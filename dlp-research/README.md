@@ -84,6 +84,9 @@ without being an exponent improvement.
   d with exactly d+1 equality tests (at most q), instantiated on that curve.
   Equality-test counts exclude point/field arithmetic and memory costs and
   are not binary-tape step bounds. Independent review is recorded in W001.
+- Fixed-width input encodings preserve observable tape distinctions: different
+  scalars on the small curve differ at a head observation within its 25-bit
+  input. This assumes known width and proves no parser or runtime bound (W003).
 - The standard secp256k1 generator coordinates satisfy y^2 = x^3 + 7 (mod p),
   and the standard scalar-order constant is less than 2^256.
 - Arithmetic showing that the earlier illustrative workload 2^128 exceeds a

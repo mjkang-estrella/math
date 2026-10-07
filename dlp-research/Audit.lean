@@ -54,3 +54,21 @@ import Research
 #print axioms Research.EncodingAudit.breakthrough_trivial
 #print axioms Research.EncodingAudit.concrete_trivial
 #print axioms Research.EncodingAudit.relabel_solved
+
+#print axioms Research.Framing.read_cons
+#print axioms Research.Framing.read_ofBits
+#print axioms Research.Framing.fixed_width_read
+#print axioms Research.Framing.fixed_width_read_injective
+#print axioms Research.Framing.fixed_width_reads_distinct
+#print axioms Research.Framing.read_difference_observable
+#print axioms Research.Framing.fixed_width_observation_distinct
+#print axioms Research.Framing.input_injective
+#print axioms Research.Framing.input_length
+#print axioms Research.Framing.input_read_roundtrip
+#print axioms Research.Framing.input_read_injective
+#print axioms Research.Framing.input_reads_distinct
+#print axioms Research.Framing.input_observation_distinct
+#print axioms Research.Framing.smallCurve_input_length
+#print axioms Research.Framing.smallCurve_input_read
+#print axioms Research.Framing.smallCurve_input_reads_distinct
+#print axioms Research.Framing.smallCurve_input_observation_distinct

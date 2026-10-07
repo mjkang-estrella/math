@@ -38,9 +38,11 @@ independent review of encoding counterexamples and InputCollision.lean: qualifie
 pass. W002 records its disagreements with Opus's informal prime-gap and advice
 claims. All three negative examples independently reproduced.
 
-Wave-2 overlap while cross-provider reviews finish: native Sol `/root/small_curve`
-now owns ONLY new `Research/Framing.lean`, proving fixed-width observable tape
-read adequacy. Existing SmallCurve source remains stable. No grandchildren.
+Wave 2: Sol `/root/small_curve` completed Framing.lean; native Astra
+`/root/encoding_review` independently passed it, then independently passed the
+coordinator's BSGS lookup experiment (W004). All review qualifications are
+recorded. Sol now has a READ-ONLY proposal task for conventional BSGS algebra
+and explicit cost interfaces; no code/schema adoption before independent review.
 
 Replacement delegate after Sol completed: Factory `claude-fable-5.1`, read-only
 independent curve/baseline proof and cost review; completed, PASS with
@@ -48,23 +50,23 @@ qualifications resolved in W001 (no blocking proof findings).
 Request `ecdloop-w1-finite-review-fable-20261007-r1`; task ID
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-finite-review-fable-20261007-r1`.
 
-Integration accepted for local commit: W001 finite coordinate curve and exact
-exhaustive equality counts reviewed by Factory Fable; W002 negative encoding
-tests reviewed by native Astra. Full suite passed 53 dependency audits and
-25 build jobs. Latest source screen sees 12 files because uncommitted Framing
-is present; Framing is NOT included in this milestone's accepted claims or
-commit. All core definitions unchanged; Goals comments clarified only.
+Committed W001/W002 locally as `c99e349`: finite coordinate curve and exact
+exhaustive equality counts (Factory review), plus negative encoding tests
+(native Astra review). No push or publication.
 
-Commit file scope: Audit.lean, Main.lean, README.md, Research.lean,
-Research/{Baseline,Checks,EncodingAudit,Goals,InputCollision,SmallCurve}.lean,
-scripts/small_curve_reference.py, research/findings/W001-initial-audit.md,
-research/findings/W002-encoding-audit.md, and this checkpoint. No toolchains,
-build products or Framing source are staged for this milestone. The commit
-records both results with their separate reviewers; see git log for its hash.
+W003/W004 accepted for the next local milestone: fixed-width observable tape
+adequacy, 17 added framing theorems; reproducible BSGS cost experiment on all
+365 scalars of five coordinate curves. Naive BSGS lookup retains d+1 equality
+checks; ordered lookup includes fresh sorting and is not a tape or speed claim.
+Full Lean check: 70 audits, 12 screened files, 27 build jobs, allowed dependencies.
+Python experiment: 119327 instrumented solver events; independent review passed.
 
-Framing implementation is complete, with 17 standalone theorem audits passed.
-Native Astra `/root/encoding_review` is now independently reviewing it read-only.
-Grok literature remains live. Research objective is active, not achieved.
+Next commit scope: Framing.lean, import and audit entries, README, Python
+cache ignore rules, scripts/bsgs_lookup_experiment.py, W003/W004 records and
+W004-bsgs-results.json, this checkpoint. No other new code or generated builds.
+
+Live work: Grok literature task above and native Sol BSGS interface proposal.
+Native Astra review is complete. Research goal remains active and unachieved.
 
 ## Task authorization
 
@@ -93,6 +95,8 @@ discrete-log algorithms. No faster algorithm has been discovered here.
   laws, complete order-seven orbit and fixed-width encoding (independent review passed).
 - `Research/Baseline.lean`: generic executable exhaustive scan with exact d+1
   equality tests; instantiated on the small curve (independent review passed).
+- `Research/Framing.lean`: fixed-width observable tape distinction (reviewed).
+- W002 negative interface tests and W004 explicit BSGS lookup-cost experiment.
 
 ## Unresolved prerequisites
 
@@ -103,16 +107,17 @@ discrete-log algorithms. No faster algorithm has been discovered here.
 
 ## Next distinct step
 
-Finish the enumerated W001/W002 local commit. Await Grok literature and native
-Astra framing review; do not duplicate either task. Then integrate/audit framing
-and test a square-root reference baseline with explicit lookup/memory costs.
-Coordinator is preparing a bounded synthetic comparison of linear versus
-ordered BSGS lookup; no algorithmic improvement has been accepted.
+Commit the enumerated reviewed W003/W004 milestone, then await Sol's explicit
+BSGS interface proposal and Grok's primary-literature candidates. Independently
+review any proposed new algebra/cost layer before implementing/accepting it.
+Keep Machine/Problem/Goals definitions frozen; do not equate API additions,
+comparisons, random-access operations, tape transitions or hardware timing.
 
-Previous goal turn: progress (negative encoding examples, independent review,
-53 audits). Current continuation: progress (Factory pass resolved, framing
-implemented, final milestone review/commit). No blocker threshold or objective
-completion criterion has been met.
+Previous turn: progress (negative tests independently reviewed, 53 audits).
+This continuation: progress (commit c99e349, 70 audits including independently
+reviewed framing, fully reproduced/reviewed BSGS experiment). Grok's task was
+verified live this turn; do not restart it solely because a wait is long.
+No completion or blocked threshold is met.
 
 ## Validation
 
@@ -125,5 +130,7 @@ completion criterion has been met.
 - `git diff --check`: passed (new files are untracked; no commit was requested).
 - No GPU computation, model API calls, recurring tasks, or attack attempts.
 
-Scope: the abstract framework and listed checks compile. The concrete elliptic-
-curve solver/refinement and all faster-algorithm claims remain unproved.
+Current scope: a finite coordinate EC instance, exhaustive high-level baseline,
+input adequacy and negative specification tests are verified as documented.
+No tape-refined EC solver, frozen hard family, cryptographic-size refinement,
+or faster-algorithm claim is proved.
