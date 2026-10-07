@@ -1,136 +1,112 @@
 # Research checkpoint
 
-Status: active, wave 1 complete; wave 2 in progress (2026-10-07). Persistent goal established in coordinator
-thread `01a118a2-f8f0-7751-90bd-ddeb86a90ada`; no token budget or recurring schedule.
-Starting commit: `815d920`; working tree clean at intake.
+Status: active, waves 1–3 correctness/finite-experiment milestone accepted
+(2026-10-07). Persistent goal in coordinator thread
+`01a118a2-f8f0-7751-90bd-ddeb86a90ada`; no token budget or recurring schedule.
+Starting commit `815d920`, clean at intake. Local milestones `c99e349` and
+`05ed8be`; current W005/W006/W007 milestone ready for local commit.
+No faster ECDLP algorithm or cryptographic break has been discovered.
 
-## Active wave and ownership
+## Authorization and operating constraints
 
-Integration milestone: inspect specification gaps and prove arithmetic and
-exact-order facts for a small actual elliptic curve, without changing the frozen
-core interface or claiming a faster ECDLP algorithm.
+User authorized the ongoing research loop, parallel native/T3 delegates,
+independent verification, and local commits of significant findings/process.
+Preparation-only restrictions are superseded. No push, publication, wallet
+recovery or scheduler. Coordinator alone integrates/stages/commits; writers
+have disjoint ownership, reviewers are read-only. No grandchildren. Respect
+four active slots including coordinator; availability is not execution evidence.
+Core Machine/Problem/Goals definitions remain frozen. Their encoding/advice
+limitations are documented by negative tests, not silently repaired.
 
-Live catalog refreshed: Codex Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory
-Fable/Opus all report child delegation support and no constraints. Actual runs
-and failures are recorded below; availability alone is not execution evidence.
+## Current live work
 
-Active wave-1 delegates:
-- Native Codex `gpt-6.1-sol`, `/root/small_curve`: completed and stable;
-  `Research/SmallCurve.lean` implements the seven-point F5 curve. All 22
-  public theorem audits passed; coordinator independently cross-checked it.
-- T3 Claude `claude-opus-5-5`, completed; request
+- Native Sol `/root/small_curve`: READ-ONLY next-step proposal for lawful
+  conventional coordinate keys and actual indexed lookup with correctness and
+  explicit comparison counts. Inspect Std APIs; no implementation or RAM
+  adoption until independent design review. Its BSGS source is frozen/accepted.
+- T3 Grok `grok-4.7`: original primary-literature/falsifiable-directions task
+  remains running at last status read. Do not duplicate because it is slow.
+  Request `ecdloop-w1-literature-grok-20261007-r1`; task ID
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-literature-grok-20261007-r1`.
+- Native Astra `/root/encoding_review`: completed independent generic BSGS
+  implementation review, PASS. Available for next distinct review.
+
+Live catalog discovered Codex Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory
+Fable/Opus with delegation supported and no reported constraints. Actual runs
+are identified here; no claim every listed model ran.
+
+## Completed delegated rounds
+
+Native Sol authored SmallCurve, Framing, OrbitArithmetic and BSGS in separate
+owned-file rounds, and proposed W005 algebra/cost design. Native Astra separately
+reviewed W002 negative tests, W003 framing, W004 experiment, W005 design and
+implementation, W006 source/arithmetic/disagreements, W007 modular arithmetic
+and frozen BSGS implementation. All qualified passes have explicit limits in
+findings; standard proof compilation is not independent cost-model acceptance.
+
+T3 completed rounds (retain exact task IDs; new reviews require new delegates):
+
+- Claude Opus 5.5 specification/lower-bound audit, request
   `ecdloop-w1-spec-opus-20261007-r1`; task ID
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-spec-opus-20261007-r1`.
-  Read-only specification and lower-bound audit.
-  Produced Lean-checked secret-revealing encoding counterexamples. Coordinator
-  reproduced and namespaced them in EncodingAudit.lean as negative tests;
-  broader informal assertions remain under review, not accepted facts.
-- T3 Grok `grok-4.7`, running; request
-  `ecdloop-w1-literature-grok-20261007-r1`; task ID
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-literature-grok-20261007-r1`.
-  Read-only primary literature and falsifiable candidate directions.
+  Secret-revealing encoding counterexamples integrated/reviewed; informal
+  prime-gap/advice claims challenged and qualified in W002.
+- Factory Fable 5.1 finite curve/baseline review, request
+  `ecdloop-w1-finite-review-fable-20261007-r1`; task ID
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-finite-review-fable-20261007-r1`.
+  PASS with scope qualifications recorded in W001.
+- Claude Opus 5.5 signed-BSGS design/literature review, request
+  `ecdloop-w3-negation-design-opus-20261007-r1`; task ID
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w3-negation-design-opus-20261007-r1`.
+  No design blocker. Native Astra challenged rounding, necessity of strict
+  span, stored-sign representation and tuning claims; resolutions in W006.
+  This early design review did not inspect the later Python implementation.
 
-Coordinator alone owns integration, findings, audit list, checkpoint, and commits.
-Delegates must not spawn grandchildren in this wave. Three children maximum.
+## Established milestones
 
-After Opus completed, native Astra `/root/encoding_review` completed a read-only
-independent review of encoding counterexamples and InputCollision.lean: qualified
-pass. W002 records its disagreements with Opus's informal prime-gap and advice
-claims. All three negative examples independently reproduced.
+- Initial scaffold: explicit binary-tape semantics, cyclic-orbit interface,
+  deterministic finite/uniform goals, order-two solver, secp256k1 constants and
+  generator equation, conditional capacity arithmetic. 12 original audits.
+- `c99e349`, W001/W002: seven-point coordinate curve over F5, proved group laws
+  and exact orbit, exhaustive solver with d+1 equality tests; independently
+  reviewed encoding leakage and indistinguishable-tape counterexamples.
+- `05ed8be`, W003/W004: fixed-width observable input distinction; all 365 scalars
+  of five synthetic coordinate curves tested with ordinary BSGS variants.
+  Linear lookup retains d+1 equality checks despite fewer additions; sorting
+  comparisons charged in ordered variant. 70 audits; 119327 instrumented events.
+- W005: generic orbit period/residue laws, executable add/neg refinement proved
+  for SmallCurve, baby construction invariants. Its exact m count is ONLY direct
+  countedAdd wrapper calls; generator evaluation/P.next and internals excluded.
+- W006: signed coverage/alias arithmetic; reviewed signed-BSGS finite experiment
+  with fresh per-target sorting on all 365 scalars, three variants, 100988
+  instrumented events. Known constant-factor addition saving accompanied by
+  sign/key costs; no calibrated speed, exponent or complete Lean signed solver.
+- W007: actual generic BSGS solver and correctness for every orbit scalar and
+  every positive width, including duplicates m>q and order one. Coordinate
+  instance checked at widths 1,3,7,8. Actual lookup is linear; no cost bound.
 
-Wave 2: Sol `/root/small_curve` completed Framing.lean; native Astra
-`/root/encoding_review` independently passed it, then independently passed the
-coordinator's BSGS lookup experiment (W004). All review qualifications are
-recorded. Sol now has a READ-ONLY proposal task for conventional BSGS algebra
-and explicit cost interfaces; no code/schema adoption before independent review.
+## Current validation and remaining assumptions
 
-Replacement delegate after Sol completed: Factory `claude-fable-5.1`, read-only
-independent curve/baseline proof and cost review; completed, PASS with
-qualifications resolved in W001 (no blocking proof findings).
-Request `ecdloop-w1-finite-review-fable-20261007-r1`; task ID
-`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-finite-review-fable-20261007-r1`.
+Integrated `./scripts/check.sh` passed: 16 screened source files, 35 build jobs,
+106 audited declarations, executable smoke output. Dependencies limited to
+propext, Classical.choice and Quot.sound. W007 frozen source also independently
+compiled/audited all nine new claims. W006 archived JSON was independently
+regenerated exactly. Earlier failed elaboration attempts and reviewer-only
+unarchived supplementary sweeps are identified in findings; none are hidden.
+These scripts detect honest mistakes, not adversarial proof validation.
 
-Committed W001/W002 locally as `c99e349`: finite coordinate curve and exact
-exhaustive equality counts (Factory review), plus negative encoding tests
-(native Astra review). No push or publication.
-
-W003/W004 accepted for the next local milestone: fixed-width observable tape
-adequacy, 17 added framing theorems; reproducible BSGS cost experiment on all
-365 scalars of five coordinate curves. Naive BSGS lookup retains d+1 equality
-checks; ordered lookup includes fresh sorting and is not a tape or speed claim.
-Full Lean check: 70 audits, 12 screened files, 27 build jobs, allowed dependencies.
-Python experiment: 119327 instrumented solver events; independent review passed.
-
-Next commit scope: Framing.lean, import and audit entries, README, Python
-cache ignore rules, scripts/bsgs_lookup_experiment.py, W003/W004 records and
-W004-bsgs-results.json, this checkpoint. No other new code or generated builds.
-
-Live work: Grok literature task above and native Sol BSGS interface proposal.
-Native Astra review is complete. Research goal remains active and unachieved.
-
-## Task authorization
-
-The user authorized an ongoing research task, parallel delegates across the
-model families in `RESEARCH_TEAM.md`, in-depth independent verification, and
-local commits of significant findings with their process/evidence. Preparation-
-only instructions from the original setup have been superseded.
-
-The task coordinator must record its active goal and delegated task IDs here
-before beginning parallel work. Only it integrates and commits shared changes.
-
-## Objective
-
-Develop a precise, verified research framework for improved elliptic-curve
-discrete-log algorithms. No faster algorithm has been discovered here.
-
-## Established artifacts
-
-- `Research/Machine.lean`: explicit finite-program binary-tape cost semantics.
-- `Research/Problem.lean`: injective cyclic-orbit public-key problem interface.
-- `Research/Goals.lean`: concrete feasibility and uniform exponent objectives;
-  conditional arithmetic capacity checks.
-- `Research/Secp256k1.lean`: standard constants and generator equation check.
-- `Research/Checks.lean`: interpreter checks and trivial order-two example.
-- `Research/SmallCurve.lean`: finite coordinate curve with seven points, group
-  laws, complete order-seven orbit and fixed-width encoding (independent review passed).
-- `Research/Baseline.lean`: generic executable exhaustive scan with exact d+1
-  equality tests; instantiated on the small curve (independent review passed).
-- `Research/Framing.lean`: fixed-width observable tape distinction (reviewed).
-- W002 negative interface tests and W004 explicit BSGS lookup-cost experiment.
-
-## Unresolved prerequisites
-
-1. General/cryptographic EC refinement beyond the finite seven-point example.
-2. Review/freeze a nontrivial curve family and public encodings.
-3. Tape refinement of the exhaustive baseline, verified square-root baseline,
-   randomized semantics, memory accounting, and cost/performance calibration.
+Open prerequisites: cryptographic/general EC refinement; reviewed hard family
+and conventional public encoding; lawful efficient keys and sorted lookup;
+complete primitive/access/allocation/storage/scalar-width accounting; tape
+refinement; randomized semantics; calibration and any genuinely improved
+candidate. Orbit laws alone give no off-orbit target validation or efficiency.
+Do not equate wrapper calls, field operations, RAM units, tape transitions or
+hardware timing. Deferred W005 RAM ledger is not an accepted model.
 
 ## Next distinct step
 
-Commit the enumerated reviewed W003/W004 milestone, then await Sol's explicit
-BSGS interface proposal and Grok's primary-literature candidates. Independently
-review any proposed new algebra/cost layer before implementing/accepting it.
-Keep Machine/Problem/Goals definitions frozen; do not equate API additions,
-comparisons, random-access operations, tape transitions or hardware timing.
-
-Previous turn: progress (negative tests independently reviewed, 53 audits).
-This continuation: progress (commit c99e349, 70 audits including independently
-reviewed framing, fully reproduced/reviewed BSGS experiment). Grok's task was
-verified live this turn; do not restart it solely because a wait is long.
-No completion or blocked threshold is met.
-
-## Validation
-
-2026-10-07, initial setup, Lean 4.34.1:
-
-- `./scripts/check.sh`: passed; 17 build jobs, source screen for 7 files,
-  axiom audit for all 12 listed declarations, executable smoke check.
-- Allowed dependencies found: `propext`, `Classical.choice`, `Quot.sound`.
-  The curve-coordinate and arithmetic checks depend on no axioms.
-- `git diff --check`: passed (new files are untracked; no commit was requested).
-- No GPU computation, model API calls, recurring tasks, or attack attempts.
-
-Current scope: a finite coordinate EC instance, exhaustive high-level baseline,
-input adequacy and negative specification tests are verified as documented.
-No tape-refined EC solver, frozen hard family, cryptographic-size refinement,
-or faster-algorithm claim is proved.
+Commit the accepted W005/W006/W007 milestone locally after staged-path/diff
+inspection. Review Sol's indexed-lookup proposal independently before assigning
+implementation. Collect Grok's existing task when its notification arrives.
+Continue bounded waves with durable evidence and reviewer disagreements.
+Research goal stays active; no completion or repeated-blocked threshold is met.

@@ -87,6 +87,14 @@ without being an exponent improvement.
 - Fixed-width input encodings preserve observable tape distinctions: different
   scalars on the small curve differ at a head observation within its 25-bit
   input. This assumes known width and proves no parser or runtime bound (W003).
+- A conventional executable baby-step/giant-step solver recovers every orbit
+  scalar for every positive table width, including duplicate baby points when
+  the width exceeds the order. Its add/neg refinement is proved for the small
+  coordinate curve. Lookup is linear; no total-cost bound is asserted (W005/W007).
+- A reproducible signed-BSGS experiment tests all 365 scalars of five synthetic
+  coordinate curves. Negation pairs reduce some counted additions while adding
+  sign/key work. This known constant-factor method has no calibrated speed or
+  exponent claim; the full event vectors and review disagreements are in W006.
 - The standard secp256k1 generator coordinates satisfy y^2 = x^3 + 7 (mod p),
   and the standard scalar-order constant is less than 2^256.
 - Arithmetic showing that the earlier illustrative workload 2^128 exceeds a

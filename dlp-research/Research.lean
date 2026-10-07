@@ -8,3 +8,7 @@ import Research.Baseline
 import Research.InputCollision
 import Research.EncodingAudit
 import Research.Framing
+import Research.SignedCoverage
+import Research.OrbitArithmetic
+import Research.BSGSArithmetic
+import Research.BSGS
