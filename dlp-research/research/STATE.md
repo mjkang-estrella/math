@@ -4,7 +4,9 @@ Status: active, waves 1–3 correctness/finite-experiment milestone accepted
 (2026-10-07). Persistent goal in coordinator thread
 `01a118a2-f8f0-7751-90bd-ddeb86a90ada`; no token budget or recurring schedule.
 Starting commit `815d920`, clean at intake. Local milestones `c99e349` and
-`05ed8be`; current W005/W006/W007 milestone ready for local commit.
+`05ed8be`; W005/W006/W007 committed locally as `9667d72`; clean after that commit.
+W008 reviewed coordinate-key layer is ready for a separate local checkpoint;
+IndexedLookup remains author-owned, unimported and uncommitted.
 No faster ECDLP algorithm or cryptographic break has been discovered.
 
 ## Authorization and operating constraints
@@ -20,16 +22,22 @@ limitations are documented by negative tests, not silently repaired.
 
 ## Current live work
 
-- Native Sol `/root/small_curve`: READ-ONLY next-step proposal for lawful
-  conventional coordinate keys and actual indexed lookup with correctness and
-  explicit comparison counts. Inspect Std APIs; no implementation or RAM
-  adoption until independent design review. Its BSGS source is frozen/accepted.
+- Native Sol `/root/small_curve`: owns ONLY Research/IndexedLookup.lean after
+  W008 design approval: actual indexed search, correctness and probe bounds.
+  Coordinator owns PointKey.lean and shared records/integration; no collisions.
 - T3 Grok `grok-4.7`: original primary-literature/falsifiable-directions task
   remains running at last status read. Do not duplicate because it is slow.
   Request `ecdloop-w1-literature-grok-20261007-r1`; task ID
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-literature-grok-20261007-r1`.
-- Native Astra `/root/encoding_review`: completed independent generic BSGS
-  implementation review, PASS. Available for next distinct review.
+- Native Astra `/root/encoding_review`: W008 design and frozen PointKey
+  implementation independently passed; currently complete. No unstable lookup
+  review yet.
+- Factory Fable 5.1: read-only whole-solver cost-design review, running.
+  Request `ecdloop-w4-cost-ledger-fable-20261007-r1`; task ID
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w4-cost-ledger-fable-20261007-r1`.
+  Supplies explicit primitive/width/setup/storage obligations; no model adopted.
+  Four active slots including coordinator; no further live delegate until a
+  task completes.
 
 Live catalog discovered Codex Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory
 Fable/Opus with delegation supported and no reported constraints. Actual runs
@@ -87,8 +95,11 @@ T3 completed rounds (retain exact task IDs; new reviews require new delegates):
 
 ## Current validation and remaining assumptions
 
-Integrated `./scripts/check.sh` passed: 16 screened source files, 35 build jobs,
-106 audited declarations, executable smoke output. Dependencies limited to
+W007 integrated check passed 106 audits. Current `./scripts/check.sh` with
+PointKey added passed 112 audited declarations and executable smoke output.
+The source screen sees unfinished IndexedLookup too, but it is not imported
+or certified by this build. Key implementation independently passed all six
+claims; generic indexed-search correctness/count proofs remain in progress. Dependencies limited to
 propext, Classical.choice and Quot.sound. W007 frozen source also independently
 compiled/audited all nine new claims. W006 archived JSON was independently
 regenerated exactly. Earlier failed elaboration attempts and reviewer-only
@@ -105,8 +116,8 @@ hardware timing. Deferred W005 RAM ledger is not an accepted model.
 
 ## Next distinct step
 
-Commit the accepted W005/W006/W007 milestone locally after staged-path/diff
-inspection. Review Sol's indexed-lookup proposal independently before assigning
-implementation. Collect Grok's existing task when its notification arrives.
+W005/W006/W007 committed after staged-path/diff inspection. Complete and
+independently review W008 implementations; adopt no whole-solver/RAM bound
+from coordinate-key or query-count theorems alone. Collect Grok's existing task when its notification arrives.
 Continue bounded waves with durable evidence and reviewer disagreements.
 Research goal stays active; no completion or repeated-blocked threshold is met.

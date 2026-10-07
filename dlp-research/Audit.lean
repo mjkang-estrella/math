@@ -110,3 +110,10 @@ import Research
 #print axioms Research.BSGS.smallCurve_correct
 #print axioms Research.BSGS.smallCurve_edges
 #print axioms Research.BSGS.order_one_correct
+
+#print axioms Research.PointKeys.rawKey_lt
+#print axioms Research.PointKeys.rawKey_injective
+#print axioms Research.PointKeys.coordinateKey_lt
+#print axioms Research.PointKeys.coordinateKey_eq_iff
+#print axioms Research.PointKeys.smallCurve_key_reflects
+#print axioms Research.PointKeys.coordinateKey_fits
