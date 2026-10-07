@@ -29,8 +29,9 @@ Two goals are intentionally separate:
 
 1. **Concrete feasibility:** a fixed, reviewed instance admits a program of
    bounded description size that solves every scalar within a specified number
-   of machine steps. This rules out hiding an astronomical inverse table in the
-   algorithm. Limits must be chosen from an actual resource budget.
+   of machine steps. This limits tables hidden in the finite program, but does
+   not constrain the public encoding or parameter advice. Those must be reviewed
+   separately. Limits must be chosen from an actual resource budget.
 2. **An exponent improvement:** one fixed program solves every instance in a
    fixed family whose orders grow with n, with cost eventually bounded by
    O(q^(1/2 - epsilon)) for some epsilon > 0. This is stronger than a
@@ -76,12 +77,28 @@ without being an exponent improvement.
   theorem that one extra unit of fuel preserves successful runs.
 - A complete toy cyclic problem of order two, with a verified trivial solver.
   It is a framework check, not an elliptic-curve result.
+- A coordinate implementation of y²=x³+2x+1 over F5 with seven points:
+  closure, abelian group laws, generator order seven, complete orbit, and an
+  injective fixed-width coordinate encoding connected to `CyclicProblem`.
+- A high-level exhaustive orbit-search baseline, proved to return every scalar
+  d with exactly d+1 equality tests (at most q), instantiated on that curve.
+  Equality-test counts exclude point/field arithmetic and memory costs and
+  are not binary-tape step bounds. Independent review is recorded in W001.
 - The standard secp256k1 generator coordinates satisfy y^2 = x^3 + 7 (mod p),
   and the standard scalar-order constant is less than 2^256.
 - Arithmetic showing that the earlier illustrative workload 2^128 exceeds a
   week of one million workers at 19.3 billion operations/second, even after a
   10-quadrillion-fold speedup.
 - A source screen and printed axiom audit for the named theorems.
+
+Negative specification tests also demonstrate why an accepted research
+challenge needs more than the abstract interface. Secret-revealing encodings
+can satisfy its goals trivially, even while preserving an existing curve orbit.
+Distinct finite-list encodings can also initialize identical tapes, making the
+corresponding problem unsolvable. These are interface counterexamples, not
+ECDLP algorithms; see `research/findings/W002-encoding-audit.md`. The small
+coordinate example has a fixed-width ordinary encoding and is separate from
+these deliberately inadmissible examples.
 
 The GPU arithmetic checks are **conditional calculations**. They do not prove
 the work estimate, the reported benchmark, linear scaling, or a reduction from
@@ -90,13 +107,14 @@ units and must never be silently equated.
 
 ## What remains open?
 
-- A concrete elliptic-curve implementation with proofs of its arithmetic and
-  generator order, connected to `CyclicProblem`. The existing interface models
-  a cyclic orbit; it does not yet enforce elliptic-curve group laws.
+- A general or cryptographic-size elliptic-curve refinement. The new seven-point
+  example is finite specification validation only. The existing interface models
+  a cyclic orbit; it does not itself enforce elliptic-curve group laws.
 - A frozen family of appropriately difficult curves and reviewed, conventional
   public encodings. Do not choose an easy family and claim a secp256k1 result.
-- An executable, verified baseline and a justified refinement to the tape
-  model (or a separately reviewed replacement cost model).
+- A justified refinement of the high-level exhaustive baseline to the tape
+  model, and a verified square-root baseline (or a separately reviewed
+  replacement cost model).
 - A randomized/probabilistic extension. The current all-input deterministic
   worst-case goal is stronger than the usual expected-cost Pollard-rho claim.
 - Resource accounting beyond transitions: peak tape usage, realistic hardware,

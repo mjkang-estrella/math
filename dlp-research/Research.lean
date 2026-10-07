@@ -3,3 +3,7 @@ import Research.Problem
 import Research.Goals
 import Research.Secp256k1
 import Research.Checks
+import Research.SmallCurve
+import Research.Baseline
+import Research.InputCollision
+import Research.EncodingAudit

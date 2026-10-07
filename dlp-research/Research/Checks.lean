@@ -1,7 +1,24 @@
 import Research.Goals
 import Research.Secp256k1
+import Research.SmallCurve
+import Research.Baseline
 
 namespace Research.Checks
+
+local instance : DecidableEq SmallCurve.problem.Point :=
+  inferInstanceAs (DecidableEq SmallCurve.Point)
+
+/-- All seven secrets on the coordinate curve are recovered by the high-level
+reference scan. The count measures equality tests, not tape transitions. -/
+theorem small_curve_baseline (d : Fin SmallCurve.problem.order) :
+    Baseline.solve SmallCurve.problem (SmallCurve.problem.publicKey d) =
+      ⟨some d.val, d.val + 1⟩ := by
+  exact Baseline.solve_publicKey SmallCurve.problem d
+
+theorem small_curve_baseline_worst_case :
+    Baseline.solve SmallCurve.problem (SmallCurve.problem.publicKey ⟨6, by decide⟩) =
+      ⟨some 6, 7⟩ := by
+  decide +kernel
 
 /-- Deliberately trivial group of order two: validates the framework only.
 It carries no evidence about large elliptic curves. -/

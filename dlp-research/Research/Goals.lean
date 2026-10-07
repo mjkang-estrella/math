@@ -2,15 +2,16 @@ import Research.Problem
 
 namespace Research
 
-/-- Fixed-instance practical target. Program size excludes hardcoding an
-astronomical inverse table. Choosing useful limits requires separate hardware
-calibration; abstract tape steps are not GPU curve operations. -/
+/-- Fixed-instance resource target. Program size limits tables in the finite
+control, but does not constrain advice in public parameters or the encoding.
+Reviewed inputs and separate hardware calibration are required; abstract tape
+steps are not GPU curve operations. -/
 def ConcreteGoal (P : CyclicProblem) (maxProgramBits maxSteps : Nat) : Prop :=
   ∃ code : Machine.Program,
     Machine.descriptionBits code ≤ maxProgramBits ∧
     SolvesWithin P code maxSteps
 
-/-- A non-vacuous family with n-bit-scale group orders. Coordinates, parameter
+/-- A family with n-bit-scale group orders, without hardness constraints. Coordinates, parameter
 encodings, and their uniform efficient generation still require external
 review and formal refinement before this is an ECDLP benchmark. -/
 structure ProblemFamily where
