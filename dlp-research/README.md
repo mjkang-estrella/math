@@ -103,8 +103,10 @@ without being an exponent improvement.
 - Independently reviewed checked-word instruction steps and actual prefix
   serialization, with fault/event correspondence and exact program bit lengths
   (W011/W013). These are internal components of a separate abstract cost model;
-  raw-input setup, shared fuel, complete solver costs and tape refinement are
-  still open. The encoding is deliberately unary and proves no compactness.
+  a raw-input runner now charges setup and execution from one budget, with
+  trace-derived counts, initialization proofs and terminal monotonicity (W014).
+  Complete solver costs and tape refinement remain open. The encoding is
+  deliberately unary and proves no compactness or budget feasibility.
 - The standard secp256k1 generator coordinates satisfy y^2 = x^3 + 7 (mod p),
   and the standard scalar-order constant is less than 2^256.
 - Arithmetic showing that the earlier illustrative workload 2^128 exceeds a

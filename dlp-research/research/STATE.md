@@ -10,7 +10,9 @@ SortedBabies and SortedBSGS are frozen, independently reviewed, integrated and
 committed locally as `f95d27e`. W010 negative findings committed as `a92d640`;
 W012 signed tuning committed as `f3d451a`. W011 abstract core contract accepted;
 WordCore and WordCodec with review records committed locally as `d830782`.
-Raw-run implementation and full solver costs remain incomplete.
+Tight signed coverage and independent enumeration committed as `03d4bdb`.
+Raw-run interpreter is independently verified (W014), awaiting local commit.
+Complete solver costs remain unproved.
 No faster ECDLP algorithm or cryptographic break has been discovered.
 
 ## Authorization and operating constraints
@@ -32,23 +34,20 @@ limitations are documented by negative tests, not silently repaired.
   review; coverage/first-hit/sequential minimality and old-cap comparison.
   Sol independently PASSed parent finite coverage script/data; W015.
   No group algorithm/cost/speed claim; experiment engine unchanged.
+  W016 design draft frozen, hash bd22c845c38d6d3c840affc217f6286fce74199865895c363176a3a413c97f4a.
+  No query implementation authorized; new independent reviews active.
   Accepted W011 hash5534f6e80df1196dcee8651c9a657f4278077991deabd786e3eeece429f18d5e.
   Coordinator owns all integration/checkpoints. No raw-run costs accepted.
 - T3 Grok `grok-4.7`: original primary-literature/falsifiable-directions task
   remains running at last status read. Do not duplicate because it is slow.
   Request `ecdloop-w1-literature-grok-20261007-r1`; task ID
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-literature-grok-20261007-r1`.
-- Native Astra `/root/encoding_review`: independently passed W008 key/search,
-  W009 adapter and full sorted solver, including all 28 compiled test cases.
-  W010 arithmetic reproduction passed. W012 source/data independently passed:
-  all2085 scalar/width cases,128691 events, every dominance/proxy result and
-  first-hit addition totals checked. W011 exact operational contract approved
-  with nonblocking test/trace/monotonicity clarifications recorded in W011
-  findings. Amendments reviewed, including explicit invalid-PC event correction.
-  Contract conditions satisfied. New round independently PASSed WordCore
-  all23theorems at frozenhasha7f0d76b73f5e5254b9571b0e3050cb8d3dca291379a4437f2916f17fb4522a7.
-  Now IMPLEMENTER owning only Research/WordRun.lean: partialsetup/rawrunner/
-  sharedfuel/eventledger, not integrated; will need separate review.
+- Native Astra `/root/encoding_review`: authored frozen WordRun, complete.
+  Hash 72ced59f481e8aef7f3340f918fa3d24ce8e9ff7ceb497d356f3cf31238b76e6.
+  Coordinator independently PASSed semantics/proofs and all 38 theorem audits;
+  compiled raw copy/conditional loop/infinite loop/fault checks PASS. W014.
+  Now read-only reviewer of frozen W016 operational domain/layout/template
+  gates. Prior component/experiment reviews remain in their findings.
 - Factory Fable 5.1: whole-solver cost-design review completed; original report
   retained verbatim in W010-cost-proposal-review.md, explicitly NOT ACCEPTED.
   Request `ecdloop-w4-cost-ledger-fable-20261007-r1`; task ID
@@ -62,8 +61,11 @@ limitations are documented by negative tests, not silently repaired.
   Request `ecdloop-w5-word-contract-opus-20261007-r1`; task ID
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w5-word-contract-opus-20261007-r1`.
   Full W010 objections/responses and exact W011 draft supplied.
-  Active: coordinator, Astra runner implementation, Grok literature (three).
-  Sol and Opus complete. Runner will receive new separate frozen review.
+  New W016 read-only Opus task RUNNING, request
+  `ecdloop-w7-query-contract-opus-20261007-r1`; task ID
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w7-query-contract-opus-20261007-r1`.
+  Active: coordinator, native Astra review, Opus review, Grok literature
+  (four). Sol draft task complete. See W016-query-contract-review.md.
 
 Live catalog discovered Codex Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory
 Fable/Opus with delegation supported and no reported constraints. Actual runs
@@ -125,13 +127,11 @@ T3 completed rounds (retain exact task IDs; new reviews require new delegates):
 
 ## Current validation and remaining assumptions
 
-Current `./scripts/check.sh` passed: 227 named theorem audits and executable
-smoke output. WordCore23/WordCodec29 and SignedTight16 claims are included;
-independent component reviews PASS. Unintegrated WordRun is only lexically
-screened by that script, not part of this build/audit acceptance. Earlier
-baseline:159. IndexedLookup (31 claims),
-SortedBabies (12) and SortedBSGS (4) each independently recompiled/audited;
-only permitted propext, Classical.choice and Quot.sound dependencies.
+Current `./scripts/check.sh` passed: 265 named theorem audits and executable
+smoke output. WordCore (23), WordCodec (29), SignedTight (16) and WordRun (38)
+are included; independent component reviews PASS. IndexedLookup (31),
+SortedBabies (12), SortedBSGS (4) and all earlier claims remain included.
+Only permitted propext, Classical.choice and Quot.sound dependencies.
 `scripts/sorted_bsgs_checks.lean` runs with lake env lean (no --run; uses #eval)
 and all 28 cases passed, output archived in W009-sorted-results.txt. W006 JSON
 was independently reproduced previously. Failed proof/command attempts and
@@ -149,29 +149,20 @@ hardware timing. Deferred W005 RAM ledger is not an accepted model.
 
 ## Next distinct step
 
-W008/W009 committed after staged-path inspection. Coordinator archived W010
-arithmetic counterexamples for word widths, bump addresses, primality and
-exact-order validation; these are not VM or accepted-solver failures. W010
-original design is rejected; W011 core contract is now independently reviewed
-and accepted with binding amendments. Implement and independently review its
-raw setup/runner/ledger; core/codec milestone committed as d830782. Sol
-formalizes the known tighter signed-block coverage separately. Retain frozen
-Machine/Problem/Goals.
-Collect Grok's existing task when its notification arrives; do not duplicate.
-Continue bounded waves with durable evidence and reviewer disagreements.
-Previous turn: progress (f3d451a independently reviewed tuning experiment).
-This turn: W011 amended core accepted; WordCore independently PASSed,
-WordCodec independently PASSed Sol review; check passed211audits (52new).
-Astra implements WordRun in separate owned file, unintegrated. First checkpoint
-compiles partial setup/readiness, actual events, shared fuel and conservation;
-ledger/monotonicity/generic setup-content facts still in progress. Sol
-implements SignedTight math in disjoint new file. Parent independent finite
-coverage check passed 66,560 scalar cases / 108,132 insertions; tighter cap
-alone changes no already-early-stopping match work. Review pending; W015
-records exact scope. SignedTight 16theorems and independent script review
-now PASS; integrated check passed 227 audits. See W013/W014/W015 records.
-None of these component results establishes full-run solver costs.
-Grok remains authoritatively working, with no pending children or terminal
-result. No duplicated task or scheduler. W011 core units are explicitly abstract;
-no query comparison or solver/tape/hardware refinement is accepted.
+Commit the independently reviewed W014 runner with its raw execution checks
+and retained proof-development failures. W016 is a new, unaccepted exact query
+challenge draft by Sol, frozen and under independent advice/cost and
+operational reviews. After acceptance, freeze numbered instruction templates before
+implementing a comparison. Whole BSGS costs must construct/reuse its table and
+generate giant keys internally; do not multiply external query-run costs.
+
+Previous goal turn: progress (03d4bdb signed coverage/finite enumeration).
+Current turn: progress (WordRun independently reviewed; all 265 integrated
+audits passed; 61 fuel-boundary program runs plus fault/ledger/output cases).
+No ECDLP speedup or whole solver cost result is established. Frozen
+Machine/Problem/Goals and existing experiment engines are unchanged.
+
+Collect Grok's existing task when notified; last authoritative status is
+working, no terminal result or pending children. Do not duplicate it because
+of elapsed time. No scheduler or publication is authorized/configured.
 Research goal stays active; no completion or repeated-blocked threshold is met.
