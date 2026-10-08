@@ -120,3 +120,38 @@ ClientRequestId ecdloop-h030-coefficient-trace-admission-opus-20261008-r1
 TaskId node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h030-coefficient-trace-admission-opus-20261008-r1
 Read-only/no runs/imports/edits/children; no implementation admitted. Factory
 Fable initial storage role is preserved, not duplicated.
+
+## C2 bounded diagnostic source round
+
+Admission review above COMPLETED, acknowledged via task_status. Raw and
+reconciliation retained; native Astra independently rejected universal exclusion
+of useful bounded correctness/events tests. Native Sol supplied concrete protocol.
+Root's experiments/H030/c2_protocol.md is now proposed/frozen for source work;
+native Astra reviews protocol, native Sol reviews extraction/traffic ledger.
+
+Native new-writer spawn failed `agent thread limit reached`, no child created.
+After refreshed live catalog, NEW T3-owned Codex source writer RUNNING:
+Provider codex; model gpt-6.1-sol; role implementation.
+ClientRequestId ecdloop-h030-c2-source-sol-20261008-r1
+TaskId node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h030-c2-source-sol-20261008-r1
+Exclusive ownership experiments/H030/c2_probe.py; no other edit/stage/commit,
+execution/import/warmup/children. Static AST allowed. Root alone admits sole run
+after separate source review. No repeated H028 trial or fixture discovery.
+Factory Fable storage original task remains confirmed RUNNING. No failed
+information/coordinate role retried or bypassed; no duplicate active hypothesis.
+
+## Storage proposal delivered; independent reviews live
+
+Factory Fable initial storage task COMPLETED; raw preserved in
+findings/H030-storage-fable-raw.md. No pending children. Filter plus smaller
+exact interval subtable is a concrete candidate; claimed constants, hash law,
+novelty and broad class optimality remain unreviewed. Native Astra separately
+reviews mechanism/counting read-only; no execution/import/edits/children.
+
+NEW primary-source/hash/cost review, distinct from completed C2 admission:
+Provider claudeAgent; model claude-opus-5-5; role review, RUNNING.
+ClientRequestId ecdloop-h030-filter-recovery-priorart-opus-20261008-r1
+TaskId node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h030-filter-recovery-priorart-opus-20261008-r1
+Brief includes raw mechanism, build/probe/recovery/false-positive concerns and
+competent-baseline requirement. Must use actual primary sources and report
+access failures. No numerical test, platform-price assumption, edits or children.

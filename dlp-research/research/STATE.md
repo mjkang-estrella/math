@@ -20,6 +20,70 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H030 current wave: independent ideas plus bounded carryover triage
 
+Latest live checkpoint (supersedes historical RUNNING labels below): Claude
+Opus C2 admission review COMPLETED and task_status result acknowledged. Root
+and independent native Astra rejected its unsupported universal test exclusion,
+hardware prices and statistical power claims; corrected full-work inequality in
+H030-c2-admission-reconciliation.md. Regular arithmetic credit remains conditional.
+No validated improvement; reference generic exponent1/2 unchanged.
+
+Root froze proposed diagnostic in experiments/H030/c2_protocol.md from native
+Sol's completed design: existing four fixtures, two fixed seeds, r8/tau2 versus
+r32 y-control, four total starts/no restart,145 formal signed entries, exact-x
+detectors, one global1M/55s plus60s outer cap. Correctness/events only, not a
+full-size gain test. Native Astra independently reviews protocol; native Sol
+separately reviews cost extraction. Neither may execute/import or edit.
+
+New native source-writer spawn failed: `agent thread limit reached`. No child
+created. Live T3 catalog refreshed; same-provider T3-owned Codex gpt-6.1-sol
+source writer successfully RUNNING with exclusive c2_probe.py ownership:
+node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h030-c2-source-sol-20261008-r1
+Root owns protocol, checkpoint, integration/staging/commits. Source construction
+only; no execution/import/warmup admitted before separate static source review.
+Factory Fable independent storage role revalidated RUNNING, original handle
+retained; no duplicated/restarted initial proposal. Failed older roles stay closed.
+
+Subsequent update: native Astra protocol review COMPLETED with conditional GO;
+five required orientation/null-hit/initialization/batch-commit/fatal-verification
+choices incorporated. Native Sol separate ledger review COMPLETED; explicit
+scalar inversions, interrupted-inverse/raw accounting, record-transfer model,
+non-overlapping phases and shared-setup snapshots added. Source writer remains
+live; no run admitted. Protocol/source hashes must be reconciled before execution.
+
+Factory Fable storage initial role now COMPLETED, result acknowledged and raw
+memo retained in H030-storage-fable-raw.md (UNREVIEWED claims). New mechanism:
+membership-filter baby table with smaller exact interval-recovery subtable.
+Its bits/work/false-positive guarantees and asserted broad optimality are not
+accepted. Native Astra independently reviews construction/counting; NEW Claude
+Opus5.5 reviews primary hash/prior-art/full-cost assumptions, RUNNING:
+node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h030-filter-recovery-priorart-opus-20261008-r1
+No storage numerical experiment admitted. This preserves independent breadth
+beside C2 source work; it is not a duplicate or failed-role substitution.
+
+Native Astra storage mathematics review subsequently COMPLETED. Root reconciled
+in H030-storage-reconciliation.md: exact signed interval recovery is coherent;
+O(b loglog b) stored-bit claim is conditional on an actual filter/constructive
+cost contract. Raw finite savings and universal class-optimality rejected.
+Same-Q-coefficient opposite equality can be useful, and adaptive label sets
+invalidate the memo's broad counting proof. Primary filter/prior-art review and
+C2 source writer remain live. No new numerical run or changed hardness estimate.
+
+Checkpoint validation: ./scripts/check.sh > /tmp/ecdlp-h030-protocol-check.log
+2>&1 passed exit0 (366 existing audits). No Lean/Audit change; quotient fibre
+count is reviewed paper mathematics only. Root stages only named process,
+findings and protocol documents, excluding live writer output and unrelated
+directories. Next decision-changing work: independent static C2 source review
+then the sole capped diagnostic, plus storage bit/work/prior-art reconciliation.
+
+Continuation after dd781d1 classified PROGRESS. Clean task worktree at start;
+unrelated factoring-research/research-monitor untouched. Both actual remaining
+T3 handles revalidated RUNNING: Factory Fable storage proposal and Claude Opus
+C2 admission review. No duplicate rounds or inferred termination from timeout.
+Root/Astra checked the candidate-specific quotient fibre count in
+H030-coefficient-repeat-screen.md: exact false h-match probability for uniform
+distinct class pairs, NOT an actual visited-pair law. This supports honest C2
+cycle-screen accounting without admitting a run or changing the baseline.
+
 Previous turn PROGRESS at c958caf. Existing unbounded goal stays active; no
 validated complete-work improvement, generic exponent reference1/2 unchanged.
 Live catalog refreshed; four independent initial lenses and one bounded H029
