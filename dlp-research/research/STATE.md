@@ -24,19 +24,18 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: H012 PC4-v1 exact bounded-degree certificate pruning of
-   short S3/root-domain systems. Correctness preflight accepted on paper, no
-   cost/yield evidence. Complete card: hypotheses/H012-pc4-v1.md. No prototype.
-4. Evidence: independently reviewed LD8-v1 costs Omega(sqrt(q log q)) expected
-   group additions under its frozen paid restart schedule. The literal filtered
-   t=2 lattice cannot pass its certification rule; adaptive fresh-column birth
-   rows alone give no information. Grok hybrid cards lack useful affine labels,
-   a specified selector/dynamics law, or sufficient useful-pair density.
-   These are scoped paper screens, not general coordinate lower bounds.
-5. Next conclusion-changing step: a bounded PC4 node diagnostic with paid setup,
-   actual closure and independently replayed certificates, only after exact
-   protocol and structural/cost reviews. One-node behavior cannot establish
-   full-query yield or scaling. No new numerical experiment or Lean theorem.
+3. Current hypothesis search: H013 broad independent operation ideation, six
+   distinct lenses. PC4 remains speculative and deferred; no engine or trial.
+4. Evidence: H012 reviews completed. Known degree2 slice certificates exist,
+   but no early-node pruning/work bound. Root verified PKM2016 primary prior
+   art and its different Magma degree metric. Raw cost-review overstatements
+   corrected in findings/H012-pc4-disposition.md. A single unclassified root
+   would not measure the missing useful pruning distribution. Earlier scoped
+   LD8/lattice/birth-row negatives stand. No universal coordinate impossibility.
+5. Next conclusion-changing step: deduplicate concrete H013 mechanisms, select
+   meaningful complete-cost gains, independently review and run the cheapest
+   matched synthetic falsifier. Material constant-factor gains count if measured
+   against competent known baselines. No claimed result from agent/idea counts.
 
 ## Live work and actual failures
 
@@ -380,3 +379,45 @@ Checkpoint validation: `./scripts/check.sh > /tmp/ecdlp-h012-operation-check.log
 2>&1` exit0,363 existing audits. No Lean source or Audit change; accepted screens
 remain paper findings. Root inspects/stages only the seven named task records;
 unrelated factoring-research/ and research-monitor/ remain untouched.
+
+## H012 review complete; H013 independent breadth wave live
+
+Previous goal turn was PROGRESS: b665cbd committed real operation screens and
+the PC4 hypothesis. Current tree revalidated clean for this task at its start.
+The exact Opus PC4 handle was confirmed RUNNING, then completion notification
+received and terminal result read. Native protocol and mathematics roles also
+COMPLETED. No failed observation restarted a live task.
+
+Root read PKM2016 source §3.3 and §4/Table4 directly and requested table screenshot.
+Raw review is retained with corrections: twist order odd, yield/rank unproved,
+no measured brute-force costs, no size-monotonic implication, no necessary
+almost-all-nodes refutation theorem. Protocol H012-pc4-diagnostic-v1.md remains
+concrete but NOT authorized for implementation/run. See full disposition for
+the resource-priority decision and reopening condition. No general PC4 failure
+theorem was found. No numerical result or new formal claim.
+
+H013 broad independent initial proposals RUNNING, all read-only/no experiments,
+edits or children. Native cap4 including root now fully occupied; three T3
+children distinct and below user-confirmed capacity20. Live exact launches:
+- Native Sol /root/h010_early_dependencies: material whole-solver constant-factor
+  improvements in arithmetic/batching/memory, competent rho baseline.
+- Native Astra /root/h006_structured_relation_ideas: new concrete coordinate/
+  algebraic relation producers beyond repeated root-oracle assumptions.
+- Native Astra /root/h007_additive_relations: representation, preprocessing and
+  time-memory tradeoffs, with single-target versus amortized costs explicit.
+- Claude Opus5.5: recent primary algebraic mechanisms with concrete ECDLP bridges.
+- Grok4.7: unconventional labelled hybrid operations, prior objections supplied.
+- Factory Opus5.5: paid information/predictor mechanisms and out-of-sample costs.
+Full new task IDs in register. Each brief asks several DISTINCT cards if useful,
+not a quota; excludes other H013 proposals before initial delivery. Root alone
+integrates, then assigns skeptical reviews to survivors. No silent substitutions,
+known-trick novelty, free training/preprocessing, or invented hardware throughput.
+Prior Factory Fable missing outputs remain failures, not this new Opus task.
+
+Objective active, improvement NONE. This is continued research, not completion
+or a genuine blocker. No new scheduler, push or purchase.
+
+Validation: `./scripts/check.sh > /tmp/ecdlp-h012-disposition-check.log 2>&1`
+exit0,363 existing audits. Only paper/process records changed, no Audit additions.
+Root stages six named task files after diff inspection; unrelated directories
+and all build/toolchain products excluded.

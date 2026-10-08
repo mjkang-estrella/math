@@ -550,3 +550,31 @@ Original card, preflight result, cost/family objections and source access failur
 included. Separate task from completed LD8 review, no backing-thread continuation.
 Read-only/no experiments/children. Root alone shared edits/commits. Live provider
 catalog refreshed; no capacity refusal or model substitution in this round.
+
+H012 PC4 Opus review COMPLETED; raw plus qualified disposition retained. Both
+native PC4 followups COMPLETED. Root independently checked primary PKM2016 PDF.
+Single-node protocol preserved but engine deferred for missing main-cost evidence;
+not a proof of PC4 impossibility. No task remains live from H012.
+
+## H013 broad independent operation wave
+
+Native followups all actually started, read-only/no trials/edits/children:
+- Sol /root/h010_early_dependencies: full-solver material constants/arithmetic.
+- Astra /root/h006_structured_relation_ideas: coordinate relation producers.
+- Astra /root/h007_additive_relations: time-memory/representation/preprocessing.
+
+New independent T3 initial rounds all launched RUNNING, no substitutions:
+- claudeAgent/claude-opus-5-5, concrete recent-primary algebraic bridges:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h013-algebra-literature-opus-20261008-r1`.
+- grok/grok-4.7, unconventional labelled hybrid operations:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h013-hybrid-operations-grok-20261008-r1`.
+- acpRegistry_factory_droid/claude-opus-5-5, paid learning/information mechanisms:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h013-learning-information-factory-opus-20261008-r1`.
+Stable clientRequestIds are suffixes. No backing-thread continuation. Original
+scope and prior lens-specific objections included, other initial H013 ideas
+withheld. Each proposer may offer3-5 genuinely distinct cards, not a forced count.
+No edits/experiments/installs/children. Native root+3 within4; T3 three below20.
+Root alone integrates shared files and commits. Known techniques, model counts
+and papers are not improvements; independent cost/recovery review follows only
+for worthwhile concrete survivors. This new Factory Opus role does not erase
+two earlier Factory Fable acknowledgment-only failures.
