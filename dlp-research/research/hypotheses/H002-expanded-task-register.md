@@ -1,5 +1,14 @@
 # H002 expanded T3 allocation
 
+Latest H007 expansion: native Astra /root/h007_lattice_carries and
+/root/h007_additive_relations RUNNING independent read-only idea generation.
+Native Sol symmetry role spawn FAILED: agent thread limit reached. No native
+success claimed. T3-owned codex/gpt-6.1-sol replacement RUNNING under stable ID:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-symmetric-equations-sol-20261008-r1`.
+Distinct lens: explicit symmetry/invariant/elimination solving operations.
+No experiments/edits/numerical scratch/children; initial briefs exclude other
+H007 initial proposals. Existing three T3 handles retained, no duplicate tasks.
+
 ## H006 review closure and H007 rolling wave
 
 H006 net proposer and independent /root/encoding_review COMPLETED; startup duplicate corrected, regular ledgers qualified, no whole-solver gain. Grok disposition independently checked. H006 rank Claude Opus COMPLETED with repairs now incorporated in H006-random-grid-rank-draft.md. H006 Factory Opus minor proposal COMPLETED; raw broad probability/decoding claims are pending review, not accepted.

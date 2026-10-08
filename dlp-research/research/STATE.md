@@ -183,3 +183,25 @@ Await async completions; no scheduler or polling loop. Goal remains active.
 Final documentation checkpoint validation: `./scripts/check.sh > /tmp/ecdlp-h006-paper-check.log 2>&1` exited0; all363 existing theorem audits pass. No new Lean claim or Audit entry. Staged paths and whitespace checked; only task-owned Markdown, no build/source/experiment changes.
 
 Paper milestone committed locally as0c77b49: scoped random-V dense TT rejection, recurrence ledger corrections and qualified minor equivalence. Subsequent native Sol H007 screen found no new survivor; no experiments authorized. Remaining live work: Fable decoding review, Claude structured solvers, Grok collision geometry.
+
+## Expanded independent H007 ideation
+
+Previous goal turns were verified waits on the same three live task handles,
+not repeated failed research or a blocker. Root now fills distinct uncovered
+idea lenses, preserving those live tasks rather than duplicating them:
+- Native Astra /root/h007_lattice_carries RUNNING: explicit integer-lift/carry/
+  bounded-root mechanisms, with full-range recovery and paid costs.
+- Native Astra /root/h007_additive_relations RUNNING: constructive additive/
+  incidence/energy mechanisms, requiring an algorithm beyond existence bounds.
+- Native Sol spawn /root/h007_symmetric_equations FAILED with agent thread limit
+  reached. No native run is claimed. T3-owned Sol replacement launched RUNNING:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-symmetric-equations-sol-20261008-r1`.
+  Lens: explicit symmetry/invariant/elimination operations, not a fast-solver oracle.
+
+Two actual native proposers plus root fit the reported four active slots; the
+extra native refusal is honored, not hidden. Four T3 tasks fit the user-confirmed
+20 capacity. All initial briefs isolated/read-only, no edits, numerical scratch,
+experiments or children. No hardware benchmark or Lean infrastructure funded.
+Several distinct mechanisms where useful, no quota/padding. Deliveries must state
+full work, prior art, unsupported assumptions and cheapest decisive falsifiers.
+This allocation is process, not an algorithmic improvement; baseline unchanged.
