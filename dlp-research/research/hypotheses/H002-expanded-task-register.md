@@ -1,5 +1,31 @@
 # H002 expanded T3 allocation
 
+## Latest H007 completion and review reconciliation
+
+- Native lattice proposer COMPLETED CARRY-LP-v1 and independent H006 decoder
+  counterexample check. Native additive proposer COMPLETED its initial screen,
+  then independently proved the composed CARRY-LP-v1 fractional witness and
+  linear expected-node obstruction. Root checked the paper assignments.
+- Native /root/encoding_review COMPLETED corrected GRR-v1 formulation/extraction.
+- Claude Opus structured proposer COMPLETED:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-structured-solvers-opus-20261008-r1`.
+- T3 codex/gpt-6.1-sol symmetry proposer COMPLETED:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-symmetric-equations-sol-20261008-r1`.
+- Native arithmetic-review followup was refused agent thread limit reached.
+  Explicit T3 codex/gpt-6-astra replacement COMPLETED cost/prior-art review:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-algebra-cost-priorart-astra-20261008-r1`.
+- Factory Fable H006 decoding review COMPLETED, raw universal yield claim
+  refuted and retained with correction:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h006-decoding-review-fable-20261008-r1`.
+- Native Sol /root/h007_fullcost_schedules COMPLETED GRR solver-source preflight,
+  read-only, no install/execution/experiments/edits/children. Earlier ideation
+  under this handle completed; roles distinguished in STATE.
+- Grok collision geometry remains live under its existing r1 handle.
+
+All initial bodies isolated; later reviews deliberately include objections and
+cross-comparison. No numerical experiment or general algebra infrastructure
+authorized by these deliveries. Main baseline unchanged.
+
 Latest H007 expansion: native Astra /root/h007_lattice_carries and
 /root/h007_additive_relations RUNNING independent read-only idea generation.
 Native Sol symmetry role spawn FAILED: agent thread limit reached. No native
