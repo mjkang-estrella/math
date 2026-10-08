@@ -18,6 +18,39 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H034 fresh mechanisms and fixed published-algorithm audit
+
+Previous goal turn PROGRESS: H033 committed as0a4d112 with independent
+corrections and passing checks. Working project clean at launch. All previous
+children terminal/collected; no duplicate coordinator or hypotheses. Refreshed
+live catalogue accepted exact Opus5.5 and Grok4.7 models. Native root+two fits4;
+two T3 tasks fit the separately confirmed capacity. No safety-failed role retry.
+
+H034 RUNNING, independent initial proposals withheld from each other:
+
+- Native Astra `/root/h007_additive_relations` COMPLETED: no new nonuniform
+  transition with supported gain. H034-nonuniform-sampling-screen.md records
+  paid rejection's conditional second-moment cancellation, exact collision-set
+  containment with memory caveat, and literal anchor reset's null labels.
+  Root checked algebra; no general walk law or experiment follows.
+- Native Sol `/root/h010_early_dependencies`: higher-level solver compositions
+  sharing paid work across useful equations; no new coordinate/arithmetic
+  primitive role, no self-reduction/portfolio or static-stream retuning.
+- Grok4.7 live search-frontier coverage compositions:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-live-coverage-compositions-grok-20261008-r1`.
+
+Distinct Claude Opus5.5 fixed-source full-cost review of published2026/2102,
+including its appendices, RUNNING:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-windowed-source-cost-opus-20261008-r1`.
+Require full outputs, setup, stopping and memory; do not dismiss a transferable
+technique solely because its reported benchmark used bounded plaintexts.
+
+All roles read-only/no edits, experiments/imports, children or commits. Root
+alone integrates. Next decision: rank concrete complete-work gain premises,
+independently review strongest, then admit only bounded synthetic tests that
+can change the conclusion. Generic exponent1/2 reference unchanged; verified
+improvement NONE. No experiment currently admitted; full research goal active.
+
 ## H033 independent proposals and remaining lookup hypothesis
 
 LATEST after6406300: prior turn PROGRESS. All three T3 H033 tasks COMPLETED,
