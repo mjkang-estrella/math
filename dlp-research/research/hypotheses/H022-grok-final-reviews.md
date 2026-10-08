@@ -36,3 +36,8 @@ Both briefs require exact narrow results, costs/assumptions and primary sources
 when importing facts. These are independent new review rounds, not reopened
 T3 child threads or duplicated initial idea roles. Native root+2 respects4.
 Original H023 initial roles and cross-reviews are complete and recorded.
+
+Both native reviews COMPLETED. Root integrated H022-final-mechanism-scopes.md:
+local norm/defect screens, literal affine-fold cost only, and a derived exact
+one-field slope endpoint key. No broad exclusion or solver improvement.
+Distinct H024 creative roles are recorded separately; no review is still live.

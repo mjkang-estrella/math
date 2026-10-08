@@ -91,3 +91,10 @@ frequency/useful-collision analysis. No prototype currently has a supported
 complete-work rationale. A new escape schedule or explicit positive argument
 for a bounded diagnostic could reopen it. No general coordinate-walk lower
 bound follows; current verified ECDLP improvement remains NONE.
+
+Endpoint refinement from the subsequent independent shifted-fold review:
+H022-final-mechanism-scopes.md derives lambda=(u*v-(3g²+A))/(2yG) as an exact
+one-field identifier of the H023 unordered pair, with a vertical sentinel.
+It costs2M per endpoint after paid setup; active states remain two-field.
+This is an alternative to storing both fields and does not change the mixing
+gate or justify a complete-work gain. Whole-pair hashing may choose DPs.

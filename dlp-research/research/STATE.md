@@ -18,7 +18,41 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H022 lazy result / H023 concrete operations (authoritative)
+## H022/H023 completion / H024 independent wave (authoritative)
+
+Previous goal turn was progress: b277b22 retained reviewed EDS matching and
+fixed-difference walk findings. Final Grok scope reviews now COMPLETED.
+H022-final-mechanism-scopes.md records exact cubic-squareclass and global
+integer-defect screens, correcting unsupported whole-direction exclusions.
+It also derives a one-field exact slope endpoint identifier for the H023
+reflection state, at2M per stored endpoint with paid constants. Active state
+still has two fields; no mixing or complete-work gain follows.
+
+H024 broad independent creative wave accepted RUNNING after catalog refresh:
+native Astra cheap fixed-difference escape; native Sol rational quotient
+coordinates/dynamics; Claude Opus algebraic-primary mechanisms; Factory Opus
+information/hybrid mechanisms. Four distinct initial lenses, no cross-sharing
+before delivery. Stable clientRequestIds, full taskIds and briefs in
+hypotheses/H024-independent-candidates.md. Native root+2 within4, two T3 roles
+within user-confirmed20; no old role duplicated or blocked provider retried.
+Root alone integrates/stages/commits. All old H022/H023 tasks are complete.
+
+Main metric remains credible complete ECDLP work. Current best ordinary
+full-range reference is square-root work with known constants/tradeoffs;
+verified improvement NONE. Next conclusion-changing work is a specific paid
+escape/coordinate/algebraic/information mechanism with positive rationale,
+then independent review and a bounded matched synthetic experiment. A compact
+endpoint key alone does not change hardness. No new numerical run, generic
+Lean stack, hardware rate or dashboard change.
+
+Validation: ./scripts/check.sh in dlp-research passed exit0,366 audits;
+log /tmp/ecdlp-h024-scope-check.log. No formal source or Audit changes.
+Root inspects/stages only the five named research Markdown paths; unrelated
+directories, build products and toolchains remain excluded. Goal stays active.
+
+Older live statuses below are superseded by this update.
+
+## H022 lazy result / H023 initial operations (historical)
 
 Previous goal turn was a verified wait on two live T3 handles, not a blocker.
 Claude lazy EDS review now COMPLETED; terminal result read/no pending children.
