@@ -24,16 +24,18 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: H015 component-aware admission could reduce dependent
-   multi-target collisions by a finite constant. Exact review shows it changes
-   rank usefulness, not the endpoint law; minimum count only proxies basin mass.
-   No measured gain, full-success probability or general novelty established.
+3. Current hypothesis: H015 component-aware admission remains unverified and
+   its prototype is parked. Uniform unresolved-root admission already has
+   K+O(log K) expected collision cost; reviewed uncapped common-work bound has
+   only O(log K/K) relative overhead. Fixed-table two-root completion law is
+   exactly policy-independent; fixed-table three-root expectations also agree.
+   Caps/growing tables remain outside those claims.
 4. Evidence: residual-quadratic relations are valid but have no cheaper useful
    dependency selector. Winnowing has no mean-delay gain in two scoped warm
    independent-rank models. Literal dense integer-tile arithmetic has31.5x padding.
    H014 remains the latest numerical run:738704 events, no gross feature signal.
-5. Next conclusion-changing step: primary-source novelty/cost review of the
-   admission rule, plus independent live Factory/Grok new mechanisms. A matched
+5. Next conclusion-changing step: independent Claude primary-source mechanisms;
+   Grok cards now undergo exact preflight and yield scoped counterexamples. A matched
    synthetic diagnostic needs a favorable complete-work hypothesis first. No
    larger feature sweep, backend engine or generic Lean infrastructure justified.
 
@@ -59,11 +61,17 @@ H015 initial native proposals all COMPLETED; root integrated four concrete cards
 without padding. Separate native Astra component-admission mathematics review
 COMPLETED, including basin-mass probability identity and root's stopped-event
 qualification. Native Sol primary-source admission-rule followup COMPLETED.
-Factory Opus primary-literature bridges and Grok unconventional compositions
-authoritatively RUNNING at latest task_status read; original handles retained.
+Factory Opus primary-literature task TERMINAL with only "Plan is up-to-date."
+Both final summaries identical, hasPendingChildRuns=false: missing research
+output, not a completed literature analysis. Explicit NEW Claude Opus replacement
+RUNNING, original failure retained; Grok composition task COMPLETED, raw retained.
 Other initial responses withheld until synthesis; no duplicate coordinator or
-hypothesis. Native coordinator only now active, T3 two below20. Full IDs in task register.
-Goal remains active; this turn is paper-screen progress, not a blocker.
+hypothesis. New native uniform-root cost review and independent experiment-value
+review COMPLETED; focused native three-root Bellman check COMPLETED. Separate
+native Sol exact-bit counterexample review COMPLETED; native Astra S3/Miller
+preflight COMPLETED. Native coordinator only active, T3 one live. Full IDs in task register.
+Goal remains active. Previous turn PROGRESS through363df56; current turn adds
+independently checked cost evidence and records a real provider delivery failure.
 
 H015 findings: residual-graph-screen, preprocessing-baseline, winnowing-screen,
 component-admission. These are paper calculations/hypotheses, not Lean theorems
@@ -76,8 +84,20 @@ Published May--Ostuzzi§6 also read directly: sequential target retries against 
 known-log table, different from this exact admission rule. No primitive-addition
 cost inferred from its random-power walk steps. Both source access gates resolved;
 candidate still lacks a favorable complete-work case or success evidence.
+New finding H015-admission-cost-screen.md includes uncapped work theorem scope,
+hard-cap/memory exceptions, and exact fixed-table two-root cancellation. No
+fixed asymptotic percentage gain from admission alone under the stated model.
+No proof assumed all basins uniform, independent actual successes, or same final
+root-state distribution for different policies. All claims remain paper-level.
 Checks: `./scripts/check.sh > /tmp/ecdlp-h015-screen-check.log 2>&1` exit0.
 Only paper/process records changed; no Audit additions or formal proof claim.
+Latest check: `./scripts/check.sh > /tmp/ecdlp-h015-cost-check.log 2>&1` exit0.
+Grok bit formula refuted by hand on recorded p59/q67 curve: k4, i0 gives beta1
+although the scalar's low bit is0. No numerical experiment or exception-handler
+execution; source/order metadata reused honestly. S3 frozen columns omit X^2Y^2
+and its stated norm test accepts pX^3 at a nonzero integer box root. AP divisor
+has nonzero elliptic group sum; supplied membership reduction is invalid. Exact
+constructions rejected before runs, no general root/function lower bound claimed.
 
 Current findings: H013-algebra-disposition.md, H013-coordinate-cards.md,
 H013-mcl-disposition.md, with raw reports and reviewer objections retained.

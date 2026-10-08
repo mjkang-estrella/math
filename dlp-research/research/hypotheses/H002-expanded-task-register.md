@@ -711,3 +711,42 @@ Both exact H015 T3 original handles revalidated RUNNING; no task restarted or
 new delegated review round inferred from the repeated H014 notification.
 H014 Opus preflight terminal summary reread matches the committed raw report.
 Root alone writes findings/checkpoint and integrates; objective/improvement unchanged.
+
+## H015 admission cost screen and actual Factory missing-output delivery
+
+Previous checkpoint363df56 is substantive progress. Authoritative status now:
+Factory original H015 task COMPLETED with summary/latestTerminalSummary exactly
+"Plan is up-to-date.", hasPendingChildRuns=false. This is missing research,
+not accepted primary-literature evidence. No backing-thread continuation/retry.
+Explicit replacement NEW delegate_task, live catalog refreshed, accepted RUNNING:
+claudeAgent/claude-opus-5-5,
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h015-primary-bridges-opus-20261008-r2`.
+Stable clientRequestId is suffix. Original independent lens, prior objections,
+failure and full-cost/source discipline supplied; new initial H015 cards withheld.
+Not attributed to Factory. Grok original task revalidated RUNNING; no duplicate.
+
+Native NEW read-only roles (no runs/edits/children):
+- /root/h007_additive_relations COMPLETED uniform-root collision/work bound and
+  stopped-event review. Separate followup COMPLETED exact two-root fixed-table
+  completion-distribution identity, originally suggested/checked by root.
+- /root/h010_early_dependencies COMPLETED independent experiment-value assessment:
+  smallK not universally ruled out, but no defensible10% complete-work ledger;
+  hypothetical phase envelope must account for changing known-anchor mass.
+- /root/h006_structured_relation_ideas RUNNING narrow three-root Bellman check
+  using exact two-root continuation, by hand, no general infrastructure.
+Root alone integrates. No new numerical run or formal proof claim.
+
+Subsequent notifications/results:
+- Native three-root Bellman check COMPLETED: exact equality of all three action
+  expectations in the frozen-table model, no allK/distribution extrapolation.
+- Grok H015 original COMPLETED with substantive3-card output, task_status read,
+  raw preserved in H015-hybrid-grok-raw.md. Proposed experiments NOT executed.
+- Native Sol /root/h010_early_dependencies COMPLETED independent arithmetic and
+  saved-metadata check of root's exact-bit counterexample, no diagnostic run.
+- Native Astra /root/h007_additive_relations COMPLETED separate S3/Miller algebraic
+  construction preflight; root's coefficient/divisor objections supplied. No
+  generic impossibility claims or repaired-module rejection accepted. Root
+  independently read the supplied divisor-class source and added an explicit
+  modular box root to the reviewer's pX^3 certificate counterexample. No trial.
+- Claude primary-literature replacement remains live at its retained new handle;
+  no Factory findings invented and no Grok backing-thread continuation.
