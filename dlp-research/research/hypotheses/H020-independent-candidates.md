@@ -14,6 +14,13 @@ prove a runtime lower bound. Read actual primary theorems when relied upon,
 scope missing access, no runs/edits/children. Root integrates; no experiment
 admitted. Remaining two initial T3 roles live as last checked; not duplicated.
 
+Native Astra review COMPLETED; root independently verified algebra and repaired
+the balanced triple-progression construction with a rectangular main part plus
+explicit short tail. Accepted scope and primary-source access limits are in
+H020-structured-disposition.md. In particular no universal degree/output-size,
+precision or Freiman runtime lower bound is accepted. No numerical experiment.
+Grok and Factory Opus exact handles revalidated RUNNING after f879f6d, no restart.
+
 ## ecdloop-h020-structured-batching-opus-20261008-r1
 
 Provider/model: claudeAgent / claude-opus-5-5.

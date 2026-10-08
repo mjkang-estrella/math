@@ -90,9 +90,13 @@ distinct T3 roles accepted RUNNING: Claude Opus structured relation batching,
 Grok memory-constrained complete-work hybrids, Factory Opus constructive public
 signals. Claude Opus structured role now COMPLETED, terminal result read/no
 pending children; raw retained in H020-structured-opus-raw.md. Native Astra
-independent review RUNNING: squared-Cauchy displacement, triple-AP product,
-composition inputs, finite-field precision and multiset-degree claims need
-correction; no proposed negative accepted yet. Other two T3 roles remain live
+independent review COMPLETED. H020-structured-disposition.md records a concrete
+O(n^(3/2)) triple-progression dictionary comparator with an explicit incomplete
+block, not a runtime lower bound. Squared-Cauchy has higher-order displacement
+structure; ordinary low-rank, cheap reciprocal-functional and finite-precision
+claims rejected. Composition lacks constructed inputs; multiplicities do not
+disappear with small support. No sub-n^(3/2) detector or numerical test admitted.
+Other two T3 roles remain live
 as last verified. Exact briefs/provider/model/clientRequestIds/full taskIds in
 hypotheses/H020-independent-candidates.md. No outputs shared before synthesis;
 all read-only, no new experiments/children. These are new distinct mechanisms,
@@ -111,7 +115,9 @@ Older historical live-work descriptions below are superseded by this section.
    PASSED. H018 implicit bidegree relations have no positive signal rationale.
    H019 initial proposals and mathematical reviews completed without a supported
    gain; a matched high-memory arithmetic baseline screen is now checked. H020 independent
-   constructive ideation is live. SP3 still lacks its sub-n^(3/2) detector.
+   constructive ideation is live. SP3 still lacks its sub-n^(3/2) detector;
+   a concrete balanced triple-progression construction now supplies the matched
+   n^(3/2) comparator, including tail and witness costs.
 4. Evidence: two explicit anchor closures reduce to group/dictionary difference
    search. Fixed precommitted tables have a coverage/setup screen; adaptive
    partial selection is NOT covered. A valid padded small-root lattice has
@@ -145,7 +151,7 @@ Older historical live-work descriptions below are superseded by this section.
    review and a matched frozen experiment; no broad feature sweep or generic
    Lean machinery is justified. Improvement still NONE.
    Latest ./scripts/check.sh exit0,363 existing audits,
-   /tmp/ecdlp-h019-fullwork-information-check.log. No new Lean/Audit claim. Numerical
+   /tmp/ecdlp-h020-structured-check.log. No new Lean/Audit claim. Numerical
    certificate verification overhead is disclosed separately from candidate
    work and these existing theorem checks.
 
