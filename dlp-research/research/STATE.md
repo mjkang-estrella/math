@@ -51,6 +51,25 @@ Persistent broad-ideation and main-problem policies remain in force.
 - Grok4.7 autonomous collision geometry/scheduling proposal RUNNING:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-autonomous-walks-grok-20261008-r1`.
 
+H031 recent-primary-source screen (completed): after verified waits, root ran a
+bounded2025/2026 literature search. No absence/novelty conclusion from search.
+Two new source claims, distinct from live initial proposals, merit cheap checks:
+- Native Astra /root/h007_additive_relations COMPLETED source audit of Gupta
+  et al.2025 Jnanabha pp23–28: confirms invalid example-point substitution,
+  omitted literal BSGS work and unspecified relation/recovery bridge. No
+  baseline change or implementation warranted; no general impossibility claim.
+- Native Sol /root/h010_early_dependencies COMPLETED scope audit of Arif/Imran
+  arXiv2508.05048v1 §3.2: restricted Theorem6 valid, ordinary ECDLP is excluded
+  identity case, no full-input transfer supplied. Rational-point preservation
+  and group-operation versus bit-cost qualifications incorporated.
+All read-only/no runs/edits/children; root alone owns new findings/STATE. Native
+root+two respects4 slots; neither role duplicates the two retained live T3
+proposers or retries a safety-interrupted ideation role. Verified improvement
+NONE. Primary links and reviewed derivations in findings/H031-primary-claim-screen.md.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h031-primary-check.log 2>&1 exit0,
+366 existing audits; no Lean/Audit edit. Two T3 original handles revalidated
+RUNNING during this source audit; no duplicate task, restart or new experiment.
+
 Continuation after4661b79: previous turn was PROGRESS (final review committed).
 Factory r2 and Grok original task handles revalidated RUNNING. Root found a
 bounded paper followup of the literal cubic screen: at most21 exceptional
