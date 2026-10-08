@@ -24,17 +24,19 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: H012 compressed relation-witness mechanisms, alongside
-   native Sol adaptive-target/base ideation and the existing Grok hybrid role.
-   No accepted faster operation. Both Factory Fable rounds returned only
-   acknowledgments; replacement is explicit, not claimed as Factory research.
-4. Evidence: H010 rejects explicit intermediate layers, not all compressed
-   circuits. A cheap bounded-degree ONE-slice norm is known but leaves a B^4
-   outer scan; no whole-grid speedup follows. H011's three supplied operations
-   remain scoped square-root screens. No new numerical result or theorem claim.
-5. Next conclusion-changing step: obtain a concrete paid whole-witness operation
-   or nonuniform sampler, then independently review its cost/yield and recovery.
-   Keep the live roles distinct; no repeated failed engine or formal machinery.
+3. Current hypothesis: H012 PC4-v1 exact bounded-degree certificate pruning of
+   short S3/root-domain systems. Correctness preflight accepted on paper, no
+   cost/yield evidence. Complete card: hypotheses/H012-pc4-v1.md. No prototype.
+4. Evidence: independently reviewed LD8-v1 costs Omega(sqrt(q log q)) expected
+   group additions under its frozen paid restart schedule. The literal filtered
+   t=2 lattice cannot pass its certification rule; adaptive fresh-column birth
+   rows alone give no information. Grok hybrid cards lack useful affine labels,
+   a specified selector/dynamics law, or sufficient useful-pair density.
+   These are scoped paper screens, not general coordinate lower bounds.
+5. Next conclusion-changing step: a bounded PC4 node diagnostic with paid setup,
+   actual closure and independently replayed certificates, only after exact
+   protocol and structural/cost reviews. One-node behavior cannot establish
+   full-query yield or scaling. No new numerical experiment or Lean theorem.
 
 ## Live work and actual failures
 
@@ -341,3 +343,40 @@ Validation for this hypothesis/process checkpoint:
 audits. No new Lean code/Audit entry. Explicit staging only STATE, task register
 and H012 gate card; unrelated directories/build products excluded. Objective
 active; no validated improvement, and no genuine blocker audit has begun.
+
+## H012 reviewed-operation checkpoint (supersedes historical live statuses)
+
+Native Sol adaptive proposer COMPLETED all three cards. Independent Claude
+Opus5.5 LD8 work review COMPLETED (prompt-only, no workspace read), root fixed
+the accumulator convention and applied Wald only to iid intrinsic seed/descent
+costs. Full table/verification cost need not be iid. See
+findings/H012-adaptive-operation-screens.md and H012-ld8-opus-raw.md.
+No LD8 pilot needed; exact scoped expectation bound already rejects the gain.
+
+Grok4.7 H010 hybrid r1 COMPLETED; raw retained in H010-hybrid-grok-raw.md.
+Native Astra /root/h007_additive_relations COMPLETED independent review; root
+integrated corrected label equation, generator-reversal and conditional pair
+count in findings/H010-hybrid-disposition.md. No proposed large sweep authorized.
+Neither finite experiments nor generic bounds were used to dismiss coordinate
+methods generally. Factory missing-output failures remain explicitly recorded.
+
+PC4 native Astra proposer COMPLETED full operation; independent Astra preflight
+accepted soundness/exhaustive fallback and found a single-node diagnostic may
+be informative. Neither claims it fits the cap. Current distinct read-only roles:
+- /root/h006_structured_relation_ideas RUNNING exact PC4 diagnostic protocol.
+- /root/h007_additive_relations RUNNING degree4 closed-subspace pruning screen.
+- Claude Opus5.5 RUNNING complete-cost/family/prior-art review, NEW task:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h012-pc4-cost-priorart-opus-20261008-r1`.
+No edits/experiments/children in these roles. Root owns integration. Native
+root+two fits4; live catalog refreshed, exact Opus model callable, launch RUNNING.
+PC4 source fetches: eprint2015/310 returned403, CEI DOI redirected to inaccessible
+ACM endpoint. Those are source leads pending review, not claimed verified reads.
+
+No main-goal improvement, full-size extrapolation or new numerical run. This is
+substantive progress through cheap falsification, not a blocker. Existing goal
+remains active without a budget, duplicate coordinator or scheduler.
+
+Checkpoint validation: `./scripts/check.sh > /tmp/ecdlp-h012-operation-check.log
+2>&1` exit0,363 existing audits. No Lean source or Audit change; accepted screens
+remain paper findings. Root inspects/stages only the seven named task records;
+unrelated factoring-research/ and research-monitor/ remain untouched.

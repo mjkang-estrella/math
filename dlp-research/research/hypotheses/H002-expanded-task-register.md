@@ -522,3 +522,31 @@ exploration. Full witness extraction required; bounded-degree one-slice norm is
 a known reference, not improvement. Root owns H012-compressed-witness-gate.md.
 No edits/experiments/children in native roles; existing Grok hybrid r1 remains
 authoritatively RUNNING. Native root+two roles fits4 slots.
+
+## H012 operation completion and distinct followups
+
+Grok H010 hybrid r1 COMPLETED. Native Astra /root/h007_additive_relations
+independently reviewed its three cards; findings/H010-hybrid-disposition.md
+retains label-recovery corrections and scoped symbolic screens. Raw report kept.
+Native Sol /root/h010_early_dependencies COMPLETED three adaptive cards, explicit
+replacement for Factory failures: LD8, filtered t2 lattice, adaptive birth rows.
+
+Claude/claude-opus-5-5 independent LD8 review COMPLETED:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h012-ld8-work-review-opus-20261008-r1`.
+Prompt-only review, full raw retained; root narrows Wald to intrinsic costs and
+freezes single-accumulator seed to justify exact addition bound. Request ID is
+task suffix. No numerical experiment or fabricated runtime.
+
+Native Astra /root/h006_structured_relation_ideas COMPLETED PC4 card and two
+compressed alternatives; /root/h007_additive_relations COMPLETED independent
+correctness preflight. New distinct native read-only tasks now RUNNING:
+proposer freezes one-node cap protocol; reviewer seeks genuine degree4 closure
+obstruction (not static input-multiple proof). No engine/experiment authorized.
+
+New cross-provider cost/family/prior-art review launched RUNNING:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h012-pc4-cost-priorart-opus-20261008-r1`.
+Provider claudeAgent, model claude-opus-5-5; stable clientRequestId is suffix.
+Original card, preflight result, cost/family objections and source access failures
+included. Separate task from completed LD8 review, no backing-thread continuation.
+Read-only/no experiments/children. Root alone shared edits/commits. Live provider
+catalog refreshed; no capacity refusal or model substitution in this round.
