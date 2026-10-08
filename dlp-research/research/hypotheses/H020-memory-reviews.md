@@ -2,6 +2,14 @@
 
 2026-10-08. Grok initial task COMPLETED; terminal result read/no pending children. Raw H020-memory-grok-raw.md is not endorsed. No experiment admitted: the exact residue-shadow algorithm is unspecified and the raw report repeats several corrected cost/discovery claims. Root raises a concrete mod-p carry objection without claiming impossibility of every coordinate-specific method. Both NEW T3 review rounds accepted RUNNING, distinct from the still-live Factory public-signal proposal. Native H021 proposers remain independent.
 
+Latest: Claude Opus shadow review COMPLETED, terminal result read/no pending
+children. Raw H020-shadow-opus-review-raw.md retained; root corrections and
+accepted scope in H020-shadow-disposition.md. In particular neither naive
+low-bit field simulation nor a factor-k solve-time reduction is established;
+no general predictor impossibility or universal macro-map runtime is claimed.
+No executable primitive, hence no numerical test. Separate Fable cost review
+still live as last revalidated; initial public-signal role likewise live.
+
 ## ecdloop-h020-residue-shadow-review-opus-20261008-r1
 
 Provider/model: claudeAgent / claude-opus-5-5.

@@ -25,6 +25,12 @@ Accepted RUNNING. Preliminary notice reports no survivor yet; contact-divisor
 relations are being checked against prior H015 work, not accepted or counted
 as a new idea. Initial report still pending.
 
+Final COMPLETED: two exact conditional divisor constructions were checked by
+root and deduplicated in H021-adaptive-disposition.md. No new independent
+recovery equation or cheaper selector supplied; no experiment or added
+infrastructure. The still-open scope is coordinate-dependent selection that
+demonstrably favors informative closures, not an assertion it is impossible.
+
 ## /root/h010_early_dependencies: reductions and representations
 
 Read-only; no edits, runs, children, commits or numerical experiments. Explore

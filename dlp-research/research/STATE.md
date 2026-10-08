@@ -100,7 +100,11 @@ Grok memory-constrained role now COMPLETED, terminal result read/no pending
 children. Raw H020-memory-grok-raw.md retained; no gain accepted. Its signed
 macro-walk depends on an unspecified exact low-bit shadow. Root flags mod-p
 carry incompatibility with naive mod-2^w arithmetic and repeated baseline/DP
-errors. NEW Claude Opus shadow-math and Factory Fable cost reviews RUNNING;
+errors. Claude Opus shadow-math review COMPLETED, terminal result read/no
+pending children; H020-shadow-disposition.md accepts word bookkeeping but
+refutes naive canonical-Fp simulation modulo2^w. No universal nonhomomorphic
+predictor impossibility, macro collision-time theorem or numerical test follows.
+Factory Fable separate cost review remains RUNNING;
 exact stable IDs and full briefs in H020-memory-reviews.md. No experiment
 admitted before a concrete primitive and full-cost justification.
 Factory public-signal initial role remains live as last verified.
@@ -120,8 +124,11 @@ and the136-pair fixed-base classical comparator. This rejects the literal
 constraint-equivalence claim, not every full instance or experimental output.
 No claimed quantum/classical speedup accepted; no hardware run or purchase.
 H021 rolling independent ideation uses two freed native slots: Astra adaptive
-relation construction and Sol executable representations/reductions, both
-RUNNING. Distinct briefs and preliminary non-endorsed leads in
+relation construction and Sol executable representations/reductions. Astra
+COMPLETED with no survivor: high contact gives a labelled multiple; unresolved
+divisor reuse duplicates H015's known relation. Root checked the conditional
+divisor/label identities; H021-adaptive-disposition.md retains scope and avoids
+padding the idea count. Sol remains RUNNING. Distinct briefs/leads in
 hypotheses/H021-independent-candidates.md. No blocked-role retry, numerical
 work or cross-sharing of initial proposals. Native concurrency respected.
 Root alone integrates; unbounded goal remains active; verified improvementNONE.
@@ -142,8 +149,10 @@ Older historical live-work descriptions below are superseded by this section.
    a concrete balanced triple-progression construction now supplies the matched
    n^(3/2) comparator, including tail and witness costs.
    A signed macro-walk proposal now faces independent exact-shadow/cost review;
-   the shortcut primitive is missing, so no numerical falsifier is executable.
-   H021 adaptive relations and representations are independent new idea passes.
+   exact-shadow review rejects naive low-bit field simulation while leaving
+   specialized predictors open; the primitive is missing, so no numerical
+   falsifier is executable. H021 adaptive pass found only known relation
+   constructions; representation/primary-source pass remains live.
 4. Evidence: two explicit anchor closures reduce to group/dictionary difference
    search. Fixed precommitted tables have a coverage/setup screen; adaptive
    partial selection is NOT covered. A valid padded small-root lattice has
@@ -177,7 +186,7 @@ Older historical live-work descriptions below are superseded by this section.
    review and a matched frozen experiment; no broad feature sweep or generic
    Lean machinery is justified. Improvement still NONE.
    Latest ./scripts/check.sh exit0,366 dependency audits,
-   /tmp/ecdlp-h020-penalty-check.log. Three focused local-penalty claims added;
+   /tmp/ecdlp-h020-shadow-check.log. Three focused local-penalty claims retained;
    these refute one proposed encoding, not ECDLP hardness. Numerical
    certificate verification overhead is disclosed separately from candidate
    work and these existing theorem checks.
