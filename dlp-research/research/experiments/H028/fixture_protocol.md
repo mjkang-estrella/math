@@ -23,7 +23,8 @@ For this p, visit b=1,...,64, curve y²=x³+x+b. Reject if4+27b²=0 modp.
 No other curve coefficient or twist search is allowed. For each nonsingular
 curve scan x=0,...,63 in order, computing rhs and y=rhs^((p+1)/4) modp by
 charged binary exponentiation. Take first y!=0 with y²=rhs. If none, rejectcurve.
-Verify G=(x,y) lies on the curve. This gives G!=O with no rational2-torsion.
+Verify G=(x,y) lies on the curve. This gives G!=O and G itself is not2-torsion;
+it does not yet exclude other rational2-torsion on this candidate curve.
 
 Set L=isqrt(4p), not2*isqrt(p), and B=ceil_sqrt(2L+1). Implement integer
 square roots by charged binary-search loops, not an unexpanded builtin. Validate

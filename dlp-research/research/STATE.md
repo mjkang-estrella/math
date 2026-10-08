@@ -48,6 +48,54 @@ no longer automatically dominates, with competent baseline and actual lookup/
 metadata/peak-memory charges. Main objective, independent breadth policy and
 sole-root integration persist. Goal active; this correctness pass is not success.
 
+## H028 parked; main algorithm research continues (latest)
+
+All H028 source, cost and calibration-decision roles COMPLETED. Final source-only
+GO on fixture_probe.py a232ba54... and protocol403da496... from independent Sol
+follows Opus's first review and root's two corrections. NO fixture run occurred.
+The program is retained unexecuted; no numerical result or source runtime exists.
+
+Root parks H028 further execution: exact equal-unit kernel loss is established;
+weighted-field savings remain conditional, and no named production implementation
+justifies an implementation-specific Python calibration as main-goal progress.
+Do not build the27-solve engine, run fixture discovery or silently change weights
+to claim a gain. Reopening needs positive complete-work headroom in a named regime.
+Keep accepted mathematics and honest limitations, including high sqrt(q) memory.
+Best supported generic exponent1/2; verified complete-work improvement NONE.
+
+Previous wave made PROGRESS with independently reviewed negative evidence and
+retained source. ./scripts/check.sh passed366 audits; no new Lean/Audit claims.
+Overall goal stays active, with broader algorithm work next; not a blocker.
+
+## H028 equal-unit kernel rationale rejected (current decision)
+
+Previous turn PROGRESS via eb5a5a8/781baff. Revalidated actual native handles
+running and clean task tree before continuing. Root/Astra/Sol now independently
+confirm the named canonical h kernel LOSES k(3ell+4) regular events/block under
+S=Af=C=1. Conditional negation also loses k(ell+3)+Nminus. This is scoped exact
+kernel accounting, not a full-run or all-algorithm impossibility result. See
+H028-unit-event-kernel-negative.md. Verified complete-work improvement NONE.
+
+Sol's27-solve cost-vector protocol is therefore NOT admitted just to seek a
+unit-event win. Native Sol /root/h010_early_dependencies now RUNNING an independent
+decision review of a possible bounded production-kernel timing falsifier versus
+parking further H028 work. Positive subkernel timing would not be a solver gain.
+
+Astra's fixture writer COMPLETED, source ownership returned to root. Root read
+all475lines, ASTparsed only and corrected imported support.Failure classification.
+No execution/import/warmup/new instance. Source SHA256
+5e4ab7bdb3e1ed0c8821cae53d15a0c3d059a1b389fb549c5e6ca9c6e28e0a90.
+Independent Claude Opus static source audit COMPLETED with GO, taskId:
+node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h028-fixture-source-review-opus-20261008-r1
+Root corrected two findings before any execution: selected G versus all-curve
+2-torsion wording, and impossible certificate failures now abort rather than
+hide in ordinary curve rejection. Current source a232ba54..., protocol403da496...;
+full hashes and caveats in H028-fixture-source-review.md. NEW native Sol final
+static source review RUNNING. Astra separately RUNNING a bounded calibration
+protocol proposal; no source writes or numerical work. A source GO alone does
+not establish a positive cost hypothesis warranting further execution.
+No current numerical command is running. Root alone integrates/commits.
+
 ## H028 paid matcher and next experiment decision (latest continuation)
 
 Previous goal turn was PROGRESS via4cc22b4 and19fa23e; worktree and live handles
