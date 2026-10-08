@@ -20,55 +20,57 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H034 finite sparse-pair contract and remaining cost gate
 
-LATEST after1359e16: current turn PROGRESS. Native Sol finite contract and
-Astra independent cap/hash/graph review COMPLETED. H034-finite-contract.md fixes
-C4-free affine-plane graph, IID labels, exact-x archive, paid hash/seed/dispatch,
-3sqrt(q) cap and fresh-blinded H019 fallback. Accepted bounded first/second
-moments and hash-conditioning argument are paper deductions, not Lean claims.
-The hash-chain traffic remains a LEADING O(sqrt(q)) term, not free overhead.
+LATEST aftera11c626: previous goal turn PROGRESS (finite-contract checkpoint).
+Current turn: matched-memory and C4-light reviews COMPLETED and independently
+checked. New records H034-matched-memory-cost-screen.md and
+H034-c4-light-screen.md retain exact scope; original contract unchanged.
 
-Factory Opus5.5 sparse-pair cost/prior-art review COMPLETED and acknowledged:
-`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-sparse-pair-priorart-factory-opus-20261008-r1`.
-Raw in H034-sparse-pair-cost-priorart-raw.md. Root retained small-margin and
-seed-cost concerns, but did NOT accept rough crossover sizes, query-only
-continuation, C4-light optimization, free lookup parity or universal novelty/
-impossibility statements. H034-review-qualifications.md records objections.
+The matched-peak baseline can asymptotically allocate four times the hash heads,
+but paid head initialization competes with saved false probes. Exact affine-hash
+collision probability and split-role H019 lookup accounting yield a conditional
+weighted crossover, not a calibrated runtime. Candidate and baseline have equal
+leading false-probe counts at equal heads. Per-key layout differences are not
+assumed to favor either solver. Spare memory alone does not reject the candidate.
 
-Grok independent live-coverage proposals COMPLETED and acknowledged:
-`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-live-coverage-compositions-grok-20261008-r1`.
-Raw in H034-live-coverage-grok-raw.md. Root found an omitted NEGATIVE equality
-in serial doubling: its signed collision image is not shown O(1). Correction
-retained; no improvement follows. All T3 H034 children now terminal/collected.
-Original Opus windowed-source raw review remains qualified, not broadly accepted.
+The C4-light alternative uses O(q^(1/4)) seeds; its variable-density law is
+lambda(x)=x²-x^4/K^4+x^6/(3K^8). Native Astra checked the prefix combinatorics,
+concentration and dependency bound. Root then removed an unnecessary graph
+hash dictionary using exact repeated-edge detection in a packed n²-bit array;
+Astra independently checked its sampler and stopped proposal integral. This
+reduces the memory premise, but RNG/indexing/random bit access remain leading
+paid costs. No adoption, numerical result or exponent improvement.
 
-LIVE native Sol `/root/h010_early_dependencies`: independent matched-peak
-leading cost comparison. Root's question: candidate and H019 may have similar
-second moments for false hash probes, while the baseline's smaller worst-case
-archive frees space for more heads. Derive a conditional complete vector and
-crossover before any diagnostic. Preliminary result: baseline can afford four
-times the hash heads, but paid head clearing can outweigh saved false probes;
-spare memory is not automatic dominance.
+LIVE native Sol `/root/h010_early_dependencies`: propose a bounded finite
+correctness/full-cost diagnostic for the FROZEN C4-free solver versus an explicit
+H019 control. Deliver protocol only: no run/code/imports/edits. Its purpose is
+to falsify executable correctness or the stated finite ledger, not to resolve
+1.5% asymptotic gains with tiny samples. Source/experiment review required before
+one aggregate1M-event/60s run. No implementation writer has been assigned yet.
+Native Astra `/root/h007_additive_relations` completed both C4-light reviews;
+all results collected. All T3 H034 tasks are terminal and acknowledged.
 
-NEW native Astra `/root/h007_additive_relations` RUNNING a distinct paper review
-of Factory's C4-light variant: fewer seeds may reduce finite setup, but duplicate
-forms and random-graph generation/storage must be paid. Root's proposed density
-correction is 1-rho²+rho^4/3 in four-support relation count, still unverified.
-This does NOT replace the frozen C4-free contract or admit a run. Its previous
-finite-contract result was collected. No writers, implementation or numerical run.
-Root alone integrates; no safety-failed role retried, no duplicate coordinator.
+Completed T3 task IDs retained in raw records:
+- ecdloop-h034-sparse-pair-priorart-factory-opus-20261008-r1
+- ecdloop-h034-live-coverage-compositions-grok-20261008-r1
+- ecdloop-h034-windowed-source-cost-opus-20261008-r1
+Full prefix: node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3A
+Root qualifications remain in H034-review-qualifications.md; the omitted signed
+doubling relation and unsupported cost/prior-art headlines were not adopted.
 
-Mandatory wave outcome: ordinary classical reference remains square-root work;
-verified complete-work improvement NONE. Candidate predicts a conditional mean
-near0.886sqrt(q) keys, compared with proved H0190.943 and empirical grumpy near
-0.90, with different proof status. Evidence supports sparse collision law and
-finite moments; setup, leading lookup traffic, peak tuning and small margin
-oppose a premature gain claim. Next decisive analysis is matched-memory cost,
-not another generic proof or benchmark. No H034 numerical experiment admitted.
+Mandatory wave outcome: ordinary square-root reference unchanged. Verified
+complete-work improvement NONE. Conditional candidate mean near0.886sqrt(q)
+keys compares with proved H0190.943 and empirical grumpy near0.90, under distinct
+assumptions. Mathematical and cost-model premises survive so far; finite seed
+setup, allocation, memory traffic and strongest comparator remain unresolved.
+Next conclusion-changing action: independently freeze a small executable
+correctness/cost diagnostic if the cap can cover a meaningful implementation.
+No H034 numerical experiment admitted or run. No Lean/Audit change. Root alone
+integrates, no unrelated files touched, no safety-failed roles retried.
 
-Validation: `./scripts/check.sh > /tmp/ecdlp-h034-finite-contract-check.log 2>&1`
-exit0;366 existing audits. The first STATE-edit command used an incorrect
-project-relative path and failed before writing; corrected here. Research
-records only, no Lean/Audit changes. Existing unbounded goal remains active.
+Validation: `./scripts/check.sh > /tmp/ecdlp-h034-cost-light-check.log 2>&1`
+exit0,366 existing audits. New results are reviewed paper arguments only;
+checks do not certify them as Lean theorems.
+Existing unbounded research goal remains active.
 
 ## H033 independent proposals and remaining lookup hypothesis
 
