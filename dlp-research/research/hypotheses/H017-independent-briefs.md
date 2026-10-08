@@ -69,4 +69,9 @@ constants. Root derived a finite-t convexity bound, independently checked by
 both proposer and reviewer. The sufficient certificate cannot reach the box
 size needed by the specified conditional collector; this is not a no-short-
 vector theorem. See H017-padded-small-root-certificate.md. Sol's remaining
-synthesis is pending. T3 original proposals remain independent and live.
+synthesis subsequently COMPLETED. A NEW native Astra symmetric-variable review
+confirmed the smaller simplex lattice, weighted coordinate bounds and same
+certificate ceiling. Reviewer supplied a separate exact finite-t proof via
+monotonicity and the hockey-stick identity; root checked it. This is a scoped
+cost screen of the explicit representation, not a new mechanism or discovery.
+T3 original proposals remain independent and live.

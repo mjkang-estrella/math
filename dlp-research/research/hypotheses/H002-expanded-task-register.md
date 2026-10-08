@@ -822,3 +822,10 @@ triangular determinant, finite LLL factor, and root's finite-t midpoint bound.
 Native Sol independently confirmed that bound; its remaining initial synthesis
 is pending. No numerical experiment, root-extraction implementation, Lean
 change or measured improvement. Root alone integrates these limited findings.
+
+After2572024, all three exact T3 handles again confirmed RUNNING. Native Sol
+final synthesis now COMPLETED, adding explicit weighted symmetric variables.
+NEW /root/h007_additive_relations review COMPLETED that extension, including a
+separate finite-t simplex determinant bound and the necessary p,t limit regime.
+Root independently checked both. No numerical test or model substitution.
+All native roles are terminal; three independent original T3 briefs remain live.

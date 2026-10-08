@@ -99,8 +99,70 @@ Other supports, shifts, systems, heuristic short-vector behavior, useful-rank
 analysis or actual cheaper extraction remain distinct possibilities. No general
 infrastructure or numerical run is justified by this negative screen alone.
 
+## Symmetric-variable compression: same finite-t certificate ceiling
+
+Sol's final proposal also replaces x_i by elementary symmetric variables e_i.
+This representation is established prior art, already recorded in H007; the
+new check here concerns this particular padded lattice and weighted norm gate.
+A NEW separate Astra review verified the degree, determinant and a stronger
+finite-t bound; root checked its proof. No source theorem about automatic root
+extraction is being inferred.
+
+A symmetric polynomial with degree at most delta in each x_i is a polynomial
+in e_1,...,e_m of ORDINARY total e-degree at most delta. For clarity, lex-leading
+partition exponents alpha_1>=...>=alpha_m are eliminated by
+e_1^(alpha_1−alpha_2)...e_m^alpha_m. The total number of e factors is alpha_1
+<=delta. Such subtraction preserves the individual x-degree bound, and repeating
+this leading-term elimination proves the statement without division. It is not
+the assertion that every e_i has the same root bound: in fact
+
+    |e_i| <= binomial(m,i)*B^i.
+
+Pad the e-support by the integer simplex A={v>=0:sum(v_i)<=delta}, normalize
+the actual scalar leading coefficient, and use the same deepest-level rows.
+Then, writing C=product_(i=1)^m binomial(m,i),
+
+    D=binomial(delta*t+m,m),
+    S=sum_(s=0)^(t−1) binomial(delta*s+m,m),
+    det(L)=p^(tD−S) * B^(m*delta*t*D/2) * C^(delta*t*D/(m+1)).
+
+Each coordinate sum over the simplex equals delta*t*D/(m+1); weighting the
+i-th coordinate by i gives the displayed B exponent. The constants C and
+the finite LLL factor make the sufficient norm criterion stricter. Dimension
+is lower than the cube's, but setting all e bounds to B would be incorrect.
+
+The reviewer's separate finite-t proof is exact:
+
+    S/(tD)=(1/t)*sum_(s=0)^(t−1)
+                  product_(j=1)^m (delta*s+j)/(delta*t+j).
+
+For s<t each factor strictly decreases with delta, since its derivative is
+j*(s−t)/(delta*t+j)^2. At delta=1 the hockey-stick binomial identity gives
+S=binomial(t+m,m+1), hence S/(tD)=1/(m+1). Thus for delta>1 the ratio is
+STRICTLY smaller than1/(m+1), at every finite t. Even discarding C and LLL
+losses, det(L)<p^(tD) requires b<2/[m*delta*(m+1)], just as above. This is a
+simplex-specific proof, not an unsupported transfer of the cube midpoint bound.
+
+So this representation change does not repair the certified collector exponent.
+It may reduce matrix size; that is a potential implementation saving only if
+there is already a successful complete extraction method. Sol additionally
+requires checking integer-zero norm certificates, zero-dimensional output,
+finite extraction and reconstruction of the integer polynomial with roots x_i,
+box filtering, rational subgroup lifting, signs and final group equations.
+Duplicate permutations do not supply useful relation rank. None of these paid
+steps is supplied for the favorable box by the determinant analysis alone.
+
+Asymptotic limits also retain their order: with m,delta fixed, choose a large
+fixed t and then grow p, or grow t slowly with t^(m−1)=o(log p), to suppress the
+LLL penalty in an exponent comparison. Taking t to infinity at fixed p does
+not do so. Distinct shifts of individual x coordinates can destroy the
+symmetry and require a new argument; the present construction uses the stated
+symmetric specialization.
+
 Validation: proposer, root and separate reviewer checked the displayed
 finite-t inequalities on paper. `./scripts/check.sh >
 /tmp/ecdlp-h017-operator-check.log 2>&1` exited0 from dlp-research, all363 existing
 dependency audits passing. No new theorem was added to Lean/Audit.lean; the
 paper derivation remains distinct from those compiled checks.
+After the symmetric extension, the same check redirected to
+`/tmp/ecdlp-h017-symmetric-check.log` also exited0 with363 existing audits passing.

@@ -33,7 +33,9 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    partial selection is NOT covered. A valid padded small-root lattice has
    a reviewed finite-t determinant ceiling: m4 gives b<1/80, incompatible with
    b>1/6 needed by the conditional collector. This rejects only its sufficient
-   certificate, not actual short vectors or other lattices. Native information
+   certificate, not actual short vectors or other lattices. Symmetric-variable
+   compression lowers dimension but retains that finite-t certified ceiling
+   after weighted bounds; separately reviewed. Native information
    role rediscovered H013's averaging screen; no new signal or card accepted.
    H014 remains the latest numerical run:738704 events, no gross feature signal.
 5. Next conclusion-changing step: independently review concrete H017 operations,
@@ -48,8 +50,10 @@ proposer's final turn FAILED with provider cybersecurity-risk flag after partial
 mathematical deliveries; no retry or completed report claimed. Separate native
 Astra anchor review COMPLETED, corrected signs, exceptions and adaptive subset
 scope. Native Sol small-root proposer supplied a valid module and confirmed
-root's finite-t bound; final synthesis still pending. Separate native Astra
-small-root math/cost review COMPLETED. Native information role COMPLETED with
+root's finite-t bound; final synthesis COMPLETED. Separate native Astra
+small-root math/cost review COMPLETED; NEW symmetric-simplex review confirmed
+weighted determinant and supplied its own exact finite-t bound, checked by root.
+Native information role COMPLETED with
 no positive signal; averaging screen deduplicated against H013. NEW Claude
 Opus coordinate bridges, Grok computational
 hybrids and Factory Opus information mechanisms revalidated RUNNING. Exact retained
