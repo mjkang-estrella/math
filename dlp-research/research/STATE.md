@@ -18,65 +18,57 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H034 fresh mechanisms and fixed published-algorithm audit
+## H034 finite sparse-pair contract and remaining cost gate
 
-LATEST after357623a: previous turn PROGRESS. Native Sol supplied a concrete
-paired-sum construction. Astra independent math review COMPLETED: literal dense
-all-pairs prefix has duplicated equations and loses its key-count rationale;
-C4-free sparse graph variant has a supported dependency-graph Poisson premise.
-Root checked event counts and read AGG Theorem1. Accepted mathematical scope in
-H034-paired-sum-mathematical-screen.md; no full-cost improvement or novelty claim.
+LATEST after1359e16: current turn PROGRESS. Native Sol finite contract and
+Astra independent cap/hash/graph review COMPLETED. H034-finite-contract.md fixes
+C4-free affine-plane graph, IID labels, exact-x archive, paid hash/seed/dispatch,
+3sqrt(q) cap and fresh-blinded H019 fallback. Accepted bounded first/second
+moments and hash-conditioning argument are paper deductions, not Lean claims.
+The hash-chain traffic remains a LEADING O(sqrt(q)) term, not free overhead.
 
-Proposer Sol RUNNING to freeze graph/seed/lookup/batch/recovery/fallback contract.
-Root highlighted fixed3sqrt(q) cap versus uncapped mean, fresh fallback blinding,
-lazy edge enumeration and paid small-field indexing. Numerical diagnostic not
-yet admitted. Full-work margin versus grumpy as well as H019 must survive.
-NEW Factory Opus5.5 independent sparse-pair cost/prior-art review RUNNING:
+Factory Opus5.5 sparse-pair cost/prior-art review COMPLETED and acknowledged:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-sparse-pair-priorart-factory-opus-20261008-r1`.
-Hypothesis and objections retained in H034-sparse-paired-sum-hypothesis.md.
+Raw in H034-sparse-pair-cost-priorart-raw.md. Root retained small-margin and
+seed-cost concerns, but did NOT accept rough crossover sizes, query-only
+continuation, C4-light optimization, free lookup parity or universal novelty/
+impossibility statements. H034-review-qualifications.md records objections.
 
-Original Opus published-windowed-source review COMPLETED, acknowledged with no
-pending children. Raw retained in H034-windowed-source-opus-raw.md; root has NOT
-accepted its broad finite/peak-memory dominance, rho-chain exclusion, parallel
-stopping assertion or proposed regrouped-batch sharpening without review.
-Original Grok live-coverage ideation remains on its original RUNNING handle.
-No writers, no numerical run, no Lean change. Verified improvement NONE.
+Grok independent live-coverage proposals COMPLETED and acknowledged:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-live-coverage-compositions-grok-20261008-r1`.
+Raw in H034-live-coverage-grok-raw.md. Root found an omitted NEGATIVE equality
+in serial doubling: its signed collision image is not shown O(1). Correction
+retained; no improvement follows. All T3 H034 children now terminal/collected.
+Original Opus windowed-source raw review remains qualified, not broadly accepted.
 
-Validation: `./scripts/check.sh > /tmp/ecdlp-h034-pair-screen-check.log 2>&1`
-exit0;366 existing audits passed. New mathematics is a reviewed paper argument,
-not a new Lean declaration; Audit unchanged. Candidate-specific contract and
-cost/prior-art gates remain open before implementation or a synthetic run.
+LIVE native Sol `/root/h010_early_dependencies`: independent matched-peak
+leading cost comparison. Root's question: candidate and H019 may have similar
+second moments for false hash probes, while the baseline's smaller worst-case
+archive frees space for more heads. Derive a conditional complete vector and
+crossover before any diagnostic. Preliminary result: baseline can afford four
+times the hash heads, but paid head clearing can outweigh saved false probes;
+spare memory is not automatic dominance.
 
-Previous goal turn PROGRESS: H033 committed as0a4d112 with independent
-corrections and passing checks. Working project clean at launch. All previous
-children terminal/collected; no duplicate coordinator or hypotheses. Refreshed
-live catalogue accepted exact Opus5.5 and Grok4.7 models. Native root+two fits4;
-two T3 tasks fit the separately confirmed capacity. No safety-failed role retry.
+NEW native Astra `/root/h007_additive_relations` RUNNING a distinct paper review
+of Factory's C4-light variant: fewer seeds may reduce finite setup, but duplicate
+forms and random-graph generation/storage must be paid. Root's proposed density
+correction is 1-rho²+rho^4/3 in four-support relation count, still unverified.
+This does NOT replace the frozen C4-free contract or admit a run. Its previous
+finite-contract result was collected. No writers, implementation or numerical run.
+Root alone integrates; no safety-failed role retried, no duplicate coordinator.
 
-H034 RUNNING, independent initial proposals withheld from each other:
+Mandatory wave outcome: ordinary classical reference remains square-root work;
+verified complete-work improvement NONE. Candidate predicts a conditional mean
+near0.886sqrt(q) keys, compared with proved H0190.943 and empirical grumpy near
+0.90, with different proof status. Evidence supports sparse collision law and
+finite moments; setup, leading lookup traffic, peak tuning and small margin
+oppose a premature gain claim. Next decisive analysis is matched-memory cost,
+not another generic proof or benchmark. No H034 numerical experiment admitted.
 
-- Native Astra `/root/h007_additive_relations` COMPLETED: no new nonuniform
-  transition with supported gain. H034-nonuniform-sampling-screen.md records
-  paid rejection's conditional second-moment cancellation, exact collision-set
-  containment with memory caveat, and literal anchor reset's null labels.
-  Root checked algebra; no general walk law or experiment follows.
-- Native Sol `/root/h010_early_dependencies`: higher-level solver compositions
-  sharing paid work across useful equations; no new coordinate/arithmetic
-  primitive role, no self-reduction/portfolio or static-stream retuning.
-- Grok4.7 live search-frontier coverage compositions:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-live-coverage-compositions-grok-20261008-r1`.
-
-Distinct Claude Opus5.5 fixed-source full-cost review of published2026/2102,
-including its appendices, RUNNING:
-`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-windowed-source-cost-opus-20261008-r1`.
-Require full outputs, setup, stopping and memory; do not dismiss a transferable
-technique solely because its reported benchmark used bounded plaintexts.
-
-All roles read-only/no edits, experiments/imports, children or commits. Root
-alone integrates. Next decision: rank concrete complete-work gain premises,
-independently review strongest, then admit only bounded synthetic tests that
-can change the conclusion. Generic exponent1/2 reference unchanged; verified
-improvement NONE. No experiment currently admitted; full research goal active.
+Validation: `./scripts/check.sh > /tmp/ecdlp-h034-finite-contract-check.log 2>&1`
+exit0;366 existing audits. The first STATE-edit command used an incorrect
+project-relative path and failed before writing; corrected here. Research
+records only, no Lean/Audit changes. Existing unbounded goal remains active.
 
 ## H033 independent proposals and remaining lookup hypothesis
 

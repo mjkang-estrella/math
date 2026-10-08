@@ -1,9 +1,12 @@
 # H034 sparse paired sums: unverified constant-factor hypothesis
 
-Status: UNVERIFIED. Native Sol proposed a C4-free variant after its literal
-all-pairs construction failed. Independent Astra mathematics and Factory Opus5.5
-cost/prior-art review RUNNING. No claimed new algorithm, verified gain, benchmark,
-Poisson theorem or experimental admission. Exponent remains1/2 even if the
+Status: UNVERIFIED full-work hypothesis. Native Sol proposed a C4-free variant
+after its literal all-pairs construction failed. Independent Astra mathematics
+and finite-contract reviews COMPLETED; Factory Opus5.5 cost/prior-art review
+COMPLETED with qualifications. See H034-paired-sum-mathematical-screen.md,
+H034-finite-contract.md and H034-review-qualifications.md for superseding scope.
+The initial conjectural text below is retained as proposal history. No claimed
+novelty, verified gain, benchmark or experimental admission. Exponent remains1/2 even if the
 suggested constant survives. Root alone integrates.
 
 ## Mechanism to freeze
