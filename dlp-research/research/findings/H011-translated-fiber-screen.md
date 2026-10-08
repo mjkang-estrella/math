@@ -91,8 +91,9 @@ provide an operation extracting useful known-anchor dependencies from those
 partitions, charge point generation, equality lookup, preprocessing, failed
 paths and extraction, and explain why its complete work beats the baseline.
 A broad lower bound for coordinate-conditioned graph traversal is NOT proved.
-The proposer is separately screening the literal predeclared affine-word
-operation; its final scoped cost report is pending at this checkpoint.
+The proposer completed the literal predeclared affine-word and two other
+operations; independent cost review confirmed their scoped failures in
+H011-fiber-operation-costs.md.
 
 General higher-degree functions, nonreflection quotients, rational centers not
 in the full prime-order setting, and other divisor arrangements remain outside

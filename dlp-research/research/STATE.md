@@ -24,19 +24,18 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: H011 known-point columns in shared fibers, following the
-   real limitation of the earlier degree-cancellation argument. Translated-x
-   common-value selectors have now failed; paid partition queries remain under
-   review. Adaptive-target/base and hybrid proposals continue independently.
-4. Evidence: independent mathematics confirms all common composites of two
-   distinct rational translated-x maps are constant on E(F_p). Compact degree2q
-   composites do exist, so degree is NOT a runtime bound. This rejects their
-   value-only selector without rejecting additional coordinate operations. H010
-   explicit-layer Graeffe rejection remains in its separately scoped findings.
-5. Next conclusion-changing step: finish the proposed fiber-partition operation
-   and whole-cost screen, then integrate independent Fable/Grok ideas. Known-log
-   columns genuinely invalidate blanket degree cancellation; no universal
-   function-field or coordinate-method exclusion is asserted. No engine funded.
+3. Current hypothesis: H011 known-point fiber loophole was explored with three
+   concrete generators. None survives its scoped full-cost screen. Independent
+   adaptive-target/base and hybrid proposals are still live; no faster algorithm.
+4. Evidence: known-point degree cancellation is genuinely different, but the
+   supplied operations reduce to pair dictionaries, predeclared reflection-word
+   collisions or uniform residual membership. Their optimistic necessary work
+   remains square-root or worse. Common translated-x values are constant across
+   rational inputs; compact degree2q examples prevent degree-as-cost claims.
+5. Next conclusion-changing step: integrate the live independent Fable/Grok
+   proposals, requiring an explicit changed selection/generation operation.
+   Higher-degree anchored intersections and coordinate-conditioned methods are
+   not ruled out by the completed H011 screens. No new engine funded.
 
 ## Live work and actual failures
 
@@ -283,3 +282,27 @@ fiber partitions; no need to rerun the completed mathematics. All hypotheses
 and limitations retained. `./scripts/check.sh > /tmp/ecdlp-h011-fiber-check.log 2>&1` passed exit0 (363 existing audits). No formal code changed; these are
 paper results. Explicit staging only task-owned Markdown, unrelated directories
 untouched. Current work is progress, not a blocker; objective remains active.
+
+Native Astra H011 operation report now COMPLETED, retained as three scoped
+operations in findings/H011-fiber-operation-costs.md. Root corrected optimistic
+envelopes versus runtime upper bounds, froze ALL coefficient/word choices for
+the collision count, and requires paid compatible divisors for uniform shifts.
+Native Sol /root/h010_early_dependencies RUNNING a new independent COST round
+on these operations; its previous mathematical round remains completed. This
+is distinct review, no numerical trial/engine/child. Existing Fable/Grok tasks
+remain live. The next decision is the cost review, not more generic theory.
+
+H011 operational cost milestone: native Sol independently CONFIRMED three scoped
+calculations. Root integrated its qualifications: L includes distinct numerical
+anchors including O; full-miss scans and secret-independent entire word families
+are required; Miller certificates use explicit rational support and need not be
+built before failed membership checks. No stronger universal lower bound claimed.
+Proposer and mathematics completed; final cost-review qualifications received.
+Existing Fable r2 and Grok hybrid r1 are the remaining independent live roles.
+Current authoritative files include both H011 findings and original draft card.
+No formal code changed; project checks remain passed. Await completion messages.
+
+Cost-review refinement before commit: distinct pair-sum keys may be generated
+without enumerating every pair. Root uses M+q/M for an explicit M-key table;
+L²+q/L² applies only to the literal all-pairs loop. No universal L² setup or
+storage claim. Both supplied explicit-table screens remain square-root at best.

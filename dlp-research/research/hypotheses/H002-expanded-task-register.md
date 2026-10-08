@@ -491,3 +491,16 @@ Root integrated source-backed standard facts and scoped derivations in
 findings/H011-translated-fiber-screen.md. Native Astra operation/cost followup
 remains RUNNING, as do the two existing T3 ideation handles. No new task IDs or
 providers silently substituted. No experiment/engine was run.
+
+H011 proposer COMPLETED three concrete operations. Native Sol
+/root/h010_early_dependencies RUNNING distinct cost round with original mechanisms
+and root objections: coverage only gives optimistic bounds, affine coefficients
+must be fixed independently of secret, and shifted pole divisors are paid.
+No experiments/edits/children. Raw operational content retained in
+findings/H011-fiber-operation-costs.md with exact restrictions.
+
+H011 native Sol cost round CONFIRMED all three scoped screens, with distinct/O
+anchor count, full-miss scans, entire independent coefficient family, and optional
+certificate-after-lookup qualifications integrated by root. No runtime upper bound
+inferred from coverage, and no degree-based evaluation lower bound. All H011
+concrete operations currently lose; higher-degree/adaptive openings remain.

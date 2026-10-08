@@ -66,5 +66,6 @@ classification: k(f1) intersection k(f2)=k(x composed with (pi-[1])). Every
 common composite is constant on the rational group, so its level set is not a
 useful selector. This does not discard the known-column loophole or all ways of
 using different fiber partitions. See ../findings/H011-translated-fiber-screen.md.
-Native Sol mathematics COMPLETED; native Astra operation/cost report still live.
+Native Sol mathematics COMPLETED; native Astra operations and independent
+Sol cost review now completed, scoped in H011-fiber-operation-costs.md.
 No code or numerical experiment warranted by this selector.
