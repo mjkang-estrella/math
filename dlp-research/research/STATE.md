@@ -18,7 +18,30 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H025 reviews complete / finite enumerator next (authoritative)
+## H025 finite layout result / scaling review (authoritative)
+
+One frozen six-case run COMPLETED, independently audited: layout B saves11.06%
+and8.36% of exact mean generated keys at509/1009 against the declared GWZ-style
+control; A fails the joint5% gate. findings/H025-finite-layout-result.md records
+all commands, ratios, limitations, hashes and review roles.426964 diagnostic
+instrumented events, no cap/error. All cases cover every scalar in main; fallback
+was NOT numerically exercised. Initial input/same-family effects and EC setup
+remain material. Verified complete-work improvement NONE; square-root reference
+unchanged. No full-size or asymptotic claim; no dashboard/hardware-rate change.
+
+Native Astra NEW artifact audit COMPLETED, GO; independent root hash/sum checks
+pass. Native Sol /root/h010_early_dependencies RUNNING a NEW next-test and full-
+work break-even design role, read-only/no experiments. T3 Claude Opus5.5 RUNNING
+a distinct scaling-geometry/prior-art review; full handle in H025 review register.
+No duplicate live hypothesis, no numerical rerun or retuning. Root sole integration.
+
+Next: checkpoint this limited finite result; assess unchanged B under increasing
+sizes and matched setup/support-memory/cost before admitting further experiments.
+All other failed literal schedules stay parked. Goal active; no broad Lean work.
+Validation: ./scripts/check.sh passed exit0,366 audits; log
+/tmp/ecdlp-h025-finite-result-check.log. No Lean/Audit changes.
+
+## H025 reviews complete / finite enumerator next (historical)
 
 Native and T3 H025 proposal/review roles are now COMPLETED; terminal results
 read. Mathematical layout review supports exact enumeration after corrections.
