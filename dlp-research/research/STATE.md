@@ -24,10 +24,11 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis set: H017 independent operation design for growing anchor
-   dictionaries, valid small-root extraction and scalar-information mechanisms;
-   three additional cross-provider independent creative lenses. H016 prototypes
-   remain parked; new briefs are in H017-independent-briefs.md.
+3. Current hypothesis set: H017 SP3 cubic-extension tensor encoding, now
+   independently identified with S3 on a cheaply parametrized conic; missing
+   sub-n^(3/2) detector remains the concrete gap. Grok and Factory independent
+   initial briefs remain live. Other H017 native constructions are screened;
+   no engine or numerical experiment accepted.
 4. Evidence: two explicit anchor closures reduce to group/dictionary difference
    search. Fixed precommitted tables have a coverage/setup screen; adaptive
    partial selection is NOT covered. A valid padded small-root lattice has
@@ -37,6 +38,10 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    compression lowers dimension but retains that finite-t certified ceiling
    after weighted bounds; separately reviewed. Native information
    role rediscovered H013's averaging screen; no new signal or card accepted.
+   SP3 exact algebra and iid witness probability hold, but inspected primary
+   incidence literature supplies neither a detector nor a relevant hardness
+   reduction. Raw extension-root runtimes and broad side-table rejections are
+   unaccepted; see H017-SP3-disposition.md.
    H014 remains the latest numerical run:738704 events, no gross feature signal.
 5. Next conclusion-changing step: independently review concrete H017 operations,
    admit a matched cheap falsifier only if useful extraction or information gain
@@ -55,8 +60,12 @@ small-root math/cost review COMPLETED; NEW symmetric-simplex review confirmed
 weighted determinant and supplied its own exact finite-t bound, checked by root.
 Native information role COMPLETED with
 no positive signal; averaging screen deduplicated against H013. NEW Claude
-Opus coordinate bridges, Grok computational
-hybrids and Factory Opus information mechanisms revalidated RUNNING. Exact retained
+Opus coordinate bridges COMPLETED after two verified waits, task_status read,
+no pending child runs. Raw retained; NEW native Astra SP3 math and native Sol
+probability/cost/literature reviews COMPLETED. Root supplied explicit halving
+parametrization and checked reviewed expansion/probability arguments. Grok
+computational hybrids and Factory Opus information briefs last confirmed RUNNING.
+Exact retained
 taskIds/clientRequestIds and independent briefs: H017-independent-briefs.md.
 Live capability discovery confirms all three requested models, no substitution.
 Read-only delegates; root owns integration. H015 replacement completion was

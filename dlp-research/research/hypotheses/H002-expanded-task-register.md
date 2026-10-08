@@ -829,3 +829,14 @@ NEW /root/h007_additive_relations review COMPLETED that extension, including a
 separate finite-t simplex determinant bound and the necessary p,t limit regime.
 Root independently checked both. No numerical test or model substitution.
 All native roles are terminal; three independent original T3 briefs remain live.
+
+Next authoritative H017 delivery: Claude coordinate bridge handle
+ecdloop-h017-coordinate-bridges-opus-20261008-r1 COMPLETED, summary read and
+saved verbatim, hasPendingChildRuns=false. NEW native /root/h007_additive_relations
+SP3 mathematics review and /root/h010_early_dependencies prior-art/full-cost
+review COMPLETED. Both independently confirmed root's explicit parametrization;
+Sol supplied an iid second-moment success bound, root checked it. Inspected
+literature supports neither the missing detector nor a rejection by3SUM
+analogy. Exact taskId remains the retained prefix plus clientRequestId, no
+backing-thread review continuation. Grok/Factory initial tasks last confirmed
+RUNNING; no duplicates or silent substitutions. No numerical runs.

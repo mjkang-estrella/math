@@ -75,3 +75,17 @@ certificate ceiling. Reviewer supplied a separate exact finite-t proof via
 monotonicity and the hockey-stick identity; root checked it. This is a scoped
 cost screen of the explicit representation, not a new mechanism or discovery.
 T3 original proposals remain independent and live.
+
+## Claude coordinate proposal delivered and reviewed
+
+`ecdloop-h017-coordinate-bridges-opus-20261008-r1` COMPLETED; task_status read,
+no pending children. Full raw output: H017-coordinate-opus-raw.md. SP3 is a
+concrete cubic-extension trilinear relation encoding, not an established faster
+algorithm. NEW native Astra mathematical and native Sol probability/cost/primary-
+literature reviews COMPLETED. Root's halving parametrization, independently
+checked by both, makes the tensor exactly−2*S3 in quadratic coordinate features;
+own-list generation needs no extension square roots. Iid witness success is
+provable, but fast detection remains missing. No applicable3SUM reduction found.
+Unmeasured operation estimates and broad side-table dismissals are not accepted.
+See H017-SP3-disposition.md. Grok and Factory initial proposals remain live;
+their initial answers have not been anchored on SP3 or the native results.
