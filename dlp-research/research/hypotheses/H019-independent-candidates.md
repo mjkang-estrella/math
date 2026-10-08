@@ -76,3 +76,32 @@ threshold inverted; finite fallback does not preserve subset exactly; correlated
 bonus channels not automatically redundant; high isogeny degree not a runtime
 exclusion. No raw negative accepted pending scoped corrections. Factory Fable
 initial role remains RUNNING as last revalidated; no duplicate or restart.
+
+## Final initial-role deliveries and independent reviews
+
+All three initial T3 roles COMPLETED; terminal results read, no pending children.
+Factory Fable raw retained in H019-information-fable-raw.md. A NEW Claude Opus
+probability/Fourier review completed; exact brief/taskId and raw-review link in
+H019-information-review-task.md. Root integrated H019-information-disposition.md,
+including further qualifications of the reviewer's own claims. No information
+floor, universal spectral/learning exclusion or new experiment accepted.
+
+Native Astra card1 and Sol cards2–4 reviews COMPLETED. Corrections and scoped
+survivors in H019-fullwork-disposition.md. NEW native Astra matched high-memory
+prior-art review COMPLETED after reading Galbraith–Wang–Zhang primary fulltext.
+Root independently checked its x-only block specialization; native Sol now
+checks exact per-key arithmetic, contiguous-prefix coverage, exception costs,
+recovery and finite overhead. Read-only/no experiments/edits/children. Specific
+brief: verify Cx=S+5(ell+1)/(2ell+1)M+(ell+1)/(k(2ell+1))(I-3M), tending2.5M+S;
+compare interleaved negationBSGS to conditional chord F3; do not quote derived
+constant as paper constant or claim a measured runtime. Root supplies prefix
+repair centers ell+j(2ell+1), advance k(2ell+1)T; count exceptional formulas.
+Current draft H019-xonly-baseline-screen.md. This is an admission screen, not
+an improved algorithm. No numerical work authorized.
+
+Sol completed algebra, prefix repair, O(ell) exception count, finite full-range
+coverage, memory and two-sign verification checks; root accepted the scoped
+arithmetic comparison and updated the document. No empirical solver claim.
+
+H020 independent new proposals launched with three distinct lenses; exact live
+handles/briefs in H020-independent-candidates.md. No new coordinator or scheduler.

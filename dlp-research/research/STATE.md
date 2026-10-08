@@ -52,12 +52,24 @@ H019-detector-disposition.md: signed-slice rank exactly(q-1)/2 over everyfield;
 Fourier normalization repaired; potential-pole exceptions required; reusable
 pair table matched by fixed-baseBSGS. Only specified implementations rejected,
 no coordinate-aware impossibility. No numerical test admitted. Factory
-Fable learned/information operators remains RUNNING as last revalidated.
-Grok full-work walks is now COMPLETED, terminal result read/no pending children;
-raw saved in H019-fullwork-grok-raw.md. Native Astra reviews chordbonus card1;
-native Sol reviews cards2–4. Root flagged reversed arithmetic inequalities,
-filter threshold and unsupported bonus-channel closure. Raw exclusions are
-NOT accepted; no numerical experiment admitted.
+Fable information and Grok full-work roles are both COMPLETED, terminal results
+read/no pending children. Raw reports retained. Native Astra chordbonus and
+native Sol cards2–4 reviews COMPLETED; H019-fullwork-disposition.md corrects
+signs, costs, endpoint discovery, filtering and isogeny scope. Correlated bonus
+channels are not automatically useless. A stronger matched high-memory BSGS
+arithmetic comparator weakens the F3 hypothesis; root/Astra derivation is in
+H019-xonly-baseline-screen.md. Native Sol independently checks the x-only
+specialization, prefix-block schedule, exception costs, finite coverage and
+recovery (checks COMPLETED). The accepted result is an arithmetic comparison,
+not an empirical whole-runtime theorem or new attack.
+No raw blanket exclusions or numerical experiment accepted.
+NEW Claude Opus probability/Fourier review COMPLETED; exact taskId/brief in
+hypotheses/H019-information-review-task.md, raw retained. Root integrates
+H019-information-disposition.md: false information budget and Fejer band
+rejected; bit-L1 and repaired window lemmas narrowly scoped. Public Q already
+determines k information-theoretically; no decoder-independent computational
+lower bound follows. Reviewer's missing energy lower bound corrected; unread
+literature assertions remain unverified. No positive feature or new test.
 No new numerical experiment proposed by Sol. Root primary-source followup and
 native Astra identity review established a genuine single-query resultant
 bridge from square-root Vélu to arbitrary explicit pair lists. It evaluates
@@ -73,6 +85,18 @@ Native followup attempt /root/h002_arithmetic_ideas failed agent thread limit;
 role did not run; same-provider Sol role explicitly uses T3 fallback. Live
 catalog refreshed; provider failures reported, no silent substitutions. T3
 capacity20/user policy remains; no duplicate coordinator or scheduler.
+H020 broad independent ideation launched after live catalog refresh. Three
+distinct T3 roles accepted RUNNING: Claude Opus structured relation batching,
+Grok memory-constrained complete-work hybrids, Factory Opus constructive public
+signals. Claude Opus structured role now COMPLETED, terminal result read/no
+pending children; raw retained in H020-structured-opus-raw.md. Native Astra
+independent review RUNNING: squared-Cauchy displacement, triple-AP product,
+composition inputs, finite-field precision and multiset-degree claims need
+correction; no proposed negative accepted yet. Other two T3 roles remain live
+as last verified. Exact briefs/provider/model/clientRequestIds/full taskIds in
+hypotheses/H020-independent-candidates.md. No outputs shared before synthesis;
+all read-only, no new experiments/children. These are new distinct mechanisms,
+not continuations through backing child threads or duplicate coordinators.
 Root alone integrates; unbounded goal remains active; verified improvementNONE.
 Older historical live-work descriptions below are superseded by this section.
 
@@ -84,9 +108,10 @@ Older historical live-work descriptions below are superseded by this section.
 2. Verified improvement: **NONE**.
 3. Current hypothesis set: four direct sparse-power feature hypotheses reached
    the exact finite threshold64 on one admitted fixture; independent audit
-   PASSED. H018 implicit bidegree relations completed paper review and have no
-   positive signal rationale yet. H019 independent candidate generation is live.
-   SP3 still lacks its sub-n^(3/2) detector.
+   PASSED. H018 implicit bidegree relations have no positive signal rationale.
+   H019 initial proposals and mathematical reviews completed without a supported
+   gain; a matched high-memory arithmetic baseline screen is now checked. H020 independent
+   constructive ideation is live. SP3 still lacks its sub-n^(3/2) detector.
 4. Evidence: two explicit anchor closures reduce to group/dictionary difference
    search. Fixed precommitted tables have a coverage/setup screen; adaptive
    partial selection is NOT covered. A valid padded small-root lattice has
@@ -114,13 +139,13 @@ Older historical live-work descriptions below are superseded by this section.
    Independent saved-data Hankel audit PASSED; exact t<64 negative only,
    no other-feature/large-curve/asymptotic inference.
 5. Next conclusion-changing step: the audited direct four-feature sparse-power
-   probe is parked. H019 distinct
+   probe is parked. H020 distinct
    independent proposers seek an explicit useful signal/relation detector or
    complete-work improvement. A testable surviving mechanism gets skeptical
    review and a matched frozen experiment; no broad feature sweep or generic
    Lean machinery is justified. Improvement still NONE.
    Latest ./scripts/check.sh exit0,363 existing audits,
-   /tmp/ecdlp-h019-resultant-check.log. No new Lean/Audit claim. Numerical
+   /tmp/ecdlp-h019-fullwork-information-check.log. No new Lean/Audit claim. Numerical
    certificate verification overhead is disclosed separately from candidate
    work and these existing theorem checks.
 
