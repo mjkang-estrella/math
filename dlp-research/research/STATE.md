@@ -18,31 +18,38 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H025 exact extension ready / static review (authoritative)
+## H025 extension rejected / H026 independent ideation (authoritative)
 
-Previous turn made progress:63aceb0 records the conditional initial arithmetic
-screen. Native Sol completed the continuation proposal. Root implemented separate
-extension_probe.py/extension_protocol.md: unchanged B at32771/65537/131071,
-compared with GWZ-style and H019 two-family schedules; all-q exact means and
-complete fallback retained. A verified strict lower-bound gate failure after
-complete blocks stops the entire all-three test; later primes explicitly untested.
-No extension numerical execution/import/self-test yet.
+Previous turn was progress:da874c9 preregistered the exact extension. Final
+Sol provenance review COMPLETED, GO; both independent static reviews cleared.
+Root executed the sole admitted command. At q32771, B's censored mean numerator
+5372448 after240 keys exceeds the5% threshold versus the completed two-family
+mean5651256. Independent Astra artifact audit and root checks pass. A next-block
+lower bound5396742 also rejects5% versus GWZ-style mean5667345. This does NOT
+exclude smaller savings, establish B's completed mean, or prove asymptotics.
+Full finding: H025-extension-finite-negative.md; all hashes/traces retained.
 
-Root justified one50M-event budget including426964 prior debit, work55s and
-outer60s, with no aggregate completion promise and no resets. Initial three
-artifacts remain unchanged and frozen hashes are checked. Deterministic gzip
-retains full first-discovery arrays/traces; truncation/cap/errors inconclusive.
-Native Astra static correctness/fix review COMPLETED, GO. Native Sol static
-budget review GO subject to metadata/provenance fixes, now implemented; final
-fix acknowledgement pending. Both read-only, no numerical execution.
+Exit0, no cap/error,5018187 events including426964 prior debit;4591223 new
+coverage-diagnostic events. All at32771;65537/131071 explicitly untested under
+the registered stop rule. No fallback reached. Park this literal validation
+without retuning or expanding implementation. Verified complete-work gain NONE;
+square-root reference unchanged. No hardware/dashboard or Lean claim changed.
 
-Next: admit the sole run after review conditions are confirmed, independently
-audit its exact evidence, and checkpoint pass/failure/inconclusive honestly.
-This is a scalar diagnostic, not complete EC work; candidate setup, forks,
-support storage and omitted costs remain explicit. Verified full-work improvement
-NONE; square-root reference unchanged. Root sole integration; goal active.
+H026 independent initial roles: native Sol RUNNING on target-dependent
+search/non-AP mechanisms; T3 Claude Opus5.5 coordinate/algebraic bridges; Grok4.7
+representation/computation hybrids. Factory Opus5.5 information role FAILED
+with internal agent error and no findings; disclosed replacement Factory Fable5.1
+accepted RUNNING for that unstarted role. Full task handles and briefs in
+hypotheses/H026-independent-candidates.md. No initial cross-sharing, no numerical
+runs, edits or children. Several different mechanisms per role if useful, not a
+quota. Native capacity and user-confirmed T3 capacity respected; catalog refreshed
+and actual acceptances retained. No blocked-provider retry or duplicate coordinator.
+
+Root alone integrates and commits. Next conclusion-changing action: rank distinct
+credible complete-work hypotheses, independently challenge their premises, then
+admit only a concrete cheap falsifier. Goal active; no generic infrastructure.
 Validation: ./scripts/check.sh passed exit0,366 audits; log
-/tmp/ecdlp-h025-extension-static-check.log. This did not execute the extension.
+/tmp/ecdlp-h025-extension-negative-check.log. No Lean/Audit changes.
 
 ## H025 initial arithmetic screen / extension design (historical)
 

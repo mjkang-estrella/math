@@ -114,3 +114,8 @@ and the stopping prime explicitly. It records and checks frozen hashes of the
 initial source, protocol AND results, binding the426964 debit to the preserved
 artifact. These hashes/metadata are administration; the equality assertion is
 charged after the prior-run debit. A provenance mismatch is inconclusive.
+
+Final pre-run admission: native Astra static correctness/fix review and native
+Sol static budget/provenance fix review both COMPLETED, GO for ONE capped run.
+Neither executed/imported the probe. No remaining review condition is open;
+no promise of completion or full-work gain. Root admits the frozen execution.

@@ -111,3 +111,11 @@ metadata; root implemented both, Astra checked all initial hashes and fix logic.
 Sol final fix acknowledgement pending. One global cap only; partial/errors are
 inconclusive. Early lower-bound rejection uses censored identity at completeblocks
 and stops all later primes, which remain untested. No numerical execution yet.
+
+Final budget/provenance fix review COMPLETED, GO. Root appended admission before
+the sole execution. Exit0, finite gate rejected at32771; later primes untested.
+NEW native Astra artifact-only review COMPLETED, GO, no discrepancies. It also
+derived the valid next-block lower bound rejecting5% against the GWZ-style
+control. Root independently checked the same hashes/identities/inequalities.
+H025-extension-finite-negative.md is authoritative. All H025 roles COMPLETED;
+new independent H026 roles have separate scopes/register. No extension rerun.
