@@ -34,6 +34,13 @@ Independent source reviews (read-only; no executions/edits/children):
   reference work. Charged events remain authoritative.
 - Factory Fable5.1 cost/evidence source audit RUNNING, new T3 round:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-source-cost-fable-20261008-r1`.
+Separate native Astra /root/h007_additive_relations follow-up COMPLETED:
+H034-balanced-graph-barrier.md establishes the restricted seed/duplicate
+surrogate overhead Omega(n+q^(3/2)/n^4), balanced at q^(3/10), with explicit
+prefix degree bound Delta=O(sqrt(q)/n). Review corrected root's finite
+supersaturation condition from S>=K to S>=2K. Uniform error separation and
+same exact blinded-fallback mean justify the stopping bridge in this model.
+No arbitrary-graph/ECDLP lower bound or whole-work win. No source change/run.
 Writer /root/h034_c4_implementation COMPLETED and source frozen during audits.
 Root alone integrates. Previous protocol review terminal/collected, not reused
 as source admission. Protocolv2 hash remains
@@ -73,7 +80,7 @@ verified complete-work improvement NONE. Collision and model premises survived
 qualified reviews, with useful corrections to seed, batching and duplicate-form
 costs. Primary uncertainties remain complete finite costs, backend remainder,
 leading integer/memory traffic and strongest comparator. Next decisive step:
-finish and independently audit source, then one admitted diagnostic if correct.
+resolve the still-live independent cost audit, then one admitted diagnostic if correct.
 No numerical run, Lean/Audit change, generic infrastructure or live target work.
 
 Validation: `./scripts/check.sh > /tmp/ecdlp-h034-source-checkpoint-check.log 2>&1`
