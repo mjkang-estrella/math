@@ -18,7 +18,55 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H028 uniform fibre bound verified; diagnostic frozen (latest checkpoint)
+## H028 diagnostic completed and independently audited (latest checkpoint)
+
+Single frozen run exit0,3,351,990 events, no cap/error. All four synthetic curves
+(q73,103,271,8053), exact fibre/discriminant identities and twelve fixed-seed
+blinded recoveries completed. Independent polynomial Miller checks on first two
+curves passed. Native Sol separately audited saved evidence/hashes/counters,
+including all660 grid records and515 finite descriptors; no rerun/import.
+Source hash a4823976...; result hash ad1be2e8...; full hashes/command/evidence in
+findings/H028-initial-diagnostic.md. Source and raw JSON retained.
+
+Main result remains NO verified complete-work improvement. Literal extra Miller
+setup alone exceeds regular squaring credit in all12 configurations, even for
+S/M<=1 while ignoring its other costs. This is a useful finite negative result,
+not rejection at larger sizes or of the independently proved rho<=3 bound.
+Fixed seeds are not iid performance samples; fullgrid continues after recovery.
+Nonidentity h0 never occurs in these fixtures, so its two-sign path is untested
+numerically despite source review. No hardware/GPU throughput claim or Lean theorem.
+
+Writer ownership returned to root. Final static source review explicitly GO'd
+one run; root used exact frozen10M/55s protocol with60s outer guard. No warmup,
+retuning, cap reset or repeated run. AST syntax parsing was source-only. Existing
+./scripts/check.sh passed366 audits; no Lean/Audit changes. Source unchanged after
+review/run. All H028 code/result reviewers COMPLETED. H027 information replacements
+failed without findings; classifier-interrupted role is not retried or bypassed.
+
+Next meaningful step: a matched full-solver cost study/analysis where startup
+no longer automatically dominates, with competent baseline and actual lookup/
+metadata/peak-memory charges. Main objective, independent breadth policy and
+sole-root integration persist. Goal active; this correctness pass is not success.
+
+## Active H028 complete-cost decision wave
+
+No further numerical run is authorized by the first diagnostic protocol.
+Two NEW native read-only followups are RUNNING: Astra
+/root/h007_additive_relations proposes the smallest matched solver study or
+prior paper gate; Sol /root/h010_early_dependencies independently challenges
+full-cost headroom, baseline fairness, stopping and memory assumptions.
+Neither may rerun/import the frozen probe, add instances, edit or spawn.
+
+Live catalog refreshed; NEW Claude Opus5.5 primary-source audit of the existing
+coefficient-key method and optimized comparators is RUNNING, taskId:
+node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h028-coefficient-keys-priorart-opus-20261008-r1
+Its distinct clientRequestId is the final suffix. This is a scoped prior-art
+review of existing H028 mathematics, not a replacement or retry of the blocked
+H027 constructive-information role. No edits, experiments or children.
+Root alone integrates. Existing breadth remains in retained H001–H028 pools;
+this wave tests the surviving named candidate, not generic infrastructure.
+
+## H028 uniform fibre bound verified; diagnostic frozen (historical checkpoint)
 
 Previous turn progressed via b03e82e. Repository revalidated clean for this task.
 Main objective and broad independent ideation remain primary. Verified COMPLETE
@@ -77,7 +125,7 @@ exited0,366 existing audits; no Lean/Audit changes. An earlier documentation
 edit used a wrong relative path and made no changes; corrected with absolute
 paths. No numerical diagnostic run. Only named research records staged.
 
-## H028 concrete key candidate under review (latest checkpoint)
+## H028 concrete key candidate under review (historical checkpoint)
 
 Previous turn made progress via checkpoint5b5bebd. Current worktree revalidated:
 only this task's new records plus unrelated directories, which remain untouched.

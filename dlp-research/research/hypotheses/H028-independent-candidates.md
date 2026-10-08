@@ -148,7 +148,7 @@ Distinguish model-specific arithmetic gains from physical or complete-work claim
 Read-only/no runs/imports/edits/children. Root alone implements/integrates.
 Original H027 Fable constructive-signal handle remains live, no duplication.
 
-## Diagnostic implementation — RUNNING
+## Diagnostic implementation — COMPLETED
 
 Native Astra /root/h007_additive_relations has exclusive write ownership of
 research/experiments/H028/key_probe.py only. Implement committed protocol a26259d,
@@ -189,3 +189,20 @@ fresh hash and remaining source review. No code run/import/compile performed.
 H027 replacement information role ended without findings due to safety classifier;
 failed role recorded in H027 register. No bypass/retry of that blocked request.
 Separate existing H028 diagnostic implementation continues.
+
+
+## Final review, one execution and independent result audit — COMPLETED
+
+Astra handed sole source ownership back to root. Final sourcea4823976... was
+AST-parsed without module execution, independently fully reviewed by Sol and
+root. Explicit GO for one frozen command under10M/55s guards received before
+execution. Details/provenance in findings/H028-initial-diagnostic.md.
+
+Exactly one command ran, exit0,3,351,990 events, all4fixtures/12seedcases complete.
+NEW Sol saved-result audit COMPLETED: hashes,612 recorded binary steps, both
+polynomial extractions, exact fibres/discriminants,660records,515 finite side
+descriptors, allrawmatchsets and symbolic projections checked without rerun.
+Literal finite setup consumes all potential regular squaring credit; accepted
+negative conclusion is limited to those configurations. Nonidentityzero branch
+not numerically exercised (all c0=0). No full-work/throughput improvement.
+Source unchanged after review/run; root alone stages source/result/findings.
