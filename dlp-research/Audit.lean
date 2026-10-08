@@ -380,3 +380,7 @@ import Research
 #print axioms Research.WordQueryInputFacts.raw_key_value
 #print axioms Research.WordQueryInputFacts.raw_payload_value
 #print axioms Research.WordQueryInputFacts.raw_query_value
+
+#print axioms Research.AndPenaltyAudit.nonnegative
+#print axioms Research.AndPenaltyAudit.not_exact
+#print axioms Research.AndPenaltyAudit.weighted_false_zero

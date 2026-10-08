@@ -104,8 +104,13 @@ not continuations through backing child threads or duplicate coordinators.
 After90b7fdf both remaining exact T3 handles revalidated RUNNING. Root bounded
 recent-primary search deduplicated Mahalanobis v2/H008 and APS/H013. A newly
 found Sept2026 Semaev/Ising annealing paper reports a changed penalty encoding
-on a 16-bit instance in its publisher abstract. Native Sol read-only fulltext
-and classical-bridge review RUNNING; source/brief in H020-independent-candidates.
+on a 16-bit instance in its publisher abstract. Native Sol fulltext/cost review
+COMPLETED; native Astra independent visual/formal-statement reviews COMPLETED.
+Root checked printed Eq22/Table1/Eq24 and proved in Lean that its local AND
+penalty is nonnegative but has invalid zeros unaffected by weighting.
+H020-penalty-source-audit.md records exact scope, fulltext access, proof review
+and the136-pair fixed-base classical comparator. This rejects the literal
+constraint-equivalence claim, not every full instance or experimental output.
 No claimed quantum/classical speedup accepted; no hardware run or purchase.
 Root alone integrates; unbounded goal remains active; verified improvementNONE.
 Older historical live-work descriptions below are superseded by this section.
@@ -156,8 +161,9 @@ Older historical live-work descriptions below are superseded by this section.
    complete-work improvement. A testable surviving mechanism gets skeptical
    review and a matched frozen experiment; no broad feature sweep or generic
    Lean machinery is justified. Improvement still NONE.
-   Latest ./scripts/check.sh exit0,363 existing audits,
-   /tmp/ecdlp-h020-structured-check.log. No new Lean/Audit claim. Numerical
+   Latest ./scripts/check.sh exit0,366 dependency audits,
+   /tmp/ecdlp-h020-penalty-check.log. Three focused local-penalty claims added;
+   these refute one proposed encoding, not ECDLP hardness. Numerical
    certificate verification overhead is disclosed separately from candidate
    work and these existing theorem checks.
 

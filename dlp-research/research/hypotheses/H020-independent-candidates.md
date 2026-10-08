@@ -45,6 +45,15 @@ No runs, edits, children, commits, paid services or broad quantum survey.
 Return candidate-specific cheap falsifier only if a real bridge exists.
 Root sole integration. This is distinct from the live Grok/Factory proposals.
 
+Sol source/cost review COMPLETED. Literal Eq22 AND penalty has false zeros;
+fulltext available at the publisher's local/article_pdf endpoint. NEW native
+Astra independent review visually confirmed Eq22/Table1/Eq24 and local scope;
+then a separate source/statement pass confirmed root's focused Lean module
+Research/AndPenaltyAudit.lean, imports and Audit entries. Both read-only;
+no claim full experiments invalid. Root full check passed, evidence in
+H020-penalty-source-audit.md. Candidate-specific exact equivalence is the cheap
+falsifier; no further numerical or hardware test admitted.
+
 ## ecdloop-h020-structured-batching-opus-20261008-r1
 
 Provider/model: claudeAgent / claude-opus-5-5.

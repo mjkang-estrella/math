@@ -25,3 +25,4 @@ import Research.WordQueryData
 import Research.WordPacking
 import Research.WordQueryCode
 import Research.WordQueryInputFacts
+import Research.AndPenaltyAudit
