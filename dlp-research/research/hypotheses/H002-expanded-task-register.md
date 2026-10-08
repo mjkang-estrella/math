@@ -504,3 +504,21 @@ anchor count, full-miss scans, entire independent coefficient family, and option
 certificate-after-lookup qualifications integrated by root. No runtime upper bound
 inferred from coverage, and no degree-based evaluation lower bound. All H011
 concrete operations currently lose; higher-degree/adaptive openings remain.
+
+## H010 Factory r2 missing output and explicit native replacement
+
+Task ecdloop-h010-adaptive-sampling-fable-20261008-r2 reached COMPLETED with only
+"I'll read the loop boundaries and current state first, then deliver the analysis
+cards." No pending child runs; full stable task ID remains above. This is a
+failed deliverable despite terminal label, not an accepted report. No third
+Factory retry. Native Sol /root/h010_early_dependencies actually started the
+replacement original adaptive-target/base brief after closing its H011 review.
+Provider substitution explicit, no claimed Factory analysis. Read-only/no trials.
+
+## H012 compressed relation witnesses
+
+Native Astra /root/h006_structured_relation_ideas RUNNING distinct fresh operation
+exploration. Full witness extraction required; bounded-degree one-slice norm is
+a known reference, not improvement. Root owns H012-compressed-witness-gate.md.
+No edits/experiments/children in native roles; existing Grok hybrid r1 remains
+authoritatively RUNNING. Native root+two roles fits4 slots.

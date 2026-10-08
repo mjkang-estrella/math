@@ -24,18 +24,17 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: H011 known-point fiber loophole was explored with three
-   concrete generators. None survives its scoped full-cost screen. Independent
-   adaptive-target/base and hybrid proposals are still live; no faster algorithm.
-4. Evidence: known-point degree cancellation is genuinely different, but the
-   supplied operations reduce to pair dictionaries, predeclared reflection-word
-   collisions or uniform residual membership. Their optimistic necessary work
-   remains square-root or worse. Common translated-x values are constant across
-   rational inputs; compact degree2q examples prevent degree-as-cost claims.
-5. Next conclusion-changing step: integrate the live independent Fable/Grok
-   proposals, requiring an explicit changed selection/generation operation.
-   Higher-degree anchored intersections and coordinate-conditioned methods are
-   not ruled out by the completed H011 screens. No new engine funded.
+3. Current hypothesis: H012 compressed relation-witness mechanisms, alongside
+   native Sol adaptive-target/base ideation and the existing Grok hybrid role.
+   No accepted faster operation. Both Factory Fable rounds returned only
+   acknowledgments; replacement is explicit, not claimed as Factory research.
+4. Evidence: H010 rejects explicit intermediate layers, not all compressed
+   circuits. A cheap bounded-degree ONE-slice norm is known but leaves a B^4
+   outer scan; no whole-grid speedup follows. H011's three supplied operations
+   remain scoped square-root screens. No new numerical result or theorem claim.
+5. Next conclusion-changing step: obtain a concrete paid whole-witness operation
+   or nonuniform sampler, then independently review its cost/yield and recovery.
+   Keep the live roles distinct; no repeated failed engine or formal machinery.
 
 ## Live work and actual failures
 
@@ -311,3 +310,34 @@ Residual sampler clarification: fresh a is uniform conditional on dictionary,
 anchors AND b chosen first; b!=0 is required for recovery. Marginal uniformity
 alone is insufficient. This per-target statement is separate from the fixed-word
 average-over-secret collision count. Cost review qualifications remain explicit.
+
+## H012 and actual provider delivery checkpoint
+
+The two preceding goal turns were verified waits, not genuine blockers: specific
+Fable r2 and Grok r1 handles revalidated RUNNING, and no old task was restarted
+merely because a wait timed out. Worktree rechecked at92e3d71 with no task edits.
+Native H011 cost reviewer now delivered its final confirmation; all substantive
+qualifications were already committed. No remaining mathematical correction.
+
+Factory Fable r2 has since become terminal COMPLETED with only:
+"I'll read the loop boundaries and current state first, then deliver the analysis
+cards." latestTerminalSummary is identical and hasPendingChildRuns=false. This
+is the SECOND missing-output delivery, not completed research. No third Factory
+retry. The unfinished adaptive-target/base brief is explicitly reassigned to
+native Sol /root/h010_early_dependencies, RUNNING with original mechanism lens
+and no attribution of Sol output to Factory. Exact r2 handle remains retained
+in the task register. No pending Factory execution is duplicated.
+
+Native Astra /root/h006_structured_relation_ideas RUNNING a distinct H012
+compressed-witness mechanism brief; see hypotheses/H012-compressed-witness-gate.md.
+It must avoid H010 explicit layers AND provide a paid whole-grid witness search,
+not just a cheap single-slice evaluation. T3 Grok hybrid r1 still confirmed live.
+Both native briefs read-only, no experiments/children/edits; root alone integrates.
+No improvement or new numerical result. These next roles keep useful ideation
+parallel without reopening completed literal algorithms or building infrastructure.
+
+Validation for this hypothesis/process checkpoint:
+`./scripts/check.sh > /tmp/ecdlp-h012-gate-check.log 2>&1` passed exit0,363 existing
+audits. No new Lean code/Audit entry. Explicit staging only STATE, task register
+and H012 gate card; unrelated directories/build products excluded. Objective
+active; no validated improvement, and no genuine blocker audit has begun.
