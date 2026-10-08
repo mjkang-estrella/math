@@ -24,26 +24,27 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: corrected GRR-v1 quadratic divisor/root-squaring system
-   could offer cheap coordinate decomposition, but solving cost and useful yield
-   remain unknown. Restricted to two-power-friendly primes; no secp256k1 transfer.
-   A random known-log dictionary/divisor system remains conditional on an actual
-   unexpanded solver. CARRY-LP-v1 has now failed a symbolic full-circuit screen.
-4. Evidence: independent reviews corrected GRR root multiplicities, extraction,
-   rationality, prime applicability and cost thresholds. Direct dictionary
-   remainder expansion exceeds its chosen setup budget. For frozen CARRY-LP-v1,
-   fractional witnesses with two unknown bits force Omega(n) expected search
-   nodes, before LP cost. No numerical trial was needed. H006 decoder review's
-   blanket zero-yield claim was refuted by an independently checked counterexample;
-   that example costs linear input and gives no faster DLP.
-5. Next conclusion-changing step: determine whether an existing exact solver
-   supports a small GRR experiment with honest event/cost accounting. Freeze its
-   algorithm, instance family, empty-target handling and extraction before running.
-   No broad F4 sweep, generic algebra package, LP tuning or new Lean stack funded.
+3. Current hypothesis: the 2026 primary paper2607.09814v2 proposes an actual
+   hyperplane-intersection/zero-minor selector. Independent correctness and cost
+   reviews are running; no complexity claim accepted from its abstract. A separate
+   recent-primary-mechanism search preserves independent creative exploration.
+4. Evidence: GRR endpoint recognition is cheap but supplied dense pushforward
+   expansion costs Omega(B^4), literal full evaluation Theta(B^5). Short-circuit
+   average cost remains distribution-dependent. Dictionary pair translation
+   reduces to paid meet-in-the-middle, optimizing to square-root work/storage.
+   No general implicit-solver impossibility follows. Grok's delivered window
+   proposal has incorrect accounting; an independent reviewer confirmed at most
+   four preimages per finite raw fixed-G normalized-row key, with explicit
+   O(w) pole handling. This does not exclude differently compressed keys.
+5. Next conclusion-changing step: recover and review the new paper's precise
+   selector, conditioned useful-relation probability and full cost. Freeze a
+   matched synthetic falsifier only if its actual operations survive. No generic
+   algebra package, F4 sweep, LP tuning or new Lean stack funded.
 
 ## Live work and actual failures
 
-- Grok/grok-4.7 H007 collision geometry remains RUNNING, last confirmed live:
+- Grok/grok-4.7 H007 collision geometry COMPLETED; raw report retained and
+  objections recorded in findings/H008-operation-disposition.md:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-collision-geometry-grok-20261008-r1`.
 - Native Sol /root/h007_fullcost_schedules COMPLETED GRR solver preflight.
   No validated instrumented engine available; SymPy offers Buchberger/F5B, notF4,
@@ -114,31 +115,39 @@ remain scoped in their findings; no toy-to-real extrapolation.
 
 ## Validation and continuation
 
-Latest committed checkpoints:0c77b49 reviewed H006 paper findings;cef10f0 fullcost
-screen;8c047fc H007 role expansion. Current changes are paper records only, no new
-Lean theorem or Audit entry. Final check `./scripts/check.sh > /tmp/ecdlp-h007-paper-check.log 2>&1`
+Latest substantive checkpoints:e11c132 H007 paper findings;3ccb30f H008 operation
+launch. Current changes are paper records only, no new Lean theorem or Audit
+entry. Final check `./scripts/check.sh > /tmp/ecdlp-h008-paper-check.log 2>&1`
 passed exit0 (363 existing audits). No code changed. Staged inspection covers
 only task-owned Markdown and excludes toolchains/build products. Unrelated untracked research-monitor/ remains untouched.
 Recent goal turns made progress or verified live-task waits, not a genuine blocker.
 The overall research objective is neither achieved nor blocked; compilation is not
 completion. Await remaining asynchronous work without a scheduler or busy loop.
 
-## H008 candidate-specific operation development
+## H008 operations completed; next research roles live
 
-Last substantive milestone e11c132 integrated CARRY-LP's paper rejection and
-corrected algebraic candidates. Grok H007 handle revalidated RUNNING this turn.
-No numerical experiment has followed. Two distinct native Astra roles now run:
-- /root/h007_lattice_carries: explicit GRR solving operations. Preliminary
-  reverse-Graeffe/divisor-norm recognition has cheap leaf checks, but naive
-  traversal still has choose(B+4,5) leaves. Early rejection must be supplied.
-- /root/h007_additive_relations: explicit unexpanded dictionary operations.
-  Preliminary signed pair-divisor translation/gcd has a target representation
-  of sizeTheta(B²), exceeding theB^(3/2) gate for that explicit variant.
+Last substantive milestone e11c132; process launch3ccb30f. Both native operation
+roles COMPLETED. H008-operation-disposition.md retains exact operations, paper
+cost failures, collision-multiplicity and average-cost qualifications. No trial
+or engine built. Native Sol protocol followup was REFUSED agent thread limit
+reached; no new run or replacement. Previous completed preflight still available.
 
-Both read-only, no trials, edits or children; distinct initial briefs. An additional
-native Sol protocol followup was refused agent thread limit reached. It did NOT
-run or receive a replacement; its previous completed preflight remains available.
-No silent success claim. Actual active roles fit native constraints; Grok remains
-the sole live T3 research task. Root will integrate concrete final operations,
-not treat an unimplemented fast elimination call as a new algorithm.
+Live read-only roles, no edits/experiments/children:
+- Native Astra /root/h007_lattice_carries COMPLETED independent Grok fixed-window
+  fiber review. Root adopted its O(w) pole qualification and scoped degree-four
+  proof; no native role remains live at this checkpoint.
+- Claude Opus5.5: new primary-paper intersection-poset correctness/probability.
+- Factory Fable5.1: independent same-paper complete-cost/experiment audit.
+- Grok4.7: independent recent-primary-mechanism proposals, excluding that paper.
+
+T3 live task IDs respectively:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h008-poset-math-opus-20261008-r1`
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h008-poset-cost-fable-20261008-r1`
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h008-recent-mechanisms-grok-20261008-r1`.
+
+All three launches returned RUNNING; capabilities refreshed with actual exact
+models available. Separate initial bodies, no duplicate active hypothesis role.
+Grok's old task is terminal, not continued through its backing thread. Native
+and T3 capacities respected. Continue via completion notifications after the
+coherent checkpoint; no busy polling or duplicate coordinator.
 Unrelated untracked factoring-research/ and research-monitor/ remain untouched.

@@ -1,5 +1,28 @@
 # H002 expanded T3 allocation
 
+## H008 current roles (supersedes historical RUNNING labels below)
+
+Native Astra GRR-operation and dictionary-operation roles COMPLETED; disposition
+in findings/H008-operation-disposition.md. Grok H007 collision geometry r1 COMPLETED;
+raw report retained with unaccepted claims and scoped corrections. Native Astra
+/root/h007_lattice_carries COMPLETED the fixed-G normalized-window obstruction
+review, read-only without experiments, edits or children. Degree-four proof
+accepted with O(w) raw pole-location qualification; see H008 disposition.
+
+New independent T3 roles, each accepted RUNNING with stable clientRequestId equal
+to the taskId suffix below. Primary new paper2607.09814v2 has not yet passed review.
+
+- ClaudeAgent/claude-opus-5-5 mathematical selector/probability audit:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h008-poset-math-opus-20261008-r1`.
+- acpRegistry_factory_droid/claude-fable-5.1 complete-cost audit:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h008-poset-cost-fable-20261008-r1`.
+- grok/grok-4.7 independent recent-primary creative mechanisms, excluding paper:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h008-recent-mechanisms-grok-20261008-r1`.
+
+All read-only, no children, trials, edits or commits. No shared initial proposals;
+separate math and cost scopes on the paper. Refreshed live capability catalog,
+no substituted or fabricated provider successes. Root retains sole integration.
+
 ## H008 candidate-specific operations
 
 Native Astra /root/h007_lattice_carries RUNNING new GRR reverse-chain/norm-solving
