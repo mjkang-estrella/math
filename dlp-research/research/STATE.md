@@ -18,46 +18,42 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## Live H017/H018 delivery update (authoritative)
+## Live H018/H019 delivery update (authoritative)
 
-H017 Grok and Factory Opus original tasks are now COMPLETED; terminal summaries
-read and raw outputs retained, no pending child runs. Native Astra Grok cards1/3
-and native Sol doubling review COMPLETED; root integrated their corrected scope
-in H017-hybrid-disposition.md. No universal branch/search lower bound accepted.
-NEW native Astra Factory cards1/2 and native Sol Factory card3/recurrence reviews
-COMPLETED, including a separate Sol check of root's corrected iid second-moment
-bound. H017-information-disposition.md retains valid conditional recovery,
-the repaired progression sampler and all objections. No numerical proposal
-executed. Native Astra one-curve BM protocol/cost preflight COMPLETED:
-hypotheses/H018-bm-probe-v1.md proposes threshold64/128 samples, one p8191
-fixture,945320-event paper reservation. Root authorized implementation FOR
-REVIEW ONLY, solely experiments/H018/bm_probe.py; no numerical execution.
-Independent native Sol protocol/source/cost reviews COMPLETED; root executed
-ONE frozen diagnostic after explicit reservation corrections. ResultINCONCLUSIVE:
-96 order tests exhausted,71755 events, no eligible fixture, controls or features.
-Independent saved-data audit PASSED at its stated scope; no scalar rerun.
-See H018-bm-initial-result.md. A separately reviewed fixture-only extension is
-accepted FOR IMPLEMENTATION REVIEW after124dba5, carrying all71755 events into
-the same cumulative1M cap. Native Astra owns only proposed H018-bm-probe-v2.md
-and bm_probe_extension.py; independent native Sol extension review RUNNING.
-Same features/threshold; public b range1..8 and
-273 order tests; explicit120s total for two60s processes. NO execution yet,
-no further fixture extension if it fails; v1 artifacts remain immutable.
-No hidden fixture search. Attempted new native
-gpt-6.1-sol code-review thread failed with agent-thread limit; model did not run.
-Three NEW T3 H018 independent initial tasks accepted RUNNING. Claude Opus
-algebraic role subsequently TERMINAL with provider safety-classifier block and
-NO deliverable: not a mathematical negative, no retry or substitution. Grok
-complete-solver hybrids now COMPLETED and independently reviewed; raw false
-closures corrected in H018-hybrid-disposition.md, no verified gain. Factory
-Opus original information task TERMINAL with no assistant result, explicitly
-recorded as missing deliverable. ONE NEW same-provider replacement r2 accepted
-RUNNING; exact brief/ID retained, no silent model change or backing-thread use.
-Exact prompts/clientRequestIds/full taskIds retained in
-hypotheses/H018-independent-operators.md. Separate lenses, initial outputs
-withheld, no duplicates or silent substitutions. Root owns integration.
-Older H017 sentences describing Grok/Factory as live are superseded here.
-Verified improvement remains NONE; existing unbounded goal stays active.
+H018 ONE fixture-only extension executed after native Astra implementation,
+independent Sol static review and root approval. Original v1 failure and71755
+cost preserved. Final static repairs: paper-sum error100000 corrected, three
+v1 hashes pinned,127 orbit-loop comparisons included. Cumulative reservation
+868942 under1M; explicit120s total across two guarded60s processes.
+Frozen protocol/source/result hashes in H018-bm-extension-result.md.
+Result completed_finite_diagnostic_only: p8191,b5,q8053,G(0,789),w2;
+all four predefined streams L64 after127 samples. Current508887 plus71755
+prior =580642 events; no cap/phase overrun. Native Sol
+/root/h010_early_dependencies independently auditing SAVED data and Hankel ranks;
+no new candidate samples or rerun. Until audit returns, threshold evidence is
+provisional. No solver or asymptotic improvement. No additional fixture or
+feature sweep; freeze v1/v2 artifacts unchanged.
+
+H018 initial T3 roles are all terminal: Claude algebraic classifier failure
+with no deliverable, no retry/substitution; Grok hybrid cards reviewed and
+corrected; Factory original no-report failure replaced by ONE explicit r2,
+now COMPLETED with no pending children. Raw information report retained.
+Native Astra /root/h007_additive_relations review COMPLETED; root integrated
+H018-information-disposition.md. A-ALG remains conditional without a positive
+signal rationale; N2/N4 false closures rejected, N1/N3 narrowed, N5 repaired.
+No new rank campaign authorized.
+
+H019 THREE distinct independent initial roles accepted RUNNING: Sol relation
+detectors, Factory Fable learned/information operators, Grok full-work walks.
+Exact briefs/clientRequestIds/full taskIds in
+hypotheses/H019-independent-candidates.md. All read-only, no numerical work,
+children or shared-file writes. Initial proposals withheld before synthesis.
+Native followup attempt /root/h002_arithmetic_ideas failed agent thread limit;
+role did not run; same-provider Sol role explicitly uses T3 fallback. Live
+catalog refreshed; provider failures reported, no silent substitutions. T3
+capacity20/user policy remains; no duplicate coordinator or scheduler.
+Root alone integrates; unbounded goal remains active; verified improvementNONE.
+Older historical live-work descriptions below are superseded by this section.
 
 ## Five-item wave report
 
@@ -65,13 +61,11 @@ Verified improvement remains NONE; existing unbounded goal stays active.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis set: H017 sparse scalar-field powers via geometric
-   sampling, reviewed conditional polynomial-shift recovery, and approximate
-   orbit labels. The one-curve BM run stopped during fixture selection with
-   no feature evidence. A charged public-fixture extension is under review.
-   H018 computational proposals reviewed;
-   concrete information operator ideation remains live. SP3 still lacks its
-   sub-n^(3/2) detector.
+3. Current hypothesis set: four direct sparse-power feature hypotheses reached
+   the exact finite threshold64 on one admitted fixture; independent audit is
+   pending. H018 implicit bidegree relations are under paper review and have no
+   positive signal rationale yet. H019 independent candidate generation is live.
+   SP3 still lacks its sub-n^(3/2) detector.
 4. Evidence: two explicit anchor closures reduce to group/dictionary difference
    search. Fixed precommitted tables have a coverage/setup screen; adaptive
    partial selection is NOT covered. A valid padded small-root lattice has
@@ -94,17 +88,19 @@ Verified improvement remains NONE; existing unbounded goal stays active.
    do not automatically reach a distinguished-point endpoint store. Information
    review proves a scoped progression variance formula and iid orbit-label
    collision order, but supplies no useful signal or full-cost saving.
-   H018 initial run used71755 events but yielded no feature observations;
-   H014 remains the latest actual feature measurement, with no gross signal.
-5. Next conclusion-changing step: decide whether ONE fixture-only extension can
-   complete the exact diagnostic while retaining/charging the first failure;
-   a completed negative would exclude
-   only its bounded sparse-feature class on the admitted instance, a positive
-   is only a candidate. Independently review new H018 operations when delivered.
-   No broad feature sweep, backend engine or generic Lean machinery justified.
-   Improvement still NONE. Latest ./scripts/check.sh exit0,363 existing audits,
-   /tmp/ecdlp-h018-preflight-check.log. No new Lean/Audit claim; diagnostic and
-   saved-data verification are separate from those existing theorem checks.
+   H018 initial run used71755 events without a fixture; one charged extension
+   reached L64 for all four fixed features,580642 cumulative events. Independent
+   saved-data Hankel audit pending; no global/large-curve inference.
+5. Next conclusion-changing step: finish independent saved-data certificate
+   audit, then park the direct four-feature sparse-power probe. H019 distinct
+   independent proposers seek an explicit useful signal/relation detector or
+   complete-work improvement. A testable surviving mechanism gets skeptical
+   review and a matched frozen experiment; no broad feature sweep or generic
+   Lean machinery is justified. Improvement still NONE.
+   Latest ./scripts/check.sh exit0,363 existing audits,
+   /tmp/ecdlp-h018-extension-check.log. No new Lean/Audit claim. Numerical
+   certificate verification overhead is disclosed separately from candidate
+   work and these existing theorem checks.
 
 ### Latest authoritative task snapshot (older sections are history)
 
