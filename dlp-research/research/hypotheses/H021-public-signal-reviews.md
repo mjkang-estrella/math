@@ -54,6 +54,12 @@ and security reduction do not construct an efficient arithmetic target from
 an unknown marked-point scalar. See H021-independent-candidates.md for the
 native proposer lead; the Claude round checks exact hypotheses and recovery.
 
+Delivery update: native Astra list review COMPLETED. Root checked and recorded
+H021-list-reduction-screen.md. Signedness admits a constant-loss reduction;
+the DKK primary modular statement was read, but curve setup/uniformity remains
+an explicit condition. Four-list modular success and output caps are justified;
+the EC translation-searchable index is missing. Sol and Claude remain live.
+
 Next decision: preserve only corrected reductions/scoped representation facts;
 request a concrete public primitive before any numerical experiment. Current
 best reference remains square-root work; verified improvement NONE.

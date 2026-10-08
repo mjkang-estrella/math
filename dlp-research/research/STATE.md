@@ -156,7 +156,11 @@ Checkpoint validation: ./scripts/check.sh run in dlp-research passed exit0,
 git parent directory failed exit127 (wrong cwd); rerun used the correct project
 directory. No Lean/Audit change in this checkpoint. Root inspected/staged only
 the named research records; toolchains and unrelated directories excluded.
-The three new review roles remain live; await delivery rather than duplicate.
+Native Astra list review subsequently COMPLETED: H021-list-reduction-screen.md
+records exact supplied-curve signed3SUM conversion, uniformity/advice caveat,
+and a second-moment proof for four-list modular filtering. The EC index is
+still missing. Native Sol and Claude Opus reviews remain live; await delivery
+rather than duplicate. Earlier RUNNING Astra status above is superseded here.
 
 ## Five-item wave report
 
