@@ -48,7 +48,7 @@ The cited Stacks section is relevant, but the exact quotient reference is [Lemma
 
 ## 3. Effectivity, degree and height
 
-Fix the ordinary effective coding of finite lists, including their ambient variable count. Let $L$ be the source list-solvability language, and $D$ the language of such codes for which $Y_q$ has a rational singular point. The proved bijection gives $D=L$. Therefore 
+Fix the ordinary effective coding of finite lists, including their ambient variable count. Let $L$ be the source list-solvability language, and $D$ the language of such codes for which $Y_q$ has a rational singular point. The proved bijection gives $D=L$. Therefore
 
 \[
 \deg_T D=0'.
