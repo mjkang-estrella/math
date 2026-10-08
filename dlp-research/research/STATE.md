@@ -24,20 +24,18 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: H015 component-aware admission remains unverified and
-   its prototype is parked. Uniform unresolved-root admission already has
-   K+O(log K) expected collision cost; reviewed uncapped common-work bound has
-   only O(log K/K) relative overhead. Fixed-table two-root completion law is
-   exactly policy-independent; fixed-table three-root expectations also agree.
-   Caps/growing tables remain outside those claims.
-4. Evidence: residual-quadratic relations are valid but have no cheaper useful
-   dependency selector. Winnowing has no mean-delay gain in two scoped warm
-   independent-rank models. Literal dense integer-tile arithmetic has31.5x padding.
+3. Current hypothesis set: H016 mixed-modulus information feature, labelled seed
+   bursts and anchored translated-fibre components. All delivered concrete
+   operations, none a supported complete-work improvement; prototypes parked.
+4. Evidence: mixed-modulus carry adds no extra information; seed negation hits
+   cluster despite pairwise uniformity; fixed few-anchor fibre components have
+   an exact3^L*N secret-coverage bound. Claude source review preserved local
+   restrictions while removing unsupported universal degree/runtime obstructions.
    H014 remains the latest numerical run:738704 events, no gross feature signal.
-5. Next conclusion-changing step: independent Claude primary-source mechanisms;
-   Grok cards now undergo exact preflight and yield scoped counterexamples. A matched
-   synthetic diagnostic needs a favorable complete-work hypothesis first. No
-   larger feature sweep, backend engine or generic Lean infrastructure justified.
+5. Next conclusion-changing step: an actually cheaper useful-boundary selector,
+   motivated scalar-information mechanism, or fully specified/costed small-root
+   construction. No larger feature sweep, backend engine or generic Lean
+   infrastructure justified. Ranked dispositions in H016-ranked-shortlist.md.
 
 ### Latest authoritative task snapshot (older sections are history)
 
@@ -64,14 +62,36 @@ qualification. Native Sol primary-source admission-rule followup COMPLETED.
 Factory Opus primary-literature task TERMINAL with only "Plan is up-to-date."
 Both final summaries identical, hasPendingChildRuns=false: missing research
 output, not a completed literature analysis. Explicit NEW Claude Opus replacement
-RUNNING, original failure retained; Grok composition task COMPLETED, raw retained.
+COMPLETED with substantive report; original failure retained. Grok composition
+task COMPLETED, raw retained. Root C/D and independent native A/B reviews of
+Claude's report COMPLETED; broad degree/rank/duality impossibility claims not accepted.
 Other initial responses withheld until synthesis; no duplicate coordinator or
 hypothesis. New native uniform-root cost review and independent experiment-value
 review COMPLETED; focused native three-root Bellman check COMPLETED. Separate
 native Sol exact-bit counterexample review COMPLETED; native Astra S3/Miller
-preflight COMPLETED. Native coordinator only active, T3 one live. Full IDs in task register.
-Goal remains active. Previous turn PROGRESS through363df56; current turn adds
-independently checked cost evidence and records a real provider delivery failure.
+preflight COMPLETED. H016 coordinate-information proposer COMPLETED one explicit
+mixed-modulus feature, with no credible positive-correlation/growing-order bridge.
+H016 relation and arithmetic roles COMPLETED. Separate Sol burst-distribution
+followup and Astra fibre/coverage review COMPLETED, all read-only/no runs/edits/
+children. No native or T3 child remains live at this checkpoint. Full IDs in register.
+Goal remains active. Last substantive checkpoint85d50c7 contains reviewed cost
+evidence and Grok counterexamples. Subsequent goal turns were VERIFIED WAITS on
+the same live Claude handle, not genuine blockers. H016 now uses free native
+capacity for distinct independent operators; proposals are not yet results.
+Brief record: hypotheses/H016-independent-mechanisms.md. Current task worktree
+was clean at launch; unrelated directories remain untouched.
+New authoritative records: H015-primary-bridges-disposition.md and raw report;
+H016-mixed-modulus-feature.md. Ordinary degree-zero specialization identities do
+not prove algorithmic impossibility, and a fixed-characteristic finite-field
+theorem does not supply an EC transfer. Official2024/1330 PDF retry returned403;
+no unread theorem adopted. No new numerical experiment or formal claim.
+H016 completed records additionally include labelled-restart-bursts.md and
+findings/H016-fiber-boundary-screen.md. Scope explicitly excludes transferring
+seed-pair counts to iid walk success, and excludes extending few-anchor coverage
+to secret-dependent/growing anchor pools. Root handled colour1's possible O
+point as a zero-log anchor instead of an affine coordinate. Goal stays active.
+Checks: `./scripts/check.sh > /tmp/ecdlp-h016-source-check.log 2>&1` exit0;
+subsequent edits are paper qualifications only. No Audit additions or proof claim.
 
 H015 findings: residual-graph-screen, preprocessing-baseline, winnowing-screen,
 component-admission. These are paper calculations/hypotheses, not Lean theorems

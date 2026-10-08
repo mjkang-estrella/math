@@ -750,3 +750,45 @@ Subsequent notifications/results:
   modular box root to the reviewer's pX^3 certificate counterexample. No trial.
 - Claude primary-literature replacement remains live at its retained new handle;
   no Factory findings invented and no Grok backing-thread continuation.
+
+## H016 native independent design wave
+
+Previous turns revalidated the same Claude H015 replacement RUNNING; observation
+was not a failure/restart trigger. Root rechecked85d50c7/task tree and then used
+available native capacity for distinct operator design, not duplicate survey work.
+All three followup_task calls accepted, read-only/no experiments/files/children:
+- /root/h007_additive_relations: coordinate information with paid error-aware
+  recovery, beyond already-falsified exact bits/fixed H014 features.
+- /root/h006_structured_relation_ideas: concrete algebraic relation/recovery
+  operations changing an actual obstruction, no free primitive or mere spec fix.
+- /root/h010_early_dependencies: arithmetic/representation/full collision work,
+  known efficient baseline and previous literal cost screens supplied.
+Initial new outputs withheld for independence, no quota/padded idea count. Native
+root+three within4; one existing T3 task remains. Exact briefs summarized in
+H016-independent-mechanisms.md. Current main-goal improvement NONE.
+
+Claude H015 replacement now COMPLETED with substantive5-bridge report;
+task_status read, no pending children, raw preserved. This is actual Claude
+output, not retroactively attributed to Factory. Root reviewed C/D against
+actual KW/Abramovich/Silverman sources; native Astra /root/h007_additive_relations
+completed NEW independent A/B primary-source review after its H016 initial card.
+Dispositions correct overbroad lower bounds, signature hypotheses, p^8 upper
+discriminant scale and characteristic-dependent surface rank. No improved bridge.
+
+H016 native coordinate-information role COMPLETED one mixed-modulus curve-equation
+feature. Root algebra/cost qualification retained: apparent carry is a scalar-field
+polynomial, parity-compatible but no positive correlation or uniform m=q^delta
+family supplied. No m6 trial or feature sweep authorized. Relation and arithmetic
+initial roles remain RUNNING; their distinct initial outputs still independent.
+
+H016 final role snapshot supersedes that live sentence:
+- Sol arithmetic proposer COMPLETED labelled burst operation; NEW paper followup
+  independently confirmed root's exact negation-collision clustering count and
+  identical repeated equations. No full walk-law inference or engine.
+- Astra relation proposer COMPLETED two translated cubic-fibre construction and
+  exact fixed-few-anchor coverage gate. NEW separate Astra /root/h007_additive_relations
+  review COMPLETED signs, graph/frontier identities, poles/O treatment and coverage
+  secret-independence scope. Both root and review retain growing-dictionary gap.
+All H015/H016 child tasks terminal/completed (Factory missing-output failure
+still classified separately). No current live native/T3 child, duplicate loop,
+numerical test or formal infrastructure. Root integrates only named task records.
