@@ -595,3 +595,27 @@ Native independent reviewer already completed; no new scheduling engine round.
 Coordinate Astra proposer and original three H013 T3 tasks remain live. The
 literal/fused cell-traffic screen and <4.1% named arithmetic ceiling are scoped;
 no fabricated time, global algorithmic rejection or measured gain.
+
+## H013 algebra, coordinate and MCL review integration
+
+2026-10-08. Original algebra Opus, original Factory Opus information and native
+coordinate proposer COMPLETED. Raw T3 reports retained; Factory actually returned
+substantive output. Native Astra orbit/shared-table cost review and Sol small-root
+source/m2 collector review COMPLETED. Root rejects their raw universal exclusions
+and preserves conditional gates in H013-algebra-disposition.md.
+
+MCL separate roles COMPLETED: native Sol exact identity/sampling/spectral review;
+native Astra full-cost/coset backend review; NEW Claude Opus character-bound and
+prior-art review (read-only/no experiments/edits/children):
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h013-mcl-character-bound-opus-20261008-r1`.
+Provider claudeAgent, model claude-opus-5-5, clientRequestId is suffix. New launch
+returned RUNNING; completion notification received and task_status read. Raw
+report retained with root subgroup/ordinarity/optimization qualifications.
+No backing-thread continuation. Original Grok H013 hybrid task still live at last
+status read. No duplicate task or replacement.
+
+New distinct native followups: Sol group-action/learning constructions; Astra
+coordinate/arithmetic features, then tiny exact-correlation protocol for sign
+and centered formal parameter. Read-only/no trials/children. A feature may be
+tested speculatively without a proof of correlation; no broad FFT/training engine.
+Root remains sole writer/integrator. Native active root+two<=4; T3 below20.

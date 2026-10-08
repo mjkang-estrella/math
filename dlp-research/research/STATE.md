@@ -24,19 +24,39 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis search: H013 broad independent operation ideation, six
-   distinct lenses. PC4 remains speculative and deferred; no engine or trial.
-4. Evidence: H013 block fingerprints exchange label bits for false-hit replay;
-   literal and specifically fused full-record bucketing lose equal-cost cell
-   traffic. Hardware benefit remains uncalibrated. A named cycle-check schedule
-   offers <4.1% arithmetic removal, not a universal full-work ceiling. No engine
-   justified by these cards. PC4 remains deferred without early-node cost/yield
-   evidence; earlier scoped LD8/lattice/birth screens stand. No universal
-   coordinate impossibility or measured improvement.
-5. Next conclusion-changing step: deduplicate concrete H013 mechanisms, select
-   meaningful complete-cost gains, independently review and run the cheapest
-   matched synthetic falsifier. Material constant-factor gains count if measured
-   against competent known baselines. No claimed result from agent/idea counts.
+3. Current hypothesis: H013 multiplicative-character correlation (MCL), a valid
+   conditional coset-recovery reduction still lacking an effective public
+   predictor. Six independent ideation lenses retained; Grok hybrid report live.
+4. Evidence: independent reviews repaired MCL calibration, sampling, character
+   conversion and backend costs. Known additive-phase correlation bounds do not
+   prove a predictor impossible or supply one. Algebra/coordinate cards yielded
+   scoped cost screens, not universal exclusions. Broad FFT sweep rejected for
+   cap overrun; no new numerical experiment. PC4 remains deferred.
+5. Next conclusion-changing step: freeze a cheap explicit feature and bounded
+   finite signal test with controls and charged setup, or find a new concrete
+   operation in the outstanding hybrid report. Native arithmetic and group-action
+   roles explore distinct actual predictor constructions. Positive finite signal
+   still needs generalization and complete-solver cost; negative finite signal
+   cannot settle asymptotics. No metric substitution by agents/proofs/commits.
+
+### Latest authoritative task snapshot (older sections are history)
+
+H013 original Opus algebra, Factory Opus learning/information, native coordinate,
+native representation and native scheduling roles COMPLETED. Independent native
+algebra/sampling/backend reviews and NEW Opus character-bound review COMPLETED.
+Factory delivered substantive output this round; earlier Fable failures remain.
+Grok H013 hybrid original task RUNNING at last status read, no duplicate round.
+Native Sol /root/h010_early_dependencies now explores explicit group-action
+features; native Astra /root/h007_additive_relations designs a bounded arithmetic
+feature screen (no run authorized yet). Coordinate proposer idle. All read-only,
+no children. Full T3 IDs and new rounds in task register. Goal remains active.
+
+Current findings: H013-algebra-disposition.md, H013-coordinate-cards.md,
+H013-mcl-disposition.md, with raw reports and reviewer objections retained.
+Validation: `./scripts/check.sh > /tmp/ecdlp-h013-mcl-check.log 2>&1` exit0,
+363 existing audits. Paper/process records only, no Lean/Audit claim added.
+Root stages named task files after diff inspection; unrelated factoring-research/
+and research-monitor/ remain untouched. No numerical experiment since H005.
 
 ## Live work and actual failures
 
