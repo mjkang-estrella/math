@@ -18,7 +18,34 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H021 completion / H022 live update (authoritative)
+## H022 rolling milestone / live reviews (authoritative)
+
+Previous goal turn was progress: fdcc41d retained the dependent-subset screen
+and launched the independent rolling review. Native Sol EDS proposer and
+native Astra rolling reviewer now COMPLETED. Root checked
+H022-rolling-Ward-screen.md: valid support-sharing recurrence and normalization,
+three reused boundary terms, corrected zero handling, buffered prefix coverage,
+and a strict finite arithmetic deficit against H019 k=b,ell=1. No all-EDS or
+all-finite-runtime exclusion; setup/traffic/verification remain separate.
+
+The distinct lazy-prefix schedule is concrete but unaccepted: proposed costs
+cg=3+.5s and cb=5.25+s still lose the leading arithmetic comparison. NEW Claude
+Opus independent dependency/cost/coverage review accepted RUNNING, exact taskId
+and brief in hypotheses/H022-lazy-EDS-review.md. Original Grok H022 independent
+mechanisms handle revalidated RUNNING. No duplicate task or new numerical run.
+Native roles are complete; these two T3 roles are the live work. Root alone
+integrates. Current best square-root reference unchanged, improvement NONE.
+Next conclusion-changing gate: a paid support/index/complete-solver mechanism
+that survives mathematical and full-cost review, then a matched experiment.
+
+Validation: ./scripts/check.sh in dlp-research passed exit0,366 audits;
+log /tmp/ecdlp-h022-rolling-check.log. Initial parent-directory invocation
+failed exit127 before the corrected-cwd run. No Lean source/Audit changes.
+Only named research Markdown is staged; unrelated directories untouched.
+
+Older live statuses below are superseded by this update.
+
+## H021 completion / H022 initial update (historical)
 
 H020/H021 public-signal and representation reviews all COMPLETED. Exact tasks
 and raw reports retained. H021-list-reduction-screen.md gives a supplied-curve

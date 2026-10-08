@@ -93,3 +93,9 @@ homogeneous (quadratic target numerator / linear target denominator), so
 the target scale persists with unscaled fixed DG support and no per-output
 conversion multiply. This supersedes the preceding normalization choice;
 orientation k=jD±i is unchanged. Review must check the actual formula.
+
+Final native completion: Sol proposer and Astra rolling reviewer COMPLETED.
+Root checked H022-rolling-Ward-screen.md including the finite kernel gap and
+known-zero correction. Distinct lazy-prefix attempt has a NEW Claude cost
+review, full details in H022-lazy-EDS-review.md. Original Grok initial role
+remains live. No untested pipeline accepted; no numerical prototype launched.
