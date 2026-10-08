@@ -317,3 +317,11 @@ import Research
 #print axioms Research.WordQueryData.rawInput_injective
 #print axioms Research.WordQueryData.numerical_boundary_checks
 #print axioms Research.WordQueryData.parser_boundary_checks
+
+#print axioms Research.WordPacking.bitValue_bound
+#print axioms Research.WordPacking.horner_step
+#print axioms Research.WordPacking.horner_initial
+#print axioms Research.WordPacking.horner_final
+#print axioms Research.WordPacking.horner_intermediates
+#print axioms Research.WordPacking.bitValue_bool
+#print axioms Research.WordPacking.bits_getElem
