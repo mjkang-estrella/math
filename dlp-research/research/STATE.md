@@ -51,6 +51,21 @@ Persistent broad-ideation and main-problem policies remain in force.
 - Grok4.7 autonomous collision geometry/scheduling proposal RUNNING:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-autonomous-walks-grok-20261008-r1`.
 
+Continuation after4661b79: previous turn was PROGRESS (final review committed).
+Factory r2 and Grok original task handles revalidated RUNNING. Root found a
+bounded paper followup of the literal cubic screen: at most21 exceptional
+addition-events over distinct indices for q>3, potentially eliminating its
+exception caveat without simulation. Native Sol /root/h010_early_dependencies
+independent check received: counts11/7/3 and truncated stopping argument
+confirmed, with literal-formula and P-only-inspection qualifications. Final
+review COMPLETED/ACCEPTED: run until recovery or the declared truncation; an
+abandoned unsuccessful shorter prefix does not inherit the work bound. Finding: findings/H031-cubic-exception-screen.md. This closes
+the conditional exception gap for the named single stream, even giving its
+inversions away; no whole-runtime theorem or new experiment follows.
+No new ideation substitution, numerical run or generic infrastructure.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h031-exception-check.log 2>&1
+exit0,366 existing audits; new result is paper-only, no Lean/Audit edit.
+
 Continuation after fdde7e0 classified PROGRESS: independent final review closes
 the pending paper check. Factory r2 and Grok original handles revalidated RUNNING
 this turn, with no pending replacement or duplicate. Await their asynchronous

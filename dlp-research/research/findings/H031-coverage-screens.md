@@ -93,3 +93,8 @@ Sol independently confirmed the label-support count and recurrence/batching
 algebra, while requiring geometry-only conditioning before denominator outcomes,
 paid distinct stream initialization, and exceptional first emissions. These
 corrections are incorporated above. No audit-count progress claim.
+
+Subsequent focused followup: [literal single-stream exception bound](H031-cubic-exception-screen.md)
+closes the exception caveat for q>3 and P-only inspection under the standard
+formula ledger. It is independently checked paper mathematics, not a generic
+representation or full-runtime lower bound.
