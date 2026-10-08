@@ -18,8 +18,9 @@ Latest user steering also requires broad independent ideation. H002 now expands
 the pool through rolling independent proposer waves, roughly3–5 mechanisms per
 proposer and15–25 distinct initial candidates if worthwhile, without quotas.
 Initial proposals are isolated before synthesis; speculative ideas are welcome.
-This supersedes the narrow two-ideas-plus-critic allocation. All providers count
-toward four active slots including coordinator. Main metric remains credible
+This supersedes the narrow two-ideas-plus-critic allocation. Latest user correction
+confirms T3 supports20 concurrent subagents, separately from the native four-slot
+limit; it supersedes the earlier conservative shared-cap assumption. Main metric remains credible
 complexity/complete work; verified improvement and dashboard baseline unchanged.
 
 ## Current five-item result report
@@ -49,7 +50,29 @@ No B200/H200 elliptic-curve-work benchmark is validated. Any hardware/dashboard
 multipliers are hypothetical; published AI FLOPS must not be converted to ECDLP
 throughput. No third-party wallets or live-fund recovery.
 
-## Live delegated work (four slots including coordinator)
+## Live delegated work (user-confirmed T3 capacity20; native capacity4)
+
+Seven additional T3 tasks launched RUNNING after the explicit capacity correction:
+two independent proposers (geometric transfers; constraint/synthesis), five
+distinct reviews (EDS bridge; lifting defect; orbit transporter; noisy predicate
+reduction; filter full cost). Exact stable request IDs, task IDs and provider/
+models are in H002-expanded-task-register.md. At launch this made nine T3 tasks
+plus one native delegate. No experiment/implementation or grandchildren funded.
+
+- geometry-transfer (`acpRegistry_factory_droid/claude-opus-5-5`), running at launch:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-geometry-transfer-20261008-r1`.
+- constraint-synthesis (`grok/grok-4.7`), running at launch:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-constraint-synthesis-20261008-r1`.
+- eds-math-review (`claudeAgent/claude-opus-5-5`), running at launch:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-eds-math-review-20261008-r1`.
+- lift-math-review (`acpRegistry_factory_droid/claude-fable-5.1`), running at launch:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-lift-math-review-20261008-r1`.
+- orbit-math-review (`claudeAgent/claude-opus-5-5`), running at launch:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-orbit-math-review-20261008-r1`.
+- predictor-reduction-review (`acpRegistry_factory_droid/claude-opus-5-5`), running at launch:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-predictor-reduction-review-20261008-r1`.
+- filter-cost-review (`claudeAgent/claude-opus-5-5`), running at launch:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-filter-cost-review-20261008-r1`.
 
 - H002 Grok4.7 geometry proposer RUNNING, request
   `ecdloop-h002-geometry-grok-20261008-r1`, task
@@ -71,11 +94,15 @@ throughput. No third-party wallets or live-fund recovery.
   No improved generator found. Nine finite rank diagnostics independently
   reproduced; scope/costs in H001-relation-rank-falsifier.md and
   H001-coordinate-cost-gate.md. No n=5/full-solver inference.
-- Native Astra `/root/h002_arithmetic_ideas` RUNNING: fresh independent initial
+- Native Astra `/root/h002_arithmetic_ideas` COMPLETED: fresh independent initial
   arithmetic/lifting/endomorphism ideas, forked without previous proposals;
   read-only,3–5 distinct mechanisms if worthwhile, no children/heavy experiments.
-  This replaces the completed Sol slot; after Factory completion the live four
-  are root+Grok+Opus+Astra.
+  Three unverified cards retained in H002-astra-arithmetic-cards.md: odd EDS
+  correlations, compressed lifting defects, large-orbit canonicalizer/transporter.
+- Native Sol `/root/h002_tradeoff_ideas` RUNNING in Astra's freed slot: fresh
+  independent non-learning time-memory/preprocessing/external-memory proposals.
+  Native Sol plus two original T3 proposers remain; expanded T3 tasks are above.
+  No prior proposer reports supplied to initial idea-generation tasks.
 - Native Astra `/root/encoding_review`: H001 item2 and focused scope review
   completed, now idle. Arithmetic archived/reproduced; no EC performance claim.
   Scope review rejects universal coordinate-filter, Coppersmith and transferred
@@ -130,3 +157,10 @@ all coordinates, mutual information alone gives no stated kangaroo speedup, and
 raw proposed training-label workloads exceed the initial cap. These are not
 reasons to discard speculative learning mechanisms before corrected testing.
 Grok/Astra/Opus continue independent proposals. No infrastructure work restarted.
+
+Latest user explicitly confirms20 concurrent T3 subagents, correcting our earlier
+conservative shared-cap assumption. Native cap remains four. Expand T3 useful
+independent ideas/reviews using delegate_task, never top-level conversations.
+Previous turn was progress: committed83c8529 initial learning pool/corrections.
+This turn adds three independent arithmetic cards and a candidate-specific filter
+cost derivation (pending review), and fills the freed slot with independent Sol.

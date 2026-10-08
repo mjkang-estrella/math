@@ -59,8 +59,12 @@ provider CLI or bypass model-account permissions.
 ## Parallel work
 
 Respect the live runtime's concurrency limits, including the coordinator.
-Use at most three distinct active delegates alongside the coordinator, counting
-cross-provider work too. Latest explicit user steering requires broad initial
+User explicitly confirms T3 Code can run20 concurrent delegated subagents.
+Use that T3 capacity for distinct useful tasks; the four-slot limit remains on
+native delegation. Do not infer this merely from maxBatchThreads, and never
+substitute top-level thread creation. This user-confirmed capacity supersedes
+the earlier conservative shared four-slot assumption. Track both native and T3
+live handles and honor actual provider errors/limits. Latest steering requires broad initial
 independent idea generation, not a fixed two-hypotheses-plus-critic pipeline.
 Keep available slots occupied by distinct productive tasks using rolling waves,
 while preserving current investigations. Each proposer should offer roughly3–5

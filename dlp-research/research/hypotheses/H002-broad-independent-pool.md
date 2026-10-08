@@ -5,6 +5,11 @@ main-problem focus. No verified improvement; accepted baseline unchanged.
 
 ## Allocation and independence
 
+Capacity update: user explicitly confirms20 concurrent T3 subagents, separately
+from native four slots. H002-expanded-task-register.md records seven additional
+actual launches with stable IDs: two independent idea lenses and five focused
+reviews. Earlier four-total-slot allocation below is historical, superseded.
+
 Current catalogue refreshed: authorized Grok4.7 and Factory Fable5.1 both available
 and actually launched. At initial launch coordinator, Sol H001, Grok and Factory
 used four slots. Sol/Factory have since completed; fresh native Astra arithmetic

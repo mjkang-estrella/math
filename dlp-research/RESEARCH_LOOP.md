@@ -16,8 +16,9 @@ machine stack a prerequisite for evaluating or rejecting an algorithm idea.
 
 Persistent user steering: maintain broad independent ideation before synthesis.
 Use as much useful parallelism as actual provider/runtime capacity permits;
-cross-provider calls do not bypass the global cap (currently four active slots
-including coordinator). Keep free slots on distinct productive ideation in
+the user explicitly confirms T3 Code supports20 concurrent subagents, while
+native delegation has four active slots. Use confirmed T3 capacity and respect
+actual provider errors/limits; do not create top-level conversations. Keep free slots on distinct productive ideation in
 rolling waves while preserving live investigations. Each proposer explores about
 3–5 different mechanisms if worthwhile; aim for an initial pool around15–25
 distinct candidates across waves, never as a quota or progress metric. Diversify
