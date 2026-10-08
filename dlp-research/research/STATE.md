@@ -20,24 +20,30 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H034 finite sparse-pair contract and remaining cost gate
 
-LATEST aftere0c263e: previous goal turn PROGRESS. Factory protocol cost review
-COMPLETED/acknowledged with no pending children. Root froze protocolv2 and
-accepted SOURCE CONSTRUCTION after its amendments plus independent Astra math
-review. H034-protocol-admission.md records scope, objections and SHA256:
-585fd2af0fefb448a3cb85ab2041aea1b604f30fd9aab87efa3cbca7d69d0812.
-No execution admitted. Source audit and one bounded root run remain future gates.
+LATEST after40a734b: source construction COMPLETED, numerical execution NOT
+ADMITTED. Separate Sol implementer froze experiments/H034/c4_probe.py at SHA256
+9ea5b055446f8b4f3b4f6b393ddf5569b1d366d003123f2f93a54b6814c21ba3;
+root independently measured the same bytes. No import, numerical run, PRNG
+sampling, warmup or selftest. Static AST/compile checks only. Source is an
+UNVALIDATED implementation checkpoint, not an accepted solver result.
 
-LIVE writer `/root/h034_c4_implementation`, GPT-6.1-Sol, owns ONLY
-research/experiments/H034/c4_probe.py. Separate agent from proposal/reviews.
-Initial standalone source now written, undergoing its source-only inspection;
-not imported/executed, not final-hashed/reviewed, not integrated into this commit.
-Root static inspection caught graph-state variable reuse (writer also caught it)
-and per-edge multiply regressions; writer reports both repaired. A reference-only
-independent ordinal-to-endpoint check was added so consistent wrong-edge generation
-cannot hide behind fallback. These are source-review findings, not run results.
-Root alone owns shared records/protocol/staging/commits. The other native reviewers
-are completed/collected; no live T3 child. Exact T3 Factory review handle:
-`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-protocol-cost-fable-20261008-r1`.
+Independent source reviews (read-only; no executions/edits/children):
+- Native Astra /root/h007_additive_relations COMPLETED: scoped GO, no
+  correctness blocker; graph, recovery, references and H019 order checked.
+  Partial generated_leaf_keys counts validated batches only, not unfinished
+  reference work. Charged events remain authoritative.
+- Factory Fable5.1 cost/evidence source audit RUNNING, new T3 round:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-source-cost-fable-20261008-r1`.
+Writer /root/h034_c4_implementation COMPLETED and source frozen during audits.
+Root alone integrates. Previous protocol review terminal/collected, not reused
+as source admission. Protocolv2 hash remains
+585fd2af0fefb448a3cb85ab2041aea1b604f30fd9aab87efa3cbca7d69d0812.
+
+H034-source-checkpoint.md records draft corrections and conservative source-only
+stage estimates. Aggregate1M events need not cover all cases: q8053 setup alone
+has a480k allowance; these are unverified envelopes, not measured work or a
+promise of completion. The one capped command remains contingent on source
+reviews and explicit root admission, without changing budget, seeds or fixtures.
 
 Protocolv2 retains full-range sampling including0, known tiny fixtures, paid
 setup/seed/leaf/fallback sheets, a1M-event55s/outer60s aggregate cap, and six
@@ -70,7 +76,7 @@ leading integer/memory traffic and strongest comparator. Next decisive step:
 finish and independently audit source, then one admitted diagnostic if correct.
 No numerical run, Lean/Audit change, generic infrastructure or live target work.
 
-Validation: `./scripts/check.sh > /tmp/ecdlp-h034-source-admission-check.log 2>&1`
+Validation: `./scripts/check.sh > /tmp/ecdlp-h034-source-checkpoint-check.log 2>&1`
 exit0,366 existing audits. This did not import or execute the new diagnostic.
 Unrelated concurrent project changes are excluded; root commits only named
 research paths. Existing unbounded research goal stays active.
