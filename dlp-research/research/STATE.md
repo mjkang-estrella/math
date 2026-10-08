@@ -9,7 +9,8 @@ W008 coordinate-key layer committed locally as `97ebd5c`. IndexedLookup,
 SortedBabies and SortedBSGS are frozen, independently reviewed, integrated and
 committed locally as `f95d27e`. W010 negative findings committed as `a92d640`;
 W012 signed tuning committed as `f3d451a`. W011 abstract core contract accepted;
-raw-run implementation and full solver costs remain incomplete.
+WordCore and WordCodec with review records committed locally as `d830782`.
+Raw-run implementation and full solver costs remain incomplete.
 No faster ECDLP algorithm or cryptographic break has been discovered.
 
 ## Authorization and operating constraints
@@ -27,6 +28,10 @@ limitations are documented by negative tests, not silently repaired.
 
 - Native Sol `/root/small_curve`: WordCore frozen and independently passed.
   Independent WordCodec review PASS, complete; hash eead4918922436ddf4acefc86f2e21b0ffd95998e1692fb1027478c1dc29b2be.
+  SignedTight frozen: 16 arithmetic theorems independently PASSed coordinator
+  review; coverage/first-hit/sequential minimality and old-cap comparison.
+  Sol independently PASSed parent finite coverage script/data; W015.
+  No group algorithm/cost/speed claim; experiment engine unchanged.
   Accepted W011 hash5534f6e80df1196dcee8651c9a657f4278077991deabd786e3eeece429f18d5e.
   Coordinator owns all integration/checkpoints. No raw-run costs accepted.
 - T3 Grok `grok-4.7`: original primary-literature/falsifiable-directions task
@@ -58,7 +63,7 @@ limitations are documented by negative tests, not silently repaired.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w5-word-contract-opus-20261007-r1`.
   Full W010 objections/responses and exact W011 draft supplied.
   Active: coordinator, Astra runner implementation, Grok literature (three).
-  Sol and Opus complete. Sol available for separate WordRun review after freeze.
+  Sol and Opus complete. Runner will receive new separate frozen review.
 
 Live catalog discovered Codex Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory
 Fable/Opus with delegation supported and no reported constraints. Actual runs
@@ -120,9 +125,11 @@ T3 completed rounds (retain exact task IDs; new reviews require new delegates):
 
 ## Current validation and remaining assumptions
 
-Current `./scripts/check.sh` passed: 22 screened files, 47 build jobs, 211
-named theorem audits and executable smoke output. New WordCore23/WordCodec29
-claims are included; independent core and codec reviews PASS. Earlier baseline:159. IndexedLookup (31 claims),
+Current `./scripts/check.sh` passed: 227 named theorem audits and executable
+smoke output. WordCore23/WordCodec29 and SignedTight16 claims are included;
+independent component reviews PASS. Unintegrated WordRun is only lexically
+screened by that script, not part of this build/audit acceptance. Earlier
+baseline:159. IndexedLookup (31 claims),
 SortedBabies (12) and SortedBSGS (4) each independently recompiled/audited;
 only permitted propext, Classical.choice and Quot.sound dependencies.
 `scripts/sorted_bsgs_checks.lean` runs with lake env lean (no --run; uses #eval)
@@ -147,15 +154,22 @@ arithmetic counterexamples for word widths, bump addresses, primality and
 exact-order validation; these are not VM or accepted-solver failures. W010
 original design is rejected; W011 core contract is now independently reviewed
 and accepted with binding amendments. Implement and independently review its
-raw setup/runner/ledger after committing independently passed internal step
-and serialization with review records. Retain frozen
+raw setup/runner/ledger; core/codec milestone committed as d830782. Sol
+formalizes the known tighter signed-block coverage separately. Retain frozen
 Machine/Problem/Goals.
 Collect Grok's existing task when its notification arrives; do not duplicate.
 Continue bounded waves with durable evidence and reviewer disagreements.
 Previous turn: progress (f3d451a independently reviewed tuning experiment).
 This turn: W011 amended core accepted; WordCore independently PASSed,
 WordCodec independently PASSed Sol review; check passed211audits (52new).
-Astra begins WordRun in separate owned file, unintegrated. See W013 record.
+Astra implements WordRun in separate owned file, unintegrated. First checkpoint
+compiles partial setup/readiness, actual events, shared fuel and conservation;
+ledger/monotonicity/generic setup-content facts still in progress. Sol
+implements SignedTight math in disjoint new file. Parent independent finite
+coverage check passed 66,560 scalar cases / 108,132 insertions; tighter cap
+alone changes no already-early-stopping match work. Review pending; W015
+records exact scope. SignedTight 16theorems and independent script review
+now PASS; integrated check passed 227 audits. See W013/W014/W015 records.
 None of these component results establishes full-run solver costs.
 Grok remains authoritatively working, with no pending children or terminal
 result. No duplicated task or scheduler. W011 core units are explicitly abstract;

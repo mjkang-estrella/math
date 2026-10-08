@@ -221,3 +221,20 @@ import Research
 #print axioms Research.WordCodec.reserved_tags_rejected
 #print axioms Research.WordCodec.admission_boundary_checks
 #print axioms Research.WordCodec.program_boundary_checks
+
+#print axioms Research.SignedTight.stride_radius
+#print axioms Research.SignedTight.stride_pos
+#print axioms Research.SignedTight.old_blocks_ge_tight
+#print axioms Research.SignedTight.old_blocks_le_tight_succ
+#print axioms Research.SignedTight.old_blocks_eq_or_succ
+#print axioms Research.SignedTight.zero_block_matches
+#print axioms Research.SignedTight.interior_matches
+#print axioms Research.SignedTight.firstHit_covers
+#print axioms Research.SignedTight.covers
+#print axioms Research.SignedTight.earlier_blocks_miss
+#print axioms Research.SignedTight.firstHit_le_of_match
+#print axioms Research.SignedTight.firstHit_exact
+#print axioms Research.SignedTight.last_block_witness
+#print axioms Research.SignedTight.sequential_cap_minimal
+#print axioms Research.SignedTight.sequential_coverage_iff
+#print axioms Research.SignedTight.boundary_checks

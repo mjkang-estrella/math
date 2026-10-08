@@ -18,3 +18,4 @@ import Research.SortedBabies
 import Research.SortedBSGS
 import Research.WordCore
 import Research.WordCodec
+import Research.SignedTight
