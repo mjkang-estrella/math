@@ -41,6 +41,20 @@ credible complete-work advantage, then independent review and frozen synthetic
 experiment. Current best supported ordinary full-range reference remains
 square-root work with known constants/tradeoffs. Verified improvement NONE.
 
+H022 subset-index proposer subsequently COMPLETED with no survivor. Root
+checked H022-dependent-subset-screen.md: the list-dependent S=B+D bridge is
+exact but lacks a fast correlated triple reporter; iid assumptions cannot be
+silently transferred. Literal pair generation costs n², not an all-index lower
+bound. Native Sol EDS schedule work and the exact Grok H022 handle revalidated
+RUNNING; no duplicate roles or numerical experiments. Prior goal turn was a
+verified wait, not a blocker. This turn records a scoped paper negative.
+Freed native Astra now independently reviews a concrete Sol rolling Ward
+schedule, with three reused boundary terms and fresh batch inversions. Exact
+corrected scalar orientation and full brief are in H022-independent-candidates.
+Sol's other constructive attempts remain live; no numerical work authorized.
+Validation: ./scripts/check.sh in dlp-research passed exit0,366 audits,
+log /tmp/ecdlp-h022-subset-check.log. No formal source/Audit changes.
+
 The historical live statuses below are superseded by this update.
 
 ## Live H018/H019 delivery update (historical)

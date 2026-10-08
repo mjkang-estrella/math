@@ -63,3 +63,33 @@ Exact brief:
 All three accepted running. No numerical experiment launched; fresh providers
 not silently substituted. Wait for notifications and review surviving concrete
 mechanisms before implementation. No validated hardware rate or dashboard change.
+
+Delivery update: native Astra subset/index role COMPLETED with no survivor.
+Root checked and retained H022-dependent-subset-screen.md: S=B+D supplies an
+exact recovery bridge and small conditional output expectation, but neither
+a fast index nor the old independence assumptions. Literal n² pair generation
+loses; no general index lower bound asserted. Other constructions were repeats,
+not new candidate cards. Native Sol EDS and exact Grok handle remain live.
+
+New independent native Astra review RUNNING on Sol's concrete rolling Ward
+schedule while Sol finishes distinct lazy/normalization attempts. Read-only,
+no runs/edits/children/commits. For tau>=3,b=tau-2, retain h_(a-r),0<=r<=tau;
+ell=tau-1; A=h_(a-ell+1)h_(a-ell-1), B=h_(a-ell)^2; fixed support
+C_m=h_m²,D_m=h_(m-1)h_(m+1). Emit r=0..b-1 by
+h_(a-2ell+r)=(A C_(ell-r)-B D_(ell-r))/h_(a-r). The shifted anchor a-b
+retains exactly three old boundary terms plus b new ones. Claimed chosen
+batch cost (6b-2)M+S+I per b fresh terms; all initialization/support paid.
+Zero terms require scalar recovery/verification. Exact corrected orientation:
+known iG and target Q-jDG, keys normalized to phi(DG), signed match yields
+k=jD±i, caps I≈D/2,J≈q/D. Scale Ward support consistently for each sequence.
+Review checks identities, finite inversion counts, boundaries, normalizations,
+actual coverage/stopping law and exceptions. No all-EDS exclusion or
+full-work conclusion from per-key costs alone. Provisional, not accepted.
+
+Normalization refinement sent to independent reviewer before acceptance:
+use phi(G) for BOTH key lists. Known h_i^G unchanged; scale the target DG
+sequence at initialization by gamma=phi(DG)/phi(G). Its recurrence is
+homogeneous (quadratic target numerator / linear target denominator), so
+the target scale persists with unscaled fixed DG support and no per-output
+conversion multiply. This supersedes the preceding normalization choice;
+orientation k=jD±i is unchanged. Review must check the actual formula.
