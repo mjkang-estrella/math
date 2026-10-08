@@ -1,5 +1,21 @@
 # H002 expanded T3 allocation
 
+## H009 CRT operation freeze and independent reviews
+
+Proposer /root/h006_structured_relation_ideas COMPLETED; frozen operation in
+H009-crt-euclid-v1.md. No trial or engine authorized. Independent native reviews:
+- /root/h007_lattice_carries RUNNING candidate-specific first-remainder support
+  mathematics; reciprocal-series argument preliminary, not accepted yet.
+- /root/h007_additive_relations COMPLETED actual S6 construction/cap screen with
+  no demonstrated cap fit; now RUNNING independent reciprocal-series mathematical
+  check, including first-review objections and scope. No experiments.
+
+NEW T3 ClaudeAgent/claude-opus-5-5 prior-art/structured-root algorithm review,
+accepted RUNNING with stable clientRequestId equal to task suffix:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h009-crt-priorart-opus-20261008-r1`.
+All read-only, no edits/trials/children. Distinct review scopes; no duplicate
+provider success claim, no new top-level conversation or scheduler.
+
 ## H008 review reconciliation and H009 independent ideation
 
 All three H008 T3 tasks below are now COMPLETED, raw reports retained. Opus and

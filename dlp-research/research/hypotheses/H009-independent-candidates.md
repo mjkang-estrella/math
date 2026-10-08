@@ -33,14 +33,17 @@ establish asymptotics. Proposer and root do not recommend a pilot merely because
 this arbitrary map is easy to implement. Park as unsupported, not disproved for
 all sizes. Verified improvement NONE.
 
-## CRT sparse-gcd selector: live specification, not yet accepted
+## CRT sparse-gcd selector: frozen operation under independent review
 
-/root/h006_structured_relation_ideas is preparing an explicit encoding of five
+/root/h006_structured_relation_ideas completed an explicit encoding of five
 pairwise-coprime multiplicative coordinate domains into one root of unity,
 followed by sparse Euclidean gcd with T^N-1. Distinct from the rejected dense TT
 representation and GRR pushforward. Initial requirement: N=product B_i divides
 p-1 with balanced B_i around q^(1/5), hence N around q, and all factorization/
 family construction is paid. No secp256k1 or arbitrary-prime applicability assumed.
-Pending final card: cumulative sparse remainder work, empty-query extraction,
-setup and memory accounting, useful relation yield and cheap decisive falsifier.
-No fast gcd oracle or engine implementation is authorized by this preliminary note.
+Final operation and full conditional ledger are frozen in H009-crt-euclid-v1.md.
+Native mathematical and diagnostic-feasibility reviews plus a new Claude Opus
+prior-art review are live. The central unsupported assumption is cheap cumulative
+sparse remainder work with sufficient useful yield. No fast gcd oracle or engine
+implementation is authorized. A reciprocal-series paper support-growth check is
+being developed; it is not yet an accepted lower bound.
