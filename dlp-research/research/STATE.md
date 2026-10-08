@@ -26,16 +26,17 @@ read-only, disjoint writers, no unbounded experiments or reset diagnostic caps.
    preprocessing and parallel tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**. No validated B200/H200 curve-work throughput;
    dashboard multipliers remain hypothetical, never converted from AI FLOPS.
-3. Current hypotheses: independent H005 readable-information and hybrid proposals
-   are live. H004 compact characters still lack useful magnitude/discovery rules;
-   recent-primary-result bridge research has a fresh round after non-delivery.
+3. Current hypothesis: H005 inverse binary walk with rational-reconstruction
+   steering passed transition/recovery preflight, with no contraction evidence.
+   One tiny whole-attempt protocol is under review and source implementation;
+   Grok hybrid and Fable recent-result proposals remain independent/live.
 4. Latest evidence: frozen four-list P1 loses exact mean output count to the same
    predeclared signed two-list c=2 rule at q31,61,127,251,509. This is an integer
    coverage diagnostic, not a complete solver or asymptotic claim. The global cap
    left larger comparisons unfinished. Fixed-window EDS A1 was separately ruled
    out for the proposed recovery regime by a reviewed coordinate-character bound.
-5. Next conclusion-changing step: screen independent H005 and recent-result
-   proposals for an actual charged algorithm and decisive cheap falsifier.
+5. Next conclusion-changing step: review then run one frozen H005 full-attempt
+   cost falsifier if its source/protocol pass; screen remaining independent ideas.
    No larger P1/A1 run, section sweep, billion-operation Fourier scan or generic
    Lean machinery follows from current evidence. Reopening needs a distinct
    mechanism and a falsifier tied to complete cost.
@@ -135,15 +136,25 @@ duplicated. H005 independent work and review:
 - Native fresh Astra /root/h005_information_ideas: COMPLETED one concrete
   rational-reconstruction-steered inverse binary walk; known recovery wrapper,
   speculative trajectory gain. Saved H005-information-proposal.md. Independent
-  /root/encoding_review is RUNNING mathematical preflight, no numerical trials.
+  /root/encoding_review COMPLETED mathematical/protocol preflight; root incorporated
+  Gauss stopping, sampler cost and validation-failure requirements. No trials. Separate Sol /root/h005_inverse_implementation
+  owns only H005/inverse_walk.py, syntax-only; no experimental run authorized.
 - Grok hybrid mechanisms, task
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h005-hybrid-ideas-grok-20261008-r1`.
 Proposal and review roles are read-only, no experiments/numerical scratch/children.
 Distinctness matters more than filling requested2–4 cards. Prior rejected hypotheses are supplied
-as scope, not a demand to recycle them. Native root+Astra fit4, T3two fit20.
+as scope, not a demand to recycle them. Native root+Astra+Sol fit4, T3two fit20.
 No main-metric improvement or new experiment claimed by these launches.
 
 Live capability refresh again exposes all user-authorized providers/models.
 Fable r1 is not counted as an idea/source review. r2 explicitly requires a
 substantive final report, including a justified no-survivor outcome if appropriate.
-No implementation or extra experiment is authorized by this process checkpoint.
+Only the named H005 source implementation is authorized; experimental execution
+still requires source review and the root's explicit run command.
+
+H005 mathematical preflight is recorded in findings/H005-inverse-walk-preflight.md.
+Root qualified the arbitrary-set by-time bound; reviewer confirmed the correction. The
+one-profile draft charges exact uniform-restart costs and a signed-BSGS reference;
+implementation/review are candidate-specific and do not claim main-goal success.
+Previous turn was a verified wait on live handles; current turn adds a reviewed
+mathematical gate, explicit correction and concrete finite-cost falsifier.

@@ -203,7 +203,11 @@ provenance; that limitation and derivative corrections retained in H003-lift-sec
 
 Native fresh Astra /root/h005_information_ideas COMPLETED independent readable
 scalar-information proposal I1; no padding. H005-information-proposal.md.
-/root/encoding_review RUNNING separate mathematical preflight, read-only, no trials.
+/root/encoding_review COMPLETED separate mathematical preflight; root qualified
+the arbitrary-known-set by-time bound. COMPLETED independent protocol review; root incorporated required corrections.
+New native Sol /root/h005_inverse_implementation RUNNING source-only implementation
+of H005/inverse_walk.py, syntax-only, no experiments or children. Root protocol:
+research/experiments/H005/inverse_walk_protocol.md. No run authorized yet.
 
 ### ecdloop-h004-recent-bridges-fable-20261008-r2
 
