@@ -21,5 +21,6 @@ H003 update: the particular coprime odd-prime-order pointwise-phi character
 predictor now has a direct low-degree coordinate reduction; see
 H003-eds-character-collapse.md. The earlier source-scope uncertainty does not
 supply a surviving fixed-window A1 hypothesis. Reconciliation with the broader
-W-sequence fixed-shift question is being checked; no novelty or resolution of
-that general question is claimed.
+W-sequence fixed-shift question is recorded in H003-eds-literature-reconciliation.md:
+a restricted quadratic odd-order case follows, with no novelty or resolution of
+the general question claimed.

@@ -154,3 +154,24 @@ raw reports retained and qualified by root dispositions, not adopted wholesale.
 - Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-lift-section-review-grok-20261008-r1`.
 - Scope: First-order Hensel/carry formulas, support obstruction and interval recovery;
   assess actual concentration mechanism before pilot. No edits/tests/children.
+
+## H004 follow-on independent proposals
+
+### ecdloop-h004-compact-algebra-opus-20261008-r1
+
+- Status: RUNNING; provider/model: `claudeAgent/claude-opus-5-5`.
+- Stable request: `ecdloop-h004-compact-algebra-opus-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-compact-algebra-opus-20261008-r1`.
+- Scope: Distinct compact-function/divisor mechanisms and actual recovery bridges.
+  Independent initial ideas, no experiments/edits/children.
+
+### ecdloop-h004-recent-bridges-fable-20261008-r1
+
+- Status: RUNNING; provider/model: `acpRegistry_factory_droid/claude-fable-5.1`.
+- Stable request: `ecdloop-h004-recent-bridges-fable-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-recent-bridges-fable-20261008-r1`.
+- Scope: Recent primary results only with concrete charged ECDLP bridge; independent
+  initial ideas, no experiments/edits/children.
+
+Native Sol `/root/h002_tradeoff_ideas` RUNNING new H004 whole-solver co-design
+ideation, independent of those initial briefs, read-only/no experiments/children.

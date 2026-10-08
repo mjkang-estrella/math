@@ -67,8 +67,8 @@ reviewer's epsilon^(-11) route as optimal or a noisy-oracle bound as universal.
 Native Astra `/root/h002_arithmetic_ideas` COMPLETED explicit A3 orbit-invariant
 construction/cost development, no edits/tests/children. Return derivatives telescope
 to a constant; pairing and coordinate-algebra invariants currently lose on setup/
-evaluation costs. See H003-orbit-invariant-development.md; no further run funded. Astra COMPLETED the A1 character/divisor analysis and is now reconciling the
-restricted bound with the earlier general EDS literature scope; other proposers idle.
+evaluation costs. See H003-orbit-invariant-development.md; no further run funded. Astra COMPLETED both A1 character/divisor analysis and the restricted literature
+reconciliation; H003-eds-literature-reconciliation.md records the exact scope.
 
 T3 Claude Opus norm/coefficient witness-generator development COMPLETED:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-norm-generator-development-opus-20261008-r1`.
@@ -157,10 +157,10 @@ reduction. Norm generators supply no gain; raw scratch checks remain unaccepted.
 claim. No new field experiment, larger cap, or change to baseline.
 
 Latest candidate-specific development: Astra derives chi(phi(R))=chi(2y(R/2))
-from the corrected doubling identity. Fixed windows may therefore be low-degree
-rational characters with square-root Fourier bounds (Shparlinski–Stange0912.5246,
-Lemmas4/5). Root retrieved primary paper; exact theorem wording has a geometric
-nonpower clarification to resolve. Independent Opus review RUNNING under task
+from the corrected doubling identity. Fixed windows are low-degree
+rational characters with the reviewed square-root Fourier bounds (Shparlinski–Stange0912.5246,
+Lemmas4/5). Root retrieved primary paper; the geometric nonpower wording was resolved using Chen Proposition1.
+Independent Opus review COMPLETED under task
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-eds-character-collapse-review-opus-20261008-r1`.
 No larger A1 run; Fable's uninstrumented suggested larger pilot is not approved.
 Native Sol section derivation completed; transcribed in H003-lift-section-development.md,
@@ -177,9 +177,39 @@ The collapse review task is COMPLETED. Raw review's supersingular-subgroup and
 unqualified O(log q)-bit Boolean generalizations are not adopted. No new arithmetic
 experiment; no claim to improve ECDLP or prove generic hardness. The fixed-window
 A1/H003 route is closed for the stated q≈p regime. Variable large windows and
-other predicates remain outside the finding. Astra is checking precise relation
-to the broader 2025 EDS question before any novelty statement; none is claimed.
+other predicates remain outside the finding. Astra completed the precise relation
+to the broader 2025 EDS question; no novelty or general resolution is claimed.
 
 Local d9099f9 retains recovery/norm findings. Current progress is a scoped analytic
 candidate rejection plus preserved explicit section hypotheses, not audit growth.
 Goal remains active and unbounded; next wakeup is independent section review.
+
+## H004 independent ideation started after5781879
+
+Previous goal turn: progress, committing conditional recovery/cost reviews and
+an independently checked scoped EDS rejection. Current authoritative git worktree
+was clean except unrelated research-monitor. Grok section review task_status
+returned RUNNING this turn; do not duplicate it. Live catalog refreshed; authorized
+providers still present with child support. No scheduler or new coordinator.
+
+To preserve broad independent exploration after closing A1, three disjoint
+initial H004 briefs are live, with no cross-reading of new proposals before
+synthesis and no experiments/edits/children:
+- Native Sol `/root/h002_tradeoff_ideas`: actual whole-solver search/arithmetic
+  co-design beyond previous T1–T4 wrappers and known batching.
+- Claude Opus: compact algebraic functions/divisor products with executable
+  scalar-recovery bridges, not missing-oracle requests.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-compact-algebra-opus-20261008-r1`.
+- Factory Fable: recent primary results with concrete applicable ECDLP input
+  construction and complete costs, not a literature survey.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-recent-bridges-fable-20261008-r1`.
+Each requests3–5 distinct mechanisms only if worthwhile, not a quota. Native
+root+Astra+Sol fit4; T3 two proposers+one distinct reviewer fit20. Main metric
+remains credible whole-solver work; no improvement or new experiment is claimed.
+
+Latest concrete evidence: H003-eds-literature-reconciliation.md derives
+s_n*s_(n+h)=c^h*v(n)*v(n+h), with exact zeros and integer-index twist. It yields
+a restricted odd-order quadratic fixed-shift cancellation case, compatible with
+the broader 2025 problem. Root retrieved the primary question/theorem and checked
+scope. No extra field operations or revised hardware claim. Native Astra is idle;
+root+Sol below4. Grok review and two H004 T3 proposers are live; await notifications.
