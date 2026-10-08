@@ -27,21 +27,20 @@ or lack executable bridges. No need to manufacture an idea-count quota.
 2. Verified improvement versus accepted baseline: **NONE**. No validated B200/H200
    curve-work throughput; dashboard multipliers remain hypothetical. AI FLOPS
    must not be converted into an EC benchmark.
-3. Hypotheses under test: A1 arithmetic-selected EDS scalar-predicate bias with
-   corrected normalization; V1 marked quotient surface giving a short quadratic
-   scalar relation, conditional on cheap explicit construction/extraction.
-4. Evidence: H001's value-rank-to-zero-indicator inference failed on all9 synthetic
-   cases and was independently reproduced. G2's specified large interval-coordinate
-   Fourier spike fails a primary character-sum bound for q≈p. Multiplicative x-only
-   views have exact zero full-nonzero-group correlation with scalar parity/half.
-   These are scoped negative gates, not generic coordinate impossibility. A1
-   normalization passed1060 finite index checks; correlations do not establish
-   scalable bias, and conditional noisy reconstruction is now mathematically reviewed; bit-cost review accepts polynomial precision; raw operation prices remain unvalidated. V1 has no cheap primitive. Tradeoff tricks owe stronger
-   full-work comparators, and do not establish single-target exponent savings.
-5. Next conclusion-changing evidence: complete the independent numerical/full-cost review of A1's conditional
-   recovery and find a concrete source of sufficient bias before more scaling.
-   Orbit and norm/coefficient developments yielded no gain. Examine explicit p-adic sections. V1 has no extraction algorithm and is lower priority. Test any surviving concrete solver against matched baselines.
-   No finite bias/degree result proves asymptotics or a whole-solver speedup.
+3. Current hypothesis: explicit p-adic carry/deformation sections might compress
+   the complete scalar correction into a small interval. Concrete conditional
+   recovery exists, but no concentration mechanism is established; independent
+   Grok review is running. V1 marked-surface extraction remains missing/parked.
+4. Evidence: A1 fixed-window EDS character collapses exactly to translated y
+   characters. Primary mixed-character bounds and independent review give all
+   normalized Fourier amplitudes <=6s*sqrt(p)/q. For fixed/polylog s and q≈p,
+   this excludes H003's proposed sufficient bias regime. See
+   H003-eds-character-collapse.md. Norm and orbit constructions yielded no gain.
+   Earlier H001 rank counterexamples and other scoped negatives remain retained.
+5. Next conclusion-changing evidence: independently assess the section formulas,
+   concentration mechanism and complete solver cost. No larger A1 diagnostic or
+   generic numerical/Lean infrastructure. New work must supply a distinct cheap
+   mechanism; neither finite biases nor polynomial degrees prove asymptotics.
 
 ## Live work and ownership
 
@@ -68,7 +67,8 @@ reviewer's epsilon^(-11) route as optimal or a noisy-oracle bound as universal.
 Native Astra `/root/h002_arithmetic_ideas` COMPLETED explicit A3 orbit-invariant
 construction/cost development, no edits/tests/children. Return derivatives telescope
 to a constant; pairing and coordinate-algebra invariants currently lose on setup/
-evaluation costs. See H003-orbit-invariant-development.md; no further run funded. Astra is now RUNNING a distinct A1 character/divisor cancellation analysis; other proposers idle.
+evaluation costs. See H003-orbit-invariant-development.md; no further run funded. Astra COMPLETED the A1 character/divisor analysis and is now reconciling the
+restricted bound with the earlier general EDS literature scope; other proposers idle.
 
 T3 Claude Opus norm/coefficient witness-generator development COMPLETED:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-norm-generator-development-opus-20261008-r1`.
@@ -163,4 +163,23 @@ Lemmas4/5). Root retrieved primary paper; exact theorem wording has a geometric
 nonpower clarification to resolve. Independent Opus review RUNNING under task
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-eds-character-collapse-review-opus-20261008-r1`.
 No larger A1 run; Fable's uninstrumented suggested larger pilot is not approved.
-Native Sol section derivation completed; not integrated/reviewed yet, no experiment.
+Native Sol section derivation completed; transcribed in H003-lift-section-development.md,
+not accepted as reviewed yet, no experiment. Grok independent review RUNNING:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-lift-section-review-grok-20261008-r1`.
+Local commit d9099f9 records the conditional recovery reviews and norm negatives.
+
+## Accepted fixed-window negative milestone
+
+H003-eds-character-collapse.md records the exact halving identity, degree3s
+rational function, primary Chen Proposition1 and subgroup averaging, and independent
+Opus review. Root read the antecedent to resolve defective preprint wording.
+The collapse review task is COMPLETED. Raw review's supersingular-subgroup and
+unqualified O(log q)-bit Boolean generalizations are not adopted. No new arithmetic
+experiment; no claim to improve ECDLP or prove generic hardness. The fixed-window
+A1/H003 route is closed for the stated q≈p regime. Variable large windows and
+other predicates remain outside the finding. Astra is checking precise relation
+to the broader 2025 EDS question before any novelty statement; none is claimed.
+
+Local d9099f9 retains recovery/norm findings. Current progress is a scoped analytic
+candidate rejection plus preserved explicit section hypotheses, not audit growth.
+Goal remains active and unbounded; next wakeup is independent section review.

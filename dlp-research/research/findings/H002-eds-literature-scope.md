@@ -16,3 +16,10 @@ Thus higher-order correlation study itself is prior art; only a specified cheap
 exceptional-family mechanism might add something. No ECDLP gain follows from
 the open fixed-shift question or these source bounds. This narrows novelty and
 corrects scope without prematurely rejecting A1.
+
+H003 update: the particular coprime odd-prime-order pointwise-phi character
+predictor now has a direct low-degree coordinate reduction; see
+H003-eds-character-collapse.md. The earlier source-scope uncertainty does not
+supply a surviving fixed-window A1 hypothesis. Reconciliation with the broader
+W-sequence fixed-shift question is being checked; no novelty or resolution of
+that general question is claimed.

@@ -141,8 +141,16 @@ raw reports retained and qualified by root dispositions, not adopted wholesale.
 
 ### ecdloop-h003-eds-character-collapse-review-opus-20261008-r1
 
-- Status: RUNNING; provider/model: `claudeAgent/claude-opus-5-5`.
+- Status: COMPLETED; provider/model: `claudeAgent/claude-opus-5-5`.
 - Stable request: `ecdloop-h003-eds-character-collapse-review-opus-20261008-r1`.
 - Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-eds-character-collapse-review-opus-20261008-r1`.
 - Scope: Independently verify phi doubling character identity, fixed-window divisor,
   primary mixed-character bound and scoped exclusion. No edits/tests/children.
+
+### ecdloop-h003-lift-section-review-grok-20261008-r1
+
+- Status: RUNNING; provider/model: `grok/grok-4.7`.
+- Stable request: `ecdloop-h003-lift-section-review-grok-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-lift-section-review-grok-20261008-r1`.
+- Scope: First-order Hensel/carry formulas, support obstruction and interval recovery;
+  assess actual concentration mechanism before pilot. No edits/tests/children.

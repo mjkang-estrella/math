@@ -105,3 +105,9 @@ exceeds the original instrumented cap and supplies no mechanism for a persistent
 bias. Moreover a new candidate-specific coordinate identity may provide an
 analytic bound for every fixed window, making that pilot unnecessary; independent
 source/mathematical review is now running. Baseline and verified gain are unchanged.
+
+Subsequent outcome: H003-eds-character-collapse.md now establishes the scoped
+fixed-window A1 magnitude obstruction after independent review and primary-source
+checking. No numerical recovery implementation or larger A1 diagnostic follows.
+The conditional recovery analysis is retained; its predicate premise is not met
+in the required asymptotic regime by this family.
