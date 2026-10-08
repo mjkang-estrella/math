@@ -30,28 +30,25 @@ limitations are documented by negative tests, not silently repaired.
 
 ## Current live work
 
-- Native Sol `/root/small_curve`: W018 numbered graphs independently PASS at
-  `08b5befa350dcd0d7f4b98932cb59a0ba3faca54683e911265af3b185b48cf26`.
-  Root accepts exact graphs for implementation only; W018 record retains evidence.
-  Sol froze Research/WordQueryCode.lean after37 theorem audits. Root comment-only
-  lexical-screen correction gives currenthash
-  `362e4ea41199bcbbaa11f8cb050e416ba757a173fc46c715b1bf3cb060182a82`.
-  Source review/admission/serialization audit pending; not integrated yet.
-- Native Astra `/root/encoding_review`: W018 graph review complete, evidence
-  independently reproduced. W019 adversarial audit complete; ring counterexample and qualified disposition
-  PASS, broad guarantees/ratio test rejected. WordPacking independent review PASS.
-  Now read-only independent review of frozen WordQueryCode and exact graph match.
-- Factory Fable5.1: W019 focused audit COMPLETED, no children. Full report retained
-  in W019-fable-audit-report.md; disposition independently reviewed and accepted
-  only with corrections in W019-disposition.md.
-  Request `ecdloop-w8-literature-audit-fable-20261008-r1`; task ID
+- Native Sol `/root/small_curve`: WordQueryCode frozen, independently reviewed
+  and integrated (347 audits), W022. Now owns only Research/WordQueryDecoder.lean
+  for actual operational field-loop contents/termination/trace refinement.
+  First bounded milestone may be genuine per-iteration/exit semantics if the
+  complete generic 9+6w theorem needs further waves; no assumed macro contract.
+- Native Astra `/root/encoding_review`: W019 adversarial and WordPacking/code
+  reviews complete. Now owns only Research/WordQueryInputFacts.lean: actual raw
+  header/key/payload/query bit association, paired numeric-value lemmas, generic
+  valid indices. No guest-execution claim. Planned API supplied to Sol.
+- Coordinator: independent fresh-run query tests and integration are next.
+  WordPacking and W019 negative finding committed as `b92f092`; typed query
+  code accepted only for fixed graph/admission/serialization, with operational
+  correctness, common F and actual cost comparisons still outstanding.
+- Factory Fable5.1 focused audit completed, no children. Its report is retained
+  with independently reviewed corrections in W019-disposition.md. Request
+  `ecdloop-w8-literature-audit-fable-20261008-r1`; task ID
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w8-literature-audit-fable-20261008-r1`.
-  Identified concrete composite-ring branch counterexample and curve-lift tests;
-  several broad reviewer claims still need qualification. Not blanket acceptance.
-- Coordinator: WordPacking arithmetic/actual-bit-index lemmas independently
-  PASS and integrated (310 audits); W021. W019 finite noncommutative ring addition
-  regression reproduced/reviewed, original prototype unchanged. Reviewing code
-  before actual fresh-run tests and generic prefix/search refinement.
+  The original general ring-addition routine is falsified by a valid-point
+  noncommutativity counterexample; sampled Smart outputs are not thereby refuted.
 - Original Grok literature task: complete report recovered read-only from backing
   timeline position144, updated2026-10-07T23:33:48.137Z, while task status still
   said running with null summary. Retained verbatim; coordinator then cancelled
@@ -67,7 +64,7 @@ limitations are documented by negative tests, not silently repaired.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w7-query-contract-opus-20261007-r1`.
   Earlier W010 Factory and W011 Opus reports/IDs remain in their findings.
 
-Active: coordinator, Astra WordQueryCode review (two); Sol idle after freeze.
+Active: coordinator, Sol operational decoder, Astra input-bit association (three).
 Factory completed; original Grok closed. No duplicate delegated tasks.
 
 Live catalog discovered Codex Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory
@@ -130,9 +127,9 @@ T3 completed rounds (retain exact task IDs; new reviews require new delegates):
 
 ## Current validation and remaining assumptions
 
-Current `./scripts/check.sh` passed: 310 named theorem audits and executable
+Current `./scripts/check.sh` passed: 347 named theorem audits and executable
 smoke output. WordCore (23), WordCodec (29), SignedTight (16) and WordRun (38)
-plus WordRunFacts (10) and WordQueryData (28) and WordPacking (7) are included; independent component reviews PASS. IndexedLookup (31),
+plus WordRunFacts (10) and WordQueryData (28), WordPacking (7) and WordQueryCode (37) are included; independent component reviews PASS. IndexedLookup (31),
 SortedBabies (12), SortedBSGS (4) and all earlier claims remain included.
 Only permitted propext, Classical.choice and Quot.sound dependencies.
 `scripts/sorted_bsgs_checks.lean` runs with lake env lean (no --run; uses #eval)
@@ -156,14 +153,14 @@ W014 runner committed as 4120ffc. W017 exact fresh-run accounting/guest split
 independently passed and integrated (275 audits). W016 amended contract accepted
 ONLY for data encoding/numerical profile support and numbered graph design:
 3aa67dbd8e98de67878d978cb895f3d3763474546ff4ed5dc39c54ec517b92b5.
-Original reviewed draft bd22c845... retained in proposals/archive. Query code
-requires independent frozen-graph review; full result needs nonvacuous actual
-code admission, generic correctness, common-F sufficiency, segment refinement
-and actual fresh-run ledgers. See binding W016 section 9 for all conditions.
+Original reviewed draft bd22c845... retained in proposals/archive. W018 graph and W022 typed code reviews now PASS; actual shared code admission
+is proved nonvacuously. Full result still needs generic correctness, common-F
+sufficiency, segment refinement and actual fresh-run ledgers. See binding W016 section 9 for all conditions.
 
 Previous goal turn: progress (a367812 exact data proofs and retained reports).
 Current turn: progress (W018 graph review accepted/reproduced; W019 focused report
-collected and challenged; fixed code implementation and arithmetic work active). No speedup, whole BSGS cost or
+collected/corrected/committed; arithmetic and fixed code independently verified;
+new operational decoder/input-bit proof tasks active). No speedup, whole BSGS cost or
 cryptographic/tape/hardware result is established. Machine/Problem/Goals and
 existing experiment engines remain unchanged.
 

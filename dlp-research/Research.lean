@@ -23,3 +23,4 @@ import Research.WordRun
 import Research.WordRunFacts
 import Research.WordQueryData
 import Research.WordPacking
+import Research.WordQueryCode
