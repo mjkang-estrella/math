@@ -45,11 +45,45 @@ Persistent broad-ideation and main-problem policies remain in force.
 - Factory Claude Opus5.5 memory/recomputation r1 FAILED with only
   `Internal error: Agent error`, no report or pending children:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-memory-recomputation-factory-opus-20261008-r1`.
-  ONE same-provider/model replacement r2 launched RUNNING, original brief, prior
+  ONE same-provider/model replacement r2 COMPLETED, original brief, prior
   failure and full accounting objections supplied; no safety-failed role retried:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-memory-recomputation-factory-opus-20261008-r2`.
+  Transport summary was only 'Plan is up-to-date.' Root recovered the substantive
+  untruncated report at messages timeline position40; no pending children. Five
+  independent cards retained verbatim in findings/H031-memory-factory-raw.md,
+  with explicit UNREVIEWED warning. No experiment or reported edits/children.
 - Grok4.7 autonomous collision geometry/scheduling proposal RUNNING:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-autonomous-walks-grok-20261008-r1`.
+
+Latest memory synthesis (supersedes older RUNNING snapshots): native Sol
+/root/h010_early_dependencies COMPLETED Card1 mathematics review; native Astra
+/root/h007_additive_relations COMPLETED Cards2–5 review and corrected Card3
+conditional inequality. Root independently checked both. Findings in
+H031-memory-disposition.md: minhash probability corrected from1/n² to1/(2n−1)
+for a single shared element; corrected idealized ledger still loses. Universal
+coalescence/filter closures are rejected. Card1 retained-giant recovery/coverage
+is coherent with identity handling, but0.906 key estimate is UNESTABLISHED.
+Exact conditional coverage recurrence replaces the unsupported count-only hazard.
+Only many-target scope; no single-target improvement or admitted numerical run.
+
+New distinct prior-art/full-cost review COMPLETED, read-only/no edits/runs/children,
+Claude Opus5.5, with previous cost/stopping/memory objections supplied:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-retained-giants-priorart-opus-20261008-r1`.
+Raw review saved in H031-retained-priorart-opus-raw.md. Root independently read
+Kuhn–Struik §4 and Bernstein–Lange grumpy §6: retention and different-stride
+coverage have known antecedents. Raw unmeasured DRAM prices, compulsory explicit
+index bits, dimensionally mixed buffer estimate and comparator rankings rejected.
+Native Astra narrow symbolic-cost correction review COMPLETED: consistent rounded
+generation credit is.09 C_x, and different table prices must be retained; agrees
+no practical domination or new experiment follows. Grok initial proposal
+remains independent and RUNNING. Neither task duplicated. No arithmetic-
+representation role retried. Require justified retained-set coverage and matched
+stored-bit costs before any simulation. Best supported exponent1/2 unchanged,
+verified improvement NONE. No new numerical run/Lean claim.
+
+Validation: ./scripts/check.sh > /tmp/ecdlp-h031-memory-check.log 2>&1 exit0,
+366 existing audits. Paper-only changes, no Audit additions. Root stages only
+STATE and named H031 records after diff inspection; unrelated directories untouched.
 
 H031 recent-primary-source screen (completed): after verified waits, root ran a
 bounded2025/2026 literature search. No absence/novelty conclusion from search.
