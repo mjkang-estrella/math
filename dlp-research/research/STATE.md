@@ -96,8 +96,15 @@ block, not a runtime lower bound. Squared-Cauchy has higher-order displacement
 structure; ordinary low-rank, cheap reciprocal-functional and finite-precision
 claims rejected. Composition lacks constructed inputs; multiplicities do not
 disappear with small support. No sub-n^(3/2) detector or numerical test admitted.
-Other two T3 roles remain live
-as last verified. Exact briefs/provider/model/clientRequestIds/full taskIds in
+Grok memory-constrained role now COMPLETED, terminal result read/no pending
+children. Raw H020-memory-grok-raw.md retained; no gain accepted. Its signed
+macro-walk depends on an unspecified exact low-bit shadow. Root flags mod-p
+carry incompatibility with naive mod-2^w arithmetic and repeated baseline/DP
+errors. NEW Claude Opus shadow-math and Factory Fable cost reviews RUNNING;
+exact stable IDs and full briefs in H020-memory-reviews.md. No experiment
+admitted before a concrete primitive and full-cost justification.
+Factory public-signal initial role remains live as last verified.
+Exact original briefs/provider/model/clientRequestIds/full taskIds in
 hypotheses/H020-independent-candidates.md. No outputs shared before synthesis;
 all read-only, no new experiments/children. These are new distinct mechanisms,
 not continuations through backing child threads or duplicate coordinators.
@@ -112,6 +119,11 @@ H020-penalty-source-audit.md records exact scope, fulltext access, proof review
 and the136-pair fixed-base classical comparator. This rejects the literal
 constraint-equivalence claim, not every full instance or experimental output.
 No claimed quantum/classical speedup accepted; no hardware run or purchase.
+H021 rolling independent ideation uses two freed native slots: Astra adaptive
+relation construction and Sol executable representations/reductions, both
+RUNNING. Distinct briefs and preliminary non-endorsed leads in
+hypotheses/H021-independent-candidates.md. No blocked-role retry, numerical
+work or cross-sharing of initial proposals. Native concurrency respected.
 Root alone integrates; unbounded goal remains active; verified improvementNONE.
 Older historical live-work descriptions below are superseded by this section.
 
@@ -129,6 +141,9 @@ Older historical live-work descriptions below are superseded by this section.
    constructive ideation is live. SP3 still lacks its sub-n^(3/2) detector;
    a concrete balanced triple-progression construction now supplies the matched
    n^(3/2) comparator, including tail and witness costs.
+   A signed macro-walk proposal now faces independent exact-shadow/cost review;
+   the shortcut primitive is missing, so no numerical falsifier is executable.
+   H021 adaptive relations and representations are independent new idea passes.
 4. Evidence: two explicit anchor closures reduce to group/dictionary difference
    search. Fixed precommitted tables have a coverage/setup screen; adaptive
    partial selection is NOT covered. A valid padded small-root lattice has
