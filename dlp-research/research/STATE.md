@@ -117,7 +117,7 @@ remain scoped in their findings; no toy-to-real extrapolation.
 Latest substantive checkpoints:715c5fd reviewed hyperplane counts;0f49240 froze
 H009 and its construction-cost gate. Current changes are paper records only,
 no new Lean theorem or Audit entry. Final check
-`./scripts/check.sh > /tmp/ecdlp-h009-obstruction-check.log 2>&1`
+`./scripts/check.sh > /tmp/ecdlp-h010-dependency-check.log 2>&1`
 passed exit0 (363 existing audits). No code changed. Staged inspection covers
 only task-owned Markdown and excludes toolchains/build products. Unrelated untracked research-monitor/ remains untouched.
 Recent goal turns made progress or verified live-task waits, not a genuine blocker.
@@ -167,13 +167,25 @@ slice/generic-scaling claims unaccepted. Root verified primary metadata; no gene
 sparse-gcd hardness transferred to the fixed-S6 family. The CRT family requires
 a suitable paid factorization of p-1, with no secp256k1 transfer.
 
-H010 live independent initial proposals, no edits/experiments/children:
+H010 independent task status, no edits/experiments/children:
 - Native Astra /root/h006_structured_relation_ideas: compressed exact selectors.
+- Native Sol /root/h010_early_dependencies COMPLETED two operation-level screens:
+  unlabelled-anchor even circuits and repeated-point short divisors. Neither
+  supplied relation producer wins. Root retained sampling/distinctness/full-sweep
+  qualifications in findings/H010-early-dependency-screen.md; no engine/pilot.
 - Factory Fable5.1: adaptive labelled targets/relations with paid factor-base changes:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-adaptive-sampling-fable-20261008-r1`.
 - Grok4.7: nonstandard hybrid geometry/information mechanisms, separate from both:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-hybrid-geometry-grok-20261008-r1`.
 Both T3 launches returned RUNNING; stable clientRequestIds are the task suffixes.
+Both handles revalidated RUNNING after the bounded native wait. Last two goal
+turns were verified waits, not a blocker. A fourth independent proposer was added
+and has now completed its distinct task;
+no completed or live hypothesis was restarted or duplicated.
+Native Astra's preliminary H010 survivor is a cyclic Graeffe norm schedule with
+explicit torsion-root backtracking, not H009 literal division. Final specification
+and cost assumptions are pending. All sparse intermediate products count; shrinking
+modulus is not a runtime bound. New restriction: N built from bounded prime factors.
 Distinct lenses and isolated initial proposals; actual native/T3 limits respected.
 Continue via completion notifications after checkpoint, no busy loop or scheduler.
 New raw reports, reviewed count identities, exact arithmetic command and unresolved

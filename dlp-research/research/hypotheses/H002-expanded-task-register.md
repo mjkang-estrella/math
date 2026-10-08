@@ -11,6 +11,12 @@ Claude Opus H009 prior-art task COMPLETED; raw unproved broader claims not accep
 
 H010 independent proposers, read-only/no trials/edits/children:
 - Native Astra /root/h006_structured_relation_ideas RUNNING compressed selectors.
+- Native Sol /root/h010_early_dependencies COMPLETED isolated useful-dependency
+  ideation (fewer required unknowns/rows, explicit nonzero Q coefficient); native
+  spawn accepted with requested gpt-6.1-sol high reasoning. Separate from selector,
+  sampling and hybrid lenses. Two scoped negative cards retained in H010-early-
+  dependency-screen.md; root corrected upper-bound-as-lower-bound and conditional
+  sampling issues. No fresh experiments or generic rank infrastructure.
 - Factory Fable5.1 RUNNING adaptive labelled sampling/paid domain changes:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-adaptive-sampling-fable-20261008-r1`.
 - Grok4.7 RUNNING unconventional hybrid mechanisms, disjoint from above:
