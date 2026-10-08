@@ -26,16 +26,16 @@ read-only, disjoint writers, no unbounded experiments or reset diagnostic caps.
    preprocessing and parallel tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**. No validated B200/H200 curve-work throughput;
    dashboard multipliers remain hypothetical, never converted from AI FLOPS.
-3. Current hypotheses: H004 distinct-dilation character and structured large-window
-   mechanisms have compact evaluators but no rule predicting useful magnitude or
-   paying for its discovery. Recent-primary-result bridge ideation remains live.
+3. Current hypotheses: independent H005 readable-information and hybrid proposals
+   are live. H004 compact characters still lack useful magnitude/discovery rules;
+   recent-primary-result bridge research has a fresh round after non-delivery.
 4. Latest evidence: frozen four-list P1 loses exact mean output count to the same
    predeclared signed two-list c=2 rule at q31,61,127,251,509. This is an integer
    coverage diagnostic, not a complete solver or asymptotic claim. The global cap
    left larger comparisons unfinished. Fixed-window EDS A1 was separately ruled
    out for the proposed recovery regime by a reviewed coordinate-character bound.
-5. Next conclusion-changing step: record the passed independent JSON audit; inspect
-   the remaining recent-result proposals for an actual cheap algorithmic bridge.
+5. Next conclusion-changing step: screen independent H005 and recent-result
+   proposals for an actual charged algorithm and decisive cheap falsifier.
    No larger P1/A1 run, section sweep, billion-operation Fourier scan or generic
    Lean machinery follows from current evidence. Reopening needs a distinct
    mechanism and a falsifier tied to complete cost.
@@ -46,9 +46,11 @@ read-only, disjoint writers, no unbounded experiments or reset diagnostic caps.
   configurations/9,164 hit entries with exact event-vector/digest reconciliation.
   No field/coverage rerun or completion of partial arrays. Exact previously run
   audit body exported and retained as H004/audit_recorded.py; no new diagnostic.
-- Factory Fable initial H004 recent-result bridge proposal: live task last confirmed
-  RUNNING; await completion notification, do not duplicate:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-recent-bridges-fable-20261008-r1`.
+- Factory Fable H004 recent-result bridge r1: terminal COMPLETED/result_available,
+  no pending children, but only an acknowledgment: no delivered research. This is
+  a task non-delivery, not a provider/tool failure or accepted source review.
+  Fresh r2 is RUNNING with the original scope and explicit prior non-delivery:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-recent-bridges-fable-20261008-r2`.
 - Other native roles now completed: Sol practical proposals, separate Sol coverage
   implementation, Astra algebraic skepticism and EDS source reconciliation.
 - T3 Opus compact-algebra proposal and Grok section review COMPLETED. Raw reports,
@@ -116,11 +118,32 @@ or third-party source are added to the project.
 Recent local milestones:79ef2d9 capped A1 evidence;66022f8 orbit negatives;
 d9099f9 conditional recovery/norm reviews;5781879 fixed-window EDS negative;
 3640f10 source reconciliation/new independent wave;0ac10be practical prior-art
-screen. Current wave adds actual capped P1 data and independently qualified
-algebraic/section dispositions. Previous turn made progress; an earlier turn
+screen;7efae56 capped P1 data and independently qualified algebraic/section
+dispositions. Previous turn made progress; an earlier turn
 was a verified wait on confirmed live handles, not a blocking condition.
 Goal remains active, neither achieved nor blocked; compilation is not completion.
 
 Independent JSON audit confirmed the P1 loss, complete/partial boundaries, all
 metrics and exact1M-event reconciliation. No new arithmetic experiment or cap
-reset. Its evidence export is complete; all native tasks are now idle.
+reset. Its evidence export is complete; H004 native tasks are idle.
+
+## H005 rolling independent ideation
+
+The recent-result Factory r1 later ended without a substantive report. Its
+terminal status was inspected before launching fresh r2; no live task was
+duplicated. H005 independent work and review:
+- Native fresh Astra /root/h005_information_ideas: COMPLETED one concrete
+  rational-reconstruction-steered inverse binary walk; known recovery wrapper,
+  speculative trajectory gain. Saved H005-information-proposal.md. Independent
+  /root/encoding_review is RUNNING mathematical preflight, no numerical trials.
+- Grok hybrid mechanisms, task
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h005-hybrid-ideas-grok-20261008-r1`.
+Proposal and review roles are read-only, no experiments/numerical scratch/children.
+Distinctness matters more than filling requested2–4 cards. Prior rejected hypotheses are supplied
+as scope, not a demand to recycle them. Native root+Astra fit4, T3two fit20.
+No main-metric improvement or new experiment claimed by these launches.
+
+Live capability refresh again exposes all user-authorized providers/models.
+Fable r1 is not counted as an idea/source review. r2 explicitly requires a
+substantive final report, including a justified no-survivor outcome if appropriate.
+No implementation or extra experiment is authorized by this process checkpoint.

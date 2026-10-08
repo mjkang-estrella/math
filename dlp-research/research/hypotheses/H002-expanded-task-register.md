@@ -167,11 +167,15 @@ raw reports retained and qualified by root dispositions, not adopted wholesale.
 
 ### ecdloop-h004-recent-bridges-fable-20261008-r1
 
-- Status: RUNNING; provider/model: `acpRegistry_factory_droid/claude-fable-5.1`.
+- Status: terminal COMPLETED, substantive NON-DELIVERY; provider/model: `acpRegistry_factory_droid/claude-fable-5.1`.
 - Stable request: `ecdloop-h004-recent-bridges-fable-20261008-r1`.
 - Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-recent-bridges-fable-20261008-r1`.
 - Scope: Recent primary results only with concrete charged ECDLP bridge; independent
   initial ideas, no experiments/edits/children.
+
+- Actual final summary: "I'll start by reading the project's findings to understand what has already been tried and rejected."
+- workState=result_available, hasPendingChildRuns=false, isError=false.
+  No proposal/source report received; do not count as research or provider failure.
 
 Native Sol `/root/h002_tradeoff_ideas` RUNNING new H004 whole-solver co-design
 ideation, independent of those initial briefs, read-only/no experiments/children.
@@ -186,3 +190,26 @@ one capped diagnostic. /root/encoding_review now audits recorded JSON only.
 /root/h002_arithmetic_ideas completed skeptical algebraic review. No extra runs.
 Grok section review reported a formula witness without reproducible numerical
 provenance; that limitation and derivative corrections retained in H003-lift-section-disposition.md.
+
+## H005 rolling proposals
+
+### ecdloop-h005-hybrid-ideas-grok-20261008-r1
+
+- Status: RUNNING; provider/model: `grok/grok-4.7`.
+- Stable request: `ecdloop-h005-hybrid-ideas-grok-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h005-hybrid-ideas-grok-20261008-r1`.
+- Scope: Distinct concrete unconventional arithmetic/combinatorial hybrids;
+  independent initial ideas, no experiments/numerical scratch/edits/children.
+
+Native fresh Astra /root/h005_information_ideas COMPLETED independent readable
+scalar-information proposal I1; no padding. H005-information-proposal.md.
+/root/encoding_review RUNNING separate mathematical preflight, read-only, no trials.
+
+### ecdloop-h004-recent-bridges-fable-20261008-r2
+
+- Status: RUNNING; provider/model: `acpRegistry_factory_droid/claude-fable-5.1`.
+- Stable request: `ecdloop-h004-recent-bridges-fable-20261008-r2`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-recent-bridges-fable-20261008-r2`.
+- Fresh delegate_task after terminal r1; original brief and non-delivery included.
+  Concrete primary-result bridges, actual costs and cheap proposed falsifiers.
+  No experiments/numeric scratch/edits/children. No other H005 initial proposals.
