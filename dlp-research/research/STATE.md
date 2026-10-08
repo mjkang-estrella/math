@@ -1,222 +1,126 @@
 # Main-objective research checkpoint
 
-Status: **active, algorithm-first research** (2026-10-08 UTC). Existing goal in
-coordinator thread `01a118a2-f8f0-7751-90bd-ddeb86a90ada` remains active, unbounded.
-No duplicate coordinator, scheduler, push or publication. No third-party targets.
+Status: **active, algorithm-first research** (2026-10-08 UTC). Existing unbounded
+goal in thread `01a118a2-f8f0-7751-90bd-ddeb86a90ada` remains open. No duplicate
+coordinator, scheduler, push, publication or third-party targeting.
 
-## Persistent user corrections acknowledged
+## Persistent user steering
 
-After363 theorem audits, generic word/query/decoder refinement had displaced
-algorithm research. This was drift, not ECDLP progress. RESEARCH_LOOP.md and
-RESEARCH_TEAM.md now prioritize credible complexity and complete work. Parked
-work is preserved; no generic infrastructure without a named promising candidate
-and exact necessary claim. The main-goal metric is never audits/agents/commits.
+Credible ECDLP complexity and matched complete work are the main metrics. The
+former word/query/decoder infrastructure priority was drift; parked drafts are
+preserved, but no more generic infrastructure without a named promising candidate
+and necessary claim. Audit counts, commits, model/idea counts are not attack progress.
 
-Broad independent ideation is persistent policy: distinct mechanisms, isolated
-initial briefs, speculative ideas allowed, then deduplication/criticism and cheap
-falsifiers. T3 user-confirmed capacity20 is separate from native four active slots;
-respect actual provider failures. Seven independent initial pools now received,
-27 raw cards before deduplication, not27 discoveries. Multiple mechanisms overlap
-or lack executable bridges. No need to manufacture an idea-count quota.
+Broad independent creative ideation remains policy: distinct mechanisms, isolated
+initial briefs, then deduplication, primary-source/cost criticism and cheap falsifiers.
+High-risk ideas may enter without a complete proof. No quota/padding or automatic
+rejection from generic lower bounds. User-confirmed T3 capacity20 is separate from
+native4 including root. Honor actual failures; do not silently substitute models.
+Root alone integrates shared files/imports/Audit, stages and commits. Reviewers
+read-only, disjoint writers, no unbounded experiments or reset diagnostic caps.
 
 ## Five-item wave report
 
-1. Best supported work: classical square-root ECDLP baseline on ordinary prime-
-   field prime-order curves, with applicable known automorphism constants and
-   matched memory/preprocessing/parallel tradeoffs. Not a coordinate lower bound.
-2. Verified improvement versus accepted baseline: **NONE**. No validated B200/H200
-   curve-work throughput; dashboard multipliers remain hypothetical. AI FLOPS
-   must not be converted into an EC benchmark.
-3. Current hypothesis: explicit p-adic carry/deformation sections might compress
-   the complete scalar correction into a small interval. Concrete conditional
-   recovery exists, but no concentration mechanism is established; independent
-   Grok review is running. V1 marked-surface extraction remains missing/parked.
-4. Evidence: A1 fixed-window EDS character collapses exactly to translated y
-   characters. Primary mixed-character bounds and independent review give all
-   normalized Fourier amplitudes <=6s*sqrt(p)/q. For fixed/polylog s and q≈p,
-   this excludes H003's proposed sufficient bias regime. See
-   H003-eds-character-collapse.md. Norm and orbit constructions yielded no gain.
-   Earlier H001 rank counterexamples and other scoped negatives remain retained.
-5. Next conclusion-changing evidence: independently assess the section formulas,
-   concentration mechanism and complete solver cost. No larger A1 diagnostic or
-   generic numerical/Lean infrastructure. New work must supply a distinct cheap
-   mechanism; neither finite biases nor polynomial degrees prove asymptotics.
+1. Best supported work: classical square-root baseline for ordinary prime-field
+   prime-order ECDLP, with known automorphism constants and matched memory,
+   preprocessing and parallel tradeoffs. This is not a coordinate-aware lower bound.
+2. Verified improvement: **NONE**. No validated B200/H200 curve-work throughput;
+   dashboard multipliers remain hypothetical, never converted from AI FLOPS.
+3. Current hypotheses: H004 distinct-dilation character and structured large-window
+   mechanisms have compact evaluators but no rule predicting useful magnitude or
+   paying for its discovery. Recent-primary-result bridge ideation remains live.
+4. Latest evidence: frozen four-list P1 loses exact mean output count to the same
+   predeclared signed two-list c=2 rule at q31,61,127,251,509. This is an integer
+   coverage diagnostic, not a complete solver or asymptotic claim. The global cap
+   left larger comparisons unfinished. Fixed-window EDS A1 was separately ruled
+   out for the proposed recovery regime by a reviewed coordinate-character bound.
+5. Next conclusion-changing step: record the passed independent JSON audit; inspect
+   the remaining recent-result proposals for an actual cheap algorithmic bridge.
+   No larger P1/A1 run, section sweep, billion-operation Fourier scan or generic
+   Lean machinery follows from current evidence. Reopening needs a distinct
+   mechanism and a falsifier tied to complete cost.
 
-## Live work and ownership
+## Current live work, exact ownership
 
-Root alone integrates shared documents/imports/Audit, stages and commits. Native
-Sol `/root/small_curve` completed/froze the A1 diagnostic. Factory Fable independently
-approved its source, then root ran it once at the original cap. Native Astra
-`/root/encoding_review` independently audited JSON/correlations/vector reconciliation,
-without rerunning field arithmetic. No writer currently edits shared files.
-
-A1 actual run: exit2 incomplete at1M events,6/11complete cases,530 retained rows,
-1060 index identity checks and41 completed families. Seventh case has all rows
-and5/6families; remaining cases not run. No larger budget authorized. All fixed
-+orientation families fail a universal-positive-advantage claim on the tested
-cases; the c=−1 five-offset subset remains inconclusive, not a scaling result.
-See H002-eds-initial-diagnostic.md, exact raw JSON and independent code review.
-
-Native Astra `/root/encoding_review` COMPLETED a concrete conditional noisy
-predicate-to-scalar construction via dyadic importance sampling of Fourier interval
-energies. Proposed sufficient epsilon^(-6)*polylog work passed mathematical review with repairs, not optimal,
-not an ECDLP improvement. Full proposal H003-noisy-recovery-proposal.md. Root
-and reviewer confirm absolute correlation suffices without a known orientation;
-see H003-noisy-recovery-disposition.md. Bit-cost review accepts polynomial precision; raw operation prices remain unvalidated. Do not treat the raw
-reviewer's epsilon^(-11) route as optimal or a noisy-oracle bound as universal.
-Native Astra `/root/h002_arithmetic_ideas` COMPLETED explicit A3 orbit-invariant
-construction/cost development, no edits/tests/children. Return derivatives telescope
-to a constant; pairing and coordinate-algebra invariants currently lose on setup/
-evaluation costs. See H003-orbit-invariant-development.md; no further run funded. Astra COMPLETED both A1 character/divisor analysis and the restricted literature
-reconciliation; H003-eds-literature-reconciliation.md records the exact scope.
-
-T3 Claude Opus norm/coefficient witness-generator development COMPLETED:
-`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-norm-generator-development-opus-20261008-r1`.
-No repository edits/children; three generators yielded no accepted gain. The
-report admitted unrequested/uninstrumented scratch checks despite no-test brief;
-not accepted as numerical evidence. Corrected parameter-specific cost gate and
-capacity limitations in H003-norm-generator-disposition.md.
-
-T3 EDS code review COMPLETED:
-`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-eds-code-review-fable-20261008-r1`.
-Earlier H002 initial proposals/reviews completed, except Factory geometric-transfer
-rounds1/2 FAILED with `Internal error: Agent error`, no findings. Replaced explicitly
-by native Sol. Full stable IDs/models in expanded-task-register and individual
-findings; no backing-child-thread messages to continue T3 reviews.
-
-## Accepted records, unresolved objections, process
-
-- `H002-first-synthesis-and-review-limits.md`: provisional deduplication/ranking,
-  preserved high-risk hypotheses, reviewer disagreements and non-adopted claims.
-- `H002-predicate-and-circuit-gates.md`: G2 and x-only null gates; G1 circuit remains
-  missing, and high recurrence complexity is not a circuit lower bound.
-- `H002-eds-normalization-disposition.md`: corrected phi(nP)=phi(P)^(n²)*W(n),
-  c^n character formula; even products not null controls. Reviewer scratch check
-  exceeded its10000-arithmetic-event brief; unmeasured excess explicitly recorded,
-  not a compliant experiment. Root has inspected but not reproduced it yet.
-- `H002-tradeoff-review-disposition.md`: baseline reuse, I/O, immutable weighted
-  labels; Grok's universal scheduling dominance not proved, raw pilot not funded.
-- `H002-marked-surface-disposition.md`: integer-matrix recovery bridge accepted;
-  no extraction algorithm. Equivalence is not impossibility; raw isotropy and
-  dense-map claims corrected. V1 retained without funding surface infrastructure.
-- `H002-filter-full-work-gate.md`: restricted renewal gate, pending a real cheap
-  predictor. Variable costs/dependence/timeout caveats in synthesis.
-- Raw reviewer reports and all proposer pools retained under findings/hypotheses.
-  Raw numerical claims, lower bounds and absence-of-prior-art claims are NOT
-  automatically accepted. The conditional epsilon^(-6) derivation has mathematical review, with polynomial-precision review completed.
-
-## Validation and commits
-
-Local milestones: `22fe257` refocus/parked work; `98bbebb` reproduced H001 rank
-negative evidence; `83c8529` learning cards/corrections; `8b8eb41` arithmetic cards,
-T3 capacity policy, expanded allocation and filter gate. Current wave adds scoped
-analytical negatives, corrected EDS diagnostic prerequisite and independent pools.
-`./scripts/check.sh > /tmp/ecdlp-h002-gates-check.log 2>&1` exited0 this wave,
-363 existing audits. No new Lean theorem; those counts are validation metadata.
-The new A1 run is independently reviewed finite evidence, explicitly incomplete,
-not a solver benchmark. Latest checks `./scripts/check.sh >
-/tmp/ecdlp-h002-eds-check.log 2>&1` exited0; no new Lean claim.
-
-Exact parked drafts: `research/parked/20261008-query-infrastructure/`, never imported.
-Unrelated `research-monitor/` remains untouched. No toolchain/build products staged.
-The1M-event cap includes overlapping counters and excludes physical/bit costs.
-
-Previous goal turn was progress: froze implementation, accepted constraint critique,
-and launched distinct concrete algorithm work. This turn made progress: actual
-bounded run, independent evidence audit, and an explicit no-larger-run decision
-pending a recovery gate. Goal remains open, neither achieved nor blocked. No
-scheduler, push, publication, real-wallet targeting or GPU-performance claim.
-
-Latest local experiment milestone79ef2d9 retains the reviewed partial A1 run,
-exact source/results hashes, raw evidence and no-larger-run decision. Orbit
-development subsequently supplied three explicit costed failures; noisy recovery
-has mathematical review and norm-generator development has completed. No verified improvement; goal unchanged.
-
-## Latest bounded wave (after66022f8)
-
-Previous goal turn was progress: independently reviewed/capped A1 evidence and
-three costed orbit failures committed79ef2d9/66022f8. This wave records a concrete
-conditional noisy recovery algorithm and launches independent mathematical and
-bit-cost reviews, plus distinct symbolic lifting-section development. No new run.
-
-T3 review statuses (no edits/tests/children):
-- Claude Opus mathematical review COMPLETED; accepted with repairs, request `ecdloop-h003-noisy-math-review-opus-20261008-r1`:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-noisy-math-review-opus-20261008-r1`.
-- Factory Fable bit/numerical/full-cost review COMPLETED, request `ecdloop-h003-noisy-bitcost-review-fable-20261008-r1`:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-noisy-bitcost-review-fable-20261008-r1`.
-Native fresh Sol `/root/h003_lift_sections` COMPLETED read-only concrete sections/
-first-order symbolic defect families, no experiments/edits/children. Avoid broken
-W019 ring formulas and broad proof infrastructure. Norm-generator T3 has completed with scoped negative findings; see disposition.
-No duplicate hypotheses or coordinator; native root+Sol+Astra below4, T3 below20.
-
-Latest review checkpoint: Opus accepts the conditional Fourier reduction with
-repairs; root corrects the raw impossible epsilon=1 illustration and the overly
-strong necessary-threshold wording. Orientation is no longer required for this
-reduction. Norm generators supply no gain; raw scratch checks remain unaccepted.
-`./scripts/check.sh > /tmp/ecdlp-h003-review-check.log 2>&1` exited0, no new Lean
-claim. No new field experiment, larger cap, or change to baseline.
-
-Latest candidate-specific development: Astra derives chi(phi(R))=chi(2y(R/2))
-from the corrected doubling identity. Fixed windows are low-degree
-rational characters with the reviewed square-root Fourier bounds (Shparlinski–Stange0912.5246,
-Lemmas4/5). Root retrieved primary paper; the geometric nonpower wording was resolved using Chen Proposition1.
-Independent Opus review COMPLETED under task
-`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-eds-character-collapse-review-opus-20261008-r1`.
-No larger A1 run; Fable's uninstrumented suggested larger pilot is not approved.
-Native Sol section derivation completed; transcribed in H003-lift-section-development.md,
-not accepted as reviewed yet, no experiment. Grok independent review RUNNING:
-`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-lift-section-review-grok-20261008-r1`.
-Local commit d9099f9 records the conditional recovery reviews and norm negatives.
-
-## Accepted fixed-window negative milestone
-
-H003-eds-character-collapse.md records the exact halving identity, degree3s
-rational function, primary Chen Proposition1 and subgroup averaging, and independent
-Opus review. Root read the antecedent to resolve defective preprint wording.
-The collapse review task is COMPLETED. Raw review's supersingular-subgroup and
-unqualified O(log q)-bit Boolean generalizations are not adopted. No new arithmetic
-experiment; no claim to improve ECDLP or prove generic hardness. The fixed-window
-A1/H003 route is closed for the stated q≈p regime. Variable large windows and
-other predicates remain outside the finding. Astra completed the precise relation
-to the broader 2025 EDS question; no novelty or general resolution is claimed.
-
-Local d9099f9 retains recovery/norm findings. Current progress is a scoped analytic
-candidate rejection plus preserved explicit section hypotheses, not audit growth.
-Goal remains active and unbounded; next wakeup is independent section review.
-
-## H004 independent ideation started after5781879
-
-Previous goal turn: progress, committing conditional recovery/cost reviews and
-an independently checked scoped EDS rejection. Current authoritative git worktree
-was clean except unrelated research-monitor. Grok section review task_status
-returned RUNNING this turn; do not duplicate it. Live catalog refreshed; authorized
-providers still present with child support. No scheduler or new coordinator.
-
-To preserve broad independent exploration after closing A1, three disjoint
-initial H004 briefs are live, with no cross-reading of new proposals before
-synthesis and no experiments/edits/children:
-- Native Sol `/root/h002_tradeoff_ideas`: actual whole-solver search/arithmetic
-  co-design beyond previous T1–T4 wrappers and known batching.
-- Claude Opus: compact algebraic functions/divisor products with executable
-  scalar-recovery bridges, not missing-oracle requests.
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-compact-algebra-opus-20261008-r1`.
-- Factory Fable: recent primary results with concrete applicable ECDLP input
-  construction and complete costs, not a literature survey.
+- Native Astra `/root/encoding_review`: COMPLETED H004 JSON audit, PASS58 complete
+  configurations/9,164 hit entries with exact event-vector/digest reconciliation.
+  No field/coverage rerun or completion of partial arrays. Exact previously run
+  audit body exported and retained as H004/audit_recorded.py; no new diagnostic.
+- Factory Fable initial H004 recent-result bridge proposal: live task last confirmed
+  RUNNING; await completion notification, do not duplicate:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-recent-bridges-fable-20261008-r1`.
-Each requests3–5 distinct mechanisms only if worthwhile, not a quota. Native
-root+Astra+Sol fit4; T3 two proposers+one distinct reviewer fit20. Main metric
-remains credible whole-solver work; no improvement or new experiment is claimed.
+- Other native roles now completed: Sol practical proposals, separate Sol coverage
+  implementation, Astra algebraic skepticism and EDS source reconciliation.
+- T3 Opus compact-algebra proposal and Grok section review COMPLETED. Raw reports,
+  task IDs and qualified dispositions retained. All stable IDs/models/rounds are
+  in `research/hypotheses/H002-expanded-task-register.md`. New T3 rounds use new
+  delegate_task calls and request IDs; no backing-child-thread continuation.
 
-Latest concrete evidence: H003-eds-literature-reconciliation.md derives
-s_n*s_(n+h)=c^h*v(n)*v(n+h), with exact zeros and integer-index twist. It yields
-a restricted odd-order quadratic fixed-shift cancellation case, compatible with
-the broader 2025 problem. Root retrieved the primary question/theorem and checked
-scope. No extra field operations or revised hardware claim. Native Astra is idle;
-root+Sol below4. Grok review and two H004 T3 proposers are live; await notifications.
+## Latest frozen experiment
 
-H004 early practical screen: native Sol and root independently found paired
-addition/block generation in Galbraith–Wang–Zhang and terminal satellite y omission
-in primary source. H004-practical-baseline-screen.md records the exact scope;
-these are baseline capabilities, not new savings. No third-party program was run.
-Previous turn was a verified wait on actual RUNNING task handles, not a blocker.
-This turn adds a source-supported negative screen while other proposals continue.
+Protocol `H004-progression-coverage-protocol.md`:
+`011ee6254fcd39829a862552047ad016d82317f6925813497b1ab9ec8e24ab80`.
+Source `research/experiments/H004/coverage_gate.py`:
+`8922240d5f2eabf7e9113122cac849210cf573e9a666f19b26c41b82f28b285b`.
+Root ran ONCE:
+`python3 research/experiments/H004/coverage_gate.py --output research/experiments/H004/coverage_initial_results.json`.
+Exit2: exactly1M algorithmic events,4 full profiles,58 complete configurations,
+q509 partial three-list configuration at emission44; q1021 not started. Raw JSON:
+`118bc3cda44688cfbeb12267524f494fdb17ef26e9d2f92d156374aa8db3b19b`.
+All actual means, source-review cautions, commands, costs and excluded costs are
+in `H004-coverage-initial-diagnostic.md`. No inference from incomplete arrays.
+
+Fixed c=2 B2 beats P1 at all five completed candidate configurations. At q509 even
+P1's censored lower bound exceeds B2's complete mean; no fallback dependence.
+No posterior best-grid rule was supplied to a solver. Full field/lookup/setup/
+recovery costs were deliberately not measured; result is a bounded rejection gate.
+
+## Accepted negative findings and retained limits
+
+- H001 numeric value rank did not imply low zero-indicator rank; nine synthetic
+  cases independently reproduced. No n5 relation generator followed.
+- H003 EDS character collapse: chi(phi(R))=chi(2y(R/2)); fixed translated products
+  have degree3s, and all Fourier amplitudes <=6s*sqrt(p)/q. Primary Chen theorem,
+  independent review and subgroup argument recorded. No general hardness theorem.
+- H003 EDS literature reconciliation: integer-index twist cancels for the quadratic
+  two-factor correlation, yielding a restricted odd-order fixed-shift result.
+  No novelty claim or resolution of the general2025 question.
+- H003 conditional noisy recovery is a reviewed epsilon^(-6) paper construction,
+  with polynomial precision repairs and absolute bias sufficient. It supplies
+  no useful predicate; unmeasured reviewer operation prices are not adopted.
+- H003 orbit invariants and norm/coefficient generators supply no improved solver.
+  Specific unfavorable constructions do not prove all compact circuits impossible.
+- H003 lifting sections have an exact conditional representation and recovery
+  scheme, but no correction-concentration mechanism. Grok recurrence/derivative
+  objections are qualified in the disposition. No252-section pilot is funded.
+- H004 compact-algebra review preserves real growing-support M1 and supported
+  x-window evaluation M2, while rejecting blanket bounded-support assertions,
+  unproved block-noise savings, missing frequency discovery and universal closures.
+- H004 practical baseline screen finds paired addition and terminal-y omission
+  already in primary paper/code. No third-party executable was run.
+
+Earlier broad pools, tradeoff/constraint/marked-surface gates, failed Factory
+geometric-transfer rounds and parked work remain in their records. Useful scoped
+negatives are preserved; raw reviewer claims are not automatically accepted.
+Several reviewers ran unrequested/uninstrumented scratch checks; these violations
+are explicitly recorded and the numbers not accepted as experiment evidence.
+
+## Validation and continuation
+
+Latest `./scripts/check.sh > /tmp/ecdlp-h004-coverage-check.log 2>&1` exit0.
+No new Lean theorem; Audit.lean unchanged. Implementer syntax-check command and
+source hash are retained. Final staged-path/diff inspection is root-owned.
+Unrelated untracked `research-monitor/` is untouched. No toolchains/build caches
+or third-party source are added to the project.
+
+Recent local milestones:79ef2d9 capped A1 evidence;66022f8 orbit negatives;
+d9099f9 conditional recovery/norm reviews;5781879 fixed-window EDS negative;
+3640f10 source reconciliation/new independent wave;0ac10be practical prior-art
+screen. Current wave adds actual capped P1 data and independently qualified
+algebraic/section dispositions. Previous turn made progress; an earlier turn
+was a verified wait on confirmed live handles, not a blocking condition.
+Goal remains active, neither achieved nor blocked; compilation is not completion.
+
+Independent JSON audit confirmed the P1 loss, complete/partial boundaries, all
+metrics and exact1M-event reconciliation. No new arithmetic experiment or cap
+reset. Its evidence export is complete; all native tasks are now idle.
