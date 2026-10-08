@@ -14,6 +14,12 @@ by these launches; reviewers may propose corrected bounded tests.
 
 ## H002 independent geometric transfers
 
+Round1 terminated FAILED with `Internal error: Agent error`, no findings and
+no pending children. Not counted as completed research. One same-model retry
+launched initially RUNNING, now also FAILED with the same error under request `ecdloop-h002-geometry-transfer-20261008-r2`:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-geometry-transfer-20261008-r2`.
+Retain the original failed handle below; no silent provider substitution.
+
 - Provider/model: `acpRegistry_factory_droid/claude-opus-5-5`.
 - Role: research; status running at launch.
 - Stable request: `ecdloop-h002-geometry-transfer-20261008-r1`.
@@ -71,3 +77,34 @@ by these launches; reviewers may propose corrected bounded tests.
 Primary best-work reference unchanged; verified improvement NONE. Breadth and
 review capacity are process, not evidence of an algorithmic gain. Next evidence:
 independent proposal cards and adversarial acceptance gates, then matched tests.
+
+## Status reconciliation after initial pool completion
+
+All original seven tasks completed except geometric-transfer rounds1 and2,
+which both FAILED with `Internal error: Agent error`, no findings. The failed
+Factory lens was explicitly replaced by native Sol /root/h002_geometry_transfer,
+which completed four independent cards. Constraint, geometry-Grok, algebraic-Opus,
+and learning-Fable initial pools all completed. No silent provider substitution.
+EDS round1, lifting, orbit, predictor-reduction and filter reviews completed;
+raw reports retained and qualified by root dispositions, not adopted wholesale.
+
+### ecdloop-h002-eds-math-review-20261008-r2
+
+- Status: COMPLETED; provider/model: `claudeAgent/claude-opus-5-5`.
+- Stable request: `ecdloop-h002-eds-math-review-20261008-r2`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-eds-math-review-20261008-r2`.
+- Scope: New review with prior normalization objection; derived correction; scratch arithmetic exceeded10000-event brief, explicitly retained as violation.
+
+### ecdloop-h002-components-review-20261008-r1
+
+- Status: COMPLETED; provider/model: `grok/grok-4.7`.
+- Stable request: `ecdloop-h002-components-review-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-components-review-20261008-r1`.
+- Scope: T3 dynamic component correctness, prior art, matched comparator; no test. Root qualifies unsupported dominance and raw budget.
+
+### ecdloop-h002-marked-surface-review-20261008-r1
+
+- Status: COMPLETED; provider/model: `claudeAgent/claude-opus-5-5`.
+- Stable request: `ecdloop-h002-marked-surface-review-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-marked-surface-review-20261008-r1`.
+- Scope: V1 input marking, short relation, quotient/extraction cost. Read-only, no experiments or children.

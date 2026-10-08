@@ -1,166 +1,107 @@
 # Main-objective research checkpoint
 
-Status: **active, algorithm-first refocus** (2026-10-08 UTC). Existing persistent
-goal in coordinator thread `01a118a2-f8f0-7751-90bd-ddeb86a90ada` remains active;
-no new coordinator, budget, recurring scheduler, push or publication.
+Status: **active, algorithm-first research** (2026-10-08 UTC). Existing goal in
+coordinator thread `01a118a2-f8f0-7751-90bd-ddeb86a90ada` remains active, unbounded.
+No duplicate coordinator, scheduler, push or publication. No third-party targets.
 
-## User correction acknowledged
+## Persistent user corrections acknowledged
 
-The user correctly identified drift: after363 theorem audits, active work was
-on query/decoder machine semantics without an improved ECDLP algorithm or full
-solver-cost result. This was disproportionate supporting work, not progress in
-credible ECDLP complexity or complete work. RESEARCH_LOOP.md/RESEARCH_TEAM.md now
-make algorithm hypotheses and cheap falsification primary. Earlier milestone
-ordering is superseded. Do not restart parked infrastructure without a named
-promising candidate and an exact necessary claim that can change its acceptance.
+After363 theorem audits, generic word/query/decoder refinement had displaced
+algorithm research. This was drift, not ECDLP progress. RESEARCH_LOOP.md and
+RESEARCH_TEAM.md now prioritize credible complexity and complete work. Parked
+work is preserved; no generic infrastructure without a named promising candidate
+and exact necessary claim. The main-goal metric is never audits/agents/commits.
 
-Latest user steering also requires broad independent ideation. H002 now expands
-the pool through rolling independent proposer waves, roughly3–5 mechanisms per
-proposer and15–25 distinct initial candidates if worthwhile, without quotas.
-Initial proposals are isolated before synthesis; speculative ideas are welcome.
-This supersedes the narrow two-ideas-plus-critic allocation. Latest user correction
-confirms T3 supports20 concurrent subagents, separately from the native four-slot
-limit; it supersedes the earlier conservative shared-cap assumption. Main metric remains credible
-complexity/complete work; verified improvement and dashboard baseline unchanged.
+Broad independent ideation is persistent policy: distinct mechanisms, isolated
+initial briefs, speculative ideas allowed, then deduplication/criticism and cheap
+falsifiers. T3 user-confirmed capacity20 is separate from native four active slots;
+respect actual provider failures. Seven independent initial pools now received,
+27 raw cards before deduplication, not27 discoveries. Multiple mechanisms overlap
+or lack executable bridges. No need to manufacture an idea-count quota.
 
-## Current five-item result report
+## Five-item wave report
 
-1. **Best supported complexity/work:** the working classical reference remains
-   generic square-root work on ordinary prime-field prime-order groups, with
-   known automorphism constants and memory/parallel tradeoffs. This is not a
-   coordinate-specific impossibility theorem. No calibrated full-size GPU cost.
-2. **Verified improvement versus accepted baseline: NONE.** Known signed BSGS,
-   finite toy successes, theorem/audit counts and commits are not discoveries.
-3. **Hypotheses under test:** H001 ranked shortlist, in research/hypotheses/
-   H001-algorithm-shortlist.md: concrete coordinate-aware relation generation;
-   coordinate relation-generator falsification plus H002 broad independent ideas.
-   Delayed canonicalization and GLV-only exponent claims failed the present gate.
-4. **Evidence:** coordinate approaches still owe an actual efficient relation
-   generator; known joins and unsupported bucket assumptions may already lose.
-   Delayed canonicalization has a finite coalescence counterexample and unfavorable
-   diagnostic arithmetic, reproduced byte-for-byte; not a runtime lower bound.
-   Existing signed studies and W019 corrections are prior/negative evidence,
-   not a verified improvement over the best applicable known baseline.
-5. **Next conclusion-changing experiment:** derive and independently challenge
-   actual candidate costs first. Only surviving explicit mechanisms get matched
-   scaling/correctness tests on increasing representative synthetic sizes/seeds.
-   If none survives, record that quickly and replace the hypotheses, not the goal.
+1. Best supported work: classical square-root ECDLP baseline on ordinary prime-
+   field prime-order curves, with applicable known automorphism constants and
+   matched memory/preprocessing/parallel tradeoffs. Not a coordinate lower bound.
+2. Verified improvement versus accepted baseline: **NONE**. No validated B200/H200
+   curve-work throughput; dashboard multipliers remain hypothetical. AI FLOPS
+   must not be converted into an EC benchmark.
+3. Hypotheses under test: A1 arithmetic-selected EDS scalar-predicate bias with
+   corrected normalization; V1 marked quotient surface giving a short quadratic
+   scalar relation, conditional on cheap explicit construction/extraction.
+4. Evidence: H001's value-rank-to-zero-indicator inference failed on all9 synthetic
+   cases and was independently reproduced. G2's specified large interval-coordinate
+   Fourier spike fails a primary character-sum bound for q≈p. Multiplicative x-only
+   views have exact zero full-nonzero-group correlation with scalar parity/half.
+   These are scoped negative gates, not generic coordinate impossibility. A1
+   normalization is now independently derived; its noisy reconstruction and bias
+   remain unestablished. V1 has no cheap primitive. Tradeoff tricks owe stronger
+   full-work comparators, and do not establish single-target exponent savings.
+5. Next conclusion-changing evidence: review and run the bounded A1 diagnostic,
+   counting actual field arithmetic and all labels. V1 review found no extraction
+   algorithm; retain it at lower priority until such a primitive is specified. Test any surviving concrete solver against matched baselines.
+   No finite bias/degree result proves asymptotics or a whole-solver speedup.
 
-No B200/H200 elliptic-curve-work benchmark is validated. Any hardware/dashboard
-multipliers are hypothetical; published AI FLOPS must not be converted to ECDLP
-throughput. No third-party wallets or live-fund recovery.
+## Live work and ownership
 
-## Live delegated work (user-confirmed T3 capacity20; native capacity4)
+Root alone integrates shared documents/imports/Audit, stages and commits. Native
+Sol `/root/small_curve` IMPLEMENTING ONLY two disjoint files:
+`research/experiments/H002/eds_diagnostic.py` and `eds_protocol.md`. Syntax check
+allowed; experiment awaits independent pre-run review. Global requested run cap:
+1M instrumented events/60s; count field-power internals, preserve incomplete output.
 
-Seven additional T3 tasks launched RUNNING after the explicit capacity correction:
-two independent proposers (geometric transfers; constraint/synthesis), five
-distinct reviews (EDS bridge; lifting defect; orbit transporter; noisy predicate
-reduction; filter full cost). Exact stable request IDs, task IDs and provider/
-models are in H002-expanded-task-register.md. At launch this made nine T3 tasks
-plus one native delegate. No experiment/implementation or grandchildren funded.
+Native Astra `/root/encoding_review` RUNNING read-only sufficiency critique of
+Grok constraint cards. Earlier G1/G2 and T1/T2/T4 reviews completed; integrated.
+Native `/root/h002_arithmetic_ideas`, `/root/h002_tradeoff_ideas`,
+`/root/h002_geometry_transfer` completed independent initial cards. No grandchildren.
 
-- geometry-transfer (`acpRegistry_factory_droid/claude-opus-5-5`), running at launch:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-geometry-transfer-20261008-r1`.
-- constraint-synthesis (`grok/grok-4.7`), running at launch:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-constraint-synthesis-20261008-r1`.
-- eds-math-review (`claudeAgent/claude-opus-5-5`), running at launch:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-eds-math-review-20261008-r1`.
-- lift-math-review (`acpRegistry_factory_droid/claude-fable-5.1`), running at launch:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-lift-math-review-20261008-r1`.
-- orbit-math-review (`claudeAgent/claude-opus-5-5`), running at launch:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-orbit-math-review-20261008-r1`.
-- predictor-reduction-review (`acpRegistry_factory_droid/claude-opus-5-5`), running at launch:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-predictor-reduction-review-20261008-r1`.
-- filter-cost-review (`claudeAgent/claude-opus-5-5`), running at launch:
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-filter-cost-review-20261008-r1`.
+T3 Claude Opus marked-surface review COMPLETED, no edits/tests/children:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-marked-surface-review-20261008-r1`.
 
-- H002 Grok4.7 geometry proposer RUNNING, request
-  `ecdloop-h002-geometry-grok-20261008-r1`, task
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-geometry-grok-20261008-r1`.
-- H002 Factory Fable5.1 learning/tradeoff proposer COMPLETED, request
-  `ecdloop-h002-learning-tradeoffs-fable-20261008-r1`, task
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-learning-tradeoffs-fable-20261008-r1`.
-  Both initial briefs are independent of prior proposal reports. Exact allocation,
-  next distinct lenses and synthesis gate: H002-broad-independent-pool.md.
-  Factory produced four cards, with L1/L2 one shared mechanism. Raw report and
-  coordinator corrections retained; no proposed experiments or reductions accepted.
-- H002 Claude Opus5.5 algebraic/coordinate proposer RUNNING in Factory's freed
-  slot, request `ecdloop-h002-algebraic-opus-20261008-r1`, task
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-algebraic-opus-20261008-r1`.
-  Independent initial brief, no other proposals supplied; read-only, no children.
+All H002 T3 initial proposals/reviews completed, except Factory geometric
+transfer rounds1/2 both FAILED (`Internal error: Agent error`, no findings),
+explicitly replaced by native Sol. Full stable request/task IDs, models and latest
+statuses: `research/hypotheses/H002-expanded-task-register.md`; older H001/wave IDs
+remain in their individual findings and parked prior checkpoint. Never continue
+T3 reviews by backing-thread messages; every new round gets new delegate_task.
 
-- Native Sol `/root/small_curve`: H001 item1 primary-source exploration of an
-  actual coordinate-aware Semaev relation generator/filter COMPLETED, now idle.
-  No improved generator found. Nine finite rank diagnostics independently
-  reproduced; scope/costs in H001-relation-rank-falsifier.md and
-  H001-coordinate-cost-gate.md. No n=5/full-solver inference.
-- Native Astra `/root/h002_arithmetic_ideas` COMPLETED: fresh independent initial
-  arithmetic/lifting/endomorphism ideas, forked without previous proposals;
-  read-only,3–5 distinct mechanisms if worthwhile, no children/heavy experiments.
-  Three unverified cards retained in H002-astra-arithmetic-cards.md: odd EDS
-  correlations, compressed lifting defects, large-orbit canonicalizer/transporter.
-- Native Sol `/root/h002_tradeoff_ideas` RUNNING in Astra's freed slot: fresh
-  independent non-learning time-memory/preprocessing/external-memory proposals.
-  Native Sol plus two original T3 proposers remain; expanded T3 tasks are above.
-  No prior proposer reports supplied to initial idea-generation tasks.
-- Native Astra `/root/encoding_review`: H001 item2 and focused scope review
-  completed, now idle. Arithmetic archived/reproduced; no EC performance claim.
-  Scope review rejects universal coordinate-filter, Coppersmith and transferred
-  large-prime claims from the raw critic report without exact hypotheses.
-- T3 Claude Opus5.5 independent algorithm/cost critic, request
-  `ecdloop-h001-algorithm-critic-opus-20261008-r1`; task ID
-  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h001-algorithm-critic-opus-20261008-r1`.
-  Authoritative status completed/result_available, no pending children. Raw
-  report retained separately with non-adoption warning. Brief includes prior
-  model/lower-bound/advice/heuristic objections and exact shortlist; no edits or
-  children. New review rounds require new delegate_task IDs, never child messaging.
-- Coordinator alone owns shared integration, operating policy, checkpoint and
-  commits. No additional infrastructure wave is active or authorized by default.
+## Accepted records, unresolved objections, process
 
-## Safely parked work
+- `H002-first-synthesis-and-review-limits.md`: provisional deduplication/ranking,
+  preserved high-risk hypotheses, reviewer disagreements and non-adopted claims.
+- `H002-predicate-and-circuit-gates.md`: G2 and x-only null gates; G1 circuit remains
+  missing, and high recurrence complexity is not a circuit lower bound.
+- `H002-eds-normalization-disposition.md`: corrected phi(nP)=phi(P)^(n²)*W(n),
+  c^n character formula; even products not null controls. Reviewer scratch check
+  exceeded its10000-arithmetic-event brief; unmeasured excess explicitly recorded,
+  not a compliant experiment. Root has inspected but not reproduced it yet.
+- `H002-tradeoff-review-disposition.md`: baseline reuse, I/O, immutable weighted
+  labels; Grok's universal scheduling dominance not proved, raw pilot not funded.
+- `H002-marked-surface-disposition.md`: integer-matrix recovery bridge accepted;
+  no extraction algorithm. Equivalence is not impossibility; raw isotropy and
+  dense-map claims corrected. V1 retained without funding surface infrastructure.
+- `H002-filter-full-work-gate.md`: restricted renewal gate, pending a real cheap
+  predictor. Variable costs/dependence/timeout caveats in synthesis.
+- Raw reviewer reports and all proposer pools retained under findings/hypotheses.
+  Raw numerical claims, lower bounds and absence-of-prior-art claims are NOT
+  automatically accepted. Predictor epsilon exponents remain unverified.
 
-Both native writers were interrupted and asked only to checkpoint; they stopped
-without new proof work. Their exact snapshots and the coordinator's unfinished
-spec draft are retained under research/parked/20261008-query-infrastructure/.
-They are not imported or accepted as research results. See its README for hashes,
-last actual compile states, failures and unproved obligations. No contents were
-discarded. The previous detailed checkpoint is retained there too.
+## Validation and commits
 
-Committed library remains at363 audited claims from fd275b4; this is validation
-metadata, not a main-goal metric. Latest supporting commits: b92f092 (reviewed
-ring-addition negative finding and decoder arithmetic),2b1b33b (typed query code),
-fd275b4 (finite fresh-run tests/input associations). Machine/Problem/Goals and
-accepted word semantics remain unchanged. Existing finite tests are not rerun
-without a new reason. Source/axiom scripts are honest-mistake checks only.
+Local milestones: `22fe257` refocus/parked work; `98bbebb` reproduced H001 rank
+negative evidence; `83c8529` learning cards/corrections; `8b8eb41` arithmetic cards,
+T3 capacity policy, expanded allocation and filter gate. Current wave adds scoped
+analytical negatives, corrected EDS diagnostic prerequisite and independent pools.
+`./scripts/check.sh > /tmp/ecdlp-h002-gates-check.log 2>&1` exited0 this wave,
+363 existing audits. No new Lean theorem; those counts are validation metadata.
+No experiment result yet from new A1 implementation. Any unfinished writer files
+are excluded from this documentary checkpoint until reviewed.
 
-Earlier T3 reviews and exact IDs remain in their individual findings and the
-archived checkpoint. Original Grok run closed interrupted after completed report
-recovery; Factory H019 audit completed and was critically qualified. No older
-T3 task is being duplicated. An unrelated research-monitor/ directory at the
-repository root is outside this task and remains untouched.
+Exact parked drafts: `research/parked/20261008-query-infrastructure/`, never imported.
+Root's unrelated `research-monitor/` remains untouched. No toolchain/build products
+are staged. Honest-mistake screens are not adversarial proof validation.
 
-Previous turn produced supporting artifacts but **no ECDLP improvement**. This
-turn changes authoritative research priorities, preserves work, and launches
-specific algorithm exploration/critique. Goal is neither achieved nor blocked.
-
-Latest local commit22fe257 implements refocus/broad ideation and preserves parked
-work. Current turn: reproduced H001 finite rank negative evidence (493728 events
-per run,987456 across author/reproduction); preserved outputs and qualifications.
-scripts/check.sh passed after adding the experiment. Previous goal turn was
-progress (authoritative policy/commit and reproduced negative gate), not a wait.
-Next: continue independent H002 proposal waves, then synthesize and falsify the
-most promising concrete mechanisms. No accepted improvement or GPU calibration.
-
-H001 rank result committed98bbebb. Current wave retains Factory's independent
-learning cards with scoped corrections: generic advice lower bounds do not cover
-all coordinates, mutual information alone gives no stated kangaroo speedup, and
-raw proposed training-label workloads exceed the initial cap. These are not
-reasons to discard speculative learning mechanisms before corrected testing.
-Grok/Astra/Opus continue independent proposals. No infrastructure work restarted.
-
-Latest user explicitly confirms20 concurrent T3 subagents, correcting our earlier
-conservative shared-cap assumption. Native cap remains four. Expand T3 useful
-independent ideas/reviews using delegate_task, never top-level conversations.
-Previous turn was progress: committed83c8529 initial learning pool/corrections.
-This turn adds three independent arithmetic cards and a candidate-specific filter
-cost derivation (pending review), and fills the freed slot with independent Sol.
+Goal remains open, neither achieved nor blocked. Current wave made progress via
+scoped mathematical rejection and candidate-specific correction, not compilation.
+Await actual child notifications; no polling shell loop or duplicate hypotheses.
