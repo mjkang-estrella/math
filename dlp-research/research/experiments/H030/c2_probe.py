@@ -229,6 +229,7 @@ def table_setup(base, key, curve, g, alpha, owner, report):
     m, f = curve.m, curve.f
     m.phase = owner + "/setup"
     entries, jumps = [], []
+    report["working_memory_bounds"] = working_memory_bounds(owner)
     report["table_pending"] = True
     report["completed_jump_records"] = 0
     report["completed_formal_records"] = []
@@ -242,7 +243,8 @@ def table_setup(base, key, curve, g, alpha, owner, report):
             point, h = curve.scalar_h(a, g, hg)
         else:
             point, h = curve.scalar(a, g), None
-        m.append(jumps, Record(m, point=point, h=h, alpha=a))
+        m.append(jumps, Record(m, point=point, h=h, alpha=a) if owner == "candidate"
+                 else Record(m, point=point, alpha=a))
         report["completed_jump_records"] = len(jumps)
         i = m.add(i, 1)
     if owner == "control":
@@ -331,20 +333,28 @@ class Arm:
         self.phase("setup")
         self.report, self.walkers, self.references = report, [], []
         self.heads, self.dp = [], []
-        self.hash_a, self.hash_b = hash_params["a"], hash_params["b"]
         self.solved, self.round = False, 0
         self.completed, self.hzero = 0, 0
         self.solver_pending = None
         self.hq = None
         report.update(status="initializing", rounds_completed=0, verified_scalar=None,
-                      walkers=[], miller=[], pending=None, batches=[], terminal_checks=[])
+                      walkers=[], miller=[], pending=None, batches=[], terminal_checks=[],
+                      first_output_check_scope="validation includes paid uncommitted overshoot; first_transition_checked additionally requires a completed solver/reference commit",
+                      partial_commit_scope="cap with pending.consistent_pair=False retains pending/inconclusive status and is not a terminal pair")
         self.scratch = []
         self.reference_scratch = []
         self.batch_scratch = []
         self.peak_solver_words = 0
         self.peak_reference_words = 0
         self.peak_combined_words = 0
+        # Available even if the cap interrupts the first partial allocation.
+        report["working_memory_bounds"] = working_memory_bounds(owner)
+        self.phase("input_dispatch")
+        if dispatch_target(key, curve, g, target, owner, report):
+            self.solved = True
+            return
         self.phase("setup")
+        self.hash_a, self.hash_b = hash_params["a"], hash_params["b"]
         if owner == "candidate":
             self.hq = key.binary_h(curve, target, report["miller"], owner + ":Q")
         self.heads = self.m.zeroes(512)
@@ -367,13 +377,18 @@ class Arm:
             if self.m.eq(sign, -1):
                 a, b = self.qf.sub(0, a), self.qf.sub(0, b)
             self.phase("starts")
-            desc = descriptor(self.m, full=point)
-            state = Record(self.m, origin=point, origin_h=h, origin_a=a, origin_b=b,
-                           index=0, epsilon=1, depth=0, h=h, a=a, b=b,
-                           desc=desc, live=True, ring=[], ring_next=0, transitions=0)
+            if owner == "candidate":
+                desc = descriptor(self.m, full=point)
+                state = Record(self.m, origin=point, origin_h=h, origin_a=a, origin_b=b,
+                               index=0, epsilon=1, depth=0, h=h, a=a, b=b,
+                               desc=desc, live=True, ring=[], ring_next=0, transitions=0)
+            else:
+                state = Record(self.m, point=point, a=a, b=b, live=True,
+                               ring=[], ring_next=0, transitions=0)
             self.m.append(self.walkers, state)
             report["walkers"].append({"index": i, "initialized": True,
                 "transitions": 0, "termination": None, "first_transition_checked": False,
+                "first_output_miller_checked": False, "first_transition_committed": False,
                 "start_reference_checked": False})
             self.state_export()
             self.insert_ring(state)
@@ -388,6 +403,8 @@ class Arm:
             report["walkers"][i]["start_reference_checked"] = True
             self.memory_sample()
             self.state_export()
+            self.phase("starts")
+            self.m.active_walker = None
             i = self.m.add(i, 1)
         report["status"] = "live"
         report["paid_batch_overshoot_outputs"] = 0
@@ -397,15 +414,28 @@ class Arm:
             self.m.active_walker = None
         self.m.phase = self.case_prefix + self.owner + "/" + category if hasattr(self, "case_prefix") else self.owner + "/" + category
 
+    def state_point(self, state, cache=True):
+        return (materialize(self.curve, state["desc"], cache, True)
+                if self.owner == "candidate" else state["point"])
+
+    def state_x(self, state):
+        if self.owner == "candidate":
+            return materialize(self.curve, state["desc"], True, False)
+        point = state["point"]
+        return None if self.m.eq(point, None) else point.x
+
     def is_identity(self, state):
+        if self.owner == "control":
+            return self.m.eq(state["point"], None)
         return self.m.eq(state["desc"]["full"], None) and self.m.eq(state["desc"]["slope"], None)
 
     def insert_ring(self, state):
         self.phase("ring")
         m = self.m
-        desc = state["desc"]
-        x = None if self.owner == "candidate" else materialize(self.curve, desc, True, False)
-        entry = Record(m, h=state["h"], x=x, a=state["a"], b=state["b"], desc=desc)
+        if self.owner == "candidate":
+            entry = Record(m, h=state["h"], x=None, a=state["a"], b=state["b"], desc=state["desc"])
+        else:
+            entry = Record(m, x=self.state_x(state), a=state["a"], b=state["b"])
         ring = state["ring"]
         if m.lt(size(m, ring), 8):
             m.append(ring, entry)
@@ -438,8 +468,8 @@ class Arm:
 
     def detect(self, index, initial=False):
         self.m.active_walker = index
-        m, state = self.m, self.m.read(self.walkers, index)
         self.phase("exceptions")
+        m, state = self.m, self.m.read(self.walkers, index)
         if self.is_identity(state):
             if not m.eq(state["b"], 0):
                 self.phase("labels")
@@ -456,7 +486,7 @@ class Arm:
                 screen = True if self.owner == "control" else m.eq(state["h"], entry["h"])
                 if screen:
                     self.phase("false_h_screens" if self.owner == "candidate" else "ring")
-                    x = materialize(self.curve, state["desc"], True, False)
+                    x = self.state_x(state)
                     oldx = materialize(self.curve, entry["desc"], True, False) if self.owner == "candidate" else entry["x"]
                     if m.eq(x, oldx):
                         if not self.recover(state["a"], state["b"], entry["a"], entry["b"], "ring", index):
@@ -467,9 +497,9 @@ class Arm:
                 self.phase("ring")
                 j = m.add(j, 1)
         self.phase("DP")
-        value = state["h"] if self.owner == "candidate" else materialize(self.curve, state["desc"], True, True).y
+        value = state["h"] if self.owner == "candidate" else state["point"].y
         if m.eq(m.rem(value, 4), 0):
-            x = materialize(self.curve, state["desc"], True, False)
+            x = self.state_x(state)
             bucket = m.rem(self.f.add(self.f.mul(self.hash_a, x), self.hash_b), 512)
             link = m.read(self.heads, bucket)
             same = False
@@ -497,8 +527,8 @@ class Arm:
 
     def plan(self, index):
         self.m.active_walker = index
-        m, f, state = self.m, self.f, self.m.read(self.walkers, index)
         self.phase("regular_steps")
+        m, f, state = self.m, self.f, self.m.read(self.walkers, index)
         if self.owner == "candidate":
             selector = state["h"]
             i = m.rem(selector, 8)
@@ -510,7 +540,7 @@ class Arm:
             left, right = state["origin"], offset["point"]
             hl, hr = state["origin_h"], offset["h"]
         else:
-            left = materialize(self.curve, state["desc"], True, True)
+            left = state["point"]
             i = m.rem(left.y, 32)
             offset = m.read(self.jumps, i)
             right, hl, hr, new_index = offset["point"], None, None, None
@@ -521,18 +551,28 @@ class Arm:
             else:
                 point, _, kind = self.curve.add(left, right)
                 h = None
+            if self.owner == "control":
+                return Record(m, index=index, alpha=offset["alpha"], point=point,
+                              left=left, right=right, numerator=None, denominator=None, kind=kind)
             return Record(m, index=index, table_index=new_index, offset=offset, left=left,
                           right=right, hl=hl, hr=hr, point=point, h=h,
                           numerator=None, denominator=None, kind=kind)
+        if self.owner == "control":
+            return Record(m, index=index, alpha=offset["alpha"], point=None,
+                          left=left, right=right, numerator=f.sub(right.y, left.y),
+                          denominator=f.sub(right.x, left.x), kind="regular")
         return Record(m, index=index, table_index=new_index, offset=offset, left=left,
                       right=right, hl=hl, hr=hr, point=None, h=None,
                       numerator=f.sub(right.y, left.y), denominator=f.sub(right.x, left.x), kind="regular")
 
     def finish(self, plan, inverse):
+        self.phase("regular_steps")
         m, f = self.m, self.f
         index = plan["index"]
         m.active_walker = index
         original = m.read(self.walkers, index)
+        if self.owner == "control":
+            return self.finish_control(plan, inverse, original)
         state = Record(m, **{key: original[key] for key in original.values})
         self.phase("regular_steps")
         regular = m.eq(plan["kind"], "regular")
@@ -553,11 +593,6 @@ class Arm:
                     sign = -1 if m.lt(negative, h) else 1
                     h = negative if m.eq(sign, -1) else h
                     desc["sign"] = sign
-            else:
-                x = f.sub(f.sub(f.square(slope), left.x), right.x)
-                y = f.sub(f.mul(slope, f.sub(left.x, x)), left.y)
-                point, h, sign = canonical(self.curve, self.curve.point(x, y))
-                desc = descriptor(m, full=point)
         else:
             self.phase("exceptions")
             point, h, sign = canonical(self.curve, plan["point"], plan["h"])
@@ -568,13 +603,11 @@ class Arm:
         if self.owner == "candidate":
             a = self.qf.add(state["origin_a"], plan["offset"]["alpha"])
             b = state["origin_b"]
-        else:
-            a, b = self.qf.add(state["a"], plan["offset"]["alpha"]), state["b"]
         if m.eq(sign, -1):
             a, b = self.qf.sub(0, a), self.qf.sub(0, b)
         self.phase("refresh")
         depth = m.add(state["depth"], 1)
-        refresh = self.owner == "control" or m.eq(depth, 2) or not regular
+        refresh = m.eq(depth, 2) or not regular
         if self.owner == "candidate" and m.eq(h, 0):
             refresh = True
         if refresh:
@@ -587,6 +620,27 @@ class Arm:
         state["desc"], state["h"], state["a"], state["b"] = desc, h, a, b
         state["transitions"] = m.add(state["transitions"], 1)
         return state
+
+    def finish_control(self, plan, inverse, original):
+        # A full-affine output needs no h, origin, formal index or descriptor.
+        m, f = self.m, self.f
+        if m.eq(plan["kind"], "regular"):
+            slope = f.mul(plan["numerator"], inverse)
+            left, right = plan["left"], plan["right"]
+            x = f.sub(f.sub(f.square(slope), left.x), right.x)
+            y = f.sub(f.mul(slope, f.sub(left.x, x)), left.y)
+            point, _, sign = canonical(self.curve, self.curve.point(x, y))
+        else:
+            self.phase("exceptions")
+            point, _, sign = canonical(self.curve, plan["point"])
+        self.phase("labels")
+        a, b = self.qf.add(original["a"], plan["alpha"]), original["b"]
+        if m.eq(sign, -1):
+            a, b = self.qf.sub(0, a), self.qf.sub(0, b)
+        self.phase("state_output")
+        return Record(m, point=point, a=a, b=b, live=original["live"],
+                      ring=original["ring"], ring_next=original["ring_next"],
+                      transitions=m.add(original["transitions"], 1))
 
     def validate_output(self, index, state):
         self.phase("reference")
@@ -605,7 +659,7 @@ class Arm:
         ra, rb = self.qf.add(ref["a"], jump["alpha"]), ref["b"]
         if m.eq(sign, -1):
             ra, rb = self.qf.sub(0, ra), self.qf.sub(0, rb)
-        actual = materialize(curve, state["desc"], False, True)
+        actual = self.state_point(state, False)
         self.key.need(curve.equal(actual, rp), "deferred/full-coordinate successor mismatch")
         self.key.need(m.eq(state["a"], ra) and m.eq(state["b"], rb), "successor label mismatch")
         if self.owner == "candidate":
@@ -614,32 +668,46 @@ class Arm:
             checked = self.key.binary_h(curve, actual, self.report["miller"], self.owner + ":first:" + str(index))
             if self.owner == "candidate":
                 self.key.need(m.eq(checked, rh), "first transition Miller mismatch")
-            self.report["walkers"][index]["first_transition_checked"] = True
+            self.report["walkers"][index]["first_output_miller_checked"] = True
         return Record(m, point=rp, h=rh, a=ra, b=rb)
+
+    def scheduler_phase(self):
+        self.phase("scheduler")
+        self.m.active_walker = None
 
     def run(self):
         m = self.m
+        if self.solved:  # Dispatcher returned before setup; no walkers exist.
+            self.report["status"] = "verified_trivial_input"
+            self.report["diagnostics_completed"] = True
+            self.report["solver_end_vectors"] = snapshot(m)
+            self.report["solver_end_I_projection"] = projection(m)
+            return
         i = 0
+        self.scheduler_phase()
         while m.lt(i, 4) and not self.solved:
             self.detect(i, True)
             self.memory_sample()
             self.state_export()
+            self.scheduler_phase()
             i = m.add(i, 1)
+        self.scheduler_phase()
         while m.lt(self.round, 32) and not self.solved:
-            self.phase("regular_steps")
-            plans, denominators, regular_indices = [], [], []
-            self.scratch = [plans, denominators, regular_indices]
+            plans, denominators = [], []
+            self.scratch = [plans, denominators]
             i = 0
+            self.scheduler_phase()
             while m.lt(i, 4):
                 state = m.read(self.walkers, i)
                 if state["live"]:
                     self.report["pending"] = {"operation": "plan", "walker": i, "round": self.round}
                     plan = self.plan(i)
+                    self.scheduler_phase()
                     m.append(plans, plan)
                     if m.eq(plan["kind"], "regular"):
-                        m.append(regular_indices, m.sub(size(m, plans), 1))
                         m.append(denominators, plan["denominator"])
                     self.memory_sample()
+                self.scheduler_phase()
                 i = m.add(i, 1)
             if m.eq(size(m, plans), 0):
                 self.report["stop_reason"] = "all_four_terminated"
@@ -653,9 +721,10 @@ class Arm:
                                             "regular": size(m, denominators)})
             # Complete the entire arithmetic batch before examining ANY outputs.
             outputs, reference_outputs = [], []
-            self.scratch = [plans, denominators, regular_indices, inverses, outputs]
+            self.scratch = [plans, denominators, inverses, outputs]
             self.reference_scratch = [reference_outputs]
             j, r = 0, 0
+            self.scheduler_phase()
             while m.lt(j, size(m, plans)):
                 plan = m.read(plans, j)
                 inverse = None
@@ -663,30 +732,49 @@ class Arm:
                     inverse = m.read(inverses, r)
                     r = m.add(r, 1)
                 self.report["pending"] = {"operation": "finish", "walker": plan["index"], "round": self.round}
-                m.append(outputs, self.finish(plan, inverse))
+                output = self.finish(plan, inverse)
+                self.scheduler_phase()
+                m.append(outputs, output)
                 self.memory_sample()
                 j = m.add(j, 1)
+            # This loop exists only for diagnostics. Its plan/output reads and
+            # index arithmetic cannot influence solver scheduling or detection.
+            self.phase("reference")
             j = 0
             while m.lt(j, size(m, plans)):
                 m.append(reference_outputs, self.validate_output(m.read(plans, j)["index"], m.read(outputs, j)))
                 self.memory_sample()
                 j = m.add(j, 1)
             j = 0
+            self.scheduler_phase()
             while m.lt(j, size(m, plans)) and not self.solved:
                 index = m.read(plans, j)["index"]
                 self.phase("state_commit")
                 m.active_walker = index
-                self.report["pending"] = {"operation": "commit_output", "walker": index, "round": self.round}
-                m.write(self.walkers, index, m.read(outputs, j))
+                self.report["pending"] = {"operation": "commit_output", "walker": index, "round": self.round,
+                                          "walker_written": False, "reference_written": False,
+                                          "consistent_pair": False}
+                committed = m.read(outputs, j)
+                m.write(self.walkers, index, committed)
+                self.report["pending"]["walker_written"] = True
                 self.state_export()
+                # Reference-array maintenance is diagnostic, never solver work.
+                self.phase("reference")
                 m.write(self.references, index, m.read(reference_outputs, j))
-                self.state_export()
+                self.report["pending"].update(reference_written=True, consistent_pair=True)
+                if committed.values["transitions"] == 1:
+                    w = self.report["walkers"][index]
+                    w["first_transition_committed"] = True
+                    w["first_transition_checked"] = w["first_output_miller_checked"]
+                self.phase("state_commit")
+                m.active_walker = index
                 self.completed = m.add(self.completed, 1)
                 self.report["walkers"][index]["transitions"] = m.read(self.walkers, index)["transitions"]
                 self.report["pending"] = {"operation": "detect_committed_output", "walker": index, "round": self.round}
                 self.detect(index)
                 self.memory_sample()
                 self.state_export()
+                self.scheduler_phase()
                 j = m.add(j, 1)
             self.report["paid_batch_overshoot_outputs"] = m.sub(size(m, plans), j)
             if m.eq(j, size(m, plans)):
@@ -695,7 +783,11 @@ class Arm:
             self.scratch = []
             self.batch_scratch = []
             self.reference_scratch = []
+            # Drop unrooted local batch aliases before the next allocation.
+            plans = denominators = inverses = outputs = reference_outputs = []
+            plan = output = state = committed = None
             self.report["pending"] = None
+            self.scheduler_phase()
         if not self.solved and "stop_reason" not in self.report:
             self.report["stop_reason"] = "32_rounds"
         self.report["solver_end_vectors"] = snapshot(m)
@@ -703,11 +795,11 @@ class Arm:
         self.report["status"] = "verified_stop" if self.solved else "finite_unsolved"
         # Even at an early successful stop every initialized walker is checked.
         i = 0
+        self.phase("terminal_diagnostics")
         while m.lt(i, size(m, self.walkers)):
-            self.phase("terminal_diagnostics")
             state = m.read(self.walkers, i)
             self.report["pending"] = {"operation": "terminal_check", "walker": i}
-            point = materialize(self.curve, state["desc"], False, True)
+            point = self.state_point(state, False)
             h = self.key.binary_h(self.curve, point, self.report["miller"], self.owner + ":terminal:" + str(i))
             if self.owner == "candidate":
                 self.key.need(m.eq(h, state["h"]), "terminal Miller mismatch")
@@ -754,6 +846,11 @@ class Arm:
 
     def state_export(self):
         # Copy already computed words, with no algebra, cache writes or ticking.
+        if self.owner == "control":
+            self.report["committed_states"] = [{"a": s.values["a"], "b": s.values["b"],
+                "point": raw_point(s.values["point"]), "live": s.values["live"],
+                "transitions": s.values["transitions"]} for s in self.walkers]
+            return
         self.report["committed_states"] = [{"a": s.values["a"], "b": s.values["b"],
             "h": s.values["h"], "K_index": s.values["index"],
             "epsilon": s.values["epsilon"], "depth": s.values["depth"],
@@ -776,9 +873,11 @@ class Arm:
         self.peak_combined_words = max(self.peak_combined_words, combined)
         self.report["memory"] = {"units": "payload words; pointers/flags/labels one word each; each Fp/Fq coordinate one word; not Python bytes",
             "candidate_table_record_words": 6, "formal_vector_words": 8,
-            "signed_jump_metadata_words": 2, "jump_record_words": 3,
-            "point_words": 2, "ring_record_words": 5, "descriptor_words": 9,
-            "walker_record_words": 15, "DP_heads": 512, "DP_record_words": 4,
+            "signed_jump_metadata_words": 2, "jump_record_words": 3 if self.owner == "candidate" else 2,
+            "point_words": 2, "ring_record_words": 5 if self.owner == "candidate" else 3,
+            "descriptor_words": 9 if self.owner == "candidate" else 0,
+            "walker_record_words": 15 if self.owner == "candidate" else 7,
+            "plan_record_words": 12 if self.owner == "candidate" else 8, "DP_heads": 512, "DP_record_words": 4,
             "table_occupancy": len(self.table) if self.table is not None else len(self.jumps),
             "DP_records": len(self.dp),
             "ring_occupancy": [len(s.values["ring"]) for s in self.walkers],
@@ -787,7 +886,64 @@ class Arm:
             "peak_sampled_reference_and_trace_words": self.peak_reference_words,
             "peak_sampled_combined_words": self.peak_combined_words,
             "peak_scope": "checkpoints after each initialized start, batch output, reference output and committed detection; pending allocation at cap may exceed last checkpoint",
-            "counts_batch_scratch_and_unique_retained_origins": True}
+            "counts_batch_scratch_and_unique_retained_origins": True,
+            "upper_bounds": self.report["working_memory_bounds"]}
+
+
+def working_memory_bounds(owner):
+    """Static overcounts for these four starts/32 rounds, including cap partials.
+
+    No Python-byte or exact-peak claim. The largest frozen p,q have <=14 bits.
+    Scalars/Miller are iterative (no recursive stack); inverse power has only
+    scalar registers and no hidden vector. Temporary points need two words.
+    Entries own 6+8+2+2 words plus list slot (rounded to20); jump records plus
+    point/list slot need6 candidate/5 control. Eight state slots overcount the
+    four originals and four pending outputs, including private eight-entry
+    rings and all descriptor referents even when aliased. At most4*(32+1) DP
+    records can be inserted. The transient allowance deliberately overcounts
+    unrooted partially constructed records/vectors/points, pending array writes,
+    plans, batch prefixes/result (each <=4), rank's <=8 two-field records,
+    <=14 Miller digits, scalar multiplication and inverse scratch registers.
+    Report dictionaries/traces/counter snapshots are a separate retained layer.
+    """
+    candidate = owner == "candidate"
+    components = {
+        "formal_table_including_points_vectors_metadata": 145 * 20 if candidate else 0,
+        "jump_records_including_points": 8 * 6 if candidate else 32 * 5,
+        "original_and_pending_state_slots_with_rings": 8 * (256 if candidate else 64),
+        "DP_records_including_array_slots": 4 * 33 * 5,
+        "bucket_heads": 512,
+        "inputs_sampling_and_array_root_slots": 256,
+        "partial_allocation_batch_and_inverse_transient_allowance": 4096 if candidate else 512}
+    # <=13 arm Miller traces: Q bootstrap, four starts, four first outputs,
+    # four terminal checks. <=14 steps per trace, each <=9 payload words plus
+    # list slot;192 words per trace safely includes headers/pending/digits.
+    diagnostic = 13 * 192 + 8 * 8 + 512
+    return {"solver_working_payload_upper_bound_words": sum(components.values()),
+        "solver_components": components,
+        "reference_and_arm_trace_upper_bound_words": diagnostic,
+        "combined_arm_working_payload_upper_bound_words": sum(components.values()) + diagnostic,
+        "scope": "one arm plus its applicable shared table/inputs, during setup or execution, including interrupted allocations; excludes retained experiment reports and counters",
+        "reference_bound_scope": "reference originals/pending outputs, <=13 retained arm Miller traces and512 transient words; table bootstrap trace/report exports belong retained experiment reporting",
+        "register_scratch": "inverse_field uses imported iterative binary power; <=32 scalar scratch/register words included in transient allowance even though local registers are free in the event ledger",
+        "not_measured_heap_or_exact_peak": True}
+
+
+def dispatch_target(key, curve, g, target, owner, report):
+    """Shared callable entry before bootstrap: return whether Q=O was handled."""
+    m = curve.m
+    m.phase = owner + "/input_dispatch"
+    if not m.eq(target, None):
+        report["input_dispatch"] = "nonidentity_continue"
+        return False
+    m.phase = owner + "/verification"
+    scalar = 0
+    key.need(curve.equal(curve.scalar(scalar, g), target),
+             "trivial-input scalar fails paid recovery verification")
+    report.update(input_dispatch="identity_target_stop_before_setup",
+                  verified_scalar=scalar, verified=True,
+                  stop_reason="identity_target", first_stop_global_events=m.total)
+    return True
 
 
 def raw_point(point):
@@ -913,7 +1069,8 @@ def direct_checks(key, curve, g, report):
         key.need(m.eq(kind, name), "direct exceptional dispatch kind mismatch")
         check = key.binary_h(curve, p, report["miller"], "dispatch:" + name)
         key.need(m.eq(h, check), "direct exceptional dispatch h mismatch")
-        report["dispatch_checks"].append({"kind": kind, "checked": True})
+        report["dispatch_checks"].append({"kind": kind, "checked": True,
+            "coverage": "H028 support add_h dispatch only; not candidate plan/finish coverage"})
 
 
 def execute():
@@ -926,6 +1083,7 @@ def execute():
         "kernel_credit": "tau=2 ideal unbatched arithmetic ceiling M+S (A credit zero), before detection/setup/dispatch; not complete-work credit",
         "weighted_inequality": "sum_k w_k*C_single_target[k] < sum_k w_k*B_single_target[k]; only matched completed verified stops may be compared",
         "inversion_convention": "expanded M/S vectors OR separate projection with COMPLETED inverse M/S removed; never add I to expanded costs; interrupted inverse raw work retained",
+        "working_memory_bounds": {owner: working_memory_bounds(owner) for owner in ("candidate", "control")},
         "pending": "support_loading"}
     m = None
     try:
@@ -983,6 +1141,7 @@ def execute():
                 self.point = Point
 
         fi = 0
+        m.phase = "experiment_scheduler"
         while m.lt(fi, 4):
             m.active_walker = None
             m.scope = "fixture" + str(fi) + "/"
@@ -996,11 +1155,10 @@ def execute():
             direct_checks(key, curve, g, fixture)
             fixture["identity_targets"] = []
             for owner in ("candidate", "control"):
-                m.phase = owner + "/identity_target_verification"
-                identity_target = None
-                key.need(m.eq(identity_target, None), "identity target input dispatch")
-                key.need(curve.equal(curve.scalar(0, g), identity_target), "identity target recovery")
-                fixture["identity_targets"].append({"arm": owner, "scalar": 0, "verified": True})
+                identity_report = {}
+                handled = dispatch_target(key, curve, g, None, owner, identity_report)
+                key.need(handled, "identity target entry dispatcher did not stop")
+                fixture["identity_targets"].append({"arm": owner, **identity_report})
             m.phase = "shared_sampling/jump_stream"
             jump_rng = stream(m, p, q, 0, TAGS["jumps"])
             alpha, i = [], 0
@@ -1018,8 +1176,10 @@ def execute():
             cj, ct, hg = table_setup(base, key, curve, g, alpha, "candidate", candidate_setup)
             bj, _, _ = table_setup(base, key, curve, g, alpha, "control", control_setup)
             fixture["setup_vectors_at_completion"] = snapshot(m)
+            m.phase = "experiment_scheduler"
             si = 0
             while m.lt(si, 2):
+                m.phase = "harness_input"
                 seed = m.read(SEEDS, si)
                 case = {"seed": seed, "status": "input_construction", "arms": {}, "pending": None}
                 fixture["cases"].append(case)
@@ -1056,10 +1216,12 @@ def execute():
                 case["pending"] = None
                 case["status"] = "completed_finite_diagnostic"
                 case["matched_first_stop_comparison_admissible"] = all(x.get("status") == "verified_stop" and x.get("diagnostics_completed") for x in case["arms"].values())
+                m.phase = "experiment_scheduler"
                 si = m.add(si, 1)
             m.scope = "fixture" + str(fi) + "/"
             fixture["pending"] = None
             fixture["actually_shared_two_target_setup"] = "completed both targets; table/jump/hash setup computed once, attributed in full to EACH single-target sheet"
+            m.phase = "experiment_scheduler"
             fi = m.add(fi, 1)
         report["pending"] = None
         report["status"] = "completed_finite_diagnostic_only"
@@ -1077,6 +1239,11 @@ def execute():
         report["inverse_expansions"] = m.inverse_rows
         report["event_categories"] = m.by_kind
         report["phase_events"] = m.by_phase
+    retained, _ = payload_words([report])
+    report["retained_experiment_reporting"] = {
+        "final_payload_words_before_encoding": retained,
+        "scope": "all retained fixture/case reports, trace exports, snapshots and attribution sheets; separate from per-arm working bounds; instrumentation counters and JSON encoding excluded",
+        "peak_bound": "not asserted for reporting/encoding; only per-arm solver and diagnostic work have static transient bounds"}
     report["elapsed_before_encoding_seconds"] = time.monotonic() - started
     payload = json.dumps(report, indent=2, sort_keys=True)
     if time.monotonic() - started >= SECONDS_CAP and report["status"] == "completed_finite_diagnostic_only":

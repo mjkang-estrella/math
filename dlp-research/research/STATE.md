@@ -20,6 +20,43 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H030 current wave: independent ideas plus bounded carryover triage
 
+LATEST RESULT (supersedes pending admission below): sole C2 run completed
+shell exit0 with experiment INCONCLUSIVE_CAP at exactly1,000,000 events.
+Seven cases completed; candidate solved5, control7. All five matched successful
+cases lose under equal-unit complete event pricing (C/B1.435–1.800), including
+post-verification scheduling. Candidate q271/seed7 exhausted four null cycles;
+q8053/seed7 reached32 rounds unsolved. Eighth case capped in second candidate
+start's independent reference Miller inverse,9M/10S partial work retained.
+No mismatch reported where checks completed. No reset, rerun or retuning.
+
+Native Astra saved-evidence math and native Sol independent cost audits both
+COMPLETED/PASS within finite scope; source/protocol/support hashes and all1M
+event sums reconcile. Raw JSON SHA2562d817c40eca05d3a9d98d35e217efd1dc89f91968fe7a17b87d644d8eafba867;
+lossless362,772-byte gzip archived in experiments/H030/c2_result.json.gz, expanded
+6MB JSON ignored locally. H030-c2-diagnostic-result.md preserves exact command,
+full outcome/cost tables, failures, partial work and reproducible data extraction.
+No whole-solver improvement; generic exponent1/2 reference unchanged.
+
+Literal r8/tau2/four-start C2 configuration PARKED. Arithmetic mechanism remains
+conditional; no general h/tag-trace rejection. Next admissible action is a NEW
+concrete paid transition-index/cycle-handling premise against a competent
+baseline, or independent alternative mechanisms. No automatic larger run,
+seed replacement, weak comparator, GPU pricing or generic Lean expansion.
+All H030 task handles now terminal and acknowledged; source ownership root.
+Validation after evidence integration: ./scripts/check.sh >
+/tmp/ecdlp-h030-result-check.log 2>&1 exit0,366 existing audits. No Lean/Audit
+edit; finite diagnostic is not a formal EC refinement theorem. Root stages only
+named H030 source/evidence/process and the exact expanded-result ignore entry.
+Unrelated directories, build products and toolchains excluded. Objective active.
+
+Latest: source repair r2 COMPLETED and result acknowledged. Hashdbfe5d542f726ab589c72fb0f185977a2fde4d1aa58f217515dc197169341c2a.
+Native Astra final mathematical/control and native Sol cost/experiment reviews
+both COMPLETED with scoped GO; root inspected diff and protocol. Sole execution
+admitted in findings/H030-c2-admission-r2.md BEFORE running command. No writer
+active, no cap consumed at admission. Exact frozen four fixtures/two seeds,
+1M events/55s work/60s outer; no reset/retry. Outcome not yet claimed. Goal active,
+verified improvement NONE. Previous source-only turn was PROGRESS, not a blocker.
+
 Continuation after7baad2c classified PROGRESS. Both retained live T3 handles
 revalidated RUNNING at turn start; both subsequently COMPLETED and terminal
 results acknowledged. No missing output or timeout was treated as termination.

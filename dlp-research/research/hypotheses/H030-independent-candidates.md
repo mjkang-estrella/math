@@ -174,3 +174,16 @@ Original protocol + r1 evidence/objections supplied. Exclusive c2_probe.py
 ownership; no other edit/stage/commit/child/run/import. Root alone admits one
 bounded execution after independent final static review. Memory sampled peaks
 must remain honestly scoped; no generic infrastructure needed to invent precision.
+
+## Final H030 diagnostic checkpoint
+
+C2 source r2 COMPLETED, native Astra mathematical regression and native Sol
+cost reviews both scoped GO at hashdbfe5d...; root admitted then executed the
+sole frozen command. No writer remains live. Result INCONCLUSIVE_CAP at1M,
+7completecases, candidate5/control7 recoveries; all5 matched full event costs
+lose under equal-unit prices. Saved-evidence audits separately completed and
+agree; findings/H030-c2-diagnostic-result.md and lossless result archive retained.
+Literal configuration parked, no automatic retry/tuning. Generic exponent1/2
+and improvement NONE remain. All H030 T3/native roles terminal; no orphan task
+or missing-output result assumed. New work must supply a distinct complete-cost
+premise or mechanism before another numerical trial.
