@@ -20,6 +20,25 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H031 current wave: independent proposals and C2 carryover
 
+Continuation after3b0b15c: preceding turns were VERIFIED WAITS on the original
+Grok task, still revalidated RUNNING; no restart/duplicate or external blocker.
+A bounded literature search resurfaced existing H002 T2's packed-storage
+comparator, not a new candidate. Native Sol /root/h010_early_dependencies
+COMPLETED a narrow primary-paper scope audit: one useful ECDLP collision versus
+many-collision memory-limited work in Trimoska–Ionica–Dequen2021. Root separately
+reads the public PCS artifact pinned at211e174a04fa74c3c2cf4019b92f40961216a4a7.
+Read-only source analysis, no build/run/import/benchmark/child or formal change;
+purpose is to constrain storage-cost transfer in H002 T2/H031, not build infrastructure.
+No new exponent, finite speedup or hardware price accepted. Root alone integrates.
+Finding H031-packed-storage-scope.md records pinned code's disabled memory cap,
+paid seed replay and storage overhead; root and independent reviewer both read
+the published primary Eq4 and confirm its conditional price optimum. Expected
+occupancy is not a peak cap. Many-collision speedups cannot be transferred by
+substituting m=1, while compression can conditionally reduce one-target DP tail
+cost. No universal rejection or new improvement; known packing belongs to baseline.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h031-packed-check.log 2>&1 exit0,
+366 existing audits, no Lean/Audit changes. Grok original proposal still RUNNING.
+
 Latest checkpoint supersedes historical live statuses below. Goal remains active;
 verified improvement NONE; generic exponent1/2 reference unchanged. Previous
 commit a10bf42 preserved the sole capped C2 diagnostic and its complete-cost
