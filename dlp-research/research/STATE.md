@@ -421,3 +421,16 @@ Validation: `./scripts/check.sh > /tmp/ecdlp-h012-disposition-check.log 2>&1`
 exit0,363 existing audits. Only paper/process records changed, no Audit additions.
 Root stages six named task files after diff inspection; unrelated directories
 and all build/toolchain products excluded.
+
+H013 continuation: previous goal turn was a VERIFIED WAIT, not a blocker. All
+three retained T3 handles revalidated RUNNING, native roles live. Current task
+tree rechecked atb5e1e9d. Root independently read BLS2011 §§2–3; acceptance
+baseline in findings/H013-collision-baseline.md. Lazy labels, seed/hash endpoints,
+batch inversion and rotated cycle checks are known comparison capabilities.
+No completed H013 proposal accepted yet, no experiment started. Exact walk
+identity/phase must survive proposed scheduling permutations. Source-backed
+baseline review is evidence preparation, not a claimed attack improvement.
+
+`./scripts/check.sh > /tmp/ecdlp-h013-baseline-check.log 2>&1` exit0,363 existing
+audits. Source notes only; no Lean/Audit edit. Explicit stage is STATE and the
+new baseline finding, with unrelated directories unchanged.
