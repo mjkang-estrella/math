@@ -20,6 +20,20 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H033 independent proposals and remaining lookup hypothesis
 
+Continuation afterdc75775: previous turn classified PROGRESS. All three T3
+handles and native Sol were authoritatively revalidated RUNNING; no restart.
+Root proposed a sharper comparator for R1's remaining lookup premise:
+partition sorted descriptors using a paid prefix directory occupying the former
+peel-stack reservation. Native Astra COMPLETED its distinct read-only adversarial
+review of memory/scratch, signature conventions and occupancy-dependent lookup
+bounds. H033-retrieval-directory-screen.md records the accepted array inequality,
+exact-search invariant and a peelable all-in-one-bucket counterexample. Concrete
+register scratch remains to be fitted; no implemented full peak bound is claimed.
+No constant expected lookup or EC distribution is assumed. Root re-read
+Dietzfelbinger–Pagh §§1.1–1.3: unit-cost word/hash assumptions do not establish
+an ECDLP full-work gain. This is a candidate-specific paper falsifier, no new
+generic infrastructure or numerical run.
+
 H032/H031 coherent findings committed as `eedcabc`. Current best supported
 classical generic exponent remains1/2; verified improvement NONE. No new run.
 Live catalogue refreshed: exact requested Opus5.5, Grok4.7 and Factory Fable5.1
