@@ -1,7 +1,8 @@
 # H031 autonomous portal and fold: pre-experiment screen
 
-Status: native independent mathematical review COMPLETED; separate Factory
-Fable5.1 cost/protocol review RUNNING. No survivor admitted to numerical testing.
+Status: native independent mathematical review and separate Factory
+Fable5.1 cost/protocol review COMPLETED. Native Sol then independently checked
+root's corrections to that cost report. No survivor admitted to numerical testing.
 Verified improvement NONE. Raw proposer report: H031-autonomous-grok-raw.md.
 
 Grok4.7 original task COMPLETED, no pending children, no reported edits/runs.
@@ -80,6 +81,51 @@ branches would change the decision; mere image-size sampling would not.
 
 The raw 'not carded' universal exclusions are not accepted without their own
 hypotheses and evidence. Current classical square-root reference and dashboard
-are unchanged. Next: collect independent cost/protocol review and finish H032
-memory-recovery synthesis. No reported experiment or hardware result is created
-by either paper screen.
+are unchanged. No reported experiment or hardware result is created by either
+paper screen.
+
+## Completed cost review and corrections
+
+Factory Fable5.1 task above COMPLETED, no pending children; raw report retained
+in H031-portal-cost-fable-raw.md. Native Sol separately confirmed the following
+root dispositions. Accept no-run for the current incomplete contracts, the
+occupation-weighted cost gate, and explicit portal reflection labels: after
+adding J=a_J G+b_J Q, a canonical flip gives(1−a−a_J,−b−b_J). The cheap-step
+(−a,−b) shortcut cannot be reused for an arbitrary portal jump.
+
+For n ordinary walkers with d portal outputs in one COMPATIBLY scheduled round,
+the report's conditional subtotal in M units is
+
+    n(4+s)+d(6+s)+(1+1_{d>0})(I/M−3).
+
+This includes one first batch and, if needed, a dependent portal batch. It is
+not a global stopped-work inequality: exceptions, batch sizes, final waste,
+zero-portal rounds and actual occupancy matter. An escape must be priced using
+its actual chosen operation; not every possible escape is the same two-batch jump.
+
+The report's following extrapolations are NOT accepted:
+
+- f=1/(E[L]+1) requires a justified renewal/counting model that includes repeats,
+  escape work and boundaries. Fresh cheap steps alone do not provide it.
+- H024's different finite reversal diagnostic did not measure this portal map's
+  segment lengths or repeated-class fraction. It does not establish E[L]≈2 or
+  settle the proposed5.8 threshold.
+- (1−ρ)² is a marking calculation for a preselected fixed two-cycle under
+  independent marks; it is not automatically a visited trap-basin probability.
+- BLS's r=2 cycle heuristic is not the min-fold map's cycle law. Historical
+  platform instruction ratios/timings do not calibrate either proposed solver.
+- The raw800-solves-per-arm estimate omits the second noisy arm. Conditional
+  on independent uncensored arms with equal CV and a normal approximation, the
+  formula is N≥2z² CV²/δ² (roughly1700 at its illustrative inputs). The underlying
+  assumptions are unverified, and neither number authorizes an experiment.
+- A bounded diagnostic can falsify a fully specified contract without a prior
+  proof of favorable segment dynamics. The raw blanket claim that no informative
+  test is possible before such a proof is too strong. Here the missing executable
+  protocol, recovery/stopping rules and full-cost premise explain the no-run call.
+
+Card2's F>4 remains conditional on a birthday-factor-to-stopping conversion,
+not a general theorem about all selection maps. No claimed runtime dominance,
+stationary distribution or practical improvement is accepted. A new exact paid
+contract and a plausible conclusion-changing question would be required for a
+bounded diagnostic; no automatic retune of the parked schedules is authorized
+by these reviews. Validation recorded in STATE.

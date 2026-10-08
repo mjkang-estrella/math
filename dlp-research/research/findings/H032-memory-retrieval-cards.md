@@ -1,5 +1,11 @@
 # H032 explicit memory–recovery cards
 
+LATEST DISPOSITION: the stated R1 SINGLE-BATCH HARD-PEAK capacity rationale is
+falsified by retaining its own construction descriptors. Independent critic and
+original proposer agree; see H032-retrieval-capacity-falsifier.md. A possible
+lookup-cost tradeoff is separate and has no supported full-work gain. Historical
+proposal/review below is retained, not silently rewritten as a discovery.
+
 Status: UNVERIFIED independent native Sol proposals; no supported complete-work
 gain or experiment-ready survivor. Proposer `/root/h010_early_dependencies`
 COMPLETED initial ideation without reading the other H032 proposals. No edits,

@@ -18,7 +18,46 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H032 rolling proposals; H031 walk report now under review
+## H032 retrieval premise resolved; H031 walk review integrated
+
+Validation: `./scripts/check.sh > /tmp/ecdlp-h032-capacity-check.log 2>&1`
+completed exit0, all366 existing theorem audits passed. These paper findings
+add no Lean theorem, so Audit.lean is unchanged. Root inspected the named diffs;
+only task-owned findings and checkpoint are included. No numerical run occurred.
+
+LATEST after4491b23: R1 single-frozen-batch capacity premise FALSIFIED by keeping
+its own sorted descriptors at no greater construction peak. Independent Astra
+critic and Sol original proposer agree; proposer withdraws that rationale.
+Pointwise replay containment requires same successful hash/archive; differing
+failed-build choices and wall-clock stopping are not silently coupled. Possible
+lookup speed, multiple archives and resident-only memory remain separate, unproved
+claims. Finding H032-retrieval-capacity-falsifier.md records the exact argument.
+
+Factory Fable portal-cost review COMPLETED, result acknowledged, no pending
+children. Native Sol's independent correction audit also COMPLETED: retain
+occupation/batch gates and portal flip(1−a−aJ,−b−bJ), reject transferred H024
+segment frequency, BLS r=2 minfold law, automatic visited-trap probabilities and
+uncalibrated sampling/hardware assertions. A specified bounded diagnostic can
+falsify an unproved model; no blanket proof-before-testing rule accepted.
+Both current walk cards still lack executable stopping/escape contracts and a
+credible gain premise. H031-autonomous-walk-screen.md reconciles the raw review.
+All H031/H032 children now terminal/collected; no writer active, no numerical run.
+Verified improvement NONE, classical square-root baseline unchanged. Goal active.
+
+Continuation after4491b23 is PROGRESS. Root proposes a cheap new R1 paper
+falsifier: keep its already-sorted hash-signature/seed/tag descriptors as the
+baseline table, fitting within the retrieval builder's hard peak. For a single
+frozen batch this may eliminate the claimed endpoint-capacity/DP-tail gain;
+constant-time lookup versus binary search remains a separately paid possibility.
+Native Astra mathematical critic and native Sol proposer/cost response RUNNING,
+read-only/no edits, experiments/imports or children. Check fixed-query replay-set
+containment, tuple/tag conventions, stopping coupling and scope before acceptance.
+This is candidate-specific analysis, not new machine/table infrastructure.
+Factory Fable original portal-cost handle revalidated RUNNING, no duplicate.
+Subsequently COMPLETED, terminal result acknowledged, no pending children;
+raw report retained in H031-portal-cost-fable-raw.md. Root accepts no-run and
+corrected occupation-weighted gate, but is checking/restricting heuristic
+segment/cycle transfers, power counts and batch assumptions before integration.
 
 LATEST: H031 Grok original task COMPLETED, terminal result acknowledged, no
 pending children or reported edits/runs. Raw two-card proposal retained in
