@@ -62,8 +62,10 @@ Native Astra `/root/encoding_review` now RUNNING a candidate-specific noisy
 predicate-to-scalar recovery/cost analysis (primary constructive algorithms,
 exact epsilon dependence), no experiments/edits/children. Do not treat the raw
 reviewer's epsilon^(-11) route as optimal or a noisy-oracle bound as universal.
-Native Astra `/root/h002_arithmetic_ideas` RUNNING explicit A3 orbit-invariant
-construction/cost development, no edits/tests/children. Native other proposers idle.
+Native Astra `/root/h002_arithmetic_ideas` COMPLETED explicit A3 orbit-invariant
+construction/cost development, no edits/tests/children. Return derivatives telescope
+to a constant; pairing and coordinate-algebra invariants currently lose on setup/
+evaluation costs. See H003-orbit-invariant-development.md; no further run funded. Native other proposers idle.
 
 T3 Claude Opus norm/coefficient witness-generator development RUNNING:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-norm-generator-development-opus-20261008-r1`.
@@ -118,3 +120,8 @@ and launched distinct concrete algorithm work. This turn made progress: actual
 bounded run, independent evidence audit, and an explicit no-larger-run decision
 pending a recovery gate. Goal remains open, neither achieved nor blocked. No
 scheduler, push, publication, real-wallet targeting or GPU-performance claim.
+
+Latest local experiment milestone79ef2d9 retains the reviewed partial A1 run,
+exact source/results hashes, raw evidence and no-larger-run decision. Orbit
+development subsequently supplied three explicit costed failures; noisy recovery
+and norm-generator tasks remain live. No verified improvement; goal unchanged.
