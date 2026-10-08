@@ -63,3 +63,9 @@ the EC translation-searchable index is missing. Sol and Claude remain live.
 Next decision: preserve only corrected reductions/scoped representation facts;
 request a concrete public primitive before any numerical experiment. Current
 best reference remains square-root work; verified improvement NONE.
+
+Final completion: native Sol and Claude Opus also COMPLETED; Claude terminal
+result read/no pending children. H021-representation-scope.md records the
+corrected projective orbit theorem and qualified trace/ray-class findings.
+Raw Claude report retained with its unsupported stronger claims explicitly
+rejected. H022 launches are distinct new creative briefs, recorded separately.

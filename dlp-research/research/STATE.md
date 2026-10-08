@@ -18,7 +18,32 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## Live H018/H019 delivery update (authoritative)
+## H021 completion / H022 live update (authoritative)
+
+H020/H021 public-signal and representation reviews all COMPLETED. Exact tasks
+and raw reports retained. H021-list-reduction-screen.md gives a supplied-curve
+signed modular3SUM reduction with uniformity/setup caveat and proves constant
+success for modular four-list filtering. The EC translation index is missing.
+H021-representation-scope.md proves the elementary projective-orbit dimension
+screen on paper and separates it from the basepoint-free geometric degree
+claim. Root rejects raw universal work bounds, trace counting treated as exact
+runtime, and ray-class equivalence without paid generator/target conversion.
+No new experiment or broad Lean refinement, and no verified improvement.
+
+H022 independent creative roles accepted RUNNING: native Sol paid lazy EDS
+schedules; native Astra constructive translation indexes; T3 Grok distinct
+complete-solver mechanisms. Ranked gates/full taskId and briefs in
+hypotheses/H022-independent-candidates.md. Initial proposals withheld between
+roles; no duplicate live work. Root+2 native within4; one T3 child within user
+capacity20. Existing broad ideation/main-objective steering remains in force.
+Next conclusion-changing step is a concrete paid primitive/schedule with a
+credible complete-work advantage, then independent review and frozen synthetic
+experiment. Current best supported ordinary full-range reference remains
+square-root work with known constants/tradeoffs. Verified improvement NONE.
+
+The historical live statuses below are superseded by this update.
+
+## Live H018/H019 delivery update (historical)
 
 H018 ONE fixture-only extension executed after native Astra implementation,
 independent Sol static review and root approval. Original v1 failure and71755
