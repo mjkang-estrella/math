@@ -20,34 +20,50 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H034 finite sparse-pair contract and remaining cost gate
 
-LATEST aftera11c626: previous goal turn PROGRESS (finite-contract checkpoint).
-Current turn: matched-memory and C4-light reviews COMPLETED and independently
-checked. New records H034-matched-memory-cost-screen.md and
-H034-c4-light-screen.md retain exact scope; original contract unchanged.
+LATEST afterb2328c3: previous turn was a VERIFIED WAIT on native Sol, then
+its completed finite protocol design was collected. Current turn PROGRESS:
+proposed research/experiments/H034/protocol.md now concretely defines fixtures,
+streams, complete solver and control ledgers, one aggregate cap, and falsifiers.
+No source writer or numerical run yet. No experiment admitted.
 
-The matched-peak baseline can asymptotically allocate four times the hash heads,
-but paid head initialization competes with saved false probes. Exact affine-hash
-collision probability and split-role H019 lookup accounting yield a conditional
-weighted crossover, not a calibrated runtime. Candidate and baseline have equal
-leading false-probe counts at equal heads. Per-key layout differences are not
-assumed to favor either solver. Spare memory alone does not reject the candidate.
+Astra independent recovery review COMPLETED. Frozen clarification: Q=O dispatch,
+then ALL eager roots constructed, then vertex-ordered first-event seed scan.
+A null first seed event falls back. Reaching leaf phase guarantees all roots
+finite/distinct-x, so ordinary simple-graph denominators cannot be zero.
+Both recovery orientations must be tried; (-1,1),(-3,1) atQ=2G demonstrates why
+one zero denominator does not imply no recovery. Fixed-k Poisson law belongs
+to undispatched leaf process; direct-zero shortcut alters uniform full-range
+moments by the small mixture only. H034-finite-contract.md records scope.
 
-The C4-light alternative uses O(q^(1/4)) seeds; its variable-density law is
-lambda(x)=x²-x^4/K^4+x^6/(3K^8). Native Astra checked the prefix combinatorics,
-concentration and dependency bound. Root then removed an unnecessary graph
-hash dictionary using exact repeated-edge detection in a packed n²-bit array;
-Astra independently checked its sampler and stopped proposal integral. This
-reduces the memory premise, but RNG/indexing/random bit access remain leading
-paid costs. No adoption, numerical result or exponent improvement.
+Native Astra mathematical protocol review COMPLETED, conditional construction
+GO with H019 index-buffer order, role-specific infinity and cap clarifications;
+these are incorporated. Root rejected its reversed6A arithmetic recommendation:
+denominator1 + y-numerators2 + shared-x-sum1 + output-subtractions2 =6A;
+two successive coordinate subtractions would total7A. Astra explicitly confirmed
+the correction; `/root/h007_additive_relations` is completed/collected.
+LIVE T3 Factory Fable5.1 cost/experiment-admission reviewer:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-protocol-cost-fable-20261008-r1`.
+Catalogue refreshed and exact target available; this is a fresh distinct review,
+not a retry of any safety-failed role. Both are read-only, no runs/imports/edits,
+children or commits. Source construction only after the protocol review gates;
+execution requires separate source audit. Native Sol design complete/collected.
+Root alone integrates shared files. No duplicate coordinator or active hypotheses.
 
-LIVE native Sol `/root/h010_early_dependencies`: propose a bounded finite
-correctness/full-cost diagnostic for the FROZEN C4-free solver versus an explicit
-H019 control. Deliver protocol only: no run/code/imports/edits. Its purpose is
-to falsify executable correctness or the stated finite ledger, not to resolve
-1.5% asymptotic gains with tiny samples. Source/experiment review required before
-one aggregate1M-event/60s run. No implementation writer has been assigned yet.
-Native Astra `/root/h007_additive_relations` completed both C4-light reviews;
-all results collected. All T3 H034 tasks are terminal and acknowledged.
+The protocol tests increasing q73/103/271/8053 with seeds7,19, uniform-range
+sampling including0, separately labelled public exception checks, reference-only
+leaf validation and stratified seed/leaf/fallback stops. Root added a second
+fixed H019 arithmetic tuple per fixture alongside three head counts; no claimed
+optimal tuning, hardware rate or grumpy improvement. Primary fallback is fixed.
+Packed-model peak and Python storage are separate. Global1M events/55s work,
+outer60s; expensive98-root tier may remain censored. No hidden warmup or resets.
+Exact seed-index head/hash rules and one paid public fallback-component check
+are now explicit. Such forced component checks are not natural solver outcomes.
+
+Previous accepted paper screens remain: matched peak competes via paid hash
+head initialization versus false probes; C4-light variable-density collision
+law and packed-bitset exact sampler reduce seed premise but add leading RNG/
+access costs. Both alternatives remain UNVERIFIED for complete-work gain.
+Original C4-free contract is the sole proposed executable diagnostic.
 
 Completed T3 task IDs retained in raw records:
 - ecdloop-h034-sparse-pair-priorart-factory-opus-20261008-r1
@@ -67,9 +83,9 @@ correctness/cost diagnostic if the cap can cover a meaningful implementation.
 No H034 numerical experiment admitted or run. No Lean/Audit change. Root alone
 integrates, no unrelated files touched, no safety-failed roles retried.
 
-Validation: `./scripts/check.sh > /tmp/ecdlp-h034-cost-light-check.log 2>&1`
-exit0,366 existing audits. New results are reviewed paper arguments only;
-checks do not certify them as Lean theorems.
+Validation: `./scripts/check.sh > /tmp/ecdlp-h034-protocol-check.log 2>&1`
+exit0,366 existing audits. New protocol/paper claims are not Lean theorems.
+No Lean/Audit changes or numerical run; execution remains unadmitted.
 Existing unbounded research goal remains active.
 
 ## H033 independent proposals and remaining lookup hypothesis

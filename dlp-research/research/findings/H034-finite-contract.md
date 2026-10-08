@@ -106,3 +106,34 @@ term's asymptotic disappearance. No practical gain or exponent change follows.
 Process: /root/h010_early_dependencies proposal; /root/h007_additive_relations
 independent finite-contract/hash review; root integration. Reviews were read-only
 without experiments, code imports, edits or children. No Audit change.
+
+## Subsequent deterministic startup clarification
+
+Root and independent Astra recovery review fixed the earlier ambiguity:
+after the explicit Q=O input dispatch, construct ALL roots before processing
+seed events. Then scan roots in vertex order, infinity first, and on the FIRST
+seed-x repeat either verify recovery or immediately fall back. Null seed events
+never permit continuing to the leaf phase. No resampling occurs.
+
+Reaching the leaf phase therefore certifies finite roots with pairwise distinct
+x. A simple graph's edges all have nonzero denominators and both signed sums
+are finite. This is an exact invariant, not a probabilistic assertion. Defensive
+ordinary edge checks must reject an invariant violation; tangent/vertical/zero
+support can be exercised separately as public component diagnostics.
+
+With equal x keys labelled(A,B),(A',B'), orientations sigma=+1,-1 yield
+d=B-sigma*B' and proposal(sigma*A'-A)/d when d!=0. Verify both nonzero-denominator
+proposals in order; a failed wrong-sign verification is expected. Example at
+Q=2G: labels(-1,1),(-3,1) represent G,-G. The first denominator is zero, yet
+the second recovers2. Premature fallback after only the first orientation would
+lose a useful relation. Null zero label(0,0), or identical labels at nonzero
+points, can require fallback; infinity/equal x is not automatically a solution.
+
+The fixed-k Poisson law describes the undispatched mathematical leaf process.
+An actual solver with Q=O dispatch has T=0 on that fixed input. For a uniform
+full-range target this shortcut alters the mixture only on probability1/q;
+it does not justify removing0 from the challenge or claiming equal fixed-input
+stopping laws after shortcut dispatch. The pending finite protocol includes0.
+
+Reference: proposed research/experiments/H034/protocol.md. Independent
+protocol review precedes source construction/execution admission. No run yet.
