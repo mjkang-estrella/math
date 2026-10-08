@@ -474,3 +474,20 @@ CONFIRMED finite coefficient identity, characteristic, face and CRT preservation
 root repeated them. Result in findings/H010-explicit-support-obstruction.md.
 No experiments or formal code. Factory Fable r2 and Grok hybrid r1 remain the
 independent live ideation roles. No duplicate or new coordinator/scheduler.
+
+## H011 known-point fiber loophole screen
+
+Native Astra /root/h006_structured_relation_ideas RUNNING concrete useful-relation
+proposal after the complete-fiber degree caveat. Native Sol
+/root/h010_early_dependencies RUNNING independent degree-two reflection/pole and
+compact Frobenius-composite audit. Read-only, no experiments/children. Root owns
+hypotheses/H011-known-point-fibers.md and shared integration. Fable r2 and Grok
+H010 hybrid r1 handles revalidated RUNNING; neither duplicated or replaced.
+H010 independent Astra stored-support review is fully COMPLETED and confirmed.
+
+H011 Sol mathematical review COMPLETED: invariant pole degree, transitivity,
+compact Frobenius degree/separability and full fixed-field classification checked.
+Root integrated source-backed standard facts and scoped derivations in
+findings/H011-translated-fiber-screen.md. Native Astra operation/cost followup
+remains RUNNING, as do the two existing T3 ideation handles. No new task IDs or
+providers silently substituted. No experiment/engine was run.

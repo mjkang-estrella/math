@@ -24,20 +24,19 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: H010 cyclic Graeffe v1 has failed an independently checked
-   first-block cost screen. Independent adaptive-labelled-sampling and hybrid
-   mechanism proposals remain live; no improved algorithm is accepted.
-4. Evidence: the first-2-block norm now has an independently checked stronger
-   two-coordinate face. An exact finite coefficient identity and full-box CRT
-   injectivity force Omega(B²) STORED terms outside O(B^-2) of uniform targets.
-   This rejects even output-sensitive multiplication variants that materialize
-   the SAME layer. Paid one-row queries give Omega(B³) expected collector work
-   at constant completion probability, versus B^(5/2) reference. Paper result,
-   not Lean-proved; compressed/bypassed layers and changed samplers remain open.
-5. Next conclusion-changing step: review the remaining adaptive-sampling/hybrid
-   proposals and primary-source applicability report. A changed concrete
-   operation is needed before reopening the rejected schedule. No S6 engine,
-   matrix-equivalence benchmark or generic Lean infrastructure is justified.
+3. Current hypothesis: H011 known-point columns in shared fibers, following the
+   real limitation of the earlier degree-cancellation argument. Translated-x
+   common-value selectors have now failed; paid partition queries remain under
+   review. Adaptive-target/base and hybrid proposals continue independently.
+4. Evidence: independent mathematics confirms all common composites of two
+   distinct rational translated-x maps are constant on E(F_p). Compact degree2q
+   composites do exist, so degree is NOT a runtime bound. This rejects their
+   value-only selector without rejecting additional coordinate operations. H010
+   explicit-layer Graeffe rejection remains in its separately scoped findings.
+5. Next conclusion-changing step: finish the proposed fiber-partition operation
+   and whole-cost screen, then integrate independent Fable/Grok ideas. Known-log
+   columns genuinely invalidate blanket degree cancellation; no universal
+   function-field or coordinate-method exclusion is asserted. No engine funded.
 
 ## Live work and actual failures
 
@@ -257,3 +256,30 @@ No new experiment, engine or Lean claim. Original literal milestone committed
 as fa606b6; this extension is a separate coherent finding. Existing checks passed;
 only task-owned Markdown changed. Factory Fable r2 and Grok hybrid r1 remain live,
 await completion notifications after checkpoint. Objective active, not achieved.
+
+## H011 continuation checkpoint
+
+Previous goal turn was progress: fa606b6 and38d7a23 committed independently
+checked H010 negative findings. Current tree rechecked clean for this task before
+new records; unrelated untracked directories remain untouched. Fable r2 and Grok
+hybrid r1 task_status both authoritatively RUNNING now. No task restarted due
+to a wait or observation timeout. Native H010 independent reviewer delivered
+its complete final support/work-reward confirmation, with no new correction.
+
+A remaining specification loophole deserves a bounded new operation screen:
+known-point columns can defeat the earlier complete-fiber degree cancellation.
+Native Astra /root/h006_structured_relation_ideas RUNNING H011 concrete generators;
+native Sol /root/h010_early_dependencies RUNNING distinct pole/reflection and
+compact Frobenius-composite review. See hypotheses/H011-known-point-fibers.md.
+High degree is explicitly not a runtime bound; no known algorithm is claimed new.
+No new numerical run or Lean infrastructure. All writers remain root-only.
+
+H011 mathematical milestone: native Sol COMPLETED independent review, root
+checked the primary separable-degree/kernel theorem and all applications.
+findings/H011-translated-fiber-screen.md retains exact known-column correction,
+reflection/pole argument, transitivity and compact Frobenius counter-caveat.
+Native Astra proposer remains RUNNING its distinct operation/cost report on
+fiber partitions; no need to rerun the completed mathematics. All hypotheses
+and limitations retained. `./scripts/check.sh > /tmp/ecdlp-h011-fiber-check.log 2>&1` passed exit0 (363 existing audits). No formal code changed; these are
+paper results. Explicit staging only task-owned Markdown, unrelated directories
+untouched. Current work is progress, not a blocker; objective remains active.
