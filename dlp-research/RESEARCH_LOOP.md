@@ -1,83 +1,88 @@
-# Resumable agent brief
+# Algorithm-first ECDLP research loop
 
-Prepare research artifacts toward a verified improvement in algorithms for the
-elliptic-curve discrete logarithm problem. The initial objective is honest
-formalization, not claiming or guaranteeing a discovery. Work on mathematical
-specifications and synthetic, small instances; this project has no wallet
-targets or live-fund recovery tasks.
+The main objective is discovering and testing more efficient elliptic-curve
+discrete-log algorithms. The research metric is a changed credible complexity
+or matched end-to-end work estimate, not theorem counts, commits, encodings,
+decoder lemmas or infrastructure. Verified improvement over the accepted
+baseline is currently **NONE**.
 
-The user has now authorized a dedicated research task, parallel subagents,
-independent verification, and local commits of significant findings together
-with their research process. Follow `RESEARCH_TEAM.md` for the approved model
-families, delegation mechanics, write ownership, and commit policy. This
-authorization supersedes the original preparation-only restriction.
+User steering on2026-10-07 local/2026-10-08 UTC supersedes the earlier milestone
+ordering. The loop drifted into disproportionate generic word-machine/query
+refinement. Preserve that work, but stop expanding it unless a named promising
+algorithm demonstrably needs a specific lemma. Do not make a complete formal
+machine stack a prerequisite for evaluating or rejecting an algorithm idea.
 
-Work in successive bounded research waves, checkpointing between them. Continue
-autonomously while useful work remains and the runtime permits. Use a persistent
-agent goal where supported; do not implement a busy shell loop or claim that a
-single process can run forever. No time-based recurring schedule is configured
-by this brief. A paused or interrupted task must resume from its checkpoint.
+## Each bounded wave
 
-## One invocation
+Persistent user steering: maintain broad independent ideation before synthesis.
+Use as much useful parallelism as actual provider/runtime capacity permits;
+cross-provider calls do not bypass the global cap (currently four active slots
+including coordinator). Keep free slots on distinct productive ideation in
+rolling waves while preserving live investigations. Each proposer explores about
+3–5 different mechanisms if worthwhile; aim for an initial pool around15–25
+distinct candidates across waves, never as a quota or progress metric. Diversify
+authorized models after live discovery; report failures without silent swaps.
+Do not restrict the pool to two ideas plus a critic. Initial proposers receive
+different lenses without other agents' proposals, reducing anchoring. Every idea
+needs a mechanism, expected gain, prior-art distinction, unsupported assumption
+and cheap decisive falsifier. Speculative ideas need not have complete proofs.
+Then deduplicate, retain rejection reasons, rank meaningful gain/testability,
+and independently review promising survivors before matched experiments. Generic
+lower bounds do not prove coordinate-aware impossibility. Breadth does not waive
+full-cost accounting or justify generic Lean infrastructure.
 
-1. Read `README.md`, `research/STATE.md`, and the current Lean definitions.
-   Check the working tree for work in progress before making edits.
-2. Select one tractable integration milestone and assign distinct parallel
-   investigations when useful. Start with the unresolved
-   concrete elliptic-curve refinement, a small checked example, or baseline
-   correctness. Do not jump directly to asserting a secp256k1 breakthrough.
-3. Write a short hypothesis: what might improve, why, and what observation or
-   proof would falsify it. Consult primary literature when assessing novelty.
-4. Implement, formalize, or experiment with explicit resource bounds. Use roughly
-   15–30 minute research waves as checkpoint intervals, not a limit on the whole
-   task. Initial toy experiments should fit within 60 seconds and one million
-   transitions; document justified increases before running them. User-authorized
-   model calls go through the native/T3 delegation tools. Do not purchase extra
-   infrastructure, rent GPUs, or start live-wallet recovery jobs.
-5. Run `./scripts/check.sh`. Add every new theorem supporting a claimed result
-   to `Audit.lean`. Report assumptions and all unproved obligations.
-6. Update `research/STATE.md` and a per-hypothesis research record with exact
-   commands, outcomes, rejected hypotheses, resource use, reviewer objections,
-   task IDs, and the next distinct step. Preserve useful negative results.
-   Commit significant coherent milestones under the policy in `RESEARCH_TEAM.md`.
-   Do not repeat a failed approach without a new reason it could succeed.
-7. Continue to the next wave or yield to outstanding subagents. Record any
-   necessary handoff before ending a run. Do not duplicate work already active.
-   If three successive iterations hit the same external blocker, explain it
-   and require a changed input rather than spinning indefinitely.
+Retain acceptance discipline: independently review and freeze challenge
+definitions before accepting significant claims. Changes to curve family,
+encoding, interpreter or costs are separate reviewed changes, never a way to
+make a candidate pass. Asymptotic claims require a uniform executable algorithm
+and a proved bound; finite improvements and practical attacks are distinct.
+Account for program size/advice and all assumptions. Do not purchase or rent
+additional infrastructure under this loop's authorization.
 
-## Acceptance conditions
+1. Inspect STATE and live task handles. Keep the existing research goal; do not
+   create another coordinator, duplicate active hypotheses or add a scheduler.
+2. Rank concrete algorithmic hypotheses. For each state the mechanism, barrier,
+   accepted baseline, predicted exponent or material complete-work saving,
+   preprocessing/memory/success assumptions, primary prior art and cheap falsifier.
+   Label known techniques as known. Reject secret-range narrowing, hidden inverse
+   tables/oracles/advice, and irrelevant special-curve transfer immediately.
+3. Use parallel distinct idea exploration and independent critical review. Give
+   each experiment one precise question that could change the full-size hardness
+   or complete-work assessment. Do not replace missing primitives by free oracles.
+4. Test correctness and scaling on increasing representative synthetic parameter
+   sizes and multiple declared seeds. Match full-work accounting: curve/field
+   arithmetic, relation generation/verification, preprocessing, lookup/sorting,
+   memory, restarts, failed trials and success probability. Distinguish memory
+   tradeoffs and amortization across targets. No real wallets or live funds.
+5. Initially bound a computation to60 seconds and roughly1M instrumented events;
+   justify larger runs in advance. Stop losing candidates promptly and preserve
+   negative evidence. Finite measurements cannot prove asymptotic complexity.
+6. Use Lean for focused mathematical claims or invariants of a promising approach.
+   Broader refinement must name the candidate and explain why the exact missing
+   lemma can change acceptance. Never weaken a challenge or add assumed attack
+   axioms to get a result. No proof escape hatches or compiler proof shortcuts.
+7. Commit coherent evidence and process locally, with commands, sources, seeds,
+   failures, costs, objections and task IDs. Run appropriate checks; when Lean
+   changes, update Audit and run scripts/check.sh. The screens are honest-mistake
+   checks, not adversarial proof validation. No push/publication without a request.
+8. Report the five items below, choose the next decisive experiment, and continue
+   or yield to confirmed-live children. Honor pause/stop/budget instructions.
 
-- Never change the target, curve family, public encoding, interpreter, or cost
-  semantics merely to make a candidate pass. Legitimate specification changes
-  are separate milestones requiring review before comparing new results.
-- No unproved escape hatches, newly assumed attack theorems, or compiler-based
-  proof shortcuts. Keep the axiom audit limited to Lean's standard logical
-  axioms. An open objective stays a definition of a proposition.
-- A complexity result requires a uniform executable algorithm and a proven
-  bound on its execution. A bare inverse function or assigned cost is not one.
-- Do not turn a secret into public input, use secret-dependent advice, narrow
-  the scalar range silently, or substitute toy/easy curves for the target.
-- A finite-size improvement, asymptotic improvement, and practical attack are
-  different results. Report each with its actual evidence and scope.
-- Benchmarks do not prove asymptotic complexity. Correctness does not prove
-  speed. A theorem about an abstract group does not certify a concrete curve.
-- Account for preprocessing, memory, program size, success probability,
-  amortization, and hardware assumptions before making a practical claim.
-- Freeze independently reviewed challenge definitions before accepting an
-  extraordinary result; the included lexical and axiom screens are not a
-  hardened untrusted-agent proof checker.
-- When a hypothesis becomes testable, separate its proposer/implementer from
-  its verifier. Obtain mathematical, executable, and cost-model checks before
-  treating an improvement as established. Disagreement is part of the record.
+## Mandatory wave report
 
-## Suggested milestone order
+- Current best supported complexity/full-work estimate and its assumptions.
+- Verified improvement versus the accepted baseline (currently NONE).
+- Concrete hypothesis under test.
+- Evidence for and against it, including failed and inconclusive tests.
+- Next experiment or analysis capable of changing the conclusion.
 
-1. Review/freeze the statement and cost model; refine curve arithmetic into it.
-2. Prove scalar multiplication and exact-order facts on a small actual curve.
-3. Formalize a baseline and demonstrate end-to-end correctness on that curve.
-4. Add explicit randomized semantics for expected-cost algorithms if needed.
-5. Connect an efficient implementation's operations to a reviewed cost model.
-6. Investigate one specific algebraic or implementation improvement at a time.
-7. Only after synthetic evidence and proofs, assess transfer to cryptographic
-   parameter sizes and the size of the remaining performance gap.
+For ordinary prime-field prime-order curves, generic square-root algorithms and
+known automorphism constants remain the working classical reference; this is not
+a proof excluding coordinate-specific attacks. Use primary sources to scope
+claims and do not treat a historical literature survey as a current novelty proof.
+No GPU curve-work throughput is validated here: B200/H200 AI FLOPS do not measure
+ECDLP work. Any dashboard multipliers are explicitly hypothetical, not benchmarks.
+
+The ongoing goal remains open. No discovery is promised, and compilation is not
+completion. See RESEARCH_TEAM.md for delegation/ownership and research/STATE.md
+for the authoritative checkpoint and active hypotheses.

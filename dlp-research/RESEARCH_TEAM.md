@@ -5,6 +5,27 @@ parallel subagents using GPT Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory's
 Claude Fable and Opus; investigate alternatives, verify hypotheses in depth,
 and commit significant findings alongside the research process.
 
+## Main-objective priority (user steering,2026-10-08 UTC)
+
+Algorithmic ECDLP complexity and matched end-to-end work are the primary metrics.
+Verified improvement is currently NONE. The prior infrastructure-first ordering
+is superseded. Do not launch or extend decoder/query/machine/tape work unless a
+named promising candidate needs that exact result for a decision. Preserve parked
+work and negative evidence; do not count it as an algorithmic improvement.
+
+Each wave must rank specific mechanisms against primary prior art and credible
+baselines, then run cheap falsifiers before expensive formalization. Explore
+ideas in parallel and review them independently. Include all preprocessing,
+memory, failed attempts, success probability and amortization. Use increasing
+representative synthetic sizes and declared seeds, never third-party wallets.
+Known signed BSGS/automorphism tricks are baselines, not discoveries. Special-curve
+attacks require their exact hypotheses and do not transfer to ordinary targets.
+Lean should prove focused candidate claims; general infrastructure needs a
+candidate-specific justification. No AI-FLOPS-to-GPU-curve-work conversion.
+
+Every wave reports best supported complexity/work, verified improvement, current
+hypothesis, evidence for/against and the next conclusion-changing experiment.
+
 ## Coordinator and approved delegates
 
 Use GPT-6 Astra as coordinator. The following exact targets were available
@@ -38,12 +59,22 @@ provider CLI or bypass model-account permissions.
 ## Parallel work
 
 Respect the live runtime's concurrency limits, including the coordinator.
-Start with up to three distinct delegates where capacity permits, then use
-additional waves. A useful first wave is:
-
-1. Mathematical specification and generic-lower-bound review (read-only).
-2. Concrete small-curve refinement and Lean implementation plan.
-3. Candidate research directions and novelty/cost analysis (read-only).
+Use at most three distinct active delegates alongside the coordinator, counting
+cross-provider work too. Latest explicit user steering requires broad initial
+independent idea generation, not a fixed two-hypotheses-plus-critic pipeline.
+Keep available slots occupied by distinct productive tasks using rolling waves,
+while preserving current investigations. Each proposer should offer roughly3–5
+genuinely different mechanisms where worthwhile; aim for roughly15–25 distinct
+initial candidates across waves without padding or treating counts as success.
+Diversify authorized models from the live catalogue and report actual failures.
+Assign distinct lenses and withhold other initial proposals until synthesis to
+reduce anchoring. Each card states mechanism, potential gain, prior-art distinction,
+unsupported assumption and cheap falsifier. High-risk ideas may enter without
+complete proofs. Deduplicate and rank by meaningful gain and cheap testability;
+retain rejected ideas/reasons. Then assign independent skeptical cost/prior-art
+review and matched synthetic experiments to survivors. No generic lower-bound
+argument alone excludes coordinate-aware approaches. No slots for duplicate
+opinions or parked infrastructure. Ownership rules below still apply.
 
 Once there is a testable hypothesis, organize separate roles for proposal,
 implementation, adversarial mathematical review, Lean proof review, and
