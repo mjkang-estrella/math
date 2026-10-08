@@ -42,6 +42,10 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    incidence literature supplies neither a detector nor a relevant hardness
    reduction. Raw extension-root runtimes and broad side-table rejections are
    unaccepted; see H017-SP3-disposition.md.
+   A focused paper pass supplied explicit quadratic product/gcd and cubic
+   quotient-algebra detectors, both too expensive. Two exact Singer-coordinate
+   screens rule out the specified small quotient-support filter and full sparse
+   convolution, not all implicit detectors; H017-SP3-detector-screen.md.
    H014 remains the latest numerical run:738704 events, no gross feature signal.
 5. Next conclusion-changing step: independently review concrete H017 operations,
    admit a matched cheap falsifier only if useful extraction or information gain
@@ -65,6 +69,15 @@ no pending child runs. Raw retained; NEW native Astra SP3 math and native Sol
 probability/cost/literature reviews COMPLETED. Root supplied explicit halving
 parametrization and checked reviewed expansion/probability arguments. Grok
 computational hybrids and Factory Opus information briefs last confirmed RUNNING.
+Both exact handles revalidated after0bb94aa. NEW native paper-only detector
+branches used free slots without duplicating those independent initial briefs.
+Astra algebraic branch COMPLETED two explicit losing operations; Sol geometric
+branch supplied a quotient-support bound and independently checked root's
+perfect-difference sparse-output argument.
+Geometric synthesis COMPLETED, also specifying a uniform-slope
+full-scan detector whose retained-hit/work bound is unfavorable. Root checked
+the bound and scoped it to that scan protocol. Both new native roles terminal;
+Grok/Factory original handles remain live as last verified. No experiment.
 Exact retained
 taskIds/clientRequestIds and independent briefs: H017-independent-briefs.md.
 Live capability discovery confirms all three requested models, no substitution.

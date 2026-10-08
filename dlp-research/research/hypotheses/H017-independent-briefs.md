@@ -89,3 +89,24 @@ provable, but fast detection remains missing. No applicable3SUM reduction found.
 Unmeasured operation estimates and broad side-table dismissals are not accepted.
 See H017-SP3-disposition.md. Grok and Factory initial proposals remain live;
 their initial answers have not been anchored on SP3 or the native results.
+
+## Focused paper-only detector development
+
+After0bb94aa and verified waits, Grok/Factory handles again confirmed RUNNING.
+Two free native roles accepted distinct followups: Astra algebraic implicit
+products/evaluation, Sol geometric filtering/representations. No engine, files,
+children or numerical runs. Root later supplied the Singer-coordinate alternative
+to Sol, explicitly distinguishing it from the independent initial attempt.
+
+Astra COMPLETED product/gcd and quotient-algebra detectors with quadratic and
+cubic costs; both overlap earlier families and are not new attacks. Sol supplied
+an exact small-quotient support obstruction. Root checked it and derived a
+perfect-difference argument forcing n² explicit sparse-convolution outputs for
+disjoint lists; Sol independently confirmed that argument. Sol final synthesis
+pending. See H017-SP3-detector-screen.md for exact scope and unresolved primitive.
+
+Sol final synthesis now COMPLETED. Its independent uniform-slope grouping
+operation loses by a retained-hit/full-scan work bound, checked by root.
+Singer quotient and full-convolution screens remain scoped. No implicit
+detector supplied; no numerical run or engine justified. Both native roles
+terminal, original Grok/Factory briefs unchanged and still live as last verified.

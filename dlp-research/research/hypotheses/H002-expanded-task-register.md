@@ -840,3 +840,17 @@ literature supports neither the missing detector nor a rejection by3SUM
 analogy. Exact taskId remains the retained prefix plus clientRequestId, no
 backing-thread review continuation. Grok/Factory initial tasks last confirmed
 RUNNING; no duplicates or silent substitutions. No numerical runs.
+
+After0bb94aa: same Grok/Factory handles again confirmed RUNNING. NEW native
+/root/h007_additive_relations algebraic detector attempt COMPLETED, with two
+explicit losing methods; NEW /root/h010_early_dependencies geometric attempt
+supplied exact quotient-support and sparse-output screens, final synthesis
+pending. Root supplied the Singer-coordinate alternative and perfect-difference
+output proof; Sol reviewed it. Paper-only, no engine or experiments. Initial
+T3 proposals remain independent, no backing-thread continuations.
+
+Sol geometric detector final now COMPLETED, adding the independently developed
+random-slope/full-scan operation and its retained-hit work bound. Root checked
+it for q>3 and retained the actual group-verification/degeneracy requirement.
+Both native followups terminal. No experiment or concrete improved detector;
+Grok/Factory original T3 task IDs remain the same, live as last verified.
