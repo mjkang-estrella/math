@@ -6,7 +6,7 @@ Three distinct initial roles, no cross-sharing before delivery. Root alone
 writes/integrates/commits. No experiment or new generic Lean work authorized
 by these briefs. Native root+2 within4; one T3 role within confirmed20.
 
-## Native Sol /root/h010_early_dependencies — RUNNING
+## Native Sol /root/h010_early_dependencies — COMPLETED
 
 Construct2–4 different uniform signed-progression layouts if worthwhile:
 explicit public b,c(q),s(q), whole-prefix overlap rationale, output/block order,
@@ -39,3 +39,24 @@ NEW H025 broad independent creative ECDLP pass in /home/mj-kang/Documents/Dev/ma
 Astra initial result: no survivor; root checked H025-low-memory-screens.md.
 No additional run admitted. Sol construction and Grok independent roles remain
 live on their existing handles; no replacement or duplicate.
+
+## Rolling native Astra role — COMPLETED
+
+After the completed low-memory report, native Astra received a distinct
+read-only constructive brief: cheap addition chains with changing Q coefficients,
+not Sol's fixed-family progressions or Grok's coordinate-aware relations.
+Seek signed scalar coverage with paid uniform generation and memory; no offline
+optimal-chain oracle or counting ceiling mistaken for achievement. Nonlinear
+label curves/structured sets/recurrences may be explored, with exact recovery,
+prior art, unsupported assumption and cheap falsifier. Ordinary parabola labels
+with consecutive coefficients give only O(t) sums; irregular sets pay generation.
+No experiments, edits or children. Other H025 initial proposals withheld.
+
+Sol supplied two preliminary explicit layouts; these remain UNREVIEWED pending
+its final exact modular-origin argument and fallback. No coverage test launched.
+The Grok handle was revalidated RUNNING. This continues the existing wave;
+no duplicate coordinator, terminal-provider retry or failed-test retuning.
+
+Both native proposal roles completed. Explicit layouts pending independent
+review in H025-signed-layouts.md; addition-chain result retained as a scoped
+component without a run. NEW reviews are registered in H025-layout-review-register.md.

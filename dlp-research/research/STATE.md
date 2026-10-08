@@ -18,7 +18,78 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H025 low-memory result (authoritative live update)
+## H025 reviews complete / finite enumerator next (authoritative)
+
+Native and T3 H025 proposal/review roles are now COMPLETED; terminal results
+read. Mathematical layout review supports exact enumeration after corrections.
+H025-layout-mathematical-review.md records modular charts, midpoint drift,
+stride duplicates, full fallback and O,G,Q initial records. Fable cost review
+found setup dominance; root corrected its control prefix counts, zero-scalar
+rationale and cross-channel tagging. Old budget estimate is not accepted.
+No candidate coverage run has occurred; no source or setup measurements invented.
+
+First probe will use primes509,1009 as suggested BEFORE any data, fixed layouts
+A/B and GWZ-style control under the same wrapper, full fallback, all-q prior
+with initial{0,±1}, and paid public-input comparisons. Root implementation is
+the next safe action, followed by independent static code/budget review before
+one globally bounded run. Finite generated-key gains cannot establish full EC
+work or asymptotics. All unresolved memory, setup and tail costs remain explicit.
+
+Grok raw bridge report also completed. Root and independent Astra review found
+and corrected false distinctness and degree exclusions; H025-bridge-scope-corrections.md
+retains the valid multiset identity, explicit F7 counterexample and scoped Tate
+triviality. No bridge experiment admitted; do not claim these directions closed.
+
+Best supported ordinary complexity remains square-root; verified improvement
+NONE. Goal active. All prior failed schedules stay parked; no new coordinator,
+provider retry, hardware rate or broad Lean infrastructure. Validation: ./scripts/check.sh passed exit0,366 audits; log
+/tmp/ecdlp-h025-reviews-check.log. No formal source/Audit changes. Older statuses below are historical.
+
+## H025 explicit layouts under independent review (historical)
+
+Previous goal turn registered rolling creative work and a verified live wait.
+Native Sol now COMPLETED two explicit signed layouts with modular chart argument,
+block order and full fallback; hypotheses/H025-signed-layouts.md retains them as
+UNREVIEWED proposals. Native Astra addition-chain role also COMPLETED: exact
+per-output arithmetic gate and lag-three component in H025-addition-chain-screen.md;
+no positive full-work coverage rationale or numerical run admitted for that role.
+
+Independent mathematical and initial-input reviews now COMPLETED; accepted
+qualifications in H025-layout-mathematical-review.md. T3 Factory Fable
+protocol/budget/memory review remains RUNNING. Full retained
+handle and scope in hypotheses/H025-layout-review-register.md. Original H025
+Grok independent coordinate-bridge ideation COMPLETED; raw report retained
+unreviewed. Root identified flawed distinctness/degree exclusions; native Astra
+now RUNNING a NEW narrow scope audit of those claims, no experiments.
+No proposed short-prefix formula or operation budget accepted on authority.
+Public O,G,Q input comparisons add work beyond the original budget estimate.
+No coverage execution yet. Native root+1 currently active, one T3 role within
+actual/user limits; no blocked-provider retry or new coordinator.
+
+Best supported full-range complexity remains square-root; verified gain NONE.
+Next conclusion-changing work: reviewed exact finite first-discovery enumeration
+for these layouts versus actual GWZ control, followed only if warranted by larger
+parameter and full arithmetic/memory analysis. Tiny tests cannot prove asymptotic
+or full-size gains. H024 failed escape test remains parked. Goal active.
+Validation: ./scripts/check.sh passed exit0,366 audits; log
+/tmp/ecdlp-h025-layout-proposals-check.log. No Lean/Audit or dashboard change.
+
+## H025 constructive continuation (historical)
+
+Previous goal turn was a verified wait on the original live Sol/Grok roles.
+Grok revalidated RUNNING; Sol has delivered two preliminary explicit progression
+layouts, pending its final argument/fallback. No gain or experiment accepted.
+Freed native Astra now RUNNING a distinct rolling role on variable-coefficient
+addition chains, independent of fixed-family layouts and coordinate-aware bridges.
+Full scope in hypotheses/H025-constructive-wave.md. Native root+2 within4,
+one T3 role within confirmed20. All initial proposals remain separated.
+
+The next gate is exact modular origin/coverage analysis and paid generation,
+not a new generic engine. Current best supported complexity remains square-root;
+verified improvement NONE. Parked H024 escape schedule is not retuned.
+Goal active; no new numeric run, Lean change or dashboard claim this update.
+
+## H025 low-memory result (historical)
 
 Previous goal turn was progress:18a3818 committed the independently audited
 finite negative and primary-prior-art correction. This turn revalidated the
