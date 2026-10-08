@@ -13,3 +13,6 @@ import Research.OrbitArithmetic
 import Research.BSGSArithmetic
 import Research.BSGS
 import Research.PointKey
+import Research.IndexedLookup
+import Research.SortedBabies
+import Research.SortedBSGS

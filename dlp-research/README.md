@@ -91,6 +91,11 @@ without being an exponent improvement.
   scalar for every positive table width, including duplicate baby points when
   the width exceeds the order. Its add/neg refinement is proved for the small
   coordinate curve. Lookup is linear; no total-cost bound is asserted (W005/W007).
+- A separate sorted solver uses reviewed coordinate keys and actual indexed
+  binary lookup. Generic proofs cover every positive table width and bound
+  accumulated query comparisons. Baby construction, sorting, key generation,
+  group arithmetic and memory remain unpriced; this is not a total-work bound
+  or a tape implementation (W008/W009).
 - A reproducible signed-BSGS experiment tests all 365 scalars of five synthetic
   coordinate curves. Negation pairs reduce some counted additions while adding
   sign/key work. This known constant-factor method has no calibrated speed or
@@ -124,8 +129,9 @@ units and must never be silently equated.
 - A frozen family of appropriately difficult curves and reviewed, conventional
   public encodings. Do not choose an easy family and claim a secp256k1 result.
 - A justified refinement of the high-level exhaustive baseline to the tape
-  model, and a verified square-root baseline (or a separately reviewed
-  replacement cost model).
+  model, and a verified complete cost bound for the sorted baseline (or a
+  separately reviewed alternative cost model). Query bounds alone do not pay
+  for construction, sorting, arithmetic, memory or physical access.
 - A randomized/probabilistic extension. The current all-input deterministic
   worst-case goal is stronger than the usual expected-cost Pollard-rho claim.
 - Resource accounting beyond transitions: peak tape usage, realistic hardware,

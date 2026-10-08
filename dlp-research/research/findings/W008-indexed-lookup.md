@@ -118,3 +118,26 @@ declarations and the executable smoke check. IndexedLookup is unimported and
 uncommitted while its author finishes correctness/probe proofs; this validation
 does not certify that unfinished module. The key-only checkpoint includes the
 accepted design and retained live task IDs, not an efficient-solver claim.
+
+## Frozen indexed-search implementation and review
+
+Sol completed Research/IndexedLookup.lean, 31 public theorems. Actual midpoint
+entries are cached and directly indexed; sortedness is a nondecreasing key
+preorder. The public lookup wrapper uses zero fuel for empty arrays, otherwise
+log2(size)+1. Generic proofs distinguish array location from payload, establish
+soundness/completeness/absence, and prove non-exhaustion independently of
+sortedness. Power-of-two probe bounds hold even for arbitrary supplied fuel.
+Executed equality/order counters satisfy the specified relations; their sum
+is at most twice the wrapper fuel. No whole-solver, allocation or latency bound.
+
+Author bounded compile and all 31 axiom checks passed. Three earlier attempts
+failed on parser/proof elaboration issues (including if-distribution and an
+unavailable tactic); corrected before freeze, no timeout or counterexample.
+Kernel boundary checks cover empty/unit, missing below/above/between, distinct
+payloads sharing a key, all equal keys, sizes four/eight and explicit exhaustion.
+
+Independent native Astra recompiled the frozen source and audited all 31
+claims: PASS, standard permitted axioms only. No proof, access, counting or
+scope blocker. It specifically confirmed absence/exhaustion separation and
+that fuel adequacy requires no sortedness. The implementation is accepted
+within its query-only scope. Integration into BSGS is recorded in W009.

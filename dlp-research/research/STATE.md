@@ -1,12 +1,13 @@
 # Research checkpoint
 
-Status: active, waves 1–3 correctness/finite-experiment milestone accepted
+Status: active, wave 4 sorted-solver correctness/query milestone accepted
 (2026-10-07). Persistent goal in coordinator thread
 `01a118a2-f8f0-7751-90bd-ddeb86a90ada`; no token budget or recurring schedule.
 Starting commit `815d920`, clean at intake. Local milestones `c99e349` and
 `05ed8be`; W005/W006/W007 committed locally as `9667d72`; clean after that commit.
-W008 reviewed coordinate-key layer is ready for a separate local checkpoint;
-IndexedLookup remains author-owned, unimported and uncommitted.
+W008 coordinate-key layer committed locally as `97ebd5c`. IndexedLookup,
+SortedBabies and SortedBSGS are frozen, independently reviewed, integrated and
+ready for the next local commit. Full-cost semantics remain under design review.
 No faster ECDLP algorithm or cryptographic break has been discovered.
 
 ## Authorization and operating constraints
@@ -22,22 +23,24 @@ limitations are documented by negative tests, not silently repaired.
 
 ## Current live work
 
-- Native Sol `/root/small_curve`: owns ONLY Research/IndexedLookup.lean after
-  W008 design approval: actual indexed search, correctness and probe bounds.
-  Coordinator owns PointKey.lean and shared records/integration; no collisions.
+- Native Sol `/root/small_curve`: completed IndexedLookup implementation;
+  now READ-ONLY adversarial review of Fable's W010 full-cost interpreter proposal.
+  No cost-model code or shared edits authorized; no children.
 - T3 Grok `grok-4.7`: original primary-literature/falsifiable-directions task
   remains running at last status read. Do not duplicate because it is slow.
   Request `ecdloop-w1-literature-grok-20261007-r1`; task ID
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-literature-grok-20261007-r1`.
-- Native Astra `/root/encoding_review`: W008 design and frozen PointKey
-  implementation independently passed; currently complete. No unstable lookup
-  review yet.
-- Factory Fable 5.1: read-only whole-solver cost-design review, running.
+- Native Astra `/root/encoding_review`: independently passed W008 key/search,
+  W009 adapter and full sorted solver, including all 28 compiled test cases.
+  Currently complete. All source frozen.
+- Factory Fable 5.1: whole-solver cost-design review completed; original report
+  retained verbatim in W010-cost-proposal-review.md, explicitly NOT ACCEPTED.
   Request `ecdloop-w4-cost-ledger-fable-20261007-r1`; task ID
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w4-cost-ledger-fable-20261007-r1`.
-  Supplies explicit primitive/width/setup/storage obligations; no model adopted.
-  Four active slots including coordinator; no further live delegate until a
-  task completes.
+  Proposes a deep-embedded word-RAM interpreter. Mark/fuel rules, addresses,
+  integer widths, prime/order validation and unsupported tape lower-bound
+  assertions are under independent challenge; no model adopted.
+  Current active slots: coordinator, Sol review, Grok literature (three).
 
 Live catalog discovered Codex Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory
 Fable/Opus with delegation supported and no reported constraints. Actual runs
@@ -89,26 +92,30 @@ T3 completed rounds (retain exact task IDs; new reviews require new delegates):
   with fresh per-target sorting on all 365 scalars, three variants, 100988
   instrumented events. Known constant-factor addition saving accompanied by
   sign/key costs; no calibrated speed, exponent or complete Lean signed solver.
-- W007: actual generic BSGS solver and correctness for every orbit scalar and
-  every positive width, including duplicates m>q and order one. Coordinate
-  instance checked at widths 1,3,7,8. Actual lookup is linear; no cost bound.
+- W007: actual generic linear BSGS correctness for every orbit scalar and
+  positive width, including duplicates m>q and order one. No cost bound.
+- W008/W009: coordinate keys, actual indexed binary search, sorted preparation
+  and full sorted BSGS correctness. Queries/probes/comparisons accumulated from
+  executed lookups; generic bounds exclude all preprocessing, key/group/scalar
+  arithmetic and memory. Runtime checks passed all 28 scalar/width cases on
+  the order-seven curve. These are conventional algorithms, not improvements.
 
 ## Current validation and remaining assumptions
 
-W007 integrated check passed 106 audits. Current `./scripts/check.sh` with
-PointKey added passed 112 audited declarations and executable smoke output.
-The source screen sees unfinished IndexedLookup too, but it is not imported
-or certified by this build. Key implementation independently passed all six
-claims; generic indexed-search correctness/count proofs remain in progress. Dependencies limited to
-propext, Classical.choice and Quot.sound. W007 frozen source also independently
-compiled/audited all nine new claims. W006 archived JSON was independently
-regenerated exactly. Earlier failed elaboration attempts and reviewer-only
-unarchived supplementary sweeps are identified in findings; none are hidden.
+Current `./scripts/check.sh` passed: 20 screened files, 43 build jobs, 159
+named theorem audits and executable smoke output. IndexedLookup (31 claims),
+SortedBabies (12) and SortedBSGS (4) each independently recompiled/audited;
+only permitted propext, Classical.choice and Quot.sound dependencies.
+`scripts/sorted_bsgs_checks.lean` runs with lake env lean (no --run; uses #eval)
+and all 28 cases passed, output archived in W009-sorted-results.txt. W006 JSON
+was independently reproduced previously. Failed proof/command attempts and
+reviewer-only unarchived sweeps are retained in findings; no failed algorithm
+case is hidden.
 These scripts detect honest mistakes, not adversarial proof validation.
 
 Open prerequisites: cryptographic/general EC refinement; reviewed hard family
-and conventional public encoding; lawful efficient keys and sorted lookup;
-complete primitive/access/allocation/storage/scalar-width accounting; tape
+and conventional public encoding; complete preprocessing, key/arithmetic,
+primitive/access/allocation/storage/scalar-width accounting; tape
 refinement; randomized semantics; calibration and any genuinely improved
 candidate. Orbit laws alone give no off-orbit target validation or efficiency.
 Do not equate wrapper calls, field operations, RAM units, tape transitions or
@@ -116,8 +123,11 @@ hardware timing. Deferred W005 RAM ledger is not an accepted model.
 
 ## Next distinct step
 
-W005/W006/W007 committed after staged-path/diff inspection. Complete and
-independently review W008 implementations; adopt no whole-solver/RAM bound
-from coordinate-key or query-count theorems alone. Collect Grok's existing task when its notification arrives.
+Commit reviewed W008/W009 sources, experiment and evidence after staged-path
+inspection. Resolve W010 design objections independently before implementing
+any alternative cost interpreter. Retain frozen Machine/Problem/Goals.
+Collect Grok's existing task when its notification arrives; do not duplicate.
 Continue bounded waves with durable evidence and reviewer disagreements.
+Previous turn: progress (97ebd5c coordinate-key commit); this turn: progress
+(generic indexed/sorted solver accepted, 159 audits, reproduced execution).
 Research goal stays active; no completion or repeated-blocked threshold is met.
