@@ -1,5 +1,28 @@
 # H002 expanded T3 allocation
 
+## H006 review closure and H007 rolling wave
+
+H006 net proposer and independent /root/encoding_review COMPLETED; startup duplicate corrected, regular ledgers qualified, no whole-solver gain. Grok disposition independently checked. H006 rank Claude Opus COMPLETED with repairs now incorporated in H006-random-grid-rank-draft.md. H006 Factory Opus minor proposal COMPLETED; raw broad probability/decoding claims are pending review, not accepted.
+
+
+## Active next work (isolated read-only roles)
+
+- Native Astra /root/h002_arithmetic_ideas COMPLETED H006 minor/pivot/probability/hash-cost review. Corrected equivalence and expected square-root hashing bound accepted in H006-minor-disposition.md; raw constants, conditioning and universal exclusions withdrawn.
+- Factory Fable H006 interpolation/folded-code review RUNNING:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h006-decoding-review-fable-20261008-r1`.
+- H007 structured algebraic solver mechanisms RUNNING, claudeAgent/claude-opus-5-5:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-structured-solvers-opus-20261008-r1`.
+- H007 collision geometry mechanisms RUNNING, grok/grok-4.7:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-collision-geometry-grok-20261008-r1`.
+- H007 complete solver arithmetic co-design FAILED, acpRegistry_factory_droid/claude-opus-5-5 (Internal error: Agent error; no result):
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-fullcost-schedules-factory-opus-20261008-r1`.
+
+Live catalog refreshed. Factory Opus full-cost task failed with Internal error: Agent error; no report. Root explicitly reassigned its role to native Sol /root/h007_fullcost_schedules, now RUNNING; this is not claimed as a Factory success. Other chosen models launched normally. Initial
+H007 briefs exclude each other's proposals; several distinct mechanisms where
+worthwhile, no quota/padding. No numerical or formal-infrastructure work authorized.
+Await async completions; no scheduler or polling loop. Goal remains active.
+
+
 User explicitly confirmed T3 supports20 concurrent subagents; native delegation
 retains its four-slot limit. Earlier conservative shared-cap assumption corrected.
 Seven new read-only T3 tasks actually launched, each returned running. Together
@@ -195,7 +218,7 @@ provenance; that limitation and derivative corrections retained in H003-lift-sec
 
 ### ecdloop-h005-hybrid-ideas-grok-20261008-r1
 
-- Status: RUNNING; provider/model: `grok/grok-4.7`.
+- Status: COMPLETED, raw retained and root disposition under review; provider/model: `grok/grok-4.7`.
 - Stable request: `ecdloop-h005-hybrid-ideas-grok-20261008-r1`.
 - Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h005-hybrid-ideas-grok-20261008-r1`.
 - Scope: Distinct concrete unconventional arithmetic/combinatorial hybrids;
@@ -243,8 +266,8 @@ exclusions and corrects primary-source/torsion-degree/sample-bound mistakes.
 
 ## H006 independent concrete-mechanism wave
 
-- Native Astra `/root/h006_structured_relation_ideas`: RUNNING, fresh isolated
-  brief for dedicated structured point-decomposition/relation procedures.
+- Native Astra `/root/h006_structured_relation_ideas`: COMPLETED, fresh isolated
+  brief produced TT zero-testing and diagonal-orbit-gcd cards.
 - Native Sol `/root/h006_net_cost_development`: RUNNING, fresh isolated brief for
   exact P2 recurrence/coordinate-output schedules and whole-solver cost.
 - Both read-only, no numerical scratch/experiments/edits/children; no other H006
@@ -261,3 +284,23 @@ exclusions and corrects primary-source/torsion-degree/sample-bound mistakes.
 - Root refreshed capabilities: exact Factory Opus model child support available;
   launch actually returned RUNNING. Native root+2 fit4; T3 Grok+Factory fit20.
   Existing Grok hybrid handle revalidated RUNNING, not replaced or duplicated.
+
+H006 structured cards saved H006-structured-relations-proposal.md, no experiments.
+Native Astra /root/h002_arithmetic_ideas RUNNING independent costs/relation-yield
+and intermediate-power rank obstruction review; root lemma/transfer caveats
+explicitly included, no asserted generic-rank theorem or new data.
+
+H006 native deliveries: structured-relation proposer and net-cost proposer
+COMPLETED; exact hypotheses/ledgers saved. /root/h002_arithmetic_ideas COMPLETED
+first independent TT cost/rank review. /root/encoding_review RUNNING separate
+net schedule and root Grok-disposition review, no numerical trials.
+
+### ecdloop-h006-random-rank-review-opus-20261008-r1
+
+- Status: RUNNING; provider/model: `claudeAgent/claude-opus-5-5`.
+- Stable request: `ecdloop-h006-random-rank-review-opus-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h006-random-rank-review-opus-20261008-r1`.
+- New independent adversarial review of H006-random-grid-rank-draft.md, with
+  root/native argument and scope objections included. Read-only, no experiments,
+  numerical scratch, edits or children. Check finite common-grid transfer rather
+  than equating formal coefficient rank with sampled rank.

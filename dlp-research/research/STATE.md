@@ -25,9 +25,10 @@ No validated B200/H200 curve throughput; dashboard multipliers remain hypothetic
    memory, parallel and multi-target tradeoffs. Not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
 3. Current hypotheses: H005 direct-halving rational-reconstruction steering failed
-   its first frozen finite-cost gate and is parked. Independent Grok hybrid
-   proposals remain live. H006 distinct concrete relation/minor mechanisms and
-   exact P2 recurrence costs are under independent development, not numerical test.
+   its first frozen finite-cost gate and is parked. H006 random-V dense TT powering
+   is rejected by a reviewed scoped paper obstruction. Net schedules supply no
+   favorable complete-cost prediction. Minor/interpolation proposals are under
+   independent review; H007 opens three distinct independent ideation lenses.
 4. Latest evidence: one capped H005 run completed,73 restart offsets,62 verified
    successes/11 timeouts,822726 instrumented events. Same fixed target: expected
    group calls4179/31 versus signed-BSGS17, field inversions3707/31 versus15.
@@ -35,16 +36,18 @@ No validated B200/H200 curve throughput; dashboard multipliers remain hypothetic
    candidate3900/31+c(k) versus reference<=14+c(k) group calls for EVERY admitted
    nonzero target on this same curve. No all-target field/runtime or asymptotic
    extension. Independent recorded-data audit PASS; no second experiment.
-5. Next conclusion-changing step: synthesize independent H006 and hybrid cards
-   for a concrete mechanism with a paid prediction and cheap falsifier. Reopening
+5. Next conclusion-changing step: determine whether H006 minor/interpolation
+   mechanisms or independent H007 cards supply a paid improvement and cheap
+   falsifier. Reopening
    the parked implementation needs changed mechanism/cost, not timeout retuning.
    No enlarged inverse-walk run, P1/A1 sweep or general Lean stack follows.
 
 ## Live work and ownership
 
-- Grok/grok-4.7 independent H005 hybrid proposal, last confirmed RUNNING:
+- Grok/grok-4.7 independent H005 hybrid proposal COMPLETED:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h005-hybrid-ideas-grok-20261008-r1`.
-  Read-only, no experiments/numerical scratch/children. Await notification; no duplicate.
+  Raw report retained H005-hybrid-grok-raw.md; root corrections independently
+  checked in H005-hybrid-disposition.md. No experiment funded.
 - Native Sol /root/h005_inverse_implementation COMPLETED source-only work.
 - Native Astra /root/encoding_review COMPLETED math, protocol, source and recorded-
   data audits, including independent all-target group-call argument. No EC rerun.
@@ -62,19 +65,26 @@ No validated B200/H200 curve throughput; dashboard multipliers remain hypothetic
 
 ## H006 rolling wave (no experiment authorized)
 
-- Native Astra /root/h006_structured_relation_ideas RUNNING: dedicated structured
-  point-decomposition/relation procedures, no assumed fast polynomial-system oracle.
-- Native Sol /root/h006_net_cost_development RUNNING: actual rank-two-net/Somos
-  recurrence plus coordinate-output formulas, compared with strong paired/batched
-  arithmetic, charging initialization/zeros/sign recovery/overshoot/memory.
-- Factory Opus constructive minor mechanisms RUNNING:
+- Native Astra /root/h006_structured_relation_ideas COMPLETED two concrete cards
+  in H006-structured-relations-proposal.md: exact TT zero-testing (speculative
+  low-intermediate-rank hypothesis) and independent diagonal-orbit gcd (losing
+  named-method yield). /root/h002_arithmetic_ideas COMPLETED independent paper/cost
+  review: a restricted random-valid-x dense-core obstruction appears provable;
+  H006-random-grid-rank-draft.md incorporates completed Opus cross-review.
+  Scoped paper rejection accepted; no trials or Lean proof.
+- Native Sol /root/h006_net_cost_development COMPLETED two actual net/quotient
+  schedules and paid paired-affine comparator. Initial arithmetic appears losing;
+  /root/encoding_review COMPLETED math/dependency/boundary/cost review, with
+  startup correction. H006-net-review.md records qualified pass and full-cost gap.
+- Factory Opus constructive minor mechanisms COMPLETED:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h006-minor-mechanisms-factory-opus-20261008-r1`.
-  Candidate-specific structure/selection, not another universal-lower-bound claim.
+  Raw report retained; broad probability/decoding exclusions are NOT accepted.
+  H006-minor-disposition.md records objections and new independent review split.
 All initial briefs are isolated, read-only and prohibit numerical scratch, edits
 or children. Live capability discovery confirmed chosen models; no substitution.
-Native root+2 fit4 and T3 Grok+Factory fit20. These launches are process, not
+Native root+Sol proposer fit4; three live T3 roles below fit20. These launches are process, not
 evidence of algorithmic improvement. They continue broad ideation without
-reopening the losing inverse-walk experiment or duplicating Grok's live work.
+reopening the losing inverse-walk experiment or duplicating existing work.
 
 ## H005 actual evidence
 
@@ -130,7 +140,44 @@ since its single run. This milestone retains actual evidence, independently run
 metadata assertions and qualified literature dispositions. Staged inspection is
 root-owned. Unrelated untracked research-monitor/ remains untouched; no build
 products, toolchains or external downloaded sources are staged.
-Latest verified evidence commit0cefd42 preserves H005's scoped negative and
+Latest experimental evidence commit0cefd42 preserves H005's scoped negative and
 qualified literature review. Prior turn made progress; intervening confirmed-live
-waits were not blocking. This turn opens distinct concrete follow-on work.
+waits were not blocking. This turn integrates reviewed scoped paper findings and
+opens distinct concrete follow-on work. Documentation adds no Lean claim; last
+363-audit check remains applicable to unchanged code.
 Goal active, neither achieved nor blocked. Compilation never means completion.
+
+H006 tensor proposal conditionally targets soft-O(B²r^6/sigma+B²), B~q^(1/5),
+requiring6rho+s<1/10 forr=q^rho,sigma=q^(-s). This was a conditional cost hypothesis. Low final indicator rank cannot justify
+cheap intermediate powers; the frozen random-V dense variant fails on paper.
+Paper review precedes any test; no generic tensor/Lean infrastructure is launched.
+Sol recurrence-cost analysis and independent review completed, including startup
+duplicate and terminal-block dependencies; this is not a new benchmark.
+
+Cross-model rank reviewer COMPLETED, Claude Opus:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h006-random-rank-review-opus-20261008-r1`.
+Scope: fixed random-V dense TT family only; high-probability middle-core
+q^(3/5+o(1)) obstruction accepted after evaluation-bridge, genericity, fixed
+addition-chain crossing, sampling-allocation and citation repairs. Paper evidence,
+not Lean-proved; raw objections retained in H006-rank-review-opus-raw.md.
+Structured/adaptive V and other representations are explicitly not excluded.
+No numerical experiment or tensor implementation has been authorized.
+
+## Active next work (isolated read-only roles)
+
+- Native Astra /root/h002_arithmetic_ideas COMPLETED H006 minor/pivot/probability/hash-cost review. Corrected equivalence and expected square-root hashing bound accepted in H006-minor-disposition.md; raw constants, conditioning and universal exclusions withdrawn.
+- Factory Fable H006 interpolation/folded-code review RUNNING:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h006-decoding-review-fable-20261008-r1`.
+- H007 structured algebraic solver mechanisms RUNNING, claudeAgent/claude-opus-5-5:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-structured-solvers-opus-20261008-r1`.
+- H007 collision geometry mechanisms RUNNING, grok/grok-4.7:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-collision-geometry-grok-20261008-r1`.
+- H007 complete solver arithmetic co-design FAILED, acpRegistry_factory_droid/claude-opus-5-5 (Internal error: Agent error; no result):
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-fullcost-schedules-factory-opus-20261008-r1`.
+
+Live catalog refreshed. Factory Opus full-cost task failed with Internal error: Agent error; no report. Root explicitly reassigned its role to native Sol /root/h007_fullcost_schedules, now RUNNING; this is not claimed as a Factory success. Other chosen models launched normally. Initial
+H007 briefs exclude each other's proposals; several distinct mechanisms where
+worthwhile, no quota/padding. No numerical or formal-infrastructure work authorized.
+Await async completions; no scheduler or polling loop. Goal remains active.
+
+Final documentation checkpoint validation: `./scripts/check.sh > /tmp/ecdlp-h006-paper-check.log 2>&1` exited0; all363 existing theorem audits pass. No new Lean claim or Audit entry. Staged paths and whitespace checked; only task-owned Markdown, no build/source/experiment changes.
