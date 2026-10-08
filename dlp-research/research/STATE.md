@@ -18,25 +18,37 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H027 constructive wave active (authoritative)
+## H027 compact trace checked; independent idea roles live (authoritative)
 
-H026 delivered no supported full-work improvement; reconciled scope/cost findings
-below are checkpointed, with raw disagreements retained. H027 starts four distinct
-roles: native Astra compact trace-functional construction; Claude Opus5.5
-algebraic invariant/target-dependent relations; Grok4.7 adaptive search hybrids;
-Factory Fable5.1 constructive signals/decoders. All RUNNING on actual accepted
-handles; no initial proposal cross-sharing. Native Sol is available for separate
-skeptical review once a concrete construction is delivered. No duplicate active
-hypothesis or coordinator. Full task IDs and exact briefs:
-hypotheses/H027-constructive-candidates.md.
+Previous goal turn made progress: commit51d8d7b reconciled H026 and launched
+H027. This turn revalidated all three initial T3 handles RUNNING and collected
+native Astra's concrete trace construction. Separate native Sol audit COMPLETED,
+GO; root checked identities/primary definitions and retained explicit costs.
 
-Astra has an UNVERIFIED preliminary Miller/logarithmic-derivative trace lead;
-normalization, evaluation cost and recovery significance remain under construction.
-It is not a scalar decoder or a verified gain. No numerical test admitted.
-Best supported complexity remains square-root; verified complete-work improvement
-NONE. Next conclusion-changing action is a concrete delivered construction and
-independent cost/math review, followed by a frozen cheap falsifier if warranted.
-Broad creative ideation remains active; no generic proof infrastructure.
+A first local coefficient of a torsion Miller function evaluates the unweighted
+elliptic trace with O(logq) group operations, paid inversions, no extension/table.
+A fixed family of weighted trace differences costs one such evaluation plus O(r)
+field work and paid anchor setup. Both constructions are explicit; neither gives
+a scalar predicate or decoding advantage. Exact additive Fp correction is zero
+on the q-group; nonlinear use remains open. No numerical test or Lean claim.
+Finding: findings/H027-compact-trace-construction.md. No novelty claim.
+
+Native Astra's construction/extension pass and Sol's math/cost review completed.
+Three independent initial roles remain live: Claude Opus5.5 algebraic invariants,
+Grok4.7 adaptive search hybrids, Factory Fable5.1 constructive signals/decoders.
+A NEW Factory Opus5.5 prior-art/recovery-meaning review was accepted RUNNING on
+the trace construction. Four T3 tasks total, full handles and briefs in
+hypotheses/H027-constructive-candidates.md; no duplicate active task or coordinator.
+Initial proposals withheld across the three ideation roles. Native reviewers free
+for distinct delivered work. Catalog and actual acceptance checked this session.
+
+Best supported ordinary full-solver complexity remains square-root; verified
+complete-work improvement NONE. Next conclusion-changing action: establish an
+actual scalar-information/recovery premise for a delivered construction, with
+paid full work, then independently review and freeze a cheap falsifier. Existing
+square-root algorithms and dashboard unchanged. Goal active; root alone commits.
+Validation: ./scripts/check.sh exit0,366 audits;
+/tmp/ecdlp-h027-compact-trace-check.log. No code/Lean/Audit edits.
 
 ## H026 delivered proposals and scoped reconciliation (completed wave)
 
