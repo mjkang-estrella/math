@@ -112,7 +112,7 @@ Claude Opus initial role completed; task_status read/acknowledged. Two concrete
 cards and exploratory attempts retained in H027-algebraic-opus-raw.md, RAW.
 External source access was two abstracts; memory hypotheses are not accepted.
 
-NEW native Astra /root/h007_additive_relations math/action audit RUNNING:
+NEW native Astra /root/h007_additive_relations math/action audit COMPLETED:
 check maximal-isotropic Frobenius-stable kernel, principal polarization and
 rotation-matrix induced isogeny. Supplied root objections: unmarked quotient
 surfaces need not form a free torsor; extra equivalences and marking costs;
@@ -120,10 +120,34 @@ normalization from k=1; unsupported Steinitz/genus assertions; character descent
 not proved merely by known symmetries; no generic embedding-degree/runtime bound.
 Read-only/no runs/edits/children; primary access distinguished from memory.
 
-NEW native Sol /root/h010_early_dependencies backend audit RUNNING:
+NEW native Sol /root/h010_early_dependencies backend audit COMPLETED:
 check exact chi(1+k²) to shifted-Legendre oracle reduction, zeros/signs, then
 read actual BBUV2019/1357 and Kaludjerovic–Kleinjung–Kostic primary work.
 Supplied root objection: a restricted query-regime upper bound and no recalled
 better algorithm do not prove failure even with a free oracle. Preserve query,
 setup, memory, adaptive-domain costs; no downgrade of H003/H018 from abstracts.
 Read-only/no runs/edits/children. No oracle extraction or gain currently supplied.
+
+
+## Scoped review outcomes and decisive paper falsifier
+
+Astra accepted K_k and marked gamma identities but not an unmarked torsor,
+Steinitz/genus claims, generic embedding-degree estimates or invariant descent.
+Corrected base k1 normalization by chi(2). Root independently supplied the
+E/F7,order13,alpha(x,y)=(2x,y) counterexample; NEW Astra review confirmed all
+point/character arithmetic and polarized equivalence. A further NEW Astra
+review checked the root's genus1 quartic/Hasse proof of non-descent for all q>9
+under the rational order-three automorphism hypotheses. No numerical run or
+claim about generic-Aut curves. H027-polarized-character-falsifier.md accepted.
+
+Sol read BBUV full COSIC primary and published KKK ANTS §2A,§5/Table2; official
+eprint retrieval failed. Exact conditional oracle reduction and paid schedules
+accepted; universal free-oracle exclusion withdrawn. Root checked algebra,
+balances and BBUV Table1. Root specified fair elementary-operation interleaving
+for unknown-sign branches and dispatch only for known excluded0,±i points.
+No complement-distribution assumption imported. H027-legendre-backend-scope.md.
+No actual oracle extractor or improved full solver supplied.
+
+Grok and Fable initial handles revalidated RUNNING this turn. Native reviewers
+are available for their distinct delivered candidates. No initial cross-sharing,
+new numerical test, broad Lean work or complete-cost improvement.

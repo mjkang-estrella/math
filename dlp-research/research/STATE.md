@@ -18,46 +18,44 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H027 trace prior art reconciled; independent idea roles live (authoritative)
+## H027 character-descent falsifier verified (authoritative)
 
-Commit51d8d7b reconciled H026 and launched H027; e6e31d9 retained the checked
-trace construction. The preceding goal turn was a verified wait. This turn
-revalidated the same handles, received primary-art/algebraic deliveries and
-completed source/domain reconciliation. Trace math/cost review remains GO.
+Previous goal turn made progress:3343c23 reconciled prior art and registered
+separate geometry/backend reviews. This turn revalidated Grok and Fable initial
+handles RUNNING, collected both native reviews, and independently checked a
+candidate-specific falsifier. No new experiment or implementation was run.
 
-A first local coefficient of a torsion Miller function evaluates the unweighted
-elliptic trace with O(logq) group operations, paid inversions, no extension/table.
-A fixed family of weighted trace differences costs one such evaluation plus O(r)
-field work and paid anchor setup. Both constructions are explicit; neither gives
-a scalar predicate or decoding advantage. Exact additive Fp correction is zero
-on the q-group; nonlinear use remains open. No numerical test or Lean claim.
-Finding: findings/H027-compact-trace-construction.md. No novelty claim.
+The Frobenius-stable maximal-isotropic kernel and marked matrix-isogeny identities
+are valid under explicit hypotheses. The proposed unmarked-surface character
+readout is false: on E/F7:y²=x³+3, order13, A_1 is polarized-isomorphic to A_9
+but chi13(1+k²) changes. Root supplied and NEW Astra reviewed the example and a
+Hasse-based size-uniform extension for q>9 when a rational order-three automorphism
+exists. This is a conditional full-size mathematical obstruction, not toy-to-real
+extrapolation, nor a rejection of marked/generic-Aut alternatives. Finding:
+findings/H027-polarized-character-falsifier.md. No universal inversion bound.
 
-Native Astra's construction/extension pass and Sol's math/cost review completed.
-Claude Opus5.5 algebraic role COMPLETED: two cards retained RAW in
-H027-algebraic-opus-raw.md. NEW native Astra checks polarized kernel/action and
-invariant scope; NEW native Sol checks the free-Legendre-oracle backend against
-primary full text. Both RUNNING. No claimed torsor or backend exclusion accepted.
-Grok4.7 adaptive search and Factory Fable5.1 signal roles remain live.
-Factory Opus5.5 prior-art/recovery-meaning review COMPLETED. Root read primary
-Rück/Semaev texts: coefficient/cocycle method is established; recovery uses
-p-primary torsion and does not extend to q!=p. NEW Sol source/domain audit also
-COMPLETED: Joux–Pierrot Psi acts on divisors, not automatically the point group;
-its claimed triviality is withdrawn. Hasse/basis claims qualified for small primes.
-Full reconciliation: findings/H027-miller-priorart-reconciliation.md.
-Two T3 initial ideation tasks remain live, full handles and briefs in
-hypotheses/H027-constructive-candidates.md; no duplicate active task or coordinator.
-Initial proposals were withheld across ideation roles before delivery. Current
-native reviewers own distinct delivered scope audits. Catalog and actual
-acceptance checked this session.
+The independent native Sol primary-text review preserves the conditional
+character-oracle to shifted-Legendre reduction. Paid BBUV/KKK schedules give
+square-root-scale heuristic word-work upper bounds; they do NOT prove failure
+with every free/adaptive oracle backend. Extraction remains unsupplied; no earlier
+H003/H018 route is downgraded from an abstract. Full costs, zero/sign handling,
+source access and limitations: findings/H027-legendre-backend-scope.md.
 
-Best supported ordinary full-solver complexity remains square-root; verified
-complete-work improvement NONE. Next conclusion-changing action: establish an
-actual scalar-information/recovery premise for a delivered construction, with
-paid full work, then independently review and freeze a cheap falsifier. Existing
-square-root algorithms and dashboard unchanged. Goal active; root alone commits.
+Both native geometry/backend reviews and follow-up scope checks completed.
+Two independent initial T3 ideation roles remain live: Grok4.7 adaptive search
+and Factory Fable5.1 constructive signals. Full task IDs/review briefs in
+hypotheses/H027-constructive-candidates.md. No duplicate work or coordinator.
+Root sole integration/commits; no code/Lean/Audit change or hardware extrapolation.
+
+Earlier compact trace and weighted-difference construction remains checked,
+with established Rück/Semaev prior art and q!=p recovery limitation. Divisor-map
+and Hasse qualifications remain in H027-miller-priorart-reconciliation.md.
+Current supported ordinary complete complexity remains square-root; verified
+full-work improvement NONE. Next conclusion-changing action: evaluate the two
+remaining independent proposals for a paid recovery premise, then independently
+review and freeze any justified synthetic falsifier. Goal active.
 Validation: ./scripts/check.sh exit0,366 audits;
-/tmp/ecdlp-h027-priorart-check.log. No code/Lean/Audit edits.
+/tmp/ecdlp-h027-character-falsifier-check.log.
 
 ## H026 delivered proposals and scoped reconciliation (completed wave)
 
