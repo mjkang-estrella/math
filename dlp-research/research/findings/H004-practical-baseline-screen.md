@@ -9,7 +9,8 @@ not a new ECDLP algorithm, benchmark or code contribution.
 baby-step giant-step algorithm](https://pdfs.semanticscholar.org/5753/7e7d4d08b6de01aa79717c4bb849e694958f.pdf),
 AMC11(2017), DOI10.3934/amc.2017038, §4.1 describes shared-inversion paired
 addition. Algorithm2/§4.3 generates blocks; §5 uses x-coordinates in BSGS and
-charges delayed collision detection caused by batching. Their quoted field-cost
+acknowledges delayed collision detection caused by batching without an exact
+finite ledger (clarified in H028's full-paper review). Their quoted field-cost
 constants assume a particular inversion/multiplication/squaring model. They are
 not measured costs in this project or evidence of full-size memory feasibility.
 

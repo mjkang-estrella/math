@@ -20,7 +20,10 @@ the subsequent approximate expression omits this factor. We use exact costs.
 ## Our specialization and accounting
 
 This derivation is a transparent specialization of known block generation,
-not a claimed discovery or a constant quoted from the paper. Keep full affine
+not a claimed discovery or a constant quoted from the paper.
+The prior terminal-y implementation inspection is separately recorded in
+H004-practical-baseline-screen.md, including its moving-branch limitation.
+For the arithmetic derivation, keep full affine
 centers X_j and precompute full affine offsets uT. Emit only x(X_j±uT), because
 these side outputs are stored rather than advanced. For d=(x(X_j)-x(uT))^-1,
 the two slopes are (y(X_j)±y(uT))*d. Two multiplications and two squares produce

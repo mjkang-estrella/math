@@ -48,41 +48,46 @@ no longer automatically dominates, with competent baseline and actual lookup/
 metadata/peak-memory charges. Main objective, independent breadth policy and
 sole-root integration persist. Goal active; this correctness pass is not success.
 
-## Active H028 complete-cost decision wave
+## H028 paid matcher and next experiment decision (latest continuation)
 
-No further numerical run is authorized by the first diagnostic protocol.
-Two NEW native read-only followups are RUNNING: Astra
-/root/h007_additive_relations proposes the smallest matched solver study or
-prior paper gate; Sol /root/h010_early_dependencies independently challenges
-full-cost headroom, baseline fairness, stopping and memory assumptions.
-Neither may rerun/import the frozen probe, add instances, edit or spawn.
+Previous goal turn was PROGRESS via4cc22b4 and19fa23e; worktree and live handles
+revalidated. Current best exponent1/2; verified complete-work improvement NONE.
 
-Live catalog refreshed; NEW Claude Opus5.5 primary-source audit of the existing
-coefficient-key method and optimized comparators is RUNNING, taskId:
+Native Astra and Sol cost/layout reviews now COMPLETED. Both independently
+validated root's concrete prepend-every-record hash matcher. Paid uniform affine
+hashing gives expected full-cap visits <=IJ/H+6IJ/q, without iid key assumptions.
+Choose slot=((a*key+b) modp) modH, with hash M+A+integer remainder paid.
+Fixed head arrays and (key,index,next) records have explicit memory/operation
+vectors. This closes a proof gap, not the finite price gate. With k=ell8 and
+hypothetical s=.8,I/M=8, a shared1M hash reduces optimistic10% margin to
+1871/6800M/key before all other costs. See H028-chained-table-contract.md.
+Progression duplicate lemma separately accepted by both reviewers; no Lean claim.
+
+Claude Opus prior-art rounds r1 and r2 COMPLETED. Exact retained task IDs:
 node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h028-coefficient-keys-priorart-opus-20261008-r1
-Its distinct clientRequestId is the final suffix. This is a scoped prior-art
-review of existing H028 mathematics, not a replacement or retry of the blocked
-H027 constructive-information role. No edits, experiments or children.
-Root alone integrates. Existing breadth remains in retained H001–H028 pools;
-this wave tests the surviving named candidate, not generic infrastructure.
-
-H028 cost-decision update: diagnostic committed as4cc22b4. Astra's initial
-protocol/layout followups COMPLETED and recommend a paper layout gate before
-new trials. Root derived an O(m) bound on canonical-key collision pairs along
-progressions; Astra and Sol independently confirmed it. This repairs the
-same-side-clustering concern only for the specified prefix sets, not general
-hash clustering or finite prices. Finding H028-layout-admission-gate.md retains
-the proof, exact hypothetical10% margin2551/6800M/key and remaining layout gate.
-Sol complete-cost review remains RUNNING. Opus prior-art r1 COMPLETED;
-raw delivery retained in H028-priorart-opus-r1-raw.md. No signed-h use found in
-its limited source search, NOT a novelty claim. Its unread-GWZ warning is a
-reviewer-specific gap: the project already read GWZ in H019. Root reopened the
-published PDF mirror successfully and assigned NEW r2 with that source:
 node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h028-coefficient-keys-priorart-opus-20261008-r2
-Status RUNNING, same read-only limits. Prior findings and exact objection
-included; no childThreadId continuation. Historical Cell constants remain
-illustrative and uncalibrated for this project.
-No source changes/reruns, new challenge instances or calibrated throughput.
+Root supplied already-read accessible GWZ mirror after r1's access gap. R2 read
+full17-page paper and confirms H019's stronger exact x-only specialization.
+No established novelty; conjectural grumpy-giants extension sketch unaccepted.
+H004 delayed-detection wording corrected and H019 cross-reference clarified.
+Reconciliation is H028-priorart-reconciliation.md; originalr1 retained raw.
+No blocked H027 information-lens retry or alternative-provider bypass occurred.
+
+Astra's next experiment-feasibility proposal COMPLETED: Hasse-interval BSGS can
+construct larger public synthetic fixtures in O(p^1/4) point work, without Sage
+or a full orbit/advice table. Root independently read Schoof §2. Native Sol
+/root/h010_early_dependencies COMPLETED its NEW independent preflight: GO for
+the bounded discovery/certificate specification near2^20,2^25,2^30, subject to
+static code review before execution. No code, imports,
+new numerical instances or experiments authorized by that proposal. Fixed a=1,
+first successful b is not representative random sampling. Discovery costs and
+public-input solver costs must both be explicit and distinguishable.
+
+Next: freeze a reviewed finite fixture and stopped-solver protocol, including
+competent x storage, exact startup and metadata costs; implement only if it can
+resolve positive complete-work headroom. Existing first diagnostic is immutable
+and will not be rerun. Sole-root integration, broad independent ideas retained
+through H028, no generic proof machinery, scheduler, push or hardware claims.
 
 ## H028 uniform fibre bound verified; diagnostic frozen (historical checkpoint)
 
@@ -1480,3 +1485,12 @@ Validation: `./scripts/check.sh > /tmp/ecdlp-h013-native-check.log 2>&1` exit0,
 363 existing audits. Subsequent edits only paper qualifications. Explicit stage
 contains STATE, task register, scheduling cards and two cost findings; no formal
 code/Audit changes or unrelated directories. Objective remains active.
+
+H028 matcher/source-reconciliation validation: ./scripts/check.sh >
+/tmp/ecdlp-h028-table-check.log 2>&1 exit0,366 existing audits. No Lean/Audit
+claim added; paper bounds remain independently reviewed mathematics.
+Fixture discovery protocol is recorded in experiments/H028/fixture_protocol.md
+before any implementation or run. Sol's final preflight confirms the
+Hasse-BSGS certificate and scope, with explicit charged integer-root loops and
+no guarantee that worst-case search fits the cap. A future writer
+may own only fixture_probe.py; source review must precede sole execution.
