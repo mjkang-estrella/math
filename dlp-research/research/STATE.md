@@ -52,8 +52,14 @@ implements ONLY experiments/H028/key_probe.py under disjoint write ownership;
 no execution/imports/self-tests/results or shared-file edits authorized. Root
 integrates/commits, and independent source review precedes first numerical run.
 
-NEW native Sol complete-cost review RUNNING for the archive-free verification
-variant, distinct from first diagnostic. Original H027 Fable initial role still
+Native Sol complete-cost review and NEW final-ledger correction review COMPLETED
+for the archive-free variant, distinct from first diagnostic. Root corrected
+two addition-count omissions and Sol confirmed. Exact matching with O(logq)
+expected verification overhead accepted; priced gain requires
+S/M > 1.5*(Af/M) + comparison/M + extra lookup/M. No measured weights or
+complete-work gain. H028-archive-free-cost-gate.md records setup/metadata and
+baseline-fairness limitations. Writer remains RUNNING, no source execution.
+Original H027 Fable initial role still
 RUNNING at authoritative check. Exact task IDs/briefs in H028 register.
 Root owns upcoming implementation/integration. No generic Lean infrastructure,
 duplicate coordinator, scheduler or push. Goal active; compilation is not success.

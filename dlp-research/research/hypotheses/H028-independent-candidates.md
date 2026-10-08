@@ -158,3 +158,10 @@ Root alone integrates/stages/commits. Independent Sol source review plus root
 inspection must precede any first run. No diagnostic orbit table is candidate
 advice. Pure source inspection only; disclose ambiguities rather than weaken
 checks or change frozen parameters. Active writer does not own STATE/protocol.
+
+Native Sol archive-free complete-cost role COMPLETED. Root corrected the
+provisional numerator/addition asymmetry and shared denominator omission; NEW
+Sol final-ledger review confirmed the corrected formulas and candidate-specific
+random-generator setup charge. Accepted conditional contract:
+findings/H028-archive-free-cost-gate.md. No measured weights or full-work gain.
+Independent code review awaits completed source; no execution.
