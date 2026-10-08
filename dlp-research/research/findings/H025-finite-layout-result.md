@@ -96,3 +96,32 @@ for this finite result; no Lean/Audit claim changed.
 Validation is recorded in STATE.md with the checkpoint. The research goal stays
 active; current supported complexity remains square-root, verified improvement
 against the accepted full-work baseline NONE.
+
+## Post-checkpoint interpretation, before any extension
+
+Root inspected existing recorded block traces only (no probe rerun). At the
+largest complete prefix t<=0.8sqrt(q), the exact diagnostics are:
+
+|q,t|control cross union/ceiling|A cross union/ceiling|B cross union/ceiling|control/A/B total coverage|
+|---|---:|---:|---:|---:|
+|509,18|182/216|185/234|190/234|191/214/248|
+|1009,24|331/378|351/432|366/432|344/386/446|
+
+B's absolute cross union is larger but its fraction of its larger pair ceiling
+is smaller than the control's at both inspected prefixes. Total coverage also
+includes the input/direct-infinity/same-family union. This post-hoc inspection
+is descriptive evidence, not an additional preregistered gate or a new test.
+It does not establish the benefit comes from shifted origins. Four versus three
+families, centering, linear effects and shifts are confounded. A future matched
+four-family zero-shift comparator could isolate one factor without retuning B.
+
+Shared setup must be priced honestly: B's c_iG need only one U=[floor(q/73)]G
+and six doublings to form U,4U,16U,64U, not four independent scalar
+multiplications. Likewise Q,2Q,4Q,8Q share three doublings; strides share[M]G.
+These observations repair the raw review's pessimistic setup interpretation,
+but do not remove setup or frontier costs. Native Sol's continuation role and
+native Astra's new block-compatibility audit will assess the complete schedule.
+Assuming matched per-key charge K and no candidate credits in other overhead,
+a5% total-work margin has extra-setup allowance at most(19*N_control-20*N_B)/(20q)*K before charging shared
+setup, verification and unequal overhead:14757/(20*509)K and21783/(20*1009)K.
+No claim is made that the real schedule meets either allowance.

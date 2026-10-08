@@ -75,3 +75,11 @@ BL/GWZ prior-art relation. Supplied finite means, accepted reviews and objection
 explicitly no full-work conclusion, runs, imports, edits, children or commits.
 The native roles cover artifact correctness and next-test costs separately.
 Live capabilities refreshed: authorized providers available, no stated constraints.
+
+NEW native Astra /root/h007_additive_relations component role RUNNING after the
+completed artifact audit: check H019 Cx arithmetic applicability to alternating
+positive/negative B frontiers, explicit centers/offsets/advances, shared setup,
+support memory and exception count. No free reverse motion, future-prefix keys,
+or cross-family batching before stopping checks. Read-only/no runs/imports.
+Root sent Sol the shared shift-chain correction and the four-family-control
+confounding issue; no experiment extension admitted yet.

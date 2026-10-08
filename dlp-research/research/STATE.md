@@ -30,7 +30,10 @@ remain material. Verified complete-work improvement NONE; square-root reference
 unchanged. No full-size or asymptotic claim; no dashboard/hardware-rate change.
 
 Native Astra NEW artifact audit COMPLETED, GO; independent root hash/sum checks
-pass. Native Sol /root/h010_early_dependencies RUNNING a NEW next-test and full-
+pass. Astra now RUNNING a distinct x-only block/frontier cost-compatibility audit,
+no experiments. Existing traces show B has larger absolute cross coverage but
+lower cross-union/ceiling fractions at the inspected early prefixes; mechanism
+attribution remains confounded. Native Sol /root/h010_early_dependencies RUNNING a NEW next-test and full-
 work break-even design role, read-only/no experiments. T3 Claude Opus5.5 RUNNING
 a distinct scaling-geometry/prior-art review; full handle in H025 review register.
 No duplicate live hypothesis, no numerical rerun or retuning. Root sole integration.
@@ -40,6 +43,9 @@ sizes and matched setup/support-memory/cost before admitting further experiments
 All other failed literal schedules stay parked. Goal active; no broad Lean work.
 Validation: ./scripts/check.sh passed exit0,366 audits; log
 /tmp/ecdlp-h025-finite-result-check.log. No Lean/Audit changes.
+Interpretation-only follow-up also passes checks; log
+/tmp/ecdlp-h025-interpretation-check.log. Previous goal turn was progress:031696f;
+current live Sol/Opus handles revalidated, Astra component review newly assigned.
 
 ## H025 reviews complete / finite enumerator next (historical)
 
