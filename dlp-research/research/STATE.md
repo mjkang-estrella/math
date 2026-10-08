@@ -18,6 +18,46 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H028 uniform fibre bound verified; diagnostic frozen (latest checkpoint)
+
+Previous turn progressed via b03e82e. Repository revalidated clean for this task.
+Main objective and broad independent ideation remain primary. Verified COMPLETE
+solver/work improvement NONE; square-root reference unchanged. No GPU calibration.
+
+Meaningful mathematical milestone: exact h=a/q collision fibres satisfy rho<=3
+on every stated p>3, prime q>3,q!=p full-order curve. For each nonzero differenceT,
+equal-h pairs are residual intersections of one fixed line with E; a monic
+quadratic permits at most2. Astra and Opus independently derived this; NEW Sol
+adversarial review and root checked polynomial/exception/counting details.
+No random-key hypothesis, hidden table, numerical/asymptotic extrapolation.
+Paper proof and exact discriminant identity: H028-uniform-fibre-bound.md.
+This is not yet a Lean theorem or complete-cost gain.
+
+After paid independent generator scaling and target shifting, expected false
+record scans <=4IJ/q and all raw scans <=6IJ/q at fixed full caps, for every
+original input. Thus bounded-refinement overhead no longer depends on an
+unproved fibre-distribution premise. One-square reconstruction and immutable
+archives separately checked. Added key/field/RAM/memory costs still open.
+
+Opus replacement r2 review COMPLETED, substantive conditional GO for a fixed
+correctness diagnostic. Factory's original empty delivery remains unusable.
+Sol diagnostic design COMPLETED. Root froze experiments/H028/protocol.md before
+any implementation/run, exact fixtures/seeds/grid, independent polynomial Miller
+for two small fixtures, discriminant consistency and one10M-event/55second
+work reservation. Changes from unexecuted3M draft and unsupported1M reviewer
+estimate explicit. Code review precedes first run.
+
+NEW native Sol complete-cost review RUNNING for the archive-free verification
+variant, distinct from first diagnostic. Original H027 Fable initial role still
+RUNNING at authoritative check. Exact task IDs/briefs in H028 register.
+Root owns upcoming implementation/integration. No generic Lean infrastructure,
+duplicate coordinator, scheduler or push. Goal active; compilation is not success.
+
+Validation: ./scripts/check.sh > /tmp/ecdlp-h028-fibre-bound-check.log 2>&1
+exited0,366 existing audits; no Lean/Audit changes. An earlier documentation
+edit used a wrong relative path and made no changes; corrected with absolute
+paths. No numerical diagnostic run. Only named research records staged.
+
 ## H028 concrete key candidate under review (latest checkpoint)
 
 Previous turn made progress via checkpoint5b5bebd. Current worktree revalidated:

@@ -121,3 +121,29 @@ Candidate h=a/q for normalized q-Miller coefficient, h(-P)=-hP and h(P+J)=hP+hJ-
 Production actual giant O dispatched BEFORE bucket comparisons. For nonidentity points signed bucket counts d, S2=sum d², rho=S2/[2(q-1)], I nonzero babies and J fixed-cap giants. Pay independent exact uniform s!=0,r inFq, G'=sG,Q'=Q+rG for EVERY fixedinput. Alleged expected false rawrecordcomparisons IJ*(S2-2(q-1))/(q(q-1)), no pairindependence. Root allpointformula (B2-b0-2(q-1))/(q(q-1)) differs by c0/(q(q-1)) solelyfor giantOcomparisons; explicitly reconciled in candidate. No fibrebound measured/proved. Deterministic fullcaps preserve coverage, no artificial probabilistic failure; stoppedcomparisons <=fullcap. Setup OlogqMiller,2scalar multiplications,targetaddition,randomsampling,all added arithmetic/keying/memory/archives/caching/false/finalverification paid.
 
 Check exact math/cost and named hiddencosts; identify whether a bounded FIXEDsynthetic fibre/correctness diagnostic is justified, not fullsolver claim. Existing H024 fixtures q73,103,271,8053 chosenbefore h measurements. Sol separately designing protocol; don't duplicate implementation. Firstdiagnostic fullqenumeration paid, not productionadvice; exact fibres and independent Millerchecks. Fixedseed correctness cases not IIDperformance. Costlowerbounds versus sufficientupperboundgates distinguish; toy startup loss doesnot rejectlarger-size mechanism. No unproved oracle, asymptotic extrapolation or novelty from searches. Primaryshared-inverseGWZ and normalizedEDSmatching antecedent recorded; readactualsource if needed, reportlimits. Return GO/NO-GO/conditional for cheapestdiagnostic with precise unresolveditems; no genericLeanwork.
+
+
+## Uniform fibre bound and r2 review — COMPLETED
+
+Opus r2 substantive review returned conditional GO for a fixed correctness/fibre
+diagnostic, no performance claim. Full raw report retained. Independently of
+Astra's simultaneous discovery, Opus derived the same residual-line rho<=3 bound.
+NEW native Sol adversarial proof review then COMPLETED: exact monic quadratic,
+tangent/inflection/vertical/infinity handling and signed counting accepted.
+Root checked algebra and expectation. Authoritative independently checked paper
+proof: findings/H028-uniform-fibre-bound.md. Former unproved moment premise
+removed; this is not a Lean theorem or complete-work improvement.
+
+Sol diagnostic-design role COMPLETED. Root froze experiments/H028/protocol.md,
+with changes to unexecuted drafts: added polynomial-Miller and all-point
+quadratic-discriminant consistency, sampled addition laws rather than uncosted
+all-pairs/all-Miller expansion, one10M-event/55second work reservation. No code
+or run yet. Independent code review precedes execution.
+
+NEW native Sol /root/h010_early_dependencies complete-cost role RUNNING: analyze
+Opus's archive-free variant verifying both scalar signs on every raw match.
+Expected all raw records<=6IJ/q suggests O(logq) verification overhead; exact
+setup/exception/memory/stopping and added field/RAM work must be included.
+Distinguish model-specific arithmetic gains from physical or complete-work claims.
+Read-only/no runs/imports/edits/children. Root alone implements/integrates.
+Original H027 Fable constructive-signal handle remains live, no duplication.

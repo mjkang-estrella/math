@@ -1,8 +1,9 @@
 # H028 provisional Miller-coefficient collision keys
 
 2026-10-08. Native Astra independent initial delivery, with root normalization
-clarification. Candidate only: replacement Claude Opus cost/mathematics review r2 is
-RUNNING; Factory initial delivery was empty (see task register). No experiment, formal theorem, novelty or complete-work gain.
+clarification. Candidate: replacement Claude Opus r2 gave conditional GO for a correctness
+diagnostic; the uniform moment lemma was independently proved subsequently.
+Factory initial delivery was empty (see task register). No experiment, formal theorem, novelty or complete-work gain.
 
 ## Mechanism and finite ledger
 
@@ -101,9 +102,11 @@ has approved the final normalized contract yet.
 
 ## Main unsupported premise and next falsifier
 
-rho=O(1) on the intended family is UNPROVED and UNMEASURED. Under it and
-I,J=O(sqrtq), false refinements have O(1) expectation, but complete finite costs
-still must fit within saved squarings. No arithmetic constant alone is a result.
+SUPERSEDED premise: rho<=3 now has an independently checked exact paper proof
+in H028-uniform-fibre-bound.md, from a residual quadratic for every point
+difference. No random-map hypothesis or finite measurement is required. Thus
+I,J=O(sqrtq) gives O(1) expected false refinements under paid randomization.
+Complete finite costs must still fit within saved squarings; no full-work win.
 
 Astra recommends existing four fixed H024 synthetic fixtures, recertification,
 one full-group h enumeration, exact fibres, and independent Miller checks at
@@ -118,3 +121,10 @@ Provisional matching/refinement overlaps H023 EDS matcher; proposed distinction
 is this slope-linear key. Targeted prior-art review still needed; no novelty claim.
 Other initial relation attempts repeated existing residual-divisor/SP3/oracle
 gaps and were not padded into cards. Supported complete work remains square-root.
+
+
+Root froze experiments/H028/protocol.md before implementation/execution,
+incorporating independent polynomial-Miller checks and discriminant consistency.
+No run occurred. Review changes and the single10M-event reservation are explicit.
+Native Sol reviews the archive-free scalar-verification variant; it is not a
+hidden change to this first diagnostic.
