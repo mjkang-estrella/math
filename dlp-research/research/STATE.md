@@ -24,10 +24,11 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: the 2026 primary paper2607.09814v2 proposes an actual
-   hyperplane-intersection/zero-minor selector. Independent correctness and cost
-   reviews are running; no complexity claim accepted from its abstract. A separate
-   recent-primary-mechanism search preserves independent creative exploration.
+3. Current hypothesis: CRT encoding of five coprime coordinate domains followed
+   by sparse polynomial gcd might supply a paid implicit selector. Final operation,
+   remainder-growth ledger and applicability are still being specified. No new
+   algorithm has passed its cost gate. Independent scalar-compression and recent
+   source-scouting cards supplied no supported improvement.
 4. Evidence: GRR endpoint recognition is cheap but supplied dense pushforward
    expansion costs Omega(B^4), literal full evaluation Theta(B^5). Short-circuit
    average cost remains distribution-dependent. Dictionary pair translation
@@ -36,10 +37,13 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    proposal has incorrect accounting; an independent reviewer confirmed at most
    four preimages per finite raw fixed-G normalized-row key, with explicit
    O(w) pole handling. This does not exclude differently compressed keys.
-5. Next conclusion-changing step: recover and review the new paper's precise
-   selector, conditioned useful-relation probability and full cost. Freeze a
-   matched synthetic falsifier only if its actual operations survive. No generic
-   algebra package, F4 sweep, LP tuning or new Lean stack funded.
+   The 2026 hyperplane-paper reviews also confirmed repeated candidate counting
+   and a conditional fixed-sweep cost rejection; raw universal restart claims
+   were withdrawn after skeptical review.
+5. Next conclusion-changing step: freeze and independently review the CRT gcd
+   operation, cumulative sparse-remainder cost, useful yield and cheapest falsifier.
+   A new paid selector could matter; an unnamed fast solver cannot. No matrix
+   equivalence benchmark, generic algebra package, F4 sweep or Lean stack funded.
 
 ## Live work and actual failures
 
@@ -117,7 +121,7 @@ remain scoped in their findings; no toy-to-real extrapolation.
 
 Latest substantive checkpoints:e11c132 H007 paper findings;3ccb30f H008 operation
 launch. Current changes are paper records only, no new Lean theorem or Audit
-entry. Final check `./scripts/check.sh > /tmp/ecdlp-h008-paper-check.log 2>&1`
+entry. Final check `./scripts/check.sh > /tmp/ecdlp-h008-count-check.log 2>&1`
 passed exit0 (363 existing audits). No code changed. Staged inspection covers
 only task-owned Markdown and excludes toolchains/build products. Unrelated untracked research-monitor/ remains untouched.
 Recent goal turns made progress or verified live-task waits, not a genuine blocker.
@@ -133,21 +137,39 @@ or engine built. Native Sol protocol followup was REFUSED agent thread limit
 reached; no new run or replacement. Previous completed preflight still available.
 
 Live read-only roles, no edits/experiments/children:
-- Native Astra /root/h007_lattice_carries COMPLETED independent Grok fixed-window
-  fiber review. Root adopted its O(w) pole qualification and scoped degree-four
-  proof; no native role remains live at this checkpoint.
-- Claude Opus5.5: new primary-paper intersection-poset correctness/probability.
-- Factory Fable5.1: independent same-paper complete-cost/experiment audit.
-- Grok4.7: independent recent-primary-mechanism proposals, excluding that paper.
+- Native Astra /root/h007_lattice_carries COMPLETED Grok fixed-window review and
+  subsequent skeptical new-paper count/conditioning/cost reconciliation.
+- Native Astra /root/h006_structured_relation_ideas RUNNING H009 implicit-algebra
+  selector ideation, distinct initial lens; no dense-tensor relaunch or solver oracle.
+- Native Astra /root/h007_additive_relations COMPLETED H009 coordinate-aware
+  sampling ideation. One unsupported scalar-compression probe, no credible gain
+  or pilot recommendation; other overlaps omitted rather than padded.
+- Claude Opus5.5 COMPLETED new primary-paper mathematics review; raw report saved.
+- Factory Fable5.1 COMPLETED independent cost audit; raw report saved. Its proposed
+  million-kernel experiment was rejected: cap excludes other work and no validated
+  full-cost hypothesis. Numerical parameter inferences disagree and were corrected.
+- Grok4.7 COMPLETED recent-primary-mechanism scouting. Raw report saved with root
+  objections: torsion-field membership and isogeny degree are not runtime lower
+  bounds; public dependence does not remove scalar information; Frobenius equals
+  identity on rational points, not every [n]. No favorable or universal negative
+  claim accepted from these cards. No experiment justified.
 
-T3 live task IDs respectively:
+T3 task IDs respectively (all three terminal):
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h008-poset-math-opus-20261008-r1`
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h008-poset-cost-fable-20261008-r1`
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h008-recent-mechanisms-grok-20261008-r1`.
 
-All three launches returned RUNNING; capabilities refreshed with actual exact
+All three launches initially returned RUNNING; capabilities refreshed with actual exact
 models available. Separate initial bodies, no duplicate active hypothesis role.
-Grok's old task is terminal, not continued through its backing thread. Native
-and T3 capacities respected. Continue via completion notifications after the
+Grok's tasks are terminal, not continued through backing threads. Native
+and T3 capacities respected. The sole live role at this checkpoint is native
+/root/h006_structured_relation_ideas, preparing a concrete CRT/sparse-gcd card.
+It is restricted to primes with a suitable paid factorization of p-1; no claimed
+secp256k1 transfer or supported improvement. Continue via completion notifications after the
 coherent checkpoint; no busy polling or duplicate coordinator.
+New raw reports, reviewed count identities, exact arithmetic command and unresolved
+conditioning details are in findings/H008-poset-count-audit.md. H009 initial cards
+are retained in hypotheses/H009-independent-candidates.md. Prior goal turn was a
+verified wait with primary-source evidence; this turn integrated completed reviews
+and root arithmetic. No genuine blocker audit has begun.
 Unrelated untracked factoring-research/ and research-monitor/ remain untouched.

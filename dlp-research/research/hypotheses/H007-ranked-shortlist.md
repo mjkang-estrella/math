@@ -1,5 +1,13 @@
 # H007 synthesis: concrete solver questions, no demonstrated improvement
 
+H008 status override: both GRR explicit reverse-pushforward implementations and
+dictionary pair translation failed their named cost gates; no instrumented solver
+pilot is currently justified. See findings/H008-operation-disposition.md. Grok's
+H007 report is complete, with its normalized raw-window gain rejected after
+independent review. Implicit variants remain speculative, not funded engines.
+The next independent ideas and new-paper audit are tracked in STATE.md; the
+historical ordering below does not authorize another generic algebra wave.
+
 Independent initial lenses: Claude structured relations, T3 Sol symmetry,
 native Astra lattice/carries and additive methods, native Sol fullcost.
 Grok collision geometry remains live. Prior-art/fullcost review: T3 Astra;

@@ -1,5 +1,23 @@
 # H002 expanded T3 allocation
 
+## H008 review reconciliation and H009 independent ideation
+
+All three H008 T3 tasks below are now COMPLETED, raw reports retained. Opus and
+Fable agree on duplicate candidate counting; native Astra independently checked
+the exact identity and conditional fixed-sweep rejection. Universal restart and
+q^(2/3) claims withdrawn; no matrix trial funded. Grok's source-scout report has
+explicit root objections, not accepted complexity lower bounds.
+
+Native H009 roles, separate initial briefs, read-only/no experiments/edits/children:
+- /root/h006_structured_relation_ideas RUNNING implicit-algebra selectors; concrete
+  CRT/sparse-gcd mechanism being specified. No free compression/elimination oracle.
+- /root/h007_additive_relations COMPLETED coordinate-aware adaptive sampling;
+  one unsupported scalar-compression probe, no credible survivor or pilot.
+- /root/h007_lattice_carries COMPLETED skeptical H008 count/conditioning review.
+
+No new T3 round for these native tasks; existing completed T3 IDs retained below.
+Actual native occupancy never exceeded coordinator plus three active children.
+
 ## H008 current roles (supersedes historical RUNNING labels below)
 
 Native Astra GRR-operation and dictionary-operation roles COMPLETED; disposition
