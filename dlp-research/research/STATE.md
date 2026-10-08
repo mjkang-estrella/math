@@ -18,6 +18,37 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H028 rolling ideation and H027 walk review (latest checkpoint)
+
+Main objective and broad independent ideation policy remain primary. Best supported
+ordinary full-size work remains square-root; verified complete-work improvement NONE.
+No GPU calibration or baseline update. HEAD entering this wave: 6c5a5c2.
+
+Two distinct native initial proposers are RUNNING: Astra coordinate/algebraic
+relations (/root/h007_additive_relations), Sol arithmetic/lifting constructions
+(/root/h010_early_dependencies). Their proposals remain independent. Astra has
+an unreviewed concrete provisional-key candidate h=a/q: claimed saved squarings
+must survive fibre occupancy, randomization, exact recovery and full memory/cost
+review. No numerical or formal result for it yet.
+
+Grok H027 adaptive-search role COMPLETED and its raw report was read/retained.
+Three differential-fill/mixer cards require collision-detection review before any
+trial: oriented walks need not coalesce on negated x matches, macro phase may
+matter, and full-BSGS fallback is not low-memory. A NEW Claude Opus5.5 reviewer
+is RUNNING with the raw report and these objections. Exact task ID and briefs:
+hypotheses/H028-independent-candidates.md. Original H027 Fable constructive-signal
+handle remains RUNNING, not restarted. Current native use root+two fits four;
+T3 live catalog refreshed and exact review launch succeeded.
+
+Next experiment capable of changing the conclusion: a frozen candidate-specific
+correctness/fibre or useful-hit/full-cost diagnostic, but only after its concrete
+contract survives independent review. No experiment admitted yet; no generic
+Lean work. Existing goal active, no duplicate coordinator or scheduler.
+
+Validation: ./scripts/check.sh > /tmp/ecdlp-h028-rolling-check.log 2>&1
+exited0, 366 existing audits. No Lean/Audit changes. Root stages only the four
+named research records; unrelated directories and build products excluded.
+
 ## H027 character-descent falsifier verified (authoritative)
 
 Checkpoint25bf0fe retained the character-descent falsifier and conditional

@@ -34,7 +34,7 @@ Exact brief:
 
 NEW H027 independent constructive ECDLP ideation. Workspace /home/mj-kang/Documents/Dev/math/dlp-research. Read operating docs, STATE and accepted findings to deduplicate; do not read other H027 proposals before delivering yours. Read-only: no experiments, imports of probes, edits, commits or children. Root alone integrates. Broad creative proposals welcome (roughly 3-5 distinct mechanisms if worthwhile, no quota); do not stop at renaming a missing oracle, and do not reject whole classes with degree/runtime or generic/coordinate confusion. Each card needs explicit public-Q operations and recovery, positive gain rationale, ordinary full-range prime-field prime-order applicability, baseline and predicted COMPLETE-work gain, setup/memory/failure/advice costs, primary prior art actually read (memory labeled), unsupported premise, cheapest decisive falsifier. No third-party targeting or special-curve extrapolation. Verified gain NONE; square-root reference unchanged. H025 fixed-layout 5% validation failed and is parked; H026 accepted scope corrections supersede raw reports. No generic Lean infrastructure or random feature benchmark without a concrete positive premise. Develop new constructions, not another broad impossibility survey. Lens: target-dependent algebraic relations/invariants. Consider an explicit marked/polarized invariant or target-dependent cover whose computation and inversion could be cheaper together, or other concrete coordinate-aware constructions. H026 withdrew unsupported universal invariant-inversion lower bounds, but supplies no executable invariant. Native trace-dual-functional role is separate; avoid duplicating it. Seek several distinct actual constructions or narrowly failed attempts, retaining a high-risk option where assumptions are clear.
 
-## adaptive-search-grok — RUNNING
+## adaptive-search-grok — COMPLETED
 
 Provider: grok; model: grok-4.7.
 ClientRequestId: ecdloop-h027-adaptive-search-grok-20261008-r1
@@ -188,3 +188,9 @@ product-of-conjugates norm and trace collapse identities, and Sol's exact CSV
 interfaces with root-checked discriminant/rational-torsion qualifications. This
 is no new attack or universal descent/representation lower bound. Official eprint
 failed, actual UGent2020/2022 manuscripts read. No numerical test admitted.
+
+
+Grok initial report subsequently completed and was read by task_status. Raw cards
+are in H027-adaptive-search-grok-raw.md. NEW independent Opus detection/cost review
+and rolling H028 native roles are tracked in H028-independent-candidates.md.
+Fable constructive-signals original handle remains RUNNING; no duplicate.
