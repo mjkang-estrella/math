@@ -18,7 +18,30 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H025 scaling and arithmetic review (authoritative)
+## H025 initial arithmetic screen / extension design (authoritative)
+
+Previous turn was progress:28a1074 retained scoped scaling and frontier results.
+This turn revalidated native Sol's live design handle. Sol supplied an interim
+cost screen, independently checked by root and NEW native Astra artifact-only
+review: at hypothetical S/M=4/5,I/M=8, the initial B1009 result's5% key-arithmetic
+credit is smaller than its paid first-frontier forks. Remaining margin before
+other costs is-67592/25225 M; q509 leaves only6342/12725 M. If omitted candidate
+costs are no smaller than control costs,1009 cannot meet a5% arithmetic gate.
+That ordering is not established for all real overhead. The result is conditional,
+not a benchmark or general rejection; findings/H025-initial-arithmetic-screen.md.
+
+Sol remains RUNNING to finalize a concrete bounded exact scaling continuation;
+root requested fixed comparators/sizes/gates, allowing a justified larger event
+cap without an unsupported low-trial statistical substitute. No extension run
+or new engine has been admitted. All other H025 reviews COMPLETED. Root sole
+integration. Verified complete ECDLP improvement NONE; square-root reference
+unchanged. Next conclusion-changing action: review/freeze the proposed larger
+unchanged-B scalar test with paid-cost interpretation, then execute only if
+admitted. Goal active; no new Lean or hardware claim.
+Validation: ./scripts/check.sh passed exit0,366 audits; log
+/tmp/ecdlp-h025-initial-arithmetic-check.log.
+
+## H025 scaling and arithmetic review (historical)
 
 Previous goal turn was progress:8e51782 separated coverage evidence from setup
 and attribution. Opus scaling review now COMPLETED; raw report retained. Root

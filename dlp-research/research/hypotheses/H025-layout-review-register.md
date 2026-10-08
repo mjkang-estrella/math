@@ -90,3 +90,8 @@ mathematical audit COMPLETED, GO only for scoped exact algebra; no adoption of
 raw independence/asymptotic exclusion. Astra frontier component COMPLETED;
 H025-frontier-cost-bridge.md records paid fork, support memory and qualifications.
 Sol next-test/cost design remains live on its native handle; no new run admitted.
+
+Sol interim arithmetic screen independently checked by root and NEW native
+Astra artifact-only review COMPLETED. H025-initial-arithmetic-screen.md records
+hypothetical weights, exact credit/fork residuals and unproved cost-ordering
+assumption. Sol's final extension design remains RUNNING; no new run admitted.
