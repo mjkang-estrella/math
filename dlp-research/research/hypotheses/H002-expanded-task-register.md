@@ -468,3 +468,9 @@ retained. Native Sol /root/h010_early_dependencies has a NEW RUNNING read-only
 paper task on two-free-coordinate support, addressing the output-sensitive
 variant suggested in the review. Not accepted yet; no experiment/implementation.
 The original first-block literal-pair obstruction remains independently checked.
+
+H010 stronger explicit-support delivery: Sol COMPLETED; independent Astra
+CONFIRMED finite coefficient identity, characteristic, face and CRT preservation;
+root repeated them. Result in findings/H010-explicit-support-obstruction.md.
+No experiments or formal code. Factory Fable r2 and Grok hybrid r1 remain the
+independent live ideation roles. No duplicate or new coordinator/scheduler.

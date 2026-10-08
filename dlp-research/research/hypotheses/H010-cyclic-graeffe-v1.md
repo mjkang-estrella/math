@@ -151,3 +151,8 @@ claiming that reference is the strongest applicable baseline. The literal-work
 obstruction itself does not need that hardness exclusion. For R=O and b!=0,
 aG+bQ=O directly gives the scalar; charge this rare exceptional event, while
 b=0 produces no useful row. The finding explicitly accounts for infinity.
+
+A stronger independently checked face now rejects variants explicitly storing
+the same intermediate layer even with output-sensitive multiplication: see
+[explicit-support obstruction](../findings/H010-explicit-support-obstruction.md).
+This extension does not reject compressed or bypassed layers.

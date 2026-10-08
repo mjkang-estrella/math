@@ -62,3 +62,12 @@ Native Sol /root/h010_early_dependencies is RUNNING this new read-only paper
 screen; no edits/experiments/children. The original literal-schedule rejection
 remains valid regardless of the answer. Fable r2 adaptive-sampling and Grok
 hybrid ideation remain separate live tasks.
+
+## Subsequent checked resolution
+
+The two-coordinate screen succeeded: see H010-explicit-support-obstruction.md.
+Native Sol, independent native Astra and root checked an exact positive-power
+coefficient formula giving Omega(B²) actual same-layer support outside O(B^-2)
+of uniform targets. Thus explicit-output multiplication is also insufficient
+for this layer schedule. The earlier conjecture text records the question as
+posed; it is superseded by this scoped paper finding, not a numerical test.

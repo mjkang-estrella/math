@@ -27,13 +27,13 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 3. Current hypothesis: H010 cyclic Graeffe v1 has failed an independently checked
    first-block cost screen. Independent adaptive-labelled-sampling and hybrid
    mechanism proposals remain live; no improved algorithm is accepted.
-4. Evidence: during the first 2-power block, an exact S6 leading face and
-   full-box CRT injectivity preserve Omega(B) terms. The NEXT frozen convolution
-   visits Omega(B²) pairs for all but at most2/(q-1) of uniform finite targets.
-   One-row output plus paid attempts gives Omega(B²) expected cost per row even
-   with arbitrary caps/early abandonment, rejecting the proposed Theta(B)-row
-   collector at Omega(B³). This is a paper result, not Lean-proved; compressed
-   multiplication and changed samplers/schedules are not excluded.
+4. Evidence: the first-2-block norm now has an independently checked stronger
+   two-coordinate face. An exact finite coefficient identity and full-box CRT
+   injectivity force Omega(B²) STORED terms outside O(B^-2) of uniform targets.
+   This rejects even output-sensitive multiplication variants that materialize
+   the SAME layer. Paid one-row queries give Omega(B³) expected collector work
+   at constant completion probability, versus B^(5/2) reference. Paper result,
+   not Lean-proved; compressed/bypassed layers and changed samplers remain open.
 5. Next conclusion-changing step: review the remaining adaptive-sampling/hybrid
    proposals and primary-source applicability report. A changed concrete
    operation is needed before reopening the rejected schedule. No S6 engine,
@@ -244,3 +244,16 @@ paper question: can the two-free-coordinate norm face force Omega(B²) STORED
 support, beyond the already rejected literal pair schedule? Conjecture only, no
 new numerical run or engine. Live T3 roles: Factory Fable r2 and Grok hybrid r1.
 Explicit staged scope also includes the raw Opus report and its disposition.
+
+## Stronger H010 explicit-support checkpoint
+
+The pending two-coordinate conjecture is now independently checked: exact face
+S3^(8a), positive-power coefficient formula, p>16a nonvanishing, complete-box
+CRT preservation and exceptional-target union bound. Native Sol COMPLETED its
+new analysis, native Astra independently CONFIRMED algebra, and root repeated the
+finite derivation. See findings/H010-explicit-support-obstruction.md. It rejects
+the explicit same-layer output-sensitive variant, not all compressed algorithms.
+No new experiment, engine or Lean claim. Original literal milestone committed
+as fa606b6; this extension is a separate coherent finding. Existing checks passed;
+only task-owned Markdown changed. Factory Fable r2 and Grok hybrid r1 remain live,
+await completion notifications after checkpoint. Objective active, not achieved.
