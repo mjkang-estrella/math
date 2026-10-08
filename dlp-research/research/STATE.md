@@ -33,8 +33,9 @@ limitations are documented by negative tests, not silently repaired.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-literature-grok-20261007-r1`.
 - Native Astra `/root/encoding_review`: independently passed W008 key/search,
   W009 adapter and full sorted solver, including all 28 compiled test cases.
-  Separately reproduced W010 arithmetic script/JSON and scope: PASS. Currently
-  complete; available to review W011 once its exact draft is frozen.
+  W010 arithmetic reproduction passed. W012 source/data independently passed:
+  all2085 scalar/width cases,128691 events, every dominance/proxy result and
+  first-hit addition totals checked. Currently complete; available for W011.
 - Factory Fable 5.1: whole-solver cost-design review completed; original report
   retained verbatim in W010-cost-proposal-review.md, explicitly NOT ACCEPTED.
   Request `ecdloop-w4-cost-ledger-fable-20261007-r1`; task ID
@@ -44,6 +45,7 @@ limitations are documented by negative tests, not silently repaired.
   fixed-capacity instruction machine is only a qualified direction; no exact
   semantics or alternative cost goal has been adopted.
   Current active slots: coordinator, Sol W011 design writer, Grok literature.
+  Native Astra completed W012 review; no duplicate tasks.
 
 Live catalog discovered Codex Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory
 Fable/Opus with delegation supported and no reported constraints. Actual runs
@@ -134,8 +136,9 @@ contract before implementing any alternative cost interpreter. Retain frozen
 Machine/Problem/Goals.
 Collect Grok's existing task when its notification arrives; do not duplicate.
 Continue bounded waves with durable evidence and reviewer disagreements.
-Previous turn: progress (f95d27e sorted-solver commit, 159 audits). This turn
-adds independently reproduced arithmetic falsifiers, rejects flawed W010
-claims and starts a disjoint exact-contract draft. All159 theorem audits still
-pass. Grok remains authoritatively live; no duplicate task or scheduler.
+Previous turn: progress (a92d640 negative cost-model findings). This turn
+adds W012 finite all-width tuning evidence while W011 is drafted. None of the
+three signed defaultwidths is dominated in the partial eventvector; minimizers
+of declared hypotheticalweights vary. These are not wholecost/speed results.
+Grok remains authoritatively live; no duplicate task or scheduler.
 Research goal stays active; no completion or repeated-blocked threshold is met.
