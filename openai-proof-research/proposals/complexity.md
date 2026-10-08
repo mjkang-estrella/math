@@ -116,7 +116,7 @@ Woodbury gives
  R'=R-RX T^{-1}V^TR,
  \qquad \det(M+XV^T)/\det M=\det T.
 \]
-Compute (V^TR), ((RX)T^{-1}), and the final (n\times2h) by (2h\times n) product using the same padding/cyclic-symmetry bounds. Only a constant number of rectangular products occur. The identity follows by multiplying the proposed inverse by (M+XV^T), using (T=I+V^TRX); the determinant identity follows from block elimination of 
+Compute (V^TR), ((RX)T^{-1}), and the final (n\times2h) by (2h\times n) product using the same padding/cyclic-symmetry bounds. Only a constant number of rectangular products occur. The identity follows by multiplying the proposed inverse by (M+XV^T), using (T=I+V^TRX); the determinant identity follows from block elimination of
 \(\begin{bmatrix}M&X\\-V^T&I\end{bmatrix}\)
 using either diagonal block. This proves the statement.
 
