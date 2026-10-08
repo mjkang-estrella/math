@@ -20,6 +20,33 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H034 fresh mechanisms and fixed published-algorithm audit
 
+LATEST after357623a: previous turn PROGRESS. Native Sol supplied a concrete
+paired-sum construction. Astra independent math review COMPLETED: literal dense
+all-pairs prefix has duplicated equations and loses its key-count rationale;
+C4-free sparse graph variant has a supported dependency-graph Poisson premise.
+Root checked event counts and read AGG Theorem1. Accepted mathematical scope in
+H034-paired-sum-mathematical-screen.md; no full-cost improvement or novelty claim.
+
+Proposer Sol RUNNING to freeze graph/seed/lookup/batch/recovery/fallback contract.
+Root highlighted fixed3sqrt(q) cap versus uncapped mean, fresh fallback blinding,
+lazy edge enumeration and paid small-field indexing. Numerical diagnostic not
+yet admitted. Full-work margin versus grumpy as well as H019 must survive.
+NEW Factory Opus5.5 independent sparse-pair cost/prior-art review RUNNING:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-sparse-pair-priorart-factory-opus-20261008-r1`.
+Hypothesis and objections retained in H034-sparse-paired-sum-hypothesis.md.
+
+Original Opus published-windowed-source review COMPLETED, acknowledged with no
+pending children. Raw retained in H034-windowed-source-opus-raw.md; root has NOT
+accepted its broad finite/peak-memory dominance, rho-chain exclusion, parallel
+stopping assertion or proposed regrouped-batch sharpening without review.
+Original Grok live-coverage ideation remains on its original RUNNING handle.
+No writers, no numerical run, no Lean change. Verified improvement NONE.
+
+Validation: `./scripts/check.sh > /tmp/ecdlp-h034-pair-screen-check.log 2>&1`
+exit0;366 existing audits passed. New mathematics is a reviewed paper argument,
+not a new Lean declaration; Audit unchanged. Candidate-specific contract and
+cost/prior-art gates remain open before implementation or a synthetic run.
+
 Previous goal turn PROGRESS: H033 committed as0a4d112 with independent
 corrections and passing checks. Working project clean at launch. All previous
 children terminal/collected; no duplicate coordinator or hypotheses. Refreshed
