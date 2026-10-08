@@ -61,9 +61,14 @@ throughput. No third-party wallets or live-fund recovery.
   next distinct lenses and synthesis gate: H002-broad-independent-pool.md.
 
 - Native Sol `/root/small_curve`: H001 item1 primary-source exploration of an
-  actual coordinate-aware Semaev relation generator/filter. Cost derivation and
-  cheap falsifier required; no bounded-root oracle, generic infrastructure or
-  special-curve extrapolation. Read-only, temporary evidence allowed.
+  actual coordinate-aware Semaev relation generator/filter COMPLETED, now idle.
+  No improved generator found. Nine finite rank diagnostics independently
+  reproduced; scope/costs in H001-relation-rank-falsifier.md and
+  H001-coordinate-cost-gate.md. No n=5/full-solver inference.
+- Native Astra `/root/h002_arithmetic_ideas` RUNNING: fresh independent initial
+  arithmetic/lifting/endomorphism ideas, forked without previous proposals;
+  read-only,3–5 distinct mechanisms if worthwhile, no children/heavy experiments.
+  This replaces the completed Sol slot; root+Grok+Fable+Astra remain four.
 - Native Astra `/root/encoding_review`: H001 item2 and focused scope review
   completed, now idle. Arithmetic archived/reproduced; no EC performance claim.
   Scope review rejects universal coordinate-filter, Coppersmith and transferred
@@ -103,3 +108,11 @@ repository root is outside this task and remains untouched.
 Previous turn produced supporting artifacts but **no ECDLP improvement**. This
 turn changes authoritative research priorities, preserves work, and launches
 specific algorithm exploration/critique. Goal is neither achieved nor blocked.
+
+Latest local commit22fe257 implements refocus/broad ideation and preserves parked
+work. Current turn: reproduced H001 finite rank negative evidence (493728 events
+per run,987456 across author/reproduction); preserved outputs and qualifications.
+scripts/check.sh passed after adding the experiment. Previous goal turn was
+progress (authoritative policy/commit and reproduced negative gate), not a wait.
+Next: continue independent H002 proposal waves, then synthesize and falsify the
+most promising concrete mechanisms. No accepted improvement or GPU calibration.

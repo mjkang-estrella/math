@@ -16,7 +16,9 @@ Opus completed; neither is counted as active. No grandchildren or duplicate task
 - Learned heuristics/generalization and time-memory-preprocessing: Factory
   Fable5.1, request `ecdloop-h002-learning-tradeoffs-fable-20261008-r1`, running.
   Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-learning-tradeoffs-fable-20261008-r1`.
-- H001 coordinate relation diagnostic remains Sol-owned until completion.
+- H001 coordinate relation diagnostic completed and was reproduced by root.
+- Native Astra `/root/h002_arithmetic_ideas` now runs independent arithmetic/
+  lifting/endomorphism ideation in the freed slot, with no prior proposal context.
 
 The H002 briefs withhold other proposal reports; each proposer generates3–5
 concrete distinct mechanisms, with gain, prior-art distinction, unsupported
