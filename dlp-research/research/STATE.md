@@ -18,7 +18,41 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H022/H023 completion / H024 independent wave (authoritative)
+## H024 slope-active component review (authoritative live checkpoint)
+
+Native Sol proposes an exact slope-active kernel, regular1M+S+I, batched4M+S,
+with an already-active exact one-field endpoint key. It can preserve the prior
+pair walk's deterministic choices by retaining the branch flag computed from
+both transient roots. Findings/H024-slope-active-kernel.md records the root
+check, explicit exceptions still to audit, and pending independent review.
+Native Astra completed its distinct initial escape proposal and now RUNNING
+on a NEW independent formula/cost review. Sol's initial role is COMPLETED;
+its separate centered-map and isogeny screens supply no admitted experiment.
+Sol now RUNNING a NEW bounded falsifier-design task (no execution), to freeze
+the actual escape/restart rule or return a scoped no-admission decision.
+Claude Opus algebraic mechanisms and Factory Opus information/hybrids both
+revalidated RUNNING on the same H024 task IDs. No duplicate or provider retry.
+
+Detected-then-doubling still pays discarded translation and three sequential
+inverse batches. Under stipulated same useful-collision law, the10% arithmetic
+gate is actual escape fraction<.03387 at S/M=.8, before other overhead. This
+is not a measured rate or a solver gain. Within-seed centered-multiplication
+null equations do not exclude cross-seed collisions. High-memory H019 remains
+separately stronger in the optimistic arithmetic comparison; memory must match.
+
+Best supported full-range complexity remains square-root with known constants
+and tradeoffs; verified improvement NONE. Next conclusion-changing step is
+independent component review followed, only if warranted, by a frozen cheap
+synthetic test of the precise escape rule and its useful collisions. No new
+numerical run, Lean infrastructure, GPU throughput or dashboard change. Broad
+independent algebraic/information ideation stays live. Goal remains active.
+
+Validation: ./scripts/check.sh passed exit0,366 audits; log
+/tmp/ecdlp-h024-slope-check.log. No Lean source or Audit changes.
+Root alone integrates and stages named research records. Unrelated directories
+and build products remain untouched. Older statuses below are historical.
+
+## H022/H023 completion / H024 independent wave (historical)
 
 Previous goal turn was progress: b277b22 retained reviewed EDS matching and
 fixed-difference walk findings. Final Grok scope reviews now COMPLETED.

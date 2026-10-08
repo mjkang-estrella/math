@@ -9,7 +9,7 @@ padded count. High-risk ideas welcome, but no hidden oracle/setup or known
 trick labeled as a discovery. No numerical run or broad Lean infrastructure.
 Current best classical square-root reference unchanged; verified gain NONE.
 
-## Native Astra /root/h007_additive_relations, RUNNING
+## Native Astra /root/h007_additive_relations, initial COMPLETED
 
 Construct actual cheaper escape/mixing for the H023 fixed-difference state.
 Use the exact one-field slope endpoint refinement; it changes records, not
@@ -21,7 +21,7 @@ A bounded diagnostic may be suggested only for a specified conclusion-changing
 mechanism. Compare competent negation rho and high-memory x-only BSGS where
 applicable. No other H024 initial proposal, edits, runs, children or commits.
 
-## Native Sol /root/h010_early_dependencies, RUNNING
+## Native Sol /root/h010_early_dependencies, initial COMPLETED
 
 Explore rational quotient coordinates/dynamics, distinct from fixed-pair
 escape implementation. Can paid coordinate changes or low-degree rational
@@ -63,3 +63,29 @@ Rank delivered mechanisms by meaningful gain and cheap falsifiability, then
 use separate critical review and a frozen matched synthetic experiment for a
 survivor. No claim that these roles will necessarily produce one. Wait for
 completion notifications; no timer, busy loop or top-level thread.
+
+## H024 slope-active independent review, RUNNING
+
+Native Astra /root/h007_additive_relations received a NEW review assignment
+following its initial completed escape proposal. Sol's slope-active formula,
+canonical labels, exact hash coupling, exceptions, endpoint keys, and dependent
+inverse batches are under independent review. Root's additional arbitrary-jump
+subtotal is explicitly unreviewed. Full mathematical statements, conditional
+cost gates and prior proposal scopes: findings/H024-slope-active-kernel.md.
+Read-only/no children/runs/edits; no whole-solver collision law assumed. Review
+also asks for the cheapest decisive frozen diagnostic, if a positive rationale
+survives. Sol's initial role subsequently COMPLETED; its scoped scalar-map/isogeny screens are recorded with the kernel; both T3 roles
+were revalidated RUNNING. Old H022 Grok terminal result re-read, already scoped
+by H022-final-mechanism-scopes.md; it launches no duplicate investigation.
+
+## H024 bounded falsifier design, RUNNING
+
+Native Sol /root/h010_early_dependencies received a NEW read-only protocol
+assignment after its initial final report. Freeze an actual low-memory
+slope-active detected-reversal rule, labels, seed generation, hash, exceptions,
+restarts and stopping. Determine whether a <=60s/1M-event diagnostic over
+increasing synthetic prime-order fixtures can decisively falsify its necessary
+escape-rate gate. A measured escape rate alone cannot establish the useful
+collision constant. Reuse existing fixtures; no run or implementation authorized
+by this assignment. Return a scoped no-admission decision if no positive
+rationale exists. This is protocol design, distinct from Astra's formula review.
