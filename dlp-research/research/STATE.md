@@ -73,6 +73,24 @@ under normalization. Sparse endpoints/seed replay repeat accepted baselines
 without a cheaper complete contract. H029-trajectory-screen.md retains all three
 attempts; no experiment admitted. Native Sol and both T3 roles remain live.
 
+H029 update: native Sol arithmetic role COMPLETED, three constructions but no
+new cheaper search operation; root checked recovery and opened primary sources.
+H029-arithmetic-screen.md retains scope, not general impossibility. Root/Astra
+also established exact finite formulas for an IDEALIZED independent-uniform jump/
+translation-fill model, including size-biased gap costs and initialization. The
+conditional equal-gap illustration is NOT a prime-curve theorem or actual bucket
+collision law; see H029-translation-jump-model.md. Both T3 handles revalidated
+RUNNING this turn; no duplicates/restarts or numerical experiments.
+
+NEW independent Claude Opus5.5 primary-comparator source audit RUNNING with
+retained task ID in H029 register. It checks at most3 relevant actual primary
+results, distinct from Grok's walk repair and Factory's parallel-work proposals.
+Both native initial roles and model review are complete. No failed role is
+silently substituted or duplicate active hypothesis created.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h029-model-check.log 2>&1 exit0,
+366 existing audits. No Lean/Audit edits; conditional probability model remains
+paper mathematics. Source retrieval supports scoped baselines, not claimed gain.
+
 ## H028 parked; main algorithm research continues (latest)
 
 All H028 source, cost and calibration-decision roles COMPLETED. Final source-only

@@ -58,3 +58,25 @@ Three attempted mechanisms retained in findings/H029-trajectory-screen.md. Root
 confirmed the exact normalized conjugacy identity; sparse endpoints and label
 replay supplied no new paid advantage over the accepted comparator. No experiment
 admitted, no broader impossibility inferred. Other three roles remain live.
+
+
+Native Sol arithmetic initial role COMPLETED, no new surviving operation from
+three transports; sources/interfaces and scoped gaps retained in H029-arithmetic-screen.md.
+Separate root/Astra translation-jump MODEL review COMPLETED with exact finite
+weighted-birthday and size-biased fill formulas. It is not actual coordinatewalk
+analysis; H029-translation-jump-model.md records initialization/detection scope.
+Grok's actual contract repair and Factory's independent initial work remain live.
+
+
+## Independent primary-comparator audit — RUNNING
+
+Claude Opus5.5, provider claudeAgent. Bounded source verification of recent
+classical ECDLP algorithms/tradeoffs, maximum3 substantive actually-read primary
+results; no novelty-from-absence, interval/small-characteristic/multitarget
+transfer, unpriced advice or generic impossibility. If no new applicable source,
+report narrow outcome without padding. This is source audit, not a retry of a
+blocked construction role. Initial audit excludes other H029 proposals.
+ClientRequestId ecdloop-h029-primary-comparator-audit-opus-20261008-r1
+TaskId node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h029-primary-comparator-audit-opus-20261008-r1
+Same read-only/no-runs/edits/imports/children limits. Native initial roles are
+complete; Grok and Factory remain on their distinct existing live tasks.
