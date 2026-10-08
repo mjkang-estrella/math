@@ -79,8 +79,8 @@ This principle is not claimed as a new theorem.
 source contracts, residue determinants, order of limits, sign expansion
 and the cyclotomic local factors. All required corrections are incorporated.
 The parent independently checked the transfer and that t⁴+1 has four
-simple roots precisely at odd primes congruent to1 modulo8, with no
-root modulo4.
+simple roots precisely at odd primes congruent to 1 modulo 8, with no
+root modulo 4.
 
 The review's optional million-integer numerical screen tested divisibility
 only by prime squares with p≤10⁶. That is **a truncated local sieve, not
