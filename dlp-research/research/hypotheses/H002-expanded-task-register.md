@@ -688,3 +688,26 @@ scheduler, busy watcher or changes to frozen challenge definitions.
 Native H015 coordinate proposer now COMPLETED one residual-quadratic graph card,
 not padded to a quota. Concrete useful-cycle selector still missing; random-edge
 cost screen expressly conditional. Root synthesis pending, other four roles live.
+
+H015 latest native disposition supersedes the prior pending sentence:
+- /root/h007_additive_relations initial relation card and correction COMPLETED.
+  Root added all known-labelled input anchors, correcting the unanchored linear-q
+  model to a separate conditional q^(2/3) direct-anchor-edge threshold. No general
+  lower bound; forced endpoints reduce to existing affine group operations.
+- /root/h006_structured_relation_ideas arithmetic/reporting cards COMPLETED.
+  Scoped warm-window winnowing mean-delay screen checked by root; literal dense
+  integer-tile cost retained with exact schedule limitations. No experiment.
+- /root/h010_early_dependencies admission-rule proposal COMPLETED. Separate
+  /root/h007_additive_relations mathematical/cost review COMPLETED; root-qualified
+  stopped-event probability and basin-mass versus count distinction retained.
+- /root/h010_early_dependencies NEW native read-only source followup COMPLETED:
+  inspect actual multi-DLP algorithms for adaptive admission novelty, no runs,
+  files or children. Actual FJM2014 PDF access succeeded after previous failures;
+  published May--Ostuzzi PDF also succeeded through Springer shell curl. Exact
+  adaptive rule differs from both inspected algorithms, not global novelty.
+  Disposition/commands retained. This is distinct from live Factory recent bridges.
+
+Both exact H015 T3 original handles revalidated RUNNING; no task restarted or
+new delegated review round inferred from the repeated H014 notification.
+H014 Opus preflight terminal summary reread matches the committed raw report.
+Root alone writes findings/checkpoint and integrates; objective/improvement unchanged.

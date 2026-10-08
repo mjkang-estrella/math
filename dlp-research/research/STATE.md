@@ -24,17 +24,18 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current evidence: H014 MCL information screen COMPLETE, q67,103,271,738704
-   events in one capped run. Neither of two frozen public features crosses the
-   descriptive3RMS threshold. Park these instances; conditional MCL remains open.
-4. Evidence against immediate expansion: no gross finite signal, no cheap
-   predictor and no favorable complete recovery cost. Independent recorded-data
-   audit passed; all exact controls and ledger totals reconciled. Tiny finite
-   results do not reject asymptotic coordinate methods. PC4 remains deferred.
-5. Next conclusion-changing step: H015 independent new mechanisms that supply an
-   actual cheaper information/recovery operation or material full-solver saving.
-   No larger feature sweep, backend engine or generic Lean infrastructure from
-   the current result. Credible costs and successful recovery remain the metrics.
+3. Current hypothesis: H015 component-aware admission could reduce dependent
+   multi-target collisions by a finite constant. Exact review shows it changes
+   rank usefulness, not the endpoint law; minimum count only proxies basin mass.
+   No measured gain, full-success probability or general novelty established.
+4. Evidence: residual-quadratic relations are valid but have no cheaper useful
+   dependency selector. Winnowing has no mean-delay gain in two scoped warm
+   independent-rank models. Literal dense integer-tile arithmetic has31.5x padding.
+   H014 remains the latest numerical run:738704 events, no gross feature signal.
+5. Next conclusion-changing step: primary-source novelty/cost review of the
+   admission rule, plus independent live Factory/Grok new mechanisms. A matched
+   synthetic diagnostic needs a favorable complete-work hypothesis first. No
+   larger feature sweep, backend engine or generic Lean infrastructure justified.
 
 ### Latest authoritative task snapshot (older sections are history)
 
@@ -54,13 +55,29 @@ Sol recorded-data audit PASSED. NEW Opus H014 preflight COMPLETED, caught imposs
 symmetry-breaking permutation controls. Root repaired both BEFORE any run:
 fields59,101,251,256-candidate windows, one global cap, signed-pair permutations.
 See H014-preflight-disposition.md for qualifications. H013/H014 roles all COMPLETE.
-H015 initial proposals, read-only/no experiments/children: native coordinate
-relation proposer COMPLETED one concrete residual-graph card (synthesis pending),
-native Astra solver arithmetic and native Sol time-memory remain RUNNING, plus
-multi-target costs, Factory Opus primary-literature bridges, Grok unconventional
-compositions. Other initial responses withheld until synthesis; no duplicate
-coordinator or current hypothesis. Native root+three within4, T3 two below20.
-Full T3 IDs in task register. Goal remains active.
+H015 initial native proposals all COMPLETED; root integrated four concrete cards
+without padding. Separate native Astra component-admission mathematics review
+COMPLETED, including basin-mass probability identity and root's stopped-event
+qualification. Native Sol primary-source admission-rule followup COMPLETED.
+Factory Opus primary-literature bridges and Grok unconventional compositions
+authoritatively RUNNING at latest task_status read; original handles retained.
+Other initial responses withheld until synthesis; no duplicate coordinator or
+hypothesis. Native coordinator only now active, T3 two below20. Full IDs in task register.
+Goal remains active; this turn is paper-screen progress, not a blocker.
+
+H015 findings: residual-graph-screen, preprocessing-baseline, winnowing-screen,
+component-admission. These are paper calculations/hypotheses, not Lean theorems
+or a verified solver gain. No new numerical run or Audit entry. H014 completion
+notification reread: same already-integrated preflight, no new objection/result.
+Ranked synthesis: hypotheses/H015-ranked-shortlist.md. Actual FJM2014 source§2
+now read by Sol and independently by root; fixed per-target chains/known graph
+baseline differs from the proposed adaptive rule, without establishing novelty.
+Published May--Ostuzzi§6 also read directly: sequential target retries against a
+known-log table, different from this exact admission rule. No primitive-addition
+cost inferred from its random-power walk steps. Both source access gates resolved;
+candidate still lacks a favorable complete-work case or success evidence.
+Checks: `./scripts/check.sh > /tmp/ecdlp-h015-screen-check.log 2>&1` exit0.
+Only paper/process records changed; no Audit additions or formal proof claim.
 
 Current findings: H013-algebra-disposition.md, H013-coordinate-cards.md,
 H013-mcl-disposition.md, with raw reports and reviewer objections retained.
