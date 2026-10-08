@@ -1,8 +1,10 @@
-# H024 slope-active translation kernel (pending independent review)
+# H024 slope-active translation kernel (independently checked component)
 
 2026-10-08. Native Sol proposal; root derivation below; native Astra independent
-review is RUNNING. This is a component hypothesis, not an improved ECDLP solver.
-No numerical experiment or new Lean claim. Verified complete-work gain NONE.
+review COMPLETED, including the written ledgers and root jump subtotal. This is a component hypothesis, not an improved ECDLP solver.
+This derivation adds no Lean claim. The subsequent finite diagnostic is recorded
+in H024-escape-finite-negative.md; it rejected the tested escape-rate gate.
+Verified complete-work gain NONE.
 
 ## Proposed representation and exact coupling
 
@@ -56,7 +58,7 @@ batch. Under an unproved equal-useful-collision-law assumption, a 10% arithmetic
 saving against 5M+S at s=S/M=.8 requires d/n < .42/7.6 ≈ .05526,
 before all other costs. A rare hash coin is not an adequate cycle escape rule.
 
-Root's additional UNREVIEWED jump subtotal: recover y (1M), add precomputed
+Root's additional jump subtotal, independently checked by Astra: recover y (1M), add precomputed
 J (2M+S+I), normalize μ (1M+I), compute other root (1S), hence
 4M+2S+2I, or leading 10M+2S after two dependent inverse batches.
 Table construction, labels, exceptions and jump selection are additional.
@@ -87,9 +89,10 @@ coalescence merely because their slope keys agree.
 
 ## Decision gate / next work
 
-Independently verify formulas, canonical labels, exceptions and dependent-batch
-costs. Then freeze a concrete escape rule and a bounded synthetic diagnostic of
-actual escape frequency and useful collisions over increasing sizes/seeds. A
+Independent review checked formulas, canonical labels and dependent-batch
+costs. The subsequently frozen detected-reversal diagnostic rejected its finite
+escape-rate gate; see H024-escape-finite-negative.md. A different admitted
+mechanism would require a new explicit rule and independent review. A
 kernel saving alone cannot justify a full benchmark campaign. No accepted
 positive full-solver rationale or exponent change yet. Independent algebraic
 and information ideation remains live, without anchoring it on this proposal.
@@ -123,3 +126,25 @@ Sol reports direct inspection of primary sources, not root re-verification:
 and [Sutherland Lecture4, sections4.2–4.3.2/Lemma4.26](https://math.mit.edu/classes/18.783/2023/LectureNotes4.pdf).
 These support ordinary addition/duplication and isogeny framework; the
 candidate-specific representation and costs are project derivations.
+
+## Completed independent review: exceptions and limits
+
+Astra derives y(P+G)+h=−(μ−2h/u)z, independently confirming the new slope
+and unchanged slope upon sorting. A canonical endpoint collision gives
+(b1−b2)k=a2−a1; zero coefficient is uninformative, with no probability claim.
+
+Before execution the protocol must dispatch:
+
+- {O,G}: a separate vertical sentinel.
+- Zero root: the {−G,2G} orbit, tangent slope at −G; no zero inverse.
+- Equal roots: known point G/2, recover from its label when possible.
+- Doubling outputs in exceptional classes; odd-order points have no nonzero
+  rational y=0 doubling denominator.
+- Arbitrary jump P=±J: ordinary doubling/infinity cases, outside its regular
+  subtotal. Charge every exception test, verification and restart.
+
+Cached flags preserve only the specified OLD walk, with cycle/history/RNG/report
+order retained as needed. They do not couple to standard negation rho, and a
+predicate requiring a NEW translation cannot be cached before that arithmetic.
+Observed escape-rate failure rejects the stipulated equal-hit-law finite cost
+hypothesis, not every possible improvement in collision behavior.

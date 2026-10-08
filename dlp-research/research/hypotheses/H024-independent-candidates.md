@@ -89,3 +89,13 @@ escape-rate gate. A measured escape rate alone cannot establish the useful
 collision constant. Reuse existing fixtures; no run or implementation authorized
 by this assignment. Return a scoped no-admission decision if no positive
 rationale exists. This is protocol design, distinct from Astra's formula review.
+
+## Final H024 disposition
+
+All four initial roles and subsequent kernel/protocol/evidence reviews completed.
+The kernel identities/ledgers checked; one approved finite diagnostic rejected
+the detected-reversal gate on all four fixed fixtures, without cap/error.
+H024-escape-finite-negative.md retains exact commands, independent audit and
+accounting qualifications. No rerun/tuning. H024-manygiant-coverage.md retains
+reviewed counting and primary-prior-art corrections; empirical constants are
+not proofs. New distinct H025 tasks are registered separately.

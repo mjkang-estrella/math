@@ -18,7 +18,45 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H024 slope-active component review (authoritative live checkpoint)
+## H024 finite negative / H025 constructive wave (authoritative)
+
+Previous goal turn was progress: local8938e7d checkpointed the component and
+pending reviews. Those reviews now COMPLETED, followed by one independently
+reviewed, bounded synthetic test. H024-escape-finite-negative.md records all
+four frozen fixtures reaching nine escapes in18,17,13,15 attempted transitions.
+The maximum256-transition blocks cannot satisfy the strict21/620 gate even
+if every remaining trial avoided escape. Park this literal detected-then-double
+schedule. The valid cheaper slope kernel remains; no universal walk exclusion.
+Implemented diagnostic ledger150590 events, no cap/error, exit0; source/protocol
+hashes and recorded evidence independently audited. Trace-write and final-state
+check qualifications retained. This is not a complete solver benchmark.
+
+H024 independent initial roles and all reviews COMPLETED. Raw algebraic and
+information reports retained explicitly unaccepted where unreviewed; no broad
+character/learning closure adopted and no spectrum test admitted. Many-family
+counting reviewed: floors are not achieved runtimes. Primary GWZ prior art adds
+an empirical negated-grumpy comparison around.9sqrt(q), separate from proved
+2sqrt(2)/3 two-family reference. Exact memory/tails/blocks remain to compare;
+no universal.9 claim or claimed new discovery. Root read primary tables.
+
+H025 new distinct roles RUNNING: native Sol explicit high-memory signed layouts;
+native Astra alternative useful low-memory operations; T3 Grok independent
+coordinate-aware bridges. Initial ideas withheld across roles. Full task handle
+and briefs in hypotheses/H025-constructive-wave.md. Native root+2 within4,
+one T3 role within confirmed20; no blocked provider retried or duplicate task.
+
+Best supported ordinary full-range complexity remains square-root with known
+constants/tradeoffs. Verified improvement NONE. Next conclusion-changing work:
+a concrete uniform coverage construction with paid full-prefix/memory analysis,
+a new low-memory mechanism overcoming actual cycle work, or a distinct public
+relation bridge. Negative test is not followed by tuning the same fixtures.
+No generic Lean work, hardware throughput or dashboard change. Goal active.
+
+Validation: ./scripts/check.sh passed exit0,366 audits; log
+/tmp/ecdlp-h024-finite-negative-check.log. No Lean/Audit changes. Root alone stages named research files; unrelated directories, build
+products and toolchains excluded. Older live statuses below are historical.
+
+## H024 slope-active component review (historical)
 
 Native Sol proposes an exact slope-active kernel, regular1M+S+I, batched4M+S,
 with an already-active exact one-field endpoint key. It can preserve the prior
