@@ -211,7 +211,7 @@ research/experiments/H005/inverse_walk_protocol.md. No run authorized yet.
 
 ### ecdloop-h004-recent-bridges-fable-20261008-r2
 
-- Status: RUNNING; provider/model: `acpRegistry_factory_droid/claude-fable-5.1`.
+- Status: COMPLETED, substantive report pending skeptical review; provider/model: `acpRegistry_factory_droid/claude-fable-5.1`.
 - Stable request: `ecdloop-h004-recent-bridges-fable-20261008-r2`.
 - Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-recent-bridges-fable-20261008-r2`.
 - Fresh delegate_task after terminal r1; original brief and non-delivery included.
@@ -220,10 +220,23 @@ research/experiments/H005/inverse_walk_protocol.md. No run authorized yet.
 
 ### ecdloop-h005-inverse-cost-review-opus-20261008-r1
 
-- Status: RUNNING; provider/model: `claudeAgent/claude-opus-5-5`.
+- Status: COMPLETED, conditional acceptance; provider/model: `claudeAgent/claude-opus-5-5`.
 - Stable request: `ecdloop-h005-inverse-cost-review-opus-20261008-r1`.
 - Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h005-inverse-cost-review-opus-20261008-r1`.
 - Independent source cost/evidence audit, prior math/protocol objections included.
   Read-only, no experiments/imports/numerical scratch/children.
 - Native Astra /root/encoding_review COMPLETED full source-correctness and
   budget/partial-output audit: PASS source968c1886..., no-run restriction honored.
+
+Root resolved Opus pre-run conditions in H005/inverse_walk_protocol.md, preserving
+sourcehash/cap/fixture and recording outer-wrapper expected-cost correction.
+
+Native /root/encoding_review RUNNING metadata-only H005 results audit and paper
+all-target group-call comparison; no second numerical experiment.
+
+H005 final independent audit: /root/encoding_review COMPLETED PASS recorded JSON
+and paper all-admitted-nonzero-target group-CALL extension; no EC rerun. Raw
+auditor script retained H005/audit_recorded.py. Root parks frozen implementation.
+Native /root/h002_arithmetic_ideas COMPLETED skeptical Fable r2 source review;
+qualified disposition H004-recent-bridges-disposition.md rejects universal
+exclusions and corrects primary-source/torsion-degree/sample-bound mistakes.

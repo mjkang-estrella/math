@@ -119,3 +119,39 @@ status. An incomplete attempt/domain has no expected-cost verdict. Exit2 on
 incomplete/error, exit0 only full completion. Preserve failures; never reset cap.
 The root will specify the exact execution/output command after source review.
 Syntax-only checks are allowed to the implementer with caches outside repository.
+
+## Root pre-run resolution of independent Opus cost audit
+
+Both static source reviews accepted hash968c1886... without a correctness or
+hidden-advice blocker. Root explicitly accepts the risk that the frozen1M-event
+cap may stop this single run before completion. Reviewer hand estimates are
+unmeasured and provide no guaranteed margin. Keep the cap, T, fixture and score
+unchanged; no warmup, cap reset or later completion run is authorized.
+
+The unchanged source's expectation excludes the outer restart-wrapper loop and
+caller success check. Report its raw vector with this exclusion, and use a
+separately labelled corrected solver vector for comparisons: add q/S to
+loop_iterations and q/S to comparisons (one fresh-attempt loop and one outcome
+check per attempt). These are fixed model-wrapper charges, not additional
+executed diagnostic events or sampler draws. The expectation's diagnostic
+success-count comparison is not itself a paid online caller success check.
+No raw-draw counter is added as an independent cost on top of bit generation.
+
+A candidate expectation present in a failed/incomplete overall run is NOT
+admissible for the gate. Comparison requires status=complete, completed reference,
+all73 attempts, no validation error and successful counter reconciliation. Raw
+partial artifacts remain evidence of what executed, never a completed verdict.
+
+The comparison concerns one fixed public Q for both algorithms. Candidate starts
+are uniform from paid random offsets; deterministic BSGS stops at Q's particular
+giant index. It is not a uniform-secret comparison. Either outcome can depend
+on that index. A loss parks only this direct-halving/fresh-restart/Fermat-inversion
+implementation at this fixture and cap, not all Q, all scores or optimized walks.
+A survival only motivates a new independently reviewed scaling/control protocol;
+this unbatched reference is weaker than the best known arithmetic implementations.
+
+Authorized root command, exactly once after writing this resolution:
+`python3 research/experiments/H005/inverse_walk.py --output research/experiments/H005/inverse_initial_results.json`
+Source remains the previously reviewed hash; the output will record this amended
+protocol hash. This amendment changes reporting and accepts the known cap risk;
+it changes no algorithm, parameter, source or executed test case.
