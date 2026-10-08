@@ -17,7 +17,7 @@ H006 net proposer and independent /root/encoding_review COMPLETED; startup dupli
 - H007 complete solver arithmetic co-design FAILED, acpRegistry_factory_droid/claude-opus-5-5 (Internal error: Agent error; no result):
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-fullcost-schedules-factory-opus-20261008-r1`.
 
-Live catalog refreshed. Factory Opus full-cost task failed with Internal error: Agent error; no report. Root explicitly reassigned its role to native Sol /root/h007_fullcost_schedules, now RUNNING; this is not claimed as a Factory success. Other chosen models launched normally. Initial
+Live catalog refreshed. Factory Opus full-cost task failed with Internal error: Agent error; no report. Root explicitly reassigned its role to native Sol /root/h007_fullcost_schedules, now COMPLETED (H007-fullcost-screen.md; no survivor); this is not claimed as a Factory success. Other chosen models launched normally. Initial
 H007 briefs exclude each other's proposals; several distinct mechanisms where
 worthwhile, no quota/padding. No numerical or formal-infrastructure work authorized.
 Await async completions; no scheduler or polling loop. Goal remains active.

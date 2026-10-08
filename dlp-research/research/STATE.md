@@ -82,7 +82,7 @@ No validated B200/H200 curve throughput; dashboard multipliers remain hypothetic
   H006-minor-disposition.md records objections and new independent review split.
 All initial briefs are isolated, read-only and prohibit numerical scratch, edits
 or children. Live capability discovery confirmed chosen models; no substitution.
-Native root+Sol proposer fit4; three live T3 roles below fit20. These launches are process, not
+Native root fits4; three live T3 roles below fit20. These launches are process, not
 evidence of algorithmic improvement. They continue broad ideation without
 reopening the losing inverse-walk experiment or duplicating existing work.
 
@@ -175,9 +175,11 @@ No numerical experiment or tensor implementation has been authorized.
 - H007 complete solver arithmetic co-design FAILED, acpRegistry_factory_droid/claude-opus-5-5 (Internal error: Agent error; no result):
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h007-fullcost-schedules-factory-opus-20261008-r1`.
 
-Live catalog refreshed. Factory Opus full-cost task failed with Internal error: Agent error; no report. Root explicitly reassigned its role to native Sol /root/h007_fullcost_schedules, now RUNNING; this is not claimed as a Factory success. Other chosen models launched normally. Initial
+Live catalog refreshed. Factory Opus full-cost task failed with Internal error: Agent error; no report. Root explicitly reassigned its role to native Sol /root/h007_fullcost_schedules, now COMPLETED (H007-fullcost-screen.md; no survivor); this is not claimed as a Factory success. Other chosen models launched normally. Initial
 H007 briefs exclude each other's proposals; several distinct mechanisms where
 worthwhile, no quota/padding. No numerical or formal-infrastructure work authorized.
 Await async completions; no scheduler or polling loop. Goal remains active.
 
 Final documentation checkpoint validation: `./scripts/check.sh > /tmp/ecdlp-h006-paper-check.log 2>&1` exited0; all363 existing theorem audits pass. No new Lean claim or Audit entry. Staged paths and whitespace checked; only task-owned Markdown, no build/source/experiment changes.
+
+Paper milestone committed locally as0c77b49: scoped random-V dense TT rejection, recurrence ledger corrections and qualified minor equivalence. Subsequent native Sol H007 screen found no new survivor; no experiments authorized. Remaining live work: Fable decoding review, Claude structured solvers, Grok collision geometry.
