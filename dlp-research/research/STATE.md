@@ -28,7 +28,7 @@ read-only, disjoint writers, no unbounded experiments or reset diagnostic caps.
    dashboard multipliers remain hypothetical, never converted from AI FLOPS.
 3. Current hypothesis: H005 inverse binary walk with rational-reconstruction
    steering passed transition/recovery preflight, with no contraction evidence.
-   One tiny whole-attempt protocol is under review and source implementation;
+   One tiny whole-attempt protocol is reviewed; source/cost audits are live;
    Grok hybrid and Fable recent-result proposals remain independent/live.
 4. Latest evidence: frozen four-list P1 loses exact mean output count to the same
    predeclared signed two-list c=2 rule at q31,61,127,251,509. This is an integer
@@ -138,12 +138,16 @@ duplicated. H005 independent work and review:
   speculative trajectory gain. Saved H005-information-proposal.md. Independent
   /root/encoding_review COMPLETED mathematical/protocol preflight; root incorporated
   Gauss stopping, sampler cost and validation-failure requirements. No trials. Separate Sol /root/h005_inverse_implementation
-  owns only H005/inverse_walk.py, syntax-only; no experimental run authorized.
+  COMPLETED H005/inverse_walk.py, syntax-only; no experimental run authorized.
+  Native Astra /root/encoding_review COMPLETED source review, PASS at the frozen
+  hash; independent Claude
+  Opus audits costs under task ID
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h005-inverse-cost-review-opus-20261008-r1`.
 - Grok hybrid mechanisms, task
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h005-hybrid-ideas-grok-20261008-r1`.
 Proposal and review roles are read-only, no experiments/numerical scratch/children.
 Distinctness matters more than filling requested2–4 cards. Prior rejected hypotheses are supplied
-as scope, not a demand to recycle them. Native root+Astra+Sol fit4, T3two fit20.
+as scope, not a demand to recycle them. Native root+Astra fit4, T3three fit20.
 No main-metric improvement or new experiment claimed by these launches.
 
 Live capability refresh again exposes all user-authorized providers/models.
@@ -158,3 +162,16 @@ one-profile draft charges exact uniform-restart costs and a signed-BSGS referenc
 implementation/review are candidate-specific and do not claim main-goal success.
 Previous turn was a verified wait on live handles; current turn adds a reviewed
 mathematical gate, explicit correction and concrete finite-cost falsifier.
+
+H005 source frozen for review (no execution):
+`968c1886389556eda86478f3c2f26a6741b2b908053dde5e182456f3173f1731`.
+Protocol: `5d1e5eedbcb0269439618ef7d7ada3ebda574e7f6c92b70448c0f5ed6c516a01`.
+Implementer syntax check passed with PYTHONPYCACHEPREFIX=/tmp/h005-inverse-walk-syntax-cache.
+Both independent reviews are read-only with explicit prohibition on numerical
+scratch checks or running/importing the diagnostic. Broad Grok/Fable idea tasks
+were revalidated RUNNING, not restarted.
+
+Static source review PASS, same source/protocol hashes. Root repository check
+`./scripts/check.sh > /tmp/ecdlp-h005-inverse-source-check.log 2>&1` exit0;
+no new Lean claims/Audit changes or numerical experiment. Opus cost audit remains
+the final pre-run gate; no retuning, enlarged budget or new source run occurred.

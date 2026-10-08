@@ -205,7 +205,7 @@ Native fresh Astra /root/h005_information_ideas COMPLETED independent readable
 scalar-information proposal I1; no padding. H005-information-proposal.md.
 /root/encoding_review COMPLETED separate mathematical preflight; root qualified
 the arbitrary-known-set by-time bound. COMPLETED independent protocol review; root incorporated required corrections.
-New native Sol /root/h005_inverse_implementation RUNNING source-only implementation
+Native Sol /root/h005_inverse_implementation COMPLETED source-only implementation
 of H005/inverse_walk.py, syntax-only, no experiments or children. Root protocol:
 research/experiments/H005/inverse_walk_protocol.md. No run authorized yet.
 
@@ -217,3 +217,13 @@ research/experiments/H005/inverse_walk_protocol.md. No run authorized yet.
 - Fresh delegate_task after terminal r1; original brief and non-delivery included.
   Concrete primary-result bridges, actual costs and cheap proposed falsifiers.
   No experiments/numeric scratch/edits/children. No other H005 initial proposals.
+
+### ecdloop-h005-inverse-cost-review-opus-20261008-r1
+
+- Status: RUNNING; provider/model: `claudeAgent/claude-opus-5-5`.
+- Stable request: `ecdloop-h005-inverse-cost-review-opus-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h005-inverse-cost-review-opus-20261008-r1`.
+- Independent source cost/evidence audit, prior math/protocol objections included.
+  Read-only, no experiments/imports/numerical scratch/children.
+- Native Astra /root/encoding_review COMPLETED full source-correctness and
+  budget/partial-output audit: PASS source968c1886..., no-run restriction honored.

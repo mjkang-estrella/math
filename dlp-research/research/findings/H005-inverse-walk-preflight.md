@@ -87,3 +87,25 @@ Final protocol review conditionally approved the core equations/coverage; also
 required false verified answers and reference exhaustion to be fatal validation
 failures, and peak memory to remain separate from additive work. Root incorporated
 these requirements. Full source review and execution are still pending.
+
+## Static source review (execution still pending cost audit)
+
+Native Astra /root/encoding_review returned PASS for source SHA256
+`968c1886389556eda86478f3c2f26a6741b2b908053dde5e182456f3173f1731` and protocol
+`5d1e5eedbcb0269439618ef7d7ada3ebda574e7f6c92b70448c0f5ed6c516a01`.
+No imports, experiments or numerical checks. It checked exact Gauss reduction,
+affine arithmetic/admission, all73 fresh attempts, known/repeated point recovery,
+reference coverage, uniform-restart rational expectations, nonadditive memory and
+partial-phase reconciliation including metadata and reference cutoff. No blocking
+discrepancy found. Root also read the source; no code mutation was needed.
+
+Separate Claude Opus cost/evidence review remains RUNNING:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h005-inverse-cost-review-opus-20261008-r1`.
+No experimental command is authorized until that review is resolved.
+
+Implementer syntax-only command passed:
+`PYTHONPYCACHEPREFIX=/tmp/h005-inverse-walk-syntax-cache python3 -m py_compile dlp-research/research/experiments/H005/inverse_walk.py`
+(from git root). Root ran existing repository checks (not the new experiment):
+`./scripts/check.sh > /tmp/ecdlp-h005-inverse-source-check.log 2>&1` from dlp-research,
+exit0. No Lean claims or Audit changes. These checks validate no new performance
+claim. Source and protocol are retained as an unexecuted testable hypothesis.
