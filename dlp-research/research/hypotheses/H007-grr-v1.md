@@ -1,7 +1,7 @@
 # H007 GRR-v1: corrected five-point relation system
 
 Independent Claude Opus proposal, native Astra /root/encoding_review mathematics.
-Cost/prior-art review RUNNING under ecdloop-h007-algebra-cost-priorart-astra-20261008-r1.
+Cost/prior-art review COMPLETED under ecdloop-h007-algebra-cost-priorart-astra-20261008-r1; see findings/H007-algebra-cost-review.md.
 No experiment or Lean claim. Main improvement NONE.
 
 Freeze p>3, E:y²=C(x)=x³+ax+b, full odd prime order q, finite target R=(r,s).
@@ -77,6 +77,6 @@ An auxiliary-curve rational-isogeny factorbase does not automatically yield the
 same divisor-level Graeffe chain. Poles/denominators/pushforward need construction.
 
 Disposition: surviving, narrowly specified solving-complexity hypothesis.
-Independent prior-art/fullcost review precedes selection of a finite test.
+Independent prior-art/fullcost review completed; an actual justified solver still precedes selection of a finite test.
 The proposer's multi-parameter F4 sweep is NOT authorized; no proof it fits
 60seconds/1M instrumented events, and finite slopes do not prove asymptotics.

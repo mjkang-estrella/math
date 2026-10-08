@@ -122,3 +122,23 @@ only task-owned Markdown and excludes toolchains/build products. Unrelated untra
 Recent goal turns made progress or verified live-task waits, not a genuine blocker.
 The overall research objective is neither achieved nor blocked; compilation is not
 completion. Await remaining asynchronous work without a scheduler or busy loop.
+
+## H008 candidate-specific operation development
+
+Last substantive milestone e11c132 integrated CARRY-LP's paper rejection and
+corrected algebraic candidates. Grok H007 handle revalidated RUNNING this turn.
+No numerical experiment has followed. Two distinct native Astra roles now run:
+- /root/h007_lattice_carries: explicit GRR solving operations. Preliminary
+  reverse-Graeffe/divisor-norm recognition has cheap leaf checks, but naive
+  traversal still has choose(B+4,5) leaves. Early rejection must be supplied.
+- /root/h007_additive_relations: explicit unexpanded dictionary operations.
+  Preliminary signed pair-divisor translation/gcd has a target representation
+  of sizeTheta(B²), exceeding theB^(3/2) gate for that explicit variant.
+
+Both read-only, no trials, edits or children; distinct initial briefs. An additional
+native Sol protocol followup was refused agent thread limit reached. It did NOT
+run or receive a replacement; its previous completed preflight remains available.
+No silent success claim. Actual active roles fit native constraints; Grok remains
+the sole live T3 research task. Root will integrate concrete final operations,
+not treat an unimplemented fast elimination call as a new algorithm.
+Unrelated untracked factoring-research/ and research-monitor/ remain untouched.

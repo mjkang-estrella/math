@@ -62,7 +62,8 @@ Native CARRY-LP-v1 and T3 Sol's target-conditioned capped-F4 proposal independen
 use full-scalar circuit branch search. Deduplicate their search/extraction
 framework, while distinguishing LP infeasibility from polynomial certificates.
 CARRY-LP-v1 is frozen in H007-carry-lp-v1.md; a local falsezero witness exists,
-and independent whole-circuit symbolic feasibility review is in progress.
+and independent whole-circuit symbolic review now proves Omega(n) expected
+search nodes for this frozen v1 (H007-carry-lp-obstruction.md). No LP pilot.
 Its hypothesis is early pruning sufficient to pay for every LP/certificate.
 Sol's F4 variant requires a fixed degree/matrix budget and full retained-tree
 profile; last-stage uniqueness is not evidence of cheap early pruning.

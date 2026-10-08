@@ -1,5 +1,16 @@
 # H002 expanded T3 allocation
 
+## H008 candidate-specific operations
+
+Native Astra /root/h007_lattice_carries RUNNING new GRR reverse-chain/norm-solving
+operation development. Native Astra /root/h007_additive_relations RUNNING new
+unexpanded dictionary/divisor operation development. Both read-only, no numerical
+scratch, experiments, edits or children; separate initial lenses and shared
+accepted H007 evidence. No repeated LP or broad lower-bound work.
+Additional native Sol /root/h007_fullcost_schedules followup was REFUSED with
+agent thread limit reached; no new run and no replacement. Its prior solver
+preflight is completed. Grok H007 r1 remains confirmed live.
+
 ## Latest H007 completion and review reconciliation
 
 - Native lattice proposer COMPLETED CARRY-LP-v1 and independent H006 decoder
