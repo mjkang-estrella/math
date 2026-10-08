@@ -83,3 +83,10 @@ support memory and exception count. No free reverse motion, future-prefix keys,
 or cross-family batching before stopping checks. Read-only/no runs/imports.
 Root sent Sol the shared shift-chain correction and the four-family-control
 confounding issue; no experiment extension admitted yet.
+
+Scaling round COMPLETED and task_status read. Raw response preserved in
+H025-scaling-opus-raw.md. Root reconciliation plus NEW native Astra narrow
+mathematical audit COMPLETED, GO only for scoped exact algebra; no adoption of
+raw independence/asymptotic exclusion. Astra frontier component COMPLETED;
+H025-frontier-cost-bridge.md records paid fork, support memory and qualifications.
+Sol next-test/cost design remains live on its native handle; no new run admitted.

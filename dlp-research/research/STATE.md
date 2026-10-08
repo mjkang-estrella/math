@@ -18,34 +18,36 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H025 finite layout result / scaling review (authoritative)
+## H025 scaling and arithmetic review (authoritative)
 
-One frozen six-case run COMPLETED, independently audited: layout B saves11.06%
-and8.36% of exact mean generated keys at509/1009 against the declared GWZ-style
-control; A fails the joint5% gate. findings/H025-finite-layout-result.md records
-all commands, ratios, limitations, hashes and review roles.426964 diagnostic
-instrumented events, no cap/error. All cases cover every scalar in main; fallback
-was NOT numerically exercised. Initial input/same-family effects and EC setup
-remain material. Verified complete-work improvement NONE; square-root reference
-unchanged. No full-size or asymptotic claim; no dashboard/hardware-rate change.
+Previous goal turn was progress:8e51782 separated coverage evidence from setup
+and attribution. Opus scaling review now COMPLETED; raw report retained. Root
+and a NEW independent Astra audit accept only the exact within-channel duplicate
+threshold and limitations of origin-only separation. The raw independence-based
+~.90 exclusion, phase sweep and fallback-negligibility claims are unverified;
+coverage-to-mean ratio corrected to sqrt(8/9). Do not close B from that heuristic.
+See findings/H025-scaling-reconciliation.md.
 
-Native Astra NEW artifact audit COMPLETED, GO; independent root hash/sum checks
-pass. Astra now RUNNING a distinct x-only block/frontier cost-compatibility audit,
-no experiments. Existing traces show B has larger absolute cross coverage but
-lower cross-union/ceiling fractions at the inspected early prefixes; mechanism
-attribution remains confounded. Native Sol /root/h010_early_dependencies RUNNING a NEW next-test and full-
-work break-even design role, read-only/no experiments. T3 Claude Opus5.5 RUNNING
-a distinct scaling-geometry/prior-art review; full handle in H025 review register.
-No duplicate live hypothesis, no numerical rerun or retuning. Root sole integration.
+Astra frontier-cost audit also COMPLETED. H019 Cx applies to later frontier
+blocks, but the first centered block needs an extra k(2M+S) fork and two center
+arrays per family, with paid initialization/exceptions. Root checked block sets
+and arithmetic; findings/H025-frontier-cost-bridge.md retains scope. At tested
+k=ell=1 use S+4M/3+2I/3 per key, not2.5M+S. No full-work gain follows.
 
-Next: checkpoint this limited finite result; assess unchanged B under increasing
-sizes and matched setup/support-memory/cost before admitting further experiments.
-All other failed literal schedules stay parked. Goal active; no broad Lean work.
+Native Sol /root/h010_early_dependencies remains RUNNING the next-test/full-work
+break-even design. No new experiment executed or admitted. Root reminded it
+that the initial1M diagnostic cap is not a permanent ceiling: an explicit bounded
+extension may be justified by B's finite gate pass; every partial/capped result
+stays inconclusive. Shared shift initialization avoids four independent SCMs.
+
+Initial B key savings11.06%/8.36% at509/1009 remain independently verified; A
+failed jointgate. Best supported complete ECDLP complexity remains square-root;
+verified improvement NONE. Next decisive work: unchanged B scaling with matched
+known controls and explicit complete-cost/memory interpretation, after review.
+No generic Lean expansion, dashboard rate, retuning, live targeting or duplicate
+coordinator. Root sole integration; goal active. Older statuses are historical.
 Validation: ./scripts/check.sh passed exit0,366 audits; log
-/tmp/ecdlp-h025-finite-result-check.log. No Lean/Audit changes.
-Interpretation-only follow-up also passes checks; log
-/tmp/ecdlp-h025-interpretation-check.log. Previous goal turn was progress:031696f;
-current live Sol/Opus handles revalidated, Astra component review newly assigned.
+/tmp/ecdlp-h025-scaling-review-check.log. No Lean/Audit changes.
 
 ## H025 reviews complete / finite enumerator next (historical)
 
