@@ -54,11 +54,17 @@ throughput. No third-party wallets or live-fund recovery.
 - H002 Grok4.7 geometry proposer RUNNING, request
   `ecdloop-h002-geometry-grok-20261008-r1`, task
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-geometry-grok-20261008-r1`.
-- H002 Factory Fable5.1 learning/tradeoff proposer RUNNING, request
+- H002 Factory Fable5.1 learning/tradeoff proposer COMPLETED, request
   `ecdloop-h002-learning-tradeoffs-fable-20261008-r1`, task
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-learning-tradeoffs-fable-20261008-r1`.
   Both initial briefs are independent of prior proposal reports. Exact allocation,
   next distinct lenses and synthesis gate: H002-broad-independent-pool.md.
+  Factory produced four cards, with L1/L2 one shared mechanism. Raw report and
+  coordinator corrections retained; no proposed experiments or reductions accepted.
+- H002 Claude Opus5.5 algebraic/coordinate proposer RUNNING in Factory's freed
+  slot, request `ecdloop-h002-algebraic-opus-20261008-r1`, task
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-algebraic-opus-20261008-r1`.
+  Independent initial brief, no other proposals supplied; read-only, no children.
 
 - Native Sol `/root/small_curve`: H001 item1 primary-source exploration of an
   actual coordinate-aware Semaev relation generator/filter COMPLETED, now idle.
@@ -68,7 +74,8 @@ throughput. No third-party wallets or live-fund recovery.
 - Native Astra `/root/h002_arithmetic_ideas` RUNNING: fresh independent initial
   arithmetic/lifting/endomorphism ideas, forked without previous proposals;
   read-only,3–5 distinct mechanisms if worthwhile, no children/heavy experiments.
-  This replaces the completed Sol slot; root+Grok+Fable+Astra remain four.
+  This replaces the completed Sol slot; after Factory completion the live four
+  are root+Grok+Opus+Astra.
 - Native Astra `/root/encoding_review`: H001 item2 and focused scope review
   completed, now idle. Arithmetic archived/reproduced; no EC performance claim.
   Scope review rejects universal coordinate-filter, Coppersmith and transferred
@@ -116,3 +123,10 @@ scripts/check.sh passed after adding the experiment. Previous goal turn was
 progress (authoritative policy/commit and reproduced negative gate), not a wait.
 Next: continue independent H002 proposal waves, then synthesize and falsify the
 most promising concrete mechanisms. No accepted improvement or GPU calibration.
+
+H001 rank result committed98bbebb. Current wave retains Factory's independent
+learning cards with scoped corrections: generic advice lower bounds do not cover
+all coordinates, mutual information alone gives no stated kangaroo speedup, and
+raw proposed training-label workloads exceed the initial cap. These are not
+reasons to discard speculative learning mechanisms before corrected testing.
+Grok/Astra/Opus continue independent proposals. No infrastructure work restarted.
