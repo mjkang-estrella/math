@@ -37,7 +37,7 @@ are the domain; uniqueness over integers or rationals is not asserted.
 [Independent review](../reviews/diophantine_sums-r1.md), theorem 2, accepted
 the proof after specifying the real-degree convention and Specker prior
 work, both incorporated here. The parent independently checked the
-1/3 tail bound, the gap between w/3 and w and threshold2w/3, and why a
+1/3 tail bound, the gap between w/3 and w and threshold 2w/3, and why a
 computable enumeration modulus would compute θ. Exact base-four gap
 checks passed in `experiments/independent_scout.py`. No proof-assistant
 verification is claimed.

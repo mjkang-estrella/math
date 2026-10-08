@@ -1,0 +1,3 @@
+# Unfinished analysis/geometry exploration
+
+The scout considered spectral-coordinate maps from first Neumann eigenfunctions under upstream family369, and the flat-torus isoperimetric profile. It left a NumPy/SciPy Galerkin experiment, but no completed proof report before the exploration was closed. The script is preserved as an unreviewed draft; its reference to `proposals/analysis_geometry.md` names an unwritten document. It was not run or adopted by the parent, and no eigenvalue, injectivity, Jacobian-sign or star-shapedness assertion from it is an accepted finding. Finite sampling would not certify those global properties.

@@ -155,6 +155,6 @@ the self-adjoint XY blocks. The parent independently checked the gap
 variance inequality, crossing-bond factors, dyadic recursion and limit
 order. `python openai-proof-research/experiments/probability_dynamics.py`
 passed exact spin-algebra checks. The constant τ is approximately
-0.0519799633352; the proper-block variance bound is below349. These checks
+0.0519799633352; the proper-block variance bound is below 349. These checks
 validate the deduction, not the upstream gap. No proof-assistant
 verification is claimed.

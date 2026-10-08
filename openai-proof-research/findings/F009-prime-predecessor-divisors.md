@@ -4,7 +4,7 @@ Status: **proved prime-predecessor specialization of classical multi-divisor law
 
 ### Exact input
 
-P is [The Poisson–Dirichlet law for prime predecessors, `thm:main`, `eq:main-law`](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/The-Poisson-Dirichlet-Law-for-Prime-Predecessors-September-24-2026/build/sections/01-introduction.tex): for uniformly weighted primes 3≤p≤x, the ranked logarithms of all prime factors of p−1, with multiplicity and normalized by log(p−1), converge in every fixed finite dimension to PD(1). The limit is ranked independent uniform stick breaking, has total mass1, and applies through all real x→∞.
+P is [The Poisson–Dirichlet law for prime predecessors, `thm:main`, `eq:main-law`](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/The-Poisson-Dirichlet-Law-for-Prime-Predecessors-September-24-2026/build/sections/01-introduction.tex): for uniformly weighted primes 3≤p≤x, the ranked logarithms of all prime factors of p−1, with multiplicity and normalized by log(p−1), converge in every fixed finite dimension to PD(1). The limit is ranked independent uniform stick breaking, has total mass 1, and applies through all real x→∞.
 
 ### Statement
 
@@ -86,10 +86,10 @@ variance obstruction. In particular, the dependence of the arcsine marginals
 and the coloring mechanism are not new general phenomena.
 
 - [Hirth, *From GEM back to Dirichlet via Hoppe’s Urn* (1997)](https://doi.org/10.1017/S0963548396002842) explicitly gives the classical GEM/PD-to-Dirichlet relationship.
-- [De la Bretèche–Tenenbaum (2016), Theorem1.1](https://tenenb.perso.math.cnrs.fr/PPP/proc-arith.pdf) gives the 2^r-coordinate Dirichlet law for r divisors of an ordinary uniform integer, including exactly the quarter-parameter joint marginal law at r=2.
-- [Bareikis–Mačiulis (2012), Theorem2.1](https://www.impan.pl/shop/en/publication/transaction/download/product/82360) gives an earlier quarter-parameter second-CDF-moment integral.
-- [Leung, Theorem7.1 and Example7.5](https://arxiv.org/html/2206.14728v3) covers ordinary-integer weighted factorizations, including the overlap factorization M=ABCH with gcd(B,C)=1. The shifted-prime indicator is not multiplicative.
-- [Bharadwaj–Rodgers v3, Theorem6 and Conjecture4](https://arxiv.org/html/2402.11884v3) gives a conditional level-one route to shifted-prime PD. The accepted OpenAI input supplies the unconditional premise within this project.
+- [De la Bretèche–Tenenbaum (2016), Theorem 1.1](https://tenenb.perso.math.cnrs.fr/PPP/proc-arith.pdf) gives the 2^r-coordinate Dirichlet law for r divisors of an ordinary uniform integer, including exactly the quarter-parameter joint marginal law at r=2.
+- [Bareikis–Mačiulis (2012), Theorem 2.1](https://www.impan.pl/shop/en/publication/transaction/download/product/82360) gives an earlier quarter-parameter second-CDF-moment integral.
+- [Leung, Theorem 7.1 and Example 7.5](https://arxiv.org/html/2206.14728v3) covers ordinary-integer weighted factorizations, including the overlap factorization M=ABCH with gcd(B,C)=1. The shifted-prime indicator is not multiplicative.
+- [Bharadwaj–Rodgers v3, Theorem 6 and Conjecture 4](https://arxiv.org/html/2402.11884v3) gives a conditional level-one route to shifted-prime PD. The accepted OpenAI input supplies the unconditional premise within this project.
 
 No identical arithmetic specialization was found in the bounded check, but
 that is not proof of priority. There is no rate, growing-number-of-divisors
@@ -108,12 +108,12 @@ A second calculation checks the fourth moment without the multivariate
 expansion. If S₂=ΣL_j² for PD(1) masses, uniform stick breaking gives
 S₂=U²+(1−U)²S₂′ in distribution. Thus E S₂=1/2 and
 E S₂²=1/5+2(1/30)(1/2)+(1/5)E S₂²=7/24. Conditional divisor variance
-in the limit is S₂/4, recovering mean1/8 and second moment7/384.
+in the limit is S₂/4, recovering mean 1/8 and second moment 7/384.
 
 `python openai-proof-research/experiments/number_theory.py` passed exact
-rational moment calculations. Its sieve over78,497 primes through10⁶
-gave mean conditional variance0.11491235 (limit0.125), mean squared
-variance0.01545020 (limit0.01822917…), and mean normalized log-gcd
-0.25600443 (limit0.25). Finite-size bias is visible; these observations
+rational moment calculations. Its sieve over 78,497 primes through 10⁶
+gave mean conditional variance 0.11491235 (limit 0.125), mean squared
+variance 0.01545020 (limit 0.01822917…), and mean normalized log-gcd
+0.25600443 (limit 0.25). Finite-size bias is visible; these observations
 are diagnostics, not a proof or an error-rate estimate. No proof-assistant
 verification is claimed.
