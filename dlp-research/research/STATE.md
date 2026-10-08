@@ -24,27 +24,21 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: CRT encoding of five coprime coordinate domains followed
-   by sparse polynomial gcd might supply a paid implicit selector. Literal sparse
-   leading-term Euclid is frozen in H009-crt-euclid-v1.md, with applicability and
-   useful-yield assumptions explicit. Independent reviews are running. No new
-   algorithm has passed its cost gate. Independent scalar-compression and recent
-   source-scouting cards supplied no supported improvement.
-4. Evidence: GRR endpoint recognition is cheap but supplied dense pushforward
-   expansion costs Omega(B^4), literal full evaluation Theta(B^5). Short-circuit
-   average cost remains distribution-dependent. Dictionary pair translation
-   reduces to paid meet-in-the-middle, optimizing to square-root work/storage.
-   No general implicit-solver impossibility follows. Grok's delivered window
-   proposal has incorrect accounting; an independent reviewer confirmed at most
-   four preimages per finite raw fixed-G normalized-row key, with explicit
-   O(w) pole handling. This does not exclude differently compressed keys.
-   The 2026 hyperplane-paper reviews also confirmed repeated candidate counting
-   and a conditional fixed-sweep cost rejection; raw universal restart claims
-   were withdrawn after skeptical review.
-5. Next conclusion-changing step: freeze and independently review the CRT gcd
-   operation, cumulative sparse-remainder cost, useful yield and cheapest falsifier.
-   A new paid selector could matter; an unnamed fast solver cannot. No matrix
-   equivalence benchmark, generic algebra package, F4 sweep or Lean stack funded.
+3. Current hypothesis: H009 literal CRT sparse-Euclid has now failed its reviewed
+   cost screen. H010 independent compressed-selector, adaptive-labelled-sampling
+   and hybrid-search ideas are under development; no new survivor is accepted.
+4. Evidence: an exact reciprocal coefficient formula and CRT noncollision give
+   Omega(B²) first-division steps outside O(B^-2) of uniform finite targets.
+   Independent review confirmed the formula, characteristic conditions and
+   quotient cutoff. A fixed-grid signed-tuple count additionally rejects the
+   proposed Theta(B)-row collector even with charged batch outputs: Omega(B³)
+   expected work versus B^(5/2) reference. Scope includes fixed shifts, uniform
+   targets and literal cap consumption; no extra early screen. This is a paper
+   result, not Lean-proved, and excludes neither faster gcd nor adaptive algorithms.
+5. Next conclusion-changing step: obtain a concrete H010 operation that changes
+   the rejected cost/yield tradeoff, then independently review and freeze a cheap
+   synthetic falsifier if warranted. No S6 engine, matrix-equivalence benchmark,
+   broad F4 campaign or generic Lean infrastructure is funded.
 
 ## Live work and actual failures
 
@@ -120,10 +114,10 @@ remain scoped in their findings; no toy-to-real extrapolation.
 
 ## Validation and continuation
 
-Latest substantive checkpoints:1740051 scoped H008 operation failures;715c5fd
-reviewed hyperplane counts and H009 ideas. Current changes are paper records only,
+Latest substantive checkpoints:715c5fd reviewed hyperplane counts;0f49240 froze
+H009 and its construction-cost gate. Current changes are paper records only,
 no new Lean theorem or Audit entry. Final check
-`./scripts/check.sh > /tmp/ecdlp-h009-freeze-check.log 2>&1`
+`./scripts/check.sh > /tmp/ecdlp-h009-obstruction-check.log 2>&1`
 passed exit0 (363 existing audits). No code changed. Staged inspection covers
 only task-owned Markdown and excludes toolchains/build products. Unrelated untracked research-monitor/ remains untouched.
 Recent goal turns made progress or verified live-task waits, not a genuine blocker.
@@ -139,16 +133,14 @@ or engine built. Native Sol protocol followup was REFUSED agent thread limit
 reached; no new run or replacement. Previous completed preflight still available.
 
 Live read-only roles, no edits/experiments/children:
-- Native Astra /root/h007_lattice_carries COMPLETED earlier reviews, now RUNNING
-  H009 candidate-specific sparse-remainder mathematics. Preliminary reciprocal
-  coefficient argument still unverified; no degree-as-sparse-work inference.
+- Native Astra /root/h007_lattice_carries COMPLETED H009 reciprocal-series paper
+  argument. Root and independent reviewer confirmed its scoped lower bound.
 - Native Astra /root/h006_structured_relation_ideas COMPLETED CRT selector card,
-  with two other routes rejected on named-operation costs/applicability.
+  now RUNNING H010 independent executable compressed-selection ideation.
 - Native Astra /root/h007_additive_relations COMPLETED coordinate ideas and H009
   construction/cap review (findings/H009-construction-screen.md); no demonstrated
-  cap fit. Now RUNNING a NEW independent check of the mathematical reviewer's
-  reciprocal coefficient formula, CRT noncollision and capped-yield consequences.
-  Batch-output/adaptive sampling extensions must not be silently included.
+  cap fit. COMPLETED independent reciprocal formula/CRT/cap review, then a separate
+  batch-output work/reward extension. Exact assumptions retained in the finding.
 - Claude Opus5.5 COMPLETED new primary-paper mathematics review; raw report saved.
 - Factory Fable5.1 COMPLETED independent cost audit; raw report saved. Its proposed
   million-kernel experiment was rejected: cap excludes other work and no validated
@@ -167,13 +159,23 @@ T3 task IDs respectively (all three terminal):
 All three launches initially returned RUNNING; capabilities refreshed with actual exact
 models available. Separate initial bodies, no duplicate active hypothesis role.
 Grok's tasks are terminal, not continued through backing threads. Native
-and T3 capacities respected. In addition to the two current native reviews, a
-NEW Claude Opus5.5 prior-art/structured-sparse-root algorithm review is RUNNING:
+and T3 capacities respected. Claude Opus5.5 prior-art/structured-sparse-root review
+COMPLETED under its retained task ID:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h009-crt-priorart-opus-20261008-r1`.
-The stable clientRequestId is its suffix. No old backing-thread continuation.
-The CRT family requires a suitable paid factorization of p-1; no claimed
-secp256k1 transfer or supported improvement. Continue via completion notifications after the
-coherent checkpoint; no busy polling or duplicate coordinator.
+The stable clientRequestId is its suffix. Raw report retained with unsupported
+slice/generic-scaling claims unaccepted. Root verified primary metadata; no generic
+sparse-gcd hardness transferred to the fixed-S6 family. The CRT family requires
+a suitable paid factorization of p-1, with no secp256k1 transfer.
+
+H010 live independent initial proposals, no edits/experiments/children:
+- Native Astra /root/h006_structured_relation_ideas: compressed exact selectors.
+- Factory Fable5.1: adaptive labelled targets/relations with paid factor-base changes:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-adaptive-sampling-fable-20261008-r1`.
+- Grok4.7: nonstandard hybrid geometry/information mechanisms, separate from both:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-hybrid-geometry-grok-20261008-r1`.
+Both T3 launches returned RUNNING; stable clientRequestIds are the task suffixes.
+Distinct lenses and isolated initial proposals; actual native/T3 limits respected.
+Continue via completion notifications after checkpoint, no busy loop or scheduler.
 New raw reports, reviewed count identities, exact arithmetic command and unresolved
 conditioning details are in findings/H008-poset-count-audit.md. H009 initial cards
 are retained in hypotheses/H009-independent-candidates.md. Prior goal turn was a

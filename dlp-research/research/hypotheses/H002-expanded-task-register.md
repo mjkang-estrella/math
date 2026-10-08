@@ -1,5 +1,23 @@
 # H002 expanded T3 allocation
 
+## H009 reviewed rejection; H010 independent rolling ideation
+
+H009 literal sparse-Euclid paper falsifier by /root/h007_lattice_carries COMPLETED.
+Root and /root/h007_additive_relations independently confirmed the reciprocal
+formula, characteristic safeguards, CRT noncollision and first-quotient placement.
+A later separate review confirmed the batch-output work/reward extension with
+uniform fixed-domain sampling, charged extraction and no extra early-return screen.
+Claude Opus H009 prior-art task COMPLETED; raw unproved broader claims not accepted.
+
+H010 independent proposers, read-only/no trials/edits/children:
+- Native Astra /root/h006_structured_relation_ideas RUNNING compressed selectors.
+- Factory Fable5.1 RUNNING adaptive labelled sampling/paid domain changes:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-adaptive-sampling-fable-20261008-r1`.
+- Grok4.7 RUNNING unconventional hybrid mechanisms, disjoint from above:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-hybrid-geometry-grok-20261008-r1`.
+Stable request IDs equal task suffixes. Both new T3 launches returned RUNNING.
+No backing-thread continuation, no duplicate coordinator, actual capacity respected.
+
 ## H009 CRT operation freeze and independent reviews
 
 Proposer /root/h006_structured_relation_ideas COMPLETED; frozen operation in

@@ -33,7 +33,7 @@ establish asymptotics. Proposer and root do not recommend a pilot merely because
 this arbitrary map is easy to implement. Park as unsupported, not disproved for
 all sizes. Verified improvement NONE.
 
-## CRT sparse-gcd selector: frozen operation under independent review
+## CRT sparse-gcd selector: literal v1 rejected after independent review
 
 /root/h006_structured_relation_ideas completed an explicit encoding of five
 pairwise-coprime multiplicative coordinate domains into one root of unity,
@@ -41,9 +41,11 @@ followed by sparse Euclidean gcd with T^N-1. Distinct from the rejected dense TT
 representation and GRR pushforward. Initial requirement: N=product B_i divides
 p-1 with balanced B_i around q^(1/5), hence N around q, and all factorization/
 family construction is paid. No secp256k1 or arbitrary-prime applicability assumed.
-Final operation and full conditional ledger are frozen in H009-crt-euclid-v1.md.
-Native mathematical and diagnostic-feasibility reviews plus a new Claude Opus
-prior-art review are live. The central unsupported assumption is cheap cumulative
-sparse remainder work with sufficient useful yield. No fast gcd oracle or engine
-implementation is authorized. A reciprocal-series paper support-growth check is
-being developed; it is not yet an accepted lower bound.
+Final operation and full ledger are frozen in H009-crt-euclid-v1.md. Native
+mathematical review and independent verification established a first-quotient
+Omega(B²) step bound for almost every uniform finite target. A separately checked
+work/reward argument rejects the proposed Theta(B)-row collector even with batch
+outputs, under its literal cap-consumption rule. See H009-first-quotient-obstruction.
+Construction cap fit was not demonstrated; no engine/pilot was run. Claude Opus
+prior-art review completed, with unproved broader claims retained as raw only.
+Alternative compressed algorithms/adaptive sampling remain outside this rejection.

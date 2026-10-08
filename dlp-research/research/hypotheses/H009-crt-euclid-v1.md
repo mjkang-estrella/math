@@ -1,4 +1,14 @@
-# H009 CRT sparse-Euclid selector v1: frozen operation, unverified cost
+# H009 CRT sparse-Euclid selector v1: frozen operation, reviewed rejection
+
+Disposition override: independently reviewed paper rejection of this literal
+first-division schedule, under the asymptotic conditions in
+findings/H009-first-quotient-obstruction.md. It needs Omega(B²) leading-term
+iterations for all but O(B^-2) of uniform finite targets. The advertised uniform
+collector's cap/yield tradeoff, including charged batch outputs, misses its
+B^(3/2) per-query gate. The collector needs Theta(B) usable rows and has no extra
+early-return screen; those are explicit scope conditions. No engine/pilot.
+Keep the original frozen operation below for reproducibility; broader algorithms
+and target-dependent shifts are not covered by this scoped result.
 
 Proposer native Astra /root/h006_structured_relation_ideas. Root records its final
 operation for independent review. No experiment, implementation or gain accepted.
@@ -92,5 +102,6 @@ independent of the chosen four points, membership probability is |FB|/q, requiri
 order-q trials for O(B) relations. Deforming the factor base or choosing points
 dependently would change the algorithm and requires a new selector/cost argument.
 
-Status: retain CRT sparse-Euclid for independent paper scrutiny; verified
-improvement NONE. Baseline unchanged. No numerical pilot yet.
+Original submission status was unverified paper hypothesis. It has now failed
+the named literal-operation screen above; verified improvement NONE, baseline
+unchanged. No numerical pilot needed for this scoped rejection.
