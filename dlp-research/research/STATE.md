@@ -18,7 +18,61 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H022 rolling milestone / live reviews (authoritative)
+## H022 lazy result / H023 concrete operations (authoritative)
+
+Previous goal turn was a verified wait on two live T3 handles, not a blocker.
+Claude lazy EDS review now COMPLETED; terminal result read/no pending children.
+H022-lazy-EDS-screen.md retains the checked cg=3+.5s,cb=5.25+s ledger and
+coverage, correcting bootstrap, scaling, noninjective matching and support
+storage. Literal lazy schedule still loses its leading arithmetic comparison.
+Raw review retained with stronger unsupported claims rejected. No experiment.
+
+H023 native proposers completed two concrete operations: Astra fixed-difference
+x-coordinate coalescing state with a cheap translation kernel but a pure-walk
+cycle defect; Sol exact EDS neighbor-based match refinement that can avoid
+SCM-per-false-hit. Neither is a solver gain. NEW independent cross-reviews
+RUNNING: Sol audits fixed-difference walk/cost/escape, Astra audits exact-key
+normalization/injectivity/index/matching cost. Exact briefs and ranked gates
+in hypotheses/H023-coordinate-walk-and-EDS-keys.md. Root owns all integration.
+Original H022 Grok broad creative task remains RUNNING, same retained handle;
+no duplicate task or blocked-provider retry. Native root+2 within4; one T3
+creative role live. Broad independent ideation remains persistent policy.
+
+Current best reference remains ordinary full-range square-root work; verified
+improvement NONE. Next experiment requires a defined escape/mixing rule with
+credible complete costs, or another concrete survivor from the independent
+proposer. A correct matcher alone is not an improved algorithm. No generic
+Lean work, numerical sweep, hardware benchmark or dashboard change.
+
+H023 matcher review subsequently COMPLETED: H023-exact-EDS-matcher.md records
+the checked spacing-independent key N=h(P)²*x(P), exact sign-class matching
+and optional secondary index. False raw hits need not pay SCM individually;
+neighbors, refinement arithmetic, larger records and final verification remain
+paid. No EDS generation saving follows. Sol fixed-difference walk review
+remains live; original Grok role likewise. No duplicated investigation.
+
+Validation: ./scripts/check.sh in dlp-research passed exit0,366 audits,
+log /tmp/ecdlp-h023-operations-check.log. No Lean source/Audit changes.
+Staging is limited to these research records, excluding unrelated directories.
+
+Final H023 completion: Sol walk review also COMPLETED. Root checked
+H023-fixed-difference-walk.md: reflection state has(q+1)/2 classes, no extra
+quotient advantage; pure memoryless±G cycles are short; rare hash mixing is
+not a complete escape rule. Paid proposal-then-doubling has a different cost
+ledger and still lacks its actual frequency/useful-hit analysis. No full-work
+gain accepted. Both native roles now complete. Original Grok H022 task is
+the remaining live role; continue from its notification, without duplication.
+
+Latest delivery: original Grok H022 task COMPLETED; terminal result read/no
+pending children, raw H022-independent-grok-raw.md retained. All T3 roles now
+terminal. NEW native reviews RUNNING: Sol shifted-involution card; Astra
+cubic-squareclass/global-defect cards. Exact briefs/root objections in
+H022-grok-final-reviews.md. Unsupported blanket exclusions are not accepted.
+The preceding live-Grok statement is superseded; no duplicate role or run.
+
+Older live statuses below are superseded by this update.
+
+## H022 rolling milestone / initial reviews (historical)
 
 Previous goal turn was progress: fdcc41d retained the dependent-subset screen
 and launched the independent rolling review. Native Sol EDS proposer and

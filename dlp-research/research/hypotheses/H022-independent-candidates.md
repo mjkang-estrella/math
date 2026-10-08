@@ -99,3 +99,8 @@ Root checked H022-rolling-Ward-screen.md including the finite kernel gap and
 known-zero correction. Distinct lazy-prefix attempt has a NEW Claude cost
 review, full details in H022-lazy-EDS-review.md. Original Grok initial role
 remains live. No untested pipeline accepted; no numerical prototype launched.
+
+Final original Grok delivery COMPLETED, terminal result read/no pending
+children. Raw in H022-independent-grok-raw.md; NEW native independent scope
+reviews in H022-grok-final-reviews.md. No initial-card blanket rejection or
+improvement accepted merely from the delivery.
