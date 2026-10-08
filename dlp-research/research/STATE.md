@@ -18,6 +18,49 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H031 current wave: independent proposals and C2 carryover
+
+Latest checkpoint supersedes historical live statuses below. Goal remains active;
+verified improvement NONE; generic exponent1/2 reference unchanged. Previous
+commit a10bf42 preserved the sole capped C2 diagnostic and its complete-cost
+losses. No new numerical run, retuning, Lean change or GPU estimate is admitted.
+Persistent broad-ideation and main-problem policies remain in force.
+
+- Native Sol /root/h010_early_dependencies COMPLETED the bounded C2 reopening
+  assessment: explicit272-word transition array and early proved null-two-cycle
+  retirement are coherent paper contracts, but no full-work premise justifies
+  another pilot. Both implementation tools must be granted to the baseline.
+  Literal C2 stays PARKED; see findings/H031-c2-carryover.md.
+- Native Astra /root/h007_additive_relations initial coverage/detection cards
+  COMPLETED, including full-Fq versus Fq* correction and literal cubic ledger.
+  Root checked the scopes; findings/H031-coverage-screens.md records them. Native
+  Sol /root/h010_early_dependencies now RUNNING independent critical review.
+  No blanket impossibility or finite whole-solver cost theorem accepted.
+- Claude Opus5.5 arithmetic representations role terminal COMPLETED at transport
+  level but reported SAFETY-INTERRUPTED, no cards/findings. Not a mathematical
+  negative result; no retry, rephrasing or rerouting. Exact task ID:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-arithmetic-representations-opus-20261008-r1`.
+- Factory Claude Opus5.5 memory/recomputation r1 FAILED with only
+  `Internal error: Agent error`, no report or pending children:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-memory-recomputation-factory-opus-20261008-r1`.
+  ONE same-provider/model replacement r2 launched RUNNING, original brief, prior
+  failure and full accounting objections supplied; no safety-failed role retried:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-memory-recomputation-factory-opus-20261008-r2`.
+- Grok4.7 autonomous collision geometry/scheduling proposal RUNNING:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-autonomous-walks-grok-20261008-r1`.
+
+Live catalog refreshed at wave start; exact authorized models were available.
+Original T3 statuses rechecked; terminal r1 acknowledged before replacement. All roles read-only,
+no experiments/imports/children; initial proposals independent of other H031
+cards. Root alone integrates shared records. Next: collect, deduplicate and
+critically cost surviving mechanisms before deciding any falsifier. No current
+candidate has a credible complete-work improvement. This is substantive paper
+triage plus confirmed-live children, not completion or an external blocker.
+
+Validation: `./scripts/check.sh > /tmp/ecdlp-h031-paper-check.log 2>&1`
+exit0,366 existing audits. Documentation-only findings, no new Lean/Audit claim.
+Root checks/stages only H031 records and STATE; unrelated directories untouched.
+
 ## H030 current wave: independent ideas plus bounded carryover triage
 
 LATEST RESULT (supersedes pending admission below): sole C2 run completed
