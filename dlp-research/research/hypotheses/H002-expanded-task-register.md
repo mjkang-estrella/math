@@ -811,3 +811,14 @@ Exact taskId prefix is preserved in the linked brief; no backing-thread messages
 top-level threads, duplicate coordinator or silent substitutions. Root obtained
 published2024/1330 version and independently checked its extraction assumption;
 native Sol retrieved the same source independently for its still-live proposal.
+
+Next H017 checkpoint: three retained T3 handles revalidated RUNNING through
+task_status; no replacements. Native anchor final FAILED with provider
+cybersecurity-risk flag, after partial mathematical outputs; actual failure
+preserved, no retry. NEW native /root/h007_additive_relations anchor review
+COMPLETED signs, exception branches and fixed-set/adaptive-subset scope.
+Then NEW native /root/h007_additive_relations padded-lattice review COMPLETED
+triangular determinant, finite LLL factor, and root's finite-t midpoint bound.
+Native Sol independently confirmed that bound; its remaining initial synthesis
+is pending. No numerical experiment, root-extraction implementation, Lean
+change or measured improvement. Root alone integrates these limited findings.

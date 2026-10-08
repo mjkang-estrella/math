@@ -53,3 +53,20 @@ candidate or main-goal progress. Known-log interpolation and lift-carry cards
 also repeat existing scoped screens. No additional feature sweep justified.
 Nonlinear features and actual cheap compressed evaluators remain outside the
 linear identity; no positive mechanism for them was supplied by this branch.
+
+## Reviewed native constructions
+
+Growing-anchor proposer supplied two partial constructions, corrected a sign
+after root objection, then its final turn FAILED with a provider cybersecurity-
+risk flag. No retry or completed final report is claimed. A NEW independent
+native Astra review completed signs, exceptional branches and the distinction
+between full fixed pair-sum sets and adaptive partial materialization. See
+H017-anchor-selector-screen.md. No favorable selector emerged.
+
+Native Sol small-root proposer supplied a valid padded-box module and exact
+determinant. A NEW separate native Astra review confirmed its algebra and LLL
+constants. Root derived a finite-t convexity bound, independently checked by
+both proposer and reviewer. The sufficient certificate cannot reach the box
+size needed by the specified conditional collector; this is not a no-short-
+vector theorem. See H017-padded-small-root-certificate.md. Sol's remaining
+synthesis is pending. T3 original proposals remain independent and live.

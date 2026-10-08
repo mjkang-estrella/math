@@ -28,12 +28,13 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    dictionaries, valid small-root extraction and scalar-information mechanisms;
    three additional cross-provider independent creative lenses. H016 prototypes
    remain parked; new briefs are in H017-independent-briefs.md.
-4. Evidence: published CRYPTO2025 small-root source retrieved; its provable
-   bound calculation retains a separate zero-dimensional root-extraction
-   assumption and supplies no ECDLP attack. Native information role found no
-   supported new signal; its linear-averaging screen duplicates H013's existing
-   paid-observation identity and is not counted as a new finding. H016
-   fixed-few-anchor coverage and seed-hit clustering remain.
+4. Evidence: two explicit anchor closures reduce to group/dictionary difference
+   search. Fixed precommitted tables have a coverage/setup screen; adaptive
+   partial selection is NOT covered. A valid padded small-root lattice has
+   a reviewed finite-t determinant ceiling: m4 gives b<1/80, incompatible with
+   b>1/6 needed by the conditional collector. This rejects only its sufficient
+   certificate, not actual short vectors or other lattices. Native information
+   role rediscovered H013's averaging screen; no new signal or card accepted.
    H014 remains the latest numerical run:738704 events, no gross feature signal.
 5. Next conclusion-changing step: independently review concrete H017 operations,
    admit a matched cheap falsifier only if useful extraction or information gain
@@ -42,11 +43,16 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ### Latest authoritative task snapshot (older sections are history)
 
-H017 began after06dbd00. Native growing-anchor and small-root roles RUNNING;
-native information role COMPLETED with no positive signal; proposed linear
-averaging screen deduplicated against H013-group-action-features.md. NEW Claude
+H017 began after06dbd00 and source checkpoint1c6cfd7. Native growing-anchor
+proposer's final turn FAILED with provider cybersecurity-risk flag after partial
+mathematical deliveries; no retry or completed report claimed. Separate native
+Astra anchor review COMPLETED, corrected signs, exceptions and adaptive subset
+scope. Native Sol small-root proposer supplied a valid module and confirmed
+root's finite-t bound; final synthesis still pending. Separate native Astra
+small-root math/cost review COMPLETED. Native information role COMPLETED with
+no positive signal; averaging screen deduplicated against H013. NEW Claude
 Opus coordinate bridges, Grok computational
-hybrids and Factory Opus information mechanisms accepted RUNNING. Exact retained
+hybrids and Factory Opus information mechanisms revalidated RUNNING. Exact retained
 taskIds/clientRequestIds and independent briefs: H017-independent-briefs.md.
 Live capability discovery confirms all three requested models, no substitution.
 Read-only delegates; root owns integration. H015 replacement completion was
