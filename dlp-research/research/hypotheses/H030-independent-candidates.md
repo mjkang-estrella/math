@@ -155,3 +155,22 @@ TaskId node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%
 Brief includes raw mechanism, build/probe/recovery/false-positive concerns and
 competent-baseline requirement. Must use actual primary sources and report
 access failures. No numerical test, platform-price assumption, edits or children.
+
+## Completed storage review and C2 source repair round2
+
+Filter-recovery Opus review COMPLETED, raw retained; native Astra corrected
+its hierarchy extension. Root verified existing public smaller-table recovery
+code. No new storage mechanism/gain accepted; no storage experiment admitted.
+
+C2 source r1 COMPLETED, AST-only syntax pass, no run. Native Sol final review
+requires minimal control representation, correct solver/reference phase ownership
+and actual Q=O entry dispatch. H030-c2-source-review-r1.md retains evidence.
+Native Astra independently reviews preserved source snapshot math, read-only.
+
+NEW source-only repair, provider codex/model gpt-6.1-sol, RUNNING:
+ClientRequestId ecdloop-h030-c2-source-sol-20261008-r2
+TaskId node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h030-c2-source-sol-20261008-r2
+Original protocol + r1 evidence/objections supplied. Exclusive c2_probe.py
+ownership; no other edit/stage/commit/child/run/import. Root alone admits one
+bounded execution after independent final static review. Memory sampled peaks
+must remain honestly scoped; no generic infrastructure needed to invent precision.

@@ -20,6 +20,46 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H030 current wave: independent ideas plus bounded carryover triage
 
+Continuation after7baad2c classified PROGRESS. Both retained live T3 handles
+revalidated RUNNING at turn start; both subsequently COMPLETED and terminal
+results acknowledged. No missing output or timeout was treated as termination.
+No validated improvement; reference exponent1/2 unchanged.
+
+Storage Opus primary report retained in H030-filter-priorart-opus-raw.md.
+Root directly read public keyhunt source and confirmed existing index-free
+filter/smaller-table recovery hierarchy. Card A novelty not supported; new
+finite advantage needs a tuned hierarchical comparator. Native Astra reviewed
+root's explicit partitioned filter proof and scoped field-hash setup loss,
+then corrected recursive hierarchy interval/leaf-cost assumptions. Findings in
+H030-partitioned-filter-screen.md, H030-storage-priorart-disposition.md and
+H030-hierarchy-scope.md. No storage run/Lean expansion admitted.
+
+C2 source r1 COMPLETED, hashf4953a117660edb3b0ba1013899c75656dc5310b67bf08efaabac6ae4f656a4b.
+Independent native Sol final static review NO-GO for remaining control overhead,
+phase attribution and real Q=O entry-dispatch repairs. No execution/import or
+cap consumed. Root recorded H030-c2-source-review-r1.md, preserved the exact
+snapshot at/tmp/h030-c2-r1.py for native Astra separate math/source review.
+NEW T3 Codex gpt-6.1-sol source repair r2 RUNNING, exclusive c2_probe.py owner:
+node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h030-c2-source-sol-20261008-r2
+Original brief and concrete objections supplied; no child-thread continuation,
+duplicate writer, numerical run or change to frozen scientific parameters.
+Root alone integrates/stages/commits. Next: independent review of repaired
+source, then only the single admitted capped correctness/events diagnostic.
+
+Native Astra r1 mathematical/source review COMPLETED, scoped algebraic GO;
+no additional invariant/recovery defect. Overshoot-check flags and pending
+partial commits need honest reporting, appended to source-review-r1. This does
+not clear Sol's cost/entry-dispatch objections or admit revised source execution.
+Root preserves the EXACT reviewed r1 snapshot in git's index from its verified
+temporary copy, without modifying the live r2 writer's working file. This is
+explicitly unexecuted, not accepted complete code. Future r2 changes remain
+visible as a separate working diff; no writer output is overwritten.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h030-storage-source-check.log 2>&1
+passed exit0,366 existing audits. No Lean/Audit changes or numerical trial.
+Review snapshot f4953a... staged via git blob26d47b127f840d3f26540b5e86bea34e4a8a46ee;
+only named H030 source/process/findings are committed. Unrelated directories,
+build products and live r2 changes are excluded. Goal stays active.
+
 Latest live checkpoint (supersedes historical RUNNING labels below): Claude
 Opus C2 admission review COMPLETED and task_status result acknowledged. Root
 and independent native Astra rejected its unsupported universal test exclusion,
