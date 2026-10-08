@@ -52,3 +52,27 @@ required all potential-pole exceptions, and matched pair tables against BSGS.
 H019-detector-disposition.md states the exact scopes. No experiment admitted.
 H018 saved-data audit also PASSED; its certificates and separate verification
 ledger are retained, with no new observations or automatic feature campaign.
+
+## Single-query operator followup
+
+Root's primary-source search identified square-root Vélu's resultant evaluator.
+Native Astra /root/h007_additive_relations completed independent arbitrary-list
+identity, zero-denominator, extraction and quotient-ring batching review.
+Native Sol /root/h010_early_dependencies separately reviews complete work and
+matched-baseline accounting (including signed scalar coverage versus x-classes).
+Both tasks read-only, no runs/edits/children. Root owns
+findings/H019-single-query-resultant.md. The independent Fable/Grok initial
+roles were revalidated RUNNING, not restarted or duplicated.
+
+## Operator completion and Grok delivery
+
+Astra identity and Sol matched-work reviews of the single-query resultant are
+COMPLETED; H019-single-query-resultant.md integrated. No numerical test admitted.
+Grok initial role COMPLETED, task_status read/no pending children; full report
+in H019-fullwork-grok-raw.md. NEW native Astra card1 and Sol cards2–4 review
+roles are read-only/no runs/edits/children. Root's explicit unresolved objections:
+2/(5+s) upper bound reversed; differentialcost ratio bound reversed; subset
+threshold inverted; finite fallback does not preserve subset exactly; correlated
+bonus channels not automatically redundant; high isogeny degree not a runtime
+exclusion. No raw negative accepted pending scoped corrections. Factory Fable
+initial role remains RUNNING as last revalidated; no duplicate or restart.

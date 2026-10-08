@@ -52,8 +52,20 @@ H019-detector-disposition.md: signed-slice rank exactly(q-1)/2 over everyfield;
 Fourier normalization repaired; potential-pole exceptions required; reusable
 pair table matched by fixed-baseBSGS. Only specified implementations rejected,
 no coordinate-aware impossibility. No numerical test admitted. Factory
-Fable learned/information operators and Grok full-work walks remain live as
-last verified. No new numerical experiment proposed by Sol.
+Fable learned/information operators remains RUNNING as last revalidated.
+Grok full-work walks is now COMPLETED, terminal result read/no pending children;
+raw saved in H019-fullwork-grok-raw.md. Native Astra reviews chordbonus card1;
+native Sol reviews cards2–4. Root flagged reversed arithmetic inequalities,
+filter threshold and unsupported bonus-channel closure. Raw exclusions are
+NOT accepted; no numerical experiment admitted.
+No new numerical experiment proposed by Sol. Root primary-source followup and
+native Astra identity review established a genuine single-query resultant
+bridge from square-root Vélu to arbitrary explicit pair lists. It evaluates
+O(n²) implicit factors at one input in softO(n) field work, but n queries still
+cost softO(n²); no full-solver gain. Native Sol matched-cost review COMPLETED,
+including4ab signed-scalar coverage, unequal-list baseline and saturation of
+query cost across targets. Both independent reviews integrated.
+See H019-single-query-resultant.md; no new numerical work or broad refinement.
 Exact briefs/clientRequestIds/full taskIds in
 hypotheses/H019-independent-candidates.md. All read-only, no numerical work,
 children or shared-file writes. Initial proposals withheld before synthesis.
@@ -108,7 +120,7 @@ Older historical live-work descriptions below are superseded by this section.
    review and a matched frozen experiment; no broad feature sweep or generic
    Lean machinery is justified. Improvement still NONE.
    Latest ./scripts/check.sh exit0,363 existing audits,
-   /tmp/ecdlp-h019-detector-check.log. No new Lean/Audit claim. Numerical
+   /tmp/ecdlp-h019-resultant-check.log. No new Lean/Audit claim. Numerical
    certificate verification overhead is disclosed separately from candidate
    work and these existing theorem checks.
 
