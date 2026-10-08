@@ -1,8 +1,8 @@
 # H028 provisional Miller-coefficient collision keys
 
 2026-10-08. Native Astra independent initial delivery, with root normalization
-clarification. Candidate only: separate Factory Opus cost/mathematics review is
-RUNNING. No experiment, formal theorem, novelty or complete-work gain.
+clarification. Candidate only: replacement Claude Opus cost/mathematics review r2 is
+RUNNING; Factory initial delivery was empty (see task register). No experiment, formal theorem, novelty or complete-work gain.
 
 ## Mechanism and finite ledger
 
@@ -42,6 +42,37 @@ plus per-key descriptors and O(k+ell) active/support data. Compare at equal
 actual memory allowance; archives are not free future point outputs.
 Worst-case bucket scanning remains quadratic; no failed/capped run is success.
 
+Subsequent Sol protocol refinement (separate Astra review COMPLETED): regular lazy
+reconstruction can avoid inversions and multiplications. Archive immutable
+(xC,hC), retain offset (xJ,hJ) and the actual signed hSide (recovered from key
+and orientation). Then lambda=hC±hJ-hSide and xSide=lambda²-xC-xJ. This costs
+one S plus additions/accesses per newly reconstructed record. The earlier
+I+M+S bound remains a valid but unnecessarily expensive recovery choice. Active
+centers still need full coordinates; old archive lifetime, exceptional outputs,
+zero buckets and caching must be explicit. This improves the proposed recovery
+ledger, not measured complete work. Factory's initial review began before this
+refinement and cannot yet be represented as approving it.
+
+Astra independently confirmed the sign/zero/tangent/identity cases. If canonical
+key kappa=epsilon*hSide, actual hSide=epsilon*kappa; descriptor sign sigma is
+separate from epsilon. Historical hC belongs to the actual labeled center.
+Center outputs return archived x without a square. Infinity is dispatched on
+generation; finite tangency uses the same reconstruction after paid exceptional
+generation. Identity operands use the other point directly. At h0 recover x
+normally, then verify both scalar signs if needed. Archives are immutable
+snapshots BEFORE center advancement and survive until all dependent records
+expire. Historical (x,h) occupies two field elements, like former (x,y);
+active centers/offsets still retain full coordinates and h. Optional x caches
+have separately charged space. No extra raw-h field is required per record.
+
+Bounded prior-art check by Astra: reopened Galbraith–Wang–Zhang §4 and retained
+Liao–Zhang §3.1 (https://tches.iacr.org/index.php/TCHES/article/download/13106/12653).
+The latter's normalized EDS provisional keys are a close antecedent, with a
+different key and recurrence. No exact matching construction was confirmed;
+this is NOT a novelty determination. eprint2019/385 returned403 and no claims
+were adopted from its snippet. First nonconstant normalized coefficient must
+not be confused with the leading Laurent coefficient.
+
 ## All-input randomization and exact false scans
 
 Pay uniform s in Fq*, uniform independent r in Fq, G'=sG,Q'=Q+rG.
@@ -79,7 +110,7 @@ one full-group h enumeration, exact fibres, and independent Miller checks at
 fixed indices. Paid enumeration is a diagnostic, not production advice.
 A tentative1M-event/60-second cap awaits static accounting. Cap exhaustion
 inconclusive, no retuning. Native Sol now designs the exact diagnostic contract;
-Factory Opus separately audits the mathematics and complete costs. No run yet.
+replacement Claude Opus separately audits the mathematics and complete costs. No run yet.
 
 Prior art actually reopened by proposer: Galbraith–Wang–Zhang shared-inverse
 paired generation, https://pdfs.semanticscholar.org/5753/7e7d4d08b6de01aa79717c4bb849e694958f.pdf .

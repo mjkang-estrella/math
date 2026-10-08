@@ -88,3 +88,36 @@ https://biblio.ugent.be/publication/01GP3YFJ87KV2ZKET1X9NH5PJ8/file/01GP3YGS40G6
 Completed scope result: H027-walk-detection-reconciliation.md is authoritative.
 Root/Astra checked exact indegree variance and rational3M ordinate recovery.
 Raw heuristic paper-kill assertions withdrawn; no walk experiment admitted.
+
+NEW native Astra refinement/prior-art role COMPLETED. Sol's diagnostic-design
+role found one-square lazy reconstruction using immutable (x,h) archives;
+root and Astra independently checked it, with zero/orientation/tangent/identity
+dispatch. Exact correction and actual source-read limits are in the candidate.
+Initial Factory review is still RUNNING and began before this refinement;
+its eventual result must be reconciled with the final contract. Sol diagnostic
+design remains RUNNING. No numerical run or implicit review approval.
+
+
+## Replacement cost review r2 — RUNNING
+
+Original Factory task is terminal COMPLETED with no pending children, but returned
+only: `Plan is up-to-date.` This is an unusable delivery, NOT a completed audit
+or approval. Status and exact output read by task_status; no result fabricated.
+The previous RUNNING references are historical.
+
+New provider claudeAgent, model claude-opus-5-5; explicit substitution after
+that empty delivery, not a silent model replacement.
+ClientRequestId: ecdloop-h028-provisional-key-cost-review-opus-20261008-r2
+TaskId: node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h028-provisional-key-cost-review-opus-20261008-r2
+
+Exact replacement brief:
+
+NEW independent adversarial H028 provisional-key mathematics/cost review, replacement round after an unusable Factory Opus delivery. Prior task ecdloop-h028-provisional-key-cost-review-factory-opus-20261008-r1 ended status completed, no pending children, with ONLY "Plan is up-to-date." This is not an approval/rejection or usable review. Your task must deliver a substantive bounded review, not a plan.
+
+Project /home/mj-kang/Documents/Dev/math/dlp-research. Read-only/no experiments/imports/edits/children. Root alone integrates. Read complete latest hypotheses/H028-provisional-key-candidate.md, findings/H028-provisional-key-preflight.md, H027-compact-trace-construction.md and H019-xonly-baseline-screen.md. These are now available and contain the full original brief's candidate plus subsequent repair. Verified improvement NONE.
+
+Candidate h=a/q for normalized q-Miller coefficient, h(-P)=-hP and h(P+J)=hP+hJ-lambda. q!=p full prime-order ordinary E. Paired C±J uses2M+I vs x-key2M+2S+I; full centers advanced. Finite block Kh=(ell+1)[I+(5k-3)M]+kS vs Kx=same+k(2ell+1)S. Keep all signed canonical buckets with orientation/descriptors, immutable historical (xC,hC), full active points/offsets. REPAIR since original review launch: lambda=hC±hJ-hSide, xSide=lambda²-xC-xJ, so regular raw-match reconstruction ONE S + additions, no inversion or M; centeroutputs noS. Zero h not infinity; zero-key exact match verifies both scalar signs; finite tangency handled, infinity/identity dispatched duringgeneration.
+
+Production actual giant O dispatched BEFORE bucket comparisons. For nonidentity points signed bucket counts d, S2=sum d², rho=S2/[2(q-1)], I nonzero babies and J fixed-cap giants. Pay independent exact uniform s!=0,r inFq, G'=sG,Q'=Q+rG for EVERY fixedinput. Alleged expected false rawrecordcomparisons IJ*(S2-2(q-1))/(q(q-1)), no pairindependence. Root allpointformula (B2-b0-2(q-1))/(q(q-1)) differs by c0/(q(q-1)) solelyfor giantOcomparisons; explicitly reconciled in candidate. No fibrebound measured/proved. Deterministic fullcaps preserve coverage, no artificial probabilistic failure; stoppedcomparisons <=fullcap. Setup OlogqMiller,2scalar multiplications,targetaddition,randomsampling,all added arithmetic/keying/memory/archives/caching/false/finalverification paid.
+
+Check exact math/cost and named hiddencosts; identify whether a bounded FIXEDsynthetic fibre/correctness diagnostic is justified, not fullsolver claim. Existing H024 fixtures q73,103,271,8053 chosenbefore h measurements. Sol separately designing protocol; don't duplicate implementation. Firstdiagnostic fullqenumeration paid, not productionadvice; exact fibres and independent Millerchecks. Fixedseed correctness cases not IIDperformance. Costlowerbounds versus sufficientupperboundgates distinguish; toy startup loss doesnot rejectlarger-size mechanism. No unproved oracle, asymptotic extrapolation or novelty from searches. Primaryshared-inverseGWZ and normalizedEDSmatching antecedent recorded; readactualsource if needed, reportlimits. Return GO/NO-GO/conditional for cheapestdiagnostic with precise unresolveditems; no genericLeanwork.

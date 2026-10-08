@@ -35,7 +35,18 @@ all-point/nonidentity formulas are retained, not yet independently accepted.
 No numerical evidence or asymptotic fibre bound. Sol's separate arithmetic role
 found no positive survivor; conditional matrix-readout screen retained in register.
 
-NEW Factory Opus5.5 provisional-key mathematics/cost review RUNNING. NEW native
+Subsequent concrete refinement: Sol derived lazy x reconstruction from stored
+hSide, historical (xC,hC) and offset (xJ,hJ), costing one square plus additions,
+not an inversion. Root and NEW Astra review independently confirmed signs,
+zero/tangent/identity cases and immutable archive lifetime. Candidate updated;
+same two-field historical snapshot size, optional caches explicitly charged.
+Bounded prior-art reads found close EDS matching antecedents, not a novelty
+determination. The original Factory task is terminal but delivered only `Plan is up-to-date.`
+No substantive review or approval resulted. NEW Claude Opus5.5 r2 review is
+RUNNING with full corrected contract and original failure evidence. Exact
+new handle/brief in H028-independent-candidates.md; model substitution explicit.
+
+Replacement Claude Opus5.5 provisional-key mathematics/cost review RUNNING. NEW native
 Sol diagnostic-design role RUNNING, distinct from that audit: freeze fixed-fixture
 correctness/fibre test and event accounting before root implementation. No test
 admitted or run. Proposer primitive check plus informative finite fibres could
@@ -52,7 +63,10 @@ Original
 H027 Fable constructive-signals handle still authoritatively RUNNING at this turn's
 check; no restart. Exact task IDs and briefs: H028-independent-candidates.md.
 
-Validation: first check invocation used the repository root and exited127 (script
+Latest validation: ./scripts/check.sh > /tmp/ecdlp-h028-lazy-reconstruction-check.log
+2>&1 exited0,366 existing audits; only candidate/process Markdown changed.
+
+Prior validation: first check invocation used the repository root and exited127 (script
 not there); corrected project-directory ./scripts/check.sh redirected to
 /tmp/ecdlp-h028-key-contract-check.log exited0,366 existing audits. No test result
 is attributed to the failed invocation. Named task records only are staged.
