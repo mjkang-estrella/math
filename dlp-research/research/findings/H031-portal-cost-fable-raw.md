@@ -29,7 +29,7 @@ Read-only. No edits, runs, imports, children, staging or commits. Files read: RE
 
 ## 2. Card 1: arithmetic gate, corrected
 
-Grok writes the gate as ρ < s/(6+s). That is an algebra slip: 
+Grok writes the gate as ρ < s/(6+s). That is an algebra slip:
 
 $$(4+s)+\rho(6+s) < 5+s \iff \rho < \frac{1}{6+s}.$$
 

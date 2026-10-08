@@ -18,6 +18,39 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H033 independent proposals and remaining lookup hypothesis
+
+H032/H031 coherent findings committed as `eedcabc`. Current best supported
+classical generic exponent remains1/2; verified improvement NONE. No new run.
+Live catalogue refreshed: exact requested Opus5.5, Grok4.7 and Factory Fable5.1
+available and accepted these calls. Native root+two workers fits native4;
+three T3 children use the separately user-confirmed20 capacity. No duplicate
+coordinator or active hypothesis. Earlier safety-failed roles are not retried.
+
+H033 initial proposals are independent, read-only and withheld from each other:
+
+- Native Astra `/root/h007_additive_relations` COMPLETED: three single-target
+  self-reduction mechanisms with no new complete-work gain premise. Root checked
+  the exact fixed-set coverage union, signed recovery and label-flattening
+  identities; H033-self-reduction-screen.md retains their scope. No experiment.
+- Native Sol `/root/h010_early_dependencies` RUNNING: adaptive restart/portfolio
+  policies with observable progress, paid failures and matched success criteria.
+- Claude Opus5.5 primary-literature algorithm audit RUNNING:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h033-primary-algorithms-opus-20261008-r1`.
+- Grok4.7 single-target table lifecycle/time-memory initial ideas RUNNING:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h033-table-lifecycle-grok-20261008-r1`.
+
+Separate focused Factory Fable5.1 analysis of the REMAINING retrieval lookup-
+cost possibility RUNNING (the capacity rationale remains withdrawn):
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h033-retrieval-lookup-fable-20261008-r1`.
+Require a competent baseline, whole build/query/replay work and a solver-derived
+query count, not an arbitrary data-structure benchmark. No assumed hardware.
+
+All roles prohibit edits, experiments/imports, children and commits. Root alone
+integrates. Next decisive step is to rank returned concrete mechanisms, test
+their stated gain premises on paper and admit only specified conclusion-changing
+synthetic diagnostics. No numerical experiment is yet authorized by this wave.
+
 ## H032 retrieval premise resolved; H031 walk review integrated
 
 Validation: `./scripts/check.sh > /tmp/ecdlp-h032-capacity-check.log 2>&1`
