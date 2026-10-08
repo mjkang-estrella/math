@@ -36,11 +36,11 @@ or lack executable bridges. No need to manufacture an idea-count quota.
    views have exact zero full-nonzero-group correlation with scalar parity/half.
    These are scoped negative gates, not generic coordinate impossibility. A1
    normalization passed1060 finite index checks; correlations do not establish
-   scalable bias, and noisy reconstruction costs remain unestablished. V1 has no cheap primitive. Tradeoff tricks owe stronger
+   scalable bias, and conditional noisy reconstruction is now mathematically reviewed; bit-cost review accepts polynomial precision; raw operation prices remain unvalidated. V1 has no cheap primitive. Tradeoff tricks owe stronger
    full-work comparators, and do not establish single-target exponent savings.
-5. Next conclusion-changing evidence: specify A1's noisy recovery and required
-   advantage before more scaling. Develop actual orbit labels and norm/coefficient
-   witnesses in parallel. V1 has no extraction algorithm and is lower priority. Test any surviving concrete solver against matched baselines.
+5. Next conclusion-changing evidence: complete the independent numerical/full-cost review of A1's conditional
+   recovery and find a concrete source of sufficient bias before more scaling.
+   Orbit and norm/coefficient developments yielded no gain. Examine explicit p-adic sections. V1 has no extraction algorithm and is lower priority. Test any surviving concrete solver against matched baselines.
    No finite bias/degree result proves asymptotics or a whole-solver speedup.
 
 ## Live work and ownership
@@ -58,18 +58,24 @@ and5/6families; remaining cases not run. No larger budget authorized. All fixed
 cases; the c=−1 five-offset subset remains inconclusive, not a scaling result.
 See H002-eds-initial-diagnostic.md, exact raw JSON and independent code review.
 
-Native Astra `/root/encoding_review` now RUNNING a candidate-specific noisy
-predicate-to-scalar recovery/cost analysis (primary constructive algorithms,
-exact epsilon dependence), no experiments/edits/children. Do not treat the raw
+Native Astra `/root/encoding_review` COMPLETED a concrete conditional noisy
+predicate-to-scalar construction via dyadic importance sampling of Fourier interval
+energies. Proposed sufficient epsilon^(-6)*polylog work passed mathematical review with repairs, not optimal,
+not an ECDLP improvement. Full proposal H003-noisy-recovery-proposal.md. Root
+and reviewer confirm absolute correlation suffices without a known orientation;
+see H003-noisy-recovery-disposition.md. Bit-cost review accepts polynomial precision; raw operation prices remain unvalidated. Do not treat the raw
 reviewer's epsilon^(-11) route as optimal or a noisy-oracle bound as universal.
 Native Astra `/root/h002_arithmetic_ideas` COMPLETED explicit A3 orbit-invariant
 construction/cost development, no edits/tests/children. Return derivatives telescope
 to a constant; pairing and coordinate-algebra invariants currently lose on setup/
-evaluation costs. See H003-orbit-invariant-development.md; no further run funded. Native other proposers idle.
+evaluation costs. See H003-orbit-invariant-development.md; no further run funded. Astra is now RUNNING a distinct A1 character/divisor cancellation analysis; other proposers idle.
 
-T3 Claude Opus norm/coefficient witness-generator development RUNNING:
+T3 Claude Opus norm/coefficient witness-generator development COMPLETED:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-norm-generator-development-opus-20261008-r1`.
-Read-only, no experiments/children. Tuple testing is not witness generation.
+No repository edits/children; three generators yielded no accepted gain. The
+report admitted unrequested/uninstrumented scratch checks despite no-test brief;
+not accepted as numerical evidence. Corrected parameter-specific cost gate and
+capacity limitations in H003-norm-generator-disposition.md.
 
 T3 EDS code review COMPLETED:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-eds-code-review-fable-20261008-r1`.
@@ -97,7 +103,7 @@ findings; no backing-child-thread messages to continue T3 reviews.
   predictor. Variable costs/dependence/timeout caveats in synthesis.
 - Raw reviewer reports and all proposer pools retained under findings/hypotheses.
   Raw numerical claims, lower bounds and absence-of-prior-art claims are NOT
-  automatically accepted. Predictor epsilon exponents remain unverified.
+  automatically accepted. The conditional epsilon^(-6) derivation has mathematical review, with polynomial-precision review completed.
 
 ## Validation and commits
 
@@ -124,4 +130,37 @@ scheduler, push, publication, real-wallet targeting or GPU-performance claim.
 Latest local experiment milestone79ef2d9 retains the reviewed partial A1 run,
 exact source/results hashes, raw evidence and no-larger-run decision. Orbit
 development subsequently supplied three explicit costed failures; noisy recovery
-and norm-generator tasks remain live. No verified improvement; goal unchanged.
+has mathematical review and norm-generator development has completed. No verified improvement; goal unchanged.
+
+## Latest bounded wave (after66022f8)
+
+Previous goal turn was progress: independently reviewed/capped A1 evidence and
+three costed orbit failures committed79ef2d9/66022f8. This wave records a concrete
+conditional noisy recovery algorithm and launches independent mathematical and
+bit-cost reviews, plus distinct symbolic lifting-section development. No new run.
+
+T3 review statuses (no edits/tests/children):
+- Claude Opus mathematical review COMPLETED; accepted with repairs, request `ecdloop-h003-noisy-math-review-opus-20261008-r1`:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-noisy-math-review-opus-20261008-r1`.
+- Factory Fable bit/numerical/full-cost review COMPLETED, request `ecdloop-h003-noisy-bitcost-review-fable-20261008-r1`:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-noisy-bitcost-review-fable-20261008-r1`.
+Native fresh Sol `/root/h003_lift_sections` COMPLETED read-only concrete sections/
+first-order symbolic defect families, no experiments/edits/children. Avoid broken
+W019 ring formulas and broad proof infrastructure. Norm-generator T3 has completed with scoped negative findings; see disposition.
+No duplicate hypotheses or coordinator; native root+Sol+Astra below4, T3 below20.
+
+Latest review checkpoint: Opus accepts the conditional Fourier reduction with
+repairs; root corrects the raw impossible epsilon=1 illustration and the overly
+strong necessary-threshold wording. Orientation is no longer required for this
+reduction. Norm generators supply no gain; raw scratch checks remain unaccepted.
+`./scripts/check.sh > /tmp/ecdlp-h003-review-check.log 2>&1` exited0, no new Lean
+claim. No new field experiment, larger cap, or change to baseline.
+
+Latest candidate-specific development: Astra derives chi(phi(R))=chi(2y(R/2))
+from the corrected doubling identity. Fixed windows may therefore be low-degree
+rational characters with square-root Fourier bounds (Shparlinski–Stange0912.5246,
+Lemmas4/5). Root retrieved primary paper; exact theorem wording has a geometric
+nonpower clarification to resolve. Independent Opus review RUNNING under task
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-eds-character-collapse-review-opus-20261008-r1`.
+No larger A1 run; Fable's uninstrumented suggested larger pilot is not approved.
+Native Sol section derivation completed; not integrated/reviewed yet, no experiment.

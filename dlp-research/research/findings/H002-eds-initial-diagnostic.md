@@ -121,3 +121,9 @@ Validation: `./scripts/check.sh > /tmp/ecdlp-h002-eds-check.log 2>&1` exited0
 with the363 existing audits; no new Lean claim was added. Python syntax check
 was performed by the implementer with cache under/tmp. Root inspected staged
 paths/diffs; the unrelated research-monitor and generated Python caches are excluded.
+
+H003 follow-up: the reviewed conditional Fourier recovery in
+`H003-noisy-recovery-disposition.md` removes the need for known orientation: a
+sufficient ABSOLUTE full-domain magnitude works. The earlier sign-based gate
+above is historical and superseded in that respect. The tiny-instance evidence
+and no-larger-run decision remain unchanged pending magnitude/full-cost evidence.

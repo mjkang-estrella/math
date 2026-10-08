@@ -119,8 +119,30 @@ raw reports retained and qualified by root dispositions, not adopted wholesale.
 
 ### ecdloop-h003-norm-generator-development-opus-20261008-r1
 
-- Status: RUNNING; provider/model: `claudeAgent/claude-opus-5-5`.
+- Status: COMPLETED; provider/model: `claudeAgent/claude-opus-5-5`.
 - Stable request: `ecdloop-h003-norm-generator-development-opus-20261008-r1`.
 - Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-norm-generator-development-opus-20261008-r1`.
 - Scope: Concrete norm/coefficient witness generators and full relation/descent
   costs;2–3 distinct variants if worthwhile. No edits/experiments/children.
+
+### ecdloop-h003-noisy-math-review-opus-20261008-r1
+
+- Status: COMPLETED; provider/model: `claudeAgent/claude-opus-5-5`.
+- Stable request: `ecdloop-h003-noisy-math-review-opus-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-noisy-math-review-opus-20261008-r1`.
+- Scope: Fourier energy math, parity spectrum, adaptive search/caps, absolute correlation and scalar recovery. Read-only, no experiments/children.
+
+### ecdloop-h003-noisy-bitcost-review-fable-20261008-r1
+
+- Status: COMPLETED; provider/model: `acpRegistry_factory_droid/claude-fable-5.1`.
+- Stable request: `ecdloop-h003-noisy-bitcost-review-fable-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-noisy-bitcost-review-fable-20261008-r1`.
+- Scope: Certified kernel precision, exact sampling, numerical/point/predicate/list costs; no real arithmetic oracle. Read-only, no experiments/children.
+
+### ecdloop-h003-eds-character-collapse-review-opus-20261008-r1
+
+- Status: RUNNING; provider/model: `claudeAgent/claude-opus-5-5`.
+- Stable request: `ecdloop-h003-eds-character-collapse-review-opus-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-eds-character-collapse-review-opus-20261008-r1`.
+- Scope: Independently verify phi doubling character identity, fixed-window divisor,
+  primary mixed-character bound and scoped exclusion. No edits/tests/children.
