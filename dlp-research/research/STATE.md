@@ -29,9 +29,12 @@ Frozen protocol/source/result hashes in H018-bm-extension-result.md.
 Result completed_finite_diagnostic_only: p8191,b5,q8053,G(0,789),w2;
 all four predefined streams L64 after127 samples. Current508887 plus71755
 prior =580642 events; no cap/phase overrun. Native Sol
-/root/h010_early_dependencies independently auditing SAVED data and Hankel ranks;
-no new candidate samples or rerun. Until audit returns, threshold evidence is
-provisional. No solver or asymptotic improvement. No additional fixture or
+/root/h010_early_dependencies saved-data audit PASSED: four independent Hankel
+ranks64, recurrences, order/primitive certificates, recorded points/features and
+controls. No new candidate samples/rerun. Exact t<64 sparse-power exclusions
+on this fixture accepted. Separate verification2887421 instrumented operations
+uses different units and is not hidden inside candidate580642. No solver or
+asymptotic improvement. No additional fixture or
 feature sweep; freeze v1/v2 artifacts unchanged.
 
 H018 initial T3 roles are all terminal: Claude algebraic classifier failure
@@ -43,8 +46,14 @@ H018-information-disposition.md. A-ALG remains conditional without a positive
 signal rationale; N2/N4 false closures rejected, N1/N3 narrowed, N5 repaired.
 No new rank campaign authorized.
 
-H019 THREE distinct independent initial roles accepted RUNNING: Sol relation
-detectors, Factory Fable learned/information operators, Grok full-work walks.
+H019 Sol relation-detector role COMPLETED, terminal result read/no pending
+children; native Astra paper review COMPLETED and root integrated
+H019-detector-disposition.md: signed-slice rank exactly(q-1)/2 over everyfield;
+Fourier normalization repaired; potential-pole exceptions required; reusable
+pair table matched by fixed-baseBSGS. Only specified implementations rejected,
+no coordinate-aware impossibility. No numerical test admitted. Factory
+Fable learned/information operators and Grok full-work walks remain live as
+last verified. No new numerical experiment proposed by Sol.
 Exact briefs/clientRequestIds/full taskIds in
 hypotheses/H019-independent-candidates.md. All read-only, no numerical work,
 children or shared-file writes. Initial proposals withheld before synthesis.
@@ -62,8 +71,8 @@ Older historical live-work descriptions below are superseded by this section.
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
 3. Current hypothesis set: four direct sparse-power feature hypotheses reached
-   the exact finite threshold64 on one admitted fixture; independent audit is
-   pending. H018 implicit bidegree relations are under paper review and have no
+   the exact finite threshold64 on one admitted fixture; independent audit
+   PASSED. H018 implicit bidegree relations completed paper review and have no
    positive signal rationale yet. H019 independent candidate generation is live.
    SP3 still lacks its sub-n^(3/2) detector.
 4. Evidence: two explicit anchor closures reduce to group/dictionary difference
@@ -89,16 +98,17 @@ Older historical live-work descriptions below are superseded by this section.
    review proves a scoped progression variance formula and iid orbit-label
    collision order, but supplies no useful signal or full-cost saving.
    H018 initial run used71755 events without a fixture; one charged extension
-   reached L64 for all four fixed features,580642 cumulative events. Independent
-   saved-data Hankel audit pending; no global/large-curve inference.
-5. Next conclusion-changing step: finish independent saved-data certificate
-   audit, then park the direct four-feature sparse-power probe. H019 distinct
+   reached L64 for all four fixed features,580642 cumulative candidate events.
+   Independent saved-data Hankel audit PASSED; exact t<64 negative only,
+   no other-feature/large-curve/asymptotic inference.
+5. Next conclusion-changing step: the audited direct four-feature sparse-power
+   probe is parked. H019 distinct
    independent proposers seek an explicit useful signal/relation detector or
    complete-work improvement. A testable surviving mechanism gets skeptical
    review and a matched frozen experiment; no broad feature sweep or generic
    Lean machinery is justified. Improvement still NONE.
    Latest ./scripts/check.sh exit0,363 existing audits,
-   /tmp/ecdlp-h018-extension-check.log. No new Lean/Audit claim. Numerical
+   /tmp/ecdlp-h019-detector-check.log. No new Lean/Audit claim. Numerical
    certificate verification overhead is disclosed separately from candidate
    work and these existing theorem checks.
 

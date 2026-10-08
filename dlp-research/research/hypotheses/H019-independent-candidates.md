@@ -34,3 +34,21 @@ Accepted status: running. No output shared before independent proposals.
 Exact brief:
 
 > Read-only independent H019 ECDLP research in /home/mj-kang/Documents/Dev/math/dlp-research. Read RESEARCH_LOOP.md, RESEARCH_TEAM.md, authoritative STATE and relevant H017/H018 findings to avoid repeats. No runs, edits, child tasks, commits, wallet targeting or coordinator. Root integrates. Ordinary prime-field prime-order FULL-RANGE ECDLP, square-root reference with known automorphisms and all setup/memory/failures/verification charged; verified gain NONE. Explore roughly3–5 genuinely distinct concrete mechanisms if worthwhile, no quota/padding. Speculative ideas welcome, but state exact operation/recovery, mathematical source of hoped-for gain, unsupported assumption, complete exponent/material work, primary prior art/source access, cheapest decisive PAPER falsifier. Generic lower bounds are not coordinate-aware impossibility; degree is not runtime; oracle/model training is not free. Do not repeat known signed BSGS or supply another decoder contingent on an unspecified signal. Independent initial ideas: do not consult other live proposers. Deliver a substantive final report, even if no candidate. Current BM finite diagnostic has completed with four fixed features L64 on one p8191,q8053 fixture, saved-data independent audit pending; do not treat this as asymptotic or authorize more tests. Distinct lens: complete collision-search algorithms whose arithmetic, correlations, memory, endpoint-discovery and scalar-label costs jointly yield a MATERIAL real gain over the BEST applicable known baseline. H018 duty-cycle doubling had small iid ideal kernel gain only, noncoalescent endpoint overhead unresolved; Fibonacci singlepoint collision not inherently invalid but no credible sampler/stopping cost. Seek new concrete ways to remove the expensive bottleneck, including unconventional hybrid mechanisms; not another cheap kernel without full solver. Known tricks remain prior art.
+
+## First delivery
+
+Sol relation-detector role COMPLETED, task_status read, no pending children.
+Raw retained in H019-detectors-sol-raw.md. Four concrete routes, no experiment
+recommended: exact kernel contraction, translated divisor products, truncated
+norm, and shared pair tables. Native Astra /root/h007_additive_relations now
+reviews rank, Fourier normalization, divisor exceptions, and matched costs.
+Root independently flagged a missing(q-1)/q normalization in the Fourier MSE
+formula; no paper-negative conclusion accepted before scoped review.
+Other two initial roles remain live as last verified; proposals remain independent.
+
+Independent native Astra review COMPLETED. Root accepted the stronger path-
+matrix signedslice rank exactly(q-1)/2 over allfields, corrected Fourier MSE,
+required all potential-pole exceptions, and matched pair tables against BSGS.
+H019-detector-disposition.md states the exact scopes. No experiment admitted.
+H018 saved-data audit also PASSED; its certificates and separate verification
+ledger are retained, with no new observations or automatic feature campaign.

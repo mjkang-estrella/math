@@ -1,10 +1,10 @@
 # H018 finite sparsity diagnostic: four threshold crossings
 
-2026-10-08. One admitted extension executed; independent saved-data audit pending.
+2026-10-08. One admitted extension executed; independent saved-data audit PASSED.
 No ECDLP solver improvement. All four fixed features reached recurrence length64
 after127 samples on the first eligible synthetic fixture. The exact claimed
 exclusion is global representations with fewer than64 nonzero scalar-field
-powers on THIS fixture, contingent on the independent certificate audit.
+powers on THIS fixture, now independently certified.
 It does not exclude64 terms, different features/curves, or asymptotic improvements.
 
 ## Execution and immutable provenance
@@ -44,13 +44,38 @@ No comparison to a differently metered baseline or hardware extrapolation.
 
 ## Independent verification and conclusion boundary
 
-Native Sol /root/h010_early_dependencies is assigned a saved-data-only audit:
-provenance and ledger, certificate arithmetic, recorded group transitions and
-features, controls, and independent64x64 Hankel rank over F8053 for each prefix.
-No new curve, sample, feature or search may be generated. Full rank would rule
-out a recurrence of order<64; a t-power representation sampled geometrically
-has recurrence order at most t, so the exact finite negative follows.
-This audit uses a different linear-algebra certificate from the generating BM.
+Native Sol /root/h010_early_dependencies executed ONE saved-data-only audit.
+All four64x64 Hankel matrices over F8053 have rank64; the saved length64
+recurrences also hold. Thus each127-term prefix has minimum recurrence length64.
+A global t-power representation sampled geometrically has Hankel rank at most t,
+which proves the exact t<64 exclusion without trusting the generating BM.
+No new curve, sample, feature or search was generated.
+
+Independent affine arithmetic verifies [8053]G=O; primality, nonsingularity,
+Hasse condition, factors and primitive-w tests pass. Checked127 saved points,
+126 recorded doubling transitions,508 feature values, and125 selection-point
+and endpoint equations. Controls have independent ranks3 and32, with their
+terms and recurrences checked. Category/carry sums reconcile; order, orbit and
+feature category counts match the recorded schedules. Failed selection endpoints
+were checked on-curve, not all recomputed as scalar multiples; this limitation
+is retained. Root read the independent audit source and checked the Hankel
+rank-to-sparse-power implication.
+
+Exact verification command, same project working directory:
+
+    timeout --signal=KILL 60s python3 -B research/experiments/H018/audit_extension_recorded.py
+
+Exit0/PASS. Script SHA256:
+10f5e84ae96199b5bcbda322838d8f864c938e23ea163c449f36d2355c6e4b79.
+The already-produced output is retained in extension_audit_result.json; no
+rerun to save it. Its SHA256 is
+b1059a3fe8ac563dd3e0487ed7b64331692b57319c26aee4a1ae5da7ab6d1833.
+Verification overhead is2887421 instrumented operations in a
+DIFFERENT convention (composite assertions count once). It is additional work,
+not included in the candidate580642 RAM events or1M candidate cap. Do not add
+incomparable raw counts or present the diagnostic cost as including its audit.
+Provenance/JSON administration is explicitly outside these event counts.
+This is independently checked executable evidence, not a new Lean theorem.
 
 No scaling experiment is justified merely by this threshold crossing. Park
 these four direct sparse-power features unless a new structural reason revives
