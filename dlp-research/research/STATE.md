@@ -31,15 +31,20 @@ limitations are documented by negative tests, not silently repaired.
 ## Current live work
 
 - Native Sol `/root/small_curve`: WordQueryCode frozen, independently reviewed
-  and integrated (347 audits), W022. Now owns only Research/WordQueryDecoder.lean
+  and committed as `2b1b33b` (347 audits), W022. Now owns only Research/WordQueryDecoder.lean
   for actual operational field-loop contents/termination/trace refinement.
   First bounded milestone may be genuine per-iteration/exit semantics if the
   complete generic 9+6w theorem needs further waves; no assumed macro contract.
 - Native Astra `/root/encoding_review`: W019 adversarial and WordPacking/code
-  reviews complete. Now owns only Research/WordQueryInputFacts.lean: actual raw
-  header/key/payload/query bit association, paired numeric-value lemmas, generic
-  valid indices. No guest-execution claim. Planned API supplied to Sol.
-- Coordinator: independent fresh-run query tests and integration are next.
+  reviews complete. WordQueryInputFacts independently reviewed by coordinator and integrated
+  (16 new claims,363 audits). Frozen hash a1fbcc6156c0ce88790001f33e66c7ffc9abae02f9c138fff5f1ba3d97fdff12.
+  W023 harness review and single independent rerun PASS, scope qualifications
+  retained. Now owns only Research/WordQuerySearch.lean for conditional actual
+  packed-state body initialization/probe/exit semantics, binary first. Ultimate
+  IndexedLookup/output/count refinement remains open; no free fresh entry.
+- Coordinator: actual fresh-run harness passed329 paired datasets/1334 fresh
+  runs/455341 trace events; independently reviewed/reproduced. InputFacts accepted and
+  integrated; generic operational decoder/search refinements remain open.
   WordPacking and W019 negative finding committed as `b92f092`; typed query
   code accepted only for fixed graph/admission/serialization, with operational
   correctness, common F and actual cost comparisons still outstanding.
@@ -64,7 +69,7 @@ limitations are documented by negative tests, not silently repaired.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w7-query-contract-opus-20261007-r1`.
   Earlier W010 Factory and W011 Opus reports/IDs remain in their findings.
 
-Active: coordinator, Sol operational decoder, Astra input-bit association (three).
+Active: coordinator, Sol operational decoder, Astra operational search (three).
 Factory completed; original Grok closed. No duplicate delegated tasks.
 
 Live catalog discovered Codex Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory
@@ -127,9 +132,9 @@ T3 completed rounds (retain exact task IDs; new reviews require new delegates):
 
 ## Current validation and remaining assumptions
 
-Current `./scripts/check.sh` passed: 347 named theorem audits and executable
+Current `./scripts/check.sh` passed: 363 named theorem audits and executable
 smoke output. WordCore (23), WordCodec (29), SignedTight (16) and WordRun (38)
-plus WordRunFacts (10) and WordQueryData (28), WordPacking (7) and WordQueryCode (37) are included; independent component reviews PASS. IndexedLookup (31),
+plus WordRunFacts (10) and WordQueryData (28), WordPacking (7) and WordQueryCode (37) and WordQueryInputFacts (16) are included; independent component reviews PASS. IndexedLookup (31),
 SortedBabies (12), SortedBSGS (4) and all earlier claims remain included.
 Only permitted propext, Classical.choice and Quot.sound dependencies.
 `scripts/sorted_bsgs_checks.lean` runs with lake env lean (no --run; uses #eval)
@@ -157,10 +162,10 @@ Original reviewed draft bd22c845... retained in proposals/archive. W018 graph an
 is proved nonvacuously. Full result still needs generic correctness, common-F
 sufficiency, segment refinement and actual fresh-run ledgers. See binding W016 section 9 for all conditions.
 
-Previous goal turn: progress (a367812 exact data proofs and retained reports).
-Current turn: progress (W018 graph review accepted/reproduced; W019 focused report
-collected/corrected/committed; arithmetic and fixed code independently verified;
-new operational decoder/input-bit proof tasks active). No speedup, whole BSGS cost or
+Previous goal turn: progress (b92f092 negative finding/arithmetic and2b1b33b typed code).
+Current turn: progress (actual raw query suite passed; input-bit association
+proofs independently reviewed/integrated; runtime review PASS; decoder and
+search operational proofs active). No speedup, whole BSGS cost or
 cryptographic/tape/hardware result is established. Machine/Problem/Goals and
 existing experiment engines remain unchanged.
 

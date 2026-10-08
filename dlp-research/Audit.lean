@@ -363,3 +363,20 @@ import Research
 #print axioms Research.WordQueryCode.rejected_6_0_0
 #print axioms Research.WordQueryCode.rejected_width_le_six
 #print axioms Research.WordQueryCode.rejected_zero_width
+
+#print axioms Research.WordQueryInputFacts.m_index_bound
+#print axioms Research.WordQueryInputFacts.k_index_bound
+#print axioms Research.WordQueryInputFacts.record_end_bound
+#print axioms Research.WordQueryInputFacts.key_index_bound
+#print axioms Research.WordQueryInputFacts.payload_index_bound
+#print axioms Research.WordQueryInputFacts.query_index_bound
+#print axioms Research.WordQueryInputFacts.raw_m_bit
+#print axioms Research.WordQueryInputFacts.raw_k_bit
+#print axioms Research.WordQueryInputFacts.raw_key_bit
+#print axioms Research.WordQueryInputFacts.raw_payload_bit
+#print axioms Research.WordQueryInputFacts.raw_query_bit
+#print axioms Research.WordQueryInputFacts.raw_m_value
+#print axioms Research.WordQueryInputFacts.raw_k_value
+#print axioms Research.WordQueryInputFacts.raw_key_value
+#print axioms Research.WordQueryInputFacts.raw_payload_value
+#print axioms Research.WordQueryInputFacts.raw_query_value
