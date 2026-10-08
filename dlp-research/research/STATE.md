@@ -18,7 +18,73 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H025 extension rejected / H026 independent ideation (authoritative)
+## H027 constructive wave active (authoritative)
+
+H026 delivered no supported full-work improvement; reconciled scope/cost findings
+below are checkpointed, with raw disagreements retained. H027 starts four distinct
+roles: native Astra compact trace-functional construction; Claude Opus5.5
+algebraic invariant/target-dependent relations; Grok4.7 adaptive search hybrids;
+Factory Fable5.1 constructive signals/decoders. All RUNNING on actual accepted
+handles; no initial proposal cross-sharing. Native Sol is available for separate
+skeptical review once a concrete construction is delivered. No duplicate active
+hypothesis or coordinator. Full task IDs and exact briefs:
+hypotheses/H027-constructive-candidates.md.
+
+Astra has an UNVERIFIED preliminary Miller/logarithmic-derivative trace lead;
+normalization, evaluation cost and recovery significance remain under construction.
+It is not a scalar decoder or a verified gain. No numerical test admitted.
+Best supported complexity remains square-root; verified complete-work improvement
+NONE. Next conclusion-changing action is a concrete delivered construction and
+independent cost/math review, followed by a frozen cheap falsifier if warranted.
+Broad creative ideation remains active; no generic proof infrastructure.
+
+## H026 delivered proposals and scoped reconciliation (completed wave)
+
+All five independent initial roles have delivered: native Sol search schedules,
+native Astra product recurrences, Claude Opus algebraic bridges, Grok EDS hybrids,
+and replacement Factory Fable information signals. Original Factory Opus failed
+with internal agent error and no findings; replacement/failure remain disclosed.
+Raw T3 reports are retained as proposals, not accepted theorem statements.
+
+Accepted scoped findings and dispositions:
+
+- Fixed-depth reused-jump signed tree has too few distinct useful equations for
+  constant-success sqrt(q) search. Root and separate Astra review verified the
+  exact finite bound and regular cost; no coordinate-adaptive exclusion.
+- Product recurrence pole/divisor obstructions hold only for their specified
+  rational-function identities/spans. Matrix-product sources do not supply the
+  missing elliptic input. Root primary reads and independent Sol scope review.
+- Literal candidate-avoidance bookkeeping is quadratic; table-attraction remains
+  speculative with no supplied positive useful-hit rationale or admitted run.
+- Opus C1 literal character expansion loses its own optimistic ledger. C2–C4
+  require constructive invariant/trace/relation primitives; broad inversion and
+  conductor exclusions withdrawn. C5 lacks a compatible tangent, not an arbitrary
+  public nonzero tangent lift. Separate native Astra/Sol reviews completed.
+- Grok EDS cards deduplicate accepted normalization/bias findings. New genealogy
+  argument confused squares with doubled indices and is withdrawn. Separate
+  Astra primary-text/scope review completed; no mean/window experiment admitted.
+- Fable window gate omits occupancy and fixed-grid probability. NEW Opus review
+  completed; root also corrected that review's zero-probability and two-sided
+  assertions. H026-window-conversion-scope.md alone is accepted for this contract.
+  Separate native Sol review also completed: field/group sizes, rational mixtures,
+  isogeny fibres and lift/log scopes corrected; blanket closures withdrawn.
+
+Authoritative files: findings/H026-fixed-depth-tree-screen.md,
+H026-native-search-cards.md, H026-product-recurrence-scope.md,
+H026-algebraic-scope-reconciliation.md, H026-eds-reconciliation.md and
+H026-window-conversion-scope.md and H026-information-algebraic-scope.md. Full task handles and review briefs are in
+hypotheses/H026-independent-candidates.md. All H026 scoped reviews completed. Native Astra has begun H027 constructive
+trace-functional follow-through; its brief is recorded in the next-wave register.
+
+Current best supported ordinary complexity remains square-root; verified
+complete-work improvement NONE. This wave produced scoped exclusions and
+corrections, not a new attack. No numerical run, hardware extrapolation or new
+Lean claim. Next conclusion-changing work must supply a constructive primitive
+or positive matched-cost premise, then an independently reviewed cheap falsifier.
+Goal active; root sole integration. Validation: ./scripts/check.sh exit0,366 audits;
+/tmp/ecdlp-h026-reconciliation-check.log. No Lean/Audit changes.
+
+## H025 extension rejected / H026 independent ideation (historical)
 
 Previous turn was progress:da874c9 preregistered the exact extension. Final
 Sol provenance review COMPLETED, GO; both independent static reviews cleared.
@@ -44,6 +110,12 @@ hypotheses/H026-independent-candidates.md. No initial cross-sharing, no numerica
 runs, edits or children. Several different mechanisms per role if useful, not a
 quota. Native capacity and user-confirmed T3 capacity respected; catalog refreshed
 and actual acceptances retained. No blocked-provider retry or duplicate coordinator.
+
+Previous goal turn was a verified wait: all three T3 handles and native Sol
+were confirmed live. They were revalidated live again. A fifth focused native
+Astra role now RUNNING on a paid orbit-product evaluation/reuse bridge, explicitly
+excluding mere repetition of the accepted soft-sqrt interval construction.
+No new numerical test or accepted gain. Scope retained in H026 register.
 
 Root alone integrates and commits. Next conclusion-changing action: rank distinct
 credible complete-work hypotheses, independently challenge their premises, then
