@@ -578,3 +578,20 @@ Root alone integrates shared files and commits. Known techniques, model counts
 and papers are not improvements; independent cost/recovery review follows only
 for worthwhile concrete survivors. This new Factory Opus role does not erase
 two earlier Factory Fable acknowledgment-only failures.
+
+H013 native representation role COMPLETED block-fingerprint card, no survivor;
+root/proposer corrected necessary hashing threshold to exact pairwise collision
+probability and hash-independent query sequence. Native Sol initial scheduling
+role COMPLETED A/B/C cards; root assigned independent native Astra cost review
+after its initial proposal was already frozen. That review COMPLETED, scoped
+traffic/capacity result in findings/H013-scheduling-preflight.md. No novelty,
+timing result or universal hardware rejection. Native Sol narrow pass/fusion and
+B-ceiling followup RUNNING; Astra coordinate proposer still RUNNING. T3 initial
+three handles above revalidated RUNNING; no model silently replaced. All roles
+read-only/no experiments/children, root alone integrates and commits.
+
+H013 Sol narrow fusion/B-ceiling followup now COMPLETED, full ledger integrated.
+Native independent reviewer already completed; no new scheduling engine round.
+Coordinate Astra proposer and original three H013 T3 tasks remain live. The
+literal/fused cell-traffic screen and <4.1% named arithmetic ceiling are scoped;
+no fabricated time, global algorithmic rejection or measured gain.

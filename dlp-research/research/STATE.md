@@ -26,12 +26,13 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 2. Verified improvement: **NONE**.
 3. Current hypothesis search: H013 broad independent operation ideation, six
    distinct lenses. PC4 remains speculative and deferred; no engine or trial.
-4. Evidence: H012 reviews completed. Known degree2 slice certificates exist,
-   but no early-node pruning/work bound. Root verified PKM2016 primary prior
-   art and its different Magma degree metric. Raw cost-review overstatements
-   corrected in findings/H012-pc4-disposition.md. A single unclassified root
-   would not measure the missing useful pruning distribution. Earlier scoped
-   LD8/lattice/birth-row negatives stand. No universal coordinate impossibility.
+4. Evidence: H013 block fingerprints exchange label bits for false-hit replay;
+   literal and specifically fused full-record bucketing lose equal-cost cell
+   traffic. Hardware benefit remains uncalibrated. A named cycle-check schedule
+   offers <4.1% arithmetic removal, not a universal full-work ceiling. No engine
+   justified by these cards. PC4 remains deferred without early-node cost/yield
+   evidence; earlier scoped LD8/lattice/birth screens stand. No universal
+   coordinate impossibility or measured improvement.
 5. Next conclusion-changing step: deduplicate concrete H013 mechanisms, select
    meaningful complete-cost gains, independently review and run the cheapest
    matched synthetic falsifier. Material constant-factor gains count if measured
@@ -434,3 +435,33 @@ baseline review is evidence preparation, not a claimed attack improvement.
 `./scripts/check.sh > /tmp/ecdlp-h013-baseline-check.log 2>&1` exit0,363 existing
 audits. Source notes only; no Lean/Audit edit. Explicit stage is STATE and the
 new baseline finding, with unrelated directories unchanged.
+
+H013 native cards received and screened:
+- Native representation proposer COMPLETED; block-index fingerprint/replay
+  card retained in findings/H013-block-fingerprint-screen.md. Root corrected
+  universal-hash upper bound to exact-collision-probability model for necessary
+  threshold; proposer agrees. No large memory gain, small constants unmeasured.
+- Native Sol initial scheduling proposer COMPLETED three cards. Literal A now
+  independently reviewed by Astra, COMPLETED: equal-cost cell traffic loses;
+  fixed-memory inversion and altered live-walker stopping costs retained.
+  See hypotheses/H013-scheduling-cards.md and scheduling-preflight finding.
+- Sol currently finishes a narrow pass/fusion specification and B arithmetic
+  ceiling, read-only/no trial. Root will not build an engine without a favorable
+  existing-kernel full-work bottleneck ledger. C parked without server evidence.
+- Astra coordinate-relation proposer remains live. Three H013 T3 original
+  handles revalidated RUNNING, no duplicates or replacements.
+No new numerical result, improvement or full-size conclusion. Source/baseline
+checkpoint d30eafc committed; paper preflights are main-cost screens, not metrics
+of cryptanalytic progress by themselves.
+
+Native Sol followup now COMPLETED. Root checked its exact fused-pass ledger:
+extra(1+a)R still exceeds possible equal-width jump-load saving. The named
+masked-check schedule has <4.1% arithmetic saving ceiling, not a universal
+full-cost bound. Both are retained in H013-scheduling-preflight.md; no candidate
+prototype justified. All native representation/scheduling roles completed;
+coordinate proposer and three independent T3 initial briefs remain live.
+
+Validation: `./scripts/check.sh > /tmp/ecdlp-h013-native-check.log 2>&1` exit0,
+363 existing audits. Subsequent edits only paper qualifications. Explicit stage
+contains STATE, task register, scheduling cards and two cost findings; no formal
+code/Audit changes or unrelated directories. Objective remains active.
