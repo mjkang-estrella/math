@@ -108,3 +108,19 @@ raw reports retained and qualified by root dispositions, not adopted wholesale.
 - Stable request: `ecdloop-h002-marked-surface-review-20261008-r1`.
 - Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-marked-surface-review-20261008-r1`.
 - Scope: V1 input marking, short relation, quotient/extraction cost. Read-only, no experiments or children.
+
+### ecdloop-h002-eds-code-review-fable-20261008-r1
+
+- Status: COMPLETED; provider/model: `acpRegistry_factory_droid/claude-fable-5.1`.
+- Stable request: `ecdloop-h002-eds-code-review-fable-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h002-eds-code-review-fable-20261008-r1`.
+- Scope: Independent frozen diagnostic arithmetic, normalization, indexing, event
+  cap, controls and partial failure output; no execution/edits/children.
+
+### ecdloop-h003-norm-generator-development-opus-20261008-r1
+
+- Status: RUNNING; provider/model: `claudeAgent/claude-opus-5-5`.
+- Stable request: `ecdloop-h003-norm-generator-development-opus-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h003-norm-generator-development-opus-20261008-r1`.
+- Scope: Concrete norm/coefficient witness generators and full relation/descent
+  costs;2–3 distinct variants if worthwhile. No edits/experiments/children.
