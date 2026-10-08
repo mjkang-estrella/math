@@ -74,7 +74,8 @@ free valid evaluations. Here the selection test only uses the explicit U.
 
 The certificate does not determine log(U): it remains
  a+b*d-sum log(A_i). Search U in a numerical dictionary of size L. If the
-anchors/dictionary are fixed before a fresh independent uniform a, U is uniform,
+anchors, dictionary AND b are fixed before a fresh independent uniform a,
+so a is uniform conditional on all three, then U is uniform for every fixed d,
 and a trial hits with probability L/q. Paid dictionary setup plus one event per
 trial has necessary work scale L+q/L. Membership can be tested BEFORE building
 the function certificate; its work is charged when performed, not asserted
@@ -118,3 +119,8 @@ Final table-scope correction: independent reviewer distinguished literal pair
 enumeration from efficient construction of a structured distinct-sum set. Root
 retains M+q/M for the latter and does not infer Theta(L²) visits/storage from
 L anchor points alone. No change to the scoped square-root conclusion.
+
+Uniform-shift scope: b is selected before a. Marginal uniformity of a is not
+enough if b depends on a (e.g. b=a collapses for d=-1). Residual membership is
+a per-target bound under the conditional sampler; reflection-word coverage is
+instead an average-over-uniform-secret bound. These quantifiers are distinct.

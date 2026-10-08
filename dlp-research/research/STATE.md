@@ -306,3 +306,8 @@ Cost-review refinement before commit: distinct pair-sum keys may be generated
 without enumerating every pair. Root uses M+q/M for an explicit M-key table;
 L²+q/L² applies only to the literal all-pairs loop. No universal L² setup or
 storage claim. Both supplied explicit-table screens remain square-root at best.
+
+Residual sampler clarification: fresh a is uniform conditional on dictionary,
+anchors AND b chosen first; b!=0 is required for recovery. Marginal uniformity
+alone is insufficient. This per-target statement is separate from the fixed-word
+average-over-secret collision count. Cost review qualifications remain explicit.
