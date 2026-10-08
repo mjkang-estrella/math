@@ -24,20 +24,17 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: H013 multiplicative-character correlation (MCL), a valid
-   conditional coset-recovery reduction still lacking an effective public
-   predictor. H014 tiny exact feature screen in implementation; no numerical run.
-4. Evidence: independent reviews repaired MCL calibration, sampling, character
-   conversion and backend costs. Known additive-phase correlation bounds do not
-   prove a predictor impossible or supply one. Algebra/coordinate cards yielded
-   scoped cost screens, not universal exclusions. Broad FFT sweep rejected for
-   cap overrun; no new numerical experiment. PC4 remains deferred.
-5. Next conclusion-changing step: independently review and execute the frozen
-   bounded feature test with charged setup. Six-lens ideation and distinct MCL
-   group-action/arithmetic followups completed, with scoped negative screens
-   retained. Positive finite signal
-   still needs generalization and complete-solver cost; negative finite signal
-   cannot settle asymptotics. No metric substitution by agents/proofs/commits.
+3. Current evidence: H014 MCL information screen COMPLETE, q67,103,271,738704
+   events in one capped run. Neither of two frozen public features crosses the
+   descriptive3RMS threshold. Park these instances; conditional MCL remains open.
+4. Evidence against immediate expansion: no gross finite signal, no cheap
+   predictor and no favorable complete recovery cost. Independent recorded-data
+   audit passed; all exact controls and ledger totals reconciled. Tiny finite
+   results do not reject asymptotic coordinate methods. PC4 remains deferred.
+5. Next conclusion-changing step: H015 independent new mechanisms that supply an
+   actual cheaper information/recovery operation or material full-solver saving.
+   No larger feature sweep, backend engine or generic Lean infrastructure from
+   the current result. Credible costs and successful recovery remain the metrics.
 
 ### Latest authoritative task snapshot (older sections are history)
 
@@ -51,19 +48,26 @@ exact x-coordinate scalar-top-bit leak false. Biased alternatives not excluded.
 Native Sol /root/h010_early_dependencies COMPLETED three explicit group-action
 feature screens; native Astra /root/h007_additive_relations COMPLETED the bounded
 arithmetic feature protocol. Native Astra /root/h006_structured_relation_ideas
-now owns ONLY experiments/H014/character_screen.py implementation, no numerical
-run. NEW Opus H014 preflight COMPLETED, caught impossible p43 admission and
+COMPLETED experiments/H014/character_screen.py implementation. Native Sol code
+review approved with a corrected reporting edge case. Root ran ONCE; independent
+Sol recorded-data audit PASSED. NEW Opus H014 preflight COMPLETED, caught impossible p43 admission and
 symmetry-breaking permutation controls. Root repaired both BEFORE any run:
 fields59,101,251,256-candidate windows, one global cap, signed-pair permutations.
-See H014-preflight-disposition.md for qualifications. All other
-roles read-only, no children. Full T3 IDs in task register. Goal remains active.
+See H014-preflight-disposition.md for qualifications. H013/H014 roles all COMPLETE.
+H015 initial proposals, read-only/no experiments/children: native coordinate
+relation proposer COMPLETED one concrete residual-graph card (synthesis pending),
+native Astra solver arithmetic and native Sol time-memory remain RUNNING, plus
+multi-target costs, Factory Opus primary-literature bridges, Grok unconventional
+compositions. Other initial responses withheld until synthesis; no duplicate
+coordinator or current hypothesis. Native root+three within4, T3 two below20.
+Full T3 IDs in task register. Goal remains active.
 
 Current findings: H013-algebra-disposition.md, H013-coordinate-cards.md,
 H013-mcl-disposition.md, with raw reports and reviewer objections retained.
 Validation: `./scripts/check.sh > /tmp/ecdlp-h013-mcl-check.log 2>&1` exit0,
 363 existing audits. Paper/process records only, no Lean/Audit claim added.
 Root stages named task files after diff inspection; unrelated factoring-research/
-and research-monitor/ remain untouched. No numerical experiment since H005.
+and research-monitor/ remain untouched. H014 is now the latest numerical experiment.
 
 H014 protocol frozen in research/experiments/H014/protocol.md. It screens two
 predeclared public features against exact order-six characters on three increasing
@@ -77,6 +81,23 @@ PROGRESS through committed752a155, not a blocker or completed objective.
 Current paper/protocol checks: `./scripts/check.sh >
 /tmp/ecdlp-h014-preflight-check.log 2>&1` exit0,363 existing audits. No Lean/Audit
 changes. Writer's unexecuted script is excluded from this paper checkpoint.
+
+H014 run/audit is now complete, superseding the pre-run sentences above. Exact
+command/hashes/full-cost limitations in findings/H014-initial-screen.md; raw
+JSON retains every candidate, measurement and control. Code and protocol were
+frozen before execution; no warmup, cap reset, field/group replay or parameter
+selection after outcomes. 148 candidate attempts,8979 retained algorithm entries.
+Native Astra conditional coset-backend followup COMPLETED two executable
+recurrences but no predictor/full-work gain. See H014-coset-backend-cards.md.
+
+Root preserved the independent compact audit as H014/audit_recorded.py and ran
+it successfully against saved JSON only. No imported diagnostic or new field/group
+computation. Latest goal turns were PROGRESS (5377e8b then numerical evidence),
+not a genuine blocker. Full objective remains open; no solver improvement.
+Final checks: `python3 research/experiments/H014/audit_recorded.py` and
+`./scripts/check.sh > /tmp/ecdlp-h014-results-check.log 2>&1` both exit0.
+No new Lean/Audit claims. Root stages only named H014 code/protocol/JSON/findings
+and process records, excluding toolchains/build products and unrelated directories.
 
 ## Live work and actual failures
 

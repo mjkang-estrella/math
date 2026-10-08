@@ -649,3 +649,42 @@ admission failures continue but GLOBAL cap never resets. Signed-pair label
 permutations preserve odd symmetry; exact ideal-null second moment recorded.
 Reviewer unvalidated class-number hit probabilities and tiny event estimates
 not accepted. Native writer informed of revised protocol; no numerical run.
+
+H014 native Astra writer COMPLETED, then completed root-approved pre-run PRNG
+output-permutation and explicit chi(g) revision. Native Sol independent complete
+code/cost review APPROVED after root's metadata-only cap-boundary counter fix.
+Root ran character_screen.py ONCE: COMPLETE all3 curves,738704 events. Native Sol
+independent JSON-only audit PASSED; audit formula error in field-reduction total
+corrected without rerunning field/group work. Raw rows/hashes and exact commands
+in H014-initial-screen.md; compact audit retained. Native Astra distinct coset-
+backend followup COMPLETED two conditional recurrences, no full-work gain.
+
+## H015 independent breadth after the finite feature screen
+
+All new roles are read-only/no experiments/edits/children; root alone integrates.
+Each asks3–5 DISTINCT concrete operations if worthwhile, not a quota; includes
+prior-art distinction, complete costs, applicable full-range family, unsupported
+assumption and cheap falsifier. Other new initial outputs withheld for independence.
+H014 features parked after no descriptive gross-signal flag; no asymptotic claim.
+
+Native starts actually accepted:
+- Astra /root/h006_structured_relation_ideas: material whole-solver arithmetic,
+  representation and parallel collision scheduling, competent known baselines.
+- Astra /root/h007_additive_relations: coordinate relation/dependency production
+  that removes an actual recorded obstruction without a free root/rank oracle.
+- Sol /root/h010_early_dependencies: full time-memory/preprocessing/multi-target
+  tradeoffs, separate offline/online and single/multiple-target claims.
+
+New independent T3 launches returned RUNNING, exact authorized models:
+- acpRegistry_factory_droid/claude-opus-5-5:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h015-primary-bridges-factory-opus-20261008-r1`.
+- grok/grok-4.7:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h015-composed-mechanisms-grok-20261008-r1`.
+Stable request IDs are suffixes. Full prior objections and cost/primary-source
+discipline supplied. No backing-thread continuation, substitutions or failures.
+Native root+3 within4; T3 two below user-confirmed20. No top-level thread,
+scheduler, busy watcher or changes to frozen challenge definitions.
+
+Native H015 coordinate proposer now COMPLETED one residual-quadratic graph card,
+not padded to a quota. Concrete useful-cycle selector still missing; random-edge
+cost screen expressly conditional. Root synthesis pending, other four roles live.

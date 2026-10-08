@@ -39,6 +39,7 @@ Construct and verify six distinct powers z^j. The complex character chi(n) is
 0 at n0; otherwise map n^h through this six-entry phase map to zeta^j, where
 zeta=exp(pi*i/3). Modular exponentiation is explicit binary arithmetic, no
 uncounted pow/inverse/discrete-log oracle. Everything above is charged setup.
+Explicitly verify chi(g)=zeta and chi(q-1)=-1.
 
 Represent Z[zeta] exactly by integer pairs(A,B) with zeta^2=zeta-1. Powers are
 (1,0),(0,1),(-1,1),(-1,0),(0,-1),(1,-1). Conjugation sends(A,B) to(A+B,-B).
@@ -83,9 +84,12 @@ features; report every output, never select a favorable seed. Full unpaired
 permutations would erase the known odd symmetry and give a misleading null scale.
 Cache the public/even-control values once per point; planted table stays separate.
 
-Freeze 32-bit LCG state <- (1664525*state+1013904223) mod2^32. Bounded integer
-draw rejects words >=floor(2^32/bound)*bound, then reduces modulo bound; orientations
-use bound2. Charge explicit arithmetic/rejections/swaps. This PRNG is a reproducible
+Freeze 32-bit LCG state <- (1664525*state+1013904223) mod2^32, then output
+word=state XOR (state>>16). This output transform is a bijection of32-bit words;
+it avoids the raw LCG's deterministically alternating least bit. This correction
+is frozen BEFORE any run. Bounded draw rejects words>=floor(2^32/bound)*bound,
+then reduces modulo bound; orientations use bound2. Charge explicit arithmetic,
+shift/XOR/rejections/swaps. This PRNG is a reproducible
 descriptive control, not independent true randomness. Under the SEPARATE ideal
 model of uniform signed-pair permutations, the mean correlation is0 and its
 exact second moment is 2*sum_(all nonzero P)|f(P)|^2/(q-1)^2. Report this rational
