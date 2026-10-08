@@ -211,7 +211,7 @@ research/experiments/H005/inverse_walk_protocol.md. No run authorized yet.
 
 ### ecdloop-h004-recent-bridges-fable-20261008-r2
 
-- Status: COMPLETED, substantive report pending skeptical review; provider/model: `acpRegistry_factory_droid/claude-fable-5.1`.
+- Status: COMPLETED; substantive report independently qualified in H004-recent-bridges-disposition.md; provider/model: `acpRegistry_factory_droid/claude-fable-5.1`.
 - Stable request: `ecdloop-h004-recent-bridges-fable-20261008-r2`.
 - Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h004-recent-bridges-fable-20261008-r2`.
 - Fresh delegate_task after terminal r1; original brief and non-delivery included.
@@ -240,3 +240,24 @@ auditor script retained H005/audit_recorded.py. Root parks frozen implementation
 Native /root/h002_arithmetic_ideas COMPLETED skeptical Fable r2 source review;
 qualified disposition H004-recent-bridges-disposition.md rejects universal
 exclusions and corrects primary-source/torsion-degree/sample-bound mistakes.
+
+## H006 independent concrete-mechanism wave
+
+- Native Astra `/root/h006_structured_relation_ideas`: RUNNING, fresh isolated
+  brief for dedicated structured point-decomposition/relation procedures.
+- Native Sol `/root/h006_net_cost_development`: RUNNING, fresh isolated brief for
+  exact P2 recurrence/coordinate-output schedules and whole-solver cost.
+- Both read-only, no numerical scratch/experiments/edits/children; no other H006
+  initial proposals. Prior-art/negative scope supplied without cross-anchoring.
+
+### ecdloop-h006-minor-mechanisms-factory-opus-20261008-r1
+
+- Status: RUNNING; provider/model: `acpRegistry_factory_droid/claude-opus-5-5`.
+- Stable request: `ecdloop-h006-minor-mechanisms-factory-opus-20261008-r1`.
+- Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h006-minor-mechanisms-factory-opus-20261008-r1`.
+- Scope: concrete constructive/adaptive/batched minor-selection mechanisms,
+  with conditioned success assumptions and full costs; primary sources only.
+  Read-only, no numerical trials/imports/edits/children. Independent initial brief.
+- Root refreshed capabilities: exact Factory Opus model child support available;
+  launch actually returned RUNNING. Native root+2 fit4; T3 Grok+Factory fit20.
+  Existing Grok hybrid handle revalidated RUNNING, not replaced or duplicated.

@@ -26,7 +26,8 @@ No validated B200/H200 curve throughput; dashboard multipliers remain hypothetic
 2. Verified improvement: **NONE**.
 3. Current hypotheses: H005 direct-halving rational-reconstruction steering failed
    its first frozen finite-cost gate and is parked. Independent Grok hybrid
-   proposals remain live. No new experiment is funded by the Fable literature cards.
+   proposals remain live. H006 distinct concrete relation/minor mechanisms and
+   exact P2 recurrence costs are under independent development, not numerical test.
 4. Latest evidence: one capped H005 run completed,73 restart offsets,62 verified
    successes/11 timeouts,822726 instrumented events. Same fixed target: expected
    group calls4179/31 versus signed-BSGS17, field inversions3707/31 versus15.
@@ -34,7 +35,7 @@ No validated B200/H200 curve throughput; dashboard multipliers remain hypothetic
    candidate3900/31+c(k) versus reference<=14+c(k) group calls for EVERY admitted
    nonzero target on this same curve. No all-target field/runtime or asymptotic
    extension. Independent recorded-data audit PASS; no second experiment.
-5. Next conclusion-changing step: assess the remaining independent hybrid cards
+5. Next conclusion-changing step: synthesize independent H006 and hybrid cards
    for a concrete mechanism with a paid prediction and cheap falsifier. Reopening
    the parked implementation needs changed mechanism/cost, not timeout retuning.
    No enlarged inverse-walk run, P1/A1 sweep or general Lean stack follows.
@@ -58,6 +59,22 @@ No validated B200/H200 curve throughput; dashboard multipliers remain hypothetic
 - Earlier native roles completed. Stable IDs/models/rounds retained in
   research/hypotheses/H002-expanded-task-register.md. New T3 rounds use new
   delegate_task calls and stable distinct IDs, never backing-thread continuation.
+
+## H006 rolling wave (no experiment authorized)
+
+- Native Astra /root/h006_structured_relation_ideas RUNNING: dedicated structured
+  point-decomposition/relation procedures, no assumed fast polynomial-system oracle.
+- Native Sol /root/h006_net_cost_development RUNNING: actual rank-two-net/Somos
+  recurrence plus coordinate-output formulas, compared with strong paired/batched
+  arithmetic, charging initialization/zeros/sign recovery/overshoot/memory.
+- Factory Opus constructive minor mechanisms RUNNING:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h006-minor-mechanisms-factory-opus-20261008-r1`.
+  Candidate-specific structure/selection, not another universal-lower-bound claim.
+All initial briefs are isolated, read-only and prohibit numerical scratch, edits
+or children. Live capability discovery confirmed chosen models; no substitution.
+Native root+2 fit4 and T3 Grok+Factory fit20. These launches are process, not
+evidence of algorithmic improvement. They continue broad ideation without
+reopening the losing inverse-walk experiment or duplicating Grok's live work.
 
 ## H005 actual evidence
 
@@ -113,5 +130,7 @@ since its single run. This milestone retains actual evidence, independently run
 metadata assertions and qualified literature dispositions. Staged inspection is
 root-owned. Unrelated untracked research-monitor/ remains untouched; no build
 products, toolchains or external downloaded sources are staged.
-Prior turn made progress; intervening confirmed-live waits were not blocking.
+Latest verified evidence commit0cefd42 preserves H005's scoped negative and
+qualified literature review. Prior turn made progress; intervening confirmed-live
+waits were not blocking. This turn opens distinct concrete follow-on work.
 Goal active, neither achieved nor blocked. Compilation never means completion.
