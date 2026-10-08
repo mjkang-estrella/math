@@ -20,73 +20,60 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H034 finite sparse-pair contract and remaining cost gate
 
-LATEST afterb2328c3: previous turn was a VERIFIED WAIT on native Sol, then
-its completed finite protocol design was collected. Current turn PROGRESS:
-proposed research/experiments/H034/protocol.md now concretely defines fixtures,
-streams, complete solver and control ledgers, one aggregate cap, and falsifiers.
-No source writer or numerical run yet. No experiment admitted.
+LATEST aftere0c263e: previous goal turn PROGRESS. Factory protocol cost review
+COMPLETED/acknowledged with no pending children. Root froze protocolv2 and
+accepted SOURCE CONSTRUCTION after its amendments plus independent Astra math
+review. H034-protocol-admission.md records scope, objections and SHA256:
+585fd2af0fefb448a3cb85ab2041aea1b604f30fd9aab87efa3cbca7d69d0812.
+No execution admitted. Source audit and one bounded root run remain future gates.
 
-Astra independent recovery review COMPLETED. Frozen clarification: Q=O dispatch,
-then ALL eager roots constructed, then vertex-ordered first-event seed scan.
-A null first seed event falls back. Reaching leaf phase guarantees all roots
-finite/distinct-x, so ordinary simple-graph denominators cannot be zero.
-Both recovery orientations must be tried; (-1,1),(-3,1) atQ=2G demonstrates why
-one zero denominator does not imply no recovery. Fixed-k Poisson law belongs
-to undispatched leaf process; direct-zero shortcut alters uniform full-range
-moments by the small mixture only. H034-finite-contract.md records scope.
-
-Native Astra mathematical protocol review COMPLETED, conditional construction
-GO with H019 index-buffer order, role-specific infinity and cap clarifications;
-these are incorporated. Root rejected its reversed6A arithmetic recommendation:
-denominator1 + y-numerators2 + shared-x-sum1 + output-subtractions2 =6A;
-two successive coordinate subtractions would total7A. Astra explicitly confirmed
-the correction; `/root/h007_additive_relations` is completed/collected.
-LIVE T3 Factory Fable5.1 cost/experiment-admission reviewer:
+LIVE writer `/root/h034_c4_implementation`, GPT-6.1-Sol, owns ONLY
+research/experiments/H034/c4_probe.py. Separate agent from proposal/reviews.
+Initial standalone source now written, undergoing its source-only inspection;
+not imported/executed, not final-hashed/reviewed, not integrated into this commit.
+Root static inspection caught graph-state variable reuse (writer also caught it)
+and per-edge multiply regressions; writer reports both repaired. A reference-only
+independent ordinal-to-endpoint check was added so consistent wrong-edge generation
+cannot hide behind fallback. These are source-review findings, not run results.
+Root alone owns shared records/protocol/staging/commits. The other native reviewers
+are completed/collected; no live T3 child. Exact T3 Factory review handle:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-protocol-cost-fable-20261008-r1`.
-Catalogue refreshed and exact target available; this is a fresh distinct review,
-not a retry of any safety-failed role. Both are read-only, no runs/imports/edits,
-children or commits. Source construction only after the protocol review gates;
-execution requires separate source audit. Native Sol design complete/collected.
-Root alone integrates shared files. No duplicate coordinator or active hypotheses.
 
-The protocol tests increasing q73/103/271/8053 with seeds7,19, uniform-range
-sampling including0, separately labelled public exception checks, reference-only
-leaf validation and stratified seed/leaf/fallback stops. Root added a second
-fixed H019 arithmetic tuple per fixture alongside three head counts; no claimed
-optimal tuning, hardware rate or grumpy improvement. Primary fallback is fixed.
-Packed-model peak and Python storage are separate. Global1M events/55s work,
-outer60s; expensive98-root tier may remain censored. No hidden warmup or resets.
-Exact seed-index head/hash rules and one paid public fallback-component check
-are now explicit. Such forced component checks are not natural solver outcomes.
+Protocolv2 retains full-range sampling including0, known tiny fixtures, paid
+setup/seed/leaf/fallback sheets, a1M-event55s/outer60s aggregate cap, and six
+predeclared H019 controls with primary firsttuple/Hc. Seed-only successes cannot
+support an improvement headline; sampled leaf testing only if reached. Source
+construction is justified as a correctness/ledger falsifier, not a tiny-margin
+speed test. Raw Fable review is qualified: per-BLOCK alternation rejected in
+favor of the reviewed per-INDEX order; no unperformed final-advance cost; rough
+seed/cap estimates not treated as measurements. Inverse expansion, streams,
+seed-index, output persistence, reference separation and initialization are fixed.
 
-Previous accepted paper screens remain: matched peak competes via paid hash
-head initialization versus false probes; C4-light variable-density collision
-law and packed-bitset exact sampler reduce seed premise but add leading RNG/
-access costs. Both alternatives remain UNVERIFIED for complete-work gain.
-Original C4-free contract is the sole proposed executable diagnostic.
+Distinct PAPER option: H034-thickened-incidence-screen.md. Root proposed a
+deterministic thickened graph, independently checked by Astra (counts/probability)
+and Sol (generation/full-line batching). It reduces seeds without random graph
+sampling state, but root rejected the optimistic log-thickness cost inference:
+its sqrt(q)/log²(q) repeated-form penalty overwhelms the saved seed scale.
+The balanced k=floor(cuberoot(ell)) alternative has reviewed candidate moment
+errorO(q^(3/10)); root setup/batch substitutionsO(q^(3/10)logq) remain conditional
+on complete leading-cost comparison, with fallback remainder retained explicitly.
+A native follow-up for that final cost substitution failed 'agent thread limit
+reached' and did NOT run; the record does not claim it did. No substitute/reroute
+was launched. Existing general batching review plus root algebra are identified.
+This paper option does NOT alter the older frozen diagnostic being implemented.
 
-Completed T3 task IDs retained in raw records:
-- ecdloop-h034-sparse-pair-priorart-factory-opus-20261008-r1
-- ecdloop-h034-live-coverage-compositions-grok-20261008-r1
-- ecdloop-h034-windowed-source-cost-opus-20261008-r1
-Full prefix: node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3A
-Root qualifications remain in H034-review-qualifications.md; the omitted signed
-doubling relation and unsupported cost/prior-art headlines were not adopted.
+Mandatory wave result: ordinary square-root work reference remains unchanged;
+verified complete-work improvement NONE. Collision and model premises survived
+qualified reviews, with useful corrections to seed, batching and duplicate-form
+costs. Primary uncertainties remain complete finite costs, backend remainder,
+leading integer/memory traffic and strongest comparator. Next decisive step:
+finish and independently audit source, then one admitted diagnostic if correct.
+No numerical run, Lean/Audit change, generic infrastructure or live target work.
 
-Mandatory wave outcome: ordinary square-root reference unchanged. Verified
-complete-work improvement NONE. Conditional candidate mean near0.886sqrt(q)
-keys compares with proved H0190.943 and empirical grumpy near0.90, under distinct
-assumptions. Mathematical and cost-model premises survive so far; finite seed
-setup, allocation, memory traffic and strongest comparator remain unresolved.
-Next conclusion-changing action: independently freeze a small executable
-correctness/cost diagnostic if the cap can cover a meaningful implementation.
-No H034 numerical experiment admitted or run. No Lean/Audit change. Root alone
-integrates, no unrelated files touched, no safety-failed roles retried.
-
-Validation: `./scripts/check.sh > /tmp/ecdlp-h034-protocol-check.log 2>&1`
-exit0,366 existing audits. New protocol/paper claims are not Lean theorems.
-No Lean/Audit changes or numerical run; execution remains unadmitted.
-Existing unbounded research goal remains active.
+Validation: `./scripts/check.sh > /tmp/ecdlp-h034-source-admission-check.log 2>&1`
+exit0,366 existing audits. This did not import or execute the new diagnostic.
+Unrelated concurrent project changes are excluded; root commits only named
+research paths. Existing unbounded research goal stays active.
 
 ## H033 independent proposals and remaining lookup hypothesis
 

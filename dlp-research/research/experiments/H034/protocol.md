@@ -1,13 +1,27 @@
-# H034 C4-free finite diagnostic: proposed protocol v1
+# H034 C4-free finite diagnostic: protocol v2 for source construction
 
-2026-10-08. PROPOSED, awaiting independent cost/source review. Native Astra
-mathematical review gives conditional GO for construction with ordering fixes;
-root corrected the review's reversed addition-count recommendation below. No numerical
-execution admitted. Root integrates native Sol design and Astra recovery review.
+2026-10-08. Source construction admitted after independent native Astra mathematics
+and Factory Fable5.1 cost reviews, with root amendments below. Numerical execution
+is NOT admitted; a separate source audit is required. Root corrected Astra's
+addition-count recommendation and did not accept Fable's per-block alternation.
+The original per-index interleaving remains fixed. Root integrates Sol design.
 Question: does a concrete C4-free paired-sum solver implement its stated finite
 correctness and complete operation ledger? This is not a speed experiment,
 grumpy comparison, small-margin statistical test or asymptotic proof.
 No C4-light variant is implemented in this diagnostic.
+
+Scope qualification: small-fixture seed collisions will frequently end the solve
+before leaf search. In the ideal IID-root model the exact probability of reaching
+the leaf phase is product_(j=0)^(n-1) (q-1-2j)/q, n=2ell², after excluding the
+Q=O shortcut; zero if n>(q-1)/2. These are model probabilities, not predictions
+for the fixed PRNG seeds. The review's numerical rates are rough and unvalidated.
+The run primarily tests setup/seed/dispatch correctness and paid batch arithmetic;
+leaf archive/recovery is tested on sampled cases ONLY IF REACHED. Record that
+boolean. Seed-only cost vectors are retained but cannot support a candidate
+improvement headline. This limited, cheap falsifier is worth the bounded run;
+it does not test the asymptotic constant or replace a later surviving full-size
+cost argument. No claim that a larger fixture must exceed the cap is accepted
+without its actual static ledger.
 
 ## Inputs, limits and immutable order
 
@@ -30,6 +44,13 @@ One future command only after independent static source/protocol review:
 
     timeout --signal=TERM --kill-after=2s 60s python3 -B research/experiments/H034/c4_probe.py --execute --output research/experiments/H034/initial_results.json
 
+The source is standalone: no numerical support-module import. Refuse execution
+if the output path already exists. Inner cap/guard exceptions must write valid
+partial JSON through try/finally; record which guard fired. External SIGTERM
+with absent/invalid output remains inconclusive, with no second run. Source,
+protocol and interpreter metadata/hashes are retained. One event is one declared
+metered modular-RAM primitive; the source must list primitives before review.
+
 First perform the paid primitive checks below in fixture order. Then test
 Q=O,G,-G on q73 through candidate and primary baseline, reported as explicit
 diagnostic cases, never mixed into sampled averages. Then process each fixture
@@ -41,9 +62,12 @@ Use H030's reproducible LCG: state=(1664525*state+1013904223) mod2^32,
 word=state xor(state>>16), initial state=(tag xor p xor q xor seed) mod2^32.
 Reject word>=2^32-(2^32 mod n) to sample[0,n), then reduce modulo n. Fixed tags:
 target0x54415247, labels0x4C414245, hash0x48415348, fallback0x46414C4C.
-Every independent arm restarts its declared hash stream, pays its construction,
-and uses its own state. Candidate fallback takes the next values from its
-separate fallback stream and reconstructs a baseline hash stream with tag xor1.
+Every arm restarts and pays its own hash stream with tag xor arm_id:
+candidate0, the six ordered controls16..21, candidate fallback1. The initial
+state uses the case seed. Sample eta=1+draw(p-1), zeta=draw(p). Label stream
+uses the case seed; draw a then b for each vertex in increasing index order.
+Candidate fallback draws R=draw(q) from its separate case-seeded fallback stream,
+then constructs its baseline hash stream with tag xor1.
 Record streams and seeds. This is deterministic reproducibility, NOT evidence
 that the theoretical IID probability law is instantiated. No awkward outputs
 are resampled except the explicitly declared unbiased integer rejection rule.
@@ -56,6 +80,12 @@ order, plus output before minus, and edge batches of at most ell. Compute
 integer roots, primality search and indices with expanded charged operations.
 Emax is the least integer E with4E²>=9q; D is the least integer with D²>=2q.
 No floating-point roots determine these ceilings.
+
+Expected fixture parameters, checked at runtime without substituting for the
+paid calculation: (q,ell,n,Emax,U,Hc,D,last_index) =
+(73,3,18,13,26,16,13,7), (103,3,18,16,32,16,15,8),
+(271,3,18,25,50,32,24,12), (8053,7,98,135,270,128,127,64).
+Orient every edge from point vertex i=x*ell+y to line vertex j=ell²+s*ell+t.
 
 At input dispatch, check ONLY Q=O; verify and return0 if so. G and -G are test
 cases, not additional shortcuts. For every other input, sample all root labels
@@ -156,6 +186,17 @@ direct recovery before hashing. Within-role repetitions do not act as cross hits
 Run all admitted controls separately; their observed lower envelope is descriptive,
 not a secret-dependent executable choice. No baseline tuning after results.
 
+The sole preregistered primary comparison is first arithmetic tuple at Hc;
+the other five results are descriptive controls, not an online min-of-six policy.
+For total Hb heads, slot=(eta*x+zeta mod p) mod(Hb/2), with a fixed role offset.
+Check regular components for BOTH solvers: side batch of b pairs is
+(5b-3)M+2bS+6bA+I; full affine advance batch of b regular additions is
+(5b-3)M+bS+6bA+I. Check actually executed complete regular components, separately
+from exceptional dispatch. H019 ellH side rounds plus one advance reproduce
+the block subtotal only when that advance is actually executed. Do not charge
+or assert an unperformed final advance. Empty components have zero inverse cost.
+Subtotal mismatch is fatal for either solver.
+
 ## Paid correctness checks and information separation
 
 For each fixture, construct one ordinary paired batch of size ell on public
@@ -173,15 +214,30 @@ failure. Pay shift, independent primary control setup, solve, unshift and verify
 This guarantees the wrapper is checked without modifying IID-labelled solver
 root samples. No output or setup from this check is reused by later cases.
 
+Also check an ordinary full-addition batch for each distinct control k on public
+pairs((i+2)G,G), paying construction/reference verification. This exercises the
+control's advance boundary even if actual blocks encounter exceptions.
+
 Independently check generated leaf x values against ordinary full affine addition
 in a reference-only phase. Never feed reference coordinates to solver state.
 Place checks so all prepaid outputs are checked even when lookup stops early.
 Reference work consumes the global cap but is separate from solver cost sheets.
+The reference checker uses immutable copies of public/root coordinates and edge
+descriptors, returns pass/fail only, and writes nothing to solver state. Complete
+prepaid reference validation before inspecting that batch's lookup results.
+No cache sharing: harness powers and reference points never supply solver
+preprocessing; each arm rebuilds D*G, strides and power arrays. Defensive regular
+denominator checks belong to each solver's ledger; the independent full check
+belongs to the reference ledger. An invariant mismatch is fatal in either.
 Verify each final scalar inside the solver against Q, then compare with private
 harness k. Append state/pending markers before work so interruption is retained.
 
 ## Complete ledger and interpretation
 
+Use the SAME expanded inverse routine in Fp and Fq for all arms: Fermat
+exponent modulus-2, left-to-right binary exponentiation from accumulator1,
+square at each bit and multiply on a1 bit. Zero inverse is invalid. Primality
+was separately validated. No builtin pow, modular inverse or hidden table.
 Expand field inverse/power loops and scalar operations; report raw Fp/Fq M,S,A,
 integer operations/branches, RNG/rejection, indexing, field-record access,
 allocations, initialization, head/node accesses, chain probes, exact matches,
@@ -203,6 +259,18 @@ as uninitialized if that is the implementation; otherwise count initialization.
 Report this packed-payload MODEL separately from measured Python-object storage;
 neither is a hardware-traffic benchmark or proof of an implemented bit layout.
 The matched-peak filter refers only to the declared logical model.
+
+Before the first solver arm, emit a per-fixture declared-capacity table and all
+control omission decisions, calculated from public parameters only. Show root/
+power/seed-index stages, leaf root/archive/head/scratch stage and fallback stage;
+do not force non-overlapping arrays to coexist. Reserve node payload uninitialized
+for both arms, but pay capacity reservation/allocator slot initialization actually
+performed, plus every head zero. Release explicitly walks each allocated live
+array/container slot and charges its release; no O(1) release on only one side.
+Report actual lifecycle differences, including uninitialized payload. Python
+storage observations may be approximate; claim neither exact allocator peak
+nor hardware bytes from packed counts. The writer must supply static stage-event
+estimates before execution review, without trial runs or post-result retuning.
 
 Retain source/support/protocol hashes, cases, streams, pending operation, per-stage
 counters, peak components, terminal reason and elapsed guard evidence. On cap,
