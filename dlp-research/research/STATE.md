@@ -213,3 +213,10 @@ a restricted odd-order quadratic fixed-shift cancellation case, compatible with
 the broader 2025 problem. Root retrieved the primary question/theorem and checked
 scope. No extra field operations or revised hardware claim. Native Astra is idle;
 root+Sol below4. Grok review and two H004 T3 proposers are live; await notifications.
+
+H004 early practical screen: native Sol and root independently found paired
+addition/block generation in Galbraith–Wang–Zhang and terminal satellite y omission
+in primary source. H004-practical-baseline-screen.md records the exact scope;
+these are baseline capabilities, not new savings. No third-party program was run.
+Previous turn was a verified wait on actual RUNNING task handles, not a blocker.
+This turn adds a source-supported negative screen while other proposals continue.
