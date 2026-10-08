@@ -244,3 +244,134 @@ Remain invalid:
 | Deferred | RAM→tape simulation with stated overhead; amortized multi-target ledger; `rand` region and expected-cost semantics; multi-precision field programs | separate milestones, each reviewed before any comparison |
 
 Suggested ownership: Wave A to one writer with the semantic freeze reviewed by a different model before Waves B–D start; B/C/D are disjoint files; coordinator integrates `Audit.lean`/imports. The W008 `IndexedLookup.lean` work remains valuable as the probe-structure specification for Wave C's search and should not be duplicated; its probe/equality/ordering invariants become the Stage II.4 search lemmas re-stated over the RAM buffer.
+
+## Coordinator challenge and durable arithmetic falsifiers
+
+The original report is not accepted as written. Its insistence on explicit
+whole-program semantics is a plausible design direction, not a proof that the
+existing explicitly scoped wrapper counts are invalid. An author could bypass
+a wrapper in a different program; that motivates coverage/refinement proofs or
+an enforced instruction language for full-cost claims. It does not invalidate
+reviewed theorems counting the calls present in the actual accepted source.
+
+Independent Sol review is in progress. Coordinator identified these issues for
+challenge: inconsistent mark/fuel rules; unspecified free ownership/double-free
+behavior; bulk allocation versus primitive steps; non-reused bump addresses;
+word widths including q itself; primality and exact-order assumptions; program
+encoding and label size; and an unsupported universal tape-complexity assertion.
+No replacement semantics has been implemented or frozen.
+
+Durable arithmetic command:
+
+```
+timeout 60 python3 scripts/cost_proposal_counterexamples.py > research/findings/W010-counterexamples.json
+```
+
+It passed and archived:
+
+- For q=2^k, k=0..8, ceil(log2 q)=k bits cannot represent q; q.bit_length()
+  supplies k+1 bits. Scalars below q and the parameter q need distinct bounds.
+- With one initial word, allocate/free three words three times without address
+  reuse: peak live words=4, terminal break=10, final last address=9. A three-bit
+  word fits peak=4 but cannot address 9. Track maximum break/address separately.
+- p=4,a=0,b=1,G=(0,1) satisfies the listed nonzero-modulus, coordinate, equation
+  and nonzero-discriminant-expression checks. For element 3, the Fermat proposal
+  gives 3^(p-2)=1 mod4 and product3, not inverse product1. Prime-field assumptions
+  must be trusted/proved or checked explicitly; this does not contradict the
+  existing prime F5 instance or authorize arbitrary composite-modulus inputs.
+- In the abstract group Z/7, 14G=0 but G has order7. A single qG=0 check proves
+  only divisibility; exact order needs additional conditions. This is not a
+  counterexample to CyclicProblem, whose distinctness premise rules it out.
+
+These checks inspect integer consequences of proposed formulas, not an actual
+WordRAM interpreter, EC runtime, accepted Lean solver or physical performance.
+The original proposal remains visible above so corrections are not hidden.
+
+## Independent disposition: DO NOT ADOPT original proposal
+
+Native Sol independently reviewed the full proposal and coordinator objections.
+It rejects adoption as written and gives a qualified design pass to a narrower
+finite-PC, checked-word, fixed-capacity interpreter only after an exact small-step
+contract is independently frozen. No WordRAM code is approved by this record.
+
+Corrections and retained qualifications:
+
+1. A mark cannot both be a one-fuel primitive and preserve steps. Omit marks
+   initially; later static labels could classify already-executed instructions.
+2. AST composition needs one shared remaining fuel and unambiguous global halt.
+   A finite PC and single-step execution avoid these unspecified conventions.
+3. Ledger.zero has peak0 while initialized input has live>0. Input allocation
+   cannot enter allocWords unless charged. Initialize/report registers, heap,
+   input copy and enough output capacity explicitly.
+4. Free lacks range/support/ownership/double-free semantics. Bulk allocation
+   taking one instruction plus len initialization units is a legitimate declared
+   abstraction, not inherently dishonest; its unit definitions must agree.
+   Huge allocation does increase cost under the proposed per-word weights.
+5. Bump address high-water and live capacity differ, as the durable example
+   shows. Initial fixed capacity removes this particular ambiguity, but stored
+   lengths/endpoints still need bounds beyond representable cell addresses.
+6. q itself needs more bits than a scalar below q at powers of two; baby j<m
+   need not be below q when m>q. W must be positive for bit1/comparison true.
+   The i*m+j bound needs q,m>0, i<B, j<m. Midpoint/square/run-length/validation
+   intermediates and sentinel addresses need separate no-overflow proofs.
+7. qG=O alone gives divisibility, not exact order. Prime q plus nonzero G is
+   one sufficient additional condition; composite q requires appropriate
+   factor-based evidence. Prime p and nonzero denominator justify Fermat
+   inversion. They can be proved preconditions for the fixed F5 instance,
+   but arbitrary parsed parameters do not inherit them.
+8. Zero scalar needs the tag0 infinity branch. Its padded coordinates (0,0)
+   need not satisfy the affine equation. The three-bit parser cannot process
+   all five Python curves unchanged.
+9. An all-input theorem still checks correct output: a missing-result halt is
+   not automatically an unsound proof. Operational failure should nevertheless
+   be distinguished. SmallCurve's untouched parameter prefix encodes5, which
+   coincidentally equals one secret's expected output; halt alone is inadequate
+   evidence. Requiring a write is unnecessary if correct output is already there.
+   Allocated finite memory also does not exactly mirror the tape's zero padding.
+10. Copying parallel key/index records uses two loads and two stores per record:
+    at least4m accesses per full pass, before any extra comparison reads. Different
+    bottom-up/top-down merge sorts need not have identical comparison totals.
+11. Instruction syntax needs an actual encoding for opcode discriminators,
+    registers, immediates and branches. A size budget excludes a table only
+    when its proved encoded size exceeds the specified bound. Three Cmd-tag
+    bits do not encode all Prim variants and operands by themselves.
+12. The universal Theta(qW) tape claim and 'fatal' overhead claim are withdrawn.
+    Particular translations may incur large movement costs, but require a
+    specified layout, head position, query path and implementation. No general
+    lower bound follows from the report.
+
+Sol consulted primary SEC1 §3.1.1.2.1 and HAC Fact2.127 for the order/field
+qualification: https://www.secg.org/sec1-v2.pdf and
+https://cacr.uwaterloo.ca/hac/about/chap2.pdf . Those sources were consulted by
+that reviewer, not newly retrieved by coordinator. The arithmetic counterexamples
+stand independently of those literature attributions.
+
+Schoolbook-looking weights are assigned proxies until supported by a bit-level
+refinement. Public deterministic widths/capacities are not automatically secret
+advice: their origin, description, computation/validation and costs must be fixed.
+The current wrapper theorems remain valid for their documented scopes.
+
+## Narrow next-stage gate
+
+Proposed next core: W>0,R>0,fixed heapCells<=2^W, typed checked words, finite PC
+and code, explicit initialization charges, and distinct halted/faulted/exhausted
+outcomes. Addresses, stored lengths and endpoints have separate bounds. Reads
+use pre-state, faults are atomic, each attempted instruction has an explicit
+charge including halt/fault, and invalid-PC/zero-fuel precedence is fixed.
+No allocation/free/marks/group/sort/sqrt primitive initially. Capacity is reported
+as capacity, not a dynamic peak-live theorem. Serialization and output conventions
+must be specified before accepting program-size or solver claims.
+
+A rigorous first comparison could implement linear and binary lookup under
+these same instructions, charging address arithmetic, loads and control. It
+must remain a query-phase result with table construction separately priced or
+explicitly excluded. Whole ECDLP execution must later construct the table from
+original public input. The accepted algebra/lookup proofs should serve as
+refinement specifications, rather than be discarded or relabeled as full costs.
+
+Independent native Astra separately reproduced the arithmetic script and
+exact archived JSON: PASS for all four narrow falsifiers, no failed tests.
+It emphasizes G=1 for the Z/7 example, and that composite element3 actually has
+inverse3 while the proposed expression returns1. Neither review ran a VM or
+established a hardware/tape bound. Sol made no file edits; coordinator records
+both reviews and preserves the rejected original report above.

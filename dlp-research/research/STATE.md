@@ -7,7 +7,7 @@ Starting commit `815d920`, clean at intake. Local milestones `c99e349` and
 `05ed8be`; W005/W006/W007 committed locally as `9667d72`; clean after that commit.
 W008 coordinate-key layer committed locally as `97ebd5c`. IndexedLookup,
 SortedBabies and SortedBSGS are frozen, independently reviewed, integrated and
-ready for the next local commit. Full-cost semantics remain under design review.
+committed locally as `f95d27e`. Full-cost semantics remain under design review.
 No faster ECDLP algorithm or cryptographic break has been discovered.
 
 ## Authorization and operating constraints
@@ -23,24 +23,27 @@ limitations are documented by negative tests, not silently repaired.
 
 ## Current live work
 
-- Native Sol `/root/small_curve`: completed IndexedLookup implementation;
-  now READ-ONLY adversarial review of Fable's W010 full-cost interpreter proposal.
-  No cost-model code or shared edits authorized; no children.
+- Native Sol `/root/small_curve`: completed adversarial W010 review: original
+  proposal rejected. Now owns ONLY research/proposals/W011-fixed-word-contract.md
+  as design writer: exact finite-PC/fixedheap semantics, no Lean implementation.
+  Draft must be independently reviewed before implementation; no children.
 - T3 Grok `grok-4.7`: original primary-literature/falsifiable-directions task
   remains running at last status read. Do not duplicate because it is slow.
   Request `ecdloop-w1-literature-grok-20261007-r1`; task ID
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w1-literature-grok-20261007-r1`.
 - Native Astra `/root/encoding_review`: independently passed W008 key/search,
   W009 adapter and full sorted solver, including all 28 compiled test cases.
-  Currently complete. All source frozen.
+  Separately reproduced W010 arithmetic script/JSON and scope: PASS. Currently
+  complete; available to review W011 once its exact draft is frozen.
 - Factory Fable 5.1: whole-solver cost-design review completed; original report
   retained verbatim in W010-cost-proposal-review.md, explicitly NOT ACCEPTED.
   Request `ecdloop-w4-cost-ledger-fable-20261007-r1`; task ID
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-w4-cost-ledger-fable-20261007-r1`.
-  Proposes a deep-embedded word-RAM interpreter. Mark/fuel rules, addresses,
-  integer widths, prime/order validation and unsupported tape lower-bound
-  assertions are under independent challenge; no model adopted.
-  Current active slots: coordinator, Sol review, Grok literature (three).
+  Original proposal rejected after independent Sol challenge. Full corrections
+  and Astra-reviewed arithmetic counterexamples retained in W010. A smaller
+  fixed-capacity instruction machine is only a qualified direction; no exact
+  semantics or alternative cost goal has been adopted.
+  Current active slots: coordinator, Sol W011 design writer, Grok literature.
 
 Live catalog discovered Codex Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory
 Fable/Opus with delegation supported and no reported constraints. Actual runs
@@ -123,11 +126,16 @@ hardware timing. Deferred W005 RAM ledger is not an accepted model.
 
 ## Next distinct step
 
-Commit reviewed W008/W009 sources, experiment and evidence after staged-path
-inspection. Resolve W010 design objections independently before implementing
-any alternative cost interpreter. Retain frozen Machine/Problem/Goals.
+W008/W009 committed after staged-path inspection. Coordinator archived W010
+arithmetic counterexamples for word widths, bump addresses, primality and
+exact-order validation; these are not VM or accepted-solver failures. W010
+original design is rejected; draft and independently review the exact W011
+contract before implementing any alternative cost interpreter. Retain frozen
+Machine/Problem/Goals.
 Collect Grok's existing task when its notification arrives; do not duplicate.
 Continue bounded waves with durable evidence and reviewer disagreements.
-Previous turn: progress (97ebd5c coordinate-key commit); this turn: progress
-(generic indexed/sorted solver accepted, 159 audits, reproduced execution).
+Previous turn: progress (f95d27e sorted-solver commit, 159 audits). This turn
+adds independently reproduced arithmetic falsifiers, rejects flawed W010
+claims and starts a disjoint exact-contract draft. All159 theorem audits still
+pass. Grok remains authoritatively live; no duplicate task or scheduler.
 Research goal stays active; no completion or repeated-blocked threshold is met.
