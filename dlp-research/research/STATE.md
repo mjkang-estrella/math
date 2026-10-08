@@ -18,7 +18,33 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H025 initial arithmetic screen / extension design (authoritative)
+## H025 exact extension ready / static review (authoritative)
+
+Previous turn made progress:63aceb0 records the conditional initial arithmetic
+screen. Native Sol completed the continuation proposal. Root implemented separate
+extension_probe.py/extension_protocol.md: unchanged B at32771/65537/131071,
+compared with GWZ-style and H019 two-family schedules; all-q exact means and
+complete fallback retained. A verified strict lower-bound gate failure after
+complete blocks stops the entire all-three test; later primes explicitly untested.
+No extension numerical execution/import/self-test yet.
+
+Root justified one50M-event budget including426964 prior debit, work55s and
+outer60s, with no aggregate completion promise and no resets. Initial three
+artifacts remain unchanged and frozen hashes are checked. Deterministic gzip
+retains full first-discovery arrays/traces; truncation/cap/errors inconclusive.
+Native Astra static correctness/fix review COMPLETED, GO. Native Sol static
+budget review GO subject to metadata/provenance fixes, now implemented; final
+fix acknowledgement pending. Both read-only, no numerical execution.
+
+Next: admit the sole run after review conditions are confirmed, independently
+audit its exact evidence, and checkpoint pass/failure/inconclusive honestly.
+This is a scalar diagnostic, not complete EC work; candidate setup, forks,
+support storage and omitted costs remain explicit. Verified full-work improvement
+NONE; square-root reference unchanged. Root sole integration; goal active.
+Validation: ./scripts/check.sh passed exit0,366 audits; log
+/tmp/ecdlp-h025-extension-static-check.log. This did not execute the extension.
+
+## H025 initial arithmetic screen / extension design (historical)
 
 Previous turn was progress:28a1074 retained scoped scaling and frontier results.
 This turn revalidated native Sol's live design handle. Sol supplied an interim

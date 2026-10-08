@@ -95,3 +95,19 @@ Sol interim arithmetic screen independently checked by root and NEW native
 Astra artifact-only review COMPLETED. H025-initial-arithmetic-screen.md records
 hypothetical weights, exact credit/fork residuals and unproved cost-ordering
 assumption. Sol's final extension design remains RUNNING; no new run admitted.
+
+## Extension proposal and static code review
+
+Native Sol continuation design COMPLETED: fixed32771/65537/131071 (Mmod3=2,1,0),
+control/two/B, unchanged B, joint5% gate againstboth, exact enumeration, a new
+explicitly justified50M cap including426964 carry. No phase-sampling or low-trial
+statistical substitute. Attribution deferred, full-work cost sheet required.
+Root froze full details in experiments/H025/extension_protocol.md and implemented
+separate extension_probe.py, preserving all initial bytes.
+
+NEW native Astra static correctness review and narrow fix check COMPLETED, GO.
+NEW native Sol static budget review GO after explicit untested-prime/provenance
+metadata; root implemented both, Astra checked all initial hashes and fix logic.
+Sol final fix acknowledgement pending. One global cap only; partial/errors are
+inconclusive. Early lower-bound rejection uses censored identity at completeblocks
+and stops all later primes, which remain untested. No numerical execution yet.
