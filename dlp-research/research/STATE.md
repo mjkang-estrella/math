@@ -18,7 +18,69 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H029 current checkpoint: report reconciliation and stronger model screen
+## H030 current wave: independent ideas plus bounded carryover triage
+
+Previous turn PROGRESS at c958caf. Existing unbounded goal stays active; no
+validated complete-work improvement, generic exponent reference1/2 unchanged.
+Live catalog refreshed; four independent initial lenses and one bounded H029
+repair triage launched without sharing initial proposals. Full handles/briefs in
+hypotheses/H030-independent-candidates.md. Native Astra initial report COMPLETED:
+indegree-filtered reporting lacks a supported nonlocal detection benefit; root
+checks its exact conditional ledger. Native Sol arithmetic fusion, Claude Opus
+automorphism-aware operations, Factory Fable storage tradeoffs and Grok existing
+walk triage are RUNNING. No experiments, imports, writers or children authorized.
+H028 remains parked. Broad ideation, honest negative evidence and sole-root
+integration persist. No known automorphism/BSGS/replay trick counts as discovery.
+Root/Astra completed conditional indegree-reporting screen; actual graph-law
+and nonlocal detection advantage remain missing, so no test admitted there.
+
+NEW preliminary C1 from Sol: reuse H028 odd h only for sign selection during
+x-only tag tracing, retain x collision keys, pay signed-sum point+h table and
+Miller setup. Possible skipped ordinate multiplication; complete gain UNVERIFIED.
+Native Astra independently reviews algebra/cost, NEW Factory Opus5.5 reviews
+primary art/fullwork; both RUNNING with T3 handle in H030 register. Other initial
+roles remain independent. No implementation/test/Lean expansion authorized.
+
+Latest H030 update: both native initial roles and independent algebra/math
+reviews COMPLETED. C1 has a valid refresh-independent logical transition and
+exact signed-table cardinality, but only conditional weighted arithmetic credit;
+extra literal h retrieval already consumes the sub-one-M equal-unit saving.
+See H030-odd-selector-tagtrace-kernel.md. Factory Opus C1 prior-art/cost review
+and Factory Fable independent storage proposal remain live at last status.
+Claude Opus automorphism initial report COMPLETED: retain explicit quotient-line
+maps and norm short-cycle bound, withdraw claimed exact indegree stopping law
+and historical-baseline ceiling; independent reconciliation retained. Grok
+bounded clocked-walk triage COMPLETED; literal family PARKED without a new
+positive full-work premise. No universal coordinate-walk impossibility inferred.
+Verified complete-work improvement NONE; best supported generic exponent1/2.
+Next decision-changing evidence: C1's paid layout/cycle/prior-art review, then
+only a justified bounded synthetic test. No implementation authorized yet.
+Both pending Factory task handles revalidated RUNNING via task_status; no
+pending result invented. Validation: ./scripts/check.sh >
+/tmp/ecdlp-h030-kernel-check.log 2>&1 exit0,366 existing audits. No Lean/Audit
+changes; C1 and other new mathematics are paper checks, not formal proofs.
+
+Factory Opus C1 review subsequently COMPLETED, raw/reconciled findings retained.
+It proposes C2: use canonical h for partition/report predicates, reconstruct
+exact point keys only when required, potentially omitting S as well as M on
+partial steps. Native Sol independent check RUNNING; preliminary regular algebra
+passes, but h canonicalization, false repeat verification/history, zero/report/
+refresh work must be paid. Root/Astra separately proved h(phi P)=beta^-1 h(P)
+for rational j0 automorphisms from normalized Miller pullback. This supports
+six-unit orientation with extra table/unit costs, not another free quotient gain.
+Full details in H030-miller-automorphism-covariance.md. Factory Fable storage
+role remains the only pending T3 initial proposal. No experiments admitted.
+
+C2 native Sol algebra/ledger review now COMPLETED, GO only for the scoped
+logical transition and regular cost expression. h canonicalization, false repeat
+screens/history, reports, zero cases and cycle work remain explicitly open.
+Both native reviewers independently confirmed order-six covariance; no new
+automorphism gain counted. H030-coefficient-steered-tagtrace.md is the current
+leading hypothesis, ahead of C1's smaller credit and the unvalidated multiplier
+walk. NEW Claude Opus C2 complete-cost admission review RUNNING, exact handle
+in H030 register; Factory Fable storage proposal remains live. Goal active.
+
+## H029 checkpoint: report reconciliation and stronger model screen
 
 Factory Fable parallel-work proposer and Claude Opus primary-comparator audit
 COMPLETED; original task handles and raw reports retained in H029 register.
