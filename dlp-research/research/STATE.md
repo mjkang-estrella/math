@@ -48,6 +48,25 @@ no longer automatically dominates, with competent baseline and actual lookup/
 metadata/peak-memory charges. Main objective, independent breadth policy and
 sole-root integration persist. Goal active; this correctness pass is not success.
 
+## H029 broad algorithm wave RUNNING (latest live checkpoint)
+
+H028 disposition committed389e396. Current best supported generic exponent1/2;
+verified complete-work improvement NONE. Overall research remains active.
+Native Astra explores distinct time-memory/collision geometry; native Sol explores
+new arithmetic/lifting/endomorphism mechanisms. Both read-only, initial proposals
+withheld across lenses. Factory Fable5.1 independently explores complete-work
+parallel scheduling/communication; Grok4.7 separately repairs its existing H027
+low-memory walk contracts using reconciled objections. All four roles confirmed
+RUNNING on launch, full task handles and briefs in H029-independent-candidates.md.
+No experiments, edits, child delegation or numerical imports authorized to roles.
+No duplicate coordinator/scheduler or blocked-role bypass. Root alone integrates.
+
+This implements persistent broad independent ideation plus preservation of an
+existing unresolved hypothesis. No quota/agent count is a research metric.
+Survivors must show a credible complete-cost mechanism and cheap decisive test
+before new implementation or formal infrastructure. All H028 source reviews are
+terminal; fixture source remains unexecuted and parked, no cap consumed.
+
 ## H028 parked; main algorithm research continues (latest)
 
 All H028 source, cost and calibration-decision roles COMPLETED. Final source-only
