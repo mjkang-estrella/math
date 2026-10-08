@@ -1494,3 +1494,15 @@ before any implementation or run. Sol's final preflight confirms the
 Hasse-BSGS certificate and scope, with explicit charged integer-root loops and
 no guarantee that worst-case search fits the cap. A future writer
 may own only fixture_probe.py; source review must precede sole execution.
+
+H028 next wave launched after committed protocol eb5a5a8:
+- Native Astra /root/h007_additive_relations RUNNING implementation, exclusive
+  ownership of experiments/H028/fixture_probe.py only. No execution/import,
+  warmup, test, other-file edit, child or commit allowed. Root source integration
+  and separate static review precede sole discovery command.
+- Native Sol /root/h010_early_dependencies RUNNING read-only next stopped-solver
+  experiment draft using public fixtures only if discovery succeeds. Exact x
+  baseline, table fairness, all work and finite success/failure gate required;
+  this draft does not authorize a solver run or new instances.
+- Both prior-art T3 rounds terminal and collected, no live T3 work duplicated.
+This is PROGRESS plus confirmed live children, not a blocker or completion.
