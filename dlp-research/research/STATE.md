@@ -20,10 +20,11 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H027 character-descent falsifier verified (authoritative)
 
-Previous goal turn made progress:3343c23 reconciled prior art and registered
-separate geometry/backend reviews. This turn revalidated Grok and Fable initial
-handles RUNNING, collected both native reviews, and independently checked a
-candidate-specific falsifier. No new experiment or implementation was run.
+Checkpoint25bf0fe retained the character-descent falsifier and conditional
+backend costs. The preceding goal turn was a verified wait. This turn revalidated
+the same two T3 handles and used freed native capacity for distinct constructive
+repair and primary-interface tasks, both now completed. No experiment or
+implementation was run.
 
 The Frobenius-stable maximal-isotropic kernel and marked matrix-isogeny identities
 are valid under explicit hypotheses. The proposed unmarked-surface character
@@ -41,8 +42,14 @@ with every free/adaptive oracle backend. Extraction remains unsupplied; no earli
 H003/H018 route is downgraded from an abstract. Full costs, zero/sign handling,
 source access and limitations: findings/H027-legendre-backend-scope.md.
 
-Both native geometry/backend reviews and follow-up scope checks completed.
-Two independent initial T3 ideation roles remain live: Grok4.7 adaptive search
+The native geometry/backend reviews and follow-up scope checks completed.
+After verified waits, two NEW native tasks COMPLETED. Astra supplied a pairing
+orbit polynomial with ordinary finite-field-DLP recovery; root checked its exact
+norm/trace collapse when <U,p>=Fq*. Sol read the actual CSV genus-character
+manuscripts: m=q fails the discriminant condition and literal cyclic-torsion
+surface interface. Root checked both calculations. No alternative extraction,
+new experiment or gain. Full finding H027-symmetry-repair-and-genus-interface.md.
+Two initial T3 handles revalidated RUNNING: Grok4.7 adaptive search
 and Factory Fable5.1 constructive signals. Full task IDs/review briefs in
 hypotheses/H027-constructive-candidates.md. No duplicate work or coordinator.
 Root sole integration/commits; no code/Lean/Audit change or hardware extrapolation.
@@ -55,7 +62,7 @@ full-work improvement NONE. Next conclusion-changing action: evaluate the two
 remaining independent proposals for a paid recovery premise, then independently
 review and freeze any justified synthetic falsifier. Goal active.
 Validation: ./scripts/check.sh exit0,366 audits;
-/tmp/ecdlp-h027-character-falsifier-check.log.
+/tmp/ecdlp-h027-symmetry-repair-check.log.
 
 ## H026 delivered proposals and scoped reconciliation (completed wave)
 

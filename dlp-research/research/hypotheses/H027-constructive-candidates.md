@@ -151,3 +151,40 @@ No actual oracle extractor or improved full solver supplied.
 Grok and Fable initial handles revalidated RUNNING this turn. Native reviewers
 are available for their distinct delivered candidates. No initial cross-sharing,
 new numerical test, broad Lean work or complete-cost improvement.
+
+
+## Distinct follow-through during live initial roles
+
+The preceding turns were verified waits; both original Grok/Fable task handles
+still report RUNNING. No restart or duplicate task. Freed native capacity now
+has two distinct read-only tasks; no new experiment or public signal is claimed.
+
+Native Astra /root/h007_additive_relations — COMPLETED, constructive repair:
+seek actually computed automorphism-compatible scalar-sensitive invariants after
+H027's character-descent falsifier. Root's formal product chi(1+k^6) respects the
+known order-three/negation/inversion symmetries, but does not prove invariance on
+all quotient fibres or supply extraction. Need concrete public-Q operations,
+paid representation/extension/setup and decoder, several distinct constructions
+if useful or scoped no-survivor. No mere polynomials in unknown k, generic degree
+proof, new oracle backend, runs/edits/children or broad Lean infrastructure.
+
+Native Sol /root/h010_early_dependencies — COMPLETED, primary theorem interface:
+read actual Castryck–Sotakova–Vercauteren eprint2020/151 or an author/publisher
+copy. Initial Opus cited only abstract/memory. Identify exact map/domain,
+discriminant/conductor/ramification and torsion hypotheses, costs and extension
+requirements; test any bridge to A_Q or a symmetrized character. Failure of a
+source hypothesis is not an impossibility theorem. Report access limits, no
+bypass, broad survey, experiment, edits or children. Distinct from Astra's live
+constructive role. Other initial proposals remain withheld until delivery.
+
+Sol also confirmed root's explicit elementary-step interleaving policy and
+known0,±iota point dispatch in H027-legendre-backend-scope.md; no complement
+collision assumption is needed for that specified schedule.
+
+
+Repair/source outcomes: H027-symmetry-repair-and-genus-interface.md retains the
+actual pairing-orbit polynomial and paid known pairing decoder, root-checked
+product-of-conjugates norm and trace collapse identities, and Sol's exact CSV
+interfaces with root-checked discriminant/rational-torsion qualifications. This
+is no new attack or universal descent/representation lower bound. Official eprint
+failed, actual UGent2020/2022 manuscripts read. No numerical test admitted.
