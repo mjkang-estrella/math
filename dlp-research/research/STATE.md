@@ -18,7 +18,74 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H031 current wave: independent proposals and C2 carryover
+## H032 rolling proposals; H031 walk report now under review
+
+LATEST: H031 Grok original task COMPLETED, terminal result acknowledged, no
+pending children or reported edits/runs. Raw two-card proposal retained in
+findings/H031-autonomous-grok-raw.md. This supersedes historical live snapshots.
+Card1 state-hash portal and Card2 two-translate fold remain unverified hypotheses,
+not accepted improvements or experiment authorizations. Root identified incorrect
+rho threshold and unmarked-cycle/stopping gap before any pilot.
+
+- Native Astra /root/h007_additive_relations COMPLETED independent H031 portal/
+  fold mathematics review after completing its H032 initial cards and root checks.
+  Correct gate isρ<1/(6+s), nots/(6+s). An unmarked cheap-step two-cycle is
+  permanently closed; null keep-walking/restart language conflicts. Fold labels
+  omit canonical sign, and its ideal min-of-two model loses. Scoped record in
+  H031-autonomous-walk-screen.md; no universal walk rejection or run admitted.
+  Separate H032 R1 retrieval construction-peak/stopping review also COMPLETED:
+  explicit peel scratch and whole-batch replay on rehash must count; frozen
+  archive does not inherit continuous-insertion stopping, tag assumptions and
+  seed range checks unresolved. Paper-only possibility, no numerical run.
+- NEW Factory Fable5.1 cost/protocol review RUNNING, exact authorized target
+  confirmed in refreshed live catalogue, original brief and root objections given:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-portal-cost-fable-20261008-r1`.
+- Native Sol H032 memory-recovery initial role COMPLETED: three cards in
+  H032-memory-retrieval-cards.md, static endpoint-to-seed retrieval remains
+  speculative; overloaded sketch and punctured-label completion lack gain
+  premises. No experiment admitted. Sol then COMPLETED independent H032 static
+  construction review: scoped accept, intermediate O and O(t) auxiliary-dispatch
+  caveats incorporated in H032-static-coefficient-screen.md.
+
+All new roles read-only/no edits, experiments/imports, children or commits.
+Native reviews have completed; one T3 cost reviewer remains active. Root alone
+integrates. Concurrency stayed within actual limits throughout the wave.
+
+Historical H032 launch snapshot: previous turn was a VERIFIED WAIT; original
+H031 Grok task was revalidated RUNNING,
+not restarted or duplicated. After60ab55e, two free native slots now pursue
+distinct initial proposals while that task runs. Root+two respects native4.
+Both read-only/no edits, numerical experiments/imports, children or commits;
+initial proposals kept independent of each other. Root alone integrates.
+
+- Native Astra /root/h007_additive_relations COMPLETED: static nonadaptive generic
+  coefficient/search schedules and useful-slope coverage versus complete work.
+  Strong signed/BSGS/grumpy/H019 comparison mandatory; literal cubic retuning
+  requires a new explicit premise. No autonomous-walk/scheduling duplication.
+  Two cards returned: additive-basis parabola and multiplicative-basis hyperbola.
+  Root's literal free-inversion loss screen and Q=G dispatch repair confirmed by
+  proposer; no survivor/experiment. H032-static-coefficient-screen.md retains
+  constructions and exact scope; separate Sol review COMPLETED/scoped accept.
+- Native Sol /root/h010_early_dependencies COMPLETED: single-target explicit
+  memory–recovery tradeoffs under hard peak capacity, with paid seed/coefficient
+  reconstruction. Known packed storage, replay, DP and H030 hierarchies belong
+  to the baseline; no new walk transition or standalone hash benchmark claim.
+  Three cards recorded; Astra's separate R1 review COMPLETED, no gain accepted.
+
+Each lens seeks several distinct mechanisms only if worthwhile, with executable
+operation, expected gain, prior art, full costs, unsupported assumption and cheap
+falsifier. No survivor is acceptable. Neither role retries safety-failed
+arithmetic-representation/information/coordinate-relation work. No new experiment
+or generic Lean infrastructure admitted. Verified improvement NONE; classical
+square-root reference unchanged. Main metric remains complete ECDLP cost.
+
+Validation after H031/H032 synthesis: ./scripts/check.sh >
+/tmp/ecdlp-h032-proposals-check.log 2>&1 exit0,366 existing audits. No Lean/Audit
+change. Root stages STATE plus named H031/H032 reports after inspecting diffs;
+unrelated directories untouched. Factory Fable portal-cost review remains live,
+with exact handle retained above; no duplicate or restart. Objective active.
+
+## H031 proposals and C2 carryover
 
 Continuation after3b0b15c: preceding turns were VERIFIED WAITS on the original
 Grok task, still revalidated RUNNING; no restart/duplicate or external blocker.
