@@ -66,6 +66,24 @@ H027 constructive-information role. No edits, experiments or children.
 Root alone integrates. Existing breadth remains in retained H001–H028 pools;
 this wave tests the surviving named candidate, not generic infrastructure.
 
+H028 cost-decision update: diagnostic committed as4cc22b4. Astra's initial
+protocol/layout followups COMPLETED and recommend a paper layout gate before
+new trials. Root derived an O(m) bound on canonical-key collision pairs along
+progressions; Astra and Sol independently confirmed it. This repairs the
+same-side-clustering concern only for the specified prefix sets, not general
+hash clustering or finite prices. Finding H028-layout-admission-gate.md retains
+the proof, exact hypothetical10% margin2551/6800M/key and remaining layout gate.
+Sol complete-cost review remains RUNNING. Opus prior-art r1 COMPLETED;
+raw delivery retained in H028-priorart-opus-r1-raw.md. No signed-h use found in
+its limited source search, NOT a novelty claim. Its unread-GWZ warning is a
+reviewer-specific gap: the project already read GWZ in H019. Root reopened the
+published PDF mirror successfully and assigned NEW r2 with that source:
+node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h028-coefficient-keys-priorart-opus-20261008-r2
+Status RUNNING, same read-only limits. Prior findings and exact objection
+included; no childThreadId continuation. Historical Cell constants remain
+illustrative and uncalibrated for this project.
+No source changes/reruns, new challenge instances or calibrated throughput.
+
 ## H028 uniform fibre bound verified; diagnostic frozen (historical checkpoint)
 
 Previous turn progressed via b03e82e. Repository revalidated clean for this task.
