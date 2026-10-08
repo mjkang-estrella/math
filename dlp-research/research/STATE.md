@@ -20,6 +20,39 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H033 independent proposals and remaining lookup hypothesis
 
+LATEST after6406300: prior turn PROGRESS. All three T3 H033 tasks COMPLETED,
+terminal results acknowledged and no pending children. Raw reports preserved.
+Native Sol stopping-policy proposal and Astra independent reviews COMPLETED:
+H033-stopping-policy-screen.md establishes only conditional leading/model
+negatives for paid interval switching, IID cutoffs and fixed-work portfolios.
+No actual EC runtime law or universal adaptive-policy exclusion is claimed.
+
+Root primary-source checks corrected Opus's wrong-modulus Hu objection; native
+Astra independently verified the actual off-curve printed2P coordinate. Root
+also restored normalization/lookup to the windowed-co-Z cost and rejected the
+memorized-target birthday extrapolation. H033-primary-audit-corrections.md
+records exact source/access limits; no broad primary-search impossibility.
+
+Factory Fable's universal lookup rejection is NOT ACCEPTED. Native Sol completed
+independent correction audit: false half-load gate and wide-payload claim,
+unproved cache/hash/failure transfers and merely conditional frozen-archive
+model. H033-retrieval-lookup-corrections.md retains correct symbolic equations.
+Capacity rationale falsified; residual lookup advantage unsupported. No benchmark.
+
+Grok table-lifecycle report COMPLETED, raw retained. Native Astra COMPLETED
+its final read-only audit. H033-table-lifecycle-corrections.md retains only the
+restricted two-phase inequality, corrects the probe-only minimum and rejects
+universal recovery/constant-memory/lifecycle claims. All H033 children now
+terminal and collected, no writer active. Root alone integrates. No numerical
+run/Lean change; improvement NONE, exponent1/2 unchanged.
+
+H033 validation: `./scripts/check.sh > /tmp/ecdlp-h033-screen-check.log 2>&1`
+exit0,366 existing audits passed. No new theorem claim requires an Audit change.
+Root inspected named diffs and retains raw reports with acceptance corrections.
+Next wave must supply a fresh concrete paid operation/coverage advantage or
+independently verified primary result; no tuning of these losing model premises
+or generic proof infrastructure. The full research goal remains active.
+
 Continuation afterdc75775: previous turn classified PROGRESS. All three T3
 handles and native Sol were authoritatively revalidated RUNNING; no restart.
 Root proposed a sharper comparator for R1's remaining lookup premise:
