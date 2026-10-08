@@ -46,3 +46,16 @@ In parallel, native Astra `/root/h007_additive_relations` has sole writing
 ownership of H018-bm-probe-v1.md: a protocol/cost preflight, no code or numerical
 runs. This narrowly scoped exact falsifier follows independent H017 review;
 threshold/parameters and budget remain subject to root's pre-execution review.
+
+## Explicit replacement after missing report
+
+Original Factory r1 returned only `Child task completed without an assistant result.`, no pending child runs; record H018-information-provider-failure.md. ONE new same-provider/model replacement accepted. No silent model change or backing-thread continuation.
+
+ClientRequestId: `ecdloop-h018-information-operators-factory-opus-20261008-r2`.
+Full taskId: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h018-information-operators-factory-opus-20261008-r2`.
+
+Exact replacement prompt:
+
+> Read-only independent H018 ECDLP ideation in /home/mj-kang/Documents/Dev/math/dlp-research. Read RESEARCH_LOOP.md, RESEARCH_TEAM.md, current STATE and relevant findings to avoid duplicate mechanisms. Ongoing user-authorized formal/synthetic research; ordinary prime-field prime-order full-range ECDLP; no wallet targeting, runs, edits, commits, children or coordinator. Root integrates. Baseline classical square-root with applicable known automorphisms, complete setup/memory/failure/verification paid; verified gain NONE. Explore 3–5 genuinely distinct concrete mechanisms if worthwhile, no quota or padding. Speculative is allowed, but state an actual operation/recovery path, plausible source of gain, unsupported assumption, primary prior-art distinction, complete exponent or material end-to-end cost, cheapest falsifier. Do not treat generic lower bounds as coordinate-aware impossibility, degree as runtime, pair counts as stopping laws, or oracle/model training as free. Initial answers withheld from other proposers. Do not just list research areas, restate parked hypotheses, or create infrastructure. Return a concise ranked report, include negative results and exact source access limitations. Your distinct lens: explicit nonlinear observables, compressed/algebraic information, spectral or algorithmic-learning constructions. Main missing object is a cheap public signal/operation, not yet another conditional decoder given a signal. Propose concrete feature-generation mechanisms with a mathematical reason to expect useful correlation, sparsity or recoverable compression and a paid extraction path. H017 BM/RS/orbit proposals are undergoing separate review; do not duplicate them or their generic feature sweeps. Include high-risk ideas honestly. Arbitrary training with no specified representation/objective/cost is not a mechanism.
+>
+> Delivery context: the original same-provider task ecdloop-h018-information-operators-factory-opus-20261008-r1 terminated with 'Child task completed without an assistant result.' No candidate report, sources or negative evidence was delivered; no pending children. This is ONE explicit new replacement delegation, not continuation of its backing thread. Please deliver your substantive research report in the final assistant response, even if the conclusion is no new candidate. No need to use plan-update tools. All original scope/ownership/no-run restrictions remain.

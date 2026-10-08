@@ -877,3 +877,23 @@ one-curve sparse-recurrence diagnostic protocol/cost preflight RUNNING, ownershi
 only hypotheses/H018-bm-probe-v1.md; no numerical/code execution. Native and T3
 capacity respected; no backing-thread continuation or duplicate coordinator.
 Root owns integration. Verified improvement NONE; unbounded goal active.
+
+## H018 delivered reviews and first diagnostic
+
+Grok r1 fullsolver-hybrids COMPLETED; raw retained and NEW native Sol cards1/3
+review COMPLETED. Root cards2/4 review completed; invalid universal closures
+and missing factor-base logs are explicit in H018-hybrid-disposition.md.
+Factory information-operators r1 TERMINAL with missing assistant result, not
+a research negative; ONE NEW same-provider/model r2 accepted RUNNING. Exact
+replacement prompt and full taskId in H018-independent-operators.md.
+
+Native Astra BM protocol and review-only implementation COMPLETED. Independent
+native Sol protocol, static code/cost and recorded-data review rounds COMPLETED.
+Root executed the diagnostic ONCE after explicit budget corrections:71755events,
+96order-test fixture-selection exhaustion, no controls/features, INCONCLUSIVE.
+See H018-bm-admission.md and H018-bm-initial-result.md for command/hashes/scope.
+Attempted new native gpt-6.1-sol reviewer spawn FAILED agent-thread limit; that
+model did not run. Existing Sol supplied the independent review instead.
+Native Astra paper-only fixture-extension assessment COMPLETED, considering
+all previous work charged in cumulative1M and explicit two-process time cap.
+No extension execution or automatic rerun authorized at this checkpoint.
