@@ -37,8 +37,13 @@ ONE frozen diagnostic after explicit reservation corrections. ResultINCONCLUSIVE
 96 order tests exhausted,71755 events, no eligible fixture, controls or features.
 Independent saved-data audit PASSED at its stated scope; no scalar rerun.
 See H018-bm-initial-result.md. A separately reviewed fixture-only extension is
-being considered, carrying all71755 events into the same cumulative1M cap;
-not yet implemented/authorized. No hidden fixture search. Attempted new native
+accepted FOR IMPLEMENTATION REVIEW after124dba5, carrying all71755 events into
+the same cumulative1M cap. Native Astra owns only proposed H018-bm-probe-v2.md
+and bm_probe_extension.py; independent native Sol extension review RUNNING.
+Same features/threshold; public b range1..8 and
+273 order tests; explicit120s total for two60s processes. NO execution yet,
+no further fixture extension if it fails; v1 artifacts remain immutable.
+No hidden fixture search. Attempted new native
 gpt-6.1-sol code-review thread failed with agent-thread limit; model did not run.
 Three NEW T3 H018 independent initial tasks accepted RUNNING. Claude Opus
 algebraic role subsequently TERMINAL with provider safety-classifier block and
