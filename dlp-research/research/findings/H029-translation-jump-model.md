@@ -53,15 +53,38 @@ Astra separately checked root's algebra. The accepted HEURISTIC negation-rho
 leading-arithmetic reference with0<=S/M<=1 is at most3sqrt(pi)M sqrt(q)<6M sqrt(q).
 Thus this exact equal-gap, fresh-uniform-jump MODEL cannot support the imported
 rho headroom even before mixer cost. This is a conditional model falsifier only.
-In particular q=32m is not a prime-order instance; almost-equal gaps need a
-separate calculation, not substitution. No numeric5.09 or universal delta
-barrier follows. Starting with a visited marker changes finite expectations.
+Here q=32m is not a prime-order instance. The independently checked extension
+below removes that divisibility restriction within this model. No numeric5.09
+or universal actual-walk delta barrier follows. Starting with a visited marker
+changes finite expectations.
 
 Equal gaps generally give the usual finite birthday product on m endpoints.
 In a sparse regime m=delta*q, fill work has order Fcost*sqrt(q/delta), under
 these hypotheses. Arbitrary gap shapes change both kappa and residual costs;
-density alone is not their replacement. Actual coordinate-defined jump outputs
+density alone is not their replacement for an exact expectation. Actual coordinate-defined jump outputs
 are not proved independent uniform, nor are their gaps known to be equal.
+
+## Unequal-gap extension, independently checked 2026-10-08
+
+Root derived and native Astra checked a density-only LOWER bound, retaining
+the same empty-visited, iid uniform landing and marker-only detection assumptions.
+Cauchy–Schwarz gives kappa>=1/m. Combining the preceding formulas yields
+
+    E W_fill >= Fcost*(q*kappa-1)/(4sqrt(kappa))
+             >= Fcost*(q-m)/(4sqrt(m)).
+
+The second inequality follows because q*sqrt(kappa)-1/sqrt(kappa) is increasing.
+The final expression decreases with m. Therefore m<=q/32 implies
+
+    E W_fill >= Fcost*31/(16sqrt2)*sqrt(q).
+
+At Fcost=5M this recovers the preceding >6M*sqrt(q) comparison for ANY positive
+integer gaps, including prime q; equal gaps and q divisible by32 are unnecessary.
+This eliminates a gap-shape loophole only in the specified iid landing model.
+It does not establish actual deterministic-walk mixing, useful label recovery,
+interior collision detection or complete implementation cost. No additional
+experiment or Lean theorem is claimed. A deterministic r-adding collision
+correction from another model must not be multiplied into this exact iid formula.
 
 ## Detection and applicability obligations
 

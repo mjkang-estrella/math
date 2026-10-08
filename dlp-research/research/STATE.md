@@ -18,7 +18,44 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H028 diagnostic completed and independently audited (latest checkpoint)
+## H029 current checkpoint: report reconciliation and stronger model screen
+
+Factory Fable parallel-work proposer and Claude Opus primary-comparator audit
+COMPLETED; original task handles and raw reports retained in H029 register.
+Native Astra independently reviewed Fable's3 cards: no complete-work survivor,
+but its purported universal rejections contain unsupported assumptions. The
+variable-hazard AM–HM argument is false in general; branching needs an actual
+retirement/detection contract. H029-parallel-reconciliation.md is authoritative.
+Native Sol COMPLETED its independent check of Opus's primary claims; corrections include
+turning an achievable success bound into a literal total-cost lower bound and
+transferring deterministic r-adding corrections to a different iid jump model.
+H029-primary-comparator-reconciliation.md retains actual historical measurements,
+constructive theorem scope and the rejection of unsupported full-work inferences.
+
+Root/Astra strengthened the CONDITIONAL translation-fill model: for m marked
+endpoints among q positions, EW_fill>=F(q-m)/(4sqrt(m)), any positive integer
+gaps. At m<=q/32 and F=5M the bound exceeds6M*sqrt(q), including prime q.
+Still requires independent uniform landings, initially empty visited set and
+marker-only collision detection; no theorem about actual coordinate walks.
+No numerical experiment or new Lean claim. Grok walk-contract repair COMPLETED
+and is retained in H029-walk-repair-grok-raw.md. Separate native Astra Stage0
+math/detection and native Sol cost/protocol reviews COMPLETED.
+H029-walk-stage0-review.md records unsupported cross-phase DP coalescence,
+conflicting null-hit policy and missing sequential inversion correction. Six-word
+DP records omit active rings/scratch/labels. Proposed tests are NOT admitted;
+the full-dictionary test and single structured scalar cannot establish the
+claimed low-memory full-work premise. Sol found an exact target bias: q=3k+r
+implies3Q=-rG, so starts three indices apart meet after1/2 translation fills.
+The proposed small-q cap also stops an all-active batch before its first mixer.
+No universal clocked-walk rejection. All H029 roles are now terminal.
+Current best supported generic exponent1/2; verified complete-work improvement
+NONE. Next decision-changing evidence is a complete repaired walk contract with
+justified useful-collision law, followed only if warranted by a frozen test.
+H028 execution remains parked. Sole-root integration and broad ideation persist.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h029-reconciliation-check.log 2>&1
+exit0,366 existing audits. No Lean/Audit edit; paper mathematics remains separate.
+
+## H028 diagnostic completed and independently audited (historical checkpoint)
 
 Single frozen run exit0,3,351,990 events, no cap/error. All four synthetic curves
 (q73,103,271,8053), exact fibre/discriminant identities and twelve fixed-seed
