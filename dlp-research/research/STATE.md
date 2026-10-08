@@ -24,20 +24,34 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis set: H016 mixed-modulus information feature, labelled seed
-   bursts and anchored translated-fibre components. All delivered concrete
-   operations, none a supported complete-work improvement; prototypes parked.
-4. Evidence: mixed-modulus carry adds no extra information; seed negation hits
-   cluster despite pairwise uniformity; fixed few-anchor fibre components have
-   an exact3^L*N secret-coverage bound. Claude source review preserved local
-   restrictions while removing unsupported universal degree/runtime obstructions.
+3. Current hypothesis set: H017 independent operation design for growing anchor
+   dictionaries, valid small-root extraction and scalar-information mechanisms;
+   three additional cross-provider independent creative lenses. H016 prototypes
+   remain parked; new briefs are in H017-independent-briefs.md.
+4. Evidence: published CRYPTO2025 small-root source retrieved; its provable
+   bound calculation retains a separate zero-dimensional root-extraction
+   assumption and supplies no ECDLP attack. Native information role found no
+   supported new signal; its linear-averaging screen duplicates H013's existing
+   paid-observation identity and is not counted as a new finding. H016
+   fixed-few-anchor coverage and seed-hit clustering remain.
    H014 remains the latest numerical run:738704 events, no gross feature signal.
-5. Next conclusion-changing step: an actually cheaper useful-boundary selector,
-   motivated scalar-information mechanism, or fully specified/costed small-root
-   construction. No larger feature sweep, backend engine or generic Lean
-   infrastructure justified. Ranked dispositions in H016-ranked-shortlist.md.
+5. Next conclusion-changing step: independently review concrete H017 operations,
+   admit a matched cheap falsifier only if useful extraction or information gain
+   survives full-cost analysis. No larger arbitrary feature sweep, backend
+   engine or generic Lean infrastructure justified; improvement still NONE.
 
 ### Latest authoritative task snapshot (older sections are history)
+
+H017 began after06dbd00. Native growing-anchor and small-root roles RUNNING;
+native information role COMPLETED with no positive signal; proposed linear
+averaging screen deduplicated against H013-group-action-features.md. NEW Claude
+Opus coordinate bridges, Grok computational
+hybrids and Factory Opus information mechanisms accepted RUNNING. Exact retained
+taskIds/clientRequestIds and independent briefs: H017-independent-briefs.md.
+Live capability discovery confirms all three requested models, no substitution.
+Read-only delegates; root owns integration. H015 replacement completion was
+acknowledged again; already integrated, no duplicate task. All older live-task
+sentences below are historical. Goal remains active, not achieved or blocked.
 
 H013 original Opus algebra, Factory Opus learning/information, native coordinate,
 native representation and native scheduling roles COMPLETED. Independent native

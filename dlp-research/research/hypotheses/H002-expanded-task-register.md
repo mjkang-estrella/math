@@ -792,3 +792,22 @@ H016 final role snapshot supersedes that live sentence:
 All H015/H016 child tasks terminal/completed (Factory missing-output failure
 still classified separately). No current live native/T3 child, duplicate loop,
 numerical test or formal infrastructure. Root integrates only named task records.
+
+## H017 independent operation wave
+
+Supersedes the previous no-live-task snapshot. Full retained task IDs and lens
+briefs are in H017-independent-briefs.md. Native /root/h006_structured_relation_ideas
+and /root/h010_early_dependencies accepted followups for growing-anchor selection
+and valid small-root construction. /root/h007_additive_relations completed its
+information brief with no new positive mechanism; root deduplicated its exact
+averaging screen against H013. No experiment launched.
+
+NEW T3 async tasks accepted RUNNING after successful live model discovery:
+- ecdloop-h017-coordinate-bridges-opus-20261008-r1 (claudeAgent/claude-opus-5-5)
+- ecdloop-h017-computational-hybrids-grok-20261008-r1 (grok/grok-4.7)
+- ecdloop-h017-information-mechanisms-factory-opus-20261008-r1
+  (acpRegistry_factory_droid/claude-opus-5-5)
+Exact taskId prefix is preserved in the linked brief; no backing-thread messages,
+top-level threads, duplicate coordinator or silent substitutions. Root obtained
+published2024/1330 version and independently checked its extraction assumption;
+native Sol retrieved the same source independently for its still-live proposal.
