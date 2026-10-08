@@ -21,6 +21,30 @@ H020-structured-disposition.md. In particular no universal degree/output-size,
 precision or Freiman runtime lower bound is accepted. No numerical experiment.
 Grok and Factory Opus exact handles revalidated RUNNING after f879f6d, no restart.
 
+## Recent primary-source bridge check
+
+After90b7fdf, root ran bounded primary-literature searches for 2025/2026 ECDLP
+algorithms. Mahalanobis2607.09814 is still v2 (Aug6), already reviewed in H008;
+APS2017/609 already reviewed in H013. Do not duplicate those investigations.
+This search is not an exhaustive literature or novelty certificate.
+
+A new primary item was found: Lin et al., DOI10.23919/ICN.2026.0017,
+https://www.sciopen.com/article/10.23919/ICN.2026.0017, published Sept21,2026.
+Root read the publisher abstract only: it reports 16-bit prime-field QA work
+and a changed penalty representation. Embedded AMiner-generated content is
+not a primary source and was ignored. No speedup or scalability claim accepted.
+
+NEW native Sol /root/h010_early_dependencies read-only source/bridge review
+RUNNING. Exact brief: obtain primary full text if available; check the proposed
+Semaev/Ising penalty restructuring and dynamic coefficient optimization for an
+actual transferable classical relation-generation gain. Verify group order,
+full scalar range, setup/embedding/repetitions/success costs, matched classical
+baseline and scaling; report source limits and specific pages/formulas. Do not
+equate annealing time with classical work or toy success with asymptotics.
+No runs, edits, children, commits, paid services or broad quantum survey.
+Return candidate-specific cheap falsifier only if a real bridge exists.
+Root sole integration. This is distinct from the live Grok/Factory proposals.
+
 ## ecdloop-h020-structured-batching-opus-20261008-r1
 
 Provider/model: claudeAgent / claude-opus-5-5.

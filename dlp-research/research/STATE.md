@@ -101,6 +101,12 @@ as last verified. Exact briefs/provider/model/clientRequestIds/full taskIds in
 hypotheses/H020-independent-candidates.md. No outputs shared before synthesis;
 all read-only, no new experiments/children. These are new distinct mechanisms,
 not continuations through backing child threads or duplicate coordinators.
+After90b7fdf both remaining exact T3 handles revalidated RUNNING. Root bounded
+recent-primary search deduplicated Mahalanobis v2/H008 and APS/H013. A newly
+found Sept2026 Semaev/Ising annealing paper reports a changed penalty encoding
+on a 16-bit instance in its publisher abstract. Native Sol read-only fulltext
+and classical-bridge review RUNNING; source/brief in H020-independent-candidates.
+No claimed quantum/classical speedup accepted; no hardware run or purchase.
 Root alone integrates; unbounded goal remains active; verified improvementNONE.
 Older historical live-work descriptions below are superseded by this section.
 
