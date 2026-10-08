@@ -47,6 +47,11 @@ for two small fixtures, discriminant consistency and one10M-event/55second
 work reservation. Changes from unexecuted3M draft and unsupported1M reviewer
 estimate explicit. Code review precedes first run.
 
+Checkpoint a26259d committed the proof and frozen protocol. Native Astra now
+implements ONLY experiments/H028/key_probe.py under disjoint write ownership;
+no execution/imports/self-tests/results or shared-file edits authorized. Root
+integrates/commits, and independent source review precedes first numerical run.
+
 NEW native Sol complete-cost review RUNNING for the archive-free verification
 variant, distinct from first diagnostic. Original H027 Fable initial role still
 RUNNING at authoritative check. Exact task IDs/briefs in H028 register.

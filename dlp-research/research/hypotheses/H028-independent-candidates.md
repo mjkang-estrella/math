@@ -147,3 +147,14 @@ setup/exception/memory/stopping and added field/RAM work must be included.
 Distinguish model-specific arithmetic gains from physical or complete-work claims.
 Read-only/no runs/imports/edits/children. Root alone implements/integrates.
 Original H027 Fable constructive-signal handle remains live, no duplication.
+
+## Diagnostic implementation — RUNNING
+
+Native Astra /root/h007_additive_relations has exclusive write ownership of
+research/experiments/H028/key_probe.py only. Implement committed protocol a26259d,
+all exact fixtures/checks/grid/accounting/guards; no execution, imports, warmups,
+py_compile or result generation, no children, no shared documentation edits.
+Root alone integrates/stages/commits. Independent Sol source review plus root
+inspection must precede any first run. No diagnostic orbit table is candidate
+advice. Pure source inspection only; disclose ambiguities rather than weaken
+checks or change frozen parameters. Active writer does not own STATE/protocol.
