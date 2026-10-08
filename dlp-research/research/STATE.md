@@ -18,36 +18,47 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H028 rolling ideation and H027 walk review (latest checkpoint)
+## H028 concrete key candidate under review (latest checkpoint)
 
-Main objective and broad independent ideation policy remain primary. Best supported
-ordinary full-size work remains square-root; verified complete-work improvement NONE.
-No GPU calibration or baseline update. HEAD entering this wave: 6c5a5c2.
+Previous turn made progress via checkpoint5b5bebd. Current worktree revalidated:
+only this task's new records plus unrelated directories, which remain untouched.
+Main objective and broad independent ideation persist. Best supported complete
+work remains square-root; verified improvement NONE. No calibrated GPU change.
 
-Two distinct native initial proposers are RUNNING: Astra coordinate/algebraic
-relations (/root/h007_additive_relations), Sol arithmetic/lifting constructions
-(/root/h010_early_dependencies). Their proposals remain independent. Astra has
-an unreviewed concrete provisional-key candidate h=a/q: claimed saved squarings
-must survive fibre occupancy, randomization, exact recovery and full memory/cost
-review. No numerical or formal result for it yet.
+Both H028 native initial roles COMPLETED independently. Astra supplied a concrete
+provisional h=a/q signed-key mechanism: regular H019 blocks avoid2kell output
+squarings, while exact points are reconstructed on bucket matches. All entries,
+archives, setup, randomization and verification remain paid. Root derived exact
+signed-fibre false-pair accounting; proposer separately confirmed and clarified
+that actual infinity is dispatched BEFORE scans. Complete candidate and differing
+all-point/nonidentity formulas are retained, not yet independently accepted.
+No numerical evidence or asymptotic fibre bound. Sol's separate arithmetic role
+found no positive survivor; conditional matrix-readout screen retained in register.
 
-Grok H027 adaptive-search role COMPLETED and its raw report was read/retained.
-Three differential-fill/mixer cards require collision-detection review before any
-trial: oriented walks need not coalesce on negated x matches, macro phase may
-matter, and full-BSGS fallback is not low-memory. A NEW Claude Opus5.5 reviewer
-is RUNNING with the raw report and these objections. Exact task ID and briefs:
-hypotheses/H028-independent-candidates.md. Original H027 Fable constructive-signal
-handle remains RUNNING, not restarted. Current native use root+two fits four;
-T3 live catalog refreshed and exact review launch succeeded.
+NEW Factory Opus5.5 provisional-key mathematics/cost review RUNNING. NEW native
+Sol diagnostic-design role RUNNING, distinct from that audit: freeze fixed-fixture
+correctness/fibre test and event accounting before root implementation. No test
+admitted or run. Proposer primitive check plus informative finite fibres could
+justify a matched whole-solver comparison; fibre statistics alone cannot do so.
 
-Next experiment capable of changing the conclusion: a frozen candidate-specific
-correctness/fibre or useful-hit/full-cost diagnostic, but only after its concrete
-contract survives independent review. No experiment admitted yet; no generic
-Lean work. Existing goal active, no duplicate coordinator or scheduler.
+H027 Opus walk review COMPLETED and raw report retained. It found real detection
+and memory issues but promotes an unverified mixing/stopping heuristic to a paper
+kill; root does NOT accept that conclusion. NEW native Astra scope review COMPLETED.
+Preliminary exact correction: selected translation/doubling indegree variance is
+2(|B|-|B intersect (2B-G)|)/q, not automatically2delta(1-delta). No runtime bound
+follows solely from this identity. Completed reconciliation also supplies a known rational3M ordinate recovery
+repair for Card2; no claimed solver gain. See H027-walk-detection-reconciliation.md.
+Original
+H027 Fable constructive-signals handle still authoritatively RUNNING at this turn's
+check; no restart. Exact task IDs and briefs: H028-independent-candidates.md.
 
-Validation: ./scripts/check.sh > /tmp/ecdlp-h028-rolling-check.log 2>&1
-exited0, 366 existing audits. No Lean/Audit changes. Root stages only the four
-named research records; unrelated directories and build products excluded.
+Validation: first check invocation used the repository root and exited127 (script
+not there); corrected project-directory ./scripts/check.sh redirected to
+/tmp/ecdlp-h028-key-contract-check.log exited0,366 existing audits. No test result
+is attributed to the failed invocation. Named task records only are staged.
+
+Root alone integrates. No Lean/Audit changes, broad infrastructure, duplicate
+coordinator, scheduler or push. Existing goal active; no proof-count success metric.
 
 ## H027 character-descent falsifier verified (authoritative)
 
