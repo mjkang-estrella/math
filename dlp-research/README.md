@@ -100,6 +100,11 @@ without being an exponent improvement.
   coordinate curves. Negation pairs reduce some counted additions while adding
   sign/key work. This known constant-factor method has no calibrated speed or
   exponent claim; the full event vectors and review disagreements are in W006.
+- Independently reviewed checked-word instruction steps and actual prefix
+  serialization, with fault/event correspondence and exact program bit lengths
+  (W011/W013). These are internal components of a separate abstract cost model;
+  raw-input setup, shared fuel, complete solver costs and tape refinement are
+  still open. The encoding is deliberately unary and proves no compactness.
 - The standard secp256k1 generator coordinates satisfy y^2 = x^3 + 7 (mod p),
   and the standard scalar-order constant is less than 2^256.
 - Arithmetic showing that the earlier illustrative workload 2^128 exceeds a

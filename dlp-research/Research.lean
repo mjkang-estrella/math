@@ -16,3 +16,5 @@ import Research.PointKey
 import Research.IndexedLookup
 import Research.SortedBabies
 import Research.SortedBSGS
+import Research.WordCore
+import Research.WordCodec
