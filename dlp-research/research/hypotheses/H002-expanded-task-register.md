@@ -431,3 +431,40 @@ net schedule and root Grok-disposition review, no numerical trials.
   root/native argument and scope objections included. Read-only, no experiments,
   numerical scratch, edits or children. Check finite common-grid transfer rather
   than equating formal coefficient rank with sampled rank.
+
+## H010 cyclic Graeffe v1 review round
+
+- Native Astra /root/h006_structured_relation_ideas COMPLETED proposal.
+- Native Astra /root/h007_additive_relations RUNNING correctness/independent
+  adversarial support review; native Sol /root/h010_early_dependencies RUNNING
+  operational-cost falsifier. Read-only, no experiments or children.
+- Claude Opus5.5 (claudeAgent) launched RUNNING, new prior-art/family/cost round:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-graeffe-priorart-opus-20261008-r1`.
+  Stable request ID is suffix. Exact live model confirmed. No backing-thread
+  continuation. Existing independent Fable/Grok H010 ideation is not duplicated.
+- Frozen operation: research/hypotheses/H010-cyclic-graeffe-v1.md.
+  Proposed first-block coefficient-face obstruction is preliminary, not accepted.
+
+H010 cyclic review delivery: native Sol COMPLETED exact first-2-block support
+obstruction; native Astra independently CONFIRMED face/phase/CRT and cap-independent
+work/reward argument, also checking norm/descent. Root verified and retained the
+scoped rejection in findings/H010-cyclic-graeffe-obstruction.md. Opus primary-source
+review remains RUNNING; existing Fable/Grok independent ideation revalidated
+RUNNING, not duplicated. No numerical experiments or new formal infrastructure.
+
+### H010 Factory Fable missing-output replacement
+
+r1 terminal status COMPLETED, result solely "I'll start by reading the loop
+instructions and current state." No findings or pending runs; failed deliverable
+recorded explicitly. Same exact Factory model, new independent round launched
+RUNNING with original adaptive-label/base lens and missing-output objection:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-adaptive-sampling-fable-20261008-r2`.
+Stable request ID is suffix; provider acpRegistry_factory_droid, model
+claude-fable-5.1. Read-only, no experiments/children. Existing Grok/Opus roles
+remain live. Native H010 correctness review now COMPLETED in full.
+
+Opus H010 Graeffe prior-art r1 COMPLETED; raw output plus qualified disposition
+retained. Native Sol /root/h010_early_dependencies has a NEW RUNNING read-only
+paper task on two-free-coordinate support, addressing the output-sensitive
+variant suggested in the review. Not accepted yet; no experiment/implementation.
+The original first-block literal-pair obstruction remains independently checked.

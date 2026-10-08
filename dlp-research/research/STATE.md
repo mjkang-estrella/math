@@ -24,21 +24,20 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis: H009 literal CRT sparse-Euclid has now failed its reviewed
-   cost screen. H010 independent compressed-selector, adaptive-labelled-sampling
-   and hybrid-search ideas are under development; no new survivor is accepted.
-4. Evidence: an exact reciprocal coefficient formula and CRT noncollision give
-   Omega(B²) first-division steps outside O(B^-2) of uniform finite targets.
-   Independent review confirmed the formula, characteristic conditions and
-   quotient cutoff. A fixed-grid signed-tuple count additionally rejects the
-   proposed Theta(B)-row collector even with charged batch outputs: Omega(B³)
-   expected work versus B^(5/2) reference. Scope includes fixed shifts, uniform
-   targets and literal cap consumption; no extra early screen. This is a paper
-   result, not Lean-proved, and excludes neither faster gcd nor adaptive algorithms.
-5. Next conclusion-changing step: obtain a concrete H010 operation that changes
-   the rejected cost/yield tradeoff, then independently review and freeze a cheap
-   synthetic falsifier if warranted. No S6 engine, matrix-equivalence benchmark,
-   broad F4 campaign or generic Lean infrastructure is funded.
+3. Current hypothesis: H010 cyclic Graeffe v1 has failed an independently checked
+   first-block cost screen. Independent adaptive-labelled-sampling and hybrid
+   mechanism proposals remain live; no improved algorithm is accepted.
+4. Evidence: during the first 2-power block, an exact S6 leading face and
+   full-box CRT injectivity preserve Omega(B) terms. The NEXT frozen convolution
+   visits Omega(B²) pairs for all but at most2/(q-1) of uniform finite targets.
+   One-row output plus paid attempts gives Omega(B²) expected cost per row even
+   with arbitrary caps/early abandonment, rejecting the proposed Theta(B)-row
+   collector at Omega(B³). This is a paper result, not Lean-proved; compressed
+   multiplication and changed samplers/schedules are not excluded.
+5. Next conclusion-changing step: review the remaining adaptive-sampling/hybrid
+   proposals and primary-source applicability report. A changed concrete
+   operation is needed before reopening the rejected schedule. No S6 engine,
+   matrix-equivalence benchmark or generic Lean infrastructure is justified.
 
 ## Live work and actual failures
 
@@ -136,7 +135,7 @@ Live read-only roles, no edits/experiments/children:
 - Native Astra /root/h007_lattice_carries COMPLETED H009 reciprocal-series paper
   argument. Root and independent reviewer confirmed its scoped lower bound.
 - Native Astra /root/h006_structured_relation_ideas COMPLETED CRT selector card,
-  now RUNNING H010 independent executable compressed-selection ideation.
+  then COMPLETED H010 independent executable compressed-selection ideation.
 - Native Astra /root/h007_additive_relations COMPLETED coordinate ideas and H009
   construction/cap review (findings/H009-construction-screen.md); no demonstrated
   cap fit. COMPLETED independent reciprocal formula/CRT/cap review, then a separate
@@ -168,7 +167,7 @@ sparse-gcd hardness transferred to the fixed-S6 family. The CRT family requires
 a suitable paid factorization of p-1, with no secp256k1 transfer.
 
 H010 independent task status, no edits/experiments/children:
-- Native Astra /root/h006_structured_relation_ideas: compressed exact selectors.
+- Native Astra /root/h006_structured_relation_ideas COMPLETED compressed exact selectors.
 - Native Sol /root/h010_early_dependencies COMPLETED two operation-level screens:
   unlabelled-anchor even circuits and repeated-point short divisors. Neither
   supplied relation producer wins. Root retained sampling/distinctness/full-sweep
@@ -183,8 +182,8 @@ turns were verified waits, not a blocker. A fourth independent proposer was adde
 and has now completed its distinct task;
 no completed or live hypothesis was restarted or duplicated.
 Native Astra's preliminary H010 survivor is a cyclic Graeffe norm schedule with
-explicit torsion-root backtracking, not H009 literal division. Final specification
-and cost assumptions are pending. All sparse intermediate products count; shrinking
+explicit torsion-root backtracking, not H009 literal division. Final specification is retained in H010-cyclic-graeffe-v1.md;
+the independently checked first-block obstruction now rejects the frozen schedule. All sparse intermediate products count; shrinking
 modulus is not a runtime bound. New restriction: N built from bounded prime factors.
 Distinct lenses and isolated initial proposals; actual native/T3 limits respected.
 Continue via completion notifications after checkpoint, no busy loop or scheduler.
@@ -194,3 +193,54 @@ are retained in hypotheses/H009-independent-candidates.md. Prior goal turn was a
 verified wait with primary-source evidence; this turn integrated completed reviews
 and root arithmetic. No genuine blocker audit has begun.
 Unrelated untracked factoring-research/ and research-monitor/ remain untouched.
+
+## H010 frozen selector review checkpoint (current status below)
+
+Native Astra /root/h006_structured_relation_ideas COMPLETED concrete cyclic
+Graeffe and conditional split-fiber cards. Full paid construction remains separate
+from the transform/descent support bound; no new algorithm win is established.
+Native Astra /root/h007_additive_relations independently CONFIRMED norm/descent
+and the cost obstruction, and supplied the split-fiber degree-accounting caveat.
+Native Sol /root/h010_early_dependencies COMPLETED the first-2-block face and
+work/reward argument. Root independently verified it; scoped paper rejection is
+recorded in findings/H010-cyclic-graeffe-obstruction.md. Both read-only, no experiments/children/edits.
+Claude Opus5.5 prior-art/family/complete-cost reviewer launched RUNNING:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-graeffe-priorart-opus-20261008-r1`.
+The stable clientRequestId is its suffix. Live capability discovery confirmed
+that exact model/provider. Existing H010 Factory Fable and Grok ideation handles
+remain retained, not duplicated. No writer touches shared state.
+
+Root reread the H009 Opus terminal result under its existing handle; already
+integrated evidence remains unchanged. Root independently opened both Graeffe
+primary sources, noted splitting/separability and excluded setup assumptions,
+and corrected missing Grenet coauthorship. New records are hypotheses and paper
+checks, no new Lean claim or Audit entry. Improvement remains NONE.
+
+H010 selector milestone: independently checked paper rejection, no new engine.
+Latest validation `./scripts/check.sh > /tmp/ecdlp-h010-graeffe-check.log 2>&1`
+passed exit0, 363 existing audits. The new result is not Lean-proved. Explicit
+staging covers only the two H010 Markdown records, STATE and task register;
+unrelated factoring-research/ and research-monitor/ remain untouched. Existing
+Fable/Grok handles revalidated RUNNING during this turn, no duplicate launches.
+Await asynchronous completion notifications after this coherent checkpoint.
+
+Factory Fable r1 has now terminated as COMPLETED with no substantive report:
+its entire returned text was "I'll start by reading the loop instructions and
+current state." latestTerminalSummary agrees and no pending child run remains.
+This is a failed deliverable, not completed research or a mathematical rejection.
+A new explicit replacement round with the same available Factory Fable5.1 model
+launched RUNNING, with the original lens and missing-output objection included:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h010-adaptive-sampling-fable-20261008-r2`.
+Stable request ID is its suffix. No silent provider substitution or backing-thread
+continuation. The live adaptive ideation handle is r2, not r1. Native correctness
+review is now fully COMPLETED and its exact final qualifications are integrated.
+
+Opus H010 prior-art r1 now COMPLETED, full report retained in
+findings/H010-graeffe-priorart-opus-raw.md with root disposition beside it.
+Unsupported sigma/raw-root/construction shortcuts are not accepted. Root checked
+sparse multiplication primary abstracts and corrected the Arnold–Roche sumset
+cost distinction. Native Sol /root/h010_early_dependencies RUNNING a new bounded
+paper question: can the two-free-coordinate norm face force Omega(B²) STORED
+support, beyond the already rejected literal pair schedule? Conjecture only, no
+new numerical run or engine. Live T3 roles: Factory Fable r2 and Grok hybrid r1.
+Explicit staged scope also includes the raw Opus report and its disposition.
