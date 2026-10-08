@@ -20,3 +20,4 @@ import Research.WordCore
 import Research.WordCodec
 import Research.SignedTight
 import Research.WordRun
+import Research.WordRunFacts

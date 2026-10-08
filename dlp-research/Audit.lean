@@ -277,3 +277,14 @@ import Research
 #print axioms Research.WordRun.expected_output_checks
 #print axioms Research.WordRun.setup_ledger_checks
 #print axioms Research.WordRun.access_disposition_checks
+
+#print axioms Research.WordRunFacts.guest_trace
+#print axioms Research.WordRunFacts.guest_setup_counts
+#print axioms Research.WordRunFacts.run_setup_counts
+#print axioms Research.WordRunFacts.run_setup_units
+#print axioms Research.WordRunFacts.terminal_setup_fuel
+#print axioms Research.WordRunFacts.terminal_setup_counts
+#print axioms Research.WordRunFacts.terminal_pays_setup
+#print axioms Research.WordRunFacts.terminal_used
+#print axioms Research.WordRunFacts.terminal_ordering
+#print axioms Research.WordRunFacts.guest_split
