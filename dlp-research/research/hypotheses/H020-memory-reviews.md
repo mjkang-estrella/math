@@ -10,7 +10,26 @@ no general predictor impossibility or universal macro-map runtime is claimed.
 No executable primitive, hence no numerical test. Separate Fable cost review
 still live as last revalidated; initial public-signal role likewise live.
 
+Latest delivery: Factory Fable cost review COMPLETED, terminal result read/no
+pending children. Raw H020-memory-cost-fable-raw.md retained. NEW native Astra
+/root/h007_additive_relations independent correction review RUNNING, read-only,
+no runs/edits/children. Brief: do not accept universal finite-memory rho factor;
+under assumed overhead n/theta all per-step arithmetic also applies to the
+overhead (missing I/D term), and active walks/DP records differ. Pairwise
+candidate count needs secret-independent labels or a justified conditional
+bound; adaptive labels evade a naive realized-cardinality argument. Generic
+membership-filter lower bounds do not establish witness-retrieval/index-memory
+bounds; check actual packed-table/directory/replay costs and avoid universal
+3x compression/dominance claims. Preserve finite Cx arithmetic, corrected
+fingerprint inequality, and scoped literal replay accounting. No new run.
+
 ## ecdloop-h020-residue-shadow-review-opus-20261008-r1
+
+Authoritative completion update: native Astra correction review COMPLETED.
+Root integrates H020-memory-cost-disposition.md: missing iota/D term,
+finite batch expression, conditional restart scope, corrected fingerprint
+inequality and membership-versus-index distinction. No all-budget dominance
+or universal compression ceiling accepted. Both original T3 reviews completed.
 
 Provider/model: claudeAgent / claude-opus-5-5.
 ClientRequestId: `ecdloop-h020-residue-shadow-review-opus-20261008-r1`.

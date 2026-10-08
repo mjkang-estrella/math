@@ -104,10 +104,20 @@ errors. Claude Opus shadow-math review COMPLETED, terminal result read/no
 pending children; H020-shadow-disposition.md accepts word bookkeeping but
 refutes naive canonical-Fp simulation modulo2^w. No universal nonhomomorphic
 predictor impossibility, macro collision-time theorem or numerical test follows.
-Factory Fable separate cost review remains RUNNING;
+Factory Fable cost review COMPLETED, terminal result read/no pending children.
+Raw H020-memory-cost-fable-raw.md retained; native Astra independent review of
+its own stronger DP/counting/filter claims COMPLETED. Root integrates
+H020-memory-cost-disposition.md: omitted iota/D overhead, finite batch costs,
+conditional restart scope, corrected fingerprint inequality and membership
+versus witness/index distinction. No blanket all-budget dominance accepted.
 exact stable IDs and full briefs in H020-memory-reviews.md. No experiment
 admitted before a concrete primitive and full-cost justification.
-Factory public-signal initial role remains live as last verified.
+Factory public-signal initial role COMPLETED, terminal result read/no pending
+children. Raw H020-public-signal-factory-raw.md retained UNREVIEWED. Two NEW
+native reviews RUNNING: Astra signed modular3SUM/four-list filter; Sol
+translation-linear representations. NEW Claude Opus trace/ray-class review
+RUNNING. Exact handle and briefs in H021-public-signal-reviews.md. No numerical
+experiment or acceptance of raw exact-counting/global impossibility claims.
 Exact original briefs/provider/model/clientRequestIds/full taskIds in
 hypotheses/H020-independent-candidates.md. No outputs shared before synthesis;
 all read-only, no new experiments/children. These are new distinct mechanisms,
@@ -128,11 +138,25 @@ relation construction and Sol executable representations/reductions. Astra
 COMPLETED with no survivor: high contact gives a labelled multiple; unresolved
 divisor reuse duplicates H015's known relation. Root checked the conditional
 divisor/label identities; H021-adaptive-disposition.md retains scope and avoids
-padding the idea count. Sol remains RUNNING. Distinct briefs/leads in
+padding the idea count. Sol COMPLETED; root/Sol read a newly located
+TCHES2026 EDS-BSGS primary paper. H021-EDS-priorart-screen.md establishes the
+literal full-list setup loses the stated limiting single-target arithmetic
+comparison, before online work. Finite parameters, key collisions and emission
+order remain explicit qualifications; lazy/shared-precompute variants are not
+excluded. Sol marked-point ray-class lead lacks public target-to-ideal
+conversion; root primary read and independent Claude review retained.
+Distinct briefs/leads in
 hypotheses/H021-independent-candidates.md. No blocked-role retry, numerical
 work or cross-sharing of initial proposals. Native concurrency respected.
 Root alone integrates; unbounded goal remains active; verified improvementNONE.
 Older historical live-work descriptions below are superseded by this section.
+
+Checkpoint validation: ./scripts/check.sh run in dlp-research passed exit0,
+366 audits; log /tmp/ecdlp-h021-cost-check.log. An initial invocation from the
+git parent directory failed exit127 (wrong cwd); rerun used the correct project
+directory. No Lean/Audit change in this checkpoint. Root inspected/staged only
+the named research records; toolchains and unrelated directories excluded.
+The three new review roles remain live; await delivery rather than duplicate.
 
 ## Five-item wave report
 
@@ -145,14 +169,16 @@ Older historical live-work descriptions below are superseded by this section.
    PASSED. H018 implicit bidegree relations have no positive signal rationale.
    H019 initial proposals and mathematical reviews completed without a supported
    gain; a matched high-memory arithmetic baseline screen is now checked. H020 independent
-   constructive ideation is live. SP3 still lacks its sub-n^(3/2) detector;
+   constructive ideation delivered; scoped claims now under independent review. SP3 still lacks its sub-n^(3/2) detector;
    a concrete balanced triple-progression construction now supplies the matched
    n^(3/2) comparator, including tail and witness costs.
-   A signed macro-walk proposal now faces independent exact-shadow/cost review;
+   A signed macro-walk proposal completed independent exact-shadow/cost review;
    exact-shadow review rejects naive low-bit field simulation while leaving
    specialized predictors open; the primitive is missing, so no numerical
    falsifier is executable. H021 adaptive pass found only known relation
-   constructions; representation/primary-source pass remains live.
+   constructions; representation pass delivered EDS and ray-class leads.
+   Literal EDS setup loses the matched arithmetic screen; ray-class bridge
+   and H020 signed-list/linear-representation claims face focused reviews.
 4. Evidence: two explicit anchor closures reduce to group/dictionary difference
    search. Fixed precommitted tables have a coverage/setup screen; adaptive
    partial selection is NOT covered. A valid padded small-root lattice has

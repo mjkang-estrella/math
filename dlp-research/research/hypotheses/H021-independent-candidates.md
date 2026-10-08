@@ -50,3 +50,23 @@ Accepted RUNNING. Preliminary notice identifies an EDS-BSGS primary article
 in TCHES2026(3), DOI10.46586/tches.v2026.i3.518-540. It is prior art, not a new
 discovery. Primary access and complete preprocessing/comparison still under
 review; no claimed gain accepted. Initial report pending.
+
+Source update: Sol and root both obtained the primary PDF via curl after the
+web tool could not access it. Root read the public EDS bridge, Algorithm4,
+Lemmas1/2 and the fixed-batch comparison in Section5.2. Its literal full-list
+precomputation is being compared with H019's variable-batch x-only baseline,
+with single-target complete work distinct from shared offline work. Sol final
+scope/coverage review pending. No claim all EDS variants lose or that a kernel
+speedup is a new attack. Temporary PDF/text outside the repository.
+
+Final COMPLETED: Sol supplied two mechanisms. The known EDS paper's literal
+full-list schedule is screened in H021-EDS-priorart-screen.md, including scope,
+coverage and key-collision qualifications. The second lead is marked-point
+ray-class vectorization: choose paid orientation O=End(E), m=(pi-1), and seek
+a connecting ideal between (E,G) and (E,Q). Returning a usable principal
+generator/residue and handling isomorphisms/units might recover the scalar.
+No cheap public-Q to arithmetic ideal representation or direct marked-action
+solver is supplied. Root read Arpin et al., arxiv2407.14450v1, Sections3.5/4:
+the cited security reduction retains discrete logarithms when restoring level
+structure. This is a representation lead, not an executable improvement.
+Independent Claude review is recorded in H021-public-signal-reviews.md.
