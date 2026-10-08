@@ -67,6 +67,12 @@ Survivors must show a credible complete-cost mechanism and cheap decisive test
 before new implementation or formal infrastructure. All H028 source reviews are
 terminal; fixture source remains unexecuted and parked, no cap consumed.
 
+H029 first initial result: native Astra time-memory/geometry role COMPLETED.
+Root checked its phase-translation conjugacy screen; no new collision opportunity
+under normalization. Sparse endpoints/seed replay repeat accepted baselines
+without a cheaper complete contract. H029-trajectory-screen.md retains all three
+attempts; no experiment admitted. Native Sol and both T3 roles remain live.
+
 ## H028 parked; main algorithm research continues (latest)
 
 All H028 source, cost and calibration-decision roles COMPLETED. Final source-only

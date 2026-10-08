@@ -51,3 +51,10 @@ for duplicate opinions. Additional distinct roles can open as evidence warrants.
 No source/runtime result accepted merely from task creation; actual failures are
 recorded. Next gate: deduplicate/rank survivors, independent skeptical review,
 then a frozen synthetic experiment capable of changing complete-work assessment.
+
+
+Initial update: Native Astra time-memory/geometry role COMPLETED, no new survivor.
+Three attempted mechanisms retained in findings/H029-trajectory-screen.md. Root
+confirmed the exact normalized conjugacy identity; sparse endpoints and label
+replay supplied no new paid advantage over the accepted comparator. No experiment
+admitted, no broader impossibility inferred. Other three roles remain live.
