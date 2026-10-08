@@ -2,8 +2,8 @@
 
 2026-10-08. Initial proposer native Astra `/root/h007_additive_relations`;
 root mathematical check and narrower followup completed. Independent native
-Sol `/root/h010_early_dependencies` algebra and scope review received; final
-review summary pending. No experiment or Lean claim.
+Sol `/root/h010_early_dependencies` final review COMPLETED: both claims accepted
+with the stated qualifications and no material mathematical objection. No experiment or Lean claim.
 Verified complete-work improvement NONE. Three distinct initial mechanisms:
 cross-start relation aggregation, cubic scalar-label schedules, compressed trail
 certificates. None currently has a positive complete-work rationale.
@@ -56,6 +56,8 @@ ledger; neither all cubic implementations nor finite totals are characterized.
 The prior [H025 schedule screen](H025-addition-chain-screen.md) bounds a fixed
 target-independent scalar-label schedule's recoverable targets by t^2+O(t)
 after t inspected points, including signed collisions and direct infinity.
+Count all inspected keys and fixed auxiliary anchors in t; identically true
+label equations reveal no scalar and must not count as recoveries.
 For a uniform full-range target, mean inspected outputs are at least
 (2/3)sqrt(q)-O(1). Even one regular full addition per output has leading
 arithmetic coefficient(2/3)(5+s), exceeding the high-memory paired comparator

@@ -34,8 +34,10 @@ Persistent broad-ideation and main-problem policies remain in force.
 - Native Astra /root/h007_additive_relations initial coverage/detection cards
   COMPLETED, including full-Fq versus Fq* correction and literal cubic ledger.
   Root checked the scopes; findings/H031-coverage-screens.md records them. Native
-  Sol /root/h010_early_dependencies now RUNNING independent critical review.
-  No blanket impossibility or finite whole-solver cost theorem accepted.
+  Sol /root/h010_early_dependencies final independent critical review COMPLETED:
+  scoped counting/batching claims accepted; distinct-start initialization and
+  exceptional first-emission caveats incorporated. No blanket impossibility
+  or finite whole-solver cost theorem accepted.
 - Claude Opus5.5 arithmetic representations role terminal COMPLETED at transport
   level but reported SAFETY-INTERRUPTED, no cards/findings. Not a mathematical
   negative result; no retry, rephrasing or rerouting. Exact task ID:
@@ -48,6 +50,11 @@ Persistent broad-ideation and main-problem policies remain in force.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-memory-recomputation-factory-opus-20261008-r2`.
 - Grok4.7 autonomous collision geometry/scheduling proposal RUNNING:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h031-autonomous-walks-grok-20261008-r1`.
+
+Continuation after fdde7e0 classified PROGRESS: independent final review closes
+the pending paper check. Factory r2 and Grok original handles revalidated RUNNING
+this turn, with no pending replacement or duplicate. Await their asynchronous
+results for synthesis; neither timeouts nor absent output imply termination.
 
 Live catalog refreshed at wave start; exact authorized models were available.
 Original T3 statuses rechecked; terminal r1 acknowledged before replacement. All roles read-only,
