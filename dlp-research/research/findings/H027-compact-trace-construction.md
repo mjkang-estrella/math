@@ -4,7 +4,8 @@
 local expansions/divisor calculation and read the relevant Couveignes–Lercier
 definitions. Separate native Sol audit COMPLETED, GO for the scoped construction and
 weighted differences, incorporating the cost/exception corrections below. A NEW
-Factory Opus prior-art review is running. Status: independently checked informal
+Factory Opus prior-art review and a separate Sol domain audit completed; see
+H027-miller-priorart-reconciliation.md for attribution and corrected scope. Status: independently checked informal
 construction; no novelty claim, executable implementation, numerical experiment,
 Lean theorem or ECDLP gain claimed.
 
@@ -132,5 +133,7 @@ Notes14.63–14.64: https://cacr.uwaterloo.ca/hac/about/chap14.pdf .
 No empirical runtime or correctness run occurred. No broad rational-degree
 obstruction is accepted or needed. An unweighted and a restricted weighted trace
 can be cheap without arbitrary dual coordinates being cheap, and cheap public
-observables do not alone lower ECDLP cost. Prior-art and recovery-meaning review
-remains live; remaining independent H027 idea roles have not yet delivered.
+observables do not alone lower ECDLP cost. Prior-art review identifies the local-coefficient method with established
+Rück/Semaev techniques whose recovery theorems use p-torsion. The ordinary trace
+construction supplies no extension of those recovery theorems. Remaining
+independent H027 idea roles have not yet delivered.

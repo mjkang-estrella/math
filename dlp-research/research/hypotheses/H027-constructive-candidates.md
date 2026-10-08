@@ -22,9 +22,9 @@ or narrowly failed construction, not generic impossibility. No experiments.
 The initial Miller/logarithmic-derivative lead became the compact construction
 and weighted differences recorded below. Separate Sol review accepted the scoped
 mathematics and costs. No bit decoder, gain or admitted numerical test; prior-art
-and recovery-meaning review remains live.
+and recovery-meaning review completed as recorded below.
 
-## algebraic-constructions-opus — RUNNING
+## algebraic-constructions-opus — COMPLETED
 
 Provider: claudeAgent; model: claude-opus-5-5.
 ClientRequestId: ecdloop-h027-algebraic-constructions-opus-20261008-r1
@@ -76,7 +76,7 @@ exact differential and norm identity, trace hypotheses, normalized Miller pole
 orders, vertical/identity cases, bit inversion cost, and fixed weighted extension.
 Original full construction and absence of a recovery premise supplied. Read-only.
 
-### Miller trace primary-art review — RUNNING
+### Miller trace primary-art review — COMPLETED
 
 Provider: acpRegistry_factory_droid; model: claude-opus-5-5.
 ClientRequestId: ecdloop-h027-miller-trace-priorart-factory-opus-20261008-r1
@@ -85,3 +85,45 @@ TaskId: node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb
 Exact brief:
 
 NEW independent H027 primary-literature and recovery-meaning review, read-only, no runs/imports/edits/children. Workspace /home/mj-kang/Documents/Dev/math/dlp-research. Native Astra construction: E/Fp short Weierstrass,p>3,#E(Fp)=q prime!=p. f_Q divisor q[Q]-q[O], z=-x/y, f_Q=z^-q(1+a_Q z+...). Claimed df/f=(q*(y(X)+yQ)/(x(X)-xQ)+a_Q)dx/(2y); Norm over rational group gives elliptic-basis trace=-a_Q. Binary Miller updates first local coefficient by adding line slopes, O(logq) group operations, paid inversions. Addition a_(Q+R)=aQ+aR-q*lambda(Q,R), so not a scalar additive coordinate. Native Sol separately audits exact algebra/cost, do not duplicate that role. Your task: primary prior art/meaning, identify whether this is an already known local/logarithmic derivative/zeta/universal extension quantity, and whether any established result supplies a constructive scalar predicate or eliminates the slope defect under the actual ordinary prime-order hypotheses. Root found https://www.sciencedirect.com/science/article/pii/S0022404997002090 (Elliptic curves and logarithmic derivatives) and https://eprint.iacr.org/2019/782.pdf (Algorithmics of elliptic bases for discrete logarithms), NOT yet read; distinguish finite-field DLP from ECDLP and absolute versus curve derivatives. Core source https://www.math.u-bordeaux.fr/~jcouveig/publi/ellbasisrev.pdf. Read actual primary text or state access limits; no novelty or complexity claim from abstracts. Do not manufacture impossibility from degree/extension size. No verified improvement, no experiment proposed until a positive recovery premise. Provide bounded substantive prior-art/scope result. Other H027 initial proposals remain withheld.
+
+
+## Prior-art reconciliation and new domain review
+
+Factory Opus report received by task_status, full raw retained in
+H027-miller-priorart-raw.md. Root read retained Rück/Semaev primary texts.
+Rück local-coefficient/cocycle technique is established prior art, with recovery
+for p-primary torsion. No novelty claimed for H027. Complex zeta/extension
+interpretations were memory-based and not accepted as source-verified claims.
+
+NEW native Sol /root/h010_early_dependencies domain/scope audit COMPLETED.
+Brief supplied entire prior report plus root objections: p7/order3 counterexample
+to blanket Hasse exclusion; identify whether Joux–Pierrot Psi acts on divisors
+or point group; qualify CL basis and homomorphism-only obstruction. Sol read
+§2.2,§3.3,AppendixB. Root independently read first two. Psi does not automatically
+descend to Pic^0, so raw triviality claim withdrawn. Full corrections and PDF
+hashes in H027-miller-priorart-reconciliation.md. No new numerical experiment.
+Opus algebraic role also delivered subsequently; raw and new reviews below.
+Two independent initial T3 ideation roles remain live; no task duplicated.
+
+
+## Algebraic initial delivery and separate reviews
+
+Claude Opus initial role completed; task_status read/acknowledged. Two concrete
+cards and exploratory attempts retained in H027-algebraic-opus-raw.md, RAW.
+External source access was two abstracts; memory hypotheses are not accepted.
+
+NEW native Astra /root/h007_additive_relations math/action audit RUNNING:
+check maximal-isotropic Frobenius-stable kernel, principal polarization and
+rotation-matrix induced isogeny. Supplied root objections: unmarked quotient
+surfaces need not form a free torsor; extra equivalences and marking costs;
+normalization from k=1; unsupported Steinitz/genus assertions; character descent
+not proved merely by known symmetries; no generic embedding-degree/runtime bound.
+Read-only/no runs/edits/children; primary access distinguished from memory.
+
+NEW native Sol /root/h010_early_dependencies backend audit RUNNING:
+check exact chi(1+k²) to shifted-Legendre oracle reduction, zeros/signs, then
+read actual BBUV2019/1357 and Kaludjerovic–Kleinjung–Kostic primary work.
+Supplied root objection: a restricted query-regime upper bound and no recalled
+better algorithm do not prove failure even with a free oracle. Preserve query,
+setup, memory, adaptive-domain costs; no downgrade of H003/H018 from abstracts.
+Read-only/no runs/edits/children. No oracle extraction or gain currently supplied.

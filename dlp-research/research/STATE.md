@@ -18,12 +18,12 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H027 compact trace checked; independent idea roles live (authoritative)
+## H027 trace prior art reconciled; independent idea roles live (authoritative)
 
-Previous goal turn made progress: commit51d8d7b reconciled H026 and launched
-H027. This turn revalidated all three initial T3 handles RUNNING and collected
-native Astra's concrete trace construction. Separate native Sol audit COMPLETED,
-GO; root checked identities/primary definitions and retained explicit costs.
+Commit51d8d7b reconciled H026 and launched H027; e6e31d9 retained the checked
+trace construction. The preceding goal turn was a verified wait. This turn
+revalidated the same handles, received primary-art/algebraic deliveries and
+completed source/domain reconciliation. Trace math/cost review remains GO.
 
 A first local coefficient of a torsion Miller function evaluates the unweighted
 elliptic trace with O(logq) group operations, paid inversions, no extension/table.
@@ -34,13 +34,22 @@ on the q-group; nonlinear use remains open. No numerical test or Lean claim.
 Finding: findings/H027-compact-trace-construction.md. No novelty claim.
 
 Native Astra's construction/extension pass and Sol's math/cost review completed.
-Three independent initial roles remain live: Claude Opus5.5 algebraic invariants,
-Grok4.7 adaptive search hybrids, Factory Fable5.1 constructive signals/decoders.
-A NEW Factory Opus5.5 prior-art/recovery-meaning review was accepted RUNNING on
-the trace construction. Four T3 tasks total, full handles and briefs in
+Claude Opus5.5 algebraic role COMPLETED: two cards retained RAW in
+H027-algebraic-opus-raw.md. NEW native Astra checks polarized kernel/action and
+invariant scope; NEW native Sol checks the free-Legendre-oracle backend against
+primary full text. Both RUNNING. No claimed torsor or backend exclusion accepted.
+Grok4.7 adaptive search and Factory Fable5.1 signal roles remain live.
+Factory Opus5.5 prior-art/recovery-meaning review COMPLETED. Root read primary
+Rück/Semaev texts: coefficient/cocycle method is established; recovery uses
+p-primary torsion and does not extend to q!=p. NEW Sol source/domain audit also
+COMPLETED: Joux–Pierrot Psi acts on divisors, not automatically the point group;
+its claimed triviality is withdrawn. Hasse/basis claims qualified for small primes.
+Full reconciliation: findings/H027-miller-priorart-reconciliation.md.
+Two T3 initial ideation tasks remain live, full handles and briefs in
 hypotheses/H027-constructive-candidates.md; no duplicate active task or coordinator.
-Initial proposals withheld across the three ideation roles. Native reviewers free
-for distinct delivered work. Catalog and actual acceptance checked this session.
+Initial proposals were withheld across ideation roles before delivery. Current
+native reviewers own distinct delivered scope audits. Catalog and actual
+acceptance checked this session.
 
 Best supported ordinary full-solver complexity remains square-root; verified
 complete-work improvement NONE. Next conclusion-changing action: establish an
@@ -48,7 +57,7 @@ actual scalar-information/recovery premise for a delivered construction, with
 paid full work, then independently review and freeze a cheap falsifier. Existing
 square-root algorithms and dashboard unchanged. Goal active; root alone commits.
 Validation: ./scripts/check.sh exit0,366 audits;
-/tmp/ecdlp-h027-compact-trace-check.log. No code/Lean/Audit edits.
+/tmp/ecdlp-h027-priorart-check.log. No code/Lean/Audit edits.
 
 ## H026 delivered proposals and scoped reconciliation (completed wave)
 
