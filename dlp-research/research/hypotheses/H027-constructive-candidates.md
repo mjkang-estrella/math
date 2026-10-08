@@ -44,7 +44,7 @@ Exact brief:
 
 NEW H027 independent constructive ECDLP ideation. Workspace /home/mj-kang/Documents/Dev/math/dlp-research. Read operating docs, STATE and accepted findings to deduplicate; do not read other H027 proposals before delivering yours. Read-only: no experiments, imports of probes, edits, commits or children. Root alone integrates. Broad creative proposals welcome (roughly 3-5 distinct mechanisms if worthwhile, no quota); do not stop at renaming a missing oracle, and do not reject whole classes with degree/runtime or generic/coordinate confusion. Each card needs explicit public-Q operations and recovery, positive gain rationale, ordinary full-range prime-field prime-order applicability, baseline and predicted COMPLETE-work gain, setup/memory/failure/advice costs, primary prior art actually read (memory labeled), unsupported premise, cheapest decisive falsifier. No third-party targeting or special-curve extrapolation. Verified gain NONE; square-root reference unchanged. H025 fixed-layout 5% validation failed and is parked; H026 accepted scope corrections supersede raw reports. No generic Lean infrastructure or random feature benchmark without a concrete positive premise. Develop new constructions, not another broad impossibility survey. Lens: adaptive collision-search geometry or unconventional computation hybrids with paid useful-collision detection. H026 fixed-depth same-jump tree lacks coverage, and literal all-pair novelty scoring costs quadratic work; these do not exclude coordinate-adaptive rules. Develop genuinely different executable mechanisms beyond retuning H025 fixed layouts. Coordinate proximity alone needs a persistence rationale; no free inverse index or uniform-random-walk assumption after adaptive selection. Avoid repeating EDS normalization/character routes, already reconciled.
 
-## constructive-signals-fable — RUNNING
+## constructive-signals-fable — terminal, unusable delivery
 
 Provider: acpRegistry_factory_droid; model: claude-fable-5.1.
 ClientRequestId: ecdloop-h027-constructive-signals-fable-20261008-r1
@@ -194,3 +194,40 @@ Grok initial report subsequently completed and was read by task_status. Raw card
 are in H027-adaptive-search-grok-raw.md. NEW independent Opus detection/cost review
 and rolling H028 native roles are tracked in H028-independent-candidates.md.
 Fable constructive-signals original handle remains RUNNING; no duplicate.
+
+
+## Constructive-signal replacement round — RUNNING
+
+Original Factory Fable task reported completed/no pending runs. Its complete
+terminal summary was only: Now the H026 accepted scoped findings, which are most relevant to my lens (information signals / window conversion), plus the H026 hypothesis register.
+No hypotheses or substantive evidence were delivered. This is not a successful
+research result. New provider claudeAgent, model claude-opus-5-5 explicitly
+replaces that unusable delivery. No model substituted silently.
+ClientRequestId: ecdloop-h027-constructive-signals-opus-20261008-r2
+TaskId: node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h027-constructive-signals-opus-20261008-r2
+
+Exact new brief:
+
+NEW H027 independent constructive-information ideation replacement round. Original Factory Fable task ecdloop-h027-constructive-signals-fable-20261008-r1 is terminal and delivered ONLY "Now the H026 accepted scoped findings, which are most relevant to my lens (information signals / window conversion), plus the H026 hypothesis register." No substantive proposals, analysis or review exist from that delivery. This round must produce a bounded substantive result, not a plan or reading-status sentence.
+
+Workspace /home/mj-kang/Documents/Dev/math/dlp-research. Read operating docs and accepted H026 information/window/algebraic scope findings as needed to deduplicate. Do not read other still-current initial proposals before delivery; do not spend the entire task traversing the full historical log. Read-only, no experiments/imports/edits/commits/children; root integrates. Native H028 is separately implementing a provisional collision-key candidate; do NOT duplicate key-generation/refinement/BSGS costs. Lens here is public constructive information with an actual scalar-recovery bridge, NOT cheaper comparison keys.
+
+Generate several genuinely distinct actual public-Q computations if worthwhile, permitting high-risk incomplete mechanisms and honestly no-survivor. Ordinary full-range prime-field prime-order ECDLP only; no special-curve or short-secret extrapolation. Each needs exact computation and recovery, positive source-of-gain rationale vs square-root reference, complete setup/memory/training/advice/failure costs, primary prior art ACTUALLY read (memory labeled), main unsupported assumption, cheapest decisive falsifier. Candidate count is not a quota. Prior H026 corrections: fixed-grid window success needs occupancy and true fixed-grid probability; no universal two-category or degree-as-runtime exclusion. Low-degree rational mixtures remain rational, but high-degree scalar multiplication is cheap. Lift/log or isogeny barriers apply only to their named maps. Do not merely rename a missing predictor or refuse novelty for lacking full proof; identify a concrete operation and narrow bridge. No numerical feature screens without positive premise, no generic Lean infrastructure. Verified complete-work improvement NONE; this is independent breadth while a separate real candidate is under implementation. Bounded final delivery, no ongoing survey loop.
+
+
+Replacement Opus r2 TERMINAL, no substantive delivery: reported safety-classifier
+interruption and explicitly no candidate cards, source reads or falsifiers.
+This is a failed role, NOT a no-survivor conclusion or review. No attempt to
+resume/rephrase/reroute the blocked request will be made. Original task IDs
+and prior unusable Factory result retained above. Exact terminal report:
+
+I've stopped this round without delivering anything substantive. A safety classifier interrupted my previous response, and I'm not going to resume or rephrase what it withheld.
+
+**What happened before the stop (read-only):**
+- I read `STATE.md`, the H027 register brief, and the accepted scope findings: `H026-information-algebraic-scope.md`, `H026-window-conversion-scope.md`, `H025-bridge-scope-corrections.md`, plus parts of `H002-predicate-and-circuit-gates.md` and `H017-small-root-source-gate.md`.
+- I also ran keyword greps across the records to check which lines of work were already covered.
+- I made no edits, ran no experiments, imported nothing, spawned no children and made no commits.
+
+**What this round did not produce:** no candidate cards, no prior-art reads and no falsifiers. Please record this replacement as failed, the same way as the original Factory delivery. Don't count it as a no-survivor result or as a review.
+
+If root still wants this lens covered, it should go to a different agent or model. My partial reading isn't a usable base for that.

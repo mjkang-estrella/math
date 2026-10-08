@@ -165,3 +165,27 @@ Sol final-ledger review confirmed the corrected formulas and candidate-specific
 random-generator setup charge. Accepted conditional contract:
 findings/H028-archive-free-cost-gate.md. No measured weights or full-work gain.
 Independent code review awaits completed source; no execution.
+
+
+Owned diagnostic source now exists; writer still finalizing static fixes, no
+execution or import. NEW native Sol partial read-only source review RUNNING
+on stable coefficient/polynomial/fibre components, distinct from writer grid
+fixes. Review is not approval to run; final source/diff review follows handoff.
+Root read coefficient/ring/grid source and flagged reference-data leakage,
+shared slope numerator convention and finite-cost report completeness. Writer
+retains sole file ownership; root has not edited key_probe.py.
+
+Original H027 Fable finally delivered only a reading-status sentence. Replacement
+Claude Opus r2 independent-information role launched, exactID in H027 register.
+
+
+Native Sol partial stable-component review COMPLETED: affine/h/Miller/polynomial/
+fibre identities and certification consistent. No execution approval; grid still
+being finalized by writer. Concrete snapshot-array writes and stale inherited
+cap-error labels forwarded to writer; attach partial allocations before filling.
+Observed initial sourcefd7099e... changed during review, final handoff requires
+fresh hash and remaining source review. No code run/import/compile performed.
+
+H027 replacement information role ended without findings due to safety classifier;
+failed role recorded in H027 register. No bypass/retry of that blocked request.
+Separate existing H028 diagnostic implementation continues.

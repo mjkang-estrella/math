@@ -59,8 +59,16 @@ expected verification overhead accepted; priced gain requires
 S/M > 1.5*(Af/M) + comparison/M + extra lookup/M. No measured weights or
 complete-work gain. H028-archive-free-cost-gate.md records setup/metadata and
 baseline-fairness limitations. Writer remains RUNNING, no source execution.
-Original H027 Fable initial role still
-RUNNING at authoritative check. Exact task IDs/briefs in H028 register.
+Original H027 Fable task is terminal with only a reading-status sentence, no
+substantive findings. NEW Claude Opus r2 independent-information replacement
+also ended without findings, reporting a safety-classifier interruption. Failed
+role retained in H027 register; not a no-survivor result, and no bypass/retry.
+
+Diagnostic source now exists, writer still finalizing it without execution.
+Native Sol partial static review COMPLETED (coefficient/polynomial/fibre math
+consistent); root reviews grid. Concrete dataflow/accounting fixes forwarded
+to writer. Partial source approval is NOT execution approval. Final review remains
+required. Root has not edited or executed writer-owned key_probe.py.
 Root owns upcoming implementation/integration. No generic Lean infrastructure,
 duplicate coordinator, scheduler or push. Goal active; compilation is not success.
 
