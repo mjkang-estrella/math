@@ -26,16 +26,16 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 2. Verified improvement: **NONE**.
 3. Current hypothesis: H013 multiplicative-character correlation (MCL), a valid
    conditional coset-recovery reduction still lacking an effective public
-   predictor. Six independent ideation lenses retained; Grok hybrid report live.
+   predictor. H014 tiny exact feature screen in implementation; no numerical run.
 4. Evidence: independent reviews repaired MCL calibration, sampling, character
    conversion and backend costs. Known additive-phase correlation bounds do not
    prove a predictor impossible or supply one. Algebra/coordinate cards yielded
    scoped cost screens, not universal exclusions. Broad FFT sweep rejected for
    cap overrun; no new numerical experiment. PC4 remains deferred.
-5. Next conclusion-changing step: freeze a cheap explicit feature and bounded
-   finite signal test with controls and charged setup, or find a new concrete
-   operation in the outstanding hybrid report. Native arithmetic and group-action
-   roles explore distinct actual predictor constructions. Positive finite signal
+5. Next conclusion-changing step: independently review and execute the frozen
+   bounded feature test with charged setup. Six-lens ideation and distinct MCL
+   group-action/arithmetic followups completed, with scoped negative screens
+   retained. Positive finite signal
    still needs generalization and complete-solver cost; negative finite signal
    cannot settle asymptotics. No metric substitution by agents/proofs/commits.
 
@@ -45,11 +45,18 @@ H013 original Opus algebra, Factory Opus learning/information, native coordinate
 native representation and native scheduling roles COMPLETED. Independent native
 algebra/sampling/backend reviews and NEW Opus character-bound review COMPLETED.
 Factory delivered substantive output this round; earlier Fable failures remain.
-Grok H013 hybrid original task RUNNING at last status read, no duplicate round.
-Native Sol /root/h010_early_dependencies now explores explicit group-action
-features; native Astra /root/h007_additive_relations designs a bounded arithmetic
-feature screen (no run authorized yet). Coordinate proposer idle. All read-only,
-no children. Full T3 IDs and new rounds in task register. Goal remains active.
+Grok H013 hybrid original task COMPLETED; raw saved, native Astra anchor/HNP
+review COMPLETED. Globally rational anchor branch has a torsion contradiction;
+exact x-coordinate scalar-top-bit leak false. Biased alternatives not excluded.
+Native Sol /root/h010_early_dependencies COMPLETED three explicit group-action
+feature screens; native Astra /root/h007_additive_relations COMPLETED the bounded
+arithmetic feature protocol. Native Astra /root/h006_structured_relation_ideas
+now owns ONLY experiments/H014/character_screen.py implementation, no numerical
+run. NEW Opus H014 preflight COMPLETED, caught impossible p43 admission and
+symmetry-breaking permutation controls. Root repaired both BEFORE any run:
+fields59,101,251,256-candidate windows, one global cap, signed-pair permutations.
+See H014-preflight-disposition.md for qualifications. All other
+roles read-only, no children. Full T3 IDs in task register. Goal remains active.
 
 Current findings: H013-algebra-disposition.md, H013-coordinate-cards.md,
 H013-mcl-disposition.md, with raw reports and reviewer objections retained.
@@ -57,6 +64,19 @@ Validation: `./scripts/check.sh > /tmp/ecdlp-h013-mcl-check.log 2>&1` exit0,
 363 existing audits. Paper/process records only, no Lean/Audit claim added.
 Root stages named task files after diff inspection; unrelated factoring-research/
 and research-monitor/ remain untouched. No numerical experiment since H005.
+
+H014 protocol frozen in research/experiments/H014/protocol.md. It screens two
+predeclared public features against exact order-six characters on three increasing
+tiny fields, with charged curve admission, all nonzero scalars, fixed planted,
+parity-null and permutation controls. Earlier m2 diagnostic NOT run: its coset
+did not reduce cardinality beyond negation. The m6 cardinality factor alone does
+not repay scalar-search/calibration costs or establish asymptotics. Independent
+review and complete code inspection precede root's single capped run. No broad
+FFT, training engine or generic formal infrastructure. Previous goal turn was
+PROGRESS through committed752a155, not a blocker or completed objective.
+Current paper/protocol checks: `./scripts/check.sh >
+/tmp/ecdlp-h014-preflight-check.log 2>&1` exit0,363 existing audits. No Lean/Audit
+changes. Writer's unexecuted script is excluded from this paper checkpoint.
 
 ## Live work and actual failures
 

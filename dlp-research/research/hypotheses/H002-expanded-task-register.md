@@ -619,3 +619,33 @@ coordinate/arithmetic features, then tiny exact-correlation protocol for sign
 and centered formal parameter. Read-only/no trials/children. A feature may be
 tested speculatively without a proof of correlation; no broad FFT/training engine.
 Root remains sole writer/integrator. Native active root+two<=4; T3 below20.
+
+## H014 bounded feature screen: protocol/implementation/review separated
+
+Native Astra arithmetic protocol COMPLETED m2 and revised m6 versions. Root did
+not run m2 because its coset cardinality merely matches the negation quotient.
+Accepted pre-run direction in experiments/H014/protocol.md. Native Astra
+/root/h006_structured_relation_ideas now WRITER for character_screen.py only,
+syntax check permitted, numerical execution forbidden until independent review.
+Root owns protocol/checkpoint/results and all staging/commits. Other native Sol
+group-action review still live; native root+two within4. No child delegation.
+
+NEW independent mathematical/cost-relevance preflight:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h014-character-screen-review-opus-20261008-r1`.
+claudeAgent/claude-opus-5-5, clientRequestId suffix, launch RUNNING. Original
+MCL repaired evidence, exact proposed experiment and prior objections supplied.
+Read-only/no runs/edits/children. Exact live provider catalog refreshed; no
+substitution. Grok original H013 hybrid task reconfirmed RUNNING this goal turn.
+
+Subsequent notifications: Grok H013 hybrid COMPLETED and task_status read; full
+raw preserved. Native Astra /root/h007_additive_relations COMPLETED independent
+anchor/HNP mathematics review. A pole-divisor argument rejects the specified
+rational anchor branch, without assuming End(E)=Z or a square-root runtime bound.
+
+Opus H014 preflight COMPLETED and task_status read; raw preserved. Root checked
+its p43 impossibility using ordinary endomorphism-ring inclusions, then changed
+the protocol BEFORE any run to p59,101,251 and256 candidates/field. Per-field
+admission failures continue but GLOBAL cap never resets. Signed-pair label
+permutations preserve odd symmetry; exact ideal-null second moment recorded.
+Reviewer unvalidated class-number hit probabilities and tiny event estimates
+not accepted. Native writer informed of revised protocol; no numerical run.
