@@ -18,7 +18,26 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H024 finite negative / H025 constructive wave (authoritative)
+## H025 low-memory result (authoritative live update)
+
+Previous goal turn was progress:18a3818 committed the independently audited
+finite negative and primary-prior-art correction. This turn revalidated the
+same Grok T3 handle RUNNING and both native roles RUNNING, then received
+Astra's final low-memory report. H025-low-memory-screens.md retains the root-
+checked oriented conditional cost screen and exact bounded-stride cross-seed
+union bound. No positive complete-work survivor or new numerical run admitted.
+Native Astra's H025 initial role is now COMPLETED; native Sol's high-memory
+construction role and original H025 Grok independent bridge role remain live.
+No duplicated hypothesis, retuned H024 test or blocked-provider retry.
+
+Square-root reference unchanged; verified improvement NONE. Next decisive
+work is an explicit paid construction from the two live independent roles,
+then skeptical review and frozen full-cost/coverage test. Goal remains active.
+Validation: ./scripts/check.sh passed exit0,366 audits; log
+/tmp/ecdlp-h025-low-memory-check.log. No Lean/Audit changes. Older statuses
+below are historical.
+
+## H024 finite negative / H025 constructive wave (historical)
 
 Previous goal turn was progress: local8938e7d checkpointed the component and
 pending reviews. Those reviews now COMPLETED, followed by one independently

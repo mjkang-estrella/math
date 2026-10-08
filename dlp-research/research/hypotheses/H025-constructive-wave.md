@@ -16,7 +16,7 @@ floor mistaken for attainment. Paid setup/recovery and real per-pair event
 budget for cheapest integer-only falsifier. Read-only/no runs/children. Do not
 read other H025 proposals. A scoped no-survivor is acceptable.
 
-## Native Astra /root/h007_additive_relations — RUNNING
+## Native Astra /root/h007_additive_relations — COMPLETED
 
 Independent low-memory constructive ideation: useful mixed walks or a different
 coordinate-aware operation with exact coalescing labels, cycle policy, paid
@@ -35,3 +35,7 @@ TaskId: node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb
 Exact brief:
 
 NEW H025 broad independent creative ECDLP pass in /home/mj-kang/Documents/Dev/math/dlp-research. Read operatingdocs/STATE and accepted findings to deduplicate, NOT otherH025 initialproposals. Read-only/no edits/runs/children/commits. Several (3–5 ifworthwhile) genuinely different concrete mechanisms, notquota/padding. Ordinary full-range prime-field prime-order targets; no verifiedgain. Distinct from concurrent lowmemorywalk-arithmetic and highmemoryAP-layout roles: seek a different coordinate-aware relation/search bridge, unusual composition of paid primitives, or public feature with exactrecovery. Existing relation-list indexes, sparse rank/character methods, lifts, EDS and norm/trace routes have scoped failures; don't merely rename them or usegenericlowerbounds as coordinateimpossibility. Highrisk and incompleteproof okay, but spellout public Q-dependent computation, source of exponent/materialCOMPLETEwork gain, setup/memory/advice/success costs, knownpriorart, mainunsupportedassumption and cheapest decisive falsifier. Recent literature only with primarysource actuallyread and concretebridge; memorycitations explicitlyunverified. No claimedlinear-time powerfromdegree, efficientkernel=attack, toyrealextrapolation or realwallet inputs. H024 broadreport had no positive algebraic survivor, slopekernel had cycleescape defect; no need to repair those. Return a bounded substantive pool or scopedno-survivor, not infrastructure orbenchmarkcampaign. Root alone integrates.
+
+Astra initial result: no survivor; root checked H025-low-memory-screens.md.
+No additional run admitted. Sol construction and Grok independent roles remain
+live on their existing handles; no replacement or duplicate.
