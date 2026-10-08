@@ -854,3 +854,26 @@ random-slope/full-scan operation and its retained-hit work bound. Root checked
 it for q>3 and retained the actual group-verification/degeneracy requirement.
 Both native followups terminal. No experiment or concrete improved detector;
 Grok/Factory original T3 task IDs remain the same, live as last verified.
+
+## H017 final delivery and H018 continuation
+
+H017 Grok computational-hybrids and Factory Opus information handles COMPLETED,
+terminal summaries read with no pending children. Full raw reports retained.
+NEW native `/root/h007_additive_relations` Grok fibre/anchor review COMPLETED;
+NEW `/root/h010_early_dependencies` doubling/storage review COMPLETED. Root
+reviewed dictionary operation and primary literature. NEW Astra Factory BM/RS
+review and NEW Sol orbit-label/recurrence review COMPLETED. Root's improved iid
+second-moment calculation then independently confirmed by separate Sol followup.
+See H017-hybrid-disposition.md and H017-information-disposition.md for corrections
+and rejected overbroad claims. No numerical or Lean run beyond normal checks.
+
+Live capability refresh followed by three NEW T3 H018 initial roles, exact
+clientRequestIds/full taskIds and full independent prompts in
+H018-independent-operators.md. Claude algebraic-operators role TERMINAL but
+substantive deliverable FAILED due provider safety-classifier block; no report,
+no mathematical negative and no retry/substitution. Grok fullsolver-hybrids and
+Factory Opus information-operators remain live as last verified. Native Astra
+one-curve sparse-recurrence diagnostic protocol/cost preflight RUNNING, ownership
+only hypotheses/H018-bm-probe-v1.md; no numerical/code execution. Native and T3
+capacity respected; no backing-thread continuation or duplicate coordinator.
+Root owns integration. Verified improvement NONE; unbounded goal active.

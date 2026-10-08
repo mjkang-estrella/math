@@ -1,6 +1,8 @@
 # H017: independent concrete mechanisms
 
-Status: in progress, 2026-10-08. Baseline unchanged; verified improvement NONE.
+Status: initial H017 delivery/review completed, 2026-10-08. Baseline unchanged;
+verified improvement NONE. Historical live-status entries below are superseded
+by the terminal snapshot at the end.
 Continuation of the existing goal, not a new coordinator or scheduler.
 
 Three accepted native followups, root plus three within the native four slots:
@@ -110,3 +112,26 @@ operation loses by a retained-hit/full-scan work bound, checked by root.
 Singer quotient and full-convolution screens remain scoped. No implicit
 detector supplied; no numerical run or engine justified. Both native roles
 terminal, original Grok/Factory briefs unchanged and still live as last verified.
+
+## Terminal H017 delivery snapshot
+
+Both retained Grok and Factory Opus handles COMPLETED, task_status summaries
+read, no pending child runs. Raw outputs saved as H017-hybrid-grok-raw.md and
+H017-information-factory-opus-raw.md. NEW native Astra Grok fibre/anchor review
+and native Sol doubling/store/cost review COMPLETED; root reviewed the explicit
+pair-dictionary operation and primary geometry sources. Several raw global
+obstructions are false and explicitly rejected in H017-hybrid-disposition.md.
+
+NEW native Astra Factory sparse-recurrence/polynomial-shift review COMPLETED;
+NEW native Sol orbit-label/recurrence review COMPLETED. Root supplied the iid
+hidden-cell second-moment argument; separate focused Sol followup independently
+confirmed it, correcting the earlier overstrong bucket-skew caution. See
+H017-information-disposition.md. Valid conditional bridges do not supply a useful
+feature or cost-qualified improvement. No numerical experiment or new Lean claim.
+
+NEW native Astra `/root/h007_additive_relations` now owns only the proposed
+H018-bm-probe-v1.md protocol preflight (no code/runs/children). H018 independent
+initial prompts and exact T3 handles are in H018-independent-operators.md.
+Claude H018 role returned provider-classifier failure with no report; other
+already-launched independent lenses remain live. No retry or substitution for
+the blocked role. Root alone integrates shared records and commits.

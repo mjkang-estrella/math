@@ -18,17 +18,39 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## Live H017/H018 delivery update (authoritative)
+
+H017 Grok and Factory Opus original tasks are now COMPLETED; terminal summaries
+read and raw outputs retained, no pending child runs. Native Astra Grok cards1/3
+and native Sol doubling review COMPLETED; root integrated their corrected scope
+in H017-hybrid-disposition.md. No universal branch/search lower bound accepted.
+NEW native Astra Factory cards1/2 and native Sol Factory card3/recurrence reviews
+COMPLETED, including a separate Sol check of root's corrected iid second-moment
+bound. H017-information-disposition.md retains valid conditional recovery,
+the repaired progression sampler and all objections. No numerical proposal
+executed. NEW native Astra one-curve BM protocol/cost preflight is RUNNING,
+sole writing ownership hypotheses/H018-bm-probe-v1.md, no runs/code/children.
+Three NEW T3 H018 independent initial tasks accepted RUNNING. Claude Opus
+algebraic role subsequently TERMINAL with provider safety-classifier block and
+NO deliverable: not a mathematical negative, no retry or substitution. Grok
+complete-solver hybrids and Factory Opus concrete information operators remain
+live as last verified. Exact prompts/clientRequestIds/full taskIds retained in
+hypotheses/H018-independent-operators.md. Separate lenses, initial outputs
+withheld, no duplicates or silent substitutions. Root owns integration.
+Older H017 sentences describing Grok/Factory as live are superseded here.
+Verified improvement remains NONE; existing unbounded goal stays active.
+
 ## Five-item wave report
 
 1. Best supported work: classical square-root reference for ordinary prime-field
    prime-order ECDLP, with known automorphism constants and charged setup, memory,
    parallel and multi-target tradeoffs. This is not a coordinate-aware lower bound.
 2. Verified improvement: **NONE**.
-3. Current hypothesis set: H017 SP3 cubic-extension tensor encoding, now
-   independently identified with S3 on a cheaply parametrized conic; missing
-   sub-n^(3/2) detector remains the concrete gap. Grok and Factory independent
-   initial briefs remain live. Other H017 native constructions are screened;
-   no engine or numerical experiment accepted.
+3. Current hypothesis set: H017 sparse scalar-field powers via geometric
+   sampling, reviewed conditional polynomial-shift recovery, and approximate
+   orbit labels. A one-curve exact BM falsifier is in protocol/cost preflight;
+   no numerical run authorized yet. H018 independent computational and concrete
+   information operators are live. SP3 still lacks its sub-n^(3/2) detector.
 4. Evidence: two explicit anchor closures reduce to group/dictionary difference
    search. Fixed precommitted tables have a coverage/setup screen; adaptive
    partial selection is NOT covered. A valid padded small-root lattice has
@@ -46,11 +68,19 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
    quotient-algebra detectors, both too expensive. Two exact Singer-coordinate
    screens rule out the specified small quotient-support filter and full sparse
    convolution, not all implicit detectors; H017-SP3-detector-screen.md.
+   Completed hybrid review rejects several false global obstructions, repairs
+   the literal pair-dictionary query, and finds that doubling side collisions
+   do not automatically reach a distinguished-point endpoint store. Information
+   review proves a scoped progression variance formula and iid orbit-label
+   collision order, but supplies no useful signal or full-cost saving.
    H014 remains the latest numerical run:738704 events, no gross feature signal.
-5. Next conclusion-changing step: independently review concrete H017 operations,
-   admit a matched cheap falsifier only if useful extraction or information gain
-   survives full-cost analysis. No larger arbitrary feature sweep, backend
-   engine or generic Lean infrastructure justified; improvement still NONE.
+5. Next conclusion-changing step: decide whether the single frozen exact BM
+   falsifier fits the global cost cap and merits execution; a negative excludes
+   only its bounded sparse-feature class on the admitted instance, a positive
+   is only a candidate. Independently review new H018 operations when delivered.
+   No broad feature sweep, backend engine or generic Lean machinery justified.
+   Improvement still NONE. Latest ./scripts/check.sh exit0,363 existing audits,
+   /tmp/ecdlp-h017-information-check.log; paper/process-only changes, no Audit additions.
 
 ### Latest authoritative task snapshot (older sections are history)
 
