@@ -18,6 +18,32 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H043 live independent constructions
+
+H042 closed at19950b4. No faster solver, experiment or full-size improvement
+admitted. Initial proposals withheld; exact briefs and ranked unresolved
+openings in H043-independent-briefs.md. Four distinct productive roles:
+- Native Astra `/root/h007_additive_relations`: COMPLETED known-log set
+  representation pass. No joint coverage/extraction improvement found;
+  progression and expanded-multiplier descriptions supplied no changed
+  witness primitive. No new card, lower bound, experiment or source claim.
+- claudeAgent / claude-opus-5-5: RUNNING trace-scalar-construction-opus.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h043-trace-scalar-construction-opus-20261009-r1`.
+- acpRegistry_factory_droid / claude-opus-5-5: RUNNING structured-system-constructions-factory-opus.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h043-structured-system-constructions-factory-opus-20261009-r1`.
+- grok / grok-4.7: RUNNING new-fullwork-constructions-grok.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h043-new-fullwork-constructions-grok-20261009-r1`.
+Fresh live catalogue confirms all exact T3 targets; accepted RUNNING, no
+failure or substitution. Native Sol review role complete, no work pending.
+No duplicate H042 task, H034 reset, stopped-role reroute, child-of-child,
+experiment or broad Lean infrastructure. Root alone integrates/commits.
+Best supported exponent1/2; verified complete-work improvement NONE.
+Next decisive evidence is an explicit competitive operation and full decoder,
+then independent review and an admitted bounded synthetic falsifier.
+Launch uses the unchanged code checked by ./scripts/check.sh >
+/tmp/ecdlp-h042-nonlinear-check.log 2>&1 (exit0,366 audits); new files are
+paper/process only. Checks do not validate a new algorithm or paper theorem.
+
 ## H042 completed constructive operators
 
 H041 completed; no improved solver or experiment admitted. H042 targets the
