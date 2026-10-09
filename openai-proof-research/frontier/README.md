@@ -24,7 +24,7 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 No high-significance named problem has been solved in this phase. The working reports belong in `scouts/`; their claims are provisional until reviewed and integrated. The immutable source revision is recorded in [../sources/upstream.json](../sources/upstream.json).
 
 - **Arithmetic:** the [second round](reviews/arithmetic-bridge-r2.md) proves that one proposed four-cycle is harmless and that the naive global unweighted operator norm fails. The full high-trace and cubic-centering estimates remain missing. This route is parked pending a genuinely new joint estimate; it is not being counted as a Chowla result.
-- **Discrete:** the [scout](scouts/discrete.md) found obstructions to union-preserving coding and graph balancing. A second round tests direct noise conditioning for Frankl's conjecture.
+- **Discrete:** the [scout](scouts/discrete.md) found obstructions to union-preserving coding and graph balancing. The [direct-noise round](reviews/frankl-direct-r2.md) produced no Frankl advance and is parked. Parent review corrected its overclaim of general falsification and its vacuous endpoint-supremum candidate. Both finite experiment outputs were reproduced exactly; floating-point evidence is not proof.
 - **Analysis:** the [hot-spots extension candidate](scouts/analysis.md) is under independent proof/novelty review, alongside an attempt to remove its simple-eigenvalue restriction. It is not yet an accepted result.
 - **Algebraic geometry:** the broad scout remains pending.
 
