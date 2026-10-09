@@ -23,7 +23,15 @@ Three T3-owned tasks each screen at least three candidates and develop their str
 | Geometric analysis | Fresh PDE, transport, curvature, regularity or inverse-problem bridges; exclude spent hot-spots and operator variants. | [Brief](iterations/iteration7-analysis-task.json) |
 | Structural mathematics | Algebra, topology, groups, discrete mathematics and complexity; seek substantive constructions beyond standard transfers. | [Brief](iterations/iteration7-structures-task.json) |
 
-The independent [parent probability/quantum screen](iterations/i07-parent-probability-screen.md) rejects two already-covered targets and a false quantum-memory extension. It derives a weighted necessary capacity condition for variable-edge four-state reconstruction and an exact counterexample to the naive unweighted extension. Sufficiency is unproved; this preliminary argument has not undergone independent review and does not change the count.
+The independent [parent probability/quantum screen](iterations/i07-parent-probability-screen.md) rejects two already-covered targets and a false quantum-memory extension. It derives a weighted necessary capacity condition for variable-edge four-state reconstruction and an exact counterexample to the naive unweighted extension. Iteration 08 now supplies a proposed converse, described below; neither stage changes the accepted count before review.
+
+The geometric-analysis task has returned no prospective substantial finding. Its constrained approximation report awaits full parent integration; the author's verdict explicitly keeps the accepted count unchanged.
+
+## Iteration 08: complete capacity candidate under proof review
+
+[The proposed weighted-capacity theorem](iterations/i08-variable-channel-capacity.md) covers arbitrary positive edge-channel parameters up to and including perfect transmission, without uniform separation from one. Its new uniform local moment estimate and flow-splitting energy bound replace the constant-channel geometric bound. Exact polynomial, posterior-orbit, kernel and finite-tree energy checks pass. These do not substitute for the infinite proof audit.
+
+A fresh [independent proof-review task](iterations/iteration8-variable-capacity-r2-task.json) is running. A separate final prior-art/significance review remains required. No R-number or accepted-count increment is assigned to the candidate yet.
 
 ## Continuation rules
 
