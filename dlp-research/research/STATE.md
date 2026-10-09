@@ -18,7 +18,34 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H037 current candidate-specific source-factory screen
+## H038 live independent mechanisms and height-factor-base gate
+
+Previous turn PROGRESS:2df9259 checkpointed H036/037. Current project tree was
+clean at re-entry. Fresh live catalog confirms selected providers/models with
+delegation supported; no substitution or provider failure. Three distinct
+read-only T3 tasks RUNNING, initial ideas withheld from one another:
+- Claude Opus5.5 constructive Farey/height factor-base operator:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h038-farey-construction-opus-20261008-r1`.
+- Grok4.7 independent low-memory complete-solver mechanisms:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h038-independent-lowmemory-grok-20261008-r1`.
+- Factory Opus5.5 independent implicit-relation operators:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h038-independent-implicit-relations-factory-opus-20261008-r1`.
+Native Astra COMPLETED root's separate exact S3/Farey/Segre geometry audit;
+native Sol COMPLETED standard m2 relation-assembly cost review, including
+adaptive multi-row returns and finite success probability. Literal full-rank
+assembly has B+q*T/B>=2sqrt(q*T) work under its explicit premises; this is no
+universal ECDLP or lattice lower bound. Evidence
+in H038-farey-geometry.md. No generic lattice impossibility is inferred from
+equal volumes or genus. All roles no runs/imports/edits/children, no experiments
+or new implementation admitted. H034 cap still consumed. Best supported
+exponent1/2, verified improvement NONE; next decisive step is an explicit paid
+decomposition/recovery operator or falsification of its full-work premise.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h038-geometry-check.log 2>&1 exit0;
+no Lean/Audit changes. Latest task_status calls confirm all three H038 T3 handles
+RUNNING with no reported pending children. Both native reviews are completed.
+Await their independent proposal notifications without duplicate launches.
+
+## H037 closed candidate-specific source-factory screen
 
 H036 paper gate and all T3 proposal/review tasks are COMPLETED and collected.
 H036-complete-ledger.md records the strengthened transposed half-buffer baseline,
