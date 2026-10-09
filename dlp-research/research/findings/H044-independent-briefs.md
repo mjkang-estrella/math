@@ -85,3 +85,33 @@ subgroup and its induced uniform distribution. Desired u must divide p−1.
 
 This is a bounded no-new-construction result, not a fresh attack or a general
 obstruction. Other initial proposals remain withheld from this proposer.
+
+## Algebraic role API failure and bounded r2
+
+Original r1 task_status returned FAILED: "Claude gave up after repeated API
+errors." No research result was delivered or accepted. Fable and Grok were
+independently revalidated RUNNING. This is a provider failure, not evidence
+against a mathematical mechanism or a safety-stopped role.
+
+One new delegate_task used the same claudeAgent / claude-opus-5-5 and exact
+original common and algebraic briefs above, followed by this round-history
+addendum: original r1 terminated FAILED from repeated Claude API errors; no
+research result accepted; one new bounded attempt; do not infer mathematics
+from the API failure; no children or retries of other stopped tasks; other
+H044 roles remain live and independent; report actual access/provider failures.
+
+Client request: `ecdloop-h044-algebraic-constructions-opus-20261009-r2`.
+Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-algebraic-constructions-opus-20261009-r2`.
+Launch status: running. No childThreadId messaging or top-level thread.
+No code/Lean changes or numerical experiments; preceding check remains valid.
+
+The r2 terminal notification was immediately retrieved with task_status:
+FAILED, same repeated Claude API errors, no pending child runs, no research
+result. No further claudeAgent retry. Root explicitly informed the user and
+reused native Sol /root/h034_c4_implementation for the unfinished algebraic
+proposer role via followup_task. It received the full original algebraic scope,
+all no-run/stopped-role/cap restrictions, prior failures, H043 corrections and
+independence requirement. It must not duplicate the completed torus reporter
+role or read other H044 proposals. This is an explicit provider/model fallback,
+not a claim Opus completed research and not a mathematical rejection. Native
+Astra remains available for independent review of survivors.

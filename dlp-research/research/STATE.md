@@ -27,14 +27,18 @@ ranked questions and exact T3 prompts. Initial proposals withheld.
   construction. No faster operation; cheap block emptiness/support extraction
   still missing. Random-list expected output bound recorded in H044 briefs;
   it supplies neither an algorithm nor a useful-relation success guarantee.
-- claudeAgent / claude-opus-5-5: RUNNING algebraic-constructions-opus.
+- claudeAgent / claude-opus-5-5: FAILED algebraic-constructions-opus r1 AND r2:
+  repeated Claude API errors, no research result. No further Claude retries.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-algebraic-constructions-opus-20261009-r1`.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-algebraic-constructions-opus-20261009-r2`.
 - acpRegistry_factory_droid / claude-fable-5.1: RUNNING information-constructions-fable.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-information-constructions-fable-20261009-r1`.
 - grok / grok-4.7: RUNNING fullsolver-compositions-grok.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-fullsolver-compositions-grok-20261009-r1`.
-No failures or substitutions at launch. Native Sol review slot reserved for
-survivors; no duplicated critic opinions or stopped-role reroutes. No solver
+- Native Sol /root/h034_c4_implementation: RUNNING algebraic proposer fallback
+  after both Opus API failures; original scope and restrictions retained.
+Explicit model substitution recorded, not silently represented as Opus work.
+Native Astra available for survivor review; no duplicated opinions or stopped-role reroutes. No solver
 runs, experiments or H034 cap reset. Existing unbounded goal remains active.
 Best supported exponent1/2; verified improvement NONE. Next decisive evidence:
 a concrete faster operator with full labelled extraction and complete costs,
