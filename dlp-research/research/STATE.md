@@ -1,6 +1,6 @@
 # Main-objective research checkpoint
 
-Status: **active, algorithm-first research** (2026-10-08 UTC). Existing unbounded
+Status: **active, algorithm-first research** (2026-10-09 UTC / 2026-10-08 local). Existing unbounded
 goal thread `01a118a2-f8f0-7751-90bd-ddeb86a90ada` remains open. No duplicate
 coordinator, scheduler, push, publication or third-party targeting.
 
@@ -24,14 +24,21 @@ H040 closed at82c891d with no candidate. Independent initial proposals are
 withheld across roles; exact briefs in H041-independent-briefs.md.
 - Native Astra `/root/h007_additive_relations`: COMPLETED nonlocal coordinate
   operator pass, no changed public relation/witness construction; no new card.
-- claudeAgent / claude-opus-5-5: RUNNING primary-operator-bridges-opus.
+- claudeAgent / claude-opus-5-5: COMPLETED primary-operator-bridges-opus,
+  no candidate. Raw report retained; root recovered PKM2016 full paper and
+  corrected the decomposition exponent gate in H041-primary-disposition.md.
+  Native Sol `/root/h034_c4_implementation`: independent scope review COMPLETED;
+  conditional attempt costs and valid witnesses retained.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-primary-operator-bridges-opus-20261008-r1`.
 - grok / grok-4.7: RUNNING fused-fullwork-grok.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-fused-fullwork-grok-20261008-r1`.
-- acpRegistry_factory_droid / claude-fable-5.1: RUNNING adaptive-information-fable.
+- acpRegistry_factory_droid / claude-fable-5.1: COMPLETED adaptive-information-fable.
+  Raw report saved; no claimed survivor. New autocorrelation statistic and signed
+  interval repair need scope/cost correction. Native Astra
+  `/root/h007_additive_relations`: independent mathematical review RUNNING.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-adaptive-information-fable-20261008-r1`.
 Fresh live catalogue confirms exact targets; no substitution or provider
-failure. Three T3 tasks live; native Sol available for independent review.
+failure. Grok initial task live; native Astra information review running.
 All delegates read-only: no runs/imports/edits/children/experiments/commits.
 No H034 reset, stopped-role reroute or duplicate H039 hybrid. Root alone
 integrates. Best supported exponent1/2; complete-work improvement NONE.
@@ -40,6 +47,10 @@ candidate-specific falsifier. No numerical experiment admitted yet.
 Launch checkpoint validation: ./scripts/check.sh >
 /tmp/ecdlp-h041-launch-check.log 2>&1 exit0,366 existing audits. No new Lean
 claim; checks do not certify paper research or an algorithm improvement.
+Primary-cost checkpoint validation: ./scripts/check.sh >
+/tmp/ecdlp-h041-primary-check.log 2>&1 exit0,366 existing audits; no new Lean
+claim. Root primary read confirms relation cost threshold p^(1/2-1/m), with
+setup, useful relation count and linear-algebra costs separately charged.
 
 ## H040 completed independent ideation
 
