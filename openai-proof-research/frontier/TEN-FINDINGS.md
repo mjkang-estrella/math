@@ -19,11 +19,13 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 - I25: **accepted as [R011](findings/R011-rooted-matching-entropy.md), the fifth substantial finding**. Full-proof review passes without repairs; independent significance review judges the rooted separator/global-maximum mechanism substantial. Parent reproduction and integrity checks pass. All entropy and counting consequences count once.
 - I26: the [completed probability report](iterations/i26-probability-discovery-resumed.md) screens Voronoi dynamics, Ising logarithmic fluctuations and integer-height interfaces. Exact conditioning identities are technical source deductions; uniform slit-domain estimates and the scaling theorem remain unproved. [Parent verification](experiments/i26-resumed-parent-verification.json) passes; no substantial finding is proposed.
 
-- I27: [fresh geometric-analysis discovery](iterations/iteration27-geometric-analysis-discovery-task.json) screens distinct rigidity, degeneration and singular-set targets, outside the parked spectral-width route.
+- I27: the [completed geometric report](iterations/i27-geometric-analysis-discovery.md) develops endpoint-varifold arguments and explicit countermodels, but rectifiability, original-metric Einstein stability and spatial-Lp Ricci-flow continuation remain unproved. [Parent verification](experiments/i27-parent-verification.json) passes; no count increment.
 
 - I28: [fresh algebra discovery](iterations/iteration28-algebra-discovery-task.json) screens structural targets outside the parked Saxl and unimodality routes.
 
 - I29: [common-matroid-base entropy](iterations/iteration29-common-base-entropy-task.json) investigates a distinct prescribed-mean target; no transfer from R011 is assumed.
+
+- I30: [focused original-metric Einstein stability](iterations/iteration30-einstein-metric-stability-task.json) attacks I27’s separate time-zero metric gap, retaining the normalized-flow counterexample.
 
 These records include active tasks, completed gap reports, and R011 acceptance. The four-finding pause checkpoint remains a historical snapshot.
 
@@ -182,3 +184,11 @@ The all-roots allowance F−H≤(3/2)(B−b_v) is exactly additive through tight
 Independent full-proof review gives PASS without repairs. The separate primary-prior-art review judges the combined mechanism SUBSTANTIAL, after checking full source proofs, the old cut-restricted rank formula, nonbipartite Bethe corrections and prescribed-mean versus counting-only bounds. The parent read both full reviews and reproduced their verifiers. R3 passes for 126 sealed artifacts, 19 frozen inputs, 18 pinned files, 38 contracts, 51 passages and 45 retrieved byte artifacts; 1,888 edge-charge and 294 trace checks reproduce. R2 and author evidence also pass. [Final parent verification](experiments/i25-novelty-r3-parent-verification.json). Only documented shared-state drift occurred.
 
 Accept this as one fifth finding. Weighted partition bounds and exponential counting improvements are consequences of that one bridge. The optimal coefficient and worldwide priority remain unestablished; no sampler or optimizer is claimed. The geometric, algebraic and common-base investigations continue toward five remaining findings.
+
+## I27 geometric analysis: three gaps and endpoint obstruction
+
+The selected Euclidean stationary-varifold target is full codimension-one rectifiability, including points with planar tangent cones. The source’s center averaging uses a strictly supercritical Frostman exponent; at the endpoint its error becomes a divergent logarithmic integral. Flat-scale/center-mass alignment is also unproved. Explicit smooth positive stress systems satisfy the limiting equations while concentrating on a hyperplane, so those equations alone cannot fix the passage. Quantitative frequency-drop identities control stress directions only after center retention and do not establish a geometric packing theorem. A separate pair of small minimal graphs refutes a mass-only singular-measure bound, without refuting rectifiability.
+
+The Einstein screen distinguishes positive-time flow limits from original metric distances and rejects universal normalized-flow convergence by unequal products of spheres. The spatial-Lp Ricci-flow extension screen isolates a scalar-square loss normalized by a shrinking core scale; vanishing rescaled Lp norm alone does not make it negligible. These are technical deductions and obstruction tests, not new substantial findings.
+
+The parent read the full report and reproduced all four commands. Verification passes for 157 sealed artifacts, nine frozen inputs, 96 pinned files, 209 contracts, 25 source passages, ten primary passages and 20 primary retrievals, plus all 9,340 cached texts. Exact diagnostics reproduce the rational frequency, stress, product, scalar-scaling and reflection identities. Only shared-ledger drift is reported. [Parent verification](experiments/i27-parent-verification.json). I30 now develops the original-metric stability question independently.

@@ -73,7 +73,7 @@ The [full proof](iterations/i03-arithmetic-progressions.md) passes [independent 
 
 [R005 — Explicit reflection half-spaces](findings/R005-operator-reflection-obstruction.md) rules out every operator T_a=S+M_aV in the proposed commuting family as an ordinary-ISP counterexample. Independent audit and parent reproduction pass; the two explicit invariant half-spaces have dense nonclosed sum. This is a candidate obstruction, not a significant new ISP theorem. [R007 — Bounded-multiplier half-spaces](findings/R007-bounded-multiplier-halfspaces.md) now validates the stronger obstruction: every bounded measurable complex coordinate/base multiplier variant S+M_rV has an invariant half-space. The exact asymmetric operator also has empty point spectra for itself and its adjoint. Independent audit and parent reproduction pass. The entire specified bounded-multiplier family is closed as an ISP-counterexample route; this is not counted as a substantial new-to-literature advance.
 
-[I27 geometric-analysis discovery](iterations/iteration27-geometric-analysis-discovery-task.json) now screens new rigidity, degeneration and singular-set routes.
+[I27 geometric analysis](iterations/i27-geometric-analysis-discovery.md) completes three screens and an endpoint rectifiability gap record. [I30](iterations/iteration30-einstein-metric-stability-task.json) now attacks the separate original-metric almost-Einstein stability question.
 
 [I28 algebra discovery](iterations/iteration28-algebra-discovery-task.json) now screens distinct structural targets outside the parked representation routes.
 
