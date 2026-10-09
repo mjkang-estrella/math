@@ -45,7 +45,7 @@ The parent checked both proofs against the actual source kernel and reran the ex
 
 ## Validated bounded-index arithmetic consequence
 
-[R004 — Simultaneous bounded residual index](findings/R004-simultaneous-bounded-index.md) combines two accepted corpus inputs to put every base in a fixed finite set at bounded index for a positive proportion of primes. The corrected theorem and prime-average corollary pass independent proof review; parent finite checks and source hashes reproduce. The literature screen found no exact duplicate, but a nonroutine new mechanism and priority remain unproved. The frontier objective stays open. The next round attempts the fixed-progression reservoir needed for positive-density primitive roots.
+[R004 — Simultaneous bounded residual index](findings/R004-simultaneous-bounded-index.md) combines two accepted corpus inputs to put every base in a fixed finite set at bounded index for a positive proportion of primes. The corrected theorem and prime-average corollary pass independent proof review; parent finite checks and source hashes reproduce. The literature screen found no exact duplicate, but a nonroutine new mechanism and priority remain unproved. The frontier objective stays open. The [progression round](iterations/i03-arithmetic-progressions.md) has returned a candidate proof of that reservoir and positive-lower-density primitive roots. Independent analytic review is running; those stronger claims are not yet accepted.
 
 ## Closed operator candidate
 
