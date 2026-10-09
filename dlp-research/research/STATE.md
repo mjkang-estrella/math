@@ -27,14 +27,19 @@ openings in H043-independent-briefs.md. Four distinct productive roles:
   representation pass. No joint coverage/extraction improvement found;
   progression and expanded-multiplier descriptions supplied no changed
   witness primitive. No new card, lower bound, experiment or source claim.
-- claudeAgent / claude-opus-5-5: RUNNING trace-scalar-construction-opus.
+- claudeAgent / claude-opus-5-5: COMPLETED trace-scalar-construction-opus.
+  No decoder supplied. Raw report saved; native Astra math and Sol cost
+  reviews COMPLETED. H043-trace-scalar-disposition.md retains the explicit
+  cubic conversion, zero correspondence and good reduction at O, correcting
+  the proposed ramification set. No group-law necessity or cost lower bound.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h043-trace-scalar-construction-opus-20261009-r1`.
 - acpRegistry_factory_droid / claude-opus-5-5: RUNNING structured-system-constructions-factory-opus.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h043-structured-system-constructions-factory-opus-20261009-r1`.
 - grok / grok-4.7: RUNNING new-fullwork-constructions-grok.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h043-new-fullwork-constructions-grok-20261009-r1`.
-Fresh live catalogue confirms all exact T3 targets; accepted RUNNING, no
-failure or substitution. Native Sol review role complete, no work pending.
+Fresh live catalogue confirms all exact T3 targets; no failure or substitution.
+Only Factory structured-system and Grok full-work T3 tasks remain live;
+native reviews complete. Root read the cited Diem and FKM primary sources.
 No duplicate H042 task, H034 reset, stopped-role reroute, child-of-child,
 experiment or broad Lean infrastructure. Root alone integrates/commits.
 Best supported exponent1/2; verified complete-work improvement NONE.
@@ -43,6 +48,9 @@ then independent review and an admitted bounded synthetic falsifier.
 Launch uses the unchanged code checked by ./scripts/check.sh >
 /tmp/ecdlp-h042-nonlinear-check.log 2>&1 (exit0,366 audits); new files are
 paper/process only. Checks do not validate a new algorithm or paper theorem.
+Trace review validation: ./scripts/check.sh > /tmp/ecdlp-h043-trace-check.log
+2>&1 exit0,366 existing audits. No new Lean claim or experiment; algebraic
+identities independently reviewed on paper, no full-work gain inferred.
 
 ## H042 completed constructive operators
 
