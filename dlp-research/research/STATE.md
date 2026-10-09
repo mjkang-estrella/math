@@ -18,7 +18,28 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H041 live independent operator search
+## H042 live constructive operators
+
+H041 completed; no improved solver or experiment admitted. H042 targets the
+corrected relation-solving opening and genuinely different public information
+operators. Exact briefs: H042-independent-briefs.md. Initial proposals withheld.
+- Native Astra `/root/h007_additive_relations`: RUNNING explicit dedicated
+  constrained-system solver / changed coordinate relation primitive.
+- claudeAgent / claude-opus-5-5: RUNNING shared-relations-opus.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-shared-relations-opus-20261009-r1`.
+- acpRegistry_factory_droid / claude-fable-5.1: RUNNING nonlinear-signals-fable.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-nonlinear-signals-fable-20261009-r1`.
+Fresh catalogue, exact targets accepted; no failure or substitution. Native
+Sol available for independent review. No new experiments/imports/edits/children
+by delegates, no H034 reset or stopped-role reroute. Root alone integrates.
+Best supported exponent1/2, verified complete-work improvement NONE. Next
+conclusion-changing evidence: actual public operator meeting the corrected
+cost gate, then independent review and a candidate-specific bounded falsifier.
+Checkpoint validation: ./scripts/check.sh > /tmp/ecdlp-h042-launch-check.log
+2>&1 exit0,366 existing audits. No Lean claim changed; checks do not certify
+the paper findings or establish an improved algorithm.
+
+## H041 completed independent operator search
 
 H040 closed at82c891d with no candidate. Independent initial proposals are
 withheld across roles; exact briefs in H041-independent-briefs.md.
@@ -30,7 +51,9 @@ withheld across roles; exact briefs in H041-independent-briefs.md.
   Native Sol `/root/h034_c4_implementation`: independent scope review COMPLETED;
   conditional attempt costs and valid witnesses retained.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-primary-operator-bridges-opus-20261008-r1`.
-- grok / grok-4.7: RUNNING fused-fullwork-grok.
+- grok / grok-4.7: COMPLETED fused-fullwork-grok; no new dataflow.
+  H041-fused-work-disposition.md retains raw report and scopes its ideal
+  collision constants and field-only memory crossing.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-fused-fullwork-grok-20261008-r1`.
 - acpRegistry_factory_droid / claude-fable-5.1: COMPLETED adaptive-information-fable.
   Raw report saved; no claimed survivor. H041-information-disposition.md retains
@@ -39,7 +62,7 @@ withheld across roles; exact briefs in H041-independent-briefs.md.
   Astra mathematical and Sol cost/recovery reviews COMPLETED; no experiment.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-adaptive-information-fable-20261008-r1`.
 Fresh live catalogue confirms exact targets; no substitution or provider
-failure. Only Grok initial task remains live; no pending native reviews.
+failure. All H041 proposers and reviews terminal; no H041 live child.
 All delegates read-only: no runs/imports/edits/children/experiments/commits.
 No H034 reset, stopped-role reroute or duplicate H039 hybrid. Root alone
 integrates. Best supported exponent1/2; complete-work improvement NONE.
