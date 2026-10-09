@@ -27,7 +27,7 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 - I30: [focused original-metric Einstein stability](iterations/iteration30-einstein-metric-stability-task.json) attacks I27’s separate time-zero metric gap, retaining the normalized-flow counterexample.
 
-- I31: [nonconical no-MCM realization](iterations/iteration31-nonconical-no-mcm-task.json) suffered a provider failure before a report. The parent verified and preserved its preparation; the [same delegated task resumed](iterations/iteration31-nonconical-resume.json) to finish the I28 audit and attempt the missing construction. Its deformation idea remains unverified; no count increment.
+- I31: [nonconical no-MCM realization](iterations/iteration31-nonconical-no-mcm-task.json) independently checks I28’s persistence argument and attempts the missing construction with its full associated-graded and nonisomorphism obligations.
 
 These records include active tasks, completed gap reports, and R011 acceptance. The four-finding pause checkpoint remains a historical snapshot.
 
@@ -202,9 +202,3 @@ The completed report develops three distinct targets. The dimension-independent 
 For the involutive Kurosh target, tensoring with the opposite algebra introduces explicit zero divisors, while the source’s degree-11 lifting and a generic degree-16 cyclic replacement fail first-kind-involution requirements. No impossibility of the full target is claimed. These are technical results and gaps, not an additional substantial finding.
 
 Parent reproduction passes for 109 sealed artifacts, 35 selected pinned sources, 57 exact source contracts and all 9,340 cached texts. Diagnostics reproduce 35,000 Weyl actions, 15,625 cocycle identities, 441 module-filtration checks, 341 Rees shifts and the weighted-chart, syzygy, tensor and graph checks. Only shared-ledger drift is reported. [Parent verification](experiments/i28-parent-verification.json) records the limits; I31 now targets the actual nonconical realization and independently audits the technical persistence proof before reuse. Count remains five of ten.
-
-## I31 provider interruption and recovery
-
-The first delegated turn failed at provider level before writing a mathematical report, diagnostics or a final seal. This is neither a proof rejection nor a successful realization. A commentary-only lead involving a primitive class at the canonical twist remains unverified, especially all-order compatibility, section-ring preservation and nonconicality after forgetting the filtration.
-
-The [parent checkpoint](experiments/i31-interrupted-parent-checkpoint.json) verifies 43 preserved preparation files, seven frozen inputs, 111 unchanged I28 files, four pinned manuscript files and 17 retained literature responses. No dependency mismatch was found. These checks establish preservation and source preparation only. The same T3 child accepted a second turn under [the recovery instructions](iterations/iteration31-nonconical-resume.json), with initial bytes frozen and new evidence confined to resumed subdirectories. Accepted count remains five of ten.
