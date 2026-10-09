@@ -1,6 +1,6 @@
 # OpenAI mathematics research
 
-**Research pause requested at [4 accepted substantial findings](frontier/TEN-FINDINGS.md), out of the original target of 10.** The fourth, [R010 — factor-count residues and PD independence](frontier/findings/R010-complex-modes-PD-independence.md), has passed independent proof and significance reviews plus parent verification. The ten-finding objective remains incomplete; remaining work is preserved for resumption.
+**Research paused at [4 accepted substantial findings](frontier/TEN-FINDINGS.md), out of the original target of 10.** The fourth, [R010 — factor-count residues and PD independence](frontier/findings/R010-complex-modes-PD-independence.md), has passed independent proof and significance reviews plus parent verification. The ten-finding objective remains incomplete; remaining work is preserved for resumption.
 
 **[R009 — variable-channel reconstruction capacity](frontier/findings/R009-variable-channel-capacity.md).** A weighted nonlinear capacity characterizes four-state reconstruction on locally finite trees with arbitrary known edge channels, including perfect transmission. Independent proof and prior-art reviews pass; the parent reproduced their checks. The degree-free extension belongs to the same finding. Worldwide priority remains unverified.
 

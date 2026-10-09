@@ -1,6 +1,6 @@
 # Ten substantial findings
 
-User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 4 accepted, 6 remaining; pause requested at four**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
+User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 4 accepted, 6 remaining; PAUSED at user request**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
 
 **User stop instruction, 2026-10-08:** “Let’s pause after 4th finding for now.” R010 has now passed proof review, separate significance review and parent verification. Its separate acceptance commit reaches that milestone. Halt outstanding delegated work and pause the ten-finding goal, preserving remaining artifacts for later resumption. The ten-finding objective is incomplete; no further research is authorized until resumed.
 
@@ -13,7 +13,7 @@ All results remain deductions under the accepted corpus at `openai/math@fd4aeeb2
 | 1 | [R006: fixed-progression PD law and positive-proportion primitive roots](findings/R006-progression-PD-primitive-root-density.md) | `4e09ab8` | `d950f93` |
 | 2 | [R008: parity independent of factor sizes and squarefreeness](findings/R008-parity-PD-independence.md) | `e651d0e` | `8155129` |
 | 3 | [R009: variable-channel four-state weighted capacity](findings/R009-variable-channel-capacity.md) | `4afc0cf` | `1bf8898` |
-| 4 | [R010: fixed factor-count residues independent of PD factor sizes](findings/R010-complex-modes-PD-independence.md) | `1b384f1` (proof integration) | Separate acceptance commit containing this record |
+| 4 | [R010: fixed factor-count residues independent of PD factor sizes](findings/R010-complex-modes-PD-independence.md) | `1b384f1` (proof integration) | `f034e3d` |
 
 Equivalent formulations, routine corollaries, and multiple consequences of the same new bridge count as one finding. In particular, R008's Moree–Hommersom implication is part of R008.
 
@@ -57,7 +57,9 @@ The [parent candidate](iterations/i14-sharp-spectral-width.md) proposes a graph-
 
 ## Iteration 15: odd-order topology construction
 
-A [fresh research task](iterations/iteration15-odd-order-topology-task.json) targets a closed aspherical topological four-manifold with an outer automorphism of exact order three that no homeomorphism represents. It must develop a genuinely ternary obstruction and prove the needed covering and geometric realization steps, while checking odd-order prior art. Repetition of binary detectors or failure merely to realize a finite group action will not meet this target. The earlier rank construction remains technical only.
+The [research task](iterations/iteration15-odd-order-topology-task.json), interrupted at the requested four-finding pause, targets a closed aspherical topological four-manifold with an outer automorphism of exact order three that no homeomorphism represents. It must develop a genuinely ternary obstruction and prove the needed covering and geometric realization steps, while checking odd-order prior art. Repetition of binary detectors or failure merely to realize a finite group action will not meet this target. The earlier rank construction remains technical only.
+
+See [the pause and resumption record](PAUSED-AT-FOUR.md) for interrupted task state and preserved artifacts. Do not execute the following rules until the user resumes.
 
 ## Continuation rules
 

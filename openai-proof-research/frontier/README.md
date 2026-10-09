@@ -21,7 +21,7 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Pause requested at the fourth finding: [10-finding ledger](TEN-FINDINGS.md); 4 accepted, 6 remaining.** Iteration 07 opens arithmetic, geometric-analysis and structural-mathematics tracks. Each candidate needs a complete new bridge and separate proof and significance reviews before it enters the count.
+**Paused at the fourth finding: [10-finding ledger](TEN-FINDINGS.md); 4 accepted, 6 remaining.** Iteration 07 opens arithmetic, geometric-analysis and structural-mathematics tracks. Each candidate needs a complete new bridge and separate proof and significance reviews before it enters the count.
 
 **Fourth substantial deduction accepted:** [R010](findings/R010-complex-modes-PD-independence.md) proves joint uniformity of Omega(p-1) modulo every fixed m and independence from the PD(1) ranked-factor law in fixed reduced progressions. Both independent reviews pass, and parent checks reproduce. The common nonzero principal model and its signed recombination supply the additional argument beyond parity. Research stops at four as requested; the ten-finding target remains incomplete.
 
