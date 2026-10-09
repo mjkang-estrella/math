@@ -84,6 +84,18 @@ YOUR DISTINCT LENS: Primary mathematical algorithms giving compact public operat
 
 ## Evidence and next decision
 
+Continuation after4a4cc15: the native evaluator construction is recorded in
+H046-half-orbit-evaluator.md, with no complete recovery gain. Sol independently
+returned three detector sketches: ternary character fingerprints for fractions
+with square denominator, fixed-anchor slope keys, and fraction-free polynomial
+intersection with index extraction. None is presented as a gain or new discovery.
+Root assigned native Astra a separate read-only mathematical/cost review of all
+three: verify identities, degenerate/null cases, probability for fixed versus
+adaptive keys, paid character/gcd/tree work, and whether a concrete overlooked
+gain could justify a test. Do not infer a universal lower bound from direct Euler
+or naive polynomial strategies. Sol finishes its scoped report; initial T3
+proposals remain independent and unreturned. No additional experiment authorized.
+
 Evidence so far: the exact H045 half-product identity exists, but no cheap
 full-recovery evaluator is supplied. Other roles have not returned proposals.
 H045 negative screens were narrowed rather than represented as impossibility.

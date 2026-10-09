@@ -28,15 +28,21 @@ handles. Root refreshed live capability catalogue and checked native status.
   algebra, degree growth, exceptional centres and primary multipoint source.
   H046-half-orbit-evaluator.md gives a paid soft-O(sqrt(q)) single-bit
   construction, not faster recovery. No shifted-query sharing supplied.
+- Native Astra follow-up LIVE: independent mathematical/cost screen of Sol's
+  three returned detector sketches (character fingerprints of square-denominator
+  fractions, fixed-anchor slope keys, fraction-free polynomial intersection).
+  No gain claimed; fixed/adaptive seed scope and full detection costs under review.
 - Native Sol /root/h034_c4_implementation RUNNING: fused point production and
-  useful equality detection/recovery with explicit representations and costs.
+  useful equality detection/recovery; initial three sketches returned, final
+  scoped report pending. Root checked identities and raised adaptive-key and
+  character-evaluation-cost qualifications before independent review.
 - Factory Fable5.1 RUNNING: public information with a paid joint recovery path.
 - Grok4.7 RUNNING: changed noncanonical search geometry and useful-event laws.
 - Factory Opus5.5 RUNNING: primary mathematical public operators with concrete
   ordinary-curve recovery bridges. Distinct provider, not a Claude API retry.
 At launch three native were active including root and three T3 tasks were
-accepted RUNNING. Astra's focused role is now complete; Sol and the T3 initial
-construction roles remain live at the latest authoritative checks. All read-only,
+accepted RUNNING. Astra's evaluator role is complete and detector review is live;
+Sol and the T3 initial construction roles remain live at authoritative checks. All read-only,
 no experiments/imports/scripts/children; root owns integration. Independent
 initial proposals withheld. H034 cap unchanged, stopped routes not reopened.
 Actual task IDs:
