@@ -1,6 +1,6 @@
 # Analysis / PDE / probability / mathematical-physics frontier scout
 
-**Parent status: candidate under independent review, not an accepted finding.** Two follow-up tasks test correctness/novelty and the repeated-eigenvalue gap. The simple-eigenvalue condition is essential to the all-eigenfunctions claim; polygons and convex domains need not satisfy it. The maximum-set structure lemma is planar. The problem API's importance categories are distinct from MathDB's numerical news significance scores. The scout's original self-assessment below is provisional.
+**Parent status: mathematically valid after the repairs in [independent review](../reviews/hotspots-review-r2.md), but rejected as satisfying the user's novelty requirement.** The advertised separation lemma is a special case of Bérard–Helffer (2021), Lemma 4.3; spectral approximation is classical. Retain this as a conditional regularity-transfer corollary. No literature priority is established. The all-eigenfunction claim still needs simplicity; the general multiple-eigenvalue extension remains under investigation. The review is authoritative for corrected references and scope.
 
 Date: 2026-10-08. Upstream: `openai/math` at
 `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. Every theorem in that revision is
@@ -15,7 +15,7 @@ script: `frontier/experiments/analysis_mathdb_fetch.py`.
 
 ## 0. Outcome in one paragraph
 
-**Main result (Section 2).** This is a new bridge lemma plus a proof. It
+**Conditional corollary (Section 2).** Using a classical level-set lemma and spectral approximation, the argument
 extends the corpus's smooth-domain hot-spots theorem (family 369) to
 **every bounded simply connected planar Lipschitz domain whose first
 positive Neumann eigenvalue is simple**. This includes simply connected
@@ -27,11 +27,11 @@ connected Lipschitz domain, at least one nonzero first-positive
 eigenfunction has this property. Every eigenfunction in its "limit set"
 also has no strict local extremum and no nondegenerate critical point.
 
-The new ingredient is a variational *separation lemma* (Lemma R). The
+The variational *separation lemma* (Lemma R) is classical; see the independent review and Bérard–Helffer (2021), Lemma 4.3. The
 level set of an interior global maximum of a first-positive Neumann
 eigenfunction cannot disconnect the domain. This lemma eliminates the
 degenerate "ridge" maxima that a limiting argument from smooth domains
-cannot exclude. Together they give a meaningful new case of the
+cannot exclude. Together they transfer the accepted smooth theorem to additional cases of the
 AIMPL/Burdzy simply connected hot-spots conjecture, which MathDB lists as
 named problem 384597.
 
@@ -136,7 +136,7 @@ L(Ω) as the set of u ∈ E(Ω) for which the following hold:
 
 L(Ω) is closed under real scalar multiplication.
 
-### 2.3 Lemma R (maximum level sets do not separate) — new bridge lemma
+### 2.3 Lemma R (maximum level sets do not separate) — classical special case
 
 *Hypotheses.* Let Ω ⊂ ℝⁿ be a bounded domain (no smoothness, no topology).
 Let 0 ≠ u ∈ E(Ω). Suppose M := sup_Ω u is attained at some point of Ω, and
@@ -181,10 +181,7 @@ put S = {x ∈ Ω : u(x) = M}.
 minimality. It uses no regularity of ∂Ω (trace-free) and works in every
 dimension.
 
-*Novelty.* The restrict-and-compare mechanism is the classical
-Courant/nodal one, but I found no statement of this exact
-maximum-level-set form (see Section 2.8). I claim it as new to this
-project only.
+*Attribution after review.* Bérard–Helffer, *Level sets of certain Neumann eigenfunctions under deformation of Lipschitz domains* (2021), Lemma 4.3 and Remark 4.4, prove the stronger connected-sublevel statement. Their argument traces to Gladwell–Zhu (2003). The arbitrary-domain formulation here uses the same Rayleigh restriction mechanism and is not claimed as a novel proof idea.
 
 ### 2.4 Lemma T (structure of an interior maximum set)
 
@@ -228,7 +225,7 @@ In particular L(Ω) ≠ {0}, and L(Ω) = E(Ω) when dim E(Ω) = 1.
 
 *Proof.*
 
-1. **Cited approximation.** Take Verchota's approximating C^∞ domains
+1. **Cited approximation (original scout citation; use the repair below).** Take Verchota's approximating C^∞ domains
    (Verchota, J. Funct. Anal. 59 (1984), appendix; see also Kenig, CBMS
    Reg. Conf. 83 (1994), Ch. 1). These are Ω_k ⊂ Ω with uniformly bounded
    Lipschitz character and homeomorphisms Λ_k : ∂Ω → ∂Ω_k satisfying
@@ -277,8 +274,7 @@ In particular L(Ω) ≠ {0}, and L(Ω) = E(Ω) when dim E(Ω) = 1.
 8. **Simple eigenvalue.** If dim E = 1, every u ∈ E is a limit of ±c u_k.
    ∎
 
-*Validation note.* Steps 1 and 4 are cited classical facts about
-Lipschitz domains; I did not re-derive them. Steps 5–8 are proved here.
+*Reference repair after independent review.* Use Ball–Zarnescu (arXiv:1312.5156v3), Theorem 5.1 and Remark 5.3: inner regularized-distance level sets preserve topology, exhaust the domain, and have uniformly controlled graph charts. The original Verchota appendix locator above was inaccurate. Uniform extension requires chart radii and finite cover control as well as slopes. Ni–Wang (2007), Proposition 5.4, supplies the classical spectral convergence precedent. The review gives the actual statements and full proof details. Boundary continuity used below follows from Nittka (arXiv:0906.5285v1), Proposition 3.6, with dimension 2 and p=4.
 
 ### 2.6 Theorem H (proved under the corpus premise)
 
@@ -326,7 +322,7 @@ theorem, ∇u_k ≠ 0 in Ω_k.
     contradicts Lemma R.
   - For the infimum, apply the same argument to −u.
 
-- (c) Suppose ∇u has an isolated zero x₀ of index ι ≠ 0 on a disk B
+- (c) First justify derivative convergence from the definition of L. Choose a compactly supported smooth test function ψ with ∫uψ≠0. Distributional testing gives μ_k=∫u_k(−Δψ)/∫u_kψ→μ. The harmonic lifts exp(√μ_k s)u_k(x) then converge locally uniformly; interior harmonic estimates give C∞ local convergence, in particular convergence of gradients. Suppose ∇u has an isolated zero x₀ of index ι ≠ 0 on a disk B
   containing no other zero. C¹ convergence gives ∇u_k → ∇u uniformly on
   B̄. So deg(∇u_k, B, 0) = ι ≠ 0 for large k, and ∇u_k vanishes in B,
   which is a contradiction. A nondegenerate critical point is isolated
@@ -353,12 +349,12 @@ gradient nonvanishing. Here (b) is the full strict conjecture statement.
 (c) is weaker than nonvanishing: degenerate index-0 critical points, or
 curves of critical points away from the extremal levels, are not excluded.
 
-### 2.7 Precise remaining gap: accidental double eigenvalues
+### 2.7 Remaining gap: multiple eigenvalues
 
 By Nadirashvili's bound, which upstream reproves as `prop:multiplicity`
-for smooth domains, multiplicity is at most 2 in the smooth case. When
-dim E(Ω) = 2, Lemma A only shows that L(Ω) contains a line. Theorem H for
-*all* of E(Ω) reduces exactly to the following:
+for smooth domains, multiplicity is at most 2 in the smooth case. This does not establish the same bound on Lipschitz limits: spectral clusters may merge. When
+dim E(Ω) = 2, Lemma A only shows that L(Ω) contains a line. The following is a sufficient condition for this proof to cover
+*all* of E(Ω); necessity is not established:
 
 > **Gap G.** Every line in a double first-positive eigenspace is the
 > locally uniform limit of first-positive eigenlines of smooth simply
@@ -391,7 +387,7 @@ dim E(Ω) = 2, Lemma A only shows that L(Ω) contains a line. Theorem H for
      it fails (it would force μ² = 1), so the disk is nondegenerate.
    - Status: conditional reduction; the degenerate case is open.
 
-**Not closed.** The general multiplicity-2 Lipschitz case and nonsmooth
+**Not closed.** The general multiple-eigenvalue Lipschitz case and nonsmooth
 non-Lipschitz domains are open. Quasidisks look plausible via conformal
 inner approximants Φ(rD) and Jones extension, but uniform extension
 constants were not verified.
@@ -412,8 +408,7 @@ constants were not verified.
   extension and no explicit statement of Lemma R.
 - **Disposition.** Theorem H(d)/(e) is a *new-to-project* result giving a
   meaningful new case of a named conjecture, conditional only on the
-  corpus. Literature priority for Lemma R is **not** established; it may
-  be folklore in nodal-domain arguments.
+  corpus. Independent review found the stronger published Lemma 4.3 of Bérard–Helffer. This is a classical transfer and does not meet the requested novelty standard.
 
 ### 2.9 Validation performed
 
@@ -430,7 +425,7 @@ constants were not verified.
   - the degree-stability argument.
 - No numerical experiment was run (scipy is unavailable; numerics would
   not add proof value).
-- This report has had no independent review yet.
+- Independent review is now complete: see [hotspots-review-r2.md](../reviews/hotspots-review-r2.md). Corrected conclusions survive; novelty claim is rejected.
 
 ## 3. Screened ranked targets: bridge attempts and obstructions
 
@@ -557,11 +552,11 @@ gap and OS axioms; exact O(4) mass asymptotics.
 
 | Item | Label |
 |---|---|
-| Lemma R (max-level non-separation, any dimension) | **proved here**; priority unknown |
+| Lemma R (max-level non-separation, any dimension) | classical restriction argument; stronger published level-set result identified |
 | Theorem H(a)–(c) for u ∈ L(Ω) | **proved here**, conditional on corpus 369 |
 | Theorem H(d): strict hot spots for simply connected Lipschitz Ω with simple μ | **proved here** (cites classical Lipschitz approximation/extension) |
 | Theorem H(e): one favorable eigenfunction for every simply connected Lipschitz Ω | **proved here** |
-| Double eigenvalue, general (Gap G) | **open**; conditional reduction (2.7.2); symmetric case sketched (2.7.1) |
+| Multiple eigenvalues (Gap G is sufficient, not equivalent) | **open here**; shape-control and symmetric sketches remain unverified |
 | Site criticality, ℝ⁵ Kakeya, ISP, NS, Smale-13, YM | **open**; obstructions recorded |
 | MathDB 389103, 389104, 398653 | already settled by the corpus (routine, not claimed) |
 
