@@ -35,14 +35,15 @@ extraction review COMPLETED. H047-compact-filter-reporter.md gives the actual
 division-free quotient-ring circuit, exception dispatch, indices and paid
 upper invoice. It remains softO(M), matching direct enumeration's exponent,
 so no improved solver or experiment follows. Native roles are now complete
-and available for independent review of the two remaining T3 constructions.
+and have now been reassigned to independent mathematical (Astra) and complete-
+cost/prior-art (Sol) review of the returned Factory report.
 
 T3 tasks, all initially accepted RUNNING after refreshed capability discovery:
-- acpRegistry_factory_droid / claude-opus-5-5: H047 shared public-signal constructions.
+- acpRegistry_factory_droid / claude-opus-5-5: COMPLETED H047 shared public-signal constructions.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-shared-information-factory-opus-20261009-r1`.
 - claudeAgent / claude-opus-5-5: FAILED primary coordinate constructions.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-coordinate-constructions-opus-20261009-r1`.
-- grok / grok-4.7: H047 autonomous search constructions.
+- grok / grok-4.7: COMPLETED H047 autonomous search constructions.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-autonomous-search-grok-20261009-r1`.
 
 Claude terminal result: 'Claude gave up after repeated API errors.', no pending
@@ -55,7 +56,21 @@ Root's H047-mixed-radix-success.md constructs two independently randomized
 long progressions from dependent short pairs. Astra independent review COMPLETE:
 exact moments, output caps, coefficient-one extraction and common-step failure
 bound checked. A fast paid reporter is still missing; no algorithm gain.
-Factory Opus and Grok remain live; two T3 children within user-confirmed20.
+Factory Opus and Grok terminal outputs collected, no pending child runs.
+H047-information-factory-raw.md preserves the actual Factory research message
+recovered from backing-thread position35; terminal summary alone was a plan
+footer. H047-walk-grok-raw.md preserves Grok's full terminal report. Both are
+UNACCEPTED. Root flags eigenline signs, unsupported evaluator/decoder closure,
+walk reflection labels, missing restart costs and inconsistent arithmetic ratios.
+Native Astra /root/h007_additive_relations reviews information mathematics;
+native Sol /root/h034_c4_implementation reviews cost/prior art, both RUNNING.
+Independent Factory Fable walk review accepted RUNNING after capability refresh:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-walk-algebra-review-fable-20261009-r1`.
+Three reviewers plus root; native3 including root, T3 one live. Review results
+are pending, not a research blocker. No raw global negative claim is adopted.
+Returned-report checkpoint validation: ./scripts/check.sh >
+/tmp/ecdlp-h047-returned-reviews-check.log 2>&1 passed exit0. No formal
+source changes, new claims, experimental runs or experimental cap changes.
 No old task duplicated or safety-stopped route rerouted. All
 roles read-only, no children/experiments/scripts/imports/files. Root alone
 integrates/stages/commits. Initial proposals withheld before synthesis. H034
