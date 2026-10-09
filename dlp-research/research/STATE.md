@@ -28,21 +28,21 @@ handles. Root refreshed live capability catalogue and checked native status.
   algebra, degree growth, exceptional centres and primary multipoint source.
   H046-half-orbit-evaluator.md gives a paid soft-O(sqrt(q)) single-bit
   construction, not faster recovery. No shifted-query sharing supplied.
-- Native Astra follow-up LIVE: independent mathematical/cost screen of Sol's
+- Native Astra follow-up COMPLETED: independent mathematical/cost screen of Sol's
   three returned detector sketches (character fingerprints of square-denominator
   fractions, fixed-anchor slope keys, fraction-free polynomial intersection).
-  No gain claimed; fixed/adaptive seed scope and full detection costs under review.
-- Native Sol /root/h034_c4_implementation RUNNING: fused point production and
-  useful equality detection/recovery; initial three sketches returned, final
-  scoped report pending. Root checked identities and raised adaptive-key and
-  character-evaluation-cost qualifications before independent review.
+  H046-detector-screen.md retains exact identities, fixed-list fingerprint
+  expectation and null/exception handling; no complete detector gain or test.
+- Native Sol /root/h034_c4_implementation COMPLETED three scoped detector
+  constructions and their invoices. Root checked identities and included
+  adaptive-key, character-cost, signed extraction and matched-input caveats.
 - Factory Fable5.1 RUNNING: public information with a paid joint recovery path.
 - Grok4.7 RUNNING: changed noncanonical search geometry and useful-event laws.
 - Factory Opus5.5 RUNNING: primary mathematical public operators with concrete
   ordinary-curve recovery bridges. Distinct provider, not a Claude API retry.
 At launch three native were active including root and three T3 tasks were
-accepted RUNNING. Astra's evaluator role is complete and detector review is live;
-Sol and the T3 initial construction roles remain live at authoritative checks. All read-only,
+accepted RUNNING. Both native roles now completed; three T3 initial construction
+roles remain RUNNING on revalidated original handles. All read-only,
 no experiments/imports/scripts/children; root owns integration. Independent
 initial proposals withheld. H034 cap unchanged, stopped routes not reopened.
 Actual task IDs:
@@ -62,6 +62,10 @@ Half-orbit evaluator validation: ./scripts/check.sh >
 /tmp/ecdlp-h046-half-orbit-check.log 2>&1 exit0,366 existing audits. This checks
 unchanged formal artifacts, not the paper evaluator; no Lean claim or experiment
 added. Root/Astra paper derivation and source checks are the recorded evidence.
+Detector validation: ./scripts/check.sh > /tmp/ecdlp-h046-detector-check.log
+2>&1 exit0,366 existing audits. No new formal claim or experiment. Root/Sol/Astra
+checked the paper identities and costs; three original T3 constructions still
+live, with no duplicate launches. This continuation is progress, not a blocker.
 
 ## H045 completed independent constructions
 
