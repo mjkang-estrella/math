@@ -24,7 +24,7 @@ When a report returns without meeting the gate, integrate its evidence and use i
 | Operator construction, round 2 | Audit cross-field arguments; solve or obstruct the exact rank-two transfer identities using the accepted operator's dyadic weights, and analyze actual invariant subspaces. | `i02-operator-r2.md`; `../reviews/i02-crossfield-r2.md` |
 | Arithmetic | Try new theorem-strength mechanisms, including the internal structure of quasi-RH proofs; avoid ordinary zero-free-region corollaries and the failed naive Chowla norm. | `i02-arithmetic.md` |
 | Hodge construction, round 1 | Returned an explicit quotient carrier and obstructions to specific constructions; no partner cycle or new Hodge case. Parent reproduced exact checks; independent proof audit is running. | [Report](i02-hodge-construction.md) |
-| Hodge construction, round 2 | Independently audit round 1, then attempt an actual curve-family/cylinder on the explicit quotient using geometry outside the excluded constructions. | `i02-hodge-cylinder-r2.md`; `../reviews/i02-hodge-construction-r2.md` |
+| Hodge construction, round 2 | Independently audit round 1, then attempt an actual curve-family/cylinder on the explicit quotient using geometry outside the excluded constructions. First turn failed at provider level; the same child task was resumed from its retained work. | `i02-hodge-cylinder-r2.md`; `../reviews/i02-hodge-construction-r2.md` |
 
 Each lane has a T3 delegated task, with IDs in its adjacent `*-task.json` file. Completion events return to the parent thread for integration and the next decision. No recurring schedule or external publication was created.
 
@@ -43,3 +43,7 @@ The parent read the completed task result and report. Its finite output reproduc
 No candidate clears the success gate. The sunflower threshold upgrade is false for unrestricted spread families, and the avoiding-set convexity application has the wrong exceptional set. The Kakeya lift recovers only dimension four. Proposition R excludes rank-one perturbations of the accepted operator, with novelty unestablished; it is recorded as an obstruction to a research route, not a substantial advance on the celebrated target.
 
 Decision: continue with the exact rank-two transfer problem in §7 of the report. The new task must use the actual dyadic weights, test controllability/observability and ordinary invariant subspaces, and reject mere similarity constructions. If that approach yields only an elementary or known obstruction, it must attempt a materially different construction. No accepted-finding count is increased.
+
+### Hodge round 2 execution recovery — 2026-10-08
+
+The original delegated run reported `Provider turn failed.` It produced literature extracts but neither assigned report. The parent read its terminal status and final activity, then resumed the same child thread with an idempotent follow-up request. Its last progress note described a cubic-cover comparison and two branched incidence-family attempts; these are unverified work in progress, not accepted findings. The original task ID remains the status handle; the follow-up run receipt is in `iteration2-hodge-cylinder-r2-resume.json`. This is an execution failure and retry, with no mathematical conclusion.
