@@ -2,6 +2,8 @@
 
 User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 3 accepted, 7 remaining**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
 
+**User stop instruction, 2026-10-08:** “Let’s pause after 4th finding for now.” Continue only until the fourth substantial finding passes the existing proof, significance, parent-verification and separate-commit gates. Then pause the research goal and halt outstanding delegated work, preserving its artifacts and exact task state for later resumption. This is a requested pause after a milestone, not a reduction of the ten-finding objective or permission to relax acceptance. Do not open further research tracks. Current count remains three; the complex-mode candidate has proof PASS and its final significance review is running.
+
 All results remain deductions under the accepted corpus at `openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. Acceptance means a complete written deduction, independent AI proof review, a separate primary-source prior-art/significance review, and parent integration. It does not establish worldwide priority, independent truth of the corpus, human peer review, or formal proof certification.
 
 ## Accepted count
