@@ -10,7 +10,7 @@ All results remain deductions under the accepted corpus at `openai/math@fd4aeeb2
 |---|---|---|---|
 | 1 | [R006: fixed-progression PD law and positive-proportion primitive roots](findings/R006-progression-PD-primitive-root-density.md) | `4e09ab8` | `d950f93` |
 | 2 | [R008: parity independent of factor sizes and squarefreeness](findings/R008-parity-PD-independence.md) | `e651d0e` | `8155129` |
-| 3 | [R009: variable-channel four-state weighted capacity](findings/R009-variable-channel-capacity.md) | `4afc0cf` | this acceptance commit |
+| 3 | [R009: variable-channel four-state weighted capacity](findings/R009-variable-channel-capacity.md) | `4afc0cf` | `1bf8898` |
 
 Equivalent formulations, routine corollaries, and multiple consequences of the same new bridge count as one finding. In particular, R008's Moree–Hommersom implication is part of R008.
 
@@ -28,7 +28,7 @@ The independent [parent probability/quantum screen](iterations/i07-parent-probab
 
 The [geometric-analysis report](iterations/i07-analysis.md) is integrated as a negative/reduction checkpoint. The restricted inverse W¹,¹ transfer is routine; a smooth compression example blocks automatic higher inverse-energy control. General cut-locus separation and the required energy-controlled approximation remain unproved. Parent verification passes for 60 pinned sources, six literature retrievals and 81 author artifacts. No accepted-count increment is assigned.
 
-The [arithmetic report](iterations/i07-arithmetic.md) is integrated with 38 verified pinned sources and 62 verified artifacts. Exact checks reproduce the inverse complex phase and enlarged quartic cell. The report proves ordinary-integer main-term expansions but leaves the marked prime-extraction estimate CM unproved; prime-input quartic squarefreeness and full consecutive-integer PD are demoted as routine consequences of lower-level source interfaces. A fresh [iteration 10 research task](iterations/iteration10-complex-modes-task.json) addresses CM and the aggregate principal terms directly. No additional finding is accepted from this report.
+The [arithmetic report](iterations/i07-arithmetic.md) is integrated with 38 verified pinned sources and 62 verified artifacts. Exact checks reproduce the inverse complex phase and enlarged quartic cell. The report proves ordinary-integer main-term expansions but leaves the marked prime-extraction estimate CM unproved; prime-input quartic squarefreeness and full consecutive-integer PD are demoted as routine consequences of lower-level source interfaces. The completed [iteration 10 candidate](iterations/i10-complex-prime-modes.md) now proposes a common physical principal model, a separate high-time estimate, a summed presieve estimate and exact aggregate recombination. Its new joint Omega modulo m / PD theorem is undergoing [fresh proof review](iterations/iteration10-complex-modes-r2-task.json). Parent reproduction passes all finite algebra diagnostics, 38 prior and 11 fresh pinned source identities, and 25 artifact hashes. No additional finding is accepted yet.
 
 The [structural report](iterations/i07-structures.md) proposes one complete construction: for every rank r, a closed aspherical four-manifold with a subgroup (Z/2)^r of outer automorphisms whose nonidentity elements have no homeomorphism representatives. Its new channel-dependent port constraint handles mixed odd lattice relations. The [independent proof audit](reviews/i07-structures-r2.md) passes, including the geometric/formal extension, reflection and nonsplit height argument. Parent reproduction passes the source/contract audit and independent lattice, cap and cocycle diagnostics; all five review artifacts match their seals. These finite diagnostics do not certify the topology, which rests on the written source-contract proof review. A separate [novelty review](iterations/iteration7-structures-novelty-r3-task.json) is running; no accepted-count increment yet.
 
@@ -43,6 +43,10 @@ The [parent factor-of-IID screen](iterations/i09-potts-fiid-screen.md) gives exa
 ## Iteration 11: accepted strengthening within R009
 
 The [locally finite extension](iterations/i11-locally-finite-capacity.md) and universal information bounds pass the [round-4 proof audit](reviews/i11-locally-finite-capacity-r4.md), with parent reproduction of all 17 artifacts and five source identities. The direct proof iterates binary subadditivity of `g(m)=m+m^3/3000`. Zero-channel pruning is jointly independent; an infinitely branching finite-chain example shows local finiteness is essential. The reviewer also supplies a perfect-copy binary-gadget reduction of qualitative reconstruction to the new bounded-child theorem. This is part of R009, never an additional count. Original candidate files retain their historical status text; R009 and this ledger govern acceptance.
+
+## Iteration 13: fresh discovery
+
+A [new T3 research task](iterations/iteration13-fresh-discovery-task.json) screens at least three distinct targets in combinatorics, theoretical computer science, dynamics or mathematical physics, outside the active topology and arithmetic routes. It must develop a nonroutine construction or estimate and check the strongest corpus companions and primary prior art. A scout report alone will not change the count.
 
 ## Continuation rules
 
