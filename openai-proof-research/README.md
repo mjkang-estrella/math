@@ -1,6 +1,6 @@
 # OpenAI mathematics research
 
-**New discovery work is active:** following R006, the user requested another substantial theorem. [Iteration 05](frontier/iterations/README.md#iteration-05--new-discovery-requested-running) records the three ongoing research tasks and their validation requirements.
+**New discovery work is active:** following R006, the user requested another substantial theorem. [Iteration 05](frontier/iterations/README.md#iteration-05--new-discovery-requested-running) records the research lanes, their current dispositions and validation requirements.
 
 **New mathematically validated result: [R008 — parity and factor-size independence](frontier/findings/R008-parity-PD-independence.md).** Assuming the pinned corpus, the number of prime factors of p−1, counted with multiplicity, is asymptotically even or odd equally often in every fixed reduced progression, independently of its PD(1) factor-size law and squarefreeness. The independent analytic audit passes and parent checks reproduce. Final novelty/significance review is running; the second substantial-discovery gate remains open until that assessment is integrated.
 

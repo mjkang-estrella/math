@@ -18,13 +18,13 @@ When a report returns without meeting the gate, integrate its evidence and use i
 
 ## Iteration 05 — new discovery requested, running
 
-After R006, the user requested: “Come up with new one - keep make a progress.” This starts a fresh search for a second substantive contribution; acceptance of R006 does not finish this new request. Three T3-owned research tasks are active:
+After R006, the user requested: “Come up with new one - keep make a progress.” This starts a fresh search for a second substantive contribution; acceptance of R006 does not finish this new request. The three research lanes have these current dispositions:
 
 | Lane | New target | Task record |
 |---|---|---|
 | Prime-predecessor parity | Independent analytic audit passes; mathematically accepted as R008. Final novelty/significance review is running before accepting the second substantial-discovery gate. | [R008](../findings/R008-parity-PD-independence.md); [audit](../reviews/i05-parity-pd-r2.md); [final review brief](iteration5-parity-novelty-r3-task.json) |
 | Simultaneous primitive roots | Initial report finds B2/B3 routine and isolates a cubic-Frobenius reservoir. Fresh independent audit and proof attempt for that reservoir are running. | [Report](i05-joint-artin.md); [next brief and ID](iteration6-cubic-reservoir-task.json) |
-| Fresh cross-field search | Returned a Gaussian polynomial multiple-convergence candidate after rejecting two other bridges. Independent proof and novelty review is running; the final proof uses classical inputs, so corpus dependence is absent. | [Candidate](i05-crossfield.md); [audit brief and ID](iteration5-crossfield-r2-task.json) |
+| Fresh cross-field search | Mathematics passes, but contribution gate is demoted: known Banach-valued Gaussian decoupling supplies the central step. No essential corpus dependency; route parked. | [Proof record](i05-crossfield.md); [independent review](../reviews/i05-crossfield-r2.md) |
 
 The [parent screening note](i05-parent-screen.md) records a routine squarefree-conditioning consequence of R006 and the exact limitation of the source sign interface. Its 180 finite CRT checks pass, including 19 forced-zero cases. This is a baseline, not an accepted new finding. Each candidate must receive fresh independent validation before promotion. No pending task is duplicated, and no further bounded-multiplier operator variants are launched.
 
@@ -47,6 +47,12 @@ The fresh independent audit passes CT, LC, SPR, signed prime extraction, size-bi
 [R008](../findings/R008-parity-PD-independence.md) accepts the mathematics and incorporates the citation distinction for ordinary BVλ, proof-equation labels, exact shared-slot count, smoothing margins, nonempty-tuple restriction and weak signed convergence. It yields parity 1/2 in every fixed reduced progression, independent of PD(1) and squarefreeness. The original candidate is retained unchanged as the reviewed artifact. This is one finding, including the Möbius-sign consequences.
 
 Decision: commit R008 separately as a validated deduction under the stipulated corpus. A fresh final novelty/significance review checks stronger source interfaces, older results and newer versions of the overlapping public claim before the second substantial-discovery gate is accepted. The mathematical audit supports a nonroutine advance, but worldwide priority is not certified. Gaussian review and cubic-reservoir work continue independently.
+
+### Gaussian review integration — 2026-10-08
+
+The independent review passes Theorem G, the finite-degree variation bound and the optional mixing limit, but demotes the contribution gate. Maas's classical Banach-valued symmetric-chaos decoupling theorem, specialized to finite variation sequence spaces, supplies the proposed central bridge. Standard Wick contraction and spectral arguments finish the reduction. Exact publication priority for the full displayed theorem remains unverified; demotion rests on a concrete classical derivation, not a missing search result.
+
+The parent read the full review and the actual Maas theorem, reproduced all independent finite output byte-for-byte, and verified 107 original manuscript files, six fresh pinned interfaces and 41 review artifacts. The [parent decision](../sources/i05_crossfield_r2/parent-decision.md) records the dependency and validation scope. Decision: preserve the correct application, assign no new finding number, and park the Gaussian route. The parity final review and cubic-reservoir work continue; this demotion does not settle those independent lanes.
 
 ## Iterations 02–04 — substantial result accepted
 
