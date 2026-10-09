@@ -1,6 +1,6 @@
-# I15 proof integration — final significance: technical only
+# I15 proof integration — significance pending
 
-The independent [R2 review](../reviews/i15-odd-order-topology-r2.md) gives **PASS for the full theorem**, relative to the pinned corpus. The parent read its full 223 lines and reproduced its dependency audit, independent finite diagnostics and artifact seal. The completed [final significance review](../reviews/i15-odd-order-topology-novelty-r3.md) gives TECHNICAL ONLY while retaining this proof PASS; no accepted-count increment follows.
+The independent [R2 review](../reviews/i15-odd-order-topology-r2.md) gives **PASS for the full theorem**, relative to the pinned corpus. The parent read its full 223 lines and reproduced its dependency audit, independent finite diagnostics and artifact seal. No accepted-count increment follows before the separate significance review.
 
 The reviewed candidate remains byte-identical (SHA-256 `98c1af96f05ba27ba56598e6422fb621627828357226267aaf2c1a5c24d66874`). The following clarifications govern its interpretation without altering that frozen record.
 
@@ -9,4 +9,4 @@ The reviewed candidate remains byte-identical (SHA-256 `98c1af96f05ba27ba56598e6
 
 The parent rerun verifies 413 review artifacts, 403 unchanged dependencies, 253 pinned source files, 149 source contracts and 17 exact proof passages. The independent diagnostic checks the 49 deficiency pairs, degree-six and degree-seven Magnus terms, mixed nilpotents and 8,750 nonabelian height-normal-form products. The reviewer gets adjoint determinant +512 and the author −512 in different coordinate orderings; only nonvanishing is used.
 
-These finite and provenance checks support the written proof and independent review. They do not themselves prove geometric placement, framing, Poincaré duality or manifold realization. The final review finds no exact primary-literature duplicate, but the substantial contribution gate fails: the source proof already supplies the marked replacement operation, and its repeated use retains the needed interfaces. In particular, the finite successor constraint and the height transfer are not separately countable discoveries.
+These finite and provenance checks support the written proof and independent review. They do not themselves prove geometric placement, framing, Poincaré duality or manifold realization. Novelty and the substantial/nonroutine contribution gate remain undecided. In particular, the finite successor constraint and the height transfer are not separately countable discoveries.
