@@ -21,7 +21,7 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**New request active:** the user asked for another result after R006. [Iteration 05](iterations/README.md#iteration-05--new-discovery-requested-running) is exploring prime-predecessor parity, simultaneous primitive roots with dependencies, and fresh cross-field bridges. No second substantial finding is claimed at this checkpoint. The simultaneous-root scout has narrowed its next step to a [cubic-Frobenius-conditioned reservoir](iterations/i05-joint-artin.md#7-the-stronger-feasible-target-actually-isolated); a fresh audit/proof round is running.
+**New request active:** the user asked for another result after R006. [Iteration 05](iterations/README.md#iteration-05--new-discovery-requested-running) records prime-predecessor parity, simultaneous primitive roots with dependencies, and cross-field bridges. R008 is mathematically accepted, with final novelty/significance assessment pending. The simultaneous-root lane has made [partial scalar progress](iterations/i06-cubic-reservoir.md), but its explicit rough-correlation estimate and cubic reservoir remain unproved; that lane is parked at the stated gap.
 
 The [parity lane](findings/R008-parity-PD-independence.md) is now mathematically accepted as R008: full Liouville cancellation jointly with PD(1) and squarefreeness in every fixed reduced progression. The independent analytic audit passes, and parent finite checks and source-integrity checks reproduce. A separate final novelty/significance review is running before the second substantial-discovery gate is closed.
 
