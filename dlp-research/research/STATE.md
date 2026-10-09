@@ -35,8 +35,11 @@ ranked questions and exact T3 prompts. Initial proposals withheld.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-information-constructions-fable-20261009-r1`.
 - grok / grok-4.7: RUNNING fullsolver-compositions-grok.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-fullsolver-compositions-grok-20261009-r1`.
-- Native Sol /root/h034_c4_implementation: RUNNING algebraic proposer fallback
-  after both Opus API failures; original scope and restrictions retained.
+- Native Sol /root/h034_c4_implementation: COMPLETED algebraic proposer fallback
+  after both Opus API failures. No new complete solver. Six-point determinant
+  and Gaussian-dependency counterexample independently checked by Astra;
+  scalar-independent quotient probe checked by root. H044-six-point-screen.md
+  retains scope, primary references and missing witness selector. No experiment.
 Explicit model substitution recorded, not silently represented as Opus work.
 Native Astra available for survivor review; no duplicated opinions or stopped-role reroutes. No solver
 runs, experiments or H034 cap reset. Existing unbounded goal remains active.
@@ -44,6 +47,9 @@ Best supported exponent1/2; verified improvement NONE. Next decisive evidence:
 a concrete faster operator with full labelled extraction and complete costs,
 then independent skeptical review before a newly admitted synthetic falsifier.
 Launch code unchanged from structured-system check exit0,366 audits.
+H044 algebraic validation: ./scripts/check.sh > /tmp/ecdlp-h044-sixpoint-check.log
+2>&1 exit0,366 existing audits. No Lean additions; paper arguments are not
+certified by that check. Fable and Grok initial proposals remain live.
 
 ## H043 completed independent constructions
 
