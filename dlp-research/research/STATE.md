@@ -18,7 +18,46 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H036 live comparator gate and independent ideation
+## H037 current candidate-specific source-factory screen
+
+H036 paper gate and all T3 proposal/review tasks are COMPLETED and collected.
+H036-complete-ledger.md records the strengthened transposed half-buffer baseline,
+descriptor-free archives, corrected capacities and fixed-fallback symbolic gate.
+Its positive/negative price regions are not a calibrated executable gain.
+Dense unweighted triples failed their scoped key-count premise; root corrected
+the review's fixed-zero-target and eager-helper assumptions. Factory Fable's
+remaining cards supplied two scoped algebraic lemmas, not universal exclusions.
+
+H037-newton-source-hypothesis.md develops the remaining short-jump-source card
+into an explicit r-wise-independent Newton construction. Native Astra
+/root/h007_additive_relations COMPLETED mathematical audit: the leading capped
+Poisson law transfers using bounded fixed moments, but no quantitative remainder
+or setup gain follows. Native Sol /root/h034_c4_implementation COMPLETED the
+separate final cost screen. Root and Sol independently found that competent
+fixed-position tables can already prepare IID sources in O(N) group work with
+charged subleading table storage, undermining the proposed O(Nr) arithmetic gain.
+All read-only, no code/experiments/imports/edits/children. H034 cap remains consumed.
+Current best exponent1/2; verified executable improvement NONE. Next decisive
+gate: a named tighter memory/randomness-cost regime or a different executable
+operator would be needed to reopen the source factory. Its current arithmetic
+premise is rejected against allowed O(N)-storage IID preparation. All current
+native and T3 roles are terminal and collected. Do not build generic formal
+infrastructure for the source factory. Validation: ./scripts/check.sh >
+/tmp/ecdlp-h036-close-h037-check.log 2>&1 exit0; no Lean/Audit changes or solver
+execution. Paper results are not established by the366 existing theorem audits.
+
+## H036 comparator gate and independent ideation history
+
+LATEST after9b29950: prior goal turn PROGRESS. This turn rechecked clean project
+state and confirmed Fable and native Sol handles RUNNING. Native Astra now
+COMPLETED a new descriptor-elimination audit: chronological node codes recover
+leaf descriptors or H019 role/index, under literal no-hole prefix semantics.
+Matched leading record/head ratio becomes3 rather than4; baseline4Hc fits only
+for h<=3-sqrt(2). Full cost ledger remains Sol's live task.
+Root's separate cheap dense-triple falsifier is under NEW read-only Opus review:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h036-hyperedge-count-review-opus-20261008-r1`.
+It tests only the complete unweighted triple-prefix construction, not sparse
+or weighted hypergraphs. No numerical run, source edit or new implementation.
 
 Previous goal turn PROGRESS: committed reviewed H035 findings as e7158ef.
 This turn confirmed the Fable handle below remains RUNNING and the project
