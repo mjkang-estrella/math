@@ -98,9 +98,18 @@ or silent substitution. Native Astra/Sol and T3 Factory Opus/Grok remain live.
 The original exact failed prompt and handle are retained. This is not a
 mathematical rejection or a blocker for the other independent work.
 
+Native reporter continuation: Astra completed the reporter pass with no
+competitive shared operation; H047-rectangle-reporter-screen.md retains its
+literal fresh-perimeter complete-reporting bound, independently checked by
+root. It excludes neither shared/cached nor early-match reporters. Astra now
+runs the failed Claude coordinate role as an explicit fallback, with the
+original lens and prior objections, no other initial proposals, and the same
+read-only/no-experiment/no-children constraints. This is a model substitution,
+not a successful Claude report; no provider retry or safety-stopped reroute.
+
 H046 gives a scoped small-isogeny filter bound, corrected finite walk costs,
 and an exact randomized-progression success law. None is a faster solver.
-No H047 proposal is yet returned or accepted. Next decisive evidence is an
+No H047 faster proposal is accepted. Next decisive evidence is an
 explicit new competitive operation and recovery path, independently reviewed.
 No new executable experiment, seed, curve, hardware number or Lean/Audit claim.
 Existing project check /tmp/ecdlp-h046-progression-check.log passed; unchanged

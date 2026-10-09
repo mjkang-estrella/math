@@ -22,8 +22,10 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 H046 closed at79ac5d0. Best supported exponent1/2; verified full-work improvement
 NONE. H047-independent-briefs.md records ranked concrete questions and exact
-T3 prompts. Native Astra /root/h007_additive_relations RUNNING constructive
-reporters on random two-direction grids, whose H046 success law now holds.
+T3 prompts. Native Astra /root/h007_additive_relations COMPLETED constructive
+reporter pass: no competitive shared operator; H047-rectangle-reporter-screen.md
+retains a narrow fresh-perimeter complete-reporting bound independently checked
+by root. It does not cover cached/shared or early-match reporters.
 Native Sol /root/h034_c4_implementation RUNNING distinct complete relation
 storage/recovery constructions. Three native active including root, within4.
 
@@ -36,7 +38,10 @@ T3 tasks, all initially accepted RUNNING after refreshed capability discovery:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-autonomous-search-grok-20261009-r1`.
 
 Claude terminal result: 'Claude gave up after repeated API errors.', no pending
-child runs or research output. No immediate retry or silent substitution.
+child runs or research output. No immediate provider retry. Native Astra now
+RUNNING an explicit fallback for that distinct coordinate-construction brief,
+with the original mechanism lens and prior objections. Its output will be
+attributed to Astra, not Claude. No other initial proposals supplied.
 Factory Opus and Grok remain live; two T3 children within user-confirmed20.
 No old task duplicated or safety-stopped route rerouted. All
 roles read-only, no children/experiments/scripts/imports/files. Root alone
@@ -48,10 +53,14 @@ recovery, or a changed complete search/relation algorithm could improve work.
 Evidence: exact progression success, half-orbit signal and finite invoices
 exist; required faster operators/stopping guarantees remain absent. Next
 conclusion-changing step is a concrete construction with a competitive full
-invoice, then independent review before any new synthetic experiment. No
-H047 result yet. Existing unbounded goal active; yield to live children.
+invoice, then independent review before any new synthetic experiment. The
+rectangle screen is a limited negative result, not an improved solver.
+Existing unbounded goal active; yield to live children.
 Launch changes process records only; H046 project check passed exit0 and
 formal artifacts remain unchanged. Compiling them is not a research result.
+Rectangle-screen validation: ./scripts/check.sh from dlp-research >
+/tmp/ecdlp-h047-rectangle-check.log 2>&1 passed exit0,366 existing audits.
+No new Lean claim; root paper-checked the implementation-specific bound.
 
 ## H046 reviewed constructions
 
