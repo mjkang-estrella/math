@@ -7,7 +7,7 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 ## Resumed work, 2026-10-09
 
 - I14: [final significance review](reviews/i14-spectral-width-novelty-r3.md) completed: **TECHNICAL ONLY**, proof PASS retained. Parent verification agrees with its reduction to known local estimates and the source's global construction. No count increment.
-- I15: a fresh [author-completion task](iterations/iteration-i15-resumption-task.json), preserving the interrupted report and validating the saved artifacts before preparing a revised proposal. No independent proof review has passed for this construction.
+- I15: the [resumed author proposal](iterations/i15-odd-order-topology-resumed.md) is complete and its evidence verified. A fresh [independent proof review](iterations/iteration15-odd-order-topology-proof-r2-task.json) is running. No independent proof review has passed for this construction.
 - I17: a [fresh discovery task](iterations/iteration-i17-resumption-task.json) screens different targets and develops the strongest viable new mechanism.
 - I18: a [joint prime-neighbor task](iterations/iteration18-joint-prime-neighbors-task.json) seeks a new joint factor-size law for p−1 and p+1 over primes, requiring a proved correlation or prime-extraction step beyond marginal laws.
 
@@ -68,7 +68,9 @@ The completed [final significance review](reviews/i14-spectral-width-novelty-r3.
 
 ## Iteration 15: odd-order topology construction
 
-The [research task](iterations/iteration15-odd-order-topology-task.json), interrupted at the requested four-finding pause, targets a closed aspherical topological four-manifold with an outer automorphism of exact order three that no homeomorphism represents. It must develop a genuinely ternary obstruction and prove the needed covering and geometric realization steps, while checking odd-order prior art. Repetition of binary detectors or failure merely to realize a finite group action will not meet this target. The earlier rank construction remains technical only.
+The [resumed author handoff](iterations/i15-odd-order-topology-resumed.md) proposes a closed oriented aspherical topological four-manifold with an outer automorphism of exact order three that no homeomorphism represents, including an infinite-order homeomorphism. Its asserted new step is a marked six-tip body with three alternative caps on each branch; a successor-color constraint then gives a proposed exact three-divisibility spectrum for manifold covers. The revised proof expands the primitive-annulus replacement, iterative framing, shallow-cap Wall cancellation, actual six-slot ideal, full-panel reflection comparison and exact height quotient. The classical finite constraint, grope contractions and height transfer alone are not claimed as substantial findings.
+
+The parent read the complete revised report and reproduced its retained-byte audit and finite checks. All 324 old artifacts remain unchanged; 69 resumed artifacts, 253 pinned source files, 149 exact source contracts, 20 old literature pairs, 23 resumed retrievals and 29 primary passages verify. Finite checks include 88,560 majority-clause cases, the degree-six Magnus word and 20,250 normal-form multiplication cases. [Parent handoff verification](experiments/i15-resumed-parent-verification.json) is provenance and diagnostic validation only. A [fresh independent proof reviewer](iterations/iteration15-odd-order-topology-proof-r2-task.json) must scrutinize the geometric and formal assertions; a separate significance review follows only if the proof passes. No count increment or independent proof PASS is assigned.
 
 See [the historical pause record](PAUSED-AT-FOUR.md) for interrupted task state and preserved artifacts. The user resumed on 2026-10-09; the continuation rules below are active again.
 

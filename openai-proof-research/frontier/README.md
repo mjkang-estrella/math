@@ -21,7 +21,7 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Resumed on 2026-10-09: [10-finding ledger](TEN-FINDINGS.md); 4 accepted, 6 remaining.** The user requested continuation to ten and project-only public publication after verification. Each candidate needs a complete new bridge and separate proof and significance reviews before it enters the count. I14 is now technical only; current work covers completion of the I15 author handoff, I17 fresh discovery and I18 joint prime-neighbor factor laws.
+**Resumed on 2026-10-09: [10-finding ledger](TEN-FINDINGS.md); 4 accepted, 6 remaining.** The user requested continuation to ten and project-only public publication after verification. Each candidate needs a complete new bridge and separate proof and significance reviews before it enters the count. I14 is now technical only; the completed [I15 ternary topology proposal](iterations/i15-odd-order-topology-resumed.md) is in fresh independent proof review. I17 fresh discovery and I18 joint prime-neighbor factor laws continue.
 
 **Fourth substantial deduction accepted:** [R010](findings/R010-complex-modes-PD-independence.md) proves joint uniformity of Omega(p-1) modulo every fixed m and independence from the PD(1) ranked-factor law in fixed reduced progressions. Both independent reviews pass, and parent checks reproduce. The common nonzero principal model and its signed recombination supply the additional argument beyond parity. The pause at four ended with the user's explicit resumption on 2026-10-09; the ten-finding target remains incomplete.
 
