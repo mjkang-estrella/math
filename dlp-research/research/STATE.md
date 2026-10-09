@@ -34,14 +34,18 @@ operators. Exact briefs: H042-independent-briefs.md. Initial proposals withheld.
   confirmed narrower materialization and bottleneck accounting; both final draft
   reviews completed. H042-shared-relations-disposition.md records the missing solver.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-shared-relations-opus-20261009-r1`.
-- Claude Opus5.5: RUNNING new bounded orbit-construction round, with prior
-  report and independent objections supplied. Must name an actual decomposition
-  representation/schedule, not repeat a known-ratio or degree observation.
+- Claude Opus5.5: COMPLETED bounded orbit-construction round; no claimed gain.
+  Root/Astra found an exact progression counterexample to its probability
+  transfer; same-degree systems need not have equal cost or useful yield.
+  H042-orbit-construction-r2-disposition.md retains known-log recovery and
+  the corrected full-scan invoice; Sol cost review COMPLETED. Submitted
+  implementation parked without a new construction round or experiment.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-orbit-construction-opus-20261009-r2`.
 - acpRegistry_factory_droid / claude-fable-5.1: RUNNING nonlinear-signals-fable.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-nonlinear-signals-fable-20261009-r1`.
-Fresh catalogue, exact targets accepted; no failure or substitution. Native
-Sol available for independent review. No new experiments/imports/edits/children
+Fresh catalogue, exact targets accepted; no failure or substitution.
+Native reviews complete; only Fable initial signal task remains live.
+No new experiments/imports/edits/children
 by delegates, no H034 reset or stopped-role reroute. Root alone integrates.
 Best supported exponent1/2, verified complete-work improvement NONE. Next
 conclusion-changing evidence: actual public operator meeting the corrected
@@ -52,6 +56,9 @@ the paper findings or establish an improved algorithm.
 Shared-review checkpoint: ./scripts/check.sh >
 /tmp/ecdlp-h042-shared-review-check.log 2>&1 exit0,366 existing audits.
 No new Lean claims or admitted experiment; only scoped paper results.
+Orbit round2 validation: ./scripts/check.sh >
+/tmp/ecdlp-h042-orbit-r2-check.log 2>&1 exit0,366 existing audits. No new
+Lean claim; checks do not certify the paper counterexample or an attack gain.
 
 ## H041 completed independent operator search
 
