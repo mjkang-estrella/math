@@ -1,4 +1,6 @@
-# Research outcome — 2026-10-08
+# First-pass research outcome — 2026-10-08
+
+**Historical status:** the user subsequently requested continued discovery. See [active iterations](iterations/README.md); completion statements below refer only to this first pass.
 
 **The requested significant, genuinely novel theorem was not achieved.** This pass produced checked technical results, rejected several overclaims, and identified exact missing steps. It did not prove a previously unresolved high-importance MathDB conjecture or establish a substantial new case of one. No candidate is being presented as a breakthrough.
 

@@ -1,6 +1,6 @@
 # OpenAI mathematics research
 
-**Latest result: [MathDB research outcome](frontier/OUTCOME.md). The completed pass did not establish a significant novel theorem.** The user clarified that routine corollaries do not meet the objective. The new phase targets substantive new proof ideas for significant named open problems. The ten deductions below are retained as the first-pass research record, not presented as satisfying that stronger novelty requirement.
+**Active research: [continued MathDB discovery iterations](frontier/iterations/README.md).** The [first pass](frontier/OUTCOME.md) did not establish a significant novel theorem; the user explicitly requested continued iteration. The user clarified that routine corollaries do not meet the objective. The new phase targets substantive new proof ideas for significant named open problems. The ten deductions below are retained as the first-pass research record, not presented as satisfying that stronger novelty requirement.
 
 ## First-pass consequences
 
