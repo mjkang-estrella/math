@@ -23,15 +23,20 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 H045 closed at7c92548. Current exponent1/2, verified full-work improvement NONE.
 H046-independent-briefs.md records ranked questions, exact T3 prompts and all
 handles. Root refreshed live capability catalogue and checked native status.
-- Native Astra /root/h007_additive_relations RUNNING: half-orbit signal evaluator
-  and possible shared-query costs; a single square-root-cost bit is not a gain.
+- Native Astra /root/h007_additive_relations COMPLETED half-orbit evaluator
+  derivation and final artifact check. Root independently checked addition
+  algebra, degree growth, exceptional centres and primary multipoint source.
+  H046-half-orbit-evaluator.md gives a paid soft-O(sqrt(q)) single-bit
+  construction, not faster recovery. No shifted-query sharing supplied.
 - Native Sol /root/h034_c4_implementation RUNNING: fused point production and
   useful equality detection/recovery with explicit representations and costs.
 - Factory Fable5.1 RUNNING: public information with a paid joint recovery path.
 - Grok4.7 RUNNING: changed noncanonical search geometry and useful-event laws.
 - Factory Opus5.5 RUNNING: primary mathematical public operators with concrete
   ordinary-curve recovery bridges. Distinct provider, not a Claude API retry.
-Three native active including root, three T3 tasks accepted RUNNING. All read-only,
+At launch three native were active including root and three T3 tasks were
+accepted RUNNING. Astra's focused role is now complete; Sol and the T3 initial
+construction roles remain live at the latest authoritative checks. All read-only,
 no experiments/imports/scripts/children; root owns integration. Independent
 initial proposals withheld. H034 cap unchanged, stopped routes not reopened.
 Actual task IDs:
@@ -39,13 +44,18 @@ Actual task IDs:
 - `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h046-noncanonical-geometry-grok-20261009-r1`.
 - `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h046-primary-public-operators-factory-opus-20261009-r1`.
 
-No new algorithm admitted. The focused signal identity supplies an opening,
-not an efficient evaluator. Other constructions remain unreturned. Next decisive
+No improved solver admitted. The focused signal now has a square-root-cost
+single-query evaluator; that does not reduce complete ECDLP work. Other
+constructions remain unreturned. Next decisive
 analysis: explicit operator, scalar recovery, useful-event guarantee and complete
 paid invoice, followed by independent review before any synthetic test. Existing
 goal active; yield to confirmed-live children rather than polling or watchers.
 Validation inherited from unchanged artifacts: H045 complete-work check exit0,
-366 existing audits. This wave adds process records only, no Lean claims.
+366 existing audits. The launch added process records only, no Lean claims.
+Half-orbit evaluator validation: ./scripts/check.sh >
+/tmp/ecdlp-h046-half-orbit-check.log 2>&1 exit0,366 existing audits. This checks
+unchanged formal artifacts, not the paper evaluator; no Lean claim or experiment
+added. Root/Astra paper derivation and source checks are the recorded evidence.
 
 ## H045 completed independent constructions
 
