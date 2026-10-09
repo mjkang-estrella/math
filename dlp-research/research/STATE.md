@@ -23,8 +23,8 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 H039 follows0c45e78, which closed H038 with independently qualified negative
 results. Launch checkpoint da2a4e4; project tree clean at re-entry. Goal active;
 no accepted executable improvement. Fresh catalogue confirms the exact models
-below support delegation without reported constraints. Three T3 initial lenses
-remain RUNNING; the native lens completed. Proposals withheld from one another:
+below support delegation without reported constraints. Grok's initial lens
+remains RUNNING; other initial roles completed. Proposals withheld across roles:
 - Native Astra /root/h007_additive_relations: COMPLETED sparse/coefficient-
   weighted lens. One concrete weighted-grid helper construction, but no complete-
   work survivor against H037's paid O(H) IID source generator. Root checked the
@@ -35,9 +35,20 @@ remain RUNNING; the native lens completed. Proposals withheld from one another:
 - Grok4.7: nonlinear/adaptive public-information recovery operators:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-nonlinear-information-grok-20261008-r1`.
 - Claude Opus5.5: exact arithmetic operations with a concrete ECDLP bridge,
-  excluding the stopped Farey/height-lattice role:
+  excluding the stopped Farey/height-lattice role: COMPLETED, no survivor.
+  H039-arithmetic-opus-raw.md retained; root scope corrections in
+  H039-arithmetic-disposition.md include a primary-source3SUM freshness check
+  and an elementary counterexample to the exact-degree/probabilistic-degree
+  inference. A requested new native Sol critic failed with thread limit reached;
+  that role did not run and is not counted as a review.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-arithmetic-operators-opus-20261008-r1`.
 - Factory Fable5.1: complete-work algorithm compositions with paid preprocessing:
+  COMPLETED, full earlier report recovered from backing-thread read because
+  terminal summary only referred to it. H039-composition-fable-raw.md retained.
+  Native Sol cost review and Astra mathematics review both COMPLETED. Corrected
+  hybrid lookup baseline/erfc gate, fixed-table coverage, and rejected universal
+  restart optimality. A conditional small-beta/cheap-lookup region remains open,
+  not a proved or calibrated gain. H039-composition-disposition.md.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-completework-composition-fable-20261008-r1`.
 Exact briefs and gates: H039-independent-briefs.md. All read-only, no runs,
 imports, edits, experiments, children or commits by delegates. Root alone
@@ -52,7 +63,11 @@ RUNNING. Do not duplicate these handles while awaiting completion notifications.
 Weighted-grid checkpoint validation: ./scripts/check.sh >
 /tmp/ecdlp-h039-grid-check.log 2>&1 exit0; no Lean/Audit changes. Existing audits
 do not establish the retained paper-only collision analysis. Native proposal
-now completed, not a live handle to wait on; the three T3 roles remain live.
+now completed, not a live handle to wait on. Latest: only the Grok T3 proposer
+remains live; all current native reviews completed. No experiment admitted.
+Validation after composition/arithmetic corrections: ./scripts/check.sh >
+/tmp/ecdlp-h039-composition-check.log 2>&1 exit0. No Lean/Audit changes; no
+numerical runs. Paper statements are not certified by the366 existing audits.
 
 ## H038 completed independent mechanisms and scoped negative results
 
