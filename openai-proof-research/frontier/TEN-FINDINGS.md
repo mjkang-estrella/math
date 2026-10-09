@@ -48,6 +48,10 @@ The [locally finite extension](iterations/i11-locally-finite-capacity.md) and un
 
 A [new T3 research task](iterations/iteration13-fresh-discovery-task.json) screens at least three distinct targets in combinatorics, theoretical computer science, dynamics or mathematical physics, outside the active topology and arithmetic routes. It must develop a nonroutine construction or estimate and check the strongest corpus companions and primary prior art. A scout report alone will not change the count.
 
+## Iteration 14: sharp spectral graph width under proof review
+
+The [parent candidate](iterations/i14-sharp-spectral-width.md) proposes a graph-width bound for every complete three-manifold with `-a Delta+Scal >=lambda>0`, throughout `4<=a<6`, and an explicit complete endpoint counterexample at `a=6`. The proposed bound is `500 sqrt((8-a)/(2(6-a)))/sqrt(lambda)`. The proof retains the full stable-surface quadratic terms, checks concavity in the reflected-collar smoothing, and propagates the new scale through local cutting and whole-fiber graph gluing. The coefficient threshold is already present in torical-band literature; any contribution must be the full graph-width implication under its stated hypotheses. All 15 pinned TeX sources, four literature artifacts and 29 sealed inputs/outputs verify; exact diagnostics check 3,125 surface identities, 405 collar identities and 99 endpoint coefficients. These checks do not certify the geometric argument. A [fresh independent proof review](iterations/iteration14-spectral-width-r2-task.json) is running. No count increment is assigned.
+
 ## Continuation rules
 
 The [iteration 12 sphere-stability screen](iterations/i12-sphere-stability-screen.md) rejects dimension-independent approximation by a linear map using the classical Matouskova–Kalton coordinate spiral, including sphere witnesses. A universal qualitative radial-defect modulus follows routinely by ultraproducts from the accepted Tingley theorem; it is not counted. An explicit general rate is not proved.
