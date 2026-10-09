@@ -54,6 +54,14 @@ All roles read-only, no scripts/imports/experiments/files/children.
 
 ### H046 public information with paid recovery
 
+Terminal update: task_status returned FAILED with summary 'Internal error:
+Agent error', hasPendingChildRuns=false. No research result supplied. Root
+recorded explicit native Sol /root/h034_c4_implementation fallback using the
+original public-information brief, no other initial T3 proposals, and the
+now-committed half-orbit evaluator/recovery limitations. This is a model/provider
+substitution, not a successful Fable run. No retry of a safety-stopped route.
+Fallback remains read-only, no files/scripts/imports/experiments/children.
+
 Client request: ecdloop-h046-public-information-fable-20261009-r1
 Provider/model: acpRegistry_factory_droid / claude-fable-5.1
 Task: `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h046-public-information-fable-20261009-r1`.

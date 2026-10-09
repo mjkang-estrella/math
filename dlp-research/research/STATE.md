@@ -36,13 +36,19 @@ handles. Root refreshed live capability catalogue and checked native status.
 - Native Sol /root/h034_c4_implementation COMPLETED three scoped detector
   constructions and their invoices. Root checked identities and included
   adaptive-key, character-cost, signed extraction and matched-input caveats.
-- Factory Fable5.1 RUNNING: public information with a paid joint recovery path.
+- Factory Fable5.1 FAILED: public-information role returned only
+  'Internal error: Agent error'; task terminal, no pending child runs or
+  research result. Original task ID retained below. No claim that it succeeded.
+- Native Sol /root/h034_c4_implementation LIVE explicit fallback for that
+  public-information question, with original brief and known evaluator/recovery
+  limitations. Distinct from its completed detector role; not a Fable result.
 - Grok4.7 RUNNING: changed noncanonical search geometry and useful-event laws.
 - Factory Opus5.5 RUNNING: primary mathematical public operators with concrete
   ordinary-curve recovery bridges. Distinct provider, not a Claude API retry.
 At launch three native were active including root and three T3 tasks were
-accepted RUNNING. Both native roles now completed; three T3 initial construction
-roles remain RUNNING on revalidated original handles. All read-only,
+accepted RUNNING. Native evaluator/detector roles completed; Sol public-information
+fallback now live. Fable terminal failed; Grok and Factory Opus retain their
+original live handles. All read-only,
 no experiments/imports/scripts/children; root owns integration. Independent
 initial proposals withheld. H034 cap unchanged, stopped routes not reopened.
 Actual task IDs:
