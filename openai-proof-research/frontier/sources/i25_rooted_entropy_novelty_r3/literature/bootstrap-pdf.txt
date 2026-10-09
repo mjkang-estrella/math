@@ -1,0 +1,639 @@
+                                                                                         Proceedings of the International Meeting on “Inference, Computation, and Spin Glasses”
+                                                                                                                                                 July 28–30, 2013, Sapporo, Japan
+
+
+
+
+                                                    Loop Calculus and Bootstrap-Belief Propagation
+
+
+
+
+arXiv:1306.1267v1 [cond-mat.stat-mech] 5 Jun 2013
+                                                    for Perfect Matchings on Arbitrary Graphs
+                                                                    Michael Chertkov a , Andrew Gelfand a,b , Jinwoo Shin c
+                                                                    Theoretical Divison & Center for Nonlinear Studies, Los Alamos National Laboratory,
+                                                                    Los Alamos, NM 87545, USA
+                                                                    Department of Computer Science, University of California, Irvine, Irvine, CA 92697-3435, USA
+                                                                    Mathematical Sciences Department, IBM T. J. Watson Research, Yorktown Heights, NY 10598, USA
+                                                                    E-mail: chertkov@lanl.gov
+
+                                                                    Abstract. This manuscript discusses computation of the Partition Function (PF) and the Minimum Weight
+                                                                    Perfect Matching (MWPM) on arbitrary, non-bipartite graphs. We present two novel problem formulations
+                                                                    - one for computing the PF of a Perfect Matching (PM) and one for finding MWPMs - that build upon the
+                                                                    inter-related Bethe Free Energy, Belief Propagation (BP), Loop Calculus (LC), Integer Linear Programming
+                                                                    (ILP) and Linear Programming (LP) frameworks. First, we describe an extension of the LC framework
+                                                                    to the PM problem. The resulting formulas, coined (fractional) Bootstrap-BP, express the PF of the
+                                                                    original model via the BFE of an alternative PM problem. We then study the zero-temperature version
+                                                                    of this Bootstrap-BP formula for approximately solving the MWPM problem. We do so by leveraging
+                                                                    the Bootstrap-BP formula to construct a sequence of MWPM problems, where each new problem in
+                                                                    the sequence is formed by contracting odd-sized cycles (or blossoms) from the previous problem. This
+                                                                    Bootstrap-and-Contract procedure converges reliably and generates an empirically tight upper bound for
+                                                                    the MWPM. We conclude by discussing the relationship between our iterative procedure and the famous
+                                                                    Blossom Algorithm of Edmonds ’65 and demonstrate the performance of the Bootstrap-and-Contract
+                                                                    approach on a variety of weighted PM problems.
+
+
+
+
+                                                    1. Introduction
+                                                    Belief Propagation (BP) is an iterative message passing algorithm with physics roots in H. Bethe [1]
+                                                    and R. Peierls’ [2] work on “melting of lattices”, information theory roots in decoding of Gallager’s
+                                                    Low Density Parity Check (LDPC) codes [3], and artificial intelligence roots dating to J. Pearl [4] (who
+                                                    actually coined the term). For decades the three fields developed BP and the homonymous Bethe-Peierls
+                                                    approximation independently. Only recently, under the Bethe Free Energy (BFE) framework of Yedidia,
+                                                    Freeman and Weiss in [5, 6], have the parallel developments been united.
+                                                        BP is a naturally distributed and easy to implement algorithm for iteratively solving the system of
+                                                    BP equations - a set of equations that also characterize the fixed points of the BFE function [5, 6]. The
+                                                    so-called BP/BFE approach can be used to compute the Partition Function (PF) or find the Maximum
+                                                    Likelihood (ML) assignment of a Graphical Model (GM), where a GM defines a joint probability over a
+                                                    set of random variables via local probability measures that factorize according to some underlying graph
+                                                    structure. BP/BFE provides an exact answer to the PF and ML tasks if the underlying graph is a tree.
+                                                    BP/BFE is a heuristic on graphs with loops, but it typically provides an accurate approximation.
+                                                        Two recent developments have altered the paradigm that BP/BFE is only “good” for tree or tree-like
+                                                    GMs. First, it was shown that BP can exactly recover the ML assignment for certain binary GMs with
+dense, loopy graph structures. For example, BP can be used to find a PM on a bipartite graph [7, 8, 9].
+Interestingly, all models of this special type can be formulated as Linear Programming (LP) problems
+that have an integral optimal solution, though this condition is not sufficient in general [9, 10, 11].
+    The Loop Calculus (LC) was developed at the same time and provides a way to express the PF a
+general binary GM as a finite (but still exponential in the size of the graph) series [12, 13]. Each term in
+the series is related to a generalized loop of the underlying graph (which is a subgraph where all vertices
+have degree two or higher) and is expressed explicitly using the solution to the BP equations. In some
+special cases, e.g. for PMs over bipartite graphs where the partition function is a permanent [14], the
+multiplicative mismatch between the PF of the original problem and the respective BFE/BP expression is
+itself the PF of a new GM defined on the same graph. In such cases, the LC can be used to improve upon
+the BP estimate for the PF (when the BP estimate is not tight) by re-summing a number of important
+LC terms [15, 16]. As suggested in [17, 18, 19, 20], the BP approximation to the ML problem can be
+improved by analyzing higher order terms of the LC (sometimes re-summing as in [20]) and using this
+information to modify the original GM. The hope is that when BP is run on the new GM it will be exact
+or, at least, improve upon its initial approximation.
+    In this manuscript we continue to work on improving BP, focusing on MWPM problems in general
+(non-bipartite) graphs. This choice is not arbitrary. MWPM is a special problem in Matching Theory
+which can be solved in polynomial time by Edmonds’ famous Blossom Algorithm (BA) [21] (see [22] for
+details of BlossomV, the state-of-the-art implementation of the BA). The most recent development in this
+classical sub-field of Computer Science is due to Chandrasekaran, Végh and Vempala [23] who proposed
+a polynomial time “cutting-plane” procedure to finding a MWPM. In contrast to Edmonds’ primal-dual
+algorithm, their approach carefully constructs a sequence of linear inequalities (or cut constraints) that
+tighten the LP relaxation, while ensuring that the added “cuts” maintain half-integrality of the LP.
+    While Edmonds’ BA is efficient, it is not a distributed algorithm. Several recent results motivate the
+use of distributed, message passing implementations of BP to solve the MWPM problem. First, standard
+max-product BP was shown to be convergent and correct when the optimal solution to the LP relaxation
+of the weighted matching problem is integral. This was shown for PMs on bipartite graphs in [7, 8, 9] and
+extended to general weighted matchings in [11]. And in [20], the MWPM was shown to be an example
+of a problem where the LP optima and iterative BP solution are equivalent (when the latter converges).
+    Unfortunately, the initial LP relaxation is not tight in general. The work in [20] considered situations
+when the optimal solution is non-integral and proposed running BP on a modified version of the weighted
+matching GM. In particular, higher order factors enforcing Edmonds’ blossom (cut) constraints were
+added to the original GM and a finite temperature version of BP (with proper annealing and damping)
+was used to improve convergence to the LP optima. A provably accurate alternative to [20], discussed
+in [24], would involve: (a) adaptively selecting the blossoms/contraints used to modify the GM; (b)
+maintaining half-integrality of the underlying LP at every iteration; and (c) proving convergence and
+correctness using the computational tree approach of [9, 11].
+    This manuscript develops a new theoretical and algorithmic approach towards constructing efficient
+and distributed algorithms for resolving the MWPM problem. This new approach, which is
+complementary to both [20] and [24], is based on extending the LC paradigm of [12, 13, 14, 25] to
+PMs over an arbitrary graph at a finite temperature, T , and careful analysis of the ML, T → 0, limit.
+Analysis of the T → 0 limit led to the development of an algorithm for (approximately) solving the
+MWPM problem - the BP-Bootstraph-Contract procedure - which we evaluated empirically.
+    The material in the manuscript is organized as follows. We provide some background on Graphical
+Models (GMs) and Perfect Matching (PM) problems in Section 2; the BP/BFE framework is briefly
+reviewed in Section 3 and in Appendix A. The main results involving the LC are covered in Section
+4. Finally, the Bootstrap BP and fractional Bootstrap BP ([25]) formulas are discussed in Section 5
+and Appendix B. The ML, T → 0, versions of the Bootstrap formulas are discussed and illustrated
+on a small example in Section 6. The Bootstrap-and-Contract algorithm is presented in Section 7 and
+evaluated empirically in Section 8. Finally, we summarize and discuss open questions in Section 9.
+2. Graphical Model of Perfect Matching
+Consider an arbitrary undirected graph, G = (V, E), with associated edge weights w =
+(exp(−εij /T )|(i, j) ∈ E), where T is a positive temperature parameter term and εij is the energy of a
+Perfect Matching (PM), or dimer1 , associated with the edge (i, j). One problem of interest is to evaluate
+the PF of the PM over the tuple (V, E, w):
+                                                       
+                           X            1  X                X                X
+                  Z(w) =       exp −           εij σij  =      (wij )σij =   W (σ),                  (1)
+                                        T
+                                   σ∈Σ                 (i,j)∈E                 σ∈Σ                σ∈Σ
+
+             n                                                  o
+                                                                   is the set of PMs in G, where a PM is a
+                                              P
+where Σ = σ|∀(i, j) : σij = {0, 1}; ∀i :                 σ
+                                                j:(i,j)∈E ij = 1
+subset of the edges in E such that an edge is adjacent to each vertex in V. Note that P(σ) = W (σ)/Z(w)
+is thus the probability of the PM σ.
+    The total weight, E, of the Maximum Weight Perfect Matching (MWPM) arises by taking the zero
+temperature limit, T → 0, of the PF
+
+                                                        log Z       X
+                                          E = − lim           = min   εij σij .                                         (2)
+                                                    T →0 T      σ∈Σ
+                                                                             (i,j)∈E
+
+The rhs of Eq. (2) is an Integer Linear Programming (ILP) problem. The LP relaxation of Eq. (2) is
+                                                                    X
+                                                    E0 = min                εij xij ,                                   (3)
+                                                            x∈X
+                                                                  (i,j)∈E
+
+               n                                P                   o
+where X = xij |∀(i, j) : xij ∈ [0, 1]; ∀i :                 x
+                                                   j:(i,j)∈E ij = 1   is the so-called PM polytope. Since
+Eq. (3) constitutes a relaxation of Eq. (2), E0 ≤ E. As shown in [26] the optimal x in Eq. (3) is half
+integer.
+    If the graph is bipartite then (a) computing the PF in (1) is equivalent to computing the permanent of
+the matrix of w-weights; (b) the PM polytope, X is equal to the convex hull of Σ; (c) E0 = E, i.e. the
+LP-relaxation is gapless; and (d) the optimal x in Eq. (3) is integral (assuming the formulation in (2) is
+not degenerate).
+
+3. Bethe Free Energy, Belief Propagation and LP-BP
+For a generic Graphical Model (GM) over G assigning (un-normalized) weight w to state σ, one defines
+the exact variational 2 function
+                                                            X               b(σ)
+                                              F{b} ≡ T           b(σ) ln          .                                     (4)
+                                                             σ
+                                                                            W (σ)
+
+          Pb(σ) is understood as a proxy to the probability P(σ) because under the normalization
+The belief,
+condition σ∈Σ b(σ) = 1, the Gibbs function is convex and it achieves its only minimum at b(σ) = P(σ)
+and F{P} = −T ln Z.
+   Belief Propagation (BP) is an iterative method for computing beliefs that is exact when the underlying
+GM is a tree. As shown in [6], the BP fixed point equations can be derived as a relaxation of the
+constrained Gibbs function (4). We briefly review the concepts of [6] with application to the PM problem.
+The material generalizes the description of [14], which was limited to bipartite graphs (permanents).
+1
+    The two terms, used respectively in Statistical Physics and Computer Science, are equivalent.
+2
+    It is referred to as the Gibbs and Kullback-Leibler function in statistical physics and statistics, respectively.
+   The BP approximate belief of state σ ∈ Σ is
+                                                              Q
+                                                                  i bi (σi )
+                                  b(σ) ≈ bBP (σ) = Q                              ,                     (5)
+                                                             (i,j)∈E bij (σij )
+
+where bi (σi ) (bij (σij )) are vertex (edge) beliefs related to each other by
+                                                          X                X
+                             ∀(i, j) ∈ E : bij (σij ) =         bi (σi ) =     bj (σj ),                (6)
+                                                           σi \σij               σj \σij
+
+and where σi = (σij |j : (i, j) ∈ E) is a vector of edge beliefs. The beliefs should also satisfy the
+normalization conditions:
+                                ∀(i, j) ∈ E : bij (1) + bij (0) = 1.                              (7)
+Substituting Eq. (5) into Eq. (4) and utilizing Eqs. (6,7) one arrives at the following Bethe Free Energy
+function (BFE)
+                                                           X
+                             FBP (β) ≡ E − T S, E ≡            bij (1)εij ,                           (8)
+                                                                     (i,j)
+                                      X X                                        XX
+                               S≡                 bij (σij ) ln bij (σij ) −               bi (σi ).    (9)
+                                    (i,j)∈E σij                                  i∈V σi
+
+    Eqs. (6,7,8,9) can be greatly simplified. One can express Eqs. (6,7) solely in terms of βij ≡ bij (1)
+satisfying the following Doubly Stochastic (DS) constraints
+                                                            X
+                            ∀(i, j) ∈ E : 0 ≤ βij ≤ 1; ∀i :     βij = 1.                            (10)
+                                                                             j
+
+   We will use β ∈ DS to indicate that the matrix β is DS, i.e. lies in the DS polytope defined by
+Eq. (10). The entropy Eq. (9) becomes
+                                   X
+                          S(β) =      ((1 − βij ) ln(1 − βij ) − βij ln βij ) .               (11)
+                                      (i,j)∈E
+
+   Therefore, the BFE/BP approximation to the partition function of the PM model over G becomes
+                                1
+                        − log ZBP =min F (β)
+                                T β∈DS BP
+                              X   εij                                    
+                        = min     βij   + log βij − (1 − βij ) log(1 − βij ) .                         (12)
+                         β∈DS         T
+                                  (i,j)∈E
+
+   The MWPM can also be estimated within the BFE/BP approach as:
+
+                                                EBP = min βij εij .                                    (13)
+                                                     β∈DS
+
+Notice that Eq. (13) is an LP, that will be called BPLP because of its relation to the BP concept. As
+shown in [9], EBP = E0 , i.e. LP≡BPLP, where LP is defined by Eq. (3). One also finds that the optimal
+β in Eq. (13) is half-integral.
+   For a most general GM the BFE function is bounded from below but non-convex. However, as shown
+in [27] for the PM over bi-partite graph, FBP (β) is a convex function over β ∈ DS. As argued in
+Appendix A the BFE convexity proof of [27] extends straightforwardly to PM GM over arbitrary G.
+   To analyze the minima of the constrained BFE in Eq. (12) we incorporate Lagrange multipliers µi
+enforcing the constraints in Eqs. (10). Looking for a stationary point of the respective Lagrange function
+over the β variables, one arrives at the following set of quadratic equations for edge variables, βij
+                                                                                                  
+                                                                                 µi + µj − εij
+                            ∀(i, j) ∈ E :           βij (1 − βij ) = exp                               .              (14)
+                                                                                      T
+
+Eqs. (14) combined with the conditions (10) constitute the so-called Belief Propagation (BP) equations.
+    To find a solution of BP Eqs. (10,14) one relies on an iterative procedure. For a description of a set of
+iterative BP algorithms convergent to a minimum of the BFE for the perfect matching problem we refer
+the interested reader to [28, 29, 30].
+
+4. Loop Series
+As shown in [12, 13], the exact partition function of a generic GM can be expressed in terms of a Loop
+Series (LS), where each term is computed explicitly using beliefs found by solving the BP equations.
+   Adapting this general result to the PM problem one derives
+                                                                    !
+                                          X                 Y
+             Z = ZBP · z, z ≡ 1 +              rC , rC =        ψi;C ,                             (15)
+                                            C               i∈C
+                     P             Q                                                s
+                       σi bi (σi )
+                       ~             j:(i,j)∈C (mij − 2σij + 1)                          βij
+                                                                            Y
+             ψi;C ≡           Q(i,j)∈C p                        = (1 − qi )                    ,   (16)
+                                              1 − (mij )2                              1 − βij
+                                        j                                                       j∈C:(i,j)∈C
+                                                                                 (i,j)∈C
+                     X                                                            X
+             mij ≡    (2σij − 1)bij (σij ) = 2βij − 1,                  qi ≡               1,                         (17)
+                     σij                                                          j∈C
+
+where once again {b} (or {β}) are solutions to the BP-equations Eqs. (10,14) and C stands for an
+arbitrary generalized loop, defined as a subgraph of the complete bipartite graph withPall its vertices
+having a degree larger than 1. The qi in Eq. (19) are the C-dependent degrees, i.e. qi = j|(i,j)∈C 1.
+   Let us clarify derivation of the compact expressions on the rhs of Eqs. (16):
+                    X                   Y                                    X                  Y
+                           bi (σi )               (mij − 2σij + 1) =                  βik               (mij + 1)
+                     σi               j:(i,j)∈C                                  ∈C
+                                                                          k:(i,k) /         j:(i,j)∈C
+                                                        (i,j)∈C
+                           X                             Y                                           Y
+                    +                 βik (mik − 1)               (mij + 1) = 2qi (1 − qi )                   βij ,   (18)
+                        k:(i,k)∈C                        j6=k                                     j:(i,j)∈C
+
+where we used relations (17) and also the double stochasticity of β.
+  Combining Eqs. (15,16) one derives
+                                                    !
+                                       Y              Y       βij
+                               rc =       (1 − qi )                 .                                                 (19)
+                                                            1 − βij
+                                                  i∈C              (i,j)∈C
+
+In Eq. (19), loops comprised of an even (odd) number of vertices give positive (negative) contributions
+to rC . Eq. (19) was stated in [14] for the bipartite case. From the above derivation, we can see that the
+result is valid for any graph G.
+5. Bootstrapping BP and Fractional BP
+Another important result for PMs is the following re-summation of the LS
+                                             Z(w)           Z(β̃)
+                                                    =Q                    ,                                              (20)
+                                            ZBP (w)    (i,j)∈E (1 − βij )
+
+where β̃ = (βij (1 − βij )|(i, j) ∈ E). Eq. (20) was stated in [14] only for the case of permanent - PM
+over binary graph, even though direct verification confirms (see Appendix B) that the formula is generic,
+applicable to PM over an arbitrary graph.
+   We call Eq. (20) the Bootstrap-BP equation because the rhs of Eq. (20) provides a quantitative
+measure of the relative accuracy of BP.
+   Extending the approach of [31] from bipartite to general graphs, one arrives at the following fractional
+generalization of Eq. (20)
+                Z(w)                Y
+                       = Z(β̃γ )         (1 − βij )γ ,                                                 (21)
+               Zγ (w)
+                                  (i,j)∈E
+                                         X   εij                                           
+               − log Zγ (w) = min              βij       + log βij + γ(1 − βij ) log(1 − βij ) ,       (22)
+                                β∈DS                   T
+                                             (i,j)∈E
+
+where β̃γ = (βij ∗ (1 − βij )−γ |(i, j) ∈ E) and the doubly stochastic βij ’s entering Eqs. (20,22) come
+from solving the following γ-version of Eq. (14)
+                                                                              
+                                                   −γ          µi + µj − εij
+                       ∀(i, j) ∈ E : βij (1 − βij ) = exp                        ,                   (23)
+                                                                      T
+γ can be any number in [−1; 1] , with γ = −1 corresponding to the BP case. Notice, that the Loop
+Series representation for the partition function correction only applies to the BP case. Its generalization
+to arbitrary γ is not known to the authors.
+
+6. Finding MWPMs via BP: An Illustration
+For an arbitrary graph, the BPLP=LP relaxation of the MWPM problem is known to be half-integral [11].
+When the solution to the relaxation is integral, one has a certificate of optimality and E = E0 . When the
+solution is half integral, E0 < E, simply because BPLP is a relaxation of the original MWPM problem.
+The Bootstrap BP recasting of the LS provides a compact expression relating E and E0 in terms of some
+new partition function. The question explored in the remainder of this section is the following:
+    • Can the (fractional) Bootstrap-BP formula in Eq. (21) be used to close the gap between E0 and E?
+   The rhs of Eq. (21) involves the PF of a new GM defined on graph G. Our hope is that the new GM is
+easier to deal with than the original GM. Before checking to see if this is true, we first analyze the T → 0
+limit of Eq. (21).
+   The fractional parameter γ in Eq. (21) can be chosen arbitrary from the interval [−1; 1]. However, in
+order to avoid resolving a fictitious singularity 3 it is convenient to consider γ = 0. Then in the T → 0
+limit one derives from Eq. (21,23):
+                                                         X
+                        E = E0 + E1 , E1 = min                (εij − µi − µj )σij                        (24)
+                                                         σ∈Σ
+                                                               (i,j)∈E
+
+where E and E0 are as in Eqs. (2,3), and µ are dual variables (often called chemical potentials in
+statistical physics) that can be reconstructed from the optimal solution of the BPLP (3) as follows:
+3
+   The algebraic factor on the rhs of Eq. (21) is singular in the T → 0 limit at γ < −1 when some βij approaches unity.
+However, the singularity is fictitious, as the PF on the rhs of Eq. (21) will turn to 0 (in the limit). Since Z(w) ∼ exp(−E/T )
+and Zγ (w) ∼ exp(−E0 /T ) and E0 < E in the case of interest, we expect to get zero (in the limit) for the rhs of Eq. (21).
+                  1       g     1          h                                              1
+
+                                   1/ 2                                                    1/ 2              1  
+                            2                                           exp           exp                 exp       
+                                               1                            T                  T                 T 
+
+                       -1    b                 c -2
+                                   1                                                      exp( 1 / T )
+                      3                           4                      1/ 2                                      1/ 2
+                                          3                                              exp(3 / 2T )
+         -2   a             3                             d   -2                 1/ 2                        1/ 2
+
+                                 1/ 2              3
+                      4                                                   1/ 2                                      1/ 2
+
+                      -2     f      1         e    -1                                    exp( 1 / T )
+                                    (a)                                                         (b)
+
+Figure 1. Illustrative 8-node example analysed with the γ = 0 version of the bootstrap-BP approach. (a)
+Numbers next to edges are εij . Edges shown in green and red output βij = 1/2 and βij = 1 respectively
+in BP-LP. MWPM is (a, f ), (e, d), (g, b), (h, c). Numbers shown in ovals and squares correspond to the
+leading asymptotic estimates for the Lagrangian multipliers, µi . Freedom in choosing the parameter
+δ, entering µi adjusted to βij = 1 does not affect the E − E0 correction we are looking for in here.
+(b) Expressions next to the edges are respective βij . Edges marked blue give the leading order PM
+contribution to Z(β̃).
+
+
+    • One first identifies any non-intersecting half-integral cycles C of G, i.e. odd-length cycles where
+      βij = 1/2 for each edge (i, j) ∈ C and {βij } is the solution of BPLP 4 .
+    • One computes Lagrangian multipliers, µi , along each half-integral cycle, resolving, separately for
+      every cycle the set of linear equations, µi + µj = εij .
+    • For every edge, (i, j) with βij = 1 one computes the Lagrangian multipliers associated with the
+      vertices i and j, µi ← εij /2 + δij and µj ← εij /2 − δij , where δij can be chosen arbitrarily, for
+      example δij ← εij /2. 5
+    To demonstrate utility of the bootstrap BPLP formulas (3,24) let us consider the 8-node example
+shown in Fig. (1). In this example, the MWPM is (a, f ), (e, d), (g, b), (h, c) and, therefore, E =
+−4 − 3 − 2 − 1 = −10. The solution to the BPLP is fractional. All edges on the two cycles, (a, b, f )
+and (c, d, e) have β = 1/2, edge (g, h) has βgh = 1 and all other edges in the graph have β = 0.
+Therefore, E0 = (−4 − 3 − 3)/2 + (−4 − 3 − 3)/2 − 1 = −11, which is clearly less than E. All
+dual variables, µi , associated with the half-integral cycles (shown in green in Fig. (1a)) are determined
+unambiguously. The dual variables for edge (g, h) must satisfy µg + µh + 1 = 0 and we choose
+µg − µh = 2δ. In principle, the freedom can be fixed taking into account the DB vertex constraints on
+all the β-corrections. However, this is not necessary because the δ’s simply cancel when computing the
+correction E1 = δ + 1 − δ = 1 = E0 − E for the PM contribution to Z(β) marked in blue in Fig. (1b).
+    A number of things are worth noting from this simple example. First, the Bootstrap formula (20)
+allowed us to reduce the original MWPM problem to an auxiliary MWPM problem on the same graph.
+At first, the new MWPM problem does not appear to be easier to solve than the original MWPM problem.
+However, this example suggests a direction to further simplify the auxiliary problem by transforming it
+to a MWPM problem on a strictly smaller graph. Indeed, for the example considered one can contract
+4
+   If the BPLP is fractional, then at least two such cycles exist. This is guaranteed by half-integrality of BPLP and because we
+are solving a PM problem.
+5
+   The choice of δ does not affect the optimal σ defining E1 in Eq. (24).
+each of the “green, half-integer” cycles to individual nodes. This suggestion is inspired by the following
+observations [21, 22, 23]:
+  • Define a blossom to be an odd-sized cycle and choose our blossoms to be the odd-sized cycles
+    with βij = 1/2 – marked green in Fig. (1a). Such blossoms contribute zero weight to the energy
+    correction E1 .
+  • Edmond’s “outer” constraint associated with any of the “half-integer” (green) blossom states that at
+    least one edge from the cut (outer) edges should be in the optimal MWPM solution of the original
+    problem. Note that for any of the “half-integer” blossoms in the example of Fig. (1) exactly one cut
+    edge (and not more than one!) contributes to the optimal MWPM of the original problem.
+   In the following section we describe an algorithm that repeatedly applies this contraction concept to
+identify a sequence of corrections to the MWPM energy E.
+
+7. Algorithm for finding MWPM sequentially
+                          Algorithm: BP-Bootstrap-Contract-Repeat
+
+  Initialization: The master system is defined as a non-degenerate MWPM over the (V, E, w) tuple.
+  (Add small random corrections to w to ensure non-degneracy.). Set E = 0.
+
+  Iterate:
+
+  (1) Solve the LP=BP-LP, Eqs. (3,13) over (V, E, w). (For efficient distributed implementa-
+  tion use the algorithm of [9, 11].) β and E0 are the outputs. Set, E+ = E0 .
+
+  (2) If solution of the LP=BP-LP is integer: Stop.
+
+  (3) Otherwise, modify the master system following the procedure:
+
+     • (a) Identify non-intersecting half-integral cycles of G, i.e. cycles along which all edged are
+       half-integral, βij = 1/2, in the solution of the LP=BP-LP. (Existence of at least two such
+       cycles is guaranteed.)
+     • (b) Compute the Lagrangian multipliers, µi , along the half-integer cycles, resolving, separately
+       for every cycle the set of linear equations, µi + µj = εij .
+     • (c) For every edge, (i, j), which is in PM according to the LP=BP-LP, i.e. βij = 1, compute
+       the Lagrangian multipliers associated with the vertices i and j, µi ← εij /2 + δij and
+       µj ← εij /2 − δij , where δij can be chosen arbitrarily, for example δij ← εij /2.
+     • (d) Update weights, ∀(i, j) : εij ← εij − µi − µj .
+     • (e) Update the (V, E, w) tuple according to the following rules: Contract all vertices
+       correspondent to a half-integer cycle into one new vertex. If multiple edges have appeared
+       in the result of the contraction, combine them in one edge choosing the new weight equal to
+       be the largest weight of the combined edges. Repeat it for all the half-integer cycles.
+     • (f) Add small random correction to w to remove possible (future) degeneracy.
+
+    As already noted, the BP-Bootstrap procedure outputs an energy E which is an upper bound on the
+value of the MWPM (proof of this statement will be presented in a future work). Once the upper bound
+is derived, one can use the following heuristics to find the PM corresponding to the output. Assume that
+                                 50 % sparse                                                      90 % sparse
+                 N/M               # Cor.        # LPs         # Blos.        N/M                   # Cor.       # LPs        # Blos.
+                 100 / 1961         100         1.4[1,4]       0.9[0,6]       100 /475               100        1.4[1,4]      0.8[0,8]
+                 250 / 12284        100         1.6[1,5]       1.2[0,8]       250 / 2973             100        1.6[1,3]      1.2[0,4]
+                 500 / 49159        100         1.8[1,6]      1.7[0,12]       500 / 11898            100        1.7[1,4]      1.5[0,6]
+                 1000 / 196696      100         1.9[1,5]       1.9[0,8]       1000 / 47576            99        1.8[1,4]      1.8[0,8]
+
+Table 1. Evaluation of BP-Bootstrap-Contract on random complete graph instances for two levels of
+sparsity. N and M indicate the number of nodes and average number of edges in each of the 100
+instances. # Cor. is the number of instances (out of 100) in which BP-Bootstrap-Contract found the
+weight of the optimal matching. # LPs indicates the average number of LPs solved by BP-Bootstrap. The
+bracketed numbers indicate the minimum and maximum number of LPs solved across the 100 instances.
+# Blos. is the average number of blossoms collapsed in each MWPM problem.
+
+
+                                   N           M             # Cor.          # LPs                 # Blos.
+                                   100         285             95          5.7[2,13]              16.0[4,32]
+                                   250         733             83          10.6[4,28]            45.8[18,82]
+                                   500         1481            75          16.4[5,36]            92.1[44,132]
+                                   1000        2979            60          28.8[9,70]       200.3[140,294]
+                                   5000        14975           5          78.5[24,202]      996.0[796,1212]
+
+           Table 2. Evaluation of BP-Bootstrap-Contract on random Triangulation instances.
+
+
+                           Singly-Connected                                                       3-Connected
+             K         # Cor.       # LPs                  # Blos.          K           # Cor.          # LPs                 # Blos.
+             100        100       10.0[3,17]         59.2[36,72]            100          100          19.6[4,39]            60.3[18,102]
+             200        100       16.4[5,29]        128.1[86,156]           200          100          34.3[5,71]           130.2[42,192]
+             500        100      34.4[11,68]       336.6[262,390]           500          100         63.2[19,143]          355.8[200,466]
+             1000       100      58.8[19,111]      704.8[582,802]           1000         100        119.7[20,223]          793.8[490,956]
+
+  Table 3. Evaluation of BP-Bootstrap on a chain of triangles connected by a single edge or 3 edges.
+
+
+
+all the  weights in the original PM formulation are integer and solve the following auxiliary LP,
+             X                    X                           X
+       min         εij xij , s.t.    εij xij ≤ E, ∀i ∈ V :          xij = 1, ∀(i, j) ∈ E xij ≥ 0.
+            (i,j)∈E                 (i,j)∈E                                          j:(i,j)∈E
+
+If the LP outputs an integral solution, we stop. Otherwise, we run the same LP with E − 1 instead of E,
+and repeat the procedure till an integral solution is found.
+
+8. Experiments
+We conducted a set of experiments to evaluate the performance of the BP-Bootstrap-Contract procedure.
+The BP-Bootstrap algorithm solves a series of LP problems, LP (0) , ..., LP (S) , where LP (S) is the first
+LP with an integral solution. LP (t+1) , the LP in iteration t+1, is constructed from LP (t) by formulating
+a new weighted PM problem.
+    Since the LP relaxation to the PM problem is half-integral [26], we are assured that the set of edges
+             (t)                                                                      (t)
+for which βij = 1/2 will form non-intersecting cycles of odd length (note that βij denotes the belief on
+edge (i, j) in the solution to LP (t) ). In addition, each odd-sized half-integral cycle identifies a constraint
+that can be used to tighten the relaxation of LP (t) . Such constraints are referred to as blossom constraints
+in the matching literature [21] and we will continue to adopt that name herein. Contracting all vertices
+correspondent to an odd-sized half-integral cycle has the effect of adding the blossom constraint to the
+LP . Thus, by contracting blossoms in each iteration, we hope to construct a series LP (0) , ..., LP (S) of
+increasingly tight LP relaxations to the PM problem.
+    Unfortunately, the procedure of greedily collapsing blossoms is not guaranteed to produce a tight LP
+for the MWPM problem. This means that the BP-Bootstrap procedure will not necessarily recover the
+weight E of the optimal perfect matching. We therefore rely on experimentation to gauge the efficacy of
+the proposed BP-Bootstrap heuristic.
+    We synthetically generated several types of weighted graph problems and compared the weight of
+the matching found by BP-Bootstrap to the weight of the optimal matching. The weight of the optimal
+perfect matching was found using Kolmogorov’s BlossomV algorithm - the state-of-the-art algorithm for
+solving weighted matching problems [22].
+    We conducted experiments on three problem types: 1) Sparse complete graph instances; 2)
+Triangulation instances; and 3) Chained triangle instance. The sparse complete graph instances were
+generated by taking a complete graph on N nodes and eliminating edges with probability p =
+{0.5, 0.9}. 6 Edge weights were assigned an integral weight drawn from a discrete uniform distribution
+in [1, 220 ]. The triangulation instances were generated by randomly placing points in the 220 ×220 square
+and computing a Delaunay triangulation on this set of points. The edge weights were set to the rounded
+Euclidean distance between two points. The chained triangle instances were used in the First DIMACS
+Implementation Challenge [32]. Based on the algorithms t.f and tt.f by N. Ritchey and B. Mattingly, we
+generate a sequence of K triangles. The chain of triangles is formed by connecting neighboring triangles
+via a single edge or by three edges. While certainly not exhaustive, this set of problems encompass an
+interesting range of graph types.
+    The results from running BP-Bootstrap on sparse complete graph instances are shown in Table 1.
+For each number of nodes N ∈ {100, 250, 500, 1000}, we generated 100 random instances. We report
+the average number of edges, M , for each setting of N and # Cor., the number of instances (out of
+100) for which BP-Bootstrap found the optimal weight matching. In addition, we report the average
+and [minimum, maximum] number of LP s solved by BP-Bootstrap as well as the number of blossoms
+contracted by the BP-Bootstrap procedure. From this table it seems clear that BP-Bootstrap procedure is
+accurate on dense complete graphs. A reason for the success of the method on this class of graphs is that
+LP (0) , the initial LP relaxation, is tight a large percentage of the time. This is indicated by the fact that
+on average less than two LP s need to be solved by BP-Bootstrap.
+    In contrast, the Bootstrap method performs rather poorly on the random Triangulation instances
+shown in Table 2. The greedy blossom contracting approach does not appear to be successful on this
+class of problems. In fact, when we examined the operation of Kolmogorov’s BlossomV algorithm on
+these instances we found that BlossomV frequently needed to backtrack and expand blossoms that had
+been collapsed - an operation not supported by our greedy heuristic.
+    Finally, the results from running BP-Bootstrap on the chained triangle instances are shown in Table
+3. The BP-Bootstrap method performs well on these problems. Interestingly, we see that the greedy
+heuristic is effective even though these instances require solving many LP s and collapsing many
+blossoms.
+
+9. Questions yet to be addressed in this project
+We conclude by describing what we believe are the two most important challenges needing to be resolved
+in our “Matching” using BP project.
+    • As proven in [33] for the bipartite (permanent) case: Z ≥ ZBP . As noticed in [31], the proof of
+      [33] is in fact a direct corollary of Eq. (20) combined with a combinatorial result of Schrijver from
+6
+    In doing so, we ensure that the graph contains a perfect matching by ensuring that the graph remains edge-connected
+                                                                                          Q
+    [34]. Indeed, it was proven in [34] (see Corollary 1c) that Perm(β.(1 − β)) ≥ (i,j)∈E (1 − βij ),
+    which is essentially the statement that the rhs of Eq. (20) in the bipartite case is equal or larger than
+    unity. The proof of Schrijver is indirect and the author mentions in passing “... we have tried to find
+    a direct proof of it, based on continuity and differentiability, and did not succeed”. Is it possible to
+    find such a direct proof based on the combination of the Loop Calculus (15,19) and the Bootstrap-
+    BP (20) formulas in the bipartite case? Can one generalize the Z ≥ ZBP statement and Schrijver
+    inequality to the case of a general, non-bipartite, graph?
+  • In general, and as explained above, our Bootstrap-and-Contract algorithm outputs an upper bound
+    on the MWPM. In our empirical study, we observed that when our algorithm fails to produce an
+    optimal matching, the BlossomV algorithm needs to backtrack and expand one or more contracted
+    blossoms. A remaining question is how to incorporate the undo/expand step into our procedure. In
+    particular, can one do so in a distributed manner, via a message passing (or perhaps just greedy)
+    procedure?
+
+Appendix A. Convexity of the Bethe Free Energy
+This Appendix generalizes the main result of [27], where convexity of the BFE was proven for the case
+of PM GM over the bi-partite
+                     P        graph, to the case of PM GM over a general graph. Indeed, according to
+Theorem 20 of [27], j:(i,j)∈E log βij − (1 − βij ) log(1 − βij ) is convex within the polytope defined
+by, j:(i,j)∈E βij = 1 and βij ≥ 0, for all (i, j) ∈ E and regardless of the global structure of the graph
+    P
+G. Therefore, FBP (12) is convex within the domain DS simply because it is represented as a sum of
+functions which are all convex within the domain.
+
+Appendix B. Derivation of the bootstrap formulas
+In this Appendix we derive Eqs. (20,21) following the logic of [14], see also Appendixes B.1, D.1 of
+[31]. For the purpose of generality we will consider arbitrary (fractional) γ and arbitrary graph G.
+    Our algebraic derivation consists of comparing two formulas. First, considering vectors of weights
+corresponding to the two sides of Eq. (23) and equating the respective partition functions one derives
+                                                         
+                                                                           P          
+                       X           X        µi + µj − εij                      i∈V µi
+             Z(β̃γ ) =     exp         σij                  = Z(w) exp                  ,           (B.1)
+                                                 T                               T
+                           σ∈Σ        (i,j)∈E
+
+                      P                         P         P                 P
+where we have used, (i,j)∈E σij (µi + µj ) = i∈V µi j:(i,j)∈E σij = i∈V µi . Second, let us apply
+log to both sides of Eqs. (23) and then sum the results over all the edges of G weighted with βij
+                                                                               
+                  X                                         1  X      X
+                           βij (log βij − γ log(1 − βij )) =    µi −   σij εij  ,                              (B.2)
+                                                            T
+                 (i,j)∈E                                            i∈V        (i,j)∈E
+
+                                                                            P
+where we have used the double stochasticity of the optimal β through,          (i,j)∈E βij (µi + µj ) =
+P        P                 P
+  i∈V µi   j:(i,j)∈E βij =  i∈V µi . Then, combining Eqs. (B.1,B.2) with Eq. (22) we arrive at Eq. (21).
+
+
+References
+ [1] Bethe H 1935 Proceedings of Royal Society of London A 150 552
+ [2] Peierls H 1936 Proceedings of Cambridge Philosophical Society 32 477–481
+ [3] Gallager R 1963 Low density parity check codes (MIT Press, Cambridge, MA)
+ [4] Pearl J 1988 Probabilistic Reasoning in Intelligent Systems: Networks of Plausible Inference (San Francisco: Morgan
+       Kaufmann Publishers, Inc.)
+ [5] Yedidia J, Freeman W and Weiss Y 2001 Generalized belief propagation vol 13 (Cambridge, MA, MIT Press) pp 689–695
+ [6] Yedidia J S, Freeman W T and Weiss Y 2005 Information Theory, IEEE Transactions on Information Theory 51 2282–
+       2312
+ [7] Bayati M, Shah D and Sharma M 2005 Maximum weight matching via max-product belief propagation Info. Theory,
+       2005. ISIT 2005. Proceedings. International Symposium on pp 1763 –1767
+ [8] Bayati M, Shah D and Sharma M 2006 A simpler max-product maximum weight matching algorithm and the auction
+       algorithm Info. Theory, 2006 IEEE International Symposium on pp 557 –561
+ [9] Bayati M, Shah D and Sharma M 2008 IEEE Transactions on Information Theory 54 1241–1251 proc. IEEE Int. Symp.
+       Information Theory, 2006
+[10] Chertkov M 2008 Journal of Statistical Mechanics: Theory and Experiment 10 16–+ (Preprint 0801.0341) URL
+       http://www.iop.org/EJ/article/1742-5468/2008/10/P10016/jstat8_10_p10016.html
+[11] Sanghavi S, Malioutov D and Willsky A 2011 Info. Theory, IEEE Trans. on 57 2203 –2212 ISSN 0018-9448
+[12] Chertkov M and Chernyak V 2006 Physical Review E 73 065102(R)
+[13] Chertkov M and Chernyak V 2006 Journal of Statistical Mechanics P06009
+[14] Watanabe Y and Chertkov M 2010 Journal of Physics A: Mathematical and Theoretical 43 242002 URL http:
+       //stacks.iop.org/1751-8121/43/i=24/a=242002
+[15] V G, JM M and HJ K 2007 Journal for Machine Learning Research (JMLR) 8 1987–2016
+[16] Gomez V, Kappen H J and Chertkov M 2010 Journal of Machine Learning Research 11 1273–1296 URL http:
+       //arxiv.org/abs/0901.0786
+[17] Chertkov M and Chernyak V Y 2006 arxiv:cs/0609154
+[18] Kudekar S, Johnson J K and Chertkov M 2011 CoRR abs/1102.5386
+[19] Kudekar S, Johnson J K and Chertkov M 2011 CoRR abs/1105.4665
+[20] Gelfand A, Chertkov M and Shin J 2013 arxiv:1305.4130 URL http://arxiv.org/abs/1305.4130
+[21] Edmonds J 1965 Canadian Journal of mathematics 17 449–467 URL http://www.cs.princeton.edu/
+       introcs/papers/edmonds.pdf
+[22] Kolmogorov V 2009 Mathematical Programming Computation 1 43–67 URL http://www.springerlink.com/
+       index/E251L2WWW0258265.pdf
+[23] Chandrasekaran K, Végh L A and Vempala S 2012 CoRR abs/1207.5813
+[24] Chertkov M, Gelfand A and Shin J 2013 unpublished
+[25] Yedidia A B and Chertkov M 2011 CoRR abs/1108.0065
+[26] Schrijver A 2003 Combinatorial Optimization (Springer-Verlag)
+[27] Vontobel P 2013 Information Theory, IEEE Transactions on 59 1866–1901 ISSN 0018-9448
+[28] Chertkov M, Kroc L and Vergassola M 2008 Belief propagation and beyond for particle tracking, arxiv:0806.1199
+       (Preprint arxiv:0806.1199) URL http://arxiv.org/abs/0806.1199
+[29] Chertkov M, Kroc L, Krzakala F, Vergassola M and Zdeborova L 2010 Proceedings of National Academy of Sciences
+       107(17) 7663–7668 (Preprint arxiv:0909.4256) URL http://arxiv.org/abs/0909.4256
+[30] Huang B and Jebara T 2009 Approximating the permanent with belief propagation, arxiv:0908.1769 (Preprint arxiv:
+       0908.1769) URL http://arxiv.org/abs/0908.1769
+[31] Chertkov M and Yedidia A B 2011 CoRR abs/1108.0065
+[32] Johnson D S and McGeoch C C 1993 Network Flows and Matching: First DIMACS Implementation Challenge,
+       Generators available at ftp://dimacs.rutgers.edu/pub/netflow/generators/matching (Ameri-
+       can Mathematical Society, Providence, RI)
+[33] Gurvits L 2011 ArXiv e-prints (Preprint 1106.2844)
+[34] Schrijver A 1998 Journal of combinatorial theory. Series B 72 122–135
+

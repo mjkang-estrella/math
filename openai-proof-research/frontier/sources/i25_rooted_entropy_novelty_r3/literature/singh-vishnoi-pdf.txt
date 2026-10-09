@@ -1,0 +1,2246 @@
+                                                          Entropy, Optimization and Counting
+                                                              Mohit Singh                                 Nisheeth K. Vishnoi
+                                                  Microsoft Research, Redmond, USA                 Microsoft Research, Bangalore, India
+                                                    Email: mohits@microsoft.com                    Email: nisheeth.vishnoi@gmail.com
+
+
+
+
+arXiv:1304.8108v1 [cs.DS] 30 Apr 2013
+                                                                                          Abstract
+                                            In this paper we study the problem of computing max-entropy distributions over a discrete set of
+                                        objects subject to observed marginals. Interest in such distributions arises due to their applicability in ar-
+                                        eas such as statistical physics, economics, biology, information theory, machine learning, combinatorics
+                                        and, more recently, approximation algorithms. A key difficulty in computing max-entropy distributions
+                                        has been to show that they have polynomially-sized descriptions. We show that such descriptions exist
+                                        under general conditions. Subsequently, we show how algorithms for (approximately) counting the un-
+                                        derlying discrete set can be translated into efficient algorithms to (approximately) compute max-entropy
+                                        distributions. In the reverse direction, we show how access to algorithms that compute max-entropy
+                                        distributions can be used to count, which establishes an equivalence between counting and computing
+                                        max-entropy distributions.
+Contents
+1 Introduction                                                                                               3
+  1.1 Our Contribution . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       4
+       1.1.1 Informal Statement of Our Results . . . . . . . . . . . . . . . . . . . . . . . . . . .         5
+  1.2 Technical Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       6
+  1.3 Organization of the Rest of the Paper . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      8
+
+2 Preliminaries                                                                                          9
+  2.1 Notation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+  2.2 Combinatorial Polytopes, Separation Oracles, Counting Oracles and Interiority . . . . . . . 9
+  2.3 The Maximum Entropy Convex Program . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+  2.4 Formal Statement of Our Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+  2.5 The Ellipsoid Algorithm . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+
+3 Examples of Combinatorial Polytopes                                                                       15
+
+4 New Algorithmic Approaches for the Traveling Salesman Problem                                             16
+
+5 Bounding Box                                                                                              17
+
+6 Optimization via Counting                                                                            18
+  6.1 Proof of Theorem 2.6 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+  6.2 Proof of Theorem 2.8 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+
+7    Counting via Optimization                                                                              22
+    7.1 A Convex Program for Counting . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       22
+    7.2 The Interior of P(M ) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   23
+    7.3 A Separation Oracle for Interiority . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   24
+    7.4 The Ellipsoid Algorithm for Theorem 2.11 . . . . . . . . . . . . . . . . . . . . . . . . . . .      25
+
+A Omitted Proofs                                                                                     31
+  A.1 Duality of the Max-Entropy Program . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+  A.2 Optimal and Near-Optimal Dual Solutions . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+
+B Generalized Counting and Minimizing Kullback-Leibler Divergence                                           34
+
+C 2 → 2-norm of ∇ f                                                                                         37
+
+
+
+
+                                                      2
+1 Introduction
+In this paper we study the computability of max-entropy probability distributions over a discrete set. Con-
+sider a collection M of discrete objects whose building blocks are the elements [m] = {1, 2, . . . , m}; thus,
+M ⊆ {0, 1}m . Suppose there is some unknown distribution p on M and we are given access to it via observ-
+ables θ , the simplest of which is the probability that an element is present in a random sample M from p;
+namely, PM←p [e ∈ M] = θe . If θ is all we know, what is our best guess for p? The principle of max-entropy
+[17, 18] postulates that the best guess is the distribution which maximizes (Shannon) entropy.1 Roughly,
+the argument is that any distribution which has more information must violate some observable, and a dis-
+tribution with less information must implicitly use additional independent observables, hence contradicting
+their maximality. Access to such a distribution could then be used to obtain samples which conform with
+the observed statistics and to obtain the most informed guess to further statistics.
+     Given the fundamental nature of such a distribution, it should not be surprising that it shows up in various
+areas such as statistical physics, economics, biology, information theory, machine learning, combinatorics
+and, more recently, in the design of approximation algorithms, see for instance [26]. From a computational
+point of view, the question is how to find max-entropy distributions. Note that the entropy function is
+concave, hence, the problem of maximizing it over the set of all probability distributions over M with
+marginals θ is a convex programming problem. But what is the input? If θ and M are given explicitly,
+then a solution to this convex program can be obtained, using the ellipsoid method, in time polynomial in
+|M | and the number of bits needed to represent θ .2 However, in most interesting applications, while θ is
+given explicitly, M may be an exponentially-sized set over the universe {0, 1}m and specified implicitly. For
+example, the input could be a graph G = (V, E) with m edges and θ ∈ Rm       ≥0 whereas M could be all spanning
+trees or all perfect matchings in G; in such a scenario |M | could be exponential in m. This renders the convex
+program for computing the max-entropy distribution prohibitively large. Moreover, simply describing the
+distribution could require exponential space. The good news is that one can use convex programming duality
+to convert the max-entropy program into one that has m variables. Additionally, under mild conditions on
+θ , strong duality holds and, hence, the max-entropy distribution is a product distribution, i.e., there exist
+γe for e ∈ [m] such that for all M ∈ M , pM ∝ ∏e∈M γe , see [4] or Lemma 2.3. Thus, the max-entropy
+distribution for θ can be described by m numbers γ = (γe )e∈[m] . There are two main computational problems
+concerning max-entropy distributions. The first is to, given θ and implicit access to M , obtain γ̃ such that
+the entropy of the product distribution p̃, corresponding to γ̃ , is close to that of the max-entropy distribution,
+and the observables obtained from p̃ are close to θ . The second is, given γ̃ , obtain a random sample from
+the distribution p̃. The second problem can be handled by invoking the equivalence between approximate
+counting and sampling due to Jerrum, Valiant and Vazirani [22] and, hence, we focus on the first issue of
+computing approximations to the max-entropy distributions.3 However, the existence of γ̃ which requires
+polynomially-many bits in the input size is, a priori, far from clear. This raises the crucial question of
+whether good enough succinct descriptions exist for max-entropy distributions.
+     While there is a vast amount of literature concerning the computation of max-entropy distributions (see
+for example the survey [37]), previous (partial) results on computing max-entropy distributions required
+exploiting some special structure of the particular problem at hand. In theoretical computer science, interest
+in rigorously computing max-entropy distributions derives from their applications to randomized rounding
+and the design of non-trivial approximation algorithms, notably to problems such as the symmetric and the
+asymmetric traveling salesman problem (TSP/ATSP). For example, using a very technical argument, [1]
+                                                                                def             1
+                                                             M M∈M is H(p) = ∑M∈M pM ln pM .
+   1 Recall that the Shannon entropy of a distribution p = (p )
+   2 The ellipsoid algorithm requires a bounding ball which in this case is trivial since ∀M ∈ M , 0 ≤ p ≤ 1.
+                                                                                                        M
+   3 To be precise, this equivalence between random sampling and approximate counting holds when the combinatorial problem at
+
+hand is self-reducible, see also [32].
+
+
+
+                                                             3
+give an algorithm to compute the max-entropy distribution over spanning trees of a graph. This algorithm
+was then used by them to improve the approximation ratio for ATSP, and by [30] to improve the approxi-
+mation ratio for (graphical) TSP, making progress on two long-standing problems. Subsequently, the ability
+to compute max-entropy distributions over spanning trees has also been used to design efficient privacy
+preserving mechanisms for spanning tree auctions by [16]. In another example, [2] show how to compute
+max-entropy distributions over perfect matchings in a tree and use it to design approximation algorithms
+for a max-min fair allocation problem. The question of computing max-entropy distributions over perfect
+matchings in bipartite (and general) graphs, however, has been an important open problem. Recent applica-
+tions of the ability to compute max-entropy distribution over perfect matchings in bipartite graphs include
+new approaches for TSP and ATSP, see [36] and Section 4.
+    For counting problems, it is rare to obtain algorithms that can count exactly, notable exceptions being
+the problem of counting spanning trees in a graph [28] or counting certain problems restricted to trees using
+dynamic programming. Most natural counting problems turn out to be #P-hard including the problem to
+count the number of perfect matchings in a bipartite graph [34, 35]. The goal then shifts to finding algorithms
+that approximately count up to any fixed precision [27, 33]. Here the most successful technique has been
+the Markov chain Monte Carlo (MCMC) method [20] which, when combined with the equivalence between
+approximate counting and sampling [22]4 , leads to many approximate counting algorithms. The technique
+has been applied to many problems including counting perfect matchings in a bipartite graph [21], counting
+bases in a balanced matroid [11], counting solutions to a knapsack problem [6] and counting the number of
+colorings in restricted graph families [19]. However, the problem of obtaining approximate counting oracles
+for several problems remains open as well; perhaps a prominent example is that of (approximately) counting
+the number of perfect matchings in a general graph.
+    In combinatorics, max-entropy distributions are often referred to as hard-core or Gibbs distributions and
+have been intensely studied. While it is nice that the hard-core distribution has a product form, i.e., pM ∝
+∏e∈M γe , the question of interest here is whether one can upper bound the γe s. Structurally, such a bound
+implies that hard-core distributions exhibit a significant amount of approximate stochastic independence. In
+an important result, [25] proved such a bound for the hard-core distribution over matchings in a graph. This
+led to resolving several questions involving asymptotic graph and hypergraph problems. For instance results
+of [23, 25, 24] prove that the fractional chromatic index of a graph asymptotically behaves as its chromatic
+index. However, the argument of [25] is quite difficult and seems to be specific to the setting of matchings
+leaving it an interesting problem to understand under what conditions can one obtain upper bounds on γe s.
+
+1.1 Our Contribution
+We first show that good enough succinct representations exist for max-entropy distributions. Subsequently,
+we give an algorithm that computes arbitrarily good approximations to max-entropy distributions given θ
+and access to a suitable counting oracle for M . Our algorithm is efficient whenever the corresponding count-
+ing oracle is efficient. Moreover, the counting oracle can be approximate and/or randomized. This allows
+us to leverage a variety of algorithms developed for several #P-hard problems to give algorithms to compute
+max-entropy distributions. Consequently, we obtain several new and old results about concrete algorithms to
+compute max-entropy distributions. Interesting examples for which we can use pre-existing counting oracles
+to obtain max-entropy distributions include spanning trees, matchings in general graphs, perfect matchings
+in bipartite graphs (using the algorithm from [21]) and subtrees of a rooted tree. The consequence for perfect
+matchings in bipartite graphs makes the algorithmic strategies for TSP/ATSP mentioned earlier computa-
+tionally feasible, see Section 4. In the reverse direction we show that if one can solve, even approximately,
+    4 We note that MCMC methods efficiently sample (and count) given a fixed γ , usually for γ = 1 corresponding to the uniform
+
+distribution. The goal in our problem is to find an γ that maximizes the entropy. In fact, given a γ , problem specific MCMC methods
+can be used to generate a random sample from M according to the product distribution corresponding to γ .
+
+
+                                                                 4
+the convex optimization problem of computing the max-entropy distribution, one can obtain such counting
+oracles. This establishes an equivalence between counting and computing max-entropy distributions in a
+general setting. As a corollary, we obtain that the problem of computing max-entropy distributions over per-
+fect matchings in general graphs is equivalent to the, hitherto unrelated, problem of approximately counting
+perfect matchings in a general graph.
+
+1.1.1   Informal Statement of Our Results
+Before we describe our results a bit more technically, we introduce some basic notation. For M ⊆ {0, 1}m ,
+let P(M ) denote the convex hull of all M where each M ∈ M is thought of as a 0/1 vector of length m,
+denoted 1M . Thus, given a θ , for the max-entropy program to have any solution, θ ∈ P(M ). Since we are
+concerned with the case when M is given implicitly and may be of exponential size, we no longer hope to
+solve the max-entropy convex program directly since that may require exponentially many variables, one for
+each M ∈ M . Thus, we work with the dual to the max-entropy convex program. The dual has m variables
+and, if θ is in the relative interior of P(M ), the optimal dual solution can be used to describe the optimal
+solution to the max-entropy convex program, which is a product distribution. In fact, we assume one can
+put a ball of radius η around θ and it still remains in the interior of P(M ). Importantly, our algorithm
+requires access to a generalized counting oracle for M , which given γ can compute ∑M∈M , M∋e ∏e′ ∈M γe′
+for all e ∈ [m] and also the sum ∑M∈M ∏e∈M γe . We also consider the case when the oracle is approximate
+(possibly randomized) and for a given ε , can output the sums above up to a multiplicative error of 1 ± ε .
+The following is the first main result of the paper, stated informally here.
+
+Theorem 1.1 (Counting Implies Optimization, See Theorems 2.6 and 2.8) There is an algorithm which,
+given access to a generalized (approximate) counting oracle for M ⊆ {0, 1}m , a θ which is promised to
+be in the η -interior of P(M ) and an ε > 0, outputs a γ such that its corresponding product probability
+distribution p is such that H(p) ≥ (1 − ε/η )H(p⋆ ) and for every e ∈ [m],
+
+                                          |PM←p [e ∈ M] − θe | ≤ ε .
+
+Here, p⋆ is the max-entropy distribution corresponding to θ . The number of calls the algorithm makes to
+the oracle is bounded by a polynomial in the input size, ln 1/η and ln 1/ε .
+
+A useful setting for η and ε to keep in mind is 1/m2 and 1/m3 respectively. The bit-lengths of the inputs to the
+counting oracle are polynomial in 1/η and, hence, the running time of our algorithm depends polynomially
+on 1/η . If the generalized counting oracle is ε -approximate, the same guarantee holds. Note that for many
+approximate counting oracles, the dependence on ε on their running time is a polynomial in 1/ε . Hence, in
+this case the running time depends polynomially on 1/ε . Finally, note that this result can be easily gener-
+alized to obtain algorithms for the problem of finding the distribution that minimizes the Kullback-Leibler
+divergence from a given product distribution subject to the marginal constraints, see Remark 2.12.
+    At a very high level, the algorithm in this theorem is obtained by applying the framework of the ellipsoid
+algorithm to the dual of the max-entropy convex program. While it is more convenient to work with the
+dual since it has m variables two issues arise: The domain of optimization becomes unconstrained and the
+separation oracle requires the ability to compute (possibly exponential sums) over subsets of M . While
+the counting oracles can be adapted to compute exponential sums, the unboundedness of the domain of
+optimization is an important problem.
+    One of the technical results in the proof of the theorem above is structural and shows that this dual
+optimization problem has an optimal solution in a box of size m/η when θ is in the η -interior of P(M ), see
+Theorem 2.7. Since γe s are exponential in the respective dual variables, there is an approximation γ̃ to the
+optimal solution to the max-entropy program, when θ is in the η -interior of P(M ), such that the number
+
+
+                                                       5
+of bits needed to represent each γ̃e is at most m/η . Such a result has been obtained for the special case of
+spanning trees by [1] and for matchings in a general graph by [25].
+     Given that counting algorithms for many problems are still elusive, one may ask if they are really nec-
+essary to compute max-entropy distributions. The final result of this paper answers this question in the
+affirmative and establishes a converse to Theorem 1.1.
+
+Theorem 1.2 (Optimizing Implies Counting, see Theorem 2.11) There is an algorithm, which given or-
+acle access to an algorithm to compute an ε -approximation to the max-entropy convex program for an
+η -interior point of P(M ), and a separation oracle for P(M ), can compute a number Z such that
+
+                                              (1 − ε )|M | ≤ Z ≤ (1 + ε )|M |.
+
+The number of calls made to the max-entropy oracle is polynomial in the input size and 1/ε .
+
+This result can be extended to obtain generalized counting oracles, see Remark 2.12. For all polytopes
+of interest in this paper, separation oracles are known, see Section 3. Moreover, this result continues to
+hold even when the separation oracle is approximate, or weak. As a corollary, using a separation oracle for
+the perfect matching polytope for general graphs [7, 31], we obtain that an algorithm to compute a good-
+enough approximation to the max-entropy distribution for any θ in the perfect matching polytope of a graph
+G implies an FPRAS to count the number of perfect matchings in the same graph.
+
+1.2 Technical Overview
+The starting point for our results is the following dual to the max-entropy convex program:
+
+                                                inf hλ , θ i + ln ∑ e−hλ ,1M i ,                                  (1)
+                                                 λ                M∈M
+
+where 1M is the indicator vector for M. When θ lies in the relative interior of P(M ), then strong duality
+holds between the primal and the dual.5 Hence, it follows from the first order conditions on the optimal
+solution pair (p⋆ , λ ⋆ ) that p⋆M ∝ e−hλ ,1M i for each M ∈ M . Suppose we know that
+                                         ⋆
+
+
+
+   1. λ ⋆ is bounded, i.e., kλ ⋆ k ≤ R for some R, and
+
+   2. there is a generalized counting oracle that allows us to compute the gradient of the objective function
+       f (λ ) = hλ , θ i + ln ∑M∈M e−hλ ,1M i at a specified λ . The gradient at λ , denoted ∇ f (λ ), turns out to be
+              def
+
+      a vector whose coordinate corresponding to e ∈ [m] is
+
+                                                            ∑M∈M , M∋e e−hλ ,1M i
+                                                     θe −                         .
+                                                             ∑M∈M e−hλ ,1M i
+
+Then, using the machinery of the ellipsoid method, it follows relatively straight-forwardly that, for any ε , we
+can compute a point λ ◦ such that f (λ ◦ ) ≤ f (λ ⋆ ) + ε with at most a poly(m, ln 1/ε , ln R) calls to the counting
+oracle. Note that since the numbers fed into the counting oracle are of the form e−λe , for each e ∈ [m], the
+running time of the counting oracle depends polynomially on R rather than ln R. Thus, we need R to be
+polynomially bounded. Hence, the question is:
+
+                                                     Can we bound kλ ⋆ k?
+   5 When θ lies on the boundary of P(M ), the infimum in the dual is not attained for any finite λ .
+
+
+
+
+                                                                 6
+Indeed, a significant part of the work done in [1] was to bound this quantity for spanning trees and in [25] for
+(not necessarily perfect) matchings in graphs. A priori it is not clear why there should be any such bound.
+In fact, we observe that if P(M ) lies in some low-dimensional affine space in Rm , the optimal solution is
+not unique and can be shifted in any direction normal to the space, see Lemma 2.5. Thus, one can only
+hope for the optimal solution to be bounded once one imposes the restriction that λ ⋆ lies in the linear space
+corresponding to the affine space in which P(M ) lives. One thing that works in our favor is that we have an
+absolute upper bound (independent of θ ) on the optimal value of f (·), namely m. Roughly, this is because at
+optimality this quantity is an entropy over a discrete set of size at most 2m . This implies that for all M ∈ M ,
+
+                                           hλ ⋆ , θ i − hλ ⋆ , 1M i ≤ m.                                      (2)
+                                                                                            √
+Using this, the η -interiority of θ , and the fact that the diameter of P(M ) is at most        m, it can then be
+shown that                                                              √
+                                                                      m m
+                                    max hλ , 1M i − min hλ , 1M i ≤
+                                            ⋆                ⋆
+                                                                          .
+                                   M∈M               M∈M                η
+Let us show how this immediately implies a bound on R when M corresponds to all the spanning trees of a
+graph with no bridge. Suppose T and T ′ are two trees such that T ′ is obtained from T by deleting an edge e
+and adding an edge f , then,
+                                                                               √
+                                                                              m m
+                              |hλ ⋆ , 1T i − hλ ⋆ , 1T ′ i| = |λe⋆ − λ f⋆ | ≤     .
+                                                                               η
+                                                                      2√
+Thus, unless the graph has a bridge, this implies |λe⋆ − λ f⋆ | ≤ m η m for all e, f ∈ G. However, attempting
+a similar combinatorial argument for perfect matchings in a bipartite graph, where we do not have this
+exchange property, the bound is worse by a factor of 2m .
+    Thus, we abandon combinatorial approaches and appeal to the geometric implication of (2) to obtain
+the desired polynomial bounding box for all P(M ). The argument is surprisingly simple and we sketch it
+                                                       def
+here. One way to interpret (2) is that the vector λ ′ = −λ ⋆/m has inner product at most 1 with v − θ for all
+v ∈ P(M ). For now, neglecting the fact that P(M ) might live in a lower dimensional affine space and that
+0 may not be in P(M ), this implies that λ ′ is in the polar of P(M ). However, since θ is in the η -interior of
+P(M ), P(M ) contains an ℓ2 ball of radius at least η inside it. Thus, the polar of P(M ) must be contained
+in the polar of this ball, which is nothing but an ℓ2 ball of radius 1/η . This gives a bound of 1/η on the ℓ2
+norm of λ ′ and, hence, a bound of m/η on the norm of λ ⋆ as desired.
+    Thus, the ellipsoid method can be used to obtain a solution λ ◦ such that f (λ ◦ ) ≤ f (λ ⋆ ) + ε . Why
+should this approximate bound imply that the product distribution obtained using λ is close in the marginals
+to θ ? The observation here is that f (λ ◦ ) − √ f (λ ) is the Kullback-Leibler (KL) divergence between the
+                                                     ⋆
+
+two distributions. This implies a bound of ε on the marginals using a standard upper bound on the total
+variation distance in terms of the KL-divergence.
+    In the case when we have access only to an approximate counting oracle for M , things are more com-
+plicated. Roughly, the approximate counting oracle translates to having access to an approximate gradient
+oracle for the function f (·) and one has to ensure that λ ⋆ is not cut-off during an iteration. Technically, we
+show that this does not happen and, hence, approximate counting oracles are equally useful for obtaining
+good approximations to max-entropy distributions.
+    Finally, note that the (projected-)gradient descent approach (see [29]) can also be shown to converge in
+polynomial time and, possibly, can result in practical algorithms for computing max-entropy distributions.
+In the case when the counting oracle is approximate, one has to deal with a noisy gradient and the solution
+turns out to be similar to the one in the ellipsoid method-based algorithm in the presence of an approximate
+counting oracle. In addition to a bound on kλ ⋆ k, one needs to bound the 2 → 2 norm of the gradient of f .
+
+
+                                                        7
+While we omit the details of the gradient descent based-algorithm, we show that k∇ f k2→2 is polynomially
+bounded, see Remark 2.9 and Theorem C.1 in Appendix C. This bound may be of independent interest.
+    We now give an overview of the reverse direction: How to count approximately given the ability to solve
+the max-entropy convex program for any point θ in the η -interior of P(M ). We start by noting that if we
+            def
+consider θ ⋆ = |M1
+                   | ∑M∈M 1M , then the optimal value of the convex program is ln |M |. Thus, given access to
+this vertex-centroid of P(M ) one can get an estimate of |M |. However, computing θ ⋆ can be shown to be
+as hard as counting |M |, for instance, when M consists of perfect matchings in a bipartite graph, see [10].
+We bypass this obstacle and apply the ellipsoid algorithm on the following (convex-programming) problem
+
+                                                 sup inf fθ (λ )
+                                                  θ   λ
+
+where fθ (λ ) is the function in (1) and where we have chosen to highlight the dependence on θ . The ellipsoid
+algorithm proposes a θ and expects the max-entropy oracle to output an approximate value for infλ fθ (λ ).
+This raises a few issues: First, given our result on optimization via counting, it is unfair to assume that we
+have such an oracle that works for all θ , irrespective of the interiority of θ in P(M ). Thus, we allow queries
+to the oracle only when θ is sufficiently in the interior of P(M ). Note that our algorithm for computing
+the max-entropy distribution in our first theorem works under these guarantees. This requires, in addition,
+a separation oracle for checking whether a point is in the η -interior of P(M ). We construct such an η -
+separation oracle from a separation oracle for P(M ). The latter, given a point, either says it is in P(M ) or
+returns an inequality valid for P(M ) but violated by this point.
+     The second issue is that θ ⋆ , our target point, may not be in the η -interior of P(M ). In fact, there may
+not be any point in the η -interior of P(M ) when η is 1/poly(m). However, under reasonable conditions on
+P(M ), which are satisfied for all polytopes we are interested in, we can show that there is a point θ • in the
+η -interior of P(M ). This allows us to recover a good enough estimate of |M |. Thus (the way we apply the
+framework of ellipsoid algorithm), we are able to recover a point close enough to θ • by doing a binary search
+on the target value of |M |. As in the forward direction, because we assume that the max-entropy algorithm
+is approximate, we must argue that θ • is not cut-off during any iteration of the ellipsoid algorithm.
+     We conclude this overview with a couple of remarks. First, unlike our results in the forward direction,
+we cannot replace the ellipsoid method based algorithm by a gradient descent approach. The reason is that
+we only have a separation oracle to detect whether a point is in P(M ) or not. Second, we can extend our
+result to show that, using a max-entropy oracle, one can obtain generalized approximate counting oracles,
+see Remark 2.12.
+
+1.3 Organization of the Rest of the Paper
+The rest of the paper is organized as follows. In Section 2, we formally define the objects of interest in our
+paper including the convex program for optimizing the max-entropy distribution and its dual. We also define
+counting oracles that are needed for solving the convex program. We then formally state our results and give
+a few lemmas stating properties about the optimal and near-optimal solution to the dual of the max-entropy
+convex program. In Section 3 we provide examples of some combinatorial polytopes to which our results
+apply. In Section 4, we show how certain algorithmic approaches for approximating the symmetric and the
+asymmetric traveling salesman problem are feasible as a result of one of the main results of this paper. In
+Section 5, we prove that there is an optimal solution to the dual of the max-entropy convex program that is
+contained in a ball of small radius around the origin. In Section 6, we use this bound on the optimal solution
+to show that counting oracles, both exact and approximate, can be used to optimize the convex program via
+the ellipsoid algorithm. In Section 7, we show the other direction of the reduction and give an algorithm that
+can approximately count given an oracle that can approximately solve the max-entropy convex program.
+Standard proofs are omitted from the main body and appear in Appendix A. In Appendix B we show how
+
+                                                          8
+generalized counting oracles can be obtained via max-entropy oracles. Here, we also introduce the program
+for minimizing the KL-divergence with respect to a fixed distribution. Finally, in Appendix C, we give a
+bound on k∇ f k2→2 .
+
+
+2 Preliminaries
+2.1 Notation
+In this section we introduce the general notation used throughout the paper. Vectors are denoted by plain
+letters such as a, b, c, d, x, y, u and v and are over Rm . We also use the Greek letters λ , θ , ν and γ to denote
+vectors. 0 is sometimes used to denote the all-zero vector and the usage should be clear from context. For
+reasons emanating from applications, we choose to index the set [m] by e. Hence, the components of a
+vector are denoted by xe , λe , θe , etc. We also use notation such as x0 , x1 , . . . , xt and λ0 , λ1 , . . . , λt to denote
+vectors. It should be clear from the context that these are vectors and not their components. The Greek letters
+η , α , β , ε , ζ are used to denote positive real numbers. For a set M ∈ {0, 1}m , let 1M denote the 0/1 indicator
+vector for M. We use 1M (e) to denote its e-th component. Thus, 1M (e) = 1 if e ∈ M and 0 otherwise. The
+letters p, q and r are reserved to denote probability distributions over {0, 1}m . Of special interest are product
+probability distributions where, for M ∈ {0, 1}m , the probability of M is proportional to ∏e∈M γe for some
+                                                                                                                            γ
+vector γ . We denote such a probability distribution by pγ to emphasize its dependence on γ , and let pM
+denote the probability of M. Additionally hx, yi denotes the inner product of two vectors, k · k denotes the
+                                 def
+Euclidean norm and kxk∞ = maxe∈[m] |xe |. We also use the notation λ (M) to denote hλ , 1M i for a vector λ
+and M ∈ {0, 1}m . |S| denotes the cardinality of a set.
+
+2.2 Combinatorial Polytopes, Separation Oracles, Counting Oracles and Interiority
+The polytopes of interest arise as convex hulls of subsets of {0, 1}m for some m. For a set M ⊆ {0, 1}m , the
+corresponding polytope is denoted by P(M ). Thus,
+                                       (                                      )
+                                                    ∑ pM 1M : pM ≥ 0, ∑ pM = 1 .
+                                            def
+                                   P(M ) =
+                                                  M∈M                          M∈M
+
+Another way to describe P(M ) is to give a maximal set of linearly independent equalities satisfied by all its
+vertices, and to list the inequalities that define P(M ). Thus, P(M ) can be described by (A= , b) and (A≤ , c)
+such that
+                                     ∀M∈M A= 1M = b and A≤ 1M ≤ c.
+While the former set cannot be more than m, the latter set can be exponential in m and we do not assume
+that (A≤ , c) is given to us explicitly.
+Separation Oracles. On occasion we require an access to a separation oracle for P(M ) of the following
+form: Given λ ∈ Rm satisfying A= λ = b, the separation oracle either says that A≤ λ ≤ c or outputs an
+inequality (a′ , c′ ) such that
+                                            ha′ , λ i > c′ .
+In fact, such an oracle is often termed a strong separation oracle.6
+Counting Oracles. The standard counting problem associated to M is to determine |M |, i.e., the number
+of vertices of P(M ). We are interested in a more general counting problem associated to M where there is
+  6 In our results that depend on access to a strong separation oracle, we can relax the guarantee to that of a weak separation oracle.
+
+We omit the details.
+
+
+                                                                  9
+a weight λe for each e ∈ [m] and the weight of M under this measure is e−λ (M) . A generalized exact counting
+oracle for M then outputs the following two quantities:
+
+   1. Z λ = ∑M∈M e−λ (M) and
+            def
+
+
+   2. for every e ∈ [m], Zeλ = ∑M∈M , M∋e e−λ (M) .
+                                    def
+
+
+The oracle is assumed to be efficient, as in it runs in time polynomial in m and bits needed to represent e−λe
+for any e ∈ [m].7
+    While efficient generalized exact counting oracles are known for some settings, for many problems of
+interest the exact counting problem is #P-hard. However, often, for these #P-hard problems, efficient oracles
+which can compute arbitrarily good approximations to the quantities of interest are known. Thus, we have
+to relax the notion to generalized approximate counting oracles which are possibly randomized. Such an
+oracle, given ε , α > 0 and weights λ ∈ Rm , returns Zeλ and Zeeλ for each e ∈ [m]. The following guarantees
+hold with probability at least 1 − α ,
+
+   1. (1 − ε )Z λ ≤ Zeλ ≤ (1 + ε )Z λ and
+
+   2. for every e ∈ [m], (1 − ε )Zeλ ≤ Zeeλ ≤ (1 + ε )Zeλ .
+
+The running time is polynomial in m, 1/ε , log 1/α and the number of bits needed to represent e−λe for any e ∈
+[m]. For the sake of readability, we ignore the fact that approximate counting oracle may be randomized. The
+statements of the theorems that use randomized approximate counting oracles can be modified appropriately
+to include the dependence on α . Note that if the problem at hand is self-reducible, then having access to
+an oracle that outputs an approximation to just Z λ suffices. We omit the details and the reader is referred
+to a discussion on self-reducibility and counting in [32]. Finally, it can be shown that, in our setting, the
+existence of a generalized (exact or approximate) counting oracle is a stronger requirement than the existence
+of a separation oracle.
+Interior of the Polytope. The dimension of P(M ) is m − rank(A= ); the polytope restricted to this affine
+space is full dimensional. Since we work with polytopes that are not full dimensional, we extend the notion
+of the interior of the polytope P(M ) and use the following definition.
+
+Definition 2.1 For an η > 0, a point θ is said to be in the η -interior of P(M ) if
+                                ′ = ′
+                                 θ : A θ = b, kθ − θ ′ k ≤ η ⊆ P(M ).
+
+We say that θ is in the interior of P(M ) if θ is in the η -interior of P(M ) for some η > 0.
+
+We are be interested in the case where η ≥ poly(m)
+                                              1
+                                                   . Hence, it is natural to ask if for every P(M ), there is a
+                1
+point in its poly(m) -interior. The following lemma, whose proof appears in Section 7, asserts that the answer
+is yes if the entries of A≤ and c are reasonable (as is the case in all our applications).
+                                                             =          ≤
+Lemma 2.2 Let M ⊆ {0, 1}m and P(M ) = x ∈ Rm            ≥0 : A x = b, A x ≤ c be such that all the entries in
+A≤ , c ∈ poly(m) · Z and their absolute values are at most poly(m). Then there exists a θ̃ ∈ P(M ) such that θ̃
+            1
+
+             1
+is in the poly(m) -interior of P(M ).
+
+At this point, if one wishes, one can look at Section 3 for some examples of combinatorial polytopes we
+consider in this paper.
+   7 To deal with issues of irrationality, it suffices to obtain the first k bits of Z λ and Z λ in time polynomial in k and m.
+                                                                                              e
+
+
+                                                                    10
+2.3 The Maximum Entropy Convex Program
+In this section we present the convex program for computing max-entropy distributions. Let P(M ) be the
+polytope corresponding to M . While we do not care about whether we have an oracle for M in this section,
+the notion of interiority is important.
+    For any point θ ∈ P(M ), by definition, it can be written as a convex combination of vertices of P(M ),
+each of which is indicator vector for some M ∈ M . Each such convex combination is a probability distribu-
+tion over M ∈ M . Of central interest in this paper is a way to find the convex combination that maximizes
+the entropy of the underlying probability distribution. Given θ , we can express the problem of finding the
+max-entropy distribution over the vertices of P(M ) as the program in Figure 1. Here 0 ln 10 is assumed to
+
+
+                                                sup          ∑M∈M pM ln p1M
+                                                s.t.
+                                         ∀e ∈ [m] ∑M∈M , M∋e pM = θe
+                                                    ∑M∈M pM = 1
+                                        ∀M ∈ M                  pM ≥ 0
+
+
+                                    Figure 1: Max-Entropy Program for (M , θ )
+
+be 0. This entropy function is easily seen to be concave and, hence, maximizing it is a convex programming
+problem. The following folklore lemma, whose proof appears in Appendix A.1, shows that if θ is in the
+interior of P(M ), then the max-entropy distribution corresponding to it is unique and can be succinctly
+                                                                                    def
+represented. Recall the notation that for λ : [m] 7→ R and M ∈ M , λ (M) = hλ , 1M i = ∑e∈M λe .
+Lemma 2.3 For a point θ in the interior of P(M ), there exists a unique distribution p⋆ which attains the
+max-entropy while satisfying
+                                            ∑ p⋆M 1M = θ .
+                                                       M∈M
+
+Moreover, there exists a λ ⋆ : [m] 7→ R such that p⋆M ∝ e−λ (M) for each M ∈ M .
+                                                           ⋆
+
+
+
+As we observe soon, while p⋆ is unique, λ ⋆ may not be. First, we record the following definitions about
+such product distributions.
+Definition 2.4 For any λ ∈ Rm , we define the distribution pλ on M such that
+                                                      −λ (M)
+                                                 def e
+                                           pλM =             where Z λ =      ∑ e−λ (N) .
+                                                                       def
+                             ∀M ∈ M                      λ
+                                                       Z                      N∈M
+
+The marginals of such a distribution are denoted by θ λ and defined to be
+                                                        Zeλ
+                          θeλ =        ∑        pλM =       where Zeλ =     ∑ e−λ (M) .
+                              def                                     def
+
+                                    M∈M , M∋e           Zλ                M∈M , M∋e
+
+The proof of this lemma relies on establishing that strong duality holds for computing the max-entropy
+distribution with marginals θ for the convex program in Figure 1. The dual of this program appears in
+Figure 2. Thus, if θ is in the interior of P(M ), then there is a λ ⋆ such that p⋆ = pλ and fθ (λ ⋆ ) = H(p⋆ ).
+                                                                                         ⋆
+
+
+    Note that λ ⋆ may not be unique and, finally, that an important property of the dual objective function is
+that fθ does not change if we shift by a vector in the span of the rows of A= . This is captured in the following
+lemma whose proof appears in Appendix A.2.
+
+                                                              11
+Lemma 2.5 fθ (λ ) = fθ (λ + (A=)⊤ d) for any d.
+
+Thus, we can restrict our search for the optimal solution to the set {λ ∈ Rm : A= λ = 0}. In this set there is
+a unique λ ⋆ which achieves the optimal value since the constraints (A= , b) are assumed to form a maximal
+linearly independent set. We refer to this λ ⋆ as the unique solution to the dual convex program.
+
+
+                                         fθ (λ ) = ∑e∈[m] θe λe + ln ∑M∈M e−λ (M)
+                                               def
+                                   inf
+                                  s.t.
+                             ∀e ∈ [m]                    λe ∈ R
+
+
+                           Figure 2: Dual of the Max-Entropy Program for (M , θ )
+
+
+2.4 Formal Statement of Our Results
+Our first result shows that if one has access to an generalized exact counting oracle then one can indeed
+compute a good approximation to the max-entropy distribution for specified marginals.
+
+Theorem 2.6 There exists an algorithm that, given a maximal set of linearly independent equalities (A= , b)
+and a generalized exact counting oracle for P(M ) ⊆ Rm , a θ in the η -interior of P(M ) and an ε > 0,
+returns a λ ◦ such that
+                                         fθ (λ ◦ ) ≤ fθ (λ ⋆ ) + ε ,
+where λ ⋆ is the optimal solution to the dual of the max-entropy convex program for (M , θ ) from Figure 2.
+Assuming that the generalized exact counting oracle is polynomial in its input parameters, the running time
+of the algorithm is polynomial in m, 1/η , log 1/ε and the number of bits needed to represent θ and (A= , b).
+
+The proof of this theorem follows from an application of the ellipsoid algorithm for minimizing the dual
+                                                                                      poly(m)
+convex program. At a first glance, it may seem enough to show that kλ ⋆ k ≤ 2 η since the number of
+iterations of the ellipsoid algorithm depends on log kλ ⋆ k. Unfortunately, this is not enough since each call
+to the oracle with input λ takes time polynomial in the number of bits needed to represent e−λe for any
+e ∈ [m]. We show the following theorem which provides a polynomial bound on kλ ⋆ k.
+
+Theorem 2.7 Let θ be in the η -interior of P(M ) ⊆ Rm . Then there exists an optimal solution λ ⋆ to the
+dual of the max-entropy convex program such that kλ ⋆ k ≤ m
+                                                          η.
+
+We specifically note that the proof of this theorem needs that λ ⋆ satisfies A= λ ⋆ = 0. Combinatorially, it is an
+interesting open problem to see one can get such a bound depending only on 1/η . Next we generalize Theo-
+rem 2.6 to polytopes where only an approximate counting oracle exists, for example, the perfect matching
+problem in bipartite graphs. While we state this theorem in the context of deterministic counting oracles, it
+holds in the randomized setting as well.
+
+Theorem 2.8 There exists an algorithm, that given a maximal set of linearly independent equalities (A= , b),
+a generalized approximate counting oracle for P(M ) ⊆ Rm , a θ in η -interior of P(M ) and an ε > 0, returns
+a λ ◦ such that
+                                          fθ (λ ◦ ) ≤ fθ (λ ⋆ ) + ε .
+Here λ ⋆ is an optimal solution to the dual of the max-entropy convex program for (M , θ ). Assuming that
+the generalized approximate counting oracle is polynomial in its input parameters, the running time of the
+algorithm is polynomial in m, 1/η , 1/ε and the number of bits needed to represent θ and (A= , b).
+
+                                                       12
+It can be shown that once we have a solution λ ◦ to the dual convex program such that
+
+                                             fθ (λ ◦ ) ≤ fθ (λ ⋆ ) + ε
+
+as in Theorems 2.6 and 2.8, one can show that the marginals obtained
+                                                                  √      from the distribution corresponding
+to λ ◦ is close to that of λ ⋆ (which is θ ), i.e., θ λ − θ ∞ ≤ O( ε ). See Appendix A.2, and in particular
+                                                       ◦
+
+
+Corollary A.5 for a proof.
+
+Remark 2.9 We can also obtain proofs of Theorems 2.6 and 2.8 by applying the framework of projected
+gradient descent. (See Section 3.2.3 in [29] for details on the gradient descent method.) For the gradient
+descent method to be polynomial time, one would need an upper bound on kλ ⋆ k and k∇ f k2→2 . The first
+bound is provided by Theorem 2.7 and the second bound is proved in Theorem C.1 in Appendix C. We have
+chosen the ellipsoid method-based proofs of Theorems 2.6 and 2.8 since the ellipsoid method is required in
+the proof of Theorem 2.11.
+
+Our final theorem proves the reverse: If one can compute good approximations to the max-entropy convex
+program for P(M ) for a given marginal vector, then one can compute good approximations to the number
+of vertices in P(M ). First, we need a notion of a max-entropy oracle for M .
+
+Definition 2.10 An approximate max-entropy oracle for M , given a θ in the η -interior of P(M ), a ζ > 0,
+and an ε > 0, either
+   1. asserts that infλ fθ (λ ) ≥ ζ − ε or
+
+   2. returns a λ ∈ Rm such that fθ (λ ) ≤ ζ + ε .
+The oracle is assumed to be efficient, i.e., it runs in time polynomial in m, 1/ε , 1/η and the number of bits
+needed to represent ζ .
+
+This is consistent with the algorithms given by Theorem 2.6 and 2.8.
+
+Theorem 2.11 There exists an algorithm that, given a maximal set of linearly independent equalities (A= , b)
+and a separation oracle and an approximate optimization oracle for M as above, returns a Ze such that (1 −
+ε )|M | ≤ Ze ≤ (1 + ε )|M |. Assuming that the running times of the separation oracle and the approximate
+max-entropy oracle are polynomial in their respective input parameters, the running time of the algorithm
+is bounded by a polynomial in m, 1/ε and the number of bits needed to represent (A= , b).
+
+Analogously, one can easily formulate and prove a randomized version of Theorem 2.11, we omit the de-
+tails. As an important corollary of this theorem, if one is able to efficiently find approximate max-entropy
+distributions for the perfect matching polytope for general graphs, then one can approximately count the
+number of perfect matchings they contain. Both problems have long been open and this result, in particular,
+relates their hardness.
+
+Remark 2.12 One may ask if Theorem 2.11 can be strengthened to obtain generalized approximate count-
+ing oracles from max-entropy oracles. The question is natural since Theorems 2.6 and 2.8 assume access
+to generalized counting oracles. The answer is yes and is provided in Theorem B.2 in Appendix B. It turns
+out that one needs access to a generalized max-entropy oracle, an oracle that can compute the distribution
+that minimizes the KL-divergence with respect to a fixed product distribution and a given set of marginals.
+These latter programs are shown, in Appendix B, to be no more general than max-entropy programs. In fact,
+analogs of Theorems 2.6 and 2.8 can be proved for min-KL-divergence programs rather than max-entropy
+programs, see Theorem B.5.
+
+                                                       13
+2.5 The Ellipsoid Algorithm
+In this section we review the basics of the ellipsoid algorithm. The ellipsoid algorithm is used in the proofs
+of our equivalence between optimization and counting: Both in the proof of Theorems 2.6 and 2.8 and in
+the proof of Theorem 2.11. Consider the following optimization problem where g(·) is convex and hi (·) are
+affine functions.
+
+                                                            inf          g(λ )
+                                                            s.t.
+                                                  ∀ 1 ≤ i ≤ k hi (λ ) = 0
+                                                                        λ ∈ Rm
+
+We assume that g is differentiable everywhere and that its gradient, denoted by ∇g, is defined everywhere.
+In our application, for a polytope P(M ) and a θ in the η -interior of P(M ), g = fθ , the objective function
+in the dual program of Figure 2. The hi (·)s are the constraints A= λ = 0, where (A= , c) is the maximal set of
+linearly independent equalities satisfied by the vertices of M . Thus, as noted in Lemma 2.5, we can restrict
+our search for the optimal solution to the set K which is defined to be
+                                                   def
+                                                 K = {λ ∈ Rm : A= λ = 0}.
+
+Note that 0 ∈ K. The ellipsoid algorithm can be used to solve such a convex program under fairly general
+conditions and we first state a version of it needed in the proof of Theorem 2.6. A crucial requirement is a
+strong first-order oracle for g which is a function such that given a λ , outputs g(λ ) and ∇g(λ ). Since we
+are only interested in λ ∈ K, and we are given the equalities describing K explicitly, we assume that we can
+project ∇g(λ ) to K. By abuse of notation, we denote the latter also by ∇g(λ ).
+    The following theorem claims that if one is given access to a strong first-order oracle for g, one can use
+the ellipsoid algorithm to obtain an approximately optimal solution to the convex program mentioned above.
+This statement is easily derivable from [3] (Theorem 8.2.1).
+
+Theorem 2.13 Given any β > 0 and R > 0, there is an algorithm which, given a strong first-order oracle
+for g, returns a point λ ′ ∈ Rm such that
+                                                                                !
+                   g(λ ′ ) ≤        inf         g(λ ) + β           sup          g(λ ) −        inf         g(λ ) .
+                               λ ∈K, kλ k∞ ≤R                λ ∈K, kλ k∞ ≤R                λ ∈K, kλ k∞ ≤R
+
+
+The number of calls to the strong first-order oracle for g are bounded by a polynomial in m, log R and log 1/β .
+
+While we do not explicitly describe the ellipsoid algorithm here, we need the following basic properties
+about minimum volume enclosing ellipsoids which forms the basis of the ellipsoid algorithm. A set E ⊆ Rm
+                                                                                                             def
+is an ellipsoid if there exists a vector a ∈ Rm and a positive definite m × m-matrix A such that E = E(A, a) =
+{x ∈ Rm : (x − a)⊤ A−1 (x − a) ≤ 1}. We also denote Vol(E) to be the volume enclosed by the ellipsoid E.
+The following theorem follows from the Löwner-John Ellipsoid. We refer the reader to [15] for more details.
+
+Theorem 2.14 Given an ellipsoid E(A, a) and a half-space {x : hc, xi ≤ hc, ai} passing through a there
+                                                                          ′)     1
+exists an ellipsoid E ′ ⊇ E(A, a) ∩ {x : hc, xi ≤ hc, ai} such that Vol(E
+                                                                    Vol(E) ≤ e
+                                                                              − 2m .
+
+In our applications of this theorem, we in fact need the ellipsoid to be in an affine space of dimension
+possibly lower than m. The definitions and the theorem continue to hold under such a setting.
+
+
+                                                                   14
+3 Examples of Combinatorial Polytopes
+If one wishes, one can keep the following combinatorial polytopes in mind while trying to understand and
+interpret the results of this paper.
+The Spanning Tree Polytope. Given a graph G = (V, E), let
+                                n                                    o
+                            def
+                        M = 1T ∈ R|E| : T ⊆ E is a spanning tree of G .
+
+It follows from a result of Edmonds [9] that
+                              n                                                     o
+                                    |E|
+                    P(M ) = x ∈ R≥0 : x(E(V )) = |V | − 1, x(E(S)) ≤ |S| − 1 ∀S ⊆ V
+                        def                                                                                def
+where, for S ⊆ V, E(S) = {e = {u, v} ∈ E : {u, v} ∩ S = {u, v}} and, for a subset of edges H ⊆ E, x(H) =
+∑e∈H xe . Edmond [8] also shows the existence of a separation oracle for this polytope. A generalized exact
+counting oracle is known for this spanning tree polytope via Kirchoff’s matrix-tree theorem, see [14].
+The Perfect Matching Polytope for Bipartite Graphs. Given a bipartite graph G = (V, E), let
+                                n                                       o
+                            def
+                         M = 1M ∈ R|E| : M is a perfect matching in G .
+
+It follows from a theorem of Birkhoff [13] that, when G is bipartite,
+                                         n                            o
+                                                  |E|
+                                P(M ) = x ∈ R≥0 : x(δ (v)) = 1 ∀v ∈ V
+                        def
+where, for v ∈ V, δ (v) = {e = {u, v} ∈ E}. Here, it can be shown that all the facets, i.e., the defining
+inequalities, are one of the set of 2m inequalities 0 ≤ xe ≤ 1 for all e ∈ [m]. The exact counting problem is
+#P-hard and while a (randomized) generalized approximate counting oracle follows from a result of Jerrum,
+Sinclair and Vigoda [21] for computing permanents.
+The Cycle Cover Polytope for Directed Graphs. Given a directed graph G = (V, A), let
+                                   n                                o
+                               def
+                           M = 1M ∈ R|A| : M is a cycle cover in G .
+
+A cycle cover in G is a collection of vertex disjoint directed cycles that cover all the vertices of G. The
+corresponding cycle cover polytope is denoted by P(M ). This polytope is easily seen to be a special case of
+the perfect matching polytope for bipartite graphs as follows. For G = (V, A), construct a bipartite graph H =
+(VL ,VR , E) where VL = VR = V. For each vertex v ∈ V we have vL ∈ VL and vR ∈ VR . There is an edge between
+uL ∈ VL and vR ∈ VR in H if and only if (u, v) ∈ A. Thus, there is a one-to-one correspondence between cycle
+covers in G and perfect matchings in H. Hence, the [21] algorithm gives a generalized approximate counting
+oracle in this case as well.
+The Perfect Matching Polytope for General Graphs. Given a graph G = (V, E), let
+                                n                                    o
+                            def
+                         M = 1M ∈ R|E| : M is a perfect matching in G .
+
+A celebrated result of Edmonds [7] states that
+                                                                                          
+                                |E|                                 |S| − 1
+           P(M ) =         x ∈ R≥0 : x(δ (v)) = 1 ∀v ∈ V, x(E(S)) ≤         ∀S ⊆ V, |S| odd .
+                                                                       2
+The separation oracle for this polytope is non-trivial and follows from the characterization result of Ed-
+monds. A direct separation oracle was also given by Padberg and Rao [31]. Coming up with a counting
+oracle for this polytope, even with uniform weights which counts the number of perfect matchings in a
+general graph, is a long-standing open problem.
+
+                                                     15
+4 New Algorithmic Approaches for the Traveling Salesman Problem
+Max-entropy distributions over spanning trees have been successfully applied to obtain improved algorithms
+for the symmetric [30] as well as the asymmetric traveling salesman problem [1]. We outline here a different
+algorithmic approach, using max-entropy distributions over cycle covers, which becomes computationally
+feasible as a consequence of our results. Let us consider the asymmetric traveling salesman problem (ATSP).
+We are given a complete directed graph G = (V, E) and cost function c : E → R≥0 which satisfies the directed
+triangle inequality. The goal is find a Hamiltonian cycle of smallest cost. First, we formulate the following
+subtour elimination linear program in Figure 3.
+
+
+                                         min            ∑e∈E ce xe
+                                         s.t.
+                                      ∀v ∈ V    x(δ + (v)) = x(δ − (v)) = 1
+                                     ∀S ⊆ V           x(δ + (S)) ≥ 1
+                                      ∀e ∈ E            0 ≤ xe ≤ 1
+
+
+                            Figure 3: Subtour Elimination LP for G = (V, E) and c
+
+Here, for a vertex v, δ + (v) is the set of directed edges going out of it and δ − (v) is the set of directed
+edges coming in to v. Let x⋆ denote the optimal solution to this linear program. The authors of [1] make the
+                      def
+observation that θuv = n−1     ⋆     ⋆
+                           n (xuv +xvu ) defined on the undirected edges is a point in the interior of the spanning
+tree polytope on G. The algorithm then samples a spanning tree T from the max-entropy            distribution with
+marginals as given by θ and crucially relies on properties of such a T to obtain an O log log n -approximation
+                                                                                            log n
+
+algorithm for the ATSP problem.
+     Interestingly, there is another integral polytope in which x⋆ is contained. Consider the convex hull P of
+all cycle covers of G, see Section 3. Then,
+                                       n                                       o
+                                               |E|
+                                  P = x ∈ R≥0 : x(δ + (v)) = x(δ − (v)) = 1 .
+
+It is easy to see that x⋆ ∈ P. Similar to the cycle cover algorithm of Frieze et al [12], the following is a
+natural algorithm for the ATSP problem.
+Randomized Cycle Cover Algorithm
+
+   1. Initialize H ← /0.
+
+   2. While G is not a single vertex
+
+         • Solve the subtour elimination LP for G to obtain the solution x⋆ .
+         • Sample a cycle cover C from the max-entropy distribution with marginals x⋆ .
+         • Include in H all edges in C , i.e., H ← H ∪ (∪C∈C C) .
+         • Select one representative vertex vC in each cycle C ∈ C and delete all the other vertices.
+
+   3. Return H.
+
+Before analyzing the performance of this algorithm, a basic question is whether this algorithm can be im-
+plemented in polynomial time. As an application of Theorem 2.8 to the cycle cover polytope for directed
+
+                                                        16
+graphs, it follows that one can sample a cycle cover from the max-entropy distribution in polynomial time
+and, thus, the question is answered affirmatively. The generalized (randomized) approximate counting or-
+acle for cycle covers in a graph follows from the work of [21]. The technical condition of interiority of x⋆
+can be satisfied with a slight loss in optimality of the objective function. The analysis of worst case perfor-
+mance of this algorithm is left open, but to the best of our knowledge, there is no example ruling out that the
+Randomized Cycle Cover Algorithm is an O(1)-approximation. Similarly, the application of Theorem 2.8
+to the perfect matching polytope in bipartite graphs makes the permanent-based approach suggested in [36]
+for the (symmetric) TSP computationally feasible.
+
+
+5 Bounding Box
+In this section, we prove Theorem 2.7 and show that there is a bounding box of small radius containing the
+optimal solution λ ⋆ . We begin with the following lemma.
+
+Lemma 5.1 Let θ be a point in the η -interior of P(M ) ⊆ Rm and let λ ⋆ be the optimal solution to the dual
+convex program. Then for any x ∈ P(M )
+
+                                                 hλ ⋆ , θ − xi ≤ m.
+
+Proof: First, note that the supremum of the primal convex program over all θ is ln |M | ≤ m. Hence, from
+strong duality it follows that f (λ ⋆ ) ≤ m. This implies that
+
+                       f (λ ⋆ ) = hλ ⋆ , θ i + ln ∑ e−λ (M) = ln ∑ ehλ ,θ i−λ (M) ≤ m.
+                                                         ⋆                  ⋆   ⋆
+
+
+                                               M∈M                 M∈M
+
+Hence, for every M ∈ M ,
+                                              hλ ⋆ , θ i − λ ⋆ (M) ≤ m.                                      (3)
+Since x ∈ P(M ), we have x = ∑M∈M rM 1M where ∑M∈M rM = 1 and rM ≥ 0 for each M ∈ M . Multiplying
+(3) by rM and summing over M we get
+
+                                    ∑ rM (hλ ⋆ , θ i − λ ⋆(M)) ≤ ∑ rM m.
+                                   M∈M                                M∈M
+
+This implies that
+                                           hλ ⋆ , θ i − ∑ rM λ ⋆ (M) ≤ m.
+                                                 M∈M
+As a consequence, we obtain that hλ , θ i − hλ , xi ≤ m, completing the proof of the lemma.
+                                   ⋆          ⋆
+
+
+
+Proof of Theorem 2.7. Recall that A= x = c denotes the maximal set of independent equalities satisfied by
+P(M ). We now define the following objects. Let
+                                      def
+                                    B = {x ∈ Rm : A= x = c, kx − θ k ≤ η }
+
+be the ball centered around θ restricted to the affine space A= x = c of radius η . Since θ is in the η -interior
+of P(M ), we have that B ⊆ P(M ). Let
+                                     def
+                                  Q = {y ∈ Rm : A= y = c, ky − θ k ≤ 1/η }
+
+be the ball centered around θ of radius η1 in the same affine space and let
+
+                            e def
+                            Q = {z ∈ Rm : A= z = c, hz − θ , x − θ i ≤ 1 ∀x ∈ B}.
+
+                                                         17
+Lemma 5.2 Q = e
+              Q.
+
+                               e Let y ∈ Q. The constraints A= y = c are clearly satisfied since y ∈ Q. For
+Proof: We first prove that Q ⊆ Q.
+any x ∈ B,
+                                                                  1
+                             hy − θ , x − θ i ≤ ky − θ kkx − θ k ≤ · η = 1.
+                                                                  η
+Thus, y ∈ e
+          Q. Now we show that Q ⊆ e
+                                  Q. Let z ∈ eQ. The constraints A= z = c are clearly satisfied since z ∈ e
+                                                                                                          Q.
+Now consider
+                                          def      z−θ
+                                       z′ = θ +            · η.
+                                                  kz − θ k
+We have that
+                                                      A= z − A= θ
+                                     A= z′ = A= θ +               · η = c.
+                                                       kz − θ k
+Moreover,
+                                                z−θ             kz − θ k
+                             kz′ − θ k = θ +            ·η −θ =          · η = η.
+                                               kz − θ k         kz − θ k
+Thus, z′ ∈ B. Hence, we must have hz − θ , z′ − θ i ≤ 1. This implies that
+                                                             
+                                                    z−θ
+                                           z − θ,           ·η ≤ 1
+                                                   kz − θ k
+
+and, therefore,
+                                                 kz − θ k ≤ 1/η .
+Thus, z ∈ Q completing the proof.
+
+We now show that
+                                               e
+                                               λ = −λ ⋆/m + θ ∈ Q.
+                                                                e
+
+To see this, first observe that
+                                      A= e
+                                         λ = −A= λ ⋆/m + A= θ = 0 + c.
+Here we have used the fact that A= λ ⋆ = 0, see Lemma 2.5. We now verify the second condition. Let x ∈ B.
+Then
+                                                  −hλ ⋆ , x − θ i  1
+                                he
+                                 λ − θ,x − θi =                   ≤ ·m = 1
+                                                        m          m
+where the last inequality follows from that fact that x ∈ B ⊆ P(M ) and Lemma 5.1. Thus, e    λ ∈ Q and
+                         e
+therefore, we must have kλ − θ k ≤ 1/η . Therefore, kλ /mk ≤ 1/η proving Theorem 2.7.
+                                                      ⋆
+
+
+
+
+6 Optimization via Counting
+In this section, we prove Theorems 2.6 and 2.8. The proof of both the theorems rely on the bounding box
+result of Theorem 2.7 and employs the framework of the ellipsoid algorithm from Section 2.5.
+
+
+
+
+                                                       18
+6.1 Proof of Theorem 2.6
+We first use Theorem 2.13 to give a proof of Theorem 2.6. The algorithm assumes access to a strong first-
+order oracle for P(M ). We then present details of how to implement a strong first-order oracle using an
+generalized exact counting oracle. Suppose λ ⋆ is the optimum of our convex program. Theorem 2.7 implies
+                                                                    def
+that for kλ ⋆ k∞ ≤ m/η . Thus, we may pick the bounding radius to R = m/η and it does not cut the optimal λ ⋆
+we are looking for. The only thing left to choose is a β such that
+                                                                      ε
+                                 β≤                                                           .
+                                          supλ ∈K, kλ k∞ ≤R fθ (λ ) − infλ ∈K, kλ k∞ ≤R fθ (λ )
+
+This would imply that the solution λ ◦ output by employing the ellipsoid method from Theorem 2.13 is such
+that
+                                           fθ (λ ◦ ) ≤ fθ (λ ⋆ ) + ε .
+To establish a bound on β , start by noticing that infλ fθ (λ ) ≥ 0. This follows from weak-duality and the fact
+that entropy is always non-negative. On the other hand we have the following simple lemma.
+
+Lemma 6.1 supkλ k∞ ≤R fθ (λ ) ≤ (2m + 1)R.
+
+Proof:
+                        fθ (λ ) ≤ |hλ , θ i| + ln ∑ e−λ (M) ≤ mR + ln(2m emR ) ≤ (2m + 1)R.
+                                                    M∈M
+
+Here we have used the fact that |M | ≤ 2m and that θe ∈ [0, 1] for each e ∈ [m].
+                                 ε
+Thus, β can be chosen to be (2m+1)R  . Hence, the running time of the ellipsoid method depends polynomially
+on the the time it takes to implement the strong first-order oracle for fθ and log mR  ε .
+Since fθ (λ ) = hλ , θ i + ln ∑M∈M e− λ (M)                  λ
+                                            = hλ , θ i + ln Z , it is easily seen that
+
+                                                   ∑M∈M , M∋e e−λ (M)        Zeλ
+                              ∇ fθ (λ )e = θe −                       = θe −     = θe − θeλ .
+                                                    ∑N∈M e−λ (N)             Zλ
+
+Hence, ∇ fθ (λ ) = θ − θ λ . Recall that the strong first-order oracle for fθ requires, for a given λ , fθ (λ )
+and ∇ fθ (λ ). The generalized exact counting oracle for P(M ) immediately does it as it gives us Zeλ for all
+e ∈ [m] and Z λ . This allows us to compute fθ (λ ) and ∇ fθ (λ ) in one call to such an oracle. In addition we
+also need time proportional to the number of bits needed to represent θ .
+    Thus, the number of calls to the counting oracle by the ellipsoid algorithm of Theorem 2.13 is bounded
+by a polynomial in m, log R and log 1/ε . Since each oracle call can be implemented in time polynomial in m
+and R,8 this gives the required running time and concludes the proof of Theorem 2.6.
+
+6.2 Proof of Theorem 2.8
+Now we give the ellipsoid algorithm that works with a generalized approximate counting oracle and prove
+Theorem 2.8. Here, the fact that the counting oracle is approximate means that the gradient computed as
+in the previous section is approximate. Thus, this raises the possibility of cutting off the optimal λ ⋆ during
+the run of the ellipsoid algorithm. We present the ellipsoid algorithm to check, given a θ and a ζ , whether
+| fθ (λ ⋆ ) − ζ | ≤ ε . The technical heart of the matter is to show that when | fθ (λ ⋆ ) − ζ | ≤ ε , λ ⋆ is never cut
+   8 Here we ignore the fact that e−λe can be irrational. This issue can be dealt in a standard manner as is done in the implementation
+
+details of all ellipsoid algorithms. See [15] for details.
+
+
+                                                                 19
+off of the successive ellipsoids obtained by adding the approximate gradient constraints. Moreover, in this
+case, once the radius of the ellipsoid becomes small enough, we can output its center as a guess for λ ⋆ . Since
+the radius of the final ellipsoid is small and contains λ ⋆ , the following lemma, which bounds the Lipschitz
+constant of fθ , implies that the value of fθ at the center of the ellipsoid is close enough to fθ (λ ⋆ ).
+
+Lemma 6.2 For any λ , λ ′                                               √
+                                                 fθ (λ ) − fθ (λ ′ ) ≤ 2 mkλ − λ ′ k.
+
+Proof: We have
+
+                                                                     ∑M∈M e−λ (M)
+                             fθ (λ ) − fθ (λ ′ ) = hθ , λ − λ ′ i + ln
+                                                                     ∑M∈M e−λ (M)
+                                                                              ′
+
+
+                                                                           e−λ (M)
+                                                 ≤ kθ kkλ − λ ′ k + ln max −λ ′ (M)
+                                                                      M∈M e
+                                                   √
+                                                 ≤ mkλ − λ ′ k + max (λ ′ (M) − λ (M))
+                                                                   M∈M
+                                                   √               √                √
+                                                 ≤ mkλ − λ k + mkλ − λ ′ k ≤ 2 mkλ − λ ′ k
+                                                             ′
+
+
+which completes the proof. Here we have used the Cauchy-Schwarz inequality in the first and third inequal-
+ities and in the second inequality we have used the fact that θ ∈ [0, 1]m .
+
+Proceeding to the ellipsoid algorithm underlying the proof of Theorem 2.8, we do a binary search on the
+optimal value fθ (λ ⋆ ) up to an accuracy of ε/8. For a guess ζ ∈ (0, m], we check whether the guess is correct
+with the following ellipsoid algorithm.9
+
+   1. Input
+
+         (a) An error parameter ε > 0.
+         (b) An interiority parameter η > 0.
+         (c) A θ which is guaranteed to be in the η -interior of P(M ).
+         (d) A maximally linearly independent set of equalities (A= , b) for P(M ).
+         (e) A generalized approximate counting oracle for M .
+         (f) A guess ζ ∈ (0, m] (for fθ (λ ⋆ )).
+
+   2. Initialization
+                       def
+         (a) Let E0 = E(B0 , c0 ) be a sphere with radius R = m/η centered around the origin (thus, containing
+             λ ⋆ by Theorem 2.7) and restricted to the affine space A= x = 0.
+         (b) Set t = 0
+                                                                               ε
+   3. Repeat until the ellipsoid Et is contained in a ball of radius at most 16√ m
+                                                                                   .
+
+                                           def                    def
+         (a) Given the ellipsoid Et = E(Bt , ct ), set λt = ct .
+         (b) Compute ζt using the counting oracle such that fθ (λt ) − ε/8 ≤ ζt ≤ fθ (λt ) + ε/8.
+         (c) If ζt ≤ ζ
+                 i. then return λt and stop.
+   9 For ease of analysis, we assume that all oracle calls are answered correctly with probability 1. The failure probability can be
+
+adjusted to arbitrary precision with a slight degradation in the running time.
+
+
+                                                                  20
+              ii. else
+                   A. Compute θt such that kθt − θ λt k1 ≤ ε/16R using the counting oracle.
+                   B. Compute the ellipsoid Et+1 to be the smallest ellipsoid containing the half-ellipsoid
+                       {λ ∈ Et : hλ − λt , θ − θt i ≤ 0} restricted to the affine space A= x = 0.
+             iii. t = t + 1.
+
+   4. Let T = t and compute ζT using the counting oracle such that fθ (λT ) − ε/8 ≤ ζT ≤ fθ (λT ) + ε/8.
+
+   5. If ζT ≤ ζ
+
+        (a) then return λT and stop.
+        (b) else return fθ (λ ⋆ ) > ζ and stop (ζ is not a good guess for fθ (λ ⋆ )).
+
+We first show that the algorithm can be implemented using a polynomial number of queries to the approxi-
+mate oracle. Steps (3b), (3(c)iiA) and (4) can be computed using oracle calls to the generalized approximate
+counting oracle for M to obtain Zeλt such that (1− ε/16)Z λt ≤ Zeλt ≤ (1+ ε/16)Z λt . We set ζt = hλt , θ i+ ln Zeλt .
+A simple calculation then shows that
+                                                        ε                   ε
+                                          fθ (λt ) −      ≤ ζt ≤ fθ (λt ) +
+                                                        8                   8
+
+since fθ (λt ) = hλt , θ i + ln Z λt . Similarly using one oracle call to the counting oracle with error parameter
+ ε
+16R , we can compute
+                                                                     ε
+                                                    kθt − θ λt k1 ≤
+                                                                    8R
+as needed in Step (3(c)iiA) of the algorithm. Using Theorem 2.14, the number of iterations can be bounded
+by a polynomial in m, log R/ε . The analysis is quite standard and omitted. Each of the oracle call can be
+implemented in time polynomial in m, R and 1/ε . We now show the following lemma which completes the
+proof of Theorem 2.8.
+
+Lemma 6.3 Let ζ ◦ be the smallest guess for which the ellipsoid algorithm succeeds in finding a solution
+and let λ ◦ denote the corresponding solution returned. Then, fθ (λ ◦ ) ≤ fθ (λ ⋆ ) + ε .
+
+Proof: Observe that we have
+                                                     ε                     ε
+                                         fθ (λ ◦ ) −   ≤ ζ ◦ ≤ fθ (λ ◦ ) + .
+                                                     8                     8
+Since ζ is the smallest guess for which the algorithm succeeds in returning an answer, it fails for some
+         ◦
+
+ζ ∈ [ζ ◦ − ε/8, ζ ◦ ]. We show that fθ (λ ⋆ ) ≥ ζ − ε/4. This suffices to prove the theorem since
+                                                        ε      ε             ε
+                                    fθ (λ ◦ ) ≤ ζ ◦ +     ≤ ζ + ≤ fθ (λ ⋆ ) + .
+                                                        8      4             2
+Suppose for the sake of contradiction that
+                                                                 ε
+                                                  fθ (λ ⋆ ) < ζ − .                                               (4)
+                                                                 4
+We then show that λ ⋆ must be in the final ellipsoid ET when the ellipsoid algorithm is run with guess ζ . Let
+λt be center of the ellipsoid Et in any iteration with guess ζ . Let ζt be computed in Step (3b) such that
+                                                       ε                  ε
+                                          fθ (λt ) −     ≤ ζt ≤ fθ (λt ) + .
+                                                       8                  8
+
+
+                                                            21
+Since the algorithm does not return any answer with guess ζ , we must have ζt > ζ . Thus,
+                                                      ε      ε              ε
+                                    fθ (λt ) ≥ ζt −     ≥ ζ − ≥ fθ (λ ⋆ ) +
+                                                      8      8              8
+where the last inequality follows from inequality (4). Let θt be computed in Step (3(c)iiA) of the algorithm
+                           ε
+such that kθt − θ λt k1 ≤ 32R . But then
+
+                       hλ ⋆ − λt , θ − θt i = hλ ⋆ − λt , θ − θ λt i + hλ ⋆ − λt , θ λt − θt i
+                                            ≤ fθ (λ ⋆ ) − fθ (λt ) + hλ ⋆ − λt , θ λt − θt i
+                                                ε
+                                            ≤ − + kλ ⋆ − λt kkθ λt − θt k
+                                                 8
+                                                ε            ε
+                                            ≤ − + 2R ·            ≤0
+                                                 8         32R
+where the first inequality follows from convexity of f . Thus, λ ⋆ satisfies the separating constraint put in
+Step (3(c)iiB) of the algorithm. Therefore, it must be contained in the final ellipsoid ET . Let λT be the center
+of the ellipsoid ET . Let ζT be computed such that |ζT − fθ (λT )| ≤ ε/8. Then
+                                                ε               √              ε
+                            ζT    ≤    fθ (λT ) + ≤ fθ (λ ⋆ ) + mkλ ⋆ − λT k +
+                                                8                              8
+                                                √     ε        ε      ε ε
+                                  ≤    fθ (λ ) + m √ + ≤ ζ − + ≤ ζ
+                                            ⋆
+                                                   16 m 8             4 4
+where we use Lemma 6.2. Therefore, the algorithm must have returned λ ◦ = λT as the feasible solution for
+guess ζ a contradiction. This completes the proof of Lemma 6.3.
+
+
+7     Counting via Optimization
+In this section we present the proof of Theorem 2.11. We start by phrasing the problem of estimating |M |
+as a convex optimization problem.
+
+7.1 A Convex Program for Counting
+Let g(θ ) denote the optimum of the max-entropy program of Figure 4 for M and a point θ in P(M ). If θ
+is in the interior of P(M ), then strong duality holds for this convex program and
+
+                                                g(θ ) = inf fθ (λ ),
+                                                             λ
+
+see Lemma 2.3. By the concavity of the Shannon entropy, g(·) can be easily seen to be a concave function
+of θ . Recall that in the setting of Theorem 2.11, we have an access to an approximate max-entropy oracle
+which, given a θ in the η -interior of P(M ), a ζ > 0 as a guess for g(θ ), and an ε > 0, either asserts that
+g(θ ) ≥ ζ − ε or returns a λ such that fθ (λ ) ≤ ζ + ε . The running time of this oracle is polynomial in m, 1/ε
+and in the number of bits needed to represent ζ . Using this oracle, we hope to get an estimate on |M |. The
+starting point of the proof is the observation that the point that maximizes g(θ ) when θ is in P(M ) is
+                                                           1
+                                                                ∑ 1M ,
+                                                    def
+                                              θ⋆ =
+                                                          |M | M∈M
+
+the vertex centroid of P(M ).
+Lemma 7.1 supθ ∈P(M ) g(θ ) ≤ ln |M | and g(θ ⋆ ) = ln |M |.
+
+                                                            22
+Proof: For any θ in the interior of P(M ), g(θ ) is the entropy of some probability distribution over the
+elements in |M |. A standard fact in information theory implies that the maximum entropy of any distribution
+over a finite set is obtained by the uniform distribution. The entropy of the uniform distribution on M is
+ln |M |, hence, g(θ ) can be upper bounded by ln |M |. On the other hand, the uniform distribution over M
+has marginals equal to θ ⋆ and, thus, g(θ ⋆ ) = ln |M |.
+
+Thus, if we could find g(θ ⋆ ), then we can estimate |M |. Finding g(θ ⋆ ) is the same as solving the convex
+program
+                                                 sup g(θ ).
+                                                   θ ∈P(M )
+
+We use the framework of the ellipsoid method to approximately solve this convex program and find a point
+which gives us a good enough estimate to g(θ ⋆ ). Note that, unlike the results in the previous section, the
+bounding box here is easily obtained since θ ∈ P(M ) ⊆ [0, 1]m .
+
+7.2 The Interior of P(M )
+To check how close a candidate point θ is to θ ⋆ , we use the max-entropy separation oracle provided to
+us. The main difficulty we encounter is that the running time of the max-entropy oracle with marginals
+θ is inverse-polynomially dependent on the interiority of the point θ . Note that interiority of θ is a pre-
+requisite for strong duality to hold and for a succinct representation of the entropy-maximizing probability
+distribution to exist as in Lemma 2.3. The reason we assume a max-entropy oracle that works only if θ is in
+the inverse-polynomial interior of P(M ) is that such an oracle is the best we can hope for algorithmically
+and, indeed, Theorems 2.6 and 2.8 provide such an oracle. Without this restriction the proof of Theorem
+2.11 is simpler, but the theorem itself is less useful as there may not exist a max-entropy oracle whose
+running time does not depend on the interiority of θ .
+    The first issue raised by interiority is whether the point we are looking for, θ ⋆ may not be in the inverse-
+polynomial interior of P(M ). To tackle this, we show that there is a point θ • in the η -interior of P(M ) for
+η = poly(ε , 1/m) such that g(θ • ) ∼ g(θ ⋆ ) = ln |M |. Thus, instead of aiming for θ ⋆ , the ellipsoid algorithm
+aims for θ • .
+
+Lemma 7.2 Given
+             ε
+                an ε > 0, there exists
+                                    ε
+                                          an η > 0 and θ • such that θ • is in η -interior of P(M ) and
+g(θ ) ≥ 1 − 16m ln |M | ≥ ln |M | − 16 . Moreover, η is at least a polynomial in 1/m and ε .
+   •
+
+
+Before we prove this lemma, we show that there exists some point θ̃ in the poly(1/m) interior of P(M ). Such
+a point is then used to show the existence of θ • . Note that we do not need to bound g(θ̃ ) and only use the
+fact that it is non-negative.
+                                                                                        =         ≤
+Lemma 7.3 (Same as Lemma 2.2) Let M ⊆ {0, 1}m and P(M ) = x ∈ Rm                  ≥0 : A x = b, A x ≤ c be such
+that all the entries in A≤ , c ∈ k1l · Z and their absolute values are at most ku . Then there exists a θ̃ ∈ P(M )
+such that θ̃ is in the k k 1m1.5 -interior of P(M ). Thus, if ku , kl = poly(m), then θ̃ is in poly(1/m)-interior of
+                        l u
+P(M ).
+
+Proof: Let r be the dimension of P(M ). Then, there exist r + 1 affinely independent vertices z0 , . . . , zr ∈
+                           def 1
+{0, 1}m . We claim that θ̃ = r+1 ∑ri=0 zi satisfies the conclusion of the lemma. Let
+
+                                            def
+                                          Fi = {x ∈ P(M ) : A≤
+                                                             i x = ci }
+
+
+
+
+                                                        23
+be a facet of P(M ) where the inequality constraint is one of (A≤ , c). Since the dimension of a facet is one
+less than that of a polytope, at least one of z0 , z1 , . . . , zr , say z0 , does not lie in F and, hence, A≤
+                                                                                                             i z0 < ci .
+Therefore,
+                                                                      1
+                                                   A≤i z0 ≤ ci −
+                                                                      kl
+since all coefficients are 1/kl -integral. Thus, the distance of z0 from F is at least
+                                                      1         1
+                                                        ≤ ≥ k k
+                                                                 √ .
+                                                  kl kAi k   l u m
+
+Hence, the distance of θ̃ from F is at least m1 · ku k1√m . Since this argument works for any facet F, the distance
+                                                      l
+of θ̃ from every facet of P(M ) is at least m1 · ku k1√m .
+                                                      l
+
+
+Henceforth, we assume that kl , ku = poly(m).
+
+Proof: [Proof of Lemma 7.2.] Let θ̃ be the point in the interior of P(M ) as guaranteed by Lemma 7.3.
+Consider the point                              
+                                            def        ε  ⋆         ε
+                                         θ• = 1 −           θ +          θ̃ .
+                                                     16m3          16m3
+Since θ̃ is in the poly(1/m, ε )-interior of P(M ), θ • must also be in the poly(1/m, ε )-interior of P(M ). On
+the other hand, since g(·) is a concave and non-negative function of θ , we have that
+                                                   ε                        ε
+                                  g(θ • ) ≥ 1 −       3
+                                                        · g(θ ⋆ ) ≥ g (θ ⋆ ) − ,
+                                                  16m                         16
+where we used the fact that ln |M | ≤ m.
+
+
+7.3 A Separation Oracle for Interiority
+Our final ingredient is a test for checking whether a point θ is in the inverse-polynomial interior of P(M ).
+We show that the separation oracle for P(M ) can be used to give such a test. We state the result in generality
+for any polyhedron P. For any η > 0, let
+                                       def
+                                    Pη = {x : y ∈ P ∀y such that kx − yk ≤ η }
+
+denote the set of η -interior points in P.
+
+Lemma 7.4 There exists an algorithm that given a separation oracle for a polyhedron P, a set of maximal
+linearly independent equalities (A= , b) satisfied by P, an η > 0, and θ ∈ Rm , either
+   1. asserts that θ ∈ Pη/2m , i.e., θ is in the η/2m-interior of P, or,
+   2. returns a such that ha, yi < ha, θ i for each y ∈ Pη , or equivalently, a separating hyperplane which
+      separates the η -interior of P from θ .
+
+Proof: We use the the separation oracle for P on a collection of a small number of points close to θ to
+deduce if θ is in the interior of P. Even if one of these points is not in P, we use a separating hyperplane for
+such a point to separate θ from the interior of P. First, we describe the procedure when P is full dimensional.
+Let x0 , . . . xm form an η -regular simplex with center θ , i.e.,
+                                             1 m
+                                               ∑ xi = θ and kxi − x j k = η
+                                             m i=0
+
+                                                             24
+for each i 6= j. Such x0 , . . . , xm can be found by starting with a regular simplex and then translating and
+scaling it. Now, the algorithm applies the separation oracle for each of xi . Suppose the separation oracle
+asserts that xi ∈ P for each 0 ≤ i ≤ m. In this case, we assert that θ ∈ Pη/2m . Observe that since each vertex
+of the simplex is in P, we must have that the whole simplex is in P. Since the simplex is regular where each
+                                                                      η
+edge is length η and the center is θ , there exists a ball of radius 2m centered at θ which is contained in the
+                                             η
+simplex and, hence, in P. Thus, θ is in 2m -interior of P as asserted.
+    Now, suppose that xi ∈ / P for some i and let a be the separating hyperplane, i.e., ha, yi < ha, xi i for each
+y ∈ P. Then consider the constraint ha, yi < ha, θ i. We claim that it is satisfied by each y ∈ Pη . Let y ∈ Pη
+and consider
+                                                     def
+                                                  y′ = y − θ + xi .
+Since kθ − xi k ≤ η and y ∈ Pη , we have that y′ ∈ P which implies that ha, y′ i < ha, xi i. But this implies that
+
+                           ha, yi = ha, y′ − xi + θ i = ha, y′ i − ha, xi i + ha, θ i < ha, θ i
+
+which gives us the required separating hyperplane.
+    Now consider the case where P is not full dimensional and let r be the dimension of P. Recall that in
+this case we define interior of P by restricting our attention to points in the affine space {x : A= x = c}. We
+modify the algorithm to chose a r-dimensional simplex in this affine space and check whether each of the
+vertices of the simplex is in P. The analysis is identical in this case.
+
+7.4 The Ellipsoid Algorithm for Theorem 2.11
+Now we present the ellipsoid algorithm to approximately solve the convex program minθ ∈P(M ) g(θ ) and
+                                                                      √
+prove Theorem 2.11. The starting ellipsoid is a ball of radius m that contains [0, 1]m which contains
+P(M ). Let us fix an ε > 0 and apply Lemma 7.2 to obtain η which is a polynomial in 1/m and ε and
+                                                                                 ε
+guarantees the existence of θ • in the η -interior such that g(θ • ) ≥ ln |M | − 16 . In the range (0, ln |M |] we
+perform a binary search for the highest ζ such that the set
+                                                def
+                                       S(ζ , η ) = {θ ∈ Pη (M ) : g(θ ) ≥ ζ }
+
+is non-empty when we search ζ within an accuracy ε/16.
+     Given a guess ζ for g(θ • ), at an iteration t of the ellipsoid algorithm, we use the center θt of the
+ellipsoid as a guess for θ • . Ideally, we would pass θt to the max-entropy oracle which would either assert
+that g(θt ) ≥ ζ − ε/16 or returns a λt such that fθt (λt ) ≤ ζ + ε/16. In the first case we stop and return θt . In the
+latter case, we continue the search and use this λt returned by the max-entropy oracle to update the ellipsoid
+into one with a smaller volume. However, to get the guarantee on the running time, we need to first check
+that the candidate point θt is in the η -interior of P(M ). Here, we use the separation oracle from Lemma
+7.4. We proceed to the max-entropy oracle only if this separation oracle asserts that the point θt is in the
+η/2m-interior of P(M ). In case this separation oracle outputs a hyperplane separating θt from Pη (M ), we
+use this hyperplane to update the ellipsoid. The key technical fact we show is that when |ζ − g(θ • )| ≤ ε/16,
+θ • is always contained in every ellipsoid. Thus, once the radius of the ellipsoid becomes small enough, we
+can output its center as a guess for θ • . Since the radius of the final ellipsoid is small and contains θ • , the
+following lemma implies that the value of g(·) at the center of the ellipsoid is close enough to g(θ • ) and,
+hence, by Lemma 7.2, to g(θ ⋆ ).
+
+Lemma 7.5 Let θ , θ ′ ∈ P(M ) such that kθ − θ ′ k ≤ ε and θ is in η -interior of P(M ). Then
+
+                                               g(θ ′ ) ≥ (1 − ε/η )g(θ ).
+
+
+                                                           25
+Proof: Let λ ⋆ be an optimal solution to infλ fθ (λ ). Thus, pλ is the optimal solution to primal convex
+                                                                               ⋆
+
+
+program and H(pλ ) = infλ fθ (λ ). We construct a probability distribution q which is feasible for the primal
+                ⋆
+
+
+convex program with parameter θ ′ and H(q) ≥ (1 − ε/η )H(pλ ), thus, proving the lemma. We begin with a
+                                                              ⋆
+
+
+claim.
+
+Claim 7.6 Let θ ′′ = θ −(1−  /η )θ
+                   def     ′       ε
+                         ε/η       . Then θ ′′ ∈ P(M ).
+
+                                                                           i , xi = bi is satisfied by both θ
+Proof: First, observe that any equality constraint for P(M ) of the form hA=
+and θ ′ . Therefore,
+
+                                           i , θ i − (1 − /η )hAi , θ i
+                                         hA=    ′         ε     =         bi − (1 − ε/η )bi
+                            i ,θ i =
+                          hA=   ′′
+                                                                        =                   = bi .
+                                                      ε/η                        ε/η
+
+
+Thus, it is enough to show that kθ ′′ − θ k ≤ η . To see this note that
+
+                                               θ ′ − (1 − ε/η )θ      θ′ − θ    ε
+                               kθ ′′ − θ k =                     −θ =        ≤     =η
+                                                      ε/η              ε/η     ε/η
+
+
+where the last inequality follows from the fact that kθ − θ ′ k ≤ ε .
+
+Let q′′ be an arbitrary probability measure over M such that the marginals of q′′ equal θ ′′ , i.e., θe′′ =
+∑M∈M :e∈M q′′ M . Let q be the probability measure defined to be
+
+                                                   q = (1 − ε/η )pλ + ε/η q′′ .
+                                                    def              ⋆
+
+
+
+
+Then
+                                               ∑     qM = (1 − ε/η )θe + ε/η θe′′ = θe′ .
+                                         M∈M :e∈M
+
+By concavity and non-negativity of the entropy function, we have
+
+                                H(q) ≥ (1 − ε/η )H(pλ ) + ε/η H(q′′ ) ≥ (1 − ε/η )H(pλ )
+                                                           ⋆                                  ⋆
+
+
+
+
+as required.
+
+We now move on to the description of the ellipsoid algorithm and subsequently complete the proof of
+Theorem 2.11.
+
+   1. Input
+
+        (a) An error parameter ε > 0.
+        (b) A maximally linearly independent set of equalities (A= , b) for P(M ).
+        (c) A separation oracle for the facets (A≤ , c) of P(M ).
+        (d) A max-entropy oracle for M .
+        (e) A guess ζ ∈ (0, m] (for g(θ • )).
+
+   2. Initialization
+
+        (a) Let η be as in Lemma 7.2.
+                    def                                                   √
+        (b) Let E0 = E(B0 , c0 ) be a sphere with radius R =                  m containing [0, 1]m restricted to the affine
+            space A= x = b.
+
+                                                                26
+         (c) Set t = 0
+                                                                              εη
+   3. Repeat until the ellipsoid Et is contained in a ball of radius at most 16m .
+                                      def                   def
+         (a) Given the ellipsoid Et = E(Bt , ct ), set θt = ct .
+         (b) Check using the separation oracle for P(M ) as in Lemma 7.4 if θt ∈ P η (M )
+                                                                                               2m
+               i. then goto Step (3c)
+              ii. else let et be the separating hyperplane returned as in Lemma 7.4, i.e., het , θ − θt i ≥ 0 for
+                  all θ ∈ Pη (M ) and goto Step (3e).
+         (c) Call the max-entropy oracle with input θt , ζ and ε/16.
+         (d) If g(θt ) ≥ ζ − ε/16
+               i. then return θt and stop.
+              ii. else the max-entropy oracle returns λt such that fθt (λt ) ≤ ζ + ε/16. Let et = λt .
+         (e) Compute the ellipsoid Et+1 to be the smallest ellipsoid containing the half-ellipsoid {θ ∈ Et :
+             het , θ − θt i ≥ 0} and restricted to the affine space A= x = b.
+         (f) t = t + 1 .
+
+   4. Let T = t call the max-entropy oracle with input θT , ζ and ε/16.
+
+   5. If g(θT ) ≥ ζ − ε/16
+
+         (a) then return θT and stop.
+         (b) else return g(θ • ) < ζ and stop (ζ is not a good guess for g(θ • )).
+                                                                                                    η
+It is clear that any call to the approximate optimization oracle is made for points θ which are in 2m  interior.
+Thus, the running time of the algorithm is polynomially bounded by m and 1/ε for each call. To bound
+                                                                       √
+the number of iterations note that the starting ellipsoid has radius m and the final ellipsoid poly(1/m, ε ).
+Hence, the number of iterations can be bounded by Theorem 2.14 by poly(m, 1/ε ). It remains to prove the
+correctness of the algorithm.
+     Towards this, let ζ ◦ be the largest guess of ζ for which the algorithms returns a positive answer and let
+θ ◦ be the point returned by the algorithm for guess ζ ◦ . We return Z ◦ = eζ as our estimate of |M |. To
+                                                                           def   ◦
+
+
+complete the proof of Theorme 2.11, we show that Z ◦ satisfies
+
+                                            (1 − ε )|M | ≤ Z ◦ ≤ (1 + ε )|M |.                               (5)
+
+First, we prove the following lemma.
+Lemma 7.7 Consider the run of the ellipsoid algorithm for a guess ζ and let the hyperplane {θ : het , θ −
+θt i ≥ 0} be used as a separating hyperplane in some iteration of the algorithm. Then this separating
+hyperplane does not cut any point θ such that θ ∈ Pη (M ) and g(θ ) ≥ ζ + ε/16.
+
+Proof: If the hyperplane et is obtained in Step (3(b)ii), then it is clearly a valid inequality for Pη (M ) and
+therefore does not cut off any of its points. Otherwise, suppose et = λt is obtained in Step (3(d)ii). Then
+                                                                                 ε
+                                        fθt (λt ) = hλt , θt i + ln Z λt ≤ ζ +      .
+                                                                                 16
+Hence,
+                                                                                        ε
+                             hλt , θ − θt i = fθ (λt ) − fθt (λt ) ≥ fθ (λt ) − ζ −        .                 (6)
+                                                                                        16
+
+                                                           27
+Thus, by the assumption in the lemma,
+
+                                             fθ (λt ) ≥ g(θ ) ≥ ζ + ε/16
+
+and, therefore, by (6), θ satisfies the constraint het , θ − θt i ≥ 0.
+
+We now show that ζ ◦ ≥ ln |M | − 416ε . Consider the run of the algorithm for
+                                                                       
+                                                      4ε            3ε
+                                      ζ ∈ ln |M | − , ln |M | −
+                                        ′
+                                                                          .
+                                                      16            16
+
+Since
+                                                          ε           ε
+                                         g(θ • ) ≥ ln |M | − ≥ ζ′ + ,
+                                                          16         16
+θ cannot be cut off in any iteration by Lemma 7.7. If the ellipsoid returns an answer when run with guess
+  •
+
+ζ ′ then
+                                                                4ε
+                                          ζ ◦ ≥ ζ ′ ≥ ln |M | −
+                                                                16
+                                                                             εη
+as claimed. Otherwise, we end with an ellipsoid ET of radius at most 16m         . Let θT be the center of the
+                                                            εη
+ellipsoid ET . Since θ ∈ ET , we have that kθ − θT k ≤ 16n . Since θ is in η -interior, from Lemma 7.5 it
+                      •                         •                        •
+
+follows that
+                                   εη                   ε                      2ε
+                    g(θT ) ≥ 1 −   16m
+                                         g(θ • ) ≥ 1 −         g(θ • ) > ln |M | − .
+                                    η                    16m                       16
+
+This contradicts the fact that the algorithm did not output θT in the last iteration and asserted
+                                                          ε             2ε
+                                         g(θT ) ≤ ζ ′ +      ≤ ln |M | − .
+                                                          16            16
+Since ζ ◦ ≥ ln |M | − 416ε and ζ ◦ ≤ ln |M | + 16
+                                               ε
+                                                  . We obtain that (1 − ε )|M | ≤ Z ◦ ≤ (1 + ε )|M | proving (5)
+and completing the proof of Theorem 2.11.
+
+
+References
+ [1] A. Asadpour, M. X. Goemans, A. Madry, S. Oveis-Gharan, and A. Saberi. An o(log n/ log log n)-
+     approximation algorithm for the asymmetric traveling salesman problem. In SODA, pages 379–389,
+     2010.
+
+ [2] A. Asadpour and A. Saberi. An approximation algorithm for max-min fair allocation of indivisible
+     goods. SIAM J. Comput., 39(7):2970–2989, 2010.
+
+ [3] A. Ben-Tal and A. Nemirovski. Optimization III: Convex analysis, nonlinear programming theory,
+     nonlinear programming algorithms. Lecture Notes, 2012.
+
+ [4] S. Boyd and L. Vandenberghe. Convex Optimization. Cambridge University Press, Mar. 2004.
+
+ [5] T. M. Cover and J. Thomas. Elements of information theory. Wiley, New York, 1991.
+
+ [6] M. E. Dyer, A. M. Frieze, R. Kannan, A. Kapoor, L. Perkovic, and U. V. Vazirani. A mildly exponential
+     time algorithm for approximating the number of solutions to a multidimensional knapsack problem.
+     Combinatorics, Probability & Computing, 2:271–284, 1993.
+
+                                                           28
+ [7] J. Edmonds. Maximum matching and a polyhedron with 0, 1 vertices. Journal of Research of the
+     National Bureau of Standards, 69:125–130, 1965.
+
+ [8] J. Edmonds. Submodular functions, matroids, and certain polyhedra. Combinatorial structures and
+     their applications, pages 69–87, 1970.
+
+ [9] J. Edmonds. Matroids and the greedy algorithm. Mathematical Programming, 1:127–136, 1971.
+     10.1007/BF01584082.
+
+[10] K. Elbassioni and H. R. Tiwary. Complexity of approximating the vertex centroid of a polyhedron.
+     Theoretical Computer Science, 421(0):56 – 61, 2012.
+
+[11] T. Feder and M. Mihail. Balanced matroids. In S. R. Kosaraju, M. Fellows, A. Wigderson, and J. A.
+     Ellis, editors, STOC, pages 26–38. ACM, 1992.
+
+[12] A. M. Frieze, G. Galbiati, and F. Maffioli. On the worst-case performance of some algorithms for the
+     asymmetric traveling salesman problem. Networks, 12(1):23–39, 1982.
+
+[13] B. Garrett. Three observations on linear algebra. (spanish). Univ. Nac. Tucumn. Revista A., 5:147–151,
+     1946.
+
+[14] C. D. Godsil and G. Royle. Algebraic Graph Theory. Springer, 2001.
+
+[15] M. Grötschel, L. Lovász, and A. Schrijver. Geometric Algorithms and Combinatorial Optimization,
+     volume 2 of Algorithms and Combinatorics. Springer, second corrected edition edition, 1993.
+
+[16] Z. Huang and S. Kannan. The exponential mechanism for social welfare: Private, truthful, and nearly
+     optimal. In FOCS, pages 140–149, 2012.
+
+[17] E. T. Jaynes. Information Theory and Statistical Mechanics. Physical Review, 106:620–630, May
+     1957.
+
+[18] E. T. Jaynes. Information Theory and Statistical Mechanics. II. Physical Review, 108:171–190, Oct.
+     1957.
+
+[19] M. Jerrum. A very simple algorithm for estimating the number of k-colorings of a low-degree graph.
+     Random Struct. Algorithms, 7(2):157–166, 1995.
+
+[20] M. Jerrum and A. Sinclair. Approximating the permanent. SIAM J. Comput., 18(6):1149–1178, 1989.
+
+[21] M. Jerrum, A. Sinclair, and E. Vigoda. A polynomial-time approximation algorithm for the permanent
+     of a matrix with nonnegative entries. J. ACM, 51(4):671–697, 2004.
+
+[22] M. Jerrum, L. G. Valiant, and V. V. Vazirani. Random generation of combinatorial structures from a
+     uniform distribution. Theor. Comput. Sci., 43:169–188, 1986.
+
+[23] J. Kahn. Asymptotics of the chromatic index for multigraphs. J. Comb. Theory, Ser. B, 68(2):233–254,
+     1996.
+
+[24] J. Kahn. Asymptotics of the list-chromatic index for multigraphs.        Random Struct. Algorithms,
+     17(2):117–156, 2000.
+
+[25] J. Kahn and P. M. Kayll. On the stochastic independence properties of hard-core distributions. Com-
+     binatorica, 17(3):369–391, 1997.
+
+                                                    29
+[26] J. N. Kapur. Maximum-Entropy Models in Science and Engineering. Wiley, New York, 1989.
+
+[27] R. M. Karp and M. Luby. Monte-carlo algorithms for enumeration and reliability problems. In FOCS,
+     pages 56–64. IEEE Computer Society, 1983.
+
+[28] G. Kirchhoff. Ueber die auösung der gleichungen, auf welche man bei der untersuchung der linearen
+     vertheilung galvanischer ströme geführt wird. Ann. Phys. und Chem., 72:497508, 1847.
+
+[29] Y. Nesterov. Introductory lectures on convex programming. Volume I: Basic course, 1998.
+
+[30] S. Oveis-Gharan, A. Saberi, and M. Singh. A randomized rounding approach to the traveling salesman
+     problem. In R. Ostrovsky, editor, FOCS, pages 550–559. IEEE, 2011.
+
+[31] M. W. Padberg and M. R. Rao. Odd minimum cut-sets and b-matchings. Mathematics of Operations
+     Research, 7(1):67–80, 1982.
+
+[32] A. Sinclair and M. Jerrum. Approximate counting, uniform generation and rapidly mixing Markov
+     chains. Inf. Comput., 82(1):93–133, July 1989.
+
+[33] L. J. Stockmeyer. On approximation algorithms for #p. SIAM J. Comput., 14(4):849–861, 1985.
+
+[34] L. G. Valiant. The complexity of computing the permanent. Theor. Comput. Sci., 8:189–201, 1979.
+
+[35] L. G. Valiant. The complexity of enumeration and reliability problems. SIAM J. Comput., 8(3):410–
+     421, 1979.
+
+[36] N. K. Vishnoi. A permanent approach to the traveling salesman problem. In FOCS, pages 76–80,
+     2012.
+
+[37] M. J. Wainwright and M. I. Jordan. Graphical models, exponential families, and variational inference.
+     Foundations and Trends in Machine Learning, 1(1-2):1–305, 2008.
+
+
+
+
+                                                   30
+A    Omitted Proofs
+A.1 Duality of the Max-Entropy Program
+Lemma A.1 For a point θ in the interior of P(M ), there exists a unique distribution p⋆ which attains the
+max-entropy while satisfying
+                                            ∑ p⋆M 1M = θ .
+                                                       M∈M
+
+Moreover, there exists λ ⋆ : [m] 7→ R such that p⋆M ∝ e−λ (M) for each M ∈ M .
+                                                                   ⋆
+
+
+
+
+Proof: Consider the convex program for computing the maximum-entropy distribution with marginals θ
+as in Figure 4. We first prove that the dual of this convex program is the one given in Figure 5. To see
+
+
+                                                sup          ∑M∈M pM ln p1M
+                                                s.t.
+                                            ∀e ∈ [m] ∑M∈M , M∋e pM = θe                                      (7)
+                                                       ∑M∈M pM = 1                                           (8)
+                                        ∀M ∈ M                  pM ≥ 0                                       (9)
+
+
+                                 Figure 4: Max-Entropy Program for (M , θ )
+
+
+
+                                            fθ (λ ) = ∑e∈[m] θe λe + ln ∑M∈M e−λ (M)
+                                                     def
+                                  inf
+                                 s.t.
+                             ∀e ∈ [m]                           λe ∈ R                                      (10)
+
+
+                           Figure 5: Dual of the Max-Entropy Program for (M , θ )
+
+this consider multipliers λe for constraints (7) in Figure 4 and a multiplier z for the constraint (8). Then the
+Lagrangian L(p, λ , z) is defined to be
+
+                                    1
+                        ∑ pM ln pM + ∑ λe (θe −                    ∑      pM ) + z(1 − ∑ pM ).
+                       M∈M                   e∈[m]            M∈M , M∋e                  M∈M
+
+This is the same as
+                                        1
+                          ∑ pM ln pM − ∑ pM λ (M) − z ∑ pM + ∑ λe θe + z.                                   (11)
+                        M∈M                    M∈M                     M∈M       e∈[m]
+
+           def
+Let g(λ , z) = inf p≥0 L(p, λ , z). Thus, the p which achieves g(λ , z) can be obtained by taking partial deriva-
+tives with respect to pM and setting them to 0 as follows.
+
+                                                 ∂L        1
+                               ∀M ∈ M                = ln    − 1 − λ (M) − z = 0.                           (12)
+                                                ∂ pM      pM
+
+
+
+                                                              31
+Thus, pM = e−1−z−λ (M) for all M ∈ M . Summing this up over all M ∈ M we obtain that
+
+                                            ∑ pM = e−1−z ∑ e−λ (M) .                                          (13)
+                                           M∈M                   M∈M
+
+For such a (p, λ , z), if we multiply each (12) by pM and add all of them up we obtain
+                                                                        
+                                              1
+                                  ∑ pM ln pM − pM − pM λ (M) − zpM = 0,
+                                M∈M
+
+which implies that                                                     
+                                                1
+                                ∑        pM ln
+                                               pM
+                                                  − pM λ (M) − zpM          =   ∑ pM .
+                               M∈M                                              M∈M
+
+Hence, combining this with (11) and using (13), the dual becomes to find the infimum of g(λ , z) which is
+
+                                          ∑ λe θe + z + e−1−z ∑ e−λ (M) .
+                                         e∈[m]                    M∈M
+
+Optimizing g(λ , z) over z one obtains that g(λ , z) is minimized when
+
+                                             1 − e−1−z ∑ e−λ (M) = 0.
+                                                           M∈M
+
+Hence, z = ln ∑M∈M e−λ (M) − 1. Thus, the Lagrangian dual becomes to minimize
+
+                                                 ∑ θe λe + ln ∑ e−λ (M) .
+                                             e∈[m]           M∈M
+
+This completes the proof that the dual of Figure 5 is the convex program in Figure 4.
+    Since θ is in the interior of P(M ), the primal-dual pair satisfies Slater’s condition and strong duality
+holds, see [4], implying that the optimum of both the programs is the same. Moreover, by the strict concavity
+                                                                                     −λ ⋆ (M)
+of the entropy function, the optimum is unique. Hence, at optimality, p⋆M = ∑ e e−λ ⋆ (N) where λ ⋆ is the
+                                                                                   N∈M
+optimal dual solution and p⋆ is the optimal primal solution.
+
+A.2 Optimal and Near-Optimal Dual Solutions
+In this section we first prove that if λ is a solution to the program in Figure 5 for (M , θ ) of value ζ , then so
+is any λ + (A= )⊤ d for any d. Recall that (A= , b) are the equality constraints satisfied by all vertices of M .
+Hence, in our search for the optimal solution to the dual convex program, we restrict ourselves to the space
+of λ s.t. A= λ = 0.
+
+Lemma A.2 (Same as Lemma 2.5) fθ (λ ) = fθ (λ + (A=)⊤ d) for any d.
+
+Proof: First, note that hλ + (A= )⊤ d, θ i = hλ , θ i+ h(A= )⊤ d, θ i. Note that θ can be written as ∑M∈M pM 1M
+and A= 1M = b for all M ∈ M . Hence,
+
+                         hλ + (A= )⊤ d, θ i = hλ , θ i + ∑ pM hd, bi = hλ , θ i + hd, bi
+                                                            M∈M
+
+since ∑M∈M pM = 1. On the other hand note that
+
+                               ln ∑ e−hλ +(A ) d,1M i = ln e−hd,bi ∑ e−hλ ,1M i
+                                                     = ⊤
+
+
+                                 M∈M                                    M∈M
+
+
+                                                            32
+which equals
+                             −hd, bi + ln ∑ e−hλ ,1M i = −hd, bi + ln ∑ e−λ (M) .
+                                            M∈M                                   M∈M
+
+Combining, we obtain that fθ (λ + (A= )⊤ d) equals
+
+                      hλ + (A=)⊤ d, θ i + ln ∑ e−hλ +(A ) d,1M i = hλ , θ i + ln ∑ e−λ (M)
+                                                            = ⊤
+
+
+                                              M∈M                                         M∈M
+
+which equals fθ (λ ). This completes the proof of the lemma.
+
+Thus, we can assume that A= λ ⋆ = 0 where λ ⋆ is the optimal solution for the program of Figure 5 for (M , θ ).
+    Next we prove that if λ is such that fθ (λ ) is close to fθ (λ ⋆ ), then pλ and pλ are close to each other. We
+                                                                                      ⋆
+
+
+relate the Kullback-Leibler distance between pλ and pλ to fθ (λ ) − fθ (λ ⋆ ). In particular θ λ and θ are close
+                                                            ⋆
+
+
+to each other. Before we state this lemma, we recall some basic measures of proximity between probability
+distributions.
+
+Definition A.3 Let p, q be two probability distributions over the same space Ω. The following are natural
+measures of distances.
+                  def
+   1. kp − qkTV = maxS⊆Ω |p(S) − q(S)|.
+                def
+   2. kp − qk1 = ∑ω |p(ω ) − q(ω )|.
+
+   3. If p, q > 0, then the Kullback-Leibler distance between them is defined to be
+
+                                                                                p(ω )
+                                              DKL (pkq) = ∑ p(ω ) ln
+                                                          def
+                                                                                      .
+                                                                ω               q(ω )
+
+       This distance function is always non-negative but not necessarily symmetric.
+
+The following lemma shows a close relation between the dual solutions and Kullback-Leibler distance be-
+tween the corresponding primal distributions.
+
+Lemma A.4 Suppose λ is such that fθ (λ ) ≤ fθ (λ ⋆ ) + ε where λ ⋆ is the optimum dual solution for the
+instance (M , θ ). Let pλ , pλ be the probability distributions corresponding to λ and λ ⋆ respectively:
+                              ⋆
+
+
+
+
+                                          e−λ (M)                                e−λ (M)
+                                                                                      ⋆
+
+                              pλM =                                  λ ⋆ def
+                                  def
+                                                         and        pM   =                  .
+                                        ∑N∈M e−λ (N)                           ∑N∈M e−λ (N)
+                                                                                        ⋆
+
+
+
+Then
+                                        fθ (λ ) − fθ (λ ⋆ ) = DKL (pλ kpλ ) = ε .
+                                                                         ⋆
+
+
+
+
+Proof: Let Z λ , Z λ denote ∑M∈M e−λ (M) and ∑M∈M e−λ (M) respectively. Then, it follows from optimality
+                      ⋆                                             ⋆
+
+
+of λ ⋆ that
+                                             ∑M∈M , M∋e e−λ (M)
+                                                           ⋆
+
+                                        θe =                    .                                  (14)
+                                                    Zλ ⋆
+Hence,
+                                                       1               1
+                              DKL (p⋆ kp) = ∑ p⋆M ln      − ∑ p⋆M ln ⋆
+                                            M∈M       pM M∈M          pM
+
+
+
+                                                          33
+which, since pM = e−λ (M)/Z λ is
+                                                                                           1
+                                     ∑ p⋆M ln Z λ + ∑ p⋆M λ (M) − ∑ p⋆M ln p⋆ .
+                                   M∈M                 M∈M                  M∈M            M
+
+This is equal to
+                                           ln Z λ − fθ (λ ⋆ ) + ∑ λe        ∑       p⋆M
+                                                               e∈[m]    M∈M , M∋e
+
+                                     = ln Z λ − fθ (λ ⋆ ) + hλ , θ i = fθ (λ ) − fθ (λ ⋆ ).
+Here, we have used (14). Hence, DKL (p⋆ kp) = fθ (λ ) − fθ (λ ⋆ ) ≤ ε .
+
+It is well-known, see [5] Lemma 12.6.1, pp. 300-301, that for probability distributions p, q over the same
+sample space                                      p             
+                                   kp − qkTV ≤ O       DKL (pkq) .                                     (15)
+Hence, we obtain the following as a corollary to Lemma A.4.
+                                                                                                   √
+Corollary A.5 Let λ be such that fθ (λ ) ≤ fθ (λ ⋆ ) + ε . Then, for all e ∈ [m], |θeλ − θeλ | ≤ O( ε ).
+                                                                                            ⋆
+
+
+
+
+Proof: This follows from the fact that
+
+                                                |θeλ − θeλ | ≤ kpλ − pλ kTV
+                                                           ⋆                ⋆
+
+
+
+
+which is at most                q                            p                          √
+                                           (pλ kpλ )                fθ (λ ) − fθ (λ ⋆ ) = O( ε ).
+                                              ⋆
+                            O        DKL                 =O
+
+
+
+
+B Generalized Counting and Minimizing Kullback-Leibler Divergence
+In this section, we outline how to obtain algorithms for generalized approximate counting from max-entropy
+oracles. Recall that the generalized approximate counting problem is: Given ε > 0 and weights µ ∈ Rm ,
+                  µ
+output Zeµ and Zee for each e ∈ [m] such that the following guarantees hold.
+   1. (1 − ε )Z µ ≤ Zeµ ≤ (1 + ε )Z µ and
+                                  µ     µ
+   2. for every e ∈ [m], (1 − ε )Ze ≤ Zee ≤ (1 + ε )Zeλ .
+Here Z µ is defined to be ∑M∈M e−µ (M) . The running time should be a polynomial in m, 1/ε , log 1/α and
+the number of bits required to represent e−µe for any e ∈ [m], or kµ k1 .10 Towards constructing such algo-
+rithms, we need access to oracles that solve a more general problem than the max-entropy problem used
+in Theorem 2.11, namely, min-Kullback-Leibler (KL)-divergence problem. This raises the issue that, while
+Theorems 2.6 and 2.8 output solutions to max-entropy problem given access to generalized counting oracles,
+to obtain a generalized counting oracle we need access to a minimum KL-divergence oracle. However, later
+in this section we show that given a generalized counting oracle, we can not only solve the max-entropy
+convex programs as in Theorem 2.8, but also the min KL-divergence program in a straightforward manner.
+The convex program for the min-KL-divergence problem is given in Figure 6. Given a µ ∈ Rm , recall that pµ
+                             µ def −µ (M)
+is the product distribution pM = e Z µ . Observe that the objective is to find a distribution p that minimizes
+  10 The number of bits needed to represent e−µe for any e ∈ [m], up to an additive error of 2−m2 , is max{poly(m), kµ k } for some
+                                                                                                                        1
+poly(m). Since all our running times depend on poly(m), we only track the dependence on kµ k1 .
+
+
+                                                               34
+                                                                µ
+                                              sup ∑M∈M pM ln p p(M)
+                                                                M
+                                                                    + ln Z µ
+                                              s.t.
+                                        ∀e ∈ [m]      ∑M∈M , M∋e pM = θe
+                                                        ∑M∈M pM = 1
+                                     ∀M ∈ M                 pM ≥ 0
+
+
+                              Figure 6: Min-KL-Divergence Program for (M , θ , µ )
+
+
+                                  inf ∑e∈[m] θe λe + ln ∑M∈M e−λ (M)−µ (M) + ln Z µ
+                                 s.t.
+                             ∀e ∈ [m]                       λe ∈ R
+
+
+                      Figure 7: Dual of the Min-KL-Divergence Program for (M , θ , µ )
+
+
+the KL-divergence, up to a shift, between the distributions p and pµ . This follows since the objective can be
+rewritten as
+                                         pµ (M)
+                               ∑ pM ln pM + ln Z µ = ln Z µ − DKL (pkpµ )
+                             M∈M
+
+where Z µ does not depend on the variable p but only on the input µ . The dual of this convex program is
+given in Figure 7. We use the following to denote the objective function of the dual:
+                                 µ
+                                fθ (λ ) = ∑ θe λe + ln ∑ e−λ (M)−µ (M) + ln Z µ .
+                                        def
+
+                                              e∈[m]       M∈M
+
+ When θ is in the interior of P(M ), strong duality holds between the programs of Figure 6 and 7. We
+assume that we are given the following approximate oracle to solve the above set of convex programs.
+
+Definition B.1 An approximate KL-optimization oracle for M , given a θ in the η -interior of P(M ), µ ∈
+Rm , a ζ > 0, and an ε > 0, either
+                         µ
+   1. asserts that infλ fθ (λ ) ≥ ζ − ε or
+                                        µ
+   2. returns a λ ∈ Rm such that fθ (λ ) ≤ ζ + ε .
+
+The oracle is assumed to be efficient, i.e., it runs in time polynomial in m, 1/ε , 1/η , the number of bits needed
+to represent ζ and kµ k1 .
+
+The following theorem is the appropriate generalization of Theorem 2.11 in this setting.
+
+Theorem B.2 There exists an algorithm that, given a maximal set of linearly independent equalities (A= , b)
+and a separation oracle for P(M ), a µ ∈ Rm , and an approximate KL-optimization oracle for M as above,
+returns a Ze such that (1 − ε )Z µ ≤ Ze ≤ (1 + ε )Z µ . Assuming that the running times of the separation oracle
+and the approximate KL oracle are polynomial in their respective input parameters, the running time of the
+algorithm is bounded by a polynomial in m, 1/ε , the number of bits needed to represent (A= , b) and kµ k1 .
+
+
+
+                                                          35
+We omit the proof since it is a simple but tedious generalization of the proof of Theorem 2.11. We highlight
+below the key additional points that must be taken into account. The algorithm in the proof of Theorem B.2
+is obtained by using the ellipsoid algorithm to maximize the concave function
+
+                                                       max gµ (θ )
+                                                        θ
+                                                        µ
+over the interior of P(M ). Here, gµ (θ ) = minλ fθ (λ ). Indeed, the maximum is attained at θ ⋆ where
+                                         def
+
+
+
+                                                       ∑M:e∈M e−µ (M)
+                                               θe⋆ =
+                                                            Zµ
+and the objective value at this maximum is ln Z µ . Thus, we use the ellipsoid algorithm to search for θ ⋆ . The
+issue of interiority as in Lemma 7.2 is resolved by proving the following lemma.
+
+            Given an ε > 0, there exists an η > 0 and θ such that θ is in η -interior of P(M ) and
+Lemma B.3                                                         •             •
+
+gµ (θ • ) ≥ 1 − 16mkε µ k1 ln Z µ ≥ ln Z µ − 16
+                                             ε
+                                                . Moreover, η is at least a polynomial in 1/m, ε and 1/kµ k1 .
+
+Similarly, Lemma 7.5 can be generalized to show the following:
+
+Lemma B.4 Let θ , θ ′ ∈ P(M ) such that kθ − θ ′ k ≤ ε and θ is in η -interior of P(M ). Then
+                                                            
+                                     µ                  ε
+                                    g (θ ) ≥ 1 −
+                                         ′
+                                                               g(θ ).
+                                                     η kµ k1
+
+Using the above two lemmas it is straightforward to generalize the argument in Theorem 2.11 to prove
+Theorem B.2.
+   To complete the picture we show that, given access to a generalized counting oracle, we can solve the
+above pair of convex programs. This gives the following theorem which is a generalization of Theorem 2.8.
+
+Theorem B.5 There exists an algorithm that, given a maximal set of linearly independent equalities (A= , b)
+and a generalized approximate counting oracle for P(M ) ⊆ Rm , a θ in the η -interior of P(M ), µ ∈ Rm
+and an ε > 0, returns a λ ◦ such that
+                                         µ           µ
+                                        fθ (λ ◦ ) ≤ fθ (λ ⋆ ) + ε ,
+where λ ⋆ is the optimal solution to the dual of the max-entropy convex program for (M , θ , µ ) from Figure
+7. Assuming that the generalized approximate counting oracle is polynomial in its input parameters, the
+running time of the algorithm is polynomial in m, 1/η , log 1/ε , the number of bits needed to represent θ and
+(A= , b), and kµ k1 .
+
+A similar theorem can be stated in the exact counting oracle setting, extending Theorem 2.6. The proof of
+Theorem B.5 is quite straightforward and relies on the following lemma that states that the objective of the
+primal convex program is just an additive shift from the objective of the maximum entropy convex program.
+Thus, the primal optimum solution remains the same. This implies that the dual convex program can be
+solved as in the proof of Theorem 2.8 with one additional call to the generalized approximate counting
+oracle involving µ s.
+
+Lemma B.6 Let p be any feasible solution to the primal convex program given in Figure 6. Then the
+objective
+                                     µ
+                                    pM                      1
+                         ∑ M pM + ln Z µ = ∑ pM ln pM − hθ , µ i.
+                             p   ln
+                        M∈M                      M∈M
+
+
+                                                            36
+Proof: We have
+                        µ
+                       pM                                  1
+             ∑ pM ln   pM
+                          + ln Z µ   =      ∑ pM ln pM + ∑ pM ln pMµ + ln Z µ
+           M∈M                            M∈M                    M∈M
+                                                           1                   e−µ (M)
+                                     =      ∑ pM ln pM + ∑ pM ln                 Zµ
+                                                                                       + ln Z µ
+                                          M∈M                    M∈M
+                                                1
+                                     = ∑ pM ln    + ∑ pM (−µ (M)) + ∑ pM Z µ + ln Z µ
+                                       M∈M     pM  M∈M             M∈M
+                                                           1
+                                     =      ∑ pM ln pM − ∑ µe ∑ pM
+                                          M∈M                    e∈E       M:e∈M
+                                                           1
+                                     =      ∑ pM ln pM − ∑ µe θe
+                                          M∈M                    e∈E
+
+where we have used the facts that ∑M pM = 1 and ∑M:e∈M pM = θe since p satisfies the constraints of the
+convex program in Figure 6.
+
+
+C     2 → 2-norm of ∇ f
+For a fixed θ , let
+                                         f (λ ) = hθ , λ i + ln ∑ e−λ (M) .
+                                               def
+                                                                                                            (16)
+                                                                 M∈M
+
+Recall that k∇ f k2→2 is the 2 → 2 Lipschitz constant of ∇ f and is defined to be the smallest non-negative
+number such that
+                                ∇ f (λ ) − ∇ f (λ ′ ) 2 ≤ k∇ f k2→2 · kλ − λ ′ k2
+for all λ , λ ′ . In this section, we show the following theorem, which can be used to give alternative gradient-
+descent based proofs of Theorems 2.6 and 2.8.
+                                                              √
+Theorem C.1 Let f be defined as in (16). Then, k∇ f k2→2 ≤ O(m m).
+
+Proof: Given λ1 and λ2 , let pλ1 and pλ2 be the corresponding product distributions and let θ1 and θ2 be the
+corresponding marginals. We break the calculation of k∇ f k2→2 into two parts:
+                                                 1                    1
+                               kλ1 − λ2 k2 >     √ and kλ1 − λ2 k2 ≤ √ .
+                                               10 m                 10 m
+
+Estimating k∇ f k2→2 in the first case is straightforward. To see this, recall that
+
+                                                     ∇ f (λi ) = θ − θi                                     (17)
+
+for i = 1, 2. Thus,                                                √
+                                                 k∇ f (λi )k2 ≤        m                                    (18)
+since θ , θi ∈ P(M ) ⊆ [0, 1]m , which implies that θ − θi ∈ [−1, 1]m for i = 1, 2. Hence,
+                                                                    √
+                                        k∇ f (λ1 ) − ∇ f (λ2 )k2 ≤ 2 m.
+
+Thus, when
+                                                                   1
+                                               kλ1 − λ2 k2 >       √ ,                                      (19)
+                                                                 10 m
+
+                                                            37
+we obtain
+                               ∆−ineq.                               (18) √                    1 (19)
+    k∇ f (λ1 ) − ∇ f (λ2 )k2     ≤       k∇ f (λ1 )k2 + k∇ f (λ2 )k2 ≤ 2 m = 20m ·             √ < 20m · kλ1 − λ2 k2 .
+                                                                                             10 m
+
+Hence, we move on to proving the theorem in the case
+                                                                              1
+                                                      kλ1 − λ2 k2 ≤           √                                                (20)
+                                                                            10 m
+
+Towards this, define
+                                                            def √
+                                                          ε=       mkλ1 − λ2 k2 .                                              (21)
+Note that by assumption (20), ε ≤ 1/10. It follows from (21) that for any M ∈ M ,
+
+                                                    ∆−ineq.                                         Cau.−Sch. √
+|λ1 (M)− λ2 (M)| =         ∑ ((λ1)e − (λ2)e )         ≤          ∑ |(λ1 )e − (λ2)e | ≤ kλ1 − λ2k1      ≤          mkλ1 − λ2 k2 = ε .
+                       e∈M                                       e∈M
+                                                                                                                               (22)
+The following series of claims establishes Theorem C.1.
+                       λ
+Claim C.2 e−ε ≤ ZZ λ12 ≤ eε .
+
+Proof: For each M ∈ M , (22) implies that
+
+                                                                   e−λ1 (M)
+                                                          e−ε ≤     − λ  (M)
+                                                                             ≤ eε .                                            (23)
+                                                                   e   2
+
+
+Thus,
+                                         e−λ1 (M) ∑M∈M e−λ1 (M)          e−λ1 (M)
+                             e−ε ≤ min            ≤                ≤ max           ≤ eε .                                      (24)
+                                     M∈M e−λ2 (M)   ∑M∈M e− λ2 (M)   M∈M e− λ2 (M)
+
+Here, we have used the inequality that for non-negative numbers a1 , a2 , . . . and b1 , b2 , . . . ,
+                                                            ai ∑i ai      ai
+                                                    min       ≤      ≤ max .                                                   (25)
+                                                      i     bi ∑i bi    i bi
+
+The claim follows by combining (24) with the definition
+
+                                                     ∑M∈M e−λ1 (M) Z λ1
+                                                                  =     .
+                                                     ∑M∈M e−λ2 (M) Z λ2
+
+
+                                                λ
+                                               pM1
+Claim C.3 For each M ∈ M , e−2ε ≤               λ    ≤ e2ε .
+                                               pM2
+
+Proof: By definition,
+                                                          pλM1   e−λ1 (M) Z λ2
+                                                               =         ·     .
+                                                          pλM2   e−λ2 (M) Z λ1
+Since all the numbers involved in this product are positive, (23) and Claim C.2 imply that both the ratios
+in the right hand side of the equation are bounded from below by e−ε and from above by eε . Hence, their
+product is bounded from below by e−2ε and from above by e2ε , completing the proof of the claim.
+
+
+                                                                       38
+Claim C.4 For each e ∈ [m], e−2ε ≤ ((θθ12 ))ee ≤ e2ε .
+
+Proof: By the definition of θ1 and θ2 ,
+                                                                   λ
+                                                 (θ1 )e ∑M∈M ,M∋e pM1
+                                                       =               .
+                                                 (θ2 )e ∑M∈M ,M∋e pλM2
+
+Combining Claim C.3 and (25), we obtain that
+                                                                           λ
+                          −2ε                  pλM1       ∑M∈M ,M∋e pM1          pλM1
+                        e       ≤      min            ≤                ≤  max         ≤ e2ε ,
+                                    M∈M ,M∋e pλ2                     λ            λ
+                                                          ∑M∈M ,M∋e pM2 M∈M ,M∋e pM2
+                                              M
+
+completing the proof of the claim.
+
+Claim C.5 For ε ≤ 1/10, kθ1 − θ2 k1 ≤ 3ε m.
+
+Proof: By definition
+                                             kθ1 − θ2 k1 = ∑ |(θ1 )e − (θ2 )e |
+                                                              e∈[m]
+
+Since θ1 , θ2 ≥ 0, Claim C.4 implies that for each e ∈ [m],
+
+                                  (e−2ε − 1)(θ2 )e ≤ (θ1 )e − (θ2 )e ≤ (e2ε − 1)(θ2 )e .
+
+Since max{|e−2ε − 1|, |e2ε − 1|} ≤ 3ε for ε ≤ 1/10, the above inequality reduces to, for each e ∈ [m],
+
+                                                |(θ1 )e − (θ2 )e | ≤ 3ε (θ2 )e .
+
+Thus,
+                            kθ1 − θ2 k1 = ∑ |(θ1 )e − (θ2 )e | ≤ ∑ 3ε (θ2 )e ≤ 3ε m
+                                               e∈[m]                           e∈[m]
+
+since θ2 ≥ 0 and θ2   ∈ P(M ) ⊆ [0, 1]m . This completes the proof of the claim.
+
+Finally, to complete the proof of Theorem C.1, note that when (20) holds,
+
+                                (17)              ℓ2 (x,y)≤ℓ1 (x,y)                 Claim C.4       (21) √
+     k∇ f (λ1 ) − ∇ f (λ2 )k2 = kθ1 − θ2 k2               ≤           kθ1 − θ2 k1      ≤        3mε = 3m mkλ1 − λ2 k2 .
+
+
+
+
+                                                                39
+
