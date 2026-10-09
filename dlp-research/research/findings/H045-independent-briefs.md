@@ -83,4 +83,3 @@ native followup_task on 2026-10-09 UTC; root retains integration ownership.
 No code or Lean changes. Launch inherits the unchanged artifact validation
 ./scripts/check.sh > /tmp/ecdlp-h044-information-check.log 2>&1 (exit0,
 366 existing audits). This does not certify proposals or paper arguments.
-
