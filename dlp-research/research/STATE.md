@@ -33,12 +33,13 @@ withheld across roles; exact briefs in H041-independent-briefs.md.
 - grok / grok-4.7: RUNNING fused-fullwork-grok.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-fused-fullwork-grok-20261008-r1`.
 - acpRegistry_factory_droid / claude-fable-5.1: COMPLETED adaptive-information-fable.
-  Raw report saved; no claimed survivor. New autocorrelation statistic and signed
-  interval repair need scope/cost correction. Native Astra
-  `/root/h007_additive_relations`: independent mathematical review RUNNING.
+  Raw report saved; no claimed survivor. H041-information-disposition.md retains
+  a narrow centered-autocorrelation bound and valid least-absolute-residue
+  recovery, with peak construction/decoding/confidence costs explicit. Native
+  Astra mathematical and Sol cost/recovery reviews COMPLETED; no experiment.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-adaptive-information-fable-20261008-r1`.
 Fresh live catalogue confirms exact targets; no substitution or provider
-failure. Grok initial task live; native Astra information review running.
+failure. Only Grok initial task remains live; no pending native reviews.
 All delegates read-only: no runs/imports/edits/children/experiments/commits.
 No H034 reset, stopped-role reroute or duplicate H039 hybrid. Root alone
 integrates. Best supported exponent1/2; complete-work improvement NONE.
@@ -51,6 +52,9 @@ Primary-cost checkpoint validation: ./scripts/check.sh >
 /tmp/ecdlp-h041-primary-check.log 2>&1 exit0,366 existing audits; no new Lean
 claim. Root primary read confirms relation cost threshold p^(1/2-1/m), with
 setup, useful relation count and linear-algebra costs separately charged.
+Information-review validation: ./scripts/check.sh >
+/tmp/ecdlp-h041-information-check.log 2>&1 exit0,366 existing audits; no Lean
+claim changed. Paper reviews do not establish an executable improvement.
 
 ## H040 completed independent ideation
 
