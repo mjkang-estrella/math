@@ -13,9 +13,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 - I19: the [structural report](iterations/i19-fresh-structural-discovery.md) proves a technical signed Saxl quotient and identifies its narrow-partition gap; two other screens yield an unresolved unimodality route and a weighted-switch counterexample. No substantial finding is proposed.
 - I20: the [kinetic report](iterations/i20-pde-kinetic-discovery.md) is a scoped gap record. It proves technical seed-count and initial-contact results, but microscopic selection, general-potential fluctuations and the dynamical mean correction remain unproved.
 - I21: the [signed Saxl follow-up](iterations/i21-signed-saxl-dominance.md) constructs signed dominance maps and arbitrary-width quotients but proves specific failures of the proposed coverage. The refined conjecture remains unproved; this route is parked pending a different uniform mechanism.
-- I22: [fresh combinatorial and algorithmic discovery](iterations/iteration22-combinatorial-discovery-task.json) is running after the topology route closed as technical only.
+- I22: the [combinatorial report](iterations/i22-combinatorial-discovery.md) retains two complete technical deductions, entropy/DP-coloring gaps, and a prior-art rejection of approximate PSD-rank strengthening. No substantial finding is proposed.
 - I23: [connected kinetic fluctuation research](iterations/iteration23-kinetic-connected-fluctuations-task.json) targets the missing normalized interacting-component estimate from I20.
 - I24: [elementary-unimodality research](iterations/iteration24-elementary-unimodality-task.json) now develops the separate chromatic-function route first screened in I19.
+- I25: [matching-entropy research](iterations/iteration25-matching-entropy-improvement-task.json) seeks a new bound or rigorous obstruction beyond I22's subcubic deduction and separator identity.
 
 These are live task launch records, not accepted findings. The four-finding pause checkpoint remains a historical snapshot.
 
@@ -123,6 +124,16 @@ The [completed follow-up](iterations/i21-signed-saxl-dominance.md) constructs ac
 The source triangle projection extends to every band width s, but a width-w target requires 2m+1≤(2w+1)s. In particular, width-two targets require s≥ceil((2m+1)/5), even with optimistic full band support. A signed version of the companion's column-component separation is also obtained; components with a bounded number of columns cannot reach the same narrow family. None supplies the missing uniform signed constituent argument. Actual growing-width band support, pre-twist exterior vectors, or another new construction would be needed before reopening this route.
 
 The parent read the full report and reproduced all three commands. Verification passes for 80 sealed artifacts, 20 frozen inputs, 21 pinned files, 42 source contracts and 14 primary contracts. Exact checks cover 928 joint-sector multiplicities, 28 constructed-map ranks, 1,452 intertwiner identities and two new literal projection cases; I19 diagnostics also reproduce. Shared-index drift is separate, with no other live-input change. [Parent verification](experiments/i21-parent-verification.json). No independent proof/significance acceptance or count increment is assigned. The freed discovery slot moves to [I24 elementary unimodality](iterations/iteration24-elementary-unimodality-task.json).
+
+## Iteration 22: technical entropy and algorithmic deductions
+
+The [completed report](iterations/i22-combinatorial-discovery.md) gives a polynomial independence-oracle implementation of the source's one-sample prophet rule for binary rational observations. A cardinality perturbation and standard submodular minimization compute the exact largest density flat, preserving the rule against its full-seed order adversary. This is a technical implementation of existing machinery, with no approximate-real observation claim.
+
+It also proves the sharp subcubic matching-entropy coefficient (1−1/m) log(3)/(2 log(3/2)) on 2m vertices, using a proved three-category scalar inequality, H≥F/m and the source's sharp Klee examples. The unrestricted coefficient-3/2 target remains unproved. Exact tight-cut entropy gluing exposes a positive separator contribution, so separate child bounds do not imply the parent bound. The near-tight conditioning estimate does not supply a prescribed-mean sampler or eliminate this contribution. [I25](iterations/iteration25-matching-entropy-improvement-task.json) directly investigates stronger covariance/face estimates and separator compensation, with counterexample searches.
+
+Two other screens remain scoped: a connected correspondence cover on C4 blocks the list proof's global-bin transfer, without refuting linear DP Hadwiger; an existing primary low-rank approximation defeats the proposed approximate PSD-rank strengthening, without contradicting the exact-rank source theorem.
+
+The parent read the full report and reproduced the checks. Verification passes for 162 sealed artifacts, 107 pinned sources, 236 source contracts, 14 frozen inputs and 18 primary artifacts. Diagnostics include 2,688 exact density instances, tight-cut and conditioning checks, source extremizers through m=7, 20 connected covers and a 16,471-point numerical scalar grid. The scalar grid and floating entropy errors are illustrative; the report provides the general proofs. [Parent verification](experiments/i22-parent-verification.json) records these limits. Shared-ledger drift is separate. No independent proof/significance acceptance or count increment is assigned.
 
 ## Continuation rules
 

@@ -1,0 +1,1346 @@
+                                                        Nearly Tight Sample Complexity for Matroid
+                                                               Online Contention Resolution
+                                                          Moran Feldman∗             Ola Svensson†            Rico Zenklusen‡
+
+
+
+
+arXiv:2507.09507v1 [cs.DS] 13 Jul 2025
+                                                                                        Abstract
+                                                 Due to their numerous applications, in particular in Mechanism Design, Prophet Inequalities
+                                             have experienced a surge of interest. They describe competitive ratios for basic stopping time
+                                             problems where random variables get revealed sequentially. A key drawback in the classical
+                                             setting is the assumption of full distributional knowledge of the involved random variables,
+                                             which is often unrealistic. A natural way to address this is via sample-based approaches, where
+                                             only a limited number of samples from the distribution of each random variable is available.
+                                             Recently, Fu, Lu, Gavin Tang, Wu, Wu, and Zhang (2024) showed that sample-based Online
+                                             Contention Resolution Schemes (OCRS) are a powerful tool to obtain sample-based Prophet
+                                             Inequalities. They presented the first sample-based OCRS for matroid constraints, which is a
+                                             heavily studied constraint family in this context, as it captures many interesting settings. This
+                                             allowed them to get the first sample-based Matroid Prophet Inequality, using O(log4 n) many
+                                             samples (per random variable), where n is the number of random variables, while obtaining a
+                                             constant competitiveness of 1/4 − ε.
+                                                 We present a nearly optimal sample-based OCRS for matroid constraints, which uses only
+                                             O(log ρ·log2 log ρ) many samples, almost matching a known lower bound of Ω(log ρ), where ρ ≤ n
+                                             is the rank of the matroid. Through the above-mentioned connection to Prophet Inequalities,
+                                             this yields a sample-based Matroid Prophet Inequality using only O(log n+log ρ·log2 log ρ) many
+                                             samples, and matching the competitiveness of 1/4 − ε, which is the best known competitiveness
+                                             for the considered almighty adversary setting even when the distributions are fully known.
+
+
+
+
+                                         ∗
+                                           Department of Computer Science, University of Haifa, Haifa, Israel. Email: moranfe@cs.haifa.ac.il.
+                                         †
+                                           School of Computer and Communication Sciences, EPFL, Lausanne, Switzerland. Email: ola.svensson@epfl.ch.
+                                         ‡
+                                           Department of Mathematics, ETH Zurich, Zurich, Switzerland. Email: ricoz@ethz.ch.
+1       Introduction
+The classical prophet inequality, introduced and solved by Krengel, Sucheston, and Garling [KS77;
+KS78], is a cornerstone of optimal stopping theory.1 In this problem, an agent observes a sequence
+of values drawn from independent known distributions, and must irrevocably decide at each step
+whether to accept the current value and stop, or discard this value and continue. The goal is to
+maximize the expectation of the single accepted value. The seminal result of [KS78] shows that a
+simple threshold-based strategy can achieve an expected value of at least 1/2 of what a “prophet”,
+who knows all values in advance, could obtain. They also showed that this ratio is optimal.
+    In recent years, the deep connections between the prophet inequality problem and Algorithmic
+Game Theory have motivated generalizations beyond the single accepted value setting. For example,
+applications in online auctions and pricing, such as the simple and practical posted-price auctions,
+often necessitate the selection of a set of values (also known as items in this context). This has led to
+the study of prophet inequalities under complex combinatorial constraints (see [HKS07; CHMS10;
+CFPV19; Luc17] and references therein). A powerful and widely studied example of such a prophet
+inequality generalization is the Matroid Prophet Inequality, introduced by Kleinberg and Weinberg
+[KW12], where the set of chosen items must satisfy a matroid constraint. Matroids are a rich
+combinatorial constraint family that capture many interesting setting.2 Impressively, Kleinberg
+and Weinberg showed that the optimal 1/2-competitive ratio extends to all matroids. However,
+a major caveat of all generalizations along this line is the strong assumption that the underlying
+value distributions are perfectly known. To address this limitation, a newer sample-based model
+has been suggested (see [AKW14]). In this model, an algorithm does not know upfront the value
+distributions, and can access them only by sampling from them. When the number of samples is
+large, this model recovers the classical setting in which the value distributions are known. Thus,
+the focus in the sample-based model is on designing algorithms that use a small number of samples.
+    Prophet inequality problems are related to Online Contention Resolution Schemes (OCRS),
+which are a versatile tool introduced by Feldman, Svensson, and Zenklusen [FSZ21] to model
+stochastic selection processes. The OCRS setting for a matroid M = (N, I) is defined as follows:
+given an input vector x ∈ [0, 1]N in the matroid polytope (i.e., x represents the marginals of some
+distribution over sets in I), nature draws a random active set R(x) ⊆ N that includes each element
+e ∈ N independently with probability xe (notice that R(x) is drawn from a product distribution;
+in the following, we refer to this distribution as D(x)). After R(x) is drawn by nature, the elements
+of R(x) arrive one-by-one in an adversarial order, and, upon each arrival, an algorithm must make
+an irrevocable decision to either select the element or discard it, while keeping the set of accepted
+elements independent in the matroid M at all times. The performance of an OCRS is measured
+by its c-selectability, which is the minimum probability that an element e is selected, conditioned
+on it being active (i.e., e ∈ R(x)).
+    OCRSs have found numerous applications, and have also been considered for various other
+combinatorial constraints beyond matroids, for other objectives, non-independent distributions,
+and also for weaker adversaries (see [FSZ21; AW18; LS18; PRSW24; GHKL24; MMG25; YK25]
+and references therein). A typical way to link them to prophet inequalities is by designing threshold-
+    1
+     Garling, although not a co-author of these seminal papers, is credited by Krengel and Sucheston for providing a
+result that leads to the tight 1/2-competitiveness of the prophet inequalities. This is why Garling is typically credited
+in this context.
+   2
+     Formally, a matroid M = (N, I) consists of a finite set N , called ground set, and a nonempty family I ⊆ 2N
+of subsets of N , called independent sets, that satisfy (i) if I ∈ I and J ⊆ I, then J ∈ I, and (ii) if I, J ∈ I with
+|J| > |I|, then there exists e ∈ J \ I such that I ∪ {e} ∈ I. We refer the interested reader to [Oxl92; Wel10] and
+[Sch03, Volume B] for further information on matroids.
+
+
+
+                                                           1
+based algorithms that select for each element e ∈ N a threshold weight τe ∈ R≥0 above which an
+element is considered for selection. For a given set of thresholds (over which one needs to optimize),
+the problem can be translated to the one of designing an OCRS, where an element is considered to
+be active if its revealed value is above the threshold.
+    Fu, Lu, Tang, Wu, Wu, and Zhang [Fu+24] showed that also sample-based prophet inequalities
+can be constructed through the framework of OCRSs, namely by designing sample-based OCRSs.
+In a sample-based OCRS, the vector x is unknown, and the algorithm is only given access to k
+independent samples from D(x) (where k should be chosen to be the smallest value that still allows
+for obtaining the desired selectability). In this problem, we assume the strongest type of adversary,
+known as the almighty adversary, who can choose the order of the elements as a function of both the
+realization of R(x) and the randomness of the algorithm. The reduction provided in [Fu+24] shows
+that a c-selectable sample-based OCRS can be transformed into a sample-based Matroid Prophet
+Inequality that is (c−ε)-competitive. This works for any ε > 0, as long as one has at least Oε (log n)
+samples (per element), where n := |N | is the size of the ground set N . The Oε (log n) samples are
+needed for the reduction, and if the sample-based OCRS itself uses k samples, then the resulting
+sample-based Matroid Prophet Inequality algorithm uses Oε (log n) + k many samples altogether.
+Leveraging this reduction, [Fu+24] presented the first constant-competitive sample-based Matroid
+Prophet Inequality, by developing a (1/4 − ε)-selectable OCRS using O(log4 n) samples.
+    In this work, we significantly improve the sample complexity for sample-based matroid OCRS,
+obtaining the following bound through a randomized algorithm. (We use rank(M ) to denote the
+rank of the matroid M , i.e., the size of the largest independent set in it.)
+Theorem 1.1. For any ε > 0, there is an polynomial-time sample-based randomized online con-
+tention resolution scheme for any matroid M with a selectability of 1/4 − ε against the almighty
+adversary. This algorithm uses O(log rank(M ) · log2 log rank(M )) many samples.
+    Through the reduction in [Fu+24], our work immediately yields a (1/4 − ε)-competitive Matroid
+Prophet Inequality algorithm with the above sample complexity plus O(log n) samples that are
+incurred by the reduction itself.
+    Our result is tight in two dimensions up to small factors. First, the sample complexity is nearly
+optimal. As was shown in [Fu+24], even an offline contention resolution scheme requires Ω(log n)
+samples (for a matroid M with log n ≈ log rank(M )) to achieve any constant selectability, leaving
+only a small gap of log2 log rank(M ) compared to our upper bound. Second, the selectability of 1/4 is
+the best known factor against an almighty adversary, even in the classic setting where the probability
+vector x is fully known [FSZ21]. One should note, however, that while the number of samples used
+by our algorithm is nearly tight for sample-based matroid OCRSs, no similar lower bounds are
+known for sample-based Matroid Prophet Inequality. Indeed, the sample complexity for the last
+problem is highly related to the notorious Matroid Secretary Problem: a lower bound showing that
+more than a single sample is necessary to get a constant competitive ratio for sample-based Matroid
+Prophet Inequality would immediately rule out the possibility of getting such a competitive ratio for
+the Matroid Secretary Problem using a class of algorithms known as “order-oblivious algorithms”
+(introduced by [AKW14]). Such a result would be a major step towards refuting the famous Matroid
+Secretary Conjecture [BIKK18], which has been open for over 15 years, and claims that the Matroid
+Secretary Problem enjoys an algorithm with a constant competitive ratio. For more information on
+the Matroid Secretary Problem, and its connections to Contention Resolutions Schemes, we refer
+the interested reader to [BIKK18; Dug22; Lac14; FSZ15] and references therein.
+
+Outline. The remainder of this paper is organized as follows. In Section 2, we introduce key
+OCRS concepts of [FSZ21] for the known x setting, and how OCRSs can be constructed by decom-
+
+                                                  2
+posing the matroid through a chain. Section 3 details our main contribution: the novel sample-based
+OCRS algorithm, which also uses a (sample-based) chain decomposition. We first present our core
+subroutine, which shows how to construct a single link of the chain using samples and a carefully
+randomized number of steps. Then, we show how this procedure can be iterated to build a full
+spanning chain, which then defines our algorithm. The core technical analysis of our algorithm is
+presented in Sections 4 and 5, where we formally bound the error probabilities and prove that our
+randomized procedure makes sufficient progress in each step, which ensures that the construction
+succeeds with high probability.
+
+
+2    OCRS for Known x via Spanning Chains
+In this section, we introduce key concepts from the OCRS of [FSZ21] for the setting of a known
+vector x. This provides context for our definitions, and sets the stage for the modifications detailed
+in Section 3, where we formally describe our algorithms. Let us begin with a central combinatorial
+object termed spanning chain, which is a laminar family of sets that includes both N and ∅ as
+members of the family.
+
+Definition 2.1 (spanning chain). A spanning chain of a finite set N is a tuple C = (C0 , . . . , Ck )
+with N = C0 ⊇ C1 ⊇ · · · ⊇ Ck = ∅. The sets Ci in a spanning chain are called links.
+
+    The number k of links in the spanning chain can vary, and we refer to it as the length of the
+spanning chain. A spanning chain is used to guide the selection decisions of the OCRS of [FSZ21]
+(but [FSZ21] refer to this chain as “chain decomposition”). The spanning chain used by [FSZ21]
+arises naturally from an iterative procedure that gets as input a matroid M = (N, I), a vector
+x ∈ PM , where PM ⊆ [0, 1]N is the matroid polytope of M , and a parameter τ ∈ (0, 1). Intutively,
+the parameter τ upper bounds the maximum probability that an element is “spanned” (i.e., cannot
+be picked due to the selection of other elements).
+    The iterative procedure starts by setting C0 = N . Subsequent links of the spanning chain are
+constructed by identifying elements that are likely to be spanned. For example, the logic used to
+construct the link C1 from C0 is specified by the following frame, where span(S) denotes the span
+of a set S in the matroid M , i.e., span(S) = {e ∈ N : r(S ∪ {e}) = r(S)}, where we denote by
+r(S) = max{|I| : I ∈ I, I ⊆ S} the rank function of M .
+
+     MinimalLinkConstruction to find C1 from C0 = N :
+        • Initialize A0 = ∅.
+        • Assuming we have defined A0 , A1 , . . . , Ai−1 , let
+
+                            Ai = {e ∈ C0 : Pr[e ∈ span((R(x) ∪ Ai−1 ) \ {e})] > τ }.
+
+            That is, Ai contains those elements that are likely to be spanned assuming that the
+            elements of Ai−1 are contracted.3
+     Notice that Ai−1 ⊆ Ai for every i ≥ 1, and Ai = Ai−1 implies Aj = Ai for every j > i.
+     Thus, the sequence of sets is guaranteed to stabilize after at most |C0 | iterations. We
+     define the second link C1 of the spanning chain to be this final (stabilized) set.
+
+   3
+     Intuitively, contracting elements in a matroid means that one views these elements as implicitly being part of
+every set. More formally, contracting a set A in the matroid M produces a new matroid over the ground set N \ A
+whose independent sets are {S ⊆ N \ A : r(S ∪ A) = r(S) + r(A)}.
+
+
+                                                        3
+    The construction of the next links of the spanning chain is done similarly. Specifically, C2 is
+generated from C1 by applying the same logic to the matroid obtained by restricting M to the set
+C1 ,4 C3 is generated from C2 by applying the same logic to the matroid obtained by restricting M
+to C2 , and so on. This construction process continues until no element is likely to be spanned, i.e.,
+an empty link Ck = ∅ is generated. The main technical observation of [FSZ21] in this context was
+that this iterative construction process is guaranteed to eventually generate such an empty link
+when x ∈ λ · PM for some λ ∈ [0, 1) and τ > λ.
+    The spanning chain C = (C0 , C1 , . . . , Ck ) resulting from the above construction defines a natural
+OCRS that is based on the following greedy selection rule.
+
+      GreedySelectionRule:
+        • Upon arrival of an active element e ∈ N , let i be the unique index with e ∈ Ci \Ci+1 .
+        • Let Mi be the matroid obtained from M by restricted to Ci and contracting Ci+1 .
+        • Accept e if and only if adding e to the set of elements of Ci \ Ci+1 already accepted
+          preserves independence in Mi .
+
+    It is important to note that the greedy selection rule always produces an independent set in the
+matroid because the spanning chain decomposes the ground sets into parts that can be considered
+separately (see, e.g., Theorem 5.1 in [Sot13]).
+    To analyze the selectability of the OCRS obtained in this way, it is convenient to have the
+following definition.
+Definition 2.2 (C-freeness of an element). Let M = (N, I) be a matroid, x ∈ PM , and C = (Ci )ki=0
+be a spanning chain of N . Consider an element e ∈ N , and let i be the unique index for which
+e ∈ Ci \ Ci+1 . Then, the C-freeness of e (with respect to M and x ∈ PM ) is
+                               Pr[e ̸∈ span(((R(x) \ {e}) ∩ Ci ) ∪ Ci+1 )].
+    Note that the C-freeness of e can be interpreted as the probability that GreedySelectionRule
+accepts e when the active elements are the elements of R(x) ∪ {e}, and e is the last of them to
+arrive. Since the probability of e to be accepted by GreedySelectionRule can only increase
+when e arrives earlier, the C-freeness of e is also a lower bound on the probability that e is accepted
+by GreedySelectionRule when the active elements are the elements of R(x) ∪ {e}, regardless
+of the order in which these elements arrive.
+    For the spanning chain C constructed by the above iterative process, the construction guarantees
+that the C-freeness of each element e ∈ N is at least τ . The following definition gives an easy way
+to state such observations.
+Definition 2.3 (c-balanced spanning chain for x). Let M = (N, I) be a matroid and let x ∈ PM .
+A spanning chain C of N is called c-balanced for x if, for each element e ∈ N , its C-freeness with
+respect to M and x is at least c.
+   For the purpose of the OCRS we construct in this paper, which only has sample access to x,
+we will need to consider distributions over spanning chains that are c-balanced for some x ∈ PM .
+Definition 2.4 (c-balanced spanning chain distribution for x). Let M = (N, I) be a matroid and
+let x ∈ PM . A distribution S over spanning chains is called c-balanced for x if, for each element
+e ∈ N,
+                     EC∼S [C-freeness of e with respect to M and x ∈ PM ] ≥ c,
+  4
+    Restricting a matroid M = (N, I) to a set C ⊆ N means removing all elements that do not belong to C from
+the ground set of M . The resulting matroid is denoted by M |C .
+
+
+                                                     4
+i.e., the expected C-freeness of e with respect to M and x, over a random spanning chain C drawn
+from S, is at least c.
+    We end this section by formally connecting the c-balancedness of a spanning chain distribution
+to the selectiveness of the OCRS that can be derived from it via GreedySelectionRule.
+Theorem 2.5. Recall that the OCRS setting consists of a matroid M = (N, I) and a vector x in
+the matroid polytope PM . Given an oracle that samples a single spanning chain from a distribution
+S that is c-balanced for λx (for some c, λ ∈ [0, 1]), one can implement a λ · c-selectable OCRS for
+M without any additional access to x.
+Proof. The OCRS works as follows. Let C = (C0 , C1 , . . . , Ck ) be the spanning chain sampled
+from the distribution. Every active element e is immediately and independently discarded with
+probability 1 − λ. Otherwise, e is fed to the greedy selection rule GreedySelectionRule, and
+is accepted if the rule accepts it. Notice that from the point of view of the rule, the set of active
+elements that it receives is distributed like R(λx). Thus, by the c-balancedness of the distribution
+from which C is drawn, each element e is accepted with probability at least c conditioned on it being
+fed to GreedySelectionRule. The theorem now follows by recalling that each active element is
+fed to GreedySelectionRule with probability exactly λ.
+
+
+3    OCRS with Sample Access to x
+Theorem 2.5 shows that to construct a sample-based OCRS for a matroid M , it suffices to describe
+an oracle that has only sample access to the distribution D(x), but still manages to sample from
+some distribution over spanning chains that is c-balanced for the vector λx. Since sample access
+to D(x) implies sample access also to D(λx), one can rephrase the task of the oracle as follows.
+Given only sample access to D(x) for some vector x ∈ λ · PM , the oracle should sample from some
+distribution over spanning chains that is c-balanced for the vector x. The rest of this paper is
+devoted to the implementation of such an oracle.
+    As explained in Section 2, in the known x setting, the oracle can return a chain whose links
+are constructed using the MinimalLinkConstruction procedure. This procedure relies on re-
+peatedly testing conditions of the form Pr[e ∈ span(·)] > τ . When x is unknown, these spanning
+probabilities cannot be computed exactly. The natural alternative is to estimate these probabilities
+using samples drawn from D(x). This sampling-based approach, however, introduces the risk of
+estimation errors. To bound the overall error probability, we must control the total number of
+estimations performed. Fortunately, the method of [FSZ21] provides a crucial starting point for
+such a bound: the spanning chain obtained by this method has a length of only O(log rank(M ))
+under the assumption λ + ε ≤ τ for any constant ε > 0.
+    This logarithmic chain length suggests a path toward a construction using a small number of
+samples. Specifically, if constructing each link required only a few probability estimations, then we
+would achieve a low total sample complexity for the construction of the entire chain. For example, if
+each link demanded only a constant number of estimations (per element), a total of O(log rank(M ))
+estimations would be needed for constructing the entire chain. By standard Chernoff bounds,
+the error probability for each estimation can then be made as small as 1/polylog(rank(M )) us-
+ing O(log log rank(M )) samples per estimation, leading to a desirable total sample complexity of
+O(log rank(M ) · log log rank(M )) for the chain construction.
+    Unfortunately, this reasoning hits a major obstacle. The MinimalLinkConstruction pro-
+cedure iteratively defines sets A0 , A1 , . . . until they stabilize, which could potentially take up
+to Ω(rank(M )) iterations per link. Even O(log rank(M )) iterations would be too much, as it
+
+                                                 5
+will require MinimalLinkConstruction to estimate Ω(log rank(M )) quantities for each of the
+O(log rank(M )) links, leading to a suboptimal total sample complexity of Ω(log2 rank(M )).
+    One of our key technical insights is that the stabilization problem can be circumvented by trun-
+cating the iterative construction process of the links after a random number h of steps drawn from
+a carefully designed distribution over {1, 2, . . . , O(log log rank(M ))}. By deliberately stopping the
+process after h iterations, rather then letting it continue until stabilization, we gain explicit control
+over the number of estimations used per link, which in turn allows us to manage the total sample
+complexity. More specifically, recall that the spanning chain consists of O(log rank(M )) links. For
+each link, our procedure needs O(log log rank(M )) estimations by design, and following our earlier
+reasoning, each of these estimations can be performed with high accuracy using O(log log rank(M ))
+samples. The total sample complexity of our approach for constructing the spanning chain is the
+product of these terms, i.e.,
+
+ O(log rank(M )) × O(log log rank(M )) × O(log log rank(M )) = O(log rank(M ) · log2 log rank(M )).
+ |              {z        }    |                   {z           }   |          {z          }
+         links in chain            estimations per link               samples per estimation
+
+Notice that this matches the near-optimal sample complexity guaranteed by Theorem 1.1. We note,
+however, that a key challenge is to ensure that the randomized truncation does not significantly
+affect the expected C-freeness of the elements. This challenge is the reason why the distribution of
+h has to be carefully chosen.
+    We now proceed to formally define the procedure for constructing a single link (Section 3.1),
+which is then used in Section 3.2 to sample from a distribution over spanning chains. This sampling
+procedure implements the oracle from Theorem 2.5, and thus, yields our OCRS (Theorem 1.1).
+
+3.1         Procedure for Constructing a Single Link
+The input to the SingleOcrsLink algorithm is a matroid M = (N, I), a vector x ∈ PM , and
+parameters ρ, τ, ε. Here, τ is the spanning probability threshold and ε > 0 is an error parameter.5
+
+          SingleOcrsLink(M, x, ρ, τ, ε):
+                          l                                 m
+            1 Let η =     1 + log1+ε lnε3ρ , and choose h at random from {1, . . . , η} according to
+                 the distribution defined by
+                                                1
+                     Pr[h = 1] =                                and      Pr[h = h] = ε · Pr[h < h] for h ∈ {2, . . . , η}.
+                                            (1 + ε)η−1
+
+            2 Let A0 = ∅.
+                          l                       m
+                                            ln ρ
+            3 Let q =              ln                   .
+                                6
+                              τ ε2           ε
+            4 for h ← 1 to h do
+            5        Let S1 , S2 , . . . , Sq be q independent samples from D(x).
+            6        Ah = {e ∈ N : Pr      c
+                                             S∼(S1 ,...,Sq ) [e ∈ spanM (Ah−1 ∪ S)] > τ }.
+            7 return Ah .
+
+
+
+     5
+    In SingleOcrsLink, as well as later on, we index the span and rank function, span and r, respectively, by the
+corresponding matroid when we want to be explicit about the underlying matroid.
+
+
+
+                                                                              6
+The SingleOcrsLink procedure is used iteratively by OcrsChain (see Section 3.2) to construct
+the spanning chain. In each iteration, it is called on a matroid obtained by restricting the matroid
+to the previous link of the chain. However, the parameter ρ is always set to be roughly the rank of
+the original matroid, and it remains fixed across all calls. In Step 6 of the algorithm, we use c    Pr[·] to
+denote the probability of an event, estimated from q samples S1 , . . . , Sq of D(x). Formally, for any
+event E depending on a set S, we have Pr c
+                                           S∼(S1 ,...,Sq ) [E] = |{p ∈ [q] : E is satisfied when S = Sp }|/q.
+    To see that Step 1 defines a valid probability distribution over {1, . . . , η}, we note that its
+definition implies that the equality Pr[h ≤ h] = (1 + ε) Pr[h ≤ h − 1] holds for every h ∈ {2, . . . , η}.
+Thus,
+           η
+                                                                                     1
+                Pr[h = h] = Pr[h ≤ η] = (1 + ε)η−1 Pr[h ≤ 1] = (1 + ε)η−1 ·                 = 1.
+           X
+
+          h=1
+                                                                                 (1 + ε)η−1
+
+The key properties of this distribution, which motivate its use, are that the probability of termi-
+                                                         3
+nating after a single iteration is small (Pr[h = 1] ≤ lnε ρ ), and for every larger number h ∈ {2, . . . , η}
+of iterations, the probability of stopping after h iterations is small compared to the probability
+of stopping in an earlier iteration (i.e., Pr[h = h] = ε · Pr[h < h]). To analyze the effect of the
+randomized truncation after h̄, the concepts of (A, τ )-good and (A, τ )-bad elements are helpful.
+
+Definition 3.1 ((A, τ )-bad, (A, τ )-good). Consider a matroid M = (N, I), x ∈ PM , a number
+τ ∈ [0, 1], and a set A ⊆ N . For an element e ∈ N , we say that
+   • e is (A, τ )-bad (with respect to M and x) if e ̸∈ A and Pr[e ∈ span(A ∪ R(x))] > τ , and
+   • e is (A, τ )-good (with respect to M and x) if e ̸∈ A and Pr[e ∈ span(A ∪ R(x))] ≤ τ .
+Notice that elements of A itself are neither (A, τ )-bad nor (A, τ )-good.
+
+    To build intuition, we analyze an idealized setting in which the estimates c    Pr[·] used by Sin-
+gleOcrsLink are identical to the true probabilities they estimate. In this case, the sequence of
+sets A0 , A1 , . . . becomes deterministic, and the only source of randomness in the output A = Ah is
+from the stopping time h. Consider an arbitrary element e ∈ N . By the construction rule, if e is
+(Ah−1 , τ )-bad, it is immediately included in the set Ah (assuming h ≥ h̄). Thus, since an element
+must be outside a set to be considered bad with respect to it, e can be (Ah−1 , τ )-bad for at most
+one index h. Let this unique index be he . By the above discussion, e is (A, τ )-bad with respect to
+the final output A = Ah of SingleOcrsLink only if this procedure stops after iteration he . The
+probability of this event depends on the value of he .
+   • Case 1: he > 2. The “bad” outcome for e occurs if h = he − 1. The “good” outcomes, where
+     e is left out of A but is not bad, occur whenever h < he − 1. Since he − 1 ≥ 2, the distribution
+     of h obeys the relation Pr[h = he − 1] = ε · Pr[h < he − 1], which directly translates to
+     Pr[e is (A, τ )-bad] = ε · Pr[e is (A, τ )-good].
+   • Case 2: he = 2. The “bad” outcome occurs in this case if h = 1. It never holds that
+     h < he − 1 = 1, so the probability of a “good” outcome is 0. Thus, in this special case, a
+     multiplicative relation does not hold between the probabilities of “good” and “bad” outcomes.
+     Instead, we rely on the fact that the distribution was designed to make the probability of the
+                                                                        3
+     bad outcome of this case small in absolute terms (Pr[h = 1] ≤ lnε ρ ).
+   • (No Bad Outcome) If he = 1, then e is in every set Ah , and thus, is never bad with respect
+     to the output set A. Otherwise, if no he value exists, e is always good when it is not part of
+     the output set.
+Combining these cases, the probability that an element e is (A, τ )-bad is either zero, a small
+additive quantity (if he = 2), or ε times the probability that it is (A, τ )-good (if he > 2). This
+
+                                                     7
+provides the precise intuition for the general bound in the proposition below, which has the form
+Pr[bad] ≤ ε · Pr[good] + small-term. The fact that an element is likely to be (A, τ )-good is desirable,
+as this property contributes towards a τ -balancedness for the final chain.
+    The above informal argument is made rigorous in Section 5, where we account for estimation
+errors to prove the following proposition. (The need to handle these sample errors is the reason
+that this proposition uses (1 − ε)τ , rather than τ , as the spanning probability threshold in the
+invocation of SingleOcrsLink.)
+
+Proposition 3.2. Consider a matroid M = (N, I), a vector x ∈ PM , and numbers ρ ∈ Z≥3 ,
+τ ∈ (0, 1], and ε ∈ (0, τ ]. Let A be the (random) output of SingleOcrsLink(M, x, ρ, (1 − ε)τ, ε).
+Then,
+                                                                       2ε3
+                    Pr[e is (A, τ )-bad] ≤ ε · Pr[e is (A, τ )-good] +      ∀e ∈ N,
+                                                                       ln ρ
+where being (A, τ )-bad or (A, τ )-good is with respect to the matroid M and the vector x.
+
+3.2      Constructing the Spanning Chain
+The OcrsChain procedure constructs a full spanning chain by iteratively applying the Sin-
+gleOcrsLink subroutine. The length ζ of the chain is determined by the rank ρ of the matroid6
+and the error parameter ε. After determining ζ, the procedure initializes the first link of the chain
+to be the entire ground set C0 = N , and the last link of the chain to be the empty set Cζ+1 = ∅.
+To construct the remaining links of the spanning chain, OcrsChain iterates from i = 1 to ζ.
+In each iteration i, it generates the link Ci by invoking SingleOcrsLink. Crucially, the input
+to the last subroutine is M |Ci−1 , i.e., the matroid M restricted to the elements of the previous
+link Ci−1 . This restriction naturally ensures that the resulting sequence of links is nested, i.e.,
+C0 ⊇ C1 ⊇ · · · ⊇ Cζ+1 .
+
+       OcrsChain(M, x, τ, ε):
+
+         1 Let ρ = max{rank(M ), 3}.
+                         ρ 
+         2 Let ζ = ε ln ε    .
+                   1
+
+         3 Let C0 = N and Cζ+1 = ∅.
+         4 for i ← 1 to ζ do
+         5      Let Ci be the output of SingleOcrsLink(M |Ci−1 , x|Ci−1 , ρ, (1 − ε)τ, ε).
+         6 return (C0 , C1 , . . . , Cζ+1 ).
+
+
+
+
+   The following is a corollary of Proposition 3.2. It shows that elements that are unlikely to be
+part of the last link of the spanning chain constructed by OcrsChain enjoy a good C-freeness.
+
+Corollary 3.3. Let M be a matroid, ε ∈ (0, 1/4), λ ∈ (0, 1 − 4ε], and x ∈ λ · PM . Let C =
+(C0 , . . . , Cζ+1 ) be the (random) output of OcrsChain(M, D(x), λ + 4ε, ε). Then, for every element
+e ∈ N,
+                                                                                       2ε
+                   Pr[C-freeness of e is at least 1 − λ − 4ε | e ̸∈ Cζ ] ≥ 1 − ε −              .
+                                                                                   Pr[e ̸∈ Cζ ]
+Proof. Let Cj ∈ C be the set with highest index that contains e. In other words, Cj is a smallest
+  6
+      If the rank of the matroid is a small constant, ρ is chosen to be a bit larger than it for technical reasons.
+
+
+                                                             8
+set containing e in the sequence C0 , . . . , Cζ ; and if this smallest set appears multiple times, we take
+the one with the highest index. Notice that conditioning on e ̸∈ Cζ is equivalent to conditioning
+on the event j ∈ {0, . . . , ζ − 1}.
+    Observe that x|Ci is a vector in the matroid polytope of M |Ci because, for every set S ⊆ Ci ,
+   e∈S xe ≤ rM (S) = rM |Ci (S). Thus, it makes sense to talk about an element being good or bad
+P
+
+with respect to the matroid M |Ci and the vector x|Ci . To simplify the terminology, we say, for
+i ∈ [ζ], that e is i-good if e is (Ci+1 , λ + 4ε)-good with respect to the matroid M |Ci and the vector
+x|Ci , and that e is i-bad if e is (Ci+1 , λ + 4ε)-bad with respect to this matroid and vector. Then,
+the C-freeness of e is at least 1 − λ − 4ε, if and only if e is j-good. Thus,
+
+   Pr[C-freeness of e is at least 1 − λ − 4ε | e ̸∈ Cζ ]
+                      = Pr[e is j-good | e ̸∈ Cζ ]
+                      = 1 − Pr[e is j-bad | e ̸∈ Cζ ]
+                                            ζ−1
+                                    1
+                      =1−                       Pr[j = i] · Pr[e is i-bad | j = i]
+                                            X
+                               Pr[e ̸∈ Cζ ] i=0
+                                            ζ−1
+                               1                                                                 2ε3
+                                                                                                              !
+                      ≥1−                  Pr[j = i] · ε · Pr[e is i-good | j = i] + Pr[j ≥ i] ·
+                                       X
+                          Pr[e ̸∈ Cζ ] i=0                                                       ln ρ
+                                                                              ζ−1
+                                                                       1                       2ε3
+                      = 1 − ε · Pr[e is j-good | e ̸∈ Cζ ] −                       Pr[j ≥ i] ·
+                                                                               X
+                                                                  Pr[e ̸∈ Cζ ] i=0             ln ρ
+                                         1            2ε3
+                      ≥1−ε−                      ·ζ ·      ,
+                                    Pr[e ̸∈ Cζ ]      ln ρ
+
+where the second equality holds since the fact that e ̸∈ Cj+1 implies that e must be either j-good
+or j-bad. To see why the first inequality holds as well, observe that e can be either i-good or i-bad
+only if j = i. Furthermore, the event j ≥ i is independent of the result of the random construction
+of Ci+1 . Thus, by Proposition 3.2,
+
+                               Pr[e is i-bad | j ≥ i]
+  Pr[e is i-bad | j = i] =
+                                 Pr[j = i | j ≥ i]
+                                                           3
+                          ε · Pr[e is i-good | j ≥ i] + ln
+                                                        2ε
+                                                           ρ                                     Pr[j ≥ i] 2ε3
+                      ≤                                        = ε · Pr[e is i-good | j = i] +            ·     .
+                                  Pr[j = i | j ≥ i]                                              Pr[j = i] ln ρ
+
+The corollary now follows since ρ ≥ 3 guarantees that
+
+                       ε3      1  ρ  ε3
+                 ζ·        ≤ 1 + ln     ·      ≤ ε3 + ε2 (1 + ln ε−1 ) ≤ ε3 + ε ≤ 2ε.
+                      ln ρ      ε   ε     ln ρ
+     The preceding corollary establishes that, with high probability, elements achieve a high level
+of C-freeness whenever they are likely to be outside the terminal set Cζ . For this to be useful,
+we need to show that no element is likely to be in Cζ , which we do by showing that Cζ is empty
+with high probability. The proof of [FSZ21] for the known x setting can easily be adapted to show
+that this holds in an idealized world in which the estimates Pr[·] c are all perfect. Unfortunately,
+however, our sampling-based approach introduces estimation errors that require a careful analysis.
+In particular, because the construction of a link by SingleOcrsLink is done iteratively through
+the construction of multiple sets Ah , we must bound the accumulated effect of the sampling errors in
+all the iterations. To this end, to analyze the sequence A1 , A2 , . . . of sets, we introduce in Section 4
+
+                                                          9
+another sequence B1 , B2 , . . . of sets that dominates the former one in the sense that Ah ⊆ Bh for
+every h, and is easier to analyze. We provide more details in Section 4, where we prove the following
+proposition.
+Proposition 3.4. Let M be a matroid, λ ∈ (0, 1), x ∈ λ · PM , τ ∈ (λ, 1], ρ ∈ Z≥3 , and ε ∈ (0, 1/20].
+Let A be the output of SingleOcrsLink(M, ρ, D(x), (1 − ε)τ, ε). Then
+                                 E[r(A)] ≤ (1 + λ − (1 − 3ε)τ ) · rank(M ).
+
+Corollary 3.5. Let M be a matroid, ε ∈ (0, 1/20], λ ∈ (0, 1 − 4ε], and x ∈ λ · PM . Let C =
+(C0 , . . . , Cζ+1 ) be the (random) output of OcrsChain(M, D(x), λ + 4ε, ε). Then, with probability
+at least 1 − ε, we have Cζ = ∅.
+Proof. Consider an arbitrary integer 1 ≤ i ≤ ζ, and observe that x|Ci−1 ∈ λ · PM |C    because, for
+                                                                                   i−1
+every S ⊆ Ci−1 , it holds that e∈S xe ≤ λ · rM (S) = λ · rM |C (S). Thus, by Proposition 3.4,
+                              P
+                                                                        i−1
+
+                       E[r(Ci ) | Ci−1 ] ≤ (1 + λ − (1 − 3ε)(λ + 4ε)) · rank(M |Ci−1 )
+                                                                   
+                                        = 1 + 3ελ − 4ε + 12ε2 · r(Ci−1 )
+                                        ≤ (1 − ε) · r(Ci−1 ),
+where the last inequality uses λ ≤ 1 − 4ε. By the law of total expectation, the last inequality
+implies E[r(Ci )] ≤ (1 − ε) · E[r(Ci−1 )], and combining this inequality for all values of i yields
+                     E[r(Cζ )] ≤ (1 − ε)ζ · E[r(C0 )] = (1 − ε)ζ · r(N ) ≤ e−ε·ζ · ρ ≤ ε,
+where we use in the penultimate inequality that ρ is set to be at least r(N ) by OcrsChain. By
+Markov’s inequality, the last bound on E[r(Cζ )] implies that
+                        Pr[Cζ = ∅] = Pr[r(Cζ ) = 0] = 1 − Pr[r(Cζ ) ≥ 1] ≥ 1 − ε.
+   Combining the above results, we get the next theorem, which summarizes the properties of the
+spanning chain produced by OcrsChain.
+Theorem 3.6. Let M be a matroid, ε ∈ (0, 1/20], λ ∈ (0, 1 − 4ε], and x ∈ λ · PM . Let C =
+(C0 , . . . , Cζ+1 ) be the (random) output of OcrsChain(M, x, λ + 4ε, ε). Then, the distribution of C
+is a (1 − λ − 8ε)-balanced spanning chain distribution for x with respect to M .
+Proof. The expected C-freeness of each element e ∈ N can be lower bounded by
+              Pr[e ̸∈ Cζ ] · Pr[C-freeness of e is at least 1 − λ − 4ε | e ̸∈ Cζ ] · (1 − λ − 4ε)
+                       ≥ (Pr[e ̸∈ Cζ ](1 − ε) − 2ε) (1 − λ − 4ε)
+                       ≥ (Pr[Cζ = ∅](1 − ε) − 2ε) (1 − λ − 4ε)
+                                         
+                       ≥ (1 − ε)2 − 2ε (1 − λ − 4ε)
+                       ≥ (1 − 4ε)(1 − λ − 4ε)
+                       ≥ 1 − λ − 8ε,
+where the first inequality holds by Corollary 3.3 and the third one by Corollary 3.5.
+    Since sample access to R(λx) can be simulated via sample access to R(x), as was mentioned
+in the beginning of this section, Theorem 3.6 can be used to implement the oracle required by
+Theorem 2.5. For the choice of λ = 1/2, this proves Theorem 1.1.7
+   7
+    Technically, we get in this way a weaker version of Theorem 1.1 in which ε is replaced with O(ε). However, this
+can be fixed by simply scaling down ε by an appropriate constant.
+
+
+                                                        10
+4     Guaranteeing Progress in Link
+In this section, we prove Proposition 3.4, which we repeat below for convenience.
+
+Proposition 3.4. Let M be a matroid, λ ∈ (0, 1), x ∈ λ · PM , τ ∈ (λ, 1], ρ ∈ Z≥3 , and ε ∈ (0, 1/20].
+Let A be the output of SingleOcrsLink(M, ρ, D(x), (1 − ε)τ, ε). Then
+
+                              E[r(A)] ≤ (1 + λ − (1 − 3ε)τ ) · rank(M ).
+
+     Note that the procedure SingleOcrsLink(M, n, D(x), (1 − ε)τ, ε) has two sources of random-
+ness. The first one is the choice of h, and the second one is the samples taken in line 5 of the
+procedure. To keep these separate, we would like the set Ai to be defined, for every integer
+0 ≤ i ≤ η, regardless of the value of h. This can be achieved by pretending (just for analysis
+purposes) that the upper bound of the loop on line 4 of SingleOcrsLink is η rather than h. This
+does not affect the output set A := Ah of this procedure. As a consequence of the fact that the sets
+A0 , A1 , . . . , Aη are all always defined now, we get the following observation.
+
+Observation 4.1. It holds that E[r(A)] ≤ E[r(Aη )].
+
+Proof. The observation holds since A is one of the sets A1 , A2 , . . . , Aη , and these sets obey A1 ⊆
+A2 ⊆ · · · ⊆ Aη .
+
+    In light of Observation 4.1, to prove Proposition 3.4, it suffices to upper bound E[r(Aη )], which
+is our goal in the rest of the section. A natural way to get such an upper bound would be to upper
+bound how quickly E[r(Ai )] increases when viewed as a function of i. However, we do not know of
+an easy way to do that directly. Instead, we define a new series of sets B0 , B1 , . . . , Bη , such that
+Ai ⊆ Bi for every integer 0 ≤ i ≤ η, and then upper bound the rate in which E[r(Bi )] increases
+as a function of i. To define this new series, we need the following tool (Lemma 4.2), a formal
+proof of which can be found in Section 4.1. In this tool, and in the rest of this section, given two
+sets S, T ⊆ M , we use the standard shorthand r(S | T ) := r(S ∪ T ) − r(T ). We also refer to this
+expression as the marginal contribution of the set S with respect to the set T .
+
+Lemma 4.2. For every set B ⊆ N and value α ∈ [0, 1), let us define
+                                             n            1                     o
+                   Tα (B) := argmaxT̄ ⊆N : r(T̄ | B) −       E[r(T̄ | B ∪ R(x))] .
+                                      B⊆T̄
+                                                         1−α
+
+Then, B ⊆ Tα (B). Furthermore,
+    • E[r(Tα (B) | B ∪ R(x))] ≤ (1 − α) · r(Tα (B) | B); and
+    • E[r(Q ∩ span(Tα (B) ∪ R(x)) | Tα (B))] ≤ α · r(Q | Tα (B)) for every set Q ⊆ N \ Tα (B).
+
+    Intuitively, Tα (B) is an extension of B obtained by adding to B sets whose expected marginal
+contribution with respect to B ∪ R(x) is much smaller than their expected marginal contribution
+with respect to B itself. This naturally implies that the expected marginal contribution of the entire
+set Tα (B) with respect to B ∪ R(x) is much smaller than the marginal contribution of Tα (B) with
+respect to B, which is the first bullet point of Lemma 4.2. Another consequence of the definition
+of Tα (B) is that the span of any sample, which has the same distribution as R(x), is unlikely to
+substantially overlap (in terms of span) with any set Q that is disjoint from Tα (B). This is formally
+stated by the second bullet point of Lemma 4.2, which uses the marginal contribution with respect
+to Tα (B) as a way to measure the “overlap.”
+
+
+                                                   11
+   The last property is very helpful for bounding sample errors when computing sets of the type
+
+                         {e ∈ N : Pr
+                                  c
+                                     S∼(S1 ,S2 ,...,Sq ) [e ∈ span(Tα (B) ∪ S)] > τ }
+
+for some set B. Notice that in SingleOcrsLink we compute similarly looking sets, but these sets
+have Ah−1 in their definitions instead of Tα (B). This discrepancy is, intuitively, the reason that
+we have to define the above-mentioned auxiliary sequence B0 , B1 , . . . , Bη . To formally define this
+sequence, let us denote by Sph the sample set Sp in iteration number h of the loop of the procedure
+SingleOcrsLink. Recall that A0 = ∅, and for every h ∈ [η],
+
+                  Ah = {e ∈ N : Pr S∼(S h ,S h ,...,Sqh ) [e ∈ span(Ah−1 ∪ S)] > (1 − ε)τ }.
+                                c
+                                            1   2
+
+
+Similarly, we define B0 := ∅, and for every h ∈ [η],
+
+               Bh := {e ∈ N : Pr
+                              c
+                                 S∼(S h ,S h ,...,Sqh ) [e ∈ span(Tα (Bh−1 ) ∪ S)] > (1 − ε)τ },              (1)
+                                        1   2
+
+
+where α is chosen to be
+                                                α = τ (1 − 2ε) .                                              (2)
+     We now observe that, as was promised above, the sequence B0 , . . . , Bη dominates the sequence
+A0 , . . . , Aη in the sense that Ah ⊆ Bh for every h ∈ [η]. Notice that this is useful since it implies
+that we can upper bound E[r(Aη )] by upper bounding E[r(Bη )].
+
+Lemma 4.3. For every h ∈ {0, . . . , η}, Ah ⊆ Bh .
+
+Proof. We prove the statement by induction. The base case h = 0 is trivial since A0 = B0 = ∅. For
+the induction step, the induction hypothesis is that Ah−1 ⊆ Bh−1 for some h ∈ {1, . . . , η}, and we
+need to show Ah ⊆ Bh . Since Lemma 4.2 guarantees that Bh−1 ⊆ T (Bh−1 ), by the monotonicity
+of the span function, we have span(Ah−1 ∪ S) ⊆ span(Bh−1 ∪ S) ⊆ span(T (Bh−1 ) ∪ S). Recall
+now that Ah and Bh are defined identically, with the only difference being that the expression
+span(Ah−1 ∪ S) in the definition of Ah is replaced with span(T (Bh−1 ) ∪ S) in the definition of Bh .
+Since we have already seen that span(Ah−1 ∪ S) ⊆ span(T (Bh−1 ) ∪ S), this implies Ah ⊆ Bh , as
+desired.
+
+    To bound the expected rank of the sets in B0 , . . . , Bη , it is helpful to think of the construction
+of Bh from Bh−1 as happening in two steps. In a first step, we compute the set Tα (Bh−1 ), which is
+a superset of Bh−1 , and in a second step we compute Bh from Tα (Bh−1 ) as shown in Equation (1).
+The following lemma shows that in expectation the rank r(Bh ) is not much larger than the rank
+of Tα (Bh−1 ). Hence, the second step of this two-step process does not add much to the expected
+rank of Bh .
+                                                                   1 2
+                                                                                             3
+Lemma 4.4. For every h ∈ [η], E[r(Bh | Tα (Bh−1 ))] ≤ e− 2 ε τ q · r(N ) ≤              ε
+                                                                                       ln ρ        · r(N ).
+
+    The second inequality of the lemma follows immediately from the definition of q. Proving
+the first inequality is much more involved, and is quite technically challenging. Thus, we defer
+the formal proof of this inequality to Section 4.2, and in the following lines, we explain why it
+intuitively follows from the properties of Tα (Bh−1 ) given by Lemma 4.2. Notice that Bh includes
+elements that are likely to be spanned by Tα (Bh−1 ) ∪ S, and Tα (Bh−1 ) itself already includes every
+element that is likely to be spanned by Tα (Bh−1 ) ∪ R(x). Since S is a sample from the distribution
+D(x) of R(x), up to sampling errors, we expect all the elements of Bh to already be in Tα (Bh−1 ).
+Thus, in a world of perfect samples, r(Bh | Tα (Bh−1 )) would be exactly 0. Bounding the deviation
+
+                                                      12
+from this ideal due to sample errors is the main challenge of the proof. To this end, the following
+is a helpful viewpoint. When checking which elements e ∈ N fulfill
+
+                           Pr S∼(S h ,S h ,...,Sqh ) [e ∈ span(Tα (Bh−1 ) ∪ S)] > (1 − ε)τ,
+                           c
+                                     1   2
+
+
+we consider the samples S1h , S2h , . . . , Sqh one by one, starting from S1h . Assume that we have con-
+sidered the samples S1h , S2h , . . . up to Sph so far. Then we keep track, for each integer i, of how big
+the rank is of the elements
+
+                 Zp,i := {e ∈ N \ Tα (Bh−1 ) : |{j ∈ [p] : e ∈ span(Sjh ∪ Tα (Bh−1 ))}| ≥ i}.
+
+In words, Zp,i is the set of elements outside of Tα (Bh−1 ) that are spanned by at least i many of the
+samples S1h , S2h , . . . , Sph together with Tα (Bh−1 ). The second bullet point of Lemma 4.2 guarantees
+that, when considering the next sample Sj+1       h , the overlap of span(T (B
+                                                                           α   h−1 ) ∪ Sj ) with Zp,i (this set
+                                                                                        h
+
+takes the role of Q in Lemma 4.4) is small when measured in terms of the marginal contribution to
+the rank (with respect to Tα (Bh−1 )). This shows that, in some sense, r(Zp,i | Tα (Bh−1 )) behaves
+like a binomial random variable, which allows us to bound its expectation. We then get a bound
+on the desired quantity E[r(Bh | Tα (Bh−1 ))] because Bh \ Tα (Bh−1 ) ⊆ Zq,⌈(1−ε)τ q⌉ .8
+    Using Lemma 4.4, we are now ready to prove Proposition 3.4.
+
+Proof of Proposition 3.4. The rank function r of a matroid is monotone and submodular. These
+properties imply that
+
+    E[r(Bη )] ≤ E[r(Bη ∪ R(x))]                                                                                           (3)
+                                  η
+               = E[r(R(x))] +
+                                  X
+                                         E[r(Bh | Bh−1 ∪ R(x)]
+                                  h=1
+                                   η                                                                                 
+               = E[r(R(x))] +                E[r(Tα (Bh−1 ) | Bh−1 ∪ R(x))] + E[r(Bh | Tα (Bh−1 ) ∪ R(x))]
+                                  X
+
+                                  h=1
+                                   η                                                                             
+               ≤ E[r(R(x))] +                (1 − α) · E[r(Tα (Bh−1 ) | Bh−1 )] + E[r(Bh | Tα (Bh−1 ))]
+                                  X
+
+                                  h=1
+                                                 η                                 η
+               = E[r(R(x))] + (1 − α) ·                E[r(Bh | Bh−1 )] + α ·            E[r(Bh | Tα (Bh−1 ))],
+                                                 X                                 X
+
+                                                 h=1                               h=1
+
+where the equalities exploit the fact that Bh−1 ⊆ Tα (Bh−1 ) ⊆ Bh for every h ∈ [η], and the second
+inequality follows from the first bullet point of Lemma 4.2 (and the submodularity of r).
+     We now would like to upper bound each one of the terms on the rightmost side of Equation (3).
+First, recall that x ∈ λ·PM , which implies E[r(R(x))] ≤ E[|R(x)|] = ∥x∥1 ≤ λ·r(N ) because r(U ) ≤
+|U | for every set U ⊆ N . Second, by the monotonicity of r and the fact that r(B0 ) = r(∅) = 0,
+we get ηh=1 r(Bh | Bh−1 ) = r(Bη ) − r(B0 ) = r(Bη ) ≤ r(N ). Finally, Lemma 4.4 guarantees that
+         P
+                               1 2
+                                                              3
+E[r(Bh | Tα (Bh−1 ))] ≤ e− 2 ε τ q · r(N ) ≤             ε
+                                                        ln ρ        · r(N ) for every h ∈ [η]. Plugging all these bounds
+into Equation (3), we get
+                                                                                      1 2
+                          E[r(Bη )] ≤ λ · r(N ) + (1 − α) · r(N ) + ηαe− 2 ε τ q · r(N )
+   8
+     An equality between Bh \ Tα (Bh−1 ) and Zq,⌈(1−ε)τ q⌉ would have held if the definition of Bh had used a non-strict
+inequality.
+
+
+
+                                                                    13
+                                                          3 !
+                                                    ε
+                                                    
+                                ≤   1 + λ − α + ηα                · r(N )
+                                                   ln ρ
+                                                                         3 !
+                                                                   ε
+                                                             
+                                ≤   1 + λ − (1 − 2ε)τ + ητ                      · r(N )
+                                                                  ln ρ
+                                ≤ (1 + λ − (1 − 3ε)τ ) · r(N ),
+
+where the second inequality holds by the definition of q (line 3 of SingleOcrsLink), the third
+inequality follows by recalling that α = τ (1 − 2ε) ≤ τ , and the last inequality holds because
+η = ⌈1 + log1+ε lnε3ρ ⌉, which implies
+                           ln ρ     ln ln ρ − 3 ln ε     2                1                       ln ρ
+                                                                                         
+             η ≤ 2 + log1+ε 3 = 2 +                  ≤2+   ln ln ρ + 3 ln                     ≤
+                            ε          ln(1 + ε)         ε                ε                        ε2
+(the two last inequalities hold for ρ ≥ 3 and ε ≤ 1/20).
+   To complete the proof of the proposition, it only remains to recall that, by Observation 4.1 and
+Lemma 4.3,
+                  E[r(A)] ≤ E[r(Aη )] ≤ E[r(Bη )] ≤ (1 + λ − (1 − 3ε)τ ) · rank(M ).
+
+4.1    Proof of Lemma 4.2
+In this section, we prove Lemma 4.2, which we repeat here for convenience.
+Lemma 4.2. For every set B ⊆ N and value α ∈ [0, 1), let us define
+                                            n             1                     o
+                   Tα (B) := argmaxT̄ ⊆N : r(T̄ | B) −       E[r(T̄ | B ∪ R(x))] .
+                                     B⊆T̄
+                                                         1−α
+
+Then, B ⊆ Tα (B). Furthermore,
+  • E[r(Tα (B) | B ∪ R(x))] ≤ (1 − α) · r(Tα (B) | B); and
+  • E[r(Q ∩ span(Tα (B) ∪ R(x)) | Tα (B))] ≤ α · r(Q | Tα (B)) for every set Q ⊆ N \ Tα (B).
+   Notice that the inclusion B ⊆ Tα (B) is an immediate consequence of the definition of Tα (B).
+Thus, we concentrate on proving the two bullet points of the lemma. Since B itself is a possible
+choice for T̄ in the definition of Tα (B), it must hold that
+                         1                                        1
+      r(Tα (B) | B) −       E[r(Tα (B) | B ∪ R(x))] ≥ r(B | B) −     E[r(B | B ∪ R(x))] = 0,
+                        1−α                                      1−α
+and the first bullet point of Lemma 4.2 follows by rearranging this inequality.
+    Proving the second bullet point of Lemma 4.2 is more involved, and is our goal in the rest of
+this section. We start by proving the following inequality.
+
+          E[r(Q ∩ span(Tα (B) ∪ R(x)) | Tα (B))] ≤ r(Q | Tα (B)) − E[r(Q | Tα (B) ∪ R(x))]               (4)
+
+By expanding the marginal contribution notation, we get that Equation (4) is equivalent to
+
+  E[r((Q ∪ Tα (B)) ∩ span(Tα (B) ∪ R(x)))]
+                                 ≤ r(Q ∪ Tα (B)) − E[r(Q ∪ Tα (B) ∪ R(x))] + E[r(Tα (B) ∪ R(x))],
+
+which holds because
+
+  r(Q ∪ Tα (B)) + E[r(Tα (B) ∪ R(x))]
+
+                                                  14
+          = r(Q ∪ Tα (B)) + E[r(span(Tα (B) ∪ R(x)))]
+          ≥ E[r((Q ∪ Tα (B)) ∪ span(Tα (B) ∪ R(x)))] + E[r((Q ∪ Tα (B)) ∩ span(Tα (B) ∪ R(x)))]
+          = E[r(Q ∪ Tα (B) ∪ R(x))] + E[r((Q ∪ Tα (B)) ∩ span(Tα (B) ∪ R(x)))],
+
+where the inequality is due to submodularity of the rank function r, and the two equalities follow
+from the facts that r(U ) = r(U ′ ) for any U ⊆ U ′ ⊆ span(U ). In particular, for any two sets
+U, W ⊆ N , we thus have r(U ∪ span(W )) = r(U ∪ W ), which we use in the last equality.
+    Having proved Equation (4), we now proceed by bounding the right-hand side of this inequality.
+To this end, observe that, because Tα (B) ∪ Q is one possible choice for the set T̄ in the definition
+of Tα (B), it must hold that
+
+                     1
+  r(Tα (B) | B) −       E[r(Tα (B) | B ∪ R(x))]
+                    1−α
+                                                                        1
+                                           ≥ r(Tα (B) ∪ Q | B) −           E[r(Tα (B) ∪ Q | B ∪ R(x))].
+                                                                       1−α
+By expanding the marginal contribution notation, and recalling that B ⊆ Tα (B), the last inequality
+is equivalent to
+                     1                                         1
+      r(Tα (B)) −       E[r(Tα (B) ∪ R(x))] ≥ r(Tα (B) ∪ Q) −     E[r(Tα (B) ∪ Q ∪ R(x))],
+                    1−α                                       1−α
+which can be rewritten as
+
+                     r(Q | Tα (B)) − E[r(Q | Tα (B) ∪ R(x))] ≤ α · r(Q | Tα (B)).
+
+The second bullet point of Lemma 4.2 now follows by combining this inequality with Equation (4).
+
+4.2    Proof of Lemma 4.4
+We now present the proof of Lemma 4.4, which we repeat here for convinience.
+                                                                 1 2
+                                                                                           3
+Lemma 4.4. For every h ∈ [η], E[r(Bh | Tα (Bh−1 ))] ≤ e− 2 ε τ q · r(N ) ≤            ε
+                                                                                     ln ρ        · r(N ).
+
+   Fix a particular value for h ∈ [η], and recall that Sph is the p-th sample set used to construct
+Ah and Bh . We also recall the definition
+
+                Zp,i := {e ∈ N \ Tα (Bh−1 ) : |{j ∈ [p] : e ∈ span(Sjh ∪ Tα (Bh−1 ))}| ≥ i}
+
+for every integer p ∈ [q] and i ∈ Z≥0 . In other words, Zp,i contains elements that are spanned by
+span(S ∪ Tα (Bh−1 )) for at least i choices S out of S1h , S2h , . . . , Sph . For consistency, let us define
+Zp,0 := N . We also need the shorthand γp,i := E[r(Zp,i | Tα (Bh−1 ))]. Observe that since the
+definition of Bh implies the inclusion Bh \ Tα (Bh−1 ) ⊆ Zq,⌈(1−ε)τ q⌉ , to prove Proposition 3.4, it
+suffices to prove
+                                                       1 2
+                                     γq,⌈(1−ε)τ q⌉ ≤ e 2 ε τ q · r(N ).
+We start with the following simple observation.
+
+Observation 4.5. For every p ∈ [q] and integer i,
+   • if i > p, then Zp,i = ∅, and therefore, γp,i = 0.
+
+
+                                                     15
+   • if p < q and i ∈ [p], then
+
+                                    Zp+1,i = Zp,i ∪ (Zp,i−1 ∩ span(Sp+1
+                                                                    h
+                                                                        ∪ Tα (Bh−1 ))).
+
+Additionally, the value of γp,0 is independent of p, i.e., γp1 ,0 = γp2 ,0 for every two values p1 , p2 ∈ [q].
+
+Proof. The first part of the observation follows immediately from the definition of Zp,i , and the
+last part of the observation holds since
+
+γp1 ,0 = E[r(Zp1 ,0 ) | Tα (Bh−1 ))] = E[r(N \ Tα (Bh−1 ) | Tα (Bh−1 ))] = E[r(Zp2 ,0 ) | Tα (Bh−1 ))] = γp2 ,0 .
+
+    It remains to prove the second part of the observation. The set Zp,i ∪ (Zp,i−1 ∩ span(Sp+1  h ∪
+Tα (Bh−1 ))) contains an element e ∈ N \ Tα (Bh−1 ) if it obeys at least one of two conditions.
+   • The first condition is that e ∈ Zp,i , i.e., it is contained in span(S ∪ Tα (Bh−1 )) for at least i
+     many choices of set S among S1h , S2h , . . . , Sph .
+   • The second condition is that e ∈ Zp,i−1 ∩ span(Sp+1      h   ∪ Tα (Bh−1 )), i.e., e is contained in
+     span(Sp+1 ∪ Tα (Bh−1 )) and in span(S ∪ Tα (Bh−1 )) for at least i − 1 many choices of set S
+            h
+
+     among S1h , S2h , . . . , Sph .
+One can verify that the elements that obey at least one of these conditions are exactly the elements
+that are contained in span(S∪Tα (Bh−1 )) for at least i many choices of set S among S1h , S2h , . . . , Sp+1
+                                                                                                         h ,
+
+and thus, they are exactly the elements of Zp+1,i .
+
+    To bound the values γp,i , we use the following lemma, which is a consequence of the second
+bullet point of Lemma 4.2, and shows that, when going from p to p + 1 samples, the total increase
+in the gammas is small for any postfix i, i + 1, . . . , p + 1 of the indices.
+                                                                Pp+1
+Lemma 4.6. For every p ∈ [q − 1] and i ∈ [p + 1],                j=i (γp+1,j − γp,j ) ≤ αγp,i−1 .
+
+Proof. By the definition of γp,i ,
+  p+1                        p+1
+        (γp+1,j − γp,j ) =         E[r(Zp+1,j | Tα (Bh−1 )) − r(Zp,j | Tα (Bh−1 ))]                          (5)
+  X                          X
+
+  j=i                        j=i
+             p+1
+         =         E[r(Zp+1,j \ Zp,j | Zp,j ∪ Tα (Bh−1 ))]
+             X
+
+             j=i
+             p+1
+                   E[r(Zp,j−1 ∩ span(Sp+1 ∪ Tα (Bh−1 )) | Zp,j ∪ Tα (Bh−1 ))]
+             X
+                                      h
+         ≤
+             j=i
+             p+1
+                   E[r(Zp,j−1 ∩ span(Sp+1 ∪ Tα (Bh−1 )) | (Zp,j ∩ span(Sp+1 ∪ Tα (Bh−1 ))) ∪ Tα (Bh−1 ))],
+             X
+                                      h                                 h
+         ≤
+             j=i
+
+where the second equality uses the inclusion Zp,j ⊆ Zp+1,j , the first inequality hold because Obser-
+vation 4.5 implies that Zp+1,j \ Zp,j ⊆ Zp,j−1 ∩ span(Sp+1
+                                                       h    ∪ Tα (Bh−1 )), and the second inequality
+is due to submodularity of the rank function.
+    Notice that since Zp,j ⊆ Zp,j−1 , the summand on the rightmost side of Equation (5) is equal to
+
+  E[r((Zp,j−1 ∩ span(Sp+1
+                      h
+                          ∪ Tα (Bh−1 ))) ∪ Tα (Bh−1 ))]
+                                                       − E[r((Zp,j ∩ span(Sp+1
+                                                                           h
+                                                                               ∪ Tα (Bh−1 ))) ∪ Tα (Bh−1 ))],
+
+
+                                                           16
+and thus, the sum on the rightmost side of Equation (5) is telescopic. Collapsing this sum yields
+     p+1
+           (γp+1,j − γp,j ) ≤ E[(r(Zp,i−1 ∩ span(Sp+1 ∪ Tα (Bh−1 ))) ∪ Tα (Bh−1 ))]
+     X
+                                                  h
+
+     j=i
+
+                                                  − E[r((Zp,p+1 ∩ span(Sp+1
+                                                                        h
+                                                                            ∪ Tα (Bh−1 ))) ∪ Tα (Bh−1 ))]
+                          = E[r(Zp,i−1 ∩ span(Sp+1
+                                               h
+                                                   ∪ Tα (Bh−1 )) | Tα (Bh−1 ))]
+                          ≤ α · E[r(Zp,i−1 | Tα (Bh−1 ))] = αγp,i−1 ,
+
+where the second equality holds because Observation 4.5 guarantees that Zp,p+1 = ∅, and the
+inequality is a consequence of the second bullet point of Lemma 4.2 applied with Q = Zp,i−1 .
+
+    Recall that our goal is to upper bound γq,⌈(1−ε)τ q⌉ . Technically, we derive below such a bound
+using multiple applications of Lemma 4.6. However, to make this derivation more structured and
+easier to understand, we define a potential function. This potential function is inspired by a proof
+for the well-known Chernoff bound. More precisely, given a parameter κ ∈ R>0 (to be set later),
+we define the potential function
+                                        p
+                            Φp (κ) :=         (γp,i − γp,i+1 )eκ·i
+                                        X
+                                                                            ∀p ∈ {0, . . . , q}.
+                                        i=0
+
+Observation 4.7. It holds that γq,⌈(1−ε)τ q⌉ ≤ e−κ·⌈(1−ε)τ q⌉ · Φq (κ).
+
+Proof. Note that
+                                            q
+                              Φq (κ) =            (γq,i − γq,i+1 )eκ·i
+                                            X
+
+                                            i=0
+                                                  q
+                                                           (γq,i − γq,i+1 )eκ·i
+                                                  X
+                                        ≥
+                                            i=⌈(1−ε)τ q⌉
+                                                                  q
+                                                                            (γq,i − γq,i+1 )
+                                                                  X
+                                        ≥ eκ·⌈(1−ε)τ q⌉ ·
+                                                             i=⌈(1−ε)τ q⌉
+
+                                        = eκ·⌈(1−ε)τ q⌉ · (γq,⌈(1−ε)τ q⌉ − γq,q+1 )
+                                        = eκ·⌈(1−ε)τ q⌉ · γq,⌈(1−ε)τ q⌉ ,
+
+where the last equality holds by Observation 4.5.
+
+    In light of Observation 4.7, to upper bound γq,⌈(1−ε)τ q⌉ , it suffices to upper bound the potential
+Φq (κ). We do this using the following lemma, which upper bounds the increase of Φp (κ) as a
+function of p. The proof of Lemma 4.8 crucially leverages Lemma 4.6.
+
+Lemma 4.8. For every p ∈ [q] and κ ∈ R>0 , we have Φp (κ) ≤ (1 − α + αeκ )Φp−1 (κ).
+
+Proof. Let us define, for every i ∈ Z≥−1 ,
+                                               
+                                               0                        if i = −1,
+                                               
+                                               
+                                    νi :=          1                     if i = 0,
+                                               
+                                               eκ·i − eκ·(i−1)          if i ≥ 1.
+                                               
+
+
+
+                                                             17
+Using this notation, we can rewrite Φp (κ) as
+
+             p                                 p
+  Φp (κ) =         (γp,i − γp,i+1 )eκ·i =
+             X                                 X
+                                                     γp,i · νi
+             i=0                               i=0
+                                                      p               i                             p                      p        
+                                                  =                         (νj − νj−1 ) =                   (νj − νj−1 ) ·         γp,i . (6)
+                                                      X                X                              X                       X
+                                                              γp,i ·
+                                                      i=0              j=0                            j=0                     i=j
+
+Notice that we have used in the second equality the fact that γp,p+1 = 0 by Observation 4.5.
+   We can now relate the potential Φp (κ) to Φp−1 (κ) as follows (we elaborate on the steps below).
+             p                        p                                      
+ Φp (κ) =           (νj − νj−1 ) ·           (γp,i − γp−1,i + γp−1,i )
+             X                         X
+
+             j=0                       i=j
+              p                        p                  p                         p                          
+        =           (νj − νj−1 ) ·           γp−1,i +               (νj − νj−1 ) ·           (γp,i − γp−1,i )
+             X                         X                    X                          X
+
+             j=0                       i=j                  j=0                        i=j
+             p−1
+             X                        p−1                  p                         p                             p
+        =           (νj − νj−1 ) ·           γp−1,i +               (νj − νj−1 ) ·            (γp,i − γp−1,i ) +             (γp,i − γp−1,i )
+                                       X                     X                          X                              X
+
+             j=0                       i=j                   j=1                        i=j                            i=1
+                           p
+        ≤ Φp−1 (κ) +           (νj − νj−1 ) · αγp−1,j−1 + αγp−1,0
+                           X
+
+                           j=1
+                                 p−1                                       p−1                   
+        = Φp−1 (κ) − α ·               νj γp−1,j + α γp−1,0 +
+                                 X                                          X
+                                                                                  νj+1 γp−1,j
+                                 j=0                                        j=0
+                                 p−1                         p−1
+        = Φp−1 (κ) − α ·               νj γp−1,j + αeκ
+                                 X                           X
+                                                                    νj γp−1,j
+                                 j=0                          j=0
+
+        = (1 − α + αeκ ) Φp−1 (κ).
+
+The first equality above follows from Equation (6). The third equality uses two properties given by
+Observation 4.5. First, the equality γp−1,p = 0 is used to decrease the upper limit of the first two
+summations from p to p − 1. Second, the third term after the third equality comes from splitting
+off the j = 0 term of the second summation, and then using ν0 = 1, ν−1 = 0, and γp,0 = γp−1,0
+to increase the lower limit of the summation in the third term from 0 to 1. The inequality uses
+Lemma 4.6 and again Equation (6). The penultimate equality is based on the equalities νj+1 = eκ ·νj
+for j ∈ Z≥1 , and ν1 + 1 = eκ · ν0 , which follow from the definition of the νj ’s. The final equality
+follows from the second equality in Equation (6).
+
+   We are now ready to prove Lemma 4.4
+
+Proof of Lemma 4.4. By applying Lemma 4.8 for every p ∈ [q], we get
+                                                              q                                       q
+                           Φq (κ) ≤ 1 − α + αeκ                    · Φ0 (κ) ≤ 1 − α + αeκ                   · r(N ),
+
+where we used Φ0 (κ) = γ0,0 = E[r(N \ Tα (Bh−1 ) | Tα (Bh−1 ))] = E[r(N | Tα (Bh−1 ))] ≤ r(N ) in the
+last inequality. Combining this inequality with Observation 4.7, we get the following upper bound
+on E[r(Bh | Tα (Bh−1 ))], which holds for any κ > 0.
+
+                          E[r(Bh | Tα (Bh−1 ))] ≤ γq,⌈(1−ε)τ q⌉ ≤ e−κ·⌈(1−ε)τ q⌉ · Φq (κ)
+
+
+                                                                       18
+                                                                                             q
+                                            ≤ e−κ·⌈(1−ε)τ q⌉ · 1 − α + αeκ                        · r(N )
+                                                                 (eκ −1)·αq
+                                            ≤ e−κ·(1−ε)τ q · e                 · r(N )
+                                                  (1−2ε)(eκ −1)−(1−ε)κ τ q
+                                            = e                                       · r(N ).
+
+The last equality uses the fact that α = (1 − 2ε)τ by definition (2).
+    We are now free to choose an arbitrary positive value for κ, and it turns out that the rightmost
+side of the above inequality is minimized for κ = ln( 1−2ε
+                                                      1−ε
+                                                           ). Plugging this value into the inequality
+yields the desired bound:
+                                                                              !τ q
+                                                       1 − 2ε
+                                                               (1−ε)
+                        E[r(Bh | Tα (Bh−1 ))] ≤                          eε            · r(N )
+                                                       1−ε
+                                                                  (1−ε)              !τ q
+                                                           ε
+                                                   
+                                              =        1−                     e   ε
+                                                                                             · r(N )
+                                                          1−ε
+                                                     1 ε2
+                                              ≤ e− 2 1−ε τ q · r(N )
+                                                     1 2
+                                              ≤ e− 2 ε τ q · r(N ),
+                                                                          1 2
+where the second inequality uses the inequality 1 − z ≤ e−z− 2 z ∀z ∈ R≥0 , which holds due to
+                                          1 2
+the following. The function f (z) := e−z− 2 z + z − 1 is non-decreasing on R≥0 and fulfills f (0) = 0.
+Hence, for any z ∈ R≥0 , we have f (z) ≥ f (0) = 0, as desired.
+
+
+5     Bounding Bad Events in Link
+In this section, we prove Proposition 3.2, which we repeat here for convenience.
+
+Proposition 3.2. Consider a matroid M = (N, I), a vector x ∈ PM , and numbers ρ ∈ Z≥3 ,
+τ ∈ (0, 1], and ε ∈ (0, τ ]. Let A be the (random) output of SingleOcrsLink(M, x, ρ, (1 − ε)τ, ε).
+Then,
+                                                                       2ε3
+                    Pr[e is (A, τ )-bad] ≤ ε · Pr[e is (A, τ )-good] +      ∀e ∈ N,
+                                                                       ln ρ
+where being (A, τ )-bad or (A, τ )-good is with respect to the matroid M and the vector x.
+
+    As was explained at the start of Section 4, we may pretend that the upper bound of the loop on
+line 4 of SingleOcrsLink is η rather than h. This does not affect the output of SingleOcrsLink,
+but keeps the randomness of h separate from the randomness of the samples takes in line 5 of the
+procedure, and allows us to assume that all the sets A0 , A1 , . . . , Aη are always defined.
+    Fix an arbitrary element e ∈ N . We say that a set Ah is critical if e is (Ah , τ )-bad; i.e., Ah is
+critical if e ̸∈ Ah and
+                                   Pr[e ∈ span(Ah ∪ R(x))] > τ.
+Recall now that our aim is to prove Proposition 3.2, which upper bounds the probability that e
+is (A, τ )-bad. Since A is sampled out of A0 , A1 , . . . , Aη , this means that we need to upper bound
+the probability that the sampled set is critical. To simplify this task, we partition the probability
+space into the following disjoint events.
+    • Emult is the event that the sequence A0 , . . . , Aη contains at least two critical sets.
+    • For h ∈ {0, . . . , η}, Eh is the event that Ah is the only critical set in the sequence.
+    • E∅ is the event that there is no critical set in the sequence.
+
+                                                     19
+   The following observation demonstrates why the events Eh are useful.
+Observation 5.1. For every integer 0 ≤ h ≤ η,
+   • Pr[e is (A, τ )-bad | Eh ] = Pr[h = h | Eh ] = Pr[h = h].
+   • Pr[e is (A, τ )-good | Eh ] = Pr[h < h | Eh ] = Pr[h < h].
+Proof. The second equality in each of the above bullets holds since h is chosen independently
+of the values of the sets A0 , A1 , . . . , Aη , and therefore, also independently of Eh . The equality
+Pr[e is (A, τ )-bad | Eh ] = Pr[h = h | Eh ] holds because the event Eh implies that Ah is the only
+critical set among A0 , A1 , . . . , Aη . Thus, to prove the observation, it remains to show that the
+equality Pr[e is (A, τ )-good | Eh ] = Pr[h < h | Eh ] holds as well.
+    Since Ah is critical under Eh , we know that e ̸∈ Ah and Pr[e ∈ Ah ∪ R(x)] > τ . Notice now that
+it always holds that A0 ⊆ A1 ⊆ . . . ⊆ Aη , and consider two cases.
+   • If h < h, then e ̸∈ Ah ⊇ Ah . Since Ah is not a critical set under Eh , this implies that e must
+     be (A, τ )-good.
+   • If h ≥ h, then Pr[e ∈ Ah ∪ R(x)] ≥ Pr[e ∈ Ah ∪ R(x)] > τ , and therefore, e is not (A, τ )-good.
+Thus, we get the desired equality Pr[e is (A, τ )-good | Eh ] = Pr[h < h | Eh ].
+
+   Using the last observation, we get
+                                                     η
+              Pr[e is (A, τ )-bad] ≤ Pr[E∅ ] · 0 +         Pr[Eh ] · Pr[h = h | Eh ] + Pr[Emult ] · 1
+                                                     X
+
+                                                     h=0
+                                      η
+                                  =         Pr[Eh ] · Pr[h = h] + Pr[Emult ]
+                                      X
+
+                                      h=0
+                                       η
+                                                                   ε3
+                                                                                
+                                        Pr[Eh ] · ε · Pr[h < h] +                    + Pr[Emult ]       (7)
+                                      X
+                                  ≤
+                                    h=0
+                                                                  ln ρ
+                                         η
+                                                                              ε3
+                                               Pr[Eh ] · Pr[h < h | Eh ] +        + Pr[Emult ]
+                                         X
+                                  ≤ε·
+                                        h=0
+                                                                             ln ρ
+                                                                       ε3
+                                  ≤ ε · Pr[e is (A, τ )-good] +            + Pr[Emult ],
+                                                                      ln ρ
+where the first and last inequalities hold by the law of total probability, and the second inequality
+holds by the next observation.
+Observation 5.2. For every integer 0 ≤ h ≤ η,
+                                                                         ε3
+                                    Pr[h = h] ≤ ε · Pr[h < h] +              .
+                                                                        ln ρ
+
+Proof. The observation clearly holds for h = 0 becauseh is always at least 1, and thus, Pr[h =
+0] = 0. Additionally, for h = 1, since η = 1 + log1+ε lnε3ρ ,
+
+                                                         1         ε3
+                                      Pr[h = 1] =               ≤      .
+                                                     (1 + ε)η−1   ln ρ
+
+Finally, for h ≥ 2, by the definition of the distribution of h̄,
+                                                                                      ε3
+                           Pr[h = h] = ε · Pr[h < h] < ε · Pr[h < h] +                    .
+                                                                                     ln ρ
+
+                                                         20
+   Proposition 3.2 now follows by plugging into Equation (7) the bound on Pr[Emult ] proved by
+the next lemma.
+                                                3
+Lemma 5.3. It holds that Pr[Emult ] ≤ lnε ρ .
+Proof. Recall that A0 ⊆ A1 ⊆ . . . ⊆ Aη . This implies that the critical sets form a continuous
+sub-sequence of the sequence A0 , A1 , . . . , Aη . Hence, Emult happens if and only if there exists an
+index h such that Ah is the first critical set in the sequence and Ah+1 is also critical. However,
+we (implicitly) show below that if some set Ah is critical, then the next set Ah+1 is very likely to
+contain e, and thus, very unlikely to be critical.
+   Let Fh be the event that Ah is the first critical set. By the above discussion,
+                                          η−1
+                           Pr[Emult ] =         Pr[Fh ] · Pr[Ah+1 is critical | Fh ].
+                                          X
+
+                                          h=0
+                                                                                        3
+Thus, to prove the lemma, is suffices to show that Pr[Ah+1 is critical | Fh ] ≤ lnε n for every integer
+0 ≤ h ≤ η − 1. In the rest of the proof, we implicitly condition on Fh . Let R1 , R2 , . . . , Rq be the q
+independent samples from the distribution D(x) used in the construction of Ah+1 . It is important
+to notice that the distribution of the samples R1 , R2 , . . . , Rq is unaffected by the conditioning on
+Fh because it is possible to determine whether Fh happened even without knowing the values of
+these samples.
+    For every j ∈ [q], we denote by Yj a Bernoulli random variable that is 1 if e ∈ span(Ah ∪ Rj )
+and 0 otherwise. By the definition of Ah+1 ,
+                                                             q
+                                                        1X
+                                  e ̸∈ Ah+1 ⇐⇒                Yj ≤ (1 − ε)τ.
+                                                        q j=1
+
+In contrast, Ah being critical yields
+
+                                          Pr[Yj = 1] > τ         ∀j ∈ [q],
+
+which, by using a classical Chernoff bound, implies
+                                                                            
+                                                         q
+                                                 1X
+                                                                                                   3
+                                                                           ε2 qτ             ε               ε3
+                                                                                        
+    Pr[Ah+1 is critical] ≤ Pr[e ̸∈ Ah+1 ] = Pr        Yj ≤ (1 − ε)τ  ≤ e− 2 ≤                         ≤        .
+                                                 q j=1                                      ln ρ            ln ρ
+
+(The first inequality holds, in fact, as an equality since Ah being critical implies that Ah+1 is critical
+whenever e ̸∈ Ah+1 .)
+
+
+References
+[AKW14]      P. D. Azar, R. Kleinberg, and S. M. Weinberg. “Prophet Inequalities with Limited
+             Information”. In: Proceedings of the 25th Annual ACM -SIAM Symposium on Discrete
+             Algorithms (SODA). 2014, pp. 1358–1377.
+[AW18]       M. Adamczyk and M. Wlodarczyk. “Random Order Contention Resolution Schemes”.
+             In: Proceedings of the 59th IEEE Symposium on Foundations of Computer Science
+             (FOCS). 2018, pp. 790–801.
+[BIKK18]     M. Babaioff, N. Immorlica, D. Kempe, and R. Kleinberg. “Matroid Secretary Prob-
+             lems”. In: Journal of the ACM 65.6 (2018), 35:1–35:26.
+
+                                                        21
+[CFPV19]   J. Correa, P. Foncea, D. Pizarro, and V. Verdugo. “From Pricing to Prophets, and
+           Back!” In: Operations Research Letters 47.1 (2019), pp. 25–29. doi: 10 . 1016 / j . orl .
+           2018.11.010.
+[CHMS10]   S. Chawla, J. D. Hartline, D. L. Malec, and B. Sivan. “Multi-Parameter Mechanism
+           Design and Sequential Posted Pricing”. In: Proceedings of the 42nd ACM Symposium
+           on Theory of Computing (STOC). New York, NY, USA: ACM, 2010, pp. 311–320.
+           doi: 10.1145/1806689.1806733.
+[Dug22]    S. Dughmi. “Matroid Secretary Is Equivalent to Contention Resolution”. In: Proceed-
+           ings of the 13th Innovations in Theoretical Computer Science Conference (ITCS).
+           2022, 58:1–58:23. doi: 10.4230/LIPICS.ITCS.2022.58.
+[FSZ15]    M. Feldman, O. Svensson, and R. Zenklusen. “A Simple O(loglog(rank))-Competitive
+           Algorithm for the Matroid Secretary Problem”. In: Proceedings of the 26th Annual
+           ACM-SIAM Symposium on Discrete Algorithms (SODA). 2015, pp. 1189–1201.
+[FSZ21]    M. Feldman, O. Svensson, and R. Zenklusen. “Online Contention Resolution Schemes
+           with Applications to Bayesian Selection Problems”. In: SIAM Journal on Computing
+           50.2 (2021), pp. 255–300.
+[Fu+24]    H. Fu, P. Lu, Z. G. Tang, H. Wu, J. Wu, and Q. Zhang. “Sample-Based Matroid
+           Prophet Inequalities”. In: Proceedings of the 25th ACM Conference on Economics and
+           Computation (EC). Ed. by D. Bergemann, R. Kleinberg, and D. Sabán. ACM, 2024,
+           p. 781. doi: 10.1145/3670865.3673506. url: https://arxiv.org/abs/2406.12799.
+[GHKL24]   A. Gupta, J. Hu, G. Kehne, and R. Levin. “Pairwise-Independent Contention Res-
+           olution”. In: Integer Programming and Combinatorial Optimization (IPCO). 2024,
+           pp. 196–209. doi: 10.1007/978-3-031-59835-7 15.
+[HKS07]    M. T. Hajiaghayi, R. Kleinberg, and T. Sandholm. “Automated Online Mechanism
+           Design and Prophet Inequalities”. In: Proceedings of the 22nd National Conference on
+           Artificial Intelligence (AAAI). AAAI Press, 2007, pp. 58–65.
+[KS77]     U. Krengel and L. Sucheston. “Semiamarts and Finite Values”. In: Bulletin of the
+           American Mathematical Society 83 (1977), pp. 745–747.
+[KS78]     U. Krengel and L. Sucheston. “On Semiamarts, Amarts, and Processes with Finite
+           Value”. In: Probability on Banach Spaces. Ed. by J. Kuelbs. Vol. 4. Advances in Prob-
+           ability and Related Topics. 1978, pp. 197–266.
+[KW12]     R. Kleinberg and S. M. Weinberg. “Matroid Prophet Inequalities”. In: Proceedings of
+           the 44th Annual ACM Symposium on Theory of Computing (STOC). New York, New
+           York, USA, 2012, pp. 123–136. doi: 10.1145/2213977.2213991.
+[Lac14]    O. Lachish. “O(log log (rank)) Competitive Ratio for the Matroid Secretary Problem”.
+           In: Proceedings of the 55th Annual IEEE Symposium on Foundations of Computer
+           Science (FOCS). 2014, pp. 326–335.
+[LS18]     E. Lee and S. Singla. “Optimal Online Contention Resolution Schemes via Ex-Ante
+           Prophet Inequalities”. In: 26th Annual European Symposium on Algorithms (ESA).
+           Vol. 112. 2018, 57:1–57:14. doi: 10.4230/LIPIcs.ESA.2018.57.
+[Luc17]    B. Lucier. “An Economic View of Prophet Inequalities”. In: ACM SIGecom Exchchanges
+           16.1 (2017), pp. 24–47. doi: 10.1145/3144722.3144725.
+
+
+
+                                               22
+[MMG25]    C. MacRury, W. Ma, and N. Grammel. “On (Random-Order) Online Contention Res-
+           olution Schemes for the Matching Polytope of (Bipartite) Graphs”. In: Operations
+           Research 73.2 (2025), pp. 689–703. doi: 10.1287/opre.2023.0339.
+[Oxl92]    J. G. Oxley. Matroid Theory. Oxford University Press, 1992.
+[PRSW24]   T. Pollner, M. Roghani, A. Saberi, and D. Wajc. “Improved Online Contention Res-
+           olution for Matchings and Applications to the Gig Economy”. In: Mathematics of
+           Operations Research 49.3 (2024), pp. 1582–1606. doi: 10.1287/moor.2023.1388.
+[Sch03]    A. Schrijver. Combinatorial Optimization, Polyhedra and Efficiency. Springer, 2003.
+           isbn: 978-3-540-44389-6.
+[Sot13]    J. A. Soto. “Matroid Secretary Problem in the Random-Assignment Model”. In: SIAM
+           Journal on Computing 42.1 (2013), pp. 178–211.
+[Wel10]    D. J. A. Welsh. Matroid Theory. Dover Publications, 2010.
+[YK25]     T. Yoshinaga and Y. Kawase. “Online Contention Resolution Schemes for Size-Stocha-
+           stic Knapsacks”. In: International Conference and Workshops on Algorithms and Com-
+           putation (WALCOM). Ed. by S.-i. Nakano and M. Xiao. 2025, pp. 393–408. doi:
+           10.1007/978-981-96-2845-2 25.
+
+
+
+
+                                             23
+
