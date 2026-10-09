@@ -32,7 +32,15 @@ H040 independent briefs: research/findings/H040-independent-briefs.md.
   records the scoped missing-map obstruction and remaining missing primitives.
 - Grok4.7: RUNNING collision-search state geometry.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h040-stategeometry-grok-20261008-r1`.
-- Factory Claude Opus5.5: RUNNING compressed information/adaptive decoding.
+- Factory Claude Opus5.5: COMPLETED compressed information/adaptive decoding;
+  no submitted candidate. Raw report preserved in H040-information-factory-raw.md.
+  Native Astra math review COMPLETED: conditional genus4, branch-sum scope,
+  exact signed-membership counterexample. Native Sol cost/sampling review
+  COMPLETED; H040-information-disposition.md retains calibrated high-SNR
+  sampling, confidence/fallback cost and separate multiplicative-coset backend.
+  Both reviewers confirmed the scoped corrections; no candidate admitted.
+  Root reopened Kohel-Shparlinski and Ahmadi-Shparlinski primary bounds;
+  no generic nonlinear exclusion or universal phase-decoder gate accepted.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h040-compressed-information-factory-opus-20261008-r1`.
 Both T3 launches accepted exact catalogued models and returned running. No
 substitution. Initial proposals withheld across roles. Native Sol final H039
@@ -41,6 +49,10 @@ No runs/imports/edits/children by delegates. Root integrates. Stopped H006 and
 H038 Farey roles excluded; no H034 cap reset. Exponent1/2 and improvement NONE.
 Launch/source checkpoint validation: ./scripts/check.sh >
 /tmp/ecdlp-h040-launch-check.log 2>&1 exit0,366 existing audits; no new Lean claims.
+Information-review validation: ./scripts/check.sh >
+/tmp/ecdlp-h040-information-check.log 2>&1 exit0,366 existing audits; paper
+findings are not certified by these checks. Only Grok initial proposer remains
+live; no pending native reviews.
 Next conclusion-changing evidence: concrete new operator plus matched complete
 cost, then independent scrutiny of its missing primitive before numerical work.
 
