@@ -41,6 +41,10 @@ The [independent proof audit](reviews/i08-variable-capacity-r2.md) passes with n
 
 The [parent factor-of-IID screen](iterations/i09-potts-fiid-screen.md) gives exact positive-posterior counterexamples to the uniform binary derivative bound for three and four states. A quotient of three independent Ising factors reaches only the elementary finite-cluster parameter range. Eleven pinned source blobs and the exact derivative/transition checks pass. These close two tempting proof shortcuts; they do not disprove the factor conjecture or supply a new theorem to count.
 
+## Iteration 11: strengthening the same capacity candidate
+
+The [locally finite extension](iterations/i11-locally-finite-capacity.md) replaces the maximum-degree estimate by iterated binary subadditivity of `g(m)=m+m^3/3000`. Its proposed proof removes the common degree bound and gives universal two-sided information/capacity bounds. Zero-channel edges can be deleted; an infinitely branching finite-chain example shows that local finiteness cannot be discarded. This is part of the same prospective capacity finding, not another count. It awaits a fresh proof review after the current review slot is available. The original candidate and ongoing novelty-review input remain unchanged.
+
 ## Continuation rules
 
 1. Integrate each returned report and its source evidence; distinguish proved steps from unresolved estimates.
