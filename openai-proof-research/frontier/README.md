@@ -21,9 +21,9 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Active target: [10 substantial findings](TEN-FINDINGS.md); 3 accepted, 7 remaining.** Iteration 07 opens arithmetic, geometric-analysis and structural-mathematics tracks. Each candidate needs a complete new bridge and separate proof and significance reviews before it enters the count.
+**Pause requested at the fourth finding: [10-finding ledger](TEN-FINDINGS.md); 4 accepted, 6 remaining.** Iteration 07 opens arithmetic, geometric-analysis and structural-mathematics tracks. Each candidate needs a complete new bridge and separate proof and significance reviews before it enters the count.
 
-The [complex prime-predecessor modes candidate](iterations/i10-complex-prime-modes.md) passes [independent proof review](reviews/i10-complex-prime-modes-r2.md); parent checks reproduce and the [integration note](iterations/i10-complex-modes-proof-integration.md) preserves four clarifications. The [separate final significance audit](iterations/iteration10-complex-modes-novelty-r3-task.json) is running. This remains an unaccepted candidate.
+**Fourth substantial deduction accepted:** [R010](findings/R010-complex-modes-PD-independence.md) proves joint uniformity of Omega(p-1) modulo every fixed m and independence from the PD(1) ranked-factor law in fixed reduced progressions. Both independent reviews pass, and parent checks reproduce. The common nonzero principal model and its signed recombination supply the additional argument beyond parity. Research stops at four as requested; the ten-finding target remains incomplete.
 
 The [sharp spectral-width candidate](iterations/i14-sharp-spectral-width.md) passes [independent proof review](reviews/i14-sharp-spectral-width-r2.md), with parent reproduction of the formal identities and complete source/artifact seal. It proposes the coefficient range below six with endpoint failure. A separate significance review remains necessary; it is not accepted or counted.
 
