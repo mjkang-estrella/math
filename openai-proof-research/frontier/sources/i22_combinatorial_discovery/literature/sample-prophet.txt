@@ -1,0 +1,1366 @@
+                                         Sample-Based Matroid Prophet Inequalities
+                                         HU FU, Shanghai University of Finance and Economics, China
+                                         PINYAN LU, Shanghai University of Finance and Economics, China
+
+
+
+
+arXiv:2406.12799v1 [cs.DS] 18 Jun 2024
+                                         ZHIHAO GAVIN TANG, Shanghai University of Finance and Economics, China
+                                         HONGXUN WU, UC Berkeley, USA
+                                         JINZHAO WU, Yale University, USA
+                                         QIANFAN ZHANG, Princeton University, USA
+                                         We study matroid prophet inequalities when distributions are unknown and accessible only through samples.
+                                         While single-sample prophet inequalities for special matroids are known, no constant-factor competitive
+                                         algorithm with even a sublinear number of samples was known for general matroids. Adding more to the
+                                         stake, the single-sample version of the question for general matroids has close (two-way) connections with
+                                         the long-standing matroid secretary conjecture.
+                                            In this work, we give a ( 1/4 − 𝜀)-competitive matroid prophet inequality with only 𝑂𝜀 (poly log 𝑛) samples.
+                                         Our algorithm consists of two parts: (i) a novel quantile-based reduction from matroid prophet inequalities to
+                                         online contention resolution schemes (OCRSs) with 𝑂𝜀 (log 𝑛) samples, and (ii) a ( 1/4 − 𝜀)-selectable matroid
+                                         OCRS with 𝑂𝜀 (poly log 𝑛) samples which carefully addresses an adaptivity challenge.
+
+
+
+
+                                         Authors’ Contact Information: Hu Fu, fuhu@mail.shufe.edu.cn, ITCS, Key Laboratory of Interdisciplinary Research of Com-
+                                         putation and Economics, Shanghai University of Finance and Economics, China; Pinyan Lu, lu.pinyan@mail.shufe.edu.cn,
+                                         ITCS, Key Laboratory of Interdisciplinary Research of Computation and Economics, Shanghai University of Finance
+                                         and Economics, China; Zhihao Gavin Tang, tang.zhihao@mail.shufe.edu.cn, ITCS, Key Laboratory of Interdisciplinary Re-
+                                         search of Computation and Economics, Shanghai University of Finance and Economics, China; Hongxun Wu, wuhx@
+                                         berkeley.edu, UC Berkeley, USA; Jinzhao Wu, jinzhao.wu@yale.edu, Yale University, USA; Qianfan Zhang, qianfan@
+                                         princeton.edu, Princeton University, USA.
+                                                                                                                            1
+
+1 Introduction
+In the classical prophet inequality problem introduced by Krengel and Sucheston [43, 44], 𝑛 items,
+with values 𝑣 1 , 𝑣 2, . . . , 𝑣 𝑛 drawn independently from known distributions D1 , D2 , . . . , D𝑛 , arrive
+one by one. An algorithm, upon observing the value of each item, must decide irrevocably whether
+to take it or discard it forever. The algorithm can take at most one item in total, and aims to
+maximize the expected value of the item taken. we measure the performance of an algorithm
+via its competitive ratio: an algorithm is 𝑐-competitive (for 𝑐 ∈ [0, 1]) if its expected value is at
+least 𝑐 fraction of what can be achieved by a prophet, who knows the realizations of the values
+and always takes the highest value max𝑖 𝑣 𝑖 , getting in expectation E [max𝑖 𝑣 𝑖 ]. Krengel, Sucheston,
+and Garling [43, 44] showed that 1/2 is the optimal competitive ratio in this so-called single-item
+setting.
+   Beyond interest of their own as canonical optimal stopping problems, prophet inequalities also
+have strong connections with online mechanism design and posted price mechanisms [11, 34].
+Many variants beyond the single-item case have been studied extensively (e.g., [1, 2, 12, 15, 22, 23,
+26, 27, 29, 31, 33, 38, 42, 50–52]). One of the signiﬁcant extensions is matroid prophet inequalities
+discovered by Kleinberg and Weinberg [42], where the set of items taken is subject to a matroid
+feasibility constraint. The single-item setting is the special case when the matroid is the 1-uniform
+matroid. Kleinberg and Weinberg [42] presented a 1/2-competitive algorithm that works for any
+matroid, which matches the best possible ratio even in the single-item case.
+   Many existing works on prophet inequalities assumed complete knowledge of distributions,
+which may be unrealistic both in practice and for some applications such as prior-independent
+mechanism design [4, 19, 37]. It is natural to ask whether similar performance can be achieved with
+only limited access to distributions (e.g., historical data points). This question was ﬁrst formulated
+as prophet inequalities with limited information (speciﬁcally, sample-based prophet inequalities)
+by Azar et al. [3], where the online algorithm only has access to a limited number of samples from
+each distribution D𝑖 . Such a sample-based paradigm is closer to practice and naturally provides
+some robustness against distribution shifts.
+   More speciﬁcally, there are two particularly interesting facets of the problem:
+    1. What is the best competitive ratio achievable with a single/constant number of samples?
+    2. What is the least number of samples needed to achieve a constant competitive ratio?
+   The ﬁrst facet was studied by Azar et al. [3]. They showed that a single sample from each dis-
+tribution suﬃces for constant-factor competitive prophet inequalities for a number of feasibility
+constraints. Since then, there have been many subsequent works on diﬀerent settings such as
+single-item [53], identical distributions [13, 14, 17, 40], non-adversarial arrivals [16, 18], and vari-
+ous other feasibility constraints [9, 41]. While some of these works studied sample-based prophet
+inequalities for speciﬁc classes of matroids, such as graphic or transversal matroids, not much was
+known for general matroids. Notably, Azar et al. [3] design single-sample prophet inequalities via
+a black-box reduction to a large subclass of algorithms for secretary problems1 . Based on the reduc-
+tion, they obtained a single-sample 1/𝑂 (log log rank)-competitive prophet inequality for general
+matroids from the state-of-the-art matroid secretary algorithm [30, 45] with the same ratio.
+   It turns out that the sample-based prophet inequalities and the secretary problem are deeply
+connected. In fact, solving either facets completely requires resolving the famous matroid secretary
+conjecture by Babaioﬀ et al. [5]. For example, Caramanis et al. [9] discovered a partial reverse
+to the aforementioned reduction of Azar et al. [3]. Very recently, Li [48] obtained a black-box
+1 The secretary problem [25] is another classical model in online decision making that is closely related to prophet inequali-
+
+ties, where values are chosen adversarially rather than sampled from distributions, but items arrive in a uniformly random
+order.
+                                                                                                      2
+
+reduction from the secretary problem to single-sample prophet inequalities (which also extends to
+the constant-sample prophet inequalities). As a consequence, simultaneously achieving constant
+competitive ratio and constant number of samples implies a constant-factor competitive algorithm
+for matroid secretary problem, which would resolve the matroid secretary conjecture.
+  In this work, we make progress on the second facet of the problem. We show that 𝑂 𝜀 (log4 𝑛)
+samples suﬃce for (1/4−𝜀)-competitive prophet inequalities for general matroids. Before our work,
+with even 𝑜 (𝑛) samples, no constant-factor competitive prophet inequalities for general matroids
+were known. This is due to the limitations of previous techniques:
+      • In the original algorithm of Kleinberg and Weinberg [42], upon the arrival of each item,
+        its value is compared against a threshold. Crucially, this threshold is the expectation of a
+        random variable that depends on the items currently taken.
+        – There is the lack-of-concentration issue with this strategy: Since the values of the items are
+           unbounded, there is no concentration with any bounded number of samples. This prevents
+           us from estimating the expectation threshold to any non-trivial accuracy.
+        – Even if the values are bounded and we have concentration, there is still the adaptivity issue:
+           The random variable for the item 𝑖 depends on whether items 1, 2, . . . , 𝑖 − 1 are accepted
+           and, therefore, depends on previous estimates. Even when there is concentration, one still
+           cannot union bound over such adaptive estimations.
+      • The approach of Feldman et al. [31] reduces prophet inequalities to online contention reso-
+        lution schemes (OCRSs). The reduction also needs to set similar thresholds.
+        – It partially gets around the lack-of-concentration issue by directly using the realization of
+           some random variable as the threshold (rather than the expectation). To generate one such
+           realization, they need one sample from each of the distributions D1 , D2, . . . , D𝑛 . Due to
+           the requirement of OCRSs, they must use independent realizations for the 𝑛 items, this
+           already requires Ω(𝑛) samples.
+        – Although there is no adaptivity in the reduction, their OCRSs also require full knowledge
+           of the distributions. If one tries to implement the OCRSs with samples, a similar adaptivity
+           issue shows up.
+   We overcome these two issues with new techniques. Our ﬁrst technical contribution is a quantile-
+based strategy for setting thresholds (in the reduction to OCRSs) and its analysis. Roughly speak-
+ing, we use the median of some random variables as thresholds, which is reminiscent of the classical
+Samuel-Cahn [54] result for the rank-1 case. With a few samples, the estimate of the median is
+guaranteed to be a (1/2 − 𝜀, 1/2 + 𝜀) quantile for some 𝜀 > 0 with high probability. This overcomes
+the lack-of-concentration issue. The analysis of this strategy is highly nontrivial and involves a
+weighted generalization of matroid strong basis exchange lemma from submodular optimization
+literature. To the best of our knowledge, it has not been applied to matroid prophet inequalities
+before. More details are discussed in Section 3.1.
+   Our second contribution is a sample-based matroid OCRS overcoming the adaptivity issue, which
+is an interesting result on its own. To obtain such OCRS, we necessarily need to randomize the ma-
+troid OCRS of Feldman et al. [31] in an ingenious way to handle adaptivity. The approach we use
+is speciﬁc to OCRSs and diﬀers from the usual randomization methods in adaptive data analysis.
+More details are discussed in Section 4. In conclusion, we believe that this work brings interesting
+techniques to the study of matroid prophet inequalities with limited information.
+
+1.1    Further Related Works
+Feldman et al. [31] introduce the concept of Online Contention Resolution Schemes (OCRSs) and
+present a 41 -selectable OCRS for matroids. Our sampled-based OCRS in Section 4 is based on their
+                                                                                                                         3
+
+algorithm. This algorithm is later improved by Lee and Singla [46] who obtain a 21 -selectable ma-
+troid OCRS by a clever reduction to the matroid prophet inequalities problem. OCRSs are also
+considered in other settings including matching [27], knapsack problem [39], and 𝑘-uniform ma-
+troids [20, 39]. Recent studies have expanded to investigate OCRSs with limited information. Fu
+et al. [32] show that there exists a 𝑒1 -selectable oblivious OCRS for rank-1 matroids. In contrast,
+for graphical and transversal matroids, they prove that no OCRS utilizing a constant number of
+samples can attain a constant selectability. Santiago et al. [55] address a scenario in which the
+marginal active probability 𝑥𝑒 is disclosed upon the arrival of element 𝑒. They provide a constant
+selectable random-order OCRS for graphical matroids.
+   Online decision making with limited information is attracting growing attention. In addition
+to the sample-based prophet inequalities discussed earlier, Li et al. [47] explore I.I.D. prophet in-
+equalities with only access to quantile queries and Nuti and Vondrák [49] study maximizing the
+probability of selecting the largest number in the secretary problem with a single sample. There are
+some works on posted-price mechanisms that also imply prophet inequalities with polynomially
+many samples [6, 22].
+
+2   Preliminaries
+Throughout the paper, we use bold letters 𝒗, 𝒙 to denote vectors and 𝑣 𝑖 , 𝑥𝑖 to denote their entries.
+   Prophet Inequalities. In the prophet inequality problem, we are given a ground set of items 𝑈 =
+[𝑛], a downward-closed family of feasible sets F ⊆ 2𝑈 , and a distribution D𝑖 for each 𝑖 ∈ 𝑈 . Items
+arrive in a ﬁxed order 1, 2, . . . , 𝑛.2 As each item arrives, a value 𝑣 𝑖 independently drawn from D𝑖 is
+revealed to the algorithm, and an irrevocable decision must be made whether to include the item
+in the output 𝐴, while keeping 𝐴 ∈ F .
+   For 𝑐 ∈ [0, 1], we say the algorithm induces a 𝑐-competitive prophet inequality for F if, for any
+D1, D2, . . . , D𝑛 ,                        "      #      "            #
+                                              Õ                  Õ
+                                         E      𝑣 𝑖 ≥ 𝑐 E max       𝑣𝑖
+                                                                 𝑆∈F
+                                               𝑖 ∈𝐴                    𝑖 ∈𝑆
+where the expectation is taken with respect to the joint distribution of D1, D2, . . . , D𝑛 and internal
+randomness of the algorithm (including samples in the limited information setting).
+    In the limited information setting, instead of distributions D1, D2, . . . , D𝑛 , the algorithm will
+take a number of samples from each D𝑖 as the oﬄine input. We say an algorithm uses 𝑘 samples
+if it takes 𝑘 samples from each D𝑖 .
+  Online Contention Resolution Schemes (OCRSs). Given a ground set of elements 𝑈 = [𝑛] and a
+downward-closed family of feasible sets F ⊆ 2𝑈 , we can deﬁne the polytope of F as the convex
+hull of all characteristic vectors of feasible sets:
+                                       P F = conv({1𝐼 | 𝐼 ∈ F }) ⊆ [0, 1] 𝑛 .
+    An OCRS for P F takes an vector 𝒙 ∈ P F as input. Let 𝑅(𝒙) ⊆ 𝑈 be a random set where each
+element 𝑖 ∈ 𝑈 is in 𝑅(𝒙) with probability 𝑥𝑖 independently. The algorithm sees the membership
+in 𝑅(𝒙) of the elements in 𝑈 arriving in a ﬁxed order 1, 2, . . . , 𝑛;2 when each element 𝑖 ∈ 𝑈 arrives,
+if it is active (i.e., 𝑖 ∈ 𝑅(𝒙)), the OCRS must decide irrevocably whether to include 𝑖 in its output 𝐴
+while keeping 𝐴 ∈ F .
+2 Our sample-based algorithm for matroid prophet inequality/OCRS actually works against almighty adversary, who deter-
+
+mines the arrival order adaptively with full knowledge of all realizations of randomness and the decisions made by the
+algorithm (see Remark 3.7 for details). Nevertheless, we assume a ﬁxed order (i.e., against oﬄine adversary) throughout the
+paper for ease of reading.
+                                                                                                       4
+
+    For 𝑐 ∈ [0, 1], an OCRS is said to be 𝑐-selectable for F if, for any 𝒙 ∈ P F ,
+                                   Pr[𝑖 ∈ 𝐴 | 𝑖 ∈ 𝑅(𝒙)] ≥ 𝑐      ∀𝑖 ∈ 𝑈
+where the probability is measured with respect to 𝑅(𝒙) and internal randomness of the OCRS
+(including samples in the limited information setting).
+   In the limited information setting, instead of 𝒙, the algorithm will take a number of samples of
+𝑅(𝒙) as the oﬄine input. We say an OCRS uses 𝑘 samples if it takes 𝑘 samples of 𝑅(𝒙).
+  Matroids. A matroid M = (𝑈 , I) is deﬁned by a ground set of elements 𝑈 = [𝑛] and a non-
+empty downward-closed family of independent sets F ⊆ 2𝑈 with the exchange property, i.e., for
+every 𝐴, 𝐵 ∈ I where |𝐴| > |𝐵|, there exists some 𝑖 ∈ 𝐴 \ 𝐵 such that 𝐵 ∪ {𝑖} ∈ I. Some notations
+for matroids are used throughout the paper:
+    • The rank of a set 𝑆 ⊆ 𝑈 is the size of the largest independent set contained in 𝑆:
+                                   rank(𝑆) = max{|𝐼 | | 𝐼 ∈ I, 𝐼 ⊆ 𝑆 }.
+      • The span of a set 𝑆 ⊆ 𝑈 is the set of elements that is not independent from 𝑆:
+                             span(𝑆) = {𝑖 ∈ 𝑈 | rank(𝑆) = rank(𝑆 ∪ {𝑖})}.
+      • An independent set 𝑆 ∈ I is called a basis if it spans the ground set, i.e., span(𝑆) = 𝑈 .
+      • The restriction of M to a set 𝑆 ⊆ 𝑈 is a matroid M |𝑆 = (𝑆, I|𝑆 ) = (𝑆, {𝐼 ∈ I | 𝐼 ⊆ 𝑆 }).
+      • The contraction of M by a set 𝑆 ⊆ 𝑈 is a matroid M/𝑆 = (𝑈 \ 𝑆, I ′ ) where
+                         I ′ = {𝐼 ∈ I|𝑈 \𝑆 | rank(𝐼 ) + rank(𝑆) = rank(𝐼 ∪ 𝑆)}.
+The polytope of a matroid M can be represented as
+                             (                                    )
+                                           Õ
+                                        𝑛
+                        PM = 𝒙 ∈ [0, 1]       𝑥𝑖 ≤ rank(𝑆), ∀𝑆 ⊆ 𝑈 .
+                                                   𝑖 ∈𝑆
+
+3     Matroid Prophet Inequalities from Samples
+In this section, we reduce the matroid prophet inequality to matroid OCRS using only 𝑂 𝜀 (log 𝑛)
+samples. Together with our 𝑂 𝜀 (log4 𝑛)-sample matroid OCRS, which we will present in Section 4,
+it proves the following theorem.
+Theorem 3.1. With 𝑂 𝜀 (log4 𝑛) samples, there is a ( 14 −𝜀)-competitive prophet inequality for general
+matroids of size 𝑛 and any 𝜀 > 0.
+
+3.1    Overview of Our Techniques
+Before getting into our matroid prophet inequalities, let us ﬁrst sketch the main idea and compar-
+ison with prior works.
+   Notations. For simplicity, we now deﬁne a minimum set of notations that we will only use in
+this subsection. In the following, we assume that the items arrive in order 1, 2, . . . , 𝑛 and 𝐴𝑖 is the
+set of items accepted by our prophet inequalities among the ﬁrst 𝑖 items.
+   For subsets 𝑆, 𝐴 ⊆ [𝑛], we will use the random variable
+                                             def
+                              OPT𝒗 (𝑆, 𝐴) = max{𝑣 (𝐼 ) | 𝐼 ⊆ 𝑆, 𝐼 ∪ 𝐴 ∈ I}
+to denote the maximum-weight subset 𝐼 ⊆ 𝑆, such that, 𝐼 ∪ 𝐴 is an independent set. For any
+independent set 𝐼 , we deﬁne
+                                       def
+                                 𝜏𝑖𝒗 (𝐼 ) = min{𝑣 𝑗 | 𝑗 ∈ 𝐼, 𝐼 − 𝑗 + 𝑖 ∈ I}
+                                                                                                            5
+
+to be the minimum value among the elements 𝑗 ∈ 𝐼 that 𝑖 can exchange with. The existence of 𝑗
+is guaranteed by the exchange property of matroids.
+  Approaches in prior works. Most matroid prophet inequalities follow a very general threshold-
+based framework:
+    • Before the arrival of an item 𝑖, select a threshold 𝑇𝑖 . If the value of 𝑖 exceeds the threshold,
+      we call it an active item.
+    • Then either accepts all active items whenever possible, or performs contention resolution
+      over the active items.
+  Therefore, the key to designing matroid prophet inequalities is choosing the appropriate thresh-
+olds {𝑇𝑖 }𝑖 ∈ [𝑛 ] . Below, we list several popular choices. and explain why they break down in the
+sampled-based setting:
+    • (Expectation-based.) In the optimal matroid prophet inequalities by Kleinberg and Weinberg
+      [42], 𝑇𝑖 is set to 21 E𝑣 [𝜏𝑖𝒗 (OPT𝒗 ( [𝑛] \ 𝐴𝑖 −1, 𝐴𝑖 −1 ))]. After their arrivals, all active items are
+      accepted.
+      Such expectation-based thresholds 𝑇𝑖 are ubiquitous in the prophet inequalities and posted-
+      price mechanisms literature (e.g. [29, 33]). However, in sample-based setting, consider an
+      item which has a large value 𝑛 10 with probability 1/𝑛 and otherwise has a value of 0. With
+      only 𝑂 (poly log 𝑛) samples, one cannot hope to see it realized with the large value, and there-
+      fore cannot estimate the expectation.
+
+    • (Fresh-samples-based.) In the reduction to OCRS by Feldman et al. [31], they draw a fresh
+                                                                                     ′     ′
+      sample 𝒗 ′−𝑖 ∼ D−𝑖 for each arriving item 𝑖. The threshold 𝑇𝑖 is set to 𝜏𝑖𝒗 (OPT𝒗 ), where
+            ′         ′
+      OPT𝒗 = OPT𝒗 ( [𝑛], ∅) is the maximum-weight independent set with respect to 𝒗 ′ . After-
+      wards, the algorithm performs online contention resolution among those active items.
+      This approach is later used in prophet inequalities for 𝑘-uniform matroids [20, 39] and bi-
+      partite matching [28]. By deﬁnition, each threshold in {𝑇𝑖 }𝑖 ∈ [𝑛 ] requires one sample of the
+      entire valuation vector 𝒗. In total, the reduction needs Ω(𝑛) samples.
+
+    • (Single-sample-based.) Naturally, one can try to instantiate the same fresh-samples-based
+      thresholds with only a single sample 𝒗 ′ shared among all items. This idea was explored by
+      Dughmi [21] in matroid secretary, which is a slightly diﬀerent setting.
+      The problem is that OCRS requires the events 𝐸𝑖 that item 𝑖 is active to be independent for
+      diﬀerent 𝑖 ∈ [𝑛]. Using a single sample introduces positive correlations between these events.
+      Dughmi [21] shows that such positive correlated items still admit a constant-selectable CRS,
+      but a constant-selectable OCRS for these items will imply the resolution of matroid secretary
+      conjecture.
+   Our Approach. (Quantile-based.) Historically, for single-item prophet inequalities, the seminal
+result by Samuel-Cahn [54] shows that the median of the maximum value distribution gives the
+optimal 2-approximation. Such quantile-based thresholds are extended to the 𝑘-uniform matroids
+by Chawla et al. [10]. Naturally, one might wonder: Is such a choice still applicable to general
+matroids? To the best of our knowledge, this question still remains unexplored (no matter whether
+you allow contention resolution at the end or not).
+   In the sample-based setting, because previous thresholds break down, we are forced to under-
+stand quantile-based thresholds. Recall that OPT𝒗 = OPT𝒗 ( [𝑛], ∅) is the maximum-weight inde-
+pendent set with respect to random valuation 𝒗. In this work, we essentially set the threshold 𝑇𝑖
+to be the (approximate) median of 𝜏𝑖𝒗 (OPT𝒗 ). (For simplicity, let us assume all 𝑇𝑖 ’s are the exact
+                                                                                                                 6
+
+medians throughout this overview.) Then apply contention resolution. At ﬁrst glance, this expres-
+sion may look similar to the fresh-samples-based thresholds of Feldman et al. [31]. However, note
+that they are using the realization of a fresh sample 𝒗 ′ for each threshold 𝑇𝑖 . But here we estimate
+the medians used to set all 𝑇𝑖 ’s using the same set of 𝑂 𝜀 (log 𝑛) samples.
+
+   Main Diﬃculty. To show that such thresholds, together with OCRS, provide a constant approx-
+imation, one needs to lower bound the total weight of active elements. That is, we wish to show
+                                                       Í
+that the contribution from nonactive items, 𝑖 ∈ [𝑛 ] 𝑣 𝑖 · 1 [𝑣 𝑖 < 𝑇𝑖 ], is at most that from active items
+Í
+  𝑖 ∈ [𝑛 ] 𝑣 𝑖 · 1 [𝑣 𝑖 ≥ 𝑇𝑖 ]. This turns out to be a non-trivial task.
+   For example, let us examine the case of 𝑘-uniform matroids. In this case, 𝜏𝑖𝒗 (OPT𝒗 ) is always
+equal to the 𝑘-th largest value among all the items, denoted by 𝑣 [𝑘]. Let 𝑇 ′ be the median of this
+value 𝑣 [𝑘]. We ﬁrst set a deterministic benchmark, 𝑘 · 𝑇 ′ :
+     • With probability 1/2, we know that 𝑣 [𝑘] ≥ 𝑇 ′ and that the contribution of active elements
+         Í
+             𝑖 ∈ [𝑛 ] 𝑣 𝑖 · 1 [𝑣 𝑖 ≥ 𝑇𝑖 ] is at least 𝑘 · 𝑇 in this case. There is no contribution from nonactive
+                                                           ′
+
+         items.
+     • With the other 1/2 probability, we know that 𝑣 [𝑘] < 𝑇 ′ and the contribution of nonactive
+                    Í
+         items 𝑖 ∈ [𝑛 ] 𝑣 𝑖 · 1 [𝑣 𝑖 < 𝑇𝑖 ] can be at most 𝑘 · 𝑇 ′ in this case.
+                                    Í                                      Í
+   Thus, we know that 𝑖 ∈ [𝑛 ] 𝑣 𝑖 · 1 [𝑣 𝑖 ≥ 𝑇𝑖 ] ≥ 𝑘 · 𝑇 ′ /2 ≥ 𝑖 ∈ [𝑛 ] 𝑣 𝑖 · 1 [𝑣 𝑖 < 𝑇𝑖 ]. We note that it is
+crucial that we are using a global argument: It ﬁrst “gathers” the contribution of those elements
+𝑖 with 𝑣 𝑖 ≥ 𝑇 ′ , comparing it against a benchmark 𝑘 · 𝑇 ′ . Then it “gathers” all the contribution of
+those elements with 𝑣 𝑖 < 𝑇 ′ and upper bounds it with the benchmark.
+   We note that such a global argument is necessary in a certain sense. Consider the following
+example: We add a new element that is deterministically 𝑇 ′ − 𝜀 to the 𝑘-uniform matroid. It is
+always below the threshold 𝑇 ′ , but is in the optimal solution with probability 1/2. This results in
+a non-negligible contribution of (𝑇 ′ − 𝜀)/2. Since it is never active, we are forced to “gather” the
+contribution of (possibly many) other active elements to compare with it.
+   Now, generalizing this argument to an arbitrary matroid, it is a priori not clear what the de-
+terministic benchmark should be. We show that the weight of Í                    the optimal independent set w.r.t.
+weights {𝑇𝑖 }𝑖 ∈ [𝑛 ] , i.e. OPT𝑇 is a good benchmark. To prove that 𝑖 ∈ [𝑛 ] 𝑣 𝑖 · 1 [𝑣 𝑖 ≥ 𝑇𝑖 ] ≥ OPT𝑇 /2 ≥
+Í
+  𝑖 ∈ [𝑛 ] 𝑣 𝑖 · 1 [𝑣 𝑖 < 𝑇𝑖 ], we need a weighted generalization of the strong basis exchange property
+(Lemma 3.8), which was used in submodular maximization [8] and has not been applied to prophet
+inequalities before.
+   Finally, to avoid losing competitive ratio in this reduction, we slightly generalize this approach
+and set multiple thresholds using diﬀerent quantiles.
+
+3.2   Reduction from Matroid Prophet Inequality to OCRS with Samples
+Recall that we use M = (𝑈 , I) to denote a matroid (where 𝑈 = [𝑛]), and for each item 𝑖 ∈ 𝑈 , its
+value 𝑣 𝑖 is drawn independently from D𝑖 . For simplicity, we assume that all D𝑖 ’s are continuous
+distributions. For general distributions with point masses, a standard tie-breaking technique can
+be applied. For completeness, we include it in Appendix A.1.
+   We ﬁrst give some useful notations that we will use in this subsection. Given the realization of
+                               def          Í
+values 𝒗, we deﬁne OPT(𝒗) = max𝑆 ∈ I 𝑗 ∈𝑆 𝑣 𝑗 as the value of the maximum independent set and
+             def            Í
+OPT𝑖 (𝒗 -𝑖 ) = max𝑆 ∈ I,𝑖∉𝑆 𝑗 ∈𝑆 𝑣 𝑗 as the optimal value when item 𝑖 is removed. We assume w.l.o.g.
+that every OPT𝑖 (𝒗 -𝑖 ) is a basis. We can always add dummy elements with zero value to ensure it.
+For simplicity of notation, we omit 𝒗 when there is no obfuscation and abuse OPT, OPT𝑖 to denote
+both optimal sets of items and their total values.
+                                                                                                          7
+
+   Given 𝒗 -𝑖 , deﬁne 𝜏𝑖 to be the smallest value among the items in OPT𝑖 that 𝑖 can exchange with.
+                          def
+That is to say, 𝜏𝑖 (𝒗 -𝑖 ) = min{𝑣 𝑗 | OPT𝑖 −𝑗 + 𝑖 ∈ I}. Again, we omit 𝒗 -𝑖 when it is clear from the
+context.
+  The following observations regarding 𝜏𝑖 are useful in our later analysis.
+Observation 3.2. Fixing 𝒗 -𝑖 , if 𝑣 𝑖 > 𝜏𝑖 (𝒗 -𝑖 ), 𝑖 ∈ OPT(𝒗); if 𝑣 𝑖 < 𝜏𝑖 (𝒗 -𝑖 ), 𝑖 ∉ OPT(𝒗).3
+   Proof. Let 𝑗 be the item whose value equals 𝜏𝑖 . In the case when 𝑣 𝑖 > 𝜏𝑖 , consider exchanging
+𝑖 with 𝑗 in OPT𝑖 . This results in a basis of value OPT𝑖 −𝜏𝑖 + 𝑣 𝑖 > OPT𝑖 . Hence OPT𝑖 is not optimal,
+and consequently 𝑖 ∈ OPT.
+   For the other direction, we prove by contradiction. Suppose 𝑖 ∈ OPT, by Lemma A.1, there is
+an element 𝑗 ∈ OPT𝑖 such that OPT −𝑖 + 𝑗 and OPT𝑖 −𝑗 + 𝑖 are both bases. Since OPT −𝑖 + 𝑗 ∈ I,
+by optimality of OPT, 𝑣 𝑗 ≤ 𝑣 𝑖 . Moreover, since OPT𝑖 −𝑗 + 𝑖 ∈ I, by the deﬁnition of 𝜏𝑖 , we have
+𝜏𝑖 ≤ 𝑣 𝑗 . Hence 𝜏𝑖 > 𝑣 𝑗 implies 𝑖 ∉ OPT.                                                         
+Observation 3.3. Suppose 𝑖 ∈ OPT, 𝑗 ∉ OPT and OPT −𝑖 + 𝑗 ∈ I. Then 𝑣 𝑖 ≥ 𝜏 𝑗 .
+  Proof. Since 𝑗 ∉ OPT, we have OPT 𝑗 = OPT. Together with the fact that OPT −𝑖 + 𝑗 is also an
+independent set, we have 𝜏 𝑗 ≤ 𝑣 𝑖 (by the deﬁnition of 𝜏 𝑗 ).                               
+
+   Our algorithm consists of two stages. In the ﬁrst stage, we estimate the thresholds {𝑇𝑖(𝑘 ) } from
+𝑂 (log 𝑛) samples. In the second stage, we use an OCRS to select a subset of active elements, which
+is sampled by an activation rule deﬁned with thresholds. We present the ﬁrst stage in the rest of
+this section. Let 𝑚 = ⌊log1+𝜀 (1/𝜀)⌋.
+  Learning Thresholds. Given 𝑁 i.i.d. samples 𝒗 𝑠 ∼ ×𝑖 D𝑖 , where 𝑠 ∈ [𝑁 ]. For each item 𝑖, let 𝑇𝑖(𝑘 )
+                                                                                          (𝑚)
+be the ⌈𝜀 (1 + 𝜀)𝑘 𝑁 ⌉-th smallest value in {𝜏𝑖 (𝒗 𝑠-𝑖 ) | 𝑠 ∈ [𝑁 ]} for 0 ≤ 𝑘 < 𝑚 and 𝑇𝑖     = ∞.
+                                                                                                    def
+    The next lemma states that the thresholds {𝑇𝑖(𝑘 ) }𝑖 ∈𝑈 approximate the functions 𝑝 𝑖 (𝑣) = Pr [𝑖 ∈
+OPT | 𝑣 𝑖 = 𝑣] within 𝜀 error. The proof is a direct application of Chernoﬀ bound and we defer
+it to Appendix A.2. Let 𝑝𝑘 = 𝜀 (1 + 𝜀)𝑘 − 𝜀 2 for 0 ≤ 𝑘 < 𝑚. Note by Observation 3.2, we have
+                                             (𝑘 )
+𝑝 𝑖 (𝑣) = Pr[𝑣 > 𝜏𝑖 ] for any ﬁxed 𝑣, and {𝑇𝑖 } are ﬁxed values (instead of random variables) here.
+                                                                                (𝑘 )
+Lemma 3.4. For any 𝜀 ∈ (0, 1), with 𝑁 = 𝑂 (log( 2𝑛𝑚         −4
+                                                     𝜀 ) · 𝜀 ) samples, 𝑝 (𝑇𝑖
+                                                                             𝑖       ) = Pr[𝑇𝑖(𝑘 ) > 𝜏𝑖 ] ∈
+             2
+[𝑝𝑘 , 𝑝𝑘 + 2𝜀 ] for all 𝑖 ∈ 𝑈 and 0 ≤ 𝑘 < 𝑚 with probability at least 1 − 𝜀. We refer to such thresholds
+as good thresholds.
+  Once we have estimated these thresholds, we view them as ﬁxed value rather than random
+variables (i.e. conditioning on the value of these thresholds). This is important for the independence
+required by OCRSs.
+   Activation Rule. With these thresholds, we specify a rule of determining whether an item 𝑖 is
+active. If 𝑣 𝑖 ∈ [𝑇𝑖(𝑘 ) ,𝑇𝑖(𝑘+1) ) for some 0 ≤ 𝑘 < 𝑚, let 𝑖 be active with probability 𝑝𝑘 ; else 𝑣 𝑖 ∈
+[0,𝑇𝑖(0) ), let 𝑖 be active with probability 0. Let 𝑥𝑖 = Pr [𝑖 is active], where the probability space
+only involves randomness of 𝑣 𝑖 ∼ D𝑖 .
+   For any 𝒗 ∼ ×𝑖 D𝑖 , we can then apply this activation rule to each of the items to generate a set
+of active items. It is important that in this stage, we do not reuse the samples from the ﬁrst stage.
+The reason is that there are correlations between the thresholds we learnt for diﬀerent items, but
+OCRS requires each item to be active independently. Thus we treat the thresholds now as ﬁxed
+values and use the real realization of 𝒗 to generate 𝑅(𝒙). Observe that, in this way, each element
+is active independently.
+3We ignore the equality case which happens with zero probability.
+                                                                                                          8
+
+Lemma 3.5. If {𝑇𝑖(𝑘 ) } are good thresholds, then 𝒙 ∈ PM .
+  Proof. Let 𝑥𝑖∗ = Pr [𝑖 ∈ OPT] for every 𝑖 ∈ 𝑈 . Since OPT ∈ I, we have 𝒙 ∗ ∈ PM . Consider the
+conditional probability of 𝑖 being active when 𝑣 𝑖 = 𝑣.
+    • If 𝑣 < 𝑇𝑖(0) , Pr [𝑖 is active | 𝑣 𝑖 = 𝑣] = 0 ≤ 𝑝 𝑖 (𝑣).
+                (𝑘 )   (𝑘+1)
+    • If 𝑣 ∈ [𝑇𝑖 ,𝑇𝑖          ) for 0 ≤ 𝑘 < 𝑚, we have
+
+                             Pr [𝑖 is active | 𝑣 𝑖 = 𝑣] = 𝑝𝑘 ≤ 𝑝 𝑖 (𝑇𝑖(𝑘 ) ) ≤ 𝑝 𝑖 (𝑣),
+
+      where the ﬁrst inequality follows from the deﬁnition of 𝑇𝑖(𝑘 ) and the second inequality fol-
+      lows from the monotonicity of the function 𝑝 𝑖 .
+Therefore, for each 𝑖 ∈ 𝑈 ,
+                        ∫                                  ∫
+                  𝑥𝑖 = Pr [𝑖 is active | 𝑣 𝑖 = 𝑣] dD𝑖 (𝑣) ≤ 𝑝 𝑖 (𝑣)dD𝑖 (𝑣) = 𝑥𝑖∗,
+                            𝑣                                          𝑣
+
+that concludes the proof of the lemma.                                                                    
+
+  Furthermore, the expected values of active items are large compared to the expected optimum.
+This is the most technical lemma and the proof is built on a monotone basis exchange lemma
+(Lemma 3.8) for matroids from [8].
+                                                     Í
+Lemma 3.6. If {𝑇𝑖(𝑘 ) } are good thresholds, then E [ 𝑖 ∈𝑅 (𝒙) 𝑣 𝑖 ] ≥ (1 − 𝑂 (𝜀)) · E [OPT].
+  Proof. We defer its proof to Section 3.3.                                                               
+
+  Now, we have all the components to prove our main theorem.
+Theorem 3.1. With 𝑂 𝜀 (log4 𝑛) samples, there is a ( 14 −𝜀)-competitive prophet inequality for general
+matroids of size 𝑛 and any 𝜀 > 0.
+
+   Proof. We ﬁrst use 𝑂 𝜀 (log 𝑛) samples to learn the thresholds {𝑇𝑖(𝑘 ) }. By Lemma 3.4 and Lemma 3.5,
+the thresholds are good with at least (1−𝜀) probability and the corresponding activation rule results
+in a valid 𝒙 ∈ PM . We then use 𝑂 𝜀 (log4 𝑛) samples to learn the corresponding ( 14 − 𝜀)-selectable
+OCRS by Theorem 4.1. Finally, in the real run of the prophet inequality, upon the arrival of an item
+𝑖, we use the activation rule constructed above to decide whether 𝑖 active and feed it to the OCRS.
+                                                                                                 (𝑘 )
+   Let ALG be the random set of elements selected by the algorithm. Let E be the event that {𝑇𝑖 }
+are good thresholds.
+          "        #              "            #
+            Õ                       Õ
+       E        𝑣 𝑖 ≥ Pr [E] · E         𝑣𝑖 E
+           𝑖 ∈ALG                       𝑖 ∈ALG
+                                           Õ                 
+                                    1                          
+                      ≥ (1 − 𝜀) ·      −𝜀 E            𝑣 𝑖 E                 (Lemma 3.4 and Theorem 4.1)
+                                    4         𝑖 ∈𝑅 (𝒙 )        
+                                                             
+                                    1
+                      ≥ (1 − 𝜀) ·      − 𝜀 · (1 − 𝑂 (𝜀)) · E [OPT]                              (Lemma 3.6)
+                                    4
+                                    
+                           1
+                      =      − 𝑂 (𝜀) · E [OPT] ,
+                           4
+that concludes the proof of the theorem.                                                                  
+                                                                                                           9
+
+Remark 3.7 (Against almighty adversary). Although here we state the prophet inequality problem
+with oﬄine adversary, i.e., assuming the items arrive in a ﬁxed order 1, 2, . . . , 𝑛, our sample-based al-
+gorithm actually works against stronger almighty adversary, who determines the arrival order adap-
+tively with full knowledge of all realizations of randomness and the decisions made by the algorithm.
+The reason is that the thresholds are computed in a non-adaptive way (by using samples only), and the
+sample-based OCRS is a greedy OCRS, which works against almighty adversary (see [31] for details).
+
+3.3 Proof of Lemma 3.6
+Observe that we select items in a conservative way, in the sense that Pr [𝑖 is active | 𝑣 𝑖 = 𝑣] ≤
+Pr [𝑖 ∈ OPT | 𝑣 𝑖 = 𝑣] for all 𝑖, 𝑣. Nevertheless, we prove that the expected values of the active items
+are 𝜀-close to the optimum.
+  We will need the following monotone basis exchange lemma for matroids. For completeness,
+we include a proof of it in Appendix A.3.
+Lemma 3.8 (Lemma 2.4, [8]). Let M = (𝑈 , I) be a weighted matroid with weight function 𝑤 :
+𝑈 → R ≥0 . Suppose 𝐴 ∈ I is the basis with maximum total weight. For every basis 𝐵, there exists a
+bijection 𝑓 : 𝐴 → 𝐵 such that for all 𝑥 ∈ 𝐴, 𝐵 − 𝑓 (𝑥) + 𝑥 is a basis and 𝑤 (𝑓 (𝑥)) ≤ 𝑤 (𝑥). Moreover,
+the bijection 𝑓 satisﬁes 𝑓 (𝑥) = 𝑥 for all 𝑥 ∈ 𝐴 ∩ 𝐵.
+  It is worthwhile to make a comparison to the following lemma in the literature.
+Lemma 3.9 (Lemma 1, [42]). Let M = (𝑈 , I) be a weighted matroid with weight function 𝑤 : 𝑈 →
+R ≥0 . Suppose 𝐴 ∈ I is the basis with maximum total weight. For every basis 𝐵, there exists a bijection
+𝑔 : 𝐵 → 𝐴 such that for all 𝑦 ∈ 𝐵, 𝐴 − 𝑔(𝑦) + 𝑦 is a basis and 𝑤 (𝑔(𝑦)) ≥ 𝑤 (𝑦).
+   Observe that the only diﬀerence between the two lemmas is the direction of the mappings 𝑓 , 𝑔.
+We note that for every bijection 𝑔 such that 𝐴 − 𝑔(𝑦) + 𝑦 is a basis, we must have 𝑤 (𝑔(𝑦)) ≥ 𝑤 (𝑦)
+as otherwise 𝑤 (𝐴 − 𝑔(𝑦) + 𝑦) > 𝑤 (𝐴). In contrast, Lemma 3.8 does not hold for every bijection 𝑓
+such that 𝐵 − 𝑓 (𝑥) + 𝑥 is a basis.
+   Now, we are ready to prove Lemma 3.6. The crucial part is to bound the contribution of those
+items with 𝑣 𝑖 < 𝑇𝑖(0) .
+
+Lemma 3.10. If {𝑇𝑖(𝑘 ) } are good thresholds,
+                             "                            #
+                               Õ          h             i
+                                   𝑣 𝑖 · 1 𝑣 𝑖 < 𝑇𝑖
+                                                    (0)
+                          E                                 ≤ 𝑂 (𝜀) · E [OPT] .
+                                 𝑖 ∈OPT
+                                      Í
+   Proof. Let 𝑊 = argmax𝑆 ∈ I 𝑖 ∈𝑆 𝑇𝑖(0) be the maximum weighted basis where item 𝑖 has value
+𝑇𝑖(0) . Fix arbitrary 𝒗 and OPT(𝒗), by Lemma 3.8, there exists a bijection 𝑓 : 𝑊 → OPT such that
+                                                 (0)     (0)
+for any 𝑗 ∈ 𝑊 , OPT −𝑓 ( 𝑗 ) + 𝑗 ∈ I and 𝑇𝑓 ( 𝑗 ) ≤ 𝑇 𝑗 . Moreover, for all 𝑗 ∈ 𝑊 ∩ OPT, 𝑓 ( 𝑗 ) = 𝑗 .
+   By Observation 3.2, for every 𝑗 ∈ 𝑊 ∩ OPT, we have 𝑓 ( 𝑗 ) = 𝑗 and 𝑣 𝑗 ≥ 𝜏 𝑗 (𝒗 -𝑗 ). For every
+𝑗 ∈ 𝑊 \ OPT, by Observation 3.3, we also have 𝑣 𝑓 ( 𝑗 ) ≥ 𝜏 𝑗 (𝒗 -𝑗 ). Hence, 𝑣 𝑓 ( 𝑗 ) ≥ 𝜏 𝑗 for all 𝑗 ∈ 𝑈 .
+Consequently,
+                            h                  i     h                   i
+                          Pr 𝑣 𝑓 ( 𝑗 ) ≥ 𝑇 𝑗(0) ≥ Pr 𝜏 𝑗 (𝒗 -𝑗 ) ≥ 𝑇 𝑗(0) ≥ 1 − 𝜀 − 𝜀 2,                  (1)
+
+where the last inequality holds when {𝑇𝑖(𝑘 ) } are good. Then,
+        "        #     "          #    "                                 #
+          Õ              Õ               Õ            h                i                    Õ
+     E         𝑣𝑖 = E       𝑣𝑓 (𝑗) ≥ E        𝑇𝑗 · 1 𝑣 𝑓 ( 𝑗 ) ≥ 𝑇𝑗
+                                                (0)                (0)
+                                                                           ≥ (1 − 𝜀 − 𝜀 2 )   𝑇 𝑗(0) .   (2)
+          𝑖 ∈OPT          𝑗 ∈𝑊              𝑗 ∈𝑊                                            𝑗 ∈𝑊
+                                                                                                                                                               10
+
+Recall that by the construction of 𝑓 , we have that 𝑇𝑓(0)
+                                                       (𝑗)
+                                                           ≤ 𝑇 𝑗(0) , ∀𝑗 ∈ 𝑊 . Equivalently, we have
+𝑇𝑓(0)
+   -1 (𝑖 ) ≥ 𝑇𝑖
+                (0)
+                    , ∀𝑖 ∈ OPT. Finally,
+           "                          #  "                            #    "                                   #
+             Õ           h          i      Õ      h                 i        Õ             h                 i
+       E           𝑣 𝑖 1 𝑣 𝑖 < 𝑇𝑖(0) ≤ E     𝑣 𝑖 1 𝑣 𝑖 < 𝑇𝑓(0)
+                                                            -1 (𝑖 )     ≤E        -1 (𝑖 ) 1 𝑣 𝑖 < 𝑇𝑓 -1 (𝑖 )
+                                                                               𝑇𝑓(0)                (0)
+
+         𝑖 ∈OPT                                               𝑖 ∈OPT                                                    𝑖 ∈OPT
+                                                          "                                                   #
+                                                              Õ                  h                        i       (1)            Õ
+                                            = E                      𝑇 𝑗(0) 1 𝑣 𝑓 ( 𝑗 ) < 𝑇 𝑗(0)                  ≤ (𝜀 + 𝜀 2 )          𝑇 𝑗(0)
+                                                              𝑗 ∈𝑊                                                               𝑗 ∈𝑊
+                                        (2)           𝜀 + 𝜀2
+                                        ≤                               E [OPT] ≤ 𝑂 (𝜀) · E [OPT] .                                                             
+                                                  1 − 𝜀 − 𝜀2
+    Proof of Lemma 3.6. For every 𝑖 ∈ 𝑈 and 𝑣 ∈ [𝑇𝑖(𝑘 ) ,𝑇𝑖(𝑘+1) ), we have
+           𝑝 𝑖 (𝑣) ≤ 𝑝 𝑖 (𝑇𝑖(𝑘+1) ) ≤ 𝜀 (1 + 𝜀)𝑘+1 + 𝜀 2                                                                                    ({𝑇𝑖(𝑘 ) } are good)
+                                      ≤ (1 + 𝑂 (𝜀)) · (𝜀 (1 + 𝜀)𝑘 − 𝜀 2 )
+                                       = (1 + 𝑂 (𝜀)) Pr [𝑖 ∈ 𝑅(𝒙) | 𝑣 𝑖 = 𝑣] .                                                                   (activation rule)
+Therefore,
+                "                                     #
+                    Õ           h                 i             Õ∫ ∞
+            E              𝑣 𝑖 1 𝑣 𝑖 ≥ 𝑇𝑖   (0)
+                                                          =                      𝑣𝑝 𝑖 (𝑣)d𝐹𝑖 (𝑣)
+                  𝑖 ∈OPT                                        𝑖 ∈𝑈     𝑇𝑖(0)
+                                                                                     Õ ∫ ∞
+                                                          ≤ (1 + 𝑂 (𝜀))                                  𝑣 Pr [𝑖 ∈ 𝑅(𝒙) | 𝑣 𝑖 = 𝑣] d𝐹𝑖 (𝑣)
+                                                                                                   (0)
+                                                                                     𝑖 ∈ [𝑛 ] 𝑇𝑖
+                                                           Õ 
+                                                                          
+                                        = (1 + 𝑂 (𝜀)) E             𝑣 𝑖  .
+                                                          𝑖 ∈𝑅 (𝒙 ) 
+                                                                          
+    Combining this inequality with Lemma 3.10, we conclude that
+         Õ                        "                             #
+                          1          Õ         h              i
+      E           
+                 𝑣𝑖  ≥           E         𝑣 𝑖 1 𝑣 𝑖 ≥ 𝑇𝑖 (0)
+        𝑖 ∈𝑅 (𝒙)  1 + 𝑂 (𝜀)        𝑖 ∈OPT
+                                                 "                                 #!
+                            1                          Õ            h              i          1
+                      =            E [OPT] − E              𝑣 𝑖 1 𝑣 𝑖 < 𝑇𝑖     (0)
+                                                                                        ≥           E [OPT] .                                                   
+                        1 + 𝑂 (𝜀)                    𝑖 ∈OPT
+                                                                                          1 + 𝑂 (𝜀)
+
+4    Matroid OCRS from Samples
+Motivated by our sample-based reduction, our goal now is to design a constant selectable matroid
+OCRS using polylogarithmic samples. A previous work [32] studied lower bounds for this problem.
+Upon careful inspection, their counterexample shows that any constant selectable matroid OCRS
+requires Ω(log 𝑛) samples. (Details are given in Appendix C.) In this work, we design a matroid
+OCRS with 𝑂 𝜀 (log4 𝑛) samples:
+Theorem 4.1. With 𝑂 𝜀 (log4 𝑛) samples, there is a ( 41 − 𝜀)-selectable OCRS for general matroids of
+size 𝑛 and any 𝜀 > 0.
+  Our OCRS is based on the matroid OCRS proposed by Feldman et al. [31]. Recall that in online
+contention resolution, each element 𝑒 ∈ 𝑁 is active independently with probability 𝑥𝑒 . Let 𝑅(𝒙) be
+the random set of active elements. For sample-based schemes, this vector 𝒙 is hidden, instead the
+                                                                                                     11
+
+    algorithm gets 𝑠 samples of 𝑅(𝒙). To implement the algorithm in [31], it suﬃces to implement an
+    oracle that answers queries of form Pr[𝑒 ∈ span(𝑅(𝒙) ∪ 𝑆)] for element 𝑒 ∈ 𝑁 and subset 𝑆 ⊆ 𝑁
+    with error up to 𝜀.
+                                                                          log(𝑛)
+       For a single ﬁxed query, evaluating the empirical probability over 𝜀 2 samples guarantees the
+    success with high probability. At ﬁrst sight, it is tempting to argue that these samples suﬃce by
+    a union bound over all poly(𝑛) queries made by their algorithm. However, such argument is only
+    true for non-adaptive queries. For adaptive queries, the error in the answers to previous queries
+    can reveal information about the samples that leads to a problematic query. Resolving this issue
+    is a central problem in adaptive data analysis. As the OCRS by Feldman et al. [31] dynamically
+    updates the set 𝑆 based on previous queries, it makes poly(𝑛) highly adaptive queries. Studies in
+    adaptive data analysis show that, in general, answering these many adaptive queries up to 𝜀 = 0.1
+    error already requires poly(𝑛) samples [36, 57]. In our work, we protect against such adaptivity
+    with new ideas that are speciﬁc to OCRSs.
+
+    4.1   Recap: Chain Decomposition
+    In this section, we brieﬂy sketch the idea of the OCRS by Feldman et al. [31]. We are given a
+    matroid M = (𝑈 , I), where 𝑈 = [𝑛] is the universe, and I is the family of independent sets.
+    Suppose 𝒙 ∈ 𝑏 · PM is a vector within the matroid polytope shrank by a factor of 𝑏, where 𝑏 is a
+    constant factor that we will pick later. Each element 𝑒 ∈ 𝑈 is active independently with probability
+    𝑥𝑒 . Let 𝑅(𝒙) be the random set of active elements (w.r.t. the vector 𝒙).
+      Protected elements. Consider the greedy algorithm that always takes an active element whenever
+    possible. Its selectability for an element 𝑒 ∈ 𝑈 can be lower-bounded:
+                Pr [𝑒 is accepted by greedy | 𝑒 is active] ≥ 1 − Pr[𝑒 ∈ span(𝑅(𝒙) \ {𝑒})].
+    The idea of chain decomposition is that we are going to protect those elements 𝑒 ∈ 𝑈 with a
+    selectability less than 1 − 𝑐. We prioritize those elements by adding them to a set of protected
+    elements 𝑆. Now the modiﬁed greedy algorithm is going to pretend that all elements in 𝑆 are
+    already taken at the beginning, then take any active element whenever possible. As the set 𝑆 is
+    now nonempty, the selectability for an element 𝑒 ∈ 𝑈 \ 𝑆 becomes
+          Pr [𝑒 is accepted by modiﬁed greedy | 𝑒 is active] ≥ 1 − Pr[𝑒 ∈ span(𝑅(𝒙) ∪ 𝑆 \ {𝑒})].
+    There may be new problematic elements with this probability less than 1 − 𝑐. We then have to
+    enlarge the set 𝑆 by adding those elements. In this way, the set 𝑆 is dynamically changing based on
+    the result of the previous queries of such a probability. Then new queries depend on the changing
+    𝑆, which makes them highly adaptive in nature. This process is summarized in Algorithm 1. It
+    takes a submatroid (𝑁 , I| 𝑁 ) for 𝑁 ⊆ 𝑈 and returns the protected set 𝑆 for that submatroid. We
+    note that although the choice of the element 𝑒 at Line 3 is arbitrary, the returned set 𝑆 is always
+    unique. (See Appendix B.1.)
+
+    ALGORITHM 1: Select protected elements for 𝑁
+1 Function Select(𝑁 , 𝑐)
+2    𝑆←∅
+3    while ∃𝑒 ∈ 𝑁 \ 𝑆, Pr [𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆) \ {𝑒 })] > 𝑐 do
+4        add such element 𝑒 to 𝑆.
+5    end
+6    return 𝑆
+                                                                                                        12
+
+       Chain decomposition. After selecting the protected set 𝑆, note that the elements outside 𝑆 can
+    be handled by the modiﬁed greedy algorithm and achieve (1 − 𝑐)-selectability. Furthermore, the
+    following lemma guarantees that set 𝑆 returned by Select(𝑁 , 𝑐) is always of a smaller rank than
+    𝑁 when 𝑏 ≤ 𝑐.
+    Lemma 4.2 (Section 2.1.1, [31]). For any submatroid (𝑁 , I| 𝑁 ), vector 𝒙 ∈ 𝑏 · PM , and 𝑐 > 0, we
+    always have
+                                       𝑏
+                           rank(𝑆) < · rank(𝑁 ) where 𝑆 = Select(𝑁 , 𝑐).
+                                       𝑐
+      Proof. We include a proof in Appendix B.2 for completeness.                                       
+
+      Therefore, as long as we pick 𝑐 ≥ 𝑏, the subproblem in 𝑆 is always strictly smaller. We can
+    recursively apply the idea to the submatroid (𝑆, I|𝑆 ). This leads to the following algorithm:
+
+
+    ALGORITHM 2: Chain decomposition in Feldman et al. [31]
+1 Procedure Decompose(𝑈 , 𝑐)
+2    𝑁0 ← 𝑈
+3    ℓ←0
+4    while 𝑁 ℓ ≠ ∅ do
+5        𝑁 ℓ+1 ← Select(𝑁𝑙 , 𝑐)
+6        ℓ ←ℓ+1
+7    end
+
+
+      By Lemma 4.2, when 𝑏 < 𝑐 − 𝜀, it is guaranteed to terminate in ℓ = 𝑂 𝜀 (log 𝑛) steps and produce
+    the following chain decomposition
+              ∅ = 𝑁 ℓ ( 𝑁 ℓ −1 ( · · · ( 𝑁 1 ( 𝑁 0 = 𝑈 where 𝑁𝑖+1 = Select(𝑁𝑖 , 𝑐) for 0 ≤ 𝑖 < ℓ.
+    The ﬁnal OCRS in [31] is simply running Algorithm 3, a modiﬁed greedy algorithm, for each layer
+    𝑁𝑖 \ 𝑁𝑖+1 separately.
+
+
+    ALGORITHM 3: Modiﬁed greedy algorithm for 𝑁𝑖 \ 𝑁𝑖+1
+1 𝐴←∅;                                               // Here 𝐴 is the set of accepted elements.
+2 for each arriving element 𝑒 ∈ 𝑁𝑖 \ 𝑁𝑖+1 do
+3     if 𝐴 ∪ 𝑁𝑖+1 ∈ I then
+4         𝐴 ← 𝐴 ∪ {𝑒 }
+5     end
+6 end
+
+7 return 𝐴
+
+
+
+
+      In other words, Algorithm 3 is equivalent to a greedy algorithm running on the matroid M | 𝑁𝑖 /𝑁𝑖+1 ,
+    which is M restricted to 𝑁𝑖 and then contracted by 𝑁𝑖+1 . It is easy to see that running Algorithm 3
+    for every 0 ≤ 𝑖 < ℓ together always produces an independent set of M. And the selectability of
+    any element 𝑒 ∈ 𝑁𝑖 \ 𝑁𝑖+1 is
+         Pr [𝑒 is accepted | 𝑒 is active] ≥ 1 − Pr [𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁𝑖 ) ∪ 𝑁𝑖+1 )) \ {𝑒})] ≥ 1 − 𝑐.
+                                                                                                           13
+
+    4.2 Selecting Protected Elements with Samples
+    Now, we move on to introduce our sampled-based OCRS. As a natural ﬁrst step, let us ﬁrst try to
+    implement Algorithm 1 with samples:
+    ALGORITHM 4: Select protected elements for 𝑁 , with samples
+1 Function  Select(𝑁 , 𝑐)
+2     Let 𝑅1 , 𝑅2 , . . . , 𝑅𝑠 be 𝑠 fresh realized samples from 𝑅(𝒙)
+                                                     Í
+3     For any event 𝐸 (𝑅), deﬁne b        Pr[𝐸] ≔ 𝑠1 𝑠𝑖=1 1 [𝐸 (𝑅𝑖 )]
+4    𝑆b ← ∅
+5     while ∃𝑒 ∈ 𝑁 \ 𝑆, Pr[𝑒    b ∈ span(((𝑅 ∩ 𝑁 ) ∪ 𝑆)   b \ {𝑒 })] > 𝑐 do
+6         add such element 𝑒 to 𝑆        b
+7     end
+8     return 𝑆b
+                                                     b In order for the chain decomposition approach
+       Suppose that the algorithm returns a ﬁnal set 𝑆.
+    to work, we need the following property: For some constant 𝑐 ′ strictly less than 1,
+                               h                                 i
+                      Pr𝑅 (𝒙 ) 𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ b                           b
+                                                        𝑆) \ {𝑒}) ≤ 𝑐 ′ , ∀𝑒 ∈ 𝑁 \ 𝑆.             (3)
+                                                              log 𝑛
+       It is tempting to think that if we take 𝑠 = 𝛿 2 samples, by concentration, we will be able
+             b
+    to use Pr[𝐸]    to answer polynomially many Pr[𝐸] queries up to 𝛿 error with high probability,
+    which ensures this property with 𝑐 ′ = 𝑐 − 𝛿. This is only true for non-adaptive queries. Here, in
+    Algorithm 4, it is crucial that the algorithm maintains a dynamic set 𝑆b and adaptively discovers
+    new elements that need to be protected. The issue with adaptive queries is that the error in the
+    previous answers reveals information about the samples.
+       Looking closer, Algorithm 4 compares the answer to those Pr[𝐸] queries with a threshold 𝑐.
+    Consider a single Pr[𝐸] query for estimating Pr [𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆)        b \ {𝑒})]. If the true
+    answer is less than 𝑐 − 𝛿 (or greater than 𝑐 + 𝛿), with high probability, the estimate returned by b    Pr
+    will also be below (or above) the threshold 𝑐. Adaptivity appears when the true answer lies within
+    [𝑐 − 𝛿, 𝑐 + 𝛿], whether the element 𝑒 is added to 𝑆b or not depends now on the error on the samples.
+                       b which determines the later queries.
+    It aﬀects the set 𝑆,
+    Remark 4.3 (Adaptive Data Analysis). Pr[𝐸]   b     asks for the fraction of samples that satisﬁes an event
+    𝐸. These are called statistical queries. Answering statistical queries against adaptivity is a central
+    problem in the ﬁeld of adaptive data analysis. Lower bounds from there show, in general, with 𝑠
+    samples, one can answer at most 𝑠 2 many such adaptive queries [36, 57]. There are a few exceptions,
+    e.g. when the support of the sample is polynomially bounded [7], or when all queries are threshold
+    queries, and they are sparse [24, 35] (in the that sense that, only a bounded number of queries have
+    above-threshold answers, which can be solved using the sparse vector technique). However, in our
+    case, the support of 𝑅(𝒙) can be as large as 2𝑛 . Although the queries are threshold queries, they are
+    not sparse. As these existing tools seem insuﬃcient, novel ideas are needed to resolve the adaptivity
+    issue in Algorithm 4.
+                                                                                     , 𝑐): despite the
+       To handle the adaptivity issue, let us observe a surprising property of Select(𝑁
+    presence of adaptivity, Select(𝑁 , 𝑐) is still sandwiched between two sets that satisfy Property (3).
+                                                                                              𝑐 2 −𝑐 1
+    Lemma 4.4. Fix any set 𝑁 ⊆ 𝑈 and constants 0 < 𝑐 1 < 𝑐 2 < 1. We deﬁne 𝑐b = 𝑐 1 +𝑐 2
+                                                                                    2 and 𝛿 =     2 .
+                         −1
+                             
+              log 𝑛 log 𝜀
+    Using 𝑂        𝛿2
+                               samples,
+                                                       ,b
+                                   Select(𝑁 , 𝑐 2 ) ⊆ Select(𝑁 𝑐 ) ⊆ Select(𝑁 , 𝑐 1 )
+                                                                                                               14
+
+                                     poly(𝜀 )
+holds with probability at least 1 − poly(𝑛) .
+
+  Proof. We prove these two cases separately:
+      ,b
+   • Select(𝑁 𝑐 ) ⊆ Select(𝑁 , 𝑐 1 ).
+                                                           ,b
+      Let 𝑆 1 = Select(𝑁 , 𝑐 1 ). Consider the process of Select(𝑁 𝑐 ) which dynamically maintains
+              b                   b
+      the set 𝑆. We claim that 𝑆 ⊆ 𝑆 1 throughout the process. We prove this via induction. Initially,
+      we have 𝑆b = ∅ ⊆ 𝑆 1 . Then at any step, if we are going to add 𝑒 to 𝑆,
+                                                                           b we must have
+
+                              Pr[𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ b
+                              b                          𝑆) \ {𝑒})] > 𝑐b.
+      By induction hypothesis, we know that 𝑆b ⊆ 𝑆 1 , which implies (𝑅(𝒙)∩𝑁 )∪𝑆b ⊆ (𝑅(𝒙)∩𝑁 )∪𝑆 1 .
+      Hence, by monotonicity,
+                             b ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆 1 ) \ {𝑒})]] > 𝑐b.
+                             Pr[𝑒
+                                                                                                                   
+                                                                                                   log 𝑛 log 𝜀 −1
+      Note 𝑆 1 = Select(𝑁 , 𝑐 1 ) is a ﬁxed set that do not depend on samples. As we take 𝑂             𝛿2
+                                                                     poly(𝜀 )
+      samples, by Chernoﬀ bound, with probability at least 1 − poly(𝑛) , we have
+
+      b ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆 1 ) \ {𝑒})]] − Pr[𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆 1 ) \ {𝑒})] ≤ 𝛿
+      Pr[𝑒                                                                                                     (4)
+                                                                                    poly(𝜀 )
+      A union bound over all 𝑛 possibilities of 𝑒 shows that with probability 1− poly(𝑛) , Equation (4)
+      holds throughout the process. Hence, for the newly added element 𝑒, we have
+                        Pr[𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆 1 ) \ {𝑒})] > 𝑐b − 𝛿 ≥ 𝑐 1 .
+      Since all elements in 𝑈 \ 𝑆 1 are (1 − 𝑐 1 )-selectable, we know that 𝑒 must be in 𝑆 1 .
+                            ,b
+    • Select(𝑁 , 𝑐 2 ) ⊆ Select(𝑁   𝑐 ).
+      First of all, let 𝑆b =                                                                         b
+                                       𝑐 ). When Algorithm 4 terminates, we know that for all 𝑒 ∈ 𝑈 \ 𝑆,
+                             Select(𝑁 ,b
+                                Pr[𝑒 ∈ span(((𝑅 ∩ 𝑁 ) ∪ b
+                                b                       𝑆) \ {𝑒})] ≤ 𝑐.
+      Consider the process of Select(𝑁 , 𝑐 2 ), which dynamically maintains a set 𝑆 2 . We claim that
+      with high probability over the randomness of 𝑆, b it holds that 𝑆 2 ⊆ 𝑆b through out this process.
+      Again, we prove this by induction. Initially, we have 𝑆 2 = ∅ ⊆ 𝑆. b At any step, if we are going
+      to add 𝑒 to 𝑆 2 , we must have
+                             Pr[𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆 2 ) \ {𝑒})] > 𝑐 2 .
+      Note that the process of generating 𝑆 2 (i.e., the procedure Select(𝑁 , 𝑐 2 )) does not depend on
+      our samples. Similar to the previous case, by Chernoﬀ bound, we get that with probability
+                   poly(𝜀 )
+      at least 1 − poly(𝑛) ,
+
+                    b ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆 2 ) \ {𝑒})] > 𝑐 2 − 𝛿 > 𝑐 2 − 𝛿 > 𝑐b.
+                    Pr[𝑒
+                                                         poly(𝜀 )                  b which implies
+      By the induction hypothesis, we know that with 1− poly(𝑛) probability, 𝑆 2 ⊆ 𝑆,
+                                        b Hence, with the same high probability,
+      (𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆 2 ⊆ (𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆.
+                              b ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆)
+                              Pr[𝑒                    b \ {𝑒})] > 𝑐b.
+
+      If this happens, 𝑒 must be in the set b
+                                            𝑆. Finally, we ﬁnish the proof by observing that we use
+      union bound over at most poly(𝑛) induction steps.                                           
+                                                                                                      15
+
+    According to Lemma 4.4, if we let 𝑆𝑐−𝛿 = Select(𝑁 , 𝑐 − 𝛿) and 𝑆𝑐+𝛿 = Select(𝑁 , 𝑐 + 𝛿), the set
+𝑆b𝑐 = 𝑆b(𝑁 , 𝑐) must satisfy 𝑆𝑐+𝛿 ⊆ 𝑆b𝑐 ⊆ 𝑆𝑐−𝛿 with high probability. Note that 𝑆𝑐−𝛿 and 𝑆𝑐+𝛿 are both
+valid choices for the set 𝑆 that satisfy Equation (3) with diﬀerent constants. Since 𝑆b𝑐 is sandwiched
+ between them, it is very tempting to think that the set 𝑆b𝑐 must also satisfy Equation (3). If so, we
+would have proved that the original OCRS of Feldman et al. [31] (Algorithm 5) works with samples.
+ However, this is not the case.
+    To see this, consider the quantity 𝑟 𝑒 ≔ Pr[𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆b𝑐 ) \ {𝑒})] for every element
+𝑒 ∈ 𝑁 \ 𝑆b𝑐 :
+     • It cannot be the case that 𝑒 ∈ 𝑆𝑐+𝛿 . If this is the case, we are guaranteed that 𝑒 ∈ 𝑆b𝑐 as well,
+        which contradicts 𝑒 ∈ 𝑁 \ 𝑆b𝑐 .
+     • If 𝑒 ∈ 𝑁 \ 𝑆𝑐−𝛿 , we are guaranteed by Algorithm 1 that
+                          Pr[𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆𝑐−𝛿 ) \ {𝑒})] ≤ 𝑐 − 𝛿.
+        Since 𝑆𝑐 ⊆ 𝑆𝑐−𝛿 , by monotonicity, the quantity 𝑟 𝑒 that we care about is also at most 𝑐 − 𝛿.
+      • If 𝑒 ∈ 𝑆𝑐−𝛿 \ 𝑆𝑐+𝛿 , on the one hand, 𝑒 is in 𝑆𝑐−𝛿 , so we do not have any non-trivial upper
+        bound for
+                               Pr[𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆𝑐−𝛿 ) \ {𝑒})].
+        On the other hand, 𝑒 ∈ 𝑁 \ 𝑆𝑐+𝛿 , although we know that
+                          Pr[𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆𝑐+𝛿 ) \ {𝑒})] ≤ 𝑐 + 𝛿.
+      But 𝑆b𝑐 is (potentially) a larger set than 𝑆𝑐+𝛿 . It could be the case that 𝑟 𝑒 is much larger than
+      𝑐 + 𝛿. So we cannot hope to get a non-trivial upper bound for 𝑟 𝑒 .
+  In conclusion, the only problematic case is when 𝑒 ∈ 𝑆𝑐−𝛿 \ 𝑆𝑐+𝛿 , where we do not have any
+guarantee of their selectability.
+
+4.3    Against Adaptivity using Randomization
+To illustrate our idea, we will ﬁrst present a simple toy example to warm up. Then we will slightly
+generalize it to our actual construction.
+  Toy Example. Our main idea for resolving such an adaptivity issue is simple to state: by choosing
+the protected set 𝑆b to be either 𝑆b𝑐 or 𝑆b𝑐+2𝛿 uniformly at random, i.e.
+                                          (
+                                             , 𝑐)
+                                            Select(𝑁           w.p. 12 ,
+                                    𝑆b =
+                                             , 𝑐 + 2𝛿) w.p. 1 .
+                                            Select(𝑁                 2
+
+By Lemma 4.4 and union bound, we know with high probability,
+                                  𝑆𝑐+3𝛿 ⊆ 𝑆b𝑐+2𝛿 ⊆ 𝑆𝑐+𝛿 ⊆ 𝑆b𝑐 ⊆ 𝑆𝑐−𝛿 .
+We know if one chooses to protect 𝑆b𝑐 (i.e., 𝑆b = Select(𝑁 , 𝑐)), we have no guarantee for the elements
+                                                                          , 𝑐 + 2𝛿)), elements in
+in 𝑆𝑐−𝛿 \ 𝑆𝑐+𝛿 . Similarly, if one chooses to protect 𝑆b𝑐+2𝛿 (i.e., 𝑆b = Select(𝑁
+𝑆𝑐+𝛿 \ 𝑆𝑐+3𝛿 are problematic. So neither of these two works. But the crucial observation is that
+𝑆𝑐−𝛿 \ 𝑆𝑐+𝛿 and 𝑆𝑐+𝛿 \ 𝑆𝑐+3𝛿 are two disjoint sets. If we just randomize between these two, we can
+imagine having guarantees for all elements with only a factor-of-2 loss in selectability.
+   More speciﬁcally, for any element 𝑒 ∈ 𝑁 ,
+    • with probability 1/2, it is not in the problematic set of elements, which means with high
+      probability, either 𝑒 ∈ 𝑆b or Pr𝑅 (𝒙 ) [𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆)b \ {𝑒})] ≤ 𝑐 + 3𝛿;
+    • with the other 1/2 probability, it is in the problematic set and we do not have any guarantee.
+                                                                                                                      16
+
+       Note that this only achieves Equation (3) with probability 1/2. There is still a probability of 1/2
+    that a bad event occurs: 𝑒 ∈ 𝑁 \ 𝑆b but Pr𝑅 (𝒙 ) [𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ b𝑆) \ {𝑒})] is too large.
+       This becomes a problem if we plug this procedure into the chain decomposition procedure
+    (Algorithm 2). From Lemma 4.2, we know that the chain decomposition procedure has at most
+                                                         ℓ times. Let us imagine the worst case: For
+    ℓ = 𝑂 𝜀 (log 𝑛) rounds. So it calls the procedure Select
+    every round in which 𝑒 is not in the problematic set, let us say that 𝑒 is in 𝑆b and the decomposition
+    procedure continues with 𝑒 ∈ 𝑁 . Once we meet a round where 𝑒 is in the problematic set (with
+    probability 1/2), we lose all guarantees for the element 𝑒. But it is highly likely (with probability
+    1 − (1/2)𝑂𝜀 (log 𝑛) ) that we will see one such problematic round.
+      Our Construction. In order to ﬁx this issue and achieve constant selectability, our ﬁnal scheme
+    needs a sequence 𝑐 1 < 𝑐 2 < · · · < 𝑐 𝑘+1 of 𝑘 + 1 diﬀerent thresholds that are equally spaced
+                                                                                               𝑐 +𝑐
+    in [𝑐 1 , 𝑐 𝑘+1 ]. The scheme picks 𝑗 ∈ [𝑘] uniformly at random and then uses 𝑐b = 𝑗 2 𝑗 +1 . Note
+    that for each round 𝑖, we are using 𝑠 fresh samples for         b𝑖 ,b
+                                                             Select( 𝑁   𝑐 ). Finally, we are going to take
+    𝑘 = 𝑂 𝜀 (log 𝑛), so that the probability that the bad event happens, 1 − (1 − 1/𝑘)𝑂𝜀 (log 𝑛) , is small
+    enough.
+
+    ALGORITHM 5: Chain decomposition, with samples
+1 Procedure 
+            Decompose(𝑈 , 𝑐 1 , 𝑐 2 , . . . , 𝑐𝑘+1 )
+2    𝑁b0 ← 𝑈
+3    ℓ←0
+4          cℓ ≠ ∅ do
+     while 𝑁
+                                                     𝑐 +𝑐
+5        Sample 𝑗ℓ ∼ Uniform([𝑘]) and let 𝑐b ← 𝑗ℓ 2 𝑗ℓ +1
+6        bℓ+1 ← 
+         𝑁              cℓ , 𝑐b)
+                 Select(𝑁
+7        ℓ ←ℓ+1
+8    end
+
+
+
+    4.4     Proof of Theorem 4.1
+    In this section, we complete the proof of Theorem 4.1 using Algorithm 5. In our proof, we set 𝑏 = 12 ,
+    which means that we shrink the ex-ante active probability 𝒙 by half to ensure 𝒙 ∈ 12 · PM . Let
+                                         bℓ ( 𝑁
+                                       ∅=𝑁    bℓ −1 ( · · · ( 𝑁
+                                                              b0 = 𝑈 = [𝑛]
+
+    be the chain decomposition generated by Algorithm 5. Based on such decomposition, we aim to
+    demonstrate that running the modiﬁed greedy algorithm, Algorithm 3, for each layer 𝑁           b𝑖 \ 𝑁b𝑖+1
+                          1                                  4
+    separately achieves ( 4 − 𝜀)-selectability using 𝑂 𝜀 (log 𝑛) samples.
+                                                                             log 𝑛
+      We ﬁrst delineate the parameters for Algorithm 5, setting 𝑘 as log(1+𝜀 ) log 1 (1−𝜀 ) = Θ𝜀 (log 𝑛) and
+                                                                                              4
+    deﬁning {𝑐 𝑗 }𝑘+1
+                  𝑗=1 as an arithmetic sequence          with initial term 𝑐 1 = 12 + 𝜀2 and terminal term 𝑐 𝑘+1 = 12 +𝜀.
+                                                 
+                              𝑘 2 log 𝑛 log 𝜀 −1                                                    𝑁
+    In each layer 𝑖, 𝑠 = Θ            𝜀2
+                                                   = Θ𝜀 (log3 𝑛) fresh samples are needed for Select(      b𝑖 ,b
+                                                                                                               𝑐 ).
+
+    Lemma 4.5. Let ℓ denote the number of layers in the chain decomposition generated by Algorithm 5,
+                                                                                    poly(𝜀 )
+    with parameters set as above. The following holds with probability at least 1 − poly(𝑛) :
+          • ℓ = 𝑂 𝜀 (log 𝑛).
+          • (1 − 𝑘1 ) ℓ ≥ 1 − 𝜀.
+                                                                                                                           17
+
+  Proof. Consider any protected set 𝑁      b𝑖 and an index 𝑗𝑖 uniformly selected from [𝑘] in layer 𝑖.
+                                           𝑐 +𝑐
+Let 𝛿 = 4𝑘𝜀 represent the gap between 𝑗𝑖 2 𝑗𝑖 +1 and both 𝑐 𝑗𝑖 and 𝑐 𝑗𝑖 +1 . Given the parameters previ-
+                              2                                    
+                               𝑘 log 𝑛 log 𝜀 −1        log 𝑛 log 𝜀 −1
+ously deﬁned, we take 𝑠 = Θ          𝜀2
+                                                  =Θ        𝛿2
+                                                                        new samples during the execution of
+ 𝑁     b𝑖 ,b                                                                                poly(𝜀 )
+Select(     𝑐 ). By applying Lemma 4.4, it is established that with probability at least 1 − poly(𝑛) :
+                                                                    𝑐 𝑗𝑖 + 𝑐 𝑗𝑖 +1
+                    Select(𝑁                b𝑖+1 = 
+                           b𝑖 , 𝑐 𝑗𝑖 +1 ) ⊆ 𝑁             b𝑖 ,
+                                                   Select(𝑁                                   b𝑖 , 𝑐 𝑗𝑖 ).
+                                                                                   ) ⊆ Select(𝑁
+                                                                          2
+                               b𝑖 , 𝑐 𝑗𝑖 ) ⊆ Select(𝑁
+   It always holds that Select(𝑁                    b𝑖 , 𝑐 1 ). Therefore,
+                                                                            
+                               rank 𝑁      b𝑖+1 ≤ rank Select(𝑁     b𝑖 , 𝑐 1 )
+                                                    1             
+                                                 <       rank 𝑁   b𝑖 .
+                                                   1+𝜀
+where the last inequality follows from Lemma 4.2 with 𝑏 = 21 and 𝑐 = 12 + 12 𝜀. Since Algorithm 5
+terminates when rank( 𝑁 bℓ ) < 1, it follows that
+                                             
+                          ℓ ≤ log1+𝜀 rank 𝑁  b0 ≤ log 𝑛 = 𝑂 𝜀 (log 𝑛).
+                                                  log(1 + 𝜀)
+                                                                                                       log 𝑛
+   Now, to demonstrate the second property, recall that 𝑘 is deﬁned as log(1+𝜀 ) log (1−𝜀 ) . It thus        1 4
+                                                                                    /
+follows that
+                                      ℓ
+                                         ≤ log1/4 (1 − 𝜀).                                         (5)
+                                     𝑘
+   Therefore,
+                                ℓ           𝑘 ! 𝑘ℓ     𝑘ℓ
+                               1            1             1
+                            1−      = 1−               ≥        ≥ 1 − 𝜀,
+                               𝑘            𝑘             4
+                                                                𝑘
+where the ﬁrst inequality leverages the property that 1 − 𝑘1 is an increasing function for 𝑘 ≥ 2,
+and 𝑘 is trivially at least 2. The ﬁnal inequality is justiﬁed by Equation (5).                
+
+   Our algorithm employs 𝑂 𝜀 (log3 𝑛) samples per layer across ℓ layers in total. Combining with
+Lemma 4.5, it is evident that the total number of samples required by our algorithm does not exceed
+𝑂 𝜀 (log4 𝑛).4
+   The remaining task is to demonstrate the selectability of Algorithm 5. Consider any element
+𝑒 ∈ 𝑈 ; our objective is to establish that
+                                                                              1
+                                   Pr[𝑒 is accepted | 𝑒 is active] ≥            − 𝑂 (𝜀).
+                                                                              2
+Given that 𝒙 is contained within 12 · PM , it is deduced that our algorithm achieves a selectability
+of 41 − 𝑂 (𝜀). For this purpose, we will introduce a stochastic process to simulate the execution of
+Algorithm 5 with respect to a ﬁxed element 𝑒.
+
+4 Should the conditions speciﬁed in Lemma 4.5 not be met, Algorithm 5 terminates immediately and announces failure. This
+                                                                                  poly(𝜀 )
+approach has a negligible impact on the algorithm’s selectability (in the order of poly(𝑛) ) and guarantees that the algorithm
+deterministically requires 𝑂 𝜀 (log4 𝑛) samples.
+                                                                                                                     18
+
+  Stochastic Process. Fix an element 𝑒 ∈ 𝑈 . Initiating with 𝑖 = 0 and 𝑁       c0 = 𝑈 = [𝑛], our stochastic
+process sequentially reveals the randomness, i.e., 𝑗 0, 𝑗 1, . . . , 𝑗 ℓ , across each layer. Assuming the
+process is at layer 𝑖, with the protected set 𝑁b𝑖 containing element 𝑒, we proceed to deﬁne 𝑁𝑖+1,𝑡 =
+        b
+Select(𝑁𝑖 , 𝑐 𝑡 ) for each 𝑡 ∈ [𝑘 + 1]. Speciﬁcally, we set 𝑁𝑖+1,0 = 𝑁     b𝑖 and 𝑁𝑖+1,𝑘+2 = ∅. It is evident
+                            𝑘+2
+that the sequence {𝑁𝑖,𝑡 }𝑡=1 satisﬁes the following property:
+                                                                              b𝑖 .
+                                  ∅ = 𝑁𝑖,𝑘+2 ⊆ 𝑁𝑖,𝑘+1 ⊆ · · · ⊆ 𝑁𝑖,1 ⊆ 𝑁𝑖,0 = 𝑁
+  Given that 𝑒 ∈ 𝑁 b𝑖 , there must exist a unique 𝑡 ∗ ∈ {0, 1, . . . , 𝑘 + 1} such that 𝑒 ∈ 𝑁𝑖,𝑡 ∗ \ 𝑁𝑖,𝑡 ∗ +1 .
+We proceed by revealing the randomness and selecting 𝑗𝑖 uniformly at random from the set [𝑘].
+With the choice of 𝑗𝑖 , the next step involves deﬁning 𝑁      b𝑖+1 = 
+                                                                     Select(𝑁   b𝑖 , (𝑐 𝑗𝑖 + 𝑐 𝑗𝑖 +1 )/2). Lemma 4.5
+ensures that5
+                    𝑁𝑖,𝑗𝑖 +1 = Select(𝑁 b𝑖 , 𝑐 𝑗𝑖 +1 ) ⊆ 𝑁
+                                                         b𝑖+1 ⊆ Select(𝑁b𝑖 , 𝑐 𝑗𝑖 ) = 𝑁𝑖,𝑗𝑖 .
+  Depending on the speciﬁc outcome of 𝑗𝑖 , we examine the subsequent scenarios:
+   • Case 1: If 𝑗𝑖 < 𝑡 ∗ , this indicates that
+                                                                      b𝑖+1 .
+                                              𝑒 ∈ 𝑁𝑖,𝑡 ∗ ⊆ 𝑁𝑖,𝑗𝑖 +1 ⊆ 𝑁
+      Consequently, 𝑒 progresses to a subsequent layer. We then increase 𝑖 by 1 to move to layer
+      𝑖 + 1.
+    • Case 2: If 𝑗𝑖 > 𝑡 ∗ , it implies that
+                                                b𝑖+1 ⊆ 𝑁𝑖,𝑗𝑖 ⊆ 𝑁𝑖,𝑡 ∗ +1 .
+                                                𝑁
+       Observe that 𝑒 ∉ 𝑁𝑖,𝑡 ∗ +1 . This observation implies that 𝑒 is also not a member of 𝑁   b𝑖+1 and
+       𝑁𝑖,𝑗𝑙 . Consequently, the probability of 𝑒 being selected in this scenario can be expressed as
+       follows:
+            Pr[𝑒 is selected | 𝑒 is active] ≥ 1 − Pr[𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 b𝑖 ) ∪ 𝑁
+                                                                                b𝑖+1 )) \ {𝑒})]
+                                         ≥ 1 − Pr[𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁b𝑖 ) ∪ 𝑁𝑖,𝑗𝑖 )) \ {𝑒})]
+                                           1
+                                         ≥ − 𝜀.
+                                           2
+                                                                b𝑖 \ 𝑁
+       The ﬁrst inequality is derived from the premise that 𝑒 ∈ 𝑁    b𝑖+1 while we are employing
+                                                b
+       a greedy strategy on the matroid M | b /𝑁𝑖+1 . The subsequent inequality emerges from the
+                                                       𝑁𝑖
+                 b𝑖+1 ⊆ 𝑁𝑖,𝑗𝑖 , and the ﬁnal inequality is in accordance with the deﬁnition that
+       inclusion 𝑁
+                                                                b𝑖 , 𝑐 𝑗𝑖 ).
+                                               𝑁𝑖+1,𝑗𝑖 = Select(𝑁
+      Hence, in this scenario, our algorithm demonstrates eﬀectiveness, thereby concluding the
+      stochastic process.
+    • Case 3: If 𝑗𝑖 = 𝑡 ∗ , the stochastic process immediately terminates with no guarantee for 𝑒.
+  Our algorithm fails at element 𝑒 only when the stochastic process ends in Case 3. As 𝑗𝑖 is drawn
+uniformly at random from [𝑘], the stochastic process falls into Case 3 with a probability of 𝑘1 in
+each layer. As there are at most ℓ layers in total, the selectability is given as
+                                                                   
+                                                       1            1 ℓ 1
+                 Pr[𝑒 is selected | 𝑒 is active] ≥       −𝜀 · 1−          ≥ − 𝑂 (𝜀).
+                                                       2            𝑘       2
+where the last inequality follows from Lemma 4.5. We hereby conclude our proof.
+5 Similarly, should this property not be upheld, both our algorithm and the stochastic process will be terminated immedi-
+
+ately. This aﬀects the algorithm’s selectability by only a negligible margin.
+                                                                                                                      19
+
+References
+ [1] Saeed Alaei. 2014. Bayesian Combinatorial Auctions: Expanding Single Buyer Mechanisms to Many Buyers. SIAM J.
+     Comput. 43, 2 (2014), 930–972.
+ [2] Saeed Alaei, MohammadTaghi Hajiaghayi, and Vahid Liaghat. 2012. Online prophet-inequality matching with appli-
+     cations to ad allocation. In Proceedings of the 13th ACM Conference on Electronic Commerce. 18–35.
+ [3] Pablo D Azar, Robert Kleinberg, and S Matthew Weinberg. 2014. Prophet inequalities with limited information. In
+     Proceedings of the twenty-ﬁfth annual ACM-SIAM symposium on Discrete algorithms. SIAM, 1358–1377.
+ [4] Pablo D Azar, Robert Kleinberg, and S Matthew Weinberg. 2019. Prior independent mechanisms via prophet inequal-
+     ities with limited information. Games and Economic Behavior 118 (2019), 511–532.
+ [5] Moshe Babaioﬀ, Nicole Immorlica, and Robert Kleinberg. 2007. Matroids, secretary problems, and online mecha-
+     nisms. In Proceedings of the Eighteenth Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2007, New Orleans,
+     Louisiana, USA, January 7-9, 2007, Nikhil Bansal, Kirk Pruhs, and Cliﬀord Stein (Eds.). SIAM, 434–443.
+ [6] Kiarash Banihashem, MohammadTaghi Hajiaghayi, Dariusz R Kowalski, Piotr Krysta, and Jan Olkowski. 2024. Power
+     of Posted-price Mechanisms for Prophet Inequalities. In Proceedings of the 2024 Annual ACM-SIAM Symposium on
+     Discrete Algorithms (SODA). SIAM, 4580–4604.
+ [7] Raef Bassily, Kobbi Nissim, Adam Smith, Thomas Steinke, Uri Stemmer, and Jonathan Ullman. 2016. Algorithmic
+     stability for adaptive data analysis. In Proceedings of the forty-eighth annual ACM symposium on Theory of Computing.
+     1046–1059.
+ [8] Niv Buchbinder, Moran Feldman, and Mohit Garg. 2019. Deterministic (1/2+ 𝜀)-Approximation for Submodular Max-
+     imization over a Matroid. In Proceedings of the Thirtieth Annual ACM-SIAM Symposium on Discrete Algorithms. SIAM,
+     241–254.
+ [9] Constantine Caramanis, Paul Dütting, Matthew Faw, Federico Fusco, Philip Lazos, Stefano Leonardi, Orestis Pa-
+     padigenopoulos, Emmanouil Pountourakis, and Rebecca Reiﬀenhäuser. 2022. Single-sample prophet inequalities via
+     greedy-ordered selection. In Proceedings of the 2022 Annual ACM-SIAM Symposium on Discrete Algorithms (SODA).
+     SIAM, 1298–1325.
+[10] Shuchi Chawla, Kira Goldner, Anna R Karlin, and J Benjamin Miller. 2020. Non-adaptive matroid prophet inequalities.
+     arXiv preprint arXiv:2011.09406 (2020).
+[11] Shuchi Chawla, Jason D. Hartline, David L. Malec, and Balasubramanian Sivan. 2010. Multi-parameter mechanism
+     design and sequential posted pricing. In Proceedings of the 42nd ACM Symposium on Theory of Computing, STOC 2010,
+     Cambridge, Massachusetts, USA, 5-8 June 2010, Leonard J. Schulman (Ed.). ACM, 311–320.
+[12] José Correa and Andrés Cristi. 2023. A Constant Factor Prophet Inequality for Online Combinatorial Auctions. In
+     Proceedings of the 55th Annual ACM Symposium on Theory of Computing. 686–697.
+[13] José Correa, Andrés Cristi, Boris Epstein, and José A Soto. 2023. Sample-driven optimal stopping: From the secretary
+     problem to the iid prophet inequality. Mathematics of Operations Research (2023).
+[14] José Correa, Paul Dütting, Felix Fischer, Kevin Schewior, and Bruno Ziliotto. 2021. Unknown IID Prophets: Better
+     Bounds, Streaming Algorithms, and a New Impossibility. In 12th Innovations in Theoretical Computer Science Confer-
+     ence (ITCS 2021). Schloss Dagstuhl-Leibniz-Zentrum fuer Informatik.
+[15] José Correa, Patricio Foncea, Ruben Hoeksma, Tim Oosterwijk, and Tjark Vredeveld. 2017. Posted price mechanisms
+     for a random stream of customers. In Proceedings of the 2017 ACM Conference on Economics and Computation. 169–186.
+[16] José R Correa, Andrés Cristi, Boris Epstein, and José A Soto. 2020. The two-sided game of googol and sample-based
+     prophet inequalities. In Proceedings of the Fourteenth Annual ACM-SIAM Symposium on Discrete Algorithms. SIAM,
+     2066–2081.
+[17] José R. Correa, Paul Dütting, Felix A. Fischer, and Kevin Schewior. 2019. Prophet Inequalities for I.I.D. Random
+     Variables from an Unknown Distribution. In Proceedings of the 2019 ACM Conference on Economics and Computation,
+     EC 2019, Phoenix, AZ, USA, June 24-28, 2019, Anna Karlin, Nicole Immorlica, and Ramesh Johari (Eds.). ACM, 3–17.
+[18] Andrés Cristi and Bruno Ziliotto. 2023. Prophet Inequalities Require Only a Constant Number of Samples. arXiv
+     preprint arXiv:2311.09141 (2023).
+[19] Peerapong Dhangwatnotai, Tim Roughgarden, and Qiqi Yan. 2010. Revenue maximization with a single sample. In
+     Proceedings of the 11th ACM conference on Electronic commerce. 129–138.
+[20] Atanas Dinev and S Matthew Weinberg. 2023. Simple and Optimal Online Contention Resolution Schemes for 𝑘-
+     Uniform Matroids. arXiv preprint arXiv:2309.10078 (2023).
+[21] Shaddin Dughmi. 2019. The outer limits of contention resolution on matroids and connections to the secretary
+     problem. arXiv preprint arXiv:1909.04268 (2019).
+[22] Paul Dutting, Michal Feldman, Thomas Kesselheim, and Brendan Lucier. 2020. Prophet inequalities made easy: Sto-
+     chastic optimization by pricing nonstochastic inputs. SIAM J. Comput. 49, 3 (2020), 540–582.
+[23] Paul Dütting, Thomas Kesselheim, and Brendan Lucier. 2020. An o (log log m) prophet inequality for subadditive
+     combinatorial auctions. ACM SIGecom Exchanges 18, 2 (2020), 32–37.
+                                                                                                                           20
+
+[24] Cynthia Dwork, Moni Naor, Omer Reingold, Guy N Rothblum, and Salil Vadhan. 2009. On the complexity of diﬀer-
+     entially private data release: eﬃcient algorithms and hardness results. In Proceedings of the forty-ﬁrst annual ACM
+     symposium on Theory of computing. 381–390.
+[25] Evgenii Borisovich Dynkin. 1963. The optimum choice of the instant for stopping a Markov process. Soviet Mathe-
+     matics 4 (1963), 627–629.
+[26] Soheil Ehsani, MohammadTaghi Hajiaghayi, Thomas Kesselheim, and Sahil Singla. 2018. Prophet secretary for combi-
+     natorial auctions and matroids. In Proceedings of the twenty-ninth annual acm-siam symposium on discrete algorithms.
+     SIAM, 700–714.
+[27] Tomer Ezra, Michal Feldman, Nick Gravin, and Zhihao Gavin Tang. 2020. Online Stochastic Max-Weight Matching:
+     Prophet Inequality for Vertex and Edge Arrival Models. In EC ’20: The 21st ACM Conference on Economics and Compu-
+     tation, Virtual Event, Hungary, July 13-17, 2020, Péter Biró, Jason Hartline, Michael Ostrovsky, and Ariel D. Procaccia
+     (Eds.). ACM, 769–787.
+[28] Tomer Ezra, Michal Feldman, Nick Gravin, and Zhihao Gavin Tang. 2022. General graphs are easier than bipartite
+     graphs: tight bounds for secretary matching. In Proceedings of the 23rd ACM Conference on Economics and Computation.
+     1148–1177.
+[29] Michal Feldman, Nick Gravin, and Brendan Lucier. 2014. Combinatorial auctions via posted prices. In Proceedings of
+     the twenty-sixth annual ACM-SIAM symposium on Discrete algorithms. SIAM, 123–135.
+[30] Moran Feldman, Ola Svensson, and Rico Zenklusen. 2014. A simple O (log log (rank))-competitive algorithm for the
+     matroid secretary problem. In Proceedings of the twenty-sixth annual ACM-SIAM symposium on Discrete algorithms.
+     SIAM, 1189–1201.
+[31] Moran Feldman, Ola Svensson, and Rico Zenklusen. 2016. Online Contention Resolution Schemes. In Proceedings of
+     the Twenty-Seventh Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2016, Arlington, VA, USA, January
+     10-12, 2016, Robert Krauthgamer (Ed.). SIAM, 1014–1033.
+[32] Hu Fu, Pinyan Lu, Zhihao Gavin Tang, Abner Turkieltaub, Hongxun Wu, Jinzhao Wu, and Qianfan Zhang. 2022.
+     Oblivious online contention resolution schemes. In Symposium on Simplicity in Algorithms (SOSA). SIAM, 268–278.
+[33] Nikolai Gravin and Hongao Wang. 2019. Prophet inequality for bipartite matching: Merits of being simple and non
+     adaptive. In Proceedings of the 2019 ACM Conference on Economics and Computation. 93–109.
+[34] Mohammad Taghi Hajiaghayi, Robert Kleinberg, and Tuomas Sandholm. 2007. Automated online mechanism design
+     and prophet inequalities. In AAAI, Vol. 7. 58–65.
+[35] Moritz Hardt and Guy N Rothblum. 2010. A multiplicative weights mechanism for privacy-preserving data analysis.
+     In 2010 IEEE 51st annual symposium on foundations of computer science. IEEE, 61–70.
+[36] Moritz Hardt and Jonathan Ullman. 2014. Preventing false discovery in interactive data analysis is hard. In 2014 IEEE
+     55th Annual Symposium on Foundations of Computer Science. IEEE, 454–463.
+[37] Jason D Hartline and Tim Roughgarden. 2009. Simple versus optimal mechanisms. In Proceedings of the 10th ACM
+     conference on Electronic commerce. 225–234.
+[38] Theodore P Hill and Robert P Kertz. 1982. Comparisons of stop rule and supremum expectations of iid random
+     variables. The Annals of Probability (1982), 336–345.
+[39] Jiashuo Jiang, Will Ma, and Jiawei Zhang. 2022. Tight Guarantees for Multi-unit Prophet Inequalities and Online
+     Stochastic Knapsack. In Proceedings of the 2022 Annual ACM-SIAM Symposium on Discrete Algorithms (SODA). SIAM,
+     1221–1246.
+[40] Haim Kaplan, David Naori, and Danny Raz. 2020. Competitive analysis with a sample and the secretary problem. In
+     Proceedings of the Fourteenth Annual ACM-SIAM Symposium on Discrete Algorithms. SIAM, 2082–2095.
+[41] Haim Kaplan, David Naori, and Danny Raz. 2022. Online weighted matching with a sample. In Proceedings of the 2022
+     Annual ACM-SIAM Symposium on Discrete Algorithms (SODA). SIAM, 1247–1272.
+[42] Robert Kleinberg and S. Matthew Weinberg. 2012. Matroid prophet inequalities. In Proceedings of the forty-fourth
+     annual ACM symposium on Theory of computing. 123–136.
+[43] Ulrich Krengel and Louis Sucheston. 1977. Semiamarts and ﬁnite values. (1977).
+[44] Ulrich Krengel and Louis Sucheston. 1978. On semiamarts, amarts, and processes with ﬁnite value. Probability on
+     Banach spaces 4 (1978), 197–266.
+[45] Oded Lachish. 2014. O (log log rank) competitive ratio for the matroid secretary problem. In 2014 IEEE 55th Annual
+     Symposium on Foundations of Computer Science. IEEE, 326–335.
+[46] Euiwoong Lee and Sahil Singla. 2018. Optimal Online Contention Resolution Schemes via Ex-Ante Prophet Inequali-
+     ties. In 26th Annual European Symposium on Algorithms, ESA 2018, August 20-22, 2018, Helsinki, Finland (LIPIcs, Vol. 112),
+     Yossi Azar, Hannah Bast, and Grzegorz Herman (Eds.). Schloss Dagstuhl - Leibniz-Zentrum für Informatik, 57:1–57:14.
+[47] Bo Li, Xiaowei Wu, and Yutong Wu. 2023. Prophet Inequality on I.I.D. Distributions: Beating 1-1/e with a Single
+     Query. arXiv:2205.05519 [cs.DS]
+                                                                                                                        21
+
+[48] Wenzheng Li. 2023. A Reduction from Matroid Secretary Problem to Single-Sample Matroid Prophet Secretary. per-
+     sonal communication.
+[49] Pranav Nuti and Jan Vondrák. 2023. Secretary problems: The power of a single sample. In Proceedings of the 2023
+     Annual ACM-SIAM Symposium on Discrete Algorithms (SODA). SIAM, 2015–2029.
+[50] Bo Peng and Zhihao Gavin Tang. 2022. Order selection prophet inequality: From threshold optimization to arrival
+     time design. In 2022 IEEE 63rd Annual Symposium on Foundations of Computer Science (FOCS). IEEE, 171–178.
+[51] Aviad Rubinstein. 2016. Beyond matroids: Secretary problem and prophet inequality with general constraints. In
+     Proceedings of the forty-eighth annual ACM symposium on Theory of Computing. 324–332.
+[52] Aviad Rubinstein and Sahil Singla. 2017. Combinatorial prophet inequalities. In Proceedings of the Twenty-Eighth
+     Annual ACM-SIAM Symposium on Discrete Algorithms. SIAM, 1671–1687.
+[53] Aviad Rubinstein, Jack Z. Wang, and S. Matthew Weinberg. 2020. Optimal Single-Choice Prophet Inequalities from
+     Samples. In 11th Innovations in Theoretical Computer Science Conference, ITCS 2020, January 12-14, 2020, Seattle, Wash-
+     ington, USA (LIPIcs, Vol. 151), Thomas Vidick (Ed.). Schloss Dagstuhl - Leibniz-Zentrum für Informatik, 60:1–60:10.
+[54] Ester Samuel-Cahn. 1984. Comparison of threshold stop rules and maximum for independent nonnegative random
+     variables. the Annals of Probability (1984), 1213–1216.
+[55] Richard Santiago, Ivan Sergeev, and Rico Zenklusen. 2023. Simple Random Order Contention Resolution for Graphic
+     Matroids with Almost no Prior Information. In Symposium on Simplicity in Algorithms (SOSA). SIAM, 84–95.
+[56] Alexander Schrijver. 2003. Combinatorial Optimization Polyhedra and Eﬃciency Volume B Matroids, Trees, Stable
+     Sets Chapters 39-69. Algorithms and Combinatorics 24, 1 (2003), ALL–ALL.
+[57] Thomas Steinke and Jonathan Ullman. 2015. Interactive ﬁngerprinting codes and the hardness of preventing false
+     discovery. In Conference on learning theory. PMLR, 1588–1628.
+
+
+A Missing Proofs from Section 3
+A.1 Tie-Breaking for Distributions with Point Masses
+Our algorithm for prophet inequality in Section 3 can only work with continuous distributions. For
+distributions with point masses, we use the following tie-breaking technique from [53] to make
+them continuous.
+   For a distribution D with point masses, we can deﬁne D ′ as the bivariate distribution D ×
+𝑈 ( [0, 1]), the product of D and the uniform distribution over [0, 1]. Then for (𝑥, 𝑡), (𝑦, 𝑢) sampled
+from D ′ , deﬁne (𝑥, 𝑡) > (𝑦, 𝑢) if either 𝑥 > 𝑦 or 𝑥 = 𝑦 and 𝑡 > 𝑢. Observe that the equality holds
+with zero probability. Therefore, if we deﬁne 𝐹 (𝑥, 𝑡) = Pr (𝑦,𝑢 )∼D ′ [(𝑥, 𝑡) > (𝑦, 𝑢)], we gain the
+desired property that 𝐹 is continuous and 𝐹 (𝑥, 𝑡) > 𝐹 (𝑦, 𝑢) ⇔ (𝑥, 𝑡) > (𝑦, 𝑢).
+
+A.2 Proof of Lemma 3.4
+     Proof of Lemma 3.4. Let the C.D.F. of 𝜏𝑖 be 𝐺𝑖 . From Observation 3.2, we know that 𝑖 ∈ OPT
+if and only if 𝑣 𝑖 > 𝜏𝑖 .6 Therefore, by deﬁnition, 𝑝 𝑖 (𝑣) = Pr[𝑖 ∈ OPT | 𝑣 𝑖 = 𝑣] = Pr[𝑣 𝑖 > 𝜏𝑖 | 𝑣 𝑖 =
+                                                                       (𝑘 )
+𝑣] = 𝐺𝑖 (𝑣). Together with 𝑝𝑘 = 𝜀 (1 + 𝜀)𝑘 − 𝜀 2 , we have that 𝑝 𝑖 (𝑇𝑖 ) ∈ [𝑝𝑘 , 𝑝𝑘 + 2𝜀] if and only if
+𝐺𝑖 (𝑇𝑖(𝑘 ) ) ∈ [𝜀 (1 + 𝜀)𝑘 − 𝜀 2, 𝜀 (1 + 𝜀)𝑘 + 𝜀 2 ].
+     For each sample 1 ≤ 𝑠 ≤ 𝑁 , 𝑖 ∈ 𝑈 and 0 ≤ 𝑘 < 𝑚, let 𝑙𝑖,𝑘    𝑠 = 1 [𝐺 (𝜏 𝑠 ) < 𝜀 (1 + 𝜀) 𝑘 − 𝜀 2 ] and
+                                                                            𝑖 𝑖
+𝑟 𝑖,𝑘 = 1 [𝐺𝑖 (𝜏𝑖 ) < 𝜀 (1 + 𝜀) + 𝜀 ]. By Chernoﬀ bound we have
+  𝑠              𝑠              𝑘     2
+
+                                      "𝑁                            #
+                                       Õ                                       4         𝜀
+                                 Pr           𝑠
+                                             𝑙𝑖,𝑘 ≥ 𝜀 (1 + 𝜀)𝑘 𝑁 ≤ 𝑒 −𝑁 𝜀 /3 ≤              ,
+                                       𝑠=1
+                                                                                        2𝑛𝑚
+                                      "𝑁                            #
+                                       Õ                                       4         𝜀
+                                 Pr            𝑠
+                                             𝑟 𝑖,𝑘 ≤ 𝜀 (1 + 𝜀)𝑘 𝑁       ≤ 𝑒 −𝑁 𝜀 /2 ≤       .
+                                      𝑠=1
+                                                                                        2𝑛𝑚
+
+
+6We neglect the case where 𝑣 = 𝜏 since it has zero probability.
+                            𝑖   𝑖
+                                                                                                                         22
+
+       Here 𝑛 is the number of elements in 𝑈 , and 𝑁 is the number of samples. Observe that if 𝐺𝑖 (𝑇𝑖(𝑘 ) ) ∉
+                                                             Í𝑁 𝑠                          Í𝑁 𝑠
+    [𝜀 (1 + 𝜀)𝑘 − 𝜀 2, 𝜀 (1 + 𝜀)𝑘 + 𝜀 2 ], we either have 𝑠=1     𝑙𝑖,𝑘 ≥ 𝜀 (1 + 𝜀)𝑘 𝑁 or 𝑠=1      𝑟 𝑖,𝑘 ≤ 𝜀 (1 + 𝜀)𝑘 𝑁 , thus
+                                   h                                                   i       𝜀
+                                            (𝑘 )
+                                Pr 𝐺𝑖 (𝑇𝑖 ) ∉ [𝜀 (1 + 𝜀)𝑘 − 𝜀 2, 𝜀 (1 + 𝜀)𝑘 + 𝜀 2 ] ≤            .
+                                                                                             𝑛𝑚
+    Then by a union bound over all 𝑖 ∈ 𝑈 and 0 ≤ 𝑘 < 𝑚, we conclude that
+                                h                                                              i
+                             Pr ∃𝑖, 𝑘 s.t. 𝐺𝑖 (𝑇𝑖(𝑘 ) ) ∉ [𝜀 (1 + 𝜀)𝑘 − 𝜀 2, 𝜀 (1 + 𝜀)𝑘 + 𝜀 2 ] ≤ 𝜀,
+
+    which implies Pr [∀𝑖, 𝑘 s.t. 𝐺𝑖 (𝑇𝑖(𝑘 ) ) ∈ [𝜀 (1 + 𝜀)𝑘 − 𝜀 2, 𝜀 (1 + 𝜀)𝑘 + 𝜀 2 ]] ≥ 1 − 𝜀.
+                                (𝑘 )
+     Thus Pr [∀𝑖, 𝑘 s.t. 𝑝 𝑖 (𝑇𝑖 ) ∈ [𝑝𝑘 , 𝑝𝑘 + 2𝜀]] ≥ 1 − 𝜀.                                                             
+
+    A.3 Proof of Lemma 3.8
+    We will need the strong basis exchange property of matroids.
+    Lemma A.1 (Strong basis exchange, Theorem 39.12 in [56]). Let M = (𝑈 , I) be a matroid. Let 𝐴
+    and 𝐵 be two bases and 𝑥 ∈ 𝐴 \ 𝐵. Then there exists 𝑦 ∈ 𝐵 \ 𝐴 such that 𝐴 − 𝑥 + 𝑦 and 𝐵 − 𝑦 + 𝑥 are
+    both bases.
+       Proof of Lemma 3.8. Let 𝑈 = [𝑛] and 𝑤 (1) ≥ 𝑤 (2) ≥ · · · ≥ 𝑤 (𝑛). Suppose the rank of the matroid
+    is 𝑟 . We denote the elements in 𝐴 by {𝑎𝑖 }𝑖 ∈ [𝑟 ] where 𝑎𝑖 ’s are in ascending order. Consequently, we
+    have 𝑤 (𝑎 1 ) ≥ 𝑤 (𝑎 2 ) ≥ · · · ≥ 𝑤 (𝑎𝑟 ). Without loss of generality, we can assume that the basis 𝐴 is
+    generated by feeding 1, 2, . . . , 𝑛 to the greedy algorithm sequentially.
+       Next, we state our algorithm for constructing the bijection 𝑓 . We will need the strong basis
+    exchange property stated in Lemma A.1.
+    ALGORITHM 6: Construct mapping 𝑓
+1  Recall 𝑟 is the rank of M
+2  𝐴𝑟 +1 ← 𝐴
+ 3 for 𝑖 ← 𝑟, 𝑟 − 1, . . . , 1 in descending order do
+ 4      if 𝑎𝑖 ∈ 𝐴𝑖+1 \ 𝐵 then
+ 5           By Lemma A.1, there exists 𝑏𝑖 ∈ 𝐵 \ 𝐴𝑖+1 such that both 𝐴𝑖+1 − 𝑎𝑖 + 𝑏𝑖 and 𝐵 − 𝑏𝑖 + 𝑎𝑖 are bases
+ 6           Let 𝑓 (𝑎𝑖 ) ← 𝑏𝑖
+ 7           𝐴𝑖 ← 𝐴𝑖+1 − 𝑎𝑖 + 𝑓 (𝑎𝑖 )
+ 8      end
+ 9      else
+10           Let 𝑓 (𝑎𝑖 ) ← 𝑎𝑖
+11           𝐴𝑖 ← 𝐴𝑖+1
+12      end
+13 end
+
+       We ﬁrst prove the following facts about Algorithm 6.
+    Fact A.2. {𝑓 (𝑎𝑖 ), 𝑓 (𝑎𝑖+1 ), . . . , 𝑓 (𝑎𝑟 )} ⊂ 𝐴𝑖 .
+      Proof. For all 𝑗 ≥ 𝑖, if 𝑎 𝑗 ∈ 𝐴 𝑗+1 \𝐵, we have 𝑓 (𝑎 𝑗 ) ∈ 𝐵 \𝐴 𝑗+1 which implies 𝑓 (𝑎 𝑗 ) ∉ {𝑎𝑖 , . . . , 𝑎 𝑗 }.
+    Together with 𝑓 (𝑎 𝑗 ) ∈ 𝐴 𝑗 , we can see that 𝑓 (𝑎 𝑗 ) is never eliminated and 𝑓 (𝑎 𝑗 ) ∈ 𝐴𝑖 . If 𝑎 𝑗 ∉ 𝐴 𝑗+1 \𝐵,
+    we know 𝑓 (𝑎 𝑗 ) = 𝑎 𝑗 , and it is in both 𝐴 𝑗 and 𝐴𝑖 .                                                          
+    Fact A.3. The resulting mapping 𝑓 is a bijection.
+       Proof. If 𝑎𝑖 ∈ 𝐴𝑖+1 \ 𝐵, since 𝑏𝑖 ∈ 𝐵 \ 𝐴𝑖+1 , we know 𝑓 (𝑎𝑖 ) = 𝑏𝑖 ∉ {𝑓 (𝑎𝑖+1 ), . . . , 𝑓 (𝑎𝑟 )} (by
+    Fact A.2). If 𝑎𝑖 ∉ 𝐴𝑖+1 \ 𝐵, 𝑓 (𝑎𝑖 ) equals 𝑎𝑖 itself. Note for all 𝑗 > 𝑖, 𝐴 𝑗+1 − 𝑎 𝑗 + 𝑓 (𝑎 𝑗 ) is a basis and
+    𝑎𝑖 ∈ 𝐴 𝑗+1 . Therefore 𝑓 (𝑎𝑖 ) = 𝑎𝑖 cannot equal to any of such 𝑓 (𝑎 𝑗 ).
+                                                                                                                    23
+
+   Thus 𝑓 (𝑎𝑖 ) ≠ 𝑓 (𝑎 𝑗 ) for all 𝑗 > 𝑖. 𝑓 is an injection. Since 𝐴 and 𝐵 are two bases and |𝐴| = |𝐵|, 𝑓
+is a bijection.                                                                                         
+Fact A.4. For all 𝑎𝑖 ∈ 𝐴, 𝑤 (𝑓 (𝑎𝑖 )) ≤ 𝑤 (𝑎𝑖 ).
+   Proof. If 𝑤 (𝑓 (𝑎𝑖 )) > 𝑤 (𝑎𝑖 ), we know 𝑓 (𝑎𝑖 ) < 𝑎𝑖 . Thus 𝑓 (𝑎𝑖 ) is fed to the greedy algorithm
+before 𝑎𝑖 . On the other hand, since 𝑓 (𝑎𝑖 ) ≠ 𝑎𝑖 , we must have 𝑎𝑖 ∈ 𝐴𝑖+1 \ 𝐵 and 𝐴𝑖+1 − 𝑎𝑖 + 𝑓 (𝑎𝑖 )
+is a basis. Therefore {𝑎 1 , 𝑎 2 , . . . , 𝑎𝑖 −1, 𝑓 (𝑎𝑖 )} ∈ I. Then our greedy algorithm should have selected
+𝑓 (𝑎𝑖 ) before it selected 𝑎𝑖 . Since we enumerate 𝑎𝑖 in decreasing order of their index, if our algorithm
+selected 𝑓 (𝑎𝑖 ), we must have 𝑓 (𝑎𝑖 ) ∈ 𝐴𝑖+1 . This contradicts with the fact 𝑓 (𝑎𝑖 ) ∈ 𝐵 \ 𝐴𝑖+1 .          
+   Finally, we verify that for all 𝑎𝑖 , 𝐵 − 𝑓 (𝑎𝑖 ) + 𝑎𝑖 is a basis. It is trivial when 𝑓 (𝑎𝑖 ) = 𝑎𝑖 . Otherwise,
+𝐵 − 𝑓 (𝑎𝑖 ) +𝑎𝑖 is also a basis according to our construction. This ﬁnishes the proof of the lemma. 
+
+B Missing Proofs from Section 4
+B.1 Uniqueness of Select(𝑁 , 𝑐) and      Select(𝑁 , 𝑐)
+In this section, we show Select(𝑁 , 𝑐) can be uniquely deﬁned by the set 𝑆 returned by Algorithm 1,
+no matter which element 𝑒 is chosen each time at Line 3.
+   Let T be the family of sets that do not satisfy the condition in Line 3, i.e., for every 𝑇 ∈ T ,
+𝑒 ∈ 𝑁 \𝑇,
+                            Pr [𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑇 ) \ {𝑒})] ≤ 𝑐.
+By deﬁnition, the set 𝑆 returned by Algorithm 1 always belongs to T . We claim such 𝑆 is the unique
+minimum set in T . The plan is to prove by induction that the changing 𝑆 in always remains a
+subset of 𝑇 during the execution of Algorithm 1 for every 𝑇 ∈ T . Initially, 𝑆 = ∅ and the statement
+trivially holds. Each time an element is added to 𝑆, we must have
+       Pr [𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑇 ) \ {𝑒})] ≥ Pr [𝑒 ∈ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ 𝑆) \ {𝑒})] > 𝑐,
+where the ﬁrst inequality is due to the monotonicity of span and the induction hypothesis 𝑆 ⊆ 𝑇 .
+That implies 𝑒 ∈ 𝑇 by deﬁnition of the family T . Therefore, 𝑆 ∪ {𝑒} ⊆ 𝑇 and we have completed
+the proof. The same argument holds if we replace Pr with Pr,             , 𝑐) is also uniquely
+                                                             b and thus Select(𝑁
+deﬁned by Algorithm 4 (for any ﬁxed samples 𝑅1, 𝑅2 , . . . , 𝑅𝑠 ).
+
+B.2 Proof of Lemma 4.2
+   Proof of Lemma 4.2. Let 𝑟 be rank(𝑆). Take 𝑒 1 , 𝑒 2 , . . . , 𝑒𝑟 from 𝑆 as follows: 𝑒𝑖 is the item that
+increases the rank of 𝑆 from 𝑖 − 1 to 𝑖 during the algorithm.
+   Before the formal proof, we ﬁrst explain the intuition. Note we know that Pr [𝑒𝑖 ∉ span(((𝑅(𝒙) ∩
+𝑁 ) ∪ {𝑒 1 , 𝑒 2 , . . . , 𝑒𝑖 −1 }) \ {𝑒𝑖 })] < 1 −𝑐 holds for all 𝑖 ∈ [𝑟 ] since 𝑒𝑖 is added to 𝑆 by our algorithm. So
+instead of directly consider rank(𝑆), we start from the random set 𝑅(𝒙) ∩ 𝑁 and add 𝑒 1 , 𝑒 2, . . . , 𝑒𝑟
+to it in order. Each item we add 𝑒𝑖 , the probability that it increase the rank by one is strictly smaller
+than 1 −𝑐. Finally, we get a set with rank E [rank(𝑆 ∪ (𝑅(𝒙) ∩ 𝑁 ))] in expectation. This is an upper
+bound of rank(𝑆), and we can further upper bound the rank of it by rank(𝑁 ) using the fact that
+𝑒𝑖 increase its rank with probability strictly less than 1 − 𝑐.
+   Formally, we have
+       rank(𝑆) ≤ E [rank(𝑆 ∪ (𝑅(𝒙) ∩ 𝑁 ))]
+                                   Õ
+                                   𝑟
+               ≤ E [|𝑅(𝒙) ∩ 𝑁 |] +   Pr [𝑒𝑖 ∉ span(((𝑅(𝒙) ∩ 𝑁 ) ∪ {𝑒 1 , 𝑒 2 , . . . , 𝑒𝑖 −1 }) \ {𝑒𝑖 })]
+                                         𝑖=1
+                 < 𝑏 rank(𝑁 ) + (1 − 𝑐) rank(𝑆),
+                                                                                                                24
+
+                                                           Í
+where we used the fact that E [|𝑅(𝒙) ∩ 𝑁 |] ≤ 𝑖 ∈𝑁 𝑥𝑖 ≤ 𝑏 rank(𝑁 ) and Pr [𝑒𝑖 ∉ span(((𝑅(𝒙) ∩
+𝑁 ) ∪ {𝑒 1 , · · · , 𝑒𝑖 −1 }) \ {𝑒𝑖 })] < 1 − 𝑐. As a result, rank(𝑆) < 𝑏𝑐 · rank(𝑁 ).      
+
+C    Non-existence of Ω(1)-Balanced Matroid CRS with 𝑜 (log 𝑛) Samples
+A previous work [32] showed the non-existence of Ω(1)-balanced matroid contention resolution
+scheme (CRS) with 𝑂 (1) samples. We note that their impossibility result can be extended to any
+Ω(1)-balanced matroid CRS with 𝑜 (log 𝑛) samples by using the same hard instance. As a direct
+consequence, it is also impossible to obtain a constant-selectable OCRS with 𝑜 (log 𝑛) samples.
+  One of their hard instance is the graphic matroid M = (𝐸, I) deﬁned on the complete bipartite
+graph 𝐾𝑁 ,𝑀 = (𝑈 ∪ 𝑉 , 𝐸) with bipartition 𝑈 = {𝑢 1 , 𝑢 2, . . . , 𝑢 𝑁 } and 𝑉 = {𝑣 1 , 𝑣 2, . . . , 𝑣 𝑀 }. Let PM
+be the polytope of the matroid and 𝛿 (𝑢) be the set of edges incident to a vertex 𝑢 ∈ 𝑈 ∪ 𝑉 .
+
+            𝑈
+            𝑢1                                                               𝑢1
+                                    𝑉                                                                  𝑉
+            𝑢2                      𝑣1                                       𝑢2                        𝑣1
+
+            𝑢3                      𝑣2                                       𝑢3                        𝑣2
+                                                                      𝑈∗
+            𝑢4                      𝑣3                                       𝑢4                        𝑣3
+
+
+            𝑢5                                                               𝑢5
+
+(a) The complete bipartite graph 𝐾𝑁 ,𝑀 and 𝒙 𝑖 .              (b) A realization 𝑅(𝒙 𝑖 ) of this instance. Let 𝑈 ∗ be
+Here 𝑖 = 4, edges adjacent to 𝑢𝑖 has probabil-                the set of all vertices on left side of degree 𝑀. If
+ity 𝑥𝑒𝑖 = 1 of being active, while other edges                𝑁 is large enough, there will be many vertices
+each only has probability 𝑀1 of being active. In              happen to be in 𝑈 ∗ . These vertices in 𝑈 ∗ are in-
+any Ω(1)-balanced CRS, they have to be selected               distinguishable to CRS, and 𝑢𝑖 (𝑖 = 4) is hidden
+with constant probability.                                    between them.
+
+                            Fig. 1. The hard instance for graphic matroids in [32]
+
+
+    Consider 𝑁 points 𝒙 1, 𝒙 2 , . . . , 𝒙 𝑁 where for every 𝑖 ∈ [𝑁 ] and 𝑒 ∈ 𝐸,
+                                                  (
+                                               𝑖    1 if 𝑒 ∈ 𝛿 (𝑢𝑖 ),
+                                              𝑥𝑒 = 1
+                                                    𝑀    otherwise.
+    Their intermediate result can be summarized as follows:
+Lemma C.1 (Section 3.1, [32]). The points 𝒙 1 , 𝒙 2, . . . , 𝒙 𝑁 are in the matroid polytope PM . Moreover,
+for any 𝑁 , 𝑀 ≥ 1, 𝑠 ≥ 0, and 0 < 𝑐 ≤ 1, if there exists a 𝑐-balanced CRS with 𝑠 samples for
+𝒙 1 , 𝒙 2, . . . , 𝒙 𝑁 ∈ PM , then
+                                            1 𝑀 (𝑠+1)𝑀
+                                       𝑐≤        +                .
+                                            𝑀              𝑁
+    Then they concluded the non-existence of Ω(1)-balanced CRS for any constant 𝑠 by letting 𝑁 ≫
+𝑀 𝑀 . The same argument, notably, remains valid to cases where 𝑠 is beyond constant. Speciﬁcally,
+                                                                                           25
+
+             log 𝑁
+for any 𝑠 ≤ 2𝑀 log 𝑀 − 1, the inequality above becomes
+                                              1   1
+                                         𝑐≤     +√ .
+                                              𝑀   𝑁
+                                                                    log 𝑁
+In other words, a ( 𝑀1 + √1 )-balanced CRS for M requires at least 2𝑀 log 𝑀 samples. By choos-
+                          𝑁
+ing 𝑁 ≫ 𝑀 𝑀 (and note that 𝑛 = |𝐸 | = 𝑁 𝑀), we conclude that Ω(1)-balanced matroid CRS is
+impossible given 𝑜 (log 𝑛) samples.
+
