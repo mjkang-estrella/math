@@ -27,11 +27,11 @@ The independent [parent probability/quantum screen](iterations/i07-parent-probab
 
 The [geometric-analysis report](iterations/i07-analysis.md) is integrated as a negative/reduction checkpoint. The restricted inverse W¹,¹ transfer is routine; a smooth compression example blocks automatic higher inverse-energy control. General cut-locus separation and the required energy-controlled approximation remain unproved. Parent verification passes for 60 pinned sources, six literature retrievals and 81 author artifacts. No accepted-count increment is assigned.
 
-## Iteration 08: complete capacity candidate under proof review
+## Iteration 08: capacity proof passed; significance review running
 
 [The proposed weighted-capacity theorem](iterations/i08-variable-channel-capacity.md) covers arbitrary positive edge-channel parameters up to and including perfect transmission, without uniform separation from one. Its new uniform local moment estimate and flow-splitting energy bound replace the constant-channel geometric bound. Exact polynomial, posterior-orbit, kernel and finite-tree energy checks pass. These do not substitute for the infinite proof audit.
 
-A fresh [independent proof-review task](iterations/iteration8-variable-capacity-r2-task.json) is running. A separate final prior-art/significance review remains required. No R-number or accepted-count increment is assigned to the candidate yet.
+The [independent proof audit](reviews/i08-variable-capacity-r2.md) passes with no substantive repair. Parent reproduction passes its exact posterior, polynomial, flow, conditioning and ray checks, and verifies all ten audit artifacts and five pinned source blobs. A fresh [final prior-art/significance task](iterations/iteration8-variable-capacity-novelty-r3-task.json) now checks the full variable-resistance literature and possible routine reductions. No R-number or accepted-count increment is assigned before that review.
 
 ## Continuation rules
 
