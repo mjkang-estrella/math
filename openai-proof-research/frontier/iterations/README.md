@@ -24,6 +24,12 @@ The user now requests continued discovery until ten substantial findings are obt
 
 The [parent probability/quantum screen](i07-parent-probability-screen.md) adds a variable-edge reconstruction lead with a proved preliminary necessary condition and an exact ray obstruction to a naive extension. A complete converse remains missing. Current primary literature removes the proposed amplitude-damping strong-converse target; conditional entropy-power optimality defeats the straightforward quantum-memory EPnI extension. These decisions preserve the count at 2/10.
 
+### Analysis-screen integration
+
+The [completed analysis report](i07-analysis.md) screens weak-MTW cut separation, constrained Ball–Evans approximation, and rough Calderón extensions. Stronger corpus companions already provide finite localization of the rough counterexample. The inverse W¹,¹ approximation transfer is routine, while the smooth compression example shows why forward approximation alone does not control any higher inverse exponent. The substantial missing construction is uniform integrability of the cofactor/negative-Jacobian energy or a derivative-controlled incompressibility correction. No such construction is claimed.
+
+The parent read the full report and the forward approximation source contract, and verified all 60 pinned source blobs, six external retrievals and 81 author artifact hashes. Only the shared iteration index changed among snapshotted inputs. The [parent record](../sources/i07_analysis/parent-verification.json) explicitly limits this to source integrity and screening integration, not independent certification of the routine propositions. Preserve the negative/reduction report without an R-number or a count increase. The new variable-channel capacity candidate receives the next proof-review slot.
+
 ## Iteration 05 — second substantial result accepted
 
 After R006, the user requested: “Come up with new one - keep make a progress.” The resulting search now accepts R008 as a second substantial, plausible new deduction under the stipulated corpus and bounded novelty assessment. Independent proof and final significance reviews support that decision; worldwide priority remains unverified. The three research lanes have these final dispositions:
