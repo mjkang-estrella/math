@@ -25,7 +25,7 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 - I29: [common-matroid-base entropy](iterations/iteration29-common-base-entropy-task.json) investigates a distinct prescribed-mean target; no transfer from R011 is assumed.
 
-- I30: [focused original-metric Einstein stability](iterations/iteration30-einstein-metric-stability-task.json) attacks I27’s separate time-zero metric gap, retaining the normalized-flow counterexample.
+- I30: the [completed candidate](iterations/i30-einstein-metric-stability.md) proposes original-metric GH distance at most C D^(1/16) using material-subset volume control and packing. Parent reproduction passes; a fresh [independent full-proof review](iterations/iteration30-einstein-metric-stability-r2-task.json) is running. Tian–Wang's packing antecedent is acknowledged; separate significance review remains necessary. No count increment.
 
 - I31: [nonconical no-MCM realization](iterations/iteration31-nonconical-no-mcm-task.json) suffered a provider failure before a report. The parent verified and preserved its preparation; the [same delegated task resumed](iterations/iteration31-nonconical-resume.json) to finish the I28 audit and attempt the missing construction. Its deformation idea remains unverified; no count increment.
 
@@ -208,3 +208,12 @@ Parent reproduction passes for 109 sealed artifacts, 35 selected pinned sources,
 The first delegated turn failed at provider level before writing a mathematical report, diagnostics or a final seal. This is neither a proof rejection nor a successful realization. A commentary-only lead involving a primitive class at the canonical twist remains unverified, especially all-order compatibility, section-ring preservation and nonconicality after forgetting the filtration.
 
 The [parent checkpoint](experiments/i31-interrupted-parent-checkpoint.json) verifies 43 preserved preparation files, seven frozen inputs, 111 unchanged I28 files, four pinned manuscript files and 17 retained literature responses. No dependency mismatch was found. These checks establish preservation and source preparation only. The same T3 child accepted a second turn under [the recovery instructions](iterations/iteration31-nonconical-resume.json), with initial bytes frozen and new evidence confined to resumed subdirectories. Accepted count remains five of ten.
+
+
+## I30 original-metric stability candidate
+
+The completed report proposes a universal GH bound C D^(1/16) for the original normalized, nonnegatively curved, simply connected four-metric, with one of the three normalized Einstein models as target. It combines a nonzero stopping time for distance distortion, square-root volume control for every fixed measurable subset, and a complete missing-ball/curve-packing argument. A local elliptic estimate at the fixed smooth slice handles the model comparison without claiming dynamical attraction of the unstable product.
+
+The parent read the report, inspected the source smoothing/defect proofs and spectral contracts, and reproduced all three commands. Checks pass for 20,698 exact diagnostic cases, 11 frozen inputs, 34 pinned source files, 17 primary retrievals, seven contracts, 21 passages and 57 sealed author artifacts. Only shared-ledger drift was found; two failed publisher retrievals remain explicitly documented. [Parent verification](experiments/i30-parent-verification.json) and [preliminary notes](sources/i30-parent-preliminary-review.md) distinguish integrity and finite algebra from analytic proof.
+
+A fresh [round-2 full-proof audit](iterations/iteration30-einstein-metric-stability-r2-task.json) is running. Tian–Wang already supplies the missing-ball and packing mechanism; even the coarser global L1 error would produce a weaker power by this argument. The all-subset improvement and final result require a separate significance assessment after proof review. No sixth finding, optimal exponent, worldwide priority or attracting normalized-flow conclusion is accepted. Count remains five of ten.
