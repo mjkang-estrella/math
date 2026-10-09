@@ -1,5 +1,7 @@
 # Research paused at four accepted findings
 
+**Historical checkpoint. Superseded by the user's explicit resumption on 2026-10-09: “Now keep proceed for 10 target”.** The halt instructions below describe the saved pause state, not current authorization. See TEN-FINDINGS.md for active work and the subsequent request to commit and push verified findings.
+
 User instruction: “Let’s pause after 4th finding for now.” The fourth finding, R010, passed independent proof review, separate significance review and parent verification, and was separately accepted in commit **f034e3d**. The original objective is ten substantial findings; it is **incomplete and paused**, with six remaining. Do not restart research, reviews, delegation or publication until the user resumes.
 
 Accepted records: R006 fixed-progression PD and positive-proportion primitive roots; R008 parity/PD/squarefreeness independence; R009 variable-channel four-state weighted capacity; R010 fixed cyclic factor-count residues independent of PD factor sizes. Exact scopes, source premises and validation limits are in their individual finding records and TEN-FINDINGS.md. Acceptance is conditional on the stipulated corpus and does not establish worldwide priority or formal/human certification.
