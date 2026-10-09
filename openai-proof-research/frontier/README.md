@@ -21,6 +21,8 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**Active target: [10 substantial findings](TEN-FINDINGS.md); 2 accepted, 8 remaining.** Iteration 07 opens arithmetic, geometric-analysis and structural-mathematics tracks. Each candidate needs a complete new bridge and separate proof and significance reviews before it enters the count.
+
 **Second substantial deduction accepted:** [Iteration 05](iterations/README.md#iteration-05--second-substantial-result-accepted) meets the user's request for another result after R006 through R008, on the stipulated-corpus and bounded novelty basis. The simultaneous-root lane made [partial scalar progress](iterations/i06-cubic-reservoir.md), but its explicit rough-correlation estimate and cubic reservoir remain unproved; that lane is parked at the stated gap.
 
 The [parity result R008](findings/R008-parity-PD-independence.md) gives full Liouville cancellation jointly with PD(1) and squarefreeness in every fixed reduced progression. Independent analytic and final significance reviews support acceptance, and parent checks reproduce. It implies Moree–Hommersom Conjecture 1 with finitely prescribed valuations. The final record includes current-version prior-art corrections and retains the limit that worldwide priority is unverified.

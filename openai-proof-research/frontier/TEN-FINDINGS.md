@@ -1,0 +1,34 @@
+# Ten substantial findings
+
+User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 2 accepted, 8 remaining**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
+
+All results remain deductions under the accepted corpus at `openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. Acceptance means a complete written deduction, independent AI proof review, a separate primary-source prior-art/significance review, and parent integration. It does not establish worldwide priority, independent truth of the corpus, human peer review, or formal proof certification.
+
+## Accepted count
+
+| Count | Finding | Mathematical commit | Final significance commit |
+|---|---|---|---|
+| 1 | [R006: fixed-progression PD law and positive-proportion primitive roots](findings/R006-progression-PD-primitive-root-density.md) | `4e09ab8` | `d950f93` |
+| 2 | [R008: parity independent of factor sizes and squarefreeness](findings/R008-parity-PD-independence.md) | `e651d0e` | `8155129` |
+
+Equivalent formulations, routine corollaries, and multiple consequences of the same new bridge count as one finding. In particular, R008's Moree–Hommersom implication is part of R008.
+
+## Iteration 07: discovery in progress
+
+Three T3-owned tasks each screen at least three candidates and develop their strongest viable candidate. Every candidate remains unaccepted until separate proof and significance reviews complete. Full briefs and task identifiers are retained below; task records describe launch state, not a continuously updated status feed.
+
+| Track | Scope | Task record |
+|---|---|---|
+| Arithmetic | New analytic mechanisms beyond accepted progression and parity laws; no automatic upgrade of marginal laws to joint distributions. | [Brief](iterations/iteration7-arithmetic-task.json) |
+| Geometric analysis | Fresh PDE, transport, curvature, regularity or inverse-problem bridges; exclude spent hot-spots and operator variants. | [Brief](iterations/iteration7-analysis-task.json) |
+| Structural mathematics | Algebra, topology, groups, discrete mathematics and complexity; seek substantive constructions beyond standard transfers. | [Brief](iterations/iteration7-structures-task.json) |
+
+## Continuation rules
+
+1. Integrate each returned report and its source evidence; distinguish proved steps from unresolved estimates.
+2. Send a complete candidate to a fresh independent proof reviewer. Repair every material objection before acceptance.
+3. Obtain a separate final prior-art and significance review against the strongest applicable corpus and current primary literature.
+4. Reproduce appropriate checks, verify source identities, and commit each accepted finding separately. Update the table only on acceptance.
+5. Refine or replace unsuccessful candidates. A parked route, conditional reduction, or clean numerical experiment does not advance the count. Maintain the standard even when discovery is slow.
+
+The cubic Artin reservoir remains parked at the explicit RP/MT-lower gap. Gaussian decoupling and the bounded-multiplier operator family are closed as described in the [frontier index](README.md). No further work in those directions counts without a materially new mechanism.

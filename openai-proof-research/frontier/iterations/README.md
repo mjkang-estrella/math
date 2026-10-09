@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## Iteration 07 — toward ten substantial findings
+
+The user now requests continued discovery until ten substantial findings are obtained. The [count and continuation ledger](../TEN-FINDINGS.md) starts with R006 and R008: **2 accepted, 8 remaining**. Three independent T3-owned research tasks screen fresh arithmetic, geometric-analysis and structural-mathematics candidates, then develop their strongest viable bridges. No candidate is counted from an author's report alone; separate proof and prior-art/significance reviews precede parent acceptance and an individual finding commit. The ledger links complete task briefs and records excluded routine consequences and parked routes.
+
 ## Iteration 05 — second substantial result accepted
 
 After R006, the user requested: “Come up with new one - keep make a progress.” The resulting search now accepts R008 as a second substantial, plausible new deduction under the stipulated corpus and bounded novelty assessment. Independent proof and final significance reviews support that decision; worldwide priority remains unverified. The three research lanes have these final dispositions:

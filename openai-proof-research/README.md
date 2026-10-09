@@ -1,5 +1,7 @@
 # OpenAI mathematics research
 
+**Current objective: [10 substantial findings](frontier/TEN-FINDINGS.md), with 2 accepted.** Following the user's request to continue, iteration 07 is researching three fresh tracks. The acceptance standard and separate-finding commit requirement remain unchanged.
+
 **Second substantial deduction accepted:** the user's request for another result after R006 is met, on the stated accepted-corpus and bounded novelty basis, by R008. [Iteration 05](frontier/iterations/README.md#iteration-05--second-substantial-result-accepted) records the search, failed routes and final acceptance decision.
 
 **[R008 — parity and factor-size independence](frontier/findings/R008-parity-PD-independence.md).** Assuming the pinned corpus, the number of prime factors of p−1, counted with multiplicity, is asymptotically even or odd equally often in every fixed reduced progression, independently of its PD(1) factor-size law and squarefreeness. Independent proof and final significance reviews support acceptance; parent checks reproduce. It also implies the precise Moree–Hommersom parity conjecture with finitely prescribed valuations. Worldwide priority remains unverified.
