@@ -20,14 +20,18 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H039 live independent mechanisms
 
-Previous goal turn PROGRESS:0c45e78 closed H038 with independently qualified
-negative results. Project tree clean at re-entry. Existing goal remains active;
+H039 follows0c45e78, which closed H038 with independently qualified negative
+results. Launch checkpoint da2a4e4; project tree clean at re-entry. Goal active;
 no accepted executable improvement. Fresh catalogue confirms the exact models
-below support delegation without reported constraints. Four distinct initial
-lenses RUNNING, with proposals withheld from one another:
-- Native Astra /root/h007_additive_relations: sparse or coefficient-weighted
-  higher-arity relations; dense-triple and naive-helper costs are explicit
-  starting objections, not universal exclusions.
+below support delegation without reported constraints. Three T3 initial lenses
+remain RUNNING; the native lens completed. Proposals withheld from one another:
+- Native Astra /root/h007_additive_relations: COMPLETED sparse/coefficient-
+  weighted lens. One concrete weighted-grid helper construction, but no complete-
+  work survivor against H037's paid O(H) IID source generator. Root checked the
+  elementary coefficients/recurrence and retained probability claims as proposer
+  analysis, not an independently accepted new law. H039-grid-helper-screen.md
+  parks it before experiments or broader proof work; reduced entropy is not a
+  solver exponent gain. Other initial proposers have not received this idea.
 - Grok4.7: nonlinear/adaptive public-information recovery operators:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-nonlinear-information-grok-20261008-r1`.
 - Claude Opus5.5: exact arithmetic operations with a concrete ECDLP bridge,
@@ -45,6 +49,10 @@ Launch-checkpoint validation: ./scripts/check.sh >
 /tmp/ecdlp-h039-launch-check.log 2>&1 exit0. No Lean/Audit changes. Native live
 inventory confirms the assigned Astra role RUNNING; three T3 launches returned
 RUNNING. Do not duplicate these handles while awaiting completion notifications.
+Weighted-grid checkpoint validation: ./scripts/check.sh >
+/tmp/ecdlp-h039-grid-check.log 2>&1 exit0; no Lean/Audit changes. Existing audits
+do not establish the retained paper-only collision analysis. Native proposal
+now completed, not a live handle to wait on; the three T3 roles remain live.
 
 ## H038 completed independent mechanisms and scoped negative results
 
