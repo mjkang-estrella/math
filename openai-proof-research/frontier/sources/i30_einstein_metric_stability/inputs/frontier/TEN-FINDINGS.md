@@ -21,13 +21,11 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 - I27: the [completed geometric report](iterations/i27-geometric-analysis-discovery.md) develops endpoint-varifold arguments and explicit countermodels, but rectifiability, original-metric Einstein stability and spatial-Lp Ricci-flow continuation remain unproved. [Parent verification](experiments/i27-parent-verification.json) passes; no count increment.
 
-- I28: the [completed algebra report](iterations/i28-algebra-discovery.md) supplies a technical filtered-persistence argument, but an obstructed nonconical ring remains unconstructed. Ulam and involutive-division-ring screens retain specific obstructions. [Parent verification](experiments/i28-parent-verification.json) passes as a gap record; no count increment.
+- I28: [fresh algebra discovery](iterations/iteration28-algebra-discovery-task.json) screens structural targets outside the parked Saxl and unimodality routes.
 
 - I29: [common-matroid-base entropy](iterations/iteration29-common-base-entropy-task.json) investigates a distinct prescribed-mean target; no transfer from R011 is assumed.
 
-- I30: the [completed candidate](iterations/i30-einstein-metric-stability.md) proposes original-metric GH distance at most C D^(1/16) using material-subset volume control and packing. Parent reproduction passes; a fresh [independent full-proof review](iterations/iteration30-einstein-metric-stability-r2-task.json) is running. Tian–Wang's packing antecedent is acknowledged; separate significance review remains necessary. No count increment.
-
-- I31: [nonconical no-MCM realization](iterations/iteration31-nonconical-no-mcm-task.json) suffered a provider failure before a report. The parent verified and preserved its preparation; the [same delegated task resumed](iterations/iteration31-nonconical-resume.json) to finish the I28 audit and attempt the missing construction. Its deformation idea remains unverified; no count increment.
+- I30: [focused original-metric Einstein stability](iterations/iteration30-einstein-metric-stability-task.json) attacks I27’s separate time-zero metric gap, retaining the normalized-flow counterexample.
 
 These records include active tasks, completed gap reports, and R011 acceptance. The four-finding pause checkpoint remains a historical snapshot.
 
@@ -194,26 +192,3 @@ The selected Euclidean stationary-varifold target is full codimension-one rectif
 The Einstein screen distinguishes positive-time flow limits from original metric distances and rejects universal normalized-flow convergence by unequal products of spheres. The spatial-Lp Ricci-flow extension screen isolates a scalar-square loss normalized by a shrinking core scale; vanishing rescaled Lp norm alone does not make it negligible. These are technical deductions and obstruction tests, not new substantial findings.
 
 The parent read the full report and reproduced all four commands. Verification passes for 157 sealed artifacts, nine frozen inputs, 96 pinned files, 209 contracts, 25 source passages, ten primary passages and 20 primary retrievals, plus all 9,340 cached texts. Exact diagnostics reproduce the rational frequency, stress, product, scalar-scaling and reflection identities. Only shared-ledger drift is reported. [Parent verification](experiments/i27-parent-verification.json). I30 now develops the original-metric stability question independently.
-
-## I28 algebra gap integration
-
-The completed report develops three distinct targets. The dimension-independent same-space finite-window correction target is blocked by the classical clock-and-shift index. The filtered-persistence proof constructs a finite Rees model without assuming degree-one generation, then applies the accepted Cartier-divisor balance and variance lemmas. Its explicit hypersurface example tests the mechanism but fails the numerical obstruction; a genuinely nonconical obstructed ring remains unconstructed. A good module filtration need not preserve the MCM property, and high-order equation perturbations need not preserve the full initial ideal.
-
-For the involutive Kurosh target, tensoring with the opposite algebra introduces explicit zero divisors, while the source’s degree-11 lifting and a generic degree-16 cyclic replacement fail first-kind-involution requirements. No impossibility of the full target is claimed. These are technical results and gaps, not an additional substantial finding.
-
-Parent reproduction passes for 109 sealed artifacts, 35 selected pinned sources, 57 exact source contracts and all 9,340 cached texts. Diagnostics reproduce 35,000 Weyl actions, 15,625 cocycle identities, 441 module-filtration checks, 341 Rees shifts and the weighted-chart, syzygy, tensor and graph checks. Only shared-ledger drift is reported. [Parent verification](experiments/i28-parent-verification.json) records the limits; I31 now targets the actual nonconical realization and independently audits the technical persistence proof before reuse. Count remains five of ten.
-
-## I31 provider interruption and recovery
-
-The first delegated turn failed at provider level before writing a mathematical report, diagnostics or a final seal. This is neither a proof rejection nor a successful realization. A commentary-only lead involving a primitive class at the canonical twist remains unverified, especially all-order compatibility, section-ring preservation and nonconicality after forgetting the filtration.
-
-The [parent checkpoint](experiments/i31-interrupted-parent-checkpoint.json) verifies 43 preserved preparation files, seven frozen inputs, 111 unchanged I28 files, four pinned manuscript files and 17 retained literature responses. No dependency mismatch was found. These checks establish preservation and source preparation only. The same T3 child accepted a second turn under [the recovery instructions](iterations/iteration31-nonconical-resume.json), with initial bytes frozen and new evidence confined to resumed subdirectories. Accepted count remains five of ten.
-
-
-## I30 original-metric stability candidate
-
-The completed report proposes a universal GH bound C D^(1/16) for the original normalized, nonnegatively curved, simply connected four-metric, with one of the three normalized Einstein models as target. It combines a nonzero stopping time for distance distortion, square-root volume control for every fixed measurable subset, and a complete missing-ball/curve-packing argument. A local elliptic estimate at the fixed smooth slice handles the model comparison without claiming dynamical attraction of the unstable product.
-
-The parent read the report, inspected the source smoothing/defect proofs and spectral contracts, and reproduced all three commands. Checks pass for 20,698 exact diagnostic cases, 11 frozen inputs, 34 pinned source files, 17 primary retrievals, seven contracts, 21 passages and 57 sealed author artifacts. Only shared-ledger drift was found; two failed publisher retrievals remain explicitly documented. [Parent verification](experiments/i30-parent-verification.json) and [preliminary notes](sources/i30-parent-preliminary-review.md) distinguish integrity and finite algebra from analytic proof.
-
-A fresh [round-2 full-proof audit](iterations/iteration30-einstein-metric-stability-r2-task.json) is running. Tian–Wang already supplies the missing-ball and packing mechanism; even the coarser global L1 error would produce a weaker power by this argument. The all-subset improvement and final result require a separate significance assessment after proof review. No sixth finding, optimal exponent, worldwide priority or attracting normalized-flow conclusion is accepted. Count remains five of ten.
