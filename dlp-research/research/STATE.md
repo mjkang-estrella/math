@@ -18,6 +18,29 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H044 live independent constructions
+
+H043 closed at f22365c with no complete-work improvement. Main objective and
+broad independent ideation policy persist. H044-independent-briefs.md records
+ranked questions and exact T3 prompts. Initial proposals withheld.
+- Native Astra /root/h007_additive_relations: COMPLETED shared-query reporter
+  construction. No faster operation; cheap block emptiness/support extraction
+  still missing. Random-list expected output bound recorded in H044 briefs;
+  it supplies neither an algorithm nor a useful-relation success guarantee.
+- claudeAgent / claude-opus-5-5: RUNNING algebraic-constructions-opus.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-algebraic-constructions-opus-20261009-r1`.
+- acpRegistry_factory_droid / claude-fable-5.1: RUNNING information-constructions-fable.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-information-constructions-fable-20261009-r1`.
+- grok / grok-4.7: RUNNING fullsolver-compositions-grok.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-fullsolver-compositions-grok-20261009-r1`.
+No failures or substitutions at launch. Native Sol review slot reserved for
+survivors; no duplicated critic opinions or stopped-role reroutes. No solver
+runs, experiments or H034 cap reset. Existing unbounded goal remains active.
+Best supported exponent1/2; verified improvement NONE. Next decisive evidence:
+a concrete faster operator with full labelled extraction and complete costs,
+then independent skeptical review before a newly admitted synthetic falsifier.
+Launch code unchanged from structured-system check exit0,366 audits.
+
 ## H043 completed independent constructions
 
 H042 closed at19950b4. No faster solver, experiment or full-size improvement
