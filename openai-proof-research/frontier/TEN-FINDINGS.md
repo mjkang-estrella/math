@@ -11,9 +11,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 - I17: [final significance review](reviews/i17-six-point-ramsey-novelty-r3.md) recommends **TECHNICAL ONLY**, retaining full proof PASS without repairs. The six-point certificate reduces to the source's adjugate lifting applied twice and multiplication. No exact duplicate or new gap is claimed; no count increment.
 - I18: the [joint prime-neighbor report](iterations/i18-joint-prime-neighbors.md) is complete as a scoped gap report. Restricted classical laws and a presieve input are proved; the full mixed prime discrepancy remains unproved. No count increment.
 - I19: the [structural report](iterations/i19-fresh-structural-discovery.md) proves a technical signed Saxl quotient and identifies its narrow-partition gap; two other screens yield an unresolved unimodality route and a weighted-switch counterexample. No substantial finding is proposed.
-- I20: [fresh PDE/kinetic discovery](iterations/iteration20-pde-kinetic-discovery-task.json) is running in a separate domain.
+- I20: the [kinetic report](iterations/i20-pde-kinetic-discovery.md) is a scoped gap record. It proves technical seed-count and initial-contact results, but microscopic selection, general-potential fluctuations and the dynamical mean correction remain unproved.
 - I21: [focused signed Saxl continuation](iterations/iteration21-signed-saxl-dominance-task.json) now seeks an actual signed-dominance construction beyond I19's two insufficient bands.
 - I22: [fresh combinatorial and algorithmic discovery](iterations/iteration22-combinatorial-discovery-task.json) is running after the topology route closed as technical only.
+- I23: [connected kinetic fluctuation research](iterations/iteration23-kinetic-connected-fluctuations-task.json) targets the missing normalized interacting-component estimate from I20.
 
 These are live task launch records, not accepted findings. The four-finding pause checkpoint remains a historical snapshot.
 
@@ -105,6 +106,14 @@ The [completed structural report](iterations/i19-fresh-structural-discovery.md) 
 The other screens remain separate: the actual root quiver is cyclic, preventing a direct acyclic Lefschetz theorem from proving general elementary unimodality; an abstract Lefschetz/permutation-module countermodel blocks another shortcut. This is no graph counterexample. A positive-weight switch chain on six vertices has exponentially slow mixing in binary weight length, disproving that unrestricted extension but not efficient weighted counting by other methods.
 
 The parent read the full report and the actual source band-quotient/dominance proofs. Diagnostics reproduce: 111 two-row checks, 458 signed lower-bound comparisons, 434 character orthogonality checks, five literal projection cases and the exact six-vertex chain checks. Verification passes for 94 sealed artifacts, 43 pinned sources, 117 source contracts, ten frozen inputs, ten primary retrievals and ten primary contracts. Shared-index drift is reported separately. [Parent verification](experiments/i19-parent-verification.json) is not an independent proof/significance acceptance. [I21](iterations/iteration21-signed-saxl-dominance-task.json) specifically investigates new signed-dominance or wider-band mechanisms rather than iterating the insufficient quotients.
+
+## Iteration 20: kinetic selection and fluctuation gaps
+
+The [completed kinetic report](iterations/i20-pde-kinetic-discovery.md) examines three distinct bridges. Its exact no-seed mixture bounds show that deterministic selection of a different macroscopic branch requires the expected seed count to diverge. A local vacancy estimate gives an initial Poisson seed window under a stated small-occupancy condition. These are technical initial-law deductions; neither proves a later branch-selection law. Applying a regular kinetic limit to the cold-jet entropy construction still needs compatible smooth uncut approximations on a common interval.
+
+The general radial-potential fluctuation target needs normalized connected-history bounds for intact interacting components, beyond isolated residence-time estimates and unnormalized history summability. The first-order dynamical mean target needs a propagated incoming collision-trace estimate. An initial contact calculation gives the excluded-volume lens coefficient 5π/12 and rules out a homogeneous-linearization trial with convergent initial derivatives. It does not disprove a merely continuous-in-time limit, where an initial boundary layer might intervene. No substantial positive theorem is proposed.
+
+The parent read the full report and reproduced 1,099 finite exclusion-graph checks and the exact rational lens coefficients. Verification passes for 217 sealed artifacts, 166 pinned files, 509 source statement contracts, eleven frozen inputs and eleven literature retrievals. Ledger drift is reported separately. [Parent verification](experiments/i20-parent-verification.json) records integrity and diagnostics, without independent analytic-proof acceptance. [I23](iterations/iteration23-kinetic-connected-fluctuations-task.json) investigates the connected-component fluctuation estimate directly; the elementary mixture and contact calculations are not submitted as counted findings.
 
 ## Continuation rules
 
