@@ -1,6 +1,8 @@
 # OpenAI mathematics research
 
-**Current objective: [10 substantial findings](frontier/TEN-FINDINGS.md), with 2 accepted.** Following the user's request to continue, iteration 07 is researching three fresh tracks. The acceptance standard and separate-finding commit requirement remain unchanged.
+**Current objective: [10 substantial findings](frontier/TEN-FINDINGS.md), with 3 accepted.** The capacity finding R009 has passed proof and significance review; further discovery and reviews continue. The acceptance standard and separate-finding commit requirement remain unchanged.
+
+**[R009 — variable-channel reconstruction capacity](frontier/findings/R009-variable-channel-capacity.md).** A weighted nonlinear capacity characterizes four-state reconstruction on locally finite trees with arbitrary known edge channels, including perfect transmission. Independent proof and prior-art reviews pass; the parent reproduced their checks. The degree-free extension belongs to the same finding. Worldwide priority remains unverified.
 
 **Second substantial deduction accepted:** the user's request for another result after R006 is met, on the stated accepted-corpus and bounded novelty basis, by R008. [Iteration 05](frontier/iterations/README.md#iteration-05--second-substantial-result-accepted) records the search, failed routes and final acceptance decision.
 
