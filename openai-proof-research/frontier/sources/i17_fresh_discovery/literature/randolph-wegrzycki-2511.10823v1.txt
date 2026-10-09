@@ -1,0 +1,22685 @@
+Beating Meet-in-the-Middle for Subset Balancing Problems
+// Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+    // Pre-apply spinout-banner dismissal here, before the banner paints, so it
+    // never flashes in only to be hidden later by the deferred arxiv-header.js.
+    // Key matches arxiv-header.js: "arxiv-banner-dismissed:" + data-banner-name.
+    if (localStorage.getItem('arxiv-banner-dismissed:spinout-nonprofit')) {
+      document.documentElement.setAttribute("data-banner-dismissed", "");
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+/* Banner pre-dismissal (set above before paint -> no flash-then-hide) and
+     reading-mode chrome hiding. */
+  html[data-banner-dismissed] .ds-announcement { display: none; }
+  html[data-reading-mode="enabled"] .ds-announcement,
+  html[data-reading-mode="enabled"] .ds-site-footer { display: none; }
+  /* Print keeps the reader header's logo, not its controls: the theme's own print rule
+     (header, nav { display: none }) sits in a layer that its header layer outranks. */
+  @media print { .arxiv-html-header .html-header-nav { display: none; } }
+  /* Keep the announcement text dark on the Open-Blue band in both colour themes
+     (otherwise it inherits the paper's warm-wash text in dark mode and washes out). */
+  .ds-announcement-text { color: var(--arxiv-ink, #1c1a17); }
+Report GitHub Issue
+×
+Title:
+Content selection saved. Describe the issue below:
+Description:
+Submit without GitHub
+Submit in GitHub
+arXiv is now an independent nonprofit!
+Learn more
+×
+Back to arXiv
+Why HTML?
+Report Issue
+Back to Abstract
+Download PDF
+Abstract
+1
+Introduction
+1.1
+Subset Balancing
+1.2
+Our Results
+1.3
+Related Work
+1.4
+Organization
+2
+Technical Overview
+2.1
+The Representation Technique
+2.2
+Mixing Dichotomies
+2.3
+Coefficient Shifting: More Flexible Representations
+2.4
+Representations Admitting Pseudosolutions
+2.5
+Compatibility Certificates for Coefficient Vectors
+2.6
+Combining The Techniques
+Further Runtime Improvements.
+3
+Preliminaries
+3.1
+A Prime Distribution Lemma
+4
+Folklore Results on Unbalanced Instances
+4.1
+Balancing Instances Using Re-Randomization
+5
+Subset Balancing on
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+5.1
+Perfect Mixing and Unbalanced Solutions
+5.2
+Algorithm for Balanced Subset Balancing on
+[
+−
+d
+:
+d
+]
+[-d:d]
+.
+Case 2:
+p
+m
+​
+a
+​
+x
+=
+(
+d
++
+1
+)
+n
+/
+2
+p_{max}=(d+1)^{n/2}
+.
+5.3
+Breaking Meet-in-the-Middle for Subset Balancing on
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+5.4
+Optimizing Runtime for
+C
+=
+[
+−
+2
+:
+2
+]
+C=[-2:2]
+6
+Subset Balancing on
+[
+±
+d
+]
+[\pm d]
+6.1
+The Coefficient Shifting Approach
+6.2
+A Mixing Dichotomy for Subset Balancing on
+[
+±
+d
+]
+[\pm d]
+6.3
+Choosing New Coefficient Sets
+6.4
+Algorithm for Balanced Subset Balancing on
+[
+±
+d
+]
+,
+d
+>
+2
+[\pm d],d>2
+6.5
+Breaking Meet-in-the-Middle for Subset Balancing on
+C
+=
+[
+±
+d
+]
+,
+d
+>
+2
+C=[\pm d],d>2
+7
+Improved Algorithm for Equal Subset Sum
+7.1
+Preprocessing
+7.2
+Good Solution Pairs
+7.3
+Algorithm for Equal Subset Sum
+7.4
+Optimizing Runtime
+8
+Compatibility Testing
+8.1
+Preprocessing
+8.2
+Number of Candidate Certificates
+8.3
+Auxiliary Sets
+8.4
+Algorithm for Compatibility Testing
+References
+A
+Proof of
+B
+Proof of
+License: CC BY 4.0
+arXiv:2511.10823v1 [cs.DS] 13 Nov 2025
+Beating Meet-in-the-Middle for Subset Balancing Problems
+Tim Randolph
+Note:
+Harvey Mudd College,
+trandolph@hmc.edu
+.
+Karol Węgrzycki
+Note:
+Max Planck Institute for Informatics,
+Saarbrücken, Germany,
+kwegrzyc@mpi-inf.mpg.de
+. Supported by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) grant number
+559177164.
+Abstract
+We consider exact algorithms for Subset Balancing, a family of related problems that generalizes Subset Sum, Partition, and Equal Subset Sum. Specifically, given as input an integer vector
+x
+→
+∈
+ℤ
+n
+\vec{x}\in\mathbb{Z}^{n}
+and a constant-size coefficient set
+C
+⊂
+ℤ
+C\subset\mathbb{Z}
+, we seek a nonzero solution vector
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+satisfying
+c
+→
+⋅
+x
+→
+=
+0
+\vec{c}\cdot\vec{x}=0
+.
+For
+C
+=
+{
+−
+d
+,
+…
+,
+d
+}
+C=\{-d,\ldots,d\}
+,
+d
+>
+1
+d>1
+and
+C
+=
+{
+−
+d
+,
+…
+,
+d
+}
+∖
+{
+0
+}
+C=\{-d,\ldots,d\}\setminus\{0\}
+,
+d
+>
+2
+d>2
+, we present algorithms that run in time
+O
+⁡
+(
+|
+C
+|
+(
+0.5
+−
+ε
+)
+​
+n
+)
+O(|C|^{(0.5-\varepsilon)n})
+for a constant
+ε
+>
+0
+\varepsilon>0
+that depends only on
+C
+C
+. These are the first algorithms that break the
+O
+⁡
+(
+|
+C
+|
+n
+/
+2
+)
+O(|C|^{n/2})
+-time “Meet-in-the-Middle barrier” for these coefficient sets in the worst case. This improves on the result of Chen, Jin, Randolph and Servedio (SODA 2022), who broke the Meet-in-the-Middle barrier on these coefficient sets in the average-case setting. We also improve the best exact algorithm for Equal Subset Sum (Subset Balancing with
+C
+=
+{
+−
+1
+,
+0
+,
+1
+}
+C=\{-1,0,1\}
+), due to Mucha, Nederlof, Pawlewicz, and Węgrzycki (ESA 2019), by an exponential margin. This positively answers an open question of Jin, Williams, and Zhang (ESA 2025). Our results leave two natural cases in which we cannot yet break the Meet-in-the-Middle barrier:
+C
+=
+{
+−
+2
+,
+−
+1
+,
+1
+,
+2
+}
+C=\{-2,-1,1,2\}
+and
+C
+=
+{
+−
+1
+,
+1
+}
+C=\{-1,1\}
+(Partition).
+Our results bring the representation technique of Howgrave-Graham and Joux (CRYPTO 2010) from average-case to worst-case inputs for many
+C
+C
+. This requires a variety of new techniques: we present strategies for (1) achieving good “mixing” with worst-case inputs, (2) creating flexible input representations for coefficient sets without 0, and (3) quickly recovering compatible solution pairs from sets of vectors containing “pseudosolution pairs”. These techniques may find application to other algorithmic problems on integer sums or be of independent interest.
+1
+Introduction
+In the Subset Sum problem, we are given a set of
+n
+n
+integers and want to partition
+it into two subsets of equal sum.
+1
+1
+1
+An alternative formulation searches for a subset of the input that sums to a specified target
+t
+t
+. Our (equivalent) definition of the problem is often called
+Partition
+. See
+[
+28
+]
+for a discussion of more equivalent problems such as Knapsack.
+This problem and its variants are among the most famous
+𝖭𝖯
+\mathsf{NP}
+-complete problems and are central to the study of algorithmic problems on integers.
+In the early 1970s, Horowitz and Sahni
+[
+17
+]
+designed an exact algorithm for Subset Sum using a strategy now known as “Meet-in-the-Middle”. A careful implementation of this algorithm runs in
+O
+⁡
+(
+2
+0.5
+​
+n
+)
+O(2^{0.5n})
+time, without additional polynomial factors
+[
+13
+]
+. Despite many attempts to improve on this algorithm, Meet-in-the-Middle remains the standard for exact algorithms for Subset Sum, and whether a
+O
+⁡
+(
+2
+(
+0.5
+−
+ε
+)
+​
+n
+)
+O(2^{(0.5-\varepsilon)n})
+-time algorithm for Subset Sum exists for any constant
+ε
+>
+0
+\varepsilon>0
+is one of the major open questions in the field.
+The last decade has witnessed a surge of research activity focused on exact algorithms for the Subset Sum problem, including several promising results closely related to this open question.
+In a breakthrough result, Howgrave-Graham and
+Joux
+[
+18
+]
+broke the Meet-in-the-Middle barrier for Subset Sum
+in the
+average-case
+setting with a
+O
+⁡
+(
+2
+0.337
+​
+n
+)
+O(2^{0.337n})
+-time algorithm. Their
+work introduced what is now known as the “representation technique”
+(see
+Section
+2.1
+). Subsequent work along these lines has refined the technique and improved the average-case runtime to
+O
+⁡
+(
+2
+0.283
+​
+n
+)
+O(2^{0.283n})
+[
+7
+,
+9
+]
+.
+Progress on Subset Sum has also spurred research on subset balancing problems, a category that generalizes Subset Sum. For example,
+Mucha, Nederlof, Pawlewicz and Węgrzycki considered the problem of
+Equal
+Subset Sum
+(ESS): does a given set of integers contain any two
+subsets with the same sum? Surprisingly, these authors showed that the
+Meet-in-the-Middle barrier for Equal Subset Sum could be broken by an
+exponential factor for
+worst-case
+inputs
+[
+27
+]
+.
+1.1
+Subset Balancing
+Equal Subset Sum and Subset Sum are both special cases of the following
+problem. (They result from setting
+C
+=
+{
+−
+1
+,
+0
+,
+1
+}
+C=\{-1,0,1\}
+and
+{
+−
+1
+,
+1
+}
+\{-1,1\}
+, respectively.)
+In:
+A vector
+x
+→
+∈
+ℤ
+n
+\vec{x}\in\mathbb{Z}^{n}
+and a fixed set
+C
+⊆
+ℤ
+C\subseteq\mathbb{Z}
+.
+Out:
+A solution vector
+c
+→
+∈
+C
+n
+∖
+{
+0
+→
+}
+\vec{c}\in C^{n}\setminus\{\vec{0}\}
+satisfying
+c
+→
+⋅
+x
+→
+=
+0
+\vec{c}\cdot\vec{x}=0
+.
+Subset Balancing was previously studied by Chen, Jin, Randolph and Servedio
+[
+12
+]
+. We follow these authors in considering two families of coefficient sets which generalize Subset Sum and Equal Subset Sum, respectively:
+•
+[
+−
+d
+:
+d
+]
+≔
+{
+−
+d
+,
+−
+d
++
+1
+,
+…
+,
+d
+−
+1
+,
+d
+}
+[-d:d]\coloneqq\{-d,-d+1,\dots,d-1,d\}
+, integers with absolute value at most
+d
+d
+including
+0
+0
+; and
+•
+[
+±
+d
+]
+≔
+{
+−
+d
+,
+…
+,
+−
+1
+,
+1
+,
+…
+,
+d
+}
+[\pm d]\coloneqq\{-d,\dots,-1,1,\dots,d\}
+, integers with absolute value at most
+d
+d
+excluding
+0
+0
+.
+Subset Balancing can be solved in time
+O
+∗
+​
+(
+|
+C
+|
+0.5
+​
+n
+)
+O^{\ast}(|C|^{0.5n})
+2
+2
+2
+O
+∗
+O^{\ast}
+notation suppresses
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+{\mathsf{poly}}(n)
+factors.
+on any coefficient set
+by using the (suitably generalized) Meet-in-the-Middle algorithm: partition the
+input integers into two sets of size
+0.5
+​
+n
+0.5n
+, then enumerate lists of all
+O
+⁡
+(
+|
+C
+|
+0.5
+​
+n
+)
+O(|C|^{0.5n})
+possible coefficient-weighted sums for each half. Then, sort the lists and search for a matching pair of sums.
+[
+12
+]
+proposed the following question regarding exact algorithms for Subset Balancing:
+Question 1
+(Meet-in-the-Middle Barrier for Subset Balancing)
+.
+Can Subset Balancing be solved in time
+O
+⁡
+(
+|
+C
+|
+(
+0.5
+−
+ε
+)
+​
+n
+)
+O(|C|^{(0.5-\varepsilon)n})
+for a constant
+ε
+>
+0
+\varepsilon>0
+?
+These authors generalized the representation technique to achieve
+O
+⁡
+(
+|
+C
+|
+(
+0.5
+−
+ε
+)
+​
+n
+)
+O(|C|^{(0.5-\varepsilon)n})
+-time algorithms for many coefficient sets in the
+average-case
+setting, in which inputs are sampled uniformly at random from an exponential range. The natural next question is whether similar improvements can be achieved in the more challenging
+worst case
+.
+1.2
+Our Results
+We establish faster algorithms for Subset Balancing on almost every coefficient
+set of the form
+[
+−
+d
+:
+d
+]
+[-d:d]
+and
+[
+±
+d
+]
+[\pm d]
+. All of our algorithms are Monte Carlo
+algorithms that never return false positives and whose success probability can
+be amplified to
+1
+−
+2
+−
+Ω
+⁡
+(
+n
+)
+1-2^{-\Omega(n)}
+by repetition. Specifically, we present the following results:
+Result 1:
+Worst-case algorithms for Subset Balancing on all
+coefficient sets
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+,
+d
+>
+1
+d>1
+that run in time
+O
+⁡
+(
+|
+C
+|
+(
+0.5
+−
+ε
+)
+​
+n
+)
+O(|C|^{(0.5-\varepsilon)n})
+for a constant
+ε
+>
+0
+\varepsilon>0
+that
+depends only on
+d
+d
+(
+Theorem
+5.1
+).
+Result 1 directly addresses
+Question
+1
+. These are the first algorithms to break the Meet-in-the-Middle barrier on these coefficient sets in the worst case, and represent a similar accomplishment to
+[
+12
+]
+in a strictly harder setting. This requires overcoming a technical hurdle: in the average case, solution representations “mix well” with high probability over the input, which allows for the representation method to be applied (
+Section
+2.1
+). However, this condition does not hold in the worst case. We formalize the idea of a “mixing dichotomy” to address this problem (
+Section
+2.2
+).
+Result 2:
+Worst-case algorithms for Subset Balancing on
+all coefficient sets
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+>
+2
+d>2
+that run in time
+O
+⁡
+(
+|
+C
+|
+(
+0.5
+−
+ε
+)
+​
+n
+)
+O(|C|^{(0.5-\varepsilon)n})
+for a constant
+ε
+>
+0
+\varepsilon>0
+that depends
+only on
+d
+d
+(
+Theorem
+6.1
+).
+These are likewise the first algorithms that break the Meet-in-the-Middle barrier on coefficient sets of the form
+[
+±
+d
+]
+[\pm d]
+in the worst-case regime. This result demonstrates that we can achieve better algorithms for coefficient sets beyond contiguous intervals, including those on the pattern of Subset Sum (
+C
+=
+[
+±
+1
+]
+C=[\pm 1]
+). We separate this result from Result 1 because it requires additional insight: specifically, a more expansive notion of a solution representation based on sumsets (
+Section
+2.3
+).
+Result 3:
+A new worst-case algorithm for Equal Subset
+Sum (Subset Balancing on
+C
+=
+[
+−
+1
+:
+1
+]
+C=[-1:1]
+) that runs in time
+O
+⁡
+(
+1.7067
+n
+)
+O(1.7067^{n})
+-time (
+Theorem
+7.1
+).
+This improves upon the result of Mucha, Nederlof, Pawlewicz and Węgrzycki
+[
+27
+]
+, who gave an
+O
+⁡
+(
+1.7088
+n
+)
+O(1.7088^{n})
+-time algorithm. In addition to the above techniques, this result uses a generalization of the recently invented method of “compatibility certificates” (
+[
+29
+]
+) and represents the first time this technique has been used to improve the
+running time
+of an algorithm as opposed to the space complexity.
+Improving the exact algorithm for Equal Subset Sum has recently gained attention in the context of work on closely related problems such as Pigeonhole Equal Subset Sum
+[
+2
+,
+21
+,
+19
+]
+. Result 3 demonstrates that additional improvements beyond
+[
+27
+]
+are possible, positively answering an open question of
+[
+19
+]
+(Section 5, Question 1).
+In summary, we improve upon the Meet-in-the-Middle algorithm for a wide variety of Subset Balancing problems, with two important exceptions: (1) the Subset Sum/Partition problem
+itself and (2) Subset Balancing on
+C
+=
+[
+±
+2
+]
+C=[\pm 2]
+.
+3
+3
+3
+Note that (1) would imply (2). Namely, to solve an instance
+(
+a
+1
+,
+…
+,
+a
+n
+)
+(a_{1},\ldots,a_{n})
+of Subset Balancing on
+[
+±
+2
+]
+[\pm 2]
+, we could use a faster than Meet-in-the-Middle algorithm for Subset Balancing on
+[
+±
+1
+]
+[\pm 1]
+on an instance
+(
+a
+1
+/
+2
+,
+…
+,
+a
+n
+/
+2
+,
+3
+​
+a
+1
+/
+2
+,
+…
+,
+3
+​
+a
+n
+/
+2
+)
+(a_{1}/2,\ldots,a_{n}/2,3a_{1}/2,...,3a_{n}/2)
+.
+A pessimistic interpretation of our results might be that if (2) is difficult, additional insights are needed to beat Meet-in-the-Middle for Subset Sum. On the other hand, our results imply that the barrier-breaking result of
+[
+27
+]
+for Equal Subset Sum is not specific to
+C
+=
+[
+−
+1
+:
+1
+]
+C=[-1:1]
+. An optimistic interpretation of our results is that they strengthen the circumstantial case that the Meet-in-the-Middle barrier can be broken for Subset Sum.
+Our proofs adapt, generalize and draw inspiration from much of the scholarship on similar problems sketched in this introduction. They also require several new conceptual ingredients, overviewed in
+Section
+2
+, that may find further application on similar problems.
+1.3
+Related Work
+Subset Sum has seen numerous applications in
+cryptography
+[
+26
+]
+. In the low-density, average-case regime,
+the problem can be solved in polynomial time
+[
+24
+,
+16
+,
+22
+]
+.
+In the pseudopolynomial regime, potential improvements over the classic
+O
+⁡
+(
+n
+​
+W
+)
+O(nW)
+-time dynamic programming algorithm are limited: we know that no
+W
+1
+−
+ε
+⋅
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+W^{1-\varepsilon}\cdot{\mathsf{poly}}(n)
+algorithm is possible for any constant
+ε
+>
+0
+\varepsilon>0
+assuming SETH
+[
+1
+]
+, where
+W
+W
+is the maximum absolute value of an input integer. Hence, researchers have focused on optimizing polynomial factors in
+n
+n
+(see
+e.g.,
+[
+1
+,
+10
+,
+14
+,
+20
+,
+23
+,
+25
+]
+).
+Subset Sum also appears more tractable if the input has significant additive structure. In
+[
+4
+]
+and
+[
+5
+]
+, Austrin, Kaski, Koivisto and Nederlof showed that Subset Sum instances with few subsets adding to any given integer (small “bucket size”) or very many subsets adding to a certain integer (large “bucket size”) could be solved in time
+O
+⁡
+(
+2
+(
+0.5
+−
+ε
+)
+​
+n
+)
+O(2^{(0.5-\varepsilon)n})
+. Randolph and Węgrzycki showed that Subset Sum can be solved efficiently if the input set has a small
+doubling constant
+, a condition that implies significant additive structure
+[
+30
+]
+.
+Still other recent work has made advancements related to space complexity, including better time-space trade-offs
+[
+15
+,
+3
+]
+, polynomial-space algorithms exponentially faster than
+O
+∗
+​
+(
+2
+n
+)
+O^{\ast}(2^{n})
+[
+6
+,
+11
+]
+, and algorithms that run in time
+O
+∗
+​
+(
+2
+0.5
+​
+n
+)
+O^{\ast}(2^{0.5n})
+and use space
+O
+⁡
+(
+2
+(
+0.25
+−
+ε
+)
+​
+n
+)
+O(2^{(0.25-\varepsilon)n})
+[
+29
+,
+8
+]
+).
+1.4
+Organization
+•
+Section
+2
+overviews the technical ingredients used in our results and the logical flow of our algorithms.
+•
+Section
+3
+summarizes notation and states a useful technical lemma related to the representation technique.
+•
+Section
+4
+formally proves the folklore result that instances of Subset Balancing that are “
+ε
+\varepsilon
+-unbalanced” can be solved in time
+O
+∗
+​
+(
+|
+C
+|
+(
+0.5
+−
+δ
+)
+​
+n
+)
+O^{\ast}(|C|^{(0.5-\delta)n})
+for a constant
+δ
+=
+δ
+⁡
+(
+|
+C
+|
+,
+ε
+)
+>
+0
+\delta=\delta(|C|,\varepsilon)>0
+that depends only on
+|
+C
+|
+|C|
+and
+ε
+\varepsilon
+. It introduces several definitions (solution profiles, unbalanced instances) and assumptions that hold without loss of generality (solutions always exist, solution profiles can be guessed) that are used to simplify arguments in later sections.
+•
+Section
+5
+proves Result 1, our main result for coefficient sets of the form
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+,
+d
+>
+1
+d>1
+.
+•
+Section
+6
+proves Result 2, our main result for coefficient sets of the form
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+>
+2
+d>2
+.
+•
+Section
+7
+proves Result 3, our main result for Equal Subset Sum (
+C
+=
+[
+−
+1
+:
+1
+]
+C=[-1:1]
+).
+•
+Section
+8
+extends the “compatibility certificate” method, first used in
+[
+29
+]
+. We use this result as an ingredient to achieve the desired runtime for the algorithm presented in
+Section
+7
+.
+2
+Technical Overview
+In this section we overview the conceptual ingredients used in our results. One (the representation technique) is familiar but needs an introduction to provide context for the others. Two (mixing dichotomies and coefficient shifting) are original, and two (representations admitting pseudosolutions and compatibility certificates) generalize ideas implicit in existing work. All require careful adaptation to work in our setting.
+We conclude with a subsection that overviews the logical structure of our results.
+2.1
+The Representation Technique
+The representation technique was introduced by Howgrave-Graham and
+Joux in
+[
+18
+]
+and used by Mucha, Nederlof, Pawlewicz and Węgrzycki in their algorithm for Equal Subset Sum
+[
+27
+]
+and by Chen, Jin, Randolph and Servedio in their algorithms for average-case Subset Balancing
+[
+12
+]
+, among others. In this work, we extend the technique further to worst-case Subset Balancing.
+The key idea behind the representation technique is to implicitly represent a
+single solution vector
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+as a set of
+solution pairs
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+satisfying
+a
+→
+−
+b
+→
+=
+c
+→
+\vec{a}-\vec{b}=\vec{c}
+.
+4
+4
+4
+It is sometimes more convenient to define solution pairs so that they satisfy
+a
+→
++
+b
+→
+=
+c
+→
+\vec{a}+\vec{b}=\vec{c}
+; this is equivalent.
+Roughly speaking, the representation technique has three steps:
+1.
+Redefine the Search Space.
+Define a large ambient set
+Y
+Y
+with
+|
+Y
+|
+>
+|
+C
+|
+n
+/
+2
+|Y|>|C|^{n/2}
+containing many vectors, including the individual members
+a
+→
+\vec{a}
+and
+b
+→
+\vec{b}
+of each solution pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+.
+2.
+Filter the Search Space.
+Filter the ambient set to create a smaller set
+Z
+⊂
+Y
+Z\subset Y
+with
+|
+Z
+|
+<
+|
+C
+|
+n
+/
+2
+|Z|<|C|^{n/2}
+that is likely to contain at least one solution pair. This is typically done by preserving the subset of vectors
+y
+→
+∈
+Y
+\vec{y}\in Y
+that satisfy
+y
+→
+⋅
+x
+→
+≡
+𝒓
+(
+mod
+𝒑
+)
+\vec{y}\cdot\vec{x}\equiv\bm{r}\pmod{\bm{p}}
+for a fixed Subset Balancing instance
+x
+→
+\vec{x}
+, a randomly chosen prime
+𝒑
+\bm{p}
+and a randomly chosen residue class
+𝒓
+∈
+[
+𝒑
+]
+\bm{r}\in[\bm{p}]
+. This produces a set
+Z
+Z
+of size approximately
+|
+Y
+|
+/
+𝒑
+|Y|/\bm{p}
+with the helpful property that for every solution pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+,
+a
+→
+⋅
+x
+→
+≡
+𝒓
+(
+mod
+𝒑
+)
+⟹
+b
+→
+⋅
+x
+→
+≡
+𝒓
+(
+mod
+𝒑
+)
+\vec{a}\cdot\vec{x}\equiv\bm{r}\pmod{\bm{p}}\implies\vec{b}\cdot\vec{x}\equiv\bm{r}\pmod{\bm{p}}
+because
+(
+a
+→
+−
+b
+→
+)
+⋅
+x
+→
+=
+c
+→
+⋅
+x
+→
+=
+0
+(\vec{a}-\vec{b})\cdot\vec{x}=\vec{c}\cdot\vec{x}=0
+by the definition of a solution pair.
+3.
+Recover Solutions.
+Search within
+Z
+Z
+to recover a solution pair.
+As an example, consider
+[
+27
+]
+’s application of the representation technique to the case of
+C
+=
+{
+−
+1
+,
+0
+,
+1
+}
+C=\{-1,0,1\}
+(Equal Subset Sum). These authors begin with the observation that the worst-case runtime of existing Meet-in-the-Middle-style approaches occurs when an Equal Subset Sum instance
+x
+→
+\vec{x}
+admits only “balanced” solutions: that is, solution vectors
+c
+→
+\vec{c}
+with approximately equal numbers of
+0
+0
+’s,
+1
+1
+’s, and
+−
+1
+-1
+’s (
+|
+c
+→
+−
+1
+​
+(
+0
+)
+|
+≈
+|
+c
+→
+−
+1
+​
+(
+1
+)
+|
+≈
+|
+c
+→
+−
+1
+​
+(
+−
+1
+)
+|
+≈
+n
+/
+3
+|\vec{c}^{\,-1}(0)|\approx|\vec{c}^{\,-1}(1)|\approx|\vec{c}^{\,-1}(-1)|\approx n/3
+).
+In this case, the set of candidate solution pairs
+{
+0
+,
+1
+}
+n
+×
+{
+0
+,
+1
+}
+n
+\{0,1\}^{n}\times\{0,1\}^{n}
+admits many pairs
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+satisfying
+a
+→
+−
+b
+→
+=
+c
+→
+\vec{a}-\vec{b}=\vec{c}
+for any fixed solution vector
+c
+→
+\vec{c}
+. In particular, if an Equal Subset Sum instance
+x
+→
+\vec{x}
+admits a solution
+c
+→
+\vec{c}
+in which
+n
+/
+3
+n/3
+indices are 0, the number of solution pairs is
+2
+n
+/
+3
+2^{n/3}
+, as for every index
+i
+i
+with
+c
+→
+i
+=
+0
+\vec{c}_{i}=0
+we can choose
+(
+a
+→
+i
+,
+b
+→
+i
+)
+(\vec{a}_{i},\vec{b}_{i})
+to be either
+(
+0
+,
+0
+)
+(0,0)
+or
+(
+1
+,
+1
+)
+(1,1)
+. Accordingly
+[
+27
+]
+filter the set of candidate solution pairs by choosing a random prime
+𝒑
+≈
+2
+n
+/
+3
+\bm{p}\approx 2^{n/3}
+and a random residue class
+𝒓
+∈
+[
+𝒑
+]
+\bm{r}\in[\bm{p}]
+and enumerating the set
+𝒮
+≔
+\displaystyle\mathcal{S}\coloneqq
+{
+v
+→
+∈
+{
+0
+,
+1
+}
+n
+∣
+v
+→
+⋅
+x
+→
+≡
+𝒓
+(
+mod
+𝒑
+)
+}
+.
+\displaystyle\{\vec{v}\in\{0,1\}^{n}\mid\vec{v}\cdot\vec{x}\equiv\bm{r}\pmod{\bm{p}}\}.
+This choice of
+𝒑
+\bm{p}
+ensures both that
+𝒮
+\mathcal{S}
+contains a solution pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+satisfying
+a
+→
+−
+b
+→
+=
+c
+→
+\vec{a}-\vec{b}=\vec{c}
+with sufficiently high probability and that
+|
+𝒮
+|
+≈
+|
+{
+0
+,
+1
+}
+n
+|
+𝒑
+≈
+2
+2
+​
+n
+/
+3
+,
+|\mathcal{S}|\approx\frac{|\{0,1\}^{n}|}{\bm{p}}\approx 2^{2n/3},
+so this pair can be recovered in time
+O
+∗
+​
+(
+2
+2
+​
+n
+/
+3
+)
+O^{\ast}(2^{2n/3})
+by enumerating and
+searching
+𝒮
+\mathcal{S}
+in output-linear time. We omit some details, such as handling instances with “unbalanced” solution vectors (see
+Section
+4
+) and the reason why
+{
+0
+,
+1
+}
+n
+⋅
+x
+→
+\{0,1\}^{n}\cdot\vec{x}
+can be assumed to produce
+2
+n
+2^{n}
+distinct dot products (implicitly, a simple mixing dichotomy).
+2.2
+Mixing Dichotomies
+Crucially, the search space filtering step of the representation technique requires that
+solution pairs fall into many different residue classes modulo
+𝒑
+\bm{p}
+when the
+dot product is taken with an input vector
+x
+→
+\vec{x}
+. Otherwise, a residue class chosen at random
+is unlikely to contain at least one solution pair. This occurs with high probability as long as solution pairs
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+create many different dot products
+a
+→
+⋅
+x
+→
+\vec{a}\cdot\vec{x}
+, an event referred to as “mixing well” with respect to
+x
+→
+\vec{x}
+. When input numbers are drawn uniformly at random from a large enough range, solution vectors mix well with high probability over the random draw of the input, a fact
+that enabled the first successful average-case algorithms based on the representation technique
+[
+18
+,
+7
+]
+.
+However, solution pairs do not always mix well with respect to worst-case instances of Subset Balancing. To make the representation technique work in these cases, we will prove
+mixing dichotomies
+: statements of the form “if solution pairs do
+not
+mix well with respect to a Subset Balancing instance
+x
+→
+\vec{x}
+,
+x
+→
+\vec{x}
+has some other useful property (that allows us to break the Meet-in-the-Middle barrier using a different approach)”.
+We prove the following mixing dichotomies:
+•
+Lemma
+5.1
+: if solution pairs do not mix well with respect to a Subset Balancing instance on a coefficient set
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+, the instance admits an “unbalanced” solution (solution in which the frequency of coefficients deviates from uniform by
+Ω
+⁡
+(
+n
+)
+\Omega(n)
+).
+•
+Lemma
+6.1
+: if solution pairs do not mix well with respect to a Subset Balancing instance on a coefficient set
+C
+C
+that can be “coefficient-shifted” (see the next subsection), the instance admits exponentially many distinct solutions.
+•
+Lemma
+7.2
+: if our set of “good solution pairs” (a definition specific to our algorithm for Equal Subset Sum) do not mix well with respect to an ESS instance, the instance admits an “unbalanced” solution.
+2.3
+Coefficient Shifting: More Flexible Representations
+When our coefficient set
+C
+C
+is a contiguous interval, it is relatively straightforward to represent a solution vector in
+C
+n
+C^{n}
+as a solution pair. For example, a solution vector
+c
+→
+∈
+[
+−
+1
+:
+1
+]
+n
+\vec{c}\in[-1:1]^{n}
+can be represented in many ways as the difference of two vectors
+a
+→
+,
+b
+→
+∈
+{
+0
+,
+1
+}
+n
+\vec{a},\vec{b}\in\{0,1\}^{n}
+(as in
+[
+27
+]
+). Likewise a solution vector
+c
+→
+∈
+{
+0
+,
+1
+}
+n
+\vec{c}\in\{0,1\}^{n}
+can be represented in many ways as a
+sum
+of two vectors in
+{
+0
+,
+1
+}
+n
+\{0,1\}^{n}
+, each with approximately half of the “
+1
+1
+” indices in
+c
+→
+\vec{c}
+(as in
+[
+18
+]
+).
+c
+→
+∈
+{
+0
+,
+1
+}
+n
+\vec{c}\in\{0,1\}^{n}
+can even be represented as a sum of two vectors in
+[
+−
+1
+:
+1
+]
+n
+[-1:1]^{n}
+, as long as the “
+−
+1
+-1
+” indices are carefully managed (as in
+[
+7
+]
+).
+However, when we generalize Subset Sum we face coefficient sets of the form
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+(without the
+0
+0
+coefficient). Designing algorithms appears more challenging for these coefficient sets. For instance, breaking the Meet-in-the-Middle
+barrier for
+C
+=
+[
+−
+1
+:
+1
+]
+C=[-1:1]
+is comparatively straightforward, while breaking the
+Meet-in-the-Middle barrier for
+C
+=
+[
+±
+1
+]
+C=[\pm 1]
+remains a notorious open question. Chen, Jin, Randolph and Servedio also noted several difficulties that arise when handling coefficient sets of the form
+[
+±
+d
+]
+[\pm d]
+that result from the lack of an
+0
+0
+coefficient
+[
+12
+]
+.
+To address these issues we introduce the technique of
+coefficient shifting
+, which effectively represents a coefficient set
+C
+C
+as the
+sumset
+of two distinct and often differently-sized “coefficient set factors”
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+.
+For example, the equation
+{
+0
+,
+1
+}
++
+{
+−
+3
+,
+−
+2
+,
+1
+,
+2
+}
+=
+[
+±
+3
+]
+\{0,1\}+\{-3,-2,1,2\}=[\pm 3]
+allows us to design algorithms that represent solution vectors in
+C
+n
+=
+[
+±
+3
+]
+n
+C^{n}=[\pm 3]^{n}
+as solution pairs chosen from
+{
+0
+,
+1
+}
+n
+\{0,1\}^{n}
+and
+{
+−
+3
+,
+−
+2
+,
+1
+,
+2
+}
+n
+\{-3,-2,1,2\}^{n}
+. Additionally, and crucially, it also creates multiple representations for
++
+2
++2
+and
+−
+2
+-2
+(as
+0
++
+(
+−
+2
+)
+0+(-2)
+and
+1
++
+(
+−
+3
+)
+1+(-3)
+,
+0
++
+2
+0+2
+and
+1
++
+1
+1+1
+respectively).
+Section
+6.1
+introduces the approach in more detail and subsequently applies it to break the Meet-in-the-Middle barrier for coefficient sets of the form
+C
+=
+[
+±
+d
+]
+,
+d
+>
+2
+C=[\pm d],d>2
+.
+2.4
+Representations Admitting Pseudosolutions
+One way to speed up the representation technique is to increase the number
+of solution pairs by making the representation more flexible: specifically,
+increasing the number of coefficients used to represent solution pairs. The idea
+is to increase the
+ratio
+of solution pairs to search space, ultimately
+resulting in a smaller filtered search space. This idea originates from
+[
+7
+]
+, who applied representations admitting pseudosolutions
+to improve on
+[
+18
+]
+’s algorithm for average-case Subset Sum.
+In our approach to Equal Subset Sum, instead of considering solution pairs chosen from
+{
+0
+,
+1
+}
+n
+\{0,1\}^{n}
+, we will enumerate the set
+𝒮
+≔
+\displaystyle\mathcal{S}\coloneqq
+{
+v
+→
+∈
+[
+0
+:
+2
+]
+n
+∣
+|
+v
+→
+−
+1
+(
+1
+)
+|
+=
+n
+/
+2
+,
+|
+v
+→
+−
+1
+(
+2
+)
+|
+=
+ε
+n
+,
+v
+→
+⋅
+x
+→
+≡
+𝒓
+(
+mod
+𝒑
+)
+}
+\displaystyle\{\vec{v}\in[0:2]^{n}\mid|\vec{v}^{\,-1}(1)|=n/2,|\vec{v}^{\,-1}(2)|=\varepsilon n,\vec{v}\cdot\vec{x}\equiv\bm{r}\pmod{\bm{p}}\}
+for a constant
+ε
+>
+0
+\varepsilon>0
+, a large random prime
+𝒑
+\bm{p}
+and a random residue class
+𝒓
+∈
+[
+𝒑
+]
+\bm{r}\in[\bm{p}]
+.
+When
+ε
+\varepsilon
+is chosen carefully,
+|
+𝒮
+|
+|\mathcal{S}|
+promises to be small enough to
+achieve a runtime improvement over
+[
+27
+]
+, who used
+solution pairs chosen from
+{
+0
+,
+1
+}
+n
+\{0,1\}^{n}
+. However, there is a problem. Because
+solution pairs contain “2” indices, it is not true that
+a
+→
+−
+b
+→
+∈
+[
+−
+1
+:
+1
+]
+n
+\vec{a}-\vec{b}\in[-1:1]^{n}
+for every
+(
+a
+→
+,
+b
+→
+)
+∈
+𝒮
+×
+𝒮
+(\vec{a},\vec{b})\in\mathcal{S}\times\mathcal{S}
+, even if
+(
+a
+→
+−
+b
+→
+)
+⋅
+x
+→
+=
+0
+(\vec{a}-\vec{b})\cdot\vec{x}=0
+. Thus, in order to solve the problem, we need to
+search
+𝒮
+\mathcal{S}
+for a “compatible” solution pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+with
+a
+→
+−
+b
+→
+∈
+[
+−
+1
+:
+1
+]
+n
+\vec{a}-\vec{b}\in[-1:1]^{n}
+. We consider a strategy for solving this problem quickly in the next subsection.
+2.5
+Compatibility Certificates for Coefficient Vectors
+A persistent challenge when designing an algorithm using the representation technique is
+the specter of “pseudo-solutions”. Often, choosing a set of solution pairs
+that allow the search space to be efficiently filtered results in pairs of vectors that appear to solve the problem but create invalid coefficients.
+For example, if a solution vector
+c
+→
+∈
+{
+−
+1
+,
+0
+,
+1
+}
+n
+\vec{c}\in\{-1,0,1\}^{n}
+is represented by
+pairs of vectors in
+{
+0
+,
+1
+,
+2
+}
+n
+\{0,1,2\}^{n}
+, the solution recovery step might erroneously return a pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+satisfying
+(
+a
+→
+−
+b
+→
+)
+⋅
+x
+→
+=
+c
+→
+⋅
+x
+→
+=
+0
+,
+(\vec{a}-\vec{b})\cdot\vec{x}=\vec{c}\cdot\vec{x}=0,
+but with
+a
+→
+−
+b
+→
+\vec{a}-\vec{b}
+containing “2” indices and thus an invalid solution.
+Such
+pseudosolution pairs
+can be easily ruled out but naively the
+process takes quadratic time in the length of the list(s) containing pseudosolutions. The problem boils down to answering the following question: “Given two vector lists
+A
+A
+and
+B
+B
+and a coefficient set
+C
+C
+, does there exist a vector pair
+(
+a
+→
+,
+b
+→
+)
+∈
+A
+×
+B
+(\vec{a},\vec{b})\in A\times B
+such that
+a
+→
+−
+b
+→
+∈
+C
+n
+\vec{a}-\vec{b}\in C^{n}
+?” We prove the following result, which shows that this problem can be solved in near-linear time in our setting.
+Theorem
+8.1
+.
+Fix a constant
+0
+≤
+ε
+≤
+1
+/
+4
+0\leq\varepsilon\leq 1/4
+and let
+A
+,
+B
+⊆
+[
+0
+:
+2
+]
+d
+A,B\subseteq[0:2]^{d}
+be two sets of vectors such that for every
+a
+→
+∈
+A
+\vec{a}\in A
+and
+b
+→
+∈
+B
+\vec{b}\in B
+it holds that
+|
+a
+→
+−
+1
+​
+(
+2
+)
+|
+=
+|
+b
+→
+−
+1
+​
+(
+2
+)
+|
+=
+ε
+​
+d
+​
+and
+​
+|
+a
+→
+−
+1
+​
+(
+1
+)
+|
+=
+|
+b
+→
+−
+1
+​
+(
+1
+)
+|
+=
+d
+/
+2
+.
+\displaystyle|\vec{a}^{\,-1}(2)|=|\vec{b}^{\,-1}(2)|=\varepsilon d\text{ and }|\vec{a}^{\,-1}(1)|=|\vec{b}^{\,-1}(1)|=d/2.
+There exists an algorithm that recovers
+(
+a
+→
+,
+b
+→
+)
+∈
+A
+×
+B
+(\vec{a},\vec{b})\in A\times B
+such that
+a
+→
+−
+b
+→
+∈
+[
+−
+1
+:
+1
+]
+d
+\vec{a}-\vec{b}\in[-1:1]^{d}
+with high probability,
+if such a pair exists, and runs in time
+O
+⁡
+(
+2
+c
+⁡
+(
+ε
+)
+​
+d
+⋅
+(
+|
+A
+|
++
+|
+B
+|
+)
+)
+O\left(2^{c(\varepsilon)d}\cdot\left(|A|+|B|\right)\right)
+, where
+c
+⁡
+(
+ε
+)
+≔
+(
+1
+−
+ε
+)
+⋅
+H
+⁡
+(
+ε
+1
+−
+ε
+)
++
+(
+1
+/
+2
++
+ε
+)
+⋅
+H
+⁡
+(
+4
+​
+ε
+1
++
+2
+​
+ε
+)
+−
+H
+⁡
+(
+2
+​
+ε
+)
++
+o
+⁡
+(
+1
+)
+.
+c(\varepsilon)\coloneqq(1-\varepsilon)\cdot H\left(\frac{\varepsilon}{1-\varepsilon}\right)+\left(1/2+\varepsilon\right)\cdot H\left(\frac{4\varepsilon}{1+2\varepsilon}\right)-H(2\varepsilon)+o(1).
+(1)
+We combine
+Theorem
+8.1
+with an approach for Equal Subset Sum that depends on representations admitting pseudosolutions (
+Section
+2.4
+). Importantly, the
+2
+c
+⁡
+(
+ε
+)
+​
+n
+2^{c(\varepsilon)n}
+factor is offset by the increase in speed gained from the more flexible representations, and the result is a faster algorithm.
+To prove
+Theorem
+8.1
+, we build off a technique for solving sparse instances of Orthogonal Vectors due to
+[
+29
+]
+. The idea is to sample
+compatibility certificates
+, sets of indices that certify that a pair of vectors is compatible. In our case, a pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+could be certified by two sets of indices
+L
+,
+R
+⊂
+[
+n
+]
+L,R\subset[n]
+satisfying
+a
+→
+−
+1
+​
+(
+2
+)
+⊆
+L
+⊆
+b
+→
+−
+1
+​
+(
+1
+)
+​
+and
+​
+b
+→
+−
+1
+​
+(
+2
+)
+⊆
+R
+⊆
+a
+→
+−
+1
+​
+(
+1
+)
+\vec{a}^{\,-1}(2)\subseteq L\subseteq\vec{b}^{\,-1}(1)\text{ and }\vec{b}^{\,-1}(2)\subseteq R\subseteq\vec{a}^{\,-1}(1)
+a property that guarantees
+a
+→
+\vec{a}
+and
+b
+→
+\vec{b}
+do not share a “0” and “2” at the same index and hence that
+a
+→
+−
+b
+→
+∈
+[
+−
+1
+:
+1
+]
+n
+\vec{a}-\vec{b}\in[-1:1]^{n}
+. (Although it is possible to achieve a result similar to
+Theorem
+8.1
+with a simpler bucketing approach, we are not aware of a simpler method that achieves a strong enough dependence on
+ε
+\varepsilon
+to improve on
+[
+27
+]
+.)
+2.6
+Combining The Techniques
+Figure 1:
+High-level overview of the logical flow of our algorithms.
+We conclude the technical overview with a high-level summary of the logical flow of our algorithms (see
+Figure
+1
+for reference).
+For any coefficient set
+C
+C
+, we can efficiently guess the frequency of each coefficient
+c
+∈
+C
+c\in C
+and choose an algorithmic strategy that searches for solutions matching this “solution profile”. If the solution profile is unbalanced, we can apply a folklore variant of Meet-in-the-Middle to search for a matching solution (
+Section
+4
+).
+If the solution profile is approximately balanced, we take a different approach according to
+C
+C
+. For
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+,
+d
+>
+1
+d>1
+, we apply a mixing dichotomy to conclude that if no unbalanced solution exists, any approximately balanced solution must mix perfectly (
+Section
+5.1
+). We then apply a generalization of the representation method (
+Section
+5.2
+).
+For
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+>
+2
+d>2
+, we choose a pair of coefficient set factors (
+Sections
+6.1
+and
+6.3
+) and apply a different mixing dichotomy to conclude that if any solution mixes poorly, there must exist exponentially many solutions; we can solve this case via a subsampling approach (
+Section
+6.2
+). Otherwise, any solution must mix well, in which case we use a generalized representation method approach (
+Section
+6.4
+).
+Finally, if
+C
+=
+[
+−
+1
+:
+1
+]
+C=[-1:1]
+, the approach is similar to other coefficient sets of the form
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+. However, in this case we choose a solution representation that creates pseudosolutions in order to improve runtime (
+Section
+7.2
+); this requires us to use the compatibility certificates method (
+Section
+8
+) and a special mixing dichotomy.
+Further Runtime Improvements.
+In this work we focus on demonstrating that the Meet-in-the-Middle barrier can be broken for Subset Balancing on many coefficient sets, not on optimizing constant factors in the exponent of the running time. We have attempted to present our framework in a modular way so that the various parts can be adapted and extended, as integrating the various techniques more tightly might lead to additional improvements in running time. For example, we believe it is possible to extend the compatibility certificate methods we apply to the
+C
+=
+[
+−
+1
+:
+1
+]
+C=[-1:1]
+case to further improve runtimes on
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+and
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+. Likewise, it may be possible to apply the idea from
+Lemma
+6.1
+to sharpen the runtime of the algorithm for
+C
+=
+[
+±
+d
+]
+,
+d
+>
+1
+C=[\pm d],d>1
+: if there are exponentially many collisions between solution pairs corresponding to a nearly balanced solution, this should imply the existence of exponentially many
+unbalanced
+solutions, a case which could be solved faster than instances with one unbalanced solution or with many balanced solutions. As the calculations are somewhat involved, we leave these optimizations for future work.
+3
+Preliminaries
+Big-
+O
+O
+Notation.
+We use standard big-
+O
+O
+notation with the addition of
+O
+∗
+O^{*}
+,
+Ω
+∗
+\Omega^{*}
+, and
+Θ
+∗
+\Theta^{*}
+, which suppress polynomial functions of
+n
+n
+. For example,
+O
+∗
+​
+(
+2
+n
+)
+≤
+2
+n
+⋅
+n
+O
+⁡
+(
+1
+)
+O^{*}(2^{n})\leq 2^{n}\cdot n^{O(1)}
+and
+Ω
+∗
+​
+(
+2
+n
+)
+≥
+2
+n
+⋅
+n
+−
+O
+⁡
+(
+1
+)
+\Omega^{*}(2^{n})\geq 2^{n}\cdot n^{-O(1)}
+. We use
+Θ
+∗
+​
+(
+f
+​
+(
+n
+)
+)
+\Theta^{*}(f(n))
+to indicate
+O
+∗
+​
+(
+f
+⁡
+(
+n
+)
+)
+∩
+Ω
+∗
+​
+(
+f
+⁡
+(
+n
+)
+)
+O^{*}(f(n))\cap\Omega^{*}(f(n))
+.
+Probability.
+Variables written in
+bold face
+are random.
+5
+5
+5
+We use this convention to emphasize variables that are sampled directly but do not apply it everywhere for the sake of readability.
+Given a set
+S
+S
+, we write
+𝒙
+∼
+S
+\bm{x}\sim S
+to indicate that
+𝒙
+\bm{x}
+is an element sampled uniformly at random from
+S
+S
+.
+Our algorithms run in exponential time and admit one-sided error (i.e., no false positives). If such an algorithm recovers a solution with inverse polynomial probability (probability
+n
+−
+O
+⁡
+(
+1
+)
+n^{-O(1)}
+), we can amplify the probability of correctness to a constant, and then further to
+1
+−
+e
+−
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+1-e^{-{\mathsf{poly}}(n)}
+, by repeating the algorithm
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+{\mathsf{poly}}(n)
+times. Amplifying the success probability in this way does not affect the runtime of our algorithms as written because the runtime statements use
+O
+∗
+O^{\ast}
+notation. When an algorithm satisfies this guarantee on correctness, we say it is correct “with high probability.”
+Sets.
+We write
+[
+n
+]
+[n]
+for the integer set
+{
+1
+,
+2
+,
+…
+,
+n
+}
+\{1,2,\dots,n\}
+and
+[
+a
+:
+b
+]
+[a:b]
+(with
+a
+≤
+b
+a\leq b
+) for the integer set
+[
+a
+,
+a
++
+1
+,
+a
++
+2
+,
+…
+,
+b
+]
+[a,a+1,a+2,\dots,b]
+. Because we will frequently refer to sets of the form
+[
+−
+d
+:
+d
+]
+∖
+{
+0
+}
+[-d:d]\setminus\{0\}
+, we abbreviate this to
+[
+±
+d
+]
+[\pm d]
+.
+Set Operations.
+Given integer sets
+X
+X
+and
+Y
+Y
+, we write:
+•
+X
++
+Y
+X+Y
+for the sumset
+{
+a
++
+b
+|
+a
+∈
+X
+,
+b
+∈
+Y
+}
+\{a+b\;|\;a\in X,b\in Y\}
+,
+•
+X
+(
+mod
+p
+)
+X\pmod{p}
+for
+{
+x
+(
+mod
+p
+)
+|
+x
+∈
+X
+}
+\{x\pmod{p}\;|\;x\in X\}
+,
+•
+X
+=
+A
+⊔
+B
+X=A\sqcup B
+to indicate that
+A
+A
+and
+B
+B
+are disjoint sets that partition
+X
+X
+, and
+•
+diam
+⁡
+(
+X
+)
+\mathrm{diam}(X)
+for the diameter
+max
+x
+1
+,
+x
+2
+∈
+X
+⁡
+|
+x
+1
+−
+x
+2
+|
+\max_{x_{1},x_{2}\in X}|x_{1}-x_{2}|
+of
+X
+X
+.
+We follow the general convention that for a function
+f
+f
+defined on the integers,
+f
+⁡
+(
+X
+)
+f(X)
+indicates the set obtained by applying
+f
+f
+element-wise to
+X
+X
+.
+Vectors.
+Given an integer vector
+x
+→
+∈
+ℤ
+d
+\vec{x}\in\mathbb{Z}^{d}
+and integer
+α
+\alpha
+, we write
+x
+→
+−
+1
+​
+(
+α
+)
+\vec{x}^{\,-1}(\alpha)
+to denote the set containing each index
+i
+∈
+[
+d
+]
+i\in[d]
+at which
+x
+→
+i
+=
+α
+\vec{x}_{i}=\alpha
+.
+Given a set of indices
+I
+⊆
+[
+d
+]
+I\subseteq[d]
+,
+v
+→
+I
+\vec{v}_{I}
+denotes the
+|
+I
+|
+|I|
+-dimensional restriction of
+v
+→
+\vec{v}
+to the indices of
+I
+I
+.
+Memory Model.
+We make the assumption that standard operations on input integers (addition, multiplication, comparison, etc.) can be performed in constant time. For inputs of size
+2
+n
+O
+⁡
+(
+1
+)
+2^{n^{O(1)}}
+, this can easily be reconciled with a more realistic RAM model: the running time of any operation that takes time
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+{\mathsf{poly}}(n)
+to execute on
+O
+⁡
+(
+n
+)
+O(n)
+-bit integers is then absorbed by the
+O
+∗
+O^{*}
+notation.
+Input Size.
+We make the assumption that the integer inputs to Subset Balancing problems are bounded by
+2
+n
+O
+⁡
+(
+1
+)
+2^{n^{O(1)}}
+. This is justified on both practical and theoretical grounds: first, inputs of size
+2
+n
+ω
+⁡
+(
+1
+)
+2^{n^{\omega(1)}}
+require superpolynomial time to read and manipulate in any realistic memory model. Second, standard self-reductions based on hashing allow instances of Subset Balancing with extremely large integers to be effectively reduced to instances with integers of size
+2
+O
+⁡
+(
+n
+)
+2^{O(n)}
+(see, e.g.,
+[
+31
+]
+, Section 2.3.4).
+Stirling’s Approximation.
+We use the following well-known consequence of Stirling’s approximation to simplify binomial coefficients. For any constant
+α
+∈
+(
+0
+,
+1
+)
+\alpha\in(0,1)
+, we have
+(
+n
+α
+​
+n
+)
+=
+Θ
+(
+n
+−
+1
+/
+2
+⋅
+2
+H
+⁡
+(
+α
+)
+​
+n
+)
+,
+\binom{n}{\alpha n}=\Theta\left(n^{-1/2}\cdot 2^{H(\alpha)n}\right),
+(2)
+where
+H
+H
+denotes the (binary) entropy function. A similar bound holds for
+multinomial coefficients: given constants
+α
+1
+,
+α
+2
+,
+…
+,
+α
+m
+\alpha_{1},\alpha_{2},\dots,\alpha_{m}
+summing to 1, we have
+(
+n
+α
+1
+​
+n
+,
+α
+2
+​
+n
+,
+…
+,
+α
+m
+​
+n
+)
+=
+Θ
+∗
+​
+(
+2
+H
+⁡
+(
+α
+1
+,
+α
+2
+,
+…
+,
+α
+m
+)
+​
+n
+)
+,
+\binom{n}{\alpha_{1}n,\;\alpha_{2}n,\;\dots,\;\alpha_{m}n}=\Theta^{*}\left(2^{H(\alpha_{1},\alpha_{2},\dots,\alpha_{m})n}\right),
+(3)
+where in this case
+H
+H
+denotes the
+m
+m
+-argument entropy function.
+3.1
+A Prime Distribution Lemma
+During the filtering step of the representation technique (see
+Section
+2.1
+), we will seek to recover at least one of a “good set” of integers
+G
+G
+hidden within a larger “ambient set” of integers
+Y
+Y
+. To do so, we will hash the elements of
+Y
+Y
+modulo a large, randomly chosen prime
+𝒑
+\bm{p}
+. Our intention is that both
+G
+G
+and
+Y
+Y
+behave much as if we had randomly subsampled the elements of
+Y
+Y
+with probability
+1
+/
+𝒑
+1/\bm{p}
+: we want many residue classes
+r
+∈
+[
+𝒑
+]
+r\in[\bm{p}]
+to contain approximately
+|
+G
+|
+/
+𝒑
+|G|/\bm{p}
+elements of
+G
+G
+and
+|
+Y
+|
+/
+𝒑
+|Y|/\bm{p}
+elements of
+Y
+Y
+.
+The following technical lemma makes this precise.
+Lemma 3.1
+.
+Fix an integer set
+G
+G
+with diameter
+diam
+⁡
+(
+G
+)
+<
+2
+n
+c
+\mathrm{diam}(G)<2^{n^{c}}
+for some constant
+c
+>
+0
+c>0
+. Let
+Y
+⊇
+G
+Y\supseteq G
+be a superset of
+G
+G
+, let
+p
+m
+​
+a
+​
+x
+≤
+O
+⁡
+(
+|
+G
+|
+)
+p_{max}\leq O(|G|)
+be an integer bound of size
+2
+Ω
+⁡
+(
+n
+)
+2^{\Omega(n)}
+, and let
+𝐩
+∼
+[
+p
+m
+​
+a
+​
+x
+:
+2
+p
+m
+​
+a
+​
+x
+]
+\bm{p}\sim[p_{max}:2p_{max}]
+be a prime. With constant probability, the set of “good residue classes”
+𝑹
+≔
+{
+r
+∈
+[
+𝒑
+]
+|
+|
+{
+g
+∈
+G
+|
+g
+≡
+r
+(
+mod
+𝒑
+)
+}
+|
+≥
+|
+G
+|
+4
+​
+p
+m
+​
+a
+​
+x
+,
+|
+{
+y
+∈
+Y
+|
+y
+≡
+r
+(
+mod
+𝒑
+)
+}
+|
+≤
+|
+Y
+|
+p
+m
+​
+a
+​
+x
+n
+c
++
+1
+}
+\bm{R}\coloneqq\left\{r\in[\bm{p}]\;\middle|\;\left|\{g\in G\;|\;g\equiv r\pmod{\bm{p}}\}\right|\geq\frac{|G|}{4p_{max}},\;|\{y\in Y\;|\;y\equiv r\pmod{\bm{p}}\}|\leq\frac{|Y|}{p_{max}}n^{c+1}\right\}
+has cardinality
+|
+𝐑
+|
+>
+p
+m
+​
+a
+​
+x
+⋅
+n
+−
+(
+c
++
+1
+)
+|\bm{R}|>p_{max}\cdot n^{-(c+1)}
+.
+We prove
+Lemma
+3.1
+in
+Appendix
+A
+. In simple terms, a “good residue class” is one that contains
+Ω
+⁡
+(
+|
+G
+|
+/
+𝒑
+)
+\Omega(|G|/\bm{p})
+elements of
+G
+G
+and
+O
+∗
+​
+(
+|
+Y
+|
+/
+𝒑
+)
+O^{*}(|Y|/\bm{p})
+elements of
+Y
+Y
+.
+Lemma
+3.1
+says that with constant probability at least an
+(
+n
+−
+O
+⁡
+(
+1
+)
+)
+(n^{-O(1)})
+-fraction of all residue classes are “good”.
+We will apply this lemma to coefficient-weighted inputs to the Subset Balancing problem.
+G
+G
+and
+Y
+Y
+will be lists of exponential size containing sums representing coefficient-weighted partial solutions. We are only interested in cases in which
+p
+m
+​
+a
+​
+x
+=
+2
+Ω
+⁡
+(
+n
+)
+p_{max}=2^{\Omega(n)}
+; otherwise, this hashing procedure cannot give us exponential time savings. The requirement that
+diam
+⁡
+(
+G
+)
+<
+2
+n
+c
+\mathrm{diam}(G)<2^{n^{c}}
+for some constant
+c
+c
+follows from our input size assumption. The final requirement is that
+p
+m
+​
+a
+​
+x
+≤
+O
+⁡
+(
+|
+G
+|
+)
+p_{max}\leq O(|G|)
+; often, we will set
+p
+m
+​
+a
+​
+x
+=
+Θ
+⁡
+(
+|
+G
+|
+)
+p_{max}=\Theta(|G|)
+to optimize runtime.
+4
+Folklore Results on Unbalanced Instances
+If a Subset Balancing instance admits a solution vector
+c
+→
+\vec{c}
+that is “unbalanced” in the sense that some coefficients are more common than others, the instance can be solved faster than
+|
+C
+|
+0.5
+​
+n
+|C|^{0.5n}
+using a fairly straightforward modification of Meet-in-the-Middle. This result is folklore: versions for Subset Sum and Equal Subset Sum are included in previous works (e.g.,
+[
+5
+,
+27
+,
+29
+]
+) and the generalization to Subset Balancing is implicit in others (e.g.,
+[
+12
+]
+). We provide a formal proof because the result is a subroutine for our later algorithms and because the proof presents an opportunity to introduce several useful definitions.
+Definition 4.1
+(Solution Profile)
+.
+Fix a coefficient set
+C
+C
+and let
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+be a coefficient vector. The
+solution profile
+π
+:
+C
+→
+ℕ
+\pi:C\rightarrow\mathbb{N}
+of
+c
+→
+\vec{c}
+is the function
+π
+⁡
+(
+z
+)
+=
+|
+c
+→
+−
+1
+​
+(
+z
+)
+|
+\pi(z)=|\vec{c}^{\,-1}(z)|
+for each coefficient
+z
+∈
+C
+z\in C
+.
+In other words,
+π
+\pi
+counts the number of occurrences of each coefficient in the vector
+c
+→
+\vec{c}
+. There are only
+O
+⁡
+(
+n
+|
+C
+|
+)
+O(n^{|C|})
+possible solution profiles for coefficient vectors of length
+n
+n
+supported on any fixed coefficient set
+C
+C
+. Therefore, because our Subset Balancing algorithms will not return false positives we can effectively “guess” the correct solution profile by separately attempting to recover solutions matching each possible
+π
+\pi
+. This will increase the overall runtime of our algorithms by a
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+{\mathsf{poly}}(n)
+factor that will ultimately be absorbed in the
+O
+∗
+O^{\ast}
+notation.
+Definition 4.2
+(
+ε
+\varepsilon
+-unbalanced solutions)
+.
+We say that a solution vector
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+with solution profile
+π
+\pi
+is
+ε
+\varepsilon
+-unbalanced
+if
+|
+π
+⁡
+(
+c
+)
+−
+n
+|
+C
+|
+|
+>
+ε
+​
+n
+\left|\pi(c)-\frac{n}{|C|}\right|>\varepsilon n
+for at least one coefficient
+c
+∈
+C
+c\in C
+.
+We refer to a solution vector that is
+not
+ε
+\varepsilon
+-unbalanced as
+ε
+\varepsilon
+-balanced
+, and to a solution vector that is
+0
+0
+-balanced as
+perfectly balanced
+.
+Lemma 4.1
+(Subset Balancing on
+ε
+\varepsilon
+-Unbalanced Instances)
+.
+For every constant
+ε
+>
+0
+\varepsilon>0
+there exists
+δ
+>
+0
+\delta>0
+and an algorithm that solves Subset Balancing instances with
+ε
+\varepsilon
+-unbalanced solutions, with high probability, in time
+O
+∗
+​
+(
+|
+C
+|
+(
+1
+/
+2
+−
+δ
+)
+​
+n
+)
+.
+O^{\ast}\left(|C|^{(1/2-\delta)n}\right).
+The algorithm behind
+Lemma
+4.1
+is a modified Meet-in-the-Middle approach. Our algorithm will not return false positives, so without loss of generality we assume the input instance has at least one solution and that we have correctly guessed the solution profile
+π
+\pi
+of a certain solution
+c
+→
+\vec{c}
+.
+We will use the following set of coefficient vectors:
+𝒮
+≔
+𝒮
+⁡
+(
+C
+,
+π
+)
+=
+{
+v
+→
+∈
+C
+n
+/
+2
+|
+|
+v
+→
+−
+1
+​
+(
+z
+)
+|
+=
+π
+⁡
+(
+z
+)
+/
+2
+​
+for all
+​
+z
+∈
+C
+}
+.
+\mathcal{S}\coloneqq\mathcal{S}(C,\pi)=\left\{\vec{v}\in C^{n/2}\;\middle|\;|\vec{v}^{\,-1}(z)|=\pi(z)/2\text{ for all }z\in C\right\}.
+(4)
+𝒮
+\mathcal{S}
+contains the
+n
+2
+\frac{n}{2}
+-dimensional coefficient vectors supported
+on
+C
+C
+that contain each coefficient in the same proportions as in
+π
+\pi
+.
+6
+6
+6
+Here we make the assumption that both
+n
+n
+and
+π
+⁡
+(
+z
+)
+\pi(z)
+,
+z
+∈
+C
+z\in C
+are even. If this is not the case, the algorithm is easily modified (one way
+of doing so creates two sets
+𝒮
+1
+\mathcal{S}_{1}
+and
+𝒮
+2
+\mathcal{S}_{2}
+of slightly uneven size). Because these changes do not materially affect the algorithm, we leave them out to minimize clutter.
+Algorithm
+1
+displays a Meet-in-the-Middle-style algorithm that takes as input a Subset Balancing instance
+x
+→
+\vec{x}
+, a coefficient set
+C
+C
+and a solution profile
+π
+\pi
+and attempts to recover a solution
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+matching
+π
+\pi
+.
+function
+UnbalancedSB
+​
+(
+x
+→
+,
+C
+,
+π
+)
+\textsf{UnbalancedSB}(\vec{x},C,\pi)
+:
+Select a partition
+A
+⊔
+B
+A\sqcup B
+of
+[
+n
+]
+[n]
+such that
+|
+A
+|
+=
+|
+B
+|
+=
+n
+/
+2
+|A|=|B|=n/2
+uniformly at random.
+1
+Enumerate
+𝒮
+≔
+𝒮
+⁡
+(
+C
+,
+π
+)
+\mathcal{S}\coloneqq\mathcal{S}(C,\pi)
+as defined in (
+4
+).
+2
+Enumerate and sort the lists
+L
+A
+≔
+𝒮
+⋅
+x
+→
+A
+L_{A}\coloneqq\mathcal{S}\cdot\vec{x}_{A}
+and
+L
+B
+≔
+𝒮
+⋅
+x
+→
+B
+L_{B}\coloneqq\mathcal{S}\cdot\vec{x}_{B}
+.
+3
+Use Meet-in-the-Middle to search for a solution pair in
+L
+A
+×
+L
+B
+L_{A}\times L_{B}
+.
+Algorithm 1
+An algorithm for unbalanced instances of Subset Balancing.
+Proof of
+Lemma
+4.1
+: Correctness.
+Consider an instance
+x
+→
+\vec{x}
+of Subset Balancing on
+C
+C
+that admits an
+ε
+\varepsilon
+-unbalanced solution
+c
+→
+\vec{c}
+for some
+ε
+>
+0
+\varepsilon>0
+. In order to recover
+c
+→
+\vec{c}
+, we repeat Algorithm
+1
+for each of the
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+{\mathsf{poly}}(n)
+possible
+ε
+\varepsilon
+-unbalanced solution profiles. Because Algorithm
+1
+does not return false positives, we proceed under the assumption that we have correctly guessed the solution profile
+π
+\pi
+matching
+c
+→
+\vec{c}
+.
+Given
+π
+\pi
+, if Algorithm
+1
+guesses a partition
+A
+⊔
+B
+A\sqcup B
+in Line
+1
+such that
+c
+→
+A
+,
+c
+→
+B
+∈
+𝒮
+\vec{c}_{A},\vec{c}_{B}\in\mathcal{S}
+,
+Lines
+1
+-
+1
+recover
+c
+→
+\vec{c}
+deterministically. Standard concentration inequalities imply that this event occurs with probability
+n
+−
+O
+⁡
+(
+|
+C
+|
+)
+n^{-O(|C|)}
+over the choice of
+A
+A
+.
+This can be amplified to high probability as discussed in
+Section
+3
+.
+∎
+Proof of
+Lemma
+4.1
+: Runtime.
+Recalling that
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+{\mathsf{poly}}(n)
+factors incurred by repeating an algorithm are absorbed in the
+O
+∗
+O^{\ast}
+notation, we proceed to bound the runtime of Algorithm
+1
+by
+O
+⁡
+(
+|
+C
+|
+(
+1
+/
+2
+−
+δ
+)
+​
+n
+)
+O(|C|^{(1/2-\delta)n})
+for a constant
+δ
+\delta
+that depends only on
+ε
+\varepsilon
+.
+Each of lines
+1
+-
+1
+in Algorithm
+1
+takes time
+O
+∗
+​
+(
+|
+𝒮
+|
+)
+\displaystyle O^{\ast}(|\mathcal{S}|)
+=
+O
+∗
+​
+(
+(
+n
+/
+2
+{
+π
+⁡
+(
+c
+)
+2
+|
+c
+∈
+C
+}
+)
+)
+\displaystyle=O^{\ast}\left(\binom{n/2}{\left\{\frac{\pi(c)}{2}\;\middle|\;c\in C\right\}}\right)
+=
+O
+∗
+​
+(
+2
+H
+⁡
+(
+{
+π
+⁡
+(
+c
+)
+n
+|
+c
+∈
+C
+}
+)
+​
+n
+2
+)
+,
+\displaystyle=O^{\ast}\left(2^{H\left(\left\{\frac{\pi(c)}{n}\;\middle|\;c\in C\right\}\right)\frac{n}{2}}\right),
+where the second line follows from Stirling’s Approximation for multinomial coefficients (
+3
+).
+Thus the runtime of Meet-in-the-Middle on unbalanced instances of Subset Balancing depends directly on the entropy of the solution profile: that is,
+H
+⁡
+(
+{
+π
+⁡
+(
+c
+)
+n
+|
+c
+∈
+C
+}
+)
+.
+H\left(\left\{\frac{\pi(c)}{n}\;\middle|\;c\in C\right\}\right).
+This expression evaluates to
+log
+2
+⁡
+(
+|
+C
+|
+)
+\log_{2}(|C|)
+when
+π
+⁡
+(
+z
+)
+=
+n
+|
+C
+|
+\pi(z)=\frac{n}{|C|}
+for all
+z
+∈
+C
+z\in C
+, and thus we recover the Meet-in-the-Middle runtime of
+O
+∗
+​
+(
+|
+C
+|
+0.5
+​
+n
+)
+O^{*}(|C|^{0.5n})
+on perfectly balanced solutions. On the other hand, if
+π
+\pi
+is
+ε
+\varepsilon
+-unbalanced for any
+ε
+>
+0
+\varepsilon>0
+, the runtime is then
+O
+⁡
+(
+|
+C
+|
+(
+1
+/
+2
+−
+δ
+)
+​
+n
+)
+O(|C|^{(1/2-\delta)n})
+for some
+δ
+≔
+δ
+⁡
+(
+ε
+)
+>
+0
+\delta\coloneqq\delta(\varepsilon)>0
+determined by the entropy function.
+7
+7
+7
+δ
+≔
+δ
+⁡
+(
+ε
+)
+\delta\coloneqq\delta(\varepsilon)
+is a cumbersome quantity but the closed form can be written down in terms of
+π
+\pi
+. We omit the expression from this short proof, but incorporate it in the proofs of
+Proposition
+5.1
+and
+Proposition
+6.1
+for the specific cases in which
+C
+=
+[
+−
+2
+:
+2
+]
+C=[-2:2]
+and
+C
+=
+[
+±
+3
+]
+C=[\pm 3]
+.
+This concludes the proof of runtime for
+Lemma
+4.1
+.
+∎
+This concludes our discussion of
+ε
+\varepsilon
+-unbalanced instances of Subset Balancing. In
+Section
+5
+we tackle balanced instances on coefficient sets of the form
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+.
+4.1
+Balancing Instances Using Re-Randomization
+Although balanced instances of Subset Balancing are the hardest cases for
+Meet-in-the-Middle and most other Subset Balancing algorithms, this is not true
+for our Equal Subset Sum algorithm in
+Section
+7
+. In that section it will be easier (and slightly faster) to deal with instances for which
+π
+⁡
+(
+1
+)
+=
+π
+⁡
+(
+−
+1
+)
+\pi(1)=\pi(-1)
+.
+We can assume this holds without loss of generality using the following trick:
+Lemma 4.2
+(Re-randomization trick)
+.
+There exists a randomized, polynomial-time transformation
+τ
+:
+ℤ
+n
+→
+ℤ
+n
+\tau:\mathbb{Z}^{n}\rightarrow\mathbb{Z}^{n}
+defined on instances of Equal Subset Sum with the following properties:
+•
+There is a one-to-one mapping between solutions to
+x
+→
+\vec{x}
+and solutions to
+τ
+⁡
+(
+x
+→
+)
+\tau(\vec{x})
+.
+•
+Given a fixed solution vector
+c
+→
+\vec{c}
+for
+x
+→
+\vec{x}
+with
+solution profile
+π
+\pi
+, let
+c
+→
+′
+\vec{c}\,^{\prime}
+denote the corresponding
+solution vector for
+τ
+⁡
+(
+x
+→
+)
+\tau(\vec{x})
+and let
+π
+′
+\pi^{\prime}
+denote its solution
+profile. Then,
+π
+​
+(
+0
+)
+=
+π
+′
+​
+(
+0
+)
+\pi(0)=\pi^{\prime}(0)
+deterministically and
+π
+′
+​
+(
+1
+)
+=
+π
+′
+​
+(
+−
+1
+)
+\pi^{\prime}(1)=\pi^{\prime}(-1)
+with probability
+n
+−
+O
+⁡
+(
+1
+)
+n^{-O(1)}
+.
+Proof.
+We define
+τ
+\tau
+as follows: given a Subset Balancing
+instance
+x
+→
+=
+(
+x
+1
+,
+…
+,
+x
+n
+)
+\vec{x}=(x_{1},\ldots,x_{n})
+, independently replace each element
+x
+i
+x_{i}
+with
+−
+x
+i
+-x_{i}
+with probability
+1
+/
+2
+1/2
+.
+Observe that
+τ
+\tau
+creates a one-to-one mapping between solutions: if
+c
+→
+\vec{c}
+is a solution vector satisfying
+c
+→
+⋅
+x
+→
+=
+0
+\vec{c}\cdot\vec{x}=0
+, then the vector
+c
+→
+′
+\vec{c}\,^{\prime}
+created by switching
+c
+i
+c_{i}
+with
+−
+c
+i
+-c_{i}
+and the vector
+x
+→
+′
+\vec{x}\,^{\prime}
+created by switching
+x
+i
+x_{i}
+with
+−
+x
+i
+-x_{i}
+also satisfy
+c
+→
+′
+⋅
+x
+→
+′
+=
+0
+\vec{c}\,^{\prime}\cdot\vec{x}\,^{\prime}=0
+. Thus every solution vector
+c
+→
+\vec{c}
+has a counterpart in the transformed problem. Moreover, any solution
+c
+→
+′
+\vec{c}\,^{\prime}
+to the transformed problem can be converted back into a solution for
+the original problem by changing back the sign of the appropriate elements.
+For any fixed solution vector
+c
+→
+\vec{c}
+with solution profile
+π
+\pi
+, the corresponding solution
+vector
+c
+→
+′
+\vec{c}\,^{\prime}
+with solution profile
+π
+′
+\pi^{\prime}
+satisfies
+π
+′
+​
+(
+0
+)
+=
+π
+​
+(
+0
+)
+\pi^{\prime}(0)=\pi(0)
+deterministically as the 0 indices do not change. Moreover,
+π
+′
+​
+(
+1
+)
+=
+π
+′
+​
+(
+−
+1
+)
+\pi^{\prime}(1)=\pi^{\prime}(-1)
+with probability
+n
+−
+O
+⁡
+(
+1
+)
+n^{-O(1)}
+over
+the choice of indices (by Stirling’s approximation for binomial coefficients
+(
+2
+)).
+∎
+We remark that although we use re-randomization only for
+C
+=
+[
+−
+1
+:
+1
+]
+C=[-1:1]
+, similar lemmas can be proved for all
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+and
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+≥
+1
+d\geq 1
+.
+5
+Subset Balancing on
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+In the previous section, we observed that the Meet-in-the-Middle Barrier can be
+broken for Subset Balancing when at least one solution is
+ε
+\varepsilon
+-unbalanced
+for a constant
+ε
+>
+0
+\varepsilon>0
+. In this section, we design a representation
+technique approach for instances of Subset Balancing on coefficient sets of the form
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+that have
+no
+ε
+\varepsilon
+-unbalanced solutions.
+5.1
+Perfect Mixing and Unbalanced Solutions
+To apply the representation technique to Subset Balancing on
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+we define our solution pairs as follows. For a fixed vector
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+, let
+P
+(
+c
+→
+)
+≔
+{
+(
+a
+→
+,
+b
+→
+)
+∈
+[
+0
+:
+d
+]
+n
+×
+[
+0
+:
+d
+]
+n
+|
+a
+→
+−
+b
+→
+=
+c
+→
+}
+P(\vec{c})\coloneqq\left\{(\vec{a},\vec{b})\in[0:d]^{n}\times[0:d]^{n}\;\middle|\;\vec{a}-\vec{b}=\vec{c}\right\}
+(5)
+denote the set of solution pairs corresponding to
+c
+→
+\vec{c}
+. We would like
+P
+⁡
+(
+c
+→
+)
+P(\vec{c})
+to satisfy a
+perfect mixing
+8
+8
+8
+This terminology is
+borrowed from Nederlof and Węgrzycki
+[
+29
+]
+, who use an analogous
+concept.
+property with respect to
+x
+→
+\vec{x}
+: that is, for
+(
+a
+→
+,
+b
+→
+)
+,
+(
+a
+→
+′
+,
+b
+→
+′
+)
+∈
+P
+⁡
+(
+c
+)
+(\vec{a},\vec{b}),(\vec{a}\,^{\prime},\vec{b}\,^{\prime})\in P(c)
+, we would like it to be true that
+a
+→
+⋅
+x
+→
+=
+a
+→
+′
+⋅
+x
+→
+⇔
+a
+→
+=
+a
+→
+′
+.
+\vec{a}\cdot\vec{x}=\vec{a}\,^{\prime}\cdot\vec{x}\iff\vec{a}=\vec{a}\,^{\prime}.
+We can guarantee this by proving a mixing dichotomy. We will show that if a Subset Balancing instance
+x
+→
+\vec{x}
+admits a solution vector
+c
+→
+\vec{c}
+whose solution pairs do
+not
+mix perfectly with respect to
+x
+→
+\vec{x}
+,
+x
+→
+\vec{x}
+has an unbalanced solution. In either case, we can break the Meet-in-the-Middle barrier.
+Lemma 5.1
+(Perfect Mixing Dichotomy for
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+)
+.
+Fix an instance
+x
+→
+\vec{x}
+of Subset Balancing on a coefficient set
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+, let
+c
+→
+\vec{c}
+be a solution vector, and let
+π
+\pi
+be the solution profile of
+c
+→
+\vec{c}
+.
+Suppose there exist two
+distinct
+solution pairs
+(
+a
+→
+,
+b
+→
+)
+,
+(
+a
+→
+′
+,
+b
+→
+′
+)
+∈
+P
+⁡
+(
+c
+→
+)
+(\vec{a},\vec{b}),(\vec{a}\,^{\prime},\vec{b}\,^{\prime})\in P(\vec{c})
+satisfying
+a
+→
+⋅
+x
+→
+=
+a
+→
+′
+⋅
+x
+→
+\vec{a}\cdot\vec{x}=\vec{a}\,^{\prime}\cdot\vec{x}
+. Then
+x
+→
+\vec{x}
+admits an
+1
+3
+​
+|
+C
+|
+\frac{1}{3|C|}
+-unbalanced solution vector.
+Proof.
+Fix
+x
+→
+\vec{x}
+,
+c
+→
+\vec{c}
+,
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+and
+(
+a
+→
+′
+,
+b
+→
+′
+)
+(\vec{a}\,^{\prime},\vec{b}\,^{\prime})
+as in the lemma statement. We begin from the fact that
+P
+⁡
+(
+c
+→
+)
+P(\vec{c})
+is determined by
+c
+→
+\vec{c}
+. Specifically, we have that
+a
+→
+,
+b
+→
+,
+a
+→
+′
+,
+b
+→
+′
+∈
+[
+0
+:
+d
+]
+n
+\vec{a},\vec{b},\vec{a}\,^{\prime},\vec{b}\,^{\prime}\in[0:d]^{n}
+and that these pairs
+satisfy
+a
+→
+−
+b
+→
+=
+a
+→
+′
+−
+b
+→
+′
+=
+c
+→
+\vec{a}-\vec{b}=\vec{a}\,^{\prime}-\vec{b}\,^{\prime}=\vec{c}
+by definition. Thus, for each index
+i
+∈
+[
+n
+]
+i\in[n]
+, we have:
+•
+If
+c
+i
+=
+d
+c_{i}=d
+, then
+a
+i
+=
+a
+i
+′
+=
+d
+a_{i}=a_{i}^{\prime}=d
+and
+b
+i
+=
+b
+i
+′
+=
+0
+b_{i}=b_{i}^{\prime}=0
+.
+•
+If
+c
+i
+=
+−
+d
+c_{i}=-d
+, then
+a
+i
+=
+a
+i
+′
+=
+0
+a_{i}=a_{i}^{\prime}=0
+and
+b
+i
+=
+b
+i
+′
+=
+d
+b_{i}=b_{i}^{\prime}=d
+.
+In either case, we have that
+a
+i
+−
+a
+i
+′
+=
+0
+a_{i}-a_{i}^{\prime}=0
+. Thus the vector
+a
+→
+−
+a
+→
+′
+\vec{a}-\vec{a}\,^{\prime}
+contains at least
+π
+⁡
+(
+d
+)
++
+π
+⁡
+(
+−
+d
+)
+\pi(d)+\pi(-d)
+zeroes, one for each occurrence of
+d
+d
+and
+−
+d
+-d
+in
+c
+→
+\vec{c}
+.
+Next, we observe that
+a
+→
+−
+a
+→
+′
+\vec{a}-\vec{a}\,^{\prime}
+is a solution: because
+a
+→
+⋅
+x
+→
+=
+a
+→
+′
+⋅
+x
+→
+\vec{a}\cdot\vec{x}=\vec{a}\,^{\prime}\cdot\vec{x}
+by assumption,
+(
+a
+→
+−
+a
+→
+′
+)
+⋅
+x
+→
+=
+0
+(\vec{a}-\vec{a}\,^{\prime})\cdot\vec{x}=0
+. Moreover, because
+a
+→
+,
+a
+→
+′
+∈
+[
+0
+:
+d
+]
+n
+\vec{a},\vec{a}\,^{\prime}\in[0:d]^{n}
+,
+a
+→
+−
+a
+→
+′
+∈
+[
+−
+d
+:
+d
+]
+n
+\vec{a}-\vec{a}\,^{\prime}\in[-d:d]^{n}
+.
+a
+→
+−
+a
+→
+′
+≠
+0
+→
+\vec{a}-\vec{a}\,^{\prime}\neq\vec{0}
+as
+a
+→
+\vec{a}
+and
+a
+→
+′
+\vec{a}\,^{\prime}
+are distinct by assumption.
+We conclude by showing that either
+c
+→
+\vec{c}
+or
+a
+→
+−
+a
+→
+′
+\vec{a}-\vec{a}\,^{\prime}
+must be unbalanced. First, suppose
+π
+⁡
+(
+d
+)
++
+π
+⁡
+(
+−
+d
+)
+<
+4
+3
+⋅
+n
+|
+C
+|
+.
+\pi(d)+\pi(-d)<\frac{4}{3}\cdot\frac{n}{|C|}.
+(6)
+In this case,
+c
+→
+\vec{c}
+is
+1
+3
+​
+|
+C
+|
+\frac{1}{3|C|}
+-unbalanced as one of
+π
+⁡
+(
+d
+)
+\pi(d)
+or
+π
+⁡
+(
+−
+d
+)
+\pi(-d)
+must be less than
+2
+3
+⋅
+n
+|
+C
+|
+\frac{2}{3}\cdot\frac{n}{|C|}
+. On the other
+hand, if (
+6
+) is false, then
+a
+→
+−
+a
+→
+′
+\vec{a}-\vec{a}\,^{\prime}
+is
+1
+3
+​
+|
+C
+|
+\frac{1}{3|C|}
+-unbalanced, as it has at least
+4
+3
+⋅
+n
+|
+C
+|
+\frac{4}{3}\cdot\frac{n}{|C|}
+zeroes.
+∎
+5.2
+Algorithm for Balanced Subset Balancing on
+[
+−
+d
+:
+d
+]
+[-d:d]
+.
+If a Subset Balancing instance
+x
+→
+\vec{x}
+admits a
+1
+3
+​
+|
+C
+|
+\frac{1}{3|C|}
+-unbalanced solution vector, we can solve the instance quickly using
+Lemma
+4.1
+. On the other hand, if
+x
+→
+\vec{x}
+does not admit a
+1
+3
+​
+|
+C
+|
+\frac{1}{3|C|}
+-unbalanced solution vector,
+Lemma
+5.1
+implies that for any solution vector
+c
+→
+\vec{c}
+,
+P
+⁡
+(
+c
+→
+)
+P(\vec{c})
+mixes perfectly with respect to
+x
+→
+\vec{x}
+. In this case, we adopt the following representation technique-style algorithm to solve the instance.
+function
+BalancedSBWith0
+(
+x
+→
+,
+C
+=
+[
+−
+d
+:
+d
+]
+,
+π
+)
+\textsf{BalancedSBWith0}(\vec{x},C=[-d:d],\pi)
+:
+Sample a prime
+𝒑
+∼
+[
+p
+m
+​
+a
+​
+x
+:
+2
+p
+m
+​
+a
+​
+x
+]
+\bm{p}\sim[p_{max}:2p_{max}]
+and a residue class
+𝒓
+∼
+[
+𝒑
+]
+\bm{r}\sim[\bm{p}]
+for
+p
+m
+​
+a
+​
+x
+p_{max}
+as defined in (
+7
+).
+1
+Enumerate the set
+𝒮
+\displaystyle\mathcal{S}
+≔
+{
+v
+→
+∈
+[
+0
+:
+d
+]
+n
+|
+v
+→
+⋅
+x
+→
+≡
+𝒓
+(
+mod
+𝒑
+)
+}
+.
+\displaystyle\coloneqq\{\vec{v}\in[0:d]^{n}\;|\;\vec{v}\cdot\vec{x}\equiv\bm{r}\pmod{\bm{p}}\}.
+If
+|
+𝒮
+|
+≥
+(
+d
++
+1
+)
+n
+p
+m
+​
+a
+​
+x
+⋅
+n
+ω
+⁡
+(
+1
+)
+|\mathcal{S}|\geq\frac{(d+1)^{n}}{p_{max}}\cdot n^{\omega(1)}
+, halt and
+return “
+failure
+’’.
+2
+Enumerate and sort the list
+L
+≔
+𝒮
+⋅
+x
+→
+L\coloneqq\mathcal{S}\cdot\vec{x}
+.
+3
+Use Meet-in-the-Middle to search for a solution pair in
+L
+×
+L
+L\times L
+.
+Algorithm 2
+Outline of a representation technique-style algorithm for balanced instances of Subset Balancing on coefficient sets of the form
+[
+−
+d
+:
+d
+]
+[-d:d]
+. Certain implementation details omitted from this figure are specified in the proof of
+Lemma
+5.2
+.
+Lemma 5.2
+(Solving Subset Balancing on
+ε
+\varepsilon
+-balanced instances with
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+)
+.
+Let
+ε
+<
+1
+3
+​
+|
+C
+|
+\varepsilon<\frac{1}{3|C|}
+be a constant and let
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+,
+d
+>
+0
+d>0
+be a coefficient set. There exists an algorithm that solves any Subset Balancing instance
+x
+→
+\vec{x}
+on
+C
+C
+that does not admit any
+ε
+\varepsilon
+-unbalanced solution, with high probability, in time
+O
+∗
+​
+(
+|
+C
+|
+(
+1
+/
+2
+−
+δ
+)
+​
+n
+)
+O^{\ast}\left(|C|^{(1/2-\delta)n}\right)
+for a constant
+δ
+>
+0
+\delta>0
+that depends only on
+d
+d
+and
+ε
+\varepsilon
+.
+Our first step to proving
+Lemma
+5.2
+is an observation that bounds the number of solution pairs for a solution vector
+c
+→
+\vec{c}
+:
+Claim 5.1
+(Number of Solution Pairs)
+.
+Fix a coefficient set
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+for an integer
+d
+>
+0
+d>0
+and let
+π
+\pi
+be a solution profile. Fix any vector
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+and let
+P
+⁡
+(
+c
+→
+)
+P(\vec{c})
+be the set of solution pairs as defined in (
+5
+). Then
+|
+P
+⁡
+(
+c
+→
+)
+|
+=
+∏
+z
+∈
+C
+(
+d
++
+1
+−
+|
+z
+|
+)
+π
+⁡
+(
+z
+)
+=
+(
+d
++
+1
+)
+π
+⁡
+(
+0
+)
+​
+∏
+i
+∈
+[
+d
+]
+(
+d
++
+1
+−
+i
+)
+π
+⁡
+(
+i
+)
++
+π
+⁡
+(
+−
+i
+)
+.
+|P(\vec{c})|=\prod_{z\in C}(d+1-|z|)^{\pi(z)}=(d+1)^{\pi(0)}\prod_{i\in[d]}(d+1-i)^{\pi(i)+\pi(-i)}.
+Proof: To begin, suppose the
+i
+i
+th coefficient
+s
+i
+s_{i}
+of
+c
+→
+\vec{c}
+is 0. In this case, there are exactly
+d
++
+1
+d+1
+pairs
+(
+a
+i
+,
+b
+i
+)
+∈
+[
+0
+:
+d
+]
+×
+[
+0
+:
+d
+]
+(a_{i},b_{i})\in[0:d]\times[0:d]
+such that
+a
+i
+−
+b
+i
+=
+0
+a_{i}-b_{i}=0
+: these pairs are
+(
+0
+,
+0
+)
+,
+(
+1
+,
+1
+)
+,
+…
+,
+(
+d
+,
+d
+)
+(0,0),(1,1),\dots,(d,d)
+.
+There are thus
+|
+{
+(
+v
+→
+,
+u
+→
+)
+∈
+[
+0
+:
+d
+]
+π
+⁡
+(
+0
+)
+×
+[
+0
+:
+d
+]
+π
+⁡
+(
+0
+)
+∣
+v
+→
+−
+u
+→
+=
+0
+→
+}
+|
+=
+(
+d
++
+1
+)
+π
+⁡
+(
+0
+)
+|\{(\vec{v},\vec{u})\in[0:d]^{\pi(0)}\times[0:d]^{\pi(0)}\;\mid\;\vec{v}-\vec{u}=\vec{0}\}|=(d+1)^{\pi(0)}
+ways to assign the indices that are
+0
+0
+in
+c
+→
+\vec{c}
+in a solution pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+.
+Likewise, there are
+d
+d
+pairs
+(
+a
+i
+,
+b
+i
+)
+∈
+[
+0
+:
+d
+]
+×
+[
+0
+:
+d
+]
+(a_{i},b_{i})\in[0:d]\times[0:d]
+such that
+a
+i
+−
+b
+i
+=
+1
+a_{i}-b_{i}=1
+: these pairs are
+(
+1
+,
+0
+)
+,
+(
+2
+,
+1
+)
+,
+…
+,
+(
+d
+,
+d
+−
+1
+)
+(1,0),(2,1),\dots,(d,d-1)
+. Extending this logic to each coefficient
+c
+∈
+C
+c\in C
+completes the proof of the claim.
+■
+\blacksquare
+We specify the implementation details omitted from Algorithm
+2
+in the proof of correctness of
+Lemma
+5.2
+below. In outline, we set
+p
+m
+​
+a
+​
+x
+p_{max}
+to be slightly
+less than the number of solution pairs in order that the expected number of
+solution pairs in
+𝒮
+\mathcal{S}
+is small but nonzero when solution pairs mix perfectly.
+Proof of
+Lemma
+5.2
+: Correctness.
+Fix an instance
+x
+→
+\vec{x}
+of Subset Balancing on
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+, let
+ε
+<
+1
+3
+​
+|
+C
+|
+\varepsilon<\frac{1}{3|C|}
+be a constant, and suppose
+x
+→
+\vec{x}
+does not admit any
+ε
+\varepsilon
+-unbalanced solution. We assume without loss of generality that
+x
+→
+\vec{x}
+admits a solution vector
+c
+→
+\vec{c}
+that is
+ε
+\varepsilon
+-balanced. Because we can try all
+ε
+\varepsilon
+-balanced solution profiles,
+suppose we have correctly guessed the solution profile
+π
+\pi
+corresponding to
+c
+→
+\vec{c}
+.
+Lines
+2
+and
+2
+of Algorithm
+2
+will recover a solution deterministically as long as (i)
+𝒮
+\mathcal{S}
+contains a solution pair
+(
+a
+→
+CLOSE
+(\vec{a}
+,
+OPEN
+b
+→
+)
+\vec{b})
+satisfying
+a
+→
+−
+b
+→
+=
+c
+→
+\vec{a}-\vec{b}=\vec{c}
+, and (ii)
+|
+𝒮
+|
+≤
+(
+d
++
+1
+)
+n
+p
+m
+​
+a
+​
+x
+⋅
+n
+O
+⁡
+(
+1
+)
+|\mathcal{S}|\leq\frac{(d+1)^{n}}{p_{max}}\cdot n^{O(1)}
+.Next, we consider the probability that these two events occur when we run Algorithm
+2
+on
+x
+→
+\vec{x}
+,
+C
+C
+, and
+π
+\pi
+. Define the set of
+partial solution sums
+G
+≔
+{
+a
+→
+⋅
+x
+→
+|
+∃
+b
+→
+​
+s.t.
+​
+(
+a
+→
+,
+b
+→
+)
+∈
+P
+⁡
+(
+c
+→
+)
+}
+.
+G\coloneqq\left\{\vec{a}\cdot\vec{x}\;\middle|\;\exists\vec{b}\text{ s.t. }(\vec{a},\vec{b})\in P(\vec{c})\right\}.
+with respect to the set of solution pairs
+P
+⁡
+(
+c
+→
+)
+P(\vec{c})
+of
+c
+→
+\vec{c}
+. By assumption,
+x
+→
+\vec{x}
+does not admit any
+ε
+\varepsilon
+-unbalanced solution for some
+ε
+<
+1
+3
+​
+|
+C
+|
+\varepsilon<\frac{1}{3|C|}
+. Thus, applying the Perfect Mixing Dichotomy (
+Lemma
+5.1
+), we have that
+|
+G
+|
+=
+|
+P
+⁡
+(
+c
+→
+)
+|
+,
+|G|=|P(\vec{c})|,
+as every left component of an element of
+P
+⁡
+(
+c
+→
+)
+P(\vec{c})
+has a unique dot product with
+x
+→
+\vec{x}
+. We set
+p
+m
+​
+a
+​
+x
+=
+min
+⁡
+{
+|
+G
+|
+,
+(
+d
++
+1
+)
+n
+/
+2
+}
+.
+p_{max}=\min\left\{|G|,(d+1)^{n/2}\right\}.
+(7)
+Here, the first argument to the
+min
+\min
+function reflects the case in which we intend that many residue classes modulo
+𝒑
+\bm{p}
+contain
+Θ
+∗
+​
+(
+1
+)
+\Theta^{*}(1)
+elements of
+G
+G
+. The second argument caps
+p
+m
+​
+a
+​
+x
+p_{max}
+. This is done to minimize the overall runtime of the algorithm, which would otherwise scale with
+|
+G
+|
+|G|
+in cases where
+|
+G
+|
+|G|
+is very large.
+We proceed to show that the algorithm recovers a solution with constant
+probability, by analysing two cases that depend on the value of
+p
+m
+​
+a
+​
+x
+p_{max}
+assigned
+in (
+7
+).
+Case 1:
+p
+m
+​
+a
+​
+x
+=
+|
+G
+|
+p_{max}=|G|
+.
+Apply
+Lemma
+3.1
+using the sets
+G
+G
+and
+(
+[
+0
+:
+d
+]
+n
+⋅
+x
+→
+)
+([0:d]^{n}\cdot\vec{x})
+and the prime range bound
+p
+m
+​
+a
+​
+x
+p_{max}
+. Let
+b
+b
+be a constant satisfying
+diam
+⁡
+(
+G
+)
+<
+2
+n
+b
+\mathrm{diam}(G)<2^{n^{b}}
+, and note
+that
+b
+b
+is
+constant under our assumption that input integers have
+size
+2
+n
+O
+⁡
+(
+1
+)
+2^{n^{O(1)}}
+. As a result, we have that with constant probability the
+set
+𝒮
+\mathcal{S}
+(i) contains at least
+|
+G
+|
+4
+​
+p
+m
+​
+a
+​
+x
+=
+1
+/
+4
+>
+0
+\frac{|G|}{4p_{max}}=1/4>0
+elements
+of
+G
+G
+, and (ii) satisfies
+|
+𝒮
+|
+≤
+(
+d
++
+1
+)
+n
+p
+m
+​
+a
+​
+x
+⋅
+n
+b
++
+1
+|\mathcal{S}|\leq\frac{(d+1)^{n}}{p_{max}}\cdot n^{b+1}
+.
+If the set
+𝒮
+\mathcal{S}
+satisfies both conditions, Algorithm
+2
+recovers a solution deterministically.
+Case 2:
+p
+m
+​
+a
+​
+x
+=
+(
+d
++
+1
+)
+n
+/
+2
+p_{max}=(d+1)^{n/2}
+.
+Once again, apply
+Lemma
+3.1
+using the sets
+G
+G
+and
+(
+[
+0
+:
+d
+]
+n
+⋅
+x
+→
+)
+([0:d]^{n}\cdot\vec{x})
+and the prime range bound
+p
+m
+​
+a
+​
+x
+p_{max}
+; define
+b
+b
+as before. We have that with constant probability the set
+𝒮
+\mathcal{S}
+(i) contains
+|
+G
+|
+4
+​
+p
+m
+​
+a
+​
+x
+>
+1
+/
+2
+>
+0
+\frac{|G|}{4p_{max}}>1/2>0
+elements of
+G
+G
+, and (ii)
+satisfies
+|
+𝒮
+|
+≤
+(
+d
++
+1
+)
+n
+p
+m
+​
+a
+​
+x
+⋅
+n
+b
++
+1
+=
+(
+d
++
+1
+)
+n
+/
+2
+⋅
+n
+b
++
+1
+|\mathcal{S}|\leq\frac{(d+1)^{n}}{p_{max}}\cdot n^{b+1}=(d+1)^{n/2}\cdot n^{b+1}
+.
+Once again, if the set
+𝒮
+\mathcal{S}
+satisfies both conditions, Algorithm
+2
+recovers a solution deterministically.
+9
+9
+9
+Note that in this case, the number of good elements
+|
+G
+|
+4
+​
+p
+m
+​
+a
+​
+x
+\frac{|G|}{4p_{max}}
+may be very large, in which case we could improve our runtime significantly using a subsampling approach. However, this is not necessary to beat Meet-in-the-Middle (and for
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+, Case 2 does not apply for small values of
+d
+d
+), so we leave this as an exercise.
+Thus Algorithm
+2
+recovers a solution with constant probability if we correctly guess the solution profile
+π
+\pi
+corresponding to
+c
+→
+\vec{c}
+. Amplifying the success probability completes the proof of correctness for
+Lemma
+5.2
+.
+∎
+Proof of
+Lemma
+5.2
+: Runtime.
+It remains to show that, given a Subset Balancing instance
+x
+→
+\vec{x}
+, coefficient set
+C
+C
+, and
+ε
+\varepsilon
+-balanced solution profile
+π
+\pi
+, Algorithm
+2
+runs in time
+O
+⁡
+(
+|
+C
+|
+(
+1
+/
+2
+−
+δ
+)
+​
+n
+)
+O(|C|^{(1/2-\delta)n})
+for some constant
+δ
+>
+0
+\delta>0
+that depends only on
+d
+d
+and
+ε
+\varepsilon
+.
+Line
+2
+can be performed in polynomial time with high probability by random sampling and polynomial-time primality-checking, as
+p
+m
+​
+a
+​
+x
+=
+2
+n
+O
+⁡
+(
+1
+)
+p_{max}=2^{n^{O(1)}}
+under our assumption that input integers have size
+2
+n
+O
+⁡
+(
+1
+)
+2^{n^{O(1)}}
+.
+Lines
+2
+and
+2
+can be easily implemented in time
+O
+∗
+​
+(
+|
+𝒮
+|
+)
+=
+O
+∗
+​
+(
+(
+d
++
+1
+)
+n
+p
+m
+​
+a
+​
+x
+)
+.
+O^{\ast}(|\mathcal{S}|)=O^{\ast}\left(\frac{(d+1)^{n}}{p_{max}}\right).
+It remains to describe the implementation of Line
+2
+and bound the runtime. We implement Line
+2
+as follows.
+First, we allocate a dynamic programming table with dimensions
+n
+×
+𝒑
+n\times\bm{p}
+. Then, for
+i
+∈
+[
+n
+]
+i\in[n]
+,
+j
+∈
+[
+𝒑
+]
+j\in[\bm{p}]
+, store the number of vectors
+a
+→
+∈
+[
+0
+:
+d
+]
+i
+\vec{a}\in[0:d]^{i}
+satisfying
+a
+→
+[
+0
+:
+i
+−
+1
+]
+⋅
+x
+→
+[
+0
+:
+i
+−
+1
+]
+≡
+j
+(
+mod
+𝒑
+)
+\vec{a}[0:i-1]\cdot\vec{x}[0:i-1]\equiv j\pmod{\bm{p}}
+in cell
+(
+i
+,
+j
+)
+(i,j)
+; that is, the number of “partial solution vectors” that allow us to achieve the sum
+j
+(
+mod
+𝒑
+)
+j\pmod{\bm{p}}
+.
+Each cell
+(
+i
+,
+j
+)
+(i,j)
+can be filled in time
+O
+⁡
+(
+|
+C
+|
+)
+O(|C|)
+by computing the sum of the entries of
+|
+C
+|
+|C|
+cells in the previous row. Thus filling in the entire table takes time
+O
+∗
+​
+(
+p
+m
+​
+a
+​
+x
+)
+O^{*}(p_{max})
+.
+Finally, we enumerate
+𝒮
+\mathcal{S}
+in time
+O
+∗
+​
+(
+|
+𝒮
+|
+)
+O^{\ast}(|\mathcal{S}|)
+by backtracking from
+cell
+[
+n
+−
+1
+,
+𝐫
+]
+[n-1,\mathbf{r}]
+. (If
+|
+𝒮
+|
+=
+ω
+⁡
+(
+(
+d
++
+1
+)
+n
+p
+m
+​
+a
+​
+x
+)
+|\mathcal{S}|=\omega\left(\frac{(d+1)^{n}}{p_{max}}\right)
+, the algorithm halts after taking
+O
+∗
+​
+(
+(
+d
++
+1
+)
+n
+p
+m
+​
+a
+​
+x
+)
+O^{*}\left(\frac{(d+1)^{n}}{p_{max}}\right)
+steps.)
+Taking the maximum over Lines
+2
+-
+2
+, Algorithm
+2
+takes time
+O
+∗
+​
+(
+max
+⁡
+{
+p
+m
+​
+a
+​
+x
+,
+(
+d
++
+1
+)
+n
+p
+m
+​
+a
+​
+x
+}
+)
+=
+O
+∗
+​
+(
+(
+d
++
+1
+)
+n
+p
+m
+​
+a
+​
+x
+)
+,
+O^{\ast}\left(\max\left\{p_{max},\frac{(d+1)^{n}}{p_{max}}\right\}\right)=O^{\ast}\left(\frac{(d+1)^{n}}{p_{max}}\right),
+as
+p
+m
+​
+a
+​
+x
+≤
+(
+d
++
+1
+)
+n
+/
+2
+p_{max}\leq(d+1)^{n/2}
+by definition.
+It remains to show that this is quantity is less than the Meet-in-the-Middle runtime of
+O
+∗
+​
+(
+|
+C
+|
+n
+/
+2
+)
+=
+O
+∗
+​
+(
+(
+2
+​
+d
++
+1
+)
+n
+/
+2
+)
+O^{*}(|C|^{n/2})=O^{*}((2d+1)^{n/2})
+for
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+,
+d
+≥
+1
+d\geq 1
+.
+The running time depends on
+p
+m
+​
+a
+​
+x
+p_{max}
+which based on (
+7
+) can take two values.
+When
+p
+m
+​
+a
+​
+x
+=
+(
+d
++
+1
+)
+n
+/
+2
+p_{max}=(d+1)^{n/2}
+, the running time is
+O
+∗
+​
+(
+(
+d
++
+1
+)
+n
+/
+p
+m
+​
+a
+​
+x
+)
+=
+O
+∗
+​
+(
+(
+d
++
+1
+)
+n
+/
+2
+)
+O^{\ast}\left((d+1)^{n}/p_{max}\right)=O^{\ast}((d+1)^{n/2})
+,
+which is less than
+(
+2
+​
+d
++
+1
+)
+n
+/
+2
+(2d+1)^{n/2}
+by an exponential margin for any positive integer
+d
+d
+.
+Therefore, we need to analyse the case when
+p
+m
+​
+a
+​
+x
+=
+|
+G
+|
+p_{max}=|G|
+.
+Substituting for
+|
+G
+|
+|G|
+using
+Claim
+5.1
+, in this case we have a runtime of
+O
+∗
+​
+(
+(
+d
++
+1
+)
+n
+|
+G
+|
+)
+=
+O
+∗
+​
+(
+(
+d
++
+1
+)
+n
+(
+d
++
+1
+)
+π
+⁡
+(
+0
+)
+​
+∏
+i
+∈
+[
+d
+]
+(
+d
++
+1
+−
+i
+)
+π
+⁡
+(
+i
+)
++
+π
+⁡
+(
+−
+i
+)
+)
+.
+O^{\ast}\left(\frac{(d+1)^{n}}{|G|}\right)=O^{\ast}\left(\frac{(d+1)^{n}}{(d+1)^{\pi(0)}\prod_{i\in[d]}(d+1-i)^{\pi(i)+\pi(-i)}}\right).
+By assumption, our solution vector
+c
+→
+\vec{c}
+is not
+1
+3
+​
+|
+C
+|
+\frac{1}{3|C|}
+-unbalanced, so
+π
+⁡
+(
+i
+)
+∈
+n
+|
+C
+|
+±
+n
+3
+​
+|
+C
+|
+\pi(i)\in\frac{n}{|C|}\pm\frac{n}{3|C|}
+for all
+i
+∈
+C
+i\in C
+. Plugging in the lower bound
+π
+⁡
+(
+i
+)
+≥
+2
+3
+​
+|
+C
+|
+​
+n
+\pi(i)\geq\frac{2}{3|C|}n
+for each
+i
+∈
+C
+i\in C
+,
+10
+10
+10
+Note that this effectively assumes the worst case among all
+(
+1
+3
+​
+|
+C
+|
+)
+(\frac{1}{3|C|})
+-balanced solution profiles. This is sufficient to break Meet-in-the-Middle, but we can optimize the runtime by calculating it as a function of
+π
+\pi
+for both Algorithm
+2
+and Algorithm
+1
+and choosing whichever is faster for each possible
+π
+\pi
+. We show an example of this in
+Section
+5.4
+.
+we have a runtime upper bound of
+O
+∗
+​
+(
+(
+d
++
+1
+)
+n
+(
+d
++
+1
+)
+2
+​
+n
+3
+​
+(
+2
+​
+d
++
+1
+)
+​
+(
+d
+!
+)
+4
+​
+n
+3
+​
+(
+2
+​
+d
++
+1
+)
+)
+.
+O^{\ast}\left(\frac{(d+1)^{n}}{(d+1)^{\frac{2n}{3(2d+1)}}(d!)^{\frac{4n}{3(2d+1)}}}\right).
+In
+Claim
+B.1
+we show that
+this quantity is exponentially smaller than the runtime of
+Meet-in-the-Middle for every positive integer
+d
+d
+. The
+proof is straightforward but somewhat technical hence we defer it to
+Appendix
+B
+.
+∎
+5.3
+Breaking Meet-in-the-Middle for Subset Balancing on
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+Theorem 5.1
+.
+For any
+d
+>
+0
+d>0
+, there exists a constant
+δ
+>
+0
+\delta>0
+such that Subset Balancing on
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+can be solved with high probability in time
+O
+∗
+​
+(
+|
+C
+|
+(
+1
+/
+2
+−
+δ
+)
+​
+n
+)
+.
+O^{\ast}\left(|C|^{(1/2-\delta)n}\right).
+Proof.
+Choose a constant
+ε
+<
+1
+3
+​
+|
+C
+|
+\varepsilon<\frac{1}{3|C|}
+and apply
+Lemmas
+4.1
+and
+5.2
+.
+∎
+The optimal constant
+δ
+\delta
+in the exponent results from trading off the approaches for balanced and unbalanced solutions to find the worst-case solution profile
+π
+\pi
+. This becomes a messy exercise for large
+d
+d
+. As a proof of concept, we solve for
+δ
+\delta
+for
+C
+=
+{
+−
+2
+,
+−
+1
+,
+0
+,
+1
+,
+2
+}
+C=\{-2,-1,0,1,2\}
+in the next subsection.
+5.4
+Optimizing Runtime for
+C
+=
+[
+−
+2
+:
+2
+]
+C=[-2:2]
+In this section, we optimize
+δ
+\delta
+in the statement of
+Theorem
+5.1
+for
+C
+=
+[
+−
+2
+:
+2
+]
+C=[-2:2]
+as a proof of concept. Specifically, we prove the following proposition.
+Proposition 5.1
+.
+Subset Balancing on
+C
+=
+[
+−
+2
+:
+2
+]
+C=[-2:2]
+can be solved with high probability in time
+O
+∗
+​
+(
+|
+C
+|
+0.478
+​
+n
+)
+=
+O
+∗
+​
+(
+2
+1.108
+​
+n
+)
+.
+O^{\ast}(|C|^{0.478n})=O^{\ast}(2^{1.108n}).
+Proof.
+Optimizing runtime comes down to trading off the runtimes given by Algorithm
+1
+and Algorithm
+2
+. Specifically, we will calculate a closed-form expression for the time required to find a solution in terms of the solution profile
+π
+\pi
+of a fixed solution vector
+c
+→
+\vec{c}
+, then take the maximum over all possible
+π
+\pi
+.
+Consider an instance
+x
+→
+\vec{x}
+of Subset Balancing on
+C
+=
+[
+−
+2
+:
+2
+]
+C=[-2:2]
+, and suppose
+x
+→
+\vec{x}
+admits a solution vector
+c
+→
+\vec{c}
+with solution profile
+π
+\pi
+.
+•
+Case 1: Unbalanced Solutions.
+Following the proof of runtime for
+Lemma
+4.1
+, we have that the runtime of Algorithm
+1
+given
+π
+\pi
+is
+O
+∗
+​
+(
+2
+H
+⁡
+(
+π
+⁡
+(
+−
+2
+)
+n
+,
+π
+⁡
+(
+−
+1
+)
+n
+,
+π
+⁡
+(
+0
+)
+n
+,
+π
+⁡
+(
+1
+)
+n
+,
+π
+⁡
+(
+2
+)
+n
+)
+​
+n
+2
+)
+O^{\ast}\left(2^{H\left(\frac{\pi(-2)}{n},\frac{\pi(-1)}{n},\frac{\pi(0)}{n},\frac{\pi(1)}{n},\frac{\pi(2)}{n}\right)\frac{n}{2}}\right)
+•
+Case 2: Balanced Solutions.
+Following the proof of runtime for
+Lemma
+5.2
+, we have that the runtime of Algorithm
+2
+given
+π
+\pi
+is
+O
+∗
+​
+(
+(
+d
++
+1
+)
+n
+p
+m
+​
+a
+​
+x
+)
+=
+O
+∗
+​
+(
+max
+⁡
+[
+3
+n
+3
+π
+⁡
+(
+0
+)
+⋅
+2
+π
+⁡
+(
+−
+1
+)
++
+π
+⁡
+(
+1
+)
+,
+3
+n
+/
+2
+]
+)
+.
+O^{\ast}\left(\frac{(d+1)^{n}}{p_{max}}\right)=O^{\ast}\left(\max\left[\frac{3^{n}}{3^{\pi(0)}\cdot 2^{\pi(-1)+\pi(1)}},3^{n/2}\right]\right).
+The
+3
+n
+/
+2
+3^{n/2}
+term is not binding for this coefficient set, so we ignore it in the following optimization.
+At this point, we can simplify the task of finding the worst-case solution profile
+π
+\pi
+by making several observations:
+1.
+For any fixed values of the quantities
+(
+π
+⁡
+(
+−
+2
+)
++
+π
+⁡
+(
+2
+)
+)
+(\pi(-2)+\pi(2))
+and
+(
+π
+⁡
+(
+−
+1
+)
++
+π
+⁡
+(
+1
+)
+)
+(\pi(-1)+\pi(1))
+, the Case 1 runtime is maximized by choosing to set
+π
+⁡
+(
+−
+2
+)
+=
+π
+⁡
+(
+2
+)
+\pi(-2)=\pi(2)
+and
+π
+⁡
+(
+−
+1
+)
+=
+π
+⁡
+(
+1
+)
+\pi(-1)=\pi(1)
+, while the Case 2 runtime is unchanged. Thus we can proceed under this assumption without loss of generality and write the expressions above in terms of
+π
+⁡
+(
+0
+)
+\pi(0)
+,
+π
+⁡
+(
+1
+)
+\pi(1)
+and
+π
+⁡
+(
+2
+)
+\pi(2)
+.
+2.
+The solution profile is constrained by the identity
+∑
+c
+∈
+[
+−
+2
+:
+2
+]
+π
+(
+c
+)
+=
+n
+\sum_{c\in[-2:2]}\pi(c)=n
+. Thus we can reduce the number of variables further by writing
+π
+⁡
+(
+2
+)
+\pi(2)
+in terms of
+π
+⁡
+(
+0
+)
+\pi(0)
+and
+π
+⁡
+(
+1
+)
+\pi(1)
+.
+3.
+Both runtimes can easily be written as functions of the form
+2
+O
+⁡
+(
+n
+)
+2^{O(n)}
+, so any variable assignment that balance the exponents of these functions also balances the original functions.
+Thus, writing both functions in terms of
+α
+0
+=
+π
+⁡
+(
+0
+)
+/
+n
+\alpha_{0}=\pi(0)/n
+and
+α
+1
+=
+π
+⁡
+(
+1
+)
+/
+n
+\alpha_{1}=\pi(1)/n
+and taking the base-2 logarithm of both sides, we can balance our runtime for worst-case
+π
+\pi
+by solving the following optimization problem:
+max
+α
+0
+,
+α
+1
+∈
+[
+0
+:
+1
+]
+min
+{
+1
+2
+⋅
+H
+(
+α
+0
+,
+α
+1
+,
+α
+1
+,
+1
+−
+α
+0
+−
+2
+​
+α
+1
+2
+,
+1
+−
+α
+0
+−
+2
+​
+α
+1
+2
+)
+,
+log
+2
+(
+3
+)
+(
+1
+−
+α
+0
+)
+−
+2
+α
+1
+}
+\max_{\alpha_{0},\alpha_{1}\in[0:1]}\min\left\{\frac{1}{2}\cdot H\left(\alpha_{0},\alpha_{1},\alpha_{1},\frac{1-\alpha_{0}-2\alpha_{1}}{2},\frac{1-\alpha_{0}-2\alpha_{1}}{2}\right),\;\log_{2}(3)(1-\alpha_{0})-2\alpha_{1}\right\}
+(8)
+Computer evaluation reveals that (
+8
+) is upper-bounded by
+1.108
+1.108
+and that the maximum occurs at approximately
+(
+α
+0
+,
+α
+1
+)
+=
+(
+0.105
+,
+0.156
+)
+(\alpha_{0},\alpha_{1})=(0.105,0.156)
+.
+∎
+6
+Subset Balancing on
+[
+±
+d
+]
+[\pm d]
+In
+Section
+5
+, we designed faster worst-case algorithms for Subset Balancing on coefficient sets of the form
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+, which generalize Equal Subset Sum. In this section, we consider worst-case algorithms for Subset Balancing on coefficient sets of the form
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+, which generalize Subset Sum.
+Unlike Equal Subset Sum, no
+O
+⁡
+(
+|
+C
+|
+(
+0.5
+−
+ε
+)
+​
+n
+)
+O(|C|^{(0.5-\varepsilon)n})
+-time algorithm for
+Subset Sum is known for any constant
+ε
+>
+0
+\varepsilon>0
+. We proceed to show that,
+perhaps surprisingly,
+O
+⁡
+(
+|
+C
+|
+(
+0.5
+−
+ε
+)
+​
+n
+)
+O(|C|^{(0.5-\varepsilon)n})
+-time algorithms
+are
+possible on
+[
+±
+d
+]
+[\pm d]
+for any
+d
+>
+2
+d>2
+.
+6.1
+The Coefficient Shifting Approach
+Our algorithm for balanced instances of Subset Balancing on coefficient sets of the form
+C
+=
+[
+−
+d
+:
+d
+]
+C=[-d:d]
+crucially relies on the fact that for
+any
+two vectors
+a
+→
+,
+b
+→
+∈
+[
+0
+:
+d
+]
+n
+\vec{a},\vec{b}\in[0:d]^{n}
+,
+a
+→
+−
+b
+→
+∈
+C
+n
+\vec{a}-\vec{b}\in C^{n}
+. This property makes it relatively easy to represent any solution vector by a set of solution pairs.
+However, this property does not hold for
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+because the
+0
+0
+coefficient is missing. For the sake of intuition, consider what would happen if
+we attempted to apply Algorithm
+2
+to an instance of
+Subset Balancing on a coefficient set of the form
+[
+±
+d
+]
+[\pm d]
+. Our perfect mixing
+dichotomy (
+Lemma
+5.1
+) does not apply: when two partial solutions
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+and
+(
+a
+→
+′
+,
+b
+→
+′
+)
+(\vec{a}\,^{\prime},\vec{b}\,^{\prime})
+collide in the sense that
+a
+→
+⋅
+x
+→
+=
+a
+→
+′
+⋅
+x
+→
+\vec{a}\cdot\vec{x}=\vec{a}\,^{\prime}\cdot\vec{x}
+, we cannot conclude that
+(
+a
+→
+−
+a
+→
+′
+)
+(\vec{a}-\vec{a}\,^{\prime})
+is a solution vector because
+(
+a
+→
+−
+a
+→
+′
+)
+(\vec{a}-\vec{a}\,^{\prime})
+might be
+0
+0
+at some indices.
+However, it is sometimes possible to avoid this issue by using coefficient sets other than
+[
+d
+]
+[d]
+or
+[
+0
+:
+d
+]
+[0:d]
+to represent partial candidate solutions, a new approach we call
+coefficient shifting
+. For a concrete example, consider the coefficient set
+C
+≔
+[
+±
+3
+]
+=
+{
+−
+3
+,
+−
+2
+,
+−
+1
+,
+1
+,
+2
+,
+3
+}
+.
+C\coloneqq[\pm 3]=\{-3,-2,-1,1,2,3\}.
+The key insight is that
+C
+C
+is the sumset of many pairs of integer sets. For
+example, for
+C
+1
+≔
+{
+0
+,
+1
+}
+C_{1}\coloneqq\{0,1\}
+and
+C
+2
+≔
+{
+−
+3
+,
+−
+2
+,
+1
+,
+2
+}
+C_{2}\coloneqq\{-3,-2,1,2\}
+, the equation
+C
+1
++
+C
+2
+=
+C
+C_{1}+C_{2}=C
+(9)
+holds. We will refer to sets
+C
+1
+C_{1}
+,
+C
+2
+C_{2}
+with this property as a pair of
+coefficient set factors
+of
+C
+C
+.
+Suppose we pursue an unusual variant of the Meet-in-the-Middle strategy by defining the following two lists:
+ℒ
+≔
+ℒ
+⁡
+(
+C
+1
+,
+C
+2
+)
+\displaystyle\mathcal{L}\coloneqq\mathcal{L}(C_{1},C_{2})
+=
+C
+1
+n
+/
+2
+×
+C
+2
+n
+/
+2
+​
+and
+\displaystyle=C_{1}^{n/2}\times C_{2}^{n/2}\text{ and }
+(10)
+ℛ
+≔
+ℛ
+⁡
+(
+C
+1
+,
+C
+2
+)
+\displaystyle\mathcal{R}\coloneqq\mathcal{R}(C_{1},C_{2})
+=
+C
+2
+n
+/
+2
+×
+C
+1
+n
+/
+2
+​
+.
+\displaystyle=C_{2}^{n/2}\times C_{1}^{n/2}\text{.}
+This construction ensures that both lists have the same length:
+|
+ℒ
+|
+=
+|
+ℛ
+|
+=
+2
+n
+/
+2
+⋅
+4
+n
+/
+2
+=
+2
+3
+​
+n
+/
+2
+.
+|\mathcal{L}|=|\mathcal{R}|=2^{n/2}\cdot 4^{n/2}=2^{3n/2}.
+Moreover, because
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+are coefficient set factors of
+C
+C
+, every vector
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+is represented by a non-empty set of
+solution pairs
+:
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+=
+{
+(
+a
+→
+,
+b
+→
+)
+∈
+ℒ
+×
+ℛ
+|
+a
+→
++
+b
+→
+=
+c
+→
+}
+.
+P(\vec{c},C_{1},C_{2})=\left\{(\vec{a},\vec{b})\in\mathcal{L}\times\mathcal{R}\;\middle|\;\vec{a}+\vec{b}=\vec{c}\right\}.
+(11)
+Given an input vector
+x
+→
+∈
+ℤ
+n
+\vec{x}\in\mathbb{Z}^{n}
+, we can solve the instance by computing
+two lists
+L
+≔
+x
+→
+⋅
+ℒ
+L\coloneqq\vec{x}\cdot\mathcal{L}
+and
+R
+≔
+x
+→
+⋅
+ℛ
+R\coloneqq\vec{x}\cdot\mathcal{R}
+, sorting, and using the Meet-in-the-Middle algorithm to recover a solution pair in time
+O
+∗
+​
+(
+2
+3
+​
+n
+/
+2
+)
+O^{*}(2^{3n/2})
+if one exists.
+For our chosen coefficient set
+C
+C
+this runtime is slower than Meet-in-the-Middle, which runs
+in time
+O
+∗
+​
+(
+|
+C
+|
+n
+/
+2
+)
+=
+O
+∗
+​
+(
+6
+n
+/
+2
+)
+O^{*}(|C|^{n/2})=O^{*}(6^{n/2})
+for
+C
+=
+[
+±
+3
+]
+C=[\pm 3]
+. However, we can
+improve the runtime further by applying the representation technique to take advantage of the many solution pairs corresponding to each solution vector. In order to do so, we would like to show something akin to the following two conditions:
+1.
+Our instance
+x
+→
+\vec{x}
+of Subset Balancing admits an
+ε
+\varepsilon
+-balanced solution
+c
+→
+\vec{c}
+for some small constant
+ε
+>
+0
+\varepsilon>0
+. This is easy to ensure without loss of generality, as if the instance admits an
+ε
+\varepsilon
+-unbalanced solution, we can solve it faster than Meet-in-the-Middle by
+Lemma
+4.1
+.
+2.
+The set of solution pairs of
+c
+→
+\vec{c}
+satisfies a perfect mixing property with respect to
+x
+→
+\vec{x}
+: for solution
+pairs
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+,
+(
+a
+→
+′
+,
+b
+→
+′
+)
+(\vec{a}\,^{\prime},\vec{b}\,^{\prime})
+, we have
+a
+→
+⋅
+x
+→
+=
+a
+→
+′
+⋅
+x
+→
+\vec{a}\cdot\vec{x}=\vec{a}\,^{\prime}\cdot\vec{x}
+if and only if
+a
+→
+=
+a
+→
+′
+\vec{a}=\vec{a}\,^{\prime}
+.
+This is harder to achieve because, as explained above, our original perfect mixing dichotomy does not apply. However, we can replace it with a different mixing dichotomy: we will show that either the solution pairs of
+c
+→
+\vec{c}
+mix (almost) perfectly or
+x
+→
+\vec{x}
+admits
+exponentially many
+solution vectors, in which case we can break the Meet-in-the-Middle barrier using a simple random sampling approach.
+Finally, we will apply the representation technique to filter the lists
+ℒ
+\mathcal{L}
+and
+ℛ
+\mathcal{R}
+and achieve worst-case runtime improvements for all coefficient sets
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+≥
+2
+d\geq 2
+. As before, we content ourselves with showing that we can achieve
+O
+⁡
+(
+|
+C
+|
+(
+1
+/
+2
+−
+δ
+)
+​
+n
+)
+O(|C|^{(1/2-\delta)n})
+for some constant
+δ
+>
+0
+\delta>0
+that depends only on
+|
+C
+|
+|C|
+in the general case. In
+Section
+6.5
+we calculate
+δ
+\delta
+exactly for the example coefficient set
+C
+=
+[
+±
+3
+]
+C=[\pm 3]
+.
+6.2
+A Mixing Dichotomy for Subset Balancing on
+[
+±
+d
+]
+[\pm d]
+Given a coefficient set
+C
+C
+, coefficient set factors
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+, and a coefficient vector
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+, define the two lists
+ℒ
+\mathcal{L}
+and
+ℛ
+\mathcal{R}
+as well as the set of solution pairs
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+P(\vec{c},C_{1},C_{2})
+as in (
+10
+) and (
+11
+) above. In addition, we define two sets containing the left and right components of the elements of
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+P(\vec{c},C_{1},C_{2})
+, respectively:
+P
+ℒ
+≔
+P
+ℒ
+​
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+\displaystyle P_{\mathcal{L}}\coloneqq P_{\mathcal{L}}(\vec{c},C_{1},C_{2})
+=
+{
+a
+→
+∈
+(
+C
+1
+n
+/
+2
+×
+C
+2
+n
+/
+2
+)
+|
+∃
+b
+→
+∈
+(
+C
+2
+n
+/
+2
+×
+C
+1
+n
+/
+2
+)
+,
+a
+→
++
+b
+→
+=
+c
+→
+}
+\displaystyle=\{\vec{a}\in(C_{1}^{n/2}\times C_{2}^{n/2})\;|\;\exists\vec{b}\in(C_{2}^{n/2}\times C_{1}^{n/2}),\vec{a}+\vec{b}=\vec{c}\}
+P
+ℛ
+≔
+P
+ℛ
+​
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+\displaystyle P_{\mathcal{R}}\coloneqq P_{\mathcal{R}}(\vec{c},C_{1},C_{2})
+=
+{
+b
+→
+∈
+(
+C
+2
+n
+/
+2
+×
+C
+1
+n
+/
+2
+)
+|
+∃
+a
+→
+∈
+(
+C
+1
+n
+/
+2
+×
+C
+2
+n
+/
+2
+)
+,
+a
+→
++
+b
+→
+=
+c
+→
+}
+.
+\displaystyle=\{\vec{b}\in(C_{2}^{n/2}\times C_{1}^{n/2})\;|\;\exists\vec{a}\in(C_{1}^{n/2}\times C_{2}^{n/2}),\vec{a}+\vec{b}=\vec{c}\}.
+We are now prepared to prove our new mixing dichotomy.
+Lemma 6.1
+(Mixing Dichotomy for
+[
+±
+d
+]
+[\pm d]
+)
+.
+Fix a coefficient set
+C
+C
+, coefficient set factors
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+, and an instance
+x
+→
+\vec{x}
+of Subset Balancing. Let
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+be a solution vector for
+x
+→
+\vec{x}
+.
+For any constant
+ε
+>
+0
+\varepsilon>0
+, if
+|
+{
+P
+ℛ
+⋅
+x
+→
+}
+|
+≤
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+⋅
+2
+−
+ε
+​
+n
+|\{P_{\mathcal{R}}\cdot\vec{x}\}|\leq|P(\vec{c},C_{1},C_{2})|\cdot 2^{-\varepsilon n}
+then
+x
+→
+\vec{x}
+has at least
+2
+ε
+​
+n
+2^{\varepsilon n}
+distinct solution vectors.
+Proof.
+Fix
+C
+C
+,
+C
+1
+C_{1}
+,
+C
+2
+C_{2}
+,
+c
+→
+\vec{c}
+, and
+x
+→
+\vec{x}
+as above, and suppose that
+|
+{
+P
+ℛ
+⋅
+x
+→
+}
+|
+≤
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+⋅
+2
+−
+ε
+​
+n
+|\{P_{\mathcal{R}}\cdot\vec{x}\}|\leq|P(\vec{c},C_{1},C_{2})|\cdot 2^{-\varepsilon n}
+(12)
+for some constant
+ε
+>
+0
+\varepsilon>0
+. First, we observe that
+|
+P
+ℒ
+|
+=
+|
+P
+ℛ
+|
+=
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+.
+|P_{\mathcal{L}}|=|P_{\mathcal{R}}|=|P(\vec{c},C_{1},C_{2})|.
+This is because there exist one-to-one mappings between each element
+ℓ
+→
+∈
+P
+ℒ
+\vec{\ell}\in P_{\mathcal{L}}
+, its partner
+c
+→
+−
+ℓ
+→
+∈
+P
+ℛ
+\vec{c}-\vec{\ell}\in P_{\mathcal{R}}
+, and the solution pair
+(
+ℓ
+→
+,
+c
+→
+−
+ℓ
+→
+)
+∈
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+(\vec{\ell},\vec{c}-\vec{\ell})\in P(\vec{c},C_{1},C_{2})
+.
+Thus (
+12
+) implies the existence of exponentially many collisions when we take the dot product of
+P
+ℒ
+P_{\mathcal{L}}
+and
+x
+→
+\vec{x}
+. In particular, there exists some integer
+v
+v
+such that the set of left solution pairs colliding at
+v
+v
+P
+ℒ
+,
+v
+≔
+|
+{
+ℓ
+→
+∈
+P
+ℒ
+|
+ℓ
+→
+⋅
+x
+→
+=
+v
+}
+|
+≥
+2
+ε
+​
+n
+.
+P_{\mathcal{L},v}\coloneqq\left|\left\{\vec{\ell}\in P_{\mathcal{L}}\;|\;\vec{\ell}\cdot\vec{x}=v\right\}\right|\geq 2^{\varepsilon n}.
+Fix an arbitrary element
+ℓ
+→
+∈
+P
+ℒ
+,
+v
+\vec{\ell}\in P_{\mathcal{L},v}
+and consider its solution pair
+(
+ℓ
+→
+,
+c
+→
+−
+ℓ
+→
+)
+(\vec{\ell},\vec{c}-\vec{\ell})
+.
+We claim that the set
+Q
+≔
+(
+c
+→
+−
+ℓ
+→
+)
++
+P
+ℒ
+,
+v
+Q\coloneqq(\vec{c}-\vec{\ell})+P_{\mathcal{L},v}
+is a set of
+2
+ε
+​
+n
+2^{\varepsilon n}
+distinct solution vectors for
+x
+→
+\vec{x}
+. To see this, first observe that
+|
+Q
+|
+=
+|
+P
+ℒ
+,
+v
+|
+≥
+2
+ε
+​
+n
+|Q|=|P_{\mathcal{L},v}|\geq 2^{\varepsilon n}
+, as
+Q
+Q
+is a translation of
+P
+ℒ
+,
+v
+P_{\mathcal{L},v}
+. Second, we observe that every vector
+(
+c
+→
+−
+ℓ
+→
++
+q
+→
+)
+∈
+Q
+(\vec{c}-\vec{\ell}+\vec{q})\in Q
+is a solution vector:
+(
+(
+c
+→
+−
+ℓ
+→
+)
++
+q
+→
+)
+⋅
+x
+→
+\displaystyle((\vec{c}-\vec{\ell})+\vec{q})\cdot\vec{x}
+=
+(
+c
+→
+−
+ℓ
+→
+)
+⋅
+x
+→
++
+q
+→
+⋅
+x
+→
+\displaystyle=(\vec{c}-\vec{\ell})\cdot\vec{x}+\vec{q}\cdot\vec{x}
+=
+(
+c
+→
+−
+ℓ
+→
+)
+⋅
+x
+→
++
+v
+\displaystyle=(\vec{c}-\vec{\ell})\cdot\vec{x}+v
+=
+(
+c
+→
+−
+ℓ
+→
+)
+⋅
+x
+→
++
+ℓ
+→
+⋅
+x
+→
+\displaystyle=(\vec{c}-\vec{\ell})\cdot\vec{x}+\vec{\ell}\cdot\vec{x}
+=
+c
+→
+⋅
+x
+→
+=
+0
+,
+\displaystyle=\vec{c}\cdot\vec{x}=0,
+where the second and third steps follow from the definition of
+P
+ℒ
+,
+v
+P_{\mathcal{L},v}
+. Finally, as
+c
+→
+−
+ℓ
+→
+∈
+P
+ℛ
+⊆
+C
+2
+n
+/
+2
+×
+C
+1
+n
+/
+2
+\vec{c}-\vec{\ell}\in P_{\mathcal{R}}\subseteq C_{2}^{n/2}\times C_{1}^{n/2}
+and
+q
+→
+∈
+P
+ℒ
+⊆
+C
+1
+n
+/
+2
+×
+C
+2
+n
+/
+2
+\vec{q}\in P_{\mathcal{L}}\subseteq C_{1}^{n/2}\times C_{2}^{n/2}
+, we know that
+(
+c
+→
+−
+ℓ
+→
++
+q
+→
+)
+∈
+C
+n
+(\vec{c}-\vec{\ell}+\vec{q})\in C^{n}
+because
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+are coefficient set factors of
+C
+C
+. This completes the proof of
+Lemma
+6.1
+.
+∎
+The property that
+x
+→
+\vec{x}
+has many distinct solution vectors is useful because such instances can be solved by randomly sampling partial solutions before running Meet-in-the-Middle:
+Lemma 6.2
+.
+Let
+x
+→
+\vec{x}
+be an instance of Subset Balancing on a coefficient set
+C
+C
+. If there exists a constant
+ε
+>
+0
+\varepsilon>0
+such that
+x
+→
+\vec{x}
+admits at least
+2
+ε
+​
+n
+2^{\varepsilon n}
+distinct solution vectors
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+,
+x
+→
+\vec{x}
+can be solved with high probability in time
+O
+∗
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+ε
+n
+/
+2
+)
+O^{\ast}(|C|^{n/2}\cdot 2^{-\varepsilon n/2})
+Proof.
+Create two lists
+L
+L
+and
+R
+R
+by sampling
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+ε
+n
+/
+2
+|C|^{n/2}\cdot 2^{-\varepsilon n/2}
+elements of
+C
+n
+/
+2
+C^{n/2}
+uniformly at random with replacement. Compute
+L
+⋅
+x
+→
+L\cdot\vec{x}
+and
+R
+⋅
+x
+→
+R\cdot\vec{x}
+and sort them by sum in time
+O
+∗
+​
+(
+|
+C
+|
+1
+−
+ε
+2
+​
+n
+)
+O^{\ast}(|C|^{\frac{1-\varepsilon}{2}n})
+. Finally, run Meet-in-the-Middle on
+L
+×
+R
+L\times R
+, which takes time
+O
+⁡
+(
+|
+L
+|
++
+|
+R
+|
+)
+O(|L|+|R|)
+.
+Meet-in-the-Middle recovers a solution deterministically if a solution is sampled; that is, if there exists
+(
+a
+→
+,
+b
+→
+)
+∈
+L
+×
+R
+(\vec{a},\vec{b})\in L\times R
+such that
+a
+→
+∘
+b
+→
+\vec{a}\circ\vec{b}
+is a solution vector for
+x
+→
+\vec{x}
+, where
+∘
+\circ
+concatenates components. Standard concentration inequalities imply that this event occurs with constant probability; this can be amplified to high probability by repeating the algorithm
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+{\mathsf{poly}}(n)
+times.
+∎
+6.3
+Choosing New Coefficient Sets
+In this section, we address the following question: which sets
+C
+C
+have coefficient set factors
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+that make the coefficient shifting approach possible?
+Roughly speaking, we want the length of the lists
+ℒ
+\mathcal{L}
+and
+ℛ
+\mathcal{R}
+to be less than
+|
+C
+|
+n
+/
+2
+|C|^{n/2}
+when we hash them modulo our large random prime
+𝒑
+\bm{p}
+, which will be approximately the size of the set
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+|P(\vec{c},C_{1},C_{2})|
+for a perfectly balanced solution vector
+c
+→
+\vec{c}
+. (Here we choose a balanced solution vector because we can easily solve unbalanced instances using
+Lemma
+4.1
+and thus the “hard” instances of Subset Balancing will have solutions approximating this form.) This condition turns out to be sufficient.
+Definition 6.1
+(Good coefficient set factors)
+.
+For a fixed coefficient set
+C
+C
+, integer sets
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+are a pair of
+good coefficient set factors
+if they satisfy the following conditions for any constant
+ε
+>
+0
+\varepsilon>0
+:
+C
+1
++
+C
+2
+\displaystyle C_{1}+C_{2}
+=
+C
+\displaystyle=C
+|
+ℒ
+⁡
+(
+C
+1
+,
+C
+2
+)
+|
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+\displaystyle\frac{|\mathcal{L}(C_{1},C_{2})|}{|P(\vec{c},C_{1},C_{2})|}
+=
+o
+⁡
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+ε
+​
+n
+)
+,
+\displaystyle=o(|C|^{n/2}\cdot 2^{-\varepsilon n}),
+where
+c
+→
+\vec{c}
+is any
+perfectly balanced
+coefficient vector.
+As it turns out, all coefficient sets of the form
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+>
+2
+d>2
+admit good coefficient set factors.
+Lemma 6.3
+.
+Every set of the form
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+>
+2
+d>2
+has a pair of good coefficient set factors.
+Proof.
+Fix a coefficient set
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+>
+2
+d>2
+, and consider the coefficient sets
+C
+1
+\displaystyle C_{1}
+≔
+{
+0
+,
+1
+}
+​
+and
+\displaystyle\coloneqq\{0,1\}\text{ and }
+C
+2
+\displaystyle C_{2}
+≔
+{
+−
+d
+,
+−
+d
++
+1
+,
+…
+,
+−
+2
+,
+1
+,
+2
+,
+…
+,
+d
+−
+1
+}
+.
+\displaystyle\coloneqq\{-d,-d+1,\dots,-2,1,2,\dots,d-1\}.
+Note that
+C
+1
++
+C
+2
+=
+C
+C_{1}+C_{2}=C
+and
+|
+ℒ
+⁡
+(
+C
+1
+,
+C
+2
+)
+|
+=
+2
+n
+/
+2
+⋅
+(
+|
+C
+|
+−
+2
+)
+n
+/
+2
+|\mathcal{L}(C_{1},C_{2})|=2^{n/2}\cdot(|C|-2)^{n/2}
+. We fix a perfectly balanced coefficient vector
+c
+→
+\vec{c}
+and proceed to count
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+|P(\vec{c},C_{1},C_{2})|
+.
+12
+12
+12
+Note that
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+P(\vec{c},C_{1},C_{2})
+depends only on
+c
+→
+\vec{c}
+’s solution profile, so the specific choice of
+c
+→
+\vec{c}
+does not matter as long as
+c
+→
+\vec{c}
+is balanced.
+We first observe that every coefficient in
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+, with the four exceptions of
+−
+d
+-d
+,
+−
+1
+-1
+,
+1
+1
+and
+d
+d
+, can be represented in exactly two ways as a sum of elements in
+C
+1
+×
+C
+2
+C_{1}\times C_{2}
+.
+Namely, any
+i
+∈
+{
+−
+d
++
+1
+,
+…
+,
+−
+2
+}
+∪
+{
+2
+,
+…
+,
+d
+−
+1
+}
+i\in\{-d+1,\ldots,-2\}\cup\{2,\ldots,d-1\}
+can be represented as
+i
+=
+0
++
+i
+i=0+i
+or
+k
+=
+1
++
+(
+i
+−
+1
+)
+k=1+(i-1)
+. Thus
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+=
+2
+n
+|
+C
+|
+⋅
+(
+|
+C
+|
+−
+4
+)
+=
+2
+|
+C
+|
+−
+4
+|
+C
+|
+​
+n
+.
+|P(\vec{c},C_{1},C_{2})|=2^{\frac{n}{|C|}\cdot(|C|-4)}=2^{\frac{|C|-4}{|C|}n}.
+(13)
+It remains to show that
+|
+ℒ
+⁡
+(
+C
+1
+,
+C
+2
+)
+|
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+=
+2
+n
+/
+2
+⋅
+(
+|
+C
+|
+−
+2
+)
+n
+/
+2
+⋅
+2
+−
+|
+C
+|
+−
+4
+|
+C
+|
+​
+n
+≤
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+ε
+​
+n
+\frac{|\mathcal{L}(C_{1},C_{2})|}{|P(\vec{c},C_{1},C_{2})|}=2^{n/2}\cdot(|C|-2)^{n/2}\cdot 2^{-\frac{|C|-4}{|C|}n}\leq|C|^{n/2}\cdot 2^{-\varepsilon n}
+holds for some constant
+ε
+>
+0
+\varepsilon>0
+. For
+d
+=
+3
+d=3
+and
+d
+=
+4
+d=4
+one can
+individually check that this holds for
+ε
+>
+0
+\varepsilon>0
+(see
+Table
+1
+).
+Hence, we focus on
+d
+≥
+5
+d\geq 5
+. Manipulating the left side, we have
+2
+n
+/
+2
+⋅
+(
+|
+C
+|
+−
+2
+)
+n
+/
+2
+⋅
+2
+−
+|
+C
+|
+−
+4
+|
+C
+|
+​
+n
+\displaystyle 2^{n/2}\cdot(|C|-2)^{n/2}\cdot 2^{-\frac{|C|-4}{|C|}n}
+<
+2
+n
+/
+2
+⋅
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+|
+C
+|
+−
+4
+|
+C
+|
+​
+n
+\displaystyle<2^{n/2}\cdot|C|^{n/2}\cdot 2^{-\frac{|C|-4}{|C|}n}
+=
+|
+C
+|
+n
+/
+2
+⋅
+2
+(
+4
+|
+C
+|
+−
+1
+2
+)
+​
+n
+\displaystyle=|C|^{n/2}\cdot 2^{\left(\frac{4}{|C|}-\frac{1}{2}\right)n}
+=
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+ε
+​
+n
+\displaystyle=|C|^{n/2}\cdot 2^{-\varepsilon n}
+for some
+ε
+≥
+1
+10
+\varepsilon\geq\frac{1}{10}
+, as
+|
+C
+|
+=
+|
+[
+±
+d
+]
+|
+≥
+10
+|C|=|[\pm d]|\geq 10
+for
+d
+≥
+5
+d\geq 5
+.
+∎
+At this point, we pause to make one technical observation that is convenient (although not strictly necessary) for the proof of
+Lemma
+6.4
+below.
+Observation 6.1
+.
+For every set of the form
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+>
+2
+d>2
+, there exists a pair of good coefficient set factors
+C
+1
+C_{1}
+,
+C
+2
+C_{2}
+satisfying
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+<
+2
+n
+|P(\vec{c},C_{1},C_{2})|<2^{n}
+for some
+ε
+>
+0
+\varepsilon>0
+.
+Proof.
+This property holds for the choice of good coefficient set factors used in the proof of
+Lemma
+6.3
+, by (
+13
+).
+∎
+To break Meet-in-the-Middle for a coefficient
+C
+C
+, we will need only the fact
+that
+C
+C
+has a pair of good coefficient set factors, but the magnitude of the
+improvement depends on exactly “how good” the pair
+C
+1
+C_{1}
+,
+C
+2
+C_{2}
+is. The
+specific choice of
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+used in the proof of
+Lemma
+6.3
+simplifies the argument, but in general, better
+choices of coefficient set factors are possible. In fact, if we choose the best
+coefficient set factors the runtime improvement relative to
+Meet-in-the-Middle appears to
+increase
+with
+|
+C
+|
+|C|
+.
+Table
+1
+summarizes the possible choices for good coefficient set factors for
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+3
+≤
+d
+≤
+7
+3\leq d\leq 7
+.
+C
+C
+C
+1
+C_{1}
+,
+C
+2
+C_{2}
+|
+ℒ
+⁡
+(
+C
+1
+,
+C
+2
+)
+|
+|\mathcal{L}(C_{1},C_{2})|
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+|P(\vec{c},C_{1},C_{2})|
+|
+ℒ
+|
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+\dfrac{|\mathcal{L}|}{|P(\vec{c},C_{1},C_{2})|}
+|
+C
+|
+n
+/
+2
+|C|^{n/2}
+[
+±
+3
+]
+[\pm 3]
+{
+0
+,
+1
+}
+,
+{
+−
+3
+,
+−
+2
+,
+1
+,
+2
+}
+\{0,1\},\{-3,-2,1,2\}
+8
+n
+/
+2
+8^{n/2}
+(
+2
+n
+/
+6
+)
+2
+(2^{n/6})^{2}
+≤
+2.245
+n
+\leq 2.245^{n}
+6
+n
+/
+2
+≥
+2.449
+n
+6^{n/2}\geq 2.449^{n}
+[
+±
+4
+]
+[\pm 4]
+{
+0
+,
+1
+}
+,
+{
+−
+4
+,
+−
+3
+,
+−
+2
+,
+1
+,
+2
+,
+3
+}
+\{0,1\},\{-4,-3,-2,1,2,3\}
+{
+0
+,
+1
+,
+2
+}
+,
+{
+−
+4
+,
+−
+3
+,
+1
+,
+2
+}
+\{0,1,2\},\{-4,-3,1,2\}
+12
+n
+/
+2
+12^{n/2}
+(
+2
+n
+/
+8
+)
+4
+(2^{n/8})^{4}
+≤
+2.450
+n
+\leq 2.450^{n}
+8
+n
+/
+2
+≥
+2.828
+n
+8^{n/2}\geq 2.828^{n}
+[
+±
+5
+]
+[\pm 5]
+{
+0
+,
+1
+}
+,
+{
+−
+5
+,
+−
+4
+,
+−
+3
+,
+−
+2
+,
+1
+,
+2
+,
+3
+,
+4
+}
+\{0,1\},\{-5,-4,-3,-2,1,2,3,4\}
+{
+0
+,
+1
+,
+2
+,
+3
+}
+,
+{
+−
+5
+,
+−
+4
+,
+1
+,
+2
+}
+\{0,1,2,3\},\{-5,-4,1,2\}
+16
+n
+/
+2
+16^{n/2}
+(
+2
+n
+/
+10
+)
+6
+(2^{n/10})^{6}
+≤
+2.640
+n
+\leq 2.640^{n}
+10
+n
+/
+2
+≥
+3.162
+n
+10^{n/2}\geq 3.162^{n}
+{
+0
+,
+1
+,
+2
+}
+,
+{
+−
+5
+,
+−
+4
+,
+−
+3
+,
+1
+,
+2
+,
+3
+}
+\{0,1,2\},\{-5,-4,-3,1,2,3\}
+18
+n
+/
+2
+18^{n/2}
+(
+2
+n
+/
+10
+)
+4
+​
+(
+3
+n
+/
+10
+)
+2
+(2^{n/10})^{4}(3^{n/10})^{2}
+≤
+2.582
+n
+\leq 2.582^{n}
+[
+±
+6
+]
+[\pm 6]
+{
+0
+,
+1
+}
+,
+{
+−
+6
+,
+…
+,
+−
+2
+,
+1
+,
+…
+,
+5
+}
+\{0,1\},\{-6,\dotsc,-2,1,\dotsc,5\}
+{
+0
+,
+1
+,
+2
+,
+3
+,
+4
+}
+,
+{
+−
+6
+,
+−
+5
+,
+1
+,
+2
+}
+\{0,1,2,3,4\},\{-6,-5,1,2\}
+20
+n
+/
+2
+20^{n/2}
+(
+2
+n
+/
+12
+)
+8
+(2^{n/12})^{8}
+≤
+2.818
+n
+\leq 2.818^{n}
+12
+n
+/
+2
+≥
+3.464
+n
+12^{n/2}\geq 3.464^{n}
+{
+0
+,
+1
+,
+2
+}
+,
+{
+−
+6
+,
+…
+,
+−
+3
+,
+1
+,
+…
+,
+4
+}
+\{0,1,2\},\{-6,\dotsc,-3,1,\dotsc,4\}
+{
+0
+,
+1
+,
+2
+,
+3
+}
+,
+{
+−
+6
+,
+−
+5
+,
+−
+4
+,
+1
+,
+2
+,
+3
+}
+\{0,1,2,3\},\{-6,-5,-4,1,2,3\}
+24
+n
+/
+2
+24^{n/2}
+(
+2
+n
+/
+12
+)
+4
+​
+(
+3
+n
+/
+12
+)
+4
+(2^{n/12})^{4}(3^{n/12})^{4}
+≤
+2.697
+n
+\leq 2.697^{n}
+{
+0
+,
+1
+}
+,
+{
+−
+7
+,
+…
+,
+−
+2
+,
+1
+,
+…
+,
+6
+}
+\{0,1\},\{-7,\dotsc,-2,1,\dotsc,6\}
+{
+0
+,
+1
+,
+2
+,
+3
+,
+4
+,
+5
+}
+,
+{
+−
+7
+,
+−
+6
+,
+1
+,
+2
+}
+\{0,1,2,3,4,5\},\{-7,-6,1,2\}
+24
+n
+/
+2
+24^{n/2}
+(
+2
+n
+/
+14
+)
+10
+(2^{n/14})^{10}
+≤
+2.987
+n
+\leq 2.987^{n}
+[
+±
+7
+]
+[\pm 7]
+{
+0
+,
+1
+,
+2
+}
+,
+{
+−
+7
+,
+…
+,
+−
+3
+,
+1
+,
+…
+,
+5
+}
+\{0,1,2\},\{-7,\dotsc,-3,1,\dotsc,5\}
+{
+0
+,
+1
+,
+2
+,
+3
+,
+4
+}
+,
+{
+−
+7
+,
+−
+6
+,
+−
+5
+,
+1
+,
+2
+,
+3
+}
+\{0,1,2,3,4\},\{-7,-6,-5,1,2,3\}
+30
+n
+/
+2
+30^{n/2}
+(
+2
+n
+/
+14
+)
+4
+​
+(
+3
+n
+/
+14
+)
+6
+(2^{n/14})^{4}(3^{n/14})^{6}
+≤
+2.807
+n
+\leq 2.807^{n}
+14
+n
+/
+2
+≥
+3.741
+n
+14^{n/2}\geq 3.741^{n}
+{
+0
+,
+1
+,
+2
+,
+3
+}
+,
+{
+−
+7
+,
+…
+,
+−
+4
+,
+1
+,
+2
+,
+3
+,
+4
+}
+\{0,1,2,3\},\{-7,\dotsc,-4,1,2,3,4\}
+32
+n
+/
+2
+32^{n/2}
+(
+2
+n
+/
+14
+)
+4
+​
+(
+3
+n
+/
+14
+)
+4
+​
+(
+4
+n
+/
+14
+)
+2
+(2^{n/14})^{4}(3^{n/14})^{4}(4^{n/14})^{2}
+≤
+2.782
+n
+\leq 2.782^{n}
+Table 1:
+Good coefficient set factors for
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+3
+≤
+d
+≤
+7
+3\leq d\leq 7
+. The runtimes in the fourth column approximate the runtime of our algorithm on perfectly balanced solution profiles. (The worst-case running time occurs on slightly unbalanced solution profiles and results from taking the better of this approach and the previous approach for unbalanced solution profiles.)
+6.4
+Algorithm for Balanced Subset Balancing on
+[
+±
+d
+]
+,
+d
+>
+2
+[\pm d],d>2
+function
+OPEN
+BalancedSBWithout0
+​
+(
+x
+→
+,
+C
+=
+[
+±
+d
+]
+)
+,
+π
+)
+\textsf{BalancedSBWithout0}(\vec{x},C=[\pm d]),\pi)
+:
+Choose good coefficient set factors
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+for
+C
+C
+.
+//
+see
+Definition
+6.1
+1
+Set
+γ
+≔
+γ
+⁡
+(
+C
+1
+,
+C
+2
+)
+\gamma\coloneqq\gamma(C_{1},C_{2})
+.
+//
+see (
+14
+)
+2
+Solve if
+x
+→
+\vec{x}
+admits
+2
+γ
+2
+​
+n
+2^{\frac{\gamma}{2}n}
+distinct solution vectors.
+//
+see
+Lemma
+6.2
+3
+Set
+p
+m
+​
+a
+​
+x
+≔
+p
+m
+​
+a
+​
+x
+​
+(
+C
+1
+,
+C
+2
+)
+p_{max}\coloneqq p_{max}(C_{1},C_{2})
+.
+//
+see (
+17
+)
+4
+Sample a prime
+𝒑
+∼
+[
+p
+m
+​
+a
+​
+x
+:
+2
+p
+m
+​
+a
+​
+x
+]
+\bm{p}\sim[p_{max}:2p_{max}]
+and a residue class
+𝒓
+∼
+𝒑
+\bm{r}\sim\bm{p}
+.
+5
+Enumerate the sets
+ℒ
+𝒓
+≔
+\displaystyle\mathcal{L}_{\bm{r}}\coloneqq
+{
+a
+→
+∈
+C
+1
+n
+/
+2
+×
+C
+2
+n
+/
+2
+|
+a
+→
+⋅
+x
+→
+≡
+𝒓
+(
+mod
+𝒑
+)
+}
+\displaystyle\left\{\vec{a}\in C_{1}^{n/2}\times C_{2}^{n/2}\;\middle|\;\vec{a}\cdot\vec{x}\equiv\bm{r}\pmod{\bm{p}}\right\}
+ℛ
+𝒓
+≔
+\displaystyle\mathcal{R}_{\bm{r}}\coloneqq
+{
+b
+→
+∈
+C
+2
+n
+/
+2
+×
+C
+1
+n
+/
+2
+|
+b
+→
+⋅
+x
+→
+≡
+−
+𝒓
+(
+mod
+𝒑
+)
+}
+\displaystyle\left\{\vec{b}\in C_{2}^{n/2}\times C_{1}^{n/2}\;\middle|\;\vec{b}\cdot\vec{x}\equiv-\bm{r}\pmod{\bm{p}}\right\}
+Halt if
+|
+ℒ
+𝒓
+|
+|\mathcal{L}_{\bm{r}}|
+or
+|
+ℛ
+𝒓
+|
+≥
+|
+ℒ
+|
+p
+m
+​
+a
+​
+x
+⋅
+n
+ω
+⁡
+(
+1
+)
+|\mathcal{R}_{\bm{r}}|\geq\frac{|\mathcal{L}|}{p_{max}}\cdot n^{\omega(1)}
+.
+//
+see
+Lemma
+6.4
+, proof of runtime.
+6
+Enumerate and sort the lists
+L
+≔
+ℒ
+𝒓
+⋅
+x
+→
+L\coloneqq\mathcal{L}_{\bm{r}}\cdot\vec{x}
+and
+R
+≔
+ℛ
+𝒓
+⋅
+x
+→
+R\coloneqq\mathcal{R}_{\bm{r}}\cdot\vec{x}
+.
+7
+Use Meet-in-the-Middle to search for a solution pair in
+L
+×
+R
+L\times R
+.
+Algorithm 3
+Outline of a representation technique-style algorithm for instances
+of Subset Balancing on coefficient sets of the form
+[
+±
+d
+]
+[\pm d]
+with balanced solutions. Certain details are deferred to the proof of
+Lemma
+6.4
+for readability.
+Lemma 6.4
+(Solving Subset Balancing with
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+>
+2
+d>2
+on instances with
+ε
+\varepsilon
+-balanced solutions)
+.
+Let
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+,
+d
+>
+2
+d>2
+be a coefficient set. Then there exists an algorithm that solves any Subset Balancing instance
+x
+→
+\vec{x}
+on
+C
+C
+that does
+not
+admit any
+ε
+\varepsilon
+-unbalanced solution, with high probability, in time
+O
+∗
+​
+(
+|
+C
+|
+(
+1
+/
+2
+−
+δ
+)
+​
+n
+)
+,
+O^{\ast}\left(|C|^{(1/2-\delta)n}\right),
+for some positive constants
+ε
+,
+δ
+\varepsilon,\delta
+that depend only on
+|
+C
+|
+|C|
+.
+Proof of correctness for
+Lemma
+6.4
+.
+Let
+C
+C
+and
+x
+→
+\vec{x}
+be as in the lemma statement
+and choose a pair of good coefficient set factors
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+for
+C
+C
+.
+(Good coefficient set factors for
+C
+C
+are guaranteed to exist by
+Lemma
+6.3
+.) Let
+γ
+≔
+γ
+⁡
+(
+C
+1
+,
+C
+2
+)
+\gamma\coloneqq\gamma(C_{1},C_{2})
+be the largest constant such that
+|
+ℒ
+|
+|
+P
+⁡
+(
+z
+→
+,
+C
+1
+,
+C
+2
+)
+|
+=
+o
+⁡
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+γ
+​
+n
+)
+\frac{|\mathcal{L}|}{|P(\vec{z},C_{1},C_{2})|}=o(|C|^{n/2}\cdot 2^{-\gamma n})
+(14)
+holds for a perfectly balanced solution profile
+z
+→
+∈
+C
+n
+\vec{z}\in C^{n}
+. Note that
+γ
+>
+0
+\gamma>0
+by the definition of good coefficient set factors (
+Definition
+6.1
+).
+As usual, because our algorithm will not return false positives, we can assume the existence of a solution without loss of generality. However, we cannot assume the existence of a
+perfectly balanced
+solution vector. Fortunately this is unnecessary. Letting
+z
+→
+\vec{z}
+denote any perfectly balanced solution vector, we observe that
+lim
+ε
+→
+0
+min
+ε
+​
+-balanced
+c
+→
+∈
+C
+n
+⁡
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+=
+|
+P
+⁡
+(
+z
+→
+,
+C
+1
+,
+C
+2
+)
+|
+.
+\lim_{\varepsilon\rightarrow 0}\;\;\min_{\begin{subarray}{c}\varepsilon\text{-balanced}\\
+\vec{c}\in C^{n}\end{subarray}}\;|P(\vec{c},C_{1},C_{2})|=|P(\vec{z},C_{1},C_{2})|.
+That is, as
+ε
+\varepsilon
+approaches
+0
+0
+, the minimum number of solution pairs for an
+ε
+\varepsilon
+-balanced coefficient vector approaches that of a perfectly balanced coefficient vector. The exact size of
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+|P(\vec{c},C_{1},C_{2})|
+is a function of the entropy the solution profile of
+c
+→
+\vec{c}
+. Thus we can choose our constant
+ε
+>
+0
+\varepsilon>0
+small enough to satisfy
+|
+ℒ
+|
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+=
+o
+⁡
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+3
+4
+​
+γ
+​
+n
+)
+\frac{|\mathcal{L}|}{|P(\vec{c},C_{1},C_{2})|}=o(|C|^{n/2}\cdot 2^{-\frac{3}{4}\gamma n})
+(15)
+for all
+ε
+\varepsilon
+-balanced coefficient vectors
+c
+→
+\vec{c}
+.
+We can then run Algorithm
+3
+on all
+ε
+\varepsilon
+-balanced solution profiles
+π
+\pi
+.
+Thus without loss of generality we proceed under the assumption that we have correctly guessed an
+ε
+\varepsilon
+-balanced solution profile
+π
+\pi
+corresponding to some solution vector
+c
+→
+\vec{c}
+.
+By
+Lemma
+6.1
+, if
+|
+{
+P
+ℒ
+⋅
+x
+→
+}
+|
+≤
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+⋅
+2
+−
+1
+2
+​
+γ
+​
+n
+,
+|\{P_{\mathcal{L}}\cdot\vec{x}\}|\leq|P(\vec{c},C_{1},C_{2})|\cdot 2^{-\frac{1}{2}\gamma n},
+then
+x
+→
+\vec{x}
+has at least
+2
+1
+2
+​
+γ
+​
+n
+2^{\frac{1}{2}\gamma n}
+solution vectors. By applying the sampling approach of
+Lemma
+6.2
+with
+ε
+=
+1
+2
+​
+γ
+\varepsilon=\frac{1}{2}\gamma
+, Algorithm
+3
+recovers a solution with high probability in time
+O
+∗
+​
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+OPEN
+−
+1
+4
+​
+γ
+)
+​
+n
+)
+O^{\ast}\left(|C|^{n/2}\cdot 2^{-\frac{1}{4}\gamma)n}\right)
+in this case.
+It remains to show that the remaining steps of Algorithm
+3
+recover a solution in the case that
+|
+{
+P
+ℒ
+⋅
+x
+→
+}
+|
+>
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+⋅
+2
+−
+1
+2
+​
+γ
+​
+n
+|\{P_{\mathcal{L}}\cdot\vec{x}\}|>|P(\vec{c},C_{1},C_{2})|\cdot 2^{-\frac{1}{2}\gamma n}
+(16)
+When we run Algorithm
+3
+, we set
+p
+m
+​
+a
+​
+x
+≔
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+⋅
+2
+−
+1
+2
+​
+γ
+​
+n
+.
+p_{max}\coloneqq|P(\vec{c},C_{1},C_{2})|\cdot 2^{-\frac{1}{2}\gamma n}.
+(17)
+Next we apply
+Lemma
+3.1
+using the sets
+{
+P
+ℒ
+⋅
+x
+→
+}
+​
+for
+​
+G
+​
+and
+\displaystyle\{P_{\mathcal{L}}\cdot\vec{x}\}\text{ for }G\text{ and }
+(
+ℒ
+⋅
+x
+→
+)
+∪
+(
+ℛ
+⋅
+−
+x
+→
+)
+for
+Y
+.
+\displaystyle(\mathcal{L}\cdot\vec{x})\cup(\mathcal{R}\cdot-\vec{x})\text{ for }Y.
+(Note that this choice for
+Y
+Y
+controls the size of
+ℒ
+𝒓
+\mathcal{L}_{\bm{r}}
+and
+ℛ
+𝒓
+\mathcal{R}_{\bm{r}}
+simultaneously.) Let
+b
+b
+be a constant satisfying
+diam
+⁡
+(
+{
+P
+ℒ
+⋅
+x
+→
+}
+)
+<
+2
+n
+b
+\mathrm{diam}(\{P_{\mathcal{L}}\cdot\vec{x}\})<2^{n^{b}}
+, and note that
+b
+b
+is indeed constant under our assumption that input integers have size
+2
+n
+O
+⁡
+(
+1
+)
+2^{n^{O(1)}}
+. Because
+p
+m
+​
+a
+​
+x
+=
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+⋅
+2
+−
+1
+2
+​
+γ
+​
+n
+≤
+|
+{
+P
+ℒ
+⋅
+x
+→
+}
+|
+p_{max}=|P(\vec{c},C_{1},C_{2})|\cdot 2^{-\frac{1}{2}\gamma n}\leq|\{P_{\mathcal{L}}\cdot\vec{x}\}|
+by (
+16
+), the lemma condition that
+p
+m
+​
+a
+​
+x
+≤
+O
+⁡
+(
+|
+G
+|
+)
+p_{max}\leq O(|G|)
+is satisfied. As a result, we have that with constant probability the set of good residue classes
+𝑹
+\bm{R}
+has cardinality
+|
+𝑹
+|
+>
+p
+m
+​
+a
+​
+x
+⋅
+n
+−
+(
+b
++
+1
+)
+|\bm{R}|>p_{max}\cdot n^{-(b+1)}
+. By the definition of
+𝑹
+\bm{R}
+(
+Lemma
+3.1
+), for any good residue class
+𝒓
+\bm{r}
+, we have
+•
+Upper bounds on the size of
+ℒ
+𝒓
+\mathcal{L}_{\bm{r}}
+and
+ℛ
+𝒓
+\mathcal{R}_{\bm{r}}
+:
+|
+ℒ
+𝒓
+|
+\displaystyle|\mathcal{L}_{\bm{r}}|
+≤
+2
+​
+(
+|
+ℒ
+|
++
+|
+ℛ
+|
+)
+p
+m
+​
+a
+​
+x
+⋅
+n
+b
++
+1
+≤
+4
+​
+|
+ℒ
+|
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+⋅
+2
+1
+2
+​
+γ
+​
+n
+⋅
+n
+b
++
+1
+≤
+O
+∗
+​
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+γ
+4
+​
+n
+)
+​
+and
+\displaystyle\leq\frac{2(|\mathcal{L}|+|\mathcal{R}|)}{p_{max}}\cdot n^{b+1}\leq\frac{4|\mathcal{L}|}{|P(\vec{c},C_{1},C_{2})|}\cdot 2^{\frac{1}{2}\gamma n}\cdot n^{b+1}\leq O^{\ast}(|C|^{n/2}\cdot 2^{-\frac{\gamma}{4}n})\text{ and }
+|
+ℛ
+𝒓
+|
+\displaystyle|\mathcal{R}_{\bm{r}}|
+≤
+2
+​
+(
+|
+ℒ
+|
++
+|
+ℛ
+|
+)
+p
+m
+​
+a
+​
+x
+⋅
+n
+b
++
+1
+≤
+4
+​
+|
+ℒ
+|
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+⋅
+2
+1
+2
+​
+γ
+​
+n
+⋅
+n
+b
++
+1
+≤
+O
+∗
+​
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+γ
+4
+​
+n
+)
+,
+\displaystyle\leq\frac{2(|\mathcal{L}|+|\mathcal{R}|)}{p_{max}}\cdot n^{b+1}\leq\frac{4|\mathcal{L}|}{|P(\vec{c},C_{1},C_{2})|}\cdot 2^{\frac{1}{2}\gamma n}\cdot n^{b+1}\leq O^{\ast}(|C|^{n/2}\cdot 2^{-\frac{\gamma}{4}n}),
+by (
+15
+) and (
+17
+).
+•
+Guaranteed existence of solution pair(s):
+ℒ
+𝒓
+\mathcal{L}_{\bm{r}}
+contains at least
+|
+{
+P
+ℒ
+⋅
+x
+→
+}
+|
+4
+​
+p
+m
+​
+a
+​
+x
+>
+0
+\frac{|\{P_{\mathcal{L}}\cdot\vec{x}\}|}{4p_{max}}>0
+elements of
+{
+P
+ℒ
+⋅
+x
+→
+}
+\{P_{\mathcal{L}}\cdot\vec{x}\}
+. Note that this implies that
+ℛ
+𝒓
+\mathcal{R}_{\bm{r}}
+contains the corresponding elements of
+{
+P
+ℛ
+⋅
+x
+→
+}
+\{P_{\mathcal{R}}\cdot\vec{x}\}
+by construction.
+In this case, the final two steps of Algorithm
+3
+recover a solution deterministically. This completes the proof of correctness for
+Lemma
+6.4
+.
+∎
+Proof of runtime for
+Lemma
+6.4
+.
+The guarantee of correctness for
+Lemma
+6.4
+is achieved by running Algorithm
+3
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+{\mathsf{poly}}(n)
+times on all solution profiles that are
+ε
+\varepsilon
+-balanced (for the constant
+ε
+>
+0
+\varepsilon>0
+chosen in the proof of correctness above). Because the additional polynomial factors are absorbed by the
+O
+∗
+O^{\ast}
+notation, it remains to bound the runtime of Algorithm
+3
+on an
+ε
+\varepsilon
+-balanced solution profile.
+Lines
+3
+,
+3
+,
+3
+and
+3
+can be implemented in polynomial time. Line
+3
+implements the procedure described in
+Lemma
+6.2
+, which runs in time
+O
+∗
+​
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+OPEN
+−
+1
+4
+​
+γ
+)
+​
+n
+)
+O^{\ast}\left(|C|^{n/2}\cdot 2^{-\frac{1}{4}\gamma)n}\right)
+for the constant
+γ
+>
+0
+\gamma>0
+determined by the coefficient set factors
+C
+1
+C_{1}
+and
+C
+2
+C_{2}
+, as described in the proof of correctness above.
+Lines
+3
+and
+3
+can be easily implemented in time
+O
+∗
+​
+(
+|
+ℒ
+𝒓
+|
++
+|
+ℛ
+𝒓
+|
+)
+=
+O
+∗
+​
+(
+|
+ℒ
+|
+/
+p
+m
+​
+a
+​
+x
+)
+O^{\ast}(|\mathcal{L}_{\bm{r}}|+|\mathcal{R}_{\bm{r}}|)=O^{\ast}(|\mathcal{L}|/p_{max})
+, which is upper-bounded by the runtime of Line
+3
+. Line
+3
+itself can be implemented in time
+O
+∗
+​
+(
+max
+⁡
+{
+p
+m
+​
+a
+​
+x
+,
+|
+ℒ
+|
+p
+m
+​
+a
+​
+x
+}
+)
+O^{\ast}\left(\max\left\{p_{max},\frac{|\mathcal{L}|}{p_{max}}\right\}\right)
+using the dynamic programming approach described in the proof of runtime for
+Lemma
+5.2
+to enumerate items that fall in the residue classes
+𝒓
+\bm{r}
+and
+−
+𝒓
+(
+mod
+𝒑
+)
+-\bm{r}\pmod{\bm{p}}
+. We can bound the first term of this expression by noting that
+p
+m
+​
+a
+​
+x
+\displaystyle p_{max}
+<
+|
+P
+⁡
+(
+c
+→
+,
+C
+1
+,
+C
+2
+)
+|
+\displaystyle<|P(\vec{c},C_{1},C_{2})|
+<
+2
+n
+\displaystyle<2^{n}
+<
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+n
+/
+4
+,
+\displaystyle<|C|^{n/2}\cdot 2^{-n/4},
+where the first inequality follows from (
+17
+), the second, without loss of generality, from
+Observation
+6.1
+, and the final inequality from the fact that
+|
+C
+|
+≥
+6
+|C|\geq 6
+by assumption. Finally, we observe that
+|
+ℒ
+|
+p
+m
+​
+a
+​
+x
+<
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+γ
+4
+​
+n
+\frac{|\mathcal{L}|}{p_{max}}<|C|^{n/2}\cdot 2^{-\frac{\gamma}{4}n}
+by (
+15
+) and (
+17
+).
+Thus the runtime of Algorithm
+3
+is at most
+O
+∗
+​
+(
+|
+C
+|
+(
+1
+2
+−
+δ
+)
+​
+n
+)
+O^{\ast}(|C|^{(\frac{1}{2}-\delta)n})
+on an
+ε
+\varepsilon
+-balanced solution profile, where
+ε
+,
+δ
+>
+0
+\varepsilon,\delta>0
+are constants that depend only on
+|
+C
+|
+|C|
+. This completes the proof of runtime for
+Lemma
+6.4
+.
+∎
+6.5
+Breaking Meet-in-the-Middle for Subset Balancing on
+C
+=
+[
+±
+d
+]
+,
+d
+>
+2
+C=[\pm d],d>2
+Theorem 6.1
+.
+For any
+d
+>
+2
+d>2
+, there exists a constant
+δ
+>
+0
+\delta>0
+such that Subset Balancing on
+C
+=
+[
+±
+d
+]
+C=[\pm d]
+, can be solved with high probability in time
+O
+∗
+​
+(
+|
+C
+|
+(
+1
+/
+2
+−
+δ
+)
+​
+n
+)
+O^{\ast}(|C|^{(1/2-\delta)n})
+Proof.
+Choose
+ε
+>
+0
+\varepsilon>0
+to satisfy the requirements for
+Lemma
+6.4
+. Then apply
+Lemmas
+4.1
+and
+6.4
+.
+∎
+Once again, the optimal value of the constant
+δ
+\delta
+results from a messy trade-off between the two approaches. As a proof of concept, we maximize
+δ
+\delta
+for
+C
+=
+[
+±
+3
+]
+C=[\pm 3]
+.
+Proposition 6.1
+.
+Subset Balancing on
+C
+=
+[
+±
+3
+]
+C=[\pm 3]
+can be solved with high probability in time
+O
+∗
+​
+(
+|
+C
+|
+0.495
+​
+n
+)
+.
+O^{\ast}(|C|^{0.495n}).
+Proof.
+Similar to the approach taken in the proof of
+Proposition
+5.1
+, we optimize runtime by running the faster of Algorithm
+1
+, our algorithm for unbalanced Subset Balancing instances, and Algorithm
+3
+, our algorithm for balanced Subset Balancing instances on
+C
+=
+[
+±
+d
+]
+,
+d
+>
+2
+C=[\pm d],d>2
+, to search for solution vectors matching each possible solution profile
+π
+\pi
+. The runtimes of both algorithms can be calculated explicitly as a function of the fixed solution profile
+π
+\pi
+, so we can find the worst-case runtime by taking the maximum over the
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+{\mathsf{poly}}(n)
+possible solution profiles.
+Case 1: Unbalanced Solutions.
+If there exists a solution vector matching
+π
+\pi
+, Algorithm
+1
+solves the instance in time
+O
+∗
+​
+(
+2
+H
+⁡
+(
+π
+⁡
+(
+−
+3
+)
+n
+,
+π
+⁡
+(
+−
+2
+)
+n
+,
+π
+⁡
+(
+−
+1
+)
+n
+,
+π
+⁡
+(
+1
+)
+n
+,
+π
+⁡
+(
+2
+)
+n
+,
+π
+⁡
+(
+3
+)
+n
+)
+​
+n
+2
+)
+.
+O^{\ast}\left(2^{H\left(\frac{\pi(-3)}{n},\frac{\pi(-2)}{n},\frac{\pi(-1)}{n},\frac{\pi(1)}{n},\frac{\pi(2)}{n},\frac{\pi(3)}{n}\right)\frac{n}{2}}\right).
+(18)
+Case 2: Balanced Solutions.
+For
+C
+=
+[
+±
+3
+]
+C=[\pm 3]
+, our choice for a pair of good coefficient set factors
+is
+C
+1
+=
+{
+0
+,
+1
+}
+C_{1}=\{0,1\}
+,
+C
+2
+=
+{
+−
+3
+,
+−
+2
+,
+1
+,
+2
+}
+C_{2}=\{-3,-2,1,2\}
+.
+Now suppose that for our values of
+π
+,
+C
+1
+,
+C
+2
+\pi,C_{1},C_{2}
+, the inequality
+|
+ℒ
+⁡
+(
+C
+1
+,
+C
+2
+)
+|
+|
+P
+⁡
+(
+z
+→
+,
+C
+1
+,
+C
+2
+)
+|
+<
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+α
+​
+n
+\frac{|\mathcal{L}(C_{1},C_{2})|}{|P(\vec{z},C_{1},C_{2})|}<|C|^{n/2}\cdot 2^{-\alpha n}
+(19)
+holds for some constant
+α
+>
+0
+\alpha>0
+and an arbitrary coefficient vector
+z
+→
+\vec{z}
+matching
+π
+\pi
+.
+In this case, we can solve the instance by applying
+Lemma
+6.2
+with
+ε
+=
+2
+​
+α
+3
+\varepsilon=\frac{2\alpha}{3}
+to solve the instance in time
+O
+∗
+​
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+α
+3
+​
+n
+)
+​
+if
+​
+|
+{
+P
+ℒ
+⋅
+x
+→
+}
+|
+≤
+|
+P
+⁡
+(
+z
+→
+,
+C
+1
+,
+C
+2
+)
+|
+⋅
+2
+−
+2
+3
+​
+α
+​
+n
+,
+O^{\ast}\left(|C|^{n/2}\cdot 2^{-\frac{\alpha}{3}n}\right)\text{ if }|\{P_{\mathcal{L}}\cdot\vec{x}\}|\leq|P(\vec{z},C_{1},C_{2})|\cdot 2^{-\frac{2}{3}\alpha n},
+and we can likewise solve the instance in time
+O
+∗
+​
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+α
+3
+​
+n
+)
+O^{\ast}\left(|C|^{n/2}\cdot 2^{-\frac{\alpha}{3}n}\right)
+by executing Lines
+3
+-
+3
+of Algorithm
+3
+if
+|
+{
+P
+ℒ
+⋅
+x
+→
+}
+|
+>
+|
+P
+⁡
+(
+z
+→
+,
+C
+1
+,
+C
+2
+)
+|
+⋅
+2
+−
+2
+3
+​
+α
+​
+n
+|\{P_{\mathcal{L}}\cdot\vec{x}\}|>|P(\vec{z},C_{1},C_{2})|\cdot 2^{-\frac{2}{3}\alpha}n
+.
+We can solve (
+19
+) for
+α
+\alpha
+by plugging in the appropriate values:
+|
+ℒ
+⁡
+(
+C
+1
+,
+C
+2
+)
+|
+\displaystyle|\mathcal{L}(C_{1},C_{2})|
+=
+|
+C
+1
+n
+/
+2
+×
+C
+2
+n
+/
+2
+|
+=
+2
+n
+/
+2
+⋅
+4
+n
+/
+2
+=
+2
+3
+2
+​
+n
+,
+\displaystyle=|C_{1}^{n/2}\times C_{2}^{n/2}|=2^{n/2}\cdot 4^{n/2}=2^{\frac{3}{2}n},
+|
+P
+⁡
+(
+z
+→
+,
+C
+1
+,
+C
+2
+)
+|
+\displaystyle|P(\vec{z},C_{1},C_{2})|
+=
+2
+π
+⁡
+(
+−
+2
+)
++
+π
+⁡
+(
+2
+)
+,
+and
+\displaystyle=2^{\pi(-2)+\pi(2)},\text{ and }
+|
+C
+|
+n
+/
+2
+\displaystyle|C|^{n/2}
+=
+6
+n
+/
+2
+,
+\displaystyle=6^{n/2},
+which yields
+α
+<
+π
+⁡
+(
+2
+)
++
+π
+⁡
+(
+−
+2
+)
+n
++
+log
+2
+⁡
+(
+6
+)
+2
+−
+3
+2
+,
+\alpha<\frac{\pi(2)+\pi(-2)}{n}+\frac{\log_{2}(6)}{2}-\frac{3}{2},
+for a final runtime of
+O
+∗
+​
+(
+|
+C
+|
+n
+/
+2
+⋅
+2
+−
+α
+3
+​
+n
+)
+\displaystyle O^{\ast}\left(|C|^{n/2}\cdot 2^{-\frac{\alpha}{3}n}\right)
+=
+O
+∗
+​
+(
+6
+n
+/
+2
+⋅
+2
+−
+1
+3
+​
+(
+π
+⁡
+(
+2
+)
++
+π
+⁡
+(
+−
+2
+)
+n
++
+log
+2
+⁡
+(
+6
+)
+2
+−
+3
+2
+)
+​
+n
+)
+\displaystyle=O^{\ast}\left(6^{n/2}\cdot 2^{-\frac{1}{3}(\frac{\pi(2)+\pi(-2)}{n}+\frac{\log_{2}(6)}{2}-\frac{3}{2})n}\right)
+(20)
+=
+O
+∗
+​
+(
+6
+n
+/
+2
+⋅
+2
+−
+π
+⁡
+(
+−
+2
+)
++
+π
+⁡
+(
+2
+)
+3
+⋅
+6
+−
+n
+6
+⋅
+2
+n
+/
+2
+)
+\displaystyle=O^{\ast}\left(6^{n/2}\cdot 2^{-\frac{\pi(-2)+\pi(2)}{3}}\cdot 6^{-\frac{n}{6}}\cdot 2^{n/2}\right)
+(21)
+=
+O
+∗
+​
+(
+6
+n
+/
+3
+⋅
+2
+n
+/
+2
+⋅
+2
+−
+π
+⁡
+(
+−
+2
+)
++
+π
+⁡
+(
+2
+)
+3
+)
+\displaystyle=O^{\ast}\left(6^{n/3}\cdot 2^{n/2}\cdot 2^{-\frac{\pi(-2)+\pi(2)}{3}}\right)
+(22)
+in this case.
+We observe that, for any fixed value of
+(
+π
+⁡
+(
+−
+2
+)
++
+π
+⁡
+(
+2
+)
+)
+(\pi(-2)+\pi(2))
+, the Case 1
+runtime (
+18
+) is maximized when
+π
+⁡
+(
+−
+2
+)
+=
+π
+⁡
+(
+2
+)
+​
+and
+​
+π
+​
+(
+−
+3
+)
+=
+π
+⁡
+(
+−
+1
+)
+=
+π
+⁡
+(
+1
+)
+=
+π
+⁡
+(
+3
+)
+=
+n
+−
+2
+​
+π
+​
+(
+2
+)
+4
+,
+\displaystyle\pi(-2)=\pi(2)\text{ and }\pi(-3)=\pi(-1)=\pi(1)=\pi(3)=\frac{n-2\pi(2)}{4},
+while the Case 2 runtime (
+22
+) is unchanged, so
+we can make these assumptions on
+π
+\pi
+without loss of generality. By taking
+the base-2 logarithm of (
+18
+) and
+(
+22
+) and writing both equations in terms of
+β
+≔
+π
+⁡
+(
+2
+)
+n
+\beta\coloneqq\frac{\pi(2)}{n}
+, we can balance our runtime for worst-case
+π
+\pi
+by solving the following optimization problem:
+max
+β
+∈
+[
+0
+,
+0.5
+]
+⁡
+min
+⁡
+[
+1
+2
+⋅
+H
+⁡
+(
+1
+−
+2
+​
+β
+4
+,
+β
+,
+1
+−
+2
+​
+β
+4
+,
+1
+−
+2
+​
+β
+4
+,
+β
+,
+1
+−
+2
+​
+β
+4
+)
+,
+log
+2
+⁡
+(
+6
+)
+3
++
+1
+2
+−
+2
+​
+β
+3
+]
+.
+\max_{\beta\in[0,0.5]}\min\left[\frac{1}{2}\cdot H\left(\frac{1-2\beta}{4},\beta,\frac{1-2\beta}{4},\frac{1-2\beta}{4},\beta,\frac{1-2\beta}{4}\right),\;\frac{\log_{2}(6)}{3}+\frac{1}{2}-\frac{2\beta}{3}\right].
+Computer evaluation reveals that the expression is maximized at
+β
+≈
+0.1232
+\beta\approx 0.1232
+and the final runtime is upper-bounded by
+O
+∗
+​
+(
+2
+1.27955
+​
+n
+)
+=
+O
+∗
+​
+(
+|
+C
+|
+0.495
+​
+n
+)
+.
+∎
+O^{\ast}(2^{1.27955n})=O^{\ast}\left(|C|^{0.495n}\right).\qed
+7
+Improved Algorithm for Equal Subset Sum
+The current fastest algorithm for Equal Subset Sum (Subset Balancing on
+C
+=
+[
+−
+1
+:
+1
+]
+C=[-1:1]
+) is due to Mucha, Nederlof, Pawlewicz, and Węgrzycki, who proved the following result:
+Lemma 7.1
+(cf.
+[
+27
+]
+, Theorems 3.3 and 3.4)
+.
+Given an Equal Subset Sum instance that admits a solution with solution profile
+π
+\pi
+, the solution can be recovered in time
+O
+∗
+​
+(
+min
+⁡
+{
+(
+n
+/
+2
+π
+⁡
+(
+0
+)
+2
+)
+​
+(
+π
+⁡
+(
+1
+)
++
+π
+⁡
+(
+−
+1
+)
+2
+π
+⁡
+(
+1
+)
+2
+)
+,
+(
+π
+⁡
+(
+1
+)
++
+π
+⁡
+(
+−
+1
+)
+π
+⁡
+(
+1
+)
+)
+}
+)
+O^{\ast}\left(\min\left\{\binom{n/2}{\frac{\pi(0)}{2}}\binom{\frac{\pi(1)+\pi(-1)}{2}}{\frac{\pi(1)}{2}},\binom{\pi(1)+\pi(-1)}{\pi(1)}\right\}\right)
+with high probability.
+This expression is maximized when
+π
+⁡
+(
+−
+1
+)
++
+π
+⁡
+(
+1
+)
+≈
+0.773
+​
+n
+\pi(-1)+\pi(1)\approx 0.773n
+, in which case it evaluates to
+O
+⁡
+(
+1.7088
+n
+)
+O(1.7088^{n})
+. Because the algorithm returns no false positives and can be run on all
+𝗉𝗈𝗅𝗒
+⁡
+(
+n
+)
+{\mathsf{poly}}(n)
+solution profiles in parallel, this is also the worst-case runtime for Equal Subset Sum. In this section we apply several additional techniques, including a mixing dichotomy and the method of compatibility certificates, to improve this result.
+7.1
+Preprocessing
+Let
+x
+→
+=
+(
+x
+1
+,
+…
+,
+x
+n
+)
+\vec{x}=(x_{1},\ldots,x_{n})
+be an instance of Equal Subset Sum. As in the previous section, we assume without loss of generality that
+x
+→
+\vec{x}
+admits a solution vector
+c
+→
+∈
+C
+n
+\vec{c}\in C^{n}
+and that
+π
+\pi
+is the solution profile corresponding to
+c
+→
+\vec{c}
+. We further assume that
+c
+→
+\vec{c}
+is a solution with
+minimal support
+; that is,
+π
+\pi
+maximizes
+π
+⁡
+(
+0
+)
+\pi(0)
+over all (nonzero) solution vectors for
+x
+→
+\vec{x}
+. By
+Lemma
+4.2
+, we can assume that
+π
+⁡
+(
+1
+)
+=
+π
+⁡
+(
+−
+1
+)
+\pi(1)=\pi(-1)
+without loss of generality at the cost of an extra
+n
+O
+⁡
+(
+1
+)
+n^{O(1)}
+factor in the runtime. Finally, we assume that
+π
+⁡
+(
+0
+)
+≤
+n
+3
+\pi(0)\leq\frac{n}{3}
+as otherwise the problem can be solved in time
+O
+∗
+​
+(
+1.7
+n
+)
+O^{*}(1.7^{n})
+by
+Lemma
+7.1
+.
+7.2
+Good Solution Pairs
+The most straightforward set of solution pairs for Equal Subset Sum given a
+fixed solution vector
+c
+→
+\vec{c}
+is the set
+{
+(
+a
+→
+,
+b
+→
+)
+∈
+{
+0
+,
+1
+}
+n
+×
+{
+0
+,
+1
+}
+n
+|
+a
+→
+−
+b
+→
+=
+c
+→
+}
+\{(\vec{a},\vec{b})\in\{0,1\}^{n}\times\{0,1\}^{n}\;|\;\vec{a}-\vec{b}=\vec{c}\}
+. Our set of solution
+pairs is based on this but slightly more complicated, so we introduce a new definition.
+Definition 7.1
+(Good Solution Pair)
+.
+With respect to a solution vector
+c
+→
+\vec{c}
+and a non-negative constant
+ε
+<
+1
+/
+12
+\varepsilon<1/12
+, the set of
+good solution pairs
+G
+(
+c
+→
+)
+⊂
+[
+0
+:
+2
+]
+n
+×
+[
+0
+:
+2
+]
+n
+G(\vec{c})\subset[0:2]^{n}\times[0:2]^{n}
+consists of all pairs
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+satisfying
+(i)
+|
+a
+→
+−
+1
+​
+(
+1
+)
+|
+=
+|
+b
+→
+−
+1
+​
+(
+1
+)
+|
+=
+n
+/
+2
+|\vec{a}^{\,-1}(1)|=|\vec{b}^{\,-1}(1)|=n/2
+and
+|
+a
+→
+−
+1
+​
+(
+2
+)
+|
+=
+|
+b
+→
+−
+1
+​
+(
+2
+)
+|
+=
+ε
+​
+n
+|\vec{a}^{\,-1}(2)|=|\vec{b}^{\,-1}(2)|=\varepsilon n
+;
+(ii)
+a
+→
+−
+b
+→
+=
+c
+→
+\vec{a}-\vec{b}=\vec{c}
+; and
+(iii)
+for every
+i
+∈
+[
+n
+]
+i\in[n]
+, if
+c
+→
+i
+=
+0
+\vec{c}_{i}=0
+then
+(
+a
+i
+→
+,
+b
+i
+→
+)
+∈
+{
+(
+0
+,
+0
+)
+,
+(
+1
+,
+1
+)
+}
+(\vec{a_{i}},\vec{b_{i}})\in\{(0,0),(1,1)\}
+.
+Here Condition
+(i)
+specifies the number of
+0
+0
+’s,
+1
+1
+’s, and
+2
+2
+’s in the vectors
+a
+→
+\vec{a}
+and
+b
+→
+\vec{b}
+.
+ε
+\varepsilon
+in particular controls the
+number of
+2
+2
+’s: increasing
+ε
+\varepsilon
+trades off an improvement in runtime due
+to increased
+|
+G
+⁡
+(
+c
+→
+)
+|
+|G(\vec{c})|
+and a slowdown due to more complicated solution
+recovery. Condition
+(ii)
+ensures that
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+corresponds to a solution vector. Condition
+(iii)
+is an additional technical requirement ruling out indices at which
+(
+a
+→
+i
+,
+b
+→
+i
+)
+=
+(
+2
+,
+2
+)
+(\vec{a}_{i},\vec{b}_{i})=(2,2)
+. It will allow us to prove a perfect mixing dichotomy: below, we will show that if two different solution pairs “collide” with respect to
+x
+→
+\vec{x}
+the ESS instance admits a solution with small support that can be recovered relatively quickly.
+Observation 7.1
+.
+For a fixed solution
+c
+→
+\vec{c}
+with
+π
+⁡
+(
+1
+)
+=
+π
+⁡
+(
+−
+1
+)
+\pi(1)=\pi(-1)
+and constant
+ε
+<
+1
+/
+12
+\varepsilon<1/12
+, the number of good solution pairs is
+p
+m
+​
+a
+​
+x
+≔
+|
+G
+⁡
+(
+c
+→
+)
+|
+=
+Θ
+∗
+​
+(
+(
+π
+⁡
+(
+1
+)
+ε
+​
+n
+)
+2
+⋅
+2
+π
+⁡
+(
+0
+)
+)
+.
+\displaystyle p_{max}\coloneqq|G(\vec{c})|=\Theta^{*}\left(\binom{\pi(1)}{\varepsilon n}^{2}\cdot 2^{\pi(0)}\right).
+(23)
+Proof.
+For every index
+i
+∈
+[
+n
+]
+i\in[n]
+, the value
+c
+→
+i
+\vec{c}_{i}
+determines
+a
+→
+i
+−
+b
+→
+i
+\vec{a}_{i}-\vec{b}_{i}
+by definition. We observe that
+If
+​
+c
+→
+i
+\displaystyle\text{If }\vec{c}_{i}
+=
+1
+​
+, then
+​
+(
+a
+→
+i
+,
+b
+→
+i
+)
+∈
+{
+(
+1
+,
+0
+)
+,
+(
+2
+,
+1
+)
+}
+​
+.
+\displaystyle=1\text{, then }(\vec{a}_{i},\vec{b}_{i})\in\{(1,0),(2,1)\}\text{.}
+If
+​
+c
+→
+i
+\displaystyle\text{If }\vec{c}_{i}
+=
+−
+1
+​
+, then
+​
+(
+a
+→
+i
+,
+b
+→
+i
+)
+∈
+{
+(
+0
+,
+1
+)
+,
+(
+1
+,
+2
+)
+}
+​
+.
+\displaystyle=-1\text{, then }(\vec{a}_{i},\vec{b}_{i})\in\{(0,1),(1,2)\}\text{.}
+If
+​
+c
+→
+i
+\displaystyle\text{If }\vec{c}_{i}
+=
+0
+​
+, then
+​
+(
+a
+→
+i
+,
+b
+→
+i
+)
+∈
+{
+(
+0
+,
+0
+)
+,
+(
+1
+,
+1
+)
+}
+​
+by Condition
+(iii)
+.
+\displaystyle=0\text{, then }(\vec{a}_{i},\vec{b}_{i})\in\{(0,0),(1,1)\}\text{ by Condition~\ref{def:good-pair-3}.}
+Note that the
+ε
+​
+n
+\varepsilon n
+appearances of
+2
+2
+in
+a
+→
+\vec{a}
+must occur at indices
+i
+i
+with
+c
+i
+=
+1
+c_{i}=1
+. Thus the factor
+(
+π
+⁡
+(
+1
+)
+ε
+​
+n
+)
+\binom{\pi(1)}{\varepsilon n}
+represents the number of ways to choose
+ε
+​
+n
+\varepsilon n
+positions for
+2
+2
+’s in
+a
+→
+\vec{a}
+from the
+π
+⁡
+(
+1
+)
+\pi(1)
+indices where
+c
+→
+i
+=
+1
+\vec{c}_{i}=1
+. Similarly, a second factor
+(
+π
+⁡
+(
+1
+)
+ε
+​
+n
+)
+=
+(
+π
+⁡
+(
+−
+1
+)
+ε
+​
+n
+)
+\binom{\pi(1)}{\varepsilon n}=\binom{\pi(-1)}{\varepsilon n}
+represents the number of ways to choose
+ε
+​
+n
+\varepsilon n
+positions for
+2
+2
+’s in
+b
+→
+\vec{b}
+among the
+π
+⁡
+(
+−
+1
+)
+\pi(-1)
+indices where
+c
+→
+i
+=
+−
+1
+\vec{c}_{i}=-1
+.
+Once the positions for
+2
+2
+’s in
+a
+→
+\vec{a}
+and
+b
+→
+\vec{b}
+are fixed, the value of
+(
+a
+→
+i
+,
+b
+→
+i
+)
+(\vec{a}_{i},\vec{b}_{i})
+is determined at every index
+i
+i
+for which
+c
+→
+i
+=
+1
+\vec{c}_{i}=1
+or
+−
+1
+-1
+. Thus it remains to count the number of ways to assign
+(
+a
+→
+i
+,
+b
+→
+i
+)
+(\vec{a}_{i},\vec{b}_{i})
+at indices
+i
+i
+for which
+c
+→
+i
+=
+0
+\vec{c}_{i}=0
+. By Condition
+(i)
+, all but
+π
+⁡
+(
+0
+)
+/
+2
+\pi(0)/2
+of the
+1
+1
+’s in the vector
+a
+→
+\vec{a}
+and all but
+π
+⁡
+(
+0
+)
+/
+2
+\pi(0)/2
+of the
+1
+1
+’s in the vector
+b
+→
+\vec{b}
+are accounted for, so half of the indices at which
+c
+i
+=
+0
+c_{i}=0
+must have
+(
+a
+→
+i
+,
+b
+→
+i
+)
+=
+(
+0
+,
+0
+)
+(\vec{a}_{i},\vec{b}_{i})=(0,0)
+and half must have
+(
+a
+→
+i
+,
+b
+→
+i
+)
+=
+(
+1
+,
+1
+)
+(\vec{a}_{i},\vec{b}_{i})=(1,1)
+. Thus there are
+Θ
+∗
+​
+(
+2
+π
+⁡
+(
+0
+)
+)
+\Theta^{*}(2^{\pi(0)})
+valid choices by Stirling’s approximation (
+2
+). Multiplying this term with the factors for the choices of
+2
+2
+’s in
+a
+→
+\vec{a}
+and
+b
+→
+\vec{b}
+completes the proof of the observation.
+∎
+Our definition of
+G
+⁡
+(
+c
+→
+)
+G(\vec{c})
+allows us to prove a new perfect mixing dichotomy: either
+G
+⁡
+(
+c
+→
+)
+G(\vec{c})
+mixes perfectly with respect to
+x
+→
+\vec{x}
+, or our assumption that the solution with minimal support has
+π
+⁡
+(
+0
+)
+≤
+n
+/
+3
+\pi(0)\leq n/3
+is violated, in which case we can solve the instance using
+Lemma
+7.1
+.
+Lemma 7.2
+(Perfect Mixing Dichotomy for Equal Subset Sum)
+.
+For a minimal-support solution
+c
+→
+\vec{c}
+with
+π
+⁡
+(
+0
+)
+≤
+n
+/
+3
+\pi(0)\leq n/3
+and
+π
+⁡
+(
+1
+)
+=
+π
+⁡
+(
+−
+1
+)
+\pi(1)=\pi(-1)
+and non-negative constant
+ε
+<
+1
+/
+12
+\varepsilon<1/12
+, for every two distinct
+good pairs
+(
+a
+→
+,
+b
+→
+)
+,
+(
+a
+→
+′
+,
+b
+→
+′
+)
+∈
+G
+⁡
+(
+c
+→
+)
+(\vec{a},\vec{b}),(\vec{a}\,^{\prime},\vec{b}\,^{\prime})\in G(\vec{c})
+, we have
+a
+→
+⋅
+x
+→
+≠
+a
+→
+′
+⋅
+x
+→
+.
+\vec{a}\cdot\vec{x}\neq\vec{a}\,^{\prime}\cdot\vec{x}.
+Proof.
+Assume for the sake of contradiction that
+a
+→
+⋅
+x
+→
+=
+a
+→
+′
+⋅
+x
+→
+\vec{a}\cdot\vec{x}=\vec{a}\,^{\prime}\cdot\vec{x}
+for
+a
+→
+\vec{a}
+and
+a
+→
+′
+\vec{a}\,^{\prime}
+as in the lemma statement. As a consequence of
+Definition
+7.1
+we have that
+c
+→
+′
+≔
+a
+→
+−
+a
+→
+′
+∈
+[
+−
+1
+:
+1
+]
+n
+\vec{c}\,^{\prime}\coloneqq\vec{a}-\vec{a}\,^{\prime}\in[-1:1]^{n}
+is a solution for Equal Subset Sum. (Note that this crucially relies on Condition
+(iii)
+, as without it an index
+i
+i
+at which
+c
+i
+=
+0
+c_{i}=0
+and
+a
+i
+−
+a
+i
+′
+=
+2
+a_{i}-a^{\prime}_{i}=2
+or
+−
+2
+-2
+would be possible.)
+Because
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+and
+(
+a
+→
+′
+,
+b
+→
+′
+)
+(\vec{a}\,^{\prime},\vec{b}\,^{\prime})
+are good solution pairs for
+c
+→
+\vec{c}
+by assumption, for every index
+i
+∈
+[
+n
+]
+i\in[n]
+with
+c
+i
+=
+1
+c_{i}=1
+we
+have that
+a
+i
+=
+a
+i
+′
+=
+1
+a_{i}=a_{i}^{\prime}=1
+unless
+a
+i
+=
+2
+a_{i}=2
+or
+a
+i
+′
+=
+2
+a^{\prime}_{i}=2
+, which is true for at most
+2
+​
+ε
+​
+n
+2\varepsilon n
+indices. Likewise
+a
+i
+=
+a
+i
+′
+=
+0
+a_{i}=a_{i}^{\prime}=0
+at all but
+2
+​
+ε
+​
+n
+2\varepsilon n
+indices
+i
+∈
+[
+n
+]
+i\in[n]
+where
+c
+i
+=
+−
+1
+c_{i}=-1
+. Thus the number of
+i
+∈
+[
+n
+]
+i\in[n]
+for which
+a
+i
+−
+a
+i
+′
+=
+0
+a_{i}-a_{i}^{\prime}=0
+is at
+least
+π
+⁡
+(
+1
+)
++
+π
+⁡
+(
+−
+1
+)
+−
+4
+​
+ε
+​
+n
+>
+2
+​
+n
+/
+3
+−
+n
+/
+3
+=
+n
+/
+3
+\pi(1)+\pi(-1)-4\varepsilon n>2n/3-n/3=n/3
+by our assumptions on
+π
+⁡
+(
+0
+)
+\pi(0)
+and
+ε
+\varepsilon
+. However, this implies that
+a
+→
+−
+a
+→
+′
+\vec{a}-\vec{a}^{\prime}
+is a solution with support less than
+c
+→
+\vec{c}
+, contradicting our assumption that
+c
+→
+\vec{c}
+is a solution of minimal support.
+∎
+7.3
+Algorithm for Equal Subset Sum
+As usual, the algorithm below is parameterized by the solution profile
+π
+\pi
+of the solutions it attempts to recover. To get our final result for ESS we will use it only when it is faster than
+Lemma
+7.1
+.
+The algorithm follows the general pattern of the representation technique.
+However, because we have chosen to use partial solution vectors supported on
+[
+0
+:
+2
+]
+n
+[0:2]^{n}
+, the list
+𝒮
+×
+𝒮
+\mathcal{S}\times\mathcal{S}
+may contain pseudosolutions (pairs
+(
+a
+→
+,
+b
+→
+)
+∈
+𝒮
+×
+𝒮
+(\vec{a},\vec{b})\in\mathcal{S}\times\mathcal{S}
+such that
+(
+a
+→
+−
+b
+→
+)
+⋅
+x
+→
+=
+0
+(\vec{a}-\vec{b})\cdot\vec{x}=0
+, but
+a
+→
+−
+b
+→
+∉
+[
+−
+1
+:
+1
+]
+n
+\vec{a}-\vec{b}\notin[-1:1]^{n}
+). To search for true solutions, for every possible value
+i
+i
+we generate a sublist
+L
+i
+L_{i}
+containing all partial solution vectors satisfying
+v
+→
+⋅
+x
+→
+=
+i
+\vec{v}\cdot\vec{x}=i
+. Then we run a subroutine that searches for true solutions given two lists of partial solution vectors, a problem that is reminiscent of solving sparse instances of Orthogonal Vectors. Our main result for this problem is given in
+Theorem
+8.1
+. The proof uses the method of compatibility certificates and is presented in
+Section
+8
+.
+function
+EqualSubsetSum
+​
+(
+x
+→
+,
+π
+,
+ε
+)
+\textsf{EqualSubsetSum}(\vec{x},\pi,\varepsilon)
+:
+Sample a prime
+𝒑
+∼
+[
+p
+m
+​
+a
+​
+x
+:
+2
+p
+m
+​
+a
+​
+x
+]
+\bm{p}\sim[p_{max}:2p_{max}]
+and residue class
+𝒓
+∼
+[
+𝒑
+]
+\bm{r}\sim[\bm{p}]
+for
+p
+m
+​
+a
+​
+x
+p_{max}
+as defined in (
+23
+).
+1
+Enumerate the set
+𝒮
+\displaystyle\mathcal{S}
+≔
+{
+v
+→
+∈
+[
+0
+:
+2
+]
+n
+|
+|
+v
+→
+−
+1
+(
+1
+)
+|
+=
+n
+/
+2
+,
+|
+v
+→
+−
+1
+(
+2
+)
+|
+=
+ε
+n
+,
+v
+→
+⋅
+x
+→
+≡
+𝒓
+(
+mod
+𝒑
+)
+}
+.
+\displaystyle\coloneqq\{\vec{v}\in[0:2]^{n}\;|\;|\vec{v}^{\,-1}(1)|=n/2,|\vec{v}^{\,-1}(2)|=\varepsilon n,\vec{v}\cdot\vec{x}\equiv\bm{r}\pmod{\bm{p}}\}.
+If
+|
+𝒮
+|
+≥
+𝐄
+[
+|
+𝒮
+|
+]
+⋅
+n
+ω
+⁡
+(
+1
+)
+|\mathcal{S}|\geq\mathop{{\bf E}\/}[|\mathcal{S}|]\cdot n^{\omega(1)}
+, halt and return “
+failure
+’’.
+2
+Enumerate the list
+L
+i
+≔
+{
+v
+→
+∈
+𝒮
+|
+v
+→
+⋅
+x
+→
+=
+i
+}
+L_{i}\coloneqq\{\vec{v}\in\mathcal{S}\;|\;\vec{v}\cdot\vec{x}=i\}
+for every value
+i
+i
+that yields a nonempty list.
+3
+For each
+L
+i
+L_{i}
+, use
+Theorem
+8.1
+to decide if there exists a good solution pair
+(
+a
+→
+,
+b
+→
+)
+∈
+L
+i
+×
+L
+i
+(\vec{a},\vec{b})\in L_{i}\times L_{i}
+.
+Algorithm 4
+Outline of our algorithm for Equal Subset Sum. Implementation
+details omitted from this figure are specified in the proofs of correctness
+and runtime (
+Lemmas
+7.3
+and
+7.4
+).
+We start by estimating
+𝐄
+[
+|
+𝒮
+|
+]
+\mathop{{\bf E}\/}[|\mathcal{S}|]
+.
+Observation 7.2
+.
+Let
+𝒮
+\mathcal{S}
+be defined with respect to a solution profile
+π
+\pi
+with
+π
+⁡
+(
+0
+)
+≤
+n
+/
+3
+\pi(0)\leq n/3
+and
+π
+⁡
+(
+1
+)
+=
+π
+⁡
+(
+−
+1
+)
+\pi(1)=\pi(-1)
+, a non-negative constant
+ε
+<
+1
+/
+12
+\varepsilon<1/12
+, a random prime
+𝒑
+∼
+[
+p
+m
+​
+a
+​
+x
+:
+2
+p
+m
+​
+a
+​
+x
+]
+\bm{p}\sim[p_{max}:2p_{max}]
+and a random residue class
+𝒓
+∼
+[
+𝒑
+]
+\bm{r}\sim[\bm{p}]
+as in Algorithm
+4
+. Then
+𝐄
+[
+|
+𝒮
+|
+]
+=
+O
+∗
+​
+(
+2
+n
+⋅
+(
+n
+/
+2
+ε
+​
+n
+)
+p
+m
+​
+a
+​
+x
+)
+\mathop{{\bf E}\/}[|\mathcal{S}|]=O^{\ast}\left(\frac{2^{n}\cdot\binom{n/2}{\varepsilon n}}{p_{max}}\right)
+(24)
+Proof.
+The size of the set
+𝒮
+0
+≔
+{
+v
+→
+∈
+[
+0
+:
+2
+]
+n
+∣
+|
+v
+→
+−
+1
+(
+1
+)
+|
+=
+n
+/
+2
+,
+|
+v
+→
+−
+1
+(
+2
+)
+|
+=
+ε
+n
+}
+\mathcal{S}_{0}\coloneqq\{\vec{v}\in[0:2]^{n}\mid|\vec{v}^{\,-1}(1)|=n/2,|\vec{v}^{\,-1}(2)|=\varepsilon n\}
+is
+O
+∗
+​
+(
+2
+n
+⋅
+(
+n
+/
+2
+ε
+​
+n
+)
+)
+O^{*}(2^{n}\cdot\binom{n/2}{\varepsilon n})
+by Stirling’s approximation.
+Because
+𝒑
+≥
+p
+m
+​
+a
+​
+x
+\bm{p}\geq p_{max}
+by definition and every element of
+𝒮
+0
+\mathcal{S}_{0}
+falls into
+𝒮
+\mathcal{S}
+with probability
+1
+/
+𝒑
+1/\bm{p}
+, the result follows by linearity of expectation.
+∎
+Lemma 7.3
+(Runtime of Algorithm
+4
+)
+.
+Given an input instance
+x
+→
+\vec{x}
+, a solution profile
+π
+\pi
+with
+π
+⁡
+(
+0
+)
+≤
+n
+/
+3
+\pi(0)\leq n/3
+and
+π
+⁡
+(
+1
+)
+=
+π
+⁡
+(
+−
+1
+)
+\pi(1)=\pi(-1)
+, and a non-negative constant
+ε
+<
+1
+/
+12
+\varepsilon<1/12
+, Algorithm
+4
+runs in time
+O
+∗
+​
+(
+2
+n
+⋅
+(
+n
+/
+2
+ε
+​
+n
+)
+⋅
+2
+c
+⁡
+(
+ε
+)
+​
+n
+p
+m
+​
+a
+​
+x
+)
+,
+O^{\ast}\left(\frac{2^{n}\cdot\binom{n/2}{\varepsilon n}\cdot 2^{c(\varepsilon)n}}{p_{max}}\right),
+(25)
+where
+p
+m
+​
+a
+​
+x
+p_{max}
+is defined as in (
+23
+) and
+c
+⁡
+(
+ε
+)
+c(\varepsilon)
+is defined as in (
+28
+).
+Proof.
+Line
+4
+needs polynomial time. Note that we can compute
+p
+m
+​
+a
+​
+x
+p_{max}
+for a given
+π
+\pi
+even if
+c
+→
+\vec{c}
+is unknown or no solution vector corresponding to
+π
+\pi
+exists.
+For Lines
+4
+and
+4
+, we can enumerate
+𝒮
+\mathcal{S}
+in
+time
+O
+∗
+​
+(
+|
+𝒮
+|
+)
+O^{\ast}(|\mathcal{S}|)
+using the dynamic programming approach described in the proof of runtime for
+Lemma
+5.2
+. The algorithm halts if
+|
+𝒮
+|
+≥
+𝐄
+[
+|
+𝒮
+|
+]
+⋅
+n
+ω
+⁡
+(
+1
+)
+=
+2
+n
+⋅
+(
+n
+/
+2
+ε
+​
+n
+)
+p
+m
+​
+a
+​
+x
+⋅
+n
+ω
+⁡
+(
+1
+)
+,
+|\mathcal{S}|\geq\mathop{{\bf E}\/}[|\mathcal{S}|]\cdot n^{\omega(1)}=\frac{2^{n}\cdot\binom{n/2}{\varepsilon n}}{p_{max}}\cdot n^{\omega(1)},
+where we use (
+24
+) to bound
+𝐄
+[
+|
+𝒮
+|
+]
+\mathop{{\bf E}\/}[|\mathcal{S}|]
+, so this
+is an upper bound on the runtime of this step. Once we have enumerated
+𝒮
+\mathcal{S}
+, every sublist
+L
+i
+L_{i}
+can also be enumerated in time
+O
+∗
+​
+(
+|
+𝒮
+|
+)
+O^{\ast}(|\mathcal{S}|)
+by sorting the vectors in
+𝒮
+\mathcal{S}
+by dot product with
+x
+→
+\vec{x}
+.
+In Line
+4
+, we apply
+Theorem
+8.1
+to every pair
+(
+L
+i
+,
+L
+i
+)
+(L_{i},L_{i})
+, which takes time
+O
+⁡
+(
+2
+c
+⁡
+(
+ε
+)
+​
+n
+⋅
+|
+𝒮
+|
+)
+O(2^{c(\varepsilon)n}\cdot|\mathcal{S}|)
+in total for
+all list pairs. Plugging in the upper bound on
+𝒮
+\mathcal{S}
+enforced by the algorithm yields (
+25
+).
+∎
+Lemma 7.4
+(Correctness of Algorithm
+4
+)
+.
+Given an input instance
+x
+→
+\vec{x}
+, a solution profile
+π
+\pi
+with
+π
+⁡
+(
+0
+)
+≤
+n
+/
+3
+\pi(0)\leq n/3
+and
+π
+⁡
+(
+1
+)
+=
+π
+⁡
+(
+−
+1
+)
+\pi(1)=\pi(-1)
+, and a non-negative constant
+ε
+<
+1
+/
+12
+\varepsilon<1/12
+, if there exists any solution vector
+c
+→
+\vec{c}
+corresponding to
+π
+\pi
+, Algorithm
+4
+recovers it with probability
+n
+−
+O
+⁡
+(
+1
+)
+n^{-O(1)}
+.
+Proof.
+Fix
+x
+→
+\vec{x}
+,
+π
+\pi
+,
+ε
+\varepsilon
+and
+c
+→
+\vec{c}
+as in the lemma statement.
+For any good solution pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+we have
+(
+a
+→
+−
+b
+→
+)
+⋅
+x
+→
+=
+c
+→
+⋅
+x
+→
+=
+0
+(\vec{a}-\vec{b})\cdot\vec{x}=\vec{c}\cdot\vec{x}=0
+by definition, so
+a
+→
+⋅
+x
+→
+=
+b
+→
+⋅
+x
+→
+\vec{a}\cdot\vec{x}=\vec{b}\cdot\vec{x}
+and thus
+a
+→
+∈
+𝒮
+\vec{a}\in\mathcal{S}
+if and only if
+b
+→
+∈
+𝒮
+\vec{b}\in\mathcal{S}
+. If
+a
+→
+,
+b
+→
+∈
+𝒮
+\vec{a},\vec{b}\in\mathcal{S}
+and
+|
+𝒮
+|
+<
+𝐄
+[
+|
+𝒮
+|
+]
+⋅
+n
+ω
+⁡
+(
+1
+)
+|\mathcal{S}|<\mathop{{\bf E}\/}[|\mathcal{S}|]\cdot n^{\omega(1)}
+, then the algorithm enumerates
+𝒮
+\mathcal{S}
+and
+a
+→
+,
+b
+→
+∈
+L
+i
+\vec{a},\vec{b}\in L_{i}
+for
+i
+=
+a
+→
+⋅
+x
+→
+i=\vec{a}\cdot\vec{x}
+. Finally, in this case
+Theorem
+8.1
+recovers
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+with probability
+n
+−
+O
+⁡
+(
+1
+)
+n^{-O(1)}
+.
+It remains to show that, with probability
+n
+−
+O
+⁡
+(
+1
+)
+n^{-O(1)}
+,
+a
+→
+∈
+𝒮
+\vec{a}\in\mathcal{S}
+for some solution pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+and the list
+𝒮
+\mathcal{S}
+satisfies
+|
+𝒮
+|
+<
+𝐄
+[
+|
+𝒮
+|
+]
+⋅
+n
+ω
+⁡
+(
+1
+)
+|\mathcal{S}|<\mathop{{\bf E}\/}[|\mathcal{S}|]\cdot n^{\omega(1)}
+. This follows from
+Lemma
+3.1
+with
+G
+\displaystyle G
+=
+{
+a
+→
+⋅
+x
+→
+|
+(
+a
+→
+,
+b
+→
+)
+∈
+G
+⁡
+(
+c
+→
+)
+}
+,
+\displaystyle=\{\vec{a}\cdot\vec{x}\;|\;(\vec{a},\vec{b})\in G(\vec{c})\},
+Y
+\displaystyle Y
+=
+𝒮
+0
+⋅
+x
+→
+=
+{
+v
+→
+∈
+[
+0
+:
+2
+]
+n
+|
+|
+v
+→
+−
+1
+(
+1
+)
+|
+=
+n
+/
+2
+,
+|
+v
+→
+−
+1
+(
+2
+)
+|
+=
+ε
+n
+}
+⋅
+x
+→
+,
+\displaystyle=\mathcal{S}_{0}\cdot\vec{x}=\{\vec{v}\in[0:2]^{n}\;\;|\;|\vec{v}^{\,-1}(1)|=n/2,|\vec{v}^{\,-1}(2)|=\varepsilon n\}\cdot\vec{x},
+using
+p
+m
+​
+a
+​
+x
+p_{max}
+as the integer bound represented by the same symbol in the
+lemma statement. Importantly, we have
+|
+G
+|
+=
+|
+G
+⁡
+(
+c
+→
+)
+|
+|G|=|G(\vec{c})|
+by our perfect
+mixing dichotomy (
+Lemma
+7.2
+),
+p
+m
+​
+a
+​
+x
+≤
+O
+⁡
+(
+|
+G
+|
+)
+p_{max}\leq O(|G|)
+by
+definition (
+23
+), and
+Y
+⊇
+G
+Y\supseteq G
+with
+|
+Y
+|
+=
+O
+∗
+​
+(
+2
+n
+⋅
+(
+n
+/
+2
+ε
+​
+n
+)
+)
+|Y|=O^{\ast}(2^{n}\cdot\binom{n/2}{\varepsilon n})
+. Thus the set of good residue classes
+𝑹
+\bm{R}
+, which contains choices
+for
+𝒓
+\bm{r}
+such that
+𝒮
+\mathcal{S}
+contains a solution pair and
+|
+𝒮
+|
+≤
+|
+Y
+|
+p
+m
+​
+a
+​
+x
+​
+n
+O
+⁡
+(
+1
+)
+=
+𝐄
+[
+|
+𝒮
+|
+]
+⋅
+n
+O
+⁡
+(
+1
+)
+,
+|\mathcal{S}|\leq\frac{|Y|}{p_{max}}n^{O(1)}=\mathop{{\bf E}\/}[|\mathcal{S}|]\cdot n^{O(1)},
+is an
+n
+−
+O
+⁡
+(
+1
+)
+n^{-O(1)}
+-fraction of all choices for
+𝒓
+\bm{r}
+with constant probability over the choice of
+𝒑
+\bm{p}
+and
+𝒓
+\bm{r}
+.
+The lemma follows from multiplying the constant probability that
+Lemma
+3.1
+obtains with the probability that we choose a good residue class in that event and the chance that
+Theorem
+8.1
+recovers a solution.
+∎
+7.4
+Optimizing Runtime
+Theorem 7.1
+.
+Equal Subset Sum can be solved in time
+O
+∗
+​
+(
+1.7067
+n
+)
+O^{\ast}(1.7067^{n})
+with high probability.
+Proof.
+Recall from
+Section
+7.1
+that we can assume without loss of generality that
+π
+⁡
+(
+1
+)
+=
+π
+⁡
+(
+1
+)
+\pi(1)=\pi(1)
+and
+π
+⁡
+(
+0
+)
+≤
+n
+/
+3
+\pi(0)\leq n/3
+. Using these assumptions to rewrite the first term of
+Lemma
+7.1
+, we have that we can solve Equal Subset Sum in time
+O
+∗
+​
+(
+(
+n
+/
+2
+π
+⁡
+(
+0
+)
+2
+)
+​
+(
+π
+⁡
+(
+1
+)
++
+π
+⁡
+(
+−
+1
+)
+2
+π
+⁡
+(
+1
+)
+2
+)
+)
+=
+O
+∗
+​
+(
+2
+1
+2
+​
+H
+​
+(
+π
+⁡
+(
+0
+)
+n
+)
++
+π
+⁡
+(
+1
+)
++
+π
+⁡
+(
+−
+1
+)
+2
+)
+O^{\ast}\left(\binom{n/2}{\frac{\pi(0)}{2}}\binom{\frac{\pi(1)+\pi(-1)}{2}}{\frac{\pi(1)}{2}}\right)=O^{\ast}\left(2^{\frac{1}{2}H(\frac{\pi(0)}{n})+\frac{\pi(1)+\pi(-1)}{2}}\right)
+(26)
+using existing algorithms, where the second term simplifies the binomials using Stirling’s Approximation (
+2
+).
+By
+Lemma
+7.3
+we know that Equal Subset Sum can be solved in
+O
+∗
+​
+(
+2
+n
+⋅
+(
+n
+/
+2
+ε
+​
+n
+)
+⋅
+2
+c
+⁡
+(
+ε
+)
+​
+n
+p
+m
+​
+a
+​
+x
+)
+=
+O
+∗
+​
+(
+2
+n
++
+H
+⁡
+(
+2
+​
+ε
+)
+​
+n
+2
++
+c
+⁡
+(
+ε
+)
+​
+n
+−
+2
+​
+H
+​
+(
+ε
+​
+n
+π
+⁡
+(
+1
+)
+)
+​
+π
+​
+(
+1
+)
+−
+π
+⁡
+(
+0
+)
+)
+O^{\ast}\left(\frac{2^{n}\cdot\binom{n/2}{\varepsilon n}\cdot 2^{c(\varepsilon)n}}{p_{max}}\right)=O^{\ast}\left(2^{n+H(2\varepsilon)\frac{n}{2}+c(\varepsilon)n-2H\left(\frac{\varepsilon n}{\pi(1)}\right)\pi(1)-\pi(0)}\right)
+(27)
+where
+p
+m
+​
+a
+​
+x
+p_{max}
+and
+c
+c
+are defined as in (
+23
+) and (
+28
+), respectively.
+13
+13
+13
+Note that at
+ε
+=
+0
+\varepsilon=0
+this expression is equivalent to
+O
+∗
+​
+(
+(
+π
+⁡
+(
+1
+)
++
+π
+⁡
+(
+−
+1
+)
+π
+⁡
+(
+1
+)
+)
+)
+O^{\ast}(\binom{\pi(1)+\pi(-1)}{\pi(1)})
+, the other term in
+Lemma
+7.1
+. To directly verify that (
+27
+) improves upon
+Lemma
+7.1
+, one can check that for sufficiently small
+ε
+>
+0
+\varepsilon>0
+, (
+27
+) is always smaller than this term near the worst-case, when
+π
+⁡
+(
+1
+)
++
+π
+⁡
+(
+−
+1
+)
+≈
+0.773
+​
+n
+\pi(1)+\pi(-1)\approx 0.773n
+.
+To optimize the exponent in the runtime we can take the base-2 logarithm of (
+26
+) and (
+27
+), write both expressions in terms of the single parameter
+p
+=
+π
+⁡
+(
+0
+)
+n
+p=\frac{\pi(0)}{n}
+, and choose
+ε
+<
+1
+/
+12
+\varepsilon<1/12
+to minimize the constant in the exponent over worst-case
+π
+\pi
+:
+max
+p
+∈
+[
+0
+,
+1
+)
+⁡
+min
+ε
+∈
+[
+0
+,
+1
+/
+12
+)
+​
+O
+∗
+​
+(
+min
+⁡
+{
+1
++
+H
+⁡
+(
+2
+​
+ε
+)
+2
++
+c
+⁡
+(
+ε
+)
+−
+2
+​
+H
+​
+(
+2
+​
+ε
+1
+−
+p
+)
+​
+1
+−
+p
+2
+−
+p
+,
+H
+⁡
+(
+p
+)
++
+1
+−
+p
+2
+}
+)
+\max_{p\in[0,1)}\min_{\varepsilon\in[0,1/12)}O^{\ast}\left(\min\left\{1+\frac{H(2\varepsilon)}{2}+c(\varepsilon)-2H\left(\frac{2\varepsilon}{1-p}\right)\frac{1-p}{2}-p,\;\;\frac{H(p)+1-p}{2}\right\}\right)
+Computer evaluation reveals that this expression is maximized at
+p
+=
+0.22266
+p=0.22266
+at which point the best choice of
+ε
+\varepsilon
+is
+ε
+=
+0.04493
+\varepsilon=0.04493
+and the running time is
+O
+∗
+​
+(
+2
+0.771167
+​
+n
+)
+=
+O
+∗
+​
+(
+1.7067
+n
+)
+O^{\ast}(2^{0.771167n})=O^{\ast}(1.7067^{n})
+as desired.
+∎
+8
+Compatibility Testing
+In the previous section, we presented an algorithm for Equal Subset Sum that enumerated lists of partial solutions and searched the lists for a solution pair. However, some partial solution pairs were pseudosolutions: pairs of vectors
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+satisfying
+(
+a
+→
+−
+b
+→
+)
+⋅
+x
+→
+=
+0
+(\vec{a}-\vec{b})\cdot\vec{x}=0
+, but
+a
+→
+−
+b
+→
+∉
+[
+−
+1
+:
+1
+]
+n
+\vec{a}-\vec{b}\not\in[-1:1]^{n}
+. To solve this problem we referred to a subroutine that could search two lists of vectors for a “compatible pair” satisfying
+a
+→
+−
+b
+→
+∈
+[
+−
+1
+:
+1
+]
+n
+\vec{a}-\vec{b}\in[-1:1]^{n}
+. This section presents that subroutine.
+An alternative approach would be to reduce our problem to an instance of Orthogonal Vectors. However, existing worst-case algorithms for Orthogonal Vectors run in time quadratic in the size of the input lists, which is too slow for our purposes. Instead, we must take advantage of the fact that our input vectors are effectively very sparse, since we need only worry about the
+ε
+​
+n
+\varepsilon n
+indices at which
+a
+→
+i
+\vec{a}_{i}
+or
+b
+→
+i
+=
+2
+\vec{b}_{i}=2
+. Exploiting this allows us to get an algorithm that approaches linear time in the length of the input lists as
+ε
+\varepsilon
+goes to
+0
+0
+. Our algorithm builds on ideas from
+[
+29
+]
+, in which a similar approach was used.
+Theorem 8.1
+.
+Fix a constant
+0
+≤
+ε
+≤
+1
+/
+4
+0\leq\varepsilon\leq 1/4
+and let
+A
+,
+B
+⊆
+[
+0
+:
+2
+]
+d
+A,B\subseteq[0:2]^{d}
+be two sets of vectors such that for every
+a
+→
+∈
+A
+\vec{a}\in A
+and
+b
+→
+∈
+B
+\vec{b}\in B
+it holds that
+|
+a
+→
+−
+1
+​
+(
+2
+)
+|
+=
+|
+b
+→
+−
+1
+​
+(
+2
+)
+|
+=
+ε
+​
+d
+​
+and
+​
+|
+a
+→
+−
+1
+​
+(
+1
+)
+|
+=
+|
+b
+→
+−
+1
+​
+(
+1
+)
+|
+=
+d
+/
+2
+.
+\displaystyle|\vec{a}^{\,-1}(2)|=|\vec{b}^{\,-1}(2)|=\varepsilon d\text{ and }|\vec{a}^{\,-1}(1)|=|\vec{b}^{\,-1}(1)|=d/2.
+There exists an algorithm that recovers
+(
+a
+→
+,
+b
+→
+)
+∈
+A
+×
+B
+(\vec{a},\vec{b})\in A\times B
+such that
+a
+→
+−
+b
+→
+∈
+[
+−
+1
+:
+1
+]
+d
+\vec{a}-\vec{b}\in[-1:1]^{d}
+with high probability,
+if such a pair exists, and runs in time
+O
+⁡
+(
+2
+c
+⁡
+(
+ε
+)
+​
+d
+⋅
+(
+|
+A
+|
++
+|
+B
+|
+)
+)
+O\left(2^{c(\varepsilon)d}\cdot\left(|A|+|B|\right)\right)
+, where
+c
+⁡
+(
+ε
+)
+≔
+(
+1
+−
+ε
+)
+⋅
+H
+⁡
+(
+ε
+1
+−
+ε
+)
++
+(
+1
+/
+2
++
+ε
+)
+⋅
+H
+⁡
+(
+4
+​
+ε
+1
++
+2
+​
+ε
+)
+−
+H
+⁡
+(
+2
+​
+ε
+)
++
+o
+⁡
+(
+1
+)
+.
+c(\varepsilon)\coloneqq(1-\varepsilon)\cdot H\left(\frac{\varepsilon}{1-\varepsilon}\right)+\left(1/2+\varepsilon\right)\cdot H\left(\frac{4\varepsilon}{1+2\varepsilon}\right)-H(2\varepsilon)+o(1).
+(28)
+In this section, the inputs to our problem are the sets
+A
+A
+and
+B
+B
+. When we apply
+Theorem
+8.1
+in our algorithm for Equal Subset Sum,
+|
+A
+|
+|A|
+and
+|
+B
+|
+|B|
+will be
+exponential
+in
+n
+n
+, the number of inputs to the Equal Subset Sum instance, and the vectors in
+A
+A
+and
+B
+B
+will have dimension
+n
+n
+. However, in this section we write
+d
+d
+for the dimension of the vectors in
+A
+A
+and
+B
+B
+to avoid confusion with the size of the input (
+|
+A
+|
++
+|
+B
+|
+|A|+|B|
+).
+8.1
+Preprocessing
+Consider two sets of vectors
+A
+A
+and
+B
+B
+as in the theorem statement. Our algorithm will not return false positives so we assume without loss of generality that there exists some solution
+(
+a
+→
+,
+b
+→
+)
+∈
+A
+×
+B
+(\vec{a},\vec{b})\in A\times B
+with
+a
+→
+−
+b
+→
+∈
+[
+−
+1
+:
+1
+]
+d
+\vec{a}-\vec{b}\in[-1:1]^{d}
+.
+We can divide the task of finding a compatible pair of vectors
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+into subproblems by partitioning the set of indices
+[
+d
+]
+[d]
+into multiple parts of equal cardinality and checking the compatibility of each set of indices separately. Let
+ℓ
+\ell
+be a large constant that we will set later. Randomly partition
+[
+d
+]
+[d]
+into
+ℓ
+\ell
+sets of equal size,
+14
+14
+14
+We can assume that
+d
+d
+is divisible by
+ℓ
+\ell
+without loss of generality using simple padding arguments.
+so
+[
+d
+]
+=
+U
+1
+⊔
+…
+⊔
+U
+ℓ
+.
+[d]=U_{1}\sqcup\ldots\sqcup U_{\ell}.
+We first observe that with sufficiently high probability, the
+0
+0
+,
+1
+1
+, and
+2
+2
+indices of
+a
+→
+\vec{a}
+and
+b
+→
+\vec{b}
+are partitioned evenly between the
+U
+i
+U_{i}
+:
+Observation 8.1
+.
+With probability
+d
+−
+O
+⁡
+(
+ℓ
+)
+d^{-O(\ell)}
+, for every
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+it holds that
+|
+U
+i
+∩
+a
+→
+−
+1
+​
+(
+2
+)
+|
+=
+|
+U
+i
+∩
+b
+→
+−
+1
+​
+(
+2
+)
+|
+=
+ε
+​
+d
+ℓ
+​
+and
+​
+|
+U
+i
+∩
+a
+→
+−
+1
+​
+(
+1
+)
+|
+=
+|
+U
+i
+∩
+b
+→
+−
+1
+​
+(
+1
+)
+|
+=
+d
+2
+​
+ℓ
+.
+|U_{i}\cap\vec{a}^{\,-1}(2)|=|U_{i}\cap\vec{b}^{\,-1}(2)|=\frac{\varepsilon d}{\ell}\text{ and }|U_{i}\cap\vec{a}^{\,-1}(1)|=|U_{i}\cap\vec{b}^{\,-1}(1)|=\frac{d}{2\ell}.
+(29)
+Proof.
+It suffices to show that for any set
+X
+⊆
+[
+d
+]
+X\subseteq[d]
+, the event
+|
+U
+i
+∩
+X
+|
+=
+|
+X
+|
+ℓ
+|U_{i}\cap X|=\frac{|X|}{\ell}
+(30)
+holds for every
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+with probability
+d
+−
+O
+⁡
+(
+ℓ
+)
+d^{-O(\ell)}
+.
+Once this statement is proved, we can complete the observation by repeatedly applying the statement above as follows: first, apply (
+30
+) with
+X
+=
+a
+→
+−
+1
+​
+(
+1
+)
+X=\vec{a}^{\,-1}(1)
+. Conditioning on the event that the indices
+a
+→
+−
+1
+​
+(
+1
+)
+\vec{a}^{\,-1}(1)
+are distributed evenly over a random
+ℓ
+\ell
+-partition of
+U
+U
+, we can consider the event that the set of indices
+a
+→
+−
+1
+​
+(
+2
+)
+\vec{a}^{\,-1}(2)
+are distributed evenly over a random
+ℓ
+\ell
+-partition of
+(
+U
+∖
+a
+→
+−
+1
+​
+(
+1
+)
+)
+(U\setminus\vec{a}^{\,-1}(1))
+. Conditioning on the previous two events, we can then consider the distribution of
+b
+→
+−
+1
+​
+(
+1
+)
+∩
+a
+→
+−
+1
+​
+(
+1
+)
+\vec{b}^{\,-1}(1)\cap\vec{a}^{\,-1}(1)
+,
+b
+→
+−
+1
+​
+(
+1
+)
+∩
+a
+→
+−
+1
+​
+(
+2
+)
+\vec{b}^{\,-1}(1)\cap\vec{a}^{\,-1}(2)
+, and
+b
+→
+−
+1
+​
+(
+1
+)
+∩
+(
+[
+d
+]
+∖
+(
+a
+→
+−
+1
+​
+(
+1
+)
+∪
+a
+→
+−
+1
+​
+(
+2
+)
+)
+CLOSE
+\vec{b}^{\,-1}(1)\cap([d]\setminus(\vec{a}^{\,-1}(1)\cup\vec{a}^{\,-1}(2))
+over the relevant subsets of
+U
+U
+. Finally, we can do likewise for
+b
+→
+−
+1
+​
+(
+2
+)
+\vec{b}^{\,-1}(2)
+. Because each one of these events occurs with probability
+d
+−
+O
+⁡
+(
+ℓ
+)
+d^{-O(\ell)}
+conditioned on the previous events, the entire sequence of events occurs with probability
+d
+−
+O
+⁡
+(
+ℓ
+)
+d^{-O(\ell)}
+.
+Returning to the proof of (
+30
+): the number of partitions of
+U
+U
+such that (
+30
+) holds for all
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+is
+(
+|
+X
+|
+|
+X
+|
+ℓ
+,
+…
+,
+|
+X
+|
+ℓ
+)
+⋅
+(
+|
+U
+∖
+X
+|
+|
+U
+∖
+X
+|
+ℓ
+,
+…
+,
+|
+U
+∖
+X
+|
+ℓ
+)
+\binom{|X|}{\frac{|X|}{\ell},\ldots,\frac{|X|}{\ell}}\cdot\binom{|U\setminus X|}{\frac{|U\setminus X|}{\ell},\ldots,\frac{|U\setminus X|}{\ell}}
+which is
+Θ
+∗
+​
+(
+2
+H
+⁡
+(
+1
+/
+ℓ
+,
+…
+,
+1
+/
+ℓ
+)
+​
+d
+)
+=
+Θ
+∗
+​
+(
+ℓ
+d
+)
+.
+\Theta^{*}(2^{H(1/\ell,\ldots,1/\ell)d})=\Theta^{*}(\ell^{d}).
+by Stirling’s approximation for multinomial coefficients (
+3
+). On the other hand, the total number of partitions of
+U
+U
+into
+ℓ
+\ell
+sets is
+ℓ
+d
+\ell^{d}
+, so (
+30
+) holds with probability at least
+d
+−
+O
+⁡
+(
+1
+)
+d^{-O(1)}
+.
+∎
+For every
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+, we will randomly select a family of partial
+certificates
+𝒬
+i
+\mathcal{Q}_{i}
+intended to certify if two vectors are compatible on the
+indices in
+U
+i
+U_{i}
+. Each element of
+𝒬
+i
+\mathcal{Q}_{i}
+is a tuple containing two subsets
+of
+U
+i
+U_{i}
+. Formally, for
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+, we select
+𝒬
+i
+⊆
+r
+(
+U
+i
+λ
+​
+|
+U
+i
+|
+)
+×
+(
+U
+i
+λ
+​
+|
+U
+i
+|
+)
+such that
+|
+𝒬
+i
+|
+=
+2
+K
+⋅
+|
+U
+i
+|
+,
+\mathcal{Q}_{i}\subseteq_{r}\binom{U_{i}}{\lambda|U_{i}|}\times\binom{U_{i}}{\lambda|U_{i}|}\text{ such that }|\mathcal{Q}_{i}|=2^{K\cdot|U_{i}|},
+(31)
+uniformly at random for two parameters
+λ
+\lambda
+and
+K
+K
+that depend only on
+ε
+\varepsilon
+and that will be fixed later.
+Definition 8.1
+(Compatibility Certificates)
+.
+For a given vector
+a
+→
+∈
+A
+\vec{a}\in A
+, we say that the tuple
+(
+L
+i
+,
+R
+i
+)
+∈
+𝒬
+i
+(L_{i},R_{i})\in\mathcal{Q}_{i}
+is an
+A
+(
+i
+)
+A^{(i)}
+-certificate
+for
+a
+→
+U
+i
+\vec{a}_{U_{i}}
+(that is,
+a
+→
+\vec{a}
+restricted to the indices in
+U
+i
+U_{i}
+) if
+a
+→
+−
+1
+​
+(
+0
+)
+∩
+R
+i
+=
+∅
+​
+and
+​
+a
+→
+−
+1
+​
+(
+2
+)
+∩
+U
+i
+⊆
+L
+i
+.
+\vec{a}^{\,-1}(0)\cap R_{i}=\emptyset\text{ and }\vec{a}^{\,-1}(2)\cap U_{i}\subseteq L_{i}.
+Likewise we say that
+(
+L
+i
+,
+R
+i
+)
+(L_{i},R_{i})
+is a
+B
+(
+i
+)
+B^{(i)}
+-certificate
+for
+b
+→
+U
+i
+\vec{b}_{U_{i}}
+if
+b
+→
+−
+1
+​
+(
+0
+)
+∩
+L
+i
+=
+∅
+​
+and
+​
+b
+→
+−
+1
+​
+(
+2
+)
+∩
+U
+i
+⊆
+R
+i
+.
+\vec{b}^{\,-1}(0)\cap L_{i}=\emptyset\text{ and }\vec{b}^{\,-1}(2)\cap U_{i}\subseteq R_{i}.
+If for a certain pair
+(
+a
+→
+,
+b
+→
+)
+∈
+A
+×
+B
+(\vec{a},\vec{b})\in A\times B
+there exist tuples
+(
+L
+i
+,
+R
+i
+)
+∈
+𝒬
+i
+(L_{i},R_{i})\in\mathcal{Q}_{i}
+such that
+(
+L
+i
+,
+R
+i
+)
+(L_{i},R_{i})
+is an
+A
+(
+i
+)
+A^{(i)}
+-certificate for
+a
+→
+\vec{a}
+and a
+B
+(
+i
+)
+B^{(i)}
+-certificate for
+b
+→
+\vec{b}
+for all
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+, then we say that the tuple
+(
+(
+L
+1
+,
+R
+1
+)
+,
+…
+,
+(
+L
+ℓ
+,
+R
+ℓ
+)
+)
+∈
+𝒬
+1
+×
+⋯
+×
+𝒬
+ℓ
+((L_{1},R_{1}),\ldots,(L_{\ell},R_{\ell}))\in\mathcal{Q}_{1}\times\cdots\times\mathcal{Q}_{\ell}
+is a
+compatibility certificate
+for the pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+.
+We have defined our compatibility certificates to act as proofs that pairs of vectors are compatible. For instance, if
+a
+→
+−
+1
+​
+(
+0
+)
+∩
+R
+i
+=
+∅
+\vec{a}^{\,-1}(0)\cap R_{i}=\emptyset
+and
+b
+→
+−
+1
+​
+(
+2
+)
+∩
+U
+i
+⊆
+R
+i
+\vec{b}^{\,-1}(2)\cap U_{i}\subseteq R_{i}
+for every
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+, this means that there is no index
+j
+∈
+[
+d
+]
+j\in[d]
+such that
+a
+i
+=
+0
+a_{i}=0
+and
+b
+j
+=
+2
+b_{j}=2
+, an event which would cause
+a
+→
+\vec{a}
+and
+b
+→
+\vec{b}
+to be incompatible. Formally, we prove the following claim.
+Claim 8.1
+.
+If
+C
+C
+is a compatibility certificate for
+(
+a
+→
+,
+b
+→
+)
+∈
+A
+×
+B
+(\vec{a},\vec{b})\in A\times B
+, then
+a
+→
+−
+b
+→
+∈
+[
+−
+1
+:
+1
+]
+d
+\vec{a}-\vec{b}\in[-1:1]^{d}
+.
+Proof: Let
+C
+=
+(
+(
+L
+1
+,
+R
+1
+)
+,
+…
+,
+(
+L
+ℓ
+,
+R
+ℓ
+)
+)
+∈
+𝒬
+1
+×
+⋯
+×
+𝒬
+ℓ
+C=((L_{1},R_{1}),\ldots,(L_{\ell},R_{\ell}))\in\mathcal{Q}_{1}\times\cdots\times\mathcal{Q}_{\ell}
+be a compatibility certificate for
+(
+a
+→
+,
+b
+→
+)
+∈
+A
+×
+B
+(\vec{a},\vec{b})\in A\times B
+and assume for contradiction that
+a
+→
+−
+b
+→
+∉
+[
+−
+1
+:
+1
+]
+d
+\vec{a}-\vec{b}\notin[-1:1]^{d}
+.
+This implies that there exists some index
+j
+∈
+U
+i
+⊆
+[
+d
+]
+j\in U_{i}\subseteq[d]
+such that
+a
+j
+−
+b
+j
+∈
+{
+−
+2
+,
+2
+}
+a_{j}-b_{j}\in\{-2,2\}
+. Without loss of generality, suppose
+a
+j
+=
+0
+a_{j}=0
+and
+b
+j
+=
+2
+b_{j}=2
+as the other case is symmetric. Because
+(
+L
+i
+,
+R
+i
+)
+(L_{i},R_{i})
+is a
+B
+(
+i
+)
+B^{(i)}
+-certificate for
+b
+→
+\vec{b}
+, we know that that
+j
+∈
+R
+i
+j\in R_{i}
+. However, because
+(
+L
+i
+,
+R
+i
+)
+(L_{i},R_{i})
+is an
+A
+(
+i
+)
+A^{(i)}
+-certificate for
+a
+→
+\vec{a}
+, we have
+j
+∉
+R
+i
+j\notin R_{i}
+, a contradiction.
+■
+\blacksquare
+8.2
+Number of Candidate Certificates
+Our next task is to set the parameters
+λ
+\lambda
+and
+K
+K
+so that for a fixed compatible pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+, we are likely to have at least one compatibility certificate in
+𝒬
+1
+×
+⋯
+×
+𝒬
+ℓ
+\mathcal{Q}_{1}\times\cdots\times\mathcal{Q}_{\ell}
+.
+Lemma 8.1
+.
+Suppose
+(
+a
+→
+,
+b
+→
+)
+∈
+A
+×
+B
+(\vec{a},\vec{b})\in A\times B
+satisfies
+a
+→
+−
+b
+→
+∈
+[
+−
+1
+:
+1
+]
+n
+\vec{a}-\vec{b}\in[-1:1]^{n}
+. Conditioned on (
+29
+), if
+λ
+\displaystyle\lambda
+∈
+[
+ε
+,
+1
+/
+2
++
+ε
+]
+​
+and
+\displaystyle\in[\varepsilon,1/2+\varepsilon]\text{ and }
+K
+\displaystyle K
+≥
+2
+​
+H
+​
+(
+λ
+)
+−
+H
+⁡
+(
+2
+​
+(
+λ
+−
+ε
+)
+)
++
+o
+⁡
+(
+1
+)
+\displaystyle\geq 2H(\lambda)-H(2(\lambda-\varepsilon))+o(1)
+with probability at least
+2
+/
+3
+2/3
+there exists a compatibility certificate in
+𝒬
+1
+×
+⋯
+×
+𝒬
+ℓ
+\mathcal{Q}_{1}\times\cdots\times\mathcal{Q}_{\ell}
+.
+Proof.
+Fix a compatible pair
+(
+a
+→
+,
+b
+→
+)
+(\vec{a},\vec{b})
+as in the lemma statement and suppose that (
+29
+) holds, so the elements of
+a
+−
+1
+​
+(
+0
+)
+a^{\,-1}(0)
+,
+a
+−
+1
+​
+(
+2
+)
+a^{\,-1}(2)
+,
+b
+−
+1
+​
+(
+0
+)
+b^{\,-1}(0)
+and
+b
+−
+1
+​
+(
+2
+)
+b^{\,-1}(2)
+are distributed evenly over our
+ℓ
+\ell
+-partition of
+U
+U
+.
+First, we consider the probability that for a certain
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+the random family of candidate certificates
+𝒬
+i
+\mathcal{Q}_{i}
+contains a pair
+(
+L
+,
+R
+)
+(L,R)
+that is an
+A
+(
+i
+)
+A^{(i)}
+-certificate for
+a
+→
+U
+i
+\vec{a}_{U_{i}}
+and a
+B
+(
+i
+)
+B^{(i)}
+-certificate for
+b
+→
+U
+i
+\vec{b}_{U_{i}}
+.
+By
+Definition
+8.1
+, for this to occur
+L
+L
+must contain the
+ε
+​
+|
+U
+i
+|
+\varepsilon|U_{i}|
+elements of
+a
+→
+−
+1
+​
+(
+2
+)
+∩
+U
+i
+\vec{a}^{\,-1}(2)\cap U_{i}
+and
+L
+L
+must be a subset of the
+(
+1
+/
+2
++
+ε
+)
+​
+|
+U
+i
+|
+(1/2+\varepsilon)|U_{i}|
+elements of
+U
+i
+∖
+b
+−
+1
+​
+(
+0
+)
+U_{i}\setminus b^{\,-1}(0)
+, leaving a choice of
+(
+λ
+−
+ε
+)
+​
+|
+U
+i
+|
+(\lambda-\varepsilon)|U_{i}|
+“free” elements from the
+|
+U
+i
+|
+/
+2
+|U_{i}|/2
+elements of
+a
+→
+−
+1
+​
+(
+1
+)
+∩
+U
+i
+\vec{a}^{\,-1}(1)\cap U_{i}
+.
+R
+R
+is similar. So the number of choices for
+(
+L
+,
+R
+)
+(L,R)
+that satisfy both properties is
+(
+|
+U
+i
+|
+/
+2
+(
+λ
+−
+ε
+)
+​
+|
+U
+i
+|
+)
+⋅
+(
+|
+U
+i
+|
+/
+2
+(
+λ
+−
+ε
+)
+​
+|
+U
+i
+|
+)
+.
+\binom{|U_{i}|/2}{(\lambda-\varepsilon)|U_{i}|}\cdot\binom{|U_{i}|/2}{(\lambda-\varepsilon)|U_{i}|}.
+On the other hand, the total number of pairs
+(
+L
+,
+R
+)
+⊆
+U
+i
+(L,R)\subseteq U_{i}
+with
+|
+L
+|
+=
+λ
+​
+|
+U
+i
+|
+,
+|
+R
+|
+=
+λ
+​
+|
+U
+i
+|
+|L|=\lambda|U_{i}|,|R|=\lambda|U_{i}|
+is
+(
+|
+U
+i
+|
+λ
+​
+|
+U
+i
+|
+)
+⋅
+(
+|
+U
+i
+|
+λ
+​
+|
+U
+i
+|
+)
+\binom{|U_{i}|}{\lambda|U_{i}|}\cdot\binom{|U_{i}|}{\lambda|U_{i}|}
+. Hence, the probability that
+a randomly selected
+(
+L
+,
+R
+)
+∈
+𝒬
+i
+(L,R)\in\mathcal{Q}_{i}
+is an
+A
+(
+i
+)
+A^{(i)}
+-certificate for
+a
+→
+U
+i
+\vec{a}_{U_{i}}
+and a
+B
+(
+i
+)
+B^{(i)}
+-certificate for
+b
+→
+U
+i
+\vec{b}_{U_{i}}
+is at least
+(
+|
+U
+i
+|
+/
+2
+(
+λ
+−
+ε
+)
+​
+|
+U
+i
+|
+)
+2
+/
+(
+|
+U
+i
+|
+λ
+​
+|
+U
+i
+|
+)
+2
+\binom{|U_{i}|/2}{(\lambda-\varepsilon)|U_{i}|}^{2}\bigg/\binom{|U_{i}|}{\lambda|U_{i}|}^{2}
+which simplifies to
+Θ
+∗
+​
+(
+2
+(
+H
+⁡
+(
+2
+​
+(
+λ
+−
+ε
+)
+)
+−
+2
+​
+H
+​
+(
+λ
+)
+)
+​
+|
+U
+i
+|
+)
+\Theta^{*}\left(2^{\left(H(2(\lambda-\varepsilon))-2H(\lambda)\right)|U_{i}|}\right)
+by Stirling’s approximation (
+2
+). Hence by selecting
+K
+≥
+2
+​
+H
+​
+(
+λ
+)
+−
+H
+⁡
+(
+2
+​
+(
+λ
+−
+ε
+)
+)
++
+o
+⁡
+(
+1
+)
+K\geq 2H(\lambda)-H(2(\lambda-\varepsilon))+o(1)
+and
+λ
+∈
+[
+ε
+,
+1
+/
+2
++
+ε
+]
+\lambda\in[\varepsilon,1/2+\varepsilon]
+we can ensure that
+𝒬
+i
+\mathcal{Q}_{i}
+contains a pair
+(
+L
+,
+R
+)
+(L,R)
+that is an
+A
+(
+i
+)
+A^{(i)}
+-certificate for
+a
+→
+U
+i
+\vec{a}_{U_{i}}
+and a
+B
+(
+i
+)
+B^{(i)}
+-certificate for
+b
+→
+U
+i
+\vec{b}_{U_{i}}
+with arbitrarily high constant probability. This follows from the standard fact that
+(
+1
+−
+1
+z
+)
+r
+​
+z
+≤
+e
+−
+r
+\left(1-\frac{1}{z}\right)^{rz}\leq e^{-r}
+for real numbers
+z
+>
+1
+z>1
+and
+r
+>
+0
+r>0
+if we let
+1
+/
+z
+1/z
+be the probability that
+a randomly selected
+(
+L
+,
+R
+)
+∈
+𝒬
+i
+(L,R)\in\mathcal{Q}_{i}
+is an
+A
+(
+i
+)
+A^{(i)}
+-certificate for
+a
+→
+U
+i
+\vec{a}_{U_{i}}
+and a
+B
+(
+i
+)
+B^{(i)}
+-certificate for
+b
+→
+U
+i
+\vec{b}_{U_{i}}
+.
+Because this event occurs independently for each
+𝒬
+i
+\mathcal{Q}_{i}
+,
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+, we can conclude that there exists a complete compatibility certificate with arbitrarily high constant probability by taking a union bound over the individual failure probabilities for
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+.
+∎
+8.3
+Auxiliary Sets
+Our algorithm will look for a compatibility certificate that occurs in
+both
+of two
+auxiliary sets
+, lists of
+A
+(
+i
+)
+A^{(i)}
+- and
+B
+(
+i
+)
+B^{(i)}
+-certificates with respect to certain vectors
+x
+→
+∈
+[
+0
+:
+2
+]
+U
+i
+\vec{x}\in[0:2]^{U_{i}}
+. Specifically, for each
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+and for every vector
+x
+→
+∈
+[
+0
+:
+2
+]
+U
+i
+\vec{x}\in[0:2]^{U_{i}}
+, we define the following two lists:
+𝒜
+(
+i
+)
+​
+(
+x
+→
+)
+≔
+\displaystyle\mathcal{A}^{(i)}(\vec{x})\coloneqq
+{
+(
+L
+,
+R
+)
+∈
+𝒬
+i
+∣
+(
+L
+,
+R
+)
+​
+is an
+A
+(
+i
+)
+-certificate for
+​
+x
+→
+}
+​
+and
+\displaystyle\{(L,R)\in\mathcal{Q}_{i}\mid(L,R)\text{ is an $A^{(i)}$-certificate for }\vec{x}\}\text{ and }
+(32)
+ℬ
+(
+i
+)
+​
+(
+x
+→
+)
+≔
+\displaystyle\mathcal{B}^{(i)}(\vec{x})\coloneqq
+{
+(
+L
+,
+R
+)
+∈
+𝒬
+i
+∣
+(
+L
+,
+R
+)
+​
+is a
+B
+(
+i
+)
+-certificate for
+​
+x
+→
+}
+.
+\displaystyle\{(L,R)\in\mathcal{Q}_{i}\mid(L,R)\text{ is a $B^{(i)}$-certificate for }\vec{x}\}.
+By definition, if
+a
+→
+\vec{a}
+and
+b
+→
+\vec{b}
+have a compatibility certificate in
+𝒬
+1
+×
+⋯
+×
+𝒬
+ℓ
+\mathcal{Q}_{1}\times\dots\times\mathcal{Q}_{\ell}
+, then this compatibility certificate is a member of both
+𝒜
+(
+1
+)
+(
+a
+→
+U
+1
+)
+×
+⋯
+×
+𝒜
+(
+ℓ
+)
+(
+a
+→
+U
+ℓ
+)
+\mathcal{A}^{(1)}(\vec{a}_{U_{1}})\times\cdots\times\mathcal{A}^{(\ell)}(\vec{a}_{U_{\ell}})
+and
+ℬ
+(
+1
+)
+(
+b
+→
+U
+1
+)
+×
+⋯
+×
+ℬ
+(
+ℓ
+)
+(
+b
+→
+U
+ℓ
+)
+\mathcal{B}^{(1)}(\vec{b}_{U_{1}})\times\cdots\times\mathcal{B}^{(\ell)}(\vec{b}_{U_{\ell}})
+.
+Claim 8.2
+.
+For each
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+we can enumerate the lists
+𝒜
+(
+i
+)
+​
+(
+x
+→
+)
+\mathcal{A}^{(i)}(\vec{x})
+and
+ℬ
+(
+i
+)
+​
+(
+x
+→
+)
+\mathcal{B}^{(i)}(\vec{x})
+for
+every
+vector
+x
+→
+∈
+[
+0
+:
+2
+]
+U
+i
+\vec{x}\in[0:2]^{U_{i}}
+in time
+O
+⁡
+(
+d
+⋅
+12
+d
+/
+ℓ
+)
+O(d\cdot 12^{d/\ell})
+.
+Proof.
+Fix
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+and perform a brute-force enumeration: for every
+(
+x
+→
+,
+(
+L
+,
+R
+)
+)
+∈
+[
+0
+:
+2
+]
+U
+i
+×
+𝒬
+i
+,
+(\vec{x},(L,R))\in[0:2]^{U_{i}}\times\mathcal{Q}_{i},
+add
+(
+L
+,
+R
+)
+(L,R)
+to
+𝒜
+(
+i
+)
+​
+(
+x
+→
+)
+\mathcal{A}^{(i)}(\vec{x})
+if
+(
+L
+,
+R
+)
+(L,R)
+is an
+A
+(
+i
+)
+A^{(i)}
+-certificate for
+x
+→
+\vec{x}
+. Checking whether
+(
+L
+,
+R
+)
+(L,R)
+is an
+A
+(
+i
+)
+A^{(i)}
+-certificate takes time
+O
+⁡
+(
+|
+U
+i
+|
+)
+=
+O
+⁡
+(
+d
+/
+ℓ
+)
+=
+O
+⁡
+(
+d
+)
+O(|U_{i}|)=O(d/\ell)=O(d)
+, and we perform at most
+O
+⁡
+(
+3
+d
+/
+ℓ
+⋅
+4
+d
+/
+ℓ
+)
+=
+O
+⁡
+(
+12
+d
+/
+ℓ
+)
+O(3^{d/\ell}\cdot 4^{d/\ell})=O(12^{d/\ell})
+checks since
+|
+[
+0
+:
+2
+]
+U
+i
+|
+≤
+3
+d
+/
+ℓ
+|[0:2]^{U_{i}}|\leq 3^{d/\ell}
+and
+|
+𝒬
+i
+|
+≤
+|
+(
+U
+i
+U
+i
+/
+2
+)
+|
+2
+≤
+2
+2
+​
+|
+U
+i
+|
+=
+4
+d
+/
+ℓ
+|\mathcal{Q}_{i}|\leq|\binom{U_{i}}{U_{i}/2}|^{2}\leq 2^{2|U_{i}|}=4^{d/\ell}
+. Computing
+ℬ
+(
+i
+)
+​
+(
+x
+→
+)
+\mathcal{B}^{(i)}(\vec{x})
+for
+x
+→
+∈
+[
+0
+:
+2
+]
+U
+i
+\vec{x}\in[0:2]^{U_{i}}
+is similar.
+∎
+Lemma 8.2
+.
+For any fixed
+a
+→
+∈
+A
+\vec{a}\in A
+and
+b
+→
+∈
+B
+\vec{b}\in B
+, conditioned on (
+29
+) it holds that:
+|
+𝒜
+(
+1
+)
+​
+(
+a
+→
+U
+1
+)
+​
+|
+⋯
+|
+​
+𝒜
+(
+ℓ
+)
+​
+(
+a
+→
+U
+ℓ
+)
+|
+\displaystyle|\mathcal{A}^{(1)}(\vec{a}_{U_{1}})|\cdots|\mathcal{A}^{(\ell)}(\vec{a}_{U_{\ell}})|
+≤
+2
+c
+0
+⋅
+d
+​
+and
+\displaystyle\leq 2^{c_{0}\cdot d}\text{ and }
+|
+ℬ
+(
+1
+)
+​
+(
+b
+→
+U
+1
+)
+​
+|
+⋯
+|
+​
+ℬ
+(
+ℓ
+)
+​
+(
+b
+→
+U
+ℓ
+)
+|
+\displaystyle|\mathcal{B}^{(1)}(\vec{b}_{U_{1}})|\cdots|\mathcal{B}^{(\ell)}(\vec{b}_{U_{\ell}})|
+≤
+2
+c
+0
+⋅
+d
+\displaystyle\leq 2^{c_{0}\cdot d}
+with probability at least
+2
+/
+3
+2/3
+, where
+c
+0
+≔
+H
+⁡
+(
+λ
+−
+ε
+1
+−
+ε
+)
+​
+(
+1
+−
+ε
+)
++
+H
+⁡
+(
+λ
+1
+/
+2
++
+ε
+)
+​
+(
+1
+/
+2
++
+ε
+)
+−
+2
+​
+H
+​
+(
+λ
+)
++
+K
++
+o
+⁡
+(
+1
+)
+.
+c_{0}\coloneqq H\left(\frac{\lambda-\varepsilon}{1-\varepsilon}\right)(1-\varepsilon)+H\left(\frac{\lambda}{1/2+\varepsilon}\right)(1/2+\varepsilon)-2H(\lambda)+K+o(1).
+(33)
+Proof.
+Suppose that (
+29
+) holds, so that the elements of
+a
+→
+−
+1
+​
+(
+0
+)
+\vec{a}^{\,-1}(0)
+,
+a
+→
+−
+1
+​
+(
+2
+)
+\vec{a}^{\,-1}(2)
+,
+b
+→
+−
+1
+​
+(
+0
+)
+\vec{b}^{\,-1}(0)
+and
+b
+→
+−
+1
+​
+(
+2
+)
+\vec{b}^{\,-1}(2)
+distribute “evenly” over our
+ℓ
+\ell
+-partition of
+U
+U
+. Our first step is to prove that for any
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+and any
+x
+→
+∈
+[
+0
+:
+2
+]
+U
+i
+\vec{x}\in[0:2]^{U_{i}}
+with
+|
+x
+→
+−
+1
+​
+(
+0
+)
+|
+=
+(
+1
+/
+2
+−
+ε
+)
+​
+|
+U
+i
+|
+|\vec{x}^{\,-1}(0)|=(1/2-\varepsilon)|U_{i}|
+and
+|
+x
+→
+−
+1
+​
+(
+2
+)
+|
+=
+ε
+​
+|
+U
+i
+|
+|\vec{x}^{\,-1}(2)|=\varepsilon|U_{i}|
+it holds that
+𝐄
+[
+|
+𝒜
+(
+i
+)
+​
+(
+x
+→
+)
+|
+]
+≤
+2
+c
+0
+⋅
+|
+U
+i
+|
+.
+\displaystyle\mathop{{\bf E}\/}\left[|\mathcal{A}^{(i)}(\vec{x})|\right]\leq 2^{c_{0}\cdot|U_{i}|}.
+(34)
+By definition
+|
+𝒜
+(
+i
+)
+​
+(
+x
+→
+)
+|
+|\mathcal{A}^{(i)}(\vec{x})|
+is equal to the number of sets
+(
+L
+,
+R
+)
+∈
+𝒬
+i
+(L,R)\in\mathcal{Q}_{i}
+such
+that
+x
+→
+−
+1
+​
+(
+2
+)
+⊆
+L
+\vec{x}^{\,-1}(2)\subseteq L
+and
+x
+→
+−
+1
+​
+(
+0
+)
+∩
+R
+=
+∅
+\vec{x}^{\,-1}(0)\cap R=\emptyset
+. Since sets
+(
+L
+,
+R
+)
+∈
+𝒬
+i
+(L,R)\in\mathcal{Q}_{i}
+are drawn uniformly at random, the
+probability that
+(
+L
+,
+R
+)
+(L,R)
+is an
+A
+(
+i
+)
+A^{(i)}
+-certificate for
+x
+→
+\vec{x}
+is equal to
+𝐏
+⁡
+[
+(
+L
+,
+R
+)
+​
+is
+A
+(
+i
+)
+-certificate for
+​
+x
+→
+]
+=
+(
+(
+1
+−
+ε
+)
+​
+|
+U
+i
+|
+(
+λ
+−
+ε
+)
+​
+|
+U
+i
+|
+)
+​
+(
+|
+U
+i
+|
+λ
+​
+|
+U
+i
+|
+)
+−
+1
+⋅
+(
+(
+1
+/
+2
++
+ε
+)
+​
+|
+U
+i
+|
+λ
+​
+|
+U
+i
+|
+)
+​
+(
+|
+U
+i
+|
+λ
+​
+|
+U
+i
+|
+)
+−
+1
+.
+\mathbf{P}\left[(L,R)\text{ is $A^{(i)}$-certificate for }\vec{x}\right]=\binom{(1-\varepsilon)|U_{i}|}{(\lambda-\varepsilon)|U_{i}|}\binom{|U_{i}|}{\lambda|U_{i}|}^{-1}\cdot\binom{(1/2+\varepsilon)|U_{i}|}{\lambda|U_{i}|}\binom{|U_{i}|}{\lambda|U_{i}|}^{-1}.
+Here, the first term comes from dividing the number of ways to choose
+L
+L
+such that
+x
+→
+−
+1
+​
+(
+2
+)
+⊆
+L
+\vec{x}^{\,-1}(2)\subseteq L
+by the total number of ways to choose
+L
+L
+, and the second term comes from dividing the number of ways to choose
+R
+R
+such that
+x
+→
+−
+1
+​
+(
+0
+)
+∩
+R
+=
+∅
+\vec{x}^{\,-1}(0)\cap R=\emptyset
+from the total number of ways to choose
+R
+R
+.
+By linearity of expectation, applying Stirling’s approximation (
+2
+) to bound the binomials, we have:
+𝐄
+[
+|
+𝒜
+(
+i
+)
+​
+(
+x
+→
+)
+|
+]
+≤
+2
+(
+H
+⁡
+(
+λ
+−
+ε
+1
+−
+ε
+)
+​
+(
+1
+−
+ε
+)
++
+H
+⁡
+(
+λ
+1
+/
+2
++
+ε
+)
+​
+(
+1
+/
+2
++
+ε
+)
+−
+2
+​
+H
+​
+(
+λ
+)
++
+o
+⁡
+(
+1
+)
+)
+​
+|
+U
+i
+|
+⋅
+2
+K
+⋅
+|
+U
+i
+|
+,
+\mathop{{\bf E}\/}[|\mathcal{A}^{(i)}(\vec{x})|]\leq 2^{\left(H\left(\frac{\lambda-\varepsilon}{1-\varepsilon}\right)(1-\varepsilon)+H\left(\frac{\lambda}{1/2+\varepsilon}\right)(1/2+\varepsilon)-2H(\lambda)+o(1)\right)|U_{i}|}\cdot 2^{K\cdot|U_{i}|},
+which is precisely (
+34
+).
+Applying Markov’s inequality to (
+34
+) yields
+|
+𝒜
+(
+i
+)
+​
+(
+x
+→
+)
+|
+≥
+(
+6
+​
+ℓ
+)
+⋅
+2
+c
+0
+⋅
+|
+U
+i
+|
+|\mathcal{A}^{(i)}(\vec{x})|\geq(6\ell)\cdot 2^{c_{0}\cdot|U_{i}|}
+with probability at most
+1
+/
+(
+6
+​
+ℓ
+)
+1/(6\ell)
+, so it follows that
+|
+𝒜
+(
+i
+)
+​
+(
+a
+→
+U
+i
+)
+|
+≤
+(
+6
+​
+ℓ
+)
+⋅
+2
+c
+0
+⋅
+|
+U
+i
+|
+|\mathcal{A}^{(i)}(\vec{a}_{U_{i}})|\leq(6\ell)\cdot 2^{c_{0}\cdot|U_{i}|}
+for
+all
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+with probability at least
+5
+/
+6
+5/6
+by a union bound. A symmetric argument leads to the conclusion that
+|
+ℬ
+(
+i
+)
+​
+(
+b
+→
+U
+i
+)
+|
+≤
+(
+6
+​
+ℓ
+)
+⋅
+2
+c
+0
+⋅
+|
+U
+i
+|
+|\mathcal{B}^{(i)}(\vec{b}_{U_{i}})|\leq(6\ell)\cdot 2^{c_{0}\cdot|U_{i}|}
+for
+all
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+with probability at least
+5
+/
+6
+5/6
+. Taking a final union bound implies that
+both
+events occur with probability at least
+2
+/
+3
+2/3
+.
+∎
+8.4
+Algorithm for Compatibility Testing
+We are now ready to present our algorithm for compatibility testing and prove
+Theorem
+8.1
+(see Algorithm
+5
+). First, we draw a random family of partial certificates
+𝒬
+i
+\mathcal{Q}_{i}
+for each
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+as in (
+31
+). Next, we build auxiliary sets
+𝒜
+(
+i
+)
+​
+(
+x
+→
+)
+\mathcal{A}^{(i)}(\vec{x})
+and
+ℬ
+(
+i
+)
+​
+(
+x
+→
+)
+\mathcal{B}^{(i)}(\vec{x})
+for every
+i
+∈
+[
+ℓ
+]
+i\in[\ell]
+and every vector
+x
+→
+∈
+[
+0
+:
+2
+]
+U
+i
+\vec{x}\in[0:2]^{U_{i}}
+.
+The core of the algorithm is constructing a set that for every vector
+a
+→
+∈
+A
+\vec{a}\in A
+contains every tuple in
+𝒜
+(
+1
+)
+(
+a
+→
+U
+1
+)
+×
+⋯
+×
+𝒜
+(
+ℓ
+)
+(
+a
+→
+U
+ℓ
+)
+\mathcal{A}^{(1)}(\vec{a}_{U_{1}})\times\cdots\times\mathcal{A}^{(\ell)}(\vec{a}_{U_{\ell}})
+. If, during the enumeration of this set for a particular
+a
+→
+∈
+A
+\vec{a}\in A
+, we find that the set contains more than
+2
+c
+0
+​
+d
+2^{c_{0}d}
+elements, we break the loop and continue with the next element of
+A
+A
+. We do the same for every
+b
+→
+∈
+B
+\vec{b}\in B
+and check if the two lists contain a common element; if so, this is a compatibility certificate.
+function
+Compatibility
+​
+(
+A
+,
+B
+)
+\textsf{Compatibility}(A,B)
+:
+Randomly partition
+[
+d
+]
+=
+U
+1
+⊔
+…
+⊔
+U
+ℓ
+[d]=U_{1}\sqcup\ldots\sqcup U_{\ell}
+//
+see Sec
+8.1
+1
+Draw sets
+𝒬
+1
+,
+…
+,
+𝒬
+ℓ
+\mathcal{Q}_{1},\ldots,\mathcal{Q}_{\ell}
+//
+see (
+31
+)
+2
+Construct
+𝒜
+(
+1
+)
+​
+(
+x
+→
+)
+,
+…
+,
+𝒜
+(
+ℓ
+)
+​
+(
+x
+→
+)
+,
+ℬ
+(
+1
+)
+​
+(
+x
+→
+)
+,
+…
+,
+ℬ
+(
+ℓ
+)
+​
+(
+x
+→
+)
+\mathcal{A}^{(1)}(\vec{x}),\ldots,\mathcal{A}^{(\ell)}(\vec{x}),\mathcal{B}^{(1)}(\vec{x}),\ldots,\mathcal{B}^{(\ell)}(\vec{x})
+for all
+x
+→
+∈
+[
+0
+:
+2
+]
+U
+i
+\vec{x}\in[0:2]^{U_{i}}
+//
+see (
+32
+)
+3
+Let
+Candidates
+=
+{
+}
+\textsf{Candidates}=\{\}
+4
+foreach
+a
+→
+∈
+A
+\vec{a}\in A
+do
+5
+foreach
+C
+∈
+𝒜
+(
+1
+)
+(
+a
+→
+U
+1
+)
+×
+⋯
+×
+𝒜
+(
+ℓ
+)
+(
+a
+→
+U
+ℓ
+)
+C\in\mathcal{A}^{(1)}(\vec{a}_{U_{1}})\times\cdots\times\mathcal{A}^{(\ell)}(\vec{a}_{U_{\ell}})
+do
+//
+break if more than
+2
+c
+0
+⋅
+d
+2^{c_{0}\cdot d}
+6
+Add
+C
+C
+to
+Candidates
+.
+7
+foreach
+b
+→
+∈
+B
+\vec{b}\in B
+do
+8
+foreach
+C
+∈
+ℬ
+(
+1
+)
+(
+b
+→
+U
+1
+)
+×
+⋯
+×
+ℬ
+(
+ℓ
+)
+(
+b
+→
+U
+ℓ
+)
+C\in\mathcal{B}^{(1)}(\vec{b}_{U_{1}})\times\cdots\times\mathcal{B}^{(\ell)}(\vec{b}_{U_{\ell}})
+do
+//
+break if more than
+2
+c
+0
+⋅
+d
+2^{c_{0}\cdot d}
+9
+if
+C
+∈
+C\in
+Candidates
+then
+10
+return
+compatible pair
+11
+return
+no compatible pair
+Algorithm 5
+Outline of our algorithm for compatibility testing. Implementation details omitted from this figure are specified in the proof of
+Lemma
+8.3
+.
+Lemma 8.3
+(Correctness and Runtime of Algorithm
+5
+)
+.
+Given
+A
+,
+B
+⊆
+[
+0
+:
+2
+]
+d
+A,B\subseteq[0:2]^{d}
+satisfying the conditions in
+Theorem
+8.1
+, Algorithm
+5
+runs in time
+(
+2
+c
+0
+⋅
+d
+​
+(
+|
+A
+|
++
+|
+B
+|
+)
++
+12
+d
+/
+ℓ
+)
+⋅
+d
+O
+⁡
+(
+ℓ
+)
+\left(2^{c_{0}\cdot d}(|A|+|B|)+12^{d/\ell}\right)\cdot d^{O(\ell)}
+and recovers a compatible pair
+(
+a
+→
+,
+b
+→
+)
+∈
+A
+×
+B
+(\vec{a},\vec{b})\in A\times B
+such that
+a
+→
+−
+b
+→
+∈
+[
+−
+1
+:
+1
+]
+d
+\vec{a}-\vec{b}\in[-1:1]^{d}
+with probability
+d
+−
+O
+⁡
+(
+ℓ
+)
+d^{-O(\ell)}
+if such a pair exists.
+Proof.
+First, we consider runtime. Lines
+5
+and
+5
+take
+polynomial time. By
+Claim
+8.2
+, the construction of
+auxiliary lists in Line
+5
+takes
+O
+⁡
+(
+d
+⋅
+12
+d
+/
+ℓ
+)
+O(d\cdot 12^{d/\ell})
+time. Finally, the interior loops in Lines
+5
+and
+5
+repeat
+2
+c
+0
+⋅
+d
+​
+(
+|
+A
+|
++
+|
+B
+|
+)
+2^{c_{0}\cdot d}(|A|+|B|)
+times. The
+operations inside the interior loops take time
+O
+⁡
+(
+1
+)
+O(1)
+(adding
+C
+C
+to
+Candidates
+) and time
+O
+⁡
+(
+log
+⁡
+(
+2
+c
+0
+⋅
+d
+​
+(
+|
+A
+|
++
+|
+B
+|
+)
+)
+)
+=
+𝗉𝗈𝗅𝗒
+⁡
+(
+d
+)
+O(\log(2^{c_{0}\cdot d}(|A|+|B|)))={\mathsf{poly}}(d)
+(searching
+Candidates
+, if we sort
+Candidates
+ahead of time). Summing the runtime of each line completes the running time analysis.
+It remains to prove correctness. Because the algorithm never returns a false positive, it remains to show that the algorithm recovers a compatible pair
+(
+a
+→
+,
+b
+→
+)
+∈
+A
+×
+B
+(\vec{a},\vec{b})\in A\times B
+if one exists.
+Fix such a pair. By
+Observation
+8.1
+, with probability
+d
+−
+O
+⁡
+(
+ℓ
+)
+d^{-O(\ell)}
+(
+29
+) holds and the 0’s, 1’s, and 2’s in
+a
+→
+\vec{a}
+and
+b
+→
+\vec{b}
+are evenly distributed between
+U
+1
+,
+…
+,
+U
+ℓ
+U_{1},\ldots,U_{\ell}
+. Conditioned on this event, the number of tuples to check in Line
+5
+and Line
+5
+is at most
+2
+c
+0
+⋅
+d
+2^{c_{0}\cdot d}
+with probability
+2
+/
+3
+2/3
+by
+Lemma
+8.2
+. Likewise conditioned on (
+29
+), the set
+Candidates
+contains a compatibility certificate for
+a
+→
+\vec{a}
+and
+b
+→
+\vec{b}
+with probability
+2
+/
+3
+2/3
+by
+Lemma
+8.1
+. By a union bound, these events occur simultaneously with probability at least
+1
+/
+3
+1/3
+.
+If this happens, the set
+Candidates
+will contain every tuple
+C
+∈
+𝒜
+(
+1
+)
+(
+a
+→
+U
+1
+)
+×
+⋯
+×
+𝒜
+(
+ℓ
+)
+(
+a
+→
+U
+ℓ
+)
+C\in\mathcal{A}^{(1)}(\vec{a}_{U_{1}})\times\cdots\times\mathcal{A}^{(\ell)}(\vec{a}_{U_{\ell}})
+, including the valid compatibility certificate(s). This compatibility certificate is also present in
+ℬ
+(
+1
+)
+(
+a
+→
+U
+1
+)
+×
+⋯
+×
+ℬ
+(
+ℓ
+)
+(
+a
+→
+U
+ℓ
+)
+\mathcal{B}^{(1)}(\vec{a}_{U_{1}})\times\cdots\times\mathcal{B}^{(\ell)}(\vec{a}_{U_{\ell}})
+so it is recovered deterministically by the loop in Line
+5
+.
+∎
+Proof of
+Theorem
+8.1
+.
+Set
+λ
+=
+2
+​
+ε
+\lambda=2\varepsilon
+and
+K
+=
+H
+⁡
+(
+2
+​
+ε
+)
++
+o
+⁡
+(
+1
+)
+K=H(2\varepsilon)+o(1)
+and observe that the conditions required by
+Lemma
+8.1
+are satisfied. Substituting these values into (
+33
+) yields
+c
+0
+=
+(
+1
+−
+ε
+)
+​
+H
+​
+(
+ε
+1
+−
+ε
+)
++
+(
+1
+/
+2
++
+ε
+)
+⋅
+H
+⁡
+(
+2
+​
+ε
+1
+/
+2
++
+ε
+)
+−
+H
+⁡
+(
+2
+​
+ε
+)
++
+o
+⁡
+(
+1
+)
+.
+c_{0}=(1-\varepsilon)H\left(\frac{\varepsilon}{1-\varepsilon}\right)+(1/2+\varepsilon)\cdot H\left(\frac{2\varepsilon}{1/2+\varepsilon}\right)-H(2\varepsilon)+o(1).
+Finally, choosing a large constant value for
+ℓ
+\ell
+such as
+ℓ
+=
+100
+/
+c
+0
+\ell=100/c_{0}
+and substituting into the runtime given by
+Lemma
+8.3
+gives the final runtime claimed by
+Theorem
+8.1
+.
+∎
+References
+[ABH+22]
+A. Abboud, K. Bringmann, D. Hermelin, and D. Shabtay
+(2022)
+SETH-based Lower Bounds for Subset Sum and Bicriteria Path
+.
+ACM Transactions on Algorithms (TALG)
+18
+(
+1
+),
+pp. 1–22
+.
+Cited by:
+§1.3
+.
+[AHJ+22]
+J. Allcock, Y. Hamoudi, A. Joux, F. Klingelhöfer, and M. Santha
+(2022)
+Classical and Quantum Algorithms for Variants of Subset-Sum via Dynamic Programming
+.
+In
+30th Annual European Symposium on Algorithms, ESA 2022
+,
+LIPIcs
+, Vol.
+244
+,
+pp. 6:1–6:18
+.
+External Links:
+Link
+,
+Document
+Cited by:
+§1.2
+.
+[AKK+13]
+P. Austrin, P. Kaski, M. Koivisto, and J. Määttä
+(2013)
+Space-Time Tradeoffs for Subset Sum: An Improved Worst Case Algorithm
+.
+In
+International Colloquium on Automata, Languages, and Programming
+,
+pp. 45–56
+.
+Cited by:
+§1.3
+.
+[AKK+15]
+P. Austrin, P. Kaski, M. Koivisto, and J. Nederlof
+(2015)
+Subset Sum in the Absence of Concentration
+.
+In
+32nd International Symposium on Theoretical Aspects of Computer Science (STACS 2015)
+,
+Cited by:
+§1.3
+.
+[AKK+16]
+P. Austrin, M. Koivisto, P. Kaski, and J. Nederlof
+(2016)
+Dense Subset Sum May Be the Hardest
+.
+33rd Symposium on Theoretical Aspects of Computer Science (STACS 2016)
+,
+pp. 13:1–13:14
+.
+Cited by:
+§1.3
+,
+§4
+.
+[BGN+18]
+N. Bansal, S. Garg, J. Nederlof, and N. Vyas
+(2018)
+Faster Space-Efficient Algorithms for Subset Sum, k-Sum, and Related Problems
+.
+SIAM J. Comput.
+47
+(
+5
+),
+pp. 1755–1777
+.
+External Links:
+Link
+,
+Document
+Cited by:
+§1.3
+.
+[BCJ11]
+A. Becker, J. Coron, and A. Joux
+(2011)
+Improved generic algorithms for hard knapsacks
+.
+In
+Annual International Conference on the Theory and Applications of Cryptographic Techniques
+,
+pp. 364–385
+.
+Cited by:
+§1
+,
+§2.2
+,
+§2.3
+,
+§2.4
+.
+[BCK+24]
+T. Belova, N. Chukhin, A. S. Kulikov, and I. Mihajlin
+(2024)
+Improved Space Bounds for Subset Sum
+.
+In
+32nd Annual European Symposium on Algorithms, ESA 2024
+,
+LIPIcs
+, Vol.
+308
+,
+pp. 21:1–21:17
+.
+External Links:
+Link
+,
+Document
+Cited by:
+§1.3
+.
+[BBS+20]
+X. Bonnetain, R. Bricout, A. Schrottenloher, and Y. Shen
+(2020)
+Improved Classical and Quantum Algorithms for Subset-Sum
+.
+In
+International Conference on the Theory and Application of Cryptology and Information Security
+,
+pp. 633–666
+.
+Cited by:
+§1
+.
+[BRI17]
+K. Bringmann
+(2017)
+A Near-linear Pseudopolynomial Time Algorithm for Subset Sum
+.
+In
+Proceedings of the Twenty-Eighth Annual ACM-SIAM Symposium on Discrete
+Algorithms, SODA 2017
+,
+Cited by:
+§1.3
+.
+[CJW+22a]
+L. Chen, C. Jin, R. R. Williams, and H. Wu
+(2022)
+Truly Low-Space Element Distinctness and Subset Sum via Pseudorandom Hash Functions
+.
+In
+Proceedings of the 2022 ACM-SIAM Symposium on Discrete Algorithms,
+SODA 2022
+,
+pp. 1661–1678
+.
+External Links:
+Link
+,
+Document
+Cited by:
+§1.3
+.
+[CJR+22b]
+X. Chen, Y. Jin, T. Randolph, and R. A. Servedio
+(2022)
+Average-Case Subset Balancing Problems
+.
+In
+Proceedings of the 2022 Annual ACM-SIAM Symposium on Discrete Algorithms (SODA)
+,
+pp. 743–778
+.
+Cited by:
+§1.1
+,
+§1.1
+,
+§1.2
+,
+§2.1
+,
+§2.3
+,
+§4
+.
+[CJR+23]
+X. Chen, Y. Jin, T. Randolph, and R. A. Servedio
+(2023)
+Subset Sum in Time
+2
+n
+/
+2
+/
+p
+​
+o
+​
+l
+​
+y
+​
+(
+n
+)
+2^{n/2}/poly(n)
+.
+In
+Proceedings of the Twenty-Seventh International Conference on Randomization and Computation (RANDOM 2023)
+,
+pp. 765–782
+.
+Cited by:
+§1
+.
+[CDL+16]
+M. Cygan, H. Dell, D. Lokshtanov, D. Marx, J. Nederlof, Y. Okamoto, R. Paturi, S. Saurabh, and M. Wahlström
+(2016)
+On Problems as Hard as CNF-SAT
+.
+ACM Trans. Algorithms
+12
+(
+3
+),
+pp. 41:1–41:24
+.
+External Links:
+Link
+,
+Document
+Cited by:
+§1.3
+.
+[DDK+12]
+I. Dinur, O. Dunkelman, N. Keller, and A. Shamir
+(2012)
+Efficient Dissection of Composite Problems, with Applications to Cryptanalysis, Knapsacks, and Combinatorial Search Problems
+.
+In
+Annual Cryptology Conference
+,
+pp. 719–740
+.
+Cited by:
+§1.3
+.
+[FRI86]
+A. M. Frieze
+(1986)
+On the Lagarias-Odlyzko Algorithm for the Subset Sum Problem
+.
+SIAM J. Comput.
+15
+(
+2
+),
+pp. 536–539
+.
+External Links:
+Link
+,
+Document
+Cited by:
+§1.3
+.
+[HS74]
+E. Horowitz and S. Sahni
+(1974)
+Computing Partitions with Applications to the Knapsack Problem
+.
+Journal of the ACM (JACM)
+21
+(
+2
+),
+pp. 277–292
+.
+Cited by:
+§1
+.
+[HJ10]
+N. Howgrave-Graham and A. Joux
+(2010)
+New Generic Algorithms for Hard Knapsacks
+.
+In
+Annual International Conference on the Theory and Applications of Cryptographic Techniques
+,
+pp. 235–256
+.
+Cited by:
+§1
+,
+§2.1
+,
+§2.2
+,
+§2.3
+,
+§2.4
+.
+[JWZ25]
+C. Jin, R. Williams, and S. Zhang
+(2025)
+New algorithms for pigeonhole equal subset sum
+.
+In
+33rd Annual European Symposium on Algorithms (ESA 2025)
+,
+pp. 86–1
+.
+Cited by:
+§1.2
+.
+[JW19]
+C. Jin and H. Wu
+(2019)
+A Simple Near-Linear Pseudopolynomial Time Randomized Algorithm for Subset Sum
+.
+In
+2nd Symposium on Simplicity in Algorithms, SOSA@SODA 2019
+,
+pp. 17:1–17:6
+.
+Cited by:
+§1.3
+.
+[JW24]
+C. Jin and H. Wu
+(2024)
+A Faster Algorithm for Pigeonhole Equal Sums
+.
+In
+51st International Colloquium on Automata, Languages, and Programming,
+ICALP 2024
+,
+LIPIcs
+, Vol.
+297
+,
+pp. 94:1–94:11
+.
+External Links:
+Link
+,
+Document
+Cited by:
+§1.2
+.
+[JW24]
+A. Joux and K. Węgrzycki
+(2024)
+Improving Lagarias-Odlyzko Algorithm For Average-Case Subset Sum: Modular Arithmetic Approach
+.
+CoRR
+abs/2408.16108
+.
+External Links:
+Link
+,
+Document
+,
+2408.16108
+Cited by:
+§1.3
+.
+[KX17]
+K. Koiliaris and C. Xu
+(2017)
+A Faster Pseudopolynomial Time Algorithm for Subset Sum
+.
+In
+Proceedings of the Twenty-Eighth Annual ACM-SIAM Symposium on Discrete
+Algorithms, SODA 2017
+,
+Cited by:
+§1.3
+.
+[LO85]
+J. C. Lagarias and A. M. Odlyzko
+(1985)
+Solving Low-Density Subset Sum Problems
+.
+J. ACM
+32
+(
+1
+),
+pp. 229–246
+.
+External Links:
+Link
+,
+Document
+Cited by:
+§1.3
+.
+[LN10]
+D. Lokshtanov and J. Nederlof
+(2010)
+Saving Space by Algebraization
+.
+In
+Proceedings of the 42nd ACM Symposium on Theory of Computing, STOC 2010
+,
+pp. 321–330
+.
+Cited by:
+§1.3
+.
+[MH78]
+R. C. Merkle and M. E. Hellman
+(1978)
+Hiding information and signatures in trapdoor knapsacks
+.
+IEEE Trans. Information Theory
+24
+(
+5
+),
+pp. 525–530
+.
+Cited by:
+§1.3
+.
+[MNP+19]
+M. Mucha, J. Nederlof, J. Pawlewicz, and K. Węgrzycki
+(2019)
+Equal-Subset-Sum Faster Than the Meet-in-the-Middle
+.
+In
+27th Annual European Symposium on Algorithms, ESA 2019
+,
+LIPIcs
+, Vol.
+144
+,
+pp. 73:1–73:16
+.
+External Links:
+Link
+,
+Document
+Cited by:
+§1.2
+,
+§1.2
+,
+§1.2
+,
+§1
+,
+§2.1
+,
+§2.1
+,
+§2.1
+,
+§2.3
+,
+§2.4
+,
+§2.5
+,
+§4
+,
+Lemma 7.1
+.
+[Nvv12]
+J. Nederlof, E. J. van Leeuwen, and R. van der Zwaan
+(2012)
+Reducing a Target Interval to a Few Exact Queries
+.
+In
+Mathematical Foundations of Computer Science 2012 - 37th International
+Symposium, MFCS 2012
+,
+Lecture Notes in Computer Science
+, Vol.
+7464
+,
+pp. 718–727
+.
+External Links:
+Link
+,
+Document
+Cited by:
+footnote 1
+.
+[NW21]
+J. Nederlof and K. Węgrzycki
+(2021)
+Improving Schroeppel and Shamir’s Algorithm for Subset Sum via Orthogonal Vectors
+.
+In
+STOC ’21: 53rd Annual ACM SIGACT Symposium on Theory of Computing
+,
+pp. 1670–1683
+.
+Cited by:
+7th item
+,
+§1.2
+,
+§1.3
+,
+§2.5
+,
+§4
+,
+§8
+,
+footnote 8
+.
+[RW24]
+T. Randolph and K. Węgrzycki
+(2024)
+Parameterized Algorithms on Integer Sets with Small Doubling: Integer Programming, Subset Sum and k-SUM
+.
+In
+32nd Annual European Symposium on Algorithms (ESA 2024)
+,
+Cited by:
+§1.3
+.
+[RAN24]
+T. Randolph
+(2024)
+Exact and parameterized algorithms for subset sum problems
+.
+Ph.D. Thesis
+,
+Columbia University
+.
+Cited by:
+§3
+.
+Appendix A
+Proof of
+Lemma
+3.1
+The prime hashing technique rests on the following lemma that follows from the prime number theorem:
+Lemma A.1
+(Folklore)
+.
+For any sufficiently large positive integer
+r
+r
+and any positive integer
+z
+z
+, a prime
+𝐩
+∼
+[
+r
+:
+2
+r
+]
+\bm{p}\sim[r:2r]
+divides
+z
+z
+with probability at most
+log
+2
+⁡
+(
+z
+)
+/
+r
+\log_{2}(z)/r
+.
+This lemma bounds the expected number of collisions observed when we hash any set of integers over a sufficiently large, randomly chosen prime. Recall our prime distribution lemma:
+See
+3.1
+Proof.
+Let
+G
+G
+,
+Y
+Y
+,
+p
+m
+​
+a
+​
+x
+p_{max}
+,
+𝒑
+\bm{p}
+, and
+𝑹
+\bm{R}
+be defined as in the lemma statement, and define the set of
+colliding pairs
+𝑷
+≔
+{
+(
+g
+1
+,
+g
+2
+)
+∈
+G
+×
+G
+|
+g
+1
+≠
+g
+2
+,
+𝒑
+divides
+|
+g
+1
+−
+g
+2
+|
+}
+.
+\bm{P}\coloneqq\left\{(g_{1},g_{2})\in G\times G\;|\;g_{1}\neq g_{2},\bm{p}\text{ divides }|g_{1}-g_{2}|\right\}.
+By
+Lemma
+A.1
+, we have that for any pair of distinct elements
+(
+g
+1
+,
+g
+2
+)
+∈
+G
+×
+G
+(g_{1},g_{2})\in G\times G
+,
+𝐏𝐫
+𝒑
+​
+prime
+∼
+[
+p
+m
+​
+a
+​
+x
+:
+2
+p
+m
+​
+a
+​
+x
+]
+[
+𝒑
+divides
+|
+g
+1
+−
+g
+2
+|
+]
+≤
+log
+2
+⁡
+(
+|
+g
+1
+−
+g
+2
+|
+)
+p
+m
+​
+a
+​
+x
+≤
+log
+2
+⁡
+(
+diam
+⁡
+(
+G
+)
+)
+p
+m
+​
+a
+​
+x
+<
+n
+c
+p
+m
+​
+a
+​
+x
+.
+\mathop{{\bf Pr}\/}_{\begin{subarray}{c}\bm{p}\text{ prime}\\
+\sim[p_{max}\;:\;2p_{max}]\end{subarray}}\left[\bm{p}\;\text{divides}\;|g_{1}-g_{2}|\right]\leq\frac{\log_{2}(|g_{1}-g_{2}|)}{p_{max}}\leq\frac{\log_{2}(\mathrm{diam}(G))}{p_{max}}<\frac{n^{c}}{p_{max}}.
+Thus we have
+𝐄
+𝒑
+[
+|
+𝑷
+|
+]
+=
+O
+⁡
+(
+|
+G
+|
+2
+)
+⋅
+n
+c
+p
+m
+​
+a
+​
+x
+\mathop{{\bf E}\/}_{\bm{p}}[|\bm{P}|]=O(|G|^{2})\cdot\frac{n^{c}}{p_{max}}
+by linearity of expectation. Applying Markov’s inequality and letting the
+O
+O
+-notation absorb the constant, we conclude that
+|
+𝑷
+|
+=
+O
+⁡
+(
+|
+G
+|
+2
+)
+⋅
+n
+c
+p
+m
+​
+a
+​
+x
+|\bm{P}|=O(|G|^{2})\cdot\frac{n^{c}}{p_{max}}
+(35)
+with constant probability. We proceed to prove that if very few residue classes contain many elements of
+G
+(
+mod
+𝒑
+)
+G\pmod{\bm{p}}
+, (
+35
+) does
+not
+hold. Thus many residue classes will contain many elements of
+G
+(
+mod
+𝒑
+)
+G\pmod{\bm{p}}
+with constant probability.
+Claim A.1
+.
+Suppose that the set of residue classes
+𝑹
+′
+≔
+{
+r
+∈
+[
+𝒑
+]
+|
+|
+{
+g
+∈
+G
+|
+g
+≡
+r
+(
+mod
+𝒑
+)
+}
+|
+≥
+|
+G
+|
+4
+​
+p
+m
+​
+a
+​
+x
+}
+\bm{R}^{\prime}\coloneqq\left\{r\in[\bm{p}]\;\middle|\;\left|\left\{g\in G\;\middle|\;g\equiv r\pmod{\bm{p}}\right\}\right|\geq\frac{|G|}{4p_{max}}\right\}
+has cardinality
+|
+𝐑
+′
+|
+≤
+2
+​
+p
+m
+​
+a
+​
+x
+⋅
+n
+−
+(
+c
++
+1
+)
+|\bm{R}^{\prime}|\leq 2p_{max}\cdot n^{-(c+1)}
+. Then (
+35
+) does not hold.
+Proof: Suppose that
+|
+𝑹
+′
+|
+|\bm{R}^{\prime}|
+is bounded as in the claim statement. Under this assumption, the residue classes in the set
+[
+𝒑
+]
+∖
+𝑹
+′
+[\bm{p}]\setminus\bm{R}^{\prime}
+contain fewer than
+𝒑
+⋅
+|
+G
+|
+4
+​
+p
+m
+​
+a
+​
+x
+≤
+2
+​
+p
+m
+​
+a
+​
+x
+⋅
+|
+G
+|
+4
+​
+p
+m
+​
+a
+​
+x
+=
+|
+G
+|
+2
+\bm{p}\cdot\frac{|G|}{4p_{max}}\leq 2p_{max}\cdot\frac{|G|}{4p_{max}}=\frac{|G|}{2}
+(36)
+elements of
+G
+G
+, so at least
+|
+G
+|
+/
+2
+|G|/2
+elements fall into residue classes in
+𝑹
+′
+\bm{R}^{\prime}
+.
+We will lower bound the number of colliding pairs in
+𝑹
+′
+\bm{R}^{\prime}
+, which is the cardinality of the set
+𝑷
+′
+≔
+{
+(
+g
+1
+,
+g
+2
+)
+∈
+G
+×
+G
+|
+g
+1
+≠
+g
+2
+,
+𝒑
+divides
+|
+g
+1
+−
+g
+2
+|
+,
+and
+g
+1
+,
+g
+2
+(
+mod
+𝒑
+)
+∈
+𝑹
+′
+}
+.
+\bm{P}^{\prime}\coloneqq\{(g_{1},g_{2})\in G\times G\;|\;g_{1}\neq g_{2},\;\bm{p}\text{ divides }|g_{1}-g_{2}|,\text{ and }g_{1},g_{2}\;(\bmod{\;\bm{p}})\in\bm{R}^{\prime}\}.
+We observe that
+|
+𝑷
+′
+|
+|\bm{P}^{\prime}|
+approximates the squared
+L
+2
+L_{2}
+-norm of the frequency vector that counts the distribution of the elements of
+G
+G
+over the residue classes in
+𝑹
+′
+\bm{R}^{\prime}
+. Specifically, letting
+G
+⁡
+[
+r
+]
+G[r]
+denote
+{
+g
+∈
+G
+|
+g
+=
+r
+(
+mod
+𝒑
+)
+}
+\{g\in G\;|\;g=r\pmod{\bm{p}}\}
+, we have
+|
+𝑷
+′
+|
+=
+∑
+r
+∈
+𝑹
+′
+|
+G
+⁡
+[
+r
+]
+|
+⋅
+(
+|
+G
+⁡
+[
+r
+]
+|
+−
+1
+)
+2
+>
+(
+∑
+r
+∈
+𝑹
+′
+|
+G
+⁡
+[
+r
+]
+|
+2
+2
+)
+−
+|
+G
+|
+,
+|\bm{P}^{\prime}|=\sum_{r\in\bm{R}^{\prime}}\frac{|G[r]|\cdot(|G[r]|-1)}{2}>\left(\sum_{r\in\bm{R}^{\prime}}\frac{|G[r]|^{2}}{2}\right)-|G|,
+(37)
+where we use
+|
+G
+|
+|G|
+as an easy upper bound on
+∑
+r
+∈
+𝑹
+′
+|
+G
+⁡
+[
+r
+]
+|
+\sum_{r\in\bm{R}^{\prime}}|G[r]|
+. Thus we can lower bound
+|
+𝑷
+′
+|
+|\bm{P}^{\prime}|
+using the following standard fact that follows from the Cauchy-Schwarz Inequality: for any
+d
+d
+-dimensional vector
+v
+→
+\vec{v}
+,
+∑
+i
+∈
+[
+d
+]
+v
+i
+2
+=
+‖
+v
+→
+‖
+2
+2
+≥
+‖
+v
+→
+‖
+1
+2
+d
+.
+\sum_{i\in[d]}v_{i}^{2}=||\vec{v}||_{2}^{2}\geq\frac{||\vec{v}||_{1}^{2}}{d}.
+(38)
+Applying (
+38
+) to (
+37
+) using the fact that
+∑
+r
+∈
+𝑹
+′
+|
+G
+⁡
+[
+r
+]
+|
+≥
+|
+G
+|
+/
+2
+\sum_{r\in\bm{R}^{\prime}}|G[r]|\geq|G|/2
+yields
+|
+𝑷
+′
+|
+≥
+(
+|
+G
+|
+/
+2
+)
+2
+2
+⋅
+|
+𝑹
+′
+|
+−
+|
+G
+|
+=
+Ω
+⁡
+(
+|
+G
+|
+2
+|
+𝑹
+′
+|
+)
+≥
+Ω
+⁡
+(
+|
+G
+|
+2
+)
+⋅
+n
+c
++
+1
+p
+m
+​
+a
+​
+x
+.
+|\bm{P}^{\prime}|\geq\frac{(|G|/2)^{2}}{2\cdot|\bm{R}^{\prime}|}-|G|=\Omega\left(\frac{|G|^{2}}{|\bm{R}^{\prime}|}\right)\geq\Omega(|G|^{2})\cdot\frac{n^{c+1}}{p_{max}}.
+However, this contradicts (
+35
+) as
+𝑷
+′
+⊆
+𝑷
+\bm{P}^{\prime}\subseteq\bm{P}
+.
+■
+\blacksquare
+Because (
+35
+) holds with constant probability, we can conclude that the set of residue classes
+𝑹
+′
+≔
+{
+r
+∈
+[
+𝒑
+]
+|
+|
+{
+g
+∈
+G
+|
+g
+≡
+r
+(
+mod
+𝒑
+)
+}
+|
+≥
+|
+G
+|
+4
+​
+p
+m
+​
+a
+​
+x
+}
+\bm{R}^{\prime}\coloneqq\left\{r\in[\bm{p}]\;\middle|\;\left|\left\{g\in G\;\middle|\;g\equiv r\pmod{\bm{p}}\right\}\right|\geq\frac{|G|}{4p_{max}}\right\}
+has cardinality at least
+2
+​
+p
+m
+​
+a
+​
+x
+⋅
+n
+−
+(
+c
++
+1
+)
+2p_{max}\cdot n^{-(c+1)}
+with constant probability by
+Claim
+A.1
+.
+Condition on this event and consider the distribution of the elements of the set
+Y
+⊇
+G
+Y\supseteq G
+over the residue classes in
+𝑹
+′
+\bm{R}^{\prime}
+. The size of the set
+{
+y
+∈
+Y
+|
+y
+≡
+𝒓
+(
+mod
+𝒑
+)
+}
+\{y\in Y\;|\;y\equiv\bm{r}\pmod{\bm{p}}\}
+is trivially at most
+|
+Y
+|
+|
+𝑹
+′
+|
+<
+|
+Y
+|
+2
+​
+p
+m
+​
+a
+​
+x
+⋅
+n
+c
++
+1
+\frac{|Y|}{|\bm{R}^{\prime}|}<\frac{|Y|}{2p_{max}}\cdot n^{c+1}
+in expectation over the choice of a random residue
+𝒓
+∈
+𝑹
+′
+\bm{r}\in\bm{R}^{\prime}
+, and at most twice this value for at least half of the elements of
+𝑹
+′
+\bm{R}^{\prime}
+by Markov’s inequality.
+Thus the subset of residue classes that contain at least
+|
+G
+|
+/
+4
+​
+p
+m
+​
+a
+​
+x
+|G|/4p_{max}
+elements of
+G
+G
+and at most
+n
+c
++
+1
+⋅
+|
+Y
+|
+/
+p
+m
+​
+a
+​
+x
+n^{c+1}\cdot|Y|/p_{max}
+elements of
+Y
+Y
+has cardinality at least
+|
+𝑹
+′
+|
+2
+>
+p
+m
+​
+a
+​
+x
+n
+c
++
+1
+\frac{|\bm{R}^{\prime}|}{2}>\frac{p_{max}}{n^{c+1}}
+if (
+35
+) holds by
+Claim
+A.1
+, which happens with constant probability over the choice of
+𝒑
+\bm{p}
+. This is exactly the set
+𝑹
+\bm{R}
+. This completes the proof of
+Lemma
+3.1
+.
+∎
+Appendix B
+Proof of
+Claim
+B.1
+Claim B.1
+.
+For every positive integer
+d
+d
+there exists a constant
+γ
+>
+0
+\gamma>0
+, depending only on
+d
+d
+, such that
+(
+d
++
+1
+)
+n
+(
+d
++
+1
+)
+2
+​
+n
+3
+​
+(
+2
+​
+d
++
+1
+)
+​
+(
+d
+!
+)
+4
+​
+n
+3
+​
+(
+2
+​
+d
++
+1
+)
+⋅
+2
+γ
+​
+n
+<
+(
+2
+​
+d
++
+1
+)
+n
+/
+2
+.
+\frac{(d+1)^{n}}{(d+1)^{\frac{2n}{3(2d+1)}}(d!)^{\frac{4n}{3(2d+1)}}}\cdot 2^{\gamma n}<(2d+1)^{n/2}.
+Proof: Recall that our goal is to prove that the quantity
+(
+d
++
+1
+)
+n
+(
+d
++
+1
+)
+2
+​
+n
+3
+​
+(
+2
+​
+d
++
+1
+)
+​
+(
+d
+!
+)
+4
+​
+n
+3
+​
+(
+2
+​
+d
++
+1
+)
+\frac{(d+1)^{n}}{(d+1)^{\frac{2n}{3(2d+1)}}(d!)^{\frac{4n}{3(2d+1)}}}
+(39)
+is smaller than
+(
+2
+​
+d
++
+1
+)
+n
+/
+2
+(2d+1)^{n/2}
+by a function exponential in
+n
+n
+for any integer
+d
+≥
+1
+d\geq 1
+.
+We begin by rewriting the denominator of (
+39
+) in terms of the factorial
+(
+d
++
+1
+)
+!
+(d+1)!
+and factoring out the common
+n
+n
+in the exponent:
+(
+d
++
+1
+)
+n
+(
+d
++
+1
+)
+2
+​
+n
+3
+​
+(
+2
+​
+d
++
+1
+)
+​
+(
+d
+!
+)
+4
+​
+n
+3
+​
+(
+2
+​
+d
++
+1
+)
+=
+(
+d
++
+1
+(
+(
+d
++
+1
+)
+!
+)
+2
+3
+​
+(
+2
+​
+d
++
+1
+)
+​
+(
+(
+d
++
+1
+)
+!
+d
++
+1
+)
+2
+3
+​
+(
+2
+​
+d
++
+1
+)
+)
+n
+\frac{(d+1)^{n}}{(d+1)^{\frac{2n}{3(2d+1)}}(d!)^{\frac{4n}{3(2d+1)}}}=\left(\frac{d+1}{((d+1)!)^{\frac{2}{3(2d+1)}}\left(\frac{(d+1)!}{d+1}\right)^{\frac{2}{3(2d+1)}}}\right)^{n}
+Next, we recall the standard fact that
+(
+k
+e
+)
+k
+≤
+k
+!
+\left(\frac{k}{e}\right)^{k}\leq k!
+for positive integer
+k
+k
+, which is a variant of Stirling’s formula. Setting
+k
+=
+d
++
+1
+k=d+1
+and applying the inequality to (
+39
+), we have that for
+d
+≥
+0
+d\geq 0
+,
+(
+d
++
+1
+(
+(
+d
++
+1
+)
+!
+)
+2
+3
+​
+(
+2
+​
+d
++
+1
+)
+​
+(
+(
+d
++
+1
+)
+!
+d
++
+1
+)
+2
+3
+​
+(
+2
+​
+d
++
+1
+)
+)
+n
+\displaystyle\left(\frac{d+1}{((d+1)!)^{\frac{2}{3(2d+1)}}\left(\frac{(d+1)!}{d+1}\right)^{\frac{2}{3(2d+1)}}}\right)^{n}
+≤
+(
+d
++
+1
+(
+d
++
+1
+e
+)
+(
+d
++
+1
+)
+⋅
+2
+3
+​
+(
+2
+​
+d
++
+1
+)
+​
+(
+d
++
+1
+e
+)
+(
+d
++
+1
+)
+⋅
+2
+3
+​
+(
+2
+​
+d
++
+1
+)
+​
+(
+d
++
+1
+)
+−
+2
+3
+​
+(
+2
+​
+d
++
+1
+)
+)
+n
+\displaystyle\leq\left(\frac{d+1}{(\frac{d+1}{e})^{\frac{(d+1)\cdot 2}{3(2d+1)}}(\frac{d+1}{e})^{\frac{(d+1)\cdot 2}{3(2d+1)}}(d+1)^{-\frac{2}{3(2d+1)}}}\right)^{n}
+=
+(
+(
+d
++
+1
+)
+⋅
+e
+4
+​
+d
++
+4
+6
+​
+d
++
+3
+(
+d
++
+1
+)
+4
+​
+d
++
+2
+6
+​
+d
++
+3
+)
+n
+\displaystyle=\left(\frac{(d+1)\cdot e^{\frac{4d+4}{6d+3}}}{(d+1)^{\frac{4d+2}{6d+3}}}\right)^{n}
+=
+(
+(
+d
++
+1
+)
+1
+/
+3
+⋅
+e
+4
+​
+d
++
+4
+6
+​
+d
++
+3
+)
+n
+\displaystyle=\left((d+1)^{1/3}\cdot e^{\frac{4d+4}{6d+3}}\right)^{n}
+Compare the base of this exponential function with that of the Meet-in-the-Middle runtime, which is
+(
+2
+​
+d
++
+1
+)
+1
+/
+2
+(2d+1)^{1/2}
+. The derivative of
+(
+d
++
+1
+)
+1
+/
+3
+⋅
+e
+4
+​
+d
++
+4
+6
+​
+d
++
+3
+(d+1)^{1/3}\cdot e^{\frac{4d+4}{6d+3}}
+with respect to
+d
+d
+is strictly less than the derivative of
+(
+2
+​
+d
++
+1
+)
+1
+/
+2
+(2d+1)^{1/2}
+with respect to
+d
+d
+, and the two quantities are equal at
+d
+≈
+8.88
+d\approx 8.88
+. Thus we conclude that the lemma holds for integers
+d
+≥
+9
+d\geq 9
+.
+It remains to show that the lemma holds for integers
+1
+≤
+d
+<
+9
+1\leq d<9
+, which is easily verified. The table below lists calculated upper bounds on (
+39
+) for
+1
+≤
+d
+<
+9
+1\leq d<9
+.
+d
+d
+(
+39
+)
+(
+2
+​
+d
++
+1
+)
+n
+/
+2
+(2d+1)^{n/2}
+1
+<
+1.715
+n
+<1.715^{n}
+>
+1.732
+n
+>1.732^{n}
+2
+<
+2.154
+n
+<2.154^{n}
+>
+2.236
+n
+>2.236^{n}
+3
+<
+2.492
+n
+<2.492^{n}
+>
+2.645
+n
+>2.645^{n}
+4
+<
+2.772
+n
+<2.772^{n}
+3
+n
+3^{n}
+5
+<
+3.013
+n
+<3.013^{n}
+>
+3.316
+n
+>3.316^{n}
+6
+<
+3.227
+n
+<3.227^{n}
+>
+3.360
+>3.360
+7
+<
+3.419
+n
+<3.419^{n}
+>
+3.872
+n
+>3.872^{n}
+8
+<
+3.595
+n
+<3.595^{n}
+>
+4.123
+n
+>4.123^{n}
+■
+\blacksquare
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue"
+(
+)
+button, located in the page header.
+Tip:
+You can select the relevant text first, to include it in your report.
+Our team has already identified
+the following issues
+. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a
+list of packages that need conversion
+, and welcome
+developer contributions
+.
+We gratefully acknowledge support from
+        our
+major funders
+,
+member institutions
+,
+,
+        and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status
+(opens in new tab)
+Major funding support from
