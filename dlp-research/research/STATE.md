@@ -39,15 +39,19 @@ handles. Root refreshed live capability catalogue and checked native status.
 - Factory Fable5.1 FAILED: public-information role returned only
   'Internal error: Agent error'; task terminal, no pending child runs or
   research result. Original task ID retained below. No claim that it succeeded.
-- Native Sol /root/h034_c4_implementation LIVE explicit fallback for that
+- Native Sol /root/h034_c4_implementation COMPLETED explicit fallback for that
   public-information question, with original brief and known evaluator/recovery
-  limitations. Distinct from its completed detector role; not a Fable result.
+  limitations. Two initial constructions returned: literal componentwise
+  half-product batching and a dense scalar-polynomial sieve; no gain claim.
+  Astra independent review COMPLETED. H046-information-fallback-screen.md
+  records representation-specific costs, not arbitrary batching/decoder bounds.
+  Distinct from completed detector work; not a Fable result.
 - Grok4.7 RUNNING: changed noncanonical search geometry and useful-event laws.
 - Factory Opus5.5 RUNNING: primary mathematical public operators with concrete
   ordinary-curve recovery bridges. Distinct provider, not a Claude API retry.
 At launch three native were active including root and three T3 tasks were
-accepted RUNNING. Native evaluator/detector roles completed; Sol public-information
-fallback now live. Fable terminal failed; Grok and Factory Opus retain their
+accepted RUNNING. Native evaluator/detector and public-information fallback roles
+completed. Fable terminal failed; Grok and Factory Opus retain their
 original live handles. All read-only,
 no experiments/imports/scripts/children; root owns integration. Independent
 initial proposals withheld. H034 cap unchanged, stopped routes not reopened.
@@ -70,8 +74,12 @@ unchanged formal artifacts, not the paper evaluator; no Lean claim or experiment
 added. Root/Astra paper derivation and source checks are the recorded evidence.
 Detector validation: ./scripts/check.sh > /tmp/ecdlp-h046-detector-check.log
 2>&1 exit0,366 existing audits. No new formal claim or experiment. Root/Sol/Astra
-checked the paper identities and costs; three original T3 constructions still
-live, with no duplicate launches. This continuation is progress, not a blocker.
+checked the paper identities and costs. Three T3 roles were live at that
+checkpoint; Fable subsequently failed as recorded above. No duplicate launches.
+Information fallback validation: ./scripts/check.sh >
+/tmp/ecdlp-h046-information-check.log 2>&1 exit0,366 existing audits. Root/Astra
+checked componentwise zero-divisor dispatch, scalar gcd roots, sign translation
+and dense nonzero-shift materialization. No new Lean claim or experiment.
 
 ## H045 completed independent constructions
 
