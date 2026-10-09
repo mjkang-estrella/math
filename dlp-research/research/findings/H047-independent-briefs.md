@@ -114,7 +114,10 @@ checked the divisor/projection calculation and primary group-law reference.
 Root also proposed H047-mixed-radix-success.md; Astra separately checked its
 two-long-list moments, caps and extraction. Sol's independent storage pool has
 returned and Astra's review is complete in H047-storage-recovery-screens.md.
-Sol now constructs a concrete compatible long-progression filter reporter.
+Sol's concrete compatible long-progression filter reporter is now complete
+and independently reviewed by Astra, with root checking the circuit and costs.
+H047-compact-filter-reporter.md retains the division-free algorithm and softO(M)
+upper invoice; it matches direct enumeration's exponent and supplies no gain.
 No independent initial outputs were shared
 before delivery. T3 Factory Opus/Grok remain live under their original handles.
 

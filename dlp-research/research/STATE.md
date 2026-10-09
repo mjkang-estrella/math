@@ -30,10 +30,12 @@ Native Sol /root/h034_c4_implementation COMPLETED initial storage/recovery
 pool: residue-index retrieval and binary filter descent returned without a
 gain premise. Astra independent review COMPLETED; H047-storage-recovery-screens.md
 retains exact intervals, signs, seed scope and nonconstant true-path costs.
-Sol now RUNNING a
-distinct concrete filter-reporter construction on the accepted mixed-radix
-long progressions. Two native active including root, within4; Astra is
-available for independent review when the remaining constructions return.
+Sol's distinct compact-filter reporter COMPLETED; Astra independent algebra/
+extraction review COMPLETED. H047-compact-filter-reporter.md gives the actual
+division-free quotient-ring circuit, exception dispatch, indices and paid
+upper invoice. It remains softO(M), matching direct enumeration's exponent,
+so no improved solver or experiment follows. Native roles are now complete
+and available for independent review of the two remaining T3 constructions.
 
 T3 tasks, all initially accepted RUNNING after refreshed capability discovery:
 - acpRegistry_factory_droid / claude-opus-5-5: H047 shared public-signal constructions.
@@ -80,6 +82,12 @@ was independently reviewed; residual projection was independently derived by
 root from the proposer and primary divisor/group reference. Formal checks do
 not certify these paper results. Previous goal turn was progress; this turn
 revalidated live T3 handles and added substantive accepted paper evidence.
+Compact-reporter validation: ./scripts/check.sh from dlp-research >
+/tmp/ecdlp-h047-reporter-check.log 2>&1 passed exit0,366 existing audits.
+No new formal claim or executable experiment; the reporter is a reviewed paper
+algorithm with an unimproved upper invoice. Previous goal turn was a verified
+wait, not a blocker; the original Factory/Grok handles were again confirmed
+RUNNING before this construction was integrated. No duplicate launch.
 
 ## H046 reviewed constructions
 
