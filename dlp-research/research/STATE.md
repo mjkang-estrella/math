@@ -62,8 +62,15 @@ recovered from backing-thread position35; terminal summary alone was a plan
 footer. H047-walk-grok-raw.md preserves Grok's full terminal report. Both are
 UNACCEPTED. Root flags eigenline signs, unsupported evaluator/decoder closure,
 walk reflection labels, missing restart costs and inconsistent arithmetic ratios.
-Native Astra /root/h007_additive_relations reviews information mathematics;
-native Sol /root/h034_c4_implementation reviews cost/prior art, both RUNNING.
+Native Astra /root/h007_additive_relations information mathematics and native
+Sol /root/h034_c4_implementation cost/prior-art reviews COMPLETED. Root checked
+their corrected H047-eigenline-residue-disposition.md: exact conditional
+product transfer, quartic nonvanishing condition, sextic observable vanishing
+case, and restricted finite-integer-order dimension screen. No universal
+decoder/evaluator closure or fused-arithmetic lower bound is adopted.
+Both native agents now RUNNING distinct short algebra/cost checks of root's
+sibling-min schedule, which delays the ordinate until the chosen sign and
+may correct the raw field invoice without establishing a solver gain.
 Independent Factory Fable walk review accepted RUNNING after capability refresh:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-walk-algebra-review-fable-20261009-r1`.
 Three reviewers plus root; native3 including root, T3 one live. Review results
