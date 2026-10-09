@@ -22,15 +22,24 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 All H039 initial proposal tasks terminal; information review terminal. The
 conditional fixed-known-log-table/rho hybrid remains an unverified ideal cost
-region, not a solver gain. Two distinct read-only followups are now RUNNING:
-- Native Sol `/root/h034_c4_implementation`: matched total memory, collision
+region, not a solver gain. Two distinct read-only followups:
+- Native Sol `/root/h034_c4_implementation`: COMPLETED matched total memory, collision
   detection, DP delay, verification and strongest applicable baseline costs.
-- Claude Opus5.5: primary prior art and single-target versus amortized costs.
+- Claude Opus5.5: RUNNING primary prior art and single-target versus amortized costs.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-hybrid-priorart-opus-20261008-r1`.
   Fresh live catalogue supports this exact target; delegate returned running.
 Original cost model and objections supplied: b=beta sqrt(q), ideal survival
 exp[-(t²+2bt)/q], cost cb beta+(cw+P)g(beta), g=e^(beta²)sqrt(pi)/2 erfc(beta).
 No-table cost cw g(0), not (cw+P)g(0); extra lookup has startup penalty P g(0).
+Native Sol followup produced H039-hybrid-memory-gate.md (root algebra checked):
+when full H019 storage fits, its ideal field-arithmetic survivor dominates this
+hybrid for r=(cw+P)/cb>=3/2. This excludes neither total-runtime reversals nor
+restricted-memory openings. A conditional DP scale can make reporting/storage
+overhead lower order; it does not prove the required actual walk law. Final
+review completed; conditions retained, including expected versus hard capacity
+and fixed-beta square-root memory. Prior-art task remains live.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h039-hybrid-memory-check.log 2>&1
+exit0,366 existing audits; no new Lean/Audit claims.
 Self-collision detection memory and other costs remain missing. No universal
 lookup lower bound or general hybrid rejection accepted. Prior art review must
 identify actual primary sources and the strongest matched-memory comparator.
