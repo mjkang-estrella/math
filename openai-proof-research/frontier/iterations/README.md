@@ -24,7 +24,7 @@ After R006, the user requested: “Come up with new one - keep make a progress.�
 |---|---|---|
 | Prime-predecessor parity | Returned a complete candidate for full Liouville cancellation and joint parity/PD independence. A fresh independent proof audit is running; no acceptance yet. | [Candidate](i05-parity-pd.md); [audit brief and ID](iteration5-parity-pd-r2-task.json) |
 | Simultaneous primitive roots | Initial report finds B2/B3 routine and isolates a cubic-Frobenius reservoir. Fresh independent audit and proof attempt for that reservoir are running. | [Report](i05-joint-artin.md); [next brief and ID](iteration6-cubic-reservoir-task.json) |
-| Fresh cross-field search | Screen at least three distinct bridges, then deeply prove the strongest substantial candidate outside the closed/stalled lanes. | [Brief and ID](iteration5-crossfield-task.json) |
+| Fresh cross-field search | Returned a Gaussian polynomial multiple-convergence candidate after rejecting two other bridges. Independent proof and novelty review is running; the final proof uses classical inputs, so corpus dependence is absent. | [Candidate](i05-crossfield.md); [audit brief and ID](iteration5-crossfield-r2-task.json) |
 
 The [parent screening note](i05-parent-screen.md) records a routine squarefree-conditioning consequence of R006 and the exact limitation of the source sign interface. Its 180 finite CRT checks pass, including 19 forced-zero cases. This is a baseline, not an accepted new finding. Each candidate must receive fresh independent validation before promotion. No pending task is duplicated, and no further bounded-multiplier operator variants are launched.
 
@@ -33,6 +33,12 @@ The [parent screening note](i05-parent-screen.md) records a routine squarefree-c
 The candidate puts full Liouville on one physical endpoint and tracks the fixed selected-prime signs in each comparison pattern. It uses a nonempty long-prime tuple, classical Liouville distribution in ordinary progressions at low frequencies, and a coefficient-independent sparse Gram estimate at high frequencies. Its proposed extraction yields equal parity densities jointly with PD(1); finite square exclusions would then give joint squarefree independence and equal Möbius-sign densities. This is a new proof attempt, not a substitution into the source's band-limited sign theorem.
 
 The parent reproduced the complete finite output and verified all 81 artifact hashes, 60 pinned manuscript files and six successful external downloads. The only changed input is this shared index. The [preliminary review](../sources/i05_parity_pd/parent-preliminary-review.md) records source-contract spot checks and their limits. A fresh independent analytic audit is running with the exact vulnerable steps specified in its brief. Decision: commit the candidate as a research checkpoint; do not promote it or increase the substantial-finding count before that review is integrated.
+
+### Cross-field candidate integration — 2026-10-08
+
+The scout rejected a known spectral thin-tree implication and a false entropy-to-subgaussian upgrade. Its positive candidate proves polynomial multiple pointwise convergence for common commuting Gaussian actions, including equal-degree polynomial maps, by conditioning independent Gaussian copies, controlling Wick contractions through spectral measures, and applying a classical single-function variation theorem. The final proof does not require the accepted corpus; this scope limitation is explicit.
+
+The parent reproduced the full finite output, verified 107 upstream files, eight literature downloads and eight artifact hashes, and checked the actual variation theorem at p=2. The [preliminary review](../sources/i05_crossfield/parent-preliminary-review.md) records the scope. Decision: preserve the proposed proof and commission a fresh independent proof/prior-art review, with special emphasis on whether older Gaussian decoupling already gives it and whether it meets the nonroutine contribution gate. No accepted theorem or substantial-finding count is added. The parity audit and cubic-reservoir work continue independently.
 
 ## Iterations 02–04 — substantial result accepted
 
