@@ -21,11 +21,13 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 - I27: the [completed geometric report](iterations/i27-geometric-analysis-discovery.md) develops endpoint-varifold arguments and explicit countermodels, but rectifiability, original-metric Einstein stability and spatial-Lp Ricci-flow continuation remain unproved. [Parent verification](experiments/i27-parent-verification.json) passes; no count increment.
 
-- I28: [fresh algebra discovery](iterations/iteration28-algebra-discovery-task.json) screens structural targets outside the parked Saxl and unimodality routes.
+- I28: the [completed algebra report](iterations/i28-algebra-discovery.md) supplies a technical filtered-persistence argument, but an obstructed nonconical ring remains unconstructed. Ulam and involutive-division-ring screens retain specific obstructions. [Parent verification](experiments/i28-parent-verification.json) passes as a gap record; no count increment.
 
 - I29: [common-matroid-base entropy](iterations/iteration29-common-base-entropy-task.json) investigates a distinct prescribed-mean target; no transfer from R011 is assumed.
 
 - I30: [focused original-metric Einstein stability](iterations/iteration30-einstein-metric-stability-task.json) attacks I27’s separate time-zero metric gap, retaining the normalized-flow counterexample.
+
+- I31: [nonconical no-MCM realization](iterations/iteration31-nonconical-no-mcm-task.json) independently checks I28’s persistence argument and attempts the missing construction with its full associated-graded and nonisomorphism obligations.
 
 These records include active tasks, completed gap reports, and R011 acceptance. The four-finding pause checkpoint remains a historical snapshot.
 
@@ -192,3 +194,11 @@ The selected Euclidean stationary-varifold target is full codimension-one rectif
 The Einstein screen distinguishes positive-time flow limits from original metric distances and rejects universal normalized-flow convergence by unequal products of spheres. The spatial-Lp Ricci-flow extension screen isolates a scalar-square loss normalized by a shrinking core scale; vanishing rescaled Lp norm alone does not make it negligible. These are technical deductions and obstruction tests, not new substantial findings.
 
 The parent read the full report and reproduced all four commands. Verification passes for 157 sealed artifacts, nine frozen inputs, 96 pinned files, 209 contracts, 25 source passages, ten primary passages and 20 primary retrievals, plus all 9,340 cached texts. Exact diagnostics reproduce the rational frequency, stress, product, scalar-scaling and reflection identities. Only shared-ledger drift is reported. [Parent verification](experiments/i27-parent-verification.json). I30 now develops the original-metric stability question independently.
+
+## I28 algebra gap integration
+
+The completed report develops three distinct targets. The dimension-independent same-space finite-window correction target is blocked by the classical clock-and-shift index. The filtered-persistence proof constructs a finite Rees model without assuming degree-one generation, then applies the accepted Cartier-divisor balance and variance lemmas. Its explicit hypersurface example tests the mechanism but fails the numerical obstruction; a genuinely nonconical obstructed ring remains unconstructed. A good module filtration need not preserve the MCM property, and high-order equation perturbations need not preserve the full initial ideal.
+
+For the involutive Kurosh target, tensoring with the opposite algebra introduces explicit zero divisors, while the source’s degree-11 lifting and a generic degree-16 cyclic replacement fail first-kind-involution requirements. No impossibility of the full target is claimed. These are technical results and gaps, not an additional substantial finding.
+
+Parent reproduction passes for 109 sealed artifacts, 35 selected pinned sources, 57 exact source contracts and all 9,340 cached texts. Diagnostics reproduce 35,000 Weyl actions, 15,625 cocycle identities, 441 module-filtration checks, 341 Rees shifts and the weighted-chart, syzygy, tensor and graph checks. Only shared-ledger drift is reported. [Parent verification](experiments/i28-parent-verification.json) records the limits; I31 now targets the actual nonconical realization and independently audits the technical persistence proof before reuse. Count remains five of ten.
