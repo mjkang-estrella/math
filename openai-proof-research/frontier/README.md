@@ -21,9 +21,9 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Paused at the fourth finding: [10-finding ledger](TEN-FINDINGS.md); 4 accepted, 6 remaining.** Iteration 07 opens arithmetic, geometric-analysis and structural-mathematics tracks. Each candidate needs a complete new bridge and separate proof and significance reviews before it enters the count.
+**Resumed on 2026-10-09: [10-finding ledger](TEN-FINDINGS.md); 4 accepted, 6 remaining.** The user requested continuation to ten and publication after verification. Each candidate needs a complete new bridge and separate proof and significance reviews before it enters the count. Current work covers I14 significance review, completion of the I15 author handoff, and I17 fresh discovery.
 
-**Fourth substantial deduction accepted:** [R010](findings/R010-complex-modes-PD-independence.md) proves joint uniformity of Omega(p-1) modulo every fixed m and independence from the PD(1) ranked-factor law in fixed reduced progressions. Both independent reviews pass, and parent checks reproduce. The common nonzero principal model and its signed recombination supply the additional argument beyond parity. Research stops at four as requested; the ten-finding target remains incomplete.
+**Fourth substantial deduction accepted:** [R010](findings/R010-complex-modes-PD-independence.md) proves joint uniformity of Omega(p-1) modulo every fixed m and independence from the PD(1) ranked-factor law in fixed reduced progressions. Both independent reviews pass, and parent checks reproduce. The common nonzero principal model and its signed recombination supply the additional argument beyond parity. The pause at four ended with the user's explicit resumption on 2026-10-09; the ten-finding target remains incomplete.
 
 The [sharp spectral-width candidate](iterations/i14-sharp-spectral-width.md) passes [independent proof review](reviews/i14-sharp-spectral-width-r2.md), with parent reproduction of the formal identities and complete source/artifact seal. It proposes the coefficient range below six with endpoint failure. A separate significance review remains necessary; it is not accepted or counted.
 

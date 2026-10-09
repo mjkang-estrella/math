@@ -1,6 +1,8 @@
 # OpenAI mathematics research
 
-**Research paused at [4 accepted substantial findings](frontier/TEN-FINDINGS.md), out of the original target of 10.** The fourth, [R010 — factor-count residues and PD independence](frontier/findings/R010-complex-modes-PD-independence.md), has passed independent proof and significance reviews plus parent verification. The ten-finding objective remains incomplete; remaining work is preserved for resumption.
+[Public repository and commit mapping](PUBLICATION.md). Only this research directory is published; historical local commit identifiers map to filtered public commits.
+
+**Research resumed on 2026-10-09 toward [10 substantial findings](frontier/TEN-FINDINGS.md): 4 accepted, 6 remaining.** The fourth, [R010 — factor-count residues and PD independence](frontier/findings/R010-complex-modes-PD-independence.md), has passed independent proof and significance reviews plus parent verification. The current round reviews spectral graph-width significance, completes the interrupted ternary topology proposal, and screens fresh directions. Candidates do not enter the count before all acceptance gates pass.
 
 **[R009 — variable-channel reconstruction capacity](frontier/findings/R009-variable-channel-capacity.md).** A weighted nonlinear capacity characterizes four-state reconstruction on locally finite trees with arbitrary known edge channels, including perfect transmission. Independent proof and prior-art reviews pass; the parent reproduced their checks. The degree-free extension belongs to the same finding. Worldwide priority remains unverified.
 
