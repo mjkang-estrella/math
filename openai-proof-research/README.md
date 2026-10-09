@@ -1,4 +1,8 @@
-# Low-hanging consequences of the OpenAI mathematics corpus
+# OpenAI mathematics research
+
+**Active direction: [MathDB frontier research](frontier/README.md).** The user clarified that routine corollaries do not meet the objective. The new phase targets substantive new proof ideas for significant named open problems. The ten deductions below are retained as the first-pass research record, not presented as satisfying that stronger novelty requirement.
+
+## First-pass consequences
 
 **Ten deductions have complete proofs and independent T3-agent reviews. Each finding has its own commit.** They use the OpenAI theorems as true premises, exactly as requested. No claim of first discovery in the mathematical literature is established, and no proof-assistant verification was run.
 
