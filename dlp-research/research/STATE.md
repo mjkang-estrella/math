@@ -20,8 +20,10 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H035 shared arithmetic/hash mechanism (paper only)
 
-H034 cost-source audit COMPLETED/acknowledged; root admits the single frozen
-diagnostic under H034-run-admission.md. No execution as of this pre-run record.
+H034 sole admitted diagnostic executed afterc89ebda; exactly1M-event cap.
+Seven sampled candidates completed, allseed-only and allmore modeled work than
+the named primary. No candidate leaf search reached; lastcase setup incomplete.
+Evidence in H034-initial-diagnostic-result.md. No retry or newrun admitted.
 Meanwhile a distinct leading-work mechanism emerged from independent Sol and
 root proposals. H035-shared-hash-fusion-screen.md records exact-uniform scaled
 coordinates and a square-only isomorphism alternative. Root corrected a needless
@@ -30,19 +32,35 @@ by H019 and the candidate; complete-work improvement remains NONE.
 
 Native Sol's full ideation report COMPLETED: fusion survives algebra; row
 locality transfers to baseline, literal quadratic detectors have quadratic work.
-Astra's final two-field refined-algebra review is pending. New primary prior-art/competent-cheaper-hash critique RUNNING:
+Astra's final refined-algebra/artifact review is now RUNNING via explicit
+followup_task. Root caught a process mistake: messages sent after the previous
+terminal answer did not launch work; earlier RUNNING wording was stale. The
+actual task inventory showed completed, and only then was this followup started.
+No result is attributed to that idle interval. Primary prior-art
+critique COMPLETED/acknowledged; H035-priorart-qualifications.md rejects its
+class-dependent sign claim of full-affine uniformity and universal baseline
+dominance. New6A shifted-square side-key mechanism remains under final review.
+Completed task:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h035-hash-fusion-priorart-opus-20261008-r1`.
 All paper roles read-only, no experiments/imports/edits/children. The H034
 source hash and protocol are unchanged. No new implementation admitted.
 
 ## H034 finite sparse-pair contract and remaining cost gate
 
-LATEST after4721715: source and both independent audits COMPLETED. The single
-frozen diagnostic is now ADMITTED under H034-run-admission.md; no execution yet. Separate Sol implementer froze experiments/H034/c4_probe.py at SHA256
+LATEST afterc89ebda: single frozen diagnostic EXECUTED and cap consumed.
+Artifact initial_results.json hash
+158f562be204de13a1bd1d6785f869a8e9c38d7a3b40b5778fc05aadb4b42f89.
+Exit2/censored_inconclusive at exactly1M metered events, duringq8053 seed19
+setupvertex32/98. Seven sampled candidate cases and26controls completed, all
+candidate successes seed-only; candidate modeled work exceedsprimary eachtime.
+Public checks and212completed regular subtotals passed, but ZEROcandidate_leaf
+components. The proposed leafsearch and collisionlaw were NOT tested.
+H034-initial-diagnostic-result.md records full scope, corrected reviewer
+predictions, cost table, capacity match and partial inverse. No *_unrecoverable
+outcome. Native independent artifact reading requested; no replays permitted.
+No retry/resume/tuning. Source hash remains
 9ea5b055446f8b4f3b4f6b393ddf5569b1d366d003123f2f93a54b6814c21ba3;
-root independently measured the same bytes. No import, numerical run, PRNG
-sampling, warmup or selftest. Static AST/compile checks only. Source is an
-UNVALIDATED implementation checkpoint, not an accepted solver result.
+protocol remains585fd2af0fefb448a3cb85ab2041aea1b604f30fd9aab87efa3cbca7d69d0812.
 
 Independent source reviews (read-only; no executions/edits/children):
 - Native Astra /root/h007_additive_relations COMPLETED: scoped GO, no
@@ -59,11 +77,11 @@ prefix degree bound Delta=O(sqrt(q)/n). Review corrected root's finite
 supersaturation condition from S>=K to S>=2K. Uniform error separation and
 same exact blinded-fallback mean justify the stopping bridge in this model.
 No arbitrary-graph/ECDLP lower bound or whole-work win. No source change/run.
-Source construction remains COMPLETED/frozen. Two separate read-only PAPER
-roles now RUNNING without source changes, executions or children:
-- /root/h034_c4_implementation (Sol): independent leading-cost arithmetic/
+Source construction remains COMPLETED/frozen. Separate read-only PAPER roles
+(no source changes, solver executions or children):
+- /root/h034_c4_implementation (Sol) COMPLETED: independent leading-cost arithmetic/
   representation/schedule mechanisms, explicit baseline portability and falsifiers.
-- /root/h007_additive_relations (Astra): review root's affine-hash/isomorphism
+- /root/h007_additive_relations (Astra) RUNNING: review root's affine-hash/isomorphism
   fusion hypothesis, including its restricted square-multiplier hash family.
 Both preserve current source; no new implementation or experiment admitted.
 The root hypothesis may benefit every comparator equally and lose its apparent
@@ -75,8 +93,8 @@ as source admission. Protocolv2 hash remains
 H034-source-checkpoint.md records draft corrections and conservative source-only
 stage estimates. Aggregate1M events need not cover all cases: q8053 setup alone
 has a480k allowance; these are unverified envelopes, not measured work or a
-promise of completion. The one capped command remains contingent on source
-reviews and explicit root admission, now granted without changing budget, seeds or fixtures.
+promise of completion. The one capped command was admitted and executed without changing budget,
+seeds or fixtures. Its cap is consumed; no continuation run is permitted.
 
 Protocolv2 retains full-range sampling including0, known tiny fixtures, paid
 setup/seed/leaf/fallback sheets, a1M-event55s/outer60s aggregate cap, and six
@@ -106,8 +124,8 @@ verified complete-work improvement NONE. Collision and model premises survived
 qualified reviews, with useful corrections to seed, batching and duplicate-form
 costs. Primary uncertainties remain complete finite costs, backend remainder,
 leading integer/memory traffic and strongest comparator. Next decisive step:
-execute the sole admitted diagnostic and interpret its qualified evidence.
-No numerical run, Lean/Audit change, generic infrastructure or live target work.
+independently review the retained artifact and finish H035 prior-art/full-cost
+comparison. No further run, Lean/Audit change, generic infrastructure or live target work.
 
 Validation: `./scripts/check.sh > /tmp/ecdlp-h034-source-checkpoint-check.log 2>&1`
 exit0,366 existing audits. This did not import or execute the new diagnostic.
