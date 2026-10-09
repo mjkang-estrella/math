@@ -1,0 +1,13 @@
+# Parent integration — cubic reservoir remains open
+
+Date: 2026-10-08. Research checkpoint; no new accepted finding.
+
+The parent read the complete independent i05 audit and i06 report. Propositions 1–3 pass: the index-dividing-two and index-dividing-three deductions have the stated restrictions, and the cubic-good condition for {2,−6} has relative density 4/9 in every fixed compatible reduced progression. The algebraic criterion and reciprocity realization are attributed to Moree–Stevenhagen and Anwar–Pappalardi. The parent opened both primary papers; Anwar–Pappalardi's Lemma 5 uses progressions of Eisenstein prime elements, not rational-prime progressions.
+
+The new report supplies proofs of a full-height scalar Hecke trace estimate (SL) and cancellation of a related rough-composite contribution (CC). The parent checked the accepted QRH manuscript's actual `thm:main` and `lem:logarithmic-control`: their field and height scope support the stated scalar approach. These two new lemmas have not received a separate independent proof audit. They remain supplied research arguments and are not promoted as a new substantial theorem.
+
+The decisive unresolved estimate is RP in i06 §5, or the weaker signed moment MT-lower in §2. It must control a cubic trace jointly with a near-one prime factor of p−1, with enough uniformity in the leading constant across every later fixed exclusion modulus. Ordinary scalar cancellation and separate Chebotarev/PD densities do not prove it. A positive lower bound depending arbitrarily on the modulus cannot absorb the global index-prime tail. R008's parity theorem is about the predecessor's Liouville sign and does not by itself control the required prime Frobenius trace.
+
+Parent reproduction passes: the original i05 results and the full independent results file match byte-for-byte, including the eight CRT unions and 48 finite reservoir diagnostics. The independent script prints only a subset of its full JSON file; the printed summary was compared separately. All 52 recorded source files, including 42 pinned manuscripts, and 26 artifact hashes match. The only changed input is the shared iteration index. See `parent-verification.json`. The finite runs at theta=1/4 and 1/10 do not test the required theta<10^-6 regime.
+
+Decision: retain the passing earlier audit and new partial analytic progress, with RP/MT/CR explicitly unproved. Park this lane at that concrete obligation while R008's final novelty assessment proceeds. No claim of simultaneous primitive roots for {2,−6}, no universal obstruction to future proof, and no increase in the substantial-discovery count follows from this round.
