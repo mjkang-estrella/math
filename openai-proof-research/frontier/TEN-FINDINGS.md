@@ -9,7 +9,8 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 - I14: [final significance review](reviews/i14-spectral-width-novelty-r3.md) completed: **TECHNICAL ONLY**, proof PASS retained. Parent verification agrees with its reduction to known local estimates and the source's global construction. No count increment.
 - I15: the [independent proof review](reviews/i15-odd-order-topology-r2.md) gives full-theorem **PASS**. [Parent integration](iterations/i15-proof-integration.md) preserves two interpretation clarifications. A [fresh significance review](iterations/iteration15-odd-order-topology-novelty-r3-task.json) is running; no count increment.
 - I17: [independent proof review](reviews/i17-six-point-ramsey-r2.md) gives **PASS** with no repairs and supplies a simpler two-factor polynomial certificate. [Parent integration](iterations/i17-proof-integration.md) retains that simplification; [separate significance review](iterations/iteration17-six-point-ramsey-novelty-r3-task.json) is running.
-- I18: a [joint prime-neighbor task](iterations/iteration18-joint-prime-neighbors-task.json) seeks a new joint factor-size law for p−1 and p+1 over primes, requiring a proved correlation or prime-extraction step beyond marginal laws.
+- I18: the [joint prime-neighbor report](iterations/i18-joint-prime-neighbors.md) is complete as a scoped gap report. Restricted classical laws and a presieve input are proved; the full mixed prime discrepancy remains unproved. No count increment.
+- I19: [fresh structural discovery](iterations/iteration19-fresh-structural-discovery-task.json) is running across other corpus targets while I15/I17 significance reviews proceed.
 
 These are live task launch records, not accepted findings. The four-finding pause checkpoint remains a historical snapshot.
 
@@ -81,6 +82,12 @@ The [completed report](iterations/i17-fresh-discovery.md) screens four distinct 
 The parent read the full report and actual source statements, reproduced 140 exact rational certificate checks, 140 diagonal determinant checks and 72 series equations through order seven, and verified 146 sealed artifacts, 85 pinned blobs, 199 pinned statement contracts and 16 primary-literature contracts. [Parent handoff verification](experiments/i17-parent-handoff-verification.json) is diagnostic and provenance evidence, not a proof PASS. The completed [independent proof review](reviews/i17-six-point-ramsey-r2.md) passes without repairs. It also proves a simpler universal certificate by multiplying two triple-interpolation factors. Parent reproduction verifies all 174 sealed artifacts, 155 inputs, both author diagnostics and the independent symbolic checks. [Integration](iterations/i17-proof-integration.md) preserves the simpler proof for the [separate significance review](iterations/iteration17-six-point-ramsey-novelty-r3-task.json), now running. The count remains four.
 
 The other screened routes are retained without acceptance: a flip-sensitive Saxl refinement lacks a compatible multiplicity-space argument; the literal subset-sum phase-energy estimator has exponential relative variance on a specified family; a two-temperature SK limit requires a new coupled transform estimate. None is claimed to solve its broader target.
+
+## Iteration 18: joint prime-neighbor gap recorded
+
+The [completed report](iterations/i18-joint-prime-neighbors.md) proves a classical mixed factorial law when combined selected logarithmic mass is less than 1/2, and an elementary ordinary presieve remainder below combined mass 1. Neither proves the full joint PD law for p−1 and p+1. The report identifies the exact missing aggregate prime-progression discrepancy (MI), the failure of endpoint invariance for the extra shifted statistic, and the shared-label symmetrization obstruction. These diagnose specific attempted proofs; they do not prove the target false or inaccessible from the corpus.
+
+The parent read all 286 lines and reproduced the diagnostics and integrity verifier: 142 sealed artifacts, 103 pinned files, 20 frozen inputs, four primary literature files, 4,608 CRT/presieve systems, 768 prime-residue systems, 38 valuation identities and 27 divisor-sum identities, with zero failures. [Parent verification](experiments/i18-parent-verification.json). This is a reusable gap record, without an independent positive-proof acceptance or count increment. The [I19 task](iterations/iteration19-fresh-structural-discovery-task.json) opens a new constructive search across distinct structural targets.
 
 ## Continuation rules
 
