@@ -1,5 +1,9 @@
 # A Lean 4 specification for discrete-log research
 
+**Research stopped by user:** existing work has been collected; explicit user
+resumption is required. Start with [research/HANDOVER.md](research/HANDOVER.md)
+for conclusions, evidence boundaries and the final shutdown checkpoint.
+
 This project defines what a verified faster discrete-log algorithm would have
 to establish. The Lean code does **not** discover an algorithm automatically
 or demonstrate a cryptographic break. The user has authorized a separate agent

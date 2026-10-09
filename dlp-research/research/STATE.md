@@ -1,10 +1,27 @@
 # Main-objective research checkpoint
 
-Status: **active, algorithm-first research** (2026-10-09 UTC / 2026-10-08 local). Existing unbounded
-goal thread `01a118a2-f8f0-7751-90bd-ddeb86a90ada` remains open. No duplicate
+Status: **STOPPED BY USER — handover complete, pause requested**
+(2026-10-09 UTC / 2026-10-08 local). Authoritative handover:
+[HANDOVER.md](HANDOVER.md). No new research, hypotheses, experiments, children,
+retries or review rounds. Existing goal
+`01a118a2-f8f0-7751-90bd-ddeb86a90ada` will be paused as the final administrative
+action after the handover commit, not marked
+complete. All older RUNNING/continue/next-wave text below is historical and
+does not authorize continuation. Explicit user resumption is required. No duplicate
 coordinator, scheduler, push, publication or third-party targeting.
 
 ## Persistent user steering
+
+Latest user stop supersedes the historical rolling ideation rules below.
+Native Astra's current H047 review and native Sol's already launched H048
+partial ideation finished. H047-sibling-min-correction.md preserves completed
+native checks; H048-stop-boundary-result.md is independently UNVERIFIED.
+Factory Fable's H047 review completed and its final report was recovered.
+H047-walk-fable-review-raw.md preserves unverified stochastic assertions;
+H047-sibling-min-correction.md distinguishes accepted arithmetic and scope.
+Native active children0; owned live T3 children0; scheduler tasks0; no matching
+research process. Final check.sh passed exit0,366 existing audits. No further
+work will be assigned. The separate low-hanging-proofs thread is untouched.
 
 Credible ECDLP complexity and matched complete work are the metrics. Earlier
 word/query/decoder infrastructure priority was drift; preserve it without further
@@ -18,7 +35,7 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H047 live independent constructions
+## H047 constructions (historical activity, now stopped)
 
 H046 closed at79ac5d0. Best supported exponent1/2; verified full-work improvement
 NONE. H047-independent-briefs.md records ranked concrete questions and exact
@@ -68,13 +85,14 @@ their corrected H047-eigenline-residue-disposition.md: exact conditional
 product transfer, quartic nonvanishing condition, sextic observable vanishing
 case, and restricted finite-integer-order dimension screen. No universal
 decoder/evaluator closure or fused-arithmetic lower bound is adopted.
-Both native agents now RUNNING distinct short algebra/cost checks of root's
-sibling-min schedule, which delays the ordinate until the chosen sign and
-may correct the raw field invoice without establishing a solver gain.
-Independent Factory Fable walk review accepted RUNNING after capability refresh:
+Native Astra sibling-min algebra/dynamics and native Sol cost checks COMPLETED.
+Delayed ordinate gives7M+S+(I-3M)/K; final Fable alternative6M+2S+(I-3M)/K
+also lacks a useful stopping law. Sol's H048 partial ideation COMPLETED at the
+stop boundary and is independently UNVERIFIED. No other H048 lens launched.
+Independent Factory Fable walk review COMPLETED, no pending runs:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-walk-algebra-review-fable-20261009-r1`.
-Three reviewers plus root; native3 including root, T3 one live. Review results
-are pending, not a research blocker. No raw global negative claim is adopted.
+All current reviews collected; active children0. No raw global negative claim
+or unverified probabilistic gain ceiling is adopted. No new work is authorized.
 Returned-report checkpoint validation: ./scripts/check.sh >
 /tmp/ecdlp-h047-returned-reviews-check.log 2>&1 passed exit0. No formal
 source changes, new claims, experimental runs or experimental cap changes.
@@ -91,7 +109,7 @@ conclusion-changing step is a concrete construction with a competitive full
 invoice, then independent review before any new synthetic experiment. The
 rectangle and projection screens are limited negative results, and the
 mixed-radix success law supplies compatible input structure, not a faster solver.
-Existing unbounded goal active; yield to live children.
+Historical next-step description only; user stop overrides it. No live children.
 Launch changes process records only; H046 project check passed exit0 and
 formal artifacts remain unchanged. Compiling them is not a research result.
 Rectangle-screen validation: ./scripts/check.sh from dlp-research >

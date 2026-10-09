@@ -1,5 +1,12 @@
 # Algorithm-first ECDLP research loop
 
+**USER STOP, 2026-10-09 UTC:** finish only work already running at the stop
+instruction, collect it, and hand over. Do not start new research rounds,
+hypotheses, experiments, children, retries or review rounds. After handover,
+the existing goal is paused until the user explicitly resumes it. This
+instruction supersedes every continuation/slot-filling rule below. See
+[research/HANDOVER.md](research/HANDOVER.md) and [STATE](research/STATE.md).
+
 The main objective is discovering and testing more efficient elliptic-curve
 discrete-log algorithms. The research metric is a changed credible complexity
 or matched end-to-end work estimate, not theorem counts, commits, encodings,

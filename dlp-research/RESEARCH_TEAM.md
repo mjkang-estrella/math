@@ -1,5 +1,12 @@
 # Research task operating instructions
 
+**USER STOP, 2026-10-09 UTC:** no new delegated work, research, retries or
+followup review rounds. Collect only already running work within its original
+scope and budget, mark unchecked output as unchecked, and stop. The coordinator
+must prepare [research/HANDOVER.md](research/HANDOVER.md) and pause the existing
+goal. Explicit user resumption is required before the historical policies below
+authorize more work. Other research threads are outside this coordinator's scope.
+
 User authorization, 2026-10-07: run a separate research-loop task; allow
 parallel subagents using GPT Astra/Sol, Claude Opus 5.5, Grok 4.7, and Factory's
 Claude Fable and Opus; investigate alternatives, verify hypotheses in depth,
