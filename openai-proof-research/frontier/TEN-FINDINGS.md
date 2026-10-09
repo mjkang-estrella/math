@@ -27,6 +27,8 @@ The independent [parent probability/quantum screen](iterations/i07-parent-probab
 
 The [geometric-analysis report](iterations/i07-analysis.md) is integrated as a negative/reduction checkpoint. The restricted inverse W¹,¹ transfer is routine; a smooth compression example blocks automatic higher inverse-energy control. General cut-locus separation and the required energy-controlled approximation remain unproved. Parent verification passes for 60 pinned sources, six literature retrievals and 81 author artifacts. No accepted-count increment is assigned.
 
+The [arithmetic report](iterations/i07-arithmetic.md) is integrated with 38 verified pinned sources and 62 verified artifacts. Exact checks reproduce the inverse complex phase and enlarged quartic cell. The report proves ordinary-integer main-term expansions but leaves the marked prime-extraction estimate CM unproved; prime-input quartic squarefreeness and full consecutive-integer PD are demoted as routine consequences of lower-level source interfaces. A fresh [iteration 10 research task](iterations/iteration10-complex-modes-task.json) addresses CM and the aggregate principal terms directly. No additional finding is accepted from this report.
+
 ## Iteration 08: capacity proof passed; significance review running
 
 [The proposed weighted-capacity theorem](iterations/i08-variable-channel-capacity.md) covers arbitrary positive edge-channel parameters up to and including perfect transmission, without uniform separation from one. Its new uniform local moment estimate and flow-splitting energy bound replace the constant-channel geometric bound. Exact polynomial, posterior-orbit, kernel and finite-tree energy checks pass. These do not substitute for the infinite proof audit.
