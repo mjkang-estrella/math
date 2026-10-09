@@ -18,6 +18,34 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H039 live independent mechanisms
+
+Previous goal turn PROGRESS:0c45e78 closed H038 with independently qualified
+negative results. Project tree clean at re-entry. Existing goal remains active;
+no accepted executable improvement. Fresh catalogue confirms the exact models
+below support delegation without reported constraints. Four distinct initial
+lenses RUNNING, with proposals withheld from one another:
+- Native Astra /root/h007_additive_relations: sparse or coefficient-weighted
+  higher-arity relations; dense-triple and naive-helper costs are explicit
+  starting objections, not universal exclusions.
+- Grok4.7: nonlinear/adaptive public-information recovery operators:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-nonlinear-information-grok-20261008-r1`.
+- Claude Opus5.5: exact arithmetic operations with a concrete ECDLP bridge,
+  excluding the stopped Farey/height-lattice role:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-arithmetic-operators-opus-20261008-r1`.
+- Factory Fable5.1: complete-work algorithm compositions with paid preprocessing:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-completework-composition-fable-20261008-r1`.
+Exact briefs and gates: H039-independent-briefs.md. All read-only, no runs,
+imports, edits, experiments, children or commits by delegates. Root alone
+integrates. No H034 cap reset, generic infrastructure or rerouted stopped role.
+Best supported exponent1/2; verified improvement NONE. Next conclusion-changing
+step: explicit recovery operator and full-work estimate from independent ideas,
+then skeptical mathematical/cost review before any frozen synthetic diagnostic.
+Launch-checkpoint validation: ./scripts/check.sh >
+/tmp/ecdlp-h039-launch-check.log 2>&1 exit0. No Lean/Audit changes. Native live
+inventory confirms the assigned Astra role RUNNING; three T3 launches returned
+RUNNING. Do not duplicate these handles while awaiting completion notifications.
+
 ## H038 completed independent mechanisms and scoped negative results
 
 Previous turn PROGRESS:75b1159 checkpointed exact S3 geometry and the standard
