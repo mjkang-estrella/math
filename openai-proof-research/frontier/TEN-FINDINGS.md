@@ -25,7 +25,7 @@ Three T3-owned tasks each screen at least three candidates and develop their str
 
 The independent [parent probability/quantum screen](iterations/i07-parent-probability-screen.md) rejects two already-covered targets and a false quantum-memory extension. It derives a weighted necessary capacity condition for variable-edge four-state reconstruction and an exact counterexample to the naive unweighted extension. Iteration 08 now supplies a proposed converse, described below; neither stage changes the accepted count before review.
 
-The geometric-analysis task has returned no prospective substantial finding. Its constrained approximation report awaits full parent integration; the author's verdict explicitly keeps the accepted count unchanged.
+The [geometric-analysis report](iterations/i07-analysis.md) is integrated as a negative/reduction checkpoint. The restricted inverse W¹,¹ transfer is routine; a smooth compression example blocks automatic higher inverse-energy control. General cut-locus separation and the required energy-controlled approximation remain unproved. Parent verification passes for 60 pinned sources, six literature retrievals and 81 author artifacts. No accepted-count increment is assigned.
 
 ## Iteration 08: complete capacity candidate under proof review
 
