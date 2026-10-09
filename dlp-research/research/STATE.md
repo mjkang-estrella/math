@@ -18,21 +18,33 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H038 live independent mechanisms and height-factor-base gate
+## H038 completed independent mechanisms and scoped negative results
 
 Previous turn PROGRESS:75b1159 checkpointed exact S3 geometry and the standard
 m2 assembly gate. Project tree was clean at re-entry. The old H035 Fable terminal
 notification was acknowledged again; its raw report and qualifications were
-already retained, so no duplicate research round was created. Two independent
-read-only T3 proposer tasks remain RUNNING. Initial ideas withheld across roles:
+already retained, so no duplicate research round was created. Both independent
+read-only T3 proposer tasks are now terminal COMPLETED, results collected with
+no pending children. Initial ideas were withheld across roles:
 - Claude Opus5.5 constructive Farey/height factor-base operator: terminal
   COMPLETED status but brief INCOMPLETE after provider safety-classifier stop.
   No construction delivered, no retry/rerouting; returned testimony retained in
   H038-farey-review-incomplete.md. This is not mathematical negative evidence.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h038-farey-construction-opus-20261008-r1`.
-- Grok4.7 independent low-memory complete-solver mechanisms:
+- Grok4.7 independent low-memory complete-solver mechanisms: COMPLETED, no
+  candidate submitted. Raw report H038-lowmemory-grok-raw.md; native Sol
+  /root/h034_c4_implementation COMPLETED independent qualification review in
+  H038-lowmemory-disposition.md. Field-only constants do not include complete
+  cycle/DP/recovery overhead; cheap-step threshold is not a universal gate.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h038-independent-lowmemory-grok-20261008-r1`.
-- Factory Opus5.5 independent implicit-relation operators:
+- Factory Opus5.5 independent implicit-relation operators: COMPLETED with three
+  paper operators, no claimed survivor. Raw H038-implicit-factory-raw.md.
+  Native Astra /root/h007_additive_relations COMPLETED independent review of
+  convolution normalization, Lucas resultant and pair-collision ledger, and
+  Gauss-period cost scope. Root qualifications H038-implicit-disposition.md
+  retain exact identities and a conditional autocorrelation screen, correct
+  the birthday arithmetic, and reject unsupported universal exclusions.
+  No experiment admitted on these reports.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h038-independent-implicit-relations-factory-opus-20261008-r1`.
 Native Astra COMPLETED root's separate exact S3/Farey/Segre geometry audit;
 native Sol COMPLETED standard m2 relation-assembly cost review, including
@@ -54,8 +66,15 @@ dependencies are excluded. Full proofs/objections: H038-bounded-recovery-graphs.
 No experiments, source changes or new Lean claims. Current validation:
 ./scripts/check.sh > /tmp/ecdlp-h038-bounded-graphs-check.log 2>&1 exit0.
 The366 existing audits pass; they do not establish these paper graph lemmas.
-The two remaining T3 roles are confirmed RUNNING with no pending children;
-await their independent proposal notifications without duplicate launches.
+All H038 T3 roles are terminal and acknowledged; both native report reviews are
+COMPLETED. No full-work survivor. The next decisive work requires an explicit
+paid recovery operator, such as a nonlinear point-count decoder, constrained
+witness extractor or implicit-period operation with complete position recovery;
+none is assumed available. No further audit infrastructure is justified.
+Current best supported exponent1/2; verified improvement NONE. Goal active.
+Closing validation: ./scripts/check.sh > /tmp/ecdlp-h038-close-check.log 2>&1
+exit0, all366 existing audits pass. No Lean/Audit changes; these checks do not
+verify the paper-only Fourier, resultant or graph claims. Root alone integrates.
 
 ## H037 closed candidate-specific source-factory screen
 
