@@ -31,9 +31,15 @@ ranked questions and exact T3 prompts. Initial proposals withheld.
   repeated Claude API errors, no research result. No further Claude retries.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-algebraic-constructions-opus-20261009-r1`.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-algebraic-constructions-opus-20261009-r2`.
-- acpRegistry_factory_droid / claude-fable-5.1: RUNNING information-constructions-fable.
+- acpRegistry_factory_droid / claude-fable-5.1: COMPLETED information-constructions-fable.
+  Raw saved unaccepted; Fourier/chirp closure and comparator-reduction claims
+  require independent mathematical, primary-source and cost review.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-information-constructions-fable-20261009-r1`.
-- grok / grok-4.7: RUNNING fullsolver-compositions-grok.
+- grok / grok-4.7: COMPLETED fullsolver-compositions-grok; raw retained
+  unaccepted as written. Native Astra math and Sol cost reviews completed;
+  H044-fullsolver-disposition.md corrects signed events, block invoice and
+  expected-hit model, and scopes the feature's automorphism-lift exclusion.
+  No unconditional losing-schedule result, improvement or experiment accepted.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-fullsolver-compositions-grok-20261009-r1`.
 - Native Sol /root/h034_c4_implementation: COMPLETED algebraic proposer fallback
   after both Opus API failures. No new complete solver. Six-point determinant
@@ -41,7 +47,8 @@ ranked questions and exact T3 prompts. Initial proposals withheld.
   scalar-independent quotient probe checked by root. H044-six-point-screen.md
   retains scope, primary references and missing witness selector. No experiment.
 Explicit model substitution recorded, not silently represented as Opus work.
-Native Astra available for survivor review; no duplicated opinions or stopped-role reroutes. No solver
+Native Astra completed the information mathematical review; native Sol is LIVE
+on its separate decoder/cost review. No duplicated opinions or stopped-role reroutes. No solver
 runs, experiments or H034 cap reset. Existing unbounded goal remains active.
 Best supported exponent1/2; verified improvement NONE. Next decisive evidence:
 a concrete faster operator with full labelled extraction and complete costs,
@@ -49,7 +56,10 @@ then independent skeptical review before a newly admitted synthetic falsifier.
 Launch code unchanged from structured-system check exit0,366 audits.
 H044 algebraic validation: ./scripts/check.sh > /tmp/ecdlp-h044-sixpoint-check.log
 2>&1 exit0,366 existing audits. No Lean additions; paper arguments are not
-certified by that check. Fable and Grok initial proposals remain live.
+certified by that check. All initial proposals now terminal and collected.
+Full-solver check: ./scripts/check.sh > /tmp/ecdlp-h044-fullsolver-check.log
+2>&1 exit0,366 existing audits; paper-only review, no new Lean claims.
+Information report remains under review; existing goal stays active.
 
 ## H043 completed independent constructions
 
