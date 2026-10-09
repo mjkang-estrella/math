@@ -18,13 +18,36 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## Current followup gate
+
+All H039 initial proposal tasks terminal; information review terminal. The
+conditional fixed-known-log-table/rho hybrid remains an unverified ideal cost
+region, not a solver gain. Two distinct read-only followups are now RUNNING:
+- Native Sol `/root/h034_c4_implementation`: matched total memory, collision
+  detection, DP delay, verification and strongest applicable baseline costs.
+- Claude Opus5.5: primary prior art and single-target versus amortized costs.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-hybrid-priorart-opus-20261008-r1`.
+  Fresh live catalogue supports this exact target; delegate returned running.
+Original cost model and objections supplied: b=beta sqrt(q), ideal survival
+exp[-(t²+2bt)/q], cost cb beta+(cw+P)g(beta), g=e^(beta²)sqrt(pi)/2 erfc(beta).
+No-table cost cw g(0), not (cw+P)g(0); extra lookup has startup penalty P g(0).
+Self-collision detection memory and other costs remain missing. No universal
+lookup lower bound or general hybrid rejection accepted. Prior art review must
+identify actual primary sources and the strongest matched-memory comparator.
+No executable runs/imports, new children, edits or commits by these delegates;
+no H034 cap reset. Root alone integrates. Verified improvement NONE; exponent
+1/2 unchanged. Next conclusion-changing step is their full-work/prior-art gate,
+not an audit count or generic proof wave. Information checkpoint validation:
+./scripts/check.sh > /tmp/ecdlp-h039-information-check.log 2>&1 exit0,366
+existing audits; no new Lean/Audit claims. This does not certify paper findings.
+
 ## H039 live independent mechanisms
 
 H039 follows0c45e78, which closed H038 with independently qualified negative
 results. Launch checkpoint da2a4e4; project tree clean at re-entry. Goal active;
 no accepted executable improvement. Fresh catalogue confirms the exact models
-below support delegation without reported constraints. Grok's initial lens
-remains RUNNING; other initial roles completed. Proposals withheld across roles:
+below support delegation without reported constraints. All initial roles are now
+COMPLETED. Initial proposals were withheld across roles:
 - Native Astra /root/h007_additive_relations: COMPLETED sparse/coefficient-
   weighted lens. One concrete weighted-grid helper construction, but no complete-
   work survivor against H037's paid O(H) IID source generator. Root checked the
@@ -32,7 +55,11 @@ remains RUNNING; other initial roles completed. Proposals withheld across roles:
   analysis, not an independently accepted new law. H039-grid-helper-screen.md
   parks it before experiments or broader proof work; reduced entropy is not a
   solver exponent gain. Other initial proposers have not received this idea.
-- Grok4.7: nonlinear/adaptive public-information recovery operators:
+- Grok4.7: nonlinear/adaptive public-information recovery operators: COMPLETED.
+  Raw report retained; native Astra review completed. Root and reviewer checked
+  an exact F5/order7 counterexample to the named halving comparator. Root read
+  the cited primary theorems and rejected broader unproved exclusions; see
+  H039-information-disposition.md. No experiment admitted.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-nonlinear-information-grok-20261008-r1`.
 - Claude Opus5.5: exact arithmetic operations with a concrete ECDLP bridge,
   excluding the stopped Farey/height-lattice role: COMPLETED, no survivor.
@@ -63,8 +90,8 @@ RUNNING. Do not duplicate these handles while awaiting completion notifications.
 Weighted-grid checkpoint validation: ./scripts/check.sh >
 /tmp/ecdlp-h039-grid-check.log 2>&1 exit0; no Lean/Audit changes. Existing audits
 do not establish the retained paper-only collision analysis. Native proposal
-now completed, not a live handle to wait on. Latest: only the Grok T3 proposer
-remains live; all current native reviews completed. No experiment admitted.
+now completed, not a live handle to wait on. At that checkpoint only Grok remained live; it has since completed.
+No experiment admitted.
 Validation after composition/arithmetic corrections: ./scripts/check.sh >
 /tmp/ecdlp-h039-composition-check.log 2>&1 exit0. No Lean/Audit changes; no
 numerical runs. Paper statements are not certified by the366 existing audits.
