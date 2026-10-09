@@ -18,7 +18,7 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H046 live independent constructions
+## H046 reviewed constructions
 
 H045 closed at7c92548. Current exponent1/2, verified full-work improvement NONE.
 H046-independent-briefs.md records ranked questions, exact T3 prompts and all
@@ -53,18 +53,21 @@ handles. Root refreshed live capability catalogue and checked native status.
   All three raw test recipes parked; no experiment admitted.
 - Factory Opus5.5 COMPLETED: actual report recovered by t3_thread_read at
   position52 after task summary only said 'Plan is up-to-date'. Four cards in
-  H046-operators-factory-raw.md remain unaccepted pending independent review.
+  H046-operators-factory-raw.md are superseded by scoped dispositions.
   Proposer read archive records, no new primary sources. Native Astra separate
   mathematical review COMPLETED. H046-isogeny-subfield-bound.md retains root
   deterministic <=4ell subgroup-point bound, independently checked by Astra.
-  Sol distinct algebraic cost/prior-art review LIVE. Astra focused follow-up
-  LIVE: do independent random affine progressions preserve the H021 second
-  moment and useful structured reporting? Root supplied a pairwise-independence
-  proof hypothesis; not yet an accepted solver or experiment.
+  Sol distinct algebraic cost/prior-art review COMPLETED and confirmed
+  H046-algebraic-disposition.md, including cheaper membership-only halving
+  and generating lists after mapping G,Q once. Astra focused
+  follow-up COMPLETED: H046-random-progression-success.md proves the H021
+  second moment for independent random affine progressions. Root checked the
+  covariance and Sol checked paid construction; a fast reporter remains missing.
 At launch three native were active including root and three T3 tasks were
 accepted RUNNING. Native evaluator/detector and public-information fallback roles
 completed. Fable terminal failed; Grok and Factory Opus terminal reports collected.
-Native algebraic cost and progression-success reviews now live. All read-only,
+All H046 initial tasks and independent reviews are terminal and collected;
+mathematical and cost dispositions are integrated. All roles read-only,
 no experiments/imports/scripts/children; root owns integration. Independent
 initial proposals withheld. H034 cap unchanged, stopped routes not reopened.
 Actual task IDs:
@@ -77,7 +80,8 @@ single-query evaluator; that does not reduce complete ECDLP work. All initial
 H046 reports are collected (including one failed role). Next decisive
 analysis: explicit operator, scalar recovery, useful-event guarantee and complete
 paid invoice, followed by independent review before any synthetic test. Existing
-goal active; yield to confirmed-live children rather than polling or watchers.
+goal active; next wave must construct a missing competitive operation. No
+remaining H046 live child, duplicate round, polling loop or watcher.
 Validation inherited from unchanged artifacts: H045 complete-work check exit0,
 366 existing audits. The launch added process records only, no Lean claims.
 Half-orbit evaluator validation: ./scripts/check.sh >
@@ -102,6 +106,12 @@ root failed exit127 (wrong working directory), logged at
 ./scripts/check.sh > /tmp/ecdlp-h046-reviewed-project-check.log 2>&1 passed
 exit0,366 existing audits. No Lean claims added; these checks do not certify
 paper results. Root checked exact staged paths and retained the failed command.
+
+Progression/algebraic validation: ./scripts/check.sh from dlp-research >
+/tmp/ecdlp-h046-progression-check.log 2>&1 passed exit0,366 existing audits.
+A preceding STATE edit used an incorrect relative path and raised FileNotFoundError
+before writing; corrected with an absolute path. No experimental work or new
+Lean claims. Progression covariance and costs were separately paper-reviewed.
 
 ## H045 completed independent constructions
 

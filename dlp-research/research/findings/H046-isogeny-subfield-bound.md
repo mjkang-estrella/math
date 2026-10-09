@@ -53,6 +53,12 @@ points are Fp²-rational. Finding a kernel, representing any larger extension,
 constructing the quotient/isogeny, evaluating it and extracting relations all
 remain paid. A general necessity claim about ell|t is not proved here.
 
+Do not require one isogeny evaluation per generated list point: a competent
+algorithm can map G and Q once and generate labelled lists directly from
+phi(G),phi(Q) on E'/Fp². Kernel/curve setup, those image queries, extension-field
+point construction, reporting and verification remain paid. An inflated
+n-times-isogeny-evaluation invoice is not a valid rejection argument.
+
 For fixed small ell, the proposed subfield filter has density at most 4ell/q
 on the original subgroup. This removes the suggestion of importing a dense
 ambient subfield filter for free. It does not establish an algorithmic lower
@@ -72,7 +78,7 @@ and disclosed reading H046-half-orbit-evaluator.md; do not label it wholly
 unexposed to this wave's work. Root proposed the bound above after source
 review. Native Astra /root/h007_additive_relations independently checked the
 coefficient-conjugation, pole-support argument and subgroup exceptions; final
-review completed. Native Sol separately reviews costs of all algebraic cards.
+review completed. Native Sol completed the separate cost review of all algebraic cards.
 
 Root read Galbraith Chapter 9, especially 9.6.12–9.6.19, before integration.
 No numerical run, import, new instance, Lean claim or Audit addition. H034's
