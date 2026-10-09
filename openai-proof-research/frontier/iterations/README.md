@@ -16,13 +16,13 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
-## Iteration 05 — new discovery requested, running
+## Iteration 05 — second substantial result accepted
 
-After R006, the user requested: “Come up with new one - keep make a progress.” This starts a fresh search for a second substantive contribution; acceptance of R006 does not finish this new request. The three research lanes have these current dispositions:
+After R006, the user requested: “Come up with new one - keep make a progress.” The resulting search now accepts R008 as a second substantial, plausible new deduction under the stipulated corpus and bounded novelty assessment. Independent proof and final significance reviews support that decision; worldwide priority remains unverified. The three research lanes have these final dispositions:
 
 | Lane | New target | Task record |
 |---|---|---|
-| Prime-predecessor parity | Independent analytic audit passes; mathematically accepted as R008. Final novelty/significance review is running before accepting the second substantial-discovery gate. | [R008](../findings/R008-parity-PD-independence.md); [audit](../reviews/i05-parity-pd-r2.md); [final review brief](iteration5-parity-novelty-r3-task.json) |
+| Prime-predecessor parity | R008 accepted as the second substantial deduction after independent analytic and final significance reviews. Includes an exact Moree–Hommersom conjecture consequence; worldwide priority unverified. | [R008](../findings/R008-parity-PD-independence.md); [proof audit](../reviews/i05-parity-pd-r2.md); [final review](../reviews/i05-parity-novelty-r3.md) |
 | Simultaneous primitive roots | Earlier propositions pass independent audit. New scalar and composite estimates isolate an explicit rough correlation RP; the cubic reservoir remains unproved. Lane parked at RP/MT-lower. | [Audit](../reviews/i05-joint-artin-r2.md); [partial progress and missing estimate](i06-cubic-reservoir.md) |
 | Fresh cross-field search | Mathematics passes, but contribution gate is demoted: known Banach-valued Gaussian decoupling supplies the central step. No essential corpus dependency; route parked. | [Proof record](i05-crossfield.md); [independent review](../reviews/i05-crossfield-r2.md) |
 
@@ -59,6 +59,16 @@ The parent read the full review and the actual Maas theorem, reproduced all inde
 The independent audit passes i05 Propositions 1–3 and retains the classical attribution of the Q/F/C criterion. The new i06 report proves a proposed full-range scalar Hecke trace estimate and rough-composite cancellation, but does not obtain the initial trace-weighted rough correlation. Its exact RP interface, and weaker MT-lower alternative, include the modulus-dependent tail budget needed to reach simultaneous primitive roots. Those estimates and the reservoir CR remain unproved. The new SL/CC arguments are not separately independently audited or promoted.
 
 The parent reproduced both result files, checked the actual accepted Hecke strip/logarithmic-control contract and the classical reciprocity source, and verified 52 source files (42 pinned) and 26 artifacts. Only the shared index input changed. The [parent decision](../sources/i06_cubic_reservoir/parent-decision.md) records the scope, including why the finite theta diagnostics cannot support the tiny-theta asymptotic. Decision: preserve this partial progress without adding a finding; park the lane at RP/MT-lower. The final novelty/significance review of the mathematically accepted R008 remains active.
+
+### Parity final acceptance — 2026-10-08
+
+The fresh final review recommends accepting R008 as a substantial nonroutine deduction beyond R006. It screened the complete inventory and inspected stronger quantitative and qualitative multiplicative-correlation interfaces, the exact D/E/S contracts, and current primary prior art. It found no direct stronger theorem supplying LP and no new proof-critical problem. Carella's latest listed v3 explicitly makes its main scalar cancellation theorems conditional on a shifted-prime distribution hypothesis; this supersedes relying on v1 criticism alone. Shift-averaged and Siegel-zero-conditional results do not supply the fixed-predecessor joint theorem under these premises.
+
+The review also proves the exact implication to Moree–Hommersom Conjecture 1: prescribe finitely many valuations, remove squares only outside that finite set, and apply LP in finitely many fixed classes before taking the square-tail cutoff to infinity. The parent checked the primary definition/conjecture and MathDB 377990 formulation. This is concrete named-problem relevance without an invented importance score or a separate finding count.
+
+The parent read the full review, checked the decisive current-version statements, and verified 52 download hashes, 36 pinned Git blobs, 34 source ranges and 25 page extracts. Only this shared index had changed among recorded inputs before integration; see [verification](../sources/i05_parity_novelty_r3/parent-verification.json). R008 now contains the final scope, corrections and named consequence.
+
+Decision: the second substantive-discovery objective is met by R008 on the qualified accepted-corpus basis. It is one finding, already committed separately for mathematical acceptance, with this final-review integration completing its significance assessment. Worldwide priority, independent validation of upstream truth, external peer review and formal certification are not claimed. Gaussian and cubic lanes remain respectively demoted and unclosed; neither is counted toward success. No further task is launched or publication attempted.
 
 ## Iterations 02–04 — substantial result accepted
 

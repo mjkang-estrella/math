@@ -1,6 +1,6 @@
 # R008 — Full parity and Poisson–Dirichlet independence for prime predecessors
 
-Date: 2026-10-08. **Mathematically validated deduction under the user's accepted corpus.** Immutable premise: `openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`, together with the accepted [R006 progression law](R006-progression-PD-primitive-root-density.md). The independent analytic audit passes without an unresolved gap. A separate final novelty/significance review is running; worldwide priority is unverified, and the second substantial-discovery gate remains pending that assessment.
+Date: 2026-10-08. **Validated substantial deduction under the user's accepted corpus.** Immutable premise: `openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`, together with the accepted [R006 progression law](R006-progression-PD-primitive-root-density.md). The independent analytic audit passes without an unresolved gap. The separate [final novelty/significance review](../reviews/i05-parity-novelty-r3.md) supports a substantial, nonroutine advance beyond R006. The parent accepts that qualified assessment as the second substantial discovery; worldwide priority remains unverified.
 
 The result gives equal even/odd parity densities for the number of prime factors of p−1, counted with multiplicity, independently of its limiting ranked factor sizes and squarefreeness. This is one finding: the Möbius-sign and squarefree consequences share the same new signed estimate.
 
@@ -142,6 +142,33 @@ The independent audit passes CT, LC, SPR, extraction, probability and squarefree
 
 All 60 cached pinned sources, 14 independently downloaded interfaces, 38 reviewer artifacts, 25 source-range hashes and five re-downloaded primary PDFs pass parent integrity checks. Only the shared iteration index changed among reviewer inputs. These checks test finite identities and integrity; the asymptotic proof rests on the written source-based argument and independent AI review, not numerical balance, human peer review or formal proof-assistant certification.
 
-The proof reviewer judges the signed analytic extension substantial beyond the source infinitude theorem and R006's unsigned law. Inspected Lichtman and Lichtman–Teräväinen results average over growing shifts and do not supply the fixed shift here. An overlapping Carella v1 claim exists; the review identifies an invalid signed-count elimination in that version. It would be false to claim no earlier paper has claimed cancellation. The final [novelty/significance review brief](../iterations/iteration5-parity-novelty-r3-task.json) explicitly requires checking newer versions, stronger corpus interfaces and possible direct classical reductions before closing the second-discovery gate.
+The proof reviewer judges the signed analytic extension substantial beyond the source infinitude theorem and R006's unsigned law. The final review separately checks that assessment against stronger corpus interfaces and current primary literature; its conclusions and version corrections are incorporated below.
 
-**Parent decision:** accept LP and its joint consequences as one mathematically validated deduction under the stipulated corpus; reserve the final substantial-new-discovery judgment pending that separate assessment. No publication or priority registration has been attempted.
+## 7. Final significance assessment and a named conjecture consequence
+
+The [final review](../reviews/i05-parity-novelty-r3.md) inspected the complete path inventory and relevant catalogue entries, then retrieved 36 pertinent pinned files. In particular, the ordinary two-point companion's quantitative theorem controls two Liouville factors at fixed affine forms with one fixed logarithmic exponent; its general multiplicative-function theorem has only qualitative integer-average cancellation. Their stronger lower-level interfaces do not directly yield the present signed prime statistic. A prime indicator or von Mangoldt weight does not satisfy those multiplicative-input hypotheses. The reviewed D/E/S interfaces likewise require the additional signed comparison and extraction argument documented above.
+
+Primary comparisons include Lichtman's shift-averaged theorem, the published Lichtman–Teräväinen logarithmic-shift-range improvement, Tao–Teräväinen's hybrid theorem under a Siegel-zero assumption and restricted scales, and Wang's September 2026 dynamical theorem still averaging over shifts. None of those inspected statements directly supplies LP. The substantive advance is the coordinated signed interior estimate at prime normalization; the squarefree product and probability inversion remain routine consequences.
+
+**Updated overlapping-claim comparison.** The latest version listed in [Carella's arXiv history](https://arxiv.org/abs/2206.12956) at inspection is v3, dated 25 July 2022. Its actual [Theorems 1.1–1.2, page 4](https://arxiv.org/pdf/2206.12956v3), explicitly assume Hypothesis 2.1, a distribution hypothesis for signs on shifted primes (page 6). This differs from ordinary-integer BVλ and is not supplied by the cited classical input. The original v1 criticism is retained as historical evidence, not used as a substitute for this current-version comparison. Earlier overlapping claims exist; no worldwide-first claim is made.
+
+**Moree–Hommersom Conjecture 1 follows under the same premises.** Their [primary manuscript, pages 20–21](https://arxiv.org/pdf/math/0307352v1), defines μ_S(n) to ignore primes in a fixed finite S and to vanish if n has a square factor outside S. For fixed nonnegative valuations e_q at q∈S, R008 implies
+
+\[
+ \sum_{\substack{p\le X\\v_q(p-1)=e_q\ (q\in S)}}\mu_S(p-1)
+ =o(\pi(X)).
+\]
+
+Indeed let B_S indicate squarefreeness outside S. On the valuation event,
+
+\[
+ \mu_S(p-1)=(-1)^{\sum_{q\in S}e_q}\lambda(p-1)B_S(p-1).
+\]
+
+At each fixed Y, the valuation event and square exclusions for q≤Y outside S specify finitely many reduced classes modulo lcm(∏q∈S q^{e_q+1}, ∏q≤Y,q∉S q²), apart from finitely many primes. Apply LP with H=1 in each class. The unsigned square tail is O(1/Y) in normalized limsup; let X→∞ and then Y→∞. This handles e_q≥2 because square exclusions are only outside S. It is one consequence of R008, not another counted finding.
+
+[MathDB 377990](https://mathdb.com/p/377990/parity-conjecture-for-the-mobius-function-on-shifted-primes) records precisely this conjecture and its primary attribution. The parent checked the formulation and found no posted solution or refreshed progress summary on the inspected page. This is named-problem relevance, not MathDB endorsement, proof certification or a numerical importance ranking.
+
+The parent read the full final review, checked the actual Carella v3 hypotheses and Moree–Hommersom definition/conjecture, and verified all 52 downloaded files, including 36 pinned sources, 34 source-range hashes and 25 page extracts. The [verification record](../sources/i05_parity_novelty_r3/parent-verification.json) separates identity checks from correctness and priority. No new proof-critical issue was found. The inventory screen was not a line-by-line audit of every corpus manuscript.
+
+**Parent decision:** accept LP and its joint consequences as the second substantial, plausible new deduction under the stipulated corpus and bounded prior-art assessment. The exact Moree–Hommersom implication strengthens its demonstrated significance. Worldwide priority, independent truth of the corpus, external human peer review and formal proof certification are not established. No publication or priority registration has been attempted.
