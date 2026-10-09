@@ -1,6 +1,6 @@
 # Frontier scout: algebraic and complex geometry
 
-**Parent status: K3 claims provisional; Mumford reduction demoted as already known.** The [independent Mumford review](../reviews/geometry-mumford-review-r2.md) accepts B0 and repairs B1, but identifies an exact prior-art match in the [October 2 release](https://zenodo.org/records/23093099), `thm:mumfordpowers`. The review supersedes Section 5 wherever formulations differ. Theorem A/Lemma C remain under independent review; the separate attempt to construct missing Mumford cycles is active. The parent reproduced the scout closure ranks and independent symbolic-certificate checks. No significant new Hodge case is established.
+**Parent status: reviewed; no significant new Hodge advance established.** The [K3 audit](../reviews/geometry-k3-review-r2.md) validates the corrected arithmetic comparison, rejects its interpretation as the full known Hodge region, identifies Lemma C in Varesco 2023, and rejects propagation from one arbitrary seed to a whole locus. The [Mumford audit](../reviews/geometry-mumford-review-r2.md) validates a repaired reduction but identifies exact prior art. These reviews supersede conflicting scout formulations. The parent reproduced both independent audits. The separate effort to construct missing Mumford cycles remains active.
 
 Research date: 2026-10-08. Upstream: [openai/math at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`](https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb). All theorems in that revision are taken as true, as instructed. Withdrawn manuscripts are not. Every new deduction below is checked independently. First-pass findings F001–F010 and the archived proposals are not reused.
 
@@ -8,16 +8,16 @@ Research date: 2026-10-08. Upstream: [openai/math at `fd4aeeb2ee4fc729c18d98444f
 
 **No landmark or celebrated problem in this domain is resolved here.** The only MathDB *landmark* problem in algebraic geometry is the Hodge conjecture. The only *celebrated* one is the Jacobian conjecture, which MathDB already marks claimed solved. I make no claim on either in general.
 
-The scout proposed two frontier statements and one algebraicity lemma. The subsequent review found prior art for the Mumford reduction; the K3 claims remain provisional. None is accepted as genuinely new substantive progress.
+The scout proposed two frontier statements and one algebraicity lemma. The subsequent review found prior art for the Mumford reduction; the K3 claims are a corrected method comparison and known/formal consequences. None is accepted as genuinely new substantive progress.
 
 | ID | Statement (short form) | Kind | Novelty status |
 |---|---|---|---|
-| **A** | For a K3 surface with ρ = 16, the corpus K3 locus and Floccari's published locus are described exactly by the even Clifford algebra C⁺(T). Together they cover exactly the surfaces whose C⁺(T) is unramified at every place above an odd prime. The two loci differ only when 2 splits in K = ℚ(√−det T). The corpus adds new cases precisely when C⁺(T) ≅ M₂((−1,−1)_K). There are explicit ρ = 16 surfaces outside both loci, and for those KS(S) is isogenous to B², with B a simple abelian 8-fold carrying quaternionic multiplication. | Proved theorem (lattice/Brauer computation plus pinned statements), with exact-arithmetic cross-checks | New to this project. I did not find this comparison in the corpus or in Floccari. Not certified new to the literature. |
+| **A** | At ρ = 16, the union of the V_P and W_m embedding loci is characterized by C⁺(T) splitting above every odd prime. The two constructions differ only when 2 splits in K. Explicit quadratic forms miss both. For full orthogonal Hodge group, the indicated KS example is B² with B a simple quaternionic eightfold; special periods may have larger endomorphism algebras. | Corrected arithmetic classification of two sufficient hypotheses | Priority unverified; no new Hodge classes and no exhaustive description of known cases. |
 | **A′** | Rational HC holds on every self-power of every projective K3 surface with ρ ≥ 17, and rational **GHC** also holds there; both transfer to Hilbert schemes and moduli spaces of sheaves. | Corollary of A | HC alone **already follows from published work** (Floccari, G&T 2026, Thm 5.11, plus the Witt-index step in §4). GHC uses the corpus. |
-| **C** | Every rational Hodge *similitude* T_{S₁} → T_{S₂} between K3 surfaces on the corpus locus is algebraic. Consequently HC holds for S₁ × S₂ when End_Hdg(T_{S₁}) = ℚ. | Proved lemma | New to this project. It recovers a small, honest piece of the **withdrawn** corpus claim on products of K3 surfaces. |
+| **C** | Every rational Hodge *similitude* T_{S₁} → T_{S₂} between K3 surfaces on the corpus locus is algebraic. Consequently HC holds for S₁ × S₂ when End_Hdg(T_{S₁}) = ℚ. | Proved lemma | Published in Varesco 2023, Theorem 5.3; no novelty claim. |
 | **B** | HC on every self-power of every complex abelian variety of dimension ≤ 5 is **equivalent** to one explicit statement: for each Mumford-type fourfold A, the multiplication by the cubic field F = End_Hdg(H²_prim(A,ℚ)) is induced by cycles on A × A. That is two exceptional classes in H⁴(A × A). Every other case holds. | Proved reduction (invariant theory plus an exact closure computation) plus assembly | The assembly half is a direct combination of corpus and Moonen–Zarhin. Exact reduction identified in prior art; not new. See parent correction in §5. |
 
-What remains open is the Hodge conjecture for Mumford fourfolds (on A × A, see §5.4) and for the ρ = 16 quaternionic-8-fold K3 surfaces (§4.4). For both I give the exact missing input and why the corpus does not supply it.
+The reviewed approaches do not construct the exceptional classes on a general Mumford square (§5.3), or the exact KS tensor for the indicated very general odd-ramified K3 example (§4.4). This does not assert that every surface outside the two embedding loci is an open Hodge case.
 
 ## 1. Sources, pinning and method
 
@@ -63,10 +63,12 @@ What remains open is the Hodge conjecture for Mumford fourfolds (on A × A, see 
 
 ## 4. Theorem A: the K3 frontier in Picard number 14–17
 
+**Reviewed scope:** this is an arithmetic comparison of two sufficient embedding hypotheses. The [independent review §§2–6](../reviews/geometry-k3-review-r2.md) supplies the complete convention repair, global binary-complement existence, CM counterexample to exhaustiveness, and exact transport limits. At 2, the split test uses the normalized determinant squareclass (even valuation and odd-unit part 1 modulo 8). Generic simplicity of the quaternionic KS factor requires full orthogonal Hodge group. Neither the comparison nor its formal consequences constructs new Hodge classes.
+
 ### 4.1 Notation
 
 - U is the hyperbolic plane. V_P := U_ℚ^{⊕2} ⊥ ⟨−1⟩^{⊕4}, which has signature (2,6) and det 1; this is the corpus K3 paper, §1.2 and Lemma 1.3. W_m := U_ℚ^{⊕3} ⊥ ⟨−m⟩ (m ∈ ℤ_{>0}), which has signature (3,4) and det m; this is Floccari's locus.
-- For a diagonal form ⟨a₁,…,a_n⟩, the Hasse invariant is c_p = ∏_{i<j}(a_i,a_j)_p. For dim T = 6 put δ = det T and K = K_T = ℚ(√−δ). The Clifford (Witt) invariant is e₂ ∈ Br₂. For dimension ≡ 6 mod 8 one has e₂ = c·(−1,−1) (Lam, *Introduction to Quadratic Forms over Fields*, Ch. V, Prop. 3.20). Sanity check: U³ has c = (−1,−1) and e₂ = 0.
+- For a diagonal form ⟨a₁,…,a_n⟩, the Hasse sign is c_p = ∏_{i<j}(a_i,a_j)_p. For dim T = 6 put δ = det T and K = ℚ(√−δ). Define b(T) = [C(T)], the Brauer class of the **full** central simple Clifford algebra, using v² = q(v,v). In additive Brauer notation b = h + (−1,−1), where h is the Hasse class. This is not the Witt homomorphism e₂, whose domain requires trivial signed discriminant. The independent decomposition and proof are in review §2.1. Local c_p are signs, while 0 for b denotes the trivial Brauer class.
 - For a K3 surface S, T = T_S ⊂ H²(S,ℚ) with its cup form has signature (2, t−2), where t = 22 − ρ(S). The corpus hypothesis is "a rational isometric embedding (T_S, q) ↪ V_P" (K3 paper Thm 1.2). Floccari's hypothesis is "T_S ↪ W_m for some m > 0" (G&T Thm 5.11).
 
 ### 4.2 Statement
@@ -75,9 +77,9 @@ What remains open is the Hodge conjecture for Mumford fourfolds (on A × A, see 
 
 1. If t ≤ 5, then T ↪ V_P, and T ↪ W_m for some m > 0.
 2. If t = 6, then δ > 0 and K is imaginary quadratic.
-   - (a) T ↪ V_P ⇔ c_p(T) = 1 for every prime p split in K ⇔ e₂(T_p) = (−1,−1)_p for every split p.
-   - (b) T ↪ W_m for some m ⇔ e₂(T_p) = 0 for every split p.
-   - (c) T lies in at least one of the two loci ⇔ e₂(T_p) = 0 for every **odd** split prime p. The two loci coincide unless 2 splits in K (−δ ≡ 1 mod 8). In that case they are disjoint and are separated by the value of e₂(T₂).
+   - (a) T ↪ V_P ⇔ c_p(T) = 1 for every prime p split in K ⇔ b(T_p) = (−1,−1)_p for every split p.
+   - (b) T ↪ W_m for some m ⇔ b(T_p) = 0 for every split p.
+   - (c) T lies in at least one of the two loci ⇔ b(T_p) = 0 for every **odd** split prime p. The two loci coincide unless 2 splits in K (−δ ≡ 1 mod 8). In that case they are disjoint and are separated by the value of b(T₂).
    - Brauer form (standard: [C⁺(T)] = res_{K/ℚ}[C(T)] in Br(K)). Condition (a) is C⁺(T) ≅ M₂((−1,−1)⊗K). Condition (b) is C⁺(T) ≅ M₄(K). Condition (c) says C⁺(T) splits at every place of K above an odd prime.
 3. If t = 7, then T ↪ V_P ⇔ c_p(T) = (−1,−1)_p(δ,−1)_p for all primes p, where δ = det T < 0. T never embeds in any W_m, because W_m has only four negative directions.
 4. If t = 8, then T ↪ V_P ⇔ T ≅ V_P ⇔ δ ∈ ℚ^{×2} and c_p(T) = (−1,−1)_p for all p.
@@ -94,27 +96,27 @@ Locally, data of dimension ≥ 3 are always realizable. The binary forms of dete
    - For t ≤ 4, take M = −T ⊥ U^{4−t}.
    In each case T ⊥ M is hyperbolic of dimension 8, so it is isometric to U⁴.
 2. *Case t = 6.* Here sig T = (2,4), so det T has sign (−1)⁴ and δ > 0.
-   - (a) N is binary with d(N) ≡ δ. One needs c_p(N) = η_p := c_p(V_P)c_p(T)(δ,δ)_p. Since V_P ≅ ⟨1,−1,1,−1,−1,−1,−1,−1⟩, c_p(V_P) = (−1,−1)_p, and η_∞ = −1 matches a negative definite N. Realizability requires η_p = 1 exactly at primes where −δ is a square, i.e. the primes split in K. At such p, δ ≡ −1 mod squares, so (δ,δ)_p = (−1,−1)_p and η_p = c_p(T). The e₂ form follows from e₂ = c(−1,−1).
-   - (b) N = ⟨x⟩ with x ≡ mδ > 0. One computes c(W_m) = (−1,−1)(−1,−m) = (−1,m). The condition reads c_p(T)(δ, mδ)_p = (−1,m)_p, i.e. (−δ, m)_p = θ_p := c_p(T)(δ,−1)_p. At ∞, θ_∞ = 1, consistent with m > 0. A suitable m exists iff θ_p = 1 at all split p. At a split p, (δ,−1)_p = (−1,−1)_p, so θ_p = e₂(T_p).
-   - (c) At the two places of K above a split p, both conditions are local conditions on e₂(T_p) ∈ Br₂(ℚ_p) ≅ ℤ/2. (−1,−1)_p is nontrivial exactly at p = 2 among the finite primes. At odd split p, both (a) and (b) demand e₂(T_p) = 0. At p = 2 (if split), (a) demands e₂ ≠ 0 and (b) demands e₂ = 0, so the union imposes nothing there. For the Brauer form: places of K over non-split primes, and the complex place, kill Br₂ of the base, and Br(K) injects into the sum of its local Brauer groups.
+   - (a) N is binary with d(N) ≡ δ. One needs c_p(N) = η_p := c_p(V_P)c_p(T)(δ,δ)_p. Since V_P ≅ ⟨1,−1,1,−1,−1,−1,−1,−1⟩, c_p(V_P) = (−1,−1)_p, and η_∞ = −1 matches a negative definite N. Realizability requires η_p = 1 exactly at primes where −δ is a square, i.e. the primes split in K. At such p, δ ≡ −1 mod squares, so (δ,δ)_p = (−1,−1)_p and η_p = c_p(T). The b form follows from b = c(−1,−1).
+   - (b) N = ⟨x⟩ with x ≡ mδ > 0. One computes c(W_m) = (−1,−1)(−1,−m) = (−1,m). The condition reads c_p(T)(δ, mδ)_p = (−1,m)_p, i.e. (−δ, m)_p = θ_p := c_p(T)(δ,−1)_p. At ∞, θ_∞ = 1, consistent with m > 0. A suitable m exists iff θ_p = 1 at all split p. At a split p, (δ,−1)_p = (−1,−1)_p, so θ_p = b(T_p).
+   - (c) At the two places of K above a split p, both conditions are local conditions on b(T_p) ∈ Br₂(ℚ_p) ≅ ℤ/2. (−1,−1)_p is nontrivial exactly at p = 2 among the finite primes. At odd split p, both (a) and (b) demand b(T_p) = 0. At p = 2 (if split), (a) demands b ≠ 0 and (b) demands b = 0, so the union imposes nothing there. For the Brauer form: places of K over non-split primes, and the complex place, kill Br₂ of the base, and Br(K) injects into the sum of its local Brauer groups.
 3. *Case t = 7.* N = ⟨x⟩ with x ≡ δ < 0, and the condition is c_p(V_P) = c_p(T)(δ,δ)_p.
 4. *Case t = 8.* Immediate. ∎
 
 ### 4.4 Consequences for K3 surfaces
 
-**Corollary A′ (ρ ≥ 17).** Let S be a projective complex K3 surface with ρ(S) ≥ 17. Then rational HC and rational GHC hold in every degree of S^m for all m ≥ 1. The same holds for every (S^{[n]})^r, every smooth projective moduli space of (twisted) Gieseker- or Bridgeland-stable objects on S and its self-powers, and every hyperkähler variety birational to such a moduli space.
+**Corollary A′ (ρ ≥ 17).** Let S be a projective complex K3 surface with ρ(S) ≥ 17. Then rational HC and rational GHC hold in every degree of S^m for all m ≥ 1. The same holds for every (S^{[n]})^r, every smooth projective moduli space of Gieseker-stable twisted sheaves or objects stable for a generic Bridgeland stability condition on S and its self-powers, and every smooth projective hyperkähler variety birational to such a hyperkähler moduli space.
 
 *Proof.* Here t ≤ 5, so Theorem A(1) gives T_S ↪ V_P. Then apply the corpus K3 paper Thm 1.2 and Cor 9.5. ∎
 
 *Novelty caveat.* For HC alone, Theorem A(1) with W_m plus Floccari's Thm 5.11 already gives the same conclusion from published sources. GHC, and HC/GHC for the moduli spaces, come from the corpus.
 
-**Corollary A″ (ρ = 16: exact known region).** Let S have ρ = 16 and T = T_S.
-- HC for all S^m is *available* (corpus or Floccari) iff C⁺(T) is unramified at every place of K above an odd prime.
-- The corpus adds surfaces not covered by Floccari **exactly** when 2 splits in K and C⁺(T) ≅ M₂((−1,−1)_K). For these, both HC and GHC come from the corpus alone. On the overlap of the two loci, GHC comes only from the corpus, since Floccari's theorem gives HC.
+**Corollary A″ (ρ = 16: union of two embedding loci, not all known Hodge cases).** Let S have ρ = 16 and T = T_S.
+- S meets at least one of the two stated embedding hypotheses iff C⁺(T) splits above every odd prime. This is not an iff for HC being known: the review constructs a CM K3 outside both loci whose self-powers are already covered by published results.
+- V_P covers surfaces not meeting the W_m hypothesis exactly when 2 splits in K and C⁺(T) ≅ M₂((−1,−1)_K). This compares those constructions only. Both HC and GHC hold throughout their union under the accepted premises: Floccari proves the exact KS correspondence, which feeds into corpus Theorem 1.1. No new cycle is constructed by this assembly.
 - *Example (corpus only):* T_ℚ ≅ ⟨3,2,−13,−10,−3,−15⟩, K = ℚ(√−39).
 - *Example (Floccari only):* T_ℚ ≅ ⟨19,13,−21,−14,−14,−21⟩, K = ℚ(√−247). Here 2 splits and c₂(T) = −1.
 
-**The genuine ρ = 16 frontier.** Take T_ℚ = ⟨21, 2, −6, −19, −2, −10⟩. Then K = ℚ(√−665); 3 splits in K, and e₂(T₃) ≠ 0.
+**An example outside the two embedding loci.** Take T_ℚ = ⟨21, 2, −6, −19, −2, −10⟩. Then K = ℚ(√−665); 3 splits in K, and b(T₃) ≠ 0.
 
 Realize it as follows. L = 2ℤ⁶ with this diagonal form is an even lattice of signature (2,4) with ℓ(A_L) ≤ 6. Since 6 + 6 < 22, it embeds primitively in Λ_K3 (Nikulin, Cor. 1.12.3). A very general period in L_ℂ gives a projective K3 surface S with ρ = 16, T_S = L, and Hdg(T_S) = SO(T_S).
 
@@ -122,7 +124,7 @@ Then End⁰(KS(S)) = C⁺(T)^{op}, the right multiplications, which form the com
 
 Neither corpus Weil theorem applies to B (they cover dim ≤ 5 and split sixfolds), and the corpus's eightfold attempt is withdrawn. Neither the V_P construction nor Floccari's construction reaches S. Validation: `frontier/experiments/geo_k3locus/floccari_compare.out`.
 
-**What would close it.** By K3 paper Thm 1.1, it suffices to make *one* exact even-Clifford Kuga–Satake tensor algebraic for one such surface per locus. Corpus Lemma 9.3 plus Buskin's theorem then transports along rational Hodge isometries. In equivalent form, one needs a geometric family realizing an orthogonal Shimura variety whose generic C⁺ is ramified above an odd prime, together with a curve-product or semiregular-sheaf seed. I found no such family in the corpus.
+**Missing geometric input, corrected by review.** One exact KS tensor gives the result for that surface and transfers through already algebraic Hodge comparisons. One arbitrary surface per quadratic locus does **not** suffice. An underlying rational quadratic isometry need not preserve the period; its orbit does not cover a period domain. A family argument must construct the exact tensor very generally and justify extension/specialization to the requested fibers. No such argument is supplied for the odd-ramified generic example.
 
 ### 4.5 Lemma C (algebraicity of Hodge similitudes)
 
@@ -132,7 +134,7 @@ Neither corpus Weil theorem applies to B (they cover dim ≤ 5 and split sixfold
 
 The even Clifford algebra is scale invariant. Define c_φ: C⁺(T₁,q₁) → C⁺(T₂,q₂) by uv ↦ λ^{−1}φ(u)φ(v). This is a well-defined isomorphism of algebras: it is induced by the isometry φ: (T₁,q₁) → (T₂, λ^{−1}q₂), composed with the canonical identification C⁺(T₂, μq) ≅ C⁺(T₂, q) given by uv ↦ μuv.
 
-c_φ takes the period bivector J₁ = e₁e₂ to J₂, because the vectors φ(e_i)/√λ are q₂-orthonormal. So c_φ is a Hodge isomorphism of the weight-one Kuga–Satake structures. It is therefore induced by an isogeny KS₁ ~ KS₂, which is algebraic by Lefschetz (1,1) on the product.
+c_φ takes the period bivector J₁ = e₁b to J₂, because the vectors φ(e_i)/√λ are q₂-orthonormal. So c_φ is a Hodge isomorphism of the weight-one Kuga–Satake structures. It is therefore induced by an isogeny KS₁ ~ KS₂, which is algebraic by Lefschetz (1,1) on the product.
 
 A direct computation gives c_φ(v a w) = λ^{−1} φ(v) c_φ(a) φ(w). Hence c_φ ∘ j^{(1)}_w(v) ∘ c_φ^{−1} = λ^{−1} j^{(2)}_{φ(w)}(φ(v)).
 
@@ -140,7 +142,7 @@ The corpus K3 paper Thm 1.2 makes the tensor ι_{w′,E} algebraic for *every* r
 
 For HC on the fourfold S₁ × S₂: H² ⊗ H² Hodge classes are NS ⊗ NS plus Hom_Hdg(T₁, T₂). If End_Hdg(T₁) = ℚ, every nonzero Hodge map ψ between these irreducible structures is a similitude: ψ*q₂ = q₁(e·,·) with e ∈ End_Hdg(T₁) = ℚ. Degree 6 is H²⊗H⁴ ⊕ H⁴⊗H², whose Hodge classes are NS⊗[pt] and [pt]⊗NS, so they are algebraic; degrees 2 and 6 hold by Lefschetz (1,1). ∎
 
-*Scope.* The lemma does **not** give HC for S₁^a × S₂^b in general. That would need the Goursat analysis of Hdg(T₁ ⊕ T₂), which has low-rank exceptions (SO(3), SO(4) coincidences, as in Shioda–Inose pairs). It also needs Hodge isomorphisms that are not similitudes when End_Hdg(T) ≠ ℚ.
+*Corrected scope and attribution.* Lemma C is Varesco, [Theorem 5.3 (2023)](https://arxiv.org/abs/2304.02519), not a new lemma here. If a Hodge similitude exists, its algebraic cohomological inverse transfers HC/GHC to every mixed power; the scout’s former Goursat objection was misplaced. More generally, review §5.3 combines the accepted conditional-reduction paper’s Proposition 6.2 with the exact KS return map to make every Hodge map algebraic between two surfaces having algebraic exact KS tensors. It gives HC on their two-factor product, and on all mixed powers when the transcendental Hodge structures are isomorphic. These are formal consequences of accepted inputs, not new geometric constructions; no unrestricted K3-products theorem follows.
 
 ## 5. Theorem B: abelian varieties of dimension ≤ 5 — corrected known reduction
 
@@ -261,8 +263,8 @@ Numerical checks verify finite algebra only. The proofs above are the arguments.
 
 - **Theorem A′:** HC is implied by published Floccari 2026 plus the elementary Witt step. GHC and the moduli-space extensions rely on the corpus. Neither source states ρ ≥ 17 explicitly.
 - **Theorem A(2) and Corollary A″** (the Brauer description of both loci and the frontier criterion): not found in the corpus, in Floccari, or in Varesco. A broader literature search was not done.
-- The Brauer reformulation relies on two standard facts used without re-proof: e₂ = c(−1,−1) in dimension ≡ 6 mod 8, and [C⁺] = res[C]. The Hasse form of A(2a)/(2b) is proved directly and checked numerically.
-- **Lemma C:** depends on the corpus's "every w" clause in K3 paper Thm 1.2 and its Prop. 2.1. I have not checked whether it appears in the literature (it is related to Buskin and Huybrechts on isogenies).
+- The Brauer reformulation relies on two standard facts used without re-proof: b = c(−1,−1) in dimension ≡ 6 mod 8, and [C⁺] = res[C]. The Hasse form of A(2a)/(2b) is proved directly and checked numerically.
+- **Lemma C:** directly precedented by Varesco 2023, Theorem 5.3. The independent review §5 gives exact attribution and corrected stronger formal consequences.
 - **Theorem B1, review update:** the exact reduction occurs in the October 2 public source cited in §5. Its novelty claim is withdrawn. Algebraicity of the exceptional classes for non-CM Mumford fourfolds remains open.
 - Not attempted: MathDB "corpus"-band items beyond those listed. Assigning significance scores beyond MathDB's own bands was not attempted, by design.
 - Files written: this report; `frontier/sources/geo_CATALOGUE.md`, `geo_pdf/`, `geo_lit/`, `geo_mathdb/`; `frontier/experiments/geo_k3locus/`, `geo_mumford/`. Nothing was staged or committed, and no indexes were edited.
