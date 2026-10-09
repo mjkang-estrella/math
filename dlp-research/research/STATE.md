@@ -20,11 +20,15 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H038 live independent mechanisms and height-factor-base gate
 
-Previous turn PROGRESS:2df9259 checkpointed H036/037. Current project tree was
-clean at re-entry. Fresh live catalog confirms selected providers/models with
-delegation supported; no substitution or provider failure. Three distinct
-read-only T3 tasks RUNNING, initial ideas withheld from one another:
-- Claude Opus5.5 constructive Farey/height factor-base operator:
+Previous turn PROGRESS:75b1159 checkpointed exact S3 geometry and the standard
+m2 assembly gate. Project tree was clean at re-entry. The old H035 Fable terminal
+notification was acknowledged again; its raw report and qualifications were
+already retained, so no duplicate research round was created. Two independent
+read-only T3 proposer tasks remain RUNNING. Initial ideas withheld across roles:
+- Claude Opus5.5 constructive Farey/height factor-base operator: terminal
+  COMPLETED status but brief INCOMPLETE after provider safety-classifier stop.
+  No construction delivered, no retry/rerouting; returned testimony retained in
+  H038-farey-review-incomplete.md. This is not mathematical negative evidence.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h038-farey-construction-opus-20261008-r1`.
 - Grok4.7 independent low-memory complete-solver mechanisms:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h038-independent-lowmemory-grok-20261008-r1`.
@@ -40,10 +44,18 @@ equal volumes or genus. All roles no runs/imports/edits/children, no experiments
 or new implementation admitted. H034 cap still consumed. Best supported
 exponent1/2, verified improvement NONE; next decisive step is an explicit paid
 decomposition/recovery operator or falsification of its full-work premise.
-Validation: ./scripts/check.sh > /tmp/ecdlp-h038-geometry-check.log 2>&1 exit0;
-no Lean/Audit changes. Latest task_status calls confirm all three H038 T3 handles
-RUNNING with no reported pending children. Both native reviews are completed.
-Await their independent proposal notifications without duplicate launches.
+New native Astra /root/h007_additive_relations reviews COMPLETED: root's bounded
+even-cycle screen and its bounded connected-graph extension. Under fixed explicit
+F, fresh uniform query targets and bounded-size recovery dependencies, useful
+witness probability is at most C_L*sum_d(B*n/q)^d; constant success requires
+B*n=Omega(q), so paid base/query budgets remain square-root scale. Query IDs
+must remain distinct even when targets coincide. Known anchor logs and growing
+dependencies are excluded. Full proofs/objections: H038-bounded-recovery-graphs.md.
+No experiments, source changes or new Lean claims. Current validation:
+./scripts/check.sh > /tmp/ecdlp-h038-bounded-graphs-check.log 2>&1 exit0.
+The366 existing audits pass; they do not establish these paper graph lemmas.
+The two remaining T3 roles are confirmed RUNNING with no pending children;
+await their independent proposal notifications without duplicate launches.
 
 ## H037 closed candidate-specific source-factory screen
 
