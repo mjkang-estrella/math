@@ -10,8 +10,9 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 - I15: the [independent proof review](reviews/i15-odd-order-topology-r2.md) gives full-theorem **PASS**. [Parent integration](iterations/i15-proof-integration.md) preserves two interpretation clarifications. A [fresh significance review](iterations/iteration15-odd-order-topology-novelty-r3-task.json) is running; no count increment.
 - I17: [final significance review](reviews/i17-six-point-ramsey-novelty-r3.md) recommends **TECHNICAL ONLY**, retaining full proof PASS without repairs. The six-point certificate reduces to the source's adjugate lifting applied twice and multiplication. No exact duplicate or new gap is claimed; no count increment.
 - I18: the [joint prime-neighbor report](iterations/i18-joint-prime-neighbors.md) is complete as a scoped gap report. Restricted classical laws and a presieve input are proved; the full mixed prime discrepancy remains unproved. No count increment.
-- I19: [fresh structural discovery](iterations/iteration19-fresh-structural-discovery-task.json) is running across other corpus targets.
+- I19: the [structural report](iterations/i19-fresh-structural-discovery.md) proves a technical signed Saxl quotient and identifies its narrow-partition gap; two other screens yield an unresolved unimodality route and a weighted-switch counterexample. No substantial finding is proposed.
 - I20: [fresh PDE/kinetic discovery](iterations/iteration20-pde-kinetic-discovery-task.json) is running in a separate domain while I15 significance review proceeds.
+- I21: [focused signed Saxl continuation](iterations/iteration21-signed-saxl-dominance-task.json) now seeks an actual signed-dominance construction beyond I19's two insufficient bands.
 
 These are live task launch records, not accepted findings. The four-finding pause checkpoint remains a historical snapshot.
 
@@ -91,6 +92,14 @@ The other screened routes are retained without acceptance: a flip-sensitive Saxl
 The [completed report](iterations/i18-joint-prime-neighbors.md) proves a classical mixed factorial law when combined selected logarithmic mass is less than 1/2, and an elementary ordinary presieve remainder below combined mass 1. Neither proves the full joint PD law for p−1 and p+1. The report identifies the exact missing aggregate prime-progression discrepancy (MI), the failure of endpoint invariance for the extra shifted statistic, and the shared-label symmetrization obstruction. These diagnose specific attempted proofs; they do not prove the target false or inaccessible from the corpus.
 
 The parent read all 286 lines and reproduced the diagnostics and integrity verifier: 142 sealed artifacts, 103 pinned files, 20 frozen inputs, four primary literature files, 4,608 CRT/presieve systems, 768 prime-residue systems, 38 valuation identities and 27 divisor-sum identities, with zero failures. [Parent verification](experiments/i18-parent-verification.json). This is a reusable gap record, without an independent positive-proof acceptance or count increment. The [I19 task](iterations/iteration19-fresh-structural-discovery-task.json) opens a new constructive search across distinct structural targets.
+
+## Iteration 19: signed band progress and a precise remaining gap
+
+The [completed structural report](iterations/i19-fresh-structural-discovery.md) proves that the Saxl source's cyclic module and band quotient preserve the physical tensor flip. The known two-row symmetric/exterior decomposition then yields explicit signed multiplicity lower bounds. Both available bands are nevertheless blind to every partition satisfying lambda_1<m and 4 lambda_1<2m−1, including a nonsign width-two family for every m≥5. The source's one-factor sign twist does not preserve a fixed flip sign. The refined Saxl conjecture remains unproved here; the quotient lemma alone is a technical extension, not a counted finding.
+
+The other screens remain separate: the actual root quiver is cyclic, preventing a direct acyclic Lefschetz theorem from proving general elementary unimodality; an abstract Lefschetz/permutation-module countermodel blocks another shortcut. This is no graph counterexample. A positive-weight switch chain on six vertices has exponentially slow mixing in binary weight length, disproving that unrestricted extension but not efficient weighted counting by other methods.
+
+The parent read the full report and the actual source band-quotient/dominance proofs. Diagnostics reproduce: 111 two-row checks, 458 signed lower-bound comparisons, 434 character orthogonality checks, five literal projection cases and the exact six-vertex chain checks. Verification passes for 94 sealed artifacts, 43 pinned sources, 117 source contracts, ten frozen inputs, ten primary retrievals and ten primary contracts. Shared-index drift is reported separately. [Parent verification](experiments/i19-parent-verification.json) is not an independent proof/significance acceptance. [I21](iterations/iteration21-signed-saxl-dominance-task.json) specifically investigates new signed-dominance or wider-band mechanisms rather than iterating the insufficient quotients.
 
 ## Continuation rules
 
