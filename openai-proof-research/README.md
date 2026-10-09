@@ -2,6 +2,8 @@
 
 **Active research: [continued MathDB discovery iterations](frontier/iterations/README.md).** The [first pass](frontier/OUTCOME.md) did not establish a significant novel theorem; the user explicitly requested continued iteration. The user clarified that routine corollaries do not meet the objective. The new phase targets substantive new proof ideas for significant named open problems. The ten deductions below are retained as the first-pass research record, not presented as satisfying that stronger novelty requirement.
 
+**Strongest validated deduction: [R006 — positive-proportion primitive roots](frontier/findings/R006-progression-PD-primitive-root-density.md).** Assuming the pinned corpus, every integer base `|a|≥2` that is not a positive square is a primitive root for a positive proportion of primes in every sufficiently large dyadic interval. A new fixed-progression Poisson–Dirichlet argument yields the improvement from `x/log²x` to `x/log x`. Independent proof review passes; final novelty/significance review is pending. This does not prove the exact Artin density formula.
+
 ## First-pass consequences
 
 **Ten deductions have complete proofs and independent T3-agent reviews. Each finding has its own commit.** They use the OpenAI theorems as true premises, exactly as requested. No claim of first discovery in the mathematical literature is established, and no proof-assistant verification was run.
