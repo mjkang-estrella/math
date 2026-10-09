@@ -46,13 +46,20 @@ handles. Root refreshed live capability catalogue and checked native status.
   Astra independent review COMPLETED. H046-information-fallback-screen.md
   records representation-specific costs, not arbitrary batching/decoder bounds.
   Distinct from completed detector work; not a Fable result.
-- Grok4.7 RUNNING: changed noncanonical search geometry and useful-event laws.
-- Factory Opus5.5 RUNNING: primary mathematical public operators with concrete
-  ordinary-curve recovery bridges. Distinct provider, not a Claude API retry.
+- Grok4.7 COMPLETED: raw three lazy/fold walk cards retained in
+  H046-geometry-grok-raw.md, unaccepted. Native Astra math review COMPLETED;
+  Sol cost/prior-art review LIVE. Root found signed-label, median/mean and
+  DP-state issues; no raw test recipe admitted.
+- Factory Opus5.5 COMPLETED: actual report recovered by t3_thread_read at
+  position52 after task summary only said 'Plan is up-to-date'. Four cards in
+  H046-operators-factory-raw.md remain unaccepted pending independent review.
+  Proposer read archive records, no new primary sources. Native Astra separate
+  mathematical review LIVE. Root checked primary isogeny references and proposed
+  a deterministic small-degree subfield-preimage bound for review; not yet accepted.
 At launch three native were active including root and three T3 tasks were
 accepted RUNNING. Native evaluator/detector and public-information fallback roles
-completed. Fable terminal failed; Grok and Factory Opus retain their
-original live handles. All read-only,
+completed. Fable terminal failed; Grok and Factory Opus terminal reports collected.
+Native algebraic and full-cost walk reviews now live. All read-only,
 no experiments/imports/scripts/children; root owns integration. Independent
 initial proposals withheld. H034 cap unchanged, stopped routes not reopened.
 Actual task IDs:
@@ -80,6 +87,10 @@ Information fallback validation: ./scripts/check.sh >
 /tmp/ecdlp-h046-information-check.log 2>&1 exit0,366 existing audits. Root/Astra
 checked componentwise zero-divisor dispatch, scalar gcd roots, sign translation
 and dense nonzero-shift materialization. No new Lean claim or experiment.
+Raw-report/review checkpoint: ./scripts/check.sh >
+/tmp/ecdlp-h046-raw-review-check.log 2>&1 exit0,366 existing audits. No new
+formal assertion; raw reports explicitly unaccepted. All T3 H046 outcomes
+collected, one failed and two completed; two distinct native reviews active.
 
 ## H045 completed independent constructions
 
