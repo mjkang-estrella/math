@@ -46,11 +46,15 @@ The [locally finite extension](iterations/i11-locally-finite-capacity.md) and un
 
 ## Iteration 13: fresh discovery
 
-A [new T3 research task](iterations/iteration13-fresh-discovery-task.json) screens at least three distinct targets in combinatorics, theoretical computer science, dynamics or mathematical physics, outside the active topology and arithmetic routes. It must develop a nonroutine construction or estimate and check the strongest corpus companions and primary prior art. A scout report alone will not change the count.
+The completed [fresh-discovery report](iterations/i13-fresh-discovery.md) is retained as a negative research record. Biregular Sidorenko-pattern pinning fails by an exact collapsed-map identity, and the proposed sign average remains positive; this does not rule out exceptional fixed signs or other constructions. Projected common-base counting needs a new support representation: separate projections need incompatible completions, and inverse-fiber sampling has exponential relative variance even for partition matroids. A bounded-observable long-memory example disproves square-root tightness under qualitative multiple mixing. Parent full-report reading, diagnostics and integrity checks pass for 126 pinned sources, six primary papers, 15 snapshots and 170 artifacts. No qualifying positive finding is claimed.
 
 ## Iteration 14: sharp spectral graph width under proof review
 
 The [parent candidate](iterations/i14-sharp-spectral-width.md) proposes a graph-width bound for every complete three-manifold with `-a Delta+Scal >=lambda>0`, throughout `4<=a<6`, and an explicit complete endpoint counterexample at `a=6`. The proposed bound is `500 sqrt((8-a)/(2(6-a)))/sqrt(lambda)`. The proof retains the full stable-surface quadratic terms, checks concavity in the reflected-collar smoothing, and propagates the new scale through local cutting and whole-fiber graph gluing. The coefficient threshold is already present in torical-band literature; any contribution must be the full graph-width implication under its stated hypotheses. All 15 pinned TeX sources, four literature artifacts and 29 sealed inputs/outputs verify; exact diagnostics check 3,125 surface identities, 405 collar identities and 99 endpoint coefficients. These checks do not certify the geometric argument. A [fresh independent proof review](iterations/iteration14-spectral-width-r2-task.json) is running. No count increment is assigned.
+
+## Iteration 15: odd-order topology construction
+
+A [fresh research task](iterations/iteration15-odd-order-topology-task.json) targets a closed aspherical topological four-manifold with an outer automorphism of exact order three that no homeomorphism represents. It must develop a genuinely ternary obstruction and prove the needed covering and geometric realization steps, while checking odd-order prior art. Repetition of binary detectors or failure merely to realize a finite group action will not meet this target. The earlier rank construction remains technical only.
 
 ## Continuation rules
 
