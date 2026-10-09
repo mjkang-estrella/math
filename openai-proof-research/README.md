@@ -1,5 +1,7 @@
 # OpenAI mathematics research
 
+**New discovery work is active:** following R006, the user requested another substantial theorem. [Iteration 05](frontier/iterations/README.md#iteration-05--new-discovery-requested-running) records the three ongoing research tasks and their validation requirements.
+
 **Research result: [R006 — positive-proportion primitive roots](frontier/findings/R006-progression-PD-primitive-root-density.md).** Continued discovery reached a substantial, nonroutine deduction under the user's accepted-corpus premise. Independent proof and final significance reviews support acceptance; worldwide priority remains unverified. The [iteration record](frontier/iterations/README.md) preserves the failed approaches and decisions. The [first-pass outcome](frontier/OUTCOME.md) and ten deductions below are historical; routine corollaries alone did not meet the user's refined objective.
 
 Assuming the pinned corpus, every integer base `|a|≥2` that is not a positive square is a primitive root for a positive proportion of primes in every sufficiently large dyadic interval. A fixed-progression Poisson–Dirichlet argument yields the improvement from `x/log²x` to `x/log x`. [Independent proof review](frontier/reviews/i03-arithmetic-progressions-r4.md) passes; the [final novelty review](frontier/reviews/i03-arithmetic-novelty-r5.md) found no established duplicate under the available premises and supports the nonroutine-improvement judgment. This does not prove existence of natural density or the exact Artin density formula.

@@ -16,6 +16,18 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## Iteration 05 — new discovery requested, running
+
+After R006, the user requested: “Come up with new one - keep make a progress.” This starts a fresh search for a second substantive contribution; acceptance of R006 does not finish this new request. Three T3-owned research tasks are active:
+
+| Lane | New target | Task record |
+|---|---|---|
+| Prime-predecessor parity | A nonroutine signed correlation/extraction giving positive proportions or a joint parity/PD law; the source sign is band-limited, not full Liouville. | [Brief and ID](iteration5-parity_pd-task.json) |
+| Simultaneous primitive roots | Dependent signed bases and exact local/entanglement constraints; reject routine union-bound or known-GRH-criterion transfers as the new discovery. | [Brief and ID](iteration5-joint_artin-task.json) |
+| Fresh cross-field search | Screen at least three distinct bridges, then deeply prove the strongest substantial candidate outside the closed/stalled lanes. | [Brief and ID](iteration5-crossfield-task.json) |
+
+The [parent screening note](i05-parent-screen.md) records a routine squarefree-conditioning consequence of R006 and the exact limitation of the source sign interface. Its 180 finite CRT checks pass, including 19 forced-zero cases. This is a baseline, not an accepted new finding. Each candidate must receive fresh independent validation before promotion. No pending task is duplicated, and no further bounded-multiplier operator variants are launched.
+
 ## Iterations 02–04 — substantial result accepted
 
 | Lane | Work | Intended report |
