@@ -32,14 +32,16 @@ by H019 and the candidate; complete-work improvement remains NONE.
 
 Native Sol's full ideation report COMPLETED: fusion survives algebra; row
 locality transfers to baseline, literal quadratic detectors have quadratic work.
-Astra's final refined-algebra/artifact review is now RUNNING via explicit
-followup_task. Root caught a process mistake: messages sent after the previous
+Astra's final refined-algebra/artifact review COMPLETED after explicit
+followup_task: all retained result totals/cost rows confirmed; corrected
+two-field7A and shifted-square6A formulas accepted with complete-cost limits. Root caught a process mistake: messages sent after the previous
 terminal answer did not launch work; earlier RUNNING wording was stale. The
 actual task inventory showed completed, and only then was this followup started.
 No result is attributed to that idle interval. Primary prior-art
 critique COMPLETED/acknowledged; H035-priorart-qualifications.md rejects its
 class-dependent sign claim of full-affine uniformity and universal baseline
-dominance. New6A shifted-square side-key mechanism remains under final review.
+dominance. Corrected6A shifted-square side-key mechanism passed final native algebra
+review, with paid full-coordinate versus key conversions and no dominance claim.
 Completed task:
 `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h035-hash-fusion-priorart-opus-20261008-r1`.
 All paper roles read-only, no experiments/imports/edits/children. The H034
@@ -57,7 +59,7 @@ Public checks and212completed regular subtotals passed, but ZEROcandidate_leaf
 components. The proposed leafsearch and collisionlaw were NOT tested.
 H034-initial-diagnostic-result.md records full scope, corrected reviewer
 predictions, cost table, capacity match and partial inverse. No *_unrecoverable
-outcome. Native independent artifact reading requested; no replays permitted.
+outcome. Native independent artifact reading COMPLETED and agreed; no replay occurred.
 No retry/resume/tuning. Source hash remains
 9ea5b055446f8b4f3b4f6b393ddf5569b1d366d003123f2f93a54b6814c21ba3;
 protocol remains585fd2af0fefb448a3cb85ab2041aea1b604f30fd9aab87efa3cbca7d69d0812.
@@ -81,11 +83,13 @@ Source construction remains COMPLETED/frozen. Separate read-only PAPER roles
 (no source changes, solver executions or children):
 - /root/h034_c4_implementation (Sol) COMPLETED: independent leading-cost arithmetic/
   representation/schedule mechanisms, explicit baseline portability and falsifiers.
-- /root/h007_additive_relations (Astra) RUNNING: review root's affine-hash/isomorphism
+- /root/h007_additive_relations (Astra) COMPLETED: review root's affine-hash/isomorphism
   fusion hypothesis, including its restricted square-multiplier hash family.
 Both preserve current source; no new implementation or experiment admitted.
 The root hypothesis may benefit every comparator equally and lose its apparent
-saving when the actual hash collision law is priced. No result accepted yet.
+saving when the actual hash collision law is priced. Only scoped algebra and
+artifact observations accepted; no complete-work improvement. All children now
+terminal and collected; no live review or writer, no duplicate tasks.
 Root alone integrates. Previous protocol review terminal/collected, not reused
 as source admission. Protocolv2 hash remains
 585fd2af0fefb448a3cb85ab2041aea1b604f30fd9aab87efa3cbca7d69d0812.
@@ -124,8 +128,8 @@ verified complete-work improvement NONE. Collision and model premises survived
 qualified reviews, with useful corrections to seed, batching and duplicate-form
 costs. Primary uncertainties remain complete finite costs, backend remainder,
 leading integer/memory traffic and strongest comparator. Next decisive step:
-independently review the retained artifact and finish H035 prior-art/full-cost
-comparison. No further run, Lean/Audit change, generic infrastructure or live target work.
+price H035 against competent shared hash/kernel baselines and require a
+meaningful full-work regime before new code or experiments. No further run, Lean/Audit change, generic infrastructure or live target work.
 
 Validation: `./scripts/check.sh > /tmp/ecdlp-h034-source-checkpoint-check.log 2>&1`
 exit0,366 existing audits. This did not import or execute the new diagnostic.

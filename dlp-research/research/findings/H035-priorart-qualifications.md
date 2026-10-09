@@ -21,7 +21,7 @@ The uniformly random shift remains uniform after the branch-dependent sign.
 
 The simpler corrected mechanism uses a square-only shifted isomorphism directly:
 X=u²*x+r,Y=u³*y and key L=X(P±J)-3r=u²*x(P±J)-2r. Its6A SIDE-KEY count
-is a valid algebraic deduction, pending independent final audit. For p=3 mod4,
+is now independently accepted by Astra in the final native audit. For p=3 mod4,
 the earlier ordered-pair reversal proof gives the SAME pair collision probability
 as full-affine hashing. That equality does not imply identical joint output
 law. The shifted model/general doubling and all center/seed/setup costs remain.
@@ -70,5 +70,5 @@ not read in this round; Thorup is the directly inspected author source.
 
 Disposition: retain corrected6A square-family mechanism for focused analysis,
 not implementation. Need the matched complete-cost ledger with an explicit
-competent hash competitor; no further numerical trial is admitted. Root's
-corrections and native final review precede any renewed T3 round.
+competent hash competitor; no further numerical trial is admitted. Root corrections and the completed native final audit are retained; any
+renewed T3 round must be a new delegated task with these objections.

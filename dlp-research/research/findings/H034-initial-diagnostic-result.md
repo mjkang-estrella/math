@@ -86,7 +86,7 @@ Root read JSON only and checked:
 - declared peaks/admitted control sets against the pre-run table;
 - exact metadata source hashes, partial stage and interrupted inverse evidence.
 These are artifact checks, not another solver run. Independent native artifact
-review is pending; no claim extends beyond retained evidence.
+review is now completed and agrees; no claim extends beyond retained evidence.
 
 ## Disposition and next conclusion-changing work
 
@@ -108,3 +108,11 @@ Process correction: root initially sent the artifact-review request as a message
 to the already-completed native reviewer. That did not start work. Agent inventory
 exposed the mistake; an explicit followup_task now starts the independent review.
 No review result or live work is claimed for the intervening idle period.
+
+Independent native Astra review COMPLETED after explicit followup: confirmed
+artifact/source hashes, event sums,7seed-only candidates,26controls,212passing
+subtotals,0candidate-leaf components, all seven matched-cost rows, capacity
+consistency, no null outcomes and exact partial inverse/cap location. It agrees
+that dynamic graph/leaf behavior remains untested and approves only recording
+this finite censored result. No solver replay, PRNG reconstruction or new
+experiment was performed. This supersedes the earlier pending-review status.

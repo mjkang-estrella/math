@@ -2,8 +2,10 @@
 
 Status: PAPER mechanism, not implemented or measured. Native Sol proposed the
 exact-uniform variant independently of root's isomorphism proposal; Astra reviews
-algebra/costs. Prior-art/competent-hash comparison is pending. Verified ECDLP
-complete-work improvement NONE. H034 source/protocol remain frozen and unexecuted.
+algebra/costs. Prior-art review completed with root corrections in
+H035-priorart-qualifications.md; complete-cost comparison remains open. Verified ECDLP
+complete-work improvement NONE. H034 source/protocol remain frozen; its sole capped run is now recorded in
+H034-initial-diagnostic-result.md. No H035 implementation/run occurred.
 
 ## Mechanism and arithmetic boundary
 
@@ -143,3 +145,14 @@ The review must compare conventional word/multiply-shift/tabulation alternatives
 including their actual distribution assumptions and complete price. If they
 already avoid the paid field multiplication, this named comparator saving may
 have no practical relevance. No source change or numerical run follows yet.
+
+## Final native algebra audit
+
+Astra completed the explicit followup and accepted the two-field7A formula,
+transformed cubic, signed output order and corrected shifted-square6A formula.
+For the latter, full stored points use Xout=L+3r while keys use X-3r. These
+must not be confused. Full Y output and transformed cubic-derivative doubling,
+setup/conversions and exceptions remain paid. The class-dependent sign folds
+to square multipliers; the reviewer confirms pair-collision equality does not
+restore full-affine joint uniformity. No universal word-hash dominance or
+universal zero-gain conclusion follows. No numerical execution by reviewer.
