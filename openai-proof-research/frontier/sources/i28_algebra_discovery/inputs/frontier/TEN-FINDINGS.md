@@ -1,6 +1,6 @@
 # Ten substantial findings
 
-User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resumed 2026-10-09: “Now keep proceed for 10 target”. This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 5 accepted, 5 remaining; research active**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
+User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resumed 2026-10-09: “Now keep proceed for 10 target”. This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 4 accepted, 6 remaining; research active**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
 
 **Historical pause, 2026-10-08:** “Let’s pause after 4th finding for now.” R010 passed all acceptance gates and the work was paused with partial artifacts preserved. **The user explicitly resumed on 2026-10-09**, then instructed: “also after the verification commit & push to the public repo”. The old pause restriction is revoked. Each newly accepted finding still receives its own commit. The user selected publication of **only `openai-proof-research`** to `https://github.com/mjkang-estrella/math`. Public history is filtered to this directory; unrelated local research is excluded. Filtering changes commit identifiers while retaining separate commits.
 
@@ -16,20 +16,14 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 - I22: the [combinatorial report](iterations/i22-combinatorial-discovery.md) retains two complete technical deductions, entropy/DP-coloring gaps, and a prior-art rejection of approximate PSD-rank strengthening. No substantial finding is proposed.
 - I23: the [kinetic follow-up](iterations/i23-kinetic-connected-fluctuations.md) proves limited component and virial estimates but leaves the normalized signed-history summation gap open. No Gaussian theorem is proposed; this route is parked pending a new representation.
 - I24: the [completed resumed report](iterations/i24-elementary-unimodality-resumed.md) reconstructs rational bar invariance and finiteness/centering of graph-relevant history jumps. Nonnegative character multiplicities and a suitable Lefschetz identification remain unproved, so general elementary unimodality is still open in this record. [Parent verification](experiments/i24-resumed-parent-verification.json) passes; no substantial finding is proposed.
-- I25: **accepted as [R011](findings/R011-rooted-matching-entropy.md), the fifth substantial finding**. Full-proof review passes without repairs; independent significance review judges the rooted separator/global-maximum mechanism substantial. Parent reproduction and integrity checks pass. All entropy and counting consequences count once.
+- I25: the [resumed report](iterations/i25-matching-entropy-improvement-resumed.md) proposes a complete rooted coefficient-3/2 entropy proof, using exact separator compensation and covariance induction. [Independent full-proof review](reviews/i25-rooted-entropy-proof-r2.md) gives **PASS with no repairs**, including the ancillary and counting claims. [Parent verification](iterations/i25-proof-integration.md) reproduces both sets of evidence; [significance review](iterations/iteration25-rooted-entropy-novelty-r3-task.json) remains running. No theorem is accepted or count increment assigned. The original interrupted numerical artifact is corrected.
 - I26: the [completed probability report](iterations/i26-probability-discovery-resumed.md) screens Voronoi dynamics, Ising logarithmic fluctuations and integer-height interfaces. Exact conditioning identities are technical source deductions; uniform slit-domain estimates and the scaling theorem remain unproved. [Parent verification](experiments/i26-resumed-parent-verification.json) passes; no substantial finding is proposed.
 
-- I27: the [completed geometric report](iterations/i27-geometric-analysis-discovery.md) develops endpoint-varifold arguments and explicit countermodels, but rectifiability, original-metric Einstein stability and spatial-Lp Ricci-flow continuation remain unproved. [Parent verification](experiments/i27-parent-verification.json) passes; no count increment.
+- I27: [fresh geometric-analysis discovery](iterations/iteration27-geometric-analysis-discovery-task.json) screens distinct rigidity, degeneration and singular-set targets, outside the parked spectral-width route.
 
-- I28: the [completed algebra report](iterations/i28-algebra-discovery.md) supplies a technical filtered-persistence argument, but an obstructed nonconical ring remains unconstructed. Ulam and involutive-division-ring screens retain specific obstructions. [Parent verification](experiments/i28-parent-verification.json) passes as a gap record; no count increment.
+- I28: [fresh algebra discovery](iterations/iteration28-algebra-discovery-task.json) screens structural targets outside the parked Saxl and unimodality routes.
 
-- I29: [common-matroid-base entropy](iterations/iteration29-common-base-entropy-task.json) investigates a distinct prescribed-mean target; no transfer from R011 is assumed.
-
-- I30: [focused original-metric Einstein stability](iterations/iteration30-einstein-metric-stability-task.json) attacks I27’s separate time-zero metric gap, retaining the normalized-flow counterexample.
-
-- I31: [nonconical no-MCM realization](iterations/iteration31-nonconical-no-mcm-task.json) independently checks I28’s persistence argument and attempts the missing construction with its full associated-graded and nonisomorphism obligations.
-
-These records include active tasks, completed gap reports, and R011 acceptance. The four-finding pause checkpoint remains a historical snapshot.
+These records include active tasks and completed reviews, not additional accepted findings. The four-finding pause checkpoint remains a historical snapshot.
 
 All results remain deductions under the accepted corpus at `openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. Acceptance means a complete written deduction, independent AI proof review, a separate primary-source prior-art/significance review, and parent integration. It does not establish worldwide priority, independent truth of the corpus, human peer review, or formal proof certification.
 
@@ -41,7 +35,6 @@ All results remain deductions under the accepted corpus at `openai/math@fd4aeeb2
 | 2 | [R008: parity independent of factor sizes and squarefreeness](findings/R008-parity-PD-independence.md) | `e651d0e` | `8155129` |
 | 3 | [R009: variable-channel four-state weighted capacity](findings/R009-variable-channel-capacity.md) | `4afc0cf` | `1bf8898` |
 | 4 | [R010: fixed factor-count residues independent of PD factor sizes](findings/R010-complex-modes-PD-independence.md) | `1b384f1` (proof integration) | `f034e3d` |
-| 5 | [R011: rooted perfect-matching entropy bound](findings/R011-rooted-matching-entropy.md) | `65ff2fd` (candidate), `f39320a` (proof integration) | [R011 acceptance record](findings/R011-rooted-matching-entropy.md) |
 
 Equivalent formulations, routine corollaries, and multiple consequences of the same new bridge count as one finding. In particular, R008's Moree–Hommersom implication is part of R008.
 
@@ -178,27 +171,3 @@ The parent read the full report and reproduced diagnostics, contract generation 
 The resumed investigation proves that normalized rational wall transport commutes with bar and that every jump used on a nonempty fixed-shape history is a finite centered palindromic Laurent polynomial. This yields a symmetry involution, but symmetry was already known. A conditional centered-chain construction needs nonnegative character multiplicities; the allowed wall example with jump v²+v⁻² shows that positivity and symmetry alone do not supply them. No occurrence of this example in the actual graph chart is claimed. The alternative geometric route still lacks an identification preserving the relevant coefficient and satisfying a proved Lefschetz theorem. General unimodality remains unproved.
 
 The parent read the full report and reproduced its two verification commands: 24 sealed artifacts, 80 unchanged inherited files, 22 pinned identities, 41 source contracts, 36 read passages, 26 primary contracts and nine PDF/text pairs. New exact tests reproduce 4,752 adjoint comparisons and 108 normalized-unit comparisons. The earlier partial finite diagnostics were separately reproduced and remain explicitly bounded; the mutation search is not an unrestricted obstruction. Only shared-ledger drift is reported. Preserved inherited evidence is integrated with this completed gap report, without an acceptance or count increment. The freed slot moves to I28.
-
-## I25 accepted as R011: rooted matching entropy
-
-The all-roots allowance F−H≤(3/2)(B−b_v) is exactly additive through tight-cut contraction. This closes an induction excluding nontrivial tight cuts at a positive global maximum, enabling the source’s stronger degree-only dimension bound. It improves the universal finite-order coefficient from 2(1−1/m) to (3/2)(1−1/m). The complete theorem includes arbitrary feasible means, boundary coordinates, disconnected graphs and labelled parallel edges.
-
-Independent full-proof review gives PASS without repairs. The separate primary-prior-art review judges the combined mechanism SUBSTANTIAL, after checking full source proofs, the old cut-restricted rank formula, nonbipartite Bethe corrections and prescribed-mean versus counting-only bounds. The parent read both full reviews and reproduced their verifiers. R3 passes for 126 sealed artifacts, 19 frozen inputs, 18 pinned files, 38 contracts, 51 passages and 45 retrieved byte artifacts; 1,888 edge-charge and 294 trace checks reproduce. R2 and author evidence also pass. [Final parent verification](experiments/i25-novelty-r3-parent-verification.json). Only documented shared-state drift occurred.
-
-Accept this as one fifth finding. Weighted partition bounds and exponential counting improvements are consequences of that one bridge. The optimal coefficient and worldwide priority remain unestablished; no sampler or optimizer is claimed. The geometric, algebraic and common-base investigations continue toward five remaining findings.
-
-## I27 geometric analysis: three gaps and endpoint obstruction
-
-The selected Euclidean stationary-varifold target is full codimension-one rectifiability, including points with planar tangent cones. The source’s center averaging uses a strictly supercritical Frostman exponent; at the endpoint its error becomes a divergent logarithmic integral. Flat-scale/center-mass alignment is also unproved. Explicit smooth positive stress systems satisfy the limiting equations while concentrating on a hyperplane, so those equations alone cannot fix the passage. Quantitative frequency-drop identities control stress directions only after center retention and do not establish a geometric packing theorem. A separate pair of small minimal graphs refutes a mass-only singular-measure bound, without refuting rectifiability.
-
-The Einstein screen distinguishes positive-time flow limits from original metric distances and rejects universal normalized-flow convergence by unequal products of spheres. The spatial-Lp Ricci-flow extension screen isolates a scalar-square loss normalized by a shrinking core scale; vanishing rescaled Lp norm alone does not make it negligible. These are technical deductions and obstruction tests, not new substantial findings.
-
-The parent read the full report and reproduced all four commands. Verification passes for 157 sealed artifacts, nine frozen inputs, 96 pinned files, 209 contracts, 25 source passages, ten primary passages and 20 primary retrievals, plus all 9,340 cached texts. Exact diagnostics reproduce the rational frequency, stress, product, scalar-scaling and reflection identities. Only shared-ledger drift is reported. [Parent verification](experiments/i27-parent-verification.json). I30 now develops the original-metric stability question independently.
-
-## I28 algebra gap integration
-
-The completed report develops three distinct targets. The dimension-independent same-space finite-window correction target is blocked by the classical clock-and-shift index. The filtered-persistence proof constructs a finite Rees model without assuming degree-one generation, then applies the accepted Cartier-divisor balance and variance lemmas. Its explicit hypersurface example tests the mechanism but fails the numerical obstruction; a genuinely nonconical obstructed ring remains unconstructed. A good module filtration need not preserve the MCM property, and high-order equation perturbations need not preserve the full initial ideal.
-
-For the involutive Kurosh target, tensoring with the opposite algebra introduces explicit zero divisors, while the source’s degree-11 lifting and a generic degree-16 cyclic replacement fail first-kind-involution requirements. No impossibility of the full target is claimed. These are technical results and gaps, not an additional substantial finding.
-
-Parent reproduction passes for 109 sealed artifacts, 35 selected pinned sources, 57 exact source contracts and all 9,340 cached texts. Diagnostics reproduce 35,000 Weyl actions, 15,625 cocycle identities, 441 module-filtration checks, 341 Rees shifts and the weighted-chart, syzygy, tensor and graph checks. Only shared-ledger drift is reported. [Parent verification](experiments/i28-parent-verification.json) records the limits; I31 now targets the actual nonconical realization and independently audits the technical persistence proof before reuse. Count remains five of ten.
