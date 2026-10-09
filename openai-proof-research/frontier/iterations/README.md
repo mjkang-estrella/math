@@ -20,7 +20,8 @@ When a report returns without meeting the gate, integrate its evidence and use i
 
 | Lane | Work | Intended report |
 |---|---|---|
-| Cross-field | Fresh high-importance targets beyond the previously exhausted lanes; screen remaining scope and develop concrete proof steps. | `i02-crossfield.md` |
+| Cross-field, round 1 | Returned failed sunflower/Kakeya bridges and a proved rank-one perturbation obstruction; no substantial new target case. Independent proof audit is running. | [Report](i02-crossfield.md) |
+| Operator construction, round 2 | Audit cross-field arguments; solve or obstruct the exact rank-two transfer identities using the accepted operator's dyadic weights, and analyze actual invariant subspaces. | `i02-operator-r2.md`; `../reviews/i02-crossfield-r2.md` |
 | Arithmetic | Try new theorem-strength mechanisms, including the internal structure of quasi-RH proofs; avoid ordinary zero-free-region corollaries and the failed naive Chowla norm. | `i02-arithmetic.md` |
 | Hodge construction, round 1 | Returned an explicit quotient carrier and obstructions to specific constructions; no partner cycle or new Hodge case. Parent reproduced exact checks; independent proof audit is running. | [Report](i02-hodge-construction.md) |
 | Hodge construction, round 2 | Independently audit round 1, then attempt an actual curve-family/cylinder on the explicit quotient using geometry outside the excluded constructions. | `i02-hodge-cylinder-r2.md`; `../reviews/i02-hodge-construction-r2.md` |
@@ -34,3 +35,11 @@ The parent read the completed task result and full report, reproduced `experimen
 The constructed object is a singular threefold quotient with a 16-dimensional level-one primitive H³ block. It is not a nonzero partner CH² class. Its identification with the repaired Mumford partner is also unproved. Restriction vanishing on boundary strata by itself must not be promoted into vanishing of every Gysin/support map; round 2 explicitly audits that distinction.
 
 Decision: retain round 1 as a research record, with no increase to the count of accepted substantial findings. Round 2 will test actual incidence families or singular supports with additional irregularity. The cross-field and arithmetic tasks were both still working when this result was integrated; their work is not duplicated.
+
+### Cross-field round 1 integration — 2026-10-08
+
+The parent read the completed task result and report. Its finite output reproduces exactly: twelve rational probability checks, binary sunflower-free examples through rank four, and twenty-nine rank-two determinant evaluations. The parent verified all nine recorded upstream SHA-256/Git-blob hashes, four literature download hashes, and eleven input hashes. These checks do not establish universal proofs or novelty. The parent also read the accepted operator's exact construction theorem and Tcaciuc's scalar resolvent results, and checked the report's Gaussian-growth argument: a nonconstant order-zero scalar resolvent function cannot omit 1; the alternative of zero moments gives a proper cyclic invariant subspace. Independent review remains pending.
+
+No candidate clears the success gate. The sunflower threshold upgrade is false for unrestricted spread families, and the avoiding-set convexity application has the wrong exceptional set. The Kakeya lift recovers only dimension four. Proposition R excludes rank-one perturbations of the accepted operator, with novelty unestablished; it is recorded as an obstruction to a research route, not a substantial advance on the celebrated target.
+
+Decision: continue with the exact rank-two transfer problem in §7 of the report. The new task must use the actual dyadic weights, test controllability/observability and ordinary invariant subspaces, and reject mere similarity constructions. If that approach yields only an elementary or known obstruction, it must attempt a materially different construction. No accepted-finding count is increased.
