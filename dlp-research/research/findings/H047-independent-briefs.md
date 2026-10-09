@@ -107,6 +107,17 @@ original lens and prior objections, no other initial proposals, and the same
 read-only/no-experiment/no-children constraints. This is a model substitution,
 not a successful Claude report; no provider retry or safety-stopped reroute.
 
+Coordinate fallback now COMPLETED: H047-residual-projection-screen.md retains
+the nonsplit residual-pair operation and exact trace identity showing its
+immediate label-recovery rule yields no new zero relation. Root independently
+checked the divisor/projection calculation and primary group-law reference.
+Root also proposed H047-mixed-radix-success.md; Astra separately checked its
+two-long-list moments, caps and extraction. Sol's independent storage pool has
+returned and Astra's review is complete in H047-storage-recovery-screens.md.
+Sol now constructs a concrete compatible long-progression filter reporter.
+No independent initial outputs were shared
+before delivery. T3 Factory Opus/Grok remain live under their original handles.
+
 H046 gives a scoped small-isogeny filter bound, corrected finite walk costs,
 and an exact randomized-progression success law. None is a faster solver.
 No H047 faster proposal is accepted. Next decisive evidence is an

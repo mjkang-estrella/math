@@ -26,8 +26,14 @@ T3 prompts. Native Astra /root/h007_additive_relations COMPLETED constructive
 reporter pass: no competitive shared operator; H047-rectangle-reporter-screen.md
 retains a narrow fresh-perimeter complete-reporting bound independently checked
 by root. It does not cover cached/shared or early-match reporters.
-Native Sol /root/h034_c4_implementation RUNNING distinct complete relation
-storage/recovery constructions. Three native active including root, within4.
+Native Sol /root/h034_c4_implementation COMPLETED initial storage/recovery
+pool: residue-index retrieval and binary filter descent returned without a
+gain premise. Astra independent review COMPLETED; H047-storage-recovery-screens.md
+retains exact intervals, signs, seed scope and nonconstant true-path costs.
+Sol now RUNNING a
+distinct concrete filter-reporter construction on the accepted mixed-radix
+long progressions. Two native active including root, within4; Astra is
+available for independent review when the remaining constructions return.
 
 T3 tasks, all initially accepted RUNNING after refreshed capability discovery:
 - acpRegistry_factory_droid / claude-opus-5-5: H047 shared public-signal constructions.
@@ -38,10 +44,15 @@ T3 tasks, all initially accepted RUNNING after refreshed capability discovery:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-autonomous-search-grok-20261009-r1`.
 
 Claude terminal result: 'Claude gave up after repeated API errors.', no pending
-child runs or research output. No immediate provider retry. Native Astra now
-RUNNING an explicit fallback for that distinct coordinate-construction brief,
-with the original mechanism lens and prior objections. Its output will be
-attributed to Astra, not Claude. No other initial proposals supplied.
+child runs or research output. No immediate provider retry. Native Astra
+COMPLETED explicit coordinate fallback: H047-residual-projection-screen.md
+records its nonsplit quadratic residual construction and failed immediate
+label-recovery bridge, independently checked by root. This is Astra output,
+not Claude research. No other initial proposals were supplied.
+Root's H047-mixed-radix-success.md constructs two independently randomized
+long progressions from dependent short pairs. Astra independent review COMPLETE:
+exact moments, output caps, coefficient-one extraction and common-step failure
+bound checked. A fast paid reporter is still missing; no algorithm gain.
 Factory Opus and Grok remain live; two T3 children within user-confirmed20.
 No old task duplicated or safety-stopped route rerouted. All
 roles read-only, no children/experiments/scripts/imports/files. Root alone
@@ -54,13 +65,21 @@ Evidence: exact progression success, half-orbit signal and finite invoices
 exist; required faster operators/stopping guarantees remain absent. Next
 conclusion-changing step is a concrete construction with a competitive full
 invoice, then independent review before any new synthetic experiment. The
-rectangle screen is a limited negative result, not an improved solver.
+rectangle and projection screens are limited negative results, and the
+mixed-radix success law supplies compatible input structure, not a faster solver.
 Existing unbounded goal active; yield to live children.
 Launch changes process records only; H046 project check passed exit0 and
 formal artifacts remain unchanged. Compiling them is not a research result.
 Rectangle-screen validation: ./scripts/check.sh from dlp-research >
 /tmp/ecdlp-h047-rectangle-check.log 2>&1 passed exit0,366 existing audits.
 No new Lean claim; root paper-checked the implementation-specific bound.
+Construction validation: ./scripts/check.sh from dlp-research >
+/tmp/ecdlp-h047-constructions-check.log 2>&1 passed exit0,366 existing audits.
+No formal source changes or executable experiments. Mixed-radix mathematics
+was independently reviewed; residual projection was independently derived by
+root from the proposer and primary divisor/group reference. Formal checks do
+not certify these paper results. Previous goal turn was progress; this turn
+revalidated live T3 handles and added substantive accepted paper evidence.
 
 ## H046 reviewed constructions
 
