@@ -14,9 +14,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 - I20: the [kinetic report](iterations/i20-pde-kinetic-discovery.md) is a scoped gap record. It proves technical seed-count and initial-contact results, but microscopic selection, general-potential fluctuations and the dynamical mean correction remain unproved.
 - I21: the [signed Saxl follow-up](iterations/i21-signed-saxl-dominance.md) constructs signed dominance maps and arbitrary-width quotients but proves specific failures of the proposed coverage. The refined conjecture remains unproved; this route is parked pending a different uniform mechanism.
 - I22: the [combinatorial report](iterations/i22-combinatorial-discovery.md) retains two complete technical deductions, entropy/DP-coloring gaps, and a prior-art rejection of approximate PSD-rank strengthening. No substantial finding is proposed.
-- I23: [connected kinetic fluctuation research](iterations/iteration23-kinetic-connected-fluctuations-task.json) targets the missing normalized interacting-component estimate from I20.
+- I23: the [kinetic follow-up](iterations/i23-kinetic-connected-fluctuations.md) proves limited component and virial estimates but leaves the normalized signed-history summation gap open. No Gaussian theorem is proposed; this route is parked pending a new representation.
 - I24: [elementary-unimodality research](iterations/iteration24-elementary-unimodality-task.json) now develops the separate chromatic-function route first screened in I19.
 - I25: [matching-entropy research](iterations/iteration25-matching-entropy-improvement-task.json) seeks a new bound or rigorous obstruction beyond I22's subcubic deduction and separator identity.
+- I26: [fresh probability/statistical-mechanics discovery](iterations/iteration26-probability-discovery-task.json) now screens distinct spatial-model targets.
 
 These are live task launch records, not accepted findings. The four-finding pause checkpoint remains a historical snapshot.
 
@@ -134,6 +135,14 @@ It also proves the sharp subcubic matching-entropy coefficient (1−1/m) log(3)/
 Two other screens remain scoped: a connected correspondence cover on C4 blocks the list proof's global-bin transfer, without refuting linear DP Hadwiger; an existing primary low-rank approximation defeats the proposed approximate PSD-rank strengthening, without contradicting the exact-rank source theorem.
 
 The parent read the full report and reproduced the checks. Verification passes for 162 sealed artifacts, 107 pinned sources, 236 source contracts, 14 frozen inputs and 18 primary artifacts. Diagnostics include 2,688 exact density instances, tight-cut and conditioning checks, source extremizers through m=7, 20 connected covers and a 16,471-point numerical scalar grid. The scalar grid and floating entropy errors are illustrative; the report provides the general proofs. [Parent verification](experiments/i22-parent-verification.json) records these limits. Shared-ledger drift is separate. No independent proof/significance acceptance or count increment is assigned.
+
+## Iteration 23: connected kinetic estimates stop before Gaussian closure
+
+The [completed follow-up](iterations/i23-kinetic-connected-fluctuations.md) constructs an exact whole-trajectory polymer identity and a normalized bound for one positive physical component, preserving finite-duration multibody dynamics. A separate virial estimate controls connected episode duration under an explicitly stronger singular-repulsive potential assumption. These are limited technical estimates without independent analytic-proof acceptance.
+
+The full nonequilibrium Gaussian theorem remains unproved. The missing step is a compatible connected representation for the source's signed, layered histories with a summable bound after extracting the fluctuation scaling. The physical contact graph alone omits detached/reference trajectories; replacing the original forest with an earliest-contact forest can change a number of edges growing with history size. Fixed-history limits and unnormalized exponential tails do not justify the required sum. Scattering collapse also needs its own centered variance or global coupling estimate; an O(epsilon) per-particle error can survive at fluctuation scale. The report carefully distinguishes these gaps from the source's already available multibody pinning and strong actual-process remainder bounds.
+
+The parent read the complete report and reproduced both commands. Verification passes for 74 artifacts, 23 pinned files, ten frozen inputs, 94 statement contracts, 32 read passages and six pinned primary versions. Exact diagnostics check 1,099 tree-partition graphs, 338,350 scaling identities, 3,240 factorial bounds and 3,160 rational virial inequalities, plus logical countermodels. Those countermodels refute proposed inferences, not the gas theorem. [Parent verification](experiments/i23-parent-verification.json). Only shared-ledger drift was observed. No substantial count increment is assigned. The freed slot moves to [I26 probability/statistical-mechanics discovery](iterations/iteration26-probability-discovery-task.json).
 
 ## Continuation rules
 
