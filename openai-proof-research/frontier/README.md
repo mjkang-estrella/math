@@ -42,3 +42,7 @@ The parent checked both proofs against the actual source kernel and reran the ex
 ## Verified polygon technical note
 
 [R003 — Polygonal Neumann eigenline selection](findings/R003-polygon-eigenline-selection.md) records the corner exclusion and its selection consequence, with conditional strict hot spots under family 369. Two independent reviews accepted the mathematics; the novelty review judged it a modest extension of a known mechanism. It is preserved as one separate finding, not counted as fulfillment of the requested high-significance advance.
+
+## Validated bounded-index arithmetic consequence
+
+[R004 — Simultaneous bounded residual index](findings/R004-simultaneous-bounded-index.md) combines two accepted corpus inputs to put every base in a fixed finite set at bounded index for a positive proportion of primes. The corrected theorem and prime-average corollary pass independent proof review; parent finite checks and source hashes reproduce. The literature screen found no exact duplicate, but a nonroutine new mechanism and priority remain unproved. The frontier objective stays open. The next round attempts the fixed-progression reservoir needed for positive-density primitive roots.
