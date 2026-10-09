@@ -18,7 +18,7 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H044 live independent constructions
+## H044 completed independent constructions
 
 H043 closed at f22365c with no complete-work improvement. Main objective and
 broad independent ideation policy persist. H044-independent-briefs.md records
@@ -32,8 +32,9 @@ ranked questions and exact T3 prompts. Initial proposals withheld.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-algebraic-constructions-opus-20261009-r1`.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-algebraic-constructions-opus-20261009-r2`.
 - acpRegistry_factory_droid / claude-fable-5.1: COMPLETED information-constructions-fable.
-  Raw saved unaccepted; Fourier/chirp closure and comparator-reduction claims
-  require independent mathematical, primary-source and cost review.
+  Raw retained; native Astra math and Sol cost reviews completed.
+  H044-information-disposition.md narrows the valid identities and withdraws
+  unsupported closure, decoder domination and comparator-reduction claims.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h044-information-constructions-fable-20261009-r1`.
 - grok / grok-4.7: COMPLETED fullsolver-compositions-grok; raw retained
   unaccepted as written. Native Astra math and Sol cost reviews completed;
@@ -47,8 +48,9 @@ ranked questions and exact T3 prompts. Initial proposals withheld.
   scalar-independent quotient probe checked by root. H044-six-point-screen.md
   retains scope, primary references and missing witness selector. No experiment.
 Explicit model substitution recorded, not silently represented as Opus work.
-Native Astra completed the information mathematical review; native Sol is LIVE
-on its separate decoder/cost review. No duplicated opinions or stopped-role reroutes. No solver
+Native Astra completed the information mathematical review and constructive
+sparse-Fourier follow-up. Native Sol completed the separate decoder/cost review
+and checked the AGS source and deterministic oracle costs. No duplicated opinions or stopped-role reroutes. No solver
 runs, experiments or H034 cap reset. Existing unbounded goal remains active.
 Best supported exponent1/2; verified improvement NONE. Next decisive evidence:
 a concrete faster operator with full labelled extraction and complete costs,
@@ -59,7 +61,17 @@ H044 algebraic validation: ./scripts/check.sh > /tmp/ecdlp-h044-sixpoint-check.l
 certified by that check. All initial proposals now terminal and collected.
 Full-solver check: ./scripts/check.sh > /tmp/ecdlp-h044-fullsolver-check.log
 2>&1 exit0,366 existing audits; paper-only review, no new Lean claims.
-Information report remains under review; existing goal stays active.
+H044-information-disposition.md
+retains conditional Parseval/differencing identities, withdraws domination and
+universal closure, and records the unproved comparator reduction. Root identified
+a global heavy-Fourier recovery alternative to the short-window FFT.
+H044-global-chirp-decoder.md gives the exact public query, Boolean CRT lift and
+AGS-based conservative soft-O(epsilon^(-11)) conditional operation bound, with
+O(epsilon^(-2)) candidate verifications. Root/Astra/Sol checked the scope;
+feature, parameter discovery and bit implementation remain required. No actual
+correlated public feature, complete solver gain or experiment. Existing goal stays active.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h044-information-check.log 2>&1,
+exit0,366 existing audits. No new Lean claim; checks do not certify paper arguments.
 
 ## H043 completed independent constructions
 
