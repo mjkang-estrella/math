@@ -18,6 +18,29 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H041 live independent operator search
+
+H040 closed at82c891d with no candidate. Independent initial proposals are
+withheld across roles; exact briefs in H041-independent-briefs.md.
+- Native Astra `/root/h007_additive_relations`: COMPLETED nonlocal coordinate
+  operator pass, no changed public relation/witness construction; no new card.
+- claudeAgent / claude-opus-5-5: RUNNING primary-operator-bridges-opus.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-primary-operator-bridges-opus-20261008-r1`.
+- grok / grok-4.7: RUNNING fused-fullwork-grok.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-fused-fullwork-grok-20261008-r1`.
+- acpRegistry_factory_droid / claude-fable-5.1: RUNNING adaptive-information-fable.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h041-adaptive-information-fable-20261008-r1`.
+Fresh live catalogue confirms exact targets; no substitution or provider
+failure. Three T3 tasks live; native Sol available for independent review.
+All delegates read-only: no runs/imports/edits/children/experiments/commits.
+No H034 reset, stopped-role reroute or duplicate H039 hybrid. Root alone
+integrates. Best supported exponent1/2; complete-work improvement NONE.
+Next decisive evidence: explicit new operator with matched paid costs and a
+candidate-specific falsifier. No numerical experiment admitted yet.
+Launch checkpoint validation: ./scripts/check.sh >
+/tmp/ecdlp-h041-launch-check.log 2>&1 exit0,366 existing audits. No new Lean
+claim; checks do not certify paper research or an algorithm improvement.
+
 ## H040 completed independent ideation
 
 H039 prior-art task completed; root read the primary Kuhn-Struik passages and
