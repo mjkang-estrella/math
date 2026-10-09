@@ -47,6 +47,8 @@ The [locally finite extension](iterations/i11-locally-finite-capacity.md) replac
 
 ## Continuation rules
 
+The [iteration 12 sphere-stability screen](iterations/i12-sphere-stability-screen.md) rejects dimension-independent approximation by a linear map using the classical Matouskova–Kalton coordinate spiral, including sphere witnesses. A universal qualitative radial-defect modulus follows routinely by ultraproducts from the accepted Tingley theorem; it is not counted. An explicit general rate is not proved.
+
 1. Integrate each returned report and its source evidence; distinguish proved steps from unresolved estimates.
 2. Send a complete candidate to a fresh independent proof reviewer. Repair every material objection before acceptance.
 3. Obtain a separate final prior-art and significance review against the strongest applicable corpus and current primary literature.
