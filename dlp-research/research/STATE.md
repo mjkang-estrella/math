@@ -18,6 +18,29 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H045 live independent constructions
+
+H044 closed at e4bcf3d; no complete-work improvement. Current exponent1/2,
+verified gain NONE. H045-independent-briefs.md records ranked concrete
+questions, common constraints and exact T3 prompts. No accepted experiment.
+- Factory / claude-opus-5-5 LIVE public-signal construction, applying the
+  corrected conditional decoder gate without assuming any signal premise.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h045-public-signal-factory-opus-20261009-r1`.
+- Grok / grok-4.7 LIVE independent complete-work constructions, with prior
+  collision/cost objections supplied, not other initial proposals.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h045-independent-completework-grok-20261009-r1`.
+- Native Sol /root/h034_c4_implementation LIVE independent structured
+  relation-generation/solving constructions. No duplicate information/walk role.
+Native Astra completed H044 derivation; brief final artifact read requested.
+Both native and T3 capacity respected. Explicit new Factory role after prior
+Claude API failures; no silent substitution or safety-stopped-role reroute.
+All researchers read-only, no scripts/imports/experiments/children. H034 cap
+untouched. Root owns integration. Initial proposals withheld before synthesis.
+Next decisive evidence: an actual public signal, useful relation operator or
+complete search schedule with a competitive paid recovery path. No additional
+formal machine infrastructure. Existing goal stays active; await asynchronous
+children rather than polling or creating a watcher.
+
 ## H044 completed independent constructions
 
 H043 closed at f22365c with no complete-work improvement. Main objective and
