@@ -18,6 +18,41 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H047 live independent constructions
+
+H046 closed at79ac5d0. Best supported exponent1/2; verified full-work improvement
+NONE. H047-independent-briefs.md records ranked concrete questions and exact
+T3 prompts. Native Astra /root/h007_additive_relations RUNNING constructive
+reporters on random two-direction grids, whose H046 success law now holds.
+Native Sol /root/h034_c4_implementation RUNNING distinct complete relation
+storage/recovery constructions. Three native active including root, within4.
+
+T3 tasks, all initially accepted RUNNING after refreshed capability discovery:
+- acpRegistry_factory_droid / claude-opus-5-5: H047 shared public-signal constructions.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-shared-information-factory-opus-20261009-r1`.
+- claudeAgent / claude-opus-5-5: FAILED primary coordinate constructions.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-coordinate-constructions-opus-20261009-r1`.
+- grok / grok-4.7: H047 autonomous search constructions.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h047-autonomous-search-grok-20261009-r1`.
+
+Claude terminal result: 'Claude gave up after repeated API errors.', no pending
+child runs or research output. No immediate retry or silent substitution.
+Factory Opus and Grok remain live; two T3 children within user-confirmed20.
+No old task duplicated or safety-stopped route rerouted. All
+roles read-only, no children/experiments/scripts/imports/files. Root alone
+integrates/stages/commits. Initial proposals withheld before synthesis. H034
+consumed cap unchanged. No Lean infrastructure expansion or GPU claim.
+
+Hypotheses: a paid selective reporter, shared public information with complete
+recovery, or a changed complete search/relation algorithm could improve work.
+Evidence: exact progression success, half-orbit signal and finite invoices
+exist; required faster operators/stopping guarantees remain absent. Next
+conclusion-changing step is a concrete construction with a competitive full
+invoice, then independent review before any new synthetic experiment. No
+H047 result yet. Existing unbounded goal active; yield to live children.
+Launch changes process records only; H046 project check passed exit0 and
+formal artifacts remain unchanged. Compiling them is not a research result.
+
 ## H046 reviewed constructions
 
 H045 closed at7c92548. Current exponent1/2, verified full-work improvement NONE.
