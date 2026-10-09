@@ -1,0 +1,2019 @@
+                                              The Matching Problem in General Graphs is in Quasi-NC
+                                                                     Ola Svensson∗             Jakub Tarnawski∗
+
+                                                                                 September 5, 2017
+
+
+
+                                                                                       Abstract
+                                                  We show that the perfect matching problem in general graphs is in quasi-NC. That is, we
+
+
+
+
+arXiv:1704.01929v2 [cs.CC] 4 Sep 2017
+                                                                                                                            2
+                                              give a deterministic parallel algorithm which runs in O(log3 n) time on nO(log n) processors.
+                                              The result is obtained by a derandomization of the Isolation Lemma for perfect matchings,
+                                              which was introduced in the classic paper by Mulmuley, Vazirani and Vazirani [1987] to
+                                              obtain a Randomized NC algorithm.
+                                                  Our proof extends the framework of Fenner, Gurjar and Thierauf [2016], who proved
+                                              the analogous result in the special case of bipartite graphs. Compared to that setting,
+                                              several new ingredients are needed due to the significantly more complex structure of perfect
+                                              matchings in general graphs. In particular, our proof heavily relies on the laminar structure
+                                              of the faces of the perfect matching polytope.
+
+
+
+
+                                          ∗
+                                           School of Computer and Communication Sciences, EPFL.
+                                        Email: {ola.svensson,jakub.tarnawski}@epfl.ch.
+                                        Supported by ERC Starting Grant 335288-OptApprox.
+                                                                   
+                   1       2                      0   X12  X13 X14
+                                                −X12  0    0   X24 
+                                        T (G) = 
+                                                −X13
+                                                                    
+                                                       0    0   X34 
+                   3       4                     −X14 −X24 −X34  0
+
+                Figure 1: Example of a Tutte matrix of an undirected graph.
+
+
+1    Introduction
+The perfect matching problem is a fundamental question in graph theory. Work on this problem
+has contributed to the development of many core concepts of modern computer science, including
+linear-algebraic, probabilistic and parallel algorithms. Edmonds [Edm65b] was the first to give
+a polynomial-time algorithm for it. However, half a century later, we still do not have full
+understanding of the deterministic parallel complexity of the perfect matching problem. In this
+paper we make progress in this direction.
+    We consider a problem to be efficiently solvable in parallel if it has an algorithm which uses
+polylogarithmic time and polynomially many processors. More formally, a problem is in the
+class NC if it has uniform circuits of polynomial size and polylogarithmic depth. The class RNC
+is obtained if we also allow randomization.
+    We study the decision version of the problem: given an undirected simple graph, determine
+whether it has a perfect matching – and the search version: find and return a perfect matching
+if one exists. The decision version was first shown to be in RNC by Lovász [Lov79]. The search
+version has proved to be more difficult and it was found to be in RNC several years later by
+Karp, Upfal and Wigderson [KUW86] and Mulmuley, Vazirani and Vazirani [MVV87]. All
+these algorithms are randomized, and it remains a major open problem to determine whether
+randomness is required, i.e., whether either version is in NC. Intuitively, one difficulty is that a
+graph may contain super-polynomially many perfect matchings and it is necessary to somehow
+coordinate the processors so that they locate the same one. Our vocabulary for this is that we
+want to isolate one matching.
+    A successful approach to the perfect matching problem has been the linear-algebraic one.
+It involves the Tutte matrix associated with a graph G = (V, E), which is a |V | × |V | matrix
+defined as follows (see Figure 1 for an example):
+                                     
+                                     X(u,v)
+                                                 if (u, v) ∈ E and u < v,
+                          T (G)u,v = −X(v,u) if (u, v) ∈ E and u > v,
+                                     
+                                     
+                                        0         if (u, v) 6∈ E,
+
+where X(u,v) for (u, v) ∈ E are variables. Tutte’s theorem [Tut47] says that det T (G) 6= 0 if and
+only if G has a perfect matching. This is great news for parallelization, as computing determi-
+nants is in NC [Csa76, Ber84]. However, the matrix is defined over a ring of indeterminates, so
+randomness is normally used in order to test if the determinant is nonzero. One approach is to
+replace each indeterminate by a random value from a large field. This leads, among others, to
+the fastest known (single-processor) running times for dense graphs [MS04, Har09].
+    A second approach, adopted by Mulmuley, Vazirani and Vazirani [MVV87] for the search
+version, is to replace the indeterminates by randomly chosen powers of two. Namely, for each
+edge (u, v), a random weight w(u, v) ∈ {1, 2, ..., 2|E|} is selected, and we substitute X(u,v) :=
+2w(u,v) . Now, let us make the crucial assumption that one perfect matching M is isolated, in
+the sense that it is the unique minimum-weight perfect matching (minimizing w(M )). Then
+det T (G) remains nonzero after the substitution: one can show that M contributes a term
+
+                                                 2
+±22w(M ) to det T (G), whereas all other terms are multiples of 22w(M )+1 and thus they cannot
+cancel 22w(M ) out. The determinant can still be computed in NC as all entries 2w(u,v) of the
+matrix are of polynomial bit-length, and so we have a parallel algorithm for the decision version.
+An algorithm for the search version also follows: for every edge in parallel, test whether removing
+it causes this least-significant digit 22w(M ) in the determinant to disappear; output those edges
+for which it does.
+    The fundamental claim in [MVV87] is that assigning random weights to edges does indeed
+isolate one matching with high probability. This is known as the Isolation Lemma and turns
+out to be true in the much more general setting of arbitrary set families:
+Lemma 1.1 (Isolation Lemma). Let M ⊆ 2E be any nonempty family of subsets of a uni-
+verse E = {1, 2, ..., |E|}. Suppose we define a weight function w : E → {1, 2, ..., 2|E|} by
+selecting each w(e) for e ∈ E independently and uniformly at random. Then with
+                                                                          P probability at
+least 1/2, there is a unique set M ∈ M which minimizes the weight w(M ) = e∈M w(e).
+
+    We call such a weight function w isolating. We take M in Lemma 1.1 to be the set of all
+perfect matchings.
+    Since Lemma 1.1 is the only randomized ingredient of the RNC algorithm, a natural approach
+to showing that the perfect matching problem is in NC is the derandomization of the Isolation
+Lemma. That is, we would like a set of polynomially many weight functions (with polynomially
+bounded values) which would be guaranteed to contain an isolating one. To get an NC algorithm,
+we should be able to generate this set efficiently in parallel; then we can try all weight functions
+simultaneously.
+    However, derandomizing the Isolation Lemma turns out to be a challenging open ques-
+tion. It has been done for certain classes of graphs: strongly chordal [DK98], planar bipar-
+tite [DKR10, TV12], or graphs with a small number of perfect matchings [GK87, AHT07].
+More generally, there has been much interest in obtaining NC algorithms for the perfect match-
+ing problem on restricted graph classes (not necessarily using the Isolation Lemma), e.g.: regular
+bipartite [LPV81], P4 -tidy [Par98], dense [DHK93], convex bipartite [DS84], claw-free [CNN89],
+incomparability graphs [KVV85]. The general set-family setting of the Isolation Lemma is also
+related to circuit lower bounds and polynomial identity testing [AM08].
+    Recently, in a major development, Fenner, Gurjar and Thierauf [FGT16] have almost de-
+randomized the Isolation Lemma for bipartite graphs. Namely, they define a family of weight
+functions which can be computed obliviously (only using the number of vertices n) and prove
+that for any bipartite graph, one of these functions is isolating. Because their family has
+quasi-polynomial size and the weights are quasi-polynomially large, this has placed the perfect
+bipartite matching problem in the class quasi-NC.
+    Nevertheless, the general-graph setting of the derandomization question (either using the
+Isolation Lemma or not) remained open. Even in the planar case, with NC algorithms for
+bipartite planar and small-genus graphs having been known for a long time [MN89, MV00],
+we knew no quasi-NC algorithm for non-bipartite graphs. Curiously, an NC algorithm to count
+the number of perfect matchings in a planar graph is known [Kas67, Vaz89], which implies
+an algorithm for the decision version. However, it is open to give an NC algorithm for the
+search version. In general, the best known upper bound on the size of uniform circuits with
+polylogarithmic depth was exponential.
+    We are able to nearly bridge this gap in understanding. The main result of our paper is the
+following:
+                                                                           2
+Theorem 1.2. For any number n, we can in quasi-NC construct nO(log n) weight functions on
+                                               2
+{1, 2, ..., n2 } with weights bounded by nO(log n) such that for any graph on n vertices, one of
+these weight functions isolates a perfect matching (if one exists).
+
+                                                 3
+    The results of [MVV87] and Theorem 1.2 together imply that the perfect matching problem
+(both the decision and the search variant) in general graphs is in quasi-NC. See Section 2.1 for
+more details on this. We remark that the implied algorithm is very simple. The complexity lies
+in the analysis, i.e., proving that one of the weight functions is isolating (see Theorem 4.11).
+    In what follows, we first give an overview of the framework in [FGT16] for bipartite graphs.
+We then explain how we extend the framework to general graphs. Due to the more complex
+structure of perfect matchings in general graphs, we need several new ideas. In particular, we
+exploit structural properties of the perfect matching polytope.
+
+1.1   Isolation in bipartite graphs
+In this section we shortly discuss the elegant framework introduced by Fenner, Gurjar and
+Thierauf [FGT16], which we extend to obtain our result.
+    If a weight function w is not isolating, then there exist two minimum-weight perfect match-
+ings, and their symmetric difference consists of alternating cycles. In each such cycle, the total
+weight of edges from the first matching must be equal to the total weight of edges from the sec-
+ond matching (as otherwise we could obtain another matching of lower weight). The difference
+between these two total weights is called the circulation of the cycle. By the above, if all cycles
+have nonzero circulation, then w is isolating. It is known how to obtain weight functions which
+satisfy a polynomial number of such non-equalities (see Lemma 3.4). However, a graph may
+have an exponential number of cycles.
+    A key idea of [FGT16] is to build the weight function in log n rounds. In the first round,
+we find a weight function with the property that each cycle of length 4 has nonzero circulation.
+This is possible since there are at most n4 such cycles. We apply this function and from now
+on consider only those edges which belong to a minimum-weight perfect matching. Crucially,
+it turns out that in the subgraph obtained this way, all cycles of length 4 have disappeared
+– this follows from the simple structure of the bipartite perfect matching polytope (a face is
+simply the bipartite matching polytope of a subgraph) and fails to hold for general graphs.
+In the second round, we start from this subgraph and apply another weight function which
+ensures that all even cycles of length up to 8 have nonzero circulation (one proves that there are
+again ≤ n4 many since the graph contains no 4-cycles). Again, these cycles disappear from the
+next subgraph, and so on. After log n rounds, the current subgraph has no cycles, i.e., it is a
+perfect matching. The final weight function is obtained by combining the log n polynomial-sized
+weight functions. To get a parallel algorithm, we need to simultaneously try each such possible
+combination, of which there are quasi-polynomially many.
+    This result has later been generalized by Gurjar and Thierauf [GT17] to the linear matroid
+intersection problem – a natural extension of bipartite matching. From the work of Narayanan,
+Saran and Vazirani [NSV94], who gave an RNC algorithm for that problem (also based on
+computing a determinant), it again follows that derandomizing the Isolation Lemma implies a
+quasi-NC algorithm.
+
+1.2   Challenges of non-bipartite graphs
+We find it useful to look at the method explained in the previous section from a polyhedral
+perspective (also used by [GT17]). We begin from the set of all perfect matchings, of which we
+take the convex hull: the perfect matching polytope. After applying the first weight function,
+we want to consider only those perfect matchings which minimize the weight; this is exactly the
+definition of a face of the polytope. In the bipartite case, any face was characterized by just
+taking a subset of edges (i.e., making certain constraints xe ≥ 0 tight), so we could simply think
+about recursing on a smaller subgraph. This was used to show that any cycle whose circulation
+
+                                                4
+                                           1
+                        select w       0            0                       C1 ∆C2
+                         =⇒        0       1            0                    =⇒
+                                       0            0
+                                           1
+
+
+                     Main difficulty                                  Minor difficulty
+
+Figure 2: An illustration of the difficulties of derandomizing the Isolation Lemma for general
+          graphs as compared to bipartite graphs.
+          On the left: in trying to remove the bold cycle, we select a weight function w such
+          that the circulation of the cycle is 1 − 0 + 1 − 0 6= 0. By minimizing over w we obtain
+          a new, smaller subface – the convex hull of perfect matchings of weight 1 – but every
+          edge of the cycle is still present in one of these matchings. The cycle has only been
+          eliminated in the following sense: it can no longer be obtained in the symmetric
+          difference of two matchings in the new face (since none of them select both swirly
+          edges). The vertex sets drawn in gray represent the new tight odd-set constraints
+          that describe the new face (indeed: for a matching to have weight 1, it must take
+          only one edge from the boundary of a gray set). We will say that the cycle does not
+          respect the gray vertex sets (see Section 3).
+          On the right: two even cycles whose symmetric difference contains no even cycle.
+
+
+has been made nonzero will not retain all of its edges in the next subgraph. The progress we
+made in the bipartite case could be measured by the girth (the minimum length of a cycle)
+of the current subgraph, which doubled as we moved from face to subface. Unfortunately, in
+the non-bipartite case, the description of the perfect matching polytope is more involved (see
+Section 2.2). Namely, moving to a new subface may also cause new tight odd-set constraints to
+appear. These, also referred to as odd cut constraints, require that, for an odd set S ⊆ V of
+vertices, exactly one edge of a matching should cross the cut defined by S. This complicates
+our task, as depicted in the left part of Figure 2 (the same example was given by [FGT16] to
+demonstrate the difficulty of the general-graph case). Now a face is described by not only a
+subset of edges, but also a family of tight odd-set constraints. Thus we can no longer guarantee
+that any cycle whose circulation has been made nonzero will disappear from the support of the
+new face, i.e., the set of edges that appear in at least one perfect matching in this face. Our
+idea of what it means to remove a cycle thus needs to be refined (see Section 3), as well as the
+measure of progress we use to prove that a single matching is isolated after log n rounds (see
+Section 4). We need several new ideas, which we outline in Section 1.3.
+    Another difficulty, of a more technical nature, concerns the counting argument used to prove
+that a graph with no cycles of length at most λ contains only polynomially many cycles of length
+at most 2λ. In the bipartite case, the symmetric difference of two even cycles contains a simple
+cycle, which is also even. In addition, one can show that if the two cycles share many vertices,
+then the symmetric difference must contain one such even cycle that is short (of length at most λ)
+and thus should not exist. This enables a simple checkpointing argument to bound the number
+of cycles of length at most 2λ, assuming that no cycle of length at most λ exists. Now, in the
+general case we are still only interested in removing even cycles, but the symmetric difference
+of two even cycles may not contain an even simple cycle (see the right part of Figure 2). This
+forces us to remove not only even simple cycles, but all even walks, which may contain repeated
+edges (we call these alternating circuits – see Definition 3.1), and to rework the counting scheme,
+obtaining a bound of n17 rather than n4 (see Lemma 5.4). Moreover, instead of simple graphs,
+we work on node-weighted multigraphs, which arise by contracting certain tight odd-sets.
+
+
+                                                5
+1.3   Our approach
+This section is a high-level, idealized explanation of how to deal with the main difficulty (see
+the left part of Figure 2); we ignore the more technical one in this description.
+
+Removing cycles which do not cross a tight odd-set As discussed in Section 1.2, when
+moving from face to subface we cannot guarantee that, for each even cycle whose circulation
+we make nonzero, one of its edges will be absent from the support of the new face. However,
+this will at least be true for cycles that do not cross any odd-set tight for the new face. This is
+because if there are no tight odd-set constraints, then our faces behave as in the bipartite case.
+So, intuitively, if we only consider those cycles which do not cross any tight set, then we can
+remove them using the same arguments as in that case. This implies, by the same argument
+as in Section 1.1, that if we apply log n weight functions in succession, then the resulting face
+will not contain in its support any even cycle that crosses no tight odd-set. This is less than we
+need, but a good first step. If, at this point, there were no tight sets, then we would be done,
+as we would have removed all cycles. However, in general there will still be cycles crossing tight
+sets, which make our task more difficult.
+
+Decomposition into two subinstances To deal with the tight odd-sets, we will make use
+of two crucial properties. The first property is easy to see: once we fix the single edge e in the
+matching which crosses a tight set S, the instance breaks up into two independent subinstances.
+That is, every perfect matching which contains e is the union of: the edge e, a perfect matching
+on the vertex set S (ignoring the S-endpoint of e), and a perfect matching on the vertex set
+V \ S (ignoring the other endpoint of e).
+    This will allow us to employ a divide-and-conquer strategy: to isolate a matching in the entire
+graph, we will take care of both subinstances and of the cut separating them. We formulate
+the task of dealing with such a subinstance (a subgraph induced on an odd-cardinality vertex
+set) as follows: we want that, once the (only) edge of a matching which lies on the boundary
+of the tight odd-set is fixed, the entire matching inside the set is uniquely determined. We will
+then call this set contractible (see Definition 4.1). This can be seen as a generalization of our
+isolation objective to subgraphs with an odd number of vertices. If we can get that for the
+tight set and for its complement, then each edge from the cut separating them induces a unique
+perfect matching in the graph. Therefore there are at most n2 perfect matchings left in the
+current face. Now, in order to isolate the entire graph, we only need a weight function w which
+assigns different weights to all these matchings. This demand can be written as a system of n4
+linear non-equalities on w, and we can generate a weight function w satisfying all of them (see
+Lemma 3.4).
+    While it is not clear how to continue this scheme beyond the first level or why we could
+hope to have a low depth of recursion, we will soon explain how we utilize this basic strategy.
+
+Laminarity The second crucial property that we utilize is that the family of odd-set con-
+straints tight for a face exhibits good structural properties. Namely, it is known that a laminar
+family of odd sets is enough to describe any face (see Section 2.2). Recall that a family of
+sets is laminar if any two sets in the family are either disjoint or one is a subset of the other
+(see Figure 4 for an example). This enables a scheme where we use this family to make progress
+in a bottom-up fashion. This is still challenging as the family does not stay fixed as we move
+from face to face. The good news is that it can only increase: whenever a new tight odd-set
+constraint appears which is not spanned by the previous ones, we can always add an odd-set to
+our laminar family.
+
+
+                                                6
+                          S1           S2           S3           S4           S5           S6           S7     S8
+                                                                  e4                                            e8
+                                                                                            e6
+
+
+
+
+                                                                                                              Phase 1
+              U1           U2           U3           U4           U5           U6           U7           U8
+                                                                                                              Phase 2
+                   U1,2                      U3,4                      U5,6                      U7,8
+                                                                                                              Phase 3
+                                U1,4                                                U5,8
+                                                                                                              Phase 4
+                                                          U1,8
+
+
+Figure 3: Example of a chain consisting of 8 tight sets, and our divide-and-conquer argument.
+
+
+Chain case To get started, let us first discuss the special case where the laminar family of
+tight constraints is a chain, i.e., an increasing sequence of odd-sets S1 ( S2 ( ... ( Sℓ . We
+remark that this will be an informal and simplified description of the proof of Lemma 5.6. For
+this introduction, assume ℓ = 8 as depicted in Figure 3. Denote by U1 , ..., U8 the layers of this
+chain, i.e., U1 = S1 and Up = Sp \ Sp−1 for p = 2, 3, ..., 8. Suppose this chain describes the face
+that was obtained by applying the log n weight functions as above that remove all even cycles
+that do not cross a tight set. Then there is no cycle that lies inside a single layer Up .
+    Notice that every layer Up is of even size and it touches two boundaries of tight odd-sets:
+Sp−1 and Sp (that is, δ(Up ) ⊆ δ(Sp−1 ) ∪ δ(Sp )). Any perfect matching in the current face will
+have one edge from δ(Sp−1 ) and one edge from δ(Sp ) (possibly the same edge), therefore Up
+will have two (or zero) boundary edges in the matching. An exception is U1 , which is odd, only
+touches S1 and will have one boundary edge in the matching. This motivates us to generalize
+our isolation objective to layers as follows: we say that a layer Up is contractible if choosing an
+edge from δ(Sp−1 ) and an edge from δ(Sp ) induces a unique matching inside Up . This definition
+naturally extends to layers of the form Sr \ Sp−1 = Up ∪ Up+1 ∪ ... ∪ Ur , which we will denote
+by Up,r .
+    Recall that we have ensured that there is no cycle that lies inside a single layer Up = Up,p. It
+follows that these layers are contractible. This is because two different matchings (but with the
+same boundary edges) in the current face would induce an alternating cycle in their symmetric
+difference.
+    Let us say that this was the first phase of our approach (see Figure 3). In the second phase,
+we want to ensure contractibility for double layers: U1,2 , U3,4 , U5,6 and U7,8 . In general, we
+double our progress in each phase: in the third one we deal with the quadruple layers U1,4 and
+U5,8 , and in the fourth phase we deal with the octuple layer U1,8 .
+    Let us now describe a single phase. Take e.g. the layer U5,8 and two boundary edges
+e4 ∈ δ(S4 ) and e8 ∈ δ(S8 ) (see Figure 3); we want to have only a unique matching in U5,8
+including these edges. Now we realize our divide-and-conquer approach. Note that the layers
+U5,6 and U7,8 have already been dealt with (made contractible) in the previous phase. Therefore,
+for each choice of boundary edge e6 ∈ δ(S6 ) for the matching, there is a unique matching inside
+both of these layers. Just like previously, this implies that there are only n2 matchings using
+e4 and e8 in the layer U5,8 , and we can select a weight function that isolates one of them.We
+
+                                                                 7
+Figure 4: Example of a general laminar family.
+          Dark-gray sets are of size at most λ and thus contractible.
+          Dashed sets are of size more than λ but at most 2λ; they must form chains (due
+          to the cardinality constraints). We make them contractible in the first step. Then
+          we contract them (so now all light-gray and dark-gray sets are contracted).
+          Thick sets are of size more than 2λ. For the second step, we erase the edges on their
+          boundaries. Then we remove cycles of length up to 2λ from the resulting instance
+          (the contraction), which has no tight odd-sets (and no cycles of length up to λ).
+
+
+actually select only one function per phase, which works simultaneously for all layers Up,r in
+this phase (here: U1,4 and U5,8 ) and all pairs of boundary edges ep−1 and er .
+    By generalizing this strategy (from ℓ = 8 to arbitrary ℓ) in the natural way, we can deal
+with any chain in log ℓ ≤ log n phases, even if it consists of Ω(n) tight sets. We remark that, in
+the general proof, we do not quite use a binary tree structure like in the example. Instead, in
+the t-th phase, we deal with all layers Up,r having 1 ≤ p ≤ r ≤ ℓ with r − p ≤ 2t−1 − 1. This
+makes our proof simpler if ℓ is not a power of two.
+
+General case Of course, there is no reason to expect that the laminar family of tight cuts
+we obtain after applying the initial log n weight functions will be a chain. It also does not seem
+easy to directly generalize our inductive scheme from a chain to an arbitrary family. Therefore
+we put forth a different progress measure, which allows us to make headway even in the absence
+of such a favorable odd-set structure.
+    Since a laminar family can be represented as a tree, we might think about a bottom-up
+strategy based on it; however, we cannot deal with its nodes level-by-level, since it may have
+height Ω(n) and we can only afford poly(log n) many phases. Instead, we will first deal with
+all tight odd-sets of size up to 4, then up to 8, then up to 16 and so on, by making them
+contractible. At the same time, we also remove all even cycles of length up to 4, then up to
+8 and so on.1 These two components of our progress measure, which we call λ-goodness, are
+mutually beneficial, as we will see below.
+    Making odd-sets contractible enables us not only to achieve progress, but also to simplify our
+setting. A contractible tight set can be, for our purposes, thought of as a single vertex – much
+   1
+    As discussed in Section 1.2 and Figure 2, the meaning of the term remove needs to be refined, as we cannot
+hope to always delete an edge of the cycle from the support of the current face.
+
+
+                                                      8
+like a blossom in Edmonds’ algorithm. This is because such a set has exactly one boundary
+edge in a perfect matching (as does a vertex), and choosing that edge determines the matching
+in the interior. As the name suggests, we will contract such sets.
+    Suppose that our current face is already λ-good. Roughly, this means that we have made
+odd-sets of size up to λ (which we will call small) contractible and removed cycles of length up
+to λ. Now we want to obtain a face which is 2λ-good.
+    The first step is to make odd-sets of size up to 2λ contractible. Let us zoom in on one such
+odd-set – a maximal set of size at most 2λ (see the largest dashed set in Figure 4). Once we
+have contracted all the small sets into single vertices, all interesting sets are now of size more
+than λ but at most 2λ, and any laminar family consisting of such sets must be a chain, since
+a set of such size cannot have two disjoint subsets of such size (see Figure 4). But this is the
+chain case that we have already solved!
+    Having made odd-sets of size up to 2λ contractible, we can contract them. The second step
+is now to remove cycles of length up to 2λ. However, here we do not need to care about those
+cycles which cross an odd-set S of size larger than 2λ – the reason being, intuitively, that in
+our technical arguments we define the length of a cycle based on the sizes of sets that it crosses,
+and thus such a cycle actually becomes longer than 2λ. In other words, we can think about
+removing cycles of length up to 2λ from a version of the input graph where all small odd-sets
+have been contracted and all larger ones have had their boundaries erased (see Figure 4). We
+call this version the contraction (see Definition 4.5). Our λ-goodness progress measure (see
+Definition 4.7) is actually defined in terms of cycles in the contraction.
+    Now the second step is easy: we just need to remove all cycles of length up to 2λ from the
+contraction, which has no tight odd-sets and no cycles of length up to λ – a simple scenario,
+already known from the bipartite case. Applying one weight function is enough to do this.
+    Finally, what does it mean for us to remove a cycle? When we make a cycle’s circulation
+nonzero, it is then eliminated from the new face in the following sense: either one of its edges
+disappears from the support of the face (recall that this is what always happened in the bipartite
+case), or a new tight odd-set appears, with the following property: the cycle crosses the set with
+fewer (or more) even-indexed edges than odd-indexed edges (see the example in Figure 2). In
+short, we say that the cycle does not respect the new face (see Section 3). This notion of removal
+makes sense when viewed in tandem with the contraction, because once a cycle crosses a set in
+the laminar family, there are two possibilities in each phase: either this set is large – then its
+boundary is not present in the contraction, which cancels the cycle, or it is small – then it is
+contracted and the cycle also disappears (for somewhat more technical reasons).
+    To reiterate, our strategy is to simultaneously remove cycles up to a given length and make
+odd-sets up to a given size contractible. We can do this in log n phases. In each such phase we
+need to apply a sequence of log n weight functions in order to deal with a chain of tight odd-sets
+(as outlined above). In all, we are able to isolate a perfect matching in the entire graph using
+a sequence O(log2 n) weight functions with polynomially bounded weights.
+
+1.4   Future work
+The most immediate open problem left by our work is to get down from quasi-NC to NC for
+the perfect matching problem. Even for the bipartite case, this will require new insights or
+methods, as it is not clear how we could e.g. reduce the number of weight functions from log n
+to only a constant.
+    Proving that the search version of the perfect matching problem in planar graphs is in NC is
+also open. While the quasi-NC result of [FGT16] gives rise to a new NC algorithm for bipartite
+planar graphs, which proceeds by verifying at each step whether the chosen weight function has
+
+
+                                                9
+removed the wanted cycles (it computes the girth of the support of the current face in NC), our
+λ-goodness progress measure seems to be difficult to verify in NC.
+    A related problem which has resisted derandomization so far is exact matching [PY82]. Here
+we are given a graph, whose some edges are colored red, and an integer k; the question is to
+find a perfect matching containing exactly k red edges. The problem is in RNC [MVV87], but
+not known to even be in P.
+    Finally, our polyhedral approach motivates the question of what other zero-one polytopes
+admit such a derandomization of the Isolation Lemma. One class that comes to mind are totally
+unimodular polyhedra. We remark that, for that class, this question has been resolved [GTV17]
+subsequent to the first version of this paper.
+
+1.5   Outline
+The rest of the paper is organized as follows. In Section 2 we introduce notation and define basic
+notions related to the perfect matching polytope and to the weight functions that we use. In
+Section 3 we define alternating circuits (our generalization of alternating cycles), discuss what
+it means for such a circuit to respect a face, and develop our tools for circuit removal. In Sec-
+tion 4 we introduce our measure of progress (λ-goodness), contractible sets and the contraction
+multigraph. We also state Theorem 4.11, which implies our main result. Finally, in Section 5
+we prove our key technical theorem: that applying log2 n + 1 weight functions allows us to make
+progress from λ-good to 2λ-good.
+
+
+2     Preliminaries
+Throughout the paper we consider a fixed graph G = (V, E) with n vertices. We remark that
+the isolating weight functions whose existence we prove can be generated without knowledge of
+the graph. For notational convenience, we assume that log2 n evaluates to an integer; otherwise
+simply replace log2 n by ⌈log2 n⌉. We also assume that n is sufficiently large.
+    We use the following notation. For a subset S ⊆ V of the vertices, let δ(S) = {e ∈ E :
+|e ∩ S| = 1} denote the edges crossing the cut (S, V \ S) and E(S) = {e ∈ E : |e ∩ S| = 2}
+                                                                                            |E|
+                     P S. We shorten δ({v}) to δ(v) for v ∈ V . For a vector (xe )e∈E ∈ R ,
+denote the edges inside
+we define x(δ(S)) = e∈δ(S) xe , as well as supp(x) = {e ∈ E : xe > 0}. For a subset X ⊆ E we
+define 1X to be the vector with 1 on coordinates in X and 0 elsewhere. We again shorten 1{e}
+to 1e for e ∈ E. Sometimes we identify matchings M with their indicator vectors 1M .
+    A matching is a set of edges M ⊆ E such that no two edges in M share an endpoint. A
+matching M is perfect if |M | = n2 .
+
+2.1   Parallel complexity
+                                                         S              k                  k
+The complexity class quasi-NC is defined as quasi-NC =   k≥0 quasi-NC , where quasi-NC is the
+                                                                        O(1)
+class of problems having uniform circuits of quasi-polynomial size 2log      n and polylogarithmic
+
+depth O(logk n) [Bar92]. Here by “uniform” we mean that the circuit can be generated in
+polylogarithmic space.
+    By the results of [MVV87], Theorem 1.2 implies that the perfect matching problem (both
+the decision and the search variant) in general graphs is in quasi-NC. The same can be said
+about maximum cardinality matching, as well as minimum-cost perfect matching for small costs
+(given in unary); see Section 5 of [MVV87].
+    Some care is required to obtain our postulated running time, i.e., that the perfect matching
+                                           2
+problem has uniform circuits of size nO(log n) and depth O(log3 n). We could get a quasi-NC4
+
+
+                                               10
+algorithm by applying the results of [MV97, Section 6.1] to compute the determinant(s). To
+shave off one log n factor, we use the following Chinese remaindering method, pointed out to
+us by Rohit Gurjar (it will also appear in the full version of [FGT16]). We first compute
+                                                                        3
+determinants modulo small primes; since the determinant has 2O(log n) bits, we need as many
+primes (each of O(log3 n) bits). For one prime this can be done in NC2 [Ber84]. Then we
+reconstruct the true value from the remainders. Doing this for an n-bits result would be in NC1
+                                           3
+[BCH86], and thus for a result with 2O(log n) bits it is in quasi-NC3 .
+
+2.2   Perfect matching polytope
+Edmonds [Edm65a] showed that the following set of equalities and inequalities on the variables
+(xe )e∈E determines the perfect matching polytope (i.e., the convex hull of indicator vectors of
+all perfect matchings):
+                             x(δ(v)) = 1 for v ∈ V ,
+                            x(δ(S)) ≥ 1 for S ⊆ V with |S| odd,
+                                  xe ≥ 0 for e ∈ E.
+    Note that the constraints imply that xe ≤ 1 for any e ∈ E. We refer to the perfect matching
+polytope of the graph G = (V, E) by PM(V, E) or simply by PM. Our approach exploits the
+special structure of faces of the perfect matching polytope. Recall that a face of a polytope is
+obtained by setting a subset of the inequalities to equalities. We follow the definition of a face
+from the book of Schrijver [Sch03] – in particular, every face is nonempty.
+    Throughout the paper, we will only consider the perfect matching polytope and so the term
+“face” will always refer to a face of PM. We sometimes abuse notation and say that a perfect
+matching M is in a face F if its indicator vector is in F . When talking about faces, we also use
+the following notation:
+
+Definition 2.1. For a face F we define
+
+E(F ) = {e ∈ E : (∃x ∈ F ) xe > 0}    and    S(F ) = {S ⊆ V : |S| odd and (∀x ∈ F ) x(δ(S)) = 1} .
+
+In other words, E(F ) contains the edges that appear in a perfect matching in F and S(F )
+contains the tight cut constraints of F .
+
+    Notice that if a set is tight for a face, then it is also tight for any of its subfaces.
+    Standard uncrossing techniques imply that faces can be defined using laminar families of
+tight constraints. This is proved using Lemma 2.2 below, which is also useful in our approach.
+    Two subsets S, T ⊆ V of vertices are said to be crossing if they intersect and none is
+contained in the other, i.e., S ∩ T, S \ T, T \ S 6= ∅. A family L of subsets of vertices is laminar
+if no two sets S, T ∈ L are crossing. Furthermore, we say that L is a maximal laminar subset
+of a family S if no set in S \ L can be added to L while maintaining laminarity.
+    Note that any single-vertex set is tight for any face, and therefore a maximal laminar family
+contains all these sets. The laminar families in our arguments will always contain all singletons.
+    The following lemma is known. For completeness, its proof is included in Appendix A.
+
+Lemma 2.2. Consider a face F . For any maximal laminar subset L of S(F ) we have
+
+                                     span(L) = span(S(F )) ,
+
+where for a subset T ⊆ S(F ), span(T ) denotes the linear subspace of RE spanned by the bound-
+aries of sets in T , i.e., span(T ) = span{1δ(S) : S ∈ T }.
+
+
+                                                11
+    Intuitively, Lemma 2.2 implies that a maximal laminar family L of S(F ) is enough to describe
+a face F (together with the edge set E(F )). Furthermore, given a subface F ′ ⊆ F , we can extend
+L to a larger laminar family L′ ⊇ L which describes F ′ .
+    As the perfect matching polytope PM is defined as the convex hull of the indicator vectors
+of all perfect matchings, it is an integral polytope. In particular, it follows that every face of
+PM is also integral.
+
+2.3   Weight functions
+For our derandomization of the Isolation Lemma we will use families of weight functions which
+are possible to generate obliviously, i.e., by only using the number of vertices in G. We define
+them below.
+Definition 2.3. Given t ≥ 7, we define the family of weight functions W(t) as follows. Number
+the edge set E = {e1 , ..., e|E| } arbitrarily. Let wk : E → Z be given by wk (ej ) = (4n2 + 1)j mod k
+for j = 1, ..., |E| and k = 2, ..., t. We define W(t) = {wk : k = 2, ..., t}.
+
+   For brevity, we write W := W(n20 ).
+   In our argument we will obtain a decreasing sequence of faces. Each face arises from the
+previous by minimizing over a linear objective (given by a weight function).
+Definition 2.4. Let F be a face and w a weight function. The subface of F minimizing w will
+be called F [w]:
+                              F [w] := argmin{hw, xi : x ∈ F }.
+    Instead of minimizing over one weight function and then over another, we can concatenate
+them in such a way that minimizing over the concatenation yields the same subface. In par-
+ticular, we will argue that one just needs to try all possible concatenations of O(log2 n) weight
+functions from W in order to find one which isolates a unique perfect matching in G (i.e., it
+produces a single extreme point as the minimizing subface).
+Definition 2.5. For two weight functions w and w′ , where w : E → Z and w′ ∈ W, we define
+their concatenation w ◦ w′ := n21 w + w′ , i.e.,
+                                      
+                               w ◦ w′ (e) := n21 · w(e) + w′ (e).
+We also define W k to be the set of all concatenations of k weight functions from W, i.e.,
+                         W k := {w1 ◦ w2 ◦ ... ◦ wk : w1 , w2 , ..., wk ∈ W} ,
+where by w1 ◦ w2 ◦ ... ◦ wk we mean ((w1 ◦ w2 ) ◦ ...) ◦ wk .
+
+Fact 2.6. We have F [w][w′ ] = F [w ◦ w′ ].
+Proof. Both faces are integral and so we only need to show that F [w][w′ ] ∩ ZE = F [w ◦ w′ ] ∩ ZE .
+The first set consists of matchings in F minimizing w and, among such matchings, minimizing
+w′ . The second set consists of matchings in F minimizing w ◦ w′ . These two sets are equal
+because for any M :
+   • (w ◦ w′ )(M ) = n21 · w(M ) + w′ (M ),
+   • w′ ∈ W = W(n20 ) implies that 0 ≤ w′ (M ) < n20 · n2 < n21 for any matching M ,
+   • w(M ) ∈ Z, so that for any two matchings M1 and M2 , w(M1 ) > w(M2 ) implies (w ◦
+     w′ )(M1 ) − (w ◦ w′ )(M2 ) = n21 (w(M1 ) − w(M2 )) + (w′ (M1 ) − w′ (M2 )) > 0.
+Hence, the ordering given by w ◦ w′ is the same as the lexicographic ordering given by (w, w′ ).
+
+                                                  12
+                                     e2        e1
+                                                         e0
+                                                         e5
+                                     e3        e4
+
+
+
+
+Figure 5: An
+          P5 example    of an alternating circuit C of length 6 with indicator vector (±1)C =
+                    i 1 = −1 + 1 − 1 + 1
+            i=0 (−1)   e i     e1    e2    e3     e4 (since 1e0 and 1e5 cancel each other). Also
+          note that (±1)C , 1δ(S) = 0 for the tight set S depicted in gray.
+
+
+3    Alternating circuits and respecting a face
+In this section we introduce two notions which are vital for our approach. Before giving the
+formal definitions, we give an informal motivation.
+    Our argument is centered around removing even cycles. As discussed in Section 1.2 and Fig-
+ure 2, the meaning of this term in the non-bipartite case needs to be more subtle than just
+“removing an edge of the cycle”.
+    In order to deal with a cycle, we find a weight function w which assigns it a nonzero
+circulation. Formally, given an even cycle C with edges numbered in order, define a vector
+(±1)C ∈ {−1, 0, 1}E as having 1 on even-numbered edges of C, −1 on odd-numbered edges of
+C, and 0 elsewhere. Then, nonzero circulation means that h(±1)C , wi 6= 0. Now, in the bipar-
+tite case, if such a cycle survived in the new face F [w], that is, C ⊆ E(F [w]), then the vector
+(±1)C could be used to obtain a point in the face F with lower w-weight than the points in
+F [w], a contradiction. This argument is possible because of the simple structure of the bipartite
+perfect matching polytope.
+    In the non-bipartite case, it is not enough that C ⊆ E(F [w]) in order to obtain such a
+point (and a contradiction). It is also required that, if the cycle C enters a tight odd-set S
+on an even-numbered edge, it exits it on an odd-numbered edge (and vice versa). This makes
+intuitive sense: if C were obtained from the symmetric difference of two perfect matchings which
+both have exactly one edge crossing S, then C would have this property. Formally, we require
+that (±1)C , 1δ(S) = 0 for each S ∈ S(F [w]). If C satisfies these two conditions, i.e., that
+C ⊆ E(F [w]) and that (±1)C , 1δ(S) = 0 for every S ∈ S(F [w]), then we say that C respects
+the face F [w]. The notion of respecting a face exactly formalizes what is required to obtain a
+contradictory point as above (see the proof of Lemma 3.3).
+    In other words, if we assign a nonzero circulation to a cycle, then it will not respect the new
+face, and this is what is now meant by removing a cycle.
+    To deal with the second, more technical difficulty discussed in Section 1.2, we need to remove
+not only simple cycles of even length, but also walks with repeated edges. However, we would
+run into problems if we allowed all such walks (up to a given length). Consider for example a
+walk C of length 2; such a walk traverses an edge back and forth. It is impossible to assign a
+nonzero circulation to C, because its vector (±1)C is zero. We overcome this technicality by
+defining alternating circuits to be those even walks whose vector (±1)C is nonzero (see Figure 5
+for an example). For generality, we also formulate the definition of respect in terms of the vector
+(±1)C .
+
+Definition 3.1. Let C = (e0 , ..., ek−1 ) be a nonempty cyclic walk of even length k.
+
+  • We define the alternating indicator vector (±1)C of C to be (±1)C =             i=0 (−1) 1ei ,
+                                                                                  Pk−1      i
+
+     where 1e ∈ RE is the indicator vector having 1 on position e and 0 elsewhere.
+
+
+                                                13
+   • We say that C is an alternating circuit if its alternating indicator vector is nonzero. We
+     also refer to C as an alternating (simple) cycle if it is an alternating circuit that visits
+     every vertex at most once.
+
+   • When talking about a graph with node-weights, the node-weight of an alternating circuit is
+     the sum of all node-weights of visited vertices (with multiplicities if visited multiple times).
+
+We remark that (±1)C does not need to have all entries −1, 0 or 1 since edges can repeat in C.
+
+Definition 3.2. We say that a vector y ∈ ZE respects a face F if:
+
+   • supp(y) ⊆ E(F ), and
+
+   • for each S ∈ S(F ) we have y, 1δ(S) = 0.
+
+Furthermore, we say that an alternating circuit C respects a face F if its alternating indicator
+vector (±1)C respects F .
+
+   Clearly, if F ′ ⊆ F are faces and a vector respects F ′ , then it also respects F .
+   Now we argue that we can remove an alternating circuit by assigning it a nonzero circulation.
+The proof of this lemma (which generalizes Lemma 3.2 of [FGT16]) motivates Definition 3.2.
+
+Lemma 3.3. Let y ∈ ZE be a vector and F a face. If w : E → R is such that hy, wi 6= 0, then
+y does not respect the face F ′ = F [w].
+
+Proof. Suppose towards a contradiction that y respects F ′ . Assume that hw, yi < 0 (otherwise
+use −y in place of y). We pick x ∈ F ′ to be the average of all extreme points of F ′ , so
+that the constraints of PM which are tight for x are exactly those which are tight for F ′ .
+Select ε > 0 very small. Then hx + εy, wi < hx, wi, which will contradict the definition of
+F ′ = argmin{hw, xi : x ∈ F } once we show that x + εy ∈ F . We show that x + εy ∈ F ′ ⊆ F by
+verifying:
+
+   • If e ∈ E(F ′ ) (i.e., e is an edge with xe > 0), then (x + εy)e = xe + εye ≥ 0 if ε is chosen
+     small enough.
+
+   • If e ∈ E \ E(F ′ ) (i.e., e is an edge with xe = 0), then from y respecting F ′ we get
+     e 6∈ supp(y) and so (x + εy)e = 0.
+
+   • If S 6∈ S(F ′ ) is an odd set not tight for F ′ , i.e., x, 1δ(S) > 1, then x + εy, 1δ(S) =
+      x, 1δ(S) + ε y, 1δ(S) ≥ 1 if ε is chosen small enough.
+
+   • If S ∈ S(F ′ ) is an odd set tight for F ′ (this includes all singleton sets), then from y
+     respecting F ′ we get y, 1δ(S) = 0 and thus x + εy, 1δ(S) = x, 1δ(S) = 1.
+
+    The following lemma says that we can assign nonzero circulation to many vectors at once
+using an oblivious choice of weight function from W. It is a minor generalization of Lemma 2.3
+of [FGT16] and the proof remains similar. We give it for completeness.
+
+Lemma 3.4. For any number s and for any set of s vectors y1 , ..., ys ∈ ZE \ {0} with the
+boundedness property kyi k1 ≤ 4n2 , there exists w ∈ W(n3 s) with hyi , wi 6= 0 for each i = 1, ..., s.
+
+We usually invoke Lemma 3.4 with vectors yi being the alternating indicator vectors of alter-
+nating circuits. Then the quantities hyi , wi are the circulations of these circuits.
+
+
+                                                  14
+Proof. Let w′ : E → Z be given by w′ (ej ) = (4n2 +1)j for j = 1, ..., |E|. Then we have hyi , w′ i 6=
+0 for each i because the highest nonzero coefficient dominates the expression. Formally, let j ′ be
+maximum index with yi (ej ′ ) 6= 0 and suppose yi (ej ′ ) > 0 (the other case is analogous). Then,
+because kyi k∞ ≤ kyi k1 ≤ 4n2 , we have
+                                                                                  ′ −1
+                                                                                 jX
+                                         X
+                                    j′                                    j′
+ yi , w   ′                   2
+               = yi (ej ′ )(4n + 1) +                    2        j   2
+                                                 yi (ej )(4n + 1) > (4n + 1) +           (−4n2 )(4n2 + 1)j = 0 .
+                                         j<j ′                                   j=−∞
+
+
+Let t = n3 s. We want to show that there exists k ∈ {2, ..., t} such that for all i = 1, ..., s,
+hyi , wk i 6= 0. Recalling the definition of wk (see Definition 2.3), hyi , wk i 6= 0 is equivalent to
+|hyi , w′ i| 6= 0 mod k.                                              Q
+      This will be implied if there exists k ∈ {2,
+                                                Q..., t} such    that i |hyi , w′ i| 6= 0 mod k. So there
+           be some k ∈ {2, ..., t} not dividing              ′
+should Q                                Q          i |hyi , w i| – equivalently, lcm(2, ...,Q
+                                                                                            t) should not
+divide i |hyi , w i|. Knowing that i |hyi , w i| 6= 0, this will follow if we have i |hyi , w′ i| <
+                   ′                             ′
+
+lcm(2, ..., t). This is true because
+    s
+    Y                                   s           2      2        2        3
+              yi , w ′   < (4n2 + 1)|E|+1 < (4n2 + 1)n s = 2n s log(4n +1) < 2n s = 2t < lcm(2, ..., t)
+    i=1
+
+where we used that lcm(2, ..., t) > 2t for t ≥ 7 [Nai82].
+
+     Lemmas 3.3 and 3.4 together imply the following:
+
+Corollary 3.5. Let F be a face. For any finite set of vectors Y ⊆ ZE \{0} with the boundedness
+property kyk1 ≤ 4n2 for every y ∈ Y, there exists w ∈ W(n3 · |Y|) such that each y ∈ Y does
+not respect the face F ′ = F [w].                                                           
+
+
+4         Contractible sets and λ-goodness
+We will make progress by ensuring that larger and larger parts of the graph are “isolated” in our
+current face F . By “parts of the graph” we mean sets S which are tight for F . As discussed in
+Section 1.3, for such a set S, the following isolation property is desirable: once the (only) edge
+of a matching which lies on the boundary of S is fixed, the entire matching inside S is uniquely
+determined. This motivates the following definition:
+
+Definition 4.1. Let F be a face and let S ∈ S(F ) be a tight set for F . We say that S is
+F -contractible if for every e ∈ δ(S) there are no two perfect matchings in F which both contain
+e and are different inside S.
+
+Note that, in the above definition, there could be no such perfect matching for certain edges
+e ∈ δ(S) (this is the case if and only if e 6∈ E(F )). Intuitively, a contractible set can be thought
+of as a single vertex with respect to the structure of the current face of the perfect matching
+polytope. The notion of contractibility enjoys the following two natural monotonicity properties:
+
+Fact 4.2. Let F ′ ⊆ F be two faces. If S is F -contractible, then it is also F ′ -contractible.               
+
+Lemma 4.3. Let F be a face and S ⊆ T two sets tight for F , i.e., S, T ∈ S(F ). If T is
+F -contractible, then so is S.
+
+
+
+
+                                                             15
+                                              e
+
+
+                                                       S
+
+
+
+
+Figure 6: Illustration of the matching M12 constructed in the proof of Lemma 4.3. Straight
+          and swirly edges denote M1 and M2 respectively. The thick edges denote M12 , which
+          agrees with M1 outside S and with M2 inside S.
+
+
+Proof. Let e ∈ δ(S). Suppose that M1 and M2 are two perfect matchings in F which contain e
+but are different inside S. We will argue that in that case there also exist two perfect matchings
+M1 and M12 in F which contain e, are different inside S, and are equal outside of S.
+   Once we have that, we conclude as follows. Let f be the (only) edge in δ(T ) ∩ M1 (perhaps
+f = e); then also f ∈ M12 . Then M1 and M12 are two perfect matchings in F which contain
+f ∈ δ(T ) but are different inside T , contradicting that T is F -contractible.
+   To get the outstanding claim, we define
+
+                               M12 = (M1 \ E(S)) ∪ (M2 ∩ E(S))
+
+to be the perfect matching that agrees with M1 on all edges not in E(S) and agrees with M2
+on all edges in E(S) (see Figure 6). To see that M12 is a perfect matching, notice that both
+M1 and M2 are in F and contain e. Furthermore, as e ∈ δ(S) for the tight set S ∈ S(F ), we
+have that M1 ∩ E(S) and M2 ∩ E(S) are both perfect matchings on the vertex set S where we
+ignore the vertex incident to e. We can thus “replace” M1 ∩ E(S) by M2 ∩ E(S) to obtain the
+perfect matching M12 .
+    We now show that M12 is in the face F . Suppose the contrary. Since M1 and M2 are both
+in F , we have M12 ⊆ E(F ). Therefore, if M12 is not in F , we must have |δ(R) ∩ M12 | > 1 for
+some tight set R ∈ S(F ). Since |R| is odd, also |δ(R) ∩ M | is odd for any perfect matching M .
+In particular, |δ(R) ∩ M12 | ≥ 3, which contradicts
+
+                        |δ(R) ∩ M12 | ≤ |δ(R) ∩ M1 | + |δ(R) ∩ M2 | = 2 ,
+
+where the equality holds because M1 and M2 are perfect matchings in F and R ∈ S(F ) is a
+tight set.
+
+   In our proof, we will be working with faces and laminar families which are compatible in
+the following sense:
+
+Definition 4.4. Let F be a face and L a laminar family. If L ⊆ S(F ), i.e., all sets S ∈ L are
+tight for F , then we say that (F, L) is a face-laminar pair.
+
+    Given a face-laminar pair (F, L), we will often work with a multigraph obtained from G
+by contracting all small sets, i.e., those with size being at most some parameter λ (which is a
+measure of our progress). This multigraph will be called the contraction (see Figure 7 for an
+example).
+    In the contraction, we will also remove all boundaries of larger sets (i.e., those with size
+larger than λ). This is done to simulate working inside each such large set independently,
+
+                                                  16
+                                                                                                            3
+                                                                     3
+                                                                                         3
+                                                                                                                1
+
+                                                                                 1                   1
+
+(a) A graph G and a laminar family L. We only draw the (b) The (F, L, 4)-contraction of G. Its vertices are labeled
+    edges in E(F ). We also do not draw ellipses for the sin- by their node-weights.
+    gleton sets in L. The dark-gray sets are F -contractible.
+
+                      Figure 7: An example of the (F, L, λ)-contraction of G.
+
+
+because the contraction then decomposes into a collection of disconnected components, one per
+each large set. Because, in the contraction, each set in L has either been contracted or has had
+its boundary removed, our task is reduced to dealing with instances having no laminar sets.
+     Moreover, we only include those edges which are still in the support of the current face F ,
+i.e., the set E(F ).
+
+Definition 4.5. Given a face-laminar pair (F, L) and a parameter λ (with 1 ≤ λ ≤ 2n), we
+define the (F, L, λ)-contraction of G as a node-weighted multigraph as follows:
+
+       • the node set is the set of maximal sets of size (cardinality) at most λ in L,
+
+       • each node has a node-weight equal to the size of the corresponding set,
+                                              S
+       • the edge set is obtained from E(F ) \ T ∈L:|T |>λ δ(T ) by contracting each of these maximal
+         sets. That is, an edge of G maps to an edge of the contraction if it is in E(F ), it is not
+         inside any of the contracted sets and it does not cross any cut defined by a set T ∈ L :
+         |T | > λ. Sometimes we identify edges of the contraction with their preimages in G.
+
+    In the (F, L, λ)-contractions arising in our arguments, we will always only contract sets
+S ∈ L which are F -contractible (i.e., the vertices of a contraction will always correspond to
+F -contractible sets). Then, a very useful property is that alternating circuits in the contraction
+can be lifted to alternating circuits in the entire graph G in a canonical way. This is done in
+the proofs of Lemmas 5.3 and 5.8.
+    Finally, we need the following extension of Definition 3.2 for vectors defined on the contrac-
+tion.
+
+Definition 4.6. Denote the (F, L, λ)-contraction of G as H, and let z ∈ ZE(H) be a vector on
+the edges of H. We say that z respects a subface F ′ ⊆ F if 2
+
+       • supp(z) ⊆ E(F ′ ), and
+
+       • for each S ∈ S(F ′ ) which is a union of sets corresponding to vertices in V (H),3 we have
+          z, 1δ(S) = 0.
+   2
+     In the following conditions we abuse notation and think of z as a vector in ZE obtained by identifying each
+edge of H with its preimage in G and letting those edges of G without a preimage in H have value 0.
+   3
+     That is, the maximal sets of size at most λ in L.
+
+
+                                                      17
+As before, we say that an alternating circuit C in H respects a subface F ′ if its alternating
+indicator vector (±1)C ∈ ZE(H) respects F ′ .
+
+    Now we are able to define our measure of progress. On one hand, we want to make larger
+and larger laminar sets contractible. On the other hand, there could very well be no laminar
+sets, so we also proceed as in the bipartite case: remove longer and longer alternating circuits.
+
+Definition 4.7. Let (F, L) be a face-laminar pair and λ a parameter (with 1 ≤ λ ≤ 2n). We
+say that (F, L) is λ-good if L is a maximal laminar subset of S(F ) and:
+
+  (i) each S ∈ L with |S| ≤ λ is F -contractible,
+
+ (ii) in the (F, L, λ)-contraction of G, there is no alternating circuit of node-weight at most λ.
+
+    We begin with λ = 1, which is trivial, and then show that by concatenating enough weight
+functions we can obtain face-laminar families which are 2-good, 4-good, 8-good, and so on. We
+are done once we have a λ-good family with λ ≥ n. The components of this proof strategy are
+given in the following three claims. The first step is clear:
+
+Fact 4.8. Let L0 be a maximal laminar subset of S(P M ). Then the face-laminar pair (PM, L0 )
+is 1-good.                                                                                
+
+Note that L0 contains all singleton sets, i.e., {{v} : v ∈ V } ⊆ L0 .
+   We then proceed iteratively in log2 n rounds using the following theorem. Its proof, which
+constitutes the bulk of our argument, is given in Section 5.
+
+Theorem 4.9. Let (F, L) be a λ-good face-laminar pair. Then there exists a weight function
+w ∈ W log2 n+1 and a laminar family L′ ⊇ L such that (F [w], L′ ) is a 2λ-good face-laminar pair.
+
+   We are done once λ exceeds n:
+
+Lemma 4.10. Suppose (F, L) is λ-good for some λ ≥ n. Then |F | = 1.
+
+   We think that the proof of this lemma is instructive. It serves to understand and motivate
+Definition 4.7, and more involved versions of this argument appear in the sequel.
+
+Proof. Let H be the (F, L, λ)-contraction of G. Also let S1 , S2 , ..., Sk be all maximal sets in
+L. As L containsS      all singletons, their disjoint union is V and we have V (H) = {S1 , ..., Sk }
+and E(H) = ki=1 δ(Si ). Since (F, L) is λ-good with λ ≥ n, each set S ∈ L is F -contractible,
+and H contains no alternating circuit of node-weight at most λ – in particular, H contains no
+alternating simple cycle. Indeed, an upper bound on the node-weight of any alternating simple
+cycle is |S1 | + ... + |Sk | = n ≤ λ.
+    Now we show that there is only one perfect matching in F . One direction is easy: since F
+is a face, it is nonempty by definition. For the other direction, let M1 and M2 be two perfect
+matchings in F . We show that M1 = M2 .
+    Because the sets S1 , ..., Sk are tight for F and no edge can possibly cross a tight odd-set
+of cardinality at least λ ≥ n, any perfect matching (in the face F ) in G induces a perfect
+matching in H. If the matchings induced by M1 and M2 were different, then their symmetric
+difference would contain an alternating  S simple cycle in S H, which is impossible. So the induced
+matchings must be equal, i.e., M1 ∩ i δ(Si ) = M2 ∩ i δ(Si ). Moreover, the sets S1 , ..., Sk are
+F -contractible, which means that, given the boundary edges, there is a unique perfect matching
+in F inside each Si . This yields M1 = M2 .
+
+
+                                                18
+   Before we proceed to the proof of Theorem 4.9, let us see how Fact 4.8, Theorem 4.9,
+and Lemma 4.10 together give our desired result:
+
+Theorem 4.11. There exists an isolating weight function w ∈ W (log2 n+1) log2 n , i.e., one with
+| PM[w]| = 1.
+
+Proof. Let ℓ = log2 n. We iteratively construct a sequence of face-laminar pairs (Fi , Li ) for
+i = 0, 1, ..., ℓ such that (Fi , Li ) is 2i -good and Fi = Fi−1 [wi ] for some weight function wi ∈ W ℓ+1 .
+We begin by setting F0 = PM and L0 to be a maximal laminar subset of S(P M ). By Fact 4.8,
+(F0 , L0 ) is 1-good. Then for i = 1, ..., ℓ we use Theorem 4.9 to obtain the wanted weight function
+wi along with a laminar family Li ⊇ Li−1 . Finally, we have that (Fℓ , Lℓ ) is 2ℓ -good, so that by
+Lemma 4.10, |Fℓ | = 1.
+     It remains to argue that Fℓ = PM[w] for some w ∈ W (ℓ+1)ℓ . To do this, we proceed as in
+Section 2.3: define the concatenation w′ • w′′ := n21(ℓ+1) w′ + w′′ for two weight functions w′ and
+w′′ , where w′′ ∈ W ℓ+1 . (We need to use a padding term n21(ℓ+1) which is larger than the n21 of
+Definition 2.5 because the right-hand weight functions are now from W ℓ+1 rather than from W.)
+By the same reasoning as for Fact 2.6 we get that Fℓ = PM[w1 ][w2 ]...[wℓ ] = PM[w1 •w2 •...•wℓ ].
+We put w = w1 • w2 • ... • wℓ ∈ W (ℓ+1)ℓ .
+
+    Theorem 4.11 implies Theorem 1.2 because we have |W (log2 n+1) log2 n | = |W|(log2 n+1) log2 n ≤
+n20(log2 n+1) log2 n , the values of any w ∈ W (log2 n+1) log2 n are bounded by n21(log2 n+1) log2 n , and
+the functions w ∈ W can be generated obliviously using only the number of vertices n.
+
+
+5    Proof of the key Theorem 4.9: from λ-good to 2λ-good
+In this section we show how to make progress (measured by the λ parameter of λ-goodness)
+by applying a new weight function to the current face. Our objective is to make larger sets
+contractible (by doubling the size threshold from λ to 2λ) and to ensure that in the new
+contracted graph, alternating circuits of an increased node-weight are not present. We do
+this by moving from the current face-laminar pair, which we call (Fin , Lin ), to a new face-laminar
+pair (Fout , Lout ). Both pairs have the property that the laminar family is a maximal laminar
+family of sets tight for the face. The new family extends the previous, i.e., Lout ⊇ Lin .
+     Our main technical tools are Theorem 5.1 and Lemma 5.6. Theorem 5.1 is used to ensure
+that certain alternating circuits are not present in the new contraction. It says that if our
+current contraction has no alternating circuits of at most some node-weight, then a single
+weight function w ∈ W is enough to guarantee that all alternating circuits of at most twice that
+node-weight do not respect the new face obtained by applying w. We call this removing these
+circuits. Lemma 5.6 is used to make sure that sets in our laminar family that are of size at most
+2λ become contractible. Later, new sets will be added to the laminar family in Lemma 5.8,
+in such a way that these properties are maintained and that the removed alternating circuits
+indeed do not survive in the new contraction.
+     The formal structure of the proof is as follows. We begin from a λ-good face-laminar pair
+(Fin , Lin ). Then, using our technical tools Theorem 5.1 and Lemma 5.6, we show in Theorem 5.5
+the existence of a weight function wout ∈ W log2 (n)+1 such that the face Fout = Fin [wout ] satisfies
+two conditions which make progress on conditions (i) and (ii) of λ-goodness:
+
+ (i)’ For each S ∈ Lin with |S| ≤ 2λ, S is Fout -contractible.
+
+ (ii)’ In the (Fout , Lin , 2λ)-contraction of G, there is no Fout -respecting alternating circuit of node-
+       weight at most 2λ.
+
+
+                                                    19
+This gives us the wanted face Fout and weight function wout . Finally, in Lemma 5.8 we show that
+extending the laminar family Lin to a maximal laminar family Lout (of sets tight for the new
+face) yields a 2λ-good pair (Fout , Lout ). This finishes the proof of Theorem 4.9.
+
+5.1    Removing alternating circuits
+This section is devoted to the proof of Theorem 5.1, which is a technical tool we use to remove
+alternating circuits of size between λ and 2λ from the contraction.
+
+Theorem 5.1. Consider a face-laminar pair (F, L) such that each S ∈ L with |S| ≤ β is F -
+contractible (for a parameter β). Denote by H the (F, L, β)-contraction of G. If H has no
+alternating circuit of node-weight at most λ, then there exists w ∈ W such that H has no
+F [w]-respecting alternating circuit of node-weight at most 2λ.
+
+    We begin with a simple technical fact: to verify that a vector respects a face, it is enough
+to check this for a maximal laminar family of tight constraints.
+
+Lemma 5.2. Consider a face F and a vector y ∈ ZE . Let L be a maximal laminar subset of
+S(F ). If for each S ∈ L we have y, 1δ(S) = 0, then the same holds for all S ∈ S(F ).
+
+Proof. As L is a maximal laminar subset of S(F ), Lemma 2.2 says that span(L)
+                                                                            P = span(S(F )).
+In other words, for any S ∈ S(F ) we can write 1δ(S) as a linear combination L∈L µL 1δ(L) for
+some coefficients (µL )L∈L . Hence
+                                 *              +
+                                     X               X
+                       y, 1δ(S) = y,    µL 1δ(L) =       µL y, 1δ(L) = 0.
+                                         L∈L                L∈L
+
+    Now we prove a lemma which reduces the task of removing an alternating circuit in H to
+that of removing a vector defined on the edges of G, which we can do using Corollary 3.5.
+Throughout this section, F , L and H are as in the statement of Theorem 5.1. Recall that the
+vertices of H are elements of L, i.e., sets of vertices, and so by S ∈ V (H) we mean the set S ∈ L
+that corresponds to a vertex in H.
+
+Lemma 5.3. Let z ∈ ZE(H) be a nonzero vector on the edges of H satisfying z, 1δ(S) = 0 for
+each S ∈ V (H). Then there exists a nonzero vector y ∈ ZE such that for any face F ′ ⊆ F we
+have: if z respects F ′ , then y respects F ′ . We also have kyk1 ≤ nkzk1 .
+
+We remark that y does not depend on F ′ .
+
+Proof. We consider z as a vector z ∈ ZE by identifying each edge of H with its preimage
+in G and letting those edges of G without a preimage in H have value 0. We may assume
+supp(z) ⊆ E(F ); otherwise z cannot respect F ′ (see Definition 4.6) and thus we are done by
+outputting any y.
+    The proof idea is to extend z to a vector y ∈ ZE which resembles an alternating indicator
+vector. We do this in a canonical way so that if this extension does not respect F ′ , then it must
+be because z itself does not respect F ′ .
+    To this end, we do the following for each S ∈ V (H): pair up the boundary edges e ∈ δ(S)
+which have ze > 0 with boundary edges e which have ze < 0, respecting their multiplicities
+as given by z. For example, if we had δ(S) = {e1 , e2 , e3 } with z(e1 ) = 3, z(e2 ) = −2 and
+z(e3 ) = −1, we would get the pairs {(e1 , e2 ), (e1 , e2 ), (e1 , e3 )}. Such a pairing is always possible
+because z, 1δ(S) = 0. Let (e+        −
+                                i , ei ) i be the multiset of pairs of edges obtained in this way
+
+
+
+                                                    20
+across all S ∈ V (H), and let Si ∈ V (H) be the set for which the pair (e+              −
+                                                                                   i , ei ) has been
+introduced. Also denote by vi+ , vi− the Si -endpoints of edges e+    −
+                                                                 i , ei .
+                                + −
+    Now, for each i we have ei , ei ∈ supp(z) ⊆ E(F ), and S is F -contractible, so there is a
+unique perfect matching Mi+ on the vertex-induced subgraph (Si \ {vi+ }, E(Si \ {vi+ })) in F
+(more precisely, Mi+ is the unique perfect matching on that subgraph that extends to a matching
+in F ), as well as a unique perfect matching Mi− on (Si \ {vi− }, E(Si \ {vi− })) in F . We let
+                                             X               
+                                   y := z +      1M + − 1M − .i       i
+                                                     i
+
+What remains now is to prove the following claim:
+
+Claim 1. Let F ′ ⊆ F be such that z respects F ′ . Then y respects F ′ .
+
+Proof. Since z respects F ′ (see Definition 4.6), we have supp(z) ⊆ E(F ′ ). This implies that
+for each i, Mi+ ⊆ E(F ′ ). Indeed, since e+                      ′
+                                           i ∈ supp(z) ⊆ E(F ), there is a perfect matching on
+(Si \ {vi }, E(Si \ {vi })) in F ′ . However, Si is F -contractible and thus Mi+ is the only such
+        +             +
+
+matching in F (thus also in F ′ ). Therefore Mi+ ⊆ E(F ′ ) and analogously Mi− ⊆ E(F ′ ).
+    Now we check the conditions for y to respect F ′ (see Definition 3.2):
+                                       S              
+    • We have supp(y) = supp(z) ∪ i Mi+ ∪ Mi− ⊆ E(F ′ ).
+
+      • Let T ∈ S(F ′ ). We need to verify that y, 1δ(T ) = 0. Let L′ be a maximal laminar
+        subfamily of S(F ′ ) extending L, i.e., L ⊆ L′ ⊆ S(F ′ ). By Lemma 5.2, it is enough to
+        verify that y, 1δ(T ) = 0 for T ∈ L′ . For a set T belonging to a laminar family which
+        extends L, it is not hard to see that there are two possibilities: either T ( S for some
+        S ∈ V (H), or T is a union of sets in V (H) (for recall that V (H) is a partitioning of V
+        that consists of sets in L). In the latter case, y, 1δ(T ) = z, 1δ(T ) = 0 because y equals
+        z on edges crossing sets in V (H) and because z respects F ′ . In the former case, we have
+                                       *                                         +
+                                          X                             
+                           y, 1δ(T ) =          1e+ − 1e− + 1M + − 1M − , 1δ(T )
+                                                         i        i       i    i
+                                          i:Si =S
+                                         X D                                             E
+                                    =               1e+i − 1e−i + 1Mi+ − 1Mi− , 1δ(T )
+                                        i:Si =S
+
+        because these are the only edges in y’s support that have an endpoint in S (other edges
+        cannot possibly cross T ⊆ S). Now it is enough to show that each summand is 0.
+        For this, we know that Mi+ ∪ {e+             −   −
+                                          i } and Mi ∪ {ei } are (partial)
+                                                                          matchings in F ′ and that
+                                                          +      +
+        T is tight for F ′ . Therefore
+                                  D    we have |δ(TE) ∩ Mi D∪ {ei } | = 1,4 and
+                                                                            E the same holds for
+        Mi− ∪ {e−
+                i }. Therefore    1Mi+ ∪{e+i } , 1δ(T ) = 1 = 1Mi− ∪{e−i } , 1δ(T ) .
+
+Regarding the norm: every edge (with multiplicity) in z causes less than n/2 new edges (a partial
+matching) to appear in y. Therefore kyk1 ≤ (n/2 + 1)kzk1 ≤ nkzk1 .
+
+    Our second lemma gives a bound on the number of alternating circuits we need to remove.
+Its proof resembles that of Lemma 3.4 in [FGT16], but it is somewhat more complex, as we are
+dealing with a node-weighted multigraph, as well as with alternating circuits instead of simple
+cycles (see Section 3). We have made no attempt to minimize the exponent 17.
+  4
+    Formally, consider a perfect matchingM + (on G) in F ′ which is a superset of Mi+ ∪ {e+
+                                                                                           i }. Then we have
+|δ(T ) ∩ M + | = 1. But δ(T ) ∩ Mi+ ∪ {e+
+                                        i } = δ(T ) ∩ M +
+                                                          because T ⊆ S.
+
+
+                                                         21
+                                   i0                                                    i0
+                                        e0
+                              e9   1          1   e1                                      1                1
+                                                               i1                                                            i1 , a
+                          1                                9                        1                                    9
+                     e8                                        e2
+
+                i3   4                                         1           i3   4                     g2       1        g4     1 b
+                     e7                                        e3                                1                 g3            f1
+                          5                                4                        5            g1                      4
+                              e6                      e4
+                                   3          1                                           3                1            f2
+                                         e5
+                                   i2                                                   i2 , d             c
+
+
+
+
+Figure 8: Intuition of the signature vector definition and the proof of Lemma 5.4.
+          On the left, each vertex is labeled by its node-weight, and the corresponding selection
+          of i0 , i1 , i2 , i3 is shown for λ = 16. Notice that the selected vertices partition the
+          alternating circuit into paths; the total node-weight of internal vertices on each path
+          is at most λ/2.
+          On the right we see two different alternating circuits with the same signature. They
+          differ in that one uses f2 and the other uses g3 , g2 , g1 . The thick edges illustrate the
+          alternating circuit B = (f1 , f2 , g1 , g2 , g3 , g4 ) of node-weight at most λ which leads to
+          the contradiction. We walk the dashed path (PD ) in reverse.
+
+
+Lemma 5.4. There are polynomially many alternating circuits of node-weight at most 2λ in H,
+up to identifying circuits with equal alternating indicator vectors. More precisely, the cardinality
+of the set
+
+                 {(±1)C : C is an alternating circuit in H of node-weight at most 2λ}
+
+is at most n17 .
+
+Proof. We will associate a small signature with each alternating circuit in H of node-weight at
+most 2λ, with the property that alternating circuits with different alternating indicator vectors
+are assigned different signatures. This will prove that the considered cardinality is at most the
+number of possible signatures, which is polynomially bounded.
+    Let C = (e0 , e1 , ..., ek−1 ) be an alternating circuit in H of node-weight at most 2λ. We want
+to define its signature σ(C). To streamline notation, we let vi be the tail of ei for i = 0, . . . , k−1.
+Thus C is of the form
+                                                  e
+                                                  0     1       e   ek−2        ek−1
+                                              v0 −→ v1 −→ . . . −−−→ vk−1 −−−→ v0 .
+
+(See also Figure 8 for an example.) We also let NW(vi ) denote the node-weight of vertex vi ,
+and in(vi ) = e(i−1) mod k and out(vi ) = ei be the incoming and outgoing edges of vi in C.5 We
+now define the signature σ(C) as the output of the following procedure:
+
+       • Let i0 = 0 be the index of the first vertex in C.
+                                                                                                 Pij −1
+       • For j = 1, 2, 3, select ij ≤ k to be the largest index satisfying                            i=ij−1 +1 NW(vi ) ≤ λ/2.
+
+       • Let t = max{j : ij < k} and output the signature σ(C) = ((−1)ij , in(vij ), out(vij ))j=0,1,...,t .
+         (Note that t ≤ 3.)
+   5
+     The functions in(v) and out(v) are not formally well-defined since they depend on the considered alternating
+circuit C and on which occurrence of v in the circuit we are considering, but their values will be clear from the
+context.
+
+
+                                                                    22
+      The intuition of the signature is as follows (see also the left part of Figure 8). The procedure
+starts at the first vertex vi0 = v0 . It then selects the farthest (according to C) vertex vi1 while
+guaranteeing that the total node-weight of the vertices visited in-between vi0 and vi1 is at most
+λ/2. Similarly, vi2 is selected to be the farthest vertex such that the total node-weight of the
+vertices vi1 +1 , . . . , vi2 −1 is at most λ/2, and i3 is selected in the same fashion. The indices
+i0 , i1 , . . . , it thus partition C into paths
+                                        0
+                                         ei                ei +1          ei −2          ei −1
+                             C0 = vi0 −−→ vi0 +1 −−0−→ . . . −−1−→ vi1 −1 −−1−→ vi1
+                                        1
+                                         ei                ei +1          ei −2          ei −1
+                             C1 = vi1 −−→ vi1 +1 −−1−→ . . . −−2−→ vi2 −1 −−2−→ vi2
+                               ..
+                                .
+                                         ei            ei +1          ei −2              ei −1
+                             C t = vi t −
+                                        −→t
+                                            vit +1 −−t−→ . . . −−0−→ vi0 −1 −−0−→ vi0
+
+
+so that the total node-weight of the internal vertices on each path is at most λ/2. Indeed, for
+Cj with j < 3 this follows from the selection of ij . For C3 (in the case t = 3), by maximality of
+i1 , i2 and i3 we have
+                             i1                       i2                     i3
+                             X                        X                      X               3
+                                   NW(vi ) +                NW(vi ) +               NW(vi ) ≥ λ
+                                                                                             2
+                         i=i0 +1                  i=i1 +1                   i=i2 +1
+                         |         {z         }   |         {z        }     |       {z   }
+                                  ≥λ/2                     ≥λ/2                   ≥λ/2
+
+and so the internal vertices of C3 can have node-weight at most λ/2 (the total node-weight of
+C being at most 2λ).
+      We now count the number of possible signature vectors. As for each j there are at most n2
+ways of choosing the incoming edge, at most n2 ways of choosing the outgoing edge, and ij can
+have two different parities, the number of possible signatures is (summing over the choices of
+                                                2                 3            4
+t = 0, 1, 2, 3) at most 2n2 · n2 + 2n2 · n2 + 2n2 · n2 + 2n2 · n2 < n17 .
+      It remains to be shown that any two alternating circuits C and D in H of node-weight
+at most 2λ have different signatures if (±1)C 6= (±1)D . Suppose that (±1)C 6= (±1)D but
+σ(C) = σ(D). We would like to derive a contradiction with the assumption (in Theorem 5.1)
+that H contains no alternating circuit of node-weight at most λ. This will finish the proof.
+      As described above, C can be partitioned into disjoint paths C0 , . . . , Ct using its indices
+i0 , . . . , it . Similarly we partition D into D0 , . . . , Dt . Since these are disjoint unions, (±1)C 6=
+(±1)D implies that at least one of the four subpaths must be different between C and D, in
+the sense that the part of the alternating indicator vector arising from that subpath is different.
+More formally, let bj denote the parity (i.e.,P    the first element) of the j-th tuplePin the signatures
+σ(C) = σ(D). Then we have (±1)C =                     j=0 bj · (±1)Cj and (±1)D =
+                                                      t
+                                                                                            j=0 bj · (±1)Dj .
+                                                                                            t
+
+Therefore, as (±1)C 6= (±1)D , there must be a j ∈ {0, . . . , t} such that (±1)Cj 6= (±1)Dj . We
+will “glue” together the paths Cj and Dj to obtain another alternating circuit B.
+      First notice that both Cj and Dj are paths of the form vij = a → b → · · · → c →
+d = vi(j+1) mod t , where the segment from b to c differs between them.6 This follows from the
+assumption that σ(C) = σ(D). Let PC denote the path from b to c in Cj and let PD denote the
+path from b to c in Dj . As the parity fields of the signatures agree, we have that |PC | + |PD |
+is even. Now let B be the cyclic walk of even length obtained by walking from b to c along the
+   6
+     Here again we slightly abuse notation since ij might differ between C and D; however, the vertex vij does
+not, because it is the tail of eij , which is part of the signature σ(C) = σ(D). The same applies to vij+1 mod t .
+
+
+
+                                                                 23
+path PC and back from c to b along the path PD (in reverse). That is, B is of the form (see
+also the right part of Figure 8)
+
+                                               f1        f|P
+                                                         C     |     g1  D
+                                                                                g|P   |
+                                            b −→ . . . −−−→ c −→ . . . −−−→ b,
+
+where we let f1 , . . . , f|PC | denote the edges of the path PC and g1 , . . . , g|PD | denote the edges
+of the reversed path PD . To verify that B is an alternating circuit we need to show that its
+alternating indicator vector is nonzero:
+              |PC |                 |PD |
+              X                     X
+ −(±1)B =             (−1) 1fi +
+                          i
+                                            (−1)|PC |+i 1gi
+              i=1                   i=1
+                                                                                         
+                                       |PC |
+                                       X
+           = (−1)0 1out(a) +                  (−1)i 1fi + (−1)|PC |+1 1in(d) 
+                                       i=1
+              |                                     {z                                     }
+                                               =(±1)Cj
+                                                                                                                      
+                                                                   |PD |
+                                                                   X
+                              + (−1)|PC |+2 1in(d) +                     (−1)|PC |+2+i 1gi + (−1)|PC |+|PD |+3 1out(a)  .
+                                                                   i=1
+                                |                                                     {z                                }
+                                                                               =−(±1)Dj
+
+
+The second equality is easiest to see by mentally extending B from a circuit b → ... → c → ... → b
+to a → b → ... → c → d → c → ... → b → a. Also recall that |PC | + |PD | is even. Thus we get
+(±1)B = −(±1)Cj + (±1)Dj , which is nonzero by the choice of j. Finally, the node-weight of B
+is at most the node-weight of the internal nodes of path Cj plus the node-weight of the internal
+nodes of path Dj and thus at most λ/2 + λ/2 = λ.
+    We have thus shown that B is a nonempty cyclic walk of even length whose alternating
+indicator vector is nonzero – thus an alternating circuit – and whose node-weight is at most λ.
+This contradicts our assumption on H.
+
+   Now we have all the tools needed to prove the main result of this section.
+
+Proof of Theorem 5.1. Let us fix some w ∈ W. We want to articulate conditions on w which
+will make sure that the statement is satisfied. Then we show that some w ∈ W satisfies these
+conditions.
+    Let C be any alternating circuit in H of node-weight at most 2λ. Our condition on w will
+be that all such circuits C should not respect F [w], i.e., that all vectors from the set
+
+           Z := {(±1)C : C is an alternating circuit in H of node-weight at most 2λ}
+
+should not respect F [w]. We use Lemma 5.3 to transform each z ∈ Z (z ∈ ZE(H) ) to a vector
+y = y(z) ∈ ZE such that if y(z) does not respect F [w], then z does not respect F [w]. Let
+Y = {y(z) : z ∈ Z}. Clearly |Y| ≤ |Z| (actually |Y| = |Z| since the mapping z 7→ y(z) is
+one-to-one), and |Z| ≤ n17 by Lemma 5.4. Moreover, since the alternating circuits C were of
+node-weight at most 2λ ≤ 4n, we have kzk1 ≤ 4n for z ∈ Z and kyk1 ≤ 4n2 for y ∈ Y. Now
+it is enough to apply Corollary 3.5 to obtain that there exists w ∈ W(n3 · n17 ) = W such that
+each y ∈ Y does not respect the face F [w], and thus each z ∈ Z does not respect F [w].
+
+
+
+
+                                                                   24
+5.2    The existence of a good weight function
+In this section, we use Theorem 5.1 to prove the existence of a weight function defining a face
+Fout with the desired properties (so as to be the face in our 2λ-good face-laminar pair), namely:
+Theorem 5.5. Let (Fin , Lin ) be a λ-good face-laminar pair. Then there exists a weight function
+wout ∈ W log2 (n)+1 such that the face Fout = Fin [wout ] satisfies:
+ (i)’ For each S ∈ Lin with |S| ≤ 2λ, S is Fout -contractible.
+
+(ii)’ In the (Fout , Lin , 2λ)-contraction of G, there is no Fout -respecting alternating circuit of node-
+      weight at most 2λ.
+
+    Throughout this section, Fin and Lin are as in the statement of Theorem 5.5. The proof
+of Theorem 5.5 is based on the following technical lemma.
+Lemma 5.6. There exists a weight function wmid ∈ W log2 n such that the face Fmid = Fin [wmid ]
+satisfies:
+ (i)’ For each S ∈ Lin with |S| ≤ 2λ, S is Fmid -contractible.
+
+Before giving the proof of Lemma 5.6 let us see how it, together with Theorem 5.1, readily
+implies Theorem 5.5. In short, once we have made sets of size up to 2λ contractible using
+Lemma 5.6, we are only left with removing alternating circuits of node-weight between λ and
+2λ. One application of Theorem 5.1 is enough to achieve this.
+Proof of Theorem 5.5. Lemma 5.6 says that there is a weight function wmid ∈ W log2 (n) such that
+the face Fmid = Fin [wmid ] satisfies that every S ∈ Lin with |S| ≤ 2λ is Fmid -contractible. As we will
+obtain Fout as a subface of Fmid , we have thus proved point (i)′ of Theorem 5.5, as any set that
+is Fmid -contractible will remain contractible in any subface of Fmid (by Fact 4.2).
+     By the above, every vertex in the (Fmid , Lin , 2λ)-contraction of G corresponds to an Fmid -
+contractible set. Moreover, by the assumption that the face-laminar pair (Fin , Lin ) is λ-good, the
+(Fin , Lin , λ)-contraction of G does not have any alternating circuits of node-weight at most λ.
+This implies that the (Fmid , Lin , 2λ)-contraction of G does not have any such alternating circuits.
+For suppose C were one. Let S1 , ..., Sk be maximal sets of size at most 2λ in Lin , i.e., the vertices
+of the (Fmid , Lin , 2λ)-contraction of G. Note that C cannot cross a set Si with |Si | > λ, because
+then its node-weight would be larger than λ. Therefore C only crosses sets Si with |Si | ≤ λ.
+Thus C also appears in the (Fmid , Lin , λ)-contraction of G, with the same node-weight, and in
+the (Fin , Lin , λ)-contraction (of which the (Fmid , Lin , λ)-contraction is a subgraph) as well. This is
+a contradiction.
+     We can thus apply Theorem 5.1 with β = 2λ to the face-laminar pair (Fmid , Lin ). We get
+a weight function w ∈ W such that the (Fmid , Lin , 2λ)-contraction has no Fmid [w]-respecting
+alternating circuit of node-weight at most 2λ. Therefore, as the (Fmid [w], Lin , 2λ)-contraction
+is a subgraph of the (Fmid , Lin , 2λ)-contraction, the face Fout = Fmid [w] satisfies (ii)′ . Selecting
+wout = wmid ◦ w ∈ W log2 (n)+1 completes the proof (by Fact 2.6).                                       
+
+   The rest of this section is devoted to the proof of Lemma 5.6. Recall that we need to prove
+the existence of a weight function wmid ∈ W log2 (n) satisfying (i)′ , i.e., that
+
+                       for each S ∈ Lin with |S| ≤ 2λ, S is Fmid -contractible,
+
+where Fmid = Fin [wmid ]. First note that the statement will be true for every S ∈ Lin with |S| ≤ λ,
+regardless of the choice of the weight function wmid . Indeed, by assumption (Fin , Lin ) is λ-good
+
+                                                   25
+                                                                        (2)
+                                                                       S3                                    (3)
+                                                                 (2)                                        S2
+                            (1)                                 S2                                    (3)
+                           S1                             (2)                                        S1
+                                                         S1
+
+                                                          e1
+
+                                                                                    e3
+
+
+
+
+Figure 9: An example of the laminar family L, which consists of disjoint chains. The different
+                                          (i)
+          shades of gray depict the sets Up .
+
+
+and so S is Fin -contractible. Thus, by Fact 4.2, S remains Fmid -contractible for any subface
+Fmid ⊆ Fin .
+    It remains to deal with the sets S ∈ Lin with λ < |S| ≤ 2λ. Let L = {S ∈ Lin : λ < |S| ≤ 2λ}
+be the laminar family Lin restricted to these sets. Notice that any set in L can have at most
+one child in L due to the cardinality constraints. In other words, L consists of disjoint chains,
+as depicted in Figure 9.
+
+Notation. We refer to the sets in the i-th chain of L by Li . Let ℓi = |Li | and index the sets
+                    (i)  (i)          (i)           (i)  (i)          (i)        (i)    (i)
+of the chain Li = {S1 , S2 , . . . , Sℓi } so that S1 ⊆ S2 ⊆ · · · ⊆ Sℓi . Let U1 = S1 and
+ (i)     (i)         (i)                                         (i)              (i)    (i)    (i)
+Up = Sp \ Sp−1 for p = 2, 3, . . . , ℓi . Also define Up,r = Up ∪ Up+1 ∪ · · · ∪ Ur .
+
+                           (i)       (i)                                                              (i)
+  Recall that a set U1,r = Sr is defined to be F -contractible if for every er ∈ δ(U1,r ) there are no
+                                                                                               (i)
+two perfect matchings in F which both contain er and are different inside U1,r (Definition 4.1).
+                                                                                                      (i)
+For the proof of Lemma 5.6, we generalize this definition to also include sets Up,r with p ≥ 2.
+                                                                            (i)
+Definition 5.7. Consider a face F . We say that a set Up,r with 2 ≤ p ≤ r ≤ ℓi is F -contractible
+                       (i)               (i)
+if for every ep−1 ∈ δ(Sp−1 ) and er ∈ δ(Sr ) there are no two perfect matchings in F which both
+                                                          (i)
+contain ep−1 and er and are different inside Up,r . (It is possible that ep−1 = er , in which case
+                                       (i)
+neither endpoint of this edge lies in Up,r .)
+
+The intuition of this definition is similar to that of Definition 4.1. Consider the second chain
+in Figure 9 for an example. If we restrict our attention to perfect matchings that contain
+               (2)                (2)             (2)      (2)
+edges e1 ∈ δ(S1 ) and e3 ∈ δ(S3 ), then, as S1 are S3 are tight sets, the task of selecting
+such a matching decomposes into two independent problems: the problem of selecting a perfect
+              (2)
+matching in U2,3 (ignoring the vertices incident to e1 and e3 ) and the problem of selecting a
+                                    (2)
+perfect matching in V \ U2,3 (again ignoring the vertices incident to e1 and e3 ).
+   The proof now proceeds iteratively as follows.
+
+   • First we select w1 ∈ W such that F1 = Fin [w1 ] satisfies:
+                                   (i)
+                                  Up is F1 -contractible for all chains i and 1 ≤ p ≤ ℓi .                         (1)
+
+   • For t = 2, 3, . . . , log2 (n) we select wt ∈ W such that Ft = Ft−1 [wt ] satisfies:
+               (i)
+          Up,r is Ft -contractible for all chains i and 1 ≤ p ≤ r ≤ ℓi with r − p ≤ 2t−1 − 1.                      (2)
+
+
+                                                         26
+We remark that, having selected w1 , w2 , . . . , wlog2 (n) as above, if we let wmid = w1 ◦ w2 ◦ . . . ◦
+wlog2 (n) ∈ W log2 (n) , then the face Fmid = Fin [wmid ] equals Flog2 (n) (by Fact 2.6). To see that this
+                                                                                          (i)
+completes the proof of Lemma 5.6, note that ℓi < n/2 for any chain i since |S1 | > λ = (2λ)/2 ≥
+   (i)           (i)                                 (i)                             (i)   (i)
+|Sℓi |/2 and |Sℓi | ≤ n. Therefore any set Sr ∈ L has r ≤ n/2 and so, by (2), Sr = U1,r is
+Fmid -contractible.
+     In what follows, we complete the proof of Lemma 5.6 with a description of how to select w1 ,
+followed by the selection of wt , t = 2, 3, . . . , log2 (n), in the iterative case.
+
+5.2.1    The selection of w1
+The following claim allows us to use Theorem 5.1 to show the existence of a weight function w1
+satisfying (1).
+
+Claim 2. If the (Fin , Lin , λ)-contraction of G has no F1 -respecting alternating circuit of node-
+                                    (i)
+weight at most 2λ, then every Up is F1 -contractible.
+
+    The claim together with Theorem 5.1 completes the selection of w1 as follows. Since (Fin , Lin )
+is λ-good, we can apply Theorem 5.1 with β = λ to obtain the existence of a weight function
+w1 ∈ W such that in the (Fin , Lin , λ)-contraction of G there is no F1 -respecting alternating
+                                                                                             (i)
+circuit of node-weight at most 2λ, where F1 = Fin [w1 ]. Hence, by the above claim, every Up is
+F1 -contractible as required.
+                                                                                 (i)                       (i)
+Proof of Claim 2. This proof resembles that of Lemma 4.10. Fix Up                      and let ep−1 ∈ δ(Sp−1 )
+               (i)
+and ep ∈ δ(Sp ).7 Suppose that M1 and M2 are two perfect matchings in F1 that both contain
+                                                                          (i)
+ep−1 and ep . We want to show that M1 and M2 are equal inside Up .
+                                                                   (i)
+     Let S1 , ..., Sk be all maximal sets S ∈ Lin with S ⊆ Up . They are those vertices of the
+                                          (i)                                  (i)
+(Fin , Lin , λ)-contraction which lie in Up , and we have S1 ∪ ... ∪ Sk = Up . Because these sets,
+                 (i)       (i)
+as well as Sp−1 and Sp , are tight for F1 , any perfect matching in F1 containing ep−1 and ep
+induces an almost-perfect matching on S1 , ..., Sk , that is, one where only the (up to two) sets
+Si containing endpoints of ep−1 and ep are unmatched (see the left part of Figure 10).
+     If the matchings induced by M1 and M2 were different, then their symmetric difference
+would induce an alternating simple cycle C in the graph obtained from E(Fin ) by contracting
+S1 , ..., Sk . The cycle C would also be present in the (Fin , Lin , λ)-contraction. This is because
+S1 , ..., Sk are maximal sets of size at most λ in Lin , so they are indeed vertices of the contraction,
+and because the edges between these vertices are not on the boundary δ(T ) of any T ∈ Lin with
+|T | > λ (in which case they would be missing from the contraction), which in turn follows by
+                                              (i)
+laminarity of Lin and the definition of Up .
+     Since C arises from two matchings in F1 , it respects F1 . This follows by a similar argument
+as the proof of Claim 1, which we repeat here for completeness. Clearly, supp(C) ⊆ M1 ∪
+M2 ⊆ E(F1 ). Let T ∈ S(F1 ) be a set tight for F1 which is a union of the vertices of the
+contraction; we want to show that (±1)C , 1δ(T ) = 0. Because C is a cycle in the contraction
+and |M1 ∩ δ(T )| = |M2 ∩ δ(T )| = 1, either C has no edge in δ(T ) or it has two, one from M1
+and one from M2 (and they cancel out).
+                                                    (i)
+     Moreover, since C is a simple cycle inside Up , its node-weight is at most |S1 | + . . . + |Sk | =
+   (i)
+|Up | ≤ 2λ. This contradicts our assumption.
+   7                                                                                                             (i)
+    Here and in Section 5.2.2, we abuse notation and assume p ≥ 2. The only difference is that, given a set Up,r
+                                                                                         (i)
+with p = 1 (in this section p = r), we consider matchings containing one edge er ∈ δ(Sr ) instead of matchings
+                                 (i)              (i)                          (i)
+containing two edges ep−1 ∈ δ(Sp−1 ) and er ∈ δ(Sr ), since if p = 1, the set Sp−1 is not defined.
+
+
+                                                      27
+                   ep
+
+
+
+
+                                                                              ep−1            eq
+                                           ep−1
+                                                                 er                                      er
+
+    ep−1
+
+
+
+            (i)              (i)               (i)               (i)                 (i)           (i)    (i)
+           Sp−1             Sp                Sp−1              Sr               Sp−1          Sq        Sr
+
+                  Claim 2                            Claim 3                               Claim 4
+
+
+Figure 10: An illustration of the claims used in the proof of Lemma 5.6.
+           Claim 2: Straight and swirly edges denote M1 and M2 respectively. The thick
+           edges denote the alternating cycle. The dark-gray sets are S1 , ..., Sk .
+           Claim 3: Straight and swirly edges denote M1 and M2 respectively. The thick
+                                                                 (i)                     (i)
+           edges denote M12 , which agrees with M1 outside Up,r and with M2 inside Up,r .
+           Claim 4: The divide-and-conquer argument is illustrated (only edges ep−1 , eq ,
+           and er are depicted). After fixing ep−1 and eq , the matching in the light-gray area
+           is unique in the face Ft−1 . Similarly, after fixing eq and er , the matching in the
+           dark-gray area is unique in the face Ft−1 . Thus, for each choice of ep−1 and er ,
+                                                        (i)
+           there can be at most one matching inside Up,r for each possible way of fixing eq . It
+                                                                   (i)
+           follows that there are at most n2 matchings inside Up,r that contain ep−1 and er .
+
+
+     Therefore, the induced matchings must be equal. Moreover, the sets S1 , ..., Sk are F1 -
+contractible, since they are vertices of the (Fin , Lin , λ)-contraction, (Fin , Lin ) is λ-good, and F1 ⊆
+Fin . This means that, given the boundary edges (i.e., the induced matching plus ep−1 and ep ),
+there is a unique perfect matching in F1 inside each Si . It follows that M1 and M2 are equal
+         (i)
+inside Up .
+
+5.2.2      The selection of wt for t = 2, 3, . . . , log2 (n)
+In this section we show the existence of a weight function wt ∈ W satisfying (2), i.e.,
+             (i)
+           Up,r is Ft -contractible for all chains i and 1 ≤ p ≤ r ≤ ℓi with r − p ≤ 2t−1 − 1,
+
+where Ft = Ft−1 [wt ].
+                                                                                                 (i)
+    The proof outline is as follows. First, in Claim 3, we give sufficient conditions on wt for Up,r
+to be Ft -contractible. They are given as a system of linear non-equalities with coefficients in
+{−1, 0, 1}. Then, in Claim 4, we upper-bound the number of these non-equalities by n11 . This
+allows us to deduce the existence of wt ∈ W by applying Lemma 3.4.
+                                                                                       (i)
+    The following claim gives sufficient linear non-equalities on wt for every Up,r to be Ft -
+                                                     (i)
+contractible (one non-equality for each choice of Up,r , ep−1 , er , M1 and M2 ).
+
+
+
+
+                                                       28
+                        (i)
+Claim 3. Let U = Up,r for some chain i and 1 ≤ p ≤ r ≤ ℓi . Suppose that for every two edges
+          (i)               (i)
+ep−1 ∈ δ(Sp−1 ) and er ∈ δ(Sr ) defining a face F = {x ∈ Ft−1 : xep−1 = 1, xer = 1} we have:
+
+ wt (M1 ∩ E(U )) 6= wt (M2 ∩ E(U ))       for any two matchings M1 , M2 in F that differ inside U .
+
+Then U is Ft -contractible.
+
+Proof. We prove the contrapositive. Suppose that U is not Ft -contractible. Then, by definition,
+                            (i)              (i)
+there must be ep−1 ∈ δ(Sp−1 ) and er ∈ δ(Sr ) that define a face F ′ = {x ∈ Ft : xep−1 =
+1, xer = 1} such that there are two matchings M1 and M2 in F ′ that differ inside U . Notice
+that F ′ ⊆ F = {x ∈ Ft−1 : xep−1 = 1, xer = 1}. Therefore M1 and M2 are also two matchings
+in F that differ inside U .
+    We complete the proof of the claim by showing that
+
+                                   wt (M1 ∩ E(U )) = wt (M2 ∩ E(U )) .                           (3)
+
+Define
+
+                                   M12 = (M1 \ E(U )) ∪ (M2 ∩ E(U ))
+
+to be the perfect matching that agrees with M1 on all edges not in E(U ) and agrees with M2
+on all edges in E(U ) (see the central part of Figure 10 for an example). By the same argument
+as in the proof of Lemma 4.3, M12 is a perfect matching in F ′ . It differs from M1 inside U and
+agrees with M1 outside U .
+    We now use that M1 and M12 are perfect matchings in F ′ to prove (3). As Ft = Ft−1 [wt ] is
+the convex-hull of matchings in Ft−1 that minimize the objective function wt , all matchings M
+in Ft and in its subface F ′ have the same weight wt (M ). In particular,
+
+  wt (M1 \ E(U )) + wt (M1 ∩ E(U )) = wt (M1 ) = wt (M12 ) = wt (M1 \ E(U )) + wt (M2 ∩ E(U ))
+
+and thus wt (M1 ∩ E(U )) = wt (M2 ∩ E(U )) as required.
+
+    The above claim says that it is sufficient to write down a non-equality for each choice of
+ (i)
+Up,r , ep−1 , er , M1 , and M2 .It is easy to upper-bound the number of ways of choosing i, p,
+r, ep−1 , and er . The following claim bounds the number of ways of choosing M1 and M2 . Its
+proof is based on a divide-and-conquer strategy (see the right part of Figure 10). It uses the
+                               (i)
+inductive assumption that Up,r is Ft−1 -contractible for all chains i and 1 ≤ p ≤ r ≤ ℓi with
+r − p ≤ 2t−2 − 1.
+                        (i)
+Claim 4. Let U = Up,r with r − p ≤ 2t−1 − 1 and define q = ⌊(p + r)/2⌋. For any two edges
+        (i)               (i)
+ep ∈ δ(Sp−1 ) and er ∈ δ(Sr ) defining a face F = {x ∈ Ft−1 : xep−1 = 1, xer = 1} we have
+
+                 |{M ∩ E(U ) : M is a matching in F }| ≤ |δ(Sq(i) ) ∩ E(F )| ≤ n2 .
+
+We remark that the first inequality holds with equality, but we only need the inequality.
+
+Proof. The second inequality in the statement is trivial. We prove the first.
+                (i)                                               (i)
+   As we have Sq ∈ Lin ⊆ S(Fin ) and F ⊆ Ft−1 ⊆ Fin , the set Sq is tight for F . Thus any
+                                       (i)                                (i)
+matching M in F must satisfy M ∩ δ(Sq ) = {eq } for some edge eq ∈ δ(Sq ) ∩ E(F ).
+
+
+
+
+                                                   29
+    We prove the statement by showing that for every choice of eq , any matching M in the face
+                                                (i)
+Feq = {x ∈ F : xeq = 1} matches the nodes in Up,r in a unique way. In other words, we show
+                                                                             (i)
+that |{M ∩ E(U ) : M is a matching in Feq }| ≤ 1 for every eq ∈ δ(Sq ) ∩ E(F ), which implies
+                                                     X
+|{M ∩ E(U ) : M is a matching in F }| ≤                           |{M ∩ E(U ) : M is a matching in Feq }|
+                                                      (i)
+                                               eq ∈δ(Sq )∩E(F )
+
+                                          ≤ |δ(Sq(i) ) ∩ E(F )| .
+
+   To prove that |{M ∩ E(U ) : M is a matching in Feq }| ≤ 1, suppose the contrary, i.e., that
+|{M ∩ E(U ) : M is a matching in Feq }| ≥ 2. Take two such matchings M1 and M2 that differ
+                                                            (i)                (i)
+inside U . By the definition of Feq we have M1 ∩ δ(Sq ) = M2 ∩ δ(Sq ) = {eq } and so M1 and
+                          (i)            (i)
+M2 must differ inside Up,q or inside Uq+1,r ; assume the former (the argument for the other case
+is the same). Notice that M1 and M2 are two matchings in Feq ⊆ Ft−1 which both contain
+                                  (i)                                 (i)
+ep−1 and eq but differ inside Up,q , which contradicts that Up,q is Ft−1 -contractible. (Note that
+q − p ≤ (r − p)/2 ≤ 2t−2 − 1/2, which implies that q − p ≤ 2t−2 − 1.)
+
+   We now have all the needed tools to show the existence of a weight function wt ∈ W such
+that the face Ft = Ft−1 [wt ] satisfies (2), i.e., that for all chains i and 1 ≤ p ≤ r ≤ ℓi with r − p ≤
+           (i)                                                                  (i)
+2t−1 − 1, Up,r is Ft -contractible. By Claim 3, this holds if for any U = Up,r with r − p ≤ 2t−1 − 1
+                          (i)                 (i)
+and for any ep−1 ∈ δ(Sp−1 ) and er ∈ δ(Sr ) defining a face F = {x ∈ Ft−1 : xep−1 = 1, xer = 1}
+we have the following:
+
+wt (M1 ∩ E(U )) − wt (M2 ∩ E(U )) 6= 0 for any two matchings M1 , M2 in F that differ inside U .
+
+   There are at most n ways of choosing i, n ways of choosing p, n ways of choosing r, n2
+ways of choosing ep−1 , n2 ways of choosing er , and by Claim 4 there are at most n4 ways of
+choosing M1 and M2 . In total, we can write the sufficient conditions on the weight function
+wt as a system of at most n11 linear non-equalities with coefficients in {−1, 0, 1}. It follows
+by Lemma 3.4 that there is a weight function wt ∈ W(n14 ) ⊆ W(n20 ) = W satisfying these
+conditions. This completes the selection of wt and the proof of Lemma 5.6.
+
+5.3    A maximal laminar family completes the proof
+In Theorem 5.5 we have demonstrated the existence of a weight function wout that defines a
+face Fout with properties (i)′ and (ii)′ . We now show that extending Lin to a maximal laminar
+family Lout of S(Fout ) yields a 2λ-good face-laminar pair. Such an extension is possible because
+Lin consists of sets that are tight for Fin and thus also for Fout . As explained in the beginning
+of Section 5, this will complete the proof of Theorem 4.9.
+    Why a maximal laminar family? Part of our argument so far was about removing certain
+alternating circuits C. In other words, we have made C not respect the new face Fout . This
+means either not having some edge from supp(C) in the support E(Fout ) of Fout , or introducing
+a new odd-set S which is tight for Fout and such that (±1)C , 1δ(S) 6= 0. In the latter case,
+we want to have an odd-set with this property also in the new laminar family Lout , so that the
+removal of C is reflected in the new contraction (which is based on Lout ). Lemma 5.2 guarantees
+that this will happen if we choose Lout to be a maximal laminar subset of S(Fout ).
+
+Lemma 5.8. Let (Fin , Lin ) be a λ-good face-laminar pair and Fout ⊆ Fin be the face guaranteed
+by Theorem 5.5. Then (Fout , Lout ) is a 2λ-good face-laminar pair, where Lout is any maximal
+laminar family with Lin ⊆ Lout ⊆ S(Fout ).
+
+                                                    30
+Proof of Lemma 5.8. Recall that Theorem 5.5 guarantees that:
+
+ (i)’ each S ∈ Lin with |S| ≤ 2λ is Fout -contractible,
+
+ (ii)’ in the (Fout , Lin , 2λ)-contraction of G, there is no alternating circuit of node-weight at most
+       2λ which respects Fout .
+
+   We want to show that the pair (Fout , Lout ) satisfies Definition 4.7, that is,
+
+  (i) each S ∈ Lout with |S| ≤ 2λ is Fout -contractible,
+
+ (ii) in the (Fout , Lout , 2λ)-contraction of G, there is no alternating circuit of node-weight at
+      most 2λ.
+
+Property (i). Fix a set S ∈ Lout with |S| ≤ 2λ. Let S1 , ..., Sk be all maximal subsets of S in
+Lin (we have S = S1 ∪ ... ∪ Sk ). If S is contained in a set from Lin of size at most 2λ, then that
+set is Fout -contractible by (i)′ , and thus S is Fout -contractible by Lemma 4.3. So assume that is
+not the case; therefore, by laminarity, each Si is a maximal set of size at most 2λ in Lin , that
+is, a vertex of the (Fout , Lin , 2λ)-contraction of G. By (i)′ , each Si is Fout -contractible.
+     Now the proof proceeds as in Claim 2. We present it for completeness. Let M1 and M2 be
+two perfect matchings in Fout which both contain an edge e ∈ δ(S). We want to show that M1
+and M2 are equal inside S. Because S and S1 , ..., Sk are tight for Fout , any perfect matching (on
+G) in Fout containing e induces an almost-perfect matching on S1 , ..., Sk , that is, one where only
+the set Si containing the S-endpoint of e is unmatched.
+     If the matchings induced by M1 and M2 were different, then their symmetric difference would
+contain an alternating simple cycle in the (Fout , Lin , 2λ)-contraction. Since this cycle arises from
+two matchings in Fout , it respects Fout . Moreover, since it is a simple cycle inside S, its node-
+weight is at most |S1 | + . . . + |Sk | = |S| ≤ 2λ. This would contradict our assumption (ii)’.
+     Therefore the induced matchings must be equal. Moreover, the sets S1 , ..., Sk are Fout -
+contractible, which means that, given the boundary edges (i.e., the induced matching plus e),
+there is a unique perfect matching in Fout inside each Si . It follows that M1 and M2 are equal
+inside S.
+
+Property (ii). Let Hout be the (Fout , Lout , 2λ)-contraction of G and let Hin be the (Fout , Lin , 2λ)-
+contraction of G. Thus Hout can also be obtained by further contracting Hin , as well as removing
+all edges that are in the boundaries of sets S ∈ Lout \ Lin with |S| > 2λ. This will be our
+perspective. Suppose towards a contradiction that there is an alternating circuit Cout in Hout of
+node-weight at most 2λ.
+    To obtain a contradiction, we are going to lift Cout back to an Fout -respecting alternating
+circuit Cin in Hin , which should not exist by (ii)′ . (This is in the same spirit as the proof of
+Lemma 5.3.) Namely, whenever Cout visits a vertex S ∈ V (Hout ), we connect up the dangling
+endpoints of this visit inside S to obtain a walk in Hin. More precisely, let e1 and e2 be two
+consecutive edges of Cout , whose common endpoint in Hout is S. Between them, we insert a
+simple path Pe1 e2 inside the image of S in Hin , which is constructed as follows.
+    Since e1 , e2 ∈ supp(Cout ) ⊆ E(Fout ), there exist matchings M1 and M2 (on G) in Fout contain-
+ing e1 and e2 , respectively. Let S1 , ..., Sk be all maximal subsets of S in Lin (Si are vertices of Hin
+and we have S = S1 ∪ ... ∪ Sk ). Denote by Se1 and Se2 the sets Si which contain the S-endpoint
+of e1 and e2 , respectively. The sets S and S1 , ..., Sk are tight for Fout , so M1 induces a perfect
+matching on {S1 , ..., Sk } \ {Se1 } (and similarly for M2 and e2 ). The symmetric difference of
+these two induced matchings contains a simple path Pe1 e2 from Se1 to Se2 in Hin which has even
+
+
+                                                   31
+                                                   S ∈ V (Hout )
+                                                          T
+
+                              e1                                                    e2
+
+
+                                   S1 = Se1   S2          S3        S4   S5 = Se2
+
+
+
+
+                                                     S6        S7
+
+
+
+Figure 11: The construction of the path Pe1 e2 inside a set S ∈ V (Hout ) in the proof of Prop-
+           erty (ii). The dark-gray sets correspond to vertices of Hin that are subsets of S.
+           The straight and swirly edges depict matchings M1 and M2 , respectively. The path
+           Pe1 e2 is depicted by fat edges.
+
+
+length (possibly 0). For an example, see Figure 11. We obtain Cin by inserting such a path Pe1 e2
+between each two consecutive edges e1 , e2 in Cout .
+    To obtain a contradiction, we need to prove that Cin is an alternating circuit of node-weight
+at most 2λ which respects Fout .
+
+       • That Cin is an alternating circuit follows by construction because each path Pe1 e2 is of
+         even length and the alternating indicator vector of Cin is nonzero since it contains the
+         alternating indicator vector of Cout (via the natural mapping of edges).
+
+       • For the node-weight, note that in Cout , the visit to S (on the edge e1 ) incurs a node-weight
+         increase of |S|, whereas in Cin , the visit to a certain subset of {S1 , ..., Sk } (on e1 and
+         Pe1 e2 ) incurs an increase of at most |S1 | + . . . + |Sk | = |S| because Pe1 e2 is a simple path.
+         Therefore the node-weight of Cin is at most that of Cout – at most 2λ.
+
+       • To see that Cin respects Fout , we use the assumption that Lout is a maximal laminar subset
+         of S(Fout ). This is in similar spirit as the proof of Claim 1. To work around the fact that
+         we are dealing with the contraction, we use the following version of Lemma 5.2:
+
+         Claim 5. Consider a vector z ∈ ZE(Hin ) . If for each T ∈ Lout which is a union of sets in
+         V (Hin) we have z, 1δ(T ) = 0, then the same holds for each T ∈ S(Fout ) which is a union
+         of sets in V (Hin ).
+
+         Let us defer the proof of Claim 5 and first use it to show that Cin respects Fout . We verify the
+         conditions of Definition 4.6. First, note that supp(Cin ) ⊆ E(Fout ) by construction. Second,
+         let T ∈ S(Fout ) be a union of vertices of Hin; we need to show that (±1)Cin , 1δ(T ) = 0.
+         By Claim 5, we may assume that T ∈ Lout . We consider two cases:
+
+            – If |T | > 2λ, then all boundary edges of T are absent from Hout (see Definition 4.5),
+              so supp(Cout ) ∩ δ(T ) = ∅. In this case T is a union of vertices of Hout and so no path
+              Pe1 e2 contains any edges from δ(T ) either. Hence supp(Cin ) ∩ δ(T ) = ∅.8
+            – If |T | ≤ 2λ, then T must be contained in a single set S ∈ V (Hout ) (as depicted
+              in Figure 11). This is because T ∈ Lout and the sets S ∈ V (Hout ) are maximal sets
+   8
+    Here we take advantage of the fact that the boundaries of large sets are erased in the definition of the
+contraction. If they were not erased, we would be unable to proceed, as there would be no reason for Cout (and
+thus Cin ) to respect Fout .
+
+
+                                                          32
+           S ∈ Lout with |S| ≤ 2λ. For every path Pe1 e2 inside S, the path e1 , Pe1 e2 , e2 is a
+           path from outside of S to outside of S which is part of the symmetric difference
+           of two matchings in Fout . If this path enters T , it must also leave T . Suppose it
+           entered T on an edge of the first matching. Then it must exit T on an edge of the
+           second matching, since T ∈ Lout ⊆ S(Fout ) is tight for Fout and both matchings are
+           in Fout , and so the corresponding ±1 terms cancel out. Abusing notation, we have
+            (±1)e1 ,Pe1 e2 ,e2 , 1δ(T ) = 0. Since this holds for every path Pe1 e2 inside S, we get
+            (±1)Cin , 1δ(T ) = 0 as required.
+   Thus Cin is an alternating circuit of node-weight at most 2λ which respects Fout . Its existence
+contradicts (ii)′ . We conclude with the proof of Claim 5:
+Proof of Claim 5. We wish to reduce our setting to that of Lemma 5.2. Define Hin′ to be the
+graph obtained from (V, E(Fout )) by contracting all maximal sets S ∈ Lin with |S| ≤ 2λ, but not
+erasing the boundaries of sets S ∈ Lin with |S| > 2λ. (If we did erase them, we would obtain
+Hin ; instead, we have V (Hin ) = V (Hin′ ) and E(Hin ) ⊆ E(Hin′ ).)
+                          ′ to be the image of F                 ′
+      Next, we define Fout                            out in Hin . More precisely, since the contracted
+sets S ∈ Lin with |S| ≤ 2λ are tight for Fout , each perfect matching on G in Fout induces a
+perfect matching on Hin′ . We let Fout ′ be the convex hull of the indicator vectors of these induced
+
+matchings. Note that there is a one-to-one correspondence between subsets of V (Hin ) that are
+tight for Fout′ and subsets of V that are tight for F
+                                                           out and are unions of sets in V (Hin ).
+      Finally, Lout also naturally maps to a laminar family L′out of subsets of vertices of Hin′ since
+Lin ⊆ Lout . Specifically, there is a set in L′out corresponding to each set in Lout that is a union of
+sets in V (Hin′ ). Note that each set in L′out is still tight for Fout′ , and that L′ is still a maximal
+                                                                                      out
+                 ′
+subset of S(Fout ). Indeed, if it were possible to add any set in S(Fout     ′ ) to L′ while maintaining
+                                                                                     out
+laminarity, then that set could be mapped back to a set in S(Fout ) and used to enlarge Lout .
+      Now, by assumption, for each T ∈ Lout which is a union of sets in V (Hin ) we have z, 1δ(T ) =
+0. This is equivalent to saying that z, 1δ(T ′ ) = 0 for each T ′ ∈ L′out . By Lemma 5.2 (applied to
+         ′ , and L′ ), we have the same for all T ′ ∈ S(F ′ ). Finally, that is equivalent to having
+Hin′ , Fout        out                                          out
+ z, 1δ(T ) = 0 for each T ∈ S(Fout ) which is a union of sets in V (Hin ).
+
+
+Acknowledgment
+We thank the anonymous FOCS 2017 reviewers for their exceptionally detailed and insightful
+comments.
+
+A     Proof of Lemma 2.2
+The proof proceeds via the primal uncrossing technique; it is adapted from [LRS11]. Assume
+without loss of generality that E = E(F ). We can do this since including the constraint xe = 0
+yields the same face as removing the edge e from G. We begin with an uncrossing lemma.
+Lemma A.1 (uncrossing). Let S, T ∈ S(F ) be two sets which are crossing (i.e., S ∩ T, S \
+T, T \ S 6= ∅). Then:
+    • if |S ∩ T | is odd: then S ∩ T, S ∪ T ∈ S(F ) and 1δ(S) + 1δ(T ) = 1δ(S∩T ) + 1δ(S∪T ) ,
+    • otherwise: S \ T, T \ S ∈ S(F ) and 1δ(S) + 1δ(T ) = 1δ(S\T ) + 1δ(T \S) .
+
+Proof. Case |S ∩ T | odd. Note that we have
+
+                        1δ(S) + 1δ(T ) = 1δ(S∩T ) + 1δ(S∪T ) + 2 · 1δ(S\T,T \S) .
+
+                                                   33
+For any x ∈ F , since S, T ∈ S(F ) and because S ∩ T , S ∪ T are nonempty odd sets, we have
+
+1 + 1 = x(δ(S)) + x(δ(T )) = x(δ(S ∩ T )) + x(δ(S ∪ T )) + 2 · x(δ(S \ T, T \ S)) ≥ 1 + 1 + 2 · 0
+
+where the inequality must be an equality, and thus x(δ(S ∩ T )) = 1, x(δ(S ∪ T )) = 1 (implying
+S ∩ T, S ∪ T ∈ S(F )) and x(δ(S \ T, T \ S)) = 0 for all x ∈ F (which, given that E = E(F ),
+implies that δ(S \ T, T \ S) = ∅ and thus 1δ(S\T,T \S) = 0).
+   Case |S ∩ T | even. Now we have
+
+                    1δ(S) + 1δ(T ) = 1δ(S\T ) + 1δ(T \S) + 2 · 1δ(S∩T,V \(S∪T )) .
+The sets S \ T and T \ S are odd and nonempty, and we proceed as above.
+
+   Define cross(S, L) to be the number of sets in L that cross S.
+
+Proposition A.2. If S 6∈ L and T ∈ L are crossing, then all four numbers cross(S ∩ T, L),
+cross(S ∪ T, L), cross(S \ T, L) and cross(T \ S, L) are smaller than cross(S, L).
+
+Proof. See Claim 9.1.6 in [LRS11].
+
+   Now we can prove Lemma 2.2. Towards a contradiction suppose that span(L) ( span(S(F )).
+Then there exists S ∈ S(F ) with 1δ(S) 6∈ span(L). Pick such a set with minimum cross(S, L).
+Clearly cross(S, L) ≥ 1, for otherwise L ∪ {S} would be laminar, contradicting maximality of L.
+Let T ∈ L be a set crossing S. Assume that |S ∩ T | is odd; the other case is analogous. Then
+by Lemma A.1, S ∩ T, S ∪ T ∈ S(F ) and
+
+                               1δ(S) + 1δ(T ) = 1δ(S∩T ) + 1δ(S∪T ) .                         (4)
+
+By Proposition A.2 and our choice of S we have 1δ(S∩T ) , 1δ(S∪T ) ∈ span(L), and of course also
+1δ(T ) ∈ span(L). This and (4) implies that 1δ(S) ∈ span(L), a contradiction.                 
+
+
+References
+[AHT07] Manindra Agrawal, Thanh Minh Hoang, and Thomas Thierauf. The polynomially
+        bounded perfect matching problem is in NC2 . In STACS 2007, 24th Annual Sympo-
+        sium on Theoretical Aspects of Computer Science, pages 489–499, 2007.
+
+[AM08]    Vikraman Arvind and Partha Mukhopadhyay. Derandomizing the isolation lemma
+          and lower bounds for circuit size. In APPROX and RANDOM, pages 276–289, 2008.
+
+[Bar92]   D. A. M. Barrington. Quasipolynomial size circuit classes. In Proceedings of the
+          Seventh Annual Structure in Complexity Theory Conference, pages 86–93, Jun 1992.
+
+[BCH86] Paul W Beame, Stephen A Cook, and H James Hoover. Log depth circuits for division
+        and related problems. SIAM J. Comput., 15(4):994–1003, November 1986.
+
+[Ber84]   Stuart J. Berkowitz. On computing the determinant in small parallel time using a
+          small number of processors. Information Processing Letters, 18(3):147–150, 1984.
+
+[CNN89] Marek Chrobak, Joseph Naor, and Mark B. Novick. Using bounded degree spanning
+        trees in the design of efficient algorithms on claw-free graphs, pages 147–162. Springer
+        Berlin Heidelberg, Berlin, Heidelberg, 1989.
+
+
+                                                 34
+[Csa76]   L. Csanky. Fast parallel inversion algorithm. SIAM Journal of Computing, 5:618–623,
+          1976.
+
+[DHK93] E. Dahlhaus, P. Hajnal, and M. Karpinski. On the parallel complexity of Hamiltonian
+        cycle and matching problem on dense graphs. Journal of Algorithms, 15(3):367 – 384,
+        1993.
+
+[DK98]    Elias Dahlhaus and Marek Karpinski. Matching and multidimensional matching in
+          chordal and strongly chordal graphs. Discrete Applied Mathematics, 84(1-3):79–91,
+          1998.
+
+[DKR10] Samir Datta, Raghav Kulkarni, and Sambuddha Roy. Deterministically isolating a
+        perfect matching in bipartite planar graphs. Theory Comput. Syst., 47(3):737–757,
+        2010.
+
+[DS84]    Eliezer Dekel and Sartaj Sahni. A parallel matching algorithm for convex bipartite
+          graphs and applications to scheduling. Journal of Parallel and Distributed Comput-
+          ing, 1(2):185 – 205, 1984.
+
+[Edm65a] Jack Edmonds. Maximum matching and a polyhedron with 0, 1 vertices. Journal of
+         Research of the National Bureau of Standards, 69:125–130, 1965.
+
+[Edm65b] Jack Edmonds. Paths, trees, and flowers. Canadian Journal of Mathematics, 17:449–
+         467, 1965.
+
+[FGT16] Stephen A. Fenner, Rohit Gurjar, and Thomas Thierauf. Bipartite perfect matching
+        is in quasi-NC. In Proceedings of the 48th Annual ACM SIGACT Symposium on
+        Theory of Computing, STOC, pages 754–763, 2016.
+
+[GK87]    Dima Grigoriev and Marek Karpinski. The matching problem for bipartite graphs
+          with polynomially bounded permanents is in NC. In 28th Annual Symposium on
+          Foundations of Computer Science (FOCS), pages 166–172, 1987.
+
+[GT17]    Rohit Gurjar and Thomas Thierauf. Linear matroid intersection is in quasi-NC. In
+          Proceedings of the 48th Annual ACM SIGACT Symposium on Theory of Computing,
+          STOC, pages 821–830, 2017.
+
+[GTV17] R. Gurjar, T. Thierauf, and N. K. Vishnoi. Isolating a Vertex via Lattices: Polytopes
+        with Totally Unimodular Faces. ArXiv e-prints, August 2017.
+
+[Har09]   Nicholas J. A. Harvey. Algebraic algorithms for matching and matroid problems.
+          SIAM J. Comput., 39(2):679–702, 2009.
+
+[Kas67]   P. W. Kasteleyn. Graph theory and crystal physics. In F. Harary, editor, Graph
+          Theory and Theoretical Physics, pages 43–110. Academic Press, 1967.
+
+[KUW86] Richard M. Karp, Eli Upfal, and Avi Wigderson. Constructing a perfect matching is
+        in random NC. Combinatorica, 6(1):35–48, 1986.
+
+[KVV85] Dexter Kozen, Umesh V. Vazirani, and Vijay V. Vazirani. NC algorithms for compa-
+        rability graphs, interval gaphs, and testing for unique perfect matching. In Proceed-
+        ings of the Fifth Conference on Foundations of Software Technology and Theoretical
+        Computer Science, pages 496–503, London, UK, 1985. Springer-Verlag.
+
+
+
+                                             35
+[Lov79]   László Lovász. On determinants, matchings, and random algorithms. In FCT, pages
+          565–574, 1979.
+
+[LPV81]   G. F. Lev, N. Pippenger, and L. G. Valiant. A fast parallel algorithm for routing in
+          permutation networks. IEEE Transactions on Computers, C-30(2):93–100, Feb 1981.
+
+[LRS11]   Lap Chi Lau, Ramamoorthi Ravi, and Mohit Singh. Iterative methods in combina-
+          torial optimization, volume 46. Cambridge University Press, 2011.
+
+[MN89]    G. L. Miller and J. Naor. Flow in planar graphs with multiple sources and sinks. In
+          30th Annual Symposium on Foundations of Computer Science, pages 112–117, 1989.
+
+[MS04]    Marcin Mucha and Piotr Sankowski. Maximum matchings via Gaussian elimination.
+          In 45th Symposium on Foundations of Computer Science (FOCS), pages 248–255,
+          2004.
+
+[MV97]    Meena Mahajan and V. Vinay. Determinant: Combinatorics, algorithms, and com-
+          plexity. Technical report, 1997.
+
+[MV00]    Meena Mahajan and Kasturi R. Varadarajan. A new NC-algorithm for finding a
+          perfect matching in bipartite planar and small genus graphs. In Proceedings of the
+          Thirty-second Annual ACM Symposium on Theory of Computing, STOC, pages 351–
+          357, 2000.
+
+[MVV87] Ketan Mulmuley, Umesh V. Vazirani, and Vijay V. Vazirani. Matching is as easy as
+        matrix inversion. Combinatorica, 7(1):105–113, 1987.
+
+[Nai82]   M. Nair. On Chebyshev-type inequalities for primes. The American Mathematical
+          Monthly, 89(2):126–129, 1982.
+
+[NSV94]   H. Narayanan, Huzur Saran, and Vijay V. Vazirani. Randomized parallel algo-
+          rithms for matroid union and intersection, with applications to arboresences and
+          edge-disjoint spanning trees. SIAM J. Comput., 23(2):387–397, 1994.
+
+[Par98]   I. Parfenoff. An efficient parallel algorithm for maximum matching for some classes
+          of graphs. Journal of Parallel and Distributed Computing, 52(1):96 – 108, 1998.
+
+[PY82]    Christos H. Papadimitriou and Mihalis Yannakakis. The complexity of restricted
+          spanning tree problems. J. ACM, 29(2):285–309, April 1982.
+
+[Sch03]   Alexander Schrijver. Combinatorial Optimization - Polyhedra and Efficiency.
+          Springer-Verlag, Berlin, 2003.
+
+[Tut47]   W. T. Tutte. The factorization of linear graphs. Journal of the London Mathematical
+          Society, 22:107–111, 1947.
+
+[TV12]    Raghunath Tewari and N. V. Vinodchandran. Green’s theorem and isolation in planar
+          graphs. Inf. Comput., 215:1–7, 2012.
+
+[Vaz89]   Vijay V. Vazirani. NC algorithms for computing the number of perfect matchings in
+          K3,3 -free graphs and related problems. Information and Computation, 80(2):152 –
+          164, 1989.
+
+
+
+
+                                             36
+
