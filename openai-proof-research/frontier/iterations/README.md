@@ -20,13 +20,19 @@ When a report returns without meeting the gate, integrate its evidence and use i
 
 [R009, variable-channel four-state capacity](../findings/R009-variable-channel-capacity.md), is accepted after separate proof and final significance reviews. The independently audited locally finite strengthening belongs to the same finding. The current count is **3 accepted, 7 remaining**; the [count and continuation ledger](../TEN-FINDINGS.md) is authoritative.
 
-The structural construction has passed proof review and is undergoing [final significance review](iteration7-structures-novelty-r3-task.json). The arithmetic track is working on the unclosed complex prime-extraction estimate CM. Earlier analysis and parent screens remain negative/reduction records; they add no findings.
+The structural construction has passed proof review and is undergoing [final significance review](iteration7-structures-novelty-r3-task.json). The [completed complex-mode candidate](i10-complex-prime-modes.md) proposes to close CM and is undergoing [independent proof review](iteration10-complex-modes-r2-task.json). Earlier analysis and parent screens remain negative/reduction records; they add no findings.
 
 ### Capacity acceptance — 2026-10-08
 
 The parent accepts R009 as the third substantial deduction under the pinned corpus. The contribution is the uniform local moment and flow-splitting sufficiency proof for arbitrary edge channels, including channels approaching or equal to perfect transmission. The final contribution audit recommends acceptance after checking variable-interaction Ising, Potts and robust-reconstruction literature and proposed standard reductions. Capacity formalism and the near-perfect ray example are not claimed as new.
 
 The parent read the final reviews and reproduced the source, artifact and exact diagnostics: 41 pinned source files, 11 primary PDFs and 101 artifacts in the significance audit; five source files and 17 artifacts in the locally finite proof audit. The latter passes universal bounds, joint independence after zero-edge pruning and the infinite-branching counterexample. It also records a perfect-copy binary-gadget reduction of the qualitative locally finite statement to the new bounded-child theorem. These extensions do not merit another count. Worldwide priority remains unverified; no human peer review or formal certification is claimed.
+
+### Complex-mode candidate integration — 2026-10-08
+
+The parent read the full i10 proof proposal. It retains the nonzero Selberg–Delange principal terms in one position model shared by all active sets, proves exact small-label covariance, supplies separate discrete high-time and summed presieve estimates, and recombines the model contributions into positive proxy mass before taking absolute values. This would yield uniformity of Omega(p−1) modulo every fixed m jointly with the PD factor law in each fixed reduced progression. It is not yet accepted.
+
+Parent checks reproduce all exact diagnostics byte for byte and verify 38 prior pinned sources, 11 fresh source copies, all input snapshots and 25 artifacts. The [parent record](i10-parent-preliminary-verification.json) limits these to finite algebra and provenance. A fresh independent reviewer must audit the rough density, aggregate square errors, physical residual, high-time scales, progression main terms, signed reassembly and limit order. No R-number or count increase precedes proof and final significance review.
 
 ### Analysis-screen integration
 
