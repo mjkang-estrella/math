@@ -18,14 +18,40 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## Current followup gate
+## H040 live independent ideation
+
+H039 prior-art task completed; root read the primary Kuhn-Struik passages and
+Bernstein-Lange generic review. Raw report and scoped corrections retained.
+Known components do not establish either novelty or universal full-cost
+rejection. The hybrid is parked as a conditional constant-factor/memory tradeoff,
+with no implementation/experiment admission. No verified improvement.
+
+H040 independent briefs: research/findings/H040-independent-briefs.md.
+- Native Astra `/root/h007_additive_relations`: COMPLETED coordinate/algebraic
+  compressed recovery operators; no survivor. H040-tangent-operator-screen.md
+  records the scoped missing-map obstruction and remaining missing primitives.
+- Grok4.7: RUNNING collision-search state geometry.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h040-stategeometry-grok-20261008-r1`.
+- Factory Claude Opus5.5: RUNNING compressed information/adaptive decoding.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h040-compressed-information-factory-opus-20261008-r1`.
+Both T3 launches accepted exact catalogued models and returned running. No
+substitution. Initial proposals withheld across roles. Native Sol final H039
+scope qualification COMPLETED; accepted the corrected dispositions.
+No runs/imports/edits/children by delegates. Root integrates. Stopped H006 and
+H038 Farey roles excluded; no H034 cap reset. Exponent1/2 and improvement NONE.
+Launch/source checkpoint validation: ./scripts/check.sh >
+/tmp/ecdlp-h040-launch-check.log 2>&1 exit0,366 existing audits; no new Lean claims.
+Next conclusion-changing evidence: concrete new operator plus matched complete
+cost, then independent scrutiny of its missing primitive before numerical work.
+
+## H039 followup gate (historical, now parked)
 
 All H039 initial proposal tasks terminal; information review terminal. The
 conditional fixed-known-log-table/rho hybrid remains an unverified ideal cost
 region, not a solver gain. Two distinct read-only followups:
 - Native Sol `/root/h034_c4_implementation`: COMPLETED matched total memory, collision
   detection, DP delay, verification and strongest applicable baseline costs.
-- Claude Opus5.5: RUNNING primary prior art and single-target versus amortized costs.
+- Claude Opus5.5: COMPLETED primary prior art and single-target versus amortized costs.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h039-hybrid-priorart-opus-20261008-r1`.
   Fresh live catalogue supports this exact target; delegate returned running.
 Original cost model and objections supplied: b=beta sqrt(q), ideal survival
@@ -37,7 +63,7 @@ hybrid for r=(cw+P)/cb>=3/2. This excludes neither total-runtime reversals nor
 restricted-memory openings. A conditional DP scale can make reporting/storage
 overhead lower order; it does not prove the required actual walk law. Final
 review completed; conditions retained, including expected versus hard capacity
-and fixed-beta square-root memory. Prior-art task remains live.
+and fixed-beta square-root memory. Prior-art task subsequently completed; see H039-hybrid-priorart-disposition.md.
 Validation: ./scripts/check.sh > /tmp/ecdlp-h039-hybrid-memory-check.log 2>&1
 exit0,366 existing audits; no new Lean/Audit claims.
 Self-collision detection memory and other costs remain missing. No universal
