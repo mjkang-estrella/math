@@ -21,4 +21,20 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-Four independent T3 scouts are exploring arithmetic, algebraic geometry, discrete mathematics, and analysis. Their working reports belong in `scouts/`; nothing there is an accepted proof until reviewed and integrated. The immutable source revision is recorded in [../sources/upstream.json](../sources/upstream.json).
+No high-significance named problem has been solved in this phase. The working reports belong in `scouts/`; their claims are provisional until reviewed and integrated. The immutable source revision is recorded in [../sources/upstream.json](../sources/upstream.json).
+
+- **Arithmetic:** the [second round](reviews/arithmetic-bridge-r2.md) proves that one proposed four-cycle is harmless and that the naive global unweighted operator norm fails. The full high-trace and cubic-centering estimates remain missing. This route is parked pending a genuinely new joint estimate; it is not being counted as a Chowla result.
+- **Discrete:** the [scout](scouts/discrete.md) found obstructions to union-preserving coding and graph balancing. A second round tests direct noise conditioning for Frankl's conjecture.
+- **Analysis:** the [hot-spots extension candidate](scouts/analysis.md) is under independent proof/novelty review, alongside an attempt to remove its simple-eigenvalue restriction. It is not yet an accepted result.
+- **Algebraic geometry:** the broad scout remains pending.
+
+## Technical findings within the incomplete arithmetic approach
+
+These are project-level proof-method findings, **not substitutes for the requested novel resolution or substantial new case of an important conjecture**. No literature-priority claim is made.
+
+| Record | What was established | Separate commit |
+|---|---|---|
+| [R001](findings/R001-divisor-parallelogram-bound.md) | A restricted normalized four-cycle family has negligible total absolute weight, even with arbitrary bounded midpoint factors. | `ed50d45` |
+| [R002](findings/R002-unweighted-kernel-obstruction.md) | Rare large entries defeat the proposed norm bound for the explicitly undeleted, unweighted kernel. | `609a94c` |
+
+The parent checked both proofs against the actual source kernel and reran the exact-arithmetic diagnostics. They do not provide the missing longer-walk or centering bounds.
