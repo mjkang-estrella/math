@@ -23,17 +23,28 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 H044 closed at e4bcf3d; no complete-work improvement. Current exponent1/2,
 verified gain NONE. H045-independent-briefs.md records ranked concrete
 questions, common constraints and exact T3 prompts. No accepted experiment.
-- Factory / claude-opus-5-5 LIVE public-signal construction, applying the
-  corrected conditional decoder gate without assuming any signal premise.
+- Factory / claude-opus-5-5 COMPLETED public-signal construction; raw retained
+  in H045-public-signal-factory-raw.md. Native Astra math and Sol cost/source
+  reviews COMPLETED. H045-public-signal-disposition.md retains scoped Miller
+  and EDS bounds and the exact half-orbit Legendre identity; withdraws universal
+  decoder closure, higher-character and free-oracle impossibility claims.
+  Root checked the character reindexing, Gauss identity and primary sources.
+  No supplied cheap evaluator, recovery gain or experiment.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h045-public-signal-factory-opus-20261009-r1`.
-- Grok / grok-4.7 LIVE independent complete-work constructions, with prior
-  collision/cost objections supplied, not other initial proposals.
+- Grok / grok-4.7 COMPLETED independent complete-work constructions; raw
+  retained unaccepted in H045-completework-grok-raw.md. Root found a false
+  unconditional Sidon-loss inference: event counts do not prove a Rayleigh
+  stopping law. Native Astra math review COMPLETED; native Sol cost review
+  LIVE. Valid finite counts will be retained with corrected probability scope.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h045-independent-completework-grok-20261009-r1`.
 - Native Sol /root/h034_c4_implementation COMPLETED structured-relation
   construction screen. H045-divisor-completion-screen.md records one residual
   point as ordinary group completion, exact B/q frozen-base membership law,
   null-coefficient scope and optimistic B+q/B invoice. No new solver card.
 Native Astra completed H044 final artifact check: no blocking errors found.
+All initial H045 proposals are terminal and collected; independent review
+continues before integration. Root checked the exact Gauss half-product identity
+and rejected the raw free-oracle lower-bound and universal pairing assertions.
 Both native and T3 capacity respected. Explicit new Factory role after prior
 Claude API failures; no silent substitution or safety-stopped-role reroute.
 All researchers read-only, no scripts/imports/experiments/children. H034 cap
@@ -45,6 +56,9 @@ children rather than polling or creating a watcher.
 Divisor screen validation: ./scripts/check.sh > /tmp/ecdlp-h045-divisor-check.log
 2>&1 exit0,366 existing audits. Root verified paper algebra/probability and read Galbraith
 7.9.8–7.9.9; no new Lean claim or experiment.
+Signal review validation: ./scripts/check.sh > /tmp/ecdlp-h045-signal-check.log
+2>&1 exit0,366 existing audits. Paper character bounds are not Lean-certified; no new
+formal infrastructure or H034 experiment was admitted.
 
 ## H044 completed independent constructions
 
