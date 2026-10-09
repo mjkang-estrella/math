@@ -1,6 +1,6 @@
 # Frontier scout: algebraic and complex geometry
 
-**Parent status: provisional scout, not accepted findings.** Independent reviews of Theorem A/Lemma C and Theorem B/B1 are active, together with a separate attempt to construct the missing Mumford cycles. All uses of “proved” below are the scout's claims awaiting that review. The parent reproduced the exact tensor-closure ranks (5 → 7 → 8, Lefschetz-only 3), which verifies finite algebra only. Neither a locus comparison nor an unclosed conditional reduction fulfills the user's requested significant new theorem.
+**Parent status: K3 claims provisional; Mumford reduction demoted as already known.** The [independent Mumford review](../reviews/geometry-mumford-review-r2.md) accepts B0 and repairs B1, but identifies an exact prior-art match in the [October 2 release](https://zenodo.org/records/23093099), `thm:mumfordpowers`. The review supersedes Section 5 wherever formulations differ. Theorem A/Lemma C remain under independent review; the separate attempt to construct missing Mumford cycles is active. The parent reproduced the scout closure ranks and independent symbolic-certificate checks. No significant new Hodge case is established.
 
 Research date: 2026-10-08. Upstream: [openai/math at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`](https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb). All theorems in that revision are taken as true, as instructed. Withdrawn manuscripts are not. Every new deduction below is checked independently. First-pass findings F001–F010 and the archived proposals are not reused.
 
@@ -8,14 +8,14 @@ Research date: 2026-10-08. Upstream: [openai/math at `fd4aeeb2ee4fc729c18d98444f
 
 **No landmark or celebrated problem in this domain is resolved here.** The only MathDB *landmark* problem in algebraic geometry is the Hodge conjecture. The only *celebrated* one is the Jacobian conjecture, which MathDB already marks claimed solved. I make no claim on either in general.
 
-The new contributions are two exact frontier theorems with complete proofs, one algebraicity lemma, and a set of attempts on other targets that end at a stated obstruction.
+The scout proposed two frontier statements and one algebraicity lemma. The subsequent review found prior art for the Mumford reduction; the K3 claims remain provisional. None is accepted as genuinely new substantive progress.
 
 | ID | Statement (short form) | Kind | Novelty status |
 |---|---|---|---|
 | **A** | For a K3 surface with ρ = 16, the corpus K3 locus and Floccari's published locus are described exactly by the even Clifford algebra C⁺(T). Together they cover exactly the surfaces whose C⁺(T) is unramified at every place above an odd prime. The two loci differ only when 2 splits in K = ℚ(√−det T). The corpus adds new cases precisely when C⁺(T) ≅ M₂((−1,−1)_K). There are explicit ρ = 16 surfaces outside both loci, and for those KS(S) is isogenous to B², with B a simple abelian 8-fold carrying quaternionic multiplication. | Proved theorem (lattice/Brauer computation plus pinned statements), with exact-arithmetic cross-checks | New to this project. I did not find this comparison in the corpus or in Floccari. Not certified new to the literature. |
 | **A′** | Rational HC holds on every self-power of every projective K3 surface with ρ ≥ 17, and rational **GHC** also holds there; both transfer to Hilbert schemes and moduli spaces of sheaves. | Corollary of A | HC alone **already follows from published work** (Floccari, G&T 2026, Thm 5.11, plus the Witt-index step in §4). GHC uses the corpus. |
 | **C** | Every rational Hodge *similitude* T_{S₁} → T_{S₂} between K3 surfaces on the corpus locus is algebraic. Consequently HC holds for S₁ × S₂ when End_Hdg(T_{S₁}) = ℚ. | Proved lemma | New to this project. It recovers a small, honest piece of the **withdrawn** corpus claim on products of K3 surfaces. |
-| **B** | HC on every self-power of every complex abelian variety of dimension ≤ 5 is **equivalent** to one explicit statement: for each Mumford-type fourfold A, the multiplication by the cubic field F = End_Hdg(H²_prim(A,ℚ)) is induced by cycles on A × A. That is two exceptional classes in H⁴(A × A). Every other case holds. | Proved reduction (invariant theory plus an exact closure computation) plus assembly | The assembly half is a direct combination of corpus and Moonen–Zarhin. The reduction to A × A is new to this project. Novelty unverified. |
+| **B** | HC on every self-power of every complex abelian variety of dimension ≤ 5 is **equivalent** to one explicit statement: for each Mumford-type fourfold A, the multiplication by the cubic field F = End_Hdg(H²_prim(A,ℚ)) is induced by cycles on A × A. That is two exceptional classes in H⁴(A × A). Every other case holds. | Proved reduction (invariant theory plus an exact closure computation) plus assembly | The assembly half is a direct combination of corpus and Moonen–Zarhin. Exact reduction identified in prior art; not new. See parent correction in §5. |
 
 What remains open is the Hodge conjecture for Mumford fourfolds (on A × A, see §5.4) and for the ρ = 16 quaternionic-8-fold K3 surfaces (§4.4). For both I give the exact missing input and why the corpus does not supply it.
 
@@ -142,7 +142,18 @@ For HC on the fourfold S₁ × S₂: H² ⊗ H² Hodge classes are NS ⊗ NS plu
 
 *Scope.* The lemma does **not** give HC for S₁^a × S₂^b in general. That would need the Goursat analysis of Hdg(T₁ ⊕ T₂), which has low-rank exceptions (SO(3), SO(4) coincidences, as in Shioda–Inose pairs). It also needs Hodge isomorphisms that are not similitudes when End_Hdg(T) ≠ ℚ.
 
-## 5. Theorem B: abelian varieties of dimension ≤ 5
+## 5. Theorem B: abelian varieties of dimension ≤ 5 — corrected known reduction
+
+**Parent correction and attribution.** The complete replacement proof is in [review §§2–7](../reviews/geometry-mumford-review-r2.md). B0 is a routine assembly. B1's substantive implication already appears in [the prior primary source, `thm:mumfordpowers`](https://github.com/creelie/H8/blob/a80abf628c5f05236372e97dbfaa5b316463e9df/tex/sections/11c_mumford.tex#L543). It is not a new theorem of this project. The following corrections govern the compressed scout derivation retained below:
+
+- Hg differs from MT; its simply connected cover becomes SL₂³, with a finite central kernel in the action.
+- The correct Hodge-structure identification is End(H²) ≅ (H² ⊗ H²)(2). Write c_f for the class in H⁴(A², ℚ(2)). Its degree-preserving correspondence is Γ_f = pr₁^*(θ²) ∪ c_f in H⁸(A², ℚ(4)), of codimension **four**. Algebraic inverse Lefschetz operators recover c_f from Γ_f.
+- Tensor composition needs Lefschetz degree conversions before cycle composition. Raw codimension-two cycles on A⁴ cannot be composed as degree-preserving correspondences on A². Geometric permutations of odd-degree legs introduce Koszul signs.
+- Review §5 replaces the finite experiment with explicit polynomial identities, and §6 proves generation at every arity and rational descent.
+- Algebraicity of c_f for just **one** f ∈ F outside ℚ suffices: composition generates ℚ[f] = F. This is a routine prime-degree field consequence.
+
+The review is the governing proof reference; the shorthand below is the historical scout record.
+
 
 ### 5.1 Assembly: everything except Mumford fourfolds
 
@@ -190,7 +201,7 @@ The same equivalence holds for X ~ A × E (dimension 5), because Moonen–Zarhin
 - Markman's route (and the corpus Weil paper §§4–8) works by deforming a *semiregular* sheaf along a Weil-type period domain. The Mumford family is not of PEL type: G(ℝ) has compact factors, so no weight-one standard representation exists.
   - The Serre tensor A ⊗ O_K is an 8-fold of Weil type, outside the corpus range, and the corpus eightfold attempt is withdrawn.
   - The singles summand T := ⊕_i S_i ⊂ Sym²V ⊂ H²(A × A) is a 9-dimensional K3-type structure with real multiplication by F, and KS(T) ~ A^{32}. So (ii) would also follow from (an algebraic KS correspondence) plus (algebraic real multiplication) for a K3-type realization of T. Both are open.
-- **Precise open input:** a semiregular coherent sheaf or cycle on A₀ × A₀, at one point A₀ of a Mumford curve, whose normalized Chern character has nonzero projection to Q_f-space. Then Buchweitz–Flenner deformation, which the Weil paper §7 reconstructs, would spread it along the curve. I could not construct one.
+- **Proposed open input, corrected by review:** construct a suitable sheaf with a nonzero exceptional component, verify semiregularity on its full obstruction space, verify that its entire relevant Chern character remains of Hodge type, and justify propagation from local deformation to the desired fibers. A cycle with nonzero projection alone is insufficient. No such object or propagation argument was constructed.
 
 ## 6. Other named targets: attempts and obstructions
 
@@ -252,6 +263,6 @@ Numerical checks verify finite algebra only. The proofs above are the arguments.
 - **Theorem A(2) and Corollary A″** (the Brauer description of both loci and the frontier criterion): not found in the corpus, in Floccari, or in Varesco. A broader literature search was not done.
 - The Brauer reformulation relies on two standard facts used without re-proof: e₂ = c(−1,−1) in dimension ≡ 6 mod 8, and [C⁺] = res[C]. The Hasse form of A(2a)/(2b) is proved directly and checked numerically.
 - **Lemma C:** depends on the corpus's "every w" clause in K3 paper Thm 1.2 and its Prop. 2.1. I have not checked whether it appears in the literature (it is related to Buskin and Huybrechts on isogenies).
-- **Theorem B1:** I did not find this reduction stated in Moonen–Zarhin, who only note the existence of exceptional classes in B²(X²), or in the corpus. A specialist check is needed. The algebraicity of Q_f for non-CM Mumford fourfolds is the open problem.
+- **Theorem B1, review update:** the exact reduction occurs in the October 2 public source cited in §5. Its novelty claim is withdrawn. Algebraicity of the exceptional classes for non-CM Mumford fourfolds remains open.
 - Not attempted: MathDB "corpus"-band items beyond those listed. Assigning significance scores beyond MathDB's own bands was not attempted, by design.
 - Files written: this report; `frontier/sources/geo_CATALOGUE.md`, `geo_pdf/`, `geo_lit/`, `geo_mathdb/`; `frontier/experiments/geo_k3locus/`, `geo_mumford/`. Nothing was staged or committed, and no indexes were edited.
