@@ -18,7 +18,7 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H040 live independent ideation
+## H040 completed independent ideation
 
 H039 prior-art task completed; root read the primary Kuhn-Struik passages and
 Bernstein-Lange generic review. Raw report and scoped corrections retained.
@@ -30,7 +30,10 @@ H040 independent briefs: research/findings/H040-independent-briefs.md.
 - Native Astra `/root/h007_additive_relations`: COMPLETED coordinate/algebraic
   compressed recovery operators; no survivor. H040-tangent-operator-screen.md
   records the scoped missing-map obstruction and remaining missing primitives.
-- Grok4.7: RUNNING collision-search state geometry.
+- Grok4.7: COMPLETED collision-search state geometry; no supplied successor.
+  Native Sol independent scope review COMPLETED. H040-geometry-disposition.md
+  corrects affine quotient counts, history/coalescence, subset retry assumptions
+  and side-feature recovery. Root read the primary negation paper.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h040-stategeometry-grok-20261008-r1`.
 - Factory Claude Opus5.5: COMPLETED compressed information/adaptive decoding;
   no submitted candidate. Raw report preserved in H040-information-factory-raw.md.
@@ -51,8 +54,11 @@ Launch/source checkpoint validation: ./scripts/check.sh >
 /tmp/ecdlp-h040-launch-check.log 2>&1 exit0,366 existing audits; no new Lean claims.
 Information-review validation: ./scripts/check.sh >
 /tmp/ecdlp-h040-information-check.log 2>&1 exit0,366 existing audits; paper
-findings are not certified by these checks. Only Grok initial proposer remains
-live; no pending native reviews.
+findings are not certified by these checks. All H040 proposers and reviews
+are terminal; no candidate admitted and no pending H040 child.
+Geometry-review validation: ./scripts/check.sh >
+/tmp/ecdlp-h040-geometry-check.log 2>&1 exit0,366 existing audits; no Lean
+claims changed. Paper findings are not certified by these checks.
 Next conclusion-changing evidence: concrete new operator plus matched complete
 cost, then independent scrutiny of its missing primitive before numerical work.
 
