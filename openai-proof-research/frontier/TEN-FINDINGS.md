@@ -23,6 +23,8 @@ Three T3-owned tasks each screen at least three candidates and develop their str
 | Geometric analysis | Fresh PDE, transport, curvature, regularity or inverse-problem bridges; exclude spent hot-spots and operator variants. | [Brief](iterations/iteration7-analysis-task.json) |
 | Structural mathematics | Algebra, topology, groups, discrete mathematics and complexity; seek substantive constructions beyond standard transfers. | [Brief](iterations/iteration7-structures-task.json) |
 
+The independent [parent probability/quantum screen](iterations/i07-parent-probability-screen.md) rejects two already-covered targets and a false quantum-memory extension. It derives a weighted necessary capacity condition for variable-edge four-state reconstruction and an exact counterexample to the naive unweighted extension. Sufficiency is unproved; this preliminary argument has not undergone independent review and does not change the count.
+
 ## Continuation rules
 
 1. Integrate each returned report and its source evidence; distinguish proved steps from unresolved estimates.
