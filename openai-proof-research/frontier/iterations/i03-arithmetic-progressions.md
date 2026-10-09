@@ -1,8 +1,8 @@
-# Arithmetic round 3: fixed-progression PD and a positive-proportion primitive-root candidate
+# Arithmetic round 3: fixed-progression PD and positive-proportion primitive roots
 
 Date: 2026-10-08. Pin: `openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`.
 
-**Status: new proof submitted for independent review, not an integrated finding.** Under the stipulated accepted manuscript contracts, the argument below derives the full Poisson–Dirichlet law for `p−1` in every fixed reduced progression. It consequently derives a positive **lower** relative density of primitive-root primes for each admissible integer base. It does not prove existence of a natural density, the Artin constant formula, effective thresholds, or any uniformity in a modulus growing with `x`. The proof uses the manuscript's general graph pairing contract, not conditioning of its marginal PD theorem. The genuinely new step is §3, which inserts two physical endpoint residues and then averages a shared dilation label. All other changes to extraction are itemized in §5.
+**Status: validated deduction under the accepted corpus; integrated as [R006](../findings/R006-progression-PD-primitive-root-density.md).** The [independent round-4 audit](../reviews/i03-arithmetic-progressions-r4.md) passes the complete argument; the parent applied its editorial corrections and reproduced its checks. A separate final novelty/significance review remains pending. Under the stipulated accepted manuscript contracts, the argument below derives the full Poisson–Dirichlet law for `p−1` in every fixed reduced progression. It consequently derives a positive **lower** relative density of primitive-root primes for each admissible integer base. It does not prove existence of a natural density, the Artin constant formula, effective thresholds, or any uniformity in a modulus growing with `x`. The proof uses the manuscript's general graph pairing contract, not conditioning of its marginal PD theorem. The additional step is §3, which inserts two physical endpoint residues and then averages a shared dilation label. All other changes to extraction are itemized in §5.
 
 Read: `AGENTS.md`, `sources/upstream.json`, relevant catalogue entries in `sources/CONTENTS.md`, `frontier/iterations/README.md`, the full round 1 arithmetic report and round 2 review, and the source contracts identified below. No upstream truth audit, further agent, commit, staging, or shared-index/prior-report edit was performed.
 
@@ -10,7 +10,7 @@ Read: `AGENTS.md`, `sources/upstream.json`, relevant catalogue entries in `sourc
 
 Let `q_1(p) ≥ q_2(p) ≥ ...` be the prime factors of `p−1`, with multiplicity and padding by 1, and put `V_j(p)=log q_j(p)/log(p−1)` for `p≥3`. Let `(L_j)` have PD(1). Write `N(x)=π(2x)−π(x)`.
 
-**Theorem AP (candidate deduction).** For every fixed integer `M≥1`, every integer `b` with `(b,M)=1`, every fixed `k≥1`, and every bounded continuous real function `H` on `[0,1]^k`,
+**Theorem AP (validated deduction under the accepted corpus).** For every fixed integer `M≥1`, every integer `b` with `(b,M)=1`, every fixed `k≥1`, and every bounded continuous real function `H` on `[0,1]^k`,
 
 \[
  \frac{1}{\pi(X;M,b)}
@@ -28,7 +28,7 @@ The limit is through all real `X→∞`; omission of `p=2` in the numerator is h
  \tag{R}
 \]
 
-**Theorem A+ (candidate deduction).** For every integer `a` with `|a|≥2` that is not a positive integer square, there exist constants `c_a>0` and `x_a` such that for every real `x≥x_a`,
+**Theorem A+ (validated deduction under the accepted corpus).** For every integer `a` with `|a|≥2` that is not a positive integer square, there exist constants `c_a>0` and `x_a` such that for every real `x≥x_a`,
 
 \[
  \#\{x<p\le2x:p\nmid a,\ \operatorname{ord}_p(a)=p-1\}
@@ -74,8 +74,8 @@ The broader contracts in that same section are decisive:
 
 1. `prop:graph-transfer` bounds physical pairings for any first vector independent of its selected mark lists, with the stated supremum and norm bounds. Dependence on the integer position is permitted. S `sections/02-transference.tex`, `thm:transference`, `cor:transference-pairing`, and `lem:physical-schur` give the original statements. In particular, multiplying a first vector by a residue indicator in its **position** preserves mark independence. No invariance under prime multiplication is required by this pairing corollary.
 2. `prop:ideal-family` supplies the raw pattern and comparison patterns. In a small group **all `J` padding labels are shared**. In a big group at most a fixed number of probe labels are freed. The kernels do not depend on any shared labels. Their total supremum mass is a fixed log power, independent of the later fixed padding choice `J`.
-3. `cor:stripping-normalization` and `cor:stripped` identify precisely the divisor shift after shared labels are removed: `n=D_R w`, `n'=D_R(w+D_C)`. The factor `1/n` changes the shared-label sum into the probability measure `∏ dp/(V_gp)`. The cutoff becomes `Ψ(w/(xD_C))`, which is independent of `D_R`. This exact cancellation, not an informal fixed-shift analogy, is used below.
-4. The comparison Fourier multiplier estimate `cor:bilinear-multiplier` allows arbitrary bounded separate tests on the two free products. Its minor-arc conclusion uses only their squared coefficient norms.
+3. Equations `cor:stripping-normalization` and `cor:stripped` identify precisely the divisor shift after shared labels are removed: `n=D_R w`, `n'=D_R(w+D_C)`. The factor `1/n` changes the shared-label sum into the probability measure `∏ dp/(V_gp)`. The cutoff becomes `Ψ(w/(xD_C))`, which is independent of `D_R`. This exact cancellation, not an informal fixed-shift analogy, is used below.
+4. The comparison Fourier multiplier estimate, equation `cor:bilinear-multiplier`, allows arbitrary bounded separate tests on the two free products. Its minor-arc conclusion uses only their squared coefficient norms. The `cor:` labels in these proof displays, including `cor:arc-energy-target` and `cor:SM` below, denote equations, not separate corollaries.
 5. The first comparison endpoint has the form `cor:U-form`. Its local energy bound `cor:arc-energy-target` is proved using `lem:local-mellin`, `lem:divisor-model`, `cor:low-main-term`, `cor:SM`, `cor:long-prime-saving` and `cor:constant-high`. These estimates are uniform at rational denominators up to any prescribed fixed log power. We explain precisely in §3.4 why fixed periodic restrictions preserve this bound.
 
 We accept these statements and use their exact interfaces; we do not re-audit their underlying moment or long-prime proofs.
@@ -149,7 +149,7 @@ Every active prime exceeds `M` for sufficiently large `x`, so both `D_R` and `D_
 
 Indeed subtracting the two congruences forces `td≡1`, hence the unique `t=d^−1`; the first is then precisely `w≡rd`. This proof never divides by `w`, `r`, or `r+1`.
 
-Average (physical-residues) over shared labels using (mix). After summing the other labels and integer positions, its error remains `O_A(L^−A)`: the kernels have total supremum mass `L^{C_1}`, both remaining marked factors have fixed log-power bounds, and `G` has a fixed divisor-power bound. On each `w≍xD_C` range, the corresponding absolute harmonic sum is `L^{O(1)}` by a fixed divisor moment. Choose the accuracy `B` in (mix) after these fixed exponents and `A`. Collision errors remain negligible under the residue multipliers since their absolute values are at most one. Insertion and removal of physical dyadic partitions do not change (orbit); after their sum the cutoff is exactly `Ψ(w/(xD_C))` and has no `D_R` dependence.
+First reassemble all physical dyadic partitions and the full Mellin integral, whose discarded tail has an arbitrarily small absolute error. On an individual dyad the position cutoff still depends on `D_R`, so mixing there is not justified. After reassembly the cutoff is exactly `Ψ(w/(xD_C))` and has no `D_R` dependence. Now average (physical-residues) over shared labels using (mix), without conditioning on either physical residue being satisfied. After summing the other labels and integer positions, its error remains `O_A(L^−A)`: the kernels have total supremum mass `L^{C_1}`, both remaining marked factors have fixed log-power bounds, and `G` has a fixed divisor-power bound. On each `w≍xD_C` range, the corresponding absolute harmonic sum is `L^{O(1)}` by a fixed divisor moment. Choose the accuracy `B` in (mix) after these fixed exponents and `A`. Collision errors remain negligible under the residue multipliers since their absolute values are at most one.
 
 The raw pattern has `D_C=1`, so its contribution is exactly `1/φ(M)` times the left-hand side of (RC), up to the stated negligible errors. Each comparison is `1/φ(M)` times the source expression `cor:stripped`, with the extra condition
 
@@ -258,7 +258,7 @@ Fix the original even sieve depth `h`, put `γ=c_0/(4h+3)`, `z=x^γ`, and sieve 
 Apply the source block sieve separately to nonnegative weights `Φ𝒲f_x` and `Φ𝒲`, restricted to the class. The centered main terms cancel, and the surviving normalized error is at most
 
 \[
- \limsup_{x\to\infty}\frac L{x,m_{\mathcal W}}
+ \limsup_{x\to\infty}\frac{L}{x m_{\mathcal W}}
  \left|\sum_{\substack{u+1\equiv b\ (M)\\P^-(u+1)>z}}
  \Phi(u/x)\mathcal W(u)(f_x(u)-C_x)\right|
  \le C_M\frac{e^{-h}}\gamma.
@@ -321,7 +321,7 @@ Choose `p` uniformly among class primes in `(x,2x]`. PNT in the fixed progressio
 
 Uniformly on the dyad `log(p−1)/log x=1+O(1/log x)`, so a fixed endpoint sandwich changes the normalization to `log(p−1)`. Multiplicity corrections on each compact interior set are negligible: a repeated tested prime entails `q²|p−1` with `q≥x^{a/2}`, and the integer upper bound `O(x^{1−a/2})` is still `o(N_M(x))` for fixed `M`. Hence for every compactly supported continuous test on the open simplex, the labelled-ball factorial measure converges to density `∏dt_i/t_i`.
 
-The balls' masses sum to one exactly. Size-biased sampling without replacement multiplies this factorial density by `∏ t_i/(1−t_1−⋯−t_{i−1})`, yielding density `∏(1−t_1−⋯−t_{i−1})^−1`. The triangular change of variables `A_i=t_i/(1−Σ_{j<i}t_j)` identifies it with uniform measure on `(0,1)^d`, of total mass one. Compact interior exhaustion therefore excludes all escaped boundary mass. The first `d` size-biased draws converge jointly to independent-uniform stick fragments, and their expected unseen mass tends to `2^−d`.
+The balls' masses sum to one exactly. Size-biased sampling without replacement multiplies this factorial density by `∏ t_i/(1−t_1−⋯−t_{i−1})`, yielding density `∏(1−t_1−⋯−t_{i−1})^−1`. The triangular change of variables `A_i=t_i/(1−Σ_{j<i}t_j)` identifies it with uniform measure on `(0,1)^d`, of total mass one. Compact interior exhaustion therefore excludes all escaped boundary mass. The first `d` size-biased draws converge jointly to GEM(1) stick fragments generated by independent uniform variables; the fragments themselves are not independent. Their expected unseen mass tends to `2^−d`.
 
 Sorting the first `d` draws and padding zeros approximates each ranked coordinate within the unseen mass. Uniform continuity, Markov's inequality, and then `d→∞` give every finite ranked joint law. This proves the dyadic form of (AP). A finite dyadic decomposition of `(X/2^J,X]` and fixed-progression PNT give the cumulative form after first `X→∞`, then `J→∞`. The discarded class-prime proportion tends to `2^−J`.
 
@@ -424,7 +424,7 @@ The located primary literature does not already give (AP) or (A+) unconditionall
 
 Inside the corpus, the general graph transference, local Mellin energy, coefficient-transfer criterion, and small-index elimination all preexist. The round 2 reviewer already supplied the all-class reservoir-to-Artin reduction. We claim as new work only the explicit two-residue physical lifting calculation, its compatibility with comparison energy, and the complete fixed-progression extraction that these enable. The result strengthens the accepted `≫_a x/log²x` primitive-root count to `≫_a x/log x`, retaining index exactly one, as well as strengthening the marginal PD theorem to its fixed-progression form.
 
-MathDB's currently retrieved [Artin page](https://mathdb.com/p/370026/artin-s-primitive-root-conjecture) records the infinitude formulation and the accepted corpus's weaker count, explicitly distinguishing it from a density formula. The previously cited `/p/316116/...` URL failed retrieval in this round. I did not freshly verify a “Celebrated” badge, numerical score, or global rank and do not inherit those claims as verified evidence. Positive lower density is a substantial strengthening of its stated infinitude target, but the exact density conjecture remains beyond this report.
+The [MathDB Artin page](https://mathdb.com/p/370026/artin-s-primitive-root-conjecture) records the famous infinitude formulation. **Parent attribution correction:** the parent's retrieved page does not support this report's original assertion that MathDB recorded the accepted corpus's weaker count. The `x/log²x` comparison is supported by manuscript P itself. The page also mentions an unverified positive-density claim; that mention is not an established theorem or priority clearance. The previously cited `/p/316116/...` URL failed retrieval in this round. No “Celebrated” badge, numerical score, or global rank is certified. Positive lower density substantially strengthens the infinitude target, but the exact density conjecture remains beyond this report.
 
 ## 10. Independent-review priorities and handoff
 
@@ -436,4 +436,4 @@ The main claim is a completed deduction offered for review, not a new conditiona
 4. Check all extraction error estimates remain absolute until discarded masses have been removed; in particular the progression indicator stays outside the allocated invariant core.
 5. Check `M` is fixed before every limit, then `Y` is chosen by the explicit `w(Y)` comparison. Nothing requires a rate uniform in the enormous resulting modulus.
 
-No independent agent was invoked, in accordance with the assignment. Parent should obtain a fresh proof audit before promoting this candidate. If that audit finds a hidden restriction in the physical-pairing or first-endpoint-energy contracts, the fallback progress is still concrete: the exact missing estimate is (RC), with the explicit candidate construction (physical-residues) and reduction (orbit), not an unspecified “AP adaptation.” The corrected B finding is separate and was not edited.
+The author invoked no independent agent, in accordance with the assignment. The parent subsequently obtained the independent round-4 audit, which passes every listed proof obligation, and integrated the corrected deduction as R006. These priorities are retained as the audit trail. The corrected B finding remains separate. A final prior-art/significance review is ongoing; mathematical acceptance does not certify global priority.
