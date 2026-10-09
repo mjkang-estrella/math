@@ -18,6 +18,43 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H036 live comparator gate and independent ideation
+
+Previous goal turn PROGRESS: committed reviewed H035 findings as e7158ef.
+This turn confirmed the Fable handle below remains RUNNING and the project
+working tree was clean before new records. Existing goal remains active.
+H036-role-tag-hypothesis.md records root's concrete merged-role H019 comparator:
+one archive might erase the candidate's apparent extra-head-read advantage.
+- Native Astra /root/h007_additive_relations COMPLETED merged-role probability
+  audit: same leading probes with an explicit equal-same-role term; separate
+  normalized-equation audit for H036-colored-pair-hypothesis.md also COMPLETED.
+  Colored forms are valid, but current helper-work balanceq^(1/3) does not beat
+  the existingq^(3/10) surrogate. Root records streaming helpers as a peak-only
+  refinement, not removal of their generation cost. No experiment admitted.
+- Native Sol /root/h034_c4_implementation RUNNING full cost ledger, including
+  merged/split archives, node arena initialization/release and matched heads.
+- Claude Opus5.5 independent algebraic mechanisms COMPLETED/acknowledged;
+  no surviving card. Raw report and root's rejection of universal negative
+  claims retained in H036-ideation-disposition.md:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h036-independent-algebra-opus-20261008-r1`.
+- T3-owned Codex GPT6Sol independent search-geometry mechanisms COMPLETED and
+  acknowledged; raw cards retained. Coefficient-colored paired sums selected
+  for a cheap paper falsifier, with paid scaled-point cache and no trial:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h036-independent-searchgeometry-sol-20261008-r1`.
+- Factory Fable5.1 independent coordinate-information proposals from H035
+  remain RUNNING under the exact task ID below, not duplicated.
+Initial proposers receive distinct lenses and no other live proposals. All
+roles read-only, no code execution/imports/edits/children. No H034 rerun or H035
+implementation admitted. No model substituted. Main metric unchanged: current
+square-root reference, verified executable improvement NONE. Next decisive
+analysis is the complete matched ledger or a concrete surviving fresh operator.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h036-paper-check.log 2>&1 exit0.
+No Lean or Audit claims added; existing checks do not prove the paper results.
+Latest live verification: Factory Fable task_status reports RUNNING; native
+inventory reports Sol cost reviewer RUNNING, Astra completed. Await completion
+notifications, no duplicate launches or busy polling. Root alone stages named
+research records; unrelated projects remain excluded.
+
 ## H035 shared arithmetic/hash mechanism (paper only)
 
 LATEST after8104ef5: paper wave PROGRESS, complete-cost review finished.
