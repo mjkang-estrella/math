@@ -21,6 +21,8 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**New request active:** the user asked for another result after R006. [Iteration 05](iterations/README.md#iteration-05--new-discovery-requested-running) is exploring prime-predecessor parity, simultaneous primitive roots with dependencies, and fresh cross-field bridges. No second substantial finding is claimed at this checkpoint.
+
 **The continued iterations reached a substantial result under the accepted-corpus premise.** The [iteration record](iterations/README.md) documents the search and acceptance decision. The [first-pass outcome](OUTCOME.md) records the previous unsuccessful search and remains historical. [R006](findings/R006-progression-PD-primitive-root-density.md) now has a complete, independently reviewed deduction of positive-proportion primitive roots for every admissible fixed base under the accepted corpus. The final review supports the substantive/nonroutine gate. Worldwide priority and the exact Artin density formula remain unproved. Working reports are provisional until reviewed and integrated. The immutable source revision is recorded in [../sources/upstream.json](../sources/upstream.json).
 
 - **Arithmetic:** the [second round](reviews/arithmetic-bridge-r2.md) proves that one proposed four-cycle is harmless and that the naive global unweighted operator norm fails. The full high-trace and cubic-centering estimates remain missing. This route is parked pending a genuinely new joint estimate; it is not being counted as a Chowla result.
