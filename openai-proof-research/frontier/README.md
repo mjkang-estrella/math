@@ -23,6 +23,8 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 **Active target: [10 substantial findings](TEN-FINDINGS.md); 3 accepted, 7 remaining.** Iteration 07 opens arithmetic, geometric-analysis and structural-mathematics tracks. Each candidate needs a complete new bridge and separate proof and significance reviews before it enters the count.
 
+The [arbitrary-rank topology construction](iterations/i07-structures.md) retains its proof PASS but is **technical only** after [final significance review](reviews/i07-structures-novelty-r3.md): cyclic-cover reduction and replication over all binary directions supply the main rank conclusion. Parent diagnostics and the artifact seal reproduce. It does not increment the substantial-finding count.
+
 **Third substantial deduction accepted:** [R009](findings/R009-variable-channel-capacity.md) proves the variable-channel four-state weighted-capacity criterion, including locally finite trees and universal information bounds. Proof, significance and extension audits pass; parent checks reproduce. This is one finding, including all degree and zero-edge extensions.
 
 **Second substantial deduction accepted:** [Iteration 05](iterations/README.md#iteration-05--second-substantial-result-accepted) meets the user's request for another result after R006 through R008, on the stipulated-corpus and bounded novelty basis. The simultaneous-root lane made [partial scalar progress](iterations/i06-cubic-reservoir.md), but its explicit rough-correlation estimate and cubic reservoir remain unproved; that lane is parked at the stated gap.
