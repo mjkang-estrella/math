@@ -35,6 +35,10 @@ The [arithmetic report](iterations/i07-arithmetic.md) is integrated with 38 veri
 
 The [independent proof audit](reviews/i08-variable-capacity-r2.md) passes with no substantive repair. Parent reproduction passes its exact posterior, polynomial, flow, conditioning and ray checks, and verifies all ten audit artifacts and five pinned source blobs. A fresh [final prior-art/significance task](iterations/iteration8-variable-capacity-novelty-r3-task.json) now checks the full variable-resistance literature and possible routine reductions. No R-number or accepted-count increment is assigned before that review.
 
+## Iteration 09: Potts factor construction remains open
+
+The [parent factor-of-IID screen](iterations/i09-potts-fiid-screen.md) gives exact positive-posterior counterexamples to the uniform binary derivative bound for three and four states. A quotient of three independent Ising factors reaches only the elementary finite-cluster parameter range. Eleven pinned source blobs and the exact derivative/transition checks pass. These close two tempting proof shortcuts; they do not disprove the factor conjecture or supply a new theorem to count.
+
 ## Continuation rules
 
 1. Integrate each returned report and its source evidence; distinguish proved steps from unresolved estimates.
