@@ -47,9 +47,9 @@ Both scripts use only Python's standard library. The fetcher verifies every file
 
 The source corpus is pinned to `openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. The research snapshot is `e7ce0ecad79b6e330dd345dbec68369a843dc0d8`. The publication work is isolated on `publication/prime-predecessor-paper`; it does not change the main research thread or its original checkout.
 
-AI assistance is disclosed in the abstract and Appendix A.2. Previous internal proof reviews were performed by AI agents; they are not human peer review or formal verification. The paper does not claim worldwide priority.
+AI assistance is disclosed once in the acknowledgements, following examples in mathematical papers. Previous internal proof reviews were performed by AI agents; they are not human peer review or formal verification. The paper does not claim worldwide priority. The original detailed file-and-label source map is retained in [the companion audit record](evidence/source-dependency-ledger.tex), outside the manuscript; Appendix A retains the mathematical dependencies.
 
-The user-requested [unslop skill](https://github.com/cursor/plugins/blob/main/pstack/skills/unslop/SKILL.md) was applied to the prose. The [editorial record](EDITORIAL-REVIEW.md) describes the pass. Mathematical meanings and qualifications take precedence over stylistic shortening.
+The user-requested [unslop skill](https://github.com/cursor/plugins/blob/main/pstack/skills/unslop/SKILL.md) was applied to the prose. The [editorial record](EDITORIAL-REVIEW.md) describes the pass and its arXiv layout and disclosure references. Mathematical meanings and qualifications take precedence over stylistic shortening.
 
 ## Remaining publication decisions
 

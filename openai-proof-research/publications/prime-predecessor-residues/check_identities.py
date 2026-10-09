@@ -104,9 +104,9 @@ for row in manifest['files']:
     all_source.append(data.decode())
     counts['pinned_source_hash_pairs'] += 1
 sources = '\n'.join(all_source)
-for label in re.findall(r'\\texttt\{([^{}]+:[^{}]+)\}', (ROOT / 'sections/07-sources.tex').read_text()):
+for label in re.findall(r'\\texttt\{([^{}]+:[^{}]+)\}', (ROOT / 'evidence/source-dependency-ledger.tex').read_text()):
     assert '\\label{' + label + '}' in sources, label
-    counts['appendix_source_label_existence'] += 1
+    counts['archived_source_label_existence'] += 1
 
 result = {
     'status': 'passed', 'checks': dict(counts),
