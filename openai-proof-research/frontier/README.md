@@ -23,7 +23,7 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 **New request active:** the user asked for another result after R006. [Iteration 05](iterations/README.md#iteration-05--new-discovery-requested-running) is exploring prime-predecessor parity, simultaneous primitive roots with dependencies, and fresh cross-field bridges. No second substantial finding is claimed at this checkpoint. The simultaneous-root scout has narrowed its next step to a [cubic-Frobenius-conditioned reservoir](iterations/i05-joint-artin.md#7-the-stronger-feasible-target-actually-isolated); a fresh audit/proof round is running.
 
-The [parity lane](iterations/i05-parity-pd.md) has returned a complete candidate for full Liouville cancellation jointly with PD(1), in every fixed reduced progression. Parent finite checks and source-integrity checks reproduce. Its new analytic steps are under fresh independent review, so the theorem remains provisional.
+The [parity lane](findings/R008-parity-PD-independence.md) is now mathematically accepted as R008: full Liouville cancellation jointly with PD(1) and squarefreeness in every fixed reduced progression. The independent analytic audit passes, and parent finite checks and source-integrity checks reproduce. A separate final novelty/significance review is running before the second substantial-discovery gate is closed.
 
 The [cross-field scout](iterations/i05-crossfield.md) also proposes polynomial multiple pointwise convergence for commuting Gaussian actions. Its final argument uses classical inputs and does not require the corpus. Independent proof and prior-art review will determine whether it supplies a substantial new contribution; it is currently a candidate only.
 

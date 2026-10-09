@@ -22,7 +22,7 @@ After R006, the user requested: “Come up with new one - keep make a progress.�
 
 | Lane | New target | Task record |
 |---|---|---|
-| Prime-predecessor parity | Returned a complete candidate for full Liouville cancellation and joint parity/PD independence. A fresh independent proof audit is running; no acceptance yet. | [Candidate](i05-parity-pd.md); [audit brief and ID](iteration5-parity-pd-r2-task.json) |
+| Prime-predecessor parity | Independent analytic audit passes; mathematically accepted as R008. Final novelty/significance review is running before accepting the second substantial-discovery gate. | [R008](../findings/R008-parity-PD-independence.md); [audit](../reviews/i05-parity-pd-r2.md); [final review brief](iteration5-parity-novelty-r3-task.json) |
 | Simultaneous primitive roots | Initial report finds B2/B3 routine and isolates a cubic-Frobenius reservoir. Fresh independent audit and proof attempt for that reservoir are running. | [Report](i05-joint-artin.md); [next brief and ID](iteration6-cubic-reservoir-task.json) |
 | Fresh cross-field search | Returned a Gaussian polynomial multiple-convergence candidate after rejecting two other bridges. Independent proof and novelty review is running; the final proof uses classical inputs, so corpus dependence is absent. | [Candidate](i05-crossfield.md); [audit brief and ID](iteration5-crossfield-r2-task.json) |
 
@@ -39,6 +39,14 @@ The parent reproduced the complete finite output and verified all 81 artifact ha
 The scout rejected a known spectral thin-tree implication and a false entropy-to-subgaussian upgrade. Its positive candidate proves polynomial multiple pointwise convergence for common commuting Gaussian actions, including equal-degree polynomial maps, by conditioning independent Gaussian copies, controlling Wick contractions through spectral measures, and applying a classical single-function variation theorem. The final proof does not require the accepted corpus; this scope limitation is explicit.
 
 The parent reproduced the full finite output, verified 107 upstream files, eight literature downloads and eight artifact hashes, and checked the actual variation theorem at p=2. The [preliminary review](../sources/i05_crossfield/parent-preliminary-review.md) records the scope. Decision: preserve the proposed proof and commission a fresh independent proof/prior-art review, with special emphasis on whether older Gaussian decoupling already gives it and whether it meets the nonroutine contribution gate. No accepted theorem or substantial-finding count is added. The parity audit and cubic-reservoir work continue independently.
+
+### Parity proof acceptance — 2026-10-08
+
+The fresh independent audit passes CT, LC, SPR, signed prime extraction, size-biased tightness and every stated joint squarefree/Möbius consequence. It finds no unresolved analytic estimate. The parent read the complete audit and reproduced both finite suites. All 60 cached pinned sources, 14 independently downloaded interfaces, 38 reviewer artifacts, 25 exact source ranges and five fresh primary PDFs match their hashes. The only changed reviewer input is the shared index. See [parent verification](../sources/i05_parity_pd_r2/parent-verification.json).
+
+[R008](../findings/R008-parity-PD-independence.md) accepts the mathematics and incorporates the citation distinction for ordinary BVλ, proof-equation labels, exact shared-slot count, smoothing margins, nonempty-tuple restriction and weak signed convergence. It yields parity 1/2 in every fixed reduced progression, independent of PD(1) and squarefreeness. The original candidate is retained unchanged as the reviewed artifact. This is one finding, including the Möbius-sign consequences.
+
+Decision: commit R008 separately as a validated deduction under the stipulated corpus. A fresh final novelty/significance review checks stronger source interfaces, older results and newer versions of the overlapping public claim before the second substantial-discovery gate is accepted. The mathematical audit supports a nonroutine advance, but worldwide priority is not certified. Gaussian review and cubic-reservoir work continue independently.
 
 ## Iterations 02–04 — substantial result accepted
 
