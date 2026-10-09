@@ -48,18 +48,23 @@ handles. Root refreshed live capability catalogue and checked native status.
   Distinct from completed detector work; not a Fable result.
 - Grok4.7 COMPLETED: raw three lazy/fold walk cards retained in
   H046-geometry-grok-raw.md, unaccepted. Native Astra math review COMPLETED;
-  Sol cost/prior-art review LIVE. Root found signed-label, median/mean and
-  DP-state issues; no raw test recipe admitted.
+  Sol cost/prior-art review COMPLETED. H046-walk-disposition.md corrects
+  signed labels, finite lazy-batch prices, median/mean comparisons and DP state.
+  All three raw test recipes parked; no experiment admitted.
 - Factory Opus5.5 COMPLETED: actual report recovered by t3_thread_read at
   position52 after task summary only said 'Plan is up-to-date'. Four cards in
   H046-operators-factory-raw.md remain unaccepted pending independent review.
   Proposer read archive records, no new primary sources. Native Astra separate
-  mathematical review LIVE. Root checked primary isogeny references and proposed
-  a deterministic small-degree subfield-preimage bound for review; not yet accepted.
+  mathematical review COMPLETED. H046-isogeny-subfield-bound.md retains root
+  deterministic <=4ell subgroup-point bound, independently checked by Astra.
+  Sol distinct algebraic cost/prior-art review LIVE. Astra focused follow-up
+  LIVE: do independent random affine progressions preserve the H021 second
+  moment and useful structured reporting? Root supplied a pairwise-independence
+  proof hypothesis; not yet an accepted solver or experiment.
 At launch three native were active including root and three T3 tasks were
 accepted RUNNING. Native evaluator/detector and public-information fallback roles
 completed. Fable terminal failed; Grok and Factory Opus terminal reports collected.
-Native algebraic and full-cost walk reviews now live. All read-only,
+Native algebraic cost and progression-success reviews now live. All read-only,
 no experiments/imports/scripts/children; root owns integration. Independent
 initial proposals withheld. H034 cap unchanged, stopped routes not reopened.
 Actual task IDs:
@@ -68,8 +73,8 @@ Actual task IDs:
 - `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h046-primary-public-operators-factory-opus-20261009-r1`.
 
 No improved solver admitted. The focused signal now has a square-root-cost
-single-query evaluator; that does not reduce complete ECDLP work. Other
-constructions remain unreturned. Next decisive
+single-query evaluator; that does not reduce complete ECDLP work. All initial
+H046 reports are collected (including one failed role). Next decisive
 analysis: explicit operator, scalar recovery, useful-event guarantee and complete
 paid invoice, followed by independent review before any synthetic test. Existing
 goal active; yield to confirmed-live children rather than polling or watchers.
@@ -91,6 +96,12 @@ Raw-report/review checkpoint: ./scripts/check.sh >
 /tmp/ecdlp-h046-raw-review-check.log 2>&1 exit0,366 existing audits. No new
 formal assertion; raw reports explicitly unaccepted. All T3 H046 outcomes
 collected, one failed and two completed; two distinct native reviews active.
+Reviewed-walk/isogeny validation: initial ./scripts/check.sh from repository
+root failed exit127 (wrong working directory), logged at
+/tmp/ecdlp-h046-reviewed-check.log. Corrected execution from dlp-research:
+./scripts/check.sh > /tmp/ecdlp-h046-reviewed-project-check.log 2>&1 passed
+exit0,366 existing audits. No Lean claims added; these checks do not certify
+paper results. Root checked exact staged paths and retained the failed command.
 
 ## H045 completed independent constructions
 
