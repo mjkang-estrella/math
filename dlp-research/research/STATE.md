@@ -18,7 +18,7 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H043 live independent constructions
+## H043 completed independent constructions
 
 H042 closed at19950b4. No faster solver, experiment or full-size improvement
 admitted. Initial proposals withheld; exact briefs and ranked unresolved
@@ -33,7 +33,12 @@ openings in H043-independent-briefs.md. Four distinct productive roles:
   cubic conversion, zero correspondence and good reduction at O, correcting
   the proposed ramification set. No group-law necessity or cost lower bound.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h043-trace-scalar-construction-opus-20261009-r1`.
-- acpRegistry_factory_droid / claude-opus-5-5: RUNNING structured-system-constructions-factory-opus.
+- acpRegistry_factory_droid / claude-opus-5-5: COMPLETED structured-system-constructions-factory-opus.
+  Raw report saved; native Astra mathematical and Sol cost reviews COMPLETED.
+  H043-structured-system-disposition.md proves the modular resultant identity
+  on paper and repairs the named reporter to soft-O(n² log u) field work.
+  Direct-grid degree, Cafure–Matera parameters and Frobenius claims narrowed;
+  unsupported solver-family exclusions withdrawn. No complete gain or experiment.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h043-structured-system-constructions-factory-opus-20261009-r1`.
 - grok / grok-4.7: COMPLETED new-fullwork-constructions-grok.
   Raw report saved; native Sol final cost review COMPLETED and root read
@@ -42,8 +47,8 @@ openings in H043-independent-briefs.md. Four distinct productive roles:
   new search schedule or full-cost gain/loss proof was supplied.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h043-new-fullwork-constructions-grok-20261009-r1`.
 Fresh live catalogue confirms all exact T3 targets; no failure or substitution.
-Only Factory structured-system T3 task remains live, revalidated RUNNING.
-All native reviews complete. Root read Diem, FKM, EFD and the co-Z paper.
+All H043 T3 roles terminal and collected; all native reviews COMPLETED.
+Earlier native reviews complete. Root read Diem, FKM, EFD and the co-Z paper.
 No duplicate H042 task, H034 reset, stopped-role reroute, child-of-child,
 experiment or broad Lean infrastructure. Root alone integrates/commits.
 Best supported exponent1/2; verified complete-work improvement NONE.
@@ -58,6 +63,12 @@ identities independently reviewed on paper, no full-work gain inferred.
 Full-work validation: ./scripts/check.sh > /tmp/ecdlp-h043-fullwork-check.log
 2>&1 exit0,366 existing audits. No new Lean claim, experiment or hardware
 measurement. Complete labelled detection/recovery remains required for admission.
+
+Structured-system validation: ./scripts/check.sh > /tmp/ecdlp-h043-structured-check.log
+2>&1 exit0,366 existing audits. No new Lean claim or executable experiment.
+The raw report is preserved; its degree-materialization invoice and universal
+solver exclusions are not accepted. Next opening is a concrete shared-query
+reporter with paid witness extraction, alongside independent new constructions.
 
 ## H042 completed constructive operators
 
