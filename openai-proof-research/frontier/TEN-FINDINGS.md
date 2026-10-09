@@ -12,9 +12,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 - I18: the [joint prime-neighbor report](iterations/i18-joint-prime-neighbors.md) is complete as a scoped gap report. Restricted classical laws and a presieve input are proved; the full mixed prime discrepancy remains unproved. No count increment.
 - I19: the [structural report](iterations/i19-fresh-structural-discovery.md) proves a technical signed Saxl quotient and identifies its narrow-partition gap; two other screens yield an unresolved unimodality route and a weighted-switch counterexample. No substantial finding is proposed.
 - I20: the [kinetic report](iterations/i20-pde-kinetic-discovery.md) is a scoped gap record. It proves technical seed-count and initial-contact results, but microscopic selection, general-potential fluctuations and the dynamical mean correction remain unproved.
-- I21: [focused signed Saxl continuation](iterations/iteration21-signed-saxl-dominance-task.json) now seeks an actual signed-dominance construction beyond I19's two insufficient bands.
+- I21: the [signed Saxl follow-up](iterations/i21-signed-saxl-dominance.md) constructs signed dominance maps and arbitrary-width quotients but proves specific failures of the proposed coverage. The refined conjecture remains unproved; this route is parked pending a different uniform mechanism.
 - I22: [fresh combinatorial and algorithmic discovery](iterations/iteration22-combinatorial-discovery-task.json) is running after the topology route closed as technical only.
 - I23: [connected kinetic fluctuation research](iterations/iteration23-kinetic-connected-fluctuations-task.json) targets the missing normalized interacting-component estimate from I20.
+- I24: [elementary-unimodality research](iterations/iteration24-elementary-unimodality-task.json) now develops the separate chromatic-function route first screened in I19.
 
 These are live task launch records, not accepted findings. The four-finding pause checkpoint remains a historical snapshot.
 
@@ -114,6 +115,14 @@ The [completed kinetic report](iterations/i20-pde-kinetic-discovery.md) examines
 The general radial-potential fluctuation target needs normalized connected-history bounds for intact interacting components, beyond isolated residence-time estimates and unnormalized history summability. The first-order dynamical mean target needs a propagated incoming collision-trace estimate. An initial contact calculation gives the excluded-volume lens coefficient 5π/12 and rules out a homogeneous-linearization trial with convergent initial derivatives. It does not disprove a merely continuous-in-time limit, where an initial boundary layer might intervene. No substantial positive theorem is proposed.
 
 The parent read the full report and reproduced 1,099 finite exclusion-graph checks and the exact rational lens coefficients. Verification passes for 217 sealed artifacts, 166 pinned files, 509 source statement contracts, eleven frozen inputs and eleven literature retrievals. Ledger drift is reported separately. [Parent verification](experiments/i20-parent-verification.json) records integrity and diagnostics, without independent analytic-proof acceptance. [I23](iterations/iteration23-kinetic-connected-fluctuations-task.json) investigates the connected-component fluctuation estimate directly; the elementary mixture and contact calculations are not submitted as counted findings.
+
+## Iteration 21: signed dominance maps do not close Saxl
+
+The [completed follow-up](iterations/i21-signed-saxl-dominance.md) constructs actual maps from the sign-twisted staircase permutation module into both physical flip eigenspaces. Their combined map is injective, but the symmetric map kills the nonexceptional constituent (3,1,1,1) at m=3 even though that constituent occurs in the full symmetric square. An exact central-projector norm certificate verifies the failure. This rejects the proposed universal nonzero-rank shortcut; it does not refute the refined conjecture or show failure at every larger m.
+
+The source triangle projection extends to every band width s, but a width-w target requires 2m+1≤(2w+1)s. In particular, width-two targets require s≥ceil((2m+1)/5), even with optimistic full band support. A signed version of the companion's column-component separation is also obtained; components with a bounded number of columns cannot reach the same narrow family. None supplies the missing uniform signed constituent argument. Actual growing-width band support, pre-twist exterior vectors, or another new construction would be needed before reopening this route.
+
+The parent read the full report and reproduced all three commands. Verification passes for 80 sealed artifacts, 20 frozen inputs, 21 pinned files, 42 source contracts and 14 primary contracts. Exact checks cover 928 joint-sector multiplicities, 28 constructed-map ranks, 1,452 intertwiner identities and two new literal projection cases; I19 diagnostics also reproduce. Shared-index drift is separate, with no other live-input change. [Parent verification](experiments/i21-parent-verification.json). No independent proof/significance acceptance or count increment is assigned. The freed discovery slot moves to [I24 elementary unimodality](iterations/iteration24-elementary-unimodality-task.json).
 
 ## Continuation rules
 
