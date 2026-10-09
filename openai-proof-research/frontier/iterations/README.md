@@ -18,6 +18,8 @@ When a report returns without meeting the gate, integrate its evidence and use i
 
 ## Iteration 07 — toward ten substantial findings
 
+Latest new candidate: [iteration 08, variable-channel four-state capacity](i08-variable-channel-capacity.md), supplies a proposed full converse to the parent screen's necessary condition. Independent proof review is running under its [own task record](iteration8-variable-capacity-r2-task.json). Final prior-art/significance review has not yet occurred; the accepted count remains 2/10.
+
 The user now requests continued discovery until ten substantial findings are obtained. The [count and continuation ledger](../TEN-FINDINGS.md) starts with R006 and R008: **2 accepted, 8 remaining**. Three independent T3-owned research tasks screen fresh arithmetic, geometric-analysis and structural-mathematics candidates, then develop their strongest viable bridges. No candidate is counted from an author's report alone; separate proof and prior-art/significance reviews precede parent acceptance and an individual finding commit. The ledger links complete task briefs and records excluded routine consequences and parked routes.
 
 The [parent probability/quantum screen](i07-parent-probability-screen.md) adds a variable-edge reconstruction lead with a proved preliminary necessary condition and an exact ray obstruction to a naive extension. A complete converse remains missing. Current primary literature removes the proposed amplitude-damping strong-converse target; conditional entropy-power optimality defeats the straightforward quantum-memory EPnI extension. These decisions preserve the count at 2/10.
