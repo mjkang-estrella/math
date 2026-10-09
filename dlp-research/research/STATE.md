@@ -18,7 +18,7 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
-## H042 live constructive operators
+## H042 completed constructive operators
 
 H041 completed; no improved solver or experiment admitted. H042 targets the
 corrected relation-solving opening and genuinely different public information
@@ -41,10 +41,16 @@ operators. Exact briefs: H042-independent-briefs.md. Initial proposals withheld.
   the corrected full-scan invoice; Sol cost review COMPLETED. Submitted
   implementation parked without a new construction round or experiment.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-orbit-construction-opus-20261009-r2`.
-- acpRegistry_factory_droid / claude-fable-5.1: RUNNING nonlinear-signals-fable.
+- acpRegistry_factory_droid / claude-fable-5.1: COMPLETED nonlinear-signals-fable.
+  Raw report saved; native Astra mathematical and Sol complete-cost reviews
+  COMPLETED. H042-nonlinear-signals-disposition.md retains a necessary
+  cancellation candidate-set lemma and an explicit elliptic quartic with an
+  exact trace identity, independently checked. No scalar decoder or gain.
+  Root recovered HN section4 and corrected biased-bit/extraction assumptions;
+  randomized exact-testing and universal cost claims withdrawn.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-nonlinear-signals-fable-20261009-r1`.
 Fresh catalogue, exact targets accepted; no failure or substitution.
-Native reviews complete; only Fable initial signal task remains live.
+All H042 T3 proposals and native reviews terminal; no H042 live child.
 No new experiments/imports/edits/children
 by delegates, no H034 reset or stopped-role reroute. Root alone integrates.
 Best supported exponent1/2, verified complete-work improvement NONE. Next
@@ -59,6 +65,11 @@ No new Lean claims or admitted experiment; only scoped paper results.
 Orbit round2 validation: ./scripts/check.sh >
 /tmp/ecdlp-h042-orbit-r2-check.log 2>&1 exit0,366 existing audits. No new
 Lean claim; checks do not certify the paper counterexample or an attack gain.
+Nonlinear-signal validation: ./scripts/check.sh >
+/tmp/ecdlp-h042-nonlinear-check.log 2>&1 exit0,366 existing audits. No Lean
+claim or numerical experiment added. The next useful evidence is a real
+coordinate-to-scalar decoder or another construction with paid competitive
+complete costs, not an evaluator-only benchmark.
 
 ## H041 completed independent operator search
 
