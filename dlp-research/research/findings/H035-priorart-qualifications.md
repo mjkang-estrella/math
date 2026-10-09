@@ -72,3 +72,25 @@ Disposition: retain corrected6A square-family mechanism for focused analysis,
 not implementation. Need the matched complete-cost ledger with an explicit
 competent hash competitor; no further numerical trial is admitted. Root corrections and the completed native final audit are retained; any
 renewed T3 round must be a new delegated task with these objections.
+
+## Subsequent root inspection of the retained BLS author copy
+
+Root located the round1 download `/tmp/h035lit.gQNd/bls.pdf`, SHA256
+78b066e7b58a596cb993d7dacb3a04eea44e86675c0711adec9e24c342a54397,
+and read its extracted text at the canonicalization/table-lookup passages
+(pp12–14). This supersedes the earlier fresh-access limitation, not the scope
+qualifications. Source: [BLS2011 author copy](https://cr.yp.to/elliptic/negation-20110102.pdf).
+
+The described bits come from a scaled canonicalized Y representation and select
+a precomputed rho jump; they also identify distinguished points. They are not
+a proof of universal archive hashing for H034/H019. The paper explicitly allows
+a small nonuniqueness probability in its machine representation, assessed by
+its own tests. Its fixed cofactor scaling is tied to that field and reduction
+implementation. Root confirms the quoted canonicalization/multiplication
+instruction counts occur, but does not transfer those platform rates. This
+supports prior art for integrated representation/selection work, not the blanket
+zero-hash-cost or unchanged-rho-trajectory assertions rejected above.
+
+Commands were read-only: `rg --files /tmp/h035lit.gQNd`, targeted text search,
+`sed -n '545,657p' /tmp/h035lit.gQNd/bls.txt`, and `sha256sum` on the PDF.
+No experiment import, curve computation or new diagnostic occurred.

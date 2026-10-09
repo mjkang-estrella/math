@@ -20,6 +20,40 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
 ## H035 shared arithmetic/hash mechanism (paper only)
 
+LATEST after8104ef5: paper wave PROGRESS, complete-cost review finished.
+H035-complete-cost-screen.md accepts a conditional expected fixed-price RAM
+saving for shared folded hashing versus separately evaluated hashes, including
+complete schedule remainders. This is NOT a new collision algorithm, finite
+hardware rate, or verified executable ECDLP improvement. Square-root baseline
+unchanged; improvement NONE. No implementation or new experiment admitted.
+- Native Sol /root/h034_c4_implementation COMPLETED complete H019 schedule ledger
+  for folded coordinates versus affine/word/raw-bit hashes, with all remainders.
+- Native Astra /root/h007_additive_relations COMPLETED exact stopped-chain
+  expectation theorem, now in H035-exact-stopped-probes.md. Pair probabilities
+  suffice for prepend/first-match linear probe counts on hash-independent
+  geometric traces; event-censored observations are explicitly excluded.
+- Native Astra follow-up cost review COMPLETED: agrees in canonical fixed-price
+  RAM, corrects inversion premise specifically to binary Fermat I=O(n).
+- Claude Opus5.5 NEW round2 COMPLETED/acknowledged; raw report retained, root
+  rejects uncalibrated percentages and unconditional ranking invariance:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h035-hash-fusion-priorart-opus-20261008-r2`.
+- Grok4.7 independent initial full-work ideas COMPLETED/acknowledged, withheld
+  H035 proposals; three cards retained with root's narrow negative screens and
+  corrections in H035-independent-disposition.md:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h035-independent-fullwork-grok-20261008-r1`.
+- Factory Fable5.1 independent initial coordinate-information ideas RUNNING,
+  H035 proposals withheld; separate lens and no substitution:
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h035-independent-information-fable-20261008-r1`.
+All read-only, no solver imports/runs/edits/children. The prior H034 cap remains
+consumed. Root alone integrates; no new implementation or numerical run admitted.
+Main metric remains credible full work; verified improvement NONE.
+Validation: ./scripts/check.sh > /tmp/ecdlp-h035-complete-cost-check.log 2>&1
+exit0 (existing366 audits). No Lean/Audit changes; that check does not establish
+the paper result. Next conclusion-changing gate is a concrete backend with
+complete prices or a justified raw-bit traffic comparison, alongside surviving
+fresh candidate mechanisms. Do not turn this shared optimization into another
+generic formal infrastructure wave. Await the independent proposal notification.
+
 H034 sole admitted diagnostic executed afterc89ebda; exactly1M-event cap.
 Seven sampled candidates completed, allseed-only and allmore modeled work than
 the named primary. No candidate leaf search reached; lastcase setup incomplete.
@@ -88,8 +122,8 @@ Source construction remains COMPLETED/frozen. Separate read-only PAPER roles
 Both preserve current source; no new implementation or experiment admitted.
 The root hypothesis may benefit every comparator equally and lose its apparent
 saving when the actual hash collision law is priced. Only scoped algebra and
-artifact observations accepted; no complete-work improvement. All children now
-terminal and collected; no live review or writer, no duplicate tasks.
+artifact observations accepted; no complete-work improvement. That prior wave is terminal and collected; the NEW paper roles above are
+live as explicitly listed. No writer or duplicate task.
 Root alone integrates. Previous protocol review terminal/collected, not reused
 as source admission. Protocolv2 hash remains
 585fd2af0fefb448a3cb85ab2041aea1b604f30fd9aab87efa3cbca7d69d0812.
