@@ -1,6 +1,6 @@
 # Separate R009 paper track
 
-Status: recorded for a separate manuscript; no paper drafted or submitted in this track.
+Status (2026-10-09): a separate nine-page manuscript has been drafted, built, visually inspected, and packaged in [variable-channel-capacity](../variable-channel-capacity/README.md). No external submission has been made for R009.
 
 Working title: *Weighted capacity for four-state reconstruction with variable edge channels*.
 
@@ -28,4 +28,4 @@ Research records in this isolated checkout:
 
 These review records are internal AI reviews. Their acceptance labels are not external peer review or formal proof certificates. Worldwide priority has not been established.
 
-Next manuscript work: verify the source class and its closure properties; state the unsmoothed two-law bounds; prove the uniform recursion and capacity comparison; include the degree-independent truncation and zero-edge argument; check the quantitative constants; then run a separate primary-source literature review. Do not merge this probability result into the prime-predecessor paper.
+Completed manuscript work: the exact source input is stated as Assumption 2.1; the unsmoothed local estimates, degree-independent quantitative comparison, locally finite argument, zero-edge pruning, and ray examples are proved in full. Source hashes, exact finite checks, literature limits, and the authoring review are recorded with the new manuscript. The PDF and clean source ZIP are available locally, together with an English announcement draft and submission metadata. This probability paper remains separate from the prime-predecessor paper.
