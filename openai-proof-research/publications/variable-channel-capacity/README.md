@@ -12,7 +12,7 @@ Standalone English manuscript for R009 and its locally finite extension, prepare
 
 The main theorem is conditional on Assumption 2.1: the preserved posterior-law class and binary moment-saving inequality asserted in the cited pinned OpenAI manuscripts. All subsequent arguments, including the uniform local estimates, quantitative bounds, zero-edge pruning, and boundary examples, are included in the paper. The numerical constants are not claimed to be optimal.
 
-Status: drafted, compiled, visually inspected, and packaged locally. No external submission or public record has been created for this paper. There is no DOI or arXiv identifier. Internal AI reviews and exact finite algebra checks are not human peer review or formal proof certification. The bounded literature review does not establish worldwide priority.
+Status: [published on Zenodo](https://zenodo.org/records/23270742) on 2026-10-09 under All rights reserved. DOI: [10.5281/zenodo.23270742](https://doi.org/10.5281/zenodo.23270742). The public PDF and ZIP downloads were verified byte-for-byte against the local artifacts. No arXiv submission has been made. Google Scholar remains pending: Google rejected login from the shared browser, and the computer-use connection exposed no browsers or native apps. Internal AI reviews and exact finite algebra checks are not human peer review or formal proof certification. The bounded literature review does not establish worldwide priority.
 
 ## Build
 

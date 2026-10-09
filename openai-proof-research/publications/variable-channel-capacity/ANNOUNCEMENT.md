@@ -10,6 +10,8 @@ The proof uses posterior estimates that remain valid without channel smoothing a
 
 The upstream assumption is stated explicitly in the paper and refers to fixed versions of two manuscripts in the OpenAI mathematics repository. The result is a conditional deduction; this announcement does not claim an unconditional solution or established worldwide priority.
 
+The [preprint and LaTeX source are available on Zenodo](https://doi.org/10.5281/zenodo.23270742).
+
 ---
 
-Posting note: this is an unsent draft. Add the public manuscript link only after a record has been published. No identifier has been assigned. Suggested subject: probability / reconstruction on trees.
+Posting note: this announcement remains an unsent draft. Suggested subject: probability / reconstruction on trees.

@@ -1,6 +1,6 @@
 # Separate R009 paper track
 
-Status (2026-10-09): a separate nine-page manuscript has been drafted, built, visually inspected, and packaged in [variable-channel-capacity](../variable-channel-capacity/README.md). No external submission has been made for R009.
+Status (2026-10-09): a separate nine-page manuscript has been drafted, built, visually inspected, and packaged in [variable-channel-capacity](../variable-channel-capacity/README.md). It was subsequently [published on Zenodo](https://zenodo.org/records/23270742) under All rights reserved, DOI 10.5281/zenodo.23270742. Google Scholar addition is pending because its sign-in was blocked and no computer-use browser was connected.
 
 Working title: *Weighted capacity for four-state reconstruction with variable edge channels*.
 
