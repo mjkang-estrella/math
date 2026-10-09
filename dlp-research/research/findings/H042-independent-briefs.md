@@ -15,7 +15,12 @@ H042 independent constructive ideation, read-only /home/mj-kang/Documents/Dev/ma
   low-degree-chain constrained Semaev solver or changed coordinate relation
   primitive. Corrected full-cost gate supplied, including sparse B² versus
   paper B^omega, useful relation overhead, setup and witness recovery. No free
-  root-finding oracle or circuit-size-to-solving-cost inference. RUNNING.
+  root-finding oracle or circuit-size-to-solving-cost inference. COMPLETED:
+  no dedicated solver or specific new diagnostic premise. Norm/resultant
+  elimination, fiber branching and fixed-coordinate extraction duplicate earlier
+  parked routes without a changed cheap operation. No lower bound inferred.
+  Read PKM sections3.1–3.2; m=5 conditional d+s<3/10 gate remains unachieved.
+  No experiments, imports, edits or children; stopped roles not revisited.
 
 - claudeAgent / claude-opus-5-5: Distinct lens: relation collection with SHARED algebraic work across many public targets, sparse relation elimination or changed factor-base geometry. Dedicated single-system solving is assigned separately. Original H041 report's D<=p1/m gate was corrected using primary PKMpaper §3.2 (https://people.maths.ox.ac.uk/petit/files/16PKC_primeECDLP.pdf): fixedm,B~p1/m, q~p, costA+B D/sigma+L(B)+recovery; sparseB² hypotheticalm5 allowsd+s<.3 (not.2), paperB^omega needsm>2omega. Can explicit reuse change paid amortized collection for ONE ECDLP, with rank and targetdependence charged? A small number of low-cost equations not enough without usefulelimination. Do not merely propose free batched oracle or repeat polynomialresultants absent changedconstruction.
   Task `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-shared-relations-opus-20261009-r1`; launch returned running.

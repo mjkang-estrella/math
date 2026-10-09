@@ -23,10 +23,21 @@ No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 H041 completed; no improved solver or experiment admitted. H042 targets the
 corrected relation-solving opening and genuinely different public information
 operators. Exact briefs: H042-independent-briefs.md. Initial proposals withheld.
-- Native Astra `/root/h007_additive_relations`: RUNNING explicit dedicated
-  constrained-system solver / changed coordinate relation primitive.
-- claudeAgent / claude-opus-5-5: RUNNING shared-relations-opus.
+- Native Astra `/root/h007_additive_relations`: COMPLETED explicit dedicated
+  constrained-system solver pass; no changed operator or diagnostic premise.
+  Eliminating chain variables, fiber branching and fixing coordinates duplicate
+  parked approaches without a new cost reduction. This supplies no lower bound.
+  Corrected m=5 relation gate d+s<3/10 remains conditional and unachieved.
+- claudeAgent / claude-opus-5-5: COMPLETED shared-relations-opus.
+  Raw report retained; independent Astra math review confirmed known-ratio
+  orbit invariant and corrected rational-Hom/degree scope. Sol cost review
+  confirmed narrower materialization and bottleneck accounting; both final draft
+  reviews completed. H042-shared-relations-disposition.md records the missing solver.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-shared-relations-opus-20261009-r1`.
+- Claude Opus5.5: RUNNING new bounded orbit-construction round, with prior
+  report and independent objections supplied. Must name an actual decomposition
+  representation/schedule, not repeat a known-ratio or degree observation.
+  `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-orbit-construction-opus-20261009-r2`.
 - acpRegistry_factory_droid / claude-fable-5.1: RUNNING nonlinear-signals-fable.
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h042-nonlinear-signals-fable-20261009-r1`.
 Fresh catalogue, exact targets accepted; no failure or substitution. Native
@@ -38,6 +49,9 @@ cost gate, then independent review and a candidate-specific bounded falsifier.
 Checkpoint validation: ./scripts/check.sh > /tmp/ecdlp-h042-launch-check.log
 2>&1 exit0,366 existing audits. No Lean claim changed; checks do not certify
 the paper findings or establish an improved algorithm.
+Shared-review checkpoint: ./scripts/check.sh >
+/tmp/ecdlp-h042-shared-review-check.log 2>&1 exit0,366 existing audits.
+No new Lean claims or admitted experiment; only scoped paper results.
 
 ## H041 completed independent operator search
 
