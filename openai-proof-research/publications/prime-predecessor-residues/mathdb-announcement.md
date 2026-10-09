@@ -20,7 +20,7 @@ The assumptions are listed by source statement in the manuscript. They include d
 
 AI systems assisted with the mathematical development, checks, reviews, and writing. The draft has not undergone external human peer review or formal proof verification. I welcome scrutiny of the deduction from the stated premises, particularly the fixed-progression transfer and the reconstruction of the complex principal term.
 
-The manuscript is currently unpublished.
+The preprint and LaTeX source are available on [Zenodo](https://doi.org/10.5281/zenodo.23270419).
 
 ---
 
