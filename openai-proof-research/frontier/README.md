@@ -25,7 +25,7 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 The [complex prime-predecessor modes candidate](iterations/i10-complex-prime-modes.md) passes [independent proof review](reviews/i10-complex-prime-modes-r2.md); parent checks reproduce and the [integration note](iterations/i10-complex-modes-proof-integration.md) preserves four clarifications. The [separate final significance audit](iterations/iteration10-complex-modes-novelty-r3-task.json) is running. This remains an unaccepted candidate.
 
-The [sharp spectral-width candidate](iterations/i14-sharp-spectral-width.md) now has a complete parent proof and a [fresh independent proof-review task](iterations/iteration14-spectral-width-r2-task.json). It proposes the coefficient range below six with endpoint failure. Both proof and separate significance review must pass before acceptance.
+The [sharp spectral-width candidate](iterations/i14-sharp-spectral-width.md) passes [independent proof review](reviews/i14-sharp-spectral-width-r2.md), with parent reproduction of the formal identities and complete source/artifact seal. It proposes the coefficient range below six with endpoint failure. A separate significance review remains necessary; it is not accepted or counted.
 
 The [arbitrary-rank topology construction](iterations/i07-structures.md) retains its proof PASS but is **technical only** after [final significance review](reviews/i07-structures-novelty-r3.md): cyclic-cover reduction and replication over all binary directions supply the main rank conclusion. Parent diagnostics and the artifact seal reproduce. It does not increment the substantial-finding count.
 
