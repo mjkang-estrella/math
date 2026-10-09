@@ -18,10 +18,27 @@ Root alone integrates/stages/commits. Reviewers read-only; writers disjoint.
 Synthetic instances only. No cap resets, warmups or hidden preprocessing.
 No validated B200/H200 curve throughput; dashboard multipliers hypothetical.
 
+## H035 shared arithmetic/hash mechanism (paper only)
+
+H034 cost-source audit COMPLETED/acknowledged; root admits the single frozen
+diagnostic under H034-run-admission.md. No execution as of this pre-run record.
+Meanwhile a distinct leading-work mechanism emerged from independent Sol and
+root proposals. H035-shared-hash-fusion-screen.md records exact-uniform scaled
+coordinates and a square-only isomorphism alternative. Root corrected a needless
+negation ledger; Sol confirmed7A perpair. The named arithmetic saving is shared
+by H019 and the candidate; complete-work improvement remains NONE.
+
+Native Sol's full ideation report COMPLETED: fusion survives algebra; row
+locality transfers to baseline, literal quadratic detectors have quadratic work.
+Astra's final two-field refined-algebra review is pending. New primary prior-art/competent-cheaper-hash critique RUNNING:
+`node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h035-hash-fusion-priorart-opus-20261008-r1`.
+All paper roles read-only, no experiments/imports/edits/children. The H034
+source hash and protocol are unchanged. No new implementation admitted.
+
 ## H034 finite sparse-pair contract and remaining cost gate
 
-LATEST after40a734b: source construction COMPLETED, numerical execution NOT
-ADMITTED. Separate Sol implementer froze experiments/H034/c4_probe.py at SHA256
+LATEST after4721715: source and both independent audits COMPLETED. The single
+frozen diagnostic is now ADMITTED under H034-run-admission.md; no execution yet. Separate Sol implementer froze experiments/H034/c4_probe.py at SHA256
 9ea5b055446f8b4f3b4f6b393ddf5569b1d366d003123f2f93a54b6814c21ba3;
 root independently measured the same bytes. No import, numerical run, PRNG
 sampling, warmup or selftest. Static AST/compile checks only. Source is an
@@ -32,7 +49,8 @@ Independent source reviews (read-only; no executions/edits/children):
   correctness blocker; graph, recovery, references and H019 order checked.
   Partial generated_leaf_keys counts validated batches only, not unfinished
   reference work. Charged events remain authoritative.
-- Factory Fable5.1 cost/evidence source audit RUNNING, new T3 round:
+- Factory Fable5.1 cost/evidence source audit COMPLETED, scoped GO:
+  D1–D4 disclosures and root corrections in H034-run-admission.md. Task:
   `node:delegated-task:command%3Amcp%3A3485a768-6d4e-4fa2-9a1d-6d44c46c29fb%3Adelegate-task%3Aecdloop-h034-source-cost-fable-20261008-r1`.
 Separate native Astra /root/h007_additive_relations follow-up COMPLETED:
 H034-balanced-graph-barrier.md establishes the restricted seed/duplicate
@@ -41,7 +59,15 @@ prefix degree bound Delta=O(sqrt(q)/n). Review corrected root's finite
 supersaturation condition from S>=K to S>=2K. Uniform error separation and
 same exact blinded-fallback mean justify the stopping bridge in this model.
 No arbitrary-graph/ECDLP lower bound or whole-work win. No source change/run.
-Writer /root/h034_c4_implementation COMPLETED and source frozen during audits.
+Source construction remains COMPLETED/frozen. Two separate read-only PAPER
+roles now RUNNING without source changes, executions or children:
+- /root/h034_c4_implementation (Sol): independent leading-cost arithmetic/
+  representation/schedule mechanisms, explicit baseline portability and falsifiers.
+- /root/h007_additive_relations (Astra): review root's affine-hash/isomorphism
+  fusion hypothesis, including its restricted square-multiplier hash family.
+Both preserve current source; no new implementation or experiment admitted.
+The root hypothesis may benefit every comparator equally and lose its apparent
+saving when the actual hash collision law is priced. No result accepted yet.
 Root alone integrates. Previous protocol review terminal/collected, not reused
 as source admission. Protocolv2 hash remains
 585fd2af0fefb448a3cb85ab2041aea1b604f30fd9aab87efa3cbca7d69d0812.
@@ -50,7 +76,7 @@ H034-source-checkpoint.md records draft corrections and conservative source-only
 stage estimates. Aggregate1M events need not cover all cases: q8053 setup alone
 has a480k allowance; these are unverified envelopes, not measured work or a
 promise of completion. The one capped command remains contingent on source
-reviews and explicit root admission, without changing budget, seeds or fixtures.
+reviews and explicit root admission, now granted without changing budget, seeds or fixtures.
 
 Protocolv2 retains full-range sampling including0, known tiny fixtures, paid
 setup/seed/leaf/fallback sheets, a1M-event55s/outer60s aggregate cap, and six
@@ -80,7 +106,7 @@ verified complete-work improvement NONE. Collision and model premises survived
 qualified reviews, with useful corrections to seed, batching and duplicate-form
 costs. Primary uncertainties remain complete finite costs, backend remainder,
 leading integer/memory traffic and strongest comparator. Next decisive step:
-resolve the still-live independent cost audit, then one admitted diagnostic if correct.
+execute the sole admitted diagnostic and interpret its qualified evidence.
 No numerical run, Lean/Audit change, generic infrastructure or live target work.
 
 Validation: `./scripts/check.sh > /tmp/ecdlp-h034-source-checkpoint-check.log 2>&1`
