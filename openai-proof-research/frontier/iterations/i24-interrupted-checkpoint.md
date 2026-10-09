@@ -1,0 +1,9 @@
+# I24 interrupted investigation — completion running
+
+The original [task](iteration24-elementary-unimodality-task.json) reached terminal status **cancelled**, with no pending child runs. Its cause is not established by the retrieved status. No final report, complete source-contract record, or artifact seal was written. The parent research objective remains active at four accepted findings.
+
+The final child commentary proposes that the exact wall normalization gives invariance under v→v⁻¹ and that productive whole jumps are finite palindromic polynomials centered at zero. This is an unfinished lead, not a reviewed proof or a unimodality theorem. Symmetry alone is insufficient. The partial allowed-wall example v²+v⁻² must not be called a graph counterexample without proving that it occurs in the actual chart.
+
+The parent preserved hashes of all 80 partial files in [the local checkpoint inventory](../experiments/i24-interrupted-checkpoint.json). Running an isolated copy of the diagnostic script reproduced both retained output files exactly: 1,360 unit-shift cases, 200 centered-packet cases, 100 rectangle cases and exact graph coefficient checks through seven vertices. The bounded mutation search covers 17,760 states with every intermediate entry bounded by six; it proves no unrestricted mutation obstruction. The graph computation is direct coloring/basis conversion, not an implementation of the proposed history witness.
+
+A [fresh completion task](iteration24-elementary-unimodality-resumed-task.json) must reconstruct the claimed symmetry argument, identify the remaining unimodality obligation, complete the report and provenance verification, and preserve every original partial byte. It writes to separate resumed paths. The original partial source/experiment trees remain local pending completed verification; publication of this checkpoint is not publication or acceptance of a theorem. No count increment follows.
