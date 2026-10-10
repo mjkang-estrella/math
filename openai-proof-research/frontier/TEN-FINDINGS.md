@@ -607,7 +607,8 @@ The parent read the complete report and verifier and the actual Xi September 202
 - I124: [completed fractal-incidence discovery](iterations/i124-fractal-incidence-discovery.md) passes original I121 N1–N16/F1–F12 without repairs at their stated scopes, retaining the technical disposition. Parent sealed replay passes. Two developed pinned-distance routes yield author-level reconstruction/incidence bridges and a genuine Frostman obstruction to a proposed uniform local-energy budget. The selected target is unproved/unrefuted; no nomination.
 - I127: [completed pinned-distance report](iterations/i127-diagonal-pinned-distance.md) passes original I124 at its scopes except the standalone arbitrary-cutoff inference; R1 conclusion has a normalized-cutoff proof. Parent sealed replay PASS. New author-level retention/incidence estimates and singular-fibre/every-subset obstructions are technical. A remains unproved/unrefuted and is parked; no nomination.
 - I130: [spectral/harmonic geometry discovery](iterations/i130-spectral-harmonic-discovery.md) passes original I127 N1–N8 at their explicit scopes and preserves inherited failures. Parent sealed replay PASS. Finite simultaneous harmonic bands, normalized exhaustion and an actual geometric escape/normalization obstruction are technical; one-metric infinite-degree H remains unproved/unrefuted. No nomination.
-- I133: [fixed-metric harmonic growth](iterations/iteration133-fixed-metric-harmonic-growth-task.json) independently audits original I130 partials and develops nested-program and normalized-exhaustion routes for H, paying earlier global growth margins, curvature and volume tails. Active.
+- I133: [fixed-metric harmonic report](iterations/i133-fixed-metric-harmonic-growth.md) passes original I130 H1/H2 and both escape/normalization claims without repairs. Parent sealed replay PASS. Countable curvature scheduling, fixed-cutoff graph bounds and common-core/uniform-AVR exhaustion obstruction are technical. Increasing-cutoff exact matching and uniform earlier growth remain unpaid; H is unproved/unrefuted and PARKED. No nomination.
+- I136: [birational-positivity discovery](iterations/iteration136-birational-positivity-discovery-task.json) audits original I133 new partials, then screens Fujita freeness, multipoint Seshadri/Nagata and bounded complements/Cartier sections. Active.
 
 ### I130 spectral/harmonic checkpoint — 2026-10-10
 
@@ -620,3 +621,7 @@ Original I128 paid proofs PASS at scope and parent sealed replay PASS. Local L2 
 ### I132 discrete-probability checkpoint — 2026-10-10
 
 Original I129 paid proofs PASS at scope and parent sealed replay PASS. M132-sparse and planted quotient results retain their conditioning hypotheses. Full symmetric singularity classification remains unpaid and is parked. I135 audits the partials and starts complex-analysis discovery. Eight accepted, two remain.
+
+### I133 fixed-metric checkpoint — 2026-10-10
+
+Original I130 paid proofs PASS without repairs and parent sealed replay PASS. Common-core/uniform-volume exhaustion still loses the finite-stage harmonic spaces because normalized growth constants diverge. Increasing-cutoff matching and global growth remain unpaid, so H is parked. I136 audits these technical partials and starts birational-positivity discovery. Eight accepted, two remain.
