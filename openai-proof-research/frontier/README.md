@@ -21,6 +21,15 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**Latest oracle gate:** [I161](reviews/i161-oracle-tolerance-contribution-astra.md)
+classifies the full theorem as **TECHNICAL ONLY** through a concrete compiler,
+causal-entropy and shifted-composition reduction. I159's original-proof PASS
+is retained; parent sealed replay passes. The
+[parent disposition](iterations/i161-oracle-contribution-parent-disposition.md)
+preserves I157's incomplete status and the internal-reserve failure.
+[I164](iterations/iteration164-structural-graph-factory-astra-task.json)
+starts fresh structural-graph discovery. **8 accepted, 2 remaining.**
+
 **Latest BFSS gate:** [I162](reviews/i162-fixed-sector-bfss-focused-astra.md)
 fails the original exact fermion formula, $2i$ instead of the source's $i/2$.
 Its corrected proof retains the leading asymptotic on the original physical
@@ -29,9 +38,9 @@ preserves that failure explicitly; sealed evidence replay passes.
 [I163](iterations/iteration163-corrected-bfss-contribution-factory-astra-task.json)
 reviews contribution. No ninth finding is accepted.
 
-**2026-10-10 recovery:** the original I158/I160 tasks failed at the Codex
+**Historical 2026-10-10 recovery:** the original I158/I160 tasks failed at the Codex
 usage limit. [I161 and I162](iterations/i161-i162-factory-astra-resume.md)
-are fresh Factory/Astra contribution and focused correctness reviews,
+were launched as fresh Factory/Astra contribution and focused correctness reviews,
 respectively. Old unsealed evidence and incomplete verdicts are preserved;
 neither has been promoted to a completed gate. Count remains **8 of 10**.
 

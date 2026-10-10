@@ -16,6 +16,22 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I161 technical disposition and I164 structural-graph discovery
+
+[I161](../reviews/i161-oracle-tolerance-contribution-astra.md) completes
+the full R154 contribution gate as **TECHNICAL ONLY**, with no new proof
+objection and I159's original-proof PASS retained. Its explicit reduction
+includes the actual compiler, causal errors, multistep smoothing, intrinsic
+error budgets, unnoising, finite dimensions and every-run costs.
+Parent sealed replay passes; the
+[parent disposition](i161-oracle-contribution-parent-disposition.md)
+preserves I157's incomplete audit and the internal-reserve failure.
+I160 preparation is archived unchanged and unsealed, not promoted.
+[I164](iteration164-structural-graph-factory-astra-task.json) starts fresh
+Factory/Astra structural-graph discovery, first screening Barnette's
+stronger proof operations against primary prior art. I163 remains a separate
+corrected-BFSS contribution review. **Eight accepted, two remaining.**
+
 ## I162 result and I163 corrected BFSS contribution gate
 
 [I162](../reviews/i162-fixed-sector-bfss-focused-astra.md) finds an actual
@@ -30,13 +46,13 @@ I158's incomplete/unsealed artifacts are archived without alteration.
 is the fresh Factory/Astra contribution review for the full corrected
 theorem. **Eight accepted, two remaining; research active.**
 
-## Iterations 161–162: Factory/Astra recovery, 2026-10-10
+## Iterations 161–162: historical Factory/Astra recovery, 2026-10-10
 
 The user requested “Proceed with Factory/astra.” The original I158 and I160
 tasks failed at the Codex usage limit, not with completed review verdicts.
-[I161](iteration161-oracle-contribution-factory-astra-task.json) resumes the
+[I161](iteration161-oracle-contribution-factory-astra-task.json) was launched for the
 full R154 contribution gate; [I162](iteration162-bfss-focused-factory-astra-task.json)
-independently reviews original S155 and all its actual mathematical dependencies.
+was launched to independently review original S155 and all its actual mathematical dependencies.
 The focused scope does not retroactively complete I158's broader historical
 audit. Original bytes and unsealed preparation remain untouched. The
 [checkpoint](i161-i162-factory-astra-resume.md) records the limitations and

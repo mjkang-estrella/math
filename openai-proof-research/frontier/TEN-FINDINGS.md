@@ -6,6 +6,20 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I161 technical disposition and I164 fresh discovery
+
+[I161](reviews/i161-oracle-tolerance-contribution-astra.md) completes the
+full R154 contribution gate as **TECHNICAL ONLY**. Its positive reduction
+pays fixed-height compiler robustness, causal-state entropy, fixed-time
+regularization, final unnoising, finite dimensions and every-run query caps.
+I159's unchanged-original proof PASS remains; parent sealed evidence replay
+passes. The [parent disposition](iterations/i161-oracle-contribution-parent-disposition.md)
+preserves I160's interrupted/unsealed preparation, I157's incomplete audit
+and the internal-reserve independence failure. No ninth finding is accepted.
+[I164](iterations/iteration164-structural-graph-factory-astra-task.json)
+starts a distinct Factory/Astra structural-graph discovery track while I163
+continues the corrected BFSS contribution gate. **8 accepted, 2 remaining.**
+
 ### I162 normalization failure and corrected candidate
 
 [I162](reviews/i162-fixed-sector-bfss-focused-astra.md) found that S155's
@@ -20,14 +34,14 @@ Parent sealed replay passes; I158 remains incomplete and unsealed.
 now assesses the corrected full theorem's contribution. **8 accepted,
 2 remaining; no acceptance follows merely from a correction or proof.**
 
-### Factory/Astra recovery, 2026-10-10
+### Historical Factory/Astra recovery, 2026-10-10
 
 The user requested “Proceed with Factory/astra.” Both I158 and I160 had
 failed at the Codex usage limit with no pending runs. Fresh
 [I161](iterations/iteration161-oracle-contribution-factory-astra-task.json)
-reviews R154's contribution; fresh
+was launched for R154's contribution; fresh
 [I162](iterations/iteration162-bfss-focused-factory-astra-task.json)
-reviews original S155 and all actual mathematical dependencies. I158's
+was launched for original S155 and all actual mathematical dependencies. I158's
 broader gate stays incomplete, its partial evidence remains unsealed, and
 I160 has no final verdict. See the
 [recovery checkpoint](iterations/i161-i162-factory-astra-resume.md).
