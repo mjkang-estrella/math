@@ -746,3 +746,8 @@ S155 proposes N_lambda(E) ~ d_lambda m_lambda sqrt(2) Gamma(1/4)^2/(270 pi^(3/2)
 ### I156 marked-network partials and a literal discrete failure — 2026-10-10
 
 The original exact J subset I_delta claim fails on a positive-probability oversized-cell event. I156 preserves this FAIL and proves a separate screened replacement with vanishing normalized error. Its same-site membership-pattern extraction supplies shared overlap clocks beyond the original distinct-site proof. Its relative normalized mass estimate C_K alpha4(delta,1)^(-1) u controls outer separation failures only. Boundary-mesh pivotal witnesses, omitted-important mass and all-recolorings network stability remain unpaid. Parent sealed replay PASS. Full marked-network convergence is parked unproved/unrefuted; no nomination and eight accepted remain eight.
+
+
+### I157 incomplete sampling review; I159 focused correctness gate — 2026-10-10
+
+I157 found no substantive defect in the inspected original R154 equations (1)-(19), but returned UNRESOLVED because required recursive and companion readings were incomplete. Parent evidence/finite replay PASS does not change that verdict. Its explanations retain the internal-reserve independence FAIL, synthetic state replacement and exact-capped fallback comparison. I159 now reviews the unchanged R154 theorem and every dependency it actually uses. The historical broader audit of unrelated torus/weighted-bin/trace-decoder branches remains incomplete; this scope change is explicit. A contribution gate remains required after any correctness PASS. Eight accepted remain eight.
