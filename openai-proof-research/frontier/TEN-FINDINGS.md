@@ -583,7 +583,8 @@ The parent read the complete report and verifier and the actual Xi September 202
 
 - I112: [completed inverse-boundary report](iterations/i112-inverse-boundary-discovery.md) supplies author-level technical G112, C112, J112/L112, R112, K112 and B112/BUDGET. Physical augmented two-jets have dimension 32, and their zero-lower-jet Hessians dimension 17; the corresponding unrestricted dimensions are 36 and 20. Parent evidence replay passes. Arbitrary same-patch elasticity recovery P112 remains unproved/unrefuted, and quantitative metric/connection recovery Q remains unresolved. Original proofs await I115 audit; no nomination or count increment.
 
-- I113: [fresh online optimization discovery](iterations/iteration113-online-optimization-discovery-task.json) screens prophet selection, k-server and stochastic-game extensions against full source operations and model-specific lower bounds. Research active; no nomination or count increment.
+- I113: [online optimization report](iterations/i113-online-optimization-discovery.md) gives an author-level technical 2⁻²⁹⁵K⁻²⁷ robust one-sample prophet guarantee, one-sided lower bounds, likelihood-aware calibration and exact stochastic Blackwell extraction. Parent evidence replay PASS; law-free c/K remains unproved/unrefuted. No count increment.
+- I116: [original-proof audit and robust-prophet continuation](iterations/iteration116-robust-prophet-continuation-task.json) audits every I113 component before developing two routes toward the sharp law-free guarantee. Active.
 
 - I114: [fresh quantum-information discovery](iterations/iteration114-quantum-information-discovery-task.json) screens entropy, channel, entangled-repetition and synthesis extensions with explicit model and resource constraints. Research active; no nomination or count increment.
 
