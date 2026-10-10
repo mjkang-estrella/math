@@ -741,3 +741,8 @@ R154 proposes: for every fixed epsilon>0 there are c_epsilon,C_epsilon>0 giving 
 ### I155 proposed fixed-sector BFSS Weyl law — 2026-10-10
 
 S155 proposes N_lambda(E) ~ d_lambda m_lambda sqrt(2) Gamma(1/4)^2/(270 pi^(3/2)) E^(9/4), for a fixed source-constructed confined physical Spin(9) type in the relative SU(2) BFSS model. The invariant fiber includes finite stabilizer components, central lifts and fermions. The report supplies a nonzero explicit type, inherited physical domains, and a weighted-cell/IMS argument controlling every singular wall and noncompact horn. Parent sealed replay PASS; independent original-proof review I158 is running. Contribution remains a separate gate because the underlying tools and formal singular-value reduction have established precedents. The specified missing Bose companion comparison is completed as new I155 work; historical I153 remains an incomplete screen, and B153/L153 stay parked. Eight accepted remain eight.
+
+
+### I156 marked-network partials and a literal discrete failure — 2026-10-10
+
+The original exact J subset I_delta claim fails on a positive-probability oversized-cell event. I156 preserves this FAIL and proves a separate screened replacement with vanishing normalized error. Its same-site membership-pattern extraction supplies shared overlap clocks beyond the original distinct-site proof. Its relative normalized mass estimate C_K alpha4(delta,1)^(-1) u controls outer separation failures only. Boundary-mesh pivotal witnesses, omitted-important mass and all-recolorings network stability remain unpaid. Parent sealed replay PASS. Full marked-network convergence is parked unproved/unrefuted; no nomination and eight accepted remain eight.
