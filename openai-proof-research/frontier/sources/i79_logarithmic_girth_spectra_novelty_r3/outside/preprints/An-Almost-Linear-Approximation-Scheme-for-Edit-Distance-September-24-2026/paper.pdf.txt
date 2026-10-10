@@ -1,0 +1,2516 @@
+      An Almost-Linear Approximation Scheme for Edit Distance
+                                                   OpenAI
+
+                                            September 24, 2026
+
+
+                                                   Abstract
+          We give a uniform randomized approximation scheme for unit-cost edit distance. For every
+      fixed rational ε ∈ (0, 1), it estimates the distance between arbitrary explicitly stored strings of
+      total length N within a factor 1 + ε with probability at least 2/3, in worst-case expected time
+      N 1+o(1) on a logarithmic-word RAM. The algorithm supports polynomially bounded integer
+      alphabets and returns zero deterministically on equal strings.
+
+
+Contents
+1 Introduction                                                                                                 3
+  1.1 Context and approach . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     3
+  1.2 Proof overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   4
+
+2 Alignment geometry and computational parameters                                                              5
+  2.1 Paths, states and connection costs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     6
+  2.2 Uniform access to the accuracy input . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     7
+  2.3 Parameters and the fixed interval tree . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     7
+
+3 Simultaneous coarse estimates                                                                                 9
+  3.1 A deterministic shift tree . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    9
+  3.2 Pruning and precision sampling . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     10
+  3.3 Converting the estimate to an integer seed . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     12
+  3.4 The conditional cost of an adaptive request . . . . . . . . . . . . . . . . . . . . . . . . . . . .      12
+
+4 A seed-to-refinement construction                                                                         13
+  4.1 Cost cones and their local evaluation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+  4.2 Wide actions and Bellman propagation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+  4.3 Local evaluation of later cones . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+
+5 Predicted bands and the refined tables                                                                     17
+  5.1 A band predicted from prefix costs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+  5.2 The finite-mixture interface for online choices . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+  5.3 Shared group samples and the update . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+  5.4 Deterministic invariants . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+  5.5 Accuracy of one group selection . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+
+6 A comparison tree and cost-weighted curvature                                                            22
+  6.1 Exact paths and rounded child states . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+  6.2 Mass and energy telescopes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+  6.3 Coverage by the computed bands . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+
+
+
+
+                                                       1
+7 Conditional regret and the first crossing                                                                  27
+  7.1 A telescoping bound at every comparison node . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+  7.2 An entropy inequality with fixed block masses . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+  7.3 Clipping before and after the first crossing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+
+8 Accuracy and the sequence of seed passes                                                                   32
+  8.1 Summing the comparison regrets . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+  8.2 Improving simultaneous seeds . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+  8.3 The final answer . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 34
+
+9 Finite optimization and exact sampling                                                                     34
+
+10 Lazy evaluation and the expected work bound                                                                37
+   10.1 Evaluation order and stored randomness . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 37
+   10.2 Finite local calculations on inaccurate seeds . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+   10.3 The current-index child budget . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 40
+   10.4 Earlier inputs and local arithmetic . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+   10.5 Counting the dependency paths . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+   10.6 Expected time and logarithmic-word storage . . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
+
+
+
+
+                                                       2
+1     Introduction
+The unit-cost edit distance ED(x, y) is the minimum number of single-symbol insertions, deletions
+and substitutions that transform a string x into a string y. All three operations have cost one. The
+strings are stored explicitly; write N = |x| + |y|. Their symbols are integer labels of polynomial
+magnitude in N + 2, stored in words of O(log(N + 2)) bits. There is no bound on the alphabet size
+independent of N .
+    An approximation scheme receives a rational ε ∈ (0, 1) and estimates the distance multiplicatively.
+Its guarantee must therefore include returning zero when the two strings are equal. We prove the
+following result.
+
+Theorem 1.1. There is one uniform randomized algorithm that, given x, y and a rational ε ∈ (0, 1),
+returns a nonnegative integer D
+                              b such that
+
+                                           b ≤ (1 + ε) ED(x, y) ≥ 2 .
+                             Pr ED(x, y) ≤ D
+                                                              
+                                                                  3
+For every fixed rational ε, its worst-case expected running time on strings of total length N is
+N 1+o(1) as N → ∞ on the logarithmic-word RAM. The expectation is over internal randomness
+only, and the bound includes input processing, preprocessing, numerical work, random sampling and
+all data-structure operations. Equal strings return zero deterministically.
+
+    The program is uniform in the accuracy input. The asymptotic assertion is pointwise in each
+fixed rational accuracy: its constants and the threshold at which the bound applies may depend on
+ε. We do not assert polynomial dependence on 1/ε or a joint bound when the accuracy varies with
+N . The output is a distance estimate; no edit-script reconstruction is needed.
+    The algorithm uses exact computation below an accuracy-dependent input-length threshold.
+Section 2 gives the finite input convention and fallback rules; their thresholds are very large, so the
+result is an asymptotic approximation scheme.
+
+1.1   Context and approach
+Edit distance originates in the study of errors in transmitted strings, including Levenshtein’s binary
+codes for insertions, deletions and bit flips [19]. The dynamic program of Wagner and Fischer [29]
+computes the minimum cost of insertions, deletions and substitutions in quadratic time. Masek
+and Paterson [22] applied block tabulation to obtain a logarithmic speedup for fixed alphabets and
+suitable fixed costs. Distance-sensitive exact algorithms offer another route when few edits are needed:
+Ukkonen [28] developed bounded-distance methods, and Landau and Vishkin [17, 18] combined
+furthest-reaching states with fast matching queries. Myers’s related difference algorithm [23] treats
+insertion–deletion scripts. For unrestricted exact computation, Backurs and Indyk [5] showed that a
+strongly subquadratic deterministic algorithm would refute the Strong Exponential Time Hypothesis.
+That lower bound does not rule out fixed-factor approximation.
+    Approximation algorithms progressively improved the accuracy available with substantially
+less work. In the following historical comparisons, write n for a common upper bound on the
+string lengths. Batu and coauthors [7] gave sublinear tests for fixed alphabets that distinguish
+sufficiently small distance from linear distance. For general pairs, Bar-Yossef, Jayram, Krauthgamer
+and Kumar [6] obtained an n3/7 approximation in quasi-linear time; Batu, Ergün and Sahinalp [8]
+improved the factor to n1/3+o(1) . For binary strings, Ostrovsky and Rabani [25] constructed a
+low-distortion embedding into ℓ1 , and Andoni and Onak [2] obtained an efficiently computable
+  e √log n)
+2O(         approximation in n1+o(1) time. Andoni, Krauthgamer and Onak [3] then achieved a
+
+                                                   3
+(log n)O(1/ξ) factor in n1+ξ time for each fixed ξ > 0, using a hierarchical alignment representation
+and nonuniformly allocated precisions.
+    The next advances reached constant factors. Chakraborty, Das, Goldenberg, Koucký and
+Saks [10] gave a constant-factor approximation in e O(n12/7 ) time. Brakensiek and Rubinstein [9] and
+Koucký and Saks [16] independently obtained near-linear exponents for sufficiently far input pairs,
+with a material additive error on general pairs. Andoni and Nosatzki [1] removed that restriction:
+for every fixed ξ > 0, their algorithm gives an approximation factor depending only on ξ in O(n1+ξ )
+time. The factor depends on the exponent parameter; this is not an approximation scheme with
+error tending to zero. For accuracy arbitrarily close to one, Mao and Rubinstein [21, Theorem 6.1]
+                                                                   Ω(1)
+recently obtained a randomized (1 + ε) approximation in n2 /2log        n time for every fixed positive ε.
+
+    The issue addressed here is how to retain fixed (1 + ε) accuracy while reducing the expected
+total work to N 1+o(1) . Recursive interval decompositions, economical evaluation of local distances,
+and accounting along an optimal alignment have substantial precedent in the algorithms above. In
+our refinement, unrestricted recursive evaluation of child distances would consume the available
+time even if the resulting numerical error were small. We therefore need both a narrow family that
+contains a suitable comparison alignment and a bound on the number of child distances actually
+evaluated.
+    For the initial estimates we adapt the shift tree and precision sampling of Andoni, Krauthgamer
+and Onak [3, 4]. The refinement is related to Mao and Rubinstein’s use of multiscale deviation
+to constrain alignment paths before sampling [21]. Here we measure the alignment’s changes in
+relative position using preliminary cost estimates as weights. A telescoping bound on their variation
+controls the total cost of places where the prediction fails. An entropy-regularized prediction rule,
+within the framework of Rakhlin and Sridharan [26], then controls the accumulated error where the
+predictions can be used. We implement its optimization by a finite Frank–Wolfe procedure [12, 15].
+The specialized geometric, probabilistic and numerical guarantees are proved in this paper.
+    Two related comparisons concern different requirements on the output or the edit costs. A
+single ℓ1 embedding of all binary strings up to a length bound must incur growing distortion [24,
+Theorem 1.1]. Our algorithm estimates the distance of the supplied pair and does not construct such
+a common embedding. Recent algorithms for metric-weighted edit costs obtain (3 + ε) approximation
+in strongly subquadratic time [11, 20]; their cost model is broader than the unit-cost model treated
+here.
+
+1.2    Proof overview
+Recursively partition the first string into a tree of intervals, ending at intervals of length at most
+one. An interval state consists of a source interval I and a target interval in the second string; its
+true cost is the edit distance between the two substrings. An action at a nonleaf assigns one target
+interval to each source child. We charge the sum of the child estimates together with penalties
+for gaps or overlaps between successive target endpoints and at the two outer endpoints. These
+penalties let us compare nearby actions without requiring their target intervals to join exactly.
+
+Estimates that can be requested adaptively. The initial seed is an integer table whose entries
+give coarse upper approximations to all interval-state costs. Although the algorithm evaluates only
+requested entries, the accuracy event covers the entire domain: later queries may depend on earlier
+random answers. Each initial entry uses a private random stream, so its expected evaluation cost can
+also be bounded conditional on the request that first exposes it. Accuracy and expected work thus
+use different probability statements. Successive refinement passes improve the seed approximation
+factor.
+
+                                                    4
+Predicting where an alignment goes. One refinement starts from such a seed. It first
+propagates estimates through a wide family of actions and averages the resulting preliminary tables
+to obtain cost proxies. At a source cut, the alignment’s shift is the target position minus the source
+position. The total shift change divided by the predicted total cost suggests how this shift should
+evolve as prefix cost accumulates. Requiring agreement with that prediction restricts the possible
+target positions at each cut to a narrow band. The algorithm computes these bands from the cost
+proxies alone.
+    To analyze them, fix optimal alignments and recursively round their child endpoints. This gives
+a comparison tree that the algorithm never computes. A cost-weighted variance measures how
+far the comparison shifts depart from the predicted evolution. Its sum telescopes, with additional
+charges for disagreements among the cost proxies. Consequently the total cost of nodes with
+large discrepancies is controlled. At the other nodes, either the substring-length difference already
+accounts for almost all predicted cost, giving a direct error bound, or the computed band contains
+the comparison action.
+
+From a band to a better seed. Within a band, an entropy-regularized rule predicts an action
+using earlier child values. Shared samples also compare rounded actions across nearby representatives.
+The resulting estimates decrease with the refinement index. After conditioning on complete child
+tables, the parent samples retain their prescribed laws, and an online inequality bounds cumulative
+excess over the comparison action. Some intermediate estimates can be smaller than true cost.
+The analysis therefore clips them from below at true cost, so an underestimate at one node cannot
+cancel an error elsewhere. Summing over the comparison tree gives a small expected positive error
+at any fixed queried state, together with a deterministic multiplicative lower bound. Independent
+repetitions, rescaling and medians turn these two bounds into a simultaneous one-sided seed with a
+smaller approximation factor. Repeating this improvement and making one final refinement gives
+the desired answer.
+
+Paying for recursive queries. A wide search or an optimization step may inspect many actions,
+but it reuses previously gathered child values. Only shared group samples, selected rounded actions
+and actual online draws require child values at the current refinement index. Common rounded
+grids limit the number of these calls to slightly more than the tree’s branching factor. Along a
+dependency path, a call either descends the tree at the same index or decreases an index or pass.
+Counting these two kinds of steps bounds the total expected work, including rational arithmetic
+and exact sampling, by N 1+o(1) .
+    Section 2 fixes the computational model, geometry and parameters. Sections 3–5 construct the
+tables. Sections 6 and 7 prove the geometric and probabilistic estimates, and Section 8 assembles the
+accuracy guarantee. Sections 9 and 10 implement every operation and complete the running-time
+proof.
+
+
+2    Alignment geometry and computational parameters
+This section fixes the input conventions and the interval states used throughout the algorithm. It
+also records the geometric inequalities that allow child intervals to be combined even when their
+target endpoints do not agree.
+
+
+
+
+                                                  5
+2.1    Paths, states and connection costs
+Index string boundaries starting at zero. An alignment path has steps (1, 0), (0, 1), (1, 1), of cost one,
+one, and the indicator that the two characters on a diagonal step differ. Such a path gives an edit
+sequence. Conversely, the original characters that survive an edit sequence occur in the final string
+in their original order. Deleting other original characters, inserting the remaining output characters
+and changing each surviving character whose label differs gives an alignment of no greater cost.
+Thus minimum alignment cost equals edit distance.
+    For an interval I = (l, u] of the first string, an interval state is (I, q), where q = (q − , q + ) is an
+integer pair with 0 ≤ q − ≤ q + ≤ |y|. When I is fixed, we also call q a state. Set
+                     c(I, q) = ED x(l,u] , y(q− ,q+ ] ,            z(I, q) = (q + − q − ) − (u − l).
+                                                       
+
+An endpoint’s shift is its target index minus its first-string index. In particular, z is the change in
+shift between the two endpoints. For pairs use |q − r|1 = |q − − r− | + |q + − r+ |.
+Lemma 2.1. For every interval state, c(I, q) ≥ |z(I, q)|. Both c(I, ·) and |z(I, ·)| are 1-Lipschitz in
+the endpoint metric. If I is partitioned, in order, into I1 , . . . , Im , and α = (s1 , . . . , sm ) is any list of
+valid child states, define
+                                                             m−1
+                           connr (α) = |s−   −
+                                         1 −r |+                   |s−
+                                                                     i+1 − si | + |sm − r |.
+                                                             X
+                                                                            +       +    +
+
+                                                             i=1
+
+Then
+                                                           c(Ii , si ) + connr (α),                           (2.1)
+                                                   X
+                                       c(I, r) ≤
+                                                   i
+                                                           |z(Ii , si )| + connr (α).                         (2.2)
+                                                   X
+                                     |z(I, r)| ≤
+                                                   i
+
+The connection inequalities also hold for finite target intervals in any extension of y beyond its stored
+endpoints.
+Proof. Only insertions and deletions change length, proving c ≥ |z|. Changing a target substring’s
+endpoints costs at most |q − r|1 : remove or insert endpoint portions if the substrings overlap, and
+delete and insert the whole substrings if they are disjoint. The triangle inequality gives the claim
+for c; the claim for |z| follows from its formula.
+    Edit each child to its specified target substring and concatenate the results. Consider the walk
+on the target’s boundary line that starts at r− , jumps to s−  1 , traverses each child target forward,
+makes the successive connecting jumps, and ends at r . Expand each jump into unit steps. From
+                                                         +
+
+this walk choose, in order, one forward crossing of every unit interval between r− and r+ . Successive
+first arrivals at the next boundary give such a choice. The letters on these selected crossings, in
+their walk order, form exactly the parent’s target substring. Delete the letters on unselected child
+crossings, and insert the letters on selected connecting crossings. By net displacement, the number
+of unselected forward crossings equals the number of backward crossings. All backward crossings
+belong to connecting jumps, since child targets are traversed forward. Thus deletions cost at most
+the total backward jump length, while insertions cost at most the total forward jump length. Their
+sum is connr (α), proving (2.1). This argument uses only the letters at finitely many target positions,
+so it also proves the assertion for extensions of y. Finally, sum the signed shift changes of child
+intervals and connecting jumps and take absolute values to obtain (2.2).
+
+    Figure 1 illustrates why the connection term permits both gaps and overlaps between consecutive
+child targets.
+
+                                                              6
+                                                   target boundary
+                               0    1          3      4       6    7        9    10
+                    r =0
+                     −
+                                        s1 = (1, 4)
+                         I1     1
+                                                1
+                         I2
+                                                    s2 = (3, 6)
+                                                                  1
+                         I3                                                      1
+                                                                   s3 = (7, 9)
+                                                                                   r+ = 10
+                              connr (α) = |1 − 0| + |3 − 4| + |7 − 6| + |10 − 9| = 4
+
+Figure 1: Connection charges for three consecutive source children. Solid arrows show their
+prescribed target intervals; dashed arrows join these intervals in child order, with the outside
+endpoints r = (0, 10). The jump from 4 to 3 points backward, so this walk is not itself an
+alignment path. Lemma 2.1 gives c(I, r) ≤ 3i=1 c(Ii , si ) + 4. Only the horizontal target-coordinate
+                                          P
+
+displacement of a dashed arrow is charged; the vertical separation of rows is for display.
+
+
+2.2   Uniform access to the accuracy input
+The rational accuracy is supplied in a fixed canonical binary encoding of its positive numerator and
+denominator in lowest terms, on a separate read-only input. For example, encode a positive integer
+by its binary length in unary, a delimiter, and its binary digits, and concatenate the two encodings.
+The input is promised to specify 0 < ε < 1. Prefix inspection is ordinary input access; no numerical
+operation on the rational is free.
+    The algorithm first handles equality, empty strings and |x| ≤ 1 exactly. These cases require
+O(N + 1) string work. On other inputs define H as the least power of two at least ⌈log2 (N + 2)⌉, and
+ℓ as the least power of two at least max(1, log2 H). Inspect at most H 2 + O(1) bits of the accuracy
+input. If its complete encoding has not been obtained, use exact alignment dynamic programming.
+The unread suffix is neither copied nor addressed. All addresses actually used for this prefix have
+O(log(N + 2)) bits. If the encoding is obtained, its integers have O(H 2 ) bits, and exact arithmetic
+decides the test ℓε ≥ 10 with polynomial work in H.
+    Use exact dynamic programming also if ℓ < 21000 or ℓε < 10. It uses O((N +1)2 ) word operations
+and can store only two rows. Together with the bounded parameter inspection, this charges every
+operation in these branches. For each fixed rational encoding, the inspection bound eventually
+exceeds its length, and both numeric tests eventually pass as N grows. Thus the exact branches
+affect only a bounded range of N for each fixed ε. They preserve the uniform algorithm and its
+approximation guarantee on that range. No assertion about efficient joint dependence on encoding
+length or 1/ε is needed.
+
+2.3   Parameters and the fixed interval tree
+All remaining arguments concern the large-input branch. Logarithms with subscript two are binary,
+and ln denotes the natural logarithm. The coarse estimator and interval tree use the branching
+factors B and M below. The factor Ainit is the initial seed accuracy, F controls its reduction across
+
+
+
+
+                                                           7
+passes, and P controls endpoint-grid resolution:
+                   j            k
+              p∗ = (log2 ℓ)1/4 ,                 B = H p∗ ,                Ainit = H p∗ +4 ,
+             M = 2⌊(log2 H)/20⌋ ,                P = H p∗ +20 ,               F = ℓ.
+The counts T and S govern preliminary propagation and refinement iterations, respectively. The
+slopes L0 and L penalize changes in target endpoints:
+                  T = 2⌈(3/4) log2 H⌉ ,     S = H/ℓ2 ,        L0 = 32F,    L = 128F.
+Finally, fix the error tolerances and the sampling and optimization parameters. Their roles are
+specified at the corresponding constructions:
+                 δ = ℓ−10 ,                   κ = τ = ℓ−4 ,                  θ = ℓ−40 ,
+                 γ = ℓ−20 ,                   η = ℓ5 ,                     Q1 = ℓ80 .
+The essential separation is between H = Θ(log(N + 2)) and ℓ = Θ(log H): the branching factors
+and grid resolutions are powers of H, while the tolerances are powers of ℓ. The inequalities below
+quantify the slack available between these scales.
+    Every integer parameter here is computable using bit lengths and integer tests. For example,
+p∗ is the largest integer whose fourth power is at most the integer log2 ℓ. The displayed fractional
+powers and logarithms require no real-arithmetic oracle. All parameters used as dyadic grid spacings
+are powers of two, and S is a positive integer in this branch.
+    We will repeatedly use the generous bounds
+                                                                      √
+                           H ≥ 2ℓ/2 ,    ℓ200 ≤ H 1/100 ,    p∗ + 21 ≤ ℓ.                       (2.3)
+The first follows from the definition of ℓ; the other two follow at ℓ ≥√21000 and become stronger as ℓ
+increases. More explicitly, 200 log2 ℓ ≤ ℓ/200 and (log2 ℓ)1/4 + 21 ≤ ℓ hold at this cutoff, and their
+right sides thereafter grow faster. Factors polynomial in ℓ and p∗ will consequently be much smaller
+than any fixed positive power of H needed below.
+    Partition x into a complete M -ary tree of height
+                                          J = ⌈logM max(1, |x|)⌉ .
+At a node (l, u] use cuts li = l + ⌊i(u − l)/M ⌋, 0 ≤ i ≤ M . Empty intervals are allowed, and node
+labels distinguish repeated intervals. Nodes need only be generated when requested. At depth j the
+width is at most ⌈|x|/M j ⌉, and leaves have width at most one. The parameters give
+                                J ≤ 100H/ℓ,         M J ≤ M max(1, |x|).                         (2.4)
+Indeed log2 M ≥ (log2 H)/20 − 1 and log2 H ≥ ℓ/2, whereas log2 |x| ≤ H. The second bound follows
+directly from the ceiling defining J.
+    At a leaf of width zero the exact cost is the target length. At a leaf containing one character,
+the cost is one for an empty target, and otherwise is the target length minus the indicator that
+this character occurs there. Sort the pairs (symbol, position) of y lexicographically by comparison
+sorting. A binary search then tests occurrence in any target interval in O(log(N + 2)) time, with
+O(N log(N + 2)) preprocessing work and linear storage. The word-label assumption makes each
+comparison a bounded number of word operations. Fresh padding symbols used later can be
+represented by a tag together with a label; no search for an unused alphabet value is needed.
+    All subsequent tables are indexed by this fixed tree and valid endpoint pairs. The total domain
+is polynomial in N + 2: there are at most 2M J nodes and at most (|y| + 1)2 pairs per node. A
+simultaneous probability guarantee over this domain is meaningful even though the algorithm will
+evaluate only a small part of it.
+
+                                                     8
+3     Simultaneous coarse estimates
+The refinement will need an integer estimate at every interval state, including states chosen adaptively
+by later computations. We construct these estimates as a random table, while evaluating only the
+entries that are requested. The construction builds on tree and precision-sampling ideas of Andoni,
+Krauthgamer, and Onak [3]; the complete bounds needed here are proved below.
+Theorem 3.1 (Initial estimates). With the parameters and labeled interval tree of Section 2, there
+is a lazily evaluated random table U (0) (I, q) of integers in [0, N ] such that, with probability at least
+0.99, simultaneously at every state,
+                                   c(I, q) ≤ U (0) (I, q) ≤ Ainit c(I, q).                            (3.1)
+Every zero-cost state has value zero on every execution. Conditional on any first request for an
+entry and the previously exposed randomness, its expected evaluation cost is at most (1 + |I|)2o(H) ,
+uniformly in the state. This cost bound includes arithmetic and random sampling and does not
+require (3.1) to hold.
+
+3.1    A deterministic shift tree
+The hierarchical representation below is an adaptation of the E-distance of Andoni, Krauthgamer
+and Onak [3, Definition 3.2 and Theorem 3.3]. We prove its precise bounds here, including the
+treatment of unequal lengths, empty intervals and bounded integer shifts.
+    Fix one state and write nx = |I|, ny = q + − q − , and c = c(I, q). If ny > 2nx , return ny : the
+bounds ny − nx ≤ c ≤ ny give the required factor two. Otherwise test equality directly and return
+zero when the strings agree. These steps cost O(1 + nx ), since in the branch requiring character
+comparisons ny ≤ 2nx . They include the case nx = 0.
+    For the remaining case, pad the shorter string at its right end with a fresh tagged symbol to
+obtain two strings of the same length n ≤ 2nx . Denote their distance by d. The length gap is at
+most c, so d ≤ 2c. Conversely, remove padding from any padded alignment. A diagonal joining
+padding to a real character has cost one and can be replaced by an insertion or deletion of the same
+cost; other operations consuming padding can be removed. Hence
+                              1 ≤ c ≤ d ≤ 2c,            1 ≤ n ≤ N,          d ≤ n.                   (3.2)
+The last bound follows by substituting characters position by position.
+   For each dyadic guess
+                                    k ∈ {1, 2, 4, . . . , 2⌈log2 n⌉ },
+split the first padded string in a complete balanced B-ary tree of depth D0 = ⌈logB n⌉. Its leaves
+have width zero or one. Allowed shifts are the integers in [−k, k]. At a width-one leaf w starting
+at position j, let Tw (v) be the mismatch indicator between its character and position j + 1 + v of
+the second padded string. A position outside the latter string has a virtual symbol that always
+mismatches. At a width-zero leaf put Tw (v) = 0. At an internal node define
+                                         B
+                              Tw (v) =            min      {Twi (v ′ ) + 2|v − v ′ |}.                (3.3)
+                                         X
+                                               v ′ ∈[−k,k]∩Z
+                                         i=1
+
+Constant shifts show that 0 ≤ Tw (v) ≤ |w|, where |w| denotes the node’s width.
+    The virtual symbols are chosen outside the alphabets of both padded strings. Thus every leaf
+value is an edit cost against a finite interval of an extended target string, to which Lemma 2.1
+applies.
+
+                                                          9
+Lemma 3.2. At the root o,
+
+                           d ≤ To (0),       To (0) ≤ (1 + 2BD0 )d       if k ≥ d.
+
+Proof. The recurrence minimizes the sum of leaf mismatches and twice the total absolute shift
+difference along tree edges, with root shift zero. For any assignment, concatenate the shifted leaf
+target intervals. By traversing the tree in depth-first order, the sum of jumps between consecutive
+leaf intervals, including the connections to the outer endpoints, is at most twice the sum of edge
+shift differences. The connection inequality from Section 2, including its virtual-position version,
+therefore bounds d by the assignment’s cost. This proves the first assertion.
+    For the second, fix an optimal padded alignment and choose ordered points (j, bj ) at every source
+cut, with b0 = 0 and bn = n. Assign shift bj − j to every node starting at j. Its absolute value is at
+most d, because only insertion and deletion steps change the shift. These assignments are allowed
+when k ≥ d.
+    For each child, the shift difference from its parent is at most the cost of the alignment subpath
+between their chosen starting points, and thus at most the cost of the parent’s subpath. There
+are B children per parent; the parent subpaths at each depth partition the alignment. Edge
+differences therefore sum to at most Bd at each of the D0 depths. A mismatching width-one leaf
+has positive cost in its corresponding subpath: a zero-cost subpath would be a matching diagonal.
+Leaf mismatches sum to at most d, and width-zero leaves contribute nothing. The assignment has
+total cost at most (1 + 2BD0 )d.
+
+3.2   Pruning and precision sampling
+Nonuniform additive precision is the sampling principle developed by Andoni, Krauthgamer and
+Onak [3, Lemma 3.12] and refined in [4, Lemma 1.2], with earlier multiscale sampling antecedents in
+Indyk and Woodruff [14]. The reconstruction arguments of Andoni, Krauthgamer and Onak already
+allow estimates to depend on the sampled precisions. Here we use a finite threshold distribution
+and prove an event covering all potential interval states, together with the conditional cost of a first
+request.
+    Computing all of (3.3) would be too expensive. The guess k will also serve as an additive
+allowance at the root: on one event of high probability, we will obtain an estimate Teo between
+To /2 − k and 2To + k simultaneously for every entry and guess. Then 2(Teo (0) + k) is an upper
+bound on d for every guess, and the guess d ≤ k < 2d gives an O(1 + BD0 ) approximation. We can
+therefore replace a node by zero whenever its entire cost fits within its additive allowance. Larger
+guesses permit more pruning; their larger allowances are paid back in the returned estimate. Set
+                                                         1
+                                Q0 = H 4 ,       λ=         ,       ao = k.
+                                                        64H
+At a node with allowance aw , independently for its children draw Ri uniformly from {1, . . . , B} and
+set
+                                         aw Ri
+                                    ti =       ,     awi = λti .                                  (3.4)
+                                         BQ0
+All these random choices can be defined in advance, even below nodes that will be pruned. The
+implementation exposes only those it needs.
+    If |w| ≤ aw , use the identically zero estimate Tew . At any other leaf use its exact array. At an
+unpruned internal node first compute
+
+                               sbi (v) = ′ min     {Tewi (v ′ ) + 2|v − v ′ |},
+                                         v ∈[−k,k]∩Z
+
+
+                                                       10
+and then put
+                                           B
+                               Tew (v) =         1sbi (v)≥ti max{sbi (v), aw /Q0 }.                          (3.5)
+                                           X
+
+                                           i=1
+The descendants used to compute sbi (v) depend on ti , so these child estimates cannot be treated as
+fixed in a concentration bound. The proof below first compares their sampled contributions with
+two lists formed from true child costs. It then concentrates those lists without assuming that any
+child estimate is accurate.
+Lemma 3.3. Except on an event of probability less than 0.01, simultaneously for all initial entries,
+all guesses, all their nodes, and all shifts,
+
+                                                                                  1+λ
+                                                                                       height(w)
+             Tw (v)/fw − aw ≤ Tew (v) ≤ fw Tw (v) + aw ,              fw =                            ≤ 2.   (3.6)
+                                                                                  1−λ
+Proof. Fix an internal node and a shift, and write si for the true child penalty minimum in (3.3).
+Let f ′ be the factor in (3.6) at its children’s structural height. Both si and f ′ are independent of
+all thresholds. Suppose for the moment that the child accuracy inequalities hold with this factor.
+Adding a nonnegative penalty preserves the lower bound after division by f ′ and the upper bound
+after multiplication by f ′ . Taking minima gives
+
+                                    si /f ′ − λti ≤ sbi (v) ≤ f ′ si + λti .
+
+Let u = aw /Q0 and define
+                                                                   si                      f ′ si
+                   ϕi (h) = 1h≥ti max{h, u},            h−
+                                                         i =             ,          i =
+                                                                                   h+             .
+                                                               f (1 + λ)
+                                                                ′                          1−λ
+
+If h−
+    i ≥ ti , then s bi (v) ≥ (1 + λ)h−           −
+                                     i − λti ≥ hi . If s
+                                                       bi (v) ≥ ti , then sbi (v) ≤ f ′ si + λsbi (v), and
+consequently sbi (v) ≤ hi . These implications prove the pathwise sandwich
+                          +
+
+
+                                     ϕi (h−
+                                          i ) ≤ ϕi (s
+                                                    bi (v)) ≤ ϕi (h+
+                                                                   i ).                                      (3.7)
+
+    We now establish concentration independently of the supposition about child accuracy. Condi-
+tional only on ancestor thresholds, u is fixed and ti = uRi /B are independent. For either of the two
+fixed argument lists hi = h±i , if 0 ≤ hi < u then
+
+                                                          ⌊Bhi /u⌋
+                                                                            
+                                   ϕi (hi ) = u Bernoulli          ;
+                                                            B
+if hi ≥ u, it equals hi deterministically. Thus
+
+            0 ≤ hi − Eϕi (hi ) ≤ u/B,            Var(ϕi (hi )) ≤ uhi ,        |ϕi (hi ) − Eϕi (hi )| ≤ u.
+
+Write V = i hi and Z = i ϕi (hi ). The total bias is at most u. Bernstein’s inequality [27,
+             P                 P
+
+Theorem 4.16] at deviation z = λV + aw /2 gives
+                                                                         !
+                                                 z2
+                 Pr(|Z − EZ| > z) ≤ 2 exp −                                  ≤ 2 exp(−λQ0 /12).
+                                            2uV + (2/3)uz
+
+For the last inequality, if V ≥ aw , the denominator is at most 3uV and z 2 ≥ λaw V ; if V ≤ aw , the
+denominator is at most 3uaw and z 2 ≥ a2w /4. Since u ≤ aw /2, adding the bias yields
+
+                                            |Z − V | ≤ λV + aw                                               (3.8)
+
+                                                         11
+outside the indicated event.
+    These conditional bounds are uniform in the ancestor thresholds, so they also hold unconditionally.
+Take their intersection over both argument lists and all fixed node and shift labels. On that
+intersection, induction from the leaves combines (3.7) and (3.8). The lower and upper bounds
+become
+                          1−λ                     ew (v) ≤ f (1 + λ) Tw (v) + aw ,
+                                                            ′
+                                   Tw (v) − a w ≤ T
+                       f ′ (1 + λ)                            1−λ
+which is exactly the desired factor update. A pruned node also satisfies the inequalities because
+Tw (v) ≤ |w| ≤ aw ; exact leaves do so directly. The factor satisfies fw ≤ exp(2/63) < 2, since
+D0 ≤ H.
+    For completeness, the event count includes the entire domain, not merely requested entries.
+There are O(M (N + 1)3 ) labeled main-tree states, O(H) guesses per entry, O(BN ) nodes per coarse
+tree, and O(N ) shifts per guess. The count of the two lists is therefore at most
+
+                                   CM BH(N + 1)5 ≤ exp(20H)
+
+for an absolute constant C under the stated cutoff. Here one may use B, M, H ≤ N in this regime
+and log2 (N + 2) ≤ H. The union failure is at most 2 exp(20H − H 3 /768) < 0.01. In particular, no
+conditioning on successful descendants was used in the concentration calculation.
+
+3.3   Converting the estimate to an integer seed
+For the padded entry, take the ceiling of
+
+                                            min 2 Teo (0) + k                                    (3.9)
+                                                                
+                                             k
+
+and clamp it to [0, N ]. On the event of Lemma 3.3, every candidate is at least To (0) ≥ d ≥ c. A
+listed guess satisfies d ≤ k < 2d, and its rounded candidate is at most
+
+                    4(1 + 2BD0 )d + 4k + 1 ≤ (25 + 16BH)c ≤ BH 4 c = Ainit c.
+
+Clamping preserves both bounds because c ≤ N . Together with the direct branches this proves the
+approximation assertion in Theorem 3.1.
+
+3.4   The conditional cost of an adaptive request
+We next prove the cost assertion, including executions outside the accuracy event. For an array E
+on [−k, k] ∩ Z, its penalty transform is computed by a left sweep
+
+                                  L(v) = min{E(v), L(v − 1) + 2}
+
+with the natural initial value, and the symmetric right sweep. Their pointwise minimum is
+
+                                       min
+                                        ′
+                                           {E(v ′ ) + 2|v − v ′ |}.
+                                        v
+
+Both sweeps take O(k) operations. An identically zero child array, whose transform is also zero, is
+represented by a marker without allocation. At an unpruned internal node the array work is O(Bk),
+including visits and thresholds for all children. An unpruned leaf costs O(k). A pruned node needs
+only its width test and marker.
+
+
+                                                   12
+    Let r be a node’s depth in the coarse tree. From (3.4), along any fixed path,
+                                                                     B
+                                                                        1
+                            Q
+                          k Re              aparent
+                                                                  
+                   aw =                             aparent = 64H
+                                                                    X
+                                                                  5
+                                   ,      E                               ≤ H 8.
+                        (64BH 5 )r            aw                    j=1
+                                                                        j
+
+It follows that E[k/aw ] ≤ H 8r . A node can incur array work only if |w| > aw , and pointwise
+
+                                                                 k
+                                          k1|w|>aw ≤ |w|           .
+                                                                aw
+Widths sum to n at each depth. Thus the expected array work for one guess, including child
+overhead charged to expanded parents, is at most
+
+                                       O 1 + Bn(D0 + 1)H 8D0 .                                        (3.10)
+                                                                        
+
+
+This estimate uses the random allowances alone and remains valid when the estimated arrays are
+inaccurate.
+    All arithmetic and sampling can be performed with finite binary integers. The quantities in (3.4)
+are dyadic; a common denominator for their descendants and the arrays needs O(D0 (p∗ + 5) log H +
+log H) bits. Minima and maxima select existing dyadic values, and sums preserve this common
+precision. The same-shift candidate in the penalty minimum gives
+
+                                   Tew (v) ≤           Tewi (v) + Baw /Q0 .
+                                               X
+
+                                                   i
+
+Since aw ≤ k and there are O(Bn) nodes, all estimate magnitudes are bounded by n + O(B 2 nk).
+Their bit lengths, and the cost of ordinary binary arithmetic on them, fit the factor H O(D0 +p∗ +1) .
+Each Ri requires exactly log2 B fair random bits. Zero arrays are never materialized.
+   There are O(H) guesses, and
+
+                      H                                           H
+                                                                                       
+         D0 ≤ 1 +           ,      log2 H   O(D0 +p∗ +1) 
+                                                               =O    + (p∗ + 1) log H       = o(H).
+                  p∗ log2 H                                       p∗
+
+Consequently (3.10), including the arithmetic factors, all guesses, equality tests, and padding, is
+(1 + |I|)2o(H) in expectation. Even a full coarse tree with all its shift arrays uses only polynomial
+space: it has O(Bn) nodes, O(n) entries per array, and the bit lengths just bounded.
+    Finally, assign a separate random stream to every initial entry, keyed by its labeled main-tree
+node and endpoint pair, and cache the completed answer. Its calculation does not query other initial
+entries. Before its first request, none of the exposed computation can depend on its unused stream:
+such a dependence would already have required evaluating this entry. Conditional on the entire
+preceding execution and the adaptive request, the stream therefore has its original distribution.
+The expected cost bound applies conditionally exactly as stated; repeated requests use the cached
+answer and pay only lookup work. This deferred exposure realizes the same full random table used
+in the simultaneous probability argument and completes the proof of Theorem 3.1.
+
+
+4    A seed-to-refinement construction
+The initial table has a large approximation factor. We now describe one refinement that reduces
+this factor while controlling expected excess over the true cost. Throughout the construction, fix
+the entire seed table; randomness introduced by the refinement is independent of it.
+
+                                                         13
+Theorem 4.1 (Refinement). Use the parameters and interval tree of Section 2 in the large-input
+branch. Let A be a power of two with 1 ≤ A ≤ Ainit , and let U be an integer table on every labeled
+tree node and every valid target state, with
+
+                         0 ≤ U (I, q) ≤ N,       c(I, q) ≤ U (I, q) ≤ Ac(I, q).
+
+Set a = max{1, A/F }. There is a randomized, finitely executable refinement table dS such that, for
+every state (I, q),
+
+                    dS (I, q) ≥ c(I, q)/a,     E (dS (I, q) − c(I, q))+ ≤ c(I, q)/ℓ.               (4.1)
+                                                                      
+
+
+The first inequality holds for every outcome of the refinement randomness; the expectation in the
+second is conditional on the fixed table U . At zero-cost states the returned value is zero for every
+outcome.
+
+    We call a seed good if its input bounds c(I, q) ≤ U (I, q) ≤ Ac(I, q) hold simultaneously at every
+state. This section and the next define the refinement table and establish its elementary invariants.
+Sections 6–8 prove the expected-error bound. Sections 9 and 10 give the numerical and evaluation
+algorithms, including their work on inaccurate seed tables. The distinction matters: the refinement
+can underestimate true cost when a > 1.
+
+4.1   Cost cones and their local evaluation
+The number a is an integer power of two. Define
+                                e (I, q) = max{⌈U (I, q)/a⌉, |z(I, q)|}.
+                                U
+
+Since F c(I, q) is an integer, rounding does not spoil the bounds
+
+                            max{c(I, q)/a, |z(I, q)|} ≤ U
+                                                        e (I, q) ≤ F c(I, q).                      (4.2)
+
+These bounds do not give endpoint regularity: neighboring seed entries can have quite different
+overestimates. We replace the scaled table by a lower envelope of cones. The charge L0 |q − r|1 for
+moving away from a center r preserves the lower bounds c/a and |z|, while making the envelope
+Lipschitz. To evaluate it with few seed queries, we retain centers on grids at several cost scales. A
+grid at the scale of the true cost will provide a nearby inexpensive center; its value will then force
+every minimizing center to be nearby as well.
+    The scales b are the powers of two from 1 to the largest power of two at most N . At scale b, put
+gb = max{1, b/P }. A grid state has both coordinates in gb Z ∩ [0, |y|], in nondecreasing order. The
+state rb (q) rounds both coordinates of q down to this grid. All these spacings are integers. If gb = 1,
+rounding is exact; otherwise
+                                          |q − rb (q)|1 < 2b/P.                                    (4.3)
+    At a nonleaf I, consider all cones
+                                             e (I, r) + L0 |q − r|1
+                                       q 7−→ U
+
+whose centers are grid states at some scale b with b/2 ≤ U (I, r) ≤ 4Ab. Include also the cone at
+every state r with U (I, r) = 0, whether or not it occurs on one of these grids. Define w0 (I, q) to be
+their minimum. At a leaf set w0 (I, q) = c(I, q). The exact leaf rule will be used for every later table
+as well.
+
+                                                     14
+Lemma 4.2 (Initial cones). For the fixed seed in Theorem 4.1,
+
+                         max{c/a, |z|} ≤ w0 ≤ 2F c,         Lip(w0 (I, ·)) ≤ L0 .                  (4.4)
+
+At a nonleaf, the following local rule computes this global minimum exactly. If U (I, q) = 0, return
+zero. Otherwise omit the zero cones, enumerate scales
+
+                                  U (I, q)/(16A2 ) ≤ b ≤ 4AU (I, q),                               (4.5)
+
+and enumerate grid centers at sup distance at most U (I, q) from q, retaining the eligibility test
+b/2 ≤ U (I, r) ≤ 4Ab.
+
+Proof. Each cone dominates c(q)/a and |z(q)| by (4.2) and the endpoint Lipschitz bounds. Each
+has Lipschitz constant L0 , so their minimum does too. Leaves satisfy these claims directly.
+   If c(I, q) = 0, the seed has U (I, q) = 0, and its own cone gives zero. For c = c(I, q) > 0, choose
+b ≤ c < 2b and set r = rb (q), e = |q − r|1 . By (4.3),
+
+                       c(I, r) ≥ b − 2b/P ≥ b/2,        c(I, r) < 2b + 2b/P ≤ 4b.
+
+Thus r is an eligible center. Its cone has value at most
+
+                     F c(I, r) + L0 e ≤ F c + (F + L0 )e ≤ F c + 66F b/P ≤ 2F c.
+
+   Any minimizing cone at a positive-cost state consequently has center distance at most 2F c/L0 =
+c/16. Its center’s true cost lies in [15c/16, 17c/16]. A zero center cannot minimize, since its distance
+would be at least c. For a minimizing nonzero center, eligibility therefore gives
+                    U (I, r)   15c   U (I, q)                         17Ac
+               b≥            ≥     ≥          ,     b ≤ 2U (I, r) ≤        ≤ 4AU (I, q).
+                      4A       64A    16A2                              8
+Its sup distance is at most c/16 ≤ U (I, q). Thus the local list contains a global minimizer, and
+every member of the local list belongs to the global family. The two minima agree.
+
+     We use this local rule as the executable definition even when the seed is inaccurate, returning N
+if its nonzero branch has no candidate. Its work remains finite without any seed guarantee. Indeed,
+the scale interval has ratio at most 64A3 , and U (I, q)/b ≤ 16A2 there. The local list therefore
+contains O((1+P A2 )2 (1+log A)) = H O(p∗ +1) raw seed queries. The returned values are nonnegative
+integers of magnitude O((L0 + 1)N ). Global cone identities and Lipschitz continuity are asserted
+only for a seed satisfying Theorem 4.1.
+
+4.2   Wide actions and Bellman propagation
+The next operator combines child estimates into a parent estimate. We first allow each child to
+choose its target independently, paying the connection charge for gaps and overlaps. Its minimum
+over earlier child tables will remain an available parent option throughout the refinement; the more
+restricted choices will use current child tables. Extending each action cost by an endpoint cone
+retains spatial regularity. Repeated propagation will also supply the average cost table used to
+predict child alignments.
+    Let a nonleaf I = (l, u] have child cuts l = l0 ≤ l1 ≤ · · · ≤ lM = u, so Ii = (li−1 , li ]. A
+representative is a pair (b, r) with r a grid state at scale b and
+
+                                       b/(4a) ≤ w0 (I, r) ≤ 8F b.                                  (4.6)
+
+                                                   15
+Write p0 = r− − l. The wide action set Ab,r consists of lists α = (s1 , . . . , sM ) of valid child grid
+states satisfying
+                       |s−
+                         i − li−1 − p0 | ≤ 10b,      i − li − p0 | ≤ 10b.
+                                                   |s+
+Consecutive target intervals need not meet. Their discrepancy is paid for by the connection charge
+connr (α) defined in Section 2. For child tables f , put
+                                              M
+                   Vr (α; f ) = connr (α) +          f (Ii , si ),                                             (4.7)
+                                              X
+
+                                               i=1
+                                    (                        "                                    #)
+                   BI (f )(q) = min w0 (I, q), min L|q − r|1 + min Vr (α; f )                          .       (4.8)
+                                                     (b,r)                        α∈Ab,r
+
+
+Every minimum over an empty set is +∞.
+   The operator BI is monotone in its child tables and is L-Lipschitz in q. It also preserves the
+lower bound max{c/a, |z|}. For the latter assertion, if each child satisfies the lower bound, then
+
+                                        connr (α) +              i c(Ii , si )
+                                                             P
+                           Vr (α; f ) ≥                                          ≥ c(I, r)/a,
+                                                   a
+while the net-change-of-shift inequality gives Vr (α; f ) ≥ |z(I, r)|. Endpoint Lipschitz continuity
+extends both bounds along the cone, and w0 satisfies them too.
+   Define the warmup tables at nonleaves by
+                                                                                    −1
+                                                                                 1 TX
+              wj (I, q) = BI (wj−1 )(q)     (1 ≤ j ≤ T ),               m=             wj ,       d0 = wT .    (4.9)
+                                                                                 T j=0
+
+Here the operator receives the indicated tables on children. Because w1 ≤ w0 and the operator is
+monotone, the warmup is nonincreasing. In particular,
+
+                       max{c/a, |z|} ≤ d0 ≤ m ≤ w0 ≤ 2F c,                          BI (d0 ) ≤ d0 .           (4.10)
+
+The last inequality follows by one further application of the same monotonicity. The tables wj and
+m are L-Lipschitz.
+    The average m is useful because shifting its iteration range by one changes it by only the
+initial-to-final drop divided by T :
+                                             T
+                                          1 X            w0 − wT
+                                                wj = m −         .
+                                          T j=1             T
+
+For any fixed representative and wide action, average the inequalities wj (I, q) ≤ L|q−r|1 +Vr (α; wj−1 )
+and then minimize over that action. The result is
+                                w0 (I, q) − wT (I, q)
+                    m(I, q) −                         ≤ L|q − r|1 + min Vr (α; m).
+                                          T                        α∈Ab,r
+
+Thus parent and child cost proxies satisfy the Bellman comparison up to a controlled averaging
+error. Section 6 will sum this error over a tree of comparison states.
+
+
+
+
+                                                         16
+4.3   Local evaluation of later cones
+The Bellman minimum, and later minima containing selected action cones, admit the same local
+evaluation rule. This rule is also what bounds the computation when a seed is wrong. We enumerate
+complete cells because Section 5 will make one shared choice for every cell; that choice must be
+independent of which query first requests the cell.
+
+Lemma 4.3 (Cone locality). Fix a good seed as in Theorem 4.1. Take a minimum of w0 (I, q) and
+any family of cones of slope L with nonnegative base costs at representatives (b, r). If w0 (I, q) = 0,
+its value is zero. Otherwise it suffices to enumerate scales
+
+                                  w0 (I, q)/(16F ) ≤ b ≤ 8aw0 (I, q)                            (4.11)
+
+and the following whole cells at each scale. Partition endpoint-pair space into half-open cells of
+side θb on each axis, with lower boundaries at multiples of θb. Enumerate the cells intersecting the
+closed sup square of radius w0 (I, q) about q, and all valid grid representatives in these cells.
+
+Proof. Write w = w0 (I, q) > 0. A competitive cone has value at most w and therefore |q −r|1 ≤ w/L.
+Since L0 /L = 1/4, 3w/4 ≤ w0 (I, r) ≤ 5w/4. Representative eligibility yields
+
+                          b ≥ 3w/(32F ) > w/(16F ),        b ≤ 5aw < 8aw.
+
+The representative belongs to the enumerated square and hence to an enumerated cell. Conversely,
+enumerating a whole cell only adds cones already in the global family. This proves exactness.
+
+    For arbitrary local w0 , the scale count in (4.11) is O(1 + log(aF )), polynomial in ℓ. There are
+O((1 + F/θ)2 ) cells per scale and O((1 + P )2 ) grid states per cell. Indeed w0 (I, q)/b ≤ 16F , and
+θb/gb ≤ P . Cells and grid points are generated by ranges of integer indices, without scanning
+unrelated positions. These count bounds do not assume a correct seed. Empty lists give the w0
+option.
+    We have now obtained nonincreasing propagated estimates and the cost proxy m. The next step
+uses m to identify narrow sets of shared child alignments. Expensive searches over the wide actions
+will use earlier tables; the narrow sets limit calls to current tables.
+
+
+5     Predicted bands and the refined tables
+Starting from the fixed seed and the table d0 = wT , we now define d1 , . . . , dS . The construction
+proceeds by node height: when defining the value at a parent and index t, all child tables through
+index t are already defined. This is a mathematical ordering, not a requirement to evaluate those
+tables in full. The algorithm will request only the entries needed by the choices below.
+    There are two ways to choose a current-index action. A shared sample compares rounded actions
+at nearby representatives; extending the chosen cost by a cone gives a spatially regular estimate.
+An online rule uses earlier child values to choose an action with small expected accumulated cost
+relative to every fixed action in a predicted band. The parent update combines these two estimates.
+We first construct the band and its child cost bounds, then specify the online rule and the shared
+samples.
+
+
+
+
+                                                  17
+5.1   A band predicted from prefix costs
+At a representative (b, r) of a nonleaf, define
+
+                                            Z = min Vr (α; m).
+                                                  α∈Ab,r
+
+Skip the band computations at this representative unless Z is finite and strictly positive. Otherwise
+set vb = z(I, r)/Z, the net shift per unit of predicted cost. If shift accumulated proportionally to
+this cost along an alignment, a prefix of cost C would end at shift p0 + vbC. We use this relation to
+predict the shift at each child cut. We call |vb| ≤ 1 − τ the velocity test, and skip unless it holds.
+    For an internal cut 1 ≤ j < M and a real shift p, let Φj (p) be the minimum prefix cost using
+the first j child restrictions of the wide action set. More explicitly, minimize
+                                   j
+                     |s−   −
+                       1 −r |+           m(Ii , si ) +         |s−
+                                                                 i+1 − si | + |sj − (lj + p)|
+                                   X                     X
+                                                                        +       +
+
+                                   i=1                   i<j
+
+over such prefix states. The wide action family is nonempty whenever the band reaches this step, so
+these prefix minima are finite. Each function in the minimum is 1-Lipschitz in p, hence so is Φj .
+    The prefix cost depends on its proposed ending shift. The predicted shift therefore solves the
+approximate fixed-point relation p = p0 + vbΦj (p). The velocity test keeps the Lipschitz constant of
+vbΦj below one, so all sufficiently accurate solutions lie in a short interval. The band below imposes
+this relation at every cut.
+    Let Cb,r be the following set of shared-endpoint actions on the scale-b grid. The outside endpoints
+are exactly r, consecutive child endpoints agree, all endpoint shifts are within 6b of p0 = r− − l, and
+the shift p at every internal cut satisfies
+
+                                         |p − p0 − vbΦj (p)| ≤ τ θb/M.                            (5.1)
+
+All child target states must be valid, so these shared endpoints are in nondecreasing order. Skip if
+Cb,r is empty.
+    The possible shifts at any fixed cut have diameter at most 2θb/M . In fact two allowed shifts
+obey
+                |p − p′ | ≤ 2τ θb/M + |vb| |Φj (p) − Φj (p′ )| ≤ 2τ θb/M + (1 − τ )|p − p′ |.
+No convexity of the allowed shift set is needed.
+   We need a uniform cost bound at each child for both action selection and rounding. For a
+nonempty band, let hi be the smallest power of two at least
+                                                                                   M
+                              (                                    )
+                          max b/M, max w0 (Ii , si (α)) ,                  hΣ =
+                                                                                   X
+                                                                                         hi .
+                                         α∈Cb,r
+                                                                                   i=1
+
+Powers of two below one are allowed here. Every band state at child i has w0 value at most hi .
+These bounds will normalize the online costs and determine a common rounding spacing for each
+child scale. Skip if hΣ > 64F b. Choose a canonical band action in a fixed ordering and round its
+two coordinates separately at child i down to multiples of max{1, θhi }. Denote the resulting action
+by β(b, r). Different children may round a shared endpoint to different positions, so β can have gaps
+or overlaps. It is used as a wide action with its connection charge, rather than as a band action.
+Finally, skip unless it belongs to Ab,r and
+
+                                  |z(Ii , si (β))| ≤ 2hi           (1 ≤ i ≤ M ).                  (5.2)
+
+                                                          18
+Representatives passing all these tests will be called unskipped. These tests affect only the band
+and rounded-action computations; they never remove an action or representative from BI .
+    Under the fixed good seed, the last two guards on β pass whenever the hΣ test passes. Indeed,
+θhi ≥ θb/M ≥ b/P . All relevant quantities are powers of two, so the rounded spacing is a multiple
+of gb . Rounding preserves the order of each child’s two endpoints and the range [0, |y|]. If its spacing
+is one, its error is zero; otherwise each coordinate error is less than θhi . Since |z| ≤ w0 ≤ hi before
+rounding,
+                                     |z(Ii , si (β))| ≤ hi + 2θhi ≤ 2hi .
+The endpoint shift radius after rounding is at most 6b + 64F θb < 10b. Section 6 will prove the
+earlier hΣ test on the needed comparison nodes.
+
+5.2   The finite-mixture interface for online choices
+The online rule uses child values at indices less than t to select one band action at time t. Its
+accumulated current-index cost will be compared with that of each fixed band action in Section 7.
+We encode a mixture of actions by its child-state marginals, with weights chosen to recover the
+unnormalized sum of child costs.
+    Fix one unskipped band C = Cb,r . Its coordinates are pairs (i, s), one for each child and each
+state appearing at that child in a band action. Let dC be their number. Map each action α to the
+probability vector ρ(α) that places mass hi /hΣ at (i, si (α)) for every child, and zero at its other
+coordinates. Let Q = conv{ρ(α) : α ∈ C}. Every vector in this convex hull has the same total mass
+hi /hΣ on the coordinates of child i.
+    Define coordinate vectors
+                                    gbj (i, s) = −dj−1 (Ii , s)/hi ,
+                                   ∆j (i, s) = (dj−1 (Ii , s) − dj (Ii , s))/hi ,
+                                          uj = gbj + (1 − 2κ)∆j .
+Here gbj predicts the negative normalized current cost from the preceding index, and ∆j is the
+observed correction:
+             gbj (i, s) + ∆j (i, s) = −dj (Ii , s)/hi ,           −hΣ ⟨gbj , ρ(α)⟩ =       dj−1 (Ii , si (α)).
+                                                                                       X
+
+                                                                                       i
+
+The fixed mass hi /hΣ in each child block cancels the normalization by hi . The objective below uses
+∆j only for j < t and uses gbt , so its required child indices are all strictly earlier than t.
+   With entropy H(ρ) = − k ρk ln ρk , using 0 ln 0 = 0, let ρt maximize
+                             P
+
+                                              *                     +
+                                  H(ρ) + η              uj + gbt , ρ     over ρ ∈ Q.                             (5.3)
+                                                  X
+
+                                                  j<t
+
+The algorithm computes a finite mixture of band actions whose vector of expected weights is within
+H −3 in ℓ1 distance of ρt , then samples that mixture exactly. Section 9 constructs this mixture
+using rational arithmetic and proves its stated accuracy and sampling cost. Thus (5.3) specifies an
+input-output contract for a finite algorithm, not an optimization oracle.
+    Only the child histories are needed for this rule, not a transcript of earlier queries at the parent.
+Parent draws may be keyed by (I, q, b, t) in addition to pass and copy identifiers. Group choices
+and table values are cached on their complete keys, and every first parent draw uses a fresh source
+independent of the complete child tables. Section 10 makes the resulting deferred evaluation and its
+costs explicit.
+
+                                                             19
+5.3   Shared group samples and the update
+For each node I, scale b, cell from Lemma 4.3, and time 1 ≤ t ≤ S, group all unskipped representatives
+in that whole cell. The following procedure chooses one member of each nonempty group. It is
+defined from complete child tables; later we evaluate its required entries on demand.
+    Sampling and rounding work together here. Sharing the child draws across a cell lets all its
+representatives reuse the same queried child labels. Rounding then limits how many different states
+at one such child can occur across the group. This combination, rather than band width alone,
+bounds the number of current-index recursive calls.
+    For each power of two h in [b/M, 64F b], set
+
+                                      kh = min{M, ⌈Q1 M h/b⌉}.
+
+For each member (b, r), we estimate the child sum in Vr (β(b, r); dt ) by separating the children
+according to their hi . If kh = M , include the contribution with hi = h exactly. Otherwise draw
+kh independent uniform child indices with replacement, using the same draws for every member
+of this group at this scale. For each sampled child include its dt value if its hi = h, and zero
+otherwise; multiply the sampled sum by M/kh . Add the connection charge exactly. Select a member
+minimizing this estimate, breaking ties by a fixed ordering. Then evaluate its actual action cost
+using all children. Samples used for different parent groups and times are independent and are
+independent of descendant randomness.
+     For example, when kh < M , there are O(Q1 M h/b) sampled child labels, and at most O(θ−2 (1 +
+b/h)) rounded states at each label across the cell. Their product is M ℓO(1) . Lemma 10.2 proves this
+count and the analogous bound for exact scales, including executions with inaccurate seeds.
+     Let Πt (I, q) be the minimum of BI (dt−1 )(q) and the actual selected group costs, each extended
+from its selected representative by L|q − r|1 . Compute this minimum by (4.11) and whole-cell
+enumeration. A group’s choice is cached for the whole cell, independent of which query first requests
+it. Lemma 4.3 shows that this local computation equals the global cone minimum for a good seed.
+     There is also an online action query at each scale passing (4.11). Put r = rb (q) and proceed only
+if this is an unskipped representative. Draw one action αt ∈ Cb,r by the rule just defined, which uses
+child histories with index less than t. Evaluate
+
+                                     L|q − r|1 +       dt (Ii , si (αt )).
+                                                   X
+
+                                                   i
+
+Let Yt (I, q) be the minimum of these online query values, or +∞ if there are none. At a nonleaf
+define                       
+                             0,
+                                                                            w0 (I, q) = 0,
+                 dt (I, q) =                    
+                                                   Πt (I, q)
+                                                                                          (5.4)
+                             min Πt (I, q), max
+                                                            , Yt (I, q)   , w0 (I, q) > 0.
+                                                    1+δ
+Leaves continue to use their exact values. At a positive w0 state, this update truncates Yt to the
+interval [Πt /(1 + δ), Πt ]: an inexpensive online action can improve the value only within this interval.
+The upper endpoint retains the Bellman comparison, while the lower endpoint transfers the spatial
+regularity of Πt to dt up to a factor 1 + δ. For a fixed pass, these definitions are well founded by
+induction on node height: current-index values are requested only at children, and at a fixed node
+the remaining refinement values have earlier indices. Section 10 gives the complete lazy evaluation
+order across passes.
+
+
+
+
+                                                   20
+5.4   Deterministic invariants
+Lemma 5.1. For a seed satisfying Theorem 4.1, every outcome of the refinement obeys
+
+                               max{c/a, |z|} ≤ dt ≤ dt−1 ≤ w0 ,                                            (5.5)
+                                                                    ′             ′
+                                       dt (I, q) ≤ (1 + δ)dt (I, q ) + L|q − q |1 .                        (5.6)
+
+At nonleaves one also has
+                                     BI (dt )(q) ≤ dt (I, q) ≤ BI (dt−1 )(q).                              (5.7)
+For d0 , the spatial bound holds with Lipschitz constant L and without the factor 1 + δ.
+Proof. Induct on node height, and at a fixed node on t. Every extra candidate in Πt is a current-value
+wide-action cone. The Bellman candidate uses earlier child values, which are at least the current ones
+by induction. Hence Πt ≥ BI (dt ), whereas Πt ≤ BI (dt−1 ). Each online candidate is a current-value
+wide-action cone too, so Yt ≥ BI (dt ), including the empty case. Taking the specified minimum and
+maximum in (5.4) proves (5.7). In particular, no lower bound is inferred from Πt /(1 + δ) alone.
+    At t = 1, (4.10) now gives d1 ≤ d0 . At later times the left inequality in (5.7) at time t − 1 gives
+dt ≤ dt−1 . The lower bound follows from Bellman preservation and the child induction.
+    The global cone interpretation makes Πt L-Lipschitz, whether or not any group estimate is
+accurate. Moreover Πt /(1 + δ) ≤ dt ≤ Πt . Thus
+
+              dt (I, q) ≤ Πt (I, q) ≤ Πt (I, q ′ ) + L|q − q ′ |1 ≤ (1 + δ)dt (I, q ′ ) + L|q − q ′ |1 .
+
+If w0 (I, q) = 0, the Bellman and Πt values are zero, and the explicit zero branch agrees with these
+inequalities. The assertions for d0 follow from the warmup.
+
+     For execution on an arbitrary seed, the local construction still gives nonnegative values at most
+its local w0 . All representative lists and skipped-band tests remain finite. We use these unconditional
+facts for work bounds, and do not extend the correctness invariants of Lemma 5.1 to inaccurate
+seeds.
+
+5.5   Accuracy of one group selection
+For a band action define xt (α) = i dt (Ii , si (α)). Two band actions differ by at most 4θb/M in each
+                                      P
+
+child’s endpoint-pair metric. Rounding the canonical action adds at most 2θhi , so |si (α) − si (β)|1 ≤
+6θhi . Also connr (β) ≤ 2θhΣ , because the unrounded action has shared endpoints. It follows that
+
+                                    Vr (β; dt ) ≤ (1 + δ)xt (α) + (6L + 2)θhΣ ,
+                                                                                                           (5.8)
+                                dt (Ii , si (β)) ≤ 2hi .
+
+The first inequality uses (5.6). For the second, use dt ≤ w0 and the L0 -Lipschitz bound to obtain
+w0 (Ii , si (β)) ≤ hi + 2L0 θhi ≤ 2hi .
+Lemma 5.2 (One-group accuracy). Under the seed hypothesis of Theorem 4.1, fix complete child
+tables and one group at time t. With conditional probability at least 1−H −4 , all action-cost estimates
+used to choose its representative are within γb of their actual costs. Consequently, for any specified
+unskipped member (b, r) of this group, on the same event, simultaneously for every valid parent state
+q and every α ∈ Cb,r ,
+
+               Πt (I, q) ≤ L|q − r|1 + (1 + δ)xt (α) + e∗ b,            e∗ = 2γ + 512LF θ ≤ κδ.            (5.9)
+
+Here the inequality uses the global cone minimum, equivalently its local evaluation from Lemma 4.3.
+
+                                                           21
+Proof. Conditioning fixes the bands, the hi , the rounded actions, and all their child costs. The
+parent’s group samples remain independent of these data. For a fixed member and sampled scale h,
+normalize one sample to
+                                              M
+                                        X=       1h =h dt (Ii , si (β)),
+                                               b i
+where i is uniform in {1, . . . , M }. By (5.8),
+
+              0 ≤ X ≤ 2M h/b,        EX ≤ 2hΣ /b ≤ 128F,         Var(X) ≤ 256F M h/b.
+
+When kh < M , the number of independent samples is at least Q1 M h/b. Bernstein’s inequality [27,
+Theorem 4.16], with normalized error α0 = γ/(2ℓ), gives a failure probability at most
+                                                   !
+                                       Q1 α02
+                           2 exp −                     ≤ 2 exp(−ℓ37 /3000).
+                                   512F + 4α0 /3
+
+When kh = M , the contribution is exact and has no failure event. There are at most 2ℓ scales and
+at most (P + 1)2 group members. A union bound is at most H −4 at the absolute cutoff. Summing
+the errors over scales gives error at most γb for every member. Shared samples between members
+cause no difficulty for this union bound.
+    On this event, estimated-cost minimization followed by actual evaluation selects a cost at most
+that of the specified member plus 2γb. The selected representative is in the same cell, so its
+endpoint-pair distance from r is at most 2θb. Using (5.8) and hΣ ≤ 64F b therefore gives (5.9), since
+its additive coefficient is at most
+
+                        2γ + (384LF + 128F + 2L)θ ≤ 2γ + 512LF θ ≤ κδ.
+
+The comparison with every band action is simultaneous because (5.8) is deterministic and uniform
+in that action.
+
+    This is a conditional statement for one whole cell and time. The accuracy proof will not require
+all group samples throughout the recursion to succeed together. Instead it will charge each group’s
+failure probability inside an expected regret bound at its comparison node.
+
+
+6    A comparison tree and cost-weighted curvature
+Multiscale restrictions of alignment paths, controlled by bounds on their total deviation, are central
+to Mao and Rubinstein’s approximation scheme [21, Sections 2.3 and 6.1]. Here the weights are
+warmup cost estimates. They need not add exactly from children to parent, so our energy calculation
+also charges their mass discrepancy and the difference between a comparison action and a minimum
+wide action.
+    Fix a seed table satisfying the hypotheses of Theorem 4.1. We construct a comparison tree
+from exact alignments. Its states are fixed before the randomness of this refinement is drawn. The
+warmup values supply weights on this tree. A telescoping energy calculation controls the total
+cost of nodes with large curvature or a large gap between the comparison action and the minimum
+wide action. At the other nodes, the velocity test has two useful outcomes. Passing it places the
+comparison action in the computed band; failing it means that length imbalance nearly accounts for
+the warmup cost. Section 7 will use these alternatives to bound the refinement error.
+
+
+
+
+                                                 22
+6.1    Exact paths and rounded child states
+Start at a state (I, q) of true cost D = c(I, q). If D = 0, the good-seed bounds force all its estimates
+to be zero, so assume D > 0. Stop a branch at a leaf of the interval tree or at a state of cost zero.
+At each remaining node, write c = c(I, q) > 0, choose the dyadic scale b with b ≤ c < 2b, and put
+
+                                    r = rb (q),     e = |q − r|1 ≤ 2b/P.
+
+Choose an optimal alignment for (I, r) and points on this path at the child cuts, in their path
+order. Use its exact endpoints at the outside cuts. For repeated cuts, repeated path points are
+permitted; alternatively a vertical segment can be assigned to one of the intervening empty children.
+Round the internal target anchors down to the grid at scale b. The resulting child states q1 , . . . , qM
+remain ordered and share endpoints, with outside endpoints exactly r. Denote this action by α∗ ,
+and continue the construction at its child states.
+    Fix a deterministic order for all choices of optimal paths and cut points. The entire comparison
+tree, including its stopping states, then depends only on the input strings and its starting state. In
+particular it is independent of every group sample and online draw in the refinement. This tree is
+used only in the proof.
+
+Lemma 6.1 (Comparison costs). At each nonterminal of the comparison tree, (b, r) is a represen-
+tative, b satisfies the local scale restriction (4.11), and α∗ is a wide action whose endpoint shifts are
+within 6b of p0 = r− − l. Writing ci = c(Ii , qi ), we have
+
+                                          ci ≤ (1 + 4M/P )c,      c ≤ Le +                          (6.1)
+                                     X                                         X
+                         c(I, r) ≤                                                  ci .
+                                      i                                         i
+
+Let Cterm be the sum of terminal true costs. Then
+
+                         Cterm ≤ (1 + 8M J/P )D ≤ 2D,
+                      X
+                                 c ≤ 2JD,
+                                                                  X
+                                                                             e ≤ 4JD/P.             (6.2)
+                   nonterminal                                 nonterminal
+
+The sum of true costs at any depth is at most 2D, also if stopped costs are carried unchanged to
+subsequent depths. At every terminal, m = c and every refinement estimate equals c.
+
+Proof. If the grid spacing is one, no rounding changes any endpoint. Otherwise an endpoint moves
+by less than b/P . Thus
+                                        c − e ≤ c(I, r) ≤ c + e.
+The initial-cone bounds give
+
+                   w0 (I, r) ≥ c(I, r)/a ≥ b/(4a),        w0 (I, r) ≤ 2F c(I, r) ≤ 8F b,
+
+so (b, r) is a representative. At q, the same bounds imply w0 (I, q)/(16F ) ≤ b ≤ 8aw0 (I, q), as
+required for (4.11).
+    Along an alignment, each change of shift is caused by an insertion or deletion and is at most the
+cost of that part of the path. Hence every unrounded anchor shift differs from p0 by at most c(I, r).
+Rounding adds less than b/P , so the distance is at most
+
+                                     c + e + b/P < (2 + 3/P )b < 6b.
+
+This proves the wide-action and radius assertions.
+
+                                                     23
+   The exact subpath costs before rounding sum to c(I, r). Each internal anchor affects the
+endpoints of two child problems. Endpoint Lipschitz continuity therefore gives
+
+                        ci ≤ c(I, r) + 2(M − 1)b/P ≤ c + 2M b/P ≤ (1 + 4M/P )c.
+                   X
+
+                    i
+
+Concatenation gives the other inequality in the first part of (6.1); it also gives c ≤ c(I, r) + e ≤
+   i ci + Le. These arguments apply without change to repeated cuts and empty child intervals.
+P
+
+     At each successive frontier of the tree, carry terminal costs unchanged. The frontier sum grows by
+a factor at most 1 + 4M/P in one step. The parameter bounds give 4M J/P ≤ 1/2, and consequently
+
+                                   (1 + 4M/P )J ≤ 1 + 8M J/P ≤ 2.
+
+This proves the terminal and level bounds. There are at most J nonterminal levels. Summing
+e ≤ 2b/P ≤ 2c/P proves the remaining bounds in (6.2).
+   At a leaf, every table uses the exact answer. At a zero-cost state, the good seed is zero and the
+upper bound w0 ≤ 2F c forces all warmup and refinement values to be zero. These are precisely the
+terminal cases.
+
+6.2   Mass and energy telescopes
+If the warmup masses added exactly from children to parent, the energies z 2 /m would telescope up
+to endpoint-rounding errors. The masses do not add exactly: a parent’s mass can be either larger
+or smaller than its children’s total. The warmup inequalities bound the total upward discrepancy,
+and conservation of mass over the comparison tree then bounds the total downward discrepancy as
+well. This is why the energy argument can use cost estimates instead of exact additive weights.
+    At a nonterminal use the representative and child states just constructed, and define
+
+      mq = m(I, q),       mi = m(Ii , qi ),       W =               G = W − Z,     R = mq − W.
+                                                        X
+                                                             mi ,
+                                                         i
+
+Here Z is the minimum wide-action cost with child table m, as in Section 5. The comparison action
+has zero connection cost, so W ≥ Z. The lower invariants and the comparison costs imply
+
+                        0 < max{c(I, r)/a, |z(I, r)|} ≤ Z ≤ W ≤ 4F c < 8F b.                      (6.3)
+
+In particular, the denominator Z defining vb is positive at every nonterminal comparison representa-
+tive.
+    Write zi = z(Ii , qi ) and zr = z(I, r). Since the child targets share endpoints, i zi = zr . Define
+                                                                                     P
+
+the curvature quantity
+                                                  X z2      z2
+                                             K=        i
+                                                         − r,                                      (6.4)
+                                                   i
+                                                      mi W
+with 0/0 = 0. A zero mi necessarily has zi = 0 by the lower invariant. For v = zr /W , the weighted
+variance identity is
+                                          X (zi − vmi )2
+                                   K=                      ≥ 0.                                (6.5)
+                                        i:m >0
+                                                   mi
+                                              i
+
+These weights are costs supplied by the warmup; they are not interval lengths.
+
+
+
+
+                                                    24
+Lemma 6.2 (Total curvature). On the fixed comparison tree, put h = Le + w0 (I, q)/T at each
+nonterminal. Then
+                                     (K + G) ≤ 4Cterm + 3                     e+4                         (6.6)
+                          X                                        X                   X
+                                                                                                  h.
+                       nonterminal                              nonterminal         nonterminal
+
+Consequently,
+                                           (K + G) ≤ 5000F (1 + J/P + J/T )D.                             (6.7)
+                                 X
+
+                             nonterminal
+Proof. First compare the parent and child warmup averages. For each wide action, average the
+parent warmup inequalities over indices 1, . . . , T , using child indices 0, . . . , T − 1. Minimize the
+resulting action cost. This gives
+                                               w0 (I, q) − wT (I, q)
+                                      mq −                           ≤ Le + Z.
+                                                         T
+Thus
+                R + G ≤ h,             R+ ≤ h,           G ≤ R− + h,           R± = max{±R, 0}.           (6.8)
+The masses cancel exactly across the tree:
+                    R = mroot − Cterm ,                             R+ + Cterm ≤           h + Cterm .
+                X                                   X           X                      X
+                                                         R− ≤
+In particular, summing G ≤ R− + h gives G ≤ Cterm + 2
+                                                    P                    P
+                                                                              h.
+    Next define the energy of any comparison state by
+                                           E(I, q) = z(I, q)2 /m(I, q),
+again using 0/0 = 0. At a nonterminal put zq = z(I, q). We have |zq | ≤ mq , |zr − zq | ≤ e, and
+|zr | ≤ W . Moreover,
+                                e ≤ 2c/P ≤ 2amq /P ≤ mq ,
+because a ≤ Ainit and 2Ainit < P . Therefore |zr | ≤ 2mq . The identity
+                                       zq2   zr2   zq2 − zr2 zr2 (W − mq )
+                                           −     =          +
+                                       mq    W        mq          mq W
+has first term at most 3e. If W ≤ mq , its second term is nonpositive; otherwise the bounds |zr | ≤ W
+and |zr | ≤ 2mq bound it by 2(W − mq ) = 2R− . It follows that
+
+                                                E(Ii , qi ) − E(I, q) + 3e + 2R− .                        (6.9)
+                                           X
+                                     K≤
+                                           i
+
+No zero denominator occurs at a nonterminal, by (6.3); zero child masses have already been treated.
+   Terminal energies are at most their true costs, and the root energy is nonnegative. Summing (6.9)
+therefore gives
+                         K ≤ Cterm + 3             e+2       R− ≤ 3Cterm + 3           e+2
+                    X                          X         X                         X         X
+                                                                                                   h.
+Adding the preceding bound on G proves (6.6). It remains only to substitute the comparison-tree
+                                       P
+
+bounds. By Lemma 6.1 and w0 ≤ 2F c,
+                                               h ≤ 512F JD/P + 4F JD/T.                                  (6.10)
+                                        X
+
+
+Together with (6.2), this yields
+                             (K + G) ≤ 8D + (2048F + 12)JD/P + 16F JD/T,
+                         X
+
+
+which implies (6.7).
+
+                                                           25
+   Call a nonterminal bad if K > bH −1/4 or G > bH −1/4 ; otherwise call it non-bad. These are
+conditions on the deterministic comparison tree and its warmup values.
+Corollary 6.3. The total true cost of bad nodes satisfies
+
+                                     c ≤ 10000F H 1/4 (1 + J/P + J/T )D.                              (6.11)
+                               X
+
+                               bad
+
+Proof. At a bad node, c < 2b < 2H 1/4 (K + G). Sum and apply Lemma 6.2.
+
+6.3   Coverage by the computed bands
+The preceding estimate controls the cost of exceptional nodes. We now show that at every remaining
+node which passes the velocity test, the band and rounding guards retain the comparison action.
+This is the point where cost-weighted curvature produces a usable prediction for the algorithm.
+Lemma 6.4 (Comparison-band coverage). At a non-bad comparison node with |vb| ≤ 1 − τ , the
+action α∗ belongs to Cb,r . Its representative is not skipped: the band is nonempty, hΣ ≤ 64F b, and
+the rounded action β(b, r) passes both the wide-action and imbalance guards.
+Proof. Let p∗j be the comparison shift at internal cut j, and write Mj = i≤j mi . The comparison
+                                                                                   P
+
+prefix is feasible for Φj (p∗j ), so this prefix cost is at most Mj . Conversely, concatenate any feasible
+prefix in that minimum with the comparison suffix. The prefix’s final jump is exactly its connection
+to the suffix. The resulting wide action has cost at least Z, and hence
+
+                                         Mj − G ≤ Φj (p∗j ) ≤ Mj .
+
+With v = zr /W , we also have
+                                        |v − vb|W = |zr |G/Z ≤ G.
+Weighted Cauchy–Schwarz in (6.5) gives
+                                         X                       √
+                                              |zi − vmi | ≤          KW .
+                                          i
+
+The shared endpoints imply p∗j − p0 =         i≤j zi . Combining the last three observations yields
+                                          P
+
+                                                          √
+                            |p∗j − p0 − vbΦj (p∗j )| ≤         KW + 2G ≤ τ θb/M.                      (6.12)
+
+For completeness, the last numerical inequality follows from K, G ≤ bH −1/4 , W < 8F b, and the
+parameter bounds:
+                     M √                  √
+                        ( KW + 2G) ≤ 8ℓ H −3/40 + 2H −1/5 ≤ ℓ−44 = τ θ.
+                     b
+                                                               √
+Indeed ℓ200 ≤ H 1/100 bounds the middle expression by 8ℓ ℓ−1500 + 2ℓ−4000 . The radius and
+shared-endpoint conditions were proved in Lemma 6.1. Thus (6.12) proves α∗ ∈ Cb,r .
+    The diameter bound for the band implies that any of its child states is within 4θb/M of qi in
+endpoint metric. Using the L0 -Lipschitz property of w0 and the factor of at most two from dyadic
+ceiling, we get
+                               hΣ ≤ 2b + 2    w0 (Ii , qi ) + 8L0 θb
+                                           X
+
+                                                  i
+                                      ≤ 2b + 4F           ci + 8L0 θb ≤ 64F b.
+                                                  X
+
+                                                      i
+
+
+                                                          26
+The last step uses (6.1), c < 2b, and the parameter range. This verifies the sum guard.
+   Under the fixed good seed, the rounding verification following (5.2) applies as soon as this sum
+guard holds. It shows that β(b, r) is a wide action and satisfies the imbalance guard. Rounding
+preserves the order of each child’s two endpoints; different child spacings may separate shared
+endpoints, with total connection charge at most 2θhΣ . Thus every guard passes.
+
+
+7     Conditional regret and the first crossing
+Fix a seed table satisfying the hypothesis of Theorem 4.1, and fix the comparison tree from Section 6.
+We will bound the error accumulated at its nodes over the refinement indices. The estimates may
+lie below true cost when a > 1. To keep such underestimation from cancelling an error elsewhere,
+define, for the analysis only,
+                                   dt (I, q) = max{c(I, q), dt (I, q)}.
+At a nonterminal comparison node use the notation c, b, r, e, qi , mi , W, G, K of Section 6, and set
+
+                                     Rt (I, q) = dt (I, q) − Le −           dt (Ii , qi ).           (7.1)
+                                                                      X
+
+                                                                        i
+
+These quantities telescope over the fixed comparison tree. We first bound their sum in time at an
+arbitrary node, then improve that bound on a node whose comparison action belongs to a computed
+band.
+
+7.1    A telescoping bound at every comparison node
+Lemma 7.1. At every nonterminal comparison node,
+                    S
+                                       d0 − dS (Ii , qi ) ≤       (mi − |zi |) ≤ W − |z(I, r)|,      (7.2)
+                    X            X                           X
+                          Rt ≤
+                    t=1          i                            i
+
+where zi = z(Ii , qi ). In particular, the bound is at most 4F c. If the node is not bad and |vb| > 1 − τ ,
+it is at most (H −1/4 + 4τ F )c.
+
+Proof. The Bellman option and the comparison action give
+
+                                         dt (I, q) ≤ Le +         dt−1 (Ii , qi ).
+                                                              X
+
+                                                              i
+
+The right side with all child values replaced by their clipped values is at least c, by Equation 6.1. It
+therefore also bounds dt (I, q). Subtracting the same expression at index t and summing proves the
+first inequality in Equation 7.2.
+     For the second inequality, consider a child separately. If d0 ≤ ci , monotonicity makes both
+clipped endpoint values equal to ci , so their difference is zero, while mi ≥ |zi |. If d0 > ci , then
+d0 = d0 ≤ mi and dS ≥ |zi |. This proves the required difference bound in both cases; it does not
+require d0 ≤ mi in the first case. Finally, i |zi | ≥ |z(I, r)| and W ≤ 4F c.
+                                               P
+
+     For the last assertion, |vb| = |z(I, r)|/Z > 1 − τ implies
+
+                             W − |z(I, r)| ≤ G + τ W ≤ (H −1/4 + 4τ F )c,
+
+using G ≤ bH −1/4 and b ≤ c at a node that is not bad.
+
+
+                                                         27
+7.2   An entropy inequality with fixed block masses
+Exponential weighting and its potential analysis have a classical role in online learning; see Freund
+and Schapire [13]. Our predicted objective has the form of optimistic regularized leader, as studied
+by Rakhlin and Sridharan [26, Section 2]. For our action vectors, each child receives a fixed total
+probability mass. Cost decrements may differ greatly between children, but their variation within
+a child is small. The following deterministic lemma isolates the reason that this weaker variation
+bound suffices.
+
+Lemma 7.2 (Monotone costs with fixed block masses). Let Q be a nonempty compact convex
+set of probability vectors in Rd , containing a vector with every coordinate positive. Partition the
+coordinates into blocks, and suppose that the total mass in each block is the same for every vector in
+Q. For an integer S ≥ 1, let f0 , . . . , fS ∈ [0, 1]d be coordinatewise nonincreasing. For η > 0 and
+0 < κ < 1/2, set
+
+                       gbt = −ft−1 ,         ∆t = ft−1 − ft ,           ut = gbt + (1 − 2κ)∆t .
+
+Suppose that the range of ∆t within each block is at most κ/η for every 1 ≤ t ≤ S. Let ρt maximize
+                             *                  +
+                H(ρ) + η             uj + gbt , ρ                               H(ρ) = −         ρk ln ρk ,
+                              X                                                              X
+                                                     over ρ ∈ Q,
+                               j<t                                                           k
+
+with 0 ln 0 = 0. For every ρ∗ ∈ Q and every integer 0 ≤ s ≤ S,
+                               s                           s
+                                                                                ln d
+                                     ⟨ft + κ∆t , ρt ⟩ ≤          ⟨ft , ρ∗ ⟩ +        + 2κ.
+                               X                           X
+                                                                                                              (7.3)
+                               t=1                         t=1
+                                                                                 η
+
+For any ζ ≥ 0, replacing each ρt on the left by a vector within ζ in ℓ1 distance adds at most sζ to
+the bound.
+
+Proof. The monotone cost vectors satisfy, coordinatewise,
+                                                     S
+                                       ∆t ≥ 0,             ∆t = f0 − fS ≤ 1.                                  (7.4)
+                                                     X
+
+                                                     t=1
+
+Define the potential
+                                          Ψ(v) = max{H(ρ) + η⟨v, ρ⟩}.
+                                                    ρ∈Q
+
+Compactness gives a maximizer, and strict concavity of entropy makes it unique. It is positive:
+moving a small distance u from a vector with a zero coordinate toward the positive feasible vector
+increases entropy by a positive multiple of u ln(1/u) + O(u), whereas the linear term changes by
+only O(u). At a positive maximizer p, first-order optimality along feasible segments gives
+
+                                     ⟨∇H(p) + ηv, ρ − p⟩ ≤ 0               (ρ ∈ Q).
+
+Since H(ρ) − H(p) = ⟨∇H(p), ρ − p⟩ − DKL (ρ∥p), we obtain the precise penalty
+
+                                      H(ρ) + η⟨v, ρ⟩ ≤ Ψ(v) − DKL (ρ∥p).                                      (7.5)
+
+Here DKL (ρ∥p) = k ρk ln(ρk /pk ), with zero terms interpreted as zero. The penalty therefore holds
+                  P
+
+on Q itself, even when its feasible directions are restricted.
+
+                                                           28
+   Put vt−1 =     j<t uj . Evaluating the old objective at the maximizer ρt of the new one gives
+                P
+
+
+                                  Ψ(vt−1 + gbt ) − Ψ(vt−1 ) ≤ η⟨gbt , ρt ⟩.                        (7.6)
+
+This inequality remains valid when the increment is negative. To add the remaining vector (1−2κ)∆t ,
+let µ be the vector whose coordinates are the minimum of ∆t in their block, and write v ′ = ∆t − µ.
+Then 0 ≤ ηvk′ ≤ κ and µ ≥ 0. Moreover ⟨µ, ρ⟩ is the same for every ρ ∈ Q, because the block
+masses are fixed. Thus the possibly large block minima contribute exactly the same linear increment
+at every feasible vector; only the small within-block remainder needs an exponential estimate.
+Equation 7.5 thus bounds the remaining potential increment by
+
+                            η(1 − 2κ)⟨µ, ρt ⟩ + ln         ρt,k exp η(1 − 2κ)vk′ .                 (7.7)
+                                                     X                          
+
+                                                      k
+
+To justify the logarithmic term, extend the supremum with its relative entropy penalty to the full
+probability simplex and normalize the weights ρt,k exp(η(1 − 2κ)vk′ ). The resulting objective equals
+the displayed logarithm minus relative entropy to these normalized weights, whose nonnegativity
+proves the bound.
+   For 0 ≤ x ≤ κ ≤ 1/2,
+                                     e(1−2κ)x ≤ 1 + (1 − κ)x.                                    (7.8)
+Indeed the derivative of ln(1 + (1 − κ)x) − (1 − 2κ)x is
+
+                                       κ − (1 − 2κ)(1 − κ)x
+                                                            ≥ 0,
+                                           1 + (1 − κ)x
+
+and the expression vanishes at zero. Apply Equation 7.8 with x = ηvk′ ≤ κ, and then use ln(1+y) ≤ y.
+Because µ ≥ 0, Equation 7.7 is at most η(1 − κ)⟨∆t , ρt ⟩. Combining the two increments yields
+
+                              Ψ(vt ) − Ψ(vt−1 ) ≤ η ⟨gbt + (1 − κ)∆t , ρt ⟩ .
+
+   Sum through s, use Ψ(0) ≤ ln d, and evaluate the last potential at ρ∗ . Its entropy is nonnegative.
+Replacing the coefficient 1 − 2κ in the accumulated comparator objective by 1 loses at most
+                                              * s              +
+                                         2κ          ∆t , ρ∗       ≤ 2κ
+                                               X
+
+                                               t=1
+
+by Equation 7.4. Finally,
+
+                         gbt + ∆t = −ft ,       gbt + (1 − κ)∆t = −(ft + κ∆t ).
+
+Reversing the signs gives (7.3). The cost vector ft + κ∆t = κft−1 + (1 − κ)ft lies in [0, 1]d , so an ℓ1
+error of at most ζ costs at most ζ per term.
+
+    Apply the lemma to an unskipped band C = Cb,r , conditioning on the complete child tables,
+including the warmup and all indices through S. The band, the scales hi , and its action hull Q are
+then fixed. Take the child coordinates as blocks and set
+
+                                         ft (i, s) = dt (Ii , s)/hi .
+
+The action hull is compact and convex, and averaging its action vectors gives a positive feasible
+vector. Every vector has mass hi /hΣ in child block i. The refinement invariants give 0 ≤ dS ≤ · · · ≤
+
+                                                      29
+d0 ≤ w0 ≤ hi on band coordinates, so the normalized costs meet the monotonicity and unit bounds
+of the lemma.
+    Two states in a child block have endpoint-pair distance at most 4θb/M . The spatial bound (5.6),
+used in both directions and with dt ≤ hi , bounds their cost difference at one index by δhi + 4Lθb/M ;
+the stronger bound at index zero also suffices. Since hi ≥ b/M , the within-block range of ∆t is at
+most
+                                       2δ + 8Lθ ≤ 3δ ≤ κ/η.                                      (7.9)
+Here 8Lθ = 1024ℓ−39 ≤ ℓ−10 and 3ηδ = 3ℓ−5 ≤ κ. The lemma therefore applies to exactly the
+objective (5.3), with d = dC . Conditioning on child tables leaves the parent group samples and
+online draws with their prescribed laws, since their streams are separate from descendant streams.
+No independence among child tables is needed.
+    To express the conclusion in action costs, put
+
+                                              xt (α) =           dt (Ii , si (α)).
+                                                          X
+
+                                                             i
+
+The fixed coordinate weights give
+
+                                        hΣ ⟨ft , ρ(α)⟩ = xt (α),
+                              hΣ ⟨ft + κ∆t , ρ(α)⟩ = xt (α) + κ xt−1 (α) − xt (α) .
+                                                                                                  
+
+
+If αt is drawn from the computed mixture, its expected action vector is that mixture’s mean.
+Lemma 7.2, with ζ = H −3 , thus gives every fixed band action α∗ and prefix 0 ≤ s ≤ S the
+conditional bound
+          " s                                                              #    s
+                xt (αt ) + κ xt−1 (αt ) − xt (αt )       child tables ≤               xt (α∗ )
+           X                                                                  X
+      E
+          t=1                                                                   t=1                                  (7.10)
+                                                                                              ln dC
+                                                                                                              
+                                                                                + hΣ                + 2κ + sH −3 .
+                                                                                                η
+The next argument shows why the decrement term on the left is enough to cover the clipping in the
+parent update.
+
+7.3       Clipping before and after the first crossing
+We now apply the entropy inequality at a comparison node that is not bad and satisfies |vb| ≤ 1 − τ .
+Lemma 6.4 ensures that its comparison action α∗ belongs to the unskipped band Cb,r and that all
+its guards pass. Write
+                                      At (α) = Le + xt (α).
+The entropy bound controls these action costs. The following proposition transfers that control to
+the clipped parent regret.
+
+Proposition 7.3. Condition on the complete child tables at such a comparison node. Then
+                                 " S
+                                                                          ln dC
+                                                         #                                           
+                                                                                + 2κ + SH −3
+                                  X
+                             E         Rt child tables ≤ hΣ
+                                 t=1
+                                                                            η                                        (7.11)
+                                                                                     −4
+                                                                  + 2δc + 2SH             F c.
+
+Here hΣ ≤ 64F b and ln dC ≤ 4(p∗ + 21)ℓ.
+
+                                                                 30
+Proof. Let t× be the first t ∈ {1, . . . , S} for which minα∈C At (α) < c, or put t× = S + 1 if there is
+none. This index depends only on the conditioned child tables. It is an analysis device, not a test
+performed by the algorithm. We will use (7.10) on the fixed prefix 1 ≤ t < t× .
+    Let Et be the failure event for the group approximation associated with this representative. By
+Lemma 5.2, Pr(Et | child tables) ≤ H −4 , and on its complement Equation 5.9 holds for every action
+in the band. For the online action αt sampled for this band, we claim that on the prefix
+                             dt (I, q) ≤ Le + xt (αt ) + κ xt−1 (αt ) − xt (αt )
+                                                                               
+                                                                                                     (7.12)
+                                         + 2F c 1Et .
+
+Every action cost At (α) is at least c on this prefix, and the online candidate satisfies Yt (q) ≤ At (αt ).
+If dt (I, q) ≤ At (αt ), the claim follows at once from child monotonicity. Otherwise, the update
+Equation 5.4 forces
+                                                                       Πt (q)
+                               Πt (q) > (1 + δ)At (αt ),   dt (I, q) =        .
+                                                                       1+δ
+The earlier-index Bellman option also gives Πt (q) ≤ Le+xt−1 (αt ), so, writing ∆x = xt−1 (αt )−xt (αt ),
+
+                                        ∆x > δAt (αt ) ≥ δc ≥ δb.
+
+On Etc , Equation 5.9 and e∗ ≤ κδ now give the full excess calculation
+                                                       e∗ b − δLe    e∗ b
+                                 dt (I, q) − At (αt ) ≤           ≤
+                                                          1+δ       1+δ
+                                                        κδb
+                                                     ≤        ≤ κ∆x.
+                                                       1+δ
+On Et , the added term 2F c suffices because dt (I, q) ≤ 2F c. This proves Equation 7.12 without
+requiring independence between the sampled action and the group event.
+   If t× ≤ S, choose an action attaining the crossing. On Etc× , its group bound gives
+
+                     Πt× (q) ≤ Le + (1 + δ)xt× (α) + e∗ b < c + δc + e∗ b ≤ c + 2δc.
+
+Thus the clipped regret at that index is at most 2δc, with an additional 2F c allowed on failure. At
+every later index, the same crossing action and child monotonicity imply BI (dt−1 )(q) < c. Hence
+dt (I, q) < c, dt (I, q) = c, and the regret is nonpositive by Equation 6.1.
+     It remains to sum (7.12) on this prefix. Use (7.10) with s = t× − 1 and the comparison action
+α∗ . Since xt (α∗ ) ≤ i dt (Ii , qi ), its comparator costs are bounded by the child terms subtracted in
+                        P
+
+each regret. The expected prefix regret is therefore at most
+                                                ln dC
+                                                                  
+                                       hΣ             + 2κ + SH −3 ,
+                                                  η
+apart from the explicit failure charges in (7.12). The prefix and possible crossing contain at most S
+failure events, each of conditional probability at most H −4 . Adding their expected costs and the
+crossing charge proves Equation 7.11.
+    Finally each child has at most (21P )2 possible states within the wide shift radius. Thus
+dC ≤ M (21P )2 , from which ln dC ≤ 4(p∗ + 21)ℓ follows using log2 H ≤ ℓ. The bound on hΣ is one of
+the band guards.
+
+   The expectation in Proposition 7.3 concerns one node after fixing its child tables. Integrating it
+and summing over the fixed comparison tree uses only linearity of expectation. No event asserting
+that every group in the recursive computation succeeds is required.
+
+                                                      31
+8     Accuracy and the sequence of seed passes
+We first sum the node estimates to prove the refinement guarantee. We then use that guarantee to
+improve the simultaneous seed factor and obtain the answer to the original input. Throughout the
+first step the entire seed table is fixed and satisfies the hypotheses of Theorem 4.1.
+
+8.1   Summing the comparison regrets
+Proof of Theorem 4.1, accuracy part. Fix a starting state with true cost D > 0 and its comparison
+tree from Section 6. For brevity write dt = max(c, dt ) at every state, as in Section 7. Terminal
+values are exact, so summing (7.1) over the tree at a fixed index gives the identity
+
+                           dt (root) = Cterm + L                 e+
+                                                      X                  X
+                                                                                    Rt .
+                                                   nonterminal        nonterminal
+
+Average this identity over t = 1, . . . , S. Since the root estimates decrease with t, the final positive
+error satisfies the deterministic bound
+                                                                                          S
+                                                                           1
+                (dS (root) − D)+ ≤ Cterm − D + L                      e+                            (8.1)
+                                                           X                    X        X
+                                                                                             Rt .
+                                                       nonterminal
+                                                                           S nonterminal t=1
+
+Lemma 6.1 bounds the first two terms by (8M J/P + 4LJ/P )D. We bound the last sum using the
+three classes of comparison nodes.
+   On bad nodes use Lemma 7.1 and W ≤ 4F c. Corollary 6.3 bounds their total contribution by
+
+                                   40000F 2 H 1/4 (1 + J/P + J/T )D.
+
+On nodes that are not bad but satisfy |vb| > 1 − τ , the same lemma gives (H −1/4 + 4τ F )c. Every
+other nonterminal satisfies Lemma 6.4, so Proposition 7.3 applies. Its dimension and mass bounds
+are
+                            ln dC ≤ 4(p∗ + 21)ℓ,     hΣ ≤ 64F b ≤ 64F c.
+The cost sum over all nonterminal levels is at most 2JD.
+   The conditional estimate at a node is valid after fixing its complete child tables. Taking
+expectations and then summing uses only the tower property and linearity of expectation. Indepen-
+dence between comparison nodes, or simultaneous success of their group samples, is unnecessary.
+Combining these bounds, the expected excess at the starting state divided by D is at most
+
+             E = (8M + 512F )J/P + 40000F 2 H 1/4 (1 + J/P + J/T )/S
+                    2J                        4(p∗ + 21)ℓ
+                                                                 
+                          −1/4
+                  +     H      + 4τ F + 64F               + 2κ + 2δ + 132F JH −3 .                  (8.2)
+                    S                              η
+Here the last term includes both numerical-mixture loss and group-failure loss: they are at most
+128F JH −3 and 4F JH −4 , respectively.
+   We verify the numerical bound explicitly. Substituting J ≤ 100H/ℓ, T ≥ H 3/4 , S = H/ℓ2 ,
+F = ℓ, M ≤ H 1/20 and P ≥ H 20 yields
+
+                          E ≤ 52000H −18 + 8.04 · 106 ℓ4 H −1/2 + 200ℓH −1/4
+                                   106 (p∗ + 21)
+                               +                 + 13200H −2 .
+                                         ℓ2
+
+
+                                                    32
+For the fourth term we have included [26400 + 51200(p∗ + 21)]/ℓ2 + 400/ℓ9 from the bracket in
+(8.2). Each of the five displayed terms is at most 1/(8ℓ) at ℓ ≥ 21000 and H ≥ 2ℓ/2 . For example,
+the second requires only
+                                 log2 (8 · 8.04 · 106 ) + 5 log2 ℓ ≤ ℓ/4;
+it holds at the cutoff and remains true thereafter. The other√ negative-power
+                                                                     √           terms require weaker
+inequalities of the same form. For the fourth, use p∗ +21 ≤ ℓ and ℓ ≥ 2 > 8·106 . Consequently
+                                                                            500
+
+E < 1/ℓ.
+    Since dS − D = (dS − D)+ , this is the required expected positive-excess bound. The deterministic
+lower bound is the invariant from Section 5. When D = 0, that invariant and w0 ≤ 2F c give dS = 0
+directly, without dividing by D. The numerical construction in Section 9 supplies the mixtures used
+in this proof, and Section 10 verifies finite execution of every defined operation.
+
+8.2   Improving simultaneous seeds
+The initial table of Theorem 3.1 has factor Ainit . The algorithm maintains a power-of-two factor A
+and an integer seed U ∈ [0, N ] on the full state domain. A seed is called good when c ≤ U ≤ Ac at
+every state. This is a mathematical event, not a test performed by the algorithm.
+    While A > F , set a = A/F and use H 2 independent copies of the refinement, conditional on the
+previous complete table. For each state, form the H 2 integers ⌈adS ⌉, take their upper middle order
+statistic, and clamp the result to [0, N ]. This defines the next seed. Update
+
+                                                A ←− 4a.                                         (8.3)
+
+All copies share the preceding table, but use independent new streams. Entries of each copy and of
+the new seed are stored on demand; their coherent full-table interpretation is justified in Section 10.
+
+Lemma 8.1. Conditional on any fixed good preceding seed, the next seed is good for factor 4a except
+with probability at most exp(10H − H 2 ).
+
+Proof. At a fixed state of positive integer cost c, the refinement theorem and Markov’s inequality
+give
+                                         Pr[dS > 2c] ≤ 1/ℓ.
+Every copy has ⌈adS ⌉ ≥ c. A copy with dS ≤ 2c has ⌈adS ⌉ ≤ 2ac, because a and c are integers. If
+strictly more than half the copies have this upper bound, their upper middle order statistic does
+too, hence in particular is at most 4ac. The probability that at least half fail is at most
+                                            2       2           2
+                                         2H ℓ−H /2 ≤ e−H .
+
+Clamping cannot spoil the lower bound c ≤ N or the upper bound. At zero-cost states every copy
+is zero under the good seed.
+    There are at most 2M max(1, |x|) labeled nodes and at most (|y| + 1)2 valid states per node.
+Their product is less than e10H in the large branch. Union over this full domain proves the assertion.
+No independence between different states is used.
+
+   The update preserves powers of two and strictly decreases A, since F > 4. Writing spass for the
+number of median passes plus the single final pass below, we have
+
+                                                    (p∗ + 1)ℓ
+                                                               
+                                    spass = O                       < H.                         (8.4)
+                                                      log2 ℓ
+
+
+                                                     33
+Indeed each median pass reduces log2 A by log2 F − 2, starting from (p∗ + 4) log2 H and stopping by
+A ≤ F . Apply Lemma 8.1 to the first failed transition after a good history. The total probability
+that any seed needed by the algorithm is not good is less than
+                                  0.01 + H exp(10H − H 2 ) < 1/10.                                (8.5)
+The initial 0.01 is the simultaneous initial-table failure probability. This estimate covers adaptive
+requests because every seed guarantee is over its entire potential domain.
+
+8.3   The final answer
+When A ≤ F , use one new refinement with a = 1 at the full root state (I, q) = ((0, |x|], (0, |y|)).
+Clamp its value to [0, N ] and round down to obtain D.
+                                                    b Fix any complete good seed before exposing
+this final refinement’s independent randomness. For the positive cost D = ED(x, y) the refinement
+theorem gives the deterministic lower bound dS ≥ D under this conditioning and
+                                                                    1   1
+                         Pr[dS > (1 + ε)D | U fixed and good] ≤        ≤ .
+                                                                    ℓε  10
+Together with (8.5), the unconditional failure probability is less than 1/5, and thus less than 1/3.
+The lower bound is not asserted on executions with a bad seed.
+    Clamping preserves the lower bound because D ≤ N . Rounding down also preserves it because
+D is an integer. Neither operation worsens the upper bound. The initial equality test returns
+zero deterministically when D = 0, and the exact branches of Section 2 are also correct. This
+establishes the accuracy assertion of Theorem 1.1 on every input. It remains to prove that the finite
+computations just specified, with all randomness and arithmetic charged, have the claimed expected
+running time.
+
+
+9     Finite optimization and exact sampling
+The optimization step is a finite implementation of the conditional-gradient method of Frank and
+Wolfe [12]. We use the fixed-step form analyzed by Jaggi [15, Algorithm 2 and Theorem 1], applied
+to a smoothed entropy objective. Our linearization has a fixed error floor, whose effect is included in
+the recurrence below. The rational arithmetic and exact sampling are also part of the running-time
+analysis.
+    The online rule in Section 5 asks for a mixture of band actions whose mean vector is close to
+an entropy maximizer. Its finite implementation separates recursive evaluation from numerical
+work. First gather the earlier-index child values, once for each distinct coordinate and history index
+occurring in the band. The procedure below then reuses this table while scoring the listed actions
+and constructing a rational mixture. It returns one exactly sampled action; only the evaluation of
+that action requests current-index child values. Thus the mean vector is used to analyze the draw,
+whereas the returned refinement value uses the cost of the single sampled action.
+    Fix an unskipped band C = Cb,r , and write d = dC for its number of coordinates. Its vertices
+ρ(α) are probability vectors, with child-block masses hi /hΣ . Let v ∈ Qd be the coefficient vector
+                                                        
+
+                                        v = η  uj + gbt  .
+                                               X
+
+                                                j<t
+
+Thus the desired vector ρt maximizes
+                       F(ρ) = H(ρ) + ⟨v, ρ⟩    over    Q = conv{ρ(α) : α ∈ C}.
+
+                                                  34
+Every coordinate occurs in a listed vertex. Also hi ≥ b/M > 0, so all the prescribed block masses
+are positive, even on an execution with an inaccurate seed.
+
+Lemma 9.1 (A finite entropy optimizer). Let Q be the convex hull of a nonempty finite list of
+rational probability vectors in Rd , and suppose that every coordinate is positive in at least one listed
+vector. Given a rational vector v and an integer H ≥ 4, put G0 = H + d + 2. A rational algorithm
+constructs a mixture of the listed vectors whose mean ρ satisfies
+
+                                            ∥ρ − ρt ∥1 ≤ H −3 ,
+
+where ρt is the unique maximizer of H(ρ) + ⟨v, ρ⟩ on Q. The number of bit operations and the
+stored mixture size are polynomial in G0 , the list size, and the maximum numerator or denominator
+bit length of an input rational. The mixture can be sampled exactly using fair random bits, with
+expected cost polynomial in the same quantities and with a fixed space bound.
+
+Proof. There is a feasible vector positive in every coordinate, obtained by averaging the list. The
+maximizer is positive as well: at a zero coordinate, moving a small distance towards that average
+produces a positive entropy contribution of order s ln(1/s), which dominates the terms of order s
+from the other coordinates and the linear objective. Strict concavity gives uniqueness.
+   Set σ = G−50
+             0    and smooth the objective by replacing −x ln x with −(x + σ) ln(x + σ) in each
+coordinate. Denote the result by Fσ . Integrating the derivative of x ln x, including at zero, gives
+                                                            √
+                                    sup|Fσ (ρ) − F(ρ)| ≤ 4d σ.                                   (9.1)
+                                      ρ∈Q
+
+The gradient of Fσ has Euclidean Lipschitz constant at most 1/σ. The diameter of Q is at most 2.
+    Start at a listed vertex. At step j ≥ 0, approximate every coordinate of the gradient to absolute
+error at most e0 = G−200 . Enumerate the list and choose a vertex vj maximizing its scalar product
+with this approximate gradient, resolving ties by a fixed order. Update
+                                                                           2
+                             ρ(j+1) = (1 − ξj )ρ(j) + ξj vj ,      ξj =       .
+                                                                          j+2
+Here vj denotes a selected vertex, whereas v without a subscript is the fixed linear coefficient vector.
+The difference between two probability vectors has ℓ1 norm at most 2. Consequently the chosen
+vertex loses at most 2e0 in the true linearization, even relative to a feasible mixture. If Dj is the
+gap from the maximum of Fσ , concavity and the gradient bound give
+
+                                                                2ξj2
+                                  Dj+1 ≤ (1 − ξj )Dj + 2e0 ξj +      .                              (9.2)
+                                                                 σ
+Since ξ0 = 1, this estimate first gives D1 ≤ 2e0 + 2/σ, independently of the size of the linear
+coefficient vector. Induction then gives
+                                                    8
+                                   Dj ≤ 2e0 +                     (j ≥ 1).
+                                                 σ(j + 1)
+
+Run Kopt = G80
+            0 steps. By (9.1), the resulting true objective gap is at most
+
+                                 2G−20
+                                   0   + 8G−30
+                                           0   + 8dG−25
+                                                    0   ≤ 12G−20
+                                                             0 .
+
+   The Hessian of negative entropy is diag(1/ρk ), which dominates the identity on the probability
+simplex. The first-order inequality at the positive maximizer, followed by this Hessian bound,
+
+                                                     35
+therefore shows that its objective gap at any feasible ρ is at least 12 ∥ρ − ρt ∥22 . The statement at
+coordinates equal to zero follows by continuity. Hence
+                                      √               √
+                          ∥ρ − ρt ∥1 ≤ d ∥ρ − ρt ∥2 ≤ 24d G−100   ≤ H −3 .
+
+   We next give an exact representation of every iterate. After K ≥ 1 steps, the weight of the
+vertex selected at step j, where 0 ≤ j < K, is
+
+                                    2 K−1       k     2(j + 1)
+                                                    =                                            (9.3)
+                                         Y
+                                                               .
+                                  j + 2 k=j+1 k + 2   K(K + 1)
+
+The initial vertex has zero remaining weight because ξ0 = 1. Store the sequence of selected vertices,
+allowing repetitions. The displayed weights sum to one and give the iterate exactly. A common
+denominator for the input vertices, multiplied by K(K + 1), is also a common denominator for its
+coordinates. One may obtain the input denominator by multiplying all input denominators, whose
+total bit length is at most the input size. Therefore the iterates can be maintained by rational
+arithmetic of polynomial bit cost, without accumulating the denominators of successive numerical
+approximations.
+    It remains to calculate the approximate gradients using finite rational operations. For r =
+x + σ ∈ [σ, 1 + σ], put b0 = (r − 1)/(r + 1). Then |b0 | ≤ 1 − σ, and
+
+                                                    X b2k+1
+                                         ln r = 2        0
+                                                                 .
+                                                    k≥0
+                                                        2k + 1
+
+Truncation after Klog = G60
+                         0 terms has absolute error at most
+
+                               2|b0 |2Klog +1         2e−2Klog σ
+                                                  ≤              < G−20
+                                                                    0 .
+                            (2Klog + 1)(1 − b20 )   (2Klog + 1)σ
+
+All terms are rational. The linear part of the gradient and its constant entropy derivative term are
+computed exactly. Thus these finite sums provide the required gradient precision; choosing a vertex
+requires only rational comparisons.
+    Computing each rational logarithm sum by direct integer arithmetic also has polynomial bit
+cost: the lengths of the powers of a rational and of the products of the odd integer denominators are
+polynomial in Klog and the input bit length. These logarithmic approximations only select vertices;
+they are not returned as recursive table values.
+    The same representation gives an exact sampler. Put K = Kopt and sample a uniform integer
+R ∈ {1, . . . , K(K + 1)/2} by drawing uniformly from a range whose size is the least power of two at
+least K(K + 1)/2, and rejecting out-of-range values. Each trial succeeds with probability greater
+than 1/2. Choose the smallest j with (j + 1)(j + 2)/2 ≥ R, by integer binary search, and return vj .
+Equation (9.3) proves exactness, including when the same vertex was selected more than once. The
+integer has O(log K) bits. Rejection reuses a fixed buffer, and its expected bit cost is polynomial.
+This completes the construction.
+
+Corollary 9.2 (Local cost of the online rule). For a band in the edit-distance algorithm, the
+numerical mixture in Section 5 can be constructed and sampled with local expected bit cost 2o(H) ,
+using only already gathered child values of earlier indices. The storage used by this calculation is
+2o(H) words.
+
+
+
+                                                    36
+Proof. At a wide-action endpoint there are O(P + 1) possible grid positions. Thus the full wide list
+has at most (C(P + 1))2M members, for an absolute constant C, and the band is a sublist. Also
+d ≤ M (21P )2 , so G0 = H O(p∗ +1) . For these vertices, use the common denominator M hΣ : every
+M hi is an integer because the dyadic scales satisfy hi ≥ b/M and b ≥ 1. The guard hΣ ≤ 64F b
+bounds this denominator’s bit length by O(H), without multiplying denominators across the action
+list. Lemma 9.1 gives a polynomial number of bit operations in these quantities and in the bit
+length of each input rational. The size bounds proved in Section 10 make the last quantity H O(p∗ +1)
+too. The total is therefore at most
+                                   2O(M (p∗ +1)ℓ) H O(p∗ +1) = 2o(H) ,
+because M ≤ H 1/20 , ℓ = Θ(log H), and p∗ + 1 = O((log ℓ)1/4 + 1). The same bounds apply to
+storage, with a reused rejection buffer. Every list score and every numerical iteration uses the stored
+child inputs, rather than a new recursive calculation for each action.
+
+
+10     Lazy evaluation and the expected work bound
+The tables defined above need not be filled. We evaluate only entries requested by the final root
+query and store each completed result. Two different costs must be controlled. A wide search
+may inspect many actions using previously gathered child values. At the current index, however,
+recursive calls are restricted to the shared group samples, the chosen rounded actions, and the
+actual online draws. The bounds on recursive requests hold on every execution of the local rules,
+including executions with inaccurate seeds or unsuccessful group samples. We charge the expected
+numerical and sampling costs conditional on those requests.
+
+10.1    Evaluation order and stored randomness
+Consider an uncached request for dt (I, q). The local cone tests and warmup data determine the
+representatives, bands and rounded actions that it can use. Evaluating these tests may itself discover
+further warmup or seed requests. Once the bands are known, the wide Bellman search and the
+online optimizer gather the needed earlier-index child values and reuse them throughout their action
+enumerations. The group samples, selected rounded actions and sampled online actions also request
+current-index child values. The entry is then obtained by the exact minimum and maximum in (5.4)
+and cached. The distinction between gathering inputs and repeatedly using them is what permits
+large local action lists with few recursive calls.
+    These instructions are well founded before any accuracy event is considered. Number refinement
+passes in their order of construction, give wj index j and dt index T + t, and identify d0 = wT .
+Treat a seed median as its H 2 preceding-pass refinement requests, and regard band and group
+calculations as auxiliary work within the table entry that requests them. Every table dependency
+strictly decreases the lexicographic triple
+                                (pass, index, remaining tree height).
+A current-index request descends to a child. Warmup and history requests decrease the index; seed
+requests enter an earlier pass, where the index may reset. Initial entries terminate this order because
+their estimators do not query any other initial entry. Different copy labels never reset the pass or
+index. Repeated and empty intervals still have distinct node labels and smaller remaining height at
+their children.
+    Fix a lexicographic order on every finite state or action list to resolve ties. Use the following
+keys for stored objects:
+
+                                                   37
+   • An initial entry is keyed by its tree-node label and its two state endpoints. Its private random
+     source supplies all guesses and thresholds in that initial-entry calculation.
+
+   • A later seed entry is keyed by its pass, node, and endpoints. Its stored value is the clamped
+     integer median of the separately identified copies of the preceding refinement.
+
+   • A warmup or refinement entry is keyed by its table kind, pass, copy, node, index, and endpoints.
+     The table kind distinguishes wj from dt , with d0 = wT identified.
+
+   • The warmup-derived data for a representative are keyed by the pass, copy, node, scale b, and
+     endpoints r. These data determine its band, scale labels, and rounded action and do not
+     depend on t.
+
+   • A group result is keyed by the pass, copy, node, scale b, the two integer cell indices, and t. It
+     contains the chosen member and its actual evaluated cost. Its random sources also distinguish
+     the scale h and the sample number.
+
+   • An online draw is keyed by the pass, copy, node, queried state q, scale b, and t. Its represen-
+     tative is rb (q). Repeated requests use the stored action, whereas different queries may have
+     independent draws even if their representatives agree.
+
+In particular, a requested group is computed over its entire specified cell. Its result does not depend
+on which query first requested it. Repeated list processing and numerical iterations use dictionary
+lookups for previously gathered recursive inputs; their lookup costs will be included below.
+    Generate fresh fair random bits on the first calculation of each random object, and retain its
+outcome. Different copies, passes, nodes, and specified random objects have independent sources.
+This can be viewed equivalently as assigning independent bit streams to all keys in advance. By the
+dependency order above, deciding to request an object uses only already exposed streams. This
+equivalence is a distributional description, not an instruction to allocate all streams or tables.
+    For a given refinement copy, the complete child tables depend on descendant streams and earlier
+passes, but not on fresh streams of the current parent. Conditioning on those tables consequently
+leaves its group samples and online draws with their specified independent laws. This justifies
+the conditioning used in the accuracy analysis. The whole-domain seed guarantees are retained;
+adaptively requesting a seed entry does not replace such a guarantee by one for a fixed query.
+    For the expected running time, we use a different conditioning. Before the first request of
+an initial entry, none of its private random bits has been exposed. Conditional on the previous
+execution and its first request, the expected cost bound of Theorem 3.1 therefore still applies. Later
+requests only look up its stored answer. This argument does not condition on the initial entry being
+correct.
+
+10.2    Finite local calculations on inaccurate seeds
+We first bound the numbers manipulated by the implementation. These bounds concern its finite
+local rules, rather than the global cone identities that were proved under a good seed.
+
+Lemma 10.1 (Unconditional size bounds). On every execution, all local searches are finite. The
+warmup values are nonnegative integers bounded by (2L0 + 1)N , and every refinement value satisfies
+0 ≤ dt (I, q) ≤ w0 (I, q). Put Q = ℓ10 + 1, and let h(I) be the remaining height of the fixed tree below
+I. Every returned dt (I, q) has denominator dividing Qh(I) . The rational data used in band tests,
+group comparisons, and the numerical optimizer have bit length H O(p∗ +1) .
+
+
+                                                  38
+Proof. Every seed entry is an integer in [0, N ] by clamping. In the local calculation of w0 (I, q), a
+zero tested seed returns zero. Otherwise the scale range is finite, and the search uses grid endpoints
+at sup distance at most U (I, q) ≤ N from q. A cone height U     e (I, r) is at most N , and its added
+charge is at most 2L0 N . The default value when the candidate list is empty is N . Leaf values
+satisfy the same bound. Hence
+                                    0 ≤ w0 (I, q) ≤ (2L0 + 1)N.
+All grid endpoints are integers: their spacing is a power of two truncated below at one. Thus cone
+and connection charges are integers. Every Bellman minimum contains its local w0 value and has
+nonnegative candidates. It follows that every wj is a nonnegative integer at most w0 at the same
+state. The average m has denominator T .
+    The value Πt contains the Bellman option, so it too is at most w0 . The clipped definition of dt is
+nonnegative and at most Πt , irrespective of seed accuracy. An empty online minimum is represented
+by the symbol +∞; the formula then returns Πt . No unbounded search or approximate numerical
+sentinel is needed for an empty list.
+    For the denominator claim, induct on physical tree height, for all indices simultaneously. Leaves
+return integers. Each actual candidate at a nonleaf is an integer charge plus a sum of child values,
+or an integer warmup value. All child denominators divide Qh(I)−1 . Minima and maxima select
+one of their arguments. The only further denominator operation in a returned value is division by
+1 + δ = Q/ℓ10 , which adds at most one power of Q. Sampling weights and numerical mixtures select
+actions; they are not themselves averaged into the returned table value. This proves the claim. In
+particular the table-value bit length is
+                                           O H + J log ℓ .
+                                                          
+
+   The preliminary scale labels hi are dyadic ceilings of positive rational quantities of bounded bit
+length. In every retained band, the explicit guard gives
+                                       b/M ≤ hi ≤ hΣ ≤ 64F b.
+Failed guards simply discard bands. All prefix and wide minima use already bounded warmup
+values and integer charges. Tests for positivity of Z, the ratio z(I, r)/Z, band membership, and
+rounded endpoint validity are exact rational tests of polynomial bit length. A nonpositive or infinite
+Z is discarded before division.
+    A group comparison may use, in addition to a common power of Q, the product of the O(ℓ)
+integers kh ≤ M as a denominator. This still has polynomially many bits. These sampling
+denominators are discarded when the chosen action is actually evaluated. Online coefficients are
+finite sums of earlier table values divided by dyadic hi and multiplied by the displayed parameters.
+Their bit length is bounded by H O(p∗ +1) . On inaccurate seeds their magnitudes need not have
+the good-seed normalization, but this does not increase their bit length beyond that bound. The
+first step ξ0 = 1 in Lemma 9.1 makes its gap estimate independent of the initial linear objective
+magnitude.
+
+    The locality bounds themselves are also unconditional. The scale range for w0 has ratio
+polynomial in A, and radius divided by grid spacing O(A2 P ). For the other local searches, the ratio
+of the endpoints of the scale interval is 128aF . It admits O((p∗ + 1)ℓ) scales. At any such scale,
+w0 (I, q)/b ≤ 16F , so the square specified in the local rule meets
+                                            O (1 + F/θ)2
+                                                           
+
+cells. A cell has O((1 + P )2 ) representative candidates. All these lists can be generated by ranges of
+integer multiple indices, without scanning unrelated string positions.
+
+                                                  39
+10.3    The current-index child budget
+The following count is the reason for using rounded actions and samples shared across a cell. At a
+small scale h, many rounded states can occur at one child, but few children are sampled. Their
+respective factors b/h and h/b cancel. At a large scale, the rounded list is already small enough
+to inspect every child. The count concerns distinct recursive inputs; repeated uses of an input are
+charged later as lookups.
+
+Lemma 10.2 (Current-index calls). Evaluating one refinement entry dt (I, q) requires at most
+M ℓO(1) distinct child entries at the same pass, copy, and index t. This bound holds for all seeds
+and all sample outcomes.
+
+Proof. Fix a group at scale b, a scale label h, and a child i. Put Dh = max(1, θh). Across the whole
+cell, all queried rounded states with hi = h use this common endpoint spacing. The wide action
+guard puts their first endpoints in an interval of length O(b): r− varies by at most θb within the
+cell, and the shift radius is at most 10b. Once the first endpoint is fixed, the guard |z(Ii , si )| ≤ 2h
+restricts the second endpoint to an interval of length 4h. The number of distinct states is therefore
+at most
+                              C(1 + b/Dh )(1 + h/Dh ) ≤ C ′ θ−2 (1 + b/h),                          (10.1)
+for absolute constants C, C ′ . This estimate also holds when θh < 1, using Dh ≥ θh. Requiring
+legitimate ordered endpoints in [0, |y|] can only reduce the count.
+    There are two cases in the group calculation. If kh < M , then h ≥ b/M and Q1 ≥ 1 imply
+
+                                   kh ≤ 2Q1 M h/b,       h/b < 1/Q1 .
+
+At most kh distinct child labels occur in the sample. Multiplying (10.1) by this number gives at
+most
+                                 C ′ θ−2 kh (1 + b/h) ≤ C ′′ M θ−2 Q1
+distinct inputs. If kh = M , the equality min(M, ⌈Q1 M h/b⌉) = M implies Q1 M h/b > M − 1. Since
+M ≥ 2 in this branch, b/h < 2Q1 . Evaluating the exact part for all children consequently uses at
+most
+                                          C ′ M θ−2 (1 + 2Q1 )
+distinct inputs as well. This proves M ℓO(1) for one group and one scale label, without an accuracy
+event.
+    There are O(log(F M )) = O(ℓ) scale labels. The number of b scales and cells requested by one
+query is polynomial in ℓ, as established above. Once a winning rounded action is chosen, evaluating
+its actual cost adds at most M child calls per group. Finally the online rule draws just one action
+for each applicable b scale; evaluating that actual action adds at most M child calls per scale. These
+factors preserve the asserted bound.
+
+    All other recursive inputs are earlier in the evaluation order. Constructing w0 uses a previous
+seed. Computing bands, prefix minima, and scale labels uses warmup data. In Πt the wide Bellman
+option uses dt−1 on children. The online coefficient vector uses dj only for j < t; it does not
+require the past transcript of actions at the parent. The numerical procedure of Section 9 therefore
+introduces no hidden current-index child queries.
+
+
+
+
+                                                   40
+10.4    Earlier inputs and local arithmetic
+Lemma 10.3 (Local evaluation cost). After collapsing the finite auxiliary calculations into table-
+entry evaluations, one warmup or refinement entry has at most H O(p∗ +1) distinct inputs at earlier
+indices or passes. Apart from its recursive inputs, its expected bit cost is 2o(H) , uniformly conditional
+on the data exposed before its fresh random draws. Its local storage is at most 2o(H) on every
+execution.
+Proof. For one representative, each endpoint in a wide action has O(P + 1) positions, since b/gb ≤ P .
+A child therefore has O((P + 1)2 ) states in the wide list. Multiplying by the number of children,
+representative candidates, cells, scales, and history indices still gives H O(p∗ +1) distinct recursive
+inputs. There are at most T + S + 1 = O(H) history indices. The searches for w0 have the same
+form of bound. An earlier seed query expands to H 2 copies of the previous refinement when required;
+this factor fits the same estimate.
+     Gather and store these distinct child inputs before repeatedly scoring action lists. The wide
+list has at most (C(P + 1))2M actions. For each internal cut, a prefix minimum enumerates the
+independently allowed states of its first children. The algorithm evaluates it only at the grid shifts
+being tested for band membership; the real argument in the definition of Φj does not require a
+search over a continuum. These prefix lists and the band candidates have the same exponential
+bound. Scanning them at all candidate cuts and shifts multiplies the list size by at most a fixed
+power and by polynomial factors. Direct enumeration, including all guard tests, therefore has local
+arithmetic count
+                                        2O(M (p∗ +1)ℓ) H O(p∗ +1) .
+Lemmas 10.1 and 9.1 give polynomial bit costs in the stated parameters for each arithmetic operation
+and for the numerical routine. Hence all local work and storage, apart from exact rejection-sampling
+time, are 2o(H) . Rejection sampling has that bound in expectation, with a fixed buffer. Uniform
+child indices can likewise be sampled by charged fair bits; here M is a power of two.
+    Use a balanced search dictionary for gathered and globally stored inputs. The keys consist of
+the bounded integer labels specified above, and their comparisons use polynomially many bits in H.
+The number of possible keys is polynomial in N : there are O(M N ) node labels, at most (N + 1)2
+states per node, polynomially many pass/copy/index choices, and polynomially bounded cell-index
+ranges since θb ≥ θ. Thus each dictionary operation has H O(1) bit cost. Repeated lookups while
+scoring lists or optimizing are included in the displayed local work, not counted as new recursive
+inputs.
+
+10.5    Counting the dependency paths
+We now quantify the dependency order from the first subsection. After inlining seed medians and
+auxiliary calculations, each dependency has one of two forms. A same-pass, same-index dependency
+descends to a child; Lemma 10.2 bounds its number by
+
+                                            Dsame = M ℓC1 .
+
+Every other dependency either decreases the index in the same pass or switches to an earlier pass,
+and its number is bounded by
+                                     Dearlier = H C2 (p∗ +1)
+for absolute constants C1 , C2 . Such dependencies stay at the same physical node or descend;
+they never ascend the tree. Auxiliary band and group calculations have been collapsed into these
+evaluations, so they create no same-index cycle at a node.
+
+                                                   41
+                              Entry at node I        M ℓO(1)            Child entry
+                              pass s, index k                          pass s, index k
+
+                                       H O(p∗ +1)
+
+                         Same node or descendant
+                           earlier index or pass
+
+
+Figure 2: The two recursive input budgets. Wide action enumeration and numerical iterations reuse
+the gathered inputs and contribute local work. Only the horizontal edge keeps both pass and index
+unchanged.
+
+
+   Let spass be the number of refinement passes, including the final pass, and put
+
+                                      Kdep = spass (T + S + 1).
+
+A dependency path ending at depth j has at most j same-index edges, because each descends
+one level. It has at most Kdep other edges: indices strictly decrease between pass switches, and
+passes strictly decrease at switches. Copy identities do not reset this order. These bounds hold
+independently of every seed or sampling accuracy event.
+   Unfolding the stored dependency graph only overcounts calculations. The number of paths
+ending at depth j is at most
+                       j K
+                                  r+s
+                          dep
+                                       !
+                       X X
+                                       r     s
+                                      Dsame Dearlier
+                       r=0 s=0
+                                   r
+                            ≤ (j + 1)(Kdep + 1)2j+Kdep M j ℓC1 j H C2 (p∗ +1)Kdep .                (10.2)
+
+Some index-decreasing edges descend too; ignoring that additional descent only enlarges this bound.
+   Write q∗ = p∗ + 1. The parameters and pass count give
+                                                                                        Hq∗
+                                                                                            
+                 J = O(H/ℓ),        T = O(H 3/4 ) = o(S),               Kdep = O               .
+                                                                                       ℓ log ℓ
+Consequently
+
+                                       J log ℓ = O(H log ℓ/ℓ) = o(H),
+                                                                 !
+                                                         Hq∗2
+                                 q∗ Kdep log H = O                   = o(H),
+                                                         log ℓ
+                                    J + Kdep = o(H).
+                                  √
+For the second limit, use q∗2 = O( log ℓ + 1). All factors beyond M j in (10.2) are therefore 2o(H) ,
+uniformly for 0 ≤ j ≤ J. The number of expanded evaluations at depth j is bounded by
+
+                                                M j 2o(H) .                                        (10.3)
+
+This is a deterministic count for the local implementation, not a count conditioned on the success of
+its estimates.
+
+
+
+                                                    42
+10.6    Expected time and logarithmic-word storage
+Theorem 10.4 (Charged expected running time). The large-input algorithm has worst-case expected
+running time N 1+o(1) on the logarithmic-word RAM, over its internal randomness. This includes
+input processing, preprocessing, initial and refined table calculations, all rational arithmetic, sampling,
+and data-structure operations. Its workspace on every execution is bounded by a fixed polynomial in
+N . Together with the exact fallbacks, the same program has the claimed expected asymptotic bound
+for each fixed rational ε ∈ (0, 1).
+
+Proof. Let nx = |x|. At depth j, an interval has width at most ⌈nx /M j ⌉. Theorem 3.1 bounds the
+expected cost of a first initial-entry request there by
+                                                               
+                                                1 + ⌈nx /M j ⌉ 2o(H) .
+
+The conditional first-request argument above makes this valid after any preceding adaptive execution.
+Equivalently, enumerate the possible request slots in an unfolded computation: at each slot that
+requests a new initial entry, condition on the past and use its independent fresh stream. The
+deterministic slot count (10.3) allows the resulting expectations to be summed. Repeat requests
+have only the charged dictionary cost. The same conditional expectation argument applies to each
+exact mixture sampler, whose expected local cost is uniformly bounded.
+   Combining Lemma 10.3 with (10.3), all these costs are at most
+                              J                                    J
+                      2o(H)         M j 1 + ⌈nx /M j ⌉ ≤ 2o(H)           (2M j + nx )
+                              X                                      X
+
+                              j=0                                    j=0
+
+                                                           ≤2 o(H)
+                                                                     O(M J ) + (J + 1)nx
+                                                                                           
+
+                                                           ≤ (nx + 1)2o(H) .
+
+Here M J ≤ M max(1, nx ) and M, J = 2o(H) . No seed or group correctness event was used.
+Sorting the occurrence data and the other input work cost O(N log(N + 2)), and leaf queries cost
+O(log(N + 2)) each. Since H = Θ(log(N + 2)), the complete expected bound is N 1+o(1) .
+    For storage, the deterministic dependency count bounds the number of stored table entries by
+N 1+o(1) . Each such evaluation creates at most H O(p∗ +1) auxiliary representative, group and draw
+records, so their total satisfies the same bound. Their keys and scalar fields have the bit bounds of
+Lemma 10.1. Each local action list and numerical computation has at most 2o(H) = N o(1) scratch
+size by Lemma 10.3; even retaining such lists or mixtures with their auxiliary records keeps the total
+refinement storage at N 1+o(1) . A fully expanded initial estimator also has polynomial worst-case
+space: its tree has O(Bn) nodes on padded length n, its shift arrays have length O(n), and its
+numbers have polynomial bit length in H and B. Pruned arrays are represented by markers. Its
+scratch can be released after storing the completed integer entry. Retaining the scratch of nested
+calls still gives a polynomial bound, since dependency depth is at most J + Kdep plus the initial-tree
+depth. Rejection loops reuse their buffers and do not enlarge storage when they run for additional
+trials.
+    Thus there is an absolute polynomial space bound in N in the large branch. Every workspace
+address fits a constant number of O(log(N + 2))-bit words. Larger rational numbers are represented
+in multiple such words and processed by charged ordinary integer algorithms, as used above. Input
+symbols and the padding tag also fit a constant number of these words, with no constant-alphabet
+assumption. The finite parameter-inspection rule and exact dynamic-programming fallback of
+Section 2 use polynomially addressed memory as well.
+
+                                                         43
+    Finally, for each fixed rational accuracy encoding, its length is eventually below the inspection
+limit, and the two remaining fallback conditions also cease for sufficiently large N . Their sizes
+are bounded as a function of that fixed parameter. They do not change the asserted asymptotic
+bound, although they impose no efficiency claim uniform in a varying ε. Together with the success
+probability established in Section 8, this proves Theorem 1.1.
+
+
+References
+ [1] Alexandr Andoni and Negev Shekel Nosatzki. Edit distance in near-linear time: It’s a constant
+     factor. In Proceedings of the 61st Annual IEEE Symposium on Foundations of Computer Science,
+     pages 990–1001, 2020. doi: 10.1109/FOCS46700.2020.00096. Full version: arXiv:2005.07678v2,
+     2022.
+
+ [2] Alexandr Andoni and Krzysztof Onak. Approximating edit distance in near-linear time. SIAM
+     Journal on Computing, 41(6):1635–1648, 2012. doi: 10.1137/090767182. Preliminary version in
+     STOC 2009, pages 199–204.
+
+ [3] Alexandr Andoni, Robert Krauthgamer, and Krzysztof Onak. Polylogarithmic approximation
+     for edit distance and the asymmetric query complexity. In 2010 IEEE 51st Annual Symposium
+     on Foundations of Computer Science, pages 377–386. IEEE Computer Society, 2010. doi:
+     10.1109/FOCS.2010.43. URL https://arxiv.org/abs/1005.4033v1. Theorem numbers refer
+     to the full version, arXiv:1005.4033v1.
+
+ [4] Alexandr Andoni, Robert Krauthgamer, and Krzysztof Onak. Streaming algorithms via
+     precision sampling. In 2011 IEEE 52nd Annual Symposium on Foundations of Computer
+     Science, pages 363–372. IEEE Computer Society, 2011. doi: 10.1109/FOCS.2011.82. URL https:
+     //arxiv.org/abs/1011.1263v2. Full version titled “Streaming Algorithms from Precision
+     Sampling”; Lemma 1.2 in arXiv:1011.1263v2.
+
+ [5] Arturs Backurs and Piotr Indyk. Edit distance cannot be computed in strongly subquadratic
+     time (unless SETH is false). SIAM Journal on Computing, 47(3):1087–1097, 2018. doi:
+     10.1137/15M1053128.
+
+ [6] Ziv Bar-Yossef, T. S. Jayram, Robert Krauthgamer, and Ravi Kumar. Approximating edit
+     distance efficiently. In Proceedings of the 45th Annual IEEE Symposium on Foundations of
+     Computer Science, pages 550–559, 2004. doi: 10.1109/FOCS.2004.14.
+
+ [7] Tuğkan Batu, Funda Ergün, Joe Kilian, Avner Magen, Sofya Raskhodnikova, Ronitt Rubinfeld,
+     and Rahul Sami. A sublinear algorithm for weakly approximating edit distance. In Proceedings
+     of the 35th Annual ACM Symposium on Theory of Computing, pages 316–324, 2003. doi:
+     10.1145/780542.780590.
+
+ [8] Tuğkan Batu, Funda Ergün, and Cenk Sahinalp. Oblivious string embeddings and edit distance
+     approximations. In Proceedings of the 17th Annual ACM–SIAM Symposium on Discrete
+     Algorithms, pages 792–801, 2006. doi: 10.1145/1109557.1109644.
+
+ [9] Joshua Brakensiek and Aviad Rubinstein. Constant-factor approximation of near-linear edit
+     distance in near-linear time. In Proceedings of the 52nd Annual ACM SIGACT Symposium on
+     Theory of Computing, pages 685–698, 2020. doi: 10.1145/3357713.3384282.
+
+
+
+                                                 44
+[10] Diptarka Chakraborty, Debarati Das, Elazar Goldenberg, Michal Koucký, and Michael Saks.
+     Approximating edit distance within constant factor in truly sub-quadratic time. Journal of the
+     ACM, 67(6):36:1–36:22, 2020. doi: 10.1145/3422823.
+[11] Debarati Das, Evangelos Kipouridis, and Tomasz Kociumaka. Metric weighted edit distance: A
+     (3 + ε)-approximation in O
+                              e ε (n1.6 ) time, 2026. URL https://arxiv.org/abs/2609.20796v1.
+     Version 1, September 17, 2026.
+[12] Marguerite Frank and Philip Wolfe. An algorithm for quadratic programming. Naval Research
+     Logistics Quarterly, 3(1–2):95–110, 1956. doi: 10.1002/nav.3800030109. URL https://doi.
+     org/10.1002/nav.3800030109.
+[13] Yoav Freund and Robert E. Schapire. A decision-theoretic generalization of on-line learning
+     and an application to boosting. Journal of Computer and System Sciences, 55(1):119–139,
+     1997. doi: 10.1006/jcss.1997.1504. URL https://doi.org/10.1006/jcss.1997.1504.
+[14] Piotr Indyk and David Woodruff. Optimal approximations of the frequency moments of
+     data streams. In Proceedings of the Thirty-Seventh Annual ACM Symposium on Theory of
+     Computing. Association for Computing Machinery, 2005. URL https://www.cs.cmu.edu/afs/
+     cs/user/dwoodruf/www/iw05.pdf.
+[15] Martin Jaggi. Revisiting Frank–Wolfe: Projection-free sparse convex optimization. In Proceed-
+     ings of the 30th International Conference on Machine Learning, volume 28 of Proceedings of
+     Machine Learning Research, pages 427–435. PMLR, 2013. URL https://proceedings.mlr.
+     press/v28/jaggi13.html.
+[16] Michal Koucký and Michael Saks. Constant factor approximations to edit distance on far input
+     pairs in nearly linear time. In Proceedings of the 52nd Annual ACM SIGACT Symposium on
+     Theory of Computing, pages 699–712, 2020. doi: 10.1145/3357713.3384307.
+[17] Gad M. Landau and Uzi Vishkin. Fast string matching with k differences. Journal of Computer
+     and System Sciences, 37(1):63–78, 1988. doi: 10.1016/0022-0000(88)90045-1.
+[18] Gad M. Landau and Uzi Vishkin. Fast parallel and serial approximate string matching. Journal
+     of Algorithms, 10(2):157–169, 1989. doi: 10.1016/0196-6774(89)90010-2.
+[19] Vladimir I. Levenshtein. Binary codes capable of correcting deletions, insertions, and reversals.
+     Soviet Physics Doklady, 10(8):707–710, 1966. English translation of Doklady Akademii Nauk
+     SSSR 163(4), 845–848 (1965).
+[20] Ethan Mader, Borna Tavasoli, and Jihan Wang. A strongly subquadratic (3 + ε)-approximation
+     for weighted edit distance over arbitrary metrics, 2026. URL https://arxiv.org/abs/2609.
+     14873v1. Version 1, September 14, 2026.
+[21] Xiao Mao and Aviad Rubinstein. Approximation schemes for edit distance and LCS in quasi-
+     strongly subquadratic time. In Proceedings of the 58th Annual ACM Symposium on Theory
+     of Computing. Association for Computing Machinery, 2026. doi: 10.1145/3798129.3800789.
+     URL https://arxiv.org/abs/2603.29702v1. Theorem numbers refer to the full version,
+     arXiv:2603.29702v1.
+[22] William J. Masek and Michael S. Paterson. A faster algorithm computing string edit distances.
+     Journal of Computer and System Sciences, 20(1):18–31, 1980. doi: 10.1016/0022-0000(80)
+     90002-1.
+
+                                                 45
+[23] Eugene W. Myers. An O(N D) difference algorithm and its variations. Algorithmica, 1:251–266,
+     1986. doi: 10.1007/BF01840446.
+
+[24] OpenAI. Edit Distance in ℓ1 : Matching Bounds up to Constants in the Exponent. OpenAI Math
+     Release preprint OAI:Edit-Distance-in-l1-Matching-Bounds-up-to-Constants-in-the-Exponent-
+     September-27-2026, 2026.
+
+[25] Rafail Ostrovsky and Yuval Rabani. Low distortion embeddings for edit distance. Journal of
+     the ACM, 54(5):23:1–23:16, 2007. doi: 10.1145/1284320.1284322.
+
+[26] Alexander Rakhlin and Karthik Sridharan. Online learning with predictable sequences. In
+     Proceedings of the 26th Annual Conference on Learning Theory, volume 30 of Proceedings of
+     Machine Learning Research, pages 993–1019. PMLR, 2013. URL https://proceedings.mlr.
+     press/v30/Rakhlin13.html.
+
+[27] Joel A. Tropp. ACM 217: Probability in high dimensions. Caltech CMS Lecture Notes 2021-01,
+     California Institute of Technology, Pasadena, March 2021. URL https://tropp.caltech.
+     edu/notes/Tro21-Probability-High-LN-corr.pdf. Corrected March 2023; Theorem 4.16.
+
+[28] Esko Ukkonen. Algorithms for approximate string matching. Information and Control, 64(1–3):
+     100–118, 1985. doi: 10.1016/S0019-9958(85)80046-2.
+
+[29] Robert A. Wagner and Michael J. Fischer. The string-to-string correction problem. Journal of
+     the ACM, 21(1):168–173, 1974. doi: 10.1145/321796.321811.
+
+
+
+
+                                               46
+
