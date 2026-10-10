@@ -95,15 +95,9 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 - I88: [completed nonlinear Banach report](iterations/i88-nonlinear-banach-discovery.md) gives technical exponential coordinate-support bounds, qualitative rank divergence and a rank-one counterexample to generic support sparsification. Parent evidence reproduction passes; no independent original-proof verdict yet. Quantitative rank Q88 and coupled absorption/AP S88 remain unproved and unrefuted. Finite binary D88 is rejected by the primary diamond theorem. No substantial nomination.
 
-- I89: [completed geometric group report](iterations/i89-geometric-group-discovery.md) gives author-level technical proximal-contraction and explicit finite-residual witness deductions. Parent evidence reproduction passes; original proofs are not yet independently audited. Q89 finite CAT(0) constants and H89 effective bounds remain unproved and unrefuted; E89 is refuted on the actual retraction example. No substantial nomination.
+- I89: [geometric group discovery](iterations/iteration89-geometric-group-discovery-task.json) screens quantitative and relative consequences of the hyperbolic, one-relator, specialness and finite-envelope constructions. New nonroutine arguments are required; no nomination at launch.
 
-- I90: [completed anchored rank report](iterations/i90-anchored-rank-approximation.md) passes original I88 A/A′/B without repairs and proposes Q90, an exponential lower bound on ordinary operator rank under the actual local-type discrepancy threshold. Weighted pair continuation and clipping keep the discrepancy cost independent of rank; a classical Auerbach envelope controls total variation by dimension. The second finite-cover argument yields only linear rank growth. Parent evidence reproduction passes. Original Q90 proof and contribution gates remain pending. No support-to-rank conversion is assumed.
-
-- I91: [finite CAT(0) continuation](iterations/iteration91-finite-cat0-obstruction-task.json) independently audits the original F89 prerequisites and attempts a quantitative finite-distance obstruction on the actual template. The rooted-tree angle counterexample must be respected; compactness alone supplies no explicit constants.
-
-- I92: [original proof review](iterations/iteration92-anchored-rank-approximation-r2-task.json) audits Q90, W/E/C, all quantitative variants and the cited I88 prerequisite verdict.
-
-- I93: [separate contribution review](iterations/iteration93-anchored-rank-approximation-novelty-r3-task.json) compares Q90 to the strongest relevant source operations and primary antecedents, conditional on original proof acceptance.
+- I90: [anchored rank continuation](iterations/iteration90-anchored-rank-approximation-task.json) independently audits original I88 prerequisites and attempts an anchor-sensitive finite-dimensional range argument or quantitative local-reflexivity substitute. No support-to-rank conversion is assumed.
 
 These records include active tasks, completed gap reports, and R011/R012/R013/R014 acceptance. The four-finding pause checkpoint remains a historical snapshot.
 

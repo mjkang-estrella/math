@@ -1,0 +1,1187 @@
+SIAM J. COMPUT.                                    c
+                                                    2009 Society for Industrial and Applied Mathematics
+Vol. 38, No. 5, pp. 2060–2078
+
+
+
+
+SAMPLING ALGORITHMS AND CORESETS FOR p REGRESSION∗
+  ANIRBAN DASGUPTA† , PETROS DRINEAS‡ , BOULOS HARB§ , RAVI KUMAR† , AND
+                                      MICHAEL W. MAHONEY¶
+
+     Abstract. The p regression problem takes as input a matrix A ∈ Rn×d , a vector b ∈ Rn ,
+and a number p ∈ [1, ∞), and it returns as output a number Z and a vector xopt ∈ Rd such that
+Z = minx∈Rd Ax − bp = Axopt − bp . In this paper, we construct coresets and obtain an eﬃcient
+two-stage sampling-based approximation algorithm for the very overconstrained (n  d) version of
+this classical problem, for all p ∈ [1, ∞). The ﬁrst stage of our algorithm nonuniformly samples
+r̂1 = O(36p dmax{p/2+1,p}+1 ) rows of A and the corresponding elements of b, and then it solves the
+p regression problem on the sample; we prove this is an 8-approximation. The second stage of our
+algorithm uses the output of the ﬁrst stage to resample r̂1 /2 constraints, and then it solves the
+p regression problem on the new sample; we prove this is a (1 + )-approximation. Our algorithm
+uniﬁes, improves upon, and extends the existing algorithms for special cases of p regression, namely,
+p = 1, 2 [K. L. Clarkson, in Proceedings of the 16th Annual ACM–SIAM Symposium on Discrete
+Algorithms, ACM, New York, SIAM, Philadelphia, 2005, pp. 257–266; P. Drineas, M. W. Mahoney,
+and S. Muthukrishnan, in Proceedings of the 17th Annual ACM–SIAM Symposium on Discrete
+Algorithms, ACM, New York, SIAM, Philadelphia, 2006, pp. 1127–1136]. In the course of proving
+our result, we develop two concepts—well-conditioned bases and subspace-preserving sampling—that
+are of independent interest.
+
+      Key words. randomized algorithms, sampling algorithms, p regression
+
+      AMS subject classification. 68W20
+
+      DOI. 10.1137/070696507
+
+
+     1. Introduction. An important question in algorithmic theory is whether there
+exists a small subset of the input such that if computations are performed only on
+this subset, then the solution to the given problem can be approximated well. Such
+a subset is often known as a coreset for the problem. The concept of coresets has
+been extensively used in solving many problems in optimization and computational
+geometry; e.g., see the excellent survey by Agarwal, Har-Peled, and Varadarajan [2].
+     In this paper, we construct coresets and obtain eﬃcient sampling algorithms for
+the classical p regression problem, for all p ∈ [1, ∞). Recall the p regression problem.
+     Problem 1 (p regression problem). Let ·p denote the p-norm of a vector.
+Given as input a matrix A ∈ Rn×m , a target vector b ∈ Rn , and a real number
+p ∈ [1, ∞), find a vector xopt and a number Z such that
+
+(1)                             Z = minm Ax − bp = Axopt − bp .
+                                    x∈R
+
+
+      In this paper, we will use the following p regression coreset concept.
+
+   ∗ Received by the editors July 10, 2007; accepted for publication (in revised form) November 5,
+
+2008; published electronically February 6, 2009.
+     http://www.siam.org/journals/sicomp/38-5/69650.html
+   † Yahoo! Research, 701 First Ave., Sunnyvale, CA 94089 (anirban@yahoo-inc.com, ravikumar@
+
+yahoo-inc.com).
+   ‡ Department of Computer Science, Rensselaer Polytechnic Institute, Troy, NY 12180 (drinep@cs.
+
+rpi.edu).
+   § Google Inc., New York, NY 10011 (harb@google.com).
+   ¶ Department of Mathematics, Stanford University, Stanford, CA 94305 (mmahoney@cs.stanford.
+
+edu).
+                                                2060
+             SAMPLING ALGORITHMS AND CORESETS FOR p REGRESSION                                 2061
+
+     Definition 2 (p regression coreset). Let 0 <  < 1. A coreset for Problem 1
+is a set of indices I such that the solution x̂opt to minx∈Rm ||Âx − b̂||p , where Â is
+composed of those rows of A whose indices are in I and b̂ consists of the corresponding
+elements of b, satisfies Ax̂opt − bp ≤ (1 + ) minx Ax − bp .
+     If n  m, i.e., if there are many more constraints than variables, then (1) is
+an overconstrained p regression problem. In this case, there does not in general
+exist a vector x such that Ax = b, and thus Z > 0. Overconstrained regression
+problems are fundamental in statistical data analysis and have numerous applications
+in applied mathematics, data mining, and machine learning [17, 10]. Even though
+convex programming methods can be used to solve the overconstrained regression
+problem in time O((mn)c ) for c > 1, this is prohibitive if n is large.1 This raises
+the natural question of developing more eﬃcient algorithms that run in time O(mc n)
+for c > 1, while possibly relaxing the solution to (1). In particular, can we get a κ-
+approximation to the p regression problem, i.e., a vector x̂ such that Ax̂ − bp ≤ κZ,
+where κ > 1? Note that a coreset of small size would strongly satisfy our requirements
+and result in an eﬃciently computed solution that is almost as good as the optimal.
+Thus, the question becomes: Do coresets exist for the p regression problem, and if
+so, can we compute them eﬃciently?
+     Our main result is an eﬃcient two-stage sampling-based approximation algorithm
+that constructs a coreset and thus achieves a (1+)-approximation for the p regression
+problem. The ﬁrst stage of the algorithm is suﬃcient to obtain a (ﬁxed) constant factor
+approximation. The second stage of the algorithm carefully uses the output of the
+ﬁrst stage to construct a coreset and achieve arbitrary constant factor approximation.
+
+     1.1. Our contributions. Summary of results. For simplicity of presen-
+tation, we summarize the results for the case of m = d = rank(A). Let k =
+max{p/2 + 1, p}, and let φ(r, d) be the time required to solve an p regression problem
+with r constraints and d variables. In the ﬁrst stage of the algorithm, we compute a
+set of sampling probabilities p1 , . . . , pn in time O(nd5 log n), sample r1 = O(36p dk+1 )
+rows of A and the corresponding elements of b according to the pi ’s, and solve an p
+regression problem on the (much smaller)        sample; we prove
+                                                                 this is an 8-approximation
+algorithm with a running time of O nd5 log n + φ(r1 , d) . In the second stage of the
+algorithm, we use the residual from the ﬁrst stage to compute a new set of sampling
+probabilities q1 , . . . , qn , sample an additional r2 = O(r1 /2 ) rows of A and the cor-
+responding elements of b according to the qi ’s, and solve an p regression problem
+on the (much smaller) sample; we prove this is a (1 + )-approximation algorithm
+with a total running time of O nd5 log n + φ(r2 , d) (section 4). We also show how
+to extend our basic algorithm to commonly encountered and more general settings of
+constrained, generalized, and weighted p regression problems (section 5).
+     We note that the lp regression problem for p = 1, 2 has been studied before. For
+p = 1, Clarkson [11] uses a subgradient-based algorithm to preprocess A and b and
+then samples the rows of the modiﬁed problem; these elegant techniques, however,
+depend crucially on the linear structure of the l1 regression problem.2 Furthermore,
+this algorithm does not yield coresets. For p = 2, Drineas, Mahoney, and Muthukrish-
+nan [13] construct coresets by exploiting the singular value decomposition, a property
+
+    1 For the special case of p = 2, vector space methods can solve the regression problem in time
+
+O(m2 n), and if p = 1 or ∞, linear programming methods can be used.
+    2 Two ingredients of [11] use the linear structure: the subgradient-based preprocessing itself and
+
+the counting argument for the concentration bound.
+2062              DASGUPTA, DRINEAS, HARB, KUMAR, AND MAHONEY
+
+
+peculiar to the l2 space. Thus, in order to eﬃciently compute coresets for the p
+regression problem for all p ∈ [1, ∞), we need tools that capture the geometry of lp -
+norms. In this paper we develop the following two tools that may be of independent
+interest (section 3).
+    (1) Well-conditioned bases. Informally speaking, if the the columns of matrix U
+form a well-conditioned basis for a d-dimensional subspace of Rn , then for all z ∈ Rd ,
+zp should be close to U zp . We will formalize this by requiring3 that for all z ∈ Rd ,
+zq multiplicatively approximates U zp by a factor that can depend on d but is in-
+dependent of n (where p and q are dual; i.e., 1q + p1 = 1). We show that these bases exist
+and can be constructed in time O(nd5 log n). In fact, our notion of a well-conditioned
+basis can be interpreted as a computational analogue of the Auerbach and Lewis bases
+studied in functional analysis [28]. They are also related to the barycentric spanners
+recently introduced by Awerbuch and R. Kleinberg [5] (section 3.1). J. Kleinberg and
+Sandler [18] deﬁned the notion of an 1 -independent basis, and our well-conditioned
+basis can be used to obtain an exponentially better “condition number” than their
+construction. Further, Clarkson [11] deﬁned the notion of an “1 -conditioned matrix,”
+and he preprocessed the input matrix to an 1 regression problem so that it satisﬁes
+conditions similar to those satisﬁed by our bases.
+     (2) Subspace-preserving sampling. We show that sampling rows of A according
+to information in the rows of a well-conditioned basis of A minimizes the sampling
+variance, and, consequently, the rank of A is not lost by sampling. This is critical
+for our relative-error approximation guarantees. The notion of subspace-preserving
+sampling was used in [13] for p = 2, but we abstract and generalize this concept for
+all p ∈ [1, ∞).
+     We note that for p = 2, our sampling complexity matches that of [13], which is
+O(d2 /2 ); and for p = 1, it improves that of [11] from O(d3.5 (log d)/2 ) to O(d2.5 /2 ).
+    Overview of our methods. Given an input matrix A, we ﬁrst construct a
+well-conditioned basis for A and use that to obtain bounds on a slightly nonstandard
+notion of a p-norm condition number of a matrix. The use of this particular condition
+number is crucial since the variance in the subspace-preserving sampling can be upper-
+bounded in terms of it. An ε-net argument then shows that the ﬁrst stage sampling
+gives us an 8-approximation. The next twist is to use the output of the ﬁrst stage as a
+feedback to ﬁne-tune the sampling probabilities. This is done so that the “positional
+information” of b with respect to A is also preserved in addition to the subspace. A
+more careful use of a diﬀerent ε-net shows that the second stage sampling achieves a
+(1 + )-approximation.
+     1.2. Related work. As mentioned earlier, in the course of providing a sampling-
+based approximation algorithm for 1 regression, Clarkson [11] shows that coresets
+exist and can be computed eﬃciently for a controlled 1 regression problem. Clarkson
+ﬁrst preprocesses the input matrix A to make it well conditioned with respect to the
+1 -norm and then applies a subgradient-descent–based approximation algorithm to
+guarantee that the 1 -norm of the target vector is conveniently bounded. Coresets of
+size O(d3.5 log d/2 ) are thereupon exhibited for this modiﬁed regression problem. For
+the 2 case, Drineas, Mahoney, and Muthukrishnan [13] designed sampling strategies
+to preserve the subspace information of A and proved the existence of a coreset of
+
+   3 The requirement could equivalently be in terms of z , but the above form yields the tightest
+                                                            p
+dependence on d, since we plan to use Hölder’s inequality.
+            SAMPLING ALGORITHMS AND CORESETS FOR p REGRESSION                           2063
+
+rows of size O(d2 /2 ), for the original 2 regression problem; this leads to a (1 + )-
+approximation algorithm. Their algorithm used O(nd2 ) time to construct the coreset
+and solve the 2 regression problem, which is suﬃcient time to solve the regression
+problem without resorting to sampling. In a subsequent work, Sarlós [22] improved
+the running time for the (1 + )-approximation to Õ(nd) by using random sketches
+based on the fast Johnson–Lindenstrauss transform of Ailon and Chazelle [3].
+                                                                            f (d)
+     More generally, embedding d-dimensional subspaces of Lp into p               using co-
+ordinate restrictions has been extensively studied [21, 23, 8, 25, 26, 24]. Using well-
+conditioned bases, one can provide a constructive analogue of Schechtman’s existential
+L1 embedding result [23] (see also [8]) that any d-dimensional subspace of L1 [0, 1] can
+                     r                                         2 2
+be embedded√ in 1 with distortion (1 + ) with r = O(d / ), albeit with an extra
+factor of d in the sampling complexity. Coresets have been analyzed by the com-
+putational geometry community as a tool for eﬃciently approximating various extent
+measures [1, 2]; see also [16, 6, 14] for applications of coresets in combinatorial opti-
+mization. An important diﬀerence is that most of the coreset constructions are expo-
+nential in dimension and thus applicable only to low-dimensional problems, whereas
+our coresets are polynomial in dimension and thus applicable to high-dimensional
+problems.
+                                                                                       p 1/p
+     2. Preliminaries. Given a vector x ∈ Rm , its p-norm is xp = m         i=1 (|xi | )    ,
+and the dual norm of ·p is denoted ·q , where 1/p + 1/q = 1. Given a ma-
+                                                         n m
+trix A ∈ Rn×m , its generalized p-norm is |||A|||p = ( i=1 j=1 |Aij |p )1/p . This is a
+submultiplicative matrix norm that generalizes the Frobenius norm from p = 2 to all
+p ∈ [1, ∞), but it is not a vector-induced matrix norm. The jth column   of A is denoted
+Aj , and the ith row is denoted Ai . In this notation, |||A|||p = ( j Aj p )1/p =
+                                                                                    p
+ 
+( i Ai pp )1/p . For x, x , x ∈ Rm , it can be shown using Hölder’s inequality that
+x − x p ≤ 2p−1 (x − x p + x − x p ).
+         p                      p             p
+
+     Two crucial ingredients in our proofs are ε-nets and tail inequalities. A subset
+N (D) of a set D equipped with a metric · is called an ε-net in D for some ε > 0 if
+for every x ∈ D there is a y ∈ N (D) with x − y ≤ ε. In order to construct an ε-net
+for D it is enough to choose N (D) to be the maximal set of points that are pairwise
+ε apart. It is well known that the unit ball of a d-dimensional space has an ε-net of
+size at most (3/ε)d [8]. We will use the following version of the Bernstein’s inequality.
+                                        {Xi }i=1 be independent random variables with
+                                                n
+     Theorem 3 (see [20, 7]). Let
+     2
+E[Xi ] < ∞ and Xi ≥ 0. Set Y = i Xi , and let γ > 0. Then
+                                                                  
+                                                          −γ 2
+(2)                     Pr [Y ≤ E[Y ] − γ] ≤ exp                    .
+                                                       2 i E[Xi2 ]
+
+If Xi − E[Xi ] ≤ Δ for all i, then with σi2 = E[Xi2 ] − E[Xi ]2 we have
+                                                                  
+                                                        −γ 2
+(3)               Pr [Y ≥ E[Y ] + γ] ≤ exp                          .
+                                                2 i σi2 + 2γΔ/3
+
+    Finally, throughout this paper, we will use the following sampling matrix formal-
+ism to represent our sampling operations. Given a set of n probabilities, pi ∈ (0, 1] for
+                                                                                         1/p
+i = 1, . . . , n, let S be an n × n diagonal sampling matrix such that Sii is set to 1/pi
+with probability pi and to zero otherwise. Clearly, premultiplying A or b by S deter-
+mines whether the ith row of A and the corresponding element of b will be         included
+in the sample, and the expected number of rows/elements selected is r = i=1 pi .
+                                                                                     n
+2064              DASGUPTA, DRINEAS, HARB, KUMAR, AND MAHONEY
+
+
+(In what follows, we will abuse notation slightly by ignoring zeroed-out rows and
+regarding S as an r × n matrix and thus SA as an r × m matrix.) Thus, e.g., sam-
+pling constraints from (1) and solving the induced subproblem may be represented as
+solving
+
+(4)                                 Ẑ = minm SAx̂ − Sbp .
+                                          x̂∈R
+
+
+A vector x̂ is said to be a κ-approximation to the p regression problem of (1) for
+κ ≥ 1 if Ax̂ − bp ≤ κZ.
+      3. Main technical ingredients.
+     3.1. Well-conditioned bases. We introduce the following notion of a “well-
+conditioned” basis.
+     Definition 4 (well-conditioned basis). Let A be an n × m matrix of rank d,
+let p ∈ [1, ∞), and let q be its dual norm. Then an n × d matrix U is an (α, β, p)–
+well-conditioned basis for the column space of A if the columns of U span the column
+space of A and (1) |||U |||p ≤ α, and (2) for all z ∈ Rd , zq ≤ β U zp . We will say
+that U is a p–well-conditioned basis for the column space of A if α and β are dO(1) ,
+independent of m and n.
+√ Recall that any orthonormal basis U for                     √ both |||U |||2 = U F =
+                                                span(A) satisﬁes
+  d and also z2 = U z2 for all z ∈ Rd and thus is a ( d, 1, 2)–well-conditioned
+basis. Thus, Deﬁnition 4 generalizes to an arbitrary p-norm for p ∈ [1, ∞), the notion
+that an orthogonal matrix is well conditioned with respect to the 2-norm. Observe
+that the conditions are slightly diﬀerent from those of the standard deﬁnition of a low-
+distortion embedding for the following reason. If U is a low distortion embedding,
+that is, if zp /C ≤ U zp ≤ zp for some C, then we can easily see that U is a
+well-conditioned basis according to the above deﬁnition with α and β being CdO(1) .
+The reverse, however, does not hold. The well-conditioned basis deﬁnition above
+is intended to capture the essence of what is required of a basis for our subspace-
+sampling strategy to hold. Note also that duality is incorporated into Deﬁnition 4
+since it relates the q-norm of the vector z ∈ Rd to the p-norm of the vector U z ∈ Rn ,
+where p and q are dual4 (i.e., 1q + 1p = 1).
+     The existence and eﬃcient construction of these bases are given by the following.
+     Theorem 5. Let A be an n × m matrix of rank d, let p ∈ [1, ∞), and let q be
+its dual norm. Then there exists an (α, β, p)–well-conditioned basis U for the column
+                                             1 1                                   1
+space of A such that if p < 2, then α = d p + 2 and β = 1; if p = 2, then α = d 2 and
+                                  1 1             1 1
+β = 1; and if p > 2, then α = d p + 2 and β = d q − 2 . Moreover, U can be computed in
+O(nmd + nd5 log n) time (or in just O(nmd) time if p = 2).
+     Proof. Let A = QR, where Q is any n × d matrix that is an orthonormal basis
+for span(A) and R is a d × m matrix. If p√= 2, then Q is the desired basis U ; from
+the discussion following Deﬁnition 4, α = d and β = 1, and computing the matrix
+U requires O(nmd) time [15]. Otherwise, ﬁx Q and p, and deﬁne the norm
+
+                                        zQ,p  Qzp .
+
+    4 For p = 2, Drineas, Mahoney, and Muthukrishnan used this basis, i.e., an orthonormal matrix,
+
+to construct probabilities to sample the original matrix. For p = 1, Clarkson used a procedure similar
+                                                                                                  √
+to the one we describe in the proof of Theorem 5 to preprocess A such that the 1-norm of z is a d d
+factor away from the 1-norm of Az.
+                SAMPLING ALGORITHMS AND CORESETS FOR p REGRESSION                       2065
+
+A quick check shows that ·Q,p is indeed a norm. (zQ,p = 0 if and only if z = 0
+since Q has full column rank; γzQ,p = γQzp = |γ| Qzp = |γ| zQ,p ; and
+z + z  Q,p = Q(z + z  )p ≤ Qzp + Qz  p = zQ,p + z  Q,p .)
+    Consider the set C = {z ∈ Rd : zQ,p ≤ 1}, which is the unit ball of the norm
+·Q,p . In addition, deﬁne the d × d matrix F such that Elj = {z ∈ Rd : z T F z ≤ 1} is
+                                                                              √
+the Löwner–John ellipsoid of C. Since C is symmetric about the origin, (1/ d)Elj ⊆
+C ⊆ Elj ; thus, for all z ∈ Rd ,
+                                                  √
+(5)                             zlj ≤ zQ,p ≤ d zlj ,
+            2
+where zlj = z T F z (see, e.g., [9, pp. 413–414]). Since the matrix F is symmetric
+positive deﬁnite, we can express it as F = GT G, where G is full rank and upper
+triangular. Since Q is an orthogonal basis for span(A) and G is a d × d matrix of full
+rank, it follows that U = QG−1 is an n × d matrix that spans the column space of A.
+Note that
+
+                                    A = QR = QG−1 GR = U τ,
+
+where τ = GR. We claim that U = QG−1 is the desired p–well-conditioned basis.
+     To establish this claim, let z  = Gz. Thus, z2lj = z T F z = z T GT Gz =
+                             2
+(Gz)T Gz = z  z  = z  2 . 
+                                Furthermore, since G is invertible, z = G−1 z  , and thus
+               T
+
+                           −1  
+zQ,p = Qzp = QG z p = U z  p . By combining these expressions with (5),
+it follows that for all z  ∈ Rd ,
+                                                     √
+(6)                             z  2 ≤ U z  p ≤ d z  2 .
+                                                  p             p
+                                                                   2 +1 , where the inequality
+                                 p             p             p
+Since |||U |||pp =       j Uj p =  j U ej p ≤  j d ej 2 = d
+                                                       2
+
+                                                                  1   1
+follows from the upper bound in (6), it follows that α = d        p+2
+                                                                 . If p < 2, then q > 2
+and zq ≤ z2 for all z ∈ Rd ; by combining this with (6), it follows that β = 1. On
+                                                           1   1
+the other hand, if p > 2, then q < 2 and zq ≤ d q − 2 z2 ; by combining this with
+                                1   1
+(6), it follows that β = d q − 2 .
+     In order to construct U , we need to compute Q and G and then invert G. Our ma-
+trix A can be decomposed into QR using the compact QR decomposition in O(nmd)
+time [15]. The matrix F describing the Löwner–John ellipsoid of the unit ball of
+·Q,p can be computed in O(nd5 log n) time [19]. Finally, computing G from F takes
+O(d3 ) time, and inverting G takes O(d3 ) time.
+     It is an open question whether the discontinuity at p = 2 in Theorem 5 is inherent
+in the structure of dual norms, or whether it is due to our inability to compute a better
+set of well-conditioned bases.
+     Connection to barycentric spanners. A point set K = {K1 , . . . , Kd } ⊆
+D ⊆ Rd is a barycentric spanner for the set D if every z ∈ D may be expressed
+as a linear combination of elements of K using coeﬃcients in [−C, C] for C = 1.
+When C > 1, K is called a C-approximate barycentric spanner. Barycentric spanners
+were introduced by Awerbuch and R. Kleinberg in [5]. They showed that if a set is
+compact, then it has a √  barycentric spanner.
+                                           √     Our proof √ shows that if A is an n × d
+matrix, then B = τ −1 / d = R−1 G−1 / d ∈ Rd×d is a d-approximate barycentric
+spanner for D = {z ∈ Rd : Azp ≤ 1}. To see this, ﬁrst note that each Bj belongs
+to D since ABj p = √1d U ej p ≤ ej 2 = 1, where the inequality is obtained
+2066            DASGUPTA, DRINEAS, HARB, KUMAR, AND MAHONEY
+
+
+from (6). Moreover,
+           √        since B spans Rd , we can write any z ∈ D as z = Bν. Thus,
+      −1
+ν = B z = dτ z. Hence,
+                                      √          √          √
+                                             
+             ν∞ ≤ ν2 ≤ U νp =  dU τ z  = d Azp ≤ d,
+                                                           p
+
+where the second inequality is also obtained from (6). This shows that our basis has
+the added property that every element z ∈ D can be expressed as a linear combination
+                                                                                  √
+of elements (or columns) of B using coeﬃcients whose 2 -norm is bounded by d.
+     Connection to Auerbach bases. An Auerbach basis U = {Uj }dj=1 for a
+d-dimensional normed space A is a basis such that Uj p = 1 for all j and such that
+                
+whenever y = j νj Uj is in the unit ball of A, then |νj | ≤ 1. The existence of such
+a basis for every ﬁnite dimensional normed space was ﬁrst proved by Auerbach [4]
+(see also [12, 27]). It can easily be shown that an Auerbach basis is an (α, β, p)–well-
+conditioned basis, with α = d and β = 1 for all p. Further, suppose U is an Auerbach
+basis for span(A), where A is an n × d matrix of rank d. Writing A = U τ , it follows
+that τ −1 is an exact barycentric spanner for D = {z ∈ Rd : Azp ≤ 1}. Speciﬁcally,
+       −1                  −1
+each τj   ∈ D since Aτj    p = Uj p = 1. Now write z ∈ D as z = τ −1 ν. Since
+the vector y = Az = U ν is in the unit ball of span(A), we have |νj | ≤ 1 for all
+1 ≤ j ≤ d. Therefore, computing a barycentric spanner for the compact set D—
+which is the preimage of the unit ball of span(A)—is equivalent (up to polynomial
+factors) to computing an Auerbach basis for span(A).
+    3.2. Subspace-preserving sampling. In the previous subsection (and in the
+notation of the proof of Theorem 5), we saw that given p ∈ [1, ∞), any n × m matrix
+A of rank d can be decomposed as
+
+                              A = QR = QG−1 GR = U τ,
+
+where U = QG−1 is a p–well-conditioned basis for span(A) and τ = GR. The
+signiﬁcance of a p–well-conditioned basis is that we are able to minimize the variance
+in our sampling process by randomly sampling rows of the matrix A and elements of
+the vector b according to a probability distribution that depends on norms of the rows
+of the matrix U . This will allow us to preserve the subspace structure of span(A) and
+thus to achieve relative-error approximation guarantees.
+     More precisely, given p ∈ [1, ∞) and any n × m matrix A of rank d decomposed
+as A = U τ , where U is an (α, β, p)–well-conditioned basis for span(A), consider any
+set of sampling probabilities pi for i = 1, . . . , n that satisfy
+                                                      p
+                                              Ui p
+(7)                             pi ≥ min 1,                r   ,
+                                              |||U |||pp
+
+where r = r(α, β, p, d, ) to be determined below. Let us randomly sample the ith row
+of A with probability pi for all i = 1, . . . , n. Recall that we can construct a diagonal
+                                                1/p
+sampling matrix S, where each Sii = 1/pi with probability pi and 0 otherwise, in
+which case we can represent the sampling operation as SA.
+    The following theorem is our main result regarding this subspace-preserving sam-
+pling procedure.
+    Theorem 6. Let A be an n×m matrix of rank d,  ≤ 1/7, and let p ∈ [1, ∞). Let
+U be an (α, β, p)–well-conditioned basis for span(A), and let us randomly sample rows
+of A according to the procedure described above using the probability distribution given
+                     SAMPLING ALGORITHMS AND CORESETS FOR p REGRESSION                                                  2067
+
+by (7), where r ≥ 16(2p + 2)(αβ)p (d ln( 12          2      2 2
+                                            ) + ln( δ ))/(p  ). Then, with probability
+1 − δ, the following holds for all x ∈ R :
+                                        m
+
+
+                                          | SAxp − Axp | ≤  Axp .
+    Proof. For simplicity of presentation, in this proof we will generally drop the
+subscript from our matrix and vector p-norms; i.e., unsubscripted norms will be p-
+norms. Note that it suﬃces to prove that, for all x ∈ Rm ,
+                                                        p                p                        p
+(8)                               (1 − )p Ax ≤ SAx ≤ (1 + )p Ax
+with probability 1 − δ. To this end, ﬁx a vector x ∈ Rm , deﬁne the random  nvariable
+                  p
+Xi = (Sii |Ai x|) , and recall that Ai = Ui τ since A =   U τ . Clearly, i=1 Xi =
+      p                                                          n               p
+SAx . In addition, since E[Xi ] = |Ai x|p , it follows that i=1 E[Xi ] = Ax . To
+bound (8), ﬁrst note that
+                                     n
+(9)                                       (Xi − E[Xi ]) =                       (Xi − E[Xi ]) .
+                                    i=1                               i:pi <1
+
+Equation (9) follows since, according to the deﬁnition of pi in (7), pi may equal
+1 for some rows, and since these rows are always included in the random sample,
+Xi = E[Xi ] for these rows. To bound the right-hand side of (9), note that for all i
+such that pi < 1,
+                       p                  p         p
+            |Ai x| /pi ≤ Ui p τ xq /pi                                          (by Hölder’s inequality)
+                                                 p
+                               ≤ |||U |||pp τ xq /r                                                      (by (7))
+                                                 p
+(10)                           ≤ (αβ) Ax /r
+                                         p
+                                                                        (by Deﬁnition 4 and Theorem 5).
+From (10) it follows that for each i such that pi < 1,
+                                                                                                  p
+                               Xi − E[Xi ] ≤ Xi ≤ |Ai x|p /pi ≤ (αβ)p Ax /r.
+                                                            p
+Thus, we may deﬁne Δ = (αβ)p Ax /r. In addition, it also follows from (10) that
+                                                                           p
+                                                                 |Ai x|
+                               E Xi2 =              |Ai x|p
+                     i:pi <1              i:pi <1
+                                                                   pi
+                                                            p
+                                          (αβ)p Ax
+                                      ≤                                    |Ai x|p                   (by (10))
+                                               r                 i:pi <1
+                                                            2p
+                          ≤ (αβ)p Ax /r,
+                                                                 
+from which it follows that i:pi <1 σi2 = i:pi <1 E Xi2 −(E[Xi ])2 ≤ i:pi <1 E Xi2 ≤
+            2p
+(αβ)p Ax /r.
+     To apply the upper tail bound in Theorem 3, deﬁne γ = ((1 + /4)p − 1) Axp .
+                                  2p
+It follows that γ 2 ≥ (p/4)2 Ax and also that
+                                                                2p                                                2p
+       2             σi2 + 2γΔ/3 ≤ 2(αβ)p Ax                       /r + 2((1 + /4)p − 1)(αβ)p Ax                  /3r
+           i:pi <1
+                                            p     
+                                           2 5     4             2p
+                                      ≤          +     (αβ)p Ax /r
+                                           3 4     3
+                                                                           2p
+                                      ≤ (2p + 2)(αβ)p Ax                      /r,
+2068             DASGUPTA, DRINEAS, HARB, KUMAR, AND MAHONEY
+
+
+where the second inequality follows by standard manipulations since  ≤ 1 and since
+p ≥ 1. Thus, by (3) of Theorem 3, it follows that
+                                          ⎡           ⎡          ⎤     ⎤
+
+           Pr [SAx > Ax + γ] = Pr ⎣                    Xi > E ⎣             Xi ⎦ + γ ⎦
+                       p          p
+
+                                                 i:pi <1              i:pi <1
+                                                                                   
+                                                           −γ 2
+                                          ≤ exp    
+                                                  2 i:pi <1 σi2 + 2γΔ/3
+                                                                  
+                                                      −2 p2 r
+                                          ≤ exp                      .
+                                                  16(2p + 2)(αβ)p
+Similarly, to apply the lower tail bound of (2) of Theorem 3, deﬁne γ = (1 − (1 −
+            p                  p
+/4)p ) Ax . Since γ ≥  Ax /4, we can follow a similar line of reasoning to show
+that
+                                                                 
+                                                        −γ 2
+                             p        p
+                  Pr [SAx < Ax − γ] ≤ exp         
+                                                    2 i:pi <1 σi2
+                                                            
+                                                      −2 r
+                                            ≤ exp              .
+                                                    32(αβ)p
+Choosing r ≥ 16(2p + 2)(αβ)p (d ln( 12         2      2 2
+                                      ) + ln( δ ))/(p  ), we get that for every ﬁxed x,
+                                                       d
+the following is true with probability at least 1 − 12 δ:
+                                      p            p                            p
+                    (1 − /4)p Ax ≤ SAx ≤ (1 + /4)p Ax .
+    Now, consider the ball B = {y ∈ Rn : y = Ax, y ≤ 1}, and consider an ε-net
+                                                               d
+for B, with ε = /4. The number of points in the ε-net is 12        . Thus, by the union
+bound, with probability 1 − δ, (8) holds for all points in the ε-net. Now, to show that
+with the same probability (8) holds for all points y ∈ B, let y ∗ ∈ B be such that
+|Sy − y| is maximized, and let η = sup{|Sy − y| : y ∈ B}. Also, let yε∗ ∈ B
+be the point in the ε-net that is closest to y ∗ . By the triangle inequality,
+  η = |Sy ∗  − y ∗ | = |Syε∗ + S(y ∗ − yε∗ ) − yε∗ + (y ∗ − yε∗ )|
+                        ≤ |Syε∗  + S(y ∗ − yε∗ ) − yε∗  + 2 y ∗ − yε∗  − y ∗ − yε∗ |
+                        ≤ |Syε∗  − yε∗ | + |S(y ∗ − yε∗ ) − y ∗ − yε∗ | + 2 y ∗ − yε∗ 
+                        ≤ /4 yε∗  + η/4 + /2,
+where the last inequality follows since y ∗ − yε∗  ≤ ε, (y ∗ − yε∗ )/ε ∈ B, and
+                           |S(y ∗ − yε∗ )/ε − (y ∗ − yε∗ )/ε| ≤ η.
+Therefore, η ≤  since yε∗  ≤ 1 and since we assume  ≤ 1/7. Thus, (8) holds for
+all points y ∈ B, with probability at least 1 − δ. Similarly, it holds for any y ∈ Rn
+such that y = Ax, since y/ y ∈ B and since S(y/ y) − y/ y ≤  implies that
+Sy − y ≤  y, which completes the proof of the theorem.
+     Several things should be noted about this result. First, it implies that rank(SA) =
+rank(A), since otherwise we could choose a vector x ∈ null(SA) and violate the
+theorem. In this sense, this theorem generalizes the subspace-preservation result of
+Lemma 4.1 of [13] to all p ∈ [1, ∞). Second, regarding sampling complexity: if
+                                            p
+p < 2 the sampling complexity is O(d 2 +2 ), if p = 2 it is O(d2 ), and if p > 2 it is
+       1  1   1   1
+O(d(d p + 2 d q − 2 )p ) = O(dp+1 ). Finally, note that this theorem is analogous to the
+main result of Schechtman [23], which uses the notion of Auerbach bases.
+              SAMPLING ALGORITHMS AND CORESETS FOR p REGRESSION                                    2069
+
+       4. The sampling algorithm.
+    4.1. Statement of our main algorithm and theorem. Our main sampling
+algorithm for approximating the solution to the p regression problem is presented
+in Figure 1. The algorithm takes as input an n × m matrix A of rank d, a vector
+b ∈ Rn , and a number p ∈ [1, ∞). It is a two-stage algorithm that returns as output
+a vector x̂opt ∈ Rm (or a vector x̂c ∈ Rm if only the ﬁrst stage is run). In either case,
+the output is the solution to the induced p regression subproblem constructed on the
+randomly sampled constraints. Note that the set of constraints r2 extracted by the
+second stage of the algorithm is a coreset for the p regression problem.
+
+ Input: An n × m matrix A of rank d, a vector b ∈ Rn , and p ∈ [1, ∞).
+ Let 0 <  < 1/7, and deﬁne k = max{p/2 + 1, p}.
+        - Find a p–well-conditioned basis U ∈ Rn×d for span(A) (as in the proof of Theorem 5).
+                                             Ui p
+          - Stage 1: Deﬁne pi = min{1, |||U |||pp r1 }, where r1 = 16(2p + 2)dk (d ln(8 · 12) + ln(200)) .
+                                                  p
+                                                            1/p
+                - Generate (implicitly) S where Sii = 1/pi  with probability pi and 0 otherwise.
+                - Let x̂c be the solution to minx∈Rm S(Ax − b)p .
+                                                                                           |ρ̂ |p
+          - Stage 2: Let ρ̂ = Ax̂c − b, and unless ρ̂ = 0, deﬁne qi = min{1, max{pi , ρ̂
+                                                                                        i
+                                                                                           p r2 }} with
+                                                                                           p
+                        p k 
+                         d
+                                                   
+            r2 = 150·24
+                     2
+                              d ln( 280
+                                     
+                                        ) + ln(200) .
+                                                                    1/p
+             - Generate (implicitly, a new) T where Tii = 1/qi     with probability qi and 0 other-
+               wise.
+             - Let x̂opt be the solution to minx∈Rm T (Ax − b)p .
+ Output: x̂opt (or x̂c if only the ﬁrst stage is run).
+
+                            Fig. 1. Sampling algorithm for p regression.
+
+
+     The algorithm ﬁrst computes a p–well-conditioned basis U for span(A), as de-
+scribed in the proof of Theorem 5. Then, in the ﬁrst stage, the algorithm uses in-
+formation from the norms of the rows of U to sample constraints from the input p
+regression problem. In particular, roughly O(dp+1 ) rows of A, and the corresponding
+elements of b, are randomly sampled according to the probability distribution given
+by
+                                 p
+                         Ui p
+(11)     pi = min 1,                 r1   , where r1 = 16(2p + 2)dk (d ln(8 · 12) + ln(200)) ,
+                          |||U |||pp
+
+                                                                                                    1/p
+implicitly represented by a diagonal sampling matrix S, where each Sii = 1/pi .
+For the remainder of the paper, we will use S to denote the sampling matrix for the
+ﬁrst-stage sampling probabilities. The algorithm then solves, using any p solver of
+one’s choice, the smaller subproblem. If the solution to the induced subproblem is
+denoted x̂c , then, as we will see in Theorem 7, this is an 8-approximation to the
+original problem.5
+    In the second stage, the algorithm uses information from the residual of the 8-
+approximation computed in the ﬁrst stage to reﬁne the sampling probabilities. Deﬁne
+    5 For p = 2, Drineas, Mahoney, and Muthukrishnan show that this ﬁrst stage actually leads to a
+
+(1 + )-approximation. For p = 1, Clarkson develops a subgradient-based algorithm and runs it, after
+preprocessing the input, on all the input constraints to obtain a constant factor approximation in a
+stage analogous to our ﬁrst stage. Here, however, we solve an p regression problem on a small subset
+of the constraints to obtain the constant factor approximation. Moreover, our procedure works for
+all p ∈ [1, ∞).
+2070              DASGUPTA, DRINEAS, HARB, KUMAR, AND MAHONEY
+
+
+the residual ρ̂ = Ax̂c − b (and note that ρ̂p ≤ 8 Z). Then, roughly O(dp+1 /2 ) rows
+of A, and the corresponding elements of b, are randomly sampled according to the
+probability distribution
+
+(12)
+                                                                             
+                     |ρ̂i |p                    150 · 24p dk         280
+qi = min 1, max pi ,         r2    , where r2 =               d ln         + ln(200)  .
+                     ρ̂pp                          2               
+
+As before, this can be represented as a diagonal sampling matrix T , where each Tii =
+    1/p
+1/qi with probability qi and 0 otherwise. For the remainder of the paper, we will use
+T to denote the sampling matrix for the second-stage sampling probabilities. Again,
+the algorithm solves, using any p solver of one’s choice, the smaller subproblem. If
+the solution to the induced subproblem at the second stage is denoted x̂opt , then, as
+we will see in Theorem 7, this is a (1 + )-approximation to the original problem.6
+     The following is our main theorem for the p regression algorithm presented in
+Figure 1 showing that coresets exist for the p regression problem and can be eﬃciently
+constructed.
+     Theorem 7. Let A be an n × m matrix of rank d, let b ∈ Rn , let p ∈ [1, ∞), and
+let k = max{p/2 + 1, p}. Recall that  ≤ 1/7, r1 = 16(2p + 2)dk (d ln(8 · 12) + ln(200)),
+                 p k                     
+and r2 = 150·24
+              2
+                  d
+                      d ln( 280
+                              ) + ln(200) . Then the following hold.
+       • Constant factor approximation. If only the first stage of the algorithm in
+         Figure 1 is run, then with probability at least 0.6 the solution x̂c to the sampled
+         problem based on the pi ’s of (7) is an 8-approximation to the p regression
+         problem.
+       • Relative-error approximation. If both stages of the algorithm are run, then
+         with probability at least 0.5 the solution x̂opt to the sampled problem based on
+         the qi ’s of (12) is a (1 + )-approximation to the p regression problem.
+       • Running time. The ith stage of the algorithm runs in time O(nmd+nd5 log n+
+         φ(20iri , m)), where φ(s, t) is the time taken to solve the regression problem
+         minx∈Rt A x − b p , where A ∈ Rs×t is of rank d and b ∈ Rs .
+     Note that since the algorithm of Figure 1 constructs the (α, β, p)–well-conditioned
+basis U using the procedure in the proof of Theorem 5, our sampling complexity
+depends on α and β. In particular, it will be O(d(αβ)p ). Thus, if p < 2, our sampling
+                                                                  1  1   1   1
+complexity is O(d · d 2 +1 ) = O(d 2 +2 ); if p > 2, it is O(d(d p + 2 d q − 2 )p ) = O(dp+1 );
+                        p             p
+
+
+and (although not explicitly stated, our proof will make it clear that) if p = 2, it
+is O(d2 ). Note also that we have stated the claims of the theorem as holding with
+constant probability, but they can be shown to hold with probability at least 1 − δ by
+using standard ampliﬁcation techniques.
+    4.2. Proof for first-stage sampling: Constant factor approximation. To
+prove the claims of Theorem 7 having to do with the output of the algorithm after
+the ﬁrst stage of sampling, we begin with two lemmas. First note that, because of
+our choice of r1 , we can use the subspace-preserving Theorem 6 with only a constant
+distortion  = 18 and δ = 100
+                            1
+                              ; i.e., for all x, we have
+
+                               7                 9
+(13)                             Axp ≤ SAxp ≤ Axp
+                               8                 8
+   6 The subspace-based sampling probabilities (11) are similar to those used by Drineas, Mahoney,
+
+and Muthukrishnan [13], while the residual-based sampling probabilities (12) are similar to those
+used by Clarkson [11].
+              SAMPLING ALGORITHMS AND CORESETS FOR p REGRESSION                   2071
+
+with probability at least 0.99. The ﬁrst lemma below now states that the optimal
+solution to the original problem provides a small (constant factor) residual when
+evaluated in the sampled problem.
+    For simplicity of notation, we again drop the p-subscript from the norm notation,
+except where it might become confusing.
+    Lemma 8. S(Axopt − b) ≤ 3Z, with probability    at least 1 − 1/3 . p
+                                                                       p
+
+    Proof. Deﬁne Xi = (Sii |Ai xopt − bi |) . Thus, i Xi = S(Axopt − b) , and the
+                                             p
+
+ﬁrst moment is E[ i Xi ] = Axopt − bp = Z. The lemma follows since, by Markov’s
+inequality,
+                                                   
+                                                           1
+                          Pr      Xi > 3 E p
+                                                   Xi ≤ p ;
+                                i                i
+                                                          3
+                    p                  p
+i.e., S(Axopt − b) > 3p Axopt − b with probability no more than 1/3p .
+      The next lemma states that if the solution to the sampled problem provides a
+constant factor approximation (when evaluated in the sampled problem), then when
+this solution is evaluated in the original regression problem we get a (slightly weaker)
+constant factor approximation.
+      Lemma 9. If S(Ax̂c − b) ≤ 3 Z, then with probability 0.99, Ax̂c − b ≤ 8 Z.
+      Proof. We will prove the contrapositive: If Ax̂c − b > 8 Z, then S(Ax̂c − b) >
+3 Z. To do so, note that, by Theorem 6 and the choice of r1 , we have that, with
+probability 0.99,
+                           7                 9
+                             Axp ≤ SAxp ≤ Axp .
+                           8                 8
+Using this,
+
+S(Ax̂c − b) ≥ SA(x̂c − xopt ) − S(Axopt − b)    (by the triangle inequality)
+                7
+              ≥ Ax̂c − Axopt  − 3 Z           (by Theorem 6 and Lemma 8)
+                8
+                7
+              ≥ (Ax̂c − b − Axopt − b) − 3 Z      (by the triangle inequality)
+                8
+                7
+              > (8 Z − Z) − 3 Z           (by the premise Ax̂c − b > 8 Z)
+                8
+              > 3 Z,
+
+which establishes the lemma.
+      Clearly, S(Ax̂c − b) ≤ S(Axopt − b) (since x̂c is an optimum for the sampled
+p regression problem). Combining this with Lemmas 8 and 9, it follows that the
+solution x̂c to the sampled problem based on the pi ’s of (7) satisﬁes Ax̂c − b ≤ 8 Z;
+i.e., x̂c is an 8-approximation to the original Z.
+      To conclude the proof of the claims for the ﬁrst stage of sampling, note that by
+our choice of r1 , Theorem 6 fails to hold for our ﬁrst-stage sampling with probability
+no greater than 1/100. In addition, the inequality in Lemma 8 fails to hold with
+probability no greater than 1/3p , which is no greater than 1/3 for all p ∈ [1, ∞).
+Finally, let r1 be a random variable representing the number of rows chosen by our
+sampling scheme, and note that E[r1 ] ≤ r1 . By Markov’s inequality, it follows that
+r1 > 20r1 with probability less than 1/20. Thus, the ﬁrst stage of our algorithm fails
+to give an 8-approximation in the speciﬁed running time with a probability bounded
+by 1/3 + 1/20 + 1/100 < 2/5.
+2072              DASGUPTA, DRINEAS, HARB, KUMAR, AND MAHONEY
+
+
+     4.3. Proof for second-stage sampling: Relative-error approximation.
+The proof of the claims of Theorem 7 having to do with the output of the algorithm
+after the second stage of sampling will parallel that for the ﬁrst stage, but it will have
+several technical complexities that arise since the ﬁrst triangle inequality approxima-
+tion in the proof of Lemma 9 is too coarse for relative-error approximation. By our
+construction, since qi ≥ pi , we have a ﬁner result for subspace preservation. Thus,
+                                 1
+applying Theorem 6 with δ = 100    , and a constant  < 18 , with probability 0.99, the
+following holds for all x:
+
+(14)                    (1 − ) Axp ≤ SAxp ≤ (1 + ) Axp .
+
+As before, we start with a lemma that states that the optimal solution to the original
+problem provides a small (now a relative-error) residual when evaluated in the sampled
+problem. This is the analogue of Lemma 8. An important diﬀerence is that the
+second-stage sampling probabilities signiﬁcantly enhance the probability of success.
+      Lemma 10. T (Axopt − b) ≤ (1 + )Z with probability at least 0.99.
+      Proof. Deﬁne the randomvariable Xi = (Tii |Ai xopt −bi |)p , and recall that Ai =
+                                         n                        p
+Ui τ since A = U τ . Clearly,          i=1 Xi = T (Axopt − b) . In addition, since E[Xi ] =
+                                           n                        p
+|Ai xopt − bi | , it follows that i=1 E[Xi ] = Axopt − b . We will use (3) of Theo-
+                  p
+                                                                           p                p
+rem 3 to provide a bound for i (Xi − E[Xi ]) = T (Axopt − b) − Axopt − b .
+      From the deﬁnition of qi in (12), it follows that for some of the rows, qi may
+equal
+        1 (just as in      the proof of Theorem 6). Since Xi = E[Xi ] for these rows,
+   i (X  i −  E[X  i ]) =     i:qi <1 (Xi − E[Xi ]), and thus we will bound this latter quantity
+with
+       (3).   To  do   so,  we   must ﬁrst provide a bound for Xi − E[Xi ] ≤ Xi and for
+             2                2
+   i:qi <1 σi ≤       i E Xi . To that end, note that
+
+|Ai (xopt − x̂c )| ≤ Ui p τ (xopt − x̂c )q      (by Hölders inequality)
+                   ≤ Ui p β U τ (xopt − x̂c )p (by Deﬁnition 4 and Theorem 5)
+                   ≤ Ui p β (Axopt − b + Ax̂c − b) (by the triangle inequality)
+(15)               ≤ Ui p β9Z,
+
+where the ﬁnal inequality follows from the deﬁnition of Z and the results from the
+ﬁrst stage of sampling. Next, note that from the conditions on the probabilities qi in
+(12), as well as by Deﬁnition 4 and the output of the ﬁrst stage of sampling, it follows
+that
+                  |ρ̂i |p   ρ̂p   8p Z p            Ui p   |||U |||p   αp
+(16)                      ≤       ≤           and             ≤           ≤
+                    qi       r2      r2                 qi         r2       r2
+for all i such that qi < 1.
+     Thus, since Xi − E[Xi ] ≤ Xi ≤ |Ai xopt − bi |p /qi , it follows that for all i such
+that qi < 1,
+
+                         2p−1
+(17)      Xi − E[Xi ] ≤        (|Ai (xopt − x̂c )|p + |ρ̂i |p )    (since ρ̂ = Ax̂c − b )
+                            qi
+                                                              
+                                 Ui pp β p 9p Z p   |ρ̂i |p
+                        ≤2 p−1
+                                                     +                           (by (15))
+                                         qi              qi
+                        ≤ 2p−1 (αp β p 9p Z p + 8p Z p ) /r2                     (by (16))
+(18)                    ≤ cp (αβ)p Z p /r2 ,
+              SAMPLING ALGORITHMS AND CORESETS FOR p REGRESSION                                 2073
+
+where we set cp = 2p−1 (9p + 8p ) ≤ 18p . Thus, we may deﬁne Δ = cp (αβ)p Z p /r2 . In
+addition, it follows that
+                                                           |Ai xopt − bi |p
+                    E Xi2 =            |Ai xopt − bi |p
+          i:qi <1             i:qi <1
+                                                                  qi
+
+                         ≤ Δ            |Ai xopt − bi |p                            (by (18))
+                                   i
+(19)                     ≤ cp (αβ)p Z 2p /r2 .
+
+                                                        γ =((1p + ) − 1)Z . We
+                                                                      p     p
+To apply the upper tail bound of (3) of Theorem 3, 
+                                                   deﬁne
+                                                      8 p
+have γ ≥ p Z , and since  ≤ 1/7, we also have γ ≤ 7 − 1 Z . Hence, by (3) of
+             p
+
+Theorem 3, it follows that
+                                                                               −γ 2
+                               p
+       ln Pr [T (Axopt − b) > Axopt − b + γ] ≤
+                                                     p
+                                                                                2
+                                                                   2    i:qi <1 σi + 2γΔ/3
+                                                                               −p2 2 r2
+                                                               ≤                        
+                                                                            2c  p
+                                                                       2cp + 3p 87 − 1 (αβ)p
+                                                                     −p2 2 r2
+                                                               ≤                 .
+                                                                   3 · 18p (αβ)p
+                                                                 2 2
+                                                −p  r2
+Thus, Pr [T (Axopt − b) > (1 + )Z] ≤ exp( 3·18 p (αβ)p ), from which the lemma fol-
+
+lows by our choice of r2 .
+    Next we show that if the solution to the sampled problem provides a relative-error
+approximation (when evaluated in the sampled problem), then when this solution is
+evaluated in the original regression problem we get a (slightly weaker) relative-error
+approximation. We ﬁrst establish two technical lemmas.
+    The following lemma says that for all optimal solutions x̂opt to the second-stage
+sampled problem, Ax̂opt is not too far from Ax̂c , where x̂c is the optimal solution
+from the ﬁrst stage, in a p-norm sense. Hence, the lemma will allow us to restrict our
+calculations in Lemmas 12 and 13 to the ball of radius 12 Z centered at Ax̂c .
+    Lemma 11. Ax̂opt − Ax̂c  ≤ 12 Z with probability 0.98.
+    Proof. With probability 0.98, both the inequalities in Lemma 9 and condition (14)
+hold true. By two applications of the triangle inequality, it follows that
+             Ax̂opt − Ax̂c  ≤ Ax̂opt − Axopt  + Axopt − b + Ax̂c − b
+                              ≤ Ax̂opt − Axopt  + 9Z,
+where the second inequality follows since Ax̂c − b ≤ 8 Z from the ﬁrst stage of
+sampling and since Z = Axopt − b. In addition, we have that
+                                   1
+         Axopt − Ax̂opt  ≤            T (Ax̂opt − Axopt )      (by Theorem 6)
+                                (1 − )
+                              ≤ (1 + 2) (T (Ax̂opt − b) + T (Axopt − b))
+                                                    (by the triangle inequality)
+                              ≤ 2(1 + 2) T (Axopt − b)
+                              ≤ 2(1 + 2)(1 + ) Axopt − b                   (by Lemma 10) ,
+where the third inequality follows since x̂opt is optimal for the sampled problem. The
+lemma follows since  ≤ 1/8.
+2074              DASGUPTA, DRINEAS, HARB, KUMAR, AND MAHONEY
+
+
+     Thus, if we deﬁne the aﬃne ball of radius 12 Z that is centered at Ax̂c and that
+lies in span(A),
+
+(20)                B = {y ∈ Rn : y = Ax, x ∈ Rm , Ax̂c − y ≤ 12 Z},
+
+then Lemma 11 states that Ax̂opt ∈ B for all optimal solutions x̂opt to the sampled
+problem. Let us consider an ε-net, and call it Bε with ε =  Z for this ball B. Using
+arguments from [8], since B is a ball in a d-dimensional subspace, the size of the
+               
+              Z d
+                       d
+ε-net is 3·12
+            Z     = 36    . The next lemma states that for all points in the ε-net,
+if that point provides a relative-error approximation (when evaluated in the sampled
+problem), then when this point is evaluated in the original regression problem we get
+a (slightly weaker) relative-error approximation.
+    Lemma 12. For all points Axε in the ε-net, Bε , if T (Axε − b) ≤ (1 + 3)Z,
+then Axε − b ≤ (1 + 6)Z with probability 0.99.
+    Proof. Fix a given point yε∗ = Ax∗ε ∈ Bε . We will prove the contrapositive for this
+point; i.e., we will prove that if Ax∗ε − b > (1+6)Z, then T (Ax∗ε − b) > (1+3)Z
+                                   1
+                                       d
+with probability at least 1 − 100     36 . The lemma will then follow from the union
+bound.
+                                                                     ∗
+                                                 n Xi = (Tii |Ai ∗xε − bip|) , and recall
+                                                                              p
+    To this end, deﬁne the random variable
+that Ai = Ui τ since A = U τ . Clearly,        i=1 Xi = T (Axε − b) . In addition,
+since E[Xi ] = |Ai x∗ε − bi |p , it follows that ni=1 E[Xi ] = Ax∗ε − bp . We will use
+(2) of Theorem 3 to provide an upper bound for the probability of the event that
+T (Ax∗ε − b) ≤ Ax∗ε − b − γ, where γ = Ax∗ε − b − (1 + 3)p Z p , under the
+              p                  p                            p
+                       ∗
+assumption that Axε − b > (1 + 6)Z.
+     From the deﬁnition of qi in (12), it follows that for some of the rows, qi may
+equal
+                   the proof of Theorem 6). Since Xi = E[Xi ] for these rows,
+       1 (just as in
+  i (Xi − E[Xi ]) =   i:pi <1 (Xi − E[Xi ]), and thus we will
+                                                         
+                                                              bound this latter quantity
+with (2). To do so, we must ﬁrst provide a bound for i:qi <1 E Xi2 . To that end,
+note that
+
+   |Ai (x∗ε − x̂c )| = |Ui τ (x∗ε − x̂c )|
+(21)                  ≤ Ui p τ (x∗ε − x̂c )q                   (by Hölders inequality)
+                     ≤ Ui p β U τ (x∗ε − x̂c )p       (by Deﬁnition 4 and Theorem 5)
+(22)                 ≤ Ui  β12Z,
+
+where the ﬁnal inequality follows from the radius of the high-dimensional ball in which
+the ε-net resides. From this, we can show that
+
+       |Ai x∗ε − bi |   2p−1
+                       ≤      (|Ai x∗ε − Ai x̂c |p + |ρ̂i |p )    (since ρ̂ = Ax̂c − b )
+             qi            qi
+                                      p                        
+                                Ui  12p β p Z p     |ρ̂i |p
+                       ≤2 p−1
+                                                     +                          (by (22))
+                                         qi              qi
+                      ≤ 2p−1 (αp 12p β p Z p + 8p Z p ) /r2                     (by (16))
+(23)                  ≤ 24p (αβ)p Z p /r2 .
+              SAMPLING ALGORITHMS AND CORESETS FOR p REGRESSION                                2075
+
+Therefore, we have that
+
+                                                          |Ai x∗ε − bi |p
+                      E Xi2 =          |Ai x∗ε − bi |p
+            i:qi <1             i:qi <1
+                                                                 qi
+                                24 (αβ)p Z p
+                                    p
+                            ≤                        |Ai x∗ε − bi |p          (by (23))
+                                     r2        i
+
+(24)                        ≤   24p (αβ)p Ax∗ε − b2p /r2 .
+
+To apply the lower tail bound of (2) of Theorem 3, deﬁne γ = Ax∗ε − b −(1+3)pZ p .
+                                                                                   p
+
+Thus, by (24) and by (2) of Theorem 3 it follows that
+
+       ln[T (Ax∗ε − b)p ≤ (1 + 3)p Z p ]
+                               −r2 (Ax∗ε − b − (1 + 3)p Z p )2
+                                                 p
+                            ≤                               2p
+                                     24p (αβ)p Ax∗ε − b
+                                                               2
+                                 −r2              (1 + 3)p Z p
+                            ≤ p              1−              p
+                               24 (αβ)p            Ax∗ε − b
+                                                               2
+                                 −r2              (1 + 3)p Z p
+                            < p              1 −                             (by the premise)
+                               24 (αβ)p           (1 + 6)p Z p
+                                −r2 2
+                            ≤ p           .
+                               24 (αβ)p
+
+The last line can be justiﬁed by the fact that (1 + 3)/(1 + 6) ≤ 1 −  since  ≤ 1/3,
+and that (1 − )p is maximized at p = 1. Since r2 ≥ 24p (αβ)p (d ln( 36 ) + ln(200))/ ,
+                                                                                          2
+
+                                                                                1
+                                                                                       d
+it follows that T (Ax∗ε − b) ≤ (1 + 3)Z with probability no greater than 200       
+                                                                                     36 .
+                                 36 d
+Since there are no more than           such points in the ε-net, the lemma follows by
+the union bound.
+     Finally, the next lemma states that if the solution to the sampled problem (in the
+second stage of sampling) provides a relative-error approximation (when evaluated in
+the sampled problem), then when this solution is evaluated in the original regression
+problem we get a (slightly weaker) relative-error approximation. This is the analogue
+of Lemma 9, and its proof will use Lemma 12.
+     Lemma 13. If T (Ax̂opt − b) ≤ (1 + )Z, then Ax̂opt − b ≤ (1 + 7)Z.
+     Proof. We will prove the contrapositive: If Ax̂opt − b > (1 + 7)Z, then
+T (Ax̂opt − b) > (1 + )Z. Since Ax̂opt lies in the ball B deﬁned by (20) and
+since the ε-net is constructed in this ball, there exists a point yε = Axε (call it Ax∗ε ),
+such that Ax̂opt − Ax∗ε  ≤  Z. Thus,
+
+       Ax∗ε − b ≥ Ax̂opt − b − Ax∗ε − Ax̂opt    (by the triangle inequality)
+                  ≥ (1 + 7)Z − Z      (by assumption and the deﬁnition of Ax∗ε )
+                      = (1 + 6)Z.
+
+Next, since Lemma 12 holds for all points Axε in the ε-net, it follows that
+
+(25)                                 T (Ax∗ε − b) > (1 + 3)Z.
+2076            DASGUPTA, DRINEAS, HARB, KUMAR, AND MAHONEY
+
+
+Finally, note that
+
+T (Ax̂opt − b) ≥ T (Ax∗ε − b) − T A(x∗ε − x̂opt )    (by the triangle inequality)
+                 > (1 + 3)Z − (1 + ) A(x∗ε − x̂opt )   (by (25) and Theorem 6)
+                 > (1 + 3)Z − (1 + ) Z                  (by the deﬁnition of Ax̂ε )
+                 > (1 + )Z,
+
+which establishes the lemma.
+     Clearly, T (Ax̂opt − b) ≤ T (Axopt − b), since x̂opt is an optimum for the
+sampled p regression problem. Combining this with Lemmas 10 and 13, it follows
+that the solution x̂opt to the sampled problem based on the qi ’s of (12) satisﬁes
+Ax̂opt − b ≤ (1 + 7) Z; i.e., x̂opt is a (1 + 7)-approximation to the original Z.
+     To conclude the proof of the claims for the second stage of sampling, note that
+we can actually replace  by /7, thus getting the (1 + )-approximation with the
+corresponding bound on r2 as in Theorem 7. To bound the failure probability, recall
+that the ﬁrst stage failed with probability no greater than 2/5. Note also that by our
+choice of r2 , Theorem 6 fails to hold for our second-stage sampling with probability
+no greater than 1/100. In addition, Lemma 10 and Lemma 12 each fails to hold with
+probability no greater than 2/100 and 1/100, respectively. Finally, let r2 be a random
+variable representing the number of rows actually chosen by our sampling scheme in
+the second stage, and note that E[r2 ] ≤ 2r2 . By Markov’s inequality, it follows that
+r2 > 40r2 with probability less than 1/20. Thus, the second stage of our algorithm
+fails with probability less than 1/20 + 1/100 + 2/100 + 1/100 < 1/10. By combining
+both stages, our algorithm fails to give a (1+)-approximation in the speciﬁed running
+time with a probability bounded from above by 2/5 + 1/10 = 1/2.
+    Remark. It has been brought to our attention by an anonymous reviewer that
+one of the main results of this section can be obtained with a simpler analysis. Via an
+analysis similar to that of section 4.2, one can show that a relative factor (as opposed
+to a constant factor) approximation can be obtained in one stage by constructing
+the sampling probabilities using subspace information from both the data matrix A
+and the target vector b. In particular, we compute the sampling probabilities from a
+p–well-conditioned basis for the augmented matrix [A b] as opposed to only from A.
+Although it simpliﬁes the analysis, this scheme has the disadvantage that a p–well-
+conditioned basis needs to be constructed for each target vector b. Using our two-
+stage algorithm, one need only construct one such basis for A which can subsequently
+be used to compute probabilities for any target vector b (see, e.g., the extension to
+generalized p regression in the next section).
+     5. Extensions. In this section we outline several immediate extensions of our
+main algorithmic result.
+     Constrained p regression. Our sampling strategies are transparent to con-
+straints placed on x. In particular, suppose we constrain the output of our algorithm
+to lie within a convex set C ⊆ Rm . If there is an algorithm to solve the constrained
+p regression problem minz∈C A x − b , where A ∈ Rs×m is of rank d and b ∈ Rs ,
+in time φ(s, m), then by modifying our main algorithm in a straightforward manner,
+we can obtain an algorithm that gives a (1 + )-approximation to the constrained p
+regression problem in time O(nmd + nd5 log n + φ(40r2 , m)).
+     Generalized p regression. Our sampling strategies extend to the case of
+generalized p regression: given as input a matrix A ∈ Rn×m of rank d, a target
+             SAMPLING ALGORITHMS AND CORESETS FOR p REGRESSION                           2077
+
+matrix B ∈ Rn×p , and a real number p ∈ [1, ∞), ﬁnd a matrix X ∈ Rm×p such
+that |||AX − B|||p is minimized. To do so, we generalize our sampling strategies in
+a straightforward manner. The probabilities pi for the ﬁrst stage of sampling are
+the same as before. Then, if X̂c is the solution to the ﬁrst-stage sampled problem,
+we can deﬁne the n × p matrix
+                                ρ̂ = AX̂c − B and deﬁne            the second-stage sampling
+probabilities to be qi = min 1, max{pi , r2 ρ̂i pp /|||ρ̂|||pp } . Then, we can show that the
+X̂opt computed from the second-stage sampled problem satisﬁes |||AX̂opt − B|||p ≤
+(1 + ) minX∈Rm×p |||AX − B|||p with probability at least 1/2.
+    Weighted p regression. Our sampling strategies also generalize to the case
+of p regression involving weighted p-norms: if w1 , . . . , wm are a set of nonnegative
+weights, then the weighted p-norm of a vector x ∈ Rm may be deﬁned as xp,w =
+ m              1/p
+( i=1 wi |xi |p ) , and the weighted analogue of the matrix p-norm |||·|||p may be
+                         d
+deﬁned as |||U |||p,w = ( j=1 Uj p,w )1/p . Our sampling scheme proceeds as before.
+First, we compute a well-conditioned basis U for span(A) with respect to this weighted
+p-norm. The sampling probabilities pi for the ﬁrst stage of the algorithm are then
+                         p
+pi = min(1, r1 wi Ui p /|||U |||pp,w ), and the sampling probabilities qi for the second
+                                                       
+stage are qi = min 1, max{pi , r2 wi |ρ̂i |p /ρ̂pp,w } , where ρ̂ is the residual from the
+ﬁrst stage.
+     General sampling probabilities. More generally, consider any sampling prob-
+                                       Ui p |(ρ )i |p
+abilities of the form pi ≥ min{1, max{ |||U|||ppp , opt
+                                                    Zp   }r}, where ρopt = Axopt − b and
+                             
+r ≥ 2 d ln(  ) + ln(200) and where we adopt the convention that 00 = 0. Then,
+     36p dk       36
+
+by an analysis similar to that presented for our two-stage algorithm, we can show
+that, by picking O(36p dp+1 /2 ) rows of A and the corresponding elements of b (in
+a single stage of sampling) according to these probabilities, the solution x̂opt to the
+sampled p regression problem is a (1 + )-approximation to the original problem with
+probability at least 1/2. (Note that these sampling probabilities, if an equality is
+used in this expression, depend on the entries of the vector ρopt = Axopt − b; in par-
+ticular, they require the solution of the original problem. This is reminiscent of the
+results of [13]. Our main two-stage algorithm shows that by solving a problem in the
+ﬁrst stage based on coarse probabilities, we can reﬁne our probabilities to approxi-
+mate these probabilities and thus obtain an (1 + )-approximation to the p regression
+problem more eﬃciently.)
+
+    Acknowledgment. We would like to thank Robert Kleinberg for pointing out
+several useful references.
+
+                                        REFERENCES
+
+ [1] P. K. Agarwal, S. Har-Peled, and K. R. Varadarajan, Approximating extent measures of
+         points, J. ACM, 51 (2004), pp. 606–635.
+ [2] P. K. Agarwal, S. Har-Peled, and K. R. Varadarajan, Geometric approximation via
+         coresets, in Combinatorial and Computational Geometry, J. E. Goodman, J. Pach, and
+         E. Welzl, eds., Math. Sci. Res. Inst. Publ. 52, Cambridge University Press, Cambridge,
+         UK, 2005, pp. 1–30.
+ [3] N. Ailon and B. Chazelle, Approximate nearest neighbors and the fast Johnson–
+         Lindenstrauss transform, in Proceedings of the 38th Annual ACM Symposium on Theory
+         of Computing, ACM, New York, 2006, pp. 557–563.
+ [4] H. Auerbach, On the Area of Convex Curves with Conjugate Diameters, Ph.D. thesis, Uni-
+         versity of Lwów, Lwów, Poland, 1930 (in Polish).
+2078             DASGUPTA, DRINEAS, HARB, KUMAR, AND MAHONEY
+
+
+ [5] B. Awerbuch and R. D. Kleinberg, Adaptive routing with end-to-end feedback: Distributed
+         learning and geometric approaches, in Proceedings of the 36th Annual ACM Symposium
+         on Theory of Computing, ACM, New York, 2004, pp. 45–53.
+ [6] M. Bädoiu and K. L. Clarkson, Smaller core-sets for balls, in Proceedings of the 14th Annual
+         ACM–SIAM Symposium on Discrete Algorithms, ACM, New York, SIAM, Philadelphia,
+         2003, pp. 801–802.
+ [7] S. Bernstein, Theory of Probability, Moscow, 1927 (in Russian).
+ [8] J. Bourgain, J. Lindenstrauss, and V. Milman, Approximation of zonoids by zonotopes,
+         Acta Math., 162 (1989), pp. 73–141.
+ [9] S. Boyd and L. Vandenberghe, Convex Optimization, Cambridge University Press, Cam-
+         bridge, UK, 2004.
+[10] S. Chatterjee, A. S. Hadi, and B. Price, Regression Analysis by Example, Wiley Series in
+         Probability and Statistics, Wiley, New York, 2000.
+[11] K. L. Clarkson, Subgradient and sampling algorithms for 1 regression, in Proceedings of the
+         16th Annual ACM–SIAM Symposium on Discrete Algorithms, ACM, New York, SIAM,
+         Philadelphia, 2005, pp. 257–266.
+[12] M. Day, Polygons circumscribed about closed convex curves, Trans. Amer. Math. Soc., 62
+         (1947), pp. 315–319.
+[13] P. Drineas, M. W. Mahoney, and S. Muthukrishnan, Sampling algorithms for 2 regression
+         and applications, in Proceedings of the 17th Annual ACM–SIAM Symposium on Discrete
+         Algorithms, ACM, New York, SIAM, Philadelphia, 2006, pp. 1127–1136.
+[14] D. Feldman, A. Fiat, and M. Sharir, Coresets for weighted facilities and their applications,
+         in Proceedings of the 47th Annual IEEE Symposium on Foundations of Computer Science,
+         IEEE Computer Society, Washington, D.C., 2006, pp. 315–324.
+[15] G. Golub and C. F. Van Loan, Matrix Computations, Johns Hopkins Studies in Mathematical
+         Sciences, Johns Hopkins University Press, Baltimore, MD, 1996.
+[16] S. Har-Peled and S. Mazumdar, On coresets for k-means and k-median clustering, in Pro-
+         ceedings of the 36th Annual ACM Symposium on Theory of Computing, ACM, New York,
+         2004, pp. 291–300.
+[17] T. Hastie, R. Tibshirani, and J. Friedman, The Elements of Statistical Learning, Springer-
+         Verlag, New York, 2003.
+[18] J. Kleinberg and M. Sandler, Using mixture models for collaborative filtering, in Proceedings
+         of the 36th Annual ACM Symposium on Theory of Computing, ACM, New York, 2004,
+         pp. 569–578.
+[19] L. Lovasz, An Algorithmic Theory of Numbers, Graphs, and Convexity, CBMS-NSF Regoinal
+         Conf. Ser. in Appl. Math. 50, SIAM, Philadelphia, 1986.
+[20] A. Maurer, A bound on the deviation probability for sums of non-negative random variables,
+         JIPAM. J. Inequal. Pure Appl. Math., 4 (2003).
+[21] J. Matousek, Lectures on Discrete Geometry, Grad. Texts in Math., Springer-Verlag, New
+         York, 2002.
+[22] T. Sarlós, Improved approximation algorithms for large matrices via random projections, in
+         Proceedings of the 47th Annual IEEE Symposium on Foundations of Computer Science,
+         IEEE Computer Society, Washington, D.C., 2006, pp. 143–152.
+[23] G. Schechtman, More on embedding subspaces of Lp in n    r , Compositio Math., 61 (1987), pp.
+         159–169.
+[24] G. Schechtman and A. Zvavitch, Embedding subspaces of Lp into N        p , 0 < p < 1, Math.
+         Nachr., 227 (2001), pp. 133–142.
+[25] M. Talagrand, Embedding subspaces of L1 into N   1 , Proc. Amer. Math. Soc., 108 (1990), pp.
+         363–369.
+[26] M. Talagrand, Embedding subspaces of Lp into N   p , Oper. Theory Adv. Appl., 77 (1995), pp.
+         311–325.
+[27] A. Taylor, A geometric theorem and its application to biorthogonal systems, Bull. Amer.
+         Math. Soc., 53 (1947), pp. 614–616.
+[28] P. Wojtaszczyk, Banach Spaces for Analysts, Cambridge Stud. Adv. Math. 25, Cambridge
+         University Press, Cambridge, UK, 1991.
+

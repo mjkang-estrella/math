@@ -1,0 +1,14 @@
+# I90 preseal developments and failures
+
+No original I88 artifact was repaired. The verdict on A/A′/B concerns its exact sealed proof. No postseal amendment is authorized by this record.
+
+- The first combined ledger display exceeded the output cap. Frozen complete bytes were retained; relevant acceptance, current-status, I88/I90, and recent-disposition sections were reread in targeted displays. This is not a claim of complete semantic reading of every historical ledger paragraph.
+- Guessed F section filenames `parameters.tex`, `metric.tex`, and `labels.tex` did not exist. `rg --files --no-ignore` revealed `blocks.tex`, which was then read completely. The failed command's extant `tests.tex` output was useful and preserved in the turn; no file was created at a guessed path.
+- A broad printed search-summary plus result-body command exceeded the output cap. Complete search files remain sealed. TeX hits, actual selected proof operations, and specific external passages were subsequently read in bounded displays. Corpus coverage refers to machine search, not reading every hit's whole manuscript.
+- The combined cotype source display lost a middle segment of `walsh.tex`; lines 90–235 were reread, including the frame lift and exact-sign stages. The read manifest's complete-operation designation includes that corrective read.
+- An initial weighted estimate summed the discrepancy separately for every envelope coordinate. Its cost was ν(S)τ, and therefore it did not prove the target at fixed τ. The final bounded observable caps at V BEFORE transferring types, giving Vτ. The inadequate estimate is explained rather than erased from the report.
+- Merely weighting the original bad-root set fails: a zero-mass state can make a root bad. The final argument changes badness to vertex–state pairs and proves the endpoint alternative at that scope.
+- Treating a finite net as finite coordinate support was rejected. The actual diffuse centers enter only through their summed variation measure and a paid TV error. This route yields linear-in-depth rank, not exponential rank.
+- The direct attempt to quantify the weak-star/local-reflexivity proof gave no bound on observable depth. It was replaced by the explicit finite-cover estimate, not sold as a hidden effective compactness modulus.
+- Primary graph-paper retrieval returned arXiv v1 with Algorithm 1 and Lemma 58. F cites the published Algorithm 6.1 and Lemma 6.3. The actual v1 consistency operation was read; these versions and labels are distinguished in the report and version manifest.
+- New literature search identified the finite-dimensional envelope as standard Auerbach/ℓ1 sensitivity geometry. The contribution discussion attributes this and confines the candidate bridge to weighted pair continuation plus clipped type transfer. Closing Q88 is not automatically substantial acceptance.
