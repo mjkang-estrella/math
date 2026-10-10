@@ -1,0 +1,1944 @@
+Proceedings of Machine Learning Research vol :1–32, 2026                39th Annual Conference on Learning Theory
+
+
+
+
+      High-Accuracy Log-Concave Sampling with Stochastic Queries
+Fan Chen                                                                                FANCHEN @ MIT. EDU
+Massachusetts Institute of Technology
+
+Sinho Chewi                                                                      SINHO . CHEWI @ YALE . EDU
+Yale University
+
+Constantinos Daskalakis                                                            COSTIS @ CSAIL . MIT. EDU
+Massachusetts Institute of Technology
+
+Alexander Rakhlin                                                                       RAKHLIN @ MIT. EDU
+Massachusetts Institute of Technology
+
+
+
+Editors: Steve Hanneke and Tor Lattimore
+
+
+
+                                                           Abstract
+     We show that high-accuracy guarantees for log-concave sampling—that is, iteration and query
+     complexities which scale as poly log(1/δ), where δ is the desired target accuracy—are achievable
+     using stochastic gradients with sub-exponential tails. Notably, this exhibits a separation with the
+     problem of convex optimization, where stochasticity (even additive Gaussian noise) in the gradient
+     oracle incurs poly(1/δ) queries. We also give an information-theoretic argument that light-tailed
+     stochastic gradients are necessary for high accuracy: for example, in the bounded variance case, we
+     show that the minimax-optimal query complexity scales as Θ(1/δ). Our framework also provides
+     similar high-accuracy guarantees under stochastic zeroth-order (value) queries, and an improved
+     complexity result for sampling from finite-sum potentials.
+
+
+1. Introduction
+We study the problem of sampling from a log-concave density µ ∝ e−f given access to a stochastic
+gradient oracle for f . Our main result shows that if the stochastic gradients are unbiased and
+have light tails (e.g., sub-exponential), then it is possible to generate a δ-accurate sample in total
+variation distance in polylog(1/δ) queries and time. We refer to such a guarantee as a high-accuracy
+guarantee.
+Recent works take inspiration from the close connections between log-concave sampling and the
+better-understood field of convex optimization. From that standpoint, the phenomenon we highlight
+here could be surprising. Indeed, it is well-known that optimization in the presence of noisy
+gradients—even additive Gaussian noise—does not admit high-accuracy guarantees. Information-
+theoretic lower bounds (Agarwal et al., 2012; Raginsky and Rakhlin, 2011) establish that the optimal
+bounds are 1/δ in the strongly convex case, and 1/δ 2 in the weakly convex case.
+On the other hand, in the literature on Markov chain Monte Carlo (MCMC), there are remarkable
+examples of “exact MCMC” methods in which various components of the algorithm are replaced by
+unbiased estimates, yet the resulting Markov chain remains geometrically ergodic toward the original
+stationary distribution. For example, suppose that µ is the marginal distribution over a parameter θ,
+
+© 2026 F. Chen, S. Chewi, C. Daskalakis & A. Rakhlin.
+                                 C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+but there is an additional latent variable z. In this case, the exact density can be difficult to compute,
+but unbiased estimators can be produced via importance sampling. Incorporating these estimators
+into Metropolis–Hastings algorithms leads to the class of pseudo-marginal MCMC methods (Andrieu
+and Roberts, 2009), some of which are exact.
+When f is a finite sum of functions (e.g., negative log-likelihoods in a statistical context), there
+is a great need to develop samplers which make use of batched stochastic gradients, echoing the
+stochastic gradient revolution in machine learning. This led to the widespread use of stochastic
+gradient Langevin dynamics (SGLD) (Welling and Teh, 2011); see Nemeth and Fearnhead (2021) for
+a survey of recent developments. These methods are based on discretizations of diffusions and are
+therefore not exact, i.e., they do not admit high-accuracy guarantees. Other works propose minibatch
+variants of Metropolis–Hastings methods (Seita et al., 2018; Zhang et al., 2020; Wu et al., 2022b),
+leading to tailored algorithms but often without quantitative convergence guarantees. A notable
+recent advance is the work of Lee et al. (2021), which developed a high-accuracy sampler for the
+finite sum setting; subsequent work (Gopi et al., 2022, 2023) developed high-accuracy samplers with
+stochastic value (zeroth-order) queries. We revisit the finite-sum setting in Section 3.4.
+Our interest lies in generalizing the above observations to the black-box setting, in which no
+particular structure for µ is assumed except log-concavity, the starting point of most non-asymptotic
+analyses (Chewi, 2026), as well as generic properties of the stochastic gradient oracle. In doing
+so, we aim to provide precise, non-asymptotic guarantees that incorporate recent state-of-the-art
+advances in sampling theory so that these guarantees are as sharp as possible.
+
+1.1. Contributions
+Our main contribution is the development of high-accuracy samplers in the presence of stochastic
+gradient noise, provided that the stochastic gradients have light tails (e.g., sub-exponential or sub-
+Gaussian). As a preview of our results, suppose that the target distribution is α-strongly log-concave
+and β-log-smooth. Then, state-of-the-art guarantees for high-accuracy sampling (Chewi et al., 2021;
+Wu et al., 2022a; Fan et al., 2023; Altschuler and Chewi, 2024; Chen et al., 2026) have established
+that it is possible to draw a δ-accurate sample in total variation distance from µ ∝ e−f using
+                    e κd1/2 polylog(1/δ)
+                                           
+                    O                           queries to exact oracles for f, ∇f ,
+
+where κ := β/α is the condition number of µ.
+A consequence of our results is that it is in fact possible to draw a sample in
+          e (κd1/2 + σ 2 /α) polylog(1/δ)
+                                               
+         O                                           queries to a stochastic oracle for ∇f ,
+
+provided that the unbiased stochastic estimates g(x) of the gradient ∇f (x) satisfy the sub-exponential
+tail bound E exp(∥g(x) − ∇f (x)∥/σ) ≤ 2. We note that our main results are considerably more
+general, allowing for both log-concavity and log-smoothness to be relaxed, and covering noisy
+zeroth-order queries as well; see Section 3.3 for details.
+This demonstrates a surprising robustness to noise for sampling, in that σ 2 /α appears additively in
+the final bound and does not significantly deteriorate the dependence on the target accuracy δ. As
+discussed above, this is a stark departure from the corresponding results in optimization, in which
+stochasticity quickly degrades the rates to poly(1/δ) regardless of the tail behavior.
+
+                                                    2
+             H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+We further remark that the work of Chatterji et al. (2022) established a lower bound of Ω(σ 2 /δ 2 )
+in a certain regime, even under Gaussian additive noise. In Section 4.2, we explain why this does
+not contradict our results: their lower bound example requires the strong log-concavity parameter α
+to tend to zero with δ; in fact, α ≲ δ 2 . Hence, our results imply that the Ω(δ −2 )-scaling is in fact
+a consequence of the target distribution being ill-conditioned. However, this raises the question of
+whether one can prove a lower bound which captures the dependence on δ, even when α remains
+bounded away from zero.
+
+We resolve this question via a new lower bound that captures how the tail behavior of the stochastic
+gradients affects the complexity of sampling to high precision. In particular, when we only assume
+that the stochastic gradients have bounded variance, our lower bound reads Ω(1/δ). This is actually
+attained by our upper bound algorithm in this setting, establishing that the optimal rate is Θ(1/δ)
+under a bounded variance constraint. More generally, if we only assume that finitely many moments
+of the stochastic gradient are bounded, our lower bound shows that Ω(1/δ c ) queries are necessary
+for some exponent c > 0.
+
+Taken together, our results show that light-tailed stochastic gradients are both necessary and sufficient
+for high-accuracy sampling.
+
+Finally, we apply our method to the finite-sum setting f = m−1 m
+                                                                   P
+                                                √                     i=1 fi and improve the √
+                                                                                             complexity
+of high-accuracy sampling from O(m + κ ( md + d)) (Lee et al., 2021) to O(m + κ md); see
+                                   e                                               e
+Section 3.4 for details.
+
+
+2. Preliminaries
+We first define the stochastic gradient/value oracle and its tail behavior.
+
+Assumption 2.1 (Stochastic gradient oracle) For any x ∈ Rd , we can draw i.i.d. samples from a
+distribution Ograd (x) such that under g ∼ Ograd (x), it holds that E[g] = ∇f (x).
+
+We assume that there is a parameter m1 > 0 such that Eg∼Ograd (x) ∥g − ∇f (x)∥ ≤ m1 for any
+x ∈ Rd .
+
+Assumption 2.2 (Stochastic value oracle) For any x ∈ Rd , we can draw i.i.d. samples from a
+distribution Oeval (x) such that under v ∼ Oeval (x), it holds that E[v] = f (x).
+
+For any stochastic oracle O Pand integer n ≥ 1, we define O(n) to be the batch oracle that, given
+input x ∈ Rd , returns y = n ni=1 y i by generating i.i.d. samples y 1 , . . . , y n ∼ O(x).
+                           1
+
+
+Definition 2.3 (Oracle with ϵ-tail) Suppose that ϵ = (ϵn )n≥1 is a sequence of functions. We say an
+oracle O is of ϵ-tail if for any x ∈ Rd , M > 0, n ≥ 1, it holds that under g ∼ O(n) (x),
+
+                        1                               
+                          E ∥g − E[g]∥ I{∥g − E[g]∥ > M } ≤ ϵn (M ; x) .
+                        M
+
+We also denote ϵn (M ) := supx∈Rd ϵn (M ; x).
+
+Some cases of interest are as follows.
+
+                                                   3
+                                     C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+Example 2.4 (Sub-polynomial tail) Suppose that for some parameter ζ > 0 and σg > 0, for any
+                                  ζ
+x, under g ∼ O(x), E exp ∥g−E[g]∥
+                             ζ       ≤ 2.1
+                                     σg
+
+Then, we can choose ϵ1 (M ) ≤ Cζ exp(−cζ (M/σg )ζ ) for M ≥ σg . More generally, we can choose
+                       √
+ϵn (M ) ≤ Cζ exp(−cζ ( nM/σg )ζ̄ ) where ζ̄ := min{ζ, 2}.
+Example 2.5 (Polynomial tail) Suppose that for some k ≥ 1 and any x, E∥g − E[g]∥2k ≤ σ2k
+                                                                                      2k .
+                                     (2k)!σ 2k
+Then we can choose ϵn (M ) ≤ nk M 2k
+                                   2k
+                                      .
+We carry out our analysis under the following Hölder continuity assumption for ∇f . It interpolates
+between the Lipschitz case (s = 0) and the smooth case (s = 1).
+Assumption 2.6 (Hölder continuous gradient) There exists s ∈ [0, 1] and βs ≥ 0 such that
+∥∇f (x) − ∇f (y)∥ ≤ βs ∥x − y∥s for all x, y ∈ Rd .
+For technical convenience, we also state our results using an approximate proximal oracle.
+Assumption 2.7 (Approximate proximal oracle) Given input x0 , the oracle Oprox,η (x0 ) returns x
+                                                                                               b
+such that ∥b        x) − x0 ∥ ≤ ηεprox .
+           x + η∇f (b
+Alternatively, if we assume that the guarantee in the assumption holds with high probability, then our
+results remain unchanged up to another error term in total variation distance. The following lemma
+shows that the approximate proximal oracle can be implemented using the stochastic gradient oracle.
+                                                                                              1/(1+s)
+Lemma 2.8 Suppose that Assumption 2.6 holds with s ∈ [0, 1] and denote ms = βs                          . Suppose
+          1
+that η ≤ 2m s
+              and we are given access to a stochastic gradient oracle with ϵ-tail.
+Then, as long as the input x0 satisfies ∥∇f (x0 )∥ ≤ G, the approximate proximal oracle with εprox =
+10(ms + M ) can be implemented with probability at least 1 − ϵn (M ) using O(n log(G/(ms + M )))
+queries to the stochastic gradient oracle.
+Notation. For any function f : Rd → R such that Zf := Rd e−f (x) dx < +∞, we define µf to be
+                                                             R
+
+the distribution over Rd with density µf (x) = Z1f e−f (x) .
+
+For B > 0, we write ClipB (·) := max{−B, min{B, ·}} and τB (·) := (|·| − B)+ . We use ≲ and
+O(·) to hide absolute constants, i.e., f ≲ g (and f = O(g)) if there is an absolute constant such that
+f ≤ Cg. The notation e O(·) hides logarithmic factors.
+
+3. High-accuracy sampling with stochastic queries
+We build up to our results in three steps. Our methods build upon first-order rejection sampling
+(FORS), a meta-algorithm recently developed in Chen et al. (2026) which simulates rejection sam-
+pling given unbiased estimators of the log-density ratio between the proposal and target. Therefore,
+we first review the FORS framework in Section 3.1. Then, in Section 3.2, we instantiate FORS for
+the problem of sampling from a Gaussian tilt distribution, thereby showing that the results of Chen
+et al. (2026) are robust to stochastic gradient noise. Finally, in Section 3.3, we combine the results of
+Section 3.2 with the proximal sampler algorithm (Lee et al., 2021; Chen et al., 2022) to establish our
+main results for log-concave sampling.
+ 1. The case ζ = 2 corresponds to a sub-Gaussian tail, and ζ = 1 to a sub-exponential tail.
+
+
+                                                           4
+             H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+3.1. Background on first-order rejection sampling (FORS)
+To motivate the FORS algorithm, we replicate the motivating example of Chen et al. (2026) here.
+Consider the simple problem of sampling from a density p ∝ e−f , where f : [0, 1] → R, f (0) = 0,
+and −1 ≤ f ′ ≤ 1. In order to perform rejection sampling with the base measure Unif([0, 1]), we
+must generate randomness b ∼ Ber(ce−f (x) ) for any given x ∈ [0, 1]. To do so, one typically
+assumes access to evaluations of f itself. The novelty of FORS lies in recognizing that this is
+unnecessary—it suffices to produce unbiased estimators of f .
+
+A more general version of this idea is known as the “Bernoulli factory” problem (Keane and O’Brien,
+1994; Nacu and Peres, 2005), and variants of this idea can be found in multiple domains (e.g., Wagner,
+1988; Papaspiliopoulos, 2011). It can be stated as the following abstract task:
+
+Task: Given i.i.d. random variables W1 , W2 , W3 , . . . in [−1, 1], generate a sample b ∼ Ber(ceE W1 ).
+
+To solve this, write the Taylor series as
+
+                                                         X e−1                   j
+                         eE W1 = e−1 · eE[1+W1 ] =                  E[1 + W1 ]        .
+                                                               j!
+                                                         j≥0
+
+
+Suppose that J ∼ Poisson(2) is independent of the i.i.d. sequence W1 , W2 , W3 , . . . . Then we notice
+that
+
+                                                    J
+                                        E W1
+                                                   hY 1 + Wj i
+                                    e          = eE             ,
+                                                         2
+                                                    j=1
+
+                        QJ      1+Wj                             1+W 
+                                        . Indeed, P(b = 1) = E Jj=1 2 j = e−1+E W1 .
+                                                              Q
+so we can set b ∼ Ber     j=1     2
+
+In summary, to generate a sample b ∼ Ber(ce−f (x) ), it suffices to have access to (a random
+number of) unbiased estimates of f (x). In Chen et al. (2026), this was leveraged to produce
+high-accuracy samplers which only use queries to the derivative f ′ , via the representation f (x) =
+Ey∼Unif([0,x]) [xf ′ (y)]. In our work, our goal is to leverage this phenomenon in order to produce
+high-accuracy samplers that tolerate stochasticity in the gradient oracle.
+
+We are now ready to state the general FORS meta-algorithm. Given a proposal distribution q, a tilt
+function w, and a tuneable parameter B = Θ(1), the goal of Algorithm 1 is to produce a sample
+from pb(x) ∝ q(x) ew(x) without having access to the value w(x). Instead, for each x ∈ Rd , we can
+generate i.i.d. samples W1 , W2 , W3 . . . such that E[W1 | x] = w(x). Let Wx denote the conditional
+distribution of W1 given x.
+
+Theorem 3.1 (FORS guarantee, Chen et al. (2026, Theorem 3.1)) Algorithm 1 outputs a random
+point with density pb(x) ∝ q(x) eE[W1 |x] . The number of sampled Wj ’s is bounded, with probability
+at least 1 − δ, by 3Be2B log(2/δ).
+
+Moreover, if Algorithm 1 is called T times, then with probability at least 1 − δ, the total number of
+sampled Wj ’s is O(Be2B (T + log(1/δ))).
+
+
+                                                     5
+                                C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+Algorithm 1 First-order rejection sampling (FORS)
+  Input: Parameter B > 0, proposal distribution q over Rd , estimator distributions (Wx )x∈Rd
+  supported on [−B, B]
+  for i = 1, 2, 3, . . . do
+    Sample x ∼ q.
+    Sample J ∼ Poisson(2B).
+    Sample i.i.d. W1 , . . . , WJ ∼ Wx .
+                                      B+W
+    Output x with probability Jj=1 2B j .
+                                 Q
+  end for
+
+
+3.2. Sampling from Gaussian tilts with stochastic queries
+The goal of this section is to sample from the following Gaussian tilt distribution:
+                                                  1           
+                              ν(x) ∝ exp −f (x) −    ∥x − x0 ∥2 .                                  (1)
+                                                  2η
+
+In Section 3.3, this will be used as a subroutine for the proximal sampler algorithm (Lee et al., 2021;
+Chen et al., 2022), leading to new guarantees for log-concave sampling.
+Remark 3.2 (Diffusion models) Leveraging the fact that the backward transition kernels along a
+diffusion model are also Gaussian tilts of the form (1), Chen et al. (2026) used FORS to provide
+the first high-accuracy sampling guarantees for diffusion models under minimal data assumptions.
+Similarly, the results we present below could also be applied to that setting to show that diffusion
+sampling can be made robust to stochastic errors in the score evaluations. For brevity, we do not
+pursue this application here.
+We now consider instantiating FORS for the Gaussian tilt distribution (1). Let γz,r (x) := γ(x; z, r)
+be any path function such that γz,1 (x) = x and γz,0 (x) = γ(z) is independent of x; here, z ∼ P is
+an external source of randomness. Then, by the fundamental theorem of calculus,
+
+                f (x) − Ez∼P f (γ(z)) = Er∼Unif([0,1]), z∼P ⟨γ̇z,r (x), ∇f (γz,r (x))⟩ .
+
+If we choose the proposal q = N(bx, ηI), where x          base point chosen so that q ≈ ν (made
+                                               b is a fixed
+                                            1
+precise in Theorem 3.3), then q(x) ∝ exp − 2η ∥x − x b∥2 , and hence
+
+                                                  1               1
+              log ν(x) − log q(x) = −f (x) −        ∥x − x0 ∥2 +         b∥2 + const
+                                                                    ∥x − x
+                                                 2η              2η
+                                       1
+                                   =     ⟨x0 − x
+                                               b, x⟩ − f (x) + const .
+                                       η
+
+Thus, applying the path integral formula to h(x) = η −1 ⟨x0 − x  b, x⟩ − f (x), we can express
+                                             D                                        E
+   log ν(x) − log q(x) = Er∼Unif([0,1]), z∼P γ̇z,r (x), η −1 (x0 − xb) − ∇f (γz,r (x)) + const .
+
+By the guarantee of Theorem 3.1, it suggests that we use the unbiased estimator Wr,z,x :=
+⟨γ̇z,r (x), u − ∇f (γz,r (x))⟩, with u := (x0 − x
+                                                b)/η. Actually, since the W ’s in Algorithm 1 must lie
+
+                                                   6
+              H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+in [−B, B], we truncate the estimator to lie in this range. Further, we replace the exact gradients by
+stochastic gradients, leading to
+                   cr,z,g,x := ClipB (⟨γ̇z,r (x), u − g⟩) ,
+                   W                                             g ∼ Ograd (γz,r (x)) .
+
+Below, we choose the base point of the proposal x
+                                                b, the path function γz,r , and the noise distribution
+P in order to optimize the dimension dependence of our result.
+Theorem 3.3 (Sampling from Gaussian tilts) Suppose that Assumption 2.6 holds, Ograd (·) has
+ϵ-tail, n ≥ 1, and B = Θ(1).
+Instantiate Algorithm 1 as follows:
+    • q = N(b             b is drawn from Oprox,η (x0 ). We write u := x0η−bx .
+            x, ηI), where x
+    • Wx is the law of ClipB (Wr,z,g,x ), where
+                                                                                      (n)
+        Wr,z,g,x = ⟨γ̇z,r (x), u − g⟩ ,     r ∼ Unif([0, 1]) , z ∼ N(0, ηI) , g ∼ Ograd (γz,r (x)) , (2)
+
+      and
+
+              γz,r,x0 (x) = ar x + (1 − ar )b
+                                            x + br z ,        ar = sin(πr/2) , br = cos(πr/2) ,      (3)
+
+      so that γ̇z,r,x0 (x) = a′r (x − x
+                                      b) + b′r z.
+                              x)∥2 ≤ ε2prox and
+Then, conditioned on ∥u − ∇f (b
+                                    sβs2           1/(1+s)
+            η −1 ≫ βs2 ds log(1/δ) + 1−s  log2 (1/δ)         + (M 2 + ε2prox ) log(1/δ) ,
+                                    d
+the law νb of Algorithm 1 satisfies DTV (ν, νb) ≤ δ + C Ex∼ν min{ϵn (M ; x), 1}, where C is an
+absolute constant.
+In our application to log-concave sampling, η will be interpreted as a step size, and hence the overall
+complexity of sampling will scale with η −1 , multiplied by the batch size n and other distribution-
+specific pre-factors. We pause to give several remarks to elucidate the dependencies in this result.
+Remark 3.4 (Dimension dependence) The first term requires taking an inverse step size η −1 ≫ β02
+in the Lipschitz case (s = 0), and η −1 ≫ β1 d1/2 in the smooth case (s = 1). This matches state-
+of-the-art results for high-accuracy sampling (Fan et al., 2023; Altschuler and Chewi, 2024; Chen
+et al., 2026), except that we allow for stochastic gradient queries.
+Remark 3.5 (Proximal tolerance) Since the theorem already requires taking η −1 ≫ β02 + M 2 in
+the Lipschitz case, and η −1 ≫ M 2 in the smooth case, then Lemma 2.8 (with n = 1) implies that
+implementing the approximate proximal oracle with the stochastic gradient oracle only incurs a
+logarithmic overhead.
+Remark 3.6 (Accuracy dependence) To reach a final error of δ, we need to take η −1 at least of
+order M 2 = ϵ−1   2
+             n (δ) . We elucidate this in two cases of particular interest.
+
+    • (Sub-Gaussian tails) Suppose that the stochastic gradients have sub-Gaussian tails, which
+      corresponds to ζ = 2 in Example 2.4. Then, we can take n = 1 and M 2 ≍ σg2 log(1/δ), thus
+      the final term requires η −1 ≫ σg2 log2 (1/δ). Hence, this leads to a high-accuracy guarantee.
+
+                                                     7
+                                 C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+    • (Bounded variance) Suppose now that the stochastic gradients merely have variance bounded
+      by σ 2 . Since ϵ1 (M ) ≲ σ 2 /M 2 , we can choose M 2 ≍ σ 2 /δ. Thus, the dependence on
+      δ becomes η −1 ≫ δ −1 log(1/δ). Although it suffices to take n = 1 here, to avoid error
+      accumulation in the next section we will eventually have to apply batching (n > 1). After
+      doing so, the iteration complexity remains 1/δ (up to logarithmic factors).
+      In Section 4, we will show that the 1/δ rate is in fact optimal under the bounded variance
+      assumption (Proposition 4.2). Thus, high-accuracy sampling requires light-tailed stochastic
+      gradients.
+Parallel to Theorem 3.3, we show that it is also possible to sample from the Gaussian tilt distribution
+with only stochastic value queries, provided that the error of the stochastic value oracle is sufficiently
+small.
+Theorem 3.7 Suppose that Assumption 2.6 holds, and Oeval (·) has ϵ-tail. Suppose that n ≥ 1 and
+B = Θ(1).
+Instantiate Algorithm 1 as follows:
+    • q = N(b             b is drawn from Oprox,η (x0 ). We write u = x0η−bx .
+            x, ηI), where x
+    • Wx is the law of ClipB (Wz,v,v′ ,x ), where
+                                                                        (n)              (n)
+               Wz,v,v′ ,x = v ′ − v − ⟨u, x − z⟩ ,       z ∼ q , v ∼ Oeval (x) , v ′ ∼ Oeval (z) .    (4)
+
+Then, conditioned on ∥u − ∇f (b x)∥ ≤ εprox , the law νb of Algorithm 1 satisfies DTV (ν, νb) ≤
+δ + C Ex∼ν min{ϵn (B/4; x), 1}, provided that
+                                        sβs2           1/(1+s)
+                η −1 ≫ βs2 ds log(1/δ) + 1−s  log2 (1/δ)         + ε2prox log(1/δ).
+                                        d
+
+We note that in general, implementing the proximal oracle with only noisy queries will incur
+additional computational cost. However, with the choice of x
+                                                           b = x0 , it is trivially guaranteed that
+εprox = ∥∇f (x0 )∥. In this case, as we will see in Theorem 3.12 below, the term ε2prox in fact
+dominates the complexity.
+
+3.3. Log-concave sampling
+To apply our results to log-concave sampling (and beyond), we apply the results of the previous
+section to the proximal sampler algorithm (Lee et al., 2021; Chen et al., 2022). Given a target
+distribution µ ∝ e−f , the proximal sampler aims to sample from the augmented distribution
+                                                      1          
+                              π̄(x, y) ∝ exp −f (x) −    ∥y − x∥2 .
+                                                      2η
+It does so by applying Gibbs sampling to π̄. Concretely, for n = 0, 1, 2, . . . and an initial point
+X0 ∼ µ0 , repeat:
+   1. Sample Yn ∼ π̄ Y |X=Xn = N(Xn , ηI).
+   2. Sample Xn+1 ∼ π̄ X|Y =Yn .
+
+                                                     8
+             H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+The distribution π̄ X|Y =y is known as the restricted Gaussian oracle (RGO), and it is exactly the
+Gaussian tilt distribution (1) with x0 = y. We therefore combine our result in Theorem 3.3 for
+implementing the RGO, together with existing results on the convergence of the proximal sampler
+itself, to deduce the following sampling corollaries. We begin by recalling the definitions of functional
+inequalities.
+Definition 3.8 (Poincaré) A distribution π satisfies a Poincaré inequality (PI) with constant C if for
+all compactly supported and smooth test functions h : Rd → R,
+
+                              VarX∼π (h(X)) ≤ C EX∼π [∥∇h(X)∥2 ] .
+
+We let CPI (π) be the smallest constant C such that π satisfies PI with constant C.
+Definition 3.9 (Log-Sobolev) A distribution π satisfies a log-Sobolev inequality (LSI) with constant
+C if for all compactly supported and smooth test functions h : Rd → R,
+                                h                   h2 (X)      i
+         EntX∼π (h2 (X)) := EX∼π h2 (X) log                       ≤ 2C EX∼π [∥∇h(X)∥2 ] .
+                                                  EX∼π [h2 (X)]
+We let CLSI (π) be the smallest constant C such that π satisfies LSI with constant C.
+It is well-known (e.g., Bakry et al., 2014) that if π is α-strongly log-concave (SLC), i.e., − log π
+is α-strongly convex, then it satisfies LSI with constant 1/α, and if π satisfies LSI with constant
+1/α, then it satisfies PI with constant 1/α. These represent meaningful enlargements of the class of
+SLC measures which still allow for tractable sampling. For example, unlike SLC, LSI is robust to
+bounded perturbations of the log-density; and unlike LSI, PI allows for capturing measures without
+sub-Gaussian tails (e.g., the two-sided exponential). See Chewi (2026) for further background in the
+context of sampling. In addition, recent progress toward the KLS conjecture (Klartag, 2023) implies
+CPI (π) ≤ O(log d) · ∥Eπ [XX ⊤ ]∥op under log-concavity of π.
+We now present a suite of results by combining Theorem 3.3 (Theorem 3.7) with the guarantees of
+the proximal sampler (Chen et al., 2022). Let ϕM (δ) := inf{n ≥ 1 : ϵn (M ) ≤ δ/(10C)}. We note
+that this can be relaxed to the “in-distribution error”:
+                                             N                                    
+                                          1 X
+              ϕM,N (δ) := inf n ≥ 1 :            Ex∼µk min{ϵn (M ; x), 1} ≤ δ/(10C) ,
+                                          N
+                                            k=1
+
+where µk is the distribution of the Xk in the exact proximal sampler.
+Theorem 3.10 Suppose that Assumption 2.6 holds for some s ∈ [0, 1], and that Ograd (·) has ϵ-tail.
+Suppose that we are given an initial distribution µ0 such that log(1 + Dχ2 (µ0 ∥ µ)) ≤ ∆.
+Choose
+                   1                                    1/(1+s)
+                     = βs2 ds log(N/δ) + βs2 log2 (N/δ)          + M 2 log(N/δ)                       (5)
+                  Cη
+for a sufficiently large universal constant C > 0. Let µ
+                                                       b denote the law of the output of the proximal
+sampler initialized at µ0 , where in each step the RGO is implemented by Theorem 3.3. Then, the
+proximal sampler ensures DTV (b   µ, µ) ≤ δ using at most N ϕM (δ/N ) log A queries to Ograd (·) in the
+following situations.
+
+                                                   9
+                                C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+   1. Suppose that µ satisfies a log-Sobolev inequality with constant CLSI (µ) < ∞ and s = 1 (i.e.,
+      f is smooth). Then,
+                         N ≲ CLSI (µ) β1 d1/2 log3/2 A + (β1 + M 2 ) log2 A ,
+                                                                              
+
+      where A := d + ∆ + δ −1 + CLSI (µ) (β1 + M 2 ).
+   2. Suppose that µ satisfies a Poincaré inequality with constant CPI (µ) < ∞. Then,
+            N ≲ CPI (µ) (βs2 ds log A + βs2 log2 A)1/(1+s) + M 2 log A (∆ + log(1/δ)) ,
+                                                                         
+
+                                                2/(1+s)
+      where A := d + ∆ + δ −1 + CPI (µ) (βs               + M 2 ).
+   3. Suppose that µ is log-concave. Then,
+                                                       1/(1+s)               W 2 (µ0 , µ)
+                   N≲      βs2 ds log A + βs2 log2 A              + M 2 log A · 2 2         ,
+                                                                                    δ
+                                      2/(1+s)
+      where A := d + ∆ + δ −1 + (βs             + M 2 ) W22 (µ0 , µ).
+Remark 3.11 (Dependence on δ) As an illustration, we describe the implied query complexity in
+the following special cases.
+    • If the stochastic gradients have subexponential tails (Example 2.4 with ζ = 1), then for
+      M ≥ σg , we can take ϕM (δ) ≲ (σg /M ) log(1/δ). Therefore, we can take M ≍ σg in all of
+      the results above, and the iteration complexity equals O(N
+                                                              e ). For example, in the smooth LSI
+                                         e          1/2
+      case, the query complexity reads O(CLSI (β1 d + σg )).2
+
+
+    • On the other hand, in the bounded variance case (Example 2.5 with k = 1), we can take
+      ϕM (δ) ≲ σ22 /(δM 2 ), and the total query complexity becomes (N ∨ N 2 σ22 /(δM 2 )) log A.
+      We then choose M to balance the terms. For example, in the smooth LSI case, the query
+      complexity reads
+                    N log A + CLSI (β12 d/M 2 ) log3 A + M 2 log4 A (σ22 log A)/δ ,
+                                                                  
+
+                                                O(κd1/2 (1 + CLSI σ22 /δ)), where κ = CLSI β1 is the
+      This leads to a total query complexity of e
+      condition number.
+We emphasize that while sampling guarantees with stochastic gradients are well-studied (e.g.,
+Dalalyan, 2017; Dalalyan and Karagulyan, 2019; Durmus et al., 2019; Balasubramanian et al., 2022;
+Huang et al., 2024; Lu et al., 2025), our contribution is to provide high-accuracy guarantees, provided
+that the stochastic gradients have light tails.
+In the next section, we show that the assumption on the tails of the stochastic gradient is necessary.
+We also provide a corresponding result for stochastic value queries.
+Theorem 3.12 Suppose that Assumption 2.6 holds and that Oeval (·) has ϵ-tail. Suppose that we are
+given an initial distribution µ0 such that log(1 + Dχ2 (µ0 ∥ µ)) ≤ ∆.
+Choose
+                        1                      ∆ + log(N/δ) 
+                          = (βs ds )2/(1+s) 1 +                log(N/δ)                            (6)
+                       Cη                             d
+
+                                                   10
+             H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+for a sufficiently large universal constant C > 0. Let µ
+                                                       b denote the law of the output of the proximal
+sampler initialized at µ0 , where in each step the RGO is implemented by Theorem 3.7. Then, the
+proximal sampler ensures DTV (b    µ, µ) ≤ δ using at most N ϕ1 (δ/(4N )) queries to Oeval (·) in the
+following situations.
+   1. Suppose that µ satisfies a log-Sobolev inequality with constant CLSI (µ) < ∞ and s = 1 (i.e.,
+      f is smooth). Then,
+
+                                N ≲ CLSI (µ) β1 (d + ∆ + log A) log2 A ,
+
+      where A := d + ∆ + δ −1 + CLSI (µ) β1 .
+   2. Suppose that µ satisfies a Poincaré inequality with constant CPI (µ) < ∞. Then,
+                                                 ∆ + log A 
+                  N ≲ CPI (µ) (βs ds )2/(1+s) 1 +             (∆ + log(1/δ)) log A ,
+                                                     d
+                                               2/(1+s)
+      where A := d + ∆ + δ −1 + CPI (µ) βs               .
+   3. Suppose that µ is log-concave. Then,
+                                              ∆ + log A         W 2 (µ0 , µ)
+                       N ≲ (βs ds )2/(1+s) 1 +             log A · 2 2         ,
+                                                  d                    δ
+                                     2/(1+s)
+      where A := d + ∆ + δ −1 + βs             W22 (µ0 , µ).
+                                                                                                   2
+Note that under noisy value queries of sub-Gaussian tail (Example 2.4), it holds that ϵn (1) ≤ e−n/σg
+for n ≫ σg2 , and hence ϕ1 (δ) = O(σg2 log(1/δ) + 1). Thus, assuming that f is α-strongly convex
+and β-smooth, the query complexity (roughly) scales as O(κd e   · max{σg2 , 1}), where κ = β/α is
+the condition number. By reduction to zeroth-order optimization, it is expected that in this setting,
+sublinear dependence on d cannot be achieved.
+
+3.4. Application: finite-sum sampling
+We now consider a slightly more abstract formulation of the finite-sum sampling problem. For
+simplicity, we focus on the smooth setting.
+Assumption 3.13 The function f takes the form f (x) = Ew∼P F (x; w), and computing ∇F (x; w)
+requires unit cost. Furthermore, ∥∇F (x; w) − ∇F (x′ ; w)∥ ≤ β1 ∥x − x′ ∥ for all w and x, x′ ∈ Rd .
+Theorem 3.14 Suppose that Assumption 3.13 holds and that the initial distribution µ0 satisfies
+log(1 + Dχ2 (µ0 ∥ µ)) ≤ ∆. Consider implementing the proximal sampler as follows.
+    • Initialize X0 ∼ µ0 .
+    • For each k ≥ 0, sample Yk ∼ N(Xk , ηI).
+    • If k mod K = 0, query X bk+1 ∼ Oprox,η (Yk ) and compute ∇f (Xk ). Otherwise, set X
+                                                                                        bk+1 :=
+      Xbm(k)+1 + Yk − Ym(k) , where m(k) := K⌊k/K⌋.
+
+    • Let Ok+1 (x) denote the distribution of ∇F (x; w) − ∇F (Xm(k) ; w) + ∇f (Xm(k) ) under
+      w ∼ P.
+
+                                                    11
+                                C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+    • Instantiate Theorem 3.3 with oracle Ok+1 and center X
+                                                          bk+1 to generate Xk+1 .
+
+Then, assuming that each call to the proximal oracle Oprox,η (·) succeeds with probability at least
+1 − δ and
+             1    √
+                 ≫ Kd + K 2/3 (d + ∆ + log(K/δ))1/3 + (ε2prox /β1 + 1) log(K/δ),                    (7)
+            β1 η
+
+the distribution µ                                        bN ) ≤ N δ.
+                  bN of our algorithm satisfies DTV (µN , µ
+                                                1 P m
+Note that when P = Unif([m]), i.e., f (x) = m       i=1 fi (x), evaluating ∇f (x) has cost m, and the
+proximal oracle can be implemented via standard SVRG methods in e    O(m) time. √ Therefore, assuming
+                                                                                             2/3 1/3
+∆ = O(d), we can choose K = m to obtain a query complexity   √ of O(m + κ ( md + m d )),
+       e                                                               e
+where κ := CLSI (µ)β1 . This improves upon the O(m + κ ( md + d)) complexity achieved in Lee
+                                                  e
+et al. (2021) in the regime m ≤ d. Moreover, by combining the two results,  √ i.e., using our result for
+m ≤ d and their result for m > d, it yields an overall bound of O(m + κ md).
+                                                                   e
+
+
+4. Lower bound: light tails are necessary for high-accuracy sampling
+4.1. A simple lower bound
+We establish lower bounds for sampling with stochastic gradient queries under oracles with bounded
+ψ-moment.
+Definition 4.1 Let ψ : [0, +∞) → [0, +∞) be an increasing function such that ψ(0) = 0. An oracle
+Ograd (·) is a ψ-oracle for f if for any x ∈ Rd , under g ∼ Ograd (x), it holds that E[g] = ∇f (x) and
+E ψ(∥g − ∇f (x)∥) ≤ 1.
+In the following, we present a simple information-theoretic argument based on the goal of sampling
+from a one-dimensional Gaussian pθ = N θ, α1 I . Here pθ (x) ∝ exp(−fθ (x)) with fθ (x) =
+                                                   
+α         2                                                                                      1
+2 (x − θ) and ∇fθ (x) = α(x − θ). Since fθ is α-strongly convex, the LSI holds with CLSI (pθ ) ≤ α .
+
+Proposition 4.2 (Lower bound) Fix any increasing function ψ : [0, +∞) → [0, +∞) such that
+ψ(0) = 0. Suppose that T ≥ 1 and δ ∈ (0, 1], and there is an algorithm Alg such that for any
+          √
+θ ∈ {0, δ/ α}, given any ψ-oracle O for fθ , return a sample x ∼ Alg(O) using T queries to O
+                         δ
+and DTV (pθ , Alg(O)) ≤ 10 . Then, it holds that
+
+                  1     √
+          T ≥     √ Fψ ( αδ) ,         Fψ (θ) := sup{u ≥ θ : (1 − ψ(θ)) · u ≥ θ · ψ(u)} .
+                10 α
+
+Remark 4.3 As demonstration, we describe the implied query complexity lower bound in the
+following special cases.
+    • Consider the case where the only assumption on Ograd (·) is that the variance is bounded by σ 2 .
+                                   2                2
+      Then we can take ψ(m) = m   σ2
+                                     and Fψ (θ) = σθ − θ for any θ ≤ σ2 , i.e., Ω(σ 2 /(αδ)) queries
+      are necessary for stochastic gradients with only bounded second moment. Thus, in this case,
+      our upper bounds are optimal (Remark 3.11), at least with respect to the dependence on δ.
+                                                                                s/(s−1)
+    • More generally, for ψ(m) = (m/σ)s with s > 1, we have Fψ (δ) ≍ σδ1/(s−1) , i.e., if the only
+      assumption on Ograd (·) is a bounded s-th moment, Proposition 4.2 yields a lower bound of
+
+                                                  12
+               H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+             √ s/(s−1) 
+       Ω (σ/δ1/(s−1)
+               α)
+                         queries. In particular, taking s → 1 implies that it is intractable to sample
+       with stochastic gradients with only bounded first moment.
+                                                                                         ζ
+    • For Ograd (·) with sub-exponential tail, we take ψ(m) = e(m/σ) − 1 with ζ > 0. Then
+      Fψ (δ) ≥ Ω(σ log1/ζ (σ/δ)), and Proposition 4.2 yields a lower bound of Ω √σα log1/ζ √σαδ .
+                                                                                                 
+
+      On the other hand, in this case, the argument of Chatterji et al. (2022) yields an alternate
+                          2
+      lower bound of Ω( σα ) in this case.
+Remark 4.4 (Dimensional dependence) For light-tailed (e.g., sub-exponential) stochastic gradi-
+ents, our upper bound scales as e  O(κd1/2 + σ 2 /α), whereas our lower bound does not scale with
+d. The κd1/2 term is therefore not captured by the lower bound; since it is independent of the
+variance proxy σ, it reflects the baseline cost of sampling even with an exact oracle. It may be
+possible to reduce this term, as the best-known lower bound for exact-oracle sampling scales only as
+      √
+min{ κ, d} (Chewi et al., 2023). However, closing this gap remains a long-standing open question.
+
+4.2. Revisiting the lower bound of Chatterji et al. (2022)
+Here, we discuss the lower bound of Chatterji et al. (2022), which also applies to sampling with
+stochastic gradients, in order to avoid potential misunderstandings.
+Their main lower bound shows that there is a strongly log-concave and log-smooth distribution, with
+condition number κ = O(1), such that it requires Ω(σ 2 /δ 2 ) queries to reach δ error in TV distance.
+Here, σ 2 is the variance of the stochastic gradients.2 This appears to contradict our upper bound,
+which only requires O(1/δ) queries in the bounded variance case. Moreover, inspection of their
+lower bound reveals that it holds when the stochastic gradient oracle is produced by adding Gaussian
+noise; in particular, the stochastic gradients have sub-Gaussian tails. In such a setting, we have
+produced algorithms whose complexity scales as O(polylog(1/δ)).
+To resolve this apparent contradiction, we remark that Chatterji et al. (2022, Theorem 4.1) requires
+taking the strong log-concavity parameter α ≲ δ 2 . Our upper bounds, which generally incur a
+dependence of σ 2 /α, therefore match their Ω(σ 2 /δ 2 ) lower bound for their hard examples up to
+logarithmic terms. However, their lower bounds do not address the question of what the best
+dependence on δ is, provided that α is bounded away from zero. This is the reason why we proved
+Proposition 4.2.
+We leave it as an open question to prove a more general lower bound which captures the dependence,
+not just on δ, but on other problem parameters such as κ and d. In the case of exact oracle access,
+proving lower bounds for sampling remains notoriously challenging, with existing results providing
+sharp characterizations only for Gaussians or in low dimension (Chewi et al., 2022, 2023).
+
+
+5. Conclusion
+In this work, we have shown that high-accuracy guarantees—polylog(1/δ) rates—are achievable
+for sampling, provided that the stochastic gradients have light tails. Moreover, via an information-
+theoretic argument, we have shown that light tails are necessary for such a result. In fact, as a
+by-product of our analysis, we identified that the optimal dependence is Θ(1/δ) if the stochastic
+
+ 2. A variance bound of σ 2 in our convention corresponds to a variance bound of σ 2 d in theirs.
+
+
+                                                           13
+                              C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+gradients are only assumed to have a bounded variance. We then improved the state-of-the-art for
+high-accuracy sampling from finite-sum potentials.
+Several open questions remain, of which we list two: (1) Can the lower bound be extended to
+capture dependence on other problem parameters, such as the dimension d? (2) What is the optimal
+complexity in the finite-sum setting?
+
+
+Acknowledgments
+We thank Sam Power for bringing to our attention useful references. We acknowledge support from
+AFOSR through award FA9550-25-1-0375, Simons Foundation and the NSF through awards DMS-
+2031883 and PHY-2019786, and DARPA AIQ award. CD is supported by a Simons Investigator
+Award, a Simons Collaboration on Algorithmic Fairness, ONR MURI grant N00014-25-1-2116, and
+ONR grant N00014-25-1-2296.
+
+
+References
+Alekh Agarwal, Peter L. Bartlett, Pradeep Ravikumar, and Martin J. Wainwright. Information-
+  theoretic lower bounds on the oracle complexity of stochastic convex optimization. IEEE Trans.
+  Inform. Theory, 58(5):3235–3249, 2012.
+
+Jason M. Altschuler and Sinho Chewi. Faster high-accuracy log-concave sampling via algorithmic
+  warm starts. J. ACM, 71(3), 6 2024.
+
+Christophe Andrieu and Gareth O. Roberts. The pseudo-marginal approach for efficient Monte Carlo
+  computations. Ann. Statist., 37(2):697–725, 2009.
+
+Dominique Bakry, Ivan Gentil, and Michel Ledoux. Analysis and geometry of Markov diffusion oper-
+  ators, volume 348 of Grundlehren der Mathematischen Wissenschaften [Fundamental Principles
+  of Mathematical Sciences]. Springer, Cham, 2014.
+
+Krishna Balasubramanian, Sinho Chewi, Murat A. Erdogdu, Adil Salim, and Matthew S. Zhang.
+  Towards a theory of non-log-concave sampling: first-order stationarity guarantees for Langevin
+  Monte Carlo. In Po-Ling Loh and Maxim Raginsky, editors, Proceedings of Thirty Fifth Conference
+  on Learning Theory, volume 178 of Proceedings of Machine Learning Research, pages 2896–2923.
+  PMLR, 7 2022.
+
+Niladri S. Chatterji, Peter L. Bartlett, and Philip M. Long. Oracle lower bounds for stochastic
+  gradient sampling algorithms. Bernoulli, 28(2):1074–1092, 2022.
+
+Fan Chen, Sinho Chewi, Constantinos Daskalakis, and Alexander Rakhlin. High-accuracy sampling
+  for diffusion models and log-concave distributions. arXiv preprint arXiv:2602.01338, 2026.
+
+Yongxin Chen, Sinho Chewi, Adil Salim, and Andre Wibisono. Improved analysis for a proximal
+  algorithm for sampling. In Po-Ling Loh and Maxim Raginsky, editors, Proceedings of Thirty
+  Fifth Conference on Learning Theory, volume 178 of Proceedings of Machine Learning Research,
+  pages 2984–3014. PMLR, 7 2022.
+
+                                               14
+            H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+Sinho Chewi. Log-concave sampling. Forthcoming, 2026. Available online at https://chewisinho.
+  github.io/.
+
+Sinho Chewi, Chen Lu, Kwangjun Ahn, Xiang Cheng, Thibaut Le Gouic, and Philippe Rigollet.
+  Optimal dimension dependence of the Metropolis-adjusted Langevin algorithm. In Mikhail Belkin
+  and Samory Kpotufe, editors, Proceedings of Thirty Fourth Conference on Learning Theory,
+  volume 134 of Proceedings of Machine Learning Research, pages 1260–1300. PMLR, 8 2021.
+
+Sinho Chewi, Patrik R. Gerber, Chen Lu, Thibaut Le Gouic, and Philippe Rigollet. The query
+  complexity of sampling from strongly log-concave distributions in one dimension. In Po-Ling
+  Loh and Maxim Raginsky, editors, Proceedings of Thirty Fifth Conference on Learning Theory,
+  volume 178 of Proceedings of Machine Learning Research, pages 2041–2059. PMLR, 7 2022.
+
+Sinho Chewi, Jaume De Dios Pont, Jerry Li, Chen Lu, and Shyam Narayanan. Query lower bounds
+  for log-concave sampling. In 2023 IEEE 64th Annual Symposium on Foundations of Computer
+  Science (FOCS), pages 2139–2148, 2023.
+
+Arnak S. Dalalyan. Further and stronger analogy between sampling and optimization: Langevin
+  Monte Carlo and gradient descent. In Satyen Kale and Ohad Shamir, editors, Proceedings of the
+  2017 Conference on Learning Theory, volume 65 of Proceedings of Machine Learning Research,
+  pages 678–689. PMLR, 7 2017.
+
+Arnak S. Dalalyan and Avetik Karagulyan. User-friendly guarantees for the Langevin Monte Carlo
+  with inaccurate gradient. Stochastic Process. Appl., 129(12):5278–5311, 2019.
+
+Alain Durmus, Szymon Majewski, and Błażej Miasojedow. Analysis of Langevin Monte Carlo via
+  convex optimization. J. Mach. Learn. Res., 20:Paper No. 73, 46, 2019.
+
+Jiaojiao Fan, Bo Yuan, and Yongxin Chen. Improved dimension dependence of a proximal algorithm
+   for sampling. In Gergely Neu and Lorenzo Rosasco, editors, Proceedings of Thirty Sixth Con-
+   ference on Learning Theory, volume 195 of Proceedings of Machine Learning Research, pages
+   1473–1521. PMLR, 7 2023.
+
+Sivakanth Gopi, Yin Tat Lee, and Daogao Liu. Private convex optimization via exponential mecha-
+  nism. In Conference on Learning Theory, pages 1948–1989. PMLR, 2022.
+
+Sivakanth Gopi, Yin Tat Lee, Daogao Liu, Ruoqi Shen, and Kevin Tian. Algorithmic aspects of
+  the log-Laplace transform and a non-Euclidean proximal sampler. In The Thirty Sixth Annual
+  Conference on Learning Theory, pages 2399–2439. PMLR, 2023.
+
+Xunpeng Huang, Difan Zou, Hanze Dong, Yian Ma, and Tong Zhang. Faster sampling via stochastic
+  gradient proximal sampler. In Ruslan Salakhutdinov, Zico Kolter, Katherine Heller, Adrian
+  Weller, Nuria Oliver, Jonathan Scarlett, and Felix Berkenkamp, editors, Proceedings of the 41st
+  International Conference on Machine Learning, volume 235 of Proceedings of Machine Learning
+  Research, pages 20559–20596. PMLR, 7 2024.
+
+MS Keane and George L. O’Brien. A Bernoulli factory. ACM Transactions on Modeling and
+ Computer Simulation (TOMACS), 4(2):213–219, 1994.
+
+                                               15
+                              C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+Bo’az Klartag. Logarithmic bounds for isoperimetry and slices of convex sets. arXiv preprint
+  arXiv:2303.14938, 2023.
+
+Yin Tat Lee, Ruoqi Shen, and Kevin Tian. Structured logconcave sampling with a restricted Gaussian
+  oracle. In Mikhail Belkin and Samory Kpotufe, editors, Proceedings of Thirty Fourth Conference
+  on Learning Theory, volume 134 of Proceedings of Machine Learning Research, pages 2993–3050.
+  PMLR, 8 2021.
+
+Jianfeng Lu, Xuda Ye, and Zhennan Zhou. Mean square error analysis of stochastic gradient and
+   variance-reduced sampling algorithms. arXiv preprint 2511.04413, 2025.
+
+¸Serban Nacu and Yuval Peres. Fast simulation of new coins from old. Ann. Appl. Probab., 15(1A):
+  93–115, 2005.
+
+Christopher Nemeth and Paul Fearnhead. Stochastic gradient Markov chain Monte Carlo. J. Amer.
+  Statist. Assoc., 116(533):433–450, 2021.
+
+Omiros Papaspiliopoulos. Monte Carlo probabilistic inference for diffusion processes: a method-
+ ological framework. In Bayesian time series models, pages 82–103. Cambridge Univ. Press,
+ Cambridge, 2011.
+
+Maxim Raginsky and Alexander Rakhlin. Information-based complexity, feedback and dynamics in
+ convex programming. IEEE Transactions on Information Theory, 57(10):7036–7056, 2011.
+
+Daniel Seita, Xinlei Pan, Haoyu Chen, and John Canny. An efficient minibatch acceptance test for
+  Metropolis–Hastings. In Proceedings of the Twenty-Seventh International Joint Conference on
+ Artificial Intelligence, IJCAI-18, pages 5359–5363. International Joint Conferences on Artificial
+  Intelligence Organization, 7 2018.
+
+Wolfgang Wagner. Monte Carlo evaluation of functionals of solutions of stochastic differential
+ equations. Variance reduction and numerical examples. Stochastic Anal. Appl., 6(4):447–468,
+ 1988.
+
+Max Welling and Yee-Whye Teh. Bayesian learning via stochastic gradient Langevin dynamics. In
+ Proceedings of the 28th International Conference on Machine Learning, ICML’11, pages 681–688,
+ Madison, WI, USA, 2011. Omnipress.
+
+Keru Wu, Scott Schmidler, and Yuansi Chen. Minimax mixing time of the Metropolis-adjusted
+  Langevin algorithm for log-concave sampling. Journal of Machine Learning Research, 23(270):
+ 1–63, 2022a.
+
+Tung-Yu Wu, Y. X. Rachel Wang, and Wing H. Wong. Mini-batch Metropolis–Hastings with
+  reversible SGLD proposal. J. Amer. Statist. Assoc., 117(537):386–394, 2022b.
+
+Ruqi Zhang, A. Feder Cooper, and Christopher M. De Sa. Asymptotically optimal exact minibatch
+  Metropolis–Hastings. In H. Larochelle, M. Ranzato, R. Hadsell, M.F. Balcan, and H. Lin, editors,
+  Advances in Neural Information Processing Systems, volume 33, pages 19500–19510. Curran
+  Associates, Inc., 2020.
+
+
+
+                                               16
+             H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+Contents
+
+1   Introduction                                                                                     1
+    1.1 Contributions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      2
+
+2   Preliminaries                                                                                    3
+
+3   High-accuracy sampling with stochastic queries                                                   4
+    3.1 Background on first-order rejection sampling (FORS) . . . . . . . . . . . . . . . .          5
+    3.2 Sampling from Gaussian tilts with stochastic queries . . . . . . . . . . . . . . . .         6
+    3.3 Log-concave sampling . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         8
+    3.4 Application: finite-sum sampling . . . . . . . . . . . . . . . . . . . . . . . . . . .      11
+
+4   Lower bound: light tails are necessary for high-accuracy sampling                               12
+    4.1 A simple lower bound . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      12
+    4.2 Revisiting the lower bound of Chatterji et al. (2022) . . . . . . . . . . . . . . . . .     13
+
+5   Conclusion                                                                                      13
+
+A Implementation of the approximate proximal oracle                                                 17
+
+B Technical tools                                                                                   19
+
+C Proofs from Section 3                                                                             21
+  C.1 Proof of Theorem 3.3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        21
+  C.2 Proof of Theorem 3.7 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        26
+  C.3 Proof of Theorem 3.10 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         27
+  C.4 Proof of Theorem 3.12 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         29
+  C.5 Proof of Theorem 3.14 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         29
+
+D Proofs from Section 4                                                                             32
+  D.1 Proof of Proposition 4.2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      32
+
+Appendix A. Implementation of the approximate proximal oracle
+In this section, we show how to implement the approximate proximal oracle (Assumption 2.7) using
+a stochastic gradient oracle.
+Proof of Lemma 2.8. Our goal is to approximately compute
+                                                       1
+                                                         ∥x − x0 ∥2 .
+                                                                   
+                               b ≈ arg min f (x) +
+                               x
+                                       x∈Rd           2η
+                                                                                   1/(1+s)
+Let x⋆ be an optimal solution to the minimization problem. We denote ms := βs                and assume
+          1
+that η ≤ 2m s
+              .
+We consider the following linearized update rule: Let X0 = x0 , and
+                             Xk − ηgk + x0               (n)
+                    Xk+1 =                 ,     gk ∼ Ograd (Xk ) ,     ∀k ≥ 0 .
+                                   2
+
+                                                 17
+                               C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+Note that x⋆ + η∇f (x⋆ ) = x0 . Therefore,
+            2∥Xk+1 − x⋆ ∥ = ∥Xk − ηgk − x⋆ + η∇f (x⋆ )∥
+                          ≤ ∥Xk − x⋆ − η(∇f (Xk ) − ∇f (x⋆ ))∥ + η∥gk − ∇f (Xk )∥ .
+In the following we denote
+                         ∆k := ∥Xk − x⋆ ∥ ,       Ek := ∥gk − ∇f (Xk )∥ .
+Note that by Assumption 2.6,
+            ∥Xk − x⋆ − η(∇f (Xk ) − ∇f (x⋆ ))∥ ≤ ∥Xk − x⋆ ∥ + η∥∇f (Xk ) − ∇f (x⋆ )∥
+                                                 ≤ ∆k + ηβs ∆sk .
+When s ∈ (0, 1), we can use AM–GM inequality to derive ηβs ∆s ≤ 12 ∆ + ηms . It is also
+straightforward to verify this inequality holds for s ∈ {0, 1}.
+Then, it holds that
+                                      3
+                                       ∆k + η(ms + Ek )
+                             ∆k+1 ≤ 2                   ,            ∀k ≥ 0 .
+                                             2
+Applying this inequality recursively, we get
+                                  3 k                    k
+                                                        η X 3 i−1
+                          ∆k ≤            ∆0 + 2ηms +               Ek−i .
+                                  4                     2    4
+                                                          i=1
+
+Note that P(Y ≥ 2y) ≤ y1 E(Y − y)+ for y > 0, and hence
+                       3 k                       k
+                                               1 X 3 i−1
+             P ∆k ≥ 2        ∆0 + 4η(ms + M ) ≤              E(Ek−i − M )+
+                        4                       8M    4
+                                                               i=1
+                                                       1
+                                                      ≤ ϵn (M ) .
+                                                       2
+Note that
+           ∆0 = ∥x0 − x⋆ ∥ = η∥∇f (x⋆ )∥ ≤ η∥∇f (x0 )∥ + η∥∇f (x0 ) − ∇f (x⋆ )∥
+                                                      1
+              ≤ ηG + ηβs ∥x0 − x⋆ ∥s ≤ ηG + ηms + ∆0 ,
+                                                      2
+and hence ∆0 ≤ 2ηG + 2ηms . In particular, when k ≥ 10 log(4G/(M + ms )), we know
+                                 P(∆k ≥ 5η(ms + M )) ≤ ϵn (M ) .
+Finally, note that
+               ∥Xk + η∇f (Xk ) − x0 ∥ ≤ ∥Xk − x⋆ ∥ + η∥∇f (Xk ) − ∇f (x⋆ )∥
+                                                       3
+                                      ≤ ∆k + ηβs ∆sk ≤ ∆k + ηms ,
+                                                       2
+and hence we know
+                      P(∥Xk + η∇f (Xk ) − x0 ∥ ≥ 10η(ms + M )) ≤ ϵn (M ) .
+                                                                                       □
+
+                                                 18
+             H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+Appendix B. Technical tools
+Lemma B.1 Let λ > 0, B > 0. Then
+                                                                          1   2 2
+                               EZ∼N(0,σ2 ) [eλ(|Z|−B)+ − 1] ≤ 2e 2 λ σ .
+
+Further, when B ≥ 2 max{λσ 2 , σ}, we can bound
+
+                                                                              B2
+                                EZ∼N(0,σ2 ) [eλ(|Z|−B)+ − 1] ≤ e− 8σ2 .
+
+Proof. By rescaling, we may assume σ = 1. Then, we can upper bound
+                                     r Z ∞
+                    λ(|Z|−B)+         2               1 2
+     EZ∼N(0,σ2 ) [e           − 1] ≤        eλ(z−B)− 2 z dz
+                                      π
+                                     r ZB∞
+                                      2       1 2      1      2        1 2
+                                   =        e 2 λ −λB− 2 (z−λ) dz = 2e 2 λ −λB Φ(B − λ) ,
+                                      π B
+                     R ∞ − 1 z2
+where Φ(w) = √12π     w e
+                           2    dz. The first inequality then follows from Φ(B − λ) ≤ 1. Further,
+                                        1   2
+                              1
+using the inequality Φ(w) ≤ √2πw e− 2 w for w > 0, we can bound
+
+                                                              1       2
+                     EZ∼N(0,σ2 ) [eλ(|Z|−B)+ − 1] ≤ 2e 2 λ −λB Φ(B − λ)
+                                                          1       2       1   2     1   2
+                                                     ≤ e 2 λ −λB− 8 B ≤ e− 8 B .
+
+                                                                                              □
+The following lemma is standard (Chen et al., 2026).
+                                                    1−s
+Lemma B.2 Suppose that η > 0 and 0 ≤ λ ≤ d4sηs . Then, it holds that
+
+                             EW ∼N(0,ηI) exp λ∥W ∥2s ≤ exp(2(ηd)s λ) .
+                                                    
+
+
+For two probability measures µ, ν, and ℓ > 1, we write Dℓ (µ ∥ ν) := Eµ ( µν )ℓ−1 − 1.
+Lemma B.3 For any ℓ > 1, it holds that
+
+                  max{Dℓ (µf ∥ µg ), Dℓ (µg ∥ µf )} ≤ Ex∼µf [e2ℓ |f (x)−g(x)| − 1] .          (8)
+
+Furthermore, it holds that
+
+                              DTV (µf , µg ) ≤ Ex∼µf [e2 |f (x)−g(x)| − 1] .                  (9)
+
+Proof. By definition, we can write
+                           Z
+                     Zg =     e−f (x)+(f (x)−g(x)) dx = Zf · Ex∼µf ef (x)−g(x) ,
+                              Rd
+
+
+                                                   19
+                                 C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+and hence
+                        µf (x)                     Zg
+                               = exp(g(x) − f (x))    = eg(x)−f (x) Eµf [ef −g ] .
+                        µg (x)                     Zf
+
+Therefore, we have
+                                       µf ℓ−1                ℓ−1
+              1 + Dℓ (µf ∥ µg ) = Eµf            = Eµf [ef −g ]     · Eµf [e(ℓ−1)(g−f ) ]
+                                       µg
+                                                   2
+                                 ≤ Eµf e(ℓ−1)|f −g| ≤ Eµf [e2ℓ|f −g| ] .
+
+Similarly,
+                         µg ℓ               −ℓ
+ 1 + Dℓ (µg ∥ µf ) = Eµf        = Eµf [ef −g ]     · Eµf [eℓ(f −g) ] ≤ Eµf [e−ℓ(f −g) ] · Eµf [eℓ(f −g) ]
+                         µf
+                                 2
+                   ≤ Eµf eℓ|f −g| ≤ Eµf [e2ℓ|f −g| ] .
+
+Combining both inequalities completes the proof of the first inequality.
+To prove the second inequality, we note that
+
+                                           µg                  ef (x)−g(x)
+                 2DTV (µf , µg ) = Eµf         − 1 = Ex∼µf                 −1
+                                           µf                 Eµf [ef −g ]
+                                          1
+                                                  Eµf |ef −g − 1| + |Eµf [ef −g ] − 1|
+                                                                                      
+                                   ≤        f −g
+                                     Eµf [e ]
+                                          2
+                                   ≤             Eµ |ef −g − 1| .
+                                     Eµf [ef −g ] f
+
+Note that |ew − 1| ≤ e|w| − 1 and Eµ [e1f −g ] ≤ Eµf [eg−f ] ≤ Eµf [e|f −g| ], so we can deduce
+                                        f
+
+
+                DTV (µf , µg ) ≤ Eµf [e|f −g| ] Eµf [e|f −g| ] − 1 ≤ Eµf [e2|f −g| − 1] .
+                                                                  
+
+                                                                                                        □
+Lemma B.4 For any f : X → [0, 1], it holds that
+
+                          Ep [f ] − M Eq [f ] ≤ inf M −(λ−1) (1 + Dλ (p ∥ q)) .
+                                                 λ>1
+
+
+Proof. By definition,
+                                                h dp    i      dp    
+                     Ep [f ] − M Eq [f ] = Eq        − M f ≤ Eq      −M     .
+                                                  dq              dq      +
+
+Note that for any random variable Y ≥ 0, we have
+
+                                                      1
+                                                                     1
+                                                                       λ  E[Y λ ]
+   E(Y − M )+ = E[I{Y > M } (Y − M )+ ] ≤ P(Y > M )1− λ E[(Y − M )λ+ ]   ≤ λ−1 .
+                                                                          M
+Combining these inequalities and taking infimum over λ > 1 completes the proof.                         □
+
+                                                       20
+             H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+Lemma B.5 (Sub-additivity for TV distance) Suppose that X1 → · · · → XT is a Markov chain.
+Given a family of transition kernels ρ = (ρt : X → ∆(X ))t∈[T ] , we let Pρ be the law of X1 , . . . , XT
+under X1 ∼ ρ1 , Xt ∼ ρt (· | Xt−1 ). Then, for any families of transition kernels ρ, ρ′ , it holds that
+                                   T
+                                   X
+                                         EXt−1 ∼Pρ DTV ρt (· | Xt−1 ), ρ′t (· | Xt−1 ) ,
+                                                                                    
+                DTV Pρ , Pρ′ ≤
+                                   t=1
+
+where we regard X0 = ⊥ and ρ1 (· |⊥) = ρ1 .
+Lemma B.6 Suppose that Y is a random variable such that E[Y ] = 0. Then for any B > 0, X ∈ R,
+                   |X − E ClipB (X + Y )| ≤ τB/2 (X) + min{2B, E τB/2 (Y )}.
+
+Proof. First, note that |ClipB (X) − ClipB (X + Y )| ≤ 2B, we know
+          |X − E ClipB (X + Y )| ≤ |X − ClipB (X)| + |E[ClipB (X) − ClipB (X + Y )]|
+                                    ≤ τB (X) + 2B.
+On the other hand, we know X = E[X + Y ], and hence
+                |X − E ClipB (X + Y )| ≤ E|X + Y − ClipB (X + Y )|
+                                           = E τB (X + Y ) ≤ τB/2 (X) + E τB/2 (Y ).
+Combining both inequalities completes the proof.                                                     □
+
+Appendix C. Proofs from Section 3
+C.1. Proof of Theorem 3.3
+Without loss of generality we only consider the case n = 1. We denote by Px the joint distribution
+of (r, z, g) under (2).
+By Theorem 3.1, the output of Algorithm 1 with the specified choices samples from νb, such that
+                    log νb(x) − log q(x) = const + E(r,z,g)∼Px ClipB (Wr,z,g,x ) .
+
+We denote W r,z,x := ⟨γ̇z,r (x), u − ∇f (γz,r (x))⟩, and we know
+                          Wr,z,g,x − W r,z,x = ⟨γ̇z,r (x), ∇f (γz,r (x)) − g⟩
+has mean zero under g ∼ Ograd (γz,r (x)). On the other hand, we know
+          Er,z W r,z,x = Er,z ⟨γ̇z,r (x), u − ∇f (γz,r (x))⟩ = − f (x) + ⟨u, x⟩ + const
+                                                            = log ν(x) − log q(x) + const .
+Then, using Lemma B.6, we have
+      |log ν(x) − log νb(x) − const|
+    ≤ Er,z W r,z,x − Eg∼Ograd (γz,r (x)) ClipB (Wr,z,g,x )
+                                       n                                                o
+    ≤ Er,z τB/2 (W r,z,x ) + Er,z min 2B, Eg∼Ograd (γz,r (x)) τB/2 (Wr,z,g,x − W r,z,x ) =: V (x).
+
+
+                                                    21
+                                 C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+Then, using Lemma B.3,
+
+                     DTV (ν, νb) ≤ Ex∼bν [e2V (x) − 1] ≤ e2B Ex∼q [e2V (x) − 1].                 (10)
+
+where the second inequality uses db ν
+                                   dq (x) ≤ e
+                                              2B for x ∈ Rd . Using the definition of V , 2eu+v ≤
+
+e2u + e2v and the convexity of w 7→ ew , we also know
+
+    2e2V (x) ≤ Er,z exp 2τB/2 (⟨γ̇z,r (x), u − ∇f (γz,r (x))⟩)
+                                                               
+                                 n                                                          o
+               + Er,z exp 2 min 2B, Eg∼Ograd (γz,r (x)) τB/2 (⟨γ̇z,r (x), ∇f (γz,r (x)) − g⟩) .
+
+Now, note that for any fixed r ∈ [0, 1] under x ∼ q = N(b           x, ηI) and z ∼ P = N(0, ηI),
+[γz,r (x); γ̇z,r (x)] are jointly distributed as
+                                                                      
+                                                         x   ηI
+                             [γz,r (x); γ̇z,r (x)] ∼ N     ,                 .              (11)
+                                                         b
+                                                         0      (π/2)2 ηI
+This implies that
+
+      2(1 + e−2B DTV (ν, νb)) ≤ 2 Ex∼q e2V (x)
+                                                                 
+   ≤ Er Ex∼q, z∼N(0,ηI) exp τB/2 (⟨γ̇z,r (x), u − ∇f (γz,r (x))⟩)
+                                   n                                                           o
+     + Er Ex∼q, z∼N(0,ηI) exp min 2B, Eg∼Ograd (γz,r (x)) τB/2 (⟨γ̇z,r (x), ∇f (γz,r (x)) − g⟩)
+                                                           
+   = Ex∼q, Z1 ∼N(0,(π/2)2 ηI) exp τB/2 (⟨Z1 , u − ∇f (Z)⟩)
+                                        n                                          o
+     + Ex∼q, Z1 ∼N(0,(π/2)2 ηI) exp min 2B, Eg∼Ograd (x) τB/2 (⟨Z1 , ∇f (x) − g⟩) .
+
+Therefore, by Lemma C.1, there is a constant c1 such that as long as η1 ≥ c1 M 2 (log(1/δ) + λ), it
+                                                        4B
+holds that for any x ∈ Rd such that ϵ(M ; x) ≤ C := e 8−1 ,
+                                                                          
+        EZ1 ∼N(0,(π/2)2 ηI) exp 2 Eg∼Ograd (Y ) τB/2 (|⟨Z1 , g − ∇f (x)⟩|) − 1 ≤ δ + 8ϵ(M ) .
+
+This immediately implies that
+                                          n                                         o
+         Ex∼q, Z1 ∼N(0,(π/2)2 ηI) exp 2 min 2B, Eg∼Ograd (x) τB/2 (⟨Z1 , ∇f (x) − g⟩) − 1
+            ≤ δ + 8 Ex∼q min{ϵ(M ; x), C}.
+
+By Lemma C.2 and Corollary C.3, there is a constant c2 such that as long as
+            1         2
+                        
+                           s               s      2
+                                                                                1+s
+            1+s
+                ≥ c β
+                   2 s    d  log(1/δ) +   1−s
+                                              log   (1/δ)   + c2 ε2prox log(1/δ)      ,
+          η                              d
+it holds that
+                                                                          
+                    Ex∼q, Z1 ∼N(0,(π/2)2 ηI) exp 2τB/2 (⟨Z1 , u − ∇f (Z)⟩) − 1 ≤ δ,
+
+and Eq [f ] ≤ e Eν [f ] + δ for any bounded function f : Rd → [0, 1]. This immediately implies that
+
+                       Ex∼q min{ϵ(M ; x), C} ≤ e Ex∼ν min{ϵ(M ; x), C} + δ.
+
+Combining the inequalities above and rescale δ ← 3δ completes the proof.                             □
+
+                                                  22
+              H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+Lemma C.1 Suppose that C > 1 is a constant, σM ≤ B2 and λ ≤ min{ 2C 2 σB2 M 2 , 2CM
+                                                                                  1
+                                                                                    σ }. Then,
+as long as ϵ(M ; x) ≤ C, it holds that
+                                                                         B2
+                                                            
+       EZ∼N(0,σ2 I) exp λ Eg∼Ograd (x) τB (|⟨Z, ∇f (x) − g⟩|) − 1 ≤ e− 8σ2 M 2 + 8ϵ(M ; x) .
+
+
+Proof. We denote P = N 0, σ 2 I and let Q be the distribution of v = g − ∇f (x). Without loss of
+                                
+
+generality, we assume the support of Q does not contain 0, and define m = Ev∼Q ∥v∥. Note that we
+assume ϵ(M ; x) ≤ 1, i.e.,
+
+        (C − 1)M ≥ Ev∼Q [∥v∥I{∥v∥ > M }] = m − Ev∼Q [∥v∥I{∥v∥ ≤ M }] ≥ m − M,
+
+                            m+M
+i.e., m ≤ CM . Define αv = ∥v∥+M . Then we know Ev∼Q [1/αv ] = 1, and hence we can consider
+the distribution Q over Rd such that dQ
+                                     dQ (g) = 1/αv . We can rewrite
+                                                               
+                            I := EZ∼P exp λ Ev∼Q τB (|⟨Z, v⟩|) − 1
+                                                                   
+                               = EZ∼P exp λ Ev∼Q [αv τB (|⟨Z, v⟩|)] − 1
+                                                               
+                               ≤ EZ∼P,v∼Q exp λαv τB (|⟨Z, v⟩|) − 1 .
+
+Then, using Lemma B.1, we can obtain the following upper bounds:
+                                                                                               √
+                                                           B                                   B/(2λ)
+(1) When B ≥ 2 max{∥v∥σ, λαv2 ∥v∥2 σ 2 }, i.e., when ∥v∥ ≤ 2σ and m + M ≤                       σ     , it holds
+that
+                                                                            B2
+                                                                     −
+                           EZ∼P exp(λαv τB (|⟨Z, v⟩|)) − 1 ≤ e           8σ 2 ∥v∥2   .
+
+(2) For any g ̸= 0, it holds that
+                                                     1   2 2   2 2           1   2       2 2
+            EZ∼P exp(λαv τB (|⟨Z, v⟩|)) − 1 ≤ 2e 2 λ αv ∥v∥ σ ≤ 2e 2 λ (m+M ) σ ≤ 4 ,
+                                 1
+where we use the condition λ ≤ 2CM σ and the fact that m ≤ CM .
+                                                   √
+                                   B                 B/(2λ)
+Now, we note that we assume M ≤ 2σ and CM ≤           σ     . Then we can upper bound
+
+                   I ≤ Ev∼Q [I{∥v∥ ≤ M }(EZ∼P exp(λαv τB (|⟨Z, v⟩|)) − 1)]
+                        + Ev∼Q [I{∥v∥ > M }(EZ∼P exp(λαv τB (|⟨Z, v⟩|)) − 1)]
+                             B2
+                     ≤ e− 8σ2 M 2 + 4Pv∼Q (∥v∥ ≥ M ) .
+
+                        ∥v∥+M
+Finally, using dQ
+               dQ (g) = m+M , we have
+
+                                              2
+                          Pv∼Q (∥v∥ ≥ M ) ≤     Ev∼Q [∥v∥I{∥v∥ ≥ M }] .
+                                              M
+Combining these inequalities gives the desired upper bound.                                                  □
+
+                                                23
+                                 C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+Lemma C.2 Suppose that Z0 ∼ N(0, ηI), Z1 ∼ N 0, σ 2 I , and Y = x
+                                                             
+                                                                b + Z0 . Suppose Assump-
+tion 2.6 holds and ∥∇f (b
+                        x) − u∥ ≤ εprox . Then it holds that
+                                                       s
+                                               B     n    d1−s                   B              o
+E exp(λτB (|⟨Z1 , ∇f (Y ) − u⟩|)) − 1 ≤ 2 exp − min                  ,                              ,
+                                                 12      sη s σ 2 βs2 σ 2 ε2prox + σ 2 βs2 (ηd)s
+                                                        s
+                                                    1  n      d1−s                 B              o
+                                       for 0 ≤ λ ≤ min                 ,                            .
+                                                    6     sη s σ 2 βs2 σ 2 ε2prox + σ 2 βs2 (ηd)s
+
+
+Proof. We write
+
+                 Mλ := E exp(λτB (|⟨Z1 , ∇f (Y ) − u⟩|)) − 1
+                      ≤ E exp(λ(|⟨Z1 , ∇f (Y ) − u⟩| − B))
+                                      1                       
+                      ≤ 2e−λB E exp λ2 σ 2 ∥∇f (Y ) − u∥2
+                                       2
+                          −λB+λ2 σ 2 ∥∇f (b
+                                          x)−u∥2
+                                                 E exp λ2 σ 2 ∥∇f (Y ) − ∇f (b
+                                                                             x)∥2 .
+                                                                                 
+                      ≤ 2e
+                                                                                      1−s
+Using Assumption 2.6 and Lemma B.2, it holds that as long as λ2 σ 2 βs2 ≤ d4sηs ,
+
+    E exp λ2 σ 2 ∥∇f (Y ) − ∇f (b
+                                x)∥2 ≤ E exp λ2 σ 2 βs2 ∥Y − x
+                                                             b∥2s ≤ exp 2λ2 σ 2 βs2 (ηd)s .
+                                                                                       
+
+
+Therefore, we have shown
+                                                                                    s
+                                                                                            d1−s
+           Mλ ≤ 2 exp λ2 σ 2 ε2prox + 2λ2 σ 2 βs2 (ηd)s − λB ,
+                                                                 
+                                                                          for λ ≤                       .
+                                                                                          4sη s σ 2 βs2
+
+Note that λ 7→ Mλ is an increasing function, and hence we can choose
+                                 s
+                                n          d1−s                     B               o
+                        λ⋆ = min                      ,                               ,
+                                         4sη s σ 2 βs2 2σ 2 ε2prox + 4σ 2 βs2 (ηd)s
+
+so that for any λ ≤ λ⋆ , it holds that
+                                     s
+                               B   n    d1−s                   B              o
+              Mλ ≤ Mλ⋆ ≤ 2 exp − min               ,                              .
+                                12     sη s σ 2 βs2 σ 2 ε2prox + σ 2 βs2 (ηd)s
+
+                                                                                                            □
+Corollary C.3 There is an absolute constant c > 0 such that the following holds. Suppose ∥u −
+∇f (b
+    x)∥ ≤ εprox .
+For any δ ∈ (0, 12 ], as long as η1 ≥ cε2prox log(1/δ) and η1+s
+                                                             1
+                                                                ≥ cβs2 ds log(1/δ), for any f : Rd →
+[0, 1] it holds that
+
+                                          Eq [f ] ≤ e Eν [f ] + δ.
+
+                                                      24
+                   H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+Proof. Recall that (in the proof of Theorem 3.3) we denote W r,z,x := ⟨γ̇z,r (x), u − ∇f (γz,r (x))⟩
+and
+
+                                  log ν(x) − log q(x) + const = Er,z W r,z,x .
+
+By Lemma B.3, it holds that for any ℓ ≥ 1,
+
+    max{Dℓ (ν ∥ q), Dℓ (q ∥ ν)} + 1 ≤ Ex∼q Er,z e2ℓ|W r,z,x |
+                                           = Er Ex∼q, z∼N(0,ηI) exp(2ℓ|⟨γ̇z,r (x), u − ∇f (γz,r (x))⟩|)
+                                           = Ex′ ∼q, z ′ ∼N(0,(π/2)2 ηI) exp 2ℓ ⟨z ′ , u − ∇f (x′ )⟩ ,
+                                                                                                    
+
+
+where the last line uses Eq. (11). Then, from our proof of Lemma C.2, we know that as long as
+              1−s
+50ℓ2 ηβs2 ≤ d4sηs ,
+
+         max{Dℓ (ν ∥ q), Dℓ (q ∥ ν)} + 1 ≤ Ex′ ∼q, z ′ ∼N(0,(π/2)2 ηI) exp 2ℓ ⟨z ′ , u − ∇f (x′ )⟩
+                                                                                                   
+
+                                         ≤ 2 exp 100ℓ2 η∥∇f (b     x) − u∥2 + 100ℓ2 ηβs2 (ηd)s .
+                                                                                                 
+
+
+
+Finally, by Lemma B.4, it holds that for any f : Rd → [0, 1],
+
+                                  Eq [f ] − e Eν [f ] ≤ inf e1−ℓ (1 + Dℓ (q ∥ ν)).
+                                                       ℓ≥1
+
+                                                                                                1
+Then, we set ℓ⋆ = 200η(ε2 1+β 2 (ηd)s ) . As long as ℓ⋆ ≥ 1, we have Eq [f ] − e Eν [f ] ≤ e1− 2 ℓ⋆ . This is
+                        prox s
+the desired result.                                                                                       □
+
+Corollary C.4 There is an absolute constant c > 0 such that the following holds. Suppose ∥u −
+    x)∥ ≤ εprox . As long as η1 ≥ cε2prox and η1+s
+∇f (b                                           1
+                                                    ≥ cβs2 ds , it holds that 1 + Dχ2 (ν ∥ q) ≤
+     2         1+s β 2 ds )
+ec(ηεprox +η        s         .
+
+Proof. It is straightforward to verify that for V (x) := Er,z W r,z,x , it holds that
+
+                                                              Ex∼q e2V (x)
+                                       1 + Dχ2 (ν ∥ q) =                     .
+                                                             (Ex∼q eV (x) )2
+
+Note that Ex∼q [V (x)] = 0 by Eq. (11). Hence,
+
+                   1 + Dχ2 (ν ∥ q) = Ex∼q e2V (x) ≤ Ex∼q Er,z e2W r,z,x
+                                    = Er Ex∼q, z∼N(0,ηI) exp(2⟨γ̇z,r (x), u − ∇f (γz,r (x))⟩)
+                                    = Ex′ ∼q, z ′ ∼N(0,(π/2)2 ηI) exp 2⟨z ′ , u − ∇f (x′ )⟩
+                                                                                           
+                                                    π2                      
+                                    = Ex′ ∼q exp         η ∥u − ∇f (x′ )∥2 .
+                                                      2
+
+The remaining proof is the same.                                                                          □
+
+                                                        25
+                                 C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+C.2. Proof of Theorem 3.7
+Without loss of generality we only consider the case n = 1. We denote by Px the joint distribution
+of (z, v, v ′ ) under (4).
+By Theorem 3.1, the output of Algorithm 1 with the specified choices samples from νb, such that
+
+                   log νb(x) − log q(x) = const + E(z,v,v′ )∼Px ClipB (Wz,v,v′ ,x ) .
+
+On the other hand, we know
+
+                       E(z,v,v′ )∼Px [Wz,v,v′ ,x ] = − f (x) + ⟨u, x⟩ + const
+                                                 = log ν(x) − log q(x) + const .
+
+Then, using Lemma B.6, |log ν(x) − log νb(x) − const| ≤ V (x), where
+
+   V (x) := E(z,v,v′ )∼Px τB (Wz,v,v′ ,x )
+          ≤ Ez∼q min 2B, Ev∼Oeval (x), v′ ∼Oeval (z) τB/2 (v − f (x) + f (z) − v ′ )
+                       
+
+             + Ez∼q τB/2 (f (z) − f (x) − ⟨u, z − x⟩)
+          ≤ Ez∼q min{2B, ϵ(B/4; x) + ϵ(B/4; z)} + Ez∼q τB/2 (f (z) − f (x) − ⟨u, z − x⟩) .
+
+In the following, we denote ∆x,z := f (x) − f (z) − ⟨u, x − z⟩. Then, using Lemma B.3,
+                                                                                      
+   DTV (ν, νb) ≤ Ex∼bν exp 2 Ez∼q τB/2 (∆x,z ) + 2 min{2B, ϵ(B/4; x) + ϵ(B/4; z)} − 1
+                                                                                                     (12)
+               ≤ e2B Ex,z∼q exp 2τB/2 (∆x,z ) + 2 min{2B, ϵ(B/4; x) + ϵ(B/4; z)} − 1
+                                                                                     
+
+
+where we use db ν
+               dq (x) ≤ e
+                          2B for x ∈ Rd and the convexity of w 7→ ew . In the following, it remains to
+
+prove the following lemma (the rest of the proof then follows from the argument of Theorem 3.3). □
+Lemma C.5 Let ∆x,z := f (x) − f (z) − ⟨u, x − z⟩ and q = N(b       x, ηI). Suppose Assumption 2.6
+holds and ∥∇f (b
+               x) − u∥ ≤ εprox . Then it holds that
+                                                     s
+                  λτB (∆x,z )
+                                           B       n   d1−s               B          o
+         Ex,z∼q e             − 1 ≤ 2 exp − min                 ,                        ,
+                                             32        sη s ηβs2 ηε2prox + ηβs2 (ηd)s
+                                                      s
+                                               1     n    d1−s              B          o
+                                  for 0 ≤ λ ≤    min              ,                      .
+                                              16        sη s ηβs2 ηε2prox + ηβs2 (ηd)s
+
+Proof. We can express
+                                                          Z 1
+             ∆x,z = f (x) − f (z) − ⟨u, x − z⟩ =                ⟨γ̇z,r (x), ∇f (γz,r (x)) − u⟩ dr,
+                                                           0
+
+where γz,r (x) and γ̇z,r (x) are defined in Eq. (3). Then, using the convexity of w → τB (w), we can
+upper bound
+
+               Ex,z∼q eλτB (∆x,z ) ≤ Er∼Unif([0,1]) Ex,z∼q eλτB (⟨γ̇z,r (x),∇f (γz,r (x))−u⟩) .
+
+
+                                                     26
+             H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+
+Now, following the proof of Theorem 3.3, we know that for any fixed r ∈ [0, 1], under x, z ∼ q, the
+vector γz,r (x), γ̇z,r (x) are jointly distributed as
+                                                                      
+                                                         x   ηI
+                             [γz,r (x); γ̇z,r (x)] ∼ N     ,                 .
+                                                         b
+                                                         0      (π/2)2 ηI
+
+Therefore, we have shown that
+
+      Ex,z∼q eλτB (∆x,z ) ≤ EZ0 ∼N(0,ηI),Z1 ∼N(0,(π/2)2 ηI) exp(λτB (|⟨Z1 , ∇f (b
+                                                                                x + Z0 ) − u⟩|)).
+
+Applying Lemma C.2 completes the proof.                                                              □
+
+C.3. Proof of Theorem 3.10
+Let ρ be the transition kernel on Rd induced by the proximal sampler, i.e., X ′ ∼ ρ(· | X) is
+                                               ′
+generated by Y ′ ∼ N(X, ηI) and X ′ ∼ π̄ X|Y =Y . Then, ρ induces a Markov chain X0 , X1 , · · · by
+X0 ∼ µ0 , Xn+1 ∼ ρ(· | Xn ) for n ≥ 0. For n ≥ 0, let µn be the law of Xn .
+                                                      ′
+Similarly, we let ρb be the transition with π̄ X|Y =Y implemented via Theorem 3.3, and the induced
+Markov chain X0 , X1 , · · · is given by X0 ∼ µ0 , Xn+1 ∼ ρb(· | Xn ) for n ≥ 0. For n ≥ 0, let µ
+                                                                                                bn be
+the law of Xn .
+Then, by Lemma B.5 and data-processing inequality, it holds that
+                                                N
+                                                X −1
+                                           
+                µN , µN ) ≤ DTV Pρb, Pρ ≤
+           DTV (b                                                      ρ(· | Xn ), ρ(· | Xn )).
+                                                          EXn ∼µn DTV (b                            (13)
+                                                n=0
+
+In all cases, we use the following error analysis. By Lemma C.6 and the fact that Dχ2 (µn ∥ µ) ≤
+                                           1/(1+s)
+Dχ2 (µ0 ∥ µ), it holds that with G = O(βs            (d + ∆ + log(N/δ))),
+
+                                                                        δ
+                             max PX∼µn (∥∇f (Xn )∥ ≥ Gδ ) ≤                .
+                             n∈[N ]                                    10N
+
+Note that as long as ∥∇f (Xn )∥ ≤ G, we can implement the proximal oracle at Xn with εprox =
+    1/(1+s)
+10(βs       + M )) and success probability at least 1 − ϵn (M ) by Lemma 2.8, using
+
+                    O(n log(G/βs1/(1+s) )) = O(n log A)           queries to Ograd (·) .
+
+Therefore, by the choice of η (5), we can implement the RGO via Theorem 3.3 so that
+                                                                δ
+                                ρ(· | Xn ), ρ(· | Xn )) ≤
+                           DTV (b                                  + 5ϵn (M )
+                                                               10N
+as long as ∥∇f (Xn )∥ ≤ G, using O(n log A) queries. Then, by a conditioning argument, we see
+that
+                                                                                  δ
+                      ρ(· | Xn ), ρ(· | Xn )) ≤ Pµn (∥∇f (Xn )∥ ≥ G) +
+         EXn ∼µn DTV (b                                                              + 5ϵn (M )
+                                                                                 10N
+                                                    δ
+                                               ≤      + 5ϵn (M ) .
+                                                   5N
+
+                                                   27
+                                     C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+Therefore, taking summation over k = 0, 1, · · · , N − 1 gives
+
+                                                                  δ
+                                             µN , µN ) ≤
+                                        DTV (b                      + 5N ϵn (M ).                     (14)
+                                                                  5
+                              δ                       δ
+Finally, we can set n = ϕM ( 10N ) so that ϵn (M ) ≤ 10N . Note that this implies
+
+                                                            3
+                                           µN , µ) ≤
+                                      DTV (b                  δ + DTV (µN , µ) .
+                                                            4
+
+Now, we apply results from Chen et al. (2022) to bound N such that DTV (µN , µ) ≤ 4δ :
+                                        0 ∥ µ)
+                           1
+    • LSI case. Here, N ≍ αη log DKL (µ
+                                      δ2
+                                               .
+
+                          1               Dχ2 (µ0 ∥ µ)
+    • PI case. Here, N ≍ αη log                δ2
+                                                       .
+                                  W22 (µ0 ,µ)
+    • LC case. Here, N ≍             ηδ 2
+                                              .
+Plugging in the choice of η in (5) gives the desired results.                                           □
+Lemma C.6 Suppose that Assumption 2.6 holds and ν is a distribution such that
+
+                                           log(1 + Dχ2 (ν ∥ µf )) ≤ ∆ .
+
+Then it holds that for δ ∈ (0, 1),
+
+                                       2/(1+s)
+                                   64βs                          
+                   PX∼ν ∥∇f (X)∥2 ≥ (1−s)/(1+s) (∆ + d + log(1/δ)) ≤ δ.
+                                   d
+
+Proof. We follow the proof of Chewi (2026, Lemma 6.2.7). For any vector v ∈ Rd , we bound
+                                           Z 1
+f (x + v) − f (x) − ⟨v, ∇f (x)⟩ =                 ⟨v, ∇f (x + rv) − ∇f (x)⟩ dr ≤ βs ∥v∥1+s ,     ∀x ∈ Rd .
+                                             0
+
+Then, we can bound
+                       Z                             Z
+                                  −f (x+v)                                          1+s
+                              e              dx ≥          e−f (x)−⟨v,∇f (x)⟩−βs ∥v∥      dx .
+                         Rd                           Rd
+
+Re-organizing gives
+                                                                     1+s
+                           EX∼µf [e⟨v,∇f (X)⟩ ] ≤ eβs ∥v∥                  ,   ∀v ∈ Rd .
+
+                                d          (1−s)/2
+For any m ≥ 0 such that βs ≤ 2(1+s)m (1+s)/2 , we can take expectation over v ∼ N(0, mI), and then
+
+Lemma B.2 gives
+                                m               
+                                    ∥∇f (X)∥2 ≤ exp 2βs (md)(1+s)/2 .
+                                                                            
+                    EX∼µf exp
+                                  2
+
+                                                             28
+                H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+                                             d       1−s
+Therefore, we choose m > 0 such that m1+s = 16β 2 , and then
+                                                s
+
+                  m               r                                m            
+                                2
+        EX∼ν exp      ∥∇f (X)∥ ≤ (1 + Dχ2 (ν ∥ µf )) EX∼µf exp           ∥∇f (X)∥2
+                    4                                                  2
+                                        1                            1        
+                                   ≤ exp ∆ + βs (md)(1+s)/2 ≤ exp (∆ + d) .
+                                          2                              2
+Applying Markov’s inequality gives
+                                            2
+                                                           m            
+              PX∼ν (∥∇f (X)∥ ≥ G) ≤ e−mG /4 EX∼ν exp           ∥∇f (X)∥2 ≤ δ ,
+                                                             4
+                4
+as long as G2 ≥ m (∆ + d + log(1/δ)). This is the desired result.                                       □
+
+C.4. Proof of Theorem 3.12
+The proof is very similar to the proof of Theorem 3.10.
+By Lemma C.6 and the fact that Dχ2 (µn ∥ µ) ≤ Dχ2 (µ0 ∥ µ), it holds that with G > 0 chosen as
+                                         2/(1+s)
+                               2 64βs
+                             G = (1−s)/(1+s) (∆ + d + log(10N/δ)) ,
+                                d
+it holds that
+                                                                      δ
+                               max PX∼µn (∥∇f (Xn )∥ ≥ Gδ ) ≤            .
+                              n∈[N ]                                 10N
+Note that as long as ∥∇f (Xn )∥ ≤ G, we can implement the proximal oracle at Xn with εprox = G
+by trivially returning x = Xn . Therefore, by the choice of η (6), we can implement the RGO via
+                                                      δ
+Theorem 3.7 so that DTV (b ρ(· | Xn ), ρ(· | Xn )) ≤ 10N + 10ϵn (M ) as long as ∥∇f (Xn )∥ ≤ G,
+using O(n) queries. The rest of the proof is concluded as before.                            □
+
+C.5. Proof of Theorem 3.14
+Denote
+                                                       1         
+                              ν(x | y) ∝x exp −f (x) −    ∥x − y∥2 .
+                                                       2η
+We let P⋆ (·) be the probability law of (X0 , Y0 ), . . . , (XN , YN ) induced by the proximal sampler, and
+E⋆ [·] be the corresponding expectation.
+In the following, we choose M > 0 as
+                M 2 = 4β12 CKη (d + log(K/δ)) + 4β12 CK 2 η 2 β1 (d + ∆ + log(K/δ)) ,
+where the constant C > 0 is from Lemma C.7, and A = M + εprox .
+For each i ≥ 0, we consider each time step in the epoch Ki := [iK, (i + 1)K). By definition of the
+                                       M
+oracle Ok+1 , as long as ∥x − XiK ∥ ≤ 2β 1
+                                           , it holds that ∥g − ∇f (x)∥ ≤ M deterministically under
+the oracle Ok+1 (x). Therefore, by Theorem 3.3, as long as
+                         1      p
+                           ≫ β1 d log(1/δ) + (A2 + M 2 + β1 ) log(1/δ) ,                       (15)
+                         η
+
+                                                    29
+                                        C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+and ∥Yk − X bk+1 − η∇f (X    bk+1 )∥ ≤ ηA, it holds that our algorithm generates a sample Xk+1
+following a distribution νbk+1 (· | Yk , XiK ) satisfying
+                                                                                   M 
+        DTV (ν(· | Yk ), νbk+1 (· | Yk , XiK )) ≲ δ + PXk+1 ∼ν(·|Yk ) ∥Xk − XiK ∥ ≥     .
+                                                                                    2β1
+Note that Eq. (15) can indeed be ensured by Eq. (7). Then, taking expectation over (Yk , XiK ) ∼ P⋆ ,
+we have
+                                                                         M 
+      E⋆ DTV (ν(· | Yk ), νbk+1 (· | Yk , XiK )) ≲ δ + P⋆ ∥Xk − XiK ∥ ≥
+                                                                         2β1
+                                                                                           
+                                                   + P⋆ ∥Yk − Xk+1 − η∇f (X
+                                                               b             bk+1 )∥ ≥ ηA .
+
+By definition, X      biK + Yk − YiK , and hence
+               bk+1 = X
+
+       ∥Yk − X
+             bk+1 − η∇f (X
+                         bk+1 )∥ = ∥YiK − X
+                                          biK − η∇f (X
+                                                     bk+1 )∥
+                                 ≤ ∥YiK − X
+                                          biK − η∇f (X
+                                                     biK )∥ + β1 η ∥X
+                                                                    biK − X
+                                                                          bk+1 ∥
+                                                = ∥YiK − X
+                                                         biK − η∇f (X
+                                                                    biK )∥ + β1 η ∥Yk − YiK ∥ .
+
+Therefore, we can bound
+                                                
+               P⋆ ∥Yk − X
+                        bk+1 − η∇f (X
+                                    bk+1 )∥ ≥ ηA
+
+                                   biK )∥ ≥ ηεprox + P⋆ ∥Yk − YiK ∥ ≥ M .
+                                                                       
+            ≤ P⋆ ∥YiK − X
+                        biK − η∇f (X
+                                                                      β1
+By our definition of the proximal oracle Oprox,η (·), the first term of the RHS is bounded by δ.
+Combining the inequalities and taking summation over k and apply Lemma B.5, we know
+                      ⌊N/K⌋
+                       X           X
+           bN ) ≤
+ DTV (µN , µ                                  E⋆ DTV (ν(· | Yk ), νbk+1 (· | Yk , XiK ))
+                       i=0       k∈Ki ∩[N ]
+                                 ⌊N/K⌋
+                                  X        X          h                   M                    M i
+                 ≲ Nδ +                                   P⋆ ∥Xk − XiK ∥ ≥     + P⋆ ∥Yk − YiK ∥ ≥
+                                                                           2β1                    β1
+                                  i=0    k∈Ki ∩[N ]
+
+                 ≲ Nδ ,
+where the last inequality follows from Lemma C.7.                                                    □
+Lemma C.7 Suppose that Assumption 2.6 holds and ν is a distribution such that
+                                              log(1 + Dχ2 (ν ∥ µf )) ≤ ∆ .
+Consider the Markov chain X0 → Y0 → · · · → XK → YK generated by the proximal sampler.
+Then as long as η ≤ Cβ 1√dK , it holds that for δ ∈ (0, 1),
+                             1
+                                                                                    
+               P max ∥Yk − Y0 ∥ ≥ R ≤ δ ,                          P max ∥Xk − Y0 ∥ ≥ R ≤ δ ,
+                     k∈[K]                                           k∈[K]
+
+where R > 0 is defined as (C > 0 is an absolute constant):
+                 R2 := CKη(d + log(K/δ)) + CK 2 η 2 β1 (d + ∆ + log(K/δ)) .
+
+                                                              30
+              H IGH -ACCURACY L OG -C ONCAVE S AMPLING WITH S TOCHASTIC Q UERIES
+
+
+
+                                         
+Proof. Denote ν(· | y) = N proxηf (y), ηI . We consider the following distributions of Markov
+chain X0 → Y0 → · · · → XK → YK :
+(1) P is the distribution of the exact proximal sampler, i.e., X0 ∼ ν, and for each k ∈ [K],
+Yk | Xk ∼ N(Xk , ηI) and Xk+1 | Yk ∼ ν(· | Yk ).
+(2) Q is the following distribution: X0 ∼ ν, and for each k ∈ [K], Yk | Xk ∼ N(Xk , ηI) and
+Xk+1 ∼ ν(· | Yk ).
+                                                                            √
+By Corollary C.4, there is a constant c1 > 0 such that as long as η1 ≥ c1 β1 d, it holds that
+                   1 + Dχ2 (ν(· | y) ∥ ν(· | y)) ≤ exp cη 2 β12 d ,     ∀y ∈ Rd .
+                                                                 
+
+Therefore, it is straightforward to verify that
+      1 + Dχ2 (P ∥ Q) ≤ (1 + max Dχ2 (ν(· | y) ∥ ν(· | y)))K ≤ exp cη 2 β12 dK ≤ O(1) .
+                                                                              
+                                     y∈Rd
+
+In the following, we denote X k = proxηf (Yk−1 ), Zk = Xk − X k−1 , and Zk′ = Yk − Xk . Then, we
+can express Yk−1 = X k + η∇f (X k ), and hence Yk = Yk−1 + Zk + Zk′ − η∇f (X k ). Apply this
+recursively, we get
+                                              k
+                                              X                 k
+                                                                X
+                                 Yk − Y0 =      (Zi + Zi′ ) − η   ∇f (X i ) .
+                                               i=1                    i=1
+Therefore, we can bound
+                                     k
+                                     X                        k
+                                                              X                         k
+                                                                                        X
+                    ∥Yk − Y0 ∥ ≤           (Zi + Zi′ ) + η          ∥∇f (Xi )∥ + ηβ1      ∥Zi ∥ .
+                                     i=1                      i=1                       i=1
+                          Pk          ′
+Note that under Q,         i=1 (Zi + Zi ) ∼ N(0, 2kηI) and hence for any k ∈ [K],
+                             k
+                            X
+                                                  √
+                                                                  
+                               (Zi + Zi′ ) ≥ 2kη ( d + 2 log(1/δ)) ≤ δ .
+                                            p           p
+                          Q
+                               i=1
+                      √ √       p         
+In addition, Q ∥Zi ∥ ≥ η ( d + 2 log(1/δ)) ≤ δ. Therefore, using the union bound, we get
+                                                                     K
+                                     √ √
+                                                                   X            
+                       p                        p
+  Q max ∥Yk − Y0 ∥ ≥ ( 2Kη + Kβ1 η η) ( d + 2 log(2K/δ)) + η           ∥∇f (Xi )∥ ≤ δ .
+      k∈[K]
+                                                                                          i=1
+
+Note that η ≤ β √1dK . Then, applying the change-of-measure argument, we get
+               1
+              
+                               p    √   p              K
+                                                       X           
+          P max ∥Yk − Y0 ∥ ≥ C1 Kη ( d + log(K/δ)) + η   ∥∇f (Xi )∥ ≤ δ .
+                  k∈[K]
+                                                                                  i=1
+
+Finally, by Lemma C.6, we can show P (∥∇f (Xi )∥ ≥ C2 β1 (∆ + d + log(K/δ))) ≤ Kδ . Taking
+                                                            p
+
+the union bound completes the proof of the first inequality. The second inequality follows similar by
+noting
+                                               k−1
+                                               X                            k
+                                                                            X
+                          Xk − X0 = Z0′ +            (Zi + Zi′ ) + Zk − η         ∇f (X i ) .
+                                               i=1                          i=1
+                                                                                                    □
+
+                                                         31
+                                C HEN C HEWI DASKALAKIS R AKHLIN
+
+
+
+
+Appendix D. Proofs from Section 4
+D.1. Proof of Proposition 4.2
+                                 √               √                         √
+Fix any p ∈ [0, 1] such that pψ( αδ/p) + ψ( αδ) ≤ 1. We denote M = pαδ .
+                     √
+We denote θ = δ/ α. Consider ψ-oracle O0 and Oθ : for any x ∈ R, O0 (x) returns αx with
+probability 1, and Oθ (x) returns αx − M with probability p and returns αx otherwise. Then, O0 is a
+ψ-oracle for f0 , and Oθ is a ψ-oracle for fθ , because
+
+                 Eg∼Oθ (x) ψ(|g − fθ′ (x)|) = pψ(M − αθ) + (1 − p)ψ(αθ) ≤ 1 .
+
+Note that
+
+                                        DTV (O0 (x), Oθ (x)) = p ,
+
+and hence by the sub-additivity of the TV distance (Lemma B.5), we have
+
+                                     DTV (Alg(O0 ), Alg(Oθ )) ≤ T p .
+
+On the other hand, by our assumption, it holds that
+
+                                               δ                                   δ
+                     DTV (p0 , Alg(O0 )) ≤       ,        DTV (pθ , Alg(Oθ )) ≤      .
+                                              10                                  10
+An elementary calculation also yields
+
+                                                                               δ
+            DTV (p0 , pθ ) = DTV N 0, α−1 , N θ, α−1 = DTV (N(0, 1), N(δ, 1)) ≥ .
+                                                   
+                                                                               3
+Therefore, by triangle inequality,
+
+    δ
+       ≤ DTV (p0 , pθ ) ≤ DTV (p0 , Alg(O0 )) + DTV (Alg(O0 ), Alg(Oθ )) + DTV (pθ , Alg(Oθ ))
+    3
+                          δ
+                        ≤ + Tp,
+                          5
+                        δ                                                 √             √
+and this implies T ≥ 10p  . Taking infimum over p ∈ (0, 1] such that pψ( αδ/p) + ψ( αδ) ≤ 1
+completes the proof.                                                                           □
+
+
+
+
+                                                     32
+
