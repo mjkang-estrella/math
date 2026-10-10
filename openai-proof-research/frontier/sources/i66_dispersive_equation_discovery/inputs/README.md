@@ -1,6 +1,6 @@
 # OpenAI mathematics research
 
-**Current progress: eight of ten substantial findings accepted.** [R014](frontier/findings/R014-uniform-coefficient-extraction.md) is the newest; algebra-rounding research continues, while I66’s logarithmic blowup candidate enters separate proof and significance reviews for the remaining two.
+**Current progress: eight of ten substantial findings accepted.** [R014](frontier/findings/R014-uniform-coefficient-extraction.md) is the newest; algebra-rounding and dispersive-equation discovery continue for the remaining two.
 
 [Public repository and commit mapping](PUBLICATION.md). Only this research directory is published; historical local commit identifiers map to filtered public commits.
 
