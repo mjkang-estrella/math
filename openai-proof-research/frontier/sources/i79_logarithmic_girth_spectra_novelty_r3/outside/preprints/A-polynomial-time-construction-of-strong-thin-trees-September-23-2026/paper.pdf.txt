@@ -1,0 +1,2118 @@
+            A polynomial-time construction of strong thin trees
+                                                 OpenAI
+
+                                          September 23, 2026
+
+
+                                                Abstract
+         We give a deterministic polynomial-time construction of strong thin trees. Given a finite
+     k-edge-connected loopless multigraph on at least one vertex, the algorithm constructs a spanning
+     tree meeting every cut in at most a C/k fraction of its edges, for a universal constant C. The
+     running time is polynomial in the binary input length, including when parallel-edge multiplicities
+     are encoded in binary.
+
+
+Contents
+1 Introduction                                                                                            2
+  1.1 Context and prior work . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .          2
+  1.2 From the geometric existence proof to an algorithm . . . . . . . . . . . . . . . . . . .            3
+
+2 Metric-cone shortcuts for thin trees                                                             4
+  2.1 The conic dual . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+  2.2 A convex realization with exact radial motion . . . . . . . . . . . . . . . . . . . . . . 6
+  2.3 Transferring the bag and charging estimates . . . . . . . . . . . . . . . . . . . . . . . 7
+  2.4 Choosing parameters and responding to a partition chain . . . . . . . . . . . . . . . 13
+
+3 Constructive shortcut extraction                                                               15
+  3.1 A ramp of packing capacities . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+  3.2 Exact separation and a uniform interior ball . . . . . . . . . . . . . . . . . . . . . . . 18
+
+4 A rank-preserving normalized frame                                                                      21
+
+5 Exact rational padding and certified signing                                                            23
+
+6 Packing-preserving sparsification and the final tree                                                    26
+
+7 Simultaneous cost-and-cut rounding                                                                      28
+
+A A finite-bit signing interface                                                                          30
+  A.1 The potential and its quantitative estimates . . . . . . . . . . . . . . . . . . . . . . .          30
+  A.2 A quantified direction of decrease . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        32
+  A.3 Uniform derivatives and a rational value oracle . . . . . . . . . . . . . . . . . . . . .           34
+  A.4 Rational descent and termination . . . . . . . . . . . . . . . . . . . . . . . . . . . . .          35
+
+
+
+
+                                                     1
+1     Introduction
+A spanning tree retains connectivity with only n−1 edges. A thin spanning tree must also use a small
+fraction of every cut, with the same tree serving all cuts simultaneously. We give a deterministic
+polynomial-bit construction at the inverse-connectivity scale.
+    Throughout, graphs are finite undirected loopless multigraphs, and every parallel copy counts
+separately. For S ⊆ V (G), let δG (S) be the multiset of edges with one endpoint in S and the other
+in its complement. The graph is k-edge-connected if |δG (S)| ≥ k for every nonempty proper S. A
+spanning tree T is α-thin in G if
+
+                               |δT (S)| ≤ α|δG (S)|         (∅ ̸= S ⊊ V (G)).
+
+We consider two input representations: an explicit list of labelled edge copies, or a list of endpoint
+pairs with nonnegative integer multiplicities written in binary. In the second representation, the
+number of edge copies may be exponential in the input length.
+Theorem 1.1 (Algorithmic strong thin trees). There is an absolute constant C with the following
+property. Given a finite k-edge-connected multigraph G on at least one vertex and an integer k ≥ 1,
+a deterministic algorithm returns a spanning tree T satisfying
+                                           C
+                              |δT (S)| ≤     |δG (S)|       (∅ ̸= S ⊊ V (G))                         (1.1)
+                                           k
+in time polynomial in the total binary input length, whether edges are listed explicitly or multiplicities
+are encoded in binary. For a one-vertex graph the answer is the empty tree.
+    The universal C/k bound is the strong thin-tree conjecture. The companion article The strong
+thin tree conjecture [20] proves the existence statement and supplies the complete hierarchy geometry
+used here. Theorem 1.1 gives the positive algorithmic resolution in both finite input models. Its
+order in k is necessary: for two vertices joined by k parallel edges, the unique cut contains exactly
+one tree edge.
+    The construction also gives simultaneous cost-and-cut rounding. Given nonnegative rational
+edge weights whose mass on every cut is at least one, and any nonnegative rational edge costs,
+we find a tree in the positive support with every cut load and its total cost bounded by constant
+multiples of the corresponding fractional quantities (Corollary 7.1). No metric assumption on the
+costs is needed.
+
+1.1    Context and prior work
+Goddyn’s qualitative conjecture asks whether every positive thinness bound follows from sufficiently
+large edge connectivity, independently of graph order [11, Problem 4]. The strong form specifies
+the rate C/k; the distinction is made explicitly in [1, Conjecture 1.3 and the following discussion].
+One source of algorithmic interest is the asymmetric traveling salesman problem, which asks for a
+minimum-cost tour through the vertices of a directed metric. Asadpour, Goemans, Mądry, Oveis Gha-
+ran, and Saberi used maximum-entropy spanning-tree distributions to obtain an O(log n/ log log n)
+approximation [4]. Their rounding method also gives the constructive O(log n/(k log log n)) thin-tree
+scale; see [1, Section 1].
+    For planar graphs, and more generally on each fixed orientable surface, Oveis Gharan and Saberi
+obtained constructive inverse-connectivity bounds [21, Theorem 5.1]. For general multigraphs, Anari
+and Oveis Gharan introduced effective-resistance-reducing flows and locally connected hierarchies,
+and proved the existence of poly(log log n)/k-thin trees [1, Corollary 1.8]. Their geometric method
+
+                                                        2
+is the principal foundation of the hierarchy argument in the companion and its extension below.
+The existence theorem does not itself give a polynomial-time construction of those trees.
+    Recent work has obtained inverse-connectivity bounds for structured families of cuts. Klein and
+Olver treat every prescribed laminar family [15]. Klein, Olver, and Yeoh construct a tree crossing each
+cut of size less than (1 + 1/40)k at most 88 times [16, Theorem 1]. Our conclusion controls all cuts
+of an arbitrary multigraph. Thin trees remain an independent structural problem: constant-factor
+approximation for asymmetric traveling salesman was already established by Svensson, Tarnawski,
+and Végh and subsequently improved by Traub and Vygen [23, 25].
+
+1.2   From the geometric existence proof to an algorithm
+High edge connectivity supplies many edge-disjoint spanning trees by the Nash–Williams–Tutte
+theorem [19, 26]. A packing bounds the average tree load on each fixed cut, but does not identify
+one tree that is small on every cut. The companion retains a large packing through successive
+sparsifications, reducing cut sizes and packing size by almost the same factor. Two vector represen-
+tations allow the same edge subset to preserve cut control and enough rank information to certify all
+partition inequalities for tree packing. Iterated matrix halving with a bounded product of losses was
+used by Harvey and Olver to obtain spectrally thin trees under an effective-resistance hypothesis
+[13, full version, Appendix F]. Here the additional packing representation permits iteration from
+edge connectivity.
+    A shortcut matrix is a positive quadratic form that bounds cut sizes; its inverse assigns each
+edge a resistance, and edges of low resistance are the candidates retained for sparsification. Three
+steps of the existence argument require new computational work. The shortcut matrix must be
+consistent with partitions determined by that same matrix; its construction by compactness and a
+fixed point does not provide a uniform finite search bound. Real whitening may introduce irrational
+entries, so a polynomial-bit algorithm must specify its numerical data and control every precision
+loss. Finally, the existential matrix partition theorem of Marcus, Spielman, and Srivastava must be
+replaced by an algorithm that finds the signs. We use the public constructive method of Ezeunala
+and Jiang, with a quantitative implementation proved below, while retaining the packing argument.
+
+A larger cone of geometric tests. The companion bounds a shortcut matrix on cut vectors.
+For optimization we use centered positive semidefinite matrices whose squared distances satisfy
+triangle inequalities. This cone has polynomially many displayed constraints. Enlarging the cone
+strengthens the required shortcut inequality, so the companion’s cut-only statement cannot simply
+be applied. We extend its proof by constructing a doubled distance-profile polytope in which radii
+about vertex images are affine and radial motion has exactly its metric length. The underlying
+distance-profile isometry is classical [10, 17]; the additional radial identities make the bag and
+charging arguments work in the new geometry.
+
+Continuous capacities and finite optimization. Instead of selecting edges abruptly at a
+resistance threshold, we assign capacities through a continuous ramp. A convex response lowers the
+resistance cutoff while maintaining the partition inequalities with a controlled loss in packing size.
+Uncrossing reduces a putative obstruction to a chain of partitions, where the geometric response
+applies simultaneously. Exact rational separation and a quantitative interior ball turn each response
+into a finite computation using the ellipsoid method [12]. Constructive graphic matroid partition
+then recovers an integer packing [8, 24].
+
+
+
+
+                                                  3
+Exact data and certified sparsification. A log-determinant normalization, following the varia-
+tional method behind radial isotropic position [7, Section 2.2], gives the second vector representation.
+We approximate the stacked vectors rationally, complete their covariance exactly to the identity,
+and apply constructive matrix signing. This step builds on the Kadison–Singer partition theorem of
+Marcus, Spielman, and Srivastava [18] and the public rank-one discrepancy method of Ezeunala
+and Jiang [9]; the exact interface and the constant used are proved in Appendix A. Rational
+matrix certificates imply every cut and packing estimate needed for the next step. The product
+of the multiplicative losses remains bounded through the iteration. A separate truncation and
+rounding reduction handles binary multiplicities before any edge expansion: it produces a graph
+with polynomially many explicit copies, independently of the numerical values of the multiplicities
+and k. The final tree lifts to original edge copies.
+
+Organization. Section 2 proves the metric-cone hierarchy estimate and its simultaneous response
+to a partition chain. Section 3 constructs a rational shortcut and a large packing of low-resistance
+edges. Section 4 builds the rank-preserving frame. Section 5 provides exact rational padding and
+signing certificates. Section 6 combines the two representations, iterates the sparsification, and
+proves the binary-multiplicity reduction. Section 7 records a simultaneous cost-and-cut rounding
+consequence for rational fractional inputs. Appendix A gives the quantitative rational implementation
+of the public rank-one signing method.
+
+
+2    Metric-cone shortcuts for thin trees
+We next develop the geometric input to the thin-tree algorithm. The shortcut theorem of the
+companion [20] tests a matrix on cuts. Convex optimization in the next section will use a larger,
+finitely described cone of tests. We establish the corresponding hierarchy estimate by extending its
+complete geometric arguments, which follow the hierarchy and effective-resistance framework of
+Anari and Oveis Gharan [1, Sections 5–7].
+    Throughout this section graphs are finite loopless multigraphs on a vertex set V , with n = |V | ≥ 2;
+edge sets retain multiplicities. All symmetric matrices act on the Euclidean space E = 1⊥ ⊂ RV .
+Equivalently, they are centered full matrices, with their zero action on span{1} understood. Write
+IE for the identity on this space, buv = eu − ev , and LG = e∈E(G) be bTe , using arbitrary edge
+                                                                 P
+
+orientations. Matrix pairings are ⟨A, Z⟩ = tr(AZ). Define the closed convex cone
+                        n                                                          o
+                   N = Z ⪰ 0 : bTuw Zbuw ≤ bTuv Zbuv + bTvw Zbvw     (u, v, w ∈ V ) .               (2.1)
+
+Its trace-dual cone is N ∗ = {A : ⟨A, Z⟩ ≥ 0 for all Z ∈ N }. The Gram-matrix representation of
+squared Euclidean distances is classical [22]; the additional triangle inequalities give the standard ℓ22
+metric relaxation [2, Section 2]. For Z ∈ N , the numbers d(u, v) = bTuv Zbuv form a squared Euclidean
+pseudometric. The centered identity belongs to N . So does cS cTS , where cS = 1S − (|S|/n)1: its
+squared distances are precisely the 0–1 cut metric of S.
+    A hierarchy is a rooted tree of distinct nonempty subsets of V , with root V , singleton leaves, and
+children partitioning their parent into at least two sets. For a nonroot node A, with parent A∗ , set
+                             P (A) = δG (A),      O(A) = EG (A, A∗ \ A).
+The hierarchy is locally h-connected if every G[A] is h-edge-connected, with the singleton condition
+vacuous. Each |O(A)| ≥ h. Each graph edge belongs to exactly two parent boundaries: those of the
+two children of its endpoints’ least common ancestor. In particular its multiplicity in any selected
+collection of parent boundaries is at most two.
+
+                                                   4
+Theorem 2.1 (Hierarchy bound for the metric test cone). There is an absolute integer h0 such
+that, for every integer h ≥ h0 , every locally h-connected hierarchy of G, and every collection M of
+nonroot nodes satisfying |O(A)| ≥ |P (A)|/h, there is a matrix D ≻ 0 on E with
+
+                                      ⟨D, Z⟩ ≤ ⟨LG , Z⟩                           (Z ∈ N ),                  (2.2)
+                        1
+                                   bT D−1 be ≤ h−31/40
+                               X
+                                                                                  (A ∈ M).                   (2.3)
+                      |O(A)| e∈O(A) e
+
+The cutoff is independent of the graph and the hierarchy depth.
+   The proof first expresses the shortcut objective as a ratio whose denominator is total edge length.
+We then represent its numerator by collections of disjoint balls and charge their radii to edge lengths;
+the resulting estimate will give simultaneous responses to partition chains.
+
+2.1   The conic dual
+Lemma 2.2 (A geometric upper bound for the shortcut program). Let G be connected and M a
+nonempty finite collection of nonroot nodes with nonempty parent boundaries. Let p∗ be the infimum,
+over D ≻ 0 satisfying Equation (2.2), of the largest marked average resistance. Then
+                                                              2
+                                  X    1  X
+                                                      ae 
+                                 A∈M
+                                     |O(A)| e=uv∈O(A)
+                     p∗ ≤ sup               X                       ,   ae = |⟨ue , pu − pv ⟩|.              (2.4)
+                           p,U                       d(u, v)
+                                         e=uv∈E(G)
+
+Here pv are Euclidean points whose squared distances d(u, v) = ∥pu − pv ∥22 satisfy the triangle
+inequalities, the denominator is positive, and U has orthonormal rows uTe . The Euclidean dimension
+may be enlarged.
+Proof. Put AA = |O(A)|−1                         T   and fA (D) = tr(AA D−1 ). These functions are convex,
+                                  P
+                                      e∈O(A) be be
+since
+                                          bT D−1 b = sup(2bT x − xT Dx).
+                                                 x
+                                     ∗
+The conic constraint is LG −D ∈ N . Choose D0 = δIE with 0 < δ < λmin (LG |E ). Then LG −D0 ≻ 0
+lies in the interior of N ∗ , because the positive semidefinite cone is contained in N ∗ . Taking an
+epigraph height above all fA (D0 ) makes the other inequalities strict as well.
+    For completeness, finite-dimensional separation gives the needed strong duality even if the
+infimum is not attained. Separate (0, 0, p∗ ) from the open convex set of (a, M, z) for which some
+D ≻ 0 and t ∈ R satisfy
+
+                          fA (D) − t < aA ,          M − D + LG ∈ int N ∗ ,       t < z.
+
+Monotonicity in the three coordinates makes the separating coefficients (λ, Z, γ) satisfy λ ≥ 0,
+Z ∈ N , and γ ≥ 0. The strictly feasible point just constructed rules out γ = 0: one may take all
+aA < 0 and M in − int N ∗ , making the pairing strictly negative for every nonzero (λ, Z). Normalize
+                                                P
+γ = 1. The unrestricted variable t then forces A λA = 1. Taking limits to the boundary of the
+open set, and using weak duality for the reverse inequality, gives
+                                                                           
+                                 inf {tr(A(λ)D−1 ) + tr(ZD)} − tr(ZLG ) ,
+                                                                                           X
+      p∗ =          sup                                                           A(λ) =          λ A AA .   (2.5)
+                        λ =1 D≻0
+                    P
+             λ≥0,     A A                                                                   A
+                    Z∈N
+
+
+                                                           5
+   For any A, Z ⪰ 0,
+
+                         inf {tr(AD−1 ) + tr(ZD)} = 2 tr (Z 1/2 AZ 1/2 )1/2 .
+                                                                             
+                                                                                                 (2.6)
+                         D≻0
+
+When A, Z ≻ 0, set H = Z 1/2 DZ 1/2 and C = Z 1/2 AZ 1/2 . The objective minus 2 tr(C 1/2 ) is
+∥H −1/2 C 1/2 − H 1/2 ∥2F , and vanishes at H = C 1/2 . For singular A or Z, add ηIE to both. The
+positive definite identity at each fixed D, followed by η ↓ 0, proves the lower bound. The unperturbed
+infimum is at most the perturbed infimum, whose limit gives the upper bound. These are auxiliary
+perturbations for the identity, not extra dual feasibility assumptions.
+    For Z ̸= 0 in N , connectivity gives E = tr(LG Z) > 0. Writing N0 = tr((Z 1/2 A(λ)Z 1/2 )1/2 ),
+optimization over the scale τ Z gives
+                                             √
+                                       sup(2 τ N0 − τ E) = N02 /E.
+                                    τ ≥0
+
+The zero multiplier contributes zero. Represent Z as the centered Gram matrix of points pv , and
+put
+                                              X       λA
+                                      we =                 .
+                                           A:e∈O(A)
+                                                    |O(A)|
+                                                                √
+Then N0 is the nuclear norm of the matrix with columns we (pu − pv ). The singular value
+decomposition, after adding zero coordinates if needed, gives
+                                            X√
+                                N0 = max          we ⟨ue , pu − pv ⟩.
+                                       U U T =I e
+
+Changing individual row signs preserves row orthonormality, so take the displayed contributions
+nonnegative. For such a maximizing U ,
+                                               s
+                                           X         λA     X
+                                  N0 ≤                           ae ,
+                                           A
+                                                   |O(A)| e∈O(A)
+                                                                   2
+                                           X1  X
+                                  N02 ≤                 ae  .
+                                        A
+                                          |O(A)| e∈O(A)
+                    qP        P √
+                       j xj ≤
+                                                          P
+The first line uses            j xj and the second uses     A λA = 1. Overlapping boundaries are
+allowed. Substitution into Equation (2.5) proves the claim.
+
+2.2   A convex realization with exact radial motion
+Starting from the classical distance-profile isometry into ℓ∞ [10, 17], we construct a continuous
+geometry for an arbitrary finite metric. It will be used for balls and shells; the Euclidean points pv
+remain the inputs to the spectral argument. Figure 1 contrasts the Euclidean spectral points with
+the distance-profile realization of the same vertex labels and illustrates the exact radial motion of
+Lemma 2.3.
+Lemma 2.3 (Doubled distance profiles). Every finite metric (S, d) has an isometric realization
+x 7→ cx in a convex polytope Q in a finite-dimensional normed space with the following properties.
+Distance ρx (q) = ∥q − cx ∥ is affine on Q. There is a common R > 0 and a point c−x ∈ Q such that
+
+                               ∥q − cx ∥ + ∥q − c−
+                                                 x∥ = R           (q ∈ Q).                       (2.7)
+
+                                                      6
+       Two realizations of the vertex labels                      Exact radial motion in Q
+                                                                cx                                 c−
+                                                                                                    x
+           pv and Yv = U pv in Euclidean space               radius 0                           radius R
+                   ∥Yu − Yv ∥22 ≤ d(u, v)
+                              selected vertex labels
+                cv in the profile polytope Q
+                                                                 move inward             move outward
+                   ∥cu − cv ∥∞ = d(u, v)                                           q
+                                                                  length ρ               length R − ρ
+                                                                                radius ρ
+
+
+Figure 1: Spectral packing uses Euclidean points; balls and shells use the distance-profile realization
+with the same vertex labels. The radial paths are schematic: in the ambient norm, distance traveled
+along either indicated segment equals change of radius. The two segments need not form one straight
+segment in Q.
+
+
+From any q ∈ Q one can reach every radial value in [0, R] by moving toward cx or c−   x , and the
+change in radius equals the distance moved. Every straight segment in Q has its norm length, and
+clamped radial functions are piecewise affine on it.
+
+Proof. Take R > 2 maxx,y d(x, y) and two copies x+ , x− of each point. On the doubled set define
+
+                   b              d(x− , y − ) = d(x, y),
+                   d(x+ , y + ) = b                            d(x+ , y − ) = R − d(x, y).
+                                                               b
+
+This is a metric. A triangle with all signs equal is an original triangle. A triangle with two equal signs
+has two cross-copy sides; an inequality with a cross-copy side on the left reduces to an original triangle
+inequality. The remaining inequality follows from d(x, y) + d(x, z) + d(z, y) ≤ 3 diam(d) < 2R.
+    For a doubled point a, let ca = (d(a,b z))z be its distance profile in ℓ∞ , and set Q = conv{ca }.
+The triangle inequality and coordinate a show ∥ca − cb ∥∞ = d(a,  b b). More generally, for q = P θ c ,
+                                                                                                     b b b
+                                      X                                    X
+                       ∥q − ca ∥∞ =         θb d(a,
+                                               b b) = qa ,       θb ≥ 0,         θb = 1.                   (2.8)
+                                       b                                    b
+
+Indeed, convexity of the norm gives the upper bound, and coordinate a gives the lower bound. Thus
+the radius is the restriction of a linear coordinate function, independently of the representation of q.
+Set cx = cx+ and c−                           b +        b −
+                      x = cx− . The identity d(x , b) + d(x , b) = R for every doubled point b proves
+Equation (2.7).
+    If ρ = ρx (q), the segment qt = (1 − t)q + tcx has ∥qt − q∥ = tρ and ρx (qt ) = (1 − t)ρ. The segment
+qt− = (1 − t)q + tc−         −                             −
+                     x has ∥qt − q∥ = t(R − ρ) and ρx (qt ) = ρ + t(R − ρ). These formulas prove the
+exact-motion assertion, including the endpoint cases. Convexity of Q keeps all segments in Q; the
+final assertion follows from Equation (2.8) and clamping.
+
+    For a pseudometric, first identify zero-distance points to apply Lemma 2.3. This identification
+concerns only the geometric point set. Every graph vertex, edge copy, hierarchy node, and center-
+vertex label is retained. In particular coincident vertex images do not contract the graph.
+
+2.3   Transferring the bag and charging estimates
+The next lemma extends the bag-selection and shell-charging arguments of [20, Propositions B.7,
+B.8, and B.10] to Q. We retain those constructions and their scalar accounting, but verify the
+geometric steps below: their stated cube hypotheses do not cover all tests in N . The two charging
+
+                                                       7
+alternatives explain the division into compact and assigned bags. Compact bags charge disjoint
+geometric objects. Assigned bags may overlap geometrically, provided their hierarchy labels separate
+the graph edges used for charging.
+     Use relative open balls B(c, δ) = {q ∈ Q : ∥q − c∥ < δ} and strict shells B(c; a, b) = {q ∈ Q : a <
+∥q − c∥ < b}. An ordinary ball includes its center, whereas a shell with a = 0 excludes it. Both
+are called radial objects. An ordinary ball B(c, b) has numerical inner radius a = 0 and width b; a
+shell has width b − a. All radial tests and width formulas below apply to both types with these
+numerical radii, but membership and intersection always use the actual support. In particular, an
+unchanged ordinary ball keeps its center. A radial restriction to a ≤ a′ < b′ ≤ b means replacement
+by the strict shell B(c; a′ , b′ ), even when a′ = 0. Such a replacement is a subset of the old support;
+it is an operation, not an identification of a ball with a punctured shell. Proposed intervals of
+nonpositive width are discarded. A bag consists of mutually disjoint balls of a common radius δ,
+centered at vertex images cv . It is β-compact of type (δ, ∆) if it has at least two balls, its center
+diameter is at most ∆, and β∆ ≤ δ|Bag|. It is η-assigned to A if |Bag| ≥ η|O(A)| and every ball
+has a designated center vertex u ∈ A with an edge uv ∈ O(A) of length d(u, v) < δ. A family has
+all its balls mutually disjoint and a common radius. A compact family has a common type (δ, ∆).
+An assigned family has one bag for each of a set of distinct assigned nodes. Bags assigned to the
+same node at one scale may always be merged: this preserves every witnessing edge, the assignment
+bound, and the total mass. Fix 0 < ρ < 1. A sequence of compact families is ρ-geometric when
+∆i+1 < ρδi ; a sequence of assigned families is ρ-geometric when δi+1 < ρδi and its assigned nodes
+are distinct across families. In either case its mass is
+                                              X              X
+                                         M=         δi            |Bag|.
+                                                i        Bag∈Fi
+
+
+Lemma 2.4 (Geometric transfer). Let pv ∈ RdE be points for which d(u, v) = ∥pu − pv ∥22 is a
+pseudometric. Realize d in Q as in Lemma 2.3. Let U : RdE → RE(G) be a contraction, change its
+row signs so ae = ⟨ue , pu − pv ⟩ ≥ 0, and set
+                                                    P           2
+                                                (    e∈O(A) ae )                 X
+                     de = d(u, v),       NA =                        ,     E=            de .
+                                                         |O(A)|                 e∈E(G)
+
+The following three assertions hold in Q.
+  (i) Let T be a nonempty set of nodes with NA > 0 and NA ≥ α                    e∈O(A) de , where 0 < α ≤ 1.
+                                                                                P
+
+      Define
+
+             J = 1 + ⌈log2 (256/α2 )⌉,          C2 = 128J 4 ,                                   σ = α/C2 ,
+             L = 2 + ⌈log2 (1/σ)⌉,            H0 = 1 + ⌈log2 (24/(ρσ ))⌉,   2
+                                                                                            C1 = 1024ϵ−2 .
+
+      If β > 1, 0 < ϵ < 1/3, 0 < ρ < 1, and σ ϵ ≤ (48βC1 )−1 , there is a ρ-geometric sequence
+      consisting either of β-compact families or of σ 1+2ϵ -assigned families, with
+                                                   σϵ       X
+                                         M≥                     NA .                                         (2.9)
+                                              384βC1 C2 LH0 A∈T
+
+ (ii) For G k-edge-connected, a ρ-geometric sequence of β-compact families with ρ ≤ 1/12 and
+      β ≥ 36 satisfies E ≥ (k/4)M.
+
+
+
+                                                         8
+(iii) For a locally k-connected hierarchy, selected nodes satisfying |O(A)| ≥ kρ|P (A)|, and a
+      ρ-geometric sequence of (24C3 /k)-assigned families, one has
+
+                                                            kC4
+                                                     E≥          M                                    (2.10)
+                                                            96C3
+
+      provided C4 ≥ 3, ρ ≤ (6C4 )−1 , and C3 ≥ 2((C4 + 1) + 4(C4 + 2)2 ).
+
+Proof. We follow the constructions in Sections B.2–B.4 of [20], keeping their scale choices and scalar
+potentials. All balls, shells, and intersections now lie in the continuous polytope Q. New shells
+inherit vertex centers, so Equation (2.8) remains available. We first obtain the bags, then explain
+how each of the two charging constructions operates in this realization.
+    Extraction and the spectral step. The two truncations and homogeneity arguments in [20,
+Section B.2.2] use only a2e ≤ de , nonnegative boundary sums, and multiplicity at most two. They
+select nonempty subsets O′ (A) ⊆ O(A) retaining a fixed fraction of each squared boundary sum,
+and group the nodes so that both positive quantities a2e and de vary by a factor less than four
+within F = A O′ (A). For one such group put N = A |O(A)|, N ′ = |F |, c1 = mine∈F a2e , and
+             S                                          P
+
+c2 = maxe∈F de . The truncation and grouping estimates give c1 N ′ ≥ σN c2 . For the Euclidean
+points Yv = U pv and α e = σN/N ′ this implies
+
+                                (Ee∈F ae )2 ≥ c1 ≥ e     αEe∈F ∥Yu − Yv ∥22 .
+                                                   αc2 ≥ e
+
+This is the exact hypothesis of the Euclidean spectral-packing Lemma B.3 of [20]; that lemma places
+no binary restriction on its points. Its selected centers have squared Euclidean separation at least
+4r. Since
+                                 ∥Yu − Yv ∥22 ≤ d(u, v) = ∥cu − cv ∥∞ ,                       (2.11)
+the corresponding Q-balls of radius r are disjoint. If b0 is their number, the spectral lemma gives
+b0 r ≥ αe ϵ c1 N ′ /C1 . Shrink their common radius to δ defined by b0 δ = α
+                                                                           e ϵ c1 N ′ /C1 . Only the selected
+vertex labels pass from the Euclidean geometry to Q; a map on intermediate points is unnecessary.
+     The rest of the one-family construction uses a maximal disjoint collection of balls of radius
+D = max{δ, 2c2 }, centered at images cu for which u ∈ A and uv ∈ O′ (A) for some A. Maximality
+puts every candidate center within 2D of a selected center: intersection of two relative balls implies
+this distance bound by the triangle inequality. Every endpoint center is within c2 of an assigned
+endpoint, hence within 3D of a selected center. Grouping by those centers gives diameter at most
+6D in the compact case. In the assigned case the witnessing edge has length at most c2 < D. The
+cardinality estimates of [20, Lemma B.6] give compactness, assignment strength, and radius range
+[σc1 , 12c1 /σ]. Its final grouping by dyadic size and then by residue class modulo H0 is numerical:
+each scale lies between σ2j and 24 2j /σ, so scales in the same residue class meet the stated geometric
+separation. The losses C2 , L, 2H0 , and 192βC1 /σ ϵ are exactly those in Equation (2.9). This proves
+(i).
+     Length charging and compact radial objects. The resource charged by both arguments is
+one fixed straight segment [cu , cv ] of length de for each graph edge, retaining parallel edges as
+separate resources. For a radial object with numerical radii a < b, its clamped radial function is
+f (q) = min{b, max{a, ∥q − c∥}}. It is 1-Lipschitz and piecewise affine on each edge segment. If the
+object has vertex witnesses at radius at most a and at least b, all its intermediate radial cuts are
+nontrivial. Consequently
+                                Z b                                    X
+                   k(b − a) ≤         |δG {v : ∥cv − c∥ < t}| dt =             |f (cu ) − f (cv )|.
+                                 a
+                                                                     uv∈E(G)
+
+
+                                                        9
+For disjoint radial objects, subdivide an edge segment at the finitely many breakpoints of these
+functions. At most one clamped function is nonconstant on each open subsegment, and its variation
+is bounded by that subsegment’s length. The total charge is therefore at most de , including edges
+along a boundary or of zero length. This proves the length bound of [20, Lemma B.9] in Q. For an
+ordinary ball, nonconstant portions of the clamped function lie at strictly positive radius. Its center
+contributes no charged length, but remains part of the ball in membership tests.
+    For compact bags, process the families in decreasing order of radius, as in [20, Proposition B.8].
+An input ball inserted at the current scale is called fresh and is left intact until the next scale; all
+other live objects are called old. Thus a fresh ordinary ball becomes an old ordinary ball at the next
+scale unless a subsequent operation restricts it. Disjoint equal-radius balls have centers separated
+by at least 2δ, since their midpoint belongs to Q. For any live object with center c and numerical
+radii a, b, call B(cu , δ) interior when
+
+                                  a + δ + ∆ ≤ ∥cu − c∥ ≤ b − δ − ∆.
+
+This conservative two-sided test also applies when the object is an ordinary ball, with a = 0. If one
+ball of a compact bag is interior, its containing object is old, since fresh balls and unprocessed balls
+belong to the same disjoint family. All bag centers have radial values in an interval [l, u] ⊆ [a+δ, b−δ]
+of width at most ∆. Replacing the old object by the strict shells with intervals (a, l − δ) and (u + δ, b)
+leaves room for all the new balls, including when the old object was ordinary. The extremal centers
+supply the new outer and inner witnesses; the previous witnesses supply the other two. Every
+inserted ball has its own center and a different bag center as witnesses. All supports are disjoint by
+1-Lipschitzness of radius. When no interior bag remains, shrinking each old interval at both ends by
+2δ + ∆ separates it from every remaining ball. Indeed, failure at the lower margin puts the entire
+candidate at radius less than a + 2δ + ∆, and failure at the upper margin puts it beyond b − 2δ − ∆.
+This includes candidates near the center of an old ordinary ball: the shrink removes that center
+neighborhood. Witnesses are preserved because the inner radius increases and the outer radius
+decreases; an inner witness need not belong to the remaining strict shell. The capacities [w − 6∆i ]+
+for all old objects and δi − 6∆i+1 for fresh balls depend only on widths and the inequalities 2δi ≤ ∆i ,
+6∆i+1 ≤ δi /2, and |Bag|δi ≥ 36∆i , all verified here. The split loses numerical width (u − l) + 2δ,
+and the shrink loses 2(2δ + ∆), with the same positive-part accounting when a residual is discarded.
+Removing the center alone adds no width loss. A retained fresh ball has the same capacity after
+becoming old. Thus the split and scale-transition inequalities in the cited proof retain at least one
+quarter of the input mass as final radial-object width. Applying the preceding length bound proves
+(ii).
+      Assigned labels, pruning, and path charging. Assigned bags require the labeled records of [20,
+Section B.4.1]. We give their definitions because geometric overlap is allowed. Write T [A] for the
+hierarchy subtree rooted at A, identifying its leaves with the vertices in A. A record H has an
+ordinary ball or shell as its support, an owner AH , a set PH of strict descendants of AH , and
+optionally one avoided strict descendant DH . Define its conflict domain and leaf set by
+                                                            
+                                       [
+                C(H) = T [AH ] \            T [P ] ∪ T [DH ] ,    L(H) = C(H) ∩ V,
+                                     P ∈PH
+
+omitting the final subtree when there is no avoided label. The record is called avoiding precisely
+when DH is present. For center c and numerical radii a < b, validity means:
+  (a) the labels have the stated form, so AH ∈ C(H);
+ (b) both endpoints of every edge of δG (P ), for every P ∈ PH , have radius at least b from c;
+
+                                                    10
+  (c) some u ∈ L(H) has radius at most a and starts at least k/4 edge-disjoint paths to vertices of
+      radius at least b. These paths lie in G[AH ], or in G[AH \ DH ] for an avoiding record;
+ (d) geometrically intersecting records have disjoint conflict domains.
+The initial paths in (c) need not avoid the predecessor subtrees in PH ; condition (b) will remove
+those subtrees from the portions used for charging. Its inner witness is a graph vertex in L(H),
+not necessarily a point of the support: for a strict shell it can lie on or inside the excluded inner
+boundary.
+    For a node A assigned at scale δi , its predecessors are the strict descendants assigned at earlier,
+larger scales. An input ball is noninsertable if it contains an endpoint of a boundary edge of any
+predecessor. Otherwise give it owner A, no avoided label, and excluded set equal to the predecessors.
+    At one scale, disjoint center-inclusive balls contain at most 2|P (A)| endpoint vertices of P (A).
+Thus a predecessor A, whose own scale is δi , deletes mass at most 4ρδi |P (A)|, which the boundary
+ratio and assignment bound pay as in the source’s Lemma B.13. Deleting noninsertable balls and
+bags losing more than half their balls retains mass at least M/2 and assignment at least 12C3 /k.
+Insertability puts the designated center vertex in its conflict domain: otherwise its witnessing edge
+in O(A) would be a forbidden predecessor-boundary edge whose endpoint lies in the ball. Another
+ball of the bag supplies an outer vertex; local connectivity supplies the required paths. The retained
+bag has more than one ball, since |O(A)| ≥ k and its assignment is at least 12C3 /k. Thus the
+resulting input records satisfy (a)–(c), including when distinct vertices have coincident images.
+    For a valid collection, stop each witnessing graph path at its first outer vertex. It cannot enter
+an excluded predecessor subtree earlier, because the entering edge would have an endpoint inside
+the outer radius. On the resulting continuous path keep the portion from the last inner-radius point
+to the first outer-radius point. Its length is at least the record’s numerical width by 1-Lipschitzness.
+Apart from endpoints it lies in a < ∥q − c∥ < b, which is contained in either type of support. For
+an ordinary ball a = 0 and the center carries no charged length. Paths within one record are
+edge-disjoint. Both endpoints of every edge in a stopped path belong to L(H): an entrance into an
+excluded subtree, even at the stopping vertex, would have a preceding endpoint inside the outer
+radius, contradicting (b). Two records charging the same graph edge therefore have intersecting
+conflict domains, so (d) makes their actual supports disjoint and they charge disjoint open portions
+of that edge. This proves the source’s Lemma B.14 in Q, at rate k/4.
+    It remains to construct a valid arrangement with enough total width. Start with the empty
+arrangement and process scales in decreasing order and, within each scale, bags in increasing depth
+of their assigned nodes. As in the compact construction, original balls inserted during the current
+phase are fresh and remain intact until the next phase; all other records are old. A candidate
+J = B(cu , δi ) is interior to a current record H with center c and numerical radii a, b when
+
+                       C(J) ∩ C(H) ̸= ∅,        a + C3 δi < ∥cu − c∥ < b − C3 δi .
+
+A candidate interior to no current record is called a border candidate. In particular old ordinary
+balls participate in this test with a = 0, including its lower margin. A record containing an interior
+candidate has width greater than 2C3 δi , so it cannot be a fresh ball of width δi . An interior candidate
+is contained in H. The processing order implies that the owner of any conflicting current record
+is an ancestor of the candidate’s owner A, and that A ∈ C(H). Two conflicting records therefore
+cannot both contain this candidate, by (d). The strict concentric restrictions defined above retain
+(a)–(c) with the old labels: the old inner witness still has radius at most the new inner radius,
+and the old paths still reach the smaller outer radius. This remains true when an ordinary ball is
+replaced by a shell and its center witness no longer lies in the support. Restricting both support
+
+
+                                                   11
+and conflict domain preserves (d). Discard any proposed radial interval of nonpositive width. Such
+restrictions cannot turn a border candidate into an interior candidate. These are the order and
+inheritance properties of [20, Lemmas B.17–B.20].
+    Meeting a record and carving its interior. The following consequence of Lemma 2.3 identifies the
+record affected by a carving operation. If a live record H with center c and numerical radii r1 < r2 ,
+and a vertex center z, satisfy
+                                      r1 − δ < ∥z − c∥ < r2 + δ,
+then B(z, δ) meets the actual support of H. Choose a radius in (r1 , r2 ) less than δ away from ∥z − c∥
+and use the exact inward or outward motion to reach it. Its traveled distance is less than δ. There
+is no radius-range obstruction: condition (c) provides an outer vertex witness, so r2 ≤ diam(d) < R.
+For an ordinary ball r1 = 0; the chosen radius is positive and belongs to that ball, even when z = c
+and outward motion is needed. This replaces motion toward the binary center or its opposite cube
+vertex in [20, Section B.4.3].
+    At scale δ, process the interior candidates of a bag assigned to A while at least half its original
+balls remain interior and untreated. Candidates that cease to be interior are kept as border
+candidates. Carving an avoiding shell around an interior candidate replaces its radial interval (r1 , r2 )
+by (r1 , q − δ) and (q + δ, r2 ), and inserts the candidate. Here q is its center’s radius from the shell
+center. Every avoiding record is indeed a strict shell: input records are nonavoiding, only the
+central shell H4 below introduces an avoided label, and later restrictions are strict shells. Radial
+Lipschitzness gives disjointness; witnesses and labels survive in the restrictions. If no remaining
+interior candidate belongs to an avoiding shell, the other two operations first split G[A∗ \ A] into
+j ≤ 2|O(A)|/k induced subgraphs that are k/4-edge-connected. This count follows by successive cuts
+smaller than k/4 and the k-connectivity of G[A∗ ]; it is independent of the embedding. Assignment
+and the half-bag loop condition give one piece adjacent along edges of length less than δ to at least
+3C3 candidate centers. Radial coordinates of these neighbors differ by less than δ from those of
+their candidate centers.
+    Choose a nonavoiding record H containing one of those candidates in its interior, with center
+c and numerical radii r1 , r2 , and write ϱ(v) = ∥cv − c∥. It may be an old ordinary ball, in which
+case r1 = 0. Let [a, b] ⊆ [r1 , r2 ] be the radial range of the neighbors in the selected piece, clipped
+to this numerical interval. Select for treatment the m still-interior candidates whose centers have
+radii in (a − δ, b + δ). Each meets the chosen record by the preceding exact-motion argument. All
+candidates of the bag have the same labels, so each has conflict domain meeting C(H). If such a
+candidate is interior to another record H ′ , its entire ball lies in H ′ , so H and H ′ intersect. The
+processing-order property puts its owner A in both conflict domains, contrary to (d). Thus every
+selected candidate is interior to H itself. The radial count in the cited proof gives m ≥ 3(C3 − 1)
+in the dense case below and b − a ≥ (C3 − 1)δ in the sparse case. It uses only the 3C3 adjacent
+centers, their interior margins, and the fact that neighbor radii differ by less than δ.
+    For the dense case, with mδ > 3(b − a), retain intervals (r1 , a − 2δ) and (b + 2δ, r2 ) and insert
+the m balls. The expanded radial interval and Lipschitzness give every required separation. For the
+sparse case mδ ≤ 3(b−a), retain (r1 , a) and (b, r2 ) and create the central shells H3 = B(c; a+δ, b−δ)
+and H4 = B(c; a, b). Give H3 owner A, no avoided label, and the old excluded nodes strictly below
+A. Give H4 the old owner and excluded set, and avoided label A. Their domains are respectively
+C(H) ∩ T [A] and C(H) \ T [A]. The old owner is a strict ancestor of A. An original ball with
+owner A cannot come from an earlier scale, since assigned nodes are distinct across families; at the
+current scale it is disjoint from every unprocessed candidate. A synthetic shell with owner A can
+only have been created while processing this same bag. It has already treated every then-interior
+candidate in its expanded interval; later restrictions only reduce its support, and border candidates
+
+
+                                                   12
+never become interior. Hence neither an original ball nor a synthetic shell with owner A can be the
+chosen record. Thus both new labels have the required form. For the changed-label path witnesses,
+extremal neighbors v1 , v2 in the selected piece and their adjacent candidates u1 , u2 ∈ A satisfy
+
+                      ϱ(v1 ) ≤ a,   ϱ(v2 ) ≥ b,    ϱ(u1 ) < a + δ,       ϱ(u2 ) > b − δ.
+
+Connectivity of G[A] supplies k paths for the inner central shell; connectivity of the selected piece
+supplies at least k/4 paths for the avoiding shell. Their initial vertices avoid excluded subtrees:
+membership in one would make the short edge u1 v1 an excluded boundary edge with an endpoint
+inside the old outer radius, or make that excluded subtree an ancestor of A, contradicting A’s
+conflict membership. The sparse-case width bound gives a + δ < b ≤ r2 , so the initial vertices
+used here lie strictly inside the old outer radius. This verifies (c) for both new labels; (b) follows
+from the smaller outer radii and excluded sets. Other records inherit separation by support and
+conflict-domain inclusion. Remaining interior candidates have centers outside (a − δ, b + δ), so miss
+both central shells. If a = 0, H4 excludes its center but may still use v1 at radius zero as its inner
+witness, as condition (c) permits.
+    The scalar accounting and the phase transition. The potentials in Section B.4.3 are δi − C4 δi+1
+for fresh balls, [w − C4 δi ]+ for other nonavoiding records, and the latter divided by 2(C4 + 2) for
+avoiding records. An original ball becomes old when its phase ends and then uses the second formula
+with width equal to its radius; if retained unchanged, it still has its center-inclusive support. These
+functions use the same numerical widths and radii in Q. The three replacements have formal width
+losses 2δ across the two avoiding residual shells in the first operation, (b − a) + 4δ across the two
+nonavoiding residual shells in the second, and 2δ across the three nonavoiding pieces in the third.
+Its numerical inequalities preserve old credit and supply C4 δ/(6C3 ) per treated candidate, counting
+sparse-case candidates as treated even though their balls are not inserted. Finally, Section B.4.4
+either retains every record when the gain from changing scale supplies the required border credit,
+or shrinks every old object, including old ordinary balls, at both ends by (C3 + 1)δi and inserts
+remaining border balls when the gain is insufficient. For a conflicting old object, border status means
+the candidate center has radius at most a + C3 δi or at least b − C3 δi . Its whole ball therefore lies
+below the new inner radius or above the new outer radius, respectively. This proves separation also
+at the center of an old ordinary ball; fresh balls are disjoint within the current family. Restrictions
+retain witnesses. Each old width decreases by 2(C3 + 1)δi , unless the object is discarded, while the
+potential threshold decreases from C4 δi to C4 δi+1 . These are the same changes for a ball and a
+shell. The source’s width calculation bounds the lost potential by half the inserted mass, leaving
+at least C4 /(6C3 ) of each border ball’s radius for its node. The half-bag stopping rule leaves final
+width at least C4 /(12C3 ) times the retained mass. Combined with the pruning factor 1/2 and the
+path-charging rate k/4, this is exactly Equation (2.10).
+    Thus the inherited constructions give (i)–(iii), with the same scalar losses and with every length
+charge measured by E = e de in the profile realization.
+                            P
+
+
+2.4   Choosing parameters and responding to a partition chain
+Proof of Theorem 2.1. If M is empty, a sufficiently small positive centered identity satisfies Equa-
+tion (2.2). Otherwise use Lemma 2.2. Fix one of its embeddings and row-orthonormal systems, with
+E > 0, and set
+
+        α = h−4/5 ,       ϵ = 1/10,      β = 36,        ρ = (2h2 )−1 ,      C3 = 104 ,     C4 = 3.
+
+
+
+
+                                                   13
+Let T consist of the marked nodes with positive NA and NA ≥ α
+                                                                       P
+                                                                         e∈O(A) de . Boundary multiplicity
+at most two gives                        X
+                                               NA ≤ 2αE.                                            (2.12)
+                                            A∈M\T
+
+If T is nonempty, apply Lemma 2.4(i). Its parameters obey
+                   C2 = O((1 + log h)4 ),      L, H0 = O(1 + log h),     σ = h−4/5 /C2 .
+The smallness condition holds for all sufficiently large absolute h. So does the assignment requirement,
+because
+                                              6/5
+                        hσ 1+2ϵ = h1/25 /C2 −→ ∞,              σ 1+2ϵ ≥ 24C3 /h.
+The marked-node condition implies |O(A)| ≥ |P (A)|/h ≥ hρ|P (A)|. For large h, ρ ≤ 1/18; also
+104 ≥ 2(4 + 4 · 25) = 208. Both charging conclusions of Lemma 2.4 therefore apply, according to the
+family type, and give the common bound
+                                                           C4      1
+                                  E ≥ c∗ hM,       c∗ =        =        .
+                                                          96C3   320000
+Together with Equation (2.9), this yields
+                       P
+                         A∈T NA         384βC1 C2 LH0      −23/25             7
+                                    ≤                 = O h       (1 + log h)    .
+                              E             c∗ hσ ϵ
+                      −1/10
+Indeed σ ϵ = h−2/25 C2   , so the exact logarithmic exponent before rounding upward is 32/5 < 7.
+Including Equation (2.12), or using it alone when T is empty, every ratio in Equation (2.4) is at
+most
+                          2h−4/5 + O h−23/25 (1 + log h)7 = o(h−31/40 ).
+                                                         
+                                                                                           (2.13)
+The exponent margins are 1/40 and 29/200, respectively. Increase h0 so the bound is at most
+h−31/40 /2. Then p∗ ≤ h−31/40 /2, and the defining property of the infimum supplies a feasible
+positive definite D with marked averages less than h−31/40 . No attainment assumption is used.
+
+   For a fixed connected ambient graph H, define
+                           KH = {X ⪰ LH : ⟨X, Z⟩ ≤ 3⟨LH , Z⟩           (Z ∈ N )}.                   (2.14)
+This set is nonempty, convex, and compact. It contains LH ; closedness is immediate, and the test
+IE bounds tr X by 3 tr LH . For X ≻ 0 write RX (e) = bTe X −1 be . Two elementary identities used
+below are
+        X ⪰ D ≻ 0 =⇒ RX (e) ≤ RD (e),               X ⪰ tbe bTe ⇐⇒ tRX (e) ≤ 1       (t > 0).       (2.15)
+The first follows by inverse order, and the second by congruence with X −1/2 and the single nonzero
+eigenvalue of a rank-one matrix.
+Proposition 2.5 (Simultaneous response). Let H be connected and let G ⊆ H be a spanning
+subgraph. Let r be a sufficiently large integer, put h = ⌊r/2⌋, and suppose G and the subgraphs
+induced by all parts of a nested sequence of partitions are h-edge-connected, with the singleton
+condition vacuous. If 0 < s ≤ r1/4 , there is Y ∈ KH such that, at every partition P in the sequence,
+all but at most r−1/3 |EG (P)| crossing edges satisfy
+                                               Y ⪰ 6s be bTe .                                      (2.16)
+Here EG (P) denotes the edges whose endpoints lie in different parts of P.
+
+                                                     14
+Proof. Use the dyadic assembly of [20, Lemma 4.2], with the hierarchy estimate and threshold
+just proved; we give the counting argument to specify both constants. In each occupied bin
+2a ≤ |EG (P)| < 2a+1 choose the finest partition. List these representatives from fine to coarse as
+P0 , . . . , Pℓ−1 , and append Pℓ = {V }. Put Bi = EG (Pi ) and Mi = |Bi |, with Mℓ = 0. Distinct parts
+of these representative partitions, together with V and singleton leaves, form a locally h-connected
+hierarchy. Mark precisely the nodes with |O(A)| ≥ |P (A)|/h, and take D from Theorem 2.1. Then
+                                         Y = LH + D ∈ KH ,
+because Y ⪰ LH and, for every Z ∈ N , ⟨Y, Z⟩ ≤ ⟨LH + LG , Z⟩ ≤ 2⟨LH , Z⟩.
+    At transition j to j + 1, the parent of each changing part is the part of Pj+1 containing it.
+Every disappearing edge in Bj \ Bj+1 belongs to parent boundaries of changing parts, whose total
+full-boundary size is at most 2Mj . Unmarked parts therefore cover at most 2Mj /h such edges. For
+marked parts, Equation (2.15) and Markov’s inequality give
+                         |{e ∈ O(A) : RY (e) > 1/(6s)}| ≤ 6s h−31/40 |O(A)|.
+Thus at most 2(h−1 + 6sh−31/40 )Mj disappearing edges fail Equation (2.16). Double counting only
+increases this upper bound.
+    There is at most one representative per dyadic bin, and its bin index strictly decreases. Hence
+Pℓ−1
+  j=i Mj < 4Mi . Each edge of Bi disappears at exactly one subsequent transition, so its bad-edge
+count is at most 8(h−1 + 6sh−31/40 )Mi . For a skipped partition with positive crossing count M , its
+representative is finer and has Mi < 2M . Consequently its bad-edge count is at most
+                      16(h−1 + 6sh−31/40 )M = O(r−1 + r−21/40 )M ≤ r−1/3 M                       (2.17)
+for a sufficiently large absolute cutoff. The final inequality uses 21/40 − 1/3 = 23/120 > 0.
+Partitions with no crossing edges need no estimate. One matrix Y therefore works for the whole
+nested sequence.
+
+
+3     Constructive shortcut extraction
+We now turn the simultaneous response of Proposition 2.5 into an algorithm. Throughout this
+section, an explicit multigraph has distinct labels for its parallel edges, and loops are discarded.
+Write EH (P) for the edges crossing a partition P of the vertex set. Matrices act on 1⊥ , with its
+inherited Euclidean inner product. We retain the cone N and compact convex set KH from the
+preceding section:
+                          KH = {X ⪰ LH : X • Z ≤ 3LH • Z (Z ∈ N )}.                            (3.1)
+Here A • Z = tr(AZ) always means the inherited trace, even when rational, nonorthonormal
+coordinates are used for computation.
+    The construction follows the packing-preserving sparsification strategy of [20]. Convex continua-
+tion produces a rational shortcut together with a large integer packing supported on its low-resistance
+edges. Nonnegative capacities permit partition uncrossing; the nearly tight partitions then have
+highly connected parts, which is precisely the input required by the simultaneous geometric response.
+
+3.1   A ramp of packing capacities
+We use two standard algorithmic inputs in precise forms. The Nash–Williams–Tutte tree-packing
+theorem [19, 26] says that a multigraph contains q edge-disjoint spanning trees if and only if
+                           |EH (P)| ≥ q(|P| − 1) for every partition P;                           (3.2)
+
+                                                  15
+see [14, Theorem 1]. A maximum union of q graphic matroids can be constructed by matroid
+partition, originating with Edmonds [8]; we use the polynomial-time independence-oracle algorithm
+of [24, Theorem 14]. The algorithm returns disjoint forests of maximum total cardinality. Their
+total size is q(n − 1) exactly when all q forests are spanning trees. Acyclicity is a polynomial-time
+independence test, including for parallel edges. We reject q(n − 1) > m before invoking this
+procedure; thus the number of matroid copies is polynomial for an explicit graph.
+
+Proposition 3.1 (Constructive shortcut extraction). There are absolute constants A and r0 such
+that the following holds. If an explicit multigraph H on at least two vertices contains r ≥ r0
+edge-disjoint spanning trees, one can deterministically compute a rational X ∈ KH and at least
+
+                                               (1 − Ar−1/16 )r
+
+edge-disjoint spanning trees, every edge e of which satisfies bTe X −1 be ≤ r−1/4 . The running time
+and output encoding length are polynomial in |V (H)| + |E(H)|.
+
+   Fix such an H, put m = |E(H)|, and set
+                                 1                  κ
+                          κ=        ,          t=      ,    r−1/8 ≤ g ≤ 2r−1/8 ,                   (3.3)
+                                m+1                 32
+where g is dyadic. Comparing eighth powers computes g exactly with O(log r) bits. At a parameter
+s > 0 and matrix X ∈ KH , define
+
+           Re (X) = bTe X −1 be ,        pe = min{2, (sRe (X))−1 },         ue = max{0, pe − 1}.   (3.4)
+
+The maintained invariant is
+                              X
+                                    (ue + κ) ≥ Q(|P| − 1)         for every P.                     (3.5)
+                            e∈EH (P)
+
+
+Initially take s = 1/2, X = LH , and Q = r. Since LH ⪰ be bTe , each Re (LH ) ≤ 1, so ue = 1 and the
+initial invariant follows from the given packing.
+    One step replaces
+
+                   s+ = (1 + t)s,          X + = (1 − t)X + tY,           Q+ = Q − 2grt,           (3.6)
+
+where Y ∈ KH is to be found. Steps are performed while s4 < r, an exact rational comparison. The
+final step may overshoot r1/4 ; every response is invoked at an old parameter s ≤ r1/4 . There are
+O(t−1 (1 + log r)) steps, since log(1 + t) ≥ t/2. Consequently
+
+                              r ≥ Q ≥ r 1 − O(r−1/8 (1 + log r)) ≥ 3r/4
+                                                                      
+                                                                                                   (3.7)
+
+after increasing the absolute cutoff r0 .
+    Let G be the active subgraph with edges ue > 0. Choose variables 0 ≤ ye ≤ 1 for e ∈ E(G) and
+impose
+                                          Y ⪰ 6sye be bTe .                                 (3.8)
+For these variables define concave lower capacities on all edges of H:
+                                    (
+                                        κ + min{1, ue + t(5ye − 4)}, e ∈ E(G),
+                         ae (y) =                                                                  (3.9)
+                                        κ,                           e∈/ E(G).
+
+                                                       16
+They are nonnegative, in fact ae ≥ κ − 4t = 7κ/8. This small baseline will also make the uncrossing
+argument valid.
+   To check the lower bound, recall that X ⪰ αbbT is equivalent to α ≤ (bT X −1 b)−1 for X ≻ 0.
+Thus X ⪰ spe be bTe , and Equation (3.8) gives
+
+                               1             (1 − t)pe + 6tye
+                                         ≥                    ≥ pe + t(5ye − 4).
+                          s+ Re (X + )             1+t
+
+Indeed the numerator of the difference in the last inequality, divided by t, is (1−5t)ye +4+4t−2pe ≥ 0,
+since pe ≤ 2 and t < 1/5. Taking the ramp at s+ , X + , including both its upper cap and its lower
+truncation, proves
+                                           u+e + κ ≥ ae (y).                                     (3.10)
+Off G this follows just from u+
+                              e ≥ 0.
+
+Lemma 3.2 (A feasible continuation response). Under Equations (3.5) and (3.7), with s ≤ r1/4 ,
+there exist Y ∈ KH and y satisfying Equation (3.8) and
+                          X
+                                   ae (y) ≥ (Q − grt)(|P| − 1)           for every P.           (3.11)
+                        e∈EH (P)
+
+Proof. Let C be the compact convex set of admissible (Y, y) before the partition inequalities are
+imposed. It is nonempty: take Y = LH and y = 0. Put q = Q − grt > 0 and let
+                                                X
+                                   SP (y) =              ae (y) − q(|P| − 1).
+                                              e∈EH (P)
+
+Each slack is continuous and concave. Its vector image need not be convex, but the downward set
+
+                             D = {v : vP ≤ SP (y) for some (Y, y) ∈ C}
+
+is convex and closed. Convexity follows coordinatewise from concavity; closedness follows by taking
+a convergent subsequence of witnesses in C. The set D is unbounded downward. If it does not meet
+the nonnegative orthant, its distance from that orthant is positive: the norm of the negative part
+of S(y) has a positive minimum on the compact set C, and passing downward cannot reduce that
+norm. Separation therefore supplies nonnegative weights wP , normalized to sum to one, for which
+                                                         X
+                                    F (w) := max              wP SP (y) < 0.                    (3.12)
+                                               (Y,y)∈C
+                                                         P
+
+    There are finitely many partitions. Hence F is continuous on their probability simplex and has
+a minimizer. Among minimizers choose one maximizing P wP |P|2 . Its support is a chain under
+                                                          P
+
+refinement. To prove this, suppose incomparable P, Q have positive mass. Move equal mass from
+them to their common refinement P ∧ Q and finest common coarsening P ∨ Q. For each edge,
+
+                             1EH (P∧Q) + 1EH (P∨Q) ≤ 1EH (P) + 1EH (Q) .
+
+Moreover,
+                                     |P ∧ Q| + |P ∨ Q| ≥ |P| + |Q|.
+For the second inequality, form the bipartite graph whose vertices are parts of P and Q and
+whose edges are their nonempty intersections. Its edges count refinement parts, and its connected
+components count coarsening parts; edges plus components are at least vertices. Since ae ≥ 0 and
+
+                                                         17
+q > 0, uncrossing decreases the weighted slack for every (Y, y), hence cannot increase F . Writing
+a = |P|, b = |Q|, c = |P ∧ Q| and d = |P ∨ Q|, incomparability gives c > max(a, b) and d < min(a, b).
+Thus
+          c2 + d2 − a2 − b2 = (c − a)(c − b) + (d − a)(d − b) + (a + b)(c + d − a − b) > 0.
+This contradicts the tie-breaking choice. The one-part partition has zero slack and is comparable
+with every partition, so it creates no exception.
+    It remains to satisfy Equation (3.11) simultaneously on any chain. Let the old slack in Equa-
+tion (3.5) be σP ≥ 0. If σP > 1, the worst possible loss 4tm < 1 already leaves the desired inequality.
+Retain only partitions with σP ≤ 1, omitting the one-part partition. Every part of every retained
+partition induces an h-edge-connected graph in G, where h = ⌊r/2⌋. Indeed, split one such part by
+any nontrivial internal cut. Subtracting the old partition capacity from the invariant for the refined
+partition shows that the internal cut has capacity at least Q − 1. Removing all baselines loses less
+than κm < 1, and ue ≤ 1 then shows that the active internal cut has more than Q − 2 ≥ h edges.
+The same argument using a two-part partition at the root gives more than Q − 1 active edges across
+every root cut. Singleton parts require no check.
+    Apply Proposition 2.5 to this chain, with its root, and set ye = 1 on edges satisfying Y ⪰ 6sbe bTe ,
+and ye = 0 otherwise. These choices satisfy Equation (3.8). Fix a retained partition, write
+d = |P| ≥ 2 and M = |EG (P)|, and call its at most r−1/3 M exceptional crossing edges bad. Good
+edges never lose capacity; bad edges lose at most 4t each. If M ≤ 8r(d − 1), the total loss is at most
+
+                                 4tr−1/3 M ≤ 32tr2/3 (d − 1) ≤ grt(d − 1)
+
+for sufficiently large r, as required.
+    If M > 8r(d − 1), near-tightness gives EG (P) ue ≤ Q(d − 1) + 1 ≤ r(d − 1) + 1. Fewer than half
+                                            P
+
+of these M edges can have ue > 1/2: their number is at most 2r(d − 1) + 2 < M/2 for the chosen
+cutoff. Each good edge with ue ≤ 1/2 gains exactly t, since t < 1/2. The total gain minus loss is
+therefore at least
+                                   t M/2 − r−1/3 M − 4tr−1/3 M ≥ 0.
+                                                  
+
+This also proves the desired inequality. Every chain thus admits a simultaneous nonnegative slack
+vector, contradicting Equation (3.12). The lemma follows.
+
+3.2    Exact separation and a uniform interior ball
+The existence lemma leaves a margin grt beyond the actual target Q+ = Q − 2grt. We next use
+that margin to compute a response, including when the stronger solution has ye = 0 or 1.
+   For distinct vertices put Tijk = bij bTij + bjk bTjk − bik bTik . The dual cone has the exact representation
+
+                               N ∗ = {P +
+                                             X
+                                                   λijk Tijk : P ⪰ 0, λijk ≥ 0}.                        (3.13)
+                                             ijk
+
+Here and below all ordered distinct triples may be used; repetitions of an identical generator are
+harmless. To verify closedness, note that tr Tijk = 2. If matrices on the right converge, their
+                              P
+traces bound both tr P and λijk . The PSD summands and coefficients therefore have convergent
+subsequences. The represented cone is closed, and its dual is exactly the PSD cone intersected with
+all triangle halfspaces, namely N . The finite-dimensional bipolar theorem proves Equation (3.13).
+This trace argument uses full centered matrices; an ordinary trace in arbitrary reduced coordinates
+would not justify it. Also, for any connected G, choosing 0 < ϵ < λmin (LG |1⊥ ) makes LG − ϵI
+positive definite and hence interior to N ∗ . This supplies strict conic feasibility whenever it is needed
+in the shortcut domain.
+
+                                                        18
+   Use variables Y , λijk ≥ 0, and ye , ze for e ∈ E(G). Besides Equation (3.8), impose
+                                                      X
+                    Y − LH ⪰ 0,         3LH − Y −              λijk Tijk ⪰ 0,                   (3.14)
+                                                         ijk
+
+                    0 ≤ ye ≤ 1,       0 ≤ ze ≤ κ + 1,              ze ≤ κ + ue + t(5ye − 4).    (3.15)
+
+Define ze = κ off G and add
+                                    X
+                                             ze ≥ Q+ (|P| − 1)        for all P.                (3.16)
+                                  e∈EH (P)
+
+By Equation (3.13), the two LMIs in Equation (3.14) describe exactly Y ∈ KH . The two upper
+bounds on ze describe ze ≤ ae (y).
+
+Lemma 3.3 (Partition separation by minimum spanning trees). For nonnegative rational capacities
+z and rational q ≥ 0, the inequalities z(EH (P)) ≥ q(|P|−1) have an exact polynomial-time separation
+oracle. Consequently the full feasible set defined by Equations (3.8) and (3.14) to (3.16) has such an
+oracle at rational points.
+
+Proof. The partition inequalities are equivalent to
+
+                                   z · ℓ ≥ q MST(ℓ)              (0 ≤ ℓe ≤ 1),                  (3.17)
+
+where MST(ℓ) is minimum spanning tree length in H. For one direction, assign length one to
+edges crossing a partition and zero to all other edges. Every spanning tree has at least |P| − 1
+crossing edges. Conversely, let Pa be the components of the subgraph of edges of length less than a.
+Kruskal’s algorithm gives                     Z          1
+                                       MST(ℓ) =              (|Pa | − 1) da.
+                                                     0
+Every edge crossing Pa has length at least a, so integration of the partition inequalities gives
+q MST(ℓ) ≤ e ze ℓe .
+           P
+
+   To separate Equation (3.17), solve the rational linear program
+                
+            max qv − z · ℓ : 0 ≤ ℓ ≤ 1, 0 ≤ v ≤ n, v ≤ ℓ(T ) for all spanning trees T .         (3.18)
+
+All facet coefficients have polynomial encoding length. A minimum spanning tree supplies exact
+separation for the exponentially many tree constraints. The rational polyhedral optimization
+theorem [12, Theorem 6.4.9] therefore computes the exact optimum and a rational optimizer in
+polynomial work. The optimum is nonnegative. If it is zero all inequalities hold; if positive, the
+returned length vector gives a violated valid linear inequality in z.
+    The scalar constraints have immediate rational separators. Exact symmetric elimination either
+certifies a rational symmetric matrix as PSD or produces a rational vector of negative quadratic
+form. Applied to an affine matrix constraint, that vector supplies a rational linear separator of
+polynomial encoding length. This completes the oracle.
+
+Lemma 3.4 (Quantitative feasibility and bounded output denominators). Every continuation step
+can be computed in polynomial binary time. Its returned variables may be taken on a fixed rational
+grid whose encoding length depends only on n + m, not on the denominators of the old capacities ue .
+
+
+
+                                                      19
+Proof. We give deliberately loose uniform bounds. Put P = n + m + 2 ≥ 5 and use the upper-
+triangular entries of the upper-left (n − 1) × (n − 1) block as free coordinates of a centered symmetric
+matrix. If that block is A, its full completion is CAC T , where C = [e1 − en · · · en−1 − en ]. Thus a
+free-coordinate perturbation of Euclidean norm η changes the full matrix in operator norm by at
+most 2P η. Include λ, y, z as ordinary scalar coordinates. Their total number D is at most P 3 .
+    A connected unweighted multigraph has
+
+                            λmin (LH |1⊥ ) ≥ P −3 =: µ,         ∥LH ∥op ≤ 2m.                    (3.19)
+
+For the first bound, for a centered unit vector choose its largest and smallest coordinates and a path
+between them of length at most n − 1. The coordinate range is at least n−1/2 , so Cauchy–Schwarz
+along that path already gives energy at least 1/(n(n − 1)) ≥ P −3 .
+   Consider an auxiliary point, without requiring its partition constraints:
+
+                   Y0 = 2LH ,       λijk,0 = P −8 ,        ye,0 = P −8 ,   ze,0 = κ/2.           (3.20)
+
+There are at most P 3 generators, each of norm at most 6, so their weighted sum has norm at most
+6P −5 < µ/2. Since s ≤ r1/4 ≤ m + 1 < P and ∥be bTe ∥ = 2, the response LMI at this point has
+margin at least 2µ − 12P −7 > µ. The other two LMIs have margins at least µ/2. The λ and lower
+y faces have margin P −8 , the upper y face has margin at least 1/2, and the z lower and upper faces
+have margins at least κ/2 and 1, respectively. Finally
+
+                           κ + ue + t(5ye,0 − 4) − ze,0 ≥ κ/2 − 4t = 3κ/8.
+
+All scalar normal norms and affine matrix Lipschitz constants are at most 20P 3 in these coordinates.
+It follows that the entire ball of radius
+                                            ρ0 = P −20                                         (3.21)
+about this auxiliary point satisfies all non-packing constraints. In particular these estimates are
+uniform even when an active ue is extremely small.
+    By Lemma 3.2, choose a stronger feasible point x∗ , using ze = ae (y) and any representation
+Equation (3.14). Let β = grt. Every nontrivial partition has slack at least β(|P| − 1) ≥ β at x∗
+relative to Equation (3.16). Moreover,
+                                                 1        1
+                                       β≥              ≥     .
+                                             32(m + 1)   32P
+
+At the auxiliary point every such slack is at least −P 2 , because all capacities are nonnegative and
+Q+ ≤ r ≤ m. Mix a fraction θ = P −8 of the auxiliary point into x∗ . Since P ≥ 5, the new partition
+slacks are at least (1 − θ)β − θP 2 ≥ β/2. Convexity gives a ball of radius θρ0 = P −28 satisfying the
+non-packing constraints about the mixture. A partition normal has at most m unit coefficients in
+                                           √
+the z coordinates, so its norm is at most m. Thus the smaller ball of radius
+
+                                               ρ = P −30                                         (3.22)
+
+satisfies every partition constraint as well. Their exponential number does not change this uniform
+estimate.
+    There is also a uniform outer ball. Testing Equation (3.1) against the centered identity gives
+tr Y ≤ 6m. Taking traces in the second LMI of Equation (3.14) gives λijk ≤ 3m. Together with
+                                                                       P
+
+0 ≤ ye ≤ 1 and 0 ≤ ze ≤ κ + 1 ≤ 2, these bounds place all free coordinates in the ball of radius P 3 .
+We may impose the larger radius 2P 3 with slack. This ball also has an exact rational separator: for
+
+                                                      20
+a rational query a with ∥a∥ > R, the inequality a · x ≤ (R2 + ∥a∥2 )/2 contains the radius-R ball
+and strictly excludes a, by Cauchy–Schwarz and the arithmetic–geometric mean inequality. All ball
+constants have logarithmic encoding length in P . The rational central-cut ellipsoid procedure, using
+Lemma 3.3, now finds an exactly feasible point in polynomial work [12, Theorem 3.2.1 and its proof].
+Indeed, use our exact membership test at every oracle query and choose the enclosing-volume cutoff
+below (2ρ/D)D , the volume of a coordinate cube contained in the proved radius-ρ inner ball. The
+small-volume outcome is impossible, so the algorithm must terminate at an exactly accepted rational
+point. This argument uses the displayed positive inradius; it does not assume exact solvability of an
+arbitrary semidefinite feasibility problem.
+    To bound the returned denominators independently of those in u, put L = ⌈log2 P ⌉, η = 2−32L
+and γ = 2−36L , and instead find x such that
+
+                                   x ± ηej ∈ F        (1 ≤ j ≤ D),                             (3.23)
+
+where F is the full step feasible set, including the outer bound. The intersection of these 2D
+translates still contains a ball of radius at least ρ − η ≥ 3ρ/4, and has a separation oracle by
+translating the queries. Use the corresponding volume cutoff with 3ρ/4 in place of ρ. Convexity
+implies that the cross-polytope {x + v : ∥v∥1 ≤ η} lies in F. Round each coordinate of x to the
+fixed dyadic mesh γ. Its total rounding error is at most Dγ/2 ≤ η/(2P ) < η, so the rounded point
+remains feasible. The outer bound gives at most 39L + O(1) bits per coordinate. This argument
+does not round a boundary solution without a margin.
+    Finally s and Q have polynomial encoding length throughout the prescribed schedule. At a
+rational X ⪰ LH , its centered inverse and all old ue are computed exactly with polynomial bit
+operations. Every new Y lies on the fixed grid just described. Forming X + = (1 − t)X + tY increases
+encoding length by only a polynomial additive amount per step. Over the polynomial number of
+steps neither denominators nor oracle work can cascade beyond polynomial size.
+
+Proof of Proposition 3.1. Apply Lemmas 3.2 and 3.4 at every step. The computed capacities satisfy
+Equation (3.16); Equation (3.10) therefore preserves Equation (3.5) with target Q+ . At termination
+s ≥ r1/4 , and every active edge has Re (X) < 1/s ≤ r−1/4 . Dropping the baselines loses less than
+one across any partition, and ue ≤ 1 gives
+
+                     |EG (P)| ≥ Q(|P| − 1) − 1 ≥ (Q − 1)(|P| − 1)     (|P| ≥ 2).
+
+Hence Equation (3.2) supplies ⌊Q−1⌋ disjoint spanning trees. Construct them by the graphic-matroid
+union procedure stated above. By Equation (3.7), their number is r(1 − O(r−1/8 (1 + log r))) − O(1),
+which is at least (1 − Ar−1/16 )r after enlarging A and r0 . All steps have the claimed polynomial bit
+complexity.
+
+
+4    A rank-preserving normalized frame
+The shortcut controls effective resistances. A second vector system encodes the spanning-tree
+packing, so that signing can preserve both properties simultaneously. The normalization uses the
+log-determinant variational method for radial isotropic position [7, Section 2.2]. We prove the
+approximate positive-weight form and its bit bounds directly, so no attainment assumption is needed.
+
+
+
+
+                                                 21
+Lemma 4.1 (A computable normalized frame). Suppose B is the union of q edge-disjoint spanning
+trees, where r/2 ≤ q ≤ r and r exceeds an absolute constant. There are vectors ze ∈ Rn−1 , obtained
+from faithful reduced incidence columns by one common invertible linear map and positive individual
+scalings, such that
+                                 X                         1 + 4/r
+                                     ze zeT = I,  ∥ze ∥2 ≤         .                           (4.1)
+                                 e∈B
+                                                              q
+
+They admit rational approximations to Euclidean error 2−b in time polynomial in n + |B| + r + b.
+An exact specification uses polynomial-bit positive rational edge weights followed by whitening; in
+particular, every subset has exactly its original incidence rank.
+Proof. Delete one row of the incidence matrix and write the resulting columns as ce . Put M =
+|B| = q(n − 1) and consider
+                              X                                                  1X
+                    N (d) =         exp(de )ce cTe ,   f (d) = log det N (d) −         de .       (4.2)
+                              e∈B
+                                                                                 q e∈B
+                                     P          P
+By Cauchy–Binet, det N (d) = T exp( e∈T de ), where T ranges over the spanning trees of B:
+reduced incidence determinants of trees have absolute value one, and other maximal minors vanish.
+Keeping the q specified disjoint trees and applying the arithmetic–geometric mean inequality gives
+                                                            !
+                                             1X
+                           det N (d) ≥ q exp       de ,             f (d) ≥ log q.
+                                             q e∈B
+
+Also f (0) ≤ (n − 1) log(2M ), so the initial gap above the infimum is bounded by n log(2M ).
+Differentiation gives
+                                                                     1
+                                  ∂e f (d) = exp(de )cTe N (d)−1 ce − .                         (4.3)
+                                                                     q
+The Hessian is the covariance matrix of the tree indicator under the probability distribution
+                       P
+proportional to exp( e∈T de ). Hence it is PSD with operator norm at most M , since these
+indicators have squared √ norm n − 1 ≤ M . Each leverage score in Equation (4.3) lies in [0, 1];
+consequently ∥∇f ∥ ≤ M .
+    Start at d = 0. At each step compute a rational gradient estimate v with ∥v − ∇f (d)∥ ≤ 1/(10r2 ).
+If ∥v∥ ≤ 2/r2 , stop; otherwise update d ← d − v/(2(M + 1)). The norm comparison can be made
+by squaring rational quantities. The Hessian bound yields
+                                                                                    1
+                 f (d − αv) ≤ f (d) − α∇f (d) · v + 12 M α2 ∥v∥2 ,         α=             .
+                                                                                 2(M + 1)
+
+At a nonstopping step the gradient error is at most ∥v∥/20. Thus the decrease is at least α∥v∥2 /2 ≥
+2α/r4 . The gap bound permits at most O((M + 1)r4 n log(2M )) such steps. At termination
+
+                                                ∥∇f (d)∥ ≤ 3/r2 .                                 (4.4)
+
+   Here is an explicit precision justification for this descent. Its iteration bound is prescribed in
+advance, and each coordinate changes by at most two in one step. Thus |de | ≤ B0 for a known
+polynomial B0 in n + M + r. On that entire box,
+
+                                       e−B0 N (0) ⪯ N (d) ⪯ eB0 N (0).
+
+The matrix N (0) is positive definite, has norm at most 2M , and has positive integral determinant. Its
+smallest eigenvalue is therefore at least (2M )−(n−2) . The upper norm and inverse-norm bounds for
+
+                                                       22
+N (d) have polynomial logarithms. Computing exponentials to polynomially many bits, forming ratio-
+nal approximations to N (d), and solving rational linear systems therefore evaluates Equation (4.3) to
+the requested error in polynomial bit work. For example, the identity N   e −1 −N −1 = Ne −1 (N − Ne )N −1
+controls the inverse error once ∥N  e − N ∥ ≤ λmin (N )/2. Gradient estimates may be rounded on one
+fixed dyadic grid 2 −b 0 sufficiently fine for the stated error. Starting at zero, every iterate then lies
+on the grid [2(M + 1)2b0 ]−1 ZM . The prescribed iteration and magnitude bounds therefore keep
+every de a polynomial-bit rational.
+    At the terminal d, choose positive rational weights ae satisfying |ae / exp(de ) − 1| ≤ 1/(100r2 )
+and put Na = e ae ce cTe . Compute its rational diagonal elimination Na = LDa LT with positive
+                P
+                          −1/2                         √
+diagonal Da , set F = Da L−1 , and define ze = ae F ce . Then F Na F T = I. The relative matrix
+bounds on Na and Equation (4.4) imply
+
+                                   1 + 1/(100r2 )           1   3             1   4   1 + 4/r
+                                                                     
+                       ∥ze ∥2 ≤                               + 2         ≤     + 2 ≤         .
+                                   1 − 1/(100r2 )           q r               q r        q
+
+Their outer products sum exactly to I. All ae are strictly positive and F is invertible, proving rank
+preservation.
+    For the promised approximations, perform exact rational diagonal elimination on the positive
+definite Na and then approximate the positive square roots of its pivots. Every pivot and inverse
+pivot has polynomial logarithmic bounds, either by the preceding spectral bounds or by determinant
+bounds for rational principal submatrices. Triangular solves and scalar square roots therefore
+approximate F and all ze to 2−b with polynomially many guard bits and polynomial work. These
+approximations refer to the single exact frame just defined; rounding does not redefine its subset
+ranks.
+
+
+5    Exact rational padding and certified signing
+The deterministic signing theorem proved in Appendix A has an exact input promise. For explicit
+rational columns v1 , . . . , vM ∈ (Q + iQ)d satisfying i vi vi∗ = I, it returns signs σi ∈ {−1, 1} with
+                                                       P
+
+
+                                                         √
+                                    σi vi vi∗
+                              X
+                                                     ≤ 40 ∆,              ∆ = max ∥vi ∥2 ,          (5.1)
+                                                                                  i
+                               i                op
+
+in time polynomial in the full binary input length. This is Theorem A.1, a quantitative form of the
+method of Ezeunala and Jiang [9]. Real rational columns are a special case. We first establish an
+elementary exact factorization, then prove the transfer required here, including identity completion
+and a rational success certificate.
+
+Lemma 5.1 (Rational positive semidefinite decomposition). Every rational Hermitian positive
+semidefinite matrix A can be written exactly as
+                                                M
+                                                      vj vj∗ ,
+                                                X
+                                        A=                            vj ∈ Q(i)n ,
+                                                j=1
+
+in polynomial bit time, with M and the total encoding length of the columns polynomial in the
+encoding length of A. If A is real, the columns may be taken real. For A = 0, the sum may be empty.
+
+Proof. If a positive semidefinite matrix has all diagonal entries zero, it is zero, since its two-by-two
+principal minors give |aij |2 ≤ aii ajj . Otherwise permute a positive diagonal entry into the first
+
+                                                                 23
+position and write
+                                      !             !        !∗                       !
+                              d b∗            1           1         0     0
+                       A=                 =d                      +              .
+                              b C            b/d         b/d        0 C − bb∗ /d
+
+Here d is positive rational and the Schur complement is positive semidefinite: evaluate the quadratic
+form of A at (−b∗ x/d, x). Repetition gives a rational pivoted LDL∗ factorization, or equivalently
+A = j dj uj u∗j with positive rational dj and rational complex uj .
+     P
+
+    All elimination entries have polynomial encoding length. To see this directly, clear the input
+denominators by one positive integer q. The resulting Gaussian-integer matrix has polynomial-bit
+entries, and every minor has polynomial bit length by the determinant expansion. At any pivot
+order, the pivots and elimination coefficients are ratios of these minors, with an additional factor q
+for the pivots. There are at most n pivots, so rational elimination takes polynomial bit time.
+    For a pivot d = a/b > 0 with positive integers a, b, expand ab = k ck 4k , where ck ∈ {0, 1, 2, 3}.
+                                                                      P
+
+Then                                                      !2
+                                              X        2k
+                                          d=      ck         .
+                                               k
+                                                        b
+
+Replace duu∗ by ck copies of the outer product of (2k /b)u for each k. The number of copies and
+their bit lengths are polynomial in those of a, b, u. This proves every assertion, including the real
+case.
+
+Lemma 5.2 (Checked signing of the stacked frame). Let X and the union B of q trees be as in
+Proposition 3.1, retaining r/2 ≤ q ≤ r trees, and let ze be the frame of Lemma 4.1. Put
+
+                                   we = (X −1/2 be , ze )          (e ∈ B).                       (5.2)
+
+For an absolute constant Cs , a deterministic polynomial-time procedure finds A ⊆ B satisfying
+
+                                                 1X
+                                                                       ≤ Cs r−1/8 .
+                                X
+                                      we weT −         we weT                                     (5.3)
+                                e∈A
+                                                 2 e∈B
+                                                                  op
+
+An exact polynomial-time rational PSD test certifies the output.
+
+Proof. The first block of Equation (5.2) is expressed in orthonormal coordinates on 1⊥ ; its particular
+orthogonal basis is irrelevant. Since LB ⪯ LH ⪯ X, its outer-product sum is at most I, while the
+second block sums to I. Block Cauchy–Schwarz therefore gives
+                                             X
+                                                   we weT ⪯ 2I.                                   (5.4)
+                                             e∈B
+
+Individual squared norms are at most r−1/4 + (1 + 4/r)/q ≤ 5r−1/4 for the chosen cutoff.
+    Write n = |V (H)|, m = |E(H)|, and P = n + m + 2, as in Lemma 3.4. The centered positive
+definite X has polynomial-bit rational entries, with smallest eigenvalue at least P −3 and norm at
+most 6m. As in the proof of Lemma 4.1, elimination, square-root approximation, and solves compute
+a whitening of this block to any requested polynomial number of bits. More explicitly, in the rational
+coordinates used above write X = CAX C T and be = Cce . Then cTe A−1         T −1 b , so whitening
+                                                                     X cf = be X     f
+AX gives the same Gram matrix as the displayed block and differs from it only by an orthogonal
+map. The smallest eigenvalue of AX is at least P −3 /n, because the centered projection of (v, 0) has
+squared norm at least ∥v∥2 /n. Thus this computation has the same polynomial precision bounds.
+
+                                                        24
+Combining it with Lemma 4.1, compute rational columns ae approximating we /2 to Euclidean error
+at most 1/(1000|B|r). Because Equation (5.4) implies ∥we /2∥ ≤ 1, the outer-product identity
+
+                                 aaT − vv T = (a − v)aT + v(a − v)T
+
+shows that
+                     X                                   1                          X       3
+                          ∥ae aTe − we weT /4∥op ≤           ,        Σ :=          ae aTe ⪯ I.   (5.5)
+                    e∈B
+                                                        100r                    e∈B
+                                                                                            4
+
+The same estimate controls every signed sum, without knowing the signs. Also ∥ae ∥2 ≤ 3r−1/4 .
+    Apply Lemma 5.1 to the rational PSD residual I −Σ, obtaining polynomially many polynomial-bit
+real rational columns v1 , . . . , vJ with
+                                    J
+                                    X
+                           VVT =          vj vjT = I − Σ,            V = [v1 · · · vJ ].          (5.6)
+                                    j=1
+
+In particular ∥V ∥op ≤ 1 and each ∥vj ∥ ≤ 1. Extend the data columns by zeros in J additional
+coordinates. Set N = 2r. For each j, add N 2 columns
+                                          1
+                                 pj,k =     (vj , τj,k fj ),       1 ≤ k ≤ N 2,                   (5.7)
+                                          N
+where fj is the jth extra coordinate vector and exactly half the τj,k equal 1, half −1. The parity
+requirement holds because N is even. Their unsigned sum is
+                                                                            !
+                                      X                      I −Σ 0
+                                            pj,k pTj,k =                        .
+                                                               0  IJ
+                                      j,k
+
+Together with the extended data this is exactly the identity. Every padding squared norm is at
+most 2/N 2 , so the maximum squared norm ∆ of the entire rational system satisfies ∆ ≤ 3r−1/4 .
+The number |B| + JN 2 of explicit columns and their binary lengths are polynomial, since r ≤ m.
+    Apply Equation (5.1). Write S for the augmented signed matrix, and distinguish the output
+signs σj,k from the fixed construction signs τj,k . Its lower principal block is
+                                                                                        !
+                                               −2                          −2
+                                                    X                           X
+                             D0 = diag N                σ1,k , . . . , N            σJ,k .
+                                                    k                           k
+
+The padding contribution to its upper principal block is exactly
+
+                                                    V D0 V T .                                    (5.8)
+
+If ∥S∥ ≤ T , then ∥D0 ∥ ≤ T and ∥V D0 V T ∥ ≤ T . Subtracting the latter from the full upper block
+gives
+                                              X
+                                                    σe ae aTe ≤ 2T.                               (5.9)
+                                              e∈B
+
+No assertion about the signed off-diagonal block is needed. √           √
+   For a fully rational certificate, choose a dyadic d0 with ∆ ≤ d0 ≤ 2 ∆ by squared comparisons
+and set T = 215 d0 . Check T I −S ⪰ 0 and T I +S ⪰ 0 exactly by rational elimination. Since 40 < 215 ,
+the signing theorem
+             √        guarantees that both tests pass. The certified output satisfies Equation (5.9)
+and T ≤ 2 16   ∆.
+
+                                                        25
+   Return the positive data signs A = {e : σe = 1}. By Equations (5.5) and (5.9), its centered half
+sum has norm at most
+                            1 X                       2
+                                  σe we weT ≤ 4T +       ≤ 220 r−1/8 .
+                            2 e                     100r
+Thus one may take Cs = 220 . The rational PSD tests have polynomial cost and certify all the
+required matrix estimates simultaneously. The signing algorithm and all numerical routines above
+have prescribed polynomial precision and iteration bounds. This proves deterministic polynomial
+bit complexity.
+
+
+6    Packing-preserving sparsification and the final tree
+Lemma 6.1 (One sparsification step). For all sufficiently large integers r, from an explicit graph
+H containing r disjoint spanning trees one can construct a subgraph H ′ = (V (H), A) and an integer
+r′ such that
+
+                   r/4 ≤ r′ ≤ r/2,        H ′ contains r′ disjoint spanning trees,                   (6.1)
+                   |δH ′ (S)| ≤ ar |δH (S)|   for every cut,            ar = 12 + 3Cs r−1/8 ,        (6.2)
+                    ar
+                          ≤ 1 + C1 r−1/16                                                            (6.3)
+                   r′ /r
+for an absolute C1 . The construction is deterministic and takes polynomial bit time, with the
+certificate in Lemma 5.2.
+Proof. Use Proposition 3.1 and discard excess trees to obtain a union B of q trees with (1 −
+Ar−1/16 )r ≤ q ≤ r. Increase the cutoff so q ≥ r/2, and apply Lemmas 4.1 and 5.2. Put ϵr = Cs r−1/8 .
+The two principal blocks of Equation (5.3) give
+                                                                      X
+                    LA ⪯ 12 LB + ϵr X ⪯ 21 LH + ϵr X,                       ze zeT ⪰ ( 12 − ϵr )I.   (6.4)
+                                                                      e∈A
+
+A centered cut indicator x has xxT ∈ N . By Equation (3.1), xT Xx ≤ 3xT LH x; evaluating the first
+inequality on x proves Equation (6.2).
+    For packing, fix a partition into d parts. Let W be the span of all ze with endpoints in a common
+part, and let Π be the orthogonal projection onto W ⊥ . Rank preservation from Lemma 4.1 gives
+dim W ≤ P ∈P (|P | − 1) = n − d, hence rank Π ≥ d − 1. Taking the trace after projection in the
+          P
+
+second inequality of Equation (6.4), and then using Equation (4.1), gives
+                                                X                                  1 + 4/r
+                       ( 12 − ϵr )(d − 1) ≤              ∥Πze ∥2 ≤ |EA (P)|                .
+                                              e∈EA (P)
+                                                                                      q
+
+The integer packing criterion thus supplies at least
+                                                   q(1/2 − ϵr )
+                                                                 
+                                                                                                     (6.5)
+                                                     1 + 4/r
+spanning trees in H ′ . Compute its maximum packing number, capped at ⌊r/2⌋, by binary search
+with the constructive graphic-matroid union algorithm, and denote the result by r′ . The lower bound
+in Equation (6.5) is already at most ⌊r/2⌋, so capping does not reduce that guarantee. Consequently
+                                          r′  1
+                                             ≥ (1 − C2 r−1/16 )
+                                          r   2
+
+                                                       26
+for an absolute C2 , absorbing the floor loss 1/r, the extraction loss, and ϵr . Taking a sufficiently
+large absolute cutoff gives Equation (6.1). Dividing ar = 12 (1 + 6ϵr ) by this lower bound and
+enlarging the absolute constant proves Equation (6.3).
+
+Proof of Theorem 1.1 for explicit graphs. First suppose n ≥ 2. Put rinit = max{1, ⌊k/2⌋}. For a
+partition into d ≥ 2 parts, summing the k-edge-connectivity bounds on its parts gives |EG (P)| ≥ kd/2.
+Thus Equation (3.2) supplies ⌊k/2⌋ trees, and connectedness supplies one when k = 1. Construct
+this initial packing. Notice that rinit ≥ k/3.
+    Starting with H0 = G and r0 = rinit , apply Lemma 6.1 whenever the current parameter is at least
+the fixed absolute cutoff R0 . Write Hi , ri for the resulting sequence. At termination 1 ≤ rJ < R0 ,
+and every Hi remains connected. Return any spanning tree of HJ .
+    The ratio estimate gives, for every cut,
+                                                      Y
+                             |δHJ (S)| ≤ |δG (S)|           ari
+                                                      i<J
+                                                       rJ    Y              −1/16
+                                         ≤ |δG (S)|               (1 + C1 ri          ).
+                                                      rinit i<J
+
+Since ri+1 ≤ ri /2, reading the parameters backwards bounds
+                                   X −1/16             −1/16 X −j/16
+                                         ri     ≤ R0                    2   .
+                                   i<J                            j≥0
+
+Thus the product is bounded by one absolute constant, independently of the initial packing number.
+With rJ < R0 and rinit ≥ k/3, the displayed estimate implies Equation (1.1) for a universal C. The
+same calculation covers J = 0, with empty product one: in that case rinit < R0 and any spanning
+tree suffices.
+    There are at most Jmax = 1 + ⌈log2 (m + 1)⌉ iterations. Every iteration consists of deterministic
+polynomial-time routines, including the rational signing algorithm of Theorem A.1. The arithmetic
+and precision bounds proved above ensure that all intermediate encodings and the total work remain
+polynomial in the explicit input length. When n = 1, return the empty tree before any packing or
+matrix call.
+
+Binary multiplicities. It remains to reduce a succinct multigraph to an explicit one without
+work polynomial in the numerical value of k. For n ≥ 2, let cuv be the binary multiplicity of the
+unordered pair uv and set
+                                                                        $         %
+                                                                   2n2 c′uv
+                              c′uv = min{cuv , k},           auv =          .                     (6.6)
+                                                                     k
+
+Every nontrivial cut still has c′ -capacity at least k: either one crossing pair already contributes k,
+or no crossing multiplicity was changed. Rounding loses less than one per crossing pair, of which
+there are at most n2 /4. Consequently the explicit graph G    e with multiplicities auv satisfies
+
+                                                                                2n2
+                       |δGe(S)| ≥ 2n2 − n2 /4 ≥ n2 ,              |δGe(S)| ≤        |δG (S)|.     (6.7)
+                                                                                 k
+
+Each auv ≤ 2n2 and there are fewer than n2 /2 pairs, so |E(G)|
+                                                            e < n4 . Apply the explicit algorithm
+                         2                        2
+with connectivity bound n . Its output tree is C/n -thin in G,
+                                                            e and hence 2C/k-thin in the original
+graph by Equation (6.7). Although temporary scaling can make auv > cuv , a tree uses at most one
+
+                                                      27
+edge of any parallel pair. Every selected pair has cuv > 0, so its tree edge maps to a genuine original
+edge. All arithmetic in Equation (6.6) is polynomial in log k, the multiplicity encoding lengths, and
+n; the main routine uses the new parameter n2 . Enlarging the universal constant by two completes
+Theorem 1.1 in the binary model.
+
+
+7    Simultaneous cost-and-cut rounding
+The all-cut theorem also permits control of one nonnegative cost functional. The reduction combines
+the truncation and rounding in (6.6) with repeated deletion and selection of the least-cost tree, as
+in Oveis Gharan and Saberi [21, full preprint, Proposition 5.1]. The rational compression below
+keeps the auxiliary graph polynomial in the input bit length.
+Corollary 7.1 (Thin and cheap rounding of fractional cuts). Fix once and for all an integer
+B ≥ max{1, C}, where C is the constant in Theorem 1.1. Let G = (V, E) be a finite undirected
+graph on n ≥ 2 vertices, given by an explicit list of edge records; in this corollary, loops and parallel
+records are allowed. Given nonnegative rational numbers xe , ce in binary, suppose that
+                                                   X
+                              x(δG (S)) :=                xe ≥ 1          (∅ ̸= S ⊊ V ).
+                                               e∈δG (S)
+
+There is a deterministic algorithm, polynomial in the total binary input length, that returns a
+spanning tree T ⊆ {e ∈ E : xe > 0} satisfying simultaneously
+
+                          |δT (S)| ≤ 24B x(δG (S))                                    (∅ ̸= S ⊊ V ),         (7.1)
+                              X                X
+                   c(T ) :=         ce ≤ 24B         ce xe .                                                 (7.2)
+                              e∈T              e∈E
+
+The cut inequalities are a promise on the input; no metric assumption on the costs is required.
+Proof. Discard loops, which affect no cut and can only reduce the nonnegative cost sum. For each
+                                                                         P
+unordered nonloop pair p, let Ep be its set of edge records and put Xp = e∈Ep xe . Discard pairs
+with Xp = 0; otherwise choose an original edge ep with xep > 0 of minimum cost among such edges,
+and put dp = cep . This preserves every cut mass and gives
+                                               X                X
+                                                   dp Xp ≤            ce xe .
+                                               p                e∈E
+
+Set K = n2 , yp = min{Xp , 1}, and ap = ⌊2Kyp ⌋. Form an explicit loopless multigraph A with ap
+labelled copies of pair p, each of cost dp . Every cut has y-mass at least one: if a crossing coordinate
+was truncated, that coordinate alone contributes one, and otherwise the cut mass is unchanged. A
+cut crosses at most n2 /4 unordered pairs, so rounding down loses at most n2 /4 from its scaled mass.
+Hence
+
+                    |δA (S)| ≥ 2K − n2 /4 ≥ K,                                                               (7.3)
+                                                                        X                    X
+                    |δA (S)| ≤ 2K x(δG (S)),               c(A) :=              ap dp ≤ 2K         ce xe .   (7.4)
+                                                                         p                   e∈E
+
+Each ap ≤ 2n2 , and fewer than n2 /2 pairs occur, so |E(A)| < n4 . In particular, A is connected.
+    If K < 12B, select any spanning tree of A. Its load on each cut is at most that of A, and its
+cost is at most c(A) by nonnegativity. Equation (7.4) and 2K < 24B therefore give both asserted
+bounds, including when the cost sum is zero.
+
+                                                           28
+   Suppose now that K ≥ 12B, and set k = ⌊K/2⌋ and m = ⌊K/(6B)⌋. Starting with R0 = A,
+apply Theorem 1.1 with connectivity parameter k to Ri , obtain a tree Ti , and delete its labelled
+edges to form Ri+1 , for 0 ≤ i < m. To verify that every call is legal, inductively we have, for all
+cuts and 0 ≤ i ≤ m,
+                            |δRi (S)| ≥ (1 − 3Bi/K)|δA (S)| ≥ 12 |δA (S)|.                     (7.5)
+Indeed, the second inequality follows from m ≤ K/(6B). Together with (7.3), it makes Ri k-edge-
+connected before its call. Since k ≥ K/3, the returned tree obeys
+
+                                               C             3B
+                                 |δTi (S)| ≤     |δRi (S)| ≤    |δA (S)|,
+                                               k             K
+which proves the next instance of (7.5). Equation (7.4) then makes every Ti at most 6B-thin relative
+to x. The trees are edge-disjoint in A, and m ≥ K/(12B) because K/(6B) ≥ 2. Nonnegative costs
+therefore give
+                                               c(A)         X
+                                 min c(Ti ) ≤       ≤ 24B       ce xe .
+                                0≤i<m           m           e∈E
+
+Select a least-cost Ti .
+     In either case, a selected tree uses at most one copy of any parallel pair. Replace that copy by
+ep . The resulting original edges still form a spanning tree, have the same cut loads and cost, and all
+have positive xe . Different extracted trees may lift to the same original edge, which is harmless
+because only one tree is output.
+     All pair sums, truncations, floors, and cost comparisons use exact rational or integer arithmetic
+of polynomial bit length; no common denominator is expanded into edge copies. The positive
+support is connected by the cut promise, so it contains at least n − 1 distinct nonloop pairs. Thus
+even if n is encoded in binary, it is bounded by the length of the explicit input. There are O(n2 )
+calls on graphs with fewer than n4 explicit edges and an O(log n)-bit parameter k. Deleting labelled
+copies, summing and comparing tree costs, and lifting the selected tree are polynomial-bit operations.
+Very small positive coordinates may round to zero, but (7.3) preserves connectivity. No division by
+P
+   e ce xe occurs; if this sum is zero, c(A) = 0 and the output cost is zero. This proves the stated bit
+bound and covers zero values.
+
+The historical thin-and-cheap formulation. The author full manuscript of Asadpour, Goe-
+mans, Mądry, Oveis Gharan, and Saberi defines an (α, s)-thin tree for a point z in a spanning-tree
+polytope by the all-cut bound |δT (S)| ≤ αz(δ(S)) and the cost bound c(T ) ≤ sc(z), with α ≥ 1. Its
+Conjecture 6.1 asks for absolute constants and a polynomial-time construction for every feasible
+Held–Karp solution [4, author full manuscript, Definition 4.1 and Conjecture 6.1].
+   For rational data on n ≥ 2 vertices in that paper’s directed-metric setting, let h be a feasible
+Held–Karp vector and use its normalized symmetrization
+                                                 n−1
+                                      z{u,v} =       (huv + hvu )
+                                                  n
+from equation (3.5) of the full manuscript. The feasibility calculation in the proof of its Lemma 3.1
+puts z in the corresponding spanning-tree polytope [4, author full manuscript, equation (3.5) and
+proof of Lemma 3.1]. In particular, flow balance and the cut constraint give
+
+                                        2(n − 1)              2(n − 1)
+                            z(δ(S)) =            h(δ + (S)) ≥          ≥ 1.
+                                           n                     n
+
+
+                                                    29
+For each support pair p = {u, v}, set dp = min{cuv , cvu }, the cost of the cheaper of both orientations.
+Its induced fractional cost satisfies
+                                          X          n−1X
+                                   c(z) =   dp zp ≤             ca ha .
+                                          p            n      a
+
+Apply Corollary 7.1 with x = z and costs dp . With the same cost function on the tree and the
+fractional point, the corollary gives c(T ) ≤ 24Bc(z) and the required all-cut bound. It therefore
+supplies the two (24B, 24B) inequalities on the undirected support, with deterministic polynomial-bit
+construction for rationally encoded data. The cheaper orientation of a selected pair need not have
+positive h-value; the support requirement is zp > 0. More generally, every rational point in a
+spanning-tree polytope satisfies the cut promise, since each constituent spanning tree meets every
+nontrivial cut. The bit guarantee here is not a claim for arbitrary real-oracle inputs.
+    The earlier SODA version instead fixes an optimum Held–Karp solution and defines its cost
+bound as c(T ) ≤ s OP THK in Definition 5.1; its Theorem 6.1 is the tour-augmentation theorem, not
+the full-manuscript conjecture [3, Definition 5.1 and Theorem 6.1]. Constant-factor approximation
+for ATSP was already established independently by Svensson, Tarnawski, and Végh and improved
+by Traub and Vygen [23, 25]. The consequence proved here concerns the underlying simultaneous
+rounding formulation; no new approximation-order claim is made.
+
+
+A     A finite-bit signing interface
+We record a conservative quantitative form of the rank-one signing method of Ezeunala and Jiang [9].
+The constants below suffice for the exact padding argument. We include their accounting and the
+finite-precision implementation to make the input interface explicit.
+Theorem A.1 (Rational rank-one signing). Given rational Hermitian matrices H1 , . . . , HN of rank
+at most one, a deterministic algorithm returns signs σi ∈ {−1, 1} such that
+                                                                  1/2
+                                      X                 X
+                                           σi Hi ≤ 40       Hi2         .
+                                       i                i
+
+Its running time is polynomial in the total binary encoding length. Consequently, for rational columns
+               ∗
+                                                                        p
+vi with i vi vi = I, the same algorithm gives discrepancy at most 40 maxi ∥vi ∥2 .
+        P
+
+   The last assertion follows from (vi vi∗ )2 = ∥vi ∥2 vi vi∗ and positivity. Forming the outer products
+has polynomial bit cost. We prove the matrix assertion next.
+
+A.1    The potential and its quantitative estimates
+In dimension zero, any signs suffice. Otherwise discard zero matrices; if none remain, any signs
+again suffice. A nonzero rank-one Hermitian matrix has one nonzero eigenvalue, equal to its trace.
+With D = i | Tr Hi |, put
+            P
+
+
+                            Ai = D−1 sign(Tr Hi )Hi ,
+                                                                        X
+                                                                ν0 =            A2i .
+                                                                            i
+                                                            P
+These are rational positive semidefinite matrices and i Tr Ai = 1. Matrix Cauchy–Schwarz gives
+1/(N d2 ) ≤ ν0 ≤ 1, where d is the matrix order. Rational positive-semidefiniteness tests and bisection
+compute rational parameters
+                                                                 √             √
+                                                                   ν             ν
+                  ν0 ≤ ν ≤ min{1, 1.001ν0 },      ε = ν/d,            ≤λ≤           .
+                                                                200N          100N
+
+                                                   30
+Set c = 384, K = 100, and σ = λ2 /ν. Thus ε ≥ 1/(N d3 ) and 1/(40000N 2 ) ≤ σ ≤ 1/(10000N 2 ).
+   For x ∈ [−1, 1]N , let
+                            X                                                    X
+                   S(x) =        x i Ai ,   ψi = (1 − x2i )1/3 ,    ηx (Z) = c       ψi Ai ZAi .
+                             i                                                   i
+Define R(x) as the minimum of t + ε Tr(X + Y ) over X, Y ≻ 0 subject to
+                     X −1 + S(x) + ηx (Y ) ⪯ tI,               Y −1 − S(x) + ηx (X) ⪯ tI,              (A.1)
+                            P
+and put Ψ(x) = R(x) + λ i ψi .
+   The variational argument of Ezeunala and Jiang [9, Section 4.1] uses only c > 0 and gives
+                                        q                         √             √
+            ∥S(x)∥ ≤ R(x) ≤ ∥S(x)∥ + 2 (c + 2)ν,        Ψ(0) ≤ (2 386 + 0.01) ν.            (A.2)
+For clarity, its quantitative ingredients are as follows. The minimizer is unique; with its positive
+definite dual multipliers P, Q it satisfies
+                     (2K)−1 I ⪯ X, Y ⪯ (K/ε)I,                P, Q ⪯ I,   Tr(P + Q) = 1,
+                                                     2
+                          P = Xηx (Q)X + εX ,                  Q = Y ηx (P )Y + εY 2 ,                 (A.3)
+and both inequalities in (A.1) are tight. Indeed, the scalar choice X = Y = aI proves the upper
+bound in (A.2); its value is below 42 < K. On the sublevel set of objective at most K, the
+constraints bound the inverse matrices and the trace penalty bounds X, Y . Compactness gives
+attainment. Stationarity gives (A.3); positive dual multipliers imply tightness. Strict convexity of
+Tr(P X −1 ) + Tr(QY −1 ) gives uniqueness.
+    On pairs of Hermitian matrices define
+                       L(U, V ) = (X −1 U X −1 − ηx (V ), Y −1 V Y −1 − ηx (U )).
+The positive-map argument of [9, Claim 4.1] yields the following bound, with the Frobenius norm
+specified explicitly:
+                             ∥L−1 ∥ ≤ ε−1 ,     L(P, Q) = ε(I, I).                         (A.4)
+All operator norms on spaces of matrix pairs here are induced by the Frobenius norm. To verify the
+norm bound, write L = C(I − T ), where
+            C(U, V ) = (X −1 U X −1 , Y −1 V Y −1 ),           T (U, V ) = (Xηx (V )X, Y ηx (U )Y ).
+Both T and C −1 preserve positive semidefinite matrix pairs. The dual identities give
+                                       T (P, Q) = (P, Q) − ε(X 2 , Y 2 ).
+Since all four matrices are positive definite, there is a δ > 0 such that the right side is at most
+(1 − δ)(P, Q) in componentwise Loewner order. Thus T is a strict contraction in the norm
+                      ∥(U, V )∥P,Q = inf{s ≥ 0 : −s(P, Q) ⪯ (U, V ) ⪯ s(P, Q)}.
+The convergent series L−1 = j≥0 T j C −1 is positive. Its value on (I, I) is (P, Q)/ε ⪯ (I, I)/ε.
+                                  P
+
+Consequently its induced norm for ∥(U, V )∥max = max{∥U ∥op , ∥V ∥op } is at most ε−1 . Finally, L
+and its inverse are self-adjoint for the Frobenius pairing. The Frobenius operator norm of L−1
+therefore equals its spectral radius, which is bounded by every induced norm. This proves (A.4).
+   The Hessian H of the Lagrangian in (X, Y ) satisfies
+                                   2ε2
+                                       I ⪯ H,    ∥H∥ ≤ 16K 3 .                              (A.5)
+                                    K
+The lower bound follows by substituting P ⪰ εX 2 in 2 Tr(P X −1 U X −1 U X −1 ) and using X −1 ⪰
+(ε/K)I; the other block is identical. The upper bound uses three inverse factors of norm at most
+2K in each of the two terms of a Hessian block.
+
+                                                         31
+A.2     A quantified direction of decrease
+A coordinate is active when |xi | < 1; let n be their number. In the following differential calculations,
+vectors and derivatives are restricted to these coordinates, with the other coordinates fixed on the
+current open face. Write Ai = ui u∗i in this analysis and set
+                          ai = u∗i Xui ,    bi = u∗i Y ui ,        pi = u∗i P ui ,      qi = u∗i Qui .
+The factors ui need not be rational: the algorithm below uses only the rational matrices Ai . If
+cψi bi ≥ 1 − xi , moving xi to 1 preserves feasibility in (A.1) with the same (t, X, Y ) and decreases Ψ
+by at least λψi . The symmetric condition cψi ai ≥ 1 + xi permits the move to −1. We may therefore
+assume
+                          cψi ai < 1 + xi ,    cψi bi < 1 − xi for all active i.                   (A.6)
+    Put αi = 1 + cψi′ bi , βi = 1 − cψi′ ai , and
+   Ti2 = αi βi /ψi ,   ℓi = αi /Ti ,   mi = βi /Ti ,           a
+                                                               ei = ℓi ai ,       bei = mi bi ,   zi = ℓi pi ,     wi = mi qi .
+For ki = −ψi′′ , elementary substitution in (A.6) gives
+               ki    1       ki   1              3         |ψi′ |
+                    ≥ ,        2 ≥ ,       Ti−2 ≤ ,               ≤ 1,          a  bi ≤ c−2 ,
+                                                                                e ie              a2i , eb2i ≤ 3c−2 .
+                                                                                                  e                         (A.7)
+              αi βi  3       Ti   3              2         ψi ki
+Here is a direct check. By symmetry take xi ≥ 0 and put r = 1 − x2i . Then 2/3 ≤ αi βi ≤ 2/r and
+ki = (2/3)r−5/3 (1+x2i /3). Also a      bi = ψi ai bi ≤ r2/3 /c2 . For u = cψi ai /(1+xi ) and v = cψi bi /(1−xi )
+                                     e ie
+in (0, 1),
+                                    1 + xi − 2xi v/3                            1 − xi + 2xi u/3
+                  c2 a
+                     e2i = r 2/3 u2                    ,      c2eb2i = r2/3 v 2                  .
+                                    1 − xi + 2xi u/3                            1 + xi − 2xi v/3
+Maximizing the first in u and minimizing v, and maximizing the second in u, v, bounds them by 3
+and 1. For negative xi the roles interchange. These formulas also prove the remaining assertions of
+(A.7).
+    We quantify the covariance construction in [9, Lemma 4.5]. Define the real symmetric, entrywise
+nonnegative positive semidefinite matrices
+                              Aij = cℓi ℓj |u∗i Xuj |2 ,           Bij = cmi mj |u∗i Y uj |2 ,
+
+and DF = diag(a                  bi wi ). The dual identities give Aw ≤ z and Bz ≤ w coordinatewise.
+              ei zi ), DG = diag(e
+Moreover,
+                          1/2    −1/2                    1/2    −1/2
+                        ∥DG ADF ∥2F ≤ n/c,            ∥DF BDG ∥2F ≤ n/c.
+For example, A2ij ≤ ca                bi ≤ c−2 bound the first sum by c−1
+                                                                                                  P
+                     ei a
+                        ej Aij and a
+                                   e ie                                 j (Aw)j /zj .
+              1/2      1/2
+    Restrict DF F and DG G to right singular directions with singular value at most 1/2 for these
+two maps. Each restriction has codimension at most 4n/c. Impose also (I −A)F +(I −B)G = 0. The
+resulting subspace G ⊆ R2n has dimension at least n − 8n/c. The covariance theorem of Bansal and
+Garg [6, Theorem 6], in the form stated by Bansal [5, Theorem 2.5] and recalled in [9, Lemma 2.1],
+supplies a positive semidefinite Γ with
+               range Γ ⊆ G,       Γ ⪯ 4 diag Γ,      Γjj ≤ 1,            Tr Γ ≥ (1/2 − 8/c)n = 23n/48.
+Take a centered finitely supported (F, G) with covariance Γ and set H = F − BG = AF − G,
+hi = Hi /Ti , and ωi = EHi2 . The two singular-value restrictions give
+                                                                X
+                                  ∥F ∥2DF + ∥G∥2DG ≤ 4                  (a        bi wi )Hi2 .
+                                                                         e i zi + e
+                                                                    i
+
+
+                                                              32
+                                                  P                                     P
+The response matrices are Ẋ = X(                     i ℓi Fi Ai )X and Ẏ         = Y(     i mi Gi Ai )Y . The diagonal of their
+inversion-energy quadratic form
+
+                            Eh = Tr(P X −1 ẊX −1 ẊX −1 ) + Tr(QY −1 Ẏ Y −1 Ẏ Y −1 )
+
+is (DF , DG ). Hence                                             X
+                                              EEh ≤ 16               (a
+                                                                      ei zi + e
+                                                                              bi wi )ωi .                                  (A.8)
+                                                                 i
+
+   We expand the first and second variation calculation of [9, Lemma 4.3 and its proof] to obtain
+                                                                                      cX
+                  ∂i R = Ti (zi − wi ),                 hT ∇2 Rh ≤ 3Eh −                  ki h2i (bi pi + ai qi ).
+                                                                                      2 i
+
+The first identity is the envelope formula ∂i R = αi pi − βi qi . For the second, keep t fixed and replace
+x by x + τ h. Invertibility of L and the implicit function theorem give a local curve (X(τ ), Y (τ ))
+satisfying both tight constraints. Its first derivatives are the response matrices above: the identities
+H = F − BG = AF − G verify the linearized constraints. This curve stays positive definite for small
+τ , and its objective bounds R(x + τ h) from above with equality at τ = 0. Differentiating twice and
+pairing with P, Q, using L(P, Q) = ε(I, I), therefore gives
+                                                                 X
+                                hT ∇2 Rh ≤ 2Eh − c                     ki h2i (bi pi + ai qi )
+                                                                  i
+                                                                 ψi′ hi qi u∗i Ẋui + pi u∗i Ẏ ui .
+                                                             X                                    
+                                                      + 2c
+                                                             i
+
+Write EX , EY for the two summands of Eh . Since P ⪰ Xηx (Q)X,
+
+                              EX ≥ Tr(ηx (Q)ẊX −1 Ẋ) = c                         ψi qi u∗i ẊX −1 Ẋui .
+                                                                              X
+
+                                                                               i
+
+The inequality |u∗i Ẋui |2 ≤ ai u∗i ẊX −1 Ẋui and weighted Cauchy–Schwarz bound the X mixed sum
+by
+                             ψi′ hi qi u∗i Ẋui ≤                                              (ψi′ )2 ψi−1 h2i ai qi .
+                        X                              p                                  X
+                    c                                      EX BX ,            BX = c
+                        i                                                                  i
+                                               ′ 2 −1 2    P
+ √ corresponding Y bound uses BY = c i′(ψ
+The
+                                             2
+                                               i ) ψi hi bi pi . Thus the full mixed term is at most
+     Bh , where Bh = BX + BY . Finally, (ψi ) /(ψi ki ) ≤ 1/2 gives Bh ≤ (c/2) i ki h2i (bi pi + ai qi ),
+                                                                                 P
+2 Eh√
+and 2 Eh Bh ≤ Eh + Bh proves the asserted Hessian bound.
+   Let Σ = EhhT and choose µi = −24Ti−1 (a      ei − e
+                                                     bi )ωi . Using (A.7) and (A.8), the operator
+               1    2
+Df = ∇f · µ + 2 Tr(∇ f Σ) satisfies
+                                                                          X
+                                         DR ≤ (24 − c/12)                     (a        bi zi )ωi ≤ 0,
+                                                                               e i wi + e
+                                                                          i
+                                                     1 48 X ki ωi      1X
+                                    X                   
+                                D        ψi       ≤−   −           ≤ −     ωi .
+                                     i
+                                                     2   c   i
+                                                               Ti2     8 i
+                                                   P
+The first line uses cancellation of 24 i (a    ei zi + e
+                                                       bi wi )ωi by the drift. For the second, the identity
+Ti (a                                    ′
+    ei + bi ) = ai + bi and (A.6) give |ψi µi | ≤ (48/c)ki ωi /Ti2 .
+         e
+     All movement bounds are polynomial and uniform in the state. Indeed (A.3) gives
+
+               Aw ≤ (1 − s0 )z,          Bz ≤ (1 − s0 )w,                 s0 = ε/(4K 2 ),           ∥A∥, ∥B∥ ≤ 3N.
+
+                                                                     33
+The spectral radius of AB is at most (1 − s0 )2 . Using its positive semidefinite conjugate yields
+
+                        ∥(I − AB)−1 ∥, ∥(I − BA)−1 ∥ ≤ J := 1 + 36K 2 N 2 /ε.
+
+Solving the two response equations gives ∥F ∥2 + ∥G∥2 ≤ E0 ∥H∥2 , where E0 = 2J 2 (1 + 3N )2 .
+Consequently, with
+                      C1 = max{1, 48E0 /23, 4(1 + 9N 2 )},  C0 = 8C1 ,
+
+           i ωi ≥ n/C1 , ωi ≤ C1 and
+          P
+we have
+
+                           ∥µ∥∞ ≤ C0 ,    Tr Σ ≤ C0 n,    DΨ ≤ −λn/C0 .                         (A.9)
+
+This proves a quantitative descent alternative for c = 384. The covariance and drift are used only
+to prove that a direction of decrease exists. The algorithm below computes neither of them nor the
+possibly irrational spectral subspaces used in their construction.
+    Here is the deterministic alternative that the algorithm will use. Suppose at least one coordinate
+is active, every active coordinate is farther than σ from its endpoints, and put a = λ/(8C02 ). Either
+an endpoint test above succeeds, giving a decrease of at least λσ, or
+
+                            ∥∇Ψ(x)∥∞ ≥ a      or λmin (∇2 Ψ(x)) ≤ −8a.                         (A.10)
+
+The endpoint estimate uses ψi ≥ σ. If all endpoint tests fail, (A.6) holds and the preceding
+calculation applies. If also ∥∇Ψ∥∞ < a, then ∇Ψ · µ ≥ −aC0 n, whereas DΨ ≤ −λn/C0 = −8aC0 n.
+Hence
+                                    1      2
+                                    2 Tr(∇ Ψ Σ) ≤ −7aC0 n.
+
+Together with Tr Σ ≤ C0 n, this gives a Hessian eigenvalue at most −14a, and therefore the asserted
+−8a bound. The remaining task is to find one of these decreases using rational value queries.
+
+A.3    Uniform derivatives and a rational value oracle
+We next make the descent computable. On any open face, let z = (t, X, Y, P, Q) and write its tight
+constraints and stationarity equations as F (x, z) = 0. The source’s smoothness proof [9, Section 4.1]
+applies to our parameters. Here we record a uniform quantitative bound. Write B = L−1 and
+E = (I, I). An inhomogeneous linearized system has the form
+
+                          Lu + hE = f,       Lp − Hu = g,       ⟨E, p⟩ = r.
+
+Eliminating u, p determines h with denominator ⟨BE, HBE⟩. By (A.4), BE = (P, Q)/ε; thus
+
+                                                           2ε2           1
+                       ∥BE∥F ≤ ε−1 ,       ⟨BE, HBE⟩ ≥         ∥BE∥2F ≥    .
+                                                           K            Kd
+The last inequality uses ∥P ∥2F + ∥Q∥2F ≥ 1/(2d). The upper bound uses Tr(P + Q) = 1 and positivity.
+Back substitution in the three equations and (A.4)–(A.5) bound the complete Jacobian inverse by a
+constant times (d + 1)(1 + ε−1 )4 .
+    When every active coordinate is at least σ/2 from its endpoints, the first three derivatives of ψi
+are bounded by 100(2/σ)3 . All derivatives of F through order three are therefore bounded by a
+computable polynomial in N, d, ε−1 , σ −1 . Three implicit differentiations give a uniform polynomial
+
+
+
+
+                                                 34
+bound M ≥ 1 for both ∥∇2 Ψ∥ and ∥∇3 Ψ∥ on these strips. There is no dependence on the number
+of faces. For an explicit choice, let
+                                      A = 1018 (d + 1)(1 + ε−1 )4 ,
+                          D∗ = 1020 (N + 1)3 (d + 1)3 (1 + ε−1 )3 (1 + σ −1 )3 ,
+                           Z2 = AD∗ (1 + Z1 )2 ,    Z3 = AD∗ (1 + Z1 )3 + 3(1 + Z1 )Z2 ,
+                                                                                         
+             Z1 = AD∗ ,
+                                  l                                        m
+                            M = 1 + (1 + 2dε)(Z2 + Z3 ) + 800λN σ −3 .
+
+The product rule, the inverse bound 2K, and Frobenius product inequalities verify these deliberately
+loose bounds.
+    A value of Ψ to additive accuracy η > 0 is computable in polynomial time in the input length
+and log η −1 . Approximate every ψi by a nonnegative rational in [0, 1] to error δ. This changes
+the optimal value by at most (cKd + λN )δ: in either direction, increase t by cKdδ to absorb the
+perturbation of the matrix constraints. Indeed, i A2i ⪯ νI and ∥Y ∥ ≤ K/ε bound the change in
+                                                 P
+
+ηx (Y ) by cδν∥Y ∥ ≤ cδνK/ε = cKdδ; the other block is identical. The resulting rational program is
+a semidefinite program by the Schur-complement formula. Impose the rational bounds
+                             I/400 ⪯ X, Y ⪯ (200/ε)I,          0 ≤ t ≤ 100.
+The scalar upper bound and sublevel estimates hold for every coefficient vector in [0, 1]N , so these
+boxes contain the minimizers both before and after approximation. The preceding comparison of
+unboxed optimal values therefore applies to the boxed programs as well. The point X = Y = I/20,
+t = 50 has constraint slack at least 50 − 20 − 2 − 384/20 = 8.8 and lies strictly inside the bounds. It
+supplies an inverse-polynomial interior radius: each Schur block dominates 28.8I          I
+                                                                                     I 0.05I ⪰ I/100,
+since subtracting I/100 leaves the scalar determinant 28.79·0.04−1 = 0.1516 > 0. In upper-triangular
+real and imaginary coordinates, a ball of radius 10−6 preserves this margin and all the boxes: a matrix-
+pair perturbation changes either Schur block by at most |∆t| + 384∥∆Y ∥F + ∥∆X∥F or its symmetric
+counterpart. An outer radius 400(d + 1)/ε suffices. Rational weak optimization [12] therefore
+evaluates the rational program to error η/2 in polynomial work. Choosing δ ≤ η/[2(cKd + λN )]
+gives the claimed oracle. Rational bisection computes the cube roots. This value oracle also works
+on lower-dimensional faces and at vertices.
+
+A.4    Rational descent and termination
+At the start of an iteration, move every active coordinate at distance z ≤ σ from its nearest endpoint
+to that endpoint. This never increases the exact potential, since
+                                    √                       √       √
+                            ∆Ψ ≤ z ν − λ[z(2 − z)]1/3 ≤ z ν − λ z ≤ 0.
+There are at most N such permanent freezes. Every remaining active coordinate is more than
+σ from either endpoint. If none remain, return the resulting vertex; all derivative and direction
+computations below are performed only when n ≥ 1.
+     With a = λ/(8C02 ) as above, choose positive powers of two s, h, each within a factor two below
+its indicated bound, with
+            s ≤ min{σ/4, a/(4M ), 1/4},        h ≤ min{σ/8, 1, a/(64M N )},        ∆ = as2 .
+Central first differences, central diagonal second differences, and four-corner mixed second differences
+of the value oracle, each query to error at most ah2 /(128N ), give rational approximations gb, H   b to
+       2
+∇Ψ, ∇ Ψ satisfying
+                              ∥gb − ∇Ψ∥∞ < a/8,          b − ∇2 Ψ∥ < a/16.
+                                                        ∥H
+
+                                                   35
+Taylor’s theorem and the third-derivative bound prove these estimates; all stencil points stay in the
+σ/2 strips.
+       Consider all 2n single-coordinate endpoint moves and the coordinate move x − s sign(gbi )ei , where
+|gbi | is maximal. Test the rational matrix H
+                                            b +7aI for positive semidefiniteness by exact elimination. If
+it fails, elimination supplies a nonzero rational vector of negative quadratic form. Set β = a/(4096M )
+and τ = a/(1024M ) and normalize that vector, using a rational upper approximation to its norm,
+to obtain w with 1 − β ≤ ∥w∥ ≤ 1. Its Rayleigh quotient for H      b is strictly below −7a. Choose ρ as
+the largest dyadic power at most sa/(4096M N ); it divides the dyadic s. Round s(1 − τ )w to ρZn
+                                                √
+to obtain q. The rounding error is at most nρ/2 ≤ sτ /8, so ∥q∥ ≤ s and ∥q − sw∥ ≤ 9sτ /8. The
+negative-direction certificate and the Hessian error bound give
+                                  111                                                 9
+                 w T ∇2 Ψ w < −       a(1 − β)2 ,    |q T ∇2 Ψ q − s2 wT ∇2 Ψ w| ≤        as2 .
+                                  16                                                 4096
+In particular,
+                                             q T ∇2 Ψ q ≤ −6as2 .
+Include both x + q and x − q. If the positive-semidefiniteness test passes, omit these two candidates.
+Whenever λmin (∇2 Ψ) ≤ −8a, the test necessarily fails, so a curvature candidate is available when it
+is needed. The two displacements are exact negatives, so their linear Taylor terms cancel.
+    By (A.10), one candidate decreases the true potential by at least 2∆. An available endpoint
+move gives a decrease at least λσ ≥ 2∆. In the remaining case, if ∥∇Ψ∥∞ ≥ a, the selected
+coordinate has the correct sign and derivative magnitude at least 3a/4, giving decrease at least
+(3/4)as − M s2 /2 ≥ (5/8)as ≥ (5/2)∆. Otherwise (A.10) gives λmin (∇2 Ψ) ≤ −8a; averaging the
+two curvature candidates gives decrease at least 3as2 − M s3 /6 > 2∆. Evaluate all final candidates
+to error ∆/4 and choose the smallest reported value. Selection loses at most ∆/2 against the best
+true candidate. Every accepted step thus decreases the exact potential by at least 3∆/2.
+    Starting from x = 0, every live coordinate stays on the fixed mesh ρZ; frozen coordinates equal
+±1. All coordinates, parameters, and query points have polynomial encoding length. There are at
+most Ψ(0)/∆ main iterations, each with polynomially many rational semidefinite value queries and
+one exact rational positive-semidefiniteness test. The normalized lower bounds on ν, ε, λ, and σ
+imply that C0 and M are bounded by fixed polynomials in N + d. In turn, a and the chosen s, h are
+bounded below by fixed inverse polynomials, as is ∆ = as2 . Since Ψ(0) < 40, the iteration count
+is polynomial as well. Together with the encoding and oracle bounds, this proves deterministic
+polynomial bit complexity on every execution.
+    At the final vertex xf , the coordinate term vanishes and (A.2) gives
+                  X f            √           √      √           √            √
+                       xi Ai ≤ (2 386 + 0.01) ν ≤ (2 386 + 0.01) 1.001ν0 < 40 ν0 .
+                   i
+
+Undoing the rational normalization and folding the signs of the original traces into xfi proves
+Theorem A.1.
+
+
+References
+ [1] Nima Anari and Shayan Oveis Gharan. Effective-Resistance-Reducing Flows, Spectrally Thin
+     Trees, and Asymmetric TSP. arXiv:1411.4613v4, 2015. Full version, revised 1 September 2015.
+
+ [2] Sanjeev Arora, Satish Rao, and Umesh Vazirani. Expander flows, geometric embeddings and
+     graph partitioning. Journal of the ACM, 56(2):5:1–5:37, 2009.
+
+                                                     36
+ [3] Arash Asadpour, Michel X. Goemans, Aleksander Mądry, Shayan Oveis Gharan, and Amin
+     Saberi. An O(log n/ log log n)-approximation algorithm for the asymmetric traveling salesman
+     problem. In Moses Charikar, editor, Proceedings of the Twenty-First Annual ACM–SIAM
+     Symposium on Discrete Algorithms, pages 379–389. SIAM, 2010. SODA version; its definition
+     and theorem numbering differs from the author full manuscript.
+
+ [4] Arash Asadpour, Michel X. Goemans, Aleksander Mądry, Shayan Oveis Gharan, and Amin
+     Saberi. An O(log n/ log log n)-approximation algorithm for the asymmetric traveling salesman
+     problem. Operations Research, 65(4):1043–1061, 2017. Preliminary version in SODA 2010.
+     Full-manuscript locators refer to the author full manuscript formerly hosted at NYU Stern
+     (Definition 4.1 and Conjecture 6.1; link unavailable).
+
+ [5] Nikhil Bansal. On a generalization of iterated and randomized rounding. Theory of Computing,
+     20(6):1–23, 2024.
+
+ [6] Nikhil Bansal and Shashwat Garg. Algorithmic discrepancy beyond partial coloring. In
+     Proceedings of the 49th Annual ACM SIGACT Symposium on Theory of Computing, pages
+     914–926, 2017. Full version: arXiv:1611.01805v2, Theorem 6.
+
+ [7] Franck Barthe. On a reverse form of the Brascamp–Lieb inequality. Inventiones Mathematicae,
+     134(2):335–361, 1998.
+
+ [8] Jack Edmonds. Matroid partition. In George B. Dantzig and Arthur F. Veinott, Jr., editors,
+     Mathematics of the Decision Sciences, Part 1, volume 11 of Lectures in Applied Mathematics,
+     pages 335–345. American Mathematical Society, Providence, RI, 1968. Reprinted in 50 Years
+     of Integer Programming 1958–2008, Springer, 2010, pp. 199–217, doi:10.1007/978-3-540-68279-
+     0_7.
+
+ [9] Ekene Ezeunala and Haotian Jiang. Rank-one matrix discrepancy and algorithmic Kadison–
+     Singer. arXiv:2609.17266v1, 2026.
+
+[10] Maurice Fréchet. Les dimensions d’un ensemble abstrait. Mathematische Annalen, 68(2):145–
+     168, 1910.
+
+[11] Luis A. Goddyn. Some open problems I like, 2004. Problem 4; webpage modified March 17,
+     2004.
+
+[12] Martin Grötschel, László Lovász, and Alexander Schrijver. Geometric Algorithms and Combi-
+     natorial Optimization, volume 2 of Algorithms and Combinatorics. Springer, Berlin, 1988.
+
+[13] Nicholas J. A. Harvey and Neil Olver. Pipage rounding, pessimistic estimators and matrix
+     concentration. In Chandra Chekuri, editor, Proceedings of the Twenty-Fifth Annual ACM-
+     SIAM Symposium on Discrete Algorithms, pages 926–945. Society for Industrial and Applied
+     Mathematics, 2014. Full version: arXiv:1307.2274v1, Appendix F.
+
+[14] Tomáš Kaiser. A short proof of the tree-packing theorem. Discrete Mathematics, 312(10):1689–
+     1691, 2012.
+
+[15] Nathan Klein and Neil Olver. Thin trees for laminar families. In 2023 IEEE 64th Annual
+     Symposium on Foundations of Computer Science, pages 50–59. IEEE, 2023.
+
+
+
+
+                                               37
+[16] Nathan Klein, Neil Olver, and Zi Song Yeoh. Thin trees for near minimum cuts. In 53rd
+     International Colloquium on Automata, Languages, and Programming (ICALP 2026), volume
+     374 of Leibniz International Proceedings in Informatics, pages 129:1–129:18. Schloss Dagstuhl –
+     Leibniz-Zentrum für Informatik, 2026.
+
+[17] Casimir Kuratowski. Quelques problèmes concernant les espaces métriques non-séparables.
+     Fundamenta Mathematicae, 25(1):534–545, 1935.
+
+[18] Adam W. Marcus, Daniel A. Spielman, and Nikhil Srivastava. Interlacing Families II: Mixed
+     Characteristic Polynomials and the Kadison–Singer Problem. Annals of Mathematics, 182(1):327–
+     350, 2015.
+
+[19] C. St. J. A. Nash-Williams. Edge-disjoint spanning trees of finite graphs. Journal of the London
+     Mathematical Society, s1-36(1):445–450, 1961.
+
+[20] OpenAI. The strong thin tree conjecture. OpenAI Math Release preprint OAI:The-strong-thin-
+     tree-conjecture-September-23-2026, 2026.
+
+[21] Shayan Oveis Gharan and Amin Saberi. The asymmetric traveling salesman problem on graphs
+     with bounded genus. In Proceedings of the Twenty-Second Annual ACM–SIAM Symposium on
+     Discrete Algorithms, pages 967–975. SIAM, 2011. Theorem numbers refer to the full preprint,
+     arXiv:0909.2849.
+
+[22] I. J. Schoenberg. Remarks to Maurice Fréchet’s article “sur la définition axiomatique d’une classe
+     d’espace distanciés vectoriellement applicable sur l’espace de Hilbert”. Annals of Mathematics,
+     36(3):724–732, 1935.
+
+[23] Ola Svensson, Jakub Tarnawski, and László A. Végh. A constant-factor approximation algorithm
+     for the asymmetric traveling salesman problem. Journal of the ACM, 67(6):37:1–37:53, 2020.
+     Preliminary version in STOC 2018.
+
+[24] Tatsuya Terao. Faster Matroid Partition Algorithms. In 50th International Colloquium on
+     Automata, Languages, and Programming (ICALP 2023), volume 261 of Leibniz International
+     Proceedings in Informatics, pages 104:1–104:20. Schloss Dagstuhl–Leibniz-Zentrum für Infor-
+     matik, 2023.
+
+[25] Vera Traub and Jens Vygen. An improved approximation algorithm for the asymmetric traveling
+     salesman problem. SIAM Journal on Computing, 51(1):139–173, 2022. Preliminary version in
+     STOC 2020.
+
+[26] W. T. Tutte. On the problem of decomposing a graph into n connected factors. Journal of the
+     London Mathematical Society, s1-36(1):221–230, 1961.
+
+
+
+
+                                                  38
+

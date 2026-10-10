@@ -1,0 +1,2486 @@
+              The approximation threshold for metric k-median
+                                                   OpenAI
+
+                                             September 24, 2026
+
+
+                                                   Abstract
+          For every fixed ε > 0, we give a deterministic polynomial-time (1 + 2/e + ε)-approximation
+      for finite rational metric k-median with specified candidate facilities, opening at most k facilities.
+      Under P ̸= N P , the infimum approximation factor in this model is therefore 1 + 2/e.
+
+
+1    Introduction
+In metric k-median, a finite set J of clients and a finite set F of candidate facilities lie in a common
+metric space. Given an integer k, one chooses at most k facilities to minimize the sum of the
+distances from clients to their nearest chosen facility. For a nonempty set S ⊆ F , write
+                                                       ∑
+            d(j, S) = min d(j, i),         cost(S) =         d(j, S),   OPTk = min cost(S).
+                        i∈S                                                         S⊆F
+                                                       j∈J                         1≤|S|≤k
+
+The input distances are rational and encoded in binary, and 1 ≤ k ≤ |F |. Both k and the metric
+are unrestricted. Candidate facilities are specified as part of the input; we do not require F = J.
+The empty-client instance has cost zero and can be handled immediately.
+    The facility budget is a central difficulty: a solution with small connection cost can be much
+easier to obtain when extra facilities are allowed. Our approach first permits a constant additive
+surplus, makes that approximation deterministic, and then removes the surplus using an established
+reduction.
+
+Theorem 1.1. For every fixed ε > 0, there is a deterministic algorithm which, given a finite rational
+metric k-median instance with 1 ≤ k ≤ |F |, returns S ⊆ F , |S| ≤ k, such that
+                                                              2
+                                     ∑              (              )
+                                           d(j, S) ≤ 1 +        + ε OPTk .
+                                     j∈J
+                                                              e
+
+Its running time is polynomial in the binary encoding length of the instance. The polynomial may
+depend on ε.
+
+    Hardness below 1+2/e in this facility model follows from the Max-k-Coverage gap: covered clients
+have distance one and uncovered clients have distance at least three. We use the formulation under
+P ̸= N P recorded by Anand and Lee [1, Sections 1 and 1.1], based on Feige’s perfect-completeness
+coverage gap [11, Theorem 5.3]. For an explicit metric completion, represent sets by facilities and
+universe elements by a disjoint client set. Give distinct points within either part distance two,
+and give a facility–client pair distance one for incidence and three otherwise. This is a metric: a
+same-part edge of length two is bounded by 1 + 1, and a cross-part edge of length at most three is
+bounded by 2 + 1. For a universe of size m, the connection cost is exactly 3m − 2c when the chosen
+
+                                                        1
+sets cover c elements; a perfect cover has cost m. Thus a gap between covering every element and
+covering at most a 1 − 1/e + δ fraction gives the lower bound 1 + 2/e − 2δ, for every fixed positive δ.
+Together with Theorem 1.1, this proves the following consequence.
+Corollary 1.2. If P ̸= N P , the infimum of deterministic polynomial-time approximation factors
+for metric k-median with specified candidate facilities is 1 + 2/e.
+    The infimum in Corollary 1.2 does not assert attainment of the endpoint factor. The hardness
+assumption and candidate-facility model are part of the statement. In particular, the corresponding
+lower-bound question with the restriction F = J is different [1].
+
+1.1   Historical context and method
+Metric k-median has been a testing ground for LP rounding, primal-dual algorithms, and local
+search. Charikar, Guha, Tardos and Shmoys gave the first constant-factor approximation through
+LP rounding [9]. Jain and Vazirani connected the cardinality constraint with metric facility location
+through Lagrangian relaxation and the primal-dual method [14]. The combinatorial improvements
+of Charikar and Guha [7] and the greedy dual-fitting approach of Jain et al. [15] developed this
+connection further. A different route, the bounded-swap local search of Arya et al. [2], achieves
+factor 3 + ε.
+    Li and Svensson [16] made constant-additive pseudo-approximations a route past the factor-three
+barrier: a constant number of extra facilities can be removed at an arbitrarily small additional
+approximation loss. Subsequent bi-point rounding, including the corrected 2.675 + ε guarantee
+of Byrka et al. [5], refined this approach. Gowda et al. [13] obtained 2.613 in their SODA 2023
+version. Cohen-Addad et al. [10] reached 2 + ε, first announced in 2025. Byrka et al. [6] subsequently
+developed a graph-based iterative rounding framework that also gives 2 + ε for metric k-median and
+extends to other clustering objectives. Theorem 1.1 reaches every fixed factor above the 1 + 2/e
+hardness boundary in the general candidate-facility model.
+    Our construction follows the iterative graph framework, with the cost analysis replaced by a
+directed comparison inequality and a potential that retains some surviving assignments after an
+opening. The earlier framework’s general transfer theorem uses a parameter at least 2 in the metric
+k-median case [6, Theorem 6.1]; it does not supply the smaller factor proved here. We establish the
+grid preparation, physical updates, comparison, and deterministic implementation together.
+    A separate companion combines anchor recovery with bounded-price payment accounting to give
+an independent randomized approximation below factor 2 while respecting the facility budget [17,
+Theorem 1.2].
+    Two other methodological antecedents are useful to distinguish. Splitting fractional facilities and
+organizing assignments around separated representatives and bundles are standard LP-rounding
+techniques; Charikar and Li [8] provide a close predecessor. The pair updates used in our preparation
+belong to the dependent-rounding approach of Srinivasan [18] and Gandhi et al. [12], with weighted
+variants studied by Byrka et al. [5]. We prove the particular moment bounds and coupled supplier
+construction needed here. Likewise, reducing the support of a distribution while matching moments is
+a standard Carathéodory argument; see Bayer and Teichmann [3] for the finite-cubature perspective.
+Our implementation specifies which moments suffice throughout the physical process and proves the
+required rational encoding bounds.
+
+1.2   Proof overview
+The proof separates the preparation of fractional openings, their iterative rounding, and the removal
+of randomness and surplus. The intermediate guarantee is measured against the standard assignment
+
+                                                  2
+LP: its variable yi is the amount of opening at facility i, and each client receives a unit of this
+opening mass. The LP has total opening mass at most k and cost at most OPTk .
+
+Preparing a constant grid. Section 3 replaces the LP openings by multiples of g = 1/∆, where
+the even integer ∆ depends only on the accuracy. The total mass increases by at most 3g, and each
+client’s expected assignment cost increases by an arbitrarily small factor. Separated representative
+clients define disjoint bundles of nearby opening mass. A bundle’s deficit is the part missing from
+a unit; its suppliers are the facilities or other bundles holding that part of the representative’s
+assignment. Rounding deficits together with their suppliers controls both the opening budget and
+the cost of restoring a full unit. This coupling must allow one supplier to serve many clients, because
+assignment mass is not a shared capacity.
+
+Rounding the grid. View every positive grid opening as copies of mass g. In each round, a
+directed graph specifies which copies a source erases when that source’s facility opens. Each target
+has exactly ∆ incoming sources, chosen with distance-dependent probabilities. Opening and erasing
+are balanced so that only a constant additional number of facilities is needed. This source-opening
+and neighbor-erasure framework, including balanced batches and forced large updates, builds on
+Byrka et al. [6, Sections 3–6].
+    The connection-cost analysis needs a different comparison below factor two. For each client, we
+track surviving copies from its initial assigned unit and a persistent bound on its eventual connection
+distance. A potential combines their remaining assignment cost with that bound. Its coefficient
+depends on elapsed time as well as surviving mass. When one of the client’s own copies opens, we
+continue tracking the cheaper survivors; this produces a subtraction that pays for other possible
+erasures. The finite inequality in Section 4 captures that payment for arbitrary directed comparison
+coefficients. Its proof transfers contributions from positive rows to lower-distance rows, whose
+negative contributions cover them. Appendix A proves every scalar estimate by explicit rational
+polynomial certificates. The geometric substitution and the potential analysis are given in Section 5.
+    A source erasing many copies is handled by forcing its facility open. Because this choice depends
+on the graph, its potential change is bounded for each realized graph first. Only then do we
+average over graphs. This order lets the finite directed inequality control the averaged drift without
+conditioning on a graph-dependent forcing event.
+
+A deterministic solution and the exact budget. The preceding analysis uses randomness,
+but only specified low-order moments of each local choice enter its bounds. Section 6 constructs
+polynomial-size rational distributions preserving these moments. All physical histories are expanded
+for a constant number of rounds, and the cheapest output satisfying the additive budget is chosen.
+The separate rational-arithmetic analysis proves polynomial time in the binary input length. The
+result is a deterministic approximation opening at most k + c facilities for an accuracy-dependent
+constant c. Li and Svensson’s reduction then removes this surplus with an arbitrarily small additional
+loss.
+
+Organization. Section 2 fixes the model and states the external additive-to-ordinary reduction.
+Section 3 prepares the openings. Section 4 proves the finite drift inequality, with its scalar
+certificates in Appendix A. Section 5 gives and analyzes the iterative procedure. Section 6 supplies
+the deterministic implementation and completes the proof of Theorem 1.1.
+
+
+
+
+                                                  3
+2     Preliminaries and the reduction
+We use the client set J, candidate set F , connection cost cost, and optimum OPTk defined in the
+introduction. Polynomial time includes the binary encodings of all distances. We henceforth assume
+J ̸= ∅ and 1 ≤ k ≤ |F |. This section fixes the fractional representation and states the external
+reduction that will remove the final constant additive surplus.
+
+2.1   The fractional solution
+We use the standard relaxation
+                                        ∑∑
+                           minimize               d(j, i)xij
+                                        j∈J i∈F
+                                        ∑
+                           subject to         xij = 1               (j ∈ J),
+                                        i∈F                                                        (2.1)
+                                        0 ≤ xij ≤ yi ≤ 1 (i ∈ F, j ∈ J),
+                                        ∑
+                                              yi ≤ k.
+                                        i∈F
+
+Its rational optimum can be found in polynomial time. For fixed openings yi , assign each client to
+its nearest unit of opening mass, using a fixed order to break ties. If hj (t) is the distance needed to
+accumulate mass t, put                          ∫       1
+                                           Vj =             hj (t) dt.
+                                                    0
+Then L = j Vj ≤ OPTk for an optimal solution of (2.1).
+           ∑
+
+    As in LP-rounding constructions such as Charikar–Li [8, Section 2], it is convenient to split
+an opening into co-located pieces so that each client’s nearest-unit assignment uses whole pieces.
+There are only polynomially many needed split points: each client uses at most one partial piece in
+a fixed distance order. Refine each facility simultaneously at all the resulting cut points. Denote
+                                                                                      ∑
+the whole-piece assignment of client j by Fj . For a set U of pieces, write y(U ) = i∈U yi ; thus
+                     ∑
+y(Fj ) = 1 and Vj = i∈Fj yi d(j, i).
+    Internal pieces at one location are allowed to be distinct, so their distance can be zero. All
+geometric arguments use only nonnegativity, symmetry, and the triangle inequality. Whenever a
+procedure returns open pieces, merge them by their original facility identity. Merging preserves
+every client’s connection cost and cannot increase the number of facilities.
+
+2.2   Constant-additive pseudo-approximation
+Definition 2.1. A c-additive α-approximation for metric k-median returns at most k + c facilities
+of cost at most α OPTk . The additive allowance c is independent of the input instance.
+
+    We use the following established result.
+
+Theorem 2.2 (Li–Svensson [16], Theorem 4 of the 2014 manuscript). Let α > 1, and suppose A is
+a c-additive α-approximation algorithm for metric k-median. For every η > 0, there is an ordinary
+(α + η)-approximation algorithm with running time nO(c/η) times the running time of A. For fixed
+α, c, η, this is polynomial overhead.
+
+    The theorem permits separate client and candidate sets and applies the pseudo-algorithm to
+restricted candidate instances. Our construction works on every such instance. We will obtain a
+
+                                                        4
+deterministic pseudo-algorithm before applying Theorem 2.2; the external reduction is not being
+used to convert an expected-cost statement into determinism.
+    For each fixed accuracy we permit all grid denominators, numbers of rounds, and additive
+allowances to be constants of any size. They may depend on that accuracy, but not on k, the
+number of input points, their distances, or their bit lengths. Thus it suffices to prove, for each
+fixed τ > 0, a deterministic cτ -additive (1 + 2/e + τ )-approximation. Our analysis in fact bounds
+the pseudo-solution against L, the initial fractional cost. This does not assert the same factor for
+rounding the original relaxation to exactly k facilities: the additive allowance and the subsequent
+reduction are essential.
+
+2.3   Probability and bookkeeping
+We use E, P, and Var for expectation, probability, and variance. Every distribution used below has
+finite support. Randomized procedures first provide the estimates; Section 6 replaces their choices
+by explicit polynomial-size lists.
+    Two elementary facts will be used repeatedly. First, for a nonnegative random cost C and an
+event E of probability at least 1 − ρ > 0,
+                                                         EC
+                                         E[C | E] ≤         .                                    (2.2)
+                                                        1−ρ
+No cost–event independence is required. Second, a finite distribution contains an outcome whose
+cost is at most its expected cost. These facts allow us to discard budget failures and select a single
+output by total cost; we never require all individual client expectation bounds to hold simultaneously
+at that output.
+    The notation O∆ (·) means that its implicit constant may depend on the fixed grid denominator
+∆, and on no input parameter. All unqualified constants in the geometric and analytic estimates
+are absolute, unless an explicit previously fixed parameter is indicated.
+
+
+3     Preparing the openings
+We first put the fractional openings on a sufficiently fine constant grid. The use of separated
+representatives and bundles is motivated by the discretization approach in [6]. The construction
+below rounds a bundle’s missing assignment mass together with the facilities that can supply it.
+This coupling provides both an additive opening bound and a multiplicative connection-cost bound.
+   Throughout this Section, the client set is nonempty; an instance without clients requires no
+cost analysis. We start with feasible fractional openings 0 ≤ yi ≤ 1. For each client j, choose a
+nearest-unit assignment xij , resolving ties in a fixed order, and write
+                                                ∑
+                                         Vj =       d(i, j)xij .
+                                                i
+
+                                   i xij = 1 and xij ≤ yi ; there is no supply constraint shared by
+                                  ∑
+The feasibility constraints are
+different clients.
+
+Theorem 3.1. For every η > 0, there is a constant ∆0 with the following property. Given a finite
+rational metric instance and feasible rational openings 0 ≤ yi ≤ 1 with a nearest-unit assignment
+of cost Vj for each client j, fix any constant even integer ∆ ≥ ∆0 and let g = 1/∆. There is a
+
+
+
+                                                    5
+randomized procedure, running in expected polynomial time on rational inputs, that produces openings
+ỹi ∈ [0, 1] ∩ gZ, allowing polynomially many co-located labeled facility pieces, such that
+                                             ∑            ∑
+                                        1≤        ỹi ≤         yi + 3g
+                                              i             i
+for every output, and the expected nearest-unit assignment cost of every client j is at most (1 + η)Vj .
+In particular the grid can be required to satisfy any additional positive instance-independent upper
+bound on g.
+    The expectation in Theorem 3.1 is taken after rejecting outcomes that exceed the opening budget.
+Section 6 gives a deterministic implementation that preserves the corresponding bound on the sum
+of the client costs.
+    We use the following elementary dependent-rounding observation, in both weighted and un-
+weighted form. The mean-preserving pair update and its product-supermartingale argument follow
+the standard approach [12, 18]; weighted rounding with one residual fraction is also studied in [5,
+Section 2]. We give the proof to specify exactly the moment guarantees used here.
+Lemma 3.2. Let qe ≥ 0 be rational counts and let βe > 0 be rational weights. One can randomly
+update the counts within the bounds [⌊qe ⌋, ⌈qe ⌉], preserving e βe qe on every update, until at most
+                                                               ∑
+
+one count is fractional. Every first moment is preserved, and the expectation of every product of
+two distinct counts is at most the product of their initial values. Rounding the possible remaining
+fractional count with its correct mean preserves these moment assertions. For the resulting integer
+counts Qe ,
+                            Var(Qe ) ≤ qe ,     E[Qe Qf ] ≤ qe qf (e ̸= f ).
+The procedure uses linearly many two-coordinate updates.
+Proof. When two coordinates are fractional, move them along the line
+                                  (qe , qf ) |−→ (qe + t, qf − (βe /βf )t)
+to one of the two endpoints allowed by their fixed floor and ceiling bounds. Choose the endpoint
+probabilities so that the conditional mean of t is zero. At least one coordinate becomes integral, and
+integral coordinates are not updated subsequently. Each coordinate is a martingale. The product of
+the two updated coordinates is a concave quadratic in t; a product involving exactly one updated
+coordinate has unchanged conditional mean. Thus every distinct-pair product is a supermartingale.
+Rounding the last fractional coordinate with the correct conditional mean leaves all these products
+unchanged in expectation. Finally, an integer random variable supported on {m, m + 1}, with mean
+m + θ, has variance θ(1 − θ) ≤ m + θ. This proves the variance assertion.
+Proof of Theorem 3.1. We first form disjoint bundles containing most of each representative’s
+assigned mass. We then round their deficits jointly with the openings that supply them, reserving a
+small amount of budget for clipping large deficits. After rounding inside bundles, every representative
+can again receive one unit. The final part of the proof compares connection costs at two representative-
+distance scales and conditions on the budget event.
+    We will choose positive rational constants in the order
+                                        δ,    M,     T1 ,       γ,   g,
+with δ small, M and then T1 large, and γ and then g small. All choices depend only on η; the last
+choice means that every sufficiently fine even grid is permitted. During the proof we require
+                                                        1                 M
+                 0 < δ ≤ 14 ,    0 < γ ≤ 1,      θ :=      ≤ 18 ,   α :=     ≤ 41 .           (3.1)
+                                                       Mδ                δT1
+Set p0 = 1 − θ and β = M/T1 = δα.
+
+                                                     6
+Splitting and representatives. For each original facility, view its opening yi as an interval of
+length yi and its assignment to client j as the initial subinterval of length xij . Split at the endpoints
+of these subintervals for all clients. There are at most |J| + 1 positive-mass pieces per original
+facility, and every assignment now uses whole pieces. Retain the notation yi for the mass of a piece,
+and let Fj be the set of pieces used by client j. Thus
+                                                 ∑                                    ∑
+                        y(Fj ) = 1,       Vj =          yi d(i, j),     y(W ) :=           yi .
+                                                 i∈Fj                                i∈W
+
+Pieces retain the distances of their original facility. They may be treated as distinct candidates
+throughout the rounding; merging co-located integral openings at the end preserves all connection
+distances and can only decrease the number of opened facilities.
+    Process the clients in nondecreasing order of Vj . Select each remaining client s as a representative
+and absorb every remaining client j for which d(j, s) ≤ M Vj . Write S for the set of representatives.
+A client j assigned to s satisfies
+
+                                       Vs ≤ Vj ,          d(j, s) ≤ M Vj .                              (3.2)
+
+Distinct representatives satisfy
+                                         d(s, t) > M max(Vs , Vt ) :
+indeed, the later one was not absorbed by the earlier one. Let Ls be the distance to a nearest other
+representative, taking Ls = ∞ when s is the only representative. Define
+
+             Ps = {i ∈ Fs : d(s, i) ≤ δLs },       ps = y(Ps ),       cs = 1 − ps ,    As = Fs \ Ps ,
+
+and let U consist of all pieces outside s Ps . For Ls = ∞, interpret Ps = Fs and cs = 0.
+                                           ⋃
+
+   The bundles Ps are disjoint. Otherwise a piece in Ps ∩ Pt would imply
+
+                                      d(s, t) ≤ δ(Ls + Lt ) ≤ 2δd(s, t),
+
+which is impossible. For finite Ls , the mass in As has distance at least δLs from s, so
+
+                               δLs cs ≤ Vs ,        0 ≤ cs ≤ θ,          ps ≥ p0 .                      (3.3)
+
+These bounds also cover Vs = 0: in that case cs = 0.
+
+Supplier stars and signed counts. For the raw opening count, give every bundle a base level
+of one. A supplier star couples planned deficits in its target bundles to the mass that will supply
+them. One planned count unit subtracts mass g from each target bundle and adds mass g at the
+supplier if it lies in U . A bundle supplier incurs no additional opening in this accounting. Thus a
+star with d targets changes the opening mass by (1 − d)g for an outside supplier and by −dg for a
+bundle supplier.
+    Make a list E of stars; a star e has weight we , a flag ae ∈ {0, 1} indicating an outside supplier, a
+target set De ⊆ S, and a specified supplier:
+   1. For each i ∈ U , take we = yi , ae = 1, De = {s : i ∈ As }, and supplier i.
+   2. For each pair s, t with y(As ∩ Pt ) > 0, take we = y(As ∩ Pt ), ae = 0, De = {s}, and supplier
+      Pt . Necessarily t ̸= s.
+   3. For each s with cs > 0, take we = γcs , ae = 0, De = {s}, and use as supplier the bundle of a
+      nearest other representative. Such a representative exists because cs > 0.
+
+                                                          7
+The last stars are called extra stars. The planned count of star e is qe = we /g. With ue = ae − |De |,
+the planned raw opening mass is
+                                           ∑             ∑              ∑
+                                   |S| +       ue we =         yi − γ       cs .                  (3.4)
+                                           e              i             s
+
+To see this, the flag-one weights sum to y(U ), while the total weight targeting s is (1 + γ)cs .
+    Apply Lemma 3.2 independently to the positive and negative signs of ue , using weights |ue |.
+Complete the rounding of the positive class by rounding its possible last fraction with the correct
+mean. Round the zero-coefficient counts independently between their floor and ceiling. Leave the
+last fractional count of the negative class, if any, temporarily unrounded. All counts are then integral
+except possibly this one.
+    If there is no remaining fraction, the resulting counts are both the nominal counts and the actual
+activation counts. Otherwise, write the remaining count as m + ξ, where 0 < ξ < 1, and let its star
+have d = |De | targets. Its nominal count is m + Bernoulli(ξ). If its flag is one, open (m + 1)g at
+its supplier, irrespective of the nominal coin. Activate m units at each target, and activate one
+additional unit at every target in a random subset of size
+
+                                   H ∈ {⌊dξ⌋, ⌈dξ⌉},             EH = dξ,
+
+whose membership marginal is ξ at every target. Such a subset is obtained by choosing the indicated
+size with the correct mean and then taking a uniformly shifted interval of that size in a fixed cyclic
+ordering of the targets. The nominal coin can be independent of this choice. All other stars use
+their integral counts for both openings and activations.
+    This modification bounds the raw opening error independently of the number of targets. For
+the exceptional star its actual signed contribution, in count units, minus its planned contribution is
+
+                 ae (m + 1) − dm − H − (ae − d)(m + ξ) = ae (1 − ξ) + dξ − H < 2.
+
+A positive coefficient ue necessarily equals one, so the last rounding in the positive class adds less
+than one further count unit. The zero class has no signed contribution. If ỹi denotes the actual
+opening on U , and Zs denotes the total activated deficit mass at s, we therefore have on every
+outcome                      ∑        ∑             ∑          ∑
+                                ỹi +   (1 − Zs ) ≤    yi − γ     cs + 3g.                       (3.5)
+                             i∈U      s                    i            s
+
+Moreover, each actual outside opening dominates both its nominal opening and every activation
+demand placed on it by a single target.
+
+Deficit moments and clipping. The signed count already controls raw opening mass. The
+remaining obstacle is that an activated deficit might leave too little mass in its own bundle. We cap
+that deficit and pay for the added bundle mass with the reserve in Equation 3.5. For every s, let
+Aes be the integer activation count from a star targeting s. Then
+
+                             EZs = (1 + γ)cs ,           Var(Zs ) ≤ g(1 + γ)cs .                  (3.6)
+
+Here it matters that the last negative star may depend on the preceding random choices. Condition
+on the complete count vector immediately before its exceptional rounding. At most one coordinate
+is fractional, so for distinct e, f targeting s, at least one of Aes , Af s is deterministic under this
+conditioning. Each has conditional mean equal to its current count. Their conditional product
+expectation is therefore the product of those two current counts. The distinct-pair product bound
+
+                                                     8
+in Lemma 3.2 consequently still holds for these activations. Their individual means are qe , and each
+is supported on {⌊qe ⌋, ⌈qe ⌉}. Thus
+                                        ∑                           ∑
+                      Var(Zs ) ≤ g 2            Var(Aes ) ≤ g 2               qe = g(1 + γ)cs ,
+                                       e:s∈De                      e:s∈De
+
+as asserted. The nominal counts also retain the same first and distinct-pair moment bounds.
+    Clip the deficit at one half:
+
+                                 Zs∗ = min(Zs , 12 ),          p′s = 1 − Zs∗ .
+
+Discard any excess activation units. This can be done in whole units because ∆ is even. By
+Equation 3.1, µs := EZs ≤ 1/4. For any random variable X with mean µ < b,
+                                                            (X − µ)2
+                                          (X − b)+ ≤                 .
+                                                              b−µ
+Indeed the assertion is immediate when X ≤ b, and otherwise follows by expanding (X − µ)2 =
+(X − b + b − µ)2 . Equation 3.6 therefore gives
+
+                                        E(Zs − 21 )+ ≤ 4g(1 + γ)cs .
+
+Let G be the event that
+                                                (Zs − Zs∗ ) ≤ γ
+                                         ∑                         ∑
+                                                                       cs .
+                                           s                       s
+If some cs is positive, Markov’s inequality gives
+                                                                   4g(1 + γ)
+                                 P(G) ≥ 1 − ρ,              ρ :=             .                    (3.7)
+                                                                       γ
+If all cs vanish, all activations and discarded amounts are zero, and G holds surely. Equations 3.5
+and 3.7 show that a vector with bundle sums p′s has total opening mass at most i yi + 3g on G.
+                                                                                  ∑
+
+
+Rounding within bundles and supplying one unit. Condition on the complete star-rounding
+outcome, including the retained activations. In each bundle independently, rescale piece i ∈ Ps to
+mass
+                                                    p′
+                                            y i = yi s .
+                                                    ps
+Since yi ≤ ps and 1/2 ≤ p′s ≤ 1, these masses belong to [0, 1]. Their sum p′s is a grid multiple. Apply
+the unweighted version of Lemma 3.2 to counts y i /g. The preserved sum is integral in count units,
+so there is no final fraction. This produces grid masses ỹi with conditional means y i and nonpositive
+conditional pair covariances. All masses remain at most one, because one is a grid point. Likewise
+the outside opening at a piece of original mass yi is at most g⌈yi /g⌉ ≤ 1, even under the exceptional
+correction.
+    Every representative s can now receive one unit: take its entire bundle mass p′s and supply its
+retained deficit Zs∗ using the retained activations. Each outside supplier has enough mass for its
+activation demand at s. Any bundle supplier is different from Ps . The total demand of s on any
+one such bundle is at most its entire retained deficit, hence at most 1/2, while every supplying
+bundle has mass at least 1/2. Allocate this demand greedily over its pieces. The bundles and U are
+disjoint, and different clients have separate assignment constraints. This proves feasibility for each
+client individually, even before conditioning on G. It also shows that the total opening mass is at
+least one.
+
+                                                        9
+Cost comparison at a distant representative scale. Fix a client j and its representative s,
+and put D = d(j, s). Let Rs = maxi∈Fs d(s, i), and define the radius
+                                                {
+                                                    Ls ,   cs > 0,
+                                         Ks =
+                                                    Rs ,   cs = 0.
+
+If Vj = 0, Equation 3.2 gives D = Vs = 0. All pieces of Fs then have distance zero from j, cs = 0,
+and Zs = 0 surely. The rounded bundle Ps = Fs still has one unit at distance zero. Hence the new
+cost is identically zero. We may therefore assume Vj > 0 in the remaining cost analysis.
+    Suppose first that Ks > T1 Vj . We have Rs ≥ δKs : this is immediate if cs = 0, and otherwise
+some assigned mass lies beyond δLs . Consequently D/Rs ≤ α < 1. This controls the cost of
+exchanging the portions of Fj and Fs that are not shared. Leave the shared pieces matched
+identically. The masses of Fs \ Fj and Fj \ Fs are equal. Each piece in the former set is at distance
+at most Rs + D from j. Each piece in the latter set is at distance at least Rs − D from j, because
+the nearest-unit assignment at s uses all closer mass before stopping at radius Rs . This argument
+remains valid at ties. Comparing the two residual costs shows that using the old assignment Fs for
+client j has cost at most
+                                              ∑               1+α
+                                 Cj (Fs ) :=     yi d(j, i) ≤     Vj .                           (3.8)
+                                             i∈F
+                                                              1−α
+                                                s
+
+   Serve j with the feasible assignment just constructed for s. For each i ∈ Ps ,
+
+                                      Eỹi = yi E[p′s ]/ps ≤ yi /ps .
+
+For an ordinary star, the expected retained activation mass is at most its original weight. Thus
+outside suppliers do not increase their expected cost charge. It remains to compare arbitrary new
+supply inside a bundle Pt with the old pieces in As ∩ Pt . This case only arises when cs > 0. Then
+D ≤ βLs , and for any old supplier piece i ∈ Pt ,
+
+                           d(j, i) ≥ d(s, t) − D − δLt ≥ (1 − β − δ)d(s, t).
+
+Any two pieces of Pt are at distance at most 2δLt . Because Lt ≤ d(s, t) and 1 − β − δ > 0, every
+possible new supplier piece has distance to j at most
+                                                                2δ
+                                  κ d(j, i),     κ := 1 +           .
+                                                              1−β−δ
+The comparison holds for every old piece, so it also holds relative to the weighted mean distance of
+the old pieces aggregated by that star. Multiplying by its expected retained activation mass bounds
+its expected cost by κ times its old cost contribution.
+    Finally, for the extra star at s, its supplier Pt satisfies d(s, t) = Ls and Lt ≤ Ls . Every supply
+position is therefore at distance at most (β + 1 + δ)Ls from j. By Equation 3.3, its expected cost is
+at most
+                                                       (β + 1 + δ)γ
+                                 (β + 1 + δ)γcs Ls ≤                  Vj .
+                                                              δ
+There is no extra star when cs = 0. Combining these bounds with Equation 3.8, the unconditional
+expected nearest-unit cost in this case is at most Bfar Vj , where
+
+                                                      1 + α (β + 1 + δ)γ
+                             Bfar := max{p−1
+                                          0 , κ}           +             .                        (3.9)
+                                                      1−α        δ
+
+
+                                                     10
+Cost comparison at a nearby representative scale. Now suppose Ks ≤ T1 Vj . Consider the
+mass on the old set Fj , using nominal rounded masses on U and actual rounded masses in the
+bundles. This mass is available in the actual opening vector. Its unconditional expected cost is at
+most Vj /p0 : nominal outside openings have mean yi , and a bundle piece has expected mass at most
+yi /ps ≤ yi /p0 .
+     We bound the expected shortfall of this available mass from one. Write MU for its nominal mass
+on U ∩ Fj . The first and pair moments of the nominal counts imply
+
+                        EMU = y(U ∩ Fj ),             Var(MU ) ≤ g y(U ∩ Fj ) ≤ g.                    (3.10)
+
+For a fixed complete star outcome, put
+
+                                                                          at p′t /pt ,
+                                                                     ∑
+                               at = y(Fj ∩ Pt ),            MP =
+                                                                     t
+
+and write MP for the actual rounded mass on these bundle pieces. Conditional on the star outcome,
+bundle rounding has nonpositive pair covariances within each bundle and is independent between
+bundles. The variance of a single grid-rounded mass of conditional mean y i is at most gy i . Therefore
+
+            E[MP | star outcome] = M P ,             Var(MP | star outcome) ≤ gM P ≤ g/p0 .           (3.11)
+
+   Clipping at 1/2 cannot increase distance from ct ≤ 1/2, so Equation 3.6 gives
+
+                             E|p′t − pt | = E|ct − Zt∗ |
+                                                                     √
+                                         ≤ E|ct − Zt | ≤ γct +           g(1 + γ)ct .                 (3.12)
+
+        t at ≤ 1, it follows that
+        ∑
+Since
+                          ⏐          ⏐                       √
+                          ⏐      ∑ ⏐⏐ ∑ at                γ + g(1 + γ)
+                                               ′
+                        E ⏐M P −  at ⏐ ≤    E|pt − pt | ≤              .
+                          ⏐
+                          ⏐
+                                    t
+                                     ⏐   pt    t
+                                                              p0
+
+Use the identity y(U ∩ Fj ) + t at = 1, the triangle inequality, and the second-moment bounds in
+                               ∑
+
+Equations 3.10–3.11. The expected shortfall is at most
+                                                                                         √
+                                                            √        √             γ+    g(1 + γ)
+                E(1 − MU − MP )+ ≤ H,               H :=        g+       g/p0 +                   .   (3.13)
+                                                                                         p0
+In particular no independence between outside counts and rescaled bundle masses is being assumed.
+    Trim any surplus mass on Fj , which cannot increase its cost. To fill a remaining shortfall, there
+is always one unit of available opening within distance
+
+                                     QVj ,         Q := M + (1 + δ)T1 ,
+
+from j. Indeed, if cs = 0, there are no activations at s and Ps has exactly one unit, all at
+distance at most D + Rs ≤ (M + T1 )Vj . If cs > 0, use Ps and the bundle Pt of a nearest other
+representative. They are disjoint and each has at least half a unit. Their supply lies within distance
+D + (1 + δ)Ls ≤ QVj . This supply can fill the shortfall even if some of it is already used: if the
+current assignment has mass 1 − q, a ball containing at least one opening unit contains at least q
+unused units. Allocate those units to finish the assignment. By Equation 3.13, the unconditional
+expected nearest-unit cost is at most Bnear Vj , where
+
+                                             Bnear := p−1
+                                                       0 + QH.                                        (3.14)
+
+                                                       11
+Choosing parameters and enforcing the budget. Equations 3.9 and 3.14 give explicit bounds
+that approach one in the stated order of parameter choices. More precisely, first choose δ small
+to make the limiting value of κ close to one. Next choose M large so that p−10 is close to one, and
+then choose T1 large so that α and β are small. With these constants fixed, choose γ small enough
+to control both the last term of Bfar and the term Qγ/p0 in Bnear . Finally choose g small enough
+to control all square-root terms and ρ in Equation 3.7. All constants may be rational, and all
+sufficiently small g = 1/∆ with even ∆ satisfy the resulting strict bounds. In particular, arrange
+
+                                               max{Bfar , Bnear }
+                               ρ < 12 ,                           ≤ 1 + η.
+                                                   1−ρ
+    Reject a star-rounding outcome outside G and repeat. For the purpose of the preceding
+unconditional analysis, the subsequent bundle rounding can be imagined on every outcome. Let
+Ṽj denote the resulting nearest-unit cost. Its nonnegativity, rather than any independence from G,
+gives
+                                                 EṼj
+                                   E[Ṽj | G] ≤       ≤ (1 + η)Vj .                           (3.15)
+                                                 P(G)
+The already established supply and opening bounds hold on every accepted outcome.
+    The split representation, star list, and number of pair updates are polynomial in the input size.
+Pair updates and subset choices use rational probabilities and rational linear operations. Their
+encodings have polynomial bit length: each weighted update introduces only ratios of integer weights
+bounded by |S|, and there are polynomially many updates; the subsequent rescalings divide by the
+rational masses ps . Exact rational sampling has expected polynomial running time. The acceptance
+probability is at least one half, so rejection multiplies the expected running time by at most two.
+This proves the theorem.
+
+
+4    A finite inequality for the drift
+The cost analysis uses an inequality on a finite probability space. Its comparison matrix need not
+be symmetric. The proof allows a positive contribution at one index only by charging indices with
+smaller values; the negative contributions at those indices pay the entire charge.
+   The statement below is independent of the rounding construction. Section 5 will apply it to
+normalized client distances and directed edge probabilities; Equation 5.27 records that substitution.
+We prove the finite statement first so that the geometric analysis can use it as a single input.
+   For 0 ≤ x ≤ 1, define
+                                   ∫ 1                               ∫ 1
+                    A(x) = 1 + 2         (1 − e−tx ) dt,   P (x) =         te−tx dt,
+                                    0                                 0                               (4.1)
+                    B(x) = 2P (x),                         m(x) = A(x) − 1 − 2xP (x).
+
+We suppress ∫the argument x when it is fixed. Differentiation under the integral gives A′ = B and
+A′′ (x) = −2 01 t2 e−tx dt < 0. In particular, 0 < P ≤ 1/2 and m ≥ 0, the latter by concavity and
+A(0) = 1. Integration by parts also gives
+                                                                                                 2
+           (1 + x)(A − 1) = 2x(1 − P ),           (1 + x)A + xB − 1 = 3x,              A(1) = 1 + .   (4.2)
+                                                                                                 e
+These identities hold at x = 0 as well, using the integral definitions.
+
+
+
+                                                      12
+Theorem 4.1 (Finite comparison inequality). Let I be a finite index set with probability weights
+(πi )i∈I , and let Di ≥ 0 satisfy Ei Di = 1. Both Ei and Et denote expectation with these weights; in a
+double expectation the two indices are sampled independently. Fix 0 ≤ x ≤ 1 and 0 < y ≤ 1, and set
+                                                          P (y − x)2
+                                                 Θ=                  .
+                                                               y
+Suppose qti ∈ [0, 1] and Ri ≥ 0 satisfy
+                                  Ri (1 − P qti ) ≤ Di + Dt           whenever qti < 1.                      (4.3)
+No symmetry is assumed for q. For any si ∈ [0, 1], put ri = Et qti and Ci = 1 − P si . Then
+                          [
+                      Ei Ci (1 − ri )Ri + ri {mDi + (2 − si )P y(Di + 1)} − Ci (Di + 1)
+                                                     (                          ) ]                          (4.4)
+                                    − Et (1 − qti ) Dt − (1 + m + 2P y)Di + ≤ 2Θ.
+
+Here u+ = max(u, 0).
+   The proof will bound each positive row by charges sent to indices with smaller D values, then
+show that those receiving rows pay all incoming charges. The scalar estimates below locate the
+positive rows, bound the largest value they can charge, and certify the required negative contributions.
+Every terminating decimal denotes an exact rational number.
+Lemma 4.2 (Scalar bounds). Fix x ∈ [0, 1], put X = 1 − x, and take 0 ≤ w ≤ X and s ∈ {0, 1}.
+Use the functions in Equation (4.1), and define
+       z = P w2 ,        b = (2 − s)P (x + w),            a = A + 2P w,                      C = 1 − P s,
+      d0 = .52,       d1 = .4,                           H0 = .394 − .42X 2 + .04X 3 , H1 = .25,
+                                √                                                                            (4.5)
+                              1− 1−P
+      Js = CHs , ks = (1 − s)   √    .
+                              1+ 1−P
+For q, r ∈ [0, 1], set
+                                  1−q
+                           ψ(q) =       ,            κs (q) = Cψ(q) − (1 − q),
+                                 1 − Pq
+                                                                                                             (4.6)
+                          K(r) = C − ks − br + 1.6z, L(r) = (C − m − b)r + .4z,
+                          M (r) = (1 − r)a + CP r,               G(r) = M (r) − L(r).
+Then the following five bounds hold on the indicated domains:
+                                                            .4z   C(1 − P )
+                                                 m+b−           ≤                         (0 < r ≤ 1),       (4.7)
+                                                             r     1 − Pr
+                      L(r) ≥ 0,         K(r) > 0,          K(r) ≥ ds G(r)                 (0 ≤ r ≤ 1),       (4.8)
+         (                    )
+             (Js − b)r + 1.6z M (r) + (C − ks − Js r)L(r) ≥ 0                             (0 ≤ r ≤ 1),       (4.9)
+                                                 (                )
+                    C − ks + 1.6z − bq + .52 ks − κs (q) ≥ H0                             (0 ≤ q ≤ 1),      (4.10)
+                                           C − ks + 1.6z − b ≥ .25.                                         (4.11)
+Proof. The scalar bounds are proved in Appendix A by analytic reductions and exact polynomial
+certificates.
+
+Proof of Theorem 4.1. We may discard indices of probability zero. The proof treats the quantities
+with a fixed second index i as a row, with t indexing its columns.
+
+                                                            13
+Reduction of the parameters. For fixed x, D, q, R, s, the left side of Equation (4.4) is nonde-
+creasing in y. The coefficient of its linear y term is nonnegative, and increasing y decreases the
+positive part that is subtracted. Replace y there by max(x, y) = x + w, where 0 ≤ w ≤ X = 1 − x,
+and put z = P w2 . If y < x, then z = 0 ≤ Θ; otherwise z = P (y − x)2 ≤ Θ, since y ≤ 1. It is
+therefore sufficient to bound the modified left side by 2z.
+   This modified left side is affine separately in every si , and its hypotheses do not constrain si . Its
+maximum over [0, 1]I is attained with every si ∈ {0, 1}. Fix such a choice. For each row use the
+notation of Lemma 4.2, with s = si , and temporarily suppress the row subscript. Write D = Di ,
+R = Ri , q = qti , Z = Dt , and r = Et qti , and put
+
+                                         U = mD + b(D + 1).
+
+Notice that a = 1 + m + 2P (x + w). Define the row contribution
+
+              F = C(1 − r)R + U r − C(D + 1) − Et (1 − q)(Z − aD)+ − (.4D + 1.6)z.                 (4.12)
+
+Because Ei Di = 1, proving Ei Fi ≤ 0 proves the desired bound 2z.
+
+A centered majorant for each row.           For s = 0, direct maximization gives
+                                                         √
+                                        P q(1 − q)   1− 1−P
+                               κ0 (q) =            ≤     √       = k0 .
+                                         1 − Pq      1+ 1−P
+For s = 1, one has κ1 (q) = −P (1 − q)2 /(1 − P q) ≤ 0 = k1 . Also
+
+                                ψ(q) = 1 − q + P qψ(q) ≤ 1 − q + P q,                              (4.13)
+
+since ψ(q) ≤ 1.
+    Equation (4.3) implies (1 − q)R ≤ ψ(q)(D + Z) when q < 1. This last inequality also holds when
+q = 1, as both sides are zero. Using (Z − aD)+ ≥ Z − aD in Equation (4.12) gives
+                      [                                                                  ]
+              F ≤ Et U q + D{Cψ(q) + a(1 − q) − C} − (.4D + 1.6)z − C + κs (q)Z .
+
+The centering identity
+                                 Et [κs (q)Z] = ks − Et [(ks − κs (q))Z]
+uses Et Z = 1. Thus, defining the explicit function
+
+                    Is (D; q, Z) = [mD + b(D + 1)]q + D{Cψ(q) + a(1 − q) − C}
+                                                                                                   (4.14)
+                                   − (.4D + 1.6)z − C + ks − (ks − κs (q))Z,
+
+we have
+                                        Fi ≤ Et Isi (Di ; qti , Dt ).                              (4.15)
+The replacement of ks Z by ks is made only under expectation. Subsequent pointwise bounds will
+concern the function in Equation (4.14).
+   Since ks − κs (q) ≥ 0 and Z ≥ 0, dropping the last term and using Equation (4.13) yields
+
+                                     Is (D; q, Z) ≤ DG(q) − K(q).                                  (4.16)
+
+Both G and K are affine in their argument, so averaging gives
+
+                                          F ≤ DG(r) − K(r).                                        (4.17)
+
+                                                     14
+Charges issued by positive rows. If r = 0, then q = 0 at every column and averaging
+Equation (4.3) gives R ≤ D + 1. Equation (4.12) then gives F ≤ 0. Consequently a row with F > 0
+has r > 0. By Equations (4.8) and (4.17), it also has
+                                                           K(r)
+                                     G(r) > 0,       D>         ≥ ds .                           (4.18)
+                                                           G(r)
+In this row put
+                                               U r − (.4D + 1.6)z
+                                        U′ =                      .
+                                                       Cr
+The identity
+                                      D+1      .4z                     m 1.2z
+                                            (                  )
+                              U′ =        m+b−                     −     −
+                                       C        r                      C   Cr
+and Equation (4.7) imply
+                                                (D + 1)(1 − P )
+                                         U′ ≤                   .                                 (4.19)
+                                                    1 − Pr
+On the other hand, discarding the nonpositive hinge term in Equation (4.12) gives F/C ≤ (1 −
+r)R + rU ′ − (D + 1). If R ≤ (D + 1)/(1 − P r), Equation (4.19) makes this upper bound nonpositive.
+Therefore
+                                         D+1
+                                   R>            ,    U ′ ≤ R(1 − P ).                            (4.20)
+                                         1 − Pr
+In particular r = 1 is impossible for a positive row, since Equation (4.19) would then give U ′ ≤ D + 1.
+    For every column with q < 1, Equations (4.3) and (4.20) now give
+
+                               (1 − q)R + qU ′ ≤ R(1 − P q) ≤ D + Z.
+
+For q = 1, the excess of the left side over D + Z is exactly U ′ − D − Z. Using Et Z = 1 and again
+discarding the nonpositive hinge term, we obtain
+
+                       F ≤ CEt 1{q=1} (U ′ − D − Z)+ ≤ CEt (U ′ − D − Z)+ .
+                                [                          ]
+                                                                                                 (4.21)
+
+This treats the unconstrained columns with q = 1 explicitly.
+    It remains to bound the largest value to which this row can charge. An exact rearrangement
+gives
+                                            br − 1.6z − L(r)D
+                                  U′ − D =                    .
+                                                    Cr
+Set T = (Js − b)r + 1.6z. The expression in Equation (4.9) is
+
+                      T M (r) + (C − ks − Js r)L(r) = T G(r) + K(r)L(r) ≥ 0.                     (4.22)
+
+Using L(r) ≥ 0 and Equation (4.18), we conclude that
+                                                                   L(r)K(r)
+                         br − 1.6z − L(r)D ≤ br − 1.6z −                    ≤ Js r.
+                                                                     G(r)
+Thus U ′ − D ≤ Hs . Since C ≤ 1, Equation (4.21) proves
+
+                                    Fi ≤ Et (Hsi − Dt )+           (Fi > 0).                     (4.23)
+
+The function H0 decreases from .394 to .014 on [0, 1], and H1 = .25. Consequently every nonzero
+charge in Equation (4.23) goes to an index with Dt < .394. This separates every possible receiving
+index from all positive rows, which have Di > dsi ≥ .4. It remains to prove that the negative
+contribution of each receiving row covers the total charge it receives.
+
+                                                    15
+Negative rows cover the incoming charges.              Put c∗ = .394 and define
+
+               P = {i : Fi > 0},      S = {i : Di ≤ c∗ },      Γit = 1{i∈P} (Hsi − Dt )+ .
+
+Equation (4.18) shows that P ∩ S = ∅, because ds ≥ .4 > c∗ . We claim that every i ∈ S satisfies
+
+                                            Fi + Et Γti ≤ 0.                                     (4.24)
+
+   Fix such an i and a column t. Hold q = qti , Z = Dt , the two types si , st , and χ = 1{Ft >0} fixed.
+As a function of a variable D ∈ [0, c∗ ],
+
+                                     Isi (D; q, Z) + χ(Hst − D)+
+
+is convex: the first term is affine and the second is a positive part multiplied by a nonnegative
+constant. It suffices to bound this expression at D = 0, c∗ . This check concerns the explicit majorant;
+it does not require the comparison hypothesis to remain valid when the variable D changes.
+    At D = c∗ , the incoming charge is zero. By Equation (4.16), the remaining term is at most
+c∗ G(q) − K(q) ≤ 0. Indeed, if G(q) < 0, use K(q) > 0; otherwise use K(q) ≥ dsi G(q) and c∗ < dsi .
+    At D = 0, Equation (4.14) reads
+
+                          Isi (0; q, Z) = bq − 1.6z − C + ks − (ks − κs (q))Z,
+
+where the unindexed scalar parameters belong to row i. If χ = 1 and st = 0, the positive donor row
+t satisfies Z = Dt > d0 = .52. Since ks − κs (q) ≥ 0, Equation (4.10) gives Isi (0; q, Z) ≤ −H0 , which
+covers its incoming charge. In the other cases the charge is either zero or H1 = .25. Equation (4.11),
+together with q ≤ 1, gives
+
+                               Isi (0; q, Z) ≤ b − 1.6z − C + ks ≤ −.25,
+
+which covers these cases as well. Convexity proves the pointwise bound throughout [0, c∗ ]. Apply it
+at D = Di and average over t in Equation (4.15) to obtain Equation (4.24).
+    Finally, the incoming charge is Γti by definition, and exchanging the two finite sums requires no
+symmetry of q. Equation (4.23) bounds all positive rows by their outgoing charges; Equation (4.24)
+makes all receiving rows pay their incoming charges; all other rows have nonpositive contribution.
+Every nonzero Γit has i ∈ P and t ∈ S. Exchanging the two indices in the finite sum with weights
+πi πt therefore gives
+                                     Ei Fi ≤ Ei,t Γit − Ei,t Γti = 0.
+This proves the stronger bound 2z after the parameter reduction and, since z ≤ Θ, proves Equa-
+tion (4.4).
+
+
+5    Tapered iterative rounding
+This section rounds a sufficiently fine grid solution. The graph used for rounding gives every active
+copy one unit of possible incoming erasers. Its distance-dependent taper makes the opening that
+accompanies an erasure comparable to the client’s surviving candidates. A potential that retains
+some cheap candidates after an opening converts this comparison into an application of Theorem 4.1.
+
+Theorem 5.1 (Rounding a grid solution). For every fixed τ > 0 and all sufficiently large constant
+integers ∆, put g = 1/∆. Suppose a finite rational metric instance has openings ỹi ∈ [0, 1] ∩ gZ of
+total mass M ≥ 1. For a client j, let Vj,0 be the cost of its nearest unit of this mass. There is a
+
+                                                  16
+constant C = C(τ, ∆) and a randomized algorithm of expected polynomial running time that outputs
+a set O of facilities with
+                |O| ≤ M + C,       Ed(j, O) ≤ (1 + 2/e + τ )Vj,0          for every client j.
+All parameters and the additive constant are independent of the instance. In particular, an initial
+mass at most k + c0 , for a fixed constant c0 , gives at most k + c0 + C facilities. The deterministic
+implementation of the resulting total-cost guarantee is given in Section 6.
+   We prove the theorem using the functions A, P, B, m defined in the preceding section. Thus
+B(x) = 2P (x) = A′ (x) and m(x) = A(x) − 1 − xB(x). We use, in particular,
+                       0 < B(x) ≤ 1,       B(x) ≥ 2P (1) > 0,             m(x) ≥ 0,
+                                                                                                 (5.1)
+                          (1 + x)A(x) + xB(x) − 1 = 3x              (0 ≤ x ≤ 1).
+The identities and derivative bounds used below follow directly from the defining integrals. Constants
+implicit in O∆ (·) may depend on ∆, but not on the instance, the round, or the subsequent heavy-
+source threshold.
+
+5.1   The graph and the physical process
+The source-opening and neighbor-erasure operation follows the framework of Byrka et al. [6,
+Definitions 3.2 and 5.1]. We specify the graph, taper, and batches here because their precise
+properties will be used in the sub-two drift analysis.
+    Represent each opening by active copies of mass g, grouped by facility. Each group has at most
+∆ active copies. Co-located facilities introduced by earlier splitting may remain distinct groups
+throughout the process; they can be merged in the output. A group always means one such labeled
+facility group, rather than an entire zero-distance class. An integral group has exactly ∆ copies.
+    Fix a small time step ℓ > 0 and a large time horizon Λ. There are T = ⌈Λ/ℓ⌉ rounds. At the
+start of round r ∈ {0, . . . , T − 1} let ξ = rℓ and x = e−ξ . For that round choose a fixed rational
+number P̂ satisfying
+                             0 < P̂ ≤ 12 ,    |P̂ − P (x)| ≤ ζ,   0 < ζ < 14 .                   (5.2)
+The finitely many rational approximations may be fixed in advance. The analytic value x is used
+only in the analysis.
+   For each active target copy i, independently of the other targets conditional on the current state,
+choose a set Hi of exactly ∆ active source copies. If the colocated active mass is below one, choose
+Ni > 0 minimally so that
+                                       (1 − d(i, h)/Ni )+
+                                   {                        }        ∑
+                        qhi = min 1,                            ,         gqhi = 1,              (5.3)
+                                               P̂                     h
+
+and give Hi these marginals. Such a radius exists: the sum is continuous and nondecreasing in the
+positive radius, starts below one, and reaches the total active mass at a finite radius. This last
+observation also handles total active mass exactly one. The equation is piecewise linear in 1/Ni .
+Fixed-sum rounding realizes the marginals since their unscaled sum is the integer ∆.
+    If the colocated active mass is already at least one, set Ni = 0 and choose ∆ colocated copies,
+including every active copy in the target’s own group. Any fixed such choice suffices in this case;
+denote its marginals by qhi as well. In either case every own-group copy belongs to Hi with certainty,
+and
+                              Ni (1 − P̂ qhi ) ≤ d(i, h)         if qhi < 1,
+                                                                                                 (5.4)
+                                      d(i, h) ≤ Ni (1 − P̂ qhi ) if qhi > 0.
+
+                                                    17
+For Ni > 0 these statements follow from the three cases of the clipped linear formula; for Ni = 0 all
+sources of positive marginal are colocated. Define the out-set of source h by
+
+                                             Eh = {i : h ∈ Hi }.
+
+A full update at h erases Eh and opens the facility of h.
+    We use balanced and biased unbalanced batches, with forced openings for large updates, as in
+the approach of Byrka et al. [6, Algorithms 4–5 and Section 5.4]. The exact batch and chunk rules
+below are part of our construction. To implement many updates while controlling the total opening
+mass, put
+
+          uh = 1 − g|Eh |,      Z = {h : uh = 0},               P = {h : uh > 0},   N = {h : uh < 0}.
+                                                 ∑
+Every target has ∆ incoming sources, so           h uh = 0. Write
+                                    ∑            ∑
+                             A∗ =         uh =         |uh |,       |P ∪ N | ≤ 2A∗ /g.                  (5.5)
+                                    h∈P          h∈N
+
+The last inequality uses that each nonzero uh is a nonzero multiple of g. Choose a further small
+constant b∗ > 0, to be fixed last, and put
+
+                                            B∗ = max{1, b∗ A∗ }.
+
+A source is heavy if g|Eh | > B∗ . Force open the facilities of all heavy sources, whether or not any
+random update is triggered.
+    All random choices and erasure sets in a round refer to its pre-round graph and active copies.
+Set p∗ = 2ℓg, and fix a small bias 0 < ϕ ≤ 1. Flip an independent fair coin to choose one of the
+following two types of round.
+   1. In a balanced round, propose each h ∈ Z independently with probability p∗ . Select a proposed
+      source only if no other proposed source has an out-set intersecting its out-set.
+   2. In an unbalanced round, select sources of P independently with probability p∗ , and nonheavy
+      sources of N independently with probability p∗ (1 + ϕ). For each heavy source, partition
+      its out-set into chunks of mass at most B∗ + 1 and trigger each chunk independently with
+      probability p∗ (1 + ϕ). A triggered chunk erases just that chunk; its source facility is already
+      included among the forced openings.
+All probabilities are at most one for the parameter choices below. Take the union of the selected full
+out-sets and triggered chunks and erase it. Then reset each forced or selected facility to ∆ active
+copies. Copies removed by either erasure or reset are distinct from the regenerated copies.
+    Two invariants are useful. First, an integral target group’s own ∆ copies exhaust each of its
+incoming sets. Therefore an erasure of an integral group is caused by one of its own sources; that
+source either is selected or is heavy. The group is reset in either case. Thus integral facilities persist,
+including when other facilities are colocated with them. Second, every erasure has an associated
+selected or forced opening. Hence total active mass always stays at least one. The construction of
+the next round’s graph is consequently well defined.
+
+5.2    The opening-count bound
+We first bound the number of facilities independently of connection cost. The next lemma controls
+the total active mass with high probability; completion will later turn that mass bound into a
+facility-count bound.
+
+                                                          18
+Lemma 5.2 (Constant additive count). Fix g, ϕ, ℓ, T as above, with ℓ sufficiently small as a function
+of ∆ and ϕ. For every fixed η > 0, one can choose b∗ > 0 and a constant C such that the final active
+mass is at most M + C with probability at least 1 − η. The bound holds uniformly over all starting
+states of total mass M .
+Proof. Condition on the entire pre-round state and its realized graph. Write A = A∗ , B = B∗ ,
+p = p∗ , and mh = g|Eh | for this proof. If n is the number of active copies, then h mh = n. Each
+                                                                                  ∑
+
+source in the zero class has mh = 1, so removing that class gives
+                                              ∑
+                                                    mh = |P ∪ N |.
+                                            h∈P∪N
+
+Every heavy source lies in N because B ≥ 1. If H is their number, then
+                                      |P ∪ N |        2A           2
+                               H≤              ≤                ≤     .                          (5.6)
+                                         B       g max{1, b∗ A}   gb∗
+Thus forced resets add at most a constant mass. If A = 0, there are no heavy sources and the same
+conclusions hold directly.
+    In a balanced round, the selected erasure sets are disjoint and each has mass one. Opening one
+facility for each selected source adds at most one unit per set, so there is no mass increase except
+the forced allowance.
+    For an unbalanced round index the ordinary selections and heavy chunks by actions e. Let Ie be
+the trigger indicator, Se its erased set, me = g|Se |, and ae = 1 for an ordinary selection or 0 for a
+chunk. Resetting facilities adds at most one unit per ordinary selection in addition to the forced
+allowance. More explicitly, the change in active mass is at most
+                                                      ⏐           ⏐
+                                              ∑       ⏐ ⋃         ⏐
+                                                      ⏐           ⏐
+                                      H+   ae Ie − g ⏐⏐       Se ⏐⏐ .
+                                         e            ⏐e:Ie =1 ⏐
+
+The union is a set of pre-round copy identities. A reset may remove additional old copies outside
+this union, which only decreases the change. Counting a selected or forced group more than once
+likewise only enlarges the upper bound. Truncated inclusion–exclusion bounds the erased union
+from below. Consequently the mass increase, apart from forcing, is at most
+                                    ∑                        ∑
+                             Z∗ =          Ie (ae − me ) +         g|Se ∩ Sf |Ie If .            (5.7)
+                                      e                      e<f
+
+This remains an upper bound when several selected copies have the same facility or when a selected
+facility was also forced.
+    Chunking preserves total erasure mass. There are |P ∪ N | − H ordinary actions, and hence
+                               ∑
+                                    (me + ae ) = 2|P ∪ N | − H ≤ 4A/g.                           (5.8)
+                                e
+
+The expectation of the linear part of (5.7) is exactly
+
+                               pA − p(1 + ϕ)A − p(1 + ϕ)H ≤ −pϕA.
+
+The last term pays for the absence of a new opening in a chunk action. Each target belongs to at
+most ∆ action sets, even after chunking. Therefore
+                                     ∑                     ∆−1∑
+                                           g|Se ∩ Sf | ≤        me .
+                                     e<f
+                                                            2 e
+
+
+                                                      19
+Independence of the indicators bounds the overlap expectation by O(p2 ∆A/g). Since p = 2ℓg,
+taking ℓ small enough relative to ϕ and ∆ gives
+
+                                             EZ∗ ≤ −pϕA/2.                                           (5.9)
+
+   Flipping coordinate Ie changes Z∗ in absolute value by at most ae + ∆me . The Efron–Stein
+independent-coordinate variance inequality [4, Section 2.2, Proposition 1], the bound ae +me ≤ B +2,
+and (5.8) give                          ∑
+                     Var Z∗ ≤ O(p∆2 ) (ae + me )2 ≤ O(p∆2 )(B + 2)A/g.                         (5.10)
+                                             e
+If A > 1/b∗ , then B = b∗ A > 1. Combining (5.9) and (5.10) yields
+                                                                (     )
+                                                      ∆2 b∗
+                                        P(Z∗ > 0) ≤ O                     .                         (5.11)
+                                                      pϕ2 g
+
+If instead A ≤ 1/b∗ , there are at most 2/(gb∗ ) ordinary sources in the nonzero classes. The actual
+positive mass change is then bounded deterministically by this constant plus the forced allowance; a
+deterministic bound on the quadratic statistic is unnecessary.
+    Choose b∗ sufficiently small that the union bound for (5.11) over the T rounds is at most η.
+On the complementary event the total increase is at most, for example, 4T /(gb∗ ). This proves the
+lemma with a constant C. The proof was conditional on every state and graph, so the same union
+bound applies to the adaptive sequence of rounds.
+
+    For later use, the mean and variance of Z∗ depend only on indicator moments through degree
+four, since Z∗ is a quadratic polynomial. The probability bounds for balanced selections below need
+only first and second moments of their proposal indicators. These are the moment requirements
+used in Section 6.
+
+5.3    A persistent backup and final completion
+We next establish a persistent bound on each client’s eventual connection distance, including
+trajectories on which none of its assigned copies opens. This is the backup-and-completion role
+in iterative rounding [6, Section 3.3 and Lemmas 6.3 and 6.5]; the following argument proves the
+bound for our tapered graph and reset rule.
+    Fix a client for the remainder of the analysis. Let S0 be the ∆ copies in its initial nearest unit,
+chosen using any fixed tie-breaking rule. Write di for its distance to copy i,
+                                            ∑
+                                     V0 =          gdi ,        R = max di .
+                                                                     i∈S0
+                                            i∈S0
+
+In particular R ≤ ∆V0 .
+Lemma 5.3 (Backup and completion). Once a copy of S0 is physically removed, an integral facility
+within distance 5R of the client exists and persists to the end. At the end of the process one can
+retain all integral facilities and open further facilities, using no more than the total final active mass,
+so that every client is connected within its own distance 5R.
+Proof. Consider the round of the first physical removal from S0 . Just before that round all of S0 is
+still active. For i, t ∈ S0 , d(i, t) ≤ di + dt ≤ 2R. At radius 2R/(1 − P̂ ), the ∆ copies of S0 all have
+incoming marginal one for target i. Minimality of the taper radius gives
+
+                                        Ni ≤ 2R/(1 − P̂ ) ≤ 4R.
+
+                                                           20
+If R = 0, the zero-radius rule gives the same conclusion directly. An erasing source h has d(i, h) ≤ Ni
+by (5.4), and hence dh ≤ 5R. Its facility is either selected or forced open. A removal by reset of i’s
+own group instead opens a facility within R. The persistence invariant proves the first assertion.
+    At the end, consider the clients not already served within 5R by an integral facility. The first
+assertion implies that every such client still has all its original S0 copies. Its radius-R neighborhood
+of active copies therefore has mass at least one. That neighborhood contains no integral group,
+since such a group would itself provide the required connection.
+    Process these neighborhoods in nondecreasing order of their radii. Accept a neighborhood if it
+is disjoint from all previously accepted ones and open any facility in each accepted neighborhood.
+These disjoint neighborhoods each contain at least one unit of mass and contain no integral group.
+Their openings, together with the retained integral groups, therefore fit within the final active mass.
+If a radius-R neighborhood was skipped, it meets an accepted radius-R′ neighborhood with R′ ≤ R.
+Through an intersection point, the distance to the accepted neighborhood’s chosen facility is at
+most R + 2R′ ≤ 3R. This proves the asserted 5R bound for every client, also when some radii are
+zero.
+
+    At any intermediate time define b to be the distance from the fixed client to its nearest integral
+facility, capped at 5R; when no integral facility exists use b = 5R. By persistence and Lemma 5.3,
+the eventual completed solution has connection distance at most b at every time on the trajectory.
+The cap need not already be attained by an open facility. It is a valid bound on the eventual
+connection because completion supplies 5R on every trajectory. The quantity b never increases.
+
+5.4   The potential and its single-action bounds
+For analysis only, track an alive set S ⊆ S0 of original copies. A physically removed copy leaves S
+permanently, even when its facility is reset with regenerated copies. We also permit the additional
+discards specified below. Put                            ∑
+                                      y = g|S|,     V =     gdi .
+                                                         i∈S
+
+At elapsed time ξ, with x = e−ξ , define
+
+               f = aV + (1 − y)b,       a = A(x) + B(x)(y − x) = 1 + m(x) + B(x)y.               (5.12)
+
+The coefficient a is the value at y of the tangent line to the concave function A at x; x is a
+deterministic clock, while y is the realized alive mass. Its affine dependence on y makes the erasure
+correction quadratic in removed mass and cost, so the graph average of the ideal bound below
+requires only first and second edge moments. In particular a ≥ 1. The initial potential is
+
+                                     f0 = A(1)V0 = (1 + 2/e)V0 .                                 (5.13)
+
+If Cj denotes the actual connection distance in the completed output, the preceding cap property
+gives
+                                Cj − fT ≤ yT bT − aT VT ≤ 5RyT .                           (5.14)
+The potential and every single-action bound below are O(R) uniformly over time: V ≤ R, 0 ≤ y ≤ 1,
+b ≤ 5R, and a is bounded.
+    We first freeze time and the graph. Write B = B(x) and bh = min{b, dh }. For a source h ∈/ S,
+let                                                      ∑
+                                δh = g|Eh ∩ S|,    Yh =        gdi .
+                                                           i∈Eh ∩S
+
+
+                                                  21
+                         A full update at an alive source h ∈ S opens its facility
+
+
+                                                                                     i ∈ S \ Eh
+                                                 i ∈ S \ Eh
+                  S ∩ Eh                                                            with adi ≥ dh
+                                                with adi < dh
+            Physically erased                                                     Physically survives;
+                                               Physically survives
+           and removed from S                                                       discarded from
+                                               and remains alive
+                                                                                     the analysis
+
+
+                            The opened facility is reset to ∆ active copies.
+              These regenerated copies are not original identities in S0 and do not enter S.
+
+
+Figure 1: One full source update, with no simultaneous relevant action. Only the middle group
+contributes to the continued alive assignment. The dashed branch is an analysis discard, not a
+physical erasure. Positions are schematic and represent no metric geometry.
+
+
+If only this full source update affects S, its removal changes the coefficient to a − Bδh and makes
+the new cap at most bh . Its potential change is consequently at most
+
+                           (a − Bδh )(V − Yh ) + (1 − y + δh )bh − f
+                              = δh bh − aYh − Bδh (V − Yh ) + (1 − y)(bh − b)
+                              ≤ δh bh − aYh − Bδh (V − Yh ).
+
+The same statement holds when h is not alive but its group contains alive copies: all those copies
+belong to Eh by the own-group edges, so its reset creates no unaccounted removal.
+    If an alive source h ∈ S opens, retain among the physical survivors only copies satisfying
+adi < dh . If their mass and cost are y ′ , V ′ , their new coefficient is at most a and their new cap is at
+most dh . Therefore
+                           f ′ ≤ aV ′ + (1 − y ′ )dh = dh −
+                                                               ∑
+                                                                    g(dh − adi )+ .
+                                                                  i∈S
+                                                                 h/∈Hi
+
+Copies satisfying equality can be discarded without changing this bound. Figure 1 separates physical
+erasure from these additional analysis discards. This continuation after an opening supplies the
+subtraction that will enter Theorem 4.1.
+   The ideal first-order bound, assigning rate g to each full source update, is thus
+                                           ⎡                                 ⎤
+                                    ∑      ⎢         ∑                       ⎥
+                               B=          ⎣dh −
+                                          g⎢                g(dh − adi )+ − f ⎥
+                                                                              ⎦
+                                    h∈S              i∈S                                                 (5.15)
+                                                    h/∈Hi
+                                        ∑
+                                    +         g [δh bh − aYh − Bδh (V − Yh )] .
+                                         ∈S
+                                        h/
+
+At a fixed alive set and cap, the time derivative is
+
+                                          f˙ = −x(y − x)B ′ (x)V.                                        (5.16)
+
+Indeed the derivative of A(x) + B(x)(y − x) with respect to x is B ′ (x)(y − x).
+
+
+                                                       22
+5.5   From the physical batch to the ideal bound
+For the actual analysis update, first account for forced openings by removing from S all copies
+whose groups are forced and updating the cap. Then apply the round’s erasures and resets. If a
+source that was alive after force removals but before these erasures was selected, choose one such
+source h and discard every remaining copy with adi ≥ dh , using the pre-round value of a. This is
+purely an analysis rule and need not be computed by the algorithm.
+
+Lemma 5.4 (Conditional batch drift). For every pre-round history and every realized graph, the
+physical round, the above alive-set update, and the time advance satisfy
+
+                        E[fr+1 − fr | history, graph] ≤ ℓ(f˙ + B) + O∆ (ϕ + ℓ)ℓR .
+                                                                      (         )
+                                                                                                (5.17)
+
+Here B is computed from that graph and the original pre-round alive set. The constants and the
+required upper bound on ℓ are uniform in b∗ .
+
+Proof. First suppose no group containing an alive copy is forced. Call an action relevant if its
+ordinary source is in S, or its ordinary out-set or heavy chunk meets S. There are at most ∆2 + ∆
+relevant actions: each of at most ∆ alive targets has ∆ incoming sources. Own-group edges ensure
+that this list also includes every ordinary reset that can affect S.
+    A balanced source has an out-set of exactly ∆ copies. Every one of those copies belongs to at
+most ∆ source out-sets, so the number ch of potentially conflicting balanced proposals is at most
+∆2 . Including the type coin, its selection marginal is
+                                     1             ch     (          )
+                                     2 p∗ (1 − p∗ )   = ℓg 1 + O∆ (ℓ) .
+
+An unbalanced ordinary or chunk action has marginal ℓg or (1 + ϕ)ℓg. Any two distinct actions have
+joint probability O(ℓ2 g 2 ); actions of opposite types have joint probability zero. These estimates do
+not assert independence of balanced selections after conflict filtering.
+    If no relevant action occurs, only the cap can improve, so the frozen-time potential cannot
+increase. If exactly one relevant ordinary action occurs, its change is bounded by the appropriate
+single-source expression in (5.15). Unrelated selections or forced openings can only lower its cap
+and do not invalidate that upper bound. The probability of two or more relevant actions is O∆ (ℓ2 ),
+and all possible potentials and individual bounds have magnitude O(R). Replacing isolated-action
+probabilities by marginals and their marginals by ℓg therefore costs O∆ ((ϕ + ℓ)ℓR).
+    For a heavy source outside S, its forced facility makes the cap at most bh even when only one
+of its chunks triggers. Force accounting can be done before erasure accounting because no forced
+group in the present case meets S; it only improves the cap. Write δc , Yc for the alive mass and cost
+                                                  ∑           ∑
+removed by chunk c of this source, and δ = c δc , Y = c Yc . Its summed single-chunk bounds
+satisfy
+                   ∑                                                         ∑
+                        [δc bh − aYc − Bδc (V − Yc )] = δbh − aY − BδV + B       δc Yc
+                    c                                                        c
+                                                     ≤ δbh − aY − Bδ(V − Y ).
+
+All cross terms omitted in the last step are nonnegative. Consequently the chunk bounds are
+dominated by the full-source term used in B.
+    The functions in the potential have uniformly bounded derivatives. The chance that a relevant
+action changes S is O∆ (ℓ); changes of the cap alone do not affect (5.16). Advancing time thus adds
+at most ℓf˙ + O∆ (ℓ2 R). This proves the lemma when no alive group is forced.
+
+
+                                                    23
+    Now suppose that forcing does remove alive copies. Let their total mass and cost be δ ≥ g and
+Y , and let b′ ≤ b be the cap after force accounting. Every removed copy is in an opened facility, so
+Y ≥ δb′ . At frozen time, the resulting decrease is at least
+
+                          f − f ′ ≥ (a − 1)Y + Bδ(V − Y ) + (1 − y)(b − b′ )
+                                 ≥ BgV + (1 − y)(b − b′ ).                                       (5.18)
+
+For the second line, use a − 1 = m + By, m ≥ 0, and y ≥ δ ≥ g. At least one removed alive copy
+has distance at most V /g, so b′ ≤ V /g. With
+
+                             Q = V + (1 − y)b,          D = (1 − y)(b − b′ ),
+
+we obtain
+                            Q ≤ (1 + 1/g)V + D,      BgV + D ≥ c∆ Q,
+                                                 2P (1)g
+                                               {         }
+                                     c∆ = min 1,           > 0.
+                                                 1 + 1/g
+Thus forcing supplies a fixed fraction of Q as free savings.
+    After force accounting, the remaining alive cost is at most V and the cap is at most V /g. Any
+further frozen-time increase has magnitude O∆ (V ), and a change to the alive set still has probability
+O∆ (ℓ). If the alive set does not change, the cap only improves. Subsequent actions and time advance
+therefore have expected increase at most O∆ (ℓQ).
+    For comparison with the pre-force ideal expression, we also have
+
+                                         |f˙| + |B| ≤ O∆ (Q).                                    (5.19)
+
+For inside sources, dh ≤ V /g. If y < 1, the grid gives 1 − y ≥ g, so an external cap charge is bounded
+using b ≤ Q/g. If y = 1, the alive set itself is a full unit; its maximum distance is at most V /g. The
+radius argument from Lemma 5.3 then bounds any source erasing an alive copy within 5V /g of the
+client. Only O∆ (1) sources have nonzero contributions. These observations prove (5.19).
+    Choose ℓ sufficiently small in terms of these constants and c∆ . The savings in (5.18) absorb
+both the subsequent expected increase and the possible negative quantity ℓ(f˙ + B). This proves
+(5.17) also in the forced case, without an additional error term. If Q = 0, all the quantities in this
+comparison vanish, so no division by Q is needed. More explicitly, if V = 0 then b′ = 0, and the
+force savings remove (1 − y)b; when also y = 1, relevant source distances and all generator terms
+are zero. The argument is uniform in the later choice of b∗ .
+
+   The order of conditioning in Lemma 5.4 is essential. Whether a group is forced depends on the
+graph. We have proved the drift comparison for every realized graph, in both force cases; we will
+now average that comparison over the original graph law, without conditioning the law on a forcing
+event.
+
+5.6    Averaging the graph and applying the finite inequality
+The physical batch has now been compared with the ideal generator for every realized graph. We
+average that generator using edge marginals and cross-target second moments, then verify the
+hypotheses of the abstract finite comparison inequality. The resulting bound is the cost estimate
+that will be summed over rounds.
+Lemma 5.5 (Averaged ideal drift). Conditional on the pre-round history, the ideal expression
+satisfies
+                              f˙ + Egraph B ≤ BgV + 12ζV.                              (5.20)
+
+                                                   24
+Proof. The pre-round quantities S, y, V, b, x are fixed throughout this proof. Define
+                                      ∑
+                          wi =              gqti ,
+                                      t∈S
+                                      ∑
+                         Kit =              gqhi qht ,                                                                    (5.21)
+                                       ∈S
+                                      h/
+                                      ∑        2
+                                          ∈S gqhi
+                                         h/
+                           si =                            if wi < 1,             si = 0         if wi = 1.
+                                         1 − wi
+We have 0 ≤ wi ≤ y ≤ 1 and 0 ≤ si ≤ 1. The inequality 2uv ≤ u2 + v 2 gives
+
+                                          Kit ≤ 21 si (1 − wi ) + st (1 − wt ) .
+                                                      [                                     ]
+                                                                                                                          (5.22)
+
+No symmetry of the directed marginals qhi is assumed.
+    To average the positive quadratic erasure term, put Xhi = 1{h∈Hi } . Choices for distinct targets
+are independent. Expanding the two removed quantities consequently gives the exact formula
+                                  ∑                  ∑                      ∑              ∑
+                     Egraph           gδh Yh =               g 2 Kit dt +         g 2 di         gqhi (1 − qhi )
+                                 ∈S
+                                h/                   i,t∈S                  i∈S             ∈S
+                                                                                           h/
+                                                     ∑
+                                                ≤            g 2 Kit dt + gV.                                             (5.23)
+                                                     i,t∈S
+     ∑
+Here h gqhi = 1 bounds the diagonal correction.
+    For the cap contribution, the external incoming mass at i is 1 − wi = (1 − y) + (y − wi ). Split it
+in these proportions. On its first part use bh ≤ b, and on its second part use, whenever qhi > 0,
+
+                                  bh ≤ dh ≤ di + d(i, h) ≤ di + (1 − P̂ qhi )Ni .
+
+This yields               ∑                                                  [                           ]
+                                  gqhi bh ≤ (1 − y)b + (y − wi ) di + (1 − P̂ si )Ni .                                    (5.24)
+                          ∈S
+                         h/
+If wi = 1, then y = 1 and both sides are zero, so the convention for si requires no division in that
+case.
+    For completeness, averaging (5.15) before using the cap bound gives, apart from the additive
+term BgV ,
+
+                  [1 − (1 + y)a − By]V − y(1 − y)b
+                        ∑         ∑                       ∑                       ∑                  ∑
+                    +         g         gqhi bh + a             gwi di + BV             gwi + B              g 2 Kit dt
+                        i∈S        ∈S
+                                  h/                      i∈S                     i∈S                i,t∈S
+                        ∑
+                                  2
+                    −           g (1 − qti )(dt − adi )+ .
+                        i,t∈S
+
+The first term of (5.24), summed over i, cancels −y(1 − y)b. The coefficient of V after adding (5.16)
+simplifies using
+                         (1 + y)a + yB + x(y − x)B ′ − 1 = 3y + B(y − x)2 .                    (5.25)
+Indeed (5.1) and its derivative give
+
+                        (1 + x)A + xB − 1 = 3x,                        A + (2 + x)B + xB ′ = 3.
+
+Expanding the left side of (5.25) in y − x has these as its constant and linear coefficients, and has
+quadratic coefficient B.
+
+                                                                  25
+   It follows that f˙ + Egraph B − BgV is at most
+
+                 − [3y + B(y − x)2 ]V
+                              {
+                       ∑                   [                         ]                    ∑
+                   +         g (y − wi ) di + (1 − P̂ si )Ni + awi di + BV wi + B               gKit dt
+                       i∈S                                                                t∈S               (5.26)
+                                                                                    }
+                                                        ∑
+                                                    −         g(1 − qti )(dt − adi )+ .
+                                                        t∈S
+
+    If y = 0, the ideal generator and time derivative are zero. If y > 0 but V = 0, then every di
+with i ∈ S is zero. For any i ∈ S with Ni > 0, all alive sources are colocated with i, so qti = 1 for
+every t ∈ S and wi = y. If Ni = 0, its radius term already vanishes. Every term of (5.26) is then
+zero. Thus the lemma holds in these degenerate cases without normalization.
+   Assume now V > 0, and set
+
+     µ = V /y,         Di = di /µ,             ri = wi /y,        Ri = (1 − 2ζ)Ni /µ,     Ci = 1 − P si .   (5.27)
+
+Give each index i ∈ S probability g/y. Expectations over these indices, written Ei and Et , satisfy
+Ei Di = 1 and ri = Et qti . For q = qti < 1, the taper approximation implies
+
+                                               (1 − 2ζ)(1 − P q) ≤ 1 − P̂ q,
+
+because the difference is at least 2ζ(1 − P q) − ζq ≥ 2ζ(1 − q) ≥ 0. The triangle inequality and (5.4)
+give
+                                 Ri (1 − P qti ) ≤ Di + Dt   (qti < 1).                         (5.28)
+These are precisely the radius hypotheses of Theorem 4.1.
+   The error in changing the taper coefficient is controlled without any bound on individual
+normalized radii. Multiply the first inequality in (5.4) by (g/y)(1 − qti ), sum over t ∈ S, and use
+1 − P̂ qti ≥ 1/2 and d(i, t) ≤ di + dt . This proves
+
+                                                (1 − ri )Ni /µ ≤ 2(Di + 1).                                 (5.29)
+
+Since
+                                      0 ≤ (1 − P̂ si ) − (1 − 2ζ)(1 − P si ) ≤ 3ζ,
+the replacement of (1 − ri )(1 − P̂ si )Ni /µ by Ci (1 − ri )Ri costs at most 6ζ(Di + 1), whose expectation
+is at most 12ζ.
+    Divide (5.26) by yV = y 2 µ and put Θ = P (y − x)2 /y. By (5.22), the normalized kernel term is
+at most                                                [                    ]
+                                BEi,t Kit Dt ≤ P Ei si (1 − yri )(1 + Di ) .
+After the radius replacement, the entire normalized expression is therefore at most
+                                  [
+              −3 − 2Θ + Ei (1 − ri )(Di + Ci Ri ) + ari Di + 2P yri
+                                                                                             ]
+                                      + P si (1 − yri )(1 + Di ) − Et (1 − qti )(Dt − aDi )+ + 12ζ.
+
+Using a = 1 + m + 2P y and Ei Di = 1, this is exactly
+                        [
+                    Ei Ci (1 − ri )Ri + ri {mDi + (2 − si )P y(Di + 1)} − Ci (Di + 1)
+                                                                             ]
+                            − Et (1 − qti )(Dt − (1 + m + 2P y)Di )+ − 2Θ + 12ζ.
+
+
+                                                                26
+Theorem 4.1 bounds the expectation by 2Θ. Multiplication by yV , with y ≤ 1, proves
+
+                           f˙ + Egraph B ≤ BgV + 12ζyV ≤ BgV + 12ζV,
+
+as claimed.
+
+5.7   Survival, accumulated error, and parameter choices
+Lemma 5.6 (Decay of the alive mass). For sufficiently small ℓ depending only on ∆, every client’s
+analysis process satisfies
+                                EyT ≤ (1 − ℓ/2)T ≤ e−Λ/2 .                                 (5.30)
+
+Proof. Condition on a history, a graph, and a currently alive target. If its group is forced, the
+original target identity is removed certainly. Otherwise its ∆ incoming source copies correspond to
+∆ distinct possible actions: each ordinary source gives its selection action, and each heavy source
+gives the unique chunk containing this target. The marginal and pair estimates in the proof of
+Lemma 5.4 give an erasure probability at least
+
+                               ∆ℓg 1 − O∆ (ℓ) − O(∆2 ℓ2 g 2 ) ≥ ℓ/2.
+                                   (          )
+
+
+Here the lower bound is the union bound with pair intersections subtracted. A simultaneous reset
+does not restore the original copy identity, and additional analysis discards only reduce survival.
+The conditional expected surviving mass is thus at most (1 − ℓ/2)y. Iteration, starting from y0 = 1,
+and T ℓ ≥ Λ prove the lemma.
+
+   We finish the proof of Theorem 5.1. First run the process without rejecting count failures, and
+complete every output by Lemma 5.3. Average Lemma 5.4 over the graph and use Lemma 5.5.
+Since V ≤ V0 , B ≤ 1, and R ≤ ∆V0 , summing over T rounds gives
+
+                       EfT ≤ [1 + 2/e + (Λ + 1){g + 12ζ + C∆ ∆(ϕ + ℓ)}] V0
+
+for a constant C∆ , provided ℓ ≤ 1. Equations (5.14) and (5.30) consequently imply the unconditional
+estimate                 [                                                     ]
+                ECj ≤ 1 + 2/e + 5∆e−Λ/2 + (Λ + 1){g + 12ζ + C∆ ∆(ϕ + ℓ)} V0 .                 (5.31)
+All these estimates also apply when V0 = 0: then R = 0, the completed connection cost is zero, and
+no normalization by V0 is used.
+    Here is an explicit order of choices that avoids circular dependence. It suffices to consider
+0 < τ ≤ 1.
+   1. Choose a sufficiently large constant integer ∆ and put g = 1/∆. For each such choice take, for
+      example,
+                                          Λ = ⌈2 log(40∆/τ )⌉ + 1.
+      Then 5∆e−Λ/2 ≤ τ /8. Taking ∆ sufficiently large also makes (Λ + 1)g ≤ τ /8, since
+      g log(1/g) −→ 0. Any additional upper bound on g required by the preparation stage
+      may be imposed at the same time.
+   2. With ∆, Λ fixed, choose a small positive rational ζ so that 12(Λ + 1)ζ ≤ τ /8. Next choose a
+      small positive rational ϕ, and then a small positive rational ℓ, so that
+
+                                       C∆ ∆(Λ + 1)(ϕ + ℓ) ≤ τ /8.
+
+
+                                                  27
+       Require in addition every upper bound on ℓ used in the count, batch, and survival lemmas,
+       and p∗ (1 + ϕ) ≤ 1. The batch constants are uniform in the remaining threshold b∗ , so these
+       requirements can be imposed before choosing that threshold. This fixes the constant number
+       of rounds T = ⌈Λ/ℓ⌉.
+    3. Put α = 1 + 2/e and choose a fixed 0 < η ≤ τ /(4(α + τ )). Finally choose rational b∗ > 0 as in
+       Lemma 5.2 so that the final mass is at most M + C with probability at least 1 − η.
+The unconditional cost in (5.31) is then at most (α + τ /2)V0 for every client. Repeat the entire
+process on failure of the final mass test. The accepted output is the unconditional output conditioned
+on that test, whose success probability is at least 1 − η. Since connection costs are nonnegative,
+
+                                                            α + τ /2
+                         E[Cj | mass test succeeds] ≤                V0 ≤ (α + τ )V0 .
+                                                             1−η
+Completion uses at most the final active mass, so an accepted output has at most M + C facilities.
+This proves the count and cost assertions of Theorem 5.1.
+    For fixed accuracy all parameters are instance-independent constants. The number of current
+facilities never exceeds the number in the split input, and every group has at most ∆ active copies.
+The graph, its marginals, a fixed-sum rounding, the action sets, their intersections, and the greedy
+completion can therefore be computed in polynomial time. The radius equations and all physical
+probabilities are rational; the approximations in (5.2) are fixed constants. Only the analysis uses
+the transcendental functions or alive-set discards. The expected number of repetitions is at most
+1/(1 − η), giving expected polynomial running time. Section 6 replaces the local random choices by
+polynomial-size lists and obtains a deterministic output with the corresponding total-cost bound.
+
+
+6     Deterministic implementation and completion
+The preceding constructions yield an additive approximation in expectation. We now replace their
+random choices by finite distributions of polynomial support, and then choose the least expensive
+feasible outcome. Throughout this section the desired approximation loss is fixed. In particular,
+the grid denominator, the number of physical rounds, and all parameters chosen in Theorems 3.1
+and 5.1 are constants independent of the input size. All input distances are rational, and running
+time includes their encoding lengths.
+
+6.1    Compression of finite distributions
+A distribution list is a finite list of states, each equipped with a nonnegative rational weight, whose
+weights sum to one. The state records the data needed to continue a construction; a feature vector
+records the statistics whose expectations must be retained.
+    The next lemma is the constructive finite-dimensional Carathéodory argument for preserving an
+expectation. Its connection with moment matching is classical [3]; we include the exact elimination
+and its bit bound because both are needed by the algorithm.
+
+Lemma 6.1 (Affine support reduction). Let a distribution list have states s1 , . . . , sM , weights
+λ1 , . . . , λM , and feature vectors v(si ) ∈ Qd . There is an exact algorithm that replaces the weights by
+nonnegative rational weights supported on at most d + 1 of the same states, preserving
+                                                M
+                                                ∑
+                                                      λi v(si ).
+                                                i=1
+
+
+                                                       28
+Its running time and output encoding length are polynomial in the encoding length of the given list
+and feature vectors.
+Proof. Discard zero-weight entries. If more than d + 1 remain, choose a nonzero integral affine
+dependence z satisfying          ∑             ∑
+                                     zi = 0,       zi v(si ) = 0.
+                                    i                           i
+Since its coefficients sum to zero, there are both positive and negative coefficients. Set
+                                                λi
+                                   t = min           ,              λ′i = λi − tzi .
+                                        i:zi >0 zi
+
+The new weights are nonnegative, have the same sum and feature expectations, and include at least
+one additional zero. Repeating gives the support bound.
+    For completeness, the rational arithmetic has polynomial complexity. An affine dependence can
+be found using at most d + 2 columns of the matrix with columns (1, v(si )). Clearing denominators
+and using minors gives an integral dependence of polynomial bit length. If λi = bi /D for a common
+denominator D, and j attains the minimum defining t, then
+                                                         bi zj − bj zi
+                                            λ′i =                      .                         (6.1)
+                                                             Dzj
+
+Thus one elimination adds at most the bit length of |zj | to a common denominator. There are at
+most M eliminations, and the feature vectors do not change. The resulting bit lengths and the
+exact linear-algebra computations are polynomially bounded.
+
+   Support reduction preserves every property satisfied by each state in the list, whether or not
+that property appears among the features. It does not preserve the entire joint distribution or
+arbitrary future adaptive behavior. We therefore specify the retained features at each use and verify
+the required estimates for the resulting process.
+
+6.2   A distribution list for the preparation stage
+Let M⋆ denote the number of stars in the preparation construction, and write Xe for the current
+count of star e. Each count remains within its original floor and ceiling. A weighted pair update
+within a strict sign preserves the weighted sum and has conditional mean equal to the current count
+vector. For every pair of distinct coordinates e, f , it also satisfies
+
+                            E[Xe′ | X] = Xe ,               E[Xe′ Xf′ | X] ≤ Xe Xf .             (6.2)
+
+Indeed, unless both coordinates are the selected pair, the product is affine in the update parameter.
+If they are the selected pair, their increments have opposite signs and the product is concave. A
+one-coordinate rounding with the correct mean preserves every distinct pair-product expectation.
+    These assertions hold for every admissible state and every permissible choice of the next pair.
+Thus the next pair may be selected adaptively, for example as the first two fractional coordinates in
+a fixed order. After branching one update at every state, apply Lemma 6.1 with the features
+
+                                   Xe     and        Xe Xf               (e < f ).
+
+Induction using (6.2) preserves the initial first moments and the upper bounds on distinct pair
+moments. Full independence between the positive, negative, and zero-coefficient classes is unnecessary
+for these conclusions.
+
+                                                           29
+    The weighted sums and floor/ceiling restrictions are properties of each retained state. Each
+productive pair update makes at least one fractional count integral, and integral counts are never
+updated again. There are therefore only O(M⋆ ) updates, with identity updates padding states that
+finish earlier. Ordinary one-coordinate rounding also handles the zero coefficients and the final
+positive-side fraction. We leave the final negative-side fraction unrounded until these operations are
+complete. Each compressed list has O(M⋆2 ) entries.
+
+The final negative-side fraction. Condition on a state of this last list. There is at most one
+fractional count, say Xe = m + ξ, where 0 < ξ < 1. The identity of e may depend on the state.
+Perform the special rounding of the preparation construction: use a nominal coin of mean ξ, open
+the outside supplier according to m + 1 if its flag is one, and activate the extra deficit on a subset of
+De with marginal ξ at every target.
+    There is a polynomial-support law for this subset. If de = |De |, choose a size
+
+                                   L ∈ {⌊ξde ⌋, ⌈ξde ⌉},   EL = ξde ,
+
+then choose a uniformly random cyclic interval of length L in a fixed cyclic order of the targets.
+Each target has inclusion probability EL/de = ξ, and the support has size at most 2de . Including
+the nominal coin changes this bound by only a constant factor.
+    For a fixed target, the special star’s activation count has conditional mean Xe ; its nominal
+count has the same conditional mean. Every other star count is integral in the conditioned state.
+Consequently, for any two distinct stars activating this target, the conditional expectation of their
+activation product is the product of their current counts. This argument applies separately in every
+state, so it remains valid when the identity of the final fractional star varies. After averaging, the
+activation counts retain the nonpositive pair-covariance bounds. Each individual activation count
+remains between the original adjacent integers, giving its variance bound as well. No pairwise
+independence between different targets of this last star is required: the deficit estimates are made
+for one target at a time, and the clipping bound sums expectations over targets.
+
+Conditional rounding inside bundles. For each resulting outer state, clip the deficits and rescale
+the bundle masses exactly as in Theorem 3.1. Keep this outer state fixed while constructing a new
+list for all the within-bundle rounds. Successive pair updates and compression of all first and distinct-
+pair moments of the opening vector preserve its marginals and nonpositive covariances conditional
+on this outer state. Updates in different bundles preserve cross-bundle product expectations; thus
+their entire Cartesian product need not be enumerated.
+     In particular, if ηi is the rounded opening minus its conditional mean in the fixed outer state,
+then the noise on a client’s old assignment obeys
+                     ⎛                ⏐            ⎞
+                                      ⏐
+                                      ⏐                  ∑ ∑ p′
+                                                                    s
+                           ∑
+                 Var ⎝             ηi ⏐ outer state⎠ ≤ g              yi ≤ g/p0 ≤ 2g.
+                     ⎜                ⏐            ⎟
+                              ⋃       ⏐                            p
+                                                         s i∈Fj ∩Ps s
+                       i∈Fj ∩  s
+                                Ps    ⏐
+
+Here p′s ≤ 1 and ps ≥ p0 ≥ 1/2. This is the conditional noise estimate used in the preparation proof.
+Maintaining a separate inner list for every outer state retains this estimate despite the varying
+rescalings.
+    All remaining preparation estimates use the retained first and second moments, or properties
+holding in every state. In particular, supplier availability and the raw opening-count bound hold in
+each state; the clipping estimate and the probability of exceeding its count allowance follow from
+the same deficit moments. The preparation list therefore satisfies the same unconditioned cost and
+
+                                                    30
+budget-success bounds as the randomized construction. Discarding budget failures and selecting
+a remaining grid solution of minimum total nearest-unit assignment cost gives the corresponding
+deterministic bound on the sum over clients. This single choice need not simultaneously attain each
+client’s individual expectation bound.
+
+6.3   A distribution list for each physical round
+Fix a physical state and a round. For each target copy, first construct a small list of source sets of
+cardinality ∆ with the prescribed edge marginals. Use ordinary fixed-sum pair rounding: after each
+pair update, branch each current state to its at most two endpoints and immediately compress the
+resulting list while preserving first moments. Thus no full tree of a target’s pair updates is ever
+enumerated, and every intermediate list has polynomial support. All sets in this list contain the
+target’s own group and respect the edges whose prescribed marginal is zero or one.
+    Combine the target lists by successive independent products. After each product, compress while
+retaining every edge first moment and every product of two edge indicators belonging to distinct
+targets. On adjoining a new target independently, its edge products with earlier targets have the
+required expectations; compression then preserves them. Induction gives a graph list with all the
+first and cross-target second moments of the independent-target graph construction. Its feature
+dimension and support size are polynomial in the number of active copies.
+    The ideal generator in (5.15) is linear in edge indicators except for the terms δh Yh . Expanding
+these terms gives products of edges from a common source to distinct targets, and diagonal terms
+reducible to first moments. The retained statistics therefore suffice for its graph average. The
+heavy-source rule and forced openings depend on more than these moments, but this introduces no
+extra averaging requirement: the batch drift bound (5.17) holds conditional on every realized graph,
+with that graph’s own forced openings and chunks. Only after that bound is applied do we average
+the ideal generator, obtaining (5.20) for the compressed graph distribution.
+
+Proposal and trigger lists. For every graph, include both round types, each with probability
+1/2. Within either type, construct the proposal or trigger indicators by successive independent
+Bernoulli products, compressing after each product while retaining all squarefree monomials of
+degree at most four. These moments coincide exactly with those of the independent reference law.
+There are polynomially many such monomials. In the balanced type the variables being compressed
+are the proposals, before conflict filtering.
+    To see why filtering requires no higher moments, write Qh for a balanced proposal and Ih for its
+acceptance. If Ch is the set of sources conflicting with h, then, in every outcome,
+                             ∑
+                      Qh −          Qh Qt ≤ Ih ≤ Qh ,     Ih It ≤ Qh Qt         (h ̸= t).
+                             t∈Ch
+
+A balanced source has |Eh | = ∆, and each target has ∆ possible sources, so |Ch | ≤ ∆(∆ − 1).
+Preservation of first and second proposal moments gives
+
+                     p∗ − ∆(∆ − 1)p2∗ ≤ EIh ≤ p∗ ,            E[Ih It ] ≤ p2∗   (h ̸= t).        (6.3)
+
+These are the marginal and pair bounds needed for the isolated-action and simultaneous-action
+estimates. Accepted out-sets remain disjoint in every outcome.
+    For an unbalanced round, the count statistic from Equation (5.7), conditional on the graph, has
+the form                                 ∑           ∑
+                                   Z∗ =      ce Ie +   cef Ie If
+                                              e         e<f
+
+
+                                                   31
+with fixed rational coefficients. It has degree at most two in the trigger indicators, and its square
+has degree at most four after using Ie2 = Ie . The compressed law therefore has exactly the
+same EZ∗ , EZ∗2 , and Var Z∗ as the independent reference law. The variance estimate proved for
+independent indicators transfers to this law, and hence so does the Chebyshev count-failure bound.
+An independent-coordinate variance inequality is applied to the reference law before this transfer.
+    The terminal alive-mass estimate likewise uses only the marginal and pair bounds for the ∆
+possible incoming triggers at each surviving target. It follows by the same union lower bound as in
+the randomized analysis. Thus all probabilistic estimates in Theorem 5.1 remain valid for these lists.
+
+Retaining adaptive histories. Expand these graph and proposal lists at every reached physical
+history, and retain all resulting physical outcomes over the T rounds. The history tree is not
+compressed. The alive sets used in the analysis can be defined along this tree, but need not be
+computed by the algorithm. Even when two histories reach the same physical state with different
+analysis-only alive sets, the next-round estimates apply to either history, since they hold for every
+admissible alive set conditional on the current physical state and graph.
+    The number of active copies is polynomial: there are at most ∆ at each facility, and resetting
+regenerates copies at an existing facility. The number of chunk actions is also polynomial, since the
+total number of source–target incidences is ∆ times the number of target copies. Each history has
+only polynomially many children. Since T is an input-independent constant, the complete history
+tree has polynomial size. At each leaf perform the final deterministic completion, discard outcomes
+exceeding the additive budget, and select one of minimum total connection cost.
+
+6.4   Rational implementation and bit complexity
+We give the encoding details because support size alone does not imply a polynomial-time algorithm.
+Fix rational values of all algorithmic parameters. In each of the finitely many rounds, fix in advance
+a rational taper value P̂ satisfying its stipulated accuracy. The analytic functions of elapsed time,
+the potential, and the analysis-only alive-set decisions need not be evaluated by the algorithm.
+    An optimal basic LP solution has polynomial encoding length. Splitting facilities to make
+assignments use whole pieces introduces only polynomially many pieces. Piece masses, bundle
+masses, and intersection masses are sums and differences of the LP coordinates. The extra star
+weights multiply a deficit by the fixed rational γ, and conversion to grid counts multiplies by the
+integer ∆. Hence the initial star counts have a common denominator D0 of polynomial bit length.
+    For weighted pair rounding, write ae = |ue |. If a pair update makes Xe integral and leaves Xf
+fractional, preservation of its weighted sum gives
+
+                                   af Xf′ = af Xf + ae Xe − ae Xe′ .
+
+Throughout these updates, therefore, every weighted count lies in D0−1 Z. Recovering Xf only
+divides by the polynomially bounded integer af . Counts remain in their original integer bounds,
+so their numerators and their endpoint probabilities have polynomial bit length as well. Final
+single-coordinate rounding makes the coordinate integral; zero-coefficient counts retain their initial
+values until rounded directly. Clipping and rescaling give fresh rational inputs of polynomial bit
+length for the within-bundle rounds, where the same argument applies with unit coefficients.
+    The taper radii can also be computed exactly. On an interval where m source copies have
+saturated marginal one and r source copies have marginal strictly between zero and one, the radius
+equation is                                ∑
+                                       r     h partial d(i, h)
+                                 m+ −                          = ∆.
+                                      P̂         P̂ Ni
+
+                                                  32
+When r > 0, an interior solution is
+                                                ∑
+                                                 h partial d(i, h)
+                                        Ni =                         .                             (6.4)
+                                                r + P̂ (m − ∆)
+
+The breakpoints are the rational numbers d(i, h) and d(i, h)/(1 − P̂ ). Sorting these values and
+checking the successive intervals finds the smallest solution, including a breakpoint solution. If r = 0,
+the equation is constant on the interval, and the first point of a solution interval is a breakpoint.
+The separately prescribed case of sufficient co-located mass uses Ni = 0. All radii, marginals, and
+resulting branch probabilities have polynomial bit length. The physical states and their feature
+values are determined without reference to the list weights.
+    It remains to control the list weights across repeated branching and compression. Suppose a
+feature vector has d coordinates of bit length at most L. In the affine-dependence computation,
+clearing denominators in each row of the matrix on at most d + 2 columns produces integer
+entries of bit length O(dL). A nonzero kernel vector can be chosen using minors, with bit length
+O(d2 L + d log(d + 1)) by the determinant bound. These bounds are independent of the current list
+weights.
+    By (6.1), an elimination multiplies a common weight denominator by just one coefficient of such
+a dependence. An exact branch with probability denominator q multiplies a common denominator by
+at most q. Branching a whole list adds the bit lengths of only polynomially many such denominators,
+and taking a product of lists adds their denominator bit lengths. There are polynomially many list
+operations, including the entire constant-depth physical history tree. Their common denominators
+and numerators consequently retain polynomial bit lengths. Exact linear algebra, comparisons, and
+cost evaluations therefore give a deterministic algorithm whose bit complexity is polynomial in the
+input encoding length for every fixed choice of accuracy parameters.
+
+6.5   Loss allocation and the approximation theorem
+We first record explicitly how conditioning and deterministic selection are combined. For a nonnega-
+tive cost C and an event G with P(G) ≥ 1 − r,
+
+                                                          EC
+                                          E[C | G] ≤         .                                     (6.5)
+                                                         1−r
+Thus a finite distribution list contains a successful outcome whose cost is no more than the right-hand
+side. No independence between cost and budget success is required.
+
+Theorem 6.2 (Deterministic additive approximation). For every fixed ε > 0, there is an instance-
+independent integer c ≥ 0 and a deterministic polynomial-time algorithm for metric k-median that
+opens at most k + c facilities and has total connection cost at most
+                                                  2
+                                           (             )
+                                               1 + + ε LP,
+                                                  e
+where LP is the optimum value of the assignment relaxation. In particular, its cost is at most the
+same factor times OPTk .
+
+Proof. Put α⋆ = 1 + 2/e, and choose a fixed positive rational number
+
+                                         t ≤ min{1/8, ε/10}.
+
+
+                                                    33
+Choose the parameters in the constructions underlying Theorems 3.1 and 5.1 with unconditioned cost
+factors at most 1 + t and α⋆ + t, respectively, and with their respective budget-failure probabilities
+at most t. The proofs of those theorems allow the cost and failure tolerances to be made arbitrarily
+small; their stated expectation guarantees absorb this same conditioning loss. Here we keep the loss
+visible.
+    All parameter choices can be made in a consistent order. After the preparation parameters
+other than the grid are fixed, take an even integer ∆ sufficiently large, set g = 1/∆, and take a
+rational horizon of order 1 + log(∆/t). The requirements that the terminal error be small and that
+Λg be small are compatible because log ∆/∆ → 0. Then choose the taper tolerance, the selection
+bias, and the time step successively small. The number of rounds is now fixed. Finally choose the
+heavy-source parameter sufficiently small that the sum of the conditional count-failure probabilities
+over all rounds is at most t. The resulting additive opening allowances are constants depending
+only on these parameter choices.
+    Let L = LP. Apply the preparation list to an optimal LP solution. Its total nearest-unit cost
+has expectation at most (1 + t)L, and its budget event has probability at least 1 − t. Select the
+least expensive successful grid solution. By (6.5), its total nearest-unit cost Lgrid satisfies
+
+                                                      1+t
+                                            Lgrid ≤       L.
+                                                      1−t
+Apply the physical-rounding list to this fixed grid solution. The summed cost bound is at most
+(α⋆ + t)Lgrid before discarding count failures, and the budget succeeds with probability at least 1 − t.
+Selecting the least expensive successful integral output therefore gives cost at most
+
+                                           (1 + t)(α⋆ + t)
+                                                           L.
+                                               (1 − t)2
+
+Since α⋆ < 2 and t ≤ 1/8,
+
+                            (1 + t)(α⋆ + t)         (3α⋆ + 1)t + (1 − α⋆ )t2
+                                            − α ⋆ =
+                                (1 − t)2                     (1 − t)2
+                                                       7t
+                                                  ≤           < 10t ≤ ε.
+                                                    (1 − t)2
+
+The two additive allowances sum to an instance-independent constant, which may be rounded up to
+an integer c.
+    Both minimum-cost selections are computable on polynomial-size lists, with polynomial bit
+complexity as proved above. They use total costs; the deterministic grid solution is not required to
+attain every client’s individual expectation bound. If L = 0, the nonnegative cost has expectation
+zero in the preparation list and then in the physical-rounding list, so the same argument gives zero
+cost without division by L.
+    Every opened copy lies at an original candidate facility. Merge copies introduced by the
+construction back to their original facility. This preserves connection distances and cannot increase
+the number of opened facilities. Finally, LP ≤ OPTk , proving the last assertion.
+
+6.6    Applying the reduction on rational inputs
+Before applying Theorem 2.2, we record its interface with the deterministic algorithm just proved.
+Every call of that reduction uses the same clients and distances with a restricted candidate set
+F ′ ⊆ F ; our pseudo-algorithm uses no additional input promise or prescribed-open facilities. Its
+
+                                                  34
+internal forced openings are decisions of that call, not constraints passed from another call. Copies
+are merged back to original candidates before returning its output. If 0 < |F ′ | < k, opening every
+candidate gives the optimum for that restricted instance. If F ′ = ∅ and clients remain, discard the
+branch. The distinguished branch retaining a padded optimal k-set has neither exception. When
+the additive allowance is zero, the pseudo-algorithm already satisfies the required budget.
+    The zero-optimum case can be recognized before the reduction. Every client location must be
+an available candidate location, and there can be at most k distinct client locations. Equivalently,
+every zero-distance class containing a client must contain a candidate, and there are at most k
+such client classes. These conditions are necessary and sufficient in the original metric; when they
+hold, open those locations. Thus the positive-optimum analysis of the reduction does not require
+division by zero. Co-located pieces occur only inside our pseudo-algorithm and do not change this
+original-metric test.
+    We also make explicit a rational implementation of the deletion threshold in the proof of Li–
+Svensson’s reduction [16, Section 2, Algorithm 2]. That proof analyzes a threshold determined by
+the unknown optimum. Its numerical value need not be computed. Suppose a call returns a set T
+with k < |T | ≤ k + c. For every set T ′ ⊆ T obtainable by at most c deletions with |T ′ | > k, and
+every i ∈ T ′ , compute
+                                 ∆(T ′ , i) = cost(T ′ \ {i}) − cost(T ′ ).
+These numbers are nonnegative rationals of polynomial bit length. There are nO(c) such numbers.
+Run the reduction’s deletion phase for each distinct number as threshold, and for zero, with a fixed
+order for choosing deletions; follow each run by its prescribed enumerative completion and retain
+the cheapest feasible result.
+    To justify this replacement, let B ∗ ≥ 0 be the threshold used in the reduction’s analysis. Choose
+the largest enumerated value at most B ∗ , including equality, or zero if there is none. Every test of
+the form ∆(T ′ , i) ≤ B ∗ has the same answer at this representative threshold. Induction through the
+at most c deletions therefore reproduces the ideal deletion history, including its fixed tie choices. Its
+output is present among the enumerated outputs. The approximation analysis still uses B ∗ ; the
+algorithm uses only exact rational comparisons. This adds nO(c) overhead to the stated reduction.
+All candidate enumeration, distance comparisons and cost evaluations likewise use polynomial-bit
+rational arithmetic.
+    Finally, the approximation parameter supplied to the reduction can be a fixed rational upper
+bound on our ratio, with its excess charged to the allowed accuracy. The auxiliary positive constants
+in its proof may then be chosen rational as well. These observations preserve both determinism and
+polynomial binary-input time; they require no oracle for the optimum.
+Proof of Theorem 1.1. Fix ε > 0. Apply Theorem 6.2 with loss ε/4, obtaining a deterministic
+c-additive approximation, where c depends only on this fixed loss. Choose a fixed rational number
+α with
+                              1 + 2/e + ε/4 < α < 1 + 2/e + ε/2.
+The pseudo-algorithm is a c-additive α-approximation. The additive-to-ordinary reduction of
+Theorem 2.2, with a fixed positive rational loss at most ε/2 and the implementation in Section 6.6,
+gives a deterministic polynomial-time algorithm opening at most k original facilities and having
+cost at most
+                                              2
+                                        (           )
+                                          1 + + ε OPTk .
+                                              e
+Copies can be merged back to their original facilities as above. If exactly k facilities are required,
+add unused facilities from F , which is possible because k ≤ |F | and can only decrease the cost.
+
+
+                                                   35
+   Combining Theorem 1.1 with the hardness bound recalled in Section 1 proves Corollary 1.2:
+under P ̸= N P , the infimum of deterministic polynomial-time approximation factors in the specified
+candidate-facility model is 1 + 2/e. The upper bound holds for every fixed positive loss and does
+not require attainment of the endpoint.
+
+
+A     Exact certificates for the scalar bounds
+This appendix proves Lemma 4.2. All terminating decimals in this appendix denote exact rational
+numbers. The argument uses two finite tables of rational polynomial minorants. We give the
+coefficient rule and the Bernstein conversion formula explicitly, so the tables can be verified using
+only rational arithmetic; the accompanying programs are supplementary implementations of these
+formulas.
+   Throughout, X = 1 − x, 0 ≤ x ≤ 1, 0 ≤ w ≤ X, 0 ≤ r ≤ 1, and s ∈ {0, 1}. We recall the
+notation
+           ∫ 1                                       ∫ 1
+    P =          te−tx dt,                A=3−2            e−tx dt,    m = A − 1 − 2P x,
+            0                                         0
+    C = 1 − sP,                           a = A + 2P w,                 b = (2 − s)P (x + w),        z = P w2 ,
+                   √
+                 1− 1−P
+    ks = (1 − s)   √      ,              K = C − ks − br + 1.6z,
+                 1+ 1−P
+    L = (C − m − b)r + .4z,              M = (1 − r)a + CP r,          G = M − L.
+
+Also set
+
+       d0 = .52,             d1 = .4,       H0 = .394 − .42X 2 + .04X 3 ,        H1 = .25,      Js = CHs .
+
+The elementary integral bounds give 0 < P ≤ .5 and 1 ≤ A ≤ 2; the latter follows from 1 − e−tx ≤ tx.
+Direct integration gives
+                                   (1 + x)(A − 1) = 2x(1 − P ).                                (A.1)
+
+A.1    Rational approximations and their errors
+Use the following polynomials in X, with coefficients displayed in ascending order:
+
+                                 p(X) = .26424112 + .16053514X + .05751895X 2
+                                                   + .01313705X 3 + .00456774X 4 ,
+                                 v(X) = 1.73575888 − .52832269X − .16191093X 2                               (A.2)
+                                                   − .03442938X 3 − .01109588X 4 ,
+                                k(X) = .0767 + .0564X + .0142X 2 + .0246X 3 .
+
+We will prove
+
+                     |p − P | ≤ ϵP := .0000075,            |v − A| ≤ 2ϵP = .000015,        k0 ≤ k.           (A.3)
+
+    For the first two claims, the integral Taylor series are
+                                        ∑    (−x)n                           ∑    (−x)n
+                              P (x) =                 ,       A(x) = 3 − 2                 .
+                                        n≥0
+                                            n!(n + 2)                        n≥0
+                                                                                 n!(n + 1)
+
+
+                                                             36
+On 0 ≤ x ≤ 1 the magnitudes of the summands decrease. Thus the partial sums through orders 12
+and 13 enclose each defining integral. Evaluating these rational enclosures at X = 0, 1/4, 1/2, 3/4, 1
+proves that the nodal errors of the displayed p, v are, respectively, less than 2.343560 · 10−9 and
+2.344324 · 10−9 . In particular, each is less than 4 · 10−9 . This nodal calculation can be performed
+without evaluating any transcendental number: at each node substitute x = 1 − X into the two
+finite sums just given and compare both rational endpoints with the displayed polynomial value.
+    Let IP , IA be the exact degree-four interpolants at these five nodes. The sum of the absolute
+values of the Lagrange basis polynomials is at most
+                                             4
+                                             ∑       44       512
+                                                            =     ,
+                                             i=0
+                                                 i!(4 − i)!    3
+because every numerator factor has absolute value at most one. Differentiating with respect to
+X gives the fifth-derivative bounds 1/7 for P and 1/3 for A. The absolute node product, with
+u = |X − 1/2|, is
+                                    u(1/4 − u2 )|1/16 − u2 |.
+For u ≤ 1/4 it is at most 1/256. For 1/4 ≤ u ≤ 1/2, the product of the two quadratic factors is at
+most ((1/4 − 1/16)/2)2 = 9/1024, so the entire expression is at most 9/2048. Both bounds are less
+than .0045. The interpolation remainder formula therefore gives
+                                 512               .0045     31709
+                          |p − P | ≤ (4 · 10−9 ) +       =            < ϵP ,
+                                  3                 840    5250000000
+                                 512               .0045     9887
+                       |v − A| ≤     (4 · 10−9 ) +       =           < 2ϵP .
+                                  3                 360    750000000
+   The coefficient signs and endpoint values give
+                              .26424112 ≤ p ≤ .5,          1 ≤ v ≤ 1.73575888,
+                                                                                                    (A.4)
+                                .0767 ≤ k ≤ .1719,         .014 ≤ H0 ≤ .394.
+For H0 , use H0′ (X) = X(−.84 + .12X) ≤ 0. The first row of Table 1 below proves
+                                       Tk := 4k − (p + ϵP )(1 + k)2 > 0.                            (A.5)
+Since 0 < k < 1 and t |→ 4t/(1 + t)2 is increasing on (0, 1), while 4k0 /(1 + k0 )2 = P , inequality (A.5)
+and P ≤ p + ϵP imply k0 ≤ k. This proves all of (A.3).
+   Define polynomial versions of the quantities used in the following reductions by
+                      c = 1 − sp,        N = c − (1 − s)k,        l = c + 1 − v + spx,
+                                                                                                    (A.6)
+               d = ds ,      h = 1.6 + .4d,       u0 = d/h,           u1 = (2 − s)(1 + d)/(2h).
+The polynomial families in the reductions are
+                              T1 = 1 − p − 1.12p(1 + x) + .4p2 X(1 + x),
+                              T2 = ((1 − p)2 − .38pX + px)(1 + x) − 2x(1 − p),
+                          Q0 (W ) = N − dv + pW (hW − 2d),
+                              Q1 = N − (2 − s)px − d(cp − l) − hpu21 ,
+                               Y = N − p (2 − s)x + (2 − s)2 /6.4 ,
+                                            (                           )
+
+                              Y ′ = N + p(1.6X 2 − 2)         (s = 0).
+The notation T (P, A) means replacement of p, v by P, A, keeping X, k and the rational constants
+fixed.
+
+                                                      37
+A.2     Reduction of the first, second, and final scalar bounds
+We first establish the first scalar inequality
+
+                                                 C(1 − P )
+                             m + b − .4z/r ≤                  (0 < r ≤ 1).                        (A.7)
+                                                  1 − Pr
+Put t = 1/r − P > 0. By (A.1), the right side of (A.7) minus its left side equals
+
+                                      2x(1 − P )
+                        C(1 − P ) −              + sP x − (2 − s)P w + .4P 2 w2
+                                        1+x
+                                                     C(1 − P )
+                                                   (                   )
+                                               +P              + .4w2 t .
+                                                         t
+Applying AM–GM to the last parentheses gives the lower bound
+
+                            2x(1 − P )                    √
+              C(1 − P ) −              + sP x − (2 − s − 2 .4C(1 − P ))P w + .4P 2 w2 .           (A.8)
+                              1+x
+                                 √
+For s = 0 the coefficient 2 − 2 .4(1 − P ) is at most 1.12. The resulting quadratic decreases for
+0 ≤ w ≤ X: its derivative is at most −1.12P + .8P 2 < 0. Substituting w = X into this √ lower bound
+gives XT1 (P )/(1 + x), where T1 is defined above. For s = 1, the coefficient 1 − 2 .4(1 − P ) is at
+most .38. Dropping the nonnegative quadratic term and using w ≤ X gives T2 (P )/(1 + x). The
+numerical coefficient comparisons also follow by squaring positive quantities: .2 > .442 and .4 > .622 .
+Table 1, with the substitution budget proved below, gives T1 (P ), T2 (P ) > 0. At X = 0, the extra
+factor X in the s = 0 reduction is zero, which still proves the required non-strict inequality.
+    For r > 0, (A.7) implies
+                                                   1−P
+                                             (            )
+                                     L ≥ Cr 1 −             ≥ 0.
+                                                   1 − Pr
+For r = 0, one has L = .4z ≥ 0 directly.
+   To check K ≥ ds G, write d = ds and h = 1.6 + .4d. The difference K − dG is affine in r. With
+NP = C −(1−s)k, replacing ks by (1−s)k only decreases this difference. Put K = NP −br+1.6z ≤ K.
+The endpoint expressions after this replacement are
+
+                             (K − dG)|r=0 = NP − dA + P w(hw − 2d),                               (A.9)
+                             (K − dG)|r=1 = Q1 (P, A) + hP (w − u1 )2 ,                          (A.10)
+
+where
+                                                     (2 − s)(1 + d)
+                                  u0 = d/h,       u1 =
+                                                           2h
+and Q1 is defined above. For s = 1 we may use the unrestricted minimum w = u0 in (A.9). For
+s = 0, the constrained minimum is at w = X if X ≤ u0 , and at w = u0 otherwise. Equation (A.10)
+is bounded below by Q1 (P, A) for both values of s. These are precisely the Q0 , Q1 checks in Table 1.
+    We next reduce the final two scalar bounds. Recall
+                                           1−q
+                             κs (q) = C          − (1 − q),    0 ≤ q ≤ 1.
+                                          1 − Pq
+
+For s = 1, ks = 0 and κs (q) ≤ 0. Thus both relevant left sides are bounded below by C + 1.6z − b.
+Its unrestricted minimum in w is the true-parameter version of Y above, so the rows Y − H0 and
+Y − .25 suffice.
+
+
+                                                    38
+   For s = 0 and X ≥ .5, use q ≤ 1 and κ0 (q) ≤ k0 . Again a common lower bound is 1−k0 +1.6z −b,
+whose unrestricted minimum is the corresponding Y . For s = 0 and X ≤ .5, we have x ≥ .5 and
+
+                                            P (x) ≤ P (.5) < .47.
+
+For example the inequality e−u ≤ 1 − u + u2 /2 yields P (.5) ≤ 1/2 − 1/6 + 1/32 = 35/96 < .47. It
+follows that b ≥ .52P/(1 − P ), because x + w ≥ .5 and 1 − P > .53. Since
+                                            P q(1 − q)    P
+                                 κ0 (q) =              ≤     (1 − q),
+                                             1 − Pq      1−P
+we obtain bq + .52κ0 (q) ≤ b. The fourth scalar left side is consequently at least
+
+                                         1 − .48k0 + 1.6z − b.
+
+The quadratic 1.6P w2 − 2P (x + w) decreases on 0 ≤ w ≤ X ≤ .5, so its minimum is P (1.6X 2 − 2).
+Thus the fourth and fifth inequalities follow, respectively, from Y ′ + .52k − H0 ≥ 0 and Y ′ − .25 ≥ 0
+after substitution. In the former expression the net coefficient of k is −.48, so replacing k0 by the
+upper bound k is conservative.
+    The last scalar bound also gives positivity of K: since b ≥ 0,
+
+                      K = C − ks − br + 1.6z ≥ C − ks − b + 1.6z ≥ .25 > 0.
+
+A.3    The first coefficient table and its exact verification
+Replacing p, v by P, A in these expressions changes their values by less than
+
+                                                 σ = .0002.                                     (A.11)
+
+For completeness, the following derivative bounds hold on the line segment between (p, v) and
+(P, A), using 0 ≤ p, P ≤ .5, 1 ≤ v, A ≤ 2, and 0 ≤ W ≤ 1:
+
+                      T       |∂p T | |∂v T | 106 |T (p, v) − T (P, A)| upper bound
+                      T1       3.64        0                                    27.3
+                      T2       8.76        0                                    65.7
+                    Q0 (W )   3.848     .52                                    36.66
+                     Q1       4.848     .52                                    44.16
+                      Y       2.625        0                                 19.6875
+                      Y′           2       0                                      15
+
+Here T1,p = −1 − 1.12(1 + x) + .8pX(1 + x), with X(1 + x) ≤ 1, and T2,p = [−2(1 − p) − .38X +
+x](1 + x) + 2x. For Q0 , use h ≤ 1.808 and 2d ≤ 1.04. For Q1 , (cp − l)p = 1 − 2sp + sX has absolute
+value at most 2, (cp − l)v = 1, and u1 ≤ 1. The last two derivative bounds follow directly from
+their displayed linear dependence on p. These estimates prove the claimed budget even on the
+full interval, rather than only the listed subintervals. Adding .52k or subtracting H0 , .25 does not
+change this budget. The row for Tk already includes ϵP explicitly and does not need this additional
+substitution estimate.
+    Here is the finite verification mechanism used in both coefficient tables. A row with scale 10a
+and integers λ0 , . . . , λn asserts
+                                                    n
+                          T (X) ≥ t(X) := 10−a
+                                                    ∑
+                                                          λj X j    (0 ≤ X ≤ 1).                (A.12)
+                                                    j=0
+
+
+                                                     39
+To verify it, expand T =
+                           ∑            j and check
+                               j cj X
+                                                                    ∑
+                        10a cj ≥ λj       (0 ≤ j < n),        10a         min(0, cj ) ≥ λn .       (A.13)
+                                                                    j≥n
+
+Positive tail terms may be discarded; for every negative tail term, cj X j ≥ cj X n . This proves (A.12).
+   All short minorants have degree at most six. On any listed interval [α, β], their degree-six
+Bernstein coefficients are
+                                      ∑ m
+                                       m                 n
+                                         ( )                         ( )
+                                   −a
+                                                        ∑               j j−h
+                 bm (t; α, β) = 10       (h6 ) (β − α)h     λj            α ,         0 ≤ m ≤ 6.   (A.14)
+                                      h=0 h             j=h
+                                                                        h
+
+Indeed, expand at X = α + (β − α)u and convert ordinary powers of u to degree-six Bernstein form.
+Thus if every coefficient in (A.14) is at least b∗ , then t(X) ≥ b∗ throughout the interval, since the
+Bernstein basis is nonnegative and sums to one. An endpoints entry with more than two numbers
+prescribes each interval between consecutive numbers.
+
+                   Table 1: First coefficient table. The scale is 10a , and the listed
+                   vector is (λ0 , . . . , λn ).
+
+          T                s Endpoints and splits a λ
+          Tk              – 0, .5, 1                     4 (4, 73, −384, 563, −184, −67)
+          T1              – 0, 1                         2 (14, −17, 3, 3, −1)
+          T2              – 0, 1                         2 (13, 10, −22)
+          Q0 (u0 )        1 0, 1                         2 (1, 3, −1)
+          Q1              1 0, 1                         2 (42, −3)
+          Q1              0 0, 1                         2 (5, −1)
+          Q0 (u0 )        0 u0 , 1                       2 (−2, 19, −1)
+          Q0 (X)          0 0, u0                        2 (2, −6)
+          Y − H0          1 0, 1                         2 (3, −9, 45, −2)
+          Y − .25         1 0, 1                         2 (17, −9)
+          Y − H0          0 .5, 1                        3 (−165, 50, 575, −1)
+          Y − .25         0 .5, 1                        2 (−3, 5, 15, −1)
+          Y ′ + .52k − H0 0 0, .125, .25, .5             4 (406, −3483, 7208, 1786, −3)
+          Y ′ − .25       0 0, .5                        2 (14, −38, 29, −1)
+
+
+   Substitution of (A.2) into the definitions verifies (A.13) for all fourteen rows of Table 1. As
+additional explicit sign certificates, the minima of the finite sets in (A.14), over all prescribed
+subintervals for each row, are at least 10−6 times the following integers, in row order:
+
+                            114, 20000, 10000, 10000, 390000, 40000, 33818,
+                                                                                                   (A.15)
+                               2743, 15000, 80000, 3625, 31250, 356, 21250.
+
+Both (A.13) and these lower bounds are finite rational comparisons specified completely by the
+table and (A.14). For example, the first row has smallest Bernstein coefficient 73/640000, and the
+thirteenth row has smallest coefficient 27341/76800000. Consequently Tk > 0, and every other short
+minorant exceeds σ = .0002 on its indicated intervals. After the substitution budget, this completes
+the first and second groups of scalar bounds and the final two scalar bounds.
+
+                                                         40
+A.4    The third scalar bound: perturbation estimate
+It remains to prove
+                             ((Js − b)r + 1.6z)M + (C − ks − Js r)L ≥ 0.                            (A.16)
+Since L ≥ 0 is already established, replacing ks with (1 − s)k only decreases the left side. We next
+replace P, A by p, v. This replacement changes the expression by at most
+
+                                          σ(r + w2 ),         σ = .0002.                            (A.17)
+
+Here are full bounds for this assertion. For either endpoint choice (π, ν) = (P, A) or (p, v), put
+cπ = 1 − sπ, H = Hs , and write the two products as F1 F2 + F3 F4 , where
+
+                              F1 = [cπ H − (2 − s)π(x + w)]r + 1.6πw2 ,
+                              F2 = (1 − r)(ν + 2πw) + cπ πr,
+                              F3 = cπ (1 − Hr) − (1 − s)k,
+                              F4 = [2 − ν − sπX − (2 − s)πw]r + .4πw2 .
+
+Writing ρ = r + w2 , the ranges already established imply
+
+                        |F1 | ≤ 1.1ρ,       |F2 | ≤ 3,        |F3 | ≤ 1,        |F4 | ≤ 2ρ.         (A.18)
+
+For F1 , both nonnegative terms in its coefficient of r are at most one, while 1.6π ≤ .8. The expression
+F2 is a convex combination of two quantities between zero and three. For F3 , the lower bounds are
+1 − .394 − .1719 = .4341 when s = 0 and .5(1 − .25) = .375 when s = 1, and the upper bound is one.
+Finally the coefficient of r in F4 belongs to [−1, 1]: 0 ≤ 2 − ν ≤ 1 and 0 ≤ sπX + (2 − s)πw ≤ 1.
+    Let δFj denote the change between the two choices. With ϵP = .0000075, direct subtraction
+gives
+
+                          |δF1 | ≤ 2ϵP ρ,                                  |δF2 | ≤ 4ϵP ,
+                          |δF3 | ≤ ϵP ,                                    |δF4 | ≤ 4ϵP ρ.
+
+For the first estimate, the coefficient multiplying ϵP r is sH + (2 − s)(x + w), at most 2 for s = 0 and
+at most 1.25 for s = 1; the remaining coefficient is 1.6. For the second, use the convex combination
+in r, together with |δ(ν + 2πw)| ≤ 4ϵP and
+
+                                 |δ(cπ π)| = |P − p| |1 − s(P + p)| ≤ ϵP .
+
+The third estimate is immediate from 0 ≤ 1 − Hr ≤ 1. For the fourth, use 2 + sX + (2 − s)w ≤ 4
+and .4 ≤ 4. Combining these differences with (A.18) and the identity ab − a′ b′ = (a − a′ )b + a′ (b − b′ )
+yields
+
+                       |δ(F1 F2 + F3 F4 )| ≤ (3 · 15 + 1.1 · 30 + 2 · 7.5 + 30)10−6 ρ
+                                            = .000123ρ < σρ           (ρ > 0).
+
+If ρ = 0, both expressions vanish. Thus (A.17) holds throughout the domain. The factor bounds
+hold for both choices, so this telescoping estimate already accounts for products of perturbations.
+
+
+
+
+                                                         41
+A.5    Bernstein expansion and the second coefficient table
+Use the polynomial quantities in (A.6), and set
+
+          j = cHs ,         b′0 = (2 − s)px,      b′1 = (2 − s)pX,                 f = 2pX,       Z ′ = pX 2 .
+
+In the polynomial version of the left side of (A.16), subtract σ(r + w2 ) and put w = Xη, 0 ≤ η ≤ 1.
+Its degree-three Bernstein coefficients in η, for i = 0, 1, 2, 3, are
+
+                                               B0 + B 1 r + B 2 r 2 ,                                            (A.19)
+
+where, writing e = i/3, e2 = i(i − 1)/6, and t = 1{i=3} , the exact formulas are
+
+                             B0 = Z ′ (1.6v + .4N )e2 + 1.6f t − σX 2 e2 ,
+                                      (                                )
+
+                             B1 = (j − b′0 )v + N l
+                                    + (j − b′0 )f − b′1 v − N b′1 e − b′1 f e2
+                                       (                               )
+                                                                                                                 (A.20)
+                                    − Z ′ (1.6(v − cp) + .4j)e2 + 1.6f t − σ,
+                                           (                                        )
+
+                             B2 = (b′0 − j)(v − cp) − jl
+                                    + (b′0 − j)f + b′1 (v − cp) + jb′1 e + b′1 f e2 .
+                                       (                                       )
+
+
+These formulas give all eight expansions, one for each pair (s, i). They can also be derived directly
+by expanding
+
+                          [j − (2 − s)p(x + w)]r + 1.6pw2 (1 − r)(v + 2pw) + cpr
+                      (                                       )(                              )
+
+                           + (N − jr) [l − (2 − s)pw]r + .4pw2 − σ(r + w2 )
+                                       (                                   )
+
+
+in powers of η after w = Xη, and using the( degree-three       conversion rule: if ah is the coefficient of
+η h , the ith Bernstein coefficient is ih=0 ah hi / h3 .
+                                      ∑            ) ( )
+
+      In all eight cases B0 ≥ 0. For i = 0, 1, it is zero. Otherwise
+
+                                B0 = X 2 p(1.6v + .4N ) − σ e2 + 1.6pX 2 f t.
+                                           (                       )
+
+
+Here N ≥ .5, v ≥ 1, and p ≥ .26424112, so the bracket is at least .475434016 > 0 and the other
+term is nonnegative.
+   Define
+                          D′ = 4B0 B2 − B12 ,   S ′ = B0 + B1 + B2 .
+For i ≤ 1, positivity of B1 and B1 + B2 proves nonnegativity of (A.19) on 0 ≤ r ≤ 1. For i ≥ 2, any
+of the following is sufficient:
+   1. B1 , B2 ≥ 0;
+   2. D′ > 0;
+   3. S ′ > 0 and B0 − B2 > 0.
+For the second criterion, B0 ≥ 0 and D′ > 0 force B0 , B2 > 0; completing the square proves
+positivity for every real r. For the third, use
+
+                               B0 + B1 r + B2 r2 = rS ′ + (1 − r)(B0 − rB2 ),
+
+where B0 − rB2 = (1 − r)B0 + r(B0 − B2 ) ≥ 0.
+
+                                                        42
+   Table 2 supplies these signs. It uses exactly the coefficient rule (A.13) and the degree-six
+Bernstein formula (A.14).
+
+                    Table 2: Second coefficient table. A row with i = 0, 1 supplies the
+                    indicated certificate separately for both values of i.
+
+            s   i   Endpoints and splits T              a λ
+            0 0 0, 1                        B1      2 (1, 90, −39)
+            0 1 0, 1                        B1      2 (1, 41, −51, 28, −1)
+            0 0, 1 0, 1                     B1 + B2 2 (10, −1)
+            0 2 0, .05                      B1      2 (1, −9, −98)
+            0 2 0, .05                      B2      2 (9, −23)
+                                                      (−2, 16, 1176, −153,
+            0   2   .05, 1                  D′      4
+                                                      −1500, 2590, −1000)
+            0   3   0, .015                 B1      2 (1, −58, −262)
+            0   3   0, .015                 B2      2 (9, −5)
+                                                      (−12, 1180, 2070, −32420,
+            0   3   .015, .25, .5, 1        D′      5
+                                                        44210, 33740, −14000)
+            1   0   0, 1                    B1      2 (5, 30, −7)
+            1   0   0, 1                    B1 + B2 2 (12, −4)
+            1   1   0, 1                    B1      2 (5, −1)
+            1   1   0, 1                    B1 + B2 2 (12, −8)
+            1   2   0, .2                   B1      2 (5, −16, −41)
+            1   2   0, .2                   B2      2 (7, −2)
+                                               ′
+            1   2   .2, 1                   D       3 (−4, 17, 92, 87, −135)
+            1   3   0, .1                   B1      3 (54, −391, −941, −900)
+            1   3   0, .1                   B2      2 (7, −1)
+            1   3   .1, .75                 D′      3 (−4, 42, 194, 478, −995)
+                                              ′
+            1   3   .75, 1                  S       2 (12, −9)
+            1   3   .75, 1                  B0 − B2 2 (−8, −32, 67, −1)
+
+
+   In the printed row order, the Bernstein coefficients of these short minorants, over all of each
+row’s subintervals, are at least 10−6 times the following integers:
+
+                                  10000, 10000, 90000, 3050, 78500, 171, 710,
+                                 89250, 60, 50000, 80000, 40000, 40000, 1600,                    (A.21)
+                                66000, 3560, 4590, 69000, 2518, 30000, 52656.
+
+The bound 90000 in the third position applies to both indices in that row. These are all positive. The
+smallest exact Bernstein coefficient among the table’s checks is 193875074979/3200000000000000, in
+the ninth printed row. Thus all the required strict signs follow from the finite rational formula (A.14).
+    For clarity, the negative-tail calculations needed for the four discriminant rows are detailed next.
+Let bh,j = [X j ]Bh and write
+
+                                 cj = [X j ]D′ =
+                                                   ∑(                             )
+                                                        4b0,u b2,j−u − b1,u b1,j−u ,
+                                                   u
+
+
+
+
+                                                         43
+where coefficients outside the degree range are zero. For a short minorant of degree n, group
+min(0, cj ) in consecutive blocks of five starting at j = n, truncating at degree 28. The five block
+sums are bounded below by .0001 times the following integers:
+
+                           s   i n deg D′     1     2   3  4  5
+                           0   2 6   20    −930  −11 −1    0  0
+                           0   3 6   22   −1070 −180 −2 −1    0                                        (A.22)
+                           1   2 4   28   −1312  −18 −1 −1 −1
+                           1   3 4   28   −8240 −1560 −29 −1 −1
+
+These twenty rational comparisons follow by substituting (A.20) and (A.2) into the displayed
+coefficient formula. Their row sums are, respectively, −.0942, −.1253, −.1333, −.9831, which are at
+least the final scaled minorant coefficients −.1, −.14, −.135, −.995. For all entries before the last, one
+checks simply 10a [X j ]T ≥ λj as in (A.13). The same coefficient rule verifies the non-discriminant
+rows directly.
+    The tail cutoff is exact: the four discriminant degrees are 20, 22, 28, 28, as recorded in (A.22), so
+no term above degree 28 has been omitted. More generally, from (A.20), the respective triples of
+degrees (deg B0 , deg B1 , deg B2 ) are
+
+                                i=0          i=1          i=2           i=3
+                     s = 0 (−∞, 9, 9) (−∞, 10, 10) (10, 10, 10)    (11, 11, 9)
+                     s = 1 (−∞, 9, 13) (−∞, 10, 13) (10, 14, 13) (11, 14, 12).
+
+Here deg 0 = −∞. These bounds also justify a uniform cutoff of 28 for every polynomial in the two
+coefficient tables.
+    For (s, i) = (0, 2), the first criterion covers X ∈ [0, .05] and the discriminant criterion covers
+X ∈ [.05, 1]. For (s, i) = (0, 3), the corresponding split is .015, with the listed additional subdivisions
+used only for Bernstein positivity. For (s, i) = (1, 2), the split is .2. For (s, i) = (1, 3), the first
+criterion covers [0, .1], the discriminant criterion covers [.1, .75], and the final criterion covers [.75, 1].
+For i = 0, 1, the full interval is covered by B1 and B1 + B2 . All endpoints belong to the stated
+intervals. Thus every coefficient (A.19) is nonnegative for 0 ≤ X, r ≤ 1. Nonnegativity and unit
+sum of the degree-three Bernstein basis in η prove the desired polynomial inequality for 0 ≤ w ≤ X;
+when X = 0 one has w = 0 directly. Restoring the error budget (A.17) proves (A.16). Together
+with the preceding reductions, this completes the proof of Lemma 4.2.
+
+
+References
+ [1] Aditya Anand and Euiwoong Lee. Separating k-median from the supplier version. In Jens
+     Vygen and Jarosław Byrka, editors, Integer Programming and Combinatorial Optimization:
+     25th International Conference, IPCO 2024, volume 14679 of Lecture Notes in Computer
+     Science, pages 14–27, Cham, 2024. Springer. doi: 10.1007/978-3-031-59835-7_2. URL https:
+     //doi.org/10.1007/978-3-031-59835-7_2. Full preprint: arXiv:2401.13819v1, January 24,
+     2024; https://arxiv.org/abs/2401.13819v1.
+
+ [2] Vijay Arya, Naveen Garg, Rohit Khandekar, Adam Meyerson, Kamesh Munagala, and Vinayaka
+     Pandit. Local search heuristics for k-median and facility location problems. SIAM Journal on
+     Computing, 33(3):544–562, 2004. doi: 10.1137/S0097539702416402. URL https://doi.org/
+     10.1137/S0097539702416402.
+
+
+                                                      44
+ [3] Christian Bayer and Josef Teichmann. The proof of Tchakaloff’s theorem, 2005. URL https:
+     //arxiv.org/abs/math/0502473v2. Version 2, 4 May 2005; published in Proceedings of the
+     American Mathematical Society 134(10), 3035–3040 (2006), doi:10.1090/S0002-9939-06-08249-9.
+
+ [4] Stéphane Boucheron, Olivier Bousquet, Gábor Lugosi, and Pascal Massart. Moment inequalities
+     for functions of independent random variables. The Annals of Probability, 33(2):514–560, 2005.
+     doi: 10.1214/009117904000000856. URL https://arxiv.org/abs/math/0503651.
+
+ [5] Jarosław Byrka, Thomas Pensyl, Bartosz Rybicki, Aravind Srinivasan, and Khoa Trinh. An
+     improved approximation for k-median and positive correlation in budgeted optimization. ACM
+     Transactions on Algorithms, 13(2):23:1–23:31, 2017. doi: 10.1145/2981561. URL https:
+     //doi.org/10.1145/2981561. Corrected full manuscript: arXiv:1406.2951v4, 23 April 2016.
+
+ [6] Jarosław Byrka, Yuhao Guo, Yang Hu, Shi Li, Chengzhang Wan, and Zaixuan Wang. k-
+     clustering via iterative randomized rounding, 2026. URL https://arxiv.org/abs/2604.
+     06046v1. Version 1, April 7, 2026.
+
+ [7] Moses Charikar and Sudipto Guha. Improved combinatorial algorithms for the facility location
+     and k-median problems. In Proceedings of the 40th Annual Symposium on Foundations of
+     Computer Science, pages 378–388. IEEE Computer Society, 1999. doi: 10.1109/SFFCS.1999.
+     814609. URL https://doi.org/10.1109/SFFCS.1999.814609.
+
+ [8] Moses Charikar and Shi Li. A dependent LP-rounding approach for the k-median problem.
+     In Automata, Languages, and Programming, volume 7391 of Lecture Notes in Computer
+     Science, pages 194–205. Springer, 2012. doi: 10.1007/978-3-642-31594-7_17. URL https:
+     //doi.org/10.1007/978-3-642-31594-7_17.
+
+ [9] Moses Charikar, Sudipto Guha, Éva Tardos, and David B. Shmoys. A constant-factor approxima-
+     tion algorithm for the k-median problem. Journal of Computer and System Sciences, 65(1):129–
+     149, 2002. doi: 10.1006/jcss.2002.1882. URL https://doi.org/10.1006/jcss.2002.1882.
+     Preliminary version in STOC 1999.
+
+[10] Vincent Cohen-Addad, Fabrizio Grandoni, Euiwoong Lee, Chris Schwiegelshohn, and Ola
+     Svensson. A (2+ε)-approximation algorithm for metric k-median. SIAM Journal on Computing,
+     2026. doi: 10.1137/25M181026X. URL https://doi.org/10.1137/25M181026X. Published
+     online August 24, 2026. Full preprint: arXiv:2503.10972v2, May 19, 2026; https://arxiv.
+     org/abs/2503.10972v2. First posted March 14, 2025.
+
+[11] Uriel Feige. A threshold of ln n for approximating set cover. Journal of the ACM, 45(4):634–652,
+     July 1998. doi: 10.1145/285055.285059. URL https://doi.org/10.1145/285055.285059.
+
+[12] Rajiv Gandhi, Samir Khuller, Srinivasan Parthasarathy, and Aravind Srinivasan. Dependent
+     rounding and its applications to approximation algorithms. Journal of the ACM, 53(3):324–360,
+     2006. doi: 10.1145/1147954.1147956. URL https://doi.org/10.1145/1147954.1147956.
+
+[13] Kishen N. Gowda, Thomas Pensyl, Aravind Srinivasan, and Khoa Trinh. Improved bi-point
+     rounding algorithms and a golden barrier for k-median. In Proceedings of the 2023 Annual
+     ACM-SIAM Symposium on Discrete Algorithms (SODA), pages 987–1011. Society for Industrial
+     and Applied Mathematics, 2023. doi: 10.1137/1.9781611977554.ch38. URL https://doi.org/
+     10.1137/1.9781611977554.ch38. Preprint: https://arxiv.org/abs/2210.13395v1.
+
+
+
+                                                 45
+[14] Kamal Jain and Vijay V. Vazirani. Approximation algorithms for metric facility location and
+     k-median problems using the primal-dual schema and lagrangian relaxation. Journal of the
+     ACM, 48(2):274–296, 2001. doi: 10.1145/375827.375845. URL https://doi.org/10.1145/
+     375827.375845.
+
+[15] Kamal Jain, Mohammad Mahdian, Evangelos Markakis, Amin Saberi, and Vijay V. Vazirani.
+     Greedy facility location algorithms analyzed using dual fitting with factor-revealing LP. Journal
+     of the ACM, 50(6):795–824, 2003. doi: 10.1145/950620.950621. URL https://doi.org/10.
+     1145/950620.950621. Preprint: https://arxiv.org/abs/cs/0207028v1.
+
+[16] Shi Li and Ola Svensson. Approximating k-median via pseudo-approximation. SIAM Journal
+     on Computing, 45(2):530–547, 2016. doi: 10.1137/130938645. URL https://doi.org/10.
+     1137/130938645. Author manuscript dated September 11, 2014: https://tcs.nju.edu.cn/
+     shili/papers/KM-SIMPCOMP2016.pdf; the additive-to-ordinary reduction is Theorem 4 in that
+     version.
+
+[17] OpenAI. Single-exponential recovery and bounded-price strictness for metric k-median. OpenAI
+     Math Release preprint OAI:Single-Exponential-Recovery-and-Bounded-Price-Strictness-for-
+     Metric-k-Median-September-24-2026, 2026.
+
+[18] Aravind Srinivasan. Distributions on level-sets with applications to approximation algorithms.
+     In Proceedings of the 42nd IEEE Symposium on Foundations of Computer Science, pages
+     588–597. IEEE Computer Society, 2001. doi: 10.1109/SFCS.2001.959935. URL https://doi.
+     org/10.1109/SFCS.2001.959935.
+
+
+
+
+                                                 46
+

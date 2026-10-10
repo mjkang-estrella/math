@@ -1,0 +1,1736 @@
+                Exact Uniform Sampling of Contingency Tables
+                           with Arbitrary Margins
+                                                  OpenAI
+
+                                            September 24, 2026
+
+
+                                                 Abstract
+           We give an exact uniform sampler for nonnegative integer contingency tables with arbitrary
+       prescribed margins. It terminates almost surely and has expected bit complexity polynomial
+       in both dimensions and the binary length of the margins. No positivity, balance, sparsity, or
+       fixed-dimension assumption is required.
+
+
+1      Introduction
+For nonnegative integer vectors r = (r1 , . . . , rm ) and c = (c1 , . . . , cn ) with common total N , write
+                                                                                    
+                                                                                    
+                                         X ∈ Zm×n
+                                                     X                X
+                         Ω(r, c) =            ≥0 :       Xij = ri ,       Xij = cj       .
+                                                                                    
+                                                     j                i
+
+The uniform distribution on this finite set gives every table equal mass. We study sampling when
+both dimensions vary and the margins are encoded in binary. In particular, a polynomial bound in
+the numeric total N would not, in general, give a polynomial bound in the input length. There are
+no cell bounds or forbidden positions: every nonnegative integer matrix with the prescribed margins
+is allowed. For probability laws on a finite set, we use the convention TV(µ, ν) = 12 x |µ(x) − ν(x)|.
+                                                                                     P
+
+
+Theorem 1.1. For arbitrary nonnegative integer margins of equal total, the following algorithms
+exist in the model of unbiased random bits and bit operations.
+    (i) Given an integer k ≥ 1, a bounded-time algorithm outputs a table in Ω(r, c) whose law is within
+        2−k in total variation of the uniform law. Its running time is polynomial in m, n, log(N + 1), k.
+ (ii) An algorithm outputs an exactly uniform table in Ω(r, c), terminates almost surely, and has
+      expected running time polynomial in m, n, log(N + 1).
+The polynomials are uniform over all margin vectors. No positivity, sparsity, balance, or fixed-
+dimension hypothesis is imposed.
+
+   For a rational tolerance 0 < ε < 1 encoded by a binary numerator and denominator, integer
+comparisons compute k = ⌈log2 (1/ε)⌉ in time polynomial in that encoding length. Thereafter part (i)
+has accuracy dependence polynomial in log(1/ε). The algorithms below are explicit, although their
+exponents are deliberately large. Part (ii) concerns expected time: an exceptionally rare branch
+performs exhaustive computation.
+
+
+
+
+                                                         1
+Counting and sampling fixed-margin arrays. Contingency tables are a basic family of integer
+arrays with linear constraints. Their enumeration and exact and approximate generation are treated,
+for example, by Diaconis and Gangolli [7]. The algorithmic question involves more than producing
+one feasible table: the law must give all feasible tables nearly or exactly the same mass, even when
+their number and the coordinate ranges are exponentially large in the margin bit length.
+    For two rows, Dyer and Greenhill [9] give polynomial-time approximate counting and sampling.
+Their heat-bath chain has mixing time at most n(n − 1) log(N/ε)/2 in the author version’s Theo-
+rem 4.1. Dependence on log N rather than N makes this a polynomial bound in the binary input
+length. Kijima and Matsui [12, Theorems 3.1 and 5.1] give exact uniform sampling for two rows by
+monotone coupling from the past, after sorting the columns. Their expected O(n3 ln N ) bound is
+stated for pseudocode using uniform real draws. These results allow arbitrary two-row margin sizes
+after deleting zero margins.
+    The fixed-row case extends beyond two rows. Cryan and Dyer [4] combine dynamic programming
+with volume estimation for approximate counting and sampling. Dyer [8, Section 3] gives a dynamic-
+programming rejection sampler that is exactly uniform, analyzed in arithmetic operations. Cryan,
+Dyer, Goldberg, Jerrum, and Martin [5] prove rapid mixing of the 2 × 2 heat-bath chain for every
+fixed number of rows. The polynomial bounds in these results depend on that fixed row count; they
+do not give a bound polynomial jointly in both dimensions.
+    DeSalvo and Zhao [6, Theorem 2.3 and Remarks 2.4–2.5] give a general exact divide-and-conquer
+construction using O(mn log M ) expected random bits, where M is the largest margin. In the cited
+arXiv version, their polynomial total-runtime conclusion is conditional on efficient evaluation of
+the parity-restricted counting quantities in Conjecture 2.6; the bit-time bounds in Theorem 1.1 are
+unconditional.
+    Another line of work uses the geometry of the transportation polytope when margins are large.
+Dyer, Kannan, and Mount [10] develop scaled coordinates, softened constraints, lattice walks, and
+rounding comparisons for dense tables. Morris [14] improves the dense sampling bounds through
+expanded polytopes and rounding. These methods are close antecedents of the dense completion
+routine below. Our use of that routine is conditional: a padding construction makes every completion
+problem dense, while a separate chain handles all cells incident to small margins.
+    For sparse margins, Arman, Gao, and Wormald [2, Theorem 1 and Remark 2] give exact uniform
+generation under 5∆4 < N , where ∆ is the largest margin, in expected O(N ) time with unit-cost
+arithmetic on integers of magnitude O(N ). The condition is a genuine restriction, although within
+this family it also bounds N polynomially in the dimensions. Their 2021 introduction surveys
+fixed-row, dense, and sparse algorithms and reports that no polynomial-time approximately uniform
+sampler for arbitrary margins was then known. Theorem 1.1 removes those margin and dimension
+restrictions and includes all random bits and integer arithmetic in its cost.
+
+Approximation and exact correction. Exactness and bounded running time are separate
+issues. Our approximate algorithm has a deterministic polynomial work bound for each accuracy
+request. The final exact correction uses the residual-mixture construction of Göbel, Liu, Manurangsi,
+and Pappik [11, Section 3.1, Algorithm 1 and Theorem 6]. That construction combines a sufficiently
+accurate sampler with a rare exhaustive draw from the remaining probability mass. Its application
+here requires an additional property: the actual implemented output law can be tabulated in time
+with an exponential input-size factor but only polynomial dependence on the accuracy bits. We
+prove that property and give the dyadic implementation explicitly. Thus the exact algorithm has
+polynomial expected bit cost, not a polynomial bound on every execution.
+
+
+
+
+                                                 2
+Proof strategy. Only cells incident to a margin below a polynomial threshold are explicit
+coordinates of the auxiliary chain. The remaining cells form a complete rectangle. We pad this
+rectangle so every conditional completion problem has large margins. Each explicit cell has two
+bounded integer values, one for its row and one for its column. Besides states where these values
+agree, called transversals, we allow a positive unit discrepancy at one cell and a negative unit
+discrepancy at another.
+    The target law on these small states assigns weight equal to the number of padded completions.
+Sampling a state from that law and then a uniform completion makes all state/completion pairs
+equally likely. Accept only a transversal whose large completion entries are all at least the padding.
+Subtracting it then gives a uniform original table conditional on acceptance. Section 2 constructs a
+repair map for the defect states and uses it to bound their weight and the probability of successful
+unpadding. The bounded sampler never evaluates completion counts: an ideal transition uses a
+uniform completion draw to test a proposed move.
+    To prove that this chain mixes in polynomial time, we expose the small-cell values of a transversal
+in a fixed order. After fixing a prefix, we compare the averages of any real function on the state
+graph over the two fibers that assign adjacent values to the next cell. The comparison comes from
+quadratic forms indexed by pairs of unit removals. Section 3 proves that these forms have at most
+one positive eigenvalue and that the property survives summing out a balanced pair. A weighted
+telescoping calculation then bounds the energy of a signed flow between neighboring conditional
+fibers. Section 4 combines this bound with conditional-variance decomposition and repair to obtain
+a Poincaré inequality for the completion-count law. This supplies the small chain’s mixing bound.
+    Section 5 implements the completion draws approximately on a finite scaled grid, using rational
+arithmetic and dyadic random choices. A continuous log-concave density serves only as an analytic
+tool for the rejection and conductance bounds. Large coordinate ranges appear in finite sums in the
+proof but are never enumerated in an ordinary run. Section 6 couples each implemented completion
+draw to its ideal counterpart and bounds the number of sampling and unpadding attempts, giving
+the bounded almost-uniform algorithm. For exactness, it also shows how to tabulate that algorithm’s
+actual finite law, including its stopping rules and fallbacks. This exhaustive computation is performed
+only on the rare correction branch.
+
+
+2    The binary model and the padded graph
+This section separates bounded small coordinates from a complete rectangle of large coordinates.
+Its repair map controls the mass of defect states; padding then gives a uniform lower bound on the
+chance of recovering an original table from a stationary state and its completion.
+    We count bit operations and use independent unbiased random bits. All margins are nonnegative
+integers given in binary, with common total N . Accuracy is specified by an integer k ≥ 1, meaning
+error at most 2−k . An empty dimension forces N = 0 and gives a unique empty table. If N = 0,
+or if one dimension is one, the unique table can likewise be returned directly. In all remaining
+constructions the dimensions are positive, and we use
+
+                        d = 10 + (m + 1)(n + 1),        L = d12 ,     U = d20 ,
+                                                                                                 (2.1)
+                         C = N + dL + U + 2,           b = d + ⌈log2 (C + 2)⌉.
+
+Here d is a dimension allowance, L the padding, U the small-margin threshold, C a coordinate cap,
+and b a bit-size allowance. Thus d ≥ 14, mn < d, U < C, and b = O(d + log(N + 1)). Polynomial
+bounds in d, b, k have the required binary-input dependence. A fixed feasible table is obtained
+greedily: choose a row and column of positive remaining margins, place the minimum of those two
+
+                                                   3
+margins in their cell, and subtract it from both margins. Each placement exhausts a row or column.
+This uses at most m + n − 1 positive placements and polynomial bit work, including initialization of
+the output. We fix index order for this construction and all later ties.
+
+2.1    Small states and large completions
+Put I = {i : ri ≥ U } and J = {j : cj ≥ U }. The large slots are the cells in the complete rectangle
+B = I × J; the remaining cells form the set S of small slots. Set Bs = C on B and Bs = U on S.
+Associate to each slot two coordinates xs , ys ∈ {0, . . . , Bs }, and put qs = Bs − ys . Here x is the row
+viewpoint and q is the column viewpoint. A slot is balanced when xs = qs , equivalently xs + ys = Bs .
+The balanced representation of a value a ∈ {0, . . . , Bs } is (xs , ys ) = (a, Bs − a); both xs and qs then
+equal a.
+    A graph state retains only the coordinates on S. Its allowed pattern is either a transversal, with
+all slots balanced, or a defect, with distinct slots t, s satisfying
+
+                       xt = qt + 1,           xs = qs − 1,              xv = qv      (v ∈
+                                                                                        / {s, t}).
+
+                                                                                                          s∈S (xs + ys ) = U |S|.
+                                                                                                          P
+We call t positive and s negative. Both patterns have total doubled occupancy
+Define the original residual margins by
+                                             X                                          X
+                       Ri0 (X) = ri −                  xij ,         Pj0 (X) = cj −               qij .
+                                           j:(i,j)∈S                                  i:(i,j)∈S
+
+Their totals agree because s∈S (xs − qs ) = 0. Let ki and ℓj be the numbers of large slots in row i
+                              P
+
+and column j. A state is feasible when all residuals are nonnegative and Ri0 = 0 if ki = 0, Pj0 = 0 if
+ℓj = 0. Its padded residuals and enlarged full margins are
+
+                   Ri (X) = Ri0 (X) + ki L,                                   Pj (X) = Pj0 (X) + ℓj L,
+                        r̄i = ri + ki L,                                          c̄j = cj + ℓj L.
+
+Write FX for the set of nonnegative integer tables on B with margins Ri (X), Pj (X), and set
+f (X) = |FX |. On infeasible states set f (X) = 0. The complete rectangle admits a greedy
+completion whenever these residual tests hold. If B is empty the only completion is the empty table,
+so feasible states have weight one.
+    Every completion has total at most N + |B|L < C, and every nonempty block margin is at least
+L. In particular the formal large capacity C excludes no completion: its doubled coordinates can be
+taken as xs = As , ys = C − As for A ∈ FX . The bounded sampler will draw completions of this
+block without enumerating its large coordinate ranges. One-row or one-column blocks have a unique
+completion and need no random draw.
+    Let X be the feasible states, T ⊆ X the transversals, and
+                              X                                X                            f (X)
+                       Z0 =         f (X),         Λ=                f (X),       π(X) =          .                        (2.2)
+                              X∈T                              X∈X
+                                                                                               Λ
+
+An original feasible table gives a transversal and a completion by retaining its small entries and
+adding L to each large entry. The small entries respect their capacity because every small cell has
+an incident original margin below U . This construction also gives a specified starting transversal,
+using the greedy original table.
+
+
+
+                                                                4
+2.2    Repairs and graph edges
+For a defect with negative slot s = (i, j) and positive slot t = (i′ , j ′ ), put v = (i′ , j). With ew
+denoting a small-slot unit vector, define its repair R(X) by
+
+                            x′ = x − et + 1{v∈S} ev ,            q ′ = x′ ,     y′ = U 1 − q′.            (2.3)
+
+The term involving ev is omitted if v is large. The undirected graph on X contains all pairs that
+differ by lowering one doubled small coordinate by one and raising another by one, and also every
+pair {X, R(X)} with X a defect. Repeated edges are counted only once. Its unnormalized energy is
+                                           X
+                       E(H) =                          min{f (X), f (Y )}(H(X) − H(Y ))2 .                (2.4)
+                                      {X,Y } an edge
+
+Lemma 2.1 (Repair and preservation of prefixes). The repair is a feasible transversal. For each
+fixed ordered pair (s, t) it is injective on small states and extends to an injection
+                                            (
+                                                (R(X), A),             v ∈ S,
+                             (X, A) 7−→                                           (A ∈ FX ).
+                                                (R(X), A + ev ),       v∈B
+
+Thus f (X) ≤ f (R(X)). Order small slots by row and then by column. If t follows s, the repair
+leaves every slot preceding s unchanged. When additionally xs = l − 1, qs = l, its repaired value at s
+is l if i′ = i and l − 1 otherwise.
+
+Proof. The defect relation is q = x − et + es , and xt ≥ 1. If v is small, the changes to x lie in row i′ ,
+with zero total; the changes to q are q ′ − q = ev − es , in column j, also with zero total. Hence all
+residual margins are unchanged. The new common entries are nonnegative. Their row totals are
+the old x row totals and their column totals are the old q column totals. At each small slot, one of
+these totals is bounded by an original margin strictly below U , proving the capacity constraint. If
+j ′ = j, then v = t and the two changes to x cancel; the reset of q is confined to that column. If
+i′ = i, then v = s: the transfer increments the negative slot, decrements the positive slot, and leaves
+q unchanged. These include both possible coincidences.
+     If v is large, it differs from s, t, and x′ = x − et , q ′ = q − es . These vectors remain nonnegative
+and within capacity, since xt ≥ 1 and qs = xs + 1 ≥ 1. Only the residuals of row i′ and column j
+increase, each by one. Both lines meet the large block. Adding one to completion entry v therefore
+gives a valid target completion. Its entries remain below C by the total bound already proved.
+     For fixed s, t, the repaired vector recovers x = x′ + et − 1{v∈S} ev , followed by q = x − et + es
+and y = U 1 − q. In the large-receiver case subtract ev from the target completion; otherwise retain
+it. These inverses on the image prove both injections.
+     Finally, t > s implies either i′ = i, j ′ > j, in which case v = s, or i′ > i, in which case every small
+receiver v follows s. Only s, t, v can change, proving prefix preservation and the claimed special
+value.
+
+   For later use, fix a balanced prefix σ before s, and let z− , z+ be the total transversal weights
+extending it with special values xs = l − 1, l, respectively. Let cσst,l be the total weight of defects
+extending that prefix with negative s satisfying xs = l − 1, qs = l and positive t > s. Lemma 2.1
+maps this entire class injectively, with completions, into one fixed child. Hence
+                            (
+                                z+ , i′ = i,
+                 cσst,l ≤                          and in particular            cσst,l ≤ max{z− , z+ }.   (2.5)
+                                z− , i′ ̸= i,
+
+                                                             5
+                                        Defect                          Repaired transversal
+                             cj ′ < U            cj ≥ U                    j′               j
+                                            s : (a, a + 1)
+               ri < U      unchanged                                  unchanged           (a, a)
+                                                 negative
+
+                          t : (b + 1, b)            z
+              ri′ ≥ U                         large entry
+                                                                          (b, b)          z+1
+                             positive
+
+
+Figure 1: The repair when the receiving cell (i′ , j) is large. Small cells display (x, q), and the
+shaded cell displays a completion entry. Decreasing xt and matching the viewpoints increases the
+residual row margin at i′ and column margin at j by one; adding one to z gives an injective map of
+completions. The other cells remain unchanged.
+
+Figure 1 illustrates the large-receiver case.
+   There are fewer than 4d2 ordered unit exchanges. A defect has one designated repair; a transversal
+has at most d2 inverse repairs, one for each ordered defect type. Thus the degree is at most 5d2 + 1.
+Neighbors can be listed with polynomial bit work using (2.3) and its inverse, testing the boxes,
+patterns and residuals, and removing duplicates. No completion count is needed. On a repair edge
+the weight in (2.4) equals the source defect’s weight.
+
+2.3    Stationary mass and unpadding
+The repair bounds defect mass by transversal mass. To recover an original table from a padded
+completion, we also need to control the probability that a large entry is smaller than the padding.
+The following estimate applies to unrestricted tables with any prescribed margins.
+Lemma 2.2 (Small entries). Consider the uniform law on all nonnegative integer tables with
+prescribed margins, with at most m rows and n columns and no entry restrictions. If both margins
+incident to a cell are at least a ≥ 4d, then, for every integer t with 0 < t ≤ a/2,
+                                                                            4td3
+                                  P{the cell’s entry is less than t} ≤           .
+                                                                              a
+Proof. Let the marked cell be (i, j) and its entry be h < t. The other entries in its row have sum at
+least a/2, as do the other entries in its column. Unless this event is empty, choose deterministically
+j ′ ̸= j and i′ ̸= i whose donor entries are both at least a/(2d). Such choices exist because each line
+has fewer than d entries. If there is only one row or column, the event is empty instead. For every
+v = 1, . . . , ⌊a/(2d)⌋, subtract v from the entries (i, j ′ ) and (i′ , j) and add v at (i, j) and (i′ , j ′ ). The
+resulting table is nonnegative with the same margins. Given this table and the labels (i′ , j ′ , h), its
+marked entry determines v, and reversing the four changes recovers the source. There are at most
+td2 possible labels for each output. Since ⌊a/(2d)⌋ ≥ a/(4d), double counting these moves gives the
+asserted bound. No upper entry bound is imposed in this argument.
+Proposition 2.3 (Stationary mass and unpadding). The masses satisfy
+                            0 < Z0 ≤ Λ ≤ (1 + d2 )Z0 ,           πmin ≥ (C + 1)−2d .                          (2.6)
+Draw X with law π and then a uniform A ∈ FX . Declare success if X is a transversal and every
+large entry of A is at least L. Subtracting L from these entries gives a uniform original table
+conditional on success, and
+                                                     1
+                                    P{success} ≥            .                             (2.7)
+                                                 2(1 + d2 )
+
+                                                             6
+Proof. For each of at most |S|(|S| − 1) ≤ d2 defect types, the joint injection in Lemma 2.1 bounds
+its total weight by Z0 . This proves the upper bound on Λ; the other mass inequalities follow
+from inclusion and the greedy starting table. There are Λ joint objects (X, A), each specified by
+2|S| + |B| ≤ 2mn < 2d integer coordinates in [0, C]. Thus Λ ≤ (C + 1)2d , and the positive integer
+weights f (X) give the minimum-mass bound.
+    Consider all unrestricted tables with the enlarged margins r̄, c̄, and call their number F . Every
+transversal and completion gives one such table, so Z0 ≤ F . Each large cell has both enlarged
+margins at least U . Lemma 2.2 and a union bound show that the proportion of these enlarged
+tables with some large entry below L is at most
+                                                  4Ld3   4Ld4   4  1
+                                            |B|        ≤      = 4 < .
+                                                   U      U    d   2
+Here L ≤ U/2 and U ≥ 4d; an empty block has no bad cells. Every enlarged table passing this test
+can be unpadded to an original table. Conversely, padding every original table gives exactly one
+passing table and a feasible transversal with its completion. Consequently the successful pairs are
+in bijection with Ω(r, c) and number at least F/2 ≥ Z0 /2. Under the stated joint law every pair has
+probability (f (X)/Λ)(1/f (X)) = 1/Λ, proving conditional uniformity and (2.7).
+
+   If there are no small slots, X has one state and all graph energies vanish; the completion and
+unpadding step still applies. If there is no large block, the completion step is deterministic. These
+conventions will also be used for the Markov chains below.
+
+
+3    Quadratic signatures and balanced summation
+The transport construction uses quadratic forms with at most one positive eigenvalue. We prove the
+required property for integer coordinates and then show that it survives summation over balanced
+slots. Integer coordinates allow two units to be removed at the same location, so the diagonal
+entries and the endpoints of the summation require explicit treatment. Large capacities occur only
+in finite mathematical sums in this section; the algorithm will not enumerate those sums. The
+one-positive-eigenvalue viewpoint is central to the theory of Lorentzian polynomials developed by
+Brändén and Huh [3]. Here the needed closure is a discrete balanced-pair summation, established
+by the laminar decomposition and telescoping calculation below.
+Definition 3.1 (Softened weights). Let B and S be the large and small slots from Section 2, and
+put                              X               Y
+                             T =    Bs ,    Q = {0, . . . , Bs }2 .
+                                             s                             s
+For a full coordinate vector ξ = (xs , ys )s , write |ξ| =                     s (xs + ys ) and qs = Bs − ys . For a ∈ R, let
+                                                                           P
+
+a+ = max(a, 0). Define
+
+                              X X                           X X
+                     D(ξ) =                xij − r̄i +                     qij − c̄j
+                               i       j                     j        i
+                                                                                                       
+                                   X         X                                 X         X
+                              +                       xij − ri  +                               qij − cj  .
+                                   i       j:(i,j)∈S                            j      i:(i,j)∈S
+                                                                       +                                    +
+
+For 0 < η < 1, set                                 (
+                                                       η D(ξ) ,       ξ ∈ Q, |ξ| = T,
+                                       Fη (ξ) =
+                                                       0,             otherwise.
+
+                                                                  7
+                                                         P
+For a small-coordinate configuration X of total              s∈S Bs , define
+                                                  X
+                       fη (X) =                                       Fη (X, (xs , ys )s∈B ).     (3.1)
+                                  (xs ,ys )=(as ,Bs −as ), 0≤as ≤Bs
+                                                  s∈B
+
+An empty product of choices contributes one term.
+
+   Every box-valid full vector of total T has strictly positive weight, regardless of its margin
+deviations or slot occupancies. Thus fη (X) > 0 for every box-valid X of the indicated total. On the
+transversal and defect patterns,
+                                         lim fη (X) = f (X).                                    (3.2)
+                                              η↓0
+
+Indeed, a term has D = 0 exactly when the full row and column margins are r̄, c̄ and the small
+row and column totals do not exceed r, c. When the large slots are balanced, these conditions
+specify precisely the nonnegative residuals and padded completions defining f . On a line without a
+large slot, the full-margin equality also makes the residual zero. The capacity C excludes no such
+completion, by its choice in (2.1). Each zero-penalty term tends to one, all other terms tend to zero,
+and the sum is finite.
+    We use the following convention throughout. Some coordinates have fixed box-valid values σ,
+of total c = |σ|; a disjoint collection R of whole slots is summed over its balanced profiles; and all
+remaining coordinates are active. For an assignment v to the active coordinates, let
+                                                        X
+                           Φσ,R (v) =                                      Fη (σ, v, b).
+                                              Q
+                                         b∈    s∈R
+                                                     {(a,Bs −a):0≤a≤Bs }
+
+
+Thus the summation domain is fixed, even when v changes. A box-valid active display p for two
+removals satisfies                         X
+                                 c + |p| +   Bs = T + 2.                                 (3.3)
+                                                      s∈R
+
+Its two-removal matrix has entries Mih = Φσ,R (p − ei − eh ). In particular, two removals at the same
+coordinate give a diagonal entry; an invalid removal gives zero. The display has total T + 2, whereas
+every nonzero entry is evaluated at total T .
+
+Lemma 3.2 (Laminar factors). With no balanced slots summed, every two-removal matrix just
+defined has at most one positive eigenvalue.
+
+Proof. Before imposing the box and total, the formula η D(ξ) is a product of positive log-concave
+sequences in sums over a laminar family of coordinate sets. Here laminar means that any two sets
+are disjoint or one contains the other. The sets are the x coordinates of each row and their small-slot
+subsets, and the y coordinates of each column and their small-slot subsets. The row and column
+families are disjoint because they use different coordinates. For example, the column factors have
+the form
+                                                         ′
+                                      η |K−z−c̄j | , η (K −z−cj )+ ,
+where z is the relevant sum of y coordinates and K, K ′ are the corresponding sums of capacities.
+All exponents are convex in z; since log η < 0, the factors are log-concave on all integers.
+    An active coordinate with pi = 0 gives a zero row and column of M ; discard these indices
+temporarily. Restrict the laminar sets to the remaining indices and absorb fixed coordinates into
+shifts of their scalar factors. Combine factors whose restricted sets coincide, and absorb empty
+sets into a positive constant. We obtain distinct nonempty laminar sets G, positive log-concave
+
+                                                         8
+sequences ψG , and arguments tG at the display. Evaluate their formula even for invalid removals for
+the moment. Let W > 0 be its value at the display and put
+                             Y ψG (tG − 1)                        ψG (tG )ψG (tG − 2)
+                      αi =                       ,      γG =                          ∈ (0, 1].
+                             G∋i
+                                   ψG (tG )                          ψG (tG − 1)2
+
+The extended two-removal matrix is W diag(α)K diag(α), where
+                                                             Y
+                                                  Kih =              γG .
+                                                          G⊇{i,h}
+
+For each set define                                              Y
+                                          aG = (1 − γG )                γG′ ≥ 0.
+                                                                G′ ⊋G
+The sets containing any given pair of indices form a chain. Telescoping the product along this chain
+gives the exact identity                          X
+                                      K = 11T −       aG 1G 1T
+                                                             G.                                 (3.4)
+                                              G
+                                       T
+Consequently K is nonpositive on {v : 1 v = 0} and has at most one positive eigenvalue.        The
+only still-invalid removals are diagonal ones at coordinates with pi = 1. Replacing each such entry
+by zero subtracts a nonnegative diagonal matrix from K, so preserves that conclusion. Positive
+diagonal congruence and restoration of the zero rows and columns complete the proof.
+    We next sum over a fresh slot of capacity B. Two occupancies are needed. At occupancy
+B, summing the profiles (j, B − j) eliminates a balanced slot and preserves the signature. At
+occupancy B + 1, the same calculation gives a weighted quadratic estimate; this is the estimate used
+to bound the transport construction in the next section. Both conclusions follow from a discrete
+second-difference inequality.
+Lemma 3.3 (Pair summation). Fix a box-valid display p on the old active coordinates, a fresh slot
+of capacity B ≥ 2, and fixed context and balanced sums as above. Choose its displayed occupancy
+D′ ∈ {B, B + 1} so that
+                                  c + |p| + D′ +
+                                                 X
+                                                   Bs = T + 2.                              (3.5)
+                                                            s∈R
+Write Φ(r, a, b) for the weight after the balanced sums, with old values r and fresh pair (a, b). The
+box-valid displays (p, j, D′ − j) are indexed by
+                                          (
+                                              {0, . . . , D′ },         D′ = B,
+                                   J =
+                                              {1, . . . , D′ − 1},      D′ = B + 1.
+Their two-removal matrices have the blocks
+                                       (Vj )ih = Φ(p − ei − eh , j, D′ − j),
+                                        S(l)i = Φ(p − ei , l, D′ − 1 − l),
+                                          uj = Φ(p, j − 1, D′ − 1 − j).
+Thus Vj records two old removals, S(l) one old and one fresh removal, and uj one removal from each
+fresh coordinate of display j. Put S(l) = 0 outside 0 ≤ l ≤ D′ − 1 and uj = 0 outside 1 ≤ j ≤ D′ − 1.
+Suppose each matrix
+                                                                           
+                                       Vj    S(j − 1) S(j)
+                             Mj = S(j − 1)T  uj−1     uj  ,                      j ∈ J,         (3.6)
+                                                          
+                                    S(j)T       uj    uj+1
+
+                                                            9
+has at most one positive eigenvalue. The entries uj−1 and uj+1 are the double removals at the first
+                                                                                  P ′ −1 T
+and second fresh coordinates, respectively. For every real old vector h satisfying D
+                                                                                   l=0 h S(l) = 0,
+define
+                        Pj−1 T
+                              h S(l)
+                   gj = l=0             (1 ≤ j ≤ D′ − 1),      gj = 0 otherwise.             (3.7)
+                             uj
+All these divisions are valid, and
+
+                        −hT Vj h ≥ 2uj gj2 − uj−1 gj−1
+                                                   2           2
+                                                       − uj+1 gj+1 ,               j ∈ J.                 (3.8)
+                        PB
+If D′ = B, the matrix     j=0 Vj has at most one positive eigenvalue. If D
+                                                                                       ′ = B + 1, then
+
+
+                                   ′ −1
+                                                           ′ −1
+                                                                               
+                                  DX                       DX
+                              2           uj gj2 ≤ −hT             j(D′ − j)Vj  h.                      (3.9)
+                                  j=1                         j=1
+
+Proof. First, uj > 0 for every 1 ≤ j ≤ D′ − 1. Its pair values (j − 1, D′ − 1 − j) are within [0, B]2 in
+both cases. They have total D′ − 2, so (3.5) puts the full configuration on the total-T slice. Choose
+any balanced box-valid profile, for example (0, Bs ), at each summed slot. The unchanged old profile
+and fixed context then give a positive term of Fη . This proves positivity even when the context
+violates the original margins or some old displayed coordinates are zero.
+    The cumulative definition and the balance condition imply, including l = 0, D′ − 1,
+
+                                            hT S(l) = ul+1 gl+1 − ul gl .                                (3.10)
+
+We use an elementary consequence of the signature assumption. If a symmetric matrix M has at
+most one positive eigenvalue and eT M e > 0, then
+
+                                                          (v T M e)2
+                                               vTM v ≤               .                                   (3.11)
+                                                            eT M e
+Indeed, subtract from v its M -orthogonal projection onto e. The remaining vector must have
+nonpositive square, since otherwise it and e span a positive definite two-dimensional subspace.
+   For j ∈ J , put v = (h, gj , −gj ), and let ea , eb denote the two fresh coordinate directions.
+Equations (3.6) and (3.10) give
+
+                     v T Mj ea = uj−1 (gj − gj−1 ),            v T Mj eb = uj+1 (gj+1 − gj ).
+
+If uj−1 > 0, apply (3.11) to ea ; if uj+1 > 0, apply it to eb . Either bound is at most
+
+                                   uj−1 (gj − gj−1 )2 + uj+1 (gj − gj+1 )2 .
+
+If both diagonals vanish, then uj > 0 and ea + eb has square 2uj and is Mj -orthogonal to v. The
+same upper bound, now zero, follows. These cases cover all admissible j: at j = 0 or D′ the inward
+diagonal is positive, and at every other index uj > 0. An exact expansion now yields
+
+                             v T Mj v − uj−1 (gj − gj−1 )2 − uj+1 (gj − gj+1 )2
+                                    = hT Vj h + 2uj gj2 − uj−1 gj−1
+                                                                2           2
+                                                                    − uj+1 gj+1 ,
+
+proving (3.8).
+   For clarity, the smallest capacity is covered without a positive diagonal at every display. When
+B = D′ = 2, the displays j = 0, 2 use the diagonal u1 > 0, and j = 1 uses the positive sum direction
+
+                                                         10
+with square 2u1 . When B = 2, D′ = 3, the only displays are j = 1, 2; they have, respectively,
+positive diagonal u2 and u1 . The out-of-box displays j = 0, 3 are never evaluated.
+   Write aj = uj gj2 , zero outside 1 ≤ j ≤ D′ − 1. For D′ = B, summing (3.8) over 0 ≤ j ≤ D′ gives
+                                       ′              ′
+                                    D
+                                     X             D
+                                                    X
+                                T
+                             −h            Vj h ≥         (2aj − aj−1 − aj+1 ) = 0.
+                                     j=0            j=0
+
+Thus the sum is nonpositive on the kernel of h 7→ hT l S(l), a subspace of codimension at most one.
+                                                               P
+
+A positive eigenspace of dimension two would intersect that kernel nontrivially, so the sum has at
+most one positive eigenvalue. For D′ = B + 1, let wj = j(D′ − j), with w0 = wD′ = 0. Multiplying
+(3.8) by wj and summing only over the admissible indices gives
+               ′ −1
+              DX                                     ′ −1
+                                                    DX                                   ′ −1
+                                                                                        DX
+                      wj (2aj − aj−1 − aj+1 ) =            (2wj − wj−1 − wj+1 )aj = 2           aj .
+               j=1                                   j=1                                j=1
+
+This proves (3.9), using only scalar zero endpoint weights, never endpoint matrices outside the
+box.
+
+Proposition 3.4 (Signature after balanced summation). Fix 0 < η < 1. For arbitrary box-valid
+fixed context σ, arbitrary balanced-slot summation set R, and arbitrary box-valid active display p
+satisfying (3.3), the matrix                                
+                                         Φσ,R (p − ei − eh ) i,h
+has at most one positive eigenvalue.
+
+Proof. Induct on |R|. Lemma 3.2 proves the empty case. For a nonempty set choose t ∈ R, regard
+its two coordinates as active at (j, Bt − j), and sum only over R \ {t}. Every resulting matrix Mj
+has at most one positive eigenvalue by induction; its total is T + 2 by (3.3). Apply Lemma 3.3 with
+D′ = Bt . The matrix B
+                      P t
+                         j=0 Vj is exactly the required matrix after also summing slot t, and has the
+asserted signature. All capacities here are at least two. Zero active coordinates give zero rows and
+columns throughout and need no additional assumption.
+
+   This is a specific closure under balanced-pair summation, proved by (3.8); arbitrary sums of
+matrices with this signature need not preserve it. In the transport argument, a weighted matrix
+Vt = j j(D′ − j)Vj will be tested against real vectors h whose entries may have either sign.
+      P
+
+Equation (3.9) controls these quadratic evaluations under the stated balance condition. We make
+no signature assertion for Vt itself. In particular, Proposition 3.4 is applied before this weighted
+sum, on the entire softened total-T box, even when the resulting two-removal configurations lie
+outside the graph patterns.
+
+
+4    Transport and the graph variance bound
+We now turn the quadratic property into a variance bound for the graph of Section 2. A signed
+flow compares adjacent conditional means; decomposing variance over successive conditions gives
+a bound on the transversals, and the repair map extends it to the full graph. All large slots are
+summed with their balances throughout. The remaining slots are exposed in row-major order. Fix a
+real-valued function H on the feasible small-state graph. The flow-energy comparison is the standard
+quadratic electrical-network method; see Aldous and Fill [1, Section 3.7.1]. The recursive signed
+demands and their bound for integer slots are constructed here. A context σ fixes balanced profiles
+
+                                                          11
+on a prefix of small slots. Write Tσ for the transversals with this context and zσ = X∈Tσ f (X).
+                                                                                          P
+
+If s is the next slot, its child j fixes (xs , ys ) = (j, U − j), and has mass zj and weighted mean Hj .
+Means are used only for positive masses.
+    Let Eσ (H) be the sum of min(f (X), f (Y ))(H(X) − H(Y ))2 over unordered unit-exchange edges
+whose endpoints respect σ. In particular Eσ (H) ≤ E(H); repair edges need not be included in Eσ .
+A superscript η on masses or means, and Eη,σ on this energy, will indicate the softened weights
+from Definition 3.1. For the softened energy we include all box-admissible transversal and defect
+patterns with the context, including states whose limiting weight is zero.
+
+4.1    Child weights and adjacent means
+Lemma 4.1 (Child log-concavity). At every context with positive transversal mass, the child masses
+(zj )U
+     j=0 are log-concave and their positive support is an integer interval. If za , zb > 0 and a ≤ j ≤ b,
+then zj ≥ min(za , zb ).
+
+Proof. For 0 < η < 1 every child mass is positive. For 1 ≤ j < U , display the next pair as
+(j + 1, U − j + 1) and sum every other unexposed slot with its balance. The display is in its box
+and has two excess units. Its two-removal matrix is
+                                               η
+                                                    zjη
+                                                         !
+                                              zj−1
+                                                        .
+                                               zjη zj+1
+                                                    η
+
+
+Proposition 3.4 gives at most one positive eigenvalue. The trace is positive, so the determinant is
+nonpositive: (zjη )2 ≥ zj−1
+                        η    η
+                            zj+1 . Consequently the successive differences of log zjη are nonincreasing,
+and for a < j < b,
+                                    zjη ≥ (zaη )(b−j)/(b−a) (zbη )(j−a)/(b−a) .
+Finite sums converge as η ↓ 0. The local inequalities give log-concavity in the limit; the displayed
+interpolation gives positivity between positive endpoints and the asserted lower bound.
+
+Lemma 4.2 (Conditional transport). Let σ be a row-major context, and let children l − 1, l of its
+next slot have positive masses z− , z+ and means H− , H+ . Then
+
+                  min(z− , z+ )(H− − H+ )2 ≤ A0 Eσ (H),        A0 = 2 + 2d(U + 1)2 .               (4.1)
+
+Proof. We first work at a fixed η > 0. Extend H by arbitrary fixed finite values to the box-admissible
+graph patterns whose limiting weights are zero, and suppress η on masses. We seek a signed flow
+with divergence fη (X)/z− at each transversal in the minus child, −fη (X)/z+ at each transversal in
+the plus child, and zero elsewhere. For such a flow J, summation by parts and Cauchy–Schwarz give
+                                                                   !
+                           η    η 2
+                                           X      J(X, Y )2
+                         (H− − H+ ) ≤                              Eη,σ (H),
+                                           XY
+                                              min(fη (X), fη (Y ))
+
+where each unit-exchange edge is oriented once. Thus it is enough to bound the flow’s resistance
+energy. We build its signed demands by successively exposing the remaining small slots, and charge
+its energy to a quadratic potential along that recursion.
+    Display the special slot s as (l, U + 1 − l), where 1 ≤ l ≤ U . Removing its first or second
+coordinate gives the minus or plus child, respectively. The flow uses these endpoint transversals and
+defects with s positive and one other unexposed small slot negative.
+    Balanced recursion. A recursion node ν displays the special pair and some subsequent small
+pairs, the latter all with occupancy U . Let p be this display, and call its coordinates the old indices.
+
+                                                   12
+With the context included, and all undisplayed slots assigned their balanced occupancies, the total
+                     P
+is T + 1, where T = s Bs . For an old index i, let si be the total softened weight obtained by
+removing one unit there and summing all undisplayed slots with their balances. Invalid removals
+have weight zero. Assign coefficients hi satisfying
+                                     X                                X
+                                            si hi = 0,         Φν =        si h2i .               (4.2)
+                                        i                              i
+
+The quantity si hi is the signed demand on that one-removal fiber; the first equality requires total
+demand zero at the node. At the root the two coefficients are 1/z− and −1/z+ , giving the prescribed
+endpoint demands and root potential 1/z− + 1/z+ .
+     To process the next ordinary slot v, branch over its balanced profiles (j, U − j), 0 ≤ j ≤ U .
+In the notation of Lemma 3.3, use the auxiliary occupancy D′ = U + 1. Then S(j) is the vector
+of old-hole weights in branch j, and uj is the no-old-hole weight with pair (j − 1, U − j). Thus
+                                                      P
+u1 , . . . , uU are positive and u0 = uU +1 = 0. Since j Si (j) = si , define
+                              Pj−1 T
+                               a=0 h S(a)
+                       gj =                         (1 ≤ j ≤ U ),           g0 = gU +1 = 0.       (4.3)
+                                     uj
+Balance gives hT S(j) = uj+1 gj+1 − uj gj , including both endpoints. In child j, retain all old
+coefficients and give the two new coordinates coefficients gj , −gj+1 . Their one-hole masses are
+uj , uj+1 , so the child is balanced. Summing child potentials conserves the old terms and adds exactly
+                               U
+                               X                         U
+                                                         X
+                                     Φνj − Φν = 2              uj gj2 ≤ −hT Vν,v h.               (4.4)
+                               j=0                       j=1
+
+Here Vν,v is the matrix of two-old-hole weights with v displayed at (a, U + 1 − a), summed over
+1 ≤ a ≤ U with multiplier a(U + 1 − a) and over all other undisplayed slots with their balances.
+The inequality is precisely Equation (3.9). Each individual display before the two removals has total
+T + 2.
+    A future quadratic form. For any slot t still to be processed, define Qt (ν) = hT Vν,t h by the same
+rule. If a different slot v is split now, we claim
+                                              U
+                                              X
+                                                    Qt (νj) ≥ Qt (ν).                             (4.5)
+                                              j=0
+
+For an explicit common summation kernel, put
+                                  U
+                                  X                      X                                    
+                    Kt (r, w) =         a(U + 1 − a)           Fη σ, r, w, (a, U + 1 − a), b .
+                                  a=1                     b
+
+Here r assigns the old coordinates, w assigns the current pair v, and b ranges over the Cartesian
+product of balanced profiles of every remaining slot other than t, including all large slots. As usual,
+an invalid coordinate assignment contributes zero. This is a single fixed summation domain; all
+penalties are evaluated on the full configurations. Every kernel entry used below has total T .
+   The old–old terms in the children partition the parent’s balanced sum over v. For a mixed term,
+removing old index i and the first new coordinate in branch j gives Kt (p − ei , (j − 1, U − j)) with
+coefficient 2hi gj . Removing i and the second new coordinate in branch j − 1 gives the identical
+kernel entry with coefficient −2hi gj . These terms cancel. All legal resulting pairs have occupancy
+U − 1; the unmatched formal endpoint removals are invalid and have weight zero. For the new–new
+terms, each resulting pair (k, U − 2 − k), 0 ≤ k ≤ U − 2, has exactly the following contributions:
+
+                                                         13
+                             Removed coordinates              Branch   Coefficient
+                             First twice                      k+2       2
+                                                                       gk+2
+                             First and second                 k+1      −2gk+1 gk+2
+                             Second twice                     k         2
+                                                                       gk+1
+
+They all multiply Kt (p, (k, U − 2 − k)). Hence the exact identity is
+                 U
+                 X                          U
+                                            X −2
+                       Qt (νj) − Qt (ν) =          Kt (p, (k, U − 2 − k))(gk+2 − gk+1 )2 ≥ 0.        (4.6)
+                 j=0                        k=0
+
+All omitted boundary removals are invalid. Auxiliary entries with two holes in an ordinary pair need
+not be graph states: they belong to the full softened total-T slice where the signature proposition
+applies. No signature property of the weighted sum Vν,t is being asserted; Equation (4.4) and the
+explicit square identity are the properties of that sum that are used.
+    The root bound. Iterating Equation (4.5) shows that the sum of Qt at the level just before
+processing t is at least its root value. Thus Equation (4.4), summed over levels, bounds the total
+leaf potential by the root potential minus the sum of the root Qt ’s. Let ct = cη,σst,l be the total weight
+of defects respecting σ with special pair (l − 1, U − l) negative, slot t positive, and every other small
+slot balanced. These auxiliary defects differ from the special-positive defects used by the leaf flow:
+the off-diagonal entry removes both special coordinates from (l, U + 1 − l), leaving (l − 1, U − l). At
+the root, the off-diagonal entry of Vν,t is this sum with multiplier a(U + 1 − a) on the positive pair
+t, so it is at most (U + 1)2 ct . Its diagonal entries are nonnegative. Substituting the root coefficients
+and dropping their nonpositive contributions to −Qt gives
+                                 X                1   1   2(U + 1)2 X
+                                          Φν ≤      +   +             ct .                           (4.7)
+                                 ν leaf
+                                                 z− z +     z− z+ t>s
+
+The sum ranges only over the other unexposed small slots. With no such slots the recursion consists
+of its root and this bound still holds.
+     Leaf flows and their divergences. At a leaf let D denote the entire small-coordinate display,
+including the fixed context. For its unfixed coordinate indices i, the valid one-removal states
+Xi = D − ei have weights si = fη (Xi ) > 0, and form a clique of unit exchanges. Choose a
+maximum-weight vertex as hub. On the edge from each nonhub Xi to the hub send signed flow
+si hi ; its conductance is exactly si . The flow’s divergence at Xi is si hi , and balance gives the same
+prescribed divergence at the hub. Its resistance energy is at most i si h2i = Φν . Different leaf
+                                                                           P
+
+cliques have disjoint edge sets: the coordinatewise maximum of the endpoints recovers D, which
+uniquely determines the leaf. Their flows can therefore be added without an energy multiplier.
+     An endpoint transversal has a unique leaf representation. Its ordinary balanced profiles determine
+all branches, and its special hole is in the first coordinate for the minus child and the second for the
+plus child. Its coefficient remains 1/z− or −1/z+ throughout. Every other used state has special
+slot positive and a unique ordinary negative pair, say (a, U − 1 − a) in slot v. It has exactly two leaf
+representations: fill the first coordinate, giving branch a + 1 and coefficient ga+1 , or fill the second,
+giving branch a and coefficient −ga+1 . All earlier profiles are determined by the state, so both
+coefficients come from the same recursion parent. Later splits retain them. Both representations
+carry the identical weight fη (X), and their divergences cancel. This also holds for a = 0, U − 1.
+     Consequently the summed flow J has divergence fη /z− on the minus child, −fη /z+ on the
+plus child, and zero elsewhere. The resistance-energy comparison from the start of the proof and
+
+
+
+                                                         14
+Equation (4.7) now eliminate the flow and all recursive coefficients:
+
+                                                 2(U + 1)2 t>s cη,σ
+                                                                   P           !
+                      η    η 2          1    1                  st,l
+                    (H− − H+ ) ≤        η +  η +        η η                        Eη,σ (H).       (4.8)
+                                       z−   z+         z− z+
+
+    The limit and conditional repair. The extension of H was fixed independently of η. For this
+fixed input all sums are finite. Since the two limiting child masses are positive, every quantity
+in Equation (4.8) converges as η ↓ 0. We take this limit only after obtaining that inequality;
+convergence of the demands, the gj ’s, or the flows is unnecessary. For the limiting cσst,l , Lemma 2.1
+injects state/completion pairs into one of the two child fibers. Specifically, since t follows s in
+row-major order, the receiver is either s itself or lies in a later row, and all earlier assignments are
+preserved. The repaired special value is l in the first case and l − 1 in the second, with the choice
+fixed by s, t. Thus
+                                         cσst,l ≤ max(z− , z+ ).
+There are fewer than d possible slots t. Multiplication of the limiting inequality by min(z− , z+ ) now
+yields Equation (4.1).
+
+4.2   From conditional transport to variance
+Theorem 4.3 (Graph Poincaré inequality). For every real function H on the feasible small graph,
+                                                              
+                 Λ Varf /Λ H ≤ (1 + 2d2 )4d2 (U + 1)6 + 2 E(H) ≤ 770d4 U 6 E(H).                   (4.9)
+
+In particular, the feasible graph is connected.
+Proof. First restrict to transversals. At a positive-mass context σ, put pj = zj /zσ . The between-child
+contribution to its unnormalized variance is
+                                                   1 X
+                                zσ Varp (Hj ) =          za zb (Ha − Hb )2 .                      (4.10)
+                                                  zσ a<b
+
+Zero-mass children may be omitted. For positive endpoints a < b, Lemma 4.1 makes every intervening
+mass at least min(za , zb ). Telescoping and Cauchy–Schwarz therefore give
+                                                                 b−1
+                        za zb                                    X
+                              (Ha − Hb )2 ≤ min(za , zb )(b − a)     (Hj − Hj+1 )2
+                         zσ                                      j=a
+                                              b−1
+                                              X
+                                         ≤U         min(zj , zj+1 )(Hj − Hj+1 )2
+                                             j=a
+                                            2
+                                         ≤ U A0 Eσ (H).
+
+There are at most (U + 1)2 pairs. Thus the contribution in Equation (4.10) is at most (U +
+1)4 A0 Eσ (H).
+    Iterating the identity Var H = E(Var(H | j)) + Var(E(H | j)) down the exposure tree expresses
+the full unnormalized transversal variance as the sum of these contributions. At any fixed depth,
+the energies Eσ use disjoint edge sets, because distinct contexts assign different prefix coordinates.
+There are at most d internal levels, and A0 ≤ 4d(U + 1)2 . Hence, writing VarT for variance under
+the normalized transversal weights,
+
+                                    Z0 VarT H ≤ 4d2 (U + 1)6 E(H).                                (4.11)
+
+                                                    15
+If there are no small slots, the transversal space is a singleton and this inequality holds directly.
+    Let H be the transversal mean, and compare each defect X to its repair R(X). By Lemma 2.1,
+f (X) ≤ f (R(X)), the repair map is injective within each of fewer than d2 defect types, and its edge
+has conductance f (X). Distinct defects give distinct repair edges. It follows that
+                                   X
+                   Λ Varf /Λ H ≤         f (X)(H(X) − H)2
+                                   X∈X
+                                                    X
+                                ≤ Z0 VarT H + 2          f (X)(H(X) − H(R(X)))2
+                                                    ∈T
+                                                   X/
+                                         X
+                                   +2          f (X)(H(R(X)) − H)2
+                                          ∈T
+                                         X/
+                                           2
+                                ≤ (1 + 2d )Z0 VarT H + 2E(H).
+
+Insert Equation (4.11) to obtain the first bound in Equation (4.9). Since U ≥ 1, 1 + 2d2 ≤ 3d2 and
+(U + 1)6 ≤ 64U 6 give the second bound. Finally, the indicator of a nonempty proper connected
+component would have positive variance and zero energy, which is impossible. The one-state case is
+already connected.
+
+
+5     Sampling a dense completion block
+The completion distributions required by the small-state chain have large minimum margins, but
+their margins need not have comparable sizes. We now give the sampling subroutine, using the
+global parameters in Equation (2.1). All random choices in its implementation use finitely many
+independent unbiased bits.
+
+Theorem 5.1 (Dense completion draw). Let a rectangular block have at most m rows and n columns,
+nonnegative integer margins of equal total less than C, and every margin at least L = d12 . For
+each integer h ≥ 1, there is an algorithm that always outputs a feasible integer table and whose
+law is within 2−h in total variation of the uniform law on the block’s feasible tables. Its worst-case
+bit running time is polynomial in d, b, h. Empty blocks, and blocks having a single row or a single
+column, have deterministic completion algorithms with the same guarantee.
+
+    The proof first groups integer tables into scaled bins and gives a constant lower bound on
+rejection-sampling acceptance. A log-concave continuous density controls the bin normalizer and
+the conductance of the finite bin chain. We then implement its transitions and the within-bin offsets
+with bounded numbers of random bits. The scaled-coordinate and softened-density construction
+follows the geometric approach of Dyer, Kannan, and Mount [10, Sections 4–5]; expanded-polytope
+rounding is also central to Morris [14, Sections 1.3–2]. The estimates and finite-bit sampler needed
+here are proved below.
+
+5.1   Scaled coordinates and rejection from bins
+The deterministic cases require no argument beyond the prescribed margins, so suppose the block
+has a, c ≥ 2 rows and columns. Write its margins as Ri , Pj . Reorder the rows and columns so that
+Ra and Pc are maximum, breaking ties by their original indices, and restore the original order when
+returning a table. The entries with i < a, j < c determine the entire table. We group their possible
+
+
+
+
+                                                   16
+integer values into intervals of lengths
+
+                             sij = min(Ri , Pj )              (1 ≤ i ≤ a, 1 ≤ j ≤ c),
+                                                 8
+                                       B=d ,             K0 = 4B,           A = d4 ,                     (5.1)
+                                              sij
+                                                        
+                                        wij =                   (i < a, j < c).
+                                              B
+
+There are e = (a − 1)(c − 1) ≤ d free entries. Since sij ≥ L ≥ 2B,
+                                                     sij         sij
+                                                         ≤ wij ≤     .                                   (5.2)
+                                                     2B          B
+Each nonnegative integer free entry has a unique representation Xij = wij vij + βij with integer
+vij ≥ 0 and 0 ≤ βij < wij . For a feasible table, Xij ≤ sij , so vij ≤ 2B < K0 . Thus all feasible tables
+are represented by bins indexed by
+
+                                            V = {0, . . . , K0 − 1}e
+
+and an offset in each free coordinate. The number of bins depends only on the dimensions, although
+an offset range can depend on the margins. We will give weight one to every bin containing a feasible
+table and choose the other weights by penalizing violations of nonnegativity. An ideal proposal then
+samples a weighted bin and uniform offsets, rejecting an infeasible table.
+    To define these weights, pass temporarily to scaled real coordinates. For u ∈ Re , define the
+affine table X(u) by
+
+                Xij (u) = wij uij                                                      (i < a, j < c),
+                                 X
+                Xic (u) = Ri −         wij uij                                         (i < a),
+                                 j<c
+                                 X
+                Xaj (u) = Pj −         wij uij                                         (j < c),
+                                 i<a
+                                 X                   X
+                Xac (u) = Ra −         Pj +                  wij uij .
+                                 j<c          i<a, j<c
+
+These formulas impose all the margins. Let Tij = Xij /sij , including the dependent entries, and set
+
+                               P = {u ∈ Re : Tij (u) ≥ 0 for every i, j}.
+
+Every free scale contributing to a dependent entry is at most that entry’s scale. For example,
+sij ≤ sic follows from Pj ≤ Pc , sij ≤ saj from Ri ≤ Ra , and sij ≤ sac follows from both inequalities.
+Thus every coefficient in each normalized affine entry has absolute value at most 1/B, and there are
+at most d of them. Consequently
+                                                                     d
+                                    |Tij (u) − Tij (v)| ≤              ∥u − v∥∞ .                        (5.3)
+                                                                     B
+Feasibility and Equation (5.2) imply P ⊂ [0, 2B]e . The integer representation above belongs to the
+closed unit bin Qv = v + [0, 1]e , at the point with coordinates uij = vij + βij /wij .
+    The feasible polytope has a point u∗ with uniform positive slack:
+                                                                      1
+                                                      Tij (u∗ ) ≥       .                                (5.4)
+                                                                     2d
+
+                                                              17
+To construct it, first assign sij /(2d) to every cell. This uses at most cRi /(2d) ≤ Ri /2 in row i and
+at most aPj /(2d) ≤ Pj /2 in column j. The remaining nonnegative real margins have equal totals
+and can be completed by the greedy supply–demand construction. The resulting table determines
+u∗ . The strict slack and Equation (5.3) also show that P has positive e-dimensional volume.
+     On the cube [0, K0 ]e define
+
+                                                                 ρ(u) = 2−Ap(u) .
+                                                           
+                     p(u) = max 0, max(−Tij (u) − d/B) ,                                          (5.5)
+                                      ij
+
+The allowance d/B makes p vanish at the lower corner of every bin meeting P, by Equation (5.3).
+The function p is convex and (d/B)-Lipschitz in the sup norm; therefore ρ is positive, continuous,
+and log-concave. Comparison with u∗ ∈ [0, 2B]e gives 0 ≤ p(u) ≤ 4d on the cube. Assign the dyadic
+bin weights
+                                        W (v) = 2−Ev ,
+                                                                  X
+                      Ev = ⌊Ap(v)⌋,                         ZB =     W (v).                  (5.6)
+                                                                     v∈V
+
+In particular W (v) = 1 whenever Qv contains a feasible point, even on its boundary. For u ∈ Qv ,
+
+                            Ap(u) − ⌊Ap(v)⌋ ≤ 1 + Ad/B = 1 + d−3 < 2,
+
+so
+                                      1
+                                      4 W (v) ≤ ρ(u) ≤ 4W (v).                                    (5.7)
+This comparison lets integrals of ρ control sums of bin weights; overlapping bin faces have zero
+volume in these integrals.
+    An ideal trial draws v with probability W (v)/ZB , then draws independent uniform offsets
+βij ∈ {0, . . . , wij − 1} and sets
+
+                                Xij = wij vij + βij    (i < a, j < c).                            (5.8)
+
+It fills the remaining entries to give the prescribed margins and accepts exactly when all entries are
+nonnegative.
+
+Proposition 5.2 (Bin rejection). An ideal trial succeeds with probability at least 1/64. Conditional
+on success, its output is exactly uniform on the feasible integer tables.
+
+Proof. The unique bin-and-offset representation of a feasible integer table has a bin of weight one.
+The table’s probability before rejection is therefore
+                                            1   Y       1
+                                                           ,                                      (5.9)
+                                           ZB i<a, j<c wij
+
+independent of the table. The dependent entries are integers because they are integer sums and
+differences. This proves conditional uniformity, including tables on faces and widths of different
+sizes.
+    For the success bound, let nfull be the number of bins whose entire closure is contained in P.
+Each has weight one and accepts every offset, so its contribution to the success probability is 1/ZB .
+We compare nfull and ZB with vol(P). Set P − = {u : Tij (u) ≥ 2d/B for every i, j}. The affine
+map u 7→ (1 − α)u + αu∗ with α = 4d2 /B sends P into P − by Equation (5.4). Hence Bernoulli’s
+inequality gives
+
+                 vol(P − ) ≥ (1 − 4d2 /B)e vol(P) ≥ (1 − 4d3 /B) vol(P) ≥ 21 vol(P).             (5.10)
+
+
+                                                  18
+Except on grid boundaries, every point of P − lies in a bin whose entire closure is in P: the change
+of any normalized entry across that bin is at most d/B. These bins cover P − up to a null set and
+each has volume one, so nfull ≥ vol(P − ) ≥ vol(P)/2.
+    To bound ZB , for any γ ≥ 0 consider the entire relaxed polytope Pγ = {u : Tij (u) ≥
+−γ for all i, j} in Re , without a cube restriction. For u ∈ Pγ the point
+
+                                                          u + 2dγu∗
+                                                     z=
+                                                           1 + 2dγ
+
+belongs to P, since the affine coefficients sum to one and each Tij (z) ≥ 0. Thus Pγ ⊂ u∗ + (1 +
+2dγ)(P − u∗ ), and
+                        vol(Pγ ) ≤ (1 + 2dγ)e vol(P) ≤ exp(2d2 γ) vol(P).                 (5.11)
+This argument also covers points with negative free coordinates. The sublevel set {p ≤ (j + 1)/A}
+inside the sampling cube is contained in Pd/B+(j+1)/A . Summing the upper bounds for the penalty
+layers and using Equation (5.7) gives
+                            Z
+                   ZB ≤ 4               ρ(u) du
+                             [0,K0 ]e
+
+                                  2−j exp 2d2 (d/B + (j + 1)/A) vol(P) ≤ 32 vol(P).
+                            X                                                
+                      ≤4
+                            j≥0
+
+For the last numerical bound put a0 = 2/d2 and b0 = 2/d5 . Since a0 + b0 ≤ 1/4, both exp(a0 ) and
+exp(a0 + b0 ) are at most 4/3. The geometric sum is at most 4(4/3)/(1 − (4/3)/2) = 16, which is
+stronger than asserted. Consequently
+
+                                                      nfull   vol(P)/2    1
+                                  P{success} ≥              ≥           = .
+                                                      ZB      32 vol(P)  64
+
+
+
+5.2    An integral interpolation inequality
+We supply the continuous inequality used to mix the bins. It is an analytic proof device; the
+algorithm never integrates or samples a real density. This finite-box statement is a special case of
+the Prékopa–Leindler inequality [13, 15]. We include the one-dimensional transport argument and
+induction on slices to specify the regularity needed here.
+
+Lemma 5.3 (Finite-box integral interpolation). Let S1 , S2 , S0 be bounded finite unions of open
+axis-aligned boxes in Rq , and let 0 < t < 1, with (1 − t)S1 + tS2 ⊂ S0 . Let f1 , f2 , f0 be positive
+continuous functions on a compact box containing the closures of these sets. If
+
+                       f0 ((1 − t)x + ty) ≥ f1 (x)1−t f2 (y)t             (x ∈ S1 , y ∈ S2 ),
+
+then                                    Z            Z         1−t Z           t
+                                              f0 ≥         f1                f2        .        (5.12)
+                                         S0           S1                S2
+
+In particular, for finite unions S, D0 of open boxes in the sampling cube,
+                                   Z                       Z       1−t Z            t
+                                                     ρ≥             ρ              ρ        .   (5.13)
+                                    (1−t)S+tD0                  S            D0
+
+
+                                                           19
+Proof. We first prove the one-dimensional integral assertion in the slightly larger class needed for
+slices. Suppose F, G, H are nonnegative, supported on bounded finite unions of intervals, and, after
+removal of finitely many endpoints, are continuous and either zero or bounded above and below
+by positive constants on each interval piece. Assume H((1 − t)x + ty) ≥ F (x)1−t G(y)t whenever
+F (x)G(y) > 0, apart from
+                        R
+                             possible source
+                                          R
+                                             endpoints. Source integrals zero give a trivial inequality;
+otherwise write MF = F > 0, MG = G > 0.
+    Let u(a), v(a), 0 < a < 1, be the quantiles of F/MF and G/MG . Split (0, 1) at the cumulative
+probabilities of the finitely many support endpoints and continuity breakpoints of both densities.
+On each remaining open interval I, the quantiles are continuously differentiable, strictly increasing,
+and satisfy
+                                            MF                   MG
+                                u′ (a) =          ,   v ′ (a) =         .
+                                         F (u(a))               G(v(a))
+These statements follow directly by inverting the continuously differentiable cumulative function on
+a positive interval piece, whose derivative is positive. The function z(a) = (1 − t)u(a) + tv(a) is
+also strictly increasing and continuously differentiable on I. Its images z(I) for distinct pieces are
+disjoint. Change of variables on each piece, followed by the weighted arithmetic–geometric mean
+inequality, yields
+                  Z         XZ
+                      H≥            H(z(a))z ′ (a) da
+                            I   I
+                                                                             1−t              t
+                                                                    MF                 MG
+                            XZ                                
+                        ≥           F (u(a))1−t G(v(a))t                                             da
+                            I   I                                 F (u(a))            G(v(a))
+                        = MF1−t MGt .
+The pieces have total parameter length one. A gap in a source support causes a quantile jump at
+one of the excluded parameterR values; the corresponding gaps between image intervals merely omit
+nonnegative contributions to H. Thus neither disconnected supports nor density jumps require
+continuity across a gap.
+   The assertion for dimension q = 1 follows by restricting the ambient continuous weights to
+their sets. Induct on q. For each first coordinate x, let Si (x) be the slice in the remaining q − 1
+coordinates and put                          Z
+                                         Fi (x) =            fi (x, x′ ) dx′ .
+                                                    Si (x)
+Whenever S1 (x) and S2 (y) are nonempty, their interpolation is contained in S0 ((1 − t)x + ty). The
+induction hypothesis for these slices therefore gives
+                                    F0 ((1 − t)x + ty) ≥ F1 (x)1−t F2 (y)t .
+To justify the one-dimensional step for the marginals, partition the first-coordinate axis by all
+endpoints of all the boxes. On each open piece, a slice domain is a fixed union of boxes or is empty.
+In the nonempty case it has fixed positive volume. Each ambient weight has a positive minimum
+and finite maximum on the compact box, so its marginal is bounded above and below by positive
+constants there. Uniform continuity of the weight on the compact box proves continuity of the
+marginal on that piece by integration over this fixed domain. These are exactly the hypotheses of
+the one-dimensional argument just proved. Applying that argument and then iterated integration
+proves Equation (5.12).
+    Finally, the interpolation of two finite unions of open axis-aligned boxes is the finite union of
+all pairwise interpolations of their boxes, each again such a box. Convexity of p gives the required
+pointwise inequality for f0 = f1 = f2 = ρ, proving Equation (5.13).
+
+                                                        20
+5.3   Conductance of the bin chain
+The following finite-chain estimate converts a cut bound into a mixing bound. We will use it for the
+bin chain here and for the small-state chain in Section 6.
+Lemma 5.4 (Conductance and mixing). Let P be a reversible kernel on a nonempty finite set V ,
+with stationary probabilities π(x) > 0 and P (x, x) ≥ 1/2. Set Q(x, y) = π(x)P (x, y) and
+                                                   X
+                                EP (H) =                  Q(x, y)(H(x) − H(y))2 ,
+                                               {x,y}⊆V
+
+where unordered pairs have distinct endpoints. If Varπ H ≤ KEP (H) for all H, with K ≥ 1, then,
+writing πmin = minx∈V π(x), for every integer t ≥ 0,
+                                                             −1 −t/K
+                                       ∥P t (x, ·) − π∥TV ≤ πmin e   .                                  (5.14)
+If, for some κ > 0, every cut satisfies
+                                               X
+                           Q(A, Ac ) :=                  Q(x, y) ≥ κ min{π(A), π(Ac )},
+                                                  ∈A
+                                            x∈A, y /
+
+then the variance inequality holds with K = 2/κ2 .
+Proof. For nonnegative g with π(g > 0) ≤ 1/2, integrate the cut inequality over Au = {x : g(x)2 > u}
+to obtain                      X                                               1/2
+                 κ∥g∥2L2 (π) ≤     Q(x, y)|g(x)2 − g(y)2 | ≤ 2EP (g)∥g∥2L2 (π)      .
+                                   {x,y}
+The last step is Cauchy–Schwarz and
+               X                                         X
+                       Q(x, y)(g(x) + g(y))2 ≤ 2              π(x)(1 − P (x, x))g(x)2 ≤ 2∥g∥2L2 (π) .
+               {x,y}                                      x
+
+Consequently ∥g∥2L2 (π) ≤ 2κ−2 EP (g), also when g = 0. Choose a π-median a of H and apply this
+to (H − a)+ and (a − H)+ . Their squared norms sum to ∥H − a∥2L2 (π) , and their energies sum to
+at most EP (H), by the corresponding inequality on each edge. Since the variance is the minimum
+squared deviation from a constant, this proves the cut assertion.
+    For mixing, reversibility makes P self-adjoint on L2 (π) and gives EP (H) = ⟨H, (I − P )H⟩π . The
+stochastic kernel 2P − I is an L2 (π) contraction by Jensen’s inequality and stationarity. Hence the
+eigenvalues of P are in [0, 1]. The variance inequality bounds those on the mean-zero subspace by
+1 − 1/K ≤ e−1/K . For gx (y) = 1{y=x} /π(x) − 1, reversibility gives
+                                           P t (x, y)
+                         (P t gx )(y) =               − 1,         ∥gx ∥2L2 (π) = π(x)−1 − 1.
+                                             π(y)
+The L2 contraction followed by Cauchy–Schwarz bounds the total variation distance by
+                                                   q
+                                               1
+                                               2       π(x)−1 − 1 e−t/K ,
+which implies (5.14). On a singleton all asserted variances and distances vanish; it may simply be
+regarded as already mixed.
+   Use the axis-neighbor Metropolis chain on V. Each of the 2e signed coordinate directions is
+proposed with probability
+                             qB = 2−qbin ,    qbin = ⌈log2 (8d)⌉;
+the unused probability, or a proposal leaving the cube, holds. A proposal v ′ within the cube is
+accepted with probability min(1, W (v ′ )/W (v)). This chain is reversible for πB (v) = W (v)/ZB and
+holds with probability at least 3/4.
+
+                                                              21
+Proposition 5.5 (Bin conductance and mixing). For every nontrivial cut of the bin states, its
+stationary edge conductance divided by the smaller stationary side mass is at least
+                                                               1
+                                                  κB =                 .
+                                                          105 d2 K0
+Starting at any bin, after H = d50 (h + 1)2 steps the total-variation distance from πB is at most
+2−4(h+d) .
+Proof. Write µ(E) = E ρ and D = (0, K0 )e . For a cut V = V1 ⊔ V2 , choose S to be the union of the
+                      R
+
+open bins on the side of smaller continuous mass. Then 0 < µ(S) ≤ µ(D)/2. Set
+                               1                           1
+                       t=         ,           r = tK0 =      ,         M = (1 − t)S + tD.
+                             4dK0                         4d
+We have S ⊂ M , by writing x = (1 − t)x + tx for x ∈ S. Lemma 5.3 gives
+
+                                 µ(M \ S) ≥ (2t − 1)µ(S) ≥ t log(2)µ(S).                           (5.15)
+
+This is actual gained mass even though S need not be convex.
+    We next cover this gain by neighborhoods of cut faces. Ignore the finite union of grid hyperplanes,
+a null set. If z ∈ M \ S, write z = (1 − t)x + ty with x ∈ S, y ∈ D. The segment from x to z stays
+inside the open convex cube and has sup-norm length less than r. Its initial bin lies on the selected
+side and its terminal bin lies on the other side. Follow the segment through its finitely many grid
+crossings. At a crossing in several coordinates simultaneously, the incident bins are indexed by the
+two choices in each crossing coordinate, and are connected by axis-neighbor faces through that same
+point. If the incoming and outgoing bins have different labels, a face path between them contains
+an opposite-label pair. Its common closed face contains the crossing point. Since some crossing
+changes the label, z is at sup distance less than r from a cut face. No exterior face is needed: the
+entire segment lies in D.
+    For such a closed unit face F , take its sup-distance-r neighborhood intersected with D, denoted
+  (r)
+F . Its volume is at most
+                                                           1     e−1
+                                                                           
+                                                  e−1
+                                   2r(1 + 2r)           ≤    exp                ≤ 1.
+                                                          2d      2d
+
+If v is the lower corner of either bin adjacent to F , every point z ∈ F (r) satisfies ∥z − v∥∞ ≤ 1 + r.
+Hence
+                                   ρ(z) ≤ 2(Ad/B)(1+r) ρ(v) ≤ 4W (v),
+and the same inequality holds for the other adjacent corner v ′ . Thus µ(F (r) ) ≤ 4 min(W (v), W (v ′ )).
+                                                                     P
+Combining the face cover with Equation (5.15), and writing Di = v∈Vi W (v), gives
+
+                                                                       t log(2)
+                                            min(W (v), W (v ′ )) ≥
+                             X
+                                                                                µ(S)
+                                                                           4
+                      vv ′ axis-neighbors
+                          v∈V1 , v ′ ∈V2
+                                                                       t log(2)
+                                                                   ≥            min(D1 , D2 ).
+                                                                          16
+The second inequality follows from Equation (5.7): the selected continuous side has mass at least
+one quarter of its own discrete weight, which is at least min(D1 , D2 ). It does not require the two
+notions of smaller side to agree. Stationary edge conductance is qB min(W (v), W (v ′ ))/ZB . Since
+qB ≥ 1/(16d), the cut ratio is at least log(2)/(1024d2 K0 ) ≥ κB .
+
+                                                          22
+   The weights satisfy 2−4Ad ≤ W (v) ≤ 1, so
+
+                              2−4Ad            −1
+                   πB,min ≥         ,     log πB,min ≤ 4d5 log 2 + d log(4d8 ) ≤ 4d5 .
+                               K0e
+
+Lemma 5.4 supplies inverse gap at most
+
+                              KB = 2κ−2          11 20
+                                     B = 3.2 · 10 d    ≤ d32          (d ≥ 14).
+
+It bounds the error at time H by exp(4d5 −H/KB ). Since d18 ≥ 4d5 and d5 h(h+2) ≥ (d+1)h ≥ h+d,
+we have
+                    H
+                         − 4d5 ≥ d18 (h + 1)2 − 4d5 ≥ 4d5 h(h + 2) ≥ 4(h + d) log 2.
+                   KB
+This proves the asserted error.
+
+5.4   A bounded random-bit implementation
+We finish the proof of Theorem 5.1, keeping explicit bounds that will also describe the finite output
+law in Section 6. Use the integer schedule
+
+                                  J = d4 (h + 1),         H = d50 (h + 1)2 .                     (5.16)
+
+Run at most J independent trials, each running H bin-chain steps from 0. At the end of each bin
+walk use Equation (5.8), but obtain each offset from the bounded draw
+
+                kij = ⌈log2 (wij + 1)⌉ + 4(h + d),  Zij uniform on {0, . . . , 2kij − 1},
+                                                  wij Zij
+                                                         
+                                                                                                 (5.17)
+                                            βij =           .
+                                                   2kij
+Return the first feasible table. If all J trials fail, return a fixed greedy feasible table with the
+required margins.
+   Each offset probability differs from 1/wij by at most 2−kij : its number of preimages is either
+the floor or the ceiling of 2kij /wij . Thus its total-variation error is at most wij /2kij ≤ 2−4(h+d) .
+Coupling the independent offsets coordinate by coordinate bounds their joint error by d2−4(h+d) .
+Proposition 5.5 bounds the bin error by 2−4(h+d) , so a complete implemented trial, including its
+success flag, differs from an ideal trial by at most (1 + d)2−4(h+d) .
+   Couple the J independent trial records until the first discrepancy. This bounds the difference
+between the implemented first-success procedure and its ideal counterpart by J(1 + d)2−4(h+d) ,
+without conditioning on an approximate success event. By Proposition 5.2, the ideal procedure
+has uniform law on success and failure probability at most (63/64)J . Its greedy fallback therefore
+changes the uniform law by at most this probability. The total error is at most
+
+                                  (63/64)J + J(1 + d)2−4(h+d) ≤ 2−h .                            (5.18)
+
+For explicit numerical bounds, d4 ≥ 128 gives (63/64)J ≤ exp(−J/64) ≤ 2−2(h+1) ≤ 2−h−2 . Also
+d ≤ 2d/2 , d + 1 ≤ 2d , and h + 1 ≤ 2h give J(1 + d)2−4(h+d) ≤ 2−3h−d ≤ 2−h−2 . All actual outputs
+are feasible by the acceptance test or the fallback.
+    It remains to account for every computation in the bit model. At an integer bin corner v, the
+entries Xij (v) are integer sums of products wij vij and margins. Since wij < C/B and vij < 4B,
+
+
+
+                                                     23
+their absolute values are at most a fixed multiple of dC; they have O(b + log d) bits. The candidates
+for the maximum defining p(v) are the rational numbers
+
+                                                     −BXij (v) − dsij
+                                       0   and                        .
+                                                         Bsij
+
+Cross multiplication, comparison, multiplication by A, and integer division compute Ev = ⌊Ap(v)⌋
+exactly with polynomial bit cost. Denominators have O(b + log d) bits and there are at most d
+candidates. In particular no evaluation of an exponential or integral is required. We have 0 ≤ Ev ≤
+4Ad, so a Metropolis acceptance is either certain or has probability 2−(Ev′ −Ev ) , implemented by
+requiring that many fresh unbiased bits to be zero. The difference has absolute value at most 8Ad,
+a convenient uniform allowance. A draw of qbin bits proposes each signed coordinate direction by
+one code, with the remaining codes holding; this implements the stated proposal exactly.
+    The offset draw in Equation (5.17) uses O(b+h+d) bits and an integer multiplication and division
+on numbers of polynomial bit length. Table construction, feasibility tests, the greedy fallback, and
+the bounded loop counters also use polynomially many operations on polynomial-length integers.
+There are JH transitions and at most dJ offsets. Schoolbook integer arithmetic already yields a
+worst-case polynomial bound in d, b, h.
+    For later use, a uniform upper bound on the number of bits per transition and per offset is
+respectively
+                           Q0 = qbin + 8Ad,      rmax = b + 1 + 4(h + d),
+                                                                                               (5.19)
+                                R1 = HQ0 + drmax ,       RD = JR1 .
+Unused transition bits, missing free coordinates, and unused trials after the first success can be
+padded with unread independent bits. Thus a trial has probabilities with common denominator 2R1 ,
+and the whole subroutine has probabilities with common denominator 2RD . This padding changes
+no output law. For an offset of width w and actual bit length k, its exact probability of value β is
+                                 &               '    &     '!
+                            −k       (β + 1)2k   β2k
+                           2                   −                 ,    0 ≤ β < w.                  (5.20)
+                                         w        w
+
+It can therefore be tabulated by integer arithmetic without enumerating the random bit strings.
+The deterministic completion cases can use the same denominator allowances. This completes the
+proof of Theorem 5.1.
+
+
+6     Sampling algorithms and exact correction
+We now turn the weighted graph bound into an algorithm using unbiased random bits. All
+deterministic choices, including greedy completions, neighbor orders, and tie breaking, are fixed
+once and for all. Abbreviate Ω(r, c) by Ω. Write νX for the uniform law on FX and z0 for a greedy
+original table. Its restriction to the small slots gives a starting transversal X0 .
+
+6.1   The ideal chain
+Set
+                                     qs = ⌈log2 (32d2 )⌉,        p = 2−qs .
+List the distinct feasible neighbors of a state X in a fixed order. Assign one of the 2qs equally likely
+binary strings to each neighbor and let all remaining strings propose a hold. This gives every edge
+the same proposal probability p in both directions. As explained in Lemma 2.1, the list is obtained
+
+                                                       24
+by testing all unit exchanges, the repair of X when it is a defect, and the uniquely reconstructed
+inverse repair of each possible ordered defect type. There are at most 5d2 + 1 neighbors. Each test
+checks only coordinate bounds, the allowed occupancy pattern, and residual margins; it does not
+evaluate f .
+    Here is the completion adjustment used for a nonholding proposal X → Y . For a nonempty block
+B = I × J, fix a reference row i0 and column j0 , independently of X. Let ∆Ri = Ri (Y ) − Ri (X)
+and ∆Pj = Pj (Y ) − Pj (X) be the changes in its padded margins. Define the integer matrix DXY by
+                                     
+                                     
+                                     
+                                      ∆Ri ,                  i ̸= i0 , j = j0 ,
+                                     
+                                     ∆P ,                    i = i0 , j ̸= j0 ,
+                                     
+                                        j
+                         (DXY )ij =
+                                      ∆Ri0 − j ′ ̸=j0 ∆Pj ′ , i = i0 , j = j0 ,
+                                            P
+                                    
+                                    
+                                    
+                                    
+                                    0,                       i ̸= i0 , j ̸= j0 .
+                                    
+
+The equality of total row and column changes verifies all its row and column sums, including the
+reference column. Also DY X = −DXY . Along a unit exchange or repair edge each individual
+residual changes by at most two; hence every displayed entry has magnitude at most 10d. These
+formulas also apply to a block with a single row or column.
+    The ideal transition draws a ∼ νX and accepts Y precisely when a + DXY is nonnegative. It
+then belongs to FY because its margins are already correct. A rejected proposal holds at X. If the
+block is empty, every edge proposal is accepted. Denote this ideal kernel by P .
+Proposition 6.1 (Small-chain bound). The kernel P is lazy and reversible for π(X) = f (X)/Λ.
+On every edge it satisfies
+                                           1          f (Y )
+                                                            
+                             P (X, Y ) ≥       min 1,          .
+                                         128d2        f (X)
+If there is more than one state, its inverse spectral gap is at most d160 . Moreover πmin ≥ (C + 1)−2d ,
+and, for every t ≥ 0,
+                             TV P t (X0 , ·), π ≤ (C + 1)2d exp(−t/d160 ).
+                                               
+                                                                                                  (6.1)
+A one-state chain is already stationary.
+Proof. The proposal holds with probability at least 1 − (5d2 + 1)/(32d2 ) > 1/2, and rejection can
+only increase this probability. Translation by DXY bijects the set of acceptable completions in FX
+with the corresponding set in FY . Calling its cardinality cXY = cY X gives f (X)P (X, Y ) = pcXY =
+f (Y )P (Y, X).
+    Every nonempty completion-block margin is at least L. Rejection implies that one of at most d
+entries of a uniform completion is less than 10d. Lemma 2.2, with a = L and threshold 10d ≤ L/2,
+gives
+                                                  40d5     40   1
+                                   P(rejection) ≤       = 7 < .
+                                                    L      d    2
+Consequently cXY ≥ f (X)/2, and in particular cXY ≥ min(f (X), f (Y ))/2. Since p ≥ 1/(64d2 ),
+both the stated transition bound and the Dirichlet-form comparison
+                                                         E(H)
+                                           EP (H) ≥
+                                                        128d2 Λ
+follow. Theorem 4.3 and U = d20 now give an inverse-gap bound of
+                       128d2 (1 + 2d2 )4d2 (U + 1)6 + 2 ≤ 98,560d126 ≤ d160 .
+                                                           
+
+Indeed the coefficient inside parentheses is at most 770d4 U 6 . The graph is connected by Theorem 4.3,
+and Proposition 2.3 gives πmin ≥ (C + 1)−2d . Lemma 5.4 now gives (6.1).
+
+                                                   25
+6.2    A bounded almost-uniform sampler
+For an integer k ≥ 1, put
+
+                      Jo = d4 (k + 1),       T = d200 (k + b)2 ,           h = d4 (k + b)2 .           (6.2)
+
+The implemented chain replaces every ideal completion draw by the subroutine of Theorem 5.1 with
+accuracy h; write µX for its output law on FX and Q for the resulting kernel. Starting anew at X0
+on each trial, perform the following bounded procedure.
+   1. Run Q for T transitions and then make one further, independent completion draw with law
+      µX at the final state.
+   2. If X is a transversal and every large completion entry is at least L, subtract L on the large
+      block and return the resulting original table. Otherwise this trial fails.
+   3. Repeat for at most Jo independent trials, and return z0 if all of them fail.
+All randomness in different draws and trials is fresh. In particular, a completion used to test a
+transition is discarded after that test; the current small state is the chain’s entire persistent state.
+
+Theorem 6.2 (Almost-uniform sampling). The preceding procedure returns a feasible table with
+law pk satisfying
+                              TV pk , Uniform(Ω) ≤ 2−k .
+                                                
+
+Its worst-case number of bit operations is bounded by a fixed polynomial in d, b, k.
+
+Proof. We first control adaptive approximation. The dense guarantee is uniform over feasible states:
+TV(µX , νX ) ≤ η := 2−h . From a common state, couple the proposal and holding decision identically,
+and maximally couple the two completion draws if there is a nonholding proposal. Agreement of
+these draws gives the same acceptance decision and the same next state. Thus
+                                                                   
+                                      sup TV Q(X, ·), P (X, ·) ≤ η.
+                                         X
+
+Couple successively until the first disagreement. Conditional on agreement so far, the common state
+may be adaptive, but the same uniform conditional bound still applies. After T transitions and the
+terminal completion, the probability of a disagreement is at most (T + 1)η. This argument uses
+neither reversibility nor a stationary-law assertion for Q. By Proposition 6.1, the additional error
+                                                                                                160
+from replacing the ideal terminal state by a stationary one is at most τ = (C + 1)2d e−T /d .
+    In a stationary ideal trial every pair (X, a) has probability π(X)/f (X) = 1/Λ. By Proposition 2.3,
+successful pairs are in bijection with Ω, and the success probability s∗ = |Ω|/Λ is at least 1/[2(1+d2 )].
+The first success among Jo independent stationary trials therefore has, including the fallback, the
+exact law
+                                1 − (1 − s∗ )Jo Uniform(Ω) + (1 − s∗ )Jo δz0 .
+                                              
+
+                                                                 o −1
+For clarity, each particular table receives first-success mass Jj=0   (1 − s∗ )j /Λ = [1 − (1 − s∗ )Jo ]/|Ω|.
+                                                                       P
+
+Pregenerate all potential trials in both procedures, then apply the same deterministic first-success-
+or-fallback map. The union bound and contraction of total variation under a deterministic map
+give total error at most
+                                     2                           160
+                         e−Jo /[2(1+d )] + Jo (C + 1)2d e−T /d         + Jo (T + 1)2−h .               (6.3)
+
+In particular, no error is divided by a success probability.
+
+
+                                                     26
+   Each term in (6.3) is at most 2−k−2 . Here are explicit checks. Put t = k + b ≥ 15, so d ≤ t,
+k + 2 ≤ t, and log2 (C + 1) < b. First,
+                            Jo        d2 (k + 1)
+                                    ≥            ≥ 49(k + 1) ≥ (k + 2) ln 2.
+                         2(1 + d2 )        4
+For the second term,
+                 ln Jo (C + 1)2d + (k + 2) ln 2 ≤ 2t2 + 6t ≤ 3t2 ≤ d40 t2 = T /d160 .
+                                   
+
+Finally, since T + 1 ≤ 2T ,
+                               
+                log2 Jo (T + 1) + k + 2 ≤ 204 log2 d + 2 log2 t + log2 (k + 1) + k + 3
+                                           ≤ 209t ≤ d4 t2 = h.
+Their sum is less than 2−k .
+    For the running time, neighbor lists have polynomial size, and all state coordinates, residuals,
+and completion entries have O(b + log d) bits. The proposal uses exactly qs unbiased bits. Each
+completion call has bounded polynomial bit cost by Theorem 5.1; the numbers of steps, trials, and
+calls in (6.2) are fixed polynomials. Comparisons, additions, integer multiplications and divisions,
+and loop counters all have polynomial bit cost, for example with schoolbook arithmetic. Only
+feasible completions and the feasible fallback can be returned. Empty and singleton-dimensional
+blocks use their deterministic completion rule. This proves the claimed worst-case bound.
+
+6.3   Exact tabulation of the implemented law
+The exact correction will need the law of the actual bounded algorithm, including approximate offsets,
+adaptive transitions, and both stopping rules. Only the small state persists between transitions.
+We can therefore cache the dense completion law for each small state, propagate the resulting
+finite kernel, and then apply the terminal and first-success rules. The spaces enumerated in this
+calculation do not grow with the accuracy request; accuracy changes only the iteration counts and
+the lengths of integers.
+Proposition 6.3 (Law tabulation). For fixed margins and k, the entire law pk can be computed
+exactly in
+                                    2500db poly(d, b, k)
+bit operations. It has a common dyadic denominator: pk (z) = az /2R , where az are nonnegative
+integers and R is bounded by a fixed polynomial in d, b, k. The sizes of all enumerated state spaces
+are independent of k.
+Proof. The finite spaces. Use the dense sampler’s notation A = d4 and K0 = 4d8 . There are at most
+S := 22db feasible small states, since their number is at most (C + 1)2d . A completion fiber, the
+original table space, an offset space, and the bin space each have at most V := 2db elements: use
+(C + 1)d ≤ 2db and K0 < C. They can be enumerated by listing coordinate arrays and retaining
+those that pass their defining tests. None of these coordinate ranges depends on k. This exhaustive
+calculation is used only for the exact correction, not during an ordinary run of the bounded sampler.
+    Caching a dense completion law. The following denominator allowances are uniform over all
+feasible small states, with h as in (6.2):
+                 Q0 = ⌈log2 (8d)⌉ + 8Ad,                    rmax = b + 1 + 4(h + d),
+                        50             2
+                  H = d (h + 1) ,                                JD = d4 (h + 1),
+                 R1 = HQ0 + drmax ,                              RD = JD R1 .                   (6.4)
+
+
+                                                   27
+Every bin transition has denominator dividing 2Q0 : its proposal needs ⌈log2 (8d)⌉ bits and every
+dyadic acceptance test needs at most 8Ad bits. For each input X, enumerate its bins, compute
+their transition matrix as BX /2Q0 with integer entries, and propagate the point mass at zero for
+H steps. At step t the vector uses denominator 2tQ0 ; its next numerator is the previous integer
+vector multiplied by BX . Adding contributions from many paths changes the numerator, not the
+denominator exponent.
+   Offsets are tabulated without enumerating their random bits. For width w and the actual bit
+count r = ⌈log2 (w + 1)⌉ + 4(h + d) ≤ rmax , the probability of offset u ∈ {0, . . . , w − 1} is
+
+                                                  (u + 1)2r   u2r
+                                                                       
+                                      2−r                   −                   .                      (6.5)
+                                                      w        w
+Indeed these two endpoints count the integers z with u ≤ wz/2r < u + 1. Integer ceiling division
+evaluates the count exactly. Enlarge its denominator to 2rmax , pad unused free coordinates to
+d, and combine with the propagated bin law. Enumerating bin and offset tuples, constructing
+the candidate table, and applying its feasibility test gives the implemented dense trial’s success
+numerators αX (a) and failure numerator ϕX , all with denominator 2R1 . Sorting of margins and
+its inverse are deterministic functions of X; we always record completions in the original block
+coordinates.
+    Let a0X be the dense call’s fixed greedy fallback. The complete dense output law is exactly
+                                     JD −1
+                                             ϕjX αX (a)2R1 (JD −j−1) + 1{a=a0 } ϕJXD
+                                      X
+                                                                                     X
+                                     j=0
+                          µX (a) =                                                       .             (6.6)
+                                                               2 RD
+This is a finite first-success sum and the all-fail mass. It introduces no division by a success probability.
+A deterministic empty or singleton-dimensional completion call uses the same denominator by
+ignoring the reserved bits. Cache (6.6) for each X.
+   Propagating the implemented chain. For a distinct neighbor Y the implemented transition is
+                                                    X
+                                 Q(X, Y ) = p             µX (a)1{a+DXY ∈FY } ,
+                                                   a∈FX
+                                                                      X                                (6.7)
+                                             Q(X, X) = 1 −                 Q(X, Y ).
+                                                                   Y ̸=X
+
+For an empty block interpret the indicator as one. These entries share denominator 2RD +qs . Since
+only X persists between steps and completion randomness is fresh, ordinary vector propagation
+vt+1 = vt Q, starting at X0 , computes the exact adaptive state law. Append the terminal completion
+draw and the unpadding test. This yields the one-outer-trial success masses g(z) and failure mass
+f0 = 1 − z g(z) with common denominator 2RT , where
+          P
+
+
+                                         RT = T (RD + qs ) + RD .
+
+Explicitly, g(z) is the sum of vT (X)µX (a) over pairs passing that test and producing z. The final
+law is
+                                                      o −1
+                                                     JX
+                                   pk (z) = g(z)             f0j + 1{z=z0 } f0Jo ,                     (6.8)
+                                                     j=0
+
+whose denominator divides 2R for R = Jo RT . Both geometric sums are evaluated by bounded
+integer multiplication and addition. Algebraically, the common denominators reserve ignored bits
+
+                                                          28
+for holds, shorter draws, and stopped trials; neither tabulation nor sampling enumerates those bit
+strings.
+    Bit complexity. The denominator exponents are bounded by fixed polynomials. With q =
+d + b + k + 2 ≥ 31, one has h ≤ q 6 , h + 1 ≤ q 7 , Q0 ≤ q 6 , rmax ≤ q 7 , H ≤ q 64 , and hence
+
+                      R1 ≤ q 71 ,     RD ≤ q 82 ,   RT ≤ q 285 ,    R ≤ q 290 ≤ q 300 .
+
+Here we used T ≤ q 202 , Jo ≤ q 5 , and qs ≤ q 2 . Probability numerators never exceed their common
+denominator. Intermediate products and sums may be stored with the prescribed stage’s denominator,
+so their bit lengths, including the offset counts in (6.5), are polynomial as well. Candidate tables
+that fail feasibility can have negative dependent entries, but their entries are integer sums of O(d)
+quantities of size O(C) and still have O(b + log d) bits.
+    For each state, dense matrix propagation costs at most HV2 arithmetic operations. Bin–offset
+summation, even with a scan of all completions to identify the output, costs at most V3 ; the
+geometric composition costs at most JD V. Constructing (6.7) uses at most S2 V terms. Small-state
+propagation uses T S2 , terminal completion and output lookup at most SV2 , and the last geometric
+composition at most Jo V. Including the cache calculation for all S states, the total number of
+arithmetic operations is at most 210db poly(d, b, k); multiplying by the established polynomial bit
+cost per operation gives the stated, looser 2500db bound. The iteration counts H, JD , T, Jo depend
+polynomially on k; none of the enumerated spaces does.
+
+6.4   Exact uniform sampling
+The final step uses the rare residual-mixture construction of Göbel, Liu, Manurangsi, and Pappik [11,
+Section 3.1, Algorithm 1 and Theorem 6]. A sufficiently accurate approximate law is dominated
+pointwise by a slight enlargement of the target law. Its remaining mass can therefore be sampled
+exactly on a rare branch. Here we verify this domination, implement the mixture with unbiased
+bits, and use Proposition 6.3 to account for the exhaustive work.
+Theorem 6.4 (Exact sampling). There is an algorithm using unbiased random bits that terminates
+almost surely, outputs an exactly uniform element of Ω, and has expected bit running time polynomial
+in d, b.
+Proof. Set
+                        D = d6 b2 ,       k = 2D,         δ = 2−D ,       M = |Ω|.
+Theorem 6.2 gives, for every z ∈ Ω, pk (z) ≤ 1/M + δ 2 . Also M ≤ (C + 1)d ≤ 2db and D ≥ db, so
+M δ ≤ 1. Therefore
+                                              1−δ                    1
+                              (1 − δ)pk (z) ≤        + (1 − δ)δ 2 ≤    .
+                                                M                   M
+It follows that r(z) = [1/M − (1 − δ)pk (z)]/δ is a probability law.
+    Use D independent bits to enter a correction branch precisely when all are zero. On the
+complementary event run the bounded sampler with accuracy k. On the correction branch,
+enumerate Ω to obtain M and use Proposition 6.3 to compute pk (z) = az /2R . Form the integer
+weights                                                     X
+                          nz = 2R+D − M (2D − 1)az ,             nz = M 2R .              (6.9)
+                                                                   z∈Ω
+
+They are nonnegative by the pointwise domination just proved, and the sum follows from z az = 2R .
+                                                                                          P
+
+Thus r(z) = nz /(M 2R ). All integers in (6.9) have O(R + D + log M ) bits; the fact that M can be
+large as a number does not make its binary representation long.
+
+                                                     29
+   To sample this law exactly, put V = M 2R and draw a uniform integer in {0, . . . , V − 1} by
+using ⌈log2 V ⌉ bits and repeating whenever their value is at least V . If V = 1, use zero bits. The
+acceptance probability is greater than 1/2, so the expected number of attempts is less than two,
+and termination is almost sure. A scan of cumulative weights nz then selects the output exactly
+according to r. Use fresh bits on each attempt and after the branch decision.
+   The output law is (1 − δ)pk + δr = Uniform(Ω). The correction branch has conditional expected
+cost at most 2500db poly(d, b, k), including enumeration, integer arithmetic, and the exact integer
+draw. Its contribution to the unconditional expectation is polynomial, since
+                                           5
+                          δ 2500db = 2−db(d b−500) ≤ 1     (d ≥ 14, b ≥ d).
+
+Substituting k = 2d6 b2 into a fixed polynomial preserves polynomial dependence on d, b. The
+other branch and the branch decision also have polynomial cost. This proves the expectation and
+termination claims.
+
+Proof of Theorem 1.1. If either dimension is empty, if N = 0, or if one dimension is one, return the
+unique feasible table as in Section 2. Otherwise the parameters in (2.1) satisfy d = O(mn+m+n+1)
+and b = O(d + log(N + 1) + log d). For the supplied integer k ≥ 1, Theorem 6.2 gives the first
+assertion. Theorem 6.4 gives the second. Their bounds therefore have the stated dependence
+on dimensions and binary margin size. All outputs are feasible, and the exact algorithm’s only
+unbounded loop is the almost-surely terminating integer rejection on its correction branch.
+
+
+References
+ [1] David Aldous and James Allen Fill. Reversible Markov chains and random walks on graphs.
+     Unfinished monograph, 2002. Recompiled 2014. https://www.stat.berkeley.edu/~aldous/
+     RWG/book.html.
+
+ [2] Andrii Arman, Pu Gao, and Nicholas Wormald. Linear-time uniform generation of random
+     sparse contingency tables with specified marginals. arXiv:2104.09413v2, 2021. Version 2, 15
+     June 2021.
+
+ [3] Petter Brändén and June Huh. Lorentzian polynomials. Annals of Mathematics (2), 192(3):821–
+     891, 2020. doi:10.4007/annals.2020.192.3.4.
+
+ [4] Mary Cryan and Martin Dyer. A polynomial-time algorithm to approximately count contingency
+     tables when the number of rows is constant. Journal of Computer and System Sciences,
+     67(2):291–310, 2003. doi:10.1016/S0022-0000(03)00014-X.
+
+ [5] Mary Cryan, Martin Dyer, Leslie Ann Goldberg, Mark Jerrum, and Russell Martin. Rapidly
+     mixing Markov chains for sampling contingency tables with a constant number of rows. SIAM
+     Journal on Computing, 36(1):247–278, 2006. doi:10.1137/S0097539703434243.
+
+ [6] Stephen DeSalvo and James Y. Zhao. Random sampling of contingency tables via probabilistic
+     divide-and-conquer. arXiv:1507.00070v4, 2016. Version 4, 29 February 2016.
+
+ [7] Persi Diaconis and Anil Gangolli. Rectangular arrays with fixed margins. In David Aldous,
+     Persi Diaconis, Joel Spencer, and J. Michael Steele, editors, Discrete Probability and Algorithms,
+     volume 72 of The IMA Volumes in Mathematics and its Applications, pages 15–41. Springer,
+     New York, 1995. doi:10.1007/978-1-4612-0801-3_3.
+
+
+                                                  30
+ [8] Martin Dyer. Approximate counting by dynamic programming. In Proceedings of the Thirty-
+     Fifth Annual ACM Symposium on Theory of Computing, pages 693–699. ACM, 2003. Published
+     article.
+
+ [9] Martin Dyer and Catherine Greenhill. Polynomial-time counting and sampling of two-rowed
+     contingency tables. Theoretical Computer Science, 246:265–278, 2000. Author version.
+
+[10] Martin Dyer, Ravi Kannan, and John Mount. Sampling contingency tables. Random Structures
+     & Algorithms, 10(4):487–506, 1997. Published article.
+
+[11] Andreas Göbel, Jingcheng Liu, Pasin Manurangsi, and Marcus Pappik. Perfect sampling from
+     rapidly mixing Markov chains. arXiv:2410.00882v2, 2024. Version 2, December 6, 2024.
+
+[12] Shuji Kijima and Tomomi Matsui. Polynomial Time Perfect Sampling Algorithm for Two-rowed
+     Contingency Tables. Mathematical Engineering Technical Reports METR 2003-15, Department
+     of Mathematical Informatics, Graduate School of Information Science and Technology, The Uni-
+     versity of Tokyo, April 2003. https://www.keisu.t.u-tokyo.ac.jp/data/2003/METR03-15.
+     pdf.
+
+[13] László Leindler. On a certain converse of Hölder’s inequality. II. Acta Scientiarum Mathemati-
+     carum, 33(3–4):217–223, 1972. Publisher archive.
+
+[14] Ben Morris. Improved bounds for sampling contingency tables. Random Structures & Algorithms,
+     21(2):135–146, 2002. doi:10.1002/rsa.10049.
+
+[15] András Prékopa. On logarithmic concave measures and functions. Acta Scientiarum Mathe-
+     maticarum (Szeged), 34:335–343, 1973. Author-hosted version.
+
+
+
+
+                                                31
+

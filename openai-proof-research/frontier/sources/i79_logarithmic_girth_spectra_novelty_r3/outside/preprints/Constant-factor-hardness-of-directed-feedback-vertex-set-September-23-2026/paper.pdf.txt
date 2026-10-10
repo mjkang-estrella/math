@@ -1,0 +1,1565 @@
+                              Constant-factor hardness of
+                              directed feedback vertex set
+                                              OpenAI
+
+                                        September 23, 2026
+
+
+                                              Abstract
+       Approximating minimum directed feedback vertex set within any fixed constant factor is
+     NP-hard, even on unweighted digraphs.
+
+
+Contents
+1 Introduction                                                                                       2
+  1.1 The approximation question . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     2
+  1.2 Methodological background . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      3
+  1.3 The reduction and its new ingredients . . . . . . . . . . . . . . . . . . . . . . . . . .      3
+  1.4 Organization . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   5
+
+2 Games and Boolean functions                                                                         5
+  2.1 The game used in the reduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      5
+  2.2 Junta approximation at fixed dyadic biases . . . . . . . . . . . . . . . . . . . . . . .        6
+
+3 The weighted reduction                                                                             7
+  3.1 Choice of parameters . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+  3.2 Rank vertices and their identifications . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+  3.3 Wildcard vertices and prefix data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+  3.4 The three test families . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+  3.5 Completeness . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+  3.6 Deterministic implementation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+
+4 Rank spreading and the surviving order                                                             12
+  4.1 A distribution on increasing embeddings . . . . . . . . . . . . . . . . . . . . . . . . .      13
+  4.2 Boolean functions from rank comparisons . . . . . . . . . . . . . . . . . . . . . . . .        14
+  4.3 When a wildcard test must be deleted . . . . . . . . . . . . . . . . . . . . . . . . . .       16
+
+5 Shared prefix conditioning                                                                         16
+
+6 A budget for pivotal labels                                                                        20
+
+
+
+
+                                                  1
+7 Soundness from coupled comparisons                                                                 22
+  7.1 Coupling and deletion cost . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   23
+  7.2 Lists chosen before the edge . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   24
+  7.3 Replacing the coupling by product measure . . . . . . . . . . . . . . . . . . . . . . .        24
+  7.4 The dyadic tail contradiction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    25
+
+8 Removing the vertex costs                                                                          26
+
+References                                                                                           29
+
+
+1     Introduction
+A directed feedback vertex set of a finite digraph G is a set F ⊆ V (G) for which the induced digraph
+G − F is acyclic. Write
+                             DFVS(G) = min{|F | : G − F is acyclic}.
+Equivalently, F intersects every directed cycle. A topological order of G − F certifies this property
+in polynomial time. The minimum-cost version assigns a positive rational cost to each vertex and
+minimizes the sum of the deleted costs. Throughout, digraphs are finite and loopless; two vertices
+may have arcs in both directions. An A-approximation, for A ≥ 1, returns a feedback vertex set of
+size at most A DFVS(G).
+
+1.1   The approximation question
+Writing n = |V (G)|, the general O(log n log log n) approximation guarantee originates in Seymour’s
+work on fractional packing of directed circuits [12]. Even, Naor, Schieber, and Sudan give a
+constructive algorithm covering weighted directed feedback sets [4].
+    Ordinary NP-hardness of approximation already follows from Vertex Cover, which asks for a
+smallest vertex set meeting every edge of an undirected graph. Replacing every edge of an undirected
+graph by its two opposite arcs makes a vertex set a directed √  feedback vertex set exactly when it
+is a vertex cover. Thus the √ earlier hardness factors below 10 5 − 21 of Dinur and Safra [3], and
+the factors strictly below 2 obtained by the completed two-to-one games line [10, Section 1.3.1],
+transfer to DFVS. These results exclude particular constants; excluding every constant had required
+a stronger complexity assumption.
+    Guruswami, Manokaran, and Raghavendra established the Unique-Games barrier against every
+constant factor through maximum acyclic subgraph and feedback arc set [9]. The expanded ordering-
+constraint framework appears in the journal paper with Håstad and Charikar [7]. Svensson gave a
+direct Unique-Games-based construction with strong structure in the YES case [13]. Guruswami
+and Lee subsequently gave a simpler proof with structured completeness and short cycles in every
+sufficiently large induced subgraph in the NO case [8]. The recent discussion of Ghorbani and Mnich
+records the remaining gap for general digraphs [6].
+    We prove the corresponding exclusion of every constant factor from ordinary NP-hardness.
+
+Theorem 1.1. For every fixed real constant A ≥ 1, it is NP-hard to approximate minimum directed
+feedback vertex set within factor A on unweighted digraphs. More precisely, there is a deterministic
+polynomial-time reduction from an NP-hard promise problem to instances (G, k) with k ∈ N>0 . The
+polynomial and its constants may depend on A. The reduction has the following alternatives:
+
+                          YES: DFVS(G) ≤ k,           NO: DFVS(G) > Ak.
+
+
+                                                  2
+    Theorem 1.1 implies that a deterministic polynomial-time algorithm with any constant approx-
+imation guarantee exists if and only if P = NP. For the reverse implication, membership of the
+size-bounded decision problem in NP permits exact optimization and witness search when P = NP.
+The theorem establishes that the required approximation factor grows without bound with the input
+size, assuming P ̸= NP. It does not identify that growth rate or improve the general approximation
+algorithm.
+    A directed feedback arc set is a set of arcs whose deletion leaves an acyclic digraph. Corollary 8.3
+transfers the same hardness to this problem on unweighted simple loopless digraphs, through a
+reduction preserving both the optimum and approximation solutions. The vertex-set hardness also
+holds when opposite arcs are forbidden, as shown in Remark 8.2.
+
+1.2   Methodological background
+Our construction shares the useful division between protected vertices and deletable test vertices in
+Svensson’s dictatorship gadget [13, Section 3.1.1]. His soundness proof also reads a Boolean function
+from a topological order [13, Section 3.1.3]. Here the protected vertices encode rank profiles, and
+compatibility across tuple prefixes supplies a family of monotone functions. Svensson uses the “It
+Ain’t Over Till It’s Over” theorem; Guruswami and Lee instead use an invariance principle [8,
+Section 1]. Our analytic input is Friedgut’s theorem on Boolean functions of bounded total influence
+[5]. We derive its required fixed-bias form explicitly. Junta-based label decoding already appears
+in Dinur and Safra’s Vertex Cover hardness proof [3, Sections 1.1 and 3], where a nearby bias is
+selected to obtain bounded total influence. Here a single pivotality budget controls all the prescribed
+biases, and the contradiction requires their estimates to concern the same distribution of functions.
+    The rank distribution is obtained by combining finite Ramsey theory [11] with finite minimax
+[14]. These are the external combinatorial tools in the rank-spreading argument. The shared-prefix
+construction and the permutation pivotality budget are proved below. Their role is to compare many
+biases without changing the distribution of the functions being analyzed. The source of hardness is
+the published imperfect-completeness two-to-one theorem, so the proof does not consume a Unique
+Games hardness theorem.
+
+1.3   The reduction and its new ingredients
+A two-to-one game has a bipartite constraint graph with a label set X at each big-side vertex
+and a label set Y at each small-side vertex. Each edge carries a map X → Y with exactly two
+preimages per label; an edge is satisfied when the chosen endpoint labels obey that map. The game
+value is the largest fraction of satisfied edges, measured under its prescribed edge distribution. Our
+starting point is the imperfect-completeness 2-to-1 Games Theorem, obtained through the work
+of Dinur, Khot, Kindler, Minzer, and Safra, Khot, Minzer, and Safra, and Barak, Kothari, and
+Steurer [2, 10, 1]. We use its precise form in Theorem 2.1: for arbitrarily small constant θ > 0,
+distinguishing game value at least 1 − θ from value at most θ is NP-hard, with fixed alphabets and
+exact two-element projection fibers. The perfect-completeness 2-to-1 Games Conjecture is not a
+premise of the argument.
+    The central difficulty is to extract a game labeling from an arbitrary acyclic remainder. An
+acyclic graph supplies a topological order, but its order can interleave the many vertices representing
+the same local test. The proof first makes comparisons within that order consistent, then interprets
+them as Boolean functions. Small deletion cost will constrain these functions in incompatible ways.
+    For a fixed integer factor A, put D = 10A. We construct a weighted graph with a feedback
+vertex set of cost at most 4 in the YES case. Suppose, toward the soundness contradiction, that a
+
+
+                                                   3
+NO instance has one of cost at most D. Fix a topological order after its deletion. The following four
+steps analyze this arbitrary order. A Boolean function on subsets is evaluated at bias p by including
+each label independently with probability p; its acceptance is the probability that its value is one.
+ (1) Rank comparisons with a common interpretation. For each short tuple of game vertices, we
+     create vertices indexed by rank-valued functions of label tuples. A global labeling evaluates
+     all these functions consistently. In the soundness analysis, a putative inexpensive feedback
+     set leaves every rank vertex present, so its surviving topological order supplies comparison
+     bits. A finite Ramsey and minimax argument produces a distribution on rank embeddings
+     for which all triples of positions have nearly identical image laws. Ordered comparisons then
+     agree with high probability, yielding a monotone Boolean function of subsets of label tuples.
+ (2) Conditioning through a shared prefix. Successive random subsets split label tuples into
+     lexicographically ordered cells. Monotonicity selects a unique transition cell, and prefix
+     identifications make these transitions consistent under refinement. A full-prefix test prevents
+     the chosen cell from having too few membership-one steps at any of many dyadic biases.
+     On averaging, the conditioned big-side Boolean function has acceptance at least a constant
+     multiple of the bias at every scale. The same prefix data define functions for every game
+     vertex before a fresh constraint is drawn.
+ (3) A pivotality budget independent of the alphabet size. A single-label test charges the event
+     that the starred label can be pivotal somewhere along a random permutation. The resulting
+     quantity B(f ) is the sum, over labels, of the probability that the label is pivotal at some prefix
+     of a random permutation of the other labels. It bounds both total influence and acceptance
+     probability divided by the bias, at every bias. Its expectation is at most D + 1 on either side
+     of the game. Friedgut’s junta theorem [5], transferred to fixed dyadic biases, therefore supplies
+     bounded coordinate lists outside a small exceptional set. Their size is fixed before choosing
+     the game alphabets.
+ (4) A common tail variable across all scales. A projection-respecting coupling compares bias p on
+     the big side with bias 2p on the small side. Game soundness makes the two junta lists typically
+     use disjoint projection fibers. The corresponding outputs are then independent under the
+     coupling, allowing the comparison bound to pass to product measures. At each dyadic bias,
+     this forces a positive contribution of constant size to the tail sum of the small-side pivotality
+     budget. All these estimates concern the same random variable under the same distribution.
+     Adding sufficiently many such contributions contradicts its expected budget.
+    The pivotality quantity is independent of the bias. This is essential: a separate influence bound
+at each scale would not justify adding the contributions to one tail sum. Likewise, the shared prefix
+fixes all vertex functions before the tested game edge is drawn; otherwise the coordinate lists would
+not define a game labeling.
+    The proof uses finite probability spaces to specify weighted test families. Every outcome is
+included explicitly with its probability as part of its cost. Thus the reduction is deterministic. All
+parameters, alphabets, tuple lengths, and rank tables are constants once the target factor is fixed,
+even though some are extremely large. Finally, rounding each vertex cost upward and replacing a
+vertex by an independent cluster produces an unweighted gap.
+
+
+
+
+                                                  4
+1.4     Organization
+Section 2 states the external theorems and proves the required dyadic junta corollary. Section 3 gives
+the parameter choices, graph, tests, and completeness argument. Section 4 proves rank spreading
+and the order lemmas used to read Boolean functions from a surviving graph. Sections 5 and 6
+establish the acceptance lower bounds and pivotality budgets. Section 7 gives the comparison and
+tail-sum contradiction. Section 8 removes the costs and proves Theorem 1.1.
+
+
+2      Games and Boolean functions
+For a finite set S, we identify {0, 1}S with the power set 2S . For p ∈ (0, 1), let µSp be the probability
+measure on 2S in which each element belongs to the sampled set independently with probability p.
+We use [n] = {1, . . . , n}. All graphs and probability spaces in the reduction are finite.
+
+2.1     The game used in the reduction
+A two-to-one game consists of a bipartite constraint graph with disjoint vertex sets U, V , nonempty
+label sets X, Y with |X| = 2|Y |, and, for each edge e = (u, v), a map πe : X → Y for which every
+fiber has cardinality two. Parallel constraints are allowed. The edges carry a rational probability
+distribution ν. Its endpoint marginals are denoted by νU and νV . A labeling consists of maps
+ℓU : U → X and ℓV : V → Y ; its value is
+
+                                          Pr       [ πe (ℓU (u)) = ℓV (v) ].
+                                       e=(u,v)∼ν
+
+The value of a game is the maximum of this expression over all labelings.
+
+Theorem 2.1 (Two-to-one games with imperfect completeness). For every constant θ ∈ (0, 1/2),
+there are constant label sets X, Y such that it is NP-hard, by a deterministic polynomial-time
+reduction, to distinguish two-to-one games of the following kinds:
+    (i) there is a labeling of value at least 1 − θ;
+ (ii) every labeling has value at most θ.
+Every constraint is a total map X → Y with exactly two preimages of each label in Y . The label
+sets may depend on θ.
+
+    We invoke the completed theorem in this precise form. Dinur, Khot, Kindler, Minzer, and Safra
+prove the stated gap conditionally on their Grassmann agreement hypothesis [2, Theorem 1.8].
+Their Hypothesis 3.6 follows from the Grassmann expansion theorem of Khot, Minzer, and Safra
+[10, Theorem 1.12, ECCC revision 2] through the implications of Barak, Kothari, and Steurer [1,
+Section 1.1 and Theorems 9–11]. The two-to-one definition and the common alphabets are as in
+[2, Definitions 1.1–1.2 and Section 4.2]. In the explicit constraint construction, the smoothing
+parameter may be chosen rational within its permitted range [2, Sections 4.2 and 5.2]. The edge
+sampling process then specifies rational weights: all constant-length tuples and constant-dimensional
+subspaces can be enumerated, followed by the prescribed identifications. With the parameters fixed,
+this is a deterministic finite construction of polynomial size. Thus the use of a rational edge law
+does not introduce randomness into the reduction. We require neither perfect completeness nor any
+degree regularity of the game.
+
+
+
+                                                         5
+2.2   Junta approximation at fixed dyadic biases
+For a Boolean function f : 2S → {0, 1} and j ∈ S, define
+                                                                                   X
+                  Ip,j (f ) =     Pr       [ f (R) ̸= f (R ∪ {j}) ],   Ip (f ) =         Ip,j (f ).   (2.1)
+                                   S\{j}
+                                R∼µp                                               j∈S
+
+This is also the probability that flipping coordinate j changes the value of f , when the entire input
+has law µSp : the change event depends only on the other coordinates. A function is a junta on J ⊆ S
+if its value depends only on R ∩ J. Constant functions are juntas on the empty set.
+Theorem 2.2 (Friedgut’s junta theorem). For every b ≥ 0 and α > 0, there is a finite integer
+Junif (b, α) with the following property. For every finite S and every Boolean function f : 2S → {0, 1}
+with I1/2 (f ) ≤ b, there is a Boolean function fe, depending on at most Junif (b, α) coordinates, for
+which
+                                          Pr [ f (R) ̸= fe(R) ] ≤ α.
+                                           R∼µS
+                                              1/2
+
+The bound is independent of |S|.
+   This is the uniform version of Friedgut’s theorem [5, Theorem 1.1 in the February 3, 1998 author
+manuscript]. Friedgut also proves a biased-product version [5, Theorem 4.1 in the same manuscript].
+We give an elementary reduction of the dyadic case to the uniform case, so that the dependence on
+the bias and independence of the game alphabet size are explicit.
+Corollary 2.3 (Dyadic junta approximation). Let p = 2−k , where k ≥ 1 is an integer. For every
+b ≥ 0 and α > 0, there is a finite integer J(p, b, α), independent of |S|, such that every Boolean
+function f : 2S → {0, 1} with Ip (f ) ≤ b has a Boolean junta approximant on at most J(p, b, α)
+coordinates with error at most α under µSp .
+Proof. The assertion is immediate for S = ∅, so assume otherwise. Let (Xj,a )j∈S, a∈[k] be independent
+uniform bits and put
+                                   k
+                                   ^
+                           Zj =          Xj,a ,      F (X) = f ({j ∈ S : Zj = 1}).
+                                   a=1
+
+The Zj are independent Bernoulli p bits. Flipping Xj,a changes F precisely when all the other k − 1
+bits of its block are one and coordinate j is pivotal for the values of the other blocks. These two
+events are independent. Therefore
+
+                                I1/2 (F ) = k2−(k−1) Ip (f ) = 2kpIp (f ) ≤ kb.                       (2.2)
+
+By Theorem 2.2, there is a Boolean approximant H to F with error at most α, using at most
+Junif (kb, α) of the individual bits Xj,a . Let J ⊆ S be the set of blocks touched by these bits. Then
+|J| ≤ Junif (kb, α).
+    Reveal all bits in every block indexed by J. Since H is measurable with respect to these revealed
+blocks, the Boolean predictor with smallest conditional error from the revealed blocks has total error
+at most that of H. More explicitly, this predictor outputs one when the conditional probability
+of F = 1 is at least 1/2, with any fixed convention at equality. The unrevealed blocks remain
+independent of the revealed blocks, and the dependence of F on a revealed block is only through its
+AND value. Consequently
+
+                  Pr[ F = 1 | (Xj,a )j∈J, a∈[k] ] = Pr[ f ({j : Zj = 1}) = 1 | (Zj )j∈J ].
+
+                                                          6
+The optimal predictor is therefore a Boolean function only of (Zj )j∈J . Regard it as a function
+fe : 2S → {0, 1} on the original coordinates. The induced law of the original input is µSp , so
+
+                                        Pr [ f (R) ̸= fe(R) ] ≤ α.
+                                       R∼µS
+                                          p
+
+
+Thus J(p, b, α) = Junif (kb, α) is a valid choice, increased to one if desired.
+
+Remark 2.4. The junta approximants need not be monotone. In the reduction, the original
+conditioned functions will be monotone, but the argument uses only their approximation errors
+and their coordinate supports. For any fixed finite collection of dyadic biases, the maximum of the
+bounds in Corollary 2.3 remains independent of the alphabet size.
+
+
+3     The weighted reduction
+We first construct a digraph with positive rational vertex costs. Write wv for the cost of a vertex v
+and w(F ) = v∈F wv for the cost of a vertex set F . For each fixed integer A ≥ 1, the construction
+              P
+
+will have a feedback vertex set of cost at most 4 in the completeness case of Theorem 2.1, whereas
+every feedback vertex set will have cost greater than D = 10A in its soundness case. Section 8
+converts this gap into an unweighted one.
+
+3.1    Choice of parameters
+Fix an integer A ≥ 1 and put D = 10A. The constants have the following roles. There will be
+M bias scales and at most T prefix slots. The full-prefix and comparison tests have total costs H
+and K. The junta size is bounded by J, independently of the game alphabets; θ is the required
+game accuracy. Finally L and N specify finite ordered rank sets, and ψ : [L] ,→ [N ] is an increasing
+random embedding. Its purpose is to make the order comparisons insensitive to their precise rank
+levels, as proved in Lemma 4.1. Choose the constants in the following order.
+    1. Set
+                                                                                               pM
+                M = 128(D + 1),        pi = 2−(i+1) ,      qi = 2pi        (i ∈ [M ]),   γ=        .
+                                                                                              1000
+    2. Set H = 8(D + 1). Choose an integer T ≥ 1 large enough that
+
+                                                         pM T
+                                                               
+                                           HM exp −                 ≤ 1,                               (3.1)
+                                                          8M
+       and an integer
+                                                        M 2T D
+                                                K≥             .                                       (3.2)
+                                                          γ
+
+    3. Put B0 = (D + 1)/γ. By Corollary 2.3, there is an integer J ≥ 1 that bounds the size of a
+       junta approximant with error at most γ for every function of total influence at most B0 at
+       any of the biases pi , qi , i ∈ [M ]. Choose a positive rational θ small enough that Theorem 2.1
+       applies and
+                                               Kθ ≤ 1,      J 2 θ ≤ γ.                            (3.3)
+      Apply that theorem with this fixed θ, and let X, Y be its alphabets, with m = |X| = 2|Y |.
+
+
+
+
+                                                    7
+   4. Put
+                         kmax = 2T m,          L = 10kmax + 30,              ρ = min{γ, 1/m}.
+      Choose a positive rational η satisfying
+                                                               T
+                                                    3ηL3 2m ≤ ρ.                                    (3.4)
+
+      Apply Lemma 4.1 to L, η, obtaining a finite N and a rational probability distribution on
+      increasing maps ψ : [L] ,→ [N ]. Fix this distribution for the construction.
+    All these quantities depend only on A. In particular, the junta bound J is fixed before the
+alphabet size m is determined. Its existence does not require an alphabet bound. The later choices
+of ρ, η, N therefore introduce no dependence back into the choice of θ.
+    Let the input game have bipartition U, V , edge distribution ν, and endpoint marginals νU , νV .
+For an edge e = (u, v), write πe : X → Y for its two-to-one projection. All probability distributions
+below are finite and rational. A sampling description specifies a separate vertex for each outcome of
+positive probability, with the indicated probability as a factor in its cost. The reduction enumerates
+these outcomes; it does not sample a random output graph.
+
+3.2    Rank vertices and their identifications
+Definition 3.1 (Rank graph). For w ∈ U ∪ V , let Λw = X if w ∈ U and Λw = Y if w ∈ V , and
+put mw = |Λw |. The allowed vertex tuples are
+                                        T
+                                        [                −1
+                                                        T[
+                                              Ut    ∪          (U t × V ).
+                                        t=0              t=0
+
+Tuples are ordered sequences and may contain repeated vertices. For an allowed tuple d =
+(w1 , . . . , wt ), let Λd = tj=1 Λwj ; the product for the empty tuple is a singleton. In every case
+                            Q
+
+
+                                                   |Λd | ≤ mT .                                     (3.5)
+
+For every function x : Λd → [N ], introduce a formal rank vertex bd (x). Within each tuple, introduce
+an arc bd (x) → bd (y) whenever
+
+                                  x(λ) < y(λ)           for every λ ∈ Λd .
+
+Whenever sw is an allowed extension of s, identify
+
+                                          bs (x) ≡ bsw (x ◦ proj),                                  (3.6)
+
+where proj : Λsw → Λs drops the last coordinate. Take the equivalence relation generated by all
+these identifications and keep the induced arcs between its classes. Each resulting rank vertex has
+cost D + 1, independently of the number of its formal representatives. We use the same notation for
+a formal vertex and its equivalence class. The vertices represented by the constant profiles with
+value j are denoted by oj , for j ∈ [N ].
+Lemma 3.2 (Evaluation invariant). Every global game labeling ℓ gives a well-defined real value on
+the rank vertices by
+                                    bd (x) 7−→ x(ℓ(d)),
+where ℓ(d) is the tuple of labels supplied by ℓ. Every rank arc strictly increases this value. Conse-
+quently, the rank graph has no self-loops, and o1 , . . . , oN are distinct vertices with an arc oj → oj ′
+whenever j < j ′ .
+
+                                                        8
+Proof. For every generating identification in Equation (3.6),
+
+                                    (x ◦ proj)(ℓ(s), ℓ(w)) = x(ℓ(s)).
+
+Thus evaluation is constant on each equivalence class. This remains true when vertices repeat
+in a tuple: their repeated coordinates are evaluated at the same global label. A rank arc is
+strictly increasing at every tuple of labels, and hence at the particular tuple supplied by ℓ. Its two
+endpoints cannot become the same equivalence class. Finally, constant profiles all identify with their
+representatives at the empty tuple, and their evaluated values are the distinct integers 1, . . . , N .
+
+    This division into protected rank vertices and deletable tests is related to the bit-vertex/test-
+vertex architecture of [13, Section 3.1.1]; here the rank profiles and prefix identifications enforce the
+consistency needed below. All other vertices will be test vertices, distinct from the rank vertices and
+from one another. Their arcs will be incident only to rank vertices. For E ⊆ Λd and 1 ≤ a < h ≤ L,
+write                                                       (
+                            ψ                                 ψ(a), λ ∈ E,
+                           bd (E; a, h) = bd (x),    x(λ) =
+                                                              ψ(h), λ ∈  / E.
+
+3.3   Wildcard vertices and prefix data
+Definition 3.3 (Wildcard vertex). Fix an allowed tuple d, an increasing map ψ, an ordered
+partition C1 , . . . , Ck of Λd with 1 ≤ k ≤ kmax , and a set Z ⊆ Λd , called the star set. Empty cells in
+the partition are permitted. Put zℓ = ψ(10ℓ + 10) for ℓ ∈ [k]. The corresponding wildcard vertex
+has an incoming arc from every rank vertex bd (x) for which
+
+                              x(λ) < zℓ    for all ℓ ∈ [k] and λ ∈ Cℓ \ Z,                           (3.7)
+
+and an outgoing arc to every bd (x) satisfying the strict reverse inequalities
+
+                              x(λ) > zℓ    for all ℓ ∈ [k] and λ ∈ Cℓ \ Z.                           (3.8)
+
+There are no restrictions on the values of x on Z.
+   The wildcard inequalities have a direct interpretation under any global labeling. If its evaluated
+tuple lies in Cr \ Z, the threshold zr lies strictly between the evaluations of every incoming and
+every outgoing rank vertex. Assigning that threshold to the test therefore extends the increasing
+evaluation along its incident arcs. At starred tuples, the arc conditions impose no restriction on
+these evaluated values; the completeness argument will delete the corresponding test.
+Definition 3.4 (Prefix data). For t ∈ {0, . . . , T }, draw s = (u1 , . . . , ut ) independently from νU
+in each slot. Independently draw i1 , . . . , it uniformly from [M ]. Conditional on these indices,
+draw Pj ⊆ X using independent Bernoulli pij membership bits, independently for different slots j.
+Partition Λs by the membership patterns
+                                                    t
+                                      1{λj ∈ Pj } j=1 ,         λ ∈ Λs .
+
+Order the 2t cells lexicographically with 1 before 0, keeping cells that happen to be empty, and
+denote them by C1 , . . . , C2t . Put
+                                           [                         [
+                                   C<r =         Cℓ ,        C≤r =         Cℓ .
+                                           ℓ<r                       ℓ≤r
+
+At t = 0 this is the one-cell partition of the singleton product domain.
+
+                                                         9
+3.4   The three test families
+Definition 3.5 (Test families). Add the following families of test vertices to the rank graph. In
+each family, independently draw ψ from the fixed rank distribution. Each outcome is a separate
+vertex with cost equal to its probability multiplied by the stated total mass. Distinct outcomes
+remain separate even if they produce the same incident arcs.
+1. Full-prefix tests, of total mass H. Draw prefix data at length T and use the wildcard vertex
+   in tuple s with those 2T cells. Its star set is
+                                                                                   pi T
+                                                                                          
+            Z = λ ∈ Λs : there exists i ∈ [M ] such that #{j : ij = i, λj ∈ Pj } <             .    (3.9)
+                                                                                   2M
+2. Single-label tests, with one family on each side. The big-side family has total mass |X|,
+   and the small-side family has total mass |Y |. Choose t uniformly from {0, . . . , T − 1} and draw
+   prefix data at length t. Independently draw w from the endpoint marginal on the chosen side, a
+   uniformly random label j0 ∈ Λw , and a uniformly random permutation (σ(1), . . . , σ(mw )) of Λw .
+   Use a wildcard vertex in tuple sw. Its cells, in order, are
+                           Cℓ × {σ(a)},        ℓ = 1, . . . , 2t ,   a = 1, . . . , mw ,
+  with the prefix-cell index first. Thus the same label permutation is used in every prefix cell. Its
+  star set is Z = Λs × {j0 }.
+3. Comparison tests, of total mass K. Choose t uniformly from {0, . . . , T − 1} and draw prefix
+   data at that length. Independently draw an edge e = (u, v) from ν and an index i uniformly
+   from [M ]. Conditional on t, choose r uniformly from [2t ], independently of all other choices.
+  Draw Ru ⊆ X and Rv ⊆ Y by the following coupling. Independently in each block indexed by
+  y ∈ Y , draw the two bits on πe−1 (y) independently with probability pi of being one. If either is
+  one, set the bit at y to one. If both are zero, set it to one with probability
+                                                    p2i
+                                                            .                                      (3.10)
+                                                 (1 − pi )2
+  This is a valid probability because pi ≤ 1/4. The marginal probability of the bit at y being one is
+                                                              p2i
+                             1 − (1 − pi )2 + (1 − pi )2              = 2pi = qi .
+                                                           (1 − pi )2
+  Hence the two complete marginals are the product measures of biases pi and qi , respectively.
+  Different projection blocks are independent, and
+                                              Ru ⊆ πe−1 (Rv )                                      (3.11)
+  holds for every outcome. These bits are fresh, independent of the prefix subsets.
+  For w ∈ {u, v} and R ⊆ Λw , define
+                                   Ewr (R) = (C<r × Λw ) ∪ (Cr × R).                               (3.12)
+  The test vertex has just the incoming and outgoing arcs in the path
+                        bψ    r                           ψ    r
+                         sv (Ev (Rv ); 2, 17) −→ test −→ bsu (Eu (Ru ); 3, 18).                    (3.13)
+
+    All wildcard partitions have admissible size: the full-prefix family has 2T ≤ kmax cells, and
+a single-label test has 2t mw ≤ 2T −1 m ≤ kmax cells. Their tuples, as well as both tuples in a
+comparison test, are among those of Definition 3.1. The padding in L contains every rank index
+used above.
+
+                                                    10
+3.5   Completeness
+Proposition 3.6. If the input game has a labeling satisfying a fraction at least 1−θ of its constraints
+under ν, then the constructed digraph has a feedback vertex set of cost at most 4.
+
+Proof. Fix such a labeling ℓ. Delete each wildcard test whose evaluated tuple ℓ(d) lies in its star
+set, and each comparison test whose edge is not satisfied by ℓ. Denote this deletion set by Fyes . No
+rank vertex is deleted.
+    We first bound its cost. In a full-prefix test, conditional on any fixed vertex tuple s, the count
+
+                                        #{j : ij = i, ℓ(uj ) ∈ Pj }
+
+is binomial with mean µi = pi T /M . Indeed, indices and subsets are independent between slots, so
+every slot contributes an independent Bernoulli variable of parameter pi /M . This argument also
+applies when the same game vertex appears in several slots. For a binomial random variable Z of
+mean µ, the exponential Markov inequality gives
+
+                  Pr[Z < µ/2] ≤ eµ/2 E[e−Z ] ≤ exp −(1/2 − e−1 )µ ≤ exp(−µ/8).
+                                                                       
+
+
+Here the middle inequality follows by writing E[e−Z ] = (1 − a + ae−1 )T ≤ exp(−T a(1 − e−1 )) when
+Z has parameters T, a. Applying this bound to each scale and taking a union bound over i ∈ [M ],
+the deletion probability for a full-prefix test is at most
+                                 M
+                                                                pM T
+                                 X                                    
+                                       exp(−µi /8) ≤ M exp −               .
+                                 i=1
+                                                                 8M
+
+After multiplication by the mass H, this is at most one by Equation (3.1). In a single-label test,
+membership of the evaluated tuple in the star set is precisely the event j0 = ℓ(w). Its probability is
+1/mw , so each of the two families contributes cost one. Comparison tests are deleted with probability
+at most θ, and hence contribute at most Kθ ≤ 1 by Equation (3.3). Thus
+
+                                       w(Fyes ) ≤ 1 + 1 + 1 + 1 = 4.
+
+   To prove that this deletion set is a feedback vertex set, assign to each rank vertex its evaluation
+under ℓ, as in Lemma 3.2. Every rank arc strictly increases the assigned value. For a retained
+wildcard vertex, let Cr be the cell containing its evaluated tuple and assign the test value zr . The
+evaluated tuple is outside the star set. Thus Equations (3.7) and (3.8), at that tuple, put every
+incoming rank value strictly below zr and every outgoing rank value strictly above it.
+    For a retained comparison, the evaluated prefix is the same on both sides and πe (ℓ(u)) = ℓ(v).
+By Equation (3.11),
+                             ℓ(su) ∈ Eur (Ru ) =⇒ ℓ(sv) ∈ Evr (Rv ).
+The possible pairs of rank indices at the start and end of Equation (3.13) are therefore (2, 3), (2, 18),
+and (17, 18). Each is increasing, so the corresponding evaluated values are strictly increasing as
+well. Assign this test any real value strictly between its two endpoint values.
+    These assignments coexist because there are no arcs between test vertices. Every arc remaining
+after deletion of Fyes strictly increases the assigned real value. A directed cycle would force a strict
+increase back to its starting value, which is impossible. Thus the remaining digraph is acyclic.
+
+
+
+
+                                                    11
+3.6   Deterministic implementation
+Proposition 3.7 (Deterministic polynomial construction). For each fixed A, the preceding con-
+struction produces a loopless digraph with positive rational vertex costs in deterministic polynomial
+time in the game input size. Its vertex costs are bounded above by a constant depending only on A.
+
+Proof. Put n = 1 + |U | + |V | + |E|, counting parallel constraints as distinct edges if necessary. The
+                                                                                                       T
+number of allowed tuples is at most (2T + 1)nT . By Equation (3.5), a tuple has at most N m
+formal rank vertices. Both factors other than nT are constants for fixed A.
+    For each slot, there are at most M 2m choices of index and subset. The support of the rank law,
+the number of permutations of either alphabet, and all choices of individual labels are also bounded
+by constants. A full-prefix test uses T game-vertex slots, so this family has OA (nT ) outcomes. A
+single-label test has at most T − 1 prefix vertices and one endpoint, again giving OA (nT ) outcomes.
+A comparison test has at most T − 1 prefix vertices and one input edge; its remaining choices,
+including the coupled subsets and candidate cell, range over constant finite sets. Thus there are
+OA (nT ) comparison outcomes as well. Here OA allows the implicit constant to depend on A.
+                                              T
+    Within a tuple there are at most N 2m formal rank arcs, and a wildcard vertex has at most
+     T
+2N m incident arcs. Comparisons have two arcs each. Therefore the total numbers of formal
+vertices and arcs are OA (nT ). Computing the equivalence relation in Equation (3.6) and discarding
+duplicate arcs cannot increase these counts. Lemma 3.2 rules out rank self-loops, and every other
+arc joins a rank vertex to a distinct test vertex.
+    It remains to account for numerical representation. Marginal endpoint probabilities are sums of
+input rational edge probabilities. They can be computed with polynomial bit length: a common
+denominator can be formed from the product of the input denominators, whose bit length is at most
+their total encoding length. Every outcome probability is a product of at most T +1 input-dependent
+edge or endpoint probabilities and a fixed number of rational factors depending only on A. Its bit
+length is therefore polynomial in the input encoding length. Zero-probability outcomes are omitted.
+The rank law supplied by Lemma 4.1 is a fixed finite rational table and may be hardwired into
+the reduction for this fixed A. Alternatively, a computable finite Ramsey bound and exhaustive
+search over finite rational probability tables recover such a law: each total-variation constraint is an
+exact rational inequality, and the strict slack in the proof of Lemma 4.1 ensures that the search
+terminates. This preprocessing depends only on A, not on the input game.
+    Finally, each outcome probability is at most one. Every test cost is therefore at most its family’s
+total mass, while every rank cost is D + 1. All costs are bounded by
+
+                                  CA = max{D + 1, H, m, |Y |, K},
+
+which depends only on A. These estimates establish both the claimed running time and the cost
+bound. No efficient dependence on a variable parameter A is asserted.
+
+
+4     Rank spreading and the surviving order
+The distribution of rank embeddings used in the construction makes comparisons at different triples
+of positions nearly indistinguishable. We first prove this statement, and then show how it turns a
+surviving topological order into compatible monotone Boolean functions.
+
+
+
+
+                                                  12
+4.1   A distribution on increasing embeddings
+For a finite set S, write S3 for its three-element subsets, each represented in increasing order when
+                            
+
+S is ordered. For probability measures µ, µ′ on a common finite space Ω, we use the convention
+                                       TV(µ, µ′ ) = max|µ(A) − µ′ (A)|.
+                                                          A⊆Ω
+
+Lemma 4.1 (Rank spreading). For every integer L ≥ 3 and every η > 0, there are an integer
+N ≥ L and       a rational probability distribution on increasing maps ψ : [L] ,→ [N ] such that, for all
+I, I ′ ∈ [L]
+            
+          3   ,
+                                        TV L(ψ(I)), L(ψ(I ′ )) ≤ η.
+                                                              
+                                                                                                    (4.1)
+Here L denotes the law of a random variable, and all the laws in Equation (4.1) use the same
+random map ψ.
+Proof. Choose a positive number δ < η/2. Let I = [L]
+                                                                      
+                                                        3 . Partition [0, 1] into a finite number b of
+intervals, each of diameter at most δ, assigning boundary points to one of their adjacent intervals.
+The finite Ramsey theorem for triples [11, Theorem B] gives an N such that every coloring of [N3 ]
+                                                                                                     
+                  2
+with at most b|I| colors has a monochromatic set of size L.
+     Consider the following finite zero-sum game. The minimizing player chooses an increasing      map
+                                                             ′                ′              [N ]
+ψ : [L] ,→ [N ]. The maximizing player chooses a triple (I, I , A), where I, I ∈ I and A ⊆ 3 . The
+payoff to the maximizing player is
+                                           1{ψ(I) ∈ A} − 1{ψ(I ′ ) ∈ A}.
+Fix an arbitrary mixed strategy τ of the maximizing player. Let wI,I ′ be its marginal probability of
+the ordered pair (I, I ′ ). When wI,I ′ > 0, define, for Z ∈ [N3 ] ,
+                                                                  
+
+                                            qI,I ′ (Z) = Pr[Z ∈ A | I, I ′ ];
+                                                           τ
+
+put qI,I ′ (Z) = 0 when wI,I ′ = 0. Color Z by the vector of intervals containing qI,I ′ (Z), one interval
+                                                                                          2
+for every ordered pair (I, I ′ ) ∈ I 2 . The number of possible colors is at most b|I| , so there is a
+monochromatic L-element set. Let ψ be its increasing enumeration. For every ordered pair (I, I ′ ),
+both ψ(I) and ψ(I ′ ) are triples in this set, and hence
+                                           |qI,I ′ (ψ(I)) − qI,I ′ (ψ(I ′ ))| ≤ δ.
+The expected payoff against τ is consequently at most
+                                           wI,I ′ qI,I ′ (ψ(I)) − qI,I ′ (ψ(I ′ )) ≤ δ.
+                                 X                                               
+
+                                I,I ′ ∈I
+
+The number N was chosen from a bound on the number of colors that does not depend on τ . Thus
+every mixed strategy of the maximizing player has a pure response with payoff at most δ.
+    By the finite minimax theorem [14, Section II.3], there is a probability distribution µ on increasing
+maps for which the expected payoff against every pure test is at most δ. Choose a rational probability
+distribution µb on the same finite space with
+                                               X
+                                                    |µ
+                                                     b(ψ) − µ(ψ)| < η/2.
+                                                ψ
+
+Such distributions are dense in the finite probability simplex. Since each payoff lies in [−1, 1], this
+replacement changes any expected payoff by less than η/2. Thus every pure test has expected payoff
+                             b. The ordered pairs include both (I, I ′ ) and (I ′ , I), and A ranges over
+less than δ + η/2 < η under µ
+               [N ]
+all subsets of 3 . The resulting inequalities give Equation (4.1).
+
+                                                               13
+4.2   Boolean functions from rank comparisons
+For the remainder of this section and Sections 5–7, suppose that the constructed weighted digraph
+has a feedback vertex set F of cost at most D. Fix a total topological order ≺ of the surviving
+vertices. Every rank vertex survives, since it has weight D + 1. In particular, the constant vertices
+satisfy
+                                         o1 ≺ o2 ≺ · · · ≺ oN .
+All subsequent random data are sampled after F and this order have been fixed. In a test family of
+total mass W , the deletion cost paid by F in that family is exactly W times the probability that its
+sampled test vertex belongs to F .
+    For an allowed tuple d, a subset E ⊆ Λd , and indices 1 ≤ a < c < h ≤ L, define
+
+             Gd (E; a, c, h) = 1{bψ
+                                  d (E; a, h) ≺ oψ(c) },          gd (E) = Gd (E; 2, 15, L − 1).   (4.2)
+
+The dependence of these functions on the sampled embedding ψ is suppressed in the notation.
+
+Definition 4.2 (Good tuples). A triple (a, c, h) is usable if
+
+                         5 ≤ c ≤ L − 5,          2 ≤ a < c,          c + 2 ≤ h ≤ L.                (4.3)
+
+The tuple d is good at ψ if
+                                          Gd (E; a, c, h) = gd (E)
+for every E ⊆ Λd and every usable triple. Otherwise it is bad at ψ.
+
+Lemma 4.3 (Probability of goodness). For each fixed allowed tuple d,
+
+                                  Pr[d is bad at ψ] ≤ 3ηL3 2|Λd | ≤ ρ.                             (4.4)
+                                   ψ
+
+The same upper bound ρ holds when d is sampled independently of ψ.
+
+Proof. Fix d and E ⊆ Λd . For integers r1 < r2 < r3 in [N ], let xr1 ,r3 be the profile taking value r1
+on E and r3 on its complement. Once the surviving order is fixed, the function
+
+                                   (r1 , r2 , r3 ) 7−→ 1{bd (xr1 ,r3 ) ≺ or2 }
+
+is a deterministic Boolean function of this triple alone. Applying Lemma 4.1 to it shows that
+
+                              |Eψ Gd (E; a, c, h) − Eψ Gd (E; a′ , c′ , h′ )| ≤ η                  (4.5)
+
+for any two increasing triples of positions, whether usable or not.
+    Equation (4.5) compares expectations; it does not by itself control disagreement under the same
+embedding. We obtain that control through pointwise ordered pairs of bits, for which the probability
+of disagreement equals the absolute difference of expectations. Fix a usable triple (a, c, h) and
+abbreviate
+                                        A0 = Gd (E; 2, 15, L − 1),
+                                        A1 = Gd (E; 2, c, L − 1),
+                                        A2 = Gd (E; 1, c, c + 1),
+                                        A3 = Gd (E; a, c, h).
+
+
+                                                       14
+The bits A0 and A1 compare the same rank vertex to two constant vertices. They are pointwise
+ordered: A0 ≤ A1 if c ≥ 15, and A1 ≤ A0 if c ≤ 15. Equation (4.5) therefore gives Pr[A0 ̸= A1 ] ≤ η.
+   The profile of bψ                                                                          ψ
+                   d (E; 1, c+1) is strictly smaller at every coordinate than the profile of bd (E; 2, L−1):
+on E use 1 < 2, and on its complement use c + 1 < L − 1. The strict rank arc from the former
+vertex to the latter forces A2 ≥ A1 . Similarly, 1 < a and c + 1 < h imply A2 ≥ A3 . Applying
+Equation (4.5) to these ordered pairs gives
+                                Pr[A1 ̸= A2 ] ≤ η,         Pr[A2 ̸= A3 ] ≤ η.
+A union bound yields                                              
+                                    Pr Gd (E; a, c, h) ̸= gd (E) ≤ 3η.
+There are at most L3 usable triples and 2|Λd | subsets E. A second union bound proves the first
+inequality of Equation (4.4). Every allowed tuple has length at most T and each slot alphabet has size
+                                               T
+at most m, so |Λd | ≤ mT . The choice 3ηL3 2m ≤ ρ proves the second inequality. Finally, averaging
+the pointwise bound over any tuple distribution independent of ψ gives the last assertion.
+    The order in Lemma 4.3 may depend on the entire weighted construction, including its rank
+distribution. The argument only uses that the order is fixed before the fresh draw of ψ. Nor does
+Equation (4.4) assert simultaneous goodness of all tuples; the subsequent estimates use its stated
+bound for sampled tuples.
+Lemma 4.4 (Monotonicity). If d is good at ψ, then gd : 2Λd → {0, 1} is monotone:
+                                   E ⊆ E′      =⇒     gd (E) ≤ gd (E ′ ).
+Moreover,
+                                      gd (∅) = 0,          gd (Λd ) = 1.
+Proof. For E ⊆ E ′ , compare
+                                    bψ   ′
+                                     d (E ; 2, 17)   and     bψ
+                                                              d (E; 3, 18).
+The first profile is strictly smaller everywhere: the index pairs in E, E ′ \ E, and Λd \ E ′ are,
+respectively, (2, 3), (2, 18), and (17, 18). The rank arc consequently implies
+                                  Gd (E ′ ; 2, 15, 17) ≥ Gd (E; 3, 15, 18).
+Both triples are usable, so goodness identifies these two bits with gd (E ′ ) and gd (E). For the extreme
+sets, the reference profile is oψ(L−1) when E = ∅ and oψ(2) when E = Λd . Their positions relative
+to oψ(15) give the claimed values.
+Lemma 4.5 (Prefix compatibility). Let sw be an allowed extension of s. For every E ⊆ Λs and
+every increasing triple (a, c, h),
+                                 Gsw (E × Λw ; a, c, h) = Gs (E; a, c, h).                            (4.6)
+In particular, gsw (E × Λw ) = gs (E). If sw is good at ψ, then so is s. The same conclusions hold for
+a prefix obtained by dropping several final slots.
+Proof. The profile on Λsw that takes value ψ(a) on E × Λw and ψ(h) elsewhere is the pullback of
+the corresponding profile on Λs under the projection dropping the last slot. Definition 3.1 identifies
+the two rank vertices. Their comparisons to the same constant marker are identical, proving
+Equation (4.6). Apply this identity both to the reference triple and to every usable triple: goodness
+of the extension gives goodness of the shorter tuple for each subset E. Iteration proves the final
+assertion. The projection identity holds on the formal product alphabets even when a game vertex
+occurs in more than one slot.
+
+                                                     15
+4.3    When a wildcard test must be deleted
+Lemma 4.6 (Wildcard forcing). Consider a wildcard test vertex vtest from Definition 3.3, with
+tuple d, embedding ψ, ordered cells C1 , . . . , Ck , and star set Z. Suppose that d is good at ψ. For an
+integer d with 0 ≤ d ≤ k, put
+                                                   d
+                                                  [      
+                                           E=           Cℓ \ Z.
+                                                  ℓ=1
+
+If
+                                    gd (E) = 0,         gd (E ∪ Z) = 1,                             (4.7)
+then vtest ∈ F .
+
+Proof. Set c = 10d + 15 and define the rank vertices
+
+                       v − = bψ
+                              d (E; 2, c + 2),     v + = bψ
+                                                          d (E ∪ Z; c − 2, L − 1).
+
+We first check the wildcard’s incident arcs. If λ ∈ Cℓ \ Z with ℓ ≤ d, then λ ∈ E, so the two profiles
+take values ψ(2) and ψ(c − 2), respectively. The inequalities
+
+                                   2 < 10ℓ + 10 ≤ 10d + 10 < c − 2
+
+place these values strictly below and strictly above zℓ = ψ(10ℓ+10). If instead ℓ > d, then λ ∈
+                                                                                              / E ∪Z,
+so the profiles take values ψ(c + 2) and ψ(L − 1). Here
+
+                   c + 2 = 10d + 17 < 10ℓ + 10 ≤ 10kmax + 10 = L − 20 < L − 1,
+
+which gives the required strict inequalities again. Thus the constructed digraph contains the arcs
+
+                                          v − −→ vtest −→ v + .
+
+Empty cells impose no conditions in these checks. The first case is absent when d = 0, and the
+second is absent when d = k.
+    Since 0 ≤ d ≤ k ≤ kmax and L = 10kmax + 30,
+
+                                            15 ≤ c ≤ L − 15.
+
+Both (2, c, c + 2) and (c − 2, c, L − 1) are therefore usable triples. Goodness and Equation (4.7)
+show that v − does not precede oψ(c) , whereas v + does precede it. If vtest survived, the displayed
+path would give v − ≺ vtest ≺ v + ≺ oψ(c) , a contradiction. Hence vtest ∈ F .
+
+
+5     Shared prefix conditioning
+Continue to fix the feedback vertex set F of cost at most D and the topological order ≺ from
+Section 4. When we sample graph tests or their defining data below, we use the finite laws that define
+the graph. In particular, the order is fixed before these draws; the distribution of an embedding is
+not conditioned on whether any test vertex survives.
+    We first specify a distribution that will be used at every bias scale. Draw ψ from the rank-
+spreading law. Independently choose t uniformly from {0, . . . , T − 1} and draw the prefix data of
+length t from Definition 3.4. Thus s = (u1 , . . . , ut ) has independent coordinates with law νU , the
+
+
+
+                                                   16
+indices i1 , . . . , it are independent and uniform in [M ], and, conditionally on these indices, the sets
+Pj are independent with laws µX       pi . Write
+                                    j
+
+
+                                         D = ψ, t, s, (ij , Pj )tj=1
+                                                                       
+                                                                                                       (5.1)
+
+for these shared data. Independently draw an edge e = (u, v) with law ν. Unless another experiment
+is explicitly specified, expectations and probabilities involving sampled endpoints refer to this joint
+law of (D, e). In particular, its marginal law for (D, u) is obtained by drawing u ∼ νU independently
+of D; the corresponding statement holds for v ∼ νV .
+Definition 5.1 (Conditioned functions). For each game vertex w, fix a label λ◦w ∈ Λw independently
+of all the sampled data. Given D, let C1 , . . . , C2t be its ordered prefix partition. If s is good, define
+its transition index by
+                                    r∗ = min{r : gs (C≤r ) = 1}.
+For every w ∈ U ∪ V define a function on 2Λw by
+                                           (
+                                               gsw Ewr∗ (R) , if sw is good,
+                                                            
+                                fw (R) =
+                                               1{λ◦w ∈ R},    otherwise,
+
+where, as in Equation (3.12),
+
+                                   Ewr (R) = (C<r × Λw ) ∪ (Cr × R).
+
+When the dependence on the shared data needs to be displayed, write fw,D in place of fw . For
+0 < p < 1, let
+                                 hw (p) = ER∼µΛw fw (R),
+                                                            p
+
+and similarly write hw,D (p) when needed. This expectation is taken with the function fixed.
+   These definitions are valid also when some prefix cells are empty. Indeed, on a good tuple the
+cumulative-set bits are monotone, start at 0, and end at 1, by Lemma 4.4. There is therefore a
+unique transition, characterized by
+
+                                    gs (C<r∗ ) = 0,         gs (C≤r∗ ) = 1.                            (5.2)
+
+The transition cell is nonempty: adding an empty cell cannot change a bit. If sw is good, then s
+is good by Lemma 4.5, so the first case in Definition 5.1 only uses a defined r∗ . If s is bad, all its
+extensions are bad and every function uses the second case.
+    For a good extension, compatibility and Equation (5.2) give
+
+                         fw (∅) = gs (C<r∗ ) = 0,           fw (Λw ) = gs (C≤r∗ ) = 1.
+
+The set Ewr∗ (R) increases with R, so this fw is monotone. The fallback function has the same
+properties. Consequently, for every realization of D and every vertex w, the function fw is monotone
+with bottom 0 and top 1. The entire family (fw )w∈U ∪V is determined by D, without using the fresh
+edge or a fresh scale index.
+   We will repeatedly use the marginal bounds
+
+                               Pr[su is bad] ≤ ρ,           Pr[sv is bad] ≤ ρ.                         (5.3)
+
+To obtain them, condition on the sampled tuple and apply Lemma 4.3; each tuple is independent of
+ψ. This argument does not assert that all extensions are good simultaneously.
+
+                                                       17
+    Our objective is to prove Ehu (pi ) ≥ pi /4 for every i ∈ [M ] under this same law. To relate
+acceptance to the full-prefix tests, we follow the transition cell through successive refinements: on a
+good full tuple, its membership bit at each step will equal the corresponding conditioned function
+value. The deletion-cost bound will make the counts of membership-one steps large with positive
+probability; averaging over a uniformly chosen prefix length will then give the desired acceptance
+bound.
+Lemma 5.2 (Refinement of the transition cell). Draw prefix data of length T and an independent
+                                                     (j)          (j)
+embedding ψ. Write sj = (u1 , . . . , uj ), and let C1 , . . . , C2j be the partition at depth j. For j = 0,
+this is the single cell Λ∅ . Suppose that sT is good, and let τj be the transition index at depth j.
+Then the full transition cell is nonempty and, for every 0 ≤ j ≤ T ,
+
+                                           Cτ(TT ) ⊆ Cτ(j)
+                                                        j
+                                                           × X T −j .
+
+Let Dj−1 denote the shared data consisting of the same embedding, the first j − 1 prefix slots, and
+the deterministic length j − 1. For each 1 ≤ j ≤ T , the membership bit of slot j throughout the full
+transition cell is
+
+                     1{λj ∈ Pj } = fuj ,Dj−1 (Pj )        for every (λ1 , . . . , λT ) ∈ Cτ(TT ) .    (5.4)
+
+Proof. Goodness is inherited by all the prefixes. A cumulative union of cells at depth j, lifted to
+the full product alphabet, is a cumulative union at a boundary of the depth-T partition. This
+follows from the lexicographic ordering: all refinements of an earlier cell precede all refinements of a
+later cell. By Lemma 4.5, the cumulative-set bit at that lifted boundary is its bit at depth j. In
+                                                       (j)
+particular, the two boundaries on either side of Cτj have bits 0 and 1. Monotonicity places the
+full transition between these boundaries, which proves the asserted containment. Its nonemptiness
+follows because an empty cell cannot change a cumulative-set bit.
+    At step j, the depth-(j − 1) transition cell has two children: its membership-1 child first, followed
+by its membership-0 child. The cumulative union at the boundary between these children is exactly
+                                        (j−1)
+                                      C<τj−1 × X ∪ Cτ(j−1)
+                                                                          
+                                                      j−1
+                                                           × Pj .
+
+The bit of this set under gsj is fuj ,Dj−1 (Pj ). Here the extension sj−1 uj = sj is good, so the fallback
+rule is not used. The bit before both children is 0 and the bit after both is 1. The transition is
+therefore in the first child if and only if the intermediate bit is 1. If either child is empty, the same
+statement follows from equality of its two boundary sets. The full transition refines the selected
+child, giving Equation (5.4).
+
+    Figure 1 illustrates the two-step case of the refinement. Each displayed cell is a set of label
+tuples; its bit is the value of g on the cumulative union ending at that cell.
+    The lemma uses formal product alphabets and literal prefix-lift identities. It does not require
+distinct game vertices in the prefix. In particular, a repeated vertex still occupies a separate slot,
+with its own independently sampled index and membership set.
+Proposition 5.3 (Average acceptance at every scale). Under the common law of (D, e), for every
+i ∈ [M ],
+                                                        pi
+                                            Ehu (pi ) ≥ .                                         (5.5)
+                                                        4
+Proof. Consider the full-prefix experiment in Definition 3.5, with data of length T and an independent
+embedding. Denote its probability and expectation by Prfull and Efull . Let ZT be the star set of its
+wildcard test vertex, and let A be the event that sT is good and its transition cell is not starred.
+
+                                                         18
+                                        Λ∅
+
+
+                           1                               0              membership pattern
+
+
+                    11           10                 01              00
+
+                     0            1                 1               1     cumulative bit
+
+Figure 1: Schematic transition refinement for two prefix slots. Membership 1 precedes 0 lexico-
+graphically. In the illustrated case the cumulative bit changes at cell 10, so the transition is in the
+first cell at depth one and its second child at depth two. The selected membership bits are therefore
+fu1 ,D0 (P1 ) = 1 and fu2 ,D1 (P2 ) = 0, with each function using its preceding prefix. Empty cells are
+retained in the ordering but cannot contain a transition.
+
+
+   The star predicate is constant on each full cell: all label tuples in that cell have the same
+membership vector, and hence the same counts at each scale. Suppose that sT is good and its
+transition cell is starred. At the cut immediately before that cell, put
+                                                         (T )
+                                               E = C<τT \ ZT .
+
+This is precisely the union of the nonstar portions of the cells before the cut. It is contained in
+  (T )                                                (T )
+C<τT , whose bit is 0. Moreover, E ∪ ZT contains C≤τT , whose bit is 1: adjoining the stars restores
+every earlier starred cell and includes the entire starred transition cell. Monotonicity gives
+
+                                  gsT (E) = 0,            gsT (E ∪ ZT ) = 1.
+
+Lemma 4.6 forces deletion of this test vertex.
+   The full-prefix family has total mass H, so its deletion probability is at most D/H. The full
+tuple is independent of the embedding, and Lemma 4.3 bounds its badness probability by ρ. We
+conclude that
+                                                      D    1
+                                     Pr(A) ≥ 1 − ρ −     ≥ .                               (5.6)
+                                     full             H    2
+The last inequality follows from the parameter choices: ρ ≤ γ ≤ 1/4000 and D/H < 1/8.
+   Define Dj−1 from this experiment as in Lemma 5.2. For a fixed i ∈ [M ], set
+                                             T
+                                             X
+                                      Yi =         1{ij = i} fuj ,Dj−1 (Pj ).
+                                             j=1
+
+On A, the transition cell is nonstarred, so the definition of ZT and Equation (5.4) give Yi ≥ pi T /(2M ).
+On all other outcomes, Yi ≥ 0, including outcomes for which some conditioned functions use the
+fallback rule. It follows from Equation (5.6) that
+
+                                                                pi T
+                                                   Efull Yi ≥        .                              (5.7)
+                                                                4M
+     We now calculate this expectation without conditioning on A. For each j, condition on the
+embedding, the first j − 1 prefix slots with all their data, and the new vertex uj . The function
+fuj ,Dj−1 is determined by these choices: both the goodness test for sj and any fallback choice are
+
+                                                         19
+independent of the fresh ij and Pj . Since ij is uniform in [M ] and Pj has law µX       pi conditional on
+ij = i,
+                     h                                                   i  1
+                Efull 1{ij = i}fuj ,Dj−1 (Pj ) ψ, (uℓ , iℓ , Pℓ )ℓ<j , uj =   hu ,D (pi ).
+                                                                            M j j−1
+The marginal law of the conditioning data and uj is the common law of (D, u) conditional on
+t = j − 1. Indeed, the new vertex has law νU independently of the earlier slots, just as does the big
+endpoint of the independently sampled edge. Therefore
+
+                                                     1 T
+                                                       X                        
+                                     Efull Yi =            E hu (pi ) | t = j − 1
+                                                     M j=1
+                                                     T
+                                                 =     Ehu (pi ).
+                                                     M
+Together with Equation (5.7), this proves Equation (5.5).
+
+   The shared distribution in Equation (5.1) has not changed with i. The favorable full-chain event
+was used only to bound a nonnegative random sum from below; it was not used to condition the
+expectation that identifies this sum with Ehu (pi ).
+
+
+6    A budget for pivotal labels
+We associate to each conditioned function a quantity that controls both its influences and its
+acceptance probabilities at every bias. The single-label tests bound the expectation of this quantity
+under the common distribution from Section 5. A single test vertex may have several cuts that
+force its deletion, but its cost is paid only once. Accordingly, we record whether a label is pivotal
+somewhere along a permutation, rather than the number of witnessing prefixes.
+
+Definition 6.1 (Pivotality budget). Let S be a nonempty finite set, and let f : 2S → {0, 1} be
+monotone with f (∅) = 0 and f (S) = 1. For each j ∈ S, let σj be a uniform permutation of S \ {j}.
+Write Ra (σj ) for the set of its first a elements, where 0 ≤ a ≤ |S| − 1. Define
+                                          "                                                  #
+                               X              there exists a ∈ {0, . . . , |S| − 1} such that
+                     B(f ) =         Pr                                                          .
+                               j∈S
+                                     σj         f (Ra (σj )) = 0,   f (Ra (σj ) ∪ {j}) = 1
+
+Thus both the empty prefix and the full prefix S \ {j} are allowed. A permutation contributes only
+once for a given j, even when several of its prefixes witness pivotality. In particular, 0 ≤ B(f ) ≤ |S|.
+
+Lemma 6.2 (Arrival-time inequalities). For every function in Definition 6.1 and every 0 < p < 1,
+
+                                Ip (f ) ≤ B(f ),             ER∼µSp f (R) ≤ pB(f ).
+
+Proof. Give each j ∈ S an independent uniform arrival time Tj ∈ [0, 1]. With probability one all
+these times are distinct. For each j, let σj be the order in which the other elements arrive, and let
+Aj be the event that some prefix of σj witnesses j’s pivotality in Definition 6.1. The permutation
+σj is uniform, so                         X
+                                             Pr(Aj ) = B(f ).
+                                                   j∈S
+
+Moreover, Aj is determined entirely by the arrival times of elements other than j, and hence is
+independent of Tj .
+
+                                                             20
+   For the influence inequality, put
+
+                                   R−j (p) = {k ∈ S \ {j} : Tk ≤ p}.
+                  S\{j}
+This set has law µp       and is a prefix of σj . By monotonicity, the event defining Ip,j (f ) is exactly
+
+                                {f (R−j (p)) = 0, f (R−j (p) ∪ {j}) = 1},
+
+which is contained in Aj . Summing Ip,j (f ) ≤ Pr(Aj ) over j proves Ip (f ) ≤ B(f ).
+    For the acceptance inequality, put R(p) = {j ∈ S : Tj ≤ p}, which has law µSp . Along the
+complete arrival sequence, the value of f starts at zero, ends at one, and never decreases. There
+is therefore a unique arriving element at which it changes from zero to one. If f (R(p)) = 1 and
+this element is j, then Tj ≤ p, and the elements arriving before j form a prefix of σj witnessing Aj .
+Consequently, up to the null event of tied arrival times,
+                                                       [                      
+                                 {f (R(p)) = 1} ⊆           {Tj ≤ p} ∩ Aj .
+                                                      j∈S
+
+A union bound and the independence established above give
+                                       X                           X
+                      ER∼µSp f (R) ≤         Pr(Tj ≤ p, Aj ) = p         Pr(Aj ) = pB(f ).
+                                       j∈S                         j∈S
+
+Only the possible-witness event Aj is asserted to be independent of Tj ; no independence of the
+actual switching element is needed.
+
+   Return to the fixed feedback vertex set F of cost at most D and its fixed topological order. For
+the functions in Definition 5.1, set
+
+                                     Bw = B(fw )            (w ∈ U ∪ V ).
+
+These variables depend on the shared data D and the named vertex w. Their definition does not
+involve a fresh tested edge or a fresh bias index. Lemma 6.2 gives, for every realization of these
+data and every 0 < p < 1,
+                                  Ip (fw ) ≤ Bw ,   hw (p) ≤ pBw .
+
+Proposition 6.3 (Single-label test budget). Under the common law of D and an independent edge
+e = (u, v) ∼ ν,
+                                EBu ≤ D + 1,      EBv ≤ D + 1.                           (6.1)
+
+Proof. Fix either side of the game and sample w independently of D from that side’s endpoint
+marginal. Its alphabet size mw is constant on the chosen side. This is exactly the marginal law of
+the shared data and endpoint in the corresponding single-label test family of Definition 3.5.
+    First fix D, w for which the extension sw is good. The conditioned function fw then uses the
+transition cell Cr∗ . The remaining randomness of a single-label test consists of a uniform label
+j0 ∈ Λw and an independent uniform permutation σ of Λw . Its star set is
+
+                                                Z = Λs × {j0 },
+
+and its ordered cells are Cℓ × {j}, first ordered by ℓ and then by σ. Suppose some prefix R of σ
+with j0 omitted satisfies
+                                 fw (R) = 0,     fw (R ∪ {j0 }) = 1.
+
+                                                      21
+    Choose a cut among the refined cells belonging to Cr∗ , including either boundary of this block if
+necessary, so that precisely the nonstar labels in R have been passed within that block. Such a cut
+exists because deleting j0 from the sequence σ preserves the order of every other label. For R = ∅
+one may cut before the block, and for R = Λw \ {j0 } one may cut after the block. Let E be the
+union of all refined cells before the cut, with all stars removed. Then exactly
+                                                         
+                                E = (C<r∗ × Λw ) \ Z ∪ (Cr∗ × R).
+
+In particular,
+                              E ⊆ Ewr∗ (R),       E ∪ Z ⊇ Ewr∗ (R ∪ {j0 }).
+The second inclusion restores the stars in all earlier prefix cells; the additional stars in later cells
+only enlarge the set. Monotonicity of gsw and the definition of fw now imply
+
+                                  gsw (E) = 0,       gsw (E ∪ Z) = 1.
+
+Lemma 4.6 therefore forces this test vertex to belong to F .
+    This argument uses the ordered partition with its empty cells retained; the set identities remain
+valid when some of those cells are empty. They also hold on the formal product label domain when
+w or another game vertex occurs repeatedly in the tuple. No independence of labels in repeated
+slots is assumed, and the use of fw rests only on the prefix identifications of Lemma 4.5.
+    For each fixed j0 , deleting j0 from a uniform permutation of Λw gives a uniform permutation of
+Λw \ {j0 }. Averaging the forced-deletion event over the uniform choice of j0 therefore gives, whenever
+sw is good,
+                                                                     Bw
+                               Pr[sampled test vertex ∈ F | D, w] ≥      .
+                                                                    mw
+Here a test is charged once if a witnessing prefix exists, regardless of how many prefixes witness the
+same label’s pivotality.
+    Let Gw denote the event that sw is good. The total mass of the chosen test family is mw , and
+its vertices carry their sampling probabilities times this mass. Thus, on taking expectations, the
+cost spent by F in this family is at least E[Bw 1Gw ]. Since the total cost of F is at most D,
+
+                                              E[Bw 1Gw ] ≤ D.
+
+On the complementary event the fallback function is still monotone, with bottom zero and top
+one, so Definition 6.1 gives Bw ≤ mw . The sampled-extension bound from Equation (5.3) gives
+Pr(Gwc ) ≤ ρ; equivalently, one may apply Lemma 4.3 after fixing the sampled vertex tuple, which is
+independent of ψ. As mw ≤ m and ρ ≤ 1/m,
+
+                                        E[Bw 1Gwc ] ≤ mw ρ ≤ 1.
+
+Adding the two bounds proves EBw ≤ D + 1 for either endpoint marginal, and hence proves
+Equation (6.1).
+
+
+7    Soundness from coupled comparisons
+Assume that the game has value at most θ, and suppose that the constructed digraph has a feedback
+vertex set F of cost at most D. Continue with the fixed topological order ≺ and the conditioned
+functions from Sections 4 and 5. In particular, D denotes the shared data in Equation (5.1),
+
+
+                                                    22
+and a fresh edge e = (u, v) has law ν independently of D. The random variables fw , hw (p), and
+Bw = B(fw ) are defined for every vertex w once D is fixed.
+    For a fixed i ∈ [M ], there are two experiments for the fresh subsets at the sampled edge. In
+the coupled experiment, (Ru , Rv ) has the law of the comparison test at index i. In the independent
+experiment, conditionally on (D, e), the subsets are independent with laws µX           Y
+                                                                                pi and µqi . We write
+Prc,i and Prind,i for probabilities in these experiments, including the common law of (D, e). Neither
+experiment samples a candidate cell unless this is explicitly stated.
+
+7.1   Coupling and deletion cost
+Recall the coupling from the comparison family in Definition 3.5. For p = pi ≤ 1/4, its exact
+marginals are µX       Y
+               p and µ2p , and Equation (3.11) gives
+
+                             Ru ⊆ πe−1 (Rv )    in every coupled outcome.
+
+For each y ∈ Y , the block consists of the two bits in πe−1 (y) and the bit at y. These blocks are
+independent across y. The marginals and block independence hold for every fixed edge, independently
+of the shared prefix data.
+
+Lemma 7.1 (Comparison deletion charge). For every i ∈ [M ],
+
+                                                                      M 2T D
+                            Pr[ fu (Ru ) = 1, fv (Rv ) = 0 ] ≤ 2ρ +          .                   (7.1)
+                            c,i                                         K
+Proof. Let G be the event that both extended tuples su and sv are good. The tuple choices are
+independent of ψ, so Lemma 4.3, averaged over these choices, gives Pr[G c ] ≤ 2ρ. On G, both
+conditioned functions use the same prefix transition index r∗ , by Definition 5.1 and Lemma 4.5.
+    Suppose that G holds and that fu (Ru ) = 1, fv (Rv ) = 0. Add the candidate-cell draw from the
+comparison test and consider the outcome r = r∗ . The start and end rank vertices of Equation (3.13)
+are then
+                           bψ     r∗
+                             sv (Ev (Rv ); 2, 17),  bψ    r∗
+                                                     su (Eu (Ru ); 3, 18).
+
+The triples (2, 15, 17) and (3, 15, 18) are usable. Goodness and the two function values show that
+the start does not precede oψ(15) , whereas the end precedes oψ(15) . If the test vertex were retained,
+its two arcs would require the start to precede the test vertex and the test vertex to precede the
+end. This contradicts the fixed topological order. Hence that comparison vertex belongs to F .
+    For fixed (D, e, Ru , Rv ) as above, the candidate-cell draw hits r∗ with probability 2−t ≥ 2−T .
+Let δi be the probability that a comparison vertex is deleted when its fresh threshold index is fixed
+to i, including the candidate-cell draw. We have proved
+
+                              δi ≥ 2−T Pr[ G, fu (Ru ) = 1, fv (Rv ) = 0 ].
+                                        c,i
+
+In the actual comparison family the threshold index is uniform on [M ]. Its deleted weight is
+                                                  M
+                                               K X
+                                                     δj ≤ D,
+                                               M j=1
+
+so δi ≤ M D/K. Combining these inequalities and then adding Pr[G c ] ≤ 2ρ proves Equation (7.1).
+
+
+
+
+                                                    23
+7.2   Lists chosen before the edge
+Lemma 7.2 (List decoding against game soundness). Suppose a game has value at most θ. Assign
+to every game vertex w a list Jw ⊆ Λw , possibly empty, of cardinality at most an integer J ≥ 1.
+Then
+                                  Pr [ πe (Ju ) ∩ Jv ̸= ∅ ] ≤ θJ 2 .
+                                 e=(u,v)∼ν
+
+The same conclusion holds conditionally on any data independent of the fresh edge, if all the lists
+are fixed by those data.
+Proof. Independently for each vertex with a nonempty list, choose its label uniformly from that list.
+Give every empty-list vertex any fixed label from its alphabet. If πe (Ju ) ∩ Jv ̸= ∅, there is at least
+one pair (x, y) ∈ Ju × Jv with πe (x) = y. Since u and v are different vertices, the probability of
+choosing that pair is
+                                              1        1
+                                                     ≥ 2.
+                                          |Ju ||Jv |  J
+The expected value of this random labeling is therefore at least the displayed intersection probability
+divided by J 2 . Every deterministic labeling in its support has value at most θ, so the expected
+value is at most θ. This proves the claim. For the conditional assertion, fix the conditioning data
+first and repeat the same argument; independence leaves the fresh edge law equal to ν.
+
+7.3   Replacing the coupling by product measure
+Proposition 7.3 (Product comparison). For every i ∈ [M ], under the common distribution of
+(D, e),
+                                                           pi
+                                   E hu (pi )(1 − hv (qi )) ≤ .                         (7.2)
+                                                             16
+Proof. Fix i. For each value of D, construct a junta approximant for each game vertex, before
+drawing the fresh edge. For notation, put
+                                                    (
+                                                      pi ,   w ∈ U,
+                                         βw,i =
+                                                      qi ,   w ∈ V.
+
+If Bw ≤ B0 , Lemma 6.2 gives Iβw,i (fw ) ≤ B0 . Corollary 2.3 and the choice of J in Section 3.1
+therefore provide a Boolean function few,i on a coordinate set Jw ⊆ Λw , with
+
+                            |Jw | ≤ J,         Pr       [ fw (R) ̸= few,i (R) ] ≤ γ.              (7.3)
+                                             R∼µΛ
+                                                β
+                                                  w
+                                                  w,i
+
+
+Choose one such pair by a fixed ordering of the finitely many possible coordinate sets and Boolean
+truth tables. If Bw > B0 , set Jw = ∅ and choose few,i to be the constant-zero function; no error
+guarantee is asserted at that vertex. We suppress the dependence of Jw on D and i.
+     This defines one list for every actual game vertex from (D, i) alone. The functions fw , including
+the fallback functions, are already defined for all vertices from D alone. Thus the choice of a junta or
+list uses no information about the fresh sampled edge. It may depend on the fixed game instance and
+the fixed topological order, as may any labeling used in a soundness argument. A repetition in the
+prefix, or an endpoint that also occurs in the prefix, does not change this conditional independence:
+the fresh edge was drawn independently of the entire prefix.
+     By Lemma 7.2, for every fixed value of D,
+
+                                   Pr [ πe (Ju ) ∩ Jv ̸= ∅ | D ] ≤ θJ 2 .
+                                  e∼ν
+
+
+                                                        24
+After averaging over D, this remains the bound on the list-intersection event under the common
+law. Also, Proposition 6.3 and Markov’s inequality give the averaged bound
+                                                               EBu + EBv
+                               Pr[ Bu > B0 or Bv > B0 ] ≤                ≤ 2γ.                     (7.4)
+                                                                  B0
+Here we have used the actual endpoint marginals of ν. Equation (7.4) is a bound under the joint
+law of (D, e); no corresponding pointwise bound conditional on D is needed.
+   Let Ai be the event, determined by (D, e), that both budgets are at most B0 and πe (Ju )∩Jv = ∅.
+The preceding bounds imply
+                                       Pr[Aci ] ≤ 2γ + θJ 2 .                                  (7.5)
+Fix (D, e) in Ai . In the coupled experiment, all bits used by the big-side junta belong to fibers
+indexed by πe (Ju ), and all bits used by the small-side junta belong to fibers indexed by Jv . These
+are disjoint collections of independently generated fibers. Consequently feu,i (Ru ) and fev,i (Rv ) are
+independent in the coupled experiment. They are also independent in the independent experiment,
+and their marginal distributions are unchanged. Their joint distributions therefore agree in the two
+experiments. This includes the case of a constant junta with an empty coordinate set.
+    The conditional approximation error for each endpoint in Equation (7.3) is at most γ in either
+experiment, because both have exactly the stipulated product marginals. Replacing fu , fv by their
+respective juntas changes the conditional probability of the pattern (1, 0) by at most 2γ, by a union
+bound. Doing this in both experiments and using equality of the junta joint distributions yields
+
+                        Pr [ fu (Ru ) = 1, fv (Rv ) = 0 | D, e ]
+                       ind,i
+                                          − Pr[ fu (Ru ) = 1, fv (Rv ) = 0 | D, e ] ≤ 4γ
+                                            c,i
+
+on Ai . On its complement the difference is at most one. Integrating over the unchanged law of
+(D, e), and using Equation (7.5) and Lemma 7.1, gives
+
+                                Pr [ fu (Ru ) = 1, fv (Rv ) = 0 ]
+                                ind,i
+                                                  M 2T D
+                                        ≤ 2ρ +           + 2γ + θJ 2 + 4γ ≤ 10γ.                   (7.6)
+                                                    K
+The conditional probability of the pattern in the independent experiment is exactly hu (pi )(1−hv (qi )).
+Finally, γ = pM /1000 and pM ≤ pi , so
+                                                          pM   pi
+                                                  10γ =       ≤ .
+                                                          100  16
+This proves Equation (7.2).
+
+7.4   The dyadic tail contradiction
+Proposition 7.4 (Weighted soundness). If the game has value at most θ, every feedback vertex set
+of the constructed weighted digraph has cost strictly greater than D.
+
+Proof. Suppose that F has cost at most D, as assumed throughout this section. Fix i ∈ [M ], and
+let
+                                    Hi = {hv (qi ) ≥ 1/2}
+
+
+                                                          25
+under the common distribution of (D, e). On its complement, hu (pi ) ≤ 2hu (pi )(1 − hv (qi )). Conse-
+quently Propositions 5.3 and 7.3 imply
+
+                          E[ hu (pi )1{Hi } ] = Ehu (pi ) − E[ hu (pi )1{Hic } ]
+                                                pi
+                                              ≥    − 2E[ hu (pi )(1 − hv (qi )) ]
+                                                4
+                                                pi
+                                              ≥ .
+                                                8
+Since 0 ≤ hu (pi ) ≤ 1, we obtain Pr[Hi ] ≥ pi /8. Lemma 6.2 also gives hv (qi ) ≤ qi Bv = 2pi Bv
+pointwise. Thus, on Hi , one has Bv ≥ 1/(4pi ), and hence
+                                                      1   pi
+                                                       
+                                  Pr Bv ≥                ≥ ,         i ∈ [M ].                   (7.7)
+                                                     4pi  8
+    These are tail estimates for one random variable Bv under one fixed probability law. The
+definition of fv , and therefore that of Bv , does not use the fresh threshold index i. The junta
+approximants used to prove the individual estimates may depend on i, but this does not alter Bv .
+    Put ai = 1/(4pi ) for i ≥ 1, and a0 = 0. For every real x ≥ 0,
+                                               M
+                                               X
+                                      x≥             (ai − ai−1 )1{x ≥ ai }.
+                                               i=1
+
+Indeed, if aj is the largest crossed threshold, the sum on the right telescopes to aj ≤ x; if no
+threshold is crossed, it is zero. Taking expectations and using Equation (7.7) yields
+                                M                                      M
+                                X                                      X ai pi        M
+                        EBv ≥         (ai − ai−1 ) Pr[Bv ≥ ai ] ≥                 =      .
+                                i=1                                     i=1
+                                                                            2 8       64
+
+Here ai = 2ai−1 for i ≥ 2, while a1 − a0 = a1 ≥ a1 /2. Since M = 128(D + 1), this gives
+EBv ≥ 2(D + 1), contradicting Proposition 6.3. No feedback vertex set of cost at most D can
+therefore exist.
+
+
+8    Removing the vertex costs
+The weighted gap converts to an unweighted gap without requiring a common denominator for all
+vertex costs. Rounding upward at a scale determined by the number of vertices controls the additive
+loss. Independent-copy blowups also occur in earlier DFVS hardness reductions [8, Section 2]. The
+rounding below allows arbitrary rational costs of polynomial bit length without expanding a common
+denominator.
+Lemma 8.1 (Rounding and cloning). Let G be a loopless digraph on S ≥ 1 vertices with positive
+rational vertex costs wv ≤ C. Set cv = ⌈Swv ⌉. Replace every vertex v by an independent set Cv of
+cv unweighted vertices, and replace every arc u → v by all arcs from Cu to Cv . Call the resulting
+digraph G.
+         b Then
+                                           (                                                 )
+                                               X
+                        G) = min
+                   DFVS( b                         cv : F is a feedback vertex set of G .        (8.1)
+                                           v∈F
+
+The number of vertices of Gb is at most CS 2 + S. For fixed C, this is a deterministic polynomial
+construction in the encoding size of G and its costs. Moreover:
+
+                                                            26
+  (i) a feedback vertex set of G of cost at most a yields a feedback vertex set of G
+                                                                                   b of size at most
+      S(a + 1);
+ (ii) if every feedback vertex set of G has cost greater than b, then DFVS(G)
+                                                                           b > Sb.
+
+Proof. Let F be a feedback vertex set of G. Deleting every cluster Cv with v ∈ F leaves only clusters
+over the acyclic digraph G − F . Lift a topological order of G − F by placing all vertices of each
+cluster consecutively. Since clusters are independent, this is a topological order of the surviving
+            b It gives a feedback vertex set of size P
+vertices of G.                                        v∈F cv .
+    Conversely, let Q be any feedback vertex set of bG, and define
+                                       FQ = {v ∈ V (G) : Cv ⊆ Q}.
+If G − FQ contained a directed cycle, every cluster over that cycle would contain a surviving vertex.
+Choosing one such vertex from each cluster would lift the original cycle to a directed cycle of Gb − Q,
+because all the intercluster arcs in the requisite directions are present. This is impossible. Thus FQ
+is a feedback vertex set of G, and           X
+                                                   cv ≤ |Q|.
+                                               v∈FQ
+
+Together with the preceding construction, this proves Equation (8.1). In particular, partial deletions
+from a cluster cannot improve the optimum beyond the corresponding choice of completely deleted
+clusters.
+    For every v we have
+                                       Swv ≤ cv < Swv + 1.
+Summing over any feedback vertex set F gives
+                                      X            X              X
+                                  S         wv ≤         cv ≤ S         wv + S.
+                                      v∈F          v∈F            v∈F
+
+This proves both gap implications by Equation (8.1). Equivalently, the rounded costs cv /S increase
+the cost of any deletion set by at most one.
+   Finally,                                  X
+                                    |V (G)|
+                                        b =     cv ≤ CS 2 + S.
+                                                     v
+There are at most the square of this number of arcs. Each cv is computed exactly by integer
+arithmetic on the rational input cost. For fixed C, the vertices and arcs can therefore be listed in
+polynomial time. Positivity of the costs ensures that every cluster is nonempty before deletions.
+The assumption that G is loopless ensures that independent clusters realize precisely the prescribed
+construction.
+
+Remark 8.2 (Avoiding opposite arcs). The construction above already gives loopless digraphs, and
+unrestricted DFVS permits opposite arcs. If opposite arcs are to be excluded, subdivide every
+weighted arc using a distinct private vertex of cost D + 1 before applying Lemma 8.1. A feedback
+vertex set of cost at most 4 in the original graph still works in the subdivided graph: a cycle avoiding
+that set would project to a directed closed walk, hence to a directed cycle, in the original remaining
+graph. On the other hand, a deletion set of cost at most D cannot contain any subdivision vertex.
+Every surviving original cycle would then lift through its private subdivisions, so the weighted
+soundness bound is preserved as well. Subdivision of every arc of a loopless digraph leaves no
+pair of opposite arcs, and the subsequent independent-cluster construction preserves this property.
+The additional vertices have constant cost and polynomial number, so the size bounds needed for
+rounding remain valid.
+
+                                                         27
+Proof of Theorem 1.1. It suffices to prove the claim for every fixed integer A ≥ 1: given any fixed
+real factor, choose an integer at least as large. For this integer A, choose the parameters of Section 3.1
+and start from the NP-hard promise problem of Theorem 2.1 at the resulting fixed θ.
+    By Proposition 3.7, the weighted reduction is deterministic and polynomial in the game input
+size, and all its costs are bounded by the constant CA . Proposition 3.6 gives a feedback vertex set
+of cost at most 4 in the YES case, while Proposition 7.4 shows that every feedback vertex set has
+cost greater than D = 10A in the NO case. Let S be the number of weighted vertices. Lemma 8.1
+gives an unweighted digraph G   b with the gap
+
+                                                 b ≤ 5S,
+                                       YES: DFVS(G)
+                                       NO:     DFVS(G)
+                                                    b > DS.
+
+This last transformation is polynomial because CA is fixed. Set k = 5S and output the pair (G,
+                                                                                            b k).
+In the YES case, DFVS(G) ≤ k, whereas in the NO case
+                         b
+
+                               DFVS(G)
+                                    b > DS = 10AS > 5AS = Ak.
+
+Thus this pair has the promised gap of Theorem 1.1.
+    A deterministic polynomial-time A-approximation would return a feasible feedback vertex set
+of size at most 5AS < DS on every YES instance. On a NO instance, every feasible feedback
+vertex set has size greater than DS. Comparing the returned size with the known threshold DS
+would therefore distinguish the NP-hard promise cases in polynomial time. This proves the asserted
+NP-hardness for every fixed constant factor, and its deterministic consequence under P ̸= NP.
+
+  A directed feedback arc set is a set of arcs whose deletion leaves an acyclic digraph. Write
+DFAS(H) for its minimum cardinality.
+
+Corollary 8.3 (Directed feedback arc set). For every fixed real A ≥ 1, approximating directed
+feedback arc set within factor A is NP-hard on unweighted simple loopless digraphs. More precisely,
+there is a deterministic polynomial reduction producing such a digraph H and a positive integer k
+with the promise gap
+                                      YES: DFAS(H) ≤ k,
+                                      NO: DFAS(H) > Ak.
+
+Proof. Let G = (V, E) be an unweighted loopless digraph, with n = |V | and m = |E|. Split each
+vertex v into v − , v + and insert the arc av : v − → v + . For every original arc e = (u, v), introduce
+n + 1 fresh private vertices we,j and the paths
+
+                               u+ −→ we,j −→ v −         (1 ≤ j ≤ n + 1).
+
+Call the resulting unweighted digraph H. All private vertices are distinct, so H has no loops or
+repeated arcs, even if G has opposite arcs. It has 2n + (n + 1)m vertices and n + 2(n + 1)m arcs
+and is explicitly constructible in polynomial time.
+    If S is a feedback vertex set of G, deleting the arcs av for v ∈ S destroys every directed cycle
+of H: a surviving cycle would alternate distinguished arcs with connector paths and project to a
+directed closed walk in G − S. Hence DFAS(H) ≤ DFVS(G) ≤ n.
+    Conversely, let F be any feedback arc set of H. If |F | ≥ n, return S = V , which is a feedback
+vertex set of size at most |F |. If |F | < n, return S = {v : av ∈ F }, again of size at most |F |. Were
+there a directed cycle in G − S, every distinguished arc needed to lift it would survive. For each
+original arc of the cycle, its n + 1 connector paths are pairwise edge-disjoint, so at least one survives
+
+                                                   28
+deletion of F . Choosing these paths would lift the cycle to H − F , a contradiction. Thus the
+returned S is always a feedback vertex set, and this recovery is polynomial time.
+    The two maps give DFAS(H) = DFVS(G). They also preserve approximation solutions: an
+A-approximate F yields |S| ≤ |F | ≤ A DFAS(H) = A DFVS(G). Composing this construction with
+Theorem 1.1 and retaining its positive integer threshold k proves the stated gap.
+
+
+References
+ [1] Boaz Barak, Pravesh K. Kothari, and David Steurer. Small-set expansion in shortcode graph and
+     the 2-to-2 Conjecture. In Avrim Blum, editor, 10th Innovations in Theoretical Computer Science
+     Conference (ITCS 2019), volume 124 of Leibniz International Proceedings in Informatics (LIPIcs),
+     pages 9:1–9:12, Dagstuhl, Germany, 2019. Schloss Dagstuhl – Leibniz-Zentrum für Informatik. https:
+     //doi.org/10.4230/LIPIcs.ITCS.2019.9.
+ [2] Irit Dinur, Subhash Khot, Guy Kindler, Dor Minzer, and Muli Safra. Towards a proof of the 2-to-1 Games
+     Conjecture? Theory of Computing, 21(11):1–50, 2025. https://doi.org/10.4086/toc.2025.v021a011.
+ [3] Irit Dinur and Samuel Safra. On the hardness of approximating minimum vertex cover. Annals of
+     Mathematics, 162(1):439–485, 2005. https://doi.org/10.4007/annals.2005.162.439.
+ [4] G. Even, J. Naor, B. Schieber, and M. Sudan. Approximating minimum feedback sets and multicuts in
+     directed graphs. Algorithmica, 20(2):151–174, 1998. https://doi.org/10.1007/PL00009191.
+ [5] Ehud Friedgut. Boolean functions with low average sensitivity depend on few coordinates. Combinatorica,
+     18(1):27–35, 1998. https://doi.org/10.1007/PL00009809.
+ [6] Ebrahim Ghorbani and Matthias Mnich. A 9/4-approximation for directed feedback vertex sets in
+     quasi-transitive digraphs. In 53rd International Colloquium on Automata, Languages, and Programming
+     (ICALP 2026), volume 374 of Leibniz International Proceedings in Informatics (LIPIcs), pages 96:1–96:16,
+     Dagstuhl, Germany, 2026. Schloss Dagstuhl – Leibniz-Zentrum für Informatik. https://doi.org/10.
+     4230/LIPIcs.ICALP.2026.96.
+ [7] Venkatesan Guruswami, Johan Håstad, Rajsekar Manokaran, Prasad Raghavendra, and Moses Charikar.
+     Beating the random ordering is hard: Every ordering CSP is approximation resistant. SIAM Journal on
+     Computing, 40(3):878–914, 2011. https://doi.org/10.1137/090756144.
+ [8] Venkatesan Guruswami and Euiwoong Lee. Simple proof of hardness of feedback vertex set. Theory of
+     Computing, 12(6):1–11, 2016. https://doi.org/10.4086/toc.2016.v012a006.
+ [9] Venkatesan Guruswami, Rajsekar Manokaran, and Prasad Raghavendra. Beating the random ordering is
+     hard: Inapproximability of maximum acyclic subgraph. In 49th Annual IEEE Symposium on Foundations
+     of Computer Science (FOCS 2008), pages 573–582. IEEE, 2008. https://doi.org/10.1109/FOCS.2008.
+     51.
+[10] Subhash Khot, Dor Minzer, and Muli Safra. Pseudorandom sets in Grassmann graph have near-perfect
+     expansion. Technical Report TR18-006, Electronic Colloquium on Computational Complexity, 2018.
+     Revision 2, May 19, 2018. https://eccc.weizmann.ac.il/report/2018/006/revision/2/download.
+[11] F. P. Ramsey. On a problem of formal logic. Proceedings of the London Mathematical Society, s2-
+     30(1):264–286, 1930. https://doi.org/10.1112/plms/s2-30.1.264.
+[12] P. D. Seymour. Packing directed circuits fractionally. Combinatorica, 15(2):281–288, 1995. https:
+     //doi.org/10.1007/BF01200760.
+[13] Ola Svensson. Hardness of vertex deletion and project scheduling. Theory of Computing, 9(24):759–781,
+     2013. https://doi.org/10.4086/toc.2013.v009a024.
+[14] J. von Neumann. Zur Theorie der Gesellschaftsspiele. Mathematische Annalen, 100(1):295–320, 1928.
+     https://doi.org/10.1007/BF01448847.
+
+
+
+                                                    29
+
