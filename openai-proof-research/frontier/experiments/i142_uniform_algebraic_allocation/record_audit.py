@@ -1,0 +1,8 @@
+from pathlib import Path
+import hashlib,json,datetime
+R=Path(__file__).resolve().parents[3];S=R/'frontier/sources/i142_uniform_algebraic_allocation'
+assert not (S/'seal.json').exists()
+claims=['A.geometry-real-cut-unimodular','A.400-entrance-contraction-real-rational-closure','A.graded-full-density-fixed-interiors','A.per-cell-backward-reshape-translation','A.simultaneous-mixed-minor-signs-real-exponents-distinct-all-large-k','A.common-locus-before-limits','A.exact-2-to-1-no-divisibility','A.singleton-axis-interpolation-scope','B.arbitrary-given-coarse-and-bubble-nef','B.etale-arcs-disjoint-sections-flat-projective-original-X','B.total-pullbacks-restrictions-gluing','B.central-nef-ample-perturbation-generic-fibre','B.Hilbert-countability-proper-images-very-general','B.real-from-below-finite-iterates','B.power-morphism-reduced-fibre-global-generation','B.finite-forest-volume-common-locus-eightfold-example','B.reciprocal-downward-fixed-positive-limits-discards']
+obj=dict(recorded_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),required_i139_sha256='4efafb184bde0e6cd5b908107e0eb29670209d4488129be0cd8b8647bda40bbc',required_i136_sha256='fb761d762d453a405d6ce3a740f5c6ceea3c7863c372648aeed781d82ea306cd',mandatory_context_complete=True,verdicts={c:'PASS without repairs' for c in claims},original_I133_literal_I5='FAIL preserved separately',I133_corrected_finite_initial_norm_criterion='PASS as separate strengthened statement',I136_paid_scopes='preserved unchanged',parent_review='selective evidence only; not substituted for original audit',new_routes_not_yet_reported=True)
+(S/'original-audit-checkpoint.json').write_text(json.dumps(obj,indent=2)+'\n')
+print('Original assertion audit checkpoint written before new-route report.')
