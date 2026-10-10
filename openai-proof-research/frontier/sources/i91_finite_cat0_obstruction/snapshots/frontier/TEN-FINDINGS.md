@@ -97,19 +97,9 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 - I89: [completed geometric group report](iterations/i89-geometric-group-discovery.md) gives author-level technical proximal-contraction and explicit finite-residual witness deductions. Parent evidence reproduction passes; original proofs are not yet independently audited. Q89 finite CAT(0) constants and H89 effective bounds remain unproved and unrefuted; E89 is refuted on the actual retraction example. No substantial nomination.
 
-- I90: [completed anchored rank report](iterations/i90-anchored-rank-approximation.md) passes original I88 A/A′/B without repairs and proposes Q90, an exponential lower bound on ordinary operator rank under the actual local-type discrepancy threshold. Weighted pair continuation and clipping keep the discrepancy cost independent of rank; a classical Auerbach envelope controls total variation by dimension. The second finite-cover argument yields only linear rank growth. Parent evidence reproduction passes. The original proof gate passes in I92 without repairs; I93 classifies the contribution as technical with a complete reduction and parent evidence PASS. No support-to-rank conversion is assumed.
+- I90: [anchored rank continuation](iterations/iteration90-anchored-rank-approximation-task.json) independently audits original I88 prerequisites and attempts an anchor-sensitive finite-dimensional range argument or quantitative local-reflexivity substitute. No support-to-rank conversion is assumed.
 
-- I91: [completed finite CAT(0) report](iterations/i91-finite-cat0-obstruction.md) passes original F89 and used I89 lemmas without repairs; R89/H89/E89 are outside its audit. It proposes Q91 with specified rational contraction parameters via fixed-scale geometry and an exact 29-point certificate. Parent evidence/certificate replay passes. The analytic reduction and contribution await I95/I96. Finite presentation enumeration is specified but no successful realization or literal presentation is output.
-
-- I92: [completed original proof review](reviews/i92-anchored-rank-approximation-r2.md) gives ORIGINAL PASS WITHOUT REPAIRS for Q90, W/E/C, (15)–(18) and I88 A/A′/B at their full stated scopes. Parent evidence reproduction passes, including all original blob identities and seven selected PDF replays. No unresolved proof objections; contribution and counting remain separate.
-
-- I93: [completed contribution review](reviews/i93-anchored-rank-approximation-novelty-r3.md) classifies Q90 and its supporting package as TECHNICAL through the source state-indexed operations, classical Auerbach domination and elementary common-part TV comparison. Parent evidence reproduction passes. I92 resolves the original-proof condition; the proof-verified result is retained without a count increment.
-
-- I94: [fresh topology discovery](iterations/iteration94-topology-transformation-discovery-task.json) screens low-dimensional topology and transformation-group constructions for a substantive new bridge, excluding ordinary products, covers and standard source refinements.
-
-- I95: [independent original-proof review](iterations/iteration95-finite-cat0-obstruction-r2-task.json) audits Q91, its actual-action-to-perturbed-certificate implication, all error budgets, exact inference semantics and scoped enumeration claims.
-
-- I96: [separate contribution review](iterations/iteration96-finite-cat0-obstruction-novelty-r3-task.json) assesses whether the finite metric bridge is substantial or technical under the strongest source operations and primary antecedents, conditional on original-proof acceptance.
+- I91: [finite CAT(0) continuation](iterations/iteration91-finite-cat0-obstruction-task.json) independently audits the original F89 prerequisites and attempts a quantitative finite-distance obstruction on the actual template. The rooted-tree angle counterexample must be respected; compactness alone supplies no explicit constants.
 
 These records include active tasks, completed gap reports, and R011/R012/R013/R014 acceptance. The four-finding pause checkpoint remains a historical snapshot.
 
