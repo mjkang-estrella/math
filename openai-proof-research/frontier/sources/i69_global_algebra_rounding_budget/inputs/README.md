@@ -1,6 +1,6 @@
 # OpenAI mathematics research
 
-**Current progress: eight of ten substantial findings accepted.** [R014](frontier/findings/R014-uniform-coefficient-extraction.md) is the newest. I67 passes C66’s original logarithmic blowup proof; [I68](frontier/reviews/i68-logarithmic-blowup-novelty.md) classifies the full result as technical only. Core evidence reproduces, with exactly explained parent-record hash failures preserved. [I69](frontier/iterations/i69-global-algebra-rounding-budget.md) leaves algebra rounding open, with verified technical partials and method obstructions. [I71](frontier/iterations/iteration71-global-variation-algebra-rounding-task.json) pursues global basis variation and spectral cuts; [I70](frontier/iterations/iteration70-symplectic-geometry-discovery-task.json) runs a fresh symplectic screen. Two further substantial findings are needed.
+**Current progress: eight of ten substantial findings accepted.** [R014](frontier/findings/R014-uniform-coefficient-extraction.md) is the newest; I65 records a logarithmic obstruction to greedy algebra rounding; I69 develops a revised global bound. I66’s logarithmic blowup candidate remains in separate proof and significance reviews. Two further substantial findings are needed to reach the target.
 
 [Public repository and commit mapping](PUBLICATION.md). Only this research directory is published; historical local commit identifiers map to filtered public commits.
 
