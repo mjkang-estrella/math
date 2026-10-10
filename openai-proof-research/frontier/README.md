@@ -21,14 +21,24 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**Structural-graph update:** [I164](iterations/i164-structural-graph-discovery.md)
+gives author-level technical square-expansion and signed-state counting
+interfaces, plus scoped prism obstructions. The sharp linear target remains
+unproved/unrefuted. Parent sealed replay passes; the
+[coverage correction](iterations/i164-structural-graph-parent-disposition.md)
+records six, not seven, selected graphs in the 198 expansion tests.
+[I165](iterations/iteration165-square-expansion-multiplicity-factory-astra-task.json)
+independently checks the used interfaces and attacks the missing comparison.
+**8 accepted, 2 remaining.**
+
 **Latest oracle gate:** [I161](reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies the full theorem as **TECHNICAL ONLY** through a concrete compiler,
 causal-entropy and shifted-composition reduction. I159's original-proof PASS
 is retained; parent sealed replay passes. The
 [parent disposition](iterations/i161-oracle-contribution-parent-disposition.md)
 preserves I157's incomplete status and the internal-reserve failure.
-[I164](iterations/iteration164-structural-graph-factory-astra-task.json)
-starts fresh structural-graph discovery. **8 accepted, 2 remaining.**
+The subsequent I164 report and I165 continuation are summarized above.
+**8 accepted, 2 remaining.**
 
 **BFSS contribution gate completed:** [I163](reviews/i163-corrected-bfss-contribution-astra.md)
 classifies the full corrected theorem as **TECHNICAL ONLY**, through source

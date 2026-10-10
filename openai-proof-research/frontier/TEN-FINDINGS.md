@@ -6,6 +6,21 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I164 gap report and I165 square-expansion continuation
+
+[I164](iterations/i164-structural-graph-discovery.md) leaves
+$h(G)\ge |V(G)|/2+2$ unproved and unrefuted for finite simple cubic bipartite
+planar 3-connected graphs. Its exact expansion identity, restricted
+induction, signed-state bound and prism obstructions are author-level
+technical results, not independently proof-passed findings.
+Parent sealed replay passes, preserving two expected historical failures.
+The [parent disposition](iterations/i164-structural-graph-parent-disposition.md)
+corrects the 198-expansion coverage to six selected graphs, without changing
+the original report or seal. [I165](iterations/iteration165-square-expansion-multiplicity-factory-astra-task.json)
+audits the used original interfaces and attacks the sufficient square-step
+counting inequality. Neither the full target's literature status nor
+worldwide novelty is certified. **8 accepted, 2 remaining; research active.**
+
 ### I163 corrected BFSS contribution: technical only
 
 [I163](reviews/i163-corrected-bfss-contribution-astra.md) completes the full
@@ -16,8 +31,8 @@ stabilizer multiplicity, limit order and exact constant. No new correctness
 objection was identified. The
 [parent disposition](iterations/i163-bfss-contribution-parent-disposition.md)
 retains the original exact-operator FAIL, its separate correction and I158's
-incomplete/unsealed status. Parent sealed replay passes. I164 continues fresh
-structural-graph discovery. **8 accepted, 2 remaining; no ninth acceptance.**
+incomplete/unsealed status. Parent sealed replay passes. Structural-graph
+research now continues in I165. **8 accepted, 2 remaining; no ninth acceptance.**
 
 ### I161 technical disposition and I164 fresh discovery
 
@@ -30,7 +45,7 @@ passes. The [parent disposition](iterations/i161-oracle-contribution-parent-disp
 preserves I160's interrupted/unsealed preparation, I157's incomplete audit
 and the internal-reserve independence failure. No ninth finding is accepted.
 [I164](iterations/iteration164-structural-graph-factory-astra-task.json)
-starts a distinct Factory/Astra structural-graph discovery track. I163 has
+started a distinct Factory/Astra structural-graph discovery track. I163 has
 now closed the corrected BFSS contribution gate as technical.
 **8 accepted, 2 remaining.**
 
