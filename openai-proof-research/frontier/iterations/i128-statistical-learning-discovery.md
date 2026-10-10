@@ -1,0 +1,195 @@
+# I128 — Original I125 audit and statistical-learning/information discovery
+
+2026-10-10. **No substantial nomination.** Eight accepted findings remain eight. The new fixed-information binary-summary stability target below remains unproved and unrefuted. Two routes pay a local quadratic estimate, an exact integrated production remainder, restricted bias coercivity, and an entropy-to-coordinate bridge; they do not pay global coordinate selection. These are author-level technical partials, not a ninth finding.
+
+All OpenAI theorems **and lower proof operations** at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb` are stipulated. Their truth is not audited. External papers are operation-level comparisons, not additional axioms. No children, shared edits, staging, commits, or publication. Active I126/I127 outputs are not dependencies. R113, Screen C, the planar screen and Ball–Evans remain parked; this round makes no further Dini regularity attempt.
+
+## 1. Original evidence failure and independent original-proof gate
+
+The complete recursive I125 task has SHA-256 `91a5fd88526b4ba5f7ebd5934dcb305c017ecf6cfcd8682d8d9f07a16251f203`. Its decoded fields and required I122/I119 records are frozen, including original briefs, reports, parent responses and objections. Decoding includes every field, not only `brief`. The supplied original I125 report and finalized parent JSON are separately bound. The reading record distinguishes original report prose, decoded JSON fields, duplicate escaped replay output, and truncated display attempts.
+
+**Original I125 verifier: FAIL**, independently reproduced with exit 1 and `ValueError: canonical inventory`. Its 42 unique rows describe exactly 43 owned artifacts including the seal; membership, duplicate rejection, sizes and hashes pass independently. The rows are in traversal order, not global path order. The original seal stays `8fdd857eeccb0d61279b428c5148915fee4d858fbc63dbc4061b1e2ee9b87f2f`. The parent adapter stays `0507da4a890521e3d8e2b875bd8720c8c3e5ebf6093879fc134ee1178a65227e`. The frozen parent receipt's **ordering-only replay PASS** sorts rows in memory and reuses all remaining original checks. It is a distinct result, never a repair or retrospective PASS of the original verifier. I128's inherited check rejects duplicates and changed membership/bytes while explicitly retaining this noncanonical presentation.
+
+The following judgments concern the ORIGINAL I125 statements. No new assumption, constant, or proof step is inserted before passing them.
+
+| Original I125 claim | Verdict | Scope that passes |
+|---|---|---|
+| CL truncation and all displayed iteration constants | PASS without repairs | Absolute local minimizers, bounded ellipticity and positive phase cost, assumed common Lipschitz bound |
+| Nondegeneracy and porosity | PASS without repairs | Free-boundary centers, interior balls, comparable-scale positive balls |
+| Selected phase, energy, gradient and minimizer compactness | PASS without repairs | Common local value/Lipschitz bounds and locally uniform coefficient convergence |
+| Free-boundary convergence and homogeneous blowups | PASS without repairs | Local Hausdorff convergence; frozen nonzero selected blowups; Dini/RD for homogeneity |
+| ND (3.2) | PASS without repairs | Quantitative almost-homogeneity and distance from every (k+1)-symmetric function, exactly as stated |
+| Centered covariance sum (3.3) | PASS without repairs, conditional | Preliminary mass bound, restrictions at atom radii, CB/ND and small drops supplied |
+| Fixed-radius center comparison (3.4) | PASS without repairs | Free-boundary centers, fixed comparable physical/normalized radii and domain margins |
+| Whole-modulus schedule (3.5) | PASS without repairs, conditional | Flatness/tree thresholds and local packing must first exist |
+| Stronger-gauge obstruction in cited flatness proofs | PASS without repairs | Failure of those deductions from ordinary Dini, not a counterexample to Dini regularity |
+| Fixed-positive-domain comparison | PASS without repairs | Fixed phase domain; squared gradient error of order ω² |
+| Constant-flux square completion and CAL | PASS without repairs | Every nonnegative fixed-trace H¹ competitor; constant p |
+| Slab/Young absorption | PASS without repairs, conditional | Same-trace competitor with the specified phase-mismatch slab |
+| Geometric contracting competitor; geometric inclusion and full tree | unresolved | Not constructed in I125; no conclusion about Screen C follows |
+
+### 1.1 Clearing constants and compactness
+
+In the original unit-ball proof, `v=min(u,h)` cancels the old integrand where `u≤h`; in the annulus its phase cost does not increase. With `C₀=Λ/λ²` this gives `F(s)≤C₀M_t²(t−s)⁻²F(t)`. The midpoint gap in the chosen radii is precisely `d_j=2^(−j−4)`. A positive value forces a positive ball of radius `min(u/K,d_j)` inside `B_(T_j)`. The strict mass bound rules out the second alternative and gives the displayed supremum estimate. Consequently `D=256C₀K²v_n^(−2/n)` is correct. Substitution of `F(T_j)≤a2^(−nj)` into the recurrence gives `F(T_(j+1))≤D a^(1+2/n)2^(−nj)≤a2^(−n(j+1))`. The original `a≤v_n2^(−4n)/2` enforces strictness at every step. The initial bound `16C₀v_n ε_cl²≤a/2` is stronger than needed. The limiting positive measure vanishes; continuity gives clearing. Its contrapositive at a free-boundary point, followed by the Lipschitz positive-ball estimate, pays porosity and Lebesgue nullity.
+
+The shell interpolation has cost `C R^(n−1)[(1+K²)δ+ε_j²/δ]`. First take `j→∞`, then `δ→0`. The limsup inequality for total energy and separate lower semicontinuity of quadratic and phase energies force both deficits to vanish. Eventual positivity on `{u>0}`, together with the lower bound on q, turns weighted phase convergence into L¹ convergence. Ellipticity and weak convergence turn quadratic-energy convergence into strong L² convergence of gradients. For an arbitrary H¹ competitor, gluing occurs outside its compact support, where it equals u; no Lipschitz bound is imposed on that competitor.
+
+CL excludes positive incursions into the interior of the zero set. Conversely, if a ball at a limiting free-boundary point contains no approximating free boundary, either its approximants vanish there or they are positive throughout it. Uniform convergence excludes the first alternative when the limit has nearby positivity. In the second, the limit solves the interior elliptic equation; its zero and nearby positivity contradict the strong maximum principle. Thus the asserted local Hausdorff convergence is paid. Rescaling freezes the coefficients, CL prevents a zero blowup, and RD plus the finite Weiss limit and strong convergence gives homogeneity. This is subsequence selection, not an energy-gap rate toward a chosen minimizer.
+
+### 1.2 Conditional estimates and exact comparisons
+
+For ND, compactness of Lipschitz functions and the Grassmannian gives a homogeneous limit with vanishing derivatives along a limiting plane on the annulus. Homogeneity propagates this to all positive radii; distributional directional derivatives then give translation invariance. That contradicts the original quantitative nonsymmetry assumption. It does not place the geometric singular set in that effective stratum.
+
+For (3.3), Fubini and `μ_j(B_(Ct_j))≤Γt_j^k` cancel the `t_j^(−k)` in CB. Each fixed-center annular increment is charged at most `H=2+ceil(log(b/a)/|log θ|)` times. The atom-radius restriction is retained. Small drops and total mass give `CΓ²HηR^k`, conditionally. For (3.4), ellipsoid symmetric-difference volume is at most `Cr^n[|x−y|/r+ω(|x−y|)]`; the physical bulk density is bounded. The sphere parametrization handles the boundary term using Lipschitz u and its zero at each center. The common Ω correction cancels. For (3.5), Dini gives the stated first integer j*, once its currently unpaid thresholds exist. Covering costs `r*^(−n)` and local `k=n−7` scaling combine to `r*^(−7)r^7`; this is not a supplied K_tree.
+
+The original gauge warning matches the actual proof interfaces. De Silva–Savin v1's flatness argument uses `σ≤cε^(n+4)`. David–Engelstein–Toro's weak-solution passage uses fractional radius powers and a small `τσ^(−2)`. The newly reread proof endings are recorded. The model recurrence sums `ω(r_j)^a`, and `ω(r)=log(e/r)⁻²` shows why Dini does not pay `a=1/2`. This proves a limitation of those applications, not a false theorem about the full coefficient class.
+
+On a fixed positive domain, testing the two Euler equations by `u−h` yields the exact identity in I125 and `||∇u−∇h||₂≤λ⁻¹||A−A₀||∞||∇u||₂`; its squared bound is `Cω(r)²L²r^n`. No interface moves. For constant p, expansion gives exactly `J(w)=E_p(w)+∫d_p χ_(w>0)+2∫p·∇w`. The gradient is zero a.e. on `{w=0}` and the last term cancels for all fixed-trace differences. Therefore CAL charges only symmetric-difference volume. A slab of thickness εr gives `Cωεr^n`, and Young gives `τε²+C²ω²/(4τ)`. None of these algebraic facts constructs the trace-compatible geometric contraction.
+
+**Inherited statuses:** the ORIGINAL I122 general-Λ equality `Ω(r)=1/log(e/r)` remains **FAIL**. Its separate corrected primitive is `1/log(e/(√Λr))`, for `√Λr≤1`. The original annular inequality and divergent-full-tail conclusion pass unchanged. Other originally scoped I122 passes and inherited I119/I116/I113 statuses stand. The I125 new operations are technical variational, compactness, covariance and calibration contributions; the unpaid entire Dini extension is neither dismissed as routine nor credited as completed.
+
+## 2. Overlap and exact candidate screens
+
+The current ledgers, catalogue and actual relevant prior report hypotheses were checked. R009 concerns heterogeneous four-state tree broadcasting and a weighted flow capacity, not randomized binary summaries of a uniform cube. I113–I119's posterior filters, thinning, weighted chains and one-loss online selection concern order/adversarial selection and product-value laws; I122/I125's variational work is separate. I38/R012 concern Gaussian partitions, first moments and a dimension/label-uniform propeller orbit. I53/I59 concern centered isotropic log-concave densities and Wasserstein distance to orthogonal exponential products; I61/R014 concern Gaussian matrix-field curls with a coefficient-energy cap. I114/I117/I120/I123 concern finite-mode bosonic states, exact entropy and energy constraints, trace norm, thermal baths and possibly internal entanglement. None supplies a Boolean-coordinate stability theorem merely because its title contains information or entropy. The frozen ledger records also distinguish I54/I57/I58 standard-map entropy from these questions. I55/I56 are inherited review records, not standalone iteration reports found by the initial glob.
+
+### A. Selected: randomized binary summaries at fixed information
+
+Let X be uniform on `{−1,1}^n`, n≥1, and let a randomized bit U have conditional mean `u(x)=E[U|X=x]∈[−1,1]`. The randomization is conditionally independent of the product-noise observation Y given X. For `0<ρ<1`, each Y coordinate equals the corresponding X coordinate times an independent sign of mean ρ. Put
+
+`ψ(t)=((1+t)log(1+t)+(1−t)log(1−t))/2`, `V(t)=atanh t`,
+
+`I(u)=Eψ(u)−ψ(Eu)=I(U;X)`, `I(Tρu)=I(U;Y)`.
+
+Fix `0<a₀≤a₁<1` and `0<ρ₀≤ρ₁<1`. For `a∈[a₀,a₁]`, impose **exactly** `I(u)=ψ(a)`, with no balance assumption. The proposed target is a finite constant C depending only on these four endpoints such that, for every n,u,a,ρ in scope,
+
+`min_(i,σ=±1) E|u−σaX_i|² ≤ C Δρ(u)`,  where `Δρ(u)=ψ(ρa)−I(Tρu)`.  (S128)
+
+This is a deterministic structural assertion, with no sample, oracle or success-probability premise. It is not asserted uniformly as a→0, a→1 or ρ approaches an endpoint. The squared distance is the distance between binary probability kernels, up to the exact factor four. Signed soft coordinates attain zero deficit. S128 is a proposed target, not a proved equality classification.
+
+The pinned **Sharp binary information contraction** source already proves the sharp bound for every randomized u at fixed information, not just Boolean functions. Its full main/scalar/flow/capacity/canonical/reserve/thinning/upgrade operations were read through their endings. In particular `D(g)≥max{F(I(g)),B_m(I(g))}`, where `F(ψ(r))=rV(r)`, is a stipulated lower operation. Its optimizer is a precise common-budget three-point joining law, and its dimension induction, wall comparison and semigroup integration are already paid. Rephrasing its sharp bound as a randomized-summary theorem would be technical.
+
+The Hellinger companion's exact theorem allows arbitrary **Boolean output bias**, uniform input, and ρ∈[−1,1]; it does not state S128. Its introduction explicitly distinguishes the square-root profile from entropy. No soft-field Hellinger assertion is imported.
+
+Current primary comparison: [Ky–Tran v1, 25 September 2026](https://arxiv.org/html/2609.31797v1) proves dimension-independent Boolean stability, with probability distance at most `10^8 ε/[ρ²(1−ρ)H(ρ)]`; its increasing-function bound omits `1−ρ`. Here H is binary entropy, not the square-root profile. The entire HTML mathematical text, including compression, production/marked-coordinate arguments, appendix estimates and certificate scope, was read. Its full auxiliary certificate repository was not independently certified. [Chen et al. v1](https://arxiv.org/html/2609.24931v1), §9 Lemma 9.2, already has the arbitrary binary-channel production and induction interface; the complete relevant induction and semigroup conclusion were read. Its extensive external Bellman certificate is not stipulated. These comparisons use actual operations, not absence of an identical title. They rule out claiming ordinary Boolean stability as new, but do not supply the soft fixed-information stability estimate here.
+
+### B. Markov deletions: identifiable, different, but no quasipolynomial separation paid
+
+Fix rational `κ∈(0,1/2]` and a known rational two-state transition matrix P whose four entries lie in `[κ,1−κ]`. For each trace independently, start the retention chain R₁,…,R_n in its known stationary distribution π and retain x_j exactly when R_j=1. Input is n in binary and the reduced rational entries of P, total encoding length L. Traces are ordinary ordered binary subsequences with delimiters; no retention positions or states are observed. A precise candidate would recover every x with probability ≥2/3 from `M=ceil exp(C_κ(log n)^3(1+log log n)^6)` independent traces, with one Turing machine using `(n+L+M)^(c_κ)` bit operations on every well-formed stream. This is unresolved here, not a theorem or a nomination.
+
+It is an identifiable model: the unique length-n trace equals x and has probability `π₁P₁₁^(n−1)≥κ^n`. Merely waiting for it costs `ceil(κ^(−n)log 3)` traces, with failure ≤1/3. This actual exponential decoder is a baseline, not the claimed quasipolynomial bound. For signs x_j and `D(z)=diag(1,z)`, the exact first-rank generating polynomial is
+
+`E Σ_(retained ranks ℓ) x_(retained ℓ) z^(ℓ−1) = Σ_(j=1)^n x_j πᵀ[D(z)P]^(j−1)e₁`.
+
+Indeed each preceding state contributes z iff retained, each transition contributes P, and the final state is forced to 1. For iid retention this collapses to `Σ x_j p(q+pz)^(j−1)`; in general it is a matrix product. This is the precise source-interface change. The source separation proof uses scalar gap products, positivity, and simultaneous Cayley continuation of `q+pz`; replacing them by a matrix identity alone supplies no stable inverse or low-degree separating statistic.
+
+The pinned uniform decoder already handles rational iid p, its denominator length, all ordinary trace observables, a PSD positive moment relaxation, rational negative-direction tests and rounded finite iteration. With `X=1+log n/(1+log(1/q))` and `B=p⁻¹ log n X²(1+log X)^6`, it uses `exp(CB)` samples and time polynomial in `n+L+exp(CB)`, uniformly including the p=1 branch. Its full separation and decoder endings were read; uniformity is not missing there. The complete latest-anchor companion also pays spectrally compact masks, weighted phase/shuffle transfer, simultaneous scalar interpolation, bounded pair tests, and an information-theoretic union decoder; its general-symbol extension requires exact symbol observations and does not promise efficient computation. It still explicitly assumes iid deletions. A Markov version would need a new separation bound against **all** feasible positive moment systems, explicit rational coefficients and quantitative estimation slack. The elementary identifiability argument does not pay that bound. A search also surfaced the 2025 [BBS paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC12630026/), but its subsequent direct primary-page open returned a reCAPTCHA screen. That failed retrieval is frozen; no theorem or novelty conclusion is based on it. This lead is left behind the selected stability target.
+
+### C. PTF learning: already a complete lower source operation
+
+For uniform X, arbitrary conditional binary labels, degree-d PTF comparison class with sign(0)=1, accuracy α∈(0,1), failure δ∈(0,1), seek an improper learner with error ≤OPT+α and time/sample polynomial in `(n+1)^k,1/α,log(1/δ)`, where `k=min{n,ceil(A d²α⁻²log(4/α))}` and A is absolute. **Rejected as technical/already supplied.** The pinned average-sensitivity theorem is `I(f)≤8d√n`; its full proof and consequences already pay random-bucket noise sensitivity, smoothing/truncation, empirical L¹ regression, threshold selection, amplification and validation at precisely this scale. Calling its Fourier tail a new learning implementation or a uniformity theorem would misdescribe the source. No product-bias or distribution-free extension is proved.
+
+### D. Noisy regression and sampling: model boundaries, no nomination
+
+For Gaussian rows and a known independent additive noise law generated by fresh randomness, a desired lower bound `T≥c_A d log(1/ε)` at memory `M≤Ad²`, average spherical angular success ≥2/3 and `0<ε≤1/10` is already obtained by running the noisy learner inside the exact-label learner. The main source explicitly discusses such a noise reduction. The transition may use the current real pair and unrestricted computation, but every retained bit must enter its finite state. Its output uses only the terminal state, stopping index ≤deterministic T, shared data-independent rule seed, and fresh randomness. It may not output discarded last-sample information. These are substantive hypotheses. The complete streaming/state-count and endpoint proofs were read; the replica and row-replacement companions retain still stronger conditional-information interfaces. No sharper sample/noise tradeoff is deduced by dropping their conditioning restrictions.
+
+The log-concave sampling source assumes C² potentials with supplied minimizer 0, `V(0)=0`, `I≤∇²V≤2I`, an exact value-and-gradient oracle, measurable random real operations and **unrestricted between-query computation**. For every fixed ε>0 it pays an every-execution `C_ε d^ε` query cap and TV≤1/10; it also pays a logarithmic query lower bound. Its complete final conditional descent, ideal-history error summation, Gaussian base rule, fixed caps and finite-dimensional fallback were read. Finite implementation of recursively noisy means is already an explicit lower operation, not an assumed sampling oracle. This is not a polynomial bit-time theorem, nor does it grant finite oracle precision robustness. No computational guarantee or precision impossibility is nominated from this distinction.
+
+## 3. Route one: dimension-uniform local quadratic stability
+
+This route proves an actual estimate for S128 in a specified neighborhood. All norms below use uniform probability; the constants do not depend on n.
+
+Set `b=(1+a₁)/2`, `D₃=2b/(1−b²)²`. For `(a,ρ)` in the compact parameter rectangle define
+
+`k(a,ρ)=ρV(ρa)/V(a)`,
+
+`q(a,ρ)=k(a,ρ)/(1−a²)−ρ²/(1−ρ²a²)`,
+
+`q*=min q(a,ρ)`, `c*=a₀²q*`,
+
+`r*=min{(1−a₁)/2, 3c*/(8D₃)}`.
+
+These are explicit one/two-variable formulas for constants; q*>0 as proved next. They are not minima over growing-dimensional function spaces. For every u with `I(u)=ψ(a)` and `||u−σaX_i||∞≤r*`,
+
+`Δρ(u) ≥ (c*/4)||u−σaX_i||₂²`.  (L128)
+
+**Proof.** Orient the coordinate as X₁ and put `h=u−aX₁`, `m=Eh`. Let
+
+`G(u)=ψ(ρa)−I(Tρu)+k[I(u)−ψ(a)]`.
+
+The first variation at aX₁ vanishes: the output derivative is `ρV(ρa)E[X₁h]` and the input derivative is `V(a)E[X₁h]`. The quadratic form of G is
+
+`Q(h)= k[Eh²/(1−a²)−m²] − [E(Tρh)²/(1−ρ²a²)−m²]`.
+
+In the Walsh basis every nonconstant mode S has coefficient
+`k/(1−a²)−ρ^(2|S|)/(1−ρ²a²)≥q(a,ρ)`.
+The constant mode has coefficient
+`k a²/(1−a²)−ρ²a²/(1−ρ²a²)=a²q(a,ρ)`.
+Thus `Q(h)≥c*Eh²`; no dimension factor or unproved tangent-space compactness is used.
+
+For positivity, let `H₀(t)=(1−t²)V(t)/t`. Its derivative is `1/t−(1+1/t²)V(t)<0` for t∈(0,1), because V(t)>t. Direct multiplication by positive denominators shows `q(a,ρ)>0` is equivalent to `H₀(ρa)>H₀(a)`. Compactness of the scalar parameter rectangle gives q*>0. Also `0<k≤ρ²≤1`, since V(t)/t increases.
+
+The two Taylor expansions stay in `[−b,b]`, including the mean terms. There `|ψ'''|≤D₃`. Since `||h||∞≤r*`, `||Tρh||∞≤r*` and `||Tρh||₂≤||h||₂`, the absolute third-order remainder in G is at most `(1+k)D₃r*Eh²/3≤2D₃r*Eh²/3`. Consequently `G(u)≥(c*/2−2D₃r*/3)Eh²≥c*Eh²/4`. On the exact information constraint G=Δ. This proves L128, including all n and all choices of coordinate/sign.
+
+This estimate is a smooth constrained-entropy calculation. It is a useful local theorem but not a substantial new global mechanism. In particular, its L∞ neighborhood is a real restriction. To exhibit the issue within the original assumptions, fix a∈(0,1), put `b₀=(1−a)/2`, and let E_k depend on k other uniform bits with probability ε_k=2^(−k). For sufficiently large k choose the unique small negative t_k solving
+
+`(1−ε_k)ψ(a+t_k)+ε_kψ(a+t_k+b₀)=ψ(a)`.
+
+The derivative in t near zero is bounded below, so existence, uniqueness and `t_k=−ε_k[ψ(a+b₀)−ψ(a)]/V(a)+O_a(ε_k²)` follow from elementary differentiation (or the intermediate value theorem and Taylor's formula). Then
+
+`u_k=X₁(a+t_k+b₀1_(E_k))`
+
+is an admissible balanced randomized kernel with **exact** fixed information. It has L² distance squared `Θ_a(ε_k)` from aX₁, but L∞ distance tends to b₀. Noise is an L¹ contraction, and ψ has bounded derivative on the fixed interior range of these kernels, so `0≤Δρ(u_k)≤C_(a,ρ)ε_k`. Small deficit therefore does not imply this particular L∞ entrance condition. This is an obstruction to closing S128 using L128 plus such an entrance assertion, not a counterexample to S128.
+
+## 4. Route two: production surplus, bias and a backward entropy bridge
+
+Write `P_s=T_(e^(−s))`, `t=−logρ`, `y(s)=I(P_su)`, and `w(s)=ψ(ae^(−s))`. The pinned production theorem gives `R(s)=D(P_su)−F(y(s))≥0` for s>0. With `z=w−y≥0`, define the secant
+
+`A(s)=[F(w(s))−F(y(s))]/[w(s)−y(s)]`
+
+and use F′ at a zero denominator. Since `0≤y≤w≤ψ(a₁)<log2`, one has `2≤A(s)≤K:=max_[0,ψ(a₁)]F′<∞`. The exact ODE is `z′=R−Az`, so
+
+`Δρ(u)=∫₀^t exp(−∫_s^t A(v)dv) R(s) ds`,
+
+and therefore `∫₀^t R(s)ds≤e^(Kt)Δρ(u)`.  (P128)
+
+For kernels attaining ±1, first integrate from η>0. Product noise is interior-valued unless u is constant, which the positive information excludes. Finite-cube continuity gives z(η)→0; monotone convergence of the nonnegative weighted surplus gives the displayed improper integral. No uniform differentiability at s=0 is assumed. This is a dimension-independent, exact paid remainder, but it only supplies average production rigidity.
+
+There is an additional bias estimate on a specified high-information subregion. Put `L=log2`, `S(I)=F(I)−2I`, `k₀=L−1/2`, and `Xi(I)=(I−k₀)S′(I)−S(I)`. The source upgrade proves `Xi(L/2)>0`, Xi increasing on `[L/2,L)`, and `D(g)−F(I(g))≥(Eg)²Xi(I(g))` there. Fix κ>0 and assume `ψ(ρa)≥L/2+κ` and `Δρ(u)≤κ`. Since y decreases, `y(s)≥y(t)≥L/2` throughout. The mean m=Eu is preserved by noise. In P128 this yields
+
+`Δρ(u) ≥ m² Xi(L/2)(1−e^(−Kt))/K`.  (B128)
+
+The coefficient has a positive lower bound on any of the fixed parameter rectangles in scope. Thus squared bias is paid by the deficit in this subregion. This is an extraction of an actual lower source reserve, not a new all-information bias theorem.
+
+A different calculation turns one large coordinate correlation into the desired distance. For any oriented coordinate with `b_i=E[uσX_i]≥0`, strong convexity `ψ''≥1` and cancellation of the linear term give
+
+`Eψ(u)−ψ(b_i) ≥ (1/2)E|u−b_iσX_i|²`.
+
+Together with fixed information and orthogonality this proves the global bridge
+
+`E|u−aσX_i|² ≤ 2[ψ(a)−ψ(b_i)+ψ(m)]+(a−b_i)²`.  (E128)
+
+It is valid even when b_i>a; the bracket is nonnegative by the preceding convexity inequality. If `|b_i−a|≤(1−a₁)/2`, its right side is at most `2V(b)|b_i−a|+2L m²+(a−b_i)²`, with b as in §3 and `ψ(m)≤L m²`. Thus a dimension-independent bound `min_i ||b_i|−a|+m²≤CΔ` would close S128. B128 pays only one part, in a restricted region. P128 supplies no such coordinate-selection estimate as written. A fixed-dimensional compactness modulus does not pay it uniformly in n.
+
+An attempted reduction to Boolean stability fails at an exact model interface. Represent U as a deterministic Boolean function F(X,R) of X and independent seed bits. For u=aX₁ with a=1/2, take two uniform seed bits and Z=−1 only on one of their four atoms; then F=X₁Z has conditional mean u. The lifted input is uniform, but `I(F;X,R)=log2`, whereas `I(U;X)=ψ(1/2)`. The missing entropy is `E H(u)>0`. Applying isotropic product noise to R introduces a different observation. Discarding that observation is data processing, with no reverse bound restoring the desired deficit. Leaving R noiseless instead changes the channel to an anisotropic one with seed correlations 1. Even comparison only to the ordinary Boolean sharp bound leaves the nonvanishing baseline `ψ(ρ)−ψ(ρa)`. Hence that lift cannot transfer the Boolean near-extremizer conclusion from Δρ(u)→0. This example satisfies the original uniform-input and randomized-summary assumptions; it is not an impossibility claim about S128 itself.
+
+## 5. Contribution gate, unpaid obligations and disposition
+
+The original-proof gate passes I125's paid claims only at their explicit scopes. Its evidence gate retains the original FAIL separately from the parent's ordering-only PASS. The new local theorem L128 and identities P128/B128/E128 have complete elementary derivations above. They do not require an external theorem to be stipulated. Finite diagnostics below test selected identities only.
+
+The contribution gate does **not** pass a new finding. Local entropy Hessians, integrating a stipulated production surplus, extracting its already-present high-information reserve, and Bregman convexity are technical. The genuinely missing mechanism would force one coordinate to carry the fixed information, with a dimension-uniform quantitative estimate, for arbitrary soft kernels including rare spikes and nonzero means at low information. Neither route constructs it. The current Boolean stability proof uses Boolean singleton/influence identities, compression, profile budgets and marked-coordinate estimates; a soft, fixed-information replacement must be proved, not presumed. The scalar common-budget optimizer in the stronger pinned source is already paid; simply citing its exact equality does not give a uniform deficit-to-coordinate estimate along the whole induction.
+
+Recommendation: retain S128 as an unresolved, distinct research lead with these partials. Do not nominate it or reopen the parked Dini branches. Markov retention remains an identifiable alternative with unpaid matrix-gap separation and decoder costs. The PTF learning and Gaussian noise reductions are explicitly screened out as source operations. No worldwide-priority, human-review, formal-proof or universal-certification claim is made.
+
+## 6. Evidence and replay
+
+The evidence directory freezes recursive originals, I125 report, seal, final parent receipt/adapter, four ledger snapshots, scoped verdicts, source identities, external version pages and HTML text views. Failed/truncated reads are retained as failures in the history, not silently counted as complete readings. Reading ranges use explicit splitlines or LF conventions and hash the joined passage without an appended newline. Source-contract/lexical matches are exact search evidence, not semantic coverage of 749 manuscripts. Only the four live ledgers may drift; their snapshots never drift.
+
+The complete inherited mapping is reused by reference: 13,223 entries, 749 manuscripts, 10,373 original positions (9,340+1,033), and 776 PDF/text bindings. No corpus is copied. The replay reuses one inherited corpus-validation chain and defers/deduplicates its diagnostic callbacks; it does not run nested verifier subprocesses. I128 uses versioned HTML for its external comparisons, with no new PDF extraction. Inherited PDF conventions remain bound, not replaced by the HTML line convention.
+
+Before finite diagnostics, the offline read-only verifier checks exact owned inventory, all immutable I128 evidence, the original noncanonical I125 inventory independently of its order, and all inherited immutable checks. It then runs each finite diagnostic suite once. No network, subprocess, bytecode, write, repair or reseal is permitted. Its single final seal is created only after preseal validation, after globally sorting and asserting canonical inventory paths. The seal is an inventory envelope, not a signature or self-hash.
+
+Run from the repository:
+
+`PYTHONDONTWRITEBYTECODE=1 python3 -B frontier/experiments/i128_statistical_learning_discovery/verify.py`
+
+A PASS certifies the specified artifact identities, memberships and finite diagnostic results. It leaves S128 unresolved, the original I125 verifier failed, all parked statuses intact, and the accepted count at eight.
