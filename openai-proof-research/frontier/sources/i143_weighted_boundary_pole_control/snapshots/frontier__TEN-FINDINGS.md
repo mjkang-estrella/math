@@ -666,18 +666,3 @@ Original I136 paid assertions PASS at scope; original I133 literal I.5 remains F
 ### I140 nonlinear-elliptic checkpoint — 2026-10-10
 
 Original I137 paid assertions PASS without repairs at scope; parent sealed replay PASS. C140 gives a uniform interior estimate with both subcritical gaps and a common positive Holder coefficient class, including a continuous limit at the moving weight pole. V140 extends the full-space pressure argument with an explicit radial coefficient-variation budget and a finite logarithmic derivative bound. Exact Talenti, variable-coefficient and resonant Dirichlet examples exclude specific stronger formulations. These are technical deductions, not a ninth finding. Boundary-pole half-space control and a tracked finite-scale estimate remain unpaid. I143 audits the originals and attempts both boundary mechanisms. Eight accepted, two remain.
-
-
-### I141 intermittent-rate checkpoint — 2026-10-10
-
-Original I138 paid assertions PASS without repairs at their original constants and scopes; parent sealed replay PASS. Actual state-weighted flux has a uniform window lower bound, but an exact nonlinear example rules out a matching upper bound frozen at the initial monomial. F1-F4 prove quantitative PE permanence when conservation laws protect every siphon, including a nonlinear rank-two binding network. R1-R7 prove it on every compact rank-one weakly reversible class with arbitrary integer complexes and multiple linkage classes, using an integer order gap and conditional nondoubling return estimate. General P138 remains unproved/unrefuted; the finite ring simulation is not an asymptotic certificate. All new deductions remain technical. I144 audits the originals and attempts higher-rank critical-siphon repulsion. Eight accepted, two remain.
-
-
-### I142 uniform-allocation checkpoint — 2026-10-10
-
-Original A139/B139 paid assertions PASS without repairs at scope; literal I133 I.5 remains FAIL separately from its correction. Parent sealed replay PASS. U142 uses adaptive dyadic allocation and hierarchical simultaneous minors to prove arbitrary-profile nefness with any fixed positive volume slack, uniformly in vector length, ratios and weight levels. Its sufficient shrinkage is O(M^(n/(n+1))) for maximum weight M. V142 supplies continuous unequal boundary classes and excludes distinct positive full-volume profiles from the precisely defined closure of equal/envelope seeds, even with finite refinements, convexification and fixed-positive limits. This is not an obstruction to all nef inputs or a counterexample to W136. No final-loss-free allocation has been proved; W136 is parked, unproved/unrefuted. All new results remain technical. I145 audits the originals and screens fresh arithmetic/automorphic sources. Eight accepted, two remain.
-
-
-### I143 weighted boundary-pole checkpoint — 2026-10-10
-
-Original I140 paid assertions PASS without repairs at their stated scopes; parent sealed replay PASS. H143 proves the weighted zero-Dirichlet half-space exclusion via uniform annular estimates, paid origin/infinity terms and the cross Pohozaev identity. It yields a qualitative bound for the specified fixed-geometry, common-Holder coefficient class with nonnegative weights and both strict gaps. F143/N143 track finite-scale tail, curvature and coefficient errors and a normalization lower energy. They still depend on a non-effective annular constant K0. Tangential reflected Green pressure is controlled with sharp coefficient n, while the radial reflected pressure operation remains unpaid. These are technical deductions, not a ninth finding. I146 independently audits the originals before testing effective finite-ball and reflected-pressure routes. Eight accepted, two remain.
