@@ -16,6 +16,19 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I163 corrected BFSS contribution: technical only
+
+[I163](../reviews/i163-corrected-bfss-contribution-astra.md) classifies the
+entire corrected Weyl theorem as **TECHNICAL ONLY**. The source's strong
+confinement and FNT's weighted gap reduce singular collars and the
+noncompact horn to explicit energy-scale cell counts, retaining the actual
+physical form, full multiplicities, limit order and exact coefficient.
+No new correctness objection was found; the original exact-operator FAIL
+and separate source-normalization correction remain unchanged.
+The [parent disposition](i163-bfss-contribution-parent-disposition.md)
+records the reduction and successful sealed replay. I158 remains incomplete
+and unsealed. I164 continues independently. **Eight accepted, two remaining.**
+
 ## I161 technical disposition and I164 structural-graph discovery
 
 [I161](../reviews/i161-oracle-tolerance-contribution-astra.md) completes
@@ -29,8 +42,9 @@ preserves I157's incomplete audit and the internal-reserve failure.
 I160 preparation is archived unchanged and unsealed, not promoted.
 [I164](iteration164-structural-graph-factory-astra-task.json) starts fresh
 Factory/Astra structural-graph discovery, first screening Barnette's
-stronger proof operations against primary prior art. I163 remains a separate
-corrected-BFSS contribution review. **Eight accepted, two remaining.**
+stronger proof operations against primary prior art. I163 has now completed
+the separate corrected-BFSS contribution gate as technical.
+**Eight accepted, two remaining.**
 
 ## I162 result and I163 corrected BFSS contribution gate
 
@@ -42,9 +56,9 @@ with the explicit correction to the pinned source coefficient. The
 the correction separately, never relabelling the original a no-repair PASS.
 The parent reproduced the sealed evidence and finite diagnostics.
 I158's incomplete/unsealed artifacts are archived without alteration.
-[I163](iteration163-corrected-bfss-contribution-factory-astra-task.json)
-is the fresh Factory/Astra contribution review for the full corrected
-theorem. **Eight accepted, two remaining; research active.**
+[I163](../reviews/i163-corrected-bfss-contribution-astra.md)
+has completed the Factory/Astra contribution review for the full corrected
+theorem as technical only. **Eight accepted, two remaining; research active.**
 
 ## Iterations 161–162: historical Factory/Astra recovery, 2026-10-10
 
