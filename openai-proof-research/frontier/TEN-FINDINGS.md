@@ -6,6 +6,28 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I165 refutes the square-step inequality; I166 attacks the affine route
+
+[I165](iterations/i165-square-expansion-multiplicity.md) **refutes** the
+universal square-step inequality (M): a certified admissible square
+expansion takes a 50-vertex cubic bipartite planar 3-connected graph with
+576 Hamiltonian cycles to a 54-vertex one with 572
+($N_{00}=138$ versus $52+38+44=134$), and a prism-spliced family has gain
+$76-8m$, negative for every even $m\ge10$. This defeats only that
+induction; Q164 remains unproved and unrefuted. I165's audit passed
+I164's original prism count, expansion identity, source-P4 positivity and
+splice/cube interfaces without repairs, and proved a short-side injection
+plus the affine splice formula $d(G_1\star G_2)=d(G_1)+d(G_2)-2$, which
+reduces the full-affine-span route (and, via the splice inequality, Q164)
+to cyclically 4-edge-connected pieces. Parent sealed replay passes in
+~92 s, preserving two timed-out runs as incomplete. The
+[parent disposition](iterations/i165-square-expansion-parent-disposition.md)
+records the full scope. [I166](iterations/iteration166-affine-span-braces-factory-astra-task.json)
+audits the new interfaces and attacks the brace affine-span problem
+directly. These narrow negative and structural results are technical;
+no ninth finding is nominated and no literature novelty is certified.
+**8 accepted, 2 remaining; research active.**
+
 ### I164 gap report and I165 square-expansion continuation
 
 [I164](iterations/i164-structural-graph-discovery.md) leaves
@@ -17,9 +39,10 @@ Parent sealed replay passes, preserving two expected historical failures.
 The [parent disposition](iterations/i164-structural-graph-parent-disposition.md)
 corrects the 198-expansion coverage to six selected graphs, without changing
 the original report or seal. [I165](iterations/iteration165-square-expansion-multiplicity-factory-astra-task.json)
-audits the used original interfaces and attacks the sufficient square-step
-counting inequality. Neither the full target's literature status nor
-worldwide novelty is certified. **8 accepted, 2 remaining; research active.**
+audited the used original interfaces and attacked the sufficient square-step
+counting inequality; its outcome is recorded in the section above. Neither
+the full target's literature status nor worldwide novelty is certified.
+**8 accepted, 2 remaining; research active.**
 
 ### I163 corrected BFSS contribution: technical only
 
