@@ -1,0 +1,330 @@
+# I43 — convex and isoperimetric discovery: equality survives, rigidity remains unpaid
+
+**Disposition: developed gap record; no substantial finding nominated.** Three distinct mechanisms were screened: logarithmic Brunn–Minkowski equality, isoperimetry under changes of torus shape/phase, and the unresolved low-dimensional reverse projection inequality. The selected target is the unrestricted **equality classification in the origin-symmetric logarithmic Brunn–Minkowski conjecture**, hence the associated uniqueness problem for normalized cone-volume measures. The accepted source proves the inequality, but does not state this equality classification. Two constructive approaches below reach exact partial results and different obstructions. Neither proves nor refutes the target.
+
+All corpus premises are accepted at `openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. No upstream truth audit is attempted. Standard transfers are expressly classified as technical. The count stays **6/10**. Independent parent proof and significance reviews would be necessary before any new acceptance. No worldwide-priority claim is made.
+
+The exact full task brief is frozen in `../sources/i43_convex_isoperimetric_discovery/brief.txt`. Evidence, source contracts, current primary responses, search snapshots and a seal are in that directory; executable, read-only checks are in `../experiments/i43_convex_isoperimetric_discovery/`. No shared/prior file, index, gitignore, staging area, commit or publication was changed.
+
+## 1. Scope, antecedents, and three screens
+
+The complete inventory has 13,223 entries and 749 manuscripts; the existing corpus has 9,340 text files. The older 719-manuscript `CONTENTS.md` is used only as a family guide. Complete-corpus and project-history searches are retained. They find one directly relevant old screen, I02's rejection of a covering-density-to-Hadwiger transfer, but no developed earlier equality or rectangular-torus target. This is a bounded text search, not proof of absence. I38's Mahler demotion, I30's local-estimate transfer demotion, and I36's standard-operation demotion govern the contribution test here. R012 and the parked transport/SK lanes are not reused.
+
+### 1.1 Family 091: unrestricted logarithmic equality — selected
+
+For each fixed integer n≥2, arbitrary full-dimensional origin-symmetric convex bodies K,L in R^n, and 0<λ<1, write
+
+\[
+ M_t=\mathcal W[h_K^{1-t}h_L^t],\qquad
+ \Delta_\lambda(K,L)=\log|M_\lambda|-(1-\lambda)\log|K|-\lambda\log|L|.
+\]
+
+**Target E:** Δλ=0 if and only if there are nonzero complementary linear subspaces F₁,…,Fₘ, origin-symmetric relative convex bodies Kⱼ⊂Fⱼ, and cⱼ>0 such that
+
+\[
+ \mathbb R^n=F_1\oplus\cdots\oplus F_m,\quad
+ K=K_1+\cdots+K_m,\quad L=c_1K_1+\cdots+c_mK_m.       \tag{E}
+\]
+
+Subspaces need not be orthogonal. Simultaneous GL(n) transformations and independent positive scalar dilations of K,L preserve the question; translations are not allowed. At λ=0,1 every pair has equality, so those endpoints are excluded. In dimension one all bodies are intervals and E is immediate. No lower-dimensional or singular-measure equality claim is folded into E.
+
+This is the named conjecture's equality/uniqueness part, not an invented new problem. A proof without reflection, smoothness, fixed normal fan, or nondegeneracy assumptions would materially complete the accepted inequality. In particular it would give uniqueness for normalized cone-volume data when one body is strictly convex, up to its unavoidable overall dilation. No MathDB score is assigned.
+
+Source `The-logarithmic-Brunn-Minkowski-conjecture-September-23-2026` (abbreviated **L**) supplies `build/introduction.tex`, `thm:main`, `cor:lp`, and `build/measure.tex`, `cor:measure`. Its proof supplies geometric slab concavity, `prop:variance`, moment coordinates (`lem:moment`), density (`lem:density`), and an explicit sum-of-squares remainder (`lem:tensor`, `eq:tensor-squares`). The entire analytic chain in `reduction`, `moment`, `identities`, `density`, `tensor`, `variance`, and `measure` was inspected. The manuscript does **not** supply a limiting equality theorem. Its bound 0<τ≤4ε⁻¹I is local strict positivity below, not a lower bound uniform in ε or q. This matters in Section 4.
+
+Paid operations are excluded early. Scalar B for all even log-concave Radon measures, including proper support subspaces, is already `cor:measure`; additive Lp for 0<p<1 is already `cor:lp`. Unconditional equality is classical. Böröczky–De's [current v6](https://arxiv.org/abs/2101.02549), Theorem 1.4, already gives quantitative factor decompositions under n common linear reflections, with a power 1/(95n) and explicit λ dependence. A general estimate with a uniformly positive gap away from overall dilation is false because direct products have genuine non-dilation equality.
+
+An essential version correction: [Lu v3, September 28, 2026](https://arxiv.org/abs/2608.20730), Theorems 1.2, 1.4, 1.6 and Corollary 1.7, already proves E and cone-volume rigidity under n−2 common orthogonal reflections, with no regularity requirement. Theorem 1.8 also classifies pairs of bodies of revolution, even with different axes. Those cases are not candidates here. The proof uses fiber Prékopa–Leindler/Dubuc equality, fixed planar parallelogram directions, and a block dilation followed by support concentration (Proposition 4.3 and Lemma 4.4). Without those reflections there is no justified coordinatewise inclusion or positive-fiber equality argument.
+
+[Putterman](https://arxiv.org/abs/1909.03729), Theorem 1.7 and Section 3, already supplies the local-to-global polytope machinery. [Kolesnikov–Milman](https://arxiv.org/abs/1711.01089) supplies the spectral formulation and strictness for larger p. Neither a p↓0 limit nor smoothing preserves endpoint rigidity automatically. [Van Handel's final author version](https://web.math.princeton.edu/~rvan/logzon221121.pdf), Theorem 1.5, actually classifies **nonsmooth local** equality for zonoids using 1-extreme normals. It must not be dismissed as merely a smooth result. Section 4 replaces the formal eigenfunction equation by a mixed-area-measure identity and uses the segment generating measure. Section 5 explicitly explains the loss of global equality in smooth approximation; Corollary 5.2 gives global cone-volume uniqueness for C³₊ zonoids. E beyond these classes is the unpaid target.
+
+### 1.2 Family 354: torus phase competition and rectangular tori
+
+For the unit cubic torus, source **T** = `The-Isoperimetric-Conjecture-for-the-Cubic-Flat-Three-Torus-September-24-2026`, `build/paper.tex`, `intro:main`, classifies every minimizer and gives
+
+\[
+ I(v)=\min\{(36\pi)^{1/3}v^{2/3},\ 2\sqrt{\pi v},\ 2\},\quad
+ 0\le v\le\tfrac12.
+\]
+
+The transitions are v₁=4π/81 and v₂=1/π, with exactly both adjacent types at each transition. `pre:reduction` is the two-volume reduction; `nest:bottom-calibration`, `nest:shape-gain`, and `nest:area-bound` use nested sections, their complementary corner extents, integrated flux and a cubic shape gain to close the second transition. This is more than just the catalogue statement.
+
+First screen: for a fixed v, Δ(E)=P(E)−I(v) and d(E)=inf\{|E△F|: F is an exact minimizer at volume v\}. The estimate Δ≥c(v)d² is **technical**, including at either transition with both types in the equality set. On a sphere the volume-constrained Jacobi eigenvalues are [ℓ(ℓ+1)−2]/r²: translation modes ℓ=1 are removed, leaving positivity. On a length-one cylinder they are m²/r²+4π²k²−1/r²; its active range r∈[2/9,1/π] has 4π²−1/r²>0, and the only zero modes are transverse translations. For slabs the volume constraint and translation quotient remove the constant modes. [Acerbi–Fusco–Morini, Corollary 1.2](https://cvgmt.sns.it/media/doc/paper/540/Acerbi-Fusco-Morini.FINAL.pdf) supplies the actual L¹ quadratic local remainder, with γ=0 allowed. BV compactness, T's equality list, and bounded distance then globalize it for fixed v. No new selection principle is needed.
+
+A tempting **uniform** version, with c>0 for all v in a neighborhood of v₁ but distance only to the exact winning type at that v, is false. Let v↓v₁ from above and take E to be a ball of volume v. Its deficit tends to zero, with derivative difference 6−9/2=3/2 at v₁. Its distance to all tube minimizers stays bounded below: otherwise compact translations and the three possible axes would identify a ball with a tube at the transition, contrary to their smooth boundaries and topology. The same construction uses a tube for v↓v₂ from above; the derivative difference is π. This refutes only that proposed uniform distance formulation. It does not refute fixed-v stability or a phase-aware estimate including the losing branch's energy cost.
+
+The substantive geometric screen was **RT**: for every 0<a≤b≤c and every finite-perimeter E in R³/(aZ×bZ×cZ), put v=min(|E|,abc−|E|). Prove the profile and equality list
+
+\[
+ P(E)\ge \min\{(36\pi)^{1/3}v^{2/3},\ 2\sqrt{\pi a v},\ 2ab\}.       \tag{RT}
+\]
+
+The conjectured types are balls, tubes along a shortest axis, and slabs orthogonal to a longest axis, with degeneracies from tied side lengths. Candidate transitions are 4πa³/81 and ab²/π. The listed winning competitors embed: their largest relevant radii are a/3 and b/π respectively. RT is a concrete rectangular periodic isoperimetric problem, with a qualitative change of geometry across unbounded aspect ratios, not a metric perturbation corollary.
+
+[Milman v3](https://arxiv.org/abs/2403.06602), Theorems 1.2–1.3 and the discussion of non-nested planar minimizers, already treats rectangular slabs/cubes and reduces important ranges to endpoint assertions. Near the cubic metric, strict local stability plus compactness/implicit-function arguments is an operation to eliminate, not an automatically substantial result. RT for every aspect ratio still requires an aspect-ratio-dependent replacement for T's nested-section endpoint estimate; a linear change of coordinates makes the perimeter anisotropic and does not preserve its numerical inequality. No such estimate was proved. This screen is parked, not declared false.
+
+### 1.3 Family 088: the remaining reverse projection problem
+
+For arbitrary full-dimensional K⊂R⁴, including nonsymmetric and nonsmooth bodies, the screened question **RP4** is
+
+\[
+ R_4(K):=|\Pi K|/|K|^3\ \le\ 160/3,                       \tag{RP4}
+\]
+
+with simplex equality, or a genuine counterexample to that upper bound. It is the unresolved four-dimensional case of Brannen's reverse projection conjecture, invariant under all invertible affine maps. The polar projection-body inequality is a different functional.
+
+Source **P** = `A-product-counterexample-to-the-simplex-maximum-for-projection-body-volume-September-24-2026`, `prop:product` and `prop:simplex`, proves R(A×B)=R(A)R(B) and c_d=(d+1)d^d/d! for simplices. `cor:exponential-excess` already iterates fixed blocks to beat c_n exponentially for all sufficiently large n. Optimizing the block size or extending the product identity to nonsmooth factors by approximation is technical. Source **PM** = `Pettys-projection-volume-conjecture-in-dimensions-at-least-four-September-24-2026`, `thm:main`, is a lower bound with ellipsoid equality; its strict norm estimate and affine position do not give the desired upper bound.
+
+The directly relevant current primary paper is [Feng–Hu–Liu–Xu](https://archive.ymsc.tsinghua.edu.cn/pacm_paperurl/20260821091122099811781), retained full text dated in its download path August 26, 2026. Theorems 1.2–1.3 classify dimension-three upper equality and construct counterexamples in every n≥9 with at most n+2 facets. Its introduction explicitly leaves dimensions 4≤n≤8 unresolved. P itself cites this stronger low-dimension counterexample, so the n=20 witness is not a fresh priority claim.
+
+All partitions of n=4,…,8 into simplex factors, allowing segment factors with c₁=2, were tested in exact rational arithmetic. None beats the n-simplex. In dimension four both T₂×T₂ and T₃×T₁ give 36<160/3. This finite test excludes only this construction class; it proves no universal upper bound. The remaining step would be control of the determinant sum of arbitrary facet area-normal vectors together with realizability/body volume, or a perturbation whose first variation has the opposite sign already in dimension four. Neither P's product calculation nor PM's minimizing normalization supplies it. RP4 is parked.
+
+## 2. A complete technical reduction: equality freezes normalized cone-volume data
+
+Let C_even(S^{n−1}) be the real even continuous functions, and define
+
+\[
+ \mathcal F(f)=\log|\mathcal W[e^f]|,\qquad
+ \nu_K=\frac{h_K\,dS_K}{n|K|}.
+\]
+
+Every Wulff body here has nonempty interior because e^f has a positive minimum. ν_K is a probability measure. The following statements require no smoothness or combinatorial assumptions.
+
+**Proposition 2.1 (technical).** Under L, F is concave on the entire vector space C_even. It has directional derivative
+
+\[
+ D\mathcal F(f)[g]=n\int g\,d\nu_{\mathcal W[e^f]}.                 \tag{2.1}
+\]
+
+For arbitrary symmetric K,L the following are equivalent:
+
+1. Δλ(K,L)=0 at one λ∈(0,1);
+2. t↦log|M_t| is affine on [0,1];
+3. ν_K=ν_L.
+
+Moreover, under these conditions ν_{M_t}=ν_K for every t∈[0,1], and
+
+\[
+ h_{M_t}(u)=h_K(u)^{1-t}h_L(u)^t\quad (u\in\operatorname{supp}\nu_K).       \tag{2.2}
+\]
+
+**Proof.** If A=W[e^f], B=W[e^g], then h_A≤e^f and h_B≤e^g. Thus their logarithmic combination is contained in W[e^{(1−t)f+tg}], and L gives concavity. Alexandrov's first-variation formula for positive continuous support bounds gives
+
+\[
+ D\mathcal F(f)[g]=|A|^{-1}\int e^f g\,dS_A.
+\]
+
+The contact relation e^f=h_A holds S_A-almost everywhere; hence (2.1). This is the classical Wulff variation used in BLYZ and Putterman's Lemma 2.1, not a new regularity theorem. Both-sided directional derivatives suffice below; no Banach-space inverse theorem is assumed.
+
+A concave function equal to its endpoint chord at an interior point equals that chord throughout the segment. For any concave differentiable F, a tangent linear functional is a global upper supporting functional. If F is affine on [f,g], its upper support at f also contacts g. A supporting functional at a point of directional differentiability is unique (test ±εv). Therefore D F(f)=D F(g), and likewise every intermediate point has that same derivative. Equation (2.1), tested on all continuous even functions, proves equality of the even measures ν.
+
+Conversely, if ν_K=ν_L, the upper-support inequalities at f=log h_K and g=log h_L give
+
+\[
+ D F(g)[g-f]\le F(g)-F(f)\le D F(f)[g-f].
+\]
+
+Both endpoints agree. The chord is therefore a common tangent and F is affine along it. Finally (2.2) follows from the contact relation and continuity: a continuous nonnegative difference which vanishes almost everywhere for a measure vanishes on its support. ∎
+
+This proposition is an application of concavity, first variation and supporting hyperplanes. It is **not** nominated as a substantial theorem. Lu's Section 5 already uses the corresponding first-variation/affine-segment operation in its symmetry class; van Handel's Section 5 explains the cone-volume uniqueness issue.
+
+A useful exact consequence is that, if an equality pair consists of polytopes, the **actual facet normals** at the endpoints and at all intermediate M_t are the same finite set. Indeed support of ν is exactly the signed facet-normal set, and a polytope is the intersection of its facet half-spaces. In one representative of each antipodal pair u_i, write h_i(t)=a_i e^{b_i t}. Then all facets stay positive and
+
+\[
+ |M_t|=Ce^{st},\quad
+ \frac{2h_i(t)A_i(t)}{|M_t|}=w_i>0,\quad
+ \sum_iw_i=n,\quad s=\sum_iw_i b_i.                         \tag{2.3}
+\]
+
+Here u_i is unit and A_i is the area of one facet in that pair. Formula (2.3) freezes the cone-volume weights, not the entire normal fan: ridges and vertices can still change. There is no facet-count-uniform lower bound on w_i for near equality.
+
+E is now precisely the classification of these constant-normalized-cone-volume equality families. Equation (2.3) is a restriction, not a proof that the normals split into complementary blocks.
+
+## 3. The easy direction of E and an exact degeneration
+
+For a direct sum as in E, use a simultaneous linear map to make the subspaces orthogonal. In dual block directions the constraints force M_t⊂Σc_j^t K_j. For an arbitrary u with block components u_j, Hölder gives
+
+\[
+ \sum_j c_j^t h_{K_j}(u_j)
+ \le (\sum_jh_{K_j}(u_j))^{1-t}
+      (\sum_jc_jh_{K_j}(u_j))^t.
+\]
+
+Thus the reverse inclusion holds too. The determinant of the block dilation is Πc_j^{t dim F_j}; consequently Δλ=0. Linear equivariance returns the nonorthogonal case. This proves sufficiency, including repeated c_j and m=1. It does not prove necessity.
+
+Even on **indecomposable**, uniformly bounded bodies there is no fixed positive local gap modulo overall dilation. In R² let
+
+\[
+ P_\delta(t)=\{|x|\le e^t,\ |y|\le e^{-t},\ |x+y|\le2-\delta\},\quad 0<\delta<1.
+\]
+
+For |t| sufficiently small all six facets are present and
+
+\[
+ |P_\delta(t)|=4-(2\cosh t-2+\delta)^2,\qquad
+ -\frac{d^2}{dt^2}\log|P_\delta(t)|\bigg|_{0}
+ =\frac{4\delta}{4-\delta^2}\longrightarrow0.                 \tag{3.1}
+\]
+
+The bodies at t=0 contain a fixed Euclidean ball and lie in a fixed ball. A full-dimensional planar direct sum is a parallelogram; these are genuine hexagons, hence indecomposable. The slope vector (1,−1,0) stays nonzero modulo constants. Its squared norm for the paired normalized cone-volume weights is 2/(2+δ), so the curvature-to-norm ratio is exactly 2δ/(2−δ), which tends to zero. This is not just loss of coercivity in unused facets. It rules out a uniform spectral surplus on this class. It does not refute E or a stability estimate measuring distance to the full decomposable equality set. The example is consistent with the known planar theorem and is retained as a diagnostic, not a new named-problem solution.
+
+## 4. Constructive approach A: extract geometry from the soft-slab remainder
+
+Fix a finite spanning direction list p_i, positive widths a_i, and slopes b_i, with h_i(t)=a_i e^{tb_i}. For even q and ε>0 define
+
+\[
+ \psi_i=(\langle p_i,x\rangle/h_i(t))^q,\quad
+ Z_{q,\epsilon}(t)=\int\exp(-\epsilon|x|^2/2-\sum_i\psi_i)\,dx.
+\]
+
+The **exact** logarithmic curvature is
+
+\[
+ D_{q,\epsilon}(t):=-\partial_t^2\log Z_{q,\epsilon}(t)
+ =q^2\left[\sum_i b_i^2\mathbb E\psi_i-
+                 \operatorname{Var}(\sum_i b_i\psi_i)\right]\ge0.       \tag{4.1}
+\]
+
+The factor q² cannot be dropped. The source uses slopes −qb_i in `prop:variance`. Its tensor computation retains the nonnegative R-square and, in its constant normalized frame,
+
+\[
+ 2\|S+\operatorname{Sym}J\|^2+\tfrac16\|J-J^{(12)}\|^2,
+\]
+
+as well as the ε-energy and the two Cauchy–Schwarz remainders for each summand. Density then passes the **inequality** to the centered score; it gives no q,ε-uniform inverse for A(A−1).
+
+There is a precise Hilbert-space way to retain what is paid. Let a_i=Eψ_i for this paragraph, c_i=b_i√a_i, σ²=Var(Σb_iψ_i), and, if σ>0, u=(Σb_iψ_i−EΣb_iψ_i)/σ. Let (Tu)_i=E(uψ_i)/√a_i. The source's dual inequality is ||T||≤1, and
+
+\[
+ \sum_i b_i^2a_i-\sigma^2
+ =\|c-\sigma Tu\|^2+\sigma^2(1-\|Tu\|^2).                  \tag{4.2}
+\]
+
+The σ=0 case is handled directly, with no division. For a sequence of the source's double-divergence tests converging to u in L², the scalar dual defects converge; each retained nonnegative energy is bounded by those defects. This is a useful constructive start toward rigidity, but it does not produce a limiting displacement field, Hessian, or decomposition. In particular the bounds on τ and its inverse used in the proof deteriorate in the hard-boundary limit.
+
+For λ∈(0,1), put Gλ(t)=(1−λ)t for t≤λ and λ(1−t) for t≥λ. Twice integrating (4.1) gives exactly
+
+\[
+ \log Z(\lambda)-(1-\lambda)\log Z(0)-\lambda\log Z(1)
+ =\int_0^1G_\lambda(t)D_{q,\epsilon}(t)\,dt.                \tag{4.3}
+\]
+
+Use the source's limit order: q→∞ at fixed ε, then ε↓0, and, for arbitrary bodies, then increase the finite direction exhaustion. This yields Δλ. Thus equality gives a vanishing **integrated** defect in that iterated limit. It does not justify setting the finite-q tensor squares to zero or exchanging these limits with a spectral inverse.
+
+### 4.1 The q=2 model gives an actual splitting mechanism
+
+With ε=0 and q=2, spanning ensures integrability and
+
+\[
+ Z=\pi^{n/2}\det Q(t)^{-1/2},\quad
+ Q(t)=\sum_i a_i^{-2}e^{-2b_it}p_ip_i^T.
+\]
+
+Cauchy–Binet expands det Q as a positive sum over n-element bases B of the vector configuration, with coefficients det(p_B)²Π_{i∈B}a_i⁻² and exponents −2Σ_{i∈B}b_i t. Therefore
+
+\[
+ -\partial_t^2\log Z=2\operatorname{Var}_{\pi_t}
+           (\sum_{i\in B}b_i).                              \tag{4.4}
+\]
+
+All basis probabilities π_t are positive. Equality holds exactly when all basis sums are equal. Basis exchange implies b_i=b_j whenever i,j belong to the same matroid component: for a circuit containing them, extend the circuit with j removed to a basis, then exchange i for j. Conversely, a basis takes exactly the rank of each component, so slopes constant on each component give constant sums. Components span complementary subspaces. This proves finite Gaussian splitting, not E. It uses a classical determinant/variance operation.
+
+### 4.2 Why this mechanism fails to pass directly to q=∞
+
+Take genuine endpoint boxes K=[−1,1]² and L=[−2,2]×[−1/2,1/2]. Include directions e₁,e₂,e₁+e₂ with their **actual endpoint support values**:
+
+\[
+ (h_1,h_2,h_3)(t)=(2^t,2^{-t},2(5/4)^t).
+\]
+
+For 0<t<1, Hölder is strict, so h₁+h₂<h₃. The diagonal slab is redundant, and the hard intersection is the box of area four. The three direction vectors form one matroid component, while their slopes (log2,−log2,log(5/4)) are not constant. Consequently the q=2 curvature is strictly positive but the limiting hard-volume curve is affine. This is a genuine equality pair, not a counterexample to E: its two coordinate factors are precisely the predicted decomposition.
+
+The loss is quantitatively explicit. On any compact interior t-interval let ρ(t)=(h₁+h₂)/h₃<1. Let Z₀ be the product soft integral omitting the diagonal slab, and Z₁ include it, both with ε=0. With α=h₁/(h₁+h₂), convexity of |·|^q gives
+
+\[
+ |(x+y)/h_3|^q\le\rho^q\big[\alpha|x/h_1|^q+(1-\alpha)|y/h_2|^q\big].
+\]
+
+Under the product density, each power has expectation 1/q (one integration by parts, or a Gamma(1/q) variable). Jensen for exp(−z) yields
+
+\[
+ 0\le\log(Z_0/Z_1)\le\rho(t)^q/q.                       \tag{4.5}
+\]
+
+At the endpoints ρ=1 the same bound is 1/q. This shows exactly how a nonconstant slope in a connected finite direction system becomes invisible. The integrals at ε=0 are justified separately by spanning/coercivity, or by ε↓0 at each fixed q; they are used as a diagnostic, not as an unauthorized interchange in the source proof.
+
+Proposition 2.1 offers a repair for **exact polytopal equality**: discard nonfacet normals and use the common true-facet set. It does not give an active-mass lower bound for arbitrary approximations or near optimizers. The missing analytic construction is a coercive boundary trace of the retained squares on those true facets, strong enough to identify a single linear dilation on each complementary normal component. No such boundary trace estimate has been established here.
+
+## 5. Constructive approach B: volume polynomials and resonance
+
+This approach avoids moment coordinates. Let P(h)={x: |⟨u_i,x⟩|≤h_i, 1≤i≤N}, with one unit normal per antipodal facet pair. In an open simple type chamber all vertices are linear functions of h; triangulating the fixed combinatorial boundary from the origin gives a homogeneous degree-n polynomial
+
+\[
+ |P(h)|=Q(h)=\sum_{|\alpha|=n}c_\alpha h^\alpha.             \tag{5.1}
+\]
+
+The coefficients need not be positive. This construction is part of the established Putterman/support-polynomial framework, also developed in [Hu–Ivaki v1](https://arxiv.org/abs/2609.21670), Sections 3–4. Their main theorem only bounds a **locally minimizing** even eigenvalue by n−1+1/(n−1); it neither reaches n in n≥3 nor classifies the kernel at n. It cannot be invoked as the missing rigidity lemma.
+
+**Proposition 5.1 (technical restricted partial).** Suppose h_i(t)=a_i e^{b_it}, a_i>0, lies in one open simple type chamber on a nonempty interval J, and every listed pair is a facet pair. Suppose log|P(h(t))| is affine on J. If α·b are pairwise distinct for the nonzero monomials in (5.1), then N=n and P(h(t)) is a parallelotope. In particular the conclusion holds if the b_i are rationally independent.
+
+**Proof.** Substitution gives a finite sum Σc_αa^αe^{(α·b)t}=Ce^{st}. Distinct real exponentials are linearly independent on any open interval (differentiate through order equal to the number of exponents minus one and use the Vandermonde determinant). Thus exactly one monomial of Q is nonzero. All its exponents are nonnegative integers and sum to n. Moving a paired support outward has derivative ∂Q/∂h_i=2A_i>0 throughout this chamber. Hence that monomial has α_i>0 for every i, so N≤n. Bounded full dimensionality requires the N normals to span R^n, so N≥n. Therefore N=n, all α_i=1, and the invertible normal-coordinate map sends P to a box. ∎
+
+This is a restricted obstruction, not a proof with generic assumptions substituted into E. Generic slopes have no non-parallelotope equality, but the relevant block equalities lie exactly on resonant slope sets. No approximation of slopes preserves equality.
+
+Proposition 2.1 strengthens the algebraic constraints for a genuine equality pair. In a chamber and using (2.3), put A_α=c_αa^α. For every exponent value r=α·b, exponential independence gives
+
+\[
+ \sum_{\alpha:\alpha\cdot b=r}A_\alpha=C\mathbf1_{r=s},\qquad
+ \sum_{\alpha:\alpha\cdot b=r}(\alpha_i-w_i)A_\alpha=0
+       \quad\text{for every }i.                            \tag{5.2}
+\]
+
+The second identity follows from h_i∂_iQ=w_iQ. These are exact finite linear cancellation constraints once a chamber, a slope resonance pattern, and endpoint support values are given. They suggest an algebraic route: prove that every realizable positive-weight solution comes from complementary blocks of normals and equal slopes within blocks. That implication is **unproved**. Signed coefficients are a genuine difficulty; treating (5.1) as a probability generating polynomial would be wrong.
+
+For example, in the six-facet planar chamber |a−b|<c<a+b,
+
+\[
+ Q(a,b,c)=4ab-(a+b-c)^2
+ =-a^2-b^2-c^2+2ab+2ac+2bc.                               \tag{5.3}
+\]
+
+This already contains negative coefficients. At a=b=c=1 its logarithmic Hessian has kernel exactly the overall-dilation direction and is negative definite on its complement; as c↑2 its nontrivial eigenvalue collapses as in (3.1). Exact symbolic/rational checks below verify these facts and several resonance groupings. They neither prove the general cancellation classification nor rule out all exceptional resonances.
+
+Normal-fan changes are another unpaid step. Constant positive facet weights prevent disappearance of facets on an exact equality path, but do not prevent nonsimple vertices or a path contained in a chamber wall. The argument has not extended (5.2) to a classification compatible across all incident chambers. Analytic continuation of one chamber polynomial beyond its geometric chamber is not permitted. The elementary concave function −(max{t,0})⁴ is a reminder that a flat interval and several matching derivatives alone do not force a globally flat extension; this is only an analogy for the inference, not a geometric counterexample.
+
+## 6. Concrete missing estimates and what the partial results do not buy
+
+Here is a finite-dimensional sufficient target for the next analytical or algebraic construction. For a fixed **irredundant simple** symmetric polytope P(h), let
+
+\[
+ H_P=-D_z^2\log |P(e^z)|\big|_{z=\log h},\qquad
+ \mathcal D_U=\{b: b_i\text{ is constant on each matroid component of }(u_i)\}.
+\]
+
+L gives H_P positive semidefinite. Every vector in D_U is in its kernel: the normal components span a direct sum, so their separate support dilations correspond in primal coordinates to independent dilations of Cartesian factors. A useful, **unproved stronger local lemma** would be
+
+\[
+ b^TH_Pb\ge c(P)\inf_{d\in\mathcal D_U}\sum_iw_i(b_i-d_i)^2,
+ \qquad c(P)>0.                                          \tag{K}
+\]
+
+No uniformity in P,N,n, facet masses, or proximity to decomposability is requested. Equation (3.1) explicitly forbids the naive fixed-n uniform strengthening. Since local second-derivative zero need not imply equality along a segment, K is a sufficient local route, **not asserted equivalent to E**, and its failure would not disprove E. Even K would require an additional compatible extension across nonsimple strata and an approximation argument preserving equality information to reach all convex bodies.
+
+The softer path version would only classify b when b^TH_{P(t)}b vanishes along a whole equality interval and (2.3) holds. This is weaker than pointwise K and is the better algebraic target for (5.2). Proving a trace estimate from (4.1) on the common positive-mass facets, or proving that the signed cancellations (5.2) force componentwise constant slopes, would be concrete new progress. Neither estimate has been supplied.
+
+Finally, even a full polytopal equality theorem would not automatically classify equality for arbitrary convex bodies: approximation supplies deficits tending to zero, not equality for each approximant. A rate/modulus or a nonsmooth equality identity stable under weak convergence of the cone-volume measures is still needed. Van Handel's measure identity is an actual template for this step, but its segment representation is unavailable for general bodies. Fixed-dimensional compactness supplies a qualitative modulus **after** equality is classified; it cannot classify the zero set and cannot provide a rate by itself.
+
+## 7. Evidence, reproducibility and limitations
+
+`source-contracts.json` records paths, labels and the portions actually used. `read-passages.json` and adjacent extracts record the primary theorem/proof passages; full retained PDF text is searchable. `responses.json` records URL, retrieval time, status and SHA-256, including fresh raw responses at the immutable pin. Version records distinguish Lu v3, Böröczky–De v6, Böröczky–Kalantzopoulos v2, Milman v3, Hu–Ivaki v1, and van Handel's final author PDF/current arXiv v2. Search-engine summaries pointing to older Lu versions were superseded by direct current-record and v3 retrievals. The initial broad search was exploratory; subsequent stored searches and direct responses govern the cited scope. A finite bounded search is not worldwide priority certification.
+
+Run from the project root:
+
+```sh
+python frontier/experiments/i43_convex_isoperimetric_discovery/check.py
+python frontier/experiments/i43_convex_isoperimetric_discovery/verify.py
+```
+
+The first command uses exact rational/symbolic arithmetic for the hexagon volume, Hessian, cone weights and collapsing gap; Cauchy–Binet basis variances; strict midpoint slab redundancy; the Green kernel; simplex-product partitions; and phase-transition values/slopes. It does not use quadrature or numerical optimization to claim an analytic theorem. The second checks all 9,340 corpus files against the complete frozen inventory/manifest, all selected pinned blobs, retained response hashes, frozen inputs and the artifact seal, then reproduces the exact diagnostics. Both commands are read-only, including disabled bytecode generation. Mutable ledger drift is reported separately from immutable source mismatch.
+
+**Handoff:** retain the complete technical equality/cone-volume reduction, the restricted nonresonance proposition, and the exact soft-slab and phase-competition obstructions. Do not promote any of them as the seventh finding. E, RT and RP4 are all unproved and not refuted by this report. The selected next mathematical bottleneck is a true-facet boundary/coercivity or signed-volume-polynomial classification that remains valid at resonances and normal-fan changes.
