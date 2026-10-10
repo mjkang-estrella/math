@@ -23,7 +23,7 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 - I28: the [completed algebra report](iterations/i28-algebra-discovery.md) supplies a technical filtered-persistence argument, but an obstructed nonconical ring remains unconstructed. Ulam and involutive-division-ring screens retain specific obstructions. [Parent verification](experiments/i28-parent-verification.json) passes as a gap record; no count increment.
 
-- I29: [common-matroid-base entropy](iterations/iteration29-common-base-entropy-task.json) investigates a distinct prescribed-mean target; no transfer from R011 is assumed.
+- I29: [completed common-base entropy report](iterations/i29-common-base-entropy.md) proves the sharp all-mean bound H_C≥F−(1−1/r)B through the source tight-chain rank and covariance trace operations. Boundary reduction, weighted Gibbs scope and explicit gluing/log-concavity/root-reserve obstructions are included. Classified technical only; parent isolated reproduction and seven PDF replays pass. No count increment.
 
 - I30: the [original-metric GH theorem](iterations/i30-einstein-metric-stability.md), with bound C D^(1/16), retains [full-proof PASS](reviews/i30-einstein-metric-stability-r2.md) but is **TECHNICAL ONLY** after [final significance review](reviews/i30-einstein-metric-stability-novelty-r3.md). Clarke's Lemma 12 supplies the exact square-root-volume refinement, and Tian–Wang supplies the distance construction. Parent reproduction passes; no exact full-scope duplicate or new gap is claimed. No count increment.
 

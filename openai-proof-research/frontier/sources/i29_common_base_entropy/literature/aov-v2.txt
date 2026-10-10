@@ -1,0 +1,1834 @@
+                                         Log-Concave Polynomials I: Entropy and a Deterministic
+                                         Approximation Algorithm for Counting Bases of Matroids
+
+                                                       Nima Anari1 , Shayan Oveis Gharan2 , and Cynthia Vinzant3
+
+
+
+
+arXiv:1807.00929v2 [cs.DS] 5 Nov 2018
+                                                      1 Computer Science Department, Stanford University, anari@cs.stanford.edu
+                                               2 Computer Science and Engineering, University of Washington, shayan@cs.washington.edu
+                                                   3 Department of Mathematics, North Carolina State University, clvinzan@ncsu.edu
+
+
+
+                                                                                 November 6, 2018
+
+
+                                                                                       Abstract
+                                                 We give a deterministic polynomial time 2O(r )-approximation algorithm for the number of
+                                             bases of a given matroid of rank r and the number of common bases of any two matroids of
+                                             rank r. To the best of our knowledge, this is the first nontrivial deterministic approximation
+                                             algorithm that works for arbitrary matroids. Based on a lower bound of Azar, Broder, and
+                                             Frieze [ABF94] this is almost the best possible result assuming oracle access to independent
+                                             sets of the matroid.
+                                                 There are two main ingredients in our result: For the first, we build upon recent results
+                                             of Adiprasito, Huh, and Katz [AHK15] and Huh and Wang [HW17] on combinatorial hodge
+                                             theory to derive a connection between matroids and log-concave polynomials. We expect that
+                                             several new applications in approximation algorithms will be derived from this connection
+                                             in future. Formally, we prove that the multivariate generating polynomial of the bases of
+                                             any matroid is log-concave as a function over the positive orthant. For the second ingredient,
+                                             we develop a general framework for approximate counting in discrete problems, based on
+                                             convex optimization. The connection goes through subadditivity of the entropy. For matroids,
+                                             we prove that an approximate superadditivity of the entropy holds by relying on the log-
+                                             concavity of the corresponding polynomials.
+
+
+                                        1 Introduction
+                                        Efficient algorithms for optimizing linear functions over convex sets, i.e., convex programming,
+                                        are one of the pinnacles of algorithm design. Convex sets yield easy instances of optimization
+                                        in the continuous world. Much the same way, matroids yield easy instances of optimization in
+                                        the discrete world. Going beyond optimization, computing the volume of or sampling from con-
+                                        vex sets is well understood algorithmically; however there has not been an analogous progress
+                                        on counting problems involving matroids. In this work, we try to address this issue by design-
+                                        ing nearly tight deterministic approximate counting algorithms for discrete structures involving
+                                        matroids and their intersections. We introduce a general optimization-based algorithm for ap-
+                                        proximate counting involving discrete objects, and show that our algorithm performs well for
+                                        matroids and their intersections.
+
+                                                                                           1
+    A matroid M = ( E, I) is a structure consisting of a finite ground set E and a non-empty
+collection I of independent subsets of E satisfying:
+
+   i) If S ⊆ T and T ∈ I , then S ∈ I .
+
+  ii) If S, T ∈ I and | T | > |S|, then there exists an element i ∈ T \ S such that S ∪ {i } ∈ I .
+
+The rank of a matroid is the size of the largest independent set of that matroid. If M has rank r,
+any set S ∈ I of size r is called a basis of M. Let B M ⊂ I denote the set of bases of M.
+     Many optimization problems are well understood on matroids. Matroids are exactly the class
+of objects for which an analogue of Kruskal’s algorithm works and gives the smallest weight
+basis.
+     One can associate to any matroid M a polytope P M , defined by exponentially many con-
+straints, called the matroid base polytope. The vertices of P M are the indicator vectors of all bases
+of M, i.e., P M = conv{1B | B ∈ B M }. Furthermore, using the duality of optimization and sepa-
+ration, one can design a separation oracle for P M in order to minimize any convex function over
+P M [Cun84].
+     More difficult problems associated to matroids come from counting. For example, given a
+matroid M, is there a polynomial time algorithm to count the number of bases of M? This
+problem is #P-hard in the worst case even if the matroid is representable over a finite field
+[Sno12], so the next natural question is: How well can we approximate the number of bases of a
+given matroid M in polynomial time? This is the main question addressed in this paper. Note
+that the number of bases of any matroid M of rank r is at most (| Er |) ≈ | E|r , so there is a simple
+| E|r approximation to the number of bases of M.
+     We also address counting problems on the intersection of two matroids. Given two matroids
+M = ( E, I M ), N = ( E, I N ) of rank r on the same ground set E, the matroid intersection problem
+is to optimize a (linear) function over all bases B common to both M and N. This problem can
+also be solved in polynomial time because P M ∩ P N is exactly the convex hull of the indicator
+vectors of B M ∩ B N [see, e.g., Sch03]. Perhaps, the most famous example of matroid intersection
+is perfect matchings in bipartite graphs. Since we can optimize over the intersection of two
+matroids, it is natural to ask if one can approximate the number of bases common to two rank-r
+matroids M and N. This is the second problem that we address in this paper.
+     Note that there are NP-hard problems involving the intersection of just three matroids, e.g.,
+the Hamiltonian path problem. It is NP-hard to test if there is a single basis in the intersection of
+three matroids. We will not discuss intersections of more than two matroids in this paper, since
+any multiplicative approximation would be NP-hard.
+
+1.1 Previous Work
+There is a long line of work on designing approximation algorithms to count the number of bases
+of a matroid. One idea is to use the Markov Chain Monte Carlo technique. For any matroid M,
+there is a well-known chain, called the basis exchange walk, which mixes to the uniform distri-
+bution over all bases. Mihail and Vazirani conjectured, about three decades ago, that the chain
+mixes in polynomial time, and hence one can approximate the number of bases of any matroid
+on n elements within 1 + ǫ factor in time poly(n, 1/ǫ). To this date, this conjecture has been
+proved only for a special class of matroids known as balanced matroids [MS91; FM92]. Balanced
+
+
+                                                   2
+matroids are special classes of matroids where the uniform distribution over the bases of the ma-
+troid, and any of its minors, satisfies the pairwise negative correlation property. Unfortunately,
+many interesting matroids are not balanced. An important example is the matroid of all acyclic
+subsets of edges of a graph G = (V, E) of size at most k (for some k < |V | − 1) [FM92].
+    Many of the extensive results in this area [Gam99; JS02; Jer+04; Jer06; Clo10; CTY15; AOR16]
+only study approximation algorithms for a limited class of matroids, and not much is known
+beyond the class of balanced matroids.
+    Most of the classical results in approximate counting rely on randomized algorithms based
+on the Markov Chain Monte Carlo technique. There are also a few results in the literature that
+exploit tools from convex optimization [Bar97; Ima+96; BS07]. To the best of our knowledge, the
+only non-trivial approximation algorithm that works for any matroid is a randomized algorithm of
+Barvinok and Samorodnitsky [BS07] that gives, roughly, a log(| E|)r approximation factor to the
+number of bases of a given matroid of rank r and the number of common bases of any two given
+matroids of rank r, in the worst case. We remark that this algorithm works for any family of
+subsets, not just matroids and their intersections, assuming access to an optimization oracle. The
+approximation factor gets better if the number of bases of the given matroid(s) are significantly
+less than (| Er |) ≃ | E|r .
+    On the negative side, Azar, Broder, and Frieze [ABF94] showed that any deterministic poly-
+nomial time algorithm that has access to the matroid M on n elements only through an inde-
+                                                                                                      2
+pendence oracle can only approximate the number of bases of M up to a factor of 2O(n/ log(n) ) .
+They actually showed the stronger result that any deterministic algorithm making k queries to
+                                                                                          2
+the independence oracle must have an approximation factor of at least 2Ω(n/ log(k) ) , as long as
+k = 2o(n) . An immediate corollary is a rank-dependent lower bound, namely that any deterministic
+algorithm making polynomially many independence queries to a matroid of rank r must have
+                                        2
+an approximation ratio of 2Ω(r/ log(n) ) as long as r ≫ log(n). This is because we can always start
+with a matroid on ≃ r elements and add loops to get a matroid on n elements without changing
+the number of bases or the rank.
+    The problem of approximating the number of bases in the intersection of two matroids M, N
+is very poorly understood. Jerrum, Sinclair, and Vigoda [JSV04] give a randomized polynomial
+time approximation to the number of perfect matchings of a bipartite graph, a special case of
+intersection of two matroids, up to a factor of 1 + ǫ. As for deterministic algorithms, for this
+special case of bipartite perfect matchings, a 2O(r ) -approximation was first introduced by Linial,
+Samorodnitsky, and Wigderson [LSW98], relying on the Van der Waerden conjecture, and later
+an improvement in the base of the exponent was achieved by Gurvits and Samorodnitsky [GS14].
+Recently, a subset of the authors [AO17] have shown that one can approximate the number of
+bases in the intersection of two real stable matroids, having oracle access to each of their generating
+polynomials, up to a 2O(r ) multiplicative error [also, cf. SV17]. Real stable matroids can be seen as
+a special case of balanced matroids. See the techniques in Section 7 and Anari and Oveis Gharan
+[AO17] for more details.
+
+1.2 Our Results
+The main result of this paper is the following.
+Theorem 1.1. Let M = ([n], I) be an arbitrary matroid of rank r given by an independence oracle; that is
+for every S ⊆ [n], one can query the oracle if S ∈ I . There is a deterministic polynomial time algorithm
+
+                                                   3
+that outputs a number β satisfying
+
+                                       max{2−O(r ) β,
+                                                        p
+                                                            β} ≤ |B M | ≤ β,
+
+where B M is the set of bases of M.
+
+    Our algorithm can be implemented with only oracle access to the independent sets of the
+matroid. Therefore, by the work of Azar, Broder, and Frieze [ABF94], this is almost the best we
+can hope for any deterministic algorithm.
+    As an immediate corollary of the above result we can count the number of independent sets
+of any given size k. This is because independent sets of size k form the bases of the truncation of
+the original matroid, which itself is a matroid.
+
+Corollary 1.2. Let M be an arbitrary matroid given by an independence oracle. There is a deterministic
+polynomial time algorithm that for any given integer k outputs a number β such that
+
+                                   max{2−O(k) β, β} ≤ |I M   k
+                                                  p
+                                                               | ≤ β,
+        k is the set of independence sets of M of size exactly k.
+where I M
+
+    Building further on our techniques, we show that one can approximate the number of bases
+in the intersection of any two matroids.
+
+Theorem 1.3. Let M and N be two matroids of rank r on the ground set [n] given by independence oracle.
+There is a deterministic polynomial time algorithm that outputs a number β such that
+
+                                          2−O(r ) β ≤ |B M ∩ B N | ≤ β,
+
+where B M , B N are the sets of bases of M and N, respectively.
+
+    Counting common bases of two matroids is a self-reducible problem. Roughly speaking, this
+means that if we want to count common bases that include some given elements i1 , . . . , ik ∈ [n]
+and exclude some other elements j1 , . . . , jl ∈ [n], then we get an instance of the same problem;
+we just have to replace the input matroids by their minors obtained by contracting i1 , . . . , ik and
+deleting j1 , . . . , jl .
+    Sinclair and Jerrum [SJ89] showed that for self-reducible counting problems, one can boost
+the approximation factor of any algorithm at the expense of an increase in running time and
+using randomization. In particular, as a corollary of Theorem 1.3 and the results of Sinclair and
+Jerrum [SJ89] we get the following.
+
+Corollary 1.4. Let M and N be two matroids of rank r on the ground set [n] given by independence oracles.
+There is a randomized algorithm that for any desired ǫ, δ > 0 outputs a number β approximating the
+number of common bases of M and N within a factor of 1 − ǫ with probability at least 1 − δ:
+                               h                              i
+                             P (1 − ǫ) β ≤ |B M ∩ B N | ≤ β ≥ 1 − δ.
+
+The running time of this algorithm is 2O(r ) poly(n, 1ǫ , log 1δ ).
+
+
+
+                                                         4
+    Counting bases of a single matroid is a special case obtained by letting M = N; so this result
+applies to counting bases of a single matroid as well. Also observe that this algorithm becomes a
+fully polynomial time randomized approximation scheme (FPRAS) when r = O(log n). We also
+prove that a slight generalization of our algorithmic framework provides 2O(r ) -approximation to
+weighted counts of bases.
+
+Theorem 1.5. Let M and N be two matroids of rank r on the ground set [n] given by independence oracles.
+There is a deterministic polynomial time algorithm that for any given weights λ = (λ1 , . . . , λn ) ∈ R n≥0 ,
+outputs a number β that 2O(r ) -approximates the λ-weighted intersection of M and N:
+
+                                       2 −O ( r ) β ≤       ∑       ∏ λi ≤ β.
+                                                        B ∈B M ∩B N i∈ B
+
+
+1.3 Techniques
+In this section we discuss the main ideas of our proof. We rely heavily on the basis generating
+polynomial of a matroid M,
+                                  g M ( z1 , . . . , z n ) = ∑ ∏ z i .                       (1)
+                                                                  B ∈B M i∈ B
+
+For some matroids, such as partition matroids and graphic matroids, the polynomial g M has a
+special property called real stability. A multivariate polynomial g ∈ R [z1 , . . . , zn ] is real stable
+if g(z1 , . . . , zn ) 6= 0 whenever Im(zi ) > 0 for all i = 1, . . . , n. Recently, real stable polynomials
+have been used for numerous counting and sampling tasks [NS16; AOR16; AO17; SV17; Ana+17;
+Ana+18].
+    Matroids with real stable basis generating polynomials are called real stable matroids. Many
+properties of these matroids can be derived from the stability of their generating polynomials.
+If g M is real stable, then the uniform distribution over the bases of the matroid, as well as its
+minors, satisfy pairwise negative correlation. Then M is a balanced matroid and one can count
+the number of bases of M within a 1 + ǫ multiplicative error by a polynomial time randomized
+algorithm.
+    On the counting side, roughly speaking, real stable matroids are almost all we know how
+to handle. However, it is known that many matroids are not real stable. Even if we allow
+arbitrary positive coefficients in front of the monomials in the generating polynomial, instead of
+uniform coefficients, for some matroids we can never get a real stable polynomial [Bra07]. Here
+we define a more general class of polynomials, namely log-concave and completely log-concave
+polynomials, to be able to study all matroids with analytical techniques.
+    Given a real stable polynomial g(z1 , z2 , . . . , zn ), its univariate restriction g(z, z, . . . , z) is real-
+rooted, and it follows that its coefficients form a log-concave sequence. Recently, Adiprasito, Huh,
+and Katz [AHK15] proved that certain univariate polynomials associated with matroids have log-
+concave coefficients, for any matroid. Their work resolved several long standing open problems
+in combinatorics. It is important to note that such results are very unlikely to follow from the
+theory of real stability because not all matroids support real stable polynomials.
+    The first ingredient of our paper is that we exploit some of the results and theory developed by
+Adiprasito, Huh, and Katz [AHK15] to show that log( g M (z1 , . . . , zn )) is concave as a function on
+the positive orthant (see Theorem 4.2). Any real stable polynomial with nonnegative coefficients
+is log-concave on the positive orthant but the converse is not necessarily true. In this paper we
+
+
+                                                             5
+study properties of log-concave polynomials with nonnegative coefficients as a generalization of
+real stable polynomials and show that they satisfy many of the closure properties of real stable
+polynomials. Here, we mainly focus on applications in approximate counting, but we hope that
+these techniques can be used for many other applications in algorithm design, operator theory,
+and combinatorics.
+     Our second ingredient is a general framework for approximate counting based on convex
+optimization. We consider probability distributions µ : 2[n] → R ≥0 on subsets of [n]. Firstly, we
+show that if µ has a log-concave generating polynomial, we can approximate its entropy using the
+marginal probabilities of the underlying elements (see Theorem 5.2). The marginal probability µi
+of an element i ∈ [n] is the probability that i is included in a random sample of µ. We show that
+∑ni=1 (µi log µ1i + (1 − µi ) log 1−1µi ) gives a “good” approximation of the entropy H(µ) of µ.
+     This is particularly interesting when µ is the uniform distribution over the bases of a matroid
+M = ([n], I), in which case H(µ) equals log(|B M |). From the marginals µi , one can approximate
+H(µ), but finding the marginal probabilities is no easier than estimating H(µ). Instead, we
+observe that the vector of marginals (µ1 , . . . , µn ) must lie in P M . So instead of trying to find
+µi ’s, we use a convex program to find a point p = ( p1 , . . . , pn ) ∈ P M maximizing the sum
+of marginal entropies, ∑ni=1 ( pi log p1i + (1 − pi ) log 1−1 pi ). Using properties of maximum entropy
+convex programs (see Theorem 2.10), we show that this also gives a “good” approximation of
+H(µ) = log(|B M |).
+     To prove Theorem 1.3, we exploit some of the previous tools that a subset of authors devel-
+oped [AO17] to approximate the number of bases in the intersection of two real stable matroids.
+In this paper we generalize these techniques to all matroids. In the process we show that for any
+matroid M the polynomial g M is completely log-concave, meaning that taking directional deriva-
+tives of the polynomial g M with respect to directions in R n≥0 results in a polynomial that as a
+function is log-concave on the positive orthant (see Theorem 4.2).
+
+1.4 Algorithmic Framework
+Our algorithms in the cases of a single matroid and the intersection of two matroids are actually
+instantiations of the same framework that could be applied to more general discrete structures.
+We use a general framework based on convex programming. Take an arbitrary family B ⊆ 2[n] of
+subsets of {1, . . . , n} as our discrete object. For us B will be either the set of bases of a matroid, or
+the common bases of two matroids, but our framework could be applied to more general families.
+We assume that we can optimize linear functions over the polytope PB = conv{1B | B ∈ B}.
+This is true in both cases involving matroid(s), as long as we have access to the corresponding
+independence oracle(s).
+    The key observation is that the entropy of the uniform distribution µ over the elements of
+B equals log(|B|) and that using subadditivity of the entropy we can relate this entropy to the
+points in PB . More precisely if µi is the marginal probability of element i being in a randomly
+chosen element of B , then (µ1 , . . . , µn ) is a point of PB ; it is precisely the average of all vertices
+
+
+
+
+                                                     6
+of PB . This fact, together with subadditivity of the entropy gives us
+                            n                                
+                                     1                   1
+    log(|B|) = H(µ) ≤ ∑ µi log + (1 − µi ) log
+                          i=1
+                                     µi                1 − µi
+                               (                                                                    )
+                                  n                                  
+                                           1                    1
+                        ≤ max ∑ pi log + (1 − pi ) log                 p = ( p1 , . . . , p n ) ∈ P B .
+                                 i=1
+                                           pi                 1 − pi
+The last quantity is something that we can efficiently compute, because we can optimize over the
+polytope PB . Therefore, we have a convex-programming-based way of obtaining an upper bound
+for log(|B|). By exponentiating the result, we get an upper bound on |B|; this is the output of
+our algorithm, β in Theorems 1.1 and 1.3. Our results show that for matroids and intersections
+of two matroids, this upper bound becomes a “good” approximation, in the sense that there is
+a complementary lower bound. We leave the question of finding more discrete structures for
+which this algorithm provides a “good” approximation open. As a potential direction, we make
+the following concrete conjecture.
+Conjecture 1.6. Let G = (V, E) be a graph with an even number of nodes, and let B ⊆ 2E be the set of
+all perfect matchings in G. Then
+                  (                                        )
+                               1                1
+             max ∑ pi log + (1 − pi ) log              p ∈ PB − O(|V |) ≤ log(|B|).
+                    i∈ E
+                               pi            1 − pi
+
+   If Conjecture 1.6 is correct, we immediately get a deterministic polynomial time 2O(|V |) -approximation
+algorithm for counting perfect matchings, because we have efficient optimization over PB . To the
+best of our knowledge, for nonbipartite graphs, no such result is known as of this writing.
+   Finally we remark that this framework can also handle weighted counting. For weight vector
+λ = (λ1 , . . . , λn ) ∈ R n≥0 , the λ-weighted count of a family B ⊆ 2[n] is simply
+
+                                                 ∑ ∏ λi .
+                                                B ∈B i∈ B
+
+For λ1 , . . . , λn = 1, this quantity becomes |B|. To handle λ-weighted counts we can simply
+change our concave program slightly to
+                       (                                                                 )
+                          n                               
+                                   λi                1
+                    max ∑ pi log + (1 − pi ) log            p = ( p1 , . . . , p n ) ∈ P B .
+                         i=1
+                                   pi              1 − pi
+In Section 8 we show that this is always an upper bound on the logarithm of λ-weighted count
+of B , and that for matroids and intersections of two matroids, this is a “good” approximation.
+
+1.5 Organization
+The rest of the paper is organized as follows. In Section 2, we go over the necessary preliminaries
+from matroid theory, convex entropy programs, linear algebra and develop some of the theory of
+log-concave polynomials. In Section 3 we review some tools from combinatorial Hodge theory
+and derive a connection with the application of differential operators to the basis generating
+polynomial of a matroid. Then, in Section 4 we prove that the generating polynomial of any
+matroid is log-concave. In Section 5 we prove that one can approximate the entropy of a log-
+concave distribution from its marginals. In Section 6 we prove Theorem 1.1 and in Section 7 we
+prove Theorem 1.3. Finally, Section 8 contains the proof of Theorem 1.5.
+
+                                                     7
+1.6 Acknowledgements
+We would like to thank Matt Baker, June Huh, and Josephine Yu for their comments on an
+early draft of this paper. Part of this work was done while the first and third authors were
+visiting the Simons Institute for the Theory of Computing. It was partially supported by the DI-
+MACS/Simons Collaboration on Bridging Continuous and Discrete Optimization through NSF
+grant CCF-1740425. Shayan Oveis Gharan is supported by the NSF grant CCF-1552097 and ONR-
+YIP grant N00014-17-1-2429. Cynthia Vinzant was partially supported by the National Science
+Foundation grant DMS-1620014.
+
+
+2 Preliminaries
+First, let us establish some notational conventions. Unless otherwise specified, all logs are in
+base e. We often use bold letters to emphasize symbols representing a vector, array, or matrix of
+numbers or variables. All vectors are assumed to be column vectors. For two vectors v, w ∈ R n ,
+we denote the standard dot product between v and w by hv, wi = v⊺ w. We use R >0 and R ≥0 to
+denote the set of positive and nonnegative real numbers, respectively, and [n] to denote {1, . . . , n}.
+When n is clear from context, for a set S ⊆ [n], we let 1S ∈ R n denote the indicator vector of S
+with (1S )i = 1 if i ∈ S, and is 0 otherwise. Abusing notation, we let 1i = 1{i} be the i-th element
+                                                                                      p
+of the standard basis for R n . For vectors z, p ∈ R n we use z p to denote ∏ni=1 zi i . Similarly we let
+                           n
+e p denote ∏ni=1 e pi = e∑i=1 pi . For a vector z ∈ R n and a set S ⊆ [n], we let zS denote ∏i∈S zi .
+     We use ∂zi or ∂i to denote the partial differential operator ∂/∂zi . Given v = (v1 , . . . , vn ) ∈ R n ,
+we will use ∂v to denote the differential operator ∑ni=1 vi ∂i . For a collection of vectors v1 , . . . , vk ∈
+R n , we use Dv1 ,...,vk to denote ∏ki=1 ∂vi . For a matrix V = [v1 | . . . | vk ] ∈ R n×k , viewed as a
+collection of column vectors, we use DV to denote Dv1 ,...,vk , i.e.,
+                                                     k       n
+                                             DV = ∏ ∑ Vij ∂i .
+                                                    j=1 i=1
+
+We denote the gradient of a function or polynomial g by ∇ g and the Hessian of g by ∇2 g. For
+a polynomial g ∈ R [z1 , . . . , zn ] and a number c ∈ R we write g(z1 , . . . , zn )|z1 =c to denote the
+restricted polynomial in z2 , . . . , zn obtained by setting z1 = c. For a polynomial g(z1 , . . . , zn ), we
+define supp( g) ⊂ Z n≥0 as the set of vectors κ = (κ1 , . . . , κn ) ∈ Z n≥0 such that the coefficient of the
+monomial ∏i zκi i is nonzero. The convex hull of supp( g) is known as the Newton polytope of g.
+We call a polynomial multiaffine if the degree of each variable is at most one.
+
+2.1 Log-Concave Polynomials
+We say that a polynomial g ∈ R [z1 , . . . , zn ] with nonnegative coefficients is log-concave if log( g) is
+a concave function over R n>0 . For simplicity, we consider the zero polynomial to be log-concave.
+Equivalently, g is log-concave if for any two points v, w ∈ R n≥0 and λ ∈ [0, 1] we have
+
+                                 g(λv + (1 − λ)w) ≥ g(v)λ · g(w)1−λ .
+
+A polynomial g with nonnegative coefficients is log-concave if and only if the Hessian of log( g) is
+negative semidefinite at all points of R n≥0 where it is defined. In particular, the set of log-concave
+
+                                                         8
+polynomials is closed in the Euclidean space of polynomials of degree ≤ d. To see this, note
+that the nonnegativity of the coefficients of g ensure that if g 6= 0, then log( g) is defined at all
+points of R n>0 . Furthermore the entries of the Hessian of log( g) at a point in R n>0 are continuous
+functions in the coefficients of g. The closed-ness of the set of log-concave polynomials then
+follows from the closed-ness of the cone of negative semidefinite matrices. The basic operation
+that preserves log-concavity is an affine transformation of the inputs.
+
+Lemma 2.1. Let g ∈ R [z1 , . . . , zn ] be a log-concave polynomial with nonnegative coefficients. Then for
+any affine transformation T : R m → R n with T (R m             n
+                                                       ≥0 ) ⊆ R ≥0 , g( T ( y1 , . . . , ym )) ∈ R [y1 , . . . , ym ] has
+nonnegative coefficients and is log-concave.
+
+Proof. We can write T as T (y) = Ay + b for some A ∈ R n×m and b ∈ R n , and one can check
+check that T (R m                n
+                        ≥0 ) ⊆ R ≥0 if and only if A and b have nonnegative entries. It follows that
+g( T (y1 , . . . , ym )) has nonnegative coefficients.
+    To check log-concavity, note that T being affine implies that for two points v, w ∈ R m  ≥0 and
+λ ∈ [0, 1], we have T (λv + (1 − λ)w) = λT (v) + (1 − λ) T (w). It follows that
+
+                                g( T (λv + (1 − λ)w)) = g(λT (v) + (1 − λ) T (w))
+                                                              ≥ g( T (v))λ · g( T (w))1−λ ,
+
+where the inequality follows from log-concavity of g.
+
+Proposition 2.2. The following operations preserve log-concavity:
+
+   1. Permutation: g 7→ g(zπ (1) , . . . , zπ (n) ) for π ∈ Sn .
+
+   2. Specialization: g 7→ g( a, z2 , . . . , zn ), where a ∈ R ≥0 .
+
+   3. Scaling: g 7→ c · g(λ1 z1 , . . . , λn zn ), where c, λ1 , . . . , λn ∈ R ≥0 .
+
+   4. Expansion: g(z1 , . . . , zn ) 7→ g(y1 + y2 + · · · + ym , z2 , . . . , zn ) ∈ R [y1 , . . . , ym , z2 , . . . , zn ].
+
+   5. Multiplication: g, h 7→ g · h where g, h are log-concave.
+
+Proof. Parts 1 to 4 follow by choosing an appropriate affine transformation T and applying
+Lemma 2.1. For Part 3 we also need to use the elementary fact that scaling by c ≥ 0 preserves
+log-concavity. For Part 5, note that log( g · h) = log g + log h. Since the sum of any two concave
+functions is concave, g · h is log-concave.
+
+    In general log-concavity is not preserved under taking derivatives. For example, g(z) =
+z4 /4 + z is log-concave on R >0 , but h = ∂g/∂z = z3 + 1 is not:
+
+           ∂2 log( g)  − 4( z3 − 2) 2                             ∂2 log(h)       −3z(z3 − 2)
+                      = 2 3           ≤0               and                      =                    = 3/4.
+               ∂z       z ( z + 4) 2                                  ∂z    z=1    ( z3 + 1) 2 z = 1
+
+In Section 4, we remedy this by considering completely log-concave polynomials, for which log-
+concavity is preserved under differentiation.
+
+
+
+
+                                                                 9
+2.2 Matroids
+Let M = ( E, I) be a matroid, as defined in Section 1. For any set S ⊆ E, the rank of S, denoted
+rank(S), is the size of the largest subset A ⊆ S such that A ∈ I . The rank of the matroid is the
+rank of the set E, and a set B ⊆ E is a basis of M if and only if B ∈ I and rank( B) = rank( E).
+    We say a matroid M is simple if it has no loops and no parallel elements, meaning that for
+all pairs i 6= j ∈ E, rank({i, j}) = 2. The dual matroid of M is the matroid M ∗ = ( E, I ∗ ) on
+the same set of elements E whose bases are the complements E \ B of bases B of M (and whose
+independent are subsets of those bases). Given two matroids, M1 = ( E1 , I1 ) and M2 = ( E2 , I2 ),
+we can also define their direct sum to be the matroid
+
+                         M1 ⊕ M2 = ( E1 ⊔ E2 , { I1 ⊔ I2 | I1 ∈ I1 , I2 ∈ I2 }),
+
+where ⊔ denotes disjoint union. When M1 , M2 have disjoint ground sets, this notion coincides
+with that of matroid union.
+   The matroid base polytope P M ⊂ R E of a matroid M is the convex hull of the indicator
+vectors of its bases. If M has rank r, it can also be defined by the following system of inequalities:
+                                                                                          
+                                                   h1E , pi = ∑i∈ E pi = r,               
+       P M = conv{1B | B ∈ B M } = p ∈ R E h1S , pi = ∑i∈S pi ≤ rank(S) ∀S ⊆ E, .                  (2)
+                                                    h1i , p i = pi ≥ 0             ∀i ∈ E.
+                                                                                          
+
+   While the above description requires exponentially many constraints (one for each set S ⊆ E),
+because of the matroidal structure, one can optimize a linear function over the vertices of P M in
+polynomial time, assuming access to an independence oracle, and thereby construct a separation
+oracle for the polytope [Cun84]. Using this, one can minimize any convex function over the
+matroid base polytope in polynomial time. See Boyd and Vandenberghe [BV04] for background
+on convex optimization.
+   For λ = (λ1 , . . . , λn ) ∈ R n≥0 , we define λ-weight of a subset of E by taking the product of
+weights of elements in the subset. That is, for a set S ⊆ E we use
+
+                                                   λS = ∏ λi                                      (3)
+                                                             i∈S
+
+to denote λ-weight of the set S. Note that if g M is the basis generating polynomial of a matroid
+M, as in Eq. (1), the λ-weight of a basis is the coefficient of the corresponding monomial in g M
+after scaling the variables by λ1 , . . . , λn , i.e.
+
+                                g M ( λ 1 z1 , . . . , λ n z n ) =    ∑ λ B ∏ zi .
+                                                                     B ∈B M   i∈ B
+
+
+2.3 Linear Algebra
+A symmetric matrix A ∈ R n×n is positive semidefinite (PSD), denoted A  0, if for all v ∈ R n ,
+
+                                                    v⊺ Av ≥ 0,
+
+and it is positive definite (PD) if the above inequality is strict for all v 6= 0. Similarly, A is
+negative semidefinite (NSD), denoted A  0, if v⊺ Av ≤ 0 for all v ∈ R n , and negative definite
+
+                                                          10
+(ND) if v⊺ Av < 0 for v 6= 0. Equivalently, a real symmetric matrix is PSD (PD, NSD, ND) if its
+eigenvalues are nonnegative (positive, nonpositive, negative), respectively.
+   Let A ∈ R n×n be a symmetric matrix with eigenvalues λ1 ≥ · · · ≥ λn and corresponding
+orthonormal eigenvectors v1 , . . . , vn . Then, we can write A as
+                                                          n
+                                                   A = ∑ λi vi v⊺i .
+                                                        i=1
+
+    We say that a sequence of real numbers β 1 ≥ · · · ≥ β n interlaces α1 ≥ α2 ≥ · · · ≥ αn if
+
+                                    α1 ≥ β 1 ≥ α2 ≥ · · · ≥ β n −1 ≥ α n ≥ β n .
+
+The following useful theorem is known as Cauchy’s interlacing theorem:
+
+Theorem 2.3 (Cauchy’s Interlacing Theorem I [see HJ13, Corollary 4.3.9]). For a symmetric matrix
+A ∈ R n×n and vector v ∈ R n , the eigenvalues of A interlace the eigenvalues of A + vv⊺ .
+
+    The following is an immediate consequence:
+
+Lemma 2.4. Let A ∈ R n×n be a symmetric matrix and let P ∈ R m×n . If A has at most one positive
+eigenvalue, then PAP⊺ has at most one positive eigenvalue.
+
+Proof. Since A has at most one positive eigenvalue, we can write A = B + vv⊺ for some vector
+v ∈ R n and some negative semidefinite matrix B. Then PAP⊺ = PBP⊺ + Pvv⊺ P⊺ . First, observe
+that PBP⊺  0, since for x ∈ R m , x⊺ PB⊺ Px = ( Px)⊺ B( Px) ≤ 0. Second, let w = Pv ∈ R m .
+Then Pvv⊺ P⊺ = ww⊺ and by Theorem 2.3, the eigenvalues of PBP⊺ interlace the eigenvalues of
+PBP⊺ + ( Pv)( Pv)⊺ . Since all eigenvalues of PBP⊺ are nonpositive, PAP⊺ = PBP⊺ + ww⊺ has at
+most one positive eigenvalue.
+
+    Another version of Cauchy’s Interlacing Theorem can be stated as follows:
+
+Theorem 2.5 (Cauchy’s Interlacing Theorem II, [see HJ13, Theorem 4.3.17]). Let A ∈ R n×n be
+symmetric and B ∈ R (n−1)×(n−1) a principal submatrix of A. Then the eigenvalues of B interlace the
+eigenvalues of A. That is,
+                               α1 ≥ β 1 ≥ α2 ≥ · · · ≥ β n −1 ≥ α n ,
+where α1 , . . . , αn and β1 , . . . , β n−1 are the eigenvalues of A and B, respectively.
+
+    This has the immediate corollary:
+
+Corollary 2.6. Let A ∈ R n×n be a symmetric matrix. If there is an (n − 1)-dimensional linear subspace
+on which the quadratic form z 7→ z⊺ Az is nonpositive, then A has at most one positive eigenvalue.
+
+Proof. After a change of basis, we can assume that the (n − 1)-dimensional linear subspace on
+which A is negative semidefinite is spanned by coordinate vectors e1 , . . . , en−1 . Then the top-left
+principal minor of A is negative semidefinite, so by Theorem 2.5, A has at most one positive
+eigenvalue.
+
+    We will also need the following lemma inspired by arguments of Huh and Wang [HW17].
+
+
+
+                                                          11
+Lemma 2.7. Let A ∈ R n×n be a real symmetric matrix with nonnegative entries and at most one positive
+eigenvalue. Then for every v ∈ R n≥0 , the n × n matrix
+                                           (v⊺ Av) · A − t( Av)( Av)⊺
+is negative semidefinite for all t ≥ 1.
+Proof. Note that since the set of negative semidefinite matrices is a closed convex cone, it suffices
+to prove this for v ∈ R n>0 and t = 1. If A is the zero matrix, the claim is immediate. Otherwise,
+v⊺ Av > 0. Let w ∈ R n and consider the 2 × n matrix P with rows v⊺ and w⊺ . Then
+                                               ⊺            
+                                                v Av v⊺ Aw
+                                     PAP =⊺
+                                                               .
+                                                w⊺ Av w⊺ Aw
+By Lemma 2.4, PAP⊺ has at most one positive eigenvalue. On the other hand, the diagonal entry
+v⊺ Av is positive, so Theorem 2.5 implies that PAP⊺ has a positive eigenvalue, meaning that it
+must have exactly one. It follows that
+                        det( PAP⊺ ) = (v⊺ Av) · (w⊺ Aw) − (w⊺ Av) · (v⊺ Aw) ≤ 0.                      (4)
+Thus w⊺ ((v⊺ Av) · A − ( Av)( Av)⊺ )w ≤ 0 for all w ∈ R n .
+
+2.4 Entropy and External Fields
+For any probability distribution µ supported on a finite set Ω, its entropy, H(µ), is defined to be
+                                                                       1
+                                          H(µ) = ∑ µ(ω ) log               .
+                                                  ω ∈Ω
+                                                                     µ(ω )
+
+For a number p ∈ [0, 1], we also use the shorthand
+                                                     1                1
+                                    H( p) = p log      + (1 − p) log
+                                                     p               1− p
+to denote the entropy of the Bernoulli distribution with parameter p. See Cover and Thomas
+[CT06] for background on entropy and its properties. One of the basic facts we will use about
+entropy is subadditivity.
+Fact 2.8. Suppose that X and Y are finitely supported, not necessarily independent, random variables. Let
+the joint distribution of ( X, Y ) be µ, and let µ X and µY denote the marginal distributions of X and Y
+respectively. Then
+                                         H(µ) ≤ H(µ X ) + H(µY ),
+with equality if and only if X and Y are independent.
+   Let µ : 2[n] → R ≥0 be a nonnegative function; we say µ is a probability distribution if ∑S⊆[n] µ(S) =
+1. The support of µ, denoted supp(µ), is the collection of S ⊆ [n] for which µ(S) 6= 0, and the
+Newton polytope Pµ ⊂ R n of µ is the convex hull of the indicator vectors in its support, i.e.,
+Pµ = conv{1S | S ∈ supp(µ)}. The entropy of µ equals
+                                                                           1
+                                      H(µ) =        ∑          µ(S) log
+                                                                          µ(S)
+                                                                               .
+                                                S ∈supp( µ )
+
+    To use entropy for approximate counting, we use the following fundamental fact:
+
+                                                         12
+Proposition 2.9. If u : 2[n] → R ≥0 is the uniform distribution over S ∈ supp(u), then H(u) equals
+the log of the number of elements in the support of u and this is an upper bound for the entropy of any
+distribution µ with supp(µ) ⊆ supp(u). That is, for any distribution µ : 2[n] → R ≥0 ,
+
+                                                  H(µ) ≤ log(|supp(µ)|),
+
+with equality when µ is the uniform distribution over its support.
+    We define the generating polynomial of µ to be the multiaffine polynomial
+
+                                            gµ ( z1 , . . . , z n ) =    ∑ µ( S ) ∏ zi .
+                                                                        S ⊆[n ]          i∈S
+
+The nonnegative function or probability distribution µ is said to be log-concave if its generating
+polynomial gµ is log-concave as a function on the positive orthant. The marginal probability of
+an element i, µi , is the probability that i is in a random sample from µ,
+
+                      µi = P S∼µ [i ∈ S] = ∑ µ(S) = ∂zi gµ (z1 , . . . , zn ) z =···=zn =1 .
+                                                                                                        1
+                                                        S∋i
+
+   For a collection of positive numbers λ = (λ1 , . . . , λn ), the λ-external field applied to µ is a
+probability distribution λ ⋆ µ : 2[n] → R ≥0 where for every S,
+                                                               !
+                                      P λ⋆µ [ S] ∝ λS · µ(S) =                    ∏ λi     · µ ( S ).             (5)
+                                                                                  i∈S
+
+As with matroid weights, we note that
+
+                       gλ ⋆ µ ( z1 , . . . , z n ) ∝    ∑ λ S µ ( S ) ∏ z i = gµ ( λ 1 z1 , . . . , λ n z n ) .
+                                                       S ⊆[n ]            i∈S
+
+    The following theorem has been rediscovered many times:
+Theorem 2.10 ([Asa+10; SV14]). Let µ : 2[n] → R ≥0 be a function. For any point p in the polytope Pµ
+and for any ǫ > 0, there exist weights λ1 , . . . , λn ∈ R >0 such that the marginal probabilities of λ ⋆ µ are
+within ǫ of p, i.e., for all i ∈ [n],
+                                        pi − P S∼λ⋆µ [i ∈ S] ≤ ǫ.
+   If p is in the relative interior of the polytope Pµ , it turns out that we can take ǫ = 0 in the
+above theorem. In either case though, we have the following.
+Corollary 2.11. Let µ : 2[n] → R ≥0 be a nonnegative function and let p ∈ Pµ . There is a probability
+distribution µ̃ with marginals p such that supp(µ̃) ⊆ supp(µ). Moreover µ̃ can be obtained as a limit of
+distributions of the form λ ⋆ µ for λ ∈ R n>0 .
+
+Proof. Note that the set of probability distributions µ̃ : 2[n] → R ≥0 with supp(µ̃) ⊆ supp(µ) is
+compact. By Theorem 2.10, for any ǫ > 0, there exist weights λ = (λ1 , . . . , λn ) ∈ R n>0 such that
+for each i, the i-th marginal of λ ⋆ µ is within ǫ of pi . By passing to a convergent subsequence,
+we can take µ̃ : 2[n] → R ≥0 to be the limit of the distributions λ ⋆ µ as ǫ → 0. Then the marginals
+of µ̃ are exactly p, and, since the support of λ ⋆ µ is contained in the support of µ for all λ, it
+follows that the support of µ̃ is also contained in the support of µ.
+
+                                                                    13
+    The following corollary follows from Proposition 2.2 and Theorem 2.10.
+Corollary 2.12. Let µ : 2[n] → R ≥0 be log-concave and let p ∈ Pµ . There is a log-concave probability
+distribution µ̃ with marginals p such that supp(µ̃ ) ⊆ supp(µ). Moreover, µ̃ can be obtained as the limit
+of distributions λ ⋆ µ for λ ∈ R n>0 .
+Proof. For every λ ∈ R n>0 ,
+
+                                   gλ ⋆ µ ( z1 , . . . , z n ) ∝ gµ ( λ 1 z1 , . . . , λ n z n ) .
+
+Therefore by Proposition 2.2, Part 3, each λ ⋆ µ is log-concave. Since the set of log-concave poly-
+nomials is closed in the Euclidean topology, it follows that the limit µ̃ given in the proof of
+Corollary 2.11 is also log-concave.
+
+Remark 2.13. Although we will not use this fact, it is worth mentioning that the distribution µ̃
+promised by Corollary 2.12 can be obtained by solving a maximum entropy program:
+                                (                                        )
+                                             µ(S)
+                        argmax ∑ µ̃ (S) log          ∀i ∈ [n] : µ̃i = pi
+                            µ̃    S
+                                             µ̃ (S)
+
+    The entropy has the following interesting relationship with geometric programs.
+Lemma 2.14 ([SV14]). Let µ : 2[n] → R ≥0 have generating polynomial gµ ∈ R [z1 , . . . , zn ]. Let p be a
+point in the Newton polytope of µ. Then
+                                                      !
+                                             gµ ( z )                 µ(S)
+                               log infn            p    = ∑ µ̃(S) log          ,
+                                    z ∈ R >0 ∏ i z i
+                                                   i      S
+                                                                      µ̃ ( S )
+
+where µ̃ is the probability distribution given by Corollaries 2.11 and 2.12. In particular, if µ is the indicator
+function of a family B ⊆ 2[n] , i.e., if µ only takes values in {0, 1}, then the above quantity is the same as
+the entropy H(µ̃).
+    For us, this will be of particular interest when µ is the indicator function over its support. In
+this case, by Proposition 2.9, the infimum in Lemma 2.14 will give a lower bound for the entropy
+of µ and thus the log of the size of its support.
+
+
+3 Hodge Theory for Matroids
+In this section we review several recent developments on combinatorial Hodge theory by Adipr-
+asito, Huh, and Katz [AHK15] and Huh and Wang [HW17]. The main result we prove in this
+section is Theorem 3.4. Later in Section 4, we use this to prove that the generating polynomial of
+the bases of any matroid is a log-concave function over the positive orthant.
+    In this section, we take all matroids to be simple. To describe the algebraic tools used [AHK15;
+HW17], we introduce a little more matroid terminology, namely the theory of flats. A subset
+F ⊆ E is a flat of M = ( E, I) if it is a maximal set with rank equal to rank( F ), i.e., for any i 6∈ F,
+rank( F ∪ {i }) = rank( F ) + 1. In particular, F = E is the unique flat of rank equal to rank( M ).
+    We say that a flat F is proper if F 6= E. Flats F1 , F2 are comparable if F1 ⊆ F2 or F2 ⊆ F1 and they
+are incomparable otherwise. A flag of M is a strictly monotonic sequence of nonempty proper flats
+of M, F1 ( F2 ( · · · ( Fl . Note that any flag of M has at most rank( M ) − 1 flats.
+
+                                                                14
+3.1 The Chow ring
+Here we go through some of the commutative algebra used by Adiprasito, Huh, and Katz
+[AHK15] and explain a special case of their main theorem. Following the set up of Adipra-
+sito, Huh, and Katz [AHK15], for a matroid M of rank r + 1 on the ground set E, define the Chow
+ring to be the ring
+                      A∗ ( M ) = R [ x F | F is a nonempty proper flat of M ]
+whose generators x F satisfy the relations
+         x F1 x F2 = 0 for all incomparable F1 , F2          and        ∑ xF − ∑ xF = 0 for all i, j ∈ E.
+                                                                        F∋i        F∋ j
+
+Since these relations are homogeneous polynomials in the generators, A∗ ( M ) is a graded ring,
+and we use Ad ( M ) to denote homogeneous polynomials in A∗ ( M ) of degree d. It turns out that
+the top degree part, Ar ( M ), is a one-dimensional vector space over R, and we write “deg” for
+the isomorphism Ar ( M ) ≃ R determined by the property that deg( x F1 . . . x Fr ) = 1 for any flag
+F1 ( F2 ( · · · ( Fr of M.
+   A function f on the set of nonempty proper subsets of E is said to be strictly submodular if
+                                      f (S) + f ( T ) > f (S ∩ T ) + f (S ∪ T )
+for any two incomparable subsets S, T of E, where we take f (∅) = f ( E) = 0. We say f is
+submodular if it satisfies the weak form of the above inequality, i.e., with possible equality. We
+remark that our notion of submodularity differs slightly from the conventional notion, in that we
+effectively require, in addition to conventional submodularity, that f takes a value of 0 on ∅, E.
+    Define the open convex cone
+                              (                                   )
+                       K ( M) =      ∑ f ( F) xF f is strictly submodular             ⊂ A1 ( M ),
+                                     F
+
+where the sum is over all flats of M. We will use K ( M ) to denote the Euclidean closure of this
+cone, namely the elements of A1 ( M ) whose coefficients give a submodular function on subsets
+of E.
+    The following is a special case of one of the main theorems of Adiprasito, Huh, and Katz
+[AHK15].
+Theorem 3.1 ([AHK15, Theorem 8.9]). Let M be a simple matroid of rank r + 1. For any ℓ0 , ℓ1 , . . . , ℓr −2
+in K ( M ), consider the symmetric bilinear form Qℓ1 ,...,ℓr−2 : A1 ( M ) × A1 ( M ) → R defined by
+                                Qℓ1 ,...,ℓr−2 (v, w) = deg(v · ℓ1 · ℓ2 · . . . ℓr −2 · w).
+Then, as a quadratic form on A1 ( M ), Qℓ1 ,...,ℓr−2 is negative definite on the kernel of Qℓ1 ,...,ℓr−2 (ℓ0 , ·), i.e.,
+on                               n                                         o
+                                   v ∈ A1 ( M ) Qℓ1 ,...,ℓr−2 (ℓ0 , v) = 0 .
+    Note that the kernel of Qℓ1 ,...,ℓr−2 (ℓ0 , ·) has codimension one, implying that the operator
+Qℓ1 ,...,ℓr−2 has at most one nonnegative eigenvalue.
+    Also, observe that the above result naturally extends to taking ℓ0 , ℓ1 , . . . , ℓr −2 in the Euclidean
+closure K ( M ) at the expense of having the slightly weaker guarantee that the operator Qℓ1 ,...,ℓr−2
+will be negative semidefinite on the kernel of Qℓ1 ,...,ℓr−2 (ℓ0 , ·). In this case, Qℓ1 ,...,ℓr−2 has at most one
+positive eigenvalue.
+
+                                                           15
+3.2 Graded Möbius Algebra
+To connect the Chow ring with the basis generating polynomial of a matroid, we introduce
+another algebra used by Huh and Wang [HW17]. Here we take M to be a simple matroid of rank
+r on the ground set [n]. For flats F1 , F2 , define F1 ∨ F2 to be the inclusion-minimal flat containing
+F1 ∪ F2 .
+    Let B∗ ( M ) denote the ring R [y F | F is a flat of M ] whose generators y F satisfy the relations
+                                  (
+                                    y F1 ∨ F2 if rank( F1 ) + rank( F2 ) = rank( F1 ∨ F2 ),
+                    y F1 · y F2 =                                                                      (6)
+                                    0         otherwise,
+
+for all pairs of flats F1 , F2 . These relations imply that for any flat F and any basis IF of F, y F
+equals the product ∏i∈ IF yi , where yi = y{i} . It follows that we can instead take y1 , . . . , yn as
+generators of B∗ ( M ) and that the relations on these generators are degree-homogeneous. Then
+B∗ ( M ) is a graded algebra and we use Bd ( M ) to denote the homogeneous polynomials of degree
+d in B∗ ( M ).
+     Huh and Wang [HW17] relate this to the Chow ring as follows. Let M0 denote the matroid of
+rank r + 1 on ground set {0, 1, . . . , n} obtained by adding 0 as a coloop. Its independent sets have
+the form I or {0} ∪ I, where I is independent in M. In the Chow ring of M0 , for each i = 1, . . . , n,
+define the degree one element
+                                         β i = ∑ x F ∈ A 1 ( M0 ) ,
+                                              F:i∈ F,0/
+                                                      ∈F
+
+where the sum is taken over flats F of M0 for which i ∈ F and 0 ∈/ F. Since the indicator function
+                             / F is submodular, β i belongs to the closed convex cone K ( M0 ).
+of the condition i ∈ F and 0 ∈
+    Huh and Wang use this to establish the following relationship between A∗ ( M0 ) and B∗ ( M ).
+
+Theorem 3.2 ([HW17, Prop 9]). There is a unique injective graded R-algebra homomorphism
+
+                            ϕ : B ∗ ( M ) 7 → A ∗ ( M0 )        with       ϕ ( yi ) = β i .
+
+    Note that for any basis B of M, ∏ i∈ B yi = y[n] is nonzero in Br ( M ). On the other hand, if
+S ⊆ [n] is a dependent set of the matroid M, then ∏i∈S yi is zero in B∗ ( M ). Then from the
+existence and injectivity of this map, it follows that for any set B ⊆ [n] with | B| = r, up to global
+scaling by a positive real number,
+                                         ! (
+                                                1 if B is a basis of M,
+                              deg ∏ β i =
+                                   i∈ B         0 otherwise,
+
+where deg : Ar ( M0 ) → R is the isomorphism discussed in Section 3.1.
+    This is particularly useful for us because of the following connection with differential opera-
+tors on the basis generating polynomial g M (z1 , . . . , zn ).
+
+Proposition 3.3. For a matrix V ∈ R n×r with columns v1 . . . vr ∈ R n ,
+                                               !
+                                         r   n
+                                 deg    ∏ ∑ Vij βi          = ∂v1 · · · ∂vr g M (z).
+                                        j=1 i=1
+
+
+
+
+                                                           16
+Furthermore, for any 0 ≤ k ≤ r and λ = (λ1 , . . . , λn ) ∈ R n ,
+                              !r − k                
+                        n               k n
+                deg ∑ λi β i         · ∏ ∑ Vij β i  = (r − k)! · ∂v · · · ∂v g M (z)|
+                                                                               1        k        z=λ .
+                            i=1              j=1 i=1
+
+Proof. For the first claim, note that both sides are linear in each vi , so it suffices to prove the claim
+when the columns are unit coordinate vectors [v1 | . . . | vr ] = [1i1 | . . . | 1ir ]. In this case we see
+that                                                           (
+                                                                 1 if {i1 , . . . , ir } is a basis of M,
+              deg( β i1 · · · β ir ) = ∂i1 · · · ∂ir g M (z) =
+                                                                 0 otherwise.
+The general case then follows from linearity in each column.
+   For the second claim, again both sides are linear in each of the first k columns, v1 , . . . , vk , so
+we can consider [v1 | . . . | vk ] = [1i1 | . . . | 1ik ]. Let I = {i1 , . . . , ik }. If rank( I ) < k, then ∏i∈ I β i is
+zero in A∗ ( M0 ) and similarly (∏i∈ I ∂i ) g M (z) is zero. Otherwise, we find that
+                         !r − k                                                               !
+                   n
+                                                                 B \ I
+         deg ∑ λi β i            ∏ β i  = (r − k ) ! · ∑ λ = (r − k ) ! · ∏ ∂ i g M ( z) ,
+                    i=1             i∈ I                    B⊇ I                        i∈ I             z=λ
+
+where the middle sum is taken over bases B ∈ B( M ) containing the set I.
+
+    We can then translate Theorem 3.1 into a statement about g M (z).
+Theorem 3.4. Let M be a simple matroid of rank r on the ground set [n]. For any 0 ≤ k ≤ r − 2, matrix of
+nonnegative real numbers V ∈ R n≥×0 k , and any λ ∈ R n≥0 , the symmetric bilinear form qV ,λ : R n × R n →
+R given by
+                                   qV ,λ ( a, b) = ∂ a ∂b DV g M (z)| z=λ
+is negative semidefinite on the kernel of qV ,λ (λ, ·). In particular, the Hessian of DV g M (z) evaluated at
+z = λ has at most one positive eigenvalue.
+Proof. For 1 ≤ j ≤ k, define ℓ j = ∑ni=1 Vij β i and for k < j ≤ r − 2, define ℓ j = ∑ni=1 λi β i . For
+each i, β i belongs to the convex cone K ( M0 ), so by the nonnegativity of Vij and λi , so does each
+ℓ j . By Proposition 3.3, qV ,λ equals the restriction of the symmetric bilinear form Qℓ1 ,...,ℓr−2 to the
+subspace of A1 ( M0 ) spanned by { β 1 , . . . , β n }. That is, for all a, b ∈ R n ,
+                                                                                          !
+                                               1
+                                          (r − k − 2)! ℓ1 ,...,ℓr−2 ∑
+                          qV ,λ ( a, b) =               Q               a i β i , ∑ bi β i .
+                                                                     i            i
+
+Let ℓ0 = ∑i λi β i . By Theorem 3.1, Qℓ1 ,...,ℓr−2 is negative semidefinite on the kernel of Qℓ1 ,...,ℓr−2 (ℓ0 , ·),
+implying that qV ,λ is negative semidefinite on the kernel of qV ,λ (λ, ·).
+    Finally, note that the Hessian of DV g M (z) evaluated at z = λ is the n × n matrix representing
+the bilinear form qV ,λ with respect to the coordinate basis. Since it is negative semidefinite on a
+linear subspace of dimension n − 1, namely the kernel of qV ,λ (λ, ·), Corollary 2.6 implies that it
+has at most one positive eigenvalue.
+
+    In the next section we use the above statement to show that generating polynomials of ma-
+troids are log-concave and remain log-concave under directional derivatives along directions in
+the positive orthant.
+
+                                                           17
+4 Completely Log-Concave Polynomials
+We call a polynomial g ∈ R [z1 , . . . , zn ] completely log-concave if for every k ≥ 0 and nonnegative
+matrix V ∈ R n≥×0 k , DV g(z) is nonnegative and log-concave as a function over R n>0 , where
+                                                                        !
+                                                         k      n
+                                      DV g ( z ) =    ∏ ∑ Vij ∂i g(z).
+                                                      j=1 i=1
+
+Note that for k = 0, this condition implies log-concavity of g itself. We call a distribution µ :
+2[n] → R ≥0 completely log-concave if and only if gµ is completely log-concave.
+Remark 4.1. Related notions of “strongly log-concave” and “Alexandrov-Fenchel” polynomials
+were studied in the work of Gurvits [Gur08; Gur09] to design approximation algorithms for
+mixed volume of polytopes and to show Newton-like inequalities for coefficients of these poly-
+nomials. Gurvits [Gur08] also mentions that because a positive combination of convex polytopes
+is a convex polytope, the stronger property we call complete log-concavity is satisfied for the
+volume polynomial. Unlike strong log-concavity, complete log-concavity is readily seen to be
+preserved under many useful operations. Completely log-concave polynomials and their proper-
+ties will be the subject of a future work, but in this section, we will study the main properties we
+need for the analysis of our counting algorithm.
+    Note that complete log-concavity implies nonnegativity of the coefficients of g. This is because
+the coefficient of ∏ i zκi i in g is a positive multiple of ∂κ11 · · · ∂κnn g(z) z=0 .
+    To verify complete log-concavity for a polynomial with nonnegative coefficients, we only have
+to check log-concavity of order k derivatives for k ≤ r − 2. For k ≥ r, DV g(z) is a nonnegative
+constant and for k = r − 1, it is a linear function with nonnegative coefficients in z1 , . . . , zn .
+    The main result of this section is that the basis generating polynomial of any matroid is
+completely log-concave.
+
+Theorem 4.2. For any matroid M, g M (z) is completely log-concave over the positive orthant.
+
+   First, we show that the statement holds when M is a simple matroid. To do this, we use a
+corollary of Euler’s identity, which states that if a polynomial g(z) is homogeneous of degree d
+then
+                                                     n
+                                       h∇ g, zi = ∑ zi ∂i g = d · g(z).                             (7)
+                                                     i=1
+
+Corollary 4.3 (Euler’s identity). If g ∈ R [z1 , . . . , zn ] is homogeneous of degree d, then
+
+                     ∇ 2 g · z = ( d − 1) · ∇ g      and            z⊺ · ∇2 g · z = d(d − 1) · g.
+
+Proof. The i-th entry of the vector ∇2 g · z equals ∑nj=1 z j · ∂i ∂ j g. Since ∂i g is homogeneous of
+degree d − 1, it follows by Euler’s identity, Eq. (7), that this equals (d − 1)∂i g. Multiplying by z⊺
+and using Eq. (7) again gives the second claim.
+
+Lemma 4.4. If M is a simple matroid, then g M (z) is completely log-concave.
+
+
+
+
+                                                           18
+Proof. Suppose that M is a simple matroid of rank r on ground set [n]. Let 0 ≤ k ≤ r − 2 and
+take a nonnegative matrix V ∈ R n≥×0 k . We need to show that for any λ ∈ R n>0 , the Hessian of
+log( DV g M (z)) is negative semidefinite at the point z = λ. Note that for h ∈ R [z1 , . . . , zn ]
+
+                 h2 · ∇2 log(h) = h · ∂i ∂ j h − ∂i h · ∂ j h 1≤i,j≤n = h · ∇2 h − (∇h)(∇h)⊺ .
+                                                            
+
+
+Now let h = DV g M (z) and consider the quadratic form qV ,λ ( a, b) = ∂a ∂b h(λ) as in Theorem 3.4.
+This is represented by the Hessian matrix of h at z = λ:
+
+                                  ∇2 h z=λ = ∂i ∂ j h(λ) 1≤i,j≤n .
+                                                       
+
+
+By Theorem 3.4 this matrix has at most one positive eigenvalue. Since it also has nonnegative
+entries, we can apply Lemma 2.7 with A = ∇2 h z=λ and v = λ. Since h(z) is homogeneous of
+degree r − k, Corollary 4.3 implies that
+
+       v⊺ Av = (r − k)(r − k − 1)h(λ)            and     ( Av)( Av)⊺ = (r − k − 1)2 · (∇h(λ))(∇h(λ))⊺ .
+
+Then Lemma 2.7 states that the matrix (v⊺ Av) · A − t( Av)( Av)⊺ =
+                                                                         
+                                           2       r−k−1
+                (r − k)(r − k − 1) · h · ∇ h − t ·           · (∇h)(∇h) ⊺
+                                                     r−k                    z=λ
+
+is negative semidefinite for all t ≥ 1. Taking t = r −r −k−k 1 then shows that h(λ)2 · ∇2 log(h) z=λ is
+negative semidefinite. Thus h = DV g M is log-concave on R n>0 .
+
+    Next we show that similar to Lemma 2.1, affine transformations preserve complete log-concavity.
+Lemma 4.5. Let T : R m → R n be an affine transformation such that T (R m                             n
+                                                                                            ≥0 ) ⊆ R ≥0 , and let
+g ∈ R [z1 , . . . , zn ] be a completely log-concave polynomial. Then g( T (y1 , . . . , ym )) ∈ R [y1 , . . . , ym ] is
+completely log-concave.
+Proof. As in the proof of Lemma 2.1, we must have T (y) = Ay + b where A ∈ R n≥×0 m and b ∈ R n≥0 .
+It follows that g( T (y)) has nonnegative coefficients. Therefore for any nonnegative matrix V ,
+DV g( T (y)) has nonnegative coefficients and is nonnegative over R m≥0 , so we just need to check
+that it is log-concave.
+    The Jacobian of T at every point is given by A. One can then check that for any v ∈ R m ,
+
+                                         ∂v g( T (y)) = (∂ Av g(z))| z= T (y) .
+
+Repeated applications of the chain rule yield for any v1 , . . . , vk ∈ R m
+
+                               ∂v1 · · · ∂vk g( T (y)) = (∂ Av1 · · · ∂ Avk g(z))| z= T (y) .
+
+                                                              ×k
+So for any k ≥ 0 and nonnegative matrix of directions V ∈ R m
+                                                            ≥0 , we have
+
+                                        DV g( T (y)) = ( D AV g(z))| z= T (y) .
+
+Since A, V have nonnegative entries, so does AV . From complete log-concavity of g it follows that
+D AV g(z) is log-concave over R n>0 . Now Lemma 2.1 implies that the composition with T remains
+log-concave.
+
+                                                            19
+Lemma 4.6. The following operations on polynomials preserve complete log-concavity:
+
+   1. Permutation: g 7→ g(zπ (1) , . . . , zπ (n) ) for π ∈ Sn .
+
+   2. Specialization: g 7→ g( a, z2 , . . . , zn ), where a ∈ R ≥0 .
+
+   3. Scaling g 7→ c · f (λ1 z1 , . . . , λn zn ), where c, λ1 , . . . , λn ∈ R ≥0 .
+
+   4. Expansion: g(z1 , . . . , zn ) 7→ g(y1 + y2 + · · · + ym , z2 , . . . , zn ) ∈ R [y1 , . . . , ym , z2 , . . . , zn ].
+
+   5. Differentiation: g 7→ ∂v g = ∑ni=1 vi ∂i g for v ∈ R n≥0 .
+
+Proof. The proof for Parts 1 to 4 follows by choosing an appropriate affine transformation T for
+each part. For Part 3, we also need to use the elementary fact that scaling by c ≥ 0 preserves
+complete log-concavity, since scalar multiplication commutes with differential operator DV .
+   Part 5 follows directly from the definition of complete log-concavity.
+
+   Now, we are ready to prove Theorem 4.2.
+
+Proof of Theorem 4.2. Let M be a matroid of rank r on ground set [n]. If M is simple, then the
+result follows from Lemma 4.4.
+    Otherwise let M̃ = ( Ẽ, Ĩ) be the simple matroid obtained by deleting loops and identifying
+each set of parallel elements of M. Say each non-loop i ∈ [n] gets mapped to the element ψ(i ) ∈ Ẽ.
+Consider the generating polynomial g M̃ (z) ∈ R [ze | e ∈ Ẽ]. Each basis of M uses at most one of
+a set of parallel elements, meaning that the basis generating polynomial of M is obtained from
+that of M̃ by substituting ze 7→ ∑i∈ψ−1 (e) yi . That is, if T : R n → R Ẽ is the linear map defined by
+                                                          (
+                                                              0         if i is a loop,
+                                             T (1i ) =
+                                                              1ψ( i)    otherwise,
+
+then
+                                         g M (y1 , . . . , yn ) = g M̃ ( T (y1 , . . . , yn )).
+By Lemma 4.5, it follows that g M is completely log-concave.
+
+
+5 Entropy of Log-Concave Distributions
+Let µ : 2[n] → R ≥0 be a probability distribution on the subsets of the set [n]. In other words,
+∀S ⊆ [n] : µ(S) ≥ 0 and,
+                                          ∑ µ(S) = 1.
+                                                         S ⊆[n ]
+
+As in Section 2.4, we consider the multiaffine generating polynomial of µ,
+
+                                                 gµ ( z ) =     ∑ µ( S ) · ∏ zi .
+                                                              S ⊆[n ]         i∈S
+
+
+We say µ is d-homogeneous if gµ is a homogeneous polynomial of degree d, i.e., gµ (αz) = αd gµ (z)
+for any α ∈ R and that µ is log-concave and completely log-concave if the generating polynomial
+
+
+                                                                   20
+gµ (z) is log-concave and completely log-concave, respectively. In this section we prove a bound
+on the entropy of log-concave probability distributions.
+    Recall that the marginal probability of an element i, µi is the probability that i is in a random
+sample from µ,
+                         µi = P S∼µ [i ∈ S] = ∂zi gµ (z1 , . . . , zn ) z =···=zn =1 .
+                                                                                1
+
+   Given marginal probabilities µ1 , . . . , µn , it is easy to derive an upper bound on the entropy of
+µ by using the subadditivity of entropy, Fact 2.8.
+Fact 5.1. For any probability distribution µ : 2[n] → R ≥0 with marginals µ1 , . . . , µn , we have
+                                n                                       n
+                                            1                   1
+                     H(µ) ≤ ∑ µi log + (1 − µi ) log                  = ∑ H(µi ).
+                               i=1
+                                           µi                1 − µi     i=1
+
+     The above inequality is tight if the marginals of µ are independent, i.e., if µ is a product
+distribution formed by n independent Bernoulli random variables with parameters µ1 , . . . , µn ,
+i.e., for all sets S ⊆ [n], µ(S) = ∏i∈S µi ∏ i/∈S (1 − µi ). The main result of this section is a lower
+bound on the entropy of log-concave distributions, which will imply that the inequality in Fact 5.1
+is tight within a factor of 2 under certain further restrictions.
+Theorem 5.2. For any log-concave probability distribution µ : 2[n] → R ≥0 with marginal probabilities
+µ1 , . . . , µn ≥ 0, we have
+                                                 n
+                                                          1
+                                     H(µ) ≥ ∑ µi log .
+                                                i=1
+                                                          µi
+
+Example 5.3. Consider the uniform distribution µ over spanning trees of the complete graph
+Kn . Cayley’s formula states that Kn has nn−2 spanning trees, so H(µ) = (n − 2) log n. On the
+other hand, the marginal probability of every edge in µ is n2 . By Theorem 4.2, the generating
+polynomial gµ is log-concave. Then the above theorem gives that
+
+                                                     2    n             n
+                                 H(µ) ≥       ∑      n
+                                                       log = (n − 1) log .
+                                                          2             2
+                                            e∈ E(K )
+                                                  n
+
+
+    To prove, Theorem 5.2, we use Jensen’s inequality in order to exploit log-concavity.
+Lemma 5.4 (Jensen’s Inequality). Suppose that f : R n≥0 → R ∪ {−∞} is a concave function, and X is
+an (R n≥0 )-valued random variable with finite support. Then
+
+                                              f (E [ X ]) ≥ E [ f ( X )].
+
+Proof of Theorem 5.2. In order to apply Lemma 5.4, we have to specify the concave function f and
+the random variable X. We let X be 1S , where S is chosen randomly according to the distribution
+µ. In other words, for every S, we let
+
+                                              P [ X = 1S ] = µ ( S ).
+
+For the function f , we will use
+                                                                                  
+                                                                       z1       zn
+                                   f (z1 , . . . , zn ) = log gµ          ,...,      .
+                                                                       µ1       µn
+
+                                                          21
+Note that even though µi could be zero for some i, the above expression is still well-defined, since
+if µi = 0, then gµ does not depend on zi . By Proposition 2.2, Part 3, the function f is concave over
+the positive orthant.
+    First, note that
+                                 E [ X ] = E S ∼ µ [ 1 S ] = ( µ1 , . . . , µ n ),
+so the left hand side of Lemma 5.4 is
+                                                                     
+                                                       µ1       µn
+                       f (E [ X ]) = log gµ               ,...,           = log gµ (1, . . . , 1) = 0.    (8)
+                                                       µ1       µn
+For the right hand side, note that for any S ∈ supp(µ), by the definition of f and gµ ,
+                                          !                  !
+                                        1                  1                        1
+            f (1S ) = log ∑ µ( T ) ∏        ≥ log µ(S) ∏       = log µ(S) + ∑ log ,
+                          T ⊆S
+                                       µ
+                                   i∈ T i
+                                                          µ
+                                                       i∈S i                 i∈S
+                                                                                    µ i
+
+where the inequality follows from monotonicity of log. Now we have
+                                                                                                     1
+               E [ f ( X )] = ∑ µ(S) f (1S ) ≥ ∑ µ(S) log µ(S) + ∑ µ(S) ∑ log
+                             S                           S                          S        i∈S
+                                                                                                     µi
+                                                                 !
+                                             n                                              n
+                                                                              1                    1
+                           = −H(µ) + ∑                 ∑ µ(S)         · log
+                                                                              µi
+                                                                                 = −H(µ) + ∑ µi log .
+                                                                                                   µi
+                                             i=1       S∋i                                 i=1
+
+By Lemma 5.4 and Eq. (8), the above quantity is ≤ 0. Rearranging yields the desired inequality.
+
+
+   Next, we discuss several corollaries of Theorem 5.2.
+Corollary 5.5. If µ is r-homogeneous and log-concave, then ∑ni=1 H(µi ) gives an additive r-approximation
+of H(µ), i.e.,
+                                       n                                       n
+                                       ∑ H(µi ) − r ≤ H(µ) ≤ ∑ H(µi ).
+                                       i=1                                    i=1
+
+Proof. The second inequality is simply Fact 5.1. For the first inequality, we use the fact that
+(1 − p) log 1−1 p ≤ p for all 0 ≤ p ≤ 1, which means that
+                                 n                                      n
+                                                             1
+                                 ∑ (1 − µi ) log 1 − µi ≤ ∑ µi = ES∼µ [|S|],                              (9)
+                                 i=1                                   i=1
+
+which for an r-homogeneous distribution is equal to r. Now by applying Theorem 5.2, we get
+                       n                   n          n                        n
+                                     1                                 1
+              H(µ) ≥ ∑ µi log           = ∑ H(µi ) − ∑ (1 − µi ) log        ≥ ∑ H(µi ) − r,
+                      i=1
+                                     µi   i=1        i=1
+                                                                     1 − µi   i=1
+
+as desired.
+
+    For a probability distribution µ : 2[n] → R ≥0 , define its dual, µ∗ : 2[n] → R ≥0 , to be the proba-
+bility distribution for which the probability of a set is equal to the probability of its complement
+under µ, i.e. µ∗ (S) = µ([n] \ S) for all S ⊆ [n]. Then for 1 ≤ i ≤ n, the i-th marginal of µ∗ is
+µ∗i = 1 − µi .
+
+                                                                 22
+Corollary 5.6. If µ, µ∗ are both log-concave probability distributions then ∑ni=1 H(µi ) gives a multiplica-
+tive 2-approximation to H(µ), i.e.,
+                                                              n
+                                       1 n
+                                         ∑   H(µi ) ≤ H(µ) ≤ ∑ H(µi ).
+                                       2 i=1                 i=1
+
+Proof. Applying Theorem 5.2 to µ and µ∗ gives
+                                  n                                   n
+                                             1                                          1
+                       H(µ) ≥ ∑ µi log            and H(µ∗ ) ≥ ∑ (1 − µi ) log               .
+                                 i=1
+                                             µi                      i=1
+                                                                                      1 − µi
+
+Since H(µ) = H(µ∗ ), averaging the above inequalities gives
+
+                               1 n         1  1 n               1     1 n
+                     H(µ) ≥      ∑
+                               2 i=1
+                                     µi log + ∑ (1 − µi ) log
+                                           µi 2 i=1           1 − µi
+                                                                     = ∑ H(µi ),
+                                                                      2 i=1
+
+as desired. The other inequality follows from Fact 5.1.
+
+   Let µ be the uniform distribution over the bases of a matroid M. It follows from Theorem 4.2
+that µ is a log-concave distribution. Furthermore, the dual probability distribution µ∗ is the
+uniform distribution over the bases of the dual matroid M ∗ , meaning that it is also log-concave.
+Then Corollary 5.5 and Corollary 5.6 immediately yield the following.
+
+Corollary 5.7. Let M be an arbitrary matroid of rank r on ground set [n] and let µ be the uniform
+distribution over the bases of M. Then ∑ni=1 H(µi ) is both an additive r-approximation and multiplicative
+2-approximation to H(µ) = log(|B M |):
+                             (                            )
+                               1 n            n                           n
+                        max      ∑
+                               2 i=1
+                                     H(µi ), ∑ H(µi ) − r ≤ H(µ) ≤ ∑ H(µi ).
+                                             i=1                         i=1
+
+   We will also use the following fact, which enables us to apply Theorem 5.2 to distributions
+other than the uniform distribution on B M .
+
+Lemma 5.8. Let M be a matroid on ground set [n] and let p be a point in P M . Then there is a distribution
+µ̃ supported on B M with marginals p, i.e., µ̃i = pi , such that both µ̃ and µ̃∗ are completely log-concave.
+Furthermore µ̃ and µ̃∗ can be obtained as the limit of external fields applied to µ and µ∗ , where µ is the
+uniform distribution on B M .
+
+Proof. If µ is the uniform distribution over B M , then gµ (z) = g M (z), which is completely log-
+concave by Theorem 4.2. Similarly, µ∗ is the uniform distribution on the bases of the dual matroid,
+so µ∗ is also completely log-concave. Furthermore, since µ and µ∗ are homogeneous distributions,
+for any λ = (λ1 , . . . , λn ) ∈ R n>0 , ((λ1 , . . . , λn ) ⋆ µ)∗ = (λ1−1 , . . . , λ− 1    ∗
+                                                                                      n ) ⋆ µ , where ⋆ is the external
+field operation described in Eq. (5) of Section 2.4.
+    By Lemma 4.6, Part 3, both λ ⋆ µ and (λ ⋆ µ)∗ are completely log-concave. Now take µ̃ to be
+the distribution promised by Corollary 2.12 with marginals p. Then µ̃ is a limit of distributions
+λ ⋆ µ, and µ̃∗ is the limit of (λ ⋆ µ)∗ . It follows that both µ̃ and µ̃∗ are completely log-concave.
+
+
+
+
+                                                         23
+6 Max Entropy Convex Programs and Counting Bases of a Matroid
+In this section we prove Theorem 1.1. Let M be a matroid of rank r on ground set [n]. Let
+µ : 2[n] → R ≥0 be the uniform distribution over the bases of M. By Corollary 5.7, it would be
+enough to compute the marginals of µ, but it can be seen that computing marginals is no easier
+than counting bases.
+    Instead, we use the convex programming framework described in Section 1.4. We claim that
+the optimum solution of the following concave program gives an additive r-approximation to
+H(µ) = log(|B M |) as well as a multiplicative 2-approximation:
+                                  (                               )
+                                       n
+                           τ = max    ∑ H( pi ) p = ( p1 , . . . , pn ) ∈ P M .                   (10)
+                                      i=1
+
+The objective function is a concave function of p, so we can solve the above program using, e.g.,
+the ellipsoid method.
+
+Proof of Theorem 1.1. Let p = ( p1 , . . . , pn ) ∈ P M be a vector achieving the maximum in Eq. (10).
+The output of our algorithm will simply be
+                                                                  !
+                                                       n
+                                     β = eτ = exp      ∑ H( pi ) .
+                                                       i=1
+
+By Proposition 2.9, the entropy H(µ) equals log(|B M |). Therefore to prove Theorem 1.1, it
+suffices to show that τ = log( β) is an additive r-approximation and also a multiplicative 2-
+approximation of H(µ), i.e., max 12 τ, τ − r ≤ H(µ) ≤ τ.
+    Firstly, note that since (µ1 , . . . , µn ) ∈ P M , we have
+                                             n
+                                       τ ≥ ∑ H(µi ) ≥ H(µ),                                       (11)
+                                            i=1
+
+where the first inequality follows from the definition, Eq. (10), and the second inequality follows
+from the subadditivity of entropy, Fact 5.1.
+    Secondly, since p is in the polytope P M = Pµ , by Lemma 5.8, there is a probability distribu-
+tion µ̃ on the bases of M such that for all i, µ̃i = pi , and both µ̃ and µ̃∗ are log-concave. Applying
+Corollaries 5.5 and 5.6 to µ̃, we get
+                                           (                              )
+                                                              n
+                                              1 n
+                                                    H(µ̃i ), ∑ H(µ̃i ) − r .
+                                              2 i∑
+                              H(µ̃ ) ≥ max
+                                                 =1          i=1
+
+But note that ∑ni=1 H(µ̃i ) = ∑ni=1 H( pi ) = τ, so H(µ̃ ) ≥ max 12 τ, τ − r .
+                                                                
+
+   Since µ is the uniform distribution over its support, and supp(µ̃ ) ⊆ supp(µ), its follows from
+Proposition 2.9 that H(µ) ≥ H(µ̃). So we find that
+                                                              
+                                                       1
+                                      H(µ) ≥ max τ, τ − r ,
+                                                       2
+
+which together with Eq. (11) finishes the proof.
+
+                                                  24
+7 Counting Common Bases of Two Matroids
+In this section we prove Theorem 1.3. Given two matroids M, N on the ground set of elements
+[n] we want to estimate the number of common bases of M and N. We may assume, trivially,
+that both matroids are of the same rank r. Following the same framework we used for a single
+matroid, described in Section 1.4, we solve the following concave program
+                               (                                       )
+                                          n
+                         τ = max          ∑ H( pi ) p = ( p1 , . . . , pn ) ∈ P M ∩ P N ,                 (12)
+                                          i=1
+
+using, e.g., the ellipsoid method, and output β = eτ as our estimate for the number of common
+bases. Our main result is that β provides a multiplicative 2O(r ) approximation to |B M ∩ B N |, or
+equivalently that τ provides an additive O(r) approximation to log(|B M ∩ B N |).
+
+Proof of Theorem 1.3. If µ is the uniform distribution on B M ∩ B N , then the vector of its marginals
+(µ1 , . . . , µn ) belongs to P M ∩ P N . It follows that
+                                          n
+                               τ ≥ ∑ H(µi ) ≥ H(µ) = log(|B M ∩ B N |),
+                                     i=1
+
+where the second inequality is an application of the subadditivity of entropy, Fact 5.1. To prove
+Theorem 1.3, it suffices to show that τ − O(r) is a lower bound for H(µ) = log(|B M ∩ B N |).
+   Let g M (y) ∈ R [y1 , . . . , yn ] be the generating polynomial of M and gN ∗ (z) ∈ R [z1 , . . . , zn ] be
+the generating polynomial of N ∗ , the dual matroid of N. Then the product g M (y) gN ∗ (z) is the
+generating polynomial of the direct sum M ⊕ N ∗ , which is a matroid:
+
+                                              g M⊕ N ∗ (y, z) = g M (y) gN ∗ (z).
+
+Then by Theorem 4.2, g M (y) gN ∗ (z) is a completely log-concave polynomial. Since deg( g M ) = r
+and deg( gN ∗ ) = n − r, the product g M (y) gN ∗ (z) is a polynomial of degree n in the 2n variables
+y1 , . . . , yn , z1 , . . . , zn . This polynomial fully encodes the matroids M and N. In particular we can
+obtain |B M ∩ B N | as the following expression
+                                                                     !
+                                                          n
+                              |B M ∩ B N | =             ∏ ( ∂ y + ∂ z ) g M ( y ) g N ∗ ( z).
+                                                                   i          i
+                                                                                                          (13)
+                                                         i=1
+
+To see this, observe that we can rewrite the right hand side as
+                                          !           !
+                                 ∑ ∏ ∂y              i          ∏ ∂z      i
+                                                                                  g M ( y ) g N ∗ ( z).
+                                S ⊆[n ]       i∈S             i∈[n ]\ S
+
+The term corresponding to each S is zero unless S is independent in M and [n] \ S is independent
+in N ∗ . But this can only happen when S is a common basis of M and N, and in that case, this
+term is the constant 1.
+   We will use complete log-concavity of g M (y) gN ∗ (z) to prove a lower bound on the expression
+in Eq. (13). Conveniently, the differential operators in Eq. (13) are of the type ∂v for v ∈ R n≥0 ,
+under which completely log-concave polynomials are closed, and this will be crucial for the
+
+                                                                  25
+proof. We will apply Theorem 7.1, which will be fully stated and proved later in this section,
+to the polynomial g M (y) gN ∗ (z), to show that for any p = ( p1 , . . . , pn ) ∈ [0, 1]n , the following
+inequality holds (see Corollary 7.2):
+                          !
+             n                                              p p         g ( y ) g N ∗ ( z)
+            ∏ yi zi M N
+                ( ∂ + ∂ )   g   ( y ) g ∗ ( z )          ≥    2
+                                                                  · inf M p 1−
+            i=1
+                                                            e      y,z>0     y z p
+                                                y = z =0                                                    (14)
+                                                                          g M (y)              g N ∗ ( z)
+                                                            p p                                      
+                                                         = 2 · inf                    · inf 1− p .
+                                                            e        y >0   yp             z >0 z
+
+Notice that evaluation at y = z = 0 is inconsequential here, because the expression being eval-
+uated is a constant. We will be particularly interested in the case where p ∈ P M ∩ P N . When
+this happens, p ∈ P N , which implies that 1 − p ∈ P N ∗ . By Lemma 5.8, there are distributions ν
+on B M and ω on B N ∗ , obtained as limits of external fields applied to uniform distributions, with
+marginals p, 1 − p, such that ν, ν∗ , ω, ω ∗ are all completely log-concave.
+
+                          ∀i ∈ [n] : νi = pi       and         ∀i ∈ [n ] : ω i = 1 − pi .
+
+By Lemma 2.14, we have
+                                                                                         
+                                  g (y)                                          g N ∗ ( z)
+                  H(ν) = log inf M p                and          H(ω ) = log inf 1− p .
+                             y >0  y                                         z >0 z
+
+Now we apply Theorem 5.2 to ν, ω ∗ . Note that the marginals of both ν and ω ∗ are p. So we get
+                                                                 n
+                                                                            1
+                                    min{H(ν), H(ω ∗ )} ≥ ∑ pi log              .
+                                                                i=1
+                                                                            pi
+
+Noting that H(ω ∗ ) = H(ω ) and combining the previous two equations, we get
+                                                                      n
+                                  g M (y)          g N ∗ ( z)
+                                                          
+                                                                               1
+                      log    inf
+                             y >0   yp
+                                           ·  inf
+                                              z > 0 z1 − p
+                                                                 ≥ 2 ∑   pi log .
+                                                                               p i
+                                                                     i=1
+
+Plugging this back into Eq. (14), and using Eq. (13), we get
+                                          n              n
+                                                 pi              1
+                     log(|B M ∩ B N |) ≥ ∑ pi log 2 + 2 ∑ pi log
+                                         i=1
+                                                 e      i=1
+                                                                 pi
+                                           n                 n
+                                                     1
+                                       = ∑ pi log       − 2 ∑ pi
+                                          i=1
+                                                     pi     i=1
+                                           n               n                            n
+                                                                              1
+                                       = ∑ H( pi ) − ∑ (1 − pi ) log               − 2 ∑ pi
+                                          i=1            i=1
+                                                                            1 − pi     i=1
+                                           n
+                                       ≥ ∑ H( pi ) − 3r,
+                                          i=1
+
+where, for the last inequality we use the fact that (1 − pi ) log 1−1 pi ≤ pi for 0 ≤ pi ≤ 1 and
+∑ni=1 pi = r. In summary, for any p ∈ P M ∩ P N , the quantity ∑ni=1 H( pi ) − 3r is a lower bound
+for log(|B M ∩ B N |). This completes the proof.
+
+                                                      26
+    Now we state and prove the technical part used in the proof above.
+
+Theorem 7.1. Let g ∈ R [y1 , . . . , yn , z1 , . . . , zn ] be a completely log-concave multiaffine polynomial and
+p ∈ [0, 1]n . Then,                        !
+                       n
+                                                                                     g(y, z)
+                      ∏(∂yi + ∂zi ) g(y, z)                        ≥ φ( p) · inf n p 1− p ,
+                                                                            y,z∈R >0 y z
+                      i=1                                y = z =0
+
+where φ( p) is independent of the polynomial g, and is given by the following expression:
+                                      n                                        
+                                          pi          1− p i          1
+                           φ ( p ) = ∏ pi · (1 − pi )        ·                    .
+                                     i=1
+                                                               1 + pi (1 − pi )
+
+   Before proving Theorem 7.1, note that we can simplify it, by using the following inequalities
+which are valid for all pi ∈ [0, 1]:
+
+                                                                           1
+                          ( 1 − p i ) 1− p i ≥ e − p i   and                         ≥ e− pi .
+                                                                    1 + pi (1 − pi )
+
+Both inequalities can be proven by taking log from the left hand sides to get convex functions of
+pi , and lower bounding by the tangent line at pi = 0. Together they imply that
+                                                 n                      p p
+                                                    p
+                                      φ ( p ) ≥ ∏ pi i · e− pi · e− pi = 2 ,
+                                                i=1
+                                                                         e
+
+giving the following.
+
+Corollary 7.2. For any completely log-concave multiaffine polynomial g ∈ R [y1 , . . . , yn , z1 , . . . , zn ] and
+p ∈ [0, 1]n the following inequality holds:
+                                        !
+                           n                             p p          g(y, z)
+                          ∏(∂yi + ∂zi ) g(y, z)      ≥ 2
+                                                          e
+                                                                  inf n p 1− p .
+                                                               y,z∈R >0 y z
+                          i=1                            y = z =0
+
+Remark 7.3. We remark that the statement and the proof of Theorem 7.1 are inspired by those
+of a similar statement in an earlier work of a subset of authors [AO17], involving real stable
+polynomials. The quantity infy,z>0 g(y, z)/y p z1− p and similar expressions called the “capacity”
+of polynomials have been studied in several works, starting with Gurvits [Gur06; Gur08; Gur09]
+and some more recent works [NS16; AO17; SV17; Lea18].
+    In the rest of this section, we prove Theorem 7.1. The proof is by induction on n, and both
+the base case and the induction step reduce to the case of n = 1. So we will prove this first. An
+important step is identifying bivariate completely log-concave multiaffine polynomials g(y, z) ∈
+R [y, z].
+
+Lemma 7.4. A polynomial g(y, z) = a + by + cz + dyz ∈ R [y, z] with nonnegative coefficients is
+completely log-concave if and only if 2bc ≥ ad. Moreover, if g is completely log-concave and d = 1 then
+(b + z)(c + y) + bc ≥ g(y, z) for all (y, z) ∈ R2 .
+
+
+
+
+                                                           27
+Proof. Since g has degree two, it is completely log-concave if and only if it is log-concave, which
+happens if and only if the matrix
+
+                                              −(b + dz)2
+                                                                   
+                                                           ad − bc
+                            g2 · ∇2 log g =
+                                               ad − bc   −(c + dz)2
+
+is negative semidefinite for all y, z ∈ R ≥0 . Its determinant simplifies to
+
+                 det g2 · ∇2 log g = d · g(y, z) · (2bc − ad + bdy + cdz + d2 yz).
+                                     
+
+
+Note that the first two factors are nonnegative on R2≥0 , and the last factor is nonnegative on R2≥0
+if and only if it is nonnegative at (y, z) = (0, 0). Since the diagonal elements of the 2 × 2 matrix
+are already nonpositive, this implies that g is log-concave if and only if 2bc − ad ≥ 0.
+    If d = 1, then 2bc ≥ a and for all (y, z) ∈ R2 , (b + z)(c + y) + bc − g(y, z) = 2bc − a ≥ 0.
+
+   Now we state and prove the n = 1 case of Theorem 7.1.
+
+Lemma 7.5. If the polynomial g(y, z) = a + by + cz + dyz ∈ R [y, z] is log-concave, then for any
+p ∈ [0, 1],
+                                     g(y, z)                     p p ( 1 − p ) 1− p
+               b + c ≥ φ( p) · inf p 1− p     where     φ ( p) =                    .
+                              y,z>0 y · z                        1 + p(1 − p)
+Proof. First let us resolve the boundary case p ∈ {0, 1}. In this case, φ( p) = 1. For p = 0, taking
+z → ∞ and y → 0, shows the desired inequality. Similarly, if p = 1, we may take y → ∞ and
+z → 0. So from now on, assume that p ∈      / {0, 1}.
+    Now we make some simplifying assumptions on g and deal with the case d = 0. If addition-
+ally c = 0, then g(y, z) does not involve the variable z, meaning that the infimum above is zero
+and the inequality is satisfied. A similar argument resolves the case b = 0. Finally, if bc 6= 0, then
+by Lemma 7.4, for sufficiently small ǫ > 0, g(y, z) + ǫyz is also log-concave. Therefore we can
+assume d is nonzero and rescale g(y, z) so that d = 1. Using the second part of Lemma 7.4, it
+then suffices to take g(y, z) = (b + z)(c + y) + bc.
+                        p              1− p
+    Consider ŷ = c · 1− p and ẑ = b · p . For this choice of ŷ, ẑ, we compute that
+
+                             1− p                                                                        1 + p(1 − p)
+                                                                                       
+                                                   p                            1   1
+      g(ŷ, ẑ) =       b+b·                 c+c·             + bc = bc ·         ·    +1       = bc ·                .
+                              p                   1−p                           p 1− p                     p(1 − p)
+
+The function of interest then evaluates to
+          g(ŷ, ẑ)          1 + p(1 − p) (1 − p) p          p1 − p                       1 + p(1 − p)
+            p   1 − p
+                      = bc ·             ·   p  p
+                                                    ·  1 − p        1 − p
+                                                                          = b p c1− p ·                        2
+                                                                                                                 ,
+          ŷ ẑ                p(1 − p)     c p       b (1 − p)                         ( p p ( 1 − p ) 1− p )
+
+and
+                                    g(ŷ, ẑ)        b p c1− p            b             c
+                         φ ( p) ·     p   1 − p
+                                                =  p           1 − p
+                                                                     ≤ p · + (1 − p) ·      = b + c.
+                                    ŷ ẑ         p (1 − p)               p            1− p
+Here the inequality follows from the weighted arithmetic mean geometric mean inequality.
+
+   We are now ready to prove Theorem 7.1.
+
+
+
+                                                                28
+Proof of Theorem 7.1. We will proceed by induction on n. The base case n = 1 is the content of
+Lemma 7.5. Suppose that the proposition holds in R [y1 , . . . , yn , z1 , . . . , zn ] and let g(s, y, t, z) be a
+completely log-concave multiaffine polynomial in R [s, y, t, z]. Let us define the polynomial
+
+                                           h(y, z) = (∂s + ∂t ) g| s=t=0 ∈ R [y, z].
+
+    Since complete log-concavity is preserved under differentiation and restriction, h(y, z) is also
+completely log-concave, and by induction, for any p ∈ [0, 1]n and any ǫ > 0, there exist ŷ, ẑ ∈ R n>0
+for which
+                                  !                           !
+                     n                           n
+                                                                                 h(ŷ, ẑ)
+        ( ∂s + ∂t ) ∏( ∂yi + ∂zi ) g       = ∏( ∂yi + ∂zi ) h          ≥ φ( p) · p 1− p − ǫ.
+                    i=1                         i=1                              ŷ ẑ
+                                             s = t = y = z =0                                y = z =0
+
+    Now consider the bivariate polynomial f ∈ R [s, t] given by f (s, t) = g(s, ŷ, t, ẑ), which is also
+completely log-concave by Lemma 4.6. By Lemma 7.5, for any q ∈ [0, 1] and any δ > 0, there
+exist ŝ, t̂ > 0 for which
+                                                                   g(ŝ, t̂)
+                                     (∂s + ∂t ) f |s=t=0 ≥ φ(q) · q 1−q − δ.
+                                                                   ŝ t̂
+Notice that (∂s + ∂t ) f | s=t=0 equals h(ŷ, ẑ). Putting this all together, we find that
+                                           !
+                              n
+                                                                       h(ŷ, ẑ)
+                 ( ∂s + ∂t ) ∏( ∂yi + ∂zi ) g             ≥ φ ( p ) · p 1− p − ǫ
+                             i=1                                       ŷ ẑ
+                                                      s = t = y = z =0
+                                                                            φ( p)
+                                                                         =            · ( ( ∂ s + ∂ t ) f | s = t =0 ) − ǫ
+                                                                          ŷ p ẑ1− p
+                                                                            φ( p)            φ(q)
+                                                                                                                       
+                                                                         ≥ p 1− p · q 1−q · f (ŝ, t̂) − δ − ǫ.
+                                                                          ŷ ẑ            ŝ t̂
+
+Since f (ŝ, t̂) = g(ŝ, ŷ, t̂, ẑ) and
+
+                            φ( p)        φ(q)                           φ(q, p)
+                            p   1 − p
+                                      · q 1−q · f (ŝ, t̂) =                            · g(ŝ, ŷ, t̂, ẑ),
+                          ŷ ẑ        ŝ t̂                 (ŝ, ŷ) ) (t̂, ẑ)1−(q,p)
+                                                                     ( q,p
+
+
+taking ǫ, δ → 0 at a rate that ensures δ · φ( p)/ŷ p ẑ1− p → 0 proves that the proposition holds in
+the polynomial ring R [s, y, t, z].
+
+
+8 Weighted Counts of Common Matroid Bases
+In this section we prove Theorem 1.5. As mentioned in Section 1.4, the algorithm we use is just
+a simple modification of the unweighted case. For given matroids M and N of rank r on the
+ground set [n], and weights λ = (λ1 , . . . , λn ) ∈ R n≥0 , we simply solve the following concave
+program                  (                                                     )
+                            n                                    
+                                     λi                      1
+                 τ = max ∑ pi log + (1 − pi ) log                  p ∈ PM ∩ PN ,
+                           i=1
+                                     pi                   1 − pi
+using, e.g., the ellipsoid method, and output β = eτ as an approximation to the λ-weighted count
+of B M ∩ B N , namely ∑ B∈B M ∩B N λ B .
+
+                                                                    29
+    It is possible to give a direct proof of Theorem 1.5 by carrying the weights through the proofs
+of Theorems 1.1 and 1.3. Here, we provide an alternative proof by reduction to the unweighted
+case.
+    First let us prove the easy side, that β is an upper bound for the logarithm of the λ-weighted
+count. As in the unweighted case, we prove this for arbitrary subsets of 2[n] , not just common
+bases of matroids.
+
+Lemma 8.1. Suppose that B ⊆ 2[n] and define PB = conv{1B | B ∈ B}. Let λ = (λ1 , . . . , λn ) ∈ R n≥0
+and let µ be the uniform distribution on B . Let p = ( p1 , . . . , pn ) ∈ PB be the marginals of the probability
+distribution λ ⋆ µ. Then
+                                                                                     !
+                         n                                        
+                                     λi                     1
+                         ∑ pi log pi + (1 − pi ) log 1 − pi ≥ log ∑ λB .
+                        i=1                                                   B ∈B
+
+Proof. Let Z denote the λ-weighted count of B , namely ∑ B∈B λ B . Note that the probability distri-
+bution λ ⋆ µ is supported on B and for S ∈ B , is given by
+
+                                                             λS             λS
+                                         P λ⋆ µ [S ] =               B
+                                                                       =       .
+                                                         ∑ B∈B λ            Z
+
+Applying the subadditivity of entropy, Fact 2.8, to the probability distribution λ ⋆ µ we get
+                                                                                      !
+             n
+                                           λS     Z                    λS          1
+            ∑ H( pi ) ≥ H(λ ⋆ µ) = ∑ Z log λS = log(Z) + ∑ Z ∑ log λi
+            i=1                       S ∈B                        S ∈B      i∈S
+                                                            !
+                                    n                     S                 n
+                                             1          λ                            1
+                      = log( Z ) + ∑ log · ∑                  = log( Z ) + ∑ pi log .
+                                   i=1
+                                            λi S∈B :i∈S Z                  i=1
+                                                                                    λi
+
+Rearranging yields the desired statement.
+
+    Now we prove Theorem 1.5.
+
+Proof of Theorem 1.5. One side of the desired inequality is an immediate consequence of Lemma 8.1,
+when we let B = B M ∩ B N . So we just need to prove the other side, i.e.,
+
+                                           2 −O ( r ) β ≤        ∑        λB ,
+                                                            B ∈B M ∩B N
+
+or equivalently, we will show that for any p ∈ P M ∩ P N
+                                                                                            !
+                                 n
+                                         λi                                             B
+                                ∑ pi log pi − O(r) ≤ log                   ∑        λ           .
+                                i=1                                   B ∈B M ∩B N
+
+
+Notice that we have dropped the terms ∑ni=1 (1 − pi ) log 1−1 pi , because they are bounded by O(r).
+    For λ = 1[n] , this is the content of Theorem 1.3. Our strategy is to prove the result first for
+λ ∈ Z n≥0 ; we will then prove the case λ ∈ Q n≥0 . The result would follow by continuity, because
+for any fixed p, both sides of the inequality are continuous functions of λ, and Q n≥0 is dense in
+R n≥0 .
+
+                                                            30
+    Suppose that λ ∈ Z n≥0 . Let us introduce two new matroids, M̃, Ñ, to which we will apply
+Theorem 1.3. We obtain these matroids, by replacing element i ∈ [n] of the ground set with λi
+new parallel elements i (1) , . . . , i(λi ) ; when λi = 0, this corresponds to deleting the element i. Let
+π : {i ( j) | i ∈ [n], j ∈ [λi ]} → [n] be the projection map from the new ground set to the old ground
+set given by the equation π (i( j) ) = i. A subset I ⊆ {i( j) | i ∈ [n], j ∈ [λi ]} is independent in M̃ or
+Ñ if and only if it contains no two parallel elements i ( j) and i (k) for j 6= k and its projection π ( I )
+is independent in M or N, respectively. The key observation is that
+
+                                         |B M̃ ∩ B Ñ | =                   ∑    λB .
+                                                                   B ∈B M ∩B N
+
+This is because for any common basis B̃ of M̃, Ñ, the projection B = π ( B̃) is a common basis of
+M and N; furthermore, for any choice of common basis B ∈ B M ∩ B N , there are ∏i∈ B λi choices
+for B̃ containing no pair of parallel elements, such that the projection π ( B̃) = B; any such B̃ is a
+common basis of M̃, Ñ.
+    Let p ∈ P M ∩ P N . It follows that there is a distribution µ supported on B M ∩ B N whose
+marginals are p. From µ, we define a distribution µ̃ supported on B M̃ ∩ B Ñ by sampling B =
+                                                                                 (j )       (j )
+{i1 , . . . , ir } ∈ B M ∩ B N according to µ and letting B̃ = {i1 1 , . . . , ir r }, where each jk is sampled
+uniformly at random from [λk ]. If µ̃ is the resulting distribution of B̃, then for any common basis
+B̃ of M̃, Ñ with projection π ( B̃) = B, this gives µ̃( B̃) = µ( B) ∏i∈ B λ−         1
+                                                                                     i . The marginals of µ̃ are
+given by
+                                                           pi
+                                                  µ̃i( j) = .
+                                                           λi
+From Theorem 1.3 it follows that
+                                                              n    λi
+                                                                                     1
+                              log(|B M̃ ∩ B Ñ |) ≥ ∑ ∑ µ̃i( j) log                        − O (r )
+                                                             i=1 j=1
+                                                                                   µ̃i( j)
+                                                              n    λi
+                                                                    pi    λi
+                                                      =∑∑              log − O(r)
+                                                                    λ
+                                                             i=1 j=1 i
+                                                                          pi
+                                                              n
+                                                                             λi
+                                                      = ∑ pi log                − O (r ),
+                                                             i=1
+                                                                             pi
+
+which completes the proof for λ ∈ Z n≥0 .
+   Now let us prove this for λ ∈ Q n≥0 . Let p ∈ P M ∩ P N and let t be such that tλ ∈ Z n≥0 . Then
+                                                             !
+                                                                        n
+                                                         B                         tλi
+                              log      ∑          (tλ)            ≥ ∑ pi log           − O (r ).
+                                    B ∈B M ∩B N                        i=1
+                                                                                    pi
+
+Notice that the expression inside the log on the left hand side is homogeneous of degree r in t.
+For the right hand side, observe that ∑ni=1 pi = r, so we can simplify the inequality to
+                                               !
+                                                              n
+                                             B                        λi
+                  r log(t) + log     ∑ λ ≥ r log(t) + ∑ pi log pi − O(r),
+                                 B ∈B ∩B  M       N          i=1
+
+which finishes the proof for λ ∈ Q n≥0 and consequently for all of R n≥0 .
+
+                                                                  31
+References
+[ABF94]    Y. Azar, A.Z. Broder, and A.M. Frieze. “On the problem of approximating the number
+           of bases of a matriod”. In: Information Processing Letters 50.1 (1994), pp. 9–11. issn:
+           0020-0190.
+[AHK15]    K. Adiprasito, J. Huh, and E. Katz. “Hodge theory for combinatorial geometries”.
+           arXiv:1511.02888[math.CO]. 2015.
+[Ana+17]   Nima Anari, Shayan Oveis Gharan, Amin Saberi, and Mohit Singh. “Nash Social
+           Welfare, Matrix Permanent, and Stable Polynomials”. In: ITCS. 2017, 36:1–36:12.
+[Ana+18]   Nima Anari, Tung Mai, Shayan Oveis Gharan, and Vijay V. Vazirani. “Nash Social
+           Welfare for Indivisible Items under Separable, Piecewise-Linear Concave Utilities”.
+           In: SODA. 2018, pp. 2274–2290.
+[AO17]     Nima Anari and Shayan Oveis Gharan. “A generalization of permanent inequalities
+           and applications in counting and optimization”. In: STOC. 2017, pp. 384–396.
+[AOR16]    Nima Anari, Shayan Oveis Gharan, and Alireza Rezaei. “Monte Carlo Markov Chain
+           Algorithms for Sampling Strongly Rayleigh Distributions and Determinantal Point
+           Processes”. In: COLT. 2016, pp. 103–115.
+[Asa+10]   Arash Asadpour, Michel X. Goemans, Aleksander Madry, Shayan Oveis Gharan, and
+           Amin Saberi. “An O(log n/ log log n)-approximation Algorithm for the Asymmetric
+           Traveling Salesman Problem”. In: SODA. 2010, pp. 379–389.
+[Bar97]    Alexander I Barvinok. “Approximate counting via random optimization”. In: Random
+           Structures and Algorithms 11.2 (1997), pp. 187–198.
+[Bra07]    Petter Branden. “Polynomials with the half-plane property and matroid theory”. In:
+           Advances in Mathematics 216.1 (2007), pp. 302–320.
+[BS07]     Alexander Barvinok and Alex Samorodnitsky. “Random weighting, asymptotic count-
+           ing, and inverse isoperimetry”. In: Israel Journal of Mathematics 158.1 (Mar. 2007),
+           pp. 159–191. issn: 1565-8511.
+[BV04]     Stephen Boyd and Lieven Vandenberghe. Convex Optimization. Cambridge University
+           Press, Mar. 2004.
+[Clo10]    Brian D. Cloteaux. “Approximating the Number of Bases for Almost All Matroids”.
+           In: Congressus Numerantium 202 (2010), pp. 149–154.
+[CT06]     Thomas M. Cover and Joy A. Thomas. Elements of Information Theory (Wiley Series
+           in Telecommunications and Signal Processing). New York, NY, USA: Wiley-Interscience,
+           2006. isbn: 0471241954.
+[CTY15]    Emma Cohen, Prasad Tetali, and Damir Yeliussizov. “Lattice Path Matroids: Negative
+           Correlation and Fast Mixing”. 2015.
+[Cun84]    William H Cunningham. “Testing membership in matroid polyhedra”. In: Journal of
+           Combinatorial Theory, Series B 36.2 (1984), pp. 161–188. issn: 0095-8956.
+[FM92]     Tomás Feder and Milena Mihail. “Balanced matroids”. In: Proceedings of the twenty-
+           fourth annual ACM symposium on Theory of Computing. Victoria, British Columbia,
+           Canada: ACM, 1992, pp. 26–38.
+
+                                               32
+[Gam99]    Anna Gambin. “On Approximating the Number of Bases of Exchange Preserving Ma-
+           troids”. In: Mathematical Foundations of Computer Science. Berlin, Heidelberg: Springer
+           Berlin Heidelberg, 1999, pp. 332–342. isbn: 978-3-540-48340-3.
+[GS14]     Leonid Gurvits and Alex Samorodnitsky. “Bounds on the permanent and some appli-
+           cations”. In: arXiv preprint arXiv:1408.0976 (2014).
+[Gur06]    Leonid Gurvits. “Hyperbolic polynomials approach to Van der Waerden/Schrijver-
+           Valiant like conjectures: sharper bounds, simpler proofs and algorithmic applica-
+           tions”. In: Proceedings of the thirty-eighth annual ACM symposium on Theory of computing.
+           ACM. 2006, pp. 417–426.
+[Gur08]    Leonid Gurvits. On Newton (like) inequalities for multivariate homogeneous polynomials.
+           2008.
+[Gur09]    Leonid Gurvits. “A polynomial-time algorithm to approximate the mixed volume
+           within a simply exponential factor”. In: Discrete & Computational Geometry 41.4 (2009),
+           pp. 533–555.
+[HJ13]     Roger A. Horn and Charles R. Johnson. Matrix analysis. Second. Cambridge University
+           Press, Cambridge, 2013, pp. xviii+643. isbn: 978-0-521-54823-6.
+[HW17]     June Huh and Botong Wang. “Enumeration of points, lines, planes, etc.” In: Acta Math.
+           218.2 (June 2017), pp. 297–317. doi: 10.4310/ACTA.2017.v218.n2.a2.
+[Ima+96]   Hiroshi Imai, Satoru Iwata, Kyoko Sekine, and Kensyu Yoshida. “Combinatorial and
+           geometric approaches to counting problems on linear matroids, graphic arrange-
+           ments, and partial orders”. In: Computing and Combinatorics. Ed. by Jin-Yi Cai and
+           Chak Kuen Wong. Springer Berlin Heidelberg, 1996, pp. 68–80.
+[Jer+04]   Mark Jerrum, Jung-Bae Son, Prasad Tetali, and Eric Vigoda. “Elementary bounds on
+           Poincaré and log-Sobolev constants for decomposable Markov chains”. In: Annals of
+           Applied Probability (2004), pp. 1741–1765.
+[Jer06]    Mark Jerrum. “Two Remarks Concerning Balanced Matroids”. In: Combinatorica 26.6
+           (2006), pp. 733–742.
+[JS02]     Mark Jerrum and Jung Bae Son. “Spectral gap and log-Sobolev constant for balanced
+           matroids”. In: FOCS. 2002, pp. 721–729.
+[JSV04]    Mark Jerrum, Alistair Sinclair, and Eric Vigoda. “A Polynomial-time Approximation
+           Algorithm for the Permanent of a Matrix with Nonnegative Entries”. In: J. ACM 51.4
+           (July 2004), pp. 671–697.
+[Lea18]    Jonathan Leake. “Capacity Preserving Operators”. In: arXiv preprint arXiv:1804.04351
+           (2018).
+[LSW98]    Nathan Linial, Alex Samorodnitsky, and Avi Wigderson. “A deterministic strongly
+           polynomial algorithm for matrix scaling and approximate permanents”. In: Proceed-
+           ings of the thirtieth annual ACM symposium on Theory of computing. ACM. 1998, pp. 644–
+           652.
+[MS91]     Milena Mihail and Madhu Sudan. Connectivity Properties of Matroids. Tech. rep. UCB/CSD-
+           92-662. EECS Department, University of California, Berkeley, Dec. 1991.
+
+
+
+                                                33
+[NS16]    Aleksandar Nikolov and Mohit Singh. “Maximizing determinants under partition
+          constraints”. In: Proceedings of the 48th Annual ACM SIGACT Symposium on Theory of
+          Computing, STOC 2016, Cambridge, MA, USA, June 18-21, 2016. 2016, pp. 192–201.
+[Sch03]   Alexander Schrijver. “Matroid intersection”. In: In Combinatorial Optimization: Polyhe-
+          dra and Efficiency. Vol. B. Springer, 2003.
+[SJ89]    Alistair Sinclair and Mark Jerrum. “Approximate counting, uniform generation and
+          rapidly mixing Markov chains”. In: Information and Computation 82.1 (1989), pp. 93–
+          133.
+[Sno12]   Michael Snook. “Counting bases of representable matroids”. In: The Electronic Journal
+          of Combinatorics 19.4 (2012).
+[SV14]    Mohit Singh and Nisheeth K. Vishnoi. “Entropy, optimization and counting”. In:
+          STOC. 2014, pp. 50–59.
+[SV17]    Damian Straszak and Nisheeth K. Vishnoi. “Real stable polynomials and matroids:
+          optimization and counting”. In: STOC. 2017, pp. 370–383.
+
+
+
+
+                                              34
+
