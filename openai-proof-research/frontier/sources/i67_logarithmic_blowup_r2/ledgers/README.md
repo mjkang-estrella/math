@@ -1,6 +1,6 @@
 # OpenAI mathematics research
 
-**Current progress: eight of ten substantial findings accepted.** [R014](frontier/findings/R014-uniform-coefficient-extraction.md) is the newest; I65 records a logarithmic obstruction to greedy algebra rounding; I69 develops a revised global bound. I67 passes I66’s original logarithmic blowup proof without repairs; I68’s significance review remains pending. A parent-record hash discrepancy is exactly explained and preserved separately from the passing core checks. Two further substantial findings are needed to reach the target.
+**Current progress: eight of ten substantial findings accepted.** [R014](frontier/findings/R014-uniform-coefficient-extraction.md) is the newest; algebra-rounding research continues, while I66’s logarithmic blowup candidate enters separate proof and significance reviews for the remaining two.
 
 [Public repository and commit mapping](PUBLICATION.md). Only this research directory is published; historical local commit identifiers map to filtered public commits.
 
