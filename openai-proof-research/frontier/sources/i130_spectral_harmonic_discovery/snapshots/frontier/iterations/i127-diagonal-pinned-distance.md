@@ -1,0 +1,253 @@
+# I127 — Original I124 audit and diagonal pinned-distance estimates
+
+**Disposition: A remains unproved and unrefuted. Recommend parking until a new common-pin oscillatory mechanism or a profile-sensitive inflation gain is supplied. No nomination; eight accepted findings remain eight.** The original paid R1 theorem, R2–R8 and scoped counterexamples pass independently, with one explicit cutoff qualification: the written multiplier bounds alone do **not** imply approximate-identity convergence. The actual source supplies normalized cutoffs. The new completed operations are a quantitative inverse-mass reconstruction criterion, an explicit singular-fibre countermodel even to uniform multiplier shell decay, a truncated incidence bound, and an obstruction to **every** positive-dimensional regular subset of the R8 support, including null subsets. None proves the pinned-distance target or meets the project's substantiality gate.
+
+All OpenAI theorems **and lower operations** at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb` are stipulated. External papers are not stipulated. No upstream truth audit, contradiction, ex-falso synthesis, children, shared edit, staging, commit or publication was used. No active I125/I126 output is a dependency. Physical/Runge, thermal production and supergeometric branches remain parked. The complete decoded original I124 task (all fields, SHA-256 `bd1ed58fb0adf6d63d0b36b67a5092f78f1d2063cf19317dfadad70ee8c6f240`) and its required I121/I118/I115/I112 recursive briefs, reports, finalized parent responses and objections were read and frozen before the original-audit checkpoint.
+
+## 1. Independent original audit, without silent repairs
+
+These judgments concern the ORIGINAL I124 assertions. Inherited original I121 N1–N16/F1–F12 passes remain at their stated scopes, including F3/F8/F9's **sufficient but unpaid** estimates, and its full-operation TECHNICAL disposition. I118/I115 scoped passes stand. Both I112 literal failures stand: constants obstruct standalone G112 on a closed component; R112's final normalization sentence fails for `(lambda,mu)=(0,1),(0,2)`, although its proportionality assertion passes. Neither refutes P112. This is not another physical audit or attempted transfer.
+
+### R1–R3: kernels, convergence and cutoff scope
+
+**R1 mathematical implication: PASS without changing the measure or shell hypotheses. R2 and the R3 finite identity: PASS. The assertion that the listed bounds on an arbitrary Q-family ensure approximate-identity convergence: FAIL as a standalone inference.** This distinction matters. The original only lists smooth low-frequency multipliers, uniform convolution L1 norms and shell support of their differences. The family `Q_N=0` satisfies those listed properties and does not approach the identity. Thus the last identification in the proof cannot be justified from those properties alone. This is not a counterexample to R1's conclusion: R1's Fourier assumptions allow us to choose canonical normalized cutoffs independently of that family. The accepted source actually fixes a cutoff equal to one near zero. I do not pass the arbitrary-family inference by silently adding its missing normalization.
+
+Here is the full independent theorem proof. Work after deleting the common null set on which monotonicity fails; define harmless zero kernels there. A positive finite decreasing kernel has a positive limit kernel, by monotone convergence applied to its complements inside the initial kernel. Its initial integrated mass `M0` is finite. Total variation and integrals of measurable complex kernels are measurable (one can use a countable algebra on the compact interval). Thus all following product-space norms are meaningful. Write `e_N=alpha_N-tau_N`, `zeta_n=alpha_n-alpha_(n+1)`, and `alpha_infinity=lim alpha_N`. Then
+
+`sum_n int zeta_n(R) dnu <= M0`, and `alpha_N-alpha_infinity=sum_(n>=N) zeta_n` as positive kernels.
+
+Choose an even smooth `q=1` on `[-1,1]`, zero outside `[-2,2]`, and `Q_N` with symbol `q(2^-N xi)`. For `P_N=Q_N-Q_(N-1)` the stated shells contain its support, `||P_N||_(L1->L1)<=2C0`, where `C0=||check q||_1`, and its symbol is uniformly bounded by `2||q||_infinity`. Plancherel and R1 give absolute convergence of `sum P_N tau_N` in `L2(nu dx dt)` (the pin variable is denoted x). The TV hypothesis gives absolute convergence of `sum P_N e_N` in L1. No individual tau_N needs a globally integrable Fourier transform.
+
+For fixed starting index K,
+
+`Z_M=sum_(n>=K)(Q_min(n,M)-Q_(K-1)) zeta_n`
+
+is an L1 series bounded by `2C0 M0`. Its limit is `Z=sum_(n>=K)(Q_n-Q_(K-1))zeta_n`, and
+
+`||Z_M-Z||_1 <= 2C0 int (alpha_(M+1)-alpha_infinity)(R) dnu ->0`.
+
+Fubini for these absolutely convergent L1 series gives exactly
+
+`Q_M alpha_infinity = Q_(K-1)alpha_infinity + sum_(N=K)^M P_N tau_N + sum_(N=K)^M P_N e_N - Z_M`.
+
+This verifies the sign, lower index and positive-variation term in R3. The right side converges in local L1 on pin-space times every bounded t-interval: the L2 term is locally L1 because nu is a probability. The canonical Q_M is an approximate identity. Testing against `h(x)phi(t)`, with h bounded measurable and phi smooth compactly supported, identifies its limit with the finite product-kernel measure `nu(dx)alpha_infinity,x(dt)`. A countable determining family of phi and uniqueness of finite measures give the fibre identity outside a single nu-null set. Positivity makes the resulting density nonnegative; its global L1 integral is the finite total mass. There is no global L2 or smoothness assertion. Positive total mass implies a positive-nu-measure set of nonzero absolutely continuous fibres, hence positive length of their containing distance sets. This is the entire mixed-space operation, not a formal Fubini slogan.
+
+**Positive restoration: PASS at its exact kernel scope.** In the planar source, with separated compact source/pin probabilities mu,nu, set
+
+`alpha_N,x=(D_x)_#(W(x,y)1_Gamma_N(x,y) mu(dy))`,
+
+`tau_N,x=(D_x)_#(W(x,y)1_Gamma_N(x,y)Theta_N(x,y) mu(dy))`.
+
+The actual source mask has `0<=Theta_N<=1`, W is positive bounded on the separated product, and Gamma_N decreases (in dimension two it can be the whole product). Consequently alpha_N−tau_N is **positive**, and its integrated TV equals exactly `int W 1_Gamma_N(1-Theta_N) dnu dmu`. Source restoration pays its summable bound and positive retained product mass. This does not apply automatically to complex oscillatory approximants, to arbitrary new masks, to smoothed marginals with different supports, or to diagonal estimates. The original unsmoothed positive kernels, not just their averaged signed Fourier integrals, are essential.
+
+### R4–R7: normalization and incidence quantifiers
+
+**R4: PASS.** Expanding the square in `int int |f(x)-f(z)|²` gives twice `int|f|²-|int f|²` for a probability nu, including for complex f. A partition with cell masses q_Q has conditional expectation norm
+
+`||E(f|partition)||² = sum_Q q_Q^-1 |int_Q f dnu|²`.
+
+Independent signs produce the sum **without** the inverse masses. Normalizing `nu|Q` multiplies its Frostman constant by `q_Q^-1`. Martingale convergence identifies the diagonal norm only with increasingly generating partitions and these factors retained. The original atomic example `alpha_x=tau_x=delta_x`, with smooth compactly supported nu in `(1,2)`, has zero restoration error and smooth unpinned average; its fibre shell norm squared is shell length. It disproves only abstract unpinning, not Euclidean A. Section 3 gives a stronger countermodel.
+
+**R5: PASS under the stated ray catalogue geometry and measurable source-projection hypothesis.** Use completed measures if the projection is analytic. For a half-open pin square Q of side r, `q=nu(Q)>0` and `nu_Q=nu|Q/q`. There are at most `C/(B theta)` heavy tubes per direction and `C/theta` directions. For distinct pins x,z, the number of catalogue tubes containing both is at most `C min(theta^-1,r/|x-z|)`. Angular separation gives the second factor; bounded transverse overlap gives the constant. Finite I1 makes the product diagonal null. Hence `sum_T nu_Q(T)^2<=Cr I1(nu_Q)`. If **the projection onto the source coordinate** of `G intersect(T times tilde T)` has mu-mass at most `A theta`, its pair mass is at most `q nu_Q(T) A theta`. Cauchy–Schwarz and the heavy-tube count yield
+
+`mass <= C A B^-1/2 sum_Q q sqrt(r I1(nu_Q))`.
+
+The identity with `sum_Q sqrt(r I1(nu|Q))` uses quadratic homogeneity of energy. A separately small source section for every pin does not imply the required projection estimate. The original does not make that replacement.
+
+**R6: PASS, for full extended-source-mass deletion.** Delete the entire rectangle `T times tilde T` whenever `mu(tilde T)>A theta`, simultaneously over the finite catalogue. For a fixed pin x in T, every point of tilde T lies in an angular cap of length at most `C theta` about x; this uses fixed positive separation and the specified extension geometry. Its radial density f_x therefore has cap average at least cA. The union of such caps is contained in `{M f_x>c' A}` after a fixed enlargement. With uncentered circular maximal operator M,
+
+`int_{Mf_x>c'A} f_x <= ||f_x||_p |{Mf_x>c'A}|^(1-1/p) <= C_p A^(1-p)||f_x||_p^p`.
+
+Integrating costs at most `C_p L A^(1-p)`. For each original T, either its whole rectangle is deleted, or its full source extension has mass at most A theta. Any further deletion only reduces its source projection. This pays exactly R5's quantifier. The estimate is one-scale; it supplies neither compatible frequency masks nor a pin-measure tube law.
+
+**R7: PASS for t>1 and actual occupied-cell lower masses.** With `d=diam Q=sqrt(2)r`, layer cake gives, for x in Q,
+
+`int_Q |x-z|^-1 dnu(z) <= q/d + Cnu d^(t-1)/(t-1)`.
+
+The boundary term must be retained; `q<=Cnu d^t` absorbs it. Integrating in x and dividing by q² gives
+
+`r I1(nu_Q) <= (sqrt(2))^(t-1) [t/(t-1)] Cnu r^t/q`.
+
+Thus `E_nu(r)<=C_t sqrt(Cnu) r^(t/2) sum sqrt(q_Q)`. On cells with `q_Q>=c r^t`, each summand is at most `C(t,Cnu,c)q_Q`. A ball lower law does not prove that condition for every half-open cell touching a boundary. At t=1 this upper integral diverges logarithmically; no endpoint estimate was established. All constants also retain the fixed catalogue, diameter and separation constants.
+
+### R8: complete construction and restriction assertions
+
+**R8: PASS.** Fix `1<s<2`. At each binary level either use all four children equally or only the lower-left child. Put `m(n)=2 times(number of free levels up to n)`. Choose successive free endpoints b_j with `b_j/a_(j-1)->infinity`; freeze through `a_j=floor(m(b_j)/s)`. For example b_j can be any integer at least `j² a_(j-1)+j²`, enlarged for the initial block if needed. Then `m(b_j)/b_j->2`, `a_j/b_j->2/s`, and `L_j=a_j-b_j->infinity`. During a free block m−sn increases; during a frozen block it decreases to a value in `[0,s)`. Thus `m(n)>=sn-C_s` at **all** levels, not only endpoints.
+
+The product probability has each occupied symbolic depth-n square of mass `2^-m(n)`. Infinitely many free digits in both coordinates make it nonatomic and give zero mass to grid boundaries. A ball with `2^(-n-1)<rho<=2^-n` meets O(1) grid squares, giving `nu(B)<=C_s rho^s`. Covers by all depth-a_j squares show Hausdorff dimension at most s; Frostman gives equality, and finite I1 follows since s>1. For any positive outer-mass A, at b_j its covering number is at least `c nu*(A)2^m(b_j)`, so its upper box dimension is two. In any countable bounded cover of a positive-mass set at least one member has positive outer mass. The countable-cover characterization of packing dimension gives packing dimension two for every positive-mass restriction. Its Hausdorff dimension is s by restriction and normalization of the same Frostman estimate. This proves the original no-positive-mass-regular-restriction assertion.
+
+At r_j=2^-b_j each occupied Q's conditional support is contained in a square of diameter `sqrt(2)r_j 2^-L_j`. Thus
+
+`I1(nu_Q)>=2^-1/2 r_j^-1 2^L_j`,
+
+`E_nu(r_j)>=2^-1/4 2^(L_j/2)=r_j^(-(1/s-1/2)+o(1))->infinity`.
+
+After any fixed positive-mass restriction and renormalization, every nonempty conditional support is still in that same small descendant, and the new q_Q sum to one. The same lower bound survives. No uniform local-energy budget is recovered that way. These statements are genuine infinite constructions, independent of the finite diagnostic. Section 4 strengthens the subset obstruction but is explicitly **new**, not retroactively inserted into the original audit.
+
+**All-pins counterexample and rejected two-star obstruction: PASS.** Take a zero-length self-similar Cantor C in `[1,2]` with dimension a in `(0,1)` and `E={0} union {r omega:r in C, omega in S1}`. Finitely many polar charts are bi-Lipschitz on these separated radii. The product has dimension 1+a (product Frostman lower bound and interval-product upper bound); `Delta_0 E=C union{0}` is null. This is only one bad pin. For fixed two distinct pins the map `y -> (|y-x1|,|y-x2|)` is sqrt(2)-Lipschitz; a source of Hausdorff dimension below two has image of dimension below two and hence zero area. That rejects the specified one-free-vertex two-star target, not arbitrary common-vertex configurations.
+
+**Original contribution: TECHNICAL by complete operations.** R1–R3 reproduce the source's monotone-shell telescoping in mixed spaces; R4 is conditional expectation and polarization; R5–R7 are tube-pair counting, maximal-function deletion and layer cake; R8 is a homogeneous variable-branching Moran construction. Their complete quantifiers and normalization are real obligations, now checked, but no new global gain or common-pin operation is supplied. Titles and evidence replay are not this contribution assessment.
+
+## 2. Exact target and source operations used
+
+The sole selected target is
+
+**A. For every compact E in R² with dim_H E>1, some x in E has Lebesgue-positive `{|x-y|:y in E}`.**
+
+Choose `1<s<t<dim_H E`, a t-Frostman probability and two separated positive-mass compact restrictions mu,nu. Normalization changes constants by their inverse masses; separation `[a,b]`, Frostman constants and finite s-energies are fixed before frequency grows. Restrictions need not be regular. Existence of one pin is the conclusion; no endpoint, all-pins, interior, uniform length or packing-equality hypothesis is added.
+
+The [stipulated Falconer source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/The-Falconer-distance-conjecture-in-all-dimensions-September-23-2026/build/sections/00_introduction.tex) supplies unpinned positivity. I read the complete relevant regularization, profile tests/mask scheduling, oscillatory conversion, four-endpoint graph, recurrence, two-depth payment and assembly/reconstruction through their endings; preparation readings include radial Lp and starting pairs. See the exact range manifest, not a claim of reading every corpus proof. Regularized classes retain their masses, have polynomially many profile states, and admit bounded endpoint multipliers. Source shell masks are fixed before such multipliers are inserted. The graph has four independently integrated endpoints and two angular variables; its row and column degrees each pay a depth. Its far reduction swaps to two internal endpoint pairs. Imposing the same pin on both copies changes that graph and its integration law. For nonatomic nu the diagonal law `nu(dx)delta_x(dx')` is singular to `nu times nu`; a bounded multiplier cannot create it.
+
+The actual [Liu v3](https://arxiv.org/html/2603.15328v3) regular-pin theorem and its good/bad decomposition, Proposition 3.3, compatible cap sets, Lemma 4.4 and final proof were read through completion. Packing regularity removes small-mass pin cubes by a covering bound. The selected caps are nested compatibly across inflated cubes; local L2 orthogonality and local constancy use the curvature relation between scales. In physical radii `h<=H` at frequency R that relation is `H<=R h²`. The final shell exponent is `2-s-min(t,1)+O(delta log(1/delta))`. The radial source estimate alone does not give the conditional pin estimate needed here.
+
+A fresh primary search found the stronger [Gan–Liu–Wu v1, *Lebesgue measure of distance sets and L² ball inflation*](https://arxiv.org/html/2610.05015v1), submitted October 4, 2026. Its full proof text was read through the weighted estimate's ending (text lines 1–1122), including the profile structure lemma, finite-scale subdivisions, all three inflation steps and final mass summation. It uses finite-scale profile regularization, not a fixed regular subset. For alpha=dim_H E and beta=dim_P E it states positivity when
+
+`alpha>3/2-1/(2 beta)` and `alpha³-(2 beta-1)alpha²-2alpha+3 beta-1<0`.
+
+Its final loss is
+
+`D(alpha,beta)=max{(beta-alpha)/(2 beta-1), (beta-alpha)/[(alpha+1)(2 beta-alpha-1)]}`,
+
+and closure requires `D<alpha-1`. Its structure lemma chooses curvature-compatible intervals with local dimension above one, pays gaps, stops on a profile line, and the remaining terminal scale uses a weighted restriction estimate. The final sum keeps the original masses of all pieces, paying bad parts and discarded residue before Cauchy–Schwarz. This is a genuine stronger operation than Liu v3 and is **not an I127 discovery**. It still leaves, for example, alpha=11/10,beta=2 unpaid: `D=3/10>1/10`. The whole beta=2 range is not reduced to alpha>1. External v1's invoked profile approximation and restriction inputs, local-constancy tails and domain conventions remain its dependencies; reading the proof is not an independent certification or an added axiom. Our new elementary results below do not depend on accepting that paper's theorem.
+
+Frozen primary records also retain the I124 exact companions: finite weak pinned exact-distance counts, finite total/unit-distance results, BOP's transversality-dependent star threshold, Iosevich–Yavicoli's dimension conclusions and ILX's Riemannian 5/4 contract. None is substituted for a uniform annulus or Euclidean threshold-one positive-length estimate. Current metadata for Liu, IY and the refined-decoupling repair was rechecked; those facts are version-bounded, not worldwide coverage. I02's complete report/R2 were reread: the Kakeya lift gives only dimension four, and shadows lose witnesses. I36's operative significance reduction and I37's obstruction record preserve TECHNICAL ONLY and PARKED respectively.
+
+## 3. Attempt one: diagonal reconstruction with the inverse masses paid
+
+### 3.1 A usable quantitative retention estimate
+
+Let `H=L2(A_R,d xi)`, with shell length at most cR. Let f be a Bochner-integrable H-valued function of the pin x, and define
+
+`S_R=sup_(|h|<=1) ||int h(x) f(x) dnu(x)||_H²`.
+
+For a finite partition P with J cells and cell masses q, fix lambda>0 and let G be the union of cells q>=lambda. Then
+
+`nu(G^c)<=J lambda`,
+
+`int_G ||f||_H² dnu <= lambda^-1 S_R + int_G ||f-E(f|P)||_H² dnu`.       (N1)
+
+Proof: random independent signs on cells, zero outside G, give `sum_(Q in G)||int_Q f||²<=S_R`; divide by q>=lambda. Orthogonality of conditional expectation gives the displayed identity plus error. If the full L2 norm is initially infinite, the conditional-mean term is finite and expansion still gives the identity with an infinite residual; if the displayed right side is finite it proves L2 integrability. All geometric applications below have bounded f at each fixed R.
+
+If within each cell of diameter Ch,
+
+`|f(x,xi)-f(z,xi)|<=L_R |x-z|` for xi in A_R,
+
+then the variance formula bounds the last term by `C R L_R² h²`. For bounded planar pin support a dyadic partition has `J<=C_D h^-2`. Taking `lambda=epsilon h²/C_D` proves
+
+`nu(G^c)<=epsilon`,
+
+`int_G int_A_R |f|² <= C_D epsilon^-1 h^-2 S_R + C R L_R² h²`.          (N2)
+
+No lower pin-mass law is assumed. This pays inverse masses explicitly rather than removing them by random signs.
+
+For the **actual source tau_N,x**, at frequency R=2^N refine its depth-N anchor cubes by dyadic cells of side h<=R^-1. Class indicators and anchors are fixed inside a cell. Distance and W have fixed derivatives by separation; differentiating the distance phase costs O(R). The source's angular mask derivative bound at root depth at most N/2 costs at most `R^(1/2+o(1))`; its polynomial state losses fit below R for large N. Summing disjoint source classes keeps their original masses, rather than multiplying by inverse class masses. Consequently `L_R<=C R`, with C depending on fixed separation, profile allowances and source data. Inserting an arbitrary bounded pin multiplier into the already fixed source shell proof gives `S_R<=C R^-gamma` for its small positive gamma. Thus N2 yields
+
+`int_G int_A_R |hat tau_N,x|² <= C[epsilon^-1 h^-2 R^-gamma + R³h²]`.   (N3)
+
+This is a derived estimate, not the desired decay. To see precisely what it would suffice to prove, set `h=R^-k` (dyadically rounded), `epsilon=R^-e`, `k>3/2`, `e>0`. Both shell terms decay if `gamma>2k+e`; square roots are then summable over N. Start at N0 so `sum epsilon_N` is smaller than, say, one quarter of the original retained weighted product mass divided by `sup W`. The common measurable pin set `G_infinity=intersection_(N>=N0)G_N` loses only that summable mass. Restrict the positive alpha kernels to it, keep source restoration, and apply R1. This is a complete **conditional sufficient route with positive retained mass**. Normalizing the remaining pin law adds only the fixed inverse mass `nu(G_infinity)^-1`.
+
+But the source gamma is small (its assembly chooses beta below 1/10 and a smaller shell gain), while this elementary route requires gamma>3. Its estimate does not close A. Optimizing h without the anchor constraint gives the same threshold gamma>3; changing signs or omitting a cell mass cannot fix it. N3's positive exponent is an insufficiency of this bound, not a proof that geometric diagonal energy diverges. A successful graph argument must exploit more than the multiplier norm and this Lipschitz control.
+
+### 3.2 A singular-fibre countermodel to the stronger abstract interface
+
+Here is an actual countermodel to the abstract implication “positive monotone kernels + zero restoration + uniform bounded pin-multiplier shell decay + O(R) pin Lipschitz control imply fibre absolute continuity.” It strengthens original R4 and makes no Euclidean-distance claim.
+
+Fix `0<a<1`, `lambda=2^(-1/a)<1/2`, and the equal-weight two-branch Cantor probability sigma for the maps `z->lambda z` and `z->1-lambda+lambda z`. Level-n intervals have length lambda^n and mass 2^-n; uniform gaps imply every interval of radius rho meets O_a(1) level-n intervals when `lambda^(n+1)<rho<=lambda^n`. Hence `sigma(B)<=C_a rho^a`. Its support has dimension a and length zero by the same covers and Frostman lower bound.
+
+Use the planar pin probability `dnu=du dv` on `[2,3] times [1,2]`. For every N and pin (u,v), put
+
+`alpha_N,(u,v)=tau_N,(u,v)=(z->u+vz)_#sigma`.
+
+Every fibre is a singular probability on the fixed interval `[2,5]`. Monotonicity is equality, retained mass one, and restoration is zero. Its Fourier transform is
+
+`f(u,v,xi)=exp(-i xi u) sigma_hat(v xi)`.
+
+Since z is bounded, this is smooth in the pin and its first derivatives are bounded by C|xi|, including across partition boundaries.
+
+The Frostman estimate gives `int_(-T)^T |sigma_hat(eta)|² d eta<=C_a T^(1-a)` for T>=1: dominate the sharp interval by a Gaussian, Fourier-invert its positive Gaussian kernel, and sum the annuli `|z-w|~2^j/T`, using the Frostman bound and Gaussian decay. Therefore, for |xi| comparable to R,
+
+`int_1^2 |sigma_hat(v xi)|² dv <= C_a R^-a`.
+
+For any measurable |h(u,v)|<=1, put `H_v(xi)=int_2^3 h(u,v)exp(-i xi u)du`. Cauchy–Schwarz in v and then Plancherel in u give
+
+`int_A_R |int h f dnu|² dxi <= C_a R^-a int_R int_1^2 |H_v(xi)|² dv dxi <= 2pi C_a R^-a ||h||_2² <= C'_a R^-a`.    (N4)
+
+The bound is uniform over **all** bounded pin multipliers, and its shell square roots are summable. Still every fibre is singular. This is compatible with N1–N3: their inverse cell masses and oscillation errors are essential. This does not falsify the stronger diagonal shell hypothesis R1, which this example cannot satisfy. It does not arise here as `D_x#mu` for one planar source of dimension above one and does not refute A. It proves exactly that the source's multiplier clause plus positive restoration, even supplemented by smooth dependence at the natural frequency scale, is an insufficient abstract interface. A new geometric common-pin operation is indispensable for this route.
+
+## 4. Attempt two: concentration-aware incidence and actual inflation costs
+
+### 4.1 Truncate the energy at the angular scale
+
+For the R5 catalogue define the bounded kernel
+
+`K_(r,theta)(x,z)=min(theta^-1,r/|x-z|)`, with diagonal value theta^-1,
+
+and the cost
+
+`F_nu(r,theta)=sum_Q q_Q [int int K_(r,theta) dnu_Q dnu_Q]^(1/2)`.
+
+The exact two-point catalogue count, including the diagonal, is at most C K. Repeating the heavy-count/Cauchy–Schwarz proof gives the stronger one-scale estimate
+
+`discarded or admitted-heavy mass <= C_p L A^(1-p) + C A B^-1/2 F_nu(r,theta)`,
+
+`F_nu(r,theta)<=min{E_nu(r),theta^-1/2}`.                            (N5)
+
+No finite energy is needed for this bounded-kernel version; when I1 is finite it improves the original bound. Constants depend only on separation, catalogue overlaps and p. Full-source deletion is exactly R6, so the projection quantifier survives. This is a usable angularly resolved estimate, not just a renamed infinite cost.
+
+For the homogeneous R8 profile, put r=2^-b, theta=2^-k and `d_l=m(b+l)-m(b)`. Uniform cylinder masses and bounded grid overlap give, with absolute geometric constants,
+
+`F_nu(2^-b,2^-k)² comparable to sum_(l=0)^k 2^(l-d_l)`.              (N6)
+
+To prove it, layer-cake the bounded kernel: its integral is comparable to a constant plus `sum_(l=1)^k 2^l Pr{|x-z|<=2^-b-l}`. Same-descendant pairs have probability `2^-d_l` and distance at most sqrt(2)2^-b-l; shift l by two for a lower bound. A ball meets O(1) depth-(b+l) cells, giving the upper bound by C2^-d_l. The shifts change the expression by a fixed factor because d increases by either zero or two at each level. All conditional cells carry translated copies of the same future profile, so their identical square-root costs sum with weights q_Q to that common value. N6 is for this homogeneous construction; it is not asserted for arbitrary profiles without a conditional correlation bound.
+
+If b=b_j and `k<=L_j-2`, the entire conditional support has diameter below theta r. Then K equals theta^-1 on every pair and **exactly** `F_nu(r,theta)=theta^-1/2`. Truncation removes dependence on unseen finer scales but cannot create a small deletion budget. In N5 the elementary choice B comparable to theta^-1 only gives an order-A bound, not a gain. Larger B makes every tube automatically nonheavy and correspondingly weakens the tube condition used by inflation. These costs cannot be omitted.
+
+### 4.2 A genuine geometric obstruction to thin-tube retention at frozen scales
+
+Take this pin measure in the unit square and a bounded smooth source probability in a separated disk. It is t-Frostman for every t<=2; the pins are s-Frostman for the chosen s>1. Both have finite energies at exponents strictly below their dimensions. Their radial source densities are uniformly bounded, with constants depending on the disk and separation; full extended tube masses are at most `C_mu theta`.
+
+At b_j choose `theta>=C 2^-L_j`, small enough for the specified tube geometry. For every conditional occupied pin cell Q, every pin x in its tiny descendant and every source y, a tube through x in the direction y−x, of width C theta r and length Cr, contains the **whole** conditional pin support. Its normalized mass is one. Consequently any rule demanding the all-directions conditional bound `nu_Q(T)<=B theta` with `B theta<1` rejects every pair (fixed width constants are absorbed into the strict inequality). A theta-separated catalogue with fixed enlargements covers these witness tubes and yields the same assertion with fixed constants. It persists for every fixed positive-mass restriction. Source-only radial or tube bounds are harmless here and cannot prevent the pin deletion.
+
+This is a constraint-respecting separated geometric example against that precise good-tube retention rule, not merely an arbitrary mass profile. The union with the smooth disk certainly has good pins, so it is emphatically not a counterexample to A. It does not exclude a stopped scheme that avoids the frozen interval, borrows free-scale growth, or uses cancellation instead of this all-directions bound.
+
+But skipping scales must pay curvature. In physical radii H=2^-b and h=2^-a at R=2^N, Liu's orthogonality/local-constancy interface requires
+
+`H<=R h²`, equivalently `a<=(N+b)/2`.                            (N7)
+
+A direct jump across `[b_j,a_j]` therefore needs `N>=b_j+2L_j`; at the frequency `N=a_j` it is forbidden. If one insists on valid inflation steps inside the frozen part (staying a fixed number of levels before its endpoint), every conditional thin-tube threshold must be at least its radius ratio, up to fixed catalogue constants. The product of those ratios is `2^(total covered frozen length)`. With J steps the possible constants cost `C^J`; for any uniformly bounded J this is an exponential frozen-length loss. A large J is itself not free: it multiplies local-constancy errors, mask enlargements and R^epsilon allowances. This establishes an actual local obstruction and accounts for the spatial/frequency condition; it is not a theorem that all variable-scale constructions fail.
+
+The stronger GLW construction specifically addresses this problem by selecting locally growing profile intervals, paying gaps and a terminal weighted estimate rather than jumping freely. Its ending retains a loss D(alpha,beta). At the R8 values alpha=s,beta=2, that known payment need not be smaller than s−1. No complete common-mask retention plus global gain for all s>1 was obtained here.
+
+### 4.3 Even null regular subsets cannot rescue this example
+
+There is a stronger elementary geometric property of the same support K:
+
+**For every subset A of K, `dim_H A <= (s/2) dim_P A`.**              (N8)
+
+In particular K contains **no** subset of positive dimension having equal Hausdorff and packing dimensions. This assertion includes nu-null subsets and is additional to original R8.
+
+Proof. Write N(A,r) for a covering number by radius-r balls. At free endpoint b_j every occupied symbolic b_j-square has just one a_j-descendant containing its part of K. A radius-2^-b_j ball meets O(1) such b_j-squares; each descendant can be covered by O(1) balls of radius 2^-a_j. Hence, for every A subset K,
+
+`N(A,2^-a_j) <= C N(A,2^-b_j)`.
+
+For bounded A with upper box dimension d, its covers along a_j give `dim_H A <= liminf_j log_2 N(A,2^-a_j)/a_j <= (s/2)d`, since b_j/a_j→s/2. For arbitrary A use the countable-cover definition of packing dimension: for each epsilon>0 cover A by bounded sets A_i with upper box dimensions at most `dim_P A+epsilon`, replace them by A_i intersect K, and apply the previous inequality to each. Countable stability of Hausdorff dimension gives `dim_H A <= (s/2)(dim_P A+epsilon)`. Let epsilon decrease to zero. Boundary overlaps only affect the constant C; symbolic covers suffice even for points on grid boundaries. The whole K attains equality (s,2), so the coefficient is sharp for this K.
+
+Thus the suggestion “choose a different null regular subset with dimension above one” is actually impossible on this example, not just unproved for the given measure. This does not preclude good pins, other measures, variable finite-scale regularization, or A itself. It blocks a specific attempted invocation of Liu's regular-pin theorem on a regular subset. It also explains why the stronger GLW finite-scale profile construction is a different operation.
+
+## 5. Decision and limits
+
+Both attempts have paid new, explicit estimates or constructions, rather than merely listing missing lemmas. Route one supplies N1–N3 with a complete retention budget and N4 as a countermodel to its proposed abstract shortcut. Route two supplies N5–N6, an actual geometric all-bad frozen-scale example with N7's curvature restriction, and N8 for every subset. These are technical deductions from conditional expectation, Fourier energy, tube counting and covering dimensions. They are useful constraints but no global gain closes A. None is nominated as a ninth finding.
+
+The precise new mechanism worth resuming for is either (i) a diagonal geometric shell estimate whose normalized pin-cell sum pays its inverse masses while retaining a common positive product mass, beyond the uniform-multiplier interface falsified by N4; or (ii) a compatible stopped inflation construction with a total profile loss strictly below s−1 for every s>1, including R8/GLW's beta=2 profiles, with all bad mass, gaps, terminal estimates and spatial/frequency errors paid. These are sufficient research directions, not claimed necessary conditions for every proof of A. In their absence, park this branch. Do not recycle the elementary lemmas as a substantial nomination or replace A by exceptional-set, regular-pin, triangle or Riemannian statements.
+
+## 6. Evidence and reproduction
+
+The owned inventory is exactly this report and the two assigned I127 directories. Frozen original task/report/parent records are immutable; the four live ledgers alone may drift. Complete inherited seals are checked flat, including prior failure records. The complete 13,223-entry/749-manuscript/10,373-original map and all 776 original-PDF/text bindings are reused by reference, not copied. One corpus traversal recomputes Git blobs, SHA-256 values and exact lexical occurrence multisets for all inherited expressions and the new expression. Search membership is not semantic reading. No old verifier is executed and no diagnostic recursion occurs.
+
+The range manifest preserves actual displayed ranges and endings. Truncated display attempts are explicitly recorded and do not count as complete reading; mandatory original recursive records and relied-upon proof portions were reread in bounded calls. Corpus and new HTML text use UTF-8 `splitlines()`, passage hashes join LF without an appended newline; inherited PDF ranges retain their original LF/form-feed convention. HTML bytes, extracted text, exact version URLs, extraction operation, fresh version metadata and failed reads are bound. Prior PDF replay records remain immutable; no new PDF extraction was needed for these HTML proofs. A bounded current-primary screen is not worldwide coverage or priority evidence.
+
+Before any finite diagnostic, the offline read-only verifier checks the exact owned inventory and every immutable byte, inherited seals/references, full original corpus mapping, lexical multisets and read passages. It has no network, write, subprocess, bytecode, repair or reseal operation. Preseal validation precedes the one final seal. Diagnostics check only exact finite variance/projection, branching/truncation and exponent/curvature instances; they do not certify the universal arguments, substantiality, A, external proofs, formal verification or human review.
+
+Run from the repository root:
+
+`python3 -B frontier/experiments/i127_diagonal_pinned_distance/verify.py`
