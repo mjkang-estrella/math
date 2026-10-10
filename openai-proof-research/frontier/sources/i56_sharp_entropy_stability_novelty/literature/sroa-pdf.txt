@@ -1,0 +1,1497 @@
+                                             SUCCESSIVE RANK-ONE APPROXIMATIONS FOR NEARLY
+                                             ORTHOGONALLY DECOMPOSABLE SYMMETRIC TENSORS
+                                                           CUN MU∗ , DANIEL HSU† , AND DONALD GOLDFARB∗
+
+                                             Abstract. Many idealized problems in signal processing, machine learning and statistics can
+                                         be reduced to the problem of finding the symmetric canonical decomposition of an underlying sym-
+                                         metric and orthogonally decomposable (SOD) tensor. Drawing inspiration from the matrix case,
+                                         the successive rank-one approximations (SROA) scheme has been proposed and shown to yield this
+                                         tensor decomposition exactly, and a plethora of numerical methods have thus been developed for
+
+
+
+
+arXiv:1705.10404v1 [cs.NA] 29 May 2017
+                                         the tensor rank-one approximation problem. In practice, however, the inevitable errors (say) from
+                                         estimation, computation, and modeling necessitate that the input tensor can only be assumed to be
+                                         a nearly SOD tensor—i.e., a symmetric tensor slightly perturbed from the underlying SOD tensor.
+                                         This article shows that even in the presence of perturbation, SROA can still robustly recover the
+                                         symmetric canonical decomposition of the underlying tensor. It is shown that when the perturba-
+                                         tion error is small enough, the approximation errors do not accumulate with the iteration number.
+                                         Numerical results are presented to support the theoretical findings.
+
+                                             Key words. tensor decomposition, rank-1 tensor approximation, orthogonally decomposable
+                                         tensor, perturbation analysis
+
+                                            AMS subject classifications. 15A18, 15A69, 49M27, 62H25
+
+
+                                              1. Introduction. The eigenvalue decomposition of symmetric matrices is one
+                                         of the most important discoveries in mathematics with an abundance of applications
+                                         across all disciplines of science and engineering. One way to explain such a decom-
+                                         position is to express the symmetric matrix as a minimal sum of rank-one symmetric
+                                         matrices. It is well known that the eigenvalue decomposition can be simply obtained
+                                         via successive rank-one approximation (SROA). Specifically, for a symmetric matrix
+                                         X ∈ Rn×n with rank r, one approximates X by a rank-one matrix to minimize the
+                                         Frobenius norm error:
+
+                                         (1.1)                      (λ1 , x1 ) ∈ arg min kX − λxx> kF ;
+                                                                                λ∈R,kxk=1
+
+
+                                         then, one approximates the residual X −λ1 x1 x>                                          >
+                                                                                              1 by another rank-one matrix λ2 x2 x2 ,
+                                         and so on. The above procedure   Pcontinues       until one has found r rank-one matrices
+                                                    r                       r
+                                         (λi xi x> )
+                                                 i i=1 ; their summation,   i=1 λ i x i x >
+                                                                                          i , yields an eigenvalue decomposition of
+                                         X. Moreover, due to the optimal approximation property of the eigendecomposition,
+                                         for any positive integer k ≤ r, the best rank-k approximation (in the sense of either
+                                                                                                                   Pk
+                                         the Frobenius norm or the operator norm) to X is simply given by i=1 λi xi x>         i [1].
+                                               In this article, we study decompositions of higher-order symmetric tensors, a
+                                         natural generalization of symmetric matrices. Many applications in signal processing,
+                                         machine learning, and statistics, involve higher-order interactions in data; in these
+                                         cases, higher-order
+                                                          Np tensors formed from the data are the primary objects of interest.
+                                         A tensor T ∈ i=1 Rni := Rn1 ×n2 ×···×np of order p is called symmetric if n1 = n2 =
+                                         · · · = np = n and its entries are invariant under any permutation of their indices.
+                                         Symmetric tensors of order two (p = 2) are symmetric matrices. In the sequel, we
+                                         reserve the term tensor (without any further specifiction) for tensors of order p ≥ 3.
+
+                                            ∗ Department of Industrial Engineering and Operations Research, Columbia University (cm3052@
+
+                                         columbia.edu, goldfarb@columbia.edu)
+                                            † Department of Computer Science, Columbia University, djhsu@cs.columbia.edu
+
+                                                                                        1
+2                                C. MU, D. HSU, AND D. GOLDFARB
+
+
+A symmetric rank-one tensor can be naturally defined as a p-fold outer product
+
+                                        v ⊗p := v ⊗ v ⊗ · · · ⊗ v ,
+                                                |     {z        }
+                                                        p times
+
+
+where v ∈ Rn and ⊗ denotes the outer product between vectors.1 The minimal
+number of rank-one symmetric tensors whose sum is T is called the symmetric tensor
+rank in the literature, and any corresponding decomposition is called a symmetric
+canonical decomposition [2]. Such decompositions have applications in many scientific
+and engineering domains [3, 4, 5, 6, 7, 8].
+    By analogy to the matrix case, successive rank-one approximations schemes have
+been proposed for symmetric tensor decomposition [9, 10, 11, 12]. Just as in the
+matrix case, one first approximates T by a symmetric rank-one tensor
+
+(1.2)                           (λ1 , v1 ) ∈ arg min        T − λv ⊗p F ,
+                                              λ∈R,kvk=1
+
+
+and then approximate the residual T − λ1 v1⊗p again by another symmetric rank-
+one tensor, and so on. (The Frobenius norm k·kF for tensors is defined later, but
+is completely analogous to the matrix case.) This process continues until a certain
+stopping criterion is met. However, unlike symmetric matrices, the above procedure
+for higher order tensors (p ≥ 3) faces a number of computational and theoretical
+challenges.
+     Unlike problem (1.1)—which can be solved efficiently using simple techniques
+such as power iterations— solving the rank-one approximation to higher order ten-
+sors is much more difficult: it is NP-hard, even for symmetric third-order tensors [13].
+Researchers in numerical linear algebra and numerical optimization have devoted a
+great amount of effort to solve problem (1.2). Broadly speaking, existing methods for
+problem (1.2) can be categorized into three types. First, as problem (1.2) is equiva-
+lent to finding the extreme value of a homogeneous polynomial over the unit sphere,
+general-purpose polynomial solvers based on the Sum-of-Squares (SOS) framework
+[14, 15, 16, 17, 18], such as GloptiPoly 3 [19] and SOSTOOLS [20], can be effec-
+tively applied to the rank-one approximation problem. The SOS approach can solve
+any polynomial problem to any given accuracy through a sequence of semidefinite
+programs; however, the size of these programs are very large for high-dimensional
+problems, and hence these techniques are generally limited to relatively small-sized
+problems. The second approach is to treat problem (1.2) as a nonlinear program
+[21, 22], and then to exploit and adapt the wealth of ideas from numerical optimiza-
+tion. The resulting methods—which include [23, 9, 10, 12, 24, 25, 26, 27, 28] to just
+name a few—are empirically efficient and scalable, but are only guaranteed to reach
+a local optimum or stationary point of the objective over the sphere. Therefore, to
+maximize their performance, these methods need to run with several starting points.
+The final approach is based on the recent trend of relaxing seemingly intractable op-
+timzation problems such as problem (1.2) with more tractable convex optimization
+problems that can be efficiently solved [29, 30, 31]. The tensor structure in (1.2) has
+made it possible to design highly-tailored convex relaxations that appear to be very ef-
+fective. For instance, the semidefinite relaxation approach in [29] was able to globally
+solve almost all the randomly generated instances that they tested. Aside from the
+    1 For any 1 ≤ i , i , . . . , i                           n                                            ⊗p is
+                            1 2            p ≤ n and any v ∈ R , the (i1 , i2 , . . . , ip )-th entry of v
+(v ⊗p )i1 ,i2 ,...,ip = vi1 vi2 · · · vip .
+                RANK-1 APPROXIMATIONS FOR STRUCTURED TENSORS                                  3
+
+above solvers, a few algorithms have been specifically designed for the scenario where
+some side information regarding the solution of (1.2) is known. For example, when
+the signs of the optimizer v1 are revealed, polynomial time approximation schemes
+for solving (1.2) are available [32].
+      In contrast to the many active efforts and promising results on the computational
+side, the theoretical properties of successive rank-one approximations are far less
+developed. Although SROA is justified for matrix eigenvalue decomposition, it is
+known to fail for general tensors [33]. Indeed, much has been established about the
+failings of low-rank approximation concepts for tensors that are taken for granted in
+the matrix setting [34, 35, 36, 37, 38]. For instance, the best rank-r approximation to
+a general tensor is not even guaranteed to exist (though several sufficient conditions
+for this existence have been recently proposed [39, 40]). Nevertheless, SROA can be
+still justified for certain classes of symmetric tensors that arise in applications.
+      Nearly SOD tensors. Indeed, in many applications (e.g., higher-order statistical
+estimation [3], independent component analysis [4, 7], and parameter estimation for
+latent variable models [8]), the input tensor Tb may be fairly assumed to be a symmet-
+ric tensor slightly perturbed from a symmetric and orthogonally decomposable (SOD)
+tensor T . That is,
+                                         Tb = T + E,
+where the underlying SOD tensor may be written as T = i=1 λi vi⊗p with hvi , vj i =
+                                                                     Pr
+1{i = j} for 1 ≤ i, j ≤ r, and E is a perturbation tensor. In these aforementioned
+applications, we are interestedPin obtaining the underlying pairs {(λi , vi )}ri=1 . When
+E vanishes, it is known that i=1 λi vi⊗p is the unique symmetric canonical decom-
+                                      r
+
+position [2, 41], and moreover, successive rank-one approximation exactly recovers
+{(λi , vi )}ri=1 [9]. However, because of the inevitable perturbation term E arising from
+sampling errors, noisy measurements, model misspecification, numerical errors, and
+so on, it is crucial to understand the behavior of SROA when E 6= 0. In particular, one
+may ask if SROA provides an accurate approximation to {(λi , vi )}ri=1 . If the answer
+is affirmative, then we can indeed take advantage of those sophisticated numerical
+approaches to solving (1.2) mentioned above for many practical problems. This is the
+focus of the present paper.
+     Algorithm-independent analysis. The recent work of [8] proposes a randomized
+algorithm for approximating SROA based on the power method of [23]. There, an
+error analysis specific to the proposed randomized algorithm (for the case p = 3)
+shows that the decomposition {(λi , vi )}ri=1 of T can be approximately recovered from
+Tb in polynomial time with high probability—provided that the perturbation E is
+sufficiently small (roughly on the order of 1/n under a natural measure). Our present
+aim is to provide a general analysis that is independent of the specific approach used
+to obtain rank-one approximations and it seems to be beneficial. Our analysis shows
+that √ the general SROA scheme in fact allows for perturbations to be of the order
+1/ p−1 n, suggesting advantages of using more sophisticated optimization procedures
+and potentially more computational resources to solve each rank-one approximation
+step.
+     As motivation, we describe a simple and typical application from probabilistic
+modeling where perturbations of SOD tensors naturally arise. But first, we establish
+notations used throughout the paper, largely borrowed from             N[42].
+                                                                            p n
+     Notation. A real p-th order n-dimensional tensor A ∈                      R := Rn×n×···×n ,
+                                    
+                 A = Ai1 ,i2 ,...,ip , Ai1 ,i2 ,...,ip ∈ R, 1 ≤ i1 , i2 , . . . , ip ≤ n,
+4                               C. MU, D. HSU, AND D. GOLDFARB
+
+
+is called symmetric if its entries are invariant under any permutation of their indices:
+for any i1 , i2 , . . . , ip ∈ [n] := {1, 2, . . . , n},
+
+                                   Ai1 ,i2 ,...,ip = Aiπ(1) ,iπ(2) ,...,iπ(p)
+
+for any permutation mapping π on [p].                                                     Np n
+     In addition to being considered as a multi-way array, a tensor A ∈                        R can
+also be interpreted as a multilinear map in the following sense: for any matrices
+Vi ∈ Rn×mi for i ∈ [p], we interpret A(V1 , V2 , . . . , Vp ) as a tensor in Rm1 ×m2 ×···×mp
+whose (i1 , i2 , . . . , ip )-th entry is
+                                              X
+  (A(V1 , V2 , . . . , Vp ))i1 ,i2 ,...,ip :=   Aj1 ,j2 ,...,jp (V1 )j1 i1 (V2 )j2 i2 · · · (Vp )jp ip .
+                                          j1 ,j2 ,...,jp ∈[n]
+
+The following are special cases:
+     1. p = 2 (i.e., A is an n × n symmetric matrix):
+
+                                      A(V1 , V2 ) = V1> AV2 ∈ Rm1 ×m2 .
+
+      2. For any i1 , i2 , . . . , ip ∈ [n],
+
+                                      A(ei1 , ei2 , . . . , eip ) = Ai1 ,i2 ,...,ip ,
+
+         where ei denotes the i-th standard basis of Rn for any i ∈ [n].
+      3. Vi = x ∈ Rn for all i ∈ [p]:
+                                              X
+               Ax⊗p := A(x, x, . . . , x) =            Ai1 ,i2 ,...,ip xi1 xi2 · · · xip ,
+                                                          i1 ,i2 ,...,ip ∈[n]
+
+         which defines a homogeneous polynomial of degree p.
+      4. Vi = x ∈ Rn for all i ∈ [p − 1], and Vp = I ∈ Rn×n :
+
+                        Ax⊗p−1 := A(x, . . . , x, I) ∈ Rn ,
+                                      X
+                       Ax⊗p−1 i =
+                             
+                                                   Ai1 ,i2 ,...,ip−1 ,i xi1 xi2 · · · xip−1 .
+                                          i1 ,i2 ,...,ip−1 ∈[n]
+                                    Np
+     For any tensors A, B ∈         Rn , the inner product between them is defined as
+                                        X
+                          hA, Bi :=             Ai1 ,i2 ,...,ip Bi1 ,i2 ,...,ip .
+                                        i1 ,i2 ,...,ip ∈[n]
+
+
+Hence, Ax⊗p (defined above) can also be interpreted as the inner product between
+A and x⊗p .                                                                     Np n
+     Two tensor norms will be      p used in the paper. For a tensor A ∈            R , its
+Frobenius norm is kAkF := hA, Ai, and its operator norm A, kAk, is defined as
+maxkxi k=1 A(x1 , x2 , . . . , xp ). It is well-known that for symmetric tensors A, kAk =
+maxkxk=1 |Ax⊗p | (see, e.g., [26, 27]).
+     A motivating example.. To illustrate why we are particularly interested in nearly
+SOD tensors, we now consider the following simple probabilistic model for charac-
+terizing the topics of text documents. (We follow the description from [8].) Let n
+be the number of distinct topics in the corpus, d be the number of distinct words in
+the vocabulary, and t ≥ p be the number of words in each document. We identify
+                  RANK-1 APPROXIMATIONS FOR STRUCTURED TENSORS                                           5
+
+the sets of distinct topics and words, respectively, by [n] and [d]. The topic model
+posits the following generative process for a document. The document’s topic h ∈ [n]
+is first randomly drawn according to a discrete probability distributionP specified by
+w = (w1 , w2 , . . . , wn ) (where we assume wi > 0 for each i ∈ [n] and i∈[n] wi = 1):
+
+                                  P [ h = i ] = wi     for all i ∈ [n].
+Given the topic h, each of the document’s t words is then drawn independently from
+the vocabulary according to the discrete distribution specified by the probability vec-
+tor µh ∈ Rd ; we assume that the probability vectors {µi }i∈[n] are linearly independent
+(and, in particular, d ≥ n). The task here is to estimate these probability vectors w
+and {µi }i∈[n] based on a corpus of documents.
+                                           Np d
+    Denote by M2 ∈ Rd×d and Mp ∈               R , respectively, the pairs probability
+matrix and p-tuples probability tensor, defined as follows: for all i1 , i2 , . . . , ip ∈ [d], ,
+              (M2 )i1 ,i2 = P [ 1st word = i1 , 2nd word = i2 ]
+        (Mp )i1 ,i2 ,...,ip = P [ 1st word = i1 , 2nd word = i2 , · · · , pth word = ip ] .
+It can be shown that M2 and Mp can be precisely represented using w and {µi }i∈[n] :
+
+                                                        wi µ⊗p
+                         X                         X
+                   M2 =     wi µi µ>
+                                   i and Mp =               i .
+                                i∈[n]                              i∈[n]
+
+    Since M2 is positive semidefinite and rank(M2 ) = n, M2 = U DU > is its reduced
+eigenvalue decomposition. Here, U ∈ Rd×n satisfies U > U = I, and D ∈ Rn×n is a
+diagonal matrix with diag D  0. Now define
+                            1−p/2               √
+  W := U D −1/2 , λi := wi        , and vi := wi W > µi ∈ Rn for each i ∈ [n].
+Then
+                                                   X                                  X
+        W > M2 W = I = M2 (W , W ) =                      wi (W > µi )(W > µi )> =            vi vi> ,
+                                                  i∈[n]                               i∈[n]
+
+which implies that {v1 , v2 , . . . , vn } are orthogonal. Moreover,
+
+                                                                        λi vi⊗p .
+                                                 X                    X
+(1.3)      T := Mp (W , W , . . . , W ) =            wi (W > µi )⊗p =
+                                                   i∈[n]                      i∈[n]
+
+Therefore, we can obtain {(λi , vi )}i∈[n] (and subsequently {(wi , µi )}i∈[n] 2 ) by com-
+puting the (unique) symmetric canonical decomposition of tensor T , which can be
+perfectly achieved by SROA [9].
+    In order to obtain the tensor T , we need M2 and Mp , both of which can be
+estimated from a collection of documents. Due to their independence, all pairs (resp.,
+p-tuples) of words in a document can be used in forming estimates of M2 (resp., Mp ).
+However, the quantities M2 and Mp are only known up to sampling errors, and hence,
+we are only able to construct a symmetric tensor Tb that is, at best, only close to the
+one in (1.3). A critical question is whether we can still use SROA (Algorithm 1) to
+obtain an approximate decomposition and robustly estimate the model parameters.
+    2 After obtaining {(λ , v )}
+                         i   i i∈[n] , it is possible to obtain {(wi , µi )}i∈[n] because for each i ∈ [n],
+                                           2/(2−p)
+there exists j ∈ [n] such that wi = λj              and µi = λj (W > )† vj , where (W > )† denotes the
+Moore-Penrose pseudoinverse of W > .
+6                                 C. MU, D. HSU, AND D. GOLDFARB
+
+
+Algorithm 1 Successive Rank-One Approximation (SROA)
+                                   Np n
+input symmetric tensor Tb ∈           R .
+ 1: initialize T 0 := T
+                    b     b
+ 2: for i = 1 to n do
+ 3:   (λ̂i , v̂i ) ∈ arg minλ∈R,kvk=1 Tb i−1 − λv ⊗p .
+                                                              F
+    4:   Tb i := Tb i−1 − λ̂i v̂i⊗p .
+    5: end for
+    6: return {(λ̂i , v̂i )}i∈[n] .
+
+
+
+    Setting. Following
+               Np       the notation in the above example, in the sequel, we denote
+Tb = T + E ∈ P Rn . Here T is a symmetric tensor that is orthogonally decompos-
+able, i.e., T = i=1 λi vi⊗p with all λi 6= 0, {v1 , v2 , . . . , vn } forming an orthonormal
+                  n
+            n
+basis of R , and E is a symmetric perturbation tensor with operator norm ε := kEk.
+Note that in some applications, we might instead have T = i=1 λi vi⊗p for some
+                                                                         Pr
+r < n. Our results nevertheless can be applied in that setting as well with little
+modification.
+    For simplicity, we also assume p is odd and treat it as a constant in big-O nota-
+tions. (We discuss the even case in Section 3.4). Without loss of generality, we can
+assume λi > 0 for all i ∈ [n], as we can always change the sign of vi to make it hold.
+Moreover, line 3 in Algorithm 1 simply becomes
+
+                              v̂i ∈ arg max Tb i−1 v ⊗p ,   λ̂i = Tb i−1 v̂i⊗p .
+                                        kvk=1
+
+       Organization. Section 2 analyzes the first iteration of Algorithm 1 and proves that
+(λ̂1 , v̂1 ) is a robust estimate of a pair (λi , vi ) for some i ∈ [n]. A full decomposition
+analysis is provided in Section 3, in which we establish the following property of
+tensors: when kEk is small enough, the approximation errors do not accumulate as the
+iteration number grows; in contrast, the use of deflation is generally not advised in the
+matrix setting for finding more than a handful of matrix eigenvectors due to potential
+instability. Numerical experiments are also reported to confirm our theoretical results.
+     2. Rank-One Approximation. In this section, we provide an analysis of the
+first step of SROA (Algorithm 1), which yield a rank-one approximation to Tb .
+     2.1. Review of Matrix Perturbation Analysis. We first state a well-known
+result about perturbations of the eigenvalue decomposition for symmetric matrices;
+this result serves as a point of comparison for our study of higher-order tensors. The
+result is stated just for rank-one approximations, and in a form analogous to what we
+are able to show for the tensor case (Theorem 2.2 below).
+     Theorem P   2.1 ([43, 44]). Let M ∈ Rn×n be a symmetric matrix with eigenvalue
+                   n
+decomposition i=1 λi vi vi> , where |λ1 | ≥ |λ2 | ≥ · · · ≥ |λn | and {v1 , v2 , . . . , vn } are
+orthonormal. Let M   c = M + E ∈ Rn×n for some symmetric matrix E with ε := kEk,
+and let
+
+                                  (λ̂, x̂) ∈ arg min    c − λxx>
+                                                        M                   .
+                                            λ∈R,kxk=1                   F
+
+
+The following holds.
+      • (Perturbation of leading eigenvalue.) |λ̂ − λ1 | ≤ ε.
+               RANK-1 APPROXIMATIONS FOR STRUCTURED TENSORS                                         7
+
+     • (Perturbation of leading eigenvector.) Suppose γ := mini6=1 |λ1 − λi | >
+                           2
+        0. Then hx̂, v1 i ≥ 1 − (2ε/γ)2 . This implies that if 2ε/γ ≤ 1, then
+        min{kv1 − x̂k , kv1 + x̂k} ≤ O(ε/γ).
+    For completeness, we give a proof of the eigenvector perturbation bound in Ap-
+pendix A since it is not directly implied by results in [44] but essentially uses the same
+arguments.
+     2.2. Single Rank-One Approximation. The main result of this section con-
+cerns the first step of SROA (Algorithm 1) and establishes a perturbation result for
+nearly SOD tensors.                                                                 Np n
+     Theorem 2.2. For any odd positive integer p ≥ 3, let Tb := T + P          E ∈       R ,
+                                                                                 n       ⊗p
+where T is a symmetric tensor with orthogonal decomposition T =                  i=1 λi vi ,
+{v1 , v2 , . . . , vn } is an orthonormal basis of Rn , λi > 0 for all i ∈ [n], and E is a
+symmetric tensor with operator norm ε := kEk. Let x̂ ∈ arg maxkxk2 =1 Tb x⊗p and
+λ̂ := Tb x̂⊗p . Then there exists j ∈ [n] such that
+                                                                 2 !
+                                                           ε     ε
+(2.1)                     |λ̂ − λj | ≤ ε, kx̂ − vj k2 ≤ 10    +         .
+                                                           λj    λj
+
+     To P             2.2, we first establish an intermediate result. Let xi := hvi , x̂i,
+        prove Theorem P
+          n             n
+so x̂ = i=1 xi vi and i=1 x2i = 1 since {v1 , v2 , . . . , vn } is an orthonormal basis for
+  n
+R and kx̂k = 1. We reorder the indicies [n] so that
+
+(2.2)                  λ1 |x1 |p−2 ≥ λ2 |x2 |p−2 ≥ · · · ≥ λn |xn |p−2 .
+
+Our intermediate result, derived by simply bounding λ̂ from both above and below,
+is as follows.
+     Lemma 2.3. In the notation from above,
+(2.3)
+ λ1 ≥ λmax − 2ε,     |x1 | ≥ 1 − 2ε/λ1 ,        x21 ≥ x1p−1 ≥ 1 − 4ε/λ1 ,       and   |λ̂ − λ1 | ≤ ε.
+
+where λmax = maxi∈[n] λi .
+   Proof. To show (2.3), we will bound λ̂ = Tb x̂⊗p from both above and below.
+   For the upper bound, we have
+
+                   λ̂ = Tb x̂⊗p = T x̂⊗p + E x̂⊗p
+                                  Xn
+                                =     λi xpi + E x̂⊗p
+                                      i=1
+                                      n
+                                      X
+(2.4)                             ≤         λi |xi |p−2 x2i + ε ≤ λ1 |x1 |p−2 + ε,
+                                      i=1
+                                                Pn      2
+where the last inequality follows since            i=1 xi = 1.
+   On the other hand,
+
+(2.5)                 λ̂ ≥ max T vi ⊗p − kEk = λmax − ε ≥ λ1 − ε.
+                          i∈[n]
+
+    Combining (2.4) and (2.5), it can be easily verified that
+
+                             λ1 ≥ λmax − 2ε,            |λ1 − λ̂| ≤ ε.
+8                          C. MU, D. HSU, AND D. GOLDFARB
+
+
+and moreover,
+
+                                               λ1 − 2ε     2ε
+                          |x1 | ≥ |x1 |p−2 ≥           =1−
+                                                 λ1        λ1
+
+which implies that xp−1
+                    1   = |x1 |p−2 · |x1 | ≥ 1 − 4ε/λ1 .
+    Remark 1. The higher-order requirement, p ≥ 3, is crucial in the analysis.
+Specifically we can bound |x1 | below by the lower bound of |x1 |p−2 , which can be done
+by bounding λ̂ = Tb x̂⊗p from both above and below. This essentially explains why
+Lemma 2.3, different from the matrix case (p = 2), does not rely on the spectral gap
+condition.
+    The bound |λ̂ − λ1 | ≤ ε proved in Lemma 2.3 is comparable to the matrix
+                                                                         Pn coun-
+terpart in Theorem 2.1, and is optimal in the worst case. Consider T = i=1 λi e⊗p i
+with λ1 > λ2 ≥ . . . ≥ λn ≥ 0 and E = εe⊗p
+                                         1 , for some ε > 0. Then clearly λ̂ = λ1 + ε
+and |λ̂ − λ1 | = ε.
+     Moreover, when E vanishes, Lemma 2.3 leads directly to the following result given
+in [9].
+     Corollary 2.4 ([9]). Suppose E = 0 (i.e., Tb = T = i=1 λi vi⊗p is orthogonally
+                                                          Pn
+decomposable). Then Algorithm 1 computes {(λi , vi )}ni=1 exactly.
+     However, compared to Theorem 2.1, the bound for x is |x1 | ≥ 1−2ε/λ p 1 appears to
+be suboptimal; this is because the bound only implies kx̂ − v1 k = O( ε/λ1 ). In the
+following, we will proceed to improve this result to kx̂ − v1 k = O(ε/λ1 ) by using the
+first-order optimality condition [22]. See [42] for a discussion in the present context.
+   Consider the Lagrangian function corresponding to the optimization problem
+maxkxk=1 Tb x⊗p ,
+
+                                              λ    2
+                                                        
+(2.6)                     L(x, λ) := Tb x⊗p −    kxk − 1 ,
+                                              2
+
+where λ ∈ R corresponds to the Lagrange multiplier for the equality constraint. As
+x̂ ∈ arg maxkxk2 =1 Tb x⊗p (and the linear independent constraint qualification [22] can
+be easily verified), there exists λ̄ ∈ R such that
+
+
+(2.7)                       ∇L(x̂, λ̄) = Tb x⊗p−1 − λ̄x = 0.
+
+
+Moreover, as kx̂k = 1, λ̄ = λ̄ hx, xi = Tb x⊗p = λ̂. Thus we have λ̂x̂ = Tb x̂⊗p−1 .
+    We are now ready to prove Theorem 2.2.
+   Proof. [Proof of Theorem 2.2] The first inequality in (2.1) has been proved in
+Lemma 2.3, so we are left to prove the second one.
+    From the first-order optimality condition above, we have
+
+                                                             X
+    λ̂x̂ = Tb x̂⊗p−1 = T x̂⊗p−1 + E x̂⊗p−1 = λ1 x1p−1 v1 +         λi xip−1 vi + E x̂⊗p−1 .
+                                                             i≥2
+                    RANK-1 APPROXIMATIONS FOR STRUCTURED TENSORS                                             9
+
+Thus,
+
+        kλ1 (x̂ − v1 )k2 = (λ1 − λ̂)x̂ + (λ̂x̂ − λ1 v1 )
+                                                                  2
+
+                                                                         X
+                             = (λ1 − λ̂)x̂ + λ1 (x1p−1 − 1)v1 +                λi xp−1
+                                                                                   i   vi + E x̂⊗p−1
+                                                                         i≥2
+                                                                                                         2
+
+                                                                  X
+(2.8)                        ≤ |λ1 − λ̂| + λ1 |xp−1
+                                                1   − 1| +              λi xp−1
+                                                                            i   vi        + E x̂⊗p−1 2
+                                                                  i≥2
+                                                                                     2
+
+by the triangle inequality. By Lemma 2.3, we have
+
+(2.9)             |λ1 − λ̂| ≤ ε,      |xp−1
+                                        1   − 1| ≤ 4ε/λ1 ,        and          E x̂⊗p−1 2 ≤ ε.
+
+Moreover,
+                                                   1/2
+         X                            X                                     q
+                λi xp−1
+                    i   vi       =         λ2i x2p−2
+                                                 i
+                                                           ≤ λ2 |x2 |p−2       1 − x21
+          i≥2                         i≥2
+                             2
+                                                                             4ελ2
+(2.10)                                                    ≤λ2 (1 − x21 ) ≤        ≤ 4ε(1 + 2ε/λ1 ),
+                                                                              λ1
+where we have used Lemma 2.3 and the fact that λ2 /λ1 ≤ λmax /λ1 ≤ 1 + 2ε/λ1 .
+Substituting (2.9) and (2.10) back into (2.8), we can easily obtain
+                                                   2 !
+                                             ε      ε
+(2.11)                    kx̂ − v1 k2 ≤ 10      +           .
+                                            λ1      λ1
+
+
+    Remark 2. When p > 3, we can slightly sharpen (2.11) to
+                                              2
+                                      ε        ε
+                      kx̂ − v1 k2 ≤ 8 + 4           ,
+                                     λ1        λ1
+by replacing (2.10) with
+                                                                   2ε
+                    λ2 (1 − x21 ) ≤ λ2 (1 − |x1 |p−2 ) ≤ λ2 ·         ≤ 2ε(1 + 2ε/λ1 ).
+                                                                   λ1
+     Theorem 2.2 indicates that the first step of SROA for a nearly SOD tensor approx-
+imately recovers (λj , vj ) for some j ∈ [n]. In particular, whenever ε is small enough
+relative to λ1 (e.g., ε ≤ λ1 /2), there always exists j ∈ [n] such that |λ̂ − λj | ≤ ε and
+kx̂ − vj k2 ≤ 10 · (1 + 1/2)ε/λj = 15ε/λj . This is analogous to Theorem 2.1, except
+that the spectral gap condition required in Theorem 2.1 is not necessary at all for the
+perturbation bounds of SOD tensors.
+     2.3. Numerical Verifications for Theorem 2.2. We generate nearly sym-
+metric orthogonally decomposable tensors Tb = T + E ∈ R10×10×10 in the following
+manner. We let the underlying symmetric orthogonally decomposable    P10 tensor T be
+the diagonal tensor with all diagonal entries equal to one, i.e., T = i=1 e⊗3
+                                                                            i  (where
+ei is the i-th coordinate basis vector). The perturbation tensor E is generated under
+the following three random models:
+10                                              C. MU, D. HSU, AND D. GOLDFARB
+
+                                                                                             1
+
+                   1
+
+                                                                                            0.8
+
+
+
+
+                                                                       minj ||v̂1 − ej ||
+                  0.8
+
+                                                                                            0.6
+
+
+      |λ̂1 − 1|
+                  0.6
+
+                                                                                            0.4
+                  0.4
+
+
+                                                                                            0.2
+                  0.2
+
+
+                   0                                                                         0
+                    0   0.2   0.4   0.6       0.8   1    1.2   1.4                            0   0.5       1   1.5
+                                          ε                                                             ε
+                                                         Perturbation: binary
+
+                                                                                             1
+
+                   1
+
+                                                                                            0.8
+
+
+
+
+                                                                       minj ||v̂1 − ej ||
+                  0.8
+
+                                                                                            0.6
+
+
+      |λ̂1 − 1|
+                  0.6
+
+                                                                                            0.4
+                  0.4
+
+
+                                                                                            0.2
+                  0.2
+
+
+                   0                                                                         0
+                    0   0.2   0.4   0.6       0.8   1    1.2   1.4                            0   0.5       1   1.5
+                                          ε                                                             ε
+                                                        Perturbation: uniform
+
+                                                                                             1
+
+                   1
+
+                                                                                            0.8
+
+
+
+
+                                                                       minj ||v̂1 − ej ||
+                  0.8
+
+                                                                                            0.6
+
+
+      |λ̂1 − 1|
+                  0.6
+
+                                                                                            0.4
+                  0.4
+
+
+                                                                                            0.2
+                  0.2
+
+
+                   0                                                                         0
+                    0   0.2   0.4   0.6       0.8   1    1.2   1.4                            0   0.5       1   1.5
+                                          ε                                                             ε
+                                                        Perturbation: Gaussian
+
+
+       Fig. 1. Approximation Errors of the First Iteration. The approximation errors in λ̂1 (resp.,
+v̂1 ) are plotted on the left (resp., right) as a function of the size of the perturbation ε. Each (red)
+point corresponds to one randomly generated instance, and the (blue) solid line is the upper bound
+from Theorem 2.2.
+
+
+
+Binary: independent entries Ei,j,k ∈ {±σ} uniformly at random;
+Uniform: indepedent entries Ei,j,k ∈ [−2σ, 2σ] uniformly at random;
+Gaussian: independent entries Ei,j,k ∼ N (0, σ 2 );
+where σ is varied from 0.0001 to 0.2 with increment 0.0001, and one instance is
+generated for each value of σ.
+    For every randomly generated instance, we solve the polynomial optimization
+                 RANK-1 APPROXIMATIONS FOR STRUCTURED TENSORS                                    11
+
+problems
+
+(2.12)                kEk = max Ex⊗3                 and v̂1 ∈ arg max Tb x⊗3
+                               kxk=1                                kxk=1
+
+
+using the general polynomial solver GloptiPoly 3 [19], and set λ̂1 := Tb v̂1⊗3 .
+    In Figure 1, we plot the approximation error |λ̂1 − 1| and minj∈[10] kv̂1 − ej k,
+respectively against the value of norm kEk. Each (red) point corresponds to one
+randomly generated instance, and the (blue) lines are the upper bounds given in
+Theorem 2.2. We observe no instance violating the theoretical bounds.
+    3. Full Decomposition Analysis. In the second iteration of Algorithm 1, we
+have
+
+                           v̂2 ∈ arg max Tb 1 x⊗p ,          λ̂2 = Tb 1 v̂2⊗p ,
+                                           kxk2 =1
+
+
+where, for some j ∈ [n],
+
+                                           λi vi⊗p + E       b = E + (λj v ⊗p − λ̂1 vˆ1 ⊗p ).
+                                    X
+         Tb 1 = T̂ − λ̂1 vˆ1 ⊗p =                    b   and E            j
+                                    i6=j
+
+
+Theorem 2.2 can be directly applied again by bounding the error norm kEk.
+                                                                      b However,
+since
+
+                         Ek = E + (λj vj⊗p − λ̂1 vˆ1 ⊗p )
+                        kb
+
+                             = E + (λj − λ̂1 )vj⊗p + λ̂1 (vj⊗p − v̂1⊗p )
+
+                             ≤ kEk + |λj − λ̂1 | + λ̂1 vj⊗p − v̂1⊗p
+                                      √
+                             ≤ (2 + 10 p)ε + O(ε2 /λj ),
+
+it appears that the approximation error may increase dramatically with the iteration
+number.
+     Fortunately, a more careful analysis shows that approximation error does not in
+fact accmulate in this way. The high-level reason is that while the        operator norm      
+kλj vj⊗p − λ̂1 v̂1⊗p k is of order ε, the relevant quantity is essentially λj vj⊗p − λ̂1 v̂1⊗p
+operating on the direction of v̂2 , i.e. |(λj vj⊗p − λ̂1 v̂1⊗p )v̂2⊗p |, which only gives rise to a
+quantity of order ε2 because p ≥ 3. This enables us to keep the approximation errors
+under control.
+     The main result of this section is as follows.
+     Theorem 3.1. Pick any odd positive integer p ≥ 3. There exists a N                    positive
+                                                                                              p n
+constant c0 = c0 (p) > 0 such that the following holds. Let Tb := T + P              E ∈         R ,
+                                                                                       n          ⊗p
+where T is a symmetric tensor with orthogonal decomposition T =                        i=1  λ i vi ,
+                                                       n
+{v1 , v2 , . . . , vn } is an orthonormal basis of R , λi > 0 for all i ∈ [n], and E is a
+symmetric tensor with operator norm ε := kEk. Assume ε ≤ c0 λmin /n1/(p−1) , where
+λmin := mini∈[n] λi . Let {(λ̂i , v̂i )}i∈[n] be the output of Algorithm 1 for input Tb . Then
+there exists a permutation π on [n] such that
+
+                |λπ(j) − λ̂j | ≤ 2ε,            vπ(j) − v̂j ≤ 20ε/λπ(j) ,         ∀j ∈ [n].
+12                               C. MU, D. HSU, AND D. GOLDFARB
+
+
+      3.1. Deflation Analysis. The proof of Theorem 3.1 is based on the following
+lemma, which provides a careful analysis of the errors introduced in T i from steps
+1, 2, . . . , i in Algorithm 1. This lemma is a generalization of a result from [8] (which
+only dealt with the p = 3 case) and also more transparently reveals the sources of
+errors that result from deflation.
+      Lemma 3.2. Fix a subset S ⊆ [n] and assume that 0 ≤ ε̂ ≤ λi /2 for each i ∈ S.
+Choose any {(λ̂i , v̂i )}i∈S ⊂ R × Rn such that
+
+             |λi − λ̂i | ≤ ε̂,       kv̂i k = 1, hvi , v̂i i ≥ 1 − 2(ε̂/λi )2 > 0,
+                                                         and
+
+and define ∆i := λi vi⊗p − λ̂i v̂i⊗p for i ∈ S. Pick any unit vector x = i=1 xi vi . Let
+                                                                               Pn
+S1 ⊆ S be the indices i ∈ [n] such that λi |xi | ≥ 4ε̂, and let S2 := S \ S1 . Then
+                                                    X                         1/2
+                                                                 2(p−2)
+             X                                                                                        X
+(3.1)               ∆i x⊗p−1             ≤ 2p+1 p               xi                     ε̂ + 2p+1             |xi |p−1 ε̂,
+             i∈S1                    2                   i∈S1                                         i∈S1
+
+                                                   X            2(p−2) !1/2                         X  ε̂ p−1
+             X
+                         ⊗p−1                 p             ε̂                                    p
+(3.2)               ∆i x                 ≤6                                              ε̂ + 6                             ε̂.
+                                                            λi                                                 λi
+             i∈S2                    2            i∈S2                                                i∈S2
+
+These imply that there exists positive constants c1 , c2 > 0, depending only on p, such
+that
+                                                 !
+         X                          X
+                  ⊗p−1                       p−1
+(3.3)         ∆i x         ≤ c1 ·       |xi | ε̂ ,
+           i∈S1                  2                i∈S1
+                                                                               !
+           X                                      X  ε̂ p−1
+                      ⊗p−1
+(3.4)             ∆i x               ≤ c2 ·                                   ε̂ ,
+                                                           λi
+           i∈S2                  2                i∈S2
+                                                                          !                                        p−1 !
+           X
+                      ⊗p−1
+                                                  X
+                                                            p−1                                         ε̂
+(3.5)             ∆i x               ≤ c1 ·             |xi |        ε̂       + c2 ·    |S|                             ε̂ .
+                                                                                                  mini∈S λi
+           i∈S                   2                i∈S
+
+                                                                                                        P
+     Remark 3. Lemma 3.2 indicates that the accumulating error           i∈S ∆i much less
+                                                                              P          ⊗p−1
+severely affects vectors that are incoherent with {vi : i ∈ S}. For instance,    i∈S ∆i vi                                        =
+                                                   ⊗p−1
+O(ε̂2 ) for i ∈ [n] \ S, while
+                                         P
+                                           i∈S ∆i vi                  = O(ε̂) for i ∈ S.
+
+     3.2. Proof of Main Theorem. We now use Lemma 3.2 to prove the main
+theorem.
+     Proof. [Proof of Theorem 3.1] It suffices to prove that the following property holds
+for each i ∈ [n]:
+                                                           (
+                                                              |λπ(j) − λ̂j | ≤ 2ε, and
+(∗) there is a permutation π on [i] s.t., for all j ∈ [i],
+                                                               vπ(j) − v̂j ≤ λ20ε π(j)
+                                                                                       .
+
+The proof is by induction. The base case of (∗) (where i = 1) follows directly from
+by Theorem 2.2.
+    Assume the induction hypothesis (∗) is true for some i ∈ [n − 1]. We will prove
+that there exists an l ∈ [n] \ {π(j) : j ∈ [i]} that satisfies
+
+(3.6)                      |λl − λ̂i+1 | ≤ 2ε,              kvl − v̂i+1 k ≤ 20ε/λl .
+               RANK-1 APPROXIMATIONS FOR STRUCTURED TENSORS                                                           13
+
+To simplify notation, we assume without loss of generality (by renumbering indices)
+                                        P
+that π(j) = j for each j ∈ [i]. Let x̂ = i∈[n] xi vi := v̂i+1 and λ̂ := λ̂i+1 , and further
+assume without loss of generality (again by renumbering indices) that
+
+                   λi+1 |xi+1 |p−2 ≥ λi+2 |xi+2 |p−2 ≥ · · · ≥ λn |xn |p−2 .
+
+In the following, we will show that l = i + 1 is an index satisfying (3.6). We use the
+assumption that
+                                                           
+                             1      1              1
+(3.7)             ε < min ,               ,                    · λmin
+                             8 2.5 + 10c1 10(40c2 n)1/(p−1)
+
+(which holds with a suitable choice of c0 in the theorem statement). Here, c1 and c2
+are the constants from Lemma 3.2 when ε̂ = 10ε. It can be verified that (∗) implies
+that the conditions for Lemma 3.2 are satisfied with this value of ε̂.
+    Recall that λ̂ = Tb i x̂⊗p , where
+                                   i                    n                          i
+                                         λ̂j v̂j⊗p =           λj vj⊗p + E +
+                                   X                    X                          X
+                   Tb i = Tb −                                                           ∆j .
+                                   j=1                 j=i+1                       j=1
+
+
+We now bound λ̂ from above and below. For the lower bound, we use (3.4) from
+Lemma 3.2 to obtain
+(3.8)
+                                                                                 p−1
+                                                                           10ε
+   λ̂ = Tb i x̂⊗p ≥ max Tb i vj ⊗p ≥ λmax,i − ε − c2 n                                   ε ≥ λmax,i − 1.25ε
+                   j∈[n]\[i]                                               λmin
+
+where λmax,i := maxj∈[n]\[i] λj and λmin := minj∈[n] λj ; the final inequality uses the
+conditions on ε in (3.7). For the upper bound, we have
+                       n
+                       X                           i
+                                                   X
+    λ̂ = Tb i x̂⊗p =           λi xpi + E x̂⊗p +             ∆j x̂⊗p
+                       j=i+1                        j=1
+                       n                            i                                        p−1
+                       X                            X                                  10ε
+                 ≤             λj xpj + ε + 10c1             |xj |p−1 ε + 10c2 n                      ε
+                       j=i+1                           j=1
+                                                                                       λmin
+                                           n                           i                                  p−1
+                                           X                           X                            10ε
+                 ≤ λi+1 |xi+1 |p−2                x2j + ε + 10c1 ε           x2j + 10c2 n                         ε
+                                          j=i+1                        j=1
+                                                                                                    λmin
+                 ≤ max λi+1 |xi+1 |p−2 , 10c1 ε + 1.25ε.
+                      
+(3.9)
+
+The first inequality
+               Pn above   follows from (3.5) in Lemma 3.2; the third inequality uses
+                      2
+the fact that    j=1 xj = 1 as well as the conditions on ε in (3.7). If the max is
+achieved by the second argument 10c1 ε, then combining (3.8) and (3.9) gives
+
+                                  (2.5 + 10c1 )ε ≥ λmax,i ≥ λmin ,
+
+a contradiction of (3.7). Therefore the max in (3.9) must be achieved by λi+1 |xi+1 |p−2 ,
+and hence combining (3.8) and (3.9) gives
+
+               λi+1 |xi+1 |p−2 ≥ λmax,i − 2.5ε and |λ̂ − λi+1 | ≤ 1.25ε.
+14                            C. MU, D. HSU, AND D. GOLDFARB
+
+
+This in turn implies that
+(3.10)
+                          2.5ε                                                                        5ε
+|xi+1 | ≥ |xi+1 |p−2 ≥ 1−      ,      λi+1 ≥ λmax,i −2.5ε,            and x2i+1 ≥ xp−1
+                                                                                   i+1 ≥ 1−               .
+                          λi+1                                                                       λi+1
+
+Thus, we have shown that x̂ is indeed coherent with v̂i+1 . Next, we will sharpen the
+bound for kx̂ − v̂i+1 k by considering the first order optimality condition.
+    Since x̂ ∈ arg minkxk2 =1 Tb i x⊗p , a first-order optimality condition similar to (2.7)
+implies λ̂ = Tb i x̂⊗p . Thus
+                                                               
+                              n                        i
+                                   λj vj⊗p + E +
+                              X                        X
+     λ̂x̂ = Tb i x̂⊗p−1 =                                   ∆j  x̂⊗p−1
+                           j=i+1                       j=1
+                                                 n
+                                                 X                                    i
+                                                                                      X
+                       = λi+1 xp−1
+                               i+1 vi+1 +                λj xjp−1 vj + E x̂⊗p−1 +           ∆j x̂⊗p−1 .
+                                                 j=i+2                                j=1
+
+
+Therefore
+
+kλi+1 (x̂ − vi+1 )k2
+= (λi+1 − λ̂)x̂ + (λ̂x̂ − λi+1 vi+1 )
+                                             2
+                                                    n
+                                                    X                                   i
+                                                                                        X
+= (λi+1 − λ̂)x̂ + λi+1 (xp−1
+                         i+1 − 1)vi+1 +                      λj xp−1
+                                                                 j   vj + E x̂⊗p−1 +          ∆j x̂⊗p−1
+                                                   j=i+2                                j=1
+                                                                                                          2
+(3.11)
+                                         n
+                                         X                                              i
+                                                                                        X
+≤ |λi+1 − λ̂| + λi+1 |xp−1
+                       i+1 − 1| +                 λj xp−1
+                                                      j   vj        + E x̂⊗p−1 2 +            ∆j x̂⊗p−1       .
+                                        j=i+2                                           j=1
+                                                                2                                         2
+
+                                                                              q
+For the third term in (3.11), we use the fact that |xi+2 | ≤                      1 − x2i+1 , the bounds
+from (3.10) and the conditions on ε in (3.7) to obtain
+
+                                                                       1/2
+                         n
+                         X                               n
+                                                         X
+                                λj xp−1
+                                    j   vj       =            λ2j xj2p−2 
+                        j=i+2                        j=i+2
+                                             2
+                                                                      q
+                                                 ≤ λi+2 |xi+2 |p−2        1 − x2i+1
+                                                 ≤ λi+2 (1 − x2i+1 )
+                                                            5ε
+                                                 ≤ λmax,i
+                                                          λi+1
+                                                           5ε
+                                                 ≤
+                                                   1 − 2.5ε/λmax,i
+(3.12)                                           ≤ 7.5ε.
+
+For the last term in (3.11), we use (3.5) from Lemma 3.2 and the conditions on ε
+                  RANK-1 APPROXIMATIONS FOR STRUCTURED TENSORS                                        15
+
+in (3.7) to get
+
+                  i                                 n                                     p−1
+                  X
+                                ⊗p−1
+                                                    X
+                                                                  p−1              10ε
+                        ∆j x̂              ≤ 10c1         |xj |         ε + 10c2 n                ε
+                  j=1                               j=1
+                                                                                   λmin
+                                       2
+                                                                                          p−1
+                                                                                    10ε
+                                           ≤ 10c1 (1 − x2i+1 )ε + 10c2 n                          ε
+                                                                                    λmin
+                                             50c1 2
+                                           ≤      ε + 0.25ε
+                                             λi+1
+(3.13)                                     ≤ 5.25ε.
+
+Therefore, substituting (3.10), (3.13) and kEk ≤ ε into (3.11) gives
+
+                                       kλi+1 (x̂ − vi+1 )k2 ≤ 20ε.
+
+
+
+    3.3. Stability of Full Decomposition. Theorem 3.1 states a (perhaps unex-
+pected) phenomenon that the approximation errors do not accumulate with iteration
+number, whenever the perturbation error is small enough. In this subsection, we
+numerically corroborate this fact.
+    We generate nearly symmetric orthogonally decomposable tensors Tb = T + E ∈
+R10×10×10 as follows. We construct the underlying symmetric orthogonally decom-
+     P10tensor T as the diagonal tensor with all diagonal entries equal to one, i.e.,
+posable
+T = i=1 e⊗3    i (where ei is the i-th coordinate basis vector). The perturbation tensor
+E is generated under three random models with σ = 0.01:
+Binary: independent entries Ei,j,k ∈ {±σ} uniformly at random;
+Uniform: indepedent entries Ei,j,k ∈ [−2σ, 2σ] uniformly at random;
+Gaussian: independent entries Ei,j,k ∼ N (0, σ 2 ).
+    For each random model, we generate 500 random instances, and apply Algorithm 1
+to each Tb to obtain approximate pairs {(λ̂i , v̂i )}i∈[10] . Again, we use GloptiPoly 3 to
+solve the polynomial optimization problem in Algorithm 1.
+    In Figure 2, we plot the mean and the standard deviation of the approximation
+errors for λ̂i and v̂i from the 500 random instances (for each i ∈ [10]). These indeed do
+not appear to grow or accumulate as the iteration number increases. This is consistent
+with our results in Theorem 3.1.
+     3.4. When p is Even. We now briefly discuss the case where the order of the
+tensor is even, i.e., p ≥ 4 isNan even integer.
+                                p n
+     Let Tb := T + EP∈            R , where T is a symmetric tensor with orthogonal
+decomposition T = i=1 λi vi⊗p , where {v1 , v2 , . . . , vn } is an orthonormal basis of
+                           n
+
+Rn , λi 6= 0 for all i ∈ [n], and E is a symmetric tensor with operator norm ε := kEk.
+Note that unlike the case when p is odd, we cannot assume λi > 0 for all i ∈ [n], and
+correspondingly, line 3 in Algorithm 1 now becomes
+                                            n                       o
+ v̂i ∈ arg max Tb i−1 v ⊗p = arg max max Tb i−1 v ⊗p , −Tb i−1 v ⊗p , λ̂i = Tb i−1 v̂i⊗p .
+         kvk=1                         kvk=1
+
+
+Nevertheless, the pair (λ̂i , v̂i ) still satisfies the first-order optimality condition λ̂i v̂i =
+Tb v̂i⊗p−1 .
+16                                      C. MU, D. HSU, AND D. GOLDFARB
+
+            0.0115                                                                          0.026
+
+                                                                                            0.024
+             0.011
+                                                                                            0.022
+
+
+
+
+                                                                         ||v̂i − eπ[i] ||
+            0.0105                                                                           0.02
+
+
+
+|λ̂i − 1|
+                                                                                            0.018
+              0.01
+                                                                                            0.016
+
+            0.0095                                                                          0.014
+
+                                                                                            0.012
+             0.009
+                                                                                             0.01
+
+            0.0085                                                                          0.008
+                  0   1   2   3   4    5    6     7   8    9   10   11                           0   1   2   3   4    5    6     7   8   9   10   11
+                                      ith iter.                                                                      ith iter.
+                                                           Perturbation: binary
+
+
+             0.025                                                                           0.03
+
+
+              0.02
+                                                                                            0.025
+
+
+
+
+                                                                         ||v̂i − eπ[i] ||
+             0.015
+
+
+
+|λ̂i − 1|     0.01                                                                           0.02
+
+
+             0.005
+                                                                                            0.015
+                 0
+
+
+            −0.005                                                                           0.01
+                  0   1   2   3   4    5    6     7   8    9   10   11                           0   1   2   3   4    5    6     7   8   9   10   11
+                                      ith iter.                                                                      ith iter.
+                                                          Perturbation: uniform
+
+
+              0.03                                                                           0.03
+
+             0.025
+                                                                                            0.025
+
+
+
+
+                                                                         ||v̂i − eπ[i] ||
+              0.02
+
+
+
+
+|λ̂i − 1|
+                                                                                             0.02
+             0.015
+
+              0.01
+                                                                                            0.015
+
+             0.005
+                                                                                             0.01
+                 0
+
+            −0.005                                                                          0.005
+                  0   1   2   3   4    5    6     7   8    9   10   11                           0   1   2   3   4    5    6     7   8   9   10   11
+                                      ith iter.                                                                      ith iter.
+                                                          Perturbation: Gaussian
+
+
+
+      Fig. 2. Approximation Errors of Algorithm 1. For each vertical bar over the iteration index
+i ∈ [10], the midpoint is the mean of the approximation errors of λ̂i (left) and v̂i (right), computed
+over 500 randomly generated instances. The error bars extend to two standard deviations above and
+below the mean.
+
+
+     Our proof for Theorem 3.1 can be easily modified and leads to the following
+result: there exists
+                       a positive constant ĉ0 = ĉ0 (p) > 0 such that whenever ε ≤
+ĉ0 mini∈[n] |λi | /n1/(p−1) , there exists a permutation π on [n] such that
+                                
+   |λπ(j) − λ̂j | ≤ 2ε,    min vπ(j) − v̂j , vπ(j) + v̂j     ≤ 20ε/|λπ(j) |, ∀j ∈ [n].
+   4. Conclusion. This paper sheds light on a problem at the intersection of nu-
+merical linear algebra and statistical estimation, and our results draw upon and enrich
+                  RANK-1 APPROXIMATIONS FOR STRUCTURED TENSORS                                          17
+
+the literature in both areas.
+     From the perspective of numerical linear algebra, SROA was previously only
+known to exactly recover the symmetric canonical decomposition of an orthogonal
+decomposable tensor. Our results show that it can robustly recover (approximate) or-
+thogonal decompositions even when applied to nearly SOD tensors; this substantially
+enlarges the applicability of SROA.
+     Previous work on statistical estimation via orthogonal tensor decompositions con-
+sidered the specific randomized power iteration algorithm of [8], which has been suc-
+cessfully applied in a number of contexts [45, 46, 47, 48, 49, 50]. Our results provide
+formal justification for using other rank-one approximation methods in these contexts,
+and it seems to be quite beneficial, in terms of sample complexity and statistical ef-
+                                                                                √ kEk
+ficiency, to use more sophisticated methods. Specifically, the perturbation error
+that can be tolerated is relaxed from power iteration’s O(1/n) to O(1/ p−1 n). In
+future work, we plan to empirically investigate these potential benefits in a number
+of applications.
+     We also note that solvers for rank-one tensor approximation often lack rigorous
+runtime or error analyses, which is not surprising given the computational difficulty
+of the problem for general tensors [13]. However, tensors that arise in applications
+are often more structured, such as being nearly SOD. Thus, another promising future
+research direction is to sidestep computational hardness barriers by developing and
+analyzing methods for such specially structured tensors (see also [8, 51] for ideas along
+this line).
+   Acknowledgements. Daniel Hsu acknowledges support from a Yahoo ACE
+award. Donald Goldfarb acknowledges support from NSF Grants DMS-1016571 and
+CCF-1527809.
+       Appendix A. Proof of Theorem 2.1.
+       Since M  c is symmetric, it has an eigenvalue decomposition Pn λ̂i v̂i v̂ > , where
+                                                                                       i=1       i
+|λ̂1 | ≥ |λ̂2 | ≥ · · · ≥ |λ̂n | and {v̂1 , v̂2 , . . . , v̂n } are orthonormal. It is straightforward to
+obtain:
+
+                                             λ̂ = λ̂1   and M
+                                                            c x̂ = λ̂x̂.
+
+By Weyl’s inequality [43],
+
+                                                |λ̂ − λ1 | ≤ kEk = ε.
+                     2
+To bound hx̂, v1 i , we employ an argument very similar to one from [44]. Observe
+that
+                                                            2
+                             2
+        kM x̂ − λ1 x̂k = (λ̂ − λ1 )x̂ − E x̂                    ≤ (|λ̂ − λ1 | kx̂k + kE x̂k)2 ≤ 4ε2 .
+
+Moreover,
+                                       n
+                                       X                           n
+                                                                   X
+              M x̂ − λ1 x̂ =             (λi − λ1 ) hvi , x̂i vi =   (λi − λ1 ) hvi , x̂i vi ,
+                                       i=1                            i=2
+
+and therefore
+                                 n
+                                 X                             n
+                                                               X
+                         2                              2                 2                    2
+      kM x̂ − λ1 x̂k =             (λi − λ1 )2 hvi , x̂i ≥ γ 2   hvi , x̂i = γ 2 (1 − hvi , x̂i ).
+                                 i=2                                 i=2
+18                                 C. MU, D. HSU, AND D. GOLDFARB
+
+                                                                                       2                        2
+Combining the upper and lower bounds on kM x̂ − λ1 x̂k gives hx̂, v1 i ≥ 1 − (2ε/γ)2
+as claimed.
+     Appendix B. Proof of Lemma 3.2.
+     Proof. The lemma holds trivially if ε̂ = 0. So we may assume ε̂ > 0. There-
+fore, for every i ∈ S1 , we have |xi | ≥ 4ε̂/λi > 0. Let ci := hvi , v̂i i, wi :=
+(v̂i − ci vi )/ kv̂i − ci vi k2 , and yi := hwi , xi, so
+                                q                                                               q
+                v̂i = ci vi +        1 − c2i wi         and       hv̂i , xi = ci xi +               1 − c2i yi .
+
+    We first establish a few inequalities that will be frequently used later. Since
+|λi − λ̂i | ≤ ε̂ ≤ λi /2, one has ε̂/λi ≤ 1/2, and 1/2 ≤ λ̂i /λi ≤ 3/2. Also, since
+ci ≥ 1 − 2(ε̂/λi )2 ≥ 1/2,
+        q               r                              2       r                                         
+                                                    2                             2                     2
+            1 − c2i ≤    1 − 1 − 2 (ε̂/λi )                  =      4 (ε̂/λi )            1 − (ε̂/λi )          ≤ 2ε̂/λi .
+
+     For each i ∈ S,
+
+∆i x⊗p−1
+                    
+= λi vi⊗p − λ̂i v̂i⊗p x⊗p−1
+                             p−1
+= λi xp−1
+      i   vi − λ̂i hv̂i , xi    v̂i
+                              q           p−1           q            
+= λi xp−1
+      i   vi − λ̂ i   ci x i +   1 − c2y
+                                      i  i        ci v i +   1 − c 2w
+                                                                   i  i
+                                                 !                                                                               p−1 !
+                               q                      p−1    q                                               q
+=    λi xp−1
+         i   − λ̂i ci   ci xi +        1 − c2i yi                vi −       λ̂i       1 − c2i     ci xi +           1 − c2i yi         wi .
+
+
+Therefore, due to the orthonormality of {vi }i∈[n] and the triangle inequality, for each
+j ∈ {1, 2},
+                                                                                                                         1/2
+             X                             X                                               q                p−1 !2
+                    ∆i x⊗p−1        ≤              λi xip−1 − λ̂i ci ci xi +                   1 − c2i yi                
+             i∈Sj                          i∈Sj
+(B.1)                           2
+                                           X            q                 q           p−1
+                                      +           λ̂i       1 − c2i ci xi + 1 − c2i yi      .
+                                           i∈Sj
+
+
+     We now prove (3.1). For any i ∈ S1 , since xi 6= 0, we may write (B.1) as
+
+(B.2)
+                                                                         !p−1 2 1/2
+                                                                              
+                                                              s
+                                                                    2
+                                       λi xi − λ̂i xi cpi 1 + 1 − ci yi
+        X                      X
+            ∆i x⊗p−1        ≤   x2p−4                                         
+                             
+                                  i
+                                                                 c2i xi
+                                                                                
+     i∈S1               2           i∈S1
+                                                                                       s                  !p−1
+                                                                                            1 − c2i yi
+                                    X                         q
+                               +           λ̂i xp−1
+                                                i   cp−1
+                                                     i            1 − c2i       1+                                    .
+                                                                                              c2i xi
+                                    i∈S1
+                     RANK-1 APPROXIMATIONS FOR STRUCTURED TENSORS                                                     19
+
+Observe that
+                                s                    p
+                                     1 − c2i yi          1 − c2i 1      4ε̂
+                                                ≤                    ≤          ≤1
+                                       c2i xi            |ci | |xi |   λi |xi |
+
+                       p
+because |ci | ≥ 1/2 and 1 − c2i ≥ 2ε̂/λi . Moreover, since 1 + (p − 1)z ≤ (1 + z)p−1 ≤
+1 + (2p−1 − 1)z for any z ∈ [0, 1],
+                          s                !p−1
+                              1 − c2i yi                                  4ε̂                     ε̂
+(B.3)                1+                           − 1 ≤ (2p−1 − 1)                = (2p+1 − 4)          .
+                                c2i xi                                   λi |xi |              λi |xi |
+
+
+Therefore,
+                            s                !p−1                                                          s                !p−1
+                                1 − c2i yi                                                                     1 − c2i yi
+λi xi − λ̂i xi cpi     1+                            ≤ |λi xi − λ̂i xi | + λ̂i |xi | 1 − cpi          1+
+                                  c2i xi                                                                         c2i xi
+                                                                                                                  
+                                                           λ̂i |xi |              ε̂                       ε̂ pε̂
+                                                     ≤ ε̂ +           (2p+1 − 4)       + pε̂ + (2p+1 − 4)
+                                                              λi                 |xi |                    |xi | λi
+                                                           3 p+1
+                                                                       − 4) + p + (2p−1 − 1)p ε̂
+                                                                                                 
+                                                     ≤ ε̂ + (2
+                                                           2
+(B.4)                                                ≤ 2p+1 pε̂.
+
+The second inequality above is obtained using the inequality |(1 + a)(1 + b) − 1| ≤
+|a| + |b| + |ab| for any a, b ∈ R, together with the inequality from (B.3) and the fact
+|1 − cpi | ≤ 2p(ε̂/λi )2 ≤ p(ε̂/λi ). Using the resulting inequality in (B.4), the first
+summand in (B.2) can be bounded as
+(B.5)
+                                               !p−1 2 1/2
+                                                    
+                                  s                                            !1/2
+     X                                    2
+                                     1 − ci yi                      X 2(p−2)
+           2p−2            p                                 p+1
+          xi      λi − λ̂i ci 1 +                          ≤2 p         xi          ε̂.
+                                                     
+                                                     
+                                       c2i xi
+  
+    i∈S1                                                                                       i∈S1
+
+
+
+To bound the second summand in (B.2), we have
+                                           s                !p−1                                           p             !p−1
+                                               1 − c2i yi                                                   1 − c2i 1
+X                      q                                               X                  q
+       λ̂i xp−1
+            i   cp−1
+                 i         1 − c2i    1+                           ≤          λ̂i xp−1
+                                                                                   i          1 − c2i   1+
+                                                 c2i xi                                                      ci    |xi |
+i∈S1                                                                   i∈S1
+                                                                                                           p−1
+                                                                       X                  2ε̂       4ε̂
+                                                                   ≤          λ̂i xip−1         1+
+                                                                                          λi       λi |xi |
+                                                                       i∈S1
+                                                                              X
+(B.6)                                                              ≤ 2p+1            |xi |p−1 ε̂, .
+                                                                              i∈S1
+
+                                                  p
+The second inequality uses the facts ci ≥ 1/2 and 1 − c2i ≤ 2ε̂/λi ; the last inequality
+uses the facts λ̂i /λi ≤ 3/2 and λi |xi | ≥ 4ε̂. Combining (B.5) and (B.6) gives the
+claimed inequality in (3.1) via (B.2).
+20                                       C. MU, D. HSU, AND D. GOLDFARB
+
+
+      It remains to prove (3.2). For each i ∈ S2 ,
+                               q           p−1                           q        p−1
+       λi xip−1 − λ̂i ci ci xi + 1 − c2i yi      ≤ λi |xi |p−1 + λ̂i |xi | + 1 − c2i
+                                                                         p−1     p−1  
+                                                                    4ε̂   4ε̂ 2ε̂
+                                                         ≤ λi                 +  + λ̂i
+                                                                    λi    λi    λi
+                                                                         p−2
+                                                                  3          ε̂
+                                                         ≤ 4p−1 + · 6p−1            ε̂
+                                                                  2          λi
+                                                               p−2
+                                                               ε̂
+                                                         ≤ 6p        ε̂.
+                                                               λi
+                                        p
+The second inequality uses the facts 1 − c2i ≤ 2ε̂/λi and λi |xi | < 4ε̂ for all i ∈ S2 ;
+the third inequality uses the fact λ̂i /λi ≤ 3/2. Therefore
+(B.7)
+                                            p−1 !2 1/2
+                                                                             !1/2
+    X         p−1
+                               q                             X  ε̂ 2(p−2)
+                                         2                  p
+         λi xi − λ̂i ci ci xi + 1 − ci yi              ≤6                          ε̂.
+                                                                    λi
+     i∈S2                                                                           i∈S2
+
+
+Moreover,
+
+     X            q                       q          p−1   X q               q       p−1
+            λ̂i       1 − c2i                    2
+                                    ci xi + 1 − ci yi      ≤           2              2
+                                                              λ̂i 1 − ci |xi | + 1 − ci
+     i∈S2                                                    i∈S2
+                                                                                  p−1
+                                                             X    2ε̂ 4ε̂ 2ε̂
+                                                         ≤          λ̂i    +
+                                                                  λi λi         λi
+                                                           i∈S2
+                                                                    X ε̂ p−1
+                                                                             
+                                                         ≤ 3 · 6p−1                 ε̂
+                                                                           λi
+                                                                    i∈S2
+                                                               X  ε̂ p−1
+                                                            p
+(B.8)                                                    ≤6                   ε̂.
+                                                                     λi
+                                                               i∈S2
+
+
+Combining (B.7) and (B.8) establishes (3.2) via (B.1) (with j = 2).
+
+                                                  REFERENCES
+
+ [1] C. Eckart and G. Young, “The approximation of one matrix by another of lower rank,” Psy-
+         chometrika, vol. 1, pp. 211–218, 1936.
+ [2] R. Harshman, “Foundations of the PARAFAC procedure: model and conditions for an ‘ex-
+         planatory’ multi-mode factor analysis,” tech. rep., UCLA Working Papers in Phonetics,
+         1970.
+ [3] P. McCullagh, Tensor Methods in Statistics. Chapman and Hall, 1987.
+ [4] P. Comon, “Independent component analysis, a new concept?,” Signal processing, vol. 36, no. 3,
+         pp. 287–314, 1994.
+ [5] A. Smilde, R. Bro, and P. Geladi, Multi-way Analysis: Applications in the Chemical Sciences.
+         Wiley, 2004.
+ [6] T. G. Kolda and B. Bader, “Tensor decompositions and applications,” SIAM review, vol. 51,
+         no. 3, pp. 455–500, 2009.
+ [7] P. Comon and C. Jutten, Handbook of Blind Source Separation: Independent component anal-
+         ysis and applications. Academic press, 2010.
+                RANK-1 APPROXIMATIONS FOR STRUCTURED TENSORS                                       21
+
+ [8] A. Anandkumar, R. Ge, D. Hsu, S. M. Kakade, and M. Telgarsky, “Tensor decompositions for
+          learning latent variable models,” Journal of Machine Learning Research, vol. 15, pp. 2773–
+          2832, 2014.
+ [9] T. Zhang and G. Golub, “Rank-one approximation to high order tensors,” SIAM Journal on
+          Matrix Analysis and Applications, vol. 23, no. 2, pp. 534–550, 2001.
+[10] E. Kofidis and P. A. Regalia, “On the best rank-1 approximation of higher-order supersymmet-
+          ric tensors,” SIAM Journal on Matrix Analysis and Applications, vol. 23, no. 3, pp. 863–
+          884, 2002.
+[11] T. Kolda, B. Bader, and J. Kenny, “Higher-order web link analysis using multilinear algebra,”
+          in Fifth International Conference on Data Mining, 2005.
+[12] Y. Wang and L. Qi, “On the successive supersymmetric rank-1 decomposition of higher-order
+          supersymmetric tensors,” Numerical Linear Algebra with Applications, vol. 14, no. 6,
+          pp. 503–519, 2007.
+[13] C. J. Hillar and L.-H. Lim, “Most tensor problems are NP-hard,” Journal of the ACM, vol. 60,
+          pp. 45:1–45:39, Nov. 2013.
+[14] N. Shor, “An approach to obtaining global extremums in polynomial mathematical program-
+          ming problems,” Cybernetics and Systems Analysis, vol. 23, no. 5, pp. 695–700, 1987.
+[15] Y. Nesterov, “Squared functional systems and optimization problems,” High performance op-
+          timization, vol. 13, pp. 405–440, 2000.
+[16] P. A. Parrilo, Structured semidefinite programs and semialgebraic geometry methods in robust-
+          ness and optimization. PhD thesis, California Institute of Technology, 2000.
+[17] J. B. Lasserre, “Global optimization with polynomials and the problem of moments,” SIAM
+          Journal on Optimization, vol. 11, no. 3, pp. 796–817, 2001.
+[18] P. A. Parrilo, “Semidefinite programming relaxations for semialgebraic problems,” Mathemat-
+          ical programming, vol. 96, no. 2, pp. 293–320, 2003.
+[19] D. Henrion, J. B. Lasserre, and J. Löfberg, “Gloptipoly 3: moments, optimization and semidef-
+          inite programming,” Optimization Methods & Software, vol. 24, no. 4-5, pp. 761–779, 2009.
+[20] A. Papachristodoulou, J. Anderson, G. Valmorbida, S. Prajna, P. Seiler, and P. A. Parrilo,
+          SOSTOOLS: Sum of squares optimization toolbox for MATLAB. http://arxiv.org/abs/
+          1310.4716, 2013.
+[21] D. P. Bertsekas, Nonlinear programming. Athena Scientific, 1999.
+[22] S. J. Wright and J. Nocedal, Numerical optimization, vol. 2. Springer New York, 1999.
+[23] L. De Lathauwer, B. De Moor, and J. Vandewalle, “On the best rank-1 and rank-
+          (R1 , R2 , . . . , Rn ) approximation of higher-order tensors,” SIAM Journal on Matrix Anal-
+          ysis and Applications, vol. 21, no. 4, pp. 1324–1342, 2000.
+[24] T. G. Kolda and J. R. Mayo, “Shifted power method for computing tensor eigenpairs,” SIAM
+          Journal on Matrix Analysis and Applications, vol. 32, no. 4, pp. 1095–1124, 2011.
+[25] L. Han, “An unconstrained optimization approach for finding real eigenvalues of even order
+          symmetric tensors,” arXiv preprint arXiv:1203.5150, 2012.
+[26] B. Chen, S. He, Z. Li, and S. Zhang, “Maximum block improvement and polynomial optimiza-
+          tion,” SIAM Journal on Optimization, vol. 22, no. 1, pp. 87–107, 2012.
+[27] X. Zhang, C. Ling, and L. Qi, “The best rank-1 approximation of a symmetric tensor and related
+          spherical optimization problems,” SIAM Journal on Matrix Analysis and Applications,
+          vol. 33, no. 3, pp. 806–821, 2012.
+[28] C. Hao, C. Cui, and Y. Dai, “A sequential subspace projection method for extreme Z-eigenvalues
+          of supersymmetric tensors,” Numerical Linear Algebra with Applications, 2014.
+[29] B. Jiang, S. Ma, and S. Zhang, “Tensor principal component analysis via convex optimization,”
+          Mathematical Programming, pp. 1–35, 2014.
+[30] J. Nie and L. Wang, “Semidefinite relaxations for best rank-1 tensor approximations,” SIAM
+          Journal on Matrix Analysis and Applications, vol. 35, no. 3, pp. 1155–1179, 2014.
+[31] Y. Yang, Q. Yang, and L. Qi, “Properties and methods for finding the best rank-one approx-
+          imation to higher-order tensors,” Computational Optimization and Applications, vol. 58,
+          no. 1, pp. 105–132, 2014.
+[32] C. Ling, J. Nie, L. Qi, and Y. Ye, “Biquadratic optimization over unit spheres and semidefinite
+          programming relaxations,” SIAM Journal on Optimization, vol. 20, no. 3, pp. 1286–1310,
+          2009.
+[33] A. Stegeman and P. Comon, “Subtracting a best rank-1 approximation may increase tensor
+          rank,” Linear Algebra and its Applications, vol. 433, no. 7, pp. 1276–1300, 2010.
+[34] T. G. Kolda, “Orthogonal tensor decompositions,” SIAM Journal on Matrix Analysis and
+          Applications, vol. 23, no. 1, pp. 243–255, 2001.
+[35] T. G. Kolda, “A counterexample to the possibility of an extension of the Eckart-Young low-rank
+          approximation theorem for the orthogonal rank tensor decomposition,” SIAM Journal on
+22                            C. MU, D. HSU, AND D. GOLDFARB
+
+
+         Matrix Analysis and Applications, vol. 24, no. 3, pp. 762–767, 2003.
+[36] A. Stegeman, “Degeneracy in candecomp/parafac and indscal explained for several three-sliced
+         arrays with a two-valued typical rank,” Psychometrika, vol. 72, no. 4, pp. 601–619, 2007.
+[37] A. Stegeman, “Low-rank approximation of generic p\timesq\times2 arrays and diverging com-
+         ponents in the candecomp/parafac model,” SIAM Journal on Matrix Analysis and Appli-
+         cations, vol. 30, no. 3, pp. 988–1007, 2008.
+[38] V. De Silva and L.-H. Lim, “Tensor rank and the ill-posedness of the best low-rank approx-
+         imation problem,” SIAM Journal on Matrix Analysis and Applications, vol. 30, no. 3,
+         pp. 1084–1127, 2008.
+[39] L.-H. Lim and P. Comon, “Multiarray signal processing: Tensor decomposition meets com-
+         pressed sensing,” Comptes Rendus Mecanique, vol. 338, no. 6, pp. 311–320, 2010.
+[40] L.-H. Lim and P. Comon, “Blind multilinear identification,” Information Theory, IEEE Trans-
+         actions on, vol. 60, no. 2, pp. 1260–1280, 2014.
+[41] J. B. Kruskal, “Three-way arrays: rank and uniqueness of trilinear decompositions, with ap-
+         plication to arithmetic complexity and statistics,” Linear Algebra and its Applications,
+         vol. 18, no. 2, pp. 95–138, 1977.
+[42] L.-H. Lim, “Singular values and eigenvalues of tensors: a variational approach,” Proceedings of
+         the IEEE International Workshop on Computational Advances in Multi-Sensor Adaptive
+         Processing, vol. 1, pp. 129–132, 2005.
+[43] H. Weyl, “Das asymptotische verteilungsgesetz der eigenwerte linearer partieller differentialgle-
+         ichungen (mit einer anwendung auf die theorie der hohlraumstrahlung),” Mathematische
+         Annalen, vol. 71, no. 4, pp. 441–479, 1912.
+[44] C. Davis and W. Kahan, “The rotation of eigenvectors by a perturbation. III,” SIAM Journal
+         on Numerical Analysis, vol. 7, no. 1, pp. 1–46, 1970.
+[45] A. T. Chaganty and P. Liang, “Spectral experts for estimating mixtures of linear regressions,”
+         in International Conference on Machine Learning, 2013.
+[46] J. Zou, D. Hsu, D. Parkes, and R. P. Adams, “Contrastive learning using spectral methods,”
+         in Advances in Neural Information Processing Systems 26, 2013.
+[47] M. G. Azar, A. Lazaric, and E. Brunskill, “Sequential transfer in multi-armed bandit with finite
+         set of models,” in Advances in Neural Information Processing Systems 26, 2013.
+[48] T.-K. Huang and J. Schneider, “Learning hidden Markov models from non-sequence data via
+         tensor decomposition,” in Advances in Neural Information Processing Systems 26, 2013.
+[49] A. Anandkumar, R. Ge, D. Hsu, and S. M. Kakade, “A tensor approach to learning mixed
+         membership community models,” Journal of Machine Learning Research, vol. 15, no. Jun,
+         pp. 2239–2312, 2014.
+[50] F. Doshi-Velez, B. Wallace, and R. Adams, “Graph-Sparse LDA: A Topic Model with Struc-
+         tured Sparsity,” ArXiv e-prints, Oct. 2014.
+[51] B. Barak, J. A. Kelner, and D. Steurer, “Dictionary learning and tensor decomposition via the
+         sum-of-squares method,” arXiv preprint arXiv:1407.1543, 2014.
+
