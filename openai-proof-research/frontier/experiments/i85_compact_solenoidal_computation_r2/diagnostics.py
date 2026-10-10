@@ -1,0 +1,121 @@
+"""Independent exact checks, not a proof of infinite-order assertions. Read-only."""
+import json
+import sys
+from pathlib import Path
+sys.dont_write_bytecode = True
+sys.path[:0] = [str(p) for p in sorted((Path(__file__).parent/'runtime').glob('*.whl'))]
+import sympy as s
+from fractions import Fraction as Q
+
+x,y,z,r=s.symbols('x y z r', real=True)
+X=s.Matrix([x,y,z]); coords=[x,y,z]
+def lap(p): return s.expand(sum(s.diff(p,t,2) for t in coords))
+def cauchy_basis(n):
+    out=[]
+    for parity in (0,1):
+        d=n-parity
+        for j in range(d+1):
+            p=x**j*y**(d-j); h=0; k=0
+            while p!=0:
+                h+=(-1)**k*z**(2*k+parity)*p/s.factorial(2*k+parity)
+                p=s.expand(s.diff(p,x,2)+s.diff(p,y,2));k+=1
+            out.append(s.expand(h))
+    assert len(out)==2*n+1 and all(lap(h)==0 for h in out)
+    return out
+def sphere_average(m):
+    if any(i%2 for i in m): return s.Integer(0)
+    return s.prod(s.factorial2(i-1) for i in m)/s.factorial2(sum(m)+1)
+def integrate_tensor(p):
+    # M/(4 pi), retaining independent radial integrals int F(r) r^k dr.
+    out=0
+    for m,c in s.Poly(s.expand(p),x,y,z).terms():
+        out+=c*sphere_average(m)*s.Symbol('I'+str(sum(m)+2))
+    return s.expand(out)
+axes=[s.Matrix([1,0,0]),s.Matrix([s.Rational(3,5),s.Rational(4,5),0])]
+center=s.Matrix([s.Rational(1,3),-s.Rational(2,5),s.Rational(7,11)])
+count=0
+for n in range(9):
+    for H in cauchy_basis(n):
+        h=H.subs(dict(zip(coords,X+center)), simultaneous=True)
+        for a in axes:
+            v=a.cross(X); D=s.hessian(h,coords)
+            actual=integrate_tensor((v.T*D*v)[0])
+            desired=-s.Symbol('I4')*(a.T*D.subs({x:0,y:0,z:0})*a)[0]/3
+            assert s.expand(actual-desired)==0,(n,H,a,actual,desired)
+            count+=1
+
+# Radial Poisson equations after integration by parts of the author's (3.3).
+A=s.Function('A')(r);B=s.Function('B')(r);F=s.Function('F')(r)
+sub={s.diff(A,r,2):4*r**3*F+r**4*s.diff(F,r),s.diff(A,r):r**4*F,
+     s.diff(B,r,2):-F-r*s.diff(F,r),s.diff(B,r):-r*F}
+q0=-s.Rational(2,3)*B;q2=-s.Rational(2,3)*A/r**3
+S0=-2*F-s.Rational(2,3)*r*s.diff(F,r);S2=s.Rational(2,3)*r*s.diff(F,r)
+for l,q,src in [(0,q0,S0),(2,q2,S2)]:
+    assert s.simplify((-s.diff(q,r,2)-2*s.diff(q,r)/r+l*(l+1)*q/r**2).subs(sub)-src)==0
+
+# Exact half-angle matrix checks with variables, not just sampled angles.
+t,dx,dy=s.symbols('t dx dy', nonzero=True)
+J=s.Matrix([[0,-1],[1,0]]);I=s.eye(2)
+Rm=((1-t*t)*I-2*t*J)/(1+t*t)
+K=I/2-J/(2*t)
+assert s.simplify((I-Rm)*K-I)==s.zeros(2)
+d=s.Matrix([dx,dy]); assert s.simplify((I-Rm)*K*d-d)==s.zeros(2,1)
+wrong=s.simplify((I-Rm)*(I/2+J/(2*t))*d-d)
+assert wrong!=s.zeros(2,1)
+
+# Worst permitted b/h. All radius inequalities are exact rationals.
+eps=Q(1,4096)
+lower=Q(1,32)-Q(1,128)-Q(9,2)*eps
+upper=Q(1,32)+Q(1,128)+Q(9,2)*eps
+support=Q(1,8)+Q(1,32)+Q(1,128)+eps/2
+assert Q(1,64)<lower<upper<Q(1,16) and 2*support<1 and support<Q(1,4)
+# Time collars: supports of theta'(2s), theta'(2s-1).
+collars=[[Q(1,8),Q(3,8)],[Q(5,8),Q(7,8)]]
+assert collars[0][1]<collars[1][0]
+
+# The six-center actual swirl obstruction, normalized by c_f R^2.
+H4=x**4+y**4+z**4-s.Rational(3,5)*(x*x+y*y+z*z)**2
+assert lap(H4)==0
+moment=0
+for j in range(3):
+    for sign in (-1,1):
+        point={coords[k]:sign if j==k else 0 for k in range(3)}
+        moment-=s.diff(H4,coords[j],2).subs(point)
+assert moment==-s.Rational(144,5)
+
+# A same-center overlap error: equal same radial profiles do NOT balance.
+# The sum is rotation about (1,1,1); a harmonic xy sees an off-diagonal stress.
+a=s.Matrix([1,1,1]);v=a.cross(X)
+overlap=integrate_tensor(2*v[0]*v[1])
+assert overlap==-s.Rational(2,3)*s.Symbol('I4')
+
+# Finite completion cubature check via exact sphere moments, with arbitrary
+# coefficient vector: orthogonality is tested through a Gram matrix on H_2..H_5.
+allh=[h for n in range(2,6) for h in cauchy_basis(n)]
+def avg(p):
+    return s.expand(sum(c*sphere_average(m) for m,c in s.Poly(s.expand(p),x,y,z).terms()))
+G=s.Matrix([[avg(a*b) for b in allh] for a in allh])
+assert G.det()!=0
+for j,h in enumerate(allh):
+    n=s.Poly(h,x,y,z).total_degree()
+    euler2=sum(coords[i]*coords[k]*s.diff(h,coords[i],coords[k]) for i in range(3) for k in range(3))
+    assert s.expand(euler2-n*(n-1)*h)==0
+    assert avg(h)==0
+
+# A finite grid budget does not hide its cardinality: epsilon/(8N) errors
+# per component sum to at most epsilon/8 for arbitrary positive integer N.
+N,err=s.symbols('N err',positive=True)
+assert s.simplify(N*err/(8*N)-err/8)==0
+for order in range(101):
+    for n in range(max(order,4),max(order,4)+30):
+        assert n+8-order>=1 and 2*n+19-order>=1
+        assert n+7<=2**n
+
+print(json.dumps(dict(status='PASS_FINITE_DIAGNOSTICS_NOT_PROOF',
+    harmonic_Cauchy_basis_degrees=list(range(9)),translated_swirl_tensor_cases=count,
+    radial_Poisson_equations=2,ordered_rotation_identity='symbolic exact',
+    wrong_inverse_sign='nonzero symbolic error',plateau_lower=str(lower),plateau_upper=str(upper),
+    pressure_and_velocity_support_radius=str(support),time_pulse_supports=[[str(a),str(b)] for a,b in collars],
+    octahedral_fourth_moment=str(moment),overlapping_swirl_xy_moment=str(overlap),
+    finite_completion_Gram_rank=len(allh),grid_error_budget='epsilon/8 for every finite N',
+    decay_exponent_checks=3030),indent=2,sort_keys=True))
