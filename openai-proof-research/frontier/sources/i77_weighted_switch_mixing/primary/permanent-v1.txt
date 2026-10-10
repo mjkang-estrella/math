@@ -1,0 +1,2699 @@
+                                                                      Fast FPRAS for the Permanent
+                                                      Xiaoyu Chen∗            Heng Guo†           Eric Vigoda‡           Xiongxin Yang‡
+
+                                                                                    September 18, 2026
+
+
+
+
+arXiv:2609.20717v1 [cs.DS] 17 Sep 2026
+                                                                                           Abstract
+                                                   We give an FPRAS for the permanent of an n × n 0/1 matrix with running time e      O(n3.5 ε−2 ).
+                                               Our algorithm extends to a strongly polynomial FPRAS for arbitrary nonnegative matrices, as
+                                               in previous works. Jerrum, Sinclair, and Vigoda (2004) gave the first FPRAS for the permanent
+                                               of a nonnegative matrix. The running time was subsequently improved to O(n     e 7 ) by Bezáková,
+                                               Štefankovič, Vazirani, and Vigoda (2008), and recently to O(n ) by Chen, Vigoda, and Yang
+                                                                                                             e   6
+
+                                               (2026).
+                                                   We introduce a multicommodity-flow bound inspired by electrical flows, replacing the usual
+                                               path-length factor by routing energy. For a boosted version of the classical JSV chain, we prove a
+                                               relaxation-time bound of O(n3 log n) and show that stationary trajectories of this length estimate
+                                               all stationary hole-pattern probabilities, yielding an e
+                                                                                                      O(n5 )-time FPRAS algorithm. Our new
+                                               hole-weighted slide (HWS) chain improves both bounds to O(n2 log n), yielding an O(n   e 4 )-time
+                                               algorithm. Finally, we obtain the claimed O(n ) running time by using a subset of O(
+                                                                                             e   3.5                                       e √n)
+                                               checkpoint temperatures in an iterated sequence of warm-starts to obtain initializations at every
+                                               temperature.
+
+
+
+
+                                           ∗
+                                              Email: xiaoyu@mit.edu, Massachusetts Institute of Technology. Supported by the NSF CAREER grant CCF-
+                                         2443045, and the Reed Fund at MIT.
+                                            †
+                                              Email: hguo@inf.ed.ac.uk, School of Informatics, University of Edinburgh, Edinburgh, United Kingdom.
+                                            ‡
+                                              Emails: {vigoda, xiongxinyang}@ucsb.edu, University of California, Santa Barbara. Supported in part by NSF
+                                         grant CCF-2147094.
+1    Introduction
+Evaluation of the permanent of a matrix is a fundamental problem in theoretical computer science.
+For an n × n matrix A = (aij ), its permanent is defined as
+                                                       n
+                                        per (A) :=
+                                                     X Y
+                                                                ai,σ(i) ,
+                                                     σ∈Sn i=1
+
+where Sn is the set of permutations of {1, . . . , n}. For the special case of a 0/1 matrix A, the
+permanent per (A) is the number of perfect matchings in the bipartite graph G = (V1 ∪ V2 , E) where
+|V1 | = |V2 | = n and A is the bipartite adjacency matrix for the edges in E.
+     Valiant [Val79] proved that exact computation of the permanent, even restricted to 0/1 matrices,
+is #P-complete. Subsequently the aim was the design of a fully polynomial randomized approximation
+scheme (FPRAS). Jerrum, Sinclair, and Vigoda [JSV04] gave the first FPRAS for 0/1 matrices, and
+more generally for every nonnegative matrix. Bezáková, Štefankovič, Vazirani, and Vigoda [BŠVV08]
+improved the running time of the JSV-algorithmic approach, achieving O(n7 log4 n) for 0/1 matrices.
+Recent work of Chen, Vigoda, and Yang [CVY26] further improved the running time for 0/1 matrices
+to O(n6 log5 n). In this paper, we improve the running time to O(n3.5 log9 n) for 0/1 matrices.
+
+Theorem 1. For all 0 < ε, δ < 1, there is a randomized algorithm that, given an n × n 0/1 matrix
+A as input, outputs an estimate pb ≥ 0 such that
+
+                            Pr [(1 − ε) per (A) ≤ pb ≤ (1 + ε) per (A)] ≥ 1 − δ,
+
+and has running time                                                   
+                                      O n7/2 ε−2 log9 (n) log(2/δ) .                               (1)
+
+    The bound in Eq. (1) counts arithmetic operations and comparisons at unit cost; the simpler
+algorithm in Theorem 7, presented in Section 4, admits the weaker bound of e  O(n4 + n3 ε−2 ) in bit
+operations, as discussed in Remark 10. A refinement of our algorithm improves the running-time
+bound in Eq. (1) to O(n
+                     e 7/2 + n3 ε−2 ), but we retain the stated bound to simplify the algorithm and
+its presentation.
+    As in [JSV04], applying the matrix-scaling reduction of Linial, Samorodnitsky, and Wigder-
+son [LSW00], we obtain a strongly polynomial-time algorithm for arbitrary nonnegative matrices
+(again, we count arithmetic operations and comparisons at unit cost as in [LSW00, JSV04]).
+
+Corollary 2. For all 0 < ε, δ < 1, there is a strongly polynomial randomized algorithm for the
+permanent of an arbitrary n × n nonnegative matrix, with the same approximation guarantee as in
+Theorem 1, and running time
+                                                                                  
+                     O n5 log n + n4 log5 n log(n/δ) + n3 ε−2 log4 n log(2/δ) .                    (2)
+
+High-level algorithmic contributions. We refer the reader to Section 3 for a more detailed
+overview of the algorithm and detailed statements of the following improved results.
+     Consider a bipartite graph G = (V1 ∪ V2 , E) where n = |V1 | = |V2 |. Let P ∗ denote the perfect
+matchings in G, and for (u, v) ∈ V1 × V2 , let N ∗ (u, v) denote the near-perfect matchings with holes
+(i.e., unmatched vertices) at u and v. Similarly, let P and N (u, v) for all (u, v) ∈ V1 × V2 denote
+the analogs for the complete bipartite graph Kn,n . Finally, let N = (u,v)∈V1 ×V2 N (u, v), and let
+                                                                          S
+
+Ω = P ∪ N.
+
+
+                                                      1
+    Our central task for estimating per (A) = |P ∗ | is designing a Markov chain that quickly generates
+samples uniformly distributed on P ∗ , the set of perfect matchings of the input bipartite graph.
+To accomplish this sampling task, we use Markov chains defined on the enlarged space Ω; the
+near-perfect matchings are needed to connect the state space by local moves.
+    One obstacle is that the input graph may have exponentially more near-perfect than perfect
+matchings. We use simulated annealing on Ω: input edges have activity one, while the activity
+of nonedges gradually decreases from one toward zero. At each temperature, ideal hole weights
+balance the total stationary weights of all (n2 + 1) hole patterns. Our boosted JSV chain gives
+perfect matchings stationary probability 1/2 under ideal weights, and constant probability under
+accurate estimates. Conditioned on being perfect, its stationary distribution is proportional to the
+products of edge activities.
+    The ideal hole weights depend on the weighted totals of P and the sets N (u, v), which are not
+known. We learn accurate estimates along a cooling schedule of O(n)    e    temperatures, starting with
+all activities equal to one, where the ideal weights are known. See Section 3.1 for details.
+    To obtain an O(n
+                   e 5 )-time algorithm, as outlined in Section 3, we present two improvements to the
+boosted JSV chain. First we prove that the relaxation time of the boosted JSV chain is O(n    e 3 ), see
+Lemma 5; this improves the previous bound of [BŠVV08] by a factor of e      O(n). Next, we show that if
+we start the chain at stationarity, then O(n ) steps are sufficient for estimating the hole-frequencies
+                                          e   3
+
+in the stationary distribution, and hence for learning accurate estimates of the ideal hole weights.
+Note that this one-trajectory learning introduces correlations on the learned quantities, but we do
+not need them to be independent. Both results use the same new multicommodity flow technique
+described below.
+    To further improve the running time to O(n    e 4 ), we present a new chain, which we call the
+hole-weighted slide (HWS) chain, see Section 4 for details. The transitions of the HWS chain are
+tailored to the subsequent congestion proofs. As a consequence, we prove that the HWS chain
+improves the relaxation time and hole-frequency estimation time by a factor of O(n). There are
+two bottlenecks at e  O(n4 ). The first is from the initialization of the HWS chain at each of the
+O(n)-temperatures
+ e                   in our simulated annealing cooling schedule; each initialization requires a burn-in
+of the mixing time which is O(n e 3 ).
+                                                                      √
+    To speed-up these initializations, we identify a subset of e   O( n) temperatures which we call
+checkpoints. The perfect-matching distribution at each checkpoint has bounded χ2 -divergence
+relative to the distributions at all cooling temperatures up to the next checkpoint, providing the
+required warm starts. The construction of the O(  e √n) checkpoints is directly related to the work of
+[ŠVV09]; the key is that we are only focusing on perfect matchings for the purposes of a warm-start.
+To obtain an initialization at an arbitrary cooling temperature, we run the HWS chain successively
+through the preceding checkpoints and then at the requested temperature. This costs O(n     e 2.5 ) time
+                                                                                             √
+per initialization, or O(n ) across all requested initializations, saving a factor of O( n). This
+                        e   3.5                                                           e
+improvement is explained in more detail in Section 5.
+    The second bottleneck preventing us from going below O(n   e 4 ) is the implementation of the HWS
+chain. The transition probabilities of this chain is non-trivial and straightforward bookkeeping would
+make the overall runtime stay at O(n
+                                   e 4 ). To achieve O(ne 3.5 ), we implement the chain in a way where
+                                        √
+for each hole pattern, only the top Θ( n) most likely proposals have their transition probabilities
+computed, and we use rejection sampling for the rest. This is also explained in Section 5.
+
+Improved multicommodity flow technique Our proofs utilize a new multicommodity-flow
+technique, inspired by electrical flows. Classical multicommodity-flow bounds incur a factor equal
+to the path length. We replace this factor by the routing energy, which is the sum of the squared
+
+
+                                                   2
+transition-usage probabilities.
+    We illustrate the idea with a near-perfect matching I ∈ N (u, v) and a perfect matching F ∈ P.
+For simplicity, suppose their symmetric difference I ⊕ F consists of a single augmenting path between
+u and v. The standard canonical path processes this augmenting path from one end: starting at
+u, it successively moves the hole by a slide move, replacing an edge of I with an adjacent edge of
+F , and finally adds the remaining edge of F . Our routing instead interleaves slides from the two
+endpoints, in a random manner.
+    We choose the probabilities so that, after t slides, each of the t + 1 possible splits between the
+two endpoints is equally likely. At this stage, each possible intermediate matching therefore has
+probability 1/(t + 1), and there are at most 2(t + 1) possible next slide transitions. Each transition
+has usage probability at most 1/(t + 1), so this stage contributes O(1/(t + 1)) to the sum of squared
+transition usages. Summing over the stages, and including the final edge additions, gives routing
+energy O(log n) (see Section 6.6 for more details), even though every path in the routing may have
+Θ(n) transitions.
+    The improvement in the subsequent analysis comes from the order in which we apply Cauchy–
+Schwarz. The classical argument applies it along each path and then averages, introducing the
+path-length factor. We instead average the telescoping identities over the routing first and then
+apply Cauchy–Schwarz, obtaining the routing energy in place of path length; see Eq. (32) in the
+proof of Lemma 14.
+    Our energy-weighted flow bound generalizes the classical multicommodity-flow bound of Sin-
+clair [Sin92] and the recent coupled-flow bound of [CVY26]. The general technique is presented in
+Section 6.
+    We note that due to high-level similarities of the algorithmic framework, many of the acceleration
+ideas here for the permanent are present in the FPRAS for the two-terminal reliability problem as
+well [FFG26].
+
+Organization. Section 3 defines the JSV chain, presents the algorithmic framework, and details
+the weaker O(n
+             e 5 ) result. In Section 4 we present the new HWS chain and detail the O(ne 4 )-time
+result. Finally, we present the O(n
+                                e 3.5 )-time result from Theorem 1 in Section 5.
+    In Section 6 we develop the energy-weighted multicommodity flows and introduce our new
+technical tool, and Section 7 proves the associated congestion bounds for the JSV and HWS chains.
+
+
+2    Markov chain preliminaries
+Let P be the transition matrix of a finite irreducible Markov chain on Ω, and let π denote its unique
+stationary distribution. Throughout this section, we assume that P is reversible and lazy:
+                                                                                   1
+           π(x)P (x, y) = π(y)P (y, x)       for all x, y ∈ Ω,        P (x, x) ≥       for all x ∈ Ω.
+                                                                                   2
+    For a function f : Ω → R, write Eπ [f ] :=          x∈Ω π(x)f (x). Its Dirichlet form and variance are
+                                                    P
+
+                                  1 X
+                  EP (f, f ) :=           π(x)P (x, y)(f (x) − f (y))2 ,
+                                  2 x,y∈Ω
+                                     h   i                  1 X
+                 Varπ [f ] := Eπ f 2 − Eπ [f ]2 =                   π(x)π(y)(f (x) − f (y))2 .
+                                                            2 x,y∈Ω
+
+
+
+
+                                                        3
+The relaxation time is the inverse of the spectral gap. Equivalently, τrel (P ) is the smallest constant
+C > 0 for which the Poincaré inequality holds:
+
+                               ∀f : Ω → R,            Varπ [f ] ≤ CEP (f, f ).                        (3)
+
+    For probability distributions µ and π on Ω, their total variation distance is
+                                                      1X
+                                  ∥µ − π∥TV :=              |µ(x) − π(x)|,
+                                                      2 x∈Ω
+
+and the χ2 -divergence of µ relative to π is
+                                                     X (µ(x) − π(x))2
+                                   χ2 (µ∥π) :=                           .
+                                                     x∈Ω
+                                                              π(x)
+
+For 0 < η < 1, the mixing time from an initial state x is defined as
+                                             n                                       o
+                       τmix (P, η; x) := min t ∈ Z≥0 : ∥P t (x, ·) − π∥TV ≤ η .
+
+The worst-case mixing time is τmix (P, η) := maxx∈Ω τmix (P, η; x). When the error parameter is
+omitted, we take η = 1/4. We use the following standard bound; e.g., see [LP17, Chapter 12]:
+                                                                        1
+                                 τmix (P, η; x) ≤ 1 + τrel (P ) log         .                         (4)
+                                                                      ηπ(x)
+    More generally, for an initial distribution µ, define
+                                                 n                               o
+                         τmix (P, η; µ) := min t ∈ Z≥0 : ∥µP t − π∥TV ≤ η .
+
+The variance-contraction inequality in [LP17, Section 12.2, equation (12.8)], applied to µ/π, together
+with Cauchy–Schwarz gives
+                                        1q 2           1             q
+                      ∥µP t − π∥TV ≤      χ (µP t ∥π) ≤ e−t/τrel (P ) χ2 (µ∥π).
+                                        2              2
+Consequently, if χ2 (µ∥π) ≤ D for some D ≥ 0, then
+
+                              τmix (P, η; µ) ≤ 1 + τrel (P ) log((1 + D)/η).                          (5)
+
+If D = O(1) then µ is called a warm-start for π, and in this case we have τmix (P ; µ) = O(τrel (P )). In
+other words, a warm-start has mixing time O(τrel ), whereas a worst case initial state has mixing time
+O(τrel log(1/πmin )) where πmin = minx∈Ω π(x). Avoiding this O(log(1/πmin ))-factor is an important
+aspect of our improved algorithm.
+
+                                    f 5
+3    Algorithm overview and simpler O(n )-time algorithm
+We begin by providing an overview of a simpler O(n e 5 )-time FPRAS for the permanent, which
+improves the previously best known result of [CVY26] by an O(n)-factor.
+                                                             e            More importantly, this
+result introduces the basic algorithmic framework, in a manner most similar to previous works.
+Subsequently, we build upon this same algorithmic framework to obtain further improvements.
+    For simplicity, consider the permanent of an n × n 0/1 matrix A, and let G = (V1 ∪ V2 , E) be
+the corresponding (unweighted) bipartite graph where |V1 | = |V2 | = n. We first check whether G
+
+                                                        4
+has a perfect matching. If not, then per (A) = 0 and the algorithm returns zero; henceforth assume
+that per (A) ≥ 1 and denote by M ∗ a perfect matching found by this check. We will fix M ∗ for the
+duration of the algorithm, it will serve as a high weight initial state for our Markov chains.
+   Recall, P ∗ denotes the set of perfect matchings of G. Our goal is to estimate per(A) = |P ∗ |.
+Henceforth, we work on the complete bipartite graph on (V1 , V2 ), and let P be its set of perfect
+matchings. For (u, v) ∈ V1 × V2 , let N (u, v) be the set of near-perfect matchings with holes at u
+and v, and let N = ∪(u,v) N (u, v). Finally, let Ω = P ∪ N .
+   For an activity λ ∈ [0, 1], assign activity 1 to every edge of G and activity λ to every nonedge.
+Extend activities to matchings M ∈ Ω, and sets of matchings S ⊂ Ω by
+
+                             λ(M ) :=                     λ(S) :=          λ(M ).
+                                        Y                              X
+                                              λ(e),
+                                        e∈M                         M ∈S
+
+At λ = 1, then λ(P) = n! and for all (u, v) ∈ V1 × V2 , λ(N (u, v)) = (n − 1)!. On the other end, if
+λ = 0, then λ(P) = |P ∗ | = per(A). A cooling schedule is a sequence λ0 = 1 > λ1 > · · · > λL > 0
+with λL ≤ 1/n!. Every perfect matching of G contributes one to λL (P), while every other perfect
+matching contributes at most λL . Hence
+
+                          per (A) ≤ λL (P) ≤ per (A) + n!λL ≤ 2 per (A) .
+
+For 0 ≤ i ≤ L, write
+                                                             λi (M )
+                           Zi := λi (P),        µi (M ) :=             (M ∈ P).
+                                                                Zi
+    Our goal is to generate samples from every µi , and then we can estimate per(A) using the
+telescoping product over the ratios λi+1 (P)/λi (P); this will be detailed in Phase 2 of the algorithm.
+    In Phase 1 of the algorithm, we devise a sequence of Markov chains to sample from µi for an
+appropriately chosen cooling schedule. To sample from µi , we use a Markov chain on Ω whose
+stationary distribution, conditional on being perfect, is µi . We utilize a variant of the JSV chain,
+which was utilized in previous works [JSV04, BŠVV08, CVY26].
+
+3.1   The boosted JSV chain
+The JSV chain, introduced in [JSV04], uses the following local moves on Ω.
+
+   • Add/delete: For P ∈ P, for (u, v) ∈ P , delete (u, v) from the perfect matching P to obtain a
+     matching in N (u, v). Similarly, from M ∈ N (u, v), add the edge (u, v) joining the two holes
+     to obtain a perfect matching.
+
+   • Slide fixing the left hole: From M ∈ N (u, v), replace an edge (x, y) ∈ M by (x, v), obtaining a
+     matching in N (u, y).
+
+   • Slide fixing the right hole: From M ∈ N (u, v), replace an edge (x, y) ∈ M by (u, y), obtaining
+     a matching in N (x, v).
+
+These reversible moves define an undirected adjacency relation M ∼ M ′ with at most 2n non-loop
+neighbors per state. Given positive hole weights w(u, v), (u, v) ∈ V1 × V2 , for M ∈ Ω, let
+
+                                               λ(M ),
+                                           (
+                                                                M ∈ P,
+                            ωλ,w (M ) :=
+                                               w(u, v)λ(M ),    M ∈ N (u, v),
+
+
+
+                                                      5
+and let π = πλ,w be the distribution on Ω where π(M ) ∝ ωλ,w (M ). For adjacent states, the
+transition matrix of the JSV chain is given by
+
+                                           1        π(M ′ )                 1        ωλ,w (M ′ )
+                                                                                (                )
+                   ′                  ′
+          ∀M ∼ M ,        PJSV (M, M ) :=    min 1,                      =    min 1,                   .   (6)
+                                          4n        π(M )                  4n        ωλ,w (M )
+
+Distinct nonadjacent states have transition probability zero, and all remaining probability is assigned
+to the self-loop. The chain is lazy and reversible with respect to π.
+    The ideal hole weights w∗ (u, v) for all (u, v) ∈ V1 × V2 are defined as
+
+                                                           λ(P)
+                                          w∗ (u, v) :=               .
+                                                         λ(N (u, v))
+
+The ideal hole weights give P and every N (u, v) the same total weight, and hence
+
+                              πλ,w∗ (P) = πλ,w∗ (N (u, v)) = 1/(n2 + 1);
+
+the stationary distribution π = πλ,w∗ at the ideal hole weights is uniformly distributed over the
+(n2 + 1)-hole patterns. However, it is unclear how to compute the ideal hole weights, and hence we
+consider approximate hole weights.
+
+Definition 3. For c ≥ 1, the hole weights w are c-rough if
+
+                                                     w(u, v)
+                             ∀(u, v) ∈ V1 × V2 ,             c−1 ≤
+                                                               ≤ c.
+                                                     w∗ (u, v)
+                                                    √
+We call them rough when c = 2, and accurate when c = 2.
+
+   As noted before, under the ideal weights, πλ,w∗ (P) = 1/(n2 +1), so the expected return time to P
+under stationarity is Θ(n2 ) steps. To make these visits more frequent, we boost each perfect-matching
+weight by n2 ; let
+                                            n2 λ(M ),
+                                           (
+                                                            M ∈ P,
+                              ωλ,w (M ) :=
+                                B
+                                            w(u, v)λ(M ), M ∈ N (u, v).
+Write πλ,w
+        B for the corresponding distribution after normalization, where the superscript B indicates
+
+boosting. With ideal weights, πλ,w
+                               B
+                                   ∗ (P) = 1/2. Moreover, with rough weights w, then πλ,w (P) = Θ(1),
+                                                                                         B
+
+and πλ,w
+      B (N (u, v)) = Θ(n−2 ).
+
+   The boosted JSV chain uses πλ,wB in Eq. (6) for its transition probabilities. Let P B = P B (λ, w)
+                                                                                       JSV     JSV
+denote its transition matrix, and note its stationary distribution is π = πλ,w B .
+
+   For any hole weights w(u, v) for all (u, v) ∈ V1 × V2 , the stationary distribution π = πλ,w
+                                                                                            B satisfies
+
+the following identity:
+                                                w(u, v) π(P)
+                                    w∗ (u, v) =                      .                              (7)
+                                                  n2 π(N (u, v))
+    As a consequence of Eq. (7), if we can estimate the ratio π(P)/π(N (u, v)) then we can boost
+rough weights w into accurate weights w′ . To estimate this ratio we need to estimate the stationary
+frequency of the hole-pattern (u, v) and the frequency of perfect matchings. The following yields a
+fast sampler of these frequencies.
+
+
+
+
+                                                         6
+                                                                            B , and let
+Lemma 4. Fix positive edge activities λ and rough hole weights w. Let X0 ∼ πλ,w
+                                     B (λ, w). For every
+X1 , X2 , . . . evolve according to PJSV
+
+                                 S ∈ {P} ∪ {N (u, v) : u ∈ V1 , v ∈ V2 },
+
+write pS := πλ,w
+             B (S). There is a universal constant C > 0 such that, for every integer T ≥ 1,
+
+
+                                          −1
+                                       1 TX             Cn3 log n 2
+                                       "                   #
+                                   Var       1{Xt ∈S} ≤          pS .                                 (8)
+                                       T t=0               T
+
+    The above lemma says that for rough weights w(u, v), if we start the boosted JSV chain at a
+stationary state, run for T = O(n3 log n) steps, and let pbS be the fraction of times that we are in
+hole-pattern S, then, by Chebyshev’s inequality, pbS is an accurate estimate of π(S). Hence, we can
+apply Eq. (7) to boost rough hole weights into accurate estimates.
+    But how do we obtain an initial state from the stationary distribution? To do this we need to
+upper bound the mixing time of the boosted JSV chain. It will be more convenient for us to upper
+bound the relaxation time and then apply Eq. (4) (this allows to apply Eq. (5) when we have a
+warm-start).
+    The following result shows that the relaxation time of the boosted JSV chain is e    O(n3 ); this
+improves the previous bound of [BŠVV08] by a factor of O(n).e
+
+Lemma 5. For every fixed c ≥ 1, there is a constant Cc such that, for every choice of positive edge
+activities and every set of c-rough hole weights,
+
+                                           τrel (PJSV
+                                                  B
+                                                      ) ≤ Cc n3 log n.                                (9)
+
+   The final ingredient is the following non-adaptive cooling schedule, specialized from a recent
+work [GLY+ 26].
+
+Lemma 6. There is an explicit schedule
+                                                                     1
+              1 = λ0 > λ1 > · · · > λL = exp −⌈log2 (n!)⌉ ≤                       L = O(n log2 n),
+                                                                
+                                                                        ,
+                                                                     n!
+such that the ideal hole weights satisfy
+
+                                                                         3  w∗ (u, v)   4
+                 ∀i ∈ {0, 1, . . . , L − 1} , ∀(u, v) ∈ V1 × V2 ,          ≤ i+1       ≤ .           (10)
+                                                                         4   wi (u, v)
+                                                                              ∗         3
+
+If Mi ∼ µi independently for 0 ≤ i < L, then
+                             L−1
+                               λi+1 (Mi )                                   E Y2      64
+                                                                                  
+                                                             ZL
+                      Y :=                          E [Y ] =                                         (11)
+                             Y
+                                λi (Mi )
+                                          ,                     ,                 2 ≤ 27 .
+                           i=0
+                                                             Z0             E [Y ]
+
+    Condition Eq. (11) will be used in Phase 2 of the algorithm to bound the variance of the
+estimator for λL (P) ≈ per(A). For our purposes in Phase 1, the key is Eq. (10).
+    By Eq. (10), accurate weights wi at λi remain rough at λi+1 . That means if we have accurate
+weights wi at λi , then run the boosted JSV chain at λi+1 with wi , starting from X0 which is
+distributed according to the stationary distribution for λi+1 , for T = O(n3 log n) steps. By Lemma 4,
+we can obtain accurate estimates of pbS for every hole pattern S, and hence by Eq. (7) we can boost
+wi into accurate weights wi+1 for λi+1 .
+
+                                                       7
+    We start with the known ideal weights w0 (u, v) = n. At each temperature, take medians of the
+empirical frequencies from O(log(n/δ)) independent batches, each with its own burn-in. This gives
+relative error at most 1/10 simultaneously for all hole patterns and all temperatures, except with
+probability at most δ/2.
+    To obtain an initial state X0 at a particular activity λi , we apply Lemma 5 with Eq. (4). Take the
+fixed matching M ∗ as our initial state, then π(M ∗ ) ≥ 1/(3n!), and hence log(1/π(M ∗ )) = O(n log n).
+Thus, O(n4 log2 n) steps of the boosted JSV chain suffice to obtain a sample from the stationary
+distribution (with small variation distance). Since there are O(n log2 n) temperatures, it takes a
+total of e
+         O(n5 ) steps to obtain initial states from stationarity at every temperature. This yields
+an O(n
+    e 5 )-time algorithm to obtain accurate weights at every temperature in the cooling schedule
+prescribed by Lemma 6.
+
+3.2    Phase 2: whole-product estimator of the permanent
+Phase 2 freezes the learned weights and uses fresh randomness. Write
+
+                                               ZL L−1
+                                                    Y Zi+1
+                                          Q :=    =        .                                       (12)
+                                               Z0   i=0
+                                                        Zi
+
+Since Z0 = n! and per (A) ≤ ZL ≤ 2 per (A), we also have
+                                                  per (A)  1
+                    p∗ := PrM ∼µL [M ⊆ E] =               ≥ ,        per (A) = n! Qp∗ .            (13)
+                                                    ZL     2
+Thus it suffices to estimate Q and p∗ .
+   For rough weights,
+                            πλBi ,wi (P) ∈ [1/3, 2/3],   πλBi ,wi ( · | P) = µi .                  (14)
+For each execution, independent auxiliary burn-in runs from M ∗ , retaining only perfect final states,
+provide initial matchings approximately distributed according to µi at every activity. These runs
+are separate from weight learning, and their cost is included in Phase 1.
+    Initialize independent boosted JSV chains at (λi , wi ) from these perfect matchings. To obtain
+the next sample, run each chain in blocks of Cn3 log n transitions, for a sufficiently large constant
+C, until a block ends at a perfect matching. Retain that matching and continue from it in the next
+round; no additional burn-in is needed.
+    In each round, one retained matching Mi from each activity λ0 , . . . , λL−1 gives the whole-product
+estimator
+                                             L−1
+                                              Y λi+1 (Mi )
+                                        Y :=                  .                                     (15)
+                                              i=0
+                                                   λ i (M i )
+At λL , record 1{ML ⊆E} . Under independent stationary perfect starts, Eq. (11) gives E [Y ] = Q
+and constant relative variance, while the terminal indicator has mean p∗ ≥ 1/2. The relaxation
+bound in Lemma 5 controls correlations between rounds. Consequently, averaging O(ε−2 ) rounds
+gives estimates Qb and pb ∗ , each with relative error at most ε/4, with constant success probability.
+Sufficiently accurate initial distributions preserve this guarantee.
+    One execution returns
+                                                        b pb ∗ .
+                                            pbrun := n! Q                                       (16)
+With the learned weights fixed, take the median of O(log(2/δ)) independent executions. Conditional
+on accurate weights, the resulting estimate has relative error at most ε with probability at least
+1 − δ/2.
+
+                                                     8
+   Excluding initialization, Phase 2 takes O(n
+                                             e 4 ε−2 ) time. Together with Phase 1, this gives total
+time O(n
+      e 5 + n4 ε−2 ), and success probability at least 1 − δ. The initialization accuracy, running-time
+cutoffs, and detailed proofs are given in Section 8.
+
+          f 4
+4     The O(n )-Algorithm: Hole-Weighted Slide (HWS) Chain
+By introducing a new Markov chain, which we call the HWS chain, we obtain the following result
+which improves the running time to O(n
+                                   e 4 ).
+
+Theorem 7. For all 0 < ε, δ < 1, there is a randomized algorithm that, given an n × n 0/1 matrix
+A as input, outputs an estimate pb ≥ 0 such that
+                         Pr [(1 − ε) per (A) ≤ pb ≤ (1 + ε) per (A)] ≥ 1 − δ,
+and has running time
+                                                                                    
+                           O n4 log5 n log(n/δ) + n3 ε−2 log4 n log(2/δ) .                             (17)
+
+4.1   The hole-weighted slide (HWS) chain
+The hole-weighted slide (HWS) chain uses the same state space Ω and the same add/delete and
+slide moves as the JSV chain. It changes both the transition probabilities and the weights assigned
+to near-perfect matchings.
+    Fix positive edge activities λ and positive hole weights w. The ideal weights remain
+                                                              λ(P)
+                                           w∗ (u, v) :=                 ,
+                                                            λ(N (u, v))
+and rough and accurate weights are defined the same as in Definition 3.
+
+Hole weights.     For distinct v, a ∈ V2 and distinct u, x ∈ V1 , define the slide scores:
+                                                 −1                                       −1
+                                 X λ(z, a)                                      X λ(x, b)
+                   Lv (a) :=                          ,       Ru (x) :=                        .   (18)
+                                 z∈V1
+                                        w(z, v)                             b∈V2
+                                                                                   w(u, b)
+
+Set Lv (v) = 0 and Ru (u) = 0. The score Lv (a) is used for slides that move the left hole while fixing
+the right hole v; Ru (x) is used for slides that move the right hole while fixing the left hole u. All
+scores are computable from the supplied activities and hole weights, without evaluating partition
+functions.
+    For each hole pair (u, v), put
+                       DL (u, v) :=                 λ(u, a)Lv (a),
+                                          X
+
+                                        a∈V2 \{v}
+
+                       DR (u, v) :=                 λ(x, v)Ru (x),
+                                          X
+
+                                        x∈V1 \{u}
+
+                        W (u, v) := w(u, v) + nλ(u, v) + DL (u, v) + DR (u, v).                        (19)
+We call W (u, v) the effective hole weight. It determines the unnormalized matching weights
+
+                                                  n2 λ(M ),
+                                              (
+                                                                 M ∈ P,
+                            HWS
+                           ωλ,w (M ) :=                                                                (20)
+                                                  W (u, v)λ(M ), M ∈ N (u, v).
+
+                                                            9
+Write
+                                                                            HWS (M )
+                                                                           ωλ,w
+                             :=               (M ),             (M ) :=                            (21)
+                                   X
+                         HWS              HWS               HWS
+                        Zλ,w             ωλ,w              πλ,w                 HWS
+                                                                                       .
+                                  M ∈Ω
+                                                                               Zλ,w
+Our goal is still to learn accurate estimates of the ideal hole weights w∗ (u, v); the effective weights
+W (u, v) are computed from the current estimates w.
+
+Transitions. Let PHWS = PHWS (λ, w) denote the transition matrix. Its non-loop transitions are
+as follows.
+  • Add/delete. For M ∈ P and (u, v) ∈ M ,
+                                                                         1
+                                         PHWS (M, M \ {(u, v)}) =          .
+                                                                        2n
+        For N ∈ N (u, v),
+                                                                     nλ(u, v)
+                                     PHWS (N, N ∪ {(u, v)}) =                  .
+                                                                     2W (u, v)
+  • Slide fixing the right hole. For N ∈ N (u, v) and (x, a) ∈ N ,
+                                                                        λ(u, a)Lv (a)
+                              PHWS N, N \ {(x, a)} ∪ {(u, a)} =
+                                                                 
+                                                                                      .
+                                                                         2W (u, v)
+        The resulting matching belongs to N (x, v).
+  • Slide fixing the left hole. For N ∈ N (u, v) and (x, a) ∈ N ,
+                                                                        λ(x, v)Ru (x)
+                              PHWS N, N \ {(x, a)} ∪ {(x, v)} =
+                                                                 
+                                                                                      .
+                                                                          2W (u, v)
+        The resulting matching belongs to N (u, a).
+All other non-loop transition probabilities are zero, and the remaining probability is assigned to
+the self-loop. These are the transition probabilities themselves; there is no additional Metropolis–
+Hastings acceptance step.
+    The total non-loop probability is 1/2 at a perfect matching. At N ∈ N (u, v), it is
+
+                      nλ(u, v) + DL (u, v) + DR (u, v)   W (u, v) − w(u, v)  1
+                                                       =                    ≤ .
+                                 2W (u, v)                   2W (u, v)       2
+Thus the chain is lazy. It is also irreducible, since every JSV add/delete and slide move has positive
+probability.
+   The factors W (u, v) cancel in the detailed-balance equations. For example, if N ′ = N \ {(x, a)} ∪
+{(u, a)}, then
+                                       λ(N )λ(u, a) = λ(N ′ )λ(x, a),
+and both stationary transition probabilities equal
+                                                                           λ(N )λ(u, a)Lv (a)
+                 HWS
+                πλ,w (N )PHWS (N, N ′ ) = πλ,w
+                                           HWS
+                                               (N ′ )PHWS (N ′ , N ) =                        .
+                                                                                2Zλ,w
+                                                                                   HWS
+
+
+The other slide direction and the add/delete moves satisfy detailed balance similarly. Hence the
+stationary distribution is πλ,w
+                            HWS . (See Remark 27 for further intuition on the design of the HWS
+
+chain transitions.)
+
+                                                      10
+Perfect-matching probability. The perfect matchings still have constant stationary probability
+when w is rough. At ideal weights, we have:
+                       λ(N (u, v))DL (u, v) =          λ(N (u, v))DR (u, v) = n(n − 1)λ(P).
+                 X                               X
+
+                 u,v                             u,v
+
+The perfect-matching weights, the w∗ (u, v) terms, and the nλ(u, v) terms each contribute n2 λ(P)
+to the normalizing constant. Consequently,
+                                                 ∗ = (5n − 2n)λ(P).
+                                             HWS        2
+                                            Zλ,w
+Replacing ideal weights by rough weights changes each effective hole weight by at most a factor of
+two. In particular,
+                            1                                                           λ(M )
+              HWS
+             πλ,w (P) ≥        ,    and for every M ∈ P, we have πλ,w
+                                                                  HWS
+                                                                      (M | P) =               .    (22)
+                            32                                                          λ(P)
+Moreover, at activity λi , this conditional distribution πλ,w
+                                                          HWS (· | P) is exactly µ .
+                                                                                  i
+  For the HWS chain, we improve the relaxation-time bound by a factor of n.
+Lemma 8. For every fixed c ≥ 1, there is a constant Cc such that, for every positive activity λ and
+every set of c-rough hole weights w,
+                                       τrel (PHWS (λ, w)) ≤ Cc n2 log n.                           (23)
+   Moreover, the HWS chain satisfies the following analog of Lemma 4.
+                                                                       HWS , and let X , X , . . .
+Lemma 9. Fix a positive activity λ and rough hole weights w. Let X0 ∼ πλ,w            1   2
+evolve according to PHWS (λ, w). For every
+                                   S ∈ {P} ∪ {N (u, v) : u ∈ V1 , v ∈ V2 },
+write pS := πλ,w
+             HWS (S). There is a universal constant C > 0 such that, for every integer T ≥ 1,
+
+                                          −1
+                                       1 TX             Cn2 log n 2
+                                        "                     #
+                                   Var       1{Xt ∈S} ≤          pS .                              (24)
+                                       T t=0               T
+
+    Compared with Lemma 4, Lemma 9 saves a factor of O(n) in the length of each learning
+trajectory.
+    For any fixed hole pattern, a stationary trajectory of length O(n2 log n) gives a constant-relative-
+error estimate with constant success probability. The same trajectory supplies the empirical
+frequencies for all hole patterns. As in Phase 1 of the simpler algorithm, medians over independent
+batches amplify these guarantees simultaneously.
+    The different stationary weights require a corresponding change to the weight update. Writing
+pP := πλ,w
+        HWS (P) and p
+                        u,v := πλ,w (N (u, v)), we have
+                                HWS
+
+
+                                   W (u, v) pP      λ(P)
+                                                =             = w∗ (u, v).                         (25)
+                                     n 2   pu,v   λ(N (u, v))
+Thus we use the same median-frequency update as before, with W (u, v) replacing the prefactor
+w(u, v):
+                                               W (u, v) pbP
+                                wnew (u, v) :=              .                            (26)
+                                                 n2 pbu,v
+As before, the algorithm returns zero if any median is zero. Relative error at most 1/10 in every
+median makes the resulting hole weights accurate.
+
+                                                         11
+4.2       e 4 )-time algorithm
+      The O(n
+Use the HWS chain throughout both phases of Section 3, with the revised weight update in Eq. (26).
+For rough weights, the normalizing-constant bound above gives πλ,w   HWS (M ∗ ) ≥ 1/(10n!). Thus
+
+Lemma 8 and Eq. (4) give an O(n3 log2 n)-step burn-in to inverse-polynomial total variation error.
+The learning trajectories and the sampling blocks in Phase 2 have length Cn2 log n. Since the
+perfect-matching conditional distribution remains µi and perfect matchings have constant stationary
+probability, the preceding correctness arguments apply with adjusted constants.
+    At each activity–weight pair, construct complete sampling tables in O(n3 ) time, allowing each
+HWS transition to be sampled in O(log n) expected time. These tables are shared by all runs using
+that pair. The preceding repetition and cutoff arguments then give Theorem 7; details are provided
+in Section 8.
+Remark 10 (Model of computation). The displayed running-time bounds in our results count
+arithmetic operations and comparisons at unit cost. For 0/1 inputs, the algorithm in Theorem 7
+can also be implemented using
+                                        e 4 + n3 ε−2 )
+                                       O(n
+bit operations, where the notation suppresses polylogarithmic factors in n, ε−1 , and δ −1 . Thus the
+bit-model implementation preserves the polynomial exponents, although it may introduce additional
+logarithmic factors beyond those displayed in Eq. (17). We omit the detailed finite-precision
+accounting.
+
+                   f 3.5
+5     The improved O(n   )-time algorithm
+We now improve the HWS algorithm from Section 4 to obtain Theorem 1. There are two further
+ingredients: checkpoint-based initialization and faster implementation of the HWS transitions. We
+describe one execution with constant success probability, and amplify its success probability at the
+end.
+    The algorithm in Section 4 initializes each learning batch by running HWS from the fixed
+matching M ∗ . Since log(1/π HWS (M ∗ )) = O(n log n), Lemma 8 and Eq. (4) give a burn-in of e   O(n3 )
+transitions per batch. Across all O(n) cooling temperatures, these initializations take O(n ) time.
+                                    e                                                      e  4
+
+    A perfect matching sampled from µi is already a constant warm-start for HWS at activity λi .
+Indeed, Eq. (22) gives µi (M ) ≤ 32πλHWS
+                                       i ,w
+                                            (M ). Thus the frequency-estimation guarantee applies from
+this initial distribution with adjusted constants, without additional burn-in. A sufficiently small
+total variation error in the initial sample is harmless. Our task is to obtain these perfect samples
+more efficiently.
+
+Checkpoint-based initialization. We use the same cooling schedule λ0 , . . . , λL from Lemma 6,
+with L = O(n log2 n). Using ideas from [ŠVV09], we select a subsequence of checkpoint temperatures
+                                                                       √
+               1=λ b0 > λ             b = λL ,
+                         b1 > · · · > λ
+                                       Lb
+                                                 b j = λc ,
+                                                 λ        j
+                                                                b = O( n log2 n).
+                                                                L
+
+The checkpoints are chosen using only the perfect-matching partition function. Their key property
+is that
+                           X µcj (M )2
+              B(cj , i) :=              = 1 + χ2 (µcj ∥µi ) ≤ 64   (cj ≤ i ≤ cj+1 ).         (27)
+                           M ∈P
+                                µi (M )
+In particular, this bounds the overlap both between successive checkpoints and between a checkpoint
+and every cooling temperature that it serves.
+
+                                                  12
+   Whenever a perfect sample is needed at λi , generate a fresh uniform perfect matching at λ0 = 1.
+Let λ           b j be the checkpoints strictly preceding λi . Carry the matching through the sequence
+    b1, . . . , λ
+
+                                   λ0 −→ b
+                                         λ1 −→ · · · −→ λ
+                                                        b j −→ λi .
+
+At each visited temperature, run HWS using the available rough hole weights. Inspect the chain after
+suitably chosen blocks of transitions and retain the first perfect matching observed before proceeding
+to the next temperature. The block lengths and inspection cutoffs give inverse-polynomial total
+variation error using O(n
+                       e 2 ) transitions per conversion; their precise choices are given in Section 8.
+Return zero if a sampling cutoff is exceeded.
+    During weight learning, the final conversion at λi uses wi−1 , which is rough by Lemma 6. All
+intermediate checkpoints have already been processed, so their hole weights are available. At λ0 = 1,
+samples are generated directly. Each requested initialization uses a fresh uniform start and fresh
+randomness; no reservoir of matchings is maintained.
+    Conditional on the information available before a request, its checkpoint sequence and transition
+rules are fixed. As long as the preceding estimates are accurate, the overlap bound justifies every
+conversion. Total variation errors add along the sequence, so taking each conversion sufficiently
+accurate controls the error in the returned sample, and then the total error over all requests. The
+detailed argument is deferred to Section 8.
+
+Selecting checkpoints while learning weights. The checkpoints are selected as Phase 1
+proceeds, using constant-relative-error estimates of the perfect-matching partition functions Zi .
+These estimates use fresh perfect samples and prefixes of the whole-product estimator in Eq. (15),
+together with median amplification. Every decision uses only estimates already available, and every
+new checkpoint is at a previously processed cooling temperature. Thus neither checkpoint selection
+nor a traversal requires hole weights that have not yet been learned.
+    At each cooling temperature, use separate sample requests for the learning batches and the prefix
+estimates. There are O(log n) requests per temperature. The learning batches run for Cn2 log n
+transitions and recalibrate the weights using Eq. (26), as before. We still learn hole weights at every
+cooling temperature; only the initialization traversals use the shorter checkpoint schedule.
+
+Faster implementation of HWS transitions. A second bottleneck is the cost of sampling the
+HWS transitions. There are O(n) possible pivots for each of the n2 hole patterns, so constructing
+complete sampling tables costs O(n3 ) time per temperature, or O(n
+                                                                e 4 ) overall. Although an individual
+transition probability is inexpensive to evaluate once the scores are known, sampling from the
+distribution over all pivots is not.
+    We avoid constructing complete tables at every temperature. Instead, compute the L- and
+R-scores and their normalizing sums using fast matrix multiplication, and retain only the k heaviest
+eligible true-edge pivots for each hole pattern. A batched construction produces these partial tables
+in O(n
+    e ω + n2 k) time per temperature, where nω is the matrix-multiplication time and we may
+take ω < 5/2. Combining the partial tables with rejection sampling implements each transition in
+O(1 + n/k) expected time, without changing its probabilities.
+ e
+    Across the O(n)
+                e     cooling temperatures, the final sample conversions and learning trajectories use
+O(n ) transitions. Their total expected time, including preprocessing, is
+ e   3
+
+                                                              !
+                                                         n4
+                                       O
+                                       e n   1+ω
+                                                   +n k+3
+                                                                  .
+                                                         k
+               √
+Choosing k =       n balances preprocessing and sampling, giving O(n
+                                                                 e 7/2 ) time for these tasks.
+
+
+                                                   13
+   At each selected checkpoint, we instead fix its learned hole weights and construct complete HWS
+sampling tables. These tables are retained and reused whenever a subsequent initialization visits
+that checkpoint. Their total construction time is O(  b 3 ) = O(n
+                                                   e Ln       e 7/2 ), and each checkpoint transition
+then takes e
+           O(1) expected time.
+   Excluding table construction, a fresh initialization therefore takes at most
+                                             √
+                                      b 2 + n2 n = O(n
+                                                       
+                                                   e 5/2 )
+                                    O
+                                    e Ln
+
+expected time: the first term accounts for the preceding checkpoints and the second for the final
+conversion at the requested cooling temperature. Across all O(n)
+                                                            e    requested initializations, the total
+is e
+   O(n ).
+      7/2
+
+
+
+Phase 2. After all weights have been learned, use fresh checkpoint traversals to obtain an initial
+perfect matching at each cooling temperature. These samples are separate from those used for weight
+learning and checkpoint selection. Run Phase 2 as in Section 4, using independent HWS chains
+with the learned weights fixed and sampling blocks of Cn2 log n transitions. Only the initializations
+traverse checkpoints; subsequent samples are obtained by continuing the chains at their respective
+cooling temperatures.
+    Averaging Cε−2 rounds of the whole-product estimator and terminal indicator gives Q    b and pb ∗ .
+One execution returns
+                                                     b pb ∗ .
+                                          pbrun = n! Q
+With partial sampling tables, the counting trajectories take O(n
+                                                             e 7/2 ε−2 ) expected time.
+
+
+Running-time summary. We cap the running time of each execution and return the median of
+O(log(2/δ)) independent executions of both phases. The proof of Theorem 1, including the sampling
+guarantees, cutoffs, and detailed running-time analysis, is given in Section 8.
+
+
+6     Energy-weighted multicommodity flows
+This section develops the multicommodity flow method used for the occupation and relaxation
+bounds of the boosted JSV chain and the HWS chain.
+    The common tool in this section is a comparison between weighted squared differences of
+function values at pairs of states and the Dirichlet form, which measures differences across single-
+step transitions. To obtain it, we connect the endpoint pairs by paths of allowed moves, expand
+each endpoint difference along its path, and control the weight charged to each transition. We
+build on classical canonical-path and multicommodity-flow bounds [DS91, Sin92]. Coupled and
+transport flows [CVY26, CFJ+ 25, CCFV25] give additional freedom in choosing the endpoint pairs.
+Our contribution refines the routing analysis by replacing the usual path-length cost with routing
+energy. For our routings, paths may have length Θ(n) while the routing energy is only O(log n).
+
+6.1   Classical multicommodity-flow bounds
+Let P be a finite lazy irreducible reversible Markov chain on Ω, with stationary distribution π.
+Its undirected transition graph has edge set T := {{x, y} : x ̸= y, P (x, y) > 0}. For I, F ∈ Ω, a
+path from I to F is a sequence γ = (I = X0 , X1 , . . . , Xℓ = F ) such that {Xj−1 , Xj } ∈ T for every
+1 ≤ j ≤ ℓ. We write |γ| = ℓ for the length of γ. Let Paths(x, y) be the set of paths from x to y in
+the transition graph with no repeated vertices, including the empty path when x = y.
+
+
+                                                  14
+Definition 11. A routing from I to F is a function θ : Paths(I, F ) → [0, 1] such that
+                                                               θ(γ) = 1.
+                                                   X
+
+                                               γ∈Paths(I,F )
+
+Equivalently, θ is a probability distribution on Paths(I, F ).
+    Under this definition, routing d units of flow sends d θ(γ) units along each path γ. This generalizes
+the classical canonical-path construction, recovered as the special case in which the routing associated
+with each pair (I, F ) assigns all the weight to a single path. Recall that the variance of a function f
+can be written as
+                                          1 X
+                             Varπ [f ] =           π(I)π(F )(f (I) − f (F ))2 .                      (28)
+                                          2 I,F ∈Ω
+The standard multicommodity flow therefore sends π(I)π(F ) units of flow from I to F for every
+ordered pair (I, F ). In particular, it also sends π(I)π(F ) units from F to I; the factor 1/2 in
+Eq. (28) accounts for this double counting. For e = {x, y} ∈ T , define its capacity by
+                                     Q(e) := π(x)P (x, y) = π(y)P (y, x).                                   (29)
+Then the Dirichlet form of f can be written as
+                                EP (f, f ) =                   Q(e)(f (x) − f (y))2 .
+                                                    X
+
+                                                e={x,y}∈T
+
+Fix a routing θI,F for every ordered pair (I, F ). The amount of flow through a transition e and the
+global congestion are defined by
+                                                                                                   L(e)
+                  L(e) :=            π(I)π(F )                     θI,F (γ),             ρ := max           (30)
+                             X                         X
+                                                                                                        .
+                                                                                              e∈T 2Q(e)
+                            I,F ∈Ω               γ∈Paths(I,F )
+                                                     e∈γ
+
+The corresponding length-weighted congestion is
+                                       1
+                      Rlen := max                 π(I)π(F )               θI,F (γ)|γ|.
+                                            X                   X
+                                 e∈T 2Q(e)
+                                           I,F ∈Ω           γ∈Paths(I,F )
+                                                                               e∈γ
+
+Finally, let ℓ := max{|γ| : θI,F (γ) > 0 for some I, F }.
+Lemma 12. For every f : Ω → R,
+                                 Varπ [f ] ≤ Rlen EP (f, f ) ≤ ℓρ EP (f, f ).
+Consequently,
+                                               τrel (P ) ≤ Rlen ≤ ℓρ.
+Proof. For every γ ∈ Paths(I, F ), write γ = (x0 , x1 , . . . , xℓ ), where x0 = I, xℓ = F , and ℓ = |γ|.
+Then telescoping and Cauchy–Schwarz give
+                                                    ℓ−1
+                                                                                         !2
+                         (f (I) − f (F )) =               f (xi ) − f (xi+1 )
+                                                    X
+                                           2                                         
+
+                                                    i=0
+                                                    ℓ−1
+                                                              ! ℓ−1                                 !
+                                                          1              f (xi ) − f (xi+1 )
+                                                                                               2           (31)
+                                                    X           X
+                                               ≤
+                                                    i=0            i=0
+                                               = |γ|                (f (x) − f (y))2 .
+                                                          X
+
+                                                       e={x,y}∈γ
+
+
+                                                              15
+Multiplying Eq. (31) by π(I)π(F )θI,F (γ)/2, summing over all ordered pairs (I, F ) and all γ ∈
+Paths(I, F ), and using γ∈Paths(I,F ) θI,F (γ) = 1, we obtain
+                       P
+
+
+                         1 X                       h                  i
+           Varπ [f ] =            π(I)π(F ) Eγ∼θI,F (f (I) − f (F ))2
+                         2 I,F ∈Ω
+                                                                                                   
+                       1 X
+                                π(I)π(F ) Eγ∼θI,F |γ|           (f (x) − f (y))2 
+                                                          X
+                     ≤
+                       2 I,F ∈Ω                        e={x,y}∈γ
+                                                                                               
+                                     1 X
+                     =                    π(I)π(F )                                             (f (x) − f (y))
+                                                                                    θI,F (γ)|γ|
+                            X                                           X
+                                                                                                                2
+                                                                                                
+                                     
+                                     2
+                         e={x,y}∈T           I,F ∈Ω                 γ∈Paths(I,F )
+                                                                        e∈γ
+
+                                              Q(e)(f (x) − f (y))2 = Rlen EP (f, f ).
+                                 X
+                     ≤ Rlen
+                              e={x,y}∈T
+
+Since |γ| ≤ ℓ, Rlen ≤ ℓρ. The relaxation-time bound follows from the Poincaré characterization.
+
+   Thus the classical comparison has two components: the maximum amount of flow using a single
+transition, measured by ρ, and the lengths of the paths carrying that flow. For matching chains,
+natural paths may have length Θ(n), leaving an additional factor of n even after the transition loads
+have been bounded.
+
+6.2   An energy-based analysis of multicommodity flow
+In this subsection, we adopt the probabilistic view of routings, regarding each routing as a distribution
+over paths. Thus, for each transition e, the total weight assigned to paths containing e is exactly
+the probability that a path sampled from θI,F uses e, i.e.,
+
+                                                      θI,F (γ) = Prγ∼θI,F [e ∈ γ] .
+                                         X
+
+                                 γ∈Paths(I,F )
+                                     e∈γ
+
+The transition support of a routing θ is the set of transitions used with positive probability:
+
+                                supp(θ) := {e ∈ T : Prγ∼θ [e ∈ γ] > 0} .
+
+The key quantity here is the energy of a routing that measures how its flow is spread over transitions.
+
+
+Definition 13. The energy of a routing θ is the sum of its squared transition-usage probabilities:
+
+                                             En(θ) :=          Prγ∼θ [e ∈ γ]2 .
+                                                         X
+
+                                                         e∈T
+
+   To compare routing energy with the path-length cost in the classical bound, observe that the
+energy is at most the expected path length. Indeed, since probabilities lie in [0, 1] and the paths
+have no repeated vertices,
+
+                                              Prγ∼θ [e ∈ γ] = Eγ∼θ [|γ|] ≤ max |γ|.
+                                     X
+                           En(θ) ≤
+                                         e                                             θ(γ)>0
+
+
+
+
+                                                               16
+Thus, for a routing supported on a single path, the energy equals the length of that path; when the
+flow is distributed among multiple paths, however, the energy can be substantially smaller. Now
+define the support congestion as
+                                                     1
+                                ρsupp := max                                 π(I)π(F ).
+                                                                   X
+                                               e∈T 2Q(e)
+                                                                I,F ∈Ω
+                                                             e∈supp(θI,F )
+
+Unlike the congestion ρ in Eq. (30), ρsupp charges the full demand of each pair whose routing can
+use e, rather than weighting it by Prγ∼θI,F [e ∈ γ]. Both ρ and ρsupp measure congestion alone;
+Rlen also includes the path-length cost. Fix a routing θI,F for every ordered pair (I, F ). Let
+Enmax := maxI,F En(θI,F ). We have the following analogue of Lemma 12.
+Lemma 14. For every f : Ω → R,
+                                       Varπ [f ] ≤ Enmax ρsupp EP (f, f ).
+Consequently,
+                                               τrel (P ) ≤ Enmax ρsupp .
+Proof. Fix an ordered pair (I, F ). For every γ ∈ Paths(I, F ), orient γ from I to F . Telescoping
+and the triangle inequality give
+                                  |f (I) − f (F )| ≤                  |f (x) − f (y)|.
+                                                              X
+
+                                                          e={x,y}∈γ
+
+Taking expectation over γ ∼ θI,F before applying Cauchy–Schwarz, we obtain
+                                                                                      
+
+                  |f (I) − f (F )| ≤ Eγ∼θI,F                       |f (x) − f (y)|
+                                                           X
+
+                                                      e={x,y}∈γ
+
+                                    =                             Prγ∼θI,F [e ∈ γ] |f (x) − f (y)|.
+                                                    X
+
+                                        e={x,y}∈supp(θI,F )
+
+Cauchy–Schwarz now gives
+                                                                                                            
+
+       (f (I) − f (F ))2 ≤                    Prγ∼θI,F [e ∈ γ]2                              (f (x) − f (y))2 
+                                   X                                                   X
+
+                               e∈supp(θI,F )                              e={x,y}∈supp(θI,F )                        (32)
+                       = En(θI,F )                             (f (x) − f (y)) .
+                                                 X
+                                                                                   2
+
+                                        e={x,y}∈supp(θI,F )
+
+Since En(θI,F ) ≤ Enmax , multiplying Eq. (32) by π(I)π(F )/2, summing over all ordered pairs (I, F ),
+and exchanging the order of summation, we obtain
+                          Enmax X
+            Varπ [f ] ≤              π(I)π(F )                                    (f (x) − f (y))2
+                                                      X
+                            2 I,F ∈Ω           e={x,y}∈supp(θ             I,F )
+                                                                                  
+                                                1                                 
+                     = Enmax                                         π(I)π(F ) (f (x) − f (y))2
+                                      X                   X                       
+                                                2
+                                                
+                                                                                   
+                                  e={x,y}∈T             I,F ∈Ω
+                                                     e∈supp(θI,F )
+
+                                                         Q(e)(f (x) − f (y))2 = Enmax ρsupp EP (f, f ).
+                                               X
+                     ≤ Enmax ρsupp
+                                         e={x,y}∈T
+
+The relaxation-time bound follows from Eq. (3).
+
+                                                             17
+      If each routing consists of one path, then Enmax = ℓ and ρsupp = ρ, recovering the classical bound
+τrel (P ) ≤ ℓρ. For a fractional routing, a smaller energy yields a better bound when the support
+congestion is also controlled. In Section 6.6, we show how two-ended routing achieves logarithmic
+energy even when every path has linear length.
+Remark 15. The key difference between the proofs of Lemmas 12 and 14 is the order in which
+we take expectation and apply Cauchy–Schwarz. In the classical proof, we apply Cauchy–Schwarz
+separately to each path, obtaining the path-length factor |γ| in Eq. (31), and then average over the
+routing. In the energy-based proof, we first average the sum of absolute increments along the path.
+This gives a sum over transitions whose coefficients are the usage probabilities Prγ∼θI,F [e ∈ γ].
+Applying Cauchy–Schwarz to this averaged sum therefore yields the routing-energy factor En(θI,F )
+as in Eq. (32). Thus, taking expectation first allows the bound to capture how the routing spreads
+its flow over transitions.
+
+6.3   Coupled flows
+In the preceding two subsections, the demand between I and F is determined by two independent
+samples from π. We now allow the endpoints to have different distributions and to be dependent. This
+is the setting of coupling-based canonical paths and transport flows [CCFV25, CFJ+ 25, CVY26].
+    Let µ and ν be probability distributions on Ω. A coupling of µ and ν is a probability distribution
+κ on Ω × Ω such that
+                                κ(I, F ) = µ(I),        κ(I, F ) = ν(F ).
+                             X                       X
+
+                                 F ∈Ω                            I∈Ω
+
+Thus, if (I, F ) ∼ κ, then I ∼ µ and F ∼ ν, but I and F need not be independent. We regard
+κ(I, F ) as the amount of flow to be sent from I to F . Choosing the coupling allows us to place this
+demand on pairs that are easier to connect in the transition graph. The resulting flow will bound
+                                     h                  i
+                      E(I,F )∼κ (f (I) − f (F ))2 =                    κ(I, F )(f (I) − f (F ))2 .
+                                                                 X
+
+                                                             I,F ∈Ω
+
+In particular, Jensen’s inequality gives
+                             2                                        2              h                i
+             Eµ [f ] − Eν [f ]       = E(I,F )∼κ [f (I) − f (F )]           ≤ E(I,F )∼κ (f (I) − f (F ))2 ,
+
+so a flow comparison also controls the difference between the two means.
+    Fix a routing θI,F for every pair with κ(I, F ) > 0. As in Section 6.1, define the congestion and
+the length-weighted congestion by
+                                              1
+                          ρ(κ) := max                    κ(I, F ) Prγ∼θI,F [e ∈ γ] ,
+                                                   X
+                                         e∈T Q(e)
+                                                  I,F ∈Ω
+                                              1
+                       Rlen (κ) := max                   κ(I, F )               θI,F (γ)|γ|.
+                                                   X                  X
+                                         e∈T Q(e)
+                                                  I,F ∈Ω          γ∈Paths(I,F )
+                                                                             e∈γ
+
+Here and below, pairs with zero demand are omitted from the sums. There is no factor 1/2 in
+these definitions because we are bounding the coupled squared difference itself. Let ℓ denote the
+maximum length of a path receiving positive flow.
+Lemma 16. For every f : Ω → R,
+                                 h                  i
+                    E(I,F )∼κ (f (I) − f (F ))2 ≤ Rlen (κ)EP (f, f ) ≤ ℓρ(κ)EP (f, f ).
+
+                                                            18
+Proof. Multiplying Eq. (31) by κ(I, F )θI,F (γ), summing over all endpoint pairs and paths, and
+exchanging the order of summation, we obtain
+                                                                                                    
+               h               i
+      E(I,F )∼κ (f (I) − f (F ))2 ≤             κ(I, F ) Eγ∼θI,F |γ|               (f (x) − f (y))2 
+                                        X                                  X
+
+                                       I,F ∈Ω                           e={x,y}∈γ
+                                                                                               
+
+                                   =                    κ(I, F )                      θI,F (γ)|γ|
+                                                                                                  (f (x) − f (y))
+                                          X          X                   X
+                                                                                                                  2
+                                                                                                
+                                                    
+                                                    
+                                       e={x,y}∈T     I,F ∈Ω           γ∈Paths(I,F )
+                                                                          e∈γ
+
+                                   ≤ Rlen (κ)                 Q(e)(f (x) − f (y))2
+                                                        X
+
+                                                  e={x,y}∈T
+
+                                   = Rlen (κ)EP (f, f ).
+
+Since |γ| ≤ ℓ, we also have Rlen (κ) ≤ ℓρ(κ).
+
+   In [CVY26, Lemma 10], coupled comparisons between blocks of a partition are combined to
+obtain a restricted Poincaré inequality. For our occupation estimates, we will use the individual
+comparisons between a hole pattern and the perfect matchings.
+   Fix u ∈ V1 and v ∈ V2 , and write
+
+                           µu,v := πλ,w
+                                    B
+                                        ( · | N (u, v)),           µ∅ := πλ,w
+                                                                          B
+                                                                              ( · | P).
+
+Independently sample I ∼ µu,v and F ∼ µ∅ . Their symmetric difference I ⊕ F consists of one
+alternating u–v augmenting path A and a collection of alternating cycles. Define J := I ⊕ A, which
+is a perfect matching.
+
+Lemma 17 ([CVY26], Lemma 13). The pair (I, J) is a coupling of µu,v and µ∅ .
+
+   Thus, we can replace the independent endpoints (I, F ) by the coupled endpoints (I, J) without
+changing either marginal distribution. The new endpoints differ only along A, so the alternating
+cycles need not be processed. The augmenting path may still require Θ(n) moves, however. We
+next combine this choice of endpoints with the energy bound from Section 6.2.
+
+6.4     Energy bounds for weighted flows
+The energy argument does not require independent endpoints, or even that the endpoint demands
+sum to one. In this subsection, we allow an arbitrary nonnegative demand κ(I, J) for each ordered
+pair (I, J). We also allow this demand to be split among several routings with the same endpoints.
+This will let us retain the independent matching F in the preceding coupling when we count the
+flow through a transition.
+
+Definition 18. Let κ : Ω × Ω → R≥0 be an endpoint demand, and let A be a finite set. A weighted
+routing family for κ consists of weights b
+                                         κ(I, a, J) ≥ 0 satisfying
+
+                                                  κ(I, a, J) = κ(I, J),                                               (33)
+                                            X
+                                                  b
+                                            a∈A
+
+together with a routing θI,a,J from I to J for each triple (I, a, J) with positive weight. We call
+such a triple a routing occurrence; the value a records the auxiliary information used to specify the
+routing. The weights and routings are fixed independently of the function f .
+
+                                                            19
+   Under this definition, the occurrence (I, a, J) sends b
+                                                         κ(I, a, J)θI,a,J (γ) units of flow along each
+path γ. Summing over a gives the prescribed total demand from I to J. When κ is a probability
+coupling, b
+          κ is a joint distribution whose endpoint marginal is κ. If the routing depends only on its
+endpoints, we may sum out a; keeping it can still make the load calculation easier.
+   Fix a weighted routing family, and put
+
+                                          Enmax :=         max       En(θI,a,J ).
+                                                       κ(I,a,J)>0
+                                                       b
+
+As in Section 6.2, define the support congestion by charging the full weight of every occurrence
+whose routing can use a transition:
+                                                  1
+                                  ρsupp := max                                κ(I, a, J).                            (34)
+                                                                 X
+                                                                              b
+                                             e∈T Q(e)
+                                                                I,a,J:
+                                                            e∈supp(θI,a,J )
+
+To include the routing cost as well, define the energy-weighted congestion by
+                                           1
+                             REn := max                                κ(I, a, J)En(θI,a,J ).
+                                                           X
+                                                                       b
+                                      e∈T Q(e)
+                                                         I,a,J:
+                                                     e∈supp(θI,a,J )
+
+All sums are over positive-weight occurrences, and all three quantities are defined to be zero when
+the demand is identically zero. Since each routing has energy at most Enmax ,
+
+                                                  REn ≤ Enmax ρsupp .                                                (35)
+
+This is the analogue of Rlen ≤ ℓρ for the energy bound.
+Lemma 19. For every weighted routing family with endpoint demand κ and every f : Ω → R,
+
+                           κ(I, J)(f (I) − f (J))2 ≤ REn EP (f, f ) ≤ Enmax ρsupp EP (f, f ).                        (36)
+                    X
+
+                   I,J∈Ω
+
+Proof. For each occurrence (I, a, J), Eq. (32) gives
+
+                     (f (I) − f (J))2 ≤ En(θI,a,J )                                 (f (x) − f (y))2 .
+                                                                     X
+
+                                                           e={x,y}∈supp(θI,a,J )
+
+Multiplying by b
+               κ(I, a, J), summing over occurrences, and using Eq. (33), we obtain
+
+             κ(I, J)(f (I) − f (J))2 =            κ(I, a, J)(f (I) − f (J))2
+      X                                   X
+                                                  b
+     I,J∈Ω                                I,a,J
+
+                                                  κ(I, a, J)En(θI,a,J )                           (f (x) − f (y))2
+                                          X                                           X
+                                      ≤           b
+                                          I,a,J                            e={x,y}∈supp(θI,a,J )
+                                                                                                  
+                                                                                               
+                                      =                                    κ(I, a, J)En(θI,a,J ) (f (x) − f (y))2
+                                             X                  X                              
+                                                                          b
+                                                                                               
+                                          e={x,y}∈T          I,a,J:
+                                                         e∈supp(θI,a,J )
+
+                                                              Q(e)(f (x) − f (y))2
+                                                     X
+                                      ≤ REn
+                                                  e={x,y}∈T
+
+                                      = REn EP (f, f ).
+
+The second inequality follows from Eq. (35).
+
+                                                            20
+   When κ is a coupling, the left-hand side is E(I,J)∼κ (f (I) − f (J))2 . Thus the lemma gives
+                                                                          
+
+the energy analogue of Lemma 16. Taking κ(I, J) = π(I)π(J)/2 and one routing per pair instead
+makes the left-hand side Varπ [f ] and recovers Lemma 14, with the same support congestion as in
+Section 6.2.
+
+6.5   The flow bounds used in our algorithm
+We now apply the weighted flow bound to the two matching chains. Fix a hole pattern (u, v), and
+let κu,v be the coupling in Lemma 17. Its first marginal is the conditional distribution on N (u, v),
+and its second marginal is the conditional distribution on P. To compare these distributions, we
+will construct a routing family for κu,v and bound its energy and support congestion.
+    For the boosted JSV chain, we have the following bounds, proved in Section 7.4.
+Lemma 20. Consider the boosted JSV chain with rough hole weights. For every hole pattern (u, v),
+the coupling κu,v admits a weighted routing family satisfying
+
+                  Enmax = O(log n),       ρsupp = O(n3 ),       REn = O(n3 log n).
+
+Corollary 21. Consequently, for every f : Ω → R,
+                                  h               i
+                       E(I,J)∼κu,v (f (I) − f (J))2 ≤ O(n3 log n)EP B (f, f ).
+                                                                     JSV
+
+
+Proof. Apply Lemmas 19 and 20.
+
+    The factor O(n3 ) comes from comparing the support load of each transition with its capacity.
+The factor O(log n) comes from the routing energy, even though the paths themselves may have
+length Θ(n).
+    The HWS chain has the same conditional distributions within each hole pattern as the boosted
+JSV chain. Thus we can use the same coupling and routing family. The energy is unchanged; the
+different transition capacities give the following support-congestion bound.
+Lemma 22. Consider the HWS chain with positive edge activities λ and rough hole weights w.
+For every hole pattern (u, v), the coupling κu,v from Lemma 17 admits a weighted routing family
+satisfying
+                  Enmax = O(log n),       ρsupp = O(n2 ),  REn = O(n2 log n).
+The congestion quantities are computed using the transition capacities of PHWS (λ, w).
+   Applying Lemma 19 now gives
+                                  h               i
+                      E(I,J)∼κu,v (f (I) − f (J))2 ≤ O(n2 log n)EPHWS (f, f ).
+
+We prove the support-congestion bounds for both chains in Section 7. The next subsection explains
+the routings and their energy bounds.
+
+6.6   Proof idea for bounding routing energy
+We first consider two perfect matchings that differ on one alternating cycle. Randomizing where
+we start switching the cycle gives a routing of constant energy. We then consider a near-perfect
+matching and a perfect matching that differ on one augmenting path. Randomizing which end of
+the path to advance gives a routing of logarithmic energy. Both constructions use moves available
+in the boosted JSV and HWS chains.
+
+                                                 21
+Lemma 23. Let I, F ∈ P such that I ⊕ F consists of a single alternating cycle of length 2k. There
+is a routing θI,F from I to F such that
+
+                                                         En(θI,F ) ≤ 2.
+
+Proof. The cycle contains k edges of I and k edges of F . Choose one of its k edges of I uniformly
+at random and delete it. Keep the resulting hole in V2 fixed, and move the hole in V1 around the
+cycle by k − 1 successive slides, each replacing an edge of I with an edge of F . Finally, add the
+remaining edge of F . Only the starting edge is randomized; the direction is fixed by keeping the
+hole in V2 stationary. This defines a routing θI,F supported on k paths, each with k + 1 transitions:
+one deletion, k − 1 slides, and one addition.
+    Different starting edges leave different fixed holes in V2 . Consequently, the k possible paths have
+no intermediate matching in common, and their transition sets are disjoint. Each path is chosen
+with probability 1/k, so every transition in the support is used with probability 1/k. There are
+k(k + 1) such transitions. By the definition of routing energy,
+                                                                                                        1           1
+                                                                                                        2
+               En(θI,F ) =                   Prγ∼θI,F [e ∈ γ]2 = k(k + 1)                                     =1+     ≤ 2.
+                                 X
+
+                             e∈supp(θI,F )
+                                                                                                        k           k
+
+    Classical canonical paths fix the component order and the starting point of each switch [JS89].
+In the construction above, each path still has length k + 1, but spreading the flow among k choices
+of the starting edge reduces the energy to at most two.
+    For an augmenting path, we instead spread the flow by choosing which endpoint to advance at
+each step. Suppose that switching the path requires k slides and one final addition. After p slides
+from one end and q slides from the other, the total number of slides is t = p + q. We call (p, q) a
+split at level t. There are t + 1 possible splits at that level; see Fig. 1. We will choose the next
+endpoint so that these splits are equally likely.
+
+                     t=0                                           (0, 0)                                     1 split
+                                                            1/            1/
+                                                               2            2
+                     t=1                                (0, 1)              (1, 0)                            2 splits
+                                                   3            3    1/          2/
+                                                 2/           1/       3             3
+                     t=2                       (0, 2)              (1, 1)            (2, 0)                   3 splits
+                                          4         1/       2            1/     4        3/
+                                        3/              4   1/              2   1/            4
+                     t=3              (0, 3)            (1, 2)              (2, 1)            (3, 0)          4 splits
+                                                                     ..
+                                                                      .
+
+Figure 1: Splits of progress between the two endpoints. Arrow labels are conditional probabilities
+for the next slide. The first four levels are shown (k ≥ 3).
+
+    At a split (p, q) with p + q = t < k, choose the next slide according to
+
+                                       (p + 1, q), with probability (p + 1)/(t + 2),
+                                   (
+                      (p, q) −→
+                                       (p, q + 1), with probability (q + 1)/(t + 2).
+
+These probabilities sum to one. Suppose that every split at level t has probability 1/(t + 1). A split
+(r, t + 1 − r) at the next level can be reached from (r − 1, t + 1 − r) or (r, t − r). Its probability is
+therefore
+                                   1     r      1 t+1−r            1
+                                            +                 =       ,
+                                  t+1t+2 t+1 t+2                 t+2
+
+                                                                     22
+for 0 ≤ r ≤ t + 1, with a missing predecessor contributing zero. Thus the next level is also uniform.
+Lemma 24. Let I ∈ N (u, v) and J ∈ P such that I ⊕ J consists of a single augmenting path
+between u and v, containing k edges of I and k + 1 edges of J. There is a routing θI,J from I to J
+such that
+                                    En(θI,J ) = O(log(k + 2)).
+Proof. Advance along the augmenting path from both ends. After p slides from u and q from v, put
+t = p + q and, if t < k, choose the next endpoint using the transition rule above. Each slide replaces
+an edge of I by the adjacent edge of J. After k slides, add the remaining edge of J. The two hole
+positions determine (p, q) uniquely, so these states form distinct levels t = 0, . . . , k, followed by J.
+This defines the routing θI,J .
+    The preceding calculation shows inductively that the t + 1 splits at level t are equally likely,
+starting from the single state at level 0.
+    Let Et be the set of transitions leaving level t, including the final additions when t = k. Every
+sampled path uses exactly one transition in Et , and hence
+
+                                                   Prγ∼θI,J [e ∈ γ] = 1.
+                                           X
+
+                                           e∈Et
+
+To use a particular transition in Et , the path must first visit its initial split. Since each split has
+probability 1/(t + 1),
+                                                        1
+                                    Prγ∼θI,J [e ∈ γ] ≤         (e ∈ Et ).
+                                                       t+1
+The sets E0 , . . . , Ek are disjoint. Summing their contributions to the routing energy gives
+              k                                k                                 k
+                                                                                X 1
+                                                     1 X
+En(θI,J ) =              Prγ∼θI,J [e ∈ γ]2 ≤                 Prγ∼θI,J [e ∈ γ] =         ≤ 1 + log(k + 1).
+              X X                              X
+
+              t=0 e∈Et                         t=0
+                                                   t + 1 e∈E                    t=0
+                                                                                    t+1
+                                                                 t
+
+
+Thus, although every path has length k + 1, its routing contributes at most 1/(t + 1) energy at level
+t, giving a logarithmic total.
+
+6.7   Occupation estimate for the boosted JSV chain
+We next use the coupled flow comparison to estimate hole-pattern probabilities along a stationary
+trajectory. The goal is a variance bound proportional to the square of the pattern probability, so
+that the trajectory gives a relative-error estimate. We first compare the conditional means of a
+function on different hole patterns, and then use this comparison to bound the sum of stationary
+covariances.
+
+Proof of Lemma 4. Write P := PJSV  B   and π := πλ,w
+                                                 B . Fix a hole-pattern set S, and put p := π(S),
+                                                                                        S
+g := 1S − pS , and K := C0 n log n, where C0 is chosen below.
+                             3
+
+    For each hole-pattern set R, write pR := π(R) and µR := π( · | R). By Lemmas 19 and 20,
+choosing C0 sufficiently large gives a coupling κR of µR and µ∅ such that
+                                               h                     i
+                                   E(I,J)∼κR (f (I) − f (J))2 ≤ KEP (f, f ).
+
+For R = P, take the diagonal coupling I = J ∼ µ∅ .
+   Fix a function f with Eπ [f ] = 0, and let mR := EµR [f ] be its conditional mean on R. Since κR
+has marginals µR and µ∅ , Jensen’s inequality gives
+                                                                         h             i
+                                                        2
+       |mR − mP |2 = E(I,J)∼κR [f (I) − f (J)]              ≤ E(I,J)∼κR (f (I) − f (J))2 ≤ KEP (f, f ).
+
+                                                            23
+The hole-pattern sets partition Ω, so              R pR = 1 and              R pR mR = Eπ [f ] = 0. It follows that
+                                               P                        P
+
+                                                                                                         q
+           |mS | =        pR (mS − mR ) ≤ |mS − mP | +                         pR |mR − mP | ≤ 2 KEP (f, f ).
+                     X                                                  X
+
+                     R                                                   R
+
+Moreover, since g = 1S − pS and f has mean zero,
+
+                                 Eπ [gf ] = Eπ [1S f ] − pS Eπ [f ] = pS mS .
+
+Combining these two observations gives
+                                      2
+                           Eπ [gf ]        ≤ 4Kp2S EP (f, f )            whenever Eπ [f ] = 0.                                (37)
+
+Thus the flow bound controls the correlation of the pattern indicator with any centered test function,
+at the required scale p2S .
+    To apply this comparison to a stationary trajectory (Xt ), write (P r g)(x) := EX0 =x [g(Xr )] for
+r ≥ 0, and put
+                                                                                                  −1
+                                                                                                 TX
+                         cr := Cov(g(X0 ), g(Xr )) = Eπ [gP r g] ,                       DT :=         cr .
+                                                                                                 r=0
+
+Laziness and reversibility imply that P has nonnegative eigenvalues, so cr ≥ 0 for every r. We will
+bound their partial sum DT by using the test function
+                                                                 −1
+                                                                TX
+                                                    fT :=             P r g.
+                                                                r=0
+
+Stationarity givesh Eπ [fT ] = 0iand Eπ [gfT ] = DT , while telescoping gives fT − P fT = g − P T g. By
+reversibility, Eπ (P r g)(P T g) = cT +r . Consequently,
+
+                                                                               h          i               −1
+                                                                                                         TX
+        EP (fT , fT ) = Eπ [fT (fT − P fT )] = Eπ [fT g] − Eπ fT P T g = DT −                                  cT +r ≤ DT .
+                                                                                                         r=0
+
+Applying Eq. (37) to fT now yields
+                                                   2
+                            DT2 = Eπ [gfT ]             ≤ 4Kp2S EP (fT , fT ) ≤ 4Kp2S DT .
+
+If DT > 0, dividing by DT gives DT ≤ 4Kp2S ; the same bound holds when DT = 0. Finally,
+stationarity and cr ≥ 0 imply
+                                  −1                                                −1
+                               1 TX             1                                  TX
+                                "                       #                                            !
+                           Var       1S (Xt ) = 2                     T c0 + 2           (T − r)cr
+                               T t=0           T                                   r=1
+                                                                2DT   8K 2
+                                                            ≤       ≤    p .
+                                                                 T     T S
+This is Eq. (8) with C = 8C0 .
+
+
+
+
+                                                                24
+6.8   Occupation estimate for the HWS chain
+The preceding proof uses the flow bound through a single constant K: every hole-pattern distribution
+can be coupled to the perfect distribution with squared differences bounded by KEP (f, f ). For the
+HWS chain, this constant improves from O(n3 log n) to O(n2 log n), giving Lemma 9.
+
+Proof of Lemma 9. Write
+                                       P := PHWS (λ, w),        π := πλ,w
+                                                                      HWS
+                                                                          .
+For each hole-pattern set R, put pR := π(R) and µR := π( · | R). By Lemmas 19 and 22, every
+near-perfect pattern R = N (u, v) has a coupling κR := κu,v of µR and µ∅ satisfying
+                        h                     i
+              E(I,J)∼κR (f (I) − f (J))2 ≤ KHWS EP (f, f ),              KHWS := C0 n2 log n,
+
+for every f : Ω → R, where C0 is a universal constant. For R = P, use the diagonal coupling
+I = J ∼ µ∅ , which satisfies the same inequality.
+    Fix a hole-pattern set S, and let g := 1S − pS . The same comparison of conditional means gives
+                                 2
+                      Eπ [gf ]        ≤ 4KHWS p2S EP (f, f )     whenever Eπ [f ] = 0.
+This argument only uses R pR = 1; it does not require the pattern probabilities to be equal. The
+                            P
+
+HWS chain is also lazy and reversible, so the stationary covariance calculation in the preceding
+proof applies with KHWS in place of K. It follows that
+                              −1
+                           1 TX             8KHWS 2   8C0 n2 log n 2
+                             "                    #
+                       Var       1{Xt ∈S} ≤      pS =             pS ,
+                           T t=0              T            T
+
+for every hole-pattern set S, proving the lemma.
+
+
+7     Flow and relaxation bounds for the JSV and HWS chains
+We prove Lemmas 20 and 22 and Lemmas 5 and 8. We first use the same two-ended routing to
+establish the fixed-hole-pattern flow bounds for both chains. We then compare perfect matchings
+using the all-roots cycle routing. Combining these comparisons gives relaxation times Oc (n3 log n)
+for boosted JSV and Oc (n2 log n) for HWS, without any additional augmenting-path analysis.
+    Throughout this section, fix positive edge activities and c-rough hole weights w. Constants
+denoted by Cc depend only on c and may change between displays. Write
+                                         PJ := PJSV
+                                                B
+                                                    ,        PR := PHWS ,
+and let πJ , πR , ZJ , ZR , and QJ , QR denote their stationary distributions, normalizing constants,
+and transition capacities, respectively.
+
+7.1   Matching identities and complement encodings
+Abbreviate
+                                      Z∅ := λ(P),       Zu,v := λ(N (u, v)).                     (38)
+Both chains have conditional distributions
+                            λ(M )                                     λ(M )
+               µ∅ (M ) =                (M ∈ P),        µu,v (M ) =            (M ∈ N (u, v)).
+                             Z∅                                        Zu,v
+In particular, these distributions do not depend on the supplied hole weights.
+
+                                                        25
+Complement encodings. Write I ⊕ F for symmetric difference and I ⊎ F for the multiset
+retaining both copies of every common edge. The complement encodings below follow the approach
+of [BŠVV08]. Once I ⊎ F and the original source holes are known, ownership of the edges on the
+augmenting path is forced. On an alternating cycle where the current matching agrees with I, it
+identifies the edges belonging to I. Thus reconstruction is unique when every cycle is unchanged. If
+one cycle is designated as active, there are at most two reconstructions, corresponding to its two
+alternating colorings. Common edges belong to both matchings.
+Lemma 25. For every u ∈ V1 and v ∈ V2 ,
+                                                   λ(u, v)Zu,v ≤ Z∅ ,                                  (39)
+and, for every fixed u ∈ V1 ,
+                                                     λ(u, v)Zu,v = Z∅ .                                (40)
+                                              X
+
+                                              v∈V2
+The identity with the vertex classes interchanged also holds.
+Proof. Adding (u, v) identifies N (u, v) with the perfect matchings containing that edge and multiplies
+the weight by λ(u, v). For fixed u, these classes partition P.
+   For distinct r, y ∈ V1 and distinct v, a ∈ V2 , let N (2) (r, y; v, a) contain the matchings with exactly
+these four holes, and put
+                                             :=                                                         (41)
+                                                       X
+                                      (2)
+                                    Zr,y;v,a                      λ(K).
+                                                       K∈N (2) (r,y;v,a)
+If two holes in the same vertex class coincide, the set is empty and its partition function is zero.
+Lemma 26. For distinct r, y ∈ V1 and distinct v, a ∈ V2 ,
+                                      Zr,a Zy,v ≤ Zr,v Zy,a + Z∅ Zr,y;v,a
+                                                                  (2)
+                                                                          .                            (42)
+Consequently, for every r ∈ V1 and distinct v, a ∈ V2 ,
+                                                     λ(y, v)Zy,a ≤ 2Zr,a Z∅ .                          (43)
+                                              X
+                                       Zr,v
+                                              y∈V1
+
+Finally, for r ∈ V1 and pairwise distinct s, v, a ∈ V2 ,
+                                                                   ≤ 2Zr,s Zr,a .                      (44)
+                                            X
+                                                           (2)
+                                     Zr,v          λ(y, v)Zr,y;s,a
+                                            y∈V1
+
+Proof. For Eq. (42), superpose a red matching in N (r, a) and a blue matching in N (y, v). The
+alternating path starting at r ends at either y or a: bipartite parity excludes v. Switching ownership
+along this path gives, respectively, a pair in N (y, a) × N (r, v) or a pair in P × N (2) (r, y; v, a). Each
+map is inverted by switching the path starting at r, and preserves every edge multiplicity. Summing
+product weights proves the inequality.
+    Interchange a, v in Eq. (42), multiply by λ(y, v), and sum over y ̸= r. Cofactor expansion gives
+                          λ(y, v)Zy,v = Z∅ − λ(r, v)Zr,v ,                                 = Zr,a .
+                   X                                                  X
+                                                                                   (2)
+                                                                           λ(y, v)Zr,y;a,v
+                   y̸=r                                                y
+
+Adding the y = r term gives Eq. (43).
+    For Eq. (44), replace row r by a row whose only nonzero entry is a one in column s, and apply
+Eq. (43) to the resulting matrix. Its perfect partition function is Zr,s ; its cofactors deleting row r
+                                                                           (2)
+are unchanged; and its cofactor deleting row y ̸= r and column a is Zr,y;s,a . The y = r summand
+vanishes since v ̸= s. These substitutions give the result. Zero activities in this auxiliary matrix are
+justified by continuity.
+
+                                                           26
+7.2   Transition capacities
+Recall from Eq. (29), the capacity of a transition e is defined as Q(e) := π(x)P (x, y) = π(y)P (y, x).
+Define the unboosted ideal weight by
+
+                                            λ(M ),
+                                          (
+                              ∗                            M ∈ P,
+                             ω (M ) :=
+                                            w (u, v)λ(M ), M ∈ N (u, v),
+                                             ∗
+
+
+and write
+                         mT := min{ω ∗ (M ), ω ∗ (M ′ )}          (T = {M, M ′ }).                (45)
+For boosted JSV,                                          !
+                                           X w(u, v)
+                           ZJ =      n +
+                                      2
+                                                              Z∅ ≤ (1 + c)n2 Z∅ .
+                                           u,v w (u, v)
+                                                ∗
+
+
+The Metropolis rule and c-roughness therefore give
+                                     1                                mT
+                        QJ (T ) =      min{πJ (M ), πJ (M ′ )} ≥                .                 (46)
+                                    4n                           4c(1 + c)n3 Z∅
+
+   For HWS, let L∗v (a) and Ru∗ (x) denote the scores evaluated at ideal weights. Then
+
+                                                   Z∅
+                                  L∗v (a) = P                       (a ̸= v).
+                                               y λ(y, a)Zy,v
+
+By Eq. (43), with the columns interchanged, and by retaining one term of this denominator,
+
+                            Zr,a
+                                 ≤ 2L∗v (a),        λ(u, a)L∗v (a) ≤ w∗ (u, v).                   (47)
+                            Zr,v
+
+The analogous inequalities hold for Ru∗ (x). The normalizing-constant calculation in Section 4.1
+gives (5n2 − 2n)Z∅ at ideal weights. Roughness changes every reciprocal score, effective weight, and
+normalizing constant by at most a factor c. Thus
+
+                          c−1 L∗v (a) ≤ Lv (a) ≤ cL∗v (a),         ZR ≤ 5cn2 Z∅ .
+
+For the slide
+                      N ∈ N (u, v) −→ N ′ = N \ {(x, a)} ∪ {(u, a)} ∈ N (x, v),
+the HWS transition rule gives
+
+                                          λ(N )λ(u, a)Lv (a)   λ(N )λ(u, a)L∗v (a)
+                      QR ({N, N ′ }) =                       ≥                     .              (48)
+                                                2ZR               10c2 n2 Z∅
+
+For a boundary transition with M = N ∪ {(u, v)} ∈ P,
+
+                                                    nλ(M )    λ(M )
+                                  QR ({N, M }) =           ≥        .                             (49)
+                                                     2ZR     10cnZ∅
+
+Remark 27. The HWS transition probabilities are designed so that their capacities match the
+sharper slide-load estimates. Comparing Eq. (48) with Eq. (55) gives support congestion Oc (n2 ),
+rather than Oc (n3 ) for boosted JSV. This is the source of the factor-n improvement in the frequency-
+estimation and relaxation-time bounds.
+
+
+                                                     27
+7.3     The fixed-hole coupling and two-ended routing
+Fix source holes (r, s). Independently sample I ∼ µr,s and F ∼ µ∅ , and obtain J by switching the
+augmenting path A in I ⊕ F . By Lemma 17, (I, J) has distribution κr,s . The endpoints agree on
+every alternating cycle, so only A needs to be processed. Retain F as auxiliary information and
+give the occurrence (I, F, J) coefficient
+
+                                                         λ(I)λ(F )
+                                              cI,F :=              .                                     (50)
+                                                          Zr,s Z∅
+
+Assign the two-ended routing of Lemma 24 to every occurrence, defining the family Fr,s . Write
+ path
+θI,F  for its individual routings.
+
+7.3.1    Routing energy
+Label the augmenting path by
+
+                                      a0 = r, b0 , a1 , b1 , . . . , ak , bk = s,
+                                                                                                         (51)
+                fj = (aj , bj ) ∈ F   (0 ≤ j ≤ k),            ej = (aj+1 , bj ) ∈ I   (0 ≤ j < k).
+
+After p left slides and q right slides, the holes are ap , bk−q , with frontier edges fp , fk−q . A left slide
+replaces ep by fp , and a right slide replaces ek−q−1 by fk−q . At level p + q = k, add the remaining
+edge to obtain J. All other components remain unchanged. Since k ≤ n − 1, the energy calculation
+in Lemma 24 gives
+                                         Enmax (Fr,s ) ≤ 1 + log n.                                       (52)
+
+7.3.2    Occurrence loads
+For an undirected transition T , define
+
+                                       Lr,s
+                                        T :=                                                             (53)
+                                                           X
+                                                                           cI,F .
+                                                                  path
+                                                 (I,F ): T ∈supp(θI,F  )
+
+Each occurrence contributes its full coefficient whenever its routing support contains T ; the
+interleaving probabilities have already been used in the energy bound.
+
+Lemma 28. For every source hole pattern (r, s) and transition T ,
+                                                              mT
+                                                  Lr,s
+                                                   T ≤C          .                                       (54)
+                                                              Z∅
+For a directed slide fixing the right hole as in Eq. (48), its directed load also satisfies
+
+                                                     4λ(N )λ(u, a)L∗v (a)
+                                      Lr,s
+                                       N →N ′ ≤                           .                              (55)
+                                                            Z∅
+The transposed bound holds for the other slide direction.
+
+Proof. For a terminal addition producing M ∈ P, the complement K = (I ⊎ F ) \ M lies in N (r, s)
+and determines the source pair uniquely. Hence
+                                             λ(M )                    λ(M )
+                               Lr,s                            λ(K) =
+                                                       X
+                                {N,M } ≤     Zr,s Z∅ K∈N (r,s)         Z∅
+                                                                            .
+
+
+                                                         28
+By Eq. (39), m{N,M } = λ(M ).
+    Now fix a directed slide N → N ′ fixing the right hole v. For an occurrence using it, write (y, v)
+for the frontier edge at the other end and form the complement
+                     I ⊎ F = N ⊎ K ⊎ {(u, a), (y, v)},           K ∈ N (2) (r, y; s, a).         (56)
+The path coordinates give a ̸= v, a ̸= s, and y ̸= r. The complement preserves product weights:
+                                λ(I)λ(F ) = λ(N )λ(K)λ(u, a)λ(y, v).                             (57)
+For fixed N, N ′ , y, K, the reconstruction in Section 7.1 determines (I, F ) uniquely. Thus
+                                          λ(N )λ(u, a) X
+                              Lr,s
+                               N →N ′ ≤
+                                                                 (2)
+                                                         λ(y, v)Zr,y;s,a .                       (58)
+                                            Zr,s Z∅    y
+
+If v = s, the sum is Zr,a by cofactor expansion. Otherwise, Eq. (44) applies. In both cases,
+                                1 X                      Zr,a
+                                              (2)
+                                      λ(y, v)Zr,y;s,a ≤2      ≤ 4L∗v (a),
+                               Zr,s y                    Zr,v
+
+proving Eq. (55). The second inequality in Eq. (47) then gives Lr,s    N →N ′ ≤ 4λ(N )/Zu,v . Since
+λ(N )λ(u, a) = λ(N ′ )λ(x, a), the same bound holds with N ′ and its holes (x, v). Taking the smaller
+bound and adding the reverse directed load proves Eq. (54). Slides fixing the left hole follow by
+transposition.
+
+7.4   The two fixed-pattern flow bounds
+We prove here Lemmas 20 and 22, which we restate for convenience.
+Lemma 20. Consider the boosted JSV chain with rough hole weights. For every hole pattern (u, v),
+the coupling κu,v admits a weighted routing family satisfying
+                   Enmax = O(log n),        ρsupp = O(n3 ),          REn = O(n3 log n).
+Lemma 22. Consider the HWS chain with positive edge activities λ and rough hole weights w.
+For every hole pattern (u, v), the coupling κu,v from Lemma 17 admits a weighted routing family
+satisfying
+                  Enmax = O(log n),       ρsupp = O(n2 ),  REn = O(n2 log n).
+The congestion quantities are computed using the transition capacities of PHWS (λ, w).
+Proof of Lemmas 20 and 22. The family Fr,s has endpoint demand κr,s and maximum energy at
+most 1 + log n. For boosted JSV, Eqs. (46) and (54) give support congestion Oc (n3 ). For HWS,
+Eqs. (48) and (55) give support congestion Oc (n2 ) on slides, while the terminal-addition load and
+Eq. (49) give Oc (n) on boundary transitions. The factorization Eq. (35) therefore gives
+                      RJEn (Fr,s ) = Oc (n3 log n),         En (Fr,s ) = Oc (n log n).
+                                                           RR                 2
+
+
+Taking c = 2 proves both flow summaries.
+   For later use, applying Lemma 19 gives, for every f : Ω → R and every source hole pattern (r, s),
+                                     h                 i
+                        E(I,J)∼κr,s (f (I) − f (J))2 ≤ Cc n3 log n EPJ (f, f ),
+                                     h                 i
+                        E(I,J)∼κr,s (f (I) − f (J))2 ≤ Cc n2 log n EPR (f, f ).                  (59)
+These are the inputs for the two occupation estimates. To obtain the relaxation bounds, it remains
+to control variation among perfect matchings.
+
+                                                      29
+7.5    Comparing perfect matchings
+We next control variation within P.
+
+Lemma 29. For every f : Ω → R,
+
+                     Varµ∅ [f ] ≤ Cc n3 EPJ (f, f ),          Varµ∅ [f ] ≤ Cc n2 EPR (f, f ).           (60)
+
+Proof. Reducing to one cycle. For two independent perfect matchings I, F ∼ µ∅ , condition on
+the multiset U := I ⊎ F . Fix an ordering of its nontrivial alternating cycles and of the two colorings
+of each cycle. All colorings have the same product weight, so the orientation vector x ∈ {0, 1}k is
+uniform. Write Ix for the corresponding matching and x̄ for the bitwise complement of x, so that
+F = Ix̄ . For every g : {0, 1}k → R, variance tensorization gives
+
+                      h                  i                       k       h                 i
+                    E (g(x) − g(x̄))2 ≤ 4 Var [g(x)] ≤                 E (g(x) − g(x(j) ))2 .
+                                                                 X
+
+                                                                 j=1
+
+Equivalently,
+                                                       k
+                                (g(x) − g(x̄))2 ≤ 2                (g(x) − g(x(j) ))2 .                 (61)
+                           X                           X X
+
+                            x                          j=1 x: xj =0
+
+Here x(j) flips coordinate j. The first inequality follows by centering g; the second is variance
+tensorization for independent fair bits.
+   For fixed U , every orientation has the same coefficient
+
+                                                       λ(Ix )λ(Ix̄ )
+                                              aU :=                  .
+                                                           Z∅2
+
+The contribution of U to Varµ∅ [f ] is (aU /2) x (f (Ix ) − f (Ix̄ ))2 . By Eq. (61), it is bounded by the
+                                                    P
+
+sum of single-cycle comparisons between Ix and Ix(j) , for xj = 0, each with coefficient aU . Retain
+U, j, x as the occurrence data. There is no additional factor for the number of cycles.
+
+Routing a single cycle. Use the all-roots routing of Lemma 23. For completeness, if its endpoints
+I, J differ on a cycle with m edges of each matching, write
+
+          I ∩ C = {ej = (aj , bj ) : 0 ≤ j < m},             J ∩ C = {gj = (aj , bj+1 ) : 0 ≤ j < m},
+
+with indices modulo m. For root r, delete er , move the left hole around the cycle while keeping br
+unmatched, and finally add the remaining edge of J. The intermediate matchings are
+
+                   Nr,s := I \ {er , . . . , er+s } ∪ {gr , . . . , gr+s−1 },     0 ≤ s < m.
+                                                   
+
+
+Their holes are ar+s , br , so the route has m + 1 legal transitions for both chains. Give each root
+probability 1/m. For fixed endpoints, a slide identifies the root by its fixed right hole and the stage
+by its moving left hole; a boundary edge identifies the root as well. Thus the rooted routes have
+disjoint transition sets and
+                                                   m(m + 1)
+                                       En(θI,J ) =           ≤ 2.
+                                                     m2
+
+
+
+
+                                                        30
+Occurrence loads. Fix a directed slide N → N ′ fixing the right hole v and inserting (u, a). For a
+contributing occurrence, let F denote the perfect matching complementary to its source orientation
+in U , and let (y, v) be the other frontier edge of the active cycle. Then
+
+                        I ⊎ F = N ⊎ K ⊎ {(u, a), (y, v)},                K ∈ N (y, a),
+
+and
+                                λ(I)λ(F ) = λ(N )λ(K)λ(u, a)λ(y, v).
+The inserted edge identifies the active cycle in the reconstructed multiset. The current matching
+determines all inactive orientations, and at most two active orientations remain. The transition
+then determines the root and stage. Consequently, the directed support load is at most
+
+                                           λ(N )λ(u, a) X
+                                       C                  λ(y, v)Zy,a .                        (62)
+                                               Z∅2      y
+
+   For boosted JSV, Eqs. (39) and (43) give
+                                   X                       2λ(u, a)Zu,a Z∅   2Z∅2
+                         λ(u, a)       λ(y, v)Zy,a ≤                       ≤      .
+                                   y                            Zu,v         Zu,v
+
+Thus the load is O(λ(N )/Zu,v ). The same bound with N ′ follows from λ(N )λ(u, a) = λ(N ′ )λ(x, a).
+Adding the two directions gives an undirected load O(mT /Z∅ ) and hence support congestion Oc (n3 )
+by Eq. (46).
+   For HWS, Eqs. (40) and (47) give
+
+                            λ(y, v)Zy,a ≤ 2L∗v (a)          λ(y, v)Zy,v = 2L∗v (a)Z∅ .
+                       X                              X
+
+                        y                              y
+
+Comparing Eq. (62) with Eq. (48) therefore gives slide support congestion Oc (n2 ), including the
+reverse direction.
+    For a boundary transition producing or leaving M ∈ P, the complement (I ⊎ F ) \ M is perfect.
+The boundary edge identifies the active cycle, and the same reconstruction has bounded multiplicity.
+Its total load is therefore at most
+                                           λ(M ) X          λ(M )
+                                       C     2     λ(K) = C       .
+                                            Z∅ K∈P           Z∅
+
+The boundary support congestion is Oc (n3 ) for boosted JSV and Oc (n) for HWS, by Eqs. (46)
+and (49). The maximum routing energy is at most two. Applying Lemma 19 to the reduced
+single-cycle comparisons proves both assertions.
+
+7.6   Completing the relaxation bounds
+Here we prove the new relaxation time bounds for the boosted JSV chain and the new HWS chain;
+we restate both lemmas for convenience.
+
+Lemma 5. For every fixed c ≥ 1, there is a constant Cc such that, for every choice of positive edge
+activities and every set of c-rough hole weights,
+
+                                           τrel (PJSV
+                                                  B
+                                                      ) ≤ Cc n3 log n.                          (9)
+
+
+                                                       31
+Lemma 8. For every fixed c ≥ 1, there is a constant Cc such that, for every positive activity λ and
+every set of c-rough hole weights w,
+
+                                           τrel (PHWS (λ, w)) ≤ Cc n2 log n.                                 (23)
+
+Proof of Lemmas 5 and 8. Let P be either chain, with stationary distribution π, and put
+
+                                     m := Eµ∅ [f ] ,         pu,v := π(N (u, v)).
+
+For every source hole pattern, the coupling κu,v has marginals µu,v and µ∅ . Thus
+                          h            i                        h                  i
+                    Eµu,v (f − m)2 ≤ 2 E(I,J)∼κu,v (f (I) − f (J))2 + 2 Varµ∅ [f ] .
+
+Averaging over the hole patterns gives
+                                h             i
+               Varπ [f ] ≤ Eπ (f − m)2
+                                                       h                     i
+                         ≤2         pu,v E(I,J)∼κu,v (f (I) − f (J))2 + (2 − π(P)) Varµ∅ [f ] .
+                              X
+
+                              u,v
+
+Since u,v pu,v ≤ 1, the fixed-pattern comparisons in Eq. (59) and the perfect-matching bounds in
+      P
+
+Lemma 29 imply
+
+                VarπJ [f ] ≤ Cc n3 log n EPJ (f, f ),               VarπR [f ] ≤ Cc n2 log n EPR (f, f ).
+
+The Poincaré characterization Eq. (3) proves both relaxation bounds.
+
+
+8     Proofs for the permanent algorithms
+In this section we complete the detailed proofs of Theorems 1 and 7, and provide a sketch for the
+standard extension to obtain Corollary 2. We first establish the cooling and sampling estimates used
+by both algorithms, and then analyze the fresh checkpoint traversals from Section 5. Throughout,
+C denotes a sufficiently large universal constant; its value may differ between occurrences.
+
+8.1    The cooling schedule
+Proof of Lemma 6. Let B := − log λL be the endpoint specified in the lemma, ∆ := 2B, and
+ξ := 1/4. For each perfect or near-perfect hole-pattern set S, put
+
+               H(M ) := |M \ E|,              ZS (β) :=             e−βH(M ) ,      zS (β) := log ZS (β).
+                                                           X
+
+                                                           M ∈S
+
+Every S contains a matching with at most one nonedge. For P, use M ∗ . For holes (u, v), delete (u, v)
+from M ∗ if it is present; otherwise delete its edges (u, v ′ ) and (u′ , v) and insert (u′ , v ′ ). Consequently,
+
+                                    0 ≤ zS (0) − zS (B) ≤ log(n!) + B ≤ ∆.                                   (63)
+
+    Set β0 = 0 and, until βi = B, define
+                                        1 βi
+                                                     
+               di := min B − βi , ξ max  ,                  ,          βi+1 := βi + di ,      λi := e−βi .   (64)
+                                        n ∆
+
+
+                                                            32
+There are O(∆) constant-length steps before βi exceeds ∆/n; afterwards each full step multiplies βi
+by 1 + ξ/∆. Thus
+                                                Bn
+                                                 
+                            L = O ∆ log 2 +            = O(n log2 n).                          (65)
+                                                 ∆
+The functions zS are nonincreasing and convex, and
+                 0 ≤ −zS′ (β) ≤ n,         β(−zS′ (β)) ≤ zS (0) − zS (β) ≤ ∆                  (0 < β ≤ B).
+The step rule therefore gives
+                                           0 ≤ zS (βi ) − zS (βi+1 ) ≤ ξ.                                      (66)
+Taking the ratio of the perfect and near-perfect partition ratios shows that wi+1 ∗ (u, v)/w ∗ (u, v) ∈
+                                                                                            i
+[e , e ] ⊆ [3/4, 4/3].
+  −ξ   ξ
+
+    To bound the whole-product second moment, abbreviate Z = ZP and z = zP . Successive step
+lengths satisfy
+                                                              ξ
+                                     di+1 ≤ rdi ,    r := 1 + .                                    (67)
+                                                              ∆
+Indeed, the full step length increases by at most ξdi /∆, and truncating the last step only decreases
+it. For independent Mi ∼ µi , put Yi = e−di H(Mi ) and qi = z(βi ) − z(βi+1 ). Then
+                             Z(βi+1 )                  E Yi2
+                                                                
+                   E [Yi ] =                       log         2 = qi − z(βi+1 ) − z(βi+1 + di ) .
+                                                                                                
+                                      ,
+                              Z(βi )                   E [Yi ]
+For i < L − 1, convexity and Eq. (67) give
+                                                             z(βi+1 ) − z(βi+1 + rdi )   qi+1
+                          z(βi+1 ) − z(βi+1 + di ) ≥                                   ≥      .
+                                                                         r                 r
+Since qi ≤ ξ and      i qi ≤ ∆, independence yields
+                   P
+
+                                                                           L−1
+                                    E Y2               1                                1
+                                                                       X
+                                log       2 ≤ q0 + 1 − r                       qi ≤ 2ξ = .                     (68)
+                                    E [Y ]                                 i=1
+                                                                                        2
+
+Also E [Y ] = ZL /Z0 , proving the lemma. Every prefix product has the same second-moment bound,
+since its relative second moment is a subproduct of factors that are all at least one.
+
+   We will use the following general form for nonnegative inputs.
+Lemma 30 (General cooling schedule). Suppose H : Ω → [0, Hmax ], with Hmax > 0, and put
+ZS (β) = M ∈S e−βH(M ) and zS (β) = log ZS (β) for every hole-pattern set S. If B > 0 and ∆ ≥ 1
+        P
+
+satisfy
+                                 ∀S,     zS (0) − zS (B) ≤ ∆,                              (69)
+then the rule
+                                                1     −1 βi
+                                                                               
+                β0 = 0,        di = min B − βi , max Hmax ,                               ,   βi+1 = βi + di   (70)
+                                                4           ∆
+gives a schedule ending at B with
+                                                       BHmax
+                                                                               
+                                       L = O ∆ log 2 +                                .                        (71)
+                                                        ∆
+Every consecutive partition ratio belongs to [e−1/4 , 1]. The ideal hole weights change by factors in
+[3/4, 4/3], and the whole-product estimator and all its prefixes have relative second moment at most
+e1/2 < 64/27.
+
+                                                                 33
+Proof. Replace n by Hmax in the preceding derivative bounds and step rule. The same length
+calculation applies, and di+1 ≤ (1+1/(4∆))di . The consecutive-ratio and second-moment calculations
+are otherwise unchanged.
+
+8.2   Learning weights and sampling perfect matchings
+For the remainder of the section, set
+                                                                  1
+                                   τ := Cτ n2 log n,      κ :=      ,
+                                                                 32
+where Cτ is large enough for the HWS relaxation bound. For every rough weight table, write
+π = πλ,w
+      HWS and µ = π( · | P). Then π(P) ≥ κ. We use throughout the fact that changing an initial
+
+distribution by total variation distance η changes the probability of any event determined by the
+subsequent trajectory by at most η.
+
+Frequency estimation from a perfect start.             For every trajectory event E,
+
+                                  PrX0 ∼µ [E] ≤ κ−1 PrX0 ∼π [E] ,
+
+because µ(M ) ≤ π(M )/κ. Thus Lemma 9 and Chebyshev’s inequality imply that a trajectory of
+length T0 = Cn2 log n, started either from π or from µ, estimates any fixed hole-pattern probability
+to relative error 1/10 except with probability 1/8. An initial total variation error at most 1/8
+increases this failure probability to at most 1/4. For b independent batches, let pbS be the median
+frequency of pattern S. A Chernoff bound gives
+
+                                  Pr [|pbS − pS | > pS /10] ≤ e−b/8 .                           (72)
+
+When every median is accurate, the update in Eq. (26) satisfies
+
+                         wnew (u, v)     pbP /pP       9 11        √ √
+                                                           
+                                     =             ∈     ,    ⊆ [1/ 2, 2].                      (73)
+                          w (u, v)
+                           ∗           pbu,v /pu,v     11 9
+
+The algorithm returns zero if a required median is zero.
+
+Lemma 31 (Perfect-output sampling). Fix 0 ≤ c ≤ i ≤ L with B(c, i) ≤ 64, and weights w that are
+rough at λi . Start HWS at (λi , w) from X0 ∼ µc . For 0 < η < 1, inspect the chain after each block
+of Cτ log(2/η) transitions and return the first perfect matching observed. Return a failure symbol †
+after C log(2/η) unsuccessful inspections. The output distribution ν, including failure, satisfies
+
+                                          ∥ν − µi ∥TV ≤ η,
+
+where µi (†) = 0. The procedure uses at most O(τ log2 (2/η)) transitions.
+
+Proof. Write P = PHWS (λi , w), π = πλHWS
+                                        i ,w
+                                              , and p = π(P) ≥ κ. Extend µc by zero outside P. For
+the density h0 = µc /π,
+                                             h i     B(c, i)
+                           ∥h0 ∥22,π := Eπ h20 =             ≤ 2048 < 642 .
+                                                       p
+Laziness and the Poincaré inequality give
+                                         h    i
+                                   Varπ P t f ≤ e−t/τ Varπ [f ] .                               (74)
+
+
+                                                  34
+Indeed, writing P = (Id + Q)/2 with Q a stationary Markov matrix, Jensen’s inequality gives
+Varπ [P f ] ≤ Varπ [f ] − EP (f, f ); iterate the Poincaré inequality.
+   Put t = Cτ log(2/η), q = C log(2/η), and θ = e−t/(2τ ) . Let hj be the unnormalized density after
+j unsuccessful inspections. Reversibility gives
+
+          hj+1 = 1P c P t hj ,     P t hj = mj + ej ,         mj = Eπ [hj ] ,        ∥ej ∥2,π ≤ θ∥hj ∥2,π .
+
+For sufficiently large C, θ ≤ κ/4, so
+
+                    ∥hj+1 ∥2,π ≤ ( 1 − p + θ)∥hj ∥2,π ≤ r∥hj ∥2,π ,               r := 1 − κ/4.
+                                    p
+
+
+The failure probability is therefore at most 64rq . The unnormalized density of the accepted output
+is
+                                              mj + 1P
+                                           X            X
+                                        1P                 ej .
+                                                j<q             j<q
+
+The second term has L1 (π) norm at most 64θ/(1 − r); the first is constant on P. Comparing its
+total mass with the density 1P /p, and including the failure symbol, gives
+                                                                  64θ
+                                        ∥ν − µi ∥TV ≤ 64rq +          ≤η
+                                                                  1−r
+for sufficiently large C. The transition count is at most qt.
+
+8.3    The counting phase
+The following argument applies to either chain and will also allow a bounded terminal correction for
+nonnegative inputs.
+Lemma 32 (Counting from perfect starts). At each activity λi , let Pi be a fixed lazy reversible chain
+with stationary distribution πi , where πi (P) ≥ κ, πi ( · | P) = µi , and τrel (Pi ) ≤ τ∗ . Suppose the whole-
+product relative second moment is at most 64/27, and let G : P → [0, 1] satisfy p∗ := EµL [G] ≥ 1/2.
+From independent starts Mi,0 ∼ µi , use the block-and-inspect procedure with block length s = Cτ∗
+and average N = Cε−2 whole-product observations and terminal values G(ML,t ). Stop and return
+zero after Cτ∗ (L + 1)N transitions in total. Then Z0 Q     b pb ∗ estimates ZL p∗ to relative error ε, except
+with probability at most 1/16. An error ζ in the joint initial distribution adds at most ζ to this
+failure probability.
+Proof. By the variance-contraction argument above,
+                                                             1
+                                          Varπi [Pis f ] ≤     Varπi [f ] .                                   (75)
+                                                             4
+Fix h : P → R and let H(x) be its expected value at the first perfect matching seen at times
+0, s, 2s, . . . from x. Then H = h on P and Pis H = H outside P. For x ∈ P, set g(x) = (Pis H)(x),
+the expected value at the next retained matching. Stationarity gives Eµi [g] = Eµi [h], proving that
+the retained matchings preserve µi . Writing pi = πi (P), we also obtain
+                                                                              3            3
+        pi Varµi [h] − Varµi [g] = Varπi [H] − Varπi [Pis H] ≥                  Varπi [H] ≥ pi Varµi [h] .
+                                   
+                                                                              4            4
+Thus Varµi [g] ≤ Varµi [h] /4. Iteration and Cauchy–Schwarz give
+
+                                 | Cov(h(Mi,t ), h(Mi,t+k ))| ≤ 2−k Varµi [h] .                               (76)
+
+                                                        35
+   Put
+                               λi+1 (M )               Varµi [hi ]
+                  hi (M ) :=                   vi :=                    Yt :=         hi (Mi,t ).
+                                                                                Y
+                                         ,                         ,
+                                λi (M )                Eµi [hi ]2               i<L
+
+Independence across activities gives E [Yt ] = Q = ZL /Z0 and               i<L (1 + vi ) ≤ 64/27.   Applying
+                                                                         Q
+
+Eq. (76) coordinatewise,
+
+                        | Cov(Yt , Yt+k )|                                     64
+                                                                                      
+                                                (1 + 2−k vi ) − 1 ≤ 2−k           −1 .
+                                             Y
+                                           ≤
+                              Q2             i<L
+                                                                               27
+
+The last inequality follows by expanding the product. Consequently,
+                         h i
+                    Var Q
+                        b
+                                  3
+                                      
+                                          64
+                                               
+                                                         Var [pb ∗ ]   3 VarµL [G]  3
+                                ≤            −1 ,                    ≤             ≤ .
+                        Q2        N       27              (p )
+                                                            ∗  2       N (p )
+                                                                            ∗ 2     N
+
+Chebyshev’s inequality makes each relative error at most ε/4 except with probability 1/64.
+   The return-time identity gives an expected 1/pi ≤ 1/κ blocks per retained sample; see [LP17,
+Chapter 10]. The expected number of transitions is at most s(L + 1)N/κ. Increasing the cutoff
+constant makes its stopping probability at most 1/64 by Markov’s inequality, including an unfinished
+sampling attempt. Outside these three events,
+                              b pb ∗
+                              Q
+                                     ∈ [(1 − ε/4)2 , (1 + ε/4)2 ] ⊆ [1 − ε, 1 + ε].
+                              Qp∗
+
+The combined failure probability is below 1/16. Total variation contraction proves the assertion
+about approximate initial distributions.
+
+8.4     The simpler HWS algorithm
+Complete sampling tables. For fixed positive activities and weights, compute all scores,
+normalizing sums, and the two pivot distributions for each hole pair by direct summation in O(n3 )
+time. Balanced prefix-sum trees sample from these distributions in O(log n) expected time per
+transition. The remaining move choice and matching update use the stored totals and mate arrays.
+This implementation is valid for every positive weight table, not only for rough weights.
+    We also record how to impose a time limit on this implementation. A biased coin can be sampled
+by exposing fresh fair bits until the corresponding dyadic interval lies on one side of its probability
+threshold. The probability that more than j bits are needed is at most 2−j , uniformly over the
+threshold and preceding history. Uniform choices can likewise be made with O(log n) such coins.
+For at most m transitions, there are at most Cm log n coins. Their conditional exponential moments
+are uniformly bounded, so Markov’s inequality applied to the product of these moments gives total
+sampling time
+                                        O m log n + log(1/ζ)                                      (77)
+                                                             
+
+except with probability ζ. We stop and return zero if this time limit is exceeded.
+
+Proof of Theorem 7. Return zero if the input graph has no perfect matching. Otherwise use the
+schedule from Lemma 6, set w0 (u, v) = n, and put
+
+                                                            1                                        1
+                                                                                                      
+      b = C log(n/δ),        r = C log(2/δ),        η=            ,      Tburn = Cτ n log n + log      .
+                                                         C(L + 1)                                    η
+
+
+                                                       36
+Since πλ,w
+         HWS (M ∗ ) ≥ 1/(10n!) for rough weights, a burn-in of T
+                                                                    burn = O(n log n) transitions from
+                                                                              3   2
+
+M ∗ gives total variation error at most η.
+    At temperature λi , conditional on the preceding weights being accurate, wi−1 is rough. Run b
+independent batches, each consisting of this burn-in followed by T0 = Cn2 log n learning transitions.
+By Eq. (72), a union bound over patterns and temperatures makes the probability of the first
+inaccurate update at most δ/8. The update is Eq. (26); its accuracy follows from Eq. (73).
+    After learning, fix the weights and prepare r independent counting executions. At each tempera-
+ture make a = C(b + r) additional independent burn-in runs from M ∗ and retain the first r perfect
+final states. Each final state is perfect with probability at least κ − η ≥ κ/2. A Chernoff bound and
+a union bound make the probability of obtaining fewer than r at any temperature at most δ/8. At
+λ0 = 1, sample uniformly directly.
+    Conditional on obtaining enough perfect states, the retained states are independent samples from
+the burn-in distribution conditioned on P. Indeed, condition first on which independent runs finish
+in P; their conditional matching values are independent and have the same distribution, regardless
+of these indicators. Conditioning increases the total variation error by at most 2/κ, so each counting
+execution has joint initial error at most 2Lη/κ ≤ 1/32. Apply Lemma 32 with G(M ) = 1{M ⊆E} .
+Each execution succeeds with probability at least 7/8. The executions are conditionally independent,
+so their median fails with probability at most e−r/8 ≤ δ/4.
+    Complete tables are built for O(L) activity–weight pairs. The transition count, including the
+counting cutoffs, is at most
+
+                            O Lb(Tburn + T0 ) + LaTburn + r(L + 1)τ ε−2 .
+                                                                           
+
+
+Use Eq. (77) with ζ = δ/8; all other work, including table construction and median computation, is
+bounded deterministically. The resulting time is
+                                                                          
+                           O n4 log5 n log(n/δ) + n3 ε−2 log4 n log(2/δ) .
+
+All counts and cutoffs are fixed in advance and the zero guard keeps every continuing weight table
+positive, so this time bound also holds on inaccurate histories. The combined failure probability is
+less than δ.
+
+    For completeness, the same argument proves the boosted-JSV bound stated in Section 3: use
+its relaxation and frequency scales Cn3 log n in place of Cn2 log n and its direct local transition
+implementation. This gives O(n
+                            e 5 + n4 ε−2 ) time.
+
+
+8.5   Selecting the checkpoints
+Lemma 33. For the cooling schedule in Section 8.1, suppose positive estimates satisfy Zb0 = n! and
+                                  9            11
+                                     Zi ≤ Zbi ≤ Zi       (0 ≤ i ≤ L).                            (78)
+                                  10           10
+                   √
+One can select O( n log2 n) checkpoints satisfying Eq. (27) in O(L log L) time, excluding the
+computation of the estimates. Before processing λi , the rule uses only estimates through index i − 1,
+and any new checkpoint is at an index at most i − 1.
+Proof. Write Z(t) = M ∈P e−tH(M ) , z = log Z, and βi = − log λi , with B, ∆, di as in Section 8.1.
+                      P
+
+Direct substitution gives
+                                       Z(β)Z(2α − β)
+                          b(α, β) :=                 ,    b(βc , βi ) = B(c, i).
+                                           Z(α)2
+
+                                                   37
+Selection rule and coverage. Initially use checkpoint 0, and select checkpoint 4 after that
+temperature has been processed. The step rule gives β4 = 1/n, and b(0, βi ) ≤ enβi ≤ e for i ≤ 4.
+For each subsequent candidate i, let c < i be the current checkpoint and α = βc . If βi > 3α/2,
+select i − 1 as the next checkpoint and reconsider i. Otherwise find j with
+                                            βj ≤ 2α − βi < βj+1
+and compute
+                                                        Zbi−1 Zbj
+                                              Ui := 2     .
+                                                     Zbc2
+Accept i with the current checkpoint if Ui ≤ 64; otherwise select i − 1 as a checkpoint and reconsider
+i. Append L as the final endpoint.
+    Rounding each inverse temperature to the preceding cooling point changes log Z by at most 1/4.
+Thus Eqs. (66) and (78) give
+                                     b(α, βi ) ≤ Ui ≤ 5b(α, βi ),                                 (79)
+since the ratio Ui /b(α, βi ) lies between 2(9/11)2 and 2(11/9)2 e1/2 < 5. There is no immediate second
+checkpoint change: for βj ≥ 1/n, the step rule gives dj ≤ βj /4 and the derivative bounds give
+
+                                                              ∆              1
+                                                           (            )
+                             log b(βj , βj+1 ) ≤ dj min n,                  ≤ .
+                                                           βj − dj           3
+
+Hence an adjacent candidate passes the geometric test and Ui ≤ 5e1/3 < 64. Every accepted
+candidate has overlap at most 64; a newly selected checkpoint i − 1 was already accepted relative to
+the previous checkpoint. This proves coverage, including both endpoints of every interval. Only
+estimates through i − 1 are used. Binary search for j takes O(log L) time, and every candidate is
+tested at most twice.
+
+Number of checkpoints. Define a nonnegative measure by dm(t) = tz ′′ (t) dt on [0, B]. Integration
+by parts gives
+                      m([0, B]) = Bz ′ (B) − z(B) + z(0) ≤ log(n!),
+since Z(B) ≥ 1 and z ′ (B) ≤ 0. A geometric-test change moves the checkpoint from α to α′ =
+βi−1 > 6α/5, because βi ≤ 5βi−1 /4. There are O(log n) such changes.
+    For a change caused by Ui > 64, put
+                      ℓ = α′ − α,       d+ = βi − α,            I = [α − d+ , α + d+ ].
+There is at least one full step between α and α′ . The step-growth bound gives ℓ ≥ 1/(4n) and
+d+ ≤ 3ℓ, while the geometric test gives d+ ≤ α/2. By Eq. (79), b(α, βi ) > 8, so
+                               log 8 < z(α + d+ ) + z(α − d+ ) − 2z(α)
+                                        Z
+                                    =       (d+ − |t − α|)z ′′ (t) dt
+                                        I
+                                    ≤ 9 log(α′ /α) m(I).
+The last inequality uses t ≥ α/2, d+ ≤ 3ℓ, and ℓ/α ≤ (3/2) log(1 + ℓ/α).
+   The intervals [α, α′ ] have disjoint interiors. Group their lengths into the O(log n) dyadic ranges
+between 1/(4n) and B. In a range ℓ ∈ [h, 2h), their starting points are at least h apart and
+I ⊆ [α − 6h, α + 6h]. Thus the enlarged intervals have bounded overlap in each range, and
+           m(I) = O(log n)m([0, B]) = O(n log2 n),                  log(α′ /α) ≤ log(nB) = O(log n).
+       X                                                        X
+
+
+                                                      38
+If J is the number of certificate-test changes, Cauchy–Schwarz yields
+                                        X                  X           
+                        J 2 log 8 ≤ 9        log(α′ /α)              m(I) = O(n log3 n).
+                                                                    √
+Including the geometric changes and endpoints gives the stated O( n log2 n) bound. On arbitrary
+estimates, the algorithm returns zero if the rule requests an already current checkpoint or exceeds
+the prescribed checkpoint cap; thus its selection time is always bounded.
+
+8.6   Faster implementation of HWS transitions
+Lemma 34. For a 0/1 input, a fixed scalar activity λ ∈ (0, 1], and any positive hole weights,
+                                                                         √
+HWS can be implemented with O(n5/2 log n) preprocessing time and O( n log n) expected time per
+transition. The transition probabilities are unchanged, and the expected-time bound holds uniformly
+over the current state and preceding history.
+
+Proof. Put Vuv = 1/w(u, v) and Λuv = λ(u, v). The products V T Λ and V ΛT give the two reciprocal-
+score denominators. After taking reciprocals and setting forbidden coordinates to zero, further
+matrix products give the true-edge score sums and hence DL , DR , W . A constant number of square
+matrix products takes O(n5/2 ) time by [CW90].
+
+Constructing the partial tables. For one score family sv (a) ≥ 0, the true-edge distribution at
+hole pair (u, v) has unnormalized weights Aua sv (a). Sort the positive scores for each v, breaking
+ties by a, and assign distinct ranks rv (a) increasing with score. Set b0 = 8n + 1 and form
+                                               r (a)                      r (a)
+                                    Eav = b0v          ,        Fav = a b0v       ,
+
+with both entries zero for zero scores. Compute S = AE and T = AF . If Suv > 0 and a∗ is the
+largest-ranked eligible pivot, then
+                                          Tuv        n−1     1
+                                              − a∗ <        < .
+                                          Suv        b0 − 1  8
+Binary search using comparisons with the half-integers between labels therefore finds a∗ in O(log n)
+                                                                        √
+time. Subtract its two contributions from Suv , Tuv and repeat until k = n pivots have been found
+or none remain. This constructs every top-k list Huv , together with membership and weighted
+prefix-sum trees, in O(n5/2 + n2 k log n) = O(n5/2 log n) time.
+
+Sampling from the tables.          For one hole pair, put
+
+                  Z=        Aua sv (a),       σ=                sv (a),       d = |{a : Aua = 1}|.
+                       X                               X
+
+                        a                          a∈Huv
+
+If the list contains all positive eligible pivots, sample directly from it; a zero-mass distribution is
+never selected. Otherwise let h be its smallest score and set Γ = σ + dh. With probability σ/Γ,
+sample a head pivot proportionally to its score and accept it. Otherwise choose a uniform neighbor a
+of u; reject if it is forbidden, has score zero, or is in the head, and otherwise accept with probability
+sv (a)/h. Repeat until acceptance. Every eligible pivot has one-attempt acceptance probability
+sv (a)/Γ, so the resulting distribution is exact. Since kh ≤ σ ≤ Z,
+                                                                 Z      1         1
+                       Pr [accept in one attempt] =                ≥         ≥         .
+                                                                 Γ   1 + d/k   1 + n/k
+
+                                                           39
+                                                       √
+Each attempt takes O(log n) expected time, giving O( n log n) per query.
+   Finally, the identity
+                            λ(u, a)sv (a) = λsv (a) + (1 − λ)Aua sv (a)
+expresses the pivot distribution as a mixture of the full score vector and the true-edge distribution,
+with precomputed mixture weights. Use sv (a) = Lv (a) for left slides and the transposed construction
+with Ru (x) for right slides. Move-type choices use the stored totals; mate arrays allow constant-time
+local updates. Every bound holds for arbitrary positive supplied weights.
+
+8.7   Proof of the improved theorem
+Proof of Theorem 1. Return zero if no true perfect matching exists. Otherwise we analyze one
+execution of both phases, as described in Section 5. Set
+                             √                                                                                 1
+  b = C log n,     Jmax = Ccp n log2 n,                   Rmax = C(L + 1) log n,                   η=                    .
+                                                                                                        CRmax (Jmax + 1)
+
+Here Rmax bounds the number of requested perfect samples, including learning, prefix estimation,
+and counting starts. A request at λi starts with a fresh uniform perfect matching and visits the
+preceding selected checkpoints and then λi , using Lemma 31 with error η at every conversion.
+During learning, the final conversion uses wi−1 ; intermediate checkpoints use their fixed learned
+weights. After learning, the final conversions for counting use wi . All requests use fresh randomness.
+
+Prefix estimates and checkpoint selection. At each temperature i < L, obtain separate
+samples for b groups of a sufficiently large constant number of prefix replicas. For replica q, maintain
+
+                                                (q)       Y λi+1 (M (q) )
+                                              Vj      =                i
+                                                                      (q)
+                                                                                    .
+                                                          i<j    λi (Mi )
+
+Set Zb0 = n! and let Zbj be n! times the median of the group averages. In a comparison in which all
+sample requests return independent exact samples from their respective µi ,
+                                                                     h              i
+                                                                          (q)
+                               h
+                                   (q)
+                                         i                       E (Vj )2
+                            E Vj             = Zj /n!,                                  ≤ 64/27.
+                                                                          (q) 2
+                                                                      h         i
+                                                                     E Vj
+
+Chebyshev’s inequality, median amplification, and a union bound therefore make all prefix estimates
+satisfy Eq. (78), except with probability at most 1/64. The samples at i produce Zbi+1 , so all
+estimates needed by the checkpoint rule are already available.
+    At each i ≥ 1, use b additional requests as independent perfect starts for the learning trajectories
+of length T0 = Cn2 log n. Apply Eqs. (72) and (73) with the update Eq. (26). Conditional on any
+preceding accurate history, the weights wi−1 are rough and the batches are independent in the
+exact-sampling comparison. Summing the probabilities of the first inaccurate update gives failure
+probability at most 1/64 over all temperatures. Return zero if any required median is zero, any
+sampling call fails, or the checkpoint or request cap is exceeded.
+
+Accuracy of fresh traversals. Fix the information available before one request, assuming the
+preceding weights and prefix estimates are accurate. The checkpoint sequence and all transition
+
+
+
+                                                                40
+rules in the request are then fixed. If K is one conversion, including an absorbing failure symbol,
+total variation contraction gives
+                  ∥νK − µnext ∥TV ≤ ∥ν − µprevious ∥TV + ∥µprevious K − µnext ∥TV .
+The second term is at most η by Lemmas 31 and 33. Induction over a traversal gives output error
+at most (Jmax + 1)η. Replacing the requests successively by exact independent samples changes the
+probability of any event, up to the first inaccurate weight or prefix estimate, by at most
+                                      Rmax (Jmax + 1)η ≤ 1/64
+when C is sufficiently large. Only the returned samples are used for learning and selecting checkpoints;
+the overall running-time cutoff is analyzed separately below. For the prefix union bound, the entire
+independent sample array in the comparison may be generated in advance, so early stopping does
+not change the bound.
+    After learning, obtain fresh counting starts at every activity. Conditional on the completed
+learning and checkpoint history, they are independent with distributions µi in the exact-sampling
+comparison. Apply Lemma 32 with τ∗ = τ and G(M ) = 1{M ⊆E} . Its transition cutoff is C(L+1)τ ε−2 .
+Combining counting failure, the two estimation failures, and the request-comparison error gives
+total failure probability at most 7/64 before the final time cutoff.
+
+Running time.      We have
+                                                            √
+   L = O(n log2 n),      Rmax = O(n log3 n),       Jmax = O( n log2 n),        log(2/η) = O(log n).
+Every conversion uses at most O(n2 log3 n) transitions. At intermediate checkpoints, complete
+tables are constructed once and reused for all traversals. Their total construction and expected
+sampling time is                                      
+                       O Jmax n3 + Rmax Jmax n2 log4 n = O(n7/2 log9 n).
+At ordinary temperatures use Lemma 34. There are O(L) activity–weight pairs, Rmax final
+conversions, and Lb learning trajectories. Their total expected time is
+                                                                   
+                O Ln5/2 log n + Rmax n5/2 log4 n + Lb n5/2 log2 n = O(n7/2 log7 n).
+
+Counting, after initialization, takes expected time
+                                                     
+                           O (L + 1)n5/2 ε−2 log2 n = O(n7/2 ε−2 log4 n).
+
+Maintain the number of nonedges under local moves and precompute the possible annealing factors.
+Updating prefix products and evaluating the whole product, as well as finding checkpoints and
+computing medians, is absorbed by these bounds.
+    The transition, request, and checkpoint caps hold on every history, and both implementations
+have their stated expected times for every positive weight table. The expected time before the final
+cutoff is therefore at most C0 n7/2 ε−2 log9 n, whether or not the learned weights and prefix estimates
+are accurate. Stop and return zero if the total time exceeds Cn7/2 ε−2 log9 n. Markov’s inequality
+makes this additional failure probability at most 1/16. Each capped execution consequently succeeds
+with probability at least 3/4. Repeating both phases independently C log(2/δ) times and returning
+their median proves the theorem, with total time
+                                                               
+                                     O n7/2 ε−2 log9 n log(2/δ) .
+
+
+
+                                                  41
+8.8   Extension to nonnegative matrices
+Proof sketch of Corollary 2. The extension to nonnegative matrices is the same as done in previous
+works [JSV04, BŠVV08], and hence we omit the details in this preprint.
+    The preprocessing of [LSW00, Theorem 3.1] computes a positive diagonal scaling A′ = D1 AD2 ,
+followed by a column permutation and row normalization, such that
+
+                                    a′uv = 1,    a′uu = max a′uv ≥ 1/n.
+                               X
+                                                         v
+                                v
+
+It also gives the scaling factor α with per (A′ ) = α per (A), in O(n5 log n) time. The diagonal perfect
+matching P ∗ has weight at least n−n .
+    As before, first return zero if the support of the input matrix A contains no perfect matching.
+Then, after applying the scaling of [LSW00] and the standard regularization of zero and sufficiently
+small entries, we apply the framework of Theorem 7, using the weighted cooling schedule from
+Lemma 30. Our HWS relaxation and frequency-estimation bounds hold for arbitrary positive edge
+activities, and P ∗ plays the role of M ∗ for initialization. Using complete sampling tables and the
+corresponding bounded terminal correction, the remaining running time is as in Theorem 7. Finally,
+divide the estimate of per (A′ ) by α. Adding the preprocessing cost gives the corollary.
+
+
+Acknowledgements
+Heng Guo would like to thank Weiming Feng and Yucheng Fu for suggesting transferring some
+techniques in the two-terminal reliability setting to the permanent setting. Eric Vigoda would like
+to thank Daniel Štefankovič for helpful conversations related to the permanent algorithm.
+    The main ideas in this paper resulted from many discussions with LLM. The final text and
+proofs were written independently by the human authors, with LLM utilized for editorial suggestions.
+The authors independently verified all mathematical claims and take full responsibility for the final
+content.
+
+
+References
+[BŠVV08] Ivona Bezáková, Daniel Štefankovič, Vijay V. Vazirani, and Eric Vigoda. Accelerating
+         simulated annealing for the permanent and combinatorial counting problems. SIAM
+         Journal on Computing, 37(5):1429–1454, 2008.
+
+[CCFV25] Charlie Carlson, Xiaoyu Chen, Weiming Feng, and Eric Vigoda. Optimal mixing for
+         randomly sampling edge colorings on trees down to the max degree. In Proceedings of the
+         36th Annual ACM-SIAM Symposium on Discrete Algorithms (SODA), pages 5418–5433,
+         2025.
+
+[CFJ+ 25] Xiaoyu Chen, Weiming Feng, Zhe Ju, Tianshun Miao, Yitong Yin, and Xinyuan Zhang.
+          Faster mixing of the Jerrum–Sinclair chain. In Proceedings of the 66th Annual IEEE
+          Symposium on Foundations of Computer Science (FOCS), pages 1007–1028, 2025.
+
+ [CVY26] Xiaoyu Chen, Eric Vigoda, and Xiongxin Yang. Faster FPRAS for the permanent via
+         restricted Poincaré inequalities and coupled flows. Preprint, arXiv:2608.26599, 2026.
+
+  [CW90] Don Coppersmith and Shmuel Winograd. Matrix multiplication via arithmetic progres-
+         sions. Journal of Symbolic Computation, 9(3):251–280, 1990.
+
+                                                  42
+  [DS91] Persi Diaconis and Daniel Stroock. Geometric bounds for eigenvalues of Markov chains.
+         The Annals of Applied Probability, 1(1):36–61, 1991.
+
+ [FFG26] Weiming Feng, Yucheng Fu, and Heng Guo. Approximating two-terminal network
+         reliability. Preprint, arXiv:2608.02523, 2026. v2, in preparation.
+
+[GLY+ 26] Heng Guo, Hongyang Liu, Xiongxin Yang, Yitong Yin, and Yiyao Zhang. Optimal
+          simulated annealing for partition function estimation. Preprint, 2026.
+
+   [JS89] Mark Jerrum and Alistair Sinclair. Approximating the permanent. SIAM Journal on
+          Computing, 18(6):1149–1178, 1989.
+
+ [JSV04] Mark Jerrum, Alistair Sinclair, and Eric Vigoda. A polynomial-time approximation
+         algorithm for the permanent of a matrix with nonnegative entries. Journal of the ACM,
+         51(4):671–697, 2004.
+
+  [LP17] David A. Levin and Yuval Peres. Markov Chains and Mixing Times. American Mathe-
+         matical Society, second edition, 2017.
+
+ [LSW00] Nathan Linial, Alex Samorodnitsky, and Avi Wigderson. A deterministic strongly
+         polynomial algorithm for matrix scaling and approximate permanents. Combinatorica,
+         20:545–568, 2000.
+
+  [Sin92] Alistair Sinclair. Improved bounds for mixing rates of Markov chains and multicommodity
+          flow. Combinatorics, Probability and Computing, 1(4):351–370, 1992.
+
+ [ŠVV09] Daniel Štefankovič, Santosh Vempala, and Eric Vigoda. Adaptive simulated annealing: A
+         near-optimal connection between sampling and counting. Journal of the ACM, 56(3):18:1–
+         18:36, 2009.
+
+  [Val79] Leslie G. Valiant. The complexity of computing the permanent. Theoretical Computer
+          Science, 8(2):189–201, 1979.
+
+
+
+
+                                              43
+
