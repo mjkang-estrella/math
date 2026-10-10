@@ -1,0 +1,1688 @@
+                                               Quantitative Stability and Numerical Resolution of the
+                                                             Moment Measure Problem∗
+                                                                   Guillaume Bonnet†                  Yanir A. Rubinstein‡
+
+
+
+
+arXiv:2604.09914v1 [math.FA] 10 Apr 2026
+                                                                                        April 14, 2026
+
+
+                                                                                             Abstract
+                                                     The moment measure problem consists in finding a convex function ψ whose moment
+                                                 measure, i.e., the pushforward by ∇ψ of the measure with density e−ψ( · ) , is prescribed. It is
+                                                 highly non-linear and less understood than the related optimal transport problem. We establish
+                                                 a quantitative stability estimate for this problem. This estimate validates, as well as leads us to
+                                                 introduce, an approach to the numerical resolution of the moment measure problem inspired
+                                                 by semi-discrete optimal transport, consisting in approximating the prescribed measure by a
+                                                 finitely supported one. We describe a Newton method for solving the discrete problem thus
+                                                 obtained, and perform numerical experiments, studying the experimental rates of convergence
+                                                 of the approximation beyond the predictions of the stability estimate.
+
+
+                                           Contents
+                                           1 Introduction                                                                                              2
+                                             1.1 Stability for the MMP . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .           4
+                                             1.2 Numerical resolution . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .          5
+                                             1.3 Relation to other work . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .          5
+                                             1.4 Outline . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         6
+
+                                           2 Moment measure problems with Lipschitz constraints                                                        6
+                                             2.1 Variational formulation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         6
+                                             2.2 The K-MMP . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .             8
+
+                                           3 Stability estimate for the MMP                                                                   11
+                                             3.1 Convexity estimate . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+                                             3.2 Stability estimate for the K-MMP . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+                                             3.3 Error estimate for the K-MMP . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+                                             3.4 A priori growth estimate à la Wang–Zhu . . . . . . . . . . . . . . . . . . . . . . . . . 15
+                                             3.5 Proof of the main estimate . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+                                              ∗ The research of Y. A. R. was supported by the Bergman Distinguished Visiting Professorship at Stanford
+
+                                           University, a Simons Fellowship in Mathematics, and NSF grants DMS-1906370,2204347,2506872.
+                                              † CEREMADE,        CNRS,      Université  Paris-Dauphine,     Université PSL,   75016    Paris,   France
+                                           (bonnet@ceremade.dauphine.fr).
+                                              ‡ University of Maryland and Stanford University (yanir@alum.mit.edu).
+
+
+
+
+                                                                                                 1
+4 Semidiscrete MMP                                                                                 19
+  4.1 Discrete problem . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+  4.2 Derivatives of the discrete energy and Laguerre diagrams . . . . . . . . . . . . . . . 20
+  4.3 Damped Newton method . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+
+5 Numerical experiments                                                                                23
+
+
+1    Introduction
+The moment measure of a convex function ψ : Rd → R ∪ {∞} is defined as the pushforward of the
+measure e−ψ(x) dx by the map ∇ψ,
+
+                                       mm(ψ) := (∇ψ)# (e−ψ(x) dx)
+
+(noting that ∇ψ(x) is defined for Lebesgue a.e. x by Rademacher’s theorem). The moment measure
+problem (MMP) consists of inverting mm, or more precisely, of finding a convex function ψ whose
+moment measure is a given (prescribed) positive, finite mass, measure µ on Rd ,
+
+                                                 mm(ψ) = µ.                                          (1.1)
+
+When the measure µ admits a density f , i.e., µ = f (y) dy, the MMP is a weak formulation of
+                        (
+                          f (∇ψ(x)) det ∇2 ψ(x) = e−ψ(x) , x ∈ Rd ,
+                                                                                             (1.2)
+                          supp µ ⊂ ∇ψ(Rd ).
+
+Indeed, (1.1) means that           Z                           Z
+                                                 e−ψ(x) dx =       f (y) dy                          (1.3)
+                                    (∇ψ)−1 (E)                 E
+
+for Borel sets E ⊂ Rd ; assuming that ψ is C 2 and strongly convex, ∇ψ is one-to-one, and so setting
+y = ∇ψ(x) implies (1.2).
+    As illustrated by the formulation (1.1), mm is a highly non-linear second-order operator. In
+particular, it is not as well-understood as the closely related, classical, Monge–Ampère operator.
+Our aim in this article is twofold: (i) to study the first numerical method for the MMP, (ii) to
+establish a quantitative stability estimate for solutions to (1.1). Of course, (i) hinges on (ii), since
+our goal is, naturally, to prove that the numerical method converges to the solution.
+    In retrospect, it is in some sense a miracle of convexity that mm even possesses a decent
+pluripotential theory reminiscent of the one for the much simpler Monge–Ampère operator.
+    The study of the so-called second boundary value problem (1.2) originates in the problem of
+finding Kähler–Ricci solitons on toric manifolds. There, ψ is assumed to have linear growth so that
+supp µ is a (bounded) convex   body, (in fact, a polytope P ), and f is of the form e⟨a, · ⟩ for a constant
+vector a ∈ R so that P f dy = 0, i.e., µ is centered. Under these assumptions, a foundational
+              d
+                         R
+
+theorem of Wang–Zhu says that (1.2) is uniquely smoothly solvable [30] (for an exposition see
+Donaldson [9]). Berman–Berndtsson considerably generalized this result by allowing arbitrary convex
+bodies and right-hand sides [2] via a variational formulation inspired by optimal transport. The
+weak formulation (1.1) of the MMP is due to Cordero-Erausquin–Klartag [5], and Santambrogio [27]
+further recast the MMP using a dual variational problem using tools from optimal transport.
+
+
+                                                     2
+    It is important to distinguish the earlier results on the MMP from the later ones: neither is
+stronger nor more general than the other, since the earlier results study classical solutions, hence
+establish higher-derivative estimates, while the later results are concerned with weak solutions, hence
+consider less regular (i.e., more general) right-hand sides.
+    Since we will ultimately be interested in a numerical scheme, e.g., will allow µ to be an empirical
+measure, it will be natural for us to work in the latter framework of weak solutions.
+    The MMP features an inherent non-uniqueness with respect to translation in Rd (this is per-
+haps easiest to see from (1.2)). In the Kähler context this is referred to as uniqueness modulo
+automorphisms and goes back to Tian–Zhu [28]; in the toric setting these automorphisms come
+from a complex torus and precisely correspond to translations in Rd . A foundational existence and
+uniqueness result of Cordero-Erausquin–Klartag (Theorem 1.2) determines the precise functional
+spaces on which (1.1) is invertible (modulo such translations). For this reason we will denote by
+
+                                              mm−1 (µ)
+
+an essentially convex function on Rd (Definition 1.1) well-defined up to a translation.
+Definition 1.1 ([5, Definition 2]). A convex function ψ : Rd → R ∪ {∞} is essentially continuous if
+it is lower semicontinuous and
+                                                              
+                             Hd−1 x ∈ ∂{ψ < ∞} | ψ(x) < ∞ = 0,
+
+where Hd−1 denotes the (d − 1)-dimensional Hausdorff measure on Rd .
+
+   A prototypical non-example is the convex indicator function
+                                            (
+                                   ∞          0 if x ∈ K,
+                                  1K (x) :=
+                                              ∞ otherwise,
+
+for a closed convex set K ⊊ Rd with nonempty interior, since then {x ∈ ∂{ψ < ∞} | ψ(x) < ∞} =
+∂K.
+Theorem 1.2 ([5, Proposition 1 and Theorem 2]).
+(Existence) A measure µ on Rd with positive finite mass is the moment measure of some essentially
+continuous convex function if and only if it is centered and not supported on a hyperplane.
+(Uniqueness) For µ centered and not supported on a hyperplane, mm−1 (µ) is uniquely determined—in
+the class of essentially continuous convex functions—by µ up to translation.
+    Theorem 1.2 does not say that mm(ψ1 ) = mm(ψ2 ) =⇒ ψ1 ( · ) = ψ2 ( · + v) for some v ∈ Rd ;
+this only holds if both ψ1 and ψ2 are essentially continuous; other, not essentially continuous,
+solutions can exist. For instance, let µ be the measure supported on a centered convex set K ⊊ Rd
+                                                    2
+with nonempty interior, and with density e−∥ · ∥ /2 on K. In other words, µ is a measure with
+               2     ∞
+density e−∥ · ∥ /2−1K on Rd , and in particular it is centered and not supported on a hyperplane.
+Then, in addition to the essentially continuous functions mm−1 (µ) guaranteed by Theorem 1.2, also
+mm ∥ · ∥2 /2 + 1∞  K = µ, and the latter is convex but not essentially continuous.
+    In this article, given a centered finite positive measure µ on Rd that is not supported on a
+hyperplane, we denote by
+                                          ψµ : Rd → R ∪ {∞}                                   (1.4)
+
+
+                                                  3
+an essentially continuous convex function whose moment measure is µ, i.e., ψµ ∈ mm−1 (µ), and
+                                        mm−1 (µ) = {ψµ ( · + v) | v ∈ Rd } ∼
+                                                                           = Rd .                          (1.5)
+In this notation, the present article establishes:
+   • The quantitative stability (modulo translations) of the convex function ψµ with respect to the
+     measure µ (Theorem 1.3).
+   • Numerical resolution of the MMP, i.e., rigorous numerical approximation of ψµ , when µ is
+     prescribed (section 4).
+
+1.1    Stability for the MMP
+The next result gives quantitative stability for the moment measure problem. Conceptually, this
+amounts to estimating the operator norm of mm−1 (mapping measures to functions), part of the
+problem being to choose the right norms.
+Theorem 1.3. Let µ ̸= ν be centered finite measures on Rd with equal positive mass, not supported
+on hyperplanes. Then there exists v ∈ Rd such that, for any constants R, r satisfying
+                      Z                                               Z
+                  1                                       1
+           R≥             ∥y∥ dµ(y),           0 < r ≤           inf      |⟨w, y⟩| dµ(y),
+                µ(Rd ) Rd                               µ(Rd ) w∈S d−1 Rd
+one has (recalling (1.4))
+                                                                                                 1/2
+                                                                                       µ(Rd )R
+                                                                                 
+                                                                     W1 (µ, ν)
+          ∥e   −ψµ ( · )
+                           −e   −ψν ( · −v)
+                                              ∥L1 (Rd ) ≲d,R/r µ(R )d
+                                                                               log 1 +                 ,   (1.6)
+                                                                     µ(Rd )R           W1 (µ, ν)
+where W1 denotes the 1-Wasserstein distance (1.7).
+
+Notation. Throughout, α ≲m β if there exists a constant Cm > 0, depending only on m, such
+that α ≤ Cm β.
+   A few comments are in order.
+   • The assumptions on µ and ν are due to Theorem 1.2.
+   • The role of v on the left-hand side of (1.6) is explained by (1.5). The exponentials compensate
+     for the fact that ψµ and ψν can have different growth at infinity. Thus, the left-hand side is a
+     measure of the distance between mm−1 (µ) and mm−1 (ν).
+   • On the right-hand side, W1 is a standard “L1 notion” of distance between two measures with
+     finite first moments and equal mass,
+                                                 Z
+                              W1 (µ, ν) := inf          |x − y| dγ(x, y),
+                                                          γ∈Π(µ,ν)      Rd ×Rd
+
+      where Π(µ, ν) denotes so-called admissible transport plans from µ to ν, i.e., the set of measures
+      on Rd × Rd with marginals µ and ν. In our proof we will rather use the dual characterization
+      of the 1-Wasserstein distance (see, e.g., [26, 29]):
+                                    Z             Z                                  
+                    W1 (µ, ν) = inf       φ dµ −                  d
+                                                       φ dν φ : R → R 1-Lipschitz .                (1.7)
+                                                     Rd          Rd
+
+
+                                                                4
+   • The estimate (1.6) is compatible with the following easily verified invariance properties of the
+     MMP:
+
+                  mm(ψ + C) = e−C mm(ψ),                  mm(ψ( · /λ)) = λd mm(ψ)(λ · ).          (1.8)
+
+    In order to prove Theorem 1.3, we consider an intermediate problem in which we look for a
+convex function which is not necessarily essentially continuous, but whose support is included in
+some given compact convex set K with nonempty interior. This intermediate problem, which we call
+the K-moment measure problem (K-MMP), may be interpreted as replacing Rd by K in the PDE
+formulation (1.2). When K is large, it can be interpreted as an approximation of the space Rd . In
+addition to making the proof of Theorem 1.3 cleaner, we believe that the K-MMP is of independent
+interest : for instance, it arises naturally in some approaches to the numerical resolution of the
+moment measure problem [17]. It has only been briefly discussed in the literature [23, 27], so we
+give some details in subsection 2.2.
+    In this approach, the proof of Theorem 1.3 naturally boils down to establishing two estimates:
+   • A quantitative stability estimate (Proposition 3.3) for the K-MMP just discussed.
+
+   • An error estimate (Proposition 3.4) between the K-MMP and the original MMP.
+
+1.2    Numerical resolution
+We study a numerical method consisting in approximating ψµ by the function ψν , where ν is a
+finitely supported measure that should be chosen close to µ in the 1-Wasserstein distance. Thanks
+to ν being finitely supported, the problem of computing ψν becomes a discrete problem that can be
+solved computationally.
+    This numerical method can be interpreted as a rather direct translation of the idea of semidiscrete
+optimal transport [1, 18, 22, 24, 25] to the setting of moment measures. Its validity in this setting is
+justified by our stability estimate, Theorem 1.3.
+    In our experiments, we compute ψν using a damped Newton method, that we describe in section 4.
+We investigate the effect of the choice of ν on the convergence of this Newton method and on the
+approximation error between ψµ and ψν . We observe that, experimentally, the rates of convergence
+of the numerical method with respect to W1 (µ, ν) are typically better than what is guaranteed by
+Theorem 1.3, and that the convergence can be improved by applying some specific rules for the
+construction of the empirical measure ν.
+
+1.3    Relation to other work
+The proof of Theorem 1.3 makes use of the sharp quantitative stability estimate for the Prékopa–
+Leindler inequality recently obtained by Figalli–van Hintum–Tiba [13]. It is also inspired by
+quantitative stability estimates for the optimal transport problem, see e.g. [8]; especially, in both
+settings, the 1-Wasserstein distance is made to appear using Kantorovich–Rubinstein duality. The
+two main differences between (1.6) and similar estimates in the optimal transport setting, such as
+the one in [8], are the weaker norm appearing on the left-hand side of (1.6), and the logarithm on
+the right-hand side. The former originates from the estimate in [13], and can be explained by the
+fact that the energy functional associated to the moment measure problem is different from the
+one associated to the optimal transport problem. The logarithm appears because the Legendre
+
+
+                                                   5
+transform of the potential ψµ in the moment measure problem is typically not Lipschitz continuous;
+our intermediary result Proposition 3.4 may be interpreted as an estimate of this lack of Lipschitz
+continuity.
+    Quantitative stability of the moment measure problem was also recently and independently
+studied by Machado–Ramos [23]. A version of our Proposition 3.3 can also be found in [23], while,
+to our knowledge, Proposition 3.4, and thus Theorem 1.3, are original. Some stability estimates for
+the moment measure problem in the standard, non-compact case are also proved in [23], but under
+different assumptions and with smaller exponents. Observe that [23] also features estimates for the
+error between the Legendre transforms of ψµ and ψν , which is a topic that we do not discuss herein.
+Quantitative stability for a quadratically regularized version of the moment measure problem was
+also studied by Delalande–Farinelli in [7].
+    The idea of adapting techniques from semidiscrete optimal transport to the numerical resolution
+of the moment measure problem is rather natural. Klartag–Mérigot–Santambrogio previously
+performed numerical experiments using this approach and presented results in some talks, e.g., [20].
+    Finite-difference discretization of the system (1.2) was first considered in the thesis of Ji [17]. In
+a forthcoming article joint with Ji [3] we synthesize our approach here with his, and also pursue
+applications to geometry, such as the Ricci flow and Kähler–Ricci solitons.
+    It is worth pointing out that the (special) moment measure problems arising in Kähler geometry
+have attracted intense efforts in the mathematical physics community, as they describe Kähler–Ricci
+solitons that in turns can be used to construct Klebanov–Tseytlin like supergravity solutions, see,
+e.g., [4, 10, 11, 12, 14, 15, 16]. The numerical results in those works employ completely different
+methods, based mainly on quantization (as opposed to PDE, as in the present article). Moreover,
+some of these works have attempted to use such solitons to study the Ricci flow, that itself has
+applications to renormalization flow in the mathematical physics literature.
+
+1.4    Outline
+In section 2, after briefly reviewing some aspects of the theory of moment measures, we discuss
+the intermediary problem involving a compact approximation of Rd that we use in the proof of
+Theorem 1.3. Section 3 is devoted to the proof of Theorem 1.3, and of the intermediary results
+Proposition 3.3 and Proposition 3.4. In section 4, we discuss the approximation of ψµ by ψν , where ν
+is a finitely supported measure, and a Newton method for computing ψν . We present some numerical
+results in section 5.
+
+
+2     Moment measure problems with Lipschitz constraints
+In subsection 2.1, we briefly review the variational formulation of the moment measure problem. In
+subsection 2.2, we study a variant of the problem involving an approximation of Rd by a compact
+domain, which will be useful for our presentation of the proof of Theorem 1.3 in section 3.
+
+2.1    Variational formulation
+For any function φ : Rd → R ∪ {∞}, let
+                                                     Z
+                                                                 ∗
+                                     I(φ) := − log            e−φ (x) dx,                           (2.1)
+                                                         Rd
+
+
+
+                                                     6
+where
+                                     φ∗ : x 7→ sup (⟨x, y⟩ − φ(y))
+                                                y∈Rd
+
+denotes the Legendre transform of φ. Observe that I(φ) can take values ∞ and −∞ (but is finite
+                           ∗
+as soon as the measure e−φ (x) dx has finite positive mass). For any probability measure µ on Rd
+and any µ-integrable function φ : Rd → R ∪ {∞}, let
+                                            Z
+                                  Eµ (φ) :=   φ(y) dµ(y) + I(φ).                            (2.2)
+                                               Rd
+
+Observe that we only define the functional Eµ for measures µ that are probability measures. This
+ensures that Eµ is invariant under addition of a constant (using that adding a constant to φ amounts
+to subtracting it from φ∗ ),
+                                    Eµ (φ + c) = Eµ (φ), ∀c ∈ R.
+If the probability measure µ is centered, then Eµ is also invariant under addition of a linear function
+(using that adding a linear function to φ amounts to a translation of φ∗ ),
+
+                                 Eµ (φ + ⟨v, · ⟩) = Eµ (φ),     ∀v ∈ Rd .
+
+   The functional Eµ is related to the MMP. This idea goes back to Berman–Berndtsson [2,
+subsection 2.6]. The following statement is not explicitly formulated by Cordero-Erausquin–Klartag
+but follows from the proof of the existence part of [5, Theorem 2] and from [5, Remark 13]. (In the
+derivation, note that by (1.3),     Z
+                                           e−ψ(x) dx = mm(ψ)(Rd ).                                (2.3)
+                                      Rd
+                                       ∗
+After easily excluding the case Rd e−φ (x) dx ∈ {0, ∞}, we may always assume, up to adding a
+                                R
+                           ∗
+constant to φ, that Rd e−φ (x) dx = 1. Then, the equivalence follows from op. cit.)
+                    R
+
+Proposition 2.1. Let µ be a centered probability measure on Rd , not supported on a hyperplane.
+Let φ : Rd → R ∪ {∞} be a lower semicontinuous convex function. The following are equivalent:
+   • φ is µ-integrable and minimizes Eµ over all µ-integrable functions.
+                                                                ∗
+   • φ∗ is essentially continuous (Definition 1.1), 0 < Rd e−φ (x) dx < +∞, and
+                                                        R
+
+                                                Z               
+                                                          ∗
+                                    mm(φ∗ ) =         e−φ (x) dx µ.                               (2.4)
+                                                           Rd
+
+
+    There may also exist minimizers of Eµ that are not lower semicontinuous or not convex (take,
+e.g., a function φ such that φ∗∗ minimizes Eµ but φ(y) > φ∗∗ (y) at a point y where µ has no atom);
+however, it is easily verified that for any such minimizer φ, the lower semicontinuous function φ∗∗
+also minimizes Eµ , since Eµ (φ∗∗ ) ≤ Eµ (φ).
+
+
+
+
+                                                       7
+2.2     The K-MMP
+Given a compact convex set K ⊂ Rd with nonempty interior, let us define the following variants of
+the functionals I and Eµ from (2.1) and (2.2). For any function φ : Rd → R ∪ {∞}, let
+                                                  Z
+                                                         ∗
+                                  IK (φ) := − log    e−φ (x) dx.
+                                                        K
+
+For any probability measure µ on Rd and any µ-integrable function φ : Rd → R ∪ {∞}, let
+                                          Z
+                              Eµ,K (φ) :=   φ(y) dµ(y) + IK (φ).
+                                               Rd
+
+   One can consider the problem of minimizing the energy Eµ,K over µ-integrable functions. Let us
+notice that this new problem is related to the minimization of Eµ under a Lipschitz constraint.
+   Let
+              LipK (Rd ) := {φ : Rd → R | ∀y1 , y2 ∈ Rd , φ(y2 ) − φ(y1 ) ≤ σK (y2 − y1 )},
+where σK is the support function of K, i.e.,
+
+                                        σK (y) := sup ⟨x, y⟩.
+                                                    x∈K
+
+Observe that
+                               φ ∈ LipK (Rd ) =⇒ Eµ,K (φ) = Eµ (φ),                             (2.5)
+since then φ∗ (x) = ∞ for all x ∈ Rd \ K. Moreover, for any µ-integrable function φ : Rd → R ∪ {∞}
+such that Eµ,K (φ) < ∞,
+
+                             φK : y 7→ sup (⟨x, y⟩ − φ∗ (x)) ∈ LipK (Rd )
+                                       x∈K
+
+(interpreted as the largest convex function satisfying φK ≤ φ and φK ∈ LipK (Rd )), and
+
+                                  Eµ (φK ) = Eµ,K (φK ) ≤ Eµ,K (φ).
+
+Thus:
+Proposition 2.2. Let K ⊂ Rd be a compact convex set with nonempty interior, and let µ be a
+probability measure on Rd . If a function of LipK (Rd ) minimizes Eµ over LipK (Rd ), then it also
+minimizes Eµ,K over all µ-integrable functions with values in R ∪ {∞}.
+   Next, we turn to the existence of minimizers of Eµ,K over LipK (Rd ).
+   To that end, we employ standard arguments, similar to the ones used, e.g., in [5] for the study of
+the minimization of Eµ , with the difference that the analysis is simpler here due compactness of K.
+For instance, observe that we do not need to assume that the measure µ is centered, nor that it is
+not supported on a hyperplane.
+Proposition 2.3. Let K ⊂ Rd be a compact convex set with nonempty interior, and let µ be a
+probability measure on Rd with finite first moments. There exists a convex function φµ,K ∈ LipK (Rd )
+                    −(φµ,K )∗ (x)
+                                  dx = 1 and that minimizes Eµ over LipK (Rd ) (equivalently, that
+               R
+that satisfies Rd e
+minimizes Eµ,K over all µ-integrable functions with values in R ∪ {∞}).
+
+                                                    8
+Proof. Let (φn )n≥0 be a minimizing sequence for Eµ on LipK (Rd ). Up to replacing φn by (φn )∗∗
+and observing that Eµ ((φn )∗∗ ) ≤ Eµ (φn ), we can assume that φn is convex for all n ≥ 0. Since Eµ is
+invariant under addition of a constant, we can assume that φn (0) = 0 for all n ≥ 0. Up to extracting
+a subsequence, we can assume that (φn )n≥0 converges locally uniformly to some convex function
+φ ∈ LipK (Rd ) (intuitively, this is because the sub-gradients are uniformly controlled).
+    For any x ∈ Rd ,
+
+               φ∗ (x) = sup (⟨x, y⟩ − φ(y)) = sup (⟨x, y⟩ − lim sup φn (y))
+                        y∈Rd                          y∈Rd        n→∞
+
+                     = sup sup inf (⟨x, y⟩ − φm (y)) ≤ sup inf sup (⟨x, y⟩ − φm (y))
+                        y∈Rd n≥0 m≥n                         n≥0 m≥n y∈Rd
+                                    ∗
+                     = lim inf (φn ) (x).
+                         n→∞
+
+Therefore,                                   ∗                    ∗
+                                     e−φ (x) ≥ lim sup e−(φn ) (x) .                              (2.6)
+                                                       n→∞
+
+    For any n ≥ 0, one has φn ≤ σK , where we used the definition of LipK (Rd ) and the fact that
+φn (0) = 0. Since the Legendre transform reverses order, we deduce that (φn )∗ ≥ (σK )∗ = 1∞
+                                                                                           K . Thus,
+       ∗           ∞
+e−(φn ) ( · ) ≤ e−1K ( · ) , which is integrable. Using Fatou’s lemma and (2.6),
+                                        Z                        Z
+                                               ∗                                    ∗
+                       I(φ) = − log         e−φ (x) dx ≤ − log      lim sup e−(φn ) (x) dx
+                                         Rd                       Rd n→∞
+                                               Z
+                                                           ∗
+                               ≤ − log lim sup      e−(φn ) (x) dx = lim inf I(φn ).
+                                   n→∞           Rd                   n→∞
+
+
+On the other hand, again by definition of LipK (Rd ) and using φn (0) = 0, one has |φn | ≤
+max{σK , σK (− · )}; the latter is µ-integrable since K is compact, so σK has linear growth, and µ
+has finite first moments. Thus, by the dominated convergence theorem,
+                                     Z                  Z
+                                lim      φn (y) dµ(y) =     φ(y) dµ(y).
+                               n→∞      Rd                   Rd
+
+Thus, Eµ (φ) ≤ limn→∞ Eµ (φn ), hence φ minimizes Eµ on LipK (Rd ).
+                                                                                          ∗
+    Even though φ minimizes Eµ on LipK (Rd ), it does not necessarily hold that Rd e−φ (x) dx = 1.
+                                                                                   R
+                                                            ∗               ∞
+This can be remedied as follows. We know that Rd e−φ (x) dx ≤ Rd e−1K (x) dx = |K| < ∞, and
+                                                    R                 R
+                  ∗
+also that Rd e−φ (x) dx > 0, since otherwise Eµ (φ) = ∞, which would contradict the inequality
+           R
+                                                                                     ∗
+Eµ (φ) ≤ Eµ (σK ) < ∞. We conclude the proof by choosing φµ,K as φ − log Rd e−φ (x) dx. Since Eµ
+                                                                            R
+
+is invariant under
+               R addition    of a constant, φµ,KRstill minimizes Eµ over LipK (Rd ), and the additive
+                    −φ∗ (x)                                   ∗
+constant − log Rd e         dx is chosen so that Rd e−(φµ,K ) (x) dx = 1.
+
+   Finally, let us mention some other properties of this modified moment measure problem. We
+only sketch the proofs, since we will not need the following results in the next sections.
+Proposition 2.4. Let K ⊂ Rd be a compact convex set with nonempty interior, and let µ be a
+probability measure on Rd with finite first moments. Then any two convex minimizers of Eµ over
+LipK (Rd ) coincide up to addition of an affine function.
+
+
+
+                                                         9
+Proof. This follows from the strict convexity up to addition of affine functions of the functional
+Eµ on the convex set of convex functions that are finite in a neighborhood of the origin, see [5,
+Remark 13]. In particular, this may be understood as a consequence of Proposition 3.2 below.
+Remark 2.5. This does not imply that any sum of a convex minimizer and an affine function is a
+minimizer: even when the measure µ is centered and thus Eµ is invariant under addition of affine
+functions, one also needs that this sum belongs to the space LipK (Rd ) of admissible functions.
+Proposition 2.6. Let K ⊂ Rd be a compact convex set with nonempty interior, and let µ be a
+                         d
+probability measure on RR with  finite first moments. Let φ ∈ LipK (Rd ) be a minimizer of Eµ over
+                             −φ∗ (x)
+        d
+LipK (R ) that satisfies Rd e        dx = 1. Then mm(φ∗ ) = µ.
+Proof. We follow the proof of the existence part of [5, Theorem 2], and refer to it for more details.
+Up to replacing φ by φ∗∗ , we may assume that φ is convex. By Proposition 2.2, φ also minimizes
+Eµ,K over all µ-integrable functions with values in R ∪ {∞}, and, since φ ∈ LipK (Rd ), one has
+φ∗ = ∞ outside K. Thus, by assumption,
+                               Z                Z
+                                       ∗                 ∗
+                                   e−φ (x) dx =      e−φ (x) dx = 1.
+                                   K                Rd
+
+Then, for any µ-integrable function φ1 : Rd → R ∪ {∞},
+            Z                 Z                    Z
+                                                          ∗
+                 φ(y) dµ(y) =     φ(y) dµ(y) − log   e−φ (x) dx
+              Rd               Rd
+                                                  ZK                    Z
+                                                                             ∗
+                            = EK (φ) ≤ EK (φ1 ) ≤    φ1 (y) dµ(y) − log   e−φ1 (x) dx.
+                                                       Rd                     K
+                                              ∗
+Using Jensen’s inequality (applicable as e−φ is a probability density),
+            Z                       Z                             Z
+                 −φ∗                   φ∗ (x)−ψ1 (x) −φ∗ (x)                             ∗
+      − log    e   1 (x)
+                         dx = − log   e             e        dx ≤   (φ∗1 (x) − φ∗ (x))e−φ (x) dx.
+             K                         K                           K
+
+The last integral can also be taken on Rd , and then
+          Z                 Z                      Z                Z
+                                         ∗                                              ∗
+              φ(y) dµ(y) +      φ∗ (x)e−φ (x) dx ≤   φ1 (y) dµ(y) +           φ∗1 (x)e−φ (x) dx.
+           Rd                 Rd                       Rd                Rd
+
+This means that φ and φ∗ are Kantorovich potentials associated to the optimal transport problem
+                  ∗                                 ∗
+between µ and e−φ (x) dx, and thus that (∇φ∗ )# (e−φ (x) dx) = µ.
+
+Remark 2.7. While φ∗ has moment measure µ in the above proposition, it is not necessarily
+essentially continuous. Therefore, Theorem 1.2 does not imply that it coincides with ψµ up to
+addition of a linear function. Adapting the arguments from [5], one could probably characterize the
+set of convex functions with moment measure µ whose Legendre transforms minimize Eµ,K , but this
+is not needed in this article.
+
+
+
+
+                                                  10
+3     Stability estimate for the MMP
+This section is devoted to the proof of Theorem 1.3. In subsection 3.1, we state a convexity estimate
+for the functional I, as a rather direct consequence of the quantitative stability of the Prékopa–
+Leindler inequality. In subsection 3.2, we deduce a stability estimate for the variant of the moment
+measure problem on a compact domain that we described in subsection 2.2. In subsection 3.3, we
+study estimate the error introduced when approximating the original problem by this variant. We
+conclude the proof of Theorem 1.3 in subsection 3.5.
+
+3.1     Convexity estimate
+We rely on the following result of Figalli–van Hintum–Tiba [13] on the quantitative stability of the
+Prékopa–Leindler inequality.
+Theorem 3.1. Let g1 , g2 : Rd → R+ be integrable functions with positive integrals. Let h : Rd → R+
+be a measurable function such that for all x1 , x2 ∈ Rd , one has h( x1 +x
+                                                                        2
+                                                                           2
+                                                                             ) ≥ g1 (x1 )1/2 g2 (x2 )1/2 .
+Then there exists v ∈ Rd such that
+                                    g1           g2 ( · − v)
+                               R            −R
+                                  g
+                                Rd 1
+                                     (x) dx     Rd 2
+                                                    g (x) dx L1 (Rd )
+                                                R                              !1/2
+                                                 Rd
+                                                     h(x) dx
+                              ≲d    R             1/2 R              1/2 − 1      .
+                                         g (x) dx
+                                      Rd 1
+                                                             g (x) dx
+                                                          Rd 2
+
+Proof. The classical Prékopa–Leindler inequality states that
+                                           R
+                                             Rd
+                                                h(x) dx
+                              R              1/2 R              1/2 ≥ 1.
+                               R d g1 (x) dx        R d g2 (x) dx
+
+Then, applying [13, Corollary 1.7] to the functions
+                  g1                        g2                                               h
+           R              ,             R           ,                                    1/2 R          1/2
+                 g (x) dx
+               Rd 1
+                                           g (x) dx
+                                         Rd 2
+                                                                           R
+                                                                                 g (x) dx        g (x) dx
+                                                                               Rd 1            Rd 2
+
+yields the announced result.
+    Following the standard argument for the proof of the convexity of I, i.e., applying the Prékopa–
+                                            ∗               ∗                           ∗
+Leindler inequality to the functions e−(φ1 ) ( · ) , e−(φ2 ) ( · ) , and e−((φ1 +φ2 )/2) ( · ) , but replacing the
+Prékopa–Leindler inequality by its quantitative version, we deduce the following convexity estimate.
+                                                                                                      ∗
+Proposition 3.2. Let φ1 , φ2 : Rd → R ∪ {∞} be two functions satisfying 0 < Rd e−(φi ) (x) dx < ∞,
+                                                                                         R
+
+i ∈ {1, 2}. There exists v ∈ Rd such that
+                                                                       ∗                      ∗          2
+                                                                 e−(φ1 ) ( · )        e−(φ2 ) ( · −v)
+                                                
+          I(φ1 ) + I(φ2 )              φ1 + φ2
+                          −I                         ≳d                          −                               .
+                                                                 e−(φ1 )∗ (x) dx        e−(φ2 )∗ (x) dx L1 (Rd )
+                                                          R                        R
+                 2                        2                   Rd                     Rd
+
+Proof. Denote
+                                                               φ0 + φ 1
+                                                      φ :=              .
+                                                                  2
+
+                                                               11
+For any x1 , x2 ∈ Rd , one has
+                                                                               
+             ∗   x1 + x 2             1             1          1         1
+          φ                 = sup       ⟨x1 , y⟩ + ⟨x2 , y⟩ − φ1 (y) − φ2 (y)
+                    2         y∈Rd    2             2          2         2
+                                                                                               
+                                       1              1                   1             1
+                            ≤ sup        ⟨x1 , y1 ⟩ − φ1 (y1 ) + sup        ⟨x2 , y2 ⟩ − φ2 (y2 )
+                              y1 ∈Rd   2              2          y2 ∈Rd   2             2
+                                1               1
+                            =     (φ1 )∗ (x1 ) + (φ2 )∗ (x2 ),
+                                2               2
+i.e.,
+                                 ∗ x1 +x2
+                                                         ∗
+                                                                 1/2         ∗
+                                                                                      1/2
+                            e−φ (     2   )
+                                                 ≥ e−(φ1 ) (x1 )        e−(φ2 ) (x2 )      .
+                                     ∗                   ∗                  ∗
+Applying Theorem 3.1 to e−(φ0 ) ( · ) , e−(φ1 ) ( · ) , and e−φ ( · ) , there exists v ∈ Rd such that
+                                         ∗                          ∗           2
+                               e−(φ1 ) ( · )         e−(φ2 ) ( · −v)
+                                      ∗         −
+                                                       e−(φ2 )∗ (x) dx L1 (Rd )
+                            R                     R
+                            Rd
+                               e−(φ1 ) (x) dx       Rd
+                                                        ∗
+                                                    e−φ (x) dx
+                                               R
+                                                 Rd
+                          ≲d R                     1/2 R                    1/2 − 1.
+                                Rd
+                                   e−(φ1 )∗ (x) dx        Rd
+                                                             e−(φ2 )∗ (x) dx
+
+Rewrite the right-hand side as
+                                                            
+                                       I(φ1 ) + I(φ2 )
+                                  exp                  − I(φ) − 1,
+                                              2
+                                        
+which is less than 2 I(φ1 )+I(φ
+                           2
+                               2)
+                                   − I(φ) for I(φ1 )+I(φ
+                                                    2
+                                                        2)
+                                                           − I(φ) small enough. On the other hand,
+the announced result also holds for I(φ1 )+I(φ
+                                          2
+                                               2)
+                                                  − I(φ) large, since one always has
+                                             ∗                          ∗       2
+                                 e−(φ1 ) ( · )      e−(φ2 ) ( · −v)
+                                        ∗       −                              ≤ 4.
+                                                      e−(φ2 )∗ (x) dx L1 (Rd )
+                             R                    R
+                              Rd
+                                 e−(φ1 ) (x) dx    Rd
+
+This concludes the proof.
+
+3.2     Stability estimate for the K-MMP
+Given a probability measure µ on Rd with finite first moments and a compact convex set K ⊂ Rd
+with nonempty interior, Proposition 2.3 furnishes a function
+
+                                                             φµ,K
+
+that minimizes Eµ over LipK (Rd ) (equivalently, minimizes Eµ,K over all µ-integrable functions with
+values in R ∪ {∞}). Set
+                                         ψµ,K := (φµ,K )∗ .                                     (3.1)
+Recall that                                       Z
+                                                         e−ψµ,K (x) dx = 1,
+                                                    Rd
+
+
+                                                              12
+and that by Proposition 2.6,
+                                                  mm(ψµ,K ) = µ.                                                                 (3.2)
+This means that ψµ,K solve the K-MMP for µ. We obtain the following stability estimate for the
+K-MMP under variation of the measure µ.
+Proposition 3.3. Let µ, ν be two probability measures on Rd with finite first moments, and let
+K ⊂ Rd be a compact convex set with nonempty interior. There exists v ∈ Rd such that
+
+                        ∥e−ψµ,K( · ) − e−ψν,K ( · −v) ∥L1 (Rd ) ≲d (diam(K)W1 (µ, ν))1/2 .
+
+Proof. By Proposition 3.2, and using that                       e−ψµ,K (x) dx =                      e−ψν,K (x) dx = 1, there exists
+                                                       R                                    R
+                                                           Rd                                   Rd
+v ∈ Rd such that
+                                                                                                                        
+                                                           I(φµ,K ) + I(φν,K )                             φµ,K + φν,K
+             ∥e−ψµ,K( · ) − e−ψν,K ( · −v) ∥2L1 (Rd ) ≲d                       −I                                            .
+                                                                    2                                           2
+
+Using that φµ,K minimizes Eµ on LipK (Rd ) and that the latter is a convex space, one has Eµ (φµ,K ) ≤
+    φ    +φ
+Eµ ( µ,K 2 ν,K ), i.e.,
+         Z                               Z                                                
+                                             φµ,K (y) + φν,K (y)              φµ,K + φν,K
+             φµ,K (y) dµ(y) + I(φµ,K ) ≤                         dµ(y) + I                    ,
+          Rd                              Rd          2                            2
+
+i.e.,                                                                 Z
+                                         φµ,K + φν,K                1
+                     I(φµ,K ) − I                           ≤                    φν,K (y) − φµ,K (y) dµ(y).
+                                              2                     2       Rd
+
+Similarly,                                                            Z
+                                         φµ,K + φν,K                1
+                     I(φν,K ) − I                           ≤                    φµ,K (y) − φν,K (y) dν(y).
+                                              2                     2   Rd
+
+Therefore,
+                                                               
+         I(φµ,K ) + I(φν,K )
+                                                                             Z
+                                             φµ,K + φν,K                1
+                             −I                                     ≤                 φν,K (y) − φµ,K (y) d(µ − ν)(y).
+                  2                               2                     4        Rd
+
+Since φµ,K and φν,K belong to LipK (Rd ), the function φν,K − φµ,K is diam(K)-Lipschitz. Using
+the Kantorovich–Rubinstein duality formula (1.7), we deduce that
+                                                      
+                I(φµ,K ) + I(φν,K )       φµ,K + φν,K      1
+                                    −I                   ≤ diam(K)W1 (µ, ν),
+                         2                      2          4
+
+as claimed.
+
+3.3     Error estimate for the K-MMP
+For a given µ we thus obtain solutions ψµ,K and ψµ of the K-MMP and the MMP, respectively.
+The next result makes precise sense of the intuition that the former should converge to the latter as
+K increases to Rd (this means that L → ∞ below).
+
+
+
+                                                                13
+Proposition 3.4. Let µ be a centered probability measure on Rd , not supported on a hyperplane,
+and let K ⊂ Rd be a compact convex set with      R nonempty interior. Let L > 0 be Rsuch that BL ⊂ K.
+There exists v ∈ Rd such that, for all R ≥ Rd ∥y∥ dµ(y) and 0 < r ≤ inf w∈S d−1 Rd |⟨w, y⟩| dµ(y),
+                                                                                   √
+                ∥e−ψµ ( · ) − e−ψµ,K ( · −v) ∥L1 (Rd ) ≲d,R/r 1 + (rL)(d−1)/2 e−rL/(4 d)
+
+(recall (1.4) and (3.2)).
+   The proof of Proposition 3.4 relies on Proposition 3.5 that is proved in subsection 3.4. It will be
+convenient to use the notation
+                                             φµ := ψµ∗ ,                                         (3.3)
+and we continue to use the notation (3.1).
+Proof of Proposition 3.4. Using Proposition 3.2 and the fact that Eµ is the sum of I and a linear
+term, there exists v ∈ Rd such that (recall (3.3))
+                                                                                        
+                                                  Eµ (φµ ) + Eµ (φµ,K )        φµ + φµ,K
+             ∥e−ψµ − e−ψµ,K ( · −v) ∥2L1 (Rd ) ≲d                       − Eµ               .
+                                                            2                      2
+                                             φ +φ
+Since φµ is a minimizer, Eµ (φµ ) ≤ Eµ ( µ 2 µ,K ),
+
+                            ∥e−ψµ − e−ψµ,K ( · −v) ∥2L1 (Rd ) ≲d Eµ (φµ,K ) − Eµ (φµ ).
+
+Since φµ,K minimizes Eµ over LipK (Rd ) (recall Proposition 2.3),
+
+              ∥e−ψµ − e−ψµ,K ( · −v) ∥2L1 (Rd ) ≲d Eµ (φ) − Eµ (φµ ),     for all φ ∈ LipK (Rd ).
+
+We will build a suitable competitor φ ∈ LipK (Rd ).
+    By Proposition 3.5, there exists v ′ ∈ Rd and a constant Cd ∈ R depending only on d such that
+ψµ (−v ′ ) < ∞ and
+                                           r
+                          ψµ (x − v ′ ) ≥ √ ∥x∥ − Cd − d log R, x ∈ Rd .                     (3.4)
+                                         2 d
+We choose
+                                 φ(y) := sup (⟨x, y⟩ − ψµ (x − v ′ )).
+                                                  x∈K
+
+It is verified that φ ∈ LipK (R ), that φ (x) = ψµ (x − v ′ ) for all x ∈ K, and that φ∗ (x) = ∞ for all
+                                  d          ∗
+
+x ∈ Rd \ K. For any y ∈ Rd , one has φ(y) = supx∈K (⟨x, y⟩ − ψµ (x − v ′ )) ≤ supx∈Rd (⟨x, y⟩ − ψµ (x −
+v ′ )) = supx∈K (⟨x + v ′ , y⟩ − ψµ (x)) = φµ (y) + ⟨v ′ , y⟩. Therefore,
+                      Z                    Z                                Z
+                             φ(y) dµ(y) ≤      [φµ (y) + ⟨v ′ , y⟩] dµ(y) =   φµ (y) dy,
+                       Rd                    Rd                              Rd
+
+and thus
+                                 Eµ (φ) − Eµ (φµ ) ≤ I(φ) − I(φµ ).
+By (2.3), as µ is a probability measure, Rd e−ψµ (x) dx = 1, i.e., I(φµ ) = 0, so
+                                         R
+
+                                           Eµ (φ) − Eµ (φµ ) ≤ I(φ).
+
+
+                                                        14
+One has
+                           Z                                             Z
+                                        −φ∗ (x)                                               ′
+           I(φ) = − log             e              dx = − log              e−ψµ (x−v ) dx
+                               Rd                                        K
+                                        Z                                  !                            Z                               !
+                                                          −ψµ (x−v ′ )                                                  −ψµ (x−v ′ )
+                 = − log 1 −                          e                  dx       ≤ − log 1 −                       e                  dx .
+                                             Rd \K                                                       Rd \BL
+
+
+Chaining the above estimates and using also that ∥e−ψµ ( · ) − e−ψµ,K ( · −v) ∥L1 (Rd ) ≤ ∥e−ψµ ( · ) ∥L1 (Rd ) +
+∥e−ψµ,K ( · −v) ∥L1 (Rd ) = 2, we deduce that
+
+                        ∥e−ψµ ( · ) − e−ψµ,K ( · −v) ∥L1 (Rd )
+                                                                             !!1/2 
+                                                      Z                            
+                                                                         ′
+                         ≲d min 1, − log 1 −                    e−ψµ (x−v ) dx
+                                                        Rd \BL                     
+                                    Z                                        !1/2
+                                                      −ψµ (x−v ′ )
+                           ≲                      e                  dx               .
+                                     Rd \BL
+
+Using (3.4),
+                       Z                                                        d                          √
+                                            −ψµ (x−v ′ )                     R
+                                                                                          1 + (rL)d−1 e−rL/(2 d) ,
+                                                                                                     
+                                        e                   dx ≲d
+                        Rd \BL                                               r
+which concludes the proof.
+
+3.4     A priori growth estimate à la Wang–Zhu
+The proof of Proposition 3.4 relied on an a priori growth estimate, Proposition 3.5. The statement
+of Proposition 3.5 below is the analogue in the setting of weak solutions of the key a priori estimate
+in the setting of classical solutions (in the toric Kähler–Einstein literature) that itself essentially
+goes back to Wang–Zhu, see [9, subsection 3.4, Proposition 1]. Our argument is completely different
+from the original geometric approach and generalizes it.
+Proposition  3.5. Let µ be a centered probability measure on Rd , not supported on a hyperplane.
+Let R ≥ Rd ∥y∥ dµ(y) and 0 < r ≤ inf w∈S d−1 Rd |⟨w, y⟩| dµ(y). There exists v ∈ Rd and a constant
+        R                                   R
+
+Cd ∈ R depending only on d such that ψµ (−v) < ∞ and, for all x ∈ Rd ,
+                                                           r
+                                              ψµ (x − v) ≥ √ ∥x∥ − Cd − d log R.
+                                                          2 d
+   The proof makes use a measure-splitting trick, proved in Lemma 3.7 below.
+Proof of Proposition 3.5. Let (ei )1≤i≤d denote the canonical basis of Rd . Let
+
+                                    wi ∈ S d−1 ,              µi,1 + µi,2 = µ,                i ∈ {1, . . . , d},                             (3.5)
+
+be obtained by applying Lemma 3.7 d times (with e = e1 , . . . , ed ). Denoting yi,1 and yi,2 the
+barycenters of µi,1 and µi,2 , we have
+
+                                                 yi,1 , yi,2 ∈ Rei ,              i ∈ {1, . . . , d}.                                         (3.6)
+
+                                                                             15
+It will be key to show that these barycenters are a priori bounded away from the origin (this is not
+a consequence of Lemma 3.7). We will obtain that towards the end of this proof.
+    First, note there exists v ∈ Rd such that (recall (3.3)),
+
+                        φµ (yi,1 ) + ⟨v, yi,1 ⟩ = φµ (yi,2 ) + ⟨v, yi,2 ⟩,           i ∈ {1, . . . , d}.         (3.7)
+
+Indeed, this amounts to solving the matrix equation
+                                     
+                          yi,2 − yi,1 1≤i≤d v = (φµ (yi,1 ) − φµ (yi,2 ))1≤i≤d ,
+
+where, by Lemma 3.7, each row of the matrix on the left is a multiple of ei . This equation is solvable
+since the i-th row is zero iff the i-th column on the right is zero.
+    Using that µi,1 (Rd ) + µi,2 (Rd ) = µ(Rd ) = 1, and (3.7), one has, for i ∈ {1, . . . , d} and j ∈ {1, 2},
+
+          φµ (yi,j ) + ⟨v, yi,j ⟩ = µi,1 (Rd )(φµ (yi,1 ) + ⟨v, yi,1 ⟩) + µi,2 (Rd )(φµ (yi,2 ) + ⟨v, yi,2 ⟩).
+
+Next, convexity of φµ and Jensen’s inequality give
+                                         Z                            Z
+                                     1                             1
+              φµ (yi,j ) = φµ                 y dµ i,j (y)  ≤               φµ (y) dµi,j (y).
+                                µi,j (Rd ) Rd                 µi,j (Rd ) Rd
+
+Combined with µi,1 + µi,2 = µ and then that µ is centered, this implies
+                                    Z                         Z
+          φµ (yi,j ) + ⟨v, yi,j ⟩ ≤   φµ (y) + ⟨v, y⟩ dµ(y) =   φµ (y) dµ(y) = Eµ (φµ ),                         (3.8)
+                                          Rd                                    Rd
+
+where the last equality holds since by (2.3), Rd e−ψµ (x) dx = 1 (µ is a probability measure), i.e.,
+                                                   R
+
+I(φµ ) = 0. Thus, (3.8) and the fact that φµ is a minimizer of Eµ (by Proposition 2.1),
+                                                                         
+                                                                     1
+                           φµ (yi,j ) + ⟨v, yi,j ⟩ ≤ Eµ (φµ ) ≤ Eµ     ∥·∥ .
+                                                                     R
+
+Using that the Legendre transform of R1 ∥ · ∥ is the convex indicator function of B1/R ,
+                                          Z
+                                        1
+              φµ (yi,j ) + ⟨v, yi,j ⟩ ≤      ∥y∥ dµ(y) − log Vol(B1/R ) ≤ Cd + d log R,                          (3.9)
+                                        R Rd
+
+where Cd = 1 − log |B1 | (remember that |B1 | depends on the dimension d).
+   For 1 ≤ i ≤ d and 1 ≤ j ≤ 2, one has (recall (3.5) and that ∥wi ∥ = 1)
+
+                                   ∥yi,j ∥ ≥ |⟨wi , yi,j ⟩| ≥ µi,j (Rd )|⟨wi , yi,j ⟩|.
+
+The splitting properties of Lemma 3.7 imply
+                                                                            Z
+                           d                          d
+                    µi,1 (R )|⟨wi , yi,1 ⟩| + µi,2 (R )|⟨wi , yi,2 ⟩| =             |⟨wi , y⟩| dµ(y) ≥ r,
+                                                                                d
+                                                                            ZR
+                    µi,1 (Rd )|⟨wi , yi,1 ⟩| − µi,2 (Rd )|⟨wi , yi,2 ⟩| =           ⟨wi , y⟩ dµ(y) = 0.
+                                                                             Rd
+
+
+
+
+                                                           16
+Altogether,
+                                                                  r
+                                    ∥yi,j ∥ ≥ µi,j (Rd )|⟨wi , yi,j ⟩| ≥
+                                                                    .
+                                                                  2
+By (3.6), the points yi,j belong to the d lines √ span{ei }, with ⟨ei , yi,1 ⟩ ≥ 0 and ⟨ei , yi,2 ⟩ ≤ 0. We
+deduce that the closed ball of radius r/(2 d) belongs to the convex hull of the points yi,j . The
+growth estimate now follows by combining this fact with the estimate (3.9), and using that ψµ ( · − v)
+is the Legendre transform of φµ ( · ) + ⟨v, · ⟩.
+    It remains to check that ψµ (−v) < ∞. Note ψµ (0 − v) = supy∈Rd [⟨0 − v, y⟩ − φµ (y)] =
+− inf y∈Rd [φµ (y) + ⟨v, y⟩] which is finite by (3.7).
+Remark 3.6. One is tempted to invoke [19, Lemma 2] that gives an estimate of a convex function ψ
+in terms of its so-called Minkowski functional ∥ · ∥ψ ; however, it is not clear to us whether that
+result can easily be used to prove Proposition 3.5 without having a Lipschitz bound on ψµ which is
+of course a bit circular, as we are trying to establish a one-sided sub-differential estimate, in essence.
+Lemma 3.7. Let µ be a centered probability measure on Rd , and let e ∈ S d−1 . There exists
+w ∈ S d−1 and two measures µ1 , µ2 on Rd with positive mass such that µ = µ1 + µ2 , ⟨w, y⟩ ≥ 0 for
+all y ∈ supp µ1 , ⟨w, y⟩ ≤ 0 for all y ∈ supp µ2 , and the barycenters of µ1 and µ2 belong to the line
+span{e}.
+Proof. Let
+        R us regularize µ by convolution. Let u ∈ C (R , R+ ) be a radial function supported on
+                                                   ∞   d
+
+B1 with Rd u(y) dy = 1. For any ε > 0, let
+                                                            Z
+                ε        −1/d                        ε
+               u : y 7→ ε     u(y/ε),              f : y 7→    uε (y − z) dµ(z),
+                                                                              Rd
+
+and let µε denote the absolutely continuous measure with density f ε . It is verified that µε is a
+centered probability measure, and that the following uniform integrability condition holds:
+                                            Z
+                                lim lim sup        ∥y∥ dµε (y) = 0.                         (3.10)
+                                  L→∞     ε→0      Rd \BL
+
+   Let (ei )1≤i≤d denote the canonical basis of Rd . Assume without loss of generality that
+
+                                                   e = ed .
+
+   For any v ∈ S d−1 , let Hv denote the closed half-space {y ∈ Rd | ⟨v, y⟩ ≥ 0}. Let us consider the
+function                                         Z                
+                       F ε : S d−1 → Rd−1 ,     v 7→             ⟨ei , y⟩ dµε (y)             .
+                                                            Hv                      1≤i≤d−1
+
+Since µε is centered, the function F ε is odd (i.e., F ε (v) + F ε (−v) = 0). By the dominated
+convergence theorem and the absolute continuity of µε , the function F ε is also continuous. Then,
+the Borsuk–Ulam theorem implies that there exists wε ∈ S d−1 such that F ε (wε ) = 0.
+   For ε > 0, let µε1 := µε Hwε and µε2 := µε H−wε . Then µε = µε1 + µε2 , and, since F ε (wε ) = 0,
+the barycenters of µε1 and µε2 belong to span{ed }.
+   By the compactness of S d−1 and Prokhorov’s theorem, there exists a decreasing sequence (εn )n≥0
+approaching zero, a vector w ∈ S d−1 , and measures µ1 , µ2 on Rd such that wεn converges to w
+and, for j ∈ {1, 2}, µεj n converges weakly to µj . Testing against appropriate bounded continuous
+functions, one has µ = µ1 + µ2 , ⟨w, y⟩ ≥ 0 for all y ∈ supp µ1 , and ⟨w, y⟩ ≤ 0 for all y ∈ supp µ2 .
+
+
+                                                       17
+    Using also the uniform integrability    property (3.10), one has, for 1 ≤ i ≤ d − 1 and 1 ≤ j ≤ 2,
+    ⟨ei , y⟩ dµj (y) = limn→∞ Rd ⟨ei , y⟩ dµεj n (y) = 0, so the barycenters of µ1 and µ2 belong to
+R                             R
+    Rd
+span{ed }.
+    We did not yet prove that µ1 and µ2 have positive mass, but since µ is centered, if, e.g.,
+µ1 (Rd ) = 0, then one has ⟨w, y⟩ = 0 for all y ∈ supp µ2 , and thus one can replace µ1 and µ2 by two
+equal measures, i.e., µ2 /2 and µ2 /2. This concludes the proof.
+Remark 3.8. Conceptually, assuming without loss of generality that e = ed , the above proof
+amounts to applying a version of the ham sandwich theorem to the signed measures ⟨ei , y⟩ dµ(y)
+for 1 ≤ i ≤ d − 1 and to, e.g., the uniform measure on the unit ball B1 . See also [6], where a
+similar regularization argument is used to prove a version of the ham sandwich theorem for general
+measures. Lemma 3.7 also brings to mind a trick used by Lehec [21, section 3].
+
+3.5         Proof of the main estimate
+The proof of Theorem 1.3 now results from a simple combination of Propositions 3.3 and 3.4.
+Proof of Theorem 1.3. By a simple rescaling argument (1.8), assume that µ and ν are probability
+measures. Together with (2.3) this means ∥e−ψµ ( · ) − e−ψν ( · −v) ∥L1 (Rd ) cannot be greater than 2;
+accordingly, we may assume without loss of generality that W1 (µ, ν)/R is smaller than an arbitrary
+positive constant, as long as this constant depends only on d and R/r.
+   For now, let us assume that W1 (µ, ν)/R ≤ r/(2R). Then, using the Kantorovich–Rubinstein
+duality formula (1.7),
+          Z                Z               Z                      Z
+              ∥y∥ dν(y) =      ∥y∥ dµ(y) −     ∥y∥ d(µ − ν)(y) ≤       ∥y∥ dµ(y) + W1 (µ, ν)
+                Rd                    Rd                 Rd                            Rd
+                                    r 3
+                                 ≤R+ ≤ R
+                                    2 2
+and, similarly,
+                                 Z                                 Z
+                                                                                                          r
+                           inf        |⟨w, y⟩| dν(y) ≥     inf             |⟨w, y⟩| dµ(y) − W1 (µ, ν) ≥     .
+                      w∈S d−1    Rd                      w∈S d−1      Rd                                  2
+
+         By Propositions 3.3 and 3.4 with K = BL for some L > 0: there exists v, v2 , v3 ∈ Rd such that
+
+             ∥e−ψµ ( · ) − e−ψν ( · −v) ∥L1 (Rd ) ≤ ∥e−ψµ ( · ) − e−ψµ,BL (·−v2 ) ∥L1 (Rd )
+                                                   + ∥e−ψν ( · −v) − e−ψν,BL (·−v3 ) ∥L1 (Rd )
+                                                 + ∥e−ψµ,BL (·−v2 ) − e−ψν,BL (·−v3 ) ∥L1 (Rd )
+                                                                                √
+                                                ≲d,R/r 1 + (rL)(d−1)/2 e−rL/(8 d) + (LW1 (µ, ν))1/2 .
+                       √
+Choosing L = 8 r d log(1 + R/W1 (µ, ν)), this yields
+                                                                                                 1/2
+                                                                       W1 (µ, ν)            R
+                   ∥e−ψµ ( · ) − e−ψν ( · −v) ∥L1 (Rd ) ≲d,R/r                   log 1 +                 ,
+                                                                          R              W1 (µ, ν)
+as announced.
+
+                                                                 18
+4     Semidiscrete MMP
+In this section, we assume that ν is a centered probability measure on Rd that is not supported on a
+hyperplane and that has finite support. The measure ν should be thought of as approximating the
+measure µ for which we are trying to solve the MMP, i.e., find mm−1 (µ) (1.5). Then, according
+to Theorem 1.3, ψν (1.4) is an approximation of ψµ (modulo a translation). The idea is then to
+recast the MMP for the finitely-supported ν as the minimization of an energy over RN . The latter,
+in turn, is equivalent to considering piecewise affine competitors for a bona fide MMP. Here, one
+makes use of Legendre duality to go back and forth between vectors and such competitors. This
+approach gives a solution of the MMP for such ν (Proposition 4.2).
+    The discrete problem and its associated energy functional Eν is introduced in subsection 4.1,
+and its relation to the original (continuous) MMP and its energy Eν is described in Propositions 4.1
+and 4.2. In subsection 4.2, we compute the first and second derivatives of the discrete energy
+functional Eν . This is motivated by subsection 4.3, in which we describe a damped Newton method
+for solving the discrete MMP.
+
+4.1    Discrete problem
+We need to introduce some notation. We denote by N ∈ N the number of elements in supp ν, and
+we let (yi )1≤i≤N be such that supp ν = {yi | 1 ≤ i ≤ N }.
+   For any vector Φ = (Φi )1≤i≤N ∈ RN , we define Φ∗ : Rd → R by
+
+                                   Φ∗ (x) := max (⟨x, yi ⟩ − Φi ).                             (4.1)
+                                             1≤i≤N
+
+The function Φ∗ may be interpreted as the Legendre transform of the function assigning the values
+Φi to the points yi and the value ∞ to all points of Rd \ supp ν. Observe that Φ∗∗ , the Legendre
+transform of Φ∗ , is the largest convex function φ : Rd → R ∪ {∞} satisfying φ(yi ) ≤ Φi for all
+1 ≤ i ≤ N.
+    Let us define discrete counterparts to the functionals I and Eν from (2.1) and (2.2) by letting,
+for any Φ ∈ RN ,
+                           Z
+                                  ∗                             X
+            I(Φ) := − log     e−Φ (x) dx,             Eν (Φ) :=       Φi ν({yi }) + I(Φ).
+                            Rd                                  1≤i≤N
+
+    The functional Eν is related to Eν as follows.
+
+Proposition 4.1. For any Φ ∈ Rn , one has Eν (Φ∗∗ ) ≤ Eν (Φ). Moreover, one has Eν (Φ∗∗ ) = Eν (Φ)
+if and only if Φi = Φ∗∗ (yi ) for all 1 ≤ i ≤ N .
+Proof. The function Φ∗ is convex and lower semicontinuous. Therefore, Φ∗∗∗ = Φ∗ , and thus
+I(Φ∗∗ ) = I(Φ). We conclude the proof using that Φ∗∗ (yi ) ≤ Φi for all 1 ≤ i ≤ N .
+   We can now show that, for the finitely supported measure ν, the moment measure problem
+reduces to the problem of minimizing Eν .
+Proposition 4.2. The function Eν admits a minimizer on RN , and for any such minimizer Φ ∈ RN ,
+Φ∗∗ coincides with φν up to addition of an affine function.
+
+
+
+                                                 19
+Proof. Using Proposition 4.1 and then the fact that φν minimizes Eν (see Proposition 2.1), one has,
+for any Φ ∈ RN ,
+                                   Eν (Φ) ≥ Eν (Φ∗∗ ) ≥ Eν (φν ).                             (4.2)
+   Let Φν := (φν (yi ))1≤i≤N . Observe that, for all x ∈ Rd ,
+
+               (Φν )∗ (x) = max (⟨x, yi ⟩ − φν (yi )) ≤ sup (⟨x, y⟩ − φν (y)) = (φν )∗ (x).
+                           1≤i≤N                         y∈Rd
+
+Thus, I(Φν ) ≤ I(φν ), and Eν (Φν ) ≤ Eν (φν ). Using (4.2), Φν minimizes Eν , and Eν (Φν ) = Eν (φν ).
+    For any minimizer Φ ∈ RN of Eν , one has Eν (Φ) = Eν (Φν ) = Eν (φν ). Then, the inequalities in
+(4.2) become equalities. RThis implies that Φ∗∗ minimizes Eν . By Proposition 2.1, Φ∗∗ has moment
+                                 ∗
+measure λν, where λ = Rd e−Φ (x) dx. Using Theorem 1.2, we deduce that Φ∗∗ coincides with φν
+up to addition of an affine function, as announced.
+
+4.2    Derivatives of the discrete energy and Laguerre diagrams
+Given Φ ∈ RN , all information about the convex functions Φ∗ and Φ∗∗ can be computed from the
+vector Φ, for instance using a standard convex hull algorithm and the fact the epigraph of Φ∗∗ is the
+unbounded convex polygon generated by the points {(yi , Φi ) | 1 ≤ i ≤ N } and by the ray spanned
+by the last element of the canonical basis of Rd+1 .
+   For any Φ ∈ RN and 1 ≤ i ≤ N , let us define the Laguerre cell
+
+                     Lagi (Φ) := {x ∈ Rd | ∀1 ≤ j ≤ N, ⟨x, yj − yi ⟩ ≤ Φj − Φi }.                 (4.3)
+
+Observe that Lagi (Φi ) is either empty or a (potentially unbounded) polyhedron of dimension d or
+less. It follows from the definition (4.1) of Φ∗ that
+
+                                    Φ∗ = ⟨yi , ·⟩ − Φi   on Lagi (Φ).                             (4.4)
+
+Moreover, one has 1≤i≤N Lagi (Φ) = Rd , and int(Lagi (Φ)) ∩ int(Lagj (Φ)) = ∅ whenever i ̸= j. The
+                   S
+
+resulting polyhedral partition of Rd is typically called the Laguerre diagram, or power diagram,
+associated to the points yi and the weights Φi . We refer to [18] for a more detailed overview of these
+notions and how they are used in the setting of semidiscrete optimal transport. Let us only mention
+here that the notion of Laguerre cells is related to the subdifferential of Φ∗∗ : if x ∈ Lagi (Φ), then
+yi ∈ ∂Φ∗ (x), and thus x ∈ ∂Φ∗∗ (yi ).
+    Let us study the first and second derivatives of the energy Eν . A key observation used in the
+analysis below is that adjusting the values of the elements of the vector Φ amounts to adjusting the
+N hyperplanes involved in the definition (4.1) of Φ∗ .
+Lemma 4.3. For any Φ ∈ RN and 1 ≤ i ≤ N , one has
+                           Z                Z
+                         ∂         ∗                     ∗
+                               e−Φ (x) dx =           e−Φ (x) dx.                                 (4.5)
+                        ∂Φi Rd               Lagi (Φ)
+
+Proof. Let (ej )1≤j≤N denote the canonical basis of RN . It follows from (4.3) that, for any 1 ≤ j ≤ N
+and x ∈ int(Lagj (Φ)), there exists cΦ,x > 0, depending only on Φ and x, such that, for all
+h ∈ [−cΦ,x , cΦ,x ], one has x ∈ Lagj (Φ + hei ). Using also (4.4), we deduce that
+                ∂ −Φ∗ ( · )    ∂ Φi −⟨·,yi ⟩                     ∗
+                   e        =     e          = eΦi −⟨·,yi ⟩ = e−Φ ( · )   on int(Lagi (Φ))
+               ∂Φi            ∂Φi
+
+                                                   20
+and, for j ̸= i,
+                             ∂ −Φ∗ ( · )    ∂ Φj −⟨yi ,·⟩
+                                e        =     e          =0      on int(Lagj (Φ)).
+                            ∂Φi            ∂Φi
+                            ∗
+On the other hand e−Φ (x) isSnot necessarily differentiable with respect to Φ if x belongs to the
+Lebesgue negligible set Rd \ 1≤j≤N int(Lagj (Φ)). Still, it follows from the definition (4.1) of Φ∗
+that, for all h ∈ R \ {0} and x ∈ Rd , one has Φ∗ (x) − |h| ≤ (Φ + hei )∗ (x) ≤ Φ∗ (x) + |h|, and thus
+                        ∗            ∗
+             e−(Φ+hei ) (x) − e−Φ (x)   max{e|h| − 1, 1 − e|h| } −Φ∗ (x)   e|h| − 1 −Φ∗ (x)
+                                      ≤                         e        =         e        .
+                         h                       |h|                          |h|
+Then, by the dominated convergence theorem,
+                                                   ∗        ∗
+                                        e−(Φ+hei ) (x) − e−Φ (x)
+              Z                      Z
+           ∂       −Φ∗ (x)
+                 e         dx = lim                              dx
+          ∂Φi Rd                h→0 Rd               h
+                                h̸=0
+                                  X Z                 ∂ −Φ∗ (x)
+                                                                     Z
+                                                                                  ∗
+                              =                          e      dx =           e−Φ (x) dx,
+                                       int(Lagj (Φ)) ∂Φi              Lagi (Φ)
+                                         1≤j≤N
+
+as announced.
+Proposition 4.4. For any Φ ∈ RN and 1 ≤ i ≤ N , one has
+                                                            ∗
+                                                         e−Φ (x) dx
+                                               R
+                          ∂Eν                   Lagi (Φ)
+                              (Φ) = ν({yi }) −                      .                            (4.6)
+                                                      e−Φ∗ (x) dx
+                                                 R
+                          ∂Φi                     Rd
+
+Proof. This follows directly from Lemma 4.3 and the definition of Eν .
+    Let us introduce the set U ⊂ RN defined as
+                                U := {Φ ∈ RN | ∀1 ≤ i ≤ N, int(Lagi (Φ)) ̸= ∅}.
+Proposition 4.5. If Φ ∈ RN minimizes Eν , then Φ ∈ U .
+Proof. This follows from the first-order optimality condition ∇Eν (Φ) = 0, where ∇Eν (Φ) is given
+by the formula (4.6), and from the fact that ν({yi }) > 0 for all 1 ≤ i ≤ N .
+Proposition 4.6. Let Φ ∈ U . For any 1 ≤ i ≤ N , one has
+                                                ∗      !2 R               ∗
+                                            e−Φ (x) dx                 e−Φ (x) dx
+                                 R
+                  ∂ 2 Eν           Lagi (Φ)                   Lagi (Φ)
+                         (Φ) =                             −                                     (4.7)
+                   ∂Φ2i                  e−Φ∗ (x) dx                e−Φ∗ (x) dx
+                                    R                          R
+                                      Rd                         Rd
+                                                            ∗
+                                 X Lagi (Φ)∩Lagj (Φ) e−Φ (x) dHd−1 (x)
+                                       R
+                               +                                            .
+                                             ∥yi − yj ∥ Rd e−Φ∗ (x) dx
+                                                       R
+                                 j̸=i
+
+For any 1 ≤ i, j ≤ N with i ̸= j, one has
+                                    R                        R                       
+                                                  −Φ∗ (x)                     −Φ∗ (x)
+                      2
+                     ∂ Eν              Lagi (Φ)
+                                                e         dx       Lagj (Φ)
+                                                                            e         dx
+                             (Φ) =                                      2                       (4.8)
+                    ∂Φi ∂Φj                                    ∗ (x)
+                                                     R
+                                                          e −Φ       dx
+                                                       Rd
+                                                                ∗
+                                                           e−Φ (x) dHd−1 (x)
+                                      R
+                                        Lagi (Φ)∩Lagj (Φ)
+                                   −                                             .
+                                             ∥yi − yj ∥ Rd e−Φ∗ (x) dx
+                                                         R
+
+
+                                                       21
+Proof. Remember that, using (4.4), one has, for any 1 ≤ i ≤ N ,
+                            Z                     Z
+                                        ∗
+                                     e−Φ (x) dx =     eΦi −⟨x,yi ⟩ dx.
+                                  Lagi (Φ)                          Rd
+
+Studying the geometric structure of the Laguerre cells Lagj (Φ), for 1 ≤ j ≤ N , as described by
+equation (4.3), and using the fact that Φ ∈ U , one obtains
+                                                                                ∗
+                                                         X Lagi (Φ)∩Lagj (Φ) e−Φ (x) dHd−1 (x)
+           Z                     Z                         R
+        ∂               ∗                      ∗
+                    e−Φ (x) dx =            e−Φ (x) dx −
+       ∂Φi Lagi (Φ)                Lagi (Φ)                            ∥yi − yj ∥
+                                                                     j̸=i
+
+and, for j ̸= i,
+                                                                                    ∗
+                                                                                e−Φ (x) dHd−1 (x)
+                          Z                                R
+                     ∂                    −Φ∗ (x)          Lagi (Φ)∩Lagj (Φ)
+                                      e             dx =                                            .
+                    ∂Φj    Lagi (Φ)                                         ∥yi − yj ∥
+We easily conclude, using the above results and equations (4.5) and (4.6).
+
+4.3    Damped Newton method
+In view of the above computations, one can attempt to compute a minimizer of Eν using a damped
+Newton method, that we describe as Algorithm 4.1. Observe that this method is largely inspired by
+a similar approach used in the setting of the optimal transform problem, see e.g. [18].
+
+Algorithm 4.1 Damped Newton method for computing ψν
+Require: a tolerance ε > 0, an initialization Φ(0) ∈ U .
+ for k ∈ N do
+    if ∥∇Eν (Φ(k) )∥ ≤ ε∥(ν({yi }))1≤i≤N ∥ then
+                                      (k) ∗
+         return (Φ(k) )∗ + log Rd e−(Φ ) (x) dx
+                               R
+
+    end if
+    find d(k) ∈ RN s.t. ∇2 Eν (Φ(k) )d(k) = −∇Eν (Φ(k) )
+    τ (k) ← max{2−i | i ∈ N, Φ(k) + 2−i d(k) ∈ U }
+    Φ(k+1) ← Φ(k) + τ (k) d(k)
+ end for
+
+    Algorithm 4.1 is a damped Newton method, since the step size is sometimes reduced to ensure
+that all iterates belong to the set U . This is motivated by the fact that the formulas (4.7) and (4.8)
+for the elements of ∇2 Eν (Φ) are only valid when Φ ∈ U . Remember that Proposition 4.5 guarantees
+that the minimizer of Eν belongs to U .
+    The matrix ∇2 Eν (Φ(k) ) appearing in Algorithm 4.1 is not invertible, since Eν is invariant under
+addition of a vector of the form (a + ⟨v, yi ⟩)1≤i≤N , for a ∈ R and v ∈ Rd . In practice, we rather solve
+                                                                                               Pd
+the linear system Mν (Φ(k) )d(k) = −∇Eν (Φ(k) ) with Mν (Φ(k) ) := ∇2 Eν (Φ(k) ) + uu⊤ + i=1 vi vi⊤ ,
+where u denotes the vector of size N whose all elements are one, and vi denotes the vector
+((yj )i )1≤j≤N . According to (4.7) and (4.8), ∇2 Eν (Φ(k) ) is the sum of a sparse matrix and a matrix
+of rank one, and thus Mν (Φ(k) ) is the sum of a sparse matrix and a matrix of rank d + 2. Elements
+of ∇Eν (Φ(k) ) and ∇2 Eν (Φ(k) ) (and thus Mν (Φ(k) )) can be computed using (4.6), (4.7), (4.8), and
+exact integration formulas for the integrals over Laguerre cells.
+
+                                                               22
+    The question of the invertibility of the matrix Mν (Φ(k) ), and of the convergence of the method
+described in Algorithm 4.1, is left for future work. The analysis of similar Newton methods in the
+setting of optimal transport [18] suggests that it may be useful to modify the damping criterion
+to impose that the iterates are sufficiently far from the boundary of U ; such considerations are
+also left for future work. In practice, on our experiments, we do not observe any issues with the
+damping criterion, nor with solving the linear system Mν (Φ(k) )d(k) = −∇Eν (Φ(k) ) using a sparse
+linear solver.
+
+
+5    Numerical experiments
+We consider different measures µ for which an exact formula for an essentially continuous convex
+function ψµ : Rd → R ∪ {∞} with moment measure µ, and for its Legendre transform φµ , is known.
+In each case, the translation up to which ψµ is unique will be prescribed by the formulas we give for
+ψµ and φµ . We also consider different rules for choosing a finitely supported approximation ν of the
+measure µ.
+    Once ν is chosen, we compute ψν using Algorithm 4.1, with tolerance ε = 10−10 . Algorithm 4.1
+only determines ψν up to a translation, which amounts to adding a linear function to φν . As a
+post-processing step, we choose this translation and linear function so as to minimize the L2 norm
+∥φµ − φν ∥L2 (ν) .
+
+Test case 1. We choose µ as the uniform probability measure on the square [−1, 1]2 . In this
+setting, valid formulas for ψµ and φµ are
+
+                   ψµ (x) = 2 log(1 + ex1 ) − x1 + 2 log(1 + ex2 ) − x2 ,
+                   φµ (y) = (1 + y1 ) log(1 + y1 ) + (1 − y1 ) log(1 − y1 )
+                            + (1 + y2 ) log(1 + y2 ) + (1 − y2 ) log(1 − y2 ) − 4 log 2,
+
+using the convention that t log t = 0 when t = 0 and t log t = ∞ when t < 0. Given a parameter
+n ∈ 2N∗ describing the fineness of the discretization of µ, and letting h := 2/n, we choose ν as
+                                                   n       n
+                                                2   2
+                                         1      X X
+                                 ν :=         2
+                                                        δ(j1 h,j2 h) .
+                                      (n + 1)     n   n
+                                                j1 =− 2 j2 =− 2
+
+
+Observe that in this setting, the number N of points of supp ν is (n + 1)2 , and the Wasserstein
+distance W1 (µ, ν) scales like h, i.e., like n−1 and like N −1/2 .
+
+Test case 2. We choose µ as the uniform probability measure on the triangle with vertices
+(−1, −1), (2, −1), and (−1, 2). In this setting, valid formulas for ψµ and φµ are
+
+                     ψµ (x) = 3 log(1 + ex1 + ex2 ) − x1 − x2 − log 2,
+                     φµ (y) = (1 + y1 ) log(1 + y1 ) + (1 + y2 ) log(1 + y2 )
+                               + (1 − y1 − y2 ) log(1 − y1 − y2 ) − 3 log 3 + log 2,
+
+
+
+
+                                                    23
+using the convention that t log t = 0 when t = 0 and t log t = ∞ when t < 0. Given a discretization
+parameter n ∈ 2N∗ , and letting h := 2/n, we choose ν as
+                                                                      n
+                                                     n    −j1
+                                                         2X
+                                           8         X
+                               ν :=                           δ(j1 h,j2 h) .
+                                    (3n + 2)(3n + 4)   n    n
+                                                            j1 =− 2 j2 =− 2
+
+
+Then, the number N of points of supp ν is (3n + 2)(3n + 4)/8, and the Wasserstein distance W1 (µ, ν)
+scales like h, i.e., like n−1 and like N −1/2 .
+
+Test case 3. We consider again the measure µ and the functions ψµ and φµ from test case 1, but
+experiment with a different rule for choosing the finitely supported measure ν. As in test case 1, we
+let n ∈ 2N∗ be a discretization parameter, and let h := 2/n. For any pair (j1 , j2 ) ∈ Z2 , let us define
+the basis function
+                                                        
+                                                           |y1 − j1 h| |y2 − j2 h|
+                uhj1 ,j2 : Rd → R, y 7→ max 0, 1 − max                ,            ,                (5.1)
+                                                               h           h
+                                                                                     
+                                                             |y1 + y2 − j1 h − j2 h|
+                                                                                        .
+                                                                        h
+
+Observe that the functions uhj1 ,j2 are continuous and piecewise affine, that
+                                                      (
+                                                       1 if k1 = j1 and k2 = j2 ,
+                              uhj1 ,j2 (k1 h, k2 h) =
+                                                       0 else
+
+for all (k1 , k2 ) ∈ Z2 \ {(j1 , j2 )}, and that, for all y ∈ Rd ,        (j1 ,j2 )∈Z2 uj1 ,j2 (y) = 1. We choose ν as
+                                                                                        h
+                                                                      P
+
+                                       n       n
+                                     X 2       2
+                                             X Z                            
+                             ν :=                          uhj1 ,j2 (y) dµ(y) δ(j1 h,j2 h) .                      (5.2)
+                                    j1 =− n       n   Rd
+                                          2 j2 =− 2
+
+
+
+Equivalently, supp ν is unchanged from test case 1, but now, given y ∈ supp ν, one has ν({y}) = h2 /4
+if y ∈ (−1, 1)2 , ν({y}) = h2 /8 if y lies in the relative interior of an edge of the square [−1, 1]2 ,
+ν({y}) = h2 /24 if y ∈ {(−1, −1), (1, 1)}, and ν({y}) = h2 /12 if y ∈ {(−1, 1), (1, −1)}. As in test
+case 1, the number N of points of supp ν is (n + 1)2 , and the Wasserstein distance W1 (µ, ν) scales
+like h, i.e., like n−1 and like N −1/2 .
+    The new formula (5.2) for choosing ν can be motivated as follows. Using the notation of section 4,
+for any 1 ≤ i ≤ N , there exists a pair (j1 , j2 ) ∈ {−n/2, . . . , n/2}2 for which yi = (j1 h, j2 h); let then
+ui := uhj1 ,j2 . When ν is chosen according to (5.2), it is easily verified that, for any Φ ∈ RN , one has
+                 PN
+Eν (Φ) = Eµ ( i=1 Φi ui + 1∞  [−1,1]2 ). Thus, the numerical solution ψν is the Legendre transform of a
+                                                                             PN
+minimizer of Eµ over the finite dimensional vector space of functions { i=1 Φi ui +1∞     [−1,1]2 | Φ ∈ R },
+                                                                                                            N
+
+which can be interpreted as a P 1 finite element space. Accordingly, with the specific choice of ν
+given by (5.2), the numerical method that we use to approximate φµ and ψµ can be understood as
+a P 1 finite element method applied to the minimization of Eµ .
+
+
+
+
+                                                           24
+                           Test case 1                      Test case 2                              Test case 3
+                 0
+            10
+
+
+
+          10−3
+
+
+
+          10−6
+                     102   103 104 105               102    103 104 105                     102      103   104     105
+                           Test case 4                      Test case 5
+                                                                                                    ∥ψµ − ψν ∥L∞ (Rd )
+            100
+                                                                                                    ∥φµ − φν ∥L2 (ν)
+                                                                                                    ∥φµ − φν ∥L1 (ν)
+                                                                                                    N −1/4
+          10−3
+                                                                                                    N −1/2
+                                                                                                    N −3/4
+          10−6                                                                                      N −1
+                     102   103     104     105       102    103      104     105
+
+Figure 1: Approximation error, with respect to the number N of points in supp ν (recall that, by
+(5.3), one has ∥ψµ − ψν ∥L∞ (Rd ) = ∥φµ − φν ∥L∞ (supp µ) ≥ ∥φµ − φν ∥L∞ (ν) in all test cases).
+
+
+Test case 4. We adapt the approach of test case 3 to the problem of test case 2. We consider the
+measure µ and the functions ψµ and φµ from test case 2, and we choose ν as
+                                                 n
+                                         n
+                                         X       2 −i
+                                                 X Z                                
+                                 ν :=                           uhj1 ,j2 (y) dµ(y)       δ(j1 h,j2 h) ,
+                                        j1 =− n       n    Rd
+                                              2 j2 =− 2
+
+
+
+where the basis functions uhj1 ,j2 are defined as in (5.1). Equivalently, supp ν is unchanged from test
+case 2, but now, given y ∈ supp ν, one has ν({y}) = 2h2 /9 if y lies in the relative interior of the
+triangle T := Conv({(−1, −1), (2, −1), (−1, 2)}), ν({y}) = h2 /9 if y lies in the relative interior of an
+edge of T , and ν({y}) = h2 /27 if y is a vertex of T . As in test case 2, the number N of points of
+supp ν is (3n + 2)(3n + 4)/8, and the Wasserstein distance W1 (µ, ν) scales like h, i.e., like n−1 and
+like N −1/2 .
+
+Test case 5. We consider the measure µ and the functions ψµ and φµ from test case 1, and a
+choice of measure ν that is designed to be adapted to the regularity of the function φµ , that we know
+a priori. More precisely, let n ∈ 2N∗ be a discretization parameter as in the previous test cases. For
+t ∈ [−1, 1], let u(t) := (1 + t) log(1 + t) + (1 − t) log(1 − t), so that φµ (y) = u(y1 ) + u(y2 ) − 4 log 2. We
+compute an (n + 1)-point discretization of the interval [−1, 1] by first considering the points −1 and
+1 and then iteratively bisecting a discretization interval [tj1 , tj2 ] that maximizes the L∞ ([tj1 , tj2 ])
+error between u and the affine interpolation of (tj1 , u(tj1 )) and (tj2 , u(tj2 )). We denote by −1 =
+t−n/2 < · · · < tn/2 = 1 the points thus obtained. For convenience, we also choose some arbitrary
+
+                                                                25
+                        Test case 1                     Test case 2                        Test case 3
+            101
+
+
+           10−7
+
+
+
+          10−15
+                  0      5     10    15            0     5        10      15     0             5   10    15
+                         Test case 4                                      Test case 5
+            101
+
+
+
+           10−7
+
+
+          10−15
+                  0      5      10   15            0      5        10    15        20    25        30    35
+                                n=8                n = 16          n = 32          n = 64
+                                n = 128            n = 256         n = 512
+
+Figure 2: Residuals ∥∇Eν (Φ(k) )∥/∥(ν({yi }))1≤i≤N ∥ in Algorithm 4.1, with respect to the iteration
+number k, for different values of the discretization parameter n. The dotted line corresponds to the
+tolerance ε = 10−10 . Iterations k at which damping occurs, i.e., for which τ (k) ̸= 1, are indicated by
+round marks.
+
+
+t−n/2−1 < t−n/2 and tn/2+1 > tn (whose exact value will have no effect on ν). We let
+                                       n       n
+                                     X 2       2
+                                             X Z                             
+                             ν :=                           uj1 ,j2 (y) dµ(y) δ(tj1 ,tj2 ) ,
+                                    j1 =− n       n    Rd
+                                          2 j2 =− 2
+
+
+
+where, for any pair (j1 , j2 ) ∈ {−n/2, . . . , n/2}2 and any y ∈ Rd ,
+                                     
+                                             y1 − tj1       tj1 − y1      y2 − t j 2   tj2 − y2
+       uj1 ,j2 (y) := max 0, 1 − max                    ,              ,             ,            ,
+                                          tj1 +1 − tj1 tj1 − tj1 −1 tj2 +1 − tj2 tj2 − tj2 −1
+                                                                                                       
+                                             y1 − t j 1        y2 − tj2     tj1 − y1        tj2 − y 2
+                                                          +              ,             +
+                                           tj1 +1 − tj1      tj2 +1 − tj2 tj1 − tj1 −1    tj2 − tj2 −1
+
+(compare with equation (5.1)). The points of supp ν are displayed in Figure 3, for some values of
+the discretization parameter n.
+    The approach we use for constructing the adapted measure ν relies on the tensor product
+structure of [−1, 1]2 . Therefore, it cannot be directly extended to the problem of test cases 2 and 4.
+It also relies on the knowledge of the exact solution φµ , and thus cannot be applied to practical
+
+
+                                                            26
+                       n=8                     n = 16                    n = 32                    n = 64
+           1
+
+
+           0
+
+
+         −1
+               −1        0         1    −1         0         1    −1         0         1      −1     0        1
+
+   Figure 3: Points of supp ν in test case 5, for some values of the discretization parameter n.
+
+
+cases for which the exact solution is unknown. Rather, the numerical results indicate that it may be
+of interest in future work to study the possibility of choosing ν adaptively without knowledge of the
+exact solution.
+
+Error norms. The error ∥e−ψµ ( · ) − e−ψν ( · ) ∥L1 (Rd ) from Theorem 1.3 is not easily computable.
+Rather, we compute the errors ∥ψµ − ψν ∥L∞ (Rd ) , ∥φµ − φν ∥L2 (ν) , and ∥φµ − φν ∥L1 (ν) .
+    The errors ∥φµ −φν ∥L2 (ν) , and ∥φµ −φν ∥L1 (ν) are easily computable, since ν is finitely supported.
+The error ∥ψµ − ψν ∥L∞ (Rd ) could be infinite for general µ and ν, but it is finite in all our test cases
+thanks to the fact that we always consider measures µ and ν for which the convex hull Conv(supp ν)
+coincides with supp µ. In this case, one can show that
+
+               ∥ψµ − ψν ∥L∞ (Rd ) = ∥φµ − φν ∥L∞ (supp µ)                                                         (5.3)
+                                                                                  
+                                  = max max(ψµ (x) − ψν (x)), max (φµ (y) − φν (y)) .
+                                                x∈Rd                        y∈supp µ
+
+
+Moreover, the maxima in x and y are reached at points corresponding to vertices of the respective
+epigraphs of ψν and φν (which are unbounded polyhedra), which makes ∥ψµ −ψν ∥L∞ (Rd ) computable.
+    To compare numerical results with Theorem 1.3, one can rely on the following observations.
+Letting R and r be as in Theorem 1.3, by Proposition 3.5, there exist v1 , v2 ∈ Rd and a constant
+Cd > 0 depending only on d such that, for all x ∈ Rd ,
+                     r                                                          r
+      ψµ (x − v1 ) ≥ √ ∥x∥ − Cd − d log R,                       ψν (x − v2 ) ≥ √ ∥x∥ − Cd − d log R.             (5.4)
+                    2 d                                                        2 d
+Thus, for any L > 0,
+
+               ∥e−ψµ ( · ) − e−ψν ( · ) ∥L1 (Rd ) = ∥e−ψµ ( · ) − e−ψν ( · ) ∥L1 (B(v1 ,L))
+                                                   + ∥e−ψµ ( · ) − e−ψν ( · ) ∥L1 (B(v2 ,L))
+                                                   + ∥e−ψµ ( · ) − e−ψν ( · ) ∥L1 (Rd \(B(v1 ,L)∪B(v2 ,L)))
+                                                 ≲d,R/r Ld ∥e−ψµ ( · ) − e−ψν ( · ) ∥L∞ (Rd )
+                                                                                       √
+                                                         + (1 + (rL)d−1 )e−rL/(2 d) ,
+
+
+
+
+                                                            27
+where, using again (5.4), ∥e−ψµ ( · ) − e−ψν ( · ) ∥L∞ (Rd ) ≲d Rd ∥ψµ − ψν ∥L∞ (Rd ) . Choosing L appropri-
+ately, one obtains the estimate
+                                                                                                
+          ∥e−ψµ ( · ) − e−ψν ( · ) ∥L1 (Rd ) ≲d,R/r ∥ψµ − ψν ∥L∞ (Rd ) logd 2 + ∥ψµ − ψν ∥−1
+                                                                                           ∞   d
+                                                                                          L (R )
+                                                                                                   .   (5.5)
+
+Results and comments. The errors between ψµ , φµ and ψν , φν in all test cases and for some
+values of the discretization parameter n are displayed in Figure 1.
+    In test cases 1 and 2, all errors experimentally scale like N −1/2 , i.e., like W1 (µ, ν). This is better
+than the rate W1 (µ, ν)1/2 that could have been expected in view of Theorem 1.3, and of the estimate
+(5.5). This result is not surprising, as we do not know if the exponent in Theorem 1.3 is optimal.
+    In test cases 3 and 4, the modified rule for choosing ν leads to experimentally larger rates of
+convergence in the L2 (ν) and L1 (ν) norms. This highlights the importance of the choice of ν, beyond
+what is reflected by the Wasserstein distance W1 (µ, ν), which scales like N −1/2 in all first fourth test
+cases. We however do not currently know any theoretical guarantee that following the approach used
+in test cases 3 and 4 for choosing the measure ν always leads to such improved rates of convergence.
+The rate of convergence in the L∞ norm is experimentally not improved, although the asymptotic
+constant seems smaller than in test cases 1 and 2.
+    In test case 5, all errors scale like N −1 . This improvement of the rates of convergence is consistent
+with the fact that supp ν has been chosen to be adapted to the regularity of φµ .
+    The residuals at each iteration of Algorithm 4.1 in all experiments are displayed in Figure 2.
+The results in test cases 1, 2, 3, and 4 are similar, and illustrate superlinear convergence of the
+Newton method, up to some artifacts in the last iterations that may be related to numerical precision
+issues. Damping experimentally only occurs in the first few iterations of Algorithm 4.1. In test
+case 5, superlinear convergence is still observed, but more iterations are required. Specifically,
+the number of iterations at which damping occurs is larger, and grows faster with respect to the
+discretization parameter n. This could be related to the fact that, for a fixed value of n, the quantity
+miny∈supp ν ν({y}) is significantly smaller in test case 5 than in the other cases.
+
+
+Acknowledgments
+G. B. thanks Quentin Mérigot for interesting discussion on the topic of this work.
+
+
+References
+ [1] F. Aurenhammer, F. Hoffmann, and B. Aronov. Minkowski-type theorems and least-squares
+     clustering. Algorithmica, 20(1):61–76, 1998.
+ [2] R. J. Berman and B. Berndtsson. Real Monge–Ampère equations and Kähler–Ricci solitons on
+     toric log fano varieties. Ann. Fac. Sci. Toulouse Math. (6), 22(4):649–711, 2013.
+ [3] G. Bonnet, Y. Ji, and Y. A. Rubinstein. Numerical Ricci iteration via optimal transport. In
+     preparation.
+ [4] R. S. Bunch and S. K. Donaldson. Numerical approximations to extremal metrics on toric
+     surfaces. In L. Ji, P. Li, R. Schoen, and L. Simon, editors, Handbook of geometric analysis I,
+
+
+
+                                                     28
+    volume 7 of Advanced Lectures in Mathematics, pages 1–28. International Press, Somerville,
+    MA, 2008.
+ [5] D. Cordero-Erausquin and B. Klartag. Moment measures. J. Funct. Anal., 268(12):3834–3866,
+     2015.
+
+ [6] G. W. Cox and R. D. McKelvey. A ham sandwich theorem for general measures. Social Choice
+     and Welfare, 1(1):75–83, 1984.
+ [7] A. Delalande and S. Farinelli. Regularized moment measures. Potential Anal., 64(2), 2026.
+ [8] A. Delalande and Q. Merigot. Quantitative stability of optimal transport maps under variations
+     of the target measure. Duke Math. J., 172(17):3321–3357, 2023.
+
+ [9] S. K. Donaldson. Kähler geometry on toric manifolds, and some other manifolds with large
+     symmetry. In L. Ji, P. Li, R. Schoen, and L. Simon, editors, Handbook of geometric analysis I,
+     volume 7 of Advanced Lectures in Mathematics, pages 29–75. International Press, Somerville,
+     MA, 2008.
+[10] S. K. Donaldson. Some numerical results in complex differential geometry. Pure Appl. Math.
+     Q., 5(2):571–618, 2009.
+[11] C. Doran, M. Headrick, C. P. Herzog, J. Kantor, and T. Wiseman. Numerical Kähler–Einstein
+     metric on the third del Pezzo. Comm. Math. Phys., 282(2):357–393, 2008.
+[12] M. R. Douglas, R. L. Karp, S. Lukic, and R. Reinbacher. Numerical Calabi–Yau metrics. J.
+     Math. Phys., 49(3), 2008.
+[13] A. Figalli, P. van Hintum, and M. Tiba. Sharp quantitative stability for the Prékopa–Leindler
+     and Borell–Brascamp–Lieb inequalities, 2025.
+[14] S. J. Hall and T. Murphy. Approximating Ricci solitons and quasi-Einstein metrics on toric
+     surfaces. New York J. Math., 22:615–635, 2016.
+
+[15] M. Headrick and T. Wiseman. Numerical Ricci-flat metrics on K3. Classical Quantum Gravity,
+     22(23):4931–4960, 2005.
+[16] M. Headrick and T. Wiseman. Numerical Kähler–Ricci soliton on the second del Pezzo, 2007.
+[17] Y. Ji. Asymptotic and Numerical Analysis in Kähler Geometry: Edge Metrics, Einstein Metrics
+     and Solitons. PhD thesis, University of Maryland, College Park, 2024.
+[18] J. Kitagawa, Q. Mérigot, and B. Thibert. Convergence of a Newton algorithm for semi-discrete
+     optimal transport. J. Eur. Math. Soc. (JEMS), 21(9):2603–2651, 2019.
+[19] B. Klartag. Logarithmically-concave moment measures I. In B. Klartag and E. Milman, editors,
+     Geometric Aspects of Functional Analysis: Israel Seminar (GAFA) 2011-2013, pages 231–260.
+     Springer, Cham, 2014.
+[20] B. Klartag, Q. Mérigot, and F. Santambrogio. Numerical resolution through optimization of
+     det D2 u = f (u). In Book of Abstracts—PGMO Days 2017, page 84, 2017.
+
+
+
+                                                29
+[21] J. Lehec. A direct proof of the functional Santaló Inequality. C. R. Math. Acad. Sci. Paris,
+     347(1-2):55–58, 2009.
+[22] M. Lindsey and Y. A. Rubinstein. Optimal transport via a Monge–Ampère optimization
+     problem. SIAM J. Math. Anal., 49(4):3073–3124, 2017.
+
+[23] J. M. Machado and P. G. R. Ramos. Quantitative stability for the Brascamp–Lieb inequality
+     and moment measures, 2025.
+[24] Q. Mérigot. A multiscale approach to optimal transport. Computer Graphics Forum, 30(5):1583–
+     1592, 2011.
+                                                                                             2 2
+                                                                                ∂2z ∂2z
+[25] V. I. Oliker and L. D. Prussner. On the numerical solution of the equation ∂x 2 ∂y 2 −
+                                                                                              ∂ z
+                                                                                             ∂x∂y  =f
+     and its discretizations, I. Numer. Math., 54(3):271–293, 1989.
+[26] F. Santambrogio. Optimal Transport for Applied Mathematicians, volume 55 of Progress in
+     Nonlinear Differential Equations and Their Applications. Birkhäuser, Cham, 2015.
+
+[27] F. Santambrogio. Dealing with moment measures via entropy and optimal transport. J. Funct.
+     Anal., 271(2):418–436, 2016.
+[28] G. Tian and X. Zhu. Uniqueness of Kähler–Ricci solitons. Acta Math., 184(2):271–305, 2000.
+[29] C. Villani. Optimal Transport, volume 338 of Grundlehren der mathematischen Wissenschaften.
+     Springer, Berlin, 2009.
+
+[30] X.-J. Wang and X. Zhu. Kähler–Ricci solitons on toric manifolds with positive first Chern class.
+     Adv. Math., 188(1):87–103, 2004.
+
+
+
+
+                                                 30
+
