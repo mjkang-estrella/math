@@ -1,0 +1,303 @@
+# I143 — Original I140 audit and weighted boundary-pole control
+
+2026-10-10. **Original I140 new deductions: PASS without repairs at their stated scopes. No new original FAIL or unresolved paid assertion.** The unsuccessful extensions in I140 remain unsuccessful extensions, not assertions retroactively repaired here. Inherited I125 literal canonical-inventory **FAIL**, its distinct ordering-only **PASS**, and I122 general-Lambda **FAIL** remain separate.
+
+**Technical progress:** the boundary-pole geometry in the stated nonnegative-weight, doubly subcritical class admits a qualitative supremum bound. A coupled annular estimate followed by a boundary Pohozaev calculation gives a finite-scale inequality with explicit tail exponent, curvature loss and Hölder loss. Its annular constant is furnished by established, non-effective Liouville/compactness operations. This is not an independently effective evaluation of the bound from numerical data. The latter remains **PARK**. The reflected Green-pressure extension itself remains unpaid. No nomination: eight accepted findings remain eight, with two slots remaining.
+
+All OpenAI theorems **and lower operations** at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb` are stipulated. No upstream truth audit, contradiction inference or ex-falso is performed. External papers are ordinary comparison evidence. No children, shared edits, staging, commits or publication. Active I141/I142 outputs are not dependencies. All other parked branches remain parked, including coherent-interface/infinite-volume screening, H, Brennan endpoint, S128, M-full, FK G, pinned A, Dini C, thermal B and physical P112.
+
+## 1. Original-context gate and verdict boundaries
+
+All decoded fields of `iteration140-nonlinear-elliptic-discovery-task.json` were frozen and read before the PDE audit; its required SHA-256 is `2ebc1cf7ae127e6460f99492f3db42526cff96bd891fa9309ba644bf66e702f0`. The full recursive I137/I134/I131/I128/I125/I122/I119 decoded originals, including embedded I116/I113 briefs, reports, finalized responses and objections, were read completely. These eight decoded records total 4,901 splitlines. The direct I140 brief, full report and finalized parent response supplied in the task were read; the original disk report and parent receipt are separately frozen. A truncated combined context display was completed by the recorded bounded reread. Discovery displays are not proof reads.
+
+AGENTS.md, the upstream identity and the current ledger state were inspected and frozen. Ledger inspection is not a claim of reading every historical ledger entry. The complete 13,223-entry/749-manuscript/10,373-original map and all 776 PDF/text bindings are reused by immutable reference, with one flat traversal per verifier invocation. The corpus is not copied. Byte coverage and semantic reading are distinct.
+
+The finalized I140 parent response explicitly records selective checks. It is neither a full original-proof pass nor a premise that forces this audit's answer. The following verdicts concern the original I140 assertions, unchanged; the new boundary arguments start only in Section 3.
+
+### 1.1 Infinity-harmonic and affine screens
+
+**p-harmonic lift obstruction: PASS without repairs at its existential, large-p scope.** For a smooth p-harmonic u at noncritical points,
+
+`|Du|² Delta u+(p-2) D²u[Du,Du]=0`.
+
+For U(x,t)=u(x)+t this gives exactly
+
+`Delta_p U=(1+|Du|²)^((p-4)/2) Delta u`.
+
+With k=(p-d)/(p-1), u=r^k on an annulus, `Delta u=k(k+d-2)r^(k-2)` and `k+d-2=(d-1)(p-2)/(p-1)`. Thus every p>d>=3 gives an actual p-harmonic function whose affine lift is not p-harmonic. The displayed profile is constant at p=d, and p=2 is harmonic; the sentence “nonzero” must not be reinterpreted as a universal assertion covering those exceptional p. I140's obstruction is that the lift cannot in general be transplanted to the approximating equation, not that every p-harmonic function fails it. This passes without changing that claim. It is not a counterexample to uniform gradient convergence, to an AMLE theorem, or to the viscosity affine-lift operation itself.
+
+The actual infinity-harmonic lift proof includes zero horizontal test gradient, where the vertical second derivative gives the sign. The stated interior exponent is unspecified in (0,1/3]; no endpoint or boundary regularity follows. Bungert's complete operative convergence argument read here compares finite-difference envelopes, strictifies the limiting equation, and estimates **values**; its improved rate contains the positive essential gradient infimum. It does not estimate the actual unmollified gradient of the p-approximant. The original limited equation-proof scope is correct.
+
+**Affine normalized cubic defect and distinctions: PASS without repairs.** For `v(y)=t^-1(u(x0+A_t y)-tangent)`, `D²v(0)=t^-1 A_t^T H A_t>=cI`. Equivalently, the smallest singular value of `H^(1/2) A_t` is at least sqrt(ct), so `||A_t^-1 H^-1/2||<=c^-1/2 t^-1/2`. Transforming the three arguments of D³ and multiplying by t gives the original normalized cubic bound `C c^-3/2 t^-1/2`. Its constant depends on the common lower normalized section modulus, dimension, normalized section diameter and inner distance, exactly as the complete Trudinger–Wang interior operation requires. It is not universal over arbitrary finite-domain perturbations with no common modulus.
+
+The source supplies uniform balance for the given complete epigraph, derives a ray doubling modulus, normalizes sections, applies the interior estimate on nested fixed balls, and sends t to infinity. That whole operation already pays the screened defect, rather than just its Bernstein headline. The graph theorem in dimensions 3–9 requires Euclidean completeness and pointwise Hessian positivity. The immersed corollary separately uses affine completeness and the global graph operation. Neither is a theorem about arbitrary immersed Euclidean-complete hypersurfaces with no graph reduction. The complete dimension-ten companion was read through its proof ending: radial F,P, smooth origin construction, invariant box, global ODE continuation, and u=sqrt(F²+t²). It gives smooth pointwise positive Hessian, without a global uniform Hessian lower bound or an affine-completeness assertion. These extra conditions cannot be inserted into its counterexample.
+
+### 1.2 C140 and the three exact obstructions
+
+**C140: PASS without repairs**, with all its stated data `n,p,q,A,B,theta,c,C,H`, n>=3, p,q>0, pq>1, A,B>-2 and both strict gaps. It is an interior bound on B_(1/2) for solutions on B1 with no boundary condition; its constant is non-effective.
+
+* The unweighted exponents solve `p beta0=alpha0+2`, `q alpha0=beta0+2`; alpha0,beta0>0. Doubling the **joint** gauge provides both local bounds and normalization. It does not assume both component values at the center have a uniform positive lower bound.
+* Coefficients converge to positive constants using the common modulus and compact value interval. To remove constants c0,d0 solve `log s-p log t=-log c0`, `log t-q log s=-log d0`. The determinant 1-pq is nonzero. The equations, rather than independent arbitrary amplitude choices, fix both factors.
+* If one exponent is below one, bounded nonnegative powers still yield local Lr right sides and W^(2,r) compactness. The strong minimum principle for continuous distributionally superharmonic representatives, followed by coupling, excludes a zero component. Strict positivity then makes the limiting powers smooth locally. No uniform Lipschitz bound on s^p near zero is used.
+* With weighted alpha,beta as below, the ball of radius |x|/4 stays in B1 for |x|<3/4. Its rescaled weight vector stays in a fixed annulus; both lower bounds and Hölder moduli are uniform. This pays `|x|[u^(1/alpha)+v^(1/beta)]<=K`. The weighted doubling centers therefore have bounded pole/scale ratio. They approach the pole if their gauge diverges.
+* Choose `n/2<r<n/max(0,-A,-B)`, with no upper restriction if the maximum is zero. The interval is nonempty because A,B>-2. Translation continuity in Lr for the locally integrable powers gives moving-pole convergence, including negative A or B in this **interior** statement. Products converge because normalized components converge uniformly and their powers are uniformly continuous on bounded ranges. W^(2,r) gives continuity through the limiting pole. Strong minimum and coupling give positive values there as required by the stipulated entire-space theorem.
+* Constants are uniform over the prescribed coefficient class, not over H→infinity, a varying gap approaching zero, all domains, or pq→1. No half-space is called an entire space.
+
+This is the full Phan/PQS architecture, with the stronger stipulated Liouville input and the origin-continuity gate spelled out. Phan's Section 4 starts its boundary argument with `dist(0,partial Omega)>0`; it does not itself settle a boundary pole.
+
+**O140a: PASS without repairs.** The Talenti normalization `[n(n-2)]^((n-2)/4)(1+r²)^(-(n-2)/2)` has `-Delta W=W^((n+2)/(n-2))`. On a fixed ball away from zero, `a=|x|^-A`, `b=|x|^-B` cancels equal positive weights. Concentration preserves those smooth coefficients, gives strict weighted gap and zero unweighted gap, and produces diverging peaks with bounded boundary values tending to zero. Those boundary values are not identically zero. The example refutes only the stronger boundary-data-free interior claim with the unweighted gap omitted.
+
+**O140b: PASS without repairs.** Differentiating `(1+r²)^-1/3` in dimension three yields the exact coefficient `(2/9)(9+r²)/(1+r²)` for the fourth power. Its range is [2/9,2], with the lower endpoint an infimum. Scaling by lambda^(2/3) gives the displayed smooth solutions. On |x|=1 the values are at most one. The coefficient jump between 0 and e1/lambda is exactly 8/9, so every theta-Hölder seminorm is at least `(8/9)lambda^theta`. This is an exact PDE family, not a fabricated coefficient oscillation, and not a counterexample with fixed H or zero Dirichlet data.
+
+**O140c: PASS without repairs.** `sin(pi r)/(pi r)` extends smoothly at zero, is positive for r<1, vanishes exactly on r=1 and has eigenvalue pi². Arbitrary common amplitude solves the coupled p=q=1 system with fixed coefficients. It is a genuine zero-Dirichlet resonance obstruction; it is outside p,q>1 and cannot be normalized with determinant 1-pq.
+
+### 1.3 V140, including the full pressure proof interface
+
+**V140: PASS without repairs at its original entire-space scope.** Here coefficients are C¹ off zero, bounded above and below, `|x||grad log a|,|x||grad log b|<=M`, and their radial logarithmic derivatives have the lower budgets -delta_a,-delta_b. This is a different coefficient class from merely common Hölder coefficients. No derivative bound is extracted from a Hölder bound.
+
+The complete six-section weighted source operation was read, not only the final theorem. The coefficient perturbation preserves the following steps.
+
+1. Positive Newton-potential lower bounds and the lower coefficient bound give the two coupled source-mass inequalities, including the source's low-power operation. The exponents remain `M_f(R)<=K R^(n-2-beta)`, `M_g(R)<=K R^(n-2-alpha)`. Constants are class-uniform. A positive harmonic constant would force mass growth incompatible with these exponents (`q alpha=beta+2+B>0` and its counterpart); thus it vanishes. The dyadic tails then converge with factors 2^(-j beta),2^(-j alpha). The resulting local mass and truncated-potential bounds do not require translation invariance of the weighted equation.
+2. At zero, bounded u,v and A,B>-2 make sources locally integrable and remove the cutoff distribution errors. The relevant cutoff errors tend to zero in n>=3. Off-zero absolute gradient representation follows from the local smoothness and the mass-controlled tails. Radial inner-boundary nonlinear terms have orders rho^(n+B),rho^(n+A); these go to zero. Coefficient derivatives contribute at most M times the localized energy, so no hidden value or derivative at zero is required.
+3. Put `f=b|x|^B u^q`, `g=a|x|^A v^p`, `ell=1/(q+1)`, `m=1/(p+1)`. In the virial identity the additional term is **on the left with positive sign**:
+
+   `ell int eta (x.grad log b)fu + m int eta (x.grad log a)gv`.
+
+   Its lower bound subtracts ell delta_b from the f-energy coefficient and m delta_a from the g coefficient. These sum to exactly Gamma, not to a budget with a and b interchanged.
+4. Localization uses `d=min(1,(2-|x|)+)`, source m_cut=n+3, k=n(m_cut+1), N=k+n+2, the positive interaction and the same cutoffs. It uses neither exact coefficient homogeneity nor an assumed energy bound. The near errors are small relative to E and the far errors are bounded by the class mass/potential constants. Cap normalization and cap mismatch also retain their original estimates.
+5. Pay the **whole** short-interval error. For `h(x)=(b(x)|x|^B)^(-1/q)` on 1<=|x|<=2, `|grad log h|<=(M+|B|)/q=:L`. On a retained interval of length at most 2 delta d(x),
+
+   `|h(z)/h(x)-1|<=exp(2L delta d(x))-1<=2L exp(2L) delta d(x)` (delta<=1).
+
+   Thus each endpoint value differs from the ideal layer value `t^(1/q)h(x)` by this relative error. After t<=f(x), it is bounded by `C(M,q,B) delta d(x)u(x)`. The analogous a,p,A estimate is paid separately. Multiplication by the cap weight and `d w<=C eta` gives a relative-energy error, not a solution-dependent additive error.
+6. The layer identity is exactly
+
+   `int_0^f [u-(t/(b|x|^B))^(1/q)] dt = fu/(q+1)`.
+
+   Positive-level intervals, endpoint averages, intervalwise infima and Tonelli are retained. The long-interval polar bound is `C/(t ell(x)^n)` with `ell(x)=delta d(x)^m_cut`; it uses ordinary bounded-ball source mass already established. Split levels at `P d^-k`: high-level loss is `C_(cap,delta) P^-1 E`, low-level loss is at most C P by the local u,v integrals. Both copies of the layer loss in pressure recovery are present. The final error has the form `C cap E+C_cap delta E+C_(cap,delta) P^-1 E+C_(cap,delta,P)`. Choose cap, then delta, then P. Every C also depends on the fixed c,C,M and exponents, never on the particular solution or its energy.
+7. With `c1=ell(n+B-delta_b)-(n-2)`, `c2=m(n+A-delta_a)`, the sum is Gamma. Replace the left side by `Gamma E/2+(c1-c2)(E_f-E_g)/2`; marginal localization absorbs the difference. Choose its epsilon to satisfy `(n-1+|c1-c2|/2)epsilon<=Gamma/4`. This is a class-uniform local-energy bound.
+8. Origin-centered dilation preserves c,C,M,delta_a,delta_b. Its exact energy exponent is `sigma=alpha+beta+2-n=gamma_w/(1-ell-m)>0`, since Gamma>0 implies gamma_w>0. The uniformly bounded dilated energy dominates `R^sigma` times any fixed positive-ball energy. This is the stated contradiction, with no claim of translation-invariance or of coefficient-class dilation invariance for an unscaled absolute Hölder norm.
+
+**O140b finite-energy Pohozaev cancellation: PASS without repairs.** Its nonlinear energy and gradient-square integral converge; outer terms are O(R^-1/3). The scalar identity is `[(3/5)-(1/2)]int a w^5+(1/5)int(x.grad a)w^5=0`, hence the latter integral is -1/2 of the former. It remains true after scaling. It demonstrates an energy-relative coefficient error; it neither satisfies V140's required positive margin nor saturates a claimed sharp pointwise budget.
+
+### 1.4 Separate inherited and unasserted scopes
+
+No original I140 paid assertion is failed or unresolved by this audit. Its stronger actual-gradient target, modulus-free affine stability, weighted boundary-pole pressure mechanism and effective quantitative bound were explicitly unproved; this audit does not relabel them PASS. Original I137 A137 and R1–R7 retain their precise local-development/normalization scopes, not a global label, extension across defects, interface law, or defect-preserving arbitrary-near-minimizer screening theorem. Original I134 scope and the recursive qualifications are unchanged. Source screening concerns approximation of the infimum. I125's original literal canonical-inventory FAIL is not replaced by its ordering-only adapter PASS. I122's original general-Lambda equality FAIL is not replaced by a primitive-class correction.
+
+## 2. Data, geometry, and actual primary comparison
+
+For all new bounded-domain assertions fix `D=(n,p,q,A,B,c,C,theta,H,Omega)` with n>=3, p,q>1, A,B>=0, 0<c<=C, 0<theta<=1, both strict gaps. Coefficients are in `C^(0,theta)(closure Omega)`, lie in [c,C], and `[a]_theta+[b]_theta<=H`. Solutions are positive in Omega, in `C(closure Omega) intersect C²(Omega)`, vanish on the entire boundary, and satisfy the two equations classically. The weighted sources are locally finite; with this solution class on a bounded domain and nonnegative weights they are in fact bounded for each individual solution. No uniform bound is assumed at the outset.
+
+Here is explicit geometry data replacing the phrase “fixed C² domain.” Fix a diameter bound D0 and a chart radius rho>0 such that at every boundary point, after rigid motion, the portion in a cylinder of radius rho is a **single** graph x_n=psi(x'), the domain is on one side, psi(0)=0, grad psi(0)=0, and `rho ||D²psi||_infinity<=G`. Take rho small enough that `||grad psi||<=1/10` on the charts used below; shrink by a factor depending on G when necessary. Require the corresponding interior/exterior ball and graph cylinders to be valid with this common radius. These properties hold for a fixed bounded C² domain. Constants use `(D0/rho,G,rho)`; no changing topology or collapsing chart scale is hidden. Only C^(1,1) bounds are needed for the uniform W^(2,r), gradient and compactness estimates below. We retain C² as requested. At the pole use a chart fixing 0 and its tangent plane.
+
+Define
+
+`alpha=(2+A+p(2+B))/(pq-1)`, `beta=(2+B+q(2+A))/(pq-1)`,
+
+`sigma=alpha+beta+2-n=gamma_w/(1-1/(p+1)-1/(q+1))>0`.
+
+Both amplitudes are positive. These are not the unweighted exponents alpha0,beta0 used in secondary concentration on an annulus.
+
+**Primary comparisons, complete operative proofs rather than abstracts.**
+
+* [Polačik–Quittner–Souplet, Part I](https://www-users.cse.umn.edu/~polacik/Publications/pqs1.pdf), Theorems 4.1–4.3, Proposition 7.1 and their complete proofs: bounded entire nonexistence gives interior estimates; boundary doubling relative to the free spherical boundary gives whole-space or bounded half-space limits; the unweighted half-space reduction is a separate operation. Its vertical limit is unweighted, and can be extended trivially from n-1 to n dimensions. None of that freezes a weight at a boundary pole.
+* [Phan v1](https://arxiv.org/abs/1108.1312v1), Lemma 4.1 and complete Section 4: coefficient freezing, joint gauge, annular weight normalization, then separate boundary and interior-origin cases. The exact premise in the bounded-domain proof is an **interior** origin. Inserting the stipulated larger entire Liouville premise extends exponent ranges, not the mechanism.
+* [Quittner–Souplet v2](https://arxiv.org/abs/2407.04154v2), complete Section 7.2: inverse nonlinear amplitude scales, the joint gauge, local bounds and nonvanishing already handle unequal regularly varying nonlinearities. Renaming those scales is no new contribution.
+* [Li–Souplet v2, 5 June 2025](https://arxiv.org/abs/2408.17007v2), the entire 14-page paper was read, with theorem page visually checked. It excludes positive **unweighted** classical zero-Dirichlet half-space solutions bounded on each finite strip, for every p,q>1. The proof runs through monotonicity, comparison of components, a nonlinear strip maximum principle, logarithmic derivative bounds and normal convexity. Its constants in these steps may depend on the solution's strip bounds. It is stronger than the bounded unweighted model needed here, but it supplies neither weighted normal derivative identities nor a quantitative perturbed-domain estimate. The external result is ordinary evidence, not stipulated. PQS with the stipulated unweighted premise already supplies the needed bounded model.
+* [Dai–Peng, Ann. Funct. Anal. 13:12 (2022)](https://doi.org/10.1007/s43034-021-00158-1), the complete 21-page paper was retrieved and read through the proof endings and references; theorem page visually checked. For Laplace powers alpha_operator=beta_operator=2, Corollary 1.8 covers `1<=p<=(n+2+2A)/(n-2)`, `1<=q<=(n+2+2B)/(n-2)`, with at least one strict. The full proof removes nonnegative harmonic half-space remainders, uses the reflected Green kernel's Kelvin identities, starts and continues scaling spheres by local L^(n/2) smallness, then bootstraps cone lower bounds to contradict Green integrability. The two individual Kelvin signs are required. Our hyperbolic region is wider: n=5,A=B=0,p=4,q=3/2 has gamma0=gamma_w=0. It is the boundary example; replacing q by 7/5 gives both gaps strictly positive while p>7/3. Thus the strict example lies outside that corollary. The abstract's phrase “subcritical growth” is not a full-hyperbola theorem.
+
+Current arXiv pages and publisher page are frozen separately from inherited versions. The author PDF retrieval succeeded even though the publisher landing page advertised subscription access. No primary proof is inferred from a search snippet. Searches for later weighted half-space work also produced fractional, higher-order and mixed exponential systems; those are not silently substituted for the present equations. This bounded search establishes no worldwide priority or absence theorem.
+
+## 3. Route 1: reflected Green interaction, a concrete estimate and a concrete obstruction
+
+Work first in H={x_n>0}, with zero continuous boundary values, constant positive coefficients in [c,C], and **bounded** classical nonnegative solutions. The bound L is part of this route's normalization, not an assumption on all unbounded solutions. Write K(z)=`|z|^(2-n)/((n-2)|S^(n-1)|)`, y*=Ry=(y',-y_n),
+
+`G(x,y)=K(x-y)-K(x-y*)>0`.
+
+### 3.1 Harmonic parts, boundary endpoints, and the pole
+
+Exhaust H by tangent balls or half-balls. Their Green potentials increase and are bounded by u,v. The residuals are nonnegative harmonic, bounded by L, with continuous zero boundary trace. Odd reflection of **these harmonic residuals** and bounded harmonic Liouville, equivalently the half-space Poisson representation, makes them zero. Thus `u=G*g`, `v=G*f`. This is not odd reflection of the nonlinear positive solution. For unbounded solutions a term h=c x_n is possible at this stage; it must be removed separately, as in Dai–Peng's full representation proof. Boundedness is sufficient for the normalized model.
+
+Positive-level layers of f,g cannot terminate at a finite plane point, including the pole, because A,B>=0 and u=v=0 there. Their actual positive-level endpoints still satisfy the correct weighted layer values. However, line segments in a non-tangential direction are clipped by H and reflected endpoint interactions are not translation invariant along the original pair of lines. One must account for these endpoints in a new interval comparison; their absence at level t>0 does not turn the reflected kernel into K.
+
+For bounded solutions, local boundary regularity gives u,v=O(x_n) and bounded gradients near 0; sources vanish at least to their corresponding positive nonlinear power there. Inner half-sphere terms in an integration by parts vanish. The local Pohozaev term on the flat boundary has `(x.nu)partial_nu u partial_nu v=0`, since x.nu=0. Normal derivatives themselves are generally nonzero. The Green normal derivative is the Poisson kernel and cannot be deleted from a representation or from a non-tangent test field. With a compact tangent vector field there is no far boundary endpoint; passing to a global dilation requires separate infinity estimates.
+
+### 3.2 Exact kernel loss
+
+Put r=|x-y|, s=|x-y*|, so `s²=r²+4x_n y_n`. The identity
+
+`G=(n-2)k_n int_r^s t^(1-n)dt`
+
+gives two-sided bounds
+
+`c_n r^(2-n) min(1,x_n y_n/r²) <= G <= C_n r^(2-n) min(1,x_n y_n/r²)`.
+
+In particular `G/K(x-y)` tends to zero like x_n y_n/r² near the boundary. There is no uniform positive lower comparison to the full-space kernel. Ordinary source mass is not controlled by the same full-space lower bound; the boundary first moment is the natural quantity. Replacing G by K in I140's mass or cap estimates loses this distinction.
+
+There is nevertheless a paid **tangential interval** operation. Fix e tangent to the plane. Along two parallel e-lines at positive heights, G is a difference of two even one-variable Newton kernels, with the same h=s_parameter-t_parameter and transverse distances a<=b. Set
+
+`J_e(x,y)=(n-2)(e.(x-y))² [r^-n-s^-n]/[r^(2-n)-s^(2-n)]`.
+
+Then
+
+`0<=J_e<= n (e.(x-y))²/r²<=n`.
+
+For equal interval weights, repeat the midpoint integration with this **difference kernel itself**: its negative derivative divided by h is positive, even and decreasing in |h|, because it is a positive integral of `(h²+t²)^(-(n+2)/2)` over t² from a² to b². The symmetric trapezoid push-forward argument therefore gives the endpoint-average inequality with J_e G as the pressure term. For unequal nonnegative interval weights, the excess coefficient has the same bound by the positive kernel G. Thus the source interval inequality survives in tangential directions with J_e replacing `(n-2)D_e`, and without subtracting two unrelated upper bounds.
+
+The loss n is sharp in the boundary dipole limit: with x_n,y_n→0 and a vanishing tangential transverse separation, `J_e→n`. The full-space bound is n-2. This is an actual reflected-kernel calculation, not merely a warning that the proof might fail. It does not establish the radial pressure coefficient needed to recover gamma_w. Tangential averaging also does not reproduce the source's radial cap tensor. A direction with nonzero normal component changes the reflected line direction to Re and introduces dependence on the sum as well as the difference of the line parameters.
+
+### 3.3 Exact virial and the missing pressure estimate
+
+For X=x eta with radial eta, X is tangent on the plane and `X(Ry)=R X(y)`. The differentiated interaction is exactly
+
+`-(X(x).grad_x+X(y).grad_y)G`
+
+`= (n-2)k_n { [(Xx-Xy).(x-y)]r^-n - [(Xx-RXy).(x-Ry)]s^-n }`.
+
+For eta=1 this equals (n-2)G, as joint dilation requires. For nonconstant eta the two terms must be estimated **after their cancellation**. Bounding them separately relative to G introduces the unbounded factor K/G near the plane. The positive marginals remain exact under the Green representation, but the full-space interval pressure estimate does not follow from positivity of those marginals.
+
+The unpaid Route-1 statement is: with the source radial cutoff and bounded normalized positive half-space pair, derive a cap/layer inequality and marginal localization whose combination yields the same positive gamma_w energy margin, with all reflected and plane terms bounded by `epsilon E+C_epsilon` in a dilation-compatible class, and give the corresponding perturbation error for C² charts and common Hölder coefficients. The tangential coefficient n calculation neither proves this nor refutes it. Source positivity, truncating intervals and odd reflection of u,v are not substitutes. **PARK this pressure route.** Section 4 uses a different, already established annular operation to control infinity and hence avoids needing that new pressure theorem.
+
+## 4. Route 2: annular boundary blowup and a controlled Pohozaev reduction
+
+This route supplies a qualitative bound and a tracked finite-scale inequality. It does not take a vertical limit of the weighted equation.
+
+### 4.1 The precise annular input and its existing proof mechanism
+
+Let K0 be a common bound for values of the weighted-amplitude rescaling on the inner annulus `3/4<|y|<5/4` of a domain lying in `1/2<|y|<2`, with zero data on its physical boundary and no data prescribed on the two artificial spheres. Physical boundary graphs have a fixed C^(1,1) radius and norm; coefficients on this annulus have fixed positive bounds and a common theta-Hölder norm. K0 depends only on those data and n,p,q,A,B. It is finite under gamma0>0.
+
+For completeness, the proof does not assume the desired boundary-pole theorem. If this annular value bound fails, use the **unweighted** gauge with alpha0,beta0 and doubling relative only to the artificial boundary. The selected centers can approach the physical boundary. At their secondary concentration scale mu→0, the annular weights stay bounded away from zero and their Hölder oscillation goes to zero; both coupling coefficients have positive constant limits. Rescaled physical graphs have gradient O(mu R) and Hessian O(mu), uniformly on each fixed ball. Interior or boundary W^(2,r) estimates for bounded normalized functions give a nontrivial bounded entire or zero-Dirichlet half-space limit. Boundary estimates exclude a center at limiting distance zero, since the gauge there would vanish. Positive amplitude normalization preserves nontriviality of both components by coupling. The stipulated unweighted entire theorem and the separate PQS half-space operation exclude these limits. Li–Souplet supplies an additional, stronger external bounded-model comparison. This is a standard coefficient and boundary version of the complete PQS/Phan reduction, not a new Liouville premise.
+
+Boundary and interior Lr estimates now give a gradient bound K1 on a slightly smaller annulus, depending only on K0 and the same data. Bounded RHS suffices for this step; no derivative of a,b is used. Rescaling about the pole gives, whenever the larger annulus fits the pole chart,
+
+`u(x)<=K0 |x|^-alpha`, `v(x)<=K0 |x|^-beta`,
+
+`|grad u(x)|<=K1 |x|^(-alpha-1)`, `|grad v(x)|<=K1 |x|^(-beta-1)`.       (A)
+
+The estimates include points arbitrarily close to the physical boundary. For a flat half-space with constant positive coefficients they hold at **all** radii, with constants depending only on n,p,q,A,B,c,C. For the fixed bounded domain they hold near the pole with coefficient modulus bounded by H rho^theta and chart norm G. The complement of a smaller pole ball is bounded uniformly by the same unweighted local-boundary argument and a finite chart covering; this constant additionally uses D0/rho and the positive lower bound on |x| there.
+
+K0 is an existing qualitative constant. This report does not claim an explicit numerical formula for K0 in terms of the Liouville gap. Later tracked constants may depend on it, and this dependency is visible throughout.
+
+### 4.2 Actual half-space nonexistence in the target range
+
+**H143, technical deduction.** For n,p,q,A,B,c0,d0 as above, there is no positive pair in `C(closure H) intersect C²(H)` with zero boundary values solving `-Delta U=c0 |y|^A V^p`, `-Delta V=d0 |y|^B U^q`. Boundedness is not needed in this final statement: (A) supplies decay at infinity, and continuity supplies boundedness on compact half-balls. The bounded normalized version follows in particular.
+
+Here is the proof, including the infinity and origin gates. By (A), both nonlinear cross-energies and the gradient product are integrable outside B1, since
+
+`A-(p+1)beta=B-(q+1)alpha=-alpha-beta-2=-n-sigma`.
+
+Their tails are at most `C(K0,K1)R^-sigma`. At the pole, continuity and local boundary estimates give bounded gradients and U,V=O(dist(y,partial H)); all inner boundary terms vanish as rho→0. Each energy is locally finite there. Multiply the first equation by V and the second by U, integrate over half-annuli, and pass first rho→0 and then R→infinity. The sphere terms are O(R^-sigma), and flat-plane terms containing U or V are zero. Hence
+
+`F:=int_H c0 |y|^A V^(p+1) = int_H grad U.grad V = int_H d0 |y|^B U^(q+1)=:G`.
+
+The cross Pohozaev identity has zero flat-plane contribution because y.nu=0. Its sphere terms again are O(R^-sigma). It gives
+
+`(n+A)F/(p+1)+(n+B)G/(q+1)=(n-2)int_H grad U.grad V`.
+
+Thus gamma_w F=0. Positivity gives F>0, a contradiction. All terms have now been paid. This is precisely an annular-estimate/finite-energy/Pohozaev reduction of the kind already operative in Phan; no new pressure theorem is claimed.
+
+For comparison, normal reflection below height lambda has `|y^lambda|²-|y|²=4lambda(lambda-y_n)>=0`, so A,B>=0 give favorable weight signs. But its coupled linear coefficients are not uniformly bounded on an unbounded strip merely because U,V are bounded. From (A) their product has order |y'|^-4, while individual powers are `|y'|^(beta-alpha-2)` and `|y'|^(alpha-beta-2)`. These require coupled amplitude compensation. A vertical translation also changes the weights to `|(y',y_n+t)|^A`, which may diverge. We do not replace this with a lower-dimensional weighted equation. The Pohozaev proof avoids both unproved plane continuation and the false weighted dimension reduction.
+
+### 4.3 Three scales in the bounded-domain blowup
+
+Let `M=max_closureOmega (u^(1/alpha)+v^(1/beta))`, choose an interior maximizer x0, and set lambda=M^-1, `U(y)=lambda^alpha u(lambda y)`, `V(y)=lambda^beta v(lambda y)`, `D_lambda=lambda^-1 Omega`. Then
+
+`U^(1/alpha)+V^(1/beta)<=1`, with equality at `z=x0/lambda`.
+
+When M is large, x0 must approach the pole: otherwise the away-pole boundary/interior bounds apply. Estimate (A) bounds the distinct pole ratio `|z|=|x0|/lambda<=T`, with `T=K0^(1/alpha)+K0^(1/beta)` enlarged to at least one. This uses no assumption about the boundary distance. Since normalized functions and their sources are bounded on B_(T+3), local boundary estimates give a common gradient constant L0 there. If `m0=min(2^-alpha,2^-beta)`, one component at z is at least m0; hence
+
+`dist(z,partial D_lambda)>=kappa:=min(1,m0/L0)`.
+
+This separates the boundary-distance scale from the pole and concentration scales. A limit therefore has a genuine interior normalization point in a half-space whose plane contains the limiting weight pole. Both coefficients freeze to positive limits a(0),b(0), but **the weights do not freeze**. The limit is H143 after a rigid motion. In the pole chart `psi_lambda(y')=lambda^-1 psi(lambda y')`,
+
+`|psi_lambda(y')|<=G lambda |y'|²/(2rho)`, `|grad psi_lambda|<=G lambda |y'|/rho`, `|D²psi_lambda|<=G lambda/rho`.
+
+If flattening is used for boundary compactness, the transformed divergence matrix differs from I by O(G lambda R/rho), and its first derivative by O(G lambda/rho), on B_R. The right-side coefficient oscillation is at most H(lambda R)^theta. These quantities vanish in the rescaling actually used. Boundary W^(2,r) compactness on fixed balls is therefore justified; no unspecified nonlinear elliptic stability principle is invoked. Since A,B>=0, weighted RHS are uniformly bounded on each fixed ball even at the pole. H143 excludes the nontrivial limit, giving a class-uniform bound on M and hence on sup(u+v).
+
+This alone is qualitative compactness. The next calculation records more than that, while retaining K0 as a non-effective input.
+
+### 4.4 Finite-scale tail, curvature and coefficient losses
+
+Consider the above normalized pair on `D_lambda intersect B_(4R)` with 0<lambda R<=rho/16 (shrink by a known factor depending on G to stay in one graph), R>=2(T+3), and U,V<=1. Keep exact Euclidean coordinates for the following integration, so there is **no flattening operator error** in the identity. Use boundary flattening only to obtain the already specified local gradient and annular estimates. Constants below depend on `(n,p,q,A,B,c,C,theta,G,H rho^theta,K0,K1,L0,sigma^-1)`; denote their common enlargement by C0. They are independent of lambda,R and the particular solution.
+
+Set `a0=a(0)`, `b0=b(0)`, `F_R=int_(D_lambda intersect B_R) a0 |y|^A V^(p+1)`, `G_R=int b0 |y|^B U^(q+1)`, `I_R=int grad U.grad V`. Let
+
+`f_e=(a(lambda y)-a0)|y|^A V^p`, `g_e=(b(lambda y)-b0)|y|^B U^q`.
+
+All identities can first be taken at regular radii and on a punctured domain, then passed to the limit at the pole. C² boundary, W^(2,r) up to the boundary for all finite r, and interior classical regularity justify integration; corners on the artificial sphere have surface measure zero. The estimates below hold at suitable radii in [R,2R], which is sufficient and avoids a transversality assumption on every sphere. Rename that radius R and enlarge C0 by 2^sigma where needed.
+
+The exact identities are
+
+`F_R=I_R-int_boundary V partial_nu U-int f_e V`,
+
+`G_R=I_R-int_boundary U partial_nu V-int g_e U`,
+
+and, writing `cA=(n+A)/(p+1)`, `cB=(n+B)/(q+1)`,
+
+`cA F_R+cB G_R-(n-2)I_R = B_nonlin-B_grad+int(f_e y.grad V+g_e y.grad U)`,       (P)
+
+where
+
+`B_nonlin=int_boundary (y.nu)[a0 |y|^A V^(p+1)/(p+1)+b0 |y|^B U^(q+1)/(q+1)]`,
+
+`B_grad=int_boundary [(y.nu)grad U.grad V-(y.grad V)partial_nu U-(y.grad U)partial_nu V]`.
+
+On the physical boundary U=V=0, their tangential gradients vanish, and `B_grad=-(y.nu)partial_nu U partial_nu V`. This is the normal-derivative contribution, not zero by Dirichlet data alone. In the pole graph
+
+`|y.nu|<=C G lambda |y|²/rho`.
+
+Using (A), all artificial-sphere contributions in these three identities are at most `C0 R^-sigma`. The physical-boundary contribution is bounded by
+
+`C0 (G lambda/rho) [1+int_1^(2R) t^-sigma dt] <= C0 G lambda R/rho`.
+
+The first term controls the inner unit ball using normalized boundedness and L0. Uniform graph area bounds control the rest. This estimate includes the logarithm when sigma=1; no endpoint exponent is lost by treating it as a pure power.
+
+Hölder regularity is used **without differentiating a or b**. Every coefficient error in the three identities is bounded by
+
+`C0 H lambda^theta [1+int_1^(2R) t^(theta-sigma-1)dt] <= C0 H(lambda R)^theta`.
+
+For example `|f_e y.grad V|<=H lambda^theta |y|^(A+theta+1)V^p |grad V|`; (A) gives exactly the radial exponent theta-sigma-1 after integration. At theta=sigma the sharper expression has a logarithm; the displayed coarse bound is still valid. Products f_e V and g_e U have the same integrable energy scaling. Normalized boundedness pays the inner ball. This is why a bound on coefficient values alone would not supply a small error, as O140b shows.
+
+Eliminating I_R and F_R-G_R from (P) yields the actual finite-scale estimate
+
+`(gamma_w/2)(F_R+G_R) <= C0 [R^-sigma + G lambda R/rho + H(lambda R)^theta]`.       (F143)
+
+The coefficient |cA-cB| and n-2 enter C0 in this elimination. No sign of y.nu, star-shapedness, finite energy assumed in advance, or derivative of a,b is used. Taking absolute values of the curved-boundary term is legitimate precisely because its factor G lambda R/rho is controlled.
+
+There is also a uniform positive lower energy for the normalized point. Let `h=min(kappa/4,m0/(4L0),1/4)`. In B_h(z), the component that is at least m0 at z is at least m0/2. Since 0 is on the boundary, |z|>=kappa and |y|>=kappa/2 there. Thus
+
+`F_R+G_R>= e0 := c omega_n h^n min{(kappa/2)^A(m0/2)^(p+1),(kappa/2)^B(m0/2)^(q+1)}>0`.       (N143)
+
+For the component V use F, and for U use G. The ball lies inside D_lambda. This pays nonvanishing quantitatively; a joint gauge alone was not treated as two positive lower bounds.
+
+Consequently choose, for example,
+
+`R_* >= max{2(T+3), (16 C0/(gamma_w e0))^(1/sigma),2}`,
+
+then choose lambda small enough that `4lambda R_*` remains in the pole chart and
+
+`G lambda R_*/rho <= gamma_w e0/(16C0)`,
+
+`H(lambda R_*)^theta <= gamma_w e0/(16C0)`.
+
+A normalized solution on the required half-ball is impossible by (F143)–(N143), after the harmless radius enlargement already stated. A zero G or zero H simply deletes its restriction. This is an explicit order of choices, with no perturbation theorem concealed in the last step. The resulting threshold, together with the away-pole bound, bounds M; `sup(u+v)<=M^alpha+M^beta` follows.
+
+**What this pays and what it does not.** F143 is a tracked finite-scale tail and perturbation estimate in terms of K0,K1,L0 and the fixed geometry/coefficient data. K1 and L0 are ordinary quantitative boundary/interior elliptic constants once K0,T are given. K0 itself was obtained by an established contradiction/compactness operation. Thus this route proves a data-dependent qualitative supremum bound and an explicit finite-scale reduction relative to that input. It does not supply a numerically effective bound for K0 from n,p,q and gamma0, or an independent fully effective exclusion replacing that input. If “quantitatively controlled” requires that further effectiveness, it remains **PARK**, precisely at an effective unweighted local annular constant or an alternative direct boundary pressure estimate. Merely naming the least finite K0 does not pay its numerical dependence.
+
+## 5. Contribution, counterexample tests, and disposition
+
+The original report correctly classified its C140, V140 and explicit obstructions as technical. Its actual p-lift obstruction and affine screen withstand audit at their limited scopes. The complete source pressure operation pays V140's coefficient bookkeeping; the full Phan/PQS operations pay C140's reduction. Their exact wording being absent from a limited search is not evidence of a new substantial mechanism.
+
+Route 1 has a concrete positive reflected-kernel/tangential-interval estimate and a sharp loss from n-2 to n in the boundary dipole limit. It has no paid radial reflected pressure theorem. Route 2 resolves the qualitative boundary-pole geometry for the stated **nonnegative** weights and both strict gaps by existing annular blowup plus a finite-energy cross Pohozaev reduction. F143 tracks exactly where curvature, Hölder oscillation and infinity enter, but still consumes the non-effective unweighted annular constant. These are technical deductions through established operations, not a ninth substantial finding.
+
+No genuine bounded normalized counterexample in the actual target class was found; H143 excludes such exact half-space models under the stipulated whole-space premise and the external/known boundary operations specified above. The reflected-pressure obstruction is not a counterexample to Target L. Talenti, the variable-coefficient smooth profile and resonance each miss an explicitly required target hypothesis. Singular-at-the-boundary homogeneous profiles miss continuity at the pole, and higher-order/fractional/mixed exponential literature concerns different equations. Negative boundary weights, pq=1, coefficients without a common modulus, and weighted-only subcriticality are not extensions of the present conclusions.
+
+**Disposition:** no nomination; qualitative Target L is technically paid in this restricted class. The fully effective numerical finite-scale exclusion, and the proposed genuine reflected Green-pressure operation, remain parked with the precise missing inputs above. No worldwide priority, formal certification or human-review certification is claimed.
+
+## 6. Evidence and finite-check contract
+
+The read manifest records actual complete passage ranges and endings, whole-file hashes and passage hashes. PDF ranges use Python splitlines, including form-feed boundaries. HTML representations use the existing deterministic extractor with MathML alttext and a final LF. Lexical evidence is an exact multiset with path, line, start/end columns, matched text and complete line, over the union of actually read lines. It is not semantic coverage. Current primary pages, retrieval outcomes and the two new PDF/text bindings are frozen; inherited retrieval failures remain immutable. The new successful Dai–Peng PDF retrieval is not replaced by the landing page's subscription message. Truncated displays and their completed rereads are explicitly recorded.
+
+The exact owned inventory is globally sorted, prevalidated before one exclusive seal. The verifier makes one flat immutable corpus traversal and verifies inherited seals, original failures, memberships, contexts, receipts, PDF/text bindings and new artifacts before any new diagnostic. Ancestor verifiers and diagnostics are not executed. Only the four named live ledgers may drift; their snapshots may not. The offline audit hook denies network, subprocesses, writes, bytecode generation, repair and resealing. New diagnostics test finite scaling, signs, exponent identities, boundary-normal algebra and reflected-kernel arithmetic; they do not certify PDE regularity, inequalities for all functions, contribution, external proofs or acceptance.
+
+Run `PYTHONDONTWRITEBYTECODE=1 python3 -B frontier/experiments/i143_weighted_boundary_pole_control/verify.py`.
