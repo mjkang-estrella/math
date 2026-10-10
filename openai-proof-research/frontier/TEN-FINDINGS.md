@@ -6,6 +6,19 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### Factory/Astra recovery, 2026-10-10
+
+The user requested “Proceed with Factory/astra.” Both I158 and I160 had
+failed at the Codex usage limit with no pending runs. Fresh
+[I161](iterations/iteration161-oracle-contribution-factory-astra-task.json)
+reviews R154's contribution; fresh
+[I162](iterations/iteration162-bfss-focused-factory-astra-task.json)
+reviews original S155 and all actual mathematical dependencies. I158's
+broader gate stays incomplete, its partial evidence remains unsealed, and
+I160 has no final verdict. See the
+[recovery checkpoint](iterations/i161-i162-factory-astra-resume.md).
+**Eight accepted, two remaining; research active.**
+
 - I14: [final significance review](reviews/i14-spectral-width-novelty-r3.md) completed: **TECHNICAL ONLY**, proof PASS retained. Parent verification agrees with its reduction to known local estimates and the source's global construction. No count increment.
 - I15: [final significance review](reviews/i15-odd-order-topology-novelty-r3.md) gives **TECHNICAL ONLY**, preserving full-theorem proof PASS. The marked construction is an iteration of an explicit source-proof operation, with unchanged downstream interfaces. No exact duplicate or new proof gap is claimed; no count increment.
 - I17: [final significance review](reviews/i17-six-point-ramsey-novelty-r3.md) recommends **TECHNICAL ONLY**, retaining full proof PASS without repairs. The six-point certificate reduces to the source's adjugate lifting applied twice and multiplication. No exact duplicate or new gap is claimed; no count increment.

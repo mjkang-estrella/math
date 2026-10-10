@@ -16,6 +16,18 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## Iterations 161–162: Factory/Astra recovery, 2026-10-10
+
+The user requested “Proceed with Factory/astra.” The original I158 and I160
+tasks failed at the Codex usage limit, not with completed review verdicts.
+[I161](iteration161-oracle-contribution-factory-astra-task.json) resumes the
+full R154 contribution gate; [I162](iteration162-bfss-focused-factory-astra-task.json)
+independently reviews original S155 and all its actual mathematical dependencies.
+The focused scope does not retroactively complete I158's broader historical
+audit. Original bytes and unsealed preparation remain untouched. The
+[checkpoint](i161-i162-factory-astra-resume.md) records the limitations and
+next actions. **8 accepted, 2 remaining; research active.**
+
 ## Iteration 07 — toward ten substantial findings
 
 [R009, variable-channel four-state capacity](../findings/R009-variable-channel-capacity.md), is accepted after separate proof and final significance reviews. The independently audited locally finite strengthening belongs to the same finding. The current count is **3 accepted, 7 remaining**; the [count and continuation ledger](../TEN-FINDINGS.md) is authoritative.
