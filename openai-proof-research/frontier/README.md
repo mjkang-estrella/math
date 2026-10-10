@@ -21,6 +21,14 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**Latest BFSS gate:** [I162](reviews/i162-fixed-sector-bfss-focused-astra.md)
+fails the original exact fermion formula, $2i$ instead of the source's $i/2$.
+Its corrected proof retains the leading asymptotic on the original physical
+form. The [parent correction](iterations/i162-bfss-normalization-parent-correction.md)
+preserves that failure explicitly; sealed evidence replay passes.
+[I163](iterations/iteration163-corrected-bfss-contribution-factory-astra-task.json)
+reviews contribution. No ninth finding is accepted.
+
 **2026-10-10 recovery:** the original I158/I160 tasks failed at the Codex
 usage limit. [I161 and I162](iterations/i161-i162-factory-astra-resume.md)
 are fresh Factory/Astra contribution and focused correctness reviews,

@@ -6,6 +6,20 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I162 normalization failure and corrected candidate
+
+[I162](reviews/i162-fixed-sector-bfss-focused-astra.md) found that S155's
+asserted exact fermion coefficient is four times the pinned source
+coefficient. The unchanged exact matrix/form claim **FAILS**; I158's narrower
+no-repair PASS is not adopted. I162 proves the same leading asymptotic with
+the source coefficient restored. The
+[parent correction](iterations/i162-bfss-normalization-parent-correction.md)
+adopts that correction separately, preserving all old bytes and verdicts.
+Parent sealed replay passes; I158 remains incomplete and unsealed.
+[I163](iterations/iteration163-corrected-bfss-contribution-factory-astra-task.json)
+now assesses the corrected full theorem's contribution. **8 accepted,
+2 remaining; no acceptance follows merely from a correction or proof.**
+
 ### Factory/Astra recovery, 2026-10-10
 
 The user requested “Proceed with Factory/astra.” Both I158 and I160 had

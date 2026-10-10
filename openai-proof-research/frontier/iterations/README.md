@@ -16,6 +16,20 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I162 result and I163 corrected BFSS contribution gate
+
+[I162](../reviews/i162-fixed-sector-bfss-focused-astra.md) finds an actual
+factor-four normalization error in S155's exact fermion matrix. It fails
+that original assertion and supports the unchanged leading Weyl law only
+with the explicit correction to the pinned source coefficient. The
+[parent disposition](i162-bfss-normalization-parent-correction.md) adopts
+the correction separately, never relabelling the original a no-repair PASS.
+The parent reproduced the sealed evidence and finite diagnostics.
+I158's incomplete/unsealed artifacts are archived without alteration.
+[I163](iteration163-corrected-bfss-contribution-factory-astra-task.json)
+is the fresh Factory/Astra contribution review for the full corrected
+theorem. **Eight accepted, two remaining; research active.**
+
 ## Iterations 161–162: Factory/Astra recovery, 2026-10-10
 
 The user requested “Proceed with Factory/astra.” The original I158 and I160
