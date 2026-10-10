@@ -21,15 +21,18 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I164](iterations/i164-structural-graph-discovery.md)
-gives author-level technical square-expansion and signed-state counting
-interfaces, plus scoped prism obstructions. The sharp linear target remains
-unproved/unrefuted. Parent sealed replay passes; the
-[coverage correction](iterations/i164-structural-graph-parent-disposition.md)
-records six, not seven, selected graphs in the 198 expansion tests.
-[I165](iterations/iteration165-square-expansion-multiplicity-factory-astra-task.json)
-independently checks the used interfaces and attacks the missing comparison.
-**8 accepted, 2 remaining.**
+**Structural-graph update:** [I165](iterations/i165-square-expansion-multiplicity.md)
+refutes the universal square-expansion counting inequality by a certified
+50-to-54-vertex admissible expansion (576 to 572 Hamiltonian cycles) and
+an infinite negative-gain family. Q164 itself remains unproved/unrefuted.
+Its audit passed I164's original prism, expansion-identity, source-P4 and
+splice interfaces without repairs, and its affine splice formula reduces
+the remaining affine-span route to cubic planar braces. Parent sealed
+replay passes; the
+[parent disposition](iterations/i165-square-expansion-parent-disposition.md)
+preserves two incomplete timed-out runs and all coverage corrections.
+[I166](iterations/iteration166-affine-span-braces-factory-astra-task.json)
+attacks the brace affine-span problem. **8 accepted, 2 remaining.**
 
 **Latest oracle gate:** [I161](reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies the full theorem as **TECHNICAL ONLY** through a concrete compiler,

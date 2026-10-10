@@ -1,14 +1,16 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I164](frontier/iterations/i164-structural-graph-discovery.md)
-leaves the sharp linear Hamiltonian-cycle target unproved and unrefuted.
-Its exact counting interfaces and prism obstructions are author-level
-technical results; parent sealed replay passes. The
-[parent disposition](frontier/iterations/i164-structural-graph-parent-disposition.md)
-corrects expansion-test coverage to six selected graphs without changing
-sealed bytes. [I165](frontier/iterations/iteration165-square-expansion-multiplicity-factory-astra-task.json)
-now audits the used interfaces and attacks the missing square-expansion
-inequality on Factory/Astra. **8 accepted, 2 remaining.**
+**Structural-graph update:** [I165](frontier/iterations/i165-square-expansion-multiplicity.md)
+**refutes** the universal square-expansion counting inequality: a certified
+admissible expansion drops the Hamiltonian-cycle count from 576 to 572,
+with an infinite negative-gain family behind it. The sharp linear target
+itself remains unproved and unrefuted. Parent sealed replay passes; the
+[parent disposition](frontier/iterations/i165-square-expansion-parent-disposition.md)
+records the refutation, the passed I164 interface audit, and the proved
+affine splice formula that reduces the remaining affine-span route to
+cubic planar braces. [I166](frontier/iterations/iteration166-affine-span-braces-factory-astra-task.json)
+now attacks that brace problem on Factory/Astra. **8 accepted,
+2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies full R154 as **TECHNICAL ONLY**, retaining I159's unchanged-original

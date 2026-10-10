@@ -16,6 +16,24 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I165 square-step refutation and I166 affine-span continuation
+
+[I165](i165-square-expansion-multiplicity.md) refutes the universal
+square-step inequality (M) with a certified admissible expansion
+(576 to 572 Hamiltonian cycles, orders 50 to 54) and an infinite
+negative-gain prism-spliced family; Q164 itself remains unproved and
+unrefuted. Its audit passed I164's original prism, expansion-identity,
+source-P4 and splice interfaces without repairs, and it proved the
+restricted short-side injection and the affine splice formula, reducing
+the affine-span route to cubic planar braces. Parent sealed replay
+passes, preserving two timed-out runs as incomplete artifacts. The
+[parent disposition](i165-square-expansion-parent-disposition.md) records
+the scope; these are technical results, not a ninth finding.
+[I166](iteration166-affine-span-braces-factory-astra-task.json)
+independently audits the new interfaces and attacks the brace
+affine-span problem, with certified counterexample searches in both
+directions. **Eight accepted, two remaining.**
+
 ## I164 structural-graph gap and I165 counting continuation
 
 [I164](i164-structural-graph-discovery.md) gives author-level exact
@@ -26,9 +44,9 @@ historical diagnostic failures. The
 [parent disposition](i164-structural-graph-parent-disposition.md) corrects
 the expansion-test coverage to six selected graphs while preserving all
 sealed bytes. [I165](iteration165-square-expansion-multiplicity-factory-astra-task.json)
-independently checks the original interfaces it uses and attacks the
-missing comparison of lost and replacement cycles, with a distinct
-alternative route if blocked. No independent full-proof PASS or
+independently checked the original interfaces it uses and attacked the
+missing comparison of lost and replacement cycles; its refutation of
+that comparison is recorded above. No independent full-proof PASS or
 substantial nomination is inferred. **Eight accepted, two remaining.**
 
 ## I163 corrected BFSS contribution: technical only
