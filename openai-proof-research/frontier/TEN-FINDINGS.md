@@ -105,7 +105,7 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 - I93: [completed contribution review](reviews/i93-anchored-rank-approximation-novelty-r3.md) classifies Q90 and its supporting package as TECHNICAL through the source state-indexed operations, classical Auerbach domination and elementary common-part TV comparison. Parent evidence reproduction passes. I92 resolves the original-proof condition; the proof-verified result is retained without a count increment.
 
-- I94: [fresh topology discovery](iterations/iteration94-topology-transformation-discovery-task.json) screens low-dimensional topology and transformation-group constructions for a substantive new bridge, excluding ordinary products, covers and standard source refinements.
+- I94: [topology discovery](iterations/i94-topology-transformation-discovery.md) gives author-level technical nonextension and even-tail stabilization results; [parent evidence replay](experiments/i94-parent-verification.json) passes. The sharp relative free involution on the actual V#2(S²×S²) remains unproved and unrefuted. No substantial nomination or count increment. [I97](iterations/iteration97-relative-involution-stabilization-task.json) independently audits the original partial proofs and attempts two geometric constructions.
 
 - I95: [independent original-proof review](iterations/iteration95-finite-cat0-obstruction-r2-task.json) audits Q91, its actual-action-to-perturbed-certificate implication, all error budgets, exact inference semantics and scoped enumeration claims.
 
