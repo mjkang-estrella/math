@@ -1,6 +1,6 @@
 # Ten substantial findings
 
-User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resumed 2026-10-09: “Now keep proceed for 10 target”. This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 7 accepted, 3 remaining; research active**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
+User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resumed 2026-10-09: “Now keep proceed for 10 target”. This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 6 accepted, 4 remaining; research active**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
 
 **Historical pause, 2026-10-08:** “Let’s pause after 4th finding for now.” R010 passed all acceptance gates and the work was paused with partial artifacts preserved. **The user explicitly resumed on 2026-10-09**, then instructed: “also after the verification commit & push to the public repo”. The old pause restriction is revoked. Each newly accepted finding still receives its own commit. The user selected publication of **only `openai-proof-research`** to `https://github.com/mjkang-estrella/math`. Public history is filtered to this directory; unrelated local research is excluded. Filtering changes commit identifiers while retaining separate commits.
 
@@ -47,14 +47,11 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 - I47: [completed independent full-proof review](reviews/i47-planar-logarithmic-stability-r2.md) gives **P10 PASS ORIGINAL WITHOUT REPAIRS**. Construction A’s partial and conditional budgets also pass, with the higher-dimensional gaps retained. Parent reproduction passes; no count increment.
 - I48: [completed contribution review](reviews/i48-planar-logarithmic-stability-novelty.md) gives **TECHNICAL ONLY**, retaining I47’s original-proof PASS. Weighted dual Cheeger, the planar ordinary spectral gap, angular mass transport and endpoint area control give an explicit reduction with intermediate exponent six. No exact duplicate or sharpness claim is made. Parent reproduction passes; no count increment.
 
-- I49: **accepted as [R013](findings/R013-higher-dimensional-logarithmic-stability.md), the seventh substantial finding**. H49 gives unrestricted finite-power logarithmic stability in every fixed dimension n≥3 with a dimension-only exponent. I50 passes the original proof without repairs, I51 judges the integrated construction substantial, and parent reproduction passes. All consequences of this construction count once.
-- I50: [completed independent full-proof audit](reviews/i50-hard-moment-quantitative-stability-r2.md) gives **H49 PASS ORIGINAL WITHOUT REPAIRS**, including its displayed exponent and arbitrary-body scope. The direct-hard diagnostics also pass within their method scope. Parent reproduction passes; this satisfies I51’s proof condition.
-- I51: [completed independent contribution review](reviews/i51-hard-moment-quantitative-stability-novelty.md) gives **SUBSTANTIAL**, originally conditional on I50’s proof approval, now satisfied. Full LSX and classical-tool attribution is retained; no worldwide priority is certified.
+- I49: [completed hard moment-field report](iterations/i49-hard-moment-quantitative-stability.md) offers a **complete author-level candidate H49** for unrestricted higher-dimensional finite-power stability, with exponent depending only on dimension. It develops finite-defect fields, radial BV normal control, a product-body construction and both endpoint comparisons. Evidence reproduction passes with the initial order-sensitive search comparison failure and subsequent replays preserved. Independent proof and significance review remain pending; no count increment.
+- I50: [independent H49 full-proof review](iterations/iteration50-hard-moment-quantitative-stability-r2-task.json) audits the original analytic chain, dimensional exponent and method diagnostics.
+- I51: [independent H49 contribution review](iterations/iteration51-hard-moment-quantitative-stability-novelty-task.json) compares the new interfaces with actual pinned and primary-source proof operations, conditional on separate proof approval.
 
-- I52: [ergodic and dynamical discovery](iterations/iteration52-ergodic-dynamical-discovery-task.json) screens unused source families and develops a distinct substantive mechanism.
-- I53: [sharp entropy stability discovery](iterations/iteration53-sharp-entropy-stability-discovery-task.json) investigates quantitative exponential-product and simplex mechanisms beyond the source’s existing equality operations.
-
-These records include active tasks, completed gap reports, and R011/R012/R013 acceptance. The four-finding pause checkpoint remains a historical snapshot.
+These records include active tasks, completed gap reports, and R011/R012 acceptance. The four-finding pause checkpoint remains a historical snapshot.
 
 All results remain deductions under the accepted corpus at `openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. Acceptance means a complete written deduction, independent AI proof review, a separate primary-source prior-art/significance review, and parent integration. It does not establish worldwide priority, independent truth of the corpus, human peer review, or formal proof certification.
 
@@ -68,7 +65,6 @@ All results remain deductions under the accepted corpus at `openai/math@fd4aeeb2
 | 4 | [R010: fixed factor-count residues independent of PD factor sizes](findings/R010-complex-modes-PD-independence.md) | `1b384f1` (proof integration) | `f034e3d` |
 | 5 | [R011: rooted perfect-matching entropy bound](findings/R011-rooted-matching-entropy.md) | `65ff2fd` (candidate), `f39320a` (proof integration) | [R011 acceptance record](findings/R011-rooted-matching-entropy.md) |
 | 6 | [R012: uniform Gaussian propeller stability](findings/R012-uniform-gaussian-propeller-stability.md) | `4d6c9f00` (candidate), `a1d77060` (proof integration) | [R012 acceptance record](findings/R012-uniform-gaussian-propeller-stability.md) |
-| 7 | [R013: higher-dimensional logarithmic stability](findings/R013-higher-dimensional-logarithmic-stability.md) | `a03655dd` (candidate); [I50 proof audit](reviews/i50-hard-moment-quantitative-stability-r2.md) | `5424232f` (significance); [R013 acceptance record](findings/R013-higher-dimensional-logarithmic-stability.md) |
 
 Equivalent formulations, routine corollaries, and multiple consequences of the same new bridge count as one finding. In particular, R008's Moree–Hommersom implication is part of R008.
 
