@@ -1,0 +1,1572 @@
+Efficient Sampling for Ising and Potts Models using Auxiliary Gaussian Variables
+Report GitHub Issue
+×
+Title:
+Content selection saved. Describe the issue below:
+Description:
+Submit without GitHub
+Submit in GitHub
+arXiv is now an independent nonprofit!
+Learn more
+×
+Back to arXiv
+Why HTML?
+Report Issue
+Back to Abstract
+Download PDF
+Abstract
+1 Introduction
+2 Choices of Auxiliary Gaussian
+2.1 Auxiliary Gaussian for Potts
+2.2 Block Gibbs using an auxiliary Gaussian
+2.3 State permutation step
+2.4 Low-rank auxiliary Gaussian
+2.5 Continuous relaxation of the Potts model
+3 Theoretical Analysis of Mixing Time
+4 Numerical Experiments
+4.1 Performance metric
+4.2 Potts models on a graph
+4.2.1 Lattice graph
+4.2.2 Curie-Weiss model
+4.3 Spin glass models
+4.3.1 Hopfield Model
+4.3.2 Cold SK model
+5 Proofs of Theorems  and
+5.1 Proof of Theorem
+5.2 Proof of Theorem
+6 Proof of Theorem
+6.1 Notations and preliminary lemmas
+6.2 Convergence of a deterministic iteration
+6.3 Convergence to the expected color proportions
+Step 1
+Step 2
+6.4 Proof of Theorem
+7 Discussion
+A Missing proofs in Section
+A.1 Conditional and marginal distributions when using the regular Auxiliary Gaussian
+A.2 Conditional and marginal distributions when using the low-rank Auxiliary Gaussian
+A.3 Proof of Proposition
+A.4 Proof of Proposition
+B Missing proofs in Section
+B.1 Proof of Lemma
+B.2 Proof of Lemma
+B.3 Proof of Lemma
+B.4 Proof of Lemma
+C Specialized Auxiliary Gaussian algorithm for q=2
+C.1 Standard Auxiliary Gaussian algorithm
+C.2 Low rank Auxiliary Gaussian algorithm
+References
+License: CC BY 4.0
+arXiv:2110.10801v2 [stat.CO] 15 Mar 2026
+Margossian, Zhong and Mukherjee
+Efficient Sampling for Ising and Potts Models
+using Auxiliary Gaussian Variables
+Charles C. Margossian* charles.margossian@ubc.ca
+Affiliation: Department of Statistics
+Affiliation: University of British Columbia
+Affiliation: Vancouver, BC, Canada
+Chenyang Zhong* cz2755@columbia.edu
+Affiliation: Department of Statistics
+Affiliation: Columbia University
+Affiliation: New York, NY, USA
+Sumit Mukherjee sm3949@columbia.edu
+Affiliation: Department of Statistics
+Affiliation: Columbia University
+Affiliation: New York, NY, USA
+Affiliation: *Equal contribution
+Abstract
+Ising and Potts models are an important class of discrete probability distributions which originated from statistical physics and since then have found applications in several disciplines.
+Simulation from these models is a well known challenging problem.
+In this paper, we study a class of Markov chain Monte Carlo algorithms, in which we introduce an auxiliary Gaussian variable such that, conditional on this variable, the discrete states are independent.
+This approach is broadly applicable to Ising and Potts models, including ones in which the coupling matrix admits negative entries, as in spin glass and Hopfield models.
+We focus on a block Gibbs sampler version of this algorithm, which alternates between sampling the auxiliary Gaussian and the discrete states, and derive mixing time bounds for a wide class of Ising/Potts models at both high and low temperatures, yielding results analogous to those derived for the Heat Bath and Swendsen-Wang algorithms. We present novel choices of auxiliary Gaussian variables which scale well with the number of states in the Potts model, and which can take advantage of the low rank structure of the coupling matrix, if any.
+Finally, we numerically evaluate the performance of the auxiliary Gaussian Gibbs sampler with several competing algorithms, across a range of examples.
+††heading: 23 2022 1- TBD; Revised TBD TBD 21-0000††shortheadings: Potts models simulation / Margossian, Zhong and Mukherjee††firstpage: 1††editor: TBD
+keywords
+Ising models, Potts models, Markov chain Monte Carlo, Gibbs sampling, mixing time
+1 Introduction
+The Ising model is a probability distribution on the space of binary vectors of size n, whose components are allowed to take two values, traditionally taken to be \{0,1\} or \{-1,1\}.
+The Ising model was first introduced in statistical physics to study ferromagnetism (Ising, 1925).
+The Potts model (Potts, 1952) generalizes the Ising model to q\geq 2 states, where the states can be taken to be [q]:=\{1,2,\cdots,q\}.
+With this choice, the Potts model is given by the following probability mass function on [q]^{n}:
+\mathbb{P}(\mathbf{X}=\mathbf{x})=\frac{1}{Z(\beta,A)}\exp\left(\frac{\beta}{2}\sum_{i,j=1}^{n}A_{ij}1\{x_{i}=x_{j}\}\right).
+(1)
+Here \beta>0 is the inverse temperature parameter; the coupling matrix A is a symmetric matrix which controls the dependence between the components of {\bf X}, and Z(\beta,A) is the normalizing constant,
+also termed the partition function.
+We assume that the diagonal entries of A equal 0, noting that this has no impact on the model (1).
+The most common choice of A is as a scaled adjacency matrix of a graph on n vertices. We consider both positive and negative entries for A, thus covering both traditional Ising/Potts models and spin glass models under one framework.
+Since their inception, the Ising and Potts models have found applications in a wide range of disciplines, including image processing, protein folding, neuroscience, and in the social sciences; see for example Lipowski (2022) and references therein.
+Two prominent cases of Ising models in machine learning are the Hopfield network and the Boltzmann machine (MacKay, 2003).
+One of the main reasons for the popularity of Ising and Potts models is that they are perhaps the simplest models which exhibit non-trivial dependence across their components.
+Simulation plays a crucial role in understanding the properties of the Ising and Potts models, particularly through the computation of Monte Carlo estimators.
+Building efficient samplers for such models is a well-known challenge (Neal, 1993; Landau and Binder, 2009; Faulkner and Livingstone, 2024).
+Over the past decade, this problem has generated much interest in the machine learning community (Martens and Sutskever, 2010; Zhang et al., 2012; Pakman and Paninski, 2013; Grathwohl et al., 2021; Robnik et al., 2023, e.g).
+A general strategy, first proposed by Martens and Sutskever (2010), is to introduce an auxiliary Gaussian (AG) variable {\bf Z}, such that the elements of {\bf X} conditional on {\bf Z} are mutually independent.
+It is then possible to construct Markov chain Monte Carlo (MCMC) algorithms, which sample from the joint space ({\bf X},{\bf Z}).
+For example, we may implement a block Gibbs sampler that alternates between sampling from {\bf X}\mid{\bf Z} and {\bf Z}\mid{\bf X}.
+We refer to such an algorithm as an AG sampler.
+The idea of introducing a latent continuous variable to study discrete states in an Ising model can be further traced back to the Hubbard–Stratonovich transformation used in theoretical physics (Stratonovich, 1957; Hubbard, 1959).
+The first contribution of our paper is algorithmic.
+We introduce two novel constructions of AG variables that in turn lead to new sampling algorithms.
+Specifically, we present a construction for Potts models and another construction for (approximately) low-rank coupling matrices A, with applications to dense regular graphs and Hopfield networks.
+These constructions can be used separately or together.
+The second contribution of our paper is theoretical and concerns bounds on the mixing time of the AG sampler.
+To the best of our knowledge, these are the first mixing time bounds for AG samplers.
+Such bounds exist for classical samplers, including the heat bath (Levin et al., 2010; Cuff et al., 2012, e.g.) and the Swendsen-Wang algorithm (Long et al., 2014; Gheissari et al., 2018; Galanis et al., 2019; Blanca et al., 2021, e.g.).
+The study of these bounds mainly focuses on cases where \beta is small (high-temperature regime) and/or A is the adjacency matrix of a complete graph (Curie-Weiss model).
+Our bounds demonstrate fast mixing of the AG sampler at high temperatures for a wide class of coupling matrices, including Ising and Potts models on graphs and spin glass models such as the Hopfield model.
+In some limited cases, such as the Curie-Weiss model, we also derive mixing bounds at low temperatures.
+Finally, our paper contains extensive numerical experiments, which demonstrate the performance of AG samplers relative to existing algorithms.
+We examine a number of target distributions, including Potts models on graphs, Hopfield networks and spin glass models.
+We consider a range of temperatures, including settings where the system is near a critical temperature or cold.
+In many regimes, we find that the AG sampler yields the best performance.
+2 Choices of Auxiliary Gaussian
+In this section, we derive the auxiliary Gaussian algorithm for the Potts model.
+We then discuss a modification of the algorithm for low-rank coupling matrices A that achieves higher computational efficiency.
+2.1 Auxiliary Gaussian for Potts
+In order to derive an auxiliary Gaussian variable for the Potts model, it is useful to rewrite the probability mass function in terms of one-hot variables.
+Consider a vector {\mathbf{x}}=(x_{1},\ldots,x_{n})\in[q]^{n}.
+For every \ell\in[q], define the one-hot vector,
+{\mathbf{y}}_{\ell}:=(1\{x_{1}=\ell\},\ldots,1\{x_{n}=\ell\})^{\prime}\in\mathbb{R}^{n}.
+In other words, the i^{\text{th}} element of \mathbf{y}_{\ell} is 1 if x_{i}=\ell, and 0 otherwise.
+This sets up a one-to-one map between \mathbf{x} and ({\bf y}_{1},\ldots,{\bf y}_{q}).
+The log probability mass function of the Potts model may then be written as
+\frac{\beta}{2}\sum_{i,j=1}^{n}A_{ij}1\{x_{i}=x_{j}\}=\frac{\beta}{2}\sum_{\ell=1}^{q}\mathbf{y}^{\prime}_{\ell}A\mathbf{y}_{\ell},
+where the additive log normalizing constant has been dropped.
+The term \mathbf{y}^{\prime}_{\ell}A\mathbf{y}_{\ell}/2 looks like the log moment generating function of a multivariate Gaussian, except that the matrix A is not non-negative definite, as the diagonal entries of A equal 0.
+Let \lambda_{\text{min}} be the smallest eigenvalue of A and consider \lambda such that \lambda>-\lambda_{\text{min}}.
+We replace A by A+\lambda I, where I\in\mathbb{R}^{n\times n} is the identity matrix, thus ensuring that A+\lambda I is positive definite.
+This change to the coupling matrix does not change the probability mass function.
+Indeed,
+\sum_{\ell=1}^{q}\mathbf{y}_{\ell}^{\prime}(A+\lambda I)\mathbf{y}_{\ell}-\sum_{\ell=1}^{q}\mathbf{y}_{\ell}^{\prime}A\mathbf{y}_{\ell}=\lambda\sum_{\ell=1}^{q}\mathbf{y}_{\ell}^{\prime}\mathbf{y}_{\ell}=\lambda\sum_{\ell=1}^{q}\sum_{i=1}^{n}1\{x_{i}=\ell\}=n\lambda,
+(2)
+where the last equality follows from the fact \sum_{\ell=1}^{q}1\{x_{i}=\ell\}=1 for each i\in[n],
+and the constant n\lambda can be absorbed into the normalizing constant.
+Setting
+B:=\beta(A+\lambda I),
+(3)
+the marginal probability mass function of \mathbf{X} can be written as
+\mathbb{P}(\mathbf{X}=\mathbf{x})=\frac{1}{Z(\beta,B)}\exp\Big(\frac{1}{2}\sum_{\ell=1}^{q}\mathbf{y}_{\ell}^{\prime}B\mathbf{y}_{\ell}\Big).
+(4)
+We now introduce our auxiliary Gaussian variables.
+Given {\mathbf{X}}={\mathbf{x}}, let \mathbf{Z}_{1},\ldots,\mathbf{Z}_{q} be mutually independent n-dimensional Gaussian random vectors with
+\displaystyle\mathbf{Z}_{\ell}\sim N\left(\mathbf{y}_{\ell},B^{-1}\right).
+(5)
+Then one can check that given {\mathbf{Z}}:=({\mathbf{Z}}_{1},\ldots,{\mathbf{Z}}_{q}) the random variables (X_{1},\ldots,X_{n}) are mutually independent, with
+\mathbb{P}(X_{i}=\ell\mid{\mathbf{Z}})=\frac{\exp\left(\sum_{j=1}^{n}B_{ij}z_{\ell j}\right)}{\sum_{\ell^{\prime}=1}^{q}\exp\left(\sum_{j=1}^{n}B_{ij}z_{\ell^{\prime}j}\right)}.
+(6)
+By iterative sampling from (5) and (6), we obtain a block Gibbs sampler.
+This approach extends the block Gibbs sampler proposed by Martens and Sutskever (2010) for Ising models.
+We might also consider running MCMC directly over {\bf Z} and then sampling {\bf X}\mid{\bf Z}.
+This is the strategy proposed by Zhang et al. (2012) for the Ising models.
+To do so, we need the unnormalized marginal density of {\bf Z}, which is given by
+\displaystyle p({{\bf z}_{1},\cdots,{\bf z}_{q}})\propto\exp\Big(-\frac{1}{2}\sum_{\ell=1}^{q}{\mathbf{z}}_{\ell}^{\prime}B{\mathbf{z}}_{\ell}\Big)\prod_{i=1}^{n}\Big(\sum_{\ell=1}^{q}\exp\Big(\sum_{j=1}^{n}B_{ij}z_{\ell j}\Big)\Big).
+(7)
+The proofs of both (6) and (7) are in Appendix A.1.
+2.2 Block Gibbs using an auxiliary Gaussian
+In this section, we analyze the complexity of the block Gibbs sampler, obtained by alternating between (5) and (6).
+We refer to this algorithm as the AG sampler.
+Algorithm 1 provides details for the AG sampler.
+There and throughout the paper, we denote the t^{th} iteration of the Markov chain as {\bf x}(t).
+If we look at the j^{\text{th}} component, we write x_{j}(t).
+The first conditional (5) requires sampling from a multivariate Gaussian distribution for each \ell\in[q].
+Each {\bf Z}_{\ell} follows a Gaussian with the same covariance matrix B and so the cost of sampling is dominated by the Cholesky decomposition and inversion of B, an operation with complexity \mathcal{O}(n^{3}).
+However, B remains unchanged between iterations, so the decomposition needs be done only once.
+Then, within each iteration, the cost is dominated by 2q matrix-vector multiplications, each with cost \mathcal{O}(n^{2}) (Algorithm 1 lines 9 and 11).
+Suppose we run MCMC for T iterations.
+Then the complexity of the algorithm is \mathcal{O}(n^{3}+Tn^{2}q).
+Provided n\ll T, the cost of the initial Cholesky decomposition is marginal.
+Algorithm 1 Block Gibbs with an auxiliary Gaussian (AG sampler)
+Input: coupling matrix A, inverse temperature \beta, pertubation \epsilon>0, initialization \mathbf{x}(0), number of iterations T
+1
+\lambda\leftarrow|\lambda_{\text{min}}(A)|+\epsilon,\ \epsilon>0  \triangleright \lambda_{\text{min}}(A) is the smallest eigenvalue of A.
+2
+B\leftarrow\beta(A+\lambda\mathbf{I})
+3
+L\leftarrow\text{Cholesky-decompose}(B^{-1})
+4
+for t in 1:T do
+5
+for \ell in 1:q do
+6
+\mathbf{y}_{\ell}\leftarrow\left(1\left\{x_{1}(t-1)=\ell\right\},...,1\left\{x_{n}(t-1)=\ell\right\}\right)
+7
+\mathbf{z}^{*}_{\ell}\sim\text{Normal}(0,I)
+8
+\mathbf{z}_{\ell}=L_{n}\mathbf{z}^{*}_{\ell}+\mathbf{y}_{\ell}
+9
+end for
+10
+P\leftarrow B[\mathbf{z}_{1},...,\mathbf{z}_{q}]
+11
+for j in 1:n do
+12
+\textbf{p}_{j}\leftarrow\exp(P_{j1:q})
+13
+x_{j}(t)\sim\text{Categorical}(\textbf{p}_{j}/\sum_{\ell=1}^{q}p_{j\ell})
+14
+end for
+15
+Draw permutation \tau_{t} over [q].  \triangleright Optional state permutation (Section 2.3).
+16
+{\bf x}(t)\leftarrow\tau_{t}({\bf x}(t))
+17
+end for
+18
+return: \mathbf{x}(1),\mathbf{x}(2),...,\mathbf{x}(T)
+Remark 1.
+Martens and Sutskever (2010) propose an auxiliary Gaussian variable over \mathbb{R}^{qn} for simulating Potts states.
+Plugging this choice into the AG sampler results in an algorithm with complexity \mathcal{O}(n^{3}+Tn^{2}q^{2}).
+By contrast, we propose using q auxiliary Gaussian variables, each over \mathbb{R}^{n}, and the cost per iteration of our sampler scales linearly in q, rather than quadratically.
+2.3 State permutation step
+The Potts model defined in (1) does not prefer any state \ell\in[q] over another, and a permutation of the states does not change the probability mass.
+However, at cold temperatures, a Markov chain may take a long time to move from one configuration where a state \ell dominates to one where a state \ell^{\prime} dominates.
+To remedy this issue, we may introduce a random permutation at each iteration \tau_{t} and do an update
+x_{i}(t)\leftarrow\tau_{t}(x_{i}(t)).
+(8)
+This update improves Monte Carlo estimates of quantities which vary under state permutations, for example the expected number of particles in a particular state \ell, \mathbb{E}\left(\sum_{i}1\{x_{i}=\ell\}\right).
+However, it does not improve estimates of quantities invariant to these permutations, such as the system’s expected Hamiltonian, \mathbb{E}\left(\beta\sum_{i,j}A_{ij}1\{x_{i}=x_{j}\}/2\right).
+The permutation step is also a theoretical tool for bounding mixing times at cold temperatures because the bounded total variation distance accounts for functions which are sensitive to state permutations.
+In particular, the permutation step plays a role in Theorem 9, but it is not used to obtain bounds at high temperatures.
+Remark 2.
+It is possible to break the symmetry over states \ell\in[q] by introducing a magnetic field in (1).
+Then (8) must be treated as a Metropolis proposal, accepted with probability \text{min}[1,\mathbb{P}({\bf X}=\tau(x(t)))/\mathbb{P}({\bf X}=x(t))], in order to preserve the correctness of the sampler.
+In the absence of a magnetic component, the acceptance probability is always 1.
+2.4 Low-rank auxiliary Gaussian
+For certain models, the modified coupling matrix B, obtained after increasing the diagonal elements of A, may be low-rank, either exactly or approximately.
+In this case, it is reasonable to believe that we don’t have to work with n-dimensional Gaussian vectors but instead with a k-dimensional Gaussian vector, where k={\rm rank}(B).
+Such algorithms have already been explored in the setting of Ising models for the complete graph (Mukherjee et al., 2018), where
+A=\frac{1}{n}{\bf 1}{\bf 1}^{\prime}-\frac{1}{n}I,
+(9)
+has eigenvalues (1-1/n,-1/n,\ldots,-1/n), where the multiplicity of the eigenvalue -1/n is n-1.
+Even though {\rm rank}(A)=n in a strict sense, we can add I/n to A to get the matrix {\bf 1}{\bf 1}^{\prime}/n, which has eigenvalues (1,0,\ldots,0), and rank 1.
+A similar approach was successful in analyzing the Ising model of a regular graph with degree \propto\sqrt{n} (Mukherjee and Xu, 2023), where {\rm rank}(A)\propto\sqrt{n}.
+To propose a general version of the low-rank algorithm, let B=\beta(A+|\lambda_{\min}|I).
+Note it is sufficient to augment the diagonal elements with |\lambda_{\min}|, rather than \lambda>|\lambda_{\min}|.
+Let \sum_{i=1}^{n}\mu_{i}{\bf p}_{i}{\bf p}_{i}^{\prime} denote the spectral expansion of B, where (\mu_{1},\ldots,\mu_{n}) are non-negative, and arranged in decreasing order, and \mathbf{p}_{i}\in\mathbb{R}^{n} is the eigenvector corresponding to eigenvalue \mu_{i}.
+Fixing \varepsilon>0, we introduce the low-rank approximation
+\tilde{B}=\sum_{i:\mu_{i}>\varepsilon}\mu_{i}\mathbf{p}_{i}\mathbf{p}_{i}^{\prime}.
+(10)
+In other words, we treat the eigenvalues below \varepsilon as 0.
+Let k\leq n denote the rank of \tilde{B}, i.e. k:=\sum_{i=1}^{n}1\{\mu_{i}>\varepsilon\}.
+Let \mathbb{Q} be the Potts model with B replaced by \tilde{B}, i.e.
+\displaystyle\mathbb{Q}(\mathbf{X}=\mathbf{x})=\frac{1}{Z(\beta,\tilde{B})}\exp\left(\frac{1}{2}\sum_{i,j=1}^{n}\tilde{B}_{ij}1\{x_{i}=x_{j}\}\right).
+(11)
+The log unormalized probability mass \mathbb{Q} can be written as
+\frac{1}{2}\sum_{\ell=1}^{q}\mathbf{y}_{\ell}^{\prime}\tilde{B}\mathbf{y}_{\ell}=\frac{1}{2}\sum_{\ell=1}^{q}\sum_{j=1}^{k}\mu_{j}(\mathbf{p}_{j}^{\prime}\mathbf{y}_{\ell})^{2}.
+(12)
+This representation motivates the following new auxiliary variable. Given \mathbf{X}=\mathbf{x}, let
+\mathbf{Z}:=\{Z_{\ell j}\}_{\ell\in[q],j\in[k]}
+be kq mutually independent Gaussians with
+\displaystyle Z_{\ell j}\sim\text{Normal}(\mathbf{p}^{\prime}_{j}\mathbf{y}_{\ell},1/\mu_{j}).
+(13)
+Then the conditional distribution of {\mathbf{X}} given {\mathbf{Z}} is
+\mathbb{P}(X_{i}=\ell\mid{\bf Z})=\frac{\exp\left(\sum_{j=1}^{k}\mu_{j}z_{\ell j}p_{ji}\right)}{\sum_{\ell^{\prime}=1}^{q}\exp\left(\sum_{j=1}^{k}\mu_{j}z_{\ell^{\prime}j}p_{ji}\right)},
+(14)
+which is straightforward to sample from. Also, the marginal density of {\bf Z} has a similar low-rank structure and
+\displaystyle p(\mathbf{z})\propto\exp\Big(-\frac{1}{2}\sum_{\ell=1}^{q}\sum_{j=1}^{k}\mu_{j}z_{\ell j}^{2}\Big)\prod_{i=1}^{n}\Big(\sum_{\ell=1}^{q}\exp\Big(\sum_{j=1}^{k}\mu_{j}z_{\ell j}p_{ji}\Big)\Big)
+(15)
+The proof of both (14) and (15) are given in Appendix A.2.
+By iterating between the steps (13) and (14), we again have a block Gibbs sampler.
+We no longer need to do an inversion and Cholesky decomposition but we do one Eigen decomposition instead, which incurs the same complexity \mathcal{O}(n^{3}). The cost per iteration is dominated by (i) calculating the mean of each univariate normal, that is doing qk inner-products of n-vectors in (13) and (ii) calculating the probability of sampling each state for each particle, which is qn inner-products of k-vectors in (14).
+Both operations have complexity \mathcal{O}(qnk).
+The resulting Gibbs sampler with m iterations has complexity \mathcal{O}(n^{3}+Tqnk).
+This is an improvement over the previously obtained complexity \mathcal{O}(n^{3}+Tqn^{2}). In particular the improvement is significant when T\gg n\gg k.
+A tuning parameter when approximating A as low-rank is the threshold \varepsilon, under which small eigenvalues of the coupling matrix are replaced by 0.
+To provide some guidance on setting \varepsilon, we bound the error on the low-rank AG sampler in the following proposition.
+Proposition 3.
+Let \mathbb{P} be the original Potts measure given in (4), and let \mathbb{Q} be the low-rank Potts measure given in (11). Then we have the following results:
+(i) The difference in the log normalizing constant of the two models satisfies
+|\log Z(\beta,B)-\log Z(\beta,\tilde{B})|\leq\frac{1}{2}n\beta\varepsilon.
+(ii) With \mathrm{KL}(.|.) denoting the Kullback-Leibler divergence between two probability measures, we have
+\max\Big(\mathrm{KL}(\mathbb{P}|\mathbb{Q}),\mathrm{KL}(\mathbb{Q}|\mathbb{P})\Big)\leq n\beta\varepsilon.
+The proof is in Appendix A.3.
+In general, the low-rank auxiliary Gaussian is useful when k={\rm rank}(\tilde{B})\ll n.
+The following proposition provides a simple sufficient condition as to when this happens.
+Proposition 4.
+Suppose \lambda_{\max} and \lambda_{\min} are the largest and smallest eigenvalues of A. Let B:=\beta(A+|\lambda_{\min}|I), and \tilde{B} be its low-rank approximation for some \varepsilon>0. If
+\displaystyle\lambda_{\max}=O(1),\quad\lambda_{\min}=o(1),
+(16)
+then k:={\rm rank}(\tilde{B})=o(n).
+The proof is in Appendix A.4.
+The above lemma raises the question of whether there are natural examples of coupling matrices A which satisfy (16). Below we give some examples of matrices A which satisfy (16), and some examples which don’t.
+In cases where the Potts model is defined over a graph, we denote by \tilde{A} the adjacency matrix—noting that A\propto\tilde{A}—and by d the degree of a regular graph, that is the number of edges connected to each node.
+•
+Satisfies (16):
+Ising model on the Complete Graph (Curie-Weiss model), random regular graphs and Erdős-Rényi graphs with large average degree, and certain Hopfield models:
+(a)
+Complete graphs. Here, all the nodes are connected to one another and A=\frac{1}{n}{\bf 1}{\bf 1}^{\prime}-\frac{1}{n}I.
+Hence \lambda_{\max}=1-\frac{1}{n}=O(1) and \lambda_{\min}=-\frac{1}{n}=o(1).
+(b)
+Random regular graphs. For d\leq n/\penalty 2 and A=\tilde{A}/d,
+we have \lambda_{\max}(\tilde{A})=d and \lambda_{\min}(\tilde{A})=O_{P}(\sqrt{d}) (see Cook et al. (2018); Tikhomirov and Youssef (2019)). Consequently, as long as d\rightarrow\infty with n\to\infty, we have \lambda_{\max}=1=O(1) and \lambda_{\min}=O_{P}\big(1/\sqrt{d}\big)=o_{P}(1).
+(c)
+Erdös–Rényi graphs. For these graphs, we denote by p the probability of there being an edge between two nodes.
+Then for p=d/n and A=\tilde{A}/d, we have that when d\gg\log n, then \big\|\tilde{A}-\frac{d}{n}{\bf 1}{\bf 1}^{\prime}\big\|_{2}=O_{P}(\sqrt{d}) (Benaych-Georges et al., 2020, Theorem 3.2).
+Hence \big\|A-\frac{1}{n}{\bf 1}{\bf 1}^{\prime}\big\|_{2}=O_{P}\big(1/\sqrt{d}\big)=o_{P}(1), and consequently \lambda_{\max}=1+o_{P}(1)=O_{P}(1),\lambda_{\min}=o_{P}(1).
+(d)
+Hopfield models. The Hopfield model is defined by an m\times n matrix \bm{\eta} of i.i.d Rademacher random variables, i.e. P(\eta_{ij}=\pm 1)=1/2.
+The coupling matrix is then A=\text{off-diag}(\widetilde{A}), where \widetilde{A}=\bm{\eta}^{\prime}\bm{\eta}/\max(m,n). Note that A=\widetilde{A}-\frac{m}{\max(m,n)}I.
+When n\ll m, we have \|\widetilde{A}-I\|_{2}=\big\|\frac{1}{m}\bm{\eta}^{\prime}\bm{\eta}-I\big\|_{2}=O_{P}\big(\sqrt{\frac{n}{m}}\big)=o_{P}(1) (see (Vershynin, 2018, Theorem 4.7.1)). Consequently \|A-{\bm{0}}\|_{2}=o_{P}(1), and so \lambda_{\max}=o_{P}(1),\lambda_{\min}=o_{P}(1).
+On the other hand, when m\ll n, we have \widetilde{A}=\frac{1}{n}{\bm{\eta}}^{\prime}{\bm{\eta}}, and in this regime (Vershynin, 2018, Theorem 4.7.1) gives
+\frac{1}{n}{\bm{\eta}}{\bm{\eta}}^{\prime}\stackrel{{\scriptstyle p}}{{\approx}}I_{m}. Since the nonzero eigenvalues of \widetilde{A}=\frac{1}{n}{\bm{\eta}}^{\prime}{\bm{\eta}} are the same as those of \frac{1}{n}{\bm{\eta}}{\bm{\eta}}^{\prime}\stackrel{{\scriptstyle p}}{{\approx}}I_{m}, we have \lambda_{\max}(\widetilde{A})=1+o_{P}(1) and \lambda_{\min}(\widetilde{A})=o_{P}(1). Consequently, \lambda_{\max}=\lambda_{\max}(\widetilde{A})-\frac{m}{n}=1+o_{P}(1) and \lambda_{\min}=\lambda_{\min}(\widetilde{A})-\frac{m}{n}=o_{P}(1).
+Note that the same applies if the components of \bm{\eta} are \sigma^{2}-sub-Gaussian random variables for a fixed \sigma. Thus the only case where the Hopfield model is not approximately low-rank is the regime when m\propto n.
+•
+Does not satisfy (16):
+Ising model on graphs with bounded average (including Ising model on the d dimensional integer lattice), Hopfield model with m=n, and Sherrington-Kirkpatrick model.
+If (16) is not satisfied, then it seems reasonable to prefer the regular version of the auxiliary Gaussian algorithm over the low-rank version.
+Numerical experiments suggest the regular version is faster when A is full-rank.
+2.5 Continuous relaxation of the Potts model
+Rather than use a block Gibbs sampler which alternates between ({\bf Z}\mid{\bf X}) and ({\bf X}\mid{\bf Z}), it is possible to directly sample from p({\bf Z}) using (7) (or (15)), which gives the unnormalized marginal density of the matrix {\mathbf{Z}}.
+The discrete states are then recovered by sampling from ({\bf X}\mid{\bf Z}).
+This approach is particularly attractive, in that it lets us use gradient-based MCMC.
+For example, Zhang et al. (2012) use Hamiltonian Monte Carlo (Neal, 2011; Betancourt, 2018, HMC;) to sample over the marginal distribution of {\bf Z} for the Ising model.
+Their strategy can be applied to Potts models and/or models with a low-rank coupling matrix A, using the auxiliary Gaussian variables we propose.
+One difficulty is that p({\bf Z}) is highly multimodal, especially for large \beta, which can lead to long mixing times, even with gradient-based MCMC.
+Furthermore, HMC is difficult to tune, and self-tuning strategies, such as the No-U Turn Sampler (Hoffman and Gelman, 2014, NUTS;) are not straightforward to implement; a similar observation is made by Grathwohl et al. (2021).
+In our numerical experiments, we consider an HMC algorithm using the proposed AG variables; however, the tuning parameters are held fixed and are likely suboptimal.
+Finding a well-tuned gradient-based sampler for p({\bf Z}) is left as an open problem.
+3 Theoretical Analysis of Mixing Time
+Monte Carlo estimators generated by MCMC suffer from a non-asymptotic bias, due to MCMC’s biased initialization, i.e. \mathbf{x}(0) is not drawn from (1).
+Hence, we need to overcome this initial bias during a burn-in phase before accumulating samples to construct our Monte Carlo estimators.
+A common metric to quantify the number of necessary burn-in iterations is the total variation mixing time,
+which can be used to bound the bias of Monte Carlo estimators over discrete spaces (Sinclair, 1993; Diaconis, 2009; Levin and Peres, 2017; Dwivedi et al., 2019; Chen et al., 2020, e.g.).
+In this section, we present theoretical results on the mixing time of the AG sampler introduced in the previous section. The proofs of our theoretical results are deferred to Sections 5 and 6.
+We first review total variation mixing time.
+Let \mathbb{N} be the natural numbers and \mathbb{N}^{*} the natural numbers excluding 0.
+Consider a Markov chain X(t) with t\in\mathbb{N} on a finite state space \Omega, and let \pi denote the chain’s stationary distribution.
+For any x_{0}\in\Omega and t\in\mathbb{N}, we denote by K^{t}_{x_{0}} the distribution of X(t) for a chain initialized at X(0)=x_{0}.
+The total variation distance between K_{x_{0}}^{t}
+and \pi is defined as
+\|K_{x_{0}}^{t}-\pi\|_{\mathrm{TV}}:=\frac{1}{2}\sum_{x\in\Omega}|K_{x_{0}}^{t}(x)-\pi(x)|,
+and takes values over [0,1].
+Standard theory of finite Markov chains guarantees that the total variation distance converges to 0 as t\to\infty under irreducibility and aperiodicity (Neal, 1993; Levin and Peres, 2017, e.g.).
+Unfortunately, this asymptotic result tells us little about the behavior of Markov chains over a finite number of iterations.
+To better understand the pre-asymptotic behavior of MCMC, we study the \epsilon-mixing time.
+Let d(t):=\max_{x_{0}\in\Omega}\|K_{x_{0}}^{t}-\pi\|_{\mathrm{TV}}. For any \epsilon>0, the \epsilon-mixing time is defined as
+t_{\mathrm{mix}}(\epsilon):=\min\{t\in\mathbb{N}:d(t)\leq\epsilon\}.
+Bounding d(t) ensures that the result holds for any choice of initialization.
+We now take X(t) to be the t^{\text{th}} sample generated by the AG sampler, and so \Omega=[q]^{n} and \pi is the probability mass function in (1). To use the AG sampler, we need to construct a modified coupling matrix, B=\beta(A+\lambda I),
+for some \lambda>|\lambda_{\text{min}}|, where we recall that \lambda_{\text{min}} is the smallest eigenvalue of A.
+Any choice of \lambda produces a correct Gibbs sampler, however for a small \lambda we will obtain stronger guarantees on mixing time.
+These guarantees are mediated by the 1-norm of B,
+\|B\|_{1}:=\max_{j\in[n]}\sum_{i=1}^{n}|B_{ij}|,
+(17)
+which for a fixed A is minimized for a small \lambda.
+Theorem 5.
+Assume that \|B\|_{1}<4/\penalty q. For any \epsilon\in(0,1), the \epsilon-mixing time of the AG sampler satisfies
+t_{\mathrm{mix}}(\epsilon)\leq\left\lceil\frac{\log{\epsilon^{-1}}+\log{n}}{-\log\big(q\|B\|_{1}/\penalty 4\big)}\right\rceil.
+Remark 6.
+Theorem 5 applies to the Curie-Weiss model (Potts model on the complete graph, with the coupling matrix given by (9); see Section 4.2.2 for details), Potts models on lattice graphs (see Section 4.2.1), and the Hopfield model:
+•
+For the Curie-Weiss model, we can take \lambda slightly larger than n^{-1}. In this case, \|B\|_{1}=\beta and our result implies that the AG sampler is fast mixing for \beta\in(0,4/\penalty q). When q=2 (corresponding to the mean-field Ising model), this range covers the entire high temperature regime.
+•
+For the Potts model on a lattice graph in \mathbb{Z}^{d}, we can take A to be the adjacency matrix of the graph normalized by 2d. In this case, |\lambda_{\min}|\leq\|A\|_{1}\leq 1 and any choice of \lambda>1 suffices. As \|B\|_{1}\leq\beta(\|A\|_{1}+\lambda)\leq\beta(1+\lambda), our result implies that the AG sampler is fast mixing for \beta\in(0,2/\penalty q). In fact, the same calculation shows that the AG sampler is fast mixing in the above regime when A is the (scaled) adjacency matrix of any d_{n}-regular graph, where d_{n} can be fixed or grow with n at an arbitrary rate.
+•
+For the Hopfield model with m\gg n^{2}\log n, take A=\text{off-diag}(\widetilde{A}) with \widetilde{A}=\bm{\eta}^{\prime}\bm{\eta}/\max(m,n). Standard concentration bounds for sub-exponential random variables (see e.g. (Vershynin, 2018, Corollary 2.8.3)) and a union bound yield that
+\|A\|_{1}=\frac{\max_{j\in[n]}\sum_{i\in[n]:i\neq j}\big|\sum_{k=1}^{m}\eta_{ki}\eta_{kj}\big|}{\max(m,n)}=\mathcal{O}\bigg(\frac{n\sqrt{m\log{n}}}{m}\bigg)=o(1)
+with high probability. Hence the AG sampler is fast mixing.
+Remark 7.
+The mixing time upper bound in Theorem 5 increases with \|B\|_{1}. As \|B\|_{1} increases with \lambda>|\lambda_{\text{min}}|, our result provides a theoretical justification for choosing \lambda to be only slightly larger than |\lambda_{\min}|.
+This formalizes an empirical observation made by Martens and Sutskever (2010) that a small \lambda yields better performance.
+Without the high temperature restriction, the mixing time can be at most exponential in n\|B\|_{1}, as shown in Theorem 8 below.
+Theorem 8.
+For any \epsilon\in(0,1), the \epsilon-mixing time of the AG sampler satisfies
+t_{\mathrm{mix}}(\epsilon)\leq\lceil\exp(2\|B\|_{1}n)\log(\epsilon^{-1})\rceil.
+Theorem 8 gives a bound on the worst case mixing time, and it is very much possible to have faster mixing for particular models, even at low temperatures.
+To show this, we consider the low-rank AG sampler (Section 2.4) with a permutation step (Section 2.3).
+Theorem 9 shows that for the Curie-Weiss model (Potts model on the complete graph, with coupling matrix (9)), the AG sampler mixes within \mathcal{O}(\log{n}) iterations, even in the low temperature regime.
+Theorem 9.
+Consider the Curie-Weiss model with q\geq 2, and assume that the inverse temperature \beta>q. For any \epsilon\in(0,1), the \epsilon-mixing time of the modified AG sampler described as above satisfies
+t_{\mathrm{mix}}(\epsilon)\leq C\log(n+1)\lceil\log(\epsilon^{-1})\rceil,
+where C only depends on q,\beta.
+Remark 10.
+For the Curie-Weiss model with general q, there are three critical temperatures \beta_{u}\leq\beta_{o}\leq\beta_{rc}=q. Following Galanis et al. (2019), \beta_{u} corresponds to the uniqueness/non-uniqueness threshold, \beta_{o} corresponds to the ordered/disordered phase transition, and \beta_{rc} was conjectured to correspond to a second uniqueness/non-uniqueness threshold (Häggström (1996)); see Costeniuc et al. (2005); Cuff et al. (2012); Galanis et al. (2016) for further details. When \beta\in(\beta_{u},\beta_{rc}), the Curie-Weiss model exhibits metastable behavior and we expect common MCMC samplers to be slow mixing in this regime (see e.g. Galanis et al. (2019); Coja-Oghlan et al. (2023)). Theorem 9 implies fast mixing of the modified AG sampler for the Curie-Weiss model throughout the low temperature regime \beta>\beta_{rc}.
+4 Numerical Experiments
+In this section, we numerically evaluate the performance of the AG sampler across a range of Ising and Potts models.
+The code to reproduce the experiments and figures can be found at https://github.com/charlesm93/potts_simulation.
+As benchmarks, we consider several MCMC algorithms.
+An important class of algorithms are Metropolis algorithms, which propose a new state {\bf x}^{\prime} and accept it with a certain probability.
+Specifically, we consider Barker’s acceptance rule, which is to accept the proposed state with probability,
+\alpha=\frac{\mathbb{P}({\bf x}^{\prime})}{\mathbb{P}({\bf x})+\mathbb{P}({\bf x}^{\prime})}=\frac{1}{1+e^{\mathcal{L}({\bf x})-\mathcal{L}({\bf x}^{\prime})}},
+(18)
+where \mathcal{L}({\bf x}):=\log\mathbb{P}({\bf x}).
+In the special case where q=2 and the proposal is obtained by “flipping” a single element x_{i}, an iteration of the Metropolis algorithm with Barker’s acceptance rule is exactly one iteration of the heat bath algorithm or Gibbs sampler, which draws a new state from the conditional distribution \mathbb{P}(X_{i}\mid{\bf x}_{-i}).
+A crucial choice in the Metropolis algorithm is to determine which site i to update.
+This can be done by sampling i uniformly from [n] at each iteration, using a schedule that sequentially updates each site, or with a more sophisticated proposal as in Gibbs-with-Gradient (Grathwohl et al., 2021).
+The calculation of \mathcal{L}({\bf x})-\mathcal{L}({\bf x}^{\prime}) can be done by treating \mathcal{L}({\bf x}) as a user-provided black box function with computational cost \mathcal{O}(n^{2}).
+However, if the difference between {\bf x} and {\bf x}^{\prime} is only one element, then \mathcal{L}({\bf x})-\mathcal{L}({\bf x}^{\prime}) can be computed in \mathcal{O}(n) operations, given an initial calculation of \mathbb{P}({\bf x}) at the first iteration of MCMC.
+All the Metropolis algorithms we consider update a single site and so, unless otherwise specified, we use the specialized calculation of \mathcal{L}({\bf x})-\mathcal{L}({\bf x}^{\prime}).
+We also consider the Wolff algorithm (Wolff, 1989) for Potts models defined on graphs.
+The Wolff algorithm is similar to the Swendsen-Wang algorithm but only updates a single cluster per iteration.
+In preliminary runs, we found that the Wolff algorithm consistently outperforms the Swendsen-Wang algorithm and so we only report results for the Wolff algorithm.
+Finally, we examine three samplers which use an auxiliary Gaussian variable: the AG sampler, the AG sampler with a low-rank auxiliary Gaussian, and discrete Hamiltonian Monte Carlo. The algorithms we evaluate are summarized in Table 1.
+Algorithm
+Description
+Black Box Metropolis
+Random site update with black box calculation of \mathcal{L}({\bf x})-\mathcal{L}({\bf x}^{\prime}).
+Metropolis
+Random single site update.
+Metropolis Long
+Single site update from sequence.
+Gibbs with Gradient
+Single site update using gradient-based proposal.
+Wolff
+Multiple updates using an auxiliary cluster. Only works for Potts
+models defined on a graph.
+AG
+Alternates between updating {\bf X} and an AG variable {\bf Z}
+(Section 2.1). When q=2, the AG variable is specialized and we
+recover the algorithm by Martens and Sutskever (2010).
+AG Low-Rank
+Same as above, but with low-rank AG variable (Section 2.4).
+Discrete HMC
+Static Hamiltonian Monte Carlo over the space of the AG
+variable {\bf Z} (Section 2.1).
+Table 1: Summary of MCMC algorithms in numerical experiments.
+The Metropolis, Metropolis Long, and Gibbs with Gradient use a specialized calculation of the acceptance probability.
+4.1 Performance metric
+A typical goal with MCMC is to estimate expectation values, that is, for a function \phi:[q]^{n}\to\Phi\subseteq\mathbb{R}, we estimate \mathbb{E}\left[\phi(\mathbf{X})\right].
+Our estimator is
+\hat{\phi}_{T}=\frac{1}{\lceil T/2\rceil}\sum^{T}_{t=\lceil T/2\rceil}\phi\left(\mathbf{x}^{(t)}\right),
+(19)
+where (\mathbf{x}(0),\cdots,\mathbf{x}(T)) are samples obtained via MCMC and T is the total number of iterations.
+Following Gelman and Shirley (2011), we discard the first half of the Markov chain as part of a burn-in phase.
+As a quantity of interest, we focus on \phi({\bf x})=-\sum_{i,j=1}^{n}A_{ij}1\{x_{i}=x_{j}\}, which is the system’s Hamiltonian and is a sufficient statistics of (1).
+We compute two statistics to evaluate the quality of \hat{\phi}_{T}:
+(i)
+The \widehat{R}-statistics (Gelman and Rubin, 1992; Vehtari et al., 2020), which compares the mean of multiple chains initialized at distinct points and approaches 1 as the Markov chain converges.
+(ii)
+The effective sample size (ESS), which for T large enough can be interpreted as the number of independent samples required to achieve the variance of \hat{\phi}_{T} (Roberts and Rosenthal, 2004).
+Following the recommendation of Vehtari et al. (2020), we will use the ESS to characterize the error of \hat{\phi}_{T}, provided \widehat{R}\approx 1.
+We compute both quantities using the R package Posterior (Buerkner et al., 2020).
+Our goal is to achieve convergence and a target ESS in as short a time as possible.
+There is no basic operations common to all the algorithms we consider, so the computational cost of a sampler is measured by its runtime (wall time).
+This means that our results depend on the implementation details of each algorithm.
+For this experiment, all samplers are implemented in R.
+For each algorithm, we run 4 chains in order to compute \widehat{R}.
+For the AG sampler, each chain is made of 50,000 iterations.
+The length of the chains for other algorithms is roughly set to keep total runtimes between methods comparable.
+4.2 Potts models on a graph
+We begin with the case where A is the adjacency matrix of a graph G scaled by its average degree.
+We consider two choices of G which are of wide interest in statistical physics: the Ising model on the integer lattice and the Curie-Weiss model.
+4.2.1 Lattice graph
+Figure 1: \widehat{R} over time. Results on a 24\times 24 Ising grid at or near the critical temperature \beta_{c}=1/\sqrt{2}\approx 0.707.
+At various checkpoints, we evaluate the run time and \widehat{R} for each sampler.
+\widehat{R}\leq 1.1 indicates the sampler is nearing convergence; in practice the more conservative threshold \widehat{R}\leq 1.01 is recommended.
+Overall, the AG sampler achieves the fastest convergence, as measured by \widehat{R}.
+Figure 2: Effective sample size per second on a 24\times 24 grid.
+(Above) Ising model, i.e. q=2, and the critical temperature is \beta_{c}=1/\sqrt{2}.
+(Below) Potts model with q=4 and the critical temperature is \beta_{c}=0.55.
+The two-dimensional lattice graph with two states (i.e. q=2) is possibly the best studied example.
+We examine a 24\times 24 graph (i.e. n=576), and consider the cases q=2,4.
+We focus on a parameter range in \beta around the critical temperature \beta_{c}(q), which is approximately 0.71 and 0.55 for q=2 and q=4 respectively, as reported by Monroe (2002).
+For q=2, we illustrate the use of \widehat{R} (Figure 1).
+We find that all algorithms achieve \widehat{R}\lesssim 1.1, which suggests approximate convergence (a more conservative threshold would be 1.01), and so calculations of the ESS provide a reasonable characterization of the Monte Carlo estimator’s error.
+We find that \widehat{R} decays fastest for the AG sampler.
+On the other hand, HMC struggles to converge and we attribute this to the difficulty of finding suitable tuning parameters which work well when sampling from p({\bf Z}).
+Figure 2 plots the ESS/s for q=2 and q=4.
+In both cases, the AG sampler offers the best performance.
+The results also highlight important variations between different Metropolis algorithms.
+The black box Metropolis performs poorly but we see a net improvement when using a specialized calculation of \mathcal{L}({\bf x}^{\prime})-\mathcal{L}({\bf x}).
+Gibbs-with-gradient performs well for q=2 but the performance decreases for q=4;
+we attribute this to the increased cost of computing a gradient-based proposal for Potts models.
+Overall Metropolis Long, which updates the sites in sequence, produces the best performance among Metropolis algorithms.
+More sophisticated strategies, such as the Wolff algorithm provide better ESS per iteration but this does not justify the high wall time cost per iteration.
+We highlight that our implementation of Wolff does not exploit the sparsity of A and that discrete HMC used static (and likely suboptimal) tuning parameters.11
+1
+Pilot runs with the self-tuning HMC implemented in Stan (Carpenter et al., 2017) also did not produce convincing results.
+4.2.2 Curie-Weiss model
+In this model A_{n}={\bf 1}{\bf 1}^{\prime}/n-I_{n}/n is the scaled adjacency matrix of a complete graph, where each node is connected to every other node.
+Once again, we consider the cases q=2,4 with n=576.
+The critical value \beta_{c}(q) is 1 and \sim1.64 for q=2 and q=4 respectively (Bollobás et al., 1996, e.g), around which we focus our simulations.
+Adjusting the diagonal elements, we obtain a rank-1 coupling matrix on which we can apply the low-rank AG variable.
+For q=2, the results are consistent with what we observed on the grid model, with the AG sampler producing the most competitive results (Figure 3).
+Using a low-rank AG offers a dramatic improvement, as might be expected, since for a fully-connected graph, the dimension of the auxiliary Gaussian variables can be reduced from n=576 to k=1.
+All algorithms suffer from an observable slow-down at the critical temperature, \beta_{c}=1.
+Figure 3: Effective sample size per second on a 24\times 24 fully-connected graph.
+(Above) Ising model, i.e. q=2. The critical temperature occurs at \beta_{c}=1 and incurs a decrease in efficiency for all algorithms.
+Using a low-rank AG improves performance.
+(Below) For q=4, we observe a critical slow down for all algorithms near the critical temperature \beta_{c}\sim 1.65.
+We also obtain competitive performance for a large \beta (cold temperatures).
+Similarly for q=4 (Figure 3), we observe a critical slow down near \beta\approx 1.65.
+Away from this point, the performance of all samplers improves, including at cold temperatures (\beta\geq q).
+Theorems 5 and 9 predict fast mixing times for the AG algorithms when \beta\notin(1,4).
+The experiment reveals that AG samplers can also perform well within \beta\in(1,4), and that the exponential bound by Theorem 8 is conservative.
+Finally, we note that the critical slow down around \beta\approx 1.65 has been analyzed in previous studies on the heat bath (Cuff et al., 2012);
+empirically we find this result to generalize to AG samplers.
+4.3 Spin glass models
+In a spin glass model, the entries in A can take both positive and negative values.
+Two important examples are the Hopfield model and the Sherrington-Kirkpatrick (SK) model. For these problems, auxiliary cluster algorithms, including the Wolff and Swendsen-Wang algorithms, are no longer an option.
+Moving forward, we only use Metropolis Long (with sequential updates) as a benchmark.
+4.3.1 Hopfield Model
+Let \bm{\eta}\in\mathbb{R}^{m\times n} be a matrix of i.i.d random variables with P(\eta_{ik}=\pm 1)=1/2,
+and let
+\displaystyle A=\frac{\bm{\eta}^{\prime}\bm{\eta}}{\max(m,n)}.
+(20)
+A can take values which are positive, negative, or zero, meaning the spins X_{i} can be correlated, anti-correlated, or uncorrelated.
+We use this example to examine the validity of the above prediction, and to compare the regular and the low-rank AG samplers across varying ranks.
+We set \beta=1, q=4, n=576, and vary m from 1 to 200.
+We plot the results in Figure 4, and find AG samplers to outperform the Metropolis sampler, with the low-rank AG yielding a large improvement for small m.
+Figure 4: Effective sample size per second on a 24\times 24 Hopfield model. For a low-rank coupling matrix, the low-rank AG offers a large improvement in performance. For larger ranks, the regular AG sampler performs slightly better. For higher ranks, the performance of all algorithms decreases.
+Remark 11.
+In all our experiments, the regular and low-rank AG generate roughly the same effective sample size.
+The difference in performance is therefore driven by the difference in the computational cost of each iteration.
+4.3.2 Cold SK model
+In the SK model, the elements of a coupling matrix A_{ij} are mutually independent, drawn from a standard normal scaled by 1/\sqrt{n}, equivalently a normal with variance 1/n:
+A_{ij}=A_{ji}\sim\text{Normal}\left(0,n^{-1}\right).
+This coupling matrix unfortunately does not admit a good low-rank approximation (c.f. Basak and Mukherjee (2017, Sec 1.3.2)).
+An important application of this model in physics is the study of spin glass systems at cold temperatures (Yucesoy, 2013; Katzgraber et al., 2001, e.g).
+For high \beta, the Potts model becomes highly multimodal, resulting in a slow or incomplete exploration by the Markov chains.
+Parallel tempering can mitigate this problem (Geyer, 1991; Hukushima et al., 1998); see also Swendsen and Wang (1986) for an earlier related proposal.
+Parallel tempering runs multiple chains or replicas over a schedule of temperatures for a set number of iterations and then exchanges, with a certain probability, the states of two replicas with a “neighboring” temperature.
+The probability of exchanging two neighboring replicas is chosen so as to maintain detailed balance.
+At high temperatures, the Markov chain can move more easily across the target space and overcome the energy barriers between modes, before being cooled down again to sample at the temperature of interest.
+When implementing a tempering algorithm, we need to choose the number of replicas and their respective temperatures.
+The first replica is at the cold temperature of interest.
+We then progressively increase the temperature of each replica to ensure that the exchange probability is high and that we eventually reach a warm temperature at which the sampler is not frustrated by high energy barriers.
+In our experiment, the target inverse-temperature is \beta=3.
+We create 11 replicas at evenly spaced temperatures, \beta=(0.5,0.75,1,1.25,1.5,1.75,2,2.25,2.5,2.75,3).
+This naive approach yields reasonable, if somewhat uneven, acceptance rates for the exchange proposals.
+There is extensive literature on setting the temperature schedule for parallel tempering using more principled, albeit more intricate, approaches (Syed et al., 2022; Atchadé et al., 2011; Kone and Kofke, 2005; Hukushima et al., 1998, e.g.) and we leave the analysis of such tempering strategies with AG sampler to future work.
+In total, we attempt 40 exchanges and run 2,000 iterations between exchanges, for a total of 80,000 iterations.
+We run 4 sets of replicas with different initializations to compute \widehat{R} and monitor whether the chains are mixing.
+The size of the system is n=128.
+Figure 5: Effective sample size per second for a Spin Glass system with n=128. At cold temperatures (high \beta), the tempered scheme improves over the non-tempered AG sampler.
+However the advantage of the AG sampler over the Heat Bath vanishes for \beta\geq 2.
+We plot the results of our experiment in Figure 5.
+The non-tempered AG suffers at cold temperatures, notably for \beta\geq 2.5.
+The tempered AG is competitive across all temperature regimes, matching the superiority of the regular AG sampler for small \betas, and yielding reasonable results for \beta large.
+However, we did not find that AG methods outperform the tempered Metropolis sampler for \beta\geq 2.
+5 Proofs of Theorems 5 and 8
+In this section, we present the proofs of Theorems 5 and 8 in Sections 5.1 and 5.2, respectively. For any \mathbf{x}=(x_{1},\cdots,x_{n}),\mathbf{x}^{\prime}=(x_{1}^{\prime},\cdots,x_{n}^{\prime})\in[q]^{n}, we denote the Hamming distance between \mathbf{x} and \mathbf{x}^{\prime} by H(\mathbf{x},\mathbf{x}^{\prime}):=\sum_{i=1}^{n}1\{x_{i}\neq x_{i}^{\prime}\}.
+5.1 Proof of Theorem 5
+The proof of Theorem 5 is based on the path coupling technique (Levin and Peres, 2017, Chapter 14). To apply this technique, we associate a labeled undirected graph with vertex set [q]^{n}, so that any two states \mathbf{x}=(x_{1},\cdots,x_{n}),\mathbf{x}^{\prime}=(x_{1}^{\prime},\cdots,x_{n}^{\prime})\in[q]^{n} are connected by an edge if and only if H(\mathbf{x},\mathbf{x}^{\prime})=1.
+In the following, we consider any two distinct states \mathbf{x}=(x_{1},\cdots,x_{n}),\mathbf{x}^{\prime}=(x_{1}^{\prime},\cdots,x_{n}^{\prime})\in[q]^{n}. Denote by \mathbf{X}(1) and \mathbf{X}^{\prime}(1) the new states after one iteration of the AG sampler started from \mathbf{x} and \mathbf{x}^{\prime}, respectively. We aim to construct a coupling of \mathbf{X}(1) and \mathbf{X}^{\prime}(1) such that \mathbb{E}[H(\mathbf{X}(1),\mathbf{X}^{\prime}(1))] is small.
+We first rewrite the steps taken by the AG sampler.
+For each \ell\in[q], let
+\mathbf{y}_{\ell}=(1\{x_{1}=\ell\},\cdots,1\{x_{n}=\ell\})^{\prime},\qquad\mathbf{y}^{\prime}_{\ell}=(1\{x_{1}^{\prime}=\ell\},\cdots,1\{x_{n}^{\prime}=\ell\})^{\prime}\in\mathbb{R}^{n}.
+Let \{\mathbf{w}_{\ell}\}_{\ell\in[q]}\stackrel{{\scriptstyle i.i.d.}}{{\sim}}N(0,B^{-1}).
+For each \ell\in[q], let
+\mathbf{z}_{\ell}=\mathbf{y}_{\ell}+{\bf w}_{\ell},\qquad\mathbf{z}^{\prime}_{\ell}=\mathbf{y}^{\prime}_{\ell}+{\bf w}_{\ell}.
+Given \mathbf{Z}=\{\mathbf{z}_{\ell}\}_{\ell=1}^{q} and \mathbf{Z}^{\prime}=\{\mathbf{z}^{\prime}_{\ell}\}_{\ell=1}^{q}, we independently sample the pairs \{(X_{i}(1),X_{i}^{\prime}(1))\}_{i=1}^{n}, so that for all i\in[n] and \ell\in[q],
+\mathbb{P}(X_{i}(1)=\ell\mid\mathbf{Z},\mathbf{Z}^{\prime})=\frac{\exp\left(\sum_{j=1}^{n}B_{ij}z_{\ell j}\right)}{\sum_{\ell^{\prime}=1}^{q}\exp\left(\sum_{j=1}^{n}B_{ij}z_{\ell^{\prime}j}\right)},
+(21)
+\mathbb{P}(X^{\prime}_{i}(1)=\ell\mid\mathbf{Z},\mathbf{Z}^{\prime})=\frac{\exp\left(\sum_{j=1}^{n}B_{ij}z^{\prime}_{\ell j}\right)}{\sum_{\ell^{\prime}=1}^{q}\exp\left(\sum_{j=1}^{n}B_{ij}z^{\prime}_{\ell^{\prime}j}\right)},
+(22)
+\displaystyle\mathbb{P}(X_{i}(1)\neq X_{i}^{\prime}(1)|\mathbf{Z},\mathbf{Z}^{\prime})=\|\mathcal{L}_{X_{i}(1)\mid\mathbf{Z},\mathbf{Z}^{\prime}}-\mathcal{L}_{X^{\prime}_{i}(1)\mid\mathbf{Z},\mathbf{Z}^{\prime}}\|_{\mathrm{TV}}
+(23)
+\displaystyle=
+\displaystyle\frac{1}{2}\sum_{\ell=1}^{q}\Bigg|\frac{\exp\left(\sum_{j=1}^{n}B_{ij}z_{\ell j}\right)}{\sum_{\ell^{\prime}=1}^{q}\exp\left(\sum_{j=1}^{n}B_{ij}z_{\ell^{\prime}j}\right)}-\frac{\exp\left(\sum_{j=1}^{n}B_{ij}z^{\prime}_{\ell j}\right)}{\sum_{\ell^{\prime}=1}^{q}\exp\left(\sum_{j=1}^{n}B_{ij}z^{\prime}_{\ell^{\prime}j}\right)}\Bigg|,
+where \mathcal{L}_{X_{i}(1)\mid\mathbf{Z},\mathbf{Z}^{\prime}} and \mathcal{L}_{X^{\prime}_{i}(1)\mid\mathbf{Z},\mathbf{Z}^{\prime}} are the conditional distributions of X_{i}(1) and X^{\prime}_{i}(1) given \mathbf{Z},\mathbf{Z}^{\prime}. Note that this can be done due to (Levin and Peres, 2017, Proposition 4.7).
+For each \ell\in[q], we define T_{\ell}:\mathbb{R}^{q}\rightarrow(0,1) by
+T_{\ell}(m_{1},\cdots,m_{q}):=\frac{\exp(m_{\ell})}{\sum_{\ell^{\prime}=1}^{q}\exp(m_{\ell^{\prime}})},\text{ for any }(m_{1},\cdots,m_{q})\in\mathbb{R}^{q}.
+(24)
+Then for any r\in[q],
+\frac{\partial T_{\ell}(m_{1},\cdots,m_{q})}{\partial m_{r}}=T_{\ell}(m_{1},\cdots,m_{q})(\mathbbm{1}_{\ell=r}-T_{r}(m_{1},\cdots,m_{q})).
+Hence, for r=\ell,
+\bigg|\frac{\partial T_{\ell}(m_{1},\cdots,m_{q})}{\partial m_{\ell}}\bigg|=T_{\ell}(m_{1},\cdots,m_{q})(1-T_{\ell}(m_{1},\cdots,m_{q}))\leq\frac{1}{4},
+(25)
+and for any r\neq\ell,
+\displaystyle\bigg|\frac{\partial T_{\ell}(m_{1},\cdots,m_{q})}{\partial m_{r}}\bigg|
+\displaystyle=
+\displaystyle T_{\ell}(m_{1},\cdots,m_{q})T_{r}(m_{1},\cdots,m_{q})
+(26)
+\displaystyle\leq
+\displaystyle T_{\ell}(m_{1},\cdots,m_{q})(1-T_{\ell}(m_{1},\cdots,m_{q}))\leq\frac{1}{4},
+where the first inequality above follows from
+\displaystyle T_{r}(m_{1},\cdots,m_{q})=\frac{\exp(m_{r})}{\sum_{\ell^{\prime}=1}^{q}\exp(m_{\ell^{\prime}})}
+\displaystyle\leq
+\displaystyle\sum_{r^{\prime}\neq\ell}\frac{\exp(m_{r^{\prime}})}{\sum_{\ell^{\prime}=1}^{q}\exp(m_{\ell^{\prime}})}
+\displaystyle=
+\displaystyle 1-\frac{\exp(m_{\ell})}{\sum_{\ell^{\prime}=1}^{q}\exp(m_{\ell^{\prime}})}=1-T_{\ell}(m_{1},\cdots,m_{q}).
+For each i\in[n] and \ell\in[q], we define
+M_{i\ell}:=\sum_{j=1}^{n}B_{ij}z_{\ell j},\quad M^{\prime}_{i\ell}:=\sum_{j=1}^{n}B_{ij}z^{\prime}_{\ell j}.
+Note that
+|M_{i\ell}-M^{\prime}_{i\ell}|\leq\sum_{j=1}^{n}|B_{ij}||z_{\ell j}-z_{\ell j}^{\prime}|=\sum_{j=1}^{n}|B_{ij}||1\{x_{j}=\ell\}-1\{x_{j}^{\prime}=\ell\}|.
+(27)
+We now bound \mathbb{E}[H(\mathbf{X}(1),\mathbf{X}^{\prime}(1))] as follows. By (23)-(27),
+\displaystyle\mathbb{E}[H(\mathbf{X}(1),\mathbf{X}^{\prime}(1))|\mathbf{Z},\mathbf{Z}^{\prime}]=\sum_{i=1}^{n}\mathbb{P}(X_{i}(1)\neq X^{\prime}_{i}(1)|\mathbf{Z},\mathbf{Z}^{\prime})
+(28)
+\displaystyle=
+\displaystyle\frac{1}{2}\sum_{i=1}^{n}\sum_{\ell=1}^{q}|T_{\ell}(M_{i1},\cdots,M_{iq})-T_{\ell}(M^{\prime}_{i1},\cdots,M^{\prime}_{iq})|\leq\frac{1}{8}\sum_{i=1}^{n}\sum_{\ell,r=1}^{q}|M_{ir}-M^{\prime}_{ir}|
+\displaystyle\leq
+\displaystyle\frac{1}{8}\sum_{i,j=1}^{n}\sum_{\ell,r=1}^{q}|B_{ij}||1\{x_{j}=r\}-1\{x_{j}^{\prime}=r\}|
+\displaystyle\leq
+\displaystyle\frac{q\|B\|_{1}}{8}\sum_{j=1}^{n}\sum_{r=1}^{q}|1\{x_{j}=r\}-1\{x_{j}^{\prime}=r\}|=\frac{q\|B\|_{1}}{4}H(\mathbf{x},\mathbf{x}^{\prime}).
+By the path coupling lemma (Levin and Peres, 2017, Corollary 14.8), for any t\in\mathbb{N}^{*},
+\max_{x\in[q]^{n}}\|K_{x}^{t}-\pi\|_{\mathrm{TV}}\leq n\Big(\frac{q\|B\|_{1}}{4}\Big)^{t},
+and also for any \epsilon\in(0,1),
+t_{\mathrm{mix}}(\epsilon)\leq\Big\lceil\frac{-\log{\epsilon}+\log{n}}{-\log\big(q\|B\|_{1}/\penalty 4\big)}\Big\rceil.
+5.2 Proof of Theorem 8
+Suppose the current states are \mathbf{x}=(x_{1},\cdots,x_{n}),\mathbf{x}^{\prime}=(x_{1}^{\prime},\cdots,x_{n}^{\prime})\in[q]^{n} with \mathbf{x}\neq\mathbf{x}^{\prime}. We use the same coupling as used in the proof of Theorem 5 and assume the notations there. Now for any i\in[n] and \ell\in[q], by (27), we have
+|M_{i\ell}-M^{\prime}_{i\ell}|\leq\sum_{j=1}^{n}|B_{ij}|\leq\|B\|_{1}.
+Using the above display, along with (21) and (22), we have for any i\in[n] and \ell\in[q],
+\displaystyle\mathbb{P}(X_{i}^{\prime}(1)=\ell|\mathbf{Z},\mathbf{Z}^{\prime})
+\displaystyle=
+\displaystyle\frac{\exp(M^{\prime}_{i\ell})}{\sum_{\ell^{\prime}=1}^{q}\exp(M^{\prime}_{i\ell^{\prime}})}\geq\frac{\exp(M_{i\ell}-\|B\|_{1})}{\sum_{\ell^{\prime}=1}^{q}\exp(M_{i\ell^{\prime}}+\|B\|_{1})}
+\displaystyle=
+\displaystyle\exp(-2\|B\|_{1})\mathbb{P}(X_{i}(1)=\ell|\mathbf{Z},\mathbf{Z}^{\prime}).
+By (23) and the above display, for any i\in[n],
+\displaystyle\mathbb{P}(X_{i}(1)=X_{i}^{\prime}(1)|\mathbf{Z},\mathbf{Z}^{\prime})
+\displaystyle=
+\displaystyle\sum_{\ell=1}^{q}\min\{\mathbb{P}(X_{i}(1)=\ell|\mathbf{Z},\mathbf{Z}^{\prime}),\mathbb{P}(X^{\prime}_{i}(1)=\ell|\mathbf{Z},\mathbf{Z}^{\prime})\}
+\displaystyle\geq
+\displaystyle\exp(-2\|B\|_{1})\sum_{\ell=1}^{q}\mathbb{P}(X_{i}(1)=\ell|\mathbf{Z},\mathbf{Z}^{\prime})=\exp(-2\|B\|_{1}),
+which gives
+\mathbb{P}(X(1)=X^{\prime}(1))=\mathbb{E}\Big[\prod_{i=1}^{n}\mathbb{P}(X_{i}(1)=X_{i}^{\prime}(1)|\mathbf{Z},\mathbf{Z}^{\prime})\Big]\geq\exp(-2n\|B\|_{1}).
+By the coupling lemma (Levin and Peres, 2017, Theorem 5.4), for any t\in\mathbb{N}^{*}, we have
+\max_{x\in[q]^{n}}\|K_{x}^{t}-\pi\|_{\mathrm{TV}}\leq(1-\exp(-2n\|B\|_{1}))^{t}\leq\exp(-t\exp(-2n\|B\|_{1})).
+Consequently, for any \epsilon\in(0,1), t_{\mathrm{mix}}(\epsilon)\leq\lceil\exp(2\|B\|_{1}n)\log(\epsilon^{-1})\rceil.
+6 Proof of Theorem 9
+In this section, we present the proof of Theorem 9. We assume \beta>q throughout this section. For any \mathbf{x}=(x_{1},\cdots,x_{n})\in[q]^{n}, we define C(\mathbf{x}):=(C_{1}(\mathbf{x}),\cdots,C_{q}(\mathbf{x})), where for each \ell\in[q], C_{\ell}(\mathbf{x}):=n^{-1}\sum_{i=1}^{n}\mathbbm{1}_{x_{i}=\ell} is the proportion of color \ell in \mathbf{x}.
+Our proof of Theorem 9 consists of four main steps. Firstly, we show the convergence of a deterministic iteration in Section 6.2. Then we show in Proposition 22 that within \mathcal{O}(\log{n}) iterations, there is a color whose proportion is greater than the proportion of any other color by a constant amount. Based on this, we show in Proposition 23 that the state evolution of the AG sampler is closely approximated by this deterministic iteration and, as a result, the macroscopic proportions of the q colors are close to the expected proportions. Finally, after the macroscopic proportions of all colors have converged, we develop a novel coupling argument to show that the AG sampler mixes in \mathcal{O}(\log{n}) iterations in Section 6.4.
+6.1 Notations and preliminary lemmas
+In this subsection, we present some notations and preliminary lemmas that will be used in later parts of the proof. We start with the following two definitions.
+Definition 12.
+We define \mathcal{X}:=\big\{\bm{\alpha}=(\alpha_{1},\cdots,\alpha_{q}):\alpha_{1},\cdots,\alpha_{q}\geq 0,\sum_{\ell=1}^{q}\alpha_{\ell}=1\big\}.
+For any \varepsilon\geq 0, we define \mathcal{X}_{\varepsilon}:=\{\bm{\alpha}=(\alpha_{1},\cdots,\alpha_{q})\in\mathcal{X}:\alpha_{1}\geq\cdots\geq\alpha_{q},\alpha_{1}-\alpha_{2}\geq\varepsilon\}.
+For any \bm{\alpha}=(\alpha_{1},\cdots,\alpha_{q})\in\mathbb{R}^{q}, we define \Phi(\bm{\alpha}):=(\Phi_{1}(\bm{\alpha}),\Phi_{2}(\bm{\alpha}),\cdots,\Phi_{q}(\bm{\alpha})) with
+\Phi_{\ell}(\bm{\alpha}):=\frac{e^{\beta\alpha_{\ell}}}{\sum_{s=1}^{q}e^{\beta\alpha_{s}}}=T_{\ell}(\beta\alpha_{1},\beta\alpha_{2},\cdots,\beta\alpha_{q}),\text{ for every }\ell\in[q],
+where T_{\ell} is as in (24).
+Lemmas 13-17 below establish some basic properties of \Phi(\cdot). The proofs of these lemmas are deferred to Appendix B.
+Lemma 13.
+Assume that \beta>q. Then the following conclusions hold:
+(a)
+The equation
+\displaystyle e^{\beta(x-y)}=\frac{x}{y},\qquad x+(q-1)y=1,\qquad 0<y<x<1
+(29)
+has a unique solution (a,b), say. Further, (a,b) satisfy a>q^{-1} and \beta qab<1;
+(b)
+The function g(x)=\frac{e^{\beta x}-1}{e^{\beta x}+q-1} is monotone increasing on [0,1], and satisfies g(0)=0, g(a-b)=a-b, g(x)>x when x\in(0,a-b), and g(x)<x when x\in(a-b,1];
+(c)
+The function h(x):=\frac{e^{\beta x}}{e^{\beta x}+(q-1)e^{\beta(1-x)/\penalty(q-1)}} is monotone increasing on [q^{-1},1], and satisfies h(q^{-1})=q^{-1}, h(a)=a, h(x)>x when x\in(q^{-1},a), and h(x)<x when x\in(a,1].
+Definition 14.
+We define \bm{\alpha}_{0}:=(a,b,\cdots,b)\in\mathcal{X}_{0}, where a,b are as in Lemma 13(a). Note that \Phi(\bm{\alpha}_{0})=\bm{\alpha}_{0}.
+Lemma 15.
+For any \bm{\alpha},\bm{\alpha}^{\prime}\in\mathbb{R}^{q}, we have \|\Phi(\bm{\alpha}^{\prime})-\Phi(\bm{\alpha})\|_{1}\leq 2\beta q\|\bm{\alpha^{\prime}}-\bm{\alpha}\|_{\infty}.
+Lemma 16.
+There exist positive constants \rho_{0},\delta_{0}\in(0,1) that only depend on q,\beta, such that for any \bm{\alpha}=(\alpha_{1},\cdots,\alpha_{q}),\bm{\alpha}^{\prime}=(\alpha^{\prime}_{1},\cdots,\alpha^{\prime}_{q})\in\mathbb{R}^{q} with \max\{\|\bm{\alpha}-\bm{\alpha}_{0}\|_{2},\|\bm{\alpha}^{\prime}-\bm{\alpha}_{0}\|_{2}\}\leq\delta_{0} and \sum_{\ell=1}^{q}\alpha_{\ell}=\sum_{\ell=1}^{q}\alpha_{\ell}^{\prime}, we have \|\Phi(\bm{\alpha}^{\prime})-\Phi(\bm{\alpha})\|_{1}\leq\rho_{0}\|\bm{\alpha}^{\prime}-\bm{\alpha}\|_{1}.
+Lemma 17.
+For any \rho\in(0,1), there exists a constant \kappa_{\rho}\in(0,1) that only depends on q,\beta,\rho, such that for any \bm{\alpha}=(\alpha_{1},\cdots,\alpha_{q})\in\mathbb{R}^{d} such that \alpha_{1}\geq\alpha_{2}\geq\cdots\geq\alpha_{q}, we have \Phi_{1}(\bm{\alpha})-\Phi_{2}(\bm{\alpha})\geq(\rho\beta/\penalty q)\min\{\alpha_{1}-\alpha_{2},\kappa_{\rho}\}.
+6.2 Convergence of a deterministic iteration
+In this subsection, we introduce the following convenient notation. For any function f:\mathcal{X}\to\mathcal{X}, we denote by f^{(t)} the function obtained by applying t times the function f, that is f^{(t)}(x)=f\circ f\circ\cdots\circ f(x).
+For example, \Phi^{(t)} is the function obtained by applying t times \Phi:\mathbb{R}^{q}\to\mathbb{R}^{q}.
+Furthermore, we write \bm{\alpha}(t)=\Phi^{(t)}(\bm{\alpha}).
+We will now show uniform convergence of the deterministic iteration \{\Phi^{(t)}(\bm{\alpha})\}_{t=1}^{\infty} for \bm{\alpha}\in\mathcal{X}_{\varepsilon} for any \varepsilon\in(0,a-b).
+The main result is given by the following proposition.
+Proposition 18.
+For any \varepsilon\in(0,a-b), we have \lim\limits_{t\rightarrow\infty}\sup\limits_{\bm{\alpha}\in\mathcal{X}_{\varepsilon}}\|\Phi^{(t)}(\bm{\alpha})-\boldsymbol{\alpha}_{0}\|_{2}=0.
+The rest of this subsection is devoted to the proof of Proposition 18. Recall g and h from Lemma 13(b)-(c).
+For any t\in\mathbb{N}, we have
+\alpha_{1}(t+1)-\alpha_{2}(t+1)=\frac{e^{\beta\alpha_{1}(t)}-e^{\beta\alpha_{2}(t)}}{\sum_{\ell=1}^{q}e^{\beta\alpha_{\ell}(t)}}\geq\frac{e^{\beta\alpha_{1}(t)}-e^{\beta\alpha_{2}(t)}}{e^{\beta\alpha_{1}(t)}+(q-1)e^{\beta\alpha_{2}(t)}}=g(\alpha_{1}(t)-\alpha_{2}(t)).
+By Jensen’s inequality,
+\frac{1}{q-1}\sum_{\ell=2}^{q}e^{\beta\alpha_{\ell}(t)}\geq e^{\beta\big(\sum_{\ell=2}^{q}\alpha_{k}(t)\big)\big/\penalty(q-1)}=e^{\beta(1-\alpha_{1}(t))/\penalty(q-1)}.
+Hence
+\alpha_{1}(t+1)=\frac{e^{\beta\alpha_{1}(t)}}{\sum_{\ell=1}^{q}e^{\beta\alpha_{\ell}(t)}}\leq\frac{e^{\beta\alpha_{1}(t)}}{e^{\beta\alpha_{1}(t)}+(q-1)e^{\beta(1-\alpha_{1}(t))/\penalty(q-1)}}=h(\alpha_{1}(t)).
+As g is monotone increasing on [0,1] and h is monotone increasing on [q^{-1},1] (by Lemma 13), by inductively applying the above displays, for any t\in\mathbb{N}, we get
+\alpha_{1}(t)-\alpha_{2}(t)\geq g^{(t)}(\alpha_{1}-\alpha_{2})\geq g^{(t)}(\varepsilon),\quad\alpha_{1}(t)\leq h^{(t)}(\alpha_{1})\leq h^{(t)}(1).
+(30)
+Again using the monotonicity of g from Lemma 13, for any \varepsilon\in(0,a-b) we get
+0=g(0)\leq g(\varepsilon)\leq g(a-b)=a-b.
+By induction, we have g^{(t)}(\varepsilon)\in(0,a-b) for all t\in\mathbb{N}. Furthermore, t\mapsto g^{(t)}(\varepsilon) is non-decreasing in t, as g(x)>x for all x\in(0,a-b) (see Lemma 13). Consequently, the sequence g^{(t)}(\varepsilon) has a limit g^{(\infty)}(\varepsilon), say.
+In a similar manner, one can show that h^{(t)}(1)\geq a, and is non-increasing in t. Hence \lim_{t\rightarrow\infty}h^{(t)}(1) exists, and equals h^{(\infty)}(1), say. Taking t\rightarrow\infty on both sides of g(g^{(t)}(\varepsilon))=g^{(t+1)}(\varepsilon) and h(h^{(t)}(1))=h^{(t+1)}(1), we obtain that
+g(g^{(\infty)}(\varepsilon))=g^{(\infty)}(\varepsilon),\quad h(h^{(\infty)}(1))=h^{(\infty)}(1).
+Thus g^{(\infty)}(\varepsilon) and h^{(\infty)}(1) are fixed points of g(\cdot) and h(\cdot) respectively, and using Lemma 13 gives g^{(\infty)}(\varepsilon)\in\{0,a-b\}, and h^{(\infty)}(1)\in\{q^{-1},a\}. Finally,
+using the fact that t\mapsto g^{(t)}(\varepsilon) is monotone, and h^{(t)}(1)\geq a (proved above), we get
+g^{(\infty)}(\varepsilon)=\lim_{t\rightarrow\infty}g^{(t)}(\varepsilon)\geq g^{(0)}(\varepsilon)=\varepsilon>0,\qquad h^{(\infty)}(1)=\lim_{t\rightarrow\infty}h^{(t)}(1)\geq a>q^{-1}.
+Hence we have
+g^{(\infty)}(\varepsilon)=a-b,\qquad h^{(\infty)}(1)=a.
+Using the above display along with (30), for any \delta>0 there exists T_{\delta,\varepsilon}\in\mathbb{N}^{*} that only depends on \delta,\varepsilon, such that for any t\geq T_{\delta,\varepsilon} and \bm{\alpha}=(\alpha_{1},\cdots,\alpha_{q})\in\mathcal{X}_{\varepsilon},
+\alpha_{1}(t)-\alpha_{2}(t)\geq a-b-\delta/\penalty(2q),\quad\alpha_{1}(t)\leq a+\delta/\penalty(2q).
+The above display implies \alpha_{2}(t)\leq b+\delta/\penalty q, and consequently,
+\displaystyle\alpha_{\ell}(t)\leq\alpha_{2}(t)\leq b+\delta/\penalty q,\quad\text{ for any }\ell\in[2,q]\cap\mathbb{N}.
+Using the above two displays, we get the following lower bounds:
+\displaystyle\alpha_{1}(t)
+\displaystyle=
+\displaystyle 1-\sum_{\ell=2}^{q}\alpha_{\ell}(t)\geq 1-\sum_{\ell=2}^{q}(b+\delta/\penalty q)=1-(q-1)b-\frac{q-1}{q}\delta\geq a-\delta,
+\displaystyle\alpha_{\ell}(t)
+\displaystyle=
+\displaystyle 1-\sum_{\ell^{\prime}\in[q]:\ell^{\prime}\neq\ell}\alpha_{\ell^{\prime}}(t)\geq 1-(a+\delta/\penalty(2q))-(q-2)(b+\delta/\penalty q)\geq b-\delta,
+for any \ell\in[2,q]\cap\mathbb{N}. Using the last four displays, for any t\geq T_{\delta,\varepsilon} and \bm{\alpha}=(\alpha_{1},\cdots,\alpha_{q})\in\mathcal{X}_{\varepsilon},
+\|\Phi^{(t)}(\bm{\alpha})-(a,b,\cdots,b)\|_{2}\leq\sqrt{q}\|\Phi^{t}(\bm{\alpha})-(a,b,\cdots,b)\|_{\infty}\leq\sqrt{q}\delta.
+Hence \lim\limits_{t\rightarrow\infty}\sup\limits_{\bm{\alpha}\in\mathcal{X}_{\varepsilon}}\|\Phi^{(t)}(\bm{\alpha})-(a,b,\cdots,b)\|_{2}=0.
+6.3 Convergence to the expected color proportions
+In this subsection, we state and prove two propositions, which are the major technical steps in proving Theorem 9.
+Throughout the remainder of this section, we denote by C and c positive constants that depend only on q,\beta. The values of these constants may change from line to line.
+The iterations of the modified AG sampler for the Curie-Weiss model can be described as follows. For each t\in\mathbb{N}, we denote by \mathbf{X}(t)=(X_{1}(t),\cdots,X_{n}(t))\in[q]^{n} the state at step t. Given \mathbf{X}(t), we set \mathbf{Y}(t):=(Y_{\ell}(t))_{\ell\in[q]} with Y_{\ell}(t)=n^{-1}\sum_{i=1}^{n}1\{X_{i}(t)=\ell\}, and perform the following steps to generate \mathbf{X}(t+1):
+•
+For each \ell\in[q], we independently sample W_{\ell}(t)\sim N(0,(n\beta)^{-1}) and take Z_{\ell}(t)=Y_{\ell}(t)+W_{\ell}(t) (note that Z_{\ell}(t)\sim N(Y_{\ell}(t),(n\beta)^{-1})). We set \mathbf{Z}(t):=(Z_{\ell}(t))_{\ell\in[q]}.
+•
+For each i\in[n], we independently sample \widetilde{X}_{i}(t+1)\in[q] such that for each \ell\in[q],
+\mathbb{P}(\widetilde{X}_{i}(t+1)=\ell\mid\mathbf{Z}(t))=\frac{e^{\beta Z_{\ell}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}.
+Then we sample a uniform random permutation \tau_{t}\in S_{q}, and set \mathbf{X}(t+1)=(X_{1}(t+1),\cdots,X_{n}(t+1)) with X_{i}(t+1)=\tau_{t}(\widetilde{X}_{i}(t+1)).
+For any t\in\mathbb{N}, we denote by Y_{(1)}(t)\geq Y_{(2)}(t)\geq\cdots\geq Y_{(q)}(t) the order statistics of Y_{1}(t),Y_{2}(t),\cdots,Y_{q}(t) and Z_{(1)}(t)\geq Z_{(2)}(t)\geq\cdots\geq Z_{(q)}(t) the order statistics of Z_{1}(t),Z_{2}(t),\cdots,Z_{q}(t). For any t\in\mathbb{N}^{*} and \ell\in[q], we let \widetilde{Y}_{\ell}(t):=n^{-1}\sum_{i=1}^{n}1\{\widetilde{X}_{i}(t)=\ell\}, and note that
+\widetilde{Y}_{\ell}(t)=\frac{1}{n}\sum_{i=1}^{n}1\{X_{i}(t)=\tau_{t}(\ell)\}=Y_{\tau_{t}(\ell)}(t).
+(31)
+Definition 19 (The filtrations \mathcal{F}_{t},\mathcal{G}_{t} and the events \mathcal{E}_{t,u,v},\mathcal{A}_{t,u,v}).
+For any t\in\mathbb{N}, let \mathcal{F}_{t} be the \sigma-algebra generated by \mathbf{X}(0),\mathbf{Z}(0),\cdots,\mathbf{X}(t-1),\mathbf{Z}(t-1),\mathbf{X}(t),
+and let \mathcal{G}_{t} be the \sigma-algebra generated by \mathbf{X}(0),\mathbf{Z}(0),\cdots,\mathbf{X}(t),\mathbf{Z}(t).
+For any t\in\mathbb{N} and u,v\geq 0, let \mathcal{E}_{t,u,v}
+be the event that for every \ell\in[q], we have
+|Z_{\ell}(t)-Y_{\ell}(t)|\leq u,\qquad\bigg|\widetilde{Y}_{\ell}(t+1)-\frac{e^{\beta Z_{\ell}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}\bigg|\leq v.
+Let \kappa:=\kappa_{\sqrt{q/\penalty\beta}} be defined as in Lemma 17. Let \mathcal{A}_{t,u,v} be the event that both of the following hold:
+Y_{(1)}(t+1)-Y_{(2)}(t+1)\geq\sqrt{\beta/\penalty q}\min\{Y_{(1)}(t)-Y_{(2)}(t),\kappa\}-2\sqrt{\beta}(u+v),
+Y_{(1)}(t+1)-Y_{(2)}(t+1)\geq\sqrt{\beta/\penalty q}\min\{Z_{(1)}(t)-Z_{(2)}(t),\kappa\}-2\sqrt{\beta}v.
+Based on Lemma 17, we establish the following two lemmas.
+Lemma 20.
+For any t\in\mathbb{N}, \ell\in[q], and u,v\geq 0,
+\displaystyle\mathbb{P}(|Z_{\ell}(t)-Y_{\ell}(t)|\geq
+\displaystyle u|\mathcal{F}_{t})\leq 2\exp(-n\beta u^{2}/\penalty 2),
+\displaystyle\mathbb{P}\Big(\Big|\widetilde{Y}_{\ell}(t+1)-\frac{e^{\beta Z_{\ell}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}\Big|\geq
+\displaystyle v\Big|\mathcal{G}_{t}\Big)\leq 2\exp(-2nv^{2}).
+Consequently, we have
+\mathbb{P}((\mathcal{E}_{t,u,v})^{c}|\mathcal{F}_{t})\leq 2q\exp(-n\beta u^{2}/\penalty 2)+2q\exp(-2nv^{2}).
+Proof.
+The two inequalities follow by tail bounds for Gaussian random variables and Hoeffding’s inequality, respectively.
+∎
+Lemma 21.
+For any t\in\mathbb{N} and u,v\geq 0, we have \mathcal{E}_{t,u,v}\subseteq\mathcal{A}_{t,u,v}.
+Proof.
+By (31) and the rearrangement inequality, on the set \mathcal{E}_{t,u,v} we have
+\displaystyle\sum_{\ell=1}^{q}\bigg(Y_{(\ell)}(t+1)-\frac{e^{\beta Z_{(\ell)}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}\bigg)^{2}\leq
+\displaystyle\sum_{\ell=1}^{q}\bigg(\widetilde{Y}_{\ell}(t+1)-\frac{e^{\beta Z_{\ell}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}\bigg)^{2}\leq qv^{2}.
+Using the triangle inequality along with the above bound gives
+\displaystyle Y_{(1)}(t+1)-Y_{(2)}(t+1)
+\displaystyle\geq
+\displaystyle\frac{e^{\beta Z_{(1)}(t)}-e^{\beta Z_{(2)}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}-\bigg|Y_{(1)}(t+1)-\frac{e^{\beta Z_{(1)}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}\bigg|-\bigg|Y_{(2)}(t+1)-\frac{e^{\beta Z_{(2)}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}\bigg|
+\displaystyle\geq
+\displaystyle\frac{e^{\beta Z_{(1)}(t)}-e^{\beta Z_{(2)}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}-2\sqrt{q}v\geq\sqrt{\beta/\penalty q}\min\{Z_{(1)}(t)-Z_{(2)}(t),\kappa\}-2\sqrt{q}v,
+where the last inequality uses Lemma 17 with \rho=\sqrt{q/\penalty\beta}. The RHS above can be bounded below by
+\sqrt{\beta/\penalty q}\min\{Y_{(1)}(t)-Y_{(2)}(t)-2\sqrt{q}u,\kappa\}-2\sqrt{q}v\geq\sqrt{\beta/\penalty q}\min\{Y_{(1)}(t)-Y_{(2)}(t),\kappa\}-2\sqrt{\beta}(u+v),
+where in the first bound we again use the rearrangement inequality to conclude that
+\sum_{\ell=1}^{q}(Z_{(\ell)}(t)-Y_{(\ell)}(t))^{2}\leq\sum_{\ell=1}^{q}(Z_{\ell}(t)-Y_{\ell}(t))^{2}\leq qu^{2}.
+∎
+Proposition 22.
+There exist positive constants C_{1},C_{2},c_{1},c_{2} that only depend on q,\beta, such that the following holds. Let \mathcal{H}_{1} be the event that Y_{(1)}(t)-Y_{(2)}(t)\geq c_{1} for some t\in[1,C_{1}\log(n+1)]\cap\mathbb{N}. Then for any random starting state \mathbf{X}(0)\in[q]^{n}, we have
+\mathbb{P}(\mathcal{H}_{1}^{c})\leq C_{2}\exp(-c_{2}\log\log(n+1)).
+Proof.
+Without loss of generality, we assume that n\geq 20. The proof is divided into the following two steps.
+Step 1
+For any t\in\mathbb{N}, let I_{t}\in S_{q} be such that Y_{I_{t}(1)}(t)\geq Y_{I_{t}(2)}(t)\geq\cdots\geq Y_{I_{t}(q)}(t). Note that for any t\in\mathbb{N}^{*} and x\geq 0, if W_{I_{t}(1)}(t)-W_{I_{t}(2)}(t)\geq x and \max_{\ell\in[q]\backslash[2]}W_{I_{t}(\ell)}(t)\leq W_{I_{t}(2)}(t), then
+\displaystyle Z_{I_{t}(1)}(t)-x=Y_{I_{t}(1)}(t)+W_{I_{t}(1)}(t)-x
+\displaystyle\geq Y_{I_{t}(2)}(t)+W_{I_{t}(2)}(t)
+\displaystyle\geq\max_{\ell\in[q]\backslash[2]}\big\{Y_{I_{t}(\ell)}(t)+W_{I_{t}(\ell)}(t)\big\}.
+In particular, this implies Z_{(\ell)}(t)=Z_{I_{t}(\ell)}(t) for \ell=1,2, and so Z_{(1)}(t)-Z_{(2)}(t)=Z_{I_{t}(1)}(t)-Z_{I_{t}(2)}(t)\geq x. Consequently,
+\Big\{W_{I_{t}(1)}(t)-W_{I_{t}(2)}(t)\geq x,\max_{\ell\in[q]\backslash[2]}W_{I_{t}(\ell)}(t)\leq W_{I_{t}(2)}(t)\Big\}\subseteq\{Z_{(1)}(t)-Z_{(2)}(t)\geq x\},
+which in turn implies
+\displaystyle\mathbb{P}(Z_{(1)}(t)-Z_{(2)}(t)\geq x|\mathcal{F}_{t})\geq\mathbb{P}(W_{1}-W_{2}\geq x,\max_{\ell\in[q]\backslash[2]}W_{\ell}\leq W_{2})
+\displaystyle=
+\displaystyle\int_{-\infty}^{\infty}\phi(y)(1-\Phi(y+\sqrt{n\beta}x))\Phi(y)^{q-2}dy\geq\int_{-1}^{0}\phi(y)(1-\Phi(y+\sqrt{n\beta}x))\Phi(y)^{q-2}dy,
+where \sqrt{n\beta}\{W_{\ell}\}_{\ell\in[q]} are i.i.d. N(0,1) random variables, and \phi(\cdot),\Phi(\cdot) are respectively the probability density function and cumulative distribution function of N(0,1).
+By Gordon (1941), for any s\geq 1,
+1-\Phi(s)\geq\frac{s}{\sqrt{2\pi}(s^{2}+1)}e^{-s^{2}/\penalty 2}\geq cs^{-1}e^{-s^{2}/\penalty 2}.
+Note that for any y\in[-1,0], 1-\Phi(y+\sqrt{n\beta}x)\geq 1-\Phi(\sqrt{n\beta}x) and \Phi(y)\geq\Phi(-1)\geq c. Hence using the above two displays, for any t\in\mathbb{N}^{*} and x\geq(n\beta)^{-1/\penalty 2}, we get
+\displaystyle\mathbb{P}(Z_{(1)}(t)-Z_{(2)}(t)\geq x|\mathcal{F}_{t})
+\displaystyle\geq
+\displaystyle c(1-\Phi(\sqrt{n\beta}x))\int_{-1}^{0}\phi(y)dy\geq c(1-\Phi(\sqrt{n\beta}x))
+\displaystyle\geq
+\displaystyle c(n\beta)^{-1/\penalty 2}x^{-1}\exp(-n\beta x^{2}/\penalty 2)\geq c\exp(-n\beta x^{2}).
+Hence for any x\geq(n\beta)^{-1/\penalty 2},
+\displaystyle\mathbb{P}\Big(\max_{t\in[1,2\log{n}]\cap\mathbb{N}}\{Z_{(1)}(t)-Z_{(2)}(t)\}<x\Big)
+\displaystyle\leq
+\displaystyle(1-c\exp(-n\beta x^{2}))^{\lfloor 2\log{n}\rfloor}
+(32)
+\displaystyle\leq
+\displaystyle\exp(-c\log{n}\exp(-n\beta x^{2})).
+Let
+T_{1}:=\inf\Bigg\{t\in\mathbb{N}^{*}:Z_{(1)}(t)-Z_{(2)}(t)\geq\frac{1}{2}\sqrt{\frac{\log\log{n}}{n\beta}}\Bigg\}.
+(33)
+Let \mathcal{D}_{1} be the event that T_{1}\leq 2\log{n}. By (32),
+\displaystyle\mathbb{P}(\mathcal{D}_{1}^{c})
+\displaystyle\leq
+\displaystyle\mathbb{P}\left(\max_{t\in[1,2\log{n}]\cap\mathbb{N}}\{Z_{(1)}(t)-Z_{(2)}(t)\}<\frac{1}{2}\sqrt{\frac{\log\log{n}}{n\beta}}\right)
+(34)
+\displaystyle\leq
+\displaystyle\exp(-c\log{n}\exp(-\log\log{n}/\penalty 4))\leq\exp(-c\sqrt{\log{n}}).
+Step 2
+Consider any t\in\mathbb{N}. For any u,v\geq 0, let \kappa,\mathcal{E}_{t,u,v},\mathcal{A}_{t,u,v} be as in Definition 19.
+By Lemma 21, we have \mathcal{E}_{t,u,v}\subseteq\mathcal{A}_{t,u,v}, and so
+\mathbb{P}((\mathcal{A}_{t,u,v})^{c}|\mathcal{F}_{t})\leq\mathbb{P}((\mathcal{E}_{t,u,v})^{c}|\mathcal{F}_{t})\leq 2q\Big[\exp(-nu^{2})+\exp(-nv^{2})\Big]\leq 4q\exp(-n\min\{u,v\}^{2}),
+where the second inequality uses Lemma 20.
+For any u\geq 0, let \mathcal{B}_{t,u} be the event that T_{1}<\infty and
+Y_{(1)}(T_{1}+t+1)-Y_{(2)}(T_{1}+t+1)\geq\sqrt{\beta/\penalty q}\min\{Y_{(1)}(T_{1}+t)-Y_{(2)}(T_{1}+t),\kappa\}-4\sqrt{\beta}u,
+Y_{(1)}(T_{1}+t+1)-Y_{(2)}(T_{1}+t+1)\geq\sqrt{\beta/\penalty q}\min\{Z_{(1)}(T_{1}+t)-Z_{(2)}(T_{1}+t),\kappa\}-2\sqrt{\beta}u.
+By the strong Markov property (see, for example, (Dembo, 2021, Proposition 6.1.16)), we have
+\mathbb{P}((\mathcal{B}_{t,u})^{c}|\mathcal{F}_{T_{1}+t})\mathbbm{1}_{T_{1}<\infty}=\mathbb{P}((\mathcal{A}_{t,u,u})^{c}|\mathcal{F}_{t})\mathbbm{1}_{T_{1}<\infty}\leq 4q\exp(-nu^{2}),
+hence
+\mathbb{P}((\mathcal{B}_{t,u})^{c}\cap\{T_{1}<\infty\})\leq 4q\exp(-nu^{2}).
+(35)
+Let
+L:=\min\bigg\{t\in\mathbb{N}:\frac{1}{2}\Big(\frac{\beta}{q}\Big)^{t/\penalty 4}\sqrt{\frac{\log\log{n}}{n\beta}}\geq\kappa\bigg\}.
+(36)
+For any t\in\mathbb{N}, we let
+u_{t}:=\frac{1}{4\sqrt{\beta}}\Big(\Big(\frac{\beta}{q}\Big)^{1/\penalty 2}-\Big(\frac{\beta}{q}\Big)^{1/\penalty 4}\Big)\Big(\frac{\beta}{q}\Big)^{t/\penalty 4}\min\bigg\{\frac{1}{2}\sqrt{\frac{\log\log{n}}{n\beta}},\kappa\bigg\}.
+(37)
+We also let \mathcal{D}_{2}:=\bigcap_{t\in[0,L]\cap\mathbb{N}}\mathcal{B}_{t,u_{t}}. By (35) and the union bound,
+\displaystyle\mathbb{P}(\mathcal{D}_{2}^{c}\cap\{T_{1}<\infty\})
+\displaystyle\leq
+\displaystyle\sum_{t\in[0,L]\cap\mathbb{N}}\mathbb{P}((\mathcal{B}_{t,u_{t}})^{c}\cap\{T_{1}<\infty\})\leq 4q\sum_{t\in[0,L]\cap\mathbb{N}}\exp(-nu_{t}^{2})
+(38)
+\displaystyle\leq
+\displaystyle C\sum_{t=0}^{\infty}\exp(-c(\beta/\penalty q)^{t/\penalty 2}\log\log{n})\leq C\exp(-c\log\log{n}).
+Assume that the event \mathcal{D}_{1}\cap\mathcal{D}_{2} holds. By the definition of T_{1} (see (33)), we have Z_{(1)}(T_{1})-Z_{(2)}(T_{1})\geq\frac{1}{2}\sqrt{\frac{\log\log{n}}{n\beta}}. If L=0, we have \frac{1}{2}\sqrt{\frac{\log\log{n}}{n\beta}}\geq\kappa, hence on the event \mathcal{B}_{0,u_{0}}\supseteq\mathcal{D}_{2}, we have
+\displaystyle Y_{(1)}(T_{1}+1)-Y_{(2)}(T_{1}+1)\geq\sqrt{\beta/\penalty q}\min\{Z_{(1)}(T_{1})-Z_{(2)}(T_{1}),\kappa\}-2\sqrt{\beta}u_{0}
+(39)
+\displaystyle\geq
+\displaystyle\sqrt{\beta/\penalty q}\kappa-\frac{1}{2}\Big(\Big(\frac{\beta}{q}\Big)^{1/\penalty 2}-\Big(\frac{\beta}{q}\Big)^{1/\penalty 4}\Big)\kappa=\frac{\kappa}{2}\bigg(\Big(\frac{\beta}{q}\Big)^{1/\penalty 2}+\Big(\frac{\beta}{q}\Big)^{1/\penalty 4}\bigg)\geq\kappa.
+If L\geq 1, we have (see the definition of L in (36))
+\kappa>\frac{1}{2}\Big(\frac{\beta}{q}\Big)^{(L-1)/\penalty 4}\sqrt{\frac{\log\log{n}}{n\beta}}.
+(40)
+Below, we show by induction that
+Y_{(1)}(T_{1}+t)-Y_{(2)}(T_{1}+t)\geq\frac{1}{2}\Big(\frac{\beta}{q}\Big)^{t/\penalty 4}\sqrt{\frac{\log\log{n}}{n\beta}}
+(41)
+for any t\in[L] as follows. When t=1, on the event \mathcal{B}_{0,u_{0}}\supseteq\mathcal{D}_{2}, we have
+\displaystyle Y_{(1)}(T_{1}+1)-Y_{(2)}(T_{1}+1)\geq\sqrt{\beta/\penalty q}\min\{Z_{(1)}(T_{1})-Z_{(2)}(T_{1}),\kappa\}-2\sqrt{\beta}u_{0}
+\displaystyle\geq
+\displaystyle\frac{1}{2}\Big(\frac{\beta}{q}\Big)^{1/\penalty 2}\sqrt{\frac{\log\log{n}}{n\beta}}-\frac{1}{2}\Big(\Big(\frac{\beta}{q}\Big)^{1/\penalty 2}-\Big(\frac{\beta}{q}\Big)^{1/\penalty 4}\Big)\sqrt{\frac{\log\log{n}}{n\beta}}=\frac{1}{2}\Big(\frac{\beta}{q}\Big)^{1/\penalty 4}\sqrt{\frac{\log\log{n}}{n\beta}},
+where we use (40) in the second inequality. This verifies the induction claim when t=1. Now suppose that (41) holds for some t\in[L-1]. On the event \mathcal{B}_{t,u_{t}}\supseteq\mathcal{D}_{2}, we have
+\displaystyle Y_{(1)}(T_{1}+t+1)-Y_{(2)}(T_{1}+t+1)
+\displaystyle\geq
+\displaystyle\sqrt{\beta/\penalty q}\min\{Y_{(1)}(T_{1}+t)-Y_{(2)}(T_{1}+t),\kappa\}-4\sqrt{\beta}u_{t}
+\displaystyle\geq
+\displaystyle\frac{1}{2}\Big(\frac{\beta}{q}\Big)^{1/\penalty 2}\Big(\frac{\beta}{q}\Big)^{t/\penalty 4}\sqrt{\frac{\log\log{n}}{n\beta}}-\frac{1}{2}\Big(\Big(\frac{\beta}{q}\Big)^{1/\penalty 2}-\Big(\frac{\beta}{q}\Big)^{1/\penalty 4}\Big)\Big(\frac{\beta}{q}\Big)^{t/\penalty 4}\sqrt{\frac{\log\log{n}}{n\beta}}
+\displaystyle=
+\displaystyle\frac{1}{2}\Big(\frac{\beta}{q}\Big)^{(t+1)/\penalty 4}\sqrt{\frac{\log\log{n}}{n\beta}},
+where we use (40) and (41) in the second inequality. Hence by induction, (41) holds for every t\in[L], and consequently,
+Y_{(1)}(T_{1}+L)-Y_{(2)}(T_{1}+L)\geq\frac{1}{2}\Big(\frac{\beta}{q}\Big)^{L/\penalty 4}\sqrt{\frac{\log\log{n}}{n\beta}}\geq\kappa,
+(42)
+where the last inequality follows from the definition of L (see (36)). By (39) and (42), we get Y_{(1)}(T_{1}+\max\{L,1\})-Y_{(2)}(T_{1}+\max\{L,1\})\geq\kappa.
+Moreover, note that on the event \mathcal{D}_{1},
+T_{1}+\max\{L,1\}\leq 2\log{n}+\max\{L,1\}\leq C_{1}\log{n},
+where C_{1} is a positive constant that depends only on q,\beta. Taking c_{1}=\kappa and recalling the definition of \mathcal{H}_{1} from the statement of the proposition, we get
+\mathcal{D}_{1}\cap\mathcal{D}_{2}\subseteq\mathcal{H}_{1}.
+(43)
+Combining (34), (38), and (43), we conclude that
+\mathbb{P}(\mathcal{H}_{1}^{c})\leq\mathbb{P}(\mathcal{D}_{1}^{c})+\mathbb{P}(\mathcal{D}_{2}^{c}\cap\mathcal{D}_{1})\leq\mathbb{P}(\mathcal{D}_{1}^{c})+\mathbb{P}(\mathcal{D}_{2}^{c}\cap\{T_{1}<\infty\})\leq C\exp(-c\log\log{n}).
+∎
+For any vector \mathbf{x}=(x_{1},\cdots,x_{q})\in\mathbb{R}^{q}, we let s(\mathbf{x}):=(x_{(1)},\cdots,x_{(q)}) be the order statistics of \mathbf{x}.
+Proposition 23.
+Let \boldsymbol{\alpha}_{0} be as in Definition 14, and let C_{1},c_{1} and the event \mathcal{H}_{1} be defined as in Proposition 22. For any t\in\mathbb{N} and \delta\in(0,1), let \mathcal{V}_{t,\delta} be the event that \|s(\mathbf{Y}(t))-\bm{\alpha}_{0}\|_{1}\leq\delta. Then for any K\geq 1 and \delta\in(0,1), there exist positive constants C^{\prime},c^{\prime} that depend only on q,\beta,K,\delta, such that for any t\in[(C_{1}+1)\log(n+1),K\log(n+1)]\cap\mathbb{N}, we have
+\mathbb{P}((\mathcal{V}_{t,\delta})^{c}\cap\mathcal{H}_{1})\leq C^{\prime}\exp(-c^{\prime}n).
+Proof.
+Let \rho_{0},\delta_{0} be defined as in Lemma 16.
+Without loss of generality, we assume that \delta\leq\delta_{0} and c_{1}<a-b. Let T_{2}:=\inf\{t\in\mathbb{N}^{*}:Y_{(1)}(t)-Y_{(2)}(t)\geq c_{1}\}. Note that when the event \mathcal{H}_{1} holds, we have T_{2}\leq C_{1}\log(n+1).
+By Proposition 18, there exists a positive constant M\in\mathbb{N} that depends only on q,\beta,\delta, such that for any t\geq M and \bm{\alpha}\in\mathcal{X}_{c_{1}}, \|\Phi^{(t)}(\bm{\alpha})-\boldsymbol{\alpha}_{0}\|_{1}\leq\delta/\penalty 2, where \mathcal{X}_{c_{1}} and \Phi(\cdot) are as in Definition 12. We take
+w_{1}:=\frac{\delta}{10\beta(2\beta q)^{M}},\quad w_{2}:=\frac{(1-\rho_{0})\delta}{5\sqrt{q}\beta^{2}},\quad w_{0}:=\min\{w_{1},w_{2}\},\quad\mathcal{D}_{3}:=\bigcap_{t=1}^{\lfloor K\log(n+1)\rfloor}\mathcal{E}_{t,w_{0},w_{0}},
+where \mathcal{E}_{t,w_{0},w_{0}} is as in Definition 19.
+Note that w_{1},w_{2},w_{0} depend only on q,\beta,\delta. By Lemma 20 and the union bound,
+\mathbb{P}(\mathcal{D}_{3}^{c})\leq 4qK\log(n+1)\exp(-nw_{0}^{2}).
+(44)
+In the following, we assume that the event \mathcal{H}_{1}\cap\mathcal{D}_{3} holds. For any t\in\mathbb{N}, we let \gamma_{t}:=\Phi^{(t)}(s(\mathbf{Y}(T_{2}))). As s(\mathbf{Y}(T_{2}))\in\mathcal{X}_{c_{1}}, for any t\geq M,
+\|\gamma_{t}-\boldsymbol{\alpha}_{0}\|_{1}=\|\Phi^{(t)}(s(\mathbf{Y}(T_{2})))-\boldsymbol{\alpha}_{0}\|_{1}\leq\frac{\delta}{2}.
+(45)
+For any t\in\mathbb{N} such that t\leq K\log(n+1), we have
+\displaystyle\sum_{\ell=1}^{q}\big(s_{\ell}(\mathbf{Y}(t+1))-\Phi_{\ell}(s(\mathbf{Y}(t)))\big)^{2}
+\displaystyle\leq
+\displaystyle 2\sum_{\ell=1}^{q}\big(s_{\ell}(\mathbf{Y}(t+1))-\Phi_{\ell}(s(\mathbf{Z}(t)))\big)^{2}+2\sum_{\ell=1}^{q}\big(\Phi_{\ell}(s(\mathbf{Z}(t)))-\Phi_{\ell}(s(\mathbf{Y}(t)))\big)^{2}
+\displaystyle\leq
+\displaystyle 2\sum_{\ell=1}^{q}\big(\widetilde{Y}_{\ell}(t+1)-\Phi_{\ell}(\mathbf{Z}(t))\big)^{2}+2\sum_{\ell=1}^{q}\big(\Phi_{\ell}(\mathbf{Z}(t))-\Phi_{\ell}(\mathbf{Y}(t))\big)^{2}
+\displaystyle\leq
+\displaystyle 2\sum_{\ell=1}^{q}\big(\widetilde{Y}_{\ell}(t+1)-\Phi_{\ell}(\mathbf{Z}(t))\big)^{2}+2\big\|\Phi(\mathbf{Z}(t))-\Phi(\mathbf{Y}(t))\big\|_{1}^{2}
+\displaystyle\leq
+\displaystyle 2\sum_{\ell=1}^{q}\big(\widetilde{Y}_{\ell}(t+1)-\Phi_{\ell}(\mathbf{Z}(t))\big)^{2}+8\beta^{2}q^{2}\|\mathbf{Z}(t)-\mathbf{Y}(t)\|_{\infty}^{2}\leq 2qw_{0}^{2}+8\beta^{2}q^{2}w_{0}^{2}\leq 10\beta^{4}w_{0}^{2},
+where \tilde{Y}_{\ell}(t+1) is as in (31) and s_{\ell}(\mathbf{Y}(t+1)) is the \ellth component of s(\mathbf{Y}(t+1)), and we use the rearrangement inequality in the second inequality, Lemma 15 in the fourth inequality, and the fact that we are working on \mathcal{E}_{t,w_{0},w_{0}}\supseteq\mathcal{D}_{3} in the fifth inequality. Hence
+\|s(\mathbf{Y}(t+1))-\Phi(s(\mathbf{Y}(t)))\|_{1}\leq\sqrt{q\sum_{\ell=1}^{q}\big(s_{\ell}(\mathbf{Y}(t+1))-\Phi_{\ell}(s(\mathbf{Y}(t)))\big)^{2}}\leq 5\sqrt{q}\beta^{2}w_{0}.
+(46)
+For any t\in\mathbb{N} such that T_{2}+t\leq K\log(n+1), by (46) and Lemma 15,
+\displaystyle\|s(\mathbf{Y}(T_{2}+t))-\gamma_{t}\|_{1}
+\displaystyle\leq
+\displaystyle\|s(\mathbf{Y}(T_{2}+t))-\Phi(s(\mathbf{Y}(T_{2}+t-1)))\|_{1}+\|\Phi(s(\mathbf{Y}(T_{2}+t-1)))-\Phi(\gamma_{t-1})\|_{1}
+\displaystyle\leq
+\displaystyle 5\sqrt{q}\beta^{2}w_{0}+2\beta q\|s(\mathbf{Y}(T_{2}+t-1))-\gamma_{t-1}\|_{1}.
+Hence
+\displaystyle\|s(\mathbf{Y}(T_{2}+t))-\gamma_{t}\|_{1}
+\displaystyle\leq\|s(\mathbf{Y}(T_{2}+t))-\gamma_{t}\|_{1}+\frac{5\sqrt{q}\beta^{2}w_{0}}{2\beta q-1}
+\displaystyle\leq 2\beta q\bigg(\|s(\mathbf{Y}(T_{2}+t-1))-\gamma_{t-1}\|_{1}+\frac{5\sqrt{q}\beta^{2}w_{0}}{2\beta q-1}\bigg).
+By iterating the above inequality, noting that \gamma_{0}=s(\mathbf{Y}(T_{2})), we get
+\displaystyle\|s(\mathbf{Y}(T_{2}+t))-\gamma_{t}\|_{1}
+\displaystyle\leq(2\beta q)^{t}\Big(\|s(\mathbf{Y}(T_{2}))-\gamma_{0}\|_{1}+\frac{5\sqrt{q}\beta^{2}w_{0}}{2\beta q-1}\Big)
+\displaystyle=\frac{5\sqrt{q}\beta^{2}}{2\beta q-1}(2\beta q)^{t}w_{0}\leq 5\beta(2\beta q)^{t}w_{0},
+where the last inequality uses \beta>q\geq 2. By (45) and the above display, if T_{2}+M\leq K\log(n+1), then
+\|s(\mathbf{Y}(T_{2}+M))-\boldsymbol{\alpha}_{0}\|_{1}\leq\|s(\mathbf{Y}(T_{2}+M))-\gamma_{M}\|_{1}+\|\gamma_{M}-\boldsymbol{\alpha}_{0}\|_{1}\leq 5\beta(2\beta q)^{M}w_{0}+\frac{\delta}{2}\leq\delta,
+where the last inequality uses the choice of M and w_{0}.
+Now we show by induction that for any t\in\mathbb{N} such that M\leq t\leq K\log(n+1)-T_{2}, we have \|s(\mathbf{Y}(T_{2}+t))-\bm{\alpha}_{0}\|_{1}\leq\delta. By the above display, this holds when t=M. Now we assume that M+1\leq t\leq K\log(n+1)-T_{2} and \|s(\mathbf{Y}(T_{2}+t-1))-\boldsymbol{\alpha}_{0}\|_{1}\leq\delta. Then, using the fact that \Phi(\bm{\alpha}_{0})=\bm{\alpha}_{0} (see Definition 14) and the triangle inequality, we get
+\displaystyle\|s(\mathbf{Y}(T_{2}+t))-\boldsymbol{\alpha}_{0}\|_{1}=\|s(\mathbf{Y}(T_{2}+t))-\Phi(\bm{\alpha}_{0})\|_{1}
+\displaystyle\leq
+\displaystyle\|s(\mathbf{Y}(T_{2}+t))-\Phi(s(\mathbf{Y}(T_{2}+t-1)))\|_{1}+\|\Phi(s(\mathbf{Y}(T_{2}+t-1)))-\Phi(\bm{\alpha}_{0})\|_{1}
+\displaystyle\leq
+\displaystyle 5\sqrt{q}\beta^{2}w_{0}+\rho_{0}\|s(\mathbf{Y}(T_{2}+t-1))-\bm{\alpha}_{0}\|_{1}
+\displaystyle\leq
+\displaystyle(1-\rho_{0})\delta+\rho_{0}\delta\leq\delta,
+where we use (46) with t replaced by t+T_{2}-1 and Lemma 16 in the third line, and the choice of w_{0} and the induction hypothesis in the fourth line. This proves the claim for all t\in\mathbb{N} such that M\leq t\leq K\log(n+1)-T_{2} by induction.
+On the event \mathcal{H}_{1}, we have
+T_{2}+M\leq C_{1}\log(n+1)+M\leq(C_{1}+1)\log(n+1),
+(47)
+where the second inequality holds for all n large enough (depending on q,\beta,\delta).
+Hence for any t\in[(C_{1}+1)\log(n+1),K\log(n+1)]\cap\mathbb{N}, we have \mathcal{H}_{1}\cap\mathcal{D}_{3}\subseteq\mathcal{V}_{t,\delta}, and so (\mathcal{V}_{t,\delta})^{c}\cap\mathcal{H}_{1}\subseteq\mathcal{D}_{3}^{c}.
+Consequently, by (44),
+\mathbb{P}((\mathcal{V}_{t,\delta})^{c}\cap\mathcal{H}_{1})\leq\mathbb{P}(\mathcal{D}_{3}^{c})\leq 4qK\log(n+1)\exp(-nw_{0}^{2})\leq C^{\prime}\exp(-c^{\prime}n),
+(48)
+where C^{\prime},c^{\prime} are positive constants that depend only on q,\beta,K,\delta.
+∎
+6.4 Proof of Theorem 9
+In this subsection, we complete the proof of Theorem 9. Consider any starting state \mathbf{X}(0)=(X_{1}(0),\cdots,X_{n}(0))\in[q]^{n}. Let \mathbf{X}^{\prime}(0)=(X^{\prime}_{1}(0),\cdots,X^{\prime}_{n}(0)) be drawn from the stationary distribution. For any t\in\mathbb{N}, we denote by \mathbf{X}(t) and \mathbf{X}^{\prime}(t) the states after running t steps of the modified AG sampler started from \mathbf{X}(0) and \mathbf{X}^{\prime}(0), respectively. For each t\in\mathbb{N} and \ell\in[q], we let
+Y_{\ell}(t):=n^{-1}\sum_{i=1}^{n}1\{X_{i}(t)=\ell\},\qquad Y^{\prime}_{\ell}(t):=n^{-1}\sum_{i=1}^{n}1\{X^{\prime}_{i}(t)=\ell\}.
+(49)
+Let C_{1},c_{1} be defined as in Proposition 22. By a slight abuse of notation (see Definition 19), for any t\in\mathbb{N}, let \mathcal{F}_{t} be the \sigma-algebra generated by \{\mathbf{X}(s)\}_{s=0}^{t},\{\mathbf{Z}(s)\}_{s=0}^{t-1} and \{\mathbf{X}^{\prime}(s)\}_{s=0}^{t},\{\mathbf{Z}^{\prime}(s)\}_{s=0}^{t-1}, and let \mathcal{G}_{t} be the \sigma-algebra generated by \{\mathbf{X}(s)\}_{s=0}^{t},\{\mathbf{Z}(s)\}_{s=0}^{t} and \{\mathbf{X}^{\prime}(s)\}_{s=0}^{t}, \{\mathbf{Z}^{\prime}(s)\}_{s=0}^{t}. Let \rho_{0},\delta_{0} be the constants in Lemma 16; note that \rho_{0},\delta_{0} only depend on q,\beta.
+Below we construct a coupling between \mathbf{X}(t) and \mathbf{X}^{\prime}(t) for all t\in\mathbb{N}. For any t\in\mathbb{N}, given \mathbf{X}(t) and \mathbf{X}^{\prime}(t), we couple \mathbf{X}(t+1) and \mathbf{X}^{\prime}(t+1) as follows. Assume that Y_{\ell_{1}}(t)\geq Y_{\ell_{2}}(t)\geq\cdots\geq Y_{\ell_{q}}(t) and Y_{\ell_{1}^{\prime}}^{\prime}(t)\geq Y_{\ell_{2}^{\prime}}^{\prime}(t)\geq\cdots\geq Y_{\ell_{q}^{\prime}}^{\prime}(t) (where (\ell_{1},\cdots,\ell_{q}) and (\ell_{1}^{\prime},\cdots,\ell_{q}^{\prime}) are permutations of [q]). Let \lambda\in S_{q} be such that \lambda(\ell_{k})=\ell_{k}^{\prime} for each k\in[q]. For each \ell\in[q], we independently sample W_{\ell}(t)\sim N(0,(n\beta)^{-1}). Let
+W^{\prime}_{\ell}(t)=W_{\lambda^{-1}(\ell)}(t),\qquad Z_{\ell}(t)=Y_{\ell}(t)+W_{\ell}(t),\qquad Z^{\prime}_{\ell}(t)=Y^{\prime}_{\ell}(t)+W^{\prime}_{\ell}(t).
+(50)
+For each i\in[n], we sample (\widetilde{X}_{i}(t+1),\widetilde{X}^{\prime}_{i}(t+1))\in[q]^{2} such that for each \ell\in[q],
+\mathbb{P}(\widetilde{X}_{i}(t+1)=\ell|\mathcal{G}_{t})=\frac{e^{\beta Z_{\ell}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}},\quad\mathbb{P}(\widetilde{X}^{\prime}_{i}(t+1)=\ell|\mathcal{G}_{t})=\frac{e^{\beta Z^{\prime}_{\ell}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z^{\prime}_{\ell^{\prime}}(t)}},
+and \mathbb{P}(\widetilde{X}_{i}(t+1)\neq\lambda^{-1}(\widetilde{X}^{\prime}_{i}(t+1))|\mathcal{G}_{t}) is equal to the total variation distance between the conditional laws of \widetilde{X}_{i}(t+1) and \lambda^{-1}(\widetilde{X}^{\prime}_{i}(t+1)) given \mathcal{G}_{t}. We sample \tau_{t} uniformly from S_{q}, and let \tau_{t}^{\prime}=\tau_{t}\lambda^{-1}\in S_{q}. Finally, set X_{i}(t+1)=\tau_{t}(\widetilde{X}_{i}(t+1)) and X^{\prime}_{i}(t+1)=\tau^{\prime}_{t}(\widetilde{X}^{\prime}_{i}(t+1)).
+We fix K\geq 2(C_{1}+1), whose value will be determined later. We also let \delta=\delta_{0}/\penalty 2 and
+\displaystyle t_{1}:=\lfloor C_{1}\log(n+1)\rfloor,\qquad t_{2}:=\lceil(C_{1}+1)\log(n+1)\rceil,\qquad t_{3}:=\lfloor K\log(n+1)\rfloor.
+By another slight abuse of notation (see Proposition 22), let \mathcal{H}_{1} be the event that Y_{(1)}(t)-Y_{(2)}(t)\geq c_{1} for some t\in[t_{1}] and Y^{\prime}_{(1)}(t^{\prime})-Y^{\prime}_{(2)}(t^{\prime})\geq c_{1} for some t^{\prime}\in[t_{1}]. Note that \mathcal{H}_{1}\in\mathcal{F}_{t_{1}}, and by Proposition 22,
+\mathbb{P}(\mathcal{H}_{1}^{c})\leq C\exp(-c\log\log(n+1)).
+(51)
+For any t\in\mathbb{N}, let \mathcal{V}_{t,\delta} be the event that \|s(\mathbf{Y}(t))-\bm{\alpha}_{0}\|_{1}\leq\delta and \|s(\mathbf{Y}^{\prime}(t))-\bm{\alpha}_{0}\|_{1}\leq\delta (where s(\mathbf{Y}(t)) and s(\mathbf{Y}^{\prime}(t)) are the order statistics of \mathbf{Y}(t) and \mathbf{Y}^{\prime}(t), respectively), and let \mathcal{U}_{t,\delta} be the event that \max_{\ell\in[q]}\{|W_{\ell}(t)|\}\leq\delta/\penalty q. Let \mathcal{W}_{K,\delta}:=\bigcap_{t\in[t_{2},t_{3}]\cap\mathbb{N}}\mathcal{V}_{t,\delta}.
+By Proposition 23 and tail bounds for Gaussian random variables, we have
+\mathbb{P}((\mathcal{W}_{K,\delta})^{c}\cap\mathcal{H}_{1})\leq C^{\prime}\exp(-c^{\prime}n),\quad\mathbb{P}((\mathcal{U}_{t,\delta})^{c})\leq 2q\exp(-n\beta q^{-2}\delta^{2}/\penalty 2)\leq C^{\prime}\exp(-c^{\prime}n),
+(52)
+where C^{\prime},c^{\prime} are positive constants that only depend on q,\beta,K.
+Let H(\cdot,\cdot) be the Hamming distance on [q]^{n}. For any t\in\mathbb{N},
+H(\mathbf{X}(t+1),\mathbf{X}^{\prime}(t+1))=\sum_{i=1}^{n}1\{X_{i}(t+1)\neq X^{\prime}_{i}(t+1)\}=\sum_{i=1}^{n}1\{\widetilde{X}_{i}(t+1)\neq\lambda^{-1}(\widetilde{X}^{\prime}_{i}(t+1))\},
+hence
+\displaystyle\mathbb{E}[H(\mathbf{X}(t+1),\mathbf{X}^{\prime}(t+1))|\mathcal{F}_{t}]
+\displaystyle=
+\displaystyle\sum_{i=1}^{n}\mathbb{P}(\widetilde{X}_{i}(t+1)\neq\lambda^{-1}(\widetilde{X}^{\prime}_{i}(t+1))|\mathcal{F}_{t})
+(53)
+\displaystyle=
+\displaystyle\frac{1}{2}\sum_{i=1}^{n}\sum_{\ell=1}^{q}\mathbb{E}\bigg[\bigg|\frac{e^{\beta Z_{\ell}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}-\frac{e^{\beta Z^{\prime}_{\lambda(\ell)}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z^{\prime}_{\ell^{\prime}}(t)}}\bigg|\bigg|\mathcal{F}_{t}\bigg],
+where the last equality uses the fact that (\widetilde{X}_{i}(t+1),\lambda^{-1}(\widetilde{X}^{\prime}_{i}(t+1))) are coupled using the total variation coupling. Note that when \mathcal{U}_{t,\delta}\cap\mathcal{V}_{t,\delta} holds, we have
+\displaystyle\|(Z_{\ell_{1}}(t),\cdots,Z_{\ell_{q}}(t))-\bm{\alpha}_{0}\|_{1}
+\displaystyle\leq
+\displaystyle\|(Z_{\ell_{1}}(t),\cdots,Z_{\ell_{q}}(t))-(Y_{\ell_{1}}(t),\cdots,Y_{\ell_{q}}(t))\|_{1}+\|s(\mathbf{Y}(t))-\bm{\alpha}_{0}\|_{1}
+\displaystyle\leq
+\displaystyle q\max_{\ell\in[q]}\{|W_{\ell}(t)|\}+\delta\leq 2\delta\leq\delta_{0}.
+The same bound applies to (Z^{\prime}_{\ell_{1}^{\prime}}(t),\cdots,Z^{\prime}_{\ell_{q}^{\prime}}(t)), and consequently, on the set \mathcal{U}_{t,\delta}\cap\mathcal{V}_{t,\delta},
+\displaystyle\sum_{\ell=1}^{q}\bigg|\frac{e^{\beta Z_{\ell}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z_{\ell^{\prime}}(t)}}-\frac{e^{\beta Z^{\prime}_{\lambda(\ell)}(t)}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta Z^{\prime}_{\ell^{\prime}}(t)}}\bigg|
+\displaystyle\leq
+\displaystyle\rho_{0}\sum_{\ell=1}^{q}|Z_{\ell}(t)-Z^{\prime}_{\lambda(\ell)}(t)|=\rho_{0}\sum_{\ell=1}^{q}|Y_{\ell}(t)-Y^{\prime}_{\lambda(\ell)}(t)|
+(54)
+\displaystyle\leq
+\displaystyle\rho_{0}\sum_{\ell=1}^{q}|Y_{\ell}(t)-Y^{\prime}_{\ell}(t)|\leq\frac{2}{n}\rho_{0}H(\mathbf{X}(t),\mathbf{X}^{\prime}(t)),
+where the inequality in the first line uses
+Lemma 16, the equality in the first line uses (50), the first inequality in the second line uses the fact that (Y_{\ell}(t))_{\ell\in[q]} and (Y^{\prime}_{\lambda(\ell)}(t))_{\ell\in[q]} have the same order, and the second inequality in the second line uses (49).
+By (53) and (54), we have
+\mathbb{E}[H(\mathbf{X}(t+1),\mathbf{X}^{\prime}(t+1))|\mathcal{F}_{t}]\leq\rho_{0}H(\mathbf{X}(t),\mathbf{X}^{\prime}(t))+\frac{nq}{2}(\mathbb{P}((\mathcal{U}_{t,\delta})^{c}|\mathcal{F}_{t})+\mathbb{P}((\mathcal{V}_{t,\delta})^{c}|\mathcal{F}_{t})).
+For any t\in[t_{2},t_{3}]\cap\mathbb{N}, by (52), noting that \mathcal{H}_{1}\in\mathcal{F}_{t_{1}}\subseteq\mathcal{F}_{t}, we have
+\displaystyle\mathbb{E}[H(\mathbf{X}(t+1),\mathbf{X}^{\prime}(t+1))\mathbbm{1}_{\mathcal{H}_{1}}]=\mathbb{E}[\mathbb{E}[H(\mathbf{X}(t+1),\mathbf{X}^{\prime}(t+1))|\mathcal{F}_{t}]\mathbbm{1}_{\mathcal{H}_{1}}]
+\displaystyle\leq
+\displaystyle\rho_{0}\mathbb{E}[H(\mathbf{X}(t),\mathbf{X}^{\prime}(t))\mathbbm{1}_{\mathcal{H}_{1}}]+\frac{nq}{2}(\mathbb{P}((\mathcal{U}_{t,\delta})^{c})+\mathbb{P}((\mathcal{V}_{t,\delta})^{c}\cap\mathcal{H}_{1}))
+\displaystyle\leq
+\displaystyle\rho_{0}\mathbb{E}[H(\mathbf{X}(t),\mathbf{X}^{\prime}(t))\mathbbm{1}_{\mathcal{H}_{1}}]+\frac{nq}{2}(\mathbb{P}((\mathcal{U}_{t,\delta})^{c})+\mathbb{P}((\mathcal{W}_{K,\delta})^{c}\cap\mathcal{H}_{1}))
+\displaystyle\leq
+\displaystyle\rho_{0}\mathbb{E}[H(\mathbf{X}(t),\mathbf{X}^{\prime}(t))\mathbbm{1}_{\mathcal{H}_{1}}]+C^{\prime}\exp(-c^{\prime}n).
+Hence
+\mathbb{E}[H(\mathbf{X}(t+1),\mathbf{X}^{\prime}(t+1))\mathbbm{1}_{\mathcal{H}_{1}}]-\frac{C^{\prime}\exp(-c^{\prime}n)}{1-\rho_{0}}\leq\rho_{0}\bigg(\mathbb{E}[H(\mathbf{X}(t),\mathbf{X}^{\prime}(t))\mathbbm{1}_{\mathcal{H}_{1}}]-\frac{C^{\prime}\exp(-c^{\prime}n)}{1-\rho_{0}}\bigg),
+and consequently,
+\displaystyle\mathbb{E}[H(\mathbf{X}(t_{3}),\mathbf{X}^{\prime}(t_{3}))\mathbbm{1}_{\mathcal{H}_{1}}]-\frac{C^{\prime}\exp(-c^{\prime}n)}{1-\rho_{0}}
+\displaystyle\leq\rho_{0}^{t_{3}-t_{2}}\bigg(\mathbb{E}[H(\mathbf{X}(t_{2}),\mathbf{X}^{\prime}(t_{2}))\mathbbm{1}_{\mathcal{H}_{1}}]-\frac{C^{\prime}\exp(-c^{\prime}n)}{1-\rho_{0}}\bigg)
+\displaystyle\leq\rho_{0}^{t_{3}-t_{2}}n\leq\rho_{0}^{K\log(n+1)/\penalty 3}n,
+where the last inequality holds for all n large enough (depending on q,\beta,K). Taking K sufficiently large (depending on q,\beta) and n sufficiently large (depending on q,\beta,K), by (51) and the above display, we get
+\mathbb{P}(\mathcal{H}_{1}^{c})\leq\frac{1}{8},\qquad\mathbb{P}(\{\mathbf{X}(t_{3})\neq\mathbf{X}^{\prime}(t_{3})\}\cap\mathcal{H}_{1})\leq\mathbb{E}[H(\mathbf{X}(t_{3}),\mathbf{X}^{\prime}(t_{3}))\mathbbm{1}_{\mathcal{H}_{1}}]\leq\frac{1}{8}.
+(55)
+Hence \mathbb{P}(\mathbf{X}(t_{3})\neq\mathbf{X}^{\prime}(t_{3}))\leq\frac{1}{4}.
+Thus by the coupling lemma (Levin and Peres, 2017, Theorem 5.4), t_{\mathrm{mix}}\Big(\frac{1}{4}\Big)\leq t_{3}\leq C\log(n+1).
+By (Levin and Peres, 2017, (4.34)), we obtain the conclusion of the theorem.
+7 Discussion
+This paper builds on a growing literature on sampling methods for Ising and Potts models, using an auxiliary Gaussian variable, a strategy first proposed in the machine learning literature by Martens and Sutskever (2010).
+We present two novel choices of auxiliary Gaussian variables: (i) a choice for Potts models, which leads to a sampler whose cost per iteration scales linearly in q; and (ii) a choice which automatically detects the (approximately) low-rank structure of \bf A and takes advantage of this low-rank structure, if it exists.
+We primarily focus on the AG sampler, which is a block Gibbs sampler.
+We run an extensive suite of numerical experiments and identify many regimes where the AG sampler outperforms competitors, at times yielding an ESS/s which is orders of magnitudes higher—for example for Ising models on a graph and low-rank Hopfield networks.
+We also identify regimes where the AG sampler exhibits poor performance, for example when applied to a cold spin glass system.
+Overall, we believe that the AG sampler’s ease of implementation and competitive performance make it an excellent method to sample from Potts models.
+Our paper also provides bounds on the mixing time of AG samplers.
+Such bounds exist for the Heat Bath and Swendsen-Wang algorithms.
+To the best of our knowledge, our paper provides the first bounds for AG samplers. Our bounds are of similar order as those for Swendsen-Wang algorithms (see, e.g., Galanis et al. (2019)).
+There exist several directions for future research. First, it would be of interest to establish matching lower bounds on the mixing time for Theorems 5 and 9. Second, it would be interesting to extend Theorem 9 to the low-temperature regime for broader classes of models, such as Potts models on random regular graphs. Another direction for future research is to investigate other algorithms which use the auxiliary Gaussian variables we propose.
+This includes discrete HMC (Zhang et al., 2012) and more generally gradient-based methods to sample over \bf Z.
+An important challenge here is to understand the geometry of p({\bf Z}) and which methods—or which tuning of a method—enable efficient sampling.
+Similarly, it is of interest to study how tempering best works with an AG sampler, or any sampler over \mathbb{P}({\bf X},{\bf Z}) in order to sample from cold systems.
+Acknowledgments
+SM gratefully acknowledges NSF for partial support during this research (DMS-2113414, DMS-2515519).
+Appendix
+The Appendix contains proofs missing in the main body.
+We derive the conditional and marginal distributions, that arise when we introduce either a regular or low-rank auxiliary Gaussian variable for Potts models.
+We prove Proposition 3, which characterizes the error committed in using the low-rank algorithm, and Proposition 4, which characterizes the type of coupling matrices for which we may want to use a low-rank algorithm.
+Specialized algorithms for the Ising model (q=2) are derived. We also provide an overview on auxiliary cluster and tempering algorithms.
+The code used for our numerical experiments can be found at https://github.com/charlesm93/potts_simulation.
+The ReadMe provides instructions on how to run the code.
+Appendix A Missing proofs in Section 2
+A.1 Conditional and marginal distributions when using the regular Auxiliary Gaussian
+We begin by proving Equations (6) and (7).
+Recall from (4) that the marginal p.m.f. of \mathbf{X} under \mathbb{P} is proportional to
+\exp\Big(\frac{1}{2}\sum_{\ell=1}^{q}{\bf y}_{\ell}^{\prime}B{\bf y}_{\ell}\Big).
+Also from (5), the conditional density of \mathbf{Z} given \mathbf{X}=\mathbf{x} is proportional to
+\exp\Big(-\frac{1}{2}\sum_{\ell=1}^{q}(\mathbf{z}_{\ell}-\mathbf{y}_{\ell})^{\prime}B(\mathbf{z}_{\ell}-\mathbf{y}_{\ell})\Big).
+Thus, the joint distribution of \mathbf{X} and \mathbf{Z} is proportional to
+\displaystyle\exp\left(\frac{1}{2}\sum_{\ell=1}^{q}\Big[{\bf y}_{\ell}^{\prime}B{\bf y}_{\ell}-(\mathbf{z}_{\ell}-\mathbf{y}_{\ell})^{\prime}B(\mathbf{z}_{\ell}-\mathbf{y}_{\ell})\Big]\right)
+\displaystyle=
+\displaystyle\exp\left(-\frac{1}{2}\sum_{\ell=1}^{q}\mathbf{z}_{\ell}^{\prime}B\mathbf{z}_{\ell}+\sum_{\ell=1}^{q}\mathbf{z}_{\ell}^{\prime}B\mathbf{y}_{\ell}\right)
+\displaystyle=
+\displaystyle\exp\left(-\frac{1}{2}\sum_{\ell=1}^{q}\mathbf{z}_{\ell}^{\prime}B\mathbf{z}_{\ell}+\sum_{\ell=1}^{q}\sum_{i=1}^{n}\sum_{j=1}^{n}z_{\ell j}B_{ij}1\{x_{i}=\ell\}\right).
+(56)
+From (56), we see that given \mathbf{Z}, the random variables (X_{1},\ldots,X_{n}) are mutually independent, with
+\mathbb{P}(X_{i}=\ell|\mathbf{Z})\propto\exp\Big(\sum_{j=1}^{n}B_{ij}z_{\ell j}\Big),
+which verifies (6).
+The marginal distribution of \mathbf{Z} is obtained from (56) by summing over \mathbf{x}\in[q]^{n}, from which (7) follows.
+A.2 Conditional and marginal distributions when using the low-rank Auxiliary Gaussian
+Next we prove Equations (13) and (15).
+Recall from (12) that the marginal p.m.f. of \mathbf{X} under \mathbb{P} is proportional to
+\exp\Big(\frac{1}{2}\sum_{\ell=1}^{q}\sum_{j=1}^{k}\mu_{j}(\mathbf{p}_{j}^{\prime}y_{\ell})^{2}\Big).
+Also from (13), the conditional density of \mathbf{Z} given \mathbf{X}=\mathbf{x} is proportional to
+\exp\Big(-\frac{1}{2}\sum_{\ell=1}^{q}\sum_{j=1}^{k}\mu_{j}(z_{\ell j}-\mathbf{p}_{j}^{\prime}\mathbf{y}_{\ell})^{2}\Big).
+Thus, the joint distribution of \mathbf{X} and \mathbf{Z} is proportional to
+\displaystyle\exp\left(\frac{1}{2}\sum_{\ell=1}^{q}\sum_{j=1}^{k}\mu_{j}\Big[(\mathbf{p}_{j}^{\prime}y_{\ell})^{2}-(z_{\ell j}-\mathbf{p}_{j}^{\prime}\mathbf{y}_{\ell})^{2}\Big]\right)
+\displaystyle=
+\displaystyle\exp\Big(-\frac{1}{2}\sum_{\ell=1}^{q}\sum_{j=1}^{k}\mu_{j}z_{\ell j}^{2}+\sum_{\ell=1}^{q}\sum_{j=1}^{k}\mu_{j}z_{\ell j}\mathbf{p}_{j}^{\prime}\mathbf{y}_{\ell}\Big)
+\displaystyle=
+\displaystyle\exp\Big(-\frac{1}{2}\sum_{\ell=1}^{q}\sum_{j=1}^{k}\mu_{j}z_{\ell j}^{2}+\sum_{\ell=1}^{q}\sum_{j=1}^{k}\sum_{i=1}^{n}\mu_{j}z_{\ell j}p_{ji}1\{x_{i}=\ell\}\Big).
+(57)
+Using (57), given \mathbf{Z}=\mathbf{z} the random variables (X_{1},\ldots,X_{n}) are mutually independent, with
+\mathbb{P}(X_{i}=\ell|\mathbf{Z})\propto\exp\Big(\sum_{j=1}^{k}\mu_{j}z_{\ell j}p_{ji}\Big),
+which verifies (14). The marginal distribution of \mathbf{Z} is obtained from (57) by summing over \mathbf{x}\in[q]^{n}, from which (15) follows.
+A.3 Proof of Proposition 3
+With B and \tilde{B} as in the distributions \mathbb{P} and \mathbb{Q} in (4)
+and (11) respectively, for any \mathbf{x}\in[q]^{n}, we have
+\displaystyle\Big|\sum_{i,j=1}^{n}B_{ij}1\{x_{i}=x_{j}\}-\sum_{i,j=1}^{n}\tilde{B}_{ij}1\{x_{i}=x_{j}\}\Big|=
+\displaystyle\Big|\sum_{\ell=1}^{q}\mathbf{y}_{\ell}^{\prime}(B-\tilde{B})\mathbf{y}_{\ell}\Big|
+\displaystyle\leq
+\displaystyle\sum_{\ell=1}^{q}\|\mathbf{y}_{\ell}\|_{2}^{2}\|B-\tilde{B}\|_{2}
+\displaystyle=
+\displaystyle\|B-\tilde{B}\|_{2}\sum_{\ell=1}^{q}\sum_{i=1}^{n}1\{x_{i}=\ell\}
+(58)
+\displaystyle=
+\displaystyle n\|B-\tilde{B}\|_{2}\leq n\varepsilon,
+(59)
+where the last bound uses the definition of \tilde{B} to note that all eigenvalues of B-\tilde{B} are smaller than \varepsilon in absolute value.
+Thus, for any \mathbf{x}\in[q]^{n}, we have
+\displaystyle e^{\frac{-n\beta\varepsilon}{2}}\leq\frac{\exp\Big(\frac{\beta}{2}\sum_{i,j=1}^{n}B_{ij}1\{x_{i}=x_{j}\}\Big)}{\exp\Big(\frac{\beta}{2}\sum_{i,j=1}^{n}\tilde{B}_{ij}1\{x_{i}=x_{j}\}\Big)}\leq e^{\frac{n\beta\varepsilon}{2}}.
+(60)
+On summing over \mathbf{x}\in[q]^{n}, this gives
+\displaystyle e^{-\frac{n\beta\varepsilon}{2}}\leq\frac{Z(\beta,B)}{Z(\beta,\tilde{B})}\leq e^{\frac{n\beta\varepsilon}{2}},
+(61)
+which verifies part (i). For verifying part (ii), taking a ratio of (60) and (61) we get
+\displaystyle e^{-n\beta\varepsilon}\leq\frac{\mathbb{P}(\mathbf{X}=\mathbf{x})}{\mathbb{Q}(\mathbf{X}=\mathbf{x})}\leq e^{n\beta\varepsilon},
+which gives
+\max({\rm KL}(\mathbb{P}|\mathbb{Q}),{\rm KL}(\mathbb{Q}|\mathbb{P}))\leq n\beta\varepsilon. This verifies part (ii), and hence completes the proof of the lemma.
+A.4 Proof of Proposition 4
+To begin, we bound k by examining the trace of B^{2}, and noting that, per Markov’s inequality,
+k\leq\sum_{i=1}^{n}\mu_{i}^{2}/\varepsilon^{2}={\rm tr}(B^{2})/\varepsilon^{2}.
+Also, we have
+\displaystyle{\rm tr}(B^{2})=\beta^{2}{\rm tr}(A^{2}+2|\lambda_{\min}|A+\lambda_{\min}^{2}I)=\beta^{2}{\rm tr}(A^{2})+\beta^{2}n\lambda_{\min}^{2}.
+(62)
+Combining the above two displays, it suffices to show that the RHS of (62) is o(n).
+Since \lambda_{\min}=o(1), it suffices to show {\rm tr}(A^{2})=o(n), which is the focus of the rest of the proof.
+To this effect, recall that {\rm tr}(A)=0. Thus, with \lambda_{1}(A),\ldots,\lambda_{n}(A) denoting the eigenvalues of A we have
+\sum_{i=1}^{n}\lambda_{i}(A)1\{\lambda_{i}(A)>0\}=\sum_{i=1}^{n}|\lambda_{i}(A)|1\{\lambda_{i}(A)<0\}\leq n|\lambda_{\min}|.
+This in turn gives
+\sum_{i=1}^{n}|\lambda_{i}(A)|=\sum_{i=1}^{n}\lambda_{i}(A)1\{\lambda_{i}(A)>0\}+\sum_{i=1}^{n}|\lambda_{i}(A)|1\{\lambda_{i}(A)<0\}\leq 2n|\lambda_{\min}|=o(n),
+and so
+{\rm tr}(A^{2})=\sum_{i=1}^{n}\lambda_{i}(A)^{2}\leq\max\{|\lambda_{\max}|,|\lambda_{\min}|\}\sum_{i=1}^{n}|\lambda_{i}(A)|=o(n),
+where the last equality uses the assumption that \lambda_{\max}=O(1) and \lambda_{\min}=o(1). This completes the proof of the proposition.
+Appendix B Missing proofs in Section 6
+B.1 Proof of Lemma 13
+For any x\in[0,1], let \psi(x):=(1-x)e^{\beta x}-(q-1)x-1, and note that
+\displaystyle\psi(0)=0,\qquad\psi^{\prime}(x)=-e^{\beta x}+\beta e^{\beta x}(1-x)-(q-1),\qquad\psi^{\prime\prime}(x)=\beta e^{\beta x}(\beta(1-x)-2).
+Then \psi^{\prime\prime}(x) has exactly one root in [0,1], and so \psi^{\prime}(x) has at most two roots in [0,1]. As \psi^{\prime}(0)=\beta-q>0 and \psi^{\prime}(1)=-e^{\beta}-q+1<0, there exists a unique root for \psi^{\prime}(x) in (0,1), which we denote by x_{1}. Since \psi(x) is strictly increasing on [0,x_{1}) with \psi(x_{1})>\psi(0)=0, and strictly decreasing on (x_{1},1] with \psi(1)=-q<0, it follows that there exists a unique x_{0}\in(x_{1},1), such that \psi(x_{0})=0. Also, recalling the formulas of \psi,g, we can write \psi(x)=(e^{\beta x}-1)\big(1-\frac{x}{g(x)}\big). Consequently, this gives
+\displaystyle g(0)=0;\quad g(x_{0})=x_{0};\quad g(x)>x\text{ for }x\in(0,x_{0});\quad g(x)<x\text{ for }x\in(x_{0},1].
+(63)
+We now give the proof of part (a). Suppose (x,y) is an arbitrary solution of (29), if it exists. Then we have x-y\in(0,1) and
+g(x-y)=\frac{e^{\beta(x-y)}-1}{e^{\beta(x-y)}+q-1}=\frac{x/\penalty y-1}{x/\penalty y+q-1}=\frac{x-y}{x+(q-1)y}=x-y.
+Since g has a unique fixed point x_{0} in (0,1), we have x-y=x_{0}. As x+(q-1)y=1, solving this we get x=(1+(q-1)x_{0})/\penalty q and y=(1-x_{0})/\penalty q. Thus there is at most a unique solution to (29). The fact that x=(1+(q-1)x_{0})/\penalty q and y=(1-x_{0})/\penalty q is a solution can be verified by elementary computations. As a-b=x_{0}>x_{1}, by the above analysis, \psi^{\prime}(a-b)<0, which yields -e^{\beta(a-b)}+\beta e^{\beta(a-b)}(1-a+b)-(q-1)<0. This, along with (29), gives
+\displaystyle 0>-\frac{a}{b}+\beta\cdot\frac{a}{b}\cdot qb-(q-1)=-\frac{a}{b}+\beta aq-(q-1)\Rightarrow\beta qab<a+(q-1)b=1.
+This completes the proof of part (a).
+Part (b) now follows from part (a) and (63), on noting that a-b=x_{0}.
+Turning to the proof of part (c),
+note that for any x\in[q^{-1},1],
+\displaystyle h(x)>x\Leftrightarrow(1-x)e^{\beta x}>x(q-1)e^{\beta\frac{1-x}{q-1}}\Leftrightarrow(1-x)e^{\beta\frac{qx-1}{q-1}}>x(q-1),
+\displaystyle g\bigg(\frac{qx-1}{q-1}\bigg)>\frac{qx-1}{q-1}\Leftrightarrow(q-1)\Big(e^{\beta\frac{qx-1}{q-1}}-1\Big)>(qx-1)\Big(e^{\beta\frac{qx-1}{q-1}}+q-1\Big)\Leftrightarrow(1-x)e^{\beta\frac{qx-1}{q-1}}>x(q-1).
+Thus we conclude that h(x)>x if and only if g\Big(\frac{qx-1}{q-1}\Big)>\frac{qx-1}{q-1}. When x\in(q^{-1},a), we have \frac{qx-1}{q-1}\in\big(0,\frac{qa-1}{q-1}\big)=(0,a-b); using part (b) and the above conclusion, we have h(x)>x when x\in(q^{-1},a). Similarly, we can deduce that h(a)=a and h(x)<x when x\in(a,1]. The fact that h(q^{-1})=q^{-1} follows from direct computation.
+B.2 Proof of Lemma 15
+For any \ell\in[q] and \theta\in[0,1], let
+\phi_{\ell}(\theta)=\Phi_{\ell}(\theta\bm{\alpha}+(1-\theta)\bm{\alpha}^{\prime})=\frac{e^{\beta(\theta\alpha_{\ell}+(1-\theta)\alpha_{\ell}^{\prime})}}{\sum_{\ell^{\prime}=1}^{q}e^{\beta(\theta\alpha_{\ell^{\prime}}+(1-\theta)\alpha_{\ell^{\prime}}^{\prime})}}.
+(64)
+Note that
+\phi_{\ell}^{\prime}(\theta)=\frac{\beta e^{\beta(\theta\alpha_{\ell}+(1-\theta)\alpha^{\prime}_{\ell})}\sum_{\ell^{\prime}\in[q]\backslash\{\ell\}}e^{\beta(\theta\alpha_{\ell^{\prime}}+(1-\theta)\alpha^{\prime}_{\ell^{\prime}})}\big((\alpha_{\ell}-\alpha_{\ell}^{\prime})-(\alpha_{\ell^{\prime}}-\alpha^{\prime}_{\ell^{\prime}})\big)}{\big(\sum_{\ell^{\prime}=1}^{q}e^{\beta(\theta\alpha_{\ell^{\prime}}+(1-\theta)\alpha_{\ell^{\prime}}^{\prime})}\big)^{2}}.
+Hence |\phi^{\prime}_{\ell}(\theta)|\leq 2\beta\max_{\ell^{\prime}\in[q]}|\alpha^{\prime}_{\ell^{\prime}}-\alpha_{\ell^{\prime}}|.
+Therefore,
+\|\Phi(\bm{\alpha^{\prime}})-\Phi(\bm{\alpha})\|_{1}=\sum_{\ell\in[q]}|\phi_{\ell}(1)-\phi_{\ell}(0)|\leq 2\beta q\max_{\ell^{\prime}\in[q]}|\alpha^{\prime}_{\ell^{\prime}}-\alpha_{\ell^{\prime}}|.
+B.3 Proof of Lemma 16
+For any \bm{\alpha}=(\alpha_{1},\cdots,\alpha_{q})\in\mathbb{R}^{q},
+\frac{\partial\Phi_{\ell}(\bm{\alpha})}{\partial\alpha_{\ell}}=\frac{\beta e^{\beta\alpha_{\ell}}\big(\sum_{s\in[q]\backslash\{\ell\}}e^{\beta\alpha_{s}}\big)}{\big(\sum_{s=1}^{q}e^{\beta\alpha_{s}}\big)^{2}},\quad\forall\ell\in[q],
+\frac{\partial\Phi_{\ell}(\bm{\alpha})}{\partial\alpha_{\ell^{\prime}}}=\frac{-\beta e^{\beta\alpha_{\ell}}e^{\beta\alpha_{\ell^{\prime}}}}{\big(\sum_{s=1}^{q}e^{\beta\alpha_{s}}\big)^{2}},\quad\forall\ell,\ell^{\prime}\in[q]\text{ such that }\ell\neq\ell^{\prime}.
+In particular, with \boldsymbol{\alpha}_{0} as in Definition 14, we have
+\frac{\partial\Phi_{1}(\bm{\alpha}_{0})}{\partial\alpha_{1}}=\frac{\beta(q-1)e^{\beta a}e^{\beta b}}{(e^{\beta a}+(q-1)e^{\beta b})^{2}},
+(65)
+\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{\ell}}=\frac{\beta e^{\beta b}(e^{\beta a}+(q-2)e^{\beta b})}{(e^{\beta a}+(q-1)e^{\beta b})^{2}},\quad\forall\ell\in[q]\backslash\{1\},
+(66)
+\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{\ell^{\prime}}}=\frac{-\beta e^{\beta a}e^{\beta b}}{(e^{\beta a}+(q-1)e^{\beta b})^{2}},\quad\forall\ell,\ell^{\prime}\in[q]\text{ such that }\ell\neq\ell^{\prime}\text{ and }\min\{\ell,\ell^{\prime}\}=1,
+(67)
+\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{\ell^{\prime}}}=\frac{-\beta e^{2\beta b}}{(e^{\beta a}+(q-1)e^{\beta b})^{2}},\quad\forall\ell,\ell^{\prime}\in[q]\text{ such that }\ell\neq\ell^{\prime}\text{ and }\min\{\ell,\ell^{\prime}\}\geq 2.
+(68)
+For any \ell,i,j\in[q] such that i<j, we bound \sum_{\ell=1}^{q}\big|\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{i}}-\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{j}}\big| as follows. If i=1, then j\in[q]\backslash\{1\}, and using (65)–(68), we get
+\displaystyle\sum_{\ell=1}^{q}\bigg|\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{i}}-\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{j}}\bigg|
+\displaystyle=\,
+\displaystyle\bigg|\frac{\partial\Phi_{1}(\bm{\alpha}_{0})}{\partial\alpha_{1}}-\frac{\partial\Phi_{1}(\bm{\alpha}_{0})}{\partial\alpha_{j}}\bigg|+\bigg|\frac{\partial\Phi_{j}(\bm{\alpha}_{0})}{\partial\alpha_{1}}-\frac{\partial\Phi_{j}(\bm{\alpha}_{0})}{\partial\alpha_{j}}\bigg|+\sum_{\ell\in[q]\backslash\{1,j\}}\bigg|\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{1}}-\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{j}}\bigg|
+\displaystyle=\,
+\displaystyle\frac{|\beta(q-1)e^{\beta a}e^{\beta b}+\beta e^{\beta a}e^{\beta b}|+|-\beta e^{\beta a}e^{\beta b}-\beta e^{\beta b}(e^{\beta a}+(q-2)e^{\beta b})|}{(e^{\beta a}+(q-1)e^{\beta b})^{2}}
+\displaystyle+\frac{(q-2)|-\beta e^{\beta a}e^{\beta b}+\beta e^{2\beta b}|}{(e^{\beta a}+(q-1)e^{\beta b})^{2}}
+\displaystyle=\,
+\displaystyle\frac{\beta qe^{\beta a}e^{\beta b}+\beta e^{\beta b}(2e^{\beta a}+(q-2)e^{\beta b})+(q-2)\beta e^{\beta b}(e^{\beta a}-e^{\beta b})}{(e^{\beta a}+(q-1)e^{\beta b})^{2}}=\frac{2\beta qe^{\beta a}e^{\beta b}}{(e^{\beta a}+(q-1)e^{\beta b})^{2}}
+\displaystyle=\,
+\displaystyle\frac{2\beta qab}{(a+(q-1)b)^{2}}=2q\beta ab,
+(69)
+where we use (29) in the last two equalities. Next, if i\geq 2, then i,j\in[q]\backslash\{1\}, and using (66)–(68), we get
+\displaystyle\sum_{\ell=1}^{q}\bigg|\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{i}}-\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{j}}\bigg|=\bigg|\frac{\partial\Phi_{i}(\bm{\alpha}_{0})}{\partial\alpha_{i}}-\frac{\partial\Phi_{i}(\bm{\alpha}_{0})}{\partial\alpha_{j}}\bigg|+\bigg|\frac{\partial\Phi_{j}(\bm{\alpha}_{0})}{\partial\alpha_{i}}-\frac{\partial\Phi_{j}(\bm{\alpha}_{0})}{\partial\alpha_{j}}\bigg|
+\displaystyle=\,
+\displaystyle\frac{2|\beta e^{\beta b}(e^{\beta a}+(q-2)e^{\beta b})+\beta e^{2\beta b}|}{(e^{\beta a}+(q-1)e^{\beta b})^{2}}=\frac{2\beta e^{\beta b}}{e^{\beta a}+(q-1)e^{\beta b}}=\frac{2\beta b}{a+(q-1)b}=2\beta b\leq 2q\beta ab,
+(70)
+where we use (29) in the last two equalities and Lemma 13(a) in the inequality in the second line.
+Below we consider any \bm{\alpha},\bm{\alpha}^{\prime}\in\mathbb{R}^{q} such that \sum_{\ell=1}^{q}\alpha_{\ell}=\sum_{\ell=1}^{q}\alpha_{\ell}^{\prime}. For any \ell\in[q], let
+H_{\ell}(\bm{\alpha},\bm{\alpha}^{\prime}):=\sum_{\ell^{\prime}=1}^{q}(\alpha_{\ell^{\prime}}-\alpha^{\prime}_{\ell^{\prime}})\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{\ell^{\prime}}}.
+(71)
+We bound \sum_{\ell=1}^{q}|H_{\ell}(\bm{\alpha},\bm{\alpha}^{\prime})| as follows. Without loss of generality, we assume that \bm{\alpha}\neq\bm{\alpha}^{\prime}. Let I_{+}:=\{\ell\in[q]:\alpha_{\ell}>\alpha^{\prime}_{\ell}\} and I_{-}:=\{\ell\in[q]:\alpha_{\ell}<\alpha^{\prime}_{\ell}\}. As \sum_{\ell\in I_{+}}(\alpha_{\ell}-\alpha^{\prime}_{\ell})=\sum_{\ell\in I_{-}}(\alpha^{\prime}_{\ell}-\alpha_{\ell}), there exists a finite sequence \{\bm{\alpha}_{j}\}_{j=0}^{J} (where J\in\mathbb{N}^{*}) from \mathbb{R}^{q}, such that \bm{\alpha}_{0}=\bm{\alpha}, \bm{\alpha}_{J}=\bm{\alpha}^{\prime}, and for any j\in[0,J-1]\cap\mathbb{N}, there exists some \ell_{j},\ell_{j}^{\prime}\in[q], such that \ell_{j}\neq\ell_{j}^{\prime}, (\bm{\alpha}_{j})_{\ell_{j}}>(\bm{\alpha}_{j+1})_{\ell_{j}}, (\bm{\alpha}_{j})_{\ell_{j}^{\prime}}<(\bm{\alpha}_{j+1})_{\ell_{j}^{\prime}}, (\bm{\alpha}_{j})_{\ell_{j}}-(\bm{\alpha}_{j+1})_{\ell_{j}}=(\bm{\alpha}_{j+1})_{\ell_{j}^{\prime}}-(\bm{\alpha}_{j})_{\ell_{j}^{\prime}}, and (\bm{\alpha}_{j})_{\ell}=(\bm{\alpha}_{j+1})_{\ell} for any \ell\in[q]\backslash\{\ell_{j},\ell_{j}^{\prime}\}. Moreover, letting s_{j}=(\bm{\alpha}_{j})_{\ell_{j}}-(\bm{\alpha}_{j+1})_{\ell_{j}}, we can select the sequence so that
+\sum_{j=0}^{J-1}s_{j}=\frac{1}{2}\sum_{\ell=1}^{q}|\bm{\alpha}_{\ell}-\bm{\alpha}^{\prime}_{\ell}|.
+(72)
+For any j\in[0,J-1]\cap\mathbb{N}, using (71) we have
+\sum_{\ell=1}^{q}|H_{\ell}(\bm{\alpha}_{j},\bm{\alpha}_{j+1})|=s_{j}\sum_{\ell=1}^{q}\bigg|\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{\ell_{j}}}-\frac{\partial\Phi_{\ell}(\bm{\alpha}_{0})}{\partial\alpha_{\ell_{j}^{\prime}}}\bigg|\leq 2q\beta abs_{j},
+where the last inequality uses (69) and (70). Hence by the above display and (72), we have
+\sum_{\ell=1}^{q}|H_{\ell}(\bm{\alpha},\bm{\alpha}^{\prime})|\leq\sum_{j=0}^{J-1}\sum_{\ell=1}^{q}|H_{\ell}(\bm{\alpha}_{j},\bm{\alpha}_{j+1})|\leq 2q\beta ab\sum_{j=0}^{J-1}s_{j}=q\beta ab\sum_{\ell=1}^{q}|\bm{\alpha}_{\ell}-\bm{\alpha}^{\prime}_{\ell}|.
+We define \phi_{\ell}(\theta) for any \ell\in[q] and \theta\in[0,1] as in (64). For any \ell\in[q],
+\displaystyle\Phi_{\ell}(\bm{\alpha})-\Phi_{\ell}(\bm{\alpha}^{\prime})
+\displaystyle=
+\displaystyle\phi_{\ell}(1)-\phi_{\ell}(0)=\int_{0}^{1}\phi_{\ell}^{\prime}(\theta)d\theta
+\displaystyle=
+\displaystyle\sum_{\ell^{\prime}=1}^{q}(\alpha_{\ell^{\prime}}-\alpha^{\prime}_{\ell^{\prime}})\int_{0}^{1}\frac{\partial\Phi_{\ell}(\theta\bm{\alpha}+(1-\theta)\bm{\alpha}^{\prime})}{\partial\alpha_{\ell^{\prime}}}d\theta.
+By Lemma 13(a), q\beta ab<1. The conclusion of the lemma follows from the above two displays, on using the continuity of \nabla\Phi.
+B.4 Proof of Lemma 17
+Note that \Phi_{1}(\bm{\alpha})-\Phi_{2}(\bm{\alpha})=\frac{e^{\beta\alpha_{1}}-e^{\beta\alpha_{2}}}{\sum_{k=1}^{q}e^{\beta\alpha_{k}}}\geq\frac{e^{\beta\alpha_{1}}-e^{\beta\alpha_{2}}}{e^{\beta\alpha_{1}}+(q-1)e^{\beta\alpha_{2}}}=g(\alpha_{1}-\alpha_{2}), where g is defined as in Lemma 13(b). To complete the proof, note that for any x\geq 0,
+g^{\prime}(x)=\frac{q\beta e^{\beta x}}{(e^{\beta x}+q-1)^{2}}>0,
+hence g^{\prime}(0)=\beta/\penalty q and g is monotone increasing on [0,\infty). Moreover, we have g(0)=0 (see Lemma 13(b)).
+Let \delta=\delta_{\beta,q,\rho}>0 be such that g^{\prime}(x)>\rho\beta/\penalty q for x\in[0,\delta], the existence of which follows from the continuity of g^{\prime}. Then, if \alpha_{1}-\alpha_{2}<\delta, we have
+\displaystyle g(\alpha_{1}-\alpha_{2})=g(\alpha_{1}-\alpha_{2})-g(0)\geq\rho\beta q^{-1}(\alpha_{1}-\alpha_{2}).
+On the other hand, if \alpha_{1}-\alpha_{2}\geq\delta, then
+\displaystyle g(\alpha_{1}-\alpha_{2})\geq g(\delta)=:\kappa_{\rho},
+where \kappa_{\rho} depends only on q,\beta,\rho. The conclusion of the lemma follows by combining the above two displays.
+Appendix C Specialized Auxiliary Gaussian algorithm for q=2
+C.1 Standard Auxiliary Gaussian algorithm
+Setting \mathbf{W}:=\mathbf{Z}_{1}-\mathbf{Z}_{2} and using (5), under \mathbb{P} we have
+\displaystyle(\mathbf{W}|\mathbf{X}=\mathbf{x})\sim N(\mathbf{y}_{1}-\mathbf{y}_{2},2B^{-1}).
+(73)
+Also, using (6), we have
+\displaystyle\mathbb{P}(X_{i}=1|\mathbf{Z}=\mathbf{z})=
+\displaystyle\frac{\exp\Big(\sum_{j=1}^{n}B_{ij}z_{1j}\Big)}{\exp\Big(\sum_{j=1}^{n}B_{ij}z_{1j}\Big)+\exp\Big(\sum_{j=1}^{n}B_{ij}z_{2j}\Big)}
+\displaystyle=
+\displaystyle\frac{\exp\Big(\frac{1}{2}\sum_{j=1}^{n}B_{ij}w_{j}\Big)}{\exp\Big(\frac{1}{2}\sum_{j=1}^{n}B_{ij}w_{j}\Big)+\exp\Big(-\frac{1}{2}\sum_{j=1}^{n}B_{ij}w_{j}\Big)},
+(74)
+where w_{j}=z_{1j}-z_{2j}. A similar calculation gives
+\displaystyle\mathbb{P}(X_{i}=2|\mathbf{Z}=\mathbf{z})=\frac{\exp\Big(-\frac{1}{2}\sum_{j=1}^{n}B_{ij}w_{j}\Big)}{\exp\Big(\frac{1}{2}\sum_{j=1}^{n}B_{ij}w_{j}\Big)+\exp\Big(-\frac{1}{2}\sum_{j=1}^{n}B_{ij}w_{j}\Big)}.
+Thus, instead of using the 2n dimensional Gaussian {\mathbf{Z}}, one can use the n dimensional Gaussian W, and iterate between (73) and (74), This is the same exact algorithm, but we work with a lower dimensional representation of the auxiliary variable, which helps in faster computations. We note that this is the exact same algorithm as (Martens and Sutskever, 2010) in the Ising case.
+C.2 Low rank Auxiliary Gaussian algorithm
+Setting \mathbf{W}:=\mathbf{Z}_{1}-\mathbf{Z}_{2} as before, using (13) under \mathbb{Q} we have
+\displaystyle(\mathbf{W}_{j}|\mathbf{X}=\mathbf{x})\sim N(\mathbf{p}_{j}^{\prime}(\mathbf{y}_{1}-\mathbf{y}_{2}),2/\mu_{j}),
+(75)
+with (W_{1},\ldots,W_{k}) mutually independent.
+Also, using (14), we have
+\displaystyle\mathbb{Q}(X_{i}=1|\mathbf{Z}=\mathbf{z})=
+\displaystyle\frac{\exp\Big(\sum_{j=1}^{k}\mu_{j}z_{1j}p_{ji}\Big)}{\exp\Big(\sum_{j=1}^{k}\mu_{j}z_{1j}p_{ji}\Big)+\exp\Big(\sum_{j=1}^{k}\mu_{j}z_{2j}p_{ji}\Big)}
+\displaystyle=
+\displaystyle\frac{\exp\Big(\frac{1}{2}\sum_{j=1}^{k}\mu_{j}w_{j}p_{ji}\Big)}{\exp\Big(\frac{1}{2}\sum_{j=1}^{k}\mu_{j}w_{j}p_{ji}\Big)+\exp\Big(-\frac{1}{2}\sum_{j=1}^{k}\mu_{j}w_{j}p_{ji}\Big)},
+(76)
+where w_{j}=z_{1j}-z_{2j}. A similar calculation gives
+\displaystyle\mathbb{Q}(X_{i}=2|\mathbf{Z}=\mathbf{z})=\frac{\exp\Big(-\frac{1}{2}\sum_{j=1}^{k}\mu_{j}w_{j}p_{ji}\Big)}{\exp\Big(\frac{1}{2}\sum_{j=1}^{k}\mu_{j}w_{j}p_{ji}\Big)+\exp\Big(-\frac{1}{2}\sum_{j=1}^{k}\mu_{j}w_{j}p_{ji}\Big)}.
+Thus, instead of using the 2k dimensional Gaussian {\mathbf{Z}}, one can use the k dimensional Gaussian W, and iterate between (75) and (76).
+References
+Atchadé et al. (2011)
+Y. F. Atchadé, G. O. Roberts, and J. S. Rosenthal
+Towards optimal scaling of Metropolis-coupled Markov chain Monte Carlo.
+Statistics and Computing 21 (4), pp. 555–568.
+External Links: Document
+Cited by: §4.3.2.
+Basak and Mukherjee (2017)
+A. Basak and S. Mukherjee
+Universality of the mean-field for the Potts model.
+Probability Theory and Related Fields 168, pp. 557 – 600.
+Cited by: §4.3.2.
+Benaych-Georges et al. (2020)
+F. Benaych-Georges, C. Bordenave, and A. Knowles
+Spectral radii of sparse random matrices.
+In Annales de l’Institut Henri Poincaré (B) Probabilités et Statistiques,
+Vol. 56, pp. 2141–2161.
+Cited by: item (c).
+Betancourt (2018)
+M. Betancourt
+A conceptual introduction to Hamiltonian Monte Carlo.
+arXiv:1701.02434v1.
+Cited by: §2.5.
+Blanca et al. (2021)
+A. Blanca, P. Caputo, D. Parisi, A. Sinclair, and E. Vigoda
+Entropy decay in the Swendsen–Wang dynamics on \mathbb{Z}^{d}.
+In Proceedings of the 53rd Annual ACM SIGACT Symposium on Theory of Computing,
+pp. 1551–1564.
+Cited by: §1.
+Bollobás et al. (1996)
+B. Bollobás, G. Grimmett, and S. Janson
+The random-cluster model on the complete graph.
+Probability Theory and Related Fields 104, pp. 283 – 317.
+Cited by: §4.2.2.
+Buerkner et al. (2020)
+P. C. Buerkner, J. Gabry, M. Kay, and A. Vehtari
+Posterior: tools for working with posterior distributions.
+External Links: Link
+Cited by: §4.1.
+Carpenter et al. (2017)
+B. Carpenter, A. Gelman, M. Hoffman, D. Lee, B. Goodrich, M. Betancourt, M. A. Brubaker, J. Guo, P. Li, and A. Riddel
+Stan: A probabilistic programming language.
+Journal of Statistical Software 76, pp. 1–32.
+External Links: Document
+Cited by: footnote 1.
+Chen et al. (2020)
+Y. Chen, R. Dwivedi, M. J. Wainwright, and B. Yu
+Fast mixing of Metropolized Hamiltonian Monte Carlo: Benefits of multi-step gradients.
+Journal of Machine Learning Research 21 (92), pp. 1–72.
+Cited by: §3.
+Coja-Oghlan et al. (2023)
+A. Coja-Oghlan, A. Galanis, L. A. Goldberg, J. B. Ravelomanana, D. Štefankovič, and E. Vigoda
+Metastability of the Potts ferromagnet on random regular graphs.
+Communications in Mathematical Physics 401 (1), pp. 185–225.
+Cited by: Remark 10.
+Cook et al. (2018)
+N. Cook, L. Goldstein, and T. Johnson
+SIZE biased couplings and the spectral gap for random regular graphs.
+The Annals of Probability 46 (1), pp. 72–125.
+Cited by: item (b).
+Costeniuc et al. (2005)
+M. Costeniuc, R. S. Ellis, and H. Touchette
+Complete analysis of phase transitions and ensemble equivalence for the Curie–Weiss–Potts model.
+Journal of Mathematical Physics 46 (6).
+Cited by: Remark 10.
+Cuff et al. (2012)
+P. Cuff, J. Ding, O. Louidor, E. Lubetzky, Y. Peres, and A. Sly
+Glauber dynamics for the mean-field Potts model.
+Journal of Statistical Physics 149, pp. 432 – 477.
+Cited by: §1,
+§4.2.2,
+Remark 10.
+Dembo (2021)
+A. Dembo
+Probability Theory: STAT310/MATH230 April 15, 2021.
+Cited by: §6.3.
+Diaconis (2009)
+P. Diaconis
+The Markov chain Monte Carlo revolution.
+Bulletin of the American Mathematical Society 46 (2), pp. 179–205.
+Cited by: §3.
+Dwivedi et al. (2019)
+R. Dwivedi, Y. Chen, M. J. Wainwright, and B. Yu
+Log-concave sampling: Metropolis-Hastings algorithms are fast.
+Journal of Machine Learning Research 20 (183), pp. 1–42.
+Cited by: §3.
+Faulkner and Livingstone (2024)
+M. F. Faulkner and S. Livingstone
+Sampling algorithms in statistical physics: a guide for statistics and machine learning.
+Statistical Science 39 (1), pp. 137–164.
+External Links: Document
+Cited by: §1.
+Galanis et al. (2016)
+A. Galanis, D. Stefankovic, E. Vigoda, and L. Yang
+Ferromagnetic Potts model: Refined# BIS-hardness and related results.
+SIAM Journal on Computing 45 (6), pp. 2004–2065.
+Cited by: Remark 10.
+Galanis et al. (2019)
+A. Galanis, D. Štefankovič, and E. Vigoda
+Swendsen-Wang algorithm on the mean-field Potts model.
+Random Structures & Algorithms 54 (1), pp. 82–147.
+Cited by: §1,
+§7,
+Remark 10.
+Gelman and Shirley (2011)
+A. Gelman and K. Shirley
+Inference from simulations and monitoring convergence.
+In Handbook of Markov Chain Monte Carlo,
+Cited by: §4.1.
+Gelman and Rubin (1992)
+A. Gelman and D. B. Rubin
+Inference from iterative simulation using multiple sequences (with discussion).
+Statistical Science 7, pp. 457–511.
+Cited by: item (i).
+Geyer (1991)
+C. J. Geyer
+Markov Chain Monte Carlo Maximum Likelihood.
+In Computing Science and Statistics: Proceedings of the 23rd Symposium on the Interface,  M. Keramidas (Ed.),
+Interface Foundation of North America, pp. 156–163.
+Cited by: §4.3.2.
+Gheissari et al. (2018)
+R. Gheissari, E. Lubetzky, and Y. Peres
+Exponentially slow mixing in the mean-field Swendsen-Wang dynamics.
+In Proceedings of the Twenty-Ninth Annual ACM-SIAM Symposium on Discrete Algorithms,
+pp. 1981–1988.
+Cited by: §1.
+Gordon (1941)
+R. D. Gordon
+Values of Mills’ ratio of area to bounding ordinate and of the normal probability integral for large values of the argument.
+Ann. Math. Statistics 12, pp. 364–366.
+External Links: ISSN 0003-4851,
+Document,
+Link,
+MathReview (Z. W. Birnbaum)
+Cited by: §6.3.
+Grathwohl et al. (2021)
+W. Grathwohl, K. Swersky, M. Hashemi, D. Duvenaud, and C. J. Maddision
+Oops I took a gradient: scalable sampling for discrete distributions.
+Proceedings of the 2021 International Conference on Machine Learning.
+Cited by: §1,
+§2.5,
+§4.
+Häggström (1996)
+O. Häggström
+The random-cluster model on a homogeneous tree.
+Probability Theory and Related Fields 104, pp. 231–253.
+Cited by: Remark 10.
+Hoffman and Gelman (2014)
+M. D. Hoffman and A. Gelman
+The No-U-Turn Sampler: adaptively setting path lengths in Hamiltonian Monte Carlo.
+Journal of Machine Learning Research 15, pp. 1593–1623.
+Cited by: §2.5.
+Hubbard (1959)
+J. Hubbard
+Calculation of partition functions.
+Physical Review Letters 3, pp. 77 – 78.
+Cited by: §1.
+Hukushima et al. (1998)
+K. Hukushima, H. Takajama, and H. Yoshina
+Exchange Monte Carlo dynamics in the SK model.
+Journal of the Physical Society of Japan 67, pp. 12 –15.
+Cited by: §4.3.2,
+§4.3.2.
+Ising (1925)
+E. Ising
+Beitrag zur Theorie des Ferromagnetismus.
+Zeitschrift für Physik 31.
+Cited by: §1.
+Katzgraber et al. (2001)
+H. G. Katzgraber, M. Palassini, and A. P. Young
+Monte Carlo simulations of spin glasses at low temperatures.
+Physical Review B 63.
+Cited by: §4.3.2.
+Kone and Kofke (2005)
+A. Kone and D. A. Kofke
+Selection of temperature intervals for parallel‐tempering simulations.
+The Journal of Chemical Physics 122 (20), pp. 206101.
+Cited by: §4.3.2.
+Landau and Binder (2009)
+D. Landau and K. Binder
+A guide to Monte Carlo simulations in statistical physics.
+Cambridge University Press.
+Cited by: §1.
+Levin et al. (2010)
+D. A. Levin, M. J. Luczak, and Y. Peres
+Glauber dynamics for the mean-field Ising model: cut-off, critical power law, and metastability.
+Probability Theory and Related Fields 146, pp. 223–265.
+Cited by: §1.
+Levin and Peres (2017)
+D. A. Levin and Y. Peres
+Markov chains and mixing times.
+American Mathematical Society, Providence, RI.
+Note: Second edition of [ MR2466937],
+With contributions by Elizabeth L. Wilmer,
+With a chapter on “Coupling from the past” by James G. Propp
+and David B. Wilson
+External Links: ISBN 978-1-4704-2962-1,
+Document,
+Link,
+MathReview Entry
+Cited by: §3,
+§3,
+§5.1,
+§5.1,
+§5.1,
+§5.2,
+§6.4.
+Lipowski (2022)
+A. Lipowski
+Ising model: recent developments and exotic applications.
+Entropy 24, pp. 1834.
+Cited by: §1.
+Long et al. (2014)
+Y. Long, A. Nachmias, W. Ning, and Y. Peres
+A power law of order 1/\penalty 4 for critical mean field Swendsen-Wang dynamics.
+Vol. 232,  American Mathematical Society.
+Cited by: §1.
+MacKay (2003)
+D. J.C. MacKay
+Information theory, inference, and learning algorithms.
+Cambridge University Press.
+Cited by: §1.
+Martens and Sutskever (2010)
+J. Martens and I. Sutskever
+Parallelizable sampling of Markov random fields.
+Proceedings of the 13^{\text{th}} International Conference on Artificial Intelligence and Statistics 9.
+Cited by: §C.1,
+§1,
+§2.1,
+Table 1,
+§7,
+Remark 1,
+Remark 7.
+Monroe (2002)
+J. L. Monroe
+Critical temperature estimates for higher-spin Ising and Potts models.
+Physical Review 66.
+Cited by: §4.2.1.
+Mukherjee et al. (2018)
+R. Mukherjee, S. Mukherjee, and M. Yuan
+Global testing against sparse alternatives under Ising models.
+Annals of Statistics 46.
+External Links: Document
+Cited by: §2.4.
+Mukherjee and Xu (2023)
+S. Mukherjee and Y. Xu
+Statistics of the two star ERGM.
+Bernoulli 29 (1), pp. 24–51.
+External Links: ISSN 1350-7265,1573-9759,
+Document,
+Link,
+MathReview (Nikolai Volodin)
+Cited by: §2.4.
+Neal (2011)
+R. M. Neal
+MCMC using Hamiltonian dynamics.
+In Handbook of Markov Chain Monte Carlo,
+Cited by: §2.5.
+Neal (1993)
+R. M. Neal
+Probabilistic inference using Markov chain Monte Carlo methods.
+Technical Report CRG-TR-93-1.
+Cited by: §1,
+§3.
+Pakman and Paninski (2013)
+A. Pakman and L. Paninski
+Auxiliary-variable exact Hamiltonian Monte Carlo samplers for binary distributions.
+Advances in Neural Information Processing Systems 26.
+Cited by: §1.
+Potts (1952)
+R. B. Potts
+Some generalized order-disorder transformations.
+Mathematical Proceedings 48, pp. 106 – 109.
+External Links: Document
+Cited by: §1.
+Roberts and Rosenthal (2004)
+G. O. Roberts and J. S. Rosenthal
+General state space Markov chains and MCMC algorithms.
+Probability Surveys 1, pp. 20 – 71.
+Cited by: item (ii).
+Robnik et al. (2023)
+J. Robnik, B. G. De Luca, E. Silverstein, and U. Seljak
+Microcanonical Hamiltonian Monte Carlo.
+Journal of Machine Learning Research 24, pp. 14696–14729.
+Cited by: §1.
+Sinclair (1993)
+A. Sinclair
+Markov chains and rapid mixing.
+Algorithms for random generation and counting: a Markov chain approach, pp. 42–62.
+Cited by: §3.
+Stratonovich (1957)
+R. L. Stratonovich
+On a method of calculating quantum distribution functions.
+Soviet Physics Doklady 2, pp. 416.
+Cited by: §1.
+Swendsen and Wang (1986)
+R. Swendsen and J. Wang
+Replica Monte Carlo simulation of spin-glasses.
+Physical Review Letters 57.
+Cited by: §4.3.2.
+Syed et al. (2022)
+S. Syed, A. Bouchard‐Côté, G. Deligiannidis, and A. Doucet
+Non‐reversible parallel tempering: a scalable highly parallel mcmc scheme.
+Journal of the Royal Statistical Society Series B 84 (2), pp. 321–350.
+Cited by: §4.3.2.
+Tikhomirov and Youssef (2019)
+K. Tikhomirov and P. Youssef
+THE spectral gap of dense random regular graphs.
+The Annals of Probability 47 (1), pp. 362–419.
+Cited by: item (b).
+Vehtari et al. (2020)
+A. Vehtari, A. Gelman, D. Simpson, B. Carpenter, and P. Bürkner
+Rank-normalization, folding, and localization: an improved \hat{R} for assessing convergence of MCMC.
+Bayesian Analysis.
+External Links: Document
+Cited by: item (i),
+item (ii).
+Vershynin (2018)
+R. Vershynin
+High-dimensional probability: An introduction with applications in data science.
+Vol. 47,  Cambridge university press.
+Cited by: item (d),
+item (d),
+3rd item.
+Wolff (1989)
+U. Wolff
+Collective Monte Carlo updating for spin systems.
+Physical Review Letters 62.
+External Links: Document
+Cited by: §4.
+Yucesoy (2013)
+B. Yucesoy
+Replica exchange Monte Carlo simulations of the Ising spin glass: static and dynamic properties.
+Vol. 832,  Open Access Dissertation.
+External Links: Document
+Cited by: §4.3.2.
+Zhang et al. (2012)
+Y. Zhang, C. Sutton, A. Storkey, and Z. Ghahramani
+Continuous relaxations for discrete Hamiltonian Monte Carlo.
+Advances in Neural Information Processing Systems 25.
+Cited by: §1,
+§2.1,
+§2.5,
+§7.
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+methods listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+We gratefully acknowledge support from
+our major funders,
+member institutions, ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
