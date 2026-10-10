@@ -1,5 +1,12 @@
 # OpenAI mathematics research
 
+**Latest BFSS review:** [I162](frontier/reviews/i162-fixed-sector-bfss-focused-astra.md)
+finds a factor-four error in S155's exact fermion coefficient. The original
+claim fails; the leading Weyl asymptotic survives the
+[explicit separate correction](frontier/iterations/i162-bfss-normalization-parent-correction.md).
+Parent sealed evidence replay passes. I163 reviews the corrected theorem's
+contribution. **8 accepted, 2 remaining.**
+
 **2026-10-10 provider recovery:** I158 and I160 stopped at the Codex usage
 limit. Fresh Factory/Astra reviews [I161 and I162](frontier/iterations/i161-i162-factory-astra-resume.md)
 now cover R154's contribution and S155's focused correctness, respectively.
