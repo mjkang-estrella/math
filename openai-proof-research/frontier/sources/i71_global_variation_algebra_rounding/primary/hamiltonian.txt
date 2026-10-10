@@ -1,0 +1,2546 @@
+                                           Rounding Almost Commuting Hamiltonians
+                                           Islam Faisal1 , Anand Natarajan2 , and Alexander Poremba1
+
+                                           1
+                                               Boston University, Boston, MA, USA
+                                           2
+                                               Massachusetts Institute of Technology, Cambridge, MA, USA
+
+
+
+                                                        Commuting Hamiltonians lie at the boundary between classical constraint
+                                                    satisfaction and quantum many-body physics, exhibiting rich quantum struc-
+
+
+
+
+arXiv:2605.26096v3 [quant-ph] 6 Oct 2026
+                                                    ture while remaining more tractable than general noncommuting models. In
+                                                    contrast, physical Hamiltonians are rarely exactly commuting, which motivates
+                                                    the study of almost commuting Hamiltonians. Despite their relevance, the im-
+                                                    plications of approximate commutation are only poorly understood.
+                                                        In this work, we show how to efficiently approximate any almost commut-
+                                                    ing 2-local qubit Hamiltonian by a commuting one: we give a new locality-
+                                                    preserving algorithmic rounding technique that maps any 2-local Hamiltonian
+                                                    H = m    i=1 hi with ∥[hi , hj ]∥ ≤ ε to a nearby Hamiltonian Ĥ whose terms
+                                                           P
+
+                                                    pair-wise commute, and which is within overall distance ∥H − Ĥ∥ = O(m ε1/3 ).
+                                                        As a consequence, we show that δ-approximations to the ground energy for
+                                                    ε-almost commuting 2-local qubit Hamiltonians lie in NP when δ ≫ mε1/3 , ex-
+                                                    tending the classical containment well beyond the commuting setting. Finally,
+                                                    we present two applications of our rounding framework: Gibbs sampling and
+                                                    fast Hamiltonian simulation for almost commuting systems.
+
+
+
+                                           1 Introduction
+                                           Commuting local Hamiltonians have been studied [BV04, AE11, Sch11, AKV18, IJ23,
+                                           BH25] across condensed matter physics, quantum information theory, and computational
+                                           complexity. From the perspective of constraint satisfaction, commuting local Hamiltoni-
+                                           ans sit at a boundary between classical and quantum problems. When all local terms
+                                           commute, the ground-state problem reduces to the simultaneous satisfaction of a fam-
+                                           ily of local constraints [BV04], analogous to a classical constraint satisfaction problem
+                                           (CSP). Indeed, many commuting Hamiltonians admit ground states that can be described
+                                           efficiently in classical terms, such as product states, stabilizer states, or tensor network
+                                           states of bounded bond dimension [GHLS15]. The computational complexity of commut-
+                                           ing Hamiltonians is thus significantly more tractable than that of general noncommuting
+                                           models, with many cases lying in the classical complexity class NP [BV04, IJ23, BH25]. In
+                                           condensed matter physics, commuting Hamiltonians serve as exactly solvable models that
+                                           capture the essential structure of entire phases of matter. Prominent examples include
+                                           stabilizer Hamiltonians for quantum error-correcting codes (e.g., the toric code [Kit03]),
+                                           Islam Faisal: islam@bu.edu
+                                           Anand Natarajan: anandn@mit.edu, partially supported by NSF CAREER Award 2339948.
+                                           Alexander Poremba: poremba@bu.edu
+
+
+
+
+                                                                                                1
+commuting-projector models for topological order [LW05], and fracton models with con-
+strained dynamics [VHF16]. Formally, the k-local commuting Hamiltonian problem con-
+sists of Hamiltonians of the form
+                        m
+                                     such that
+                        X
+                   H=         hi                       [hi , hj ] = 0,       ∀i, j = 1, . . . , m   (1)
+                        i=1
+
+where all of the terms pair-wise commute1 and each term is of unit norm ∥hi ∥ ≤ 1 act-
+ing on at most k qubits. Commuting Hamiltonians retain intrinsically quantum features
+that sharply distinguish them from classical CSPs: although all of the Hamiltonian terms
+     i=1 can be simultaneously diagonalized, the common eigenbasis may not be a prod-
+{hi }m
+uct basis, and the ground states may exhibit long-range entanglement and topological
+order, such as the toric code [Kit03]. From a complexity-theoretic perspective, this places
+commuting Hamiltonians in an intermediate regime between classical satisfiability and
+fully quantum local Hamiltonians, providing a test ground for difficult problems such as
+the quantum PCP conjecture [AE11, Has13], the NLTS conjecture [ABN23], Gibbs state
+preparation [KB16] and fast thermalization [CB23].
+
+Almost commuting Hamiltonians. Despite their utility, commuting Hamiltonians
+represent a highly nongeneric limit. Physical systems are rarely exactly commuting, and
+even infinitesimal noncommuting perturbations can produce dramatic qualitative changes.
+This motivates the study of almost commuting Hamiltonians, in which local terms fail
+to commute but only do so weakly; for example, when the Hamiltonian terms pair-wise
+"ε-almost commute" in the sense that
+
+                                   ∥[hi , hj ]∥ ≤ ε,          ∀i, j = 1, . . . , m.                 (2)
+
+This class of Hamiltonians captures a much richer range of physical phenomena, including
+entanglement generation, slow dynamics, and emergent conservation laws [Sac11, MRS24].
+A simple and illustrative example is the transverse-field Ising model in the weak-field
+regime, described by the 2-local qubit Hamiltonian
+                                                X                    X
+                                       H=−              Zi Zj − h         Xi ,                      (3)
+                                                ⟨i,j⟩                 i
+
+with h ≪ 1. At h = 0, the Hamiltonian consists of exactly commuting terms and re-
+duces to a classical Ising model with product-state ground states. Turning on a weak
+transverse field introduces local noncommuting terms whose pairwise commutator norms
+∥[Zi Zj , hXk ]∥ scale with h for i = k or j = k, resulting in an almost commuting Hamilto-
+nian. Generally speaking, even mild noncommutativity can cause the underlying physics
+to change qualitatively: the ground state becomes entangled, quantum fluctuations lift
+degeneracies, and the system supports nontrivial correlations which are absent in the com-
+muting case [MRS24]. This illustrates how almost commuting Hamiltonians interpolate
+between classical constraint satisfaction and genuinely quantum many-body behavior.
+    The weak transverse-field Ising model might suggest that any almost commuting Hamil-
+tonian can always be identified as a simple perturbation of an underlying commuting model.
+However, this intuition can be misleading in general. While the perturbation theory [Kat66]
+perspective is useful in identifying approximately commuting structure in very special or
+integrable models, this relies on strong assumptions—such as a known commuting parent
+
+  1
+      The commutator of two operators A and B is defined as [A, B] = AB − BA.
+
+
+                                                          2
+Hamiltonian or small, easily identifiable model parameters—which may not be present in
+generic local Hamiltonians.
+    From a computational standpoint, almost commuting Hamiltonians occupy a com-
+pelling intermediate regime. At first sight, they appear no longer classically reducible;
+and yet they are far from fully quantum Hamiltonians. Understanding whether their
+ground states and low-energy properties retain some of the tractability of commuting
+models—or instead exhibit the full hardness of general quantum constraint satisfaction
+problems—remains an intriguing open question.
+
+Making almost commuting matrices commute. A naive idea for handling almost
+commuting systems, in general, is to simply discard Hamiltonian terms until the remainder
+commute; for example, one could consider the anti-commutation graph whose vertices
+correspond to Hamiltonian terms and whose edges connect pairs that fail to commute,
+and then try to find a maximum independent set (or some efficient approximation) [BH92].
+The resulting Hamiltonian, obtained by retaining only the corresponding subset of terms, is
+exactly commuting by construction. However, this approach does not exploit the magnitude
+of the noncommutativity: its error is determined solely by how many terms are removed.
+In the worst case, even when all ε-almost commute for a small ε > 0, the procedure
+may discard a constant fraction of the terms, leading to a vacuous approximation error
+that scales with m (the number of Hamiltonian terms) with no improvement as ε →
+0. In contrast, a meaningful rounding procedure for almost commuting Hamiltonians
+should be ε-sensitive, with an error that decreases as the commutators become smaller.
+This suggests that an ε-sensitive rounding procedure must do more than just pruning a
+noncommuting interaction graph: it must exploit the algebraic structure of the Hamiltonian
+terms themselves.
+    A more sophisticated angle of attack for dealing with a set of almost commuting ma-
+trices is to explicitly find nearby commuting matrices; for example, starting with a pair
+                            A, B ∈ Cd×d     with    ∥[A, B]∥ ≤ ε                         (4)
+one might try to "round" to Â, B̂ such that [Â, B̂] = 0 with ∥Â − A∥ ≤ δ(ε) and
+∥B̂ − B∥ ≤ δ(ε), for some δ(ε) such that δ(ε) → 0 as ε → 0. The mathematical problem of
+rounding almost commuting matrices has a long and subtle history. For pairs of Hermitian
+matrices, Lin’s theorem [Lin97] guarantees that rounding is indeed possible, and quantita-
+tive bounds on δ(ε) were later given by Hastings [Has09, Her22]. Surprisingly, the same is
+not possible for triplets of Hermitian matrices, as shown by Davidson [Dav85] and also by
+Hastings and Loring [HL10] who gave further topological obstructions towards rounding
+in terms of the Bott index. These results suggest that large collections of almost com-
+muting Hermitian matrices can, in general, not be rounded to nearby commuting matrices
+unless further structure is enforced, hindering a direct application to almost commuting
+Hamiltonians. Nevertheless, many physically relevant non-commuting local Hamiltonians
+are semi-classical, and may very well be close to a commuting Hamiltonian, as the weak
+transverse-field Ising model in Equation (3) suggests. This raises the question:
+  Is it possible to round generic almost commuting Hamiltonians to nearby commuting
+                                      Hamiltonians?
+    Progress on this question could shed new light on the extent to which weak noncommu-
+tativity is essential for the observed physics, versus merely a perturbation of an underlying
+commuting structure. Moreover, from a complexity perspective, it would allow us to better
+understand the boundary between classical satisfiability and inherently quantum optimiza-
+tion problems.
+
+                                             3
+1.1 Our contributions
+In this work, we overcome many prior limitations on rounding approximately commuting
+Hermitian matrices which have so far hindered applications to many-body Hamiltonians.
+We develop the first locality-preserving algorithmic rounding technique that allows one to
+simultaneously round large collections of almost commuting Hermitian matrices—avoiding
+the regimes where general no-go results apply—by exploiting the special structure of phys-
+ical many-body Hamiltonians:
+       • (Locality:) Interactions in physical many-body Hamiltonians tend to be local in the
+         sense that they involve a constant number of particles at a time; consequently, each
+         term in the Hamiltonian is actually a highly non-generic Hermitian operator: it
+         only acts non-trivially on a few sub-systems at a time and is equal to the identity
+         everywhere else.
+       • (Dimensionality:) Many-body Hamiltonians tend to involve particles whose Hilbert
+         space carries a fixed local dimension. In the case of two-level qubit systems (or "spin
+         systems"), such constrained dimensionality can give rise to very useful properties,
+         such as the fact that commutation between Hermitian single-qubit operators becomes
+         transitive: if A, B commute and B, C commute, then A and C must also commute,
+         provided that B is not a multiple of the identity.2 In higher dimensions, this property
+         can fail due to degenerate eigenspaces.3
+   Our rounding technique exploits these physical constraints, and allows us to efficiently
+approximate any almost commuting 2-local Hamiltonian by a nearby commuting one, while
+preserving locality. This is captured by our main result, which we informally state below.
+Informal Theorem 1.1 (Formally, Theorem 5.1). Let H =                i=1 hi be an ε-almost
+                                                                     m         P
+
+commuting 2-local Hamiltonian on n qubits. Then, there exists a deterministic classical
+algorithm that, given as input a description of H and the bound ε, runs in linear time
+and outputs a nearby commuting 2-local Hamiltonian Ĥ = m    i=1 ĥi such that ∥hi − ĥi ∥ ≤
+                                                           P
+
+O(ε ), for all i ∈ [m], and which is within overall distance ∥Ĥ − H∥ ≤ O(m ε1/3 ).
+    1/3
+
+    To the best of our knowledge, this yields the first algorithmic rounding technique for
+almost commuting 2-local qubit Hamiltonians which produces an explicit, quantitative
+error bound that vanishes as ε → 0, unlike naive methods that fail to take the magnitude
+of the noncommutativity into account 4 . As a direct consequence of our rounding result,
+we show the following:
+Informal Theorem 1.2 (Formally, Corollary 6.2). The ε-almost commuting 2-local qubit
+Hamiltonian problem with m terms and energy promise gap5 δ is contained in NP when
+δ ≫ mε1/3 .
+   This extends the classical NP containment result of Bravyi and Vyalyi [BV04] well
+beyond the commuting setting. In addition, the above theorem also implies a new no-
+go result in the context of quantum PCPs [AE11, Has13] akin to [Ara11]. Specifically,
+   2
+       We prove this statement in Lemma 3.5.
+   3
+    For example, suppose that the matrices A and C act differently inside the same degenerate subspace
+of the matrix B. Then, both matrices can commute with B but they need not commute with each other.
+   4
+       For a detailed comparison with the non-constructive rounding in [Ara11], see Section 1.3.
+   5
+    Here we mean the difference in energy thresholds for the YES and NO cases of the local Hamiltonian
+problem. Note that in the formal statement of Corollary 6.2 we use the relative promise gap γ, which is
+equal to the energy promise gap divided by m.
+
+
+                                                      4
+                    ∥[hi , hj ]∥ ≤ ε                                   [ĥi , ĥj ] = 0
+
+
+
+                                                Rounding
+
+                   hi                                                 ĥi
+
+                                       hj                                                 ĥj
+
+
+          Almost commuting Hamiltonian                        Nearby commuting Hamiltonian
+
+Figure 1: Illustration
+                    Pmof our locality-preserving rounding transformation. Left: an almost commuting
+                                                                                          Pm
+Hamiltonian H = i=1 hi on a 2D lattice. Right: a nearby commuting Hamiltonian Ĥ = i=1 ĥi of
+exactly the same locality. We remark that our rounding map does not require geometric locality.
+
+
+it suggests that any qPCP-hard family of 2-local qubit Hamiltonians must exhibit some
+moderate amount of noncommutativity: assuming NP ̸= QMA, any family of 2-local qubit
+Hamiltonians for which the γ-LH problem is QMA-hard for constant γ must allow for
+pairwise commutator norms of Ω(1).
+    More broadly, this places almost commuting Hamiltonians in an intermediate regime
+between classical constraint satisfaction and fully quantum optimization. It shows that,
+at least for 2-local qubit systems, genuine QMA-hardness requires a significant departure
+from the structure of commuting models, thereby linking a complexity-theoretic transition
+to a quantitative, operator-algebraic measure of noncommutativity.
+    Finally, in section A, we give a simple example Hamiltonian consisting of 2 terms that
+shows that a rounding error of Ω(ε1/2 ) is necessary. We discuss the prospects for making
+our bounds tight below in section 1.5.
+
+1.2 Applications
+As an application of our rounding technique for almost commuting quantum many-body
+systems, we present two algorithmic applications; the first one in the context of quantum
+Gibbs sampling and the second in the context of Hamiltonian simulation.
+
+Quantum Gibbs sampling. The Gibbs ensemble connects microscopic descriptions of
+physical systems with their macroscopic thermodynamic behavior, allowing one to compute
+quantities such as free energies, effective partition functions, and equilibrium expectation
+values [PB11, Cha87, Cal85, LL80, Sac11, AS10, Mer65, Tuc10, LB14]. Given a local
+Hamiltonian H and an inverse temperature β > 0, the Gibbs state is given by
+                                                         e−βH
+                                            ρβ (H) =              .                             (5)
+                                                       Tr [e−βH ]
+A recent line of work [TOV+ 11, CKF23, CKG23, BCL24, RW24] has proposed quantum
+algorithms for preparing such thermal states. Although these methods can offer theoreti-
+cal speedups [BCL24, RW24], their performance typically hinges on either mixing-related
+characteristics or temperature-dependent quantities that are challenging to estimate or
+control in realistic settings.
+    A prominent category of Gibbs sampling tasks—one which typically admits polynomial-
+time algorithms with provable guarantees [HJ25, SLS+ 25]—is the commuting case, where
+
+                                                       5
+H is a commuting Hamiltonian. By leveraging the Structure Lemma [BV04], recent
+work [HJ25] showed that Gibbs sampling for large classes of commuting Hamiltonians
+even reduces to Gibbs sampling for certain classical Hamiltonians; these in turn can admit
+powerful classical methods such as Swendsen-Wang dynamics [SW87, FGW22]. While the
+commuting case has been widely studied, only little is known about the non-commuting
+case, let alone the almost commuting case.6 Currently, all existing quantum Gibbs sam-
+pling methods fail to take such almost commuting structure into account; in particular,
+the techniques for the commuting case are known to break down in the presence of (even
+mild) non-commuting interactions. This raises the question: is it possible to extend quan-
+tum Gibbs sampling techniques for commuting Hamiltonians towards almost-commuting
+Hamiltonians?
+    In Section 6.2, we give an affirmative answer to this question: we use our rounding
+technique to reduce Gibbs sampling for certain almost commuting 2-local Hamiltonians to
+Gibbs sampling for a nearby commuting Hamiltonian, thereby allowing one to once again
+make use of the full toolbox for the commuting case [HJ25, SLS+ 25]. Moreover, we show
+that a standard continuity bound on the stability of the Gibbs state suffices to ensure
+that the reduction is sound, and indeed approximately samples from the target state in
+Equation (5).
+
+Faster Hamiltonian simulation. Simulating quantum-mechanical systems is one of
+the central tasks in quantum algorithms. It is well known that Trotter-based Hamil-
+tonian simulation methods can perform better in the presence of commutativity in the
+Hamiltonian. In fact, for an exactly commuting Hamiltonian, the runtime of Hamiltonian
+simulation can be logarithmic in the simulation time t (as explained in Lemma 6.4), un-
+like the linear or worse scaling in the general case. This makes commutativity a useful
+algorithmic resource for real-time dynamics, not only a simplifying structural assumption
+for ground-state problems. For Hamiltonians that do not exactly commute, prior investi-
+gations [CST+ 21] have shown that commutator bounds can lead to faster Trotter-based
+simulation algorithms. Our setting is complementary: rather than analyzing the Trotter
+error directly, we first round the Hamiltonian to a nearby commuting one and then simulate
+the remaining discrepancy separately.
+    In Section 6.3, we observe that our rounding, together with the "interaction picture"
+method of Low and Wiebe [LW18], gives us a way to directly leverage the first-order
+commutators alone to speed up Hamiltonian simulation. In a nutshell, we apply the al-
+gorithm of [LW18] with the fast part of the Hamiltonian being the commuting rounding,
+and the slow part being the error term incurred in the rounding. Intuitively, the system is
+evolved mostly under a nearby exactly commuting Hamiltonian, while the genuinely non-
+commuting remainder is treated as a perturbation in the interaction picture. Apart from
+a commuting-simulation overhead and polylogarithmic factors, the time-dependent cost is
+governed by a norm bound for the latter term, controlled by the commutator error, rather
+than by the total norm of the Hamiltonian. In this way, the simulation cost is governed
+by how far the Hamiltonian is from the commuting regime, rather than by the full norm
+of the Hamiltonian itself.
+   6
+     We remark that Schmidhuber et al. [SLS+ 25] recently studied another form of "almost commuting"
+Hamiltonians; namely, signed Pauli Hamiltonians with a sparse anti-commutation graph. In their work,
+they provide evidence that Gibbs sampling and optimization for such almost commuting systems is classi-
+cally intractable, hinting at potential quantum advantage of the HDQI algorithm. However, their notion
+of almost commuting Hamiltonians is quite different from ours; in particular, our rounding algorithm does
+not seem to apply in their setting.
+
+
+
+                                                   6
+1.3 Related work
+The work of [CRSV17] studied projections that pairwise nearly commute and used a pre-
+decessor (see Theorem 3.2 [CRSV17]) of the pinching technique we extend here. However,
+their techniques do not preserve the locality of the operators, and hence do not apply in
+our setting.
+    The specific question of rounding approximately commuting Hamiltonians to commut-
+ing Hamiltonians was first studied by Arad [Ara11]. In this work, it is shown that for
+two-local Hamiltonians on d-dimensional qudits on a D-regular interaction graph, whose
+terms are projectors, an "asymptotically good" rounding exists: that is, for fixed d and D,
+in the limit of the commutator error ε going to 0, the rounding error also goes to 0. The
+rounding error may depend on both d and D. However, the rounding is non-constructive
+and no explicit bound on the rounding error was established. Arad’s techniques also do
+not easily lend themselves to algorithmic rounding, since they are based on a nonconstruc-
+tive compactness argument inspired by a work of Halmos [Hal76]. The rounding results
+in [Ara11] are incomparable to ours: they are weaker in that they only apply to Hamiltoni-
+ans whose terms are projectors; at the same time, they are also more general in that they
+apply to local dimensions greater than 2 as well. We remark that Arad’s proof also makes
+use of local decompositions of the Hamiltonian terms, similar to the Pauli decompositions
+that we exploit. Comparing our results to his, we consider our main contribution to be the
+locality-preserving algorithmic rounding theorem with an explicit polynomial bound on the
+rounding error given by our analysis—to our knowledge, the first constructive rounding
+technique with an explicit error bound in terms of ϵ that goes to zero as ϵ → 0. In fact,
+coming up with such a bound was listed by Arad as an open question, with the suggestion
+that it might follow easily from the techniques of [PS79]. This latter paper belongs to
+the rich literature on rounding approximately commuting high-dimensional matrices. We
+do not believe this literature is directly useful or relevant to our problem because we are
+interested specifically in roundings that preserve the local structure of the Hamiltonian.
+    Turning to complexity theory, our work connects to the extensive literature on com-
+muting local Hamiltonians. Beginning with the result of Bravyi and Vyalyi [BV04] that
+commuting 2-local qubit Hamiltonians lie in NP, subsequent works have extended NP con-
+tainment results to broader commuting settings, including higher-locality qubit systems,
+certain qutrit systems, two-dimensional geometries, and more general interaction com-
+plexes [AE11, Sch11, AKV18, IJ23, BH25]. The central contribution of this work is to
+extend this viewpoint beyond exact commutativity. We show that sufficiently almost com-
+muting 2-local qubit Hamiltonians can be rounded to nearby commuting Hamiltonians,
+thus extending the classical containment well beyond the commuting setting.
+
+1.4 Technical Overview
+Let us now proceed with a technical overview of the result in this paper. We assume famil-
+iarity with the basic formalism of quantum information, and refer the reader to Section 2
+for a refresher.
+    To illustrate our rounding technique, we consider the simple (although already non-
+trivial7 ) example of an ε-almost-commuting 2-local Hamiltonian on a three-qubit triangle,
+
+                                   H = h1,2 + h1,3 + h2,3 ,                                (6)
+
+  7
+     We remark that prior no-go results on rounding general Hermitian matrices already apply to
+triplets [Dav85].
+
+
+
+                                              7
+where the i, j terms pair-wise ϵ-almost commute such that
+
+                  ∥[h1,2 , h1,3 ]∥ ≤ ε ,     ∥[h1,3 , h2,3 ]∥ ≤ ε         and         ∥[h1,2 , h2,3 ]∥ ≤ ε            (7)
+
+for some ε ∈ (0, 1). The goal is to identify an exactly commuting Hamiltonian Ĥ =
+ĥ1,2 + ĥ1,3 + ĥ2,3 with [ĥ1,2 , ĥ1,3 ] = [ĥ1,3 , ĥ2,3 ] = [ĥ1,2 , ĥ2,3 ] = 0, which inherits the locality
+of the original Hamiltonian, and which is nearby in the sense that
+
+            ∥h1,2 − ĥ1,2 ∥ ≤ δ(ε) ,       ∥h1,3 − ĥ1,3 ∥ ≤ δ(ε),              and         ∥h2,3 − ĥ2,3 ∥ ≤ δ(ε)    (8)
+
+for some function δ(ε) with the property that δ(ε) → 0 as ε → 0.
+    Let us first consider the Hamiltonian terms h1,2 and h1,3 . Using a local expansion in
+terms of the Pauli basis {σ (i) }3i=0 given in Lemma 4.1, we can expand the Hamiltonian
+terms in H as follows:8
+                                                       3
+                                                       X         (α)      (α)
+                                              h1,2 =         A1 ⊗ σ 2                                                 (9)
+                                                       α=0
+                                                        3
+                                                       X         (β)      (β)
+                                              h1,3 =         B1        ⊗ σ3                                          (10)
+                                                       β=0
+
+                                                                 (α)                  (β)
+for some collections of Hermitian matrices {A1 }α and {B1 }β in C2×2 . Since we know
+that ∥[h1,2 , h1,3 ]∥ ≤ ε, it is tempting to argue that the almost-commuting property must
+also "propagate" down to the collections of matrices {A(α) }α and {B (β) }β . In Theorem 4.4,
+we show that this is indeed the case, leveraging the fact that {σ (i) }3i=0 form an orthogonal
+basis of the space of 2 × 2 complex matrices under the Hilbert-Schmidt inner product.
+Concretely, we can argue that
+                                       (α)     (β)
+                                    ∥[A1 , B1 ]∥ ≤ ε,            ∀α, β = 0, 1, 2, 3.                                 (11)
+
+This observation allows us to effectively reduce the task of rounding a 2-qubit operator
+to that of rounding a collection of single-qubit operators; in other words, the goal now
+                                (α)          (β)
+is to find nearby matrices {Â1 }α and {B̂1 }β which perfectly pairwise commute i.e.
+   (α)   (β)
+[Â1 , B̂1 ] = 0, for all α, β.
+
+Pinching. How can we make two almost-commuting 2 × 2 Hermitian matrices com-
+mute? Here, we take inspiration from the well-known pinching technique for projectors
+(e.g. [CRSV17]). Suppose that A, B ∈ C2×2 are arbitrary Hermitian matrices such that
+∥[A, B]∥ ≤ ε and ∆(A) > 0; for example, as in (11) when A is not scalar. First, we observe
+that the spectral theorem allows us to expand the matrix A as
+
+                                     A = λmin (A) Π + λmax (A) (I − Π),                                              (12)
+
+where λmin , λmax ∈ R are eigenvalues and Π and (I − Π) are orthogonal projectors onto the
+eigenspaces. To pinch B by A (concretely, by the eigenspace projectors associated with
+A), we map
+
+                                B      7→     B̂ = Π B Π + (I − Π)B(I − Π).                                          (13)
+
+   8
+       Here, the subscript indicates the qubit and we omit single-qubit identity operators for ease of notation.
+
+
+
+                                                             8
+Because B̂ is now diagonal in the eigenbasis of A, we can see that [B̂, A] = 0, and hence
+the two matrices perfectly commute. Moreover, a simple argument (formally proven in
+Lemma 3.2) reveals that the distance between B̂ and B is at most
+                                                   ∥[A, B]∥    ε
+                                    ∥B̂ − B∥ ≤              ≤      ,                      (14)
+                                                    ∆(A)      ∆(A)
+where ∆(A) = |λmax (A) − λmin (A)| is the spectral gap of A. This immediately presents a
+problem: if the eigenvalues of A are extremely close to one another, the spectral gap ∆(A)
+can be vanishingly small, thereby causing the distance between B̂ and B to blow up. In
+general, we may not have any control over the spectral properties that arise from the Pauli
+decompositions in (9) and (10).
+
+Gap or snap? In order to explain how we get around the spectral gap issue, let us
+again revisit the example of two Hermitian matrices A, B ∈ C2×2 with ∥[A, B]∥ ≤ ε. We
+introduce a threshold parameter η ∈ (0, 1) (to be determined later) and distinguish between
+the following cases:
+   • (the gapped case) ∆(A) ≥ η: in this case, the spectrum of A is sufficiently gapped,
+     and the pinching bound in (14) translates into a stable upper bound of ∥B̂ −B∥ ≤ ηε .
+    • (the nearly-degenerate case) ∆(A) < η: in this case, the pinching bound in (14)
+      may blow up; fortunately, however, a small gap ∆(A) necessarily means that A must
+      also be close to a multiple of the identity. Instead of pinching B, we can simply
+      snap A towards Â = Tr(A) 2 I. Importantly, this makes Â trivially commute with not
+      just B but in fact any other matrix as well—an important fact we will crucially
+      exploit later on. A simple calculation (formally shown in Lemma 3.4) reveals that
+      ∥Â − A∥ = ∆(A)/2, and thus ∥Â − A∥ < η.
+                              √
+For example, letting η = ε, we can always find a nearby commuting matrix within
+          √                                                                              √
+distance ε; either by pinching B to get B̂ such that [B̂, A] = 0 and ∥B̂ − B∥ ≤ ηε = ε,
+                                                                          √
+or by snapping A to get Â such that [B, Â] = 0 and ∥Â − A∥ < η = ε. Note that the
+2 × 2 qubit structure in the "gap or snap" approach for A, B ∈ C2×2 is crucial; indeed, in
+the qudit case, it is entirely possible for operators to have no spectral gap at all, and yet
+at the same time it is also not possible to simply "snap" them towards the identity.
+
+Locality-preserving rounding. Equipped with the "gap or snap" paradigm, we ex-
+plain a slightly simplified version of our full locality-preserving rounding technique on the
+ε-almost commuting Hamiltonian H = h1,2 + h1,3 + h2,3 from before. (We will indicate the
+step that was simplified when we reach it in our explanation.) To this end, we once again
+use local expansions in terms of the Pauli basis {σ (i) }3i=0 . While our earlier expansions in
+(9) and (10) only involved one of the qubit systems, our full rounding technique makes use
+of Pauli expansions on both of the qubits; that is, for each of the terms h12 , h13 and h23 ,
+we consider both possible expansions as follows:
+            3             3
+               (α)   (α)      (α)   (α)                           (α)           (α)
+                                                          for
+            X            X
+   h1,2 =     A1 ⊗ σ 2 =     σ1 ⊗ A 2                           {A1 }3α=0 ,   {A2 }3α=0   (15)
+          α=0            α=0
+           3              3
+               (β)   (β)      (β)  (β)                            (β)           (β)
+                                                          for
+          X              X
+   h1,3 =     B1 ⊗ σ 3 =     σ1 ⊗ B3                            {B1 }3β=0 ,   {B3 }3β=0   (16)
+          β=0            β=0
+            3                      3
+                   (γ)   (γ)         (γ)       (γ)                 (γ)          (γ)
+                                                          for
+            X                      X
+   h2,3 =         C2 ⊗ σ 3     =         σ2 ⊗ C3                {C2 }3γ=0 ,   {C3 }3γ=0   (17)
+            γ=0                    γ=0
+
+
+
+                                                     9
+                                                    h1,3
+
+
+
+
+                            h1,2                                            h2,3
+
+
+Figure 2: The commutation graph of the 3-qubit triangle Hamiltonian. The vertices represent
+matrices from the local Pauli expansion of each Hamiltonian term; the inner and outer rows show the
+expansions about qubits 1, 3 for h1,3 , 1, 2 for h1,2 , and 2, 3 for h2,3 , respectively. The edges represent
+near-commutation across Hamiltonian terms, as in (18), (19) and (20). For each qubit, our rounding
+procedure selects a pivot with a large spectral gap (e.g., the red vertex) and uses it to pinch all of the
+relevant vertices belonging to the same qubit (e.g. the green vertices). While vertices belonging to the
+same cluster are not required to commute, we also choose to pinch within clusters to exploit transitivity :
+if two green vertices each commute with the gapped pivot, they must also commute between each other.
+Pinching on the qubit shared between h1,2 and h1,3 , the pinching operator P1 ensures that the pinched
+vertices all mutually commute (now, green edges); this implies that pinched Hamiltonian terms now
+exactly commute as [P1 (h1,2 ), P1 (h1,3 )] = 0.
+
+
+For convenience’ sake, we refer to the left decomposition in Equation (15) as the de-
+composition "about qubit 1", and the right decomposition in the same equation as the
+decomposition "about qubit 2"—and similarly for the others. Note that each expansion
+introduces a collection of four Hermitian matrices in C2×2 : in the decomposition "about
+qubit i", these four matrices act on qubit i. In a slight abuse of notation, we use the
+same variable and rely on the subscript to indicate which qubit the matrices act on, as
+well as which of the two sets of matrices we are referring to. Thanks to our previous
+insight that the ε-almost-commuting property of h1,2 , h1,3 and h2,3 "propagates" down to
+the collections of matrices acting on the same qubit (formally, Theorem 4.4), we get
+                                   (α)   (β)
+                              ∥[A1 , B1 ]∥ ≤ ε,            ∀α, β = 0, 1, 2, 3                           (18)
+                                 (α)  (γ)
+                              ∥[A2 , C2 ]∥ ≤ ε,            ∀α, γ = 0, 1, 2, 3                           (19)
+                                 (β)  (γ)
+                              ∥[B3 , C3 ]∥ ≤ ε,            ∀β, γ = 0, 1, 2, 3                           (20)
+We may visualize the commutation structure of the triangle Hamiltonian as a graph G =
+(V, E); here the vertex set V consists of the 24 matrices in (15), (16) (17), and E contains
+edges between vertex pairs which are ε-almost commuting according to (18), (19) and
+(20). We can group vertices belonging to the same Hamiltonian term together, and we can
+use a top and bottom vertex layer within each cluster to represent the two possible Pauli
+expansions (e.g., see Figure 2).
+    Choose η = ε1/3 . Then, our locality-preserving rounding takes place as follows:
+   1. (Partitioning:) Split the almost-commuting Hamiltonian H into a gapped and nearly-
+      degenerate part (depending on η) such that H = Hgap + Hdeg , where
+
+                                                     10
+     • Hgap features Hamiltonian terms for which both sets of the two possible Pauli
+       expansions contain a matrix of spectral gap of at least η (these particular ma-
+       trices will enable us to round to nearby commuting matrices via pinching), and
+     • Hdeg features Hamiltonian terms that do not satisfy the gap condition: morally,
+       these terms act "almost trivially" on at least one of the qubits they touch.
+
+2. (Snap:) For each term hi,j ∈ Hdeg , we use snapping to round it to a term that is
+   exactly trivial on at least one qubit. Concretely, suppose h1,2 is in Hdeg because its
+   decomposition
+                                              3
+                                              X            (α)
+                                     h1,2 =         Aα1 ⊗ σ2
+                                              α=0
+
+   is not gapped—that is, each matrix Aα1 has spectral gap smaller than η. Then
+                                                                               Tr(Aα1)
+   snapping simply consists of replacing each Aα1 in the decomposition with       2    I1 ,
+   yielding a new operator h′1,2 that is effectively 1-local, and may in fact be simply
+   a multiple of the identity. As a simplifying assumption, we will suppose that all
+   the post-snapping operators h′i,j are in fact multiples of identity: the general case
+   including 1-local operators is more cumbersome, requiring an additional round of
+   snapping with the same gap parameter, but conceptually no more difficult than this
+   special case. Let H ′ be H after snapping has been performed (with all the terms in
+   Hgap unchanged). This step incurs an error of O(η).
+
+3. (Gap:) We are now in the position that for every Hamiltonian term that acts non-
+   trivially on a qubit, at least one operator in its Pauli decomposition for that qubit is
+   guaranteed to have a spectral gap. Intuitively, the spectral gap means these gapped
+   operators have a "strong opinion" about the correct basis in which to pinch this
+   qubit, and our algorithm will listen to them. More precisely, for any qubit i that is
+   nontrivially acted on by at least two terms of H ′ , pick any gapped operator in the
+   decomposition "about qubit i" of the terms acting on i, and set it to be the pivot Ri
+   associated with i. (If a qubit does not have two nontrivial terms, set the pivot to be
+   identity.) Once a pivot has been identified for each qubit, pinch each Hamiltonian
+   term h′i,j simultaneously by the pivots Ri and Rj : mathematically,
+
+                                h′i,j 7→ ĥi,j = (Pi ⊗ Pj )(h′i,j ),
+
+   where Pi is the pinching superoperator given by
+
+                          Pi (X) = Πi X Πi + (I − Πi )X(I − Πi )                      (21)
+
+   and where Πi and I − Πi are the eigenspace projectors of the i-th pivot element;
+   when Ri = I, we set Pi = id. The Hamiltonian Ĥ = (i,j) ĥi,j is the final product
+                                                     P
+
+   of our rounding procedure.
+   After the pinching process is complete, it is easy to see that all the terms ĥi,j are
+   forced to commute with each other by construction. What is harder to see is that
+   this does not incur a large error. This is essentially for two reasons:
+
+     • Propagation: If we imagine pinching h′i,j by a pivot arising from a different
+       Hamiltonian term h′i,k , then this pivot is guaranteed to almost commute—up
+       to error ε—with all terms in the decomposition of h′i,j by the fact that h′i,j and
+       h′i,k approximately commute, together with Theorem 4.4.
+
+
+                                              11
+         • Transitivity: If we imagine pinching h′i,j by a pivot arising from the same Hamil-
+           tonian term h′i,j , then this pivot can be shown to almost commute with all other
+           terms in the decomposition of h′i,j by using the transitivity of commutation for
+           gapped matrices, by passing through another term h′i,k . This is illustrated in
+           Figure 2. The transitivity uses the gapped property of h′i,k , and yields a slightly
+           worse commutator error of O(ε/η).
+
+      Thus, the pivot with which we pinch a given Hamiltonian term commutes with that
+      term up to error at most κ = O(ε/η), and it can be shown that the error induced in
+      pinching is at most O(κ/η) = O(ε/η 2 ). (We refer to Lemma 5.2 for a formal analysis
+      of the pinching operation.) Our choice of η = ε1/3 balances the errors from the gap
+      and snap steps, giving us an overall error of O(ε1/3 ). In the more general case, where
+      our simplifying assumption in the snapping step is removed, it turns out a second
+      round of snapping is needed: since snapping does not increase pairwise commutator
+      norms, this second round uses the same gap parameter η = ε1/3 and contributes
+      O(ε1/3 ) error, leaving the final bound O(ε1/3 ) unchanged.
+
+     Notice that the Hamiltonian Ĥ inherits the same locality from the original Hamiltonian
+H; this is due to the local nature of our pinching and snapping techniques. In Theorem 5.1,
+we show that our rounding technique—when applied to the triangle Hamiltonian—yields
+an exactly commuting Hamiltonian Ĥ = ĥ1,2 + ĥ2,3 + ĥ1,3 with [ĥ1,2 , ĥ1,3 ] = [ĥ1,3 , ĥ2,3 ] =
+[ĥ1,2 , ĥ2,3 ] = 0 and
+                                     ∥H − Ĥ∥ ≤ O(ε1/3 ).
+Our rounding technique thus rests on two important structural facts: (i) approximate
+commutation of Hamiltonian terms propagates to the single-qubit operators in their Pauli
+decompositions, and (ii) pinching against gapped local pivots enforces exact commutation
+while preserving locality. In this sense, our procedure is a consistent local change of basis
+across the interaction graph, with snapping handling terms which are too close to the
+identity to select a stable basis.
+
+Concrete 3-qubit example. We now illustrate the rounding procedure on a concrete
+triangle Hamiltonian on three qubits, shown in Figure 3.
+    The terms h1,2 and h2,3 commute exactly: both are controlled on the shared qubit,
+qubit 2, in the standard basis. On the other hand, h1,3 acts in the X basis on qubits 1 and
+3, and therefore commutes only approximately with h1,2 and h2,3 ; the obstruction comes
+from the Z-basis components of h1,2 and h2,3 , whose coefficients are suppressed by the
+factor 1/100.
+    This example is useful because it rules out a naïve sequential approach to rounding.
+One might try first to round the already commuting pair h1,2 , h2,3 to an exactly commuting
+pair ĥ1,2 , ĥ2,3 , without taking h1,3 into account, and only afterwards try to round h1,3 to
+some ĥ1,3 that commutes with both of them. However, for the particular pair h1,2 , h2,3
+above, there is no operator on qubits 1 and 3 that acts nontrivially on both qubits and
+commutes exactly with both h1,2 and h2,3 . Thus any successful rounding must modify
+at least one of h1,2 or h2,3 , despite the fact that these two terms commute perfectly with
+each other. This illustrates why the rounding procedure must be global in nature: the
+choice of how to round one pair of terms cannot be made independently of the remaining
+interactions.
+    Let us now see how the one-shot rounding procedure handles this example. All three
+terms are gapped in the relevant sense in both of their possible Pauli decompositions, so
+
+
+                                                 12
+                        3                                                    1
+                                                    h1,2 = X ⊗ |0⟩⟨0| ⊗ I +     Z ⊗ |1⟩⟨1| ⊗ I,
+                                                                            100
+                h1,3            h2,3                                         1
+                                                    h2,3 = I ⊗ |0⟩⟨0| ⊗ X +     I ⊗ |1⟩⟨1| ⊗ Z,
+                                                                            100
+                                                    h1,3 = X ⊗ I ⊗ X.
+            1                          2
+                       h1,2
+
+                        Figure 3: A simple triangle Hamiltonian on three qubits.
+
+
+the partitioning and snapping steps are trivial. The only nontrivial part of the procedure
+is the gapped rounding step, in which we choose a pivot operator Ai for each qubit i and
+then pinch the Hamiltonian terms with respect to these pivots.
+    We begin with qubit 2. The terms acting on qubit 2 are already written in the appro-
+priate form, with the Pauli operators placed on the non-shared qubits 1 and 3:
+                                                   1
+                          h1,2 = (|0⟩⟨0|)2 ⊗ X1 +     (|1⟩⟨1|)2 ⊗ Z1 ,
+                                                  100
+                                                   1
+                          h2,3 = (|0⟩⟨0|)2 ⊗ X3 +     (|1⟩⟨1|)2 ⊗ Z3 .
+                                                  100
+The coefficient |0⟩⟨0| is gapped, so we take
+                                                   A2 = (|0⟩⟨0|)2 .
+    Next consider qubit 1. The term h1,3 is already expressed in the desired form, while
+h1,2 must be rewritten so that the Pauli operators act on the non-shared qubit 2:
+                              1         1                            1     1
+                                                                               
+                       h1,2 =    X+       Z                 ⊗ I2 +     X−     Z           ⊗ Z2 ,
+                              2      100                1            2    100         1
+                       h1,3 = X1 ⊗ X3 .
+There are several possible gapped choices for the pivot. For simplicity, we take
+                                                      A1 = X1 .
+   Finally, for qubit 3, we proceed in the same way:
+                              1          1                          1          1
+                                                                                         
+                       h2,3 = I2 ⊗ X +      Z                      + Z2 ⊗ X −     Z                 ,
+                              2         100                      3  2         100               3
+                       h1,3 = X1 ⊗ X3 .
+Again, we choose the convenient pivot
+                                                      A3 = X3 .
+    With these choices of pivots, the pinching step is especially transparent: it forces the
+Hamiltonian to be diagonal in the tensor-product basis defined by the X basis on qubit 1,
+the standard basis on qubit 2, and the X basis on qubit 3. The rounded Hamiltonian
+                                               Ĥ = ĥ1,2 + ĥ1,3 + ĥ2,3
+is therefore given by
+                                                ĥ1,2 = X1 ⊗ |0⟩⟨0|2 ,
+                                                ĥ1,3 = X1 ⊗ X3 ,
+                                                ĥ2,3 = |0⟩⟨0|2 ⊗ X3 .
+These three terms now commute exactly.
+
+                                                             13
+The role of transitivity. This simple example also illustrates the role played by transi-
+tivity of commutation for 2×2 matrices. As discussed above, transitivity is what allows the
+rounding procedure to control commutation relations among different operators appearing
+in the Pauli decomposition of a single Hamiltonian term. In the present example, this
+control is reflected in the fact that the small Z-components in h1,2 and h2,3 are compatible
+with the choice of X-basis pivots on qubits 1 and 3.
+    One way to see this is to ask what would happen if the coefficient 1/100 in h1,2 were
+replaced by 1. Then h1,2 and h2,3 would still commute exactly, since they would remain
+diagonal in the same basis on the shared qubit 2. However, the commutator between h1,2
+and h1,3 would become large. In fact, h1,2 would no longer commute with any operator on
+qubits 1 and 3 that acts nontrivially on both qubits. Thus the smallness of the noncom-
+muting component is essential: it is precisely what permits the global choice of pivots to
+round all three terms simultaneously.
+
+Generalizing to m Hamiltonian terms. The same mechanism extends from this
+triangle example to general 2-local qubit Hamiltonians with m terms. Rather than choosing
+a rounding separately for each pair of Hamiltonian terms, the algorithm chooses pivots at
+the level of individual qubits. Each Hamiltonian term is then pinched with respect to
+the pivots on the qubits it touches. This one-shot choice is what preserves locality while
+enforcing exact commutation globally: at each qubit shared by two terms, their local
+components are diagonal in the same pivot basis, so every pair of rounded terms now
+commutes exactly.
+    The example above captures the main reason such a global procedure is needed. Even
+when two terms commute exactly, keeping them fixed may be incompatible with rounding
+the rest of the Hamiltonian. The rounding algorithm therefore treats the Hamiltonian
+as a whole, using the approximately commuting structure to identify local bases that are
+simultaneously compatible across all interactions.
+
+1.5 Discussion and Future Work
+The most immediate next question to investigate is whether the ε-dependence of our ap-
+                                                                         √
+proximation result can be improved to match our lower bound of Ω( ε). Preliminary
+investigations using AI tools show that a refined application of our pinching and snapping
+                                      √
+techniques can indeed achieve an O( ε) rounding error, but we leave the task of verifying
+this claim and generating a human-readable proof of it for future work.
+    After improving the ε dependence, the next natural questions to investigate are whether
+our rounding can be extended to systems of higher locality or local dimension. We suspect
+that going beyond qubits may be challenging, since the transitivity property that is crucial
+to our proof is no longer true for higher dimensions (even for dimension 3).
+    Another direction for generalization is to study looser notions of approximate commu-
+tation. For instance, what can we say if we only have a bound on the average norm of the
+commutators? Similar regimes were studied algorithmically in [SLS+ 25].
+    In the context of complexity theory, one interesting direction is to see what our re-
+sult implies about the quantum PCP conjecture. Recall that our rounding result already
+implies that any qPCP-hard family of 2-local qubit Hamiltonians must exhibit some mod-
+erate amount of noncommutativity: assuming NP ̸= QMA, any family of 2-local qubit
+Hamiltonians for which the γ-LH problem is QMA-hard for constant γ must allow for at
+least one of the pairwise commutator norms to be Ω(1). (In fact, such a family must also
+allow for a constant fraction of the terms to fail to approximately commute with the other
+terms—otherwise, these “bad terms” could simply be deleted from the Hamiltonian.) It
+
+                                            14
+would be interesting to see whether this bound can be improved, for instance by finding a
+rounding technique that is more sensitive to the commutator norms of individual pairs of
+terms, rather than merely the maximum commutator norm.
+    Taking an alternate perspective, the complexity of the general k-local commuting
+Hamiltonian problem on qudits is wide open, and it is possible that some version of this
+problem is even qPCP-hard. Moreover, it is possible that gap-amplifying transformations
+for commuting Hamiltonians will be easier to design than for general Hamiltonians. Could
+some rounding scheme along the lines of ours show that gap amplification for commuting
+Hamiltonians directly implies the quantum PCP conjecture?
+
+Acknowledgements and AI statement. Special thanks to Thomas Vidick for an
+inspirational email conversation at the start of this project. We also thank Christopher
+Laumann, Jiaqing Jiang, Thomas Vidick, and Rahul Trivedi for useful conversations on
+the general status of commuting and almost commuting Hamiltonians and the role they
+play in physics.
+    The majority of this work was completed between September 2025 and February 2026
+without substantial AI usage. We used ChatGPT for support with our literature review
+and the design of our figures (from September 2025 - February 2026), for pointing out a
+small modification to our proof to improve the error bound from ε1/6 to ε1/3 (in September
+2026), for providing the example in section A (in September 2026), and for help with final
+editing (in September 2026); all other technical results and all the writing in this paper
+were human generated.
+    IF thanks Muhammad Faisal for help with setting up an effective environment to use
+generative AI. AN was partially supported by NSF CAREER Award 2339948.
+
+
+2 Preliminaries
+The d-dimensional complex vector space is denoted by Cd . We use L(V, W ) to denote the
+set of linear operators mapping between finite-dimensional complex vector spaces V and
+W , and we use L(Cd ) to denote the set of linear operators over Cd . The operator norm of
+a linear operator A ∈ L(V, W ), for some finite-dimensional complex vector spaces V ̸= {0}
+and W is given by
+
+                                  ∥A∥ = sup ∥Ax∥2 ,                                  (22)
+                                         ∥x∥2 =1
+
+
+where ∥x∥2 = ⟨x, x⟩ is the standard Euclidean norm; we occasionally omit the sub-
+               p
+
+script for convenience. The operator norm satisfies the triangle inequality and is sub-
+multiplicative with ∥A · B∥ ≤ ∥A∥ · ∥B∥, for all A ∈ L(V, W ) and B ∈ L(U, V ), where U is
+a finite-dimensional complex vector space. A linear operator A ∈ L(Cd ) is called positive
+semi-definite (PSD), denoted by A ⪰ 0, whenever x† Ax ≥ 0, for all x ∈ Cd , and where †
+is the adjoint. A unitary U : Cd → Cd is a linear operator such that U † U = U U † = I,
+where I is the identity matrix on Cd . A linear operator H ∈ L(Cd ) is called Hermitian
+if H † = H. We use Herm(Cd ) to denote the set of d-dimensional Hermitian matrices. A
+Hermitian operator Π ∈ Herm(Cd ) is called a projector if Π2 = Π. Any A ∈ Herm(C2 )
+admits a spectral decomposition of the form
+
+                                  A = λ1 Π + λ2 (I − Π)                              (23)
+
+
+
+
+                                           15
+where λ1 , λ2 ∈ R are the eigenvalues of A, and where Π and (I − Π) are the projectors
+onto the respective eigenspaces of A; we call the eigenvalue difference
+                                    ∆(A) := |λ1 − λ2 |                                 (24)
+the spectral gap of A, and we say that A is η-gapped if ∆(A) ≥ η.
+
+Commutator. Let A, B ∈ Cd×d . Then, the commutator between A and B is defined as
+                                   [A, B] := AB − BA.                                  (25)
+We say that A commutes with B (equivalently, B commutes with A) if [A, B] = 0 or
+AB = BA. For a specified ε ≥ 0, we say that A and B ε-almost commute if
+                                       ∥[A, B]∥ ≤ ε ,                                  (26)
+where ∥ · ∥ is the operator norm. We use the following elementary fact about the commu-
+tator.
+Fact 2.1. Let A, B, C ∈ Cd×d be arbitrary matrices. Then,
+                         ∥[A, C]∥ ≤ 2 · ∥A − B∥ · ∥C∥ + ∥[B, C]∥.                      (27)
+Proof. First, notice that the commutator is linear in the sense that
+                               [A, C] = [A − B, C] + [B, C].                           (28)
+Using the triangle inequality and the sub-multiplicativity of the operator norm, we get
+                    ∥[A, C]∥ = ∥[A − B, C] + [B, C]∥                                   (29)
+                             ≤ ∥[A − B, C]∥ + ∥[B, C]∥                                 (30)
+                             = ∥(A − B)C − C(A − B)∥ + ∥[B, C]∥                        (31)
+                             ≤ ∥(A − B)C∥ + ∥C(A − B)∥ + ∥[B, C]∥                      (32)
+                             ≤ 2 · ∥A − B∥ · ∥C∥ + ∥[B, C]∥.                           (33)
+
+
+   We use the following well-known fact about commuting Hermitian matrices.
+Fact 2.2 (Simultaneous Diagonalization). Let A, B ∈ Herm(C2 ) be exactly commuting
+Hermitian matrices. Then, A and B can be simultaneously diagonalized in the following
+sense: there exists a spectral decomposition via common eigenspace projectors Π and (I −
+Π) such that
+                 A = a1 Π + a2 (I − Π)      and     B = b1 Π + b2 (I − Π)              (34)
+where a1 , a2 ∈ R and b1 , b2 ∈ R are the eigenvalues of A and B, respectively.
+
+Spectral stability. We use Weyl’s inequality (e.g., see [Tao10]) which states that the
+eigenvalue spectra of Hermitian matrices remain stable under perturbations.
+Lemma 2.3 (Weyl’s inequality). Let A, B ∈ Herm(Cd ). Then, for all i ∈ [d],
+                               |λi (A + B) − λi (A)| ≤ ∥B∥ ,
+where λi (A) and λi (A + B) denote the i-th eigenvalues of A and A + B, respectively, listed
+in the same nondecreasing order.
+   The following is a direct consequence of Weyl’s inequality in Lemma 2.3.
+Fact 2.4. Let A, B ∈ Herm(Cd ) and ε ≥ 0. If ∥A − B∥ ≤ ε, then |λmin (A) − λmin (B)| ≤ ε.
+
+                                            16
+Quantum information. A finite-dimensional complex Hilbert space is denoted by H,
+and we use subscripts to distinguish between different systems (or registers); for example,
+we let H1 be the Hilbert space corresponding to the system labeled as 1. The tensor
+product of two Hilbert spaces H1 and H2 is another Hilbert space which we denote by
+H1,2 = H1 ⊗ H2 .
+    A quantum system over the 2-dimensional Hilbert space H ∼      = C2 is called a qubit; in
+general, when H ∼= Cd for d ≥ 2,we call it a qudit. For n ∈ N, we refer to quantum registers
+                                  ⊗n
+over the Hilbert space H ∼ = C2       as n-qubit states. We use the word quantum state to
+refer to both pure states (unit vectors |ψ⟩ ∈ H), as well as density matrices ρ ∈ D(H) with
+
+               D(H) = {ρ ∈ L(H) : ρ is Hermitian, ρ ≥ 0 and Tr[ρ] = 1}.                           (35)
+
+Given a bipartite operator ρ1,2 ∈ D(H1,2 ), we denote the partial trace over a system, say
+the second system, by Tr2 [·], and we call ρ1 = Tr2 [ρ1,2 ] the reduced state. We use the
+following simple fact:
+Fact 2.5. Let H1,2 = H1 ⊗ H2 be a bipartite Hilbert space, for two finite-dimensional
+complex Hilbert spaces H1 and H2 of dimension d1 and d2 , respectively. Then, it holds
+that
+                                1
+                      ∥ρ1,2 ∥ ≥    ∥Tr2 (ρ1,2 )∥, ∀ρ1,2 ∈ D(H1,2 ).               (36)
+                                d2
+Proof. By the variational characterization of the operator norm, we have
+                                                                              
+                                ∥ρ1,2 ∥ =       max            Tr ρ1,2 τ1,2
+                                            τ1,2 ∈D(H1,2 )
+                                                                                 I2 
+                                       ≥      max         Tr ρ1,2 σ1 ⊗
+                                            σ1 ∈D(H1 )                            d2
+                                                    1                    
+                                       =      max      Tr Tr2 (ρ1,2 ) σ1
+                                         σ1 ∈D(H1 ) d2
+                                          1                               
+                                       =       max Tr Tr2 (ρ1,2 ) σ1
+                                         d2 σ1 ∈D(H1 )
+                                          1
+                                       =     ∥Tr2 (ρ1,2 )∥.
+                                         d2
+                                                                                                 
+In the third line, we used the standard identity Tr ρ12 (σ1 ⊗ I2 ) = Tr Tr2 (ρ12 ) σ1 to
+reduce the partial trace explicitly. This completes the proof.
+
+Pauli matrices. The four 2 × 2 Pauli matrices are denoted as
+                                              !                                           !
+                         (0)              1 0                      (1)              0 1
+                     σ         =I=            ,                σ          =X=                     (37)
+                                          0 1                                       1 0
+                                                  !                                           !
+                         (2)              0 −i                      (3)              1 0
+                     σ         =Y =            ,                σ         =Z=             .       (38)
+                                          i 0                                        0 −1
+
+The Pauli matrices are Hermitian and unitary, hence involutions: (σ (α) )2 = I. Each can
+therefore be viewed as an observable; for α = 1, 2, 3 its eigenvalues are ±1.
+Fact 2.6 (Properties of the Pauli matrices). The Pauli matrices {σ (α) }3α=0 satisfy
+
+                    Tr[σ (0) ] = 2,         Tr σ (α) = 0, ∀α = 1, 2, 3,                   and
+                                                     
+                                                                                                  (39)
+                          h           i
+                    Tr σ (α) σ (β) = 2δα,β ,              ∀α, β = 0, 1, 2, 3 ,                    (40)
+
+
+                                                          17
+and form an orthogonal basis of C2×2 with respect to the Hilbert-Schmidt inner product; in
+other words, any linear operator A ∈ C2×2 can be written as a complex linear combination
+of the form
+                                           3
+                                        1X      h       i
+                                 A=           Tr σ (α) A · σ (α) .                               (41)
+                                        2 α=0
+
+2.1 Local Hamiltonian Problem
+We begin by recalling the promise-problem formulation of the local Hamiltonian problem.
+This language is convenient because local Hamiltonian problems naturally come with an
+energy gap promise: an instance is assumed to be either below a lower threshold or above
+an upper threshold, with no requirement on what happens in between.
+
+Definition 2.7 (Binary Promise Problem). Let {0, 1}∗ be the set of all binary strings.
+A = (AYES , ANO ) is called a binary promise problem when AYES ⊆ {0, 1}∗ , ANO ⊆ {0, 1}∗ ,
+and AYES ∩ ANO = ∅.
+
+    We now specialize this general notion to the 2-local Hamiltonian problem. Throughout
+the paper, we keep track of both the absolute promise gap and the relative promise gap,
+since the latter is the natural normalization when the Hamiltonian has m local terms.
+
+Definition 2.8 (2-Local Hamiltonian Problem γ-2-LH). The 2-local Hamiltonian problem
+notated as γ-2-LH is a binary promise problem where the input is a classical binary string
+x = (H, a, b) such that:
+
+  • H is a 2-local Hamiltonian H =                     hi,j on a total of n qubits where E ⊆ [n] × [n]
+                                               P
+                                             (i,j)∈E
+     and |E| = m = poly(n) and each hi,j is a Hermitian matrix with a bounded operator
+     norm ∥hi,j ∥ ≤ 1 and its entries are specified by poly(n) bits and hi,j is non-identity
+     on at most 2 qubits (namely i, j),
+
+  • a and b are rational or constant-degree real algebraic numbers with exact poly(n)-bit
+    descriptions such that a < b; the gap Γ = b − a is called the absolute promise gap
+    and γ = Γ/m is called the relative promise gap, and we require γ ≥ 1/poly(n),
+
+  • for yes-instances, there exists an n-qubit quantum state |ψ⟩ such that ⟨ψ| H |ψ⟩ ≤ a
+    (i.e. energy of the state w.r.t. H is at most a),
+
+  • for no-instances, for every n-qubit quantum state |ψ⟩, it holds that ⟨ψ| H |ψ⟩ ≥ b
+    (i.e. energy of the state w.r.t. H is at least b), and
+
+  • it is promised that any instance will be either a yes or no instance.
+
+   The main objects of this paper are restricted versions of the local Hamiltonian problem
+in which the local terms commute, or nearly commute, with one another. The exactly
+commuting case serves as the classical benchmark against which we compare the almost
+commuting setting.
+
+Definition 2.9 (Commuting 2-Local Hamiltonian Problem). The Commuting Local Hamil-
+tonian Problem notated as γ-2-CLH is defined as the γ-2-LH problem in Definition 2.8
+with an additional restriction on the input that any pair of terms commute; in other words,
+
+                       [hi,j , hk,ℓ ] = 0,       ∀(i, j) ∈ E, ∀(k, ℓ) ∈ E.                       (42)
+
+                                                   18
+   We also introduce the almost commuting analogue, where exact commutation is relaxed
+to a uniform operator-norm bound on all pairwise commutators. This is the promise
+problem to which our rounding theorem will later be applied.
+
+Definition 2.10 (Almost Commuting Local Hamiltonian Problem). The Almost Com-
+muting 2-Local Hamiltonian Problem notated as (γ, ε)-2-ACLH is defined as the γ-2-LH
+problem in Definition 2.8 with an additional restriction that any pair of terms ε-almost-
+commute:
+                                    
+                         ∥ hi,j , hk,ℓ ∥ ≤ ε ,     ∀(i, j) ∈ E, ∀(k, ℓ) ∈ E.                      (43)
+
+2.2 Complexity Classes
+We next recall the complexity-theoretic notions used to state our containment and hardness
+consequences. Since the local Hamiltonian problem is naturally a promise problem, we use
+the corresponding promise-problem formulations of NP and QMA.
+
+Definition 2.11 (NP). A binary promise problem 9 A = (AYES , ANO ) is contained in NP
+if there exist polynomials p(n), q(n) and a deterministic verifier V such that on instance
+x ∈ AYES ∪ ANO with |x| = n:
+
+   1. Completeness: x ∈ AYES =⇒ ∃w : |w| = q(n) and V (x, w) outputs 1 in p(n) time; and
+
+   2. Soundness: x ∈ ANO =⇒ ∀w : V (x, w) outputs 0 in p(n) time.
+
+    In contrast to NP, the class QMA allows the verifier to receive a quantum witness and
+to perform a quantum verification procedure. This is the natural quantum analogue of NP
+and is the complexity class captured by the general local Hamiltonian problem.
+
+Definition 2.12 (QMA). A promise problem A = (AYES , ANO ) is contained in QMA if
+there exist polynomials p(n), q(n), r(n) and a uniform family of quantum verifiers {Vn }
+(that run in p(n) time) such that on instance x ∈ AYES ∪ ANO with |x| = n:
+
+   1. Completeness: If x is a yes-instance, i.e. x ∈ AYES , then there exists a q(n)-qubit
+      quantum state |ψ⟩ such that
+                                                        
+                          Pr[Vn |x⟩ ⊗ |0⟩⊗r(n) ⊗ |ψ⟩         accepts ] ≥ 2/3, and                 (44)
+
+   2. Soundness: If x is a no-instance, i.e. x ∈ ANO , then for any q(n)-qubit quantum
+      state |ψ⟩,                                 
+                       Pr[Vn |x⟩ ⊗ |0⟩⊗r(n) ⊗ |ψ⟩ accepts ] ≤ 1/3.                 (45)
+
+    We will also use the standard notion of completeness for promise-problem complexity
+classes. In our setting, completeness is used to formalize the sense in which the local
+Hamiltonian problem captures the full difficulty of QMA.
+
+Definition 2.13 (Completeness). We say that a promise problem A = (AYES , ANO ) is
+complete for the class C, notated as C-complete if:
+
+   1. A ∈ C; and
+   9
+    We technically define a promise version of NP. Historically, containment in NP was defined when any
+binary string was either yes or no. That promise version of NP has been recently widely adopted when
+talking about promise problems.
+
+
+                                                  19
+  2. for any promise problem B = (BYES , BNO ) ∈ C, there exists a polynomial-time
+     reduction f such that:
+
+         (a) x ∈ BYES =⇒ f (x) ∈ AYES ; and
+         (b) x ∈ BNO =⇒ f (x) ∈ ANO .
+
+   Finally, we record the standard hardness statement for the 2-local Hamiltonian prob-
+lem in the relative-gap notation used throughout this paper. This result provides the
+baseline QMA-hardness result against which our NP containment for almost commuting
+Hamiltonians should be compared.
+
+Theorem 2.14 ([KKR05]). The γ-2-LH problem is QMA-complete when γ = O(m−c ) for
+any c > 0.
+
+Proof. The result shown in [KKR05] is that the problem is QMA-complete for some par-
+ticular c, but a simple gap-amplification argument10 gives the claimed statement. We
+illustrate this argument with some concrete numbers. Suppose LH is QMA-hard for a
+relative gap of γ = m−3 , meaning an absolute gap in energy of mγ. Then consider a
+k-fold amplified Hamiltonian acting on a system of kn qubits divided into k groups of n
+qubits, given by Hk = ki=1 (H)i ⊗ Iī . (That is, Hk is a sum of copies of H acting on the
+                           P
+
+ith group of n qubits, for i running from 1 to k.) This Hamiltonian has m′ = km terms
+and an absolute energy gap of kmγ, so the new relative gap is γ ′ (m′ ) = m−3 = (m′ /k)−3 .
+If we set k = m99 —which gives m′ = m100 and k = m′99/100 —then m′ /k = m′0.01 , so
+γ ′ (m′ ) = (m′ )−0.03 . This establishes that the LH problem for γ = m−0.03 is QMA-hard.
+
+Theorem 2.15 ([BV04]). The γ-2-CLH promise problem is contained in NP for any
+admissible11 γ.
+
+Proof. Lemma 5 of [BV04] shows that the problem γ-2-CLH for any value of γ is contained
+in NP if the "common eigenspace problem" (CES) for 2-local projectors is contained in NP.
+This latter containment is shown in Theorem 3 of [BV04].
+
+
+3 Commutativity in the World of Qubit Operators
+In this section, we collect the qubit-specific facts that make the pinching step possible. We
+first define the pinching and snapping operations for single-qubit operators, and then prove
+the elementary norm bounds that control the errors they introduce. We also isolate the
+transitivity phenomenon for commuting qubit operators, which is one of the main algebraic
+features that fails in higher local dimension and is used crucially in our rounding argument.
+
+3.1 Pinching by a Hermitian Qubit Operator
+Definition 3.1 (Pinching operator). Let A ∈ Herm(C2 ) be Hermitian with ∆(A) > 0 and
+spectral decomposition
+
+                                  A = λmin (A) Π + λmax (A) (I − Π),                    (46)
+
+ 10
+      We have heard it credited to Lijie Chen, but it may be folklore.
+ 11
+      Our definition of γ-2-CLH requires γ ≥ 1/poly(n).
+
+
+
+
+                                                     20
+where Π and (I − Π) are the eigenspace projectors. Then, the pinching operator PA :
+L(C2 ) → L(C2 ) associated with the eigenspace projectors of A is defined as
+                 PA (X) = Π X Π + (I − Π)X(I − Π) ,                    for X ∈ C2×2 .        (47)
+For a scalar operator A = cI, we define PA = id.
+   Equipped with Definition 3.1, we now show the following result.
+Lemma 3.2 (Pinching by a Hermitian qubit operator). Let A ∈ Herm(C2 ) be a Hermitian
+operator with ∆(A) > 0 and spectral decomposition given by
+                             A = λmin (A) Π + λmax (A) (I − Π)                               (48)
+with eigenvalues λmin , λmax ∈ R and eigenspace projectors Π and (I − Π). Let PA be the
+pinching operator in Definition 3.1 with respect to A. Then, for any B ∈ C2×2 , the pinched
+matrix PA (B) satisfies
+                                                                          ∥[B, A]∥
+                  [PA (B), A] = 0       and         ∥B − PA (B)∥ =                 ,         (49)
+                                                                           ∆(A)
+where ∆(A) = λmax (A) − λmin (A) is the spectral gap of A.
+Proof. Both the operator norm and the commutator are invariant under unitary conjuga-
+tion. Hence, without loss of generality, we may assume that A is diagonal in its eigenbasis:
+                                                !                               !
+                         λmin (A)    0                                      1 0
+                   A=                                 and          Π=           .            (50)
+                            0     λmax (A)                                  0 0
+Expanding B in the eigenbasis of A, we get
+                                                           !
+                                              B1,1 B1,2
+                                      B=                .                                    (51)
+                                              B2,1 B2,2
+A direct computation shows that
+        [B, A] = BA − AB                                                                     (52)
+                                                            !                           !
+                                            0    B1,2                         0    B1,2
+               = λmax (A) − λmin (A)                            = ∆(A) ·                 .   (53)
+                                            −B2,1  0                          −B2,1  0
+By definition of the pinching operator, we have
+                                                               !
+                                                B1,1  0
+                                    PA (B) =              ,                                  (54)
+                                                 0   B2,2
+which is diagonal in the eigenbasis of A, and hence [PA (B), A] = 0. Moreover,
+                                                                   !
+                                                      0   B1,2
+                               B − PA (B) =                    .                             (55)
+                                                     B2,1  0
+Next, consider the Pauli-Z unitary
+                                                       !
+                                                1 0
+                                        Z=           .                                       (56)
+                                                0 −1
+It is now easy to see that
+                             B − PA (B) = ∆(A)−1 · Z · [B, A].                               (57)
+Using the unitary invariance of the operator norm with respect to Z, we obtain the equality
+                                              ∥Z · [B, A]∥   ∥[B, A]∥
+                        ∥B − PA (B)∥ =                     =          .                      (58)
+                                                 ∆(A)         ∆(A)
+
+
+
+                                                21
+3.2 Snapping Hermitian qubit operators to multiples of the Identity
+In this section, we formally introduce the mathematical background for the “snapping
+technique”.
+
+Definition 3.3 (Snapping operation). The snapping operation is the linear map
+
+                                                                  Tr(X)
+                 S : Herm(C2 ) → Herm(C2 ),        X 7→ S(X) :=         I.           (59)
+                                                                    2
+For a Hermitian qubit operator, Tr(X)/2 = (λmin (X) + λmax (X))/2 is the midpoint of its
+spectrum.
+
+Lemma 3.4 (Snapping a Hermitian qubit operator to the identity). Let B ∈ Herm(C2 )
+be any matrix with spectral decomposition
+
+                            B = λmin (B) Π + λmax (B) (I − Π),                       (60)
+
+and let S denote the snapping operator defined in Definition 3.3. Then,
+
+                            λmax (B) − λmin (B)   ∆(B)
+            ∥B − S(B)∥ =                        =      ,       ∥S(B)∥ ≤ ∥B∥,         (61)
+                                     2             2
+where ∆(B) = λmax (B) − λmin (B) is the spectral gap of B.
+
+Proof. The operator norm is invariant under unitary conjugation. Hence, without loss of
+generality, we may assume that B is diagonal in its eigenbasis:
+                                                         !
+                                     λmin (B)    0
+                               B=                      .                             (62)
+                                        0     λmax (B)
+
+By definition of the snapping operation, with c = (λmin (B) + λmax (B))/2, we have
+                                                                      !
+                                                   ∆(B)/2    0
+                  S(B) = cI,      S(B) − B =                      .                  (63)
+                                                     0    −∆(B)/2
+
+The operator norm of a Hermitian matrix equals the maximum absolute value of its
+eigenvalues. Consequently,
+
+                   ∆(B)
+    ∥B − S(B)∥ =        ,      ∥S(B)∥ = |c| ≤ max{|λmin (B)|, |λmax (B)|} = ∥B∥.     (64)
+                    2
+
+
+
+3.3 Transitivity of (Almost) Commutativity of Qubit Operators
+Lemma 3.5 (Gapped spectra imply transitivity of commutativity). Let A, B, C ∈ Herm(C2 )
+and suppose that B has non-zero spectral gap ∆(B) = λmax (B) − λmin (B) > 0. Then,
+
+                 [A, B] = 0    and    [B, C] = 0     implies   [A, C] = 0.
+
+Proof. Since ∆(B) > 0, the matrix B admits an eigenbasis, unique up to phases and
+ordering, in which it is diagonal. Let {Π, Π⊥ } be the orthogonal projectors onto the
+respective eigenspaces. Because A commutes with B, and C commutes with B, we can
+
+
+
+                                           22
+use simultaneous diagonalization (see Fact 2.2) and the fact12 ∆(B) > 0 to diagonalize all
+three matrices with respect to the same eigenspace projectors {Π, Π⊥ } as follows:
+
+                                          A = a1 Π + a2 Π⊥                                           (65)
+
+                                           B = b1 Π + b2 Π⊥                                          (66)
+                                           C = c 1 Π + c 2 Π⊥                                        (67)
+Using the orthogonality of {Π, Π⊥ }, we then find that
+                       h                             i
+            [A, C] = a1 Π + a2 Π⊥ , c1 Π + c2 Π⊥
+                    = a1 c1 [Π, Π] + a1 c2 [Π, Π⊥ ] + a2 c1 [Π⊥ , Π] + a2 c2 [Π⊥ , Π⊥ ] = 0.
+
+
+
+   The exact transitivity statement above is useful only after the relevant operators have
+been made exactly commuting. In the rounding argument, however, we typically know only
+that two local components almost commute with a common gapped pivot. The following
+lemma provides the corresponding robust version: if A and C each almost commute with
+a sufficiently gapped qubit operator B, then A and C must almost commute with each
+other.
+Lemma 3.6 (Gapped spectra imply transitivity of almost-commutativity). Let A, B, C ∈
+Herm(C2 ) and suppose that B has non-zero gap ∆(B) = λmax (B) − λmin (B) ≥ ξ > 0.
+Then,
+                                                                           2ε             ε
+     ∥[A, B]∥ ≤ ε       and    ∥[B, C]∥ ≤ ε       implies    ∥[A, C]∥ ≤         ∥A∥ + ∥C∥ + .
+                                                                           ξ               ξ
+When ∥A∥ ≤ 1, ∥C∥ ≤ 1, and ξ ≥ ε > 0, the bound becomes
+
+                                                  4ε 2ε2 6ε
+                                     ∥[A, C]∥ ≤     + 2 ≤ .
+                                                  ξ   ξ  ξ
+Proof. According to Lemma 3.2, there exist (via pinching by B) A′ and C ′ such that
+[A′ , B] = [B, C ′ ] = 0 and ∥A − A′ ∥ ≤ ξε and ∥C − C ′ ∥ ≤ ξε . By Lemma 3.5, it holds that
+[C ′ , A′ ] = 0. Thus, we can bound ∥[A, C]∥ as follows:
+
+      ∥[A, C]∥ ≤ 2 · ∥A − A′ ∥ · ∥C∥ + ∥[A′ , C]∥              (via Fact 2.1)
+                 2ϵ                                                 ε
+               ≤     · ∥C∥ + ∥[C, A′ ]∥           (∥A − A′ ∥ ≤ and [C, A′ ] = −[A′ , C])
+                  ξ                                                 ξ
+                 2ϵ
+               ≤     · ∥C∥ + 2 · ∥C − C ′ ∥ · ∥A′ ∥ + ∥[C ′ , A′ ]∥         (via Fact 2.1)
+                  ξ
+                 2ϵ           2ε                                     ε
+               ≤     · ∥C∥ +      · ∥A′ ∥          (∥C − C ′ ∥ ≤ and [C ′ , A′ ] = 0)
+                  ξ           ξ                                      ξ
+                 2ε
+               ≤     (∥C∥ + ∥A∥ + ε/ξ)               (∥A′ ∥ ≤ ∥A∥ + ε/ξ).
+                  ξ
+
+
+  12
+     Without that condition, we can only conclude that A and B can be simultaneously diagonalized and
+that B and C can be simultaneously diagonalized, but not necessarily all three can be simultaneously
+diagonalized. If B is a multiple of the identity, then any two non-commuting matrices will be a counterex-
+ample.
+
+
+                                                   23
+4 Local-to-Global Framework for Operators on 2 Qubits
+In this section, we develop the local-to-global tools used in the rounding argument. The
+main point is that approximate commutation of two-qubit Hamiltonian terms can be de-
+tected at the level of the single-qubit operators appearing in their local Pauli decompo-
+sitions. This allows us to translate global commutator bounds into local algebraic con-
+straints, which will later be used to choose pivots, perform snapping, and preserve locality
+throughout the rounding procedure.
+
+4.1 Local Pauli Decomposition
+The following simple fact gives a decomposition of a two-qubit operator acting on qubits
+s and r into a sum of tensor product operators. Similar decompositions play a deep role
+in the theory of commuting Hamiltonians, for instance in Equation (1) of [AE11].
+Lemma 4.1 (Local Pauli decomposition). Let hs,r ∈ L(Hs ⊗ Hr ) be a linear two-qubit
+operator acting on the qubits labeled by s and r. Then, hs,r can be decomposed as a linear
+combination of the form
+                                                            3
+                                                            X
+                                                hs,r =          A(α)  (α)
+                                                                 s ⊗ σr                                            (68)
+                                                         α=0
+                                                                                                     (α)
+where {σrα }3α=0 are the Pauli matrices on the r-th qubit, and where {As }3α=0 is an en-
+                                                                   (α)
+semble of 2 × 2 complex matrices. Furthermore, the components {As }3α=0 are Hermitian
+if and only if hs,r is Hermitian.
+Proof. Here, we make use of Fact 2.6; namely, that the Pauli matrices form an orthogonal
+basis of L(C2 ) with respect to the Hilbert-Schmidt inner product. Observing that tensor
+products of Pauli matrices form a basis of the space of linear operators on the tensor
+system C2 ⊗ C2 , we obtain the decomposition
+                                                    X 3
+                                                    3 X
+                                      hs,r =                    cα,β σs(β) ⊗ σr(α) .
+                                                    α=0 β=0
+
+              (α)                             (β)                                                                  (α)
+Next, we let As = 3β=0 cα,β σs and show the if and only if statement. First, if As is
+                        P
+
+Hermitian, then its tensor product with a Hermitian Pauli matrix must also be Hermitian,
+and the sum hs,r over these tensor products is going to be Hermitian. Second, to show
+                                      (α)
+that if hs,r is Hermitian, then each As is Hermitian, we proceed as follows; first, observe
+that
+                                                                          
+         h                i                 3
+                                              X
+   Trr    I ⊗ σr(α) hs,r = Trr                     A(β)   (α) (β) 
+                                                     s ⊗ σ r σr                      (by Equation (68))            (69)
+                                              β=0
+                                    3
+                                    X                                 
+                                =         A(β)     (α) (β)
+                                           s · Tr σr σr                              (by linearity of the trace)   (70)
+                                    β=0
+                                    3
+                                    X
+                                =         2δα,β A(β)
+                                                 s                                   (by Fact 2.6)                 (71)
+                                    β=0
+
+                                = 2A(α)
+                                    s .                                                                            (72)
+                                          h                      i
+                                                            (α)                (α)
+We can similarly compute Trr hs,r I ⊗ σr                               = 2As . Combining the two, we get
+                           1     h                  i   1     h                 i
+                    A(α)
+                     s   =   Trr    I ⊗ σr
+                                          (α)
+                                                h s,r   =   Trr  h s,r   I ⊗ σr
+                                                                               (α)
+                                                                                      .                            (73)
+                           2                              2
+
+                                                              24
+                                                                        (α)
+Putting everything together, we can verify that As                            is Hermitian by noting the following.
+                  †     1    h                   i†
+            A(α)
+             s          = Trr I ⊗ σr(α) hs,r                              (by Equation (73))                  (74)
+                          2
+                          1
+                                            † 
+                        = Trr h†s,r I ⊗ σr(α)                             ("Socks and Shoes" property)        (75)
+                          2
+                          1    h            i
+                        = Trr hs,r I ⊗ σr(α)                              (hs,r and σr(α) are hermitian)      (76)
+                          2
+                        = A(α)
+                            s                                             (by Equation (73))                  (77)
+
+
+   When working with local Pauli decompositions of two-qubit operators, it will be con-
+venient for us to use the following notion of a gapped decomposition.
+Definition 4.2 (Gapped Pauli decomposition). A two-qubit operator hs,r ∈ Herm(Hs ⊗
+Hr ) acting on the qubits labeled by s and r is said to be η-gapped on the s-subsystem
+                                                            (α)
+(notated as (s, η)-gapped) if any of the local components {As }3α=0 which appear in the
+local Pauli decomposition of the form
+                                                     3
+                                                     X
+                                           hs,r =               A(α)  (α)
+                                                                 s ⊗ σr                                       (78)
+                                                     α=0
+                                                                              (α∗ )
+is η-gapped; in other words, there exists a matrix As      ∈ C2×2 which is η-gapped such
+         (α∗ )
+that ∆(As ) ≥ η. The property (r, η)-gapped is defined similarly. We say the operator is
+η-gapped on both subsystems if it is both (r, η)-gapped and (s, η)-gapped.
+
+4.2 Global-to-Local Inheritance of Norms of Commutators
+Let hs,r and hs,q be 2 Hamiltonian terms on qubit pairs {s, r} and {s, q}, where s, r, q
+are distinct, such that they ε-almost commute i.e. ∥[hs,r , hs,q ]∥ ≤ ε. Let their local
+components on the shared qubit be {A(α) } and {B (β) }. An important question for our
+techniques is: what can we say about the commutator of any pair ∥[A(α) , B (β) ]∥? We will
+prove in Theorem 4.4 that any pair of local components must also ε-almost commute. For
+that proof, we will use Lemma 4.3.
+Lemma 4.3 (Operator norm lower bound from orthogonal components). Let {Mi }i ⊆
+Cd1 ×d1 , and let {Ni }i ⊆ Cd2 ×d2 be Hermitian binary observables satisfying
+                               Ni2 = Id2        and                  Tr[Ni Nj ] = d2 δi,j .                   (79)
+Then, any operator of the form T =              i Mi ⊗ Ni satisfies
+                                                P
+
+                                    ∥T ∥ ≥ ∥Mi ∥,                      for every i.                           (80)
+Proof. We compute
+                                       T †T =              Mi† Mj ⊗ Ni Nj ,
+                                                X
+                                                                                                              (81)
+                                                    i,j
+
+where we used that each Ni is Hermitian. Taking the partial trace over the second sub-
+system and using the Hilbert-Schmidt orthogonality of the Ni ’s gives
+                                    Tr2 [T † T ] =              Mi† Mj Tr[Ni Nj ]
+                                                      X
+                                                                                                              (82)
+                                                          i,j
+
+                                                                     Mi† Mi .
+                                                                X
+                                                = d2                                                          (83)
+                                                                 i
+
+
+                                                                25
+By Fact 2.5, extended by homogeneity to positive semidefinite operators, we have
+
+                                                   1                 X †
+                        ∥T ∥2 = ∥T † T ∥ ≥            Tr2 [T † T ] =   Mi Mi .                                   (84)
+                                                   d2                i
+
+Since each Mj† Mj is positive semidefinite, we have
+
+                                                   Mj† Mj ⪰ Mi† Mi
+                                              X
+                                                                                                                 (85)
+                                              j
+
+for every i, and hence
+
+                                         Mj† Mj ≥ ∥Mi† Mi ∥ = ∥Mi ∥2 .
+                                 X
+                                                                                                                 (86)
+                                    j
+
+Combining the two inequalities yields ∥T ∥2 ≥ ∥Mi ∥2 , and therefore ∥T ∥ ≥ ∥Mi ∥.
+
+Theorem 4.4. Let hs,r and hs,q be two 2-qubit linear operators on qubit pairs {s, r} and
+{s, q}, where s, r, q are distinct. According to Lemma 4.1, these can be written as
+                              3
+                              X                                               3
+                                                                              X
+                     hs,r =         A(α)  (α)
+                                     s ⊗ σr                          hs,q =         Bs(β) ⊗ σq(β)                (87)
+                              α=0                                             β=0
+
+                                                               (α)                    (β)
+for ensembles of 2 × 2 complex matrices {As }3α=0 and {Bs }3β=0 . Then, if the terms
+                                                                                       (α)     (β)
+satisfy ∥[hs,r , hs,q ]∥ ≤ ε, for some ε ≥ 0, this implies that ∥[As , Bs ]∥ ≤ ε, for all α, β.
+Proof. We can re-write the linear operators with an identity factor on the unaffected qubit,
+                    3
+                    X                                                               3
+                                                                                    X
+           hs,r =         A(α)  (α)
+                           s ⊗ σr ⊗ Iq                   and               hs,q =         Bs(β) ⊗ Ir ⊗ σq(β) .   (88)
+                    α=0                                                             β=0
+
+Then, we can compute the products hs,r hs,q and hs,q hs,r as follows.
+                                                  X
+                              hs,r hs,q =               A(α) (β) (α)  (β)
+                                                         s Bs ⊗ σr ⊗ σq                                          (89)
+                                                  α,β
+                                                  X
+                              hs,q hs,r =               Bs(β) A(α)  (α)  (β)
+                                                               s ⊗ σr ⊗ σq                                       (90)
+                                                  α,β
+
+Then, we can plug these in the definition of the commutator.
+
+                    [hs,r , hs,q ] = hs,r hs,q − hs,q hs,r
+                                        X                                     
+                                 =            A(α) (β)   (β) (α)
+                                               s B s − B s As    ⊗ σr(α) ⊗ σq(β)
+                                        α,β
+                                        Xh                     i      h               i
+                                 =            A(α)  (β)
+                                               s , Bs   ⊗ σr(α) ⊗ σq(β)
+                                        α,β
+
+                                                        (α)          (β)
+Using Fact 2.6, we can conclude that {σr ⊗ σq }α,β forms a set of pairwise orthogonal
+observables on the tensor product system Hr ⊗Hq . Thus, for each α, β, Lemma 4.3 implies
+that
+
+                                ∥[A(α)  (β)
+                                   s , Bs ]∥ ≤ ∥[hs,r , hs,q ]∥ ≤ ε.                                             (91)
+
+This proves the claim.
+
+                                                              26
+4.3 Snapping a 2-local Hamiltonian term into 1-local Hamiltonian term
+Theorem 4.5 (Snapping 2-local Hamiltonian terms into 1-local terms). Let hs,r ∈ Herm(Hs ⊗
+Hr ) be a two-qubit operator acting on qubits s and r which is not (s, η)-gapped according
+to Definition 4.2. Then, there exists a 1-local Hamiltonian term ĥr such that:
+
+                               ∥hs,r − Is ⊗ ĥr ∥ ≤ 4η,           ∥ĥr ∥ ≤ ∥hs,r ∥.                       (92)
+
+Proof. Using Lemma 4.1, we can expand the two-qubit operator hs,r as
+                         3
+                         X                       3 
+                                                 X                                    
+                hs,r =         Aαs ⊗ σr(α) =           λαmax Παs + λαmin (I − Παs ) ⊗ σr(α) .
+                         α=0                     α=0
+
+The hypothesis that hs,r is not (s, η)-gapped means that for all α, ∆(Aαs ) < η. Applying
+the snapping operation of Definition 3.3, we replace each coefficient by the midpoint of its
+spectrum:
+                                   Tr(Aαs )      λmin (Aαs ) + λmax (Aαs )
+                 Âαs := S(Aαs ) =          Is =                           Is .
+                                      2                      2
+The induced map on the full two-qubit term is norm-nonincreasing. Define the operator
+on qubit r by
+                                           3
+                                           X Tr(Aα )   s          1
+                                  ĥr :=                   σr(α) = Trs (hs,r ).                           (93)
+                                           α=0
+                                                   2              2
+
+Indeed, conjugating a single-qubit operator by each of I, X, Y, Z and averaging removes
+its traceless Pauli components. Thus,
+
+                                            1 3
+                                              X
+                               Is ⊗ ĥr =        (σ (µ) ⊗ Ir )hs,r (σs(µ) ⊗ Ir ).
+                                            4 µ=0 s
+
+       (µ)
+Each σs      ⊗ Ir is unitary. By the triangle inequality and unitary invariance,
+                                                         3
+                                                      1X
+                               ∥ĥr ∥ = ∥Is ⊗ ĥr ∥ ≤       ∥hs,r ∥ = ∥hs,r ∥.
+                                                      4 µ=0
+
+Since ∥Aαs − Âαs ∥ = ∆(Aαs )/2, we can calculate the rounding error explicitly as follows:
+                                 3 
+                                 X                 
+      ∥hs,r − Is ⊗ ĥr ∥ =              Aαs − Âαs ⊗ σr(α)
+                                α=0
+                                3
+                                X                 
+                          ≤             Aαs − Âαs ⊗ σr(α)                        (triangle inequality)
+                                α=0
+                                X3
+                          ≤           Aαs − Âαs · ∥σr(α) ∥             (by the properties of ∥ · ∥)
+                                α=0
+                                                       | {z }
+                                                           =1
+                                  3
+                                1 X
+                          ≤           ∆(Aαs ) ≤ 2η ≤ 4η.
+                                2 α=0
+
+
+
+
+                                                           27
+5 Rounding Almost Commuting 2-Local Qubit Hamiltonians
+In this section, we prove the main result of our paper: any almost commuting 2-local
+Hamiltonian (on qubits) can be mapped to a nearby exactly commuting (qubit) Hamil-
+tonian of the same locality. The proof of our main result uses a technical helper lemma
+(Lemma 5.2), which we formally state and prove later in this section.
+Theorem 5.1 (Algorithmic rounding for almost commuting 2-local Hamiltonians on
+qubits).
+Let H =    hI be a 2-local Hamiltonian on n qubits, where I is a collection of distinct
+         P
+            I∈I
+sets of indices affected by each Hamiltonian term, where m = |I| is the total number of
+terms, and where
+  • each term hI , for I ∈ I, is a Hermitian operator that acts as non-identity on at
+    most two qubits (i.e. |I| ≤ 2), of unit norm ∥hI ∥ ≤ 1, and
+  • all terms pair-wise ε-almost commute with 0 ≤ ε ≤ 1 such that
+                                       ∥[hI , hJ ]∥ ≤ ε,      ∀I, J ∈ I.
+
+Given a description of H and the bound ε, it is possible to compute in classical determin-
+istic time O(m)13 the description of a nearby exactly commuting Hamiltonian Ĥ =
+                                                                                     P
+                                                                                        ĥI
+                                                                                      I∈I
+such that
+  • Ĥ is 2-local, thereby preserving the locality of the Hamiltonian H, and ∥ĥI ∥ ≤ ∥hI ∥ ≤
+    1 for every I ∈ I,
+  • Ĥ is a qubit Hamiltonian, thereby preserving the local dimension of H,
+  • all of the terms in Ĥ pairwise commute such that
+                                        [ĥI , ĥJ ] = 0,    ∀I, J ∈ I,                 (94)
+
+  • all of the terms in Ĥ are (point-wise) nearby in the sense that
+                                  ∥ĥI − hI ∥ ≤ 200 ε1/3 ,      ∀I ∈ I, and             (95)
+
+  • Ĥ is overall close to H in operator norm such that
+                                          ∥Ĥ − H∥ ≤ 200 m ε1/3 .                       (96)
+
+Proof. If ε = 0, set Ĥ = H, which satisfies all the claims. Henceforth assume ε > 0.
+We remark that the statement of the theorem allows the Hamiltonian to have terms that
+have locality strictly less than 2. For convenience, we assume that the Hamiltonian is
+                   P
+of the form H = (i,j)∈E hi,j so that all terms in H are formally two-local. This avoids
+additional bookkeeping and is purely for clarity of the exposition (it does not materially
+affect any of the arguments). The ordering of the two indices on the Hamiltonian term is
+irrelevant, so we will freely write hi,j or hj,i for the same term as convenient.
+    Our rounding procedure generates the Hamiltonian Ĥ as follows. We will have two
+stages of snapping with gap parameters η2 in the first stage and η1 in the second stage
+(note that the index is counting down), with η1 = η2 = ε1/3 . Similarly, the commutator
+norm will be bounded by ε2 in the first stage and ε1 in the second stage (with the index
+counting down as well).
+ 13
+      And polynomial in the bit complexity of each Hamiltonian term and of ε.
+
+
+                                                     28
+1. Define sets of terms T2 , T1 , T0 that will keep track of 2-local, 1-local, and 0-local
+   terms, respectively, through the snapping process. To start out, let T2 contain all
+   the terms in H, and let T1 and T0 be empty.
+   Let ε2 = ε.
+                                                       1/3
+2. Snapping 2-local terms. Let η2 := ε2 . For every term hi,j in T2 :
+
+    (a) If hi,j is η2 -gapped on both subsystems according to Definition 4.2 (i.e. (i, η2 )-
+                                                                          (snap)
+        gapped and (j, η2 )-gapped), remove it from T2 and place it in H2        .
+   (b) Else, pick the qubit j (WLOG) such that hi,j is not (j, η2 )-gapped. Snap
+       using Theorem 4.5 into a 1-local term on the subsystem i to obtain h′i,j as
+       below and place h′i,j in T1 .
+
+                        h′i,j = gi ⊗ Ij                where           ∥h′i,j − hi,j ∥ ≤ 4η2 .      (97)
+
+3. Snapping 1-local terms. Let η1 := η2 . For each term h′i,j in T1 (1-local terms),
+   perform the following.
+                                                                          (snap)
+    (a) If h′i,j is (i, η1 )-gapped, place the term into H1                        .
+   (b) Else, snap that term into a multiple of the identity h′′i,j := S(gi ) ⊗ Ij = cI,
+       where c = Tr(gi )/2, and place that term into T0 .
+
+                                                  ∥h′′i,j − h′i,j ∥ ≤ 4η1 .                         (98)
+
+                                     (snap)
+4. Move every term in T0 to H0                .
+
+5. We now have:
+                                                   (snap)        (snap)        (snap)
+                            H (snap) = H2                   + H1          + H0                      (99)
+   Both snapping stages are norm-nonincreasing: this follows from Theorem 4.5 for the
+                                                                              (snap)
+   first stage and from ∥S(gi )∥ = |Tr(gi )|/2 ≤ ∥gi ∥ for the second. Thus ∥hi,j ∥ ≤
+   ∥hi,j ∥ ≤ 1 for every term. Moreover:
+
+    (a) Spectral gap:
+                            (snap)                (snap)
+          i. Every term hi,j     in H2                      is η2 -gapped on both subsystems i and j
+             according to Definition 4.2.
+                           (snap)         (snap)
+         ii. Every term hi,j   in H1    is η1 -gapped (according to Definition 4.2) on
+             the subsystem acted upon nontrivially.
+                           (snap)             (snap)
+         iii. Every term hi,j        in H0             is proportional to the identity (zero spectral
+              gap).
+   (b) Rounding error:
+                           (snap)             (snap)
+          i. Every term hi,j     in H2     is identical to the corresponding term hi,j in
+             H.
+                             (snap)     (snap)
+         ii. For every term hi,j    in H1      , we have
+
+                                                      (snap)
+                                                   ∥hi,j       − hi,j ∥ ≤ 4η2 .                   (100)
+
+                                                             (snap)
+             This is because every term in H1                         was obtained by one application of
+             snapping with gap parameter η2 .
+
+                                                     29
+                                    (snap)             (snap)
+        iii. For every term hi,j              in H0             , we have
+                                                     (snap)
+                                               ∥hi,j          − hi,j ∥ ≤ 4η2 + 4η1 .
+            This is because every such term was obtained from snapping an original
+            two-local term twice, first with gap parameter η2 and then with gap pa-
+            rameter η1 .
+    (c) Commutativity error: Let ε1 := ε. Write Ss (X) = 12 Is ⊗Trs (X) for snapping
+        qubit s, with tensor factors ordered appropriately. As shown in Theorem 4.5,
+        this map is an average of Pauli conjugations and is therefore contractive in
+        operator norm. If Y acts trivially on s, then
+                                              [Ss (X), Y ] = Ss ([X, Y ]).
+        Recall that the sets of indices are distinct, so two sets of indices share at most
+        one qubit. If snapping removes that shared qubit from either term, the resulting
+        terms act on non-overlapping qubits and commute exactly. Otherwise, snapping
+        acts only on qubits private to each term, so the identity above and contractivity
+        apply. In particular:
+              (snap)
+         i. H2        contains 2-local terms such that each pair of terms ε2 -commute.
+               (snap)
+         ii. H1       contains 1-local terms such that each pair of terms ε1 -commute.
+                                                                    (snap)
+             For two such terms overlapping on qubit i, write hi,j         = Sj (hi,j ) and
+              (snap)
+             hi,k    = Sk (hi,k ), where j ̸= k. Then
+                                   (snap)      (snap)
+                                ∥[hi,j      , hi,k      ]∥ = ∥Sj Sk ([hi,j , hi,k ])∥ ≤ ε = ε1 .
+                                  (snap)                                                (snap)
+        iii. Any term in H2        ε1 -commutes with any term in H1         . Their commu-
+             tator is zero unless they overlap on the qubit affected by the 1-local term.
+                   (snap)           (snap)      (snap)                 (snap)
+             For hi,j     = hi,j ∈ H2      and hi,k    = Sk (hi,k ) ∈ H1      , we have
+                                     (snap)      (snap)
+                                 ∥[hi,k       , hi,j       ]∥ = ∥Sk ([hi,k , hi,j ])∥ ≤ ε = ε1 .
+                       (snap)
+        Terms in H0             are scalar and commute with every term.
+6. Pivot selection. For each qubit i ∈ [n], assign it a pivot operator Ri as follows.
+   (a) If qubit i is affected by at most one non-identity Hamiltonian term in H (snap) ,
+       let Ri be the one-qubit identity operator.
+   (b) Otherwise, there are 2 subcases:
+                                                     (snap)         (snap)
+         i. At least one of the terms hi,j                    in H1          acts nontrivially on i. This term
+                          (snap)
+             is 1-local: hi,j    = gi ⊗ Ij for some gi . In this case, set Ri = gi .
+         ii. All of the terms in H (snap) acting nontrivially on i are 2-local:                      in this
+                                                        (snap)
+            case, pick an arbitrary one of these terms hij     (e.g.                        the one with the
+                                                                                                      (snap)
+            lexicographically first index pair i, j). By the assumption that hij                               ∈
+             (snap)
+            H2      , it must be η2 -gapped on both systems i and j. So writing its Pauli
+            decomposition as
+                                                                    3
+                                                       (snap)       X
+                                                     hij        =       Aαi ⊗ σjα ,
+                                               α=0
+            we let Ri be any of the operators Aαi that has spectral gap at least η2 .
+
+                                                        30
+We claim that for each qubit i ∈ [n] there exists a choice of parameters κi , ζi such
+that the following hold.
+                                              (snap)
+  1. For any Hamiltonian term hi,j                     ∈ H (snap) ,
+
+                                                 (snap)
+                                             ∥[hi,j        , Ri ⊗ Ij ]∥ ≤ κi ,
+
+     and likewise with i and j interchanged.
+  2. For each i, either Ri is identity or the spectral gap of Ri is at least ζi .
+  3. For each i, κi /ζi ≤ max{ε1 /η1 , 24ε2 /η22 }.
+
+
+Case 1: at most 1 term in H (snap) acts nontrivially on i. In this case, the
+algorithm above sets Ri = I. Let κi = 0 and ζi = 1. The three properties hold.
+
+
+Case 2: at least 2 distinct terms in H (snap) act nontrivially on i.                          Within
+this case, there are two subcases.
+
+
+Case 2a: at least one of the terms in H (snap) acting nontrivially on i is
+1-local. In this case, the procedure above sets Ri to be equal to (the nontrivial
+                                          (snap)
+tensor factor of) some such 1-local term hi,j . Let κi be equal to ε1 and ζi = η1 .
+                                   (snap)
+We know that the term hi,j       has commutativity error ε1 with all other terms in
+H (snap) and has spectral gap at least η1 , so the three properties hold.
+
+
+Case 2b: all of the terms in H (snap) acting nontrivially on i are 2-local.
+In this case, the procedure above will take Ri to be some operator from the local
+                           (snap)
+decomposition of a term hi,k . We will set κi = 24ε2 /η2 and ζi = η2 . This setting
+automatically satisfies the third property.
+To see that the properties hold with these parameters, let the decomposition of
+ (snap)
+hi,k    be
+                                                     3
+                                           (snap)
+                                                        Biβ ⊗ σkβ .
+                                                    X
+                                          hi,k    =                                             (101)
+                                                    β=0
+                                      ∗
+Let β ∗ be such that Ri = Biβ . By construction, we know that β ∗ was chosen so that
+                             ∗
+the spectral gap of Ri = Biβ is at least η2 , which establishes the second property.
+                                                       (snap)
+We now show the first property. Let hi,j                        be a Hamiltonian term acting on qubit
+                                        (snap)
+i. Now, suppose j ̸= k. Then decompose hi,j    as
+
+                                                     3
+                                           (snap)   X
+                                          hi,j    =     Aαi ⊗ σjα .                             (102)
+                                                    α=0
+
+          (snap)      (snap)
+Since ∥[hi,j       , hi,k      ]∥ ≤ ε2 , we can conclude by applying Theorem 4.4 that for
+each α:
+                                               ∥[Aαi , Ri ]∥ ≤ ε2 ,                             (103)
+and therefore
+                                    (snap)
+                                 ∥[hi,j      , Ri ⊗ Ij ]∥ ≤ 4ε2 ≤ 24ε2 /η2 ,                    (104)
+
+                                                      31
+  under the assumption that η2 ≤ 6.
+  Now, suppose j = k. In this case, we are going to use transitivity (Lemma 3.6) to
+                                                  (snap)
+  obtain our conclusion. Pick j ′ ̸= k such that hi,j ′ acts nontrivially on qubit i. (We
+  are guaranteed that such a j ′ exists by the assumption that we are in Case 2.) Such
+  Hamiltonian term has the decomposition
+                                                     3
+                                       (snap)        X
+                                   hi,j ′       =         Aαi ⊗ σjα′ .                                    (105)
+                                                    α=0
+
+  By Equation (103), we know that for each α, ∥[Aαi , Ri ]∥ ≤ ε2 . Now, let Biβ be an
+                                       (snap)          (snap) (snap)
+  operator from the decomposition of hi,k . Since ∥[hi,k , hi,j ′ ]∥ ≤ ε2 , we can
+  conclude by Theorem 4.4 that for any α:
+
+                                         ∥[Biβ , Aαi ]∥ ≤ ε2 .                                            (106)
+
+  Furthermore, by the fact that we chose hij ′ to act nontrivially on qubit i, we know
+  that it is η2 -gapped on qubit i, and therefore that there exists an α∗ such that
+        ∗
+  ∆(Aαi ) ≥ η2 .
+                                                                         ∗                      ∗
+  Now, we will use transitivity: we know that ∥[Biβ , Aαi ]∥ ≤ ε2 and ∥[Aαi , Ri ]∥ ≤ ε2 ,
+  so by Lemma 3.6, we can conclude that
+                                                      6ε2     6ε2
+                              ∥[Biβ , Ri ]∥ ≤           α ∗ ≤     ,                                       (107)
+                                                     ∆(Ai )   η2
+
+  where we are assuming that ε2 ≤ η2 and moreover that the terms of the Hamiltonian
+  have operator norm at most 1. So, we have
+
+                                    (snap)                        24ε2
+                               ∥[hi,k        , Ri ⊗ Ik ]∥ ≤            .
+                                                                   η2
+
+7. Pinch everything. Define the global pinching map P that pinches each qubit i by
+   Ri . Our final Hamiltonian will be
+                                        b = P(H (snap) ).
+                                        H
+
+  Tensor-product pinching is an average of unitary conjugations and is therefore con-
+                                                           (snap)
+  tractive in operator norm. Consequently, ∥ĥi,j ∥ ≤ ∥hi,j ∥ ≤ ∥hi,j ∥ ≤ 1. By
+  Lemma 5.2, we conclude that the resulting Hamiltonian H   b is commuting, and that
+                                                                     (snap)
+  for each term hi,j in H, its distance from the corresponding term hi,j
+                b       b                                                   in H (snap)
+  is bounded by
+                                   (                 !)
+                                         κi κj                               ε1 24ε2
+                                                                                      
+                  (snap)
+        ∥ĥi,j − hi,j ∥ ≤ 4 max             +               ≤ 8 max            ,           ≤ 192 ε1/3 ,
+                             i,j         ζi   ζj                             η1 η22
+
+  where the final inequality follows from the parameter settings we have made:
+
+                                            ε2 = ε,                                                       (108)
+                                            ε1 = ε,                                                       (109)
+                                                 √
+                                            η2 = 3 ε, and                                                 (110)
+                                                       √
+                                            η1 = η2 = 3 ε.                                                (111)
+
+                                                32
+Computing the total distance between the input and output terms for each
+term. For each input Hamiltonian term hi,j , we compute an upper bound on its distance
+from the output term ĥi,j . By the triangle inequality, there are two distances to add: (1)
+               (snap)
+the distance ∥hi,j    − ĥi,j ∥, which we showed above is bounded by 192 ε1/3 , and (2) the
+                   (snap)
+distance ∥hi,j − hi,j ∥, which we bounded earlier by 4(η2 + η1 ). Thus, the total distance
+is bounded above as follows.
+                                     (snap)          (snap)
+      ∥ĥi,j − hi,j ∥ ≤ ∥ĥi,j − hi,j         ∥ + ∥hi,j        − hi,j ∥
+                     ≤ 192 ε1/3 + 4η2 + 4η1
+                                   √
+                     ≤ 192 ε1/3 + 4 3 ε + 4ε1/3                               Ineq. 110 and Ineq. 111
+                               1/3
+                     ≤ 200 ε         .
+
+From this, the total operator norm bound
+
+                                           ∥Ĥ − H∥ ≤ 200mε1/3
+
+follows directly by applying the triangle inequality m times.
+
+Runtime: The fact that the runtime is linear in m follows by inspecting the algorithm:
+only the at most 2m qubits occurring in the input need to be processed, and all matrix
+operations are on constant-size matrices. For rational input entries and rational ε, the gap
+comparisons involve algebraic numbers of bounded degree and polynomial bit complexity.
+The output terms can themselves be represented exactly with rational entries: midpoint
+snapping is rational, and for a non-scalar rational pivot R, writing B = R − Tr(R) 2 I and
+ 2        2
+b = Tr(B )/2 > 0 gives
+                                          1        BXB
+                                                        
+                                PR (X) =     X+            .
+                                          2         b2
+Each output term uses only a constant number of these rational matrix operations, so its
+bit complexity is polynomial in that of the input. In particular, exact commutation does
+not require rounding the output matrices to floating-point numbers.
+
+Lemma 5.2 (The multi-qubit pinching lemma). Let H = (i,j)∈E hij be a 2-local Hamil-
+                                                                          P
+
+tonian and for each i ∈ [n], let Pi be either the identity superoperator or the pinching
+superoperator for some one-local Hermitian operator Ri acting on qubit i. Suppose that
+for each i where Pi is not identity, ∆(Ri ) ≥ ηi and for all j,
+
+                                            ∥[Ri ⊗ Ij , hi,j ]∥ ≤ κi ,
+
+for parameters ηi > 0 and κi ≥ 0; when Pi = id, set ηi = 1 and κi = 0. Then the 2-local
+Hamiltonian
+                         H′ =
+                                X
+                                    (Pi ⊗ Pj ⊗ id[n]\{i,j} )(hi,j )              (112)
+                                         (i,j)∈E
+
+satisfies the following properties:
+
+  1. For all i such that Pi is not identity, all the terms h′i,j touching qubit i commute
+     with each other, and with Ri .
+
+  2. For all (i, j) ∈ E,                                                      !
+                                                                    κi κj
+                                          ∥h′i,j − hi,j ∥ ≤ 4          +          .                     (113)
+                                                                    ηi   ηj
+
+                                                          33
+Proof. We show the two properties in turn.
+
+   1. Commutativity. We only need to check commutativity for pairs of terms which
+      overlap on exactly one qubit (there are no two terms that overlap on two qubits
+      since our convention14 is that hi,j is the sole term in the Hamiltonian acting on the
+      pair i, j), and that were affected nontrivially by the pinching on the shared qubit.
+      Let {i, j, k} be three distinct indices. Consider the terms hi,j and hj,k which have
+      the following decomposition according to Lemma 4.1.
+
+                                         3                                        3
+                                                                                        Bjβ ⊗ σkβ
+                                         X                                        X
+                                hi,j =         σiα ⊗ Aαj                hj,k =                                 (114)
+                                         α=0                                      β=0
+
+       Now, consider the commutator [h′i,j , h′j,k ].
+
+       [h′i,j , h′j,k ] = [(Pi ⊗ Pj )(hi,j ), (Pj ⊗ Pk )(hj,k )]           (by Equation (112))
+                                                                   
+
+                   =  (Pi ⊗ Pj )(σ α ⊗ Aα ), (Pj ⊗ Pk )(B β ⊗ σ β )
+                      X                      X
+                                               i     j                            j      k          (by Equation (114))
+                          α                                 β
+
+                             Pi (σiα ) ⊗ [Pj (Aαj ), Pj (Bjβ )] ⊗Pk (σkβ )
+                       X
+                   =                                                                  (commutator properties)
+                       α,β               |         {z           }
+                                                   =0
+                   = 0.
+
+       To see that the commutators in the sum are 0, observe that by Lemma 3.2, each
+       Pj (Aαj ) and Pj (Bjβ ) commutes with Rj , and thus by Lemma 3.5 and the fact that
+       Rj is gapped, we get that Pj (Aαj ) and Pj (Bjβ ) commute with each other. The same
+       calculation shows that each h′i,j commutes with Ri whenever Pi is not identity.
+
+   2. Rounding error. To bound the rounding error, we will first show a commutativity
+      property of the operators Ri for every qubit where they are defined. Consider such
+      a qubit i and let hi,j be a Hamiltonian term acting on qubit i. Decompose hi,j as
+                                                            3
+                                                            X
+                                                   hi,j =           Aαi ⊗ σjα .                                (114)
+                                                            α=0
+
+       Since, by the hypothesis, ∥[hi,j , (Ri ⊗ Ij )]∥ ≤ κi , expanding this commutator and
+       applying Lemma 4.3 shows that for each α:
+
+                                                    ∥[Aαi , Ri ]∥ ≤ κi .                                       (115)
+
+       Now, we can compute the rounding error of any Hamiltonian term. Let hi,j be any
+       term of the Hamiltonian. If both Pi and Pj are equal to identity, then there is
+       nothing to prove.
+       Now, suppose without loss of generality that qubit i has Pi not equal to identity, so
+
+  14
+     This convention is without loss of generality, since one can absorb all terms that act on a pair i, j into
+a single term at the start of the analysis.
+
+
+
+
+                                                           34
+     Ri is defined. Then we obtain
+                                                     3
+                                                     X
+                                                            Pi (Aαi ) − Aαi ⊗ σjα
+                                                                           
+                           ∥Pi (hi,j ) − hi,j ∥ =                                              (116)
+                                                    α=0
+                                                    3
+                                                    X
+                                                ≤         ∥Pi (Aαi ) − Aαi ∥                   (117)
+                                                    α=0
+                                                          3
+                                                    1 X
+                                                ≤            ∥[Aαi , Ri ]∥                     (118)
+                                                  ∆(Ri ) α=0
+                                                      4           4κi
+                                                ≤          · κi ≤     ,                        (119)
+                                                    ∆(Ri )         ηi
+
+     where in the second to last line we applied Lemma 3.2 and Equation (115). Now, if
+     Pj is equal to identity, then h′i,j = Pi (hi,j ), so we have shown Equation (113) in this
+     case.
+     The remaining case is if Pj is also not equal to identity. In this case, write the
+     decomposition
+                                                    3
+                                                    X
+                                          hi,j =          σiα ⊗ Cjα .
+                                                    α=0
+
+     We can similarly derive the bound
+                                             3
+                                             X
+      ∥(Pi ⊗ Pj )(hi,j ) − Pi (hi,j )∥ = ∥       Pi (σiα ) ⊗ (Pj (Cjα ) − Cjα )∥               (120)
+                                          α=0
+                                          3
+                                          X
+                                      ≤         ∥(Pj (Cjα ) − Cjα )∥                           (121)
+                                          α=0
+                                                  3
+                                            1 X
+                                      ≤              ∥[Cjα , Rj ]∥                             (122)
+                                          ∆(Rj ) α=0
+                                          4κj
+                                      ≤              (by Equation (115) and ∆(Rj ) ≥ ηj ), (123)
+                                           ηj
+
+     where we have used the bound ∥Pi (σiα )∥ ≤ ∥σiα ∥ = 1, which follows from the fact
+     that Pi is a positive unital map and thus contractive in operator norm (see [Wat18,
+     Theorem 6.12]). So overall, by the triangle inequality, we get
+
+         ∥hi,j − (Pi ⊗ Pj )(hi,j )∥ ≤ ∥hi,j − Pi (hi,j )∥ + ∥Pi (hi,j ) − (Pi ⊗ Pj )(hi,j )∥   (124)
+                                      4κi 4κj
+                                    ≤      +      .                                            (125)
+                                       ηi     ηj
+
+     This proves Equation (113).
+
+
+
+
+6 Applications to Almost Commuting 2-local Hamiltonians
+In this section, we use our locality-preserving rounding technique (formally, Theorem 5.1)
+to show that the almost commuting 2-local Hamiltonian problem lies in NP.
+
+
+
+                                                    35
+6.1 Containment in NP
+Theorem 6.1. There exists a linear-time computable reduction from the (γ, ε)-2-ACLH
+problem to the (γ ′ )-2-CLH where γ ′ = γ − 400 ε1/3 for any 0 ≤ ε ≤ 1 such that γ ′ ≥
+1/poly(n).
+
+Proof. Given (H, a, b) an instance of (γ, ε)-2-ACLH, let H ′ be the commuting Hamiltonian
+obtained by applying Theorem 5.1 to H, and let a′ = a + 200mε1/3 and b′ = b − 200mε1/3 .
+These thresholds have exact polynomial-bit descriptions as constant-degree algebraic num-
+bers (a defining polynomial together with an isolating interval); their numerical approxi-
+mations can be computed to any inverse-polynomial accuracy in polynomial time. From
+the operator norm bound in the theorem, together with Fact 2.4, we know that
+
+                              |λmin (H ′ ) − λmin (H)| ≤ 200mε1/3 .
+
+   Hence, we have
+
+                               λmin (H) ≤ a =⇒ λmin (H ′ ) ≤ a′                              (126)
+                                                           ′     ′
+                                λmin (H) ≥ b =⇒ λmin (H ) ≥ b .                              (127)
+
+Thus, since (b′ − a′ )/m = γ ′ ≥ 1/poly(n), it holds that (H ′ , a′ , b′ ) is always an instance of
+(γ ′ )-2-CLH satisfying the promise for γ ′ = γ − 400ε1/3 , and H ′ is a YES instance iff H is
+a YES instance, so the map H 7→ H ′ is a reduction as claimed.
+
+Corollary 6.2. The (γ, ε)-2-ACLH promise problem is in NP when γ−400ε1/3 ≥ 1/poly(n).
+
+Proof. This is a direct consequence of Theorem 6.1 and Theorem 2.15.
+
+6.2 Quantum Gibbs sampling
+As an application of our locality-preserving rounding technique for almost commuting
+quantum many-body Hamiltonians, we now consider the task of quantum Gibbs sampling.
+For a local Hamiltonian H and an inverse temperature β > 0, the Gibbs state
+
+                                                   e−βH
+                                      ρβ (H) =                                               (128)
+                                                 Tr [e−βH ]
+
+describes the thermal equilibrium properties of a quantum system at finite temperature
+T = 1/β. Given a precision parameter δ > 0, the (H, β, δ)-Gibbs state preparation (or
+sampling) task with respect to the Hamiltonian H and an inverse temperature β > 0 is to
+output ρ such that
+
+                                       ∥ρ − ρβ (H)∥1 ≤ δ.                                    (129)
+
+Almost-commuting Hamiltonians. Our rounding technique allows us to reduce quan-
+tum Gibbs sampling for ε-almost-commuting 2-local qubit Hamiltonians to the task of
+Gibbs sampling for a nearby commuting 2-local qubit Hamiltonian, provided that ε is
+sufficiently small.
+    We use the following result on the continuity of the Gibbs state (with respect to the
+Hamiltonian) which is implicit in [CMTW25, Proposition 15].
+
+
+
+
+                                                36
+Proposition 1 (Continuity of the Gibbs state, [CMTW25]). Let H, Ĥ be Hermitian op-
+erators acting on a finite-dimensional complex vector space. Then, for any inverse tem-
+perature β > 0,
+                           ∥ρβ (H) − ρβ (Ĥ)∥1 ≤ e2β∥H−Ĥ∥ − 1.
+In particular, if ∥H − Ĥ∥ ≤ ln(1 + δ)/2β, then it holds that ∥ρβ (H) − ρβ (Ĥ)∥1 ≤ δ.
+
+   Equipped with the above technical fact, we can now show the following reduction.
+
+Theorem 6.3. Let H = m          i=1 hi be an ε-almost-commuting 2-local qubit Hamiltonian
+                            P
+
+with ∥hi ∥ ≤ 1 and ∥[hi , hj ]∥ ≤ ε, for all i, j, where 0 ≤ ε ≤ 1. Then, for any inverse
+temperature β > 0 and any precision δ > 0 such that
+                                                      δ
+                                 200mε1/3 ≤ ln 1 +        /2β                              (130)
+                                                       2
+
+there exists a reduction from the task of (H, β, δ)-Gibbs sampling to the task of (Ĥ, β, δ/2)-
+Gibbs sampling for a 2-local commuting qubit Hamiltonian Ĥ. Moreover, if the Gibbs
+sampler for Ĥ runs in time T , then the resulting Gibbs sampler for H runs in time
+T + O(m).
+
+Proof. The reduction simply applies the rounding technique from Theorem 5.1 to H,
+resulting in a 2-local commuting qubit Hamiltonian Ĥ such that ∥H − Ĥ∥ ≤ 200mε1/3 .
+Then, the output of any successful (Ĥ, β, δ/2)-Gibbs sampler results in a state ρ such that
+
+      ∥ρ − ρβ (H)∥1 ≤ ∥ρ − ρβ (Ĥ)∥1 + ∥ρβ (Ĥ) − ρβ (H)∥1         (triangle inequality)
+                      δ
+                    ≤ + ∥ρβ (Ĥ) − ρβ (H)∥1                        (by assumption)
+                      2
+                      δ
+                    ≤ + e2β∥H−Ĥ∥ − 1                              (Proposition 1)
+                      2
+                      δ δ
+                    ≤ + =δ                                         (due to (130))
+                      2 2
+Because the rounding step is deterministic and requires time O(m), the claim follows.
+
+    We remark that our Gibbs sampling reduction for almost-commuting Hamiltonians
+above can be further combined with the reduction of [HJ25, Theorem 9], thereby reduc-
+ing Gibbs sampling for (certain) almost-commuting 2-local qubit Hamiltonians to Gibbs
+sampling of certain classical Hamiltonians.
+
+6.3 Faster Hamiltonian simulation
+Our result gives a method to speed up Hamiltonian simulation for approximately com-
+muting Hamiltonians. The basic idea is to use the fact that time evolution of commuting
+Hamiltonians can be simulated very efficiently, since the matrix exponential factors into
+a product of exponentials of the individual terms. For short times, thus, one could sim-
+ply round an approximately commuting Hamiltonian H to a commuting Hamiltonian H ′
+with our technique, and simulate H ′ instead of H. For longer times, the error incurred
+by this rounding may be prohibitive: for this more general case, we can use the "interac-
+tion picture" formalism of Low and Wiebe [LW18], in essentially a black-box way, to add
+corrections from the rounding error.
+    As a first step, we show the following helper lemma which is essentially folklore.
+
+
+                                              37
+Lemma 6.4. Suppose H = m      i=1 hi is an O(1)-local commuting Hamiltonian on n qubits,
+                              P
+
+with ∥hi ∥ ≤ 1, m = Ω(n), t ∈ R, and 0 < δ < 1. Then there exists a unitary quantum
+circuit on n system qubits and one ancillary qubit of gate complexity
+                                                                                 
+                             O m poly log(m/δ), log(2 + |t|)
+
+that implements a unitary U such that, with the ancillary qubit initialized to |0⟩,
+
+                                U (I ⊗ |0⟩) − (eiHt ⊗ |0⟩) ≤ δ.
+
+Moreover, this circuit can be computed from a classical description of H and t in classical
+time scaling as O(mpoly(L, log(m/δ), log(2 + |t|))), where L bounds the bit complexity of
+each local term and of t.
+Proof. Using the commutativity of the terms of H, we may write the exponential of H as
+a product of exponentials of individual terms as follows:
+                                               Pm                m
+                                   eiHt = ei          hi t
+                                                                 Y
+                                                i=1          =         eihi t .
+                                                                 i=1
+
+So to simulate the time evolution, it suffices to simulate eihi t for each term hi . To do this,
+since hi acts locally on a constant number of qubits, we can explicitly compute eihi t , up
+to some appropriate finite precision, and then apply the Solovay-Kitaev theorem, in the
+algorithmic form of [DN06], to simulate it using a sequence of elementary gates. To retain
+scalar phases, embed each local unitary V as V ⊗ |0⟩⟨0| + V † ⊗ |1⟩⟨1| on one additional
+qubit. This embedded unitary has determinant one and acts as V when the ancillary qubit
+is |0⟩. The same ancillary qubit can be reused throughout, and the approximation errors
+accumulate by the triangle inequality.
+     We now estimate the time complexity of this procedure. In order to implement eiHt up
+to error δ, we need to implement each eihi t up to error δ/m. To do this, if each term hi is k-
+local, it suffices to compute each entry of the matrix eihi t up to error δ/(100m 2k ) (so that
+the total computed matrix is at most δ/(100m) far in operator norm from eihi t ). Replacing
+this numerical matrix by its unitary polar factor increases the error by at most a constant
+factor. We then apply the Solovay-Kitaev theorem to approximate its determinant-one
+embedding up to error δ/(100m). Applying the results of [DN06], we get the claimed gate
+complexity and runtime.
+
+    We will now sketch how to use our rounding to perform Hamiltonian simulation.
+The main technical obstacle to directly applying a standard algorithm is the following:
+Hamiltonian simulation algorithms are typically given in the oracle model, where access
+to H is given through a unitary oracle OH that implements a "block-encoding" of H:
+(⟨0| ⊗ I)OH (|0⟩ ⊗ I) ∝ H. However, in our setting, we need to work in a model where
+the Hamiltonian is given as explicit input (i.e. as a classical string containing descriptions
+of all the local terms), in order to apply our rounding algorithm. Indeed, implicit in the
+oracle picture is the assumption that for any realistic Hamiltonian, such an oracle can be
+implemented efficiently. So we will assume that we have a method to construct such a
+block encoding and leave its size as a parameter.
+    Our rounding says that
+                                       H = H ′ + ∆,
+where H ′ is a commuting Hamiltonian with ∥H ′ ∥ ≤ αA := m, and ∆ is a local Hamiltonian
+with ∥∆∥ ≤ 200mε1/3 . Here we assume the hypotheses of Theorem 5.1. Moreover, H ′ and
+
+                                                    38
+∆ are efficiently computable from H. If ∆ = 0, we use Lemma 6.4 alone. Otherwise,
+choose a known normalization αB > 0 such that
+
+                                                 ∥∆∥ ≤ αB ≤ 200mε1/3 ;
+
+for example, one may take αB = 200mε1/3 . Suppose that, once we have written down
+∆, we can construct a block encoding of ∆/αB , together with its controlled version and
+inverse, with gate complexity Tblock at the precision required below. We assume that the
+number of block-encoding ancillas is O(Tblock ), so reflections on those ancillas are included
+in the cost bound.
+    We use the interaction-picture construction of Low and Wiebe [LW18], with H ′ as
+the “fast” part and ∆ as the slow part. To account for small times explicitly, let t > 0,
+0 < δ < 1, and set
+                                                                                    ′      ′
+        r = max{1, ⌈2αB t⌉},                     τ = t/r,              HI (s) = eiH s ∆e−iH s   (0 ≤ s ≤ τ ).
+
+Then
+                                       Rτ               r
+        −iHt        −iH ′ τ        −i        HI (s) ds
+       e       = e            Te        0                     ,        ∥HI (s)∥ ≤ αB ,   ∥ḢI (s)∥ ≤ 2αA αB .
+
+The truncated-Dyson-series algorithm of [LW18, Theorem 3 and Lemma 6], with er-
+ror O(δ/r) per segment, uses O(r)
+                                e    queries in total to a time-indexed block encoding of
+HI (s)/αB , together with r evolutions under H ′ .
+    For completeness, the required time-indexed oracle can be implemented directly, with-
+out assuming a simulation cost proportional to the duration of each short evolution. As in
+the proof of [LW18, Theorem 7], let
+                                                 M −1
+                                                                                ′
+                                                         |ℓ⟩⟨ℓ| ⊗ Ia ⊗ e−iH ℓτ /M ,
+                                                 X
+                                        V =
+                                                 ℓ=0
+
+where Ia acts on the block-encoding ancillas. If O∆ block-encodes ∆/αB , then V † (I⊗O∆ )V
+is the required time-indexed block encoding. Here M can be chosen to be a power of two
+of order 1 + t(αA + αB )/δ + log2 (2 + r/δ), as required by [LW18, Lemma 5]. Expanding ℓ
+in binary implements this controlled evolution using O(log M ) controlled evolutions under
+H ′ , each of duration at most τ ≤ t. The proof of Lemma 6.4 applies to these controlled
+evolutions as well: controlling each local exponential increases its locality by only one.
+Each such evolution therefore costs O(m)
+                                      e     gates, uniformly in its duration, when its error is
+chosen sufficiently small that all oracle-synthesis errors sum to O(δ). Thus a time-indexed
+oracle costs eO(Tblock + m) gates. The r separate evolutions under H ′ and the auxiliary
+gates in the Dyson-series algorithm fit within the same total bound.
+     Putting this together and ignoring polylogarithmic factors gives gate complexity
+
+                                                         and hence            e (1 + mε1/3 t)(Tblock + m) ,
+                                                                                                          
+        O
+        e (1 + αB t)(Tblock + m) ,                                            O
+
+where the hidden factors are polynomial in log(2 + m(1 + t)/δ). The case t = 0 requires
+no gates, and negative times are handled by taking the inverse circuit. Apart from the
+commuting-simulation overhead and polylogarithmic factors, the important feature is that
+the time-dependent cost scales with a normalization bound for ∆, controlled by the com-
+mutator error, rather than with the total norm of the Hamiltonian.
+
+
+
+                                                                  39
+References
+[ABN23]      Anurag Anshu, Nikolas P. Breuckmann, and Chinmay Nirkhe. “NLTS Hamil-
+             tonians from Good Quantum Codes”. In: Proceedings of the 55th Annual
+             ACM Symposium on Theory of Computing. STOC ’23. ACM, June 2023,
+             pp. 1090–1096. doi: 10.1145/3564246.3585114. url: http://dx.doi.org/
+             10.1145/3564246.3585114 (cit. on p. 2).
+[AE11]       Dorit Aharonov and Lior Eldar. “On the complexity of commuting local
+             Hamiltonians, and tight conditions for topological order in such systems”. In:
+             2011 IEEE 52nd Annual Symposium on Foundations of Computer Science.
+             IEEE. 2011, pp. 334–343. doi: 10.1109/FOCS.2011.58. arXiv: 1102 . 0770
+             (cit. on pp. 1, 2, 4, 7, 24).
+[AKV18]      Dorit Aharonov, Oded Kenneth, and Itamar Vigdorovich. “On the Complex-
+             ity of Two Dimensional Commuting Local Hamiltonians”. en. In: vol. 111.
+             Schloss Dagstuhl – Leibniz-Zentrum für Informatik, 2018, 2:1–2:21. doi:
+             10.4230/LIPICS.TQC.2018.2. url: https : / / drops . dagstuhl . de /
+             entities/document/10.4230/LIPIcs.TQC.2018.2 (cit. on pp. 1, 7).
+[Ara11]      Itai Arad. “A note about a partial no-go theorem for quantum PCP”. In:
+             Quantum Information & Computation 11.11-12 (2011), pp. 1019–1027. url:
+             https://www.rintonpress.com/xxqic11/qic-11-1112/1019-1027.pdf
+             (cit. on pp. 4, 7).
+[AS10]       Alexander Altland and Ben D. Simons. Condensed Matter Field Theory.
+             2nd ed. Cambridge University Press, 2010 (cit. on p. 5).
+[BCL24]      Thiago Bergamaschi, Chi-Fang Chen, and Yunchao Liu. “Quantum computa-
+             tional advantage with constant-temperature Gibbs sampling”. In: 2024 IEEE
+             65th Annual Symposium on Foundations of Computer Science (FOCS).
+             arXiv:2404.14639. IEEE. 2024, pp. 1063–1085 (cit. on p. 5).
+[BH25]       John Bostanci and Yeongwoo Hwang. Commuting Local Hamiltonians Be-
+             yond 2D. 2025. arXiv: 2410.10495 [quant-ph]. url: https://arxiv.org/
+             abs/2410.10495 (cit. on pp. 1, 7).
+[BH92]       Ravi Boppana and Magnús M. Halldórsson. “Approximating maximum in-
+             dependent sets by excluding subgraphs”. In: BIT 32.2 (June 1992), pp. 180–
+             196. issn: 0006-3835. doi: 10.1007/BF01994876. url: https://doi.org/
+             10.1007/BF01994876 (cit. on p. 3).
+[BV04]       S. Bravyi and M. Vyalyi. Commutative version of the k-local Hamiltonian
+             problem and common eigenspace problem. 2004. arXiv: quant-ph/0308021
+             [quant-ph]. url: https://arxiv.org/abs/quant- ph/0308021 (cit. on
+             pp. 1, 4, 6, 7, 20).
+[Cal85]      Herbert B. Callen. Thermodynamics and an Introduction to Thermostatis-
+             tics. 2nd ed. Wiley, 1985 (cit. on p. 5).
+[CB23]       Chi-Fang Chen and Fernando G. S. L. Brandão. Fast Thermalization
+             from the Eigenstate Thermalization Hypothesis. 2023. arXiv: 2112 . 07646
+             [quant-ph]. url: https://arxiv.org/abs/2112.07646 (cit. on p. 2).
+[Cha87]      David Chandler. Introduction to Modern Statistical Mechanics. Oxford Uni-
+             versity Press, 1987 (cit. on p. 5).
+
+
+
+                                           40
+[CKF23]     Chi-Fang Chen, Michael J. Kastoryano, and András Gilyén Fernando
+            Brandão. “Quantum Thermal State Preparation”. In: arXiv preprint (2023).
+            url: https://arxiv.org/abs/2303.18224 (cit. on p. 5).
+[CKG23]     Chi-Fang Chen, Michael J Kastoryano, and András Gilyén. “An efficient
+            and exact noncommutative quantum Gibbs sampler”. In: arXiv preprint
+            arXiv:2311.09207 (2023) (cit. on p. 5).
+[CMTW25]    Ángela Capel, Massimo Moscolari, Stefan Teufel, and Tom Wessel. “From
+            Decay of Correlations to Locality and Stability of the Gibbs State”. In: Com-
+            munications in Mathematical Physics 406.2 (Jan. 2025). issn: 1432-0916.
+            doi: 10.1007/s00220-024-05198-x. url: http : / / dx . doi . org / 10 . 1007 /
+            s00220-024-05198-x (cit. on pp. 36, 37).
+[CRSV17]    Rui Chao, Ben W. Reichardt, Chris Sutherland, and Thomas Vidick. “Over-
+            lapping Qubits”. en. In: vol. 67. Schloss Dagstuhl – Leibniz-Zentrum für In-
+            formatik, 2017, 48:1–48:21. doi: 10.4230/LIPICS.ITCS.2017.48. url: https:
+            / / drops . dagstuhl . de / entities / document / 10 . 4230 / LIPIcs . ITCS .
+            2017.48 (cit. on pp. 7, 8).
+[CST+ 21]   Andrew M Childs, Yuan Su, Minh C Tran, Nathan Wiebe, and Shuchen Zhu.
+            “Theory of trotter error with commutator scaling”. In: Physical Review X
+            11.1 (2021), p. 011020 (cit. on p. 6).
+[Dav85]     Kenneth R. Davidson. “Almost commuting Hermitian matrices”. In: Math-
+            ematica Scandinavica 56 (1985), pp. 222–240. doi: 10.7146/math.scand.a-
+            12098. url: https://www.mscand.dk/article/view/12098 (cit. on pp. 3,
+            7).
+[DN06]      Christopher M Dawson and Michael A Nielsen. “The Solovay-Kitaev algo-
+            rithm”. In: Quantum Information & Computation 6.1 (2006), pp. 81–95.
+            arXiv: https://arxiv.org/pdf/quant-ph/0505030 (cit. on p. 38).
+[FGW22]     Weiming Feng, Heng Guo, and Jiaheng Wang. Swendsen-Wang dynamics for
+            the ferromagnetic Ising model with external fields. 2022. arXiv: 2205.01985
+            [cs.DS]. url: https://arxiv.org/abs/2205.01985 (cit. on p. 6).
+[GHLS15]    Sevag Gharibian, Yichen Huang, Zeph Landau, and Seung Woo Shin. “Quan-
+            tum Hamiltonian Complexity”. In: Foundations and Trends® in Theoret-
+            ical Computer Science 10.3 (2015), pp. 159–282. issn: 1551-3068. doi:
+            10.1561/0400000066. url: http : / / dx . doi . org / 10 . 1561 / 0400000066
+            (cit. on p. 1).
+[Hal76]     Paul R Halmos. “Some unsolved problems of unknown depth about operators
+            on Hilbert space”. In: Proceedings of the Royal Society of Edinburgh Section
+            A: Mathematics 76.1 (1976), pp. 67–76 (cit. on p. 7).
+[Has09]     M. B. Hastings. “Making Almost Commuting Matrices Commute”. In: Com-
+            munications in Mathematical Physics 291.2 (July 2009), pp. 321–345. issn:
+            1432-0916. doi: 10.1007/s00220-009-0877-2. url: http://dx.doi.org/10.
+            1007/s00220-009-0877-2 (cit. on p. 3).
+[Has13]     Matthew B. Hastings. “Trivial low-energy states for commuting Hamilto-
+            nians, and the quantum PCP conjecture”. In: Quantum Information and
+            Computation 13.5–6 (2013). arXiv:1201.3387, pp. 393–429 (cit. on pp. 2, 4).
+
+
+
+
+                                          41
+[Her22]   David Herrera. On Hastings’ approach to Lin’s Theorem for Almost Commut-
+          ing Matrices. 2022. arXiv: 2011.11800 [math.FA]. url: https://arxiv.
+          org/abs/2011.11800 (cit. on p. 3).
+[HJ25]    Yeongwoo Hwang and Jiaqing Jiang. Gibbs state preparation for commuting
+          Hamiltonian: Mapping to classical Gibbs sampling. 2025. arXiv: 2410.04909
+          [quant-ph]. url: https://arxiv.org/abs/2410.04909 (cit. on pp. 5, 6,
+          37).
+[HL10]    Matthew B. Hastings and Terry A. Loring. “Almost commuting ma-
+          trices, localized Wannier functions, and the quantum Hall effect”. In:
+          Journal of Mathematical Physics 51.1 (Jan. 2010). issn: 1089-7658. doi:
+          10.1063/1.3274817. url: http://dx.doi.org/10.1063/1.3274817 (cit. on
+          p. 3).
+[IJ23]    Sandy Irani and Jiaqing Jiang. Commuting Local Hamiltonian Problem on
+          2D beyond qubits. 2023. arXiv: 2309 . 04910 [quant-ph]. url: https : / /
+          arxiv.org/abs/2309.04910 (cit. on pp. 1, 7).
+[Kat66]   Tosio Kato. Perturbation Theory for Linear Operators. 1966, pp. xix + 592
+          (cit. on p. 2).
+[KB16]    Michael J. Kastoryano and Fernando G. S. L. Brandao. Quantum Gibbs
+          Samplers: the commuting case. 2016. arXiv: 1409.3435 [quant-ph]. url:
+          https://arxiv.org/abs/1409.3435 (cit. on p. 2).
+[Kit03]   A.Yu. Kitaev. “Fault-tolerant quantum computation by anyons”. In: Annals
+          of Physics 303.1 (Jan. 2003), pp. 2–30. issn: 0003-4916. doi: 10.1016/s0003-
+          4916(02)00018-0. url: http : / / dx . doi . org / 10 . 1016 / S0003 - 4916(02 )
+          00018-0 (cit. on pp. 1, 2).
+[KKR05]   Julia Kempe, Alexei Kitaev, and Oded Regev. The Complexity of the Local
+          Hamiltonian Problem. 2005. arXiv: quant- ph/0406180 [quant-ph]. url:
+          https://arxiv.org/abs/quant-ph/0406180 (cit. on p. 20).
+[LB14]    David P. Landau and Kurt Binder. A Guide to Monte Carlo Simulations in
+          Statistical Physics. 4th ed. Cambridge University Press, 2014 (cit. on p. 5).
+[Lin97]   Huaxin Lin. “Almost commuting selfadjoint matrices and applications”. In:
+          Fields Institute Communications 13 (1997), pp. 193–233 (cit. on p. 3).
+[LL80]    L. D. Landau and E. M. Lifshitz. Statistical Physics, Part 1. 3rd ed. Course
+          of Theoretical Physics, Vol. 5. Pergamon Press, 1980 (cit. on p. 5).
+[LW05]    Michael A. Levin and Xiao-Gang Wen. “String-net condensation: A physical
+          mechanism for topological phases”. In: Physical Review B 71.4 (Jan. 2005).
+          issn: 1550-235X. doi: 10.1103/physrevb.71.045110. url: http://dx.doi.
+          org/10.1103/PhysRevB.71.045110 (cit. on p. 2).
+[LW18]    Guang Hao Low and Nathan Wiebe. “Hamiltonian simulation in the inter-
+          action picture”. In: (2018). arXiv: 1805.00675 (cit. on pp. 6, 37, 39).
+[Mer65]   N. David Mermin. “Thermal Properties of the Inhomogeneous Electron
+          Gas”. In: Physical Review 137.5A (1965), A1441–A1443. doi: 10.1103/Phys-
+          Rev.137.A1441 (cit. on p. 5).
+[MRS24]   Glen Bigan Mbeng, Angelo Russomanno, and Giuseppe E. Santoro. “The
+          quantum Ising chain for beginners”. In: SciPost Physics Lecture Notes (June
+          2024). issn: 2590-1990. doi: 10.21468/scipostphyslectnotes.82. url: http:
+          //dx.doi.org/10.21468/SciPostPhysLectNotes.82 (cit. on p. 2).
+
+                                         42
+[PB11]       R. K. Pathria and Paul D. Beale. Statistical Mechanics. 3rd ed. Elsevier,
+             2011 (cit. on p. 5).
+[PS79]       Carl Pearcy and Allen Shields. “Almost commuting matrices”. In: Journal
+             of Functional Analysis 33.3 (1979), pp. 332–338 (cit. on p. 7).
+[RW24]       Joel Rajakumar and James D Watson. “Gibbs sampling gives quantum ad-
+             vantage at constant temperatures with O(1)-local Hamiltonians”. In: arXiv
+             preprint arXiv:2408.01516 (2024) (cit. on p. 5).
+[Sac11]      Subir Sachdev. Quantum Phase Transitions. 2nd ed. Cambridge University
+             Press, 2011 (cit. on pp. 2, 5).
+[Sch11]      Norbert Schuch. Complexity of commuting Hamiltonians on a square lattice
+             of qubits. 2011. arXiv: 1105.2843 [quant-ph]. url: https://arxiv.org/
+             abs/1105.2843 (cit. on pp. 1, 7).
+[SLS+ 25]    Alexander Schmidhuber, Jonathan Z. Lu, Noah Shutty, Stephen Jordan,
+             Alexander Poremba, and Yihui Quek. Hamiltonian Decoded Quantum In-
+             terferometry. 2025. arXiv: 2510.07913 [quant-ph]. url: https://arxiv.
+             org/abs/2510.07913 (cit. on pp. 5, 6, 14).
+[SW87]       Robert H. Swendsen and Jian-Sheng Wang. “Nonuniversal critical dynamics
+             in Monte Carlo simulations”. In: Phys. Rev. Lett. 58 (2 Jan. 1987), pp. 86–
+             88. doi: 10.1103/PhysRevLett.58.86. url: https://link.aps.org/doi/
+             10.1103/PhysRevLett.58.86 (cit. on p. 6).
+[Tao10]      Terence Tao. 254A, Notes 3a: Eigenvalues and sums of Hermitian matrices.
+             Accessed: 2026-01-23. Jan. 2010. url: https://terrytao.wordpress.com/
+             2010/01/12/254a- notes- 3a- eigenvalues- and- sums- of- hermitian-
+             matrices/ (cit. on p. 16).
+[TOV+ 11]    K. Temme, T. J. Osborne, K. G. Vollbrecht, D. Poulin, and F. Verstraete.
+             “Quantum Metropolis sampling”. In: Nature 471.7336 (Mar. 2011), pp. 87–
+             90. issn: 1476-4687. doi: 10.1038/nature09770. url: http://dx.doi.org/
+             10.1038/nature09770 (cit. on p. 5).
+[Tuc10]      Mark E. Tuckerman. Statistical Mechanics: Theory and Molecular Simula-
+             tion. Oxford University Press, 2010 (cit. on p. 5).
+[VHF16]      Sagar Vijay, Jeongwan Haah, and Liang Fu. “Fracton topological order, gen-
+             eralized lattice gauge theory, and duality”. In: Physical Review B 94.23 (Dec.
+             2016). issn: 2469-9969. doi: 10.1103/physrevb.94.235157. url: http://dx.
+             doi.org/10.1103/PhysRevB.94.235157 (cit. on p. 2).
+[Wat18]      John Watrous. The Theory of Quantum Information. Cambridge University
+             Press, 2018 (cit. on p. 35).
+
+
+A Lower bound on the term-wise distance
+We now show a concrete pair of 2-qubit hermitian operators that ε-almost commute for
+                                                                           √
+which any exactly commuting approximation needs to move one of them by Ω( ϵ).
+Theorem A.1 (Lower bound of rounding two anticommuting binary observables). Let
+P, Q be a pair of anti-commuting (P Q = −QP ) binary observables on a Hilbert space H.
+Let t > 0. Then,
+  1. ε := ∥[tP, tQ]∥ = 2t2 , and
+
+                                           43
+  2. for any pair of commuting Hermitian operators P̂ , Q̂, the following holds:
+                                 ∥tP − P̂ ∥2 + ∥tQ − Q̂∥2 ≥ t2 = ε/2.                                   (131)
+
+In other words, in any√ rounding scheme, one of the rounded operators must be moved by
+a distance of at least 2ε .
+Proof. Since P̂ and Q̂ commute, they are simultaneously diagonalizable, and thus have a
+common eigenvector |ψ⟩. Thus,
+                               P̂ |ψ⟩ = p̂ |ψ⟩ ,             Q̂ |ψ⟩ = q̂ |ψ⟩ .                          (132)
+Also, define p and q as follows:
+                          p := ⟨ψ| P |ψ⟩               and        q := ⟨ψ| Q |ψ⟩                        (133)
+where p and q are real since P and Q are Hermitian. We now have:
+     ∥tP − P̂ ∥2op ≥ ∥(tP − P̂ ) |ψ⟩ ∥22                                         by Definition of ∥ · ∥op
+                  = ∥tP |ψ⟩ − p̂ |ψ⟩ ∥22
+                  = t ⟨ψ| P |ψ⟩ − 2tp̂ ⟨ψ| P |ψ⟩ + p̂2 ⟨ψ|ψ⟩
+                     2     2
+
+                  = t2 − 2tpp̂ + p̂2
+                  = (p̂ − tp)2 + t2 (1 − p2 ) ≥ t2 (1 − p2 ).
+Similarly, we have:
+                                    ∥tQ − Q̂∥2 ≥ t2 (1 − q 2 ).                                         (134)
+Thus,
+                         ∥tP − P̂ ∥2 + ∥tQ − Q̂∥2 ≥ t2 (2 − (p2 + q 2 )).                               (135)
+If p2 + q 2 ≤ 1, we obtain our result. We show that this is the case during the rest of this
+proof. Define
+                          R := pP + qQ      and      s := p2 + q 2 .                  (136)
+By anticommutation (P Q + QP = 0) and since P 2 = Q2 = I, we have:
+                              R2 = (pP + qQ)2                                                           (137)
+                                       2       2                          2      2
+                                  = p P + pq(P Q + QP ) + q Q                                           (138)
+                                       2                 2
+                                  =p ·I +0+q ·I                                                         (139)
+                                           2       2
+                                  = (p + q ) · I = s · I.                                               (140)
+Since R is hermitian, ∥R∥2 = ∥R2 ∥ = |s| = s (since s = p2 + q 2 is non-negative). Thus,
+       √
+∥R∥ = s. On the other hand, we have:
+                      ⟨ψ|R|ψ⟩ = ⟨ψ|pP |ψ⟩ + ⟨ψ|qQ|ψ⟩ = p2 + q 2 = s.                                    (141)
+                                                       √
+By the definition of operator norm, we have s ≤ ∥R∥ = s. Thus, s ≤ 1.
+Corollary A.2. For 0 < ε ≤ 1, set
+                                                                                 q
+                        h12 = tX1 X2 ,             h13 = tZ1 Z3 ,         t=         ε/2,               (142)
+
+and let P̂ and Q̂ be a pair of Hermitian commuting operators. Then, ∥[h12 , h13 ]∥ = ε, but:
+                                     √                          √
+                                       ε                          ε
+                       ∥h12 − P̂ ∥ ≥        or     ∥h13 − Q̂∥ ≥     .                 (143)
+                                      2                         2
+Proof. Since X1 and Z1 anti-commute, and since the Pauli matrices are Hermitian observ-
+ables, the result follows directly by Theorem A.1.
+
+
+                                                       44
+
