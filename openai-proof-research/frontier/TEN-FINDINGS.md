@@ -53,7 +53,9 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 - I52: [completed ergodic/dynamical gap report](iterations/i52-ergodic-dynamical-discovery.md). Standard-map relative asymptotics, finite-time lower bounds, a one-step upper bound and a conditional projective criterion are technical partial results. Constant additive entropy loss remains unproved and unrefuted; parent evidence reproduction passes. No nomination.
 - I54: [standard-map additive entropy follow-up](iterations/iteration54-standard-map-additive-entropy-task.json) seeks deterministic projective nonconcentration or a summable regeneration/cancellation bound with all constants tracked.
-- I53: [sharp entropy stability discovery](iterations/iteration53-sharp-entropy-stability-discovery-task.json) investigates quantitative exponential-product and simplex mechanisms beyond the source’s existing equality operations.
+- I53: [complete author-level H53 candidate](iterations/i53-sharp-entropy-stability-discovery.md): fixed-dimensional Wasserstein distance to the entire orthogonal exponential-product orbit is bounded by C_m times the entropy deficit to power 1/(m+6). Parent evidence reproduction passes; dimension-uniform and simplex targets remain open.
+- I55: [independent proof audit](iterations/iteration55-sharp-entropy-stability-r2-task.json) checks H53, the cubic residual lemma, the weaker spectral construction and all normalization/approximation costs.
+- I56: [independent contribution audit](iterations/iteration56-sharp-entropy-stability-novelty-task.json) tests the claimed mechanism against tensor antecedents and a possible classical transverse-derivative reduction. No acceptance pending these reviews.
 
 These records include active tasks, completed gap reports, and R011/R012/R013 acceptance. The four-finding pause checkpoint remains a historical snapshot.
 
