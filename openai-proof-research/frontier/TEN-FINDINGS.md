@@ -85,7 +85,8 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 - I80: [geometric-flow and fluid-computation discovery](iterations/iteration80-geometric-flows-computation-discovery-task.json) is active on fresh constructive consequences, screening at least three targets and developing distinct routes while preserving exact geometric, computability and derivative hypotheses.
 
-- I81: [Diophantine approximation discovery](iterations/iteration81-diophantine-approximation-discovery-task.json) is active on new quantitative and compatibility consequences, with effective bounds and arithmetic dependence kept explicit.
+- I81: [completed Diophantine report](iterations/i81-diophantine-approximation-discovery.md) gives author-level technical Catalan separation exp(-C log²(2b)) and explicit alternating approximants with exponential denominator growth. Parent evidence reproduction passes; these are not independently proof-reviewed or accepted substantial findings. The finite-exponent target remains unproved and unrefuted; effective pi bounds and arbitrary inhomogeneous counting retain separate gaps, and a total computable witness bound for a nonrecursive represented set is refuted.
+- I83: [focused Catalan continuation](iterations/iteration83-catalan-finite-measure-task.json) independently audits the original reused arguments and develops two constructive routes to a finite irrationality measure, with the missing height/decay and holonomic hypotheses explicit.
 - I82: [measured-group and operator-algebra discovery](iterations/iteration82-measured-group-operator-discovery-task.json) is active on new action, stability and relative compatibility mechanisms with exact norm and quantifier scopes.
 
 These records include active tasks, completed gap reports, and R011/R012/R013/R014 acceptance. The four-finding pause checkpoint remains a historical snapshot.
