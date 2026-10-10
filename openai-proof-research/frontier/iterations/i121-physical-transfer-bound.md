@@ -1,0 +1,392 @@
+# I121 — Original I118 audit and the actual physical transfer bound
+
+**Disposition: original I118 positive assertions PASS without repairs at their stated scopes; two developed analytic attempts remain blocked; park this branch pending a new mechanism. No nomination.** P112 is unproved and unrefuted. Eight substantial findings remain eight. The original I115 scoped passes and the two original I112 literal failures are retained. Mathematical proof, evidence reproduction, and substantiality are separate judgments throughout.
+
+The premises are **all pinned source theorems and lower proof operations** at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. No upstream truth audit, contradiction synthesis, or ex-falso argument is used. P112 means: every bounded connected smooth Euclidean three-domain, every nonempty relatively open proper patch, both real smooth coefficients with `mu>0` and `3lambda+2mu>0`, and equality of the physical energy pairings for all vector displacements supported in that same patch. There is no inaccessible-collar agreement, coefficient subclass, added measurement, or geometric restriction.
+
+The exact recursive I118 task bytes have SHA-256 `19806b3abe8937dbeb11fc72a8cb47a0c52d7bf2e7cee0a0880eefc2b5b2dbf1`. Its entire brief, including the original I112/I115 briefs, reports, and finalized parent responses, was read and frozen. The on-disk I118 report, its finalized parent response, and this launch brief are separately frozen. The audit checkpoint precedes the I121 constructions. No children, shared edits, staging, commits, or publication; no working I119/I120 dependencies.
+
+## 1. Audit of the ORIGINAL I118 assertions
+
+Verdicts apply to the original words and formulas, including their explicit conditional scopes. A PASS below never changes an assumed uniform bound into a constructed one.
+
+**Inherited original I115 audit: retain all scoped PASS verdicts.** A115 uses exact local physical boundary-symbol recovery and flat pasting, not interior collar agreement. The original residual/gauge identities use the actual 17-dimensional Hessian space, including its unrestricted scalar Hessian column. F115 uses a fourth-order closure with coupled lower-order terms; the degree-three kernel remains eight-dimensional. H115 requires an open physical response comparison, not contact of images. Its determinant/conformal/UCP argument uses positive `mu` to fix scale. Fixed-radius transfer retains its stated coverage scope, actual divergence, actual traction, and no shrinking-core bound. The graph/annihilator, boundary signs, cutoff defect and whole-domain collar budget retain their original scopes. The complete nested proofs, rather than only the parent summaries, were read.
+
+**Preserved literal failures.** G112's standalone invertibility assertion fails on a compact manifold with a closed component: constants on that component remain in the Dirichlet kernel. Its connected, nonempty-boundary application passes. R112's proportionality theorem passes, but its last sentence fails for equal zero lambda: `(lambda,mu)=(0,1),(0,2)` have proportional operators and identical homogeneous solution jets with scale two. Their DN maps differ. Neither example refutes P112.
+
+**Small-ball family and balanced graph, (3.1)–(3.3): PASS without repairs.** On each fixed finite set of Sobolev and parameter orders the pulled-back physical Dirichlet inverse is uniformly bounded down to zero radius. Its limiting operator is the constant Lamé operator, not the scalar Laplacian. Differentiating that inverse controls the smoothing remainder as well as the boundary symbol. Hence `B_r=r T_B`, `F_r=Lambda^-1 B_r` have the asserted orders and smooth parameter dependence. The identity-plus-positive operator `M_r=I+F_r^*F_r` is invertible on L2; ellipticity and regularity extend this to each fixed Sobolev scale. With `G_r g=(g,F_r g)`, `Pi_r=G_r M_r^-1 G_r^*` is exactly the orthogonal graph projection. The orthogonal complement is `(-F_r^*a,a)`. Undoing balancing gives the original graph and annihilator, with bilinear transposes for evaluation and Hermitian adjoints only for norms. Parameter bounds after substituting the profile allow powers of beta. They are not unweighted center derivative bounds. The output factor `R=diag(I3,r)` produces the displayed unscaled lower-left `r^-1`; the test `g=omega` verifies that this loss is real.
+
+**Frozen normal symbol and the scoped obstruction, (4.1)–(4.3): PASS without repairs.** Put `m=mu`, `kappa=lambda+mu`, `q=|eta|`, `v=(i eta,-q)`. Direct substitution of `exp(i eta.z'-qt)(a+t b)` gives
+
+\[
+D=\frac{2m}{2m+\kappa}v^t a,\qquad
+b=\frac{\kappa}{2mq}vD,\qquad
+\mathsf N=qI-N,\quad N=\frac{\kappa}{(2m+\kappa)q}vv^t.
+\]
+
+Here `v^t v=0`, but `vv^t` is nonzero, so `N^2=0` and the normal symbol is not diagonalizable. A positive Hermitian self-adjoint symmetrizer would make it similar to a Hermitian matrix, a contradiction. This excludes precisely that symmetrizer and an order-zero perturbation of harmonic normal differentiation. It does not exclude accretive estimates, traction energy, or a nonnormal estimate for the full quotient. For the original polynomial, the correction has Laplacian `-6 kappa e1/(3m+kappa)` and divergence `6m z1/(3m+kappa)`. Thus the physical sum of derivative squares is not zero; this is an actual solution witness.
+
+**Ambient extension, output conjugation and projected equation, (4.4)–(4.7): PASS without repairs.** With unscaled augmentation the small-ball rescaling tends to the Laplacian, so an unrestricted auxiliary Dirichlet extension exists on sufficiently small balls. This is used only to differentiate the physical graph. The product rule for `W=diag(I3,r Lambda^-1)` gives exactly `Chat_i=(partial_i W)W^-1+W C_i W^-1`. A moving angular frame also differentiates Lambda. Conjugating the output by R gives `-2 f_i E4`, the rightmost `-f_i R A_i R^-1 E4`, and `(|df|^2-Delta f)E4` with the original signs and order. The top-right drift is `kappa/(mr)`. It survives constant freezing and physical dilation.
+
+Differentiating a physical transfer tests the output equation against physical inputs only. Smooth traces of solutions on slightly enlarged physical balls are dense in the physical graph, by smooth Dirichlet dependence. If n is a smooth annihilator section, differentiating its zero pairing against every such input proves `Pi Dhat_i(I-Pi)=0` as an operator on sections. Repetition gives the second-order identity. Thus the quotient equation is valid. There is no inference that an arbitrary augmented extension solves the second equation.
+
+**All projection and cutoff commutators, (4.8)–(4.11): PASS without repairs.** On `Pi phi=phi`, the normal part is exactly `(I-Pi)[Phat,Pi]phi`. The first commutator is `partial_i Pi+[Chat_i^t,Pi]`. Applying the product commutator rule twice gives all three compositions in (4.9); neither factors nor differentiated coefficients may be commuted. The outer radius commutes with Pi. Output coefficients act on the other tensor index and commute with this input projection. Orthogonality gives (4.10). The cutoff formula follows from two differentiations of the scalar cutoff; on covariant base tensors it is the corresponding covariant Hessian contraction. These formulas do not bound the normal part, and hence do not imply coercivity of the compression. The cutoff assertions are only local-evaluation bounds on the lower strip and fixed-separation bounds at positive depth.
+
+**Right inverse and uniform Sobolev perturbation, (5.1)–(5.4): PASS without repairs.** The two normalized equations are `(l+3)a+2l b=1` and `2a+(4l+2)b=-kappa/m`; their determinant is `2(2l+3)(l+1)`. The original coefficients solve them, including `l=0` with `a=1/3`. They and their fixed coefficient-parameter derivatives are O((l+1)^-1). Multiplication by omega shifts harmonic degree by one, proving the stated one-order Sobolev gain. The Neumann inverse is first taken on one fixed scale; elliptic regularity and bijectivity there give the inverse on every other fixed scale. Radius thresholds may depend on the finite collection of requested bounds. This is not an assertion of one threshold uniform over arbitrary derivative orders or coefficient classes.
+
+Duality using the right inverse on `H^-1 -> L2` gives `||a||H1 <= C||B_r^*a||2`. Coercivity of its form and elliptic inversion therefore justify `(B_r B_r^*)^-1`, `K_r`, and the orthogonal projection `S_r` on `ker(B_r:L2->H^-1)`. For variable coefficients this is zero **boundary** divergence, exactly as the original warns; zero interior divergence is not inferred.
+
+**Sharp quotient criterion D118, (5.5): PASS without repairs.** For `Q=rh`, write `J=S_r Q`, `a=K_r Q`. The decomposition `Q=J+B_r^*a` supplies the upper estimate with `(p,b)=(J/r,a)`. Conversely `Q=rp+B_r^*b` gives `J/r=S_r p`, `a=rK_r p+b`. Uniform L2 boundedness of K proves the lower estimate. These identities extend distributionally to an arbitrary admissible L2 pair; no implicit H1 hypothesis on b is added. Integration over the base preserves the constants. The necessity conclusion concerns the scalar row in precisely this unscaled graph-dual norm. Bounded Q pays a, but not J/r. The toroidal high-degree example disproves a finite-moment inference only; it is not claimed to be the continued flux.
+
+**Local evaluation and geodesic weights, (5.6)–(5.10): PASS without repairs.** At frozen coefficients divergence is harmonic; its center value is its spherical average, and the volume divergence theorem gives `Qev_0=B_0^*1=3 omega^t` for the unit Euclidean ball with probability sphere measure. Smooth dependence on independent center/radius parameters makes `Qev_r-B_r^*1` a smooth function vanishing at r=0. Its divided difference is smooth by the integral Taylor formula, which proves every fixed parameter derivative assertion. The frozen displacement polynomial formula and its degree-two moment give exactly the displayed alpha and beta2.
+
+The geodesic statement is valid with its express weight qualification. For `gamma=e^{-2Lt0} dx^2`, a parallel orthonormal parametrization has `X(y,r,omega)=y+c(y)r O(y)omega+O(r^2)`, `c=e^{Lt0}`. In a frame with O removed, `r div_x=c^-1 div_z` at r=0. With a reference measure `dmu=w_y d sigma`, the frozen mean weight is `w_y^-1`; with probability rotation measure it is 1. The frozen row is then `3c^-1 omega^t/w_y`. The physical boundary divergence trace carries the same factor. Surface Jacobians and frame factors are pulled back before this identity is used. They are smooth and positive, so the divided-difference proof survives. The original did not claim that a geodesic surface area measure is Euclidean. None of this establishes a bound for a two-medium continued kernel.
+
+**Actual flux identities, (5.11)–(5.13): PASS without repairs.** Transposing physical traction in the flux gives the displacement density F. Differentiating the transfer through a fixed surrounding surface, then pulling back the sphere measure, gives `h=sum_i(partial_i F_i+(C_i^el)^t F_i)` and `Q=rh`. Thus its scalar output is actual output divergence. The splitting in (5.12) represents this same functional. Differentiation of S and the angular commutator must remain, and `r partial^alpha(J/r)=(partial-f)^alpha J` is the exact conjugation identity in flat coordinates. Covariant versions retain curvature. The coefficient `r^-1` in C is differentiated as well. These are finite-radius identities, not boundedness claims.
+
+**Conditional T118, including source frames, contact and globalization: PASS without repairs.** Four actual physical cap-source responses form an invertible augmented value matrix V1 at contact by J112; equality of all response jets from the matched side gives the same invertible V2 there. Continuity supplies fixed invertible frames nearby. With B=V2 V1^-1, Taylor against the assumed unscaled representative yields `|U2,F-B U1,F| <= C_F r rho`. Every compact set in the fixed core `t<0` has `sup r ->0`. Its L2 error tends to zero under the hypothesized L2 bound for rho, with no subsequence or compactness claim for GL(4). The resulting equality is smooth and holds for every source separately. H115 with coordinate identity forces the physical comparison and coefficients to agree.
+
+The source depth is `integral_(1/8)^(t0) exp(-2Ls) ds`, so it is **strictly negative at contact**, not zero. The shrinking neighborhood crosses the frontier. The physical maximal match glues by literal equality, its Green equality propagates off one pole, and a ball in the match touching its complement supplies a smooth one-sided contact away from the source ball. A local extension contradicts maximality. Connectedness fills the enlarged interior; continuity covers its closure. No inaccessible boundary step is omitted. The hypothesis must hold at every such frontier. It is not supplied by fixed-radius product continuation.
+
+**Simpler displacement condition: PASS without repairs.** Constants solve both variable-coefficient physical systems. Reproduction from the known side and UCP give `integral F=I3` exactly. Therefore a uniform L2 bound for the actual F makes `u2,F-u1,F` vanish by first-order Taylor on the shrinking core. Actual divergences agree by differentiation of the resulting exact equality. Physical jets and R112, normalized by positive mu on the known side, determine the coefficients. This condition suffices without an unscaled divergence-row bound; the original correctly calls it unavailable.
+
+**Remaining conditional budgets: PASS without repairs as bookkeeping, unresolved as constructed estimates.** The original requests radius-independent normalized moments/remainders, their fixed high smooth bounds, and the unscaled estimate before invoking interpolation. In dimension three, `d*=23/2`, `eta=1/23`, `p*>23`, `m>=45` give the stated orders ten, eight, and nine in the F115 chain. The first-jet block has 15 coordinates per output row modulo its single divergence gauge. It is not four independent constant augmented solutions. Physical spatial dilation uses `(u_epsilon,d_epsilon)=(u(p+epsilon z),epsilon d(p+epsilon z))`; the 3D Green displacement has factor epsilon and differentiated tensor factors acquire their corresponding additional powers. One fixed dilation precedes delta shrinkage. These observations validate the conditional statements, not their missing analytic antecedents.
+
+## 2. Complete-operation contribution assessment and readings
+
+The whole positive I118 scope is reproduced by the following operations. Physical small-ball inversion plus order-zero Hilbert graph calculus gives the projector. The Jordan obstruction follows from the full decaying normal solution, not just an eigenvalue count. The quotient equation uses differentiation, actual trace density and annihilator invariance; its commutators are exact product rules. The right inverse is an explicit homogeneous Dirichlet construction followed by smooth elliptic perturbation. D118 is its full Hilbert orthogonal decomposition, valid on the stated Sobolev scales. The evaluation density uses interior Dirichlet regularity and exact frozen mean/divergence identities. The actual transfer uses the accepted complete separate-system cross-series, strict-sphere continuation, overlap UCP and physical Green flux. T118 uses an assumed bound, fixed source frames, Taylor convergence, H115 and literal maximal-match globalization. These reductions cover variable coefficients and the stated topology, not merely frozen examples. They leave precisely the actual shrinking transfer estimate unpaid. All are technical; none is a substantial nomination.
+
+For this audit I read M's entire introduction, boundary/contact, product, sphere, angular, matrix and globalization sections through their endings; E's introduction, full boundary reduction and full augmentation/analytic estimates; and C's complete bootstrap. In particular the scalar squared-norm proof uses cancellation of **scalar principal angular symbols**, two distinct half-order strengths, real scalar second-base coefficients, six trace-operator base derivatives and profile derivatives through seven within its allowance of eight. These are full operations, not theorem-title matches. E's other operations and Tan–Liu's full boundary recursion remain immutable inherited readings; they are not relabelled newly read in full here.
+
+Current primary arXiv pages were browsed for Tan–Liu, the Hardy paper and CJLT; the retrieved pages still list v1. The current upstream main response equals the pin. The complete Hardy v1 paper, including its spherical decomposition and appendix, was read locally from the inherited exact PDF text. Its ball Poisson and spherical calculations supply a comparison for the independently derived frozen formulas below, not a variable-coefficient continuation bound. The bounded literature search found no source used here that supplies the missing estimate. This is not a worldwide-priority or nonexistence claim. The new corpus lexical screen and all inherited screens retain full membership and spans, without claiming semantic reading of all 749 manuscripts.
+
+## 3. Attempt one: accretivity and an exact compression to displacement coordinates
+
+This attempt goes beyond simply noting a Jordan block. It proves a positive frozen estimate, removes the extrinsic projection residual exactly by changing quotient coordinates, and derives the signed principal terms that still prevent applying the source estimate.
+
+### 3.1 A positive nonnormal estimate, with its limitation
+
+At a nonzero tangential covector rotate so `eta=q e1` and put `a=kappa/(2m+kappa)`, so `0<a<1`. On the tangential-normal two-plane,
+
+\[
+\mathsf N=q(I-aJ),\qquad
+J=\begin{pmatrix}-1&-i\\-i&1\end{pmatrix},\qquad J^2=0.
+\tag{N1}
+\]
+
+The remaining tangential direction has symbol q. Thus
+
+\[
+\operatorname{Re}\langle\mathsf N z,z\rangle
+\ge(1-a)q|z|^2,\qquad
+\|\mathsf N^{-1}\|\le q^{-1}(1+2a),\qquad
+ e^{-t\mathsf N}=e^{-qt}(I+atqJ).
+\tag{N2}
+\]
+
+Proof: `(J+J*)/2=diag(-1,1)`, `||J||=2`, and the nilpotence gives both the inverse and exponential explicitly. These estimates are uniform on a fixed compact admissible coefficient range. No Hermitian matrix making N self-adjoint has been introduced. The decaying half-space branch can therefore be estimated despite its Jordan block.
+
+But its adjoint-square commutator is
+
+\[
+[\mathsf N^*,\mathsf N]
+=a^2q^2\begin{pmatrix}0&4i\\-4i&0\end{pmatrix}.
+\tag{N3}
+\]
+
+It has eigenvalues `+4a^2q^2` and `-4a^2q^2`. The vector `(1,i)` realizes the negative sign. Hence positivity in (N2) does not give a positive difference of raising/lowering squares. Dilation changes neither a nor this principal matrix. This proves a concrete limitation of this energy attempt, without excluding some different nonnormal coercive estimate.
+
+### 3.2 Eliminate the normal residual algebraically, without discarding it
+
+Work in a real Hilbert identification and complexify afterwards. All maps below act on each input row; output indices are separate. Let
+
+\[
+M=I+F_r^*F_r,\quad Gg=(g,F_rg),\quad
+I_r=GM^{-1/2},\quad I_r^*I_r=I,\quad I_rI_r^*=\Pi.
+\tag{N4}
+\]
+
+The positive square root and inverse are uniformly order zero on each fixed Sobolev scale. This follows either from positive elliptic functional calculus or its resolvent construction with the uniform spectral lower bound 1. All required fixed parameter derivatives follow by differentiating the resolvent; no radius-independent bound over infinitely many orders is asserted.
+
+Set `phi=I_r z`, and define the compressed connection on three-component input rows by
+
+\[
+\mathscr D_i z=I_r^*\widehat D_i(I_r z)=\partial_i z+\Gamma_i z.
+\tag{N5}
+\]
+
+The identity `Pi Dhat_i(I-Pi)=0` proved in the original audit implies, as differential operators on sections,
+
+\[
+ I_r^*\widehat D_i\widehat D_j I_r=\mathscr D_i\mathscr D_j.
+\tag{N6}
+\]
+
+Indeed insert `Pi+(I-Pi)` between the two D's. The second summand is exactly zero after left projection, including the derivative of its moving projection. The first summand is (N6). This is not an estimate that makes the discarded normal component small: it is an exact quotient-coordinate identity. Accordingly the compressed equation is
+
+\[
+\mathscr P z=r\{a^{ij}\mathscr D_i\mathscr D_j+
+ \widehat b_2^i\mathscr D_i+\widehat A_2^0\}z=0.
+\tag{N7}
+\]
+
+Here `a=gamma^-1`; `widehat b` includes the fixed covariant drift and the conjugation terms from (4.5). They are retained, with the same scalar conformal multiplier applied to the output equation.
+
+There is a useful way to check every coefficient of (N5). If h is the displacement functional represented by phi, then `h=G^*phi=M^{1/2}z`. Let `D_i^el=partial_i+(C_i^el)^t` be the exact physical displacement trace connection, including the measure derivative. Equality of pairings for all physical traces gives
+
+\[
+\mathscr D_i=M^{-1/2}D_i^{el}M^{1/2},\quad
+\Gamma_i=M^{-1/2}(\partial_iM^{1/2})
+ +M^{-1/2}(C_i^{el})^tM^{1/2}.
+\tag{N8}
+\]
+
+For the scaled output, h consists of the actual F rows and Q row. Thus bounded z is equivalent to bounded **scaled** displacement functionals, not to the unscaled augmented norm. D118's `S_r Q/r` remains necessary in that formulation. The coordinate change has not removed the physical loss.
+
+### 3.3 The full leading physical operator and derivative accounting
+
+In a flat frozen ball write `A_i g=(partial_i u_g)|S`, `N_B g=(omega.partial u_g)|S`. Then exactly
+
+\[
+C_i^{el}=r^{-1}A_i+f_iN_B,\qquad
+[A_i,A_j]=0,\qquad
+\sum_iA_iA_i=-\frac{\kappa_1}{m_1}\,(\nabla d_{u_g})|_S.
+\tag{N9}
+\]
+
+For the last formula the right side denotes the boundary operator on g. The derivative solutions solve the same constant physical system, so Dirichlet uniqueness proves the first commutation identity. The second is its actual PDE, not a scalar harmonic identity. On the conformal geodesic spheres, the Euclidean leading terms use physical length `s=c(y)r` and the smooth frame. Parameter differentiation and the pulled-back Dirichlet inverse give additional matrix angular order-one terms with coefficient O(1), bounded geometry terms, and the retained profile factors; terms of size `s^-1` must still be kept. Such an O(1) order-one remainder is already stronger than the scalar source's order-zero difference, and is not silently absorbed here.
+
+To display the output coupling without auxiliary choices, the actual displacement density satisfies the exact flat-coordinate equation
+
+\[
+0=\mathcal P_{el}F_a:=\frac r{m_2}\left[
+ m_2\sum_iD_i^{el}D_i^{el}F_a+
+ \kappa_2\sum_bD_a^{el}D_b^{el}F_b+
+ \sum_j(\partial_jm_2)(D_j^{el}F_a+D_a^{el}F_j)
+ +(\partial_a\lambda_2)\sum_bD_b^{el}F_b\right].
+\tag{N10}
+\]
+
+All operators act on the input row on their right; the subscripts a,b label output components. This follows by differentiating the flux against every local physical displacement input, and density of their arbitrary displacement traces. It is a genuine equation, not a projected equation, but it has the nonscalar physical output principal part. In the constant, fixed-radius model its pure angular leading term is
+
+\[
+r^{-1}\left[\sum_i(A_i^t)^2F_a+
+ \frac{\kappa_2}{m_2}\sum_b A_a^tA_b^t F_b\right].
+\tag{N11}
+\]
+
+It cannot be removed entrywise. It is the same coupling represented by the `r^-1` drift in (N7). Physical dilation leaves the ratios in (N11) unchanged. A bound for each N alone does not control their coupled raising operator.
+
+Here is the complete rule set used to retain the base/angular/scaling derivatives; it is also an explicit specification of the unpaid terms, rather than an ellipsis treating them as harmless:
+
+\[
+[\mathscr D_i,Z]=\partial_i Z+[\Gamma_i,Z],\qquad
+[\mathscr D_i\mathscr D_j,Z]
+=\mathscr D_i[\mathscr D_j,Z]+[\mathscr D_i,Z]\mathscr D_j,
+\tag{N12}
+\]
+
+\[
+\partial^\alpha(r^{-1}A)
+=r^{-1}(\partial-f)^\alpha A,\quad
+[\partial^\alpha,Z]=\sum_{0<\nu\le\alpha}{\alpha\choose\nu}
+ (\partial^\nu Z)\partial^{\alpha-\nu},\quad
+[UV,Z]=U[V,Z]+[U,Z]V.
+\tag{N13}
+\]
+
+For angular `Z=Lambda^s`, scalar principal symbols permit the usual one-order reduction when commuting with a single matrix operator. Between two matrix angular operators there is **no such reduction unless their principal symbols commute**. In base measure `mu(y)dy`, `mathscr D_i^dagger=-partial_i-partial_i log mu+Gamma_i^*`. Derivatives of `M^±1/2`, `r`, `c`, the angular frame, the surface density, all output coefficients and the fixed conformal drift occur in (N8), (N12) and (N13). In a horizontal frame retain `[nabla_i,nabla_j]` and its angular rotation action. The equations are invariant under switching to flat coordinates with the corresponding connection coefficients, so these rules enumerate the entire finite expansion at any prescribed order.
+
+In particular, if one tries the source's squared-norm comparison, its exact error operator remains
+
+\[
+2[T^\dagger,U]+2[U^\dagger,T]+[U^\dagger,U]
+ -2(UZ+(UZ)^\dagger).
+\tag{N14}
+\]
+
+For the source these reduce to forms of types `epsilon beta^-1 Psi^1 partial_y^2`, `epsilon Psi^2 partial_y`, `epsilon beta Psi^3`. Here (N3), (N8), and (N11) leave matrix principal products with no justified one-order reduction or small factor. Simply retaining their order-four form would require angular H2 control and coefficients with negative radius powers. The source norm
+
+\[
+\mathcal N(z)^2=\int\{|\nabla z|_0^2+\beta^2|z|_1^2
+ +\beta^{-1}|\nabla z|_{1/2}^2+\beta|z|_{3/2}^2\}
+\tag{N15}
+\]
+
+does not bound that form by a small multiple. (N3) supplies actual signs in one principal subsystem; it is not merely an order-count warning. Cancellations in a newly designed full physical energy could change this conclusion, but none is proved here.
+
+Normalization is kept physical. Constants give the three exact displacement moments. A first-jet normalization uses a fixed finite source right inverse on the 15-dimensional physical first-jet space, modulo one divergence gauge per output row. Such a block must be transported through (N8); ordinary four-component mean-zero is not invariant under Pi or M. The cutoff commutator of (N7) is exactly
+
+\[
+[\mathscr P,\chi]
+=r\{2a^{ij}\chi_i\mathscr D_j+a^{ij}\nabla_i\nabla_j\chi
+ +\widehat b_2^i\chi_i\}.
+\tag{N16}
+\]
+
+Both cutoff regions are paid as in the original audit. The shrinking-core estimate is not.
+
+**Attempt-one outcome.** Accretivity (N2) is proved and exact compression (N6) removes the need to estimate an extrinsic normal component separately. It leaves a full nonnormal physical operator, the singular coefficient (N11), the physical normalization block and the matrix principal terms in (N14). No uniform coercivity for that operator has been proved. This is a technical reformulation with a genuine positive frozen estimate, not a successful A* construction.
+
+## 4. Attempt two: bound the actual Cauchy defect of the continued kernel
+
+This attempt estimates the physical Green flux directly and then tests whether its divergence can satisfy D118. It does not substitute a local evaluation kernel.
+
+### 4.1 An exact scaled flux identity
+
+Use M's actual parametrization `X(y,r,omega)=exp_y^gamma(r omega)`. Set `s=c(y)r` with `c=e^{Lt0}` and write the **Euclidean physical** surface density as
+
+\[
+dS_x=s^2 j(y,r,\omega)d\sigma_y,\qquad j>0.
+\]
+
+The entire smooth Jacobian j is retained; s is a scalar at each center. Let K be the top physical block of the continued mixed kernel, let `Lambda^tr` be the physical displacement-to-traction map on this geodesic ball, pulled back to the sphere, and define
+
+\[
+k=sK(X,y),\quad \tau=s^2\sigma_{1,x}(K)(X,y)\nu,
+\quad \mathcal L=s\Lambda^{tr}.
+\tag{F1}
+\]
+
+Column by column, self-adjointness of traction for the actual surface measure gives the exact density
+
+\[
+ F_\delta=j\,(\mathcal L k-\tau)^t.
+\tag{F2}
+\]
+
+Indeed `Lambda^tr K=s^-2 mathcal L k`; multiplying by `s^2j` in the two terms of Green's flux proves (F2). Transposing with respect to probability measure without j would be wrong. The coefficients are those of medium 1 and the normal is the actual Euclidean outward normal. This identity applies on the conformal geodesic sphere, not only on a Euclidean sphere.
+
+Uniform small-ball Dirichlet estimates give `mathcal L:H^(v+1)->H^v` at each fixed Sobolev order. Consequently a sufficient kernel estimate for the simpler displacement condition is
+
+\[
+\sup_\delta\{\|\chi k\|_{L^2_yH^1_\omega}
+                  +\|\chi\tau\|_{L^2}\}<\infty.
+\tag{F3}
+\]
+
+The exact, weaker quantity to bound is `chi j(mathcal L k-tau)^t`. These are statements about the continued K; the usual point singularity estimates for either original Green kernel do not prove them. They are available on the lower strip and at positive depth only.
+
+There is a precise reason ordinary Dirichlet energy cannot supply (F3). If a first-variable kernel column w extends as a homogeneous physical solution through the entire ball, then `mathcal L(sw)=s^2 traction(w)`. Its contribution to (F2) is zero. The density measures the part that fails to have such an interior extension. A Dirichlet estimate bounds the regular extension of a boundary trace, but does not identify its traction with that of the continued exterior column. An annular energy estimate retains the inner-boundary Cauchy term. Dropping it would set this very defect to zero. Positivity of the Lamé energy supplies no sign for that mixed Cauchy term.
+
+Subtracting the first-medium Green kernel does not fix this. On the moving off-diagonal domain, `H=K-G1` satisfies
+
+\[
+L_{1,x}H=0,\qquad
+L_{2,y}H=(L_{1,y}-L_{2,y})G_1,
+\tag{F4}
+\]
+
+with the appropriate second tensor-index convention, and vanishes on the known-side seed. This is an exact inhomogeneous continuation problem. It has no prescribed small Cauchy data on the missing inner boundary. Flatness at contact gives arbitrary fixed powers of the **spatial** distance with constants depending on that power. After the spatial dilation is fixed, a coefficient difference at an unmatched center is fixed while `r_delta(y)` tends to zero exponentially. It cannot be bounded by `C r_delta(y)` merely from smallness of the dilation. A global resolvent identity for `G2-G1` also does not identify H: K is the mixed continuation, not globally G2.
+
+### 4.2 Physical multipoles test the proposed estimate
+
+The missing control is visible even with full physical product equations, beyond an abstract trace density. For one admissible constant medium let G be its Kelvin fundamental matrix for positive `P=-L`. Fix an integer `k>=1` and consider off the diagonal
+
+\[
+K^{(k)}(x,y)=G(x-y)+\partial_{y_1}^kG(x-y).
+\tag{F5}
+\]
+
+It satisfies both physical equations and all differentiated physical divergence constraints. Differentiating Green evaluation through a fixed surrounding surface shows that its flux on local physical solutions is
+
+\[
+T^{(k)}u(y)=u(y)+\partial_1^k u(y).
+\tag{F6}
+\]
+
+It reproduces constants, and all polynomial moments of degree less than k. It is smooth at every positive separation with every fixed derivative bounded on any fixed separated compact set. Nevertheless its displacement density is not uniformly bounded as r tends to zero. Take the actual physical polynomial
+
+\[
+u(x)=e_3\operatorname{Re}((x_1-y_1)+i(x_2-y_2))^k.
+\]
+
+It has zero divergence and zero vector Laplacian, hence solves the Lamé equation. Its center value is zero, its kth x1 derivative is `k! e3`, and its sphere trace norm is `C_k r^k`. Duality in (F6) forces `||F_r^(k)||2 >= c_k r^-k`. On the actual conformal geodesic spheres the same trace has size at most `C_k r^k`, so the lower bound persists. This uses a real physical polynomial, not a false scalar identity on all physical traces.
+
+For another direct flux check, a toroidal harmonic of degree l has regular field `rho^l V_l` and exterior field `rho^(-l-1)V_l`. Both are harmonic, tangent and divergence-free. Their tangential tractions are `m(l-1)rho^(l-1)V_l` and `-m(l+2)rho^(-l-2)V_l`. Their integrated Wronskian is `m(2l+1) integral|V_l|^2`, independently of rho. Normalizing the regular boundary trace to V_l produces the `rho^-l` density loss. Thus the bad high modes have an actual physical flux realization.
+
+Crucially, (F5) **does not equal the original evaluation kernel on the lower open seed**. It is not the actual K arising from P112 data; UCP precludes adding it while keeping that seed. It is therefore a counterexample only to an estimate deduced from off-diagonal equations, fixed-radius smoothness and finite moments alone. No admissible pair with equal partial DN maps has been constructed. The seed-to-core estimate that excludes these modes uniformly is exactly what remains to be proved, and cannot be replaced by this example's qualitative uniqueness observation.
+
+### 4.3 Exact cancellation target and all derivative losses
+
+For the actual F define the true scalar row and its split by
+
+\[
+h=\sum_iD_i^{el}F_i,\quad Q=rh,\quad J=S_rQ,\quad b=K_rQ.
+\tag{F7}
+\]
+
+Then `Psi=((F,0),(J/r,b))` is the original actual unscaled representative. D118 proves that, assuming bounded Q, its scalar row has bounded minimal norm if and only if J/r is bounded. Equivalently the required estimate on the infinite-dimensional kernel is
+
+\[
+\sup_{\substack{B_rg=0\\\|g\|_2=1}}
+\left|r\operatorname{div}_y S(y;u_g)\right|\le Cr,
+\tag{F8}
+\]
+
+in the corresponding pointwise operator formulation (or the integrated row norm for the L2-in-base version). The derivative in y uses the local fixed-input solution u_g and a fixed surrounding surface, then density extends it to traces. Zero boundary divergence does not mean zero interior divergence for variable coefficients. There is no source identity forcing (F8) for the cross-medium flux.
+
+Here are sufficient budgets with their precise roles. For the direct T118 conclusion only the core L2 norms `chi F`, `chi b`, `chi J/r` are required, together with the actual representation and reproduction. The simpler displacement conclusion needs only `chi F`. To run a differentiated quotient-energy construction one may instead require, for every `0<=j<=6` and the chosen fixed angular Sobolev orders v needed in the compositions,
+
+\[
+\|\chi\beta^{-j}\nabla^jF\|_{L^2_yH^v}
++\|\chi\beta^{-j}\nabla^jb\|_{L^2_yH^v}
++\|\chi\beta^{-j}r^{-1}(\nabla-d\log r)^jJ\|_{L^2_yH^v}\le C_{j,v}.
+\tag{F9}
+\]
+
+This is an explicitly stronger proposed budget, not a derived estimate or a claim that differentiation is needed for the simpler Taylor limit. Choose the finite angular orders before shrinking; orders must support the actual compositions, adjoints and angular form estimates, not merely L2 multiplication. The normalization uses fixed source families with C45 bounds if the original moment/F115 path is pursued; that path still requires radius-independent D,R. Its order-ten remainder is differentiated twice to form E through eight, and the order-three ODE state gives D through nine. These facts do not follow just by bounding a radius-dependent smooth kernel.
+
+Every derivative in (F9) expands by (N12)–(N13) and the following identities, which prevent a lost factor of r:
+
+\[
+\nabla J=(\nabla S_r)Q+S_r\nabla Q,\qquad
+\Lambda^vJ=S_r\Lambda^vQ+[\Lambda^v,S_r]Q,
+\tag{F10}
+\]
+
+\[
+\partial^\alpha Q
+=\sum_{\nu\le\alpha}{\alpha\choose\nu}
+ (\partial^\nu r)\partial^{\alpha-\nu}\sum_iD_i^{el}F_i,
+\quad
+\nabla_i(J/r)=r^{-1}(\nabla_i-f_i)J.
+\tag{F11}
+\]
+
+The multi-index sum in (F11) is in a fixed coordinate trivialization. For a covariant derivative word, use the Leibniz sum over all subwords, preserving their relative order; reordering those words adds the connection commutators. Differentiating (F2) also differentiates j, s, the pulled-back normal, coefficients, and mathcal L. For independent center/radius parameters,
+
+\[
+\nabla_i k=(\nabla_i s)K+s\{(\nabla_xK)\nabla_i X+\partial_{y_i}K\},
+\tag{F12}
+\]
+
+and tau has the analogous product derivative with both powers of s and the derivative of traction. `nabla_i X` includes `r_i`, the geodesic Jacobi field and frame transport. Repeated derivatives follow the displayed product rule, with no omission of `partial_r`, angular or measure terms. Profile bounds give `|partial^j r|<=C_j r beta^j`; differentiating `s^-1` gives `s^-1` times the ordered `partial-d log s` factors. The `r^-1` part of C in (F7) is consequently still singular after any such bookkeeping. Six trace base derivatives, up to five coefficient derivatives in the squared-norm comparison, and profile derivatives through seven fit inside the original eight-profile allowance; if a new energy uses additional derivatives it must pay an enlarged finite budget explicitly.
+
+On the lower cutoff strip the original divided-difference Poisson calculation proves the unscaled cancellation for the **actual** flux there, because that flux equals local evaluation there. On the positive-depth strip all radii and separations have fixed lower bounds. On the unmatched core neither (F3), the weaker defect bound (F2), nor (F8) or (F9) is established. A bounded scaled Q alone cannot yield the divided derivative in (F11).
+
+**Attempt-two outcome.** The actual density is exactly the physical boundary Cauchy defect (F2). Regular extensions cancel from it; uncontrolled singular modes are not bounded by ordinary Dirichlet energy. Physical multipoles demonstrate the insufficiency of the proposed local substitutes. The exact seed-conditioned norm estimate for this defect, or the trace-kernel gain (F8) with the required budgets, remains unpaid.
+
+## 5. Remaining analytic obstruction and decision
+
+The geometry is fixed throughout both attempts: `gamma=e^-2Lt0 dx^2`, M's depth with lower integration limit 1/8, the geodesic sphere map, the prescribed cutoff and the strictly negative-depth core. Choose the geometry, finite derivative orders and source tests first, then p*, amplitude and positive separation margins, then **one** sufficiently small physical spatial dilation. Only after these choices may delta tend to zero. With equal normalized scalar principal metrics there is no new principal-metric bootstrap to use to make the physical Lamé coupling small; its nonzero frozen ratio remains.
+
+There are two precise potential ways to reopen the branch. One is a seed-normalized coercive estimate for (N7) or equivalently the actual physical operator (N10), controlling the nonnormal principal commutators and (N11), on the proper physical normalization block, with the source's half-order strengths or a fully proved replacement. The other is a uniform estimate for `chi j(mathcal L k-tau)^t` for the uniquely continued mixed kernel. If only scaled augmented bounds are available, the additional sharp requirement is `chi S_r Q/r` and its needed derivatives. These are sufficient analytic inputs; they are not declared logically equivalent to P112 or necessary for all possible proofs.
+
+If the displacement estimate closes, the exact constant normalization, Taylor limit, physical jet rigidity, cap normalization and maximal-match argument audited above complete the proof. If the unscaled augmented estimate closes, the fixed four-source frames and conditional T118 complete it; alternatively the original moment/F115/H115 route must pay all its stated normalization and derivative budgets. Neither antecedent has been constructed here, so no unconditional continuation theorem is nominated.
+
+The boundary expanding-Runge branch remains parked. Its whole-domain budget retains both `I_Ct(w1,w2)` and `I_Ct(u1,u2)`, every support commutator, the physical `grad chi.u` divergence defect, opposite Carleman boundary signs and the divergence remainder `O(tau^(2-N))` multiplied by every loss. No new estimate controls the signed inner collar flux. Small collar volume, individual energy bounds, or accessible flatness does not pay it.
+
+After the two attempts above, further rearrangement of these same unpaid estimates is not a reason to continue. **Park the physical-transfer branch pending a new mechanism that controls the actual seed-to-core flux.** The new accretivity calculation, exact quotient coordinates and Cauchy-defect identity are technical consequences of full physical and accepted lower operations. They do not increase the accepted count. P112 has neither a proof nor an actual admissible counterpair in this record.
+
+## 6. Evidence contract
+
+The exact owned inventory includes only this report and the two assigned I121 directories. The original task, report and parent response are frozen separately, with exact supplied substrings preserved. Only the four specified live ledgers may drift; their snapshots remain immutable. All I112/I115/I118 inventories, seals, immutable references, failure logs and parent bindings are verified directly in a single flat preflight. No earlier verifier is executed. No I119/I120 working output is bound.
+
+The verifier checks the owned seal and exact inventory, every inherited immutable artifact, the entire 13,223-entry tree/749-manuscript/10,373-original Git/SHA/text mapping including 776 PDF text bindings, exact lexical membership/multiplicity/spans, and every inherited/new passage **before any diagnostics**. Corpus/TeX lines use `str.splitlines()`; PDF passages use LF splitting with form feeds preserved; joined passage hashes append no newline. Only the two explicitly selected inherited PDFs are re-extracted to stdout. Current primary metadata is frozen, not fetched by the verifier.
+
+Finite diagnostics replay each original I112/I115/I118 diagnostic once after that preflight, and separately check I121's finite rational matrix and physical polynomial instances. They do not certify the universal analytic assertions, A*, P112, substantiality, priority or human review. The original proofs and limits above carry the mathematical claims. A combined Hardy/web read was truncated; its complete appendix was reread in a bounded call, and the failure remains recorded. All inherited failures remain bound unchanged.
+
+Run `python3 -B frontier/experiments/i121_physical_transfer_bound/verify.py`. The verifier is offline and read-only, with no network, write, bytecode, repair or reseal. Preseal validation precedes the single final seal. Final sealed replay only reads and reports.
+
+Primary references: [M, complete pinned one-patch operations](https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Determination-of-a-metric-and-a-unitary-connection-from-one-boundary-patch-October-5-2026); [E, pinned physical elasticity operations](https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Global-Uniqueness-for-the-Smooth-Isotropic-Elasticity-Inverse-Problem-September-24-2026); [C, pinned scalar bootstrap](https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Smooth-Anisotropic-Uniqueness-in-the-Calderon-Problem-from-One-Boundary-Patch-September-24-2026); [Tan–Liu v1](https://arxiv.org/abs/2211.06650v1); [Hardy spaces for the Lamé equation, v1](https://arxiv.org/abs/2510.10798v1); [CJLT v1, bounded contract screen](https://arxiv.org/abs/2609.20134v1).
