@@ -1,0 +1,1169 @@
+Randomized k-Server in Polynomial Time
+Christian Coester
+University of Oxford, UK
+Romain Cosson
+New York University, NY, USA
+      Abstract
+We study the design of computationally efficient randomized algorithms for the k-server problem.
+Existing randomized algorithms with the best known competitive ratios are, on the one hand,
+inherently implicit and, on the other hand, employ a rounding scheme that maintains a distribution
+over exponentially many configurations. In this work, we introduce a derandomization framework that
+transforms any randomized k-server algorithm on a hierarchically separated tree into one that uses
+only O(log k) random bits for request sequences of arbitrary length – hence maintaining a distribution
+over only polynomially many server configurations. Leveraging this black-box derandomization, we
+obtain the first polynomial-time randomized k-server algorithm on arbitrary n-point metrics with a
+polylogarithmic competitive ratio. Our results also have implications for the advice complexity of
+the k-server problem.
+
+2012 ACM Subject Classification Theory of computation → Online algorithms; Theory of computa-
+tion → K-server algorithms; Theory of computation → Pseudorandomness and derandomization
+
+Keywords and phrases k-server, online algorithms, computational complexity, randomized complexity,
+advice complexity
+
+Digital Object Identifier 10.4230/LIPIcs.ICALP.2026.65
+
+Category Track A: Algorithms, Complexity and Games
+
+Related Version Full Version: https://arxiv.org/abs/2605.01497
+
+Funding Christian Coester: Funded by the European Union (ERC, CCOO, 101165139). Views and
+opinions expressed are however those of the author(s) only and do not necessarily reflect those of the
+European Union or the European Research Council. Neither the European Union nor the granting
+authority can be held responsible for them.
+
+Acknowledgements We thank the anonymous reviewers for their constructive feedback.
+
+
+ 1      Introduction
+The k-server problem is a cornerstone in online algorithms, sometimes described as the “holy
+grail of competitive analysis”, and many techniques originally developed for k-server went
+on to impact various other problems in the field. While there has been limited progress on
+deterministic algorithms for the problem since a competitive ratio of 2k − 1 was established
+in [29], the study of randomized algorithms has seen recent breakthroughs, culminating in
+an O(log n log2 k)-competitive randomized algorithm on n-point metrics via an O(log2 k)-
+competitive algorithm on hierarchically separated trees (HSTs) [15], and an Ω(log2 k) lower
+bound refuting the randomized k-server conjecture [14].
+    Despite the improved information-theoretic understanding of the problem, competitive
+algorithms that are also computationally efficient are lacking. Among algorithms for general
+metrics with polynomial (in the metric space encoding size) per-request running time, the
+best known competitive ratio is exponential in k, achieved by the randomized Harmonic
+algorithm [25, 6]. The work function algorithm [29], which achieves the best deterministic
+competitive ratio, has time-per-request either exponential in k or as an increasing function
+in the number of preceding requests (i.e., growing unbounded over time) [31].
+             © Christian Coester and Romain Cosson;
+                                                                                                       EA
+             licensed under Creative Commons License CC-BY 4.0
+                                                                                                       TC S
+53rd International Colloquium on Automata, Languages, and Programming (ICALP 2026).
+Editors: Sayan Bhattacharya, Danupon Nanongkai, Michael Benedikt, and Gabriele Puppis;
+Article No. 65; pp. 65:1–65:20
+                     Leibniz International Proceedings in Informatics
+                     Schloss Dagstuhl – Leibniz-Zentrum für Informatik, Dagstuhl Publishing, Germany
+65:2   Randomized k-Server in Polynomial Time
+
+
+            For modern randomized algorithms, it is unclear how to even implement them at all
+       while retaining competitiveness. Although the k-server problem is a discrete combinatorial
+       online problem, recent progress relies on continuous methods such as existence results for
+       solutions of differential inclusions, leading to implicit algorithms. The lack of efficiency of the
+       algorithm in [15] was pointed out explicitly in Bubeck’s TCS+ talk [13, minute 40:50]. This
+       algorithm is defined by a continuous (both in time and space) projected gradient flow. A first
+       step towards making the approach explicit – and towards obtaining a discrete algorithm that
+       could be implemented – was taken by [17], which replaced the continuous gradient flow with a
+       sequence of Bregman projections, effectively discretizing the algorithm in time. In this paper,
+       we address the problem of discretization in space. Specifically, we show that any randomized
+       k-server algorithm on hierarchically separated trees (HSTs) can be transformed into an
+       algorithm that uses a finite number of random bits (more precisely, O(log k) random bits,
+       regardless of the length of the request sequence). While the basic idea of space discretizations
+       has been present already in variants of paging [1, 5], prior techniques do not extend to
+       k-server, as we discuss in Section 1.3.
+            Our derandomization resolves two problems that hinder the implementability of current
+       algorithms: first, that they require computing the exact solutions of a sequence of convex
+       optimization problems, whereas finite time/space iterative methods can only provide approxi-
+       mate solutions; second, that they maintain a probability distribution over exponentially many
+       server configurations (specifically, up to nk server configurations). In contrast, our approach
+       reduces the cardinality of the support of a randomized algorithm to O(k 2 ) – a quantity that
+       is independent of both the number of points in the metric space and the number of requests.
+       This leads us to the first polynomial-time randomized k-server algorithm that achieves a
+       polylogarithmic competitive ratio, matching the state-of-the-art competitiveness guarantee
+       of [15, 17]. Our results also have implications for the so-called “advice complexity” of the
+       k-server problem [10].
+            k-server problem. The problem is defined for a metric space M = (M, d) with n ≥ k
+       points. The input is a sequence of points ρ(·) = (ρ(1), ρ(2), . . . ), where ρ(t) ∈ M is called
+       the request at time t ∈ N. The output of the problem is a sequence of server configurations
+       C(·) = (C(1), C(2), . . . ), where C(t) is a subset of k points of M that represent the position
+       of k servers at time t. The output must serve all the requests, meaning that it should satisfy
+       ∀t : ρ(t) ∈ C(t).
+            Deterministic algorithms. A deterministic (online) algorithm C(·) for the k-server problem
+       is a function that maps a sequence of revealed requests ρ(≤ t) = (ρ(1), . . . , ρ(t)) to a
+       configuration C(ρ(≤ t)) ∈ M k which contains the current request ρ(t). In slight abuse of
+       notation, we denote the configuration C(ρ(≤ t)) by C(t). The cost of a deterministic algorithm
+       C(·) on the input sequence ρ(·) is defined by
+                                 X
+            Cost(C(·), ρ(·)) =       d(C(t), C(t + 1)),
+                               t
+
+       where the distance between two configurations d(C, C ′ ) is defined as the minimum weight of
+       a matching between C and C ′ .
+            Randomized algorithms. A randomized (online) algorithm R(·) is a probability distribution
+       over deterministic (online) algorithms. The cost of a randomized algorithm on an instance
+       is the expected cost on that instance. For a parameter m ∈ N, an m-barely random
+       algorithm is defined as the uniform distribution over m deterministic algorithms R(·) =
+       (C1 (·), . . . , Cm (·)), and its cost on an instance ρ(·) is therefore given by Cost(R(·), ρ(·)) =
+        1                                                       b
+          P
+        m     j∈[m] Cost(Cj (·), ρ(·)). Note that if m = 2 for an integer b, an m-barely random
+       algorithm can be sampled with just b random bits, independently of the length of the input
+       sequence–hence the term barely random algorithm, introduced in [32].
+C. Coester and R. Cosson                                                                            65:3
+
+
+    Advised algorithm. An online algorithm with advice A(·) is a deterministic algorithm
+whose input is augmented with some bits of advice supposedly provided by a third party that
+knows the problem instance. For any parameter m ∈ N, we define an m-advised algorithm
+A(·) as a collection of m deterministic algorithms A(·) = (C1 (·), . . . , Cm (·)). The cost of
+an m-advised algorithm is defined as Cost(A(·), ρ(·)) = minj∈[m] Cost(Cj (·), ρ(·)), and is
+therefore not greater than its barely random counterpart.
+    Competitive analysis. The performance of an online algorithm for the k-server problem is
+evaluated by its competitive ratio. We say that an online algorithm A(·) is c-competitive if
+it satisfies for any input ρ(·) that
+
+   Cost(A(·), ρ(·)) ≤ c · OPT(ρ(·)) + c0 ,                                                  (1)
+
+where c is a positive real number, OPT(ρ(·)) = inf C(·) Cost(C(·), ρ(·)) is called the offline
+optimum and c0 is a constant independent of the sequence of requests.
+
+Main result. The main result of this paper (Theorem 1) is a polynomial-time randomized
+k-server algorithm that enjoys state-of-the-art competitive guarantees. The main technical
+ingredient for this result is a polynomial-time derandomization scheme (Proposition 5 and
+Proposition 6) transforming a c-competitive randomized k-server algorithm on hierarchically
+separated trees (HSTs) into an O(c)-competitive k-server algorithm that uses only O(log k)
+random bits. As detailed in the related works section below, this framework extends previous
+results on the randomized complexity [11] and the advice complexity [21, 10] of the k-server
+problem.
+
+
+1.1    Previous work
+The k-server problem was introduced by [30] as a general framework for online problems.
+This initial work focused on the competitive ratio of deterministic algorithms, establishing a
+universal lower bound of k and conjecturing that a k-competitive algorithm exists for all
+metric spaces. The problem quickly became central in the domain of online algorithms, and,
+years after, the deterministic analysis of the k-server problem was nearly settled by [29],
+which proved that the work function algorithm is (2k − 1)-competitive in all metric spaces.
+In this paper, we are primarily concerned with the randomized and the fractional variants of
+the k-server problem, and we refer to [28] for details on the deterministic variant.
+    The first randomized analysis of the k-server problem was by [23]. They introduced a
+simple (and discrete) “marking” algorithm that is 2Hk -competitive on the uniform metric
+space (equivalent to the paging problem). In contrast, going beyond the uniform metric
+space later required the introduction of the fractional variant of the k-server problem. The
+idea is to have the algorithm maintain a (fractional) measure over the metric space, of
+total mass k, representing for each point the probability that a server is located at that
+point. This effectively allows the algorithm to move probability mass continuously in space,
+enabling the use of new methods. Any randomized algorithm straightforwardly induces a
+fractional algorithm, but a reciprocal transformation is only known for the line metric [20]
+and hierarchically separated trees (HSTs) [2] (as well as metrics that embed into HSTs with
+constant distortion, such as weighted stars, for which this result was established first [3]).
+This typically requires a nontrivial “rounding” step. The idea of studying the fractional
+variant of the k-server problem was first used by [9] to obtain refined randomized guarantees
+on the uniform metric space. In subsequent breakthroughs, first [3] used the approach to
+obtain an O(log k)-competitive algorithm on weighted stars with a primal-dual algorithm.
+
+
+
+                                                                                                  ICALP 2026
+65:4   Randomized k-Server in Polynomial Time
+
+
+       After, [2] obtained an Õ(log3 n log2 k)-competitive algorithm n-point metrics, based on a
+       fractional algorithm on HSTs. To date, the best randomized competitive ratio is due to [15],
+       which presented an O(log2 k)-competitive algorithm for HSTs. The focus on hierarchically
+       separated trees is theoretically motivated by random tree embeddings [22], which allow to
+       embed any n-point metric space into a hierarchically separated tree with a distortion of
+       O(log n). Therefore, the result of [15] directly translates into an O(log n log2 k)-competitive
+       algorithm on arbitrary metrics. The question whether an o(k)-competitive randomized
+       algorithm exists for the k-server problem on arbitrary metrics remains open.
+           The study of randomized complexity in online algorithms started with the work of [32]
+       on the list update problem. They noticed that a finite number of random bits (independent
+       of the length of the request sequence) is sufficient to improve the competitive ratio from 2
+       to 1.75 and coined the term “barely random algorithm”. The notion is also covered in [12,
+       Chap. 2]. In the case of the k-server problem, a result of this type is in [11, 27] (see also [26,
+       Chap. 3]) and is restricted to the uniform metric space. Their result essentially says that
+       there exists an O(log k)-competitive algorithm for paging that requires only O(log k) random
+       bits. This can be recovered as a consequence of our derandomization method since there
+       exist O(log k)-competitive randomized algorithms on the uniform metric space [23]. Other
+       works, such as [21, 10, 33], study the randomized complexity or advice complexity of the
+       k-server problem, but in a weaker regime where the number of bits of advice or the number
+       of random bits is allowed to scale
+                                      √ with the size of the problem instance. For example, [21]
+       introduces a deterministic O( k)-competitive algorithm for the k-server problem that uses
+       O(1) bits of advice per request.
+           One important technical tool that we use throughout the paper is the notion of m-barely
+       fractional algorithms, which allows us to recover some of the power of fractional algorithms,
+       while enforcing a discretization in space. Informally, an m-barely fractional algorithm is one
+       that moves server mass in fractions that are multiples of 1/m, and consequently, the size of
+       its support is bounded by km. Furthermore, applying the rounding of [2], the cardinality of
+       the support of the distribution over deterministic algorithms of the corresponding randomized
+       algorithm can be restricted to m. We note that barely fractional algorithms are already
+       instrumental in previous works, such as in [1, 5], which study variants of the k-server problem
+       on weighted stars (cf. Section 1.3 for further discussion), and in [18], which studies a
+       multi-agent version of metrical task systems.
+
+
+       1.2      Preliminaries
+       For x ∈ R, we write x+ := max{x, 0}.
+
+
+       Weighted trees. Let V be the set of nodes of a rooted edge-weighted tree. We denote by
+       r ∈ V the root and by L ⊆ V the set of leaves. For a node u ∈ V \ {r}, we denote by p(u) its
+       parent and by wu the weight of the edge between u and p(u). For a node u ∈ V , we denote
+       by Cu the set of its children and by Lu the set of leaves in the subtree rooted at u.
+          Any weighted tree induces a metric space on its leaves L,1 where the distance between
+       two leaves is defined as the sum of edge weights on their connecting path.
+
+
+       1
+           We do not consider internal nodes to be points of the metric space, and in particular we assume that
+           k-server requests never come at internal nodes. This is without loss of generality, as new leaves could
+           be attached to internal nodes with edges of length 0.
+C. Coester and R. Cosson                                                                            65:5
+
+
+    For τ ≥ 1, a τ -HST (hierarchically separated tree) is the metric space induced by a
+tree whose edge weights satisfy wu = τ wv for all u ∈ V \ {r} and v ∈ Cu , and where
+all leaves are at the same depth. It is well-known that any n-point metric space can be
+probabilistically embedded into an HST such that all distances are distorted by a factor
+O(log n) in expectation [22].
+
+Inner and leaf measures. An inner measure of total mass k on a tree with nodes V is a
+vector z ∈ Z, where
+         (                                        )
+                                            X
+               V
+   Z = z ∈ R+ s.t. zr = k and ∀u ∈ V : zu ≥     zc .
+                                                  c∈Cu
+
+Here, zu represents the amount of server mass in the subtree rooted at u. We write
+            P
+z[u] = zu − c∈Cu zc for the mass at u itself. If z[u] = 0 for every u ∈ V \ L, then z is called
+a leaf measure. Thus, a leaf measure is a measure of mass k on the points L of the associated
+metric space, whereas an inner measure may have some of the mass on internal nodes, which
+we do not consider part of the metric space. We say that a measure is m-barely fractional if
+                        1         1 2
+it only takes values in m N = {0, m , m , . . . }.
+
+Optimal transport. We define the transport distance between two measures z, z′ ∈ Z by
+                X
+  OT(z, z′ ) =      wu |zu − zu′ |.
+                u∈V \{r}
+
+This definition matches the classical interpretation of optimal transport for measures on
+trees.
+
+Fractional algorithm. A fractional (online) k-server algorithm on a tree metric L is a
+function z(·) that takes as input a sequence ρ(≤ t) and produces as output a leaf measure
+                                     P
+denoted by z(t), with total mass u∈L zu (t) = k and that services requests by satisfying
+zρ(t) (t) = 1. The cost of a fractional algorithm z(·) on some instance ρ(·) is defined by
+                        X
+   Cost(z(·), ρ(·)) =       OT(z(t + 1), z(t)).
+                        t
+
+A fractional algorithm z(·) is m-barely fractional if it only outputs m-barely fractional
+measures.
+
+Computational complexity of algorithms. To properly define computational complexity,
+we restrict our attention to metric spaces where all distances are integral. This assumption
+is without loss of generality, up to arbitrary precision, because the k-server problem is
+scale-invariant. We use D to denote the diameter of the underlying metric space. Thus,
+distances are encoded in words of O(log D) bits. We aim for algorithms that process each
+new request in time polynomial in log D and the number of points n in the metric space.
+
+1.3    Why past approaches do not extend to k-server
+The idea of working with barely fractional algorithms is already present in [1], which applies
+it to weighted/generalized paging, corresponding to star metrics for k-servers. In this case, a
+barely fractional algorithm can be achieved very simply by rounding each (fully fractional)
+
+
+
+                                                                                                  ICALP 2026
+65:6   Randomized k-Server in Polynomial Time
+
+
+       evicted page mass x to f (x) = k1 ⌊min(2kx, k)⌋. However, discretizations of this form are not
+       competitive for k-server, because tiny fluctuations in x may lead to large movements in f (x)
+       (because ⌊·⌋ is discontinuous!). This issue does not arise on stars, where the evicted page
+       mass x is decreased only when set to 0, but on trees, it occurs at internal nodes. In fact, all
+       approaches of the form x 7→ f (x) for a fixed function f (·) are condemned to fail.
+           Another possible perspective on the rounding of [1] for star metrics is to assume that
+       the root can hold server mass and to consider the modified algorithm in which upward
+       movements (from a leaf to the root) are twice those of the base algorithm2 and where requests
+       are served by pulling server mass down from the root to the requested leaf. One can show
+       that the modified algorithm is valid and suffers only a factor-of-2 loss in the movement cost.
+       Furthermore, this transformation naturally extends to metric spaces that can be embedded
+       as the leaves of a tree, by assuming that all non-leaf nodes can hold server mass and that
+       requests are served by pulling server mass down from the nearest ancestors of the requested
+       leaf. In star metrics, the cumulative movements of the modified algorithm can be rounded
+       down to the nearest multiple of 1/k, yielding exactly the rounding of [1]. But in trees, that
+       simple rounding is no longer possible: Consider a node u with two children, each of which
+                     1
+       sends mass 2k   to its grandparent in the accelerated algorithm (i.e., to p(u)). Then the mass
+       traveling from u to p(u) is k1 , so we would want to send the same mass after discretization.
+                                                              1
+       But each movement from a child of u to u is only 2k      , which might be insufficient to cross
+                              1
+       the next multiple of k . Hence, the discretized algorithm would not have any movement into
+       u that could be sent further upwards to p(u).
+           We resolve these kinds of issues via a technique inspired by physics that we can refer to
+       as hysteresis (see Section 2). Roughly, it ensures that the barely fractional configuration only
+       changes when the proximity to the target configuration improves a lot, i.e., when moving is
+       really worth it.
+           The question of computational complexity of variants of weighted paging was also raised
+       in a more recent paper of Bansal et al. [5], which proposed a polynomial-time algorithm for
+       a generalization of weighted paging at the expense of an overall competitiveness of O(log2 k)
+       instead of O(log k).
+
+       1.4      Exposition of the results and outline
+       Our main result is the following.
+       ▶ Theorem 1. There exists an O(log2 k)-competitive randomized k-server algorithm for
+       τ -HST metrics with τ ≥ 10 that serves requests in polynomial time in (n, log D). The
+       algorithm uses only O(log k) random bits, regardless of the length of the request sequence.
+       By classical polynomial time random HST embeddings [22], we obtain the following extension
+       of the theorem to general metrics.
+       ▶ Corollary 2. There exists a randomized O(log n log2 k)-competitive k-server algorithm on
+       arbitrary n-point metrics that serves requests in polynomial time.
+       We note that this algorithm for general metrics is still barely random as it only samples a
+       bounded number of random bits at the start of the program. Most of these bits are used to
+       compute the HST embedding.
+          By observing that bits of advice are at least as useful as random bits (see discussion
+       above), we also obtain the following corollary.
+
+
+       2
+           Movements in the modified algorithm stop when there is no mass available at the source.
+C. Coester and R. Cosson                                                                              65:7
+
+
+▶ Corollary 3. For any τ -HST metric, with τ ≥ 10, there exists a deterministic k-server
+algorithm with advice that is O(log2 k)-competitive and that only uses O(log k) bits of advice.
+We now streamline the main arguments leading to Theorem 1. We start with the fractional
+algorithm of [17], that can be adapted to run in polynomial time albeit at the expense of an
+additive penalty, as stated below.
+▶ Proposition 4. Let ϵ > 0. There exists a fractional k-server algorithm z(·) for τ -HST
+metrics with τ ≥ 10 that serves each request in polynomial time in (n, log 1/ϵ, log D), and
+satisfying for all requests sequences ρ(·)
+
+   Cost(z(·), ρ(·)) ≤ O(log2 k)OPT(ρ(·)) + ϵT + O(D log2 k),
+
+where T is the length of the sequence ρ(·).
+Note that this fractional algorithm is not competitive in the sense of Equation (1). The
+seemingly innocuous additive term in ϵT is, in fact, quite inconvenient because a malicious
+adversary can make the additive term ϵT very large, while keeping the offline cost bounded.
+Specifically, consider the case of a (k + 1)-point metric with k points close to one another, and
+one far-away point, and assume only the k nearby points are requested. A natural fractional
+algorithm (and indeed the algorithm in [17]) would send only a very small (smaller than ϵ)
+fractional mass from the far-away point to the group of k points, per request. Therefore,
+a polynomial-time implementation that approximates fractional mass to within precision ϵ
+in each step would never move any mass from the far-away point to the group of k points,
+and thus, would not have a finite competitive ratio. The other crucial issue with this
+fractional algorithm is that, under the rounding of [2], it induces a randomized algorithm
+with exponential support, thereby losing its computational efficiency. We deal with both
+issues by discretizing the fractional algorithm (Proposition 5) before applying the rounding
+of [2] (Proposition 6). For further generality, the statements of the propositions are extended
+in Proposition 5 to arbitrary trees, and, in Proposition 6, to all metric spaces for which a
+rounding scheme is known. The combination of Proposition 5 and Proposition 6 entails our
+derandomization scheme.
+▶ Proposition 5 (Fractional to barely fractional). Let m ≥ 2k 2 + k. Any fractional online algo-
+rithm for k-server on trees can be converted online into an m-barely fractional algorithm with
+at most a polynomial additive overhead in running time and a constant factor multiplicative
+overhead in cost.
+
+▶ Proposition 6 (Barely fractional to barely randomized). For k-server on a line metric
+or τ -HSTs with τ > 5, any m-barely fractional algorithm can be converted online into an
+m-barely random algorithm with at most a polynomial additive overhead in running time and
+a constant factor multiplicative overhead in cost.
+It is clear from the statement of these propositions why they lead to a polynomial time
+randomized algorithm (provided that 1/ϵ and m are sufficiently “small”), but it is not
+immediately obvious why they also solve the issue that was initially raised by the additive
+                                                 1
+term. For this, we note that we can pick ϵ = Θ m    , and then directly apply the following
+result.
+▶ Proposition 7. Suppose that there is an m-barely fractional algorithm z(·) satisfying for
+any request sequence ρ(·),
+                                       1
+   Cost(z(·), ρ(·)) ≤ c OPT(ρ(·)) +      T + c0 ,
+                                      2m
+
+
+
+                                                                                                    ICALP 2026
+65:8   Randomized k-Server in Polynomial Time
+
+
+       where T is the number of time-steps in the input sequence ρ(·), c0 is a constant independent
+       of ρ(·), and each non-zero distance is at least 1. Then the variant of z(·) that ignores any
+       request that it can serve without moving is 2c-competitive.
+
+           We prove Propositions 5 and 7 in Section 2, Proposition 6 in Section 3, and Proposition 4
+       in Section 4.
+
+
+        2      Barely fractional k-server
+       In this section, we prove the main technical step of this paper of going from fractional to
+       barely-fractional algorithms. Before presenting the proof, we start with a general discussion
+       of how hysteresis can be used in competitive analysis, motivating our approach with a simple
+       example inspired by dynamic data structures.
+
+       ▶ Proposition 5 (Fractional to barely fractional). Let m ≥ 2k 2 + k. Any fractional online algo-
+       rithm for k-server on trees can be converted online into an m-barely fractional algorithm with
+       at most a polynomial additive overhead in running time and a constant factor multiplicative
+       overhead in cost.
+
+       ▶ Remark 8 (Collective interpretation of m-barely fractional algorithms). One way to interpret
+       m-barely fractional k-server is as an online problem with mk deterministic agents, where each
+       incoming request must be served by moving m agents to the requested point. This perspective
+       connects to the metric allocation problem [4], which generalizes k-server by allowing a broader
+       class of requests. It also relates to collective metrical task systems [18], where a team of m
+       agents jointly faces a metrical task system, and to collective tree exploration [19], where a
+       team of k agents must explore an unknown tree as quickly as possible.
+
+       Warm-up: competitiveness via hysteresis. Hysteresis is a phenomenon where a system’s
+       present state depends on its history. It is a common theme in physics, specifically in
+       electromagnetism, where it describes the fact a magnet can resist a (mildly) opposing
+       magnetic field.
+           In computer science, the concept appears in dynamic data structures [7], and in real-world
+       implementations of resizable arrays (see e.g., [8, 34]). Specifically, consider the situation
+       where a user wishes to store at time t an array of size y(t) ∈ N. Since reallocating memory
+       space is costly, a common technique is to allocate at any time t an array of size x(t) ≥ y(t),
+       where the value of x(t) is more “stable” than the value of y(t) (i.e., it resists change). A
+       typical update rule for x(t) is as follows:
+            (
+             If y(t) ≥ x(t − 1) then set x(t) = 2x(t − 1).
+                                                                                                   (2)
+             If y(t) ≤ x(t − 1)/4 then set x(t) = x(t − 1)/2.
+
+       Basic arguments involving geometric sums demonstrate the approach’s competitiveness. As
+       a warm-up to our proof of Proposition 5, we propose a new perspective on the update rule
+       described in Equation (2), which can equivalently be formulated as
+
+            x(t) = arg min |x − x(t − 1)| + |x − 2y(t)|,                                           (3)
+                   x∈{2i : i∈N}
+
+
+       where ties are broken in favor of the solution maximizing |x − x(t − 1)|. The idea is that the
+       first term |x − x(t − 1)| resists changes in the value of x, whereas the other term |x − 2y(t)|
+C. Coester and R. Cosson                                                                             65:9
+
+
+encourages x to take a value close to 2y. We now show the competitiveness of Equation (3)
+without using geometric sums. By optimality of x(t) in (3) we have that
+
+   |x(t) − x(t − 1)| + |x(t) − 2y(t)| = |x(t − 1) − 2y(t)|.                                  (4)
+
+Subtracting |x(t − 1) − 2y(t − 1)| from both sides of Equation (4), and using on the right-hand
+side that |x(t−1)−2y(t)|−|x(t−1)−2y(t−1)| ≤ 2|y(t−1)−y(t)|, and on the left-hand side, the
+               P
+telescopic sum t∈[T ] |x(t)−2y(t)|−|x(t−1)−2y(t−1)| = |x(T )−2y(T )|−|x(0)−2y(0)| ≥ 0,
+we get,
+    X                               X
+            |x(t) − x(t − 1)| ≤ 2            |y(t) − y(t − 1)|,
+   t∈[T ]                           t∈[T ]
+
+
+and thus, the competitiveness of x(·). This analysis can be extrapolated to more complex
+settings, as we will see in the proof below. Specifically, the reader will notice the parallel
+between Equation (3) and our discretization technique for k-server in Equation (5), where
+the absolute value is replaced with an optimal transport cost, and where the set {2i : i ∈ N}
+is replaced by a set of barely fractional configurations.
+
+Proof of Proposition 5. Let x(·) be the given fractional algorithm, and assume without loss
+of generality that it is initialized with an integral configuration x(0). The proof goes through
+a sequence of steps that progressively go from the initial fully fractional strategy x(·) to the
+desired barely fractional strategy y(·):
+1. First, we define a sequence of inner measures z(1) (·) of total mass k, with a movement
+    cost at most twice the movement cost of x(·), and satisfying at all times and for all nodes
+               (1)                                                   (1)
+    u ∈ V : zu > 0 =⇒ xu ≥ 1/2 as well as xu ≥ 1 =⇒ zu ≥ 1, where we drop the
+    dependency on t for convenience.
+2. Next, for m′ = 2m + 2k + 1, we define a sequence of m′ -barely fractional inner measures
+    z(2) (·) of total mass k, of movement cost at most the movement cost of z(1) (·), and
+                                                         (2)    (1)
+    satisfying at all times and for all nodes u ∈ V : zu ≥ zu − (2k + 1)/m′ .
+3. Then, we define a sequence of 2m-barely fractional inner measures z(3) (·) of total mass in
+    the interval [k, k + 1/2] (the same mass in each step), of movement cost at most twice
+    the movement cost of z(2) (·) and satisfying at all times, and for all nodes u ∈ V : xu ≥
+              (3)
+    1 =⇒ zu ≥ 1.
+4. After, we define a sequence of m-barely fractional inner measures z(4) (·) of total mass k,
+    of movement cost at most twice the movement cost of z(3) (·), and satisfying at all times
+                                               (4)
+    and for all nodes u ∈ V : xu ≥ 1 =⇒ zu ≥ 1.
+5. Finally, observing that all prior steps can be performed online, we obtain our desired
+    m-barely fractional online algorithm by converting the sequence of inner measures z(4) (·)
+    into a sequence of leaf measures.
+
+
+Step 1.      We consider the function σ : R+ → R+ such that σ|[ℓ,ℓ+ 1 ] = ℓ for every ℓ ∈ Z+ and
+                                                                    2
+σ is extended affinely to the rest of R+ . Equivalently, ∀x ∈ R+ : σ(x) = ⌊x⌋+2(x−⌊x⌋−1/2)+ .
+The definition is borrowed from [15]. We consider the strategy z(1) (·) defined at all times by
+z(1) (t) = σ(x(t)) where σ(·) is applied element-wise (including to inner nodes of the tree).
+Note that z(1) (·) always defines an inner measure of total mass k because σ(·) is superadditive
+           (1)
+and ∀t : zr (t) = σ(k) = k. Also, since σ(·) is 2-Lipschitz, the movement cost of z(1) (·) is at
+most twice the cost of x(·).
+
+
+
+                                                                                                   ICALP 2026
+65:10   Randomized k-Server in Polynomial Time
+
+
+        Step 2. Next, we consider the strategy z(2) (·) defined by initializing z(2) (0) = z(1) (0) = x(0)
+        and with the induction for t ≥ 1,
+
+           z(2) (t) ∈      arg min          OT(z(2) (t − 1), z) + OT(z, z(1) (t)),                         (5)
+                             z∈Z
+                        ∀u∈V : zu ∈ m1′ N
+
+
+        where we split ties in favor of a configuration maximizing OT(z(2) (t − 1), z). Note that the old
+        configuration z = z(2) (t − 1) already minimizes (5), due to the triangle inequality. Starting
+        from this z, in a polynomial number of steps we can successively modify z until it satisfies
+        the tie-breaking rule, as follows: While the tree contains an edge (u, v) such that z[u] ≥ m1′
+                                                                                            (1)
+        and the subtree Vu of nodes closer to u than v satisfies s∈Vu z[s] ≥ s∈Vu z[s] + m1′ , we
+                                                                    P              P
+
+        change z by removing mass m1′ from u and adding it to v. This increases the first term in the
+        optimization problem (5) by m1′ times the length of the edge (u, v) and decreases the second
+        term by the same amount. Once such an edge (u, v) no longer exists, we set z(2) (t) := z.
+        In other words, we gradually move z away from z(2) (t − 1) and towards z(1) (t) as long as
+        another m′ -barely fractional configuration in that direction exists. Polynomial running time
+        of the procedure follows from the fact that each edge (u, v) can be chosen at most m′ k times.
+            We first show that the movement cost of z(2) (·) is at most the movement cost of z(1) (·).
+        We have by optimality of z(2) (t) in (5) and triangle inequality that
+
+           OT(z(2) (t − 1), z(2) (t)) + OT(z(2) (t), z(1) (t))) = OT(z(2) (t − 1), z(1) (t)).
+
+        By the triangle inequality OT(z(2) (t − 1), z(1) (t)) ≤ OT(z(2) (t − 1), z(1) (t − 1)) + OT(z(1) (t −
+        1), z(1) (t)), we then obtain the inequality
+
+        OT(z(2) (t−1), z(2) (t))+OT(z(2) (t), z(1) (t))−OT(z(2) (t−1), z(1) (t−1)) ≤ OT(z(1) (t−1), z(1) (t)).
+        We therefore conclude that the movement cost of z(2) (·) is less than the movement cost of
+        z(1) (·) by taking a telescopic sum in the above equation.
+                                                          (2)      (1)
+            Second, we prove that for all nodes u ∈ V : zu (t) ≥ zu (t) − (2k + 1)/m′ . For this, we
+                                                               (2)
+        denote by Fu the set of nodes v ∈ V \ {u} satisfying z[v] > 0 and such that z(2) has no mass
+        on the path from v to u (except at its endpoints). Denoting by π(·, ·) an optimal transport
+        from z(1) to z(2) , we have that
+                            X            X
+            zu(2) = zu(1) +    π(v, u) −    π(u, v),
+                             v∈V                v∈V
+                                X
+                ≥ zu(1) −               π(u, v),
+                             v∈V \{u}
+                                                       
+                              X         X
+                = zu(1) −                      π(u, w) ,                                                 (6)
+                             v∈Fu     w∈V (v)
+
+                          |Fu |
+                ≥ zu(1) −       .                                                                          (7)
+                           m′
+        where in (6), we denote by V (v) the tree composed of nodes that are separated from u by
+                                                                                   ′
+                                                           P
+        v ∈ Fu , and where for (7) we use that ∀v ∈ Fu :     w∈V (v) π(u, w) ≤ 1/m , otherwise, the
+        tie-breaking rule of (5) is contradicted by considering the configuration z where, starting
+        from z(2) , we remove a mass of 1/m′ from v and add it to u instead. Then, we observe
+        that (a) at most one node of Fu is an ancestor of u, and we denote it by ū, and (b) the
+        set Fu′ = Fu \ {ū} does not contain a pair of nodes where one is an ancestor of the other.
+C. Coester and R. Cosson                                                                                 65:11
+
+
+                  (2)                      (1)
+Since ∀v ∈ Fu′ : zv > 0 we have that zv > 0 and thus that xv ≥ 1/2. Thus, all elements
+of Fu′ correspond to a mass of at least 1/2 for x, which is of total mass k. This shows that
+|Fu′ | ≤ 2k, and thus that |Fu | ≤ 2k + 1.
+
+Step 3. We then consider the sequence defined at all times by z(3) (t) = λz(2) (t), for
+           1
+λ = 1−(2k+1)/m    ′ , which defines 2m-barely fractional measures of mass λk. We note that the
+
+constraint 4k + 4k + 1 ≤ m′ , i.e., 2k 2 + k ≤ m, effectively enforces that λk ∈ [k, k + 1/2].
+                2
+
+Clearly, since λ ≤ 2, the movement cost of z(3) (·) is at most twice the movement cost of z(2) (·).
+                                                             (2)     (1)
+Also, for any node u ∈ V for which xu ≥ 1, we have that zu ≥ zu − 2k+1              2k+1
+                                                                          m′ ≥ 1 − m′ = 1/λ
+            (3)        (2)
+and thus zu = λzu ≥ 1.
+
+Step 4. We finally consider z(4) (·) defined by ∀t : z(4) (t) = σ(z(3) (t)). This defines a
+valid sequence of inner measures because σ(·) is super-additive, with mass k since we have
+        (4)                                                                (3)
+that zr = σ (λk) = k. Also, we clearly have that whenever xu ≥ 1, zu ≥ 1 and thus,
+ (4)                        (4)                                  (3)
+zu ≥ 1. Each    measure   z (t) is m-barely fractional because z (t) is 2m-barely fractional
+           1       1
+and σ 2m N ⊂ m N. By the same Lipschitzness argument as above, the movement cost of
+z(4) (·) is at most twice the movement cost of z(3) (·).
+
+Step 5. We observe that all the definitions above can be implemented online and in
+polynomial time. The algorithm z(4) (·) satisfies almost all the desired properties: It is
+m-barely fractional, has a total mass k, serves the same requests as x(·), and its movement
+cost is at most 8 times the movement cost of x(·). However, it may have fractional mass at
+inner nodes of the tree. To prevent this, any movement of server mass can be deferred until
+it reaches a leaf, since placing server mass at internal nodes is never necessary for serving
+requests.                                                                                   ◀
+
+   We then observe that barely fractional algorithms can handle a small (compared to m)
+additive overhead, as exposed in the following proposition.
+▶ Proposition 7. Suppose that there is an m-barely fractional algorithm z(·) satisfying for
+any request sequence ρ(·),
+                                        1
+   Cost(z(·), ρ(·)) ≤ c OPT(ρ(·)) +       T + c0 ,
+                                       2m
+where T is the number of time-steps in the input sequence ρ(·), c0 is a constant independent
+of ρ(·), and each non-zero distance is at least 1. Then the variant of z(·) that ignores any
+request that it can serve without moving is 2c-competitive.
+Proof of Proposition 7. Let z′ (·) be the variant of z(·) that ignores requests that are already
+satisfied. Concretely, we will have z′ (t) = z′ (t − 1) if zρ(t)
+                                                            ′
+                                                                 (t − 1) ≥ 1. We denote by ρ′ (·) the
+subsequence of ρ(·) where we remove all such superfluous requests. The fractional algorithm
+z′ (·) is formally defined by the value of algorithm z(·) on the request sequence ρ′ (·). Denoting
+by T ′ the length of ρ′ (·), i.e., the number of requests that are not superfluous, we have
+    1 ′                                                             1 ′
+      T ≤ Cost(z′ (·), ρ(·)) = Cost(z(·), ρ′ (·)) ≤ cOPT(ρ′ (·)) +    T + c0 ,                   (8)
+    m                                                              2m
+where the first inequality comes from the fact that any movement entails a cost of at least
+1
+m . Thus,
+
+     1 ′
+       T ≤ cOPT(ρ′ (·)) + c0 .                                                                   (9)
+    2m
+
+
+
+                                                                                                        ICALP 2026
+65:12   Randomized k-Server in Polynomial Time
+
+
+        Therefore, observing that OPT(ρ′ (·)) ≤ OPT(ρ(·)) because ρ′ (·) is a subsequence of ρ(·), we
+        have
+
+             Cost(z′ (·), ρ(·)) ≤ 2cOPT(ρ(·)) + 2c0 .                                                  (10)
+
+        Since superfluous requests can be eliminated in constant time, the computational complexity
+        of z′ (·) is no larger than the computational complexity of z(·).                        ◀
+
+
+         3      Barely random k-server
+        ▶ Proposition 6 (Barely fractional to barely randomized). For k-server on a line metric
+        or τ -HSTs with τ > 5, any m-barely fractional algorithm can be converted online into an
+        m-barely random algorithm with at most a polynomial additive overhead in running time and
+        a constant factor multiplicative overhead in cost.
+
+        Proof. We first prove the result for the line metric M = ([n], d(·, ·)), with ∀u, v ∈
+        [n]2 : d(u, v) = |u − v|. We view this as a tree rooted at 1 ∈ [n], and for convenience,
+        other than our usual convention, we consider internal nodes part of the metric space. (Recall
+        that both models are equivalent by adding leaves at distance 0.) For a configuration z, we
+        have that zu denotes the mass that is located “below” u ∈ [n], whereas z[u] = zu − zu+1 is the
+        mass located at u (with the convention that zn+1 = 0). Then, given an m-barely fractional
+        algorithm z(·) for any i ∈ {1, . . . , m}, at any time t, we define the deterministic k-server
+        configuration Ri (t) as
+                                                         
+                                                i−1
+            Ri (t) = max{u ∈ [n] : zu (t) +             = h}              .                       (11)
+                                                  m           h∈{1,...,k}
+
+
+        We observe that Ri (t) contains always exactly k points of [n], because z1 (t) = k, and
+        zn+1 (t) = 0. Also, we note that the randomized algorithm R(·) effectively serves the
+        incoming requests, i.e., ∀i ∈ [m] : u ∈ Ri (t). This is because, when the request is at u = ρ(t),
+        we must have z[u] (t) = 1 and thus zu (t) = zu+1 (t) + 1. Finally, we study the movement cost
+                                                         1
+        of R(·). We note that when a unit mass of m         moves in z(t) along one edge, at most one
+        configuration Ri (t) is affected, moving by a distance of at most one. This shows that the
+        movement cost of R(·) is less than the movement cost of z(·), and it finishes the proof.
+            We then turn to the proof in the case where the tree is an HST. Adapting the proof of [2]
+        is straightforward, and we only describe the main ideas. We will make sure that the m-barely
+        random configuration R(·) = (R1 (·), . . . , Rm (·)) is consistent with z(·) at all times, i.e., for
+        all t > 0 and u ∈ V ,
+
+                        1 X X
+             zu (t) =         1(v ∈ Ri (t)).
+                        m
+                          i∈[m] v∈Lu
+
+
+        We further say that a configuration C is balanced with respect to z if it satisfies ∀u ∈
+        V : nu (C) = v∈Lu 1(v ∈ C) ∈ {⌊zu ⌋, ⌈zu ⌉}, where nu (C) counts the number of servers below
+                    P
+
+        u in C. The result is obtained by induction by applying the following lemma.
+
+        ▶ Lemma 9. Consider two m-barely fractional configurations z and z′ and some m-barely ran-
+        dom configuration R = (R1 , . . . , Rm ) that is consistent and balanced with respect to z. Then
+        one can find in polynomial time an m-barely random configuration R′ = (R′1 , . . . , R′m ) that is
+        consistent and balanced with respect to z′ and such that m   1                 ′              ′
+                                                                       P
+                                                                         i∈[m] d(Ri , Ri ) = O(OT(z, z )).
+C. Coester and R. Cosson                                                                             65:13
+
+
+Proof sketch. Observe that it suffices to consider the elementary case where:
+
+     zℓ′ ′ ← zℓ′ + 1/m and zℓ′ ← zℓ − 1/m,
+
+for two leaves ℓ, ℓ′ ∈ L. We first construct R̄ that is consistent with z′ , but imbalanced. If
+there exists i ∈ [m] such that ℓ ∈ Ri and ℓ′ ̸∈ Ri , we simply transfer the server at ℓ in Ri
+to ℓ′ . Otherwise, since zℓ > 0 and zℓ′ < 1, we can pick i ̸= j ∈ [m] such that ℓ, ℓ′ ∈ Ri
+and ℓ, ℓ′ ̸∈ Rj . We denote by u the lowest common ancestor of ℓ and ℓ′ . Because both
+configurations are balanced with respect to z, their numbers of servers below u differ by at
+most 1, and we can pick a leaf ℓ′′ that is a descendant of u such that ℓ′′ ∈ Rj and ℓ′′ ̸∈ Ri .
+We then proceed to the following updates,
+
+     R̄i ← Ri ∪ {ℓ′′ } \ {ℓ}   and R̄j ← Rj ∪ {ℓ′ } \ {ℓ′′ }.
+
+The total movement cost for this operation is at most 2OT(z, z′ ), and the configuration
+R̄ obtained is consistent with z′ . However, the configuration R̄ might not be balanced
+with respect to z′ , specifically, descendants of u might have become imbalanced after this
+transformation, where u is the lowest common ancestor of ℓ and ℓ′ . We therefore need to
+transform R̄ into a configuration R′ that is balanced, while incurring a limited movement
+cost. For this, the idea is to balance all descendants v of u, proceeding inductively from top
+to bottom. Concretely, this is achieved by exchanging points between pairs of configurations
+(Ri , Rj ) that satisfy nv (Ri ) > ⌈zu ⌉ and nv (Rj ) < ⌊zu ⌋, thus strictly reducing the balance
+gap
+                 1 X    X
+     G(R, z) =       wv   min{|nv (Ri ) − ⌊zv ⌋|, |nv (Ri ) − ⌈zv ⌉|},
+                 m
+                   v∈V     i∈[m]
+
+while preserving the consistency property. We refer to [2] for complete details. This
+procedure runs in polynomial time because, when a node v is being balanced, the value
+   P
+of i∈[m] min{|nv (Ri ) − ⌊zv ⌋|, |nv (Ri ) − ⌈zv ⌉|} decreases by at least 2 at each balancing
+step.                                                                                        ◀
+
+                                                                                               ◀
+
+ 4      Polynomial time algorithm with additive cost
+In this section, we explain how we adapt the fractional k-server algorithm of [17] to run in
+polynomial time, albeit at the expense of an additive cost, as stated in Proposition 4.
+
+▶ Proposition 4. Let ϵ > 0. There exists a fractional k-server algorithm z(·) for τ -HST
+metrics with τ ≥ 10 that serves each request in polynomial time in (n, log 1/ϵ, log D), and
+satisfying for all requests sequences ρ(·)
+
+     Cost(z(·), ρ(·)) ≤ O(log2 k)OPT(ρ(·)) + ϵT + O(D log2 k),
+
+where T is the length of the sequence ρ(·).
+
+    The algorithm in [17] operates by finding a solution to a constrained convex optimization
+problem, which is restated in Equation (12) below. As the solution can contain irrational
+numbers, we cannot solve it exactly in finite time or space, so we aim for an approximate
+solution. The constraint set, which is known in the literature as the assignment polytope [15]
+
+
+
+
+                                                                                                    ICALP 2026
+65:14   Randomized k-Server in Polynomial Time
+
+
+        or anti-server polytope [17], is defined by an exponential number of constraints, but admits
+        a fast separation oracle (see Remark 16 in Appendix A). Thus, we can use the ellipsoid
+        algorithm to find an approximate solution of this problem in polynomial time.
+            We first recall some definitions from [17] relevant to our discussion. Some of the notation
+        in [17] is for the more general case where an online algorithm with k servers competes against
+        an offline algorithm with h servers, for h ≤ k. For our purposes, the special case h = k
+        suffices.
+            For a node u ∈ V , let nu = |Lu | be the number of leaves in the subtree rooted at u. Let
+        χ := {(u, j) | u ∈ V, j ∈ [nu ]}, and for u ∈ V \ L let χu := {(v, j) ∈ χ | v ∈ Cu } = {(v, j) |
+        v ∈ Cu , j ∈ [nv ]}. The anti-server polytope employed in [17], originally introduced in [15], is
+        defined as
+                   
+            P := x ∈ [0, 1]χ         xrj ≥ 1j>k                     ∀j ∈ [nr ],
+                                 X           X                                          
+                                     xui ≤         xvj              ∀u ∈ V \ L, S ⊆ χu .
+                                    i≤|S|         (v,j)∈S
+
+
+        For intuition, an integral k-server configuration can be encoded by an “anti-server configu-
+        ration” x ∈ P by setting xuj = 0 if the subtree rooted at u contains at least j servers and
+        xuj = 1 otherwise. In particular, a leaf ℓ ∈ L contains a server if xℓ1 = 0.
+                       1
+            Let δ = 2k+1   and Pδ := {x ∈ P | xℓ1 ≥ δ for all ℓ ∈ L}. The online algorithm in [17]
+                                                                           P
+        maintains an anti-server configuration x(t) in Pδ that satisfies ℓ∈L xℓ1 (t) = n − k. This
+        is then converted into a leaf measure z(t) ∈ Z of mass k + 12 by setting zℓ (t) := 1−x   ℓ1 (t)
+                                                                                                1−δ
+        for ℓ ∈ L and zu = ℓ∈Lu zℓ , thus yielding a fractional k + 12 -server algorithm. A simple
+                            P
+
+        transformation (first shown in [15],
+                                          analogous to step 4 in our proof of Proposition 5) then
+        shows that any fractional k + 12 -server algorithm can be converted into a fractional k-server
+        algorithm while increasing the cost by only a constant factor.
+            When a request arrives at a leaf ρ(t) ∈ L and the previous anti-server configuration is
+        x(t − 1) ∈ P , the algorithm of [17] chooses the new anti-server configuration as
+
+           x(t) := arg min D(x ∥ x(t − 1)),                                                            (12)
+                     x∈Pδ
+                    xρ(t)1 =δ
+
+
+        where
+                                                                                      !
+                    ′
+                                X           X                  xuj + δ
+           D(x ∥ x ) :=                wu         (xuj + δ) log ′      − xuj + x′uj       .            (13)
+                                              j
+                                                               xuj + δ
+                           u∈V \{r}
+
+                                                                                              1−xρ(t)1
+        Observe that the associated leaf measure z(t) serves the request, since zρ(t) =         1−δ    = 1.
+          In the following Lemma,
+                                +
+                                        X                              +
+           ∥x(t) − x(t − 1)∥w :=              wu (xui (t) − xui (t − 1))
+                                        u,i
+
+
+        denotes the “positive movement cost” associated with the transition from x(t − 1) to x(t).
+        Over any sequence of steps, the total positive and negative movement are equal up to a
+        bounded additive error, and hence the sum of these terms over all time steps upper bounds
+        the movement cost of z(·) up to a constant factor.
+C. Coester and R. Cosson                                                                           65:15
+
+
+▶ Lemma 10. Let the underlying tree be a τ -HST with τ ≥ 10. Let y(t) ∈ P be the
+anti-server configuration at time t corresponding to an optimal offline algorithm. For any
+configuration x(t − 1) ∈ Pδ at time t − 1, the new configuration x(t) defined in (12) satisfies
+                     +
+   ∥x(t) − x(t − 1)∥w + Q(x(t), y(t)) − Q(x(t − 1), y(t − 1)) ≤ O log2 k · ∆t OPT,
+                                                                           
+
+where Q(x, y) is a potential function that is O(D log2 k)-Lipschitz in any xui , and ∆t OPT
+is the cost of the offline algorithm at time t.
+Proof. The function Q is a combination of several potential functions used in [17]. We prove
+our lemma by combining several inequalities that have been derived in [17]. Since the proof
+of some of these inequalities is rather involved, we do not repeat it here and instead refer
+to the original paper. When citing specific results from [17], we will refer to the numbering
+used in the corresponding full version of the paper [16].
+    First, define the potential function
+                    X        X                 yuj + δ
+    Φ(y ∥ x) :=          wu      (yuj + δ) log          .
+                              j
+                                               x uj + δ
+                     u∈V \{r}
+
+where y ∈ P and x ∈ Pδ refer to the anti-server configurations of the offline and online
+algorithm, respectively. By [16, Lemma 3.6], when the offline algorithm moves from y(t − 1)
+to y(t), the change in Φ can be bounded by
+                                                                   
+                                                                  1
+   Φ(y(t) ∥ x(t − 1)) − Φ(y(t − 1) ∥ x(t − 1)) ≤ (1 + δ) log 1 +      · ∆t OPT.        (14)
+                                                                  δ
+      Further, [16, Theorem 4.1] shows for some constants c1 , c2 , c3 > 0 that
+                       +          k X t
+      ∥x(t) − x(t − 1)∥w ≤ c1 log ·     A + Ψ(z(t)) − Ψ(z(t − 1)),                         (15)
+                                  δ j rj
+
+where z(t) is the leaf measure of mass k + 12 corresponding to x(t) and
+               X wu Z zu                                            +
+                                      z         X            2
+   Ψ(z) := c2                   ln 1 +    dz − c3    wu zu − zp(u)
+                u
+                   1 − δ zu (0)        δ           u
+                                                               3
+
+and Atrj are quantities that by [16, Inequality (3.13)] satisfy
+                                          1X t          2
+   Φ(y(t) ∥ x(t − 1)) − Φ(y(t) ∥ x(t)) ≥         Arj + (W (x(t)) − W (x(t − 1))),          (16)
+                                          3 j           3
+
+for
+                 XX
+      W (x) :=             wu xuj .
+                 u     j
+
+Setting
+                    k                       k
+                       · Φ(y ∥ x) + 2c1 log · W (x) − Ψ(z)
+      Q(x, y) := 3c1 log
+                    δ                       δ
+and combining inequalities (14), (15) and (16) yields
+                           +
+      ∥x(t) − x(t − 1)∥w + Q(x(t), y(t)) − Q(x(t − 1), y(t − 1))
+                                                       
+                                  k                   1
+                         ≤ 3c1 log · (1 + δ) log 1 +      · ∆t OPT
+                                  δ                   δ
+                         = O log2 k · ∆t OPT.
+                                    
+
+Using wu ≤ D and 1/δ = O(k), it is easy to check that Q is O(D log2 k)-Lipschitz in any
+xui .                                                                                ◀
+
+
+                                                                                                  ICALP 2026
+65:16   Randomized k-Server in Polynomial Time
+
+
+             Equipped with Lemma 10, we can now conclude this section with the proof of Proposition 4.
+
+        Proof of Proposition 4. The algorithm is defined by induction by iteratively obtaining an
+        approximate solution of Equation (12) with the Ellipsoid method (Corollary 15 in Appendix A)
+        with a precision that we will specify later. This defines a sequence of points in the anti-server
+        polytope xϵ (t), which are then transformed into a fractional k-server configuration z(t) via
+        the transformations explained above, with a loss of only a constant factor in the movement
+        cost in the process.
+           By Corollary 15, the sequence xϵ (t) satisfies the following approximate version of
+        Lemma 10:
+                                +
+             ∥xϵ (t) − xϵ (t − 1)∥w + Q(xϵ (t), y(t)) − Q(xϵ (t − 1), y(t − 1))
+                                                          ≤ O log2 k · ∆t OPT + O(ϵ′ D log2 k),
+                                                                       
+
+        where we used the fact that Q(x, y) is O(D log2 k)-Lipschitz in its first argument, and that
+        || · ||+
+               w is O(D)-Lipschitz. By telescopic sum,
+              X                        +
+                  ∥xϵ (t) − xϵ (t − 1)∥w ≤ O(log2 k)OPT(ρ(·)) + O(ϵ′ D log2 kT ) + O(D log2 k),
+             t≤T
+
+        where we use that Q(x, y) is bounded by O(D log2 k). For the right choice of precision in
+        our application of Corollary 15 of order ϵ/(D log2 k), we thus have that
+
+             Cost(z(·), ρ(·)) ≤ O(log2 k)OPT(ρ(·)) + ϵT + O(D log2 k).                                   ◀
+
+
+               References
+         1    Anna Adamaszek, Artur Czumaj, Matthias Englert, and Harald Räcke. An O(log k)-
+              competitive algorithm for generalized caching. In Proceedings of the Twenty-Third Annual
+              ACM-SIAM Symposium on Discrete Algorithms, pages 1681–1689, 2012. doi:10.1137/1.
+              9781611973099.133.
+         2    Nikhil Bansal, Niv Buchbinder, Aleksander Madry, and Joseph Naor. A polylogarithmic-
+              competitive algorithm for the k-server problem. Journal of the ACM (JACM), 62(5):1–49,
+              2015. doi:10.1145/2783434.
+         3    Nikhil Bansal, Niv Buchbinder, and Joseph Naor. A primal-dual randomized algorithm for
+              weighted paging. Journal of the ACM (JACM), 59(4):1–24, 2012. doi:10.1145/2339123.
+              2339126.
+         4    Nikhil Bansal and Christian Coester. Online metric allocation and time-varying regularization.
+              In 30th Annual European Symposium on Algorithms, ESA, 2022.
+         5    Nikhil Bansal, Joseph Naor, and Ohad Talmon. Efficient online weighted multi-level paging.
+              In Proceedings of the 33rd ACM Symposium on Parallelism in Algorithms and Architectures,
+              pages 94–104, 2021.
+         6    Yair Bartal and Eddie Grove. The harmonic k-server algorithm is competitive. J. ACM,
+              47(1):1–15, 2000. doi:10.1145/331605.331606.
+         7    Michael A Bender, Alex Conway, Martín Farach-Colton, William Kuszmaul, and Guido
+              Tagliavini. Iceberg hashing: Optimizing many hash-table criteria at once. Journal of the ACM,
+              70(6):1–51, 2023. doi:10.1145/3625817.
+         8    Emery D Berger and Robert D Blumofe. Hoard: A fast, scalable, and memory-efficient allocator
+              for shared-memory multiprocessors. Technical report, Technical Report UTCS-TR99-22, The
+              University of Texas at Austin, 1999.
+         9    Avrim Blum, Carl Burch, and Adam Kalai. Finely-competitive paging. In 40th Annual
+              Symposium on Foundations of Computer Science (Cat. No. 99CB37039), pages 450–457. IEEE,
+              1999. doi:10.1109/SFFCS.1999.814617.
+C. Coester and R. Cosson                                                                              65:17
+
+
+10   Hans-Joachim Böckenhauer, Dennis Komm, Rastislav Královič, and Richard Královič. On
+     the advice complexity of the k-server problem. In International Colloquium on Automata,
+     Languages, and Programming, pages 207–218. Springer, 2011.
+11   Hans-Joachim Böckenhauer, Dennis Komm, Rastislav Královič, Richard Královič, and Tobias
+     Mömke. On the advice complexity of online problems. In Algorithms and Computation:
+     20th International Symposium, ISAAC 2009, Honolulu, Hawaii, USA, December 16-18, 2009.
+     Proceedings 20, pages 331–340. Springer, 2009. doi:10.1007/978-3-642-10631-6_35.
+12   Allan Borodin and Ran El-Yaniv. Online computation and competitive analysis. cambridge
+     university press, 2005.
+13   Sébastien Bubeck. k-server via multiscale entropic regularization. TCS+ seminar. Video
+     recording at https://www.youtube.com/watch?v=UAfo90a4Cg0&t=2452s, December 2017.
+14   Sébastien Bubeck, Christian Coester, and Yuval Rabani. The randomized k-server conjecture
+     is false! In Proceedings of the 55th Annual ACM Symposium on Theory of Computing, STOC,
+     2023.
+15   Sébastien Bubeck, Michael B. Cohen, Yin Tat Lee, James R. Lee, and Aleksander Madry. k-
+     server via multiscale entropic regularization. In Proceedings of the 50th Annual ACM SIGACT
+     Symposium on Theory of Computing, STOC, 2018.
+16   Niv Buchbinder, Anupam Gupta, Marco Molinaro, and Joseph Naor. k-servers with a smile:
+     Online algorithms via projections. Full version of [17] available at https://arxiv.org/pdf/
+     1810.07508v3, 2018.
+17   Niv Buchbinder, Anupam Gupta, Marco Molinaro, and Joseph (Seffi) Naor. k-servers with a
+     smile: Online algorithms via projections. In Proceedings of the Thirtieth Annual ACM-SIAM
+     Symposium on Discrete Algorithms, SODA, 2019.
+18   Romain Cosson and Laurent Massoulié. Barely random algorithms and collective metrical
+     task systems. Advances in Neural Information Processing Systems, 37:37337–37355, 2024.
+19   Romain Cosson and Laurent Massoulié. Collective tree exploration via potential function
+     method. In 15th Innovations in Theoretical Computer Science Conference (ITCS 2024), 2024.
+20   Sina Dehghani, Soheil Ehsani, MohammadTaghi Hajiaghayi, Vahid Liaghat, and Saeed
+     Seddighin. Stochastic k-Server: How Should Uber Work? In 44th International Colloquium on
+     Automata, Languages, and Programming (ICALP 2017), volume 80 of Leibniz International
+     Proceedings in Informatics (LIPIcs), pages 126:1–126:14. Schloss Dagstuhl – Leibniz-Zentrum
+     für Informatik, 2017. doi:10.4230/LIPIcs.ICALP.2017.126.
+21   Yuval Emek, Pierre Fraigniaud, Amos Korman, and Adi Rosén. Online computation with advice.
+     Theoretical Computer Science, 412(24):2642–2656, 2011. doi:10.1016/J.TCS.2010.08.007.
+22   Jittat Fakcharoenphol, Satish Rao, and Kunal Talwar. A tight bound on approximating
+     arbitrary metrics by tree metrics. In Proceedings of the thirty-fifth annual ACM symposium on
+     Theory of computing, pages 448–455, 2003. doi:10.1145/780542.780608.
+23   Amos Fiat, Richard M Karp, Michael Luby, Lyle A McGeoch, Daniel D Sleator, and Neal E
+     Young. Competitive paging algorithms. Journal of Algorithms, 12(4):685–699, 1991. doi:
+     10.1016/0196-6774(91)90041-V.
+24   Martin Grötschel, László Lovász, and Alexander Schrijver. Geometric algorithms and combi-
+     natorial optimization, volume 2. Springer Science & Business Media, 2012.
+25   Edward F. Grove. The harmonic online k-server algorithm is competitive. In Proceedings
+     of the 23rd Annual ACM Symposium on Theory of Computing, STOC, pages 260–266, 1991.
+     doi:10.1145/103418.103448.
+26   Dennis Komm. Introduction to Online Computation. Springer, 2016.
+27   Dennis Komm and Richard Královič. Advice complexity and barely random algorithms.
+     RAIRO-Theoretical Informatics and Applications, 45(2):249–267, 2011. doi:10.1051/ITA/
+     2011105.
+28   Elias Koutsoupias. The k-server problem. Computer Science Review, 3(2):105–118, 2009.
+     doi:10.1016/J.COSREV.2009.04.002.
+
+
+
+
+                                                                                                     ICALP 2026
+65:18   Randomized k-Server in Polynomial Time
+
+
+        29   Elias Koutsoupias and Christos H Papadimitriou. On the k-server conjecture. Journal of the
+             ACM (JACM), 42(5):971–983, 1995. doi:10.1145/210118.210128.
+        30   Mark Manasse, Lyle McGeoch, and Daniel Sleator. Competitive algorithms for on-line
+             problems. In Proceedings of the twentieth annual ACM symposium on Theory of computing,
+             pages 322–333, 1988.
+        31   Sharath Raghvendra and Rachita Sowle. A Scalable Work Function Algorithm for the k-Server
+             Problem. In 18th Scandinavian Symposium and Workshops on Algorithm Theory (SWAT 2022),
+             volume 227 of Leibniz International Proceedings in Informatics (LIPIcs), pages 30:1–30:20.
+             Schloss Dagstuhl – Leibniz-Zentrum für Informatik, 2022. doi:10.4230/LIPIcs.SWAT.2022.
+             30.
+        32   Nick Reingold, Jeffery Westbrook, and Daniel D Sleator. Randomized competitive algorithms
+             for the list update problem. Algorithmica, 11(1):15–32, 1994. doi:10.1007/BF01294261.
+        33   Marc P Renault and Adi Rosén. On online algorithms with advice for the k-server problem.
+             Theory of Computing Systems, 56(1):3–21, 2015. doi:10.1007/S00224-012-9434-Z.
+        34   Stijn Schildermans, Kris Aerts, Jianchen Shan, and Xiaoning Ding. Ptlbmalloc2: Reducing tlb
+             shootdowns with high memory efficiency. In 2020 IEEE Intl Conf on Parallel & Distributed Pro-
+             cessing with Applications, Big Data & Cloud Computing, Sustainable Computing & Communica-
+             tions, Social Computing & Networking (ISPA/BDCloud/SocialCom/SustainCom), pages 76–83.
+             IEEE Computer Society, 2020. doi:10.1109/ISPA-BDCLOUD-SOCIALCOM-SUSTAINCOM51426.
+             2020.00036.
+
+
+         A     Ellipsoid method
+        In this section, we briefly explain how the ellipsoid method allows us to provide approximate
+        solutions for problems of the form of (12) in polynomial time. We start with some definitions
+        from [24].
+
+        ▶ Definition 11 (Approximate oracles [24]). An approximate separation oracle for a closed
+        convex set K ⊂ Rd is an algorithm that takes as input a rational number γ > 0 and a rational
+        point y ∈ Qd , and that, in polynomial time in the encoding length of the inputs either reports
+        that y is at distance at most γ from K, or returns a vector c ∈ Qd satisfying ||c||∞ = 1
+        and ∀x ∈ K : cT x ≤ cT y + γ. An approximate first order oracle for a convex differentiable
+        function f : Rd → R is an algorithm that takes as input a rational number γ > 0 and a
+        rational point y ∈ Qd , and that, in polynomial time in the encoding lengths of the inputs
+        returns a vector g ∈ Rd that satisfies ||g − ∇f (y)|| ≤ γ. An approximate zeroth-order oracle
+        for f (·) is an algorithm that, for the same input, returns in polynomial time in the encoding
+        lengths of the inputs a value v such that |f (y) − v| ≤ γ.
+
+        ▶ Theorem 12 (Central cut ellipsoid, Theorem 3.2.1 of [24]). There is an algorithm that takes
+        as input a convex set K ⊂ Rd contained in a ball of radius R represented by an approximate
+        separation oracle, and a precision ϵ > 0, and in polynomial time in (d, log R, log 1/ϵ) either
+        outputs a point that is at distance at most ϵ from K or an ellipsoid of volume at most ϵ2d
+        that contains K.
+
+        ▶ Remark 13. In the original statement of Theorem 12, the volume of the ellipsoid for the
+        failure case is ϵ, but it can be strengthened to ϵ2d for a computational cost of same order
+        by running the algorithm with ϵ′ = ϵ2d . In practice, if the polytope is full-dimensional, its
+        volume is lower-bounded by an exponential function of its encoding length (see [24, Lemma
+        3.1.35]), and the failure case is not raised.
+        We will utilize the following corollary, which concerns the approximate optimization of convex
+        functions.
+C. Coester and R. Cosson                                                                                     65:19
+
+
+▶ Corollary 14. There is an algorithm that takes as input a precision ϵ > 0, a closed convex
+set K ⊂ Rd contained in a ball of radius R represented by an approximate separation oracle
+and satisfying that the volume of the intersection of K with any ball centered on a point
+of K of radius r is at least Ω(rd ), and a convex function f (·) of Rd represented by its
+approximate zeroth-order and first-order oracles, that is L-Lipschitz, α-strongly convex, and
+a closed interval of width w to which the minimum value of f (·) belongs, and that, in time
+polynomial in (d, log R, log 1/ϵ, log 1/α, log L) outputs a point x∗,ϵ satisfying ||x∗,ϵ − x∗ || ≤ ϵ
+where x∗ = arg minx∈K f (x).
+
+Proof. Define f ∗ = minx∈K f (x). for a fixed threshold A ∈ R, consider the closed convex
+set defined by
+
+    KA = {x : f (x) ≤ A} ∩ K.
+
+We start by assuming that we have A ∈ [f ∗ + ϵ′ , f ∗ + 2ϵ′ ], where ϵ′ = αϵ2 /8, and that we
+are given x∗,ϵ that is at a distance at most ϵ/2 from a point xA in KA . Then, by strong
+convexity of f (·), we have α||x∗ − xA ||2 ≤ f (xA ) − f (x∗ ) ≤ αϵ2 /4 so that ||xA − x∗ || ≤ ϵ/2.
+And by triangle inequality, ||x∗,ϵ − x∗ || ≤ ϵ/2 + ϵ/2 = ϵ.
+    We now explain how to find a value of A ∈ [f ∗ +ϵ′ , f ∗ +2ϵ′ ], and to obtain the corresponding
+point x∗,ϵ in polynomial time. We will proceed by dichotomy. We know that the minimum
+value of the function is within an interval of width w. We maintain the interval [A−              +
+                                                                                             i , Ai ] of
+                                     −   +
+candidates for A, starting with [A0 , A0 ] being that interval of width w. We run the central
+                                                                                                  −
+cut ellipsoid algorithm for KAi where Ai is the midpoint of the interval, Ai = (A+        i + Ai )/2,
+                                                                 −
+and, if it returns a solution, we update the interval to [Ai , Ai ] and otherwise to [Ai , A+        i ].
+We note that in only O(log w + log 1/ϵ′ ) steps, the width of the interval is smaller than ϵ′ /2.
+We also note that A−                              ∗      ′                            ∗
+                      i cannot be greater than f + ϵ , because, for any A ≥ f + ϵ , we have
+                                                                                           ′
+                                   ′   d
+that the volume of KA is in Ω((ϵ /L) ) because it contains the intersection of K with a ball
+of radius ϵ′ /L. Finally, running the central cut ellipsoid algorithm on A+           ∗    ′    ∗
+                                                                               i ∈ [f + ϵ , f + 2ϵ ]
+                                                                                                       ′
+                               ∗,ϵ
+returns the desired output x .
+    To conclude, we need to argue that for any value of A, we can run the central cut ellipsoid
+algorithm for KA . Note that KA is contained in a closed convex set included in a ball of
+radius R and that an approximate separation oracle for KA is given at y ∈ Qd by (1) an
+approximate separation oracle for K at y if y ̸∈ K (2) an approximate gradient of f (·) at y
+if f (y) ≥ A. Thus, applying Theorem 12, the central cut ellipsoid method applied to KA
+and ϵ/2 outputs either a point that is at distance at most ϵ/2 from KA or a certificate that
+the volume of KA is less than (ϵ/2)2d .                                                               ◀
+
+    We now apply this theorem to real functions of the form f (x) = D(x ∥ x(t − 1)) for the
+divergence defined in (13) and some fixed vector x(t − 1) and to the anti-server polytope Pδ
+(where we drop the variable xρ(t)1 which is set equal to δ). The dimension d of the polytope
+is bounded by n2 , the function f (·) is L-Lipschitz with L = O(D log k) and α-strongly convex
+with α = Ω(1). There exists a separation oracle for the anti-server polytope (Remark 16),
+and, furthermore, by Taylor expansions of the log(·) on the interval [δ, 1 + δ], approximate
+zeroth and first-order oracle for f (·) are known. Finally, we also note that for any point x at
+a distance η from the antiserver polytope, there is a polynomial time procedure (specifically,
+enforcing the constraints from top to bottom in the tree) that returns a point x′ in the
+antiserver polytope at distance at most O(η) from x. Therefore, applying Corollary 14, we
+have the following result.
+
+
+
+
+                                                                                                            ICALP 2026
+65:20   Randomized k-Server in Polynomial Time
+
+
+        ▶ Corollary 15. For any ϵ > 0, for any HST with n nodes and diameter D, and for
+        any element x(t − 1) of the antiserver polytope, there is a polynomial time algorithm that
+        provides an approximate solution xϵ of (12) satisfying ||x(t) − xϵ || ≤ ϵ in time polynomial
+        in (log 1/ϵ, n, log D).
+
+        ▶ Remark 16 (Separation oracle for the antiserver polytope). Let nu be the number of leaves
+        below u. Recall that χ(u) is the set of pairs (v, i) where v is a child of u and i ≤ nv . Let
+        (v1 , i1 ), (v2 , i2 ), . . . be the list of elements of χ(u) in increasing order of their x-values. Note
+        that a constraint between u and its children is violated if and only if the constraint of a set
+        S that is a prefix of this list is violated. Since there are only nu prefixes, for each u, we only
+        need to check polynomially many constraints to find a violated constraint, if one exists.
+
