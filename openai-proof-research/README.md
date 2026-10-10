@@ -1,13 +1,22 @@
 # OpenAI mathematics research
 
+**Structural-graph update:** [I164](frontier/iterations/i164-structural-graph-discovery.md)
+leaves the sharp linear Hamiltonian-cycle target unproved and unrefuted.
+Its exact counting interfaces and prism obstructions are author-level
+technical results; parent sealed replay passes. The
+[parent disposition](frontier/iterations/i164-structural-graph-parent-disposition.md)
+corrects expansion-test coverage to six selected graphs without changing
+sealed bytes. [I165](frontier/iterations/iteration165-square-expansion-multiplicity-factory-astra-task.json)
+now audits the used interfaces and attacks the missing square-expansion
+inequality on Factory/Astra. **8 accepted, 2 remaining.**
+
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies full R154 as **TECHNICAL ONLY**, retaining I159's unchanged-original
 proof PASS. Parent sealed replay passes. The
 [parent disposition](frontier/iterations/i161-oracle-contribution-parent-disposition.md)
 records the full-scope reduction and preserved historical failures.
-[I164](frontier/iterations/iteration164-structural-graph-factory-astra-task.json)
-starts fresh structural-graph discovery on Factory/Astra. **8 accepted,
-2 remaining.**
+The subsequent [I164 discovery report](frontier/iterations/i164-structural-graph-discovery.md)
+and I165 continuation are summarized above. **8 accepted, 2 remaining.**
 
 **BFSS contribution gate completed:** [I163](frontier/reviews/i163-corrected-bfss-contribution-astra.md)
 classifies the entire corrected Weyl theorem as **TECHNICAL ONLY**.

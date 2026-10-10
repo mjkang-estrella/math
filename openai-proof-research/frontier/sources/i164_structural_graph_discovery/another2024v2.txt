@@ -1,0 +1,1683 @@
+                                         ANOTHER HAMILTONIAN CYCLE IN BIPARTITE PFAFFIAN GRAPHS
+
+                                                         ANDREAS BJÖRKLUND, PETTERI KASKI, AND JESPER NEDERLOF
+
+
+
+
+                                              Abstract. Finding a Hamiltonian cycle in a given graph is computationally challenging, and in
+
+
+
+
+arXiv:2308.01574v2 [cs.DS] 22 Feb 2024
+                                              general remains so even when one is further given one Hamiltonian cycle in the graph and asked to
+                                              ﬁnd another. In fact, no signiﬁcantly faster algorithms are known for ﬁnding another Hamiltonian
+                                              cycle than for ﬁnding a ﬁrst one even in the setting where another Hamiltonian cycle is structurally
+                                              guaranteed to exist, such as for odd-degree graphs. We identify a graph class—the bipartite Pfaﬃan
+                                              graphs of minimum degree three—where it is NP-complete to decide whether a given graph in the
+                                              class is Hamiltonian, but when presented with a Hamiltonian cycle as part of the input, another
+                                              Hamiltonian cycle can be found eﬃciently.
+                                                  We prove that Thomason’s lollipop method [Ann. Discrete Math., 1978], a well-known algorithm
+                                              for ﬁnding another Hamiltonian cycle, runs in a linear number of steps in cubic bipartite Pfaﬃan
+                                              graphs. This was conjectured for cubic bipartite planar graphs by Haddadan [MSc thesis, Water-
+                                              loo, 2015]; in contrast, examples are known of both cubic bipartite graphs and cubic planar graphs
+                                              where the lollipop method takes exponential time.
+                                                  Beyond the lollipop method, we address a slightly more general graph class and present two
+                                              algorithms, one running in linear-time and one operating in logarithmic space, that take as input
+                                              (i) a bipartite Pfaﬃan graph G of minimum degree three, (ii) a Hamiltonian cycle H in G, and (iii)
+                                              an edge e in H, and output at least three other Hamiltonian cycles through the edge e in G.
+                                                  We also present further improved algorithms for ﬁnding optimal traveling salesperson tours and
+                                              counting Hamiltonian cycles in bipartite planar graphs with running times that are not known to
+                                              hold in general planar graphs.
+                                                  We prove our results by a new structural technique that eﬃciently witnesses each Hamiltonian
+                                              cycle H through an arbitrary ﬁxed anchor edge e in a bipartite Pfaﬃan graph using a two-coloring
+                                              of the vertices as advice that is unique to H. Previous techniques—the Cut&Count technique
+                                              of Cygan, Nederlof, Pilipczuk, Pilipczuk, Van Rooij, and Wojtaszczyk [FOCS’11, TALG’22] in
+                                              particular—were able to reduce the Hamiltonian cycle problem only to essentially counting prob-
+                                              lems; our results show that counting can be avoided by leveraging properties of bipartite Pfaﬃan
+                                              graphs. Our technique also has purely graph-theoretical consequences; for example, we show that
+                                              every cubic bipartite Pfaﬃan graph has either zero or at least six distinct Hamiltonian cycles; the
+                                              latter case is tight for the cube graph.
+
+
+
+
+                                         (AB) IT University of Copenhagen, Denmark
+                                         (PK) Aalto University, Finland
+                                         (JN) Utrecht University, the Netherlands
+                                         E-mail addresses: anbjo@itu.dk, petteri.kaski@aalto.fi, j.nederlof@uu.nl.
+                                                                                                                 1
+
+                                              1. Introduction
+Finding a Hamiltonian cycle in a given undirected graph is a well-known, well-researched, and hard
+problem. This paper studies the question whether knowledge of one Hamiltonian cycle helps in
+ﬁnding another one. More precisely, the Another Hamiltonian Cycle problem asks, given as
+input (i) a graph1 G, (ii) a Hamiltonian cycle H in G, and (iii) an edge e ∈ E(H), to ﬁnd another
+Hamiltonian cycle H ′ 6= H in G with e ∈ E(H ′ ).
+   Our interest is in the class of bipartite Pfaffian2 graphs, a superclass of the bipartite planar
+graphs. This focus is partly motivated by the fact that both in cubic bipartite graphs and cubic
+planar graphs, a well-known general algorithm for ﬁnding another Hamiltonian cycle, Thomason’s
+lollipop method [Tho78], requires exponential time in the worst case, c.f. Section 1.1. Also, the
+problem of deciding if the graph contains a Hamiltonian cycle at all remains NP-hard in the family
+of cubic bipartite planar graphs, as proved by Akiyama, Nishizeki, and Saito [ANS80].
+   As our main result, we show that Another Hamiltonian Cycle admits both a linear-time
+algorithm as well as a logarithmic-space algorithm in bipartite Pfaﬃan graphs of minimum degree
+three. Further restricted to cubic bipartite Pfaﬃan graphs, we prove that Thomason’s lollipop
+method runs in a linear number of steps and can be implemented to run in linear time. This is to
+our knowledge a ﬁrst example of a nontrivial graph class where Another Hamiltonian Cycle
+is eﬃciently solvable; such an example was solicited by Kintali [Kin09]. By trivial we here intend
+a graph class in which Hamiltonicity detection is NP-hard but is artiﬁcially constructed to ensure
+a simple local rerouting of any Hamiltonian cycle. Rather, in our case the global properties of
+bipartiteness, Pfaﬃanity, and the everywhere-local property of minimum-degree three, interplay to
+enable an eﬃcient algorithm. Without the minimum-degree constraint, the problem is NP-hard
+(see Appendix A).
+   Our techniques have also purely graph-theoretic consequences. We show that every cubic bipar-
+tite Pfaﬃan graph has at least three other Hamiltonian cycles through any edge of a Hamiltonian
+cycle. All three Hamiltonian cycles can be found in linear time. We also show that such Hamiltonian
+graphs must have at least six Hamiltonian cycles. The 8-vertex cube graph ( ), the canonical ex-
+ample in this class, is an extremal example to both results. It has precisely six distinct Hamiltonian
+cycles with every graph edge in exactly four of them.
+1.1. Motivation and earlier work. While a graph need not be Hamiltonian, and a Hamiltonian
+graph need not admit another Hamiltonian cycle, there exist graph families with Hamiltonian
+members where another Hamiltonian cycle is always known to exist. Perhaps the most prominent
+such family are the odd-degree graphs, which via Smith’s Theorem (see [Tut46]) have an even
+number of Hamiltonian cycles through any given edge. Thomason [Tho78] gave a constructive proof
+by describing an algorithm that solves for another Hamiltonian cycle in cubic graphs. The algorithm
+is often called Thomason’s lollipop method as it transforms a Hamiltonian cycle to another one by a
+sequence of lollipop graphs, see Section 3.3 for a precise description of the algorithm. Dropping the
+requirement that the Hamiltonian cycle should go through a speciﬁc edge, Bosák [Bos67] proved that
+every cubic bipartite graph has an even number of Hamiltonian cycles. Thomassen [Tho96, Tho97]
+showed that no bipartite graph in which every vertex in one of the two parts of the bipartition has
+degree at least three, has a unique Hamiltonian cycle. A famous conjecture due to Sheehan [She75]
+claims that no 4-regular graph can have a unique Hamiltonian cycle; Thomassen’s result proves
+Sheehan’s conjecture for bipartite graphs.
+   Papadimitriou [Pap94] popularized the Another Hamiltonian Cycle problem and Thoma-
+son’s algorithm by introducing the complexity class PPA and showed the containment of the prob-
+lem in odd-degree graphs; completeness for PPA remains open. It is also open whether the problem
+  1
+    We tacitly work with undirected simple loopless graphs unless mentioned otherwise, as well as assume knowledge
+of standard graph-theoretic terminology [Wes96]. Our conventions with graphs can be found in Section 1.6.
+   2We postpone a precise deﬁnition and motivation of Pfaﬃan graphs to Section 1.5. Planar graphs are Pfaﬃan.
+2
+
+can be solved in polynomial time—indeed, the drawback of Thomason’s algorithm is that it may
+run for a very long time; Krawczyk [Kra99] and Cameron [Cam01] showed that Thomason’s al-
+gorithm requires exponential time for a family of cubic planar graphs. Later this was shown by
+Zhong [Zho18] also for cubic bipartite graphs. The best bound to date is the recent result of Briański
+and Szady [BS22], which shows that there are cubic 3-connected planar graphs on n vertices, in
+which Thomason’s lollipop algorithm runs in Ω(1.18n ) time.
+   The above papers reason about Thomason’s algorithm speciﬁcally, but it may of course be other
+algorithms that solve the problem more eﬃciently. Some progress in this direction was provided
+by Bazgan, Santha, and Tuza [BST99] that showed that one given a cubic graph on n vertices
+and one of its Hamiltonian cycles can ﬁnd another cycle of length (1 − ǫ)n for any ﬁxed constant
+ǫ > 0 in polynomial time. Deligkas, Mertzios, Spirakis, and Zamaraev [DMSZ20] derived an
+exponential-time polynomial-space deterministic algorithm that given a cubic graph along with
+one of its Hamiltonian cycles ﬁnds another Hamiltonian cycle; the algorithm is shown to be faster
+than the fastest known exponential-time polynomial-space deterministic algorithm for ﬁnding a
+Hamiltonian cycle in cubic graphs.
+1.2. Main results for bipartite Pfaffian graphs. Let us now review our main results for bi-
+partite Pfaﬃan graphs and the underlying techniques in more detail. Our main theorems are as
+follows.
+Theorem 1 (Main; Linear–time Another Hamiltonian Cycle in minimum degree three).
+There exists a deterministic linear-time algorithm that, given as input (i) a bipartite Pfaffian graph
+G with minimum degree three, (ii) a Hamiltonian cycle H in G, and (iii) an edge e ∈ E(H), outputs
+a Hamiltonian cycle H ′ 6= H in G with e ∈ E(H ′ ).
+
+Theorem 2 (Main; Logarithmic–space Another Hamiltonian Cycle in minimum degree
+three). There exists a deterministic logarithmic-space algorithm that, given as input (i) a bipartite
+Pfaffian graph G with minimum degree three, (ii) a Hamiltonian cycle H in G, and (iii) an edge
+e ∈ E(H), outputs a Hamiltonian cycle H ′ 6= H in G with e ∈ E(H ′ ).
+   One consequence of the above algorithm is that it indirectly proves that there are eﬃcient parallel
+circuits for generating another Hamiltonian cycle in this graph class, due to the known complexity
+class containment L ⊆ NC2 by exponentiation of the state transition matrix by iterated squaring.
+   The framework underlying our main theorems can also be used to prove an upper bound on the
+number of steps needed for Thomason’s lollipop method to terminate.
+Theorem 3 (Thomason’s lollipop method in cubic bipartite Pfaﬃan graphs). Thomason’s lollipop
+method starting from any Hamiltonian cycle H and any edge e ∈ E(H) in an n-vertex cubic bipartite
+Pfaffian graph G, terminates after at most n steps.
+   It was conjectured in a master thesis at Waterloo by Haddadan [Had15] that Thomason’s lollipop
+method runs in a linear number of steps in cubic bipartite planar graphs. It was there also proven to
+hold for the subfamily of such graphs that does not have the wheel graph on six vertices as a minor.
+However, as the author himself points out, ﬁnding a ﬁrst Hamiltonian cycle in this limited graph
+family does not seem intractable. We are not aware of any other papers providing a polynomial
+time bound on Thomason’s lollipop method in any graph class.
+   Our framework also can be used to prove the following structural results for Hamiltonian cycles.
+Corollary 4 (Non-uniqueness in minimum degree three). For every bipartite Pfaffian graph G of
+minimum degree three and for every edge e ∈ E(G), it holds that G has either zero or at least four
+distinct Hamiltonian cycles H with e ∈ E(H).
+  The cube graph is a cubic bipartite Pfaﬃan graph with six distinct Hamiltonian cycles. We show
+that no Hamiltonian graph in this class can have fewer Hamiltonian cycles.
+                                                                                                               3
+
+Corollary 5 (Cubic tight lower bound). Every cubic bipartite Pfaffian graph has either zero or at
+least six distinct Hamiltonian cycles.
+  Chia and Ong [CO07] (in the paragraph after Theorem 10) asked whether there exists cubic
+bipartite planar graphs with exactly four Hamiltonian cycles. The above Corollary rules out that
+possibility.
+Remarks. One consequence of Theorem 1 is that if the Another Hamiltonian Cycle prob-
+lem in general odd degree graphs is PPA-complete as hypothesized by Papadimitriou [Pap94,
+Open Problem (4)], then any proof cannot carry over to cubic bipartite planar graphs unless also
+PPA = FP. Our result also seems related to another well-known conjecture, namely Barnette’s
+conjecture (cf. Tutte [Tut69, Unsolved Problem V]), which states that every cubic 3-connected
+bipartite planar graph (Barnette graph) has a Hamiltonian cycle. Gorsky, Steiner, and Wieder-
+recht [GSW23] recently extended the conjecture by showing that if Barnette’s conjecture is true,
+it also holds that every cubic bipartite 3-connected Pfaﬃan graph has a Hamiltonian cycle. It is
+known that if Barnette’s conjecture is true, then there is a Hamiltonian cycle through every edge in
+every such graph, see Kelmans [Kel94]. Moreover, it was indirectly shown by Holton, Manvel, and
+McKay [HMM85] that any Barnette graph larger than the smallest such graph—namely the cube
+graph—can be reduced to a smaller Barnette graph in such a way that if the smaller graph has a
+Hamiltonian cycle through every edge, then the larger one must also have a Hamiltonian cycle. This
+means that if it was possible given any single Hamiltonian cycle in a Barnette graph to generate
+a Hamiltonian cycle through any speciﬁc edge not on the initial cycle, then Barnette’s conjecture
+would be constructively true. We remark that our algorithm is not known to be able to do this, not
+even indirectly by applying it several times in a chain of Hamiltonian cycle transformations. We
+do note however, that our algorithms in Theorems 1 and 2 not only make sure the edge e = {s, t}
+is part of both Hamiltonian cycles, they also retain the other edge incident to s on H; this can be
+observed by Lemma 16, that is, no edge incident to s is changed by the algorithms since it is not
+on the alternating cycle we use. In particular this makes it possible given H and any given edge
+f ∈ E(G) not on H, to ﬁnd another Hamiltonian cycle H ′ such that f is also not part of H ′ .
+1.3. Overview of techniques. At the heart of our algorithms and structural results is what we
+believe to be a new framework for eﬃciently witnessing a Hamiltonian cycle H through an arbitrary
+anchor edge e in a bipartite Pfaﬃan graph G. We associate a (not necessarily proper) two-coloring
+χH : V (G) → {0, 1} to H that is unique to H (but dependent on a ﬁxed but arbitrary Pfaﬃan
+orientation of G as well as e) and that deﬁnes a unique acyclic Hamiltonian3 orientation of G \ e.
+We will refer to such an χH as a good coloring. This acyclicity in particular enables the unique
+recovery of H in linear time by standard topological sorting when given χH as advice. The reader
+may want to consult Figure 1 (on page 8) for an advance illustration at this point; the framework
+itself is developed in Section 2.
+   We also show that it suﬃces to know χH in only one of the parts of a bipartition of G to eﬃciently
+extend to a Hamiltonian cycle, which is not necessarily equal to H however. More precisely, we
+show that a coloring λ of one of the parts leads to an auxiliary bipartite graph Fλ whose perfect
+matchings correspond to the good colorings χH extending λ, which in turn each deﬁne a unique
+Hamiltonian cycle H. We refer to Figure 2 (on page 11) for an advance illustration of this setting.
+   Finally, when G has minimum degree three, we observe that we can use Fλ to eﬃciently switch
+from one Hamiltonian cycle H in G (described by a perfect matching MH in Fλ ) to another
+Hamiltonian cycle H ′ 6= H in G by switching along an alternating cycle in Fλ which can be
+discovered through a directed cycle in an auxiliary directed graph Dλ,H . Moreover, we show that
+this construction and discovery can be executed in deterministic linear time. We refer to Figure 3
+  3In precise terms, the orientation is a directed acyclic graph that contains as a directed subgraph a directed
+Hamiltonian path from one end of e to the other.
+4
+
+(on page 15) for an advance illustration of this setting; the switching construction itself is developed
+in Section 3.
+
+1.4. Further results. There are further algorithmic consequences of our framework on Pfaﬃan
+graphs to the problems of deterministically ﬁnding and counting Hamiltonian cycles as well as the
+Traveling Salesperson Problem (TSP) in the bipartite Pfaﬃan/planar setting.
+   Our framework for witnessing Hamiltonicity should be contrasted with the Cut&Count approach
+for detecting Hamiltonian cycles by Cygan, Nederlof, Pilipczuk, Pilipczuk, Van Rooij, and Woj-
+taszczyk [CNP+ 22], which reduces the Hamiltonian cycle problem to a local problem by showing
+that a cycle cover of the input graph is Hamiltonian if and only if the number of the exponentially
+many vertex partitions that are consistent (deﬁned in a certain local way) with it is odd. This
+approach therefore necessarily reduces the original decision problem to a parity counting problem,
+which has several disadvantages that seem inherent to the approach, including the need for random-
+ization and a running time factor that is pseudo-polynomial in the integer weights for edge-weighted
+problem variants. Our framework shows that for bipartite Pfaﬃan graphs there is a more natural
+way to witness that a cycle cover is Hamiltonian using only a single vertex partition; that is, χH .
+   Earlier work. Before stating our results, let us set the stage by reviewing pertinent earlier
+work. To start with, let us recall that in terms of complexity lower bounds,√an algorithm for
+detecting Hamiltonicity in a given n-vertex planar graph with worst-case exp(o( n)) running time
+would violate the Exponential Time Hypothesis, as seen by combining the Sparsiﬁcation Lemma of
+Impagliazzo, Paturi, and Zane [IPZ01] with the reduction in Garey, Johnson, and Tarjan [GJT76],
+see Deı̆neko, Klinz, and Woeginger [DKW06].
+   Algorithms for detecting
+                      √     and ﬁnding a Hamiltonian cycle in a given n-vertex planar graph running
+in worst-case exp(O( n)) time have also been known since the work of Deı̆neko, Klinz, and Woegin-
+ger [DKW06]. Further exploiting the properties of planar graphs, Dorn, Penninkx, Bodlaender, and
+Fomin [DPBF10] improved the base in the exponential running time signiﬁcantly. Subsequently sev-
+eral powerful algorithmic techniques have been developed to get faster algorithms for connectivity
+problems in general and Hamiltonicity problems in particular, including the Cut&Count technique
+of Cygan, Nederlof, Pilipczuk, Pilipczuk, Van Rooij, and Wojtaszczyk [CNP+ 22], the rank-based
+method with representative sets and reductions via fast Gaussian elimination in Bodlaender, Cy-
+gan, Kratsch, and Nederlof [BCKN15], and especially the technique of bases of perfect matchings
+in Cygan, Kratsch, and Nederlof [CKN18]. Pino, Bodlaender, and Van Rooij [PBvR17, Pin16] use
+these techniques over branch width to bring the base of the exponential running time down as much
+as possible in the planar case.
+   As far as we know though, there have been no studies showing that the input graph being
+bipartite would help getting even faster algorithms in planar graphs. One reason to expect it would
+is that the fastest known algorithm for Hamiltonicity detection in a bipartite graph is much faster
+than the fastest for a general graph, see Björklund [Bjö14]. Another one is the TSP algorithm
+restricted to bipartite graphs by Nederlof [Ned20] that has a O(cn ) running time for some c < 2 if
+matrix multiplication is in quadratic time, as opposed to what is known for general graphs.
+   Our results. By eﬀectively testing all possible coloring-advice bits in our new Hamiltonicity
+framework, we get improved deterministic algorithms parameterized by various graph decomposi-
+tions’ width measures in the class of bipartite Pfaﬃan (or planar) graphs. Earlier parameterized
+algorithms of this type apply to all graphs, and it is not obvious how to further exploit a bipartite
+structure and modify these algorithms for improved running time. Our takeaway message is that it
+nevertheless appears to be easier to count and ﬁnd weighted Hamiltonian cycles in bipartite planar
+graphs than in general planar ones. Let us now state each of our results and highlight a comparison
+with pertinent earlier algorithms.
+                                                                                                   5
+
+Theorem 6 (Bipartite Pfaﬃan TSP parameterized by path width). Given an edge-weighted bi-
+partite Pfaffian graph G on n vertices along with a path decomposition of width pw(G), we can
+compute the minimum weight Hamiltonian cycle in G in 4pw(G) poly(n) time.
+  Bodlaender, Cygan, Kratsch, and Nederlof [BCKN15] present an algorithm running in (2 +
+2ω/2 )pw(G) poly(n) time with ω < 2.373 the square matrix multiplication exponent that works for
+any graph. Our algorithm is only asymptotically better if ω > 2. Our technique also generalizes
+to other graph decompositions, in particular the branch width.
+Theorem 7 (Bipartite Pfaﬃan TSP parameterized by branch width). Given an edge-weighted
+bipartite Pfaffian graph G on n vertices along with a branch decomposition of width bw(G), we can
+compute the minimum weight Hamiltonian cycle in G in 8bw(G) poly(n) time.
+   The most striking application of the above result is perhaps that it gives an improved running
+time for TSP in bipartite planar graphs
+Corollary 8 (Bipartite planar TSP). Given an edge-weighted bipartite planar√graph G on n ver-
+tices, we can compute the minimum weight Hamiltonian cycle in G in O(26.366 n ) time.
+   This √ should be contrasted with the best known result for general planar graphs which is the
+O(2 6.570  n ) time bound by Pino, Bodlaender, and Van Rooij [PBvR17] (see also [Pin16] for the full
+
+argument). Our result matches the running time of the randomized graphic planar TSP algorithm
+in Cygan, Nederlof, Pilipczuk, Pilipczuk, Van Rooij, and Wojtaszczyk [CNP+ 22].
+   Our technique also makes it possible to count the Hamiltonian cycles.
+Theorem 9 (Bipartite Pfaﬃan counting Hamiltonian cycles parameterized by path width). Given
+a bipartite Pfaffian graph G on n vertices along with a path decomposition of width pw(G), we can
+count the Hamiltonian cycles in G in 4pw(G) poly(n) time.
+   The best known result for general graphs is the 6pw(G) poly(n) time algorithm by Bodlaender,
+Cygan, Kratsch, and Nederlof [BCKN15]. It is also known that improving this general graph
+result to (6 − ǫ)pw(G) poly(n) for any ǫ > 0 is impossible unless the Strong Exponential Time
+Hypothesis is false, see Curticapean, Lindzey, and Nederlof [CLN18]. There is also a general graph
+(2ω + 2)tw(G) poly(n) time algorithm parameterized in the tree width by Wlodarczyk [Wlo19].
+Theorem 10 (Bipartite Pfaﬃan counting Hamiltonian cycles parameterized by branch width).
+Given a bipartite Pfaffian graph G on n vertices along with a branch decomposition of width bw(G),
+we can count the Hamiltonian cycles in G in 2ω bw(G) poly(n) time, where ω < 2.373.
+  For this problem we get a much faster algorithm in bipartite planar graphs.
+Corollary 11 (Bipartite planar counting of Hamiltonian cycles). Given a bipartite√planar graph
+G on n vertices, we can compute the number of Hamiltonian cycles in G in O(25.049 n ) time.
+   The best known bound for general planar graphs as far as we can tell is to √
+                                                                             implicitly build on a
+result of Bodlaender, Cygan, Kratsch, and Nederlof [BCKN15] to get a O(26.508 n ) time algorithm.
+1.5. Pfaffian graphs. Let us now deﬁne and motivate Pfaﬃan graphs in more detail. An orien-
+tation of a graph G replaces every edge {u, v} ∈ E(G) with either the directed arc (u, v) or the
+                                                         ~ A cycle C in G is central if the graph
+directed arc (v, u), thereby obtaining a directed graph G.
+G \ V (C) admits a perfect matching. We say that an orientation of a cycle is consistent if it is
+strongly connected. An orientation G  ~ of G is Pfaffian if for every central cycle C in G it holds
+that both consistent orientations of C have an odd number of arcs in common with G.   ~ A graph is
+Pfaffian if it admits a Pfaﬃan orientation.
+   The bipartite Pfaﬃan graphs are most famous as the graph class in which Pólya’s permanent
+problem has a solution, the bipartite graphs in which one can compute the number of perfect
+6
+
+matchings eﬃciently by reduction to a matrix determinant, see e.g. Robertson, Seymour, and
+Thomas [RST99] and McCuaig [McC04]. This brings us to one of our motivations to study the
+complexity of the detection (and counting) of Hamiltonian cycles on this graph class: Previous
+algorithms for Hamiltonian cycles (such as the one by Björklund [Bjö14]) use determinant-based
+methods previously designed for counting matchings (modulo 2) in polynomial time; given this
+close connection between the two problems it is natural to ask whether Pfaﬃanity can be exploited
+for detecting and counting Hamiltonian cycles, similarly as for counting perfect matchings.
+   The bipartite Pfaﬃan graphs were characterized by Little [Lit75] as those graphs G that do not
+have a vertex set U ⊆ V (G) such that G \ U has a perfect matching and the induced subgraph G[U ]
+admits an even subdivision of K3,3 as a subgraph. McCuaig [McC04] and Robertson, Seymour, and
+Thomas [RST99] gave a structural characterization of bipartite Pfaﬃan graphs and the latter also
+outlined an O(n3 ) time algorithm for their recognition; this algorithm can also produce a Pfaﬃan
+orientation when one exists.
+   A general Pfaﬃan graph, as opposed to a bipartite one, can be very dense as observed by
+Norine [Nor05]: there is an inﬁnite family of n-vertex Pfaﬃan graphs with Ω(n2 ) edges. This
+construction in particular poses obstacles to ﬁnd characterizations as the ones mentioned above for
+bipartite graphs. Indeed, it is not known how to eﬃciently recognize a general Pfaﬃan graph.
+   The most famous Pfaﬃan graphs are the planar ones, graphs whose vertices can be embedded
+in the plane with straight lines connecting the vertices of every edge without any two lines crossing
+each other except at endpoints. That these graphs are Pfaﬃan was discovered by Kasteleyn [Kas67];
+furthermore, there is a linear-time algorithm that ﬁnds a Pfaﬃan orientation given a planar graph
+by Little [Lit74].
+1.6. Conventions and organization. We assume knowledge of standard graph-theoretic termi-
+nology; see e.g. West [Wes96]. Graphs in this paper are undirected unless otherwise mentioned; this
+in particular also applies to subgraphs such as paths, cycles, and Hamiltonian cycles. No graph or
+directed graph in this paper has loops or multiple edges. For a graph or directed graph G, we write
+V (G) for the vertex set of G and E(G) for the edge set of G. We identify the edges of a graph with
+two-subsets {u, w} where u and w are distinct vertices. We call the edges of a directed graph arcs
+in what follows, and identify each arc with a two-tuple (u, w) where u and w are distinct vertices.
+We recall our conventions with orientations and Pfaﬃan graphs from Section 1.5.
+   We work with Iverson’s bracket notation—for a logical proposition P , we deﬁne
+                                               (
+                                                1 if P is true ;
+                                      [[P ]] =
+                                                0 if P is false .
+   The rest of this paper is organized as follows. Section 2 presents our novel witnessing technique
+for Hamiltonian cycles in bipartite Pfaﬃan graphs. We prove our main theorems and their indirect
+structural corollaries in Section 3. Our further results on ﬁnding and counting Hamiltonian cycles
+as well as on TSP are proved in Section 4. Finally, in Appendix A we prove the NP-hardness of
+Another Hamiltonian Cycle in bipartite Pfaﬃan graphs without constrained vertex degrees.
+
+                   2. Hamiltonian cycles in bipartite Pfaffian graphs
+   This section presents what we believe to be a novel technique to eﬃciently witness Hamiltonian
+cycles in bipartite Pfaﬃan graphs via (not necessarily proper) two-colorings of the vertices. We
+also show how to eﬃciently construct a Pfaﬃan orientation from a known Hamiltonian cycle in
+a bipartite Pfaﬃan graph, as well as show how to eﬃciently ﬁnd a witness by extending a given
+partial witness deﬁned on only one of the parts of a bipartition.
+   Throughout this section G is an n-vertex bipartite Pfaﬃan graph and G ~ is a ﬁxed but otherwise
+arbitrary Pfaﬃan orientation of G. Since we are interested in whether G is Hamiltonian, without
+loss of generality we may assume that n is even and n ≥ 4 in what follows.
+                                                                                                                       7
+
+  Select an arbitrary edge e ∈ E(G) and call it the anchor edge.
+2.1. Preliminaries: The structure of Pfaffian orientations. We start by recalling the known
+structure of Pfaﬃan orientations of G. Namely, de Carvalho, Lucchesi, and Murty [dCLM05]
+observed that all Pfaﬃan orientations of G are obtainable from each other by reversals of arcs
+across vertex cuts. More precisely, for any Pfaﬃan orientation G ~ and any vertex u ∈ V (G), it holds
+                                         ~
+that reversing the arcs incident to u in G results in another Pfaﬃan orientation; furthermore, every
+Pfaﬃan orientation of G can be obtained by starting with an arbitrary Pfaﬃan orientation of G
+and repeating such operations for diﬀerent vertices [dCLM05].
+2.2. The two-coloring defined by an anchored Hamiltonian cycle. We are interested in
+characterising each Hamiltonian cycle H in G that traverses the selected anchor edge e—we say
+that such an H is anchored—using a function χH : V (G) → {0, 1} that is unique4 to H and from
+which we will (in the next subsection) see H can be eﬃciently constructed.
+   Towards this end, let us study the Pfaﬃan orientation G  ~ at the anchor e. Let (s, t) ∈ E(G)     ~ be
+the arc in G~ whose underlying edge in G is the anchor edge e = {s, t}. Construct from the Pfaﬃan
+orientation G~ a new orientation G~ e of G that is otherwise identical to G
+                                                                          ~ except that the arc (s, t)
+has been replaced with the arc (t, s). That is, by deﬁnition we have (t, s) ∈ E(G ~ e ).
+   Now consider an arbitrary anchored Hamiltonian cycle H in G. Since e ∈ E(H), there is a
+unique consistent orientation H~ of H such that (t, s) ∈ E( ~
+                                                            H). Let us write v0 , v1 , . . . , vn−1 for the
+                                        ~
+vertices of G indexed in the directed H-path order from s to t; that is,
+(1)       v0 = s ,         vn−1 = t ,                                 ~
+                                         and (vi , v(i+1) mod n ) ∈ E(H) for all i = 0, 1, . . . , n − 1 .
+Associate with H the (not necessarily proper) vertex-coloring function χH : V (G) → {0, 1} deﬁned
+by setting
+             χH (v0 ) = 0 and
+(2)
+                                                     ~ e )]] (mod 2)
+          χH (vi+1 ) ≡ χH (vi ) + [[(vi , vi+1 ) ∈ E(G                             for all i = 0, 1, . . . , n − 2 .
+Because ~
+        G is a Pfaﬃan orientation and H is a central cycle of G, we have
+                                              n−1
+                      |E( ~
+                         H) ∩ E( ~               [[(vi , v(i+1) mod n ) ∈ E( ~
+                                              X
+(3)                             G)| =                                       G)]] ≡ 1         (mod 2) .
+                                              i=0
+      ~ and G
+Since G     ~ e diﬀer only in the orientation of e ∈ E(H), from (3) we immediately have
+                                              n−1
+                        ~ ∩ E(G
+                              ~ e )| =                                      ~ e )]] ≡ 0 (mod 2) .
+                                              X
+(4)                  |E(H)                       [[(vi , v(i+1) mod n ) ∈ E(G
+                                              i=0
+We thus conclude
+                                                          n−2
+                     (2)     (4)
+          χH (v0 ) = 0 ≡ |E( ~     ~ e )| =                                     ~ e )]] + [[(vn−1 , v0 ) ∈ E(G
+                                                                                                             ~ e )]]
+                                                          X
+                            H) ∩ E(G                         [[(vi , vi+1 ) ∈ E(G
+(5)                                                       i=0
+                                                    (2)
+                                                                                      ~ e )]] (mod 2) .
+                                                    ≡ χH (vn−1 ) + [[(vn−1 , v0 ) ∈ E(G
+                      ~ e we have (t, s) ∈ E(G
+Since by deﬁnition of G                       ~ e ), from (1) and (5) we conclude that χH (t) = 1.
+Furthermore, from (2) and (5) we have for all (u, w) ∈ E(H) ~ that
+
+(6)                                                               ~ e )]]
+                                   χH (w) ≡ χH (u) + [[(u, w) ∈ E(G                (mod 2) .
+   4Unique but not canonical; as we will see, the function χ will depend not only on the Hamiltonian cycle H but
+                                                            H
+                                                                        ~ of G.
+also on the choice of our assumed ﬁxed but arbitrary Pfaﬃan orientation G
+8
+
+
+That is, each arc (u, w) ∈ E(H)~ is χH -monochromatic (i.e. both endpoints are assigned the same
+                                        ~ e ).
+value by χH ) if and only if (w, u) ∈ E(G
+2.3. The orientation induced by a good coloring. Suppose now that we do not know any-
+thing about the (anchored) Hamiltonian cycles of G, if any, and have access only to the Pfaﬃan
+orientation G ~ and the orientation G
+                                    ~ e ; the latter is easily obtainable from ~  G, cf. Section 2.2.
+   Consider an arbitrary vertex coloring χ : V (G) → {0, 1} with χ(s) = 0 and χ(t) = 1. The last
+observation in Section 2.2 suggests that we should explore reversing exactly the χ-monochromatic
+        ~ e . Let us make this formal as follows. Let the orientation G
+arcs in G                                                                  ~ χe induced by the coloring χ
+be the unique orientation of G that for each edge {u, w} ∈ E(G) satisﬁes
+(7)                     ~ χ ) if and only if χ(w) ≡ χ(u) + [[(u, w) ∈ E(G
+             (u, w) ∈ E(G                                                      ~ e )]] (mod 2) .
+                           e
+   To witness the serendipity of (7), suppose that G admits an anchored Hamiltonian cycle H; it
+follows immediately from (6) and (7) that E(H)   ~ ⊆ E(G     ~ χe H ). Thus, if we know only the coloring
+                                      ~ in E(G   χ
+                                               ~ e H ); let us next analyse this situation in more detail
+χH but not H, we can search for E(H)
+from the standpoint of our arbitrary χ.
+   Call the coloring χ good if there exists an anchored Hamiltonian cycle H in G with χ = χH ;
+otherwise call χ bad. The following lemma shows that the orientation G           ~ χe for a good χ enables
+linear-time and unique algorithmic recovery of H by standard longest-path search in a directed
+acyclic graph (DAG); in fact, mere topological sorting suﬃces, as is apparent from the proof. See
+also Figure 1 for an illustration of the concepts involved in a Hamiltonian planar graph.
+
+            s                                s                                 s
+
+
+
+
+            t                                t                                 t
+
+        Figure 1. Illustration of orientations induced by good colorings. Left: an undi-
+        rected bipartite planar graph G drawn in one of its orientations G ~ e with e = {s, t},
+        one arc reversal away from a Pfaﬃan orientation G.  ~ Middle and right: two vertex
+                                                          ~ χH
+        colorings χH and coloring-induced orientations Ge for two diﬀerent Hamiltonian
+        cycles H, with the arcs of H  ~ drawn in bold in each case. Observe that every
+        monochromatic arc reverses its orientation with respect to G~ e , whereas bichromatic
+                                                                                          ~ χe H
+        arcs keep their orientation. Observe also that the removal of the arc (t, s) from G
+        leaves an acyclic Hamiltonian directed graph, whereby the directed Hamiltonian
+        path and hence H can be found, for example, by topological sorting; cf. Lemma 12.
+
+Lemma 12 (Acyclic Hamiltonicity of good-coloring-induced orientations). Let χ be good. Then,
+                ~ χe \ (t, s) of G \ e is acyclic with the unique source vertex s and the unique sink
+the orientation G
+vertex t. Moreover, the longest directed path in G    ~ χe \ (t, s) is unique and a directed Hamiltonian
+path.
+Proof. Since χ is good, there exists an anchored Hamiltonian cycle H with χ = χH . Furthermore,
+we can follow the notational conventions in Section 2.2 with respect to this H, including the vertex-
+indexing v0 , v1 , . . . , vn−1 for G and (1) in particular. From E(H)               ~ χe ) we thus conclude that
+                                                                               ~ ⊆ E(G
+the sequence v0 , v1 , . . . , vn−1 deﬁnes a longest directed path (which is also a directed Hamiltonian
+path from s to t) in the directed graph G     ~ χe \ (t, s). It follows immediately that s is the only possible
+source vertex and t is the only possible sink vertex in G          ~ χe \ (t, s).
+                                                                                                                               9
+
+
+   Let us next show that G      ~ χe \ (t, s) is acyclic as a directed graph. To reach a contradiction, suppose
+     ~ is a directed cycle in G
+that D                              ~ χe \(t, s). Since (t, s) = (vn−1 , v0 ) ∈
+                                                                              / E(D)~ and D    ~ is a directed cycle with
+V (~
+   D) ⊆ {v0 , v1 , . . . , vn−1 }, there must exist 0 ≤ i < j ≤ n − 1 with at least two proper inequalities
+among the three such that (vj , vi ) ∈ E(D)           ~ and thus (vj , vi ) ∈ E(G      ~ χe ). Let C    ~ be the directed
+               ~ = {vi , vi+1 , . . . , vj } and E(C)
+cycle with V (C)                                         ~ = {(vi , vi+1 ), (vi+1 , vi+2 ), . . . , (vj−1 , vj ), (vj , vi )}. In
+            ~ 6= H
+particular, C       ~ since (t, s) ∈    / E( ~C). Let C be the underlying undirected cycle of ~              C, and observe
+that C is a cycle of G. Since G is bipartite, C is even and has at least four vertices. Thus, the
+edges of H \ V (C) contain a perfect matching of G \ V (C), implying that C is central. Since C
+avoids e and C ~ is a consistent orientation of C, we conclude by Pfaﬃanity that
+
+                                |E( ~     ~ e )| = |E( ~
+                                   C) ∩ E(G           C) ∩ E( ~
+                                                             G)| ≡ 1                (mod 2) .
+But this is a contradiction since for all (u, w) ∈ E(C)        ~ we have (u, w) ∈ E(G     ~ χe ), and thus by (7)
+it holds that χ(w) ≡ χ(u) + [[(u, w) ∈ E(G     ~ e )]] (mod 2); take the sum of these congruences over all
+                  ~                          ~
+arcs (u, w) ∈ E(C) to conclude that |E(C) ∩ E(G         ~ e )| ≡ 0 (mod 2), a contradiction. Thus, G    ~ χe \ (t, s)
+is acyclic as a directed graph.
+    From acyclicity it also immediately follows that s is a source vertex and t is a sink vertex of
+ ~ χ
+Ge \ (t, s); indeed, any arc into s or any arc out of t would complete a directed cycle together with
+an appropriate proper segment of the directed Hamiltonian path s = v0 , v1 , . . . , vn−1 = t. This
+longest path (of n vertices) is also seen to be unique in G         ~ χe \ (t, s); indeed, the existence of any
+other such path would again imply an arc that would complete a directed cycle together with an
+appropriate proper segment of v0 , v1 , . . . , vn−1 .                                                             
+
+  An immediate corollary of the proof Lemma 12 is that there are at most 2n−2 Hamiltonian cycles
+through any ﬁxed edge in an n-vertex bipartite Pfaﬃan graph. For comparison, there are planar
+graphs with at least 2.08n Hamiltonian cycles, see [BKK+ 07].
+
+2.4. Constructing a Pfaffian orientation from a Hamiltonian cycle. Next we address the
+task of constructing a Pfaﬃan orientation if we know one Hamiltonian cycle, with the intent of
+constructing possible further Hamiltonian cycles with the help of the Pfaﬃan orientation obtained.
+Lemma 13 (Constructing a Pfaﬃan orientation from a Hamiltonian cycle). There exists a linear-
+time algorithm that, given as input a bipartite Pfaffian graph G and a Hamiltonian cycle H in G,
+                               ~ of G.
+outputs a Pfaffian orientation G
+Proof. Let G and H be given as input, and select an arbitrary edge e ∈ E(H) as an anchor edge in
+the sense of Section 2.2. Let H         ~ ′ be an arbitrary consistent orientation of H; let s, t ∈ V (G) such
+                    ~ ′
+that (t, s) ∈ E(H ) and e = {s, t}.
+   Since G is Pfaﬃan, it has a Pfaﬃan orientation. Let G                     ~ be an arbitrary Pfaﬃan orientation
+of G. Without loss of generality we can assume that (s, t) ∈ E(G);                     ~ indeed, reverse all arcs if
+(s, t) ∈     ~ Let G
+       / E(G).          ~ e , H,
+                              ~ and χH be constructed from G,          ~ e, and H as in Section 2.2. In particular,
+we have H  ~ = ~
+             ′     H.
+   Now observe that A      ~=G   ~ χe H \ (t, s) is acyclic and Hamiltonian by Lemma 12. Furthermore, since
+A~ is acyclic and has the directed Hamiltonian path H                ~ ′ \ (t, s), we can in linear time construct A    ~
+from G, H  ~ ′ , and e by orienting G \ e so that (i) the edges of H \ e are oriented as in H           ~ ′ \ (t, s), and
+(ii) all the other edges of G \ e are oriented into arcs in directed H             ~ \ (t, s)-order; indeed, otherwise
+                                                                                     ′
+
+a directed cycle would result.
+   Next, let χ : V (G) → {0, 1} be the proper two-coloring of the vertices of G with χ(s) = 0 and
+χ(t) = 1; such a χ exists and is unique because G is bipartite Hamiltonian. Since no edge of G is
+χ-monochromatic, we have (G            ~ ′ )e = (G~ ′ )χe for all Pfaﬃan orientations G   ~ ′ of G. We will construct
+10
+
+                                                                             ~ 0, G
+a sequence χ0 , χ1 , . . . , χn : V (G) → {0, 1} of colorings and a sequence G    ~ 1, . . . , G
+                                                                                               ~ n of Pfaﬃan
+orientations of G such that
+(8)              ~ ∪ (t, s) = G
+                 A            ~ χH = (G
+                                      ~ 0 )χ0 = (G
+                                                 ~ 1 )χ1 = · · · = (G          ~ n )χ = (G
+                                                                    ~ n )χn = (G         ~ n )e .
+                                e          e          e                  e          e
+
+This concludes that A      ~ ∪ (s, t) is a Pfaﬃan orientation of G. Moreover, A         ~ ∪ (s, t) is constructible in
+linear time from the given input G and H.
+   It remains to construct the sequences χ0 , χ1 , . . . , χn and ~        ~ 1, . . . , G
+                                                                      G0 , G            ~ n as well as conclude (8).
+The ﬁrst two identities in (8) are immediate when we set χ0 = χH and G                   ~ 0 = G.
+                                                                                                ~ Let v1 , v2 , . . . , vn
+be an arbitrary enumeration of the n vertices of G. For k = 1, 2, . . . , n, deﬁne χk : V (G) → {0, 1}
+for all j = 1, 2, . . . , n by the rule
+                                                     (
+                                                      χ(vj )     if j ≤ k ;
+                                          χk (vj ) =
+                                                      χk−1 (vj ) if j > k.
+It is immediate that χn = χ, which establishes the last two identities in (8). Furthermore, χk−1
+and χk are identical expect possibly at vk . Also observe that χk (s) = χH (s) = χ(s) = 0 and
+χk (t) = χH (t) = χ(t) = 1 for all k = 0, 1, . . . , n. To deﬁne the sequence G        ~ k for k = 1, 2, . . . , n,
+split into cases as follows: when χk (vk ) = χk−1 (vk ), set G       ~k = G ~ k−1 ; when χk (vk ) 6= χk−1 (vk ),
+     ~                                   ~
+set Gk to be otherwise identical to Gk−1 except reverse all arcs incident to vk . In both of these
+cases we observe by (7) that (G   ~ k−1 )χe k−1 = (G
+                                                   ~ k )χe k , which establishes all the remaining equalities
+in (8). Furthermore, G ~ k is a Pfaﬃan orientation since ~      Gk−1 is a Pfaﬃan orientation; indeed, recall
+                       ~      ~
+Section 2.1 and that G0 = G is a Pfaﬃan orientation by assumption.                                               
+
+2.5. Finding a good coloring. Let us now study the task of ﬁnding a good coloring χ given
+the bipartite Pfaﬃan graph G, the Pfaﬃan orientation ~      G, and the anchor edge e as input; also
+recall the conventions and further notation—in particular, the vertices s and t—from Sections 2.2
+and 2.3. In this setting, a natural question to ask is how much one needs to reveal from a good
+coloring χ to enable eﬃcient completion to a good coloring. We now show that it suﬃces to reveal
+χ in one of the parts of the bipartition of G by a reduction to bipartite perfect matching in an
+auxiliary bipartite graph.
+   More precisely, let the sets L (“left”) and R (“right”) form a partition of the vertices of G such
+that s ∈ L, t ∈ R, and every edge of G has one end in L and the other end in R.5 Let λ : L → {0, 1}
+with λ(s) = 0 be a given further input. Our task is to ﬁnd whether there exists a good coloring
+χ : V (G) → {0, 1} with χ(ℓ) = λ(ℓ) for all ℓ ∈ L ⊆ V (G); that is, whether there exists a good
+coloring that extends the partial coloring λ.
+   Construct an auxiliary bipartite graph Fλ as follows. Let the vertex set V (Fλ ) = V (G) × {0, 1}.
+To avoid notational confusion between arcs and vertices of Fλ , we will use bracketed notation [u, k]
+for vertices of Fλ with u ∈ V (G) and k ∈ {0, 1}. The edge set E(Fλ ) is deﬁned by the following
+rule. For all ℓ ∈ L, r ∈ R, p ∈ {0, 1}, and ρ ∈ {0, 1} with {ℓ, r} ∈ E(G), we have
+(9)                                            {[ℓ, p], [r, ρ]} ∈ E(Fλ )
+if and only if both
+(10)                                                          ~ e ]] (mod 2)
+                                        ρ ≡ λ(ℓ) + [[(ℓ, r) ∈ G
+and
+(11)                                      ℓ 6= s   or    p 6= 0 or     r = t.
+
+   5This bipartition (L, R) of G is in fact unique unless G is not Hamiltonian. Moreover, (L, R) is computable in
+linear time from the given input.
+                                                                                                          11
+
+For an edge {[ℓ, p], [r, ρ]} ∈ E(Fλ ), we say that the edge {ℓ, r} ∈ E(G) is the projection of the edge
+(to G) and call p the port at ℓ and ρ the parity at r, stressing that port and parity have asymmetric
+roles in our construction even though both range in {0, 1}.
+    Let us now start analysing the structure of Fλ in more detail. First, the parts L × {0, 1} and
+R×{0, 1} witness by (9) that Fλ is bipartite. In particular, Fλ has 2n vertices with |L| = |R| = n/2,
+where we recall that n ≥ 4 is the number of vertices in G with n even. Second, recalling that s ∈ L
+and t ∈ R, the constraint (11) eﬀectively states that [s, 0] is adjacent only to [t, 0] in Fλ ; indeed,
+recalling that λ(s) = 0 and (s, t) ∈ /G~ e , from (10) we have that [s, 0] is not adjacent to [t, 1]. Third,
+for all ℓ ∈ L \ {s}, we observe from (10) and (11), the latter being trivially true, that the vertices
+[ℓ, 0] and [ℓ, 1] have identical vertex neighborhoods in Fλ .
+    We are now ready for our ﬁrst key lemma. Recall the coloring χH associated to an anchored
+Hamiltonian cycle H of G from Section 2.2. The ﬁrst lemma shows that every perfect matching
+in Fλ gives rise to an anchored Hamiltonian cycle; diﬀerent perfect matchings may give rise to the
+same anchored Hamiltonian cycle however. This structure is illustrated in Figure 2.
+
+
+                        s                                    s
+
+
+
+
+                        t                                    t
+
+        Figure 2. Illustration of a perfect matching in the graph Fλ . Left: The graph G
+        drawn in one of its orientations G ~ e with e = {s, t} and the bipartition (L, R) with
+        vertices in L drawn as white circles and the vertices in R drawn as black boxes.
+        Right: The graph Fλ and the coloring λ drawn as an oriented overlay of G. Observe
+        that each vertex r ∈ R has two copies [r, ρ] in Fλ , one for each parity ρ ∈ {0, 1}, with
+        a blue square indicating parity 0 and an orange square indicating parity 1. Although
+        each vertex ℓ ∈ L has two copies [ℓ, p] in Fλ , one copy for each port p ∈ {0, 1}, we
+        contract these two copies into one vertex (circle) in the drawing, and display for
+        each vertex its color λ(ℓ) ∈ {0, 1} (blue or orange) instead. Each arc in the drawing
+        is oriented from L to R and represents two edges of Fλ with opposite ports. A
+        perfect matching M in Fλ is represented by the bold arcs. In particular, observe
+        that each circle is incident to two bold arcs; these two bold arcs represent two edges
+        in M with opposite ports. These opposite ports are otherwise arbitrary except for
+        the edge of M that projects to {s, t}, which must have port 0. Also observe that
+        from the drawn M it is visually intuitive how to obtain a Hamiltonian cycle in G
+        corresponding to M by turning the bold arcs into the edges of a Hamiltonian cycle
+        in G; this intuition is made rigorous in Lemma 14 by the Hamiltonian cycle H[M ]
+        of G obtained from M .
+
+
+Lemma 14 (Perfect matchings witness good extensions). For every perfect matching M in Fλ ,
+there exists a Hamiltonian cycle H[M ] in G with χH[M ] (ℓ) = λ(ℓ) for all ℓ ∈ L.
+
+Proof. Let M be an arbitrary perfect matching in Fλ . For [ℓ, p] ∈ L × {0, 1} and [r, ρ] ∈ L × {0, 1},
+let us use functional notation M ([ℓ, p]) = [r, ρ] or M ([r, ρ]) = [ℓ, p] to signal that the vertices [ℓ, p]
+and [r, ρ] are matched by M in Fλ . We construct the anchored Hamiltonian cycle H[M ] as well
+as the coloring χ = χH[M ] with χ(ℓ) = λ(ℓ) for all ℓ ∈ L by traversing all the vertices of Fλ in an
+order determined by M to yield the Hamiltonian cycle H[M ]. In particular, we will deﬁne H[M ] in
+12
+
+steps by introducing, one vertex at a time, a vertex order v0 , v1 , . . . , vn−1 for the vertices of G with
+                                                 −−−→        ~ χe ) for all i = 0, 1, . . . , n − 1.
+v0 = s, vn−1 = t, and (vi , v(i+1) mod n ) ∈ E(H[M ]) ⊆ E(G
+    Our traversal starts from the vertex [ℓ0 , p0 ] of Fλ deﬁned by ℓ0 = s and p0 = 1. The traversal
+then follows edges in the perfect matching M , changing parity (at vertices in R × {0, 1}) and port
+(at vertices in L × {0, 1}) to arrive at subsequent edges; for these changes, for z ∈ {0, 1} it is
+convenient to write z = (z + 1) mod 2 for notational brevity; that is, 0 = 1 and 1 = 0.
+    In precise terms, the traversal is as follows. Assuming we have deﬁned ℓj ∈ L and pj ∈ {0, 1}
+for all j ∈ {0, 1, . . . , i} with i ≥ 0, we proceed to deﬁne ℓi+1 ∈ L and pi+1 ∈ {0, 1} as follows. Set
+v2i = ℓi and χ(ℓi ) = λ(ℓi ). Deﬁne ri ∈ R and ρi ∈ {0, 1} by M ([ℓi , pi ]) = [ri , ρi ]. Set v2i+1 = ri
+and χ(ri ) = ρi . Deﬁne ℓ′i ∈ L and p′i ∈ {0, 1} by M ([ri , ρi ]) = [ℓ′i , p′i ]. Set ℓi+1 = ℓ′i and pi+1 = p′i
+as well as χ(ℓi+1 ) = λ(ℓi+1 ) and v2(i+1) = ℓi+1 . We continue this process for i = 0, 1, . . . and claim
+that eventually ℓi+1 = ℓ0 and pi+1 = p0 with i + 1 = n/2, at which point {v0 , v1 , . . . , vn−1 } = V (G)
+and H[M ] is a Hamiltonian cycle in G with χH[M ] = χ with χ(ℓ) = λ(ℓ) for all ℓ ∈ L.
+    Let us now analyse the traversal process in more detail. First, we observe that ℓi+1 6= ℓi ; indeed,
+suppose that ℓi+1 = ℓi and observe that the traversal step from ℓi to ℓi+1 changes parity from ρi to
+ρ̄i at ri , yet from (10) we observe that every edge of Fλ that projects to the edge {ℓi , ri } = {ℓi+1 , ri }
+has the same parity at ri , a contradiction. Next, let us observe that (v2i , v2i+1 ) = (ℓi , ri ) ∈ E(G   ~ χe ).
+Indeed, the identity is immediate, and membership holds by (7) and
+                               (10)
+                                                       ~ e ]] = χ(ℓi ) + [[(ℓi , ri ) ∈ G
+                 χ(ri ) = ρi ≡ λ(ℓi ) + [[(ℓi , ri ) ∈ G                                ~ e ]] (mod 2) .
+                                                             ~ χe ). Again the identity is immediate,
+Let us then observe that (v2i+1 , v2i+2 ) = (ri , ℓi+1 ) ∈ E(G
+and membership holds by (7), the fact that ~   Gχe orients {ℓi+1 , ri } ∈ E(G) in one of two possible
+orientations, and
+                           (10)
+                                                         ~ e ]] = χ(ℓi+1 ) + [[(ℓi+1 , ri ) ∈ G
+        χ(ri ) = ρi 6= ρ̄i ≡ λ(ℓi+1 ) + [[(ℓi+1 , ri ) ∈ G                                    ~ e ]] (mod 2) .
+
+   Next let us show that all the vertices ℓi and ri traversed by the process are distinct, until ℓi+1 = ℓ0
+for some i ≥ 1, noting that the case i = 0 has already been excluded earlier. Suppose ℓ1 , ℓ2 , . . . , ℓi
+are distinct; since M contains exactly two edges (of opposite parities) that project to edges incident
+to any ﬁxed r ∈ R, we observe that these two edges of M have been each traversed once by the
+process for each r0 , r1 , . . . , ri since ℓ0 , ℓ1 , . . . , ℓi are distinct, implying that r0 , r1 , . . . , ri are distinct,
+and thus that v0 , v1 , . . . , v2i+1 are distinct. So suppose that ℓi+1 = ℓj for some 0 ≤ j ≤ i; also note
+that this must happen for some i < |L| = n/2. If j ≥ 1, we have a contradiction since M contains
+exactly two edges (of opposite ports) that project to edges incident to any ﬁxed ℓ ∈ L, and for
+ℓ = ℓj these two edges (projecting to {ℓj , rj−1 } and {ℓj , rj }) have already been traversed; so there
+is no edge in M that projects to {ℓj , ri } = {ℓi+1 , ri }, a contradiction. So we must have j = 0. This
+implies in particular that (vk , v(k+1) mod (2i+2) ) ∈ E(G             ~ χe ) for all k = 0, 1, . . . , 2i + 1. Furthermore,
+since the edge of M that is incident to [ℓ0 , p0 ] = [s, 1] has already been traversed, we have that the
+edge {[ℓi+1 , pi+1 ], [ri , ρ̄i ]} in M must be the edge {[s, 0], [t, 0]} (recall our analysis earlier that [s, 0]
+is adjacent only to [t, 0] in Fλ ); thus we conclude that χ(t) = χ(ri ) = ρi 6= ρ̄i = 0; that is, χ(t) = 1.
+   Let us next show that i = n/2 − 1. So to reach a contradiction, suppose that i < n/2 − 1. In
+particular, the edges of G underlying the arcs (vk , v(k+1) mod (2i+2) ) ∈ E(G                ~ χe ) for k = 0, 1, . . . , 2i + 1
+trace a cycle of even length 2i + 2 < n in G. This leaves some of the vertices in G, and thus
+all corresponding vertices of Fλ regardless of port/parity, unvisited by the traversal process. By
+starting the traversal process again from an arbitrary unvisited vertex in L × {0, 1}, we end up
+tracing a further even-length cycle in G, and repeating the process until all vertices of G are visited,
+we obtain a vertex-disjoint union of even-length cycles that together cover the vertices of G, as well
+as a coloring χ such that all the cycles (in their consistently oriented form as they were traversed)
+occur as directed subgraphs of G          ~ χe . Since 2i + 2 < n, this cycle cover thus contains a cycle C
+                                                                                                                    13
+
+
+that does not contain the anchor edge e and whose consistent orientation C             ~ is a subgraph of G     ~ χe ;
+observing that C is central—indeed, use every other edge from each even cycle other than C in the
+cover to witness a perfect matching in G \ V (C)—this leads to a contradiction via Pfaﬃanity by
+the same argument as was used in the proof of Lemma 12; thus, i = n/2 − 1.
+   Since i = n/2 − 1, it follows from (vk , v(k+1) mod n ) ∈ E(G   ~ χe ) for all k = 0, 1, . . . , n − 1 and from
+Lemma 12 we conclude that χ = χH[M ] for the anchored Hamiltonian cycle H[M ] in G deﬁned by
+V (H[M ]) = {v0 , v1 , . . . , vn−1 } and E(H[M ]) = {{vk , v(k+1) mod n } : k = 0, 1, . . . , n − 1}.             
+   Conversely, we show that every good extension of λ is witnessed by a perfect matching in Fλ .
+Lemma 15 (Good extensions witness perfect matchings). For every anchored Hamiltonian cycle
+H in G with χH (ℓ) = λ(ℓ) for all ℓ ∈ L, there exists a perfect matching MH in Fλ with H[MH ] = H.
+Proof. Let H be an anchored Hamiltonian cycle in G with χH (ℓ) = λ(ℓ) for all ℓ ∈ L. Let H                            ~
+be the consistent orientation of H with distinct vertices v0 , v1 , . . . , vn−1 so that v0 = s, vn−1 = t,
+and (vk , v(k+1) mod n ) ∈ E( ~   H) ⊆ E(G    ~ χe H ) for all k = 0, 1, . . . , n − 1. Set ℓi = v2i , ri = v2i+1 , and
+ρi = (χH (ℓi ) + [[(ℓi , ri ) ∈ G ~ e ]]) mod 2 for all i = 0, 1, . . . , n/2 − 1. Observe also that by (7) and
+               ~ χH
+(ℓi , ri ) ∈ E(Ge ), we have χH (ri ) = ρi for all i = 0, 1, . . . , n/2 − 1.
+    Start with an empty matching MH . It is immediate from (10) and (11) that {[ℓi , 1], [ri , ρi ]} ∈
+E(Fλ ) for i = 0, 1, . . . , n/2 − 1. Take each of these n/2 vertex-disjoint edges into MH . Next
+observe that we have {[ℓ(i+1) mod (n/2) , 0], [ri , ρ̄i ]} ∈ E(Fλ ) for i = 0, 1, . . . , n/2 − 1; indeed, from
+(ri , ℓ(i+1) mod (n/2) ) ∈ E(G~ χe H ) we conclude by (7) that
+                                                                                    ~ e )]] (mod 2) ;
+            ρi = χH (ri ) ≡ χH (ℓ(i+1) mod (n/2) ) + [[(ri , ℓ(i+1) mod (n/2) ) ∈ E(G
+that is,
+                                                                              ~ e )]] (mod 2) ,
+                ρ̄i ≡ χH (ℓ(i+1) mod (n/2) ) + [[(ℓ(i+1) mod (n/2) , ri ) ∈ E(G
+so (10) holds. Furthermore, (11) holds expect possibly when ℓ(i+1) mod (n/2) = s; but then i = n/2−1
+and thus ri = t, so (11) holds also in this case. Take each of these n/2 vertex-disjoint edges into
+MH and observe that the n edges now in MH constitute a perfect matching in Fλ .
+   By tracing the traversal process in the proof of Lemma 14 with the deﬁnition of the perfect
+matching MH above, we conclude that H[MH ] = H.                                                    
+   Thus, Fλ has a perfect matching if and only if λ has a good extension. Moreover, from the proofs
+of Lemma 14 and Lemma 15 we observe that the transformations M 7→ H[M ] and H 7→ MH are
+computable in linear time. We also observe that for every anchored Hamiltonian cycle H in G
+there are exactly 2n/2−1 perfect matchings M in Fλ with H[M ] = H; these M are all obtainable
+from each other by transposing ports at zero or more vertices ℓ ∈ L \ {s}.
+
+                 3. Another Hamiltonian cycle in bipartite Pfaffian graphs
+   This section studies the problem of ﬁnding another Hamiltonian cycle when given as input
+(i) a bipartite Pfaﬃan graph G and (ii) a Hamiltonian cycle H in G. Recall from Lemma 13
+                                                          ~ from this input. In what follows we
+that we can in linear time construct a Pfaﬃan orientation G
+                                 ~
+thus tacitly assume that such a G is available and ﬁxed together with an arbitrary anchor edge
+e ∈ E(H).
+3.1. Linear-time solvability in minimum degree three. Our ﬁrst objective in this section is
+our main theorem, which we restate below for convenience.
+Theorem 1 (Main; Linear–time Another Hamiltonian Cycle in minimum degree three).
+There exists a deterministic linear-time algorithm that, given as input (i) a bipartite Pfaffian graph
+G with minimum degree three, (ii) a Hamiltonian cycle H in G, and (iii) an edge e ∈ E(H), outputs
+a Hamiltonian cycle H ′ 6= H in G with e ∈ E(H ′ ).
+14
+
+   We now proceed to prove Theorem 1. Recall and assume the setting of Section 2.5. Observe
+that from the given input, we can in linear total time (a) ﬁnd a Pfaﬃan orientation G       ~ using H,
+                               ~
+(b) compute the orientation Ge , (c) compute the coloring χH , (d) compute the vertex bipartition
+(L, R) of G, (e) restrict χH to L to obtain the coloring λ, (f) construct the graph Fλ , as well as (g)
+construct the perfect matching MH in Fλ .
+   Using MH and Fλ , introduce the directed graph Dλ,H with the vertex set V (Dλ,H ) = L and
+the arc set deﬁned for all distinct ℓ, ℓ′ ∈ L by the rule (ℓ, ℓ′ ) ∈ E(Dλ,H ) if and only if there exist
+p, p′ ∈ {0, 1}, r ∈ R, and ρ ∈ {0, 1} such that
+(12)                    {[ℓ, p], [r, ρ]} ∈ E(Fλ ) \ MH     and {[ℓ′ , p′ ], [r, ρ]} ∈ MH .
+That is, an arc (ℓ, ℓ′ ) ∈ E(Dλ,H ) indicates that (disregarding ports p and p′ ) we can walk from ℓ
+to ℓ′ in Fλ by traversing ﬁrst an edge not in MH , followed by an edge in MH . We stress that the
+traversal (12) preserves the parity ρ for consecutive edges, whereas the traversal in the proof of
+Lemma 14 changes parity for consecutive edges; the latter also uses edges only in MH .
+   We recall that G has minimum degree at least three; this enables us to ﬁnd a Hamiltonian cycle
+other than H in G with the help of a directed cycle in Dλ,H revealed in the following lemma.
+Lemma 16 (Existence of an s-avoiding directed cycle in Dλ,H ). Suppose that every vertex of G
+has degree at least three. Then, the directed graph Dλ,H contains at least one directed cycle that
+avoids the vertex s.
+Proof. It suﬃces to show that all vertices of Dλ,H have out-degree at least one and that the vertex s
+is a source; that is, s has in-degree zero. Towards this end, since every vertex of G has degree at least
+three, for every ℓ ∈ L there exist distinct r, r ′ , r ′′ ∈ R and three edges {ℓ, r}, {ℓ, r ′ }, {ℓ, r ′′ } ∈ E(G).
+Furthermore, since ℓ gives rise to the vertices [ℓ, 0] and [ℓ, 1] in Fℓ , the edges of MH project to at
+most two of these three edges; without loss of generality we may assume that the edge {ℓ, r} is
+not in the projection of MH . For p = 1 and the unique ρ ∈ {0, 1} such that (10) holds we thus
+have by (9) that {[ℓ, p], [r, ρ]} ∈ E(Fλ ) \ MH . Since MH is a perfect matching in Fλ , there exist
+ℓ′ ∈ L and p′ ∈ {0, 1} such that {[ℓ′ , p′ ], [r, ρ]} ∈ MH ; we must have ℓ′ 6= ℓ since {ℓ, r} is not in the
+projection of MH . Thus, we have (ℓ, ℓ′ ) ∈ E(Dλ,H ) by (12). Since ℓ ∈ L was arbitrary, we conclude
+that every vertex of Dλ,H has out-degree at least one.
+    It remains to show that s has in-degree zero in Dλ,H . To reach a contradiction, suppose that
+there exists an arc (ℓ, s) ∈ E(Dλ,H ). From (12) we thus have that there exist p, p′ , ρ ∈ {0, 1} and
+r ∈ R with {[ℓ, p], [r, ρ]} ∈ E(Fλ ) \ MH and {[s, p′ ], [r, ρ]} ∈ MH . Let us split into two cases based
+on the value of p′ and obtain a contradiction in both cases.
+    In the ﬁrst case, suppose that p′ = 0. Recall that in the graph Fλ we have that the vertex
+[s, 0] is adjacent only to the vertex [t, 0]. Since MH is a perfect matching, we must thus have
+{[s, 0], [t, 0]} ∈ MH , and hence r = t and ρ = 0. From (10) we thus have that 0 = ρ ≡ λ(ℓ) +
+[[(ℓ, r) ∈ G~ e ]] = χH (ℓ) + [[(ℓ, t) ∈ G
+                                         ~ e ]] (mod 2). Now recall that χH (t) = 1. In particular, we have
+                                 ~
+χH (t) 6≡ χH (ℓ) + [[(ℓ, t) ∈ Ge ]] (mod 2), implying by (7) that (t, ℓ) ∈ E(G        ~ χe H ). But then since ℓ 6= s
+we have that the arc (t, ℓ) together with the directed (ℓ, t)-subpath of the directed Hamiltonian
+path H  ~ \ (t, s) yields a directed cycle in G    ~ χe H \ (t, s), a contradiction to acyclicity in Lemma 12.
+    In the second case, suppose that p′ = 1. Then, in the construction of MH in Lemma 15 we
+observe that we must have ℓ0 = s, r0 = r, and χH (r) = χH (r0 ) = ρ0 = ρ. In particular, we have
+(s, r) ∈ E(H). ~ From (10) and λ(ℓ) = χH (ℓ) we thus conclude that
+                                                 ~ e ]] ≡ χH (ℓ) + [[(ℓ, r) ∈ G
+                  χH (r) = ρ ≡ λ(ℓ) + [[(ℓ, r) ∈ G                            ~ e ]] (mod 2) ,
+
+implying by (7) that (ℓ, r) ∈ ~   Gχe H . But then since ℓ 6= s we have that the arc (ℓ, r) together with
+the directed (r, ℓ)-subpath of the directed Hamiltonian path H       ~ \ (t, s) yields a directed cycle in
+   χ
+ ~ e H \ (t, s), a contradiction to acyclicity in Lemma 12.
+G                                                                                                       
+                                                                                                            15
+
+
+   By the previous lemma we thus know that Dλ,H contains an s-avoiding directed cycle Q                 ~ with
+   ~ = {ℓ0 , ℓ1 , . . . , ℓk−1 } ⊆ L and (ℓj , ℓ(j+1) mod k ) ∈ E(Q)
+V (Q)                                                             ~ for each j = 0, 1, . . . , k − 1 and k ≥ 2.
+            ~ to construct from MH another Hamiltonian cycle H ′ 6= H in G. Figure 3 illustrates
+We will use Q
+the construction.
+
+                          s                                         s
+
+
+
+
+                          t                                          t
+
+                          s                                         s
+
+
+
+
+                          t                                          t
+
+
+        Figure 3. Obtaining another Hamiltonian cycle using a directed cycle in Dλ,H .
+        Left: Two perfect matchings MH in Fλ drawn as oriented overlays of G (cf. Figure 2),
+        with further overlaying drawn in green and constituting the arcs of Dλ,H . Right:
+        The corresponding two orientations G ~ χe H and colorings χH . Top and bottom: In
+        both cases we have that Dλ,H contains a unique s-avoiding directed cycle Q.~ Using
+        ~ in each case we can switch between the top and bottom Hamiltonian cycles in G.
+        Q
+        Note in particular that the two vertex colorings agree in L but diﬀer in R.
+
+                                    ~ in turn we conclude that for j = 0, 1, . . . , k − 1 there exist
+   From (12) applied to each arc of Q
+rj ∈ R and ρj , pj ∈ {0, 1} with
+(13)          {[ℓj , pj ], [rj , ρj ]} ∈ E(Fλ ) \ MH    and {[ℓ(j+1) mod k , p′j ], [rj , ρj ]} ∈ MH .
+We observe that the vertices [rj , ρj ] for j = 0, 1, . . . , k − 1 are distinct because MH is a perfect
+matching and ℓ(j+1) mod k for j = 0, 1, . . . , k − 1 are distinct. In spite of this, the edges (13) for
+j = 0, 1, 2, . . . , k − 1 need not form a cycle in Fλ because we can have p′j 6= p(j+1) mod k . Here is
+where the fact that Q     ~ is s-avoiding pays oﬀ. Let M = MH and recall that the vertices [ℓ, 0] and
+[ℓ, 1] for each ℓ ∈ L \ {s} have identical vertex neighborhoods in Fλ . Thus, whenever we have
+p′j 6= p(j+1) mod k , we can modify M by transposing the vertices [ℓ(j+1) mod k , 0] and [ℓ(j+1) mod k , 1]
+in the edges of M ; by the identical vertex neighborhoods property, the resulting M will still be a
+perfect matching in Fλ . Moreover, we have H = H[MH ] = H[M ]; indeed, the traversal construction
+in Lemma 14 is insensitive to the speciﬁc values of the (opposite) ports. For j = 0, 1, . . . , k − 1 we
+thus now have
+(14)       {[ℓj , pj ], [rj , ρj ]} ∈ E(Fλ ) \ M   and {[ℓ(j+1) mod k , p(j+1) mod k ], [rj , ρj ]} ∈ M ;
+that is, these edges now form a 2k-vertex cycle in Fλ . Let us write A for this cycle in Fλ .
+   Observe in particular from (14) that the edges of A alternate between edges in M and edges not
+in M . Thus, we have that the symmetric diﬀerence M ′ = (M \ E(A)) ∪ (E(A) \ M ) is a perfect
+matching in Fλ . Furthermore, M ′ and M project to a diﬀerent set of edges of G; indeed, from (14)
+we have that rj changes adjacency from ℓ(j+1) mod k in H[M ] to ℓj in H[M ′ ] for j = 0, 1, . . . , k − 1.
+It follows that H ′ = H[M ′ ] 6= H[M ] = H. Thus, we have constructed a Hamiltonian cycle H ′ in
+16
+
+G that is diﬀerent from H. Moreover, this construction is computable in deterministic linear time.
+This completes the proof of Theorem 1.                                                          
+
+3.2. Logarithmic-space solvability in minimum degree three. We next describe how we can
+implement the ideas of the previous section in an algorithm that uses little space. We consider as
+input a bipartite Pfaﬃan graph G of minimum degree three, a consistently oriented Hamiltonian
+      ~ in G, and an arc (t, s) ∈ H.
+cycle H                            ~ More precisely, we assume both graphs G and H    ~ are given in
+the input as a list of adjacency lists for each vertex. We seek to output a list of edges of another
+Hamiltonian cycle H ′ 6= H with {s, t} ∈ E(H ′ ). We assume that the vertices of G are represented
+as O(log n)-bit integers in the input, where n is the number of vertices in G.
+Theorem 2 (Main; Logarithmic–space Another Hamiltonian Cycle in minimum degree
+three). There exists a deterministic logarithmic-space algorithm that, given as input (i) a bipartite
+Pfaffian graph G with minimum degree three, (ii) a Hamiltonian cycle H in G, and (iii) an edge
+e ∈ E(H), outputs a Hamiltonian cycle H ′ 6= H in G with e ∈ E(H ′ ).
+Proof. Suppose that G has n vertices. We describe an algorithm that uses space that is only
+logarithmic in n; however, this algorithm no longer runs in linear time but merely in polynomial
+time. Recalling the proof of Theorem 1 and the alternating cycle A in Fλ , the algorithm outputs
+(i) all edges in H but not in A, and (ii) all edges in A but not on H; the edges (i) and (ii) together
+form another Hamiltonian cycle H ′ containing the edge e = {s, t}. The algorithm relies on the
+following logarithmic-space subroutines to accomplish the listing (i) and (ii).
+   First, from the given input H  ~ we can compute in space logarithmic in n the following numerical
+identiﬁer id(v) for any given vertex v. Namely, we set id(v) to equal the number of arcs along the
+consistently oriented H  ~ from s to v. From a given v we can compute id(v) by keeping track of one
+vertex w (where we currently are) and a counter c (how many edges we have traversed along H).         ~
+                                                                                ~
+Starting with w = s and c = 0, as long as w 6= v, we traverse arcs of H, setting w to the next
+vertex after w on H  ~ and increasing c by one, and repeat until we reach v, at which point we return
+c = id(v). Also observe that this identiﬁer subroutine enables us to determine whether a given
+vertex is in the set L (even identiﬁer) or the set R (odd identiﬁer) in the bipartition (L, R) of G
+with s ∈ L.
+   Second, from Lemma 13 applied to G and H with e = {s, t} we observe that the Pfaﬃan
+orientation G ~ χ , where χ is the proper coloring of the vertices of G with χ(s) = 0, has the property
+that each edge {u, v} ∈ E(G) is oriented from u to v in G   ~ χ if and only if id(u) < id(v). Thus, using
+the subroutine for the vertex identiﬁers, we can compute in logarithmic space in n the orientation
+of any given edge {u, v} ∈ E(G) in G   ~ χ.
+   Third, we develop a subroutine for accessing the arcs of a subgraph Dλ,H  ′                    ′
+                                                                                 of Dλ,H with V (Dλ,H )=
+V (Dλ,H ) = L and with the property that there is exactly one out-arc from each vertex. That is, we
+describe a subroutine that given a vertex v ∈ L computes in logarithmic space the end-vertex u ∈ L
+of an arc (v, u) in Dλ,H . To accomplish this, we compute id(v), ﬁnd the ﬁrst vertex w adjacent
+to v in G from the adjacency list for v, such that {v, w} 6∈ E(H). Next, we compute id(w). If
+id(v) < id(w), we locate the vertex u as the one immediately preceding w along ~       H; otherwise, that
+is, when id(v) > id(w), we locate the vertex u as the one immediately succeeding w along H.       ~ By
+the structure of χ and G   ~ , this will ensure that the parity at w is the same in Fλ for the edges
+                             χ
+
+projecting to {v, w} and {u, w} in G.
+   Fourth, we can ﬁnd a vertex on the unique cycle in Dλ,H    ′    by starting from s and walking along
+               ′
+the arcs of Dλ,H for n steps. The subroutine again only needs two additional variables, the current
+vertex and a counter keeping track of how many steps we have taken; each step is taken with the
+subroutine in the previous paragraph. Once we have found a vertex on the cycle, we can easily
+enumerate the vertices in A along a consistent orientation A     ~ by traversing the arcs on the cycle in
+                                                                                                    17
+
+  ′
+Dλ,H   (again using the subroutine from the previous paragraph) until we get back to the starting
+vertex on the cycle. This also requires storing only two pointers (vertices).
+                                                                                          ~ (over A)
+    Finally, the listing (i) (the listing (ii)) can be done by making one revolution over H       ~
+and for each arc traversed using the subroutines for one revolution over A  ~ (over H)
+                                                                                     ~ to check that
+the underlying edge is not in A (not in H). Both enumerations are thus computable in logarithmic
+space.                                                                                            
+
+3.3. Thomason’s lollipop method in cubic bipartite Pfaffian graphs. In this section we
+prove that Thomason’s lollipop method runs in a linear number of steps in cubic bipartite Pfaﬃan
+graphs. Let us ﬁrst set up some preliminaries and then describe Thomason’s lollipop method.
+   Let G be a Hamiltonian cubic graph and let H be a Hamiltonian cycle in G. Select an edge
+e = {s, t} in the Hamiltonian cycle H. Let us call e the anchor edge. A lollipop is a connected
+graph with one vertex of degree one, one vertex of degree three, and all other vertices of degree two.
+All lollipops considered in what follows are subgraphs of G such that t is the unique degree-one
+vertex and e is the edge incident to t on the lollipop.
+   The lollipop method is best described as operating on a family of Hamiltonian paths in G. We
+say that a Hamiltonian path in G that starts at the vertex t and continues via the anchor edge e
+is an e-anchored Hamiltonian path. Now recall that G is cubic, so the vertex t is adjacent to s
+(via the anchor edge e) and to two other vertices a and b. The lollipop method transforms a given
+e-anchored Hamiltonian path Pe that ends at either a or b into an e-anchored Hamiltonian path
+Pe′ 6= Pe that ends at either a or b. Observe in particular that both Hamiltonian paths Pe and Pe′
+can be completed into e-anchored Hamiltonian cycles by adding the missing edge {a, t} or {b, t}
+into the respective path.
+   The transformation from Pe to Pe′ is via a sequence of lollipop steps. A lollipop step consists of
+adding one edge to an e-anchored Hamiltonian path and removing another one, so that another
+e-anchored Hamiltonian path is formed. More precisely, let Q be an e-anchored Hamiltonian path
+ending at some vertex u. Since G is cubic, u is adjacent to two other vertices, x and y, such that
+the edges {u, x} and {u, y} of G are not in Q. Assume that x 6= t. Add the edge {u, x} into Q
+to obtain a lollipop Ω where the unique degree-three vertex is x. Now observe that among the
+three adjacent vertices to x there is a unique vertex v ∈   / {u, t} such that both {v, x} ∈ E(Ω) and
+removing {v, x} from Ω leaves an e-anchored Hamiltonian path Q′ ending at v. The transformation
+from Q to Q′ now constitutes one lollipop step. Observe also that lollipop steps are reversible; that
+is, we can go back to Q from Q′ by performing a lollipop step starting from Q′ .
+   The lollipop state graph L(G, s, t) has as its vertices the e-anchored Hamiltonian paths in G and
+two vertices are joined by an edge if and only if it is possible to transform between the e-anchored
+Hamiltonian paths by one lollipop step. We observe immediately that L(G, s, t) has no isolated
+vertices—indeed, from any vertex Q we can arrive at another vertex Q′ 6= Q by a lollipop step—
+and the degree-one vertices are exactly the e-anchored Hamiltonian paths Q that end at a vertex
+u adjacent to t in G; that is, u ∈ {a, b}; moreover, all other vertices have degree two. Thus, we can
+transform from Pe to Pe′ 6= Pe by tracing a path in L(G, s, t) from Pe to Pe′ .
+   We now proceed to prove an upper bound on the maximum length of a path in L(G, s, t) on a
+cubic bipartite Pfaﬃan graph G. An example of the lollipop method applied to a cubic bipartite
+planar graph using the terminology in the subsequent proof is given in Figure 4.
+Theorem 3 (Thomason’s lollipop method in cubic bipartite Pfaﬃan graphs). Thomason’s lollipop
+method starting from any Hamiltonian cycle H and any edge e ∈ E(H) in an n-vertex cubic bipartite
+Pfaffian graph G, terminates after at most n steps.
+Proof. To analyze the lollipop method in cubic bipartite Pfaﬃan graphs, let a cubic bipartite
+Pfaﬃan graph G, a Hamiltonian cycle H in G, and e = {s, t} ∈ E(H) be given as input. This
+input enables us to work in the setting of Section 3.1; let the vertex bipartition (L, R) of G, the
+18
+
+
+           H                                    Q0                                   Q1
+
+s                                  s                                    s
+
+
+
+
+t                                  t                                    t
+
+           Q2                                   Q3                                   Q4
+
+s                                  s                                    s
+
+
+
+
+t                                  t                                    t
+
+           Q5                                   Q6                                   Q7
+
+s                                  s                                    s
+
+
+
+
+t                                  t                                    t
+
+           Q8                                   Q9                                    H′
+
+s                                  s                                    s
+
+
+
+
+t                                  t                                    t
+
+
+     Figure 4. An example of the sequence of steps of Thomason’s lollipop method in
+     an n-vertex cubic bipartite planar graph viewed as a sequence of arc reversals in the
+     directed graph Dλ,H . The given input G and H together with e = {s, t} is displayed
+                                                        ~ e obtained from Lemma 13 on input
+     in the top left; the black arcs are oriented as in G
+     H. We display the initial Hamiltonian cycle H (top left) and the ﬁnal Hamiltonian
+     cycle H ′ (bottom right) obtained by the method, as well as the intermediate e-
+     anchored Hamiltonian paths Q0 , Q1 , . . . , Q9 obtained in consecutive lollipop steps;
+     the end-vertex of each Qi is highlighted with red. The green arcs in Q0 are the arcs
+     of Dλ,H . Observe that each lollipop step from Qi to Qi+1 can be understood as
+     reversing the light-green arc in Qi ; the method terminates when the end-vertices of
+     Q0 and Qi+1 agree. By the structure of Dλ,H , we must have i ≤ n; cf. Theorem 3.
+                                                                                                                         19
+
+coloring λ of L, the graph Fλ , the perfect matching MH in Fλ , and the directed graph Dλ,H be
+constructed accordingly. Recall that s ∈ L and t ∈ R.
+    The lollipop method starts by removing the edge {t, u} with u 6= s from H to obtain e-anchored
+Hamiltonian path Pe . Let Q0 , Q1 , . . . , Qh be the sequence of e-anchored Hamiltonian paths tra-
+versed by consecutive lollipop steps in L(G, s, t) with Pe = Q0 and Qh = Pe′ . We will show that Pe′
+ends at u and thus we can obtain a Hamiltonian cycle H ′ 6= H by inserting the edge {t, u} into Pe′ .
+Moreover and crucially, we will show that h ≤ n.
+    Our analysis of the lollipop method is based on the directed graph Dλ,H . We recommend
+consulting Figure 4 for intuition at this point. Recall from the proof of Lemma 16 that, in the
+directed graph Dλ,H , the vertex s has in-degree zero and every vertex has out-degree at least
+one. In particular, by traversing out-arcs from the vertex u in Dλ,H , and traversing the eventual
+directed cycle encountered, as well as traversing backwards to u from the directed cycle, in precise
+terms we observe that there exist vertices w0 , w1 , . . . , wd−1 with (wj , w(j+1) mod d ) ∈ E(Dλ,H ) for
+j = 0, 1, . . . , d − 1 as well as vertices w0′ , w1′ , . . . , wd′ ′ with w0 = wd′ ′ , w0′ = u, {w0 , w1 , . . . , wd−1 } ∩
+{w0′ , w1′ , . . . , wd′ ′ −1 } = ∅, and (wj′ , wj+1
+                                                 ′   ) ∈ E(Dλ,H ) for j = 0, 1, . . . , d′ − 1. That is, the sequence
+w0′ , w1′ , . . . , wd′ ′ forms a directed path starting at the vertex u = w0′ and ending at the vertex wd′ =
+w0 , which is on the directed cycle formed by the vertices w0 , w1 , . . . , wd−1 in Dλ,H ; the directed cycle
+and the directed path intersect exactly at the vertex wd′ = w0 . In particular d + d′ ≤ |L| = n/2.
+    It will be convenient to introduce the following sequence of vertices visited on the traversal of
+Dλ,H from u. For i = 0, 1, . . . , 2d′ + d, deﬁne
+                                      
+                                          ′          for i = 0, 1, . . . , d′ − 1 ;
+                                      wi
+                                      
+(15)                             vi = wi−d′          for i = d′ , d′ + 1, . . . , d′ + d − 1 ;
+                                        w2d′ +d−i for i = d′ + d, d′ + d + 1, . . . , 2d′ + d .
+                                       ′
+                                      
+
+We have (vi , vi+1 ) ∈ E(Dλ,H ) for i = 0, 1, . . . , d′ + d − 1; these arcs are precisely the arcs traversed
+forward. We have (vi+1 , vi ) ∈ E(Dλ,H ) for i = d′ + d, d′ + d + 1, . . . , 2d′ + d − 1; these arcs are
+precisely the arcs traversed backward. For an arc (ℓ, ℓ′ ) ∈ E(Dλ,H ), let us write r(ℓ, ℓ′ ), ρ(ℓ, ℓ′ ),
+and p′ (ℓ, ℓ′ ), respectively, for the unique r ∈ R, ρ ∈ {0, 1}, and p′ ∈ {0, 1} such that (12) holds.
+Also, let us write p(ℓ, ℓ′ ) for the minimum p ∈ {0, 1} such that that (12) holds.
+    Let M − be a matching with n−1 edges in Fλ such that the vertex [t, 1] is left unmatched by M − ;
+we call such matchings almost perfect—indeed, any perfect matching M in Fλ has n edges. Also
+observe that the other vertex left unmatched by M − is [ℓ, p] for some ℓ ∈ L and p ∈ {0, 1}. Recall
+the parity-and-port-changing traversal of M in the proof of Lemma 14 resulting in the Hamiltonian
+cycle H[M ]. Deﬁne a similar parity-and-port-changing traversal of M − by starting at the vertex
+[ℓ, p̄] and observe by a similar argument as in the proof of Lemma 14 that this traversal deﬁnes an
+e-anchored Hamiltonian path P[M − ] from the vertex ℓ to the vertex t in G; in particular, observe
+that P[M − ] is e-anchored since by the structure of Fλ the almost perfect M − must contain the
+edge {[s, 0], [t, 0]}.
+    We now proceed to characterize the e-anchored Hamiltonian paths Q0 , Q1 , . . . , Qh using corre-
+sponding almost perfect matchings M0− , M1− , . . . , Mh− , and conclude that h = 2d′ + d ≤ n in the
+process. For i = 0, 1, . . . , h, let us write ui for the end-vertex of Qi other than t. Recalling that
+Q0 = Pe is constructed by deleting the edge {u, t} from the Hamiltonian cycle H, let p ∈ {0, 1}
+be the port and f ∈ E(Fλ ) the edge with f = {[u, p], [t, 1]} ∈ MH . Take M0− = MH \ {f }. In
+particular, we have Q0 = Pe = P[M0− ] and u0 = v0 = u. Let p0 = p; we will ﬁx values pi ∈ {0, 1}
+for i = 1, 2, . . . , h as we progress in what follows.
+    We split the analysis into two ranges based on the parameter i. The ﬁrst range corresponds to
+the forward-traversal of arcs in Dλ,H . For i = 0, 1, . . . , d′ + d − 1, we say an almost perfect matching
+M − has property i if
+     (i) [vi , pi ] is left unmatched by M − ; and
+20
+
+      (ii) we have {[vj , p(vj , vj+1 )], [r(vj , vj+1 ), ρ(vj , vj+1 )]} ∈ M − and
+            {[r(vj , vj+1 ), ρ(vj , vj+1 )], [vj+1 , p′ (vj , vj+1 )]} ∈
+                                                                       / M − for all 0 ≤ j ≤ i − 1; and
+    (iii) we have {[vj , p(vj , vj+1 )], [r(vj , vj+1 ), ρ(vj , vj+1 )]} ∈   / M − and
+            {[r(vj , vj+1 ), ρ(vj , vj+1 )], [vj+1 , p′ (vj , vj+1 )]} ∈ M − for all i ≤ j ≤ d′ + d.
+The second range corresponds to the backward-traversal of arcs in Dλ,H . For i = d′ + d, d′ + d +
+1, . . . , 2d′ + d, we we say an almost perfect matching M − has property i if
+      (i’) [vi , pi ] is left unmatched by M − ; and
+    (ii’) we have {[vj , p(vj , vj+1 )], [r(vj , vj+1 ), ρ(vj , vj+1 )]} ∈ M − and
+            {[r(vj , vj+1 ), ρ(vj , vj+1 )], [vj+1 , p′ (vj , vj+1 )]} ∈
+                                                                       / M−
+            for all d ≤ j ≤ d + d − 1 as well as for all 0 ≤ j ≤ 2d′ + d − 1 − i; and
+                        ′        ′
+
+   (iii’) we have {[vj , p(vj , vj+1 )], [r(vj , vj+1 ), ρ(vj , vj+1 )]} ∈   / M − and
+            {[r(vj , vj+1 ), ρ(vj , vj+1 )], [vj+1 , p (vj , vj+1 )]} ∈ M for all 2d′ + d − i ≤ j ≤ d′ − 1.
+                                                      ′                    −
+
+From previous observations and (12) we have that M0− satisﬁes property 0.
+    Let us now analyse the lollipop step mapping Qi to Qi+1 one value i = 0, 1, . . . , d′ + d − 1 at
+a time. Suppose that there is an almost perfect matching Mi− of Fλ that satisﬁes property i and
+that Qi = P[Mi− ]. In particular, we have ui = vi by (i) and Qi = P[Mi− ]. We claim that the vertex
+r(vi , vi+1 ) is the unique degree-three vertex in the lollipop formed by the lollipop step transforming
+Qi to Qi+1 . Observe by (iii) that {[r(vi , vi+1 ), ρ(vi , vi+1 )], [vi+1 , p′ (vi , vi+1 )]} ∈ Mi− , implying that
+{r(vi , vi+1 ), vi+1 } is an edge in Qi = P[Mi− ]. Recalling that Mi− is almost perfect, all vertices in
+R × {0, 1} are matched, so r(vi , vi+1 ) ∈ R is in fact adjacent to another vertex ωi 6= vi+1 along
+an edge in Qi = P[Mi− ]. By (iii) and (12) we have {vi , r(vi , vi+1 )} is an edge in G but not in
+Qi = P[Mi− ], and Qi ends at vi . Thus, r(vi , vi+1 ) is the unique degree-three vertex in the lollipop.
+Next, the lollipop step proceeds to delete an edge adjacent to the degree-three vertex r(vi , vi+1 ) in
+the lollipop. This edge is {vi+1 , r(vi , vi+1 )} by the previous analysis. It follows that Qi+1 is obtained
+from Qi by deleting {vi+1 , r(vi , vi+1 )} and inserting {vi , r(vi , vi+1 )}. Thus, Qi+1 ends at ui+1 = vi+1 .
+               −
+Deﬁne Mi+1         by starting with Mi− and deleting the edge {[r(vi , vi+1 ), ρ(vi , vi+1 )], [vi+1 , p′ (vi , vi+1 )]}
+as well as inserting the edge {[vi , p(vi , vi+1 )], [r(vi , vi+1 ), ρ(vi , vi+1 )]}. Fix pi+1 = p′ (vi , vi+1 ). From
+                                               −
+(i), (ii), and (iii) we have that Mi+1              is an almost perfect matching that satisﬁes property i + 1.
+                                     −
+Furthermore, Qi+1 = P[Mi+1 ].
+    Analysis of the lollipop step mapping Qi to Qi+1 for i = d′ + d, d′ + d + 1, . . . , 2d′ + d − 1 is
+now similar, but relying on properties (i’), (ii’), (iii’) instead. From the existence of an almost
+perfect matching Mi− of Fλ that satisﬁes property i and Qi = P[Mi− ], by a similar analysis we
+                                                                           −
+conclude that there exists an almost perfect matching Mi+1                     of Fλ that satisﬁes property i + 1 and
+                   −
+Qi+1 = P[Mi+1 ]. Since v2d′ +d = u and u is adjacent to t in G, from (i’) we conclude in particular
+that Pe′ = Q2d′ +d and thus h = 2d′ + d. Since 2d′ + d ≤ n, we have shown that the lollipop method
+terminates in at most n lollipop steps.                                                                               
+   We note that the algorithm implicit in the proof not only uses at most a linear number of lollipop
+steps, but also can be implemented with the guidance of Dλ,H to run in linear time.
+3.4. Graph-theoretic structural corollaries. We now restate and prove Corollaries 4 and 5.
+Corollary 4 (Non-uniqueness in minimum degree three). For every bipartite Pfaffian graph G of
+minimum degree three and for every edge e ∈ E(G), it holds that G has either zero or at least four
+distinct Hamiltonian cycles H with e ∈ E(H).
+Proof. The proof of Theorem 1 in the previous section shows how to generate one other Hamiltonian
+cycle H ′ 6= H such that the vertex colorings χH ′ and χH diﬀer in at least one vertex in R but agree
+for all vertices in L. We can change the roles of L and R, s and t, and the two colors in the
+construction, and compute another Hamiltonian cycle H ′′ from H with χH ′′ diﬀerent from χH in
+L but the same in R. Clearly, as the vertex coloring is unique for a Hamiltonian cycle, H ′ and
+                                                                                                      21
+
+H ′′ must be diﬀerent Hamiltonian cycles that are also diﬀerent from H. Also, taking either of H ′
+or H ′′ as the source, again ﬂipping the roles of L and R, we can generate a fourth Hamiltonian
+cycle H ′′′ whose coloring χH ′′′ is diﬀerent from the colorings of H, H ′ , and H ′′ . This way we have
+generated at least three new distinct Hamiltonian cycles H ′ , H ′′ , and H ′′′ from H.               
+Corollary 5 (Cubic tight lower bound). Every cubic bipartite Pfaffian graph has either zero or at
+least six distinct Hamiltonian cycles.
+Proof. Given a Hamiltonian cycle H, we can use Theorem 1 to obtain another Hamiltonian cycle
+H ′ that in particular must have an edge f ∈ E(H ′ ) \ E(H). From Corollary 4 we have thus that
+there exist at least four distinct Hamiltonian cycles in G with f as the anchor edge. This means
+we have generated at least ﬁve distinct Hamiltonian cycles in G. From Bosák’s theorem [Bos67] we
+know every cubic bipartite graph must have an even number of distinct Hamiltonian cycles, which
+shows that there must be at least six distinct Hamiltonian cycles in every cubic bipartite Pfaﬃan
+graph.                                                                                          
+
+           4. Faster algorithms for TSP and counting Hamiltonian cycles
+  In this section we describe and analyze our new algorithms for TSP and counting Hamiltonian
+cycles restricted to bipartite Pfaﬃan graphs, in particular bipartite planar ones.
+4.1. Algorithmic preliminaries and conventions. Our algorithms in this section diﬀer from
+earlier ones on planar graphs in that we begin by computing and ﬁxing a Pfaﬃan orientation ~       G
+of the input graph G. This can be done in linear time in the case of planar graphs, and in O(n3 )
+time with the algorithm in [RST99] for any bipartite Pfaﬃan graph. We also ﬁx an arbitrary edge
+e ∈ E(G) with e = {s, t} for distinct s, t ∈ V (G) and compute the orientation G  ~ e of G as well as
+the vertex bipartition (L, R) of G with s ∈ L and t ∈ R.
+   We will ﬁrst consider the anchored problems of ﬁnding the shortest traveling salesperson tour
+through e, and counting the Hamiltonian cycles through e. To get the full solution, we can consider
+each edge in turn and in the case of counting, divide the total amount by n in the end. This only
+incurs a polynomial overhead on the running time.
+   Apart from this initial step of ﬁxing an edge and a Pfaﬃan orientation, our algorithm follows and
+uses well-known material for dynamic programming over graph decompositions and is only repeated
+here for the reader’s convenience. The only new parts are what we count, how to represent partial
+solutions of what we count, and how to update them.
+4.2. Graph decompositions. We consider some of the most familiar graph decompositions, orig-
+inally proposed in Robertson and Seymour [RS86, RS91]. We will not explicitly consider tree
+width as a parameter in our algorithms but deﬁne it anyway along the way to explain a path
+decomposition.
+Tree and path decompositions. A tree decomposition of an undirected graph G is a tree Ttd in which
+each vertex x ∈ V (Ttd ) is associated with a set of vertices Bx ⊆ V (G), called a bag, such that
+∪x∈V (Ttd ) Bx = V (G) with the properties
+    (1) for every {u, v} ∈ E(G), there exists an x ∈ V (Ttd ) such that both u, v ∈ Bx , and
+    (2) if v ∈ Bx and v ∈ By , then v ∈ Bz for all z ∈ V (Ttd ) on the path joining x and y in Ttd .
+   The width of a tree decomposition is measured in the size of its largest bag. More precisely, we
+say that the width of the decomposition is equal to maxx∈V (Ttd ) |Bx | − 1. A path decomposition is
+a tree decomposition where the tree Ttd is a path. We also say that the tree width tw(G), and the
+path width pw(G), of the graph G equals the minimum width of any such decompositions for the
+graph.
+   A nice tree decomposition as deﬁned in [BCKN15] is a tree decomposition Ttd with one special
+bag r called the root and in which each bag is one of the following types:
+22
+
+     (1) Leaf bag: a leaf x ∈ V (Ttd ) with Bx = ∅.
+     (2) Introduce vertex bag: an internal vertex x ∈ V (Ttd ) with one child vertex y for which
+         Bx = By ∪ {v} for some v 6∈ By . This bag is said to introduce v.
+     (3) Introduce edge bag: an internal vertex x ∈ V (Ttd ) labeled with an edge {u, v} ∈ E(G) with
+         one child bag y for which u, v ∈ Bx = By . This bag is said to introduce {u, v}.
+     (4) Forget bag: an internal vertex x ∈ V (Ttd ) with one child bag y for which Bx = By \ {v} for
+         some v ∈ By . This bag is said to forget v.
+     (5) Join bag: an internal vertex x ∈ V (Ttd ) with two child vertices p and q with Bx = Bp = Bq .
+Moreover, every edge {u, v} ∈ E(G) is introduced exactly once. Proposition 2.2 in [BCKN15] shows
+how to compute a nice tree decomposition from an arbitrary tree decomposition of the same tree
+width in polynomial time. A nice path decomposition is deﬁned similarly and has no join bags. It
+is preferable to put the root vertex at one of the two leaf bags.
+
+Branch decompositions. A branch decomposition of G is an unrooted binary tree Tbd in which edges
+are associated with subsets of V (G), called middle sets. Each leaf in Tbd is associated with a unique
+edge of G. With each edge x ∈ E(Tbd ) we associate the middle set Bx consisting of every vertex
+v ∈ V (G) that appears in both subtrees obtained by removing x from Tbd . That is, for each vertex
+v ∈ V (G) both of the subtrees have at least one leaf associated with a graph edge in G incident to
+v. The width of the branch decomposition is maxx∈E(Tbd ) |Bx | − 1. The branch width bw(G) of a
+graph is the minimum width of any branch decomposition of G. An optimal branch decomposition
+in a planar graph can be found in polynomial time, see Gu and Tamaki [GT08].
+
+4.3. Vertex states in a graph decomposition. The correspondence between perfect matchings
+and good extensions (Lemma 14 and Lemma 15) makes it possible to count and detect optimally
+edge-weighted Hamiltonian cycles by considering all colorings in a dynamic programming fashion
+over graph decompositions. That is, recalling Section 2.5, we consider all ways to simultaneously
+produce a coloring λ : L → {0, 1} and as well as a perfect matching M in the corresponding
+bipartite graph Fλ . However, there will be no notion of ports of the vertices in L in our dynamic
+programming. Indeed, we will just make sure by our vertex states that every vertex in L is mapped
+twice. Since edges of the graph are considered in a ﬁxed order across the dynamic programming
+over the graph decomposition, we may interpret the matching in Fλ we build to consistently use
+port 0 for the ﬁrst edge we choose incident to any ℓ ∈ L \ {s}, and port 1 for the second edge we
+choose incident to that ℓ. For ℓ = s, to meet 11, we treat a chosen edge {s, u} with u 6= t to use
+port 1, and the second edge {s, t} to use port 0. To make sure that we indeed pick {s, t} as one of
+the two edges incident to s, we can use an extra global state bit.
+   One only needs four states per vertex to keep track of partial solutions. For each vertex in the
+original graph G, that now represents two vertices in the graph Fλ under a partial coloring of the
+vertices in L, we have the states
+ (σ00 ) we have not matched this vertex,
+ (σ01 ) we have matched this vertex once, and we have colored it 0 (blue),
+ (σ10 ) we have matched this vertex once, and we have colored it 1 (orange),
+ (σ11 ) we have matched this vertex twice.
+We do however need to handle vertices in L and R diﬀerently. If we have a vertex ℓ ∈ L that is
+matched once with color c, we have to make sure that the next matching edge uses the same color
+c for the vertex ℓ. That is, we have already assigned a color to this vertex with λ and we need to
+stick to it. But for a vertex r ∈ R that is matched once with color c, we have to make sure the
+next matching edge uses the opposite color c̄ = 1 − c, as we seek two edges that match diﬀerently
+colored vertices in R in our perfect matching in Fλ . We also only use the states σ00 , σ01 , and σ11
+for the vertex s to make sure it gets the color 0 (blue).
+                                                                                                          23
+
+        Table 1. Mapping from vertex states for the endpoints of an edge {ℓ, r} to the new
+        states, if any. Left: The states’ mapping when (ℓ, r) ∈   ~ e ). Right: The states’
+                                                              / E(G
+                                   ~
+        mapping when (ℓ, r) ∈ E(Ge ).
+
+  ℓ\r      σ00          σ01          σ10       σ11     ℓ\r      σ00          σ01          σ10       σ11
+  σ00   (σ01 , σ01 ) (σ10 , σ11 ) (σ01 , σ11 ) -       σ00   (σ01 , σ10 ) (σ01 , σ11 ) (σ10 , σ11 ) -
+        (σ10 , σ10 )                                         (σ10 , σ01 )
+  σ01   (σ11 , σ01 )      -       (σ11 , σ11 ) -       σ01   (σ11 , σ10 ) (σ11 , σ11 )      -        -
+  σ10   (σ11 , σ10 ) (σ11 , σ11 )      -        -      σ10   (σ11 , σ01 )      -       (σ11 , σ11 ) -
+  σ11        -            -            -        -      σ11        -            -            -        -
+
+4.4. Dynamic programming over a path decomposition. We will now see how we can solve
+minimum TSP over a path decomposition in Theorem 6.
+Theorem 6 (Bipartite Pfaﬃan TSP parameterized by path width). Given an edge-weighted bi-
+partite Pfaffian graph G on n vertices along with a path decomposition of width pw(G), we can
+compute the minimum weight Hamiltonian cycle in G in 4pw(G) poly(n) time.
+   For a variable A, let A :=min B be shorthand for A := B if A was not previously assigned a
+value, and A := min(A, B) otherwise. Similarly, let A :=+ B be shorthand for A := B if A was not
+previously assigned a value, and A := A + B otherwise.
+   As input we are given an edge-weighted graph G with an edge weight function w : E(G) → Q>0 ,
+and a path decomposition Tpd of width pw(G). We will compute the optimum TSP tour from below
+up to the root node r of Tpd . We say a node y is below another node x 6= r if the path from r to y in
+Tpd goes through x. We deﬁne for each vertex x ∈ V (Tpd ) a map Mx : {σ00 , σ01 , σ10 , σ11 }Bx → Q>0 .
+The mapping captures for each set of states S on the vertices in the bag Bx , the smallest possible
+sum of edge weights for any matching such that
+    (1) all vertices that are not in the bag Bx , but are in some bag for some node y below x, have
+        been matched to the state σ11 ,
+    (2) all vertices in the bag Bx have been matched to the corresponding state in S, and
+    (3) all remaining vertices are unmatched and have state σ00 .
+   We evaluate the nodes in the path decomposition one at a time, starting with the leaf node on
+the other side of the root. The last node processed is the root (the leaf node on the other side of the
+path). If ∅ ∈ Mr , we return Mr (∅) as the length of the shortest traveling salesperson tour through
+the edge e, otherwise we return that there is not any tour through e. We update the node’s states
+as follows according to type of node. Let y be the current node and x its predecessor (if any):
+    (1) Leaf node. If y is not the root, we set My (∅) := 0. If y is the root, we set My = Mx with x
+        the forget bag adjacent to this leaf node y,
+    (2) Introduce vertex node. By = Bx ∪ {v}. For every state S ∈ Mx , we add the state S ′ =
+        S + {v ← σ00 } to My with My (S ′ ) :=min Mx (S).
+    (3) Introduce edge node. {ℓ, r} ∈ By = Bx , with ℓ ∈ L and r ∈ R. For every state S ∈ Mx , we
+        ﬁrst add the state S ∈ My with My (S) :=min Mx (S). Next, we add the state S ′ to My for
+        every matching pair in Table 1 where we have replaced the states for ℓ and r in S with the
+        ones given in the tables. We set My (S ′ ) :=min Mx (S) + w({ℓ, r}) to account for the weight
+        of the added edge. Note that there are diﬀerent state transitions depending on whether or
+        not (ℓ, r) ∈ E(G ~ e ).
+    (4) Forget vertex node. By = Bx \ {v}. For each state S ∈ Mx such that S(v) = σ11 , add
+        S ′ = S − {v} to My with My (S ′ ) :=min Mx (S).
+This concludes the description of the algorithm and the proof of Theorem 6.
+   We next turn to the proof of Theorem 9.
+24
+
+       Table 2. Matching states from Bx and By in the forget set marked with an “x”.
+       Left: For vertices in L. Right: For vertices in R.
+
+                  L     σ00 σ01 σ10 σ11                     R       σ00 σ01 σ10 σ11
+                  σ00                x                      σ00                  x
+                  σ01        x                              σ01              x
+                  σ10            x                          σ10          x
+                  σ11    x                                  σ11      x
+
+Theorem 9 (Bipartite Pfaﬃan counting Hamiltonian cycles parameterized by path width). Given
+a bipartite Pfaffian graph G on n vertices along with a path decomposition of width pw(G), we can
+count the Hamiltonian cycles in G in 4pw(G) poly(n) time.
+   To modify the algorithm to count Hamiltonian cycles in Theorem 9, we let M map to the ring
+Z[ξ] instead of Q>0 with ξ a formal polynomial indeterminate. We set the initial state to M (∅) = 1
+and replace M (S ′ ) :=min M (S) + w({ℓ, r}) in the introduce-edge nodes with M (S ′ ) :=+ ξM (S),
+and also replace the equality operator :=min with :=+ in all steps. Finally, we look at the coeﬃcient
+of ξ n in Mr (∅) to see how many Hamiltonian cycles go through the edge e. Summing over all edges
+e and dividing by n gives us the ﬁnal count.
+   Note that since there are at most 4pw(G)+1 states to consider at each bag, the running time
+follows. This completes the proof of Theorem 9.
+4.5. Dynamic programming over a branch decomposition. We will now see how we can
+solve minimum TSP over a branch decomposition to obtain Theorem 7.
+Theorem 7 (Bipartite Pfaﬃan TSP parameterized by branch width). Given an edge-weighted
+bipartite Pfaffian graph G on n vertices along with a branch decomposition of width bw(G), we can
+compute the minimum weight Hamiltonian cycle in G in 8bw(G) poly(n) time.
+   Given an edge weighted graph G with weights w : E → Q>0 and a branch decomposition Tbd of
+width bw(G) as input, we ﬁrst insert a new root node r in Tbd at an arbitrary edge {u, v} ∈ E(Tbd )
+by subdividing it as {u, r} and {r, v}. We will compute the optimum TSP tour from the leaves up
+to the root r in Tbd . We say an edge y ∈ E(Tbd ) is below another edge x ∈ E(Tbd ) with x 6= r
+if the path joining r and y in Tbd goes through x. We deﬁne for each edge x ∈ E(Tbd ) a map
+Mx : {σ00 , σ01 , σ10 , σ11 }Bx → Q>0 . The mapping captures for each set of states S on the vertices
+in the middle set Bx , the smallest possible sum of edge weights for any matching such that
+    (1) all vertices that are not in the middle set Bx , but are in some middle set for some node y
+        below x, have been matched to the state σ11 ,
+    (2) all vertices in the middle set Bx have been matched to the corresponding state in S, and
+    (3) all remaining vertices are unmatched and have state σ00 .
+   For any internal node v 6= r in Tbd we have three incident edges x, y, and z; let z be the unique
+edge closest to r in Tbd . We deﬁne the four pairwise disjoint sets
+    (1) the Left set: Lv = (Bx ∩ Bz ) \ By ,
+    (2) the Right set: Rv = (By ∩ Bz ) \ Bx ,
+    (3) the Forget set: Fv = (Bx ∩ By ) \ Bz , and
+    (4) the Intersection set: Iv = Bx ∩ By ∩ Bz .
+   By identifying the sets Bx = Lv ∪ Fv ∪ Iv , By = Rv ∪ Fv ∪ Iv , and Bz = Lv ∪ Rv ∪ Iv , we get a
+bound of bw(G) on the size of each of these three unions. In particular
+                                                                  3
+(16)                            |Iv | + |Lv | + |Rv | + |Fv | ≤     bw(G).
+                                                                  2
+                                                                                                       25
+
+   We compute the mapping M for all edges in the branch decomposition tree in order from furthest
+to nearest the root r. For any leaf node v and its only incident edge z representing an edge
+{ℓ, r} ∈ E(G), we set Mz (ℓ ← σ00 , r ← σ00 ) = 0 and either
+    (1) Mz (ℓ ← σ01 , r ← σ01 ) = Mz (ℓ ← σ10 , r ← σ10 ) = w({ℓ, r}) if (ℓ, r) ∈   ~ e ), or
+                                                                                / E(G
+                                                                                    ~ e ).
+    (2) Mz (ℓ ← σ01 , r ← σ10 ) = Mz (ℓ ← σ10 , r ← σ01 ) = w({ℓ, r}) if (ℓ, r) ∈ E(G
+   For any internal node w with three edges x, y, and z, with z closest to r, we do the following:
+For every state Sx ∈ Mx and every state Sy ∈ My such that vertices in Iv have the same state in
+Sx and Sy , and vertices in Fv have matching states in Sx and Sy according to Table 2, we deﬁne a
+new state S ′ by
+    (1) taking Iv vertices’ state values from both Sx and Sy (as they agree),
+    (2) taking Lv vertices’ state values from Sx , and
+    (3) taking Rv vertices’ state values from Sy .
+   We set Mz (S ′ ) :=min Mx (Sx ) + My (Sy ).
+   Finally, for the two edges x and y incident to the root r, we list all pairs of states with Sx ∈ Mx
+and Sy ∈ My such that all vertices match according to Table 2. The minimum of Mx (Sx ) + My (Sy )
+over all such pairs is the length of the shortest Hamiltonian cycle in G.
+   This completes the description of the algorithm in Theorem 7. We observe that the running time
+is bounded by 4|Iv |+|Lv |+|Rv |+|Fv | at every internal node v. This is at most 8bw(G) by the bound in
+(16). The computation needed at the root vertex is at most 4bw(G) poly(n) if we iterate over all
+states Sx ∈ Mx and compute what the unique Sy ∈ My is that matches Sx and look it up in an
+eﬃcient dictionary structure for My . This completes the proof of Theorem 7.
+   We next turn to the proof of Theorem 10.
+Theorem 10 (Bipartite Pfaﬃan counting Hamiltonian cycles parameterized by branch width).
+Given a bipartite Pfaffian graph G on n vertices along with a branch decomposition of width bw(G),
+we can count the Hamiltonian cycles in G in 2ω bw(G) poly(n) time, where ω < 2.373.
+   To modify the algorithm to count Hamiltonian cycles in Theorem 10, we again let M map to
+Z[ξ] with ξ a formal polynomial indeterminate. We set the initial states at the leaves to M (∅) = 1
+and either
+    (1) Mz (ℓ ← σ01 , r ← σ01 ) = Mz (ℓ ← σ10 , r ← σ10 ) = ξ if (ℓ, r) ∈
+                                                                        / E(G~ e ), or
+    (2) Mz (ℓ ← σ01 , r ← σ10 ) = Mz (ℓ ← σ10 , r ← σ01 ) = ξ if (ℓ, r) ∈ E(G~ e ).
+   We also replace Mz (S ′ ) :=min Mx (Sx ) + My (Sy ) for Mz (S ′ ) :=+ Mx (Sx )My (Sy ) at the internal
+nodes. Finally, for the root r we compute the sum T over all pairs of states Sx ∈ Mx and Sy ∈ My
+such that vertices match according to to Table 2 of Mx (Sx )My (Sy ). The coeﬃcient of ξ n in T is the
+number of Hamiltonian cycles through e. Summing this contribution over all edges e and dividing
+by n gives us the ﬁnal count.
+   Contrary to the TSP case, there is a known technique to speed up the counting computation at
+every internal node proposed by Dorn [Dor06]. As we in this case want to compute a sum–product
+formula for each triple of states in Iv , Lv , and Rv at an internal node v, we can invoke fast matrix
+multiplication to get the counts faster than through a naı̈ve enumeration. For each state ι ∈ Iv ,
+we deﬁne two matrices Av,ι that is a 4|Lv | × 4|Fv | matrix with rows representing states in Lv and
+columns states in Fv , and Bv,ι that is a 4|Fv | × 4|Rv | matrix with columns representing states in
+Rv and rows representing states in Fv . However, the rows are permuted so that matching states
+according to Table 2 are paired up. That is, the forget set at column index i in Av,ι and the forget
+set at row i in Bv,ι are such that each pair of vertex states match. This enables us to compute
+the matrix product Cv,ι = Av,ι Bv,ι to get the state ι ∪ λ ∪ ρ by mapping it to the entry Cv,ι [λ, ρ].
+Dorn [Dor06] proved that the worst computation times occurs when |Lv | = |Rv | = |Fv | = bw(G)       2 ,
+which gives us the running time in Theorem 10.
+26
+
+     Finally, we turn to Corollary 8 and Corollary 11, restated below for convenience.
+Corollary 8 (Bipartite planar TSP). Given an edge-weighted bipartite planar√graph G on n ver-
+tices, we can compute the minimum weight Hamiltonian cycle in G in O(26.366 n ) time.
+Corollary 11 (Bipartite planar counting of Hamiltonian cycles). Given a bipartite√planar graph
+G on n vertices, we can compute the number of Hamiltonian cycles in G in O(25.049 n ) time.
+   These follow from Theorem 7 and 10, respectively, after applying a bound√on the branch width
+for planar graphs by Fomin and Thilikos [FT06]. They prove bw(G) < 2.122 n in a planar graph,
+and as mentioned above, such a branch decomposition can be found in polynomial time. This
+concludes the description of our algorithmic results.
+
+                                         Acknowledgment
+We thank the anonymous reviewers of an earlier version of this manuscript for their comments, in
+particular for pointing out [GSW23]. AB is supported by the VILLUM Foundation, Grant 16582.
+JN is supported by the project CRACKNP that has received funding from the European Research
+Council (ERC) under the European Union’s Horizon 2020 research and innovation programme
+(grant agreement No 853234).
+                                                                                                     27
+
+                                              Appendix
+
+                     Appendix A. NP-completeness in planar graphs
+  In this section we prove that the degree requirement is necessary in Theorem 1 and 2, i.e., when
+we drop the minimum degree constraint, just detecting if the graph has another Hamiltonian cycle
+becomes NP-hard.
+Theorem 17 (Hardness of detecting another Hamiltonian cycle). Given a bipartite Pfaffian graph
+G and a Hamiltonian cycle H in G as input, it is NP-complete to decide whether G has a Hamil-
+tonian cycle H ′ 6= H.
+    The problem is clearly in NP as one can guess a Hamiltonian cycle in polynomial time and check
+that it is a Hamiltonian cycle and that it diﬀers from the given one. Our hardness–reduction borrows
+several parts of the original proof by Garey, Johnson, and Tarjan [GJT76] that Hamiltonian
+Cycle is NP-complete in planar graphs. In particular we use the xor-gadget and the cross-over
+construction from these reductions, see Figure 6 and Figure 8. We do however reduce from another
+problem than SAT as we ﬁnd it easier to argue one-to-one correspondence between a Hamiltonian
+cycle and a solution to our NP-hard problem. We reduce from the Exact Set Cover problem,
+that given an n-element universe U and a family F of subsets of U asks if there is a subset
+S ⊆ F such that ∪˙ S∈S S = U . Karp [Kar72] showed that Exact Set Cover is NP-complete.
+                                                                                             ′
+Given an
+  ′
+         S instance (U, F) to Exact Set Cover, we build a slightly larger instance (U, F ), with
+F = F {U }, that is, we add a subset covering all of the universe by itself. With foresight, we will
+encode (U, F ′ ) in a graph so that every solution to the Exact Set Cover problem corresponds to
+a unique Hamiltonian cycle in the graph. We will then provide the Hamiltonian cycle corresponding
+to the solution S = {U } and ask for another Hamiltonian cycle. Any other Hamiltonian cycle will
+then by deﬁnition correspond to a solution to the original Exact Set Cover instance (U, F).
+    A common component in our gadgets is the forced edge, drawn as a thick black edge in the ﬁgures.
+It is encoded by a path on three edges with two intermediate additional degree-two vertices. We
+will encode the condition for each u ∈ U that exactly one subset in F covers it with a gadget called
+avoid-one. The gadget encodes a set of choices c1 , . . . , ck . It is depicted in Figure 5.
+
+               c1     c2         ck                 c1     c2         ck           c1 c2 . . . ck
+          a                ...         b      a                 ...         b
+
+                                                                                         ∨˙
+
+
+
+       Figure 5. The avoid-one gadget. Left: The gadget itself. Thick edges must be used
+       by a Hamiltonian cycle. This is accomplished by replacing each thick edge with a
+       path on three edges and two additional degree-two vertices. The key property of the
+       gadget is that in any Hamiltonian cycle in our ﬁnal construction, exactly one of the
+       k choice edges c1 , c2 , . . . , ck is not part of the cycle. Middle: Any Hamiltonian cycle
+       enters and exits only at the terminals a and b avoiding exactly one of the choices,
+       here c2 . It will follow from the rest of the construction that the Hamiltonian cycle
+       could not enter and exit also via a choice edge, since that part would then form
+       a cycle of its own. Right: A schematic version of the gadget used in subsequent
+       ﬁgures.
+
+  We also need the xor-gadget that given a pair of edge-connected vertex pairs a1 , a2 and b1 , b2
+ensures that a Hamiltonian cycle either goes through a1 , a2 or b1 , b2 but not both, see Figure 6.
+28
+
+
+                   a1                       a2                  a1                       a2
+
+                    b1                      b2                   b1                      b2
+
+       Figure 6. The xor-gadget. Left: The gadget itself. Thick edges must be used by
+       a Hamiltonian cycle. The key property of the gadget is that in any Hamiltonian
+       cycle in our ﬁnal construction, either the cycle enters and leaves through a1 and a2
+       or through b1 and b2 , but not both. Right: A schematic version of the gadget used
+       in subsequent ﬁgures.
+
+  Our instance graph will have one strain of subset choice gadgets at the top, and one strain of
+avoid-one gadgets for each element in the universe U at the bottom. The two strains are connected
+with each other at both the left and right end. Between the two strains run several xor-gadgets
+that ensure consistence of the subset selection and the universe cover. See Figure 7. Note that the
+xor-gadgets may cross each other but any such crossing can be resolved by a well-known uncrossing
+gadget from [GJT76], see Figure 8. This completes our construction.
+
+           S1               S2                S3               S4                S5               S6
+
+
+
+
+           ∨˙               ∨˙                ∨˙               ∨˙                ∨˙               ∨˙
+           u1               u2                u3               u4                u5               u6
+
+       Figure 7. An instance corresponding to the Exact Set Cover instance U =
+       {u1 , u2 , . . . , u6 } and F = {S1 , S2 , . . . , S6 }. Only two subsets S3 = {u1 , u4 , u5 } and
+       S4 = {u2 , u3 , u4 } are drawn for clarity.
+
+
+
+
+       Figure 8. Crossing and uncrossing. Left: Two crossing xor-gadgets. Right: Un-
+       crossing via the cross-over construction from [GJT76].
+
+   We now proceed with a proof Theorem 17. We will ﬁrst argue that the set of solutions to the
+Exact Cover instance (U, F ′ ) corresponds one-to-one to the Hamiltonian cycles in the constructed
+graph. First consider any solution S ⊆ F ′ to the Exact Cover instance (U, F ′ ). We can construct
+a Hamiltonian cycle through the constructed graph by taking the upper path (c.f. Figure 7) on
+each subset choice gadget for each subset Si ∈ F \ S, and the lower path for each subset choice
+gadget Si ∈ S, including covering all vertices in the associated xor-gadgets. Since this is a solution
+to the Exact Cover problem, this part of the cycle will block exactly one of the choice edges in
+each avoid-one gadget with the corresponding xor-gadget, and we can take the unique path from
+                                                                                                  29
+
+a to b in the gadget that passes every vertex of the gadget and avoids using the one choice edge
+which is blocked from the subset choice gadget string side.
+   In the other direction, any Hamiltonian cycle must cover all choice edges in an avoid-one gadget
+except precisely one, since the xor-gadgets assure us that we cannot have paths entering and exiting
+at both sides. That means in particular that it is impossible for the Hamiltonian cycle to leave an
+avoid-one gadget in a choice edge to continue in a subset choice gadget (and vice versa). The path
+has to return to the other end of the choice edge. The omitted choice edge in each avoid-one gadget
+must be covered from the subset choice gadget string side, which forces the Hamiltonian cycle to
+take the lower path exactly for the subsets needed to cover U in a solution to the Exact Cover
+instance (U, F ′ ).
+   The proof now follows by providing the unique Hamiltonian cycle that represents the planted
+solution S = {U } and ask for another one. By the above one-to-one relationship, that other
+Hamiltonian cycle encodes a solution to (U, F), which is NP-hard to ﬁnd. This completes the proof
+of Theorem 17.                                                                                     
+30
+
+                                                 References
+[ANS80]   Takanori Akiyama, Takao Nishizeki, and Nobuji Saito. NP-completeness of the Hamiltonian cycle problem
+          for bipartite graphs. Journal of Information Processing, 3:73–76, 1980.
+[BCKN15] Hans Bodlaender, Marek Cygan, Stefan Kratsch, and Jesper Nederlof. Deterministic single exponential
+          time algorithms for connectivity problems parameterized by treewidth. Information and Computation,
+          243:86–111, 2015. 40th International Colloquium on Automata, Languages and Programming (ICALP
+          2013). doi:https://doi.org/10.1016/j.ic.2014.12.008.
+[Bjö14]  Andreas Björklund. Determinant sums for undirected Hamiltonicity. SIAM J. Comput., 43(1):280–299,
+          2014.
+[BKK+ 07] Kevin Buchin, Christian Knauer, Klaus Kriegel, André Schulz, and Raimund Seidel. On the number of
+          cycles in planar graphs. In Guohui Lin, editor, Computing and Combinatorics, 13th Annual International
+          Conference, COCOON 2007, Banff, Canada, July 16-19, 2007, Proceedings, volume 4598 of Lecture Notes
+          in Computer Science, pages 97–107. Springer, 2007. doi:10.1007/978-3-540-73545-8\_12.
+[Bos67]   J. Bosák. Hamiltonian lines in cubic graphs. In Theory of Graphs, International Symposium, Rome, July
+          1966, pages 35–46. Gordon & Breach, New York, 1967.
+[BS22]    Marcin Briański and Adam Szady. A short note on graphs with long Thomason chains. Discrete Mathe-
+          matics, 345(1):112624, 2022. doi:https://doi.org/10.1016/j.disc.2021.112624.
+[BST99] Cristina Bazgan, Miklos Santha, and Zsolt Tuza. On the approximation of ﬁnding a(nother) Hamiltonian
+          cycle in cubic Hamiltonian graphs. J. Algorithms, 31(1):249–268, 1999. doi:10.1006/jagm.1998.0998.
+[Cam01] Kathie Cameron. Thomason’s algorithm for ﬁnding a second hamiltonian circuit through a given edge in
+          a cubic graph is exponential on Krawczyk’s graphs. Discrete Mathematics, 235(1):69–77, 2001. Chech and
+          Slovak 3. doi:https://doi.org/10.1016/S0012-365X(00)00260-0.
+[CKN18] Marek Cygan, Stefan Kratsch, and Jesper Nederlof. Fast Hamiltonicity checking via bases of perfect
+          matchings. J. ACM, 65(3):12:1–12:46, 2018.
+[CLN18] Radu Curticapean, Nathan Lindzey, and Jesper Nederlof. A tight lower bound for counting Hamiltonian
+          cycles via matrix rank. In Artur Czumaj, editor, Proceedings of the Twenty-Ninth Annual ACM-SIAM
+          Symposium on Discrete Algorithms, SODA 2018, New Orleans, LA, USA, January 7-10, 2018, pages
+          1080–1099. SIAM, 2018. doi:10.1137/1.9781611975031.70.
+[CNP+ 22] Marek Cygan, Jesper Nederlof, Marcin Pilipczuk, Michal Pilipczuk, Johan M. M. Van Rooij, and
+          Jakub Onufry Wojtaszczyk. Solving connectivity problems parameterized by treewidth in single expo-
+          nential time. ACM Transactions on Algorithms, 18(2), 2022. doi:10.1145/3506707.
+[CO07]    G.L. Chia and Siew-Hui Ong. Hamilton cycles in cubic graphs. AKCE International Journal of Graphs
+          and Combinatorics, 4(3):251–259, 2007. doi:10.1080/09728600.2007.12088840.
+[dCLM05] Marcelo H. de Carvalho, Cláudio L. Lucchesi, and U. S.R. Murty. On the number of dissimilar pfaf-
+          ﬁan orientations of graphs. RAIRO - Theoretical Informatics and Applications, 39(1):93–113, 2005.
+          doi:10.1051/ita:2005005.
+[DKW06] Vladimir G. Deı̆neko, Bettina Klinz, and Gerhard J. Woeginger. Exact algorithms for the
+          hamiltonian cycle problem in planar graphs. Oper. Res. Lett., 34(3):269–274, 2006. URL:
+          https://doi.org/10.1016/j.orl.2005.04.013, doi:10.1016/J.ORL.2005.04.013.
+[DMSZ20] Argyrios Deligkas, George B. Mertzios, Paul G. Spirakis, and Viktor Zamaraev. Exact and approximate
+          algorithms for computing a second hamiltonian cycle. In Javier Esparza and Daniel Král’, editors, 45th
+          International Symposium on Mathematical Foundations of Computer Science, MFCS 2020, August 24-28,
+          2020, Prague, Czech Republic, volume 170 of LIPIcs, pages 27:1–27:13. Schloss Dagstuhl - Leibniz-Zentrum
+          für Informatik, 2020. doi:10.4230/LIPIcs.MFCS.2020.27.
+[Dor06]   Frederic Dorn. Dynamic programming and fast matrix multiplication. In Yossi Azar and Thomas Erlebach,
+          editors, Algorithms - ESA 2006, 14th Annual European Symposium, Zurich, Switzerland, September 11-
+          13, 2006, Proceedings, volume 4168 of Lecture Notes in Computer Science, pages 280–291. Springer, 2006.
+          doi:10.1007/11841036\_27.
+[DPBF10] Frederic Dorn, Eelko Penninkx, Hans L. Bodlaender, and Fedor V. Fomin. Eﬃcient exact algo-
+          rithms on planar graphs: Exploiting sphere cut decompositions. Algorithmica, 58(3):790–810, 2010.
+          doi:10.1007/s00453-009-9296-1.
+[FT06]    Fedor V. Fomin and Dimitrios M. Thilikos. New upper bounds on the decomposability of planar graphs.
+          J. Graph Theory, 51(1):53–81, 2006. doi:10.1002/jgt.20121.
+[GJT76] M. R. Garey, D. S. Johnson, and R. Endre Tarjan. The planar Hamiltonian circuit problem is NP-complete.
+          SIAM Journal on Computing, 5(4):704–714, 1976. doi:10.1137/0205049.
+[GSW23] Maximilian        Gorsky,      Raphael    Steiner,    and    Sebastian    Wiederrecht.    Matching     the-
+          ory       and     barnette’s    conjecture.      Discrete    Mathematics,      346(2):113249,       2023.
+                                                                                                         31
+
+         URL:                       https://www.sciencedirect.com/science/article/pii/S0012365X22004551,
+         doi:https://doi.org/10.1016/j.disc.2022.113249.
+[GT08]   Qian-Ping Gu and Hisao Tamaki. Optimal branch-decomposition of planar graphs in o(n3 ) time. ACM
+         Trans. Algorithms, 4(3), jul 2008. doi:10.1145/1367064.1367070.
+[Had15]  Haddadan, Arash. Finding a second hamiltonian cycle in barnette graphs. Master’s thesis, 2015. URL:
+         http://hdl.handle.net/10012/9630.
+[HMM85] Derek A. Holton, Bennet Manvel, and Brendan D. McKay. Hamiltonian cycles in cubic 3-connected
+         bipartite planar graphs. J. Comb. Theory, Ser. B, 38:279–297, 1985.
+[IPZ01]  Russell Impagliazzo, Ramamohan Paturi, and Francis Zane. Which problems have strongly
+         exponential complexity?         Journal of Computer and System Sciences, 63(4):512–530, 2001.
+         doi:https://doi.org/10.1006/jcss.2001.1774.
+[Kar72]  Richard M. Karp. Reducibility among combinatorial problems. In Raymond E. Miller and James W.
+         Thatcher, editors, Proceedings of a symposium on the Complexity of Computer Computations, held
+         March 20-22, 1972, at the IBM Thomas J. Watson Research Center, Yorktown Heights, New
+         York, USA, The IBM Research Symposia Series, pages 85–103. Plenum Press, New York, 1972.
+         doi:10.1007/978-1-4684-2001-2\_9.
+[Kas67]  Pieter W. Kasteleyn. Graph theory and crystal physics. Graph Theory and Theoretical Physics, pages
+         43–110, 1967.
+[Kel94]  A.K. Kelmans. Constructions of cubic bipartite 3-connected graphs without Hamiltonian cycles. Amer.
+         Math. Soc. Transl., 158:127–140, 1994.
+[Kin09]  Shiva Kintali. Finding a second Hamilton circuit. 2009. URL: https://kintali.wordpress.com/2009/07/25/finding-a-sec
+[Kra99]  Adam Krawczyk. The complexity of ﬁnding a second Hamiltonian cycle in cubic graphs. Journal of
+         Computer and System Sciences, 58(3):641–647, 1999. doi:https://doi.org/10.1006/jcss.1998.1611.
+[Lit74]  Charles H. C. Little. An extension of Kasteleyn’s method of enumerating the 1-factors of planar graphs. In
+         Combinatorial Mathematics (Proc. Second Australian Conf., Univ. Melbourne, Melbourne, 1973), number
+         403 in Lecture Notes in Mathematics, pages 63–72. Springer, Berlin, 1974.
+[Lit75]  Charles H. C. Little. A characterization of convertible (0, 1)-matrices. J. Combinatorial Theory, 18:187–
+         208, 1975.
+[McC04] William McCuaig. Pólya’s permanent problem. Electron. J. Combin., 11(1), 2004.
+[Ned20]  Jesper Nederlof. Bipartite TSP in O(1.9999n ) time, assuming quadratic time matrix multiplication.
+         In Proccedings of the 52nd Annual ACM SIGACT Symposium on Theory of Computing, STOC 2020,
+         Chicago, IL, USA, June 22-26, 2020, pages 40–53. ACM, 2020. doi:10.1145/3357713.3384264.
+[Nor05]  Serguei Norine. Matching structure and Pfaffian orientations of graphs. PhD thesis, Georgia Institute of
+         Technology, 2005.
+[Pap94]  Christos H. Papadimitriou. On the complexity of the parity argument and other ineﬃ-
+         cient proofs of existence. Journal of Computer and System Sciences, 48(3):498–532, 1994.
+         doi:https://doi.org/10.1016/S0022-0000(05)80063-7.
+[PBvR17] Willem J. A. Pino, Hans L. Bodlaender, and Johan M. M. van Rooij. Cut and Count and Represen-
+         tative Sets on Branch Decompositions. In Jiong Guo and Danny Hermelin, editors, 11th International
+         Symposium on Parameterized and Exact Computation (IPEC 2016), volume 63 of Leibniz International
+         Proceedings in Informatics (LIPIcs), pages 27:1–27:12, Dagstuhl, Germany, 2017. Schloss Dagstuhl–
+         Leibniz-Zentrum fuer Informatik. URL: http://drops.dagstuhl.de/opus/volltexte/2017/6945,
+         doi:10.4230/LIPIcs.IPEC.2016.27.
+[Pin16]  Willem J. A. Pino. Cut and count and representative sets on branch decompositions. Master’s thesis,
+         Utrecht university, August 2016.
+[RS86]   Neil Robertson and Paul D. Seymour. Graph minors. II. Algorithmic aspects of tree-width. Journal of
+         Algorithms, 7(3):309–322, 1986.
+[RS91]   Neil Robertson and Paul D. Seymour. Graph minors. X. Obstructions to tree-
+         decomposition.     Journal     of   Combinatorial     Theory,     Series    B,   52(2):153–190,     1991.
+         doi:https://doi.org/10.1016/0095-8956(91)90061-N.
+[RST99] Neil Robertson, Paul D. Seymour, and Robin Thomas. Permanents, Pfaﬃan orientations, and even di-
+         rected circuits. Ann. of Math. (2), 150(3):929–975, 1999. doi:10.2307/121059.
+[She75]  John Sheehan. The multiplicity of Hamiltonian circuits in a graph. In Recent advances in graph theory
+         (Proc. 2nd Czechoslovak Sympos., Prague, 1974), pages 477–480. Academia, Prague, 1975.
+[Tho78]  Andrew G. Thomason. Hamiltonian cycles and uniquely edge colourable graphs. In B. Bollobas, editor,
+         Advances in Graph Theory, volume 3 of Annals of Discrete Mathematics, pages 259–268. Elsevier, 1978.
+         doi:https://doi.org/10.1016/S0167-5060(08)70511-9.
+[Tho96]  Carsten Thomassen. On the number of Hamiltonian cycles in bipartite graphs. Combinatorics, Probability
+         & Computing, 5:437–442, 1996.
+32
+
+[Tho97]   Carsten      Thomassen.      Chords      of     longest     cycles    in     cubic   graphs.     Jour-
+          nal     of      Combinatorial    Theory,         Series    B,      71(2):211–214,     1997.      URL:
+          https://www.sciencedirect.com/science/article/pii/S0095895697917767,
+          doi:https://doi.org/10.1006/jctb.1997.1776.
+[Tut46]   William T. Tutte. On Hamiltonian circuits. J. London Math. Soc., 21:98–101, 1946.
+[Tut69]   William T. Tutte, editor. Recent Progress in Combinatorics: Proceedings. New York. Academic Press,
+          1969.
+[Wes96]   Douglas B. West. Introduction to Graph Theory. Prentice Hall, Inc., Upper Saddle River, NJ, 1996.
+[Wlo19]   Michal Wlodarczyk. Cliﬀord algebras meet tree decompositions. Algorithmica, 81(2):497–518, 2019.
+          doi:10.1007/s00453-018-0489-3.
+[Zho18]   Liang Zhong. The complexity of Thomason’s algorithm for ﬁnding a second Hamiltonian cycle. Bulletin
+          of the Australian Mathematical Society, 98(1):18–26, 2018. doi:10.1017/S0004972718000242.
+

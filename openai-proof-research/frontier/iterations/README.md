@@ -16,6 +16,21 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I164 structural-graph gap and I165 counting continuation
+
+[I164](i164-structural-graph-discovery.md) gives author-level exact
+square-expansion and signed-state counting interfaces and scoped prism
+obstructions. The sharp linear Hamiltonian-cycle target remains unproved
+and unrefuted. Parent sealed replay passes, including both expected
+historical diagnostic failures. The
+[parent disposition](i164-structural-graph-parent-disposition.md) corrects
+the expansion-test coverage to six selected graphs while preserving all
+sealed bytes. [I165](iteration165-square-expansion-multiplicity-factory-astra-task.json)
+independently checks the original interfaces it uses and attacks the
+missing comparison of lost and replacement cycles, with a distinct
+alternative route if blocked. No independent full-proof PASS or
+substantial nomination is inferred. **Eight accepted, two remaining.**
+
 ## I163 corrected BFSS contribution: technical only
 
 [I163](../reviews/i163-corrected-bfss-contribution-astra.md) classifies the
@@ -27,7 +42,7 @@ No new correctness objection was found; the original exact-operator FAIL
 and separate source-normalization correction remain unchanged.
 The [parent disposition](i163-bfss-contribution-parent-disposition.md)
 records the reduction and successful sealed replay. I158 remains incomplete
-and unsealed. I164 continues independently. **Eight accepted, two remaining.**
+and unsealed. I165 continues the graph research. **Eight accepted, two remaining.**
 
 ## I161 technical disposition and I164 structural-graph discovery
 
@@ -40,7 +55,7 @@ Parent sealed replay passes; the
 [parent disposition](i161-oracle-contribution-parent-disposition.md)
 preserves I157's incomplete audit and the internal-reserve failure.
 I160 preparation is archived unchanged and unsealed, not promoted.
-[I164](iteration164-structural-graph-factory-astra-task.json) starts fresh
+[I164](iteration164-structural-graph-factory-astra-task.json) started fresh
 Factory/Astra structural-graph discovery, first screening Barnette's
 stronger proof operations against primary prior art. I163 has now completed
 the separate corrected-BFSS contribution gate as technical.
