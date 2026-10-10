@@ -751,3 +751,8 @@ The original exact J subset I_delta claim fails on a positive-probability oversi
 ### I157 incomplete sampling review; I159 focused correctness gate — 2026-10-10
 
 I157 found no substantive defect in the inspected original R154 equations (1)-(19), but returned UNRESOLVED because required recursive and companion readings were incomplete. Parent evidence/finite replay PASS does not change that verdict. Its explanations retain the internal-reserve independence FAIL, synthetic state replacement and exact-capped fallback comparison. I159 now reviews the unchanged R154 theorem and every dependency it actually uses. The historical broader audit of unrelated torus/weighted-bin/trace-decoder branches remains incomplete; this scope change is explicit. A contribution gate remains required after any correctness PASS. Eight accepted remain eight.
+
+
+### I159 original R154 proof PASS; I160 contribution gate — 2026-10-10
+
+I159 independently passes the unchanged ORIGINAL R154 theorem and proof without substantive repairs, under the stipulated source theorems and lower operations. It newly reads the complete eight-file upper-bound dependency closure and the required shifted-composition proof ranges, and rebuilds equations (1)-(19). Parent evidence replay PASS. The theorem retains epsilon-dependent positive error tolerance, supplied normalized mode, arbitrary causal bounded inconsistent value/gradient errors, fixed TV accuracy, real-query computation and every-run subpolynomial caps. Historical I157 remains incomplete at its broader scope; the blanket internal-reserve claim remains FAIL. I160 is the separate full-theorem contribution gate. Correctness alone adds no finding: eight accepted, two remain.
