@@ -6,6 +6,19 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I163 corrected BFSS contribution: technical only
+
+[I163](reviews/i163-corrected-bfss-contribution-astra.md) completes the full
+corrected-theorem contribution gate as **TECHNICAL ONLY**. Source
+gradient-plus-linear confinement, FNT's weighted cell gap and explicit
+horn/collar counts give a domain-respecting reduction including the full
+stabilizer multiplicity, limit order and exact constant. No new correctness
+objection was identified. The
+[parent disposition](iterations/i163-bfss-contribution-parent-disposition.md)
+retains the original exact-operator FAIL, its separate correction and I158's
+incomplete/unsealed status. Parent sealed replay passes. I164 continues fresh
+structural-graph discovery. **8 accepted, 2 remaining; no ninth acceptance.**
+
 ### I161 technical disposition and I164 fresh discovery
 
 [I161](reviews/i161-oracle-tolerance-contribution-astra.md) completes the
@@ -17,8 +30,9 @@ passes. The [parent disposition](iterations/i161-oracle-contribution-parent-disp
 preserves I160's interrupted/unsealed preparation, I157's incomplete audit
 and the internal-reserve independence failure. No ninth finding is accepted.
 [I164](iterations/iteration164-structural-graph-factory-astra-task.json)
-starts a distinct Factory/Astra structural-graph discovery track while I163
-continues the corrected BFSS contribution gate. **8 accepted, 2 remaining.**
+starts a distinct Factory/Astra structural-graph discovery track. I163 has
+now closed the corrected BFSS contribution gate as technical.
+**8 accepted, 2 remaining.**
 
 ### I162 normalization failure and corrected candidate
 
@@ -30,8 +44,8 @@ the source coefficient restored. The
 [parent correction](iterations/i162-bfss-normalization-parent-correction.md)
 adopts that correction separately, preserving all old bytes and verdicts.
 Parent sealed replay passes; I158 remains incomplete and unsealed.
-[I163](iterations/iteration163-corrected-bfss-contribution-factory-astra-task.json)
-now assesses the corrected full theorem's contribution. **8 accepted,
+[I163's completed review](reviews/i163-corrected-bfss-contribution-astra.md)
+classifies the corrected full theorem as technical. **8 accepted,
 2 remaining; no acceptance follows merely from a correction or proof.**
 
 ### Historical Factory/Astra recovery, 2026-10-10

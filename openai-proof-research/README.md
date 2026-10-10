@@ -9,12 +9,13 @@ records the full-scope reduction and preserved historical failures.
 starts fresh structural-graph discovery on Factory/Astra. **8 accepted,
 2 remaining.**
 
-**Latest BFSS review:** [I162](frontier/reviews/i162-fixed-sector-bfss-focused-astra.md)
-finds a factor-four error in S155's exact fermion coefficient. The original
-claim fails; the leading Weyl asymptotic survives the
-[explicit separate correction](frontier/iterations/i162-bfss-normalization-parent-correction.md).
-Parent sealed evidence replay passes. I163 reviews the corrected theorem's
-contribution. **8 accepted, 2 remaining.**
+**BFSS contribution gate completed:** [I163](frontier/reviews/i163-corrected-bfss-contribution-astra.md)
+classifies the entire corrected Weyl theorem as **TECHNICAL ONLY**.
+The source confinement and weighted cell gap pay the horn and singular-collar
+counts on the original physical form. Parent sealed replay passes; the
+[parent disposition](frontier/iterations/i163-bfss-contribution-parent-disposition.md)
+retains I162's separate correction and the original exact-operator **FAIL**.
+No ninth finding is accepted. **8 accepted, 2 remaining.**
 
 **Historical 2026-10-10 provider recovery:** I158 and I160 stopped at the Codex usage
 limit. Fresh Factory/Astra reviews [I161 and I162](frontier/iterations/i161-i162-factory-astra-resume.md)
