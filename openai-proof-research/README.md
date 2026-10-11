@@ -1,17 +1,16 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I172](frontier/iterations/i172-prescribed-square-switch.md)
-passes the assigned I171 audits. S172 transports prescribed-switch signed
-certificates through remote vertex splices. K172/R172 construct an infinite
-genuine $(3,3)$ octagon family with
-$(\ell,t,\eta)=(m-3,m-4,1)$ for every even $m\ge4$, despite all compatible
-old families being empty. Explicit residual paths recover the missing
-directions. The family has splice cuts and is **not a brace family**.
-Parent sealed replay and independent certificate checks pass; the
-[parent disposition](frontier/iterations/i172-prescribed-square-switch-parent-disposition.md)
-records technical-only status and the 29 failed cap-transport attempts.
-[I173](frontier/iterations/iteration173-brace-high-loss-octagons-factory-astra-task.json)
-targets removal of the splice cuts while preserving high loss.
+**Structural-graph update:** [I173](frontier/iterations/i173-brace-high-loss-octagons.md)
+passes the I172 audits but finds no high-loss brace. Its 236 declared
+surgery histories include 212 certified brace outputs, all with loss zero.
+Q173 proves a finite survivor-saturation obstruction: the first operation
+already absorbs the missing directions. Parent sealed replay and separate
+checks of 236 survivor bases, 328,920 matching witnesses and 1,500 rational
+identities pass. The
+[parent disposition](frontier/iterations/i173-brace-high-loss-octagons-parent-disposition.md)
+keeps the exact finite scope and all failures.
+[I174](frontier/iterations/iteration174-prism-gadget-survival-factory-astra-task.json)
+tests punctured-prism gadgets with an early survivor-saturation check.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)

@@ -1,0 +1,320 @@
+"""Fresh I173 research; all external data comes from authenticated memory."""
+import json
+from collections import Counter
+from fractions import Fraction
+from itertools import combinations
+import toolkit as t
+
+OLD = "frontier/experiments/i172_prescribed_square_switch/"
+DATA = {}
+
+
+def data(path):
+    return json.loads(DATA[path])
+
+
+def old(name):
+    return data(OLD + name + "-attempt-01.json")
+
+
+def as_graph(record):
+    F = record["faces"]
+    return dict(n=record["n"], faces=F,
+                edges=sorted({t.edge(a, b) for f in F for a, b in zip(f, f[1:] + f[:1])}))
+
+
+def compare_row(new, previous):
+    for k in ("n", "arcs", "counts", "dg", "rankL", "rankU", "rankUV",
+              "ell", "t", "eta", "delta_V", "delta_R", "epsilon"):
+        if k in previous:
+            assert new[k] == previous[k], (k, new[k], previous[k])
+
+
+def compare_families(rec, previous):
+    assert set(map(tuple, previous["cycles"])) == set(rec["cycles"])
+    for k, vs in rec["families"].items():
+        assert set(vs) == set(map(tuple, previous["families"][k])), k
+    compare_row(rec["row"], previous["row"])
+
+
+def mandatory():
+    previous = old("mandatory")
+    auditrows = data("frontier/experiments/i169_bridge_independence/audit-attempt-02.json")["rows"]
+    graphbank = data("frontier/experiments/i166_affine_span_braces/bracegen-graphs.json")
+    graphs = [as_graph(g) for group in graphbank.values() for g in group.values()]
+    out = []
+    for expected in previous["census"]:
+        i = expected["index"]
+        a = next(r for r in auditrows if r["index"] == i)
+        E = tuple(map(tuple, a["parent_edges"]))
+        g = next(g for g in graphs if t.edges_of(g) == E)
+        rec = t.analyze(g, a["step"])
+        compare_row(rec["row"], expected["row"])
+        rec["certification"] = t.certify_graph(g)
+        rec["index"] = i
+        for k, vs in a["classes"].items():
+            assert set(rec["families"][k]) == {t.vector(E, map(tuple, es)) for es in vs}
+        fs = rec["families"]
+        L = t.diff(sorted(fs["N10"] + fs["N01"] + fs["N11"]))
+        U = sum((t.diff(fs[k]) for k in ("Pux", "Pvy", "D11")), [])
+        offset = t.plus((1, rec["bridge"]), (-1, a["b"]))
+        assert t.rank(L + U + [offset]) == t.rank(L + U)
+        rec["ancestor_bridge_difference"] = offset
+        out.append(rec)
+    assert [r["index"] for r in out] == [0, 520, 522, 524, 527, 528, 530, 533, 534, 536, 539, 431]
+    c = previous["C171"]
+    rec = t.analyze(c["graph"], c["row"]["step"])
+    compare_row(rec["row"], c["row"])
+    rec["certification"] = t.certify_graph(c["graph"])
+    rec["brace"] = t.brace_certificate(c["graph"])
+    assert rec["brace"]["brace"] and len(rec["brace"]["extended_pairs"]) == 1032
+    w = tuple(map(Fraction, c["w"]))
+    dot = lambda v: sum(a * b for a, b in zip(w, v))
+    fs = rec["families"]
+    L = t.diff(sorted(fs["N10"] + fs["N01"] + fs["N11"]))
+    assert all(dot(v) == 0 for v in L + t.diff(fs["N00"]))
+    assert dot(t.plus((1, c["N"]), (-1, c["C0"]))) == 1
+    assert dot(t.plus((1, c["F"]), (-1, c["C0"]))) == Fraction(1, 14)
+    assert dot(t.plus((1, c["T"]), (-1, c["C0"]))) == Fraction(-1, 2)
+    qa, qb, _ = t.boundary_q(c["graph"], c["row"]["step"])
+    uvxy = rec["uvxy"]
+    ef = t.vector(t.edges_of(c["graph"]), [t.edge(*uvxy[:2]), t.edge(*uvxy[2:])])
+    assert t.plus((1, c["N"]), (1, ef), (-1, qa), (-1, qb)) == tuple(c["F"])
+    assert c["T"] != c["F"]
+    V = set(t.adjacency(t.edges_of(c["graph"])))
+    for name in ("F", "T"):
+        E2 = [e for e, val in zip(t.edges_of(c["graph"]), c[name]) if val]
+        assert all(len(n) == 2 for n in t.adjacency(E2).values())
+        assert len(t.components(V, E2)) == 2
+    rec["weight_checks"] = dict(F="1/14", T="-1/2", w=c["w"], F_vector=c["F"], T_vector=c["T"], C0=c["C0"])
+    high = []
+    for a in old("cut-octagons")["records"]:
+        if a["L"] in (6, 10):
+            r = t.analyze(a["graph"], a["row"]["step"])
+            compare_families(r, a)
+            assert r["row"]["ell"] == a["L"] - 3
+            r["m"] = a["L"]
+            r["certification"] = t.certify_graph(a["graph"])
+            high.append(r)
+    return dict(status="PASS", first_order=previous["order"] + ["C171 [1,1,3]", "G6", "G10"],
+                census=out, C171=rec, high_loss=high)
+
+
+def ancestor_audit():
+    # Called only after the mandatory payload has completed.
+    octagons, remote, caps, residual, projection = [], [], [], [], []
+    for a in old("cut-octagons")["records"]:
+        g, m = a["graph"], a["L"]
+        r = t.analyze(g, a["row"]["step"])
+        compare_families(r, a)
+        for name in ("graph", "base_graph", "intermediate_graph"):
+            t.certify_graph(a[name])
+        assert r["row"]["dg"] == m + 7 and r["row"]["rankL"] == 10
+        assert r["row"]["rankL0"] == 8
+        assert all(not d["good"] for d in r["residuals"].values())
+        r["m"] = m
+        r["cuts"] = t.cuts3(g)
+        r["brace"] = t.brace_certificate(g)
+        assert not r["brace"]["brace"]
+        fs = r["families"]
+        L = t.diff(sorted(fs["N10"] + fs["N01"] + fs["N11"]))
+        U = sum((t.diff(fs[k]) for k in ("Pux", "Pvy", "D11")), [])
+        sep = list(map(Fraction, a["bridge_separator"]))
+        assert all(sum(x * y for x, y in zip(sep, v)) == 0 for v in L + U)
+        assert sum(x * y for x, y in zip(sep, r["bridge"])) != 0
+        # Stored offsets need not use our representatives, but must differ inside
+        # the exact within-class spaces, not merely have the same rank.
+        L0 = sum((t.diff(fs[k]) for k in ("N10", "N01", "N11")), [])
+        for name, space in (("bridge", L + U), ("beta", L0 + U), ("c", L0 + t.diff(fs["N00"]))):
+            d = t.plus((1, a[name]), (-1, r[name]))
+            assert t.rank(space + [d]) == t.rank(space)
+        octagons.append(r)
+    for a in old("remote-splices")["rows"]:
+        r = t.analyze(a["graph"], a["row"]["step"])
+        compare_families(r, a)
+        t.certify_graph(a["graph"])
+        total = [Fraction(0)] * len(t.edges_of(a["graph"]))
+        q, total_coeff = Fraction(0), Fraction(0)
+        for term in a["coefficients"]:
+            C, coeff = tuple(term["C"]), Fraction(term["coefficient"])
+            assert C in r["cycles"]
+            total = [x + coeff * y for x, y in zip(total, C)]
+            total_coeff += coeff
+            if C in r["families"]["N00"]:
+                q += coeff
+        assert total_coeff == 1 and total == a["F"]
+        assert q == Fraction(a["N00_coefficient_total"]) == Fraction(1, a["L"] - 2)
+        qa, qb, _ = t.boundary_q(a["graph"], a["row"]["step"])
+        uvxy = r["uvxy"]
+        ef = t.vector(t.edges_of(a["graph"]), [t.edge(*uvxy[:2]), t.edge(*uvxy[2:])])
+        assert t.plus((1, a["N"]), (1, ef), (-1, qa), (-1, qb)) == tuple(a["F"])
+        r["signed_certificate"] = a["coefficients"]
+        r["prescribed_factor"] = a["F"]
+        r["lost_total"] = str(q)
+        remote.append(r)
+    for a in old("cap-transport")["records"]:
+        r = t.analyze(a["graph"], a["row"]["step"])
+        compare_families(r, a)
+        for gn, rn in (("base_graph", "base_row"), ("intermediate_graph", "intermediate_row"), ("graph", "row")):
+            t.certify_graph(a[gn])
+            compare_row(t.analyze(a[gn], a[rn]["step"])["row"], a[rn])
+        r["m"] = a["L"]
+        r["partners"] = [a["top_partner"], a["bottom_partner"]]
+        caps.append(r)
+    assert Counter((r["row"]["ell"], r["row"]["t"], r["row"]["eta"]) for r in caps) == {(0, 0, 0): 20, (1, 1, 0): 9}
+    for a in old("residual-certificates")["records"]:
+        r = next(r for r in octagons if r["m"] == a["L"])
+        fs = r["families"]
+        for N, P in zip(a["old_cycles"], a["residual_paths"]):
+            assert tuple(N) in fs["N00"] and tuple(P) in fs["Pux"]
+            assert t.plus((1, P), (-1, N)) == tuple(a["translation_offset"])
+        L = t.diff(sorted(fs["N10"] + fs["N01"] + fs["N11"]))
+        dirs = t.diff(a["residual_paths"])
+        assert dirs == t.diff(a["old_cycles"])
+        assert t.rank(L + dirs) - t.rank(L) == a["L"] - 4 == a["rank_mod_L"]
+        residual.append(dict(m=a["L"], offset=a["translation_offset"], directions=dirs,
+                             recovered=a["rank_mod_L"]))
+    for a in old("cut-projection")["records"]:
+        m = a["L"]
+        r = next(r for r in octagons if r["m"] == m)
+        E, baseE = t.edges_of(r["graph"]), t.edges_of(a["base_graph"])
+        offA, offB = 2 * m, 2 * m + 8
+        remap = {
+            t.edge(1, offA + 1): t.edge(0, 1),
+            t.edge(m - 1, offA + 4): t.edge(0, m - 1),
+            t.edge(m, offA + 3): t.edge(0, m),
+            t.edge(1, offB + 1): t.edge(1, m + 1),
+            t.edge(m, offB + 4): t.edge(m, m + 1),
+            t.edge(m + 2, offB + 3): t.edge(m + 1, m + 2),
+        }
+        def project(vec):
+            ans = [0] * len(baseE)
+            for e, val in zip(E, vec):
+                if e in remap:
+                    ans[baseE.index(remap[e])] += val
+                elif e in baseE:
+                    ans[baseE.index(e)] += val
+            return tuple(ans)
+        base = t.analyze(a["base_graph"], a["source_row"]["step"])
+        projected = {}
+        for name, vs in r["families"].items():
+            counts = Counter(project(v) for v in vs)
+            assert set(counts) == set(base["families"][name])
+            assert set(counts.values()) == {4}
+            assert set(counts) == set(map(tuple, a["projected_families"][name]["vectors"]))
+            projected[name] = [dict(vector=v, fibre=n) for v, n in sorted(counts.items())]
+        # Arbitrary inherited representative projection is verified coordinatewise.
+        source = next(x for x in old("cut-octagons")["records"] if x["L"] == m)
+        assert project(source["bridge"]) == tuple(a["projected_bridge"]) == tuple(a["source_bridge"])
+        for k in ("bridge", "beta", "c"):
+            space = t.diff(base["cycles"])
+            assert t.rank(space + [t.plus((1, project(r[k])), (-1, base[k]))]) == t.rank(space)
+        projection.append(dict(m=m, families=projected, projected_bridge=project(r["bridge"]),
+                               projected_beta=project(r["beta"]), projected_c=project(r["c"]),
+                               ambient_degree_dimension=len(E) - r["graph"]["n"] + 1))
+    return dict(status="PASS ORIGINAL", octagons=octagons, remote=remote, caps=caps,
+                residual=residual, projection=projection,
+                scopes=dict(octagons=4, remote=12, caps=29, seven_class_projections=28))
+
+
+def cross_steps(g, side, perimeter):
+    """Lexicographic (face index, edge index, edge index), no isomorphism pruning."""
+    side, perimeter = set(side), set(perimeter)
+    ans = []
+    for k, F in enumerate(g["faces"]):
+        for i, j in combinations(range(len(F)), 2):
+            if (j - i) % 2 or j - i < 2 or j - i > len(F) - 2:
+                continue
+            e = t.edge(F[i], F[(i + 1) % len(F)])
+            f = t.edge(F[j], F[(j + 1) % len(F)])
+            if e in perimeter or f in perimeter:
+                continue
+            if (set(e) <= side and not set(f) & side) or (set(f) <= side and not set(e) & side):
+                ans.append([k, i, j])
+    return ans
+
+
+def surgery_plan():
+    out = []
+    for a in old("cut-octagons")["records"]:
+        m = a["L"]
+        if m not in (6, 8, 10):
+            continue
+        g = a["graph"]
+        F = g["faces"][a["row"]["step"][0]]
+        perimeter = [t.edge(x, y) for x, y in zip(F, F[1:] + F[:1])]
+        A, B = list(range(2 * m + 1, 2 * m + 8)), list(range(2 * m + 9, 2 * m + 16))
+        first = cross_steps(g, A, perimeter)
+        children = []
+        for step in first:
+            child = t.expand(g, step)
+            children.append(dict(first=step, second=cross_steps(child, B, perimeter)))
+        out.append(dict(m=m, cutA=A, cutB=B, protected=F, first_count=len(first),
+                        second_count=sum(len(c["second"]) for c in children), steps=children))
+    return dict(order="m=6,8,10; all cross-A then all cross-B, lexicographic step triples",
+                duplicates="No pruning of histories or labelled graphs", rows=out)
+
+
+def transport(parent_graph, child, previous_pairs):
+    """Keep all local extensions in the certificate; choose least vector to continue."""
+    oldE, newE = t.edges_of(parent_graph), t.edges_of(child["graph"])
+    common = sorted(set(oldE) & set(newE))
+    old_indices, new_indices = [oldE.index(e) for e in common], [newE.index(e) for e in common]
+    output, continuing = [], []
+    for N, P in previous_pairs:
+        entry = {}
+        selected = []
+        for name, vec in (("N00", N), ("Pux", P)):
+            signature = tuple(vec[i] for i in old_indices)
+            lifts = [v for v in child["families"][name] if tuple(v[i] for i in new_indices) == signature]
+            entry[name] = dict(parent=vec, extensions=lifts)
+            selected.append(lifts[0] if lifts else None)
+        output.append(entry)
+        if all(v is not None for v in selected):
+            continuing.append(selected)
+    fs = child["families"]
+    L = t.diff(sorted(fs["N10"] + fs["N01"] + fs["N11"]))
+    Ns = [x[0] for x in continuing]
+    Ps = [x[1] for x in continuing]
+    offsets = sorted(set(t.plus((1, p), (-1, n)) for n, p in continuing))
+    cert = dict(records=output, paired_survivors=len(continuing), offsets=offsets,
+                old_rank_mod_L=t.rank(L + t.diff(Ns)) - t.rank(L),
+                path_rank_mod_L=t.rank(L + t.diff(Ps)) - t.rank(L),
+                equal_differences=t.diff(Ns) == t.diff(Ps))
+    return cert, continuing
+
+
+def surgeries():
+    plan = surgery_plan()
+    rows = []
+    for spec in plan["rows"]:
+        m = spec["m"]
+        original = next(a for a in old("cut-octagons")["records"] if a["L"] == m)
+        fixed = next(a for a in old("residual-certificates")["records"] if a["L"] == m)
+        g, F = original["graph"], spec["protected"]
+        pairs = list(zip(fixed["old_cycles"], fixed["residual_paths"]))
+        for first in spec["steps"]:
+            step1 = first["first"]
+            h = t.expand(g, step1)
+            r1 = t.analyze(h, t.find_step(h, original["e"], original["f"], F))
+            r1["certification"] = t.certify_graph(h)
+            r1["brace"] = t.brace_certificate(h)
+            r1["cuts"] = t.cuts3(h)
+            r1["transport"], pairs1 = transport(g, r1, pairs)
+            r1["m"], r1["history"] = m, [step1]
+            rows.append(r1)
+            for step2 in first["second"]:
+                h2 = t.expand(h, step2)
+                r2 = t.analyze(h2, t.find_step(h2, original["e"], original["f"], F))
+                r2["certification"] = t.certify_graph(h2)
+                r2["brace"] = t.brace_certificate(h2)
+                r2["cuts"] = t.cuts3(h2)
+                r2["transport"], _ = transport(h, r2, pairs1)
+                r2["m"], r2["history"] = m, [step1, step2]
+                rows.append(r2)
+    histogram = Counter((r["m"], len(r["history"]), r["brace"]["brace"],
+                         r["row"]["ell"], r["row"]["t"], r["row"]["eta"]) for r in rows)
+    return dict(plan=plan, records=rows,
+                histogram=[dict(key=k, count=n) for k, n in sorted(histogram.items())],
+                high_loss_braces=[i for i, r in enumerate(rows) if r["brace"]["brace"] and r["row"]["ell"] >= 2],
+                tested=len(rows))

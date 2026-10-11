@@ -6,6 +6,33 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I173 finite survivor saturation and I174 prism gadgets
+
+[I173](iterations/i173-brace-high-loss-octagons.md) passes the original-scope
+S172/K172/R172 audits. Its declared cross-cut C4 operations remove the two
+cube cuts and yield **212 certified brace histories**, but all **236**
+first/second-stage records have loss zero. No isomorphism census or
+untested-parameter assertion is made.
+
+**Q173** proves the finite obstruction with explicit survivor bases
+attaining the homogeneous degree-kernel upper bound. The first operation
+already absorbs all missing directions. All 1,500 transported-direction
+coordinate certificates have zero remainder. Parent direct checks verify
+all 236 bases, all 328,920 matching witnesses, and the 72 impossible
+first-stage tight-cut pairs. Six empty canonical second-stage transports
+and the corrected separator-schema failure are retained.
+
+Parent sealed replay passes in 268.718492 seconds: six byte-identical
+payloads, eight blocked probes, 62 owned/205 non-context external
+bindings, with four additional context receipts. The
+[parent disposition](iterations/i173-brace-high-loss-octagons-parent-disposition.md)
+classifies the round **technical only, no ninth nomination**.
+[I174](iterations/iteration174-prism-gadget-survival-factory-astra-task.json)
+tests punctured-prism attachments with bounded mixed-gadget follow-up
+and seeks a structural survivor-saturation criterion.
+The high-loss brace target and all universal inequalities remain open.
+**8 accepted, 2 remaining; research active.**
+
 ### I172 prescribed-switch transport, high-loss octagons, and I173
 
 [I172](iterations/i172-prescribed-square-switch.md) passes the assigned
