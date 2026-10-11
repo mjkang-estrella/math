@@ -16,6 +16,21 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I187 marked-state analysis checked, I188 patch geometry prepared
+
+[I187](i187-frozen-state-survival.md) proves the dual hypotheses,
+conditional source-preimage criterion and exact restricted orientation
+formulas, but not survivor nonvanishing.
+[Parent review](i187-frozen-state-survival-parent-disposition.md) passes
+the original scoped deductions, five-file authentication, sixteen input
+hashes, exact formal identities and the inherited 23-stage replay.
+[I188](iteration188-patch-rooted-state-brief.md) investigates a concrete
+specialization omitted from the generic filter analysis: actual
+two-square facial geometry may force one common marked-cycle orientation.
+It must distinguish phase alignment, frozen matching recovery and full
+survivor type. E183/Z184 remain open, with the local-ear mechanism parked.
+**Eight accepted, two remaining.**
+
 ## I186 region analysis checked, local ears parked, I187 prepared
 
 [I186](i186-theta-region-balance.md) supplies matching closure, exact

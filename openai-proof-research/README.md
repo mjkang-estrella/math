@@ -1,5 +1,14 @@
 # OpenAI mathematics research
 
+**I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)
+passes the dual hypotheses, conditional recovery criterion and restricted
+orientation formulas. Authentication, exact algebra checks and the
+inherited replay pass. Survivor nonvanishing and E183 remain unresolved.
+[I188](frontier/iterations/iteration188-patch-rooted-state-brief.md)
+tests whether the exact two-square geometry forces a common marked-cycle
+orientation, then checks matching recovery and survival separately.
+The local-ear mechanism stays parked. **8 accepted, 2 remaining.**
+
 **I186 reviewed, local ears parked:** [Parent review](frontier/iterations/i186-theta-region-balance-parent-disposition.md)
 passes the region-balance proof and short-arc exclusions. The length-five
 example satisfies only symbolic incidence conditions, not the full graph
