@@ -1,16 +1,16 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I174](frontier/iterations/i174-prism-gadget-survival.md)
-passes the I173 certificate audit. The order-32 prism-gadget construction
-starts with loss 3, but all six bounded first surgeries have loss zero.
-S174 proves conditional preservation of survival defect through complete,
-exterior-controlled splice fibres, without attachment affine fullness.
-Changing only the untouched gadget cannot repair the certified exteriors.
-Parent replay and 15 independent complete seven-family checks pass. The
-[parent disposition](frontier/iterations/i174-prism-gadget-survival-parent-disposition.md)
-records the scope and preserved parent-document packaging interruption.
-[I175](frontier/iterations/iteration175-affected-prism-exterior-factory-astra-task.json)
-tests affected P8 exteriors and the missing-active-type boundary.
+**Structural-graph update:** [I175](frontier/iterations/i175-affected-prism-exterior.md)
+finds two order-30 braces, both with loss zero and (3,1) interfaces.
+Its five-port decomposition pays actual packing products and anchor
+relations. M175 gives the exact missing-type correction; A175 rules out
+missing survivor types under the protected local geometry.
+Parent replay and independent new-graph/five-port checks pass. The
+[parent disposition](frontier/iterations/i175-affected-prism-exterior-parent-disposition.md)
+records technical scope, preserved failures and the historical-context
+requirement for later replay.
+[I176](frontier/iterations/iteration176-uniform-five-port-rank-factory-astra-task.json)
+targets the unproved uniform local and projected rank conditions.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)

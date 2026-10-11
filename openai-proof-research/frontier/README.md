@@ -21,17 +21,17 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I174](iterations/i174-prism-gadget-survival.md)
-passes the I173 certificate audit. All six bounded prism-gadget first
-surgeries collapse initial loss 3 to zero; no second surgery is eligible.
-S174 proves a conditional exterior-controlled splice-defect identity,
-even for an attachment with deficient affine span. Its hypotheses include
-all three active survivor types and complete compatible fibres.
-Parent replay and 15 independent seven-family checks pass. The
-[parent disposition](iterations/i174-prism-gadget-survival-parent-disposition.md)
-preserves the rejected embedding and parent-document packaging interruption.
-[I175](iterations/iteration175-affected-prism-exterior-factory-astra-task.json)
-changes the affected attachment and examines missing active types.
+**Structural-graph update:** [I175](iterations/i175-affected-prism-exterior.md)
+certifies two order-30 braces with loss zero and (3,1) hexagons.
+The five-port product/anchor formula, M175 missing-type correction and
+A175 local type-forcing lemma are proved in their stated scopes.
+Six finite decompositions do not prove uniform prism-family saturation.
+Parent replay and independent checks pass; the
+[parent disposition](iterations/i175-affected-prism-exterior-parent-disposition.md)
+preserves two diagnostic failures and documents the replay-context limit.
+[I176](iterations/iteration176-uniform-five-port-rank-factory-astra-task.json)
+seeks analytic local directions and actual projected anchors for all even
+parameters, rather than a larger-prism census.
 A high-loss brace is still missing.
 Technical only; universal exchange, (T), and Q164 remain open.
 **8 accepted, 2 remaining.**

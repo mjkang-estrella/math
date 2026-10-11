@@ -1,0 +1,528 @@
+"""I175 mathematical stages. INPUT is an authenticated immutable bytes mapping."""
+import json
+from itertools import combinations
+
+OLD = "frontier/experiments/i174_prism_gadget_survival/"
+
+
+def data(name):
+    return json.loads(INPUT[name])
+
+
+def compare_record(old, dfs=False):
+    fresh = analyse(old["graph"], old["uvxy"], dfs)
+    for k in ("cycles", "families", "beta", "c", "residuals"):
+        assert json.dumps(fresh[k], sort_keys=True) == json.dumps(old[k], sort_keys=True), k
+    for k, value in old["row"].items():
+        assert fresh["row"][k] == value, (k, fresh["row"][k], value)
+    f = fresh["families"]
+    L = diff(sorted(f["N10"]+f["N01"]+f["N11"]))
+    U = sum((diff(f[k]) for k in ("Pux", "Pvy", "D11")), [])
+    displacement = sub(fresh["bridge"], old["bridge"])
+    assert rank(L+U+[displacement]) == rank(L+U)
+    fresh["ancestor_bridge_difference"] = displacement
+    return fresh
+
+
+def mandatory():
+    old = data(OLD+"mandatory-attempt-02.json")
+    want = [0, 520, 522, 524, 527, 528, 530, 533, 534, 536, 539, 431]
+    assert [r["index"] for r in old["census"]] == want
+    out = []
+    for r in old["census"]:
+        a = compare_record(r, True)
+        a["index"] = r["index"]
+        out.append(a)
+    c171 = compare_record(old["C171"], True)
+    wdata = old["C171"]["weight_checks"]
+    w = list(map(Fraction, wdata["w"]))
+    dot = lambda v: sum(a*b for a, b in zip(w, v))
+    f = c171["families"]
+    assert all(dot(v) == 0 for v in diff(sorted(f["N10"]+f["N01"]+f["N11"]))+diff(f["N00"]))
+    assert dot(sub(f["N00"][0], wdata["C0"])) == 1
+    u, v, x, y = c171["uvxy"]
+    es = list(map(tuple, c171["graph"]["edges"]))
+    toggle = [0]*len(es)
+    for a, b, sign in [(u, v, 1), (x, y, 1), (u, x, -1), (v, y, -1)]:
+        toggle[es.index(edge(a, b))] = sign
+    assert tuple(wdata["F_vector"]) in [add(n, toggle) for n in f["N00"]]
+    for key, value in [("F", Fraction(1, 14)), ("T", Fraction(-1, 2))]:
+        factor = wdata[key+"_vector"]
+        assert dot(sub(factor, wdata["C0"])) == value
+        factor_adj = adjacency(selected_edges(es, factor))
+        assert set(factor_adj) == set(adjacency(es))
+        assert all(x in (0, 1) for x in factor) and all(len(v) == 2 for v in factor_adj.values())
+        assert len(components(selected_edges(es, factor), adjacency(es))) == 2
+    assert wdata["F_vector"] != wdata["T_vector"]
+    c171["weight_checks"] = wdata
+    c171["brace"] = brace(c171["graph"])
+    assert c171["brace"]["brace"] and len(c171["brace"]["extensions"]) == 1032
+    r = out[-1]
+    w431 = (1,-1,0,2,-2,0,2,0,4,0,1,0,1,0,0,0,-1,0,0,0,0,-1,0,0,0,0,1,0,0,0)
+    f = r["families"]
+    L = diff(sorted(f["N10"]+f["N01"]+f["N11"]))
+    V = diff(f["N00"])
+    U = sum((diff(f[k]) for k in ("Pux", "Pvy", "D11")), [])
+    dot431 = lambda v: sum(a*b for a, b in zip(w431, v))
+    assert all(dot431(v) == 0 for v in L+U)
+    assert dot431(r["bridge"]) == 10 and abs(dot431(V[0])) == 8
+    assert rank(U+V) > rank(U) and rank(L+U+V) > rank(L+U)
+    high = [compare_record(r, True) for r in old["high_loss"]]
+    assert [r["row"]["ell"] for r in high] == [3, 7]
+    for k, row in zip((6, 10), high):
+        h = prism(k)
+        for z, amap, offset in [(0, {1: 1, k-1: 4, k: 3}, 2*k),
+                                (k+1, {1: 1, k: 4, k+2: 3}, 2*k+8)]:
+            trials = [splice(h, z, prism(4), 0, amap, offset, reverse) for reverse in (False, True)]
+            h = next(t for t in trials if len(adjacency(t["edges"]))-len(t["edges"])+len(t["faces"]) == 2)
+        assert h["edges"] == list(map(tuple, row["graph"]["edges"]))
+    exp = data(OLD+"experiments-attempt-03.json")
+    first = compare_record(exp["first_children"][0], True)
+    initial = exp["initials"][0]
+    rebuilt = square(normalize(initial["graph"]["edges"], initial["graph"]["faces"]), [0, 0, 6])
+    assert rebuilt == normalize(first["graph"]["edges"], first["graph"]["faces"])
+    structural = data(OLD+"structural-attempt-03.json")
+    exterior = compare_record(structural["applications"][0]["contracted"], True)
+    assert exterior["row"]["n"] == 26 and exterior["row"]["rankL"] == 14
+    return {"status": "PASS", "order": want+["C171", "G6", "G10", "I174-first", "I174-exterior"],
+            "census": out, "C171": c171, "high_loss": high,
+            "I174_first": first, "I174_exterior": exterior,
+            "separator431": {"bridge": 10, "old_absolute": 8,
+                             "V_subset_U": False, "V_subset_LU": False}}
+
+
+def historical():
+    """Fresh certificate checks, not the ancestor's complete search."""
+    exp = data(OLD+"experiments-attempt-03.json")
+    applications = data(OLD+"structural-attempt-03.json")["applications"]
+    records = []
+    matching_count = failed = 0
+    for kind, rs in (("initial", exp["initials"]), ("first", exp["first_children"])):
+        for old in rs:
+            new = compare_record(old)
+            if kind == "initial":
+                ka, kb = old["attachments"]
+                rebuilt = splice(prism(6), 0, prism(ka), 0, {1: 1, 5: ka-1, 6: ka}, 12, True)
+                rebuilt = splice(rebuilt, 7, prism(kb), 0, {1: 1, 6: kb, 8: kb-1}, 12+2*ka, False)
+                assert rebuilt == normalize(new["graph"]["edges"], new["graph"]["faces"])
+            br = brace(new["graph"])
+            assert br["brace"] == old["brace"]["brace"]
+            matching_count += len(br["extensions"])
+            failed += len(br["failures"])
+            records.append({"kind": kind, "attachments": old["attachments"], "row": new["row"],
+                            "matching_extensions": len(br["extensions"]), "failures": br["failures"]})
+    structural = []
+    for app, child in zip(applications, exp["first_children"]):
+        contracted = compare_record(app["contracted"])
+        dec = child["saturation_decomposition"]
+        local = dec["local_basis"]
+        image = dec["image_basis"]
+        assert rank(local) == dec["kernel_rank"]
+        assert rank(image) == dec["image_rank"]
+        exterior_indices = dec["exterior_indices"]
+        assert all(all(v[i] == 0 for i in exterior_indices) for v in local)
+        survivors = sorted(child["families"]["N10"]+child["families"]["N01"]+child["families"]["N11"])
+        directions = diff(survivors)
+        assert rank([[v[i] for i in exterior_indices] for v in directions]) == rank(image)
+        assert rank(directions) == rank(local)+rank(image)
+        side = set(dec["side"])
+        ges = list(map(tuple, child["graph"]["edges"]))
+        hes = list(map(tuple, contracted["graph"]["edges"]))
+        fibres = {}
+        for family, members in child["families"].items():
+            counts = {}
+            for c in members:
+                projected = [0]*len(hes)
+                for e, value in zip(ges, c):
+                    if set(e) <= side:
+                        continue
+                    restored = edge(*(7 if v in side else v for v in e))
+                    projected[hes.index(restored)] = value
+                key = tuple(projected)
+                counts[key] = counts.get(key, 0)+1
+            assert set(counts) == set(map(tuple, contracted["families"][family]))
+            fibres[family] = [{"projection": key, "multiplicity": value} for key, value in sorted(counts.items())]
+        structural.append({"row": contracted["row"], "kernel": rank(local),
+                           "image": rank(image), "active_types": app["active_types"],
+                           "seven_class_fibres": fibres})
+    assert matching_count == 9324 and failed == 36
+    q = data("frontier/experiments/i173_brace_high_loss_octagons/surgeries-attempt-01.json")
+    checked = []
+    qmatch = qfailed = 0
+    for no, rec in enumerate(q["records"]):
+        g = rec["graph"]
+        certify(g)
+        es = list(map(tuple, g["edges"]))
+        vertices = set(adjacency(es))
+        survivors = sorted(rec["families"]["N10"]+rec["families"]["N01"]+rec["families"]["N11"])
+        u, v, x, y = rec["uvxy"]
+        ei, fi = es.index(edge(u, v)), es.index(edge(x, y))
+        for cycle in survivors:
+            assert cycle[ei] or cycle[fi]
+            used = selected_edges(es, cycle)
+            assert all(x in (0, 1) for x in cycle)
+            assert all(len(ns) == 2 for ns in adjacency(used).values())
+            assert set(adjacency(used)) == vertices and len(components(used, vertices)) == 1
+        assert rank(diff(survivors)) == len(es)-len(vertices)+1
+        coverage = set()
+        for i, j, matching in rec["brace"]["extended_pairs"]:
+            assert i in matching and j in matching
+            assert not set(es[i]) & set(es[j])
+            endpoints = [v for idx in matching for v in es[idx]]
+            assert len(endpoints) == len(set(endpoints)) == len(vertices) and set(endpoints) == vertices
+            assert (i, j) not in coverage
+            coverage.add((i, j))
+        for i, j in rec["brace"]["failed_pairs"]:
+            assert next(matchings(es, (i, j)), None) is None
+            coverage.add((i, j))
+        assert coverage == {(i, j) for i, j in combinations(range(len(es)), 2) if not set(es[i]) & set(es[j])}
+        qmatch += len(rec["brace"]["extended_pairs"])
+        qfailed += len(rec["brace"]["failed_pairs"])
+        checked.append({"index": no, "m": rec["m"], "history": rec["history"],
+                        "loss": 0, "brace": not rec["brace"]["failed_pairs"]})
+    assert len(checked) == 236 and sum(r["brace"] for r in checked) == 212 and qmatch == 328920 and qfailed == 72
+    return {"status": "PASS", "complete_records": 15, "graphs": records,
+            "applications": structural, "matching_extensions": matching_count, "failed_pairs": failed,
+            "Q173": {"scope": "Fresh survivor-rank and matching certificates, not whole ancestor search",
+                     "records": checked, "matching_witnesses": qmatch, "failed_pairs": qfailed}}
+
+
+def candidates(g, side, protected):
+    color = {}
+    for c, vertices in enumerate(certify(g)["bipartition"]):
+        color.update({v: c for v in vertices})
+    valid, skips = [], []
+    protected = {edge(protected[i-1], protected[i]) for i in range(len(protected))}
+    for k, face in enumerate(g["faces"]):
+        for i, j in combinations(range(len(face)), 2):
+            u, v = face[i], face[(i+1) % len(face)]
+            y, x = face[j], face[(j+1) % len(face)]
+            e, f = edge(u, v), edge(x, y)
+            cross = (set(e) <= side and not set(f) & side) or (set(f) <= side and not set(e) & side)
+            if not cross or len({u, v, x, y}) != 4:
+                continue
+            rec = {"triple": [k, i, j], "edges": [e, f]}
+            if e in protected or f in protected:
+                skips.append(dict(rec, reason="protected-perimeter"))
+            elif color[u] == color[x]:
+                skips.append(dict(rec, reason="bipartite-orientation"))
+            else:
+                valid.append(rec)
+    return {"valid": valid, "skips": skips, "untested": valid[2:]}
+
+
+def experiment():
+    core, attachment = prism(6), prism(8)
+    portmap = {1: 1, 5: 7, 6: 8}
+    bad = splice(core, 0, attachment, 0, portmap, 12, False)
+    good = splice(core, 0, attachment, 0, portmap, 12, True)
+    rejected = {"graph": bad, "certification": certify(bad, False)}
+    assert rejected["certification"]["euler"] == 0
+    protected = [1, 13, 21, 20, 6, 7]
+    uvxy = [20, 6, 1, 7]
+    assert canonical(protected) in good["faces"]
+    initial = analyse(good, uvxy, True)
+    initial["brace"] = brace(good)
+    assert good["n"] == 26
+    _, groups = port_groups(good, sorted(initial["families"]["N10"]+initial["families"]["N01"]+initial["families"]["N11"]), 7)
+    initial["survivor_types"] = [{"signature": k, "count": len(v), "anchor": v[0]} for k, v in groups.items()]
+    plan = candidates(good, set(range(13, 28)), protected)
+    children = []
+    for row in plan["valid"][:2]:
+        child = square(good, row["triple"])
+        assert canonical(protected) in child["faces"] and child["n"] == 30
+        r = analyse(child, uvxy, True)
+        r["triple"] = row["triple"]
+        r["brace"] = brace(child)
+        survivors = sorted(r["families"]["N10"]+r["families"]["N01"]+r["families"]["N11"])
+        _, groups = port_groups(child, survivors, 7)
+        r["survivor_types"] = [{"signature": k, "count": len(v), "anchor": v[0],
+                                "within_rank": rank(diff(v))} for k, v in groups.items()]
+        r["actual_type_anchor_offsets"] = diff([v[0] for v in groups.values()])
+        r["eligible"] = r["row"]["ell"] >= 2 and len(groups) == 3
+        # The protocol does not grow a saturated exterior.
+        assert not r["eligible"], "Eligible continuation must be implemented before finalization"
+        children.append(r)
+    return {"status": "PASS", "initial": initial, "rejected_embedding": rejected,
+            "plan": plan, "first_children": children, "second_attachments": 0, "second_surgeries": 0}
+
+
+def boundary():
+    attachment = prism(4)
+    ac = cycle_sets(attachment["edges"])
+    _, ag = port_groups(attachment, ac, 0)
+    KA = sum((diff(v) for v in ag.values()), [])
+    subsets = []
+    for size in (1, 2, 3):
+        for active in combinations(list(ag), size):
+            rows = sum((diff(ag[s]) for s in active), [])
+            subsets.append({"active": active, "rank": rank(rows),
+                            "full_kernel_rank": rank(KA), "correction": rank(KA)-rank(rows)})
+    # Exactly three small prisms, to test the missing-type boundary, not
+    # additional first-surgery experiments.
+    tested = 0
+    missing = []
+    for k in (4, 6, 8):
+        h = prism(k)
+        es = h["edges"]
+        cycles = cycle_sets(es)
+        colors = {v: c for c, part in enumerate(certify(h)["bipartition"]) for v in part}
+        for no, face in enumerate(h["faces"]):
+            for i, j in combinations(range(len(face)), 2):
+                u, v = face[i], face[(i+1) % len(face)]
+                y, x = face[j], face[(j+1) % len(face)]
+                if len({u, v, x, y}) != 4 or colors[u] == colors[x]:
+                    continue
+                ei, fi = es.index(edge(u, v)), es.index(edge(x, y))
+                survivor = [c for c in cycles if c[ei] or c[fi]]
+                for z in sorted(set(adjacency(es))-{u, v, x, y}):
+                    tested += 1
+                    _, fulltypes = port_groups(h, cycles, z)
+                    _, active = port_groups(h, survivor, z)
+                    assert len(fulltypes) == 3
+                    if len(active) < 3:
+                        missing.append({"k": k, "face": no, "positions": [i, j], "uvxy": [u, v, x, y],
+                                        "z": z, "active": list(active),
+                                        "exterior_d": rank(diff(cycles)),
+                                        "exterior_L": rank(diff(survivor))})
+    witness = None
+    if missing:
+        first = missing[0]
+        h = prism(first["k"])
+        z = first["z"]
+        hports = sorted(adjacency(h["edges"])[z])
+        amap = dict(zip(hports, [1, 3, 4]))
+        offset = 2*first["k"]
+        trials = [splice(h, z, attachment, 0, amap, offset, rev) for rev in (False, True)]
+        g = next(t for t in trials if len(adjacency(t["edges"]))-len(t["edges"])+len(t["faces"]) == 2)
+        certify(g)
+        uvxy = first["uvxy"]
+        interface(g, uvxy)
+        hc = cycle_sets(h["edges"])
+        gc = cycle_sets(g["edges"])
+        def survivors(graph, cycles):
+            u, v, x, y = uvxy
+            e = graph["edges"].index(edge(u, v))
+            f = graph["edges"].index(edge(x, y))
+            return [c for c in cycles if c[e] or c[f]]
+        hs, gs = survivors(h, hc), survivors(g, gc)
+        _, hg = port_groups(h, hs, z)
+        hix, _ = port_groups(h, hc, z)
+        aix, _ = port_groups(attachment, ac, 0)
+        active_attachment = set()
+        for sig in hg:
+            omitted_neighbor = next(w for i, w in enumerate(hports) if not sig[i])
+            ap = amap[omitted_neighbor]
+            target = next(s for s in ag if not s[aix.index(attachment["edges"].index(edge(0, ap)))] )
+            active_attachment.add(target)
+        activeK = sum((diff(ag[s]) for s in active_attachment), [])
+        ellH = rank(diff(hc))-rank(diff(hs))
+        ellG = rank(diff(gc))-rank(diff(gs))
+        assert ellG == ellH+rank(KA)-rank(activeK)
+        witness = {"exterior": h, "glued": g, "uvxy": uvxy, "z": z,
+                   "portmap": amap, "exterior_cycles": hc, "exterior_survivors": hs,
+                   "glued_cycles": gc, "glued_survivors": gs,
+                   "active_attachment_types": sorted(active_attachment),
+                   "kernel_full": rank(KA), "kernel_active": rank(activeK),
+                   "ellH": ellH, "ellG": ellG, "brace": brace(g),
+                   "facial_order": interface(g, uvxy)}
+    # All types active but one fixed attachment per type, using actual cube
+    # paths, is a counterexample to dropping complete compatible fibres.
+    h = prism(4)
+    hcycles = cycle_sets(h["edges"])
+    amap = {1: 1, 3: 3, 4: 4}
+    candidates_g = [splice(h, 0, attachment, 0, amap, 8, rev) for rev in (False, True)]
+    g = next(t for t in candidates_g if len(adjacency(t["edges"]))-len(t["edges"])+len(t["faces"]) == 2)
+    gc = cycle_sets(g["edges"])
+    outside = [i for i, e in enumerate(g["edges"]) if not all(v >= 9 for v in e)]
+    groups = {}
+    for c in gc:
+        key = tuple(c[i] for i in outside)
+        groups.setdefault(key, []).append(c)
+    restricted = [min(v) for v in groups.values()]
+    # Use a common attachment anchor for each type (lex minimum does this
+    # because all internal attachment coordinates form a fixed sorted block).
+    restricted_d = rank(diff(restricted))
+    assert len(groups) == len(hcycles) == 6
+    assert rank(diff(gc)) == 8 and restricted_d == 5
+    # Genuine cubic planar bipartite graph counterexample for the general
+    # arbitrary survivor-family statement, not a two-deleted-edge interface.
+    type_ix, _ = port_groups(g, gc, 1)
+    _, ext_types = port_groups(h, hcycles, 0)
+    chosen_type = min(ext_types)
+    exterior_members = ext_types[chosen_type]
+    exterior_keys = set()
+    # Restore 0 and compare each exterior projection against the chosen type.
+    def restored(c):
+        vec = [0]*len(h["edges"])
+        for i in outside:
+            e = g["edges"][i]
+            if any(v >= 9 for v in e):
+                neighbor = next(v for v in e if v < 9)
+                oldedge = edge(0, neighbor)
+            else:
+                oldedge = tuple(e)
+            vec[h["edges"].index(oldedge)] = c[i]
+        return tuple(vec)
+    selected = [c for c in gc if restored(c) in exterior_members]
+    ellH = rank(diff(hcycles))-rank(diff(exterior_members))
+    ellG = rank(diff(gc))-rank(diff(selected))
+    assert (ellH, ellG) == (4, 6)
+    # Check a small real attachment where a proper active subset already
+    # generates the entire kernel: all-three is not logically necessary.
+    equality_example = None
+    old = data(OLD+"mandatory-attempt-02.json")
+    for rec in [old["census"][-1], old["C171"]]:
+        graph = rec["graph"]
+        for z in sorted(adjacency(graph["edges"])):
+            _, gg = port_groups(graph, rec["cycles"], z)
+            allK = sum((diff(v) for v in gg.values()), [])
+            for active in combinations(list(gg), 2):
+                partK = sum((diff(gg[s]) for s in active), [])
+                if rank(partK) == rank(allK):
+                    equality_example = {"graph": graph, "z": z, "active": active,
+                                        "kernel_rank": rank(allK),
+                                        "type_ranks": [{"signature": s, "rank": rank(diff(v))} for s, v in gg.items()]}
+                    break
+            if equality_example:
+                break
+        if equality_example:
+            break
+    # The original S174 statement is for cubic graphs, not only bipartite
+    # graphs. K4 has three singleton port classes and zero port kernel.
+    tetra = normalize(list(combinations(range(4), 2)),
+                      [[0, 1, 2], [0, 3, 1], [0, 2, 3], [1, 3, 2]])
+    tc = cycle_sets(tetra["edges"])
+    _, tg = port_groups(tetra, tc, 0)
+    assert len(tg) == 3 and all(len(v) == 1 for v in tg.values())
+    assert rank(sum((diff(v) for v in tg.values()), [])) == 0
+    equality_general = {"attachment": tetra, "cycles": tc,
+                        "full_kernel_rank": 0, "every_nonempty_subset_kernel_rank": 0,
+                        "caveat": "Nonbipartite; valid for S174 general cubic scope only"}
+    return {"status": "PASS", "cube_active_subsets": subsets,
+            "boundary_scan": {"prisms": [4, 6, 8], "interface_vertex_cases": tested,
+                              "missing_type_records": missing},
+            "planar_missing_type_witness": witness,
+            "proper_type_counterexample": {"graph": g, "exterior": h, "active_type": chosen_type,
+                                          "exterior_members": exterior_members, "survivors": selected,
+                                          "ellH": ellH, "ellG": ellG,
+                                          "caveat": "Omitted-port predicate, not a protected deletion interface"},
+            "proper_subset_equal_kernel": equality_example,
+            "all_three_not_necessary": equality_general,
+            "incomplete_fibres": {"graph": g, "full_cycles": gc,
+                                 "restricted_cycles": restricted, "full_dimension": 8,
+                                 "restricted_dimension": restricted_d,
+                                 "exterior_dimension": 5, "all_types_active": True}}
+
+
+def packing_table(es, vertices, boundary_edges, chosen, side):
+    """Exhaust path packings by degrees and reject every isolated cycle."""
+    target = {v: 2 for v in vertices}
+    endpoint_labels = {}
+    for i in chosen:
+        v = next(v for v in boundary_edges[i] if (v in side) == (vertices == side))
+        target[v] -= 1
+        assert v not in endpoint_labels
+        endpoint_labels[v] = i
+    result = {}
+    for vector_ in degree_subgraphs(es, target, set()):
+        parts = components(selected_edges(es, vector_), vertices)
+        pairs = []
+        for part in parts:
+            ends = [endpoint_labels[v] for v in part if v in endpoint_labels]
+            if len(ends) != 2:
+                break
+            pairs.append(tuple(sorted(ends)))
+        else:
+            state = tuple(sorted(pairs))
+            result.setdefault(state, []).append(vector_)
+    return {key: sorted(vs) for key, vs in sorted(result.items())}
+
+
+def five_port_certificate(record, k):
+    g = record["graph"]
+    es = list(map(tuple, g["edges"]))
+    vertices = set(adjacency(es))
+    base_side = set(range(13, 12+2*k))
+    old = base_side | set(range(1, 12))
+    new = vertices-old
+    assert len(new) == 4
+    side = base_side | {v for e in es for v in e if v in new and any(w in base_side for w in e)}
+    outside = vertices-side
+    local_es = [e for e in es if set(e) <= side]
+    exterior_es = [e for e in es if set(e) <= outside]
+    cut = [e for e in es if bool(set(e) & side) and not set(e) <= side]
+    assert len(cut) == 5 and len(outside) == 13
+    u, v, x, y = record["uvxy"]
+    deletion_e, deletion_f = edge(u, v), edge(x, y)
+    assert deletion_e in cut and deletion_f in exterior_es
+    eidx, fidx = cut.index(deletion_e), exterior_es.index(deletion_f)
+    states = []
+    union = set()
+    WX, WY, anchors = [], [], []
+
+    def embed(a, b, chosen):
+        d = dict(zip(local_es, a))
+        d.update(zip(exterior_es, b))
+        d.update({e: int(i in chosen) for i, e in enumerate(cut)})
+        return tuple(d[e] for e in es)
+
+    for size in (2, 4):
+        for chosen in combinations(range(5), size):
+            local = packing_table(local_es, side, cut, chosen, side)
+            exterior = packing_table(exterior_es, outside, cut, chosen, side)
+            for p, aa in local.items():
+                for q, bb_all in exterior.items():
+                    # Gluing endpoint pairings must form one circuit.
+                    if len(components(list(p)+list(q), chosen)) != 1:
+                        continue
+                    bb = [b for b in bb_all if eidx in chosen or b[fidx]]
+                    if not bb:
+                        continue
+                    anchor = embed(aa[0], bb[0], chosen)
+                    anchors.append(anchor)
+                    dx = [sub(embed(a, bb[0], chosen), anchor) for a in aa[1:]]
+                    dy = [sub(embed(aa[0], b, chosen), anchor) for b in bb[1:]]
+                    WX += dx
+                    WY += dy
+                    lifted = [embed(a, b, chosen) for a in aa for b in bb]
+                    assert not union.intersection(lifted)
+                    union.update(lifted)
+                    states.append({"cut": chosen, "local_pairing": p, "exterior_pairing": q,
+                                   "local_packings": aa, "exterior_packings": bb, "anchor": anchor,
+                                   "local_rank": rank(diff(aa)), "exterior_rank": rank(diff(bb)),
+                                   "product_size": len(lifted)})
+    survivors = sorted(record["families"]["N10"]+record["families"]["N01"]+record["families"]["N11"])
+    assert union == set(map(tuple, survivors))
+    a, b = rank(WX), rank(WY)
+    assert rank(WX+WY) == a+b
+    anchor_differences = diff(anchors)
+    total = rank(WX+WY+anchor_differences)
+    assert total == record["row"]["rankL"]
+    # Projection retaining exterior AND cut coordinates. Local within-state
+    # variations are killed; actual anchor relations may add kernel directions.
+    projected = [i for i, e in enumerate(es) if e not in local_es]
+    image_rank = rank([[v[i] for i in projected] for v in WY+anchor_differences])
+    kernel_extra = total-image_rank-a
+    assert kernel_extra >= 0
+    return {"k": k, "graph": g, "side": sorted(side), "outside": sorted(outside), "cut": cut,
+            "local_edges": local_es, "exterior_edges": exterior_es,
+            "states": states, "product_count": len(union),
+            "local_space_basis": integer_basis(WX), "exterior_space_basis": integer_basis(WY),
+            "actual_anchor_differences": anchor_differences,
+            "local_rank": a, "exterior_rank": b,
+            "anchor_quotient_rank": total-a-b, "survivor_rank": total,
+            "ambient": len(es)-len(vertices)+1, "image_rank": image_rank,
+            "kernel_rank": total-image_rank, "extra_anchor_kernel": kernel_extra}
+
+
+def local_saturation():
+    old = data(OLD+"structural-attempt-03.json")["applications"]
+    records = [(4, old[2]["contracted"]), (4, old[3]["contracted"]),
+               (6, old[0]["contracted"]), (6, old[1]["contracted"])]
+    new = experiment()
+    records += [(8, r) for r in new["first_children"]]
+    certificates = [five_port_certificate(r, k) for k, r in records]
+    assert all(c["survivor_rank"] == c["ambient"] for c in certificates)
+    return {"status": "PASS", "scope": "six finite constructions; general five-port criterion proved separately",
+            "certificates": certificates}

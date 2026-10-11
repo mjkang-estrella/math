@@ -16,6 +16,26 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I175 five-port products, missing types and I176 uniform rank
+
+[I175](i175-affected-prism-exterior.md) certifies two low-loss order-30
+braces with (3,1) hexagons, not high-loss octagonal braces. Its exact
+five-port product/anchor formula and conditional rank criterion are proved;
+the uniform rank hypotheses remain unpaid. M175 gives the actual
+missing-type kernel correction, and A175 excludes missing survivor types
+under the protected local configuration.
+
+Parent replay passes (~16.20 s; five byte-identical payloads, eight blocked
+probes). Independent parent checks reproduce three seven-family records,
+2,460 matchings, six full five-port products and the small boundary examples.
+Two diagnostic failures remain preserved. The
+[parent disposition](i175-affected-prism-exterior-parent-disposition.md)
+records technical status and the historical-context replay requirement.
+[I176](iteration176-uniform-five-port-rank-factory-astra-task.json) seeks
+an analytic uniform first-surgery rank proof, not an enlarged census.
+The high-loss brace target and universal inequalities remain open.
+**Eight accepted, two remaining.**
+
 ## I174 conditional splice defect and I175 affected exteriors
 
 [I174](i174-prism-gadget-survival.md) passes the I173 certificate audit.
