@@ -16,6 +16,23 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I166 brace campaign and I167 exchange-step continuation
+
+[I166](i166-affine-span-braces.md) independently re-derived all audited
+I165 interfaces (PASS) and delivers exact evidence on 438 distinct
+braces of orders 8–64: all affine-full, no Q164 violation, tight exactly
+on prisms, census-anchored to OEIS A007083. New certified technical
+facts: the B18 obstruction to brace-only square-expansion generation at
+order 18, a proved face-toggle lemma, and a quantified survival
+obstruction showing the exchange step cannot be proved by transport.
+The brace theorem $d=n/2+1$ and Q164 remain open. Parent sealed replay
+passes; the [parent disposition](i166-affine-span-parent-disposition.md)
+records the scope. No independent full-proof PASS or substantial
+nomination is inferred.
+[I167](iteration167-exchange-step-braces-factory-astra-task.json)
+audits the new interfaces and attacks the exchange step and McCuaig's
+brace-generation backbone. **Eight accepted, two remaining.**
+
 ## I165 square-step refutation and I166 affine-span continuation
 
 [I165](i165-square-expansion-multiplicity.md) refutes the universal
@@ -30,9 +47,9 @@ passes, preserving two timed-out runs as incomplete artifacts. The
 [parent disposition](i165-square-expansion-parent-disposition.md) records
 the scope; these are technical results, not a ninth finding.
 [I166](iteration166-affine-span-braces-factory-astra-task.json)
-independently audits the new interfaces and attacks the brace
-affine-span problem, with certified counterexample searches in both
-directions. **Eight accepted, two remaining.**
+independently audited the new interfaces and attacked the brace
+affine-span problem; its outcome is recorded above. **Eight accepted,
+two remaining.**
 
 ## I164 structural-graph gap and I165 counting continuation
 
