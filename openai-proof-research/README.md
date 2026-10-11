@@ -1,12 +1,15 @@
 # OpenAI mathematics research
 
-**I188 interrupted and resumed:** The first I188 run stopped with a
-provider-reported network failure at 2026-10-11T15:14:16Z, delivering no
-report, verdict, or output files. Its unverified draft reasoning was read
-and passed only as labelled leads. [Recovery record](frontier/iterations/i188-provider-failure-recovery.md);
-a [resume run](frontier/iterations/iteration188-patch-rooted-state-factory-astra-resume-task.json)
-with a fresh clientRequestId now holds the same brief and five-file scope.
-**8 accepted, 2 remaining.**
+**I188 twice interrupted, resumed on a new transport:** The first I188
+run stopped with a provider-reported network failure at
+2026-10-11T15:14:16Z, and its resume failed the same way at
+2026-10-11T16:25:43Z; neither wrote a report, verdict, or output files.
+Both unverified drafts were read and passed on only as labelled leads.
+[Recovery records](frontier/iterations/i188-provider-failure-recovery.md)
+([second](frontier/iterations/i188-provider-failure-recovery-2.md));
+a [second resume](frontier/iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
+on a different provider driver now holds the same brief and five-file
+scope. **8 accepted, 2 remaining.**
 
 **I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)
 passes the dual hypotheses, conditional recovery criterion and restricted

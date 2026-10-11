@@ -21,12 +21,14 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**I188 provider failure and resume:** the first patch-geometry run
-failed at the provider with no outputs written
-([recovery record](iterations/i188-provider-failure-recovery.md)).
-A [resume](iterations/iteration188-patch-rooted-state-factory-astra-resume-task.json)
-re-runs the identical brief and write scope; salvaged draft reasoning
-was relayed only as unverified leads. No verdict exists yet.
+**I188 provider failures and second resume:** the first patch-geometry
+run and its resume both failed at the provider with no outputs written
+([recovery records](iterations/i188-provider-failure-recovery.md),
+[second](iterations/i188-provider-failure-recovery-2.md)).
+A [second resume](iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
+on a different provider driver re-runs the identical brief and write
+scope; salvaged draft reasoning was relayed only as unverified leads.
+No verdict exists yet.
 **Eight accepted, two remaining.**
 
 **I187 global-state analysis checked:** [Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)

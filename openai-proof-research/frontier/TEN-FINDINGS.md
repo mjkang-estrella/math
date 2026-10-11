@@ -6,17 +6,21 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
-### I188 patch-geometry run interrupted, resumed without verdict
+### I188 patch-geometry run twice interrupted, resumed on a new transport
 
-The first I188 run stopped at 2026-10-11T15:14:16Z with a
-provider-reported network failure and wrote no output files
-([recovery record](iterations/i188-provider-failure-recovery.md)).
-The parent read its unverified draft reasoning (square faciality, local
-dual identifications, one common marked source cycle, unfinished sign
-consistency) and relayed it only as labelled leads. A
-[resume](iterations/iteration188-patch-rooted-state-factory-astra-resume-task.json)
-holds the same brief and five-file scope under a fresh clientRequestId.
-No mathematical result is claimed. **Eight accepted, two remaining.**
+The first I188 run stopped at 2026-10-11T15:14:16Z and its resume at
+2026-10-11T16:25:43Z, both with provider-reported network failures and
+no output files
+([recovery records](iterations/i188-provider-failure-recovery.md),
+[second](iterations/i188-provider-failure-recovery-2.md)). The parent
+read both unverified drafts (square faciality, the six-triangle dual
+disk, one forced marked cycle per group with a completed sign
+argument, forced-leaf white-tree recovery, open survivor type) and
+relayed them only as labelled leads. A
+[second resume](iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
+on a different provider driver holds the same brief and five-file
+scope under a fresh clientRequestId. No mathematical result is
+claimed. **Eight accepted, two remaining.**
 
 ### I187 marked-state deductions checked, patch-rooted geometry next
 
