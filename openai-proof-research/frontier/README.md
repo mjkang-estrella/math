@@ -21,17 +21,18 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I173](iterations/i173-brace-high-loss-octagons.md)
-passes the assigned I172 audits. The declared 236 surgery histories remove
-the cuts and produce 212 certified brace outputs, but all losses are zero.
-Q173 proves finite survivor saturation, with 1,500 explicit absorption
-identities. Parent replay and independent checks of all 236 survivor
-bases and 328,920 matching witnesses pass. The
-[parent disposition](iterations/i173-brace-high-loss-octagons-parent-disposition.md)
-preserves failed transports and the corrected diagnostic schema failure.
-[I174](iterations/iteration174-prism-gadget-survival-factory-astra-task.json)
-changes the attachment gadget and tests saturation before extending a
-history. A high-loss brace is still missing.
+**Structural-graph update:** [I174](iterations/i174-prism-gadget-survival.md)
+passes the I173 certificate audit. All six bounded prism-gadget first
+surgeries collapse initial loss 3 to zero; no second surgery is eligible.
+S174 proves a conditional exterior-controlled splice-defect identity,
+even for an attachment with deficient affine span. Its hypotheses include
+all three active survivor types and complete compatible fibres.
+Parent replay and 15 independent seven-family checks pass. The
+[parent disposition](iterations/i174-prism-gadget-survival-parent-disposition.md)
+preserves the rejected embedding and parent-document packaging interruption.
+[I175](iterations/iteration175-affected-prism-exterior-factory-astra-task.json)
+changes the affected attachment and examines missing active types.
+A high-loss brace is still missing.
 Technical only; universal exchange, (T), and Q164 remain open.
 **8 accepted, 2 remaining.**
 

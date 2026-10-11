@@ -16,6 +16,28 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I174 conditional splice defect and I175 affected exteriors
+
+[I174](i174-prism-gadget-survival.md) passes the I173 certificate audit.
+The three initial prism-gadget graphs have loss 3; all six executed
+first surgeries saturate to zero. No second surgery is eligible and
+no new brace is claimed. S174 proves conditional defect preservation
+through exterior-controlled, complete splice fibres with all three
+survivor types, without assuming attachment affine fullness.
+Its finite applications have four saturated contracted exteriors.
+
+Parent replay passes (~17.09 s; four byte-identical payloads, eight
+blocked probes), with 15 independent complete seven-family checks,
+six kernel/image splits and 9,324 verified matching witnesses.
+The rejected rotation, 36 tight-cut failures and explicit pre-seal
+parent-document transition remain preserved. The
+[parent disposition](i174-prism-gadget-survival-parent-disposition.md)
+classifies the lemma and finite search as technical only.
+[I175](iteration175-affected-prism-exterior-factory-astra-task.json)
+tests affected P8 exteriors and the missing-active-type boundary.
+High-loss braces and the universal targets remain open.
+**Eight accepted, two remaining.**
+
 ## I173 finite survivor saturation and I174 prism gadgets
 
 [I173](i173-brace-high-loss-octagons.md) passes S172/K172/R172 in their

@@ -6,6 +6,35 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I174 conditional splice defect and I175 affected exteriors
+
+[I174](iterations/i174-prism-gadget-survival.md) passes the I173 finite
+certificate audit. Three initial prism-gadget graphs have loss 3, but
+all six bounded first surgeries have loss zero; none of the nine graphs
+is a brace. No second surgery is eligible. Twenty other valid first
+triples remain untested.
+
+**S174** proves defect preservation when survival is exterior-controlled,
+all three survivor port types occur, and all compatible attachment fibres
+are present. Both projection kernels equal the sum of the actual
+within-type attachment difference spaces. Attachment affine fullness
+is not required for defect equality. The six finite applications reduce
+to four saturated exterior constructions, so changing only the untouched
+attachment cannot repair them under those hypotheses.
+
+Parent sealed replay passes (~17.09 s; four byte-identical payloads,
+eight blocked probes; 107 owned/277 non-context external plus four contexts).
+Independent parent DFS/Fraction checks verify 15 complete seven-family
+records, six kernel/image splits, 9,324 matchings and 36 tight-cut failures.
+The [parent disposition](iterations/i174-prism-gadget-survival-parent-disposition.md)
+retains the exact pre-seal document transition caused by a late parent
+whitespace note. No mathematical evidence was exempted or resealed.
+The lemma remains **technical only, no ninth nomination**.
+[I175](iterations/iteration175-affected-prism-exterior-factory-astra-task.json)
+tests affected P8 exteriors before adding the second gadget and attacks
+the missing-active-type boundary. Universal targets remain open.
+**8 accepted, 2 remaining; research active.**
+
 ### I173 finite survivor saturation and I174 prism gadgets
 
 [I173](iterations/i173-brace-high-loss-octagons.md) passes the original-scope
