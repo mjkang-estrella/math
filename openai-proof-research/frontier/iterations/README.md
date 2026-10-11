@@ -16,6 +16,20 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I184 cycle existence proved, I185 joining-ear attempt prepared
+
+[I184](i184-alternating-cycle.md) pays the first matching-cycle
+obligation for every residual perfect matching and each matching edge.
+[Parent review](i184-alternating-cycle-parent-disposition.md) passes its
+reachability/deficit/three-edge-shore proof without substantive repair,
+plus output authentication and inherited sealed replay. The technical
+lemma alone produces only a spanning 2-factor, not a survivor Hamiltonian
+complement. Z184/E183 remain open. The
+[I185 brief](iteration185-connected-reconnection-brief.md) focuses on
+an eligible alternating ear that improves retained-path reconnection.
+No local-improvement theorem or new acceptance is assumed.
+**Eight accepted, two remaining.**
+
 ## I183 finalization complete, I184 proof attempt prepared
 
 [The finalization report](i183-cptp-finalization.md) completes all 23

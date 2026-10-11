@@ -21,6 +21,14 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I184 matching-cycle lemma:** [Parent review](iterations/i184-alternating-cycle-parent-disposition.md)
+passes the original reachability/three-edge-shore proof without repair.
+Every residual matching edge lies on an alternating cycle, but the
+retained-path reconnection may still be disconnected. Z184/E183 stay
+open. Five output hashes and the inherited 23-stage replay pass.
+[I185](iterations/iteration185-connected-reconnection-brief.md) focuses
+on an eligible joining ear. **Eight accepted, two remaining.**
+
 **I183 finalization complete:** [Parent review](iterations/i183-finalization-parent-disposition.md)
 passes all 23 controls, full sealed byte/membership checks and eight
 live probes. Independent parent code rebuilds the twelve facial controls
