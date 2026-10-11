@@ -1,19 +1,18 @@
 # OpenAI mathematics research
 
-**I190 residual pairing analysis checked:**
-[Parent review](frontier/iterations/i190-beta-pairing-survivor-parent-disposition.md)
-passes the residual connectivity proofs, the exact patch-matching
-deletion table (independently re-derived by exhaustive enumeration of
-all $2^{11}$ local subsets), the universal alpha terminal-deletion
-paths, the constant Pfaffian matching sign, and the conditional
-alpha-to-beta square switch preserving full survivor type inside $W$.
-E183 stays UNRESOLVED at (R190): some cycle-free beta residual matching
-with survivor type, with rigid counterexample constraints recorded
-(cut profiles $\{e_2,e_3,e_4\}$ or $\{e_2\}$, excluded $W$ squares).
-[I191](frontier/iterations/iteration191-concentration-exclusion-brief.md)
-makes the final focused E183 attempt — concentration exclusion or a
-fully hypothesized counterexample; on another UNRESOLVED the line parks
-and work pivots to Q164/universal exchange. **8 accepted, 2 remaining.**
+**E183 line parked after I191; pivot to the exchange residual:**
+[Parent review](frontier/iterations/i191-concentration-exclusion-parent-disposition.md)
+passes the all-$R$ square transport (no square contains $e_2$; the only
+no-cut-2 crossing transition interchanges the two survivor types), the
+deletion-path crossing constraints, and the exact multiplicity identity
+$|B_R|=3(c_P+c_D)$, with the square classification and the ten formal
+cut profiles independently verified on the declared exterior. The joint
+counterexample system J191 — exactly E183 — was neither contradicted
+nor realized, so under the I190/I191 stopping rule the E183 line is
+**parked** (the paid deductions remain available). [I192](frontier/iterations/iteration192-exchange-residual-brief.md)
+returns to the dormant affine-dimension line: the universal exchange
+inequality $t+\eta\ge\ell$, whose proof yields Q164 via the paid splice
+reduction. **8 accepted, 2 remaining.**
 
 **I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)
 passes the dual hypotheses, conditional recovery criterion and restricted
