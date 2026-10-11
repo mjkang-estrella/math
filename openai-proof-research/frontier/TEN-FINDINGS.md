@@ -6,6 +6,18 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I188 patch-geometry run interrupted, resumed without verdict
+
+The first I188 run stopped at 2026-10-11T15:14:16Z with a
+provider-reported network failure and wrote no output files
+([recovery record](iterations/i188-provider-failure-recovery.md)).
+The parent read its unverified draft reasoning (square faciality, local
+dual identifications, one common marked source cycle, unfinished sign
+consistency) and relayed it only as labelled leads. A
+[resume](iterations/iteration188-patch-rooted-state-factory-astra-resume-task.json)
+holds the same brief and five-file scope under a fresh clientRequestId.
+No mathematical result is claimed. **Eight accepted, two remaining.**
+
 ### I187 marked-state deductions checked, patch-rooted geometry next
 
 [I187](iterations/i187-frozen-state-survival.md) pays the exact dual
