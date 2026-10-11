@@ -21,20 +21,21 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**I193 pairing symmetry and composition checked:**
-[Parent review](iterations/i193-equality-bridge-parent-disposition.md)
-passes the quadrilateral pairing symmetry ($\alpha_A=\alpha_B$,
-verified on prisms), the central-square composition
-($\Delta_c=\eta_{first}$; $\lambda_c=\lambda/(1+2\lambda)$; the
-gain-three recovery after a hypothetical failed step), and the
-sufficient subcases — the cube composition instance was re-derived by
-direct enumeration ($d: 5\to7\to9$, $\lambda_c=1/4$). Short-gap
-exchange stays UNRESOLVED at J193 ($w(F_Q-C_0)\ne-1/2$ unpaid).
-[I194](iterations/iteration194-quotient-sign-brief.md) is the final
-focused short-gap attempt: the sign conjecture $w(F_Q-C_0)\ge0$, a
-verified negative instance, or the exact obstruction, under an explicit
-stopping rule. The E183 line and local ears stay parked; the long-gap
-clauses of J192 remain open. **Eight accepted, two remaining.**
+**I194 flip criterion and cube obstruction checked; short-gap front
+parked:** [Parent review](iterations/i194-quotient-sign-parent-disposition.md)
+passes the exact flip-connectivity criterion, the conditional
+fractional block lemma, the cube brace step that defeats universal
+direct-flip certificates ($\lambda=1/2$, every $F\triangle C$ a single
+alternating cycle; parent re-derived with $\kappa=1/2$), and the
+three-matching bookkeeping. The sign conjecture stays UNRESOLVED at
+J194 with no decisive new constraint; per the brief's stopping rule
+the short-gap front is **PARKED** beside the E183 line.
+[I195](iterations/iteration195-long-gap-deficit-brief.md) attacks the
+long-gap clauses of J192 ($t\ge\ell-1$ on long gaps, and
+$\beta\notin L_0+U$ when $\Delta=1$), with the even-prism
+polygonal-face deletions ($m=8$, $3+3$ split) as a paid test family,
+under a symmetric stopping rule. The E183 line and local ears stay
+parked. **Eight accepted, two remaining.**
 
 **I187 global-state analysis checked:** [Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)
 passes the original dual/recovery deductions and marked orientation
