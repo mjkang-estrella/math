@@ -21,18 +21,20 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**I191 concentration analysis checked; E183 line parked:**
-[Parent review](iterations/i191-concentration-exclusion-parent-disposition.md)
-passes the strengthened square transport (useful square anywhere in $R$
-suffices; crossing squares never contain $e_2$; the $14;14\leftrightarrow
-0134;03,14$ toggle verified edge-by-edge), the deletion-path crossing
-constraints, and the exact count $|B_R|=3(c_P+c_D)$, all independently
-checked on the declared exterior. The joint assertion J191 (equivalent
-to E183) is neither proved nor refuted, and the record supplies no
-decisive new constraint, so the stated stopping rule applies: **the
-E183 line is parked**. [I192](iterations/iteration192-exchange-residual-brief.md)
-pivots to the universal exchange residual $t+\eta\ge\ell$ / Q164 line
-at its sharpest paid point. Local ears stay parked.
+**I192 residual analysis checked, exchange open at J192:**
+[Parent review](iterations/i192-exchange-residual-parent-disposition.md)
+passes the exact facial-translation classification (confirmed by
+parent-side noncrossing-matching enumeration, $m\le8$), the bridge
+identity $b=3r+2s_{arc}+a_P+a_Q+a_D$, the short-gap equality reduction
+to the single coefficient $\lambda=-1/2$ on the actual two-factor
+$F_Q$, and the prism family (independently re-derived for
+$m\in\{4,6,8\}$, including $\eta=1$ by direct rank computation).
+Universal exchange stays UNRESOLVED at J192; the failure locus is
+exactly $\Delta\ge2$ or ($\Delta=1$ with $\beta\in L_0+U$).
+[I193](iterations/iteration193-equality-bridge-brief.md) targets the
+short-gap exchange theorem: exclude $\lambda=-1/2$ (quadrilateral core
+$\alpha\ne-3/2$), refute by a fully specified step, or isolate the
+exact obstruction. The E183 line and local ears stay parked.
 **Eight accepted, two remaining.**
 
 **I187 global-state analysis checked:** [Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)
