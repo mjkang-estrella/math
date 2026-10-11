@@ -1,0 +1,555 @@
+"""Fresh I174 graph, exhaustive enumeration and rational linear algebra."""
+from collections import Counter, defaultdict
+from fractions import Fraction
+from functools import lru_cache
+from itertools import combinations
+from math import gcd
+
+
+def edge(a, b):
+    return tuple(sorted((a, b)))
+
+
+def normalized(face):
+    return min(tuple(face[i:] + face[:i]) for i in range(len(face)))
+
+
+def graph(edges, faces):
+    es = sorted(set(map(tuple, (edge(*e) for e in edges))))
+    return dict(edges=[list(e) for e in es],
+                faces=[list(f) for f in sorted(normalized(list(f)) for f in faces)],
+                n=len({v for e in es for v in e}))
+
+
+def adjacency(g):
+    a = defaultdict(set)
+    for u, v in g["edges"]:
+        a[u].add(v)
+        a[v].add(u)
+    return dict(a)
+
+
+def components(a, vertices=None):
+    unseen = set(a if vertices is None else vertices)
+    out = []
+    while unseen:
+        todo = [min(unseen)]
+        part = set()
+        while todo:
+            v = todo.pop()
+            if v not in unseen:
+                continue
+            unseen.remove(v)
+            part.add(v)
+            todo.extend(a[v] & unseen)
+        out.append(part)
+    return out
+
+
+def coloring(a):
+    colors = {}
+    for start in a:
+        if start in colors:
+            continue
+        colors[start] = 0
+        todo = [start]
+        while todo:
+            u = todo.pop()
+            for v in a[u]:
+                if v in colors:
+                    assert colors[v] != colors[u]
+                else:
+                    colors[v] = 1 - colors[u]
+                    todo.append(v)
+    return colors
+
+
+def rotation(g):
+    r = {v: {} for v in adjacency(g)}
+    for face in g["faces"]:
+        for i, v in enumerate(face):
+            r[v][face[i-1]] = face[(i+1) % len(face)]
+    return r
+
+
+def from_rotation(r):
+    darts = {(v, w) for v in r for w in r[v]}
+    faces = []
+    while darts:
+        start = min(darts)
+        u, v = start
+        f = []
+        while True:
+            assert (u, v) in darts
+            darts.remove((u, v))
+            f.append(u)
+            u, v = v, r[v][u]
+            if (u, v) == start:
+                break
+        faces.append(f)
+    return graph([(u, v) for u in r for v in r[u]], faces)
+
+
+def certify(g):
+    a = adjacency(g)
+    es = list(map(tuple, g["edges"]))
+    assert len(es) == len(set(es)) and all(u < v for u, v in es)
+    assert len(a) == g["n"] and all(len(n) == 3 for n in a.values())
+    c = coloring(a)
+    assert len(components(a)) == 1
+    for deleted in combinations(a, 2):
+        assert len(components(a, set(a) - set(deleted))) == 1
+    darts = Counter()
+    r = {v: {} for v in a}
+    for f in g["faces"]:
+        assert len(f) == len(set(f))
+        for i, u in enumerate(f):
+            v = f[(i+1) % len(f)]
+            assert v in a[u]
+            darts[u, v] += 1
+            assert f[i-1] not in r[u]
+            r[u][f[i-1]] = v
+    assert darts == Counter({(u, v): 1 for u in a for v in a[u]})
+    for v in a:
+        x = min(a[v])
+        orbit = []
+        while x not in orbit:
+            orbit.append(x)
+            x = r[v][x]
+        assert set(orbit) == a[v]
+    assert len(a) - len(es) + len(g["faces"]) == 2
+    return dict(n=len(a), edges=len(es), sphere=True, three_connected=True,
+                bipartition=[sorted(v for v in a if c[v] == b) for b in (0, 1)])
+
+
+def prism(m):
+    es = []
+    for i in range(m):
+        j = (i+1) % m
+        es.extend([(i, j), (m+i, m+j), (i, m+i)])
+    fs = [list(range(m)), list(reversed(range(m, 2*m)))]
+    fs += [[i, m+i, m+(i+1) % m, (i+1) % m] for i in range(m)]
+    return graph(es, fs)
+
+
+def splice(g, vertex, k, offset, portmap):
+    h = prism(k)
+    r0, r1 = rotation(g), rotation(h)
+    assert set(portmap) == set(r0[vertex])
+    assert set(portmap.values()) == set(r1[0])
+    assert not (set(r0) & set(range(offset, offset+2*k)))
+    trials = []
+    for reverse in (False, True):
+        r = {}
+        for v, link in r0.items():
+            if v == vertex:
+                continue
+            conv = lambda w: offset + portmap[v] if w == vertex else w
+            r[v] = {conv(x): conv(y) for x, y in link.items()}
+        back = {v: u for u, v in portmap.items()}
+        for v, link0 in r1.items():
+            if v == 0:
+                continue
+            link = {y: x for x, y in link0.items()} if reverse else link0
+            conv = lambda w: back[v] if w == 0 else offset+w
+            r[offset+v] = {conv(x): conv(y) for x, y in link.items()}
+        out = from_rotation(r)
+        chi = out["n"] - len(out["edges"]) + len(out["faces"])
+        trials.append(dict(reverse=reverse, euler=chi))
+        if chi == 2:
+            certify(out)
+            return out, trials
+    raise AssertionError(("no sphere splice", trials))
+
+
+def attached(m=6, ka=6, kb=6, legacy=False):
+    aoff, boff = 2*m, 2*m+2*ka
+    amap = {1: 1, m-1: ka-1, m: ka}
+    bmap = {1: 1, m: kb, m+2: kb-1}
+    if legacy:
+        assert ka == kb == 4
+        amap = {1: 1, m-1: 4, m: 3}
+        bmap = {1: 1, m: 4, m+2: 3}
+    g, ta = splice(prism(m), 0, ka, aoff, amap)
+    g, tb = splice(g, m+1, kb, boff, bmap)
+    if legacy:
+        octagon = [1, aoff+1, aoff+2, aoff+3, m, boff+4, boff+5, boff+1]
+        uvxy = [aoff+3, m, 1, boff+1]
+    else:
+        octagon = [1, aoff+1, aoff+ka+1, aoff+ka, m, boff+kb, boff+kb+1, boff+1]
+        uvxy = [aoff+ka, m, 1, boff+1]
+    assert normalized(octagon) in map(tuple, g["faces"]) or normalized(octagon[::-1]) in map(tuple, g["faces"])
+    return g, uvxy, dict(offsets=[aoff, boff], octagon=octagon, portmaps=[amap, bmap],
+                         orientation_trials=[ta, tb],
+                         sides=[list(range(aoff+1,aoff+2*ka)), list(range(boff+1,boff+2*kb))])
+
+
+def expand(g, step):
+    fi, i, j = step
+    face = g["faces"][fi]
+    n = len(face)
+    u, v, y, x = face[i], face[(i+1)%n], face[j], face[(j+1)%n]
+    assert len({u, v, x, y}) == 4
+    assert coloring(adjacency(g))[u] != coloring(adjacency(g))[x]
+    p, q, r, s = range(max(adjacency(g))+1, max(adjacency(g))+5)
+    e, f = edge(u, v), edge(x, y)
+    es = [tuple(e0) for e0 in g["edges"] if tuple(e0) not in (e, f)]
+    es += [(u,p),(v,q),(x,r),(y,s),(p,q),(q,s),(s,r),(r,p)]
+    fs = []
+    for index, old in enumerate(g["faces"]):
+        if index == fi:
+            arc1 = face[j+1:] + face[:i+1]
+            arc2 = face[i+1:j+1]
+            fs += [[u,p,r] + arc1[:-1], arc2+[s,q], [p,q,s,r]]
+            continue
+        new = []
+        for h, z in enumerate(old):
+            w = old[(h+1)%len(old)]
+            new.append(z)
+            if edge(z,w) == e:
+                assert (z,w) == (v,u)
+                new += [q,p]
+            if edge(z,w) == f:
+                assert (z,w) == (x,y)
+                new += [r,s]
+        fs.append(new)
+    out = graph(es, fs)
+    certify(out)
+    return out
+
+
+def diff(a, b):
+    return tuple(x-y for x,y in zip(a,b))
+
+
+def add(*rows):
+    return tuple(map(sum, zip(*rows)))
+
+
+def differences(rows):
+    return [diff(v, rows[0]) for v in rows[1:]] if rows else []
+
+
+def integer_basis(rows):
+    pivots = {}
+    selected = []
+    for index, row in enumerate(rows):
+        v = list(row)
+        for j, w in sorted(pivots.items()):
+            if v[j]:
+                aa, bb = w[j], v[j]
+                v = [aa*x-bb*y for x,y in zip(v,w)]
+                d = 0
+                for x in v:
+                    d = gcd(d, x)
+                if d:
+                    v = [x//d for x in v]
+        if any(v):
+            j = next(j for j,x in enumerate(v) if x)
+            pivots[j] = v
+            selected.append(index)
+    return selected
+
+
+def rational_rank(rows):
+    basis = {}
+    for row in rows:
+        v = {j: Fraction(x) for j,x in enumerate(row) if x}
+        while v:
+            j = max(v)
+            if j not in basis:
+                scale = v[j]
+                basis[j] = {k:x/scale for k,x in v.items()}
+                break
+            scale = v[j]
+            for k,x in basis[j].items():
+                y = v.get(k,0) - scale*x
+                if y:
+                    v[k] = y
+                else:
+                    v.pop(k, None)
+    return len(basis)
+
+
+@lru_cache(maxsize=4096)
+def rank_cached(rows):
+    a = len(integer_basis(rows))
+    b = rational_rank(rows)
+    assert a == b
+    return a
+
+
+def rank(rows):
+    return rank_cached(tuple(sorted(set(tuple(v) for v in rows if any(v)))))
+
+
+def incidence(g, selected):
+    selected = set(map(tuple, selected))
+    return tuple(int(tuple(e) in selected) for e in g["edges"])
+
+
+def parts_vector(g, row):
+    a = {v: set() for v in adjacency(g)}
+    assert len(row) == len(g["edges"]) and set(row) <= {0,1}
+    for on, (u,v) in zip(row,g["edges"]):
+        if on:
+            a[u].add(v)
+            a[v].add(u)
+    return a, components(a)
+
+
+def cycle_check(g, row):
+    a, parts = parts_vector(g,row)
+    assert len(parts) == 1 and all(len(ns) == 2 for ns in a.values())
+
+
+def matchings(g):
+    a = adjacency(g)
+    def rec(unmatched, chosen):
+        if not unmatched:
+            yield tuple(chosen)
+            return
+        v = min(unmatched)
+        for w in sorted(a[v] & unmatched):
+            yield from rec(unmatched-{v,w}, chosen+[edge(v,w)])
+    return list(rec(set(a),[]))
+
+
+def paths_dfs(g, start, end, allowed=None, spanning=True):
+    a = adjacency(g)
+    allowed = set(a) if allowed is None else set(allowed)
+    order = sorted(a)
+    bit = {v:1<<i for i,v in enumerate(order)}
+    am = {v:sum(bit[w] for w in a[v] & allowed) for v in a}
+    full = sum(bit[v] for v in allowed)
+    def connected(mask):
+        if not mask:
+            return True
+        seen, front = 0, mask & -mask
+        while front:
+            seen |= front
+            nxt = 0
+            while front:
+                b = front & -front
+                front -= b
+                nxt |= am[order[b.bit_length()-1]]
+            front = nxt & mask & ~seen
+        return seen == mask
+    def rec(v, used, path):
+        if v == end:
+            if not spanning or used == full:
+                yield tuple(path)
+            return
+        remaining = full & ~used
+        if spanning:
+            if not connected(remaining):
+                return
+            available = remaining | bit[v]
+            for w in allowed:
+                if remaining & bit[w] and (am[w] & available).bit_count() < (1 if w == end else 2):
+                    return
+        for w in sorted(a[v] & allowed):
+            if not used & bit[w]:
+                yield from rec(w,used|bit[w],path+[w])
+    yield from rec(start,bit[start],[start])
+
+
+def path_vector(g, path):
+    return incidence(g,[edge(x,y) for x,y in zip(path,path[1:])])
+
+
+def cycles(g):
+    es = list(map(tuple,g["edges"]))
+    by_match = []
+    for matching in matchings(g):
+        row = tuple(int(e not in matching) for e in es)
+        a, parts = parts_vector(g,row)
+        if len(parts) == 1:
+            by_match.append(row)
+    by_path = set()
+    a = adjacency(g)
+    root = min(a)
+    for end in sorted(a[root]):
+        for path in paths_dfs(g,root,end):
+            by_path.add(incidence(g,[edge(x,y) for x,y in zip(path,path[1:])]+[edge(end,root)]))
+    assert set(by_match) == by_path
+    return sorted(by_path)
+
+
+def degree_objects(g, target):
+    """Vertex-saturation enumeration, independent of path DFS."""
+    es = list(map(tuple,g["edges"]))
+    vertices = sorted(adjacency(g))
+    incident = {v:[i for i,e in enumerate(es) if v in e] for v in vertices}
+    def rec(status):
+        available = {}
+        for v in vertices:
+            chosen = sum(status[i] == 1 for i in incident[v])
+            undecided = [i for i in incident[v] if status[i] == -1]
+            need = target[v]-chosen
+            if need < 0 or need > len(undecided):
+                return
+            if undecided:
+                available[v] = (undecided,need)
+            elif need:
+                return
+        if not available:
+            yield tuple(status)
+            return
+        v = min(available,key=lambda v:(len(available[v][0]),v))
+        undecided, need = available[v]
+        for use in combinations(undecided,need):
+            use = set(use)
+            nxt = status[:]
+            for i in undecided:
+                nxt[i] = int(i in use)
+            yield from rec(nxt)
+    return rec([-1]*len(es))
+
+
+def seven(g, uvxy):
+    u,v,x,y = uvxy
+    es = list(map(tuple,g["edges"]))
+    ei,fi = es.index(edge(u,v)),es.index(edge(x,y))
+    cs = cycles(g)
+    out = {"N"+str(i)+str(j): [c for c in cs if (c[ei],c[fi]) == (i,j)]
+           for i in (0,1) for j in (0,1)}
+    h = dict(g,edges=[e for e in g["edges"] if tuple(e) not in (es[ei],es[fi])])
+    def lift(row):
+        d = dict(zip(map(tuple,h["edges"]),row))
+        return tuple(d.get(e,0) for e in es)
+    for name,ends in [("Pux",(u,x)),("Pvy",(v,y)),("D11",(u,v,x,y))]:
+        target = {z:(1 if z in ends else 2) for z in adjacency(g)}
+        rows = []
+        for row in degree_objects(h,target):
+            a,parts = parts_vector(h,row)
+            if name == "D11":
+                valid = len(parts) == 2 and any(u in p and v in p and x not in p and y not in p for p in parts)
+            else:
+                valid = len(parts) == 1
+            if valid:
+                rows.append(lift(row))
+        independent = set()
+        if name != "D11":
+            for path in paths_dfs(h,*ends):
+                independent.add(path_vector(g,path))
+        else:
+            allowed = set(adjacency(g)) - {x,y}
+            for path1 in paths_dfs(h,u,v,allowed,spanning=False):
+                remain = set(adjacency(g)) - set(path1)
+                if len(components(adjacency(h),remain)) != 1:
+                    continue
+                for path2 in paths_dfs(h,x,y,remain):
+                    independent.add(add(path_vector(g,path1),path_vector(g,path2)))
+        assert set(rows) == independent, name
+        out[name] = sorted(independent)
+    assert all(out.values())
+    return cs, out
+
+
+def boundary(g, uvxy):
+    u,v,x,y = uvxy
+    for f0 in g["faces"]:
+        for f in (f0,f0[::-1]):
+            if u not in f:
+                continue
+            i = f.index(u)
+            f = f[i:]+f[:i]
+            if f[1] == v and x in f and y in f and f.index(x) == f.index(y)+1:
+                a = [u]+list(reversed(f[f.index(x):]))
+                b = f[1:f.index(y)+1]
+                return a,b,f
+    raise AssertionError("not a facial interface")
+
+
+def analyze(g, uvxy):
+    cert = certify(g)
+    cs, fam = seven(g,uvxy)
+    u,v,x,y = uvxy
+    es = list(map(tuple,g["edges"]))
+    arcs = boundary(g,uvxy)
+    def qarc(path):
+        q = [0]*len(es)
+        for i,(a,b) in enumerate(zip(path,path[1:])):
+            q[es.index(edge(a,b))] = (-1)**i
+        return tuple(q)
+    qa,qb = map(qarc,arcs[:2])
+    S = sorted(fam["N10"]+fam["N01"]+fam["N11"])
+    L = differences(S)
+    L0 = sum((differences(fam[k]) for k in ("N10","N01","N11")),[])
+    V = differences(fam["N00"])
+    U = sum((differences(fam[k]) for k in ("Pux","Pvy","D11")),[])
+    residuals, VG, R = {},[],[]
+    for name,q in zip(("Pux","Pvy","D11"),(qa,qb,add(qa,qb))):
+        J = fam[name]
+        good = [n for n in fam["N00"] if diff(n,q) in J]
+        residual = [p for p in J if add(p,q) not in fam["N00"]]
+        anchor = diff(good[0],q) if good else J[0]
+        directions = [diff(p,anchor) for p in residual]
+        VG += differences(good)
+        R += directions
+        residuals[name] = dict(q=q,good=good,residual=residual,anchor=anchor,
+                               residual_directions=directions)
+    assert rank(U) == rank(VG+R) == rank(U+VG+R)
+    two = tuple(2*int(e in (edge(u,v),edge(x,y))) for e in es)
+    A,B,C,N = [fam[k][0] for k in ("N10","N01","N11","N00")]
+    P,Q,D = [fam[k][0] for k in ("Pux","Pvy","D11")]
+    bridge = diff(add(P,Q,D,two),tuple(3*z for z in S[0]))
+    beta = diff(add(P,Q,D,two),add(A,B,C))
+    c = diff(add(N,C),add(A,B))
+    row = dict(n=g["n"],arcs=[len(a)-1 for a in arcs[:2]],
+               counts={k:len(vv) for k,vv in fam.items()},dg=rank(differences(cs)),
+               rankL=rank(L),rankL0=rank(L0),rankU=rank(U),rankUV=rank(U+V),
+               ell=rank(differences(cs))-rank(L),t=rank(L+U)-rank(L),
+               eta=rank(L+U+[bridge])-rank(L+U),
+               delta_V=rank(L0+V)-rank(L0+VG),
+               delta_R=rank(L0+VG+R)-rank(L0+VG),
+               epsilon=rank(L0+V+[c])-rank(L0+V))
+    assert row["ell"]-row["t"] == row["delta_V"]+row["epsilon"]-row["delta_R"]
+    assert row["eta"] == rank(L+U+[beta])-rank(L+U)
+    assert rank(L) == rank(L0)+2
+    assert rank(L+U+[diff(bridge,beta)]) == rank(L+U)
+    basis = integer_basis(L)
+    return dict(graph=g,uvxy=uvxy,certification=cert,cycles=cs,families=fam,
+                row=row,bridge=bridge,beta=beta,c=c,residuals=residuals,
+                saturation=dict(anchor=S[0],cycles=[S[i+1] for i in basis],
+                                rank=rank(L),ambient=len(es)-g["n"]+1))
+
+
+def matching_check(g, indices, pair=None):
+    es = g["edges"]
+    assert len(indices) == g["n"]//2 and len(indices) == len(set(indices))
+    count = Counter(v for i in indices for v in es[i])
+    assert count == Counter({v:1 for v in adjacency(g)})
+    if pair is not None:
+        assert set(pair) <= set(indices)
+
+
+def brace(g):
+    a = adjacency(g)
+    color = coloring(a)
+    es = list(map(tuple,g["edges"]))
+    lookup = {e:i for i,e in enumerate(es)}
+    success, failures = [],[]
+    for i,j in combinations(range(len(es)),2):
+        fixed = set(es[i]+es[j])
+        if len(fixed) != 4:
+            continue
+        mates = {}
+        def augment(u, seen):
+            for v in sorted(a[u]-fixed):
+                if v in seen:
+                    continue
+                seen.add(v)
+                if v not in mates or augment(mates[v],seen):
+                    mates[v] = u
+                    return True
+            return False
+        left = sorted(v for v in a if color[v] == 0 and v not in fixed)
+        if all(augment(v,set()) for v in left):
+            indices = sorted([i,j]+[lookup[edge(v,u)] for v,u in mates.items()])
+            matching_check(g,indices,(i,j))
+            success.append([i,j,indices])
+        else:
+            failures.append([i,j])
+    return dict(brace=not failures,extended_pairs=success,failed_pairs=failures)

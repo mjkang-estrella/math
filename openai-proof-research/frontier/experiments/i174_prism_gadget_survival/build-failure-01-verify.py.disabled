@@ -1,0 +1,164 @@
+"""Immutable-first independent I174 replay. This is an audit guard, not an OS sandbox."""
+from pathlib import Path
+from collections import Counter, defaultdict
+from fractions import Fraction
+from functools import lru_cache
+from itertools import combinations
+from math import gcd
+import hashlib
+import json
+import os
+import socket
+import subprocess
+import sys
+import time
+import types
+
+ROOT = Path(__file__).resolve().parents[3]
+HERE = Path(__file__).resolve().parent
+PREFIX = "frontier/experiments/i174_prism_gadget_survival/"
+REPORT = "frontier/iterations/i174-prism-gadget-survival.md"
+SOURCE = "frontier/sources/i174_prism_gadget_survival/"
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def all_owned():
+    out = {REPORT}
+    for directory in (HERE, ROOT / SOURCE):
+        out.update(str(p.relative_to(ROOT)) for p in directory.rglob("*") if p.is_file())
+    return out
+
+
+def main():
+    started = time.monotonic()
+    pre = sys.argv[1:] == ["--prevalidate"]
+    assert pre or not sys.argv[1:]
+    invraw = (HERE / "inventory.json").read_bytes()
+    inv = json.loads(invraw)
+    controls = {PREFIX+name for name in ("inventory.json","prevalidation.json","seal.json")}
+    assert set(inv["controls"]) == controls
+    assert all_owned() - controls == {e["path"] for e in inv["owned"]}
+    controlbytes = {p:(ROOT/p).read_bytes() for p in controls if (ROOT/p).exists()}
+    if pre:
+        assert PREFIX+"seal.json" not in controlbytes
+    else:
+        seal = json.loads(controlbytes[PREFIX+"seal.json"])
+        successful = json.loads(controlbytes[PREFIX+"prevalidation.json"])
+        assert sha(invraw) == seal["inventory_sha256"]
+        assert sha(controlbytes[PREFIX+"prevalidation.json"]) == seal["prevalidation_sha256"]
+        assert successful["status"] == "PASS" and successful["stderr"] == ""
+        assert successful["result"]["inventory_sha256"] == sha(invraw)
+    mem = {}
+    for entry in inv["owned"]+inv["external"]:
+        path = entry["path"]
+        assert path not in mem
+        data = (ROOT/path).read_bytes()
+        assert sha(data) == entry["sha256"] and len(data) == entry["size"], path
+        mem[path] = data
+    context_before = {}
+    contexts = []
+    for entry in inv["context"]:
+        data = (ROOT/entry["path"]).read_bytes()
+        context_before[entry["path"]] = data
+        contexts.append(dict(path=entry["path"],inherited=entry["inherited"],
+                             inventory_current=entry["current"],actual=sha(data),
+                             drift=sha(data) != entry["inherited"]))
+    assert len(context_before) == 4
+    frozen = types.MappingProxyType(mem)
+    if not pre:
+        assert seal["report_sha256"] == sha(mem[REPORT])
+        assert seal["verifier_sha256"] == sha(mem[PREFIX+"verify.py"])
+    allowed_sources = {str(ROOT/(PREFIX+name+".py")):mem[PREFIX+name+".py"]
+                       for name in ("mathkit","research")}
+    # The outside-execution probe is compiled before the guard and never admitted.
+    outside_code = compile("pass","<outside-execution-probe>","exec")
+    allowed_codes = set()
+    active = [True]
+    def guard(event,args):
+        if not active[0]:
+            return
+        if event == "open":
+            raise PermissionError("I174 replay forbids all filesystem opens")
+        if event.startswith(("socket.","subprocess.")) or event in {
+            "os.mkdir","os.remove","os.rmdir","os.rename","os.link","os.symlink",
+            "os.chmod","os.chown","os.truncate","os.utime","os.system",
+            "os.posix_spawn","os.fork","os.exec","os.chdir","os.putenv","os.unsetenv",
+        }:
+            raise PermissionError("I174 forbidden side effect: "+event)
+        if event == "compile":
+            source,filename = args
+            if isinstance(source,str):
+                source = source.encode()
+            if filename not in allowed_sources or source != allowed_sources[filename]:
+                raise PermissionError("I174 unbound or forged compilation")
+        if event == "exec" and args[0] not in allowed_codes:
+            raise PermissionError("I174 unbound execution")
+    sys.addaudithook(guard)
+    probes = []
+    probe_path = str(HERE/"MUST-NOT-BE-CREATED")
+    tests = [
+        ("write",lambda:open(probe_path,"w")),
+        ("mutation",lambda:os.mkdir(probe_path)),
+        ("network",lambda:socket.socket()),
+        ("subprocess",lambda:subprocess.Popen([sys.executable,"-V"])),
+        ("unbound-read",lambda:open("/etc/hosts","rb")),
+        ("outside-compile",lambda:compile("pass","<outside>","exec")),
+        ("outside-exec",lambda:exec(outside_code,{})),
+        ("forged-owned-source",lambda:compile(b"pass",str(HERE/"mathkit.py"),"exec")),
+    ]
+    for name,probe in tests:
+        try:
+            probe()
+        except PermissionError:
+            probes.append(dict(probe=name,blocked=True))
+        else:
+            raise AssertionError("unblocked probe: "+name)
+    modules = {}
+    for name in ("mathkit","research"):
+        filename = str(HERE/(name+".py"))
+        code = compile(allowed_sources[filename],filename,"exec")
+        def admit(c):
+            allowed_codes.add(c)
+            for v in c.co_consts:
+                if isinstance(v,types.CodeType):
+                    admit(v)
+        admit(code)
+        mod = types.ModuleType(name)
+        mod.__file__ = filename
+        sys.modules[name] = mod
+        exec(code,mod.__dict__)
+        modules[name] = mod
+    comparisons = []
+    for job in inv["replays"]:
+        t0 = time.monotonic()
+        result = getattr(modules["research"],job["function"])(frozen)
+        output = (json.dumps(result,sort_keys=True,indent=2)+"\n").encode()
+        assert output == mem[job["payload"]], job["function"]
+        comparisons.append(dict(function=job["function"],payload=job["payload"],
+                                sha256=sha(output),byte_identical=True,
+                                seconds=time.monotonic()-t0))
+    active[0] = False
+    assert all_owned() - controls == {e["path"] for e in inv["owned"]}
+    for path,data in mem.items():
+        assert (ROOT/path).read_bytes() == data, ("changed",path)
+    for path,data in context_before.items():
+        assert (ROOT/path).read_bytes() == data, ("context changed",path)
+    for path,data in controlbytes.items():
+        assert (ROOT/path).read_bytes() == data, ("control changed",path)
+    result = dict(status="PASS",iteration=174,prevalidation=pre,probes=probes,
+                  comparisons=comparisons,owned=len(inv["owned"]),external=len(inv["external"]),
+                  contexts=contexts,inventory_sha256=sha(invraw),report_sha256=sha(mem[REPORT]),
+                  verifier_sha256=sha(mem[PREFIX+"verify.py"]),
+                  before_after="all owned, external, controls and current context bytes unchanged",
+                  runtime_seconds=time.monotonic()-started,
+                  limits="Python audit guard, not OS sandboxing; clean-clone reconstruction not tested")
+    if not pre:
+        result["seal_sha256"] = sha(controlbytes[PREFIX+"seal.json"])
+    print(json.dumps(result,indent=2,sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

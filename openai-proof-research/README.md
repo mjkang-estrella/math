@@ -1,16 +1,16 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I173](frontier/iterations/i173-brace-high-loss-octagons.md)
-passes the I172 audits but finds no high-loss brace. Its 236 declared
-surgery histories include 212 certified brace outputs, all with loss zero.
-Q173 proves a finite survivor-saturation obstruction: the first operation
-already absorbs the missing directions. Parent sealed replay and separate
-checks of 236 survivor bases, 328,920 matching witnesses and 1,500 rational
-identities pass. The
-[parent disposition](frontier/iterations/i173-brace-high-loss-octagons-parent-disposition.md)
-keeps the exact finite scope and all failures.
-[I174](frontier/iterations/iteration174-prism-gadget-survival-factory-astra-task.json)
-tests punctured-prism gadgets with an early survivor-saturation check.
+**Structural-graph update:** [I174](frontier/iterations/i174-prism-gadget-survival.md)
+passes the I173 certificate audit. The order-32 prism-gadget construction
+starts with loss 3, but all six bounded first surgeries have loss zero.
+S174 proves conditional preservation of survival defect through complete,
+exterior-controlled splice fibres, without attachment affine fullness.
+Changing only the untouched gadget cannot repair the certified exteriors.
+Parent replay and 15 independent complete seven-family checks pass. The
+[parent disposition](frontier/iterations/i174-prism-gadget-survival-parent-disposition.md)
+records the scope and preserved parent-document packaging interruption.
+[I175](frontier/iterations/iteration175-affected-prism-exterior-factory-astra-task.json)
+tests affected P8 exteriors and the missing-active-type boundary.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)

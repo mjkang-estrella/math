@@ -1,0 +1,355 @@
+"""I174 bounded experiments. Inputs are authenticated bytes supplied by caller."""
+import json
+from collections import Counter
+from fractions import Fraction
+from itertools import combinations
+from mathkit import *
+
+OLD = "frontier/experiments/i173_brace_high_loss_octagons/"
+
+
+def load(memory, name):
+    return json.loads(memory[OLD+name])
+
+
+def compare_record(record):
+    fresh = analyze(record["graph"],record["uvxy"])
+    for k in fresh["row"]:
+        assert fresh["row"][k] == record["row"][k], (k,fresh["row"],record["row"])
+    for k in fresh["families"]:
+        assert fresh["families"][k] == list(map(tuple,record["families"][k])), k
+    assert fresh["beta"] == tuple(record["beta"])
+    assert fresh["c"] == tuple(record["c"])
+    S = sorted(fresh["families"]["N10"]+fresh["families"]["N01"]+fresh["families"]["N11"])
+    difference = diff(record["bridge"],fresh["bridge"])
+    assert rank(differences(S)+[difference]) == rank(differences(S))
+    for name in fresh["residuals"]:
+        for field in ("q","good","residual","anchor","residual_directions"):
+            assert json.dumps(fresh["residuals"][name][field]) == json.dumps(record["residuals"][name][field]), (name,field)
+    fresh["ancestor_bridge_difference"] = difference
+    return fresh
+
+
+def face_set(g):
+    return {normalized(list(f)) for f in g["faces"]}
+
+
+def same_unoriented_faces(a,b):
+    def unoriented(g):
+        return {min(normalized(f),normalized(f[::-1])) for f in g["faces"]}
+    assert unoriented(a) == unoriented(b)
+
+
+def mandatory(memory):
+    saved = load(memory,"mandatory-attempt-01.json")
+    expected = [0,520,522,524,527,528,530,533,534,536,539,431]
+    assert [r["index"] for r in saved["census"]] == expected
+    out = []
+    for r in saved["census"]:
+        f = compare_record(r)
+        f["index"] = r["index"]
+        assert f["row"]["ell"] == (1 if r["index"] in (0,431) else 7)
+        out.append(f)
+    c171 = compare_record(saved["C171"])
+    weights = saved["C171"]["weight_checks"]
+    w = list(map(Fraction,weights["w"]))
+    dot = lambda row: sum(a*b for a,b in zip(w,row))
+    F,T,C0 = [tuple(weights[k]) for k in ("F_vector","T_vector","C0")]
+    fam = c171["families"]
+    L = differences(fam["N10"]+fam["N01"]+fam["N11"])
+    V = differences(fam["N00"])
+    assert all(dot(v) == 0 for v in L+V)
+    assert C0 in c171["cycles"]
+    assert {dot(diff(n,C0)) for n in fam["N00"]} == {Fraction(1)}
+    assert dot(diff(F,C0)) == Fraction(1,14) and dot(diff(T,C0)) == Fraction(-1,2)
+    assert F != T
+    for factor in (F,T):
+        a,parts = parts_vector(c171["graph"],factor)
+        assert len(parts) == 2 and all(len(ns) == 2 for ns in a.values())
+    u,v,x,y = c171["uvxy"]
+    es = list(map(tuple,c171["graph"]["edges"]))
+    switch = tuple(int(e in (edge(u,v),edge(x,y)))-int(e in (edge(u,x),edge(v,y))) for e in es)
+    assert diff(F,switch) in fam["N00"]
+    c171["weight_checks"] = weights
+    c171["brace"] = brace(c171["graph"])
+    assert c171["brace"]["brace"] and len(c171["brace"]["extended_pairs"]) == 1032
+    high = []
+    for r in saved["high_loss"]:
+        built, uvxy, construction = attached(r["m"],4,4,True)
+        assert built["edges"] == r["graph"]["edges"] and uvxy == r["uvxy"]
+        same_unoriented_faces(built,r["graph"])
+        f = compare_record(r)
+        assert f["row"]["ell"] == r["m"]-3
+        f["construction"] = construction
+        high.append(f)
+    ancestor = load(memory,"ancestor_audit-attempt-01.json")
+    records = load(memory,"surgeries-attempt-01.json")["records"]
+    base = next(r for r in ancestor["octagons"] if r["m"] == 6)
+    first = next(r for r in records if r["m"] == 6 and len(r["history"]) == 1)
+    second = next(r for r in records if r["m"] == 6 and len(r["history"]) == 2)
+    built1 = expand(base["graph"],first["history"][0])
+    assert built1["edges"] == first["graph"]["edges"]
+    same_unoriented_faces(built1,first["graph"])
+    # Preserve saved face numbering as data for the second declared triple.
+    built2 = expand(first["graph"],second["history"][1])
+    assert built2["edges"] == second["graph"]["edges"]
+    same_unoriented_faces(built2,second["graph"])
+    reps = [compare_record(first),compare_record(second)]
+    assert all(r["row"]["ell"] == 0 for r in reps)
+    sep = (1,-1,0,2,-2,0,2,0,4,0,1,0,1,0,0,0,-1,0,0,0,0,-1,0,0,0,0,1,0,0,0)
+    r = out[-1]
+    fam = r["families"]
+    lu = differences(fam["N10"]+fam["N01"]+fam["N11"])
+    lu += sum((differences(fam[k]) for k in ("Pux","Pvy","D11")),[])
+    dot431 = lambda z: sum(a*b for a,b in zip(sep,z))
+    assert all(dot431(z) == 0 for z in lu)
+    assert dot431(r["bridge"]) == 10
+    assert abs(dot431(diff(*fam["N00"]))) == 8
+    return dict(status="PASS",order=expected+["C171","G6","G10","I173-first","I173-second"],
+                census=out,C171=c171,high_loss=high,representative_surgeries=reps,
+                separator431=dict(bridge=10,old_absolute=8))
+
+
+def certificates(memory):
+    old = load(memory,"surgeries-attempt-01.json")["records"]
+    post = load(memory,"post_analysis-attempt-01.json")["records"]
+    assert len(old) == len(post) == 236
+    rows = []
+    success = Counter()
+    failures = identities = 0
+    empty = []
+    for index,(r,p) in enumerate(zip(old,post)):
+        g = r["graph"]
+        certify(g)
+        u,v,x,y = r["uvxy"]
+        assert [len(a)-1 for a in boundary(g,r["uvxy"])[:2]] == [3,3]
+        es = list(map(tuple,g["edges"]))
+        ei,fi = es.index(edge(u,v)),es.index(edge(x,y))
+        D = len(es)-g["n"]+1
+        assert D == p["ambient_degree_kernel_dimension"]
+        anchor = tuple(p["anchor"])
+        shown = list(map(tuple,p["survivor_basis_cycles"]))
+        for c in [anchor]+shown:
+            cycle_check(g,c)
+            assert c[ei] or c[fi]
+        directions = [diff(c,anchor) for c in shown]
+        assert len(directions) == rank(directions) == D == p["survivor_rank"]
+        expected_pairs = {(i,j) for i,j in combinations(range(len(es)),2) if len(set(es[i]+es[j])) == 4}
+        witnesses = r["brace"]["extended_pairs"]
+        failed = [tuple(z) for z in r["brace"]["failed_pairs"]]
+        given = [(i,j) for i,j,_ in witnesses]+failed
+        assert len(given) == len(set(given)) and set(given) == expected_pairs
+        for i,j,match in witnesses:
+            matching_check(g,match,(i,j))
+        depth = len(r["history"])
+        success[depth] += len(witnesses)
+        assert len(failed) == (3 if depth == 1 else 0)
+        assert r["brace"]["brace"] == (depth == 2)
+        if failed:
+            assert len(r["cuts"]) == 1
+            cut = r["cuts"][0]
+            side = set(cut["sides"][1])
+            delta = {i for i,(a,b) in enumerate(es) if (a in side) != (b in side)}
+            colors = coloring(adjacency(g))
+            inside = Counter(colors[z] for z in side)
+            majority = max(inside,key=inside.get)
+            assert abs(inside[0]-inside[1]) == 1 and len(delta) == 3
+            assert all(colors[a if a in side else b] == majority for i,(a,b) in enumerate(es) if i in delta)
+            assert set(failed) == set(combinations(sorted(delta),2))
+            failures += len(failed)
+        for k in ("old_direction_coordinates","path_direction_coordinates"):
+            for entry in p[k]:
+                coeff = list(map(Fraction,entry["coefficients"]))
+                assert len(coeff) == len(directions)
+                got = tuple(sum(c*row[j] for c,row in zip(coeff,directions)) for j in range(len(es)))
+                assert got == tuple(entry["direction"])
+                assert all(Fraction(z) == 0 for z in entry["remainder"]) and entry["absorbed"]
+                identities += 1
+        if r["transport"]["paired_survivors"] == 0:
+            assert depth == 2
+            empty.append(dict(index=index,m=r["m"],history=r["history"],transport=r["transport"]))
+        rows.append(dict(index=index,m=r["m"],history=r["history"],dimension=D,
+                         matching_witnesses=len(witnesses),failed_pairs=failed,
+                         absorption_identities=sum(len(p[k]) for k in ("old_direction_coordinates","path_direction_coordinates"))))
+    assert success == {1:26076,2:302844}
+    assert failures == 72 and identities == 1500 and len(empty) == 6
+    # Original-scope signed identities and projection checks, without ancestor execution.
+    a = load(memory,"ancestor_audit-attempt-01.json")
+    remote = []
+    for r in a["remote"]:
+        g = r["graph"]
+        certify(g)
+        coefficients = [Fraction(z["coefficient"]) for z in r["signed_certificate"]]
+        cycles0 = [z["C"] for z in r["signed_certificate"]]
+        for c in cycles0:
+            cycle_check(g,c)
+        assert sum(coefficients) == 1
+        total = tuple(sum(c*row[j] for c,row in zip(coefficients,cycles0)) for j in range(len(g["edges"])))
+        assert total == tuple(r["prescribed_factor"])
+        u,v,x,y = r["uvxy"]
+        es = list(map(tuple,g["edges"]))
+        ei,fi = es.index(edge(u,v)),es.index(edge(x,y))
+        lost = sum(c for c,row in zip(coefficients,cycles0) if not row[ei] and not row[fi])
+        assert lost == Fraction(r["lost_total"])
+        remote.append(dict(lost_total=str(lost),terms=len(coefficients),prescribed_vector_checked=True))
+    projection = []
+    for r in a["octagons"]:
+        m = r["m"]
+        g,uvxy,construction = attached(m,4,4,True)
+        assert g["edges"] == r["graph"]["edges"]
+        same_unoriented_faces(g,r["graph"])
+        fresh = compare_record(r)
+        projection.append(project_classes(fresh,m,4,4,True))
+    return dict(status="PASS",records=rows,matching_totals=dict(success),failed=failures,
+                identities=identities,empty_canonical_pairs=empty,remote_signed=remote,
+                cube_projection=projection,
+                original_scope=dict(S172="PASS ORIGINAL signed remote transport only",
+                                    K172="PASS ORIGINAL non-braces",
+                                    R172="PASS ORIGINAL four-to-one and actual residual translation",
+                                    Q173="PASS finite 24+212 labelled histories; no new ancestor search"))
+
+
+def project_classes(record,m,ka,kb,legacy=False):
+    g = record["graph"]
+    base = prism(m)
+    aoff,boff = 2*m,2*m+2*ka
+    amap = {1:1,m-1:ka-1,m:ka}
+    bmap = {1:1,m:kb,m+2:kb-1}
+    if legacy:
+        amap = {1:1,m-1:4,m:3}
+        bmap = {1:1,m:4,m+2:3}
+    mapping = {edge(z,aoff+p):edge(z,0) for z,p in amap.items()}
+    mapping.update({edge(z,boff+p):edge(z,m+1) for z,p in bmap.items()})
+    bes = list(map(tuple,base["edges"]))
+    def project(row):
+        out = [0]*len(bes)
+        for (a,b),val in zip(g["edges"],row):
+            e = (a,b)
+            if e in mapping:
+                out[bes.index(mapping[e])] += val
+            elif e in bes:
+                out[bes.index(e)] += val
+        return tuple(out)
+    _,bf = seven(base,[0,m,1,m+1])
+    families = {}
+    for k,rows in record["families"].items():
+        counts = Counter(map(project,rows))
+        assert set(counts) == set(bf[k]),k
+        if legacy:
+            assert set(counts.values()) == {4}
+        families[k] = [dict(vector=v,fibre=n) for v,n in sorted(counts.items())]
+    return dict(m=m,attachments=[ka,kb],families=families,
+                projected_beta=project(record["beta"]),projected_c=project(record["c"]),
+                projected_bridge=project(record["bridge"]))
+
+
+def port_data(k):
+    g = prism(k)
+    cs = cycles(g)
+    es = list(map(tuple,g["edges"]))
+    ports = (1,k-1,k)
+    groups = {p:[c for c in cs if not c[es.index(edge(0,p))]] for p in ports}
+    rows = sum((differences(groups[p]) for p in ports),[])
+    return dict(prism=k,cycles=len(cs),dimension=rank(differences(cs)),
+                port_groups=[dict(omitted=p,count=len(groups[p]),dimension=rank(differences(groups[p])),
+                                  cycles=groups[p]) for p in ports],
+                combined_port_kernel=rank(rows))
+
+
+def choices(g,side,uvxy):
+    perimeter = {edge(a,b) for a,b in zip(boundary(g,uvxy)[2],boundary(g,uvxy)[2][1:]+boundary(g,uvxy)[2][:1])}
+    side = set(side)
+    color = coloring(adjacency(g))
+    valid,skips = [],[]
+    for fi,face in enumerate(g["faces"]):
+        for i,j in combinations(range(len(face)),2):
+            e = edge(face[i],face[(i+1)%len(face)])
+            f = edge(face[j],face[(j+1)%len(face)])
+            se,sf = set(e),set(f)
+            cross = (se <= side and not sf & side) or (sf <= side and not se & side)
+            if not cross:
+                continue
+            reason = None
+            if e in perimeter or f in perimeter:
+                reason = "protected perimeter"
+            elif len(se | sf) != 4:
+                reason = "not disjoint"
+            elif color[face[i]] == color[face[(j+1)%len(face)]]:
+                reason = "not bipartite expansion"
+            if reason:
+                skips.append(dict(step=[fi,i,j],edges=[e,f],reason=reason))
+            else:
+                valid.append([fi,i,j])
+    return dict(order="canonical oriented faces; lex (face,index,index); numeric labels",
+                valid=valid,skips=skips)
+
+
+def experiments(memory):
+    # Mandatory tests are a prerequisite, called before this entry by the runner/verifier.
+    ports = [port_data(4),port_data(6)]
+    records, initials = [],[]
+    types = [(6,6),(4,6),(6,4)]
+    for ka,kb in types:
+        g,uvxy,construction = attached(6,ka,kb)
+        initial = analyze(g,uvxy)
+        initial["construction"] = construction
+        initial["projection"] = project_classes(initial,6,ka,kb)
+        initial["brace"] = brace(g)
+        plan = choices(g,construction["sides"][0],uvxy)
+        initial["first_cut_plan"] = plan
+        initial["attachments"] = [ka,kb]
+        initials.append(initial)
+        for ordinal,step in enumerate(plan["valid"][:2]):
+            h = expand(g,step)
+            child = analyze(h,uvxy)
+            child.update(attachments=[ka,kb],history=[step],first_ordinal=ordinal,
+                         brace=brace(h))
+            child["saturation_decomposition"] = kernel_certificate(child,construction["sides"][1])
+            if child["row"]["ell"] < 2:
+                child["decision"] = "STOP: saturated" if child["saturation"]["rank"] == child["saturation"]["ambient"] else "STOP: loss below two"
+            else:
+                second = choices(h,construction["sides"][1],uvxy)
+                child["second_cut_plan"] = second
+                finals = []
+                for step2 in second["valid"][:4]:
+                    final = analyze(expand(h,step2),uvxy)
+                    final["brace"] = brace(final["graph"])
+                    final["history"] = [step,step2]
+                    finals.append(final)
+                child["second_children"] = finals
+            records.append(child)
+    return dict(status="PASS",ports=ports,initials=initials,first_children=records,
+                policy="P6/P6 first history tested once, then second; mixed types first two each; only loss>=2 gets up to four second surgeries",
+                first_count=len(records),second_count=sum(len(r.get("second_children",[])) for r in records))
+
+
+def kernel_certificate(record,side):
+    """Certify a local-to-exterior rank split at the untouched gadget."""
+    side = set(side)
+    g = record["graph"]
+    internal = [i for i,(u,v) in enumerate(g["edges"]) if u in side and v in side]
+    exterior = [i for i in range(len(g["edges"])) if i not in internal]
+    fam = record["families"]
+    S = sorted(fam["N10"]+fam["N01"]+fam["N11"])
+    fibres = defaultdict(list)
+    for c in S:
+        fibres[tuple(c[i] for i in exterior)].append(c)
+    local = sum((differences(rows) for rows in fibres.values()),[])
+    projected = [tuple(v[i] for i in exterior) for v in differences(S)]
+    local_basis = integer_basis(local)
+    image_basis = integer_basis(projected)
+    kernel_rank = rank(local)
+    image_rank = rank(projected)
+    assert rank(differences(S)) == kernel_rank+image_rank
+    # Port-type breakdown pays which internal directions are present.
+    cut = [i for i,(u,v) in enumerate(g["edges"]) if (u in side) != (v in side)]
+    grouped = defaultdict(list)
+    for rows in fibres.values():
+        key = tuple(rows[0][i] for i in cut)
+        grouped[key] += differences(rows)
+    return dict(side=sorted(side),internal_indices=internal,exterior_indices=exterior,
+                kernel_rank=kernel_rank,image_rank=image_rank,
+                ambient=record["saturation"]["ambient"],
+                local_basis=[local[i] for i in local_basis],
+                image_basis=[projected[i] for i in image_basis],
+                port_types=[dict(status=k,rank=rank(v)) for k,v in sorted(grouped.items())])
