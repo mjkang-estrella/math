@@ -21,14 +21,13 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I179](iterations/i179-path-recombination.md)
-proves a finite two-colour lock but leaves L179 unresolved.
-Parent replay and independent complete recoloring checks pass.
-The [parent disposition](iterations/i179-path-recombination-parent-disposition.md)
-adds a verified six-cycle exchange with another actual survivor helper,
-paying the proposed finite follow-up without a third-colour detour.
-[I180](iterations/iteration180-survivor-helper-connectivity-factory-astra-task.json)
-targets graph-independent lost-fibre connectivity by these actual moves.
+**Structural-graph update:** [I180](iterations/i180-survivor-helper-connectivity.md)
+gives the complete retained helper path, 24 directed witnesses and 99
+cycle-obstructed moves. Replay and independent parent checks pass.
+The [parent disposition](iterations/i180-survivor-helper-connectivity-parent-disposition.md)
+retains unresolved H180/L179 and the finite failure of strict Hamming descent.
+[I181](iterations/iteration181-six-cycle-helper-factory-astra-task.json)
+targets actual helper existence for one port-disjoint two-square patch.
 A high-loss brace is still missing.
 Technical only; universal exchange, (T), and Q164 remain open.
 **8 accepted, 2 remaining.**

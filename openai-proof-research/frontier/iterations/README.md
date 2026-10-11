@@ -16,6 +16,21 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I180 finite helper path and I181 local extension
+
+[I180](i180-survivor-helper-connectivity.md) certifies the entire retained
+five-vertex helper path, its 24 directed witnesses and 99 rejected moves.
+Nine fixed-pair identities have no safe first move; strict Hamming descent
+also fails. Neither limitation refutes H180, which remains unresolved.
+
+Parent replay (~7.87 s; two payloads, eight probes) and independent
+complete helper checks pass. The
+[parent disposition](i180-survivor-helper-connectivity-parent-disposition.md)
+records exact scope, preservation and a historical count-explanation correction.
+[I181](iteration181-six-cycle-helper-factory-astra-task.json) targets
+actual helpers for one port-disjoint two-square patch, without new graph tests.
+**Eight accepted, two remaining.**
+
 ## I179 finite lock, parent helper and I180 connectivity
 
 [I179](i179-path-recombination.md) proves a finite two-colour lock:

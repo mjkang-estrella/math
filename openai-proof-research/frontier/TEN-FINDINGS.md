@@ -6,6 +6,24 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I180 finite helper path and I181 local extension
+
+[I180](iterations/i180-survivor-helper-connectivity.md) verifies exactly
+$p_0-p_1-p_2-p_3-p_4$ on the retained lost fibre: 24 directed witnesses,
+99 cycle-obstructed moves, nine fixed-pair locks and a Hamming-distance
+plateau. General connectivity H180 and residual bound L179 remain unresolved.
+
+Parent replay passes (~7.87 s; two byte-identical payloads, eight probes;
+44 owned, 913 strict inputs and four contexts).
+Independent parent DFS, exact-sum and component checks verify the
+complete helper graph, every output word and both finite strategy limits.
+The [parent disposition](iterations/i180-survivor-helper-connectivity-parent-disposition.md)
+also corrects a historical JSON-count explanation without changing sealed bytes.
+[I181](iterations/iteration181-six-cycle-helper-factory-astra-task.json)
+isolates actual helper existence for a port-disjoint six-cycle formed
+by two adjacent quadrilateral faces. No new graph tests are authorized.
+**Technical only. Eight accepted, two remaining; research active.**
+
 ### I179 finite lock, parent helper and I180 connectivity
 
 [I179](iterations/i179-path-recombination.md) leaves L179 unresolved.
