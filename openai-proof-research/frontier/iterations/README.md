@@ -16,6 +16,20 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I183 partial checkpoint, finalization prepared
+
+[The resumed checkpoint](i183-cptp-survival-resumed.md) is explicitly
+incomplete and unsealed. [Parent review](i183-checkpoint-parent-disposition.md)
+passes all byte checks, four-chunk replay, eight probes and independent
+formal shore/attachment certificates. Fixed-local invariance,
+continuation distinctness and the incidence reduction are technical
+corrections only. E183 remains unresolved; the alternating-cycle
+sufficient route is not equivalent to it. The
+[bounded finalization brief](iteration183-cptp-finalization-brief.md)
+assigns the eleven missing controls and facial-arc reconstruction in
+new directories, preserving every checkpoint byte.
+**Eight accepted, two remaining.**
+
 ## I183 interrupted, continuation prepared
 
 The [interruption record](i183-provider-failure-recovery.md) distinguishes
