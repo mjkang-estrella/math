@@ -21,19 +21,19 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**I189 patch transport checked, E183 still open:**
-[Parent review](iterations/i189-patch-route-transport-parent-disposition.md)
-passes the complete ten-row patch-restriction classification
-(independently re-derived by enumerating all $2^{11}$ local subsets),
-exact rest-pairing admissibility, the type-preserving $K_B\to K_A$
-transport, and the conditional $F$ and short-repair transports; all
-eight exterior witnesses were verified edge-by-edge. The
-necessary-and-sufficient restatement (T_R) is correct, but its
-survivor-typed $\beta$ instance is unproved and no fully hypothesized
-counterexample exists; original E183 stays UNRESOLVED.
-[I190](iterations/iteration190-beta-pairing-survivor-brief.md) attacks
-the pairing layer through brace consequences and the manuscript's
-circulation/Pfaffian operations. Local ears stay parked.
+**I190 pairing analysis checked, E183 still open:**
+[Parent review](iterations/i190-beta-pairing-survivor-parent-disposition.md)
+passes the residual connectivity, the exact $J$-grouped patch-matching
+table (independently re-derived by enumerating all $2^{11}$ local
+subsets), the universal alpha terminal-deletion paths, the constant
+Pfaffian sign, and the conditional $W$-square alpha-to-beta switch with
+full type preservation. The counterexample hypothesis (C190) is
+sharpened to rigid cut profiles and excluded squares, but neither
+contradicted nor realized; original E183 stays UNRESOLVED at (R190).
+[I191](iterations/iteration191-concentration-exclusion-brief.md) is the
+final focused E183 attempt: concentration exclusion or a fully
+hypothesized counterexample. On another UNRESOLVED the line parks and
+work pivots to Q164/universal exchange. Local ears stay parked.
 **Eight accepted, two remaining.**
 
 **I187 global-state analysis checked:** [Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)
