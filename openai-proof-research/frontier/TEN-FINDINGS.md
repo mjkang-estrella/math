@@ -6,6 +6,29 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I178 complete relations and I179 path recombination
+
+[I178](iterations/i178-five-port-annihilator.md) passes the scoped I177
+audit and derives all four projected relations, their actual lifts,
+anchor invariance and the conditional survivor-annihilator presentation.
+Complete fixed-exterior enumeration leaves two additional lost local
+types; their explicit residuals give the exact full-cycle completion
+criterion. A deficient actual graph or structural impossibility theorem
+is **not** established.
+
+Parent replay passes (~27.95 s; two byte-identical payloads, eight probes;
+81 owned, 678 strict external plus four contexts).
+Independent parent checks exhaust five retained products, every
+noncrossing fixed-exterior type, all four relations, 84 individual
+anchor changes and both lost-fibre target formulas.
+The [parent disposition](iterations/i178-five-port-annihilator-parent-disposition.md)
+accepts only the conditional technical result and preserves failures.
+All five systems have loss zero. **No ninth nomination.**
+[I179](iterations/iteration179-path-recombination-factory-astra-task.json)
+attempts a single graph-theoretic residual-rank bound under explicit
+fixed-interface and brace-completion hypotheses, without a graph sweep.
+**8 accepted, 2 remaining; research active.**
+
 ### I177 adjacent-port saturation and I178 compatibility
 
 [I177](iterations/i177-adjacent-port-surgery.md) passes all original-scope
