@@ -16,6 +16,33 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I167 exchange-step audit, corrected system, and I168 continuation
+
+[I167](i167-exchange-step-braces.md) **fails I166's Section 5 aggregated
+constant-weight equations as written** — an explicit vertex-potential
+witness on an expanded cube gives $N_{10}$ aggregate 2 versus $N_{01}$
+aggregate 0 at $\delta=0$, so no common $\gamma$ exists; the original
+bytes and failure are preserved unrepaired — and proves the corrected
+complete six-class system CW167 with exact cross-class offsets. Its
+independent audit passes the face-toggle lemma, the B18 three-way
+certificates, the census anchor, all 240 splice instances, the original
+survival statistics and the exact-rank methodology. New proved
+full-scope results: the transported child hull has exactly the survival
+rank, so path classes must supply $2+(d(G)-d_{\rm surv})$ directions;
+P167 bounds every fixed-terminal path class strictly below the cycle
+rank of $K$; A167 gives a dual-tree antichain obstruction to any
+one-direction face transfer. A 636-expansion campaign finds no exchange
+counterexample (required extra-rank distribution up to 9). The McCuaig
+route is reduced to an exact typed-port interface (14 versus 8 witness),
+with the original 2001 article retrieval-blocked, distinguished from
+absence. Parent sealed replay passes (~28 s). The
+[parent disposition](i167-exchange-step-braces-parent-disposition.md)
+records the scope: technical only, no ninth nomination; the exchange
+step, (T) and Q164 remain open.
+[I168](iteration168-cross-class-exchange-factory-astra-task.json)
+audits the new interfaces and attacks the exchange step through the
+joint cross-class system. **Eight accepted, two remaining.**
+
 ## I166 brace campaign and I167 exchange-step continuation
 
 [I166](i166-affine-span-braces.md) independently re-derived all audited
@@ -30,8 +57,9 @@ passes; the [parent disposition](i166-affine-span-parent-disposition.md)
 records the scope. No independent full-proof PASS or substantial
 nomination is inferred.
 [I167](iteration167-exchange-step-braces-factory-astra-task.json)
-audits the new interfaces and attacks the exchange step and McCuaig's
-brace-generation backbone. **Eight accepted, two remaining.**
+audited the new interfaces and attacked the exchange step and McCuaig's
+brace-generation backbone; its outcome is recorded above. **Eight
+accepted, two remaining.**
 
 ## I165 square-step refutation and I166 affine-span continuation
 

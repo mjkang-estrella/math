@@ -6,6 +6,42 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I167 corrected exchange system and I168 continuation
+
+[I167](iterations/i167-exchange-step-braces.md) **fails I166's Section 5
+aggregated constant-weight equations as written**: on an expanded cube, a
+unit vertex potential gives every child Hamiltonian cycle weight 2 with
+$\delta=0$, yet the aggregated $N_{10}$ and $N_{01}$ parent weights are 2
+and 0, so no common $\gamma$ exists. The original I166 bytes are
+preserved and the failure is not repaired in place; I167 proves the
+corrected complete six-class system **CW167** with normalized parent
+weights and exact cross-class offsets, verified by signed-weight checks
+on complete class sets for all 636 face-labelled admissible expansions
+of the order-20 census (no exchange counterexample; required extra-rank
+distribution $2{:}138, 3{:}441, 5{:}34, 7{:}13, 9{:}10$). Its
+independent audit passes I166's face-toggle lemma, B18 certificates,
+census anchor, 240 splices, survival counts and rank methodology. New
+proved full-scope results: the transported child hull has exactly the
+survival rank, so path classes must jointly supply
+$2+(d(G)-d_{\rm surv})$ directions; **P167** bounds every fixed-terminal
+spanning-path class strictly below the cycle rank of the deleted-edge
+graph (within-class constancy alone cannot force potentials);
+**A167** proves the rooted dual shores of Hamiltonian cycles form an
+antichain, ruling out one-direction face transfers. The McCuaig
+generation route is reduced to an exact typed-port interface
+(order-16 witness: 14 unrestricted versus 8 typed retract cycles); the
+original 2001 article remains retrieval-blocked (HTTP 403), recorded as
+blocked, not absent. Parent hash precheck and sealed replay pass
+(~28 s); the two concurrently edited context ledgers are bound with
+their drift receipt preserved and excluded from replay premises only.
+The [parent disposition](iterations/i167-exchange-step-braces-parent-disposition.md)
+classifies the round **technical only, no ninth nomination**: the
+exchange step $d(H)\ge d(G)+2$, the brace theorem (T) and Q164 remain
+unproved and unrefuted. [I168](iterations/iteration168-cross-class-exchange-factory-astra-task.json)
+audits the new interfaces and attacks the exchange step through the
+joint cross-class system (single-family and within-family-only arguments
+are excluded). **8 accepted, 2 remaining; research active.**
+
 ### I166 brace campaign and I167 exchange-step continuation
 
 [I166](iterations/i166-affine-span-braces.md) independently re-derived

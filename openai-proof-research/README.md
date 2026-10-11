@@ -1,18 +1,22 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I166](frontier/iterations/i166-affine-span-braces.md)
-independently re-derived all audited I165 interfaces and delivers exact
-evidence on 438 distinct braces (orders 8–64): every sampled graph has
-full Hamiltonian-cycle affine dimension and none violates the sharp
-linear count target, which stays unproved and unrefuted. New certified
-technical facts: brace-only square-expansion generation fails at order
-18 (B18, three-way certificate), a proved face-toggle lemma rules out
-facial-switch spanning witnesses, and a quantified survival obstruction
-redirects the exchange-step proof. Parent sealed replay passes; the
-[parent disposition](frontier/iterations/i166-affine-span-parent-disposition.md)
-records the scope. [I167](frontier/iterations/iteration167-exchange-step-braces-factory-astra-task.json)
-now attacks the exchange step and evaluates McCuaig brace generation on
-Factory/Astra. **8 accepted, 2 remaining.**
+**Structural-graph update:** [I167](frontier/iterations/i167-exchange-step-braces.md)
+**fails I166's aggregated constant-weight equations as written** (explicit
+vertex-potential witness on an expanded cube; original failure preserved
+unrepaired) and proves the corrected complete six-class system CW167 with
+exact cross-class offsets. Its independent audit passes the face-toggle
+lemma, B18 certificates, census anchor, splices and survival counts, and
+it adds three proved full-scope results: the transported hull has exactly
+survival rank, a universal fixed-terminal path-rank deficit (P167), and a
+dual-tree antichain obstruction (A167). A 636-expansion campaign finds no
+exchange counterexample, with some steps requiring nine new directions;
+the McCuaig route reduces to an exact typed-port interface. The exchange
+step, the brace theorem and the sharp linear count target remain unproved
+and unrefuted. Parent sealed replay passes; the
+[parent disposition](frontier/iterations/i167-exchange-step-braces-parent-disposition.md)
+classifies the round technical only. [I168](frontier/iterations/iteration168-cross-class-exchange-factory-astra-task.json)
+now audits the new interfaces and attacks the exchange step through the
+joint cross-class system on Factory/Astra. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies full R154 as **TECHNICAL ONLY**, retaining I159's unchanged-original
