@@ -1,19 +1,18 @@
 # OpenAI mathematics research
 
-**I188 completed after two provider failures:** the
-[second resume](frontier/iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
-on a different provider driver returned; earlier failures are in the
-[recovery records](frontier/iterations/i188-provider-failure-recovery.md)
-([second](frontier/iterations/i188-provider-failure-recovery-2.md)).
-[Parent review](frontier/iterations/i188-patch-rooted-state-parent-disposition.md)
-passes the two-square faciality, six-triangle dual disk, one
-consistently signed marked cycle per group, marked nonvanishing and
-forced-leaf matching recovery, and independently re-derives the
-exhaustive exterior classification. The $A$-containing source image is
-nonempty, but survival of its recovered matchings is unproved and
-original E183 stays UNRESOLVED. [I189](frontier/iterations/iteration189-patch-route-transport-brief.md)
-attempts survivor transport via a complete patch-route classification.
-**8 accepted, 2 remaining.**
+**I189 patch classification checked, transport conditional:**
+[Parent review](frontier/iterations/i189-patch-route-transport-parent-disposition.md)
+passes the complete ten-row patch-restriction classification
+(independently re-derived by exhaustive enumeration of all $2^{11}$
+local edge subsets), the exact rest-pairing admissibility, the toggled
+$K_B$ transport, and the conditional exterior-assisted and short-repair
+transports, with all eight exterior witnesses verified edge-by-edge.
+Original E183 stays UNRESOLVED: open classes need an unrestricted rest
+change giving cycle-free $\beta$ pairing and survivor type
+simultaneously, and no fully hypothesized counterexample exists.
+[I190](frontier/iterations/iteration190-beta-pairing-survivor-brief.md)
+attacks the pairing layer via brace consequences and the manuscript's
+circulation/Pfaffian operations. **8 accepted, 2 remaining.**
 
 **I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)
 passes the dual hypotheses, conditional recovery criterion and restricted

@@ -6,28 +6,26 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
-### I188 patch-geometry deductions checked after two provider failures
+### I189 patch classification checked; transport conditional, E183 open
 
-The first I188 run and its first resume both failed at the provider
-with no outputs
-([recovery records](iterations/i188-provider-failure-recovery.md),
-[second](iterations/i188-provider-failure-recovery-2.md)); their drafts
-were relayed only as labelled unverified leads. The
-[second resume](iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
-on a different provider driver returned the
-[report](iterations/i188-patch-rooted-state.md): both squares facial, a
-six-triangle dual disk with roots $\{o,\ell,r\}$, one consistently
-signed marked cycle per source group, nonzero marked sum, and
-forced-leaf recovery of a perfect matching containing the frozen half
-$A$. [Parent review](iterations/i188-patch-rooted-state-parent-disposition.md)
-passes these deductions without repairs, authenticates all five outputs
-and seventeen inputs, and independently re-derives the step-6 exterior
-table by exhaustive enumeration ($131072$ assignments; exactly the
-claimed packings). Survivor existence in the marked image is unproved,
-so original E183 stays UNRESOLVED; no substantial finding is nominated.
-[I189](iterations/iteration189-patch-route-transport-brief.md)
-investigates survivor transport through a complete symbolic
-classification of Hamiltonian-cycle patch restrictions.
+[I189](iterations/i189-patch-route-transport.md) gives the complete
+ten-row degree-feasible classification of Hamiltonian patch
+restrictions (seven candidate rows), exact rest-pairing admissibility
+with the planar $\gamma$ exclusion, the type-preserving toggled
+transport $K_B\to K_A$, conditional exterior-assisted transports with
+eight explicit witnesses, and two-continuation matching repairs with
+short-repair sufficient conditions.
+[Parent review](iterations/i189-patch-route-transport-parent-disposition.md)
+passes these without repairs: the classification was independently
+re-derived by exhaustive enumeration of all $2^{11}$ local edge
+subsets, and every exterior witness verified edge-by-edge. The
+necessary-and-sufficient restatement (T_R) over all perfect matchings
+of $R=G-V(C)$ is correct; a survivor-typed cycle-free $\beta$ instance
+is unproved, and the $U=0134$ balanced repair provably yields lost $D$.
+Original E183 stays UNRESOLVED; no substantial finding is nominated.
+[I190](iterations/iteration190-beta-pairing-survivor-brief.md) attacks
+the pairing layer via brace consequences and the manuscript's
+circulation/Pfaffian operations.
 **Eight accepted, two remaining.**
 
 ### I187 marked-state deductions checked, patch-rooted geometry next
