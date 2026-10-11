@@ -16,6 +16,22 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I179 finite lock, parent helper and I180 connectivity
+
+[I179](i179-path-recombination.md) proves a finite two-colour lock:
+isolated cycles defeat every nontrivial recoloring of the five prescribed
+overlays. L179 remains unresolved. Parent replay passes (~6.41 s;
+three byte-identical payloads, eight probes), and an independent
+edge-by-edge enumeration confirms all 18 admissible recolorings.
+
+The [parent disposition](i179-path-recombination-parent-disposition.md)
+adds an actual same-type survivor helper, giving a safe six-cycle exchange
+for the first locked path. The state-0 third packing is unnecessary.
+[I180](iteration180-survivor-helper-connectivity-factory-astra-task.json)
+targets graph-independent connectivity of the complete lost-P fibre
+under actual helper moves. No general helper-existence result or
+substantial new finding is claimed. **Eight accepted, two remaining.**
+
 ## I178 complete relations and I179 path recombination
 
 [I178](i178-five-port-annihilator.md) supplies the complete four-relation

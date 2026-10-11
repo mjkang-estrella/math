@@ -6,6 +6,25 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I179 finite lock, parent helper and I180 connectivity
+
+[I179](iterations/i179-path-recombination.md) leaves L179 unresolved.
+Its actual two-colour lock is independently verified: all 18 admissible
+recolorings of five retained overlays give only the original unordered
+pair as complete cycle-free outputs. Parent sealed replay passes
+(~6.41 s; three byte-identical payloads, eight probes; 122 owned,
+774 strict external plus four contexts).
+
+The [parent disposition](iterations/i179-path-recombination-parent-disposition.md)
+also executes the proposed finite helper step. A different survivor
+packing allows a verified six-cycle exchange; the singleton state-0
+packing stays idle. All outputs are actual complete packings.
+This does not establish general helper existence or L179.
+[I180](iterations/iteration180-survivor-helper-connectivity-factory-astra-task.json)
+targets lost-P-fibre connectivity by same-type survivor-helper moves
+under the exact fixed-interface/brace hypotheses, without a graph sweep.
+**No ninth nomination. Eight accepted, two remaining; research active.**
+
 ### I178 complete relations and I179 path recombination
 
 [I178](iterations/i178-five-port-annihilator.md) passes the scoped I177

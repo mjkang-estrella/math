@@ -1,15 +1,15 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I178](frontier/iterations/i178-five-port-annihilator.md)
-derives all four actual anchor relations and the two lost-fibre completion
-constraints for the fixed five-port interface. Parent sealed replay and
-independent checks pass, including 84 actual anchor changes.
-The [parent disposition](frontier/iterations/i178-five-port-annihilator-parent-disposition.md)
-accepts the conditional presentation but leaves graph realizability unpaid.
-All five retained validation systems remain saturated.
-[I179](frontier/iterations/iteration179-path-recombination-factory-astra-task.json)
-targets one graph-theoretic path-recombination lemma, not another rank
-reformulation or graph sweep.
+**Structural-graph update:** [I179](frontier/iterations/i179-path-recombination.md)
+leaves the recombination bound unresolved but proves a finite two-packing
+lock: nontrivial exchanges create isolated cycles.
+Parent replay and independent edge-by-edge checks pass.
+The [parent disposition](frontier/iterations/i179-path-recombination-parent-disposition.md)
+also supplies an actual six-cycle survivor-helper exchange that bypasses
+this specific lock. No general helper-existence theorem follows.
+[I180](frontier/iterations/iteration180-survivor-helper-connectivity-factory-astra-task.json)
+targets graph-independent connectivity of the lost path fibre under
+such actual helper moves, without a graph sweep.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
