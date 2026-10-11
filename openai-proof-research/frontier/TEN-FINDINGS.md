@@ -6,6 +6,19 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I196 partial checkpoint; active continuation and overlap correction
+
+The initial I196 task was cancelled before a screening verdict. Its
+later maintenance continuation is active, so the parent did not launch
+a duplicate. [Recovery record](iterations/i196-fresh-discovery-parent-checkpoint.md)
+preserves five initialized partial files as byte-checked copies and
+distinguishes the cancelled task from the later run. The claim that
+all three proposed families were never screened is superseded:
+I36/I37 already address 084, and I07/I99 already address 020. The
+active child received those exclusions and a bounded substitution rule.
+No screening outcome, proof PASS, or nomination is inferred.
+**Eight accepted, two remaining.**
+
 ### I195 cap-prism family checked; long-gap front parked at J195
 
 [I195](iterations/i195-long-gap-deficit.md) proves the complete
@@ -30,8 +43,9 @@ long-gap bound stays UNRESOLVED at J195 with no decisive new
 constraint, so per the brief's stopping rule the **long-gap front is
 PARKED** beside the short-gap front and E183; Q164, (T) and universal
 exchange remain recorded open surfaces.
-[I196](iterations/iteration196-fresh-discovery-brief.md) opens a fresh
-discovery lane (families 084, 020, 026).
+[I196](iterations/iteration196-fresh-discovery-brief.md) originally
+proposed families 084, 020, and 026; its overlap premise is corrected
+in the recovery entry above.
 **Eight accepted, two remaining.**
 
 ### I187 marked-state deductions checked, patch-rooted geometry next

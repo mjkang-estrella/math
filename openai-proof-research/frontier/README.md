@@ -32,10 +32,14 @@ $\Delta=\kappa-\gamma$ quotient obstruction. The general long-gap
 clauses stay UNRESOLVED at J195 with no decisive new constraint; per
 the brief's stopping rule the long-gap front is **PARKED** beside the
 short-gap front (J194/J193) and the E183 line.
-[I196](iterations/iteration196-fresh-discovery-brief.md) opens a fresh
-discovery lane screening the unscreened families 084 (geometric Erdős
-similarity), 020 (squarefree quartics / power-free values) and 026
-(positive density of large prime gaps). Q164, (T) and universal
+[I196](iterations/iteration196-fresh-discovery-brief.md) has an active
+maintenance continuation after its initial task was cancelled without
+a screening verdict.
+[Parent recovery](iterations/i196-fresh-discovery-parent-checkpoint.md)
+preserves the initial partial records and corrects the "unscreened"
+premise using I36/I37 (084) and I07/I99 (020); no absence-of-prior-work
+claim is made for 026. The correction was steered into the existing run,
+not a duplicate task. Q164, (T) and universal
 exchange remain recorded open surfaces. **Eight accepted, two
 remaining.**
 
