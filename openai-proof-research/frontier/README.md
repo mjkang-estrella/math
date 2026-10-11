@@ -21,17 +21,19 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I181](iterations/i181-six-cycle-helper.md)
-proves the two-square local reattachment lemma: any actual opposite-half
-survivor helper toggles the six-cycle with type, pairing and acyclicity
-preserved. Parent independent patch forcing and all 120 reattachment rows
-pass byte-identically. Existence of the helper remains unpaid; the missing
-condition is a controlled three-edge alternating-half extension.
-The [parent disposition](iterations/i181-six-cycle-helper-parent-disposition.md)
-retains unresolved E181/H180/L179.
-[I182](iterations/iteration182-controlled-extension-brief.md) targets
-exactly that controlled extension: proof or an actual counterexample
-meeting every H180 hypothesis.
+**Structural-graph update:** [I182](iterations/i182-controlled-extension.md)
+reduces the controlled extension to a single survival predicate on the
+derived graph: an A-prescribed perfect matching with Hamiltonian
+complement always exists under the hypotheses, and the open content is
+whether the cross-paired two-path population contains a survivor-fibre
+member. Parent independent checks recheck all 626 reduction cases and
+the retained finite certificate byte-exactly.
+The [parent disposition](iterations/i182-controlled-extension-parent-disposition.md)
+retains unresolved E182/E181/H180/L179 and records two sealed-verifier
+weaknesses plus a development-time reseal.
+[I183](iterations/iteration183-cptp-survival-brief.md) targets exactly
+that survival predicate: proof or an actual counterexample meeting
+every H180 hypothesis.
 A high-loss brace is still missing.
 Technical only; universal exchange, (T), and Q164 remain open.
 **8 accepted, 2 remaining.**
