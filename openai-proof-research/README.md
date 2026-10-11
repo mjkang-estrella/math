@@ -1,15 +1,19 @@
 # OpenAI mathematics research
 
-**I188 twice interrupted, resumed on a new transport:** The first I188
-run stopped with a provider-reported network failure at
-2026-10-11T15:14:16Z, and its resume failed the same way at
-2026-10-11T16:25:43Z; neither wrote a report, verdict, or output files.
-Both unverified drafts were read and passed on only as labelled leads.
-[Recovery records](frontier/iterations/i188-provider-failure-recovery.md)
-([second](frontier/iterations/i188-provider-failure-recovery-2.md));
-a [second resume](frontier/iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
-on a different provider driver now holds the same brief and five-file
-scope. **8 accepted, 2 remaining.**
+**I188 completed after two provider failures:** the
+[second resume](frontier/iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
+on a different provider driver returned; earlier failures are in the
+[recovery records](frontier/iterations/i188-provider-failure-recovery.md)
+([second](frontier/iterations/i188-provider-failure-recovery-2.md)).
+[Parent review](frontier/iterations/i188-patch-rooted-state-parent-disposition.md)
+passes the two-square faciality, six-triangle dual disk, one
+consistently signed marked cycle per group, marked nonvanishing and
+forced-leaf matching recovery, and independently re-derives the
+exhaustive exterior classification. The $A$-containing source image is
+nonempty, but survival of its recovered matchings is unproved and
+original E183 stays UNRESOLVED. [I189](frontier/iterations/iteration189-patch-route-transport-brief.md)
+attempts survivor transport via a complete patch-route classification.
+**8 accepted, 2 remaining.**
 
 **I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)
 passes the dual hypotheses, conditional recovery criterion and restricted

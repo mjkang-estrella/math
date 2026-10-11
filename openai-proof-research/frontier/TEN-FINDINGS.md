@@ -6,21 +6,29 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
-### I188 patch-geometry run twice interrupted, resumed on a new transport
+### I188 patch-geometry deductions checked after two provider failures
 
-The first I188 run stopped at 2026-10-11T15:14:16Z and its resume at
-2026-10-11T16:25:43Z, both with provider-reported network failures and
-no output files
+The first I188 run and its first resume both failed at the provider
+with no outputs
 ([recovery records](iterations/i188-provider-failure-recovery.md),
-[second](iterations/i188-provider-failure-recovery-2.md)). The parent
-read both unverified drafts (square faciality, the six-triangle dual
-disk, one forced marked cycle per group with a completed sign
-argument, forced-leaf white-tree recovery, open survivor type) and
-relayed them only as labelled leads. A
+[second](iterations/i188-provider-failure-recovery-2.md)); their drafts
+were relayed only as labelled unverified leads. The
 [second resume](iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
-on a different provider driver holds the same brief and five-file
-scope under a fresh clientRequestId. No mathematical result is
-claimed. **Eight accepted, two remaining.**
+on a different provider driver returned the
+[report](iterations/i188-patch-rooted-state.md): both squares facial, a
+six-triangle dual disk with roots $\{o,\ell,r\}$, one consistently
+signed marked cycle per source group, nonzero marked sum, and
+forced-leaf recovery of a perfect matching containing the frozen half
+$A$. [Parent review](iterations/i188-patch-rooted-state-parent-disposition.md)
+passes these deductions without repairs, authenticates all five outputs
+and seventeen inputs, and independently re-derives the step-6 exterior
+table by exhaustive enumeration ($131072$ assignments; exactly the
+claimed packings). Survivor existence in the marked image is unproved,
+so original E183 stays UNRESOLVED; no substantial finding is nominated.
+[I189](iterations/iteration189-patch-route-transport-brief.md)
+investigates survivor transport through a complete symbolic
+classification of Hamiltonian-cycle patch restrictions.
+**Eight accepted, two remaining.**
 
 ### I187 marked-state deductions checked, patch-rooted geometry next
 
