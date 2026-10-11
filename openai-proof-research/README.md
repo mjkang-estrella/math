@@ -1,20 +1,21 @@
 # OpenAI mathematics research
 
-**I193 equality-bridge analysis checked:**
-[Parent review](frontier/iterations/i193-equality-bridge-parent-disposition.md)
-passes the complementary-pairing symmetry ($\alpha_A=\alpha_B$ on a
-quadrilateral, confirmed numerically on prisms $m\in\{4,6,8\}$ via
-exact quotient functionals), the central-square composition
-($\Delta_c=\eta_{first}$, $\lambda_c=\lambda/(1+2\lambda)$, and
-gain-three recovery after a hypothetical failure — the cube instance
-verified by direct enumeration: $5\to7\to9$, lost fibre $=$ $D_{11}$
-lift, $\lambda_c=1/4$), and the sufficient subcases (single-flip
-nonnegativity, integer span, odd lattice index). Short-gap exchange
-stays UNRESOLVED at J193: the coefficient $w(F_Q-C_0)=-1/2$ is
-unexcluded. [I194](frontier/iterations/iteration194-quotient-sign-brief.md)
-makes the final focused short-gap attempt: prove the quotient sign
-conjecture $w(F_Q-C_0)\ge0$, exhibit a negative-value step, or isolate
-the exact obstruction; on another UNRESOLVED the front parks.
+**I194 quotient-sign analysis checked; short-gap front parked:**
+[Parent review](frontier/iterations/i194-quotient-sign-parent-disposition.md)
+passes the exact flip-connectivity criterion ($q=2$ failure iff
+$\beta=\tau$), the conditional fractional block lemma, the fully
+specified cube brace obstruction ($\lambda=1/2$, yet every surviving
+symmetric difference is a single alternating cycle whose only flip is
+disconnected — independently re-derived with identity (10),
+$\kappa=1/2$ and the $\beta=\tau$ instance), and the three-matching
+bookkeeping; the prism values $\lambda=1/(m-2)$ are confirmed
+non-integral, excluding all integral certificates. The sign conjecture
+stays UNRESOLVED at J194 with no decisive new constraint, so per the
+brief's stopping rule the **short-gap front is PARKED** beside the
+E183 line. [I195](frontier/iterations/iteration195-long-gap-deficit-brief.md)
+attacks the long-gap clauses of J192 ($\Delta\le1$, and
+$\beta\notin L_0+U$ when $\Delta=1$), with even-prism polygonal-face
+deletions as a paid test family.
 **8 accepted, 2 remaining.**
 
 **I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)

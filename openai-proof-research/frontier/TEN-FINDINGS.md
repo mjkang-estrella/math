@@ -6,26 +6,31 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
-### I193 symmetry and composition checked; short-gap exchange open at J193
+### I194 flip criterion checked; short-gap front parked at J194
 
-[I193](iterations/i193-equality-bridge.md) proves the complementary
-deletion-pairing symmetry on a quadrilateral (equal deficits, equal
-coefficients $\alpha_A=\alpha_B$), the central-square composition
-(lost family $=$ original $D_{11}$ fibre; $\Delta_c=\eta_{first}$;
-coefficient transport $\lambda_c=\lambda/(1+2\lambda)$; after a
-hypothetical failed step the successor gains exactly three), and
-sufficient conditions excluding the failure coefficient
-(single-flip Hamiltonicity, integer span, odd lattice index).
-[Parent review](iterations/i193-equality-bridge-parent-disposition.md)
-passes these without repairs, independently verifying the prism
-symmetry by exact quotient functionals ($m\in\{4,6,8\}$) and the full
-cube composition chain by direct enumeration ($d: 5\to7\to9$,
-$\lambda_c=1/4$). Short-gap exchange stays UNRESOLVED at J193
-($w(F_Q-C_0)\ne-1/2$); the paid prism values $\lambda=1/(m-2)>0$
-motivate the sign formulation. [I194](iterations/iteration194-quotient-sign-brief.md)
-is the final focused short-gap attempt: prove $w(F_Q-C_0)\ge0$,
-exhibit a verified negative-value step, or isolate the exact
-obstruction; on another UNRESOLVED the front parks beside E183.
+[I194](iterations/i194-quotient-sign.md) proves the exact
+flip-connectivity criterion (flipped-factor components $=$ components
+of $\tau\cup\beta$; $q=2$ failure iff $\beta=\tau$), a conditional
+fractional block lemma (a nonnegative cover by Hamiltonian flip blocks
+gives $\lambda\ge0$, including the all-$(k-1)$-block subcase), a fully
+specified cube brace obstruction ($\lambda=1/2$ while every surviving
+$F\triangle C$ is one alternating cycle whose only flip is the
+disconnected $F$ — no universal direct-flip certificate exists even
+for braces), and the three-matching bookkeeping
+($F+F_{01}+F_{02}=2E$, $\lambda=\kappa-h(F_{01})-h(F_{02})$, with the
+two-phase incompatibility).
+[Parent review](iterations/i194-quotient-sign-parent-disposition.md)
+passes these without repairs, independently re-deriving the whole cube
+instance (identity (10), $\lambda=\kappa=1/2$, the five single-cycle
+symmetric differences, the $\beta=\tau$ flip failure), the prism
+fractional exclusion of integral certificates, and the
+negative-iterate arithmetic. The sign conjecture stays UNRESOLVED at
+J194 with no decisive new constraint, so per the brief's stopping rule
+the **short-gap front is PARKED** beside the E183 line.
+[I195](iterations/iteration195-long-gap-deficit-brief.md) attacks the
+long-gap clauses of J192 ($t\ge\ell-1$ on long gaps; $\beta\notin
+L_0+U$ when $\Delta=1$), with even-prism polygonal-face deletions as a
+paid test family, under a symmetric stopping rule.
 **Eight accepted, two remaining.**
 
 ### I187 marked-state deductions checked, patch-rooted geometry next

@@ -16,6 +16,36 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I194 checked; short-gap front parked at J194; long-gap deficit next
+
+The first [I194](iteration194-quotient-sign-brief.md) dispatch
+completed and returned the
+[report](i194-quotient-sign.md): the exact flip-connectivity criterion
+(5), the conditional fractional block lemma (7)/(8), the fully
+specified cube brace obstruction to universal direct-flip certificates
+($\lambda=1/2$, every surviving $F\triangle C$ a single alternating
+cycle whose only flip is disconnected), the three-matching
+decomposition (13)/(14) with $\kappa=1/2$ on the cube, and the
+phase-incompatibility fact. The
+[parent disposition](i194-quotient-sign-parent-disposition.md) passes
+these, independently re-deriving the complete cube instance (identity
+(10), $\lambda=\kappa=1/2$, the $\beta=\tau$ criterion instance), the
+prism fractional exclusion of integral certificates ($m\le62$), and
+the recurrence/negative-iterate arithmetic. The sign conjecture stays
+UNRESOLVED at J194 with no decisive new constraint and no negative
+instance, so the brief's stopping rule fires: **the short-gap front is
+PARKED** beside the E183 line, with the exact resumption state
+recorded in the disposition.
+[I195](iteration195-long-gap-deficit-brief.md) attacks the long-gap
+clauses of J192 — prove $\Delta\le1$ on long-gap steps (equivalently
+$t\ge\ell-1$ after I192's collapse $V_{good}=0$, $R=U$,
+$\delta_R=t$), settle the $\Delta=1$ bridge clause, exhibit a verified
+violating step, or isolate the exact remaining assertion — with the
+even-prism polygonal-face deletions ($m=8$ $3+3$ split) as a paid,
+parent-verifiable test family and a symmetric stopping rule. The E183
+line and local-ear mechanism remain parked. **Eight accepted, two
+remaining.**
+
 ## I193 checked; short-gap exchange sharp at J193; sign conjecture next
 
 The first [I193](iteration193-equality-bridge-brief.md) dispatch
