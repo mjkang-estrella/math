@@ -1,0 +1,732 @@
+"""Independent exact graph/packing certificates, written for I179."""
+from fractions import Fraction as F
+from itertools import combinations, product
+from math import gcd
+from functools import reduce
+
+
+def sub(a, b):
+    return tuple(x-y for x, y in zip(a, b))
+
+
+def lin(rows, coeffs):
+    return tuple(sum(c*r[j] for r, c in zip(rows, coeffs)) for j in range(len(rows[0])))
+
+
+def diff(rows):
+    return [sub(x, rows[0]) for x in rows[1:]] if rows else []
+
+
+def ibasis(rows):
+    piv = {}
+    chosen = []
+    for row in rows:
+        den = 1
+        for x in row:
+            den = den * F(x).denominator // gcd(den, F(x).denominator)
+        v = [int(F(x)*den) for x in row]
+        for j, b in sorted(piv.items()):
+            if v[j]:
+                a, c = v[j], b[j]
+                v = [c*x-a*y for x, y in zip(v, b)]
+                g = reduce(gcd, v, 0)
+                if g:
+                    v = [x//g for x in v]
+        if any(v):
+            j = next(j for j, x in enumerate(v) if x)
+            g = reduce(gcd, v, 0)
+            v = [x//g for x in v]
+            piv[j] = v
+            chosen.append(tuple(row))
+    return chosen
+
+
+def frank(rows):
+    if not rows:
+        return 0
+    # Separate column elimination on the reversed transpose.
+    a = [[F(row[j]) for row in reversed(rows)] for j in reversed(range(len(rows[0])))]
+    k = 0
+    for j in range(len(a[0])):
+        p = next((p for p in range(k, len(a)) if a[p][j]), None)
+        if p is None:
+            continue
+        a[k], a[p] = a[p], a[k]
+        q = a[k][j]
+        a[k] = [x/q for x in a[k]]
+        for p in range(k+1, len(a)):
+            if a[p][j]:
+                q = a[p][j]
+                a[p] = [x-q*y for x, y in zip(a[p], a[k])]
+        k += 1
+        if k == len(a):
+            break
+    return k
+
+
+RANK_CACHE = {}
+
+
+def rank(rows):
+    key = tuple(tuple(F(x) for x in r) for r in rows)
+    if key not in RANK_CACHE:
+        a, b = len(ibasis(key)), frank(key)
+        assert a == b, (a, b)
+        RANK_CACHE[key] = a
+    return RANK_CACHE[key]
+
+
+def coordinates(basis, target):
+    n = len(basis)
+    a = [[F(b[j]) for b in basis]+[F(target[j])] for j in range(len(target))]
+    k, piv = 0, []
+    for j in range(n):
+        p = next((i for i in range(k, len(a)) if a[i][j]), None)
+        if p is None:
+            continue
+        a[k], a[p] = a[p], a[k]
+        q = a[k][j]
+        a[k] = [x/q for x in a[k]]
+        for i in range(len(a)):
+            if i != k and a[i][j]:
+                q = a[i][j]
+                a[i] = [x-q*y for x, y in zip(a[i], a[k])]
+        piv.append(j)
+        k += 1
+    assert all(any(row[:-1]) or not row[-1] for row in a)
+    out = [F(0)]*n
+    for i, j in enumerate(piv):
+        out[j] = a[i][-1]
+    assert lin(basis, out) == tuple(target)
+    return out
+
+
+def nullspace(rows, width):
+    a = [[F(x) for x in r] for r in rows]
+    k, piv = 0, []
+    for j in range(width):
+        p = next((i for i in range(k, len(a)) if a[i][j]), None)
+        if p is None:
+            continue
+        a[k], a[p] = a[p], a[k]
+        q = a[k][j]
+        a[k] = [x/q for x in a[k]]
+        for i in range(len(a)):
+            if i != k and a[i][j]:
+                q = a[i][j]
+                a[i] = [x-q*y for x, y in zip(a[i], a[k])]
+        piv.append(j)
+        k += 1
+    out = []
+    for j in range(width):
+        if j not in piv:
+            v = [F(0)]*width
+            v[j] = 1
+            for i, p in enumerate(piv):
+                v[p] = -a[i][j]
+            out.append(tuple(v))
+    return out
+
+
+def det(a):
+    a = [[F(x) for x in r] for r in a]
+    d = F(1)
+    for j in range(len(a)):
+        p = next((i for i in range(j, len(a)) if a[i][j]), None)
+        if p is None:
+            return F(0)
+        if p != j:
+            a[p], a[j] = a[j], a[p]
+            d = -d
+        q = a[j][j]
+        d *= q
+        for i in range(j+1, len(a)):
+            c = a[i][j]/q
+            a[i] = [x-c*y for x, y in zip(a[i], a[j])]
+    return d
+
+
+def edges(graph):
+    es = tuple(tuple(e) for e in graph["edges"])
+    assert es == tuple(sorted(set(es))) and all(a < b for a, b in es)
+    return es
+
+
+def adjacency(es, vertices=None):
+    adj = {v: [] for v in (vertices or sorted({v for e in es for v in e}))}
+    for i, (a, b) in enumerate(es):
+        adj[a].append((b, i))
+        adj[b].append((a, i))
+    return adj
+
+
+def components(es, vector, vertices=None):
+    adj = adjacency(es, vertices)
+    unseen = set(adj)
+    out = []
+    while unseen:
+        todo = [min(unseen)]
+        unseen.remove(todo[0])
+        c = []
+        while todo:
+            v = todo.pop()
+            c.append(v)
+            for w, i in adj[v]:
+                if vector[i] and w in unseen:
+                    unseen.remove(w)
+                    todo.append(w)
+        out.append(sorted(c))
+    return sorted(out)
+
+
+def degrees(es, vector, vertices=None):
+    return {v: sum(vector[i] for _, i in nbr) for v, nbr in adjacency(es, vertices).items()}
+
+
+def degree_sets(es, target, forbidden=()):
+    """Exhaust every binary edge set with prescribed degrees, vertex branching."""
+    adj = adjacency(es, sorted(target))
+    initial = [-1]*len(es)
+    for i in forbidden:
+        initial[i] = 0
+    out = []
+
+    def visit(a):
+        choices = []
+        for v, nbr in adj.items():
+            unknown = [i for _, i in nbr if a[i] < 0]
+            left = target[v]-sum(a[i] == 1 for _, i in nbr)
+            if left < 0 or left > len(unknown):
+                return
+            if unknown:
+                choices.append((len(list(combinations(unknown, left))), v, unknown, left))
+        if not choices:
+            out.append(tuple(a))
+            return
+        _, _, unknown, left = min(choices)
+        for selected in combinations(unknown, left):
+            b = a[:]
+            for i in unknown:
+                b[i] = int(i in selected)
+            visit(b)
+    visit(initial)
+    assert len(out) == len(set(out))
+    return sorted(out)
+
+
+def hamilton_dfs(es, endpoints=None, forbidden=()):
+    adj = adjacency(es)
+    verts = set(adj)
+    start = endpoints[0] if endpoints else min(verts)
+    end = endpoints[1] if endpoints else start
+    out = set()
+
+    def visit(v, seen, used, second):
+        if len(seen) == len(verts):
+            if endpoints:
+                if v == end:
+                    out.add(tuple(int(i in used) for i in range(len(es))))
+            elif second < v:
+                for w, i in adj[v]:
+                    if w == start and i not in forbidden:
+                        out.add(tuple(int(j in used or j == i) for j in range(len(es))))
+            return
+        for w, i in adj[v]:
+            if i not in forbidden and w not in seen:
+                if endpoints and w == end and len(seen)+1 < len(verts):
+                    continue
+                visit(w, seen | {w}, used | {i}, w if second is None else second)
+    visit(start, {start}, set(), None)
+    return sorted(out)
+
+
+def packings(es, endpoints, forbidden=()):
+    """Keys are exact endpoint pairs in vertex labels; reject every cycle."""
+    verts = set(adjacency(es))
+    target = {v: 1 if v in endpoints else 2 for v in verts}
+    out = {}
+    for a in degree_sets(es, target, forbidden):
+        cs = components(es, a)
+        pairs = [tuple(sorted(set(c) & set(endpoints))) for c in cs]
+        if all(len(p) == 2 for p in pairs):
+            out.setdefault(tuple(sorted(pairs)), []).append(a)
+    if len(endpoints) == 2:
+        assert sorted(sum(out.values(), [])) == hamilton_dfs(es, tuple(sorted(endpoints)), forbidden)
+    return out
+
+
+def graphcheck(graph):
+    es = edges(graph)
+    adj = adjacency(es)
+    vs = sorted(adj)
+    assert len(vs) == graph["n"] and all(len(adj[v]) == 3 for v in vs)
+    color = {vs[0]: 0}
+    todo = [vs[0]]
+    while todo:
+        v = todo.pop()
+        for w, _ in adj[v]:
+            if w not in color:
+                color[w] = 1-color[v]
+                todo.append(w)
+            assert color[w] != color[v]
+    assert len(color) == len(vs)
+    for deleted in combinations(vs, 2):
+        left = set(vs)-set(deleted)
+        reach, todo = set(), [min(left)]
+        while todo:
+            v = todo.pop()
+            if v in reach:
+                continue
+            reach.add(v)
+            todo.extend(w for w, _ in adj[v] if w in left and w not in reach)
+        assert reach == left
+    darts, links = [], {v: {} for v in vs}
+    for face in graph["faces"]:
+        assert len(face) == len(set(face))
+        for j, v in enumerate(face):
+            a, b = face[j-1], face[(j+1) % len(face)]
+            darts.append((v, b))
+            assert a not in links[v]
+            links[v][a] = b
+    assert sorted(darts) == sorted((a, b) for e in es for a, b in (e, e[::-1]))
+    assert len(vs)-len(es)+len(graph["faces"]) == 2
+    for v in vs:
+        start = min(links[v])
+        a, reached = start, set()
+        while a not in reached:
+            reached.add(a)
+            a = links[v][a]
+        assert a == start and reached == {w for w, _ in adj[v]}
+    return color
+
+
+def seven(record):
+    graph = record["graph"]
+    es = edges(graph)
+    graphcheck(graph)
+    vs = sorted(adjacency(es))
+    u, v, x, y = record["uvxy"]
+    ei, fi = es.index(tuple(sorted((u, v)))), es.index(tuple(sorted((x, y))))
+    cyc = [a for a in degree_sets(es, dict.fromkeys(vs, 2)) if len(components(es, a)) == 1]
+    assert cyc == hamilton_dfs(es) == [tuple(a) for a in record["cycles"]]
+    fam = {"N"+str(a)+str(b): [c for c in cyc if c[ei] == a and c[fi] == b]
+           for a, b in product((0, 1), repeat=2)}
+    for name, ends, pairing in [
+        ("Pux", (u, x), ((u, x),)), ("Pvy", (v, y), ((v, y),)),
+        ("D11", (u, v, x, y), ((u, v), (x, y)))]:
+        key = tuple(sorted(tuple(sorted(p)) for p in pairing))
+        fam[name] = packings(es, ends, (ei, fi)).get(key, [])
+    assert {k: [list(v) for v in a] for k, a in fam.items()} == record["families"]
+    S = sorted(fam["N10"]+fam["N01"]+fam["N11"])
+    L, V = diff(S), diff(fam["N00"])
+    L0 = sum((diff(fam[n]) for n in ("N10", "N01", "N11")), [])
+    U = sum((diff(fam[n]) for n in ("Pux", "Pvy", "D11")), [])
+    A, B, C, N, P, Q, D = [fam[n][0] for n in ("N10", "N01", "N11", "N00", "Pux", "Pvy", "D11")]
+    ef = tuple(2*int(j in (ei, fi)) for j in range(len(es)))
+    b = lin([P, Q, D, ef, S[0]], [1, 1, 1, 1, -3])
+    beta = lin([P, Q, D, ef, A, B, C], [1, 1, 1, 1, -1, -1, -1])
+    c = lin([N, A, B, C], [1, -1, -1, 1])
+    assert b == tuple(record.get("b", record.get("bridge")))
+    assert beta == tuple(record["beta"]) and c == tuple(record["c"])
+    assert rank(L+[sub(b, beta)]) == rank(L)
+    assert rank(L+U+[b]) == rank(L+U+[beta])
+    assert all(not z for z in degrees(es, b).values())
+    assert all(not z for z in degrees(es, beta).values())
+    assert rank([(a[ei], a[fi]) for a in L]) == 2
+    # Derive both odd-arc vectors from the actual facial cycle.
+    face = next(f for f in graph["faces"] if all(w in f for w in (u, v, x, y))
+                and any({f[i], f[(i+1) % len(f)]} == {u, v} for i in range(len(f)))
+                and any({f[i], f[(i+1) % len(f)]} == {x, y} for i in range(len(f))))
+    qrows, lengths = [], []
+    for start, end in ((u, x), (v, y)):
+        q = [0]*len(es)
+        a, previous, distance = start, None, 0
+        while a != end:
+            opts = [face[(face.index(a)+d) % len(face)] for d in (-1, 1)]
+            w = next(w for w in opts if w != previous and
+                     es.index(tuple(sorted((a, w)))) not in (ei, fi))
+            q[es.index(tuple(sorted((a, w))))] = (-1)**distance
+            previous, a, distance = a, w, distance+1
+        assert distance % 2 == 1
+        qrows.append(tuple(q))
+        lengths.append(distance)
+    qrows.append(lin(qrows, [1, 1]))
+    vg, rr, residuals = [], [], {}
+    for name, q in zip(("Pux", "Pvy", "D11"), qrows):
+        good = [n for n in fam["N00"] if sub(n, q) in fam[name]]
+        rest = [p for p in fam[name] if p not in {sub(n, q) for n in good}]
+        old = record["residuals"][name]
+        anchor = tuple(old["anchor"])
+        assert anchor in fam[name]
+        if good:
+            assert anchor in {sub(n, q) for n in good}
+        rd = [sub(p, anchor) for p in rest]
+        assert list(q) == old["q"]
+        assert [list(a) for a in good] == old["good"]
+        assert [list(a) for a in rest] == old["residual"]
+        assert [list(a) for a in rd] == old["residual_directions"]
+        vg += diff(good)
+        rr += rd
+        assert all(p[ei] == p[fi] == 0 for p in fam[name])
+        assert all(not z for r in rd for z in degrees(es, r).values())
+        residuals[name] = dict(q=list(q), good=good, residual=rest, anchor=anchor,
+                               residual_directions=rd)
+    assert rank(U+vg+rr) == rank(U) == rank(vg+rr)
+    dv = rank(L0+V)-rank(L0+vg)
+    dr = rank(L0+vg+rr)-rank(L0+vg)
+    eps = rank(L0+V+[c])-rank(L0+V)
+    row = dict(arcs=lengths, counts={k: len(a) for k, a in fam.items()},
+               dg=rank(diff(cyc)), rankL=rank(L), rankL0=rank(L0),
+               rankU=rank(U), rankUV=rank(U+V), delta_V=dv, delta_R=dr,
+               epsilon=eps, ell=rank(diff(cyc))-rank(L),
+               t=rank(L+U)-rank(L), eta=rank(L+U+[b])-rank(L+U))
+    assert row["ell"]-row["t"] == dv+eps-dr
+    assert all(record["row"][k] == value for k, value in row.items()), row
+    extensions = None
+    if "brace" in record:
+        expected = {(i, j) for i, j in combinations(range(len(es)), 2)
+                    if not set(es[i]) & set(es[j])}
+        seen = set()
+        for i, j, indices in record["brace"]["extensions"]:
+            assert (i, j) in expected and (i, j) not in seen
+            assert i in indices and j in indices and len(indices) == len(vs)//2
+            assert sorted(v for a in indices for v in es[a]) == vs
+            seen.add((i, j))
+        assert seen == expected and not record["brace"]["failures"]
+        extensions = len(seen)
+    return dict(row=row, b=b, beta=beta, c=c, residuals=residuals,
+                V_subset_U=rank(U+V) == rank(U),
+                V_subset_LU=rank(L+U+V) == rank(L+U), matching_extensions=extensions)
+
+
+def dot(a, b):
+    return sum(F(x)*F(y) for x, y in zip(a, b))
+
+
+def c171(record, prior):
+    result = seven(record)
+    es = edges(record["graph"])
+    w = record["weight_checks"]
+    f, t, base = (tuple(w[k]) for k in ("F_vector", "T_vector", "C0"))
+    assert f != t and base in [tuple(x) for x in record["cycles"]]
+    assert len(components(es, f)) == len(components(es, t)) == 2
+    assert set(degrees(es, f).values()) == set(degrees(es, t).values()) == {2}
+    assert dot(w["w"], sub(f, base)) == F(1, 14)
+    assert dot(w["w"], sub(t, base)) == F(-1, 2)
+    square = prior["switch"]["square"]
+    old = list(f)
+    for a, b in square:
+        i = es.index(tuple(sorted((a, b))))
+        old[i] = 1-old[i]
+    assert old in record["cycles"] and old == prior["switch"]["reconstructed_pre_switch"]
+    assert old != list(base)
+    result["switch"] = dict(F="1/14", T="-1/2", square=square, reconstructed_pre_switch=old)
+    return result
+
+
+RELATIONS = [
+    [0, 0, 0, 1, -1, 0, 0, -1, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, -1, 0, -1, 0, 0, 1, 0, 0],
+    [0, 0, 0, -1, 0, 0, 0, 0, 0, -1, 0, 1, 0],
+    [0, 0, 0, -1, 0, 0, -1, 1, 0, -1, 0, 0, 1],
+]
+
+
+def pairing_list(xs):
+    if not xs:
+        return [()]
+    return [tuple(sorted(((xs[0], b),)+p)) for b in xs[1:]
+            for p in pairing_list(tuple(x for x in xs if x not in (xs[0], b)))]
+
+
+def noncrossing(pairs, order=(0, 2, 1, 4, 3)):
+    for p, q in combinations(pairs, 2):
+        a, b = sorted(order.index(v) for v in p)
+        c, d = sorted(order.index(v) for v in q)
+        if (a < c < b < d) or (c < a < d < b):
+            return False
+    return True
+
+
+def glue_connected(px, py):
+    if len(px) == 1:
+        return px == py
+    return px != py
+
+
+def five_data(graph, cut):
+    es = edges(graph)
+    s = max(v for e in es for v in e)-3
+    Y = set(range(1, 12)) | {s, s+1}
+    X = set(adjacency(es))-Y
+    xe = tuple(e for e in es if set(e) <= X)
+    ye = tuple(e for e in es if set(e) <= Y)
+    cut = tuple(tuple(sorted(e)) for e in cut)
+    assert set(cut) == set(es)-set(xe)-set(ye) and len(cut) == 5
+    bx = [next(v for v in e if v in X) for e in cut]
+    by = [next(v for v in e if v in Y) for e in cut]
+    assert len(set(bx)) == len(set(by)) == 5 and len(Y) == 13
+    color = graphcheck(graph)
+    flip = color[1]
+    assert [color[v]^flip for v in bx] == [1, 1, 1, 0, 1]
+    assert [color[v]^flip for v in by] == [0, 0, 0, 1, 0]
+    for local_es, vs, boundary in ((xe, X, bx), (ye, Y, by)):
+        adj = adjacency(local_es)
+        assert set(adj) == vs and len(components(local_es, [1]*len(local_es))) == 1
+        assert all(len(adj[v]) == (2 if v in boundary else 3) for v in vs)
+    # Trace each side's boundary using the inherited sphere rotation.
+    links = {v: {} for v in adjacency(es)}
+    for f in graph["faces"]:
+        for j, v in enumerate(f):
+            links[v][f[j-1]] = f[(j+1) % len(f)]
+    boundary_orders = []
+    for vs, boundary in ((X, bx), (Y, by)):
+        entry = boundary[0]
+        outside = next(v for v in cut[0] if v != entry)
+        a, b = entry, links[entry][outside]
+        labels = []
+        for _ in range(4*len(es)):
+            nxt = links[b][a]
+            if nxt not in vs:
+                labels.append(boundary.index(b))
+                nxt = links[b][nxt]
+            a, b = b, nxt
+            if a == entry and b == links[entry][outside]:
+                break
+        # Derive order independently by an oriented boundary dart walk below.
+        # The first crossing is 0; orientation may be the reverse boundary convention.
+        if labels:
+            j = labels.index(0)
+            labels = labels[j:]+labels[:j]
+        assert len(labels) == 5 and len(set(labels)) == 5, labels
+        boundary_orders.append(labels)
+    assert boundary_orders[0] in ([0, 2, 1, 4, 3], [0, 3, 4, 1, 2])
+    assert boundary_orders[1] in ([0, 2, 1, 4, 3], [0, 3, 4, 1, 2])
+    assert boundary_orders[0] != boundary_orders[1]
+    return es, xe, ye, cut, bx, by
+
+
+def fiveport(graph, cut, expected, changes=True):
+    es, xe, ye, cut, bx, by = five_data(graph, cut)
+    xi = [es.index(e) for e in xe]
+    yi = [es.index(e) for e in ye]
+    ci = [es.index(e) for e in cut]
+    projection = sorted(yi+ci)
+
+    def embed(a, indices):
+        v = [0]*len(es)
+        for j, i in enumerate(indices):
+            v[i] = a[j]
+        return tuple(v)
+
+    def glue(a, b, J):
+        return lin([embed(a, xi), embed(b, yi), embed([int(i in J) for i in range(5)], ci)],
+                   [1, 1, 1])
+
+    complete, states, allproducts, possible, lost = [], [], [], [], []
+    for n in (2, 4):
+        for J in combinations(range(5), n):
+            sides = []
+            for local_es, boundary in ((xe, bx), (ye, by)):
+                raw = packings(local_es, [boundary[j] for j in J])
+                fam = {}
+                for pairing, values in raw.items():
+                    key = tuple(sorted(tuple(sorted(boundary.index(v) for v in p)) for p in pairing))
+                    assert noncrossing(key)
+                    fam[key] = values
+                sides.append(fam)
+            xf, yf = sides
+            complete.append(dict(J=J, local=[dict(pairing=p, packings=a) for p, a in sorted(xf.items())],
+                                 exterior=[dict(pairing=p, packings=a) for p, a in sorted(yf.items())]))
+            for px in pairing_list(J):
+                if not noncrossing(px):
+                    continue
+                for py, ys in sorted(yf.items()):
+                    if not glue_connected(px, py):
+                        continue
+                    for survival in (True, False):
+                        partners = [y for y in ys if ((2 in J) or y[ye.index((1, 7))]) == survival]
+                        if partners:
+                            possible.append((J, px, survival, len(partners)))
+                        xs = xf.get(px, [])
+                        if not partners or not xs:
+                            continue
+                        products = sorted(glue(a, b, J) for a, b in product(xs, partners))
+                        assert all(set(degrees(es, a).values()) == {2}
+                                   and len(components(es, a)) == 1 for a in products)
+                        allproducts += products
+                        state = dict(J=J, px=px, py=py, X=xs, Y=partners,
+                                     anchor=glue(xs[0], partners[0], J), products=products)
+                        (states if survival else lost).append(state)
+    assert len(states) == 11
+    assert [(J, p, n) for J, p, surv, n in possible if not surv] == [
+        ((0, 1), ((0, 1),), 3), ((0, 1, 3, 4), ((0, 1), (3, 4)), 3)]
+    S = sorted(a for st in states for a in st["products"])
+    cyc = hamilton_dfs(es)
+    assert sorted(allproducts) == cyc and len(set(allproducts)) == len(allproducts)
+    assert S == [a for a in cyc if a[ci[2]] or a[es.index((1, 7))]]
+    old = expected["presentation"]
+    assert [[list(st["J"]), [list(p) for p in st["px"]], [list(p) for p in st["py"]]]
+            for st in states] == [[st["J"], st["px"], st["py"]] for st in old["states"]]
+    for i, st in enumerate(states):
+        assert [list(a) for a in st["X"]] == old["states"][i]["X"], ("X", i)
+        assert [list(a) for a in st["Y"]] == old["states"][i]["Y"], ("Y", i)
+        assert list(st["anchor"]) == old["states"][i]["anchor"], ("anchor", i)
+        assert [list(a) for a in st["products"]] == sorted(old["states"][i]["products"]), ("products", i)
+    wx = [embed(a, xi) for st in states for a in diff(st["X"])]
+    wy = [embed(a, yi) for st in states for a in diff(st["Y"])]
+    ybase = [embed(sub(states[1]["Y"][1], states[1]["Y"][0]), yi),
+             embed(sub(states[4]["Y"][1], states[4]["Y"][0]), yi),
+             embed(sub(states[4]["Y"][2], states[4]["Y"][0]), yi)]
+    anchors = [st["anchor"] for st in states]
+    gens = ybase+diff(anchors)
+    projected = [tuple(a[i] for i in projection) for a in gens]
+    lifts = [lin(gens, r) for r in RELATIONS]
+    assert rank(projected) == 9 and rank(RELATIONS) == 4
+    assert all(not any(lin(projected, r)) for r in RELATIONS)
+    assert [list(a) for a in lifts] == [[F(x) for x in a] for a in old["actual_lifts"]]
+    K = ibasis(wx+lifts)
+    assert rank(diff(S)) == rank(wx+wy+diff(anchors)) == 9+rank(K)
+    local_inc = [[int(v in e) for e in xe] for v in sorted(adjacency(xe))]
+    h = len(xe)-rank(local_inc)
+    assert h == old["h"] and rank(wx) == old["a"] and rank(K)-rank(wx) == old["r"]
+    # All single actual anchor changes and a simultaneous anchor/basis change.
+    anchor_checks = []
+
+    def changed(xs, ys, ybasis, name):
+        aa = [glue(xs[i], ys[i], st["J"]) for i, st in enumerate(states)]
+        gg = ybasis+diff(aa)
+        pp = [tuple(a[i] for i in projection) for a in gg]
+        rr = nullspace(list(zip(*pp)), 13)
+        kk = [lin(gg, r) for r in rr]
+        assert len(rr) == 4 and rank(pp) == 9
+        assert rank(wx+kk) == rank(K) == rank(K+kk)
+        anchor_checks.append(dict(name=name, relations=rr, lifts=kk,
+                                  coordinates=[coordinates(K, a) for a in kk]))
+    if changes:
+        for i, st in enumerate(states):
+            for side in ("X", "Y"):
+                for j in range(1, len(st[side])):
+                    xx = [s["X"][0] for s in states]
+                    yy = [s["Y"][0] for s in states]
+                    (xx if side == "X" else yy)[i] = st[side][j]
+                    changed(xx, yy, ybase, [i, side, j])
+        assert len(anchor_checks) == len(expected["single_anchor_changes"])
+        changed([s["X"][-1] for s in states], [s["Y"][-1] for s in states],
+                [lin(ybase, [1, 1, 0]), lin(ybase, [0, 1, 1]), ybase[2]], "simultaneous")
+    imagebasis = [gens[i] for i in (0, 1, 2, 3, 4, 5, 6, 7, 9)]
+    pbase = [tuple(a[i] for i in projection) for a in imagebasis]
+    xx = [embed(st["X"][0], xi) for st in states]
+    tp = lin([xx[i] for i in (0, 2, 3, 4, 5)], [1, 1, -1, 4, -4])
+    td = lin([xx[i] for i in (2, 3, 4, 5, 7)], [1, -1, 4, -4, 1])
+    residuals, completions = [], []
+    for st in lost:
+        target = tp if len(st["J"]) == 2 else td
+        for j, y in enumerate(st["Y"]):
+            co = coordinates(pbase, tuple(sub(glue(st["X"][0], y, st["J"]), anchors[0])[i]
+                                                for i in projection))
+            assert co == list(map(F, [-3, 1+(j == 1), 1+(j == 2), 0, 1, -1, 4, -4,
+                                      int(len(st["J"]) == 4)]))
+            for x in st["X"]:
+                a = sub(sub(glue(x, y, st["J"]), anchors[0]), lin(imagebasis, co))
+                assert a == sub(embed(x, xi), target)
+                assert not any(a[i] for i in projection)
+                assert all(not v for v in degrees(es, a).values())
+                residuals.append(a)
+            completions.append(dict(J=st["J"], exterior=y, coordinates=co,
+                                    target=[target[i] for i in xi]))
+    increment = rank(K+residuals)-rank(K)
+    assert increment == rank(diff(cyc))-rank(diff(S)) == 0
+    # Finite actual I177-only relation, not a general constraint.
+    if expected["name"] == "I177":
+        Xs = [embed(sub(states[1]["X"][1], states[1]["X"][0]), xi)]
+        Xs += [embed(sub(a, states[5]["X"][0]), xi) for a in states[5]["X"][1:]]
+        rhs = lin(Xs+lifts[:2], [5, -1, -1, -1, -1, 1, 2])
+        assert lin([lifts[2]], [3]) == lin([lifts[3]], [3]) == rhs
+    return dict(name=expected["name"], full=len(cyc), survivors=len(S), h=h, a=rank(wx),
+                r=rank(K)-rank(wx), image=9, loss=increment, complete=complete,
+                states=states, local_edges=xe, cut=cut, boundary=bx,
+                generators=gens, lifts=lifts, kernel=K, local_differences=wx,
+                projection=projection, anchors=anchors, anchor_checks=anchor_checks,
+                completion=completions, residuals=residuals)
+
+
+def proof6(retained, graph, cut):
+    es, xe, ye, cut, bx, by = five_data(graph, cut)
+    T = lambda i: 12+i
+    B = lambda i: 18+i
+    ts = lambda a, b: [T(i) for i in range(a, b+(1 if b >= a else -1), 1 if b >= a else -1)]
+    bs = lambda a, b: [B(i) for i in range(a, b+(1 if b >= a else -1), 1 if b >= a else -1)]
+    p, q = 26, 27
+    W = [T(1), B(1), B(2), T(2), T(3), B(3)]
+    V = [T(1), T(2), B(2), B(3), T(3)]
+    words = {
+        "0": [ts(1, 3)+[p, q]+ts(4, 5)+bs(5, 0)],
+        "1a": [[B(0), B(1)]+V+[p, q, T(4), B(4), B(5), T(5)]],
+        "1b": [[T(5), T(4), q, p]+ts(3, 1)+bs(1, 5)+[B(0)]],
+        "2": [[T(5), T(4), B(4), B(5), B(0), B(1)]+V+[p, q]],
+        "3": [[B(0), B(5), T(5), T(4)]+bs(4, 1)+ts(1, 3)+[p, q]],
+        "4a": [W+[B(4), B(5), B(0)], [T(5), T(4), q, p]],
+        "4b": [ts(1, 3)+bs(3, 0), [T(5), B(5), B(4), T(4), q, p]],
+        "5": [W+[B(4), T(4), q, p], [T(5), B(5), B(0)]],
+        "7Z": [W+[B(4), T(4), T(5), B(5), B(0)], [p, q]],
+        "8": [ts(1, 3)+[p], bs(0, 5)+[T(5), T(4), q]],
+        "9": [[T(5), B(5), B(0)], [p]+ts(3, 1)+bs(1, 4)+[T(4), q]],
+        "10a": [[T(5), B(5), B(4), T(4), q], [B(0), B(1)]+V+[p]],
+        "10b": [[T(5), T(4), q], [B(0)]+bs(5, 1)+ts(1, 3)+[p]],
+        "6r4": [ts(1, 3)+[p], [T(5), B(5)]+bs(0, 4)+[T(4), q]],
+    }
+    for r in (1, 2):
+        words["6r"+str(r)] = [ts(1, r)+bs(r, 0)+bs(5, r+1)+ts(r+1, 3)+[p],
+                              [T(5), T(4), q]]
+        words["7r"+str(r)] = [ts(1, r)+bs(r, 0),
+                              [p]+ts(3, r+1)+bs(r+1, 5)+[T(5), T(4), q]]
+    vectors, records = {}, []
+    for old in retained["local_witnesses"]:
+        name = old["name"]
+        paths = words[name]
+        assert paths == old["path_words"]
+        assert sorted(v for path in paths for v in path) == sorted(adjacency(xe))
+        used = {tuple(sorted((a, b))) for path in paths for a, b in zip(path, path[1:])}
+        assert used <= set(xe)
+        assert [list(e) for e in xe if e not in used] == old["missing"]
+        vector = tuple(int(e in used) for e in xe)
+        st = retained["states"][old["state"]]
+        ends = {bx[i] for i in st["J"]}
+        assert degrees(xe, vector) == {v: 1 if v in ends else 2 for v in adjacency(xe)}
+        pairing = sorted(sorted([bx.index(path[0]), bx.index(path[-1])]) for path in paths)
+        assert pairing == st["px"] and noncrossing(tuple(map(tuple, pairing)))
+        vectors[name] = vector
+        records.append(dict(name=name, paths=paths, missing=old["missing"], state=old["state"]))
+    directions = [sub(vectors["6r"+str(r)], vectors["6r4"]) for r in (1, 2)]
+    directions += [sub(vectors[a], vectors[b]) for a, b in (("1a", "1b"), ("4a", "4b"), ("7Z", "7r1"))]
+    columns = [xe.index(tuple(e)) for e in retained["local_minor_edges"]]
+    minor = [[a[j] for j in columns] for a in directions]
+    assert minor == retained["local_minor"] and det(minor) == -2 and rank(directions) == 5
+    anchors = []
+    for old in retained["anchors"]:
+        x = vectors[old["local_template"]]
+        y = tuple(old["Y"])
+        st = retained["states"][old["state"]]
+        assert y in sum(packings(ye, [by[j] for j in st["J"]]).values(), [])
+        a = tuple(x[xe.index(e)] if e in xe else y[ye.index(e)] if e in ye
+                  else int(cut.index(e) in st["J"]) for e in es)
+        assert list(a) == old["cycle"] and len(components(es, a)) == 1
+        assert a[es.index(cut[2])] or a[es.index((1, 7))]
+        anchors.append(a)
+    image_lifts = []
+    for i, row in enumerate(retained["image_directions"][:3]):
+        a = tuple(F(row[(ye+cut).index(e)]) if e in ye+cut else F(0) for e in es)
+        assert not any(a[es.index(e)] for e in xe+cut)
+        state = 1 if i == 0 else 4
+        other = tuple(x+y for x, y in zip(anchors[state], a))
+        assert other in hamilton_dfs(es)
+        image_lifts.append(a)
+    image_lifts += [sub(anchors[i], anchors[0]) for i in (1, 2, 3, 4, 5, 7)]
+    assert [[a[es.index(e)] for e in ye+cut] for a in image_lifts] == retained["image_directions"]
+    columns = [es.index((ye+cut)[i]) for i in retained["image_columns"]]
+    image_minor = [[a[i] for i in columns] for a in image_lifts]
+    assert image_minor == retained["image_minor"] and det(image_minor) == 1
+    assert rank(image_lifts) == 9
+    return dict(words=records, local_directions=directions, local_minor=minor,
+                local_determinant=-2, image_minor=image_minor, image_determinant=1, anchors=anchors)

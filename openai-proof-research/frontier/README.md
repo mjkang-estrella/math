@@ -21,15 +21,14 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I178](iterations/i178-five-port-annihilator.md)
-gives all four projected relations with actual lifts, an anchor-invariant
-annihilator presentation, and exact completion constraints for two lost
-types. Realizability remains unpaid; all five retained systems are saturated.
-Parent replay and independent relation, completion and 84-anchor-change
-checks pass. The [parent disposition](iterations/i178-five-port-annihilator-parent-disposition.md)
-retains conditional scope and all failures.
-[I179](iterations/iteration179-path-recombination-factory-astra-task.json)
-targets one fixed-interface graph-theoretic recombination lemma.
+**Structural-graph update:** [I179](iterations/i179-path-recombination.md)
+proves a finite two-colour lock but leaves L179 unresolved.
+Parent replay and independent complete recoloring checks pass.
+The [parent disposition](iterations/i179-path-recombination-parent-disposition.md)
+adds a verified six-cycle exchange with another actual survivor helper,
+paying the proposed finite follow-up without a third-colour detour.
+[I180](iterations/iteration180-survivor-helper-connectivity-factory-astra-task.json)
+targets graph-independent lost-fibre connectivity by these actual moves.
 A high-loss brace is still missing.
 Technical only; universal exchange, (T), and Q164 remain open.
 **8 accepted, 2 remaining.**

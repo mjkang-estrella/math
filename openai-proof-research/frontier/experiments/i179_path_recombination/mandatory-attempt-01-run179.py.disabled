@@ -1,0 +1,72 @@
+"""Retain every development stage and outcome; never run ancestor code."""
+import hashlib
+import json
+import sys
+import time
+import traceback
+import types
+from pathlib import Path
+from fractions import Fraction
+
+ROOT = Path(__file__).resolve().parents[3]
+HERE = Path(__file__).resolve().parent
+
+
+def encoded(data):
+    return (json.dumps(data, indent=2, sort_keys=True,
+                       default=lambda x: str(x) if isinstance(x, Fraction) else None)+"\n").encode()
+
+
+def main():
+    name = sys.argv[1]
+    assert name in ("mandatory", "analytic", "recombination")
+    inputs = json.loads((HERE / "inputs.json").read_bytes())
+    bound = {}
+    for row in inputs["strict"]:
+        b = (ROOT / row["path"]).read_bytes()
+        assert len(b) == row["size"] and hashlib.sha256(b).hexdigest() == row["sha256"], row["path"]
+        bound[row["path"]] = b
+    context = {row["path"]: (ROOT / row["path"]).read_bytes() for row in inputs["context"]}
+    index = 1
+    while (HERE / f"{name}-attempt-{index:02d}-receipt.json").exists():
+        index += 1
+    prefix = f"{name}-attempt-{index:02d}"
+    source = {n: (HERE / n).read_bytes() for n in ("math179.py", "research179.py", "run179.py")}
+    for n, b in source.items():
+        with (HERE / f"{prefix}-{n}.disabled").open("xb") as f:
+            f.write(b)
+    with (HERE / f"{prefix}-preflight.json").open("xb") as f:
+        f.write(encoded(dict(status="PASS", strict=len(bound),
+                             inputs_sha256=hashlib.sha256((HERE / "inputs.json").read_bytes()).hexdigest(),
+                             context={p: hashlib.sha256(b).hexdigest() for p, b in context.items()})))
+    start = time.monotonic()
+    payload, error, ok = b"", b"", False
+    try:
+        m = types.ModuleType("fresh_math179")
+        exec(compile(source["math179.py"], str(HERE / "math179.py"), "exec"), m.__dict__)
+        r = {"m": m}
+        exec(compile(source["research179.py"], str(HERE / "research179.py"), "exec"), r)
+        data = r[name](lambda p: json.loads(bound[p]))
+        payload = encoded(data)
+        ok = True
+    except Exception:
+        error = traceback.format_exc().encode()
+    for suffix, b in ((".json", payload), ("-stderr.txt", error)):
+        with (HERE / (prefix+suffix)).open("xb") as f:
+            f.write(b)
+    for p, b in bound.items():
+        assert (ROOT / p).read_bytes() == b, p
+    for p, b in context.items():
+        assert (ROOT / p).read_bytes() == b, p
+    receipt = dict(status="PASS" if ok else "FAIL", runtime_seconds=time.monotonic()-start,
+                   prefix=prefix, stderr_bytes=len(error), strict_unchanged=True, context_unchanged=True)
+    with (HERE / f"{prefix}-receipt.json").open("xb") as f:
+        f.write(encoded(receipt))
+    print(json.dumps(receipt, indent=2))
+    if error:
+        print(error.decode(), file=sys.stderr)
+    return 0 if ok else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

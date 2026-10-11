@@ -1,0 +1,158 @@
+"""Bounded I179 research driver; m is the authenticated fresh math module."""
+
+ORDER = [0, 520, 522, 524, 527, 528, 530, 533, 534, 536, 539, 431]
+P175 = "frontier/experiments/i175_affected_prism_exterior/"
+P176 = "frontier/experiments/i176_uniform_five_port_rank/"
+P177 = "frontier/experiments/i177_adjacent_port_surgery/"
+P178 = "frontier/experiments/i178_five_port_annihilator/"
+
+
+def mandatory(load):
+    old = load(P175+"mandatory-attempt-02.json")
+    prior = load(P178+"mandatory-attempt-05.json")
+    out = dict(order=ORDER+["C171", "G6", "G10", "first_P8", "I176_k6",
+                          "I177_child_absorption", "I178_four_relations_lost_completion"])
+    byindex = {a["index"]: a for a in old["census"]}
+    out["controls"] = []
+    for i in ORDER:
+        a = m.seven(byindex[i])
+        assert (a["row"]["ell"], a["row"]["t"], a["row"]["eta"]) == (
+            (1, 0, 1) if i in (0, 431) else (7, 6, 1))
+        assert a["b"] == tuple(prior["controls"][ORDER.index(i)]["b"])
+        out["controls"].append(dict(a, index=i))
+    assert not out["controls"][-1]["V_subset_U"] and not out["controls"][-1]["V_subset_LU"]
+    assert all(not r["good"] for r in out["controls"][-1]["residuals"].values())
+    out["C171"] = m.c171(old["C171"], prior["C171"])
+    out["G6_G10"] = [m.seven(a) for a in old["high_loss"]]
+    assert [a["row"]["ell"] for a in out["G6_G10"]] == [3, 7]
+    p8 = load(P175+"experiment-attempt-01.json")["first_children"][0]
+    out["first_P8"] = m.seven(p8)
+    finite = load(P176+"finite-attempt-01.json")["certificates"]
+    k6 = next(a for a in finite if a["k"] == 6)
+    out["I176_k6"] = m.proof6(load(P176+"uniform-attempt-02.json")["checks"][0],
+                              k6["graph"], k6["cut"])
+    child = load(P177+"experiment-attempt-03.json")
+    out["I177_initial"] = m.seven(child["initial"])
+    out["I177"] = m.seven(child["child"])
+    es = m.edges(child["child"]["graph"])
+    oe = m.edges(child["initial"]["graph"])
+    removed = {(1, 2), (13, 14)}
+    inserted = {(1, 28), (2, 29), (13, 30), (14, 31),
+                (28, 29), (28, 30), (29, 31), (30, 31)}
+    assert set(es) == (set(oe)-removed) | inserted
+    assert [1, 13, 21, 20, 6, 7] in child["child"]["graph"]["faces"]
+    basis = [[m.F(x) for x in row] for row in child["actual_ambient_basis"]]
+    assert m.rank(basis) == 16
+    anchor = child["child"]["survivor_anchor"]
+    survivors = [a for a in child["child"]["cycles"]
+                 if a[es.index((6, 20))] or a[es.index((1, 7))]]
+    for a in child["child"]["survivor_basis"]:
+        assert list(m.lin([a, anchor], [1, 1])) in survivors
+    minor = [[a[j] for j in child["actual_survivor_minor"]["columns"]]
+             for a in child["child"]["survivor_basis"]]
+    assert m.det(minor) == 2
+
+    def tau(r):
+        a, b = r[oe.index((1, 2))], r[oe.index((13, 14))]
+        v = {e: r[i] for i, e in enumerate(oe) if e not in removed}
+        v.update({(1, 28): a, (2, 29): a, (13, 30): b, (14, 31): b,
+                  (28, 29): -a, (30, 31): -b, (28, 30): 0, (29, 31): 0})
+        return tuple(v[e] for e in es)
+    olddirs = m.diff(child["initial"]["cycles"])
+    assert m.rank(olddirs) == m.rank([tau(a) for a in olddirs]) == 14
+    assert all(not z for a in olddirs for z in m.degrees(es, tau(a)).values())
+    oldL = child["initial"]["survivor_basis"]
+    quot = []
+    absorptions = []
+    for a in child["old_defect_absorption"]:
+        d = tuple(a["old_direction"])
+        assert any(list(m.lin([b, d], [1, 1])) in child["initial"]["cycles"]
+                   for b in child["initial"]["cycles"])
+        assert tau(d) == tuple(a["transport"])
+        coeff = [m.F(x) for x in a["coefficients"]]
+        assert m.lin(basis, coeff) == tau(d)
+        quot.append(d)
+        absorptions.append(dict(old=d, transport=tau(d), coefficients=coeff))
+    assert m.rank(oldL+quot) == m.rank(oldL)+3 == 14
+    out["I177_absorption"] = dict(transport_rank=14, equations=absorptions,
+                                  actual_cycle_determinant=2)
+    # Only now start the mandatory full I178 presentation/completion checks.
+    analytic = load(P178+"analytic-attempt-05.json")["systems"]
+    fp = m.fiveport(child["child"]["graph"], child["fiveport"]["cut"], analytic[0])
+    out["I178"] = fp
+    out["status"] = "PASS"
+    return out
+
+
+def analytic(load):
+    expected = load(P178+"analytic-attempt-05.json")["systems"]
+    child = load(P177+"experiment-attempt-03.json")
+    p8s = load(P175+"experiment-attempt-01.json")["first_children"]
+    finite = load(P176+"finite-attempt-01.json")["certificates"]
+    retained = [(child["child"]["graph"], child["fiveport"]["cut"])]
+    for p8 in p8s:
+        retained.append((p8["graph"], [(1, 13), (5, 19), (6, 20), (28, 30), (29, 31)]))
+    for k in (4, 6):
+        a = next(a for a in finite if a["k"] == k)
+        retained.append((a["graph"], a["cut"]))
+    systems = [m.fiveport(graph, cut, old) for (graph, cut), old in zip(retained, expected)]
+    assert sum(len(s["anchor_checks"])-1 for s in systems) == 84
+    squarecounts = []
+    for graph, _ in retained[:3]:
+        adj = m.adjacency(m.edges(graph))
+        total = sum(len(set(w for w, _ in adj[a]) & set(w for w, _ in adj[b])) *
+                    (len(set(w for w, _ in adj[a]) & set(w for w, _ in adj[b]))-1)//2
+                    for a, b in m.combinations(adj, 2))//2
+        squarecounts.append(total)
+    assert squarecounts == [10, 9, 9]
+    return dict(status="PASS", new_graphs=0, systems=systems, square_counts=squarecounts,
+                individual_anchor_checks=84)
+
+
+def recombination(load):
+    """Only overlays of complete packings on the retained I177 local graph."""
+    expected = load(P178+"analytic-attempt-05.json")["systems"][0]
+    child = load(P177+"experiment-attempt-03.json")
+    es = tuple(tuple(e) for e in child["fiveport"]["xe"])
+    boundary = [13, 19, 20, 30, 31]
+    families = expected["all_complete_families"]
+    p = next(a for a in families if a["J"] == [0, 1])["local"][0]["packings"]
+    states = expected["presentation"]["states"]
+    first_bad = None
+    totals = dict(overlays=0, components=0, cycle_obstructed=0, cycle_free=0)
+    # Predeclared scope: the five complete P packings against state 0's sole packing.
+    for a0 in p:
+        for b0 in states[0]["X"]:
+            a, b = tuple(a0), tuple(b0)
+            totals["overlays"] += 1
+            z = tuple(int(x != y) for x, y in zip(a, b))
+            comps = [c for c in m.components(es, z) if any(z[i] and e[0] in c for i, e in enumerate(es))]
+            for vertices in comps:
+                idx = [i for i, e in enumerate(es) if z[i] and e[0] in vertices]
+                totals["components"] += 1
+                aa, bb = list(a), list(b)
+                for i in idx:
+                    aa[i], bb[i] = b[i], a[i]
+                assert m.lin([a, b], [1, 1]) == m.lin([aa, bb], [1, 1])
+                descriptions = []
+                bad = False
+                for v in (aa, bb):
+                    deg = m.degrees(es, v)
+                    J = [i for i, x in enumerate(boundary) if deg[x] == 1]
+                    assert all(deg[x] == (1 if x in [boundary[i] for i in J] else 2)
+                               for x in deg)
+                    cs = m.components(es, v)
+                    cycles = [c for c in cs if all(deg[x] == 2 for x in c)]
+                    pairs = sorted(sorted(boundary.index(x) for x in c if deg[x] == 1)
+                                   for c in cs if not all(deg[x] == 2 for x in c))
+                    assert all(len(q) == 2 for q in pairs) and m.noncrossing(pairs)
+                    bad |= bool(cycles)
+                    descriptions.append(dict(J=J, pairing=pairs, components=cs,
+                                             isolated_cycles=cycles, degrees=deg))
+                totals["cycle_obstructed" if bad else "cycle_free"] += 1
+                if bad and first_bad is None:
+                    first_bad = dict(a=a, b=b, exchanged_edges=[es[i] for i in idx],
+                                     output_a=aa, output_b=bb, output_components=descriptions)
+    return dict(status="PASS", scope="Five retained I177 P packings x sole state-0 packing",
+                new_graphs=0, totals=totals, first_cycle_obstruction=first_bad,
+                L179="UNRESOLVED")
