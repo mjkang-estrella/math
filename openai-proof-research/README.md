@@ -1,14 +1,16 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I180](frontier/iterations/i180-survivor-helper-connectivity.md)
-certifies the complete five-vertex helper path in the retained example.
-All 24 directed witnesses and 99 cycle-obstructed moves pass independent
-parent checks and sealed replay. Strict Hamming-distance descent fails.
-The [parent disposition](frontier/iterations/i180-survivor-helper-connectivity-parent-disposition.md)
-preserves finite scope: general helper connectivity remains unresolved.
-[I181](frontier/iterations/iteration181-six-cycle-helper-factory-astra-task.json)
-isolates helper existence for a port-disjoint six-cycle formed by two
-adjacent quadrilateral faces, without new graph tests.
+**Structural-graph update:** [I181](frontier/iterations/i181-six-cycle-helper.md)
+proves the local reattachment lemma for the two-square six-cycle patch:
+once an actual opposite-half survivor helper exists, toggling the cycle
+preserves spanning degrees, port pairing, component count, acyclicity and
+the coordinate identity. Independent parent certificates exhaust all 2^11
+local restrictions and all 120 external segment pairings byte-identically.
+The [parent disposition](frontier/iterations/i181-six-cycle-helper-parent-disposition.md)
+preserves exact scope: the unpaid step is a controlled three-edge
+alternating-half extension, and E181/H180/L179 remain unresolved.
+[I182](frontier/iterations/iteration182-controlled-extension-brief.md)
+targets exactly that extension, proof or actual counterexample.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
