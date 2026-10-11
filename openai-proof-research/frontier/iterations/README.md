@@ -16,6 +16,19 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I185 splice analysis checked, I186 full-theta analysis prepared
+
+[I185](i185-connected-reconnection.md) proves exact ear eligibility
+and $c'=c-a+b$, not existence of an improving ear.
+[Parent review](i185-connected-reconnection-parent-disposition.md)
+passes the original deductions, output/source authentication and
+inherited sealed replay. The fragmentation example remains a formal
+pairing calculation, not an exact-hypothesis counterexample.
+[I186](iteration186-theta-region-balance-brief.md) examines the missing
+full-theta region balance in one bounded final local-ear attempt;
+absent a usable new constraint, that mechanism will be parked.
+Z184 and E183 remain open. **Eight accepted, two remaining.**
+
 ## I184 cycle existence proved, I185 joining-ear attempt prepared
 
 [I184](i184-alternating-cycle.md) pays the first matching-cycle

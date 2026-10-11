@@ -6,6 +6,23 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I185 splice criterion checked, one final geometric ear analysis
+
+[I185](iterations/i185-connected-reconnection.md) gives exact endpoint,
+parity and protected-edge conditions for an alternating-ear splice,
+with complement component change $c'=c-a+b$.
+[Parent review](iterations/i185-connected-reconnection-parent-disposition.md)
+passes the original technical deductions, authenticates the five output
+records and replays the sealed reference. The six-incidence zero-gain
+pattern remains formal; no simultaneous full-theta/Hamiltonian
+realization at the exact graph hypotheses has been supplied.
+No improving ear is proved.
+[I186](iterations/iteration186-theta-region-balance-brief.md) checks
+region matching closure and color balance, with a stopping rule to park
+this local mechanism if it yields no usable structural constraint.
+Z184/E183 and the broader universal targets remain unresolved.
+**Eight accepted, two remaining.**
+
 ### I184 cycle existence proved, connected reconnection still open
 
 [I184](iterations/i184-alternating-cycle.md) proves that every edge of
