@@ -16,6 +16,27 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I173 finite survivor saturation and I174 prism gadgets
+
+[I173](i173-brace-high-loss-octagons.md) passes S172/K172/R172 in their
+original scopes. Its 236 declared surgery histories include 212 certified
+brace outputs, but every protected octagon has loss zero. Q173 proves
+finite survivor saturation by bases attaining the ambient degree-kernel
+dimension; 1,500 exact identities exhibit absorption of transported
+directions. The first operation already destroys the intended loss.
+
+Parent replay passes in 268.718492 seconds with six byte-identical
+payloads, eight blocked probes and all non-context bindings unchanged.
+Separate parent checks cover all 236 bases, 328,920 matching witnesses,
+72 tight-cut failures and 1,500 identities. Six empty paired transports
+and the corrected separator-schema diagnostic failure remain preserved.
+The [parent disposition](i173-brace-high-loss-octagons-parent-disposition.md)
+records finite, technical-only scope, not a universal brace theorem.
+[I174](iteration174-prism-gadget-survival-factory-astra-task.json) changes
+the attachment to punctured prisms, tests saturation early, and seeks a
+structural criterion. The high-loss brace target, universal exchange,
+(T), and Q164 remain open. **Eight accepted, two remaining.**
+
 ## I172 prescribed-switch transport, high-loss octagons, and I173
 
 [I172](i172-prescribed-square-switch.md) passes the assigned I171 audits.

@@ -21,18 +21,17 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I172](iterations/i172-prescribed-square-switch.md)
-passes the assigned I171 audits. S172 transports exact signed certificates
-for the prescribed square switch through remote splices. K172/R172 prove
-an infinite $(3,3)$ octagon family with unbounded loss:
-$(\ell,t,\eta)=(m-3,m-4,1)$ for even $m\ge4$.
-All compatible old families are empty, yet an explicit residual translation
-recovers $m-4$ directions. The family is not a brace family: two splice
-cuts remain. Parent replay and independent checks pass; the
-[parent disposition](iterations/i172-prescribed-square-switch-parent-disposition.md)
-records the exact scope and all 29 failed cap constructions.
-[I173](iterations/iteration173-brace-high-loss-octagons-factory-astra-task.json)
-targets bracehood while preserving the octagon and loss at least two.
+**Structural-graph update:** [I173](iterations/i173-brace-high-loss-octagons.md)
+passes the assigned I172 audits. The declared 236 surgery histories remove
+the cuts and produce 212 certified brace outputs, but all losses are zero.
+Q173 proves finite survivor saturation, with 1,500 explicit absorption
+identities. Parent replay and independent checks of all 236 survivor
+bases and 328,920 matching witnesses pass. The
+[parent disposition](iterations/i173-brace-high-loss-octagons-parent-disposition.md)
+preserves failed transports and the corrected diagnostic schema failure.
+[I174](iterations/iteration174-prism-gadget-survival-factory-astra-task.json)
+changes the attachment gadget and tests saturation before extending a
+history. A high-loss brace is still missing.
 Technical only; universal exchange, (T), and Q164 remain open.
 **8 accepted, 2 remaining.**
 
