@@ -1,5 +1,13 @@
 # OpenAI mathematics research
 
+**I183 finalization complete:** [Parent review](frontier/iterations/i183-finalization-parent-disposition.md)
+passes the sealed 23-stage replay, with independent reconstruction of all
+twelve facial controls and 626 matching cases. The earlier checkpoint
+remains historically incomplete and unsealed. E183 is still open.
+[I184](frontier/iterations/iteration184-alternating-cycle-brief.md)
+targets the unpaid alternating-cycle condition in a proof-only round,
+without rebuilding historical controls. **8 accepted, 2 remaining.**
+
 **I183 partial checkpoint:** [Parent review](frontier/iterations/i183-checkpoint-parent-disposition.md)
 passes authentication and the four completed diagnostic chunks, but
 eleven of 23 mandatory controls and facial-arc reconstruction remain

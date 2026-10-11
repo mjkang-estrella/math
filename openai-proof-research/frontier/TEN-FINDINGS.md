@@ -6,6 +6,23 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I183 finalization complete, I184 proof attempt prepared
+
+[I183 finalization](iterations/i183-cptp-finalization.md) closes all
+23 bounded controls and the facial-arc reconstruction backlog.
+[Parent authentication and replay](iterations/i183-finalization-parent-disposition.md)
+pass for 562 owned files and 1,153 strict bindings, with eight live
+rejection probes and a source positive control. Independent parent
+implementations confirm all twelve indexed facial controls and all
+626 matching-complement cases, including complete controlled sets.
+No universal survivor proof follows. Earlier failed/incomplete records
+retain their historical statuses and all limitations remain recorded.
+[I184](iterations/iteration184-alternating-cycle-brief.md) now targets
+one matching-alternating cycle through cut 2 with connected toggled
+complement, for some completion of each admissible lost packing.
+It is a proof-only round, not another historical-control rebuild.
+Z184 and E183 remain open. **Eight accepted, two remaining.**
+
 ### I183 partial checkpoint, finalization prepared
 
 The [resumed report](iterations/i183-cptp-survival-resumed.md) remains

@@ -21,6 +21,14 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I183 finalization complete:** [Parent review](iterations/i183-finalization-parent-disposition.md)
+passes all 23 controls, full sealed byte/membership checks and eight
+live probes. Independent parent code rebuilds the twelve facial controls
+and all 626 reduction cases. These remain finite/technical, not a new
+accepted finding. E183 stays open; [I184](iterations/iteration184-alternating-cycle-brief.md)
+is a focused written alternating-cycle attempt using the existing sealed
+validation reference. **Eight accepted, two remaining.**
+
 **I183 partial checkpoint:** [Parent review](iterations/i183-checkpoint-parent-disposition.md)
 authenticates 76 owned files and 1,067 strict bindings, with successful
 four-chunk replay and independent formal cut/attachment checks.
