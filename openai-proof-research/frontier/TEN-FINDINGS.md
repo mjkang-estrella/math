@@ -6,6 +6,39 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I169 quadrilateral recovery, prism exchange theorem, and I170 continuation
+
+[I169](iterations/i169-bridge-independence.md) passes all audited I168
+interfaces (R168/E168, D168, M168, the histogram and both mandatory
+sets: PASS ORIGINAL, two enumerators and two rank implementations) and
+proves three new results. **F169** removes the deleted-edge coordinates
+entirely: with $\beta=P+Q+D+2\mathbf 1_e+2\mathbf 1_f-A-B-C\in\ker A_K$
+and the $N_{00}$ offset $c=N-A-B+C$, exchange is exactly
+$\dim(L_0+U+\operatorname{span}\{\beta\})\ge\dim(L_0+V+\operatorname{span}\{c\})$;
+deleted-edge-only separators are refuted as a method since
+$\rho(L)=\mathbb Q^2$ universally. **S169** proves for every facial
+quadrilateral expansion the exact bijections $N_{00}\to P_{ux},P_{vy},
+D_{11}$ (delete cross diagonals $ux$, $vy$, or both), hence $U=V$,
+$\ell-1\le t\le\ell$, and $b\equiv 3r+2s\pmod W$; exchange fails in the
+equality case **exactly** at the quotient coefficient
+$\alpha=-\tfrac32$. **P169** proves exchange for every lateral-face
+expansion of every even prism — including unbounded losses
+$\ell=L-3$ — via the integral identity
+$(L-2)s=(L-3)C_0-\sum_{j\ne0}C_j+X+Y$, with $\alpha=-(L-3)/(L-2)$
+approaching $-1$, never $-\tfrac32$. On the 206 quadrilateral census
+steps, all 182 equality cases have
+$\alpha\in\{-\tfrac12,-\tfrac34,-\tfrac56,-\tfrac78\}$. Universal
+exchange, (T) and Q164 remain open; no counterexample was found.
+Parent precheck and sealed replay pass (~52 s; eight guard probes
+blocked; context ledgers drift-free at replay). The
+[parent disposition](iterations/i169-bridge-independence-parent-disposition.md)
+classifies the round **technical only, no ninth nomination**.
+[I170](iterations/iteration170-quadrilateral-coefficient-factory-astra-task.json)
+audits the new interfaces and attacks the excluded coefficient
+$-\tfrac32$ (observed coefficients have the shape $-(m-1)/m$; the
+excluded value has the opposite shape) and the longer-face correction.
+**8 accepted, 2 remaining; research active.**
+
 ### I168 cross-class rank identity, two obstructions, and I169 continuation
 
 [I168](iterations/i168-cross-class-exchange.md) passes all six audited

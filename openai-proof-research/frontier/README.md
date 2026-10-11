@@ -21,21 +21,21 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I168](iterations/i168-cross-class-exchange.md)
-passes all six audited I167 interfaces and proves **R168**, the exact
-cross-class rank identity $d(H)=2+\dim(L+U+\operatorname{span}\{b\})$:
-the exchange step is now precisely the residual inequality
-$t+\eta\ge\ell$ (E168), with $t\ge\ell-1$ on all 636 tested steps and
-the balanced bridge $\eta=1$ in every equality case. It also proves two
-method obstructions: **D168** (an infinite even-prism family refutes
-every bounded-bidirectional dual-transfer spanning route) and **M168**
-(an exact certificate refutes typed degree-and-port affine fullness on
-the McCuaig retract). The exchange step, the brace theorem and Q164
+**Structural-graph update:** [I169](iterations/i169-bridge-independence.md)
+passes all audited I168 interfaces and proves three new results:
+**F169** (exchange is exactly a comparison inside the deleted-edge graph
+$K$), **S169** (for every facial quadrilateral expansion, exact
+$N_{00}$-to-path bijections give $\ell-1\le t\le\ell$, and exchange can
+fail in the equality case only at the single quotient coefficient
+$\alpha=-\tfrac32$), and **P169** (exchange holds for every lateral-face
+expansion of every even prism, with unbounded survival loss and
+$\alpha=-(L-3)/(L-2)$). All 182 tested equality cases have
+$\alpha\ne-\tfrac32$. Universal exchange, the brace theorem and Q164
 remain open; technical only, no ninth nomination. Parent sealed replay
-passes; the [parent disposition](iterations/i168-cross-class-exchange-parent-disposition.md)
-records the scope. [I169](iterations/iteration169-bridge-independence-factory-astra-task.json)
-audits the new interfaces and attacks $t+\eta\ge\ell$ directly.
-**8 accepted, 2 remaining.**
+passes; the [parent disposition](iterations/i169-bridge-independence-parent-disposition.md)
+records the scope. [I170](iterations/iteration170-quadrilateral-coefficient-factory-astra-task.json)
+audits the new interfaces and attacks the excluded coefficient and the
+longer-face correction. **8 accepted, 2 remaining.**
 
 **Latest oracle gate:** [I161](reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies the full theorem as **TECHNICAL ONLY** through a concrete compiler,

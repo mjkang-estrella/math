@@ -16,6 +16,33 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I169 quadrilateral recovery, prism exchange theorem, and I170 continuation
+
+[I169](i169-bridge-independence.md) passes all audited I168 interfaces
+(R168/E168, D168, M168, histogram, mandatory cases: PASS ORIGINAL with
+two enumerators and two rank implementations) and proves three new
+results. **F169** eliminates the deleted-edge coordinates: exchange is
+exactly the $K$-space comparison
+$\dim(L_0+U+\operatorname{span}\{\beta\})\ge\dim(L_0+V+\operatorname{span}\{c\})$,
+and deleted-edge-only separators are refuted as a method. **S169**
+proves, for every facial quadrilateral expansion, exact bijections
+$N_{00}\to P_{ux},P_{vy},D_{11}$ (deleting the cross diagonals), hence
+$U=V$, $\ell-1\le t\le\ell$, and exchange failing in the equality case
+**exactly** when the quotient coefficient is $\alpha=-\tfrac32$.
+**P169** proves exchange for every lateral-face expansion of every even
+prism, with $\alpha=-(L-3)/(L-2)$ and unbounded losses $\ell=L-3$.
+On the 206 quadrilateral census steps the 182 equality cases have
+$\alpha\in\{-\tfrac12,-\tfrac34,-\tfrac56,-\tfrac78\}$, never
+$-\tfrac32$. Universal exchange, (T) and Q164 remain open. Parent
+sealed replay passes (~52 s; eight guard probes blocked; drift-free
+context ledgers). The
+[parent disposition](i169-bridge-independence-parent-disposition.md)
+records the scope: technical only, no ninth nomination.
+[I170](iteration170-quadrilateral-coefficient-factory-astra-task.json)
+audits the new interfaces and attacks the excluded coefficient
+$-\tfrac32$ and the longer-face correction. **Eight accepted, two
+remaining.**
+
 ## I168 cross-class rank identity, two obstructions, and I169 continuation
 
 [I168](i168-cross-class-exchange.md) passes all six audited I167
@@ -36,8 +63,9 @@ Parent sealed replay passes (~17 s; context ledgers drift-free at
 replay). The [parent disposition](i168-cross-class-exchange-parent-disposition.md)
 records the scope: technical only, no ninth nomination.
 [I169](iteration169-bridge-independence-factory-astra-task.json)
-audits the new interfaces and attacks the residual inequality
-$t+\eta\ge\ell$ directly. **Eight accepted, two remaining.**
+audited the new interfaces and attacked the residual inequality
+$t+\eta\ge\ell$; its outcome is recorded above. **Eight accepted, two
+remaining.**
 
 ## I167 exchange-step audit, corrected system, and I168 continuation
 
