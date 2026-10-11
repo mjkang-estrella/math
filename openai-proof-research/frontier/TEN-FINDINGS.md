@@ -6,6 +6,31 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I182 survival reduction and I183 CPTP-survival
+
+[I182](iterations/i182-controlled-extension.md) proves the reduction
+lemma: deleting the alternating half bijects prescribed perfect matchings
+with perfect matchings of the derived graph G' = G − V(C), and a
+Hamiltonian complement is exactly a cross-paired acyclic two-path
+complement there. Since the lost toggle is complete, that topological
+half is always payable; the entire open content is CPTP-survival — a
+member of the nonempty cross-paired population with one of the eleven
+survivor port types rather than the two lost types.
+
+Parent replay passes (mandatory ~3.37 s, extension ~0.07 s; both
+byte-identical, eight probes; 25 owned, 1,014 strict inputs byte-checked
+by the parent harness, four drift-exempt contexts). Independent parent
+certificates re-enumerate the three-patch census, all six directed
+instances, all 626 reduction equivalence checks, and the five controlled
+matchings per instance coinciding exactly with the survivor-helper
+products; every instance's q-completion appears as a lost matching, as
+predicted. The [parent disposition](iterations/i182-controlled-extension-parent-disposition.md)
+records exact scope plus three sealed-verifier weaknesses (no strict
+byte-check, vacuous forged-source probe, development-time reseal).
+[I183](iterations/iteration183-cptp-survival-brief.md) takes
+CPTP-survival itself as the single target.
+**Technical only. Eight accepted, two remaining; research active.**
+
 ### I181 local reattachment and I182 controlled extension
 
 [I181](iterations/i181-six-cycle-helper.md) proves the local reattachment

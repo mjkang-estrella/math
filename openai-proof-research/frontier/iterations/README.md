@@ -16,6 +16,24 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I182 survival reduction and I183 CPTP-survival
+
+[I182](i182-controlled-extension.md) reduces the controlled
+alternating-half extension exactly to a survival predicate on the
+derived graph: the A-prescribed Hamiltonian-complement matching always
+exists, and only survivor-fibre membership in the cross-paired two-path
+population is unpaid. E182, E181, H180 and L179 remain unresolved.
+
+Parent replay (both payloads byte-identical, eight probes; 25 owned,
+1,014 strict, four contexts) and independent parent certificates pass:
+the three-patch census, all 626 reduction checks and the exact
+helper-product correspondence are recomputed from the frozen data.
+The [parent disposition](i182-controlled-extension-parent-disposition.md)
+records exact scope and three sealed-verifier weaknesses.
+[I183](iteration183-cptp-survival-brief.md) targets CPTP-survival
+itself, proof or an actual fully hypothesized counterexample, without a
+graph sweep. **Eight accepted, two remaining.**
+
 ## I181 local reattachment and I182 controlled extension
 
 [I181](i181-six-cycle-helper.md) proves the two-square local reattachment

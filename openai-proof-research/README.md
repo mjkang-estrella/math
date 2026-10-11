@@ -1,16 +1,18 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I181](frontier/iterations/i181-six-cycle-helper.md)
-proves the local reattachment lemma for the two-square six-cycle patch:
-once an actual opposite-half survivor helper exists, toggling the cycle
-preserves spanning degrees, port pairing, component count, acyclicity and
-the coordinate identity. Independent parent certificates exhaust all 2^11
-local restrictions and all 120 external segment pairings byte-identically.
-The [parent disposition](frontier/iterations/i181-six-cycle-helper-parent-disposition.md)
-preserves exact scope: the unpaid step is a controlled three-edge
-alternating-half extension, and E181/H180/L179 remain unresolved.
-[I182](frontier/iterations/iteration182-controlled-extension-brief.md)
-targets exactly that extension, proof or actual counterexample.
+**Structural-graph update:** [I182](frontier/iterations/i182-controlled-extension.md)
+reduces the controlled three-edge alternating-half extension exactly:
+deleting the half bijects prescribed matchings with perfect matchings of
+the vertex-deleted graph, and a Hamiltonian complement is equivalent to a
+cross-paired acyclic two-path complement. The topological half is always
+payable; only CPTP-survival (a survivor port type in that nonempty
+population) remains unpaid. Independent parent certificates recheck all
+626 reduction cases, the three-patch census and the five-per-instance
+controlled matchings coinciding with the helper products.
+The [parent disposition](frontier/iterations/i182-controlled-extension-parent-disposition.md)
+preserves exact scope: E182/E181/H180/L179 remain unresolved.
+[I183](frontier/iterations/iteration183-cptp-survival-brief.md)
+targets exactly the survival predicate, proof or actual counterexample.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
