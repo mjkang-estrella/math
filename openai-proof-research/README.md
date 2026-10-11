@@ -1,19 +1,20 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I168](frontier/iterations/i168-cross-class-exchange.md)
-passes all six audited I167 interfaces and proves **R168**, the exact
-cross-class rank identity $d(H)=2+\dim(L+U+\operatorname{span}\{b\})$,
-reducing the exchange step to the residual inequality $t+\eta\ge\ell$
-(E168), which holds on all 636 tested expansions. It also proves two
-method obstructions: **D168**, an infinite even-prism family refuting
-every bounded-bidirectional dual-transfer spanning route, and **M168**,
-an exact certificate refuting typed degree-and-port affine fullness on
-the McCuaig retract. The exchange step, the brace theorem and the sharp
-linear count target remain unproved and unrefuted. Parent sealed replay
-passes; the [parent disposition](frontier/iterations/i168-cross-class-exchange-parent-disposition.md)
-classifies the round technical only. [I169](frontier/iterations/iteration169-bridge-independence-factory-astra-task.json)
-now audits the new interfaces and attacks $t+\eta\ge\ell$ directly on
-Factory/Astra. **8 accepted, 2 remaining.**
+**Structural-graph update:** [I169](frontier/iterations/i169-bridge-independence.md)
+passes all audited I168 interfaces and proves three new results:
+**F169** (exchange is exactly a rank comparison inside the deleted-edge
+graph $K$), **S169** (for every facial quadrilateral expansion, exact
+$N_{00}$-to-path bijections give $\ell-1\le t\le\ell$, with exchange
+failing in the equality case only at the single quotient coefficient
+$\alpha=-\tfrac32$), and **P169** (exchange holds for every lateral-face
+expansion of every even prism, with unbounded survival loss and
+$\alpha=-(L-3)/(L-2)$). All 182 tested equality cases avoid
+$-\tfrac32$. Universal exchange, the brace theorem and the sharp linear
+count target remain unproved and unrefuted. Parent sealed replay passes;
+the [parent disposition](frontier/iterations/i169-bridge-independence-parent-disposition.md)
+classifies the round technical only. [I170](frontier/iterations/iteration170-quadrilateral-coefficient-factory-astra-task.json)
+now audits the new interfaces and attacks the excluded coefficient and
+the longer-face correction on Factory/Astra. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies full R154 as **TECHNICAL ONLY**, retaining I159's unchanged-original

@@ -1,0 +1,205 @@
+"""I169 fresh exact graph and linear algebra primitives; stdlib only."""
+from fractions import Fraction
+from itertools import combinations
+from math import gcd
+from functools import reduce
+
+def edge(a,b): return (min(a,b),max(a,b))
+def adjacency(edges):
+    a={v:[] for e in edges for v in e}
+    for u,v in edges: a[u].append(v);a[v].append(u)
+    return {v:sorted(a[v]) for v in sorted(a)}
+def connected(a,vs):
+    vs=set(vs)
+    if not vs:return False
+    seen={min(vs)}; todo=list(seen)
+    while todo:
+        for v in a[todo.pop()]:
+            if v in vs and v not in seen:seen.add(v);todo.append(v)
+    return seen==vs
+
+def hamilton(edges,start=None,end=None):
+    """Vertex-path DFS, no factor or matching routine used."""
+    a=adjacency(edges); vs=set(a);start=min(vs) if start is None else start
+    found=set();path=[start]; seen={start}
+    def visit(u):
+        if len(path)==len(vs):
+            if end is None:
+                if start not in a[u] or path[1]>u:return
+                es=[edge(path[i],path[i+1]) for i in range(len(path)-1)]+[edge(u,start)]
+            else:
+                if u!=end:return
+                es=[edge(path[i],path[i+1]) for i in range(len(path)-1)]
+            found.add(frozenset(es));return
+        for v in a[u]:
+            if v in seen or (v==end and len(path)!=len(vs)-1):continue
+            seen.add(v);path.append(v);visit(v);path.pop();seen.remove(v)
+    visit(start)
+    return sorted(found,key=lambda c:tuple(sorted(c)))
+
+def factors(edges,target):
+    """Independent edge-decision recursion satisfying specified degrees."""
+    es=tuple(map(tuple,edges));verts=sorted(target);inc={v:[i for i,e in enumerate(es) if v in e] for v in verts}
+    out=[]
+    def search(state):
+        while True:
+            forced={};best=None
+            for v in verts:
+                free=[i for i in inc[v] if state[i]<0];need=target[v]-sum(state[i]==1 for i in inc[v])
+                if need<0 or need>len(free):return
+                if free and (need==0 or need==len(free)):
+                    val=int(need!=0)
+                    for i in free:
+                        if i in forced and forced[i]!=val:return
+                        forced[i]=val
+                elif free:
+                    key=(len(free),v)
+                    if best is None or key<best[0]:best=(key,free,need)
+            if not forced:break
+            for i,val in forced.items():state[i]=val
+        if best is None:
+            out.append(frozenset(es[i] for i,x in enumerate(state) if x==1));return
+        _,free,need=best
+        for choice in combinations(free,need):
+            nxt=state[:];ss=set(choice)
+            for i in free:nxt[i]=int(i in ss)
+            search(nxt)
+    search([-1]*len(es))
+    return sorted(set(out),key=lambda c:tuple(sorted(c)))
+def factor_cycles(edges):
+    a=adjacency(edges)
+    return [c for c in factors(edges,{v:2 for v in a}) if connected(adjacency(c),a)]
+def two_paths(edges,terminals):
+    u,v,x,y=terminals;vs=set(adjacency(edges));out=[]
+    for c in factors(edges,{z:1 if z in terminals else 2 for z in vs}):
+        a=adjacency(c);seen={u};todo=[u]
+        while todo:
+            for z in a[todo.pop()]:
+                if z not in seen: seen.add(z);todo.append(z)
+        if v in seen and x not in seen and y not in seen and connected(a,vs-seen):out.append(c)
+    return out
+
+def primitive(v):
+    g=reduce(gcd,(abs(x) for x in v),0)
+    if g:v=[x//g for x in v]
+    first=next((x for x in v if x),1)
+    return [-x for x in v] if first<0 else v
+
+def integer_basis(rows):
+    """Incremental primitive integer elimination (no fractions)."""
+    basis={}
+    for row in rows:
+        v=list(row)
+        for p,b in sorted(basis.items()):
+            if v[p]:
+                x,y=b[p],v[p];v=primitive([x*a-y*c for a,c in zip(v,b)])
+        p=next((i for i,x in enumerate(v) if x),None)
+        if p is not None:basis[p]=primitive(v)
+    return [basis[p] for p in sorted(basis)]
+def rank_integer(rows):return len(integer_basis(rows))
+def rank_fraction(rows):
+    """Independent column sweep with rational pivoting and forward row reduction."""
+    a=[list(map(Fraction,row)) for row in rows]
+    if not a:return 0
+    height=len(a);r=0
+    for c in range(len(a[0])):
+        p=next((k for k in range(r,height) if a[k][c]),None)
+        if p is None:continue
+        a[r],a[p]=a[p],a[r];div=a[r][c]
+        for j in range(c,len(a[r])):a[r][j]/=div
+        for k in range(r+1,height):
+            mul=a[k][c]
+            if mul:
+                for j in range(c,len(a[k])):a[k][j]-=mul*a[r][j]
+        r+=1
+        if r==height:break
+    return r
+
+def rank(rows):
+    rows=list(rows);a=rank_integer(rows);b=rank_fraction(rows)
+    assert a==b,('rank disagreement',a,b)
+    return a
+
+def nullspace(rows,width):
+    a=[list(map(Fraction,row)) for row in rows];r=0;piv=[]
+    for c in range(width):
+        p=next((k for k in range(r,len(a)) if a[k][c]),None)
+        if p is None:continue
+        a[r],a[p]=a[p],a[r];div=a[r][c];a[r]=[x/div for x in a[r]]
+        for k in range(len(a)):
+            if k!=r and a[k][c]:
+                mul=a[k][c];a[k]=[x-mul*y for x,y in zip(a[k],a[r])]
+        piv.append(c);r+=1
+        if r==len(a):break
+    out=[]
+    for f in range(width):
+        if f in piv:continue
+        z=[Fraction(0)]*width;z[f]=1
+        for i,p in enumerate(piv):z[p]=-a[i][f]
+        den=1
+        for x in z:den=den*x.denominator//gcd(den,x.denominator)
+        out.append(primitive([int(x*den) for x in z]))
+    return out
+
+def vec(c,es):return [int(e in c) for e in es]
+def sub(a,b):return [x-y for x,y in zip(a,b)]
+def differences(cs,es):
+    vv=[vec(c,es) for c in cs]
+    return [sub(v,vv[0]) for v in vv[1:]] if vv else []
+def dot(x,y):return sum(a*b for a,b in zip(x,y))
+def incidence(es):return [[int(v in e) for e in es] for v in sorted(adjacency(es))]
+def face_edges(f):return [edge(f[i],f[(i+1)%len(f)]) for i in range(len(f))]
+def expand(g,step):
+    fi,i,j=step;f=g['faces'][fi];u,v=f[i],f[(i+1)%len(f)];y,x=f[j],f[(j+1)%len(f)]
+    p,q,r,s=range(max(adjacency(g['edges']))+1,max(adjacency(g['edges']))+5)
+    uv,xy=edge(u,v),edge(x,y);es=set(map(tuple,g['edges']))-{uv,xy}
+    es.update(map(lambda t:edge(*t),[(u,p),(v,q),(x,r),(y,s),(p,q),(r,s),(p,r),(q,s)]))
+    chains={uv:[u,p,q,v],xy:[y,s,r,x]};faces=[]
+    for k,ff in enumerate(g['faces']):
+        if k==fi:continue
+        new=[]
+        for a,b in zip(ff,ff[1:]+ff[:1]):
+            chain=chains.get(edge(a,b))
+            if chain is None:new.append(a)
+            else:new.extend((chain if chain[0]==a else chain[::-1])[:-1])
+        faces.append(new)
+    faces.extend([f[i+1:j+1]+[s,q],f[j+1:]+f[:i+1]+[p,r],[p,q,s,r]])
+    return {'edges':sorted(es),'faces':faces,'n':g['n']+4},(u,v,x,y,p,q,r,s)
+
+def validate_plane(g):
+    es=list(map(tuple,g['edges']));a=adjacency(es);vs=set(a);faces=g['faces'];directed=[]
+    assert all(len(ns)==3 for ns in a.values()) and len(vs)==g['n']
+    color={}
+    def color_visit(v,c):
+        if v in color:assert color[v]==c;return
+        color[v]=c
+        for w in a[v]:color_visit(w,1-c)
+    color_visit(min(vs),0);assert len(color)==len(vs)
+    for ff in faces:
+        assert len(set(ff))==len(ff)
+        directed.extend(zip(ff,ff[1:]+ff[:1]))
+    assert len(set(directed))==2*len(es)
+    assert set(directed)=={e for u,v in es for e in [(u,v),(v,u)]}
+    assert len(vs)-len(es)+len(faces)==2
+    for remove in [()]+list(combinations(vs,1))+list(combinations(vs,2)):
+        assert connected(a,vs-set(remove))
+    return True
+
+def prism(length):
+    es={edge(i,(i+1)%length) for i in range(length)}|{edge(length+i,length+(i+1)%length) for i in range(length)}|{edge(i,length+i) for i in range(length)}
+    faces=[list(range(length)),list(range(length,2*length))[::-1]]
+    faces += [[(i+1)%length,i,length+i,length+(i+1)%length] for i in range(length)]
+    return {'edges':sorted(es),'faces':faces,'n':2*length}
+
+def dual_shores(g):
+    es=list(map(tuple,g['edges']));faces=g['faces'];ef={e:[] for e in es}
+    for i,f in enumerate(faces):
+        for e in face_edges(f):ef[e].append(i)
+    assert all(len(x)==2 for x in ef.values());de=list(map(tuple,ef.values()));a=adjacency(de);V=set(a)
+    def tree(s):return connected(a,s) and sum(u in s and v in s for u,v in de)==len(s)-1
+    out=[]
+    for mask in range(1,1<<(len(faces)-1)):
+        s={i+1 for i in range(len(faces)-1) if mask>>i&1}
+        if tree(s) and tree(V-s):
+            out.append((s,frozenset(e for e,(a,b) in ef.items() if (a in s)!=(b in s))))
+    return out
