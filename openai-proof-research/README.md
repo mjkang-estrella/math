@@ -1,5 +1,14 @@
 # OpenAI mathematics research
 
+**I186 reviewed, local ears parked:** [Parent review](frontier/iterations/i186-theta-region-balance-parent-disposition.md)
+passes the region-balance proof and short-arc exclusions. The length-five
+example satisfies only symbolic incidence conditions, not the full graph
+hypotheses. Authentication and the inherited 23-stage replay pass.
+The stopping rule parks this mechanism, not E183 or the research program.
+[I187](frontier/iterations/iteration187-frozen-state-survival-brief.md)
+returns to unrestricted E183 through global paired-state cancellation,
+without a single-cycle or cut-2 prescription. **8 accepted, 2 remaining.**
+
 **I185 splice analysis:** [Parent review](frontier/iterations/i185-connected-reconnection-parent-disposition.md)
 passes the exact ear conditions and component-change formula, but no
 improving ear is forced. The formal fragmentation pattern is not a
