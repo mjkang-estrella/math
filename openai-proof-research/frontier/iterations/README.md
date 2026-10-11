@@ -16,6 +16,25 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I190 pairing deductions checked; final concentration attempt
+
+The first [I190](iteration190-beta-pairing-survivor-brief.md) dispatch
+completed and returned the
+[report](i190-beta-pairing-survivor.md): residual connectivity, the
+exact $J$-grouped patch-matching table, universal alpha
+terminal-deletion paths, parity and crossing identities, constant
+Pfaffian sign, and the conditional $W$-square switch. The
+[parent disposition](i190-beta-pairing-survivor-parent-disposition.md)
+passes these deductions, independently re-derives the matching table by
+exhaustive enumeration, verifies the cut profiles and witnesses, and
+records original E183 as UNRESOLVED at (R190) with the sharpened
+counterexample constraints (C190).
+[I191](iteration191-concentration-exclusion-brief.md) is the final
+focused E183 attempt: concentration exclusion or a fully hypothesized
+counterexample; on another UNRESOLVED the line parks and work pivots to
+Q164/universal exchange. The local-ear mechanism remains parked.
+**Eight accepted, two remaining.**
+
 ## I189 transport analysis checked; pairing layer next
 
 The first [I189](iteration189-patch-route-transport-brief.md) dispatch

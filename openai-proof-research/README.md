@@ -1,18 +1,19 @@
 # OpenAI mathematics research
 
-**I189 patch classification checked, transport conditional:**
-[Parent review](frontier/iterations/i189-patch-route-transport-parent-disposition.md)
-passes the complete ten-row patch-restriction classification
-(independently re-derived by exhaustive enumeration of all $2^{11}$
-local edge subsets), the exact rest-pairing admissibility, the toggled
-$K_B$ transport, and the conditional exterior-assisted and short-repair
-transports, with all eight exterior witnesses verified edge-by-edge.
-Original E183 stays UNRESOLVED: open classes need an unrestricted rest
-change giving cycle-free $\beta$ pairing and survivor type
-simultaneously, and no fully hypothesized counterexample exists.
-[I190](frontier/iterations/iteration190-beta-pairing-survivor-brief.md)
-attacks the pairing layer via brace consequences and the manuscript's
-circulation/Pfaffian operations. **8 accepted, 2 remaining.**
+**I190 residual pairing analysis checked:**
+[Parent review](frontier/iterations/i190-beta-pairing-survivor-parent-disposition.md)
+passes the residual connectivity proofs, the exact patch-matching
+deletion table (independently re-derived by exhaustive enumeration of
+all $2^{11}$ local subsets), the universal alpha terminal-deletion
+paths, the constant Pfaffian matching sign, and the conditional
+alpha-to-beta square switch preserving full survivor type inside $W$.
+E183 stays UNRESOLVED at (R190): some cycle-free beta residual matching
+with survivor type, with rigid counterexample constraints recorded
+(cut profiles $\{e_2,e_3,e_4\}$ or $\{e_2\}$, excluded $W$ squares).
+[I191](frontier/iterations/iteration191-concentration-exclusion-brief.md)
+makes the final focused E183 attempt — concentration exclusion or a
+fully hypothesized counterexample; on another UNRESOLVED the line parks
+and work pivots to Q164/universal exchange. **8 accepted, 2 remaining.**
 
 **I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)
 passes the dual hypotheses, conditional recovery criterion and restricted

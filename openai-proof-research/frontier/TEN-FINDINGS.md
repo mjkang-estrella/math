@@ -6,26 +6,27 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
-### I189 patch classification checked; transport conditional, E183 open
+### I190 residual pairing deductions checked; final E183 attempt next
 
-[I189](iterations/i189-patch-route-transport.md) gives the complete
-ten-row degree-feasible classification of Hamiltonian patch
-restrictions (seven candidate rows), exact rest-pairing admissibility
-with the planar $\gamma$ exclusion, the type-preserving toggled
-transport $K_B\to K_A$, conditional exterior-assisted transports with
-eight explicit witnesses, and two-continuation matching repairs with
-short-repair sufficient conditions.
-[Parent review](iterations/i189-patch-route-transport-parent-disposition.md)
-passes these without repairs: the classification was independently
-re-derived by exhaustive enumeration of all $2^{11}$ local edge
-subsets, and every exterior witness verified edge-by-edge. The
-necessary-and-sufficient restatement (T_R) over all perfect matchings
-of $R=G-V(C)$ is correct; a survivor-typed cycle-free $\beta$ instance
-is unproved, and the $U=0134$ balanced repair provably yields lost $D$.
-Original E183 stays UNRESOLVED; no substantial finding is nominated.
-[I190](iterations/iteration190-beta-pairing-survivor-brief.md) attacks
-the pairing layer via brace consequences and the manuscript's
-circulation/Pfaffian operations.
+[I190](iterations/i190-beta-pairing-survivor.md) proves residual
+connectivity (no bridge or cut vertex), the exact $J$-grouped
+patch-matching table, universal alpha-paired alternating
+terminal-deletion paths for every residual matching, component/crossing
+parity identities, constant oriented Pfaffian matching sign, and a
+conditional four-cycle $\alpha\to\beta$ switch preserving full survivor
+type when the square lies in $W$.
+[Parent review](iterations/i190-beta-pairing-survivor-parent-disposition.md)
+passes these without repairs, independently re-deriving the matching
+table by exhaustive enumeration of all $2^{11}$ local subsets and
+verifying the cut-profile mapping (8) and all inherited witnesses. The
+counterexample hypothesis (C190) is sharpened (rigid cut profiles
+$\{e_2,e_3,e_4\}$ or $\{e_2\}$; no useful $W$ squares; all survivors in
+open classes) but neither contradicted nor realized, so original E183
+stays UNRESOLVED; no substantial finding is nominated.
+[I191](iterations/iteration191-concentration-exclusion-brief.md) is the
+final focused E183 attempt — concentration exclusion or a fully
+hypothesized counterexample. On another UNRESOLVED the E183 line parks
+and the program pivots to Q164/universal exchange.
 **Eight accepted, two remaining.**
 
 ### I187 marked-state deductions checked, patch-rooted geometry next
