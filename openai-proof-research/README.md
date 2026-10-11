@@ -1,27 +1,19 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I170](frontier/iterations/i170-quadrilateral-coefficient.md)
-passes all audited I169 interfaces and proves two new results: **H170**
-(whenever either cross-terminal pair is an edge — hence for every facial
-quadrilateral *and* hexagon expansion — exact translation bijections give
-$U=V+Z$ and $t\ge\ell-1$, with the bridge relation
-$b\equiv r+2z\pmod{L+U}$ and equality-case failure exactly at
-$z\equiv-r/2$) and **R170** (exact boundary-residual generators for
-arbitrary faces: $\operatorname{diff}(J)=\operatorname{diff}(F_J)
-+\operatorname{span}(E_J)$, the deficit identity
-$\ell-t=\delta_V+\varepsilon-\delta_R$, and exchange as
-$\delta_R+\eta\ge\delta_V+\varepsilon$). The blanket containment
-$V\subseteq U$, even $V\subseteq L+U$, is **refuted** by certified
-octagonal examples (index 431 with an explicit separator). The excluded
-quadrilateral coefficient $\alpha=-\tfrac32$ is now exactly a
-normalized weight $-\tfrac12$ of the disconnected square-switch
-2-factor; 1,120 tested equality cases all have $\alpha=-(m-1)/m$.
-Universal exchange, the brace theorem and Q164 remain unproved and
-unrefuted. Parent sealed replay passes; the
-[parent disposition](frontier/iterations/i170-quadrilateral-coefficient-parent-disposition.md)
-classifies the round technical only. [I171](frontier/iterations/iteration171-square-switch-weight-factory-astra-task.json)
-now audits the new interfaces and attacks the 2-factor weight bound and
-the octagonal lower bound on Factory/Astra. **8 accepted, 2 remaining.**
+**Structural-graph update:** [I171](frontier/iterations/i171-square-switch-weight.md)
+passes the assigned I170 audits and certifies a sharp distinction: in one
+order-32 brace, a two-component factor has normalized weight $-\tfrac12$,
+but the prescribed square switch has weight $+\tfrac1{14}$. Generic
+factor positivity is false; the square-specific exclusion remains open.
+W171 identifies the forbidden primitive quotient pair $(2,-3)$, and O171
+classifies the path-plus-cycle failures of minimal-octagon toggles.
+The walks sample now has 1,720 steps and 1,074 equality cases, not a proof
+of universal exchange. Parent sealed replay and independent witness checks
+pass. The [parent disposition](frontier/iterations/i171-square-switch-weight-parent-disposition.md)
+records the scope and corrects the previous parent-side population count.
+[I172](frontier/iterations/iteration172-prescribed-square-switch-factory-astra-task.json)
+targets the prescribed switch and high-loss minimal octagons.
+Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies full R154 as **TECHNICAL ONLY**, retaining I159's unchanged-original

@@ -16,6 +16,31 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I171 square-specific obstruction and I172 continuation
+
+[I171](i171-square-switch-weight.md) passes the assigned I170 audits.
+W171 sharpens the signed-affine and primitive-quotient reformulations;
+C171 certifies an order-32 brace with a two-component factor of weight
+$-\tfrac12$ and its distinct prescribed square switch of weight
+$+\tfrac1{14}$. O171 classifies minimal-octagon toggles, which can remain
+disconnected after passing the binary-coordinate test. A new index-431
+separator annihilates all of $L+U$ and pairs with the bridge to give 10.
+
+There are 806 new order-32 square steps, with 464 equality coefficients
+$-13/14$. The combined walks population has 1,720 steps and 1,074 equality
+cases; the old census remains separate. The 624+96 minimal-octagon steps
+all have loss at most one and do not test the hard regime. Parent replay
+passes (~492 s; 11 byte-equal payloads; eight probes blocked); inherited
+context drift is recorded. Separate parent enumeration verifies both
+key witnesses and all 1,032 brace-extension pairs.
+The [parent disposition](i171-square-switch-weight-parent-disposition.md)
+records technical-only status and corrects the preceding parent's count
+(1,120 steps, 792 equality occurrences, not 1,120 equality cases).
+[I172](iteration172-prescribed-square-switch-factory-astra-task.json)
+targets a square-specific relation excluding $(2,-3)$ and high-loss
+minimal octagons. Universal exchange, (T), and Q164 remain open.
+**Eight accepted, two remaining.**
+
 ## I170 short-gap theorem, exact residuals, and I171 continuation
 
 [I170](i170-quadrilateral-coefficient.md) passes all audited I169
@@ -35,7 +60,8 @@ examples (indices 263, 272, 431; index 431 has explicit separator $w$
 with $w\cdot U=0$, $w\cdot v=-8$), without touching the exchange target.
 The excluded quadrilateral coefficient $\alpha=-\tfrac32$ is exactly a
 normalized weight $-\tfrac12$ of the disconnected square-switch
-2-factor. All 1,120 tested quadrilateral equality cases have
+2-factor. The 1,120 tested quadrilateral steps have 792 equality occurrences,
+all with
 $\alpha=-(m-1)/m$; 982 additional longer-face steps show no
 $t\le\ell-2$. Universal exchange, (T) and Q164 remain open. Parent
 sealed replay passes (~131 s; seven payloads byte-equal; eight guard

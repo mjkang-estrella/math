@@ -1,0 +1,73 @@
+"""Fresh I171 audit and attack driver; inputs are ancestor JSON only."""
+import json
+from pathlib import Path
+from collections import Counter
+ROOT=Path(__file__).resolve().parents[3]
+OWN=Path(__file__).resolve().parent
+exec(compile((OWN/'toolkit.py').read_bytes(),str(OWN/'toolkit.py'),'exec'))
+FIRST=[0,520,522,524,527,528,530,533,534,536,539,431]
+
+def read(p):return json.loads((ROOT/p).read_bytes())
+def inputs():
+    graphs=read('frontier/experiments/i166_affine_span_braces/bracegen-graphs.json')
+    census=read('frontier/experiments/i167_exchange_step_braces/diagnostic-attempt-01.json')['expansions']
+    return graphs,census
+
+def mandatory(graphs,census):
+    lookup={g['history']:g for g in graphs['bfs'].values()}; result=[]
+    for i in FIRST:
+        src=census[i]; row,data=analyze(lookup[src['parent_history']],src['step']);row['index']=i
+        assert [row[z] for z in ('ell','t','eta')]==([7,6,1] if i in FIRST[1:-1] else [1,0,1])
+        if i==431:
+            assert (row['rankU'],row['rankUV'])==(8,9)
+            assert [row[z] for z in ('delta_V','delta_R','epsilon')]==[1,0,0]
+            w=(1,1,0,-2,2,0,0,0,-3,0,-1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,-1,0,0,0)
+            v=(0,-1,1,1,-1,0,0,0,0,-1,1,0,0,1,-1,0,-1,0,1,0,0,0,1,0,-1,0,1,-1,-1,1)
+            assert all(sum(a*b for a,b in zip(w,z))==0 for z in data['U'])
+            assert sum(a*b for a,b in zip(w,v))==-8
+            assert v in {sub(a,b) for a in data['cv']['N00'] for b in data['cv']['N00']}
+            row['separator_check']={'w':w,'v':v,'dot':-8,'all_U_zero':True}
+        result.append(row)
+    return result
+
+def run(mode):
+    graphs,census=inputs(); first=mandatory(graphs,census)
+    if mode=='mandatory':return {'first':first,'verdict':'PASS'}
+    lookup={g['history']:g for g in graphs['bfs'].values()}
+    if mode=='audit':
+        expected={r['index']:r for r in read('frontier/experiments/i170_quadrilateral_coefficient/audit-attempt-01.json')['rows']}
+        expectedR={r['index']:r for r in read('frontier/experiments/i170_quadrilateral_coefficient/residual-attempt-03.json')['rows']}
+        rows=[]
+        for i,src in enumerate(census):
+            row,data=analyze(lookup[src['parent_history']],src['step']);row['index']=i
+            for key in ('ell','t','eta','dg','counts'):assert row[key]==expected[i][key],(i,key)
+            if 'delta_V' in row:
+                for key in ('delta_V','delta_R','epsilon'):assert row[key]==expectedR[i][key],(i,key)
+            if i in (263,272,431):assert (row['rankU'],row['rankUV'])==(8,9)
+            rows.append(row)
+        hist=dict(sorted(Counter(str(tuple(r[z] for z in ('ell','t','eta'))) for r in rows).items()))
+        assert hist=={'(0, 0, 0)':138,'(1, 0, 1)':385,'(1, 1, 0)':56,'(3, 2, 1)':34,'(5, 4, 1)':13,'(7, 6, 1)':10}
+        assert sum(bool(r['short_edges']) for r in rows)==580
+        return {'first':first,'rows':rows,'histogram':hist,'short_gap':580,'hexagons':sum(r['face_length']==6 for r in rows),'verdict':'PASS'}
+    if mode in ('coefficient-audit','long-audit'):
+        square=mode=='coefficient-audit'; limit=28 if square else 24
+        old=read('frontier/experiments/i170_quadrilateral_coefficient/'+('coefficient' if square else 'longscan')+'-attempt-01.json')
+        expected={(r['history'],tuple(r['step'])):r for r in old['rows']};rows=[];nsteps=0
+        for g in graphs['walks'].values():
+            if g['n']>limit:continue
+            for step in steps(g):
+                if (len(g['faces'][step[0]])==4)!=square:continue
+                nsteps+=1;row,_=analyze(g,step,residual=not square);row['history']=g['history'];prev=expected.get((g['history'],tuple(step)))
+                if square and row['t']!=row['ell']-1:continue
+                assert prev is not None
+                for k in (('alpha','ell','t') if square else ('ell','t','eta')):assert row[k]==prev[k],(g['history'],step,k)
+                rows.append(row)
+        assert nsteps==old['steps'] and len(rows)==len(old['rows'])
+        hist=dict(sorted(Counter(r['alpha'] if square else str(tuple(r[z] for z in ('face_length','ell','t','eta'))) for r in rows).items()))
+        assert hist==old['histogram']
+        return {'first':first,'steps':nsteps,'rows':rows,'histogram':hist,'verdict':'PASS'}
+    raise ValueError(mode)
+
+if __name__=='__main__':
+    import sys
+    print(json.dumps(run(sys.argv[1]),sort_keys=True,indent=2))
