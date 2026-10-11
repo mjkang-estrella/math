@@ -16,6 +16,16 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I183 interrupted, continuation prepared
+
+The [interruption record](i183-provider-failure-recovery.md) distinguishes
+the provider-reported network failure from a research verdict. Original
+partial files remain unchanged; preservation and syntax checks pass,
+but no I183 mathematical verification is claimed.
+The [continuation brief](iteration183-cptp-survival-resume-brief.md)
+retains the original target and isolates resumed work.
+**Eight accepted, two remaining.**
+
 ## I182 survival reduction and I183 CPTP-survival
 
 [I182](i182-controlled-extension.md) reduces the controlled

@@ -1,5 +1,10 @@
 # OpenAI mathematics research
 
+**I183 recovery:** The first run stopped with a provider-reported network
+failure, without a report or verdict. Its three partial files are
+preserved; [a scoped continuation](frontier/iterations/iteration183-cptp-survival-resume-brief.md)
+retains the same target and acceptance gate. **8 accepted, 2 remaining.**
+
 **Structural-graph update:** [I182](frontier/iterations/i182-controlled-extension.md)
 reduces the controlled three-edge alternating-half extension exactly:
 deleting the half bijects prescribed matchings with perfect matchings of

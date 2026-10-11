@@ -6,6 +6,16 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I183 interrupted, continuation prepared
+
+The first I183 run ended with a provider error and a reported network
+failure, not a mathematical verdict. Three draft/freeze files remain;
+no report, diagnostics or seal was delivered.
+[Parent preservation checks](iterations/i183-provider-failure-recovery.md)
+authenticate the saved bytes and all 1,053 listed strict rows, with
+syntax checks only. The [continuation brief](iterations/iteration183-cptp-survival-resume-brief.md)
+preserves originals and isolates new writes. **Eight accepted, two remaining.**
+
 ### I182 survival reduction and I183 CPTP-survival
 
 [I182](iterations/i182-controlled-extension.md) proves the reduction

@@ -21,6 +21,12 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I183 recovery:** The original task failed before producing a report or
+sealed diagnostics. [Preservation checks](iterations/i183-provider-failure-recovery.md)
+pass for three partial files and 1,053 listed strict bindings, not for
+mathematical claims. A [scoped continuation](iterations/iteration183-cptp-survival-resume-brief.md)
+keeps the original target. **Eight accepted, two remaining.**
+
 **Structural-graph update:** [I182](iterations/i182-controlled-extension.md)
 reduces the controlled extension to a single survival predicate on the
 derived graph: an A-prescribed perfect matching with Hamiltonian
