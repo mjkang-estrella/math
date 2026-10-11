@@ -21,13 +21,17 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I180](iterations/i180-survivor-helper-connectivity.md)
-gives the complete retained helper path, 24 directed witnesses and 99
-cycle-obstructed moves. Replay and independent parent checks pass.
-The [parent disposition](iterations/i180-survivor-helper-connectivity-parent-disposition.md)
-retains unresolved H180/L179 and the finite failure of strict Hamming descent.
-[I181](iterations/iteration181-six-cycle-helper-factory-astra-task.json)
-targets actual helper existence for one port-disjoint two-square patch.
+**Structural-graph update:** [I181](iterations/i181-six-cycle-helper.md)
+proves the two-square local reattachment lemma: any actual opposite-half
+survivor helper toggles the six-cycle with type, pairing and acyclicity
+preserved. Parent independent patch forcing and all 120 reattachment rows
+pass byte-identically. Existence of the helper remains unpaid; the missing
+condition is a controlled three-edge alternating-half extension.
+The [parent disposition](iterations/i181-six-cycle-helper-parent-disposition.md)
+retains unresolved E181/H180/L179.
+[I182](iterations/iteration182-controlled-extension-brief.md) targets
+exactly that controlled extension: proof or an actual counterexample
+meeting every H180 hypothesis.
 A high-loss brace is still missing.
 Technical only; universal exchange, (T), and Q164 remain open.
 **8 accepted, 2 remaining.**

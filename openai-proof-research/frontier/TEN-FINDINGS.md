@@ -6,6 +6,29 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I181 local reattachment and I182 controlled extension
+
+[I181](iterations/i181-six-cycle-helper.md) proves the local reattachment
+lemma for the port-disjoint two-square six-cycle: degree two forces the
+chord and all four continuation edges on either alternating half, both
+halves induce the same terminal pairing, and toggling an actual helper
+preserves type, pairing and acyclicity with p+u=q+v coordinatewise.
+Helper existence stays unpaid; the isolated missing condition is a
+controlled three-edge alternating-half extension with simultaneous
+Hamiltonian-complement and survivor-fibre control.
+
+Parent replay passes (mandatory ~3.4 s per pass, topology ~0.01 s; two
+byte-identical payloads each, eight probes; 29 owned, 972 strict inputs
+and four contexts). Independent parent certificates exhaust all 2^11
+local patch restrictions (unique forced solution per half) and all 120
+external segment pairings, byte-identical to the sealed topology table.
+The [parent disposition](iterations/i181-six-cycle-helper-parent-disposition.md)
+confirms brace two-extendability, the pinned P4 theorem and edge
+avoidance do not supply the simultaneous controls.
+[I182](iterations/iteration182-controlled-extension-brief.md) takes
+exactly that controlled extension as its single target.
+**Technical only. Eight accepted, two remaining; research active.**
+
 ### I180 finite helper path and I181 local extension
 
 [I180](iterations/i180-survivor-helper-connectivity.md) verifies exactly

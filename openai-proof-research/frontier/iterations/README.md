@@ -16,6 +16,24 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I181 local reattachment and I182 controlled extension
+
+[I181](i181-six-cycle-helper.md) proves the two-square local reattachment
+lemma and isolates the unpaid step: a controlled three-edge
+alternating-half extension whose perfect matching has a Hamiltonian
+complement with survivor-fibre local restriction. E181, H180 and L179
+remain unresolved.
+
+Parent replay (two byte-identical payloads per diagnostic, eight probes;
+29 owned, 972 strict, four contexts) and independent parent certificates
+pass: unique forced local restriction per alternating half by full 2^11
+exhaustion, and byte-identical recomputation of all 120 reattachment rows.
+The [parent disposition](i181-six-cycle-helper-parent-disposition.md)
+records exact scope and preservation.
+[I182](iteration182-controlled-extension-brief.md) targets proof or an
+actual fully hypothesized counterexample for that controlled extension,
+without a graph sweep. **Eight accepted, two remaining.**
+
 ## I180 finite helper path and I181 local extension
 
 [I180](i180-survivor-helper-connectivity.md) certifies the entire retained
