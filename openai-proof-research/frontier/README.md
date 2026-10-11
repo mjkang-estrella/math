@@ -21,21 +21,19 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**I188 patch geometry checked, E183 still open:** the
-[second resume](iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
-returned after the two provider failures
-([recovery records](iterations/i188-provider-failure-recovery.md),
-[second](iterations/i188-provider-failure-recovery-2.md)).
-[Parent review](iterations/i188-patch-rooted-state-parent-disposition.md)
-passes faciality, the six-triangle dual disk, the one consistently
-signed marked cycle per group, marked nonvanishing and forced-leaf
-recovery (so the $A$-containing source image is nonempty), and
-independently verifies the exact no-cut-2 exterior table by exhaustive
-enumeration of all $2^{17}$ assignments. Survival of the marked image
-remains unpaid; original E183 is UNRESOLVED.
-[I189](iterations/iteration189-patch-route-transport-brief.md) asks for
-a complete symbolic patch-route classification and survivor transport
-to the canonical routes. Local ears stay parked.
+**I189 patch transport checked, E183 still open:**
+[Parent review](iterations/i189-patch-route-transport-parent-disposition.md)
+passes the complete ten-row patch-restriction classification
+(independently re-derived by enumerating all $2^{11}$ local subsets),
+exact rest-pairing admissibility, the type-preserving $K_B\to K_A$
+transport, and the conditional $F$ and short-repair transports; all
+eight exterior witnesses were verified edge-by-edge. The
+necessary-and-sufficient restatement (T_R) is correct, but its
+survivor-typed $\beta$ instance is unproved and no fully hypothesized
+counterexample exists; original E183 stays UNRESOLVED.
+[I190](iterations/iteration190-beta-pairing-survivor-brief.md) attacks
+the pairing layer through brace consequences and the manuscript's
+circulation/Pfaffian operations. Local ears stay parked.
 **Eight accepted, two remaining.**
 
 **I187 global-state analysis checked:** [Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)

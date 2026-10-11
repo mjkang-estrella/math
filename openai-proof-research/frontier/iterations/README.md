@@ -16,6 +16,26 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I189 transport analysis checked; pairing layer next
+
+The first [I189](iteration189-patch-route-transport-brief.md) dispatch
+completed and returned the
+[report](i189-patch-route-transport.md): a complete ten-row
+patch-restriction classification, exact rest-pairing admissibility,
+the type-preserving $K_B\to K_A$ transport, conditional $F$ and
+short-repair transports, and the necessary-and-sufficient restatement
+(T_R) over all perfect matchings of $R$. The
+[parent disposition](i189-patch-route-transport-parent-disposition.md)
+passes these deductions, independently re-derives the classification by
+exhaustive enumeration of all $2^{11}$ local subsets, verifies all
+eight exterior witnesses, and records original E183 as UNRESOLVED: the
+open classes need a survivor-typed cycle-free $\beta$ complement that
+no current argument supplies or excludes.
+[I190](iteration190-beta-pairing-survivor-brief.md) attacks the pairing
+layer through brace consequences and the manuscript's
+circulation/Pfaffian operations. The local-ear mechanism remains
+parked. **Eight accepted, two remaining.**
+
 ## I188 completed after two provider failures; survivor transport next
 
 The first [I188](iteration188-patch-rooted-state-brief.md) run and its
