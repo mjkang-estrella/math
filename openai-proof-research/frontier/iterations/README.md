@@ -16,21 +16,26 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
-## I188 twice interrupted by provider failures, resumed on a new transport
+## I188 completed after two provider failures; survivor transport next
 
-The first [I188](iteration188-patch-rooted-state-brief.md) run failed at
-the provider at 2026-10-11T15:14:16Z and its
+The first [I188](iteration188-patch-rooted-state-brief.md) run and its
 [first resume](iteration188-patch-rooted-state-factory-astra-resume-task.json)
-failed identically at 2026-10-11T16:25:43Z, each with no report and no
-output files; see the [recovery records](i188-provider-failure-recovery.md)
-([second](i188-provider-failure-recovery-2.md)). Both unverified drafts
-(the second reaching a completed group-independent sign argument and a
-forced-leaf recovery of both frozen edges, with survivor type open)
-were read by the parent and passed on only as unverified leads. The
+failed identically at the provider with no outputs; see the
+[recovery records](i188-provider-failure-recovery.md)
+([second](i188-provider-failure-recovery-2.md)). The
 [second resume](iteration188-patch-rooted-state-codex-astra-resume2-task.json)
-moves to a different provider driver with the model family unchanged,
-reusing the identical brief and five-file scope under a fresh
-clientRequestId. E183/Z184 remain open; no new acceptance.
+on a different provider driver returned the
+[report](i188-patch-rooted-state.md): faciality, the six-triangle dual
+disk, one consistently signed marked cycle per group, marked
+nonvanishing and forced-leaf recovery all proved; survival not proved.
+The [parent disposition](i188-patch-rooted-state-parent-disposition.md)
+passes those deductions, authenticates the outputs, independently
+reproduces the exact exterior table by exhaustive enumeration, and
+records original E183 as UNRESOLVED with the precise residual
+implications (17) and (18). [I189](iteration189-patch-route-transport-brief.md)
+attempts survivor transport: a complete symbolic classification of
+patch restrictions and a transport, obstruction, or fully hypothesized
+counterexample verdict. The local-ear mechanism remains parked.
 **Eight accepted, two remaining.**
 
 ## I187 marked-state analysis checked, I188 patch geometry prepared

@@ -21,14 +21,21 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**I188 provider failures and second resume:** the first patch-geometry
-run and its resume both failed at the provider with no outputs written
+**I188 patch geometry checked, E183 still open:** the
+[second resume](iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
+returned after the two provider failures
 ([recovery records](iterations/i188-provider-failure-recovery.md),
 [second](iterations/i188-provider-failure-recovery-2.md)).
-A [second resume](iterations/iteration188-patch-rooted-state-codex-astra-resume2-task.json)
-on a different provider driver re-runs the identical brief and write
-scope; salvaged draft reasoning was relayed only as unverified leads.
-No verdict exists yet.
+[Parent review](iterations/i188-patch-rooted-state-parent-disposition.md)
+passes faciality, the six-triangle dual disk, the one consistently
+signed marked cycle per group, marked nonvanishing and forced-leaf
+recovery (so the $A$-containing source image is nonempty), and
+independently verifies the exact no-cut-2 exterior table by exhaustive
+enumeration of all $2^{17}$ assignments. Survival of the marked image
+remains unpaid; original E183 is UNRESOLVED.
+[I189](iterations/iteration189-patch-route-transport-brief.md) asks for
+a complete symbolic patch-route classification and survivor transport
+to the canonical routes. Local ears stay parked.
 **Eight accepted, two remaining.**
 
 **I187 global-state analysis checked:** [Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)
