@@ -1,0 +1,172 @@
+"""I175 mathematical stages. INPUT is an authenticated immutable bytes mapping."""
+import json
+from itertools import combinations
+
+OLD = "frontier/experiments/i174_prism_gadget_survival/"
+
+
+def data(name):
+    return json.loads(INPUT[name])
+
+
+def compare_record(old, dfs=False):
+    fresh = analyse(old["graph"], old["uvxy"], dfs)
+    for k in ("cycles", "families", "beta", "c", "residuals"):
+        assert json.dumps(fresh[k], sort_keys=True) == json.dumps(old[k], sort_keys=True), k
+    for k, value in old["row"].items():
+        assert fresh["row"][k] == value, (k, fresh["row"][k], value)
+    f = fresh["families"]
+    L = diff(sorted(f["N10"]+f["N01"]+f["N11"]))
+    U = sum((diff(f[k]) for k in ("Pux", "Pvy", "D11")), [])
+    displacement = sub(fresh["bridge"], old["bridge"])
+    assert rank(L+U+[displacement]) == rank(L+U)
+    fresh["ancestor_bridge_difference"] = displacement
+    return fresh
+
+
+def mandatory():
+    old = data(OLD+"mandatory-attempt-02.json")
+    want = [0, 520, 522, 524, 527, 528, 530, 533, 534, 536, 539, 431]
+    assert [r["index"] for r in old["census"]] == want
+    out = []
+    for r in old["census"]:
+        a = compare_record(r, True)
+        a["index"] = r["index"]
+        out.append(a)
+    c171 = compare_record(old["C171"], True)
+    wdata = old["C171"]["weight_checks"]
+    w = list(map(Fraction, wdata["w"]))
+    dot = lambda v: sum(a*b for a, b in zip(w, v))
+    f = c171["families"]
+    assert all(dot(v) == 0 for v in diff(sorted(f["N10"]+f["N01"]+f["N11"]))+diff(f["N00"]))
+    u, v, x, y = c171["uvxy"]
+    es = list(map(tuple, c171["graph"]["edges"]))
+    toggle = [0]*len(es)
+    for a, b, sign in [(u, v, 1), (x, y, 1), (u, x, -1), (v, y, -1)]:
+        toggle[es.index(edge(a, b))] = sign
+    assert tuple(wdata["F_vector"]) in [add(n, toggle) for n in f["N00"]]
+    for key, value in [("F", Fraction(1, 14)), ("T", Fraction(-1, 2))]:
+        factor = wdata[key+"_vector"]
+        assert dot(sub(factor, wdata["C0"])) == value
+        assert len(components(selected_edges(es, factor), adjacency(es))) == 2
+    assert wdata["F_vector"] != wdata["T_vector"]
+    c171["weight_checks"] = wdata
+    c171["brace"] = brace(c171["graph"])
+    assert c171["brace"]["brace"] and len(c171["brace"]["extensions"]) == 1032
+    r = out[-1]
+    w431 = (1,-1,0,2,-2,0,2,0,4,0,1,0,1,0,0,0,-1,0,0,0,0,-1,0,0,0,0,1,0,0,0)
+    f = r["families"]
+    L = diff(sorted(f["N10"]+f["N01"]+f["N11"]))
+    V = diff(f["N00"])
+    U = sum((diff(f[k]) for k in ("Pux", "Pvy", "D11")), [])
+    dot431 = lambda v: sum(a*b for a, b in zip(w431, v))
+    assert all(dot431(v) == 0 for v in L+U)
+    assert dot431(r["bridge"]) == 10 and abs(dot431(V[0])) == 8
+    assert rank(U+V) > rank(U) and rank(L+U+V) > rank(L+U)
+    high = [compare_record(r, True) for r in old["high_loss"]]
+    assert [r["row"]["ell"] for r in high] == [3, 7]
+    exp = data(OLD+"experiments-attempt-03.json")
+    first = compare_record(exp["first_children"][0], True)
+    initial = exp["initials"][0]
+    rebuilt = square(normalize(initial["graph"]["edges"], initial["graph"]["faces"]), [0, 0, 6])
+    assert rebuilt == normalize(first["graph"]["edges"], first["graph"]["faces"])
+    structural = data(OLD+"structural-attempt-03.json")
+    exterior = compare_record(structural["applications"][0]["contracted"], True)
+    assert exterior["row"]["n"] == 26 and exterior["row"]["rankL"] == 14
+    return {"status": "PASS", "order": want+["C171", "G6", "G10", "I174-first", "I174-exterior"],
+            "census": out, "C171": c171, "high_loss": high,
+            "I174_first": first, "I174_exterior": exterior,
+            "separator431": {"bridge": 10, "old_absolute": 8,
+                             "V_subset_U": False, "V_subset_LU": False}}
+
+
+def historical():
+    """Fresh certificate checks, not the ancestor's complete search."""
+    exp = data(OLD+"experiments-attempt-03.json")
+    applications = data(OLD+"structural-attempt-03.json")["applications"]
+    records = []
+    matching_count = failed = 0
+    for kind, rs in (("initial", exp["initials"]), ("first", exp["first_children"])):
+        for old in rs:
+            new = compare_record(old)
+            br = brace(new["graph"])
+            assert br["brace"] == old["brace"]["brace"]
+            matching_count += len(br["extensions"])
+            failed += len(br["failures"])
+            records.append({"kind": kind, "attachments": old["attachments"], "row": new["row"],
+                            "matching_extensions": len(br["extensions"]), "failures": br["failures"]})
+    structural = []
+    for app, child in zip(applications, exp["first_children"]):
+        contracted = compare_record(app["contracted"])
+        dec = child["saturation_decomposition"]
+        local = dec["local_basis"]
+        image = dec["image_basis"]
+        assert rank(local) == dec["kernel_rank"]
+        assert rank(image) == dec["image_rank"]
+        assert rank(local+image) == dec["kernel_rank"]+dec["image_rank"]
+        structural.append({"row": contracted["row"], "kernel": rank(local),
+                           "image": rank(image), "active_types": app["active_types"]})
+    assert matching_count == 9324 and failed == 36
+    return {"status": "PASS", "complete_records": 15, "graphs": records,
+            "applications": structural, "matching_extensions": matching_count, "failed_pairs": failed,
+            "Q173_scope": "Authenticated 236-history certificate audit; no rerun of ancestor census"}
+
+
+def candidates(g, side, protected):
+    color = {}
+    for c, vertices in enumerate(certify(g)["bipartition"]):
+        color.update({v: c for v in vertices})
+    valid, skips = [], []
+    protected = {edge(protected[i-1], protected[i]) for i in range(len(protected))}
+    for k, face in enumerate(g["faces"]):
+        for i, j in combinations(range(len(face)), 2):
+            u, v = face[i], face[(i+1) % len(face)]
+            y, x = face[j], face[(j+1) % len(face)]
+            e, f = edge(u, v), edge(x, y)
+            cross = (set(e) <= side and not set(f) & side) or (set(f) <= side and not set(e) & side)
+            if not cross or len({u, v, x, y}) != 4:
+                continue
+            rec = {"triple": [k, i, j], "edges": [e, f]}
+            if e in protected or f in protected:
+                skips.append(dict(rec, reason="protected-perimeter"))
+            elif color[u] == color[x]:
+                skips.append(dict(rec, reason="bipartite-orientation"))
+            else:
+                valid.append(rec)
+    return {"valid": valid, "skips": skips, "untested": valid[2:]}
+
+
+def experiment():
+    core, attachment = prism(6), prism(8)
+    portmap = {1: 1, 5: 7, 6: 8}
+    bad = splice(core, 0, attachment, 0, portmap, 12, False)
+    good = splice(core, 0, attachment, 0, portmap, 12, True)
+    rejected = {"graph": bad, "certification": certify(bad, False)}
+    assert rejected["certification"]["euler"] == 0
+    protected = [1, 13, 21, 20, 6, 7]
+    uvxy = [20, 6, 1, 7]
+    assert canonical(protected) in good["faces"]
+    initial = analyse(good, uvxy, True)
+    initial["brace"] = brace(good)
+    assert good["n"] == 26
+    _, groups = port_groups(good, sorted(initial["families"]["N10"]+initial["families"]["N01"]+initial["families"]["N11"]), 7)
+    initial["survivor_types"] = [{"signature": k, "count": len(v), "anchor": v[0]} for k, v in groups.items()]
+    plan = candidates(good, set(range(13, 28)), protected)
+    children = []
+    for row in plan["valid"][:2]:
+        child = square(good, row["triple"])
+        assert canonical(protected) in child["faces"] and child["n"] == 30
+        r = analyse(child, uvxy, True)
+        r["triple"] = row["triple"]
+        r["brace"] = brace(child)
+        survivors = sorted(r["families"]["N10"]+r["families"]["N01"]+r["families"]["N11"])
+        _, groups = port_groups(child, survivors, 7)
+        r["survivor_types"] = [{"signature": k, "count": len(v), "anchor": v[0],
+                                "within_rank": rank(diff(v))} for k, v in groups.items()]
+        r["actual_type_anchor_offsets"] = diff([v[0] for v in groups.values()])
+        r["eligible"] = r["row"]["ell"] >= 2 and len(groups) == 3
+        # The protocol does not grow a saturated exterior.
+        assert not r["eligible"], "Eligible continuation must be implemented before finalization"
+        children.append(r)
+    return {"status": "PASS", "initial": initial, "rejected_embedding": rejected,
+            "plan": plan, "first_children": children, "second_attachments": 0, "second_surgeries": 0}

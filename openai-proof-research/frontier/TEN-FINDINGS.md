@@ -6,6 +6,35 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I175 five-port products, missing types and I176 uniform rank
+
+[I175](iterations/i175-affected-prism-exterior.md) passes the assigned
+I174 audit. Two of 14 valid affected-P8 first surgeries give order-30
+braces with loss zero and (3,1) interfaces. Twelve remain untested;
+no second attachment or surgery is executed.
+
+The five-port criterion pays path-packing exhaustion and actual state
+anchors. Six finite decompositions have image rank 9, but three require
+two extra kernel directions from anchor relations. **M175** gives the
+exact active-type kernel correction under complete exterior-controlled
+fibres. **A175** forces all three survivor types at the protected local
+configuration using the stipulated three-edge-path theorem.
+Neither result proves a high-loss brace bound or uniform prism rank.
+
+Parent replay passes (~16.20 s; five byte-identical payloads, eight blocked
+probes; 94 owned, 399 non-context external plus four contexts).
+Separate parent DFS/Fraction checks verify three complete seven-family
+graphs, 2,460 matchings, six full five-port products and the small
+missing-type examples. The
+[parent disposition](iterations/i175-affected-prism-exterior-parent-disposition.md)
+retains both diagnostic failures and documents that later sealed replay
+needs the historical ledger contexts. Clean-clone reconstruction is untested.
+**Technical only, no ninth nomination.**
+[I176](iterations/iteration176-uniform-five-port-rank-factory-astra-task.json)
+targets the unpaid analytic local-rank and nine-dimensional image proof,
+with new recurrence checks bounded to k=10,12.
+**8 accepted, 2 remaining; research active.**
+
 ### I174 conditional splice defect and I175 affected exteriors
 
 [I174](iterations/i174-prism-gadget-survival.md) passes the I173 finite
