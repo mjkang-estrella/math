@@ -16,6 +16,19 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I188 interrupted by provider failure, resumed on the same brief
+
+The first [I188](iteration188-patch-rooted-state-brief.md) run failed at
+the provider at 2026-10-11T15:14:16Z with no report and no output files;
+see the [recovery record](i188-provider-failure-recovery.md). Its long
+unverified draft (faciality, six-triangle dual picture, a single forced
+marked source cycle, unfinished sign consistency) was read by the parent
+and passed on only as unverified leads. The
+[resume](iteration188-patch-rooted-state-factory-astra-resume-task.json)
+reuses the identical brief and five-file scope with a fresh
+clientRequestId. E183/Z184 remain open; no new acceptance.
+**Eight accepted, two remaining.**
+
 ## I187 marked-state analysis checked, I188 patch geometry prepared
 
 [I187](i187-frozen-state-survival.md) proves the dual hypotheses,
