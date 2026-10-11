@@ -21,19 +21,18 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I171](iterations/i171-square-switch-weight.md)
-passes the assigned I170 audits. Its certified order-32 brace has a
-two-component factor of weight $-\tfrac12$, while the prescribed square
-switch has weight $+\tfrac1{14}$. This refutes a generic-factor shortcut,
-not exchange. W171 gives the forbidden primitive pair $(2,-3)$;
-O171 classifies minimal-octagon toggle failures, with an explicit
-$L+U$ bridge separator at index 431. The 624+96 new octagon tests all have
-loss at most one, so they do not resolve the difficult high-loss case.
-Parent sealed replay and separate witness checks pass; the
-[parent disposition](iterations/i171-square-switch-weight-parent-disposition.md)
-also corrects I170's parent-side population count.
-[I172](iterations/iteration172-prescribed-square-switch-factory-astra-task.json)
-targets the prescribed switch and high-loss minimal octagons.
+**Structural-graph update:** [I172](iterations/i172-prescribed-square-switch.md)
+passes the assigned I171 audits. S172 transports exact signed certificates
+for the prescribed square switch through remote splices. K172/R172 prove
+an infinite $(3,3)$ octagon family with unbounded loss:
+$(\ell,t,\eta)=(m-3,m-4,1)$ for even $m\ge4$.
+All compatible old families are empty, yet an explicit residual translation
+recovers $m-4$ directions. The family is not a brace family: two splice
+cuts remain. Parent replay and independent checks pass; the
+[parent disposition](iterations/i172-prescribed-square-switch-parent-disposition.md)
+records the exact scope and all 29 failed cap constructions.
+[I173](iterations/iteration173-brace-high-loss-octagons-factory-astra-task.json)
+targets bracehood while preserving the octagon and loss at least two.
 Technical only; universal exchange, (T), and Q164 remain open.
 **8 accepted, 2 remaining.**
 

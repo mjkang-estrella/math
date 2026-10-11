@@ -16,6 +16,31 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I172 prescribed-switch transport, high-loss octagons, and I173
+
+[I172](i172-prescribed-square-switch.md) passes the assigned I171 audits.
+S172 transports the prescribed factor's signed affine certificate through
+remote vertex splices, preserving the lost-class total, and proves
+exchange for protected decorated prism squares.
+K172/R172 give a genuine $(3,3)$ octagon for every even $m\ge4$ with
+$(\ell,t,\eta)=(m-3,m-4,1)$ and
+$(\delta_V,\delta_R,\epsilon)=(m-4,m-4,1)$.
+All compatible old families are empty; explicit alternative residual
+paths recover the missing directions. The seven classes project
+four-to-one to the prism classes. The family retains two splice cuts
+and is not a brace family.
+
+Four finite certificates have losses 1/3/5/7 at orders 20/24/28/32;
+12 remote-splice signed relations and all 29 failed cap transports are
+retained. Parent sealed replay passes (~323 s; seven byte-equal payloads;
+eight blocked probes; inherited context drift documented), and separate
+parent DFS/rank checks reproduce the new certificates.
+The [parent disposition](i172-prescribed-square-switch-parent-disposition.md)
+records technical-only status. [I173](iteration173-brace-high-loss-octagons-factory-astra-task.json)
+audits the new results and targets removing the cuts while preserving
+high loss and certifying bracehood. Universal exchange, (T), and Q164
+remain open. **Eight accepted, two remaining.**
+
 ## I171 square-specific obstruction and I172 continuation
 
 [I171](i171-square-switch-weight.md) passes the assigned I170 audits.

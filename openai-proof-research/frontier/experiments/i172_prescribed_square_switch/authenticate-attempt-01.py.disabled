@@ -1,0 +1,62 @@
+"""Authenticate I171 as data, never compile or import ancestor Python."""
+import hashlib
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+OLD = ROOT / "frontier/experiments/i171_square_switch_weight"
+OUT = ROOT / "frontier/sources/i172_prescribed_square_switch"
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def run():
+    anchors = {
+        "frontier/iterations/i171-square-switch-weight.md":
+            "d9c61b5d49e778d80e376d39ee6ffee83ad11590fa68861d5bf66c25bfa7e5a6",
+        "frontier/experiments/i171_square_switch_weight/seal.json":
+            "0cd340b50cfd23a041bdab7baf827e1d8c26e279e9a7705caecd49a7d2eefedf",
+        "frontier/experiments/i171_square_switch_weight/verify.py":
+            "a5c8a04f3e0f49b28151fb3d7c8c1fe127104e6e5b4373a5da810c7d1a3c2b45",
+    }
+    for path, expected in anchors.items():
+        assert digest((ROOT / path).read_bytes()) == expected, path
+    seal = json.loads((OLD / "seal.json").read_bytes())
+    for name in ("inventory", "prevalidation"):
+        assert digest((OLD / (name + ".json")).read_bytes()) == seal[name + "_sha256"]
+    inventory = json.loads((OLD / "inventory.json").read_bytes())
+    results = {}
+    for section in ("owned", "external"):
+        rows = []
+        for entry in inventory[section]:
+            data = (ROOT / entry["path"]).read_bytes()
+            ok = digest(data) == entry["sha256"] and len(data) == entry["size"]
+            context = entry.get("role") == "context-only"
+            assert ok or context, entry["path"]
+            rows.append(dict(entry, actual_sha256=digest(data), actual_size=len(data),
+                             match=ok))
+        results[section] = rows
+    control = {"inventory.json", "prevalidation.json", "seal.json"}
+    listed = {r["path"] for r in inventory["owned"]}
+    actual = {str(p.relative_to(ROOT)) for directory in
+              (OLD, ROOT / "frontier/sources/i171_square_switch_weight")
+              for p in directory.rglob("*") if p.is_file()
+              and not (p.parent == OLD and p.name in control)}
+    actual.add("frontier/iterations/i171-square-switch-weight.md")
+    assert actual == listed, (actual - listed, listed - actual)
+    pre = json.loads((OLD / "prevalidation.json").read_bytes())
+    assert all(c["match"] for c in pre["comparisons"])
+    return {"anchors": anchors, "seal": seal, "checks": results,
+            "owned_complete": True, "ancestor_execution": False,
+            "prevalidation": pre}
+
+
+if __name__ == "__main__":
+    result = run()
+    OUT.mkdir(parents=True, exist_ok=True)
+    with (OUT / "i171-authentication.json").open("x") as f:
+        json.dump(result, f, indent=2, sort_keys=True)
+        f.write("\n")
+    print(json.dumps({k: len(v) for k, v in result["checks"].items()}))

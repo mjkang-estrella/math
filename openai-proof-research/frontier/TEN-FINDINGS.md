@@ -6,6 +6,37 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I172 prescribed-switch transport, high-loss octagons, and I173
+
+[I172](iterations/i172-prescribed-square-switch.md) passes the assigned
+I171 audits. **S172** transports a signed affine certificate for the
+prescribed square switch through any remote vertex splice, preserving
+the lost-class total. Protected even-prism squares therefore retain
+$\alpha=-(m-3)/(m-2)$ through remote decorations; this is not a theorem
+on arbitrary brace-internal squares.
+
+**K172/R172** construct, for every even $m\ge4$, a genuine $(3,3)$ octagon
+on $2m+12$ vertices with
+$(\ell,t,\eta)=(m-3,m-4,1)$ and
+$(\delta_V,\delta_R,\epsilon)=(m-4,m-4,1)$.
+All three compatible old families are empty. A different residual
+rerouting recovers $m-4$ directions, so the lower bound is sharp and
+exchange holds. The written proof pays for the seven-class four-to-one
+projection and attachment kernel, not just the old-cycle projection.
+The graphs have nontrivial splice cuts and are **not braces**.
+
+Parent replay passes (~323 s; seven byte-equal payloads; eight blocked
+probes; inherited context drift recorded), with separate parent enumeration
+of all four octagon certificates and 12 exact signed relations.
+All 29 two-cap construction failures remain: 20 loss-zero and nine
+loss-one cases. The
+[parent disposition](iterations/i172-prescribed-square-switch-parent-disposition.md)
+classifies the round **technical only, no ninth nomination**.
+[I173](iterations/iteration173-brace-high-loss-octagons-factory-astra-task.json)
+audits the new proofs and seeks brace high-loss octagons by removing the
+splice cuts while preserving the residual mechanism.
+**8 accepted, 2 remaining; research active.**
+
 ### I171 square-specific obstruction and I172 continuation
 
 [I171](iterations/i171-square-switch-weight.md) passes the assigned I170

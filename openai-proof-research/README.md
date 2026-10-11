@@ -1,18 +1,17 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I171](frontier/iterations/i171-square-switch-weight.md)
-passes the assigned I170 audits and certifies a sharp distinction: in one
-order-32 brace, a two-component factor has normalized weight $-\tfrac12$,
-but the prescribed square switch has weight $+\tfrac1{14}$. Generic
-factor positivity is false; the square-specific exclusion remains open.
-W171 identifies the forbidden primitive quotient pair $(2,-3)$, and O171
-classifies the path-plus-cycle failures of minimal-octagon toggles.
-The walks sample now has 1,720 steps and 1,074 equality cases, not a proof
-of universal exchange. Parent sealed replay and independent witness checks
-pass. The [parent disposition](frontier/iterations/i171-square-switch-weight-parent-disposition.md)
-records the scope and corrects the previous parent-side population count.
-[I172](frontier/iterations/iteration172-prescribed-square-switch-factory-astra-task.json)
-targets the prescribed switch and high-loss minimal octagons.
+**Structural-graph update:** [I172](frontier/iterations/i172-prescribed-square-switch.md)
+passes the assigned I171 audits. S172 transports prescribed-switch signed
+certificates through remote vertex splices. K172/R172 construct an infinite
+genuine $(3,3)$ octagon family with
+$(\ell,t,\eta)=(m-3,m-4,1)$ for every even $m\ge4$, despite all compatible
+old families being empty. Explicit residual paths recover the missing
+directions. The family has splice cuts and is **not a brace family**.
+Parent sealed replay and independent certificate checks pass; the
+[parent disposition](frontier/iterations/i172-prescribed-square-switch-parent-disposition.md)
+records technical-only status and the 29 failed cap-transport attempts.
+[I173](frontier/iterations/iteration173-brace-high-loss-octagons-factory-astra-task.json)
+targets removal of the splice cuts while preserving high loss.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
