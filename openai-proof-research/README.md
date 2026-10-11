@@ -1,15 +1,15 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I176](frontier/iterations/i176-uniform-five-port-rank.md)
-proves survivor saturation for the specified first prism surgery at every
-even k≥6. Explicit local and projected minors have determinants 4−k and 1.
-This rules out high loss in that family, not in all braces or surgeries.
-Parent proof review, sealed replay and five independent finite product
-checks pass. The
-[parent disposition](frontier/iterations/i176-uniform-five-port-rank-parent-disposition.md)
-preserves the k=4 exception and all diagnostic failures.
-[I177](frontier/iterations/iteration177-adjacent-port-surgery-factory-astra-task.json)
-tests one adjacent-port P8 operation outside the proved scope.
+**Structural-graph update:** [I177](frontier/iterations/i177-adjacent-port-surgery.md)
+finds a distinct order-30 brace with loss zero: two actual anchor-kernel
+directions restore saturation despite lower within-state local rank.
+All 900 matching witnesses, 46 survivor products and three old-defect
+absorption identities pass independent parent checks and sealed replay.
+The [parent disposition](frontier/iterations/i177-adjacent-port-surgery-parent-disposition.md)
+preserves finite scope, all failures and U176's uniform proof verdicts.
+The protected face is still a (3,1) hexagon, not a high-loss octagon.
+[I178](frontier/iterations/iteration178-five-port-annihilator-factory-astra-task.json)
+analyzes every fixed-interface anchor relation, without a new graph sweep.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
