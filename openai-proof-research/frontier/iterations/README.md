@@ -16,6 +16,26 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I176 uniform saturation and I177 adjacent-port surgery
+
+[I176](i176-uniform-five-port-rank.md) proves first-surgery saturation for
+every even k≥6 through explicit path words and minors of determinants
+4−k and 1. Parent review accepts the original uniform proof at its scope;
+it is not finite interpolation or a uniform brace theorem.
+The k=4 local-rank exception and its two anchor-kernel directions remain
+separate.
+
+Parent replay passes (~2.03 s; three byte-identical payloads, eight blocked
+probes). Independent parent checks exhaust five actual packing products
+and verify 96 local words, both minors and all selected anchors.
+The [parent disposition](i176-uniform-five-port-rank-parent-disposition.md)
+preserves child failures and the corrected parent sufficient-versus-exhaustive
+partner test, with no sealed evidence changed.
+[I177](iteration177-adjacent-port-surgery-factory-astra-task.json) audits
+U176 and tests one adjacent-port P8 surgery outside its stated scope.
+No high-loss brace or universal exchange result is claimed.
+**Eight accepted, two remaining.**
+
 ## I175 five-port products, missing types and I176 uniform rank
 
 [I175](i175-affected-prism-exterior.md) certifies two low-loss order-30

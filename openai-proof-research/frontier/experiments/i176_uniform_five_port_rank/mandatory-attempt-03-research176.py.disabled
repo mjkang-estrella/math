@@ -1,0 +1,134 @@
+"""Fresh I176 controls and bounded constructive certificates."""
+import json
+
+P175 = "frontier/experiments/i175_affected_prism_exterior/"
+
+
+def mandatory():
+    old = json.loads(READ(P175+"mandatory-attempt-02.json"))
+    indices = [0,520,522,524,527,528,530,533,534,536,539,431]
+    assert old["order"][:12] == indices
+    rows = []
+    for i,record in zip(indices,old["census"]):
+        rows.append({"index":i,**M.diagnostic(record)})
+    assert not rows[-1]["V_subset_U"] and not rows[-1]["V_subset_LU"]
+    c171 = M.diagnostic(old["C171"])
+    high_loss = [M.diagnostic(record) for record in old["high_loss"]]
+    p8 = json.loads(READ(P175+"experiment-attempt-01.json"))["first_children"][0]
+    first = M.diagnostic(p8)
+    five = M.fiveport(8)
+    assert five["graph"]["edges"] == p8["graph"]["edges"]
+    assert five["graph"]["faces"] == p8["graph"]["faces"]
+    prior = json.loads(READ(P175+"local_saturation-attempt-01.json"))["certificates"][4]
+    for new,old_key in [("local_rank","local_rank"),("exterior_rank","exterior_rank"),
+                        ("image","image_rank"),("rank","survivor_rank")]:
+        assert five[new] == prior[old_key]
+    for s,t in zip(five["states"],prior["states"]):
+        assert s["J"]==t["cut"] and s["px"]==t["local_pairing"] and s["py"]==t["exterior_pairing"]
+        assert s["X"]==t["local_packings"] and s["Y"]==t["exterior_packings"] and s["anchor"]==t["anchor"]
+    return {"status":"PASS","order":indices+["C171","G6","G10","I175-first-P8"],
+            "census":rows,"C171":c171,"G6_G10":high_loss,"first_P8":first,"fiveport_P8":five}
+
+
+def finite():
+    checks = []
+    for k in (4,6,8):
+        checks.append(M.fiveport(k))
+    return {"status":"PASS","certificates":checks}
+
+
+def uniform():
+    base = json.loads(READ("frontier/experiments/i176_uniform_five_port_rank/finite-attempt-01.json"))["certificates"][1]
+    fixed_y = [s["Y"] for s in base["states"]]
+    checks = []
+    for k in (6,8,10,12):
+        c = M.fiveport(k)
+        ee = list(map(tuple,c["xe"]))
+        E = list(map(tuple,c["graph"]["edges"]))
+        cut = list(map(tuple,c["cut"]))
+        xe = set(ee)
+        X = {v for e in ee for v in e}
+        ports = [next(v for v in e if v in X) for e in cut]
+        deleted = M.templates(k)
+        words = M.path_words(k)
+        rows = {}
+        witnesses = []
+        for name,missing in deleted.items():
+            state_id = int(name.split("r")[0].rstrip("abZ"))
+            state = c["states"][state_id]
+            assert missing <= xe
+            row = tuple(int(e not in missing) for e in ee)
+            assert list(row) in state["X"], (k,name)
+            trace = M.packing_paths(X,xe-missing,{ports[j] for j in state["J"]})
+            explicit = words[name]
+            vertices = sum(explicit,[])
+            assert len(vertices)==len(set(vertices))==len(X) and set(vertices)==X
+            word_edges = {M.edge(a,b) for path in explicit for a,b in zip(path,path[1:])}
+            assert word_edges == xe-missing
+            pair = sorted(sorted([ports.index(t[0]),ports.index(t[-1])]) for t in trace)
+            assert pair == state["px"]
+            rows[name] = row
+            witnesses.append({"name":name,"state":state_id,"missing":[list(e) for e in sorted(missing)],
+                              "paths":trace,"path_words":explicit,"exterior_partner_index":0})
+        directions = [M.sub(rows["6r"+str(i)],rows["6r"+str(k-2)]) for i in range(1,k-3)]
+        directions += [M.sub(rows["1a"],rows["1b"]),M.sub(rows["4a"],rows["4b"]),
+                       M.sub(rows["7Z"],rows["7r1"])]
+        p,q = c["square"][2:]
+        minor_edges = [M.edge(12+i,13+i) for i in range(1,k-3)]
+        minor_edges += [M.edge(10+k,11+k),M.edge(p,q),M.edge(12+k,13+k)]
+        minor = [[d[ee.index(e)] for e in minor_edges] for d in directions]
+        schur = [r[:] for r in minor[-3:]]
+        for row in schur:
+            for j in range(k-4):
+                assert minor[j][j] == -1
+                factor = -row[j]
+                row[:] = [x-factor*y for x,y in zip(row,minor[j])]
+        m = k//2
+        assert [r[-3:] for r in schur] == [[1-m,0,1],[3-m,0,-1],[3-m,1,-1]]
+        assert M.determinant(minor) == 4-k
+        assert M.rank(directions) == k-1
+        assert fixed_y == [s["Y"] for s in c["states"]]
+        # Canonical exterior coordinates: 17 Y edges followed by five labelled cut edges.
+        image_rows, descriptions = [],[]
+        for i,state in enumerate(c["states"]):
+            for j,row in enumerate(state["Y"][1:],1):
+                image_rows.append(list(M.sub(row,state["Y"][0]))+[0]*5)
+                descriptions.append(["Y",i,j,0])
+        def project(state):
+            return state["Y"][0]+[int(i in state["J"]) for i in range(5)]
+        for i,state in enumerate(c["states"][1:],1):
+            image_rows.append(list(M.sub(project(state),project(c["states"][0]))))
+            descriptions.append(["anchor",i,0])
+        chosen,selected = [],[]
+        for row,desc in zip(image_rows,descriptions):
+            if M.rank(chosen+[row]) > len(chosen):
+                chosen.append(row)
+                selected.append(desc)
+        columns = M.rank_integer(chosen,pivots=True)
+        image_minor = [[row[i] for i in columns] for row in chosen]
+        assert len(chosen)==len(columns)==9
+        image_det = M.determinant(image_minor)
+        assert image_det
+        # Every state anchor below is defined by an explicit formula, not a translated vector.
+        anchor_names = ["0","1a","2","3","4a","5","6r1","7Z","8","9","10a"]
+        anchors = []
+        for i,name in enumerate(anchor_names):
+            state = c["states"][i]
+            anchor = [0]*len(E)
+            for e,x in zip(ee,rows[name]):
+                anchor[E.index(e)] = x
+            for e,x in zip(map(tuple,c["ye"]),state["Y"][0]):
+                anchor[E.index(e)] = x
+            for j in state["J"]:
+                anchor[E.index(cut[j])] = 1
+            assert len(M.components({v for e in E for v in e},[e for e,x in zip(E,anchor) if x]))==1
+            assert anchor[E.index(cut[2])] or anchor[E.index((1,7))]
+            anchors.append({"state":i,"local_template":name,"Y":state["Y"][0],"cycle":anchor})
+        checks.append({"k":k,"local_witnesses":witnesses,"local_minor_edges":[list(e) for e in minor_edges],
+                       "local_minor":minor,"local_determinant":str(M.determinant(minor)),
+                       "schur":[r[-3:] for r in schur],"local_rank":k-1,
+                       "image_directions":chosen,"image_descriptions":selected,
+                       "image_columns":columns,"image_minor":image_minor,"image_determinant":str(image_det),
+                       "anchors":anchors,"states":c["states"],"rank":c["rank"],"survivors":c["survivors"]})
+    assert all(x["image_directions"]==checks[0]["image_directions"] for x in checks)
+    return {"status":"PASS","checks":checks,"new_parameters":[10,12],"fixed_exterior":base["ye"]}
