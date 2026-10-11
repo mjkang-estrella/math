@@ -6,6 +6,30 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I176 uniform saturation and I177 adjacent-port surgery
+
+[U176](iterations/i176-uniform-five-port-rank.md) proves that every even
+k≥6 has survivor space equal to the full incidence kernel, dimension k+8,
+for the specified first prism surgery. Closed path words realize k−1
+independent local directions with determinant 4−k; actual exterior
+partners and anchors give a fixed image minor of determinant 1.
+The separate k=4 case has local rank1 and two extra anchor-kernel directions.
+This is a uniform family obstruction, not a high-loss or uniform brace theorem.
+
+Parent replay passes (~2.03 s; three byte-identical payloads, eight blocked
+probes; 59 owned, 507 strict external plus four contexts).
+Independent parent DFS/Fraction checks exhaust five packing products and
+verify 96 local words, both minors and actual glued anchors.
+The [parent disposition](iterations/i176-uniform-five-port-rank-parent-disposition.md)
+accepts the written uniform proof, retains child and parent diagnostic
+failures, and records the corrected context-tolerant replay policy.
+**Technical only, no ninth nomination.**
+[I177](iterations/iteration177-adjacent-port-surgery-factory-astra-task.json)
+audits U176 and tests only the previously unexecuted adjacent-port P8
+triple `[0,0,10]`, with no larger-prism sweep or second attachment.
+Universal exchange, (T), and Q164 remain open.
+**8 accepted, 2 remaining; research active.**
+
 ### I175 five-port products, missing types and I176 uniform rank
 
 [I175](iterations/i175-affected-prism-exterior.md) passes the assigned

@@ -1,16 +1,15 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I175](frontier/iterations/i175-affected-prism-exterior.md)
-finds two order-30 braces, both with loss zero and (3,1) interfaces.
-Its five-port decomposition pays actual packing products and anchor
-relations. M175 gives the exact missing-type correction; A175 rules out
-missing survivor types under the protected local geometry.
-Parent replay and independent new-graph/five-port checks pass. The
-[parent disposition](frontier/iterations/i175-affected-prism-exterior-parent-disposition.md)
-records technical scope, preserved failures and the historical-context
-requirement for later replay.
-[I176](frontier/iterations/iteration176-uniform-five-port-rank-factory-astra-task.json)
-targets the unproved uniform local and projected rank conditions.
+**Structural-graph update:** [I176](frontier/iterations/i176-uniform-five-port-rank.md)
+proves survivor saturation for the specified first prism surgery at every
+even k≥6. Explicit local and projected minors have determinants 4−k and 1.
+This rules out high loss in that family, not in all braces or surgeries.
+Parent proof review, sealed replay and five independent finite product
+checks pass. The
+[parent disposition](frontier/iterations/i176-uniform-five-port-rank-parent-disposition.md)
+preserves the k=4 exception and all diagnostic failures.
+[I177](frontier/iterations/iteration177-adjacent-port-surgery-factory-astra-task.json)
+tests one adjacent-port P8 operation outside the proved scope.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
