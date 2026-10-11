@@ -1,0 +1,273 @@
+"""Bounded retained-system research. No new graph is generated."""
+from fractions import Fraction as F
+from itertools import combinations
+
+
+def check_uniform6(m, load):
+    cert = load("frontier/experiments/i176_uniform_five_port_rank/uniform-attempt-02.json")["checks"][0]
+    assert cert["k"] == 6
+    system = fiveport(m["I176_k6"]["complete_fiveport"])
+    es = edges(system["graph"])
+    xe, ye = system["xe"], system["ye"]
+    k, n, j = 6, 5, 3
+    T = lambda i: 12+i
+    B = lambda i: 12+k+i
+    p, q = 14+2*k, 15+2*k
+    def interval(fn, a, b):
+        return [fn(i) for i in range(a, b+(1 if b >= a else -1), 1 if b >= a else -1)]
+    tt = lambda a, b: interval(T, a, b)
+    bb = lambda a, b: interval(B, a, b)
+    W = sum(([T(i), B(i), B(i+1), T(i+1)] for i in range(1, j-1, 2)), [])+[T(j), B(j)]
+    V = sum(([T(i), T(i+1), B(i+1), B(i+2)] for i in range(1, j-1, 2)), [])+[T(j)]
+    words = {
+        "0": [tt(1,j)+[p,q]+tt(n-1,n)+bb(n,0)],
+        "1a": [[B(0),B(1)]+V+[p,q,T(n-1),B(n-1),B(n),T(n)]],
+        "1b": [[T(n),T(n-1),q,p]+tt(j,1)+bb(1,n)+[B(0)]],
+        "2": [[T(n),T(n-1),B(n-1),B(n),B(0),B(1)]+V+[p,q]],
+        "3": [[B(0),B(n),T(n),T(n-1)]+bb(n-1,1)+tt(1,j)+[p,q]],
+        "4a": [W+[B(n-1),B(n),B(0)], [T(n),T(n-1),q,p]],
+        "4b": [tt(1,j)+bb(j,0), [T(n),B(n),B(n-1),T(n-1),q,p]],
+        "5": [W+[B(n-1),T(n-1),q,p], [T(n),B(n),B(0)]],
+        "6n": [tt(1,j)+[p], [T(n),B(n)]+bb(0,n-1)+[T(n-1),q]],
+        "7Z": [W+[B(n-1),T(n-1),T(n),B(n),B(0)], [p,q]],
+        "8": [tt(1,j)+[p], bb(0,n)+[T(n),T(n-1),q]],
+        "9": [[T(n),B(n),B(0)], [p]+tt(j,1)+bb(1,n-1)+[T(n-1),q]],
+        "10a": [[T(n),B(n),B(n-1),T(n-1),q], [B(0),B(1)]+V+[p]],
+        "10b": [[T(n),T(n-1),q], [B(0)]+bb(n,1)+tt(1,j)+[p]],
+    }
+    for r in range(1, j):
+        words[f"6r{r}"] = [tt(1,r)+bb(r,0)+bb(n,r+1)+tt(r+1,j)+[p], [T(n),T(n-1),q]]
+        words[f"7r{r}"] = [tt(1,r)+bb(r,0), [p]+tt(j,r+1)+bb(r+1,n)+[T(n),T(n-1),q]]
+    words[f"6r{n-1}"] = words["6n"]
+    local = {}
+    word_results = []
+    for witness in cert["local_witnesses"]:
+        name = witness["name"]
+        # The exceptional index uses the separate word, never the ordinary formula.
+        ww = words[name]
+        assert ww == witness["path_words"], name
+        vertices = [v for path in ww for v in path]
+        assert len(vertices) == len(set(vertices)) and set(vertices) == set(system["X"])
+        selected = {edge(u,v) for path in ww for u,v in zip(path,path[1:])}
+        assert selected <= set(xe)
+        assert sorted(set(xe)-selected) == list(map(tuple, witness["missing"]))
+        vv = vector(xe, selected)
+        st = system["states"][witness["state"]]
+        assert list(vv) in st["X"]
+        local[name] = vector(es, selected)
+        word_results.append({"name": name, "word": ww, "missing": witness["missing"]})
+    dirs = [sub(local[f"6r{r}"], local[f"6r{n-1}"]) for r in range(1,j)]
+    dirs += [sub(local["1a"],local["1b"]), sub(local["4a"],local["4b"]),
+             sub(local["7Z"],local["7r1"])]
+    cols = [es.index(tuple(e)) for e in cert["local_minor_edges"]]
+    minor = [[d[i] for i in cols] for d in dirs]
+    assert minor == cert["local_minor"] and determinant(minor) == -2
+    anchors = []
+    for rec in cert["anchors"]:
+        st = system["states"][rec["state"]]
+        assert rec["Y"] in st["Y"]
+        yy = vector(es, {e for e,b in zip(ye,rec["Y"]) if b})
+        cut = vector(es, {system["cut"][i] for i in st["J"]})
+        cycle = add(local[rec["local_template"]], yy, cut)
+        assert cycle == tuple(rec["cycle"]) and cycle in system["survivors"]
+        anchors.append(cycle)
+    images = []
+    for desc in cert["image_descriptions"]:
+        if desc[0] == "Y":
+            _, st, aa, bb = desc
+            # Proof certificate retains its specified sufficient partner order.
+            ys = cert["states"][st]["Y"]
+            diff = sub(ys[aa], ys[bb])
+            images.append(tuple(diff[ye.index(e)] if e in ye else 0 for e in es))
+        else:
+            images.append(sub(anchors[desc[1]],anchors[desc[2]]))
+    proof_order = list(ye)+system["cut"]
+    proj = [es.index(e) for e in proof_order]
+    projected = [tuple(v[i] for i in proj) for v in images]
+    assert projected == [tuple(v) for v in cert["image_directions"]]
+    # Stored minor is checked against full vectors, not trusted as input.
+    column_edges = [proof_order[i] for i in cert["image_columns"]]
+    actualminor = [[v[es.index(e)] for e in column_edges] for v in images]
+    assert actualminor == cert["image_minor"] and determinant(actualminor) == 1
+    assert rank(dirs) == 5 and rank(projected) == 9 and rank(dirs+images) == 14
+    return {"words": word_results, "local_minor": minor, "local_determinant": -2,
+            "image_minor": actualminor, "image_determinant": 1,
+            "actual_anchors": anchors, "local_directions": dirs, "image_lifts": images}
+
+
+def control_c171(record):
+    out = seven(record)
+    sw = record["switch_check"]
+    es = edges(record["graph"])
+    Fv, Tv, ref, pre = [tuple(sw[k]) for k in ("F","T","reference","pre_switch")]
+    weight = tuple(map(F, sw["w"]))
+    changed = [es[i] for i,(a,b) in enumerate(zip(Fv,pre)) if a != b]
+    assert len(changed) == 4 and len(adjacency(changed)) == 4
+    assert all(len(v) == 2 for v in adjacency(changed).values())
+    recovered = tuple(1-b if e in changed else b for e,b in zip(es,Fv))
+    assert recovered == pre and list(pre) in record["cycles"]
+    assert pre != ref and Fv != Tv
+    for v in (Fv,Tv):
+        a = adjacency([e for e,b in zip(es,v) if b])
+        assert len(a) == record["graph"]["n"] and all(len(s) == 2 for s in a.values())
+        assert len(components(a)) == 2
+    assert dot(weight,sub(Fv,ref)) == F(1,14)
+    assert dot(weight,sub(Tv,ref)) == F(-1,2)
+    out["switch"] = {"F": "1/14", "T": "-1/2", "reference_distinct": True,
+                     "reconstructed_pre_switch": recovered, "square": changed}
+    return out
+
+
+def count_squares(es):
+    a = adjacency(es)
+    cycles = set()
+    for u in a:
+        for v in a[u]:
+            for w in a[v]-{u}:
+                for z in (a[w] & a[u])-{v}:
+                    if len({u,v,w,z}) == 4:
+                        cycles.add(tuple(sorted([edge(u,v),edge(v,w),edge(w,z),edge(z,u)])))
+    return len(cycles)
+
+
+def child_audit(exp, retained):
+    out = seven(exp["child"])
+    five = fiveport(exp["fiveport"])
+    out["initial"] = seven(exp["initial"])
+    oldes, es = edges(exp["initial"]["graph"]), edges(exp["child"]["graph"])
+    face = exp["original_face"]
+    assert face == [1,2,3,4,5,19,18,17,16,15,14,13]
+    assert face in exp["initial"]["graph"]["faces"]
+    assert edge(face[0],face[1]) == (1,2) and edge(face[10],face[11]) == (13,14)
+    replacement = {(1,28),(2,29),(13,30),(14,31),(28,29),(28,30),(29,31),(30,31)}
+    assert set(es) == (set(oldes)-{(1,2),(13,14)}) | replacement
+    assert [1,13,21,20,6,7] in exp["child"]["graph"]["faces"]
+    assert exp["child"]["uvxy"] == [20,6,1,7]
+    sys = presentation(five)
+    basis = [tuple(map(F,v)) for v in exp["actual_ambient_basis"]]
+    assert rank(basis) == 16 and rank(basis+differences(five["survivors"])) == 16
+    A = [tuple(v) for v in exp["fiveport"]["anchor_differences"]]
+    K1 = sub(add(A[5],A[0]),add(A[1],A[4]))
+    K2 = sub(add(A[7],A[0]),add(A[2],A[4]))
+    assert basis == (sys["local_basis"]+sys["exterior_basis"]+
+                     [A[i] for i in (0,1,2,3,4,6)]+[K1,K2])
+    assert rank(sys["local_basis"]+[K1,K2]) == 7
+    survivor_basis = list(map(tuple,exp["child"]["survivor_basis"]))
+    c0 = tuple(exp["child"]["survivor_anchor"])
+    assert all(add(c0,v) in five["survivors"] for v in survivor_basis)
+    columns = exp["actual_survivor_minor"]["columns"]
+    minor = [[v[i] for i in columns] for v in survivor_basis]
+    assert minor == exp["actual_survivor_minor"]["matrix"] and determinant(minor) == 2
+    def tau(v):
+        aa, bb = v[oldes.index((1,2))],v[oldes.index((13,14))]
+        new = {(1,28):aa,(2,29):aa,(13,30):bb,(14,31):bb,
+               (28,29):-aa,(30,31):-bb,(28,30):0,(29,31):0}
+        return tuple(v[oldes.index(e)] if e in oldes else new[e] for e in es)
+    oldkernel = nullspace(incidence(oldes),len(oldes))
+    transported = [tau(v) for v in oldkernel]
+    assert len(oldkernel) == rank(transported) == 14
+    assert all(dot(row,v) == 0 for row in incidence(es) for v in transported)
+    oldcyc = list(map(tuple,exp["initial"]["cycles"]))
+    oldc0 = tuple(exp["initial"]["survivor_anchor"])
+    oldsurv = list(map(tuple,exp["initial"]["survivor_basis"]))
+    olddirs = []
+    for rec in exp["old_defect_absorption"]:
+        d = tuple(rec["old_direction"])
+        assert add(oldc0,d) in oldcyc
+        assert tau(d) == tuple(rec["transport"]) == combine(list(map(F,rec["coefficients"])),basis)
+        olddirs.append(d)
+    assert rank(oldsurv+olddirs) == rank(oldsurv)+3 == 14
+    squares = [count_squares(es)]+[count_squares(edges(ch["graph"])) for ch in retained["first_children"]]
+    assert squares == [10,9,9]
+    out.update({"fiveport": sys, "actual_survivor_minor": minor, "determinant": 2,
+                "K1": K1, "K2": K2, "transport_rank": 14,
+                "absorption": exp["old_defect_absorption"], "square_counts": squares,
+                "all_cut_sets": len(five["all_families"]), "products": len(five["survivors"])})
+    return out, five
+
+
+def mandatory(load):
+    m = load("frontier/experiments/i177_adjacent_port_surgery/mandatory-attempt-05.json")
+    e = load("frontier/experiments/i177_adjacent_port_surgery/experiment-attempt-03.json")
+    retained = load("frontier/experiments/i175_affected_prism_exterior/experiment-attempt-01.json")
+    order = [0,520,522,524,527,528,530,533,534,536,539,431]
+    rows = []
+    for idx, record in zip(order,m["census"]):
+        assert idx == record["index"]
+        r = seven(record)
+        r["index"] = idx
+        if idx == 431:
+            assert not r["V_subset_U"] and not r["V_subset_LU"]
+            assert all(not s["good"] for s in record["residuals"].values())
+        rows.append(r)
+    c171 = control_c171(m["C171"])
+    octagons = [seven(r) for r in m["G6_G10"]]
+    assert [r["row"]["ell"] for r in octagons] == [3,7]
+    first = seven(m["first_P8"])
+    first_product = presentation(fiveport(m["first_P8_fiveport"]))
+    uniform = check_uniform6(m,load)
+    child, _ = child_audit(e,retained)
+    return {"status":"PASS", "order":order+["C171","G6","G10","first_P8","I176_k6","I177"],
+            "controls":rows, "C171":c171, "G6_G10":octagons, "first_P8":first,
+            "first_P8_product":first_product, "I176_k6":uniform,"I177":child}
+
+
+def analytic(load):
+    m = load("frontier/experiments/i177_adjacent_port_surgery/mandatory-attempt-05.json")
+    e = load("frontier/experiments/i177_adjacent_port_surgery/experiment-attempt-03.json")
+    a = load("frontier/experiments/i177_adjacent_port_surgery/audit-attempt-03.json")
+    p8 = load("frontier/experiments/i175_affected_prism_exterior/experiment-attempt-01.json")
+    second = dict(e["fiveport"])
+    # Only the already retained graph is used. No operation or candidate generation.
+    second = {k:v for k,v in second.items() if k in {"X","Y","xe","ye","cut","graph"}}
+    second["graph"] = p8["first_children"][1]["graph"]
+    second["xe"] = [list(ed) for ed in edges(second["graph"]) if set(ed) <= set(second["X"])]
+    second["ye"] = [list(ed) for ed in edges(second["graph"]) if set(ed) <= set(second["Y"])]
+    inputs = [("I177",e["fiveport"]),("I175_first",m["first_P8_fiveport"]),
+              ("I175_second",second),("I176_k4",a["k4"]),
+              ("I176_k6",m["I176_k6"]["complete_fiveport"])]
+    result = []
+    for name,data in inputs:
+        sys = fiveport(data)
+        first = presentation(sys)
+        assert first["relation_basis"] == [
+            (0,0,0,1,-1,0,0,-1,1,0,0,0,0),
+            (0,0,0,1,0,-1,0,-1,0,0,1,0,0),
+            (0,0,0,-1,0,0,0,0,0,-1,0,1,0),
+            (0,0,0,-1,0,0,-1,1,0,-1,0,0,1)]
+        if name == "I177":
+            x = first["local_basis"]
+            k1,k2,k3,k4 = first["actual_lifts"]
+            assert scale(k3,3) == scale(k4,3) == add(
+                scale(x[0],5),scale(add(*x[1:]),-1),k1,scale(k2,2))
+        changed = presentation(sys,True)
+        assert [first[k] for k in ("h","a","r","image","loss")] == [
+            changed[k] for k in ("h","a","r","image","loss")]
+        assert rank(first["kernel_basis"]+changed["kernel_basis"]) == len(first["kernel_basis"])
+        # Every old actual lift lies in the new kernel and conversely.
+        change_coords = [coordinates(v,changed["kernel_basis"]) for v in first["actual_lifts"]]
+        reverse_coords = [coordinates(v,first["kernel_basis"]) for v in changed["actual_lifts"]]
+        relation_coords = [coordinates(v,first["kernel_basis"]) for v in first["actual_lifts"]]
+        single_changes = []
+        for si, state in enumerate(sys["states"]):
+            choices = [(si,j,0) for j in range(1,len(state["X"]))]
+            choices += [(si,0,j) for j in range(1,len(state["Y"]))]
+            for choice in choices:
+                cp = presentation(sys,override=choice)
+                assert (cp["a"],cp["r"],cp["image"],cp["loss"]) == (
+                    first["a"],first["r"],first["image"],first["loss"])
+                assert rank(first["kernel_basis"]+cp["kernel_basis"]) == len(first["kernel_basis"])
+                single_changes.append({"actual_anchor_choice":choice,
+                    "relation_basis":cp["relation_basis"],"actual_lifts":cp["actual_lifts"],
+                    "lift_coordinates_in_original_kernel":[coordinates(v,first["kernel_basis"])
+                                                          for v in cp["actual_lifts"]]})
+        result.append({"name":name,"presentation":first,"changed_anchors":changed,
+                       "boundary_geometry":boundary_geometry(sys),
+                       "completion_constraints":completion_constraints(sys,first),
+                       "lift_coordinates":relation_coords,
+                       "old_lifts_in_changed_kernel":change_coords,
+                       "changed_lifts_in_old_kernel":reverse_coords,
+                       "single_anchor_changes":single_changes,
+                       "full_products":len(sys["cycles"]), "survivor_products":len(sys["survivors"]),
+                       "all_complete_families":sys["all_families"]})
+    return {"status":"PASS","systems":result,"new_graphs":0,"realizability":"UNPAID"}

@@ -1,15 +1,15 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I177](frontier/iterations/i177-adjacent-port-surgery.md)
-finds a distinct order-30 brace with loss zero: two actual anchor-kernel
-directions restore saturation despite lower within-state local rank.
-All 900 matching witnesses, 46 survivor products and three old-defect
-absorption identities pass independent parent checks and sealed replay.
-The [parent disposition](frontier/iterations/i177-adjacent-port-surgery-parent-disposition.md)
-preserves finite scope, all failures and U176's uniform proof verdicts.
-The protected face is still a (3,1) hexagon, not a high-loss octagon.
-[I178](frontier/iterations/iteration178-five-port-annihilator-factory-astra-task.json)
-analyzes every fixed-interface anchor relation, without a new graph sweep.
+**Structural-graph update:** [I178](frontier/iterations/i178-five-port-annihilator.md)
+derives all four actual anchor relations and the two lost-fibre completion
+constraints for the fixed five-port interface. Parent sealed replay and
+independent checks pass, including 84 actual anchor changes.
+The [parent disposition](frontier/iterations/i178-five-port-annihilator-parent-disposition.md)
+accepts the conditional presentation but leaves graph realizability unpaid.
+All five retained validation systems remain saturated.
+[I179](frontier/iterations/iteration179-path-recombination-factory-astra-task.json)
+targets one graph-theoretic path-recombination lemma, not another rank
+reformulation or graph sweep.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)

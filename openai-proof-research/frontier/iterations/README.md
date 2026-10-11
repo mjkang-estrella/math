@@ -16,6 +16,24 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I178 complete relations and I179 path recombination
+
+[I178](i178-five-port-annihilator.md) supplies the complete four-relation
+presentation, actual lifted kernels, anchor invariance and exact
+nonsurvivor completion constraints. The desired graph-realization
+boundary remains unpaid. All five retained systems are saturated.
+
+Parent replay passes (~27.95 s; two byte-identical payloads, eight probes).
+Independent parent checks verify five full products, fixed-exterior type
+exhaustion, four relations, 84 individual anchor changes and all lost
+completion identities. The
+[parent disposition](i178-five-port-annihilator-parent-disposition.md)
+retains the conditional scope and preserved failures.
+[I179](iteration179-path-recombination-factory-astra-task.json) targets
+one actual path-recombination lemma, not a further rank reformulation.
+High-loss braces and universal targets remain open.
+**Eight accepted, two remaining.**
+
 ## I177 adjacent-port saturation and I178 compatibility
 
 [I177](i177-adjacent-port-surgery.md) passes the unchanged U176 audit.
