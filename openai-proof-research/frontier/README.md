@@ -21,21 +21,20 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**I192 residual analysis checked, exchange open at J192:**
-[Parent review](iterations/i192-exchange-residual-parent-disposition.md)
-passes the exact facial-translation classification (confirmed by
-parent-side noncrossing-matching enumeration, $m\le8$), the bridge
-identity $b=3r+2s_{arc}+a_P+a_Q+a_D$, the short-gap equality reduction
-to the single coefficient $\lambda=-1/2$ on the actual two-factor
-$F_Q$, and the prism family (independently re-derived for
-$m\in\{4,6,8\}$, including $\eta=1$ by direct rank computation).
-Universal exchange stays UNRESOLVED at J192; the failure locus is
-exactly $\Delta\ge2$ or ($\Delta=1$ with $\beta\in L_0+U$).
-[I193](iterations/iteration193-equality-bridge-brief.md) targets the
-short-gap exchange theorem: exclude $\lambda=-1/2$ (quadrilateral core
-$\alpha\ne-3/2$), refute by a fully specified step, or isolate the
-exact obstruction. The E183 line and local ears stay parked.
-**Eight accepted, two remaining.**
+**I193 pairing symmetry and composition checked:**
+[Parent review](iterations/i193-equality-bridge-parent-disposition.md)
+passes the quadrilateral pairing symmetry ($\alpha_A=\alpha_B$,
+verified on prisms), the central-square composition
+($\Delta_c=\eta_{first}$; $\lambda_c=\lambda/(1+2\lambda)$; the
+gain-three recovery after a hypothetical failed step), and the
+sufficient subcases — the cube composition instance was re-derived by
+direct enumeration ($d: 5\to7\to9$, $\lambda_c=1/4$). Short-gap
+exchange stays UNRESOLVED at J193 ($w(F_Q-C_0)\ne-1/2$ unpaid).
+[I194](iterations/iteration194-quotient-sign-brief.md) is the final
+focused short-gap attempt: the sign conjecture $w(F_Q-C_0)\ge0$, a
+verified negative instance, or the exact obstruction, under an explicit
+stopping rule. The E183 line and local ears stay parked; the long-gap
+clauses of J192 remain open. **Eight accepted, two remaining.**
 
 **I187 global-state analysis checked:** [Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)
 passes the original dual/recovery deductions and marked orientation
