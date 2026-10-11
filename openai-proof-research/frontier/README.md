@@ -21,6 +21,15 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I185 splice analysis:** [Parent review](iterations/i185-connected-reconnection-parent-disposition.md)
+passes original ear eligibility and exact component accounting at scope.
+Joining can be offset by fragmentation in formal pairing data, not yet
+an admissible full graph. Output authentication and inherited replay pass.
+[I186](iterations/iteration186-theta-region-balance-brief.md) checks
+matching closure and color balance in the full theta regions, then parks
+the local-ear route if no usable constraint emerges.
+**Eight accepted, two remaining.**
+
 **I184 matching-cycle lemma:** [Parent review](iterations/i184-alternating-cycle-parent-disposition.md)
 passes the original reachability/three-edge-shore proof without repair.
 Every residual matching edge lies on an alternating cycle, but the

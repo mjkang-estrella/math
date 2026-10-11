@@ -1,5 +1,13 @@
 # OpenAI mathematics research
 
+**I185 splice analysis:** [Parent review](frontier/iterations/i185-connected-reconnection-parent-disposition.md)
+passes the exact ear conditions and component-change formula, but no
+improving ear is forced. The formal fragmentation pattern is not a
+full graph counterexample. [I186](frontier/iterations/iteration186-theta-region-balance-brief.md)
+checks full-theta region balance in one final bounded local-ear attempt,
+with an explicit stopping rule. Z184/E183 stay open.
+**8 accepted, 2 remaining.**
+
 **I184 matching-cycle lemma:** [Parent review](frontier/iterations/i184-alternating-cycle-parent-disposition.md)
 passes the written proof that every residual matching edge lies on an
 alternating cycle. Connectedness after toggling is still unpaid, so
