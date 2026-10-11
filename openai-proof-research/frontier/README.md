@@ -21,18 +21,18 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I165](iterations/i165-square-expansion-multiplicity.md)
-refutes the universal square-expansion counting inequality by a certified
-50-to-54-vertex admissible expansion (576 to 572 Hamiltonian cycles) and
-an infinite negative-gain family. Q164 itself remains unproved/unrefuted.
-Its audit passed I164's original prism, expansion-identity, source-P4 and
-splice interfaces without repairs, and its affine splice formula reduces
-the remaining affine-span route to cubic planar braces. Parent sealed
-replay passes; the
-[parent disposition](iterations/i165-square-expansion-parent-disposition.md)
-preserves two incomplete timed-out runs and all coverage corrections.
-[I166](iterations/iteration166-affine-span-braces-factory-astra-task.json)
-attacks the brace affine-span problem. **8 accepted, 2 remaining.**
+**Structural-graph update:** [I166](iterations/i166-affine-span-braces.md)
+independently re-derived all audited I165 interfaces and delivers exact
+evidence on 438 distinct braces (orders 8–64): all affine-full, no Q164
+violation, tight exactly on prisms, anchored to the OEIS A007083 census.
+New certified technical facts: the B18 obstruction to brace-only C4
+generation, a proved face-toggle lemma, and a quantified survival
+obstruction for the exchange step. The brace theorem and Q164 remain
+open. Parent sealed replay passes; the
+[parent disposition](iterations/i166-affine-span-parent-disposition.md)
+records the scope. [I167](iterations/iteration167-exchange-step-braces-factory-astra-task.json)
+attacks the exchange step and evaluates McCuaig brace generation.
+**8 accepted, 2 remaining.**
 
 **Latest oracle gate:** [I161](reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies the full theorem as **TECHNICAL ONLY** through a concrete compiler,

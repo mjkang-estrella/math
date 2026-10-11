@@ -6,6 +6,27 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I166 brace campaign and I167 exchange-step continuation
+
+[I166](iterations/i166-affine-span-braces.md) independently re-derived
+every audited I165 interface (all PASS) and produced an exact certificate
+over 452 diagnosed records — 438 distinct braces, orders 8–64, dual
+enumerators and exact rational ranks: every sampled graph has full
+Hamiltonian-cycle affine dimension $d=n/2+1$, no graph violates Q164,
+and tightness holds exactly on even prisms. New certified technical
+facts: the 18-vertex brace B18 has no brace-only square-expansion
+generation from the cube (three independent certificates); a proved
+face-toggle lemma shows facial toggles always disconnect, ruling out
+facial-switch spanning witnesses; and a survival analysis (136 of 142
+steps) shows expansion-edge cycles do not span the parent affine hull,
+so the exchange step $d(H)\ge d(G)+2$ must be carried by the
+spanning-path classes. Parent sealed replay passes (~1479 s). The
+[parent disposition](iterations/i166-affine-span-parent-disposition.md)
+records the scope; no universal statement is proved and no ninth finding
+is nominated. [I167](iterations/iteration167-exchange-step-braces-factory-astra-task.json)
+audits the new interfaces and attacks the exchange step plus McCuaig's
+brace-generation backbone. **8 accepted, 2 remaining; research active.**
+
 ### I165 refutes the square-step inequality; I166 attacks the affine route
 
 [I165](iterations/i165-square-expansion-multiplicity.md) **refutes** the
@@ -23,10 +44,11 @@ to cyclically 4-edge-connected pieces. Parent sealed replay passes in
 ~92 s, preserving two timed-out runs as incomplete. The
 [parent disposition](iterations/i165-square-expansion-parent-disposition.md)
 records the full scope. [I166](iterations/iteration166-affine-span-braces-factory-astra-task.json)
-audits the new interfaces and attacks the brace affine-span problem
-directly. These narrow negative and structural results are technical;
-no ninth finding is nominated and no literature novelty is certified.
-**8 accepted, 2 remaining; research active.**
+audited the new interfaces and attacked the brace affine-span problem;
+its outcome is recorded in the section above. These narrow negative and
+structural results are technical; no ninth finding is nominated and no
+literature novelty is certified. **8 accepted, 2 remaining; research
+active.**
 
 ### I164 gap report and I165 square-expansion continuation
 

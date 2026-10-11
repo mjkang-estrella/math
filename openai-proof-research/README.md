@@ -1,16 +1,18 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I165](frontier/iterations/i165-square-expansion-multiplicity.md)
-**refutes** the universal square-expansion counting inequality: a certified
-admissible expansion drops the Hamiltonian-cycle count from 576 to 572,
-with an infinite negative-gain family behind it. The sharp linear target
-itself remains unproved and unrefuted. Parent sealed replay passes; the
-[parent disposition](frontier/iterations/i165-square-expansion-parent-disposition.md)
-records the refutation, the passed I164 interface audit, and the proved
-affine splice formula that reduces the remaining affine-span route to
-cubic planar braces. [I166](frontier/iterations/iteration166-affine-span-braces-factory-astra-task.json)
-now attacks that brace problem on Factory/Astra. **8 accepted,
-2 remaining.**
+**Structural-graph update:** [I166](frontier/iterations/i166-affine-span-braces.md)
+independently re-derived all audited I165 interfaces and delivers exact
+evidence on 438 distinct braces (orders 8–64): every sampled graph has
+full Hamiltonian-cycle affine dimension and none violates the sharp
+linear count target, which stays unproved and unrefuted. New certified
+technical facts: brace-only square-expansion generation fails at order
+18 (B18, three-way certificate), a proved face-toggle lemma rules out
+facial-switch spanning witnesses, and a quantified survival obstruction
+redirects the exchange-step proof. Parent sealed replay passes; the
+[parent disposition](frontier/iterations/i166-affine-span-parent-disposition.md)
+records the scope. [I167](frontier/iterations/iteration167-exchange-step-braces-factory-astra-task.json)
+now attacks the exchange step and evaluates McCuaig brace generation on
+Factory/Astra. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies full R154 as **TECHNICAL ONLY**, retaining I159's unchanged-original
