@@ -16,16 +16,20 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
-## I188 interrupted by provider failure, resumed on the same brief
+## I188 twice interrupted by provider failures, resumed on a new transport
 
 The first [I188](iteration188-patch-rooted-state-brief.md) run failed at
-the provider at 2026-10-11T15:14:16Z with no report and no output files;
-see the [recovery record](i188-provider-failure-recovery.md). Its long
-unverified draft (faciality, six-triangle dual picture, a single forced
-marked source cycle, unfinished sign consistency) was read by the parent
-and passed on only as unverified leads. The
-[resume](iteration188-patch-rooted-state-factory-astra-resume-task.json)
-reuses the identical brief and five-file scope with a fresh
+the provider at 2026-10-11T15:14:16Z and its
+[first resume](iteration188-patch-rooted-state-factory-astra-resume-task.json)
+failed identically at 2026-10-11T16:25:43Z, each with no report and no
+output files; see the [recovery records](i188-provider-failure-recovery.md)
+([second](i188-provider-failure-recovery-2.md)). Both unverified drafts
+(the second reaching a completed group-independent sign argument and a
+forced-leaf recovery of both frozen edges, with survivor type open)
+were read by the parent and passed on only as unverified leads. The
+[second resume](iteration188-patch-rooted-state-codex-astra-resume2-task.json)
+moves to a different provider driver with the model family unchanged,
+reusing the identical brief and five-file scope under a fresh
 clientRequestId. E183/Z184 remain open; no new acceptance.
 **Eight accepted, two remaining.**
 
