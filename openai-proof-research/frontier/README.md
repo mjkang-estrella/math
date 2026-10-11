@@ -21,21 +21,25 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I169](iterations/i169-bridge-independence.md)
-passes all audited I168 interfaces and proves three new results:
-**F169** (exchange is exactly a comparison inside the deleted-edge graph
-$K$), **S169** (for every facial quadrilateral expansion, exact
-$N_{00}$-to-path bijections give $\ell-1\le t\le\ell$, and exchange can
-fail in the equality case only at the single quotient coefficient
-$\alpha=-\tfrac32$), and **P169** (exchange holds for every lateral-face
-expansion of every even prism, with unbounded survival loss and
-$\alpha=-(L-3)/(L-2)$). All 182 tested equality cases have
-$\alpha\ne-\tfrac32$. Universal exchange, the brace theorem and Q164
-remain open; technical only, no ninth nomination. Parent sealed replay
-passes; the [parent disposition](iterations/i169-bridge-independence-parent-disposition.md)
-records the scope. [I170](iterations/iteration170-quadrilateral-coefficient-factory-astra-task.json)
-audits the new interfaces and attacks the excluded coefficient and the
-longer-face correction. **8 accepted, 2 remaining.**
+**Structural-graph update:** [I170](iterations/i170-quadrilateral-coefficient.md)
+passes all audited I169 interfaces and proves two new results: **H170**
+(short-gap expansions — including every facial quadrilateral and hexagon
+expansion — satisfy exact translation bijections $N_{00}\to P_{ux}$ and
+$P_{vy}\to D_{11}$, hence $U=V+Z$ and $t\ge\ell-1$, with
+$b\equiv r+2z\pmod{L+U}$) and **R170** (exact boundary-residual
+decomposition $\operatorname{diff}(J)=\operatorname{diff}(F_J)
++\operatorname{span}(E_J)$ with the deficit identity
+$\ell-t=\delta_V+\varepsilon-\delta_R$). The containment shortcut
+$V\subseteq U$, even $V\subseteq L+U$, is refuted by certified octagonal
+examples; the remaining quadrilateral gap is the single excluded value
+$\alpha=-\tfrac32$, equivalently a normalized weight $-\tfrac12$ of the
+disconnected square-switch 2-factor. Universal exchange, the brace
+theorem and Q164 remain open; technical only, no ninth nomination.
+Parent sealed replay passes; the
+[parent disposition](iterations/i170-quadrilateral-coefficient-parent-disposition.md)
+records the scope. [I171](iterations/iteration171-square-switch-weight-factory-astra-task.json)
+audits the new interfaces and attacks the 2-factor weight bound and the
+octagonal lower bound (R170.3). **8 accepted, 2 remaining.**
 
 **Latest oracle gate:** [I161](reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies the full theorem as **TECHNICAL ONLY** through a concrete compiler,

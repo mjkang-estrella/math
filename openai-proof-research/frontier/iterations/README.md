@@ -16,6 +16,37 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I170 short-gap theorem, exact residuals, and I171 continuation
+
+[I170](i170-quadrilateral-coefficient.md) passes all audited I169
+interfaces (F169, S169, P169, 206-step coefficient data: PASS ORIGINAL
+with fresh enumerators and two rank implementations) and proves two new
+results. **H170**: whenever a cross-terminal pair is an edge — forced for
+every quadrilateral and hexagon face by the odd-arc parity count — exact
+translation bijections $N_{00}\to P_{ux}$ and $P_{vy}\to D_{11}$ give
+$U=V+Z$ and $t\ge\ell-1$, with $b\equiv r+2z\pmod{L+U}$ and
+equality-case failure exactly at $z\equiv-r/2$. **R170**: exact
+boundary-residual generators
+$\operatorname{diff}(J)=\operatorname{diff}(F_J)+\operatorname{span}(E_J)$,
+deficit identity $\ell-t=\delta_V+\varepsilon-\delta_R$, exchange iff
+$\delta_R+\eta\ge\delta_V+\varepsilon$. The blanket containments
+$V\subseteq U$ and $V\subseteq L+U$ are refuted by certified octagonal
+examples (indices 263, 272, 431; index 431 has explicit separator $w$
+with $w\cdot U=0$, $w\cdot v=-8$), without touching the exchange target.
+The excluded quadrilateral coefficient $\alpha=-\tfrac32$ is exactly a
+normalized weight $-\tfrac12$ of the disconnected square-switch
+2-factor. All 1,120 tested quadrilateral equality cases have
+$\alpha=-(m-1)/m$; 982 additional longer-face steps show no
+$t\le\ell-2$. Universal exchange, (T) and Q164 remain open. Parent
+sealed replay passes (~131 s; seven payloads byte-equal; eight guard
+probes blocked; drift-free context ledgers). The
+[parent disposition](i170-quadrilateral-coefficient-parent-disposition.md)
+records the scope: technical only, no ninth nomination.
+[I171](iteration171-square-switch-weight-factory-astra-task.json)
+audits the new interfaces and attacks the 2-factor normalized-weight
+bound and the octagonal (R170.3) lower bound, with index 431 added to
+the mandatory tests. **Eight accepted, two remaining.**
+
 ## I169 quadrilateral recovery, prism exchange theorem, and I170 continuation
 
 [I169](i169-bridge-independence.md) passes all audited I168 interfaces

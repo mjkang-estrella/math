@@ -1,0 +1,248 @@
+"""I170 original standard-library graph and rational-space toolkit."""
+import itertools, math
+from fractions import Fraction
+from functools import lru_cache
+
+def edge(a,b): return tuple(sorted((a,b)))
+def canon(es): return tuple(sorted(edge(*e) for e in es))
+def adj(es):
+    d={v:[] for e in es for v in e}
+    for a,b in es:d[a].append(b);d[b].append(a)
+    return {v:sorted(d[v]) for v in sorted(d)}
+def components(es,vertices):
+    a={v:[] for v in vertices}
+    for u,v in es:a[u].append(v);a[v].append(u)
+    unseen=set(vertices);out=[]
+    while unseen:
+        todo=[min(unseen)];unseen.remove(todo[0]);c=[]
+        while todo:
+            v=todo.pop();c.append(v)
+            for w in a[v]:
+                if w in unseen:unseen.remove(w);todo.append(w)
+        out.append(tuple(sorted(c)))
+    return sorted(out)
+
+@lru_cache(None)
+def walks(es,start=None,end=None):
+    a=adj(es);vs=list(a);start=min(vs) if start is None else start
+    out=[];path=[start];used={start}
+    def rec(v):
+        if len(path)==len(vs):
+            if end is None:
+                if start in a[v] and path[1]<path[-1]:out.append(canon(zip(path,path[1:]+[start])))
+            elif v==end:out.append(canon(zip(path,path[1:])))
+            return
+        for w in a[v]:
+            if w not in used and (w!=end or len(path)==len(vs)-1):
+                used.add(w);path.append(w);rec(w);path.pop();used.remove(w)
+    rec(start)
+    return tuple(sorted(out))
+
+@lru_cache(None)
+def factors(es,ends=()):
+    """Independent vertex-by-vertex degree assignment, then component filter."""
+    vs=sorted(adj(es));inc={v:[] for v in vs}
+    for i,(u,v) in enumerate(es):inc[u].append(i);inc[v].append(i)
+    state=[-1]*len(es);target={v:1 if v in ends else 2 for v in vs};out=[]
+    def rec(k):
+        if k==len(vs):
+            selected=tuple(es[i] for i,x in enumerate(state) if x)
+            cs=components(selected,vs)
+            if not ends:
+                if len(cs)==1:out.append(selected)
+            elif len(ends)==2:
+                if len(cs)==1:out.append(selected)
+            elif len(cs)==2 and all(len(set(c)&set(ends))==2 for c in cs):out.append(selected)
+            return
+        v=vs[k];unk=[i for i in inc[v] if state[i]<0];need=target[v]-sum(state[i]==1 for i in inc[v])
+        if not 0<=need<=len(unk):return
+        for take in itertools.combinations(unk,need):
+            ss=set(take)
+            for i in unk:state[i]=int(i in ss)
+            good=True
+            for i in unk:
+                u,w=es[i];z=w if u==v else u
+                ones=sum(state[j]==1 for j in inc[z]);free=sum(state[j]<0 for j in inc[z])
+                if not ones<=target[z]<=ones+free:good=False;break
+            if good:rec(k+1)
+            for i in unk:state[i]=-1
+    rec(0)
+    return tuple(sorted(out))
+
+def primitive(row):
+    g=0
+    for x in row:g=math.gcd(g,x)
+    if not g:return tuple(row)
+    if next(x for x in row if x)<0:g=-g
+    return tuple(x//g for x in row)
+def intbasis(rows):
+    base={}
+    for row in rows:
+        v=tuple(row)
+        for p,b in sorted(base.items()):
+            if v[p]:v=primitive([b[p]*x-v[p]*y for x,y in zip(v,b)])
+        if any(v):base[next(i for i,x in enumerate(v) if x)]=primitive(v)
+    return base
+
+def rational_rank(rows):
+    """Column-pivot elimination on the transpose; independent Fraction arithmetic."""
+    if not rows:return 0
+    a=[[Fraction(row[j]) for row in rows] for j in range(len(rows[0]))]
+    rank=0
+    for j in range(len(rows)):
+        p=next((i for i in range(rank,len(a)) if a[i][j]),None)
+        if p is None:continue
+        a[rank],a[p]=a[p],a[rank];v=a[rank];q=v[j]
+        for k in range(j,len(rows)):v[k]/=q
+        for i in range(rank+1,len(a)):
+            q=a[i][j]
+            if q:
+                for k in range(j,len(rows)):a[i][k]-=q*v[k]
+        rank+=1
+        if rank==len(a):break
+    return rank
+@lru_cache(4096)
+def _rank(rows):
+    a=len(intbasis(rows));b=rational_rank(rows);assert a==b,(a,b)
+    return a
+def rank(rows):return _rank(tuple(sorted(set(tuple(x) for x in rows if any(x)))))
+def reducev(v,rows):
+    v=list(map(Fraction,v))
+    for p,b in sorted(intbasis(rows).items()):
+        q=v[p]/b[p]
+        v=[x-q*y for x,y in zip(v,b)]
+    return v
+def vec(es,sub):
+    s=set(sub);return tuple(int(e in s) for e in es)
+def add(*xs):return tuple(map(sum,zip(*xs)))
+def scale(a,x):return tuple(a*v for v in x)
+def diff(xs):return [add(x,scale(-1,xs[0])) for x in xs[1:]] if xs else []
+def degree(es,v):
+    out={u:0 for u in adj(es)}
+    for (u,w),x in zip(es,v):out[u]+=x;out[w]+=x
+    return out
+
+def admissible(es,faces=None):
+    a=adj(es);vs=list(a);assert len(es)==len(set(es));assert all(u!=v for u,v in es)
+    assert all(len(a[v])==3 for v in vs)
+    color={vs[0]:0};todo=[vs[0]]
+    for v in todo:
+        for w in a[v]:
+            if w not in color:color[w]=1-color[v];todo.append(w)
+            assert color[w]!=color[v]
+    assert len(color)==len(vs)
+    for rem in itertools.combinations(vs,2):
+        vv=set(vs)-set(rem);ee=[e for e in es if not set(e)&set(rem)]
+        assert len(components(ee,vv))==1
+    if faces is not None:
+        darts={}
+        for f in faces:
+            assert len(f)==len(set(f))
+            for u,v in zip(f,f[1:]+f[:1]):darts[u,v]=darts.get((u,v),0)+1
+        assert set(darts)=={d for e in es for d in (e,e[::-1])}
+        assert all(x==1 for x in darts.values())
+        assert len(vs)-len(es)+len(faces)==2
+        # every vertex link is one cyclic rotation, not several disjoint disks
+        for v in vs:
+            nxt={}
+            for f in faces:
+                if v in f:
+                    k=f.index(v);nxt[f[k-1]]=f[(k+1)%len(f)]
+            assert set(nxt)==set(a[v]);w=a[v][0];seen=set()
+            while w not in seen:seen.add(w);w=nxt[w]
+            assert seen==set(a[v])
+    return True
+
+def expand(es,faces,step):
+    fi,i,j=step;f=faces[fi];u=f[i];v=f[(i+1)%len(f)];y=f[j];x=f[(j+1)%len(f)]
+    assert len({u,v,x,y})==4
+    p=max(adj(es))+1;q=p+1;r=p+2;s=p+3
+    e=edge(u,v);g=edge(x,y);K=tuple(z for z in es if z not in (e,g))
+    ne=canon(K+((u,p),(v,q),(x,r),(y,s),(p,q),(q,s),(s,r),(r,p)))
+    fs=[]
+    for k,face in enumerate(faces):
+        if k==fi:continue
+        ff=[]
+        for aa,bb in zip(face,face[1:]+face[:1]):
+            ff.append(aa)
+            if edge(aa,bb)==e:ff.extend([p,q] if aa==u else [q,p])
+            if edge(aa,bb)==g:ff.extend([r,s] if aa==x else [s,r])
+        fs.append(ff)
+    rot=f[i:]+f[:i];jj=(j-i)%len(f)
+    fs.extend([[q]+rot[1:jj+1]+[s],[r]+rot[jj+1:]+[u,p],[p,q,s,r]])
+    return ne,fs,(u,v,x,y,p,q,r,s)
+
+def classes(es,labels):
+    u,v,x,y,*_=labels;e=edge(u,v);f=edge(x,y);K=tuple(z for z in es if z not in (e,f))
+    hc=walks(es);assert hc==factors(es)
+    out={k:[] for k in ['N00','N10','N01','N11','Pux','Pvy','D11']}
+    for h in hc:out['N'+str(int(e in h))+str(int(f in h))].append(h)
+    out['Pux']=list(walks(K,u,x));out['Pvy']=list(walks(K,v,y))
+    assert tuple(out['Pux'])==factors(K,tuple(sorted((u,x))))
+    assert tuple(out['Pvy'])==factors(K,tuple(sorted((v,y))))
+    for d in factors(K,tuple(sorted((u,v,x,y)))):
+        co=components(d,adj(es))
+        if any(u in cc and v in cc for cc in co):out['D11'].append(d)
+    return out
+
+def lifts(cl,labels):
+    u,v,x,y,p,q,r,s=labels;e=edge(u,v);f=edge(x,y);out={}
+    local={
+      'N10':[(u,p),(p,r),(r,s),(s,q),(q,v)],
+      'N01':[(x,r),(r,p),(p,q),(q,s),(s,y)],
+      'N11':[(u,p),(p,q),(q,v),(x,r),(r,s),(s,y)],
+      'Pux':[(u,p),(p,q),(q,s),(s,r),(r,x)],
+      'Pvy':[(v,q),(q,p),(p,r),(r,s),(s,y)],
+      'D11':[(u,p),(p,r),(r,x),(v,q),(q,s),(s,y)]}
+    for k,le in local.items():out[k]=tuple(sorted(canon(tuple(z for z in h if z not in (e,f))+tuple(le)) for h in cl[k]))
+    return out
+
+def compute(es,labels,cl,child):
+    u,v,x,y,*_=labels;e=edge(u,v);f=edge(x,y);ev=vec(es,[e]);fv=vec(es,[f])
+    vs={k:[vec(es,z) for z in zs] for k,zs in cl.items()}
+    S=vs['N10']+vs['N01']+vs['N11'];N=vs['N00'];assert S and all(vs[k] for k in ['N10','N01','N11','Pux','Pvy','D11'])
+    L=diff(S);L0=sum((diff(vs[k]) for k in ['N10','N01','N11']),[])
+    V=diff(N);U=sum((diff(vs[k]) for k in ['Pux','Pvy','D11']),[])
+    A,B,C=[vs[k][0] for k in ['N10','N01','N11']];P,Q,D=[vs[k][0] for k in ['Pux','Pvy','D11']]
+    b=add(P,Q,D,scale(2,ev),scale(2,fv),scale(-3,S[0]))
+    beta=add(P,Q,D,scale(2,ev),scale(2,fv),scale(-1,A),scale(-1,B),scale(-1,C))
+    assert not any(degree(es,b).values()) and not any(degree(es,beta).values())
+    ei=es.index(e);fi=es.index(f);assert beta[ei]==beta[fi]==0
+    dl=rank(L);dl0=rank(L0);lu=rank(L+U);dg=rank(diff(S+N));eta=rank(L+U+[b])-lu
+    assert rank([(z[ei],z[fi]) for z in L])==2
+    assert dl==2+dl0 and lu==2+rank(L0+U)
+    assert rank(L+[add(b,scale(-1,beta))])==dl
+    assert eta==rank(L0+U+[beta])-rank(L0+U)
+    dh=rank(diff([vec(child,z) for z in walks(child)]))
+    assert dh==2+rank(L+U+[b])
+    cc=None
+    if N:
+        cc=add(N[0],scale(-1,A),scale(-1,B),C)
+        assert cc[ei]==cc[fi]==0 and not any(degree(es,cc).values())
+        assert dg==2+rank(L0+V+[cc])
+        assert (dh>=dg+2)==(rank(L0+U+[beta])>=rank(L0+V+[cc]))
+    else:assert dg==dl
+    ans={'dg':dg,'dh':dh,'ell':dg-dl,'t':lu-dl,'eta':eta,'L0':dl0,'L':dl,'U':rank(U),'V':rank(V),'W':rank(L+V),'beta':beta,'c':cc,'counts':{k:len(v) for k,v in cl.items()}}
+    return ans,(L,L0,U,V,b,beta,cc,vs,S)
+
+def square(es,labels,cl,state,ans):
+    u,v,x,y,*_=labels;a=edge(u,x);c=edge(v,y);e=edge(u,v);f=edge(x,y)
+    N=cl['N00'];assert N
+    for name,rem in [('Pux',{a}),('Pvy',{c}),('D11',{a,c})]:
+        assert all(rem<=set(z) for z in N)
+        assert tuple(sorted(tuple(t for t in z if t not in rem) for z in N))==tuple(cl[name])
+        assert all(not rem.intersection(z) for z in cl[name])
+        assert tuple(sorted(canon(tuple(z)+tuple(rem)) for z in cl[name]))==tuple(N)
+    L,L0,U,V,b,beta,cc,vs,S=state;W=L+V
+    assert rank(U)==rank(V)==rank(U+V)
+    r=add(vs['N00'][0],scale(-1,S[0]));s=add(vec(es,[e,f]),scale(-1,vec(es,[a,c])))
+    assert rank(W+[r])==ans['dg'];assert rank(W+[add(b,scale(-3,r),scale(-2,s))])==rank(W)
+    assert ans['ell']-1<=ans['t']<=ans['ell']
+    alpha=None
+    if ans['t']==ans['ell']-1:
+        rr=reducev(r,W);ss=reducev(s,W);assert any(rr)
+        if rank(W+[r,s])==rank(W)+1:
+            ii=next(i for i,z in enumerate(rr) if z);al=ss[ii]/rr[ii];assert all(x==al*y for x,y in zip(ss,rr))
+            alpha=str(al);assert bool(ans['eta'])==(al!=Fraction(-3,2))
+        else:assert ans['eta']==1;alpha='outside parent span'
+    return {'alpha':alpha,'s':s,'r':r}
