@@ -1,0 +1,79 @@
+"""Independent rational crosschecks and new obstruction certificates."""
+from fractions import Fraction
+from math import lcm,gcd
+import json
+from itertools import combinations
+from toolkit import *
+from audit import inputs
+from attack import shores,typed_detail,split_check
+
+def rref(rows,width):
+    a=[[Fraction(z) for z in r] for r in rows];pivot=[];k=0
+    for j in range(width):
+        q=next((i for i in range(k,len(a)) if a[i][j]),None)
+        if q is None:continue
+        a[k],a[q]=a[q],a[k];s=a[k][j];a[k]=[z/s for z in a[k]]
+        for i in range(len(a)):
+            if i!=k and a[i][j]:
+                t=a[i][j];a[i]=[z-t*w for z,w in zip(a[i],a[k])]
+        pivot.append(j);k+=1
+        if k==len(a):break
+    return a[:k],pivot
+
+def nullspace(rows,width):
+    a,piv=rref(rows,width);out=[]
+    for j in range(width):
+        if j in piv:continue
+        v=[Fraction(0)]*width;v[j]=1
+        for r,k in zip(a,piv):v[k]=-r[j]
+        den=1
+        for x in v:den=lcm(den,x.denominator)
+        out.append([int(x*den) for x in v])
+    return out
+
+def prism(L):
+    faces=[list(range(L)),list(range(2*L-1,L-1,-1))]
+    faces += [[(i+1)%L,i,L+i,L+(i+1)%L] for i in range(L)]
+    return faces
+
+def prism_checks():
+    rows=[]
+    for L in range(4,18,2):
+        fs=prism(L);certify(fs);es=edges(fs);cs=cycles(es);assert cs==cycles_matching(es)
+        ss=shores(fs,cs);Z=set(range(2,L+2));pred=[Z-{i} for i in sorted(Z)]+[{1}|{i+2 for i in range(L) if i%2==parity} for parity in (0,1)]
+        assert {frozenset(s) for s in ss}=={frozenset(s) for s in pred}
+        assert len(cs)==L+2 and dim(cs,es)==L+1
+        assert len(rref(differences(cs,es),len(es))[1])==L+1
+        scans=[]
+        for b in range(1,L//2+1):
+            pairs=[(i,j) for i,j in combinations(range(len(cs)),2) if max(len(ss[i]-ss[j]),len(ss[j]-ss[i]))<=b]
+            rr=rank([sub(vec(cs[i],es),vec(cs[j],es)) for i,j in pairs])
+            if b<L//2-1:assert rr==L-1 and len(components(pairs,range(len(cs))))==3
+            scans.append({'b':b,'rank':rr,'components':len(components(pairs,range(len(cs))))})
+        rows.append({'L':L,'n':2*L,'h':len(cs),'d':dim(cs,es),'bounded_exchange':scans})
+    return rows
+
+def typed_obstruction(w):
+    data=typed_detail(w);es=[tuple(e) for e in w['retract_edges']];cs=cycles(es);ports=[[set(map(tuple,p)) for p in pp] for pp in data['ports']]
+    tc=[c for c in cs if all(len(c&p)==1 for pp in ports for p in pp)]
+    eq=[[int(v in e) for e in es] for v in sorted(adj(es))]+[[int(e in pp[0]) for e in es] for pp in ports]
+    diff=differences(tc,es);eqrank=len(rref(eq,len(es))[1]);assert eqrank==13
+    annihilator=nullspace(diff,len(es));weight=next(w for w in annihilator if len(rref(eq+[w],len(es))[1])>eqrank)
+    perturb=next(z for z in nullspace(eq,len(es)) if sum(x*y for x,y in zip(z,weight)))
+    vals={sum(x*y for x,y in zip(vec(c,es),weight)) for c in tc};assert len(vals)==1
+    assert len(rref(diff,len(es))[1])==5
+    return {'edges':es,'weight':weight,'typed_constant':next(iter(vals)),'homogeneous_degree_and_port_perturbation':perturb,'pairing':sum(x*y for x,y in zip(weight,perturb)),'degree_port_rank':eqrank,'typed_difference_rank':5,'all_retract_difference_rank':len(rref(differences(cs,es),len(es))[1]),'typed_cycles':[sorted(c) for c in tc]}
+
+def mandatory_rational(gs,old):
+    out=[]
+    indices=[0]+[i for i,r in enumerate(old['expansions']) if r['d_parent']+2-r['d_survival']==9]
+    for i in indices:
+        row=old['expansions'][i];fs,l,es,he,ke,nc,cl,li=boundary(gs[row['parent_history']]['faces'],row['step']);s=nc['N10']+nc['N01']+nc['N11'];L=differences(s,es);U=[z for k in ['Pux','Pvy','D11'] for z in differences(cl[k],es)];detail=split_check(gs[row['parent_history']],row,i);rr=[len(rref(z,len(es))[1]) for z in [L,L+U,L+U+[detail['bridge']]]];assert rr==[detail['ds'],detail['ds']+detail['within_mod_transport'],detail['dh']-2];out.append({'index':i,'rational_ranks':rr})
+    return out
+
+def main():
+    gs,old,support=inputs()
+    # Required witnesses are tested before the general prism conjecture.
+    rat=mandatory_rational(gs,old)
+    return {'mandatory_rational_checks':rat,'prisms':prism_checks(),'typed_explicit_obstruction':typed_obstruction(support['mccuaig_retract'])}
+if __name__=='__main__':print(json.dumps(main(),sort_keys=True,indent=2))

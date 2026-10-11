@@ -16,6 +16,29 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I168 cross-class rank identity, two obstructions, and I169 continuation
+
+[I168](i168-cross-class-exchange.md) passes all six audited I167
+interfaces (PASS ORIGINAL, fresh toolkit, complete-set signed-weight
+checks) and proves **R168**: the exact cross-class rank identity
+$d(H)=2+\dim(L+U+\operatorname{span}\{b\})$, with the balanced bridge
+$b\in\ker A_G$ choice-independent, so exchange is exactly
+$t+\eta\ge\ell$ (E168). It proves two further obstructions: **D168**,
+an infinite even-prism family showing no universal bound on both
+dual-shore transfer sizes can span Hamiltonian-cycle differences
+(bipyramid dual, $L+2$ affinely independent cycles, bounded transfers
+span only $L-1$ of $L+1$ dimensions); and **M168**, an exact
+certificate (explicit constant weight and perturbation) refuting typed
+degree-and-port affine fullness on the order-12 McCuaig retract. The
+636-step $(\ell,t,\eta)$ histogram shows $t\ge\ell-1$ throughout, with
+$\eta=1$ in every equality case. Exchange, (T) and Q164 remain open.
+Parent sealed replay passes (~17 s; context ledgers drift-free at
+replay). The [parent disposition](i168-cross-class-exchange-parent-disposition.md)
+records the scope: technical only, no ninth nomination.
+[I169](iteration169-bridge-independence-factory-astra-task.json)
+audits the new interfaces and attacks the residual inequality
+$t+\eta\ge\ell$ directly. **Eight accepted, two remaining.**
+
 ## I167 exchange-step audit, corrected system, and I168 continuation
 
 [I167](i167-exchange-step-braces.md) **fails I166's Section 5 aggregated
@@ -40,8 +63,9 @@ absence. Parent sealed replay passes (~28 s). The
 records the scope: technical only, no ninth nomination; the exchange
 step, (T) and Q164 remain open.
 [I168](iteration168-cross-class-exchange-factory-astra-task.json)
-audits the new interfaces and attacks the exchange step through the
-joint cross-class system. **Eight accepted, two remaining.**
+audited the new interfaces and attacked the exchange step through the
+joint cross-class system; its outcome is recorded above. **Eight
+accepted, two remaining.**
 
 ## I166 brace campaign and I167 exchange-step continuation
 
