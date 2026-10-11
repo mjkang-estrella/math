@@ -21,19 +21,18 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**I190 pairing analysis checked, E183 still open:**
-[Parent review](iterations/i190-beta-pairing-survivor-parent-disposition.md)
-passes the residual connectivity, the exact $J$-grouped patch-matching
-table (independently re-derived by enumerating all $2^{11}$ local
-subsets), the universal alpha terminal-deletion paths, the constant
-Pfaffian sign, and the conditional $W$-square alpha-to-beta switch with
-full type preservation. The counterexample hypothesis (C190) is
-sharpened to rigid cut profiles and excluded squares, but neither
-contradicted nor realized; original E183 stays UNRESOLVED at (R190).
-[I191](iterations/iteration191-concentration-exclusion-brief.md) is the
-final focused E183 attempt: concentration exclusion or a fully
-hypothesized counterexample. On another UNRESOLVED the line parks and
-work pivots to Q164/universal exchange. Local ears stay parked.
+**I191 concentration analysis checked; E183 line parked:**
+[Parent review](iterations/i191-concentration-exclusion-parent-disposition.md)
+passes the strengthened square transport (useful square anywhere in $R$
+suffices; crossing squares never contain $e_2$; the $14;14\leftrightarrow
+0134;03,14$ toggle verified edge-by-edge), the deletion-path crossing
+constraints, and the exact count $|B_R|=3(c_P+c_D)$, all independently
+checked on the declared exterior. The joint assertion J191 (equivalent
+to E183) is neither proved nor refuted, and the record supplies no
+decisive new constraint, so the stated stopping rule applies: **the
+E183 line is parked**. [I192](iterations/iteration192-exchange-residual-brief.md)
+pivots to the universal exchange residual $t+\eta\ge\ell$ / Q164 line
+at its sharpest paid point. Local ears stay parked.
 **Eight accepted, two remaining.**
 
 **I187 global-state analysis checked:** [Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)

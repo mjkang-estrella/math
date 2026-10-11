@@ -16,6 +16,28 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I191 checked; E183 line parked; pivot to the exchange residual
+
+The first [I191](iteration191-concentration-exclusion-brief.md) dispatch
+completed and returned the
+[report](i191-concentration-exclusion.md): the joint concentration
+system J191 (exactly equivalent to E183), the all-$R$ conditional
+square transport (no square contains $e_2$; the sole no-cut-2 crossing
+transition interchanges the two survivor types), exact deletion-path
+crossing constraints, and the multiplicity identity
+$|B_R|=3(c_P+c_D)$. The
+[parent disposition](i191-concentration-exclusion-parent-disposition.md)
+passes these deductions, independently verifies the square
+classification, toggle transitions and ten formal cut profiles on the
+declared exterior, and records J191 as neither proved nor refuted.
+With no decisive new constraint after four sharpenings (I188–I191), the
+stated stopping rule applies and **the E183 line is parked**.
+[I192](iteration192-exchange-residual-brief.md) pivots to the universal
+exchange residual $t+\eta\ge\ell$, whose proof closes the induction to
+Q164 via the paid I165 splice formula; refutation by a fully specified
+step or an exact obstruction are the other accepted outcomes. The
+local-ear mechanism remains parked. **Eight accepted, two remaining.**
+
 ## I190 pairing deductions checked; final concentration attempt
 
 The first [I190](iteration190-beta-pairing-survivor-brief.md) dispatch

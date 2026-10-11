@@ -6,27 +6,28 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
-### I190 residual pairing deductions checked; final E183 attempt next
+### I191 joint concentration system checked; E183 line parked, pivot to exchange
 
-[I190](iterations/i190-beta-pairing-survivor.md) proves residual
-connectivity (no bridge or cut vertex), the exact $J$-grouped
-patch-matching table, universal alpha-paired alternating
-terminal-deletion paths for every residual matching, component/crossing
-parity identities, constant oriented Pfaffian matching sign, and a
-conditional four-cycle $\alpha\to\beta$ switch preserving full survivor
-type when the square lies in $W$.
-[Parent review](iterations/i190-beta-pairing-survivor-parent-disposition.md)
-passes these without repairs, independently re-deriving the matching
-table by exhaustive enumeration of all $2^{11}$ local subsets and
-verifying the cut-profile mapping (8) and all inherited witnesses. The
-counterexample hypothesis (C190) is sharpened (rigid cut profiles
-$\{e_2,e_3,e_4\}$ or $\{e_2\}$; no useful $W$ squares; all survivors in
-open classes) but neither contradicted nor realized, so original E183
-stays UNRESOLVED; no substantial finding is nominated.
-[I191](iterations/iteration191-concentration-exclusion-brief.md) is the
-final focused E183 attempt — concentration exclusion or a fully
-hypothesized counterexample. On another UNRESOLVED the E183 line parks
-and the program pivots to Q164/universal exchange.
+[I191](iterations/i191-concentration-exclusion.md) assembles the exact
+joint counterexample system J191 (equivalent to E183) and proves: the
+conditional square transport extends from $W$ to all of $R$ (crossing
+squares use only $\{e_0,e_3\}$ or $\{e_3,e_4\}$, never $e_2$; the only
+no-cut-2 useful crossing transition interchanges the survivor types
+$14;14$ and $0134;03,14$); the universal alpha deletion paths have
+exact crossing-balance constraints with path-only flipping refuted as a
+repair; and complete lost exteriors force $|B_R|=3(c_P+c_D)$ with cut
+polynomial $3c_Pz_2z_3z_4+3c_Dz_2$.
+[Parent review](iterations/i191-concentration-exclusion-parent-disposition.md)
+passes these without repairs, independently verifying the square
+classification, toggle transitions, and the ten formal cut profiles on
+the declared exterior. J191 is neither proved nor realized, and no
+decisive new constraint emerged, so under the stopping rule the E183
+line is **parked** after four sharpenings (I188–I191); all paid
+deductions remain available. [I192](iterations/iteration192-exchange-residual-brief.md)
+returns to the affine-dimension line: prove, refute, or exactly
+obstruct the universal exchange residual $t+\eta\ge\ell$ (R170 form
+$\delta_R+\eta\ge\delta_V+\varepsilon$), whose proof yields Q164 via
+the paid splice reduction.
 **Eight accepted, two remaining.**
 
 ### I187 marked-state deductions checked, patch-rooted geometry next
