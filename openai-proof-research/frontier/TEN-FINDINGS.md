@@ -6,28 +6,26 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
-### I192 facial-translation classification checked; exchange open at J192
+### I193 symmetry and composition checked; short-gap exchange open at J193
 
-[I192](iterations/i192-exchange-residual.md) proves the complete
-compatible-family classification for the facial alternating-arc
-translations ($F_J=N^{00}$ on short arcs, empty otherwise, via a
-noncrossing-matching argument), the exact long-gap bridge identity
-retaining the completed-object defects, the short-gap equality
-reduction $\eta=0\iff\lambda=-1/2$ with the actual two-factor
-interpretation $z=F_Q-C_0$, and the full prism verification
-($\alpha=-(m-3)/(m-2)$, $(\ell,t,\eta)=(m-3,m-4,1)$ adjacent-rung and
-$(1,0,1)$ rail).
-[Parent review](iterations/i192-exchange-residual-parent-disposition.md)
-passes these without repairs, independently re-deriving the matching
-core for $m\le8$ and the prism structure, independence, identity (17)
-and ranks for $m\in\{4,6,8\}$. Universal exchange stays UNRESOLVED at
-the exact assertion J192 ($\Delta\le1$, and bridge independence when
-$\Delta=1$); the short-gap failure coefficient $-1/2$ is not excluded
-even for quadrilaterals, and both long-gap clauses are open. Q164 is
-recorded precisely: the historical count bound $h(G)\ge n/2+2$, implied
-by the stronger affine target $d=n/2+1$.
-[I193](iterations/iteration193-equality-bridge-brief.md) attacks the
-short-gap equality exclusion $\lambda\ne-1/2$.
+[I193](iterations/i193-equality-bridge.md) proves the complementary
+deletion-pairing symmetry on a quadrilateral (equal deficits, equal
+coefficients $\alpha_A=\alpha_B$), the central-square composition
+(lost family $=$ original $D_{11}$ fibre; $\Delta_c=\eta_{first}$;
+coefficient transport $\lambda_c=\lambda/(1+2\lambda)$; after a
+hypothetical failed step the successor gains exactly three), and
+sufficient conditions excluding the failure coefficient
+(single-flip Hamiltonicity, integer span, odd lattice index).
+[Parent review](iterations/i193-equality-bridge-parent-disposition.md)
+passes these without repairs, independently verifying the prism
+symmetry by exact quotient functionals ($m\in\{4,6,8\}$) and the full
+cube composition chain by direct enumeration ($d: 5\to7\to9$,
+$\lambda_c=1/4$). Short-gap exchange stays UNRESOLVED at J193
+($w(F_Q-C_0)\ne-1/2$); the paid prism values $\lambda=1/(m-2)>0$
+motivate the sign formulation. [I194](iterations/iteration194-quotient-sign-brief.md)
+is the final focused short-gap attempt: prove $w(F_Q-C_0)\ge0$,
+exhibit a verified negative-value step, or isolate the exact
+obstruction; on another UNRESOLVED the front parks beside E183.
 **Eight accepted, two remaining.**
 
 ### I187 marked-state deductions checked, patch-rooted geometry next

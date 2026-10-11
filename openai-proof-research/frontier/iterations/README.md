@@ -16,6 +16,27 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I193 checked; short-gap exchange sharp at J193; sign conjecture next
+
+The first [I193](iteration193-equality-bridge-brief.md) dispatch
+completed and returned the
+[report](i193-equality-bridge.md): the complementary-pairing symmetry
+($\alpha_A=\alpha_B$), the central-square composition identities
+($\Delta_c=\eta_{first}$, $\lambda_c=\lambda/(1+2\lambda)$, conditional
+gain-three recovery), and the sufficient subcases for the equality
+exclusion. The
+[parent disposition](i193-equality-bridge-parent-disposition.md) passes
+these, independently verifying the prism symmetry with exact rational
+quotient functionals ($m\in\{4,6,8\}$) and the cube composition chain
+by direct enumeration ($d: 5\to7\to9$; lost fibre $=$ $D_{11}$ lift;
+$\lambda_c=1/4$). Short-gap exchange stays UNRESOLVED at J193
+($w(F_Q-C_0)\ne-1/2$). [I194](iteration194-quotient-sign-brief.md)
+makes the final focused short-gap attempt — the sign conjecture
+$w(F_Q-C_0)\ge0$, a verified negative instance, or an exact
+obstruction — under an explicit stopping rule: on another UNRESOLVED
+the front parks beside the E183 line, which remains parked with the
+local-ear mechanism. **Eight accepted, two remaining.**
+
 ## I192 checked; exchange residual sharp at J192; equality bridge next
 
 The first [I192](iteration192-exchange-residual-brief.md) dispatch

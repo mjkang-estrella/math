@@ -1,20 +1,20 @@
 # OpenAI mathematics research
 
-**I192 exchange-residual analysis checked:**
-[Parent review](frontier/iterations/i192-exchange-residual-parent-disposition.md)
-passes the facial-translation classification (compatible families are
-exactly $N^{00}$ on short arcs, empty on long arcs; independently
-confirmed by noncrossing-matching enumeration for $m\le8$), the
-long-gap bridge identity, the short-gap equality reduction
-($\eta=0\iff\lambda=-1/2$, with the quadrilateral instance being the
-paid S169 failure $\alpha=-3/2$), and the prism family (parent
-re-derived exhaustion, affine independence, identity (17), and
-$(\ell,t,\eta)$ by direct enumeration and rational ranks for
-$m\in\{4,6,8\}$). Universal exchange stays UNRESOLVED at J192
-($\Delta\le1$, and $\beta\notin L_0+U$ when $\Delta=1$); Q164 is
-clarified as the historical count bound $h\ge n/2+2$, implied by the
-stronger affine target. [I193](frontier/iterations/iteration193-equality-bridge-brief.md)
-attacks the short-gap equality exclusion $\lambda\ne-1/2$.
+**I193 equality-bridge analysis checked:**
+[Parent review](frontier/iterations/i193-equality-bridge-parent-disposition.md)
+passes the complementary-pairing symmetry ($\alpha_A=\alpha_B$ on a
+quadrilateral, confirmed numerically on prisms $m\in\{4,6,8\}$ via
+exact quotient functionals), the central-square composition
+($\Delta_c=\eta_{first}$, $\lambda_c=\lambda/(1+2\lambda)$, and
+gain-three recovery after a hypothetical failure — the cube instance
+verified by direct enumeration: $5\to7\to9$, lost fibre $=$ $D_{11}$
+lift, $\lambda_c=1/4$), and the sufficient subcases (single-flip
+nonnegativity, integer span, odd lattice index). Short-gap exchange
+stays UNRESOLVED at J193: the coefficient $w(F_Q-C_0)=-1/2$ is
+unexcluded. [I194](frontier/iterations/iteration194-quotient-sign-brief.md)
+makes the final focused short-gap attempt: prove the quotient sign
+conjecture $w(F_Q-C_0)\ge0$, exhibit a negative-value step, or isolate
+the exact obstruction; on another UNRESOLVED the front parks.
 **8 accepted, 2 remaining.**
 
 **I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)
