@@ -1,0 +1,9 @@
+# Publication preparation review
+
+The theorem is conditional on Assumption 2.1, which states the precise smooth variance, moment-coordinate, adjunction, dense-range and retained tensor inequalities. It does not assume the centered nonsymmetric claim of Liu-Sun-Xiong. Checked the completion at fixed positive regularizer; weak local Sobolev limit with the R square retained; positive joint contact measures before signed multiplication; the nonzero mean score; affine covariance; dimension-only rates after John and mean-Hessian normalizations; the full Euclidean gauge gradient in the radial Jacobian; transverse averaging on the full cube; transfer of Lipschitz support errors and correct mixed-volume orientation; removal of translations; both volume signs and the zero-deficit upper-budget argument. The publication text supplies definitions and expands the coordinate and moving-map explanations implicit in the research report. Exact finite checks passed 3,336 assertions. These do not establish the analytic inputs or verify PDE compactness numerically.
+
+All PDF pages were rendered with Poppler at 105 dpi and visually inspected. The final builds have no overfull/underfull boxes, missing glyphs, unresolved citations or references. Extracting each source ZIP into a separate directory and rebuilding gave identical extracted PDF text. The ZIPs contain only main.tex with the bibliography.
+
+The earlier proof and significance PASS reports are AI project reviews, not human peer review, formal verification, or proof of worldwide priority. This preparation involved no additional agents. No new proof gap was identified within the stated premises.
+
+Editorial review used the requested unslop guidance, ordinary AMS article structure, and the same AI-use acknowledgment as the author's preceding manuscripts. No arXiv submission, Scholar profile update, or MathDB announcement was made in this preparation.
