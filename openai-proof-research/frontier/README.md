@@ -21,18 +21,22 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I166](iterations/i166-affine-span-braces.md)
-independently re-derived all audited I165 interfaces and delivers exact
-evidence on 438 distinct braces (orders 8–64): all affine-full, no Q164
-violation, tight exactly on prisms, anchored to the OEIS A007083 census.
-New certified technical facts: the B18 obstruction to brace-only C4
-generation, a proved face-toggle lemma, and a quantified survival
-obstruction for the exchange step. The brace theorem and Q164 remain
-open. Parent sealed replay passes; the
-[parent disposition](iterations/i166-affine-span-parent-disposition.md)
-records the scope. [I167](iterations/iteration167-exchange-step-braces-factory-astra-task.json)
-attacks the exchange step and evaluates McCuaig brace generation.
-**8 accepted, 2 remaining.**
+**Structural-graph update:** [I167](iterations/i167-exchange-step-braces.md)
+**fails I166's aggregated constant-weight equations as written** (explicit
+vertex-potential witness on an expanded cube; original bytes and failure
+preserved) and proves the corrected complete six-class system CW167.
+Its audit passes I166's face-toggle lemma, B18 certificates, census
+anchor, splices and survival counts. New proved results: the transported
+hull has exactly survival rank, a universal fixed-terminal path-rank
+deficit (P167), and a dual-tree antichain obstruction (A167). A
+636-expansion campaign finds no exchange counterexample; some steps
+require nine new directions. The McCuaig route reduces to an exact
+typed-port interface. The exchange step, the brace theorem and Q164
+remain open; technical only, no ninth nomination. Parent sealed replay
+passes; the [parent disposition](iterations/i167-exchange-step-braces-parent-disposition.md)
+records the scope. [I168](iterations/iteration168-cross-class-exchange-factory-astra-task.json)
+audits the new interfaces and attacks the exchange step through the
+joint cross-class system. **8 accepted, 2 remaining.**
 
 **Latest oracle gate:** [I161](reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies the full theorem as **TECHNICAL ONLY** through a concrete compiler,
