@@ -16,6 +16,34 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I195 checked; long-gap front parked at J195; fresh discovery next
+
+The first [I195](iteration195-long-gap-deficit-brief.md) dispatch
+completed and returned the
+[report](i195-long-gap-deficit.md): the complete cap-prism family
+theorem (both long-gap clauses on every even-prism polygonal-face
+deletion with arcs $\ge3$; $(\ell,t,\epsilon,\Delta)=(1,0,1,1)$ with
+zero margin; independent bridge $w(\beta)=m/(m-2)>0$), the
+multi-component flip identity, the Boolean arc-completion
+constructions, and the $\Delta=\kappa-\gamma$ quotient obstacle. The
+[parent disposition](i195-long-gap-deficit-parent-disposition.md)
+passes these, independently re-deriving the $m=8$, $j=4$ instance by
+fresh enumeration (ten old cycles with $N00=\{Y\}$; the new families
+$3,3,9$ exactly matching the child's formulas; $w(\beta)=4/3$; the
+child graph with 24 cycles and $d(H)=11$) and the cube instance of the
+flip identity. The general long-gap clauses stay UNRESOLVED at J195
+with no decisive new constraint and no violating instance, so the
+brief's stopping rule fires: **the long-gap front is PARKED** beside
+the short-gap front (J194/J193) and the E183 line, with the exact
+resumption state recorded. With both exchange fronts and the E183 line
+parked and the remaining Barnette surfaces (Q164, (T)) blocked by the
+mapped induction obstruction, [I196](iteration196-fresh-discovery-brief.md)
+opens a fresh discovery lane screening the previously unscreened
+families 084 (geometric Erdős similarity), 020 (squarefree quartics /
+power-free polynomial values) and 026 (positive lower density of large
+prime gaps) under the standing five-point gate. The local-ear
+mechanism remains parked. **Eight accepted, two remaining.**
+
 ## I194 checked; short-gap front parked at J194; long-gap deficit next
 
 The first [I194](iteration194-quotient-sign-brief.md) dispatch

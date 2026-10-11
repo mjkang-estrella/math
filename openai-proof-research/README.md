@@ -1,21 +1,19 @@
 # OpenAI mathematics research
 
-**I194 quotient-sign analysis checked; short-gap front parked:**
-[Parent review](frontier/iterations/i194-quotient-sign-parent-disposition.md)
-passes the exact flip-connectivity criterion ($q=2$ failure iff
-$\beta=\tau$), the conditional fractional block lemma, the fully
-specified cube brace obstruction ($\lambda=1/2$, yet every surviving
-symmetric difference is a single alternating cycle whose only flip is
-disconnected — independently re-derived with identity (10),
-$\kappa=1/2$ and the $\beta=\tau$ instance), and the three-matching
-bookkeeping; the prism values $\lambda=1/(m-2)$ are confirmed
-non-integral, excluding all integral certificates. The sign conjecture
-stays UNRESOLVED at J194 with no decisive new constraint, so per the
-brief's stopping rule the **short-gap front is PARKED** beside the
-E183 line. [I195](frontier/iterations/iteration195-long-gap-deficit-brief.md)
-attacks the long-gap clauses of J192 ($\Delta\le1$, and
-$\beta\notin L_0+U$ when $\Delta=1$), with even-prism polygonal-face
-deletions as a paid test family.
+**I195 long-gap analysis checked; both exchange fronts parked:**
+[Parent review](frontier/iterations/i195-long-gap-deficit-parent-disposition.md)
+passes the complete cap-prism family theorem — for every even
+$m\ge8$ polygonal-face deletion with both arcs $\ge3$, the exact
+classes, ranks $(\ell,t,\epsilon,\Delta)=(1,0,1,1)$ with zero margin,
+and an independent bridge $w(\beta)=m/(m-2)>0$ (the $m=8$ case
+independently re-derived by fresh enumeration: family lists matching
+the child's formulas exactly, $w(\beta)=4/3$, $d(H)=11$) — plus the
+multi-component flip identity (verified on the cube) and the
+$\Delta=\kappa-\gamma$ quotient obstruction. The general long-gap
+bound stays UNRESOLVED at J195 with no decisive new constraint, so per
+the brief's stopping rule the **long-gap front is PARKED** beside the
+short-gap front and E183. [I196](frontier/iterations/iteration196-fresh-discovery-brief.md)
+opens a fresh discovery lane (families 084, 020, 026).
 **8 accepted, 2 remaining.**
 
 **I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)
