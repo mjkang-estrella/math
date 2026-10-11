@@ -6,6 +6,46 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I170 short-gap theorem, exact boundary residuals, and I171 continuation
+
+[I170](iterations/i170-quadrilateral-coefficient.md) passes all audited
+I169 interfaces (F169, S169, P169, and the 206-step coefficient data:
+PASS ORIGINAL, fresh enumerators and two exact rank implementations) and
+proves two new results. **H170**: if either cross-terminal pair $ux$ or
+$vy$ is an edge of $K$, then degree-two forcing and planar separation
+give exact translation bijections $N_{00}\to P_{ux}$ and
+$P_{vy}\to D_{11}$, hence $U=V+Z$ and $t\ge\ell-1$; since both
+complementary arcs are odd, every admissible facial quadrilateral and
+hexagon expansion has such a short gap, so the lower bound is proved for
+all face lengths up to six. The bridge satisfies
+$b\equiv r+2z\pmod{L+U}$, and equality-case exchange fails exactly at
+$z\equiv-r/2$. **R170**: for arbitrary faces, alternating arc sums $q_J$
+give the exact decomposition
+$\operatorname{diff}(J)=\operatorname{diff}(F_J)+\operatorname{span}(E_J)$
+with $\operatorname{diff}(F_J)\subseteq V$, the deficit identity
+$\ell-t=\delta_V+\varepsilon-\delta_R$, and exchange exactly as
+$\delta_R+\eta\ge\delta_V+\varepsilon$. The tempting containment
+$V\subseteq U$, and even $V\subseteq L+U$, is **refuted** by certified
+octagonal examples at indices 263, 272, 431 (index 431:
+$(\ell,t,\eta)=(1,0,1)$, $(\delta_V,\delta_R,\varepsilon)=(1,0,0)$,
+explicit integer separator $w$ with $w\cdot U=0$, $w\cdot v=-8$); these
+are not counterexamples to exchange. The quadrilateral equality gap is
+reformulated exactly: $\alpha=-\tfrac32$ iff the disconnected
+square-switch 2-factor has normalized weight $-\tfrac12$. Finite
+evidence: all 1,120 tested quadrilateral equality cases (182 original +
+914 new through parent order 28, 610 with a quotient) have
+$\alpha=-(m-1)/m$, never $-\tfrac32$; 982 longer-face steps through
+parent order 24 show no $t\le\ell-2$. Parent precheck and sealed replay
+pass (~131 s; seven payloads byte-equal; eight guard probes blocked;
+context ledgers drift-free). The
+[parent disposition](iterations/i170-quadrilateral-coefficient-parent-disposition.md)
+classifies the round **technical only, no ninth nomination**.
+[I171](iterations/iteration171-square-switch-weight-factory-astra-task.json)
+audits the new interfaces and attacks the 2-factor normalized-weight
+bound (equivalent to $\alpha\ne-\tfrac32$) and the octagonal case of
+(R170.3) with both arcs of length three, with index 431 added to the
+mandatory tests. **8 accepted, 2 remaining; research active.**
+
 ### I169 quadrilateral recovery, prism exchange theorem, and I170 continuation
 
 [I169](iterations/i169-bridge-independence.md) passes all audited I168
