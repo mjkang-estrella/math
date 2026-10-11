@@ -1,15 +1,14 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I179](frontier/iterations/i179-path-recombination.md)
-leaves the recombination bound unresolved but proves a finite two-packing
-lock: nontrivial exchanges create isolated cycles.
-Parent replay and independent edge-by-edge checks pass.
-The [parent disposition](frontier/iterations/i179-path-recombination-parent-disposition.md)
-also supplies an actual six-cycle survivor-helper exchange that bypasses
-this specific lock. No general helper-existence theorem follows.
-[I180](frontier/iterations/iteration180-survivor-helper-connectivity-factory-astra-task.json)
-targets graph-independent connectivity of the lost path fibre under
-such actual helper moves, without a graph sweep.
+**Structural-graph update:** [I180](frontier/iterations/i180-survivor-helper-connectivity.md)
+certifies the complete five-vertex helper path in the retained example.
+All 24 directed witnesses and 99 cycle-obstructed moves pass independent
+parent checks and sealed replay. Strict Hamming-distance descent fails.
+The [parent disposition](frontier/iterations/i180-survivor-helper-connectivity-parent-disposition.md)
+preserves finite scope: general helper connectivity remains unresolved.
+[I181](frontier/iterations/iteration181-six-cycle-helper-factory-astra-task.json)
+isolates helper existence for a port-disjoint six-cycle formed by two
+adjacent quadrilateral faces, without new graph tests.
 Universal exchange, (T), and Q164 remain open. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
