@@ -21,21 +21,23 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**I194 flip criterion and cube obstruction checked; short-gap front
-parked:** [Parent review](iterations/i194-quotient-sign-parent-disposition.md)
-passes the exact flip-connectivity criterion, the conditional
-fractional block lemma, the cube brace step that defeats universal
-direct-flip certificates ($\lambda=1/2$, every $F\triangle C$ a single
-alternating cycle; parent re-derived with $\kappa=1/2$), and the
-three-matching bookkeeping. The sign conjecture stays UNRESOLVED at
-J194 with no decisive new constraint; per the brief's stopping rule
-the short-gap front is **PARKED** beside the E183 line.
-[I195](iterations/iteration195-long-gap-deficit-brief.md) attacks the
-long-gap clauses of J192 ($t\ge\ell-1$ on long gaps, and
-$\beta\notin L_0+U$ when $\Delta=1$), with the even-prism
-polygonal-face deletions ($m=8$, $3+3$ split) as a paid test family,
-under a symmetric stopping rule. The E183 line and local ears stay
-parked. **Eight accepted, two remaining.**
+**I195 cap-prism theorem checked; long-gap front parked:**
+[Parent review](iterations/i195-long-gap-deficit-parent-disposition.md)
+passes the complete long-gap cap-prism family ($\Delta=1$ with zero
+margin but independent bridge $w(\beta)=m/(m-2)>0$; the $m=8$, $3+3$
+instance re-derived by fresh parent enumeration, including exact
+family lists, ranks, and the child graph with 24 cycles, $d(H)=11$),
+the multi-component flip identity (cube-verified), and the
+$\Delta=\kappa-\gamma$ quotient obstruction. The general long-gap
+clauses stay UNRESOLVED at J195 with no decisive new constraint; per
+the brief's stopping rule the long-gap front is **PARKED** beside the
+short-gap front (J194/J193) and the E183 line.
+[I196](iterations/iteration196-fresh-discovery-brief.md) opens a fresh
+discovery lane screening the unscreened families 084 (geometric Erdős
+similarity), 020 (squarefree quartics / power-free values) and 026
+(positive density of large prime gaps). Q164, (T) and universal
+exchange remain recorded open surfaces. **Eight accepted, two
+remaining.**
 
 **I187 global-state analysis checked:** [Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)
 passes the original dual/recovery deductions and marked orientation

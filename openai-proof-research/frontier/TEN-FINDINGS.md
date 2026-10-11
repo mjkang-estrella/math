@@ -6,31 +6,32 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
-### I194 flip criterion checked; short-gap front parked at J194
+### I195 cap-prism family checked; long-gap front parked at J195
 
-[I194](iterations/i194-quotient-sign.md) proves the exact
-flip-connectivity criterion (flipped-factor components $=$ components
-of $\tau\cup\beta$; $q=2$ failure iff $\beta=\tau$), a conditional
-fractional block lemma (a nonnegative cover by Hamiltonian flip blocks
-gives $\lambda\ge0$, including the all-$(k-1)$-block subcase), a fully
-specified cube brace obstruction ($\lambda=1/2$ while every surviving
-$F\triangle C$ is one alternating cycle whose only flip is the
-disconnected $F$ — no universal direct-flip certificate exists even
-for braces), and the three-matching bookkeeping
-($F+F_{01}+F_{02}=2E$, $\lambda=\kappa-h(F_{01})-h(F_{02})$, with the
-two-phase incompatibility).
-[Parent review](iterations/i194-quotient-sign-parent-disposition.md)
-passes these without repairs, independently re-deriving the whole cube
-instance (identity (10), $\lambda=\kappa=1/2$, the five single-cycle
-symmetric differences, the $\beta=\tau$ flip failure), the prism
-fractional exclusion of integral certificates, and the
-negative-iterate arithmetic. The sign conjecture stays UNRESOLVED at
-J194 with no decisive new constraint, so per the brief's stopping rule
-the **short-gap front is PARKED** beside the E183 line.
-[I195](iterations/iteration195-long-gap-deficit-brief.md) attacks the
-long-gap clauses of J192 ($t\ge\ell-1$ on long gaps; $\beta\notin
-L_0+U$ when $\Delta=1$), with even-prism polygonal-face deletions as a
-paid test family, under a symmetric stopping rule.
+[I195](iterations/i195-long-gap-deficit.md) proves the complete
+long-gap cap-prism family theorem: for every even $m\ge8$ and even
+$4\le j\le m-4$, the polygonal-face deletion $t_0,t_j$ of
+$C_m\square K_2$ (odd arcs $\ge3$) has complete six classes with
+explicit vector formulas, ranks $(\ell,t,\epsilon,\Delta)=(1,0,1,1)$
+with zero margin, and an independent bridge $w(\beta)=m/(m-2)>0$, so
+both long-gap clauses hold sharply on this infinite family; it also
+proves the multi-component flip identity
+($h-c+\#\mathrm{comp}(\tau\cup\mu)$), the Boolean arc-completion
+constructions with exact component counts, and the
+$\Delta=\kappa-\gamma$ quotient obstruction explaining why the
+short-gap normalized functional does not transplant.
+[Parent review](iterations/i195-long-gap-deficit-parent-disposition.md)
+passes these without repairs, independently re-deriving the $m=8$,
+$j=4$ instance by fresh enumeration (family lists exactly equal to the
+child's formulas; $d(G)=9$, $\dim L=8$, $\dim L_0=6$, $\dim U=4
+\subseteq L_0$; identities (10)/(12); $w(\beta)=4/3$; the child graph
+with 24 cycles and $d(H)=11$) and the cube flip instance. The general
+long-gap bound stays UNRESOLVED at J195 with no decisive new
+constraint, so per the brief's stopping rule the **long-gap front is
+PARKED** beside the short-gap front and E183; Q164, (T) and universal
+exchange remain recorded open surfaces.
+[I196](iterations/iteration196-fresh-discovery-brief.md) opens a fresh
+discovery lane (families 084, 020, 026).
 **Eight accepted, two remaining.**
 
 ### I187 marked-state deductions checked, patch-rooted geometry next
