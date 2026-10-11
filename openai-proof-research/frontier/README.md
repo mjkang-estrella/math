@@ -21,6 +21,17 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I186 region analysis checked:** [Parent review](iterations/i186-theta-region-balance-parent-disposition.md)
+passes the original matching-closure, color-balance and short-arc
+deductions. The symbolic length-five case is not a graph counterexample.
+Five-file authentication and the inherited sealed replay pass.
+The local-ear mechanism is now **parked** under its stopping rule;
+Z184/E183 remain open. [I187](iterations/iteration187-frozen-state-survival-brief.md)
+investigates global paired-state cancellation with the frozen matching
+half and survivor type, not another local-improvement criterion.
+**Eight accepted, two remaining.**
+
+
 **I185 splice analysis:** [Parent review](iterations/i185-connected-reconnection-parent-disposition.md)
 passes original ear eligibility and exact component accounting at scope.
 Joining can be offset by fragmentation in formal pairing data, not yet

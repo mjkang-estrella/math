@@ -6,6 +6,24 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I186 region deductions checked, local-ear mechanism parked
+
+[I186](iterations/i186-theta-region-balance.md) proves strict-interior
+matching closure and exact color balance, including chords and residual
+terminal deficits. It excludes retained arcs of lengths one and three
+for the specified zero-gain pattern. At length five only symbolic
+incidence compatibility is supplied, not an admissible graph realization.
+[Parent review](iterations/i186-theta-region-balance-parent-disposition.md)
+passes the original deductions, all five output hashes and fourteen
+input/source records, formal incidence checks and the inherited 23-stage
+replay. No improving ear is proved. The explicit stopping rule now
+**parks the local-ear mechanism**, without resolving or refuting Z184/E183.
+[I187](iterations/iteration187-frozen-state-survival-brief.md) returns
+to unrestricted E183 by investigating frozen-matching survivor
+nonvanishing in the source's global paired-state construction.
+No single-cycle, cut-2, or bounded-transfer restriction is imposed.
+**Eight accepted, two remaining; both acceptance gates unchanged.**
+
 ### I185 splice criterion checked, one final geometric ear analysis
 
 [I185](iterations/i185-connected-reconnection.md) gives exact endpoint,

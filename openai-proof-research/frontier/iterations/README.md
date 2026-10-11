@@ -16,6 +16,22 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I186 region analysis checked, local ears parked, I187 prepared
+
+[I186](i186-theta-region-balance.md) supplies matching closure, exact
+region balances and a limited short-arc exclusion.
+[Parent review](i186-theta-region-balance-parent-disposition.md) passes
+the original written deductions and independent symbolic checks;
+five output hashes, fourteen input/source records and the inherited
+sealed replay also pass. Length-five incidence compatibility is not
+an actual graph or a counterexample. No improving-ear bridge emerged,
+so the **local-ear mechanism is parked**, as required.
+[I187](iteration187-frozen-state-survival-brief.md) investigates the
+source's global paired-state cancellation for the frozen half and
+survivor type. It returns to unrestricted E183 rather than requiring
+a single alternating cycle or cut 2. Z184/E183 and the broader universal
+targets remain open. **Eight accepted, two remaining.**
+
 ## I185 splice analysis checked, I186 full-theta analysis prepared
 
 [I185](i185-connected-reconnection.md) proves exact ear eligibility
