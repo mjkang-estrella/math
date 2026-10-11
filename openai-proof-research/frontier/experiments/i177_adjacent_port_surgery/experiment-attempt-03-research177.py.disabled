@@ -1,0 +1,372 @@
+"""Targeted controls, unchanged U176 certificates, and one new adjacent surgery."""
+import json
+from pathlib import Path
+
+ROOT = Path("/home/mj-kang/Documents/Dev/math/openai-proof-research")
+EXP = ROOT / "frontier/experiments"
+
+
+def load(relative):
+    path = EXP / relative
+    data = INPUT_BYTES[str(path)] if "INPUT_BYTES" in globals() else path.read_bytes()
+    return json.loads(data)
+
+
+def clean(obj):
+    return json.loads(json.dumps(obj))
+
+
+def old_mandatory():
+    return load("i175_affected_prism_exterior/mandatory-attempt-02.json")
+
+
+def proof_certificate(k, retain_fiveport=False):
+    """Verify actual retained U176 words, omitted sets, partners and minors."""
+    data = load("i176_uniform_five_port_rank/uniform-attempt-02.json")
+    c = next(r for r in data["checks"] if r["k"] == k)
+    graph, square, uvxy = square_surgery(initial_prism(k), [0, 0, 6])
+    assert uvxy == (1, 2, 12+k-3, 12+k-2)
+    E = graph["edges"]
+    s, t, p, q = square
+    X = set(range(13, 12+2*k)) | {p, q}
+    xe = [e for e in E if set(e) <= X]
+    ye = [e for e in E if not set(e) & X]
+    cut = [(1, 13), (5, 11+k), (6, 12+k), (s, p), (t, q)]
+    V = set(v for e in E for v in e)
+    ex = lambda i: 12+i
+    bot = lambda i: 12+k+i
+    n, j = k-1, k-3
+    h = lambda i: edge(ex(i), ex(i+1))
+    g = lambda i: edge(bot(i), bot((i+1) % k))
+    rung = lambda i: edge(ex(i), bot(i))
+    z = edge(p, q)
+    def run(fun, a, b):
+        return [fun(i) for i in range(a, b+(1 if b >= a else -1), 1 if b >= a else -1)]
+    W = sum(([ex(i), bot(i), bot(i+1), ex(i+1)] for i in range(1, j-1, 2)), [])+[ex(j), bot(j)]
+    Vword = sum(([ex(i), ex(i+1), bot(i+1), bot(i+2)] for i in range(1, j-1, 2)), [])+[ex(j)]
+    templates = {
+        "0": [run(ex, 1, j)+[p, q]+run(ex, n-1, n)+run(bot, n, 0)],
+        "1a": [[bot(0), bot(1)]+Vword+[p, q, ex(n-1), bot(n-1), bot(n), ex(n)]],
+        "1b": [[ex(n), ex(n-1), q, p]+run(ex, j, 1)+run(bot, 1, n)+[bot(0)]],
+        "2": [[ex(n), ex(n-1), bot(n-1), bot(n), bot(0), bot(1)]+Vword+[p, q]],
+        "3": [[bot(0), bot(n), ex(n), ex(n-1)]+run(bot, n-1, 1)+run(ex, 1, j)+[p, q]],
+        "4a": [W+[bot(n-1), bot(n), bot(0)], [ex(n), ex(n-1), q, p]],
+        "4b": [run(ex, 1, j)+run(bot, j, 0), [ex(n), bot(n), bot(n-1), ex(n-1), q, p]],
+        "5": [W+[bot(n-1), ex(n-1), q, p], [ex(n), bot(n), bot(0)]],
+        "6r"+str(n-1): [run(ex, 1, j)+[p], [ex(n), bot(n)]+run(bot, 0, n-1)+[ex(n-1), q]],
+        "7Z": [W+[bot(n-1), ex(n-1), ex(n), bot(n), bot(0)], [p, q]],
+        "8": [run(ex, 1, j)+[p], run(bot, 0, n)+[ex(n), ex(n-1), q]],
+        "9": [[ex(n), bot(n), bot(0)], [p]+run(ex, j, 1)+run(bot, 1, n-1)+[ex(n-1), q]],
+        "10a": [[ex(n), bot(n), bot(n-1), ex(n-1), q], [bot(0), bot(1)]+Vword+[p]],
+        "10b": [[ex(n), ex(n-1), q], [bot(0)]+run(bot, n, 1)+run(ex, 1, j)+[p]],
+    }
+    for rr in range(1, j):
+        templates["6r"+str(rr)] = [run(ex, 1, rr)+run(bot, rr, 0)+run(bot, n, rr+1)+run(ex, rr+1, j)+[p],
+                                  [ex(n), ex(n-1), q]]
+        templates["7r"+str(rr)] = [run(ex, 1, rr)+run(bot, rr, 0),
+                                  [p]+run(ex, j, rr+1)+run(bot, rr+1, n)+[ex(n), ex(n-1), q]]
+    exterior_words = [
+        [[[1, s, t, 2, 3, 4, 5, 11, 10, 9, 8, 7, 6]]],
+        [[[5, 11, 10, 4, 3, 9, 8, 2, t, s, 1, 7, 6]],
+         [[5, 4, 3, 2, t, s, 1, 7, 8, 9, 10, 11, 6]]],
+        [[[5, 4, 3, 2, 8, 9, 10, 11, 6, 7, 1, s, t]]],
+        [[[6, 11, 5, 4, 10, 9, 3, 2, 8, 7, 1, s, t]]],
+        [[[1, 7, 8, 2, t, s], [5, 4, 3, 9, 10, 11, 6]],
+         [[1, 7, 8, 9, 3, 2, t, s], [5, 4, 10, 11, 6]],
+         [[1, 7, 8, 9, 10, 4, 3, 2, t, s], [5, 11, 6]]],
+        [[[1, 7, 6], [5, 11, 10, 4, 3, 9, 8, 2, t, s]]],
+        [[[1, 7, 6, 11, 10, 9, 8, 2, 3, 4, 5], [s, t]]],
+        [[[1, s], [6, 7, 8, 9, 10, 11, 5, 4, 3, 2, t]]],
+        [[[1, 7, 8, 2, 3, 9, 10, 4, 5, 11, 6], [s, t]]],
+        [[[5, 11, 10, 4, 3, 9, 8, 2, t], [6, 7, 1, s]]],
+        [[[5, 4, 3, 9, 10, 11, 6], [s, 1, 7, 8, 2, t]]],
+    ]
+    assert sum(map(len, exterior_words)) == 14
+    for state_index, partners in enumerate(exterior_words):
+        for partner_index, paths in enumerate(partners):
+            flat = [v for word in paths for v in word]
+            assert len(flat) == len(set(flat)) == 13 and set(flat) == V-X
+            used = {edge(a, b) for word in paths for a, b in zip(word, word[1:])}
+            assert used <= set(ye)
+            assert [int(e in used) for e in ye] == c["states"][state_index]["Y"][partner_index]
+    words = {}
+    for rec in c["local_witnesses"]:
+        paths = templates[rec["name"]]
+        assert paths == rec["path_words"]
+        assert len([v for word in paths for v in word]) == len(X)
+        assert {v for word in paths for v in word} == X
+        used = {edge(a, b) for word in paths for a, b in zip(word, word[1:])}
+        assert used <= set(xe)
+        missing = set(xe)-used
+        assert missing == {tuple(e) for e in rec["missing"]}
+        name = rec["name"]
+        if name.startswith("6r"):
+            r = int(name[2:])
+            formula = {rung(i) for i in range(1, n+1) if i not in (r, r+1)} | {h(r), g(r), z}
+        elif name == "1a":
+            formula = {h(i) for i in range(2, n, 2)} | {g(i) for i in range(1, j+1, 2)} | {g(n)}
+        elif name == "1b":
+            formula = {rung(i) for i in range(2, n+1)} | {g(0)}
+        elif name == "4a":
+            formula = {h(i) for i in range(1, j, 2)} | {edge(ex(j), p), rung(n-1), rung(n), g(0)} | {g(i) for i in range(2, j, 2)}
+        elif name == "4b":
+            formula = {rung(i) for i in range(1, j)} | {edge(ex(j), p), h(n-1), g(n), g(j)}
+        elif name == "7Z":
+            formula = {h(i) for i in range(1, j, 2)} | {edge(ex(j), p), edge(ex(n-1), q), g(0)} | {g(i) for i in range(2, n, 2)}
+        elif name == "7r1":
+            formula = {rung(i) for i in range(3, n)} | {h(1), g(1), g(n), z}
+        else:
+            formula = missing
+        assert missing == formula, name
+        row = tuple(int(e in used) for e in xe)
+        state = c["states"][rec["state"]]
+        endpoints = [13, 11+k, 12+k, p, q]
+        pairs = pairing(xe, row, X, [endpoints[i] for i in state["J"]])
+        assert pairs == tuple(sorted(edge(endpoints[a], endpoints[b]) for a, b in state["px"]))
+        assert list(row) in state["X"]
+        yy = state["Y"][rec["exterior_partner_index"]]
+        selected_edges = used | set(selected(ye, yy)) | {cut[i] for i in state["J"]}
+        assert Counter(v for e in selected_edges for v in e) == Counter({v: 2 for v in V})
+        assert len(components(selected_edges, V)) == 1
+        assert (6, 12+k) in selected_edges or (1, 7) in selected_edges
+        words[name] = row
+    vectors = [minus(words["6r"+str(r)], words["6r"+str(n-1)]) for r in range(1, j)]
+    vectors += [minus(words[a], words[b]) for a, b in (("1a", "1b"), ("4a", "4b"), ("7Z", "7r1"))]
+    cols = [h(i) for i in range(1, j)]+[h(n-1), z, g(0)]
+    minor = [[v[xe.index(e)] for e in cols] for v in vectors]
+    assert minor == c["local_minor"]
+    assert determinant(minor) == 4-k
+    assert rank(vectors) == k-1
+    m = k//2
+    schur = [[1-m, 0, 1], [3-m, 0, -1], [3-m, 1, -1]]
+    assert determinant(schur) == 4-k
+    # Each retained anchor is exactly the gluing, including cut coordinates.
+    anchors = []
+    for a in c["anchors"]:
+        st = c["states"][a["state"]]
+        selected_edges = set(selected(xe, words[a["local_template"]])) | set(selected(ye, a["Y"])) | {cut[i] for i in st["J"]}
+        r = tuple(int(e in selected_edges) for e in E)
+        assert list(r) == a["cycle"]
+        assert list(words[a["local_template"]]) in st["X"]
+        assert a["Y"] in st["Y"]
+        anchors.append(r)
+    pi = [i for i, e in enumerate(E) if e not in xe]
+    exterior_coordinates = ye+cut
+    def lift_y(r):
+        d = dict(zip(ye, r))
+        return tuple(d.get(e, 0) for e in exterior_coordinates)
+    image = []
+    for desc in c["image_descriptions"]:
+        if desc[0] == "Y":
+            _, st, a, b = desc
+            image.append(lift_y(minus(c["states"][st]["Y"][a], c["states"][st]["Y"][b])))
+        else:
+            _, a, b = desc
+            d = dict(zip(E, minus(anchors[a], anchors[b])))
+            image.append(tuple(d[e] for e in exterior_coordinates))
+    assert clean(image) == c["image_directions"]
+    imageedges = [(1, 7), (1, s), (2, 3), (2, 8), (3, 4), (4, 5), (5, 11), (6, 7), (s, t)]
+    image_minor = [[r[exterior_coordinates.index(e)] for e in imageedges] for r in image]
+    assert image_minor == c["image_minor"]
+    assert determinant(image_minor) == 1
+    result = {"k": k, "words": len(words), "local_minor": minor, "local_determinant": str(determinant(minor)),
+              "schur": schur, "image_minor": image_minor, "image_determinant": "1",
+              "actual_anchors": anchors, "local_directions": vectors, "image_directions": image}
+    if retain_fiveport:
+        fp = fiveport(graph, k, square)
+        assert fp["local_rank"] == k-1 and fp["image_rank"] == 9
+        assert fp["survivor_rank"] == k+8
+        # Listed partners are sufficient subfamilies; complete families may be bigger.
+        for st in c["states"]:
+            actual = next(a for a in fp["states"] if clean((a["J"], a["px"], a["py"])) == [st["J"], st["px"], st["py"]])
+            assert {tuple(r) for r in st["X"]} <= set(actual["X"])
+            assert {tuple(r) for r in st["Y"]} <= set(actual["Y"])
+        result["complete_fiveport"] = fp
+    return result
+
+
+def mandatory():
+    old = old_mandatory()
+    order = [0, 520, 522, 524, 527, 528, 530, 533, 534, 536, 539, 431]
+    output = []
+    for i in order:
+        prev = next(x for x in old["census"] if x["index"] == i)
+        r = diagnostic(prev["graph"], prev["uvxy"])
+        compare_diagnostic(r, prev)
+        r["index"] = i
+        if i == 431:
+            L = r["survivor_basis"]
+            U = sum((differences(r["families"][n]) for n in ("Pux", "Pvy", "D11")), [])
+            w = (1, -1, 0, 2, -2, 0, 2, 0, 4, 0, 1, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
+            dot = lambda x: sum(a*b for a, b in zip(w, x))
+            assert all(dot(x) == 0 for x in L+U)
+            assert dot(r["b"]) == 10
+            assert abs(dot(differences(r["families"]["N00"])[0])) == 8
+            assert not r["V_subset_U"] and not r["V_subset_LU"]
+            r["separator"] = w
+        output.append(r)
+    c = diagnostic(old["C171"]["graph"], old["C171"]["uvxy"])
+    compare_diagnostic(c, old["C171"])
+    weights = old["C171"]["weight_checks"]
+    w = tuple(map(Fraction, weights["w"]))
+    ref, f, factor = map(tuple, (weights["C0"], weights["F_vector"], weights["T_vector"]))
+    dot = lambda r: sum(a*b for a, b in zip(w, minus(r, ref)))
+    assert dot(f) == Fraction(1, 14) and dot(factor) == Fraction(-1, 2) and f != factor
+    E = [tuple(e) for e in c["graph"]["edges"]]
+    V = set(v for e in E for v in e)
+    for row in (f, factor):
+        assert all(x in (0, 1) for x in row)
+        assert Counter(v for e in selected(E, row) for v in e) == Counter({v: 2 for v in V})
+        assert len(components(selected(E, row), V)) == 2
+    u, v, x, y = c["uvxy"]
+    switch = tuple(int(e in (edge(u, v), edge(x, y)))-int(e in (edge(u, x), edge(v, y))) for e in E)
+    preswitch = minus(f, switch)
+    assert preswitch in c["families"]["N00"] and preswitch != ref
+    assert dot(preswitch) == 1
+    assert all(sum(a*b for a, b in zip(w, r)) == 0 for r in c["survivor_basis"]+differences(c["families"]["N00"]))
+    c["switch_check"] = {"reference": ref, "pre_switch": preswitch, "F": f, "T": factor,
+                         "w": list(map(str, w)), "F_value": "1/14", "T_value": "-1/2"}
+    c["brace"] = matching_certificate(c["graph"], old["C171"]["brace"])
+    highs = []
+    for prev in old["high_loss"]:
+        r = diagnostic(prev["graph"], prev["uvxy"])
+        compare_diagnostic(r, prev)
+        highs.append(r)
+    prev = load("i175_affected_prism_exterior/experiment-attempt-01.json")["first_children"][0]
+    r = diagnostic(prev["graph"], prev["uvxy"])
+    compare_diagnostic(r, prev)
+    r["brace"] = matching_certificate(r["graph"], prev["brace"])
+    fp = fiveport(r["graph"], 8, (28, 29, 30, 31), r["cycles"])
+    assert (fp["local_rank"], fp["exterior_rank"], fp["anchor_increment"], fp["image_rank"]) == (7, 3, 6, 9)
+    k6 = proof_certificate(6, True)
+    return {"status": "PASS", "order": order+["C171", "G6", "G10", "first_P8", "I176_k6"],
+            "census": output, "C171": c, "G6_G10": highs, "first_P8": r,
+            "first_P8_fiveport": fp, "I176_k6": k6}
+
+
+def audit():
+    certificates = [proof_certificate(k) for k in (6, 8, 10, 12)]
+    assert sum(r["words"] for r in certificates) == 96
+    old = load("i176_uniform_five_port_rank/finite-attempt-01.json")["certificates"][0]
+    g, square, _ = square_surgery(initial_prism(4), [0, 0, 6])
+    assert clean(g) == old["graph"]
+    fp = fiveport(g, 4, square)
+    assert (fp["local_rank"], fp["extra_anchor_kernel"], fp["survivor_rank"]) == (1, 2, 12)
+    return {"status": "PASS", "certificate_checks": certificates, "k4": fp,
+            "scope": "No new parameter values; word/minor certificates plus separate k4 finite product."}
+
+
+def experiment():
+    prev = load("i175_affected_prism_exterior/experiment-attempt-01.json")
+    initial = initial_prism(8)
+    assert clean(initial) == prev["initial"]["graph"]
+    original_face = list(initial["faces"][0])
+    assert original_face == [1, 2, 3, 4, 5, 19, 18, 17, 16, 15, 14, 13]
+    assert edge(original_face[0], original_face[1]) == (1, 2)
+    assert edge(original_face[10], original_face[11]) == (13, 14)
+    old = diagnostic(initial, (20, 6, 1, 7))
+    compare_diagnostic(old, prev["initial"])
+    assert (old["row"]["dg"], old["row"]["rankL"], old["row"]["ell"]) == (14, 11, 3)
+    g, square, uvxy = square_surgery(initial, [0, 0, 10])
+    assert uvxy == (1, 2, 13, 14)
+    assert (1, 13, 21, 20, 6, 7) in g["faces"]
+    d = diagnostic(g, (20, 6, 1, 7))
+    d["brace"] = matching_certificate(g)
+    fp = fiveport(g, 8, square, d["cycles"])
+    assert d["row"]["rankL"] == fp["survivor_rank"]
+    E = g["edges"]
+    # Identify every chosen local/exterior direction with an actual state product.
+    witnesses = []
+    for side, bas, edge_order in (("X", fp["local_basis"], fp["xe"]),
+                                  ("Y", fp["exterior_basis"], fp["ye"])):
+        for r in bas:
+            found = None
+            for i, st in enumerate(fp["states"]):
+                for j in range(1, len(st[side])):
+                    delta = dict(zip(edge_order, minus(st[side][j], st[side][0])))
+                    if tuple(delta.get(e, 0) for e in E) == r:
+                        found = {"side": side, "state": i, "packing": j, "base": 0,
+                                 "common_partner": st["Y" if side == "X" else "X"][0],
+                                 "direction": r}
+                        break
+                if found is not None:
+                    break
+            assert found is not None
+            witnesses.append(found)
+    # An explicit incidence-kernel injection fixes the convention for old defect transport.
+    oe = initial["edges"]
+    s, t, p, q = square
+    eidx, fidx = oe.index((1, 2)), oe.index((13, 14))
+    def transport(r):
+        out = {e: r[i] for i, e in enumerate(oe) if e in E}
+        a, b = r[eidx], r[fidx]
+        out.update({edge(1, s): a, edge(2, t): a, edge(13, p): b, edge(14, q): b,
+                    edge(s, t): -a, edge(p, q): -b, edge(s, p): 0, edge(t, q): 0})
+        ans = tuple(out.get(e, 0) for e in E)
+        assert all(sum(ans[i] for i, e in enumerate(E) if v in e) == 0 for v in fp["X"]+fp["Y"])
+        return ans
+    old_basis = old["survivor_basis"]
+    defects = []
+    for r in differences(old["cycles"]):
+        if rank(old_basis+defects+[r]) > rank(old_basis+defects):
+            defects.append(r)
+    assert len(defects) == 3
+    ambient_basis = fp["local_basis"]+fp["projected_lifts"]
+    if fp["extra_anchor_kernel"]:
+        ambient_basis += [tuple(map(Fraction, r["direction"])) for r in fp["extra_kernel_relations"]]
+    assert rank(ambient_basis) == d["row"]["rankL"]
+    absorption = []
+    for r in defects:
+        tr = transport(r)
+        coeff = coefficients(tr, ambient_basis)
+        absorption.append({"old_direction": r, "transport": tr,
+                           "coefficients": list(map(str, coeff)) if coeff is not None else None})
+    if d["row"]["ell"] == 0:
+        assert rank(ambient_basis) == len(E)-g["n"]+1
+        assert all(x["coefficients"] is not None for x in absorption)
+    # Small readable identities fixing which anchor relations pay the missing rank.
+    A = fp["anchor_differences"]
+    kernels = [tuple(map(Fraction, r["direction"])) for r in fp["extra_kernel_relations"]]
+    assert kernels == [plus(A[5], A[0], scale(-1, A[1]), scale(-1, A[4])),
+                       plus(A[7], A[0], scale(-1, A[2]), scale(-1, A[4]))]
+    assert minus(absorption[1]["transport"], absorption[0]["transport"]) == fp["exterior_basis"][1]
+    assert minus(absorption[2]["transport"], absorption[0]["transport"]) == fp["exterior_basis"][2]
+    # A determinant for actual survivor-minus-anchor vectors, independent of the decomposition.
+    basis_rows = d["survivor_basis"]
+    column_indices, column_rows = [], []
+    for jcol in range(len(E)):
+        column = tuple(r[jcol] for r in basis_rows)
+        if rank(column_rows+[column]) > len(column_rows):
+            column_indices.append(jcol)
+            column_rows.append(column)
+    minor = [[r[jcol] for jcol in column_indices] for r in basis_rows]
+    assert len(column_indices) == 16 and determinant(minor)
+    # Full unmarked and strictly marked comparisons to both already tested children.
+    def marks(graph):
+        side = set(range(13, 28)) | {30, 31}
+        ports = [(1, 13), (5, 19), (6, 20), (28, 30), (29, 31)]
+        protected = [(6, 20), (1, 7)]
+        return {v: ("X" if v in side else "Y",
+                    tuple(i for i, e in enumerate(ports) if v in e),
+                    tuple(i for i, e in enumerate(protected) if v in e))
+                for v in {v for e in graph["edges"] for v in e}}
+    iso = []
+    def squares(graph):
+        adj = adjacency(graph["edges"])
+        return sum(len(adj[a] & adj[b])*(len(adj[a] & adj[b])-1)//2
+                   for a, b in combinations(sorted(adj), 2))//2
+    for rec in prev["first_children"]:
+        h = rec["graph"]
+        plain = graph_isomorphism(g, h)
+        marked = graph_isomorphism(g, h, marks(g), marks(h))
+        iso.append({"tested_triple": rec["triple"],
+                    "square_counts": [squares(g), squares(h)],
+                    "unmarked_isomorphism": sorted(plain.items()) if plain is not None else None,
+                    "marked_isomorphism": sorted(marked.items()) if marked is not None else None})
+    return {"status": "PASS", "triple": [0, 0, 10], "actual_edges": [(1, 2), (13, 14)],
+            "original_face": original_face, "initial": old, "child": d, "fiveport": fp,
+            "basis_witnesses": witnesses, "actual_ambient_basis": [list(map(str, r)) for r in ambient_basis],
+            "actual_survivor_minor": {"columns": column_indices, "matrix": minor,
+                                      "determinant": str(determinant(minor))},
+            "old_defect_absorption": absorption, "isomorphisms": iso,
+            "new_operations": 1, "second_attachments": 0, "second_surgeries": 0}

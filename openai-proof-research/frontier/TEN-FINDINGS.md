@@ -6,6 +6,29 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I177 adjacent-port saturation and I178 compatibility
+
+[I177](iterations/i177-adjacent-port-surgery.md) passes all original-scope
+U176 verdicts. The single new P8 operation `[0,0,10]` gives a distinct
+order-30 brace with 64 cycles,46 survivors and loss zero. Its local rank5
+does not preserve defect: two actual anchor-kernel directions restore
+rank16. Three explicit ambient-transport identities absorb the old defect.
+The protected interface is still a (3,1) hexagon. Eleven triples remain
+untested; no second attachment or surgery was performed.
+
+Parent replay passes (~4.64 s; three byte-identical payloads,eight probes;
+78 owned,585 strict external plus four contexts).
+Independent parent checks verify two complete seven-family records,
+all15 cut sets,46 products,900 matchings,both kernel corrections,the
+determinant2 actual-cycle basis and all three absorption identities.
+The [parent disposition](iterations/i177-adjacent-port-surgery-parent-disposition.md)
+preserves all diagnostic failures and conditional escape requirements.
+**Technical only, no ninth nomination.**
+[I178](iterations/iteration178-five-port-annihilator-factory-astra-task.json)
+analyzes all projected relations and realizable complete local fibres
+at this fixed interface. No new graph sweep is authorized.
+**8 accepted, 2 remaining; research active.**
+
 ### I176 uniform saturation and I177 adjacent-port surgery
 
 [U176](iterations/i176-uniform-five-port-rank.md) proves that every even

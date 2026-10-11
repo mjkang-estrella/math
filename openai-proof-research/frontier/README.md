@@ -21,16 +21,16 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I176](iterations/i176-uniform-five-port-rank.md)
-proves uniform saturation for the first specified prism surgery, every
-even k≥6. Actual path words and minors 4−k and 1 pay the local/image
-rank conditions without finite interpolation. The k=4 case is separate.
-Parent proof review, sealed replay and five independent finite product
-checks pass; the
-[parent disposition](iterations/i176-uniform-five-port-rank-parent-disposition.md)
-records the precise obstruction and preserved diagnostic failures.
-[I177](iterations/iteration177-adjacent-port-surgery-factory-astra-task.json)
-tests one adjacent-port P8 operation with a freshly rebuilt decomposition.
+**Structural-graph update:** [I177](iterations/i177-adjacent-port-surgery.md)
+passes the original U176 audit and tests one adjacent-port operation.
+Its distinct order-30 brace has loss zero: local rank5 gains two actual
+anchor-kernel directions, giving survivor rank16. The protected
+interface remains (3,1). Eleven of14 triples remain untested.
+Parent replay and independent product, matching and absorption checks
+pass; the [parent disposition](iterations/i177-adjacent-port-surgery-parent-disposition.md)
+records exact scope and retained failures.
+[I178](iterations/iteration178-five-port-annihilator-factory-astra-task.json)
+analyzes complete fixed-interface compatibility, not another graph sweep.
 A high-loss brace is still missing.
 Technical only; universal exchange, (T), and Q164 remain open.
 **8 accepted, 2 remaining.**

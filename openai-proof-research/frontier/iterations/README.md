@@ -16,6 +16,25 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I177 adjacent-port saturation and I178 compatibility
+
+[I177](i177-adjacent-port-surgery.md) passes the unchanged U176 audit.
+The one new adjacent-port surgery gives a distinct order-30 brace,
+64 cycles,46 survivors and loss zero. Local rank5 is supplemented by
+two actual anchor-kernel directions, not a defect-preserving shortcut.
+The protected face stays a (3,1) hexagon. Eleven triples remain untested.
+
+Parent sealed replay passes (~4.64 s; three byte-identical payloads,
+eight blocked probes). Independent parent checks cover two seven-family
+records,all15 cut sets,46 products,900 matchings,both kernel corrections,
+the determinant2 actual-cycle basis and three old-defect absorptions.
+The [parent disposition](i177-adjacent-port-surgery-parent-disposition.md)
+retains finite scope, ambient-only transport and preserved failures.
+[I178](iteration178-five-port-annihilator-factory-astra-task.json) turns
+to all actual fixed-interface compatibility relations, not a graph sweep.
+High-loss braces and universal targets remain open.
+**Eight accepted, two remaining.**
+
 ## I176 uniform saturation and I177 adjacent-port surgery
 
 [I176](i176-uniform-five-port-rank.md) proves first-surgery saturation for
