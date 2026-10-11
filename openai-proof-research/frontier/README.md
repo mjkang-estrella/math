@@ -21,6 +21,14 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I183 partial checkpoint:** [Parent review](iterations/i183-checkpoint-parent-disposition.md)
+authenticates 76 owned files and 1,067 strict bindings, with successful
+four-chunk replay and independent formal cut/attachment checks.
+The elementary fixed-local and distinct-terminal corrections pass at
+scope, but E183 remains open. Eleven controls and facial geometry are
+unfinished; no seal exists. [Finalization](iterations/iteration183-cptp-finalization-brief.md)
+is separately scoped. **Eight accepted, two remaining.**
+
 **I183 recovery:** The original task failed before producing a report or
 sealed diagnostics. [Preservation checks](iterations/i183-provider-failure-recovery.md)
 pass for three partial files and 1,053 listed strict bindings, not for

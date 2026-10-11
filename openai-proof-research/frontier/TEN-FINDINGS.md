@@ -6,6 +6,22 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I183 partial checkpoint, finalization prepared
+
+The [resumed report](iterations/i183-cptp-survival-resumed.md) remains
+incomplete and unsealed. [Parent review](iterations/i183-checkpoint-parent-disposition.md)
+authenticates 76 owned files and 1,067 strict bindings; all four saved
+chunks replay, with eight live rejection probes and a genuine source
+positive control. Independent formal cut/attachment checks pass.
+Fixed-local exterior rerouting cannot change type, and the exact brace
+hypotheses force distinct patch terminals. These are technical
+corrections, not new accepted findings. Eleven mandatory controls and
+facial-arc reconstruction remain unfinished. A
+[separate finalization](iterations/iteration183-cptp-finalization-brief.md)
+must complete those obligations without changing the checkpoint.
+E183 and the stronger sufficient alternating-cycle route remain open.
+**Eight accepted, two remaining.**
+
 ### I183 interrupted, continuation prepared
 
 The first I183 run ended with a provider error and a reported network

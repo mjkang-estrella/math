@@ -1,5 +1,14 @@
 # OpenAI mathematics research
 
+**I183 partial checkpoint:** [Parent review](frontier/iterations/i183-checkpoint-parent-disposition.md)
+passes authentication and the four completed diagnostic chunks, but
+eleven of 23 mandatory controls and facial-arc reconstruction remain
+unfinished. The continuation stays **unsealed**. Fixed-local rerouting
+cannot change local type; the stated brace hypotheses force distinct
+patch terminals. E183 remains open. A
+[bounded finalization](frontier/iterations/iteration183-cptp-finalization-brief.md)
+will close the verification backlog. **8 accepted, 2 remaining.**
+
 **I183 recovery:** The first run stopped with a provider-reported network
 failure, without a report or verdict. Its three partial files are
 preserved; [a scoped continuation](frontier/iterations/iteration183-cptp-survival-resume-brief.md)
