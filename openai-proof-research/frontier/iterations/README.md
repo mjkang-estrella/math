@@ -16,6 +16,22 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I196 partial recovery; later run active; overlap premise corrected
+
+The original [I196 task](iteration196-fresh-discovery-task.json) is
+cancelled, not complete. Its five initialized files contain no theorem
+or screening verdict. A maintenance handoff already started ordinal 2
+in the backing thread; the parent verified that state and did not
+launch a duplicate.
+[The checkpoint](i196-fresh-discovery-parent-checkpoint.md) preserves
+byte-checked copies and records the active-run steering acknowledgment.
+The original "never screened" assertion is false for 084 (I36/I37) and
+020 (I07/I99); the parent sent these concrete exclusions to the active
+continuation. No absence-of-search inference is made for 026.
+Any substitution remains bounded, and both acceptance gates remain
+required. No mathematical result is accepted from this recovery.
+**Eight accepted, two remaining.**
+
 ## I195 checked; long-gap front parked at J195; fresh discovery next
 
 The first [I195](iteration195-long-gap-deficit-brief.md) dispatch
@@ -38,10 +54,11 @@ the short-gap front (J194/J193) and the E183 line, with the exact
 resumption state recorded. With both exchange fronts and the E183 line
 parked and the remaining Barnette surfaces (Q164, (T)) blocked by the
 mapped induction obstruction, [I196](iteration196-fresh-discovery-brief.md)
-opens a fresh discovery lane screening the previously unscreened
-families 084 (geometric Erdős similarity), 020 (squarefree quartics /
+originally proposed screening families
+084 (geometric Erdős similarity), 020 (squarefree quartics /
 power-free polynomial values) and 026 (positive lower density of large
-prime gaps) under the standing five-point gate. The local-ear
+prime gaps) under the standing five-point gate. The prior "unscreened"
+claim is superseded by the I196 recovery entry above. The local-ear
 mechanism remains parked. **Eight accepted, two remaining.**
 
 ## I194 checked; short-gap front parked at J194; long-gap deficit next

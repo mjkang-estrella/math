@@ -13,7 +13,12 @@ $\Delta=\kappa-\gamma$ quotient obstruction. The general long-gap
 bound stays UNRESOLVED at J195 with no decisive new constraint, so per
 the brief's stopping rule the **long-gap front is PARKED** beside the
 short-gap front and E183. [I196](frontier/iterations/iteration196-fresh-discovery-brief.md)
-opens a fresh discovery lane (families 084, 020, 026).
+had its initial run cancelled before a screening verdict. A later
+maintenance continuation is active.
+[Parent recovery](frontier/iterations/i196-fresh-discovery-parent-checkpoint.md)
+preserves the initial partial records and corrects the unsupported
+"never screened" premise: families 084 and 020 have prior project work.
+The running continuation received that correction; no duplicate was launched.
 **8 accepted, 2 remaining.**
 
 **I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)
