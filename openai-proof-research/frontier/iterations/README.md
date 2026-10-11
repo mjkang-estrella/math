@@ -16,6 +16,28 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I192 checked; exchange residual sharp at J192; equality bridge next
+
+The first [I192](iteration192-exchange-residual-brief.md) dispatch
+completed and returned the
+[report](i192-exchange-residual.md): the exact facial-translation
+classification (compatible families are $N^{00}$ on short arcs, empty
+on long arcs), the long-gap bridge identity with retained defects, the
+short-gap equality reduction to the single coefficient
+$\lambda=-1/2$ (quadrilateral form $\alpha=-3/2$, the paid S169
+failure), and the written prism verification. The
+[parent disposition](i192-exchange-residual-parent-disposition.md)
+passes these, independently confirming the matching lemma by
+noncrossing enumeration ($m\le8$) and the prism structure, identity
+(17) and $(\ell,t,\eta)$ by fresh enumeration with exact rational
+ranks ($m\in\{4,6,8\}$). Universal exchange stays UNRESOLVED at J192;
+the historical Q164 is the count bound $h\ge n/2+2$, implied by the
+stronger affine target. [I193](iteration193-equality-bridge-brief.md)
+targets the short-gap exchange theorem via the equality-case exclusion
+$\lambda\ne-1/2$, with refutation by a fully specified step or an exact
+obstruction as the other outcomes. The E183 line and local-ear
+mechanism remain parked. **Eight accepted, two remaining.**
+
 ## I191 checked; E183 line parked; pivot to the exchange residual
 
 The first [I191](iteration191-concentration-exclusion-brief.md) dispatch

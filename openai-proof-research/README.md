@@ -1,18 +1,21 @@
 # OpenAI mathematics research
 
-**E183 line parked after I191; pivot to the exchange residual:**
-[Parent review](frontier/iterations/i191-concentration-exclusion-parent-disposition.md)
-passes the all-$R$ square transport (no square contains $e_2$; the only
-no-cut-2 crossing transition interchanges the two survivor types), the
-deletion-path crossing constraints, and the exact multiplicity identity
-$|B_R|=3(c_P+c_D)$, with the square classification and the ten formal
-cut profiles independently verified on the declared exterior. The joint
-counterexample system J191 — exactly E183 — was neither contradicted
-nor realized, so under the I190/I191 stopping rule the E183 line is
-**parked** (the paid deductions remain available). [I192](frontier/iterations/iteration192-exchange-residual-brief.md)
-returns to the dormant affine-dimension line: the universal exchange
-inequality $t+\eta\ge\ell$, whose proof yields Q164 via the paid splice
-reduction. **8 accepted, 2 remaining.**
+**I192 exchange-residual analysis checked:**
+[Parent review](frontier/iterations/i192-exchange-residual-parent-disposition.md)
+passes the facial-translation classification (compatible families are
+exactly $N^{00}$ on short arcs, empty on long arcs; independently
+confirmed by noncrossing-matching enumeration for $m\le8$), the
+long-gap bridge identity, the short-gap equality reduction
+($\eta=0\iff\lambda=-1/2$, with the quadrilateral instance being the
+paid S169 failure $\alpha=-3/2$), and the prism family (parent
+re-derived exhaustion, affine independence, identity (17), and
+$(\ell,t,\eta)$ by direct enumeration and rational ranks for
+$m\in\{4,6,8\}$). Universal exchange stays UNRESOLVED at J192
+($\Delta\le1$, and $\beta\notin L_0+U$ when $\Delta=1$); Q164 is
+clarified as the historical count bound $h\ge n/2+2$, implied by the
+stronger affine target. [I193](frontier/iterations/iteration193-equality-bridge-brief.md)
+attacks the short-gap equality exclusion $\lambda\ne-1/2$.
+**8 accepted, 2 remaining.**
 
 **I187 marked-state analysis checked:** [Parent review](frontier/iterations/i187-frozen-state-survival-parent-disposition.md)
 passes the dual hypotheses, conditional recovery criterion and restricted

@@ -6,28 +6,28 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
-### I191 joint concentration system checked; E183 line parked, pivot to exchange
+### I192 facial-translation classification checked; exchange open at J192
 
-[I191](iterations/i191-concentration-exclusion.md) assembles the exact
-joint counterexample system J191 (equivalent to E183) and proves: the
-conditional square transport extends from $W$ to all of $R$ (crossing
-squares use only $\{e_0,e_3\}$ or $\{e_3,e_4\}$, never $e_2$; the only
-no-cut-2 useful crossing transition interchanges the survivor types
-$14;14$ and $0134;03,14$); the universal alpha deletion paths have
-exact crossing-balance constraints with path-only flipping refuted as a
-repair; and complete lost exteriors force $|B_R|=3(c_P+c_D)$ with cut
-polynomial $3c_Pz_2z_3z_4+3c_Dz_2$.
-[Parent review](iterations/i191-concentration-exclusion-parent-disposition.md)
-passes these without repairs, independently verifying the square
-classification, toggle transitions, and the ten formal cut profiles on
-the declared exterior. J191 is neither proved nor realized, and no
-decisive new constraint emerged, so under the stopping rule the E183
-line is **parked** after four sharpenings (I188–I191); all paid
-deductions remain available. [I192](iterations/iteration192-exchange-residual-brief.md)
-returns to the affine-dimension line: prove, refute, or exactly
-obstruct the universal exchange residual $t+\eta\ge\ell$ (R170 form
-$\delta_R+\eta\ge\delta_V+\varepsilon$), whose proof yields Q164 via
-the paid splice reduction.
+[I192](iterations/i192-exchange-residual.md) proves the complete
+compatible-family classification for the facial alternating-arc
+translations ($F_J=N^{00}$ on short arcs, empty otherwise, via a
+noncrossing-matching argument), the exact long-gap bridge identity
+retaining the completed-object defects, the short-gap equality
+reduction $\eta=0\iff\lambda=-1/2$ with the actual two-factor
+interpretation $z=F_Q-C_0$, and the full prism verification
+($\alpha=-(m-3)/(m-2)$, $(\ell,t,\eta)=(m-3,m-4,1)$ adjacent-rung and
+$(1,0,1)$ rail).
+[Parent review](iterations/i192-exchange-residual-parent-disposition.md)
+passes these without repairs, independently re-deriving the matching
+core for $m\le8$ and the prism structure, independence, identity (17)
+and ranks for $m\in\{4,6,8\}$. Universal exchange stays UNRESOLVED at
+the exact assertion J192 ($\Delta\le1$, and bridge independence when
+$\Delta=1$); the short-gap failure coefficient $-1/2$ is not excluded
+even for quadrilaterals, and both long-gap clauses are open. Q164 is
+recorded precisely: the historical count bound $h(G)\ge n/2+2$, implied
+by the stronger affine target $d=n/2+1$.
+[I193](iterations/iteration193-equality-bridge-brief.md) attacks the
+short-gap equality exclusion $\lambda\ne-1/2$.
 **Eight accepted, two remaining.**
 
 ### I187 marked-state deductions checked, patch-rooted geometry next
