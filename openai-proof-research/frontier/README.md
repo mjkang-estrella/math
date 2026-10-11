@@ -21,6 +21,16 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I187 global-state analysis checked:** [Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)
+passes the original dual/recovery deductions and marked orientation
+formulas, plus authentication, exact algebra checks and sealed replay.
+Fixed-state cancellation survives restrictions; survivor nonvanishing is
+still unpaid. [I188](iterations/iteration188-patch-rooted-state-brief.md)
+examines the actual two-square geometry for a consistently oriented
+marked source cycle and checks its consequences for recovery and type.
+E183/Z184 remain open; local ears stay parked.
+**Eight accepted, two remaining.**
+
 **I186 region analysis checked:** [Parent review](iterations/i186-theta-region-balance-parent-disposition.md)
 passes the original matching-closure, color-balance and short-arc
 deductions. The symbolic length-five case is not a graph counterexample.

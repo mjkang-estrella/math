@@ -6,6 +6,23 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I187 marked-state deductions checked, patch-rooted geometry next
+
+[I187](iterations/i187-frozen-state-survival.md) pays the exact dual
+hypotheses and derives the rooted matching-recovery constraints, a
+conditional preimage criterion and restricted orientation-group sums.
+[Parent review](iterations/i187-frozen-state-survival-parent-disposition.md)
+passes those scoped deductions without repairs, authenticates five
+outputs and sixteen input records, independently checks the formal
+algebra and replays all 23 inherited stages. No proof of survivor
+nonvanishing or exact-instance counterexample is supplied.
+[I188](iterations/iteration188-patch-rooted-state-brief.md) tests whether
+the two-square patch forces the generic endpoint restrictions onto one
+consistently oriented source cycle. Faciality, dual identifications,
+phase alignment, matching recovery and survivor type must each be paid.
+E183 and Z184 remain unresolved; the local-ear mechanism stays parked.
+**Eight accepted, two remaining; no new contribution acceptance.**
+
 ### I186 region deductions checked, local-ear mechanism parked
 
 [I186](iterations/i186-theta-region-balance.md) proves strict-interior
