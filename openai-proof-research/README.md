@@ -1,5 +1,13 @@
 # OpenAI mathematics research
 
+**I184 matching-cycle lemma:** [Parent review](frontier/iterations/i184-alternating-cycle-parent-disposition.md)
+passes the written proof that every residual matching edge lies on an
+alternating cycle. Connectedness after toggling is still unpaid, so
+Z184 and E183 remain open. Output authentication and inherited sealed
+replay pass. [I185](frontier/iterations/iteration185-connected-reconnection-brief.md)
+now attempts a joining-ear improvement, without rebuilding controls.
+**8 accepted, 2 remaining.**
+
 **I183 finalization complete:** [Parent review](frontier/iterations/i183-finalization-parent-disposition.md)
 passes the sealed 23-stage replay, with independent reconstruction of all
 twelve facial controls and 626 matching cases. The earlier checkpoint

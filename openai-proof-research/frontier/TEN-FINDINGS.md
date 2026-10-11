@@ -6,6 +6,23 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I184 cycle existence proved, connected reconnection still open
+
+[I184](iterations/i184-alternating-cycle.md) proves that every edge of
+every perfect matching of the residual graph lies on a simple
+alternating cycle there. [Parent review](iterations/i184-alternating-cycle-parent-disposition.md)
+passes the original argument: a failed directed path forces a
+three-edge shore whose one-crossing condition contradicts brace
+two-extendability. This is elementary technical progress, not a ninth
+finding. The parent authenticates all five proof-record outputs and
+replays the sealed reference; no new computational package is claimed.
+Connectedness of the alternating cycle's edge pairing does not establish
+connectedness of the retained-path reconnection. Z184 and E183 remain
+unresolved. [I185](iterations/iteration185-connected-reconnection-brief.md)
+attempts a specific joining-ear improvement of a component-minimizing
+cycle, retaining the existential completion quantifier.
+**Eight accepted, two remaining.**
+
 ### I183 finalization complete, I184 proof attempt prepared
 
 [I183 finalization](iterations/i183-cptp-finalization.md) closes all
