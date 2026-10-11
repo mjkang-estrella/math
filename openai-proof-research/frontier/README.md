@@ -21,22 +21,21 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I167](iterations/i167-exchange-step-braces.md)
-**fails I166's aggregated constant-weight equations as written** (explicit
-vertex-potential witness on an expanded cube; original bytes and failure
-preserved) and proves the corrected complete six-class system CW167.
-Its audit passes I166's face-toggle lemma, B18 certificates, census
-anchor, splices and survival counts. New proved results: the transported
-hull has exactly survival rank, a universal fixed-terminal path-rank
-deficit (P167), and a dual-tree antichain obstruction (A167). A
-636-expansion campaign finds no exchange counterexample; some steps
-require nine new directions. The McCuaig route reduces to an exact
-typed-port interface. The exchange step, the brace theorem and Q164
+**Structural-graph update:** [I168](iterations/i168-cross-class-exchange.md)
+passes all six audited I167 interfaces and proves **R168**, the exact
+cross-class rank identity $d(H)=2+\dim(L+U+\operatorname{span}\{b\})$:
+the exchange step is now precisely the residual inequality
+$t+\eta\ge\ell$ (E168), with $t\ge\ell-1$ on all 636 tested steps and
+the balanced bridge $\eta=1$ in every equality case. It also proves two
+method obstructions: **D168** (an infinite even-prism family refutes
+every bounded-bidirectional dual-transfer spanning route) and **M168**
+(an exact certificate refutes typed degree-and-port affine fullness on
+the McCuaig retract). The exchange step, the brace theorem and Q164
 remain open; technical only, no ninth nomination. Parent sealed replay
-passes; the [parent disposition](iterations/i167-exchange-step-braces-parent-disposition.md)
-records the scope. [I168](iterations/iteration168-cross-class-exchange-factory-astra-task.json)
-audits the new interfaces and attacks the exchange step through the
-joint cross-class system. **8 accepted, 2 remaining.**
+passes; the [parent disposition](iterations/i168-cross-class-exchange-parent-disposition.md)
+records the scope. [I169](iterations/iteration169-bridge-independence-factory-astra-task.json)
+audits the new interfaces and attacks $t+\eta\ge\ell$ directly.
+**8 accepted, 2 remaining.**
 
 **Latest oracle gate:** [I161](reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies the full theorem as **TECHNICAL ONLY** through a concrete compiler,

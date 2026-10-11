@@ -6,6 +6,38 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I168 cross-class rank identity, two obstructions, and I169 continuation
+
+[I168](iterations/i168-cross-class-exchange.md) passes all six audited
+I167 interfaces (PASS ORIGINAL with a fresh toolkit) and proves
+**R168**: for every admissible C4 expansion,
+$d(H)=2+\dim(L+U+\operatorname{span}\{b\})$, where $L$ is the surviving
+parent difference space, $U$ the within-class difference sum of the
+three new classes, and $b=\chi(P_0)+\chi(Q_0)+\chi(D_0)+2\mathbf
+1_{uv}+2\mathbf 1_{xy}-3\chi(C_0)$ a balanced cross-class bridge in
+$\ker A_G$, choice-independent modulo $L+U$. Exchange is thereby exactly
+**E168**: $t+\eta\ge\ell$ with $\ell=d(G)-d_{\rm surv}$,
+$t=\dim(L+U)-\dim L$ and $\eta\in\{0,1\}$ the bridge independence. The
+full 636-step histogram shows $t\ge\ell-1$ throughout and $\eta=1$ in
+every equality case; the expanded cube $(1,0,1)$ and the ten
+nine-direction steps $(7,6,1)$ are the mandatory test cases. Two further
+proved obstructions close off natural routes: **D168** gives an infinite
+even-prism family whose bounded bidirectional dual-shore transfers span
+only $L-1$ of $L+1$ Hamiltonian-cycle dimensions (complete bipyramid
+D-list exhaustion and affine-independence proof); **M168** refutes typed
+degree-and-port affine fullness on the order-12 McCuaig retract by an
+explicit constant weight $-1$ on all eight typed cycles paired against a
+homogeneous degree-and-port perturbation. One first-run implementation
+failure (face-rotation mislabelling) is preserved as a child-side
+artifact, not an I167 defect. Parent precheck and sealed replay pass
+(~17 s), this time with the context ledgers drift-free at replay.
+The [parent disposition](iterations/i168-cross-class-exchange-parent-disposition.md)
+classifies the round **technical only, no ninth nomination**: exchange,
+(T) and Q164 remain unproved and unrefuted.
+[I169](iterations/iteration169-bridge-independence-factory-astra-task.json)
+audits the new interfaces and attacks the residual inequality
+$t+\eta\ge\ell$ directly. **8 accepted, 2 remaining; research active.**
+
 ### I167 corrected exchange system and I168 continuation
 
 [I167](iterations/i167-exchange-step-braces.md) **fails I166's Section 5

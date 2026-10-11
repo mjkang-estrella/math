@@ -1,22 +1,19 @@
 # OpenAI mathematics research
 
-**Structural-graph update:** [I167](frontier/iterations/i167-exchange-step-braces.md)
-**fails I166's aggregated constant-weight equations as written** (explicit
-vertex-potential witness on an expanded cube; original failure preserved
-unrepaired) and proves the corrected complete six-class system CW167 with
-exact cross-class offsets. Its independent audit passes the face-toggle
-lemma, B18 certificates, census anchor, splices and survival counts, and
-it adds three proved full-scope results: the transported hull has exactly
-survival rank, a universal fixed-terminal path-rank deficit (P167), and a
-dual-tree antichain obstruction (A167). A 636-expansion campaign finds no
-exchange counterexample, with some steps requiring nine new directions;
-the McCuaig route reduces to an exact typed-port interface. The exchange
-step, the brace theorem and the sharp linear count target remain unproved
-and unrefuted. Parent sealed replay passes; the
-[parent disposition](frontier/iterations/i167-exchange-step-braces-parent-disposition.md)
-classifies the round technical only. [I168](frontier/iterations/iteration168-cross-class-exchange-factory-astra-task.json)
-now audits the new interfaces and attacks the exchange step through the
-joint cross-class system on Factory/Astra. **8 accepted, 2 remaining.**
+**Structural-graph update:** [I168](frontier/iterations/i168-cross-class-exchange.md)
+passes all six audited I167 interfaces and proves **R168**, the exact
+cross-class rank identity $d(H)=2+\dim(L+U+\operatorname{span}\{b\})$,
+reducing the exchange step to the residual inequality $t+\eta\ge\ell$
+(E168), which holds on all 636 tested expansions. It also proves two
+method obstructions: **D168**, an infinite even-prism family refuting
+every bounded-bidirectional dual-transfer spanning route, and **M168**,
+an exact certificate refuting typed degree-and-port affine fullness on
+the McCuaig retract. The exchange step, the brace theorem and the sharp
+linear count target remain unproved and unrefuted. Parent sealed replay
+passes; the [parent disposition](frontier/iterations/i168-cross-class-exchange-parent-disposition.md)
+classifies the round technical only. [I169](frontier/iterations/iteration169-bridge-independence-factory-astra-task.json)
+now audits the new interfaces and attacks $t+\eta\ge\ell$ directly on
+Factory/Astra. **8 accepted, 2 remaining.**
 
 **Latest oracle contribution gate:** [I161](frontier/reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies full R154 as **TECHNICAL ONLY**, retaining I159's unchanged-original
