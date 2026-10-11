@@ -6,6 +6,33 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I171 square-specific obstruction and I172 continuation
+
+[I171](iterations/i171-square-switch-weight.md) passes the assigned I170
+audits. **W171** gives the signed-affine coefficient-total identity and
+reduces square exchange failure to the primitive pair $(2,-3)$.
+**C171** certifies an order-32 brace with a two-component factor of weight
+$-\tfrac12$ while its prescribed square switch has weight $+\tfrac1{14}$.
+Generic factor positivity cannot prove the square-specific exclusion.
+**O171** classifies the binary but disconnected minimal-octagon toggles;
+index 431 has empty compatible old families and an explicit separator
+annihilating $L+U$ with bridge pairing 10.
+
+The new 806 order-32 square steps have 464 equality coefficients $-13/14$.
+The combined walks population is 1,720 steps with 1,074 equality cases,
+kept separate from the old census. The 624+96 minimal-octagon tests have
+loss at most one; their lower bound follows already from $t\ge0$.
+Parent replay passes (~492 s; 11 byte-equal payloads; eight blocked probes),
+with inherited context drift recorded. Independent parent DFS and matching
+checks verify both key witnesses, including all 1,032 brace-extension pairs.
+The [parent disposition](iterations/i171-square-switch-weight-parent-disposition.md)
+records **technical only, no ninth nomination**, and corrects I170's
+parent-side count: 1,120 tested steps, 792 equality occurrences.
+[I172](iterations/iteration172-prescribed-square-switch-factory-astra-task.json)
+audits the new results, attacks a genuinely prescribed-switch relation,
+and seeks a minimal octagon with loss at least two or a proof excluding
+such loss. **8 accepted, 2 remaining; research active.**
+
 ### I170 short-gap theorem, exact boundary residuals, and I171 continuation
 
 [I170](iterations/i170-quadrilateral-coefficient.md) passes all audited
@@ -32,8 +59,9 @@ explicit integer separator $w$ with $w\cdot U=0$, $w\cdot v=-8$); these
 are not counterexamples to exchange. The quadrilateral equality gap is
 reformulated exactly: $\alpha=-\tfrac32$ iff the disconnected
 square-switch 2-factor has normalized weight $-\tfrac12$. Finite
-evidence: all 1,120 tested quadrilateral equality cases (182 original +
-914 new through parent order 28, 610 with a quotient) have
+evidence: the 1,120 tested quadrilateral steps (206 original +
+914 new through parent order 28) have 792 equality occurrences
+(182+610), all with
 $\alpha=-(m-1)/m$, never $-\tfrac32$; 982 longer-face steps through
 parent order 24 show no $t\le\ell-2$. Parent precheck and sealed replay
 pass (~131 s; seven payloads byte-equal; eight guard probes blocked;

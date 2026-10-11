@@ -1,0 +1,96 @@
+"""I171 immutable-first verifier. Stdlib only; invoke python -I -B verify.py MODE."""
+import sys, os, json, hashlib, time, marshal, sysconfig, socket, subprocess
+from pathlib import Path
+from fractions import Fraction
+from collections import Counter
+from functools import lru_cache
+from itertools import combinations
+from math import gcd,lcm
+START=time.monotonic()
+OWN=Path(__file__).resolve().parent
+ROOT=OWN.parents[2]
+SOURCE=ROOT/'frontier/sources/i171_square_switch_weight'
+REPORT=ROOT/'frontier/iterations/i171-square-switch-weight.md'
+sha=lambda b:hashlib.sha256(b).hexdigest()
+def serial(obj):return (json.dumps(obj,sort_keys=True,indent=2)+'\n').encode()
+
+def verify():
+    pre='--prevalidate' in sys.argv
+    inventory_bytes=(OWN/'inventory.json').read_bytes(); inventory=json.loads(inventory_bytes)
+    if not pre:
+        seal_bytes=(OWN/'seal.json').read_bytes();seal=json.loads(seal_bytes)
+        assert sha(inventory_bytes)==seal['inventory_sha256']
+        assert sha((OWN/'prevalidation.json').read_bytes())==seal['prevalidation_sha256']
+        pv=json.loads((OWN/'prevalidation.json').read_bytes());assert pv['status']=='PASS'
+    bound={};drift=[]
+    for entry in inventory['files']+inventory['external']:
+        path=(ROOT/entry['path']).resolve();data=path.read_bytes();actual=sha(data)
+        if entry.get('role')=='context-only':
+            drift.append({'path':entry['path'],'expected':entry['sha256'],'actual':actual,'drift':actual!=entry['sha256'],'enforced':False})
+        else:assert actual==entry['sha256'] and len(data)==entry['size'],entry['path']
+        bound[str(path)]=data
+    assert str(REPORT) in bound and str(Path(__file__).resolve()) in bound
+    if not pre:
+        assert sha(bound[str(REPORT)])==seal['report_sha256']
+        assert sha(bound[str(Path(__file__).resolve())])==seal['verifier_sha256']
+    # Only final owned .py sources are executable; disabled snapshots are byte data.
+    programs={p:data for p,data in bound.items() if Path(p).parent==OWN and p.endswith('.py')}
+    codes={p:compile(data,p,'exec') for p,data in programs.items()}
+    allowed_exec={sha(marshal.dumps(c)) for c in codes.values()}
+    outside=compile('pass','/i171-outside-source.py','exec')
+    stdlib=Path(sysconfig.get_path('stdlib')).resolve()
+    def trusted(path):
+        try:p=Path(path).resolve()
+        except (TypeError,ValueError):return False
+        return stdlib in p.parents and 'site-packages' not in p.parts and 'dist-packages' not in p.parts
+    mutators={'os.remove','os.rmdir','os.rename','os.mkdir','os.chmod','os.chown','os.utime','os.link','os.symlink','os.truncate','os.ftruncate','os.chdir','os.fchdir','os.putenv','os.unsetenv','shutil.copyfile','shutil.copymode','shutil.copystat'}
+    def guard(event,args):
+        if event=='open':
+            path,mode,flags=args
+            if isinstance(path,int):raise PermissionError('guard: unbound fd')
+            if flags & (os.O_WRONLY|os.O_RDWR|os.O_CREAT|os.O_TRUNC|os.O_APPEND) or (mode and any(c in mode for c in 'wax+')):raise PermissionError('guard: write')
+            name=str(Path(path).resolve())
+            if name not in bound and not trusted(name):raise PermissionError('guard: unbound read')
+        elif event in mutators:raise PermissionError('guard: filesystem mutation')
+        elif event.startswith(('socket.','subprocess.','ctypes.')) or event in ('os.system','os.exec','os.posix_spawn','os.spawn','os.fork','os.forkpty'):raise PermissionError('guard: network or subprocess')
+        elif event=='compile':
+            data,filename=args
+            if isinstance(data,str):data=data.encode()
+            if filename in programs:
+                if data!=programs[filename]:raise PermissionError('guard: forged owned source')
+            else:raise PermissionError('guard: outside compile')
+        elif event=='exec':
+            code=args[0]
+            if sha(marshal.dumps(code)) not in allowed_exec:raise PermissionError('guard: outside exec')
+    sys.addaudithook(guard)
+    probes=[]
+    checks=[
+        ('writes',lambda:open(OWN/'GUARD-PROBE-WRITE','wb')),
+        ('filesystem_mutation',lambda:os.mkdir(OWN/'GUARD-PROBE-DIRECTORY')),
+        ('network',lambda:socket.socket()),
+        ('subprocesses',lambda:subprocess.Popen([sys.executable,'-V'])),
+        ('unbound_reads',lambda:open(ROOT/'UNBOUND-I171-PROBE','rb')),
+        ('outside_compile',lambda:compile('pass','/i171-outside-source.py','exec')),
+        ('outside_exec',lambda:exec(outside,{})),
+        ('forged_owned_source',lambda:compile(b'pass\n',str(OWN/'toolkit.py'),'exec'))]
+    for name,fn in checks:
+        try:fn()
+        except PermissionError as ex:probes.append({'probe':name,'blocked':True,'reason':str(ex)})
+        else:raise AssertionError('unguarded '+name)
+    scopes={}
+    def load(name):
+        if name not in scopes:
+            p=str(OWN/name);scope={'__name__':'i171_replay_'+name,'__file__':p};exec(codes[p],scope);scopes[name]=scope
+        return scopes[name]
+    comparisons=[]
+    for spec in inventory['replays']:
+        begin=time.monotonic();print('I171 replay START '+spec['payload'],file=sys.stderr,flush=True);module=load(spec['module']);result=module[spec['function']](*spec['args'])
+        actual=serial(result);expected=bound[str((ROOT/spec['payload']).resolve())]
+        assert actual==expected,('diagnostic mismatch',spec['payload'],sha(actual),sha(expected))
+        comparisons.append({'payload':spec['payload'],'sha256':sha(actual),'seconds':round(time.monotonic()-begin,6),'match':True})
+        print('I171 replay PASS '+spec['payload']+' '+str(comparisons[-1]['seconds'])+'s',file=sys.stderr,flush=True)
+    receipt={'status':'PASS','mode':'prevalidation' if pre else 'sealed-read-only-replay','report_sha256':sha(bound[str(REPORT)]),'verifier_sha256':sha(bound[str(Path(__file__).resolve())]),'inventory_sha256':sha(inventory_bytes),'guard_probes':probes,'context_drift':drift,'comparisons':comparisons,'runtime_seconds':round(time.monotonic()-START,6)}
+    if not pre:receipt['seal_sha256']=sha(seal_bytes)
+    print(serial(receipt).decode(),end='')
+
+if __name__=='__main__':verify()

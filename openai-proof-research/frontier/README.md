@@ -21,25 +21,21 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-**Structural-graph update:** [I170](iterations/i170-quadrilateral-coefficient.md)
-passes all audited I169 interfaces and proves two new results: **H170**
-(short-gap expansions — including every facial quadrilateral and hexagon
-expansion — satisfy exact translation bijections $N_{00}\to P_{ux}$ and
-$P_{vy}\to D_{11}$, hence $U=V+Z$ and $t\ge\ell-1$, with
-$b\equiv r+2z\pmod{L+U}$) and **R170** (exact boundary-residual
-decomposition $\operatorname{diff}(J)=\operatorname{diff}(F_J)
-+\operatorname{span}(E_J)$ with the deficit identity
-$\ell-t=\delta_V+\varepsilon-\delta_R$). The containment shortcut
-$V\subseteq U$, even $V\subseteq L+U$, is refuted by certified octagonal
-examples; the remaining quadrilateral gap is the single excluded value
-$\alpha=-\tfrac32$, equivalently a normalized weight $-\tfrac12$ of the
-disconnected square-switch 2-factor. Universal exchange, the brace
-theorem and Q164 remain open; technical only, no ninth nomination.
-Parent sealed replay passes; the
-[parent disposition](iterations/i170-quadrilateral-coefficient-parent-disposition.md)
-records the scope. [I171](iterations/iteration171-square-switch-weight-factory-astra-task.json)
-audits the new interfaces and attacks the 2-factor weight bound and the
-octagonal lower bound (R170.3). **8 accepted, 2 remaining.**
+**Structural-graph update:** [I171](iterations/i171-square-switch-weight.md)
+passes the assigned I170 audits. Its certified order-32 brace has a
+two-component factor of weight $-\tfrac12$, while the prescribed square
+switch has weight $+\tfrac1{14}$. This refutes a generic-factor shortcut,
+not exchange. W171 gives the forbidden primitive pair $(2,-3)$;
+O171 classifies minimal-octagon toggle failures, with an explicit
+$L+U$ bridge separator at index 431. The 624+96 new octagon tests all have
+loss at most one, so they do not resolve the difficult high-loss case.
+Parent sealed replay and separate witness checks pass; the
+[parent disposition](iterations/i171-square-switch-weight-parent-disposition.md)
+also corrects I170's parent-side population count.
+[I172](iterations/iteration172-prescribed-square-switch-factory-astra-task.json)
+targets the prescribed switch and high-loss minimal octagons.
+Technical only; universal exchange, (T), and Q164 remain open.
+**8 accepted, 2 remaining.**
 
 **Latest oracle gate:** [I161](reviews/i161-oracle-tolerance-contribution-astra.md)
 classifies the full theorem as **TECHNICAL ONLY** through a concrete compiler,
