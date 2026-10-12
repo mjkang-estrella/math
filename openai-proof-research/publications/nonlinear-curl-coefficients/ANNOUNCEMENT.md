@@ -1,4 +1,4 @@
-# MathDB announcement draft
+# MathDB submission and review invitation
 
 Dimension-uniform coefficient extraction from nonlinear curl
 
@@ -8,6 +8,6 @@ Let L(x) = sum_r x_r X_r, where the X_r are real symmetric m by m matrices and s
 
 Preprint and source: https://zenodo.org/records/23305996.
 
-This is an author preprint, not a claim of human peer review or worldwide priority.
+Independent feedback is welcome on the proof and its relation to existing work. In particular, I would appreciate checks of the dimension-independent spectral cutoff in Section 3, the passage from curl energy to the algebraic residual in Section 4, and the energy-controlled symmetric repair in Section 5. The operator-energy bound is a hypothesis of the theorem. This preprint has not undergone independent human peer review.
 
-Status: draft only; not sent or posted.
+Status: published on MathDB on October 12, 2026: https://mathdb.com/abs/2610.00015. The invitation appears in the paper comments; it is not a separate discussion reply.

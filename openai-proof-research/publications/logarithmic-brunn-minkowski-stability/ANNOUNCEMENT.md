@@ -1,4 +1,4 @@
-# MathDB announcement draft
+# MathDB submission and review invitation
 
 A conditional power stability estimate for the logarithmic Brunn-Minkowski inequality
 
@@ -8,6 +8,6 @@ Assuming the smooth variance and moment-coordinate identities specified in this 
 
 Preprint and source: https://zenodo.org/records/23306006.
 
-This is an author preprint, not a claim of human peer review or worldwide priority.
+Independent feedback is welcome on the conditional theorem and its relation to existing stability results. In particular, I would appreciate checks of the retained derivative energy in the compact-target limit (Sections 2–3), the boundary-flux estimate (Section 5), and the recovery of both endpoints from a common product body (Sections 6–7). The result depends on Assumption 2.1; it is not an unconditional proof of logarithmic Brunn–Minkowski. This preprint has not undergone independent human peer review.
 
-Status: draft only; not sent or posted.
+Status: published on MathDB on October 12, 2026: https://mathdb.com/abs/2610.00016. The invitation appears in the paper comments; it is not a separate discussion reply.
