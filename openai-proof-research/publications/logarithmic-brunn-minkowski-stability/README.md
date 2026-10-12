@@ -15,3 +15,5 @@ The paper develops R013. The source archive contains only `main.tex`, including 
 The acknowledgment follows the wording used in this author's preceding publications. Editing also followed the user-requested unslop skill.
 
 MathDB version 1: https://mathdb.com/abs/2610.00016 (October 12, 2026). PDF and LaTeX source are available under MathDB's perpetual, non-exclusive distribution license. The paper comments invite independent feedback; no independent human peer review is claimed. Verification is recorded in `evidence/mathdb-publication.json`.
+
+MathDB version 2: https://mathdb.com/abs/2610.00016v2. Presentation update only: paper comments shortened after comparison with six other submissions. The manuscript is unchanged. Verification: `evidence/mathdb-presentation-v2.json`.

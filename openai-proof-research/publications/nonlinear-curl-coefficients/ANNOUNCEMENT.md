@@ -8,6 +8,6 @@ Let L(x) = sum_r x_r X_r, where the X_r are real symmetric m by m matrices and s
 
 Preprint and source: https://zenodo.org/records/23305996.
 
-Independent feedback is welcome on the proof and its relation to existing work. In particular, I would appreciate checks of the dimension-independent spectral cutoff in Section 3, the passage from curl energy to the algebraic residual in Section 4, and the energy-controlled symmetric repair in Section 5. The operator-energy bound is a hypothesis of the theorem. This preprint has not undergone independent human peer review.
+Comments and corrections welcome.
 
-Status: published on MathDB on October 12, 2026: https://mathdb.com/abs/2610.00015. The invitation appears in the paper comments; it is not a separate discussion reply.
+Status: MathDB version 2, presentation update on October 12, 2026: https://mathdb.com/abs/2610.00015v2. The invitation appears in the paper comments; it is not a separate discussion reply.

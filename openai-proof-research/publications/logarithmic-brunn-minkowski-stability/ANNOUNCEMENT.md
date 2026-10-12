@@ -8,6 +8,6 @@ Assuming the smooth variance and moment-coordinate identities specified in this 
 
 Preprint and source: https://zenodo.org/records/23306006.
 
-Independent feedback is welcome on the conditional theorem and its relation to existing stability results. In particular, I would appreciate checks of the retained derivative energy in the compact-target limit (Sections 2–3), the boundary-flux estimate (Section 5), and the recovery of both endpoints from a common product body (Sections 6–7). The result depends on Assumption 2.1; it is not an unconditional proof of logarithmic Brunn–Minkowski. This preprint has not undergone independent human peer review.
+Comments and corrections welcome.
 
-Status: published on MathDB on October 12, 2026: https://mathdb.com/abs/2610.00016. The invitation appears in the paper comments; it is not a separate discussion reply.
+Status: MathDB version 2, presentation update on October 12, 2026: https://mathdb.com/abs/2610.00016v2. The invitation appears in the paper comments; it is not a separate discussion reply.
