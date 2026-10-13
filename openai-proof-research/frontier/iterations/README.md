@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I230 complete: unrestricted p-gradient target remains open
+
+[I230](./i230-p-gradient-parent-disposition.md) retains technical partial results and the precise unproved step. **Nine accepted, one remaining; research continues.**
+
 ## I233 parent note: conditional viscous reduction
 
 The [parent calculation](./i233-viscous-variational-reduction.md) identifies a convex variational form and reduces viscous rigidity to an unpaid uniform local spatial-gradient modulus. It proves neither that modulus nor the desired theorem. I230–I232 continue. **Nine accepted, one remaining.**

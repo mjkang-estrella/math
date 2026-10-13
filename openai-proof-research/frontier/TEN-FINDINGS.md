@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I230 complete: unrestricted p-gradient target remains open
+
+[I230](iterations/i230-p-gradient-parent-disposition.md) retains technical partial results and the precise unproved step. **Nine accepted, one remaining; research continues.**
+
 ### I233 parent note: conditional viscous reduction
 
 The [parent calculation](iterations/i233-viscous-variational-reduction.md) identifies a convex variational form and reduces viscous rigidity to an unpaid uniform local spatial-gradient modulus. It proves neither that modulus nor the desired theorem. I230–I232 continue. **Nine accepted, one remaining.**
