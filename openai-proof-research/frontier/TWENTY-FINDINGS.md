@@ -12,7 +12,7 @@ The following work is active or awaiting independent review. All delegated round
 
 - [I247: explicit quantitative scalarization](iterations/i247-quantitative-scalarization-parent-disposition.md) has a complete proposed proof. Separate [I251 proof](iterations/iteration251-quantitative-scalarization-proof-brief.md) and [I252 contribution](iterations/iteration252-quantitative-scalarization-contribution-brief.md) reviews are running. Quantitative disk geometry is excluded from this nomination.
 - [I248: combinatorial structure](iterations/iteration248-combinatorial-structure-discovery-brief.md) continues discovery.
-- I249 has finished discovery with an unproved nonlinear contact passage. Its final record is being integrated; the auxiliary linearized calculation is not accepted as a finding.
+- [I249: nested geometric contact](iterations/i249-geometric-contact-parent-disposition.md) is unresolved. The exact linearized contact constant is retained, but the nonlinear lower limit and matching recovery construction remain unproved.
 
 These are candidates and research records, not additional accepted results.
 
