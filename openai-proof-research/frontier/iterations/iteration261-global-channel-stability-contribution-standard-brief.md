@@ -1,6 +1,6 @@
 # I261: global channel stability contribution review
 
-Prepared, NOT LAUNCHED. This is the controlling I262 scope; earlier I259 draft was never launched.
+Launched and acknowledged running as mathdb-i261-global-channel-stability-contribution-sol-high-standard-20261012, using GPT-6.1 Sol/high/Standard. This is the controlling I262 scope; earlier I259 draft was never launched.
 
 Read /home/mj-kang/Documents/Dev/math/openai-proof-research/AGENTS.md and sources/upstream.json. Work only inside that project. All OpenAI results pinned at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are assumed true; validate new deductions, not upstream truth. Goal twenty total substantial findings; ten accepted. Use GPT-6.1 Sol/high/Standard only. No subagents, live sibling reads, shared edits, staging, commits, publishing, research code, tests, numerical experiments/scans, snapshots or giant history replay. Retrieval, text extraction, mathematical derivation and provenance hashing are allowed.
 
