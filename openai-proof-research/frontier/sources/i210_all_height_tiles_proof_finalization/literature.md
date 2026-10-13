@@ -1,0 +1,23 @@
+# I210 source contracts and reading limits
+
+2026-10-12. Scoped independent proof finalization, not a contribution review. The pinned corpus at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb` and paid lower operations are accepted. Existing source copies were read in place; no downloads or duplicate copies were made. Input bytes and SHA-256 hashes are recorded in the [authentication ledger](../../experiments/i210_all_height_tiles_proof_finalization/input-authentication.json).
+
+## Sources directly rechecked in I210
+
+Under `frontier/sources/i198_geometry_representation/preprints/Finite-cylinder-approximation-of-ruled-sets-September-27-2026/build/sections/`, read all of:
+
+- `linear-coverings.tex`: `b:lattice` requires real parameters with product in [0,1), including zero and with no individual smallness bound; it gives closed-square pointwise coverage. `b:zero-diagonal`, `b:affine-cover` and `b:affine-inverse` supply the nonpositive-determinant templates and their exact strict threshold. [Pinned source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Finite-cylinder-approximation-of-ruled-sets-September-27-2026/build/sections/linear-coverings.tex).
+- `introduction.tex`: `b:projection` gives h|T|J_h(g) in the original physical coordinates and preserves nondegenerate parallelogram bases. `b:approximation` states the neighborhood and arbitrary-compact-set scope. [Pinned source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Finite-cylinder-approximation-of-ruled-sets-September-27-2026/build/sections/introduction.tex).
+- `finite-approximation.tex`: `b:finite-retention`, `b:finite-area` and the outer-neighborhood passage are the accepted operations. The current proof must use fundamental cells for counting, because its intercepts overlap; it does. [Pinned source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Finite-cylinder-approximation-of-ruled-sets-September-27-2026/build/sections/finite-approximation.tex).
+
+Read **printed/PDF pages 7–10 only**, as extracted text, of the existing `frontier/sources/i201_elliptic_covering/kolountzakis-1998-publisher.pdf`: Kolountzakis, *Lattice Tilings by Cubes: Whole, Notched and Extended*. Sections 2.1–2.3 give the transpose convention and equations (17)–(21), including the negative-product additive rectangle identity used by the paid small-positive-determinant fallback. No full-paper reread or visual inspection is claimed. [Publisher](https://www.combinatorics.org/ojs/index.php/eljc/article/viewFile/v5i1r14/pdf/), [DOI](https://doi.org/10.37236/1352).
+
+Read **printed/PDF pages 1–4 only**, as extracted text, of the existing `frontier/sources/i201_elliptic_covering/grepstad-kolountzakis-spyridakis-2025v1.pdf`: Grepstad, Kolountzakis and Spyridakis, *Bounded lattice tiles that pack with another lattice*, [arXiv:2508.07972v1](https://arxiv.org/abs/2508.07972v1). The abstract supplies the finite-polytopal option, §1.2 defines tiling/packing almost everywhere, and Theorem 1.2 with §1.5 supplies the bounded containing-almost-domain contract. Later proof sections were not read in I210. This theorem is auxiliary, not a dependency of Theorem 1 or 3. The area-preserving closure argument for the polytopal completion is given independently in I210 §2.
+
+## Local records, reuse and exclusions
+
+Read the I210 and I207 briefs, I203 brief/report/analytic record/parent nomination/literature record, and I207 saved review/literature/authentication in full. I207's saved reasoning is attributed explicitly in the new review, not presented as a successful previous handoff. The I207 authentication record is metadata, not a recursive authentication of its inputs. Read I201 analytic lines 1–132 for the paid fallback and transfer. Read catalogue lines 2440–2490 containing family 100; no whole-catalogue or preprint-tree audit was performed.
+
+Companion-paper scope checks and the nonessential Fourier/fractional/regularization discussion are reused from I207 with attribution. The companion manuscripts, I203 reading/failure log and authentication, the soft-tile paper, the common-domain paper and the three-subgroup paper were not independently reread in this round. No broad or novelty search, priority assessment, new equivalence to Steinhaus, or extension of the periodic lower bound to arbitrary cylinders is made.
+
+The final proof verdict is **PASS WITH PRECISE CORRECTIONS**: Theorems 1 and 3 and functional stability pass unchanged; qualify the arbitrary measurable common cover as almost everywhere and reserve the area-preserving pointwise repair for the finite-polytopal completion followed by closure.
