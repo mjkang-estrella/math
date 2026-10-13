@@ -1,0 +1,9 @@
+# I343 parent source screen
+
+2026-10-13. The following pinned raw GitHub bodies were fetched into memory, not retained. The ranges are semantic reads, distinct from full-response hashes.
+
+- Linear-Variance-of-the-Random-3-SAT-Hitting-Time-October-5-2026/build/source/main.tex: SHA256 888db8d247151937a55c67a14f7b014bb9a6c812639680dd300ea5df94adfcf4, 27412 bytes. Lines 1–180 and 555–664 read; lemma/corollary/moment/tail label inventory also inspected. Actual thm:main states uncapped variance Theta(n), and thm:wilson compares fixed probability levels. Neither read passage gives a central limit theorem or a pointwise anti-concentration rate.
+- Variance-of-the-Random-k-SAT-Hitting-Time-September-27-2026/build/source/sections/introduction.tex: SHA256 dc63bb28e88b320d713cbfe8bedc453b5aa783fd9516cc7cbae15cdcd717a248, 9955 bytes. Lines 1–180 read, not the last twelve. Actual thm:variance covers fixed k and caps, with linear variance for k>=4 and an older logarithmic bound for k=3. It explicitly excludes a fluctuation-scale bound on the finite-size mean bias.
+- Computing-the-Random-3-SAT-Threshold-September-27-2026/build/sections/introduction.tex: SHA256 ce097bf0270147675456facc16237707e48a6cff8bd21fc1e5b51849600ae58c, 5000 bytes. Complete 91 lines read. Actual thm:main is computability of the limiting density, without an efficiency estimate or a critical-window law.
+
+All paths are under preprints/ at OpenAI/math revision fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. Source truth is stipulated, not audited. The parent's speculation that higher deletion moments or sparse polynomial approximations might aid a normal limit is only a research suggestion; it does not establish a martingale limit, conditional-variance concentration or normality. Hitting time depends on clause order, so full clause-permutation symmetry must not be assumed. The I343 brief records these caveats. No new theorem is nominated by this screen.

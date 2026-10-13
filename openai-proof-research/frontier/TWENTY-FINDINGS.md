@@ -76,6 +76,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I341 adaptive PPT-composite channels](iterations/i341-adaptive-ppt-square-key-obstruction.md) proposes a uniform secret-key obstruction under arbitrary finite adaptive use with quantum memories and public feedback. The new operation is preservation of the represented class under a cross-party transmission, not merely its Choi-state inclusion. I342 independently reviews the full contribution and standard cone/teleportation reductions. No proof gate or acceptance is claimed.
 
+- [I343 random-SAT fluctuations](iterations/iteration343-sat-fluctuation-discovery-brief.md) is investigating a genuine fluctuation theorem beyond the pinned linear variance bounds. A normal limit or stronger concentration requires additional estimates; variance order alone is not treated as a proof. No acceptance is added.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
@@ -99,7 +101,6 @@ The original ten retain their existing acceptance decisions. Their linked record
 | 13 | [R019: attained entangled complete-Crouzeix equality](findings/R019-entangled-complete-crouzeix-equality.md) | Independent I291 proof PASS and I292 contribution SUBSTANTIAL |
 | 14 | [R020: global binary-information stability](findings/R020-global-binary-information-stability.md) | Independent I304 full proof PASS and I303 contribution SUBSTANTIAL |
 | 15 | [R021: exact fixed-gate discrete logarithms](findings/R021-exact-fixed-gate-discrete-logarithms.md) | Independent I323 full proof PASS unchanged and I324 contribution SUBSTANTIAL |
-
 | 16 | [R022: sharp small-information stability](findings/R022-sharp-small-information-stability.md) | Independent I335 full proof PASS unchanged and I336 contribution SUBSTANTIAL |
 
 R017–R022 are the six additional acceptances after reopening. Four remain toward twenty total.
