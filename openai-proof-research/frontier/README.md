@@ -2,7 +2,7 @@
 
 ## Active target: twenty substantial findings
 
-On 2026-10-12 the user raised the target to twenty. **Eleven accepted, nine remaining.** The [twenty-finding ledger](TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
+On 2026-10-12 the user raised the target to twenty. **Twelve accepted, eight remaining.** The [twenty-finding ledger](TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
 
 This phase responds to the user's correction: the objective is a genuinely new idea toward a significant named open problem, not another routine consequence of an accepted OpenAI theorem. The earlier F001–F010 remain archived deductions; they do not meet this phase's research target.
 
@@ -25,9 +25,13 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-## Eleventh finding accepted: nonlinear ball–tube contact
+## Twelfth finding accepted: logarithmic ball–slab contact
 
-[R017](findings/R017-ball-tube-contact-asymptotic.md) establishes the sharp second-order nesting cost over all finite-perimeter pairs. Independent I269 proof review passed and I270 contribution review judged the result substantial. **Eleven accepted; nine remain.** The logarithmic ball–slab candidate is under independent proof review; other discovery and contribution tasks continue at Standard speed.
+[R018](findings/R018-ball-slab-logarithmic-contact.md) establishes the sharp epsilon-squared-over-logarithm nesting cost over all finite-perimeter pairs. I277 proof review passed and I278 contribution review judged the singular lower passage substantial, with classical contact laws and R017's inherited machinery credited. **Twelve accepted; eight remain.** Two complementary GAD investigations and fresh arithmetic discovery continue at Standard speed.
+
+## Historical eleventh acceptance: nonlinear ball–tube contact
+
+[R017](findings/R017-ball-tube-contact-asymptotic.md) establishes the sharp second-order nesting cost over all finite-perimeter pairs. Independent I269 proof review passed and I270 contribution review judged the result substantial. **Eleven accepted; nine remain.** The subsequent R018 acceptance and current work are recorded above.
 
 ## Historical first milestone: ten substantial findings
 

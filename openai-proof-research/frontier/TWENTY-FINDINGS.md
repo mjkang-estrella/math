@@ -1,6 +1,6 @@
 # Twenty substantial findings
 
-User direction, 2026-10-12: “Perfect. Now go for 20”. **Target: 20 total; 11 accepted, 9 remaining.** This extends the completed [first-ten milestone](TEN-FINDINGS.md); it does not restart the count.
+User direction, 2026-10-12: “Perfect. Now go for 20”. **Target: 20 total; 12 accepted, 8 remaining.** This extends the completed [first-ten milestone](TEN-FINDINGS.md); it does not restart the count.
 
 The acceptance standard is unchanged: a complete nonroutine mathematical contribution, independently reviewed for proof and for substantiality against primary literature. Technical deductions, equivalent formulations, unproved conditionals and rediscovered results do not increase the count. All pinned OpenAI results are assumed true at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. Worldwide priority is not asserted.
 
@@ -20,9 +20,11 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I273 quantum discovery](iterations/i273-quantum-discovery-parent-disposition.md) completed with an unresolved GAD uniform-stability target and technical diagnostics only. [I279](iterations/i279-gad-cat-state-obstruction.md) refutes its stronger summed-marginal bridge without refuting the original target. Independent [I280 proof discovery](iterations/iteration280-gad-uniform-stability-proof-discovery-standard-brief.md) and [I281 adversarial discovery](iterations/iteration281-gad-uniform-stability-adversarial-standard-brief.md) now investigate the actual target at Standard speed. No acceptance is claimed.
 
-- [I274: logarithmic ball–slab point contact](iterations/i274-ball-slab-point-contact-proposal.md) is a new parent hypothesis with predicted coefficient 2pi and scale epsilon^2/|log epsilon|. [I275](iterations/i275-logarithmic-contact-full-proof.md) now provides a complete proposed upper and lower argument using exact vertical graph coordinates, spectral separation, and annular capacity. Its completed [I277 independent proof review](iterations/i277-logarithmic-contact-proof-parent-disposition.md) passed the full unrestricted claim without necessary repairs. The separate [I278 contribution review](iterations/iteration278-logarithmic-contact-contribution-standard-brief.md) remains running at Standard speed; no acceptance is claimed. The [I276 literature screen](iterations/i276-point-contact-prior-art-screen.md) identifies classical logarithmic compressed-droplet laws, which must be included in the contribution comparison.
+- **Accepted as [R018](findings/R018-ball-slab-logarithmic-contact.md):** the I274/I275 logarithmic ball–slab minimum over all finite-perimeter pairs. [I277 proof review](iterations/i277-logarithmic-contact-proof-parent-disposition.md) passed without necessary repair; [I278 contribution review](iterations/i278-logarithmic-contact-contribution-parent-disposition.md) concluded SUBSTANTIAL for the singular lower passage beyond R017, with classical logarithmic contact laws explicitly credited. This is the twelfth acceptance.
 
-These are candidates and research records, not additional accepted results.
+- [I282 arithmetic joint-statistics discovery](iterations/iteration282-arithmetic-joint-statistics-standard-brief.md) investigates a new bridge beyond the completed prime-factor findings, using pinned families 011/012 and primary comparisons. It is running with GPT-6.1 Sol/high/Standard; no result or acceptance is assumed.
+
+Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
 
@@ -42,4 +44,6 @@ The original ten retain their existing acceptance decisions. Their linked record
 | 10 | [R016: complete Crouzeix equality in dimension four](findings/R016-complete-crouzeix-equality.md) | `1c8aa3f0`; independent I245 proof PASS and I246 contribution SUBSTANTIAL |
 | 11 | [R017: sharp nonlinear ball–tube nesting cost](findings/R017-ball-tube-contact-asymptotic.md) | Independent I269 proof PASS and I270 contribution SUBSTANTIAL |
 
-R017 is the first additional acceptance after reopening. The target remains twenty total.
+| 12 | [R018: sharp logarithmic ball–slab nesting cost](findings/R018-ball-slab-logarithmic-contact.md) | Independent I277 proof PASS and I278 contribution SUBSTANTIAL |
+
+R017 and R018 are the two additional acceptances after reopening. Eight remain toward twenty total.
