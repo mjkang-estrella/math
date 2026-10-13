@@ -31,3 +31,15 @@ For s>=1/3, A_s=(1-s)D_s+s B_s, where B_s has Bloch action (s,s,2s-1), with Paul
 One would need a quantitative bound using all heterogeneous branches. Randomly selected local symmetric-projector tests have a useful elementary inequality: if Pi_S=product_(j in S) Sym_j and sites are selected independently with probability p, then 1-E Pi_S >= p(1-product_j Sym_j), because these projectors commute. But no entropy-deficit bound for those partial tests is supplied here. Do not substitute this projector identity for the missing channel estimate.
 
 The full GAD target, any stronger King remainder, and heterogeneous-branch stability remain open in this note. The prior false sum of original marginal determinants remains excluded; the intended costs would be conditional along a common adaptive tree. No numerical scan or inverse-channel argument has been used.
+
+## Additional primary lead: retain a data-processing remainder
+
+The parent read Amosov, [arXiv:1301.2886v1](https://arxiv.org/html/1301.2886v1), Theorem 1 and Proposition 5 with its complete proof (served lines 75–200). Proposition 5 retains S((Psi tensor Id)Ppsi) in place of a one-site minimum, plus the conditional tail-output entropies in the dephasing basis. Its difference is an explicit relative-entropy data-processing loss for a state supported on the span of basis-conditioned pure branches. This is old material and does not itself give the proposed King remainder. The served text has apparent normalization/typographical issues; reconstruct the qubit proof directly before relying on the display.
+
+There is also the elementary identity A_s=Psi_X,s composed with Psi_Y,s, where the two phase-damping Bloch actions are (1,s,s) and (s,1,s). A proposed route is to combine the two complementary dephasing losses or their recovery remainders. No theorem is obtained by replacing the pure input in Proposition 5 by the mixed output of the first dephasing step without justification. Another equivalent channel mixture is
+
+    A_s = (1+s)/4 (Psi_X,s + Psi_Y,s)
+          +(1-s)/4 (Ad_Y composed with Psi_X,s
+                       +Ad_X composed with Psi_Y,s).
+
+For a root marginal diagonal in Z, all four dephasing measurements are balanced, making this a concrete test case for the required tradeoff. For a general root marginal they need not be balanced; that restriction must not be silently added to the target. The mixture/serial identities are direct Pauli algebra, not new contributions. A second search lead, arXiv:1409.5881, was opened but its theorem/proof has not yet been read by the parent and is not a premise.

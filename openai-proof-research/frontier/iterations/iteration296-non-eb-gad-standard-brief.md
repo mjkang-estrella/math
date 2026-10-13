@@ -1,6 +1,6 @@
 # I296 — non-EB GAD stability and a quantitative King remainder
 
-Prepared GPT-6.1 Sol/high/Standard brief; no task launch is asserted by this file.
+Launched with GPT-6.1 Sol/high/Standard on 2026-10-13 as `mathdb-i296-non-eb-gad-stability-sol-high-standard-20261013`; the task was acknowledged running.
 
 I296 research: obtain a dimension-independent non-entanglement-breaking GAD stability bridge, or refute the precise proposed bridge. Work only in /home/mj-kang/Documents/Dev/math/openai-proof-research. Read AGENTS.md, sources/upstream.json. Pinned OpenAI results at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated true. Current count 13/20. GPT-6.1 Sol/high/Standard. No subagents, live sibling reads, shared indexes, git staging/commits/publication, numerical scans, or giant history replay.
 
@@ -17,3 +17,6 @@ Alternative: for s>=1/3, A_s=(1-s)D_s+s B_s, B_s Bloch(s,s,2s-1), Pauli weights(
 Pursue the exact missing estimate deeply. If false, supply a verified analytic counterexample and identify what weaker legitimate mechanism might still close the all-n target. If full target remains open, record exact unpaid operation; don't nominate a minor conditional bridge as solved. Credit old King, Bae depolarizing, product-test and pinned GAD inputs. Contributions must be nonroutine.
 
 Write only frontier/iterations/i296-non-eb-gad-stability.md; frontier/experiments/i296_non_eb_gad_stability/{analysis.md,reading-and-failures.md,input-authentication.json}; frontier/sources/i296_non_eb_gad_stability/literature.md plus minimal metadata/short excerpts. No full external bodies or whole-section verbatim copies. Exact source URLs/hashes/read extents, all failures, detached output hashes. No acceptance claim.
+
+
+Launch supplement: I293 has completed with TECHNICAL and no analytic flaw on the original EB target. The complete review and analysis were added as required prior context: review SHA256 c4f54385580f096d4ce2205ddf98f125cdbfdba697d34bd89fa2155d2fadba5b; analysis SHA256 be4f709f069d19c96af8ee8cf888c43f904c0a93a57db5bf0deffe169805f60f. The stronger drift follows from the old mixed-state purity formula and is not a separate nomination. I294 remains live and must not be read. The parent note now includes Amosov Proposition 5 and complementary-dephasing identities as further leads, with their unpaid scope identified.
