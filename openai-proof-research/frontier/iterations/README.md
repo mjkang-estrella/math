@@ -2,7 +2,7 @@
 
 ## Active target: twenty substantial findings
 
-On 2026-10-12 the user raised the target to twenty. **Ten accepted, ten remaining.** The [twenty-finding ledger](../TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. I247–I249 are running with GPT-6.1 Sol/high/ultrafast. Earlier completion and task-status entries below are historical.
+On 2026-10-12 the user raised the target to twenty. **Ten accepted, ten remaining.** The [twenty-finding ledger](../TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/ultrafast; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
 
 User direction on 2026-10-08: “Iterate & discover until you get a desired output.” The previous [outcome](../OUTCOME.md) is a historical report of the first pass, not a completion claim for the resumed objective.
 
