@@ -14,6 +14,8 @@ The following work is active or awaiting independent review. All delegated round
 - [I248: combinatorial structure](iterations/iteration248-combinatorial-structure-discovery-brief.md) continues discovery.
 - [I249: nested geometric contact](iterations/i249-geometric-contact-parent-disposition.md) is unresolved. The exact linearized contact constant is retained, but the nonlinear lower limit and matching recovery construction remain unproved.
 
+- [I250: transverse matrix Lieb–Thirring deficit](iterations/i250-lieb-thirring-transverse-hessian.md) is a parent-authored candidate. It includes an explicit quadratic form and a threshold-eigenvalue estimate; independent proof and contribution gates have not yet run.
+
 These are candidates and research records, not additional accepted results.
 
 ## Accepted count
