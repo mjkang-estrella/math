@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I237 complete: correct cube bound remains technical
+
+[I237](iterations/i237-cube-bound-parent-disposition.md) proves the total base-area bound 2sqrt(3) for the side-two cube. Cap subtraction and scalar optimization of an old density certificate do not meet the substantiality gate. **Nine accepted, one remaining; the two I236 reviews continue.**
+
 ### I240: independent contribution review started
 
 [I240](iterations/iteration240-viscous-rigidity-contribution-brief.md) assesses whether the complete finite-viscosity theorem clears the substantive-contribution standard, separately from I239 proof review. GPT-6.1 Sol/high/ultrafast was acknowledged running. **Nine accepted, one remaining.**
