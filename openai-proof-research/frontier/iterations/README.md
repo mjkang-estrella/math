@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I228 proof PASS; contribution review pending
+
+[I228](./i228-forced-infinity-proof-parent-disposition.md) passes the full bounded-forcing regularity and gradient stability proof, with two expository clarifications. I229 independently reviews contribution and prior art. **Nine accepted, one remaining.**
+
 ## I228–I229: independent forced-equation gates
 
 [I228](./iteration228-forced-infinity-proof-brief.md) checks the complete proof, and [I229](./iteration229-forced-infinity-contribution-brief.md) assesses the complete contribution and primary prior art. [I227](./i227-priority-stop.md) is interrupted for review priority, with no completed result. **Nine accepted, one remaining.**
