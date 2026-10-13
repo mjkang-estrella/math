@@ -1,0 +1,19 @@
+# I296 — the strengthened balanced King bridge is false
+
+2026-10-13. **Analytic counterexample verified. Non-EB all-n GAD stability remains OPEN. No acceptance or substantiality claim; count 13/20 unchanged.** All pinned OpenAI results at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated true.
+
+For any 0<s<1, fix p=3/4 and take psi=sqrt(p)|++>+sqrt(1-p)|-->, where the signs are X eigenstates. Its root marginal is (I+X/2)/2 and its impurity is 3/8. Let the qubit tail channel measure X and record its label in orthogonal flags. Every balanced root measurement is perpendicular to X, so every conditional tail output is the same state diag(p,1-p), with entropy H(p). The full output has entropy h((1+s)/2)+H(p). Thus King's entropy residual is exactly zero for EVERY balanced ensemble, while root impurity is positive. No ensemble-choice loophole remains.
+
+The [complete analysis](../experiments/i296_non_eb_gad_stability/analysis.md) also checks the actual old proof: all positive-weight phase-damping branches have the same flagged output, so both mixture/Jensen loss and phase-damping slack vanish. Retaining both losses cannot prove the proposed strengthening.
+
+The parent's suggested exact-drift replacement is also false for arbitrary CPTP partners. Here F_1=0 on every pure conditional tail and F_2=p(1-p)=3/16, yet the residual is zero. The parent explicitly corrected this version, and that correction is retained. Faithful higher-copy tests cannot repair a local arbitrary-partner payment with a zero entropy residual.
+
+The stronger impurity claim remains false even for actual GAD tensor-power tails. For psi_n=sqrt(p)|+>^n+sqrt(1-p)|->^n the balanced King residual tends to zero, uniformly over every permissible ensemble, while root impurity stays 2p(1-p). Its total entropy deficit tends to H(p), so this does not refute the global stability target.
+
+Those cats do NOT refute the tensor-tail exact-drift alternative. An analytic complementary-pair block calculation gives residual decay from classical label ambiguity at rate sqrt(1-s²), with a 1/sqrt(n) factor, and coherence at rate s². The dominant rate is max(s²,sqrt(1-s²))>1/2, whereas the exact test drift is 2p(1-p)2^(1-n). The residual/drift ratio therefore diverges for every fixed interior s. Both losses must be retained for this rate conclusion; no numerical scan is involved.
+
+The exact unpaid operation is a same-ensemble estimate R(psi,A_s^tensor(n-1);E)>=c_s[F_n(psi)-E F_tail], uniform in n and pure psi, with c_s bounded below on the requested compact s interval. This is restricted to actual GAD tensor partners and is explicitly NOT established. A proof would telescope directly with old product-test soundness and the paid amplitude/Hellinger estimate. Genuinely amortized or block payment is another unproved option. No minor conditional implication is nominated as a completed finding.
+
+King's complete Sections 3–4 and relevant Section 2 were read, not merely the theorem statements. Amosov Proposition 5 and its proof were read and its balanced-qubit data-processing remainder reconstructed. The frozen I289 files and complete I293 contribution review/analysis were read; the supplied SHA256s match. I284's non-CP reduction and I279's false summed-marginal route remain excluded. Credit King, Amosov, Bae depolarizing precedent, Shor, the older product-test tools, pinned GAD inputs, and the parent's exact-drift suggestion/correction.
+
+[Reading and failures](../experiments/i296_non_eb_gad_stability/reading-and-failures.md), [authentication](../experiments/i296_non_eb_gad_stability/input-authentication.json), and [literature](../sources/i296_non_eb_gad_stability/literature.md) record exact sources, hashes and limits. Only the five assigned I296 files are written. No subagents, I294/I295 reads, shared indexes, staging, commits, publication, numerical scans or giant history replay. Detached output hashes accompany handoff.
