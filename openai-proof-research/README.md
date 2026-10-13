@@ -1,5 +1,11 @@
 # OpenAI mathematics research
 
+**I202 completed; contribution assessment pending:**
+[Parent checkpoint](frontier/iterations/i202-foulkes-parent-disposition.md)
+checks the odd-prime determinant socle family. The full Foulkes quotient
+remains unresolved; an independent review will assess whether the auxiliary
+family merits nomination. **8 accepted, 2 remaining.**
+
 **I205 running:** The [new construction attempt](frontier/iterations/iteration205-bounded-egyptian-denominators-brief.md)
 targets short Egyptian fractions with a polynomial bound on each denominator,
 beyond the methods ruled out in I204. The Foulkes and lattice-covering

@@ -21,6 +21,11 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I202 completed:** [Parent checkpoint](iterations/i202-foulkes-parent-disposition.md)
+records the odd-prime socle family and the unresolved full quotient.
+Its contribution is being assessed independently before any nomination.
+**Eight accepted, two remaining.**
+
 [I205](iterations/iteration205-bounded-egyptian-denominators-brief.md) was
 acknowledged as running under GPT-6.1 Sol/high/ultrafast. It seeks a new
 construction for the polynomial maximum-denominator target. I202 and
