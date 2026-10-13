@@ -21,6 +21,12 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I198 completed:** The [parent disposition](iterations/i198-geometry-representation-parent-disposition.md)
+retains its Foulkes improvement, cone deductions, and cylinder counterexample
+as technical work. Its three unpaid mechanisms are assigned separate
+focused follow-ups. No substantial nomination has passed either gate.
+**Eight accepted, two remaining.**
+
 [I198](iterations/iteration198-geometry-representation-discovery-brief.md)
 is running a bounded screen of hyperbolicity cones, cylinder coverings,
 and Foulkes maps with GPT-6.1 Sol, high reasoning, ultrafast service.
