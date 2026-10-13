@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I240: independent contribution review started
+
+[I240](./iteration240-viscous-rigidity-contribution-brief.md) assesses whether the complete finite-viscosity theorem clears the substantive-contribution standard, separately from I239 proof review. GPT-6.1 Sol/high/ultrafast was acknowledged running. **Nine accepted, one remaining.**
+
 ## I236 candidate: finite-viscosity rigidity enters review
 
 [I236](./i236-viscous-contact-parent-disposition.md) supplies a complete contact-propagation and fitted-class affinity argument. [I239](./iteration239-viscous-rigidity-proof-brief.md) independently reviews the proof; a separate contribution decision is still required. This is not a p-gradient or uniform-viscosity theorem. **Nine accepted, one remaining.**
