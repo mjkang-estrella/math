@@ -14,7 +14,7 @@ The following work is active or awaiting independent review. All active and futu
 - [I248: rooted-pattern packing](iterations/i248-rooted-packing-parent-disposition.md) has a complete proposed proof. [I257 proof](iterations/iteration257-rooted-packing-proof-standard-brief.md) and [I258 contribution](iterations/iteration258-rooted-packing-contribution-standard-brief.md) reviews are running at Standard speed.
 - [I249: nested geometric contact](iterations/i249-geometric-contact-parent-disposition.md) is unresolved. The exact linearized contact constant is retained. [I253](iterations/i253-contact-recovery-parent.md) supplies a proposed matching nonlinear recovery construction; the nonlinear lower limit remains unproved, and no substantial finding is accepted.
 
-- [I250: transverse matrix Lieb–Thirring deficit](iterations/i250-lieb-thirring-transverse-hessian.md) is a parent-authored candidate. It includes an explicit quadratic form and a threshold-eigenvalue estimate; independent proof and contribution gates have not yet run.
+- [I259: dimension-uniform local channel stability](iterations/i259-dimension-uniform-channel-stability.md) strengthens the [I250 fixed-profile Hessian](iterations/i250-lieb-thirring-transverse-hessian.md). It proposes two-sided full-deficit control for bounded measurable real channel rotations, uniformly in finite matrix size. Both independent gates remain to be run; the two versions will not be counted separately.
 
 These are candidates and research records, not additional accepted results.
 
