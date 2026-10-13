@@ -1,6 +1,6 @@
 # I270: geometric contact contribution review
 
-Prepared, **not launched**. All three delegated slots are currently occupied. The exact proposed brief follows; launch requires an available slot and no change to the candidate identity.
+Launched and acknowledged running as `mathdb-i270-nonlinear-contact-contribution-sol-high-standard-20261012`, GPT-6.1 Sol/high/Standard. The exact delegated brief follows.
 
 Read /home/mj-kang/Documents/Dev/math/openai-proof-research/AGENTS.md and sources/upstream.json. Work only inside this project, using GPT-6.1 Sol/high/Standard. User target twenty total substantial findings, ten accepted. Assume all OpenAI results at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb true. No subagents, live sibling reads, shared edits, staging, commits, publishing, research code/tests/numerical scans, snapshots or giant history replay. Retrieval, primary-source text/rendering, mathematical reasoning and provenance hashes are authorized.
 
