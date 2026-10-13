@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I242 candidate: complete equality in base dimension four
+
+[I242](iterations/i242-crouzeix-parent-disposition.md) submits complete polynomial scalarization and disk rigidity for independent [proof](iterations/iteration245-crouzeix-rigidity-proof-brief.md) and [contribution](iterations/iteration246-crouzeix-rigidity-contribution-brief.md) reviews. Both gates were acknowledged running with GPT-6.1 Sol/high/ultrafast. The positive-deficit modulus is unproved. **Nine accepted, one remaining.**
+
 ## I241 complete: selected high-viscosity branch excluded
 
 [I241](iterations/i241-p-gradient-parent-disposition.md) obtains an actual-p cylinder estimate and rules out a high-viscosity bad scale under explicit noncritical selection hypotheses. Producing those hypotheses for arbitrary approximants remains unpaid. **Nine accepted, one remaining.**
