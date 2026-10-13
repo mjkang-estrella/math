@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I222 completed: Coulomb proof passes
+
+[I222 independently passes the complete product-bump cost-complexity theorem. Contribution is a separate gate.](iterations/i222-coulomb-proof-parent-disposition.md) **Nine accepted, one remaining.**
+
 ## I221–I223: Coulomb comparison and independent gates
 
 [I222](iterations/iteration222-coulomb-cost-complexity-proof-brief.md) reviews the complete Coulomb cost-complexity proof; [I223](iterations/iteration223-coulomb-cost-complexity-contribution-brief.md) independently assesses the full contribution. [I221](iterations/iteration221-coulomb-contribution-screen-brief.md) separately screens the earlier proposed statement. All run with GPT-6.1 Sol/high/ultrafast; none is a count increment. **Nine accepted, one remaining.**
