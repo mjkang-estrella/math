@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I218 proof PASS; final contribution gate pending
+
+[I218](iterations/i218-neumann-eigenmap-parent-disposition.md) independently passes the full global eigenmap theorem with no corrections. I219 continues the separate contribution and prior-art gate. **Nine accepted, one remaining.**
+
 ### I218–I219: both eigenmap gates running
 
 [I218](iterations/iteration218-neumann-eigenmap-proof-brief.md) independently checks the eigenmap proof and [I219](iterations/iteration219-neumann-eigenmap-contribution-brief.md) independently checks contribution and prior art. Both were acknowledged as running with GPT-6.1 Sol/high/ultrafast. I216 continues the boundary-approximation line; I217 was interrupted to prioritize validation and its partial files remain preserved. **Nine accepted, one remaining.**
