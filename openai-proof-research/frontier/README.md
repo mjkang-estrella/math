@@ -2,7 +2,11 @@
 
 ## Active target: twenty substantial findings
 
-On 2026-10-12 the user raised the target to twenty. **Fifteen accepted, five remaining.** The [twenty-finding ledger](TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
+On 2026-10-12 the user raised the target to twenty. **Sixteen accepted, four remaining.** The [twenty-finding ledger](TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
+
+## Sixteenth finding accepted: sharp small-information stability
+
+[R022](findings/R022-sharp-small-information-stability.md) proves dimension-free stability for arbitrary binary summaries down to zero information, with the sharp fourth-power loss. I335 passed the complete proof unchanged; I336 judged the full endpoint package substantial. Bias, endpoint values, rare spikes and varying dimensions are included. **Sixteen accepted; four remain.**
 
 ## Fifteenth finding accepted: exact fixed-gate discrete logarithms
 
