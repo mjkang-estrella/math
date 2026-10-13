@@ -1,0 +1,29 @@
+# I313 — source and primary-literature boundaries
+
+2026-10-13. No new external full body was saved. Versioned primary URLs and exact local input hashes are in the authentication record. Source truth is stipulated only for the pinned OpenAI results; external papers are comparisons, not extra axioms.
+
+## Pinned OpenAI source
+
+Repository revision: fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. [Actual main source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Sharp-binary-information-contraction-on-the-discrete-cube-September-24-2026/build/main.tex): `main:soft` is arbitrary randomized binary-channel contraction at actual information; `upgrade:production` is the interior all-dimensional max-profile bound, not endpoint stability. [Scalar source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Sharp-binary-information-contraction-on-the-discrete-cube-September-24-2026/build/sections/scalar.tex): `scalar:profile-convexity` gives F''>=4/3, with F'(0)=2. [Capacity source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Sharp-binary-information-contraction-on-the-discrete-cube-September-24-2026/build/sections/capacity.tex): `capacity:onebit` and `capacity:refined` have genuine one-bit scope. [Flow source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Sharp-binary-information-contraction-on-the-discrete-cube-September-24-2026/build/sections/flow.tex) integrates production without requiring initial finite production. The main source expressly warns that information-only local joining cannot be used for every coupled pair law. The Hellinger companion's actual `thm:main` is Boolean with arbitrary output bias. No companion gives S313 merely by a change of names.
+
+Fresh byte retrieval matched all eight sharp-information files plus the Hellinger main file. Semantic reading in this round is focused, not a claim of rereading all canonical/reserve/thinning files: those full files were authenticated; their applicable extents are delimited by I131 and completed I304.
+
+## Low-information SDPI and the local limit
+
+[Polyanskiy–Wu, author manuscript](https://people.lids.mit.edu/yp/homepage/data/simple-IMA.pdf), §2.1, Theorems 2–4 and Appendix A.1–A.3: fixed-input chi-square contraction equals squared maximal correlation, and local mixtures establish a lower comparison to KL contraction. Appendix A.1 first controls likelihood ratios and takes the perturbation limit with the comparison law fixed. Remark 7 discusses a fixed-law finite-chi-square alternative. This does not give a uniform fourth-order expansion when the field, dimension or rare posterior changes with the information parameter. §2.2's FI curve allows general auxiliaries and variable input joint laws; its definition is not the binary-output, fixed uniform-cube structural endpoint. The posterior density identities used in I313 retain both output-label weights and the mean normalization. No inference from a local chi-square coefficient to a uniform relative error is imported.
+
+## First-level stability
+
+[Friedgut–Kalai–Naor, rewritten original proof, v1](https://arxiv.org/html/2105.03246v1), Theorem 0.1 and proof through Theorem 0.2: a {0,1}-valued function with small Fourier mass above level one is near a constant or coordinate/complement, with absolute constants. Its argument uses the Boolean range to control the first-level L1 norm. It does not state a corresponding assertion for arbitrary bounded real fields. I313's exactly normalized two-coordinate affine example has zero higher mass yet positive distance; additional singleton disagreement must be charged.
+
+## Closest information stability and rare-error comparator
+
+[Ky–Tran v1](https://arxiv.org/html/2609.31797v1), Theorem 1.1: dimension-independent probability distance for Boolean summaries near the universal dictator information psi(r), with general and increasing correlation factors. This budget differs from psi(ra) as a tends to zero. The statement does not cover arbitrary soft kernels with exact low input information. No certificate suite was executed or certified in I313.
+
+[Yu v5](https://arxiv.org/html/2410.10147v5), §4.1, Theorems 4.1, 4.2 and 4.5: balanced Boolean local dictator optimality and rare-error estimates for convex output functionals. The asymptotic theorem tracks error-set probability with fixed correlation and functional. It is a methodological predecessor of support/hypercontractive control, not an arbitrary-bias soft endpoint theorem. I313 tracks the actual L131 constants instead.
+
+[Chen et al. v2](https://arxiv.org/html/2609.24931v2), Lemma 9.2 and the following semigroup proof: the arbitrary-array induction is already present. The new web retrieval returned `Internal Error`; the existing authenticated v2 mathematical text was read at lines 2582–2658. Its Boolean specialization integrates from the deterministic conditional-entropy endpoint. No claim of fresh full-paper retrieval, uniform endpoint stability, or independently certified external Bellman artifacts is made.
+
+## Completed internal results and novelty limits
+
+I128 P128 and I131 N131/Q131/L131 have operative proofs, not stipulated upstream status. The warning after N131 is essential. I299 completes the restricted cube chain; I301 completes scalar Gaussian strictness and qualitative compact gaps. I304 completes unrestricted S302 on compact amplitude rectangles; I303's substantiality belongs to that Gaussian extension. Their exact scopes do not quantify vanishing-information constants. The parent one-bit obstruction, affine capacity averaging, scalar Bregman bridge, compression sharpening and conservative local-radius extraction are technical partials. This comparison does not establish worldwide priority or classify the unresolved full S313 as substantial.
