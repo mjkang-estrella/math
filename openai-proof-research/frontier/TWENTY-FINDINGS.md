@@ -44,6 +44,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I305 boundary fold proposal](iterations/i305-neumann-boundary-fold.md) gives a parent derivation of quadratic boundary folding and a sharp one-half Hölder inverse for the double first Neumann eigenmap on smooth positively curved convex domains. It explicitly credits the older Bañuelos–Pang cubic derivative method. No independent proof or contribution gate has run, and no count is added.
 
+- [I306 strict scalar/complete gap](iterations/i306-strict-scalar-complete-gap.md) proposes that R019's matrix has scalar supremum strictly below two while its complete constant is exactly two. The proof closes the nonpolynomial Schur-jet possibility using finite interpolation, primary scalar equality operations and explicit power bounds. It is an unreviewed strengthening, not an additional acceptance.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
