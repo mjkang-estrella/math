@@ -26,7 +26,7 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I283 endpoint check](iterations/i283-ball-slab-endpoint-obstruction.md) constructs a competing cylinder inside the slab and proves that R018's coefficient is not uniform as R approaches 1/3. This is a technical boundary observation, not a thirteenth finding. A moving-radius crossover lower bound and its substantiality are not established.
 
-- [I286 quantitative Cartan–Hadamard discovery](iterations/iteration286-quantitative-cartan-hadamard-standard-brief.md) investigates a new global stability estimate or counterexample using the pinned sharp isoperimetric theorem. It runs at Standard speed; no hypothesis is asserted as a result.
+- [I286 quantitative Cartan–Hadamard discovery](iterations/i286-quantitative-cartan-hadamard-parent-disposition.md) completed with the global stability estimate still unproved and unrefuted. Its definition and BV-reduction checks are technical; volume-preserving ripples refute a proposed curvature-energy bridge, not the target. No acceptance is added.
 
 - [I287 repeated-support Crouzeix discovery](iterations/iteration287-crouzeix-repeated-support-standard-brief.md) seeks a new algebraic step beyond R016 in exceptional support multiplicities. It runs at Standard speed; extending the same argument through known low-dimensional pencil results is explicitly not a substantial nomination.
 
