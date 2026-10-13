@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I224 nominated: forced infinity-Laplace regularity
+
+[I224](iterations/i224-forced-infinity-parent-nomination.md) proposes a bounded-forcing interior C1,alpha theorem and actual-gradient stability. I228 and I229 independently review proof and contribution. **Nine accepted, one remaining; no acceptance at nomination.**
+
 ## I225 unresolved; probability research starts
 
 [I225](iterations/i225-curvature-parent-disposition.md) leaves integrated quadratic coercivity unpaid and retains a weaker technical estimate. [I227](iterations/iteration227-probability-structural-bridge-brief.md) investigates finite dependence or critical coding; I224 and I226 continue. **Nine accepted, one remaining.**
