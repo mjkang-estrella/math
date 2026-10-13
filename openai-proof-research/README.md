@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I211 proof PASS; contribution and new discovery continue
+
+[I211](frontier/iterations/i211-tetrahedron-lower-bound-parent-disposition.md) passes the complete tetrahedral lower-bound proof; I212 independently checks contribution and prior art before any count increment. [I214](frontier/iterations/iteration214-neumann-eigenmap-discovery-brief.md) investigates global spectral coordinates while I213 continues its separate discovery line. **Eight accepted, two remaining.**
+
 ## I211–I213: validation and new discovery continue toward ten
 
 [I211](frontier/iterations/iteration211-tetrahedron-lower-bound-proof-brief.md) and [I212](frontier/iterations/iteration212-tetrahedron-lower-bound-contribution-brief.md) independently review the tetrahedral lower bound. [I213](frontier/iterations/iteration213-new-analytic-geometric-discovery-brief.md) screens three new geometric/analytic families. All were acknowledged as running with GPT-6.1 Sol/high/ultrafast. The user reaffirmed that work continues until ten accepted findings; publishing a checkpoint does not finish that objective. **Eight accepted, two remaining.**
