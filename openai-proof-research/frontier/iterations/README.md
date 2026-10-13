@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I239 complete: finite-viscosity proof PASS
+
+[I239](./i239-viscous-proof-parent-disposition.md) finds no unpaid bridge or required repair in I236. The independent contribution gate remains pending; a proof PASS alone does not change the count. **Nine accepted, one remaining.**
+
 ## I237 complete: correct cube bound remains technical
 
 [I237](./i237-cube-bound-parent-disposition.md) proves the total base-area bound 2sqrt(3) for the side-two cube. Cap subtraction and scalar optimization of an old density certificate do not meet the substantiality gate. **Nine accepted, one remaining; the two I236 reviews continue.**

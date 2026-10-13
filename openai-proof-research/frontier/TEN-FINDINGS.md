@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I239 complete: finite-viscosity proof PASS
+
+[I239](iterations/i239-viscous-proof-parent-disposition.md) finds no unpaid bridge or required repair in I236. The independent contribution gate remains pending; a proof PASS alone does not change the count. **Nine accepted, one remaining.**
+
 ### I237 complete: correct cube bound remains technical
 
 [I237](iterations/i237-cube-bound-parent-disposition.md) proves the total base-area bound 2sqrt(3) for the side-two cube. Cap subtraction and scalar optimization of an old density certificate do not meet the substantiality gate. **Nine accepted, one remaining; the two I236 reviews continue.**
