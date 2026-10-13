@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I208 complete: all-height covering contribution is technical
+
+I203's covering formula is retained as a proof-validated technical result. The [I208 parent disposition](frontier/iterations/i208-all-height-tiles-parent-disposition.md) accepts the independent negative contribution verdict without claiming that an exact duplicate was found. **Eight accepted, two remaining.**
+
 ## I208–I210 active; saved I207 review requires finalization
 
 [I207's saved review and auxiliary correction](frontier/iterations/i207-all-height-tiles-parent-disposition.md) are preserved after its provider failed before the terminal handoff. [I210](frontier/iterations/iteration210-all-height-tiles-proof-finalization-brief.md) finalizes that proof gate; [I208](frontier/iterations/iteration208-all-height-tiles-contribution-brief.md) assesses contribution; [I209](frontier/iterations/iteration209-elliptic-tetrahedron-improvement-brief.md) seeks a concrete tetrahedron-covering consequence. All three were acknowledged as running with GPT-6.1 Sol/high/ultrafast. **Eight accepted, two remaining.**
