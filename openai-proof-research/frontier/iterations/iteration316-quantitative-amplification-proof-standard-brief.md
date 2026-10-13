@@ -1,0 +1,23 @@
+# I316 — independent quantitative amplification proof, prepared
+
+Dispatched as a new independent proof round. Use GPT-6.1 Sol, high reasoning, Standard service. Work only in /home/mj-kang/Documents/Dev/math/openai-proof-research. Read AGENTS.md and sources/upstream.json. Stipulate the fixed OpenAI corpus, but independently check all new deductions. No child agents, live sibling reads, shared-index changes, git, publication or numerical scans.
+
+Independently audit the entire frozen parent proposal `frontier/iterations/i315-quantitative-amplification-gap.md`, whose final digest will be recorded at dispatch. The exact target Q315 is: for every integer r>=2, the explicit polynomial-inner model defines an irreducible nilpotent A_r of dimension (r³+3r)/2, with A_r^(r²+1)=0 and w(A_r)<=1, such that C_r(A_r)=2 and
+
+    C_d(A_r)<=2-(1-d/r)/22 for every 1<=d<r.
+
+The same bound must hold for all d by d Schur functions on the open unit disk. C_d denotes the supremum of disk-bounded matrix-polynomial evaluation norms, with no degree restriction. Preserve all constants, the full r,d scope, and every matrix model condition.
+
+The original qualitative I312 target used an exponential-size Sidon construction to get a strict but unspecified gap at every smaller coefficient size, and was being independently reviewed as a separate frozen round. It does NOT validate Q315. The current model is different: Phi=z diag(z^(ri)) Fourier_r diag(z^j), Theta=z Phi, C=P_H M_z|H, X weighted 1/sqrt2 on constants E, sqrt2 on F=Phi C^r and one on the orthogonal remainder; A=X C X^(-1), P=Phi transpose. Read I312's original parent construction and rank-defect warning only for context; rederive the needed model identities for these new exponents.
+
+Check T315 exactly: integral Phi B Phi*=tr(B)I/r for every constant B. Verify that r(i-j)+k-l=0 forces i=j and k=l. Check finite model dimension and nilpotence, both defect kernels and partial isometry, the explicit numerical-radius factorization, the base-first transpose and level-r witness, and irreducibility. The old scalar weighted compressed-shift model is explicitly credited to Gau–Wu 2009, not claimed new.
+
+The critical new quantitative chain must be checked independently. For epsilon=4-gamma², verify the three nonnegative similarity-loss terms, the bounds on x outside E, z outside F and the contractive defect of S=Q[C]. Check the use of D=(I-S*S)^(1/2) to obtain the quadratic defect of the projected input v, rather than losing a square root. Verify h=VQ^T, its compression w, and f=Phi W; verify the Pythagorean bound ||h-f||²<=5epsilon and ||W||²>=2-6epsilon with the stated constants. For Pi projecting off range V, verify Pi h=0, the exact twirl of WW*, and t(2-6epsilon)<=5epsilon even when the lower bound is negative. Check the inversion epsilon>=2t/(5+6t)>=2t/11 and the final 1/22 norm gap. Do not replace it by a weaker exponent or a compactness modulus.
+
+The qualitative hierarchy's contribution question concerns whether old model reducibility and generic compactness already supply its result. Q315 has a different claim, a dimension-independent gap at a fixed channel fraction, and polynomial base dimension; this task judges correctness only. No contribution or acceptance decision. The parent will append any finalized I312/I314 evidence available at dispatch; otherwise their live files must remain unread.
+
+Return PASS unchanged, FAIL with an exact invalid step/counterexample, or UNRESOLVED with an exact missing operation. Separate explanatory expansion from actual repair and never silently weaken a hypothesis or constant. Write ONLY `frontier/reviews/i316-quantitative-amplification-proof.md`; `frontier/experiments/i316_quantitative_amplification_proof/{analysis.md,reading-and-failures.md,input-authentication.json}`; `frontier/sources/i316_quantitative_amplification_proof/literature.md` plus necessary short metadata. No full external bodies or sections. Record raw input identities and precise semantic reads. Return detached hashes for the five finalized outputs.
+
+## Dispatch authentication and completed evidence
+
+Q315 SHA256: `53020ac5aa0e859cf48c3746c92adf2ab832f51dc9bdc7ddaf145bc3d400c41d`. I312 finalized PASS unchanged for the entire original qualitative hierarchy. Its final report hash is `d0c28028e872b56cc03a5cf0caa984de12b52afeae9ece3a73c60199cfe823a3`; its analysis hash is `8b4b4cb8590af8149169d60e1c5b3aebce2b22795042044c9c92cc99625647a2`. Both finalized paths were supplied with permission to read them, explicitly without presuming any Q315 constant or model change. I313 and I314 remain live and unreadable. Dispatch: `mathdb-i316-quantitative-amplification-proof-sol-high-standard-20261013`, GPT-6.1 Sol/high/Standard.
