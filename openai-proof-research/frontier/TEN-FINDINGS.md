@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I211–I213: validation and new discovery continue toward ten
+
+[I211](iterations/iteration211-tetrahedron-lower-bound-proof-brief.md) and [I212](iterations/iteration212-tetrahedron-lower-bound-contribution-brief.md) independently review the tetrahedral lower bound. [I213](iterations/iteration213-new-analytic-geometric-discovery-brief.md) screens three new geometric/analytic families. All were acknowledged as running with GPT-6.1 Sol/high/ultrafast. The user reaffirmed that work continues until ten accepted findings; publishing a checkpoint does not finish that objective. **Eight accepted, two remaining.**
+
 ### I209 nominated: tetrahedral cylinder-cover lower bound
 
 [I209](iterations/i209-tetrahedron-lower-bound-parent-nomination.md) nominates sum |B_i| >= (sqrt(15)/9) A_min(T) for regular tetrahedra and proves sharpness within quadratic-density certificates. Independent proof and contribution gates are pending. The candidate is independent of I203. **Eight accepted, two remaining.**
