@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I241 complete: selected high-viscosity branch excluded
+
+[I241](./i241-p-gradient-parent-disposition.md) obtains an actual-p cylinder estimate and rules out a high-viscosity bad scale under explicit noncritical selection hypotheses. Producing those hypotheses for arbitrary approximants remains unpaid. **Nine accepted, one remaining.**
+
 ## I242–I243: complete Crouzeix rigidity follow-up
 
 [I242](./iteration242-crouzeix-four-dimensional-rigidity-brief.md) investigates the complete positive-boundary certificate; [I243](./iteration243-crouzeix-extremal-scalarization-brief.md) independently investigates scalarization in base dimension four. Both receive I238’s exact amplification obstruction. GPT-6.1 Sol/high/ultrafast was acknowledged running. **Nine accepted, one remaining.**
