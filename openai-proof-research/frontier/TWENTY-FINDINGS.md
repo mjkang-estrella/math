@@ -16,6 +16,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I262: global uniform channel stability](iterations/i262-global-channel-stability.md) strengthens the I250/I259 spectral proposals by removing the support restriction. It proposes two-sided full-deficit control for all small measurable real channel rotations, with constants independent of channel count and spatial variation. The [I260 proof](iterations/i260-global-channel-proof-parent-disposition.md) passed with no required repair; [I261 contribution](iterations/i261-global-channel-contribution-parent-disposition.md) concluded TECHNICAL, so I262 is not accepted as a substantial finding. The earlier variants will not be counted separately. [I264](iterations/i264-weighted-neighborhood-channel-stability.md) is a new unreviewed strengthening using weighted-average closeness alone; I260/I261 remain on their unchanged I262 target. The new [I265 proof](iterations/iteration265-weighted-neighborhood-channel-proof-standard-brief.md) and [I266 contribution](iterations/iteration266-weighted-neighborhood-channel-contribution-standard-brief.md) gates are running at Standard speed. I266 explicitly includes the prior constructive contribution objection.
 
+- [I267: sparser rooted packing](iterations/i267-sparser-rooted-packing-transfer.md) proposes the same rank-transfer conclusion under r^b >= n^(-1/3)(log n)^2, using self-bounding concentration and a shorter permutation exposure. This unreviewed follow-up does not override I258's prior TECHNICAL verdict and has no count increment.
+
 These are candidates and research records, not additional accepted results.
 
 ## Accepted count

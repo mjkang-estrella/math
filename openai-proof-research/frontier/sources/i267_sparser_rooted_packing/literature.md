@@ -1,0 +1,11 @@
+# I267 primary inputs and limits
+
+The new external input is Boucheron–Lugosi–Massart, *On concentration of self-bounding functions*, Electronic Journal of Probability 14 (2009), no.64, pp.1884–1899, DOI https://doi.org/10.1214/EJP.v14-690 . Primary journal mirror PDF: https://www.maths.tcd.ie/EMIS/journals/EJP-ECP/article/download/690/690-2335-1-PB.pdf . The author publication page links the DOI: https://stephane-v-boucheron.fr/publication/mr-2540852/ .
+
+The parent read the definitions and Theorem1 in full, then the modified logarithmic Sobolev statement, differential-inequality reduction, complete presented Theorem1 proof, and Lemmas2–4 with their proofs in Sections4–5. The retained statement and proof excerpts are exact pdftotext -layout ranges, with identities in the manifest. Section2 applications and most Section3 material are not claimed fully read or used. The original antecedent proof of the modified log-Sobolev input is not claimed read. The full PDF was retrieved in memory for extraction, not retained. Its SHA256 is e1cd5fac74d4863df5417a6513bc05aeb5e83408a16a0512d29ac656d9e6a179.
+
+Theorem1 supplies upper and lower tails for the (d,0)-self-bounding functionals proved in I267. This is classical input, not a new concentration theorem. The new deduction is the application to the weighted maximum packing, combined with the compressed test count and the shorter permutation exposure.
+
+The remaining graph construction and exact source contracts are those of I248 and its full independent correctness reconstruction I257. The pinned source is family175, Graph Decompositions at the Integral Expectation Threshold, revision fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. The actual pinned compression/transfer proof and related primary rooted-embedding material were read earlier in this parent chain and in I257. Those earlier source read limits are retained; I267 does not claim a fresh full retrieval or expanded reading of them.
+
+The prior contribution judgment I258 was TECHNICAL. No new literature survey has yet decided whether the broader density range is a substantial contribution. There is no claim of a sharp threshold, no candidate-list result, and no asserted worldwide novelty. A parameter improvement obtained through known concentration may itself remain technical; an independent contribution assessment is needed.
