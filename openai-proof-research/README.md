@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I225 unresolved; probability research starts
+
+[I225](frontier/iterations/i225-curvature-parent-disposition.md) leaves integrated quadratic coercivity unpaid and retains a weaker technical estimate. [I227](frontier/iterations/iteration227-probability-structural-bridge-brief.md) investigates finite dependence or critical coding; I224 and I226 continue. **Nine accepted, one remaining.**
+
 ## I224–I226: research continues toward ten
 
 [I224](frontier/iterations/iteration224-infinity-gradient-stability-brief.md) seeks an inhomogeneous gradient estimate; [I225](frontier/iterations/iteration225-new-curvature-bridge-brief.md) investigates curvature and transport; [I226](frontier/iterations/iteration226-new-algebraic-bridge-brief.md) seeks a structural algebraic bridge. All three were acknowledged as running with GPT-6.1 Sol/high/ultrafast. **Nine accepted, one remaining.**
