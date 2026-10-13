@@ -1,0 +1,7 @@
+# Sharp ball–tube and ball–slab nesting costs in the cubic three-torus
+
+Myeongjin Kang
+
+Assume the scalar isoperimetric profile and equality classification for the cubic flat three-torus stated in the paper. We determine the sharp summed-perimeter cost of nesting a ball-volume region inside a slightly thinned tube-volume or slab-volume region, minimizing over all finite-perimeter pairs. For ball–tube contact the minimum is asymptotic to K(R) epsilon squared, where K(R) = 4 pi R / (R + 4 G_R) and G_R = R squared - (R/2) cot(1/(2R)), for 2/9 < R < 1/pi. For ball–slab contact it is asymptotic to 2 pi epsilon squared / |log epsilon|, for 1/(2 pi) < R < 1/3. A common volume-correction flow gives scalar quasiminimality of exact paired minimizers. The sharp constants then follow from the coupled quadratic problem and logarithmic capacity at the two polar contacts.
+
+7 pages. Comments and corrections welcome.
