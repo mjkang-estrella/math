@@ -1,5 +1,11 @@
 # OpenAI mathematics research
 
+**I206 review running:** [Independent contribution assessment](frontier/iterations/iteration206-foulkes-socle-contribution-brief.md)
+checks whether the I202 odd-prime socle family adds a substantive result
+beyond known determinant and Latin-square methods. No acceptance is
+presumed; a separate proof review would still be required.
+**8 accepted, 2 remaining.**
+
 **I202 completed; contribution assessment pending:**
 [Parent checkpoint](frontier/iterations/i202-foulkes-parent-disposition.md)
 checks the odd-prime determinant socle family. The full Foulkes quotient

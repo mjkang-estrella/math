@@ -16,6 +16,14 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I206 running: independent contribution assessment
+
+The [brief](iteration206-foulkes-socle-contribution-brief.md) and
+[dispatch](iteration206-foulkes-socle-contribution-task.json) ask whether
+the complete I202 auxiliary family merits a nomination. The review was
+acknowledged as running with GPT-6.1 Sol/high/ultrafast. No acceptance or
+finding-count change follows from dispatch. **Eight accepted, two remaining.**
+
 ## I202 completed: auxiliary socle family, full target unresolved
 
 The [report](i202-foulkes-quotient.md) and

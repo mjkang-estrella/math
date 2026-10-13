@@ -21,6 +21,11 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+[I206](iterations/iteration206-foulkes-socle-contribution-brief.md) was
+acknowledged as running with GPT-6.1 Sol/high/ultrafast. It independently
+assesses contribution of the I202 auxiliary family. I203 and I205 retain
+their separate research scopes. **Eight accepted, two remaining.**
+
 **I202 completed:** [Parent checkpoint](iterations/i202-foulkes-parent-disposition.md)
 records the odd-prime socle family and the unresolved full quotient.
 Its contribution is being assessed independently before any nomination.
