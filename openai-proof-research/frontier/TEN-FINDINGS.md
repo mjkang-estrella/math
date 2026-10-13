@@ -1,5 +1,7 @@
 # Ten substantial findings
 
+**Completed first milestone.** The user has now requested twenty total findings. See the [active twenty-finding ledger](TWENTY-FINDINGS.md); the ten acceptances recorded here remain valid. Earlier statements that no discovery is active describe the completed milestone.
+
 User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resumed 2026-10-09: “Now keep proceed for 10 target”. This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 10 accepted, 0 remaining; completed 2026-10-12**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
 
 **Historical pause, 2026-10-08:** “Let’s pause after 4th finding for now.” R010 passed all acceptance gates and the work was paused with partial artifacts preserved. **The user explicitly resumed on 2026-10-09**, then instructed: “also after the verification commit & push to the public repo”. The old pause restriction is revoked. Each newly accepted finding still receives its own commit. The user selected publication of **only `openai-proof-research`** to `https://github.com/mjkang-estrella/math`. Public history is filtered to this directory; unrelated local research is excluded. Filtering changes commit identifiers while retaining separate commits.
