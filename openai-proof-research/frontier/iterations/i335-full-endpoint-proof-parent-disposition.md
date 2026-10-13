@@ -1,0 +1,11 @@
+# I335 parent disposition — full endpoint proof passes
+
+2026-10-13. The independent proof review returns **PASS unchanged** for full S313 and its I334 production argument. The independent contribution gate remains pending. The total is **15/20**; the theorem and all its ingredients remain one nomination.
+
+The parent read all five final records and checked their detached hashes, eighteen local input identities and nine freshly retrieved pinned source identities. See [authentication](../experiments/i335_parent_integration/input-authentication.json), [review](../reviews/i335-full-endpoint-proof.md), and [independent analysis](../experiments/i335_full_endpoint_proof/analysis.md). Input byte authentication does not expand the documented semantic reading boundaries. The review discloses its initial out-of-project filename inventory; no other-project body was read or written.
+
+The checked theorem retains every original quantifier: arbitrary finite cube dimension, arbitrary bounded soft kernel including endpoints, arbitrary bias, all positive information amplitudes up to a fixed a1<1, and correlations in a fixed compact subinterval of (0,1). Its squared-distance loss is C a^(-4), and the normalized fixed-bias one-coordinate family proves exponent four sharp.
+
+The review independently recalculates the original higher-mode entrance, the uniform quartic passage with exact bad-input entropy, and the relative coordinate-cone estimate. The absolute quartic remainder is used only to enter that cone; it is not used to pay an arbitrarily vanishing distance. The cone estimate retains the exact conditional baseline, pays original higher modes, and makes the clipping error vanish with the other-singleton energy.
+
+The new dimension-free production surplus D>=F(I)+c(Eu)^2 I^2 passes with its strict thinning margin, one-bit core surplus, entropy-flag bound, convex potential, both canonical geometries, original individual child budgets and induction. Positive-time integration treats means approaching endpoints. R020 is used only on a fixed positive-amplitude interval. No repair or narrower hypothesis is required. This is analytic proof validation, not machine formalization, a contribution decision or a priority certificate.
