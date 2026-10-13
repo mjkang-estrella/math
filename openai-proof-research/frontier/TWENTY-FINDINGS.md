@@ -22,11 +22,13 @@ The following work is active or awaiting independent review. All active and futu
 
 - **Accepted as [R018](findings/R018-ball-slab-logarithmic-contact.md):** the I274/I275 logarithmic ball–slab minimum over all finite-perimeter pairs. [I277 proof review](iterations/i277-logarithmic-contact-proof-parent-disposition.md) passed without necessary repair; [I278 contribution review](iterations/i278-logarithmic-contact-contribution-parent-disposition.md) concluded SUBSTANTIAL for the singular lower passage beyond R017, with classical logarithmic contact laws explicitly credited. This is the twelfth acceptance.
 
-- [I282 arithmetic joint-statistics discovery](iterations/iteration282-arithmetic-joint-statistics-standard-brief.md) investigates a new bridge beyond the completed prime-factor findings, using pinned families 011/012 and primary comparisons. It is running with GPT-6.1 Sol/high/Standard; no result or acceptance is assumed.
+- [I282 arithmetic joint-statistics discovery](iterations/i282-arithmetic-joint-statistics-parent-disposition.md) completed with a proved technical partial below total selected mass 1/2 and an explicit unpaid weighted prime-distribution estimate for the full target. No acceptance is added.
 
 - [I283 endpoint check](iterations/i283-ball-slab-endpoint-obstruction.md) constructs a competing cylinder inside the slab and proves that R018's coefficient is not uniform as R approaches 1/3. This is a technical boundary observation, not a thirteenth finding. A moving-radius crossover lower bound and its substantiality are not established.
 
 - [I286 quantitative Cartan–Hadamard discovery](iterations/iteration286-quantitative-cartan-hadamard-standard-brief.md) investigates a new global stability estimate or counterexample using the pinned sharp isoperimetric theorem. It runs at Standard speed; no hypothesis is asserted as a result.
+
+- [I287 repeated-support Crouzeix discovery](iterations/iteration287-crouzeix-repeated-support-standard-brief.md) seeks a new algebraic step beyond R016 in exceptional support multiplicities. It runs at Standard speed; extending the same argument through known low-dimensional pencil results is explicitly not a substantial nomination.
 
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
