@@ -62,9 +62,11 @@ The following work is active or awaiting independent review. All active and futu
 
 - **Accepted as [R021](findings/R021-exact-fixed-gate-discrete-logarithms.md):** the complete I322 exact fixed-gate discrete-logarithm theorem. [I323 proof](iterations/i323-exact-logarithm-proof-parent-disposition.md) passes the full theorem and compiler unchanged; [I324 contribution](iterations/i324-exact-logarithm-contribution-parent-disposition.md) concludes SUBSTANTIAL for the selected-event probability estimate and exact fixed-dimensional evaluation. Source probability engineering and classical counting are credited. Prime-order and arbitrary-order versions count once; worldwide priority is unestablished.
 
-- [I327 fixed-gate algebraic search](iterations/iteration327-fixed-gate-algebraic-search-standard-brief.md) is active at Standard speed. Its main target is exact primitive-element search; the unresolved step concerns multiple valid outputs rather than the uniquely verified logarithm of I322. No theorem or acceptance is assumed from this plan.
+- [I327 fixed-gate algebraic search](iterations/i327-algebraic-search-parent-disposition.md) completed with a proposed exact primitive-element algorithm using the stipulated zero-free half-plane and exact factorization. It is classified TECHNICAL and not nominated. Direct multi-witness completion remains unresolved; the symmetric obstruction is not an impossibility theorem for primitive finding.
 
 - [I329 zero-key Bell research](iterations/i329-zero-key-bell-research-brief.md) is active at Standard speed. Its target is ordinary bipartite Bell nonlocality within the stipulated zero-key represented class. The [natural block-measurement obstruction](iterations/i329-parent-block-measurement-obstruction.md) rules out a setting-dependent postselection shortcut; no Bell theorem is assumed.
+
+- [I331 two-sided Sobolev approximation](iterations/i331-bi-sobolev-research-brief.md) is active at Standard speed. It asks for one sequence approximating both a spatial map and its inverse strongly in W1,2, or a proved counterexample. Forward approximation and inverse smoothness do not settle this target.
 
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 

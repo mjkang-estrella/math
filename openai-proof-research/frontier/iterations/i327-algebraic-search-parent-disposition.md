@@ -1,0 +1,15 @@
+# I327 parent disposition — exact primitive finding, technical consequence
+
+2026-10-13. The completed research obtains exact primitive-element search under the full stipulated corpus, using exact factoring and the Dirichlet zero-free half-plane. It explicitly declines a substantial-finding nomination. **Fifteen findings remain accepted; no increment.** The frozen child's references to fourteen and unreviewed I322 reflect its entry context, before R021 acceptance.
+
+The parent read all five terminal artifacts, checked their detached hashes, matched seven local-input identities and freshly matched thirteen pinned source identities. Parent authentication is in [the integration record](../experiments/i327_parent_integration/input-authentication.json). The parent additionally read the exact quasi-Riemann theorem at lines 106–111 and its existing quadratic-nonresidue/root-algorithm corollary at lines 325–361. Fresh source hashing does not imply reading other source bodies in full.
+
+The algorithm factors p-1 with the stipulated exact finite-gate circuit. Classical effective explicit-formula and zero-count bounds, combined with the stipulated strip 1/8<=Re(rho)<=7/8, bound a witness outside each proper multiplicative subgroup by K(ceil(log2 p)+1)^32. For each prime ell dividing p-1, a charged deterministic scan finds a_ell with a_ell^((p-1)/ell)!=1. Its maximal ell-primary component has the full required order, and the product of those components generates F_p^*. Every search and arithmetic step is inside the polynomial worst-case clock. The argument uses the analytic theorem essentially; it does not exactify multi-output quantum search.
+
+The separately stated ring obstruction rules out symmetric quarter-success preparation when the number of generators has an odd factor. It does not rule out arbitrary asymmetric preparations, and does not contradict the deterministic analytic algorithm. The black-box exact-order transfer is supporting technical progress under an explicit coherent encoding/oracle interface. It is not another acceptance.
+
+The proof is recorded as a complete research deduction, not as having passed two new independent acceptance gates. The author's negative contribution assessment is appropriate: subgroup escape and primary assembly are classical once the strong analytic premise is available. Neither an unsuccessful search for a new compiler nor the theorem's usefulness changes that classification. No worldwide priority is claimed. Scope deviations and failed retrievals remain in the original log.
+
+Evidence: [report](i327-fixed-gate-algebraic-search.md), [analysis](../experiments/i327_fixed_gate_algebraic_search/analysis.md), [reading log](../experiments/i327_fixed_gate_algebraic_search/reading-and-failures.md), [authentication](../experiments/i327_fixed_gate_algebraic_search/input-authentication.json), [literature](../sources/i327_fixed_gate_algebraic_search/literature.md).
+
+The freed slot was assigned to [I331 two-sided Sobolev approximation](i331-bi-sobolev-research-brief.md), using GPT-6.1 Sol/high/Standard. I325 and I329 continue independently. No new result is assumed from the I331 launch.
