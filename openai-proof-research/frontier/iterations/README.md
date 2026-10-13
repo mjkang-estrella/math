@@ -18,6 +18,13 @@ When a report returns without meeting the gate, integrate its evidence and use i
 
 ## I197 fresh discovery restarted with corrected exclusions
 
+**Model switch:** The user requested stopping the first I197 agent and
+rerunning it with GPT-6.1 Sol, high reasoning, and ultrafast service.
+The old task was confirmed interrupted with no pending runs; the
+[new round](iteration197-r2-sol-high-ultrafast-task.json) was acknowledged
+as running and inherited the partial source notes. No nomination was
+delivered before the switch.
+
 The [parent restart](i197-fresh-discovery-parent-restart.md) records that
 I196 and its continuation are cancelled with no pending child runs, and
 the latest retry failed to start. The [new brief](iteration197-fresh-discovery-brief.md)

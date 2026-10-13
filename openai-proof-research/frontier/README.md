@@ -21,6 +21,12 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+At the user's request, the initial I197 agent was stopped and
+[round 2](iterations/iteration197-r2-sol-high-ultrafast-task.json) was
+started with **GPT-6.1 Sol, high reasoning, ultrafast service**. It continues
+the same assignment with the interrupted agent's partial source records.
+No nomination had been delivered. **Eight accepted, two remaining.**
+
 **I195 cap-prism theorem checked; long-gap front parked:**
 [Parent review](iterations/i195-long-gap-deficit-parent-disposition.md)
 passes the complete long-gap cap-prism family ($\Delta=1$ with zero
