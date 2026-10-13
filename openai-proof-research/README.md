@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I242–I243: complete Crouzeix rigidity follow-up
+
+[I242](frontier/iterations/iteration242-crouzeix-four-dimensional-rigidity-brief.md) investigates the complete positive-boundary certificate; [I243](frontier/iterations/iteration243-crouzeix-extremal-scalarization-brief.md) independently investigates scalarization in base dimension four. Both receive I238’s exact amplification obstruction. GPT-6.1 Sol/high/ultrafast was acknowledged running. **Nine accepted, one remaining.**
+
 ## I238 complete: scalar stability remains technical
 
 [I238](frontier/iterations/i238-crouzeix-parent-disposition.md) retains a restricted scalar theorem and an exact obstruction to amplifying its proof. Complete four-dimensional rigidity remains open and receives focused follow-up. **Nine accepted, one remaining.**
