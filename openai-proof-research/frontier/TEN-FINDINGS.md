@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I238 complete: scalar stability remains technical
+
+[I238](iterations/i238-crouzeix-parent-disposition.md) retains a restricted scalar theorem and an exact obstruction to amplifying its proof. Complete four-dimensional rigidity remains open and receives focused follow-up. **Nine accepted, one remaining.**
+
 ### I240 complete: finite-viscosity result remains technical
 
 [I240](iterations/i240-viscous-contribution-parent-disposition.md) declines substantiality while preserving I239 proof PASS. The completed theorem is retained without counting it; I241 pursues the remaining p-gradient regime. **Nine accepted, one remaining.**
