@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I234 complete: local gradient estimate remains unpaid
+
+[I234](iterations/i234-viscous-local-parent-disposition.md) records the smooth partial estimates and the missing local viscosity bridge. The separate contact-propagation route continues. **Nine accepted, one remaining.**
+
 ## I234–I236: focus on the remaining estimates
 
 [I234](iterations/iteration234-viscous-local-regularity-brief.md) studies local regularity of the viscous equation; [I236](iterations/iteration236-viscous-contact-propagation-brief.md) studies contact propagation for its actual barycentric pair. [I235](iterations/iteration235-finite-range-crossing-brief.md) targets the missing finite-range crossing estimate. All were acknowledged running with GPT-6.1 Sol/high/ultrafast. **Nine accepted, one remaining.**
