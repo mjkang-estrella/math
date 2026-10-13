@@ -1,0 +1,56 @@
+# I268 primary literature and read extents
+
+2026-10-12. Independent contribution comparison of authenticated I267. Final verdict TECHNICAL; no proof-gate verdict. All pinned OpenAI results are stipulated true. Exact source bytes and excerpt SHA256s are in frontier/experiments/i268_sparser_rooted_packing_contribution/input-authentication.json. Every retained excerpt was independently read completely. External full PDFs were retrieved and hashed in memory but were not retained or claimed fully read.
+
+## Pinned175 and needed companions
+
+[Graph Decompositions at the Integral Expectation Threshold, pinned main.tex](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Graph-Decompositions-at-the-Integral-Expectation-Threshold-October-5-2026/build/main.tex). All 841 lines read, including every proof and assembly; retained 175-graph-decomposition-full.tex. Fresh retrieval SHA256 c40e3b32954b715c0e755bf763d5fbe675f4134d3b6b0a2936579751cb7cba7f, Git blob 928bb7e06d85629e06b700bc69080b179bacbb96, matched the immutable preprints-tree entry.
+
+The actual lem:compression selects O(r^(-s)) supports with smoothed indicator ≥1/2; its support hypothesis excludes the empty set, which I248 handles explicitly. The complete prop:transfer proof controls all root choices and compressed tests using common source/target means, treats repeated demand and uses ordinary Hall. Its stated density range is r^s≥n^(-.01); its scalar independent-row concentration is Hoeffding. The separate prop:degree-embedding and prop:stars proofs and the final partition were read. No exact d-block rank transfer is stated. The deeper decomposition theorem is not a premise of I267's self-contained packing deduction; the dependence is on this compression/transfer method.
+
+[Integral/fractional introduction](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Integral-and-fractional-expectation-thresholds-are-equivalent-September-23-2026/build/source/sections/introduction.tex), all 208 lines, and [consequences.tex](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Integral-and-fractional-expectation-thresholds-are-equivalent-September-23-2026/build/source/sections/consequences.tex), all 50 lines, read and freshly authenticated. The thm:main contract is dimension-independent constant-factor fractional-to-integral covering; cor:two-unions has a complete cover-budget consequence proof. Neither read section supplies matching-rank transfer. Internal selector and rounding proofs were not read or audited.
+
+[Discrete-convexity introduction](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Talagrands-discrete-convexity-conjecture-September-23-2026/build/source/sections/00_intro.tex), all 173 lines, and [density restoration](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Talagrands-discrete-convexity-conjecture-September-23-2026/build/source/sections/03_density.tex), all 84 lines, read and freshly authenticated. These state original-density covering outside bounded unions, prove the two-union consequence, and restore density by dependent-row couplings. They concern covers, not disjoint rooted packing ranks. Internal covering/signed-kernel sections and the figure input were not read. This is a bounded companion comparison, not a blanket search of all stipulated results.
+
+## Classical self-bounding input
+
+[Boucheron–Lugosi–Massart, On concentration of self-bounding functions, EJP 14 (2009), no.64, pp.1884–1899](https://www.maths.tcd.ie/EMIS/journals/EJP-ECP/article/download/690/690-2335-1-PB.pdf), [DOI](https://doi.org/10.1214/EJP.v14-690). Exact PDF SHA256 e1cd5fac74d4863df5417a6513bc05aeb5e83408a16a0512d29ac656d9e6a179, 180160 bytes, independently matched I267's original PDF identity.
+
+Read both I267-retained excerpts fully and independently matched their bytes to fresh pdftotext -layout extraction. Retained blm-statement.txt (SHA256 cc1cac25ab9a50d4626a6fd484a245fc5a4c9da153c0a28cc3a36b3304eb052e) and blm-proof.txt (435fc9311d1ae4ca11534c33a7a935334a138ea96de37d438fec452bb8e99b9f). The parent records original extraction ranges 45–215 and 540–891; the retained newline counts differ because form feeds are also split by Python splitlines. Bytes, not a reflowed line numbering convention, authenticate these excerpts.
+
+Read all Definitions 1–3, Theorem 1 and its remarks; the modified-log-Sobolev statement, differential-inequality reduction, complete presented Theorem 1 proof and Lemmas 2–4 with their proofs in §§4–5. Classical antecedent proofs of the log-Sobolev input were not read. Most applications in §§2–3 were not read; the proof excerpt begins with a short ending fragment of §3, which was read but is not used. The theorem supplies mean-scale tails for (d,0)-self-bounding optima; no new concentration result is credited to I267. Its introduction also records prior self-bounding mean-scale bounds.
+
+## Close packing-concentration precedents
+
+[Blum, Caragiannis, Haghtalab, A. D. Procaccia, E. B. Procaccia and Vaish, Opting Into Optimal Matchings, arXiv:1609.04051v1](https://arxiv.org/pdf/1609.04051v1). Current primary abstract/version record was read on 2026-10-12 and shows v1, 13 September 2016; the publication is SODA 2017. PDF SHA256 e91a9213d709024189a060e625becb4b672014f161ff3bbaf3dda41a32c6dffa, 266008 bytes.
+
+Completely read and retained exact pdftotext -layout splitlines ranges 200–294 (bounded §2 context, including exact Lemma 2.4), 440–520 (all §2.2 concentration argument plus short next-section opening), 851–920 (all Appendix A.3 including the upper-tail discussion). Lines 100–150 were additionally read for context, not retained and not a full introduction claim. Every relevant self-bounding statement and proof was read.
+
+Their sampled induced subgraph of a fixed directed graph supports optimal packings of cycles of length at most L. Vertex deletion loses at most one bounded cycle; charging necessary deletions to vertices covered by an optimum proves normalized (L,0)-self-boundedness, then BLM gives the mean-scale lower tail. Their §2.2 explicitly discusses why ordinary n-coordinate Lipschitz concentration is inadequate. This is a close mechanism precedent. It is not I267's random-edge, smoothed weighted, arbitrary-root-family or Cartesian-product theorem. Their warning about a linear-t upper-tail term does not defeat I267's constant-relative-error use, where that denominator remains O_d(μ).
+
+[Ezra, Leonardi, Reiffenhäuser, Russo and Tsigonias-Dimitriadis, Prophet Inequalities via the Expected Competitive Ratio, arXiv:2207.03361v4](https://arxiv.org/pdf/2207.03361v4). Current primary version record read on 2026-10-12; v4 is 6 October 2023. PDF SHA256 aa2db2f95ac137ceebcad4cf4058a899fa3dee060099b0b95699c5b5ac071609, 483120 bytes.
+
+Completely read and retained ranges 355–395 (model and optimum definitions), 410–465 (structural self-bounding definition/Proposition 1 and BLM statement), 1795–1940 (bounded beginning of Appendix F.2 through full Definitions 5–7, Claim 13/proof, Proposition 5/proof and Remark 2, plus the next paragraph opening). The whole cited weighted optimum proof was read. Later prophet reductions and other appendices were not read. The 2025 ACM journal publication surfaced in search but its DOI retrieval returned 403; no claim about unread final journal revisions is used.
+
+Their normalized maximum weighted feasible-set objective is self-bounding for downward-closed packing and extended-XOS objectives. Coordinate deletion is charged to one maximizing feasible set. It is direct evidence that the weighted extension is an established technique. I267's weights are dependent functions of vertex-owned graph coordinates, so the theorem is not imported by pretending those item weights are independent. I267 supplies its own local deletion surrogate, which is a general bounded-disjoint-item argument. Neither primary comparison proves the exact transfer theorem KNOWN.
+
+## Rooted-block primary comparison
+
+[Ferber–Luh–Nguyen, Embedding Large Graphs into a Random Graph, arXiv:1606.05923v3](https://arxiv.org/pdf/1606.05923v3). Fresh PDF SHA256 e723e9ef87d47c559ba520f1bcd2dd4a399f9a26de241422f84245821485e7c8, 392820 bytes. Read all §2.4, retained all 470 lines, and verified the existing exact excerpt as a substring of fresh extraction. This includes Lemmas 2.5/2.7, all covariance calculations and Theorem 2.6 (the AH contract). Other sections were not systematically read in I268. AH's original topological proof was not read.
+
+Compatible-block hypergraphs, independent rounds and all-subfamily matching inequalities are already present. Their W_ij∩W_i'j'=∅ for i≠i' is used when different-index extended copies have common required edges only in their internal overlap. Arbitrary root reuse prevents importing that covariance calculation. No two-host source-rank theorem is stated. It is architecture prior art, not a direct improvement comparison across identical hypotheses.
+
+[Nenadov–Škorić, Powers of Hamilton cycles in random graphs and tight Hamilton cycles in random hypergraphs, arXiv:1601.04034v2](https://arxiv.org/pdf/1601.04034v2). Fresh PDF SHA256 51a14fe0d557f6d6be65b6d176c565a3f73f9f0d793661d1814673390e9a9e2e, 330427 bytes. Read entire §3 (541 retained lines): definitions, Lemma 3.3, Claim 3.4, all Connecting Lemma/§3.1 corollary proofs, and all §3.2 Janson proof. Verified retained bytes against fresh extraction. Other sections and Hamilton assembly were not read.
+
+Lemma 3.3 is already simultaneous for allowed disjoint root-tuple families, with rooted-density m(F,x) control and possibly growing structures. Its copy-after-deletion property and greedy rounds supply rooted matching. The δ_2 estimate explicitly uses disjoint root tuples to place intersecting copies in the same family. I267 has unrestricted root overlap and a source-relative rank comparison, so there is no direct implication. This source identifies actual subgraph-density/covariance control beyond I267's coarse witness-mean bound.
+
+## Bounded current search
+
+Twelve queries, four batches, all on 2026-10-12:
+
+- “self-bounding” “matching” graph packing; “self-bounding” “weighted” packing; random graphs rooted packing transfer overlapping roots concentration.
+- “Opting Into Optimal Matchings” arxiv; “Prophet Inequalities via the Expected Competitive Ratio” arxiv; “rooted” “packing” “self-bounding”; “rooted” “rank transfer” random graph.
+- “Opting Into Optimal Matchings” arxiv Blum Haghtalab; “Prophet Inequalities via the Expected Competitive Ratio” site:arxiv.org.
+- “rooted packing” “transfer” graph random; “self-bounding” “rooted” graph packing; “weighted packing” “self-bounding” graph concentration.
+
+Search snippets were leads, not theorem evidence. No exact rank-transfer statement was located; absence does not demonstrate novelty. No MathDB prominence or score is asserted. No fresh Yang proof was read or used; completed I258's description of a withdrawn argument is not mathematical evidence for this gate. Access limitations and corrected truncation incidents are recorded in reading-and-failures.md. No worldwide-priority claim follows from these bounded comparisons.
