@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I232 complete: finite-range speed remains unresolved
+
+[I232](iterations/i232-finite-range-parent-disposition.md) retains technical partial results and the precise unproved step. **Nine accepted, one remaining; research continues.**
+
 ## I230 complete: unrestricted p-gradient target remains open
 
 [I230](iterations/i230-p-gradient-parent-disposition.md) retains technical partial results and the precise unproved step. **Nine accepted, one remaining; research continues.**
