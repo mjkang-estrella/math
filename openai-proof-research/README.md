@@ -1,5 +1,11 @@
 # OpenAI mathematics research
 
+**I198 completed, technical only:** The [parent disposition](frontier/iterations/i198-geometry-representation-parent-disposition.md)
+checks the Foulkes threshold b>=(a-1)^2 and rotational covering obstruction,
+and records the unpaid cone-regularization and conductor estimates.
+No substantial result is nominated. Separate focused follow-ups are next.
+**8 accepted, 2 remaining.**
+
 **I198 running:** [New discovery round](frontier/iterations/iteration198-geometry-representation-discovery-brief.md)
 screens hyperbolicity cones and semidefinite lifts, then cylinder coverings
 and Foulkes maps if needed. It uses GPT-6.1 Sol, high reasoning, ultrafast.

@@ -6,6 +6,17 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I198 completed: technical bounds, no substantial nomination
+
+[I198](iterations/i198-geometry-representation-discovery.md) and its
+[parent disposition](iterations/i198-geometry-representation-parent-disposition.md)
+record canonical Foulkes surjectivity from b>=(a-1)^2, the source-form
+regularization threshold, and a rotational counterexample to the unchanged
+cylinder cost. The Foulkes proof combines accepted source operations;
+the proposed stronger mechanisms remain unpaid. Output and source hashes
+were checked, with the predecessor and I31 files preserved.
+**Eight accepted, two remaining.**
+
 ### I198: new bounded discovery round
 
 [I198](iterations/iteration198-geometry-representation-discovery-brief.md)

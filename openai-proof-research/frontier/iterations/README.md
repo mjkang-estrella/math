@@ -16,7 +16,16 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
-## I198: lifts, coverings, and Foulkes discovery
+## I198 completed: three focused bridges remain
+
+The [report](i198-geometry-representation-discovery.md) and
+[parent disposition](i198-geometry-representation-parent-disposition.md)
+retain the square Foulkes threshold as technical and isolate the structured
+annihilator/conductor, regularized-cone, and elliptic-covering gaps.
+Five output hashes, 38 source copies, and six preservation baselines match.
+No substantial nomination is made. **Eight accepted, two remaining.**
+
+## I198 historical launch: lifts, coverings, and Foulkes discovery
 
 The [brief](iteration198-geometry-representation-discovery-brief.md) and
 [dispatch](iteration198-geometry-representation-discovery-task.json)
