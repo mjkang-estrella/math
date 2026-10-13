@@ -8,10 +8,10 @@ Each newly accepted finding receives its own commit, followed by verified public
 
 ## Active research
 
-The following work is active or awaiting independent review. All delegated rounds use GPT-6.1 Sol, high reasoning and ultrafast service.
+The following work is active or awaiting independent review. All active and future delegated rounds use GPT-6.1 Sol, high reasoning and Standard service, as requested by the user. See the [verified restart record](iterations/i256-standard-speed-restart.md).
 
-- [I247: explicit quantitative scalarization](iterations/i247-quantitative-scalarization-parent-disposition.md) has a complete proposed proof. The [I251 independent proof](iterations/i251-quantitative-proof-parent-disposition.md) passed without repairs; [I252 contribution review](iterations/iteration252-quantitative-scalarization-contribution-brief.md) remains pending. Quantitative disk geometry is excluded from this nomination.
-- [I248: combinatorial structure](iterations/iteration248-combinatorial-structure-discovery-brief.md) continues discovery.
+- [I247: explicit quantitative scalarization](iterations/i247-quantitative-scalarization-parent-disposition.md) has a complete proposed proof. The [I251 independent proof](iterations/i251-quantitative-proof-parent-disposition.md) passed without repairs; [I256 Standard-speed contribution review](iterations/iteration256-quantitative-scalarization-contribution-standard-brief.md) is running after the requested service-tier change. Quantitative disk geometry is excluded from this nomination.
+- [I248: rooted-pattern packing](iterations/i248-rooted-packing-parent-disposition.md) has a complete proposed proof. [I257 proof](iterations/iteration257-rooted-packing-proof-standard-brief.md) and [I258 contribution](iterations/iteration258-rooted-packing-contribution-standard-brief.md) reviews are running at Standard speed.
 - [I249: nested geometric contact](iterations/i249-geometric-contact-parent-disposition.md) is unresolved. The exact linearized contact constant is retained. [I253](iterations/i253-contact-recovery-parent.md) supplies a proposed matching nonlinear recovery construction; the nonlinear lower limit remains unproved, and no substantial finding is accepted.
 
 - [I250: transverse matrix Lieb–Thirring deficit](iterations/i250-lieb-thirring-transverse-hessian.md) is a parent-authored candidate. It includes an explicit quadratic form and a threshold-eigenvalue estimate; independent proof and contribution gates have not yet run.
