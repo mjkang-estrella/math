@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I213 retained; focused boundary approximation continues
+
+[I213](iterations/i213-new-analytic-geometric-parent-disposition.md) retains exact compression/flattening lemmas and a fixed-cutoff counterexample, but does not prove relative strong approximation. I216 continues the missing annular derivative estimate. The ninth accepted finding remains R015. **Nine accepted, one remaining.**
+
 ### R015 accepted: ninth substantial finding
 
 [R015: tetrahedral cylinder-cover lower bound](findings/R015-tetrahedral-cylinder-lower-bound.md) is accepted after separate proof and contribution reviews. It gives sum |B_i| >= (sqrt(15)/9) A_min(T), with exact optimality in the quadratic-density certificate class. The final comparison acknowledges the stronger old inscribed-ball bound pi/(6sqrt(2)). **Nine accepted, one remaining; research continues until ten.**
