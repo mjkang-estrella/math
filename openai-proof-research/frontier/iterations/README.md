@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I215 parent extension: higher-dimensional simplex certificate
+
+The [parent calculation](./i215-simplex-quadratic-extension.md) extends the same weighted-chord argument to the proposed regular n-simplex bound 3/[sqrt(2)(n+2)] for n>=4. This remains unreviewed and is part of the same candidate, not a separate finding. I212, I213 and I214 continue their separate tasks. **Eight accepted, two remaining.**
+
 ## I211 proof PASS; contribution and new discovery continue
 
 [I211](./i211-tetrahedron-lower-bound-parent-disposition.md) passes the complete tetrahedral lower-bound proof; I212 independently checks contribution and prior art before any count increment. [I214](./iteration214-neumann-eigenmap-discovery-brief.md) investigates global spectral coordinates while I213 continues its separate discovery line. **Eight accepted, two remaining.**
