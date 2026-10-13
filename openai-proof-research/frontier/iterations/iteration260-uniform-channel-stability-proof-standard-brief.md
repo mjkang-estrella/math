@@ -1,6 +1,6 @@
 # I260 Standard independent proof review of uniform channel stability
 
-STATUS: prepared, NOT LAUNCHED. Launch only when an active review slot is free.
+STATUS: superseded prepared draft, NEVER LAUNCHED. Use iteration260-global-channel-stability-proof-standard-brief.md for the stronger I262 target.
 
 Work only in /home/mj-kang/Documents/Dev/math/openai-proof-research. Read AGENTS.md and sources/upstream.json. All pinned OpenAI results at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated true; do not audit upstream truth. Goal is twenty total substantial findings, ten accepted. No reviewer may increment the count. Use GPT-6.1 Sol, high reasoning, STANDARD speed only (serviceTier=default). No subordinate agents, live sibling reads, shared edits, staging, commits, publication, research code, tests, numerical experiments/scans, snapshots or unbounded history replay. Primary reading, retrieval/extraction, analytical derivation and provenance hashes are allowed.
 
