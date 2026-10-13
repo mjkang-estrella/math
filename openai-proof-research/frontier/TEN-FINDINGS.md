@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I234–I236: focus on the remaining estimates
+
+[I234](iterations/iteration234-viscous-local-regularity-brief.md) studies local regularity of the viscous equation; [I236](iterations/iteration236-viscous-contact-propagation-brief.md) studies contact propagation for its actual barycentric pair. [I235](iterations/iteration235-finite-range-crossing-brief.md) targets the missing finite-range crossing estimate. All were acknowledged running with GPT-6.1 Sol/high/ultrafast. **Nine accepted, one remaining.**
+
 ### I231 complete: finite-viscosity rigidity remains unresolved
 
 [I231](iterations/i231-viscous-parent-disposition.md) retains technical partial results and the precise unproved step. **Nine accepted, one remaining; research continues.**
