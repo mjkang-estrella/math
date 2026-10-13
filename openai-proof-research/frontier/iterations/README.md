@@ -16,7 +16,16 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
-## I199–I201 running: three focused bridges
+## I200 completed; I199 and I201 continue
+
+The [I200 report](i200-regularized-cone-bridge.md) and
+[parent disposition](i200-regularized-cone-parent-disposition.md) retain
+the large-delta spectrahedral range and repaired-patch calculation as
+technical. The small-delta arbitrary-lift question remains unresolved;
+the cone branch is parked pending a new mechanism. I199 and I201 were
+confirmed running. **Eight accepted, two remaining.**
+
+## I199–I201 historical parallel dispatch
 
 - [I199 brief](iteration199-foulkes-structured-bridge-brief.md),
   [dispatch](iteration199-foulkes-structured-bridge-task.json): structured

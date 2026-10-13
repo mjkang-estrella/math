@@ -1,10 +1,15 @@
 # OpenAI mathematics research
 
-**I199–I201 running in parallel:**
-[Foulkes constraints](frontier/iterations/iteration199-foulkes-structured-bridge-brief.md),
-[cone regularization](frontier/iterations/iteration200-regularized-cone-bridge-brief.md),
+**I200 completed; I199 and I201 running:**
+[The cone review](frontier/iterations/i200-regularized-cone-parent-disposition.md)
+checks an explicit large-delta spectrahedral range and a repaired patch
+whose positive moment residual blocks that attempted obstruction.
+Small-delta liftability remains unresolved; no finding is added.
+
+The continuing
+[Foulkes constraints](frontier/iterations/iteration199-foulkes-structured-bridge-brief.md)
 and [elliptic cylinder costs](frontier/iterations/iteration201-elliptic-covering-bridge-brief.md)
-target the three unpaid mechanisms left by I198. All use GPT-6.1 Sol,
+target their unpaid mechanisms from I198. Both use GPT-6.1 Sol,
 high reasoning, ultrafast. No new result is claimed at dispatch.
 **8 accepted, 2 remaining.**
 
