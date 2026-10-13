@@ -38,6 +38,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I297 dimension-five Crouzeix boundary](iterations/i297-dimension-five-parent-disposition.md) completed a proposed extension through dimension five using an old 2014 support theorem and the R016 equality mechanism. The resulting first-failure dimension six is a technical deduction pending independent review; neither it nor the ancillary all-dimensional Schmidt-rank ceiling adds an accepted finding.
 
+- [I300 Gaussian translation strictness](iterations/i300-gaussian-translation-strictness.md) is a new unreviewed parent proof proposal for the unrestricted scalar Gaussian gap. It uses an equality Euler equation, a translation second variation and a bias-aware entropy/variance bound. If verified with the prior chain, it would close the full S128 target. [I301 proof brief](iterations/iteration301-gaussian-translation-proof-standard-brief.md) is prepared for the next available review slot; no task has yet been launched and no count is added.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
