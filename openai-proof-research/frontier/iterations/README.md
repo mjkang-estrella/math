@@ -16,13 +16,25 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
-## I196 partial recovery; later run active; overlap premise corrected
+## I197 fresh discovery restarted with corrected exclusions
+
+The [parent restart](i197-fresh-discovery-parent-restart.md) records that
+I196 and its continuation are cancelled with no pending child runs, and
+the latest retry failed to start. The [new brief](iteration197-fresh-discovery-brief.md)
+begins with positive lower density of large prime gaps, permits at most
+two replacement families, and excludes the documented old 084/020
+deductions. The [dispatch](iteration197-fresh-discovery-task.json) was
+acknowledged as running. No theorem or screening verdict is inferred
+from that acknowledgment. **Eight accepted, two remaining.**
+
+## I196 historical partial recovery; overlap premise corrected
 
 The original [I196 task](iteration196-fresh-discovery-task.json) is
 cancelled, not complete. Its five initialized files contain no theorem
 or screening verdict. A maintenance handoff already started ordinal 2
-in the backing thread; the parent verified that state and did not
-launch a duplicate.
+in the backing thread; the parent verified that state at the checkpoint
+and did not launch a duplicate then. The continuation is now cancelled;
+the subsequent restart is recorded above.
 [The checkpoint](i196-fresh-discovery-parent-checkpoint.md) preserves
 byte-checked copies and records the active-run steering acknowledgment.
 The original "never screened" assertion is false for 084 (I36/I37) and
