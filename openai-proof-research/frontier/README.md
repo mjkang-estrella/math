@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## Target complete: ten substantial findings
+
+[R016: complete Crouzeix equality in dimension four](findings/R016-complete-crouzeix-equality.md) passes independent proof and contribution reviews. Exact equality for a finite matrix-valued polynomial now yields a scalar equality witness and a disk numerical range in base size at most four. **Ten accepted, zero remaining.** The acceptance covers attained finite-polynomial equality; the stronger I243 supremum statement and quantitative near-equality bounds remain outside the reviewed scope. No further discovery task is active. Earlier status entries below are historical.
+
 ## I246 complete: E4 contribution SUBSTANTIAL
 
 [I246](iterations/i246-crouzeix-contribution-parent-disposition.md) supports the new complete-witness scalarization mechanism. With I245 proof PASS, both gates are satisfied; the tenth acceptance is recorded in its own following commit.
