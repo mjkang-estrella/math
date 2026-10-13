@@ -62,6 +62,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I322 exact fixed-gate discrete logarithms](iterations/i322-exact-discrete-logarithm-candidate.md) is a complete parent candidate using selected-frequency estimates, exact fixed-dimensional probability counts, and per-label dyadic completion. Independent [I323 proof](iterations/iteration323-exact-discrete-logarithm-proof-standard-brief.md) and [I324 contribution](iterations/iteration324-exact-discrete-logarithm-contribution-standard-brief.md) audits are active at Standard speed. It is not accepted.
 
+- [I327 fixed-gate algebraic search](iterations/iteration327-fixed-gate-algebraic-search-standard-brief.md) is prepared but not dispatched. Its main target is exact primitive-element search; the unresolved step concerns multiple valid outputs rather than the uniquely verified logarithm of I322. No theorem or acceptance is assumed from this plan.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
