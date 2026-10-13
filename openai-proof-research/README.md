@@ -1,5 +1,11 @@
 # OpenAI mathematics research
 
+**I197 model switch:** At the user's request, the Astra task was stopped
+and [I197 round 2](frontier/iterations/iteration197-r2-sol-high-ultrafast-task.json)
+was started with **GPT-6.1 Sol, high reasoning, ultrafast service**.
+The interrupted task's partial notes and source records were handed over;
+no theorem had been nominated. **8 accepted, 2 remaining.**
+
 **I195 long-gap analysis checked; both exchange fronts parked:**
 [Parent review](frontier/iterations/i195-long-gap-deficit-parent-disposition.md)
 passes the complete cap-prism family theorem — for every even

@@ -6,6 +6,17 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I197 round 2: user-requested model switch
+
+The original I197 agent was stopped and confirmed interrupted with no
+pending runs. [Round 2](iterations/iteration197-r2-sol-high-ultrafast-task.json)
+was acknowledged as running with **GPT-6.1 Sol, high reasoning, ultrafast
+service**. Its prompt includes the original assignment, partial files,
+and interrupted progress message. The source notes suggest investigating
+chains of large gaps and the stronger joint-detection requirement for
+narrow gap intervals; neither route has a validated theorem yet.
+**Eight accepted, two remaining.**
+
 ### I197 fresh discovery restarted after I196 cancellation
 
 [I197](iterations/i197-fresh-discovery-parent-restart.md) starts with the
