@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I209 nominated: tetrahedral cylinder-cover lower bound
+
+[I209](frontier/iterations/i209-tetrahedron-lower-bound-parent-nomination.md) nominates sum |B_i| >= (sqrt(15)/9) A_min(T) for regular tetrahedra and proves sharpness within quadratic-density certificates. Independent proof and contribution gates are pending. The candidate is independent of I203. **Eight accepted, two remaining.**
+
 ## I210 complete: covering proof finalized with auxiliary correction
 
 [I210's completed proof review](frontier/iterations/i210-all-height-tiles-parent-disposition.md) validates the covering theorems and adopts the precise almost-everywhere/pointwise auxiliary correction. The separate contribution verdict remains technical. **Eight accepted, two remaining.**
