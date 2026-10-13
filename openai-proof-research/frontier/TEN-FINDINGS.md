@@ -6,6 +6,17 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I199–I201: parallel focused follow-ups
+
+Three new tasks target the actual gaps from I198: the
+[Foulkes annihilator/conductor](iterations/iteration199-foulkes-structured-bridge-brief.md),
+[regularized nonliftable cone](iterations/iteration200-regularized-cone-bridge-brief.md),
+and [elliptic finite-cover construction](iterations/iteration201-elliptic-covering-bridge-brief.md).
+Each received the original brief, completed I198 analysis and parent
+objections, and was acknowledged as running with GPT-6.1 Sol, high,
+ultrafast. Their launch records claim no new proof or nomination.
+**Eight accepted, two remaining.**
+
 ### I198 completed: technical bounds, no substantial nomination
 
 [I198](iterations/i198-geometry-representation-discovery.md) and its

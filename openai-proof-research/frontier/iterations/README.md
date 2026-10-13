@@ -16,6 +16,22 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I199–I201 running: three focused bridges
+
+- [I199 brief](iteration199-foulkes-structured-bridge-brief.md),
+  [dispatch](iteration199-foulkes-structured-bridge-task.json): structured
+  Foulkes annihilators and the conductor quotient.
+- [I200 brief](iteration200-regularized-cone-bridge-brief.md),
+  [dispatch](iteration200-regularized-cone-bridge-task.json): positive
+  quadratic regularization of the nonliftable cone.
+- [I201 brief](iteration201-elliptic-covering-bridge-brief.md),
+  [dispatch](iteration201-elliptic-covering-bridge-task.json): a corrected
+  elliptic finite-cover mechanism with a geometric consequence.
+
+All three were acknowledged as running with GPT-6.1 Sol/high/ultrafast,
+with separate output scopes and full predecessor context. No result is
+claimed at launch. **Eight accepted, two remaining.**
+
 ## I198 completed: three focused bridges remain
 
 The [report](i198-geometry-representation-discovery.md) and

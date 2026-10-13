@@ -21,6 +21,13 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+Three focused rounds are running with GPT-6.1 Sol/high/ultrafast:
+[I199](iterations/iteration199-foulkes-structured-bridge-brief.md) on structured
+Foulkes constraints, [I200](iterations/iteration200-regularized-cone-bridge-brief.md)
+on positive cone regularization, and
+[I201](iterations/iteration201-elliptic-covering-bridge-brief.md) on corrected
+elliptic cylinder costs. Their outputs are disjoint. **Eight accepted, two remaining.**
+
 **I198 completed:** The [parent disposition](iterations/i198-geometry-representation-parent-disposition.md)
 retains its Foulkes improvement, cone deductions, and cylinder counterexample
 as technical work. Its three unpaid mechanisms are assigned separate
