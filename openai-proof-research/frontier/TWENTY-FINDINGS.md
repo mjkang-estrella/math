@@ -72,6 +72,10 @@ The following work is active or awaiting independent review. All active and futu
 
 [I337 fixed-codimension hidden subspaces](iterations/i337-bounded-corank-hsp-proposal.md) is retained as technical research. The completed [I338 contribution review](iterations/i338-bounded-corank-hsp-parent-disposition.md) concludes TECHNICAL for the full unknown-subspace, growing-prime, fixed-gate theorem by an explicit operation-level reduction to R021. No independent full proof PASS or acceptance is claimed. Fixed codimension is essential; no general-rank theorem is presumed.
 
+- [I340 kinetic path fluctuations](iterations/iteration340-kinetic-path-fluctuations-brief.md) is investigating functional convergence on the full regular nonequilibrium kinetic lifespan. The parent [continuity and coupling lemmas](iterations/i340-parent-path-transfer.md) do not pay tightness. A finite-dimensional distribution result alone is not promoted to path convergence. No acceptance is added.
+
+- [I341 adaptive PPT-composite channels](iterations/i341-adaptive-ppt-square-key-obstruction.md) proposes a uniform secret-key obstruction under arbitrary finite adaptive use with quantum memories and public feedback. The new operation is preservation of the represented class under a cross-party transmission, not merely its Choi-state inclusion. I342 independently reviews the full contribution and standard cone/teleportation reductions. No proof gate or acceptance is claimed.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
