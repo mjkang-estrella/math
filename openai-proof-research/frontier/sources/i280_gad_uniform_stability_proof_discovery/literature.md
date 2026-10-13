@@ -1,0 +1,15 @@
+# I280 primary-literature record
+
+Read/search date: 2026-10-12. **No worldwide priority claim or acceptance recommendation.** Only the specified limited primary excerpts are retained. Full-body retrieval/hashing is distinguished from semantic reading in the authentication JSON.
+
+[Sason–Verdú, *f-Divergence Inequalities*, arXiv:1508.00335v6](https://arxiv.org/html/1508.00335v6#S3.SS2): fully read §III-B, including Theorem 2 and its proof. Its relative-entropy/χ² comparison is a standard ingredient; I280 derives the required Bernoulli inequality directly from log s≤s−1. The probability-chain calculation and affinity bound are also proved directly. These ingredients are not novelty claims. Retained: `sason-verdu-1508.00335v6-S3.SS2.txt`.
+
+[Carlen, *A remainder term for Hölder's inequality for matrices and quantum entropy inequalities*, arXiv:1605.04581v1](https://arxiv.org/html/1605.04581v1#S3): fully read §§1 and 3, including the uniform-convexity argument and Corollary 3.3's Pinsker statement for density matrices. This supplies a primary comparator for the standard trace-norm entropy-concavity remainder. I280 proves that remainder independently via the logarithmic-mean entropy Hessian and weighted Cauchy–Schwarz. The source HTML has typographical anomalies in proof formulas; retained text preserves them, and no such formula is used as a new premise. Retained: `carlen-1605.04581v1-S1.txt`, `-S3.txt`.
+
+[Bae–Gour–Lee–Park–Sanders, *Stability theorem of depolarizing channels for the minimal output quantum Rényi entropies*, arXiv:1510.07815v1](https://arxiv.org/html/1510.07815v1#S3): fully read §§II–III, including definitions, Lemma 5's proof, the von Neumann remark, and Theorems 6–7. The authors state depolarizing stability at p=1 and p≥2. The argument expands about a closest product with a Taylor error, without an explicit all-n remainder constant/global entry estimate in the retained passages. It is a comparator, not a theorem for GAD. I280 cannot obtain its needed quantifiers merely from this expansion. This is not a claimed refutation of the paper. Retained: `bae-1510.07815v1-S2.txt`, `-S3.txt`.
+
+The completed I273 literature note was fully read. Its Fang v2 strong-converse duplicate and Ruskai–Yard local-additivity comparison remain exclusions; they are not new targets. Their retained original excerpts were not reread in I280. No claim that those papers supply uniform GAD input stability is made.
+
+Searches covered quantum minimum-output entropy stability, product-state near minimizers, depolarizing stability, and trace-norm concavity/Pinsker remainders. Unopened search hits, abstracts, and failed URLs are leads, not proof premises. Guessed v2 HTML URLs for Bae and Carlen failed; the verified v1 pages succeeded. No search-absence argument supports novelty. No broad proof-level priority certification for the new restricted GAD consequences has been completed.
+
+The paid partials in the analysis concern all-n amplitude control and special phase families. Their ingredients are standard, and the full uniform arbitrary-phase inequality remains unresolved. No independent contribution judgment is attempted here.
