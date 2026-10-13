@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I228–I229: independent forced-equation gates
+
+[I228](iterations/iteration228-forced-infinity-proof-brief.md) checks the complete proof, and [I229](iterations/iteration229-forced-infinity-contribution-brief.md) assesses the complete contribution and primary prior art. [I227](iterations/i227-priority-stop.md) is interrupted for review priority, with no completed result. **Nine accepted, one remaining.**
+
 ## I226 complete: algebraic results retained as technical
 
 [I226](iterations/i226-algebra-parent-disposition.md) proves cancellation and an auxiliary-size obstruction, with direct overlap in established filtered-complex and Clifford methods. Neither is counted. **Nine accepted, one remaining; I224 independent gates continue.**
