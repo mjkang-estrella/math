@@ -6,6 +6,15 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I204 completed: two denominator methods fail; target remains open
+
+The [report](iterations/i204-arithmetic-structures-discovery.md) and
+[parent disposition](iterations/i204-arithmetic-structures-parent-disposition.md)
+separate limitations of the source's raw recursion and special common
+denominators from the actual maximum-denominator question. The three
+screens produced no substantial nomination. All output and retained-source
+hashes were checked. **Eight accepted, two remaining.**
+
 ### I202–I204: focused continuations and a fresh arithmetic screen
 
 [I202](iterations/iteration202-foulkes-quotient-brief.md) seeks the actual

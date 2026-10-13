@@ -16,7 +16,15 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
-## I202–I204 running
+## I204 completed: polynomial denominator budget unresolved
+
+The [report](i204-arithmetic-structures-discovery.md) and
+[parent disposition](i204-arithmetic-structures-parent-disposition.md)
+check exact method limitations and leave the simultaneous short-length,
+polynomial maximum-denominator target unpaid. No substantial nomination.
+**Eight accepted, two remaining.**
+
+## I202–I204 historical dispatch
 
 - [I202 brief](iteration202-foulkes-quotient-brief.md),
   [dispatch](iteration202-foulkes-quotient-task.json): actual Foulkes

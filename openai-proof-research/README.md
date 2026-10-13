@@ -1,5 +1,10 @@
 # OpenAI mathematics research
 
+**I204 completed, no nomination:** [Parent disposition](frontier/iterations/i204-arithmetic-structures-parent-disposition.md)
+checks two Egyptian-fraction method obstructions and retains the exact
+polynomial maximum-denominator target as unresolved. Character-variety
+and Gaussian-prime screens supplied no new mechanism. **8 accepted, 2 remaining.**
+
 **I202–I204 running:** Focused follow-ups address the
 [Foulkes quotient](frontier/iterations/iteration202-foulkes-quotient-brief.md)
 and [all-height lattice covers](frontier/iterations/iteration203-all-height-tiles-brief.md).
