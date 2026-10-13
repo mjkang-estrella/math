@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I214 nominated: global Neumann eigenfunction coordinates
+
+[I214](./i214-neumann-eigenmap-parent-nomination.md) proposes global analytic coordinates and a smooth strictly star-shaped image for a double first-positive Neumann eigenspace. I218 independently checks the proof; a separate contribution gate is required. This is a nomination, not the tenth finding. **Nine accepted, one remaining.**
+
 ## I214, I216 and I217 active toward the tenth finding
 
 Three research tasks continue toward the tenth finding: [I214](./iteration214-neumann-eigenmap-discovery-brief.md) on global Neumann eigenmaps, [I216](./iteration216-relative-sobolev-collar-brief.md) on exact-boundary Sobolev approximation, and [I217](./iteration217-quantitative-coulomb-monge-brief.md) on quantitative Coulomb transport. All use GPT-6.1 Sol/high/ultrafast. I215's further Gaussian certificate is retained as an unreviewed extension of the same simplex family, not another count. **Nine accepted, one remaining.**
