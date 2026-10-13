@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I205 completed: bounded-denominator construction unresolved
+
+The [I205 parent disposition](./i205-bounded-egyptian-parent-disposition.md) retains an exact multiset-to-distinct reduction and scoped method obstructions. It does not supply the bounded multiset construction needed for the short Egyptian-fraction target. This branch is parked pending a new mechanism; no nomination. **Eight accepted, two remaining.**
+
 ## I203 nominated: optimal all-height elliptic covers
 
 [I203](./i203-all-height-tiles.md) gives an explicit compact parallelogram attaining c_L(A)=1+L^2 det A for every trace-zero elliptic A and L>0, with a corresponding nonlinear finite-cover bound. The [parent nomination](./i203-all-height-tiles-parent-nomination.md) records the initial check and outstanding independent proof and contribution gates. The result is nominated, not accepted. **Eight accepted, two remaining.**
