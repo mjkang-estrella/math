@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I206 completed: socle family is technical/known only
+
+The [independent contribution review](frontier/reviews/i206-foulkes-socle-contribution.md) identifies I202's covariant as a standard substitution into a known rectangular invariant. The [parent disposition](frontier/iterations/i206-foulkes-socle-parent-disposition.md) retains the useful auxiliary family without nomination; the full Foulkes quotient remains unresolved. The covering nomination has separate acceptance gates. **Eight accepted, two remaining.**
+
 ## I205 completed: bounded-denominator construction unresolved
 
 The [I205 parent disposition](frontier/iterations/i205-bounded-egyptian-parent-disposition.md) retains an exact multiset-to-distinct reduction and scoped method obstructions. It does not supply the bounded multiset construction needed for the short Egyptian-fraction target. This branch is parked pending a new mechanism; no nomination. **Eight accepted, two remaining.**
