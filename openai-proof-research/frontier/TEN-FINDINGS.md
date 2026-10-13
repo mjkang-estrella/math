@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I243 complete: independent overlapping scalarization route
+
+[I243](iterations/i243-scalarization-parent-disposition.md) independently derives the rank mechanism and proposes a broader quotient-norm equality theorem. Its extra steps are not part of the current E4 gates and are not separately accepted or counted. **Nine accepted, one remaining.**
+
 ### I242 candidate: complete equality in base dimension four
 
 [I242](iterations/i242-crouzeix-parent-disposition.md) submits complete polynomial scalarization and disk rigidity for independent [proof](iterations/iteration245-crouzeix-rigidity-proof-brief.md) and [contribution](iterations/iteration246-crouzeix-rigidity-contribution-brief.md) reviews. Both gates were acknowledged running with GPT-6.1 Sol/high/ultrafast. The positive-deficit modulus is unproved. **Nine accepted, one remaining.**
