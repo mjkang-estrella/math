@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I226 complete: algebraic results retained as technical
+
+[I226](./i226-algebra-parent-disposition.md) proves cancellation and an auxiliary-size obstruction, with direct overlap in established filtered-complex and Clifford methods. Neither is counted. **Nine accepted, one remaining; I224 independent gates continue.**
+
 ## I224 nominated: forced infinity-Laplace regularity
 
 [I224](./i224-forced-infinity-parent-nomination.md) proposes a bounded-forcing interior C1,alpha theorem and actual-gradient stability. I228 and I229 independently review proof and contribution. **Nine accepted, one remaining; no acceptance at nomination.**
