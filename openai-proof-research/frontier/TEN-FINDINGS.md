@@ -1,10 +1,14 @@
 # Ten substantial findings
 
-User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resumed 2026-10-09: “Now keep proceed for 10 target”. This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 9 accepted, 1 remaining; research active**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
+User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resumed 2026-10-09: “Now keep proceed for 10 target”. This continues the substantial-discovery standard used for R006 and R008. Target: **10 total; 10 accepted, 0 remaining; completed 2026-10-12**. The historical F001–F010 and technical R001–R005/R007 do not enter this count.
 
 **Historical pause, 2026-10-08:** “Let’s pause after 4th finding for now.” R010 passed all acceptance gates and the work was paused with partial artifacts preserved. **The user explicitly resumed on 2026-10-09**, then instructed: “also after the verification commit & push to the public repo”. The old pause restriction is revoked. Each newly accepted finding still receives its own commit. The user selected publication of **only `openai-proof-research`** to `https://github.com/mjkang-estrella/math`. Public history is filtered to this directory; unrelated local research is excluded. Filtering changes commit identifiers while retaining separate commits.
 
 ## Resumed work, 2026-10-09
+
+### Target complete: ten substantial findings
+
+[R016: complete Crouzeix equality in dimension four](findings/R016-complete-crouzeix-equality.md) passes independent proof and contribution reviews. Exact equality for a finite matrix-valued polynomial now yields a scalar equality witness and a disk numerical range in base size at most four. **Ten accepted, zero remaining.** The acceptance covers attained finite-polynomial equality; the stronger I243 supremum statement and quantitative near-equality bounds remain outside the reviewed scope. No further discovery task is active. Earlier status entries below are historical.
 
 ### I246 complete: E4 contribution SUBSTANTIAL
 
@@ -1196,6 +1200,7 @@ All results remain deductions under the accepted corpus at `openai/math@fd4aeeb2
 | 7 | [R013: higher-dimensional logarithmic stability](findings/R013-higher-dimensional-logarithmic-stability.md) | `a03655dd` (candidate); [I50 proof audit](reviews/i50-hard-moment-quantitative-stability-r2.md) | `5424232f` (significance); [R013 acceptance record](findings/R013-higher-dimensional-logarithmic-stability.md) |
 | 8 | [R014: dimension-uniform coefficient extraction](findings/R014-uniform-coefficient-extraction.md) | `e0f1fcc2` (candidate), `8c013c14` (proof integration) | [I64 significance review](reviews/i64-entropy-coefficient-extraction-novelty.md); [R014 acceptance record](findings/R014-uniform-coefficient-extraction.md) |
 | 9 | [R015: tetrahedral cylinder-cover lower bound](findings/R015-tetrahedral-cylinder-lower-bound.md) | `dabda2d4` (candidate), `acbddbe1` (proof integration) | [I212 contribution review](reviews/i212-tetrahedron-lower-bound-contribution.md); [R015 acceptance](findings/R015-tetrahedral-cylinder-lower-bound.md) |
+| 10 | [R016: complete Crouzeix equality in dimension four](findings/R016-complete-crouzeix-equality.md) | `ad8969f1` (candidate), `dd9c31cc` (proof integration) | `aa2929a0` (contribution integration); [R016 acceptance](findings/R016-complete-crouzeix-equality.md) |
 
 Equivalent formulations, routine corollaries, and multiple consequences of the same new bridge count as one finding. In particular, R008's Moree–Hommersom implication is part of R008.
 
