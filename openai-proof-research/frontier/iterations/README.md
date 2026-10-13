@@ -2,7 +2,11 @@
 
 ## Active target: twenty substantial findings
 
-On 2026-10-12 the user raised the target to twenty. **Twelve accepted, eight remaining.** The [twenty-finding ledger](../TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
+On 2026-10-12 the user raised the target to twenty. **Thirteen accepted, seven remaining.** The [twenty-finding ledger](../TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
+
+## Thirteenth finding accepted: entangled complete-Crouzeix equality
+
+[R019](../findings/R019-entangled-complete-crouzeix-equality.md) constructs an irreducible six-dimensional attained equality witness for which every constant scalar coefficient compression misses equality. I291 proof review passed and I292 contribution review judged the original-matrix construction substantial. The old LSS base and standard inner factorization are credited. **Thirteen accepted; seven remain.** Quantum-stability reviews and Gaussian soft-summary research continue at Standard speed.
 
 User direction on 2026-10-08: “Iterate & discover until you get a desired output.” The previous [outcome](../OUTCOME.md) is a historical report of the first pass, not a completion claim for the resumed objective.
 

@@ -1,6 +1,6 @@
 # Twenty substantial findings
 
-User direction, 2026-10-12: “Perfect. Now go for 20”. **Target: 20 total; 12 accepted, 8 remaining.** This extends the completed [first-ten milestone](TEN-FINDINGS.md); it does not restart the count.
+User direction, 2026-10-12: “Perfect. Now go for 20”. **Target: 20 total; 13 accepted, 7 remaining.** This extends the completed [first-ten milestone](TEN-FINDINGS.md); it does not restart the count.
 
 The acceptance standard is unchanged: a complete nonroutine mathematical contribution, independently reviewed for proof and for substantiality against primary literature. Technical deductions, equivalent formulations, unproved conditionals and rediscovered results do not increase the count. All pinned OpenAI results are assumed true at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. Worldwide priority is not asserted.
 
@@ -28,9 +28,11 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I286 quantitative Cartan–Hadamard discovery](iterations/i286-quantitative-cartan-hadamard-parent-disposition.md) completed with the global stability estimate still unproved and unrefuted. Its definition and BV-reduction checks are technical; volume-preserving ripples refute a proposed curvature-energy bridge, not the target. No acceptance is added.
 
-- [I287 repeated-support Crouzeix discovery](iterations/i287-crouzeix-counterexample-parent-disposition.md) proposes an explicit irreducible six-dimensional equality witness with no constant scalar coefficient compression attaining equality. The old LSS base matrix is credited; the polynomial and its rank-two obstruction are the proposed increment. [I291 independent proof review](iterations/i291-crouzeix-proof-parent-disposition.md) passed without repairs on the original artifact. [I292 contribution review](iterations/iteration292-crouzeix-contribution-standard-brief.md) is now underway at Standard speed. Acceptance remains outstanding; disk rigidity is not refuted.
+- **Accepted as [R019](findings/R019-entangled-complete-crouzeix-equality.md):** the I287 irreducible six-dimensional attained equality witness has no constant scalar coefficient compression attaining equality. [I291 proof](iterations/i291-crouzeix-proof-parent-disposition.md) passed without repairs and [I292 contribution](iterations/i292-crouzeix-contribution-parent-disposition.md) concluded SUBSTANTIAL. The old LSS base and standard inner factorization are credited; the original-matrix norming channel and obstruction are the new construction. Disk rigidity is not refuted.
 
 - [I290 global soft-summary stability](iterations/i290-global-soft-summary-parent-disposition.md) proves a proposed global bound in every fixed positive singleton sector and reduces all remaining failures to diffuse compressed kernels. Its Gaussian transfer is paid, but the required dimension-independent strict Gaussian gap remains unproved. S128 is neither solved nor refuted; no acceptance is added.
+
+- [I295 Gaussian rearrangement research](iterations/iteration295-gaussian-rearrangement-standard-brief.md) is now running at Standard speed. It tests a one-dimensional reduction of I290’s diffuse Gaussian gap and a concrete small-amplitude/strong-noise region, without assuming the full Gaussian gap.
 
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
@@ -52,5 +54,6 @@ The original ten retain their existing acceptance decisions. Their linked record
 | 10 | [R016: complete Crouzeix equality in dimension four](findings/R016-complete-crouzeix-equality.md) | `1c8aa3f0`; independent I245 proof PASS and I246 contribution SUBSTANTIAL |
 | 11 | [R017: sharp nonlinear ball–tube nesting cost](findings/R017-ball-tube-contact-asymptotic.md) | Independent I269 proof PASS and I270 contribution SUBSTANTIAL |
 | 12 | [R018: sharp logarithmic ball–slab nesting cost](findings/R018-ball-slab-logarithmic-contact.md) | Independent I277 proof PASS and I278 contribution SUBSTANTIAL |
+| 13 | [R019: attained entangled complete-Crouzeix equality](findings/R019-entangled-complete-crouzeix-equality.md) | Independent I291 proof PASS and I292 contribution SUBSTANTIAL |
 
-R017 and R018 are the two additional acceptances after reopening. Eight remain toward twenty total.
+R017, R018 and R019 are the three additional acceptances after reopening. Seven remain toward twenty total.
