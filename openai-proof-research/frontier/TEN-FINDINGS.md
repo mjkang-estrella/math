@@ -6,6 +6,15 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I205: focused polynomial-denominator construction
+
+The [brief](iterations/iteration205-bounded-egyptian-denominators-brief.md)
+and [dispatch](iterations/iteration205-bounded-egyptian-denominators-task.json)
+carry the complete I204 argument and parent objections into a new attempt.
+The task was acknowledged as running with GPT-6.1 Sol/high/ultrafast;
+I202 and I203 keep their disjoint scopes. No nomination at launch.
+**Eight accepted, two remaining.**
+
 ### I204 completed: two denominator methods fail; target remains open
 
 The [report](iterations/i204-arithmetic-structures-discovery.md) and

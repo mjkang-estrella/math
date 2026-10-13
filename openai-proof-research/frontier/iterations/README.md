@@ -16,6 +16,14 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I205 running: new denominator-budget construction
+
+The [brief](iteration205-bounded-egyptian-denominators-brief.md) and
+[dispatch](iteration205-bounded-egyptian-denominators-task.json) target a
+new mechanism beyond the literal recursion and restricted common-denominator
+methods. The task was acknowledged as running with GPT-6.1 Sol/high/ultrafast.
+I202 and I203 retain separate scopes. **Eight accepted, two remaining.**
+
 ## I204 completed: polynomial denominator budget unresolved
 
 The [report](i204-arithmetic-structures-discovery.md) and

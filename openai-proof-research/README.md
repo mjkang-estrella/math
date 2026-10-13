@@ -1,5 +1,10 @@
 # OpenAI mathematics research
 
+**I205 running:** The [new construction attempt](frontier/iterations/iteration205-bounded-egyptian-denominators-brief.md)
+targets short Egyptian fractions with a polynomial bound on each denominator,
+beyond the methods ruled out in I204. The Foulkes and lattice-covering
+follow-ups retain their separate scopes. **8 accepted, 2 remaining.**
+
 **I204 completed, no nomination:** [Parent disposition](frontier/iterations/i204-arithmetic-structures-parent-disposition.md)
 checks two Egyptian-fraction method obstructions and retains the exact
 polynomial maximum-denominator target as unresolved. Character-variety
