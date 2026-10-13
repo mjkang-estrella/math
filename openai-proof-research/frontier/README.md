@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I228 proof PASS; contribution review pending
+
+[I228](iterations/i228-forced-infinity-proof-parent-disposition.md) passes the full bounded-forcing regularity and gradient stability proof, with two expository clarifications. I229 independently reviews contribution and prior art. **Nine accepted, one remaining.**
+
 ## I228–I229: independent forced-equation gates
 
 [I228](iterations/iteration228-forced-infinity-proof-brief.md) checks the complete proof, and [I229](iterations/iteration229-forced-infinity-contribution-brief.md) assesses the complete contribution and primary prior art. [I227](iterations/i227-priority-stop.md) is interrupted for review priority, with no completed result. **Nine accepted, one remaining.**

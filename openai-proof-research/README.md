@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I228 proof PASS; contribution review pending
+
+[I228](frontier/iterations/i228-forced-infinity-proof-parent-disposition.md) passes the full bounded-forcing regularity and gradient stability proof, with two expository clarifications. I229 independently reviews contribution and prior art. **Nine accepted, one remaining.**
+
 ## I228–I229: independent forced-equation gates
 
 [I228](frontier/iterations/iteration228-forced-infinity-proof-brief.md) checks the complete proof, and [I229](frontier/iterations/iteration229-forced-infinity-contribution-brief.md) assesses the complete contribution and primary prior art. [I227](frontier/iterations/i227-priority-stop.md) is interrupted for review priority, with no completed result. **Nine accepted, one remaining.**
