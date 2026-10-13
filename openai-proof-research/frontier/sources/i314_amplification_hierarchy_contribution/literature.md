@@ -1,0 +1,38 @@
+# I314 — primary-source literature and operation map
+
+2026-10-13. This is a bounded comparison for the whole I312 amplification hierarchy. No full new external body, section, PDF or page image is retained. Source statements and reading extents are distinguished from search leads. The verdict is TECHNICAL by the explicit reduction in the analysis, not DUPLICATE by a located identical theorem.
+
+## Decisive read sources
+
+1. **Hwa-Long Gau and Pei Yuan Wu, Inner functions of numerical contractions**, Linear Algebra and its Applications 430 (2009), 2182–2191, DOI 10.1016/j.laa.2008.11.020. [Institutional journal PDF](https://ir.lib.nycu.edu.tw/server/api/core/bitstreams/761cc49b-4b82-4fd4-8748-960e6473e874/content). The entire ten-page article, web extraction lines 0–829, including Theorems 5 and 8 and both proofs, was read. Raw PDF: 149049 bytes; SHA256 `aaebae81c7cc045f3778cea0a975ab0ecb517ac5e9acb0313e9381859c158ba3`. No page-image hash is claimed. Credited operation: scalar endpoint weighting and equality through condition-two similarity. It does not state the matrix hierarchy; the analysis writes the rank-independent extension. Its scalar theorem receives no new contribution credit.
+
+2. **Chafiq Benhida, Emmanuel Fricain and Dan Timotin, Reducing subspaces of C00 contractions**, New York Journal of Mathematics 27 (2021), 1597–1612. [Journal PDF](https://nyjm.albany.edu/j/2021/27-62p.pdf). Read model definitions/formulas (2.4)–(2.7), Lemma 2.2 and the relevant model discussion; Section 3's Lemma 3.1, Corollaries 3.2–3.4 and their proofs (web lines 175–435 cover these passages). Raw PDF: 793503 bytes; SHA256 `18f611b16a5c04984d6dfb3632ca645bf63c6643f8125d7c90cfd4840614dec2`. Credited operation: constant defect-subspace block decomposition is equivalent to reducibility. The analysis proves its exact model-space specialization and derives the positive-matrix formulation by spectral projections. Sections 4–6 were not systematically reviewed.
+
+3. **Kenneth R. Davidson, Vern I. Paulsen and Hugo J. Woerdeman, Complete spectral sets and numerical range**. [Author-hosted preprint](https://www.math.uwaterloo.ca/~krdavids/Preprints/DPWnum_range.pdf). Entire eight-page preprint, web lines 0–535, read, including Theorem 2.3's proof, Lemmas 2.1–2.2, and consequences. Raw PDF: 273886 bytes; SHA256 `ef6c7c29bc28cc0e3231887ffb2082918c7a6c200d82cdb9c795f94828d4ac24`. Operation comparison: its converse is n-to-2n, not reduction to coefficient size two. Complete disk bounds and similarity are credited; no first-attainment-rank theorem is attributed to it.
+
+## Other theorem-level inspections
+
+4. **Greg Knese, Kummert's approach to realization on the bidisk**, arXiv:1907.13191v2. [Versioned text](https://arxiv.org/html/1907.13191v2). Read Theorem 2.1 with proof (lines 125–225), Proposition 2.2 with proof (228–250), and Theorem 3.1 with proof (266–307). Adjacent realization remarks were screened, not all later sections. Credited operation: finite contractive/isometric transfer realization and one-variable positive kernel. General realization does not specify norm-two evaluation on its contraction state. No raw-document hash computed here.
+
+5. **Per Åhag, Rafał Czyż and Jani A. Virtanen, Square Functions, Complete Crouzeix Conjecture in Dimension Three, and the Clouâtre–Ostermann–Ransford conjecture**, arXiv:2608.27346v3. [Versioned text](https://arxiv.org/html/2608.27346v3). Read Section 5, lines 708–863, including Lemmas 5.1–5.2, Theorem 5.3, Proposition 5.4, Theorem 5.5 and their proofs; also the dimension-three equality proof, lines 1263–1308. These supply finite rectangular detection, orthogonal Schmidt families and similarity enlargement, rather than a prescribed all-r numerical-contraction hierarchy. No whole-paper reading or raw hash claimed.
+
+6. **Qixiao He, Ilya M. Spitkovsky and Ibrahim Suleiman, On low-dimensional partial isometries**, Electronic Journal of Linear Algebra 39 (2023), 124–135. [Journal PDF](https://journals.uwyo.edu/index.php/ela/article/download/7405/6127/15643). Only lines 0–163 were inspected: introduction, partial-isometry block form, extreme-rank statements and beginning size-three discussion. This is a screening limit; no assertion about all later examples, or all-dimensional amplification absence, is made. No raw hash computed.
+
+## Pinned OpenAI sources
+
+The revision is stipulated true: `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. Actual TeX statements were read; no upstream truth audit was performed. Retrievals were in memory only.
+
+- [A direct proof of the complete Crouzeix inequality, build/main.tex](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/A-direct-proof-of-the-complete-Crouzeix-inequality-September-26-2026/build/main.tex): `thm:main`, lines 58–66, and surrounding introduction through 122. Raw SHA256 `54a429fe7129b4760b3015fabf2269d4de5fa38aba9539b18542c1df7e58333f`. It supplies the stipulated general complete upper bound, which the construction does not need.
+- [The complete Crouzeix theorem, build/main.tex](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/The-complete-Crouzeix-theorem-September-23-2026/build/main.tex): lines 50–170, including `thm:structural` and `thm:representation`; all of `prop:extremal` and its proof, 386–534; adjacent discussion through 570. Raw SHA256 `8a5de532bd3bd4c0b84cc8114c22175968813a6e984ced0d1bf48011270e621c`. Rational endpoint interpolation is credited, without attributing the present first-detection hierarchy to it.
+
+## Completed local comparisons
+
+- R019: read the entire finding and its mathematical proof, especially its stated fixed-witness coefficient-compression scope.
+- I292: read the entire completed review, all 167 lines of its contribution analysis, and its parent disposition. This supplies the project comparison with the fixed old LSS base and the contribution standard; no claim of independently accessing the original LSS article is made.
+- I309: after the user's supplemental authorization, read the entire completed review and analysis, and match both supplied hashes. Its E307 known/Q310 technical judgment is separate from the present matrix target. Its source-reading claims are reported as completed evidence, not promoted into new external reads by this reviewer.
+
+## Unavailable and unadjudicated leads
+
+- **John A. Holbrook, Interpenetration of ellipsoids and the polynomial bound of a matrix**, LAA 229 (1995), 151–166, DOI 10.1016/0024-3795(93)00350-9. [Publisher page](https://www.sciencedirect.com/science/article/pii/0024379593003509). The search returned publisher abstract metadata describing scalar/complete polynomial-bound differences. Opening the full page failed with 403. No theorem/proof was read, no full-scope reduction or impossibility is attributed to it, and no claim about its unread contents is made.
+- **Davidson–Katsoulis, Dilation Theory, Commutant Lifting and Semicrossed Products**, Documenta Mathematica 16 (2011), 781–868. The ETH PDF mirror returned Internal Error; a Kyoto mirror briefly yielded a cached PDF inventory, but focused extraction and live in-memory retrieval failed with 403. Search displayed an Example 3.3 excerpt. It was not treated as an independently read theorem. The one-generator threshold-one argument in the analysis is written directly, using the matrix contraction calculus already read in DPW.
+- Other broad search returns about multivariable/noncommutative algebras were leads only. They were not used as a mathematical antecedent without a conversion to one generator, numerical radius one, finite nilpotence, irreducibility and every smaller level.
