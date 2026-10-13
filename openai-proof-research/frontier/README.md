@@ -21,10 +21,14 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-Three focused rounds are running with GPT-6.1 Sol/high/ultrafast:
+**I200 completed:** [Parent review](iterations/i200-regularized-cone-parent-disposition.md)
+checks the explicit large-delta lift and the positive residual of its
+repaired patch. The small-delta problem stays unresolved and the branch
+is parked pending a new mechanism. No substantial finding is added.
+
+Two focused rounds continue with GPT-6.1 Sol/high/ultrafast:
 [I199](iterations/iteration199-foulkes-structured-bridge-brief.md) on structured
-Foulkes constraints, [I200](iterations/iteration200-regularized-cone-bridge-brief.md)
-on positive cone regularization, and
+Foulkes constraints and
 [I201](iterations/iteration201-elliptic-covering-bridge-brief.md) on corrected
 elliptic cylinder costs. Their outputs are disjoint. **Eight accepted, two remaining.**
 

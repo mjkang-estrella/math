@@ -6,6 +6,18 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I200 completed: large-delta lift; small-delta case remains open
+
+[I200](iterations/i200-regularized-cone-bridge.md) and its
+[parent disposition](iterations/i200-regularized-cone-parent-disposition.md)
+give an explicit spectrahedral range delta>=sigma and an attained
+positive threshold for joint linear Gram factors. A repaired polynomial
+patch is feasible, but its moment residual is positive, so it does not
+prove nonliftability. Arbitrary liftability below the Gram threshold
+remains unresolved. The technical deductions are retained without a
+nomination. I199 and I201 were confirmed running independently.
+**Eight accepted, two remaining.**
+
 ### I199–I201: parallel focused follow-ups
 
 Three new tasks target the actual gaps from I198: the
