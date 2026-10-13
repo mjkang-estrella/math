@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I246 complete: E4 contribution SUBSTANTIAL
+
+[I246](frontier/iterations/i246-crouzeix-contribution-parent-disposition.md) supports the new complete-witness scalarization mechanism. With I245 proof PASS, both gates are satisfied; the tenth acceptance is recorded in its own following commit.
+
 ## I245 complete: E4 independent proof PASS
 
 [I245](frontier/iterations/i245-crouzeix-proof-parent-disposition.md) approves the attained finite-polynomial scalarization and disk-rigidity proof without repairs. The contribution decision and final acceptance are recorded separately. **Nine accepted, one remaining at this checkpoint.**
