@@ -2,7 +2,7 @@
 
 ## Active target: twenty substantial findings
 
-On 2026-10-12 the user raised the target to twenty. **Ten accepted, ten remaining.** The [twenty-finding ledger](TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
+On 2026-10-12 the user raised the target to twenty. **Eleven accepted, nine remaining.** The [twenty-finding ledger](TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
 
 This phase responds to the user's correction: the objective is a genuinely new idea toward a significant named open problem, not another routine consequence of an accepted OpenAI theorem. The earlier F001–F010 remain archived deductions; they do not meet this phase's research target.
 
@@ -25,7 +25,11 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
-## Target complete: ten substantial findings
+## Eleventh finding accepted: nonlinear ball–tube contact
+
+[R017](findings/R017-ball-tube-contact-asymptotic.md) establishes the sharp second-order nesting cost over all finite-perimeter pairs. Independent I269 proof review passed and I270 contribution review judged the result substantial. **Eleven accepted; nine remain.** The logarithmic ball–slab candidate is under independent proof review; other discovery and contribution tasks continue at Standard speed.
+
+## Historical first milestone: ten substantial findings
 
 [R016: complete Crouzeix equality in dimension four](findings/R016-complete-crouzeix-equality.md) passes independent proof and contribution reviews. Exact equality for a finite matrix-valued polynomial now yields a scalar equality witness and a disk numerical range in base size at most four. **Ten accepted, zero remaining.** The acceptance covers attained finite-polynomial equality; the stronger I243 supremum statement and quantitative near-equality bounds remain outside the reviewed scope. No further discovery task is active. Earlier status entries below are historical.
 
