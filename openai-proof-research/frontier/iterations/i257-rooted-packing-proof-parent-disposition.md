@@ -1,0 +1,11 @@
+# I257 parent disposition: rooted-packing correctness
+
+The independent Standard-speed proof gate completed **PASS**, with no required repair, for the exact I248 rank-transfer theorem and its bounded-component corollary. The separate I258 contribution gate concluded TECHNICAL. Both decisions are retained: mathematical validity does not by itself meet the substantial-finding threshold. The accepted count remains **10/20**.
+
+The parent read the complete review and reconstruction, reading/failure log and literature record, and verified the local hashes recorded in the authentication manifest, including all five retained primary excerpts. The candidate SHA256 remains `47a0fa44fdc57a1c2009da17f14a6dab8aa6d05fec63d49e55f013d49487886b`. Review SHA256: `33099b8843b14e88aa51e83fc58e592d2478752442887457139dc59c26be0a0b`. Manifest SHA256: `294a3a03c187fed74f7f19d2dae46ed1f737335ba84086fab4d96e84236df25a`.
+
+The review independently checked compression on slot-root edge coordinates, the maximum/conditional-expectation direction, vertex-block concentration, uniform test entropy, invariant random optimum selection, conditioning and trimming across independent layers, the permutation martingale, all floor/cap cases, and the deterministic typical-class argument needed for Cartesian-product and adaptive quantifiers. It also verified padding and the exact sufficient Aharoni–Haxell condition in the primary FLN application. The original topological AH proof was inaccessible and was not claimed read; the rank theorem is independent of that external corollary input.
+
+Optional expansions are explanatory, not mathematical repairs. They do not convert the contribution decision to SUBSTANTIAL. Interrupted I254 material remains preserved and supplies no proof evidence. Authenticated source excerpts retain their original whitespace; authored Markdown passes whitespace checks.
+
+Evidence: [review](../reviews/i257-rooted-packing-proof.md), [full reconstruction](../experiments/i257_rooted_packing_proof/analysis.md), [reading record](../experiments/i257_rooted_packing_proof/reading-and-failures.md), [literature](../sources/i257_rooted_packing_proof/literature.md), [authentication](../experiments/i257_rooted_packing_proof/input-authentication.json), [separate contribution disposition](i258-rooted-packing-parent-disposition.md).
