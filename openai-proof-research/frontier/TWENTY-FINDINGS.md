@@ -50,6 +50,10 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I310 quantitative nilpotent gap](iterations/i310-quantitative-nilpotent-scalar-gap.md) proposes an explicit scalar functional-calculus gap depending only on a nilpotence bound and the power-norm gap. It strengthens the same I307/I306 package, is not covered by the completed qualitative I308 proof audit, and is not an additional acceptance slot. [I311 independent quantitative proof review](iterations/i311-quantitative-nilpotent-proof-parent-disposition.md) passed unchanged at Standard speed, including every explicit constant and boundary case. [I309 contribution review](iterations/iteration309-disk-extremizer-contribution-standard-brief.md) is active for the entire exact-plus-quantitative package at Standard speed.
 
+- [I312 strict amplification hierarchy](iterations/i312-parent-amplification-construction.md) proposes, for every r>=2, an explicit irreducible nilpotent matrix with C_d<2 for all d<r and C_r=2. The earlier [rank-defect obstruction](iterations/i312-parent-rank-defect-obstruction.md) ruled out a naive enlargement. [I312 full proof review](iterations/iteration312-amplification-hierarchy-standard-brief.md) and [I314 independent contribution review](iterations/iteration314-amplification-hierarchy-contribution-standard-brief.md) are active at Standard speed. The old Gau–Wu scalar model and the fact that the new construction has an old similarity upper bound are explicit comparison obligations. No hierarchy acceptance is presumed.
+
+- [I313 small-information endpoint](iterations/i313-small-information-endpoint.md) proves a parent technical one-coordinate a^(-4) rate and a matching obstruction to every smaller exponent. The all-dimensional endpoint theorem is still open; its [research brief](iterations/iteration313-small-information-endpoint-standard-brief.md) is prepared but not launched. This does not strengthen the accepted compact-rectangle R020 statement by assumption and does not add to the count.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
