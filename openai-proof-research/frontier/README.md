@@ -32,14 +32,18 @@ $\Delta=\kappa-\gamma$ quotient obstruction. The general long-gap
 clauses stay UNRESOLVED at J195 with no decisive new constraint; per
 the brief's stopping rule the long-gap front is **PARKED** beside the
 short-gap front (J194/J193) and the E183 line.
-[I196](iterations/iteration196-fresh-discovery-brief.md) has an active
-maintenance continuation after its initial task was cancelled without
-a screening verdict.
+[I196](iterations/iteration196-fresh-discovery-brief.md) and its maintenance
+continuation were cancelled without a screening verdict; a later retry
+failed to start.
 [Parent recovery](iterations/i196-fresh-discovery-parent-checkpoint.md)
 preserves the initial partial records and corrects the "unscreened"
 premise using I36/I37 (084) and I07/I99 (020); no absence-of-prior-work
-claim is made for 026. The correction was steered into the existing run,
-not a duplicate task. Q164, (T) and universal
+claim is made for 026.
+[I197](iterations/i197-fresh-discovery-parent-restart.md) restarts fresh
+discovery with the corrected exclusions, starting with large prime gaps
+and allowing at most two replacement families. The new task was
+acknowledged as running; no mathematical result is claimed at dispatch.
+Q164, (T) and universal
 exchange remain recorded open surfaces. **Eight accepted, two
 remaining.**
 

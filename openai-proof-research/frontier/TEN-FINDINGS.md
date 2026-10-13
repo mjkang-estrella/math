@@ -6,16 +6,28 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
-### I196 partial checkpoint; active continuation and overlap correction
+### I197 fresh discovery restarted after I196 cancellation
+
+[I197](iterations/i197-fresh-discovery-parent-restart.md) starts with the
+large-prime-gap manuscript and permits at most two replacement families
+after target-level overlap checks. Both original I196 work and its later
+continuation are cancelled with no pending child runs; the latest retry
+failed to start. A new delegated task received the original assignment,
+overlap corrections, and precise output scope, and was acknowledged as
+running. No mathematical result or finding-count increase is claimed.
+**Eight accepted, two remaining.**
+
+### I196 historical partial checkpoint and overlap correction
 
 The initial I196 task was cancelled before a screening verdict. Its
-later maintenance continuation is active, so the parent did not launch
-a duplicate. [Recovery record](iterations/i196-fresh-discovery-parent-checkpoint.md)
+later maintenance continuation was active at that checkpoint, so the
+parent did not launch a duplicate then. Its cancellation and restart
+are recorded above. [Recovery record](iterations/i196-fresh-discovery-parent-checkpoint.md)
 preserves five initialized partial files as byte-checked copies and
 distinguishes the cancelled task from the later run. The claim that
 all three proposed families were never screened is superseded:
 I36/I37 already address 084, and I07/I99 already address 020. The
-active child received those exclusions and a bounded substitution rule.
+then-active child received those exclusions and a bounded substitution rule.
 No screening outcome, proof PASS, or nomination is inferred.
 **Eight accepted, two remaining.**
 
