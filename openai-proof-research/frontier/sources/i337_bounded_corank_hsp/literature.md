@@ -1,0 +1,9 @@
+# I337 parent primary-source comparison leads
+
+2026-10-13. These are limited mathematical reads, not a contribution verdict. No new external full text has been retained. R021 and its I323/I324 validation remain credited predecessors.
+
+[Imran–Ivanyos, arXiv:2202.04047v2](https://arxiv.org/html/2202.04047v2), actual HTML lines 45–85: the model discussion distinguishes a finite basis from input-dependent exact transforms. Theorem 1 solves the general prime-power module HSP while charging QFT_m and inverse calls separately. It outputs a canonical lattice description. This is a stronger group range with a stronger transform interface; it does not immediately implement I337 in the prescribed gate set. Only the model and theorem were read here, not the full algorithm proof.
+
+[Dong–Fan–Zhong–Qiu, arXiv:2512.22959v1](https://arxiv.org/html/2512.22959v1), actual HTML lines 236–304, 305–327 and 412–487: the preparation explicitly includes factorwise exact Fourier transforms. Algorithm 2 uses computed arccos phases; Algorithm 3 and Theorem 3 give exact subgroup recovery when its order is known. This credits exact recovery and known-order use, but does not remove those transform/phase operations. The local theorem proof was read; the entire paper was not. The 2026 published abstract was a version lead only.
+
+The accepted R021 construction already supplies fixed-set polygonal transforms, selected-frequency estimates and a fixed-dimensional exact probability evaluator for a two-register cyclic logarithm experiment. The proposed I337 adds a fixed number of quotient coordinates, but could still be a technical extension. The supplied-basis removal uses standard linear algebra, inverse-polynomial coordinate-basis guessing and witness-dependent mass counting. An independent contribution review must assess that complete operation-level relationship; a different oracle presentation alone does not establish substantiality.
