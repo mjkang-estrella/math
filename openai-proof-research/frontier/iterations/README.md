@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I218 proof PASS; final contribution gate pending
+
+[I218](./i218-neumann-eigenmap-parent-disposition.md) independently passes the full global eigenmap theorem with no corrections. I219 continues the separate contribution and prior-art gate. **Nine accepted, one remaining.**
+
 ## I218–I219: both eigenmap gates running
 
 [I218](./iteration218-neumann-eigenmap-proof-brief.md) independently checks the eigenmap proof and [I219](./iteration219-neumann-eigenmap-contribution-brief.md) independently checks contribution and prior art. Both were acknowledged as running with GPT-6.1 Sol/high/ultrafast. I216 continues the boundary-approximation line; I217 was interrupted to prioritize validation and its partial files remain preserved. **Nine accepted, one remaining.**
