@@ -68,6 +68,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I331 two-sided Sobolev approximation](iterations/i331-bi-sobolev-research-brief.md) is active at Standard speed. It asks for one sequence approximating both a spatial map and its inverse strongly in W1,2, or a proved counterexample. Forward approximation and inverse smoothness do not settle this target.
 
+- [I334 uniform biased production](iterations/i334-uniform-biased-production-candidate.md) gives a new parent joining proof for D>=F(I)+c m²I² across all means and dimensions. It is unreviewed and is being independently checked within I325. If valid, it pays the [I332 missing endpoint reduction](iterations/i332-biased-production-reduction.md); the full S313 package still requires both independent acceptance gates. No count is added.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
