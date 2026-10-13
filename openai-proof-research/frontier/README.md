@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I216 completed: exact-boundary density is technical overlap
+
+[I216](iterations/i216-relative-sobolev-parent-disposition.md) derives exact-boundary approximation from the source smooth-cutoff operation; its stronger linear-cost target remains unresolved. It is not nominated. I219 continues the separate eigenmap contribution gate, and I220 continues the Coulomb line. **Nine accepted, one remaining.**
+
 ## I220 continues the preserved Coulomb partials
 
 [I217 partial work](iterations/i217-interruption-parent-disposition.md) is preserved as incomplete. [I220](iterations/iteration220-quantitative-coulomb-continuation-brief.md) resumes it in a freed slot while I216 works on relative approximation and I219 reviews the eigenmap contribution. I218 has already passed its proof. **Nine accepted, one remaining.**
