@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I235 complete: conditional conversion, unresolved crossing
+
+[I235](./i235-finite-range-crossing-parent-disposition.md) completes the shifted-renewal conversion but leaves the required crossing and shared-environment estimates unproved. The route is parked pending a new mechanism. **Nine accepted, one remaining.**
+
 ## I234 complete: local gradient estimate remains unpaid
 
 [I234](./i234-viscous-local-parent-disposition.md) records the smooth partial estimates and the missing local viscosity bridge. The separate contact-propagation route continues. **Nine accepted, one remaining.**

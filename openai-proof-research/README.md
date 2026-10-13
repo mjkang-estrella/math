@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I235 complete: conditional conversion, unresolved crossing
+
+[I235](frontier/iterations/i235-finite-range-crossing-parent-disposition.md) completes the shifted-renewal conversion but leaves the required crossing and shared-environment estimates unproved. The route is parked pending a new mechanism. **Nine accepted, one remaining.**
+
 ## I234 complete: local gradient estimate remains unpaid
 
 [I234](frontier/iterations/i234-viscous-local-parent-disposition.md) records the smooth partial estimates and the missing local viscosity bridge. The separate contact-propagation route continues. **Nine accepted, one remaining.**
