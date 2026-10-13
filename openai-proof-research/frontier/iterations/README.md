@@ -16,7 +16,16 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
-## I197 fresh discovery restarted with corrected exclusions
+## I197 completed: no substantial nomination
+
+The [completed report](i197-fresh-discovery.md) and
+[parent disposition](i197-fresh-discovery-parent-disposition.md) establish
+the scope: a technically proved positive-density chain theorem, and an
+unclosed prescribed-gap-box route at a joint prime lower bound. All five
+detached output hashes and eight source-copy hashes match. The 026 branch
+is parked pending a new mechanism. **Eight accepted, two remaining.**
+
+## I197 historical restart with corrected exclusions
 
 **Model switch:** The user requested stopping the first I197 agent and
 rerunning it with GPT-6.1 Sol, high reasoning, and ultrafast service.

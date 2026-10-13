@@ -6,6 +6,18 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I197 completed: chain-density deduction is technical only
+
+The [report](iterations/i197-fresh-discovery.md) and
+[parent disposition](iterations/i197-fresh-discovery-parent-disposition.md)
+retain the positive-density theorem for fixed chains of large gaps as
+a technical deduction of accepted moment operations. The written score,
+moment and multiplicity steps pass the scoped parent check. The stronger
+prescribed narrow-box route still lacks its joint prime-detection lower
+bound. No nomination or independent acceptance is claimed. The source
+copies and output hashes were checked; the 026 branch is parked pending
+a new mechanism. **Eight accepted, two remaining.**
+
 ### I197 round 2: user-requested model switch
 
 The original I197 agent was stopped and confirmed interrupted with no

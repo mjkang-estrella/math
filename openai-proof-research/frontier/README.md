@@ -21,6 +21,13 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I197 completed:** The [parent check](iterations/i197-fresh-discovery-parent-disposition.md)
+retains the large-gap chain result as technical only. The narrow-box
+route is unclosed at its joint lower-bound estimate, and the 026 branch
+is parked pending a new mechanism. The next bounded screen concerns
+hyperbolicity cones, cylinder coverings, and Foulkes maps.
+**Eight accepted, two remaining.**
+
 At the user's request, the initial I197 agent was stopped and
 [round 2](iterations/iteration197-r2-sol-high-ultrafast-task.json) was
 started with **GPT-6.1 Sol, high reasoning, ultrafast service**. It continues
