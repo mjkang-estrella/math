@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I229 complete: forcing result stays technical
+
+[I229](./i229-forced-infinity-contribution-parent-disposition.md) declines substantiality while preserving the independent proof PASS. The result is retained as a useful robustness corollary. Actual p-harmonic gradients and finite-range ballisticity are under investigation. **Nine accepted, one remaining.**
+
 ## I228 proof PASS; contribution review pending
 
 [I228](./i228-forced-infinity-proof-parent-disposition.md) passes the full bounded-forcing regularity and gradient stability proof, with two expository clarifications. I229 independently reviews contribution and prior art. **Nine accepted, one remaining.**
