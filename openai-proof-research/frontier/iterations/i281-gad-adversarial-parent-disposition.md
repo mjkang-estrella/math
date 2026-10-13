@@ -1,0 +1,15 @@
+# I281 parent disposition — adversarial GAD search
+
+2026-10-12. **No counterexample and no new acceptance.** The full dimension-independent pure-input stability target remains unresolved. Twelve findings are accepted, eight remain. The child's eleven-count statement reflects its assignment snapshot, not the current ledger.
+
+The parent read the full report, 281-line analysis, reading log, literature note and authentication record. Independently of I280, this round proves the same conditional-amplitude relative-entropy lower bound and stability for phases separating by site. It verifies I279's bounded-entropy cat and the failure of summed original marginal control. This independent agreement is useful evidence, but is neither an additional finding nor a contribution gate.
+
+New attack checks have explicit restrictions. At nu=1/2 the Pauli decomposition and error-ensemble Gram estimate control all relative phases and arbitrarily rare weights in an opposite-latitude cat, for sufficiently large n. The Gram entropy loss is bounded by 4 epsilon(1-epsilon), and the final positive mixture estimate gives squared distance at most 8 D_n/(1-gamma). This avoids applying a fixed-weight entropy limit to superexponentially rare weights. The parent checked the coefficient signs, tensor damping, Gram trace identity and n threshold.
+
+Separated codeword superpositions have entropy excess equal to their mixing entropy up to explicit coherence, entropy-continuity and decoding errors. Their relative conclusion requires the entropy to dominate those errors. An unital small even-cat expansion matches the quartic distance and diagonal-relative-entropy scales when n delta^2 tends to zero. Neither calculation covers arbitrary dense phase codebooks, collective fluctuations at all scales, or the general pure-input problem.
+
+The depolarizing paper is a prior comparator only: its displayed local expansion does not furnish an imported all-n GAD remainder or global entry argument. The completed I281 output may inform a later phase investigation, but was not available to I280 during its independent derivation.
+
+All 28 available local hash records were checked. The detached report hash is `c72fe7fa862dac285e1a282c2a90142147902fa531b0356fefb7ed0917fc2047`, analysis hash `0476a46359fb7b58076287828cdbd5908276b04026b7957a1c78fd987ade3355`, and manifest hash `83d127e3a3b44e3c7cc6d499ef273ed74368e60303b6c01ab38e6df3328a13a1`. External verbatim section extracts remain local reading caches, excluded from publication; their URLs, exact reading extents and hashes are in the public manifest. No whole-source reading is inferred from hashing.
+
+Evidence: [report](i281-gad-uniform-stability-adversarial.md), [analysis](../experiments/i281_gad_uniform_stability_adversarial/analysis.md), [reading log](../experiments/i281_gad_uniform_stability_adversarial/reading-and-failures.md), [sources](../sources/i281_gad_uniform_stability_adversarial/literature.md), [authentication](../experiments/i281_gad_uniform_stability_adversarial/input-authentication.json).
