@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I240 complete: finite-viscosity result remains technical
+
+[I240](iterations/i240-viscous-contribution-parent-disposition.md) declines substantiality while preserving I239 proof PASS. The completed theorem is retained without counting it; I241 pursues the remaining p-gradient regime. **Nine accepted, one remaining.**
+
 ## I241: remaining p-gradient regime under investigation
 
 [I241](iterations/iteration241-p-gradient-high-viscosity-brief.md) uses the completed finite-viscosity result to investigate the unresolved high-viscosity regime for actual p-harmonic sequences. The false limiting-PDE shortcut remains excluded. GPT-6.1 Sol/high/ultrafast was acknowledged running. **Nine accepted, one remaining.**
