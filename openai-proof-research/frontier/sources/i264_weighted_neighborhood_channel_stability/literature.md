@@ -1,0 +1,9 @@
+# I264 source dependencies and comparison limits
+
+This proposed theorem is in the same chain as I250/I259/I262. The pinned revision is fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. The sharp matrix constant and scalar equality profile are stipulated from the family-262 manuscript, *Equality cases in the sharp one-dimensional matrix Lieb–Thirring inequality*. Exact primary paths, URLs, hashes and read extents are recorded in `frontier/experiments/i250_lieb_thirring_transverse_hessian/input-authentication.json`.
+
+The external operator-valued endpoint estimate is Hundertmark–Laptev–Weidl, *New bounds on the Lieb–Thirring constants*, Theorem 3.1: https://www.ma.imperial.ac.uk/~alaptev/Papers/hlw.pdf . The parent previously visually read pages 3–6, including the complete presented proof and operator conventions; identity and scope are retained in the I259 source/authentication records. This is credited classical mathematics. It applies to a nonnegative bounded finite-matrix potential with integrable trace, which B_w w f f^T satisfies without compact support. No other section of HLW is claimed read or used.
+
+Scalar Carlen–Frank–Lieb stability, https://arxiv.org/html/1301.5032 , remains serious prior art. Only the earlier documented introduction/main-statement scope is claimed; I264 does not assert that the literature lacks broader matrix or vector versions. No fresh novelty search or worldwide-priority conclusion is made. Independent contribution review is required.
+
+The proposed strengthening is weighted-neighborhood control with no essential-supremum orientation hypothesis. The new mathematical steps are the full nonlinear coupling estimate, use of the integrable w/rho ratio, and weighted interpolation for large-angle exceptional sets. These are proposed deductions, not new primary literature. No copied primary excerpts were added because this round did not expand the prior reading scope.
