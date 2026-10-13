@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I238 complete: scalar stability remains technical
+
+[I238](./i238-crouzeix-parent-disposition.md) retains a restricted scalar theorem and an exact obstruction to amplifying its proof. Complete four-dimensional rigidity remains open and receives focused follow-up. **Nine accepted, one remaining.**
+
 ## I240 complete: finite-viscosity result remains technical
 
 [I240](./i240-viscous-contribution-parent-disposition.md) declines substantiality while preserving I239 proof PASS. The completed theorem is retained without counting it; I241 pursues the remaining p-gradient regime. **Nine accepted, one remaining.**
