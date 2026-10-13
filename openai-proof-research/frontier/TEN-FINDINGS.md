@@ -6,6 +6,15 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I199 completed: structured constraints, unresolved Foulkes seed
+
+The [report](iterations/i199-foulkes-structured-bridge.md) and
+[parent disposition](iterations/i199-foulkes-parent-disposition.md) give
+the determinant-square restriction, a noninjective restriction diagnostic,
+and the exact A_1^2 C_6=0 multiplication gap. They prove neither the
+canonical (7,8) seed nor the ordinary seventh case. Technical partials
+are retained without a nomination. **Eight accepted, two remaining.**
+
 ### I200 completed: large-delta lift; small-delta case remains open
 
 [I200](iterations/i200-regularized-cone-bridge.md) and its

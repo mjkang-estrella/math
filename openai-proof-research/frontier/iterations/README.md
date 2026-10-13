@@ -16,7 +16,15 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
-## I200 completed; I199 and I201 continue
+## I199 completed: exact Foulkes quotient gap
+
+The [report](i199-foulkes-structured-bridge.md) and
+[parent disposition](i199-foulkes-parent-disposition.md) retain the
+structured restrictions but leave A_1^2 C_6=0 unproved. No substantial
+nomination is made. I201 has returned for separate integration.
+**Eight accepted, two remaining.**
+
+## I200 historical checkpoint; I199 and I201 then continued
 
 The [I200 report](i200-regularized-cone-bridge.md) and
 [parent disposition](i200-regularized-cone-parent-disposition.md) retain

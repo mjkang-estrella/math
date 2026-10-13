@@ -21,6 +21,11 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I199 completed:** [Parent disposition](iterations/i199-foulkes-parent-disposition.md)
+retains its determinant-square restriction and exact quotient reduction.
+The seventh Foulkes seed remains unproved. I201's completed output is
+being integrated separately. **Eight accepted, two remaining.**
+
 **I200 completed:** [Parent review](iterations/i200-regularized-cone-parent-disposition.md)
 checks the explicit large-delta lift and the positive residual of its
 repaired patch. The small-delta problem stays unresolved and the branch

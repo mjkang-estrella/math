@@ -1,5 +1,10 @@
 # OpenAI mathematics research
 
+**I199 completed, unresolved:** The [parent disposition](frontier/iterations/i199-foulkes-parent-disposition.md)
+checks the structured restrictions and identifies A_1^2 C_6=0 as the exact
+remaining Foulkes seed. No nomination is made. I201 has also returned and
+is being integrated separately. **8 accepted, 2 remaining.**
+
 **I200 completed; I199 and I201 running:**
 [The cone review](frontier/iterations/i200-regularized-cone-parent-disposition.md)
 checks an explicit large-delta spectrahedral range and a repaired patch
