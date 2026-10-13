@@ -16,6 +16,22 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I202–I204 running
+
+- [I202 brief](iteration202-foulkes-quotient-brief.md),
+  [dispatch](iteration202-foulkes-quotient-task.json): actual Foulkes
+  deficiency-module multiplication.
+- [I203 brief](iteration203-all-height-tiles-brief.md),
+  [dispatch](iteration203-all-height-tiles-task.json): all-height lattice
+  covers beyond the solved resonances.
+- [I204 brief](iteration204-arithmetic-structures-discovery-brief.md),
+  [dispatch](iteration204-arithmetic-structures-discovery-task.json):
+  bounded arithmetic discovery with prior-work checks.
+
+All were acknowledged as running with GPT-6.1 Sol/high/ultrafast. Output
+scopes are disjoint and both acceptance gates remain due for nominations.
+**Eight accepted, two remaining.**
+
 ## I201 completed: corrected finite covers, optimality gap
 
 The [report](i201-elliptic-covering-bridge.md) and
