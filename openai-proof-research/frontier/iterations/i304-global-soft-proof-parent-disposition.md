@@ -1,0 +1,15 @@
+# I304 parent disposition — unrestricted stability passes
+
+2026-10-13. **Independent complete proof verdict: PASS unchanged for unrestricted S302.** The supporting sharpness assertion also passes unchanged. No repair, new hypothesis or unpaid mathematical operation remains. This is the final correctness gate for the same all-rectangle theorem judged SUBSTANTIAL in I303; the parent accepts it separately as R020 after integrating this evidence.
+
+The parent read the complete final 319-line analysis in two bounded parts, the final review, reading log and literature record, and inspected the authentication schema and every operative group. It verified all 34 local input hashes, 36 semantic passages, 40 exact source-label lines, nine pinned source identities and five detached output hashes. It also reverified the fourteen I301 input records and twelve passages, all seven I302 dependency/output records, and the complete I303 final output hashes and input identities. Byte identification does not replace mathematical reading.
+
+The full proof independently checks production integration and earlier-time budget control; soft sorting and its quantitative backward transfer; local L2 coercivity with rare spikes and original endpoints; both branches of joining equality; compactness of pair laws on a fixed square; marked-singleton entrance; scalar Gaussian strictness with the positive mean term retained; exact-law rearrangement and scalar compactness; fixed-degree Lindeberg transfer of both information budgets; and exclusion of diffuse near-extremizers. All n, all bounded soft kernels, arbitrary bias and exact information are retained. The constant depends only on the four compact-rectangle endpoints. The two-coordinate exact-budget example proves the sharp exponent in squared L2 distance.
+
+Final review SHA256: `ebe55bd375f8eebd9956c6cfbd251135703d1d6c7cc137fd41a0ac2c807e0d92`. Analysis: `c9a10e576923b20a4570762b1817d143d1da71c5e332a6a7e80a6bb66f01b9c5`. Authentication: `3455468cfd1dec2eabbf40f862840ade82fd01825e2e1c55288043d89a3f4298`.
+
+The reviewer calls the in-flight I299 finalization supplement a “user” message. It was a parent-supplied message, sent only after I299 finalized, as the parent task record shows. This corrects attribution of the operational notice; the reviewed mathematical inputs and authorization to read finalized evidence are unchanged. I303 remained unread by I304, preserving separation of proof and contribution reviews.
+
+I298's restricted S295 TECHNICAL verdict remains intact. Neither S295 nor the Gaussian component nor the sharpness example receives a separate acceptance. R020 is one full theorem. No effective constants, endpoint-uniform rate or worldwide priority are claimed.
+
+Evidence: [review](../reviews/i304-global-soft-proof.md), [full analysis](../experiments/i304_global_soft_proof/analysis.md), [reading log](../experiments/i304_global_soft_proof/reading-and-failures.md), [authentication](../experiments/i304_global_soft_proof/input-authentication.json), [literature](../sources/i304_global_soft_proof/literature.md), [independent contribution](i303-global-soft-contribution-parent-disposition.md).
