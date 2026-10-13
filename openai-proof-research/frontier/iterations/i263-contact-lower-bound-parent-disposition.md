@@ -1,0 +1,13 @@
+# I263 parent disposition: complete proposed contact asymptotic
+
+I263 supplies a full proposed nonlinear lower-bound proof, rather than another conditional reduction. Combined with I253's recovery, checked in the same analysis, it claims the exact limit D_R(epsilon)/epsilon² -> K(R). The parent read the complete 280-line proof, report, read log and literature record, and verified the authentication hashes against local bytes. This is not yet an independently validated or accepted finding. Count stays **10/20**.
+
+The key new argument takes exact paired minimizers, constructs a common ambient two-parameter volume correction, and uses intersection/union perimeter submodularity to prove uniform scalar quasiminimality for each interface. The classical improved-convergence theorem is applied only after this paired lemma. The remaining proof explicitly controls graph energies, reference-center normalization, relative transverse drift, compact traces, and the passage to the quadratic obstacle problem. Arbitrary finite-perimeter competitors are covered by minimizing replacement, not by falsely claiming they all have smooth boundaries.
+
+The parent checked the logic of the lattice identities, independent volume derivatives at free limit patches, the range of sphere/tube scalar minimizers, removal of Jacobi modes, the sign of the contact translation, and the stated recovery. These checks motivate independent review and do not substitute for it. The primary regularity theorem's exact assumptions, uniform correction estimates, and trace passage are critical review targets.
+
+Complete proof SHA256: `d02db6dfe8b65bba3196baf2cd8de6eb4dec1ce13084696c9fe81ed2aee3fc95`. Report: `687450a31dbef8b64490a0064c4f3de8b29e7d1f913e9b4abc3077c2792c5840`. Manifest: `2f7b995ab03f06fa77aa52831d85046894754c3ca5a7292b533cbdcc9ca849a6`.
+
+The I269 independent proof gate is launched at GPT-6.1 Sol/high/Standard. A separate contribution gate has not yet launched. The I249/I253/I263 chain is one prospective finding, not several. All source reading limits and the fact that AFM states its regularity theorem without reproducing the underlying classical proof remain disclosed.
+
+Evidence: [complete proof](../experiments/i263_nonlinear_contact_lower_bound/analysis.md), [report](i263-nonlinear-contact-lower-bound.md), [reading record](../experiments/i263_nonlinear_contact_lower_bound/reading-and-failures.md), [literature](../sources/i263_nonlinear_contact_lower_bound/literature.md), [authentication](../experiments/i263_nonlinear_contact_lower_bound/input-authentication.json), [I269 brief](iteration269-nonlinear-contact-proof-standard-brief.md).

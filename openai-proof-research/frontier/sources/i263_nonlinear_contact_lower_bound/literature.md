@@ -1,0 +1,35 @@
+# I263 literature and primary-source contract
+
+2026-10-12. The pinned OpenAI theorems are stipulated true. External primary results are read to establish the precise applicable contract, not to infer anything from search snippets. Hashes and byte extents appear in the I263 authentication manifest.
+
+## Pinned torus theorem
+
+Retained and fully read [354-paper.tex](354-paper.tex), fetched from the [immutable raw source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/The-Isoperimetric-Conjecture-for-the-Cubic-Flat-Three-Torus-September-24-2026/build/paper.tex). The actual Theorem `intro:main` gives the unit-torus profile and ALL equality classes. At the strictly interior volumes used here the inner equality class consists of translated embedded balls and the outer equality class of circular tubes about shortest geodesics. Signed coordinate permutations, translations and null sets are included in the isometry convention. No internal period-two area normalization is silently substituted for this unit-torus statement.
+
+The paper's full introduction and completion argument were read; input references to other files are not a claim of reading the whole manuscript. The existing I249 `354-preliminaries.tex`, `354-geometry.tex`, and `354-planar-sections.tex` were also read completely. Their reflection and CMC slice identities concern one-set isoperimetric minimizers and cannot be assumed for paired minimizers. I263 does not use those structural arguments as a regularization theorem. The present pinned `354-references.tex` is retained and fully read. The catalogue's 354 block and the corresponding preprints-tree paths were checked; the listed manuscript is the family source, with no second pinned 354 manuscript used as an unexamined companion.
+
+## AFM: the theorem actually needed
+
+E. Acerbi, N. Fusco, M. Morini, *Minimality via second variation for a nonlocal isoperimetric problem*, CMP 322 (2013), 515–557. [Author-hosted final PDF](https://cvgmt.sns.it/media/doc/paper/540/Acerbi-Fusco-Morini.FINAL.pdf); [primary repository record](https://cvgmt.sns.it/paper/540/).
+
+Retained, fully read excerpts are PDF page 7, PDF page 22, and reference pages 34–35. The complete original PDF was streamed for hashing and text extraction but not retained as an unread full-paper artifact. Its SHA256 is `7805d5a0b9daf3873a199bbfe23d4064964fc2e72701be6d45303549028d4c72`, matching I249's authenticated source bytes.
+
+Definition 2.5 on page 7 requires, for every comparison ball and competitor with compactly contained symmetric difference, P(E)<=P(H)+omega rho^N. Theorem 4.2 on page 22 requires a sequence of these omega-minimizers with COMMON omega, bounded global perimeters and L1 convergence to a C2 set. It concludes that the whole boundary is eventually a normal graph, of class C^{1,1/2}, with graph functions tending to zero in C^{1,alpha} for alpha<1/2. It does not require a one-set volume-constrained minimizer or independent CMC premise. This is exactly the contract checked after I263's paired lattice lemma.
+
+The theorem is stated without a proof in AFM; the preceding paragraph attributes it to classical regularity, citing Almgren and related sources. The reference list was read to identify those references. We do not claim to have read Almgren's 199-page monograph or to reprove this standard external theorem. AFM Theorem 2.8's additional C3 regularity requires an Euler–Lagrange equation and is NOT asserted for our paired interfaces. AFM Theorems 1.1 and 3.9 are NOT used to silently produce pair-preserving approximations; the actual graph expansion/coercivity argument is supplied in I263.
+
+The page excerpts contain portions of neighboring statements/proofs. Theorem 4.3's obstacle proof and Proposition 2.7 are not claimed fully read or used from these fragments. Additional existing I249 AFM text was read only at the extents specified in the reading log.
+
+## Relevant companion/prior-operation comparisons
+
+E. Milman, *Isoperimetric Inequalities on Slabs with applications to Cubes and Gaussian Slabs*, [arXiv:2403.06602v3, Section 2.1](https://arxiv.org/html/2403.06602v3#S2.SS1). The complete presented Section 2.1, browser lines 333–403, was read, including Proposition 2.5's full presented proof sketch and Corollary 2.8's full proof. The slice-volume BV lower bound and the nesting/alignment criterion are prior operations. We do not claim an unseen full technical proof of the proposition, which the source explicitly presents as a sketch. This work is a comparison for the abandoned direct-slicing route, not an ingredient of the final paired proof. No local copy retained.
+
+S. Alama, L. Bronsard, X. Lu, C. Wang, *Core shells and double bubbles in a weighted nonlocal isoperimetric problem*, [arXiv:2212.06381v1](https://arxiv.org/abs/2212.06381v1). Version v1 PDF pages 1–9 were retrieved, extracted, fully read and retained. This includes the full equality-case proof of Theorem 2.2 on page 9. At sigma_02=sigma_01+sigma_12, the local energy is already written as a weighted sum of the inner and union perimeters, and separate Euclidean isoperimetry produces nested disks. The theorem concerns the planar Euclidean local problem; the introduction describes a two-dimensional nonlocal small-droplet regime. We use no claim about its later second Gamma-limit theorem without reading its proof: those later proofs were not retrieved. The page-9 start of Lemma 2.3 is a partial neighboring argument and is not used. This comparison establishes that the nested/sum-perimeter formulation itself is prior art, while leaving the I263 ball–tube lower passage to its own proof.
+
+The arXiv current-version page reports v4; we deliberately authenticate and cite the exact v1 bytes read. The search result pointing to a ResearchGate copy was only a navigation lead; all retained/used text came from the primary arXiv PDF. No inference from the unavailable browser PDF rendering was used.
+
+## Bounded fresh search scope
+
+Three batches of three queries were used: (1) torus Steiner symmetrization; improved cluster convergence/selection and surface tensions; Milman's product-slicing profile; (2) nested perimeter selection/contact; surface-tension triangle equality; second-order contact Gamma limits; (3) exact core-shell title; nested-set quasiminimizers; nested perimeter intersection regularity with volume constraints. Cluster search hits and unrelated quantum/contact or engineering results were navigation aids only, not proof premises. The final proof relies on the precisely read scalar AFM theorem AFTER proving paired scalar quasiminimality, so no ordinary cluster regularity theorem is stretched to the degenerate contact energy.
+
+No exhaustive novelty search was attempted, and no claim of worldwide novelty follows from absence of an exact search match. The pinned paper and the read companions already pay the scalar profile, separate stability, nested-phase formulation and generic slicing operations. The new-to-this-round claim is the complete nonlinear lower passage for the specified contact problem.
