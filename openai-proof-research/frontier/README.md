@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I236 candidate: finite-viscosity rigidity enters review
+
+[I236](iterations/i236-viscous-contact-parent-disposition.md) supplies a complete contact-propagation and fitted-class affinity argument. [I239](iterations/iteration239-viscous-rigidity-proof-brief.md) independently reviews the proof; a separate contribution decision is still required. This is not a p-gradient or uniform-viscosity theorem. **Nine accepted, one remaining.**
+
 ## I237–I238: two additional candidates under investigation
 
 [I237](iterations/iteration237-cube-cylinder-bound-brief.md) checks a clipped spherical density bound for cube cylinder covers, including whether it is already known or merely technical. [I238](iterations/iteration238-crouzeix-stability-brief.md) seeks a quantitative rigidity bridge from the complete Crouzeix inequality. Both were acknowledged running with GPT-6.1 Sol/high/ultrafast; I236 contact propagation continues separately. **Nine accepted, one remaining.**
