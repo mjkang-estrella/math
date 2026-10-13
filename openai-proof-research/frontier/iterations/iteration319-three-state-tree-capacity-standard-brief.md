@@ -1,0 +1,28 @@
+# I319 — three-state tree capacity discovery, new research round
+
+Use GPT-6.1 Sol, high reasoning, Standard service. Work only in openai-proof-research and read AGENTS.md and sources/upstream.json. No subagents, live sibling reads, git, shared-index changes, publication or numerical scans. Fourteen findings are accepted toward twenty; do not alter acceptance or count. This is a new research direction to attempt, not a request to confirm a result.
+
+## Exact research target
+
+Investigate whether the symmetric ferromagnetic THREE-state broadcast on an arbitrary deterministic bounded-degree rooted tree admits an exact weighted L²-capacity criterion. The uniform root has three states; known independent edge channels have entries lambda_e delta_(i,j)+(1-lambda_e)/3, with 0<lambda_e<=1, and all spins at level n are observed. Set R_v=product_(e in root-to-v) lambda_e². A candidate capacity is
+
+    C_2(T)=sup{ |theta| : theta is a nonnegative conserved flow to infinity,
+          sup_ray sum_(e=(v,w) on ray) (1-lambda_e²) theta(e)/R_w <=1 }.
+
+The candidate conclusion is reconstruction iff C_2(T)>0, with dimensionless two-sided comparisons to limiting quadratic posterior information if they are actually provable. First check normalization, perfect-edge rays and noiseless/infinite-capacity conventions. The core target is fixed 0<lambda<1 on arbitrary bounded-degree trees if full variable-edge generality cannot be reached; clearly label scope reductions. No restriction to spherically symmetric trees or direct evaluation of a known capacity criterion counts as the intended bridge.
+
+## Prior work and known gaps
+
+Read completed `frontier/iterations/i07-parent-probability-screen.md` and its source manifest. I07 inspected the actual pinned three-state paper: `sections/03-positive.tex` pos:additive, pos:moment-bounds, pos:correlation-bound use a COMMON limiting fixed-point posterior law and regular/Poisson factorial moments. `sections/04-local.tex` loc:pair allows distinct messages but loc:gap returns to a common law. They do not by themselves establish an arbitrary-tree criterion. Source pin is fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb, family229, `The-exact-reconstruction-threshold-for-the-three-state-symmetric-channel-September-25-2026`. Read actual primary statements and needed proof passages and the full relevant companions, not merely the catalogue.
+
+The accepted four-state variable-channel result R009 (now covering all locally finite trees), `frontier/findings/R009-variable-channel-capacity.md`, and completed `frontier/iterations/i08-variable-channel-capacity.md` concern L³-capacity with weight 1-lambda_e^4 and squared flows. Do not just rename four as three. Its preserved-class moment saving is cubic and is specific to that proof. The candidate three-state quadratic saving requires a genuinely paid mixed-message mechanism; differences in exponent and posterior-law closure must be justified. `frontier/iterations/i11-locally-finite-capacity.md` is another completed four-state route and not an answer here. A filename-only search may locate other completed three-state/negative-channel attempts; inspect relevant finished predecessors before duplicating them.
+
+Potential route, expressly unproved: find a channel-closed class of symmetric three-state posterior experiments and a uniform quadratic combining saving m(mu star nu)<=m(mu)+m(nu)-c m(mu)m(nu), or an appropriate changed potential with a provable converse comparison. Then pay necessity by a nonlinear flow extraction and sufficiency by an attenuated revealing observation scheme, keeping channel losses and perfect-edge limits. The corresponding mixed-posterior inequality may be false; try to refute it symbolically, and distinguish refuting the route from refuting the target. Do not import the source's identical-law recursion on a nonhomogeneous tree. Classical Ising L²-capacity or Kesten–Stigum moment bounds alone are not an argument for nonlinear three-state necessity. Read their primary sources if using them.
+
+The source already proves exact regular/Poisson thresholds and three-community SBM recovery; those do not count as new. The original accepted four-state criterion must not be recounted. Check external prior literature for arbitrary-tree Potts, capacity, robust reconstruction and critical branching geometries. No numerical evidence is a proof and no failed search proves novelty.
+
+## Deliverables
+
+Write only `frontier/iterations/i319-three-state-tree-capacity.md`; `frontier/experiments/i319_three_state_tree_capacity/{analysis.md,reading-and-failures.md,input-authentication.json}`; `frontier/sources/i319_three_state_tree_capacity/literature.md`, plus short necessary metadata. No new full external body or section may be retained. Give a complete exact statement/proof if achieved, or isolate the precise unpaid inequality and strongest genuinely proved technical partials. Separate correctness, contribution and priority limits. Return detached hashes for all five final outputs. Do not keep iterating superficial corollaries if the core bridge fails; report the obstruction so the parent can redirect.
+
+The parent also searched completed I26 resumed probability discovery and I132 discrete probability discovery for overlap: neither reported a three-state tree-capacity result. I26 addresses height/interface limits; I132 primarily threshold and discrete-noise questions. Read them only if a concrete overlap appears. The pinned source path includes `build/sections/03-positive.tex` and `build/sections/04-local.tex`; use the complete tree/manifest to confirm exact paths.
