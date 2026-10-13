@@ -48,6 +48,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I307 disk extremizer spectrum](iterations/i307-disk-extremizer-spectrum.md) proposes a general necessary form for all factor-two scalar Schur extremizers, via the original disk resolvent and exact Hardy coefficient norms. Its nilpotent corollary implies I306. These form one potential package, not two acceptance slots. [I308 independent proof review](iterations/iteration308-disk-extremizer-proof-standard-brief.md) is now running at Standard speed; both gates remain open.
 
+- [I310 quantitative nilpotent gap](iterations/i310-quantitative-nilpotent-scalar-gap.md) proposes an explicit scalar functional-calculus gap depending only on a nilpotence bound and the power-norm gap. It strengthens the same I307/I306 package, is not covered by the active qualitative I308 proof audit, and is not an additional acceptance slot. Its quantitative proof remains independently unreviewed.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
