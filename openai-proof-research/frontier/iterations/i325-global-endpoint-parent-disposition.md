@@ -8,4 +8,4 @@ The new interior-mean proof pays original higher modes and rare input tails, obt
 
 The full statement retains arbitrary finite dimensions, original values in [-1,1], exact information normalization, all means and the uniform a^(-4) rate. I325, I334 and their supporting lemmas form one connected nomination. The prior one-coordinate sharpness construction is supporting evidence, not another finding. No worldwide-priority claim is made.
 
-I335 independently reviews the complete theorem. I339 separately audits the I334 production core and must not be treated as a full-S313 proof gate. I336's full contribution brief is ready; dispatch waits for an available child slot. None of the pending reviews is used as completed evidence.
+I335 independently reviews the complete theorem, including the I334 production core. I339 was interrupted without a verdict to consolidate that redundant component review and free a child slot; its unfinished files are not proof evidence. I336 now independently reviews contribution of the full theorem. Both full reviews were requested as GPT-6.1 Sol high, Standard service. No pending review is used as completed evidence.
