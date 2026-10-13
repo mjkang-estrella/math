@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I220 nominated: sharp cost-complexity for Coulomb maps
+
+[I220](./i220-coulomb-cost-complexity-parent-nomination.md) proposes matching BV and fractional cost gaps for a smooth identical-marginal three-particle example, with exact preserving cycles. The known exponent alone is not the claimed contribution. Separate complete-proof and contribution gates are running as I222/I223. **Nine accepted, one remaining.**
+
 ## I219 complete: eigenmap remains technical
 
 [I219](./i219-neumann-eigenmap-parent-disposition.md) identifies established nodal structure and standard univalence mechanisms. The parent retains its technical contribution verdict while preserving I218's proof PASS. This candidate is not counted. **Nine accepted, one remaining; quantitative Coulomb validation continues.**

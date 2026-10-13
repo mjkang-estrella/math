@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I220 nominated: sharp cost-complexity for Coulomb maps
+
+[I220](iterations/i220-coulomb-cost-complexity-parent-nomination.md) proposes matching BV and fractional cost gaps for a smooth identical-marginal three-particle example, with exact preserving cycles. The known exponent alone is not the claimed contribution. Separate complete-proof and contribution gates are running as I222/I223. **Nine accepted, one remaining.**
+
 ### I219 complete: eigenmap remains technical
 
 [I219](iterations/i219-neumann-eigenmap-parent-disposition.md) identifies established nodal structure and standard univalence mechanisms. The parent retains its technical contribution verdict while preserving I218's proof PASS. This candidate is not counted. **Nine accepted, one remaining; quantitative Coulomb validation continues.**
