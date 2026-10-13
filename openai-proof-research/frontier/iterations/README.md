@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I243 complete: independent overlapping scalarization route
+
+[I243](./i243-scalarization-parent-disposition.md) independently derives the rank mechanism and proposes a broader quotient-norm equality theorem. Its extra steps are not part of the current E4 gates and are not separately accepted or counted. **Nine accepted, one remaining.**
+
 ## I242 candidate: complete equality in base dimension four
 
 [I242](./i242-crouzeix-parent-disposition.md) submits complete polynomial scalarization and disk rigidity for independent [proof](./iteration245-crouzeix-rigidity-proof-brief.md) and [contribution](./iteration246-crouzeix-rigidity-contribution-brief.md) reviews. Both gates were acknowledged running with GPT-6.1 Sol/high/ultrafast. The positive-deficit modulus is unproved. **Nine accepted, one remaining.**
