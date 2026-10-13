@@ -1,0 +1,22 @@
+# I301 — Gaussian translation strictness proof review
+
+2026-10-13. **Verdict: PASS unchanged for U300.** Independent adversarial mathematical review of parent analysis SHA256 `a00cd592d623d7b9b1cc5be06a3fd3c96f09de8cc0fc933295e68238fa75af1e`. No acceptance, contribution, priority, or count claim is made.
+
+The theorem passes with its original quantifiers: every measurable w:R->[-1,1] with 0<I(w)<log 2 and every 0<r<1 satisfy
+
+    I(Q_r w)<psi(r psi^{-1}(I(w))).
+
+Bias, endpoint-valued inputs, arbitrary tails, nonmonotone fields, and large amplitudes are covered. No theorem restriction or repair is necessary. The [full independent derivation](../experiments/i301_gaussian_translation_proof/analysis.md) supplies the following checks.
+
+1. **Non-strict interface verified.** The actual pinned `main:soft` applies to arbitrary soft cube kernels. I290's conditional block-sum replacement has uniform conditional-mean error O(M^{-1/2}) for smooth fields, including arbitrary output-bit configurations. Uniform continuity of psi transports output entropy; Gaussian L2 smoothing approximation covers measurable fields. A joint weak CLT alone is not invoked.
+2. **Scalar inequality verified at all open parameters.** K's derivative, both zero endpoint limits, and its unique derivative sign change check using the actual DLMF coth formula. The positive coefficient-ratio argument checks. Crucially, F'/(F+xF')=M(a sqrt(x))/x, with the factor 1/x exactly as written. Therefore k>r^2(1-b)/(1-r^2 b), and f_r''<0.
+3. **Likelihood-ratio bound retains bias.** R(s,z)=(1+s w(z))/(1+s m) is correctly normalized. Jensen under the joint law gives I(w)<=log(1+Var(w)/(1-m^2)), including endpoint-valued w.
+4. **Euler and tail arguments verified.** Prior smoothing gives 1±w>=c exp(-C x^2), quadratic V(w), bounded ordinary derivatives, bounded Fisher integrand, and linear (V(w))'. Compact input perturbations remain a controlled distance from output endpoints because |Q_r phi|<=C(1±Q_r w). Thus the unconstrained first variation gives exactly Q_r V(Q_r w)=k V(w)+(1-k)V(m), with no free multiplier.
+5. **Correlation factors and second variation verified.** Differentiating the Euler identity gives r^2 E[(Q_r w')^2/(1-(Q_r w)^2)]=kD. The translation output is Q_r w_c(x)=Q_r w(x+c/r). Cancellation of the w'' terms gives the parent's exact G'' formula. The composed Fisher and logarithmic derivative bounds justify chain-rule differentiation and agree with Gaussian change of variables. Cauchy-Schwarz, the joint Jensen bound, and the scalar inequality force G''(0)<0, contradicting the minimum.
+6. **Removal of smoothing verified.** The semigroup split r=s tau and f_s composed with f_tau=f_r force equality at a positively smoothed kernel. Its information is positive and below log 2. This contradicts item 5 without analyticity.
+
+**Scope of the downstream conclusion.** I295's law-preserving rearrangement was checked from the operative primary Borell inequality, and its scalar Helly/OU compactness was checked directly. Consequently U300 does imply a positive dimension-free Gaussian gap G290 on every compact rectangle strictly inside the open amplitude/correlation square. This is qualitative, with no effective constant. This review does **not** independently pass the complete I290/I128/I131 cube chain. Full global S128 remains conditional on that chain's own independent proof gate, including marked joining/entrance, compression/local/backward estimates and diffuse transfer. Reading an inherited claim is distinguished from independently proving it.
+
+**Objections and repairs.** No substantive objection or unresolved U300 step remains under the stipulated pinned cube theorem. The expanded perturbation and domination arguments are justifications of claims already made, not repairs or additional assumptions. There is no counterexample. No acceptance or contribution assessment was performed.
+
+The [reading and failure record](../experiments/i301_gaussian_translation_proof/reading-and-failures.md), [input authentication](../experiments/i301_gaussian_translation_proof/input-authentication.json), and [source record](../sources/i301_gaussian_translation_proof/literature.md) delimit actual reads and retrieval failures. No I298/I299 review was read. No subagents, scans, shared-index edits, staging, commits, or publication occurred. Detached hashes of the five authored files are returned outside them.
