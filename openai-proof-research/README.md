@@ -1,5 +1,13 @@
 # OpenAI mathematics research
 
+**I199–I201 running in parallel:**
+[Foulkes constraints](frontier/iterations/iteration199-foulkes-structured-bridge-brief.md),
+[cone regularization](frontier/iterations/iteration200-regularized-cone-bridge-brief.md),
+and [elliptic cylinder costs](frontier/iterations/iteration201-elliptic-covering-bridge-brief.md)
+target the three unpaid mechanisms left by I198. All use GPT-6.1 Sol,
+high reasoning, ultrafast. No new result is claimed at dispatch.
+**8 accepted, 2 remaining.**
+
 **I198 completed, technical only:** The [parent disposition](frontier/iterations/i198-geometry-representation-parent-disposition.md)
 checks the Foulkes threshold b>=(a-1)^2 and rotational covering obstruction,
 and records the unpaid cone-regularization and conductor estimates.
