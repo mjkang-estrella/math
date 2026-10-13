@@ -30,7 +30,7 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I287 repeated-support Crouzeix discovery](iterations/i287-crouzeix-counterexample-parent-disposition.md) proposes an explicit irreducible six-dimensional equality witness with no constant scalar coefficient compression attaining equality. The old LSS base matrix is credited; the polynomial and its rank-two obstruction are the proposed increment. [I291 independent proof review](iterations/i291-crouzeix-proof-parent-disposition.md) passed without repairs on the original artifact. [I292 contribution review](iterations/iteration292-crouzeix-contribution-standard-brief.md) is now underway at Standard speed. Acceptance remains outstanding; disk rigidity is not refuted.
 
-- [I290 global soft-summary stability](iterations/iteration290-global-soft-summary-standard-brief.md) resumes the unresolved S128 target after I131's dimension-independent local L2 theorem. It seeks the missing global coordinate-selection estimate for arbitrary randomized binary summaries; no local or fixed-complexity result is counted as a solution.
+- [I290 global soft-summary stability](iterations/i290-global-soft-summary-parent-disposition.md) proves a proposed global bound in every fixed positive singleton sector and reduces all remaining failures to diffuse compressed kernels. Its Gaussian transfer is paid, but the required dimension-independent strict Gaussian gap remains unproved. S128 is neither solved nor refuted; no acceptance is added.
 
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
