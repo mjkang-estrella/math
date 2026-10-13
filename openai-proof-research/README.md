@@ -1,5 +1,12 @@
 # OpenAI mathematics research
 
+**I197 completed, technical only:** The [parent disposition](frontier/iterations/i197-fresh-discovery-parent-disposition.md)
+checks the fixed-chain large-prime-gap deduction under the accepted source
+operations. Prescribed narrow gap ranges still require a joint prime
+lower bound. No substantial finding is nominated. The next screen moves
+to hyperbolicity cones, cylinder coverings, and Foulkes maps.
+**8 accepted, 2 remaining.**
+
 **I197 model switch:** At the user's request, the Astra task was stopped
 and [I197 round 2](frontier/iterations/iteration197-r2-sol-high-ultrafast-task.json)
 was started with **GPT-6.1 Sol, high reasoning, ultrafast service**.
