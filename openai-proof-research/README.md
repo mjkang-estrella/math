@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I218–I219: both eigenmap gates running
+
+[I218](frontier/iterations/iteration218-neumann-eigenmap-proof-brief.md) independently checks the eigenmap proof and [I219](frontier/iterations/iteration219-neumann-eigenmap-contribution-brief.md) independently checks contribution and prior art. Both were acknowledged as running with GPT-6.1 Sol/high/ultrafast. I216 continues the boundary-approximation line; I217 was interrupted to prioritize validation and its partial files remain preserved. **Nine accepted, one remaining.**
+
 ## I214 nominated: global Neumann eigenfunction coordinates
 
 [I214](frontier/iterations/i214-neumann-eigenmap-parent-nomination.md) proposes global analytic coordinates and a smooth strictly star-shaped image for a double first-positive Neumann eigenspace. I218 independently checks the proof; a separate contribution gate is required. This is a nomination, not the tenth finding. **Nine accepted, one remaining.**
