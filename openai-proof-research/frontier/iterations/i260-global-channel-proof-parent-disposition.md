@@ -1,0 +1,15 @@
+# I260 parent disposition: global channel stability proof
+
+The completed independent proof review returns **PASS**, with no required repair, for the exact I262 candidate. It checks the full moment deficit, all finite real channel dimensions, all bounded measurable small-amplitude orientations, and the displayed constants without a support restriction. This is a correctness decision only. I261 contribution review remains separate, and no additional finding is accepted.
+
+The parent read the full review, derivation audit, read/failure record, literature record and authentication JSON. All local input/output hash records matched. The exact candidate is unchanged at SHA256 `1899a85fadb07ed0dd34b1396c31033c80d7a8b88b45455cdcb4f5116931cbfb`. Review SHA256: `9252d117260e475f961bc35104fe2e78fc11e521e3000d293e7f969987a4d719`. Manifest SHA256: `dc287075b7b2d1b734b98e6adc461c364a10243163ed5193fac86a960c3f26ee`.
+
+The review independently reconstructed principal-channel centering, weighted coercivity and ground-state form domains, the analytic rank-one branch and Feshbach/Cauchy constants, fixed-subspace compression and interlacing, the precise HLW endpoint hypothesis, critical Holder interpolation, and the final two error budgets. It found no missing dimension or spatial-support factor, including for disturbances translated into the tails. Optional domain and min-max expansions are explanatory rather than repairs.
+
+The reviewer fully read both pinned introductions and visually read the entire presented HLW Theorem 3.1 proof on pages 3–6. It did not audit upstream truth or claim broader literature novelty. The original external PDF fetch timed out; direct retrieval succeeded with the expected hash. A missing pypdf import was bypassed using installed Poppler, with no package installation. Only fully read rendered pages and primary sections are retained.
+
+This round was dispatched with GPT-6.1 Sol/high/Standard; the reviewer reports it could not separately inspect its service-tier field. The parent dispatch records the requested Standard setting and no restart or tier change occurred.
+
+The parent subsequently developed I264 with weighted-average proximity instead of the I262 pointwise-amplitude hypothesis. I260's PASS does not certify that stronger result. I265 is a new Standard-speed proof gate on exact I264, explicitly paying its additional nonlinear/form-estimate burden. The I250/I259/I262/I264 chain remains one prospective finding and the accepted count is **10/20**.
+
+Evidence: [review](../reviews/i260-uniform-channel-stability-proof.md), [analysis](../experiments/i260_uniform_channel_stability_proof/analysis.md), [read extents](../experiments/i260_uniform_channel_stability_proof/reading-and-failures.md), [literature](../sources/i260_uniform_channel_stability_proof/literature.md), [authentication](../experiments/i260_uniform_channel_stability_proof/input-authentication.json), [new I265 brief](iteration265-weighted-neighborhood-channel-proof-standard-brief.md).
