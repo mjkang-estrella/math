@@ -2,7 +2,11 @@
 
 ## Active target: twenty substantial findings
 
-On 2026-10-12 the user raised the target to twenty. **Fourteen accepted, six remaining.** The [twenty-finding ledger](TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
+On 2026-10-12 the user raised the target to twenty. **Fifteen accepted, five remaining.** The [twenty-finding ledger](TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
+
+## Fifteenth finding accepted: exact fixed-gate discrete logarithms
+
+[R021](findings/R021-exact-fixed-gate-discrete-logarithms.md) proves probability-one discrete logarithms for every promised prime-field subgroup over one fixed finite gate set, with polynomial uniform worst-case resources. I323 passed the full theorem unchanged; I324 judged the selected-probability construction substantial, with source methods and classical counting credited. **Fifteen accepted; five remain.**
 
 ## Fourteenth finding accepted: global binary-information stability
 

@@ -1,6 +1,6 @@
 # Twenty substantial findings
 
-User direction, 2026-10-12: “Perfect. Now go for 20”. **Target: 20 total; 14 accepted, 6 remaining.** This extends the completed [first-ten milestone](TEN-FINDINGS.md); it does not restart the count.
+User direction, 2026-10-12: “Perfect. Now go for 20”. **Target: 20 total; 15 accepted, 5 remaining.** This extends the completed [first-ten milestone](TEN-FINDINGS.md); it does not restart the count.
 
 The acceptance standard is unchanged: a complete nonroutine mathematical contribution, independently reviewed for proof and for substantiality against primary literature. Technical deductions, equivalent formulations, unproved conditionals and rediscovered results do not increase the count. All pinned OpenAI results are assumed true at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. Worldwide priority is not asserted.
 
@@ -60,9 +60,11 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I320 nonlinear quartic normal form](iterations/i320-quartic-nonlinear-normal-form.md) was independently checked by [I321](iterations/i321-nonlinear-endpoint-parent-disposition.md), which also proves a larger conditional-coordinate tube estimate permitting fixed interior bias and endpoint spikes. Global entrance and endpoint-mean control remain unpaid. [I325](iterations/iteration325-global-endpoint-alternative-standard-brief.md) is active at Standard speed on the full global alternative, with all prior gaps retained. No acceptance is added.
 
-- [I322 exact fixed-gate discrete logarithms](iterations/i322-exact-discrete-logarithm-candidate.md) is a complete parent candidate using selected-frequency estimates, exact fixed-dimensional probability counts, and per-label dyadic completion. Independent [I323 proof](iterations/i323-exact-logarithm-proof-parent-disposition.md) passes unchanged for the full theorem and compiler. [I324 contribution](iterations/iteration324-exact-discrete-logarithm-contribution-standard-brief.md) remains active at Standard speed. It is not accepted.
+- **Accepted as [R021](findings/R021-exact-fixed-gate-discrete-logarithms.md):** the complete I322 exact fixed-gate discrete-logarithm theorem. [I323 proof](iterations/i323-exact-logarithm-proof-parent-disposition.md) passes the full theorem and compiler unchanged; [I324 contribution](iterations/i324-exact-logarithm-contribution-parent-disposition.md) concludes SUBSTANTIAL for the selected-event probability estimate and exact fixed-dimensional evaluation. Source probability engineering and classical counting are credited. Prime-order and arbitrary-order versions count once; worldwide priority is unestablished.
 
 - [I327 fixed-gate algebraic search](iterations/iteration327-fixed-gate-algebraic-search-standard-brief.md) is active at Standard speed. Its main target is exact primitive-element search; the unresolved step concerns multiple valid outputs rather than the uniquely verified logarithm of I322. No theorem or acceptance is assumed from this plan.
+
+- [I329 zero-key Bell research](iterations/i329-zero-key-bell-research-brief.md) is active at Standard speed. Its target is ordinary bipartite Bell nonlocality within the stipulated zero-key represented class. The [natural block-measurement obstruction](iterations/i329-parent-block-measurement-obstruction.md) rules out a setting-dependent postselection shortcut; no Bell theorem is assumed.
 
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
@@ -86,5 +88,6 @@ The original ten retain their existing acceptance decisions. Their linked record
 | 12 | [R018: sharp logarithmic ball–slab nesting cost](findings/R018-ball-slab-logarithmic-contact.md) | Independent I277 proof PASS and I278 contribution SUBSTANTIAL |
 | 13 | [R019: attained entangled complete-Crouzeix equality](findings/R019-entangled-complete-crouzeix-equality.md) | Independent I291 proof PASS and I292 contribution SUBSTANTIAL |
 | 14 | [R020: global binary-information stability](findings/R020-global-binary-information-stability.md) | Independent I304 full proof PASS and I303 contribution SUBSTANTIAL |
+| 15 | [R021: exact fixed-gate discrete logarithms](findings/R021-exact-fixed-gate-discrete-logarithms.md) | Independent I323 full proof PASS unchanged and I324 contribution SUBSTANTIAL |
 
-R017–R020 are the four additional acceptances after reopening. Six remain toward twenty total.
+R017–R021 are the five additional acceptances after reopening. Five remain toward twenty total.
