@@ -1,0 +1,11 @@
+# I336 parent disposition — full endpoint contribution is substantial
+
+2026-10-13. The independent contribution verdict is **SUBSTANTIAL** for the full S313 endpoint theorem, the I334 production correction and their supporting partials as **one connected nomination**. The separate I335 proof gate has already passed unchanged. The parent accepts the package once as R022, the sixteenth substantial finding.
+
+The parent read all five finalized I336 artifacts, matched every detached SHA256, verified thirty-four local input identities and nine fresh pinned source identities, and checked that the original ten accepted finding files are byte-identical to their preserved baseline. See [authentication](../experiments/i336_parent_integration/input-authentication.json), [review](../reviews/i336-full-endpoint-contribution.md) and [analysis](../experiments/i336_full_endpoint_contribution/analysis.md). Hash-only ancestors and scoped primary reads retain those limits. The initial out-of-project filename inventory error is disclosed; no other-project body was opened or written.
+
+The substantial new work is the uniform small-information proof for original arbitrary kernels: higher-mode entrance with paid spikes, a uniform quartic form retaining bad-input entropy, a relative cone estimate when distance vanishes, and a bias correction paid on both canonical joining geometries with original individual child information. This closes regimes not covered by R020's fixed positive-amplitude compactness. The new joining correction remains uniform as the mean approaches an endpoint.
+
+The reviewer explicitly credits the source optimizer/production framework, classical norm tools, R020, earlier one-coordinate sharpness, fixed-cube coefficient calculations, old tube estimates and final semigroup integration. Actual primary arbitrary-array induction, Boolean stability, FKN and SDPI interfaces were compared; no operation-level reduction preserving all the theorem's quantifiers and rate was found. The verdict is a focused contribution judgment, not a worldwide-priority certificate or a claim that every external proof margin was audited.
+
+Both full gates are now complete. R022 has its own acceptance commit; no component is separately counted. The target remains twenty total, with four still needed.
