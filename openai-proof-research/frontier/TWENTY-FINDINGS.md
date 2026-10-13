@@ -42,6 +42,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I302 full global soft-stability proposal](iterations/i302-global-soft-stability.md) integrates the new I300 strictness argument with the earlier internal chain and states the exact all-rectangle theorem. [I303 independent contribution review](iterations/iteration303-global-soft-contribution-standard-brief.md) is now running at Standard speed, with the finalized I298 objection and full-target response. [I304 independent full proof review](iterations/iteration304-global-soft-proof-standard-brief.md) is now running at Standard speed, including the older cube chain and a [supporting sharpness example](iterations/i302-parent-sharpness-note.md). The completed I301 component pass does not presume a full-theorem pass. This is the unrestricted version of the same S128 target and will not be counted separately from S295.
 
+- [I305 boundary fold proposal](iterations/i305-neumann-boundary-fold.md) gives a parent derivation of quadratic boundary folding and a sharp one-half Hölder inverse for the double first Neumann eigenmap on smooth positively curved convex domains. It explicitly credits the older Bañuelos–Pang cubic derivative method. No independent proof or contribution gate has run, and no count is added.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
