@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I221–I223: Coulomb comparison and independent gates
+
+[I222](iterations/iteration222-coulomb-cost-complexity-proof-brief.md) reviews the complete Coulomb cost-complexity proof; [I223](iterations/iteration223-coulomb-cost-complexity-contribution-brief.md) independently assesses the full contribution. [I221](iterations/iteration221-coulomb-contribution-screen-brief.md) separately screens the earlier proposed statement. All run with GPT-6.1 Sol/high/ultrafast; none is a count increment. **Nine accepted, one remaining.**
+
 ### I220 nominated: sharp cost-complexity for Coulomb maps
 
 [I220](iterations/i220-coulomb-cost-complexity-parent-nomination.md) proposes matching BV and fractional cost gaps for a smooth identical-marginal three-particle example, with exact preserving cycles. The known exponent alone is not the claimed contribution. Separate complete-proof and contribution gates are running as I222/I223. **Nine accepted, one remaining.**
