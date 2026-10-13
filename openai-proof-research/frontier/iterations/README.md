@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I240 complete: finite-viscosity result remains technical
+
+[I240](./i240-viscous-contribution-parent-disposition.md) declines substantiality while preserving I239 proof PASS. The completed theorem is retained without counting it; I241 pursues the remaining p-gradient regime. **Nine accepted, one remaining.**
+
 ## I241: remaining p-gradient regime under investigation
 
 [I241](./iteration241-p-gradient-high-viscosity-brief.md) uses the completed finite-viscosity result to investigate the unresolved high-viscosity regime for actual p-harmonic sequences. The false limiting-PDE shortcut remains excluded. GPT-6.1 Sol/high/ultrafast was acknowledged running. **Nine accepted, one remaining.**
