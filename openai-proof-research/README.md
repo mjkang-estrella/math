@@ -1,5 +1,10 @@
 # OpenAI mathematics research
 
+**I198 running:** [New discovery round](frontier/iterations/iteration198-geometry-representation-discovery-brief.md)
+screens hyperbolicity cones and semidefinite lifts, then cylinder coverings
+and Foulkes maps if needed. It uses GPT-6.1 Sol, high reasoning, ultrafast.
+**8 accepted, 2 remaining.**
+
 **I197 completed, technical only:** The [parent disposition](frontier/iterations/i197-fresh-discovery-parent-disposition.md)
 checks the fixed-chain large-prime-gap deduction under the accepted source
 operations. Prescribed narrow gap ranges still require a joint prime
