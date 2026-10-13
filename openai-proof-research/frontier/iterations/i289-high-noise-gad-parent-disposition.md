@@ -1,0 +1,11 @@
+# I289 parent disposition — global high-noise theorem submitted
+
+2026-10-13. The author supplies a complete proposed all-n theorem for arbitrary pure inputs of the unital GAD channel with Bloch multipliers (s,s,s²), 0 < s <= 1/3. The squared unhalved trace distance to equatorial product states is at most 276 times the output-entropy deficit divided by s². The result has no phase-rank, support or initial-closeness restriction. It is not accepted yet; twelve findings remain accepted toward twenty.
+
+The parent read the full report, analysis, reading log and literature index, and inspected the authentication metadata. All 23 locally available input records and the five detached output hashes match. The main analysis is frozen at SHA256 `063466c7963eb9696af1d6fe4e07a3bbb328842a55b4ecfa09b6759004be9e02`.
+
+The proof explicitly combines Shor's EB entropy recursion with an arbitrary-ensemble drift inequality for the two-copy product test, then applies older global product-test soundness. A separately paid computational-amplitude KL estimate and Hellinger rounding select the equator. The parent supplied the pairwise drift derivation during discovery; this shared contribution is credited and does not constitute independent validation. The reported constant arithmetic and same-tree induction are consistent on parent inspection. Independent proof and contribution gates remain required.
+
+The same unsimplified constant extends to s <= sqrt(2)-1 by the same decomposition. This is one candidate, not a second finding. Full non-EB stability remains open; the general interior-EB suggestion is not a completed nominated theorem. The short assembly has genuine risk of being classified as a technical consequence of older EB and product-test results. I293 must address that comparison directly before acceptance.
+
+Only authored notes, proof and manifests are integrated. No new external source bodies are published. Evidence: [report](i289-high-noise-gad-stability.md), [proof](../experiments/i289_high_noise_gad_stability/analysis.md), [reading log](../experiments/i289_high_noise_gad_stability/reading-and-failures.md), [literature](../sources/i289_high_noise_gad_stability/literature.md), [manifest](../experiments/i289_high_noise_gad_stability/input-authentication.json), [review brief](iteration293-high-noise-gad-contribution-standard-brief.md).
