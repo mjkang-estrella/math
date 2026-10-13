@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I230–I232: new unpaid bridges
+
+[I230](frontier/iterations/iteration230-p-harmonic-gradient-brief.md) seeks convergence of actual p-harmonic gradients; [I231](frontier/iterations/iteration231-viscous-liouville-brief.md) studies the new viscous limiting equation; [I232](frontier/iterations/iteration232-finite-range-ballisticity-brief.md) resumes finite-range ballisticity after I227's interruption. All three were acknowledged running with GPT-6.1 Sol/high/ultrafast. **Nine accepted, one remaining; research continues.**
+
 ## I229 complete: forcing result stays technical
 
 [I229](frontier/iterations/i229-forced-infinity-contribution-parent-disposition.md) declines substantiality while preserving the independent proof PASS. The result is retained as a useful robustness corollary. Actual p-harmonic gradients and finite-range ballisticity are under investigation. **Nine accepted, one remaining.**
