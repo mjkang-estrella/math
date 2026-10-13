@@ -64,7 +64,7 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I327 fixed-gate algebraic search](iterations/i327-algebraic-search-parent-disposition.md) completed with a proposed exact primitive-element algorithm using the stipulated zero-free half-plane and exact factorization. It is classified TECHNICAL and not nominated. Direct multi-witness completion remains unresolved; the symmetric obstruction is not an impossibility theorem for primitive finding.
 
-- [I329 zero-key Bell research](iterations/i329-zero-key-bell-research-brief.md) is active at Standard speed. Its target is ordinary bipartite Bell nonlocality within the stipulated zero-key represented class. The [natural block-measurement obstruction](iterations/i329-parent-block-measurement-obstruction.md) rules out a setting-dependent postselection shortcut; no Bell theorem is assumed.
+- [I329 zero-key Bell research](iterations/i329-zero-key-bell-parent-disposition.md) completed with the full target unresolved. It excludes the PT-invariant two-qutrit Bell predecessor from the represented class, while preserving the source’s larger entangled PT-invariant examples. The natural block-measurement route is local. No acceptance is added.
 
 - [I331 two-sided Sobolev approximation](iterations/i331-bi-sobolev-research-brief.md) is active at Standard speed. It asks for one sequence approximating both a spatial map and its inverse strongly in W1,2, or a proved counterexample. Forward approximation and inverse smoothness do not settle this target.
 
