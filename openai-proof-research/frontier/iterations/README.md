@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I237 complete: correct cube bound remains technical
+
+[I237](./i237-cube-bound-parent-disposition.md) proves the total base-area bound 2sqrt(3) for the side-two cube. Cap subtraction and scalar optimization of an old density certificate do not meet the substantiality gate. **Nine accepted, one remaining; the two I236 reviews continue.**
+
 ## I240: independent contribution review started
 
 [I240](./iteration240-viscous-rigidity-contribution-brief.md) assesses whether the complete finite-viscosity theorem clears the substantive-contribution standard, separately from I239 proof review. GPT-6.1 Sol/high/ultrafast was acknowledged running. **Nine accepted, one remaining.**
