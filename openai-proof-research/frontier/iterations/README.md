@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I233 parent note: conditional viscous reduction
+
+The [parent calculation](./i233-viscous-variational-reduction.md) identifies a convex variational form and reduces viscous rigidity to an unpaid uniform local spatial-gradient modulus. It proves neither that modulus nor the desired theorem. I230–I232 continue. **Nine accepted, one remaining.**
+
 ## I230–I232: new unpaid bridges
 
 [I230](./iteration230-p-harmonic-gradient-brief.md) seeks convergence of actual p-harmonic gradients; [I231](./iteration231-viscous-liouville-brief.md) studies the new viscous limiting equation; [I232](./iteration232-finite-range-ballisticity-brief.md) resumes finite-range ballisticity after I227's interruption. All three were acknowledged running with GPT-6.1 Sol/high/ultrafast. **Nine accepted, one remaining; research continues.**
