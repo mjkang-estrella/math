@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I228–I229: independent forced-equation gates
+
+[I228](frontier/iterations/iteration228-forced-infinity-proof-brief.md) checks the complete proof, and [I229](frontier/iterations/iteration229-forced-infinity-contribution-brief.md) assesses the complete contribution and primary prior art. [I227](frontier/iterations/i227-priority-stop.md) is interrupted for review priority, with no completed result. **Nine accepted, one remaining.**
+
 ## I226 complete: algebraic results retained as technical
 
 [I226](frontier/iterations/i226-algebra-parent-disposition.md) proves cancellation and an auxiliary-size obstruction, with direct overlap in established filtered-complex and Clifford methods. Neither is counted. **Nine accepted, one remaining; I224 independent gates continue.**
