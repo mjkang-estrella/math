@@ -43,7 +43,6 @@ The original ten retain their existing acceptance decisions. Their linked record
 | 9 | [R015: tetrahedral cylinder-cover lower bound](findings/R015-tetrahedral-cylinder-lower-bound.md) | Linked acceptance record |
 | 10 | [R016: complete Crouzeix equality in dimension four](findings/R016-complete-crouzeix-equality.md) | `1c8aa3f0`; independent I245 proof PASS and I246 contribution SUBSTANTIAL |
 | 11 | [R017: sharp nonlinear ball–tube nesting cost](findings/R017-ball-tube-contact-asymptotic.md) | Independent I269 proof PASS and I270 contribution SUBSTANTIAL |
-
 | 12 | [R018: sharp logarithmic ball–slab nesting cost](findings/R018-ball-slab-logarithmic-contact.md) | Independent I277 proof PASS and I278 contribution SUBSTANTIAL |
 
 R017 and R018 are the two additional acceptances after reopening. Eight remain toward twenty total.
