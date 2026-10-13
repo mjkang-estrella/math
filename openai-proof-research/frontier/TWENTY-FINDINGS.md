@@ -8,13 +8,13 @@ Each newly accepted finding receives its own commit, followed by verified public
 
 ## Active research
 
-Three T3-owned discovery tasks are running with GPT-6.1 Sol, high reasoning and ultrafast service:
+The following work is active or awaiting independent review. All delegated rounds use GPT-6.1 Sol, high reasoning and ultrafast service.
 
-- [I247: quantitative complete Crouzeix rigidity](iterations/iteration247-quantitative-complete-rigidity-brief.md). Seek an explicit stability estimate beyond R016. Its overlapping nonattainment extension alone is not a new counted finding.
-- [I248: combinatorial structure](iterations/iteration248-combinatorial-structure-discovery-brief.md). Search for a new structural bridge from the relevant pinned combinatorial results.
-- [I249: geometric analytic bridge](iterations/iteration249-geometric-analytic-discovery-brief.md). Seek a new quantitative or localization argument in geometry and PDE.
+- [I247: explicit quantitative scalarization](iterations/i247-quantitative-scalarization-parent-disposition.md) has a complete proposed proof. Separate [I251 proof](iterations/iteration251-quantitative-scalarization-proof-brief.md) and [I252 contribution](iterations/iteration252-quantitative-scalarization-contribution-brief.md) reviews are running. Quantitative disk geometry is excluded from this nomination.
+- [I248: combinatorial structure](iterations/iteration248-combinatorial-structure-discovery-brief.md) continues discovery.
+- I249 has finished discovery with an unproved nonlinear contact passage. Its final record is being integrated; the auxiliary linearized calculation is not accepted as a finding.
 
-These are discovery tasks, not accepted results. Separate proof and contribution gates follow only for completed candidates.
+These are candidates and research records, not additional accepted results.
 
 ## Accepted count
 
