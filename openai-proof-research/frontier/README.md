@@ -21,6 +21,11 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I204 completed:** [Parent disposition](iterations/i204-arithmetic-structures-parent-disposition.md)
+retains technical denominator obstructions, not a negative answer to the
+polynomial maximum-denominator target. That exact construction problem
+continues in a focused follow-up. **Eight accepted, two remaining.**
+
 [I202](iterations/iteration202-foulkes-quotient-brief.md) targets the actual
 Foulkes quotient, [I203](iterations/iteration203-all-height-tiles-brief.md)
 the all-height lattice-cover optimum, and
