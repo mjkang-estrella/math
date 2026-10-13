@@ -1,0 +1,27 @@
+# I325 — global alternative for the small-information endpoint
+
+Run as GPT-6.1 Sol, high reasoning, Standard service. Work only in openai-proof-research, read AGENTS.md and sources/upstream.json, and assume the pinned OpenAI corpus true. No subagents, git, publication, shared-index changes, numerical scans, live sibling bodies, or other-project access. Fourteen findings are accepted toward twenty; do not alter counts or lower standards.
+
+## Full task and completed rounds
+
+Keep the full S313 target: for fixed 0<a1<1 and 0<r0<=r1<1, all finite n, all u:{-1,1}^n->[-1,1] with I(u)=psi(a), 0<a<=a1, prove or refute d_a(u)<=C(a1,r0,r1)a^(-4)[psi(ra)-I(T_ru)]. Here psi(t)=((1+t)log(1+t)+(1-t)log(1-t))/2, I(u)=Epsi(u)-psi(Eu), and d_a=min_(i,sign)E|u-sign*aX_i|^2. Include arbitrary bias, endpoint values, rare events and changing dimensions. Exact normalization is mandatory for a counterexample.
+
+Read the original complete I321 brief `iteration321-nonlinear-small-information-standard-brief.md`; it contains the prior I313/I304/I320 identities, hypotheses and objections. Read the finalized I321 report `i321-nonlinear-small-information.md` (SHA256 c72128896bd12f90591880580aa63ae6487c2b13cb24a20fe04e503a3ad132f8) and its complete analysis `../experiments/i321_nonlinear_small_information/analysis.md` (6e526a2f9d290caff7bace022506defa75c82dd75a40c3cf4cf2a87cfb4cac21), plus its reading, authentication and literature records. These are now finalized and authorized. Their new partial T321 is an internal deduction, not a stipulated source theorem; audit any part used. Do not read live I323/I324 files.
+
+T321 proves the full endpoint estimate in an original conditional-coordinate tube: v=E[u|X_i]=m+bX_i, w=u-v, |m|<=m0<1, ||w||2<=epsilon*a^M, M=max{2+1/(2theta),2/(qout-2)}, theta=1/(1+r1^2)-1/2, qout=min{3,1+r1^(-2)}. Its weighted lower bound is c[a^4 m^2+a^2 other-singleton mass+higher mass]. Its proof uses the exact split I(u)=I(v)+E Bpsi(u,v), the concave secant of f_r(J)=psi(r psi^-1(J)), a two-by-two Walsh Schur complement, and support-hypercontractive control of original endpoint spikes. Mean need not shrink to zero. It does NOT give global entrance or endpoint-mean uniformity.
+
+I320's optimized quartic coefficient was independently checked in I321: for fixed interior m, h=1-m^2, first-level f with Ef^2=h, and optimal quadratic correction -(m/h)(f^2-h), the coefficient is r^2(1-r^2)[kappa*m^2/(3h)+(1-kappa)/6], kappa=sum c_i^4/h^2. A biased coordinate is not always a transverse local maximizer. No uniform expansion or normal-form representation follows for arbitrary u.
+
+## New work: attack the actual global gap
+
+The target is equivalent up to fixed constants to Delta>=c a^4 B, B=m^2+q-max_i uhat(i)^2+H, where q is total singleton mass and H total higher Walsh mass. T321 does not cover residuals of order a. Do not spend the round reproving its tube, the affine case, one-bit expansion, or a slightly improved local exponent. Seek a global alternative paying a^4B directly or a rigorous quantitative entrance preserving original higher modes. Include the full target's endpoint-bias regime in the final outcome, even if only one major component closes.
+
+Possible parent hypothesis, unproved: for means in a fixed interior interval, a contradiction argument with Delta=o(a^4B) might first force H=O(a^4) by a spike-tolerant second-order entropy comparison, then justify the optimized quartic normal form in a variable-dimensional first-chaos limit. This needs a genuine lower bound for rare input tails, not an absolute uncontrolled O(a^4) error, and a relative argument near m=0,kappa=1. The normal-form deficit is often stronger than a^4B on spread directions, which may help match regimes with T321. This is a suggested route, not an additional assumption or proved lemma.
+
+Another unproved possibility is a genuinely nonlinear production lower bound D(u)-F(I(u))>=c m^2 I(u)^2 for small I, uniform in n and m, with an additional geometric term as needed. Source `upgrade:production` does not provide this: its available max-profile can equal 2I in a low-information sector. N131's one-bit bias bound CANNOT be inserted for arbitrary nonlinear u. Either prove such a claim independently with all range constraints, refute it exactly, or identify a different route. Do not claim that the absence of this bound in the source refutes it.
+
+For means approaching +/-1, small information does not imply small relative fluctuations. Any constants using a fixed m0<1 must remain explicitly restricted. A strong global bias gap may separate this regime, but no such separation is currently paid. Likewise, positive-time smoothing cannot be inverted to pay original high modes. Gaussian compactness and fixed-degree invariance errors must be compared to a^4B, not just o(1).
+
+## Deliverables
+
+Write only `frontier/iterations/i325-global-endpoint-alternative.md`, `frontier/experiments/i325_global_endpoint_alternative/{analysis.md,reading-and-failures.md,input-authentication.json}`, and `frontier/sources/i325_global_endpoint_alternative/literature.md`, plus short necessary metadata. Record actual primary source reading and immutable identities. No new full external bodies/sections retained. Give a complete proof if achieved; otherwise isolate newly paid operations and exact remaining gaps, without declaring a restricted result the full S313 theorem. Separate correctness, substantiality and worldwide priority. Return all five detached hashes. No acceptance edits.
