@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I224–I226: research continues toward ten
+
+[I224](iterations/iteration224-infinity-gradient-stability-brief.md) seeks an inhomogeneous gradient estimate; [I225](iterations/iteration225-new-curvature-bridge-brief.md) investigates curvature and transport; [I226](iterations/iteration226-new-algebraic-bridge-brief.md) seeks a structural algebraic bridge. All three were acknowledged as running with GPT-6.1 Sol/high/ultrafast. **Nine accepted, one remaining.**
+
 ## I221 preliminary screen archived
 
 [I221](iterations/i221-coulomb-screen-parent-disposition.md) supported a fresh completed-proof assessment, which I222/I223 now supply. The final Coulomb contribution classification remains technical. **Nine accepted, one remaining.**
