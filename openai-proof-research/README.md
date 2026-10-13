@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I239 complete: finite-viscosity proof PASS
+
+[I239](frontier/iterations/i239-viscous-proof-parent-disposition.md) finds no unpaid bridge or required repair in I236. The independent contribution gate remains pending; a proof PASS alone does not change the count. **Nine accepted, one remaining.**
+
 ## I237 complete: correct cube bound remains technical
 
 [I237](frontier/iterations/i237-cube-bound-parent-disposition.md) proves the total base-area bound 2sqrt(3) for the side-two cube. Cap subtraction and scalar optimization of an old density certificate do not meet the substantiality gate. **Nine accepted, one remaining; the two I236 reviews continue.**
