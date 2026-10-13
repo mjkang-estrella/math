@@ -6,6 +6,15 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I202: odd-prime socle family, contribution not yet accepted
+
+[I202](iterations/i202-foulkes-quotient.md) and its
+[parent checkpoint](iterations/i202-foulkes-parent-disposition.md) prove
+that the rectangular determinant class in C_(p-1) is annihilated by A_1
+for every odd prime p. The full C_8=0 target remains unresolved. A separate
+contribution assessment is requested; this auxiliary result is not an
+accepted finding. **Eight accepted, two remaining.**
+
 ### I205: focused polynomial-denominator construction
 
 The [brief](iterations/iteration205-bounded-egyptian-denominators-brief.md)

@@ -16,6 +16,14 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I202 completed: auxiliary socle family, full target unresolved
+
+The [report](i202-foulkes-quotient.md) and
+[parent checkpoint](i202-foulkes-parent-disposition.md) record an actual
+multiplication theorem for all odd primes, and the remaining full quotient
+gap. Independent contribution assessment is requested before considering
+a nomination. **Eight accepted, two remaining.**
+
 ## I205 running: new denominator-budget construction
 
 The [brief](iteration205-bounded-egyptian-denominators-brief.md) and
