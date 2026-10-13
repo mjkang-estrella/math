@@ -10,7 +10,7 @@ Each newly accepted finding receives its own commit, followed by verified public
 
 The following work is active or awaiting independent review. All delegated rounds use GPT-6.1 Sol, high reasoning and ultrafast service.
 
-- [I247: explicit quantitative scalarization](iterations/i247-quantitative-scalarization-parent-disposition.md) has a complete proposed proof. Separate [I251 proof](iterations/iteration251-quantitative-scalarization-proof-brief.md) and [I252 contribution](iterations/iteration252-quantitative-scalarization-contribution-brief.md) reviews are running. Quantitative disk geometry is excluded from this nomination.
+- [I247: explicit quantitative scalarization](iterations/i247-quantitative-scalarization-parent-disposition.md) has a complete proposed proof. The [I251 independent proof](iterations/i251-quantitative-proof-parent-disposition.md) passed without repairs; [I252 contribution review](iterations/iteration252-quantitative-scalarization-contribution-brief.md) remains pending. Quantitative disk geometry is excluded from this nomination.
 - [I248: combinatorial structure](iterations/iteration248-combinatorial-structure-discovery-brief.md) continues discovery.
 - [I249: nested geometric contact](iterations/i249-geometric-contact-parent-disposition.md) is unresolved. The exact linearized contact constant is retained. [I253](iterations/i253-contact-recovery-parent.md) supplies a proposed matching nonlinear recovery construction; the nonlinear lower limit remains unproved, and no substantial finding is accepted.
 
