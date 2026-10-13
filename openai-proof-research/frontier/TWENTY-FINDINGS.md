@@ -66,9 +66,11 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I329 zero-key Bell research](iterations/i329-zero-key-bell-parent-disposition.md) completed with the full target unresolved. It excludes the PT-invariant two-qutrit Bell predecessor from the represented class, while preserving the source’s larger entangled PT-invariant examples. The natural block-measurement route is local. No acceptance is added.
 
-- [I331 two-sided Sobolev approximation](iterations/i331-bi-sobolev-research-brief.md) is active at Standard speed. It asks for one sequence approximating both a spatial map and its inverse strongly in W1,2, or a proved counterexample. Forward approximation and inverse smoothness do not settle this target.
+- [I331 two-sided Sobolev approximation](iterations/i331-bi-sobolev-parent-disposition.md) completed with the general target unresolved. The proposed rank-one obstruction is excluded by the actual critical inverse-map theorem. A same-map inverse-energy limsup estimate remains unpaid; forward convergence and smooth inverses alone do not supply it. No acceptance is added.
 
 - [I334 uniform biased production](iterations/i334-uniform-biased-production-candidate.md) gives a new parent joining proof for D>=F(I)+c m²I² across all means and dimensions. It is unreviewed and is being independently checked within I325. If valid, it pays the [I332 missing endpoint reduction](iterations/i332-biased-production-reduction.md); the full S313 package still requires both independent acceptance gates. No count is added.
+
+[I337 fixed-codimension hidden subspaces](iterations/i337-bounded-corank-hsp-proposal.md) is a new unaccepted fixed-gate oracle proposal. I338 is independently reviewing its contribution relative to R021 and the exact-HSP literature at Standard speed. Fixed codimension is essential to the counting argument; no general-rank theorem is presumed.
 
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
