@@ -70,7 +70,7 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I334 uniform biased production](iterations/i334-uniform-biased-production-candidate.md) gives a new parent joining proof for D>=F(I)+c m²I² across all means and dimensions. The completed I325 research audit passes it unchanged; I335 now reviews the full S313 theorem including this production core, and I336 reviews its full contribution. The redundant component-only I339 was interrupted without a verdict. The [I332 endpoint reduction](iterations/i332-biased-production-reduction.md) is included in the proposed full proof. Both full-theorem acceptance gates still remain; no count is added.
 
-[I337 fixed-codimension hidden subspaces](iterations/i337-bounded-corank-hsp-proposal.md) is a new unaccepted fixed-gate oracle proposal. I338 is independently reviewing its contribution relative to R021 and the exact-HSP literature at Standard speed. Fixed codimension is essential to the counting argument; no general-rank theorem is presumed.
+[I337 fixed-codimension hidden subspaces](iterations/i337-bounded-corank-hsp-proposal.md) is retained as technical research. The completed [I338 contribution review](iterations/i338-bounded-corank-hsp-parent-disposition.md) concludes TECHNICAL for the full unknown-subspace, growing-prime, fixed-gate theorem by an explicit operation-level reduction to R021. No independent full proof PASS or acceptance is claimed. Fixed codimension is essential; no general-rank theorem is presumed.
 
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
