@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I245 complete: E4 independent proof PASS
+
+[I245](frontier/iterations/i245-crouzeix-proof-parent-disposition.md) approves the attained finite-polynomial scalarization and disk-rigidity proof without repairs. The contribution decision and final acceptance are recorded separately. **Nine accepted, one remaining at this checkpoint.**
+
 ## I243 complete: independent overlapping scalarization route
 
 [I243](frontier/iterations/i243-scalarization-parent-disposition.md) independently derives the rank mechanism and proposes a broader quotient-norm equality theorem. Its extra steps are not part of the current E4 gates and are not separately accepted or counted. **Nine accepted, one remaining.**
