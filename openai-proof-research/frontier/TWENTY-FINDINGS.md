@@ -40,6 +40,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I300 Gaussian translation strictness](iterations/i300-gaussian-translation-strictness.md) is a new unreviewed parent proof proposal for the unrestricted scalar Gaussian gap. It uses an equality Euler equation, a translation second variation and a bias-aware entropy/variance bound. If verified with the prior chain, it would close the full S128 target. [I301 independent adversarial proof review](iterations/iteration301-gaussian-translation-proof-standard-brief.md) is now running at Standard speed. The proof and contribution gates remain open; no count is added.
 
+- [I302 full global soft-stability proposal](iterations/i302-global-soft-stability.md) integrates the new I300 strictness argument with the earlier internal chain and states the exact all-rectangle theorem. Its dependencies are under review; no gate is presumed passed. It is the unrestricted version of the same S128 target and will not be counted separately from S295.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
