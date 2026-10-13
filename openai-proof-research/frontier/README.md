@@ -1,5 +1,9 @@
 # MathDB frontier research
 
+## Active target: twenty substantial findings
+
+On 2026-10-12 the user raised the target to twenty. **Ten accepted, ten remaining.** The [twenty-finding ledger](TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. I247–I249 are running with GPT-6.1 Sol/high/ultrafast. Earlier completion and task-status entries below are historical.
+
 This phase responds to the user's correction: the objective is a genuinely new idea toward a significant named open problem, not another routine consequence of an accepted OpenAI theorem. The earlier F001–F010 remain archived deductions; they do not meet this phase's research target.
 
 ## Acceptance standard

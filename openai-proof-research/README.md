@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## Active target: twenty substantial findings
+
+On 2026-10-12 the user raised the target to twenty. **Ten accepted, ten remaining.** The [twenty-finding ledger](frontier/TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. I247–I249 are running with GPT-6.1 Sol/high/ultrafast. Earlier completion and task-status entries below are historical.
+
 ## Target complete: ten substantial findings
 
 [R016: complete Crouzeix equality in dimension four](frontier/findings/R016-complete-crouzeix-equality.md) passes independent proof and contribution reviews. Exact equality for a finite matrix-valued polynomial now yields a scalar equality witness and a disk numerical range in base size at most four. **Ten accepted, zero remaining.** The acceptance covers attained finite-polynomial equality; the stronger I243 supremum statement and quantitative near-equality bounds remain outside the reviewed scope. No further discovery task is active. Earlier status entries below are historical.
