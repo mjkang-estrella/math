@@ -1,0 +1,35 @@
+# I201 primary literature and source record
+
+2026-10-12. The corpus pin is `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. Exact paths, URLs, SHA-256 values, byte lengths and reading scopes are in [input-authentication.json](../../experiments/i201_elliptic_covering/input-authentication.json). Individual source files are hashed; this is not a recursive snapshot or seal.
+
+## Accepted corpus read in place
+
+The I198 retained copies were used directly, without duplication:
+
+* **Finite cylinder approximation of ruled sets:** `build/sections/introduction.tex`, `linear-coverings.tex`, `finite-approximation.tex`, `comparison.tex`, and `build/references.bib`, each in full. Actual labels used: `b:projection`, `b:approximation`, `b:lattice`, `b:zero-diagonal`, `b:affine-cover`, `b:finite-retention`, `b:smooth-rate`. The affine zero-diagonal reduction and the finite inverse/collar construction are accepted lower operations, not audited discoveries.
+* **Finite angular cylinder covers below the half-area bound:** retained `build/sections/introduction.tex` in full. It already states explicit triangular counts, remainder control and the cubic-buffer improvement.
+* **Slope-field perturbations of the two-cylinder covering:** retained `build/sections/introduction.tex` in full. It already supplies rational, singular and nilpotent constructions and affine transport of normalized tetrahedral costs. Later component proofs were not all read in this round; their statements are accepted, not independently revalidated.
+* **Finite triangular approximation of radial sweeps:** retained `build/introduction.tex` in full. The apex, arbitrary tags, one triangle per interval, and actual projected bases are already included.
+
+Two additional individual corpus files were fetched from pinned raw URLs and read in full; copies are retained here:
+
+* `radial-freezing.tex`: original `preprints/Finite-triangular-approximation-of-radial-sweeps-September-27-2026/build/freezing.tex`, including `sec:freezing`, the negative radial collar, transverse quadratic error, finite triangle and actual-base squeeze. It shows that enclosing frozen intercept errors is already an explicit source operation.
+* `angular-cubic-buffer.tex`: original `preprints/Finite-angular-cylinder-covers-below-the-half-area-bound-September-27-2026/build/sections/cubic-buffer.tex`, especially `prop:angular-cubic`. It already proves normalized cost 1/2-tau²/240+(25/2)tau³ with absolute error <=2tau⁴ and 2 ceil(8/tau²) cylinders. No improved geometric coefficient was obtained here.
+
+## External primary sources
+
+1. **Mihail Kolountzakis, Lattice Tilings by Cubes: Whole, Notched and Extended**, Electronic Journal of Combinatorics 5 (1998), R14. [Publisher PDF](https://www.combinatorics.org/ojs/index.php/eljc/article/viewFile/v5i1r14/pdf/), [DOI](https://doi.org/10.37236/1352). Full 11-page publisher PDF read and retained as `kolountzakis-1998-publisher.pdf`. Theorem 2 gives the Fourier tiling criterion; §2.3 equations (17)–(21) and Theorem 8 give the extended-cube construction with negative parameter product. This is the decisive positive prior-art overlap: the affine square-plus-rectangle used in Proposition A is already this construction. The fixed union of the positive- and negative-height rectangles, followed by accepted finite retention, gives the recorded corrected upper bound. An author-hosted PDF had unreadable extracted font encoding; its hash is logged, but that unusable copy was removed and is not called full-read.
+
+2. **Sigrid Grepstad and Mihail N. Kolountzakis, Bounded common fundamental domains for two lattices**. [arXiv:2507.00604v1](https://arxiv.org/abs/2507.00604v1), [published DOI](https://doi.org/10.1016/j.aim.2025.110776). Full 13-page v1 PDF read and retained as `grepstad-kolountzakis-2025v1.pdf`. Theorem 1 gives bounded measurable common domains for every equal-covolume pair, with a finite-polytopal choice. Theorem 2 treats dense sums; the proof uses bounded-distance equivalence of model sets and finite equidecompositions. This strengthens the available endpoint construction. It supplies neither all-height coverage along an elliptic path nor a uniform shape theorem under perturbations. The I201 counterexample addresses that missing inference, not their theorem.
+
+3. **Sigrid Grepstad, Mihail N. Kolountzakis and Emmanuil Spyridakis, Bounded lattice tiles that pack with another lattice**. [arXiv:2508.07972v1](https://arxiv.org/abs/2508.07972v1). Full 13-page v1 PDF read and retained as `grepstad-kolountzakis-spyridakis-2025v1.pdf`. Theorem 1.2 provides bounded polytopal tiling for the denser lattice and packing for the sparser one. Theorem 1.1 concerns unequal-covolume exact fundamental domains without measurability. The former is a packing statement and cannot be substituted for the simultaneous-cover property required here. These results and their finite-polytope proofs were examined as a possible second route, not nominated as new results.
+
+4. **Károly Bezdek and Alexander Litvak, Covering convex bodies by cylinders and lattice points by flats**. [arXiv:0903.4842v1](https://arxiv.org/abs/0903.4842v1), [journal DOI](https://doi.org/10.1007/s12220-008-9063-6). Full 14-page v1 PDF read and retained as `bezdek-litvak-2009v1.pdf`; research use is confined to §3 and the related slicing bound. Theorem 3.1 proves directionwise normalized lower bounds 1/d in general and 1 for ellipsoids. In dimension three this gives the absolute minimum-shadow lower bound 1/3. The ellipsoid proof uses a density with constant line integrals; the general proof uses a section/projection inequality and Fubini. Reading the later lattice-point sections was only completion of this primary source, not expansion of the research task.
+
+The primary Han–Wang author PDF returned HTTP 403. Its institutional publication abstract was inspected; no claim to have read that proof is made. The 2025 full-read primary papers above provide the needed current two-lattice comparison. Verreault's survey metadata was checked only for context and is not a proof dependency or a claim of an exhaustive current best-bound survey.
+
+## Early and final prior-art checks
+
+Searches covered finite cylinder/elliptic ruled covers, extended-square tiling, simultaneous rotated lattices, common fundamental domains and the cylinder-covering lower bounds. The early search located both Kolountzakis's known affine mechanism and the 2025 bounded-domain results. The end search was repeated for the settled targets. Unrelated algebraic-geometric uses of “elliptic”, “ruled” and “cover” were excluded. Corpus mirror hits were treated as duplicate provenance, not new independent papers.
+
+The contribution decision does not infer novelty from absent keywords. It rests on explicit overlap for Proposition A, a defined restricted scope for the resonant sharpness result, the all-height gap in Route B, and the absence of a proved stronger convex-body consequence. No worldwide priority or globally optimal elliptic cost is claimed.

@@ -1,5 +1,11 @@
 # OpenAI mathematics research
 
+**I201 completed, technical only:** [Parent disposition](frontier/iterations/i201-elliptic-covering-parent-disposition.md)
+checks the corrected finite-cover construction and distinguishes its
+three sharp periodic cases from general cylinder-covering optimality.
+The all-height optimum and stronger convex-body consequence remain open.
+**8 accepted, 2 remaining.**
+
 **I199 completed, unresolved:** The [parent disposition](frontier/iterations/i199-foulkes-parent-disposition.md)
 checks the structured restrictions and identifies A_1^2 C_6=0 as the exact
 remaining Foulkes seed. No nomination is made. I201 has also returned and

@@ -6,6 +6,16 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I201 completed: corrected elliptic costs, no nomination
+
+The [report](iterations/i201-elliptic-covering-bridge.md) and
+[parent disposition](iterations/i201-elliptic-covering-parent-disposition.md)
+retain a finite-cover bound with multiplier 1+2L^2(det DV)_+, its boundary
+retention and stability, three optimal periodic cases, and an endpoint-only
+counterexample. The construction combines existing tiling and source
+operations; it does not settle the general optimum or improve the
+convex-body bounds. **Eight accepted, two remaining.**
+
 ### I199 completed: structured constraints, unresolved Foulkes seed
 
 The [report](iterations/i199-foulkes-structured-bridge.md) and
