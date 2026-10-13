@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I234–I236: focus on the remaining estimates
+
+[I234](frontier/iterations/iteration234-viscous-local-regularity-brief.md) studies local regularity of the viscous equation; [I236](frontier/iterations/iteration236-viscous-contact-propagation-brief.md) studies contact propagation for its actual barycentric pair. [I235](frontier/iterations/iteration235-finite-range-crossing-brief.md) targets the missing finite-range crossing estimate. All were acknowledged running with GPT-6.1 Sol/high/ultrafast. **Nine accepted, one remaining.**
+
 ## I231 complete: finite-viscosity rigidity remains unresolved
 
 [I231](frontier/iterations/i231-viscous-parent-disposition.md) retains technical partial results and the precise unproved step. **Nine accepted, one remaining; research continues.**
