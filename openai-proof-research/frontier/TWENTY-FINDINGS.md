@@ -32,7 +32,7 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I290 global soft-summary stability](iterations/i290-global-soft-summary-parent-disposition.md) proves a proposed global bound in every fixed positive singleton sector and reduces all remaining failures to diffuse compressed kernels. Its Gaussian transfer is paid, but the required dimension-independent strict Gaussian gap remains unproved. S128 is neither solved nor refuted; no acceptance is added.
 
-- [I295 Gaussian rearrangement research](iterations/iteration295-gaussian-rearrangement-standard-brief.md) is now running at Standard speed. It tests a one-dimensional reduction of I290’s diffuse Gaussian gap and a concrete small-amplitude/strong-noise region, without assuming the full Gaussian gap.
+- [I295 Gaussian rearrangement research](iterations/i295-gaussian-rearrangement-parent-disposition.md) completed a proposed global arbitrary-kernel stability theorem on compact rectangles with rho_1 a_1 < 1/sqrt(2). The full all-rectangle theorem remains unresolved. [I298 independent contribution review](iterations/iteration298-gaussian-stability-contribution-standard-brief.md) now assesses the complete chain, including the earlier unaccepted internal stability lemmas. A separate proof gate is still required; no acceptance is added.
 
 - [I296 non-EB GAD stability](iterations/iteration296-non-eb-gad-standard-brief.md) is now running at Standard speed. It seeks a quantitative remainder in King’s conditional-entropy argument beyond the EB region, with the old phase-damping and product-test results credited. The proposed remainder is not assumed true.
 
