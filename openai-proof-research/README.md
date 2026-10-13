@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I208–I210 active; saved I207 review requires finalization
+
+[I207's saved review and auxiliary correction](frontier/iterations/i207-all-height-tiles-parent-disposition.md) are preserved after its provider failed before the terminal handoff. [I210](frontier/iterations/iteration210-all-height-tiles-proof-finalization-brief.md) finalizes that proof gate; [I208](frontier/iterations/iteration208-all-height-tiles-contribution-brief.md) assesses contribution; [I209](frontier/iterations/iteration209-elliptic-tetrahedron-improvement-brief.md) seeks a concrete tetrahedron-covering consequence. All three were acknowledged as running with GPT-6.1 Sol/high/ultrafast. **Eight accepted, two remaining.**
+
 ## I206 completed: socle family is technical/known only
 
 The [independent contribution review](frontier/reviews/i206-foulkes-socle-contribution.md) identifies I202's covariant as a standard substitution into a known rectangular invariant. The [parent disposition](frontier/iterations/i206-foulkes-socle-parent-disposition.md) retains the useful auxiliary family without nomination; the full Foulkes quotient remains unresolved. The covering nomination has separate acceptance gates. **Eight accepted, two remaining.**
