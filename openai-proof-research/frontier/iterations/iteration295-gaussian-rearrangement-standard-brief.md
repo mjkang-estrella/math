@@ -1,6 +1,6 @@
 # I295 — Gaussian rearrangement and the diffuse soft-summary gap
 
-Prepared GPT-6.1 Sol/high/Standard research brief; not a task-launch receipt.
+GPT-6.1 Sol/high/Standard. Launched asynchronously on 2026-10-13 and acknowledged running as `mathdb-i295-gaussian-rearrangement-stability-sol-high-standard-20261013`. The supplied count in the frozen brief reflects its preparation checkpoint.
 
 I295 research: close the diffuse Gaussian gap of S128, using the parent Borell-rearrangement lead. Work only /home/mj-kang/Documents/Dev/math/openai-proof-research. Read AGENTS.md and sources/upstream.json; all pinned OpenAI results at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated true. Twelve accepted toward twenty; don't alter counts. GPT-6.1 Sol, high, Standard. No subagents, live sibling reads, shared-index edits, git staging/commits/publication, numerical scans or giant history replay.
 
