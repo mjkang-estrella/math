@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I221 preliminary screen archived
+
+[I221](iterations/i221-coulomb-screen-parent-disposition.md) supported a fresh completed-proof assessment, which I222/I223 now supply. The final Coulomb contribution classification remains technical. **Nine accepted, one remaining.**
+
 ### I223 completed: Coulomb result remains technical
 
 [I223 contribution disposition](iterations/i223-coulomb-contribution-parent-disposition.md) retains the useful theorem with I222 proof PASS, but does not count its standard transfer as a substantial finding. **Nine accepted, one remaining; I224–I226 continue research.**
