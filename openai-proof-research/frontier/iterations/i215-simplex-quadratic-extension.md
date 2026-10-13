@@ -39,3 +39,13 @@ For beta>=0, alpha>=0. On an edge, mean |x|^2=R^2-2/3>=c, so its certificate is 
 This is written parent mathematics, not a completed independent proof or contribution assessment. The parent checked the exact general-dimensional simplex projection proposition in the retained pinned source and conducted preliminary primary-source searches for regular-simplex cylinder bounds. Search results found the 2009 Bezdek–Litvak cylinder paper and unrelated translative lattice-covering results; this is not a sufficient global novelty check. No new source copy, numerical experiment, code, test, or source-truth audit was used. The existing 2009 comparison and source records remain in the I209/I211 packages.
 
 The extension should be sent for separate validation before any accepted statement is enlarged. It cannot supply both the ninth and tenth findings: it is the same weighted-chord bridge.
+
+## Separate Gaussian certificate within the same research family
+
+A further author-level estimate, not independently reviewed, is
+
+    sum_i |B_i| / A_min(S) >= sqrt((n+1)(n+2)/(pi e n^3))
+
+for every regular n-simplex, n>=2. It follows without the quadratic chord calculation: set f=exp(-lambda|x|^2)1_S. Every line integral is at most sqrt(pi/lambda). Jensen gives integral_S f >= Vol(S) exp(-lambda c), where c=2n/[(n+1)(n+2)]. Hence the certificate is at least (2/n)sqrt(lambda/pi)exp(-lambda c). Choosing lambda=1/(2c) gives the displayed value. This is of order n^(-1/2), while the quadratic bound is of order n^(-1). The proof is elementary, so no independent novelty or substantiality claim is made. It is not a tenth finding and must be compared with primary regular-simplex cylinder bounds before promotion.
+
+Follow-up reading: Bezdek–Litvak, *Packing convex bodies by cylinders*, arXiv:1507.05115v2, PDF pages 1–6 were read through the web extraction (the remaining pages were not read). They state the old general covering and multiple-covering bounds and packing analogues; no simplex-specific lower bound appears in those pages. This limited reading does not establish novelty of either extension. URL: https://arxiv.org/pdf/1507.05115v2.
