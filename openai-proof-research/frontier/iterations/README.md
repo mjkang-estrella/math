@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I214, I216 and I217 active toward the tenth finding
+
+Three research tasks continue toward the tenth finding: [I214](./iteration214-neumann-eigenmap-discovery-brief.md) on global Neumann eigenmaps, [I216](./iteration216-relative-sobolev-collar-brief.md) on exact-boundary Sobolev approximation, and [I217](./iteration217-quantitative-coulomb-monge-brief.md) on quantitative Coulomb transport. All use GPT-6.1 Sol/high/ultrafast. I215's further Gaussian certificate is retained as an unreviewed extension of the same simplex family, not another count. **Nine accepted, one remaining.**
+
 ## I213 retained; focused boundary approximation continues
 
 [I213](./i213-new-analytic-geometric-parent-disposition.md) retains exact compression/flattening lemmas and a fixed-cutoff counterexample, but does not prove relative strong approximation. I216 continues the missing annular derivative estimate. The ninth accepted finding remains R015. **Nine accepted, one remaining.**
