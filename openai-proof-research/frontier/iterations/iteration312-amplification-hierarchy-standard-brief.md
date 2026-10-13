@@ -1,6 +1,6 @@
 # I312 — a genuine third-level amplification obstruction
 
-Prepared for the next available research slot; not yet delegated. Use GPT-6.1 Sol, high reasoning, Standard service. Work only in `/home/mj-kang/Documents/Dev/math/openai-proof-research`; read AGENTS.md and sources/upstream.json. Stipulate the pinned OpenAI results at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. No child agents, live sibling reads, shared-index changes, git, publication, parameter sweeps or numerical optimization.
+Delegated as I312 independent proof review after the parent supplied the complete all-r construction below. Use GPT-6.1 Sol, high reasoning, Standard service. Work only in `/home/mj-kang/Documents/Dev/math/openai-proof-research`; read AGENTS.md and sources/upstream.json. Stipulate the pinned OpenAI results at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. No child agents, live sibling reads, shared-index changes, git, publication, parameter sweeps or numerical optimization.
 
 Target a genuinely stronger amplification phenomenon than accepted R019. For a finite nilpotent matrix A with w(A)<=1, define
 
@@ -21,3 +21,7 @@ Primary comparison newly read by the parent: Davidson–Paulsen–Woerdeman, *Co
 Deliver a complete construction/proof, an exact obstruction to the target, or an honest developed gap record with proved partials and the precise missing operation. Do not replace the target with a technically easier scalar result. Read enough primary literature to identify whether arbitrary amplification hierarchies are already standard for this single-generator numerical-radius class. Distinguish general operator spaces or arbitrary homomorphisms from one finite matrix with numerical range in the disk. Avoid accepting a construction merely because a finite computation passes.
 
 Write only `frontier/iterations/i312-amplification-hierarchy.md`; `frontier/experiments/i312_amplification_hierarchy/{analysis.md,reading-and-failures.md,input-authentication.json}`; `frontier/sources/i312_amplification_hierarchy/literature.md`, plus strictly necessary short metadata. Record exact input identities and semantic extents. Do not retain new full external bodies or sections. Return detached hashes. No acceptance or count change is authorized in this research task.
+
+## Dispatch update
+
+The open lead was superseded by `frontier/iterations/i312-parent-amplification-construction.md`, SHA256 `da83fdf48779e56c2c8c694973282ecf61ea14c1134e86b9f48bfed12cc89070`. The full original brief plus this complete candidate and explicit checks of the matrix model, all smaller Schur levels, Fourier rigidity and irreducibility were dispatched under `mathdb-i312-amplification-hierarchy-proof-sol-high-standard-20261013`, GPT-6.1 Sol/high/Standard. The output paths remain as specified above. This is now primarily an independent full-proof gate, not an invitation to replace the target with a weaker construction. The scalar Gau–Wu construction and its prior-art implications were supplied explicitly. No contribution gate has run for the hierarchy.
