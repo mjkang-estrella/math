@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I237–I238: two additional candidates under investigation
+
+[I237](frontier/iterations/iteration237-cube-cylinder-bound-brief.md) checks a clipped spherical density bound for cube cylinder covers, including whether it is already known or merely technical. [I238](frontier/iterations/iteration238-crouzeix-stability-brief.md) seeks a quantitative rigidity bridge from the complete Crouzeix inequality. Both were acknowledged running with GPT-6.1 Sol/high/ultrafast; I236 contact propagation continues separately. **Nine accepted, one remaining.**
+
 ## I235 complete: conditional conversion, unresolved crossing
 
 [I235](frontier/iterations/i235-finite-range-crossing-parent-disposition.md) completes the shifted-renewal conversion but leaves the required crossing and shared-environment estimates unproved. The route is parked pending a new mechanism. **Nine accepted, one remaining.**
