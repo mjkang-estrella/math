@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I231 complete: finite-viscosity rigidity remains unresolved
+
+[I231](iterations/i231-viscous-parent-disposition.md) retains technical partial results and the precise unproved step. **Nine accepted, one remaining; research continues.**
+
 ### I232 complete: finite-range speed remains unresolved
 
 [I232](iterations/i232-finite-range-parent-disposition.md) retains technical partial results and the precise unproved step. **Nine accepted, one remaining; research continues.**
