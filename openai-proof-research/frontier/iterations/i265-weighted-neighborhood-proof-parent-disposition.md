@@ -1,0 +1,13 @@
+# I265 parent disposition: weighted-neighborhood correctness
+
+The independent Standard-speed review returns **PASS**, with no required mathematical repairs, for exact I264. This validates the stronger weighted-neighborhood hypothesis, not merely the older pointwise-small theorem. I266 contribution review remains separate and pending. No accepted-count change: **10/20**.
+
+The parent read the entire review, independent derivation and pressure checks, read/failure record and literature record. The authentication manifest's local input/output hashes matched, including the retained primary excerpts. Candidate SHA256 is unchanged: `a0080234eacf4d410917e426222e3e89b24f9eba968cc815c4b46c5b59957395`. Review SHA256: `552c94f155e0cdcf21d16724b787682d147ded50a23dabe45c10d8f0719a8c3e`. Manifest SHA256: `ab0e3b099a8f63c2bf8fa82c7a89dbfdde3a3db21c44aa93fce4f7705e6681c8`.
+
+The review reconstructs measurable sign-gauging and principal covariance, global scalar weighted coercivity, the complete nonlinear coupling including its first-channel component, dimension-independent Sobolev evaluation and relative form bounds, spectral isolation and exact Feshbach inversion, compression interlacing, and both weighted Holder steps. It checks the explicit radius and constants as stated. Orthogonal defects in shrinking intervals and translated tail intervals, arbitrary measurable oscillation, and arbitrarily many finite channels expose no missing factor or assumption.
+
+The theorem remains local in weighted J, with a fixed scalar soliton, real rank-one orientations and the open gamma range. It does not establish that small deficit implies small J, global arbitrary-potential stability, or an infinite-channel theorem. Optional form-domain and min-max explanations are supplied in the review; no candidate repair is required.
+
+Primary contracts and complete presented HLW proof were read with exact identities and limited extents. The review independently confirmed GPT-6.1 Sol/high/default (Standard) in its thread configuration. It read no live sibling or I261 material. I260's PASS was permitted background, not a premise for the stronger estimates. The parent's I261 contribution disposition and the pending I266 gate still govern any substantiality assessment.
+
+Evidence: [review](../reviews/i265-weighted-neighborhood-channel-proof.md), [derivation](../experiments/i265_weighted_neighborhood_channel_proof/analysis.md), [read extents](../experiments/i265_weighted_neighborhood_channel_proof/reading-and-failures.md), [literature](../sources/i265_weighted_neighborhood_channel_proof/literature.md), [authentication](../experiments/i265_weighted_neighborhood_channel_proof/input-authentication.json).
