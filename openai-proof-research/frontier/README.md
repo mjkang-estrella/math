@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I226 complete: algebraic results retained as technical
+
+[I226](iterations/i226-algebra-parent-disposition.md) proves cancellation and an auxiliary-size obstruction, with direct overlap in established filtered-complex and Clifford methods. Neither is counted. **Nine accepted, one remaining; I224 independent gates continue.**
+
 ## I224 nominated: forced infinity-Laplace regularity
 
 [I224](iterations/i224-forced-infinity-parent-nomination.md) proposes a bounded-forcing interior C1,alpha theorem and actual-gradient stability. I228 and I229 independently review proof and contribution. **Nine accepted, one remaining; no acceptance at nomination.**
