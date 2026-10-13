@@ -20,7 +20,7 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I273: fresh quantum and algorithmic discovery](iterations/iteration273-quantum-algorithmic-discovery-standard-brief.md) is running at Standard speed, screening new consequences in source families 276, 277, 283 and 284. No finding is nominated or accepted yet.
 
-- [I274: logarithmic ball–slab point contact](iterations/i274-ball-slab-point-contact-proposal.md) is a new parent hypothesis with predicted coefficient 2pi and scale epsilon^2/|log epsilon|. Its upper construction and nonlinear lower capacity argument remain unvalidated; no gate or acceptance is claimed.
+- [I274: logarithmic ball–slab point contact](iterations/i274-ball-slab-point-contact-proposal.md) is a new parent hypothesis with predicted coefficient 2pi and scale epsilon^2/|log epsilon|. [I275](iterations/i275-logarithmic-contact-full-proof.md) now provides a complete proposed upper and lower argument using exact vertical graph coordinates, spectral separation, and annular capacity. It remains independently unvalidated; no gate or acceptance is claimed.
 
 These are candidates and research records, not additional accepted results.
 
