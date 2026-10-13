@@ -30,6 +30,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I287 repeated-support Crouzeix discovery](iterations/iteration287-crouzeix-repeated-support-standard-brief.md) seeks a new algebraic step beyond R016 in exceptional support multiplicities. It runs at Standard speed; extending the same argument through known low-dimensional pencil results is explicitly not a substantial nomination.
 
+- [I290 global soft-summary stability](iterations/iteration290-global-soft-summary-standard-brief.md) resumes the unresolved S128 target after I131's dimension-independent local L2 theorem. It seeks the missing global coordinate-selection estimate for arbitrary randomized binary summaries; no local or fixed-complexity result is counted as a solution.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
