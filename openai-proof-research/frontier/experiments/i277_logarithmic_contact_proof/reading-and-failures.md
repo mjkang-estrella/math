@@ -1,0 +1,45 @@
+# I277 source/read extents and execution limits
+
+2026-10-12. First independent PROOF gate of I275 completed: **PASS for the complete exact all-finite-perimeter claim**. No contribution decision or accepted-count change. The target of twenty substantial findings is preserved; the twenty analysis sections are proof audit steps within one prospective theorem, not twenty findings.
+
+## Fully read assigned inputs
+
+- Project AGENTS.md and sources/upstream.json, complete.
+- frontier/iterations/i275-logarithmic-contact-full-proof.md, all 141 lines, including every section and final audit/status paragraph. Detached expected SHA256 ab1a54ce81fc0047d05edc343ab6c65ac00e2a62fcc4515725df748c7aaf693f matched freshly computed bytes.
+- frontier/experiments/i275_logarithmic_contact_full_proof/input-authentication.json, complete. All five listed input hashes match the corresponding retained input bytes. Its own separately computed SHA256 is 65a5edff4a626d374c7974327b63756b9e5a0bb562c6bb39a2512dc38d7afb5e. No additional experiment analysis was present in the assigned I275 experiment directory inventory.
+- frontier/iterations/i274-ball-slab-point-contact-proposal.md, complete. Read as the original unproved hypothesis with unpaid steps, not a theorem premise.
+- frontier/iterations/i276-point-contact-prior-art-screen.md and frontier/sources/i276_point_contact_prior_art/literature.md, both complete. These are parent prior-art/read-limit records. Their underlying compressed-droplet PDFs were not retrieved or newly read here and are not proof dependencies.
+- Completed frontier/reviews/i269-nonlinear-contact-proof.md and frontier/experiments/i269_nonlinear_contact_proof/analysis.md, all 319 analysis lines. The latter was completed in bounded displays of 1–180 and 181–319 after combined-output truncation.
+- Completed I269 reading-and-failures.md and its source literature.md, both complete. Historical claims about I269's further reads are not my own fresh read claims. I249/I253/I263 candidate proofs, I269's manifest, ABLW excerpt, Milman, and other discovery history were not opened for this review. I269 was used only as a checked predecessor for volume correction/quasiminimality; its ball–tube theorem does not prove I275.
+
+## Actual pinned theorem and required companion boundary
+
+Fully read retained I269 354-paper.tex (201 lines) and 354-references.tex (73 lines). The actual Theorem intro:main, including v=min(V,1-V), every finite-perimeter equality case and the V>1/2 complement clause, is the relied-upon theorem. The bibliography gives the precise AFM companion identity. These fully read files are copied into the authorized I277 source directory after checking their contracts and hashes.
+
+Read the family-354 catalogue block in sources/CONTENTS.md, in a bounded display around lines 8608–8623, and the matching manuscript paths and object metadata in sources/preprints-tree.json (bounded family block). An earlier whole-catalogue display exceeded the output limit and exposed truncated catalogue material, including unrelated surrounding entries. That is not a full-catalogue read claim. The bounded family block completed the relevant catalogue check. The tree lists one manuscript package for this family; its entry theorem already contains all profile and complement classification needed here. No additional pinned companion theorem is imported from a title or summary. The retained bibliography is the only needed companion file; none of its cited results besides the separately checked AFM contract is a premise.
+
+The exact pinned repository/commit is taken from the supplied upstream record and the retained immutable raw-source provenance. SHA256 hashes match I275's supplied authentication and I269's recorded source identifiers. The manifest also checks the two retained TeX files against their Git blob SHA1 identifiers in the bounded pinned tree metadata. This is file authentication, not an upstream-truth audit. No upstream included proof, internal numerical appendix, Lean file or manuscript PDF was audited. Reading TeX input directives does not constitute reading their target files.
+
+## External AFM exact retained excerpts
+
+Fully read I269 afm-2013-page-7.txt, afm-2013-page-22.txt, and afm-2013-references-pages-34-35.txt. Initial aggregated displays truncated part of the combined source output; complete dedicated displays of the entry TeX/bibliography/page-7/page-22 and later full reference-page display completed all these reads. Only after reading and checking the Definition 2.5 and Theorem 4.2 contracts were these excerpts copied to I277.
+
+Definition 2.5 requires every ball and every finite-perimeter scalar competitor, with compactly supported symmetric difference and no volume constraint. Theorem 4.2 requires common omega, bounded perimeters, and L1 convergence to a C2 set on T^N, and concludes whole-boundary normal graphs small in C^{1,alpha}, alpha<1/2. Connectedness is not an assumption. Each hypothesis and the occupied-side interpretation were proved independently in the present ball–slab setting.
+
+The exact external source is the author-hosted AFM final PDF cited in literature.md. The retained full-PDF hash 7805d5a0b9daf3873a199bbfe23d4064964fc2e72701be6d45303549028d4c72 is a historical I269 authentication record, not newly recomputed whole-PDF authentication in I277. I277 independently hashes the retained excerpt bytes; both contract excerpts match I275's recorded hashes. No internet retrieval was needed or performed. No full-PDF or visual-page read is claimed.
+
+AFM states the improved-convergence theorem as established classical regularity and attributes it to Almgren and other references; it does not prove it on the retained page. The complete references excerpt was read for that attribution. The underlying monographs/notes were not read and no independent proof of that external theorem is claimed. Neighboring portions of Proposition 2.7 and Theorem 4.3/proof are partial context, not additional complete proofs or premises. The external theorem is accepted after precise contract checking, not folded into the OpenAI truth stipulation.
+
+## Independent checks and disposition
+
+Checked every step of the new chain: strict profile branches above and below half volume; exact paired minimizers; limiting normal interval centering; free limit patches and measurable-set flow Jacobians; uniform two-volume inverse and BV perimeter cost; both lattice pointwise identities; arbitrary scalar comparisons and large-ball extension; all AFM hypotheses; whole graphs, disconnected boundaries and occupied sides; sphere reference-center implicit function; exact slab face means; sphere's quadratic mean; exact-volume energy remainders; spectral coercivity at the epsilon/sqrt(log) scale; exact lower-face sign; actual polar coordinate inverse and multiplier derivative; fixed low-mode uniform o(epsilon); high-mode negative-potential absorption; energy-sharing factor; local H1 norms; outer-radius averaging; shrinking-circle constraints; annular capacity normalization; positive-part drift and all successive limits; rounded upper corners, exact free-patch corrections, and boundary-to-region containment.
+
+No substantive gap or required repair was found. Clarifying the inverse coordinate map, chart coverage, occupied sides and centering expands consequences of existing assumptions; it imposes no new symmetry or regularity restriction. The result is not merely an upper bound or a theorem about smooth competitors. There is no novelty/contribution verdict.
+
+## Tool failures, runtime, and scope
+
+Several initial file/output inspections were too broad or combined too many reads and were truncated. Each substantive span used was subsequently displayed separately or in bounded pieces. One initial inventory requested a nonexistent I275 source directory; the proof instead explicitly locates its retained sources in completed I269, which were read there. A pre-write existence check confirmed that the assigned I277 review and two output directories did not yet exist. There was no external access failure or mathematical check delegated to software.
+
+Runtime instructions identify GPT-6.1 Sol with high reasoning effort. One read-only T3 capabilities call confirmed inherited model gpt-6.1-sol and Standard service option currentValue=default. The model-catalog reasoning option currentValue=low is a provider configuration field; it is not asserted to replace the explicit high runtime instruction. No model switch, delegation, new conversation, or per-request billing attestation occurred.
+
+All work stayed in /home/mj-kang/Documents/Dev/math/openai-proof-research. Only authorized I277 outputs and fully read needed primary excerpts were written. No candidate edits, live I272/I273 or other sibling-content reads, subagents, shared edits/index/count modifications, staging, commits, publishing, snapshots, giant history replay, research code/tests or numerical scans occurred. Shell/Python use for hashes, file extents, provenance JSON and copying fully read sources is artifact bookkeeping only, not research computation. No work remains pending.
