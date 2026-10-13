@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I203 nominated: optimal all-height elliptic covers
+
+[I203](iterations/i203-all-height-tiles.md) gives an explicit compact parallelogram attaining c_L(A)=1+L^2 det A for every trace-zero elliptic A and L>0, with a corresponding nonlinear finite-cover bound. The [parent nomination](iterations/i203-all-height-tiles-parent-nomination.md) records the initial check and outstanding independent proof and contribution gates. The result is nominated, not accepted. **Eight accepted, two remaining.**
+
 ### I206: independent contribution review of I202
 
 The [brief](iterations/iteration206-foulkes-socle-contribution-brief.md) and

@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## I203 nominated: optimal all-height elliptic covers
+
+[I203](iterations/i203-all-height-tiles.md) gives an explicit compact parallelogram attaining c_L(A)=1+L^2 det A for every trace-zero elliptic A and L>0, with a corresponding nonlinear finite-cover bound. The [parent nomination](iterations/i203-all-height-tiles-parent-nomination.md) records the initial check and outstanding independent proof and contribution gates. The result is nominated, not accepted. **Eight accepted, two remaining.**
+
 [I206](iterations/iteration206-foulkes-socle-contribution-brief.md) was
 acknowledged as running with GPT-6.1 Sol/high/ultrafast. It independently
 assesses contribution of the I202 auxiliary family. I203 and I205 retain

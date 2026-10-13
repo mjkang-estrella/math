@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I203 nominated: optimal all-height elliptic covers
+
+[I203](frontier/iterations/i203-all-height-tiles.md) gives an explicit compact parallelogram attaining c_L(A)=1+L^2 det A for every trace-zero elliptic A and L>0, with a corresponding nonlinear finite-cover bound. The [parent nomination](frontier/iterations/i203-all-height-tiles-parent-nomination.md) records the initial check and outstanding independent proof and contribution gates. The result is nominated, not accepted. **Eight accepted, two remaining.**
+
 **I206 review running:** [Independent contribution assessment](frontier/iterations/iteration206-foulkes-socle-contribution-brief.md)
 checks whether the I202 odd-prime socle family adds a substantive result
 beyond known determinant and Latin-square methods. No acceptance is
