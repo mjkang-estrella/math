@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I241 complete: selected high-viscosity branch excluded
+
+[I241](frontier/iterations/i241-p-gradient-parent-disposition.md) obtains an actual-p cylinder estimate and rules out a high-viscosity bad scale under explicit noncritical selection hypotheses. Producing those hypotheses for arbitrary approximants remains unpaid. **Nine accepted, one remaining.**
+
 ## I242–I243: complete Crouzeix rigidity follow-up
 
 [I242](frontier/iterations/iteration242-crouzeix-four-dimensional-rigidity-brief.md) investigates the complete positive-boundary certificate; [I243](frontier/iterations/iteration243-crouzeix-extremal-scalarization-brief.md) independently investigates scalarization in base dimension four. Both receive I238’s exact amplification obstruction. GPT-6.1 Sol/high/ultrafast was acknowledged running. **Nine accepted, one remaining.**
