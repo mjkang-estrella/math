@@ -6,6 +6,18 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I202–I204: focused continuations and a fresh arithmetic screen
+
+[I202](iterations/iteration202-foulkes-quotient-brief.md) seeks the actual
+A_1^2 C_6=0 multiplication bridge.
+[I203](iterations/iteration203-all-height-tiles-brief.md) seeks an optimum
+or obstruction for all-height elliptic lattice covers beyond the three
+solved resonances. [I204](iterations/iteration204-arithmetic-structures-discovery-brief.md)
+screens three other corpus families with explicit overlap checks.
+All three tasks were acknowledged as running under GPT-6.1 Sol, high,
+ultrafast. No result or nomination is inferred from dispatch.
+**Eight accepted, two remaining.**
+
 ### I201 completed: corrected elliptic costs, no nomination
 
 The [report](iterations/i201-elliptic-covering-bridge.md) and

@@ -21,6 +21,13 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+[I202](iterations/iteration202-foulkes-quotient-brief.md) targets the actual
+Foulkes quotient, [I203](iterations/iteration203-all-height-tiles-brief.md)
+the all-height lattice-cover optimum, and
+[I204](iterations/iteration204-arithmetic-structures-discovery-brief.md)
+a bounded fresh arithmetic screen. All were acknowledged as running with
+GPT-6.1 Sol/high/ultrafast. **Eight accepted, two remaining.**
+
 **I201 completed:** [Parent disposition](iterations/i201-elliptic-covering-parent-disposition.md)
 retains the corrected elliptic cost and three sharp periodic cases as
 technical results. General all-height optimality remains unresolved.

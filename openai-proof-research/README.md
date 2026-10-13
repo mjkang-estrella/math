@@ -1,5 +1,12 @@
 # OpenAI mathematics research
 
+**I202–I204 running:** Focused follow-ups address the
+[Foulkes quotient](frontier/iterations/iteration202-foulkes-quotient-brief.md)
+and [all-height lattice covers](frontier/iterations/iteration203-all-height-tiles-brief.md).
+A parallel [arithmetic screen](frontier/iterations/iteration204-arithmetic-structures-discovery-brief.md)
+examines Egyptian fractions, character varieties, and Gaussian-prime graphs.
+All use GPT-6.1 Sol/high/ultrafast. **8 accepted, 2 remaining.**
+
 **I201 completed, technical only:** [Parent disposition](frontier/iterations/i201-elliptic-covering-parent-disposition.md)
 checks the corrected finite-cover construction and distinguishes its
 three sharp periodic cases from general cylinder-covering optimality.
