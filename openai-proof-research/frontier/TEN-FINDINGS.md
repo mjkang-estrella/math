@@ -6,6 +6,10 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I220 continues the preserved Coulomb partials
+
+[I217 partial work](iterations/i217-interruption-parent-disposition.md) is preserved as incomplete. [I220](iterations/iteration220-quantitative-coulomb-continuation-brief.md) resumes it in a freed slot while I216 works on relative approximation and I219 reviews the eigenmap contribution. I218 has already passed its proof. **Nine accepted, one remaining.**
+
 ### I218 proof PASS; final contribution gate pending
 
 [I218](iterations/i218-neumann-eigenmap-parent-disposition.md) independently passes the full global eigenmap theorem with no corrections. I219 continues the separate contribution and prior-art gate. **Nine accepted, one remaining.**
