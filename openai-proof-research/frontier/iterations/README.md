@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I234 complete: local gradient estimate remains unpaid
+
+[I234](./i234-viscous-local-parent-disposition.md) records the smooth partial estimates and the missing local viscosity bridge. The separate contact-propagation route continues. **Nine accepted, one remaining.**
+
 ## I234–I236: focus on the remaining estimates
 
 [I234](./iteration234-viscous-local-regularity-brief.md) studies local regularity of the viscous equation; [I236](./iteration236-viscous-contact-propagation-brief.md) studies contact propagation for its actual barycentric pair. [I235](./iteration235-finite-range-crossing-brief.md) targets the missing finite-range crossing estimate. All were acknowledged running with GPT-6.1 Sol/high/ultrafast. **Nine accepted, one remaining.**
