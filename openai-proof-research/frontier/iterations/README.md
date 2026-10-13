@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I219 complete: eigenmap remains technical
+
+[I219](./i219-neumann-eigenmap-parent-disposition.md) identifies established nodal structure and standard univalence mechanisms. The parent retains its technical contribution verdict while preserving I218's proof PASS. This candidate is not counted. **Nine accepted, one remaining; quantitative Coulomb validation continues.**
+
 ## I216 completed: exact-boundary density is technical overlap
 
 [I216](./i216-relative-sobolev-parent-disposition.md) derives exact-boundary approximation from the source smooth-cutoff operation; its stronger linear-cost target remains unresolved. It is not nominated. I219 continues the separate eigenmap contribution gate, and I220 continues the Coulomb line. **Nine accepted, one remaining.**
