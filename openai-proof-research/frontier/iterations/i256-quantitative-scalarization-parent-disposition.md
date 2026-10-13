@@ -1,0 +1,11 @@
+# I256 parent disposition: quantitative scalarization
+
+The independent Standard-speed contribution review is complete: **TECHNICAL**. I247 remains a useful quantitative deduction, with the separate I251 proof PASS retained. It is not accepted as an additional substantial finding. The accepted count stays **10/20**.
+
+The complete review, analysis, reading record and literature record were read. The candidate identity is unchanged. Parent verification matched 36 local provenance/hash records, including retained primary excerpts; the two remote-only pinned manuscript records are identified as such rather than claimed local. Detached review SHA256: `9c9176c9ebbb76ac3a55484a4bbb496eb8b74e7f3ad6d09cd56f48f21068865d`; authentication JSON SHA256: `4abc85d9f1bf3f693cbf5477a7238a950de20ddde5090508e1d15062436e565d`.
+
+The decisive contribution limitation is that R016/I242 already contains the structural boundary-rank mechanism. The new degree- and coefficient-size-uniform estimates, arclength weighting, perturbative inertia bound and maximal-pair stationarity quantify that mechanism. The reviewer found no exact full primary predecessor, so this is not a KNOWN verdict or a worldwide novelty determination. Quantitative disk geometry remains outside the statement and unresolved. No proof defect or requested local proof repair is inferred from this contribution decision.
+
+A future substantial nomination requires new structural mathematics, not changed constants or a relabeling of this result. The review documents the corrected temporary excerpt-location incident; the files were removed from the wrong location and recreated in the assigned project directory. Interrupted I252 material and unrelated work remain preserved.
+
+Evidence: [independent review](../reviews/i256-quantitative-scalarization-contribution.md), [analysis](../experiments/i256_quantitative_scalarization_contribution/analysis.md), [read extents and failures](../experiments/i256_quantitative_scalarization_contribution/reading-and-failures.md), [literature](../sources/i256_quantitative_scalarization_contribution/literature.md), [authentication](../experiments/i256_quantitative_scalarization_contribution/input-authentication.json).
