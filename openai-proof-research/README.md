@@ -1,5 +1,9 @@
 # OpenAI mathematics research
 
+## I223 completed: Coulomb result remains technical
+
+[I223 contribution disposition](frontier/iterations/i223-coulomb-contribution-parent-disposition.md) retains the useful theorem with I222 proof PASS, but does not count its standard transfer as a substantial finding. **Nine accepted, one remaining; I224–I226 continue research.**
+
 ## I222 completed: Coulomb proof passes
 
 [I222 independently passes the complete product-bump cost-complexity theorem. Contribution is a separate gate.](frontier/iterations/i222-coulomb-proof-parent-disposition.md) **Nine accepted, one remaining.**
