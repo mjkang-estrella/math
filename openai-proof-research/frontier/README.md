@@ -21,6 +21,11 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+[I198](iterations/iteration198-geometry-representation-discovery-brief.md)
+is running a bounded screen of hyperbolicity cones, cylinder coverings,
+and Foulkes maps with GPT-6.1 Sol, high reasoning, ultrafast service.
+No new candidate is claimed at dispatch. **Eight accepted, two remaining.**
+
 **I197 completed:** The [parent check](iterations/i197-fresh-discovery-parent-disposition.md)
 retains the large-gap chain result as technical only. The narrow-box
 route is unclosed at its joint lower-bound estimate, and the 026 branch

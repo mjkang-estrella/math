@@ -6,6 +6,16 @@ User direction, 2026-10-08: “Perfect. Keep progress until you got 10.” Resum
 
 ## Resumed work, 2026-10-09
 
+### I198: new bounded discovery round
+
+[I198](iterations/iteration198-geometry-representation-discovery-brief.md)
+prioritizes nonliftable hyperbolicity cones, with cylinder coverings and
+Foulkes maps as alternatives. The [dispatch](iterations/iteration198-geometry-representation-discovery-task.json)
+was acknowledged as running with GPT-6.1 Sol, high reasoning, ultrafast.
+The completed I197 report and parent disposition accompany the task.
+No absence-of-prior-screening claim or mathematical result is inferred.
+**Eight accepted, two remaining.**
+
 ### I197 completed: chain-density deduction is technical only
 
 The [report](iterations/i197-fresh-discovery.md) and

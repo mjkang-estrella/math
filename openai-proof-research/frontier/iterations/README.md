@@ -16,6 +16,14 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I198: lifts, coverings, and Foulkes discovery
+
+The [brief](iteration198-geometry-representation-discovery-brief.md) and
+[dispatch](iteration198-geometry-representation-discovery-task.json)
+start a bounded three-family screen with GPT-6.1 Sol, high reasoning,
+ultrafast service. The task was acknowledged as running; any nominated
+result still requires both independent gates. **Eight accepted, two remaining.**
+
 ## I197 completed: no substantial nomination
 
 The [completed report](i197-fresh-discovery.md) and
