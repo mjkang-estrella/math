@@ -21,6 +21,11 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+**I201 completed:** [Parent disposition](iterations/i201-elliptic-covering-parent-disposition.md)
+retains the corrected elliptic cost and three sharp periodic cases as
+technical results. General all-height optimality remains unresolved.
+**Eight accepted, two remaining.**
+
 **I199 completed:** [Parent disposition](iterations/i199-foulkes-parent-disposition.md)
 retains its determinant-square restriction and exact quotient reduction.
 The seventh Foulkes seed remains unproved. I201's completed output is

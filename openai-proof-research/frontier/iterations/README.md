@@ -16,6 +16,14 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I201 completed: corrected finite covers, optimality gap
+
+The [report](i201-elliptic-covering-bridge.md) and
+[parent disposition](i201-elliptic-covering-parent-disposition.md) check
+the corrected elliptic cost and distinguish three sharp periodic cases
+from global finite-cover optimality. The endpoint counterexample leaves
+the all-height selection problem unresolved. **Eight accepted, two remaining.**
+
 ## I199 completed: exact Foulkes quotient gap
 
 The [report](i199-foulkes-structured-bridge.md) and
