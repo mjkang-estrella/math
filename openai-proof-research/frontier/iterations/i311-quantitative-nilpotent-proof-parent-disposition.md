@@ -1,0 +1,11 @@
+# I311 parent disposition — explicit nilpotent gap passes
+
+2026-10-13. **Independent proof verdict: PASS unchanged** for all of Q310, including its exact constants, dyadic exponent, arbitrary finite base dimension and open-disk scalar Schur functions. There was no necessary repair or unpaid mathematical operation. The parent read the complete finalized review, analysis, reading log, literature record and authentication. Eleven local input hashes, eleven semantic passages, two inherited file bindings, three inherited passage bindings and five detached final output hashes were verified.
+
+The proof checks the negative-coefficient use of the lower forward-moment bound, the backward-moment budget, determinant slack, reflected conjugation, constant 17, exact Hardy distance identity, endpoint-deletion induction and its recurrence, first-L-coefficient evaluation, and all zero or low-norm cases. The parameter L is only a nilpotence bound, not necessarily the exact index. No qualitative compactness theorem supplies the explicit constants.
+
+Final review SHA256: `3ae6187b33a6b9d01dd3bc90307410cce14f22b77a9eeb9818b3adabb45f0025`. Analysis: `32bee0cf45f33069b92758aef7de4b0e28c918ad3913ae5e903f8b6d7627188b`. Authentication: `042cdc27bdaca74f6541ee512a08758f63b9939e2564b23f35329c490ba3cad7`.
+
+This is correctness evidence for the same I306/I307/I310 package, not another acceptance. I309's full contribution review remains active. Its preliminary identification of Gau–Wu's older scalar equality theorem is being checked against the primary source; no terminal contribution verdict is presumed here. Thirteen findings remain accepted. I312 now uses the freed slot for an independent proof audit of a distinct proposed amplification hierarchy, including exclusion of every smaller coefficient size.
+
+Evidence: [review](../reviews/i311-quantitative-nilpotent-proof.md), [analysis](../experiments/i311_quantitative_nilpotent_proof/analysis.md), [reading log](../experiments/i311_quantitative_nilpotent_proof/reading-and-failures.md), [authentication](../experiments/i311_quantitative_nilpotent_proof/input-authentication.json), [literature](../sources/i311_quantitative_nilpotent_proof/literature.md).
