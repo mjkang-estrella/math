@@ -1,0 +1,29 @@
+# I317 — contribution review of the complete Q315 hierarchy
+
+2026-10-13. **Verdict: TECHNICAL**, for the entire qualitative-plus-quantitative all-r hierarchy as one nomination. This is not DUPLICATE: no inspected publication was established to contain the exact Q315 theorem. The negative verdict rests on the full quantitative reduction in [analysis.md](../experiments/i317_quantitative_amplification_contribution/analysis.md), not search absence, the earlier I314 verdict, or proof correctness. No acceptance or count change is made; fourteen accepted is the supplied administrative context.
+
+The complete 124-line frozen [Q315 proposal](../iterations/i315-quantitative-amplification-gap.md) matches SHA256 `53020ac5aa0e859cf48c3746c92adf2ab832f51dc9bdc7ddaf145bc3d400c41d`. Its target is retained: for every integer r>=2, an explicit irreducible nilpotent numerical contraction A_r of dimension (r³+3r)/2, with A_r^(r²+1)=0, satisfies C_r(A_r)=2 and C_d(A_r)<=2-(1-d/r)/22 for every integer 1<=d<r. The upper bound concerns arbitrary size-d open-disk matrix Schur functions, hence all disk-bounded polynomials of unrestricted degree. A fixed positive lost channel fraction has a positive gap independent of r.
+
+The newly authorized finalized I316 review and complete analysis match both supplied hashes and were read in full. They distinguish **FAIL of the literal frozen proof** from **independent verification of Q315 with the single comparison repair**: line 96 must end `<=5epsilon`, since its strict comparison fails at epsilon=0. This report uses that explicitly documented weak comparison, leaves the frozen input unchanged, and does not describe the proof as PASS unchanged. The repair alters no theorem condition or constant and does not affect the contribution judgment.
+
+The actual reduction is as follows. [Gau–Wu, Theorems 5 and 8](https://ir.lib.nycu.edu.tw/server/api/core/bitstreams/761cc49b-4b82-4fd4-8748-960e6473e874/content), supplies the scalar endpoint metric and its equality chase; the analysis writes the rank-independent extension. Standard Fourier phase averaging supplies the depolarizing first moment. [Werner, Theorem 1, equations (5)–(6), Proposition 3 and Section 4](https://arxiv.org/pdf/quant-ph/0003070), was actually read for that predecessor operation, without attributing this analytic model to it. Encoding the two phase variables as z^r and z gives exactly Phi=z diag(z^(ri)) Fourier_r diag(z^j): the bounded frequencies r(i-j)+k-l have no unintended zero. This preserves the polynomial dimension and nilpotence, rather than importing an arbitrary finite unitary design that lacks an analytic lift.
+
+For any Schur multiplier compression S=Q[C], the old endpoint metric has fixed spectral gaps. The three squared similarity losses bound both endpoint tails and the contraction deficit by multiples of epsilon=4-||Q[A_r]||². The elementary positive defect square root gives ||(I-S*S)^(1/2)v||²<=2epsilon for the projected constant input v. Orthogonal projection then gives
+
+    ||V Q^T-Phi W||²<=5epsilon,    ||W||_HS²>=2-6epsilon.
+
+Projection off ran V annihilates VQ^T for **every** Q. Exact depolarization gives its complementary output mass as (rank Pi/r)||W||². Therefore, with t=1-d/r,
+
+    t(2-6epsilon)<=5epsilon,
+    epsilon>=2t/(5+6t)>=2t/11,
+    2-||Q[A_r]||>=t/22.
+
+Every constant is independent of r, d and polynomial degree. This is a routine stability calculation on the already chosen endpoint model, followed by the exact trace of a projection against the maximally mixed average. It is more than qualitative irreducibility or compactness; the additional quantitative work is explicitly paid in the reduction. There is no approximate spectral-projection theorem, dimension-dependent stability inversion, or compatibility with a separately prescribed original matrix to establish.
+
+[Benhida–Fricain–Timotin, Lemma 3.1 and Corollary 3.2](https://nyjm.albany.edu/j/2021/27-62p.pdf), identifies the classical constant defect-subspace decomposition. Averaging excludes that decomposition and, with endpoint-kernel preservation and cyclicity, proves irreducibility of the weighted A_r. The same finite model supplies the transpose polynomial witness attaining two at level r. Thus irreducibility, exact attainment and every smaller Schur level all survive the reduction; no direct sum, asymptotic base or witness-only bound replaces the target.
+
+DPW's actual Theorem 2.3 and proof supplies the old complete-norm/numerical-radius relation and an n-to-2n triangular test, not detection at level two. Pisier's one-generator amplification predecessors are credited and tested in the analysis: their unbounded complete norms cannot all have numerical radius at most one, and rescaling does not preserve this endpoint and hierarchy. R019/I292's original rank-two witness and I309's scalar E307/Q310 package receive no new credit. Q315 is stronger than those claims; that strength does not itself pay a new operation.
+
+The construction establishes its complete disk upper bound by old similarity and multiplier methods. It does **not logically require the new OpenAI constant-two theorem**. The pinned primary statements and companion endpoint proposition were read as source context, with stipulated truth. Source-driven motivation must not be represented as logical dependence on that theorem.
+
+The literature comparison is bounded: the published Pisier PDF was blocked, an earlier primary version and the author-uploaded Davidson–Paulsen finite construction were inspected instead, and Holbrook's full proof was not obtained. No worldwide priority conclusion follows. Exact semantic extents, identities, inaccessible sources, and the single endpoint correction are recorded in the other four assigned artifacts. All r and both hierarchy variants remain one nomination; no count, shared index, git, publication or subagent action was taken.
