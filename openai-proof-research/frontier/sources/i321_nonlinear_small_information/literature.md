@@ -1,0 +1,25 @@
+# I321 — source and literature boundaries
+
+2026-10-13. No new external body or section is retained. Exact local hashes, pinned URLs and current reading extents are in the authentication record. Source truth is stipulated only for OpenAI/math revision fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb; new deductions are checked independently.
+
+## Pinned source actually used
+
+[Main source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Sharp-binary-information-contraction-on-the-discrete-cube-September-24-2026/build/main.tex), `main:soft` and `upgrade:production`: contraction at the actual information and interior all-dimensional sharp production. The latter is a max-profile inequality and is not a nonlinear stability theorem at scale a^4B. The main source expressly restricts information-only local joining for general coupled pairs. Actual statements and the generator were read; no joining-tree coercivity is inferred.
+
+[Scalar source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Sharp-binary-information-contraction-on-the-discrete-cube-September-24-2026/build/sections/scalar.tex), `scalar:profile-convexity`: F''>=4/3 and smoothness at zero. [Capacity source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Sharp-binary-information-contraction-on-the-discrete-cube-September-24-2026/build/sections/capacity.tex), `capacity:onebit`/`capacity:refined`: D>=hF(J/h) for a genuine interior one-bit field. Its full proof was read. T321 applies it to the actual conditional channel v and proves a different nonlinear residual estimate; N131 is not elevated to arbitrary-kernel scope.
+
+[Flow source](https://raw.githubusercontent.com/openai/math/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/Sharp-binary-information-contraction-on-the-discrete-cube-September-24-2026/build/sections/flow.tex): exact information evolution and positive-time treatment of original endpoints. All four files freshly matched their pinned raw identities in memory. Full primary canonical/reserve/thinning sections and the Hellinger/Chen companion bodies were not newly inspected; their limitations were read through the finalized I313/I304 source record. They are not additional premises for T321.
+
+## Current primary comparisons
+
+[Yu, version 5](https://arxiv.org/html/2410.10147v5), §4.1, Theorems 4.1, 4.2 and 4.5: the local results concern balanced Boolean functions and distance to Boolean dictators. Remark 4.3 uses support hypercontractivity; Lemma 4.4 explicitly allows real functions. These statements were read at lines 365–462. They support the scope comparison and the standard hypercontractive interface, rather than the new nonlinear endpoint claim. T321's mean can be fixed and nonzero, and its exact input information tends to zero. The real hypercontractive norm inequalities also have a direct two-point proof, read in I304 and checked in the new analysis. No external certificate or appendix-wide verification is asserted.
+
+[Friedgut–Kalai–Naor, rewritten original proof, version 1](https://arxiv.org/html/2105.03246v1), Theorem 0.1 and proof through Theorem 0.2, lines 18–69: the range is Boolean. Its first-level conclusion is not an arbitrary soft-field coordinate-selection theorem. T321 assumes an original conditional residual bound and proves its weighted entropy payment; it does not infer that hypothesis from small higher mass. The inherited exactly normalized two-coordinate affine obstruction remains relevant.
+
+Polyanskiy–Wu, Ky–Tran, Chen v2 and further comparisons are documented in I313's fully read source/authentication record. Their original primary bodies were not reread here; no current semantic reading or new immutable authentication is claimed for them. Their scopes are not used to certify global entrance or endpoint bias. This round is a focused comparison, not an exhaustive novelty search.
+
+## Inherited versus new; priority boundary
+
+Inherited: B313's modal bridge, A313's affine theorem, L313's conservative shrinking ball, and I304's compact-away-from-zero result. The operations actually used for T321—the Bregman distance bridge, the genuine one-bit bias estimate, and the scalar ODE—are rederived in the analysis. The complete finalized reports were read and authenticated. I320 is a parent finite-cube calculation; its independent coefficient/attainability audit is new verification, not a new parent theorem or acceptance.
+
+New technical partial: exact conditional information splitting and concave-secant comparison, a uniform two-by-two weighted residual Hessian with its Schur complement, and a spike-tolerant original-residual tube estimate with half the previous conservative radius exponent. Fixed bias and exact original endpoint spikes can occur inside this scope. The missing global alternative and endpoint-mean payment remain explicit. No substantial full-S313 contribution, exhaustive novelty result or worldwide-priority claim is asserted. Acceptance and the fourteen-of-twenty count remain unchanged.

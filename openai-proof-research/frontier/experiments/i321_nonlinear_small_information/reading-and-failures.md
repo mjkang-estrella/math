@@ -1,0 +1,32 @@
+# I321 — reading and failure record
+
+2026-10-13. No child agents, git commands, publication, shared-index edits, acceptance/count changes or numerical scans occurred. No live I316/I317/I319 body was read. No new external full body or section was saved. Authored files are precisely the five assigned I321 outputs.
+
+## Actual reading extents
+
+- AGENTS.md and sources/upstream.json: full. sources/CONTENTS.md: focused semantic coverage only of lines 2922–2940, family 119. An earlier oversized catalogue display was truncated and is not a full semantic read.
+- Finalized I313 research report: full, all 33 lines. Complete I313 analysis: full, all 219 lines, including exact source interfaces, B313, Q313, A313, L313, exact rare-event tests and its final gap. Its reading/failure log, literature note and authentication JSON were read in full. The initially combined authentication/catalogue output was truncated; the authentication JSON was subsequently read alone through its ending. The parent one-bit I313 note was read in full; its historical count/live-status sentences are not current premises.
+- Finalized I304 review: full, all 18 lines. Complete analysis: consecutive chunks 1–160 and 161–319, through the final scope statement. This includes the exact ODE, Bregman backward bridge, real-function hypercontractivity, local spike argument, joining/marked compactness and both-budget Gaussian transfer. This task does not claim to reopen the entire compact-rectangle review; operations reused here are independently developed at the endpoint scope.
+- I320 note: full, all 62 lines. Its authentication file at frontier/experiments/i320_quartic_normal_form/input-authentication.json: full. Every coefficient, the level-two square, the minimum and the implicit normalization were independently calculated. The five dispatch hashes of I313/I304/I320 match actual bytes.
+- Actual pinned Sharp-binary-information source: main.tex lines 64–105, 171–230 and 238–320; scalar.tex lines 1–140; capacity.tex in full; flow.tex in full. The applicable labels are main:soft, main:functionals/flow-identity, upgrade:production, scalar:profile-convexity, capacity:onebit/refined, and flow:sharp-trajectory. Four fresh pinned raw bodies were retrieved only in memory and matched local bytes and I313's authenticated identities. Scalar lines 129–140 begin a further lemma but are not a relied-on proof. The primary joining sections, Hellinger companion and Chen text were not newly read or authenticated in this round; descriptions of their boundaries are inherited from the finalized I313/I304 inputs.
+- Primary external Yu v5: title/scope display and focused lines 365–462, with actual Theorems 4.1, 4.2, 4.5, Remark 4.3 and Lemma 4.4. The latter explicitly permits real functions in hypercontractivity. Theorem 4.1's displayed proof was read; no claim is made to reading the appendix proof of Theorem 4.2 or the whole manuscript. Primary FKN v1: lines 18–69, including Theorem 0.1, its proof and Theorem 0.2. External versions and current web-line extents are recorded in authentication. No external theorem is an additional stipulated axiom for the nonlinear endpoint.
+
+## Tooling/display failures and corrections
+
+1. The initial filename inventory ran from the parent math directory and listed filenames from another project before the workdir was scoped to openai-proof-research. No outside-project body was read and no outside-project file was written. The inventory output was truncated; it is not evidence of semantic reading.
+2. The guessed paths i320_quartic_nonlinear_normal_form did not exist. A filename-only inventory within the authorized frontier experiment/source directories identified the actual authentication path i320_quartic_normal_form. This did not open any live sibling body.
+3. An early combined read accidentally included the full catalogue, overflowing the output budget. All required reports, complete analyses, failure/source record and authentication were subsequently read in bounded displays. The catalogue was reread only at family 119.
+4. No raw retrieval, write, or analytic-check command failed after these corrections. New external bodies were never persisted. The rational coefficient checks did not require Sympy or numerical evaluation.
+
+## Analytic failure ledger
+
+- Uniform quartic expansion for arbitrary low-information kernels remains false by the inherited exactly normalized rare spikes. T321 expands only the bounded interior one-bit conditional field, and handles the original residual with exact Bregman positivity.
+- Treating a biased one-bit normalized field as a transverse local maximizer at all means is false. The I320 coefficient decreases on optimized spreading when m²>1/3. T321's smaller actual one-bit information and exact secant avoid making that claim.
+- Applying one-bit capacity/N131 to general nonlinear production is not licensed. Capacity is used only for v=m+bX_i. The residual has a separately proved block estimate.
+- Charging every residual at the a^4 eigenvalue unnecessarily loses radius. T321 retains the a² singleton and order-one higher-mode scales; it still uses support/hypercontractive error payment rather than presuming a uniform smooth input.
+- Inferring global conditional-tube entrance from low information is unproved and generally not a direct consequence: the residual may have L2 size of order a. No global entrance is established here.
+- Sending m0 to one in the interior estimates is unpaid. Bregman upper constants, scalar remainders and multiplier bounds deteriorate. Exactly normalized rare Boolean outputs obstruct an unqualified small-relative-fluctuation shortcut.
+- Absolute Gaussian/fixed-degree errors cannot be substituted at the a^4B scale, especially near a coordinate. No relative-budget transfer or normal-form representation is proved here.
+- Positive-time closeness cannot be inverted to recover original high modes. T321 assumes and estimates the original residual, and thus does not conceal this unpaid operation.
+
+Validation consists of a complete analytic proof, exact rational polynomial identities for the quartic minimum and Schur coefficient, fresh in-memory primary-source byte matching, and final output inspection. It is not a formal proof checker or numerical assay. Final correctness scope is the I320 local audit and T321 only; unrestricted S313 is UNRESOLVED. Contribution treatment is a technical partial, with no full-endpoint PASS, new acceptance or worldwide-priority claim.
