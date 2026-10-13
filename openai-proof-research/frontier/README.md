@@ -21,6 +21,10 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+## R015 accepted: ninth substantial finding
+
+[R015: tetrahedral cylinder-cover lower bound](findings/R015-tetrahedral-cylinder-lower-bound.md) is accepted after separate proof and contribution reviews. It gives sum |B_i| >= (sqrt(15)/9) A_min(T), with exact optimality in the quadratic-density certificate class. The final comparison acknowledges the stronger old inscribed-ball bound pi/(6sqrt(2)). **Nine accepted, one remaining; research continues until ten.**
+
 ## I215 parent extension: higher-dimensional simplex certificate
 
 The [parent calculation](iterations/i215-simplex-quadratic-extension.md) extends the same weighted-chord argument to the proposed regular n-simplex bound 3/[sqrt(2)(n+2)] for n>=4. This remains unreviewed and is part of the same candidate, not a separate finding. I212, I213 and I214 continue their separate tasks. **Eight accepted, two remaining.**
