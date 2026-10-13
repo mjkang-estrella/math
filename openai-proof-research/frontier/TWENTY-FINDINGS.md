@@ -46,6 +46,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I306 strict scalar/complete gap](iterations/i306-strict-scalar-complete-gap.md) proposes that R019's matrix has scalar supremum strictly below two while its complete constant is exactly two. The proof closes the nonpolynomial Schur-jet possibility using finite interpolation, primary scalar equality operations and explicit power bounds. It is an unreviewed strengthening, not an additional acceptance.
 
+- [I307 disk extremizer spectrum](iterations/i307-disk-extremizer-spectrum.md) proposes a general necessary form for all factor-two scalar Schur extremizers, via the original disk resolvent and exact Hardy coefficient norms. Its nilpotent corollary implies I306. These form one potential package, not two acceptance slots; both independent gates remain open.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
