@@ -16,6 +16,10 @@ Before accepting a candidate:
 
 When a report returns without meeting the gate, integrate its evidence and use it to choose a concrete refinement or a fresh target. Do not automatically close the resumed research just because the current delegated batch finishes. Do not lower the novelty/significance standard to force success.
 
+## I210 complete: covering proof finalized with auxiliary correction
+
+[I210's completed proof review](./i210-all-height-tiles-parent-disposition.md) validates the covering theorems and adopts the precise almost-everywhere/pointwise auxiliary correction. The separate contribution verdict remains technical. **Eight accepted, two remaining.**
+
 ## I208 complete: all-height covering contribution is technical
 
 I203's covering formula is retained as a proof-validated technical result. The [I208 parent disposition](./i208-all-height-tiles-parent-disposition.md) accepts the independent negative contribution verdict without claiming that an exact duplicate was found. **Eight accepted, two remaining.**
