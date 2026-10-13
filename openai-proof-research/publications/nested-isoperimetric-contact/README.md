@@ -13,3 +13,5 @@ Research pin: `mjkang-estrella/math@d513e308d86a38004d78bab9b9e88532e92bf56c`. U
 License: All rights reserved. Claude Opus 5.5 manuscript audits and the parent repair check are AI reviews, not human peer review or formal verification.
 
 Zenodo: https://doi.org/10.5281/zenodo.23350051
+
+MathDB: https://mathdb.com/abs/2610.00021
