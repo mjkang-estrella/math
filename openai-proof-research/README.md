@@ -2,7 +2,11 @@
 
 ## Active target: twenty substantial findings
 
-On 2026-10-12 the user raised the target to twenty. **Thirteen accepted, seven remaining.** The [twenty-finding ledger](frontier/TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
+On 2026-10-12 the user raised the target to twenty. **Fourteen accepted, six remaining.** The [twenty-finding ledger](frontier/TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
+
+## Fourteenth finding accepted: global binary-information stability
+
+[R020](frontier/findings/R020-global-binary-information-stability.md) proves dimension-free linear stability of sharp binary-information contraction for arbitrary bounded cube kernels on every compact open amplitude/correlation rectangle. I304 passed the complete proof unchanged and I303 judged the unrestricted Gaussian step substantial, with classical translation methods explicitly credited. **Fourteen accepted; six remain.**
 
 ## Thirteenth finding accepted: entangled complete-Crouzeix equality
 
