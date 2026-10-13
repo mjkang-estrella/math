@@ -24,6 +24,8 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I282 arithmetic joint-statistics discovery](iterations/iteration282-arithmetic-joint-statistics-standard-brief.md) investigates a new bridge beyond the completed prime-factor findings, using pinned families 011/012 and primary comparisons. It is running with GPT-6.1 Sol/high/Standard; no result or acceptance is assumed.
 
+- [I283 endpoint check](iterations/i283-ball-slab-endpoint-obstruction.md) constructs a competing cylinder inside the slab and proves that R018's coefficient is not uniform as R approaches 1/3. This is a technical boundary observation, not a thirteenth finding. A moving-radius crossover lower bound and its substantiality are not established.
+
 Entries explicitly marked accepted contribute to the count below; all other entries are candidates or research records.
 
 ## Accepted count
