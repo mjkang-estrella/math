@@ -21,6 +21,11 @@ The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Na
 
 ## Current work
 
+[I205](iterations/iteration205-bounded-egyptian-denominators-brief.md) was
+acknowledged as running under GPT-6.1 Sol/high/ultrafast. It seeks a new
+construction for the polynomial maximum-denominator target. I202 and
+I203 continue independently. **Eight accepted, two remaining.**
+
 **I204 completed:** [Parent disposition](iterations/i204-arithmetic-structures-parent-disposition.md)
 retains technical denominator obstructions, not a negative answer to the
 polynomial maximum-denominator target. That exact construction problem
