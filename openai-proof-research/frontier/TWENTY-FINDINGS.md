@@ -28,7 +28,7 @@ The following work is active or awaiting independent review. All active and futu
 
 - [I286 quantitative Cartan–Hadamard discovery](iterations/i286-quantitative-cartan-hadamard-parent-disposition.md) completed with the global stability estimate still unproved and unrefuted. Its definition and BV-reduction checks are technical; volume-preserving ripples refute a proposed curvature-energy bridge, not the target. No acceptance is added.
 
-- [I287 repeated-support Crouzeix discovery](iterations/iteration287-crouzeix-repeated-support-standard-brief.md) seeks a new algebraic step beyond R016 in exceptional support multiplicities. It runs at Standard speed; extending the same argument through known low-dimensional pencil results is explicitly not a substantial nomination.
+- [I287 repeated-support Crouzeix discovery](iterations/i287-crouzeix-counterexample-parent-disposition.md) proposes an explicit irreducible six-dimensional equality witness with no constant scalar coefficient compression attaining equality. The old LSS base matrix is credited; the polynomial and its rank-two obstruction are the proposed increment. [I291 independent proof review](iterations/iteration291-crouzeix-counterexample-proof-standard-brief.md) is underway at Standard speed. Contribution review and acceptance remain outstanding; disk rigidity is not refuted.
 
 - [I290 global soft-summary stability](iterations/iteration290-global-soft-summary-standard-brief.md) resumes the unresolved S128 target after I131's dimension-independent local L2 theorem. It seeks the missing global coordinate-selection estimate for arbitrary randomized binary summaries; no local or fixed-complexity result is counted as a solution.
 
