@@ -1,0 +1,7 @@
+# Complete Crouzeix equality without a scalar coefficient compression
+
+Myeongjin Kang
+
+We give an explicit irreducible matrix N of order six with unit-disk numerical range and a 2 by 2 matrix polynomial P satisfying max over the unit disk of ||P(z)|| = 1 and ||P[N]|| = 2. Every compression by constant complex unit coefficient vectors u and v nevertheless satisfies ||(v* P u)(N)|| <= sqrt(849)/16 < 2. The matrix is twice a member of the classical Li-Spitkovsky-Shukla family. A simple top singular pair provides a finite certificate of equality and of the obstruction to scalar coefficient compression. All assertions follow from explicit matrix calculations.
+
+4 pages. Comments and corrections welcome.
