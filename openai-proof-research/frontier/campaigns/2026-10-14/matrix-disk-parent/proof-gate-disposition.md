@@ -1,7 +1,8 @@
 # Parent disposition of the arbitrary-dimensional matrix disk proof gate
 
 Status: independent proof PASS and independent contribution SUBSTANTIAL;
-standalone manuscript gate still required before acceptance. Campaign count remains 1/10.
+standalone manuscript gate PASS. Release preparation and scoped formal support
+remain in progress. Campaign count remains 1/10 pending acceptance integration.
 
 The full frozen candidate analysis.md has SHA256
 `e74dda6b866d7780b57911aef30a2bfb99589e7036864b1da6a302072ab462b6`.
@@ -51,3 +52,17 @@ GLM implementation task is attempting a finite scalar bistochastic variance
 identity in Lean, with arbitrary finite index set and explicit row/column sums.
 Its output is not yet reviewed and cannot be represented as formal support.
 It would not cover the Hilbert-valued integral, Fatou limit or full theorem.
+
+## Standalone manuscript gate integrated
+
+The parent read the complete independent manuscript review and verdict and
+verified all 37 authored review output records and all 30 frozen manuscript
+output records. Review SHA256:
+`35f67ec7bd5d885c4ccd2c2230d694faaa85eb5fa5657ae828b21e91b9a99ce0`.
+The independent reviewer reconstructed the full proof, checked 52 source-map
+line targets, reran 33 exact supporting checks and 30 editorial checks in a
+copy, and inspected all eleven PDF pages. Required repairs: none. The optional
+notation collision between the scalar maximum and zeroth cross coefficient
+is harmless in context; the reviewed manuscript remains frozen. This is
+internal independent review, not journal peer review or a Lean certificate.
+See manuscript-gate-disposition.json for the parent receipt.
