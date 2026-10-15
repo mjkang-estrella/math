@@ -70,6 +70,9 @@ def assemble(destination):
         add(name)
     add(CAMPAIGN / 'p-gradient-release/assemble.py')
     add(CAMPAIGN / 'p-gradient-release/verify_bundle.py')
+    add(CAMPAIGN / 'p-gradient-release/README.md')
+    add(CAMPAIGN / 'p-gradient-release/STATUS.md')
+    add('frontier/findings/R023-uniform-p-harmonic-gradients.md')
 
     # Bind both the PDF/TeX and the actual formal proof bytes to their receipts.
     for component in ['p-gradient-manuscript', 'formal']:
@@ -115,7 +118,8 @@ def assemble(destination):
     selected['BUNDLE-MANIFEST.json'] = (json.dumps(manifest, indent=2)+'\n').encode()
     selected['BUNDLE-README.txt'] = b'''DRAFT RESEARCH PACKAGE -- NOT PUBLICLY SUBMITTED OR PUBLISHED
 
-Read frontier/campaigns/2026-10-14/p-gradient-manuscript/README.md first.
+Read frontier/campaigns/2026-10-14/p-gradient-release/STATUS.md first.
+Then read frontier/campaigns/2026-10-14/p-gradient-manuscript/README.md.
 The PDF is in that directory's output/pdf/main.pdf.
 Proof and contribution reviews are separate supporting evidence.
 The independent manuscript review is included with its exact scope.
