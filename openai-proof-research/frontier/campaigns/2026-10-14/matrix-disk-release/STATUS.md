@@ -23,8 +23,12 @@ remain antecedents and are not counted again.
 Supporting verification consists of 33 exact finite checks, deliberate
 mutation rejection, source correspondence, independent written proof
 reviews, hash receipts and all-page PDF inspection. No full Lean proof
-exists, and the pending GLM finite-variance task is excluded. Formal
-support can be added later with its own compilation and coverage receipt.
+exists. The updated archive includes GLM's finite real scalar variance
+proof after independent source, type, fresh-compilation and standard-axiom
+audit. The portable pinned Lake project builds with the existing dependency
+cache; a fresh network dependency installation was not tested. The source
+and audit receipts are included, while author binaries are excluded. These
+supporting lemmas are not a formal proof of the analytic theorem.
 
 This package is prepared locally for publication. No Zenodo record, DOI,
 MathDB submission or external endorsement is claimed. Author and licenses

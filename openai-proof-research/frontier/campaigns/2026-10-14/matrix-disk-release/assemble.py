@@ -38,6 +38,9 @@ def assemble(destination):
     for component, expected_manifest in [
         ('matrix-disk-manuscript', '5777482c17f9a943422a3ef256d5bbe8e17029732680358d1a25726e358904cd'),
         ('matrix-disk-manuscript-review-r1', 'f6b44ba37987035c500827828102020ab5172208f9ddd64ad71ce10880806ff0'),
+        ('matrix-disk-formal-glm-r1', '591da01b56411fd4eadcae87f3a2f896c77bcebe1d49d9106fb53d0877e91d69'),
+        ('matrix-disk-formal-review-r1', '75c6b6be28944761fe44f9c91bf8e8063bd98e5dffc11f6670ca310c263bb5dc'),
+        ('matrix-disk-formal-v1', '04f67b750a409fab81102c698719d0bb219d1101170939c7d637c8a484f48fdc'),
     ]:
         base = C / component
         manifest_path = base / 'outputs.json'
@@ -80,7 +83,7 @@ def assemble(destination):
         'context_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
         'commit_note': 'Context only; individual hashes identify the bundled bytes.',
         'current_manuscript': str(C / 'matrix-disk-manuscript/output/pdf/main.pdf'),
-        'formal_coverage': 'No verified Lean output bundled; 33 exact finite supporting checks, not a formalized analytic theorem.',
+        'formal_coverage': 'Three finite real scalar variance supporting declarations independently compiled and axiom-audited; no Hilbert integral, Fatou or full analytic theorem formalization. 33 exact finite checks also included.',
         'files': {name: {'sha256': sha(data), 'bytes': len(data)} for name, data in sorted(selected.items())},
         'external_dependencies': 'Pinned complete Crouzeix/Faber operations and credited Jin geometry; source URLs/hashes retained. Third-party source copies excluded.',
     }
@@ -93,7 +96,8 @@ def assemble(destination):
         'Read frontier/campaigns/2026-10-14/matrix-disk-release/STATUS.md and README.md.\n'
         'The reviewed PDF is in matrix-disk-manuscript/output/pdf/main.pdf.\n'
         'Author: Myeongjin Kang; no affiliation. Original prose CC BY 4.0; code MIT.\n'
-        'No full Lean certificate. See the exact scope in the manuscript and R024 finding.\n'
+        'Finite scalar Lean support included; no full analytic Lean certificate.\n'
+        'See matrix-disk-formal-v1/README.md for the pinned Lake rebuild.\n'
         'Verify from this extracted root:\n'
         'python3 -I frontier/campaigns/2026-10-14/matrix-disk-release/verify_bundle.py\n'
     ).encode()

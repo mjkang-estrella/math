@@ -3,7 +3,8 @@
 Status: independent proof PASS and independent contribution SUBSTANTIAL;
 standalone manuscript gate PASS. R024 accepted after local release integrity
 and exact-check verification. Campaign count is now 2/10. The GLM finite
-scalar implementation remains pending and is not used for acceptance.
+scalar implementation has subsequently passed independent parent audit;
+it remains supporting algebra and earns no separate acceptance.
 
 The full frozen candidate analysis.md has SHA256
 `e74dda6b866d7780b57911aef30a2bfb99589e7036864b1da6a302072ab462b6`.
@@ -78,3 +79,16 @@ receipts; a modified manuscript was rejected. The archive retains the exact
 reviewed PDF and preparation-time records. This later disposition supersedes
 older status/count prose without altering frozen mathematics. There is no
 full Lean certificate and no public submission.
+
+## Scoped Lean supplement
+
+The finite real scalar bistochastic variance identity, per-column identity
+and nonnegative deficit supplied by GLM passed independent source/type
+audit and fresh compilation with standard axioms only. The parent compiled
+against a newly generated temporary olean, not the author's binary. The
+portable pinned Lake project also built with the existing dependency cache.
+Source SHA256:
+`cf6d64a82946147ebb6a3797570c050ce6377c662044a0e1d563050e59ffa077`.
+See matrix-disk-formal-review-r1/review.md and validation.json; the second
+release archive includes these source/audit artifacts. The reviewed paper
+is unchanged, and no integral/Fatou/full analytic formalization is claimed.

@@ -111,10 +111,14 @@ rights are preserved. Historical third-party source copies are excluded.
 Gram restrictions, inverse multiplication order, transpose and half
 factors, and variance orientation, including deliberate mutations. They
 do not establish the conformal, Hilbert-valued, Fatou, rationalization,
-maximum-principle or geometric arguments. GLM's separate finite real
-variance implementation remains pending and is not used for acceptance
-or represented as verified support. A later independently compiled lemma
-may supplement this package without becoming another accepted result.
+maximum-principle or geometric arguments. GLM's finite real scalar variance
+implementation has now passed the [independent parent audit](../campaigns/2026-10-14/matrix-disk-formal-review-r1/review.md).
+The generic identity, per-column identity and nonnegative-deficit corollary
+compile on Lean 4.34.1 and pinned mathlib with only propext, Classical.choice
+and Quot.sound. A [portable Lake project](../campaigns/2026-10-14/matrix-disk-formal-v1/README.md)
+and exact source/audit receipts supplement the updated archive. This does
+not retroactively supply a formal proof of the analytic argument and earns
+no separate accepted-result credit.
 
 Nothing has been submitted to Zenodo or MathDB. The local MathDB routing
 draft distinguishes this equality theorem from the credited complete

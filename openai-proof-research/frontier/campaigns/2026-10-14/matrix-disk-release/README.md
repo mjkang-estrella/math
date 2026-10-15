@@ -30,10 +30,12 @@ the original relative project layout, which this archive retains. Run it
 only in a copy, since it writes validation and output manifests. Its status
 strings describe manuscript preparation, not the later review decision.
 
-No Lean source is represented as verified in this release. GLM's separate
-finite scalar variance implementation remains under development. Even a
-verified finite identity would not formalize the Hilbert-valued integral,
-Fatou passage, boundary convergence, resolvent or geometric arguments.
+The updated release includes independently compiled finite scalar Lean
+support and its exact coverage/axiom receipts. See
+`../matrix-disk-formal-v1/README.md` for a pinned Lake rebuild. The generic
+identity, per-column lemma and nonnegative deficit are verified. They do
+not formalize the Hilbert-valued integral, Fatou passage, boundary
+convergence, resolvent or geometric arguments. The reviewed PDF is unchanged.
 
 To assemble again from the research checkout:
 
@@ -44,7 +46,7 @@ python3 -I frontier/campaigns/2026-10-14/matrix-disk-release/assemble.py /new/pa
 The assembler refuses to replace an existing archive. It uses an explicit
 allowlist, verifies the frozen manuscript and review receipts, and records
 the captured bytes. It excludes downloaded third-party manuscripts, Lean
-caches, active agent outputs and unrelated workspace files. Historical
+caches, author-generated Lean binaries, active agent outputs and unrelated workspace files. Historical
 source/input manifests can refer to excluded third-party or antecedent
 files; those are provenance references, not promises of bundled content.
 `BUNDLE-MANIFEST.json` is the authoritative list of included files.

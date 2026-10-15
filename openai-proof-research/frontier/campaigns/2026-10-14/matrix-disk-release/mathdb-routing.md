@@ -20,7 +20,8 @@ Proposed related-result text:
 > level set. This is a result about equality in the credited inequality,
 > not a new proof of that inequality. Independent internal proof,
 > contribution and manuscript reviews and 33 exact supporting checks
-> accompany the paper. The analytic theorem is not formalized in Lean.
+> accompany the paper. Independently compiled finite scalar variance Lean
+> support is included; the analytic theorem is not formalized in Lean.
 
 Author: Myeongjin Kang; no affiliation. Original prose CC BY 4.0, original
 code MIT. The public paper/package URL must be filled with the actual
