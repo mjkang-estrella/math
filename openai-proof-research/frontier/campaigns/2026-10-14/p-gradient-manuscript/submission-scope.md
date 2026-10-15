@@ -1,6 +1,8 @@
 # Candidate submission scope
 
-Not submitted. The repaired proof and manuscript audit must pass first.
+Not submitted or accepted. The repaired research argument passed the
+independent round-2 proof gate. This consolidated manuscript still needs
+its own independent verification gate.
 
 Proposed title: **Uniform interior gradient estimates for finite p through
 a constrained affine lift**.
@@ -36,8 +38,12 @@ sources, toolchain and mathlib pins, build command and axiom audit;
 independent proof/contribution reviews with input hashes.
 
 Formal statement to include with any deposit: **The Lean development
-certifies three scalar real-algebra inequalities supporting zero-jet
-ellipticity. It does not formalize the full analytic theorem.**
+certifies three scalar and seven vector supporting theorems for zero-jet
+ellipticity. The vector certificate works in any real inner product space;
+`physical_uniform_bounds` bounds the actual form with `sqrt(e)` under
+`‖a‖²+b²=1`, `0<=e<=1`, and `b0²<=b²`, without a coordinate split.
+It does not formalize the local jet-neighborhood estimate, Savin's theorem,
+the PDE, compactness, fitted-class rigidity or the full analytic theorem.**
 
 Before a final Zenodo record, finalize author names, affiliations if
 desired, license, and the public repository/archive reference. No author,

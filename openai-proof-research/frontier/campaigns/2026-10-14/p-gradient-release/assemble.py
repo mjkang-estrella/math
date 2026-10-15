@@ -14,7 +14,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[4]
 CAMPAIGN = Path('frontier/campaigns/2026-10-14')
-ALLOWED = {'.md', '.tex', '.lean', '.json', '.py', '.txt', '.toml'}
+ALLOWED = {'.md', '.tex', '.lean', '.json', '.py', '.txt', '.toml', '.diff'}
 
 
 def digest(data):
@@ -43,6 +43,8 @@ def assemble(destination):
             if path.is_file() and path.suffix in ALLOWED and '__pycache__' not in path.parts:
                 add(path.relative_to(ROOT))
     add(CAMPAIGN / 'p-gradient-manuscript/output/pdf/main.pdf')
+    add(CAMPAIGN / 'p-gradient-manuscript/output/pdf/main.log')
+    add(CAMPAIGN / 'p-gradient-manuscript-consolidation/build-final.log')
     for name in ['lemma.md', 'insertion.md', 'reading.md', 'manifest.json']:
         add(CAMPAIGN / 'p-gradient-uniformity' / name)
     for name in ['README.md', 'Audit.lean', 'FrontierSupport.lean',

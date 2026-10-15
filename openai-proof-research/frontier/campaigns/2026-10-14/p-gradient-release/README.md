@@ -29,3 +29,13 @@ This temporary archive precedes the active manuscript consolidation and
 must be regenerated after the final manuscript gate. The assembler always
 labels its output DRAFT; it cannot declare acceptance or publication.
 Author names, affiliations, license and external identifiers remain unset.
+
+After consolidation, the parent checked all frozen source/PDF/receipt hashes
+and inspected all six final contact sheets (21 pages). The assembler now
+includes the exact appendix diffs and both recorded build logs. A second
+disposable archive, `/tmp/frontier-typeset/p-gradient-consolidated-check-1.zip`,
+contains 59 project files, SHA256
+`014f6b5ae62d0c64286f17435ec41912370fb3fe6e5f16a5dfb6494848b1ef5a`.
+Its captured-byte integrity check passed. It is still a draft; final manuscript
+review and publication metadata remain outstanding. Page renders remain in
+the repository as visual-QA evidence rather than inside the draft ZIP.
