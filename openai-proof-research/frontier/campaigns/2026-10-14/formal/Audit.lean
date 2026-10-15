@@ -3,3 +3,10 @@ import FrontierSupport
 #print axioms FrontierSupport.LiftedEllipticity.square_decomposition
 #print axioms FrontierSupport.LiftedEllipticity.bounds
 #print axioms FrontierSupport.LiftedEllipticity.uniform_lower
+#print axioms FrontierSupport.VectorEllipticity.norm_smul_sub_sq
+#print axioms FrontierSupport.VectorEllipticity.gram_nonneg
+#print axioms FrontierSupport.VectorEllipticity.square_decomposition
+#print axioms FrontierSupport.VectorEllipticity.lower_certificate
+#print axioms FrontierSupport.VectorEllipticity.bounds
+#print axioms FrontierSupport.VectorEllipticity.uniform_bounds
+#print axioms FrontierSupport.VectorEllipticity.physical_uniform_bounds

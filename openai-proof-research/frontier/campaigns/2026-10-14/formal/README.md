@@ -34,10 +34,22 @@ variables for the zero-jet quadratic form in I345 Section 7:
 - lower and upper quadratic bounds, uniformly over the stated parameters;
 - the explicit uniform lower constant `b0^2/3`.
 
-The real assumptions include `a^2+b^2=1`, `t^2<=1`, and `y>=0`.
-The geometric interpretation sets `t=sqrt(e)` and `y` to a squared
-perpendicular norm. The orthogonal coordinate split is explained in
-`../p-gradient-parent/ellipticity.md`, but is **not** itself formalized.
+`FrontierSupport/VectorEllipticity.lean` adds seven theorems in an arbitrary
+real inner product space. They establish the Gram nonnegativity bound,
+exact square decompositions, and both bounds for the actual vector form
+
+    Q(a,h,b,e,s) = ‖h‖² + (1+e)s² - (⟪a,h⟫ + b√e s)².
+
+The final `physical_uniform_bounds` theorem assumes `‖a‖²+b²=1`,
+`0<=e<=1`, and `b0²<=b²`. It proves
+
+    (b0²/3)(‖h‖²+s²) <= Q <= 2(‖h‖²+s²).
+
+This includes the square-root substitution and needs no coordinate split.
+It is the dimension-independent zero-jet form used in the manuscript.
+The scalar module remains available, with assumptions `a²+b²=1`,
+`t²<=1`, and `y>=0`. There are ten supporting lemmas in total; these are
+not ten research results and do not add an accepted campaign result.
 
 The library contains no proof of weak/viscosity equivalence, compactness,
 Savin's theorem, fitted-class Liouville rigidity, gradient extraction,
