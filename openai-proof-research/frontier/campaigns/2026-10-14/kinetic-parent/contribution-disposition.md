@@ -1,8 +1,7 @@
 # Parent integration: kinetic contribution gate
 
 Verdict integrated: SUBSTANTIAL, conditional on validity of the full original
-I340 path theorem. No acceptance or count increment. The required chronology
-repair and full proof gate remain outstanding.
+I340 path theorem. No acceptance or count increment. The required chronology repair has now passed the independent full proof round 2; see `proof-r2-disposition.md`. The standalone manuscript gate remains outstanding.
 
 The parent read the complete review and source map, and directly checked
 BGSS arXiv:2008.10403v2 Theorem 10 point 3 and the end of section 8.2 in
@@ -11,8 +10,7 @@ The distinction is substantive: BGSS's window factor localizes a free
 creation/clustering time on a short interval; the proposed new collective
 shift must control determined redundant times in H's full-lifespan chart.
 DHM describes off-equilibrium long-time fluctuations as an expected direction.
-The proof of the new bridge, E-prime and uniform remainders is still subject
-to the separate gate. The contribution is one package, not separate awards
+The new bridge, E-prime and uniform remainders subsequently passed the separate proof gate on the repaired bytes. The contribution is one package, not separate awards
 for cumulant algebra, microscopic union bounds, chaining or exact centering.
 
 Review SHA256:
