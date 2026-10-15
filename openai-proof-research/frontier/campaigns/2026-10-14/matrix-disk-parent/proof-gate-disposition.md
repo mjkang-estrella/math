@@ -1,8 +1,9 @@
 # Parent disposition of the arbitrary-dimensional matrix disk proof gate
 
 Status: independent proof PASS and independent contribution SUBSTANTIAL;
-standalone manuscript gate PASS. Release preparation and scoped formal support
-remain in progress. Campaign count remains 1/10 pending acceptance integration.
+standalone manuscript gate PASS. R024 accepted after local release integrity
+and exact-check verification. Campaign count is now 2/10. The GLM finite
+scalar implementation remains pending and is not used for acceptance.
 
 The full frozen candidate analysis.md has SHA256
 `e74dda6b866d7780b57911aef30a2bfb99589e7036864b1da6a302072ab462b6`.
@@ -66,3 +67,14 @@ notation collision between the scalar maximum and zeroth cross coefficient
 is harmless in context; the reviewed manuscript remains frozen. This is
 internal independent review, not journal peer review or a Lean certificate.
 See manuscript-gate-disposition.json for the parent receipt.
+
+## Acceptance and local archive
+
+Accepted once as R024 after all three gates. The 104-file archive
+`output/release/r024-matrix-disk-v1.zip` has SHA256
+`91a08c2f38ff6c8e97cde4ea8457bdf863dfc23211355a2b83c883cdfe474a81`.
+Clean extraction passed all manifest hashes and 33 exact checks with unchanged
+receipts; a modified manuscript was rejected. The archive retains the exact
+reviewed PDF and preparation-time records. This later disposition supersedes
+older status/count prose without altering frozen mathematics. There is no
+full Lean certificate and no public submission.
