@@ -30,6 +30,31 @@ must be regenerated after the final manuscript gate. The assembler always
 labels its output DRAFT; it cannot declare acceptance or publication.
 Author names, affiliations, license and external identifiers remain unset.
 
+## Completed manuscript gate and portable verification
+
+The fresh independent manuscript gate now returns PASS with no required
+repair, for the same frozen PDF. Its authored review files and all 27 page
+and contact-sheet images are now included. Downloaded third-party reading
+PDFs and text extracts are excluded through an explicit review allowlist.
+The assembler checks the review's output hashes and reviewed input hashes
+in addition to the earlier receipts. Historical pending-review banners
+inside the frozen manuscript are superseded by the included parent gate
+disposition without changing the reviewed proof bytes.
+
+The reviewed 100-file archive passed a clean temporary extraction, manifest
+verification and both algebra checkers. An intentionally corrupted manuscript
+was rejected before those checkers ran; see `package-check.json`. Run:
+
+```sh
+python3 -I frontier/campaigns/2026-10-14/p-gradient-release/verify_bundle.py
+```
+
+from an extracted bundle. For Lean, use the pinned lake commands in the
+bundle README. The original review runner records its original local
+toolchain/cache paths and is retained as evidence, not a portable installer.
+Package checks do not certify the analytic proof. The publication draft
+still needs the user's authorship/license metadata before public release.
+
 After consolidation, the parent checked all frozen source/PDF/receipt hashes
 and inspected all six final contact sheets (21 pages). The assembler now
 includes the exact appendix diffs and both recorded build logs. A second

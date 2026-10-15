@@ -45,6 +45,15 @@ def assemble(destination):
     add(CAMPAIGN / 'p-gradient-manuscript/output/pdf/main.pdf')
     add(CAMPAIGN / 'p-gradient-manuscript/output/pdf/main.log')
     add(CAMPAIGN / 'p-gradient-manuscript-consolidation/build-final.log')
+    for path in sorted((ROOT / CAMPAIGN / 'p-gradient-manuscript-consolidation/pages').glob('*.png')):
+        add(path.relative_to(ROOT))
+    # Explicit review allowlist excludes downloaded third-party articles/text.
+    for name in ['review.md', 'source-map.md', 'input-hashes.json', 'supplemental-input-hashes.json',
+                 'outputs.json', 'checks/run_checks.py', 'checks/run-output.json',
+                 'checks/presentation.json', 'checks/ScalarAudit.lean',
+                 'checks/VectorAudit.lean', 'checks/scalar-lean-audit.txt',
+                 'checks/lean-audit.txt']:
+        add(CAMPAIGN / 'p-gradient-manuscript-review-r1' / name)
     for name in ['lemma.md', 'insertion.md', 'reading.md', 'manifest.json']:
         add(CAMPAIGN / 'p-gradient-uniformity' / name)
     for name in ['README.md', 'Audit.lean', 'FrontierSupport.lean',
@@ -60,6 +69,7 @@ def assemble(destination):
                  'frontier/iterations/i239-viscous-proof-parent-disposition.md']:
         add(name)
     add(CAMPAIGN / 'p-gradient-release/assemble.py')
+    add(CAMPAIGN / 'p-gradient-release/verify_bundle.py')
 
     # Bind both the PDF/TeX and the actual formal proof bytes to their receipts.
     for component in ['p-gradient-manuscript', 'formal']:
@@ -74,6 +84,15 @@ def assemble(destination):
     for key, record in proof_receipt['files']['repaired_argument'].items():
         if key not in selected or digest(selected[key]) != record['sha256']:
             raise ValueError(f'Changed reviewed argument: {key}')
+    review_base = CAMPAIGN / 'p-gradient-manuscript-review-r1'
+    review_outputs = json.loads(selected[(review_base / 'outputs.json').as_posix()])
+    for name, record in review_outputs['authored_outputs'].items():
+        key = (review_base / name).as_posix()
+        if key not in selected or digest(selected[key]) != record['sha256']:
+            raise ValueError(f'Changed manuscript review output: {key}')
+    for key, record in json.loads(selected[(review_base / 'input-hashes.json').as_posix()]).items():
+        if digest((ROOT / key).read_bytes()) != record['sha256']:
+            raise ValueError(f'Changed manuscript review input: {key}')
 
     # Catch concurrent writes; the archive itself uses the captured bytes.
     for key, data in selected.items():
@@ -82,7 +101,8 @@ def assemble(destination):
     context_commit = subprocess.check_output(
         ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     manifest = {
-        'status': 'DRAFT: not accepted, licensed, submitted, or published',
+        'status': 'PUBLICATION DRAFT: authors/license unset; not submitted or published',
+        'research_status': 'See included independent reviews and parent disposition; assembly itself makes no acceptance decision.',
         'title': 'Uniform interior gradient estimates for finite p through a constrained affine lift',
         'context_commit': context_commit,
         'commit_note': 'Context only. Individual hashes, not this commit, identify packaged bytes.',
@@ -93,12 +113,14 @@ def assemble(destination):
         'external_dependencies': 'Pinned upstream and classical sources remain cited dependencies. Third-party source PDFs and Lean caches are not bundled.',
     }
     selected['BUNDLE-MANIFEST.json'] = (json.dumps(manifest, indent=2)+'\n').encode()
-    selected['BUNDLE-README.txt'] = b'''DRAFT RESEARCH PACKAGE -- NOT A PUBLICATION OR ACCEPTANCE
+    selected['BUNDLE-README.txt'] = b'''DRAFT RESEARCH PACKAGE -- NOT PUBLICLY SUBMITTED OR PUBLISHED
 
 Read frontier/campaigns/2026-10-14/p-gradient-manuscript/README.md first.
 The PDF is in that directory's output/pdf/main.pdf.
 Proof and contribution reviews are separate supporting evidence.
-The manuscript gate, final metadata and publication remain outstanding.
+The independent manuscript review is included with its exact scope.
+Final metadata and publication remain outstanding. Frozen historical
+manuscript banners and receipts describe their status before that review.
 
 To rebuild supporting Lean lemmas, install the pinned Lean toolchain, then:
   cd frontier/campaigns/2026-10-14/formal
@@ -112,9 +134,13 @@ To typeset the manuscript, run in p-gradient-manuscript with Tectonic 0.17.0:
   tectonic -X compile main.tex --outdir output/pdf --keep-logs
 
 Run the standard-library algebra checks from the extracted package root:
-  python3 -I frontier/campaigns/2026-10-14/p-gradient-proof/checks/algebra_checks.py
-  python3 -I frontier/campaigns/2026-10-14/p-gradient-proof-r2/checks/r2_checks.py
+  python3 -I frontier/campaigns/2026-10-14/p-gradient-release/verify_bundle.py
+This verifies the package manifest and invokes both recorded checkers.
 These include finite sampled inequalities, not solely symbolic proofs.
+
+The original manuscript-review runner records its original workspace
+toolchain/cache paths. It is evidence of that run, not a clean-machine
+installer. Use the lake commands above for a portable Lean rebuild.
 
 BUNDLE-MANIFEST.json binds every project file by SHA256 and byte length.
 Original review inputs and later manuscript revisions are both retained.
