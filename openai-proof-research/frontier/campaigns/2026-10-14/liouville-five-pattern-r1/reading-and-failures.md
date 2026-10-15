@@ -1,0 +1,48 @@
+# Read record, boundaries and validation
+
+This assignment concerns only full target D1 in `discrete-discovery/targets.md`. Date: 2026-10-14. Outcome: **UNRESOLVED; no accepted or counted advance**. Parent must obtain separate proof and contribution review before accepting any future full-target proof.
+
+## Local sources actually read
+
+All paths below are relative to the repository root. Identity data are in `input-authentication.json`.
+
+* `AGENTS.md`, `sources/upstream.json`: complete. Catalogue `sources/CONTENTS.md`: entry 007, not the whole catalogue. `sources/preprints-tree.json`: programmatic lookup of the three exact source007 paths, not human reading of all paths. The tree is the complete preprint tree, not the truncated root cache.
+* `frontier/campaigns/2026-10-14/discrete-discovery/{targets.md,candidate.md,sources.md,exact-results.json}`: complete. These are prior campaign records, not newly proved facts.
+* `discrete-discovery/upstream/0-introduction.tex`: complete, including actual `thm:q-affine` and source-constant scope. `1-affine-corollaries.tex`: complete. `2-08-affine.tex`: complete quantitative affine transfer proof. `manifest.json`: complete. All three retained files were independently SHA256-checked against the retained manifest and Git-blob-SHA1-checked against their exact pinned entries in `sources/preprints-tree.json`. Upstream theorem truth is stipulated; this is identity/interface checking, not an audit.
+* `discrete-discovery/tao-teravainen-2019.txt`: introduction lines 440–540 (including actual Theorem 1.14), and **complete Section 7**, lines 2009–2190 in retained pdftotext. Section 7 was revisited in bounded chunks after an initially truncated combined output. In particular read Lemmas 7.1–7.3, equations (7.3)–(7.4), full case analysis, and footnote 14 on upper/lower density. The rest of the paper was not claimed read.
+* `discrete-discovery/sawin-2018.txt`: lines 58–160 (Definitions 1.1, 1.3, 1.4, Theorems 1.5–1.6 and boundaries); **complete Section 3**, lines 328–545 (Theorems 3.1–3.2 and proofs, Remarks 3.3–3.5); Section 4 through complete Propositions 4.1–4.2 and the subsequent caveat on unchecked transfers. Section 2 and the rest of the paper were not claimed read. The retained PDF and text hashes were checked, but no visual PDF audit is asserted.
+* `discrete-discovery/search_dilation.py`: complete, to understand the old finite factor-two relaxation. `liouville-five-pattern-r1/affine_lp.py`: complete, including the finite constraints and output limitations.
+
+## Primary web comparison actually performed
+
+Only primary mathematical statements below are relied on; search snippets and secondary summaries are not theorem inputs. Search dates are 2026-10-14. This is a bounded comparison, not an exhaustive novelty certification.
+
+1. [Tao–Teräväinen, *Value patterns of multiplicative functions and related sequences*, arXiv:1904.05096v2](https://arxiv.org/html/1904.05096v2): primary page checked; actual load-bearing Section 7 and Theorem 1.14 read from the retained text as specified above. The published ≥24 upper-density claim and twelve specified lower-density words are prior results. The three-parameter expansion is theirs.
+2. [Sawin, *Dynamical models for Liouville and obstructions to further progress on sign patterns*, arXiv:1809.03280v1](https://arxiv.org/html/1809.03280v1): primary page checked; retained-text extents above supply the actual statements/proofs. Degree-one polynomial phases and the inverse-limit passage to affine multiplication maps are established model mechanisms. The length-29 example concerns the ability to omit an **arbitrarily prescribed** sufficiently long word; it does not preclude particular missing five-words. No novelty is claimed for the mechanism used here.
+3. [Tao–Teräväinen, *The structure of logarithmically averaged correlations of multiplicative functions, with applications to the Chowla and Elliott conjectures*, arXiv:1708.02610v2](https://arxiv.org/html/1708.02610v2): actual Theorem 1.2(ii),(iii), Corollary 1.6 and Remark 1.5 checked; **complete Appendix A Theorem A.1 statement and proof** read, browser-rendered lines 1118–1160. This supports unequal-slope odd affine moments and even reflection/periodic-isotypic structure on arbitrary growing logarithmic windows. The display's slope indices are inconsistent typographically; the proof explicitly reduces arbitrary finitely many slopes to a common multiple. We use that intended, proved contract, not a growing-slope uniformity claim.
+4. [Matomäki–Radziwiłł–Tao–Teräväinen–Ziegler, *Higher uniformity of bounded multiplicative functions in short intervals on average*, Annals 197 (2023), 739–857, institutional primary PDF](https://www.utupub.fi/bitstream/handle/10024/185080/Matom%C3%A4kiKEtal2023Higheruniformity.pdf?isAllowed=y&sequence=1): actual Corollary 1.1, Theorems 1.3 and 1.5, Corollary 1.6 and introductory discussion read on PDF pages 1–7; Proposition 1.7, Theorem 1.8, Theorem 1.9 and surrounding discussion on pages 8–10 subsequently read. Full proofs are **not** claimed read or used. The Gowers result has H≥X^θ for fixed θ>0. The shorter stretched-exponential range stated for weak norms is not arbitrary slow growth. Theorem 1.9 proves superpolynomial global word complexity, not the occurrence/density of each specified length-five word. The scale gap and the ordinary-versus-logarithmic quantifiers cannot be filled by citing this introduction.
+5. A search returned a secondary description suggesting all Liouville sign patterns were handled by a 2026 paper. The actual primary [Krishnamoorthy, *On a conjecture of Corrádi and Kátai*, arXiv:2608.13266v1](https://arxiv.org/html/2608.13266v1), introduction and Theorems 1–3 (rendered lines 44–104), was read. Its sign-pattern theorem concerns additive **compositions** a₁+⋯+a_k=N, not consecutive values λ(n+j). It is not a D1 theorem; no truth audit of that unrelated theorem was needed.
+
+The bounded queries included `Liouville length five 32 sign patterns positive lower density 2025 2026`, `Liouville sign patterns all five affine two point correlations Sawin dynamical models`, and targeted odd-affine/isotopy and short-interval uniformity queries. No claim that D1 is new to the literature follows from a failure to find it. A guessed arXiv HTML path `https://arxiv.org/html/2204.02831` failed (404) and supplied no input. New remote source identity hashes, fetched separately from the reading view, are in `web-source-hashes.json`; full remote bodies are not retained in this proposal.
+
+## New deductions and what was checked
+
+The full-target report proves only supporting statements, explicitly not countable substitutes:
+
+* exact enumeration of the eight boundary inequalities of the known five-letter law;
+* the explicit rational-coordinate model and each multiplication/division, conditional-measure, affine-pair, odd-moment and reflection interface;
+* a finite exact integration of its five-word law, credited to the known phase-model mechanism;
+* the compactness and arbitrary-growing-window quantifier reduction needed for lower natural density;
+* a direct partial-summation transfer of the stipulated ordinary fixed-affine estimate, preserving its genuine coefficient scope.
+
+`python frontier/campaigns/2026-10-14/liouville-five-pattern-r1/exact_checks.py` passed. It uses Python `Fraction` throughout, no floating arithmetic or random sampling. It partitions the two-dimensional phase square into exact affine cells, verifies total mass, all odd moments, all pairs, sign/reversal symmetries, all 32 Fourier formulas, and all nine coefficient classes. `exact-results.json` records the full table and the stripe decomposition. This script supports the written finite calculation; it does not formalize Haar duality or prove a Liouville density claim. No full Lean proof is claimed.
+
+The finite exploratory LP used the existing read-only `discrete-discovery/.venv/bin/python` with NumPy/SciPy/HiGHS, writing only this assignment's script and JSON. Grid: a≤3, 0≤b≤4a, 17 primitive affine variables. Full constraints and residuals are retained in `lp-A3-K4.json`. The four floating-infeasible word orbits are exactly already specified TT2019 words. The other six orbits are floating feasible. No exact dual certificate, exact rational primal certificate, infinite model, or numerical proof is asserted. The model in the report is an analytic infinite construction for its one missing-word orbit and does not depend on HiGHS.
+
+No Monte Carlo was used in this assignment. Finite LP statuses are evidence only. No shared index, source file, existing campaign artifact, staging area or commit was changed by this task.
+
+## Precise failure and next mathematical obligation
+
+The original D1 bridge is strict positivity of all three margins in equation (3) **on every actual Liouville growing-window cluster law**. The model puts (1/3,0,1/3) on a zero face while meeting all the enumerated limiting arithmetic axioms. Thus stronger affine pair information cannot simply be assumed to imply this strictness after passing to those moments. The model does not establish that all potential quantitative uses of source007 fail: it has no actual arithmetic finite-cutoff history obeying the source's rate.
+
+The modern local-uniformity and complexity statements read do not themselves identify the entire attainable compact set or rule out every zero face with the required window quantifiers. An actual arithmetic rigidity theorem is still needed; no such theorem is proved here. Resolving only the 24-word example, producing a strict adjacent-four estimate, checking more finite dilation LPs, removing this one phase model, or assuming ergodicity would leave D1 unpaid.
