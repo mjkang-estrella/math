@@ -1,0 +1,9 @@
+# Parent integration of independent kinetic Lean audit
+
+**PASS for the nine advertised algebraic supporting declarations; no required repair.** The parent read the full independent review and coverage map, exact typed wrappers, run/authentication code, validation records and the inspected mutation diagnostics. All 20 review inputs, 22 outputs and the compiler identity match the frozen hashes and lengths. The parent did not rerun the independent audit after its successful fresh compilation; the root's own source compilation was already recorded separately.
+
+The audit freshly compiled copied source, all nine original check declarations and fourteen explicit audit theorems, with zero warnings and only propext, Classical.choice and Quot.sound. Four meaningful formula corruptions failed. The semantic counterchecks confirm why a unit normal and both old velocities are essential for energy conservation. The source and complete-history usage were compared with the actual pinned collision convention.
+
+The supported scope is pair momentum/energy, finite all-line energy under one pair replacement/update, affine origin/time-shift identities, and rational exponent arithmetic. The contact identity assumes the supplied translated time; it does not prove the determined-root algorithm's covariance. Neither histories, chronology, Jacobian, analytic estimates, stochastic tightness nor the full path theorem is formalized. Independent compiled review output is retained as provenance, not trusted in place of fresh source compilation. No additional frontier result is counted.
+
+The frozen author's validation predates this independent audit and correctly records that no independent semantic review existed at its freeze. This parent disposition supplies the later review status without rewriting that historical package. Standalone manuscript review remains outstanding; campaign count stays 2/10.

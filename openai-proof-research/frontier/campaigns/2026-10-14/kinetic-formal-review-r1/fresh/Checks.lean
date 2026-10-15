@@ -1,0 +1,21 @@
+import KineticSupport
+
+#check KineticSupport.collision_momentum
+#check KineticSupport.collision_energy
+#check KineticSupport.affine_time_shift
+#check KineticSupport.relative_origin_shift
+#check KineticSupport.contact_time_shift
+#check KineticSupport.affine_shift_compose
+#check KineticSupport.total_energy_of_pair_replacement
+#check KineticSupport.total_collision_energy
+#check KineticSupport.exponent_budget
+
+#print axioms KineticSupport.collision_momentum
+#print axioms KineticSupport.collision_energy
+#print axioms KineticSupport.affine_time_shift
+#print axioms KineticSupport.relative_origin_shift
+#print axioms KineticSupport.contact_time_shift
+#print axioms KineticSupport.affine_shift_compose
+#print axioms KineticSupport.total_energy_of_pair_replacement
+#print axioms KineticSupport.total_collision_energy
+#print axioms KineticSupport.exponent_budget
