@@ -45,9 +45,12 @@ systems*, Acta Math. 138 (1977), 219–240, specifically (1.3)–(1.4),
 (4.9)–(4.12), (5.1) and Theorem (5.4), with (5.5).
 
 The parent read the full main argument, printed pages 219–239, from the
-primary scan recorded below. A separate compact-parameter audit is in
-progress under `../p-gradient-uniformity/`; R1 is not marked closed by
-this addendum. The issue is common choices in the iteration, not merely
+primary scan recorded below. The separate compact-parameter audit is
+complete in `../p-gradient-uniformity/lemma.md`, with source and output
+hashes in its `manifest.json`. It supplies explicit common perturbation
+and decay choices and an oscillation-normalized bound. R1 is resolved
+at supporting-proof level, pending the fresh full proof gate.
+The issue is common choices in the iteration, not merely
 fixed-p existence of constants. The correct substitution uses the
 paper's exponent s=(p-2)/2, rho(Q)=Q^s, C=0. The bounded-gradient input
 comes from I345 section 2.1. In dimension two a constant extension to
@@ -207,7 +210,7 @@ proved by (8.2)–(8.4). They cannot be interchanged before that step.
   analytic theorem. The supporting Lean project has its own pinned
   build and axiom-audit receipt.
 
-Outstanding: R1 independent compact-parameter audit; fresh review of
-the repaired proof interfaces; contribution/novelty review; full
+Outstanding: fresh review of the R1 audit and the repaired proof
+interfaces; contribution/novelty review; full
 manuscript and appendix integration; manuscript validation and precise
 formal-coverage statement. No public upload or submission has occurred.

@@ -1,0 +1,159 @@
+# GLM calibration — exact finite-algebra reproduction of the R019 matrix certificate
+
+**Campaign:** 2026-10-14 (ten additional frontier results). **Task:** initial GLM
+calibration per `frontier/NEW-TEN-2026-10-14.md` item 1. This is the old accepted
+result R019 (`frontier/findings/R019-entangled-complete-crouzeix-equality.md`) and
+earns **no new-result credit**.
+
+**Status: complete.** All 21 base-case finite-algebra certificates pass in exact
+arithmetic; all four mutation tests behave exactly as the dependency analysis
+predicts. One modest dependency install (sympy 1.14.0 in a throwaway venv). No
+commit, no staging, no shared-index edits; only this directory was written.
+
+## Artifacts
+
+| File | Content |
+|---|---|
+| `check.py` | Self-contained exact certificate battery + mutation tests; writes `results.json`. |
+| `results.json` | Machine-readable: versions, per-check status/detail/duration, mutation tables, expected-vs-actual, explicit limitations. |
+| `report.md` | This report. |
+
+## Exact commands run
+
+```sh
+# one modest dependency install (throwaway venv, no global configuration change)
+python3 -m venv /tmp/sympy-venv && /tmp/sympy-venv/bin/pip install sympy==1.14.0
+
+# the battery (writes results.json next to itself), ~20 s wall
+cd openai-proof-research/frontier/campaigns/2026-10-14/glm-calibration
+/tmp/sympy-venv/bin/python check.py
+```
+
+Final exit code 0 with the summary line
+`ALL BASE CHECKS PASS; ALL MUTATION EXPECTATIONS CONFIRMED`.
+Environment: Python 3.14.7, SymPy 1.14.0, Linux x86_64.
+
+## Method
+
+Everything is derived from the definitions displayed in the R019 finding text —
+N, P(z), C, a, ℓ, x, y, B, h, g — never from cached numeric outputs. The I287
+analysis and the reviews were deliberately **not** read. All pass/fail decisions
+are exact: SymPy rationals and square roots; polynomial reductions modulo
+`c²+s²−1` (support pencil) and `zw−1` (boundary identity) via Gröbner bases;
+sign decisions on field elements of Q(√2,√7,√14) by rational-interval bounds
+from integer `isqrt` (no floating point anywhere); the eigenvalue ordering uses
+an integer-square comparison (33²·113 = 123057 < 606841 = 779²).
+
+## Base-case results (all 21 PASS)
+
+* **N structure** — all 36 entries exact: the six nonzero entries as displayed,
+  the remaining 30 explicitly zero.
+* **P coefficients** — C₀…C₃ extracted symbolically from the displayed P(z);
+  C₀=0, C₁ sole support (2,1), C₂ diagonal, C₃ sole support (1,2); round-trip
+  Σ Cₖzᵏ reproduces P(z).
+* **Re N blocks** — with Re N = (N+N*)/2 (Hermitian part), reordered
+  (1,3,5|2,4,6), diagonal blocks zero and off-diagonal blocks equal to the
+  displayed C and C*. (Note: "Re N" is the Hermitian part, not entrywise
+  real part; the displayed C matches only under that reading — worth stating
+  in any manuscript.)
+* **CC\* = I − aa\*** with a = (√2/2, −3√2/8, −√7/8); **‖a‖² = 57/64**;
+  **charpoly(CC\*) = (t−1)²(t−7/64)**, singular values of C are 1, 1, √7/8.
+* **Support pencil** — charpoly of Re(e^{−iθ}N), reduced mod c²+s²−1, is
+  θ-independent and equals (t²−1)²(t²−7/64): verified **symbolically in θ**, not
+  by sampling angles.
+* **P[N]** — base-first assembly P[N] = Σ Nᵏ⊗C_k (index 2i+j), cross-checked
+  against an independent `TensorProduct` assembly. **Tensor-convention test:**
+  the fiber-first assembly Σ C_k⊗Nᵏ differs from P[N] and fails P[N]x = 2y by a
+  nonzero exact amount.
+* **P[N]x = 2y** exactly, ‖x‖ = ‖y‖ = 1; ℓ unit, Nℓ = 0, N\*ℓ = (√7/2)e₃ −
+  (3√2/4)e₅; x and y both have flat Schmidt coefficients (fiber Grams I/2).
+* **Grading** — grade dimensions exactly (1,3,4,3,1); each term Nᵏ⊗C_k and the
+  assembled P[N] raise grade by exactly 2 (all 144 entries checked).
+* **B block** — the grade-1→3 block equals the displayed B, including its
+  explicit zeros. **B\*B**: eigenvalue 4 on (1,0,1)/√2; complementary 2×2 block
+  exactly [[67/64, 33√7/128],[33√7/128, 301/256]]; complementary trace 569/256
+  and determinant 49/64; eigenvalues 4, (569±33√113)/512, the latter two below
+  337/128 by the integer-square comparison above.
+* **Outer blocks** — grade-0 column norm² 337/128; grade-2→4 block rank one
+  with squared norm 337/128; grade-3 and grade-4 input columns of P[N] vanish.
+* **Full characteristic polynomial** — computed directly on the 12×12 matrix
+  P[N]\*P[N] (no block shortcuts):
+  t⁷(t−4)(t−337/128)²(t²−569t/256+49/64), so the squared singular values are
+  exactly 4, 337/128, 337/128, (569±33√113)/512 with 7 zeros, and ‖P[N]‖ = 2.
+* **N³N\*³ = (7/4)e₁e₁\*** exactly.
+* **Cyclic star algebra** — rank of {We₁ : |W| ≤ L} is 1,2,3,5,6,6 for
+  L = 0..5: e₁ is cyclic with minimal word length 4, matching the finding's
+  argument (which needs N\*ℓ, a length-4 word combination). Claimed vector
+  identities N\*e₁, N\*²e₁, N\*³e₁ verified; det[(3/2, √14/4),(√7/2, −3√2/4)]
+  = −2√2 as claimed. **Stronger finite verification:** the word-space dimension
+  of the unital \*-algebra generated by N is 36 at word length ≤ 6, i.e. the
+  \*-algebra is all of M₆(C) — so the "any commuting orthogonal projection is 0
+  or I" conclusion is finitely verified, not merely reduced to the text's
+  analytic argument.
+* **Boundary identity** — P(z)P(z)\* = I reduced modulo zw = 1 (w = conj z,
+  |z| = 1): the columns of P are orthogonal unit vectors on the circle.
+* **Scalar-channel bound, sampled** — for 36 exact unit pairs (u,v) from
+  {f₁, f₂, (1±1)/√2, (1±i)/√2}, M = Σ (v\*C_k u)Nᵏ satisfies
+  ‖M‖² ≤ 849/256, decided by an exact principal-minor PSD test on
+  849/256·I − M\*M (all 63 minors, each signed exactly). 36/36 pass.
+
+## Mutation tests (all consistent with dependency analysis)
+
+| Mutant | Perturbation | Certificates that must fail — all did | Certificates that must survive — all did |
+|---|---|---|---|
+| `mut_N_a` | N₁₂ := 6/5 + 1/20 | N_structure, ReN_blocks, CCstar, SV_C, Pencil_theta, ell_props, PNx_2y, B_block, BBstar, Outer_blocks, Charpoly | P_coefficients, Norm_a, Schmidt, Grading, N3Nst3, Boundary_PP |
+| `mut_N_b` | N₅₆ := √2 + 1/10 | N_structure, ReN_blocks, CCstar, SV_C, Pencil_theta, PNx_2y, B_block, BBstar, Outer_blocks, Charpoly, N3Nst3 | P_coefficients, Norm_a, ell_props, Schmidt, Grading, Boundary_PP |
+| `mut_P_a` | C₂[1,1] := 3/4 + 1/10 | P_coefficients, PNx_2y, B_block, BBstar, Outer_blocks, Charpoly, Boundary_PP | all N-side certificates incl. Pencil_theta, N3Nst3, Grading |
+| `mut_P_b` | C₁[2,1] := √7/4 + 1/10 | same set as mut_P_a | same, incl. Grading (support pattern unchanged) |
+
+Two findings from the mutation round worth recording:
+
+1. **N³N\*³ is blind to N₁₂.** N³ depends on N only through the N₁₄N₄₅N₅₆ path
+   (the N₁₂N₂₃ branch dies because row 3 of N is empty), so perturbing N₁₂
+   leaves N³N\*³ = (7/4)e₁e₁\* intact while breaking the norm/spectrum battery.
+   The battery is still sensitive to N₁₂ through B (via N²e₃ = (N₁₂N₂₃ +
+   N₁₄N₄₃)e₁) — no vacuity — but a manuscript should not claim N₁₂ is witnessed
+   by the rank-one identity alone.
+2. My first hand-derived expectation set for `mut_N_a` was wrong (I predicted
+   PNx_2y and Outer_blocks would survive; they do not). The runtime results are
+   authoritative and the expected sets in `check.py` now encode the corrected
+   dependency analysis. Recorded here for candor.
+
+Certificates not in any expected set (Cyclic_rank, Spot_check,
+PN_construction, Tensor_convention) are reported per-mutant in `results.json`;
+e.g. cyclic rank stays 6 under all four mutants, and the sampled scalar-channel
+bound happens to still hold under all four (it is an inequality, not an
+identity, so survival is unremarkable).
+
+## What was NOT verified (analytic or out of scope)
+
+Recorded in `results.json` under `not_verified_here_analytic_claims`:
+
+* The maximum-principle step ‖P(z)‖ ≤ 1 on the disk from the boundary identity
+  (only the algebraic boundary identity was verified).
+* The **universal quantifier** in ‖(v\*Pu)(N)‖ ≤ √849/16 for *all* unit u, v —
+  only the ingredients (flat Schmidt coefficients, exact spectrum) and 36
+  exact samples were checked.
+* The convexity step from constant support-pencil spectrum to W(N) = closed
+  unit disk (the spectrum itself is verified for symbolic θ).
+* The equality-case structure claims of the I287 analysis (rank-four boundary
+  field, D inertia (2,2,2), H^{1/2}DH^{1/2} = 0) — different artifact, not read.
+* Upstream theorem truth (assumed per campaign rules), novelty, and priority.
+
+## Candid assessment
+
+* The R019 certificate is **reproduced exactly, independently of any cached
+  output**: every displayed scalar (57/64, 337/128, 569/256, 49/64, −2√2,
+  849/256, the five squared singular values, the grading dimensions) fell out
+  of the derived objects, not the text.
+* One transcription subtlety was found and handled: "Re N" must be read as the
+  Hermitian part (N+N\*)/2. A reader taking entrywise real parts (N is real)
+  would get blocks inconsistent with the displayed C and a factor-2 error.
+* The check script itself had six bugs across two debug iterations (reversed
+  fiber indices in the grading term check, a missing `e5`, a Groebner domain
+  coercion, a wrong trace target, a dict-comparison with explicit zeros, a
+  missing import); all were caught by the battery's own base-case failures and
+  fixed before the final run. The final run is the one recorded here.
+* No Lean artifact was requested or produced for this calibration task; the
+  campaign-level Lean requirements apply to new accepted results, not to this
+  old-result reproduction.
