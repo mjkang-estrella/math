@@ -1,0 +1,14 @@
+# Attempt and failure record
+
+The capacity target was retained throughout. No regular/Poisson threshold, spherical-tree evaluation, binary transfer, or four-state criterion is proposed as its replacement.
+
+1. Read the original I319 brief completely, completed I319 and its full analysis/read-failure record, completed I326, and every file of the supplied generated-parent obstruction. The 171 rational rows of checks.json were inspected in a compact complete rendering; no finite agreement was interpreted as a universal bound.
+2. Revisited the actual pinned three-state positive section, foundations, negative local section, and radial appendix in full. The positive proof obtains its crucial moment region from a common limiting law. The mixed version of additive log calculus extends, but its positive cross term cannot be discarded. Negative local pair certificates do not by themselves give positive-generated closure.
+3. Checked the full four-state capacity manuscript and the full preserved-cone section of its threshold companion. Its moment-saving hypothesis is explicitly a separate, four-state theorem. No assertion about the remainder of that threshold companion is needed; certificate/code sections were not newly read or executed in this round.
+4. A global source-F product subadditivity claim is false even on two near-perfect positive channels. A tempting repair subtracts (8/5)(E J)^2 and cancels the mixed term exactly. It becomes negative near revealing channels. The candidate proves a slightly broader four-parameter no-go, as technical failure evidence only.
+5. Considered whether weaker third/fourth-moment constraints, positive-channel smoothing, or grouped branching repairs the issue. I326 and the supplied generated-parent example already prevent the simplest proposed constraints. Small uniform posterior support gives a local saving but fails product closure (I319), and small mean information alone does not give support control. No new positive-generated invariant region, mixed-law remainder bound, telescoping error estimate, or actual capacity counterexample was obtained. These are unresolved attempts, not claimed impossibility theorems.
+6. Checked primary arbitrary-tree Potts/entropy results and fresh external search leads. KL contraction gives a different weight in general; a strict branching-number condition does not settle the capacity boundary. Neither external route supplies U. See sources.md for exact read extent.
+
+Specified symbolic Taylor/identity checks pass with rational arithmetic in check.py. They are not a scan and supply no experimental proof. All writes were confined to this assigned directory. No agents, git operations, shared-index edits, publication, or acceptance count changes were performed.
+
+Disposition: stop and redirect. Original necessity remains unpaid even for one fixed interior channel on arbitrary bounded-degree trees. The finite-family no-go should not consume a substantial-result slot.
