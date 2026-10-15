@@ -1,0 +1,15 @@
+import BallSlabSupport
+
+#check BallSlabSupport.kernelCoefficient_telescope
+#check BallSlabSupport.kernelCoefficient_nonneg
+#check BallSlabSupport.kernelCoefficient_partial_sum
+#check BallSlabSupport.kernelCoefficient_partial_sum_bounds
+#check BallSlabSupport.reciprocal_remainder
+#check BallSlabSupport.tangent_energy_remainder
+
+#print axioms BallSlabSupport.kernelCoefficient_telescope
+#print axioms BallSlabSupport.kernelCoefficient_nonneg
+#print axioms BallSlabSupport.kernelCoefficient_partial_sum
+#print axioms BallSlabSupport.kernelCoefficient_partial_sum_bounds
+#print axioms BallSlabSupport.reciprocal_remainder
+#print axioms BallSlabSupport.tangent_energy_remainder
