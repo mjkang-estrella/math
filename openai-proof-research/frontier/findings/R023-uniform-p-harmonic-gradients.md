@@ -114,6 +114,7 @@ are corollaries of this theorem, with the latter restricted to fixed
 p>max(3,1+1/alpha_n) and p-dependent constants. Neither counts separately.
 The full [MathDB 405360 problem](https://mathdb.com/p/405360/the-c-p-regularity-conjecture)
 is not solved by this finding. No exact matching homogeneous record was
-identified in the bounded search. Author names, affiliations, license and
-final destination/account details remain to be finalized. Nothing has
+identified in the bounded search. The publication copy lists Myeongjin Kang with no affiliation, CC BY 4.0
+for the paper/original prose and MIT for original code/Lean. Third-party
+notices are preserved. Final destination/account details remain outstanding. Nothing has
 been submitted to Zenodo or MathDB.

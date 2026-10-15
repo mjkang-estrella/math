@@ -35,13 +35,19 @@ def assemble(destination):
 
     for name in ['p-gradient-manuscript', 'p-gradient-parent',
                  'p-gradient-proof', 'p-gradient-proof-r2',
-                 'p-gradient-contribution-r1', 'p-gradient-manuscript-consolidation']:
+                 'p-gradient-contribution-r1', 'p-gradient-manuscript-consolidation',
+                 'p-gradient-publication-v1']:
         directory = ROOT / CAMPAIGN / name
         if not directory.is_dir():
             raise ValueError(f'Missing publication component: {name}')
         for path in sorted(directory.rglob('*')):
             if path.is_file() and path.suffix in ALLOWED and '__pycache__' not in path.parts:
                 add(path.relative_to(ROOT))
+    add(CAMPAIGN / 'publication-metadata.json')
+    add(CAMPAIGN / 'p-gradient-publication-v1/output/pdf/main.pdf')
+    add(CAMPAIGN / 'p-gradient-publication-v1/output/pdf/main.log')
+    for path in sorted((ROOT / CAMPAIGN / 'p-gradient-publication-v1/qa').glob('*.png')):
+        add(path.relative_to(ROOT))
     add(CAMPAIGN / 'p-gradient-manuscript/output/pdf/main.pdf')
     add(CAMPAIGN / 'p-gradient-manuscript/output/pdf/main.log')
     add(CAMPAIGN / 'p-gradient-manuscript-consolidation/build-final.log')
@@ -75,7 +81,7 @@ def assemble(destination):
     add('frontier/findings/R023-uniform-p-harmonic-gradients.md')
 
     # Bind both the PDF/TeX and the actual formal proof bytes to their receipts.
-    for component in ['p-gradient-manuscript', 'formal']:
+    for component in ['p-gradient-manuscript', 'formal', 'p-gradient-publication-v1']:
         receipt_path = (CAMPAIGN / component / 'validation.json').as_posix()
         receipt = json.loads(selected[receipt_path])
         for relative, expected in receipt['sha256'].items():
@@ -97,6 +103,9 @@ def assemble(destination):
         if digest((ROOT / key).read_bytes()) != record['sha256']:
             raise ValueError(f'Changed manuscript review input: {key}')
 
+    subprocess.run(['python3', '-I', str(ROOT / CAMPAIGN / 'p-gradient-publication-v1/verify_editorial.py')], check=True, stdout=subprocess.DEVNULL)
+    metadata = json.loads(selected[(CAMPAIGN / 'publication-metadata.json').as_posix()])
+
     # Catch concurrent writes; the archive itself uses the captured bytes.
     for key, data in selected.items():
         if (ROOT / key).read_bytes() != data:
@@ -104,12 +113,15 @@ def assemble(destination):
     context_commit = subprocess.check_output(
         ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     manifest = {
-        'status': 'PUBLICATION DRAFT: authors/license unset; not submitted or published',
+        'status': 'PUBLICATION DRAFT: author and licenses set; not submitted or published',
         'research_status': 'See included independent reviews and parent disposition; assembly itself makes no acceptance decision.',
         'title': 'Uniform interior gradient estimates for finite p through a constrained affine lift',
         'context_commit': context_commit,
         'commit_note': 'Context only. Individual hashes, not this commit, identify packaged bytes.',
-        'authors': None, 'license': None, 'doi': None,
+        'authors': metadata['author_names'], 'affiliations': metadata['affiliations'],
+        'license': metadata['paper_license']['spdx'],
+        'code_license': metadata['original_code_license']['spdx'], 'doi': None,
+        'current_manuscript': (CAMPAIGN / 'p-gradient-publication-v1/output/pdf/main.pdf').as_posix(),
         'formal_coverage': 'Zero-jet ellipticity supporting lemmas only; no full PDE formalization.',
         'files': {key: {'sha256': digest(data), 'bytes': len(data)}
                   for key, data in sorted(selected.items())},
@@ -119,12 +131,14 @@ def assemble(destination):
     selected['BUNDLE-README.txt'] = b'''DRAFT RESEARCH PACKAGE -- NOT PUBLICLY SUBMITTED OR PUBLISHED
 
 Read frontier/campaigns/2026-10-14/p-gradient-release/STATUS.md first.
-Then read frontier/campaigns/2026-10-14/p-gradient-manuscript/README.md.
+Then read frontier/campaigns/2026-10-14/p-gradient-publication-v1/README.md.
 The PDF is in that directory's output/pdf/main.pdf.
 Proof and contribution reviews are separate supporting evidence.
 The independent manuscript review is included with its exact scope.
-Final metadata and publication remain outstanding. Frozen historical
-manuscript banners and receipts describe their status before that review.
+Author: Myeongjin Kang. No affiliation. Paper/original prose: CC BY 4.0.
+Original code and Lean: MIT. The license files are in p-gradient-publication-v1.
+Third-party rights and notices remain intact. Publication remains outstanding.
+Frozen historical manuscripts/receipts retain their pre-review status text.
 
 To rebuild supporting Lean lemmas, install the pinned Lean toolchain, then:
   cd frontier/campaigns/2026-10-14/formal
@@ -134,12 +148,13 @@ To rebuild supporting Lean lemmas, install the pinned Lean toolchain, then:
 Network access is needed for the pinned dependencies/cache on a clean machine.
 The Lean project does not formalize the full analytic theorem.
 
-To typeset the manuscript, run in p-gradient-manuscript with Tectonic 0.17.0:
+To typeset the manuscript, run in p-gradient-publication-v1 with Tectonic 0.17.0:
   tectonic -X compile main.tex --outdir output/pdf --keep-logs
 
 Run the standard-library algebra checks from the extracted package root:
   python3 -I frontier/campaigns/2026-10-14/p-gradient-release/verify_bundle.py
-This verifies the package manifest and invokes both recorded checkers.
+This verifies the package manifest, publication editorial equivalence,
+and both recorded algebra checkers.
 These include finite sampled inequalities, not solely symbolic proofs.
 
 The original manuscript-review runner records its original workspace
@@ -150,7 +165,8 @@ BUNDLE-MANIFEST.json binds every project file by SHA256 and byte length.
 Original review inputs and later manuscript revisions are both retained.
 Some research notes link to external source scans not bundled here; their
 source URLs and recorded hashes are reference metadata, not included files.
-No license or author identity has been selected on the user's behalf.
+Publication metadata follows the user-supplied name, no affiliation, and
+open-license preference recorded in publication-metadata.json.
 '''
     destination = destination.resolve()
     if destination.exists():

@@ -24,8 +24,9 @@ for name, expected in manifest['files'].items():
         raise ValueError(f'Package integrity mismatch: {name}')
 print(f"Verified {len(manifest['files'])} project files", flush=True)
 for relative in [
+    'frontier/campaigns/2026-10-14/p-gradient-publication-v1/verify_editorial.py',
     'frontier/campaigns/2026-10-14/p-gradient-proof/checks/algebra_checks.py',
     'frontier/campaigns/2026-10-14/p-gradient-proof-r2/checks/r2_checks.py',
 ]:
     subprocess.run([sys.executable, '-I', str(ROOT / relative)], cwd=ROOT, check=True)
-print('PASS: package integrity and two algebra checkers; no analytic-proof certification')
+print('PASS: package integrity editorial equivalence and two algebra checkers; no analytic-proof certification')

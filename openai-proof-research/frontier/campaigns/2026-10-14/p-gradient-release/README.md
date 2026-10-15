@@ -28,7 +28,9 @@ build. The previous Lean build/axiom audit remains separately recorded.
 This temporary archive precedes the active manuscript consolidation and
 must be regenerated after the final manuscript gate. The assembler always
 labels its output DRAFT; it cannot declare acceptance or publication.
-Author names, affiliations, license and external identifiers remain unset.
+That historical assembly had unset authorship and license fields. Current
+metadata is recorded in ../publication-metadata.json; external identifiers
+remain unset.
 
 ## Completed manuscript gate and portable verification
 
@@ -52,8 +54,8 @@ python3 -I frontier/campaigns/2026-10-14/p-gradient-release/verify_bundle.py
 from an extracted bundle. For Lean, use the pinned lake commands in the
 bundle README. The original review runner records its original local
 toolchain/cache paths and is retained as evidence, not a portable installer.
-Package checks do not certify the analytic proof. The publication draft
-still needs the user's authorship/license metadata before public release.
+Package checks do not certify the analytic proof. The current publication copy includes the user-provided authorship and
+open-license metadata; see STATUS.md for the remaining submission scope.
 
 After consolidation, the parent checked all frozen source/PDF/receipt hashes
 and inspected all six final contact sheets (21 pages). The assembler now
@@ -64,3 +66,17 @@ contains 59 project files, SHA256
 Its captured-byte integrity check passed. It is still a draft; final manuscript
 review and publication metadata remain outstanding. Page renders remain in
 the repository as visual-QA evidence rather than inside the draft ZIP.
+
+## Publication copy with author and licenses
+
+The user specified Myeongjin Kang, no affiliation and an open license.
+The current copy in `../p-gradient-publication-v1` uses CC BY 4.0 for the
+paper/original prose and MIT for original code/Lean, with third-party rights
+preserved. It removes historical review-status language, leaves every proof
+source unchanged, and checks the body against the frozen reviewed text after
+reversing three explicitly recorded editorial replacements. The 20-page PDF
+was rebuilt and all pages visually inspected. Its separate validation receipt
+binds the current sources, PDF and renders. The assembler verifies that
+receipt and includes both publication and historical versions. The portable
+verifier also runs the editorial-equivalence check. This does not submit
+anything or create a DOI. Earlier archive receipts remain historical evidence.
