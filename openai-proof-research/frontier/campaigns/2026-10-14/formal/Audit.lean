@@ -1,0 +1,5 @@
+import FrontierSupport
+
+#print axioms FrontierSupport.LiftedEllipticity.square_decomposition
+#print axioms FrontierSupport.LiftedEllipticity.bounds
+#print axioms FrontierSupport.LiftedEllipticity.uniform_lower
