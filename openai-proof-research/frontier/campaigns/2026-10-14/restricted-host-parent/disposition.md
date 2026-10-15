@@ -1,0 +1,9 @@
+# Parent disposition: restricted-host graph mixing
+
+**Original D3 target UNRESOLVED; no acceptance or count.** The target is irreducibility and a polynomial worst-start total-variation mixing bound for every feasible labelled degree vector on K_n minus any matching, using the specified half-lazy uniform four-/six-cycle proposal.
+
+The parent read the complete candidate, sources and failure record, and both diagnostic scripts. All 25 local inputs and seven outputs match their recorded lengths and SHA-256 hashes; pinned source blobs also match. The exact support script was rerun from a temporary copy and its output matches byte for byte. The larger n=7 connectivity enumeration was read and authenticated but not independently rerun; no all-n inference or mixing theorem is made from it. No fresh parent primary-literature audit is claimed in this technical integration.
+
+The split-fiber construction forces a clique and an independent set by degree-sum equality, leaving exactly an arbitrary loopless directed degree fiber. The report gives a length-at-most-two routing of six-cycle moves through ordinary directed switches or triangle reversals and a deliberately loose polynomial Dirichlet comparison. This exposes the target's scope without proving its spectral gap. The two-state fiber makes all pair heat baths identities and defeats the unmodified three-row bound (variance nine versus six). These are failures of proposed restricted analogues, not contradictions of the stipulated complete-host source theorem.
+
+The unpaid bridge is a uniform all-degree Poincare/congestion bound for the augmented host chain; neither this bound nor a counterexample is produced. The technical reductions and obstructions are retained, not nominated as substitute frontier solutions. Further effort should target a new substantive bridge, not repackage finite connectivity or an alternative sampler as the requested chain theorem.
