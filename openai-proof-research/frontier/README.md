@@ -1,6 +1,15 @@
 # MathDB frontier research
 
-## Active target: twenty substantial findings
+## Active target: ten additional frontier results
+
+The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **3/10 internally
+accepted results**: R023, R024 and [R025](findings/R025-functional-hard-sphere-fluctuations.md).
+R025 supplies the full regular-lifespan hard-sphere path theorem relative
+to pinned source interfaces. Its reviewed paper and local archive are
+verified; Lean covers supporting lemmas only. Staircase manuscript and
+formal work continue at standard speed. No public submissions have occurred.
+
+## Historical target: twenty substantial findings
 
 On 2026-10-12 the user raised the target to twenty. **Sixteen accepted, four remaining.** The [twenty-finding ledger](TWENTY-FINDINGS.md) tracks the active research, unchanged acceptance gates and new results. Discovery and independent reviews are active with GPT-6.1 Sol/high/Standard; the linked ledger records their current stages. Earlier completion and task-status entries below are historical.
 
