@@ -1,0 +1,12 @@
+# Research progress
+
+- Initialized owned directory. Read root AGENTS.md, upstream pin, full campaign ledger and full mandatory fresh-r9 historical brief; read full G candidate and both parent dispositions, and F contribution corrections. Independent G reviews next. F/G and all listed unresolved/technical lanes excluded. No candidate selected or theorem claimed.
+
+- Completed mandated full G candidate and both full reviews, parent dispositions and F corrections. Read selected inherited veto passages in strict-BV historical brief and prior I217 partial report/analytic attempt; did not replay stored code.
+- Screen rejected bi-Sobolev and Brenier prior lanes; matrix Lieb--Thirring equality is an exact pinned companion theorem; generic RWRE CLT transfer is already excluded as technical in I232. Those are screening decisions, not candidate proofs.
+- Selected family 373, distinct from FK. Read actual Coulomb main/local/calibration/splitting/proof and full Riesz companion statements/proofs, plus primary equality-of-infima and duality contracts. Frozen exact target P in original-scope.md before sustained proof. Unpaid operation: global contact completion carrying an everywhere-positive smooth square marginal without losing the exact branch domination.
+
+- Sustained proof checkpoints: derived local leakage criterion; constant extension fails complementary slackness; direct symmetric c-transform can destroy feasibility. Averaged c-transform preserves feasibility and all old equality sheets, with a uniform Lipschitz fixed point and explicit tail/contact-escape analysis. Remaining obstruction is contact completion with smooth positive projected marginals, not weak convergence or direct-method existence. No P proof claimed. Full arguments are being written in candidate.md.
+
+- Final mathematical disposition: full P UNRESOLVED. candidate.md gives exact P, paid existence/equal-infimum steps, complete technical local-leakage and averaged-transform proofs, explicit compact escape analysis, sufficient but unpaid CP, and two analytic route obstructions. No finite checker or simulation is needed; no full proof/contribution gate requested. No scope weakening, nomination, manuscript, Lean or count change.
+- Finalizing immutable input/output inventories, exact membership, source Git blobs, external continuity seals and read-only verifier. Failure controls will request a wrong anchor and a false PROVED status without changing any fixture.
