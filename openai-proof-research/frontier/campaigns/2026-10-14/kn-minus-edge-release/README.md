@@ -1,4 +1,4 @@
-# Complete graph minus an edge: local release preparation
+# Complete graph minus an edge: reviewed local release
 
 Myeongjin Kang, no affiliation. Original prose CC BY 4.0; original code MIT.
 
@@ -13,14 +13,16 @@ The pinned upstream statements are stipulated mathematical premises. The new
 proof has an independent proof PASS and a separate substantial-contribution
 review. No worldwide priority is certified. The original manuscript audit asked
 for three documentary/reproducibility repairs; the r2 paper implements them.
-The final independent revision gate is pending in this preparation. Assembly
-refuses a pending gate. This directory alone awards no acceptance or count.
+The final independent revision audit returned PASS_REVISION with no required
+fixes. The parent authenticated its terminal hashes and replayed its arithmetic
+checker. Assembly binds that actual audit and the preceding gates; this directory
+alone awards no acceptance or count.
 
 After assembly, `FINAL-GATE.json` records the actual parent integration of the
 independent revision audit. Its evidence is bound by an externally supplied hash.
 Historical pending/count fields inside frozen author and review files retain
-what was true at their creation; they are not silently rewritten. This README
-records preparation history, not an assertion that a final gate has occurred.
+what was true at their creation; they are not silently rewritten. The included gate records all four review verdicts. The separately retained
+preparation manifest documents the earlier pending state, before this release.
 
 Paper and complete manuscript public payload:
 `frontier/campaigns/2026-10-14/kn-minus-edge-manuscript-r2/main.pdf`.
@@ -32,3 +34,7 @@ The full crossing theorem is **not formalized**. See `FORMAL-COVERAGE.md`.
 commands. `RIGHTS.md` explains the explicit public selection. Local Zenodo and
 MathDB metadata have no DOI, account, routing or submission identifiers.
 Nothing has been publicly uploaded or submitted.
+
+Editorial clarification O1: the manuscript RIGHTS reference to
+`work/chn-v5.txt` describes historical r1 scratch. It is absent from the revised
+manuscript and this archive. Reviewed manuscript bytes remain unchanged.
