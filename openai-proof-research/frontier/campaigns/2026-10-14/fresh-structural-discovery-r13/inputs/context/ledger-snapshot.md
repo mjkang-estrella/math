@@ -1,0 +1,583 @@
+# Ten additional frontier results — 2026-10-14 campaign
+
+Status: active. **4/10 newly accepted results.**
+
+The user requests ten new frontier mathematics solutions, suitable for paper publication on Zenodo (interpreting “Zendoo”) and submission to mathdb.com, with supporting artifacts such as Lean formalizations. This campaign is additional to the sixteen acceptances recorded in TWENTY-FINDINGS.md at start commit `3eb9ef0f`. It does not relabel prior findings as new results or assert that the older twenty-result milestone was completed.
+
+## Acceptance and publication
+
+- Record the exact problem, hypotheses, quantifiers, conclusion, and remaining scope. A meaningful partial advance must be labelled as such; it cannot be advertised as solving the full named problem.
+- Assume the pinned OpenAI input theorems true, at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`; read actual statements and companion papers. Record any newer upstream dependency separately.
+- Require a complete proof, independent adversarial proof review, and separate primary-literature contribution review. Routine transfers, rediscoveries, equivalent formulations, and unproved conditional bridges do not count.
+- Computational checks support proofs; they do not replace general arguments. GLM implementation and verification are reviewed independently.
+- Every accepted result needs a self-contained manuscript with citations, provenance, reproducibility instructions, and a precise formalization coverage statement. Lean files must compile without `sorry` or an axiom restating the new conclusion. Explicit upstream mathematical assumptions are permitted and must be exposed. A formalized supporting lemma is not a formalized full theorem.
+- Prepare publication and submission materials locally. Actual public uploads/submissions require a concrete completed package and destination/account details; no acceptance or submission is claimed before it occurs.
+- Parent integrates only campaign-owned changes, and commits each accepted finding separately. Preserve unrelated and pre-existing working-tree changes.
+
+## Model allocation
+
+Authorized: Codex GPT-6.1-Sol/high, Pi GLM-5.3-Flash, Claude Opus 5.5, and Grok 4.7; Factory Opus 5.5 is the Claude-limit fallback. Initial GLM deployment is `pi` / `spark/GLM-5.3-Flash-EXL3`, thinking high. Evaluate its actual output before broadening assignments. Independent reviewers receive the full original claim and all prior objections in each new review round.
+
+## Initial work
+
+1. GLM calibration: independently reproduce the exact finite-dimensional R019 matrix certificate, with deliberate mutation tests. This is an old accepted result and earns **no new-result credit**. Own outputs: `campaigns/2026-10-14/glm-calibration/`.
+2. Independent Opus proof review of the pre-existing, unaccepted I345 unrestricted p-uniform gradient candidate. It remains unaccepted until both proof and contribution gates pass. Own outputs: `campaigns/2026-10-14/p-gradient-proof/`.
+3. GPT-6.1-Sol/high discovery: find a nonduplicative discrete/algebraic target with a substantive new bridge and tractable exact/formal support. Own outputs: `campaigns/2026-10-14/discrete-discovery/`.
+
+Task IDs and dispositions are recorded in `campaigns/2026-10-14/tasks.json`.
+
+## Parent progress
+
+- The [p-gradient contribution screen](campaigns/2026-10-14/p-gradient-parent/contribution-screen.md)
+  compares actual primary theorem statements and distinguishes the candidate
+  from the full inhomogeneous MathDB conjecture. Its proposed large-p
+  application is conditional on the candidate and is not a second result.
+- The [Lean support project](campaigns/2026-10-14/formal/README.md) builds
+  successfully with pinned Lean 4.34.1 and mathlib. Three scalar and seven vector supporting lemmas
+  certify a parameter-uniform bound for I345's actual zero-jet vector form,
+  including its square-root substitution;
+  the [validation receipt](campaigns/2026-10-14/formal/validation.json)
+  records source hashes and the standard-axiom audit. This does not certify
+  the full PDE proof, perturbation theorem, or novelty.
+- The [Opus proof review](campaigns/2026-10-14/p-gradient-proof/review.md)
+  returned a conditional pass for the full p>=3 claim. The parent reproduced
+  its algebra checks and wrote a [repair addendum](campaigns/2026-10-14/p-gradient-parent/proof-repair-addendum.md)
+  with quantified small-solution, scale-selection and coarse-cylinder lemmas.
+  The [compact-p source audit](campaigns/2026-10-14/p-gradient-uniformity/lemma.md)
+  now supplies explicit common constants. [Opus round 2](campaigns/2026-10-14/p-gradient-proof-r2/review.md)
+  returned PASS for the full repaired argument, with no remaining mathematical
+  gap found. Presentation items P1-P8 are resolved; the fresh independent manuscript
+  gate returned PASS with no required repairs. Grok's independent
+  [contribution review](campaigns/2026-10-14/p-gradient-contribution-r1/review.md)
+  returned SUBSTANTIAL, with bounded literature coverage. R023 is now
+  accepted as the first result of this campaign.
+- A [21-page candidate manuscript](campaigns/2026-10-14/p-gradient-manuscript/output/pdf/main.pdf)
+  now contains the full proposed argument, the finite-viscosity appendix,
+  eleven references and the precise Lean coverage statement. The build
+  has no TeX warnings and all rendered pages were inspected. Its independent mathematical
+  presentation review passed. The current [20-page publication copy](campaigns/2026-10-14/p-gradient-publication-v1/output/pdf/main.pdf)
+  lists Myeongjin Kang with no affiliation, CC BY 4.0 paper/original prose and
+  MIT original code/Lean. An exact editorial check and clean-extraction bundle
+  verification passed; public submission remains outstanding.
+- [Discrete discovery](campaigns/2026-10-14/discrete-discovery/candidate.md)
+  completed a sharp stationary-process supporting theorem and exact
+  obstructions to two shortcuts. The parent reproduced its exact checks.
+  The main Liouville five-pattern target remains open, and no substantial
+  acceptance is proposed. Its Lean file covers two finite Boolean identities.
+- GLM's finite-algebra calibration is complete. Its
+  [independent audit](campaigns/2026-10-14/glm-calibration-review/review.md)
+  reproduced the baseline core but found two checker defects: a tensor
+  stride error and rank calculations cached from the baseline during
+  mutations. The [repair round](campaigns/2026-10-14/glm-calibration-r2/report.md)
+  now passes the [independent parent audit](campaigns/2026-10-14/glm-calibration-r2-review/review.md):
+  24 checks, four mutations, and additional rank/tensor/error controls.
+  This supports a bounded
+  implementation role under independent review, not sole-verifier use
+  or a general model-reliability conclusion.
+- The [SAT covariance attempt](campaigns/2026-10-14/sat-covariance-parent/disposition.md)
+  completed energy localization and a k>=8 pre-window reduction. The unpaid
+  covariance sum still has only O(n^2) control. The original k>=4 CLT remains
+  unresolved; no result is counted. Three editorial corrections are recorded
+  without modifying the frozen partial.
+
+- The full kinetic path theorem is accepted as R025 after proof round 2,
+  separate contribution review, original and final manuscript reviews, and
+  clean-extraction verification of the final archive. The repaired argument
+  retains global chronology while localizing determined redundant contacts.
+  Its nine audited Lean declarations support algebraic steps; the full
+  analytic theorem remains unformalized. Earlier integrated-process partials
+  are credited antecedents, not additional results.
+
+- The parent derived a [dimension-five scalarization extension](campaigns/2026-10-14/crouzeix-five/analysis.md)
+  by combining the existing R016 argument with Leake–Lins–Spitkovsky's
+  published Theorem 5.7. It would establish dimension-six minimality for
+  R019's specified-witness obstruction. This is an unreviewed technical
+  deduction from credited inputs, with no new-result credit.
+
+- The [matrix disk candidate](campaigns/2026-10-14/matrix-disk-discovery/analysis.md)
+  proves disk rigidity for attained complete matrix-polynomial equality in
+  every finite dimension, with an arbitrary-rank polynomial unitary channel
+  and rational exterior inverse. Independent proof PASS and contribution
+  SUBSTANTIAL are [integrated](campaigns/2026-10-14/matrix-disk-parent/proof-gate-disposition.md).
+  The [11-page standalone manuscript](campaigns/2026-10-14/matrix-disk-manuscript/output/pdf/main.pdf)
+  is frozen. Parent source/visual/check validation and the fresh independent
+  manuscript review passed. The 104-file local publication archive passed
+  clean-extraction integrity and all 33 exact checks; R024 is accepted as
+  the second result. The finite-variance Lean implementation subsequently passed independent
+  source/type/axiom audit and a portable pinned Lake build; it supports only
+  finite real scalar algebra.
+  The current v2 archive contains 130 project files, including the portable
+  Lean support and independent audit; the manuscript PDF is unchanged.
+  R019 and the dimension-five deduction remain antecedents.
+
+- An [exact positive-tree counterexample](campaigns/2026-10-14/three-state-generated-parent/analysis.md)
+  rules out the unit quadratic saving in the three-state capacity route.
+  It uses a three-leaf star with strictly positive channel parameters
+  1/4,4/5,4/5. A smaller uniform positive coefficient and the original
+  capacity necessity theorem remain unproved. This technical obstruction
+  is not counted as a frontier solution.
+
+## Accepted results
+
+1. [R023 — Uniform interior gradient estimates for every finite p>=3](findings/R023-uniform-p-harmonic-gradients.md).
+   Full original homogeneous claim; proof, contribution and standalone-manuscript
+   gates passed. Ten supporting Lean lemmas; full PDE not formalized.
+   Paper and review package prepared locally; author and open licenses set.
+   Public submission and destination/account details remain outstanding.
+
+2. [R024 — Disk rigidity for attained complete polynomial equality](findings/R024-attained-complete-polynomial-disk-rigidity.md).
+   Every finite base/coefficient dimension and polynomial degree; all three
+   independent gates passed. One package with the arbitrary-rank channel and
+   exterior inverse, not separate counts. Reviewed 11-page paper and current 130-file
+   v2 local archive verified; 33 finite exact checks, no full Lean certificate.
+   Three finite scalar Lean declarations independently verified; full analytic
+   theorem not formalized. Nothing publicly submitted.
+
+3. [R025 — Functional hard-sphere fluctuations](findings/R025-functional-hard-sphere-fluctuations.md).
+   Whole-space, unsmoothed deterministic grand-canonical gas on the full
+   supplied regular Boltzmann interval; finite-test-vector J1 convergence and
+   C-tightness. Proof, contribution and final manuscript gates passed.
+   Reviewed 19-page paper, nine supporting Lean declarations and 208-file
+   local archive verified. Full analytic theorem not formalized; no public submission.
+
+4. [R026 — Integral staircase regular summand](findings/R026-integral-staircase-regular-summand.md).
+   Every m >= 1, the specified integral Specht-cube orbit splits as the regular
+   module, and the split maps survive every commutative-ring base change.
+   Full proof, narrow contribution and manuscript gates passed; 16 supporting
+   Lean theorems passed independent audit. The six-page paper and 172-file
+   local archive are verified, including the full cited I21 note and exact
+   coverage supplement. Full staircase combinatorics remain unformalized.
+   Nothing publicly submitted.
+
+## Further active research
+
+- Second-order ball/slab contact and crossover: the prior moving-radius
+  leading law is technical and not recounted. A new unrestricted log-log
+  correction now has a complete frozen candidate and independent full-scope
+  [proof PASS](campaigns/2026-10-14/ball-slab-proof-r1/review.md), with no
+  required repair. Parent source and analytic checks are recorded separately.
+  A nine-page standalone draft builds without warnings; all pages were
+  inspected and its exact support reproduced. The independent contribution
+  gate returned TECHNICAL: the quantitative refinement uses the same paid
+  capacity mechanism. The draft is retained as technical research, without
+  a new acceptance or an additional frontier manuscript gate. Six scalar
+  supporting Lean lemmas subsequently compiled with standard axioms only;
+  this is not a full geometric formalization or a separate result.
+  Formal radial inversion is classical and is not the proposed contribution.
+- A fresh three-state arbitrary-tree capacity attempt ended with a proposed
+  technical potential-family obstruction. Original necessity is unresolved;
+  no new-result credit. Parent proof reading, hash authentication and exact
+  coefficient reproduction passed; the technical note is retained.
+
+- Full length-five Liouville pattern research remains unresolved. The
+  [completed report](campaigns/2026-10-14/liouville-five-pattern-r1/candidate.md)
+  gives a credited infinite model with full fixed-affine pair cancellation
+  and four missing patterns, not an arithmetic counterexample. Parent
+  authentication and exact rational checks passed. No narrowed substitute
+  is counted; the research slot has moved to fresh substantial-target discovery.
+
+- Restricted-host graph mixing remains unresolved for every feasible degree
+  vector on K_n minus a matching, with both four- and six-edge alternating
+  cycle moves. The [completed report](campaigns/2026-10-14/restricted-host-mixing-r1/candidate.md)
+  embeds the full directed degree problem and identifies two failures of the
+  unchanged source method. Parent authentication and exact supporting checks
+  passed. All-n irreducibility and polynomial mixing still require proof;
+  these technical reductions are not counted.
+
+- Fresh Randers entropy rigidity remains unresolved at the full negatively
+  curved, Anosov Randers scope. The [report](campaigns/2026-10-14/fresh-frontier-discovery-r1/candidate.md)
+  proves technical contact/time-change reductions and identifies the unpaid
+  nonclosed magnetic rigidity implication. Parent hash authentication and
+  48 exact supporting controls passed; no narrower result is nominated.
+
+- The integral staircase package is accepted as R026. All independent gates
+  and final package conditions are satisfied; exact rights, citations and
+  formalization limits are preserved in the accepted finding and archive.
+
+- Factory discovery produced a [full proposed crossing-number formula](campaigns/2026-10-14/fresh-substantial-discovery-r2/candidate.md)
+  for K_n with one edge removed, together with a cited path-product corollary.
+  The proposed new range is odd n >= 15; even sizes and smaller odd sizes are
+  credited consequences of earlier work plus the pinned complete-graph theorem.
+  Parent read the full candidate and both checkers, authenticated source interfaces,
+  and recorded computation-scope qualifications. All mathematical checker output
+  reproduced exactly; the original timing footer is recorded separately.
+  The [independent adversarial proof review](campaigns/2026-10-14/kn-minus-edge-proof-r1/review.md)
+  returned PASS for the full theorem and corollary under the stipulated upstream
+  results, with no required mathematical repair. Parent authenticated 39 inputs
+  and 19 outputs and reproduced the independent checks byte-identically, including
+  n = 15. The [separate contribution review](campaigns/2026-10-14/kn-minus-edge-contribution-r1/review.md)
+  returned SUBSTANTIAL for one package, specifically the odd lower bound at
+  n >= 15. Parent authenticated the evidence, matched two freshly retrieved
+  primary PDFs and reproduced the gap checks. The 15-page manuscript draft is
+  authenticated, its new checks reproduce exactly, and all pages were inspected.
+  Independent manuscript review is active. Parent corrections cover the product
+  novelty range (odd m >= 13 and path length n >= 2), current formal coverage,
+  and clean-extract public verification; the full corollary still includes n = 1.
+  [Scoped Lean support](campaigns/2026-10-14/kn-minus-edge-formal-v1/README.txt)
+  now compiles: parent fresh-source replay passed for 47 support and 9 control
+  theorems, with standard axioms only. Both evaluation injections and the full
+  drawing theorem remain unformalized. The [independent formal audit](campaigns/2026-10-14/kn-minus-edge-formal-review-r1/review.md)
+  passed for this scoped support, with 16 additional Lean controls; parent
+  fresh-source replay and all type/axiom comparisons passed. Manuscript
+  review and final package verification remain outstanding.
+  This candidate is not accepted or counted.
+
+- The [operator discovery report](campaigns/2026-10-14/fresh-operator-discovery-r1/candidate.md)
+  leaves full two-input EPnI equality unresolved. It gives a technical Gaussian
+  classification and obstructions to conditional-sign, score-regularity and
+  finite-information-penalty proof routes. Parent read the report/code and
+  reproduced the exact checks and source hashes; this is not a full proof gate.
+  The [second Gaussianity attempt](campaigns/2026-10-14/epni-gaussianity-r2/candidate.md)
+  also leaves the full target unresolved. Parent reproduced its finite Gaussian
+  obstructions and authenticated the inventory; its technical rate statement has
+  [limit, chain-rule and spectral qualifications](campaigns/2026-10-14/epni-gaussianity-parent/disposition.json).
+  The positive-output-entropy rate comparison does not force Gaussianity. No
+  partial result is counted. The freed slot now pursues fresh structural discovery
+  with all prior scope and duplication objections supplied.
+
+- The [arithmetic discovery report](campaigns/2026-10-14/fresh-arithmetic-discovery-r1/candidate.md)
+  leaves the uniform quartic paired-Jacobsthal bound unresolved. It proves
+  technical transfers and arithmetic obstructions to two proposed shortcuts;
+  a critical two-class survivor estimate remains unpaid. Parent read the report,
+  source interfaces and code, authenticated 47 pinned blobs and reproduced
+  1,958 finite residue systems and 332,590 CRT checks. No new result is counted.
+
+- Fresh [structural discovery](campaigns/2026-10-14/fresh-structural-discovery-r3/candidate.md)
+  proposes universal subgroup-count congruences modulo p^(h+1) for every
+  finite iterated extension of Z_p, including p = 2, all open subgroups,
+  and a precise closed-subgroup extension. Parent read the full proof and
+  source interfaces, authenticated 79 inputs/12 outputs/39 pinned blobs,
+  and reproduced all finite checks. The [independent contribution review](campaigns/2026-10-14/poly-zp-contribution-r1/review.md)
+  returned TECHNICAL across the full original scope: an explicit GRV
+  orbit-product reduction supplies the key congruence, followed by routine
+  iteration and lattice truncation. Parent authenticated 139 inputs/13 outputs,
+  reproduced both receipts and checked the primary comparison passages.
+  No exact published duplicate is claimed. The [separate proof audit](campaigns/2026-10-14/poly-zp-proof-r1/review.md)
+  returned mathematical PASS; parent authenticated 97 inputs/14 outputs and
+  reproduced the independent checks. Sharpness examples, explicit third source
+  lemma and the Frankel citation are corrected in a parent addendum while
+  preserving the frozen candidate. The contribution verdict remains TECHNICAL.
+  Not counted; subsequent structural and analytic work is recorded below.
+
+- The [two-order signing report](campaigns/2026-10-14/fresh-structural-discovery-r4/candidate.md)
+  leaves the full common-sign Euclidean prefix bound unresolved. Three technical
+  obstructions rule out the investigated transfers of the one-order proof;
+  none refutes the target. Parent read the report and source interfaces,
+  authenticated 70 files and 11 pinned blobs, and reproduced the finite checks.
+  The [second attempt](campaigns/2026-10-14/two-order-signing-r2/candidate.md)
+  establishes an elementary factor-two equivalence with weighted interval
+  coverage. Even the scalar case matches the weighted one-block question
+  posed in [CKMS section 6](https://arxiv.org/html/2610.16079v1#S6), which the
+  parent checked directly. The full target remains unresolved. Parent
+  authenticated 18 inputs and 22 outputs and reproduced the exact checks.
+  [Parent qualifications](campaigns/2026-10-14/two-order-signing-parent/r2-corrections.json)
+  correct a rank example, distinguish the exact fixed-weight value 5/3 from
+  an uncertified maximum over weights, and limit use of the thesis's printed
+  weighted-discrepancy equality. No result is counted. This target is retained
+  as unresolved; the structural r6 findings are recorded below.
+
+- The [analytic report](campaigns/2026-10-14/fresh-analytic-discovery-r5/candidate.md)
+  retains a technical Sobolev continuity argument and leaves strict BV
+  continuity of the centered disk maximal operator unresolved. Sharp upper
+  passage of variation and tail control remain unpaid; flat-layer calculations
+  do not settle arbitrary strict sequences. Parent read the report, code and
+  pinned source interfaces, authenticated 59 inputs and 15 outputs, checked
+  10 pinned blobs, and reproduced the supporting calculations. This is not an
+  independent full proof or contribution gate. The [second attempt](campaigns/2026-10-14/strict-bv-continuity-r2/candidate.md)
+  supplies the full signed-sequence tail argument, fixed-positive-radius
+  continuity and supporting cancellation and monotone-layer calculations.
+  The sharp local upper variation estimate remains unresolved. Parent read
+  the deductions and relevant source proofs, authenticated 79 inputs and
+  15 outputs, and reproduced both receipts. These are supporting deductions,
+  not a new accepted result or an independent full proof gate. Factory r3
+  ended without a report or owned output directory; its provider completion
+  is not a mathematical result. Parent recovered the activity record and
+  recorded the missing deliverable. The [fourth attempt](campaigns/2026-10-14/strict-bv-continuity-r4/candidate.md)
+  adds exact common-profile and varying-baseline estimates, constant-C
+  singular-cluster localization, and a planar example showing why the
+  profile argument does not transfer by naive slicing. The example is not
+  a strict sequence or a counterexample to B. U-sharp remains unpaid.
+  Parent read the report and relevant pinned source interfaces, authenticated
+  102 inputs/18 outputs and reproduced the current and prior receipt chains
+  in a disposable copy, with both trees unchanged. No full proof or
+  contribution PASS is claimed. Full B is retained as unresolved; a fresh
+  analytic/probabilistic discovery round produced the separate FK-map
+  candidate recorded below, with prior findings and vetoes supplied.
+  The campaign remains at 4/10.
+
+- The [sixth structural report](campaigns/2026-10-14/fresh-structural-discovery-r6/candidate.md)
+  leaves the full real Hamiltonian affine-span claim for every Barnette graph
+  unresolved. It supplies even-prism bases and three-edge splice closure,
+  while preservation under allowed C4 expansion remains unpaid. Its exact
+  14-vertex diagnostic shows that a selected family covering prescribed
+  paths and local traces need not span; it does not refute the full claim.
+  Parent authenticated 40 inputs, 17 outputs and five pinned blobs, and
+  reproduced both receipts, including 160 seeded finite probes. These
+  supporting computations are not a proof of the all-graph target. The
+  [parent verification record](campaigns/2026-10-14/hamiltonian-span-parent/r6-verification.json)
+  qualifies the claimed read-only behavior: the probe writes on rank failure;
+  parent replayed it in a disposable copy and both trees remained unchanged.
+  The [focused second attempt](campaigns/2026-10-14/hamiltonian-span-r2/candidate.md)
+  gives an exact C4 rank decomposition but leaves its exterior path-cover
+  span identity unpaid. A Pfaffian parity argument rules out integer
+  exchanges; an expanded cube requires quarter coefficients, and prism
+  examples require unbounded denominators. These are obstructions to
+  proposed proof steps, not counterexamples to the real affine-span claim.
+  Parent authenticated 22 inputs/15 outputs and five pinned Git blobs,
+  reproduced both exact receipts, and confirmed the r2/r6 trees unchanged.
+  Full H is retained as unresolved. Fresh structural r8 pursued the
+  elementary-unimodality target recorded below, with the original brief,
+  findings and objections. No full proof or contribution PASS is claimed,
+  and the count remains 4/10.
+
+- The [fresh analytic report](campaigns/2026-10-14/fresh-analytic-discovery-r7/candidate.md)
+  proposes a complete Fréchet relaxation-time law on finite FK maps for
+  every fixed q>4 and 0<alpha<1/2, through all n, with independent Pareto
+  resistances on every edge and the original-degree speed measure. Loops
+  and parallel edges are retained. The proposed proof uses a weighted
+  fringe estimate under only finite second offspring moment, an exact
+  positive inverse decomposition over blocks, negligible cyclic-block
+  traces, and asymptotic separation of extreme bridge traps.
+  Parent read the complete candidate and key pinned source interfaces,
+  authenticated 34 inputs/18 outputs and 13 pinned Git blobs, and replayed
+  the exact supporting checks with the package unchanged. These checks
+  do not certify the asymptotic theorem. The [independent proof audit](campaigns/2026-10-14/fk-frechet-proof-r1/review.md)
+  passes the full unchanged theorem F with no blocking objection. Parent
+  authenticated all 13 review payloads and the complete frozen candidate,
+  and reproduced the independent finite checker with both trees unchanged.
+  Two nonblocking wording clarifications are recorded for the manuscript:
+  the explicit truncated branch-mass limit and an unconditional truncated
+  expectation. The [contribution review](campaigns/2026-10-14/fk-frechet-contribution-r1/review.md)
+  classifies the entire unchanged F as TECHNICAL: the Janson integrable-toll
+  criterion, a finite-variance hypothesis check, and standard electrical,
+  tail and spectral operations pay the bridge. No exact duplicate was found;
+  this is not a worldwide novelty verdict. Parent checked the central Janson
+  and Fill–Janson statements, verified the cited file hashes and unchanged
+  candidate, and snapshotted all six review files (no reviewer seal supplied).
+  Parent [corrections](campaigns/2026-10-14/fk-frechet-parent/contribution-r1-corrections.json)
+  exclude a false universal tree-gap comparison using an explicit path
+  counterexample and qualify the general-family and spectral analogies.
+  The proof PASS stands, but F is retained as technical research and is not
+  advanced to manuscript/formalization or counted. A fresh analytic r9 task
+  has produced the [full proposed target G](campaigns/2026-10-14/fresh-analytic-discovery-r9/candidate.md):
+  joint excursion and trace-norm convergence to a stable CRT cut operator,
+  for every q>4 and 1/2<alpha<1, all-edge disorder, original degree clock,
+  all n and only finite second offspring moment. Limit construction,
+  injectivity and a nonconstant inverse-gap law are included. Parent read
+  the full candidate and key pinned interfaces, authenticated 111 inputs,
+  19 outputs and 13 pinned blobs, and reproduced exact support and six
+  tamper rejections with unchanged files. These do not certify the limit.
+  The [independent proof audit](campaigns/2026-10-14/fk-stable-cut-proof-r1/review.md)
+  passes the full unchanged G, with four nonblocking presentation notes.
+  Parent authenticated 134 candidate files, three external inputs and 11
+  review payloads, and reproduced the separate finite diagnostic receipt.
+  The [contribution audit](campaigns/2026-10-14/fk-stable-cut-contribution-r1/review.md)
+  rates full G TECHNICAL, without finding an exact duplicate: interval
+  coding/coarea, stable marking, the cut Green identity, trace truncation
+  and clade separation are assessed as known or elementary operations.
+  Parent authenticated 29 external inputs/five outputs and reproduced the
+  independent finite checks; candidate and both review trees are unchanged.
+  [Parent qualifications](campaigns/2026-10-14/fk-stable-cut-parent/contribution-r1-disposition.json)
+  preserve G's distributional inverse-gap law (no closed-form norm CDF),
+  distinguish antecedent templates from a theorem directly implying G,
+  and restrict the unit-resistance analogue to the bridge contribution.
+  G remains technical research support, with no manuscript/formalization
+  advancement or count increase. The campaign stays 4/10.
+
+- The [eighth structural report](campaigns/2026-10-14/fresh-structural-discovery-r8/candidate.md)
+  leaves elementary unimodality of chromatic quasisymmetric functions
+  unresolved over all natural unit interval graphs and partitions. It
+  identifies a cyclic skew matrix in the actual scattering roots, an
+  abstract Lefschetz countermodel to inferring primitive Young positivity
+  from degreewise permutation modules, and a nonunimodal pre-Lefschetz
+  example. None is a counterexample to the original conjecture. The full
+  coefficientwise Lefschetz upgrade remains unpaid. Parent authenticated
+  24 inputs/19 outputs and ten pinned Git blobs, reproduced the 196-graph
+  exact enumeration and bounded mutation diagnostics, and independently
+  reran two failure tests with unchanged frozen files. Bounded mutation
+  searches do not prove mutation-cyclicity. No result is counted. The
+  The [focused second attempt](campaigns/2026-10-14/elementary-unimodality-r2/candidate.md)
+  also leaves full U unresolved. It derives finite positive centered
+  parity-pure jumps on each live history, and rules out a cluster-monomial
+  identification in one specified natural rank-two realization. That
+  specialization merges coefficients and does not rule out other
+  realizations. Nonnegative centered-string multiplicities for the full
+  partition-specific sum remain unpaid. Parent read the full report and
+  key source interfaces, authenticated 30 inputs/16 outputs and ten pinned
+  blobs, reproduced the exact arithmetic and three rejection controls in
+  disposable copies, and rejected a wrong external anchor. Both frozen
+  trees remained unchanged. This is technical support, not a solution;
+  no formal/manuscript work or count increase. Full U is retained, and a
+  structural discovery r10 has returned the separate unresolved target C
+  recorded below. The accepted count stays 4/10.
+
+
+- The [structural r10 report](campaigns/2026-10-14/fresh-structural-discovery-r10/candidate.md)
+  retains full relative complete-intersection Betti extremality C as
+  unresolved: all characteristic-zero homogeneous Artinian complete
+  intersections, proper homogeneous quotients and relative graded Tor
+  degrees. Ambient polynomial-ring bounds do not supply the required
+  change of base. Explicit examples reject direct pure-power quotient
+  actions and an automatic algebra-filtration inference; neither refutes C.
+  The full Tate differential-rank comparison remains unpaid. Parent read
+  the report, checking code and key source/primary relative-comparison
+  interfaces, authenticated 61 inputs/26 outputs and 25 pinned blobs, and
+  reproduced three exact receipts. The 25 examples, 63 regular pencil
+  cases and two low-degree bar comparisons are finite support only.
+  Wrong-anchor and authenticated checker-failure controls rejected with
+  r10 and both frozen continuity packages unchanged. No mathematical or
+  contribution PASS, nomination, manuscript or count change is claimed.
+  The [focused second attempt](campaigns/2026-10-14/relative-ci-r2/candidate.md)
+  also leaves full C unresolved. It identifies centralizer compatibility
+  and compatible module associated gradeds, but no all-syzygy lifting or
+  full filtered Tate comparison. A standard all-degree example has the
+  same ambient quotient and different relative resolutions over two
+  complete-intersection bases; both satisfy C. It clarifies the missing
+  homotopy data and is not a substitute result. Parent authenticated six
+  inputs/24 outputs and 25 pinned blobs, reproduced the exact diagnostics
+  through p=6 and four rejection controls, with r2 and r10 unchanged.
+  Bar comparisons through p=1 share quotient arithmetic; finite checks
+  prove no general inequality. Full C remains unresolved after two attempts,
+  with no nomination, manuscript/formalization work or count change.
+
+- The [structural r11 report](campaigns/2026-10-14/fresh-structural-discovery-r11/candidate.md)
+  leaves root closure of every finite-rank Artin parabolic unresolved.
+  Full R is equivalent to torsion-freeness of every parabolic normalizer
+  quotient, or the stated finite-orbit fixation extension. The exact
+  cross-Hom calculation blocks unrestricted direct-sum middle vanishing;
+  its two transports are not a finite periodic orbit, and it refutes
+  neither R nor every orbit-specific method. Parent authenticated 90
+  inputs/21 outputs, 78 pinned blobs and both historical trees; exact
+  finite checks and parent wrong-anchor/failure/write controls passed
+  with original files unchanged. No independent proof/contribution PASS,
+  manuscript/formalization or count increase. The crossing manuscript
+  audit remains active. Accepted total stays 4/10.
+  A focused second attempt on unchanged full R is now running with
+  normal-speed GPT-6.1-Sol/high, concentrating on genuine finite periodic
+  orbits or a full normalizer-quotient argument. Prior objections remain
+  explicit; no blanket direct-sum extension is assumed.
+
+- The [analytic r10 report](campaigns/2026-10-14/fresh-analytic-discovery-r10/candidate.md)
+  leaves full P unresolved: Coulomb nonattainment by every preserving
+  Borel map pair for one everywhere-positive Schwartz-square marginal.
+  The leakage obstruction and averaged dual iteration preserve the local
+  source sheets in a global Lipschitz self-conjugate potential. Finite
+  contacts exist outside a compact possible defect, but constructing a
+  contact-supported coupling with smooth positive common marginals is
+  unpaid. Neither Gaussian mixing, separate optimizer mixing, weak graph
+  limits nor measurable selection supplies that construction. Parent read
+  the full report and key primary interfaces, authenticated 96 payloads,
+  71 pinned blobs and historical references, and reproduced read-only
+  integrity plus two failure controls with all protected files unchanged.
+  These are artifact checks only; no numerical proof, independent gates,
+  manuscript/formalization or count increase is claimed. Total stays 4/10.
+  The [second attempt](campaigns/2026-10-14/coulomb-positive-r2/candidate.md)
+  also leaves full P unresolved. A conditional global contact-atlas gluing
+  argument pays smooth square-root and tail regularity, but no such atlas
+  or alternative contact-density completion was constructed. A local
+  Coulomb example rejects inferring every projection rank from strict
+  pair minimization; a perpendicular swap shows common full-support
+  translation destroys the source plan's optimality. Neither refutes P.
+  Parent authenticated 23 own files/279 external records and the two
+  artifact failure controls unchanged. The child's fixed reference to
+  the mutable ledger is preserved by an exact historical snapshot and
+  explicit parent hash-only verifier. No mathematical checker, proof/
+  contribution acceptance or count increase. P stays unresolved after
+  two attempts; another analytic family is the next discovery step.
+
+- The [Artin second attempt](campaigns/2026-10-14/artin-root-r2/candidate.md)
+  proposes a complete proof of unchanged full R. Digne–Godelle–Michel's
+  arbitrary-type retraction product law supplies a complementary subgroup
+  in each parabolic normalizer; stipulated torsion-freeness and parabolic
+  closure then give root closure. Parent checked the actual primary TeX
+  interface and full deduction, but no independent proof PASS is claimed.
+  The author calls this a short source composition and does not nominate
+  a substantial contribution. Independent proof review and contribution
+  triage are next; no manuscript/formalization or count increase.
+  Thirty frozen files and all external inputs authenticated. Original
+  verifier success predates ledger integration; parent hash-only replay
+  uses one explicitly preserved historical ledger snapshot. Total 4/10.
+  An independent full-R proof audit with separate contribution triage is
+  now running on normal-speed GPT-6.1-Sol/high. Opus5.5 via Factory is
+  exploring a distinct analytic source family in discovery r11, preserving
+  full P as unresolved and all earlier scope/contribution objections.
+  The crossing manuscript audit remains separate. No count change.
+
+- The [independent Artin review](campaigns/2026-10-14/artin-root-review-r1/review.md)
+  returns PASS_FULL_R relative to stipulated sources, with TECHNICAL
+  contribution. The full unchanged root-closure theorem is retained,
+  but its complement construction and closure reduction introduce no
+  substantial operation beyond established inputs. Explicit spherical
+  splitting antecedents GHLY5.6/Godelle4.25(ii) are credited. Parent
+  read the full review and primary interfaces; integrity/rejection replay
+  preserved 32 review plus270 external frozen files and78 pinned blobs.
+  One prose archive/TeX hash mislabel is corrected in a separate parent
+  record; source records and verification were already correct. No
+  manuscript/formalization or count increase. Accepted total stays4/10;
+  distinct structural discovery follows while analytic r11 and the
+  crossing manuscript audit continue separately.
+  Distinct structural discovery r12 is now running with normal-speed
+  GPT-6.1-Sol/high; the full review and parent response accompany it.
+
+- [Structural discovery r12](campaigns/2026-10-14/fresh-structural-discovery-r12/candidate.md)
+  leaves full four-factor type-D saturation Q4 unresolved. The unpaid
+  operation is an integral common diagonal in the correct root-lattice
+  coset preserving both triangle feasibility conditions. Coupled schedule
+  equations expose that constraint; quaternionic examples reject blindly
+  extending the three-orbit strict count, even with odd block parities.
+  These are method obstructions, not counterexamples to Q4. The prior
+  I104/I226 all-arity screen is credited; no new conjecture or worldwide
+  priority claim. Parent read the full report and key primary interfaces,
+  authenticated116 files/50 pinned blobs and replayed one exact rational
+  profile diagnostic plus two rejection controls unchanged. The stronger
+  analytical odd-parity example is not covered by that checker. No
+  nomination, independent gates, manuscript/formalization or count change.
+  Total stays4/10. A focused second attempt will first check the precise
+  primary polygon/arity interfaces, then pursue the actual integral junction.
+  The focused full-Q4 second attempt is now running with normal-speed
+  GPT-6.1-Sol/high, with the original brief, full findings and parent response.
+
+- [Analytic discovery r11](campaigns/2026-10-14/fresh-analytic-discovery-r11/candidate.md)
+  leaves the sextic Salem Bernoulli-convolution singularity target T
+  unresolved. A sufficient finite-seed criterion and conditional orbit
+  bounds are retained as technical support. No qualifying seed was found.
+  Parent corrections S1-S6 preserve the distinction between sufficiency
+  and equivalence, conditional bounds and heuristic product impossibility,
+  floating searches and certified exact inequalities. In particular the
+  report has not ruled out all product multipliers. Parent authenticated
+  27 files/8 source blobs and replayed polynomial algebra plus floating
+  constants/greedy evidence under a read-only guard; these do not certify T.
+  The actual child final was recovered from durable history; its terminal
+  summary was only a plan/usage footer. No independent gates, manuscript,
+  formalization or count change. Total remains4/10. A focused second
+  attempt will audit the support claims before pursuing a full argument.
+  The focused second attempt is running on normal-speed GPT-6.1-Sol/high
+  with the complete prior brief, findings and parent corrections.
+
+- The [four-factor Spin second attempt](campaigns/2026-10-14/spin-four-factor-r2/candidate.md)
+  retains full Q4 as unresolved after two attempts. Original polygon
+  interfaces distinguish vertices from special vertices; the cited
+  special-vertex conclusion requires dilation. An exact signed-cycle
+  junction criterion and an explicit feasible Spin(8) bridge repair
+  one actual wrong-coset fixed system. Universal repair remains unpaid;
+  that example also has a simpler unscaled invariant and is no
+  counterexample. Parent authenticated43 own plus116 frozen files and
+  50 pinned blobs, replayed the exact local diagnostic and wrong-anchor
+  control unchanged. This verifies artifacts and the local example,
+  not full Q4 or contribution. No independent gates or count increase.
+  Total stays4/10; next is a distinct structural source family, not a
+  third Q4 attempt. Salem r2 and the crossing audit remain separate.
+  Distinct structural discovery r13 is running on normal-speed
+  GPT-6.1-Sol/high, with full recent findings and parent response.
+
+- The [Salem second attempt](campaigns/2026-10-14/salem-sextic-r2/candidate.md)
+  leaves full T unresolved after two attempts. The sufficient seed argument
+  is reconstructed, the amplitude-cap corollary repaired, and a finite-prefix
+  tail split derived. No qualifying seed or alternative full proof is found.
+  Rational intervals exclude the particular element U^8 from the original
+  sufficient test for all q,M; this excludes neither other seeds nor T.
+  S1-S6 remain in force. Parent authenticated33 own plus27 prior files and
+  8 pinned blobs, reproduced the exact diagnostic, and checked wrong-anchor
+  and false-PROVED rejection with all originals unchanged. No independent
+  mathematical/contribution acceptance or count increase: total4/10.
+  Next is a distinct analytic family, not another Salem attempt.
