@@ -1,0 +1,9 @@
+# Progress
+
+2026-10-16: Created own workspace. Authenticated complete r10 exact membership and all 61 input/26 output bytes against the externally supplied seal without running stored code. Full C remains UNRESOLVED; no count change. Beginning complete continuity reading and source-interface inspection.
+
+Continuity and source-interface reading completed. Read Gasharov--Horwitz--Peeva Proposition 2.6 directly, including its family/free-resolution proof, plus the pinned leading-submodule and division-form interfaces and the Eisenbud--Peeva higher-homotopy/Shamash interfaces. Investigated a filtered-endomorphism alternative; compatibility with the whole relative complex remains unproved. Found an all-degree fixed-ambient example with genuinely different relative Betti series, recorded in checkpoint.md. It is a diagnostic, not a violation of C or a replacement nomination.
+
+Initial integrity-control baseline correctly stopped at a verifier-format bug: frozen r10 uses a sha256sum-style detached line, while this round initially expected a bare digest. Corrected the parser to accept exactly the two documented formats; retained initial verifier bytes/authentication/failure. No external bytes changed. Mathematical diagnostic failure and correction are separately preserved.
+
+Final disposition: full C UNRESOLVED, counted=false, campaign unchanged at 4/10. The two-base series have all-degree derivations; the new exact Tate receipt covers every internal degree through p=6, and separate bar machinery agrees through p=1. Corrected diagnostic and verifier controls passed. Wrong-anchor, payload corruption, authenticated checker failure and attempted checker write were rejected in owned disposable copies; copies removed and all original/external bytes unchanged. No prior checker was run. Final verifier replay follows final sealing and writes no receipt.
