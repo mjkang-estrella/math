@@ -1,0 +1,33 @@
+import ReviewControls
+#check @IndependentReview.one_slot_is_not_both
+#print axioms IndependentReview.one_slot_is_not_both
+#check @IndependentReview.zero_functional_dimension
+#print axioms IndependentReview.zero_functional_dimension
+#check @IndependentReview.nonbasis_witness_tensor
+#print axioms IndependentReview.nonbasis_witness_tensor
+#check @IndependentReview.mixed_without_self_isotropy
+#print axioms IndependentReview.mixed_without_self_isotropy
+#check @IndependentReview.mixed_with_same_nonzero_image
+#print axioms IndependentReview.mixed_with_same_nonzero_image
+#check @IndependentReview.second_injection_essential
+#print axioms IndependentReview.second_injection_essential
+#check @IndependentReview.excluded_endpoint_can_survive
+#print axioms IndependentReview.excluded_endpoint_can_survive
+#check @IndependentReview.localization_nontrivial_instance
+#print axioms IndependentReview.localization_nontrivial_instance
+#check @IndependentReview.constant_square_does_not_detect_twist
+#print axioms IndependentReview.constant_square_does_not_detect_twist
+#check @IndependentReview.twist_root_and_detected_constant
+#print axioms IndependentReview.twist_root_and_detected_constant
+#check @IndependentReview.nonzero_specialization_has_root
+#print axioms IndependentReview.nonzero_specialization_has_root
+#check @IndependentReview.finite_field_pointwise_trap
+#print axioms IndependentReview.finite_field_pointwise_trap
+#check @IndependentReview.too_few_roots
+#print axioms IndependentReview.too_few_roots
+#check @IndependentReview.zero_degree_convention
+#print axioms IndependentReview.zero_degree_convention
+#check @IndependentReview.characteristic_two_skew_trap
+#print axioms IndependentReview.characteristic_two_skew_trap
+#check @IndependentReview.both_local_factors_needed
+#print axioms IndependentReview.both_local_factors_needed
