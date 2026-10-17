@@ -50,3 +50,5 @@ Eight pinned blobs and two primary PDFs are locally authenticated in source-rece
 - History I152 lines80–150 read: its developed heterogeneous known-retention target differs, and remains unpaid there. Initial broad search output was truncated; it is not a complete developed-history eligibility check. No eligibility verdict is issued here.
 
 The source's pinned ordinary reconstruction result includes sample and bit-work bounds; neither is established for the circular problem here. Exact finite diagnostics verify only the stated small-channel identities. They do not prove reconstruction, substantiality or worldwide novelty.
+
+Further parent calculation: [mixture-obstruction.md](mixture-obstruction.md) gives explicit parity-binomial laws for which the initial scale signal survives but every balanced product of at most four Gaussian-window factors falls below the scale-step threshold. These are not uniform cyclic-orbit laws. This rules out a generic positivity-only replacement, not the circular reconstruction target.
