@@ -2,7 +2,7 @@
 
 ## Active target: ten additional frontier results
 
-The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **9/10 internally accepted results**: R023–R031. [R031](findings/R031-transitive-superquadratic-sensitivity.md) gives an unbounded superquadratic separation of zero-input block sensitivity from ordinary all-input sensitivity for total Boolean functions with full coordinate transitivity, including a fixed exponent above two. All four reviews and release checks pass; Lean support is scoped. R023–R030 are [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md); R031 submission is pending. Research continues toward 10/10.
+The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **10/10 internally accepted results**: R023–R032. [R032](findings/R032-continuum-coulomb-qma.md) proves uniform QMA membership for full-continuum electronic Coulomb energy with unit nuclei, including unbound spectral infima; stipulated source hardness gives completeness for the same problem. All four reviews and release checks pass; Lean support is scoped. R023–R030 are [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md); R031 and R032 submissions remain pending a functioning browser connection. Internal acceptance is not external peer review or worldwide-priority certification.
 
 ## Historical target: twenty substantial findings
 
