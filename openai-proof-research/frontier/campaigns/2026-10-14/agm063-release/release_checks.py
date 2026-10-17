@@ -88,12 +88,12 @@ def main():
     expected_pages=sorted(visual['pages'],key=lambda row:row['path'])
     fresh_pages=sorted((build/'checks/pages').glob('page-*.png'))
     expected_count=json.loads((manuscript/'checks/build-receipt.json').read_text())['pdf_pages']
-    assert visual['status']=='ALL_FINAL_PAGES_INSPECTED' and visual['pdf_sha256']==sha((build/pdf).read_bytes()),'visual PDF identity'
+    assert visual['status']=='FINAL_ALL_PAGES_VISUALLY_INSPECTED' and visual['pdf_sha256']==sha((build/pdf).read_bytes()),'visual PDF identity'
     assert len(expected_pages)==len(fresh_pages)==expected_count>0,'page count drift'
     assert [p.name for p in fresh_pages]==[Path(row['path']).name for row in expected_pages],'page inventory drift'
     for n,row in enumerate(expected_pages,1):
         name=row['path'];data=(build/name).read_bytes()
-        assert isinstance(row.get('observation'),str) and row['observation'],'missing page inspection record'
+        assert row.get('visually_inspected') is True and visual.get('method'),'missing page inspection record'
         assert sha(data)==row['sha256'],('render hash drift',n)
         pages.append({'page':n,'sha256':sha(data),'identical_to_reviewed_page':True,'identity_method':'SHA256 matches sealed visual-review record'})
     for name in ['build-receipt.json','main.log','compiler.txt']:shutil.copyfile(build/'checks'/name,work/('pdf-'+name))
