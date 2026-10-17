@@ -1,0 +1,3 @@
+# Rights and provenance
+
+Myeongjin Kang; no affiliation. Original independent review prose: CC BY4.0 (https://creativecommons.org/licenses/by/4.0/). Original code: MIT, see LICENSE-code.txt. The verifier adapts the manuscript's original MIT integrity routines with the attribution preserved. Rebuild source and build helper are copied byte-for-byte from the reviewed manuscript, retaining their CC BY4.0/MIT identities. The rebuilt PDF and PNGs show that manuscript only. Third-party mathematical sources, PDFs and Semmes rendering were read in separately retained private inputs; none are copied into this review or relicensed. This is private review/reproduction evidence, not publication or a journal endorsement.
