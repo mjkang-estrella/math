@@ -1,0 +1,16 @@
+# R22 mathematical checkpoint — family334 pre-freeze screen
+
+Status: no target frozen, no nomination, no count. Author Myeongjin Kang, no affiliation; original prose CC BY4, code MIT; third-party sources private. RF and all earlier packets remain untouched.
+
+The actual family334 theorem and full model/assembly bodies are now read. The source gives a smooth nonimmersible germ with Euclidean full jet, using an existing residual whole-patch obstruction, infinitely flat prescribed curvature, finite orientation nets and a summable two-level assembly. Every curvature zero inside an individual model patch is a clean sign change, so the patch obstruction is explicitly a whole-square condition and not local nonrealizability at every patch point.
+
+Candidate operations considered before freezing:
+
+1. A dense nonimmersion locus cannot work: local realization holds where Gaussian curvature is nonzero; a dense bad locus would force K identically zero by continuity, and a flat metric is locally realizable. This is a method/target screen, not an objection to the source theorem.
+2. Replacing the one accumulation point by a prescribed closed nowhere-dense set is not automatically substantial. The source already pays disjoint patch placement, arbitrary finite-seminorm smallness, all-orders summation, orientation selection and the boundary-saddle obstruction. A lower containment of the prescribed set in the bad locus appears to repeat the same construction. It cannot be counted by changing an accumulation parameter.
+3. Exact prescribed nonimmersion locus is genuinely harder: the assembly does not give local smooth realizability at every point outside the requested locus, particularly at the disk boundaries and other accumulation points. Clean-sign local existence covers individual patch zeros, not these flat accumulation boundaries. A reverse/local-existence mechanism is unpaid.
+4. A genericity strengthening in the Frechet space of metrics with Euclidean infinite jet needs more than the source's Baire theorem in a fixed curvature-model perturbation space. The source's residual set is relative to coefficients fixed outside the central box. That constrained slice is not an open set in the full flat-jet metric space. Dense cut-and-paste constructions do not establish residuality. Compactness of bounded C^m immersion classes yields lower-regularity limits, whereas the source excludes smooth immersions; this is an exact regularity interface that cannot be silently crossed.
+
+The initial history search found no relevant earlier-developed family334 chain in canonical iteration/proposal/review/findings files and current ledgers. This is bounded evidence, not a positive worldwide or exhaustive-project eligibility claim. Closest primary construction reading is underway before any scope freeze.
+
+Completed: `candidate.md` now gives full proofs of the two-sided flat-jet density fact and the closed-nowhere-dense restriction, both technical supporting deductions, plus exact unpaid prescribed-locus/genericity interfaces. Closest primary bodies are read to the extents in `reading-and-rights.md`. No substantive target was frozen and no nomination follows. Packet identity verification does not certify mathematics or novelty.

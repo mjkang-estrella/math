@@ -1,0 +1,19 @@
+# Reading, identity and provenance
+
+This is a pre-freeze screen. Hash verification is not full reading or proof verification.
+
+Mandatory context: AGENTS read in the ongoing assignment; review-entry-parent/next-discovery-brief read completely. Posterior-critical-wave fresh-r15 and complex-projector fresh-r17 opening assignment/exclusion sections reread, with prior full relevant exclusion portions retained from the continuing assignment. Long appended historical reports were not newly reread in full; one combined output was truncated, and no unshown material is claimed read. Current NEW-TEN opening and late entries 735–end were read; canonical TEN/TWENTY and iteration/proposal/review/findings text searched for actual family334 terms. The first numerical `334` search had false matches in hashes/iteration IDs and was not treated as eligibility evidence. Refined searches used the exact manuscript title, local isometric immersion, Nadirashvili and surface metric. No earlier-developed family334 chain was established in those bounded searches. No positive exhaustive eligibility claim is made.
+
+Complete source catalog parsed with truncated=false. Family334 has one catalog manuscript; no same-family companion was omitted. Ten source TeX/Bib files were downloaded at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and independently matched to catalog Git blobs. `source-receipt.json` records exact paths, URLs, SHA256 and byte counts. Actual reading: main.tex lines1–190 (Theorem A, regularity scope, antecedents, method); model.tex entirely; assembly.tex entirely (prescribed curvature, placement, summation, boundary lemma, proof, flat-jet corollary); pulse.tex lines1–65 and370–end; caps.tex actual cap regularity statement and high-derivative setup passages; references.bib entirely. The full cap/pulse analytic proof was not read, is not audited, and its stipulated truth is not challenged. Downloaded figures were authenticated but not examined as mathematical premises.
+
+Primary reading:
+
+- NY2008.txt all272lines: full paper, including finite-regularity theorem, construction, tails, summation and contradiction. Author-hosted PDF URL in private/primary-receipts.json.
+- NY2002.txt lines1–140 and465–635: both theorem statements, introductory mechanism/status, final construction of Theorem1.1 including Step3 boundary saddle, and Section3 proof of Theorem1.2 through its terminal curvature and norm conclusions. The earlier analytic/geometric lemmas were not fully read or independently verified. Their older status discrepancy is recorded, not resolved.
+- Khuri2009.txt all314lines: full paper, including Theorem1/reduction, curvature ODE, Lemmas2–3, integration-by-parts calculation and Darboux reconstruction appendix. No new proof claimed for these operations.
+
+Searches: smooth/local nonisometric immersion, prescribed singular sets, generic flat jets; primary nonembedding papers and their cited construction. Other search results, including discussion sites and general transversality articles, are not proof sources. No exhaustive citation tracing or worldwide priority conclusion.
+
+No exact target frozen. No nested agents, shared/author edits, staging, commits, manuscript/Lean work or publication. Author Myeongjin Kang; no affiliation. Original screen prose CC BY4, original verifier MIT. All PDFs, extracts and pinned manuscript files remain private third-party inputs.
+
+Pre-seal identity check caught a basename collision between the source figure pulse.tex and section pulse.tex. The figure was fetched again at its pinned URL into private/figure-pulse.tex, checked against its original hash, and the source receipt was corrected. The section proof extract was unaffected; final verification requires unique local source paths. No failed preliminary manifest is the final seal.
