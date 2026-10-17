@@ -84,17 +84,20 @@ def main():
     pdf='output/pdf/continuum-coulomb-qma.pdf'
     assert (build/pdf).read_bytes()==(manuscript/pdf).read_bytes(),'PDF byte drift'
     pages=[]
-    expected_pages=sorted((manuscript/'checks/pages').glob('page-*.png'))
+    visual=json.loads((manuscript/'checks/visual-review.json').read_text())
+    expected_pages=sorted(visual['pages'],key=lambda row:row['path'])
     fresh_pages=sorted((build/'checks/pages').glob('page-*.png'))
     expected_count=json.loads((manuscript/'checks/build-receipt.json').read_text())['pdf_pages']
+    assert visual['status']=='ALL_PAGES_VIEWED_CLEAN' and visual['pdf_sha256']==sha((build/pdf).read_bytes()),'visual PDF identity'
     assert len(expected_pages)==len(fresh_pages)==expected_count>0,'page count drift'
-    assert [p.name for p in fresh_pages]==[p.name for p in expected_pages],'page inventory drift'
-    for n,page in enumerate(expected_pages,1):
-        name='checks/pages/'+page.name;data=(build/name).read_bytes()
-        assert data==(manuscript/name).read_bytes(),('render drift',n)
-        pages.append({'page':n,'sha256':sha(data),'identical_to_reviewed_page':True})
+    assert [p.name for p in fresh_pages]==[Path(row['path']).name for row in expected_pages],'page inventory drift'
+    for n,row in enumerate(expected_pages,1):
+        name=row['path'];data=(build/name).read_bytes()
+        assert row['viewed'] is True and row['findings']==[],'page not inspected'
+        assert sha(data)==row['sha256'],('render hash drift',n)
+        pages.append({'page':n,'sha256':sha(data),'identical_to_reviewed_page':True,'identity_method':'SHA256 matches sealed visual-review record'})
     for name in ['build-receipt.json','main.log','compiler.txt']:shutil.copyfile(build/'checks'/name,work/('pdf-'+name))
-    receipt={'status':'PASS_RELEASE_CHECKS','archive_sha256':sha(archive.read_bytes()),'manifest_sha256':a.manifest_sha256,'gate_sha256':a.gate_sha256,'deterministic_reassembly_byte_identical':True,'fresh_pdf_sha256':sha((build/pdf).read_bytes()),'fresh_render_pages':pages,'cases':cases,'Lean_rebuilt':False,'no_new_visual_claim':'All fresh page bytes equal the individually inspected manuscript-review pages.','scope':'Integrity/reproduction checks only; no theorem/priority/acceptance/publication inference.'}
+    receipt={'status':'PASS_RELEASE_CHECKS','archive_sha256':sha(archive.read_bytes()),'manifest_sha256':a.manifest_sha256,'gate_sha256':a.gate_sha256,'deterministic_reassembly_byte_identical':True,'fresh_pdf_sha256':sha((build/pdf).read_bytes()),'fresh_render_pages':pages,'cases':cases,'Lean_rebuilt':False,'no_new_visual_claim':'All fresh page hashes match the sealed individually inspected manuscript page records.','scope':'Integrity/reproduction checks only; no theorem/priority/acceptance/publication inference.'}
     (work/'receipt.json').write_bytes(dump(receipt))
     shutil.rmtree(clean);shutil.rmtree(build)
     (work/'reassembled.zip').unlink();(work/'symlink.zip').unlink()
