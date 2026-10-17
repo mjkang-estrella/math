@@ -2,7 +2,7 @@
 
 ## Active target: ten additional frontier results
 
-The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **8/10 internally accepted results**: R023–R030. [R030](findings/R030-doubling-rectifiable-nonembedding-curves.md) constructs an ambient-doubling rectifiable curve in every infinite-dimensional real Banach space that admits no finite-dimensional bi-Lipschitz embedding, conditional on the pinned source theorem. All four reviews and release checks pass; the full theorem remains prose with scoped Lean support. R023–R029 are [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md); R030 submission is underway. Research continues toward 10/10.
+The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **8/10 internally accepted results**: R023–R030. [R030](findings/R030-doubling-rectifiable-nonembedding-curves.md) constructs an ambient-doubling rectifiable curve in every infinite-dimensional real Banach space that admits no finite-dimensional bi-Lipschitz embedding, conditional on the pinned source theorem. All four reviews and release checks pass; the full theorem remains prose with scoped Lean support. All eight results are [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md). Research continues toward 10/10.
 
 ## Historical target: twenty substantial findings
 
