@@ -1,0 +1,15 @@
+# Frozen scope O234: bounded spectral outliers at all temperatures
+
+For every K<infinity, every sequence of deterministic real diagonal N-by-N matrices Lambda_N with operator norm at most K, every compactly supported probability law mu for which their empirical eigenvalue measures converge weakly to mu, and every real theta such that max spec(Lambda_N) tends to theta, the following holds. Necessarily theta >= max supp(mu). There is NO lower-edge convergence assumption, no restriction on the number or positions of bounded lower outliers, and no restriction on the number or locations of upper outliers beyond these hypotheses. In particular every sublinear number and every finite number of positive outliers is included. Atomic and point-mass laws are included.
+
+For Haar U_N in O(N), under any joint coupling across dimensions, define for every beta>=0
+P_N(beta)=N^(-1) log(2^(-N) sum_{sigma in {-1,1}^N} exp[(beta/2) sigma^T U_N^T Lambda_N U_N sigma]).
+Then the expectations and almost surely the random functions P_N(beta) converge, locally uniformly in beta in [0,infinity), to F(beta_*mu,beta theta), where beta_*mu is the pushforward by multiplication by beta. Equivalently at beta=1 the limit is
+F(mu,theta)=inf_{nondecreasing measurable p:(0,1)->[0,1]} {S(p)+(1/2) integral_0^1 R_(mu,theta)(D_p(r)) dr}.
+Here S is exactly the pinned source Gaussian-recursion functional (its full definition will be reproduced in the proof), D_p(r)=1-r-integral_0^1(p(s)-r)_+ ds, and for x>0 b_(mu,theta)(x) is the unique b>theta solving integral(b-lambda)^(-1) mu(dlambda)=x if such a solution exists, otherwise theta. Set R_(mu,theta)(x)=b_(mu,theta)(x)-1/x and R_(mu,theta)(0)=integral lambda mu(dlambda). The beta=0 value is zero. Counting-measure normalization adds log2.
+
+This is the complete target. It does not assert overlap laws, derivative convergence, rates, unbounded spectral norms, non-Haar eigenvectors or a magnetic-field theorem. It is not the annealed spherical integral. No failed proof may be replaced by a positive-temperature window, a fixed-rank-only case, or a no-outlier case.
+
+Proof plan: bounded lower-outlier deletion via ordered derivatives of convex symmetric expected pressure; quantitative finite-N rank-k versus rank-one comparison using a flat bulk block, a finite quadratic net and Haar concentration; source application at fixed positive spike fraction; uniform continuity of the capped transform as that fraction tends to zero; spectral sandwich for all outlier configurations; rational-temperature concentration plus Lipschitz interpolation. Feasible partial formal support consists of actual finite projection/net and partition-sum inequalities and ordered finite-coordinate bounds, without pretending to formalize the spin-glass formula.
+
+Chronology: the feasibility argument and primary/history comparison were developed BEFORE this freeze and are preserved separately. This freeze precedes writing the complete proof and adversarial checks. It is not a retrospective claim that the initial heuristic was a frozen theorem. No independent correctness/contribution verdict is asserted.
