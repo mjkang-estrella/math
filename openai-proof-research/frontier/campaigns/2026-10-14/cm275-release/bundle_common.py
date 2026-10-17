@@ -55,7 +55,7 @@ def gate_check(gate):
     require(gate.get('status') == 'ALL_REVIEW_GATES_PASS', 'final independent gate still pending')
     expected = {'proof': 'PASS_FULL_CM275',
                 'contribution': 'SUBSTANTIAL',
-                'formal': 'PASS_SCOPED_SUPPORT', 'manuscript': 'PASS_MANUSCRIPT'}
+                'formal': 'PASS_SCOPED_SUPPORT', 'manuscript': 'PASS_FULL_MANUSCRIPT_CM275'}
     require(gate.get('verdicts') == expected, 'required verdicts missing or different')
     require(gate.get('full_claim_unchanged') is True, 'scope not bound')
     require(gate.get('full_CM275_formalized') is False, 'unsupported full formal claim')
@@ -82,4 +82,4 @@ def directory_set(names):
         result.update(str(q) for q in p.parents if str(q)!='.')
     return result
 
-EXPECTED_ANCHORS = {'fresh-analytic-discovery-r26': {'file': 'output-manifest.json', 'sha256': '957291975356455fcb76bffd1af3fbaad1d344921049b9f9bf7d9ecdd09b2299'}, 'cm275-proof-r1': {'file': 'output-manifest.json', 'sha256': 'beb36630630f6319ba266a9dfaf50d3f57ad0fce2bc312b490cd27dbbb582257'}, 'cm275-contribution-r1': {'file': 'output-manifest.json', 'sha256': '7ee0388a2964746bb5ea4a9d55ecb446784281e647d219bbaf1ed291a711928e'}, 'cm275-formal-v1': {'file': 'output-manifest.json', 'sha256': 'c834b31ddf0c9c5665146d4456ee792a876f446341ad00da681cb1981a3c76e6'}, 'cm275-manuscript-r1': {'file': 'manifest.json', 'sha256': 'bdb61d89b0d52cbfd4dbc2a68272235958560e28677aeb3029488c8895388e61'}, 'cm275-formal-review-r1': {'file': 'output-manifest.json', 'sha256': 'a9df4500bf782df3b24bc9138d625502c3f3bae864b226242f23091f8a385d86'}, 'cm275-manuscript-review-r1': None}
+EXPECTED_ANCHORS = {'fresh-analytic-discovery-r26': {'file': 'output-manifest.json', 'sha256': '957291975356455fcb76bffd1af3fbaad1d344921049b9f9bf7d9ecdd09b2299'}, 'cm275-proof-r1': {'file': 'output-manifest.json', 'sha256': 'beb36630630f6319ba266a9dfaf50d3f57ad0fce2bc312b490cd27dbbb582257'}, 'cm275-contribution-r1': {'file': 'output-manifest.json', 'sha256': '7ee0388a2964746bb5ea4a9d55ecb446784281e647d219bbaf1ed291a711928e'}, 'cm275-formal-v1': {'file': 'output-manifest.json', 'sha256': 'c834b31ddf0c9c5665146d4456ee792a876f446341ad00da681cb1981a3c76e6'}, 'cm275-manuscript-r1': {'file': 'manifest.json', 'sha256': 'bdb61d89b0d52cbfd4dbc2a68272235958560e28677aeb3029488c8895388e61'}, 'cm275-formal-review-r1': {'file': 'output-manifest.json', 'sha256': 'a9df4500bf782df3b24bc9138d625502c3f3bae864b226242f23091f8a385d86'}, 'cm275-manuscript-review-r1': {'file': 'output-manifest.json', 'sha256': '2dfc87ffef99fc8dceb4b50549aa835a0340075bdd502c2050b2acb4db4d5278'}}

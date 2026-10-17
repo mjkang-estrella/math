@@ -1,6 +1,6 @@
 # Quantum verification of full-continuum Coulomb energy with unit nuclei
 
-Myeongjin Kang, no affiliation. Release preparation: the full proof, contribution and scoped-formal reviews are adopted; final independent manuscript review adoption remains pending. Campaign acceptance and public submission are separate parent actions.
+Myeongjin Kang, no affiliation. All four independent internal review gates are adopted. Campaign acceptance and public submission are separate parent actions.
 
 The theorem proves uniform QMA membership for the electronic Coulomb spectral-infimum problem with explicitly listed distinct rational unit-charge nuclei, unary electron number, binary rational thresholds and gap at least the reciprocal input length. It uses the full spinful antisymmetric form on all of space and omits nuclear repulsion. There is no binding, attained-ground-state, separation, bounded-diameter, supplied-basis, selected-spin or state-preparation promise. Combining membership with the stipulated pinned source hardness theorem yields QMA completeness for the same problem.
 
@@ -10,4 +10,4 @@ The candidate author also wrote the manuscript. The contribution reviewer implem
 
 The full continuum theorem is not formalized. Lean proves 30 supporting theorems with 36 public declarations and 14 additional control theorems. Exact interfaces and omitted analytic and quantum-complexity steps are described in FORMAL-COVERAGE.md. REPRODUCTION.md identifies the portable archive verifier and the separate fresh source and typesetting workflows.
 
-The release selects original project material and public manuscript files. External source bodies, primary literature PDFs/texts and compiler/dependency objects are excluded. Earlier full-workspace manifests and verifiers retain their original input inventories; they are provenance records, not portable-subset reproduction commands. FINAL-GATE.json, once adopted, binds the actual final review artifacts and package anchors without rewriting historical statuses.
+The release selects original project material and public manuscript files. External source bodies, primary literature PDFs/texts and compiler/dependency objects are excluded. Earlier full-workspace manifests and verifiers retain their original input inventories; they are provenance records, not portable-subset reproduction commands. FINAL-GATE.json binds the actual final review artifacts and package anchors without rewriting historical statuses.

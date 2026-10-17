@@ -1,6 +1,6 @@
 # Verification and reproduction
 
-Final independent artifact review adoption is pending. A distributable archive can be assembled only after FINAL-GATE.json binds all four adopted reviews. Supply its separately delivered hashes when checking an archive or a clean extraction:
+FINAL-GATE.json binds all four adopted internal review gates. Supply its separately delivered hashes when checking an archive or a clean extraction:
 
     python3 -B verify_bundle.py /path/to/archive.zip --manifest-sha256 HASH --gate-sha256 HASH
 
