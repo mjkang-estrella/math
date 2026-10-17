@@ -1,0 +1,13 @@
+# History and disposition
+
+This round produces no substantial candidate. Parent requested a clean checkpoint before possible independent O217 review; no O217 author artifact was read. Root family122 circular-trace reconstruction remains reserved.
+
+Family185 was initially considered after a lexical history search. Parent supplied a concrete missed history pointer: `fresh-structural-discovery-r21/candidate.md` and `checkpoint.md`. Those were read completely, along with the relevant NEW-TEN disposition near line792. They already develop the full arbitrary-countable-matroid connected self-dual construction through finite-error rank invariance and symmetric one-exchange thickening. That chain is excluded; no finitary/cofinitary/tame/representable narrowing or adjacent rescue is attempted. The initial limited canonical search did not justify eligibility. The three fetched185 sections were read before this correction; other185 inputs are authenticated but unread.
+
+Other bounded history screens found old developed178/180/188/190/192/200/208/210/334/354 routes or source-paid corollaries; this round does not reopen them. In particular 188 is the prior r29 rooted-count/collision screen; 151 is the parent's finite-C^r parameter-retuning screen. Mere keyword hits were not mathematical eligibility clearance.
+
+For354 the exact additional read was I43 lines1–85, all I249 report and all I263 report. I43 Section1.2 already gives fixed-volume quadratic stability from the source equality list plus classical local stability, and explains why distance only to the winning phase cannot have a uniform positive constant across a transition. I249 develops the full nested ball–tube contact target, and I263 supplies its later proposed nonlinear lower bound. This is a concrete developed chain, not merely a catalogue occurrence. It is excluded without reopening or reviewing its mathematical correctness. The broad first354 search accidentally matched hash substrings and printed truncated output; that output is not claimed read. `history354.json` is a later filtered exact-term list, still only a search record.
+
+Family171 yielded the precise pre-freeze barrier in `screen-171.md`. No full target was frozen, solved, disproved at r=3/4, or shrunk. The r>=5 obstruction and cube-host parity coloring are elementary credited facts, not substantial nominations. No numerical evidence is used.
+
+Original prose: Myeongjin Kang, no affiliation, CC BY4.0. Original verifier code: MIT. Third-party source bodies in `private/` are retained only as private research inputs and are not relicensed or prepared for public upload. All earlier sealed packets remain unchanged.
