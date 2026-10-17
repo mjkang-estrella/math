@@ -1,0 +1,15 @@
+# Checker and build provenance
+
+Original code is MIT; author Myeongjin Kang. No third-party code or manuscript is copied here.
+
+- `inherited/author.py` is an unchanged byte copy of fresh-arithmetic-discovery-r4/verify_math.py. It was written in the discovery task, using bitmasks for exact deletion boundary comparisons. Its outputs are finite diagnostics, not a universal proof.
+- `inherited/reviewer.py` is an unchanged byte copy of seymour-s2-proof-r1/check_mechanisms.py. It was written independently in the proof-review task, using explicit sets. Its repository authentication prefix expects private source files and is retained for provenance only, not used by the public reproduction command.
+- `reviewer_portable.py` is an explicitly modified adapter, generated from the preceding file by `prepare_support.py`. The mathematical functions and entire enumeration loop are unchanged. Only the repository/source authentication prefix and output-receipt suffix of `main()` are replaced by a returned diagnostic-count dictionary. The inherited file is not overwritten. `run_checks.py` authenticates both versions and verifies the exact unchanged source spans before execution.
+- `run_checks.py`, `build.py`, `verify_package.py`, `freeze.py`, and `prepare_support.py` are manuscript packaging code. They are not independent mathematical reviewers. `run_checks.py` requires both diagnostic executables, exact expected counts, and the false-shortcut witness. No missing check is skipped or accepted by default. It writes no files on a normal run.
+- `prepare_support.py` is a one-time repository handoff assembler; it is excluded from the public allowlist. Public recipients do not need it or any private input.
+- `build.py` invokes Tectonic, rejects layout/reference warnings, extracts text and renders every page through Poppler. Manual review of those rendered pages is recorded separately.
+- The package verifier checks exact file membership, lengths and SHA-256 values against a detached-hashable public manifest. Its success establishes byte consistency only. The optional expected manifest hash must come from a trusted external record; a self-consistent malicious bundle is not authenticated by itself.
+
+Exact byte identities, origin paths and adaptation descriptions are in `checker-identities.json`. The independently reviewed universal argument is in the manuscript, not in these enumerations. The finite checks do not establish pruning, the minimum-counterexample construction, full S2 or literature novelty.
+
+The `formal/` subtree is an unchanged copy of the separately sealed implementation packet `seymour-s2-formal-r1`, whose output-manifest SHA-256 is dc95788a4e2d44c74c9c9a5d2a705641fc61baadc479cfe5903859911e01bc47. Its forty listed files and manifest were authenticated before copying. `formal/provenance.json` identifies its copied project runner and original code. Its implementation receipts are not an independent formal audit. The outer `formal-scope.json` binds the exact copied coverage record and lists the unformalized graph steps.
