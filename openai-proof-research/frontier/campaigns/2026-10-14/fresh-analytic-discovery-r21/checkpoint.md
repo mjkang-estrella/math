@@ -1,0 +1,11 @@
+# Round21 discovery checkpoint
+
+Myeongjin Kang; no affiliation. Original prose CC BY4.0.
+
+No target frozen. Retain all inherited exclusions and complete earlier brief readings. Family083 reserved by root; structural334 and arithmetic193 closing. Family271 and r20 families300/298 are not being resumed. Search the full catalogue and older developed histories before scope selection. Only this assigned directory may be edited.
+
+Family225 selected for pre-freeze nonlinear screen after older-history check: I26 uses the six-vertex source as an antecedent to triangular integer-height interfaces; that developed interface target is not resumed. Read full pinned introduction and Section7 through line735 (ordinary moments, neutral blocks, smooth tests, separated endpoint factor, offdiagonal desmoothing, finite-energy extension, pinned averages), plus full completion Section8. Earlier large display of full Section7 was truncated and is not a full-read claim. Twelve source TeX files downloaded and authenticated.
+
+A technical deduction is saved in neutral-block-exponential-bound.md: tracking the source's double commutator yields Lq<=Cq and uniform small exponential moments for one neutral block. It does not yield fixed-charge multiscale asymptotics. The proof pays no new substantial bridge and is not nominated. Read LOS Assumptions2.1–2.4, Theorem2.1 and its full L2 proof, plus DKLM Theorem4.5 and full Section21 proof body through its ending (Lemma21.3 geometric statement is present without a proof in that section). Primary finite-domain2610.07454 located; its operation is not being nominated.
+
+Parent-requested earlier-section check completed: Section2 exact finite-word expansion and complete proof plus two-twist overlaps; Section3 limits convention, row-normalization statement/first proof portion, joint tail/word-kernel/clustering complete proofs; Section4 endpoint continuation and diagonal boost/cocycle passages; Section5 exact overlap and full finite-trace/symbol proof. Explicit nonuniformity in growing words and finite twist identified. Saved a direct exact evaluation of the formal finite-charge bulk logarithmic symbol, but finite-matrix uniformity and spatial-source identification remain unproved. No freeze or nominee.
