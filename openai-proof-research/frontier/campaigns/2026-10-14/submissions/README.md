@@ -1,6 +1,6 @@
 # Public submissions: R023–R030
 
-All eight accepted campaign papers were published on Zenodo and MathDB on 2026-10-17 UTC (2026-10-16 local), under the user’s explicit submission authorization.
+The first eight accepted campaign papers were published on Zenodo and MathDB on 2026-10-17 UTC (2026-10-16 local), under the user’s explicit submission authorization.
 
 | Paper | Zenodo PDF and complete supporting package | MathDB PDF |
 | --- | --- | --- |
@@ -17,8 +17,10 @@ Zenodo titles and descriptions match the prepared metadata; both public file che
 
 These are AI-assisted preprints, internally reviewed under the disclosed stipulated source premises. Publication is not external peer review or worldwide-priority certification. Scoped Lean coverage and its omissions remain stated in each paper and package. Original prose is CC BY 4.0; original code/Lean MIT, with third-party rights preserved. MathDB carries the PDFs; paired Zenodo links above provide the full supporting packages. Frozen paper/package metadata remains historically unchanged.
 
-Campaign acceptance remains **8/10**. Public deposits do not add research findings.
+Campaign acceptance is **9/10**; R031 is prepared and not yet publicly submitted. Public deposits do not add research findings.
 
 R029 public verification: [Zenodo metadata and both checksums](r029-zenodo-verification.json), [all eleven MathDB PDF pages](r029-mathdb-verification.json). The MathDB margin stamp is the only raster difference; its first page was also visually inspected. No supplementary ZIP was accepted by MathDB; the entire ZIP is available on Zenodo.
 
 R030 public verification: [Zenodo metadata and both checksums](r030-zenodo-verification.json), [all nine MathDB PDF pages](r030-mathdb-verification.json). The platform stamp is confined to the left margin; all other page pixels match the final manuscript at72dpi. The public first page was visually inspected.
+
+R031 submission is authorized and ready locally. The latest session check could open T3 tabs but snapshots failed with missing automation-host/timeouts; fallback CUA had no browser. See [session evidence](../ts132-parent/publication-session-check.json). No login or publication success is claimed.
