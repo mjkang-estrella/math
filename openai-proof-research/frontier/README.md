@@ -2,7 +2,7 @@
 
 ## Active target: ten additional frontier results
 
-The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **7/10 internally accepted results**: R023–R029. [R029](findings/R029-complex-projective-plane-borsuk-nine.md) proves that the rank-one projector realization of CP2 in R8 has Borsuk number exactly nine, with all four independent reviews and final release checks passed. Supporting Lean lemmas are compiled; the full geometric and topological theorem remains prose. R023–R028 are [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md); R029 submission is underway. Research continues toward 10/10.
+The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **7/10 internally accepted results**: R023–R029. [R029](findings/R029-complex-projective-plane-borsuk-nine.md) proves that the rank-one projector realization of CP2 in R8 has Borsuk number exactly nine, with all four independent reviews and final release checks passed. Supporting Lean lemmas are compiled; the full geometric and topological theorem remains prose. All seven are [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md), with public metadata and files verified. Research continues toward 10/10.
 
 ## Historical target: twenty substantial findings
 

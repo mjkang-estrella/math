@@ -21,3 +21,7 @@ The [public release](../campaigns/2026-10-14/complex-projector-borsuk-release/RE
 Parent verification passed archive and clean-extraction integrity, byte-identical reassembly, the portable exact Appendix A certificate, byte-identical PDF rebuilding, and wrong-anchor, changed-file, missing-file, extra-file, symlink and pending-gate rejection. The independent manuscript reviewer inspected all eleven rendered pages. See the [final receipt](../campaigns/2026-10-14/complex-projector-borsuk-parent/final-package-verification.json). Hashes and finite diagnostics do not replace universal proof. Historical private-input verifiers are preserved with explicit portability limits; the top-level archive verifier is portable.
 
 Author: Myeongjin Kang, no affiliation. Original prose CC BY 4.0; original code MIT. Public submission is authorized and underway; no upload, DOI or external acceptance is asserted by this acceptance record. Research continues toward 10/10.
+
+## Public publication
+
+Published 2026-10-17 UTC: [Zenodo PDF and complete supporting package](https://zenodo.org/records/23432031), DOI `10.5281/zenodo.23432031`; [MathDB paper](https://mathdb.com/abs/2610.00029). Public title, author, description and both Zenodo checksums were verified. All eleven MathDB PDF page rasters match outside its narrow platform stamp. See [submission receipts](../campaigns/2026-10-14/submissions/README.md). Earlier pending statements record the acceptance-time state; publication is not external peer review.
