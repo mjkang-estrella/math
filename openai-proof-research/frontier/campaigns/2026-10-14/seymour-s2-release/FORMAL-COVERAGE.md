@@ -1,0 +1,5 @@
+# Formal coverage
+
+The full S2 graph theorem is not formalized. The eleven support declarations prove boundary integer/indicator consequences from an assumed identity; a finite-family aggregate gain from given anchor counts and bounds; finite-fiber and tagged-family strict cardinality inequalities; and complement/pruning objective arithmetic from explicit disjointness, retained-subset, deletion-budget and maximality inputs.
+
+Minimal counterexamples, protected subset deficits, graph boundary identities, strong connectivity, transitive blowup estimates, compatibility and anchor paths, graph/fiber identification, pruning existence, diagonal retention and admissibility remain in the prose proof. No upstream theorem or new graph conclusion is installed as a Lean axiom. The seven controls expose false weakenings and are not graph counterexamples or separate results. Exact declaration-level coverage is in the preserved implementation coverage.json. Independent formal audit evidence is required in FINAL-GATE.json before assembly.
