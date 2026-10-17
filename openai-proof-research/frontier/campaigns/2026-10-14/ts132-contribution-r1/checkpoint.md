@@ -1,0 +1,13 @@
+# TS132 independent contribution review
+
+Started independent contribution/eligibility gate for the exact frozen full TS132 target. No verdict, proof gate, or count inferred. Source truth stipulated at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. Author packet remains read-only. Only this unique review directory may be written.
+
+## Actual operation comparison checkpoint
+Read full frozen scope/candidate and all seven pinned source non-PDF files. Read Meiburg main mathematical body §§1–6, CKP introduction and exact pointer decoder/transitivity and complexity-transfer endings, plus §5 desensitization transfer. Read Chaubal–Gál specified DNF argument, Chakraborty cyclic/minterm construction and lower-bound proof endings, and Kulkarni–Tal §4. No independent proof verdict claimed.
+
+Residual operation is simultaneously obtaining head-constant exclusion bounded independently of p, alphabet r=o(sqrt(k)), and a transitive action on ALL row-position pairs. Source supplies ordinary/joint recurrences; Meiburg supplies Paley/cyclotomic symmetry proposal; OR balancing, composition, and wreath actions are antecedents. The direct one-coordinate injective difference labels have r=(k-1)/2, which fails the needed small r/M interface. Fixed-depth first-difference lift keeps r=(p-1)/2 while k=p^4 and forbidden head-constant sets have size <=81. Whether this short compatible construction clears the substantial gate is being assessed independently; author's claim that a technical judgment must exhibit a general theorem is not adopted.
+
+Relevant older developed chains read: I147 T2 is total bit-transitive randomized-vs-quantum quartic separation via an unpaid pointer compiler; r25 family192 is cyclic linear Fourier/degree using disjoint translates. Neither supplies the labeled tournament operation. Primary Kulkarni–Tal symmetry averaging concerns fractional bs and requires a low-sensitivity transitive function as input; it is not a compiler making arbitrary source functions transitive.
+
+## Final disposition
+Independent contribution verdict SUBSTANTIAL for the unchanged full TS132 target; no full-proof PASS, count, publication, or worldwide priority certificate. The substantive compatibility argument and the considered technical objection are explicit in review.md. Parent presentation requirement: remove author wording imposing a literal-reduction burden for TECHNICAL; preserve all antecedent credits and scope exclusions. Bounded current primary/history limits are in reading-and-limits.md. Full author copy and five primary bodies are retained privately. External-anchor identity verifier rejects wrong anchors, changed payload, extra files, and extra empty directories.
