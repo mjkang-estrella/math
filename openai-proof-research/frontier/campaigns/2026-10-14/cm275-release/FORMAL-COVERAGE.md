@@ -1,0 +1,13 @@
+# Scoped formal support
+
+Lean 4.34.1, compiler commit5045d0056413266e57c625dcd7c365b10e377c52, and mathlibd13f23b723b8a846827a245b89c10fc7d3f11612 compile 30 support theorems, six definitions and 14 separate control theorems. The final implementation manifest is c834b31ddf0c9c5665146d4456ee792a876f446341ad00da681cb1981a3c76e6. Independent scoped formal review passed at manifest a9df4500bf782df3b24bc9138d625502c3f3bae864b226242f23091f8a385d86. Its 16 additional semantic theorems and three definitions exercise actual aliases, S2 sign sectors and a nonorthogonal algebraic average; all were freshly compiled and inspected.
+
+The supporting statements establish:
+
+- Normalized finite-character Parseval and sample energy for an injective family of actual additive characters, preservation under explicit unit-modulus coefficient phases, and finite-group translation. Concrete ZMod characters and initial/centered residue-band injectivity are proved.
+- The actual character-twisted average of a supplied finite-group representation: its explicit formula, eigenvector range, fixed vectors, idempotence and commutation with a supplied commuting linear map. The permutation-sign character is instantiated. This is algebraic idempotence; Hilbert-space orthogonality is not claimed.
+- Conditional scalar transfer of four assumed energy errors, the fair two-test identity, quantitative YES/NO margins, approximation losses and soundness with subnormalized accepted weight.
+
+Lean does not construct continuous torus integration, real-translation phases, the product grid and spin realization, the spatial-spin permutation representation or its unitarity. The Coulomb form, Hardy/IMS estimates, exterior wedge, cap comparison, operator-domain/Ritz estimates, L2 translation and Lipschitz quadrature remain human proofs. Quantum instruments, circuit synthesis and uniform complexity, entangled-witness amplification, source hardness and QMA membership/completeness are also outside the formal development. The scalar energy and acceptance premises are explicit assumptions, not formal proofs of those analytic or circuit facts.
+
+The implementation includes nine deliberately false mathematical goals and four actual subprocess-wrapper checks. The runner requires the exact nine filenames and reports executed counts; missing or empty test directories reject before compiler invocation. The root freshly rebuilt all own sources and read their types/axioms and actual failure outputs. Only propext, Classical.choice and Quot.sound occur. Pinned precompiled dependency objects are reused; this does not rebuild or audit the compiler and entire library from source.

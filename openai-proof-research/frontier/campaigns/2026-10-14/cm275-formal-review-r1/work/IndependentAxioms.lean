@@ -1,0 +1,40 @@
+import IndependentControls
+import AlgebraicControls
+#check ReviewControls.centered_alias_counterexample
+#print axioms ReviewControls.centered_alias_counterexample
+#check ReviewControls.centered_endpoint_valid
+#print axioms ReviewControls.centered_endpoint_valid
+#check ReviewControls.duplicate_character_sample
+#print axioms ReviewControls.duplicate_character_sample
+#check ReviewControls.duplicate_character_energy
+#print axioms ReviewControls.duplicate_character_energy
+#check ReviewControls.duplicate_character_invalid_parseval
+#print axioms ReviewControls.duplicate_character_invalid_parseval
+#check ReviewControls.singleton_frequency_injective
+#print axioms ReviewControls.singleton_frequency_injective
+#check ReviewControls.nonunit_phase_energy
+#print axioms ReviewControls.nonunit_phase_energy
+#check ReviewControls.nonunit_phase_not_isometry
+#print axioms ReviewControls.nonunit_phase_not_isometry
+#check ReviewControls.trivial_representation_fixed
+#print axioms ReviewControls.trivial_representation_fixed
+#check ReviewControls.trivial_action_sign_zero
+#print axioms ReviewControls.trivial_action_sign_zero
+#check ReviewAlgebra.failure_weight_above_one_counterexample
+#print axioms ReviewAlgebra.failure_weight_above_one_counterexample
+#check ReviewAlgebra.negative_probability_counterexample
+#print axioms ReviewAlgebra.negative_probability_counterexample
+#check ReviewAlgebra.oblique
+#print axioms ReviewAlgebra.oblique
+#check ReviewAlgebra.involution
+#print axioms ReviewAlgebra.involution
+#check ReviewAlgebra.euclideanPair
+#print axioms ReviewAlgebra.euclideanPair
+#check ReviewAlgebra.involution_square
+#print axioms ReviewAlgebra.involution_square
+#check ReviewAlgebra.oblique_is_average
+#print axioms ReviewAlgebra.oblique_is_average
+#check ReviewAlgebra.oblique_idempotent
+#print axioms ReviewAlgebra.oblique_idempotent
+#check ReviewAlgebra.oblique_not_selfadjoint
+#print axioms ReviewAlgebra.oblique_not_selfadjoint
