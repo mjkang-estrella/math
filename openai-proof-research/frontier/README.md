@@ -7,7 +7,7 @@ accepted results**: R023–R028. [R028](findings/R028-two-seymour-vertices.md)
 proves the two-vertex Seymour conclusion under its stated pinned source
 premises, with all four independent reviews and final release checks passed.
 Supporting Lean lemmas are compiled; the full graph theorem remains prose.
-Public submission is authorized and in progress. Research continues toward 10/10.
+All six are [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md), with verified files and metadata. Research continues toward 10/10.
 
 ## Historical target: twenty substantial findings
 
@@ -46,7 +46,7 @@ The [database](https://mathdb.com/database) exposes Trending, Newest, Featured, 
 
 For example, the indexed [Schubert-varieties homepage snapshot](https://mathdb.com/?tag=schubert-varieties) reports 97/100 for a forced Navier–Stokes announcement, 84/100 for a cscK Yau–Tian–Donaldson counterexample claim, 79/100 for a Pierce–Birkhoff counterexample claim, 76/100 for a bicentralizer/classification claim, and 75/100 for an Arnold–Givental claim. The snapshot was indexed three weeks before retrieval on 2026-10-08; these are historical news scores, not current scores for our proposed work.
 
-The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Navier–Stokes, and the solved Poincaré conjecture. Featuring and numerical news significance must not be conflated. Browser access hit a Cloudflare verification page; readable search-index copies remain available. No submissions or claims have been posted to MathDB.
+The current homepage features Hodge, BSD, Riemann, Yang–Mills, P versus NP, Navier–Stokes, and the solved Poincaré conjecture. Featuring and numerical news significance must not be conflated. The earlier survey encountered Cloudflare verification. The six current campaign papers have since been submitted; their actual publication links are listed above.
 
 ## Current work
 

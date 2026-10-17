@@ -123,3 +123,7 @@ no separate accepted-result credit.
 Nothing has been submitted to Zenodo or MathDB. The local MathDB routing
 draft distinguishes this equality theorem from the credited complete
 inequality in record 392465. No public URL, DOI or endorsement is invented.
+
+## Public publication
+
+Published 2026-10-17 UTC: [Zenodo manuscript and supporting package](https://zenodo.org/records/23429974), DOI `10.5281/zenodo.23429974`; [MathDB paper](https://mathdb.com/abs/2610.00024). Files and metadata were verified; see the [submission receipt](../campaigns/2026-10-14/submissions/README.md). Earlier pending-submission statements above record the acceptance-time state. Publication does not imply external peer review.

@@ -96,3 +96,7 @@ retain their original meaning; this record supplies the later acceptance.
 Author: Myeongjin Kang, no affiliation. Original prose CC BY 4.0; original
 code MIT. Local Zenodo/MathDB metadata are prepared. No public upload,
 submission, DOI or external endorsement is claimed. Campaign continues at 5/10.
+
+## Public publication
+
+Published 2026-10-17 UTC: [Zenodo manuscript and supporting package](https://zenodo.org/records/23430013), DOI `10.5281/zenodo.23430013`; [MathDB paper](https://mathdb.com/abs/2610.00027). Files and metadata were verified; see the [submission receipt](../campaigns/2026-10-14/submissions/README.md). Earlier pending-submission statements above record the acceptance-time state. Publication does not imply external peer review.

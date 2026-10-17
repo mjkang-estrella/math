@@ -56,3 +56,7 @@ Author: Myeongjin Kang, no affiliation. Original prose CC BY 4.0; original code
 MIT. Public submission is authorized and being prepared; this acceptance record
 does not assert an upload, DOI or external acceptance. Earlier frozen pending
 metadata remains historical. Research continues toward 10/10.
+
+## Public publication
+
+Published 2026-10-17 UTC: [Zenodo manuscript and supporting package](https://zenodo.org/records/23430050), DOI `10.5281/zenodo.23430050`; [MathDB paper](https://mathdb.com/abs/2610.00028). Files and metadata were verified; see the [submission receipt](../campaigns/2026-10-14/submissions/README.md). Earlier pending-submission statements above record the acceptance-time state. Publication does not imply external peer review.

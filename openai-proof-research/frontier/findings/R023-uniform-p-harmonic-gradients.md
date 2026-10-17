@@ -118,3 +118,7 @@ identified in the bounded search. The publication copy lists Myeongjin Kang with
 for the paper/original prose and MIT for original code/Lean. Third-party
 notices are preserved. Final destination/account details remain outstanding. Nothing has
 been submitted to Zenodo or MathDB.
+
+## Public publication
+
+Published 2026-10-17 UTC: [Zenodo manuscript and supporting package](https://zenodo.org/records/23429943), DOI `10.5281/zenodo.23429943`; [MathDB paper](https://mathdb.com/abs/2610.00023). Files and metadata were verified; see the [submission receipt](../campaigns/2026-10-14/submissions/README.md). Earlier pending-submission statements above record the acceptance-time state. Publication does not imply external peer review.

@@ -117,3 +117,7 @@ Its bundle manifest SHA256 is
 Preparation-time pending/count text in frozen files is historical; this
 acceptance record supersedes that status without changing reviewed bytes.
 Nothing has been publicly uploaded or submitted to Zenodo or MathDB.
+
+## Public publication
+
+Published 2026-10-17 UTC: [Zenodo manuscript and supporting package](https://zenodo.org/records/23429983), DOI `10.5281/zenodo.23429983`; [MathDB paper](https://mathdb.com/abs/2610.00025). Files and metadata were verified; see the [submission receipt](../campaigns/2026-10-14/submissions/README.md). Earlier pending-submission statements above record the acceptance-time state. Publication does not imply external peer review.

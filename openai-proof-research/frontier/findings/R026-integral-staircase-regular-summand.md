@@ -125,3 +125,7 @@ two historical finite programs, 3,072 interface comparisons and all nine
 independent manuscript control groups without modifying the extracted tree.
 See the [final receipt](../campaigns/2026-10-14/staircase-parent/final-package-verification.json).
 Nothing has been publicly uploaded or submitted.
+
+## Public publication
+
+Published 2026-10-17 UTC: [Zenodo manuscript and supporting package](https://zenodo.org/records/23429994), DOI `10.5281/zenodo.23429994`; [MathDB paper](https://mathdb.com/abs/2610.00026). Files and metadata were verified; see the [submission receipt](../campaigns/2026-10-14/submissions/README.md). Earlier pending-submission statements above record the acceptance-time state. Publication does not imply external peer review.
