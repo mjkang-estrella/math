@@ -1,0 +1,1 @@
+Author of record: Myeongjin Kang; no affiliation. Original prose in this directory: CC BY 4.0. Original code (verify.py, checks/root_window_check.py): MIT License. No third-party source text is copied here. Third-party sources stay private in the author packet and are referenced only by path and hash.
