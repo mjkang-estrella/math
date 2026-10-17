@@ -1,0 +1,15 @@
+# Family259 parent pre-freeze screen
+
+Myeongjin Kang; no affiliation. Original prose CCBY4. No target frozen, nomination or count.
+
+The family259 introductory statement and full group-actions/conclusion files were read at the stipulated pinfd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. Eleven TeX/bibliography files were downloaded and Git-blob authenticated; retrieval is not full-body reading. Other proof bodies are not read here. The complete preprints-tree supplied the paths. Focused searches of iteration/report Markdown and campaign ledgers did not expose an older developed259 chain; this is bounded evidence only, no independent eligibility clearance.
+
+The source group is Gamma=F(a,b1,...,b99)*_J(J×<t>), J=<b1,...,b99,w>, w=ab1ab2...ab99a. It has free Bernoulli cost>=1+eta and finite-height actions X×Z/M of cost<=1+99/M, M>100. These inputs are accepted, not audited. The full low-cost graphing proof was read: all t edges, J generators on a tiny t-marker, a edges on99 consecutive height fibers, and the w relation propagates the a edges to all heights.
+
+The first possible target, finitely presented non-fixed-price examples, is already paid by the displayed group. It has the finite presentation on a,b1,...,b99,t with relations [t,b_i]=[t,w]=1. It is not a new deduction deserving a nomination.
+
+Attaining cost one using a profinite height is also a routine transfer. Take X×Zhat with action(x,z)g=(xg,z+chi(g)), Haar measure on Zhat. For every M the exact source graphing lifts from its quotient modM and still generates all group edges by the identical finite propagation. The t-marker proof still applies because t fixes height and its Bernoulli coordinates are independent. Thus cost<=1+99/M for every M and hence cost=1, using the standard lower bound for free infinite-group actions. No approximation or inverse-limit orbit claim is needed: each lifted graphing already generates the full orbit relation. This is a technical consequence, not a nomination. A singleton group identity set remains null by the Bernoulli factor.
+
+The more demanding possibility of a strongly ergodic cost-one action is not established by this construction. The infinite profinite rotation factor carries asymptotically invariant sets. The finite-height actions can have different spectral behavior at every fixed height, but the growing heights do not supply a uniform spectral gap for their inverse limit. No exact strong-ergodicity target has been frozen, and no claimed impossibility is inferred.
+
+A bounded primary-literature search located Abert–Weiss arXiv1103.1063 (Bernoulli maximal cost), Gaboriau's cost lectures, and Tucker-Drob arXiv1211.6395 (shift minimality). Their full proof bodies were not read, so they are leads, not additional theorem premises or a completed novelty comparison. No assertion of world priority, residual finiteness, linearity, specialness or any other new group property is made. In particular, no compatibility issue among stipulated inputs is used to manufacture a conclusion.
