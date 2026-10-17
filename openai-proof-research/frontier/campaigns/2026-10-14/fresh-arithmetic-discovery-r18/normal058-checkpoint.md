@@ -1,0 +1,9 @@
+# Full-normal 058 continuation: retained unresolved interface
+
+The inherited target is unchanged: for every connected normal compact Kähler complex space X, a semialgebraic projective-open universal cover should be biholomorphic to D×C^m×F, with D bounded symmetric and F simply connected normal projective. This is not proved or nominated in r18. The smooth argument from sealed r17 remains technical support, never a replacement target.
+
+The focused continuation reread Kollár–Pardon's complete Theorem 20 proof (retained r17 kp.txt 440–610) and compared the exact primary contracts. Its cycle-space proof starts with a given morphism from a normal PROJECTIVE source to a smooth projective aspherical base. Claudon–Höring's Theorem 1.5 still starts with a compact Kähler MANIFOLD. Search results for singular Kähler Albanese theorems either returned those papers or imposed extra singularity/anticanonical assumptions. No applicable full-normal theorem was retrieved.
+
+The graph-degree operation is already paid by the real-Kähler cycle bounds retained in r17. The continuation did not construct a normal relative Albanese map with the exact fundamental-group, all-fiber flatness/normality and bundle properties required by the target, nor prove descent through a resolution's exceptional sets. Resolution is not an automatic replacement for those hypotheses. No rational-singularity, smoothness, projectivity, or finite-cover hypothesis was added to manufacture a theorem.
+
+This is a bounded unsuccessful bridge check, not a claim that the full-normal target is false or open in all current literature. No new primary PDF was fetched for this 058 continuation; the actual proof comparison is to the already retained and sealed r17 bodies. All r17 files and anchors remain unchanged. The distinct family063 route was pursued only after this exact unresolved disposition was preserved.
