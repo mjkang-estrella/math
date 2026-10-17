@@ -1,0 +1,48 @@
+# Provenance, exact reading limits, and contribution comparison
+
+Pinned source revision: fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. All22 source text files in receipts.json were fetched from raw GitHub at this commit. Each was matched to its Git blob SHA1 in the complete13,223-entry preprints-tree.json. sources/tree.json was not used. The original source truths are stipulated; nothing here audits their truth or exploits inconsistencies.
+
+## Source reading
+
+* Semialgebraic-universal-covers.../build/main.tex: entire wrapper, introduction, assembly, Remmert and Singer corollaries.
+* Its sections/history.tex and sections/quasiprojective.tex: complete.
+* Its sections/quotient.tex: complete1–808, in sequential chunks; the first and last chunks were read before the middle, then60–390 and391–750 repaired the gap. All guards, incidence, compactness, exhaustion, inverse and normal-descent operations were read.
+* Its sections/groups.tex: complete1–535, chunks1–220,220–410,411–535. The exact Kähler interfaces of core, Liouville, special abelianity, compactifiable covers, Selberg and symmetry were inspected.
+* Its sections/compact.tex: complete1–605. An initially truncated combined display was repaired by335–605; the earlier output included1–335. In particular both full integral graph marking and compact-factor proof were read.
+* Its sections/windows.tex:1–120; the full `win:construction` statement484–559 and proof opening through575;820–932, including full `win:tower-properties`. The intervening induction is NOT claimed read. Its lower theorem is stipulated at its exact general ambient/local-pseudoconvex scope.
+* Its sections/preliminaries.tex and localization.tex: file-level keyword/label navigation only; not body-read. Their internals are not independently checked.
+* Symmetry-of-semialgebraic-bounded-domains.../build/paper.tex: complete wrapper/introduction/main theorem and scope/history. Five proof-body sections fetched, NOT read. No new use beyond its exact theorem scope.
+* Family057 introduction: main theorem, compactifiable-cover corollary and full proof, with the truncated compactifiable proof repaired by195–270. Most of the combined introduction display was visible, but only the explicitly mentioned interfaces are claimed as deliberate complete reads; its group/spectral/descent proofs were not fetched or read in r17. Its compactifiable-cover statement is already stronger than an unqualified recollection of its title.
+* Source bibliographies: entries locating the relevant primary documents, not every reference's contents. README/figures otherwise fetched but not studied.
+
+## Primary reading
+
+All retained URLs, exact PDF hashes, extracted-text hashes and local names are in primary-receipts.json. These are actual primary PDFs or authors' research texts, not secondary generated summaries.
+
+1. Claudon–Höring with Campana appendix, *Compact Kähler manifolds with compactifiable universal cover*, BSMF141(2013),355–375, original published numdam PDF. `cl-h.txt`1–220 (full introduction statements and initial definitions);286–375 (tail of cycle-space compactification, Cor2.6 and §2.B real-Kähler graph degree, through Lemma2.7 opening);635–810 (proof ending of preceding theorem, full Theorem3.1, Proposition1.4 proof, Theorem1.5 proof and Remark3.3, appendix opening). Other parts were not fully read. The key compared operation is §2.B: morphism graphs are measured against fixed Kähler forms and bounded degree gives finitely many cycle components. Theorem1.5 retains a manifold hypothesis.
+2. Kollár–Pardon, *Algebraic varieties with semialgebraic universal cover*, arXiv1104.2309v2. `kp.txt`440–610: Remark18, Definition19, Theorem20 and complete proof through its ending, and Theorem3's proof. Other sections, including the proofs of its imported topological results, were not read. The normal-source bundle theorem explicitly assumes projectivity. Its isomorphism loci need bounded graph degree; unbounded discrete automorphisms are explicitly discussed.
+3. Ivashkovich2008, *Extra extension properties of equidimensional holomorphic mappings*. `ivashkovich.txt`1–158, with110–158 reread separately. Cor2(a) explicitly allows compact Kähler quotient and arbitrary complex ambient. Its proof is stated there as a consequence of Theorem4; the original1992 proof and later sections are not claimed read. PDF text has a control-character accent for “Kähler”; the extracted English theorem remains legible. No visual page reading or OCR is claimed.
+4. Poczobut, *An algebraic variant of the Fischer–Grauert theorem*, arXiv2108.10041v1. `fischer-grauert-variant.txt`1–40, especially exact classical Theorem1.1 reproduced at29–33. The original1965 Fischer–Grauert article was sought but not retrieved. Its theorem is invoked as classical, with this precise secondary-to-original attribution; Poczobut's algebraic theorem/proof is not invoked or claimed read. This is a primary research article quoting a classical theorem, not a claim of reading FG65.
+5. Forstnerič–Prezelj, *Oka's principle for holomorphic fiber bundles with sprays*, retained arXivmath/0305238v1. `oka.txt`1–68: definitions, exact Theorem1.3 and complex-Lie-group/principal-bundle examples. Full Oka proof not read or re-proved. The section theorem is used as an established primary input.
+
+Two web search batches oriented the compactifiable Kähler comparison and the real-class graph-volume precedent, followed by a Fischer–Grauert source search. Search snippets are not used to assert novelty or an exact theorem beyond the retained bodies. Lieberman's original1978 paper was not fetched; no original-proof reading is claimed. The actual graph-volume comparison is anchored to CH2013's explicit §2.B instead.
+
+## History and chronology
+
+Read AGENTS.md and the governing r16 brief completely, using r17 ownership as specified by the parent. Read complete r5–r16 arithmetic checkpoints; r7/r8 and r13/r14 were separately redisplayed to repair the initial combined-output truncation. The quoted r16 manifest/checkpoint anchors were supplied by the parent; this task did not modify or independently reopen its seal.
+
+The complete372-family title list from CONTENTS was read. Catalogue bodies for042,047,058,203,209,210 were read; these orient source selection only. Canonical search hit lists then exposed prior Oka, modular, Gersten and Foulkes work. The first four-screen section of I104 was actually read through its exact scope definitions and primary comparisons; its later all-length proof was not read in full. I102/I98 developed Oka work was identified by history records and current independent-review descriptions; those full proof bodies were not re-read here. No new Oka theorem was developed.
+
+NEW-TEN and tasks.json were read as current campaign context for status/exclusions. Their first combined shell display was severely truncated. Later task-disposition output and the selected70–124 slice recovered the relevant homological/Gersten and technical-history exclusions; NEW-TEN350–570 was read completely, while571–790 was again truncated in the middle. The first/main and latest status portions and supplied current parent brief govern the count/model/publishing rules. **This is not a fresh full semantic read of every task, every ledger line, or every old source.** Snapshots are retained for independent inspection, not represented as having been exhaustively read.
+
+Focused canonical Markdown searches, excluding nested copied inputs for the operative058 screen, found no developed semialgebraic/Kollár–Pardon chain. This is bounded negative history evidence, not worldwide novelty clearance. With no substantial nomination, no final eligibility certificate is asserted.
+
+Selection chronology: history exclusions042/203/209/210 → source058 main/companions → exact full window scope and quotient/compact interfaces → real-class graph bound → actual CH/KP comparison → recognition that the smooth support is technically paid and the normal bundle contract is unproved. Early “compact-Kähler” messages had not specified singularity scope; the checkpoint explicitly records that ambiguity and retains the faithful normal-space target rather than silently treating the smooth case as a full solution.
+
+## Feasible formal interface and adversarial checks
+
+The proper map and geometric identifications remain explicit hypotheses in the support lemma. A Lean algebra fragment could certify binomial expansion and positivity of the mixed intersection pairing under an abstract positive multilinear interface. A separate finite-set lemma could formalize the logic that finitely many connected components have a fixed marking and are closed under union. Neither would prove existence of graph parameter spaces, homotopy marking, cycle-space topology, or a Kähler Albanese theorem. No Lean implementation or formal-completion claim is made.
+
+Checks explicitly preserved: an ambient projective presentation does not make X projective (a nonprojective complex torus is covered by C^n); real mixed intersections are constant by closedness, not by being integers; only graph degree is integral, and a finite union of Chow spaces handles the bound; class preservation is not preservation of a differential form; a finite étale Albanese base change can descend the smooth bundle in the torsion-free abelian case, but a resolution is not such a base change; no normal bundle theorem follows from a smooth theorem just by resolving; the bounded-domain companion is already quotient-independent.
+
+No new result is nominated. These exact limitations are mathematical scope information, not an integrity warning: the verifier only establishes file identities.
