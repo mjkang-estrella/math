@@ -1,0 +1,9 @@
+# Scoped formal coverage
+
+The full O217 probability theorem is not formalized. The sealed implementation contains28 support theorems and43 public declarations, plus8 semantic-control theorems. Exact types, standard-axiom reports and declaration-to-human mappings are in the selected o217-formal-v1 packet.
+
+Formalized: actual finite i<j edge counting; Boolean-spin vertex involution; concrete Hamiltonian and positive exponential partition/log identities; smoothness of the coordinate log partition; deleted-coordinate third-derivative oddness under star reflection, including arbitrary observables using mathlib total-derivative conventions; exact square-Taylor remainder algebra and a bound from explicit lower-order scalar remainder premises; real quadratic bootstrap and scalar centering corrections; finite-size edge-count cancellations.
+
+Not formalized: probability spaces/product laws, expectation/moment matching, quantitative cumulant and mixed-derivative bounds, Taylor's theorem supplying scalar premises, Lindeberg telescoping, finite-hybrid maximum and deleted-coordinate restoration, random-variable variance identities, stipulated Gaussian limiting law/prefactor, Levy/Slutsky transfer or eventual positivity. Formal cubic oddness alone supplies no quantitative regularity for arbitrary observables.
+
+Lean4.34.1 and mathlibd13f23b723b8a846827a245b89c10fc7d3f11612 are pinned. Own source is built fresh; compiled third-party dependencies are trusted cached inputs and not independently rebuilt. The independent formal audit passed with no required repairs; it freshly rebuilt the source and added eight boundary theorems, including actual n2 cubic-zero controls. The independent manuscript audit also passed with no required repairs. No acceptance follows from compilation or hashes alone.
