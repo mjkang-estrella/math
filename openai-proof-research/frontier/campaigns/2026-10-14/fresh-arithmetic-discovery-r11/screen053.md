@@ -1,0 +1,11 @@
+# Family 053: no target freeze
+
+The complete source introduction and strata recipe were read, together with detector lines 1–430 and 650–763 and support lines 1–110 and 470–563 (LF line numbering). All 13 non-PDF blobs in this sole catalogue companion were authenticated against the complete pinned tree. Remaining proof sections are retained but not claimed read.
+
+The actual source gives one class Y in degree 2D on n=3D markings, g=10^60 and D=binom(g,3), vanishing in rational Chow but outside the exact original Pixton span. The span already includes outer-graph insertion and is an ideal stable under all gluing/forgetting pushforwards and pullbacks (prop:known-relations). Routine propagation does not enlarge that conclusion meaningfully.
+
+The detector is supported only on rational-tails graphs with one genus-g root. Its actual nonmembership test evaluates the color-alternated cubic product to a nonzero scalar times the top exterior monomial in all theta_ijk. The displayed support proof uses the full complete-triple color supply; varying its huge constants or genus would mainly replay the same operation. No genus-uniform theorem is silently inferred from a proof stated at fixed g.
+
+A possible substantially different ambition would concern indecomposable new relations beyond adjoining finitely many smaller-genus generators, or relations on spaces with dramatically fewer markings. Neither follows merely from t(P)=0: arbitrary newly adjoined Chow relations are not known annihilated, and the required closure under repeated operations would have to be proved. The supplied cutoff t_m=0 in degree greater than m explains one concrete obstruction to preserving detection under naive removal of many labels. Forgetting changes degree as well as arity, so that cutoff alone is not asserted to rule out every pushforward.
+
+No complete mechanism for those stronger targets was found; no target, independent verdict or nomination is frozen. This is a bounded source-operation screen, not a worldwide novelty conclusion or an upstream audit. No primary-body comparison was completed for a new claim because no viable new operation emerged. History keyword search found no developed Pixton route in proposals/iterations/reviews, but this is not a positive eligibility certificate.
