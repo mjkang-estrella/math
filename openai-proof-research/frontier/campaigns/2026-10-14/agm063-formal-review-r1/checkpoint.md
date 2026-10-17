@@ -1,0 +1,7 @@
+# Completed independent formal review
+
+PASS_SCOPED_SUPPORT; no required repairs. All 35 public declarations / 29 support theorems match the six requested abstract interfaces. The fresh build, all eleven original proved controls, seven original false-goal controls and four original wrapper controls passed. Nine new boundary theorems, five new false-goal controls, four independently invoked wrapper CLI controls and exact-inventory mutation tests also passed.
+
+Read review.md for semantic findings, reading-limits.md for exact trust/reading boundaries, declaration-audit.json for every declaration, and rebuild-copy/review-build/ for actual fresh logs. Copied historical logs under rebuild-copy/validation/ are not fresh evidence. The original implementation remains sealed at the externally supplied ca6bdb0cccd691d0c8a94ff8ec3bfbd9ccdd87a64ba5b4cf344a1b1c73b8ad9c anchor.
+
+The review manifest has no exempt payloads. Run `python3 -B verify.py --anchor EXTERNAL_REVIEW_MANIFEST_SHA256` against the separately delivered anchor. The actual pre-seal fixture controls include positive, wrong anchor, changed, missing, extra file/directory, symlink and restored cases. Final positive/wrong-anchor executions are delivered externally to the parent, avoiding self-referential transcript hashes. Verifiers check identity only. No full classification formalization, acceptance, campaign count change, commit or upload is claimed.
