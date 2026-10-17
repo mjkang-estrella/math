@@ -2,7 +2,7 @@
 
 ## Active target: twenty additional frontier results
 
-The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **10/20 internally accepted results**: R023–R032. The user raised the target to twenty on 2026-10-17; ten further substantial results are required. [R032](findings/R032-continuum-coulomb-qma.md) proves uniform QMA membership for full-continuum electronic Coulomb energy with unit nuclei, including unbound spectral infima; stipulated source hardness gives completeness for the same problem. All four reviews and release checks pass; Lean support is scoped. R023–R030 are [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md); R031 and R032 submissions are resuming after the browser connection recovered. Internal acceptance is not external peer review or worldwide-priority certification.
+The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **10/20 internally accepted results**: R023–R032. The user raised the target to twenty on 2026-10-17; ten further substantial results are required. [R032](findings/R032-continuum-coulomb-qma.md) proves uniform QMA membership for full-continuum electronic Coulomb energy with unit nuclei, including unbound spectral infima; stipulated source hardness gives completeness for the same problem. All four reviews and release checks pass; Lean support is scoped. R023–R030 are [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md); The user stopped further uploads on2026-10-17 to focus on twenty accepted results; R031 and R032 remain local and unpublished. Internal acceptance is not external peer review or worldwide-priority certification.
 
 ## Historical target: twenty substantial findings
 

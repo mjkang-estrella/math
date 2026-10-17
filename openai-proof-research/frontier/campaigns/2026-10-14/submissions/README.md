@@ -17,12 +17,12 @@ Zenodo titles and descriptions match the prepared metadata; both public file che
 
 These are AI-assisted preprints, internally reviewed under the disclosed stipulated source premises. Publication is not external peer review or worldwide-priority certification. Scoped Lean coverage and its omissions remain stated in each paper and package. Original prose is CC BY 4.0; original code/Lean MIT, with third-party rights preserved. MathDB carries the PDFs; paired Zenodo links above provide the full supporting packages. Frozen paper/package metadata remains historically unchanged.
 
-Campaign acceptance is **10/10**; R031 and R032 are prepared and not yet publicly submitted. Public deposits do not add research findings.
+Campaign acceptance is **10/20**; R031 and R032 are prepared and not yet publicly submitted. Public deposits do not add research findings.
 
 R029 public verification: [Zenodo metadata and both checksums](r029-zenodo-verification.json), [all eleven MathDB PDF pages](r029-mathdb-verification.json). The MathDB margin stamp is the only raster difference; its first page was also visually inspected. No supplementary ZIP was accepted by MathDB; the entire ZIP is available on Zenodo.
 
 R030 public verification: [Zenodo metadata and both checksums](r030-zenodo-verification.json), [all nine MathDB PDF pages](r030-mathdb-verification.json). The platform stamp is confined to the left margin; all other page pixels match the final manuscript at72dpi. The public first page was visually inspected.
 
-R031 submission is authorized and ready locally. The latest session check could open T3 tabs but snapshots failed with missing automation-host/timeouts; fallback CUA had no browser. See [session evidence](../ts132-parent/publication-session-check.json). No login or publication success is claimed.
+Further uploads and browser work were **stopped by the user on2026-10-17**, to focus on twenty accepted research results. This supersedes the earlier submission authorization. No submission will resume without a new instruction.
 
-R032 submission is also authorized and ready: [prepared files and metadata](r032-prepared.json), [internal acceptance](../cm275-parent/acceptance.json). No public record or DOI is claimed yet.
+R031 remains ready locally and unpublished. R032 likewise remains local: [prepared files and metadata](r032-prepared.json), [internal acceptance](../cm275-parent/acceptance.json). Neither has a verified public record or DOI. The prepared artifacts and historical session evidence remain unchanged.
