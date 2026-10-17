@@ -1,0 +1,1 @@
+Myeongjin Kang; no affiliation. Original prose CC BY 4.0; original verifier code MIT. Private source and primary files retain their original authorship and rights and are not redistributed in the public commit. Source truth is stipulated at the named pin, not independently certified here.
