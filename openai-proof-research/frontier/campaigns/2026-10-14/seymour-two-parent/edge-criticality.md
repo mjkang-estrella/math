@@ -52,3 +52,25 @@ not a contradiction. They do not establish the full two-vertex assertion.
 The exact source-premise scope and any integration into its pruning proof
 remain the active author's responsibility. No numerical test is used to
 claim a universal graph conclusion.
+
+## Further consequence conditional on the protected subset-deficit lemma
+
+A minimal sink-free counterexample D is strongly connected. A proper
+terminal strong component would itself be sink-free (a singleton terminal
+component would be a sink of D); its two good vertices supplied by order
+minimality would remain good in D. This contradicts uniqueness.
+
+Suppose the author's protected lemma has established the source-style
+strict subset deficit for every nonempty S contained in V(D)\{z}. Then w
+has an in-neighbor other than z. Indeed, otherwise strong connectivity
+and z's unique outgoing neighbor give F(S)=V(D)\{w} for S=V(D)\{z}:
+every vertex other than w has an in-neighbor in S. Moreover z belongs to
+F(S), so w belongs to F²(S). It follows that
+
+ |F²(S)\F(S)| >= 1 = |F(S)\S|,
+
+contradicting the protected strict deficit. Thus D−z has positive
+indegree at every vertex: w retains an in-neighbor and no other vertex
+loses an incoming arc when z is removed. This deduction is conditional
+on that protected lemma, which is being proved by the author, and must
+not be confused with a completed full argument.
