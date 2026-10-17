@@ -1,0 +1,5 @@
+# CM275 manuscript implementation
+
+Unique directory created after absence check. Full unchanged CM275 scope; adopted independent proof and contribution gates are inputs, not manuscript acceptance. Author Myeongjin Kang, no affiliation; prose CC BY4, code MIT; third-party bodies private. PDF skill marker ran successfully immediately before first authoring command. Full standalone proof, reviewer clarifications, Lewin sector-localization attribution and exact pending formal coverage will be incorporated. No count/publication/shared edits.
+
+Full ten-page final build complete with the exact compiled-coverage paragraph. Every final page individually viewed cleanly; independent second build has identical PDF and all ten rendered-page bytes. Full proof map, response matrix, read limits and rights saved. Formal dependency authenticated against the externally supplied c834b31d… seal; positive replay and wrong-anchor rejection recorded. Final exact-inventory controls and seal complete the implementation; independent manuscript/formal verdicts and publication remain separate.
