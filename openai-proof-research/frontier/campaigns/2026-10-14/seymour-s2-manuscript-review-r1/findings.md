@@ -1,0 +1,9 @@
+# S2 manuscript audit findings
+
+Full proof and appendices read against the exact candidate and prior proof/contribution reports. No scope weakening or missing new mathematical deduction found. Both stipulated premises match the actual pinned statements; labels are corrected. The deleted-vertex boundary is kept before summation, the right-row exclusion has the correct direction, and both complement/diagonal arguments are supplied explicitly. No use of the false singleton shortcut occurs.
+
+The manuscript's 11-support/7-control Lean description matches the actual declaration types read here. Full graph-to-set, minimality, blowup, anchor and pruning-existence bridges remain plainly unformalized. An independent formal reviewer has separately reported a scoped PASS; this manuscript audit does not award that gate.
+
+All four externally supplied manuscript/package hashes authenticate. All 78 output payloads, 11 fixed input identities, 10 pinned source SHA/Git identities and unchanged original checker copies authenticate. Independent clean ZIP execution reproduces both diagnostic counts exactly. Nineteen independent positive/negative scenarios pass, including incorrect expected mathematical output, missing checker, missing identity, malformed or duplicate manifest paths, required anchor omission, wrong external anchor, unexpected file, symlink and restored integrity.
+
+Clean rebuild using Tectonic 0.17.0 and cached ordinary TeX dependencies produces byte-identical PDF and extracted text. All nine newly rendered pages have been visually inspected: readable formulas, clean margins, no clipped material, unresolved references or missing glyphs. References and source paths are legible. Remaining work is final receipt/unchanged-input check and report sealing; no substantive verdict awarded in this interim note.

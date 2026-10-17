@@ -2,14 +2,12 @@
 
 ## Active target: ten additional frontier results
 
-The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **4/10 internally
-accepted results**: R023, R024, R025 and [R026](findings/R026-integral-staircase-regular-summand.md).
-R025 supplies the full regular-lifespan hard-sphere path theorem relative
-to pinned source interfaces. Its reviewed paper and local archive are
-verified; Lean covers supporting lemmas only. R026 adds the integral and
-all-ring staircase regular summand, with a verified six-page paper and local
-archive. Fresh research continues at standard speed. No public submissions
-have occurred.
+The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **6/10 internally
+accepted results**: R023–R028. [R028](findings/R028-two-seymour-vertices.md)
+proves the two-vertex Seymour conclusion under its stated pinned source
+premises, with all four independent reviews and final release checks passed.
+Supporting Lean lemmas are compiled; the full graph theorem remains prose.
+Public submission is authorized and in progress. Research continues toward 10/10.
 
 ## Historical target: twenty substantial findings
 
