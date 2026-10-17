@@ -1,0 +1,5 @@
+# CDF098 full manuscript: parent integration
+
+Parent read the complete main.tex, formal-support.tex, formal-coverage.md, response-matrix.md, proof-source-map.md, BUILD.md and read-only verifier. The original full universal-Banach ambient-doubling rectifiable nonembedding target and all constants are preserved. Five proof-review editorial findings are explicitly addressed. Actual two-center segment covers in prose are correctly distinguished from five-center formal support.
+
+Seal `14216c0f3656c05406225a7c5d87f652b8e7ef0d5fb358d3bef480dd5aafd881` authenticates 36 files and seven directories; three original dependency inventories, 75 formal payloads, 34 explicit inputs, source Git blobs and all nine-page visual QA linkage passed. Wrong anchor rejects. Parent does not claim a new visual inspection. A separate reviewer with no CDF098 artifact authorship is auditing the complete proof/transcription, primary comparison, fresh PDF reproduction and every page. No manuscript verdict or count is presumed. Campaign7/10.

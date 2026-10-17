@@ -1,0 +1,15 @@
+# CDF098 contribution gate: parent disposition
+
+Adopt **SUBSTANTIAL**, with the bounded historical eligibility and primary-reading limits in the independent report. This does not certify the full proof, formal support, manuscript, acceptance or worldwide priority. Count remains 6/10.
+
+Reviewed manifest anchor: `42befbcdc270f6802d47080dfba86ef105dcd9316a237324eb0a4a5355f4c691`; review SHA256 `32bf6e4d6ca5ac53d98312a227594a4236507966d3c14192442ee0c5333c3acd`; read-limits SHA256 `9801e9efcdd85bc054d8f31daf19b78b4c83faa5c36723934bc4bf75462809f1`. Parent read the complete review, actual read limits and verifier. External-anchor replay passed 106 review payloads, 21 author payloads, two pinned text blobs and seven primary PDFs; wrong-anchor input rejected. Original author scope, candidate and manifest bytes equal the review's retained copy.
+
+The exact frozen target is unchanged: one universal ambient doubling bound for a Lipschitz curve in every infinite-dimensional real Banach space, with no finite-distortion embedding into any finite-dimensional real normed space. No simple-arc, quasiconvex or intrinsic-geodesic substitute is introduced.
+
+The positive operation comparison identifies a finite polygonal ambient completion of a finite doubling Hilbert set that retains its original distances. Assigning the net scale as an actual extra coordinate controls balls meeting long-edge interiors, uniformly in span dimension, cardinality and aspect ratio. Source finite witnesses, Dvoretzky placement and shrinking clusters remain credited; the subsequent finite-length tour is elementary.
+
+Gupta–Talwar's read proof controls intrinsic shortest-path completion; Semmes Section6 constructs a weighted path metric after snowflake realization. Neither supplies the ambient Hilbert realization required here merely by drawing their edges. Schul's sufficient construction supplies connected finite-length sets without the needed output-doubling guarantee. These are substantive differences in the operations, not just differently phrased conclusions. The reviewer actually visually read all of Semmes Section6, resolving the specific unread comparator. Parent has read that comparison and its extent record, not independently reread the entire scanned section. Later Naples, David–Schul and Badger–Naples–Vellis checks retain their more limited declared extents.
+
+The I88 operative targets concern free-space rank, AP/absorption and binary diamonds; its family098 paragraph credits compact transfer and discusses cardinality rates, without developing the connected ambient-thickening target. The eligibility search remains bounded, not exhaustive semantic clearance of repository history.
+
+The exact full proof is now separately under Opus review at cdf098-proof-r1, task recorded in proof-r1-task.json. No favorable contribution verdict is evidence of proof validity. Public original review files and hash manifests are committed; third-party PDFs, OCR and rendered pages remain local private evidence, so the complete identity replay requires those retained private files. Original prose CC BY4.0; Myeongjin Kang, no affiliation.
