@@ -1,0 +1,7 @@
+# B8C independent manuscript gate
+
+Adopt PASS_MANUSCRIPT for the unchanged full two-sided B8C theorem. Review seal SHA256 e098fd365f03cfa5b895d939029c33c15a7fb36ff9fa7582b04bfcd30eb83e72; review.md SHA256 a9f14a6d8e6d50fd1b4e2f35ed6dfeade467f8e3efed678554e91971923a131f. Parent read the complete report, actual reading limits, README and verifier. External-anchor replay passed34files7directories,37manuscriptfiles,fourpredecessors,45manuscriptdependencies and additional immutable inputs, rebuiltPDFidentity and all11visualpage links; wronganchor rejected.
+
+The reviewer independently rederived the full human proof, including geometric F/O production outside Lean, and found no required repair. The fresh reviewer-owned build is byte-identical to PDF870941e2499b3005f13063694ce183d3c77fdbea6ead1263a3c3e49dd58a517b. Every newly rendered page was individually visually inspected; exact Appendix computation and strict printed bands passed. All four prior editorial corrections are present. Actual primary-reading limits and residual general-codebook uncertainty remain explicit.
+
+The reviewer authored the separate scoped Lean implementation, which is disclosed. They did not author the manuscript and do not issue the independent formal verdict. That gate separately passed via analytic_discovery_r18. Full proof, contributionSUBSTANTIAL, scopedformal and manuscript gates now allpass. Release assembly and parent final acceptance remain next; no publication is inferred from this review. Original proseCCBY4.0, MyeongjinKang/noaffiliation.
