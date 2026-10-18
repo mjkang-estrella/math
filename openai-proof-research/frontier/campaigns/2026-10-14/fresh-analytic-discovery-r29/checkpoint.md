@@ -1,0 +1,11 @@
+# Analytic r29 recovery checkpoint — no nominee
+
+Author: Myeongjin Kang; no affiliation. Original prose CC BY 4.0; original code MIT. Third-party source bodies remain private.
+
+The original worker was cancelled during a T3 restart. Recovery used the existing r29 directory and preserved its source/primary receipts and all saved input bytes. The only previously saved artifacts were receipts and private source bodies; no original-scope.md, freeze receipt, candidate proof, or report was present. The parent supplied a reconstruction of the earlier screens. That reconstruction is credited as parent context, not falsely claimed as recovered written proof or this worker's reading.
+
+The recovered lane pursued family 278, the three-electron Coulomb density without admissible Kohn–Sham ensemble representation. Three substantive continuations were examined: quantitative norm escape for arbitrary representing approximants; extension to a generalized Friedrichs Hamiltonian; and direct transverse boundary-layer growth of the formal potential. The first has only a standard qualitative convex-analytic consequence. The second is a standard ground-state-form construction. The third has an exact positive-gap local cancellation model showing why density curvature alone is insufficient. See screen-278.md for exact scopes, proofs of the diagnostics, and the unpaid global interface.
+
+No quantitative rate or substantial new theorem was proved. No theorem scope was frozen before the cancellation, and none is retrospectively invented. No narrowed replacement is nominated. No independent proof/contribution verdict, manuscript, Lean claim, acceptance, or campaign-count increment is asserted. Campaign count was 11/20 in the supplied brief; only the parent updates it. Excluded 063/217/122 and structural-owned 120/124/164 were not pursued.
+
+A feasible future proof must control the global angle boundary layer, or another genuinely quantitative density-to-potential mechanism, at the original full potential/ensemble scope. Additional uniform spectral gaps, compact support, finite-rank ensembles, fixed orbital multiplicity, or uniform critical-potential tail control would change that scope. The checkpoint leaves this interface open.
