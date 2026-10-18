@@ -1,0 +1,7 @@
+# Integrity verification protocol
+
+The read-only verify.py requires --expected-manifest-sha256 from its caller. It never treats an internally stored digest as an external anchor. The final manifest enumerates every payload file and every directory (including empty directories), and the verifier rejects root/payload symlinks, nonregular files, hardlinked files, nested manifests, changed/missing/extra files and extra directories. It checks all44 pinned Git blob identities and four primary PDF/text receipt pairs without network access. It does not claim source truth, proof correctness, novelty or independent review.
+
+checks/integrity-results.json records12 passing controls on disposable copies of the intermediate packet, before that result and this record were added. The harness's scratch directory is removed in a finally block. Cases include a positive copy, wrong anchor, changed/missing/extra payload, extra empty directory, root/payload symlinks, hardlink, FIFO, nested manifest, and internally resealing a modified payload against the original external anchor. These controls do not mutate old packets.
+
+After adding this record, the final manifest is regenerated once and the exact final packet is verified positively against its freshly computed external hash; a deliberately wrong external hash is checked separately. Those final command results and the hash are delivered to the parent outside the immutable packet. No later addition is permitted without a new external anchor. The manifest itself is excluded from its payload list to avoid a hash cycle.
