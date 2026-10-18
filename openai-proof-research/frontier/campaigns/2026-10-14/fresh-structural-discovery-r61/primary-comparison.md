@@ -1,0 +1,25 @@
+# Primary and source operation comparison
+
+This is a bounded author-side comparison, not a global priority search or an independent contribution gate.
+
+## Source247 and companion
+
+The principal manuscript's `prop:hierarchy`, `ca:alternating`, `ca:direct`, `ca:cut-reduction`, `ca:automaton`, `ca:all-tests`, `thm:algebra` and `cor:nil-algebra` are the operative dependencies. The entire local-rule construction and cancellation section were read. The source already gives an ordinarily finitely presented infinite-dimensional graded nil algebra, matrix nilness, and cancellation over every characteristic-two field. Those striking conclusions are paid. The residual-finiteness companion's introduction, construction and ring-phases section were read, including its fixed-geometric-height hierarchy input and phase recursion. A tensor/growth search of all ten retrieved companion TeX files found no pertinent tensor-absorption claim; its other long group-theoretic sections were not fully read. That bounded comparison does not certify the absence of every implicit corollary.
+
+## Durand–Romashchenko–Shen
+
+*Fixed-point tile sets and their applications*, JCSS78 (2012), 731–764, DOI10.1016/j.jcss.2011.11.001; retained author PDF https://www.lirmm.fr/~ashen/nafit/2011-jcss.pdf. Read local text330–445 (fixed-point self-simulation in §2.3) and652–746 (variable zoom in §5 and Theorem5 application). This explicitly pays programmable increasing zoom, not just constant zoom. We do NOT claim h↦h², Kleene self-reference, computation tableaux or variable zoom as new. T247G must check that the specific source word compiler's payload, arbitrary-state rollback and isolated-token contracts survive that schedule, and couple this with coefficient growth. The DRS body does not in these read passages discuss nil algebra tensor absorption. No full-paper reading is claimed.
+
+## Smoktunowicz tensor-square construction
+
+*Infinitely dimensional, affine nil algebras A⊗A^op and A⊗A exist*, arXiv1403.2557v1, https://arxiv.org/pdf/1403.2557v1. Read retained layout-text1–285 (abstract, §§1–3, Lemma4.1 and start of Lemma4.2), and760–960 (end of tensor-ideal construction, §§7–8 including the ideal I[D], infinite-dimensionality and complete tensor-square/opposite-square assembly, plus beginning of appendix Lemma9.1). Its operation chooses homogeneous subspaces with Golod–Shafarevich/Nullstellensatz controls, places powers into a tensor ideal, and descends through I[D]⊗A+A⊗I[D]. It proves simultaneous nil tensor squares for its constructed affine algebra over algebraically closed fields. Ordinary finite presentation and a universal coefficient class B are not asserted in these read statements. T247G does not strengthen its tensor-square conclusion: no finite-GK hypothesis on our A is known, so A⊗A nil is NOT obtained. The unread detailed estimates in §§4–6 and most of §§9–12 are not claimed checked. PDF frontmatter gives arXiv11March2014 but internal date25September2018; the exact v1 bytes are pinned rather than silently resolving this discrepancy.
+
+## Additional source-cited comparator and search limits
+
+Smoktunowicz, *The Jacobson radical of rings with nilpotent homogeneous elements*, BLMS40 (2008),917–928, DOI10.1112/blms/bdn086, is cited by the pinned source for bounded-length matrix encoding. Search-visible primary text included Theorems1.1–1.2 and the §6–7 locator. Direct retrieval of both Edinburgh PDF endpoints returned HTTP403; no retained PDF or full §6–7 semantic read is claimed. The present proof uses the fully read source prefix-state automaton and credits its stated antecedent. Schützenberger1961 is likewise a source-cited weighted-automata antecedent, not an independently read body here.
+
+Bounded web searches combined nil algebra/tensor with polynomial growth, locally subexponential growth, finite GK dimension, finite Gelfand–Kirillov dimension, finite presentation, and stable/universally nil. They located the above and other abstract-level leads, not an exact universal finite-GK absorber theorem. This negative search result is NOT novelty clearance. No theorem from the other unread leads is used.
+
+## Residual candidate operation and risk
+
+For one fixed presentation, (a) source packet cancellation is applied to the finite vector space M_d(V^s), rather than to M_d(K); (b) repeated cut/automaton moves track coefficient degree s and matrix dimension d separately; (c) one accelerating hierarchy defeats every fixed polynomial growth exponent g. Fixed D in the source's explicit budget cannot pay all g at once. This statement is about that estimate, not failure of its actual algebra. The simultaneous budget and finite-rule compatibility are the candidate's residual proof. Its individual ingredients are elementary or inherited, so the risk of a TECHNICAL rather than SUBSTANTIAL verdict is explicit. Only an independent operation-level gate may settle campaign eligibility. The author claims a new-to-project candidate with a full relative proof, not demonstrated new-to-literature priority.

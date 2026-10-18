@@ -1,0 +1,24 @@
+# T247G pre-freeze mechanism
+
+This is a feasibility derivation, not a completed candidate or a contribution verdict. The intended construction is one infinite-dimensional, ordinarily finitely presented, positively graded nonunital F2-algebra A such that, for every characteristic-two field K and every K-algebra B of locally finite Gelfand–Kirillov dimension, A_K tensor B is nil (indeed matrix-nil). Here locally finite GK dimension means that each finite subset of B is contained in an affine subalgebra with a finite-dimensional generating filtration V and constants C,g satisfying dim V^n <= C(n+1)^g. B need not be nil, PI, finite dimensional, commutative or uniformly bounded in GK dimension. This intended scope is not yet frozen.
+
+The source already proves matrix nilness over every characteristic-two field at the weighted-test level; neither that nor scalar extension is a new operation. Its finite presentation is essential, as are its faithful word hierarchy, arbitrary-word rollback, token normalization, alternating packet cancellation and prefix-state chunk automaton. Durand–Romashchenko–Shen already provide variable-zoom self-simulation; changing the growth schedule alone is not claimed as new.
+
+The potential new ingredient is a simultaneous coefficient-degree and automaton-state budget for weights in an INFINITE-dimensional coefficient algebra. For a finite input, choose a unital filtration V containing every coefficient. Incoming level-j chunk weights belong to M_{d_j}(V^{s_j}). The alternating multilinear packet sum vanishes once its length exceeds d_j^2 dim(V^{s_j}), since alternation vanishes on repeated vectors in any characteristic-two associative algebra; the coefficient space need not be closed under multiplication. Cut reduction raises the coefficient degree by at most k L_j; the chunk automaton raises matrix dimension by at most k |Sigma_j|^k but does not raise coefficient degree (identity transitions have degree zero). Thus, after the initial chunk-to-letter automaton,
+
+  d_1=d_0, s_1=k L_0;
+  d_{j+1} <= k |Sigma_j|^k d_j,
+  s_{j+1} <= k L_j s_j.
+
+With |Sigma_j|<=2^(c h_j), L_j=2^(h_j+1)+1, this gives
+
+  log_2[d_j^2 dim(V^{s_j})]
+  <= O_input(1)+(2kc+g) sum_{i<j}h_i+O_g(j).
+
+For the source's fixed ratio h_{j+1}=D h_j, this accounting does not cover ALL coefficient growth exponents g for one fixed algebra. Taking h_{j+1}=h_j^2 makes h_j/sum_{i<j}h_i tend to infinity. The actual local-rule compiler appears to permit this change: replace upper data length cDh by ch^2, the encoded upper parameter Dh by h^2, and the predicate's upper evaluation by its evaluation at h^2. Its local table predicate still has polynomial running time in h; the universal simulation at h^2 still fits T=2^floor(h/5) for all sufficiently large h. The fixed alphabet field width ch, bounded relation length k, structural grammar, forged-state rollback and token proofs are unchanged after these substitutions. This requires an explicit delta proof, not just applying the source proposition whose formal statement fixes D.
+
+At a stopping level q_j/(100k) exceeds the coefficient-space dimension plus the two crossing-chunk losses. Direct packet cancellation then kills every sufficiently long weighted sum. Backward cut identities retain coefficient order. For a tensor element with varying word lengths, a central variable z records the factor count exactly as in the source. Work over K(z), whose scalar extension preserves the filtration dimensions, and then use injectivity of vector-space localization to extract coefficients back in the original tensor algebra. This is the intended route to nilness, not an appeal to Köthe's conjecture.
+
+Limits: no statement about A tensor A is implied, since A need not have finite GK dimension. No nilness is asserted for arbitrary coefficient algebras. Indeed, for any finitely generated nonnilpotent A with generators a_1,...,a_r, the element sum a_i tensor x_i in A tensor K<x_1,...,x_r> is not nilpotent: its nth power has linearly independent free-word coefficients and at least one nonzero length-n product in A. This is an exact general boundary, not a refutation of the finite-GK target.
+
+Primary comparison underway: Smoktunowicz arXiv1403.2557v1 constructs affine infinite-dimensional R with R tensor R and R tensor R^op nil, by homogeneous-subspace/ideal constraints, Golod–Shafarevich and Nullstellensatz. Read abstract, Sections1–3 and Lemma4.1 proof so far; the long tensor-ideal construction has not yet been read fully. It does not in those passages assert ordinary finite presentation or a universal arbitrary coefficient-algebra class. DRS2012 Section5 was read through the variable-zoom construction and Theorem5 application; it explicitly pays the general programmable-growth mechanism. No worldwide novelty claim follows from these bounded reads.
