@@ -1,4 +1,6 @@
 import Mathlib.Combinatorics.SimpleGraph.Walk.Decomp
+import Mathlib.Combinatorics.SimpleGraph.Paths
+import Mathlib.Algebra.Order.BigOperators.Group.List
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Linarith
@@ -175,5 +177,35 @@ theorem ray_tail_stable {V : Type*} [DecidableEq V] {G : SimpleGraph V}
     (hcal i j hij) hfar (segments i j) (hsegments i j hij)
   exact late_segment_minimizes d hsym htri w w' F hoff hdom C hregion
     (hcal i j hij) hlate (segments i j) (hsegments i j hij) havoid p hp
+
+/-- Erasing loops does not increase a nonnegative weighted walk cost. -/
+theorem bypass_cost_le {V : Type*} [DecidableEq V] {G : SimpleGraph V}
+    (w : Sym2 V → ℝ) (hw : ∀ e, 0 ≤ w e) {a b : V} (p : G.Walk a b) :
+    walkCost w p.bypass ≤ walkCost w p := by
+  apply (p.edges_bypass_sublist_edges.map w).sum_le_sum
+  intro z hz
+  obtain ⟨e, _, rfl⟩ := List.mem_map.mp hz
+  exact hw e
+
+/-- With nonnegative modified weights, tail minimality holds against every finite walk. -/
+theorem ray_tail_stable_all_walks {V : Type*} [DecidableEq V] {G : SimpleGraph V}
+    (d : V → V → ℝ) (hsym : ∀ u v, d u v = d v u)
+    (htri : ∀ u v z, d u z ≤ d u v + d v z)
+    (w w' : Sym2 V → ℝ) (hw : ∀ e, 0 ≤ w e) (hw' : ∀ e, 0 ≤ w' e)
+    (F : Finset (Sym2 V)) (hoff : ∀ e, e ∉ F → w' e = w e)
+    (hdom : ∀ {u v} (p : G.Walk u v), d u v ≤ walkCost w p)
+    (x : V) (ray : ℕ → V) (segments : ∀ i j, G.Walk (ray i) (ray j))
+    (hsegments : ∀ i j, i ≤ j → walkCost w (segments i j) = d (ray i) (ray j))
+    (hcal : ∀ i j, i ≤ j → d x (ray j) = d x (ray i) + d (ray i) (ray j))
+    (hescape : ∀ B : ℝ, ∃ N : ℕ, ∀ n, N ≤ n → B < d x (ray n))
+    (C : ℝ) (hregion : ∀ e ∈ F, ∃ c, c ∈ e ∧ d x c ≤ C) :
+    ∃ N : ℕ, ∀ i, N ≤ i → ∀ j, i ≤ j →
+      ∀ p : G.Walk (ray i) (ray j), walkCost w' (segments i j) ≤ walkCost w' p := by
+  obtain ⟨N, hN⟩ := ray_tail_stable d hsym htri w w' hw F hoff hdom x ray
+    segments hsegments hcal hescape C hregion
+  refine ⟨N, ?_⟩
+  intro i hi j hij p
+  exact (hN i hi j hij p.bypass p.bypass_isPath.isTrail.edges_nodup).trans
+    (bypass_cost_le w' hw' p)
 
 end T212M

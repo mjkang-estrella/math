@@ -75,4 +75,15 @@ theorem without_lateness_minimality_fails :
   norm_num [walkCost, shortcut, earlySegment, newWeight, changedEdges,
     lineWeight, lineDistance]
 
+theorem newWeight_nonneg (e : Sym2 (Fin 4)) : 0 ≤ newWeight e := by
+  induction e using Sym2.inductionOn with
+  | _ u v =>
+    fin_cases u <;> fin_cases v <;>
+      norm_num [newWeight, changedEdges, lineWeight, lineDistance]
+
+theorem late_segment_all_walks (p : (⊤ : SimpleGraph (Fin 4)).Walk 2 3) :
+    walkCost newWeight segment ≤ walkCost newWeight p := by
+  exact (late_segment_example p.bypass_isPath.isTrail.edges_nodup).trans
+    (bypass_cost_le newWeight newWeight_nonneg p)
+
 end T212MControls

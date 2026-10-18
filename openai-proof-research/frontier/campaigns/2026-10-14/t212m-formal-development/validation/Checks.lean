@@ -24,6 +24,10 @@ import Controls
 #print axioms T212M.calibrated_segment_avoids
 #check @T212M.ray_tail_stable
 #print axioms T212M.ray_tail_stable
+#check @T212M.bypass_cost_le
+#print axioms T212M.bypass_cost_le
+#check @T212M.ray_tail_stable_all_walks
+#print axioms T212M.ray_tail_stable_all_walks
 #check @T212MControls.lineDistance
 #print axioms T212MControls.lineDistance
 #check @T212MControls.lineWeight
@@ -54,3 +58,7 @@ import Controls
 #print axioms T212MControls.early_segment_unchanged
 #check @T212MControls.without_lateness_minimality_fails
 #print axioms T212MControls.without_lateness_minimality_fails
+#check @T212MControls.newWeight_nonneg
+#print axioms T212MControls.newWeight_nonneg
+#check @T212MControls.late_segment_all_walks
+#print axioms T212MControls.late_segment_all_walks
