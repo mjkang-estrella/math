@@ -1,0 +1,11 @@
+# Exact reading and limits
+
+Canonical source truth is stipulated at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb; no upstream truth audit was performed. The complete 13223-entry, nontruncated tree is retained. Receipts authenticate all ten non-PDF source024 blobs and all twelve non-PDF direct weighted-fiber companion blobs. Inventory authentication does not mean every blob was read.
+
+Across r52 and this continuation, source024 statements.tex, extraction.tex, layers.tex, collisions.tex, limits.tex and companion.tex were read in full; introduction.tex, main.tex and README were read in full. Only the relevant Ford sieve and weighted-fiber bibliography entries were read in references.bib. The direct weighted-fiber companion introduction (sections/00-introduction.tex) and totient conclusion (sections/07-totient-conclusion.tex) were read in full: its large fibers and smooth shifted-prime results do not assert the present all-window distinct-value asymptotic. Its further Poisson–Dirichlet companion was not recursively audited and is not used here. No exhaustive literature-priority claim is made.
+
+Actual Ford text ranges read across r52/r53: 1-100, 105-158, 195-239, 365-575, 700-1225, 1645-1990. These include the operative normal-prime decomposition, rough sieve extraction, first-failure reciprocal estimates, Theorem 16 and Lemmas 6.1/6.2 with Theorem 10 proof. The full paper, including its long lower-bound and fiber arguments, was not read or audited. primary-reading-ranges.json pins the exact identity and line ranges for the reciprocal inequality (11), terminal sum and coordinate-tail passages requested by the parent; ranges refer to the retained pdftotext-layout bytes.
+
+Ford sieve2023 text 855-1120 was read across the two rounds, covering the relevant upper sieve and uniform prime-forms statements/proofs. Tao quantitative PNT Corollary 39 proof and Exercise 40 pi-form were read at web lines 632-656 in r52; the whole retained HTML was not read. These classical primary results are quoted with their operative ranges rather than treated as corpus-stipulated results.
+
+No pending independent review directories were read. This is author research, not an independent proof or contribution gate. The integrity verifier authenticates bytes and identities only.

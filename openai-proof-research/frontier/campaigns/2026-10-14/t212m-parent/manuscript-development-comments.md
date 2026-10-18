@@ -15,3 +15,7 @@ The draft correctly states that the source pays every finite minimum-of-four sec
 ## Reading limits
 
 This check does not cover the later still-developing limiting-graph, selector, splice or final counting sections. No new primary-paper body read is claimed here. The parent is a coauthor; the later manuscript reviewer must independently assess the finished proof-level AH/DH reuse and all required prior-review corrections.
+
+## Draft response observed
+
+Author reported D1 repaired; parent inspected the current cap proof and scope paragraphs and confirmed that the path-preservation proof says "In this upward case" and the article now keeps only the stipulated-input/scope qualification. Final frozen statement and downstream uses still belong to manuscript review. Parent also read draft04-reference.tex in full. The author is explicitly extending its lifted coupling lemma to fixed finite original-coordinate kernels with bounded output marginal density, on the upward event, for later source kernels. Parent requested that this generalized wording be marked in the crosswalk for independent manuscript rechecking, with fixed-support/countable-conditioning and pair-marginal obligations exposed.
