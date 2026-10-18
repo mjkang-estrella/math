@@ -1,0 +1,5 @@
+# r31 closed pre-freeze screen
+
+Family253 variable-size polygon-embedding complex was investigated. No full target frozen, candidate or count. The complete structuralr28 screen was read and its compression suggestion credited. Actual Li primary proves ordinary homology localization; it is not a new operation. A finite-area orbit bound and a quadratic-norm obstruction delimit the attempted geometric normalization of punctured complements. Brown's stabilizer and essential-triviality hypotheses remain unpaid. The broader F_infinity direction is neither proved nor disproved. See screen-253.md for exact proofs and limitations, reading-limits.md for actual source/primary ranges, and diagnostics.py for finite arithmetic checks only.
+
+Catalogue-only leads201/206/209/256/314 were checked against developed history; none was a new target or mathematical exclusion. T259S/r30 and all earlier sealed packets remain untouched. Parent reported T259S proof PASS and contribution TECHNICAL during this round; no escalation or relabel follows. Campaign remains13/20. No independent gate or acceptance is claimed here.
