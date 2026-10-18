@@ -1,0 +1,23 @@
+# Draft implementation handoff — no final gate or archive
+
+Current implementation anchor: `8f345107d548351b951cffda0f964a952e4cb768c7894ff5fc852c62b142aa11` for IMPLEMENTATION-MANIFEST.json. It binds exactly the seven OWN files, including the unchanged supplement driver, selection, policy and public README. The draft selects 102 evidence files and creates a 112-file preparatory tree (102 evidence + seven OWN helpers/data + implementation manifest + README alias + bundle manifest).
+
+Current positive/refusal receipt: draft-release-tests-v2.json, 35 passing cases. Preparatory stage `/var/tmp/t212m-release-draft-utz_trf_/stage`; external bundle-manifest hash `9297d0cd6eab0c5d973eada1e0893f24417f91c8ff87de83d272e4fc49465d36`. The first draft-release-tests.json is historical evidence for the earlier draft anchor, before explicit round2 verdict checks; it is preserved. Neither receipt is a mathematical gate. These tests do not execute PDF/Lean builds. The existing supplement replay receipts and driver were not modified.
+
+The only ZIPs emitted in testing were tiny unrelated toy fixtures for deterministic metadata and unsafe-member refusal tests. No T212M final archive was assembled, no synthetic review was constructed, and no pending reviewer files were read. `completion:null` refuses final assembly even when arbitrary external hashes are supplied.
+
+After actual round2 review and parent closure exist, the parent must inspect their bytes and bind them. The exact completion policy structure expected by the current draft is:
+
+- `r2`: `packet` = `t212m-manuscript-review-r2`, actual `manifest` filename, actual manifest `sha256`, and `expected_metadata` equal to its parsed metadata with only `files` and `directories` removed.
+- `files`: explicit selected round2 rows with `path`, `packet`, `relative`, `bytes`, `sha256` (and optional descriptive role). Include actual manifest, review.md, reading-limits.md and actual checks/evidence as appropriate. Each selected non-manifest byte must be a frozen manifest member. Do not include private bodies or write-in-place drivers.
+- `parent`: exact actual closure `path` under t212m-parent, `bytes`, `sha256`, and `expected_content` equal to the actual parsed JSON, not a reconstruction from a desired verdict.
+
+The current final checker explicitly requires round2 `verdict=PASS_AH_PROOF_INTERFACES_T212M`, integer `required_objections=0`, and the exact unchanged manuscript anchor. If the actual reviewer schema represents those facts differently, adapt the checked code transparently to that actual schema before reanchoring; do not mutate review evidence or fabricate keys. Metadata equality and a parent status alone are insufficient.
+
+The actual parent closure must have `status=ADOPTED_FULL_MANUSCRIPT_CLOSURE_T212M`, fixed `manuscript_anchor`, fixed `r1_review_anchor`, actual `r2_review_anchor`, `closure_complete=true`, `accepted=false`, `published=false`, integer `count_change=0`. Other fields are allowed only as exact authenticated actual content. This closure schema was agreed with the parent; no such record is invented by this implementation.
+
+At that time update the public RELEASE-README.md to explain the actual closure and its precise reading limits, preserving historical pending/16-count evidence as historical and the conditional-source/formal-coverage boundaries. Regenerate the implementation manifest over the exact seven OWN files and convey its new hash externally. Actual closure produces a review-closed conditional release, not campaign acceptance or publication. The new bundle manifest records both external closure anchors; final ZIP verification requires all four external identities: implementation, bundle manifest, round2, parent closure.
+
+Final parent sequence: inspect all helper changes and exact selected files; run authenticated final assembly into a new path; verify ZIP identity; extract using a trusted extractor into a new directory; verify exact extracted inventory; run the separately labeled PDF, original Lean and Independent replay commands with fresh disjoint outputs. Fresh PDF/Lean replay and actual closure-path execution are intentionally still pending. The script does not invent mathematical review tests for a nonexistent round2.
+
+Identity checks assume a non-adversarial filesystem during the operation: lstat and hash checks refuse observed links, hardlinks, special files and bad ancestry, but do not implement a concurrent hostile-filesystem race defense. Python and stdlib are trusted; PDF uses trusted cached TeX resources, and Lean uses the recorded compiler and dependency cache with the original builders' documented limits. Do not overstate the archive checker as a semantic or full formal theorem verifier.
