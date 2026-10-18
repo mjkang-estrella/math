@@ -1,0 +1,11 @@
+# r73: source 299 screening closed without nomination
+
+Status: technical screening only. No target was frozen, no candidate was nominated, and no independent mathematical or contribution review was requested. Campaign count remains 16. This receipt records author exploration, not a review verdict or global priority determination.
+
+The explored question was whether the source's infinite identical tensor-power conclusion extends to arbitrary sequences of nonzero unital separable characterless complex C*-algebras. Actual primary reading supplies counterexamples, including simple infinite-dimensional AH factors. A possible construction by partitioning a bundle sequence and applying classical simplicity twists is already dominated by Robert–Rørdam Theorem 7.17. Even the contrast with Z-stability of each factor's identical infinite power is paid by Dadarlat–Toms Theorem 1.1, without the new pinned source. Accordingly there is no substantive source-essential bridge to submit.
+
+Chronology: catalogue/history navigation; provisional selection of family 299; actual pinned theorem and finite-operation reading; Gardella–Thiel and DHTW comparison; HRW bundle construction; exploratory partition-and-twist sketch; RR stronger construction and proof comparison; DT positive-power interface check; closure. This is an after-exploration checkpoint, not a retroactive scope freeze.
+
+The catalogue/history JSON is navigation, not eligibility evidence. Searches can miss punctuation, abbreviations, concepts and untracked history. Parent's source-navigation-r1 map (commit d79a8b82) likewise has known false lows. Actual matching history passages excluded 091, 097, 155, 173, 186, 248, 340, 343 and 347 before provisional selection. Those prior packets were not reread in full. The absence of matches for family 299 did not establish freshness.
+
+Parent author assistance warned that ultraproduct characters alone do not imply a non-Z-stable tensor product, and that trivial bundles defeat a dimension/rank-only necessary threshold. Those warnings are incorporated below; parent assistance is not independent review. No mathematical finite experiment was needed or used as proof. Integrity checks establish bytes and membership only. Private primary bodies are retained for internal reading provenance and are not publication payloads.
