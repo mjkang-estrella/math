@@ -1,0 +1,18 @@
+# Reading, history, and primary comparison
+
+Pin: openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. Source282 is OpenAI, Scale and conformal symmetry in four-dimensional operational quantum field theory, September26 2026. The complete canonical preprints tree lists one manuscript for this family. All11 text blobs (.tex/.bib/.md) were retrieved at pinned raw URLs and Git-blob verified; this is authentication, not a claim to read every body.
+
+Actual source reads: introduction01 lines1–220; foundations02 lines1–190,427–565,915–990; charges05 lines680–890,1000–1065,1225–1467; reconstruction08 lines1216–1625; null-current03 lines776–805. References.bib entries for Morinelli–Tanimoto and Guido–Longo–Wiesbrock were read. Other modules and omitted ranges were not read. The work uses the stipulated theorems at their stated contracts rather than auditing upstream proofs. In particular no full source reconstruction proof audit is claimed.
+
+Primary body reads, line numbers referring to retained pdftotext -layout derivatives:
+
+- Brunetti–Guido–Longo, arXiv:funct-an/9302008v1: lines1–105,470–535,590–735. Full local bounded-algebra covariance is a premise of its global extension and duality results. Minkowski essential duality is distinguished from cover double-cone duality.
+- Brunetti–Guido–Longo, arXiv:funct-an/9401002v1: lines460–535 and700–744. Full modular action on other regions is needed; coaxial invariance alone is not its hypothesis. No full group-cohomology proof read is claimed.
+- Morinelli–Tanimoto, arXiv:1807.04707v1 (the downloaded unversioned PDF identifies v1): lines1–100 (separately reread after an earlier truncated combined output) and1180–1285. The mechanism-relevant §5.2–5.3 block appeared intact. Its discussion explicitly separates representation extensions, correct rotations, bounded-net covariance, and four-dimensional compatibility. These are primary discussion/comparison passages, not a read of its full two-dimensional theorem proof.
+- Guido–Longo–Wiesbrock, arXiv:hep-th/9703129v2: lines1–155. The introduction gives proper dual conformal nets and distinct Möbius representations with common affine restriction. Its full technical proofs are not claimed read.
+
+Bochner–Schwartz, Reeh–Schlieder, elementary self-adjoint deficiency theory, finite-dimensional local Lie/transport integration and Gårding smoothing are explicitly named standard dependencies. Their original bodies were not read here. The grade-floor proof spells out its spectral and zero-field operations; the Jacobi obstruction spells out its deficiency calculation. No unbounded Lie-algebra integration theorem is assumed to bypass the local-unitary construction.
+
+Historical screen: AGENTS.md and controlling NEW-TEN read. Title/operation searches of iteration and campaign public Markdown excluded developed families149 (I138/I141/I144),101 (I53),096 (R012/I38),092 (I134/I208),367 (I122/I125) and333 (r17). Search of scale/conformal symmetry and exact family wording found no operative282 development in the bounded history screen; absence is not proof of novelty. Catalogued338 is frozen T338N under independent review and was not reopened. Pending reviewer directories were not read.
+
+Private downloaded source/primary bodies and extraction derivatives stay under ignored private/. Public payloads contain original derivations, provenance and limited theorem paraphrases only. No third-party body is selected. Parent suggestions are author collaboration, not review. No full theorem, independent gate, formalization, manuscript, acceptance, publication, or count change is claimed.
