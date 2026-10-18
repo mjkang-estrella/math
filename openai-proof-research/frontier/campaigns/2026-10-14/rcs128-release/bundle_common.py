@@ -90,5 +90,5 @@ EXPECTED_ANCHORS = {
  'rcs128-formal-v1': {'file':'manifest.json','sha256':'c3a051864862ebf53c24fce85da991f2e1da18340d38afdae238f3a160361963'},
  'rcs128-formal-review-r2': {'file':'manifest.json','sha256':'776eb20b725cd9fdfcef97fdef16492c2ddc8114da50f2203a7eb6c38bd6ed2e'},
  'rcs128-manuscript-r1': {'file':'MANIFEST.json','sha256':'00b40211d6c6f7c1361e89953a6e9a0260c230f4e8225b5e81872d52e6aaee05'},
- 'rcs128-manuscript-review-r1': None,
+ 'rcs128-manuscript-review-r1': {'file':'MANIFEST.json','sha256':'9a38b63a7796c6c64b0812e2dd14a087c34af45dfe441bb9797a2d817683ed16'},
 }
