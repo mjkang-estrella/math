@@ -1,0 +1,7 @@
+# Exact reading and provenance limits
+
+Read AGENTS.md, sources/upstream.json, full r65 parent adoption, r65 diagonal-route/checkpoint/reading-limits/primary-receipts, r63 working-interface, and the r65 integrity verifier. Current source-body reads are source083 02-reductions.tex lines 1–90, 669–735, 945–1040. Keyword hits in 09/10 sections were inspected only; no full section read or selected hierarchy audit. The source-receipts file retains the exact pinned canonical path, Git blob and SHA256 of the copied operative reductions body. The complete preprint catalogue/tree had been inspected in earlier assigned rounds; it was not re-read exhaustively here. No new companion search or external primary body reading occurred in r67.
+
+Primary antecedent claims here are limited to the parent-adopted r65 operations and the source's actual credited one-dimensional interface. No new literature-priority clearance, Cotlar extension, or original-body reading is asserted. The constant-direction fractional calculation and H¹ obstruction are written out in full. They are technical diagnostics; the variable-field estimate remains an obligation.
+
+No upstream truth audit, proof-review verdict, Lean run, manuscript task, or publication. Identity checks certify bytes only. r65 and both release preparations remain unchanged. The assigned parent alone controls shared indexes, commits and count decisions.
