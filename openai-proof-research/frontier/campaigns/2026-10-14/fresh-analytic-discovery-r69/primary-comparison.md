@@ -1,0 +1,9 @@
+# Antecedent and reading boundary
+
+Actually read Guo, arXiv:1610.05233v1, title/abstract and Introduction through the start of §2 (equation 2.1). Exact copied HTML and derived-text hashes are recorded. This is an actual primary-body read, not a search snippet. The extraction retains math alttext and duplicated rendered math; the displayed math was read from the alttext formulas.
+
+Guo Theorem 1.2 concerns smooth frequency-scale variation for Lipschitz fields after a single Littlewood–Paley projection, weak (2,2) and strong p>2. Theorem 1.3 states a single-band strong p>1 variation estimate for one-variable fields. Equations (1.10)–(1.12) discuss polynomial-curve Hilbert transforms and credit Lie for polynomial Carleson estimates. None of those statements is silently identified with the all-width, hard-cutoff fractional square estimate here. Lie's original bodies were not read and their estimates are not imported.
+
+The affine supporting calculation uses explicit Fourier/multiplier integration by parts. Its literature novelty is unassessed and not claimed. Classical curve estimates and Guo's related work make a substantiality nomination of this restricted supporting result inappropriate without further work; no favorable contribution verdict is issued. No new companion search or new source-family screen was undertaken because the actual assigned mechanism produced a concrete bound.
+
+Current pinned-source reading: source083 02-reductions.tex lines 90–130, including the fixed-time Jacobian and endpoint-annulus comparison. Its other operative passages were read in r65/r67, not newly reread in full. r65 flow-route.md was reread. A combined catalogue search output was truncated and is not a catalogue-wide reading claim. AGENTS and source pin remain as read in the earlier rounds. No full hierarchy or ordinary forest audit occurred.
