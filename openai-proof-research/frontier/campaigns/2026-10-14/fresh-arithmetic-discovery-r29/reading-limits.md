@@ -1,0 +1,18 @@
+# Exact reading and provenance limits
+
+Read AGENTS.md and sources/upstream.json. Read the complete concise catalogue-title extraction, selected full entries, and selected complete-tree directories. The whole preprints-tree JSON was parsed, not line-by-line semantically read. A long catalogue display truncated and is not claimed complete. Complete tree says truncated=false. Never used sources/tree.json for inventory.
+
+Source047: all eleven non-PDF bodies read in full: README, main, preamble, references, sections01–07. Individual tool outputs returned these sections without truncation. All Git blobs matched canonical preprints-tree.json independently. Source PDF not retrieved. Family049: all ten non-PDF blobs across both listed companion directories retrieved/authenticated, but only October5 sections/01-introduction.tex and September24 build/paper.tex lines1–152 read fully. Wrapper/reference/core bodies of these companions not claimed read; no proof reliance.
+
+External retained bodies:
+
+- Blanc–van Santen author PDF: 2017 author preprint, 33 pages (inspect file metadata for exact page count), not asserted identical to the 2019 journal version. pdftotext -layout lines1–240 and1070–1380 read; this includes complete intro statements, Proposition5.4, full §5.2, and Lemma5.10 through its proof/Theorem3 ending. Earlier lemmas invoked there and the remainder of the paper were not read. Rendered page24 inspected visually for the Proposition5.8 argument.
+- Ghosh–Gupta PDF identifies arXiv2206.15210v5, June4 2023. Text lines1–45 and1150–1330 read; these contain the full Theorem4.1 proof and4.2–4.4. Earlier invariant computation/internal dependencies were not independently read. Rendered page21 inspected visually, including its displayed contraction comparison. The browser also returned the older v2 HTML introduction, which is not substituted for the retained v5 proof.
+- Ghosh–Pal PDF identifies arXiv2404.13803v1, April22 2024. Text lines1–45 and230–309 read, including full Theorem3.2 proof. The rest is not claimed read. Rendered page6 inspected visually. Browser attempt at v2 returned an error; no v2 read is claimed.
+- Gupta2013 arXiv1309.1368 landing/HTML retrieval metadata and search results were seen, but no substantive body was read in this round; no primary-operation claim relies on it.
+
+The PDF skill was read and used for read-only extraction/rendered inspection. No manuscript PDF was created. Private primary bodies, extracted text and page images are excluded from Git/public release. Their hashes and retrieval URLs are in primary-receipts.json; downloading is not semantic reading.
+
+The complete frozen scope preceded the all-n proof writeup. Initial speculative u³-to-f(u) moduli did not reach a frozen target; the unrelated center-classification obstacle is preserved in the chronology. Thickness n>=2 is the actual frozen scope, not a weakening of an earlier frozen target. Parent contributions and closest primary operations are recorded in source-and-credit.md. No nested agents, shared metadata edits, staging, commits, uploads, acceptance or count occurred. Original prose: Myeongjin Kang, no affiliation, CC BY4.0. Original diagnostic/verifier code: MIT. Third-party rights unchanged.
+
+Before final seal, the full saved arithmetic-r23 brief and current NEW-TEN ledger tail (last65 lines, through T008M technical disposition) were reread. Current parent overrides are r29 ownership, count13/20 and no008 escalation. The entire ledger was not reread in this round. Context receipt hashes record bytes at this reread, not a claim of full semantic reading of every file.
