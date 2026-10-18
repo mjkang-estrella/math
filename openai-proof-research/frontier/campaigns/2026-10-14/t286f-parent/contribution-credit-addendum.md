@@ -1,0 +1,11 @@
+# T286F parent credit and disposition addendum
+
+The frozen author packet is unchanged. The full proof review passes; the separate contribution review classifies the result TECHNICAL. It remains uncounted, with no manuscript or scoped formal acceptance claimed. The statement is new to this project only, and bounded literature reading establishes no priority.
+
+Required credits adopted for any future use: Deprez–Vaes, JNCG 5 (2011), 523–545, proof of Theorem 1.2 and Theorem 4.2, provides the normal-core reduction and twisted Hecke bicategory framework; Arano–Vaes, arXiv:1602.03047, provides the C*-tensor Hecke-category framework. The stipulated source companion already contains identity-degree and minimal-corner compression in `lem:endpoints-bounded-grades`, `lem:endpoints-minimal-corner` and `prop:endpoints-corner-constraints`. Standard Tannakian finite quotients, source fusion/regrouping, finite-index restriction, regular Q-systems and Morita equivalence remain credited inputs. The common-kernel sandwich is presented as a finite-Hecke reduction in this tensor-finite setting, without claiming a new general method.
+
+One overbroad sentence of the contribution report is not adopted: an arbitrary finite set of commensurators need not normalize a finite-index subgroup. For example, multiplication by 2 is a commensuration of the additive group Z, and no subgroup nZ has 2(nZ)=nZ. T286F obtains invariance using the finite tensor-closed identity sector and the sandwich with every representation in it; it does not follow from a finite set of germs alone. This parent caveat limits the analogy and is not a favorable contribution re-review. The conservative no-count disposition remains.
+
+Proof-review optional items O1–O6 are preserved in the original report: algebraic versus standard modules, explicit Pimsner–Popa norm bound, separability projection for tensor products, the reducible-inclusion Morita bridge, Q-system normalization and identity-sector closure. No claim that a revised manuscript has implemented these items is made.
+
+Parent integration read both reports and limits in full and replayed both review inventories and reason-checked copied controls. No new primary-body reading or literature search was performed for this addendum.
