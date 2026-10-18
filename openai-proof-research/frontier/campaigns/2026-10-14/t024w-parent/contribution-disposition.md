@@ -1,0 +1,9 @@
+# T024W contribution disposition
+
+Adopt TECHNICAL conditional on independent correctness of the exact frozen r53 target. The full assertion remains V(x+x/log x)-V(x) asymptotic to V(x)/log x for every real endpoint, without exceptional endpoints, averaging or a weaker order bound. This report supplies no proof gate, and no acceptance or count change follows. Count16/20; uploads stopped.
+
+The independent reviewer identifies the paid mechanism as source024's main-mass/finite-map argument, with each exceptional and collision family localized by recounting its free prime. The hyperbola split for the non-nice family and translated upper sieves are necessary to the deduction but classified as technical. Proof length and the need for those local bounds do not make them substantial new operations. The separate proof review remains pending.
+
+All three required contribution conditions are adopted. In future discussion, credit the large free prime and small cofactor after the first simplex inequality to Ford's proof of (4.1), retained text lines1127–1136, and Theorem16 lines1685–1700. Credit the local collision bound to the r52 section3 precursor together with source024's comparison proposition and Ford's sieve. The frozen author packet is not edited.
+
+The report's absence-of-duplicate finding is bounded by its declared reads and searches. Its categorical sentence excluding all pre-2026 literature from a source's open-problem description is not adopted as a priority proof. Parent has read the full contribution report, coverage and verifier, replayed13 copied controls, and reverified the author packet. No new parent primary-paper reading or literature search is claimed. Fresh arithmetic discovery continues in r54; no formal or manuscript gate is commissioned for this technical candidate.
