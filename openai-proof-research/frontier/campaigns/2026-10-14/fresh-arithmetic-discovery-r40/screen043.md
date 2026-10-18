@@ -1,0 +1,9 @@
+# Family043: paid equivariant and endoscopic interfaces
+
+Prefreeze screen only; no theorem selected. The complete actual source01-introduction,02-lefschetz and09-conclusion were read. All13 non-PDF source blobs are retained/authenticated (source043-receipts.json); the remaining sections are retrieved, not read.
+
+The full source theorem includes every nontrivial Pic^0(C)[n] character, explicitly. Its final endoscopic-weight corollary already transports the Maulik–Shen perverse image equality to the Betti weight filtration with the precise shift2d_gamma. Its final multiplicativity corollary already includes products of two arbitrary character summands, with product character chi psi. Thus an equivariant/isotypic P=W theorem, an endoscopic image equality, or variant perverse multiplicativity would directly repackage source conclusions. None is nominated.
+
+The common lowering operator also supplies a rational simultaneous eigenspace splitting of the two filtrations (02-lefschetz, alg:eigenspace-filtration). The printed commutator identity involves the single Lefschetz class e; it does not by itself make the shifted grading operator a derivation of the full cohomology ring. A multiplicative Chow or filtered-chain-level refinement would require additional maps beyond this cohomological identity. No such full target has been frozen, proved or declared impossible.
+
+History screen: the structuralr39 history index pointed only to the actual arithmeticr18 catalogue-read note for043. Current authored Markdown search for fixed-determinant, perverse/weight and P=W returned that new screen plus unrelated arithmetic determinants and probability determinants. This is not exhaustive novelty clearance. Primary operations have not yet been independently read for043 because the proposed basic interface is already an explicit source corollary. No primary paper is claimed read on that basis.
