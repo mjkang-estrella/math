@@ -1,0 +1,13 @@
+# r48 working checkpoint
+
+Author: Myeongjin Kang. No affiliation. Original prose CC BY 4.0.
+
+No nominee, scope freeze, independent review or acceptance. Current source reservation is family 216, critical planar XY magnetic-field response. Original source truths at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated. Only this directory is edited. Earlier frozen targets and packets are untouched.
+
+Chronology: after catalogue/history scouting, the six actual family-216 manuscript trees were retrieved and authenticated (70 non-PDF blobs). Download is not semantic reading. The center-magnetization, critical-spin-field and logarithmic-correlation introductions were read in full; critical-spin-field 07-fields.tex lines 1–270 and 06-correlations.tex 370–530 were read. The broad history phrase scan is retained privately; all 808 matches are copied catalogue/source contexts after excluding those paths, not developed author proofs. Old-index hits are misleading iteration-number coincidences or a generic critical/near-critical phrase and were not treated as eligibility evidence. No global literature novelty inferred from this.
+
+Primary Camia–Garban–Newman, arXiv1205.6612v2, was read in full. Its plus-boundary block optimization and general correlation-length formula already pay the generic equation-of-state scale selection. Newman–Wu1708.08820v3 opening through Theorem1 and boundary convention, Ginibre1970 classical correlation machinery, MMP1978 Proposition1 and plus-state construction, and Dario–Garban2025 PropositionA.2/Remark16 provide comparison operations. Exact read extents will be finalized; several combined outputs were truncated, so no full-body claim is made for those papers.
+
+A likely technical deduction is m(h) comparable to h^(1/15)(log(1/h))^(1/15). The candidate route uses: source local second-moment bounds extended to a full pinned square by a Whitney decomposition; source Lee–Yang absolute moments for finite-field upper control; Ginibre local-field domination plus symmetric Lee–Yang tilt for a lower bound; and radial correlation comparison for infinite-volume block variance. The full author proof is now assembled in 216-technical-transfer.md and classified as a technical adaptation of CGN, not a substantial nomination.
+
+The exact amplitude m(h)/(h^(1/15)(log(1/h))^(1/15))→positive constant is not inferred from these comparison bounds or from fixed-domain field convergence. No full-amplitude target has been frozen. An interchange of the large-domain and lattice scaling limits would need a new quantitative boundary/free-energy interface; the present sources are being checked before deciding whether such a path is credible.
