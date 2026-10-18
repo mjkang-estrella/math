@@ -1,0 +1,3 @@
+# Honest formal support scope
+
+No Lean or other proof-assistant artifact is supplied. A feasible local formalization would encode finite arc sets, divergence and cut balance; derive the max-flow cut criterion and integer split-network construction from an established integral-flow library; then prove the cut-deletion bound and exact rational exponent inequalities. The probabilistic sampling/witness argument, full directed DFS proof and competing-tree literature comparison would remain human mathematics unless separately formalized. None of this would close the unresolved global box/path construction, and the diagnostic program is not a substitute for those proofs.
