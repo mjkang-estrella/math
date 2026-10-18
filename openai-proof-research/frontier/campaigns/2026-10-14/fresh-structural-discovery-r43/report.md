@@ -1,0 +1,13 @@
+# Structural discovery r43: no nominee
+
+Family301, trace cones and Razak–Jacelon stabilization, was investigated at the operation level. No full research target was frozen and no campaign contribution is proposed. The conclusion is author-side screening, not an independent gate or a proof that every possible extension is paid.
+
+The source realizes prescribed full extended-trace-cone isomorphisms, including ideal weights. Consequently a global cone isomorphism compatible with C_0(X) fibre ideals already yields a C_0(X)-linear algebra isomorphism; parameter-corollary.md gives the short proof. Merely fibrewise input is a different problem and is not asserted to suffice.
+
+The subsequent unrestricted Cu-morphism idea initially appeared to require new uniqueness with overlapping image ideals. Reading source05 corrected that premise: its target labels need not preserve intersections. Gabe's absorption and ideal-related stable uniqueness are already the operative primary tools. ideal-transport.md proves the remaining ideal, compact-controller, finite-trace-domain and trace-kernel adjunction calculations from the Cu morphism axioms. These are technical support, not a substantial new construction. The full general noninvertible realization theorem remains unproved here; source03–08 have not been transferred wholesale.
+
+History was reconciled using the r39 index only as a pointer and a fresh bounded authored search. The actual I84 and I87 hits distinguish abstract close-algebra examples from this nuclear trace-cone theorem. They are previous comparisons, not a developed family301 extension. Absence of other hits is not novelty clearance. No change to existing full166/full332 or any other frozen target is made.
+
+Primary comparison was early enough to reject inflated novelty: Robert's morphism theorem has a one-dimensional NCCW/inductive-limit domain and Cu-tilde invariant, Cantier's closing discussion records the tracial classification landscape and restricted morphism results, and Gabe supplies the actual ideal-related absorption/uniqueness operations. None is asserted here to prove the full arbitrary nuclear W-stable morphism statement by itself. See reading-limits.md for exact operative reading and unexamined dependencies.
+
+No finite numerical diagnostic was needed for the elementary lemmas. Integrity tests check bytes and provenance only. There is no Lean claim, independent review PASS, publication, or count increment. Private upstream and primary bodies remain ignored and unreleased. Original prose: Myeongjin Kang, no affiliation, CC BY 4.0; verification code MIT.
