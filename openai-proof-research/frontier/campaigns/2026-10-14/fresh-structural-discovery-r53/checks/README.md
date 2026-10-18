@@ -1,0 +1,1 @@
+The rational diagnostic is one exact example. Four PDF/text extractions replay byte-for-byte. Thirteen disposable copied-packet integrity controls pass; final external-anchor verification is reported outside the packet. Controls are copied/adapted from r52 with provenance, not mathematical evidence. No source theorem is audited.
