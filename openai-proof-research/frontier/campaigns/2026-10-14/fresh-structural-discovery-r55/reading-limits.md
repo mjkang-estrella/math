@@ -1,0 +1,17 @@
+# Actual reading and provenance limits
+
+Pinned repository truth is stipulated at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. The complete sources/preprints-tree.json, not the truncated root-tree cache, supplies canonical Git identities. source-tree-selection.json is the exact21-blob selection; source-receipts.json records pinned URLs, byte counts and SHA256. These identity checks do not audit upstream truth.
+
+Family303: all13 TeX/Bib files retrieved. The introduction was read fully; other bodies were not semantically read apart from targeted search hits in foundations.tex. The fixed-n quantifier is operative. Family297: all8 TeX/Bib files retrieved. Introduction, construction, HNN, bridge and iteration sections were read fully. states.tex lines233–292 were read; other states content only searched. Bibliography entries for Vaccaro/Tanaka/Farah–Hirshberg were inspected. main.tex was not read. Receipt paths identify exact files.
+
+Primary semantic reads, in saved pdftotext line coordinates:
+- Rørdam2003:1250–1346, including complete Theorem6.10 and Corollaries7.1–7.2 proofs and beginning7.3; also180–260 vector-bundle preliminaries. Not the full paper. https://web.math.ku.dk/~rordam/manus/simple.pdf
+- Vaccaro1711.05845v4:1–210,252–370,407–484. Corrected Theorems1–2/A, Lemma3.5 and partial Section4.1 were read. The full technical TheoremA proof was not read. https://arxiv.org/pdf/1711.05845v4
+- Tanaka2609.26930v1:1–766 continuously, including full operative Sections2–5 and Corollary5.4 proof. Section6 and references were not read beyond search hits. https://arxiv.org/pdf/2609.26930v1
+- CNP.pdf was retrieved as a possible corrigendum, but its title identified2017 Waterloo talk slides. It is renamed vaccaro2017slides and unused. Only title inspected; the separate2020 corrigendum was not read. https://people.dm.unipi.it/vaccaro/CNP.pdf
+- Blackadar, Traces on simple AF C*-algebras, JFA38(1980),156–168: original publisher abstract read, full proof not read or archived. Its classical realization theorem is an explicit imported premise. https://www.sciencedirect.com/science/article/pii/0022123680900622
+Kishimoto–Ozawa–Sakai homogeneity is imported in the form stated in the actually read Tanaka Section2; its original proof was not read.
+
+History was bounded to project catalogue/index pointers and authored canonical/campaign notes, excluding private/source copies and briefs as development evidence. The r39 index is a pointer, not clearance. Actual operative search passages rejected101 through I53,347 through I70,076 through I135/currentr30. I70 display was truncated, so no full I70 reading is claimed. The Naimark I84 hit at line342 was only a universal-bidual comparator, not a developed trace-simplex target. Neither absence of303 hits nor these bounds proves global freshness. Some catalogue/index outputs were truncated; no exhaustive catalogue/history read is claimed. One search included a nonexistent root and exited2; its absence results were not used as clearance. An irrelevant line from a contribution-review file appeared in a broad search; that review body was not opened or used.
+
+Root assistance consisted of discussion of scope and the need for actual primary comparison; no independent gate is inferred. This packet's algebraic reasoning is author-side, not Lean or independently reviewed. No finite diagnostic is presented as proof. Private third-party bodies are ignored and must not be staged or uploaded.
