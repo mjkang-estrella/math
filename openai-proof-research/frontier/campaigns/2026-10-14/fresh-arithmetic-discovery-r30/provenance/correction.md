@@ -1,0 +1,5 @@
+# Pre-final provenance correction
+
+The first inventory/source verification caught a missing non-PDF PNG in the preliminary family262 retrieval. Its35 text blobs were complete as text retrieval, but the claim of complete non-PDF coverage was inaccurate. The missing half-line-gluing.png was retrieved and Git-blob authenticated, without a visual read; family262 is36 non-PDF blobs, source259 is13, combined49. The stored pre-final files are superseded history, not an alternate approved inventory. Only the root manifest.json and external final anchors are operative.
+
+Pre-final manifest SHA256:680d782eb33c646aa55c84d8ee0fffaf7dc20186185291e1ff9f9e0c9f39a0e9. All18 copied controls passed for that pre-final inventory, but the source-completeness check failed and no final handoff was made. Candidate SHA256 ee450dee9bd78fb4592313b9b30ac06dd41270019c59da318681423484912491 and scope SHA25650d98b466935720cfbf9d8f9764f7d8ad8a837a2e58480c7c6b7e44f5ea4f99d are unchanged. No mathematical repair or scope change occurred. The parent was notified before correction.

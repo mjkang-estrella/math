@@ -1,0 +1,13 @@
+# r30 completed author candidate T259S
+
+Myeongjin Kang; no affiliation. Original prose CC BY4.0; code MIT.
+
+The unchanged frozen T259S scope has a complete author proof in `candidate-259.md`: the explicit source259 group admits a free weakly mixing spectral-gap cost-one action Y, while its Bernoulli action X has the same stated spectral-gap lower bound and cost≥1+η. Exact scope and chronology are in `scope-259.md`. No independent proof/contribution/formal/manuscript/release gate has been passed by this packet, no acceptance is asserted, and the campaign count remains13/20.
+
+The quotient q sends exactly one row a-source u₁ to c and the other99 to identity, while q(a)=d. All-fiber availability therefore propagates D⇒Dc by recovering an interior edge using the known prefix, supplied w-edge and reverse known suffix. Arbitrarily small Bernoulli c-markers cover their positive translates. Simultaneously q identifies H=⟨w,b₁⟩ with F₂, and Y|H is Bernoulli; the tensor-label and4-tree calculation gives the frozen gap4−2√3. This is the proposed residual construction, with classical/source operations fully credited and no substantiality presumption.
+
+`source-and-credit.md`, `reading-limits.md`, receipt files and `source-family-inventory.json` distinguish source truth, actual read bodies, retrieved unread bodies, primary comparison and remaining literature limits. No primary-book retrieval failure is hidden. `formal-interfaces.md` gives bounded algebra/relational and analytic contracts; no formal implementation or full formal proof is claimed. `diagnostics.py` checks finite word identities and direction controls only.
+
+Earlier family262/095/catalogue screening is preserved in `screen262-checkpoint.md` and `finite-bubble-obstruction.md`; those are technical/no-nominee evidence, not part of T259S. Earlier frozen packets, shared indexes, live T047N reviews, staging/commits and publication were untouched. Third-party bodies under `private/` are excluded from any public payload.
+
+The strict verifier takes both manifest and executing-verifier SHA256 anchors from outside the packet, checks exact file/directory inventories (including empty directories), rejects symlinks including original path ancestry, hardlinks and nonregular objects, and can authenticate all48 source blobs against the complete tree. A public-only copy deletes exactly `private/` and uses the same manifest. Copied controls exercise positive and public-only cases plus16 mutations. Their final external-anchor run is reported to the parent; hashes are integrity evidence, not mathematical proof or contribution acceptance.

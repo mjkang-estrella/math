@@ -1,0 +1,13 @@
+# r30 checkpoint: no nominee
+
+Myeongjin Kang; no affiliation. Original prose CC BY 4.0; original code MIT.
+
+Status: **NO NOMINEE; NO FULL TARGET FROZEN; counted=false.** Campaign remains13/20 under the parent instruction. This packet contains bounded technical exclusion evidence and a corrected history screen. It does not satisfy the substantial-new-result gate, and no proof/contribution/formal/manuscript/release acceptance is asserted.
+
+The preliminary family262 reservation was made after catalogue and limited history pointers, before a target freeze. Reading the actual equality theorem and compactness operation suggested a scalar multibump obstruction. The broader operative history search then found that I38 §1.2 had already proved that obstruction. It also found the developed I250/I259/I262/I264/I271 channel-stability chain and the screened-out P3R three-well phase package. I38 §1.2, I261's full contribution review, I272's full parent disposition, and P3R's exact original scope and terminal disposition were then read. The root was notified immediately. No absence-from-index eligibility argument survives this check.
+
+`finite-bubble-obstruction.md` records the elementary k-versus-K extension: normalized k separated scalar solitons have vanishing full-moment deficit while their sharp asymptotic p-th power distance from sums of at most K<k arbitrary solitons is (k−K)/k. It is explicitly credited to the old splitting operation and is **not** a new candidate or a weakened replacement target. A finite bubble budget based only on a deficit tolerance cannot repair the old global-stability screen. Unrestricted bubble approximation remains open in this packet; no affirmative theorem is promised.
+
+Other catalogue-only considerations produced no developed target. In particular, source095 smoothing was identified with the prior I200 regularized-cone bridge; no source095 body was retrieved in r30. A family250 conjugacy-problem lead was screened only through catalogue/history/search results; I89's relative-retraction obstruction was read. Search results already pointed to known simple-group conjugacy constructions, so no250 theorem or source-essential mechanism was asserted. These are not new mathematical exclusions.
+
+All35 non-PDF text bodies of the three family262 manuscripts were retrieved from pinned raw URLs and authenticated against the complete `sources/preprints-tree.json` by Git blob identity. Retrieval is not reading; `reading-limits.md` is authoritative. The primary HTML is retained privately. No third-party body is intended for Git or publication. r29, its clarification, live T047N reviews, T008M, TREE097 and all shared ledgers were untouched.

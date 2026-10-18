@@ -1,0 +1,13 @@
+# Feasible scoped formal support for T259S
+
+Original prose CC BY4.0, Myeongjin Kang; no affiliation. This is a plan, not implementation or certification. No theorem prover was run. Proof and contribution gates precede implementation.
+
+1. **Algebraic quotient.** Define the100-generator free group and the substitutions q(a)=d, q(b₁)=d⁻¹c, q(b₂)=d⁻¹c⁻¹, q(bᵢ)=d⁻¹ otherwise. Prove q(u₀)=1, q(u₁)=c, q(uᵢ)=1 for2≤i≤99 and q(w)=d by recursion. A quotient presentation with relations [t,bᵢ]=[t,w]=1 then receives q with q(t)=1. The inverse F₂→H on d↦w,c↦wb₁ proves the two-generator subgroup isomorphism. This is exact group reasoning, not a hash of checked words.
+
+2. **Action/relational path.** For an arbitrary right Γ-set Y, an equivariant map π:Y→Z for a q-action, and an equivalence relation R containing B-edges, define available(D) by ∀y,π(y)∈D⇒R(y,ya). Encode the finite row path and prove available(D)⇒available(Dc). Assumptions should be exactly the supplied edges and quotient identities, not availability of the desired edge. An induction gives coverage for ⋃_{n≥0}Ecⁿ. This is the central new combinatorial interface and can be formalized without measure theory.
+
+3. **Graphing/cost wrapper.** The measured part must explicitly supply standard Borel probability actions, Borel marker domains of measures p and ρ, full t-orbit coverage, countable/finite partial bijections and cost accounting. The relational interface then proves generation. Source259 high-cost and aperiodic cost≥1 are named theorem inputs. Treating these as declared assumptions gives scoped support only; it does not certify the entire p.m.p. theorem unless the measure/graphing library is implemented or imported with exact verified contracts.
+
+4. **Gap interface.** A finite-support free H-set lemma proves that every nonempty finite labeling has trivial stabilizer for torsion-free H. Separately prove the degree4-tree quadratic-form estimate, then a Hilbert direct-sum transfer and the generator energy identity. The Bernoulli tensor-basis decomposition, density and mixing argument remain analytic interfaces unless completely formalized. A finite matrix calculation is not a replacement.
+
+Useful negative controls for any implementation: change q(u₂) to c (two exceptional positions); drop the all-fiber availability quantifier; reverse the recovered suffix; weaken the free-coordinate-orbit hypothesis; or use the nonstrong profinite factor. Each must fail the relevant exact interface, rather than be excluded by an unrelated syntactic premise. No promise of full end-to-end Lean feasibility is made; the algebraic/relational component is the bounded credible first formal target.
