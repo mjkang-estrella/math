@@ -1,0 +1,35 @@
+# Reading limits, provenance and failures
+
+This record concerns r30 only. Previous r29 is sealed and immutable; it was not edited. Prior reads retained in the task history are distinguished from new r30 reads. Current parent count is 12/20; this packet contributes no acceptance.
+
+## Rules and history
+
+Read the full r30 brief, AGENTS.md, upstream.json, r29 screen/checkpoint/reading limits and parent disposition. The r25–r28 checkpoints and reading limits had been read during r29; they were not all reread in r30. The long NEW-TEN ledger was consulted in bounded opening/terminal portions during the preceding work, not newly read end to end. The complete 13,223-entry preprints tree was parsed and checked nontruncated; this is inventory coverage, not semantic reading of every manuscript. Source catalogue headings and selected complete family entries were read. The bounded history searches used original Markdown paths, excluding private/frozen/input copies where specified; they do not establish semantic absence across the entire project. Relevant full task entries were requested from tasks.json by lexical keys; no entries matched the tested 364/346/326 keys. One first tasks.json path was wrong and immediately corrected.
+
+The I02 Vlasov mention was the only developed-history hit located for 362 in the initial bounded screen; root subsequently reserved the family. Later next-lead checking located the exact I27 endpoint-varifold target, I20/I23/R025 kinetic development, and the Crouzeix and inverse-elasticity chains. Several large combined history displays were truncated and are not claimed as full reads. In particular I122 variational discovery was not fully read from its truncated display. I88's cotype/fixed-point passages were read, not its whole report.
+
+## Pinned mathematical bodies actually read
+
+All source objects are pinned at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. Git blob SHA1 and SHA256 are in source-receipts.json and independently replayed against the saved complete tree. Retention does not imply complete reading.
+
+Family 362: full introduction.tex (227 lines), setup.tex (140), closure.tex (87), occupation.tex (416), and direct.tex (428) were read. Occupation 1–180 and direct 195–279 were reread after earlier combined-output limits, so those complete-file statements do not rely on a truncated display. Read retarded.tex 1–95, 160–195, and 250–290, including total energy/cone proof, boundary representation and data bound. Read continuation.tex 285–490, including the field modification/vacuum/localization and ending continuation discussion. Read selection.tex 1–165: selection weights, the receiver coefficient and beginning of exponent proof. Other selection/direction/cancellation portions were lexically searched only. Their complete proof bodies were NOT read. No claim that all support-radius dependence has been removed or audited is made. All 16 source text/bibliography/figure files are retained, but main/references/figures and unread portions are not attributed as semantic reads.
+
+Next-lead screen: family 346 introduction (200 lines) and full final dimension-reduction section (392 lines) read before the I27 overlap was found. Other family-346 sections and primary rectifiability papers were not read in this round. Family 326 introduction/approximation combined display was truncated; only the visible introduction theorem/history (including explicit no-AP counterexamples) and visible compact-map/AP-composite portions are used. No complete-read claim is made for either retained 326 file. Family 352 introduction (188 lines), including exact theorem, product corollary and construction discussion, read fully. Its lower proofs and primary literature are not yet read. Family 352 is only a proposed next feasibility lead.
+
+## Closest primary operations for 362
+
+Exact versioned source URLs: https://arxiv.org/src/1406.0169v1 and https://arxiv.org/src/1607.07416v1. Abstract pages were initially opened using web search as discovery pointers; operative TeX bodies were then downloaded and read. The downloaded files were historically named source.tar, but both are actually single-file gzip-compressed TeX, NOT tar archives. A later tarfile inspection failed; magic-byte/gzip inspection resolved the format, and gzip decompression is byte-for-byte identical to each saved main.tex. Receipts and verifier now state the actual encoding. Original download bytes were preserved.
+
+Luk–Strain: read main.tex 220–310 (main continuation theorems/initial assumptions), 175–215 (weight and contextual criterion), 1165–1235 (proof entry, bounded characteristic displacement and initial-shift estimates), and 1510–1548 (derivative closure and conclusion). Other theorem/proposition labels were searched. The full 2,000-line paper and every intermediate derivative proof were not read. The screen attributes conditional continuation, not a new global theorem or a fully replayed proof of every imported local result.
+
+Patel: read main.tex 205–290 for initial assumptions/main theorem and 660–795 for the operative moment/characteristic/iteration proof during the earlier r30 work; later selected ranges 235–266 and 680–713 were reread. A subsequent combined redisplay of 660–795 was truncated, not used to enlarge coverage. The exact main theorem and finalest use evolved moments uniformly bounded up to T. The full KT/KS estimates and the whole paper were not read. Thus the comparison verifies which missing global input is required, not all proofs of these primary results.
+
+These are bounded closest-primary comparisons, not a worldwide novelty search. Source bodies remain private third-party evidence. No claim of source truth auditing, novelty, or acceptance is attached to hashes.
+
+## Mathematical validation and remaining work
+
+The original screen's cross-work identity, L1–L∞ shell-current interpolation, Maxwell L2 tail estimate, lognormal Schwartz tail comparison, and convergent doubling-series test were derived explicitly. The later density-only supplement preserves total field energy and derives the a_j^(1/2), a_j^(3/4) balance weights and polynomial shell sums. The final supplement also checks polynomial initial-label growth, its sufficient moment implication, the still-unproved receiver-adapted cap, and the potentially quadratic-exponential moment constants for a lognormal tail. These are conditional diagnostic calculations; they do not close the source/receiver stable-cell and selected-bin bootstrap. No numerical experiment is being passed off as a proof. No Lean global proof or verification of the missing nonlinear estimate was attempted.
+
+verify.py verifies only exact inventory, saved-source identities and decompression provenance. It requires an externally supplied manifest SHA256 and excludes only ROOT manifest.json, not arbitrary files sharing that basename. Its positive/wrong-anchor control commands are reported separately by the parent-facing handoff after sealing. No mathematical theorem is certified by this verifier.
+
+Myeongjin Kang; original prose CC BY 4.0; code MIT. No affiliation.

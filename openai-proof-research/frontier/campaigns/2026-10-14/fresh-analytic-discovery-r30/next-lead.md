@@ -1,0 +1,11 @@
+# Prospective next lead, not a frozen target
+
+Family 352, *A finite-time singularity of Calabi flow on projective space*, is distinct from 362. The full pinned introduction and main theorem were read and retained with Git-blob authentication. They construct one U(10)-invariant smooth initial metric in the Fubini–Study class on CP^10, with scalar curvature asymptotic a(T−t)^−1/2 at the fixed point. The already supplied stationary-product corollary is not a new target.
+
+The concrete question is the dynamical stability of this singularity under non-U(10)-invariant Kähler perturbations in the same class. The source expressly builds its ancient inverse by selecting finitely many components from future forcing, using the freedom to choose the initial metric, and does not require a stability or nondegeneracy result for the profile. A full perturbative theorem therefore needs the angular linearized spectrum and a weighted quasilinear stable-manifold/gluing construction beyond that radial correction. Whether the resulting basin is open, finite codimensional, or unstable has not been established. No arbitrary open-basin assertion is being frozen, and no narrower radial result is being substituted.
+
+This is a plausible feasibility lead only. The lower flat/parabolic/profile/compact proofs and closest primary operations still must be read. The current bounded original-path search in iterations/findings/reviews found no Calabi-flow development. That is not complete eligibility or novelty clearance.
+
+Other leads tested and discarded during handoff: family 364 is already developed in I20/I23 and accepted R025; family 346's endpoint rectifiability is exactly the I27 developed target; family 325 has several accepted and quantitative branches; families 365/372 have the developed physical-elasticity chain. Family 326 was rejected on its actual introduction: removing AP is false, with known primal/dual-cotype counterexamples explicitly recalled by the source. These exclusions prevent mistaking a catalogue-level idea for a fresh target. The two retained family-346 sections were read before the exact I27 overlap was found. The family-326 source retrieval is retained despite its rejected lead.
+
+Myeongjin Kang; original prose CC BY 4.0. No affiliation. No nominee or priority claim.
