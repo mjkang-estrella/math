@@ -1,0 +1,20 @@
+# T133E actual reading, provenance and verification limits
+
+Source truth is stipulated at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. The full13223-entry preprints-tree was parsed with truncated=false and SHA256 eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b. source133-receipts.json records44 fetched canonical non-PDF blobs across all four family133 companions. Retrieval is not semantic reading.
+
+Variable-dimension source actual complete reads: sections01-introduction (229 lines),02-refinement-game (228),06-subcubic-realization (548),07-game-reduction (311),08-uniformity (320), bibliography. Section04-blocks-projection lines1–260 read: full block definition/local-fiber proof, exact-projection statement and initial support lemma; the remaining exact-projection proof was not read. Section03-computation-images lines233–305 and405–429 read: full scalar-image definition, circuit-consistency statement, and polarity corollary/proof. Its earlier addressed-circuit compiler and full buffer proof were not read. Section05-general-realization and figures/main/README were authenticated but not semantically read. Reliance on the exact-projection/compiler results is on stipulated source statements, not a newly claimed upstream audit.
+
+Companions: identification section01-introduction fully read (160 lines); parity-lifts section01-introduction fully read (255 lines, in two segments); fixed-dimension build/main.tex lines1–180 read, covering abstract, full main theorem, convention/history and beginning proof outline. Other companion bodies were fetched but not read. These inspected interfaces distinguish pair equivalence, identification, fixed-k decider bounds and early-round parity encoding; no full-compiler companion review is claimed.
+
+Primary URLs and PDF/text hashes are private/primary/receipt.json. Retained extracted text line ranges actually read:
+
+- lasserre.txt:1–210,280–465,890–1012 (last range displayed in segments, with980–1012 re-read after a combined-output truncation). Includes Theorem3.1, Lemmas3.2–3.4, CFI definitions, and expansion section through proof of3.4. Lemmas5.2/5.3 statements read, not their later proofs. Full SDP/vector construction and full nonisomorphism proof not read.
+- expanders.txt:3410–3465, Construction8.1/Theorem8.2 and surrounding discussion, not the complete harmonic-analysis proof. This is the classical frame interface; no new spectral proof claimed.
+- wl-dimension.txt:110–170 and595–665, plus navigation matches. Includes Theorems1–2 and bounded-color-class discussion, Lemmas14–18 beginnings and thin-fiber reasoning. Full complexity reductions not read.
+- uncolored-cfi.txt:1–185 and1680–1812, full introduction and section9 through the transition to section10, including the full short proof of Theorem9.3. Its earlier gadget recovery lemmas are cited antecedents, not independently reread in full.
+
+No PDF visual inspection was performed; reasoning uses extracted text and canonical TeX. Broad web searches served navigation; third-party summaries and search snippets are not mathematical inputs. Primary bodies stay private.
+
+Finite diagnostics build five frames (sides2–6), verify degree/port/root promises and station recognition under iterative color refinement; check265 exact base-multigraph cuts for sides2/3; and verify66 lifted dihedral automorphisms on monochromatic cycle fixtures. They do not instantiate the full source computation compiler, enumerate all output-graph cuts, or solve a growing-dimensional WL game. These checks are not proofs of the theorem. The full proof is candidate.md.
+
+Parent supplied methodological warnings about exact width, root/station recognition, common frame, binary dimension capping and the need to compare actual encoding operations. The candidate was developed by this author; parent feedback is collaboration, not independent review. Scope chronology is explicit in expander-exploration.md and scope-freeze.md. No scope weakening, independent gate, formalization, manuscript release, upload, acceptance or count change is asserted.
