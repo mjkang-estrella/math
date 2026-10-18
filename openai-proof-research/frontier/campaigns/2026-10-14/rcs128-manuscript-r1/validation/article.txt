@@ -1,0 +1,876 @@
+                 A source-relative factor-two approximation
+                    for reverse-complement superstrings
+                                          Myeongjin Kang
+
+                                  Manuscript r1, October 2026
+
+
+                                               Abstract
+          Assuming the count, periodic-layer, and connection lemmas of the pinned ordinary
+      shortest-common-superstring construction of OpenAI, we give a deterministic polynomial-
+      bit-time factor-two algorithm for superstrings with reverse complements. The alphabet
+      and its involution are explicitly encoded and may vary with the input; ﬁxed letters, reverse-
+      complement palindromes, empty requirements, duplicates, and containment are included.
+      The extension uses one matched construction: a phase-free 2k + 1 count rule for self-
+      reversed periodic texts, adjacent sorted proﬁles sharing both reﬂection axes, and an odd
+      core of 2k − 1 layers in a 2k-layer budget unit. Established connection and symmetric
+      traversal operations complete the algorithm. The dependence is on the stated source’s
+      stronger structural lemmas, not merely on black-box existence of an ordinary factor-two
+      algorithm. Sixteen ﬁnite and scalar Lean support lemmas cover speciﬁed interfaces only;
+      the full algorithm is not formalized.
+
+
+1     Statement, dependence, and antecedents
+Let Σ be a ﬁnite alphabet with an involution cm : Σ → Σ. For a word s = s1 · · · sh , put
+ρ(s) = cm(sh ) · · · cm(s1 ) and ρ(ε) = ε. A word is feasible for a ﬁnite listed family S if, for
+every s ∈ S, it contains s or ρ(s) as a contiguous substring. Write OPTRC (S) for its minimum
+symbol length. Alphabet labels, the involution table, word symbols, and list boundaries are
+explicit; N denotes their total encoded bit length.
+
+Theorem 1.1 (Source-relative approximation). Assume the structural results of [1] at revision
+fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb, with the contracts speciﬁed below. There is
+a deterministic algorithm, polynomial in N , which for every such (Σ, cm, S) returns a feasible
+word T with |T | ≤ 2 OPTRC (S). The assertion includes arbitrary ﬁxed letters and words,
+empty words and the empty list, duplicates, and substring redundancy. Neither the alphabet
+nor the word lengths are bounded constants.
+
+    The source’s truths are assumptions of this article. We do not audit them or derive an
+independent proof of the ordinary superstring theorem. In particular, an unspeciﬁed ordinary
+factor-two algorithm would not supply the contracts used here. Yamano–Shibuya’s reduction
+in [2, Theorem 2] also explains why an unrestricted reverse-complement result cannot be
+advertised as bypassing the ordinary problem.
+
+1.1   The precise source interface
+The following labels identify results in the pinned source, not labels of this article. Its section
+ﬁles are under build/sections/.
+
+
+
+                                                   1
+   1. 02-counts.tex: the blocking functional, extension and ordinary period rules, and the
+      occurrence and balance proofs lem:counts, lem:base. Their use requires a nonnegative
+      count vector on a substring-closed set satisfying those rules. It does not require choosing
+      the smallest ordinary count vector.
+
+   2. 03-layers.tex: lem:recorded, lem:layers, lem:matching-window, lem:agreement,
+      and lem:max-rotation. These provide recorded counts, sorted primitive passages, ac-
+      tual matching windows, and the two periodic comparison bounds.
+
+   3. 04-connections.tex: lem:ordered-windows and lem:band; the proof of lem:
+      collective; and lem:host after its hypotheses are established on a single host path.
+      We state the relevant contracts in Section 4. The source collective statement has k
+      layers and K = kp; our odd-core use has 2k − 1 layers and K = kp, and uses the proof’s
+      geometric inequalities.
+
+   4. 05-processing.tex: its ordinary threshold, partition, and individual-link/request con-
+      struction, applied to nonself text orbits.
+
+   5. 06-cycles.tex: the proof of lem:cycle-contact and the free-period strategy of lem:
+      free-period and thm:connection. We adapt the geometric proof to odd cores and
+      justify the two-port quotient separately; the original one-sided connection theorem is
+      not assumed equivariant.
+
+   6. 07-algorithm.tex: ﬁnite record search, explicit coordinate representation, and the
+      suﬃx invariant for spelling the output.
+
+All these hypotheses and their symmetric applications are made explicit below. Source-paid
+arguments are recalled in our notation where needed to make the adaptation checkable.
+
+1.2   Related operations and the credit boundary
+The arbitrary-involution formulation, formal copies of ﬁxed words, paired cycle selection,
+both-orientation periodic comparisons, and an 8/3 approximation occur in Yamano–Shibuya
+[2], especially Section 2, Lemmas 7, 9, 12, and Theorems 11–13. Their CPM paper [3] proves
+3.75 and 2.875 guarantees and, in Lemma 18, compares an optimum with its entire reverse
+complement. Thus the generic use of T and ρ(T ) is an antecedent, not a contribution here.
+Fici et al. [4] already use distinct palindrome vertex copies and paired reverse paths in Sections
+2–3, and reversal surgery in Lemma 6. Their Theorem 7 is a one-half compression guarantee;
+it is not a factor-two length guarantee.
+     Jiang, Li and Du studied superstrings with ﬂipping, as described by Fici et al. and Yamano–
+Shibuya [5, 4, 3, 2]. The 1992 full text was unavailable in our bounded searches, so our
+comparison uses those later accounts. Fici et al. report a 4 length bound for a greedy-like
+reversal algorithm. The CPM 2026 account distinguishes the 4-approximate MGREEDY
+extension from a suggested 3-approximate TGREEDY extension; WABI 2026 summarizes the
+earlier bound as 3. We do not assign an independent theorem statement to the unread 1992
+body.
+     Goldberg–Karzanov’s symmetric decomposition and parity results [6, Theorem 3.1 and
+Corollary 3.2] precede the pairing operations below. Their Section 5 already exchanges com-
+plementary halves of two self-symmetric cycles meeting at two mate vertices. We credit that
+splice; our shared-axis lemma supplies the meeting hypothesis for possibly diﬀerent ordered
+staircase proﬁles. Their setting has no ﬁxed vertices, whereas our hierarchical graph has
+ﬁxed vertices, including ε; we therefore give the needed parity and traversal proof explicitly.
+Bidirected incidence walks and balanced connected Euler criteria also appear in Medvedev et
+
+
+                                                2
+al. [7, Section 2.2, Lemma 1] and Kundeti et al. [8, Section 6]. Their spectrum-constrained
+cyclic assembly results are not imported as exact algorithms for our arbitrary-length linear
+requirements.
+    Extremal and critical rotations are established tools in Breslauer–Jiang–Jiang [9, 10] and
+Mucha [11]. We cite the 1997 journal article as the archival reference, but our operational
+comparison uses the 1996 BRICS report RS-96-21; the journal body was not read, and report
+lemma numbers are not transferred to it. The report’s concluding remarks credit Crochemore
+with a Lyndon minimum/maximum-rotation argument. The hierarchical representation and
+the separation between cycle-cover bounds and connectivity also precede this work; see the
+Collapsing framework [12, Sections 2.2 and 7.2].
+    The contribution claimed here is exactly one matched package: the phase-free self-text
+count rule in Lemma 2.1, the transfer to adjacent sorted proﬁles sharing both axes in
+Lemma 3.1, and the 2k − 1 odd core inside a 2k-layer unit in Lemma 6.1. No separate
+novelty is claimed for phase parity, tagged counts, maxima or even rounding, decomposition,
+splicing, anchors, batch ﬂips, request reclassiﬁcation, rotations, cycle accounting, half-Euler
+extraction, or complexity bookkeeping.
+
+1.3   Why the matched package is needed
+For identity complement on {b, c}, take S = {bbcbbc, bcbbcb, cbbcbb}. The ordinary rules sym-
+metrized by orbit maxima and even rounding give one-letter counts 4, 2, hence Wsym = 6. But
+OPTRC = 7: a length-six word cannot contain the two distinct length-six orientation orbits,
+and bbcbbcb satisﬁes both. This refutes only a connection theorem that would retain those
+counts and yield output length at most the same Wsym . It does not refute factor two or all
+equivariant methods. The stronger rule below gives W = 12 on this instance.
+    A diﬀerent diagnostic, {aaa, aab, abcaa, accc} with a ↔ b and c ﬁxed, has optimum 10.
+Minimum constrained-cycle-cover orientation ties can lead to ordinary forced-count certiﬁcates
+11 or 9. This shows that arbitrary minimum tie-breaking does not ensure the desired W
+certiﬁcate; it does not exclude all orientation-selection methods. These ﬁnite certiﬁcates
+motivate the construction and are not used to prove Theorem 1.1.
+    Boosting only ﬁxed words is also insuﬃcient for the intended proof: in (abcacb)Z , the
+layer z(x) = x + 8 has ﬁxed-axis windows at starts 0, 3, whereas its unique greatest forward
+rotation starts at 4. The two windows there are cbabcac and cbabcacb, neither ﬁxed. A count
+rule conﬁned to ﬁxed-axis starts would not justify the maximal-rotation cycle argument. The
+rule below holds at every phase of a self-reversed text.
+
+
+2     Symmetric counts and their domination
+Remove empty requirements, merge ρ-orbits, and discard an orbit contained in a diﬀerent
+larger orbit. If s is contained in t, then ρ(s) is contained in ρ(t), so either orientation of the
+larger word satisﬁes an orientation of the smaller. This preprocessing preserves feasibility and
+the optimum. If nothing remains, return ε. Otherwise let R include both orientations of the
+surviving requirements, and let V consist of all their substrings, including ε. It is substring-
+closed and ρ-closed; required words are maximal in V . Let L be the total symbol length of
+one representative per surviving orbit, so L ≤ N and |V | = O(L2 ).
+
+
+
+
+                                                3
+2.1    Blocking and the recursion
+A periodic text is a map A : Z → Σ with A(i + p) = A(i) for some positive p, not necessarily
+least. For s = A[0 : h) and r ∈ V , let bA,s (r) count the integers j such that
+
+                          1 ≤ j,   j + h ≤ |r| − 1,      r[j : j + h) = s,
+      r(i) = A(i − j) (1 ≤ i ≤ |r| − 2),          r(0) ̸= A(−j),    r(|r| − 1) ̸= A(|r| − 1 − j).   (1)
+                  ∑
+Put BA (s; m) = r∈V \{ε} bA,s (r)m(r). Only |r| ≥ |s| + 2 contributes. For an occurrence
+aligned with A in a ﬁnite word, the nearest mismatches on both sides, if present, determine a
+unique bracket. Call it blocked when that bracket belongs to V ; absence of either mismatch
+means unblocked. Consequently BA (s; NT ) counts blocked occurrences exactly. This is the
+blocking contract of [1, Section 2]; its coeﬃcients count placements, not just distinct bracket
+words.
+    Deﬁne m(s) in decreasing length, simultaneously on each ρ-orbit. Missing words have
+count zero. The lower bounds are
+                                    ∑                           ∑
+                          m(s) ≥         m(cs),        m(s) ≥       m(sc),                          (2)
+                                     c                          c
+
+with required lower bound 1 for nonﬁxed words and 2 for ﬁxed words. For v = A[0 : h),
+w = A[0 : h − kp) nonempty, k ≥ 1, impose
+
+                   m(v) > BA (v; m)       =⇒       m(w) ≥ BA (w; m) + g(A, k),
+                               {
+                                2k + 1, A self-reversed,                                            (3)
+                   g(A, k) =
+                                k + 1, otherwise.
+
+Here self-reversed means that for some integer c, cm(A(j)) = A(c − 1 − j) for every j; equiv-
+alently its reverse complement is a translate of itself. Take the maximum of all bounds for
+both words of an orbit and assign it to both. At a ﬁxed word round upward to even. Every
+bound refers only to longer words, so this deﬁnes an explicit recursion. Enumerate every
+v ∈ V , 1 ≤ p < |v|, and k with kp < |v|, retaining a rule precisely when repetition of v[0 : p)
+agrees with v. This includes all nonleast periods and all phases represented by such words.
+No ﬁxed-word-only 2k + 2 variant is used.
+Lemma 2.1 (Tagged-text domination). For every feasible T and every nonempty s ∈ V ,
+
+                               m(s) ≤ N (s) := NT (s) + Nρ(T ) (s).
+            ∑
+Thus W :=     a∈Σ m(a) ≤ 2 OPTRC (S), and m(s) ≤ 2L.
+
+Proof. Treat T and ρ(T ) as distinct tagged components, even if their word labels coincide.
+Then N is symmetric and even at every ﬁxed word. It satisﬁes the required and extension
+bounds. Descending induction for the ordinary k + 1 rule is the proof of [1, lem:counts]
+on this disjoint collection: an unblocked v gives k + 1 period-spaced unblocked preﬁxes, or a
+positive longer-bracket deﬁcit contributes that many placements. The blocking functional is
+linear over the components.
+    We prove the additional 2k + 1 bound. Translate so that v = A[0 : h), |w| = h − kp. In
+a self-reversed text, ρ(v) occupies A[c − h : c). The possible starts of a copy of w inside this
+interval form an integer interval of kp + 1 integers. At least k of them have residue 0 modulo
+p, and hence spell w in the required A alignment. The original v contains k + 1 such copies,
+at 0, p, . . . , kp.
+    If N (v) > BA (v; N ), choose an unblocked v in one tagged component. All k + 1 internal
+copies are unblocked: a mismatch bracket of an internal copy must enclose the entire matching
+
+                                                   4
+v interval. Reﬂect this occurrence into the other component. Each of the indicated k aligned
+copies in ρ(v) is likewise unblocked. A bracket blocking one would enclose ρ(v); its reﬂection
+is in V and would block the original v. End mismatches remain mismatches because cm is a
+bijection. Tagging makes the two sets of occurrences disjoint. Therefore
+
+                          N (w) − BA (w; N ) ≥ (k + 1) + k = 2k + 1.
+
+    Otherwise N (v) = BA (v; N ) ≥ m(v) > BA (v; m). Write ∆(r) = N (r) − m(r) for longer
+words. Induction makes these nonnegative. Some bracket word r has bA,v (r) > 0 and ∆(r) > 0.
+Its chosen placement contains k + 1 counted placements of w. The reﬂected bracket in ρ(r)
+contains at least k of the aligned shifted-phase placements just described; both endpoints
+remain mismatches, so they are counted by the same functional for w. If r ̸= ρ(r), symmetry
+gives ∆(ρ(r)) = ∆(r) ≥ 1, and these two bracket terms contribute at least 2k+1 to BA (w; N )−
+BA (w; m). If r = ρ(r), the positive integer ∆(r) is even, hence at least 2; the original k + 1
+placements alone give 2(k + 1) ≥ 2k + 1. There is no double counting of a ﬁxed bracket. All
+other terms are nonnegative. This proves the new bound in both cases.
+    Orbit maxima stay below the symmetric N , and even rounding stays below its even values
+at ﬁxed words. Induction follows. Summing letter counts gives W ≤ 2|T |. Concatenating one
+surviving representative per orbit supplies a feasible word of length L, proving m(s) ≤ 2L.
+
+2.2   The balanced graph and ﬁxed vertices
+For each nonempty s, the hierarchical graph has an up edge pref(s) → s and a down edge
+s → suf(s); preﬁx and suﬃx here delete the last and ﬁrst letter respectively. Up cost is one,
+down cost zero. Give these edges multiplicities
+                                   ∑                                      ∑
+                   u(s) = m(s) −        m(cs),       d(s) = m(s) −                m(sc).    (4)
+                                    c                                         c
+
+By the telescoping proof of [1, lem:base], this graph G is balanced, has W up and W down
+copies, and uses every required vertex. Indeed both degrees at nonempty s equal m(s) −
+∑
+  c,d m(csd), and the total multiplicities telescope to W .
+    Symmetry gives u(s) = d(ρ(s)). Pair copies to deﬁne an edge-reversing involution τ ,
+mapping the up edge at s to the down edge at ρ(s). There are no ﬁxed edges. At a nonempty
+ﬁxed s, the displayed degree is even: nonﬁxed extension words pair and ﬁxed extension words
+have even counts. At the empty vertex,
+                                        ∑            ∑                ∑
+                       outdegG (ε) =        u(a) =           m(s) −           m(s)          (5)
+                                        a            |s|=1            |s|=2
+
+is also even. It is not the total up cost W . Adding a closed walk C together with its
+reversed image τ C preserves balance, symmetry, and even outdegree at ﬁxed vertices, since
+the increment there is outdegC + indegC = 2 outdegC .
+
+
+3     Paired walks, sorted layers, and shared axes
+3.1   Paired decomposition and the exit convention
+At each nonﬁxed vertex choose a matching from incoming to outgoing edge copies and force
+its reversed matching at the mate vertex. At a ﬁxed vertex, pair outgoing copies by a ﬁxed-
+point-free involution; identifying incoming copies with their reversals gives the transition
+matching. This is possible by Section 2.2. The resulting cycles come in distinct reversed pairs.
+For if reversal ﬁxed one cyclic edge order, its reﬂection would ﬁx an edge or exchange two
+
+
+                                                 5
+consecutive edges, yielding a ﬁxed transition. Both are excluded. Fixed tie orders make this
+construction deterministic. It is an elementary adaptation of paired-decomposition principles,
+not a separate contribution.
+   Lift each closed walk to windows [x, e) in the periodic text formed by its cyclic up letters.
+Up steps increase e and down steps increase x; a turn with P up steps advances by (P, P ). A
+word occurrence is recorded if a visited window contains it, counted once per starting residue
+modulo P . The telescoping up-step argument of [1, lem:recorded] gives total recorded count
+m(s), even when |s| > P .
+   Group texts up to translation, reduce to least period p, and sort primitive passages by
+normalized exits. More explicitly, if original walk j has turn dj p and exit function Zj , sort
+the multiset
+                               {Zj (x + rp) − rp : j, 0 ≤ r < dj }
+at each x. Its order statistics are layer exits zi (x). We index higher layers ﬁrst. Put
+
+fi (x) = zi (x − 1),   li (x) = zi (x),   zi (x − 1) ≤ zi (x),   zi (x − 1) ≥ x,
+                                                                             zi (x + p) = zi (x) + p.
+                                                                                                  (6)
+A layer visits exactly [x, e) for fi (x) ≤ e ≤ li (x), then takes a down step. The source sorting
+proof preserves the phase-labelled edge multiset: down steps are determined by exits, and
+vertical-edge multiplicities by entry-minus-exit cumulative counts. Each layer has p up steps
+and receives an additional budget p; the budgets sum to W . Every layer window spells a word
+of V .
+    The convention for occurrences is crucial. At a speciﬁed start t, a layer records [t, t + h)
+exactly when its exit zi (t) ≥ t + h. Thus sorting preserves phase-speciﬁc recorded counts, not
+merely aggregate counts of word labels. Its entries decide whether that recorded word is also
+an actual vertex at start t.
+
+3.2    Text orbits and adjacent pairs
+A nonself text orbit comprises two translation classes exchanged by ρ. Their sorted layers
+pair rank by rank. Choose the canonical text to be the greatest forward rotation among both
+orientations. A basic unit consists of one representative layer and its reﬂected mate, with
+budget 2p.
+    For a self-reversed primitive text ﬁx
+
+                       R(x, e) = (c − e, c − x),         cm(A(j)) = A(c − 1 − j).                (7)
+
+There are an even number of primitive passages, inherited from distinct reversed walk pairs.
+Reﬂection preserves the order of staircase proﬁles: it sends the upper region of a path to
+the upper region of the reﬂected path. The ordered decomposition is uniquely determined by
+its exit multisets. Its phase-labelled multiset is invariant under R, so every sorted proﬁle is
+individually ﬁxed under this reﬂection, modulo period translation. This does not imply even
+multiplicity of each proﬁle.
+Lemma 3.1 (Shared-axis adjacent pairs). Pair the sorted layers of a self text from the top
+in adjacent pairs. Each pair shares both reﬂection-axis vertices in a primitive turn, and is
+therefore already connected. The two proﬁles may be diﬀerent. Removing full pairs preserves
+all ﬁxed-phase even tails.
+Proof. For a nonempty interval [t, t + h) with 2t + h ≡ c (mod p), reﬂection ﬁxes its align-
+ment. It pairs its recorded occurrences on the original distinct reversed walks without ﬁxed
+occurrences. Consequently their number is even. The exit convention makes this number
+exactly
+                                     #{i : zi (t) ≥ t + h},                               (8)
+
+                                                     6
+which sorting preserves. Since exits are ordered, every even upper tail consists of whole top-
+aligned adjacent pairs. Whenever the upper member visits this axis vertex, the lower member
+records it too; its entry is no higher than the upper entry, so it actually visits the same vertex.
+The two threshold indicators agree for every pair, and removing a full pair preserves evenness.
+    Along one primitive turn, x+e increases by one at every step and by 2p overall. It therefore
+reaches both classes c and c + p modulo 2p, at actual vertices. These are the two ﬁxed-axis
+vertices, where the preceding argument applies. If the vertex is empty, its upper entry is x,
+and the lower entry, lying between x and that entry, is also x; both visit ε. No occurrence
+count of the empty word is needed. When p = 1, every window is an axis window and the
+turn has exactly two window visits; the same argument includes this case.
+
+3.3   Spliced paths for hosting
+Let D1 , D2 be a self pair and let U, V be its two shared axes in cyclic order. Form E from
+D1 [U, V ] followed by D2 [V, U + (p, p)], and form F from the complementary arcs. These are
+monotone period-p paths with p up steps each; their labelled union equals that of D1 , D2 .
+Reﬂection exchanges the half-period arcs, so R(E) = F at the level of windows and phase-
+labelled edges. Coincident proﬁles use distinct labels. This is not an assertion about the
+original base edge-copy involution after sorting. Later rootedness uses shared vertices, and
+mirrored added walks receive new paired edge copies. Keep the original sorted proﬁles for all
+band geometry; use E, F only as host paths.
+    The exchange-of-halves operation has the antecedent in [6, Section 5]. That operation
+assumes the two meetings. Lemma 3.1 is what establishes them for the ordered proﬁles here.
+
+
+4     Geometric connection contracts
+A piece is rooted when its underlying undirected support is connected to ε. All edge multisets
+are balanced, and all base edges remain, so touching one vertex of a layer connects its entire
+support. Incidental connectivity does not change budget marks.
+    A record is an actual window on a target layer, together with an alignment in a source text
+agreeing throughout that window. The matching-window contract [1, lem:matching-window]
+says that the number of blocked recorded occurrences relative to A is BA (s; m), and every
+unblocked occurrence is contained in such an actual matching window. The nearest-mismatch
+correspondence proves the ﬁrst assertion. For the second, follow the layer from the ﬁrst window
+containing the occurrence until its left mismatch is deleted; a right mismatch cannot enter
+ﬁrst without recording its bracket.
+    We also use [1, lem:agreement]: distinct aligned texts of periods p, q agree on fewer than
+p + q letters, and on fewer than p if both have period p. Alignment matters, even within one
+translation class. The maximal-rotation contract [1, lem:max-rotation] says that if t starts
+the greatest forward rotation of A and every rotation of a diﬀerent aligned period-q text D is
+at most that word, they cannot agree on all q positions starting at t. These comparisons use
+encoded-symbol order and include opposite orientations as well as diﬀerent phases.
+Lemma 4.1 (Ordered windows and bands). For windows [a, b), [c, d) in a common text,
+spelling words in V , with a ≤ c and b ≤ d, there is a hierarchical walk of up cost d − b,
+with a contact of length at most max(0, b − c). An ordered list costs its total end increase. If
+the last window is a period translate of the ﬁrst by K, it closes at cost K. For any ordered
+band of period-p layers with top ﬁrst end H and bottom last end E at t, a nonnegative multiple
+K of p with H − E ≤ K joins the band at cost at most K.
+Proof. These are [1, lem:ordered-windows, lem:band]. If c ≤ b, delete to [c, b) and append
+to [c, d), using suﬃxes and preﬁxes. If c > b, delete to empty, traverse each intervening letter
+
+                                                7
+by an up/down pair, then build the second window. The active alphabet’s individual letters
+lie in V . Thus all intermediate vertices are legal. For a band, if E ≥ H the layers already
+share [t, E). Otherwise grow from [t, E) to [t, H), touching each vertical range, and continue
+to [t + K, E + K). The end increase is K.
+
+Lemma 4.2 (Collective proof in geometric form). Let any positive number of ordered period-p
+layers have top ﬁrst end rH = fH (a) and bottom last end rL = lL (a). Let R = [a, b) be a
+record and K a nonnegative multiple of p. If
+
+                        rH ≤ b + K,        rH − rL ≤ K,         rL + K ≥ b,                        (9)
+
+a cost-K closed walk based at R touches all these layers.
+Proof. This is the proof of [1, lem:collective], with its numerical layer-count restriction
+removed, not a verbatim use of its statement. Set Y = max(b, rH ). The inequalities give
+b ≤ Y ≤ b + K and fi (a) ≤ Y ≤ li (a) + K = li (a + K) for every layer. Choose its ﬁrst
+start xi ∈ [a, a + K] reaching height Y . Then [xi , Y ) is an actual window. Layer order makes
+these starts nondecreasing from top to bottom. Follow R, these windows, and R + K using
+Lemma 4.1. No step used the number of layers.
+
+4.1    The individual trichotomy
+For a period-p layer with fi (a) ≤ b and a diﬀerent-text record R = [a, b) of target period q,
+the source’s Section 5 gives three cases. If a vertex has length at most p, root it by a round
+trip through ε. Otherwise, if li (a) + p ≥ b, choose an actual [a + p, e′ ) with b ≤ e′ ≤ b + p and
+follow
+                                     R, [a + p, e′ ), R + p.                                    (10)
+This cost-p link has a contact of length at most max(0, b − a − p) ≤ q. We use the weak
+bound ≤ q in cycle accounting. If neither case holds, reserve budget p for the actual requester
+window [a, e), e = fi (a), which satisﬁes
+
+                                     a + p < e ≤ li (a) < b − p.                                 (11)
+
+Since b − a < p + q and now b − a > 2p, necessarily q > p. A request may spend the recipient’s
+budget; a planned link does not.
+Lemma 4.3 (Single-path host contract). Let a monotone period-q host path have available
+budget q. For each of a nonempty set of distinct child text groups choose one actual host
+record Ri = [ai , bi ), agreeing with the child text of period pi . The child texts are distinct up to
+translation from one another and from the host text. Every requester at Ri is an actual child
+window [ai , e) satisfying ai + pi < e ≤ bi − pi , with its budget pi reserved. Then the host and
+all requesters can be rooted within those budgets.
+Proof. This is [1, lem:host]; we recall its constructive content because it speciﬁes what a
+spliced host must satisfy. Choose a child j of minimum period among the requesting groups
+and order the records from Rj to its next copy on the host. Translations by multiples of q
+transport each entire child coordinate system, preserving its labels and budget. Put T = aj +q.
+Then
+                               aj ≤ ai ≤ T,     bj ≤ bi ≤ bj + q.
+Successive records obey bi −al < pi +pl : if they overlap this is the agreement bound for distinct
+child texts; if not it is immediate. The initial host excursion visits all requester windows at j,
+ordered by end, then Rj . At each later record visit the clamped contacts
+
+                               Qi,e = [min(ai + pi , T ), max(e, bj )).                          (12)
+
+                                                  8
+They lie inside Ri . Before clamping, their starts and ends are ordered because ai + pi < ei ≤
+bi − pi < al + pl < el ; clamping preserves order. Each end is less than T + pj , using the overlap
+with the next j record. Return to the ﬁrst requester at j translated by q, whose end exceeds
+T + pj . Lemma 4.1 gives a cost-q closed excursion and, on the ﬁnal transition, a contact of
+length less than pj .
+    For a requester at i ̸= j, write Qi,e = [s, h). Then ai ≤ s ≤ ai + pi and e ≤ h ≤ e + pi .
+For the last bound, if h = bj , minimum pj ≤ pi gives bj < ai + pj + pi ≤ ai + 2pi < e + pi . In
+the child text the ordered list Qi,e , [ai + pi , e + pi ), Qi,e + pi attaches the requester at cost pi .
+The requesters at j were touched directly, so one unspent pj budget roots the short contact.
+This proves the contract, including the case with no later records.
+
+
+5     Routing requests through paired hosts
+Process primitive-text orbits in increasing least period, breaking ties by canonical text and
+stable identiﬁers. Requests will go strictly upward in period. All records refer to the ﬁxed
+base-layer decomposition. A basic pair reserves its entire 2p budget, and processing never
+splits that account.
+    For a nonself recipient pair use its two exchanged sorted layers E, F . For a self pair use
+the spliced paths of Section 3.3, each with budget q and together representing the recipient’s
+2q account. If requests arrive, choose one original request as an anchor and name E so that
+its original record lies there. Keep its whole child-orbit batch unﬂipped. Every other child
+orbit also uses one record for all its requests. If that record lies only on F , reﬂect the whole
+batch, so its record lies on E. Distinct child orbits still give distinct child texts, all of period
+smaller than q.
+
+5.1    Reclassiﬁcation before invoking the host lemma
+A reﬂected requester may be right-anchored. At its new record R′ = [a′ , b′ ), its reﬂected
+actual window is [u, b′ ) ⊆ R′ . Monotonicity gives f (a′ ) ≤ f (u) ≤ b′ . Reapply Section 4.1
+to that layer and R′ . Its ﬁrst case is vacuous here: the original case-three requester had no
+vertex of length at most p, and reﬂection preserves lengths. Its second case gives a link to R′
+which will be executed after the host is rooted. Its third case gives exactly the left-anchored
+inequality in Lemma 4.3. The unchanged anchor batch still supplies at least one genuine
+third-case request.
+    Apply Lemma 4.3 once on the actual monotone path E to the surviving third-case requests
+and mirror the entire construction on F . The one-record-per-child, distinct-text, left-anchor,
+nonempty, and available-budget hypotheses have all been re-established; this is not an invo-
+cation on a disconnected union of proﬁles. Choose the minimum-period child only among
+these surviving groups. One of its requester-pair budgets pays the two short root contacts;
+that pair was touched directly by the two host excursions. Total cost is at most 2q plus all
+surviving requester-pair budgets.
+    Both host paths are rooted. Their union contains all of the original recipient pair. Now
+execute the second-case attachments with their own 2p accounts. They are attachments to
+rooted material, not new outgoing plans at a noncanonical phase. Thus all original requester
+units become rooted. A self child pair is connected at its axes, so touching its selected member
+roots both; a nonself pair uses the mirrored construction for its other member. This establishes
+the routing without a new geometric host lemma or separate novelty claim.
+
+
+
+
+                                                   9
+5.2   Two roles of the baseline
+Choose the highest recipient pair as baseline if there are any recipients. Its two members have
+already been rooted. The unchanged anchor gives an actual record S of length < q + p < 2q
+on one member, where p < q is a child’s period. The short-record member and the upper
+sorted member used to bound the available region need not coincide.
+    Root every unspent pair below the baseline with its own 2q budget. If a layer has a vertex
+of length at most q, use that root excursion and its mirror. Otherwise, writing the short
+record as S = [a, h), a lower layer has an actual [a, e) with q < e − a ≤ h − a < 2q. The
+ordered list
+                            [a, h), [a + q, e + q), [a + q, h + q)
+costs q and attaches the lower layer; add its mirror. For a nonself orbit, if S lies on the partner
+layer, do this construction in that partner text group with the same-rank lower member and
+then reﬂect. For a self pair all lower pairs lie below whichever member carries S. The upper
+member of the baseline pair is used subsequently for band tests. These two uses of the baseline
+have distinct hypotheses and budgets.
+
+
+6     Upper groups and the matched odd core
+After incoming requests and lower pairs have been handled, the available upper region has
+intact pair boundaries. Its budgets are untouched. We now either root its pairs, reserve
+outgoing links, or send requests using one chosen record per child text orbit.
+
+6.1   Nonself orbits: the ordinary procedure and its mirror
+Use the canonical representative group. If it has n available layers, let t start its greatest
+forward rotation and H = fH (t). When H − t ≤ np, an excursion through [t, H) roots them
+within np. When a baseline exists with lbase (t) ≥ H − np, a band of width np attaches them.
+Mirror the chosen operation; the paired cost is at most 2np.
+    In the remaining case H > t + np and the baseline, if present, lies below H − np. Choose
+the ﬁrst k with #{i : li (t) ≥ H − kp} ≤ k, counting the whole representative group. It stops
+by n. The preceding failed threshold gives the bottom of the top k layers last end at least
+H − (k − 1)p; for k = 1 this is immediate. Translation to (t − p, t] gives the wide band ≤ kp at
+every start. The ordinary k + 1 rule forces an unblocked occurrence of w = A[t : H − kp) at a
+diﬀerent full-text alignment, and hence a record R = [a, b) with a ≤ t, b ≥ H − kp, |R| < p + q.
+Only canonical-group layers can carry the identical alignment.
+    Set K = kp, rH = fH (a), and let rL be the bottom last end of that top block. If rL +K ≥ b,
+reserve its K budget for the collective link. Otherwise use the individual trichotomy on all
+upper layers. If the collective link is made, use the trichotomy on the layers below it. In
+either case their ﬁrst ends at a are at most b: when the test fails rH ≤ rL + K < b, and
+below a successful block li (t) < H − K ≤ b. Mirror every root, link, and request with its
+paired layer budget. This is precisely the ordinary procedure of [1, Section 5], with paired
+accounting. A collective block and its mirror form a unit of budget 2kp; band joining each
+component costs at most 2(k − 1)p, leaving 2p. An individual pair has the same saving with
+k = 1. The canonical orientation does not change with host routing.
+
+6.2   Self orbits: threshold and odd core
+Suppose the available upper region has 2r layers, paired from the top. If r = 0 there is nothing
+to do. Take the greatest forward phase t and H = fH (t). If H − t ≤ rp, an excursion through
+
+
+
+                                                10
+the top vertex and its mirror roots all upper layers for at most 2rp. If a baseline exists with
+lbase (t) ≥ H − rp, a width-rp band and its mirror do the same. Otherwise
+
+                    H > t + rp,      lbase (t) < H − rp   if a baseline exists.               (13)
+
+Lemma 6.1 (Odd core and outside record). Choose the ﬁrst k ≥ 1 such that
+
+                                  #{i : li (t) ≥ H − kp} ≤ 2k,                                (14)
+
+counting the whole self group. Then k ≤ r, and the top 2k − 1 layers, called the core, satisfy
+
+                 lcore (t) ≥ H − (k − 1)p,     fH (x) − lcore (x) ≤ kp   (x ∈ Z).             (15)
+
+For w = A[t : H − kp) there is an actual record R = [a, b) on a diﬀerent aligned text of least
+period q, with
+                           a ≤ t, b ≥ H − kp, b − a < p + q.                              (16)
+
+Proof. By equation (13), no layer at or below the baseline qualiﬁes at k = r, so the threshold
+stops by r. If k > 1, failure at k − 1 means at least 2k − 1 layers qualify there, giving the ﬁrst
+bound. If k = 1, the core is just the top layer, whose last end is at least H. For x′ ∈ (t − p, t],
+monotonicity and periodicity give fH (x′ ) ≤ H and lcore (x′ ) ≥ lcore (t) − p. Translation proves
+the second bound.
+    The actual top vertex v = A[t : H) is unblocked in its own text, so its count-rule trigger
+holds. The self-text rule supplies at least 2k + 1 unblocked occurrences of w. At most 2k have
+the identical full-text alignment, by equation (14) and the exit convention: each primitive
+layer has just one start residue with that alignment. An occurrence outside it gives an actual
+matching record by Section 4. Agreement bounds give equation (16); if q = p the stronger
+bound b−a < p holds. The alternative alignment may be another phase of the same group.
+
+6.3   Completing a paired unit
+Set K = kp, rH = fH (a), and rL = lcore (a). Then equation (15) and equation (16) give
+rH − rL ≤ K and rH ≤ H ≤ b + K. If rL + K ≥ b, apply Lemma 4.2 to the 2k − 1 core
+layers, at cost K, and add its reﬂection. The ﬁnal, 2kth layer shares the axes with core layer
+2k − 1 by Lemma 3.1. The whole 2k-layer unit is therefore connected to its target within its
+2kp budget. Alternatively, the sharp core band in equation (15) joins the core at cost at most
+(k − 1)p; adding its mirror and using the shared axes internally joins the full unit for at most
+2(k − 1)p, freeing 2p. This includes k = 1: its core is one layer and its mate already meets it.
+    If the collective test fails, rH ≤ rL + K < b, so all available upper pairs, including the
+top k pairs, enter the individual procedure. If it succeeds, only pairs below the top 2k layers
+do so; their last ends at t are < H − K ≤ b, hence their upper ﬁrst ends at a are at most
+b. Apply Section 4.1 to each such upper member, then mirror. Roots and links use at most
+2p; otherwise reserve a 2p request to period q > p. A self pair’s two members already meet,
+so touching the chosen member is suﬃcient. Every request from this child orbit uses the one
+record supplied above.
+
+Proposition 6.2 (Disjoint paired budget partition). After processing all text orbits, each
+basic pair is marked rooted or belongs to exactly one outgoing unit. A unit targets one actual
+layer and its reﬂected partner, and reserves only its own paired budget. A unit with budget
+2kp can be joined internally for at most 2(k − 1)p. All requests have been fulﬁlled.
+
+Proof. Incoming requests use disjoint reserved child budgets and the still available recipient-
+pair budget. The baseline step spends only remaining lower-pair budgets. Easy branches
+spend only available upper budgets; in the hard branch, the collective unit and individual
+
+                                                11
+pairs partition them. Every request goes to a strictly larger period, so it is fulﬁlled later by
+Section 5. Only unexecuted links remain outgoing. The internal saving is the ordinary sharp-
+band saving for nonself blocks and Section 6.3 for self blocks. Whole-pair removal preserves
+ﬁxed-phase parity and pair boundaries. No incidental intersection is used to reassign or spend
+another account.
+
+
+7     Opening quotient cycles symmetrically
+Make one node for each outgoing unit. Its target pair belongs to another unit or is rooted, so
+every nonsink node has one outgoing arc. A nonself unit has two ports, its representative block
+and its reﬂected block; each is internally connectable. A self unit is internally connected once
+its core is joined, so its conceptual ports coincide. A planned link pair joins corresponding
+source and target ports, possibly exchanging them. A quotient path therefore lifts to paths
+reaching endpoint ports. A twisted quotient cycle need not lift to two disjoint cycles, and we
+do not assume that it does.
+
+7.1   Selﬂoops and maximal contacts
+For a quotient selﬂoop, source and target have equal period p and diﬀerent aligned text, even
+if the target is the opposite orientation. Thus |R| < p. Omit both planned links, join the unit
+internally, and use the saved 2p to root R and ρ(R) for 2|R| < 2p. Both ports are rooted.
+     For a cycle of length at least two, choose a unit with greatest canonical forward text,
+breaking ties by stable IDs. Every forward rotation of either orientation of the target text is
+at most this chosen source. Let q be the target period.
+
+Lemma 7.1 (Paired short contact). The selected link pair can be realized within its reserved
+budget with one contact of length at most q and its reﬂection.
+
+Proof. For an individual plan, equation (10) gives the bound ≤ q. For a collective plan
+consider its representative block in the nonself case, or its odd core in the self case. Write
+K = kp, with record R = [a, b), distinguished start t, and H = fH (t). If a constituent already
+has a vertex of length at most q, the collective construction suﬃces. Otherwise all constituent
+vertices have length greater than q.
+    The maximal-rotation contract and the canonical comparison give b − t < q. Put x =
+min(t, a+K). If x = t this already gives b−x < q; otherwise b−x = b−a−K < p+q −K ≤ q.
+Thus [x, b) is a short suﬃx of R. Every constituent ﬁrst end at x exceeds b, since its vertex
+length exceeds q > b − x, and is at most H. With F = fH (x) we have b < F ≤ H ≤ b + K.
+Follow the ordered list
+
+                           [a, b),   [x, b),   [x, F ),   [a + K, b + K).                     (17)
+
+Its cost is K; the growth at x touches all constituents, and the short suﬃx is the desired contact.
+Its prescribed windows are actual vertices or substrings of them. This is the geometric proof
+of [1, lem:cycle-contact], now applied to the odd core where appropriate, not an unqualiﬁed
+use of its original block statement. The ﬁnal self-layer meets its core partner. Reﬂect the
+constructed walk to obtain the second contact within the paired budget.
+
+Theorem 7.2 (Paired connection budget). One can add paired closed walks of total up cost
+at most W to G so that the resulting graph D is connected to ε. It is balanced, τ -invariant,
+and has even outdegree at every ﬁxed vertex. Its total up cost U is at most 2W .
+
+Proof. For a cycle of length at least two retain the selected link pair of Lemma 7.1, but omit
+the target unit’s outgoing pair. These are diﬀerent links. Join that target internally, saving
+
+                                                  12
+2q, and use the saving to root both short contacts. The quotient cycle with the omitted edge
+removed is a path ending at the target. Every lifted component meets one of the retained
+contact pieces, which touch both target ports. Rootedness propagates along the path to every
+source port, whether the lift was twisted or untwisted. This also covers mixed self and nonself
+cycles.
+    Diﬀerent quotient cycles have disjoint accounts. Execute all other links in increasing
+distance from rooted sinks or opened cycles. Each uses its source unit’s reserved account.
+Together with the earlier rooting and request operations, this roots every layer. The accounts
+partition the original layer budgets, whose sum is W .
+    Every addition was a closed walk and its reversed partner, with fresh paired edge copies.
+Hence balance, symmetry, and ﬁxed-vertex parity persist by Section 2.2. All base edges
+remain, so required vertices remain used, and total up cost is at most W + W = 2W .
+
+
+8    Half-Euler extraction and polynomial bit complexity
+Lemma 8.1 (Half-Euler walk). Let a ﬁnite nonempty balanced directed multigraph have a
+reversing involution on vertices and edge copies, no ﬁxed edge, connected used support, and
+a ﬁxed root in that used support. If every ﬁxed vertex has even outdegree, there is a directed
+closed walk from the root using exactly one edge from each involution pair. It can be constructed
+in polynomial time.
+Proof. Quotient vertices and edges by the involution, retaining both incidences of each edge,
+including loops. At a nonﬁxed vertex orbit choose a representative v. Label an incidence
+positive if its compatible lift is outgoing at v, and negative if incoming there. The numbers
+of positive and negative incidences equal outdeg(v) and indeg(v), so they agree. At a ﬁxed
+vertex the quotient degree equals its directed outdegree and is even.
+     Pair opposite signs at each nonﬁxed orbit and pair arbitrary incidences at ﬁxed vertices.
+The resulting transition system decomposes the quotient edges into closed alternating trails.
+These lift consistently: at a nonﬁxed orbit an arrival through a positive incidence puts the
+lift at the mate of v, where departure requires a negative incidence; the other case is reversed.
+At a ﬁxed vertex either state is available. The ﬁnal/initial paired incidences give closure. If
+several trails remain, connectedness supplies two sharing a vertex. Cross-switch two incidence
+pairs there, aligning opposite signs at a nonﬁxed orbit, to merge the trails. This preserves all
+local conditions. Repeating produces a quotient Euler trail, which lifts from the ﬁxed root
+and closes there, selecting one copy from each orbit.
+     This is the signed-incidence Euler construction underlying the antecedents in Section 1.2,
+with ﬁxed vertices handled explicitly. The general lemma allows quotient loops. Our hierar-
+chical graph has none, because an edge changes word length and ρ preserves it.
+
+Proof of Theorem 1.1. The empty cases were handled before the construction. Otherwise
+apply Lemma 8.1 to D from Theorem 7.2, rooted at ε. Since D has U up and U down edges
+and τ exchanges them, it has U edge orbits. The selected closed walk has U edges; half are
+up, since word length returns to zero. It visits a representative of every used vertex orbit, and
+thus one orientation of every required word. Append the letter of each up step to the output.
+At every moment the current vertex is a suﬃx of the output so far: up appends a letter to
+both, and down deletes the vertex’s ﬁrst letter. This is the suﬃx invariant of [1, Section 7].
+Therefore the word is feasible and
+
+                                |T | = U/2 ≤ W ≤ 2 OPTRC (S).                                (18)
+
+   For completeness we detail the ﬁnite realization and bit costs. All ﬁnite choices use
+encoded-symbol order and stable IDs, including orbits of equal least period, tied canonical
+
+                                               13
+maxima, transitions, records, host anchors, threshold choices, and trail splices. Unused alpha-
+bet symbols may be ignored after reading and checking the explicit alphabet and involution;
+keep every used symbol and its mate.
+    There are O(L2 ) substring vertices of length at most L, and all counts are at most 2L.
+Enumerating v, p, k as in Section 2.1 gives a polynomial list (the coarse bound O(L4 ) suﬃces).
+Evaluate blocking by enumerating every bracket word and position. Self-reversal is tested
+by comparing a primitive period word with rotations of its reverse complement. These are
+polynomial operations on explicit strings and polynomial-bit integers.
+    The base graph has 2W ≤ 4L edge copies. Paired transitions and walk lifts are ﬁnite scans.
+Least periods, normalized passages, and their exit order statistics use explicit comparisons
+and sorting. The total number of primitive phases is W , so storing one period of each zi and
+its text is polynomial. Both axis crossings and the host splices are scans through these stored
+paths.
+    Equality or order comparison of two periodic texts needs at most the sum of their periods,
+by the agreement bound. Normalize record starts to a turn, translating child coordinates
+together with the record. All actual windows have length at most L, and the resulting
+integers have polynomial bit length. There are 2W actual window visits per turn across all
+layers. To ﬁnd a diﬀerent-alignment record for w, enumerate them and each placement of
+w within them, at most 2W L candidates. Align the placement to its prescribed occurrence
+interval; reject identical full texts or windows not matching the source throughout. The count
+and matching-window arguments prove that a candidate remains.
+    Threshold searches, the individual tests, batch reclassiﬁcation, host record order, and
+functional-graph cycle detection all operate on polynomially many stored objects. Collective
+intersections scan at most K ≤ W start coordinates. Ordered-window paths are materialized
+by preﬁxes, suﬃxes, and single letters. The paired budget proof bounds the ﬁnal graph by
+2U ≤ 4W ≤ 8L edge copies, including all additions. The quotient traversal and output take
+polynomial time in this explicit graph. Comparisons and output of variable-width symbol
+labels are charged their encoded bit lengths; no unbounded-label unit-cost operation, random
+choice, or inﬁnite-text oracle is used. This establishes the claimed deterministic polynomial
+bit complexity at the full scope.
+
+
+A     Scope of formal support and validation
+A companion Lean package, RCS128 formal v1, contains sixteen support theorems. It does
+not formalize Theorem 1.1. Its independent formal review concerns these exact ﬁnite or scalar
+statements, with standard axioms only. The correspondence is as follows; theorem names are
+in namespace RCS128.
+
+Declarations                                Mathematical interface and limitation
+even_card_of_reflection,                    Even cardinality under a supplied free
+even_phase_card                             involution, optionally preserving a phase
+                                            predicate. The actual tagged occurrences and
+                                            their reﬂection are not constructed in Lean.
+filter_eq_range_at_boundary,                Even upper tails force adjacent top-aligned
+adjacent_pair_of_even_tail,                 indicators to agree. The exact equality between
+adjacent_exit_threshold,                    phase counts and exit counts, sortedness, and
+reflection_sorted_pair                      phase preservation are hypotheses.
+
+
+
+
+                                              14
+Declarations                                Mathematical interface and limitation
+even_card_erase_pair,                       Removal preserves parity when both distinct
+even_phase_after_pair_removal,              elements belong to the underlying set and agree
+lower_pair_visits_axis                      on the phase; entry order upgrades a recorded
+                                            threshold to a visit. Axis existence and proﬁle
+                                            geometry are external.
+odd_core_from_previous_failure,             Minimal-threshold arithmetic, the 2k + 1 versus
+first_threshold_core,                       2k pigeonhole step, and 2(k − 1)p + 2p = 2kp.
+exists_record_outside_alignment,            Actual records, bands, and the k = 1 geometric
+odd_core_budget                             case are external.
+shifted_copy_fits,                          Oﬀset ﬁtting and an even positive deﬁcit giving
+fixed_deficit_surplus                       at least 2k + 1. The reﬂected bracket
+                                            construction and complete domination
+                                            induction are external.
+final_length_bound                          Scalar composition of 2|T | = U , U ≤ 2W , and
+                                            W ≤ 2 OPTRC . All three substantive premises
+                                            are supplied outside Lean.
+
+
+A.1    What the support does not establish
+The frozen package does not formalize words, reverse complements, blocking, hierarchical
+graphs, sorted staircase geometry, spliced hosts, quotient cycles, half-Euler extraction, or
+polynomial bit complexity. The unblocked and nonﬁxed-bracket arithmetic (k + 1) + k =
+2k + 1 is not part of its frozen count support. Removing pairs, re-indexing the sorted list,
+and pairing the remainder is not formalized as a composed layer operation. In the removal
+statements, “absent pairs” means absent from the phase; both distinct elements must still
+belong to the underlying set. The extra 1 < k assumption in odd_core_from_previous_
+failure is harmless but unnecessary; the separate ﬁrst-threshold theorem includes k = 1.
+Most declarations are elementary ﬁnite or scalar lemmas. None should be described as a
+machine proof of the geometric construction.
+    The seven frozen author control declarations are mostly numerical or ﬁnite-set witnesses,
+not formal hypothesis-sensitivity tests of those theorems. The independent review added ﬁfty-
+nine declarations that supply the sensitivity evidence and positive controls. We attribute that
+evidence to the reviewer, not to the original seven controls.
+    The recorded review rebuilt the support and reviewer sources with Lean 4.34.1 and in-
+spected printed types and axioms. It performed module-only kernel replay. Pinned depen-
+dency .olean ﬁles were trusted read-only; no fresh replay or rebuild of all mathlib depen-
+dencies was performed. Compilation alone does not certify statement identity: a weakened
+factor-four statement passes the original harness. Identity therefore also rests on external
+manifest hashes and the reviewer’s type audit. The original harness has declaration/token-
+scan limitations, closed for these frozen sources by that audit and the module replay, not by
+a universal claim about the harness.
+
+A.2    Diagnostics and author-side provenance
+Finite count, axis, splice, and graph checks are diagnostics, not proofs. An independent
+proof reviewer also wrote an end-to-end executable model and tested hosts, cores, cycles, and
+output. Actual multi-child ﬂipped batches occurred zero times in the recorded model runs;
+the routing argument in Section 5.1 rests on its mathematical proof, not on an assertion
+that testing covered that branch. Per-request shadow checks do not change that limitation.
+
+
+                                              15
+The original frozen candidate, its exact scope, and all failed intermediate constructions are
+preserved outside this manuscript; no historical novelty statement is silently updated there.
+
+
+B    Attribution, reading limits, and rights
+This is a source-relative article by Myeongjin Kang, with no aﬃliation stated. AI assis-
+tance is part of its author-side provenance. The parent GPT-6 Astra supplied substantial
+author-side work on the reﬂection count argument, odd-core rule, spliced-host routing, cycle
+accounting, baseline distinction, empty-vertex degree correction, and scoped Lean implemen-
+tation. Author-side agents developed the construction and checks; GPT-6 Astra prepared this
+manuscript. Separate Opus 5.5 agents performed the proof, formal-support, and contribution
+reviews. These were independent agent roles, not human refereeing or author-side checks
+relabelled as independent review. Those review results are not publication, acceptance, or
+worldwide-priority certiﬁcates.
+    The pinned source’s sections 1–7 and operative proofs were read for this manuscript. Pri-
+mary comparison is bounded: the WABI formulation, lemmas and algorithm sections, the
+CPM introduction and Lemma 18, Goldberg–Karzanov’s speciﬁed decomposition, parity and
+splice passages, and the cited bidirected and rotation passages were inspected. Fici et al.’s
+arXiv v1 extraction was read throughout. The accompanying reading ledger records exact
+ranges and distinguishes this author’s reading from the parent’s broader reading. The Jiang–
+Li–Du 1992 body and Breslauer–Jiang–Jiang 1997 journal body remain unread under the ex-
+plicit citation choices in Section 1.2. We make no exhaustive literature or worldwide-priority
+claim.
+    Original prose is licensed CC BY 4.0 and original accompanying code MIT. Private third-
+party source bodies are not included in the public manuscript payload. Citations identify
+sources without asserting a redistribution license for their downloaded bodies.
+
+
+References
+ [1] OpenAI.     A     Polynomial-Time   2-Approximation    for   Shortest    Com-
+     mon    Superstring.   September   24,    2026.    Pinned   source,     revision
+     fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. Pinned manuscript directory.
+
+ [2] Ryosuke Yamano and Tetsuo Shibuya. Improved approximation algorithms and hardness
+     results for shortest common superstring with reverse complements. In WABI 2026, LIPIcs
+     390, 2:1–2:13, 2026. https://doi.org/10.4230/LIPIcs.WABI.2026.2.
+
+ [3] Ryosuke Yamano and Tetsuo Shibuya. Improved approximation ratios for the shortest
+     common superstring problem with reverse complements. In CPM 2026, LIPIcs 369, 15:1–
+     15:11, 2026. https://doi.org/10.4230/LIPIcs.CPM.2026.15.
+
+ [4] Gabriele Fici, Tomasz Kociumaka, Jakub Radoszewski, Wojciech Rytter, and Tomasz
+     Waleń. On the Greedy Algorithm for the Shortest Common Superstring Problem with
+     Reversals. arXiv:1511.08431v1, 2015. https://arxiv.org/abs/1511.08431v1.
+
+ [5] Tao Jiang, Ming Li, and Ding-Zhu Du. A note on shortest superstrings with ﬂip-
+     ping. Information Processing Letters 44(4):195–199, 1992. https://doi.org/10.1016/
+     0020-0190(92)90084-9. Body unavailable in the bounded comparison; historical discus-
+     sion is through [4, 3, 2] as explained in Section 1.2.
+
+
+
+
+                                             16
+ [6] Andrew V. Goldberg and Alexander V. Karzanov. Maximum Skew-Symmetric Flows and
+     Matchings. arXiv:math/0304290v2, January 2004 (manuscript dated December 2003).
+     https://arxiv.org/abs/math/0304290v2.
+
+ [7] Paul Medvedev, Konstantinos Georgiou, Gene Myers, and Michael Brudno. Com-
+     putability of Models for Sequence Assembly. 2007. Author-hosted WABI paper. https:
+     //medvedevgroup.com/papers/wabi07.pdf.
+
+ [8] Vamsi Kundeti, Sanguthevar Rajasekaran, and Hieu Dinh. An Eﬃcient Algorithm for
+     Chinese Postman Walk on Bi-directed de Bruijn Graphs. arXiv:1006.4828v1, 2010. https:
+     //arxiv.org/abs/1006.4828v1.
+
+ [9] Dany Breslauer, Tao Jiang, and Zhigen Jiang. Rotations of periodic strings and short
+     superstrings. Journal of Algorithms 24(2):340–353, 1997. https://doi.org/10.1006/
+     jagm.1997.0861. Archival reference; journal body not read in this comparison.
+
+[10] Dany Breslauer, Tao Jiang, and Zhigen Jiang. Rotation of Periodic Strings and Short
+     Superstrings. BRICS Report RS-96-21, June 1996. Operational comparison version.
+     https://www.brics.dk/RS/96/21/BRICS-RS-96-21.pdf.
+
+[11] Marcin Mucha. Lyndon words and short superstrings. In SODA 2013, pages 958–972,
+     2013. https://doi.org/10.1137/1.9781611973105.69.
+
+[12] Alexander Golovnev, Alexander S. Kulikov, Alexander Logunov, Ivan Mihajlin, and Mak-
+     sim Nikolaev. Collapsing superstring conjecture. In APPROX/RANDOM 2019, LIPIcs
+     145, article 26, 2019. https://doi.org/10.4230/LIPIcs.APPROX-RANDOM.2019.26. Op-
+     erational comparison: revised arXiv:1809.08669v3, 2020, https://arxiv.org/abs/1809.
+     08669v3.
+
+
+
+
+                                           17
+
