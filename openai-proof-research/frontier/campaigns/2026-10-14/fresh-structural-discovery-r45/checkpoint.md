@@ -1,0 +1,13 @@
+# r45 checkpoint — provisional 178 Hamiltonian-preserving repair
+
+Status: pre-freeze substantive screen; no theorem nominated, no completed construction, no campaign count. All prior packets remain immutable. The potential conditional target is an exact spectral repair preserving Hamiltonicity when the input satisfies all three hypotheses of source Theorem `thm:exact-repair` and is supplied with a Hamilton cycle. No original-scope file has been frozen, and neither a deterministic nor randomized full theorem is claimed.
+
+The source is a partial-stub-pairing construction followed by simultaneous switches, not a theorem on arbitrary-base two-sided Ramanujan lifts. Its early phase begins with an empty pairing. A global construction starting from a prescribed cycle would require an additional initial-account argument not obtained here.
+
+The source's repair theorem and proof, repair.tex lines 279–end, have now been read (the earlier read was 290–530; this continuation read 260–300 and 530–end). Its spectral bias uses independent uniform oriented full-graph edge pairs, a small endpoint-projector tilt, and pairwise independent repeated draws. A polynomial affine seed space supplies the deterministic search. Restricting to noncycle edges changes the covariance and destroys the exact diagonal drift identity. A same-type cycle/noncycle mixture restores the un-tilted first moment, but does not yet restore the positive tilted mean or a polynomial search over globally cycle-preserving switch collections. Details are in working.md.
+
+Actual earlier history read: structural r19 candidate.md, r26 screen.md (both full), r32 screen-171.md and r27 operation-comparison.md (full). Their developed 178 extension is logarithmic-girth retention via radius exclusions, classified technical. Initial index/canonical searches remain bounded pointers, not worldwide novelty clearance. The current selection is not a relabeling of those girth exclusions.
+
+Pinned source inventory: all 14 text blobs in the single catalogue178 manuscript directory, authenticated in source-receipts.json. Other retrieved sections are not claimed read. Introduction was read through its construction overview, early.tex lines1–100; precise final reading ledger remains to be assembled. Primary search leads remain leads until their actual operative statements are read.
+
+Final screen update: introduction.tex is now fully read; primary-comparison.md and reading-limits.md replace the provisional reading description above. The classical bipartite lift branch is technical. No frozen target or nominee emerged. The exact finite diagnostics pass. A strict final seal and caller-anchor controls accompany this handoff.
