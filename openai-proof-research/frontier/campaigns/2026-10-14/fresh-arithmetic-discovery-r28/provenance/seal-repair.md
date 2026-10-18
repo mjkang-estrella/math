@@ -1,0 +1,9 @@
+# Superseded first inventory seal; mathematical bytes unchanged
+
+The first author handoff announced manifest SHA2563129883883539023eebe278a0d5ebb107a0905d2fdfe1afa57f8b60d2c7f7fb4 and verifier SHA2560e28edf6f84ab67cf1cbd999b4f31485f07b00f933d33bb11ddf95be0fa83db8 before the positive replay. That replay FAILED because family200's receipt schema uses no local field and names its Git identity git_blob_sha1; the verifier assumed008's schema. The copied controls also FAILED before validation due to /tmp disk quota. No positive verdict was claimed after those failures. The parent was notified immediately and held independent review dispatch.
+
+The original manifest/verifier/control bytes are preserved under distinct superseded filenames in this directory. The repaired verifier derives the family200 private path from its canonical source path and accepts the two explicit Git identity field names. Parent requested additional exact directory, original-root/ancestor symlink, hardlink and nonregular-object checks. These were added with lstat scanning, alongside copied mutation cases. Controls now use /var/tmp and dispose of each case immediately.
+
+Neither scope-008.md nor candidate-008.md changed during this repair. Their hashes remain8ad29468d11619f3108690f025fc71b4a47c9d55cb6faa7ad3565fa7885a9039 and0bf87bcaaef27e9cb5d5d2451a5808f1f09b41022f2c03aeecbc33d76f2fba5f respectively. The replacement manifest/verifier anchors supersede the first pair and are supplied externally in the final handoff. Integrity checks are not mathematical or contribution verdicts.
+
+While the verifier repair proceeded, the parent identified Jacques Lewin's1974 matrix-representation papers as a possible closer antecedent and began retrieving them. This author had not read those bodies at this seal; no verdict about them is inferred from snippets. That lead must be resolved in the separate contribution review and is additional to the explicit reading limits already recorded.
