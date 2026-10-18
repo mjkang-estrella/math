@@ -1,0 +1,7 @@
+# Formal coverage
+
+The independently adopted PASS_SCOPED_T117Q concerns31 support and15 control declarations, with standard Lean axioms only. It proves actual finite complex-matrix spectral cutoff construction, positivity/idempotence, defect and compression estimates, half coverage, positive trace pairing without commutation, and a nonempty-family trace-budget consequence. The projection is constructed, not postulated. Coverage assumes its stated positive-matrix budgets and chart bounds.
+
+Not formalized: Gaussian/Wick moments, empirical design, fractional powers/operator concavity/Loewner–Heinz budgets, compression-to-operator-norm conversion, Gaussian-sign/Bessel construction, trace-norm duality/per-chart estimate, source metric/kernel/repair/coarea geometry, uniform copies, asymptotics or arbitrary-Hilbert-space passage. Neither the metric nor the full distortion theorem has a Lean declaration. Eigenbasis independence is not formalized. The abstract h=0 control is not a counterexample to actual spectralCut of the zero matrix, which retains the threshold eigenvalues.
+
+The pinned Lean4.34.1 builder checks all nine dependency revisions and freshly compiles local objects, but trusts dependency object caches. No cache is distributed. Existing build/audit logs and the separate formal review are selected evidence. Release preparation did not rerun a compiler and is not an additional formal review.
