@@ -1,0 +1,9 @@
+# r99 live screen, no target frozen
+
+Source pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. Source367 has prior development: I122 studied Dini-coefficient sharp singular packing. That route is excluded. The initial graphical Bernstein idea is also excluded: Engelstein–Fernández-Real–Yu, arXiv2212.08847v2, actual HTML introduction through Theorem1.4, proves graphical classification through n_local*+1; substituting the pinned n_local*=6 is routine. No new graphical theorem is nominated.
+
+Current distinct operation under investigation: combine the source367 tensor instability mechanism with global stable-solution estimates, seeking full nonhomogeneous stable rigidity in dimensions5–6. This is not yet a frozen claim: precise primary hypotheses and the operative global estimates must first be read. The source explicitly distinguishes minimizing cones from arbitrary entire stable solutions and cites Fernández-Real–Serra2609.05669v1 in dimension4.
+
+First concrete interface: the source tensor on S5 is T=Hess g+gI with ΔT=5T and full Codazzi symmetry; its homogeneous Euclidean extension has a radial zero eigenvector. General Euclidean harmonic u has ΔHess u=0, and no such zero eigenvector. Radial Hardy separation supplies the source's angular +4h² term only for a cone. Thus neither the tensor certificate nor cone exclusion can be invoked for an arbitrary stable solution without a new global estimate or justified homogeneous blowdown.
+
+Actual reading so far: source367 history.tex, consequences.tex, geometry.tex in full; all15 text blobs authenticated but other bodies not yet claimed read. I122 opening history and Screen C/body excerpt115–165 read; output of the attempted full report read was truncated and is not claimed complete. Primary2212.08847v2 actual HTML lines31–164 plus displayed definition excerpts, not full proof. Parent assistance on previous r95 is unrelated and not a review gate here.
