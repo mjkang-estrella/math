@@ -1,0 +1,13 @@
+# Arithmetic discovery r21 — full target unresolved, zero nomination
+
+Myeongjin Kang, no affiliation. Original prose CC BY4.0; original code MIT. Third-party source bodies are private inputs. Parent state12/20; uploads stopped. Only r21 was written; predecessor seals remain immutable.
+
+The unchanged investigated target T0677 classifies **all** smooth connected complex projective Fano sevenfolds with nef tangent bundle as rational homogeneous, with no Picard-number/index/VMRT restriction. It is unproved and unrefuted here; no completed-candidate freeze, acceptance, count, or worldwide novelty claim is made.
+
+The source067 sixfold theorem and all its mathematical sections/certificate code were read, along with the complete mathematical texts of Kanemitsu1503.04579v1, Kanemitsu1505.02952v1 and Watanabe1904.10185v1. Existing family063/AGM063 is prior accepted work and is not repackaged. Dimension increment alone is not a contribution criterion.
+
+The actual mechanism was tested, with precise failures saved in cp067-screen.md. In d=4 the sevenfold Q3-bundle moments give integral lambda3, replacing the sixfold contradiction9/4; higher odd-Segre equations and adjacent log-concavity remain compatible. P2-bundle Betti profiles pass the source's Lefschetz dimension test. In d=5 the legitimate IG(2,6) model has u5/2 and violates the old sixfold quadratic, while a rank-four alternating-form cone shows the old dimension-only nondegeneracy inference no longer works. These are proof-route consistency witnesses, not CP counterexamples. In d=6 rational shifted descent has a standard symmetric/exterior-square repair, but independent middle GRR constraints and classification remain. Rho2 is not automatically handled by the prior Picard induction. No concrete full-scope closure was obtained; restricted cases are not substitutes.
+
+The preliminary194 screen was corrected after fully reading both AB194 terminal reviews: the all-Betti complete-local characteristic-p route is already developed and source-relative TECHNICAL. The absence claim from the early limited search was withdrawn before any nomination. Other history exclusions and exact read limits are retained separately.
+
+Standard-library exact diagnostics pass normally and under python-O; they certify only the stated finite identities. The upstream certificate was not run. The verifier requires an external anchor, exact payload inventory and byte hashes; seven controls cover baseline, wrong anchor, changed bytes, recomputed seal with original anchor, extra file, symlink and missing file. Integrity is not proof review. The next discovery should select a genuinely distinct family rather than promote a restricted sevenfold classification.
