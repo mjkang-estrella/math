@@ -1,0 +1,11 @@
+# Completed independent AGM063 manuscript review
+
+PASS_FULL_MANUSCRIPT_AGM063, conditional on stipulated S1/S2 and the identified classical contracts. No required repairs remain. The preparatory genus-zero wording issue was corrected by the authorized finalizer before sealing; the full five-type theorem is unchanged.
+
+Exact manuscript manifest: 5a043ad5acdf541b9a10d912dbd0339b3c8c0aa2650bd92a4a41d5422d0c34bb. Exact final PDF: bb9d911bf972f91d57f6e00b037ecd012e2cd892927d22ebbb5fa8ca0682b4b5. The original packet stayed immutable. The nine-page PDF rebuilt byte-for-byte in an isolated owned copy and every regenerated page PNG matched. All nine final pages were directly visually inspected. Both complete Watanabe v2 bodies were independently read, and fresh PDF downloads matched receipts. The revised second theorem's birational hypothesis is preserved. Required R2–R4 and earlier optional precision points are satisfied.
+
+See review.md for the full verdict and deduction audit; reading-limits.md for exact boundaries; primary-comparison-notes.md for detailed preparatory primary/math notes (its pending statements are historical and superseded by this report); visual-review.json for each final page; rebuild/ and rebuild.stdout/stderr for actual new build logs; input-authentication.json and artifact-controls.json for input identity and independent tamper tests.
+
+I authored the earlier scoped formal review but none of the candidate, implementation or manuscript. Full geometry remains human, not Lean-formalized. No acceptance, count change, external peer review, worldwide priority, shared edits, staging, commits, uploads or nested agents are claimed.
+
+The final review-manifest.json binds every payload and directory with no transcript exceptions. Use the separately delivered external digest with `python3 -B verify.py --anchor EXTERNAL_REVIEW_MANIFEST_SHA256`. The pre-seal actual verifier controls include positive, wrong anchor, changed/missing report, extra file/directory, symlink, hardlink, FIFO and restoration. Final positive and wrong-anchor outputs are delivered externally to the parent to avoid self-referential transcript hashes. Integrity verification alone does not certify the verdict's mathematics or reading.

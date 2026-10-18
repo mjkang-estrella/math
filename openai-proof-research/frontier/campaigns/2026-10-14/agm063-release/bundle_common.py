@@ -89,5 +89,5 @@ EXPECTED_ANCHORS = {
  'agm063-formal-v1': {'file':'output-manifest.json','sha256':'ca6bdb0cccd691d0c8a94ff8ec3bfbd9ccdd87a64ba5b4cf344a1b1c73b8ad9c'},
  'agm063-formal-review-r1': {'file':'review-manifest.json','sha256':'d1b788176d9f9d7759d99fb874a6ccea6ad9233faf5d3c01d00bdc8a1d6863fb'},
  'agm063-manuscript-r1': {'file':'output-manifest.json','sha256':'5a043ad5acdf541b9a10d912dbd0339b3c8c0aa2650bd92a4a41d5422d0c34bb'},
- 'agm063-manuscript-review-r1': None,
+ 'agm063-manuscript-review-r1': {'file':'review-manifest.json','sha256':'983419b33d2d23edb78672f2e1f2a22431a828ad2a96d438fd738d3345390b09'},
 }

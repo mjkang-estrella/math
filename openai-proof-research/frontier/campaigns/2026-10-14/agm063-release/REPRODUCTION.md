@@ -1,6 +1,6 @@
 # Reproduction boundaries
 
-This preparation remains gated until the final independent manuscript review is adopted. No final archive anchors are claimed here. Once assembled, expected archive, BUNDLE-MANIFEST and FINAL-GATE hashes must come from a separately trusted parent receipt, not from the package under test.
+All independent review gates have passed. The local archive is r034-advanced-mukai-classification-v1.zip. Expected archive, BUNDLE-MANIFEST and FINAL-GATE hashes must come from a separately trusted parent receipt, not from the package under test.
 
 The portable verify_bundle.py checks an archive or clean extraction using --manifest-sha256 and --gate-sha256. assemble.py rejects a pending gate. Original private-packet verifiers may require excluded private source bodies and workspace-relative inputs; their manifests are retained for provenance, not a claim that the full private workspace is bundled.
 

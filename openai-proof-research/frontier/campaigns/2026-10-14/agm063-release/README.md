@@ -1,6 +1,6 @@
 # Advanced generalized Mukai classification
 
-Local research package by Myeongjin Kang, no affiliation. Preparation is pending the final independent manuscript gate; no acceptance or publication is implied.
+Local research package by Myeongjin Kang, no affiliation. All four independent review gates have passed and been adopted. Parent acceptance is recorded separately after release checks; no publication is implied.
 
 The unchanged theorem classifies every positive-dimensional smooth connected complex projective Fano manifold with actual Picard number r and pseudoindex i satisfying r(i-1)>=n-1 into the five types and exact parameter ranges in the fixed scope. The source's bound/equality theorem S1 and stronger internal nonzero independent correspondence-word theorem S2 at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated mathematical inputs. This is a deduction from those inputs, not a new proof of them.
 
