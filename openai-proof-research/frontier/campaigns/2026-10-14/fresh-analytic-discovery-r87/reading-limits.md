@@ -1,0 +1,13 @@
+# Actual reading, provenance, and scope
+
+Parent adoption of r85 was read in full. The original prospective scope and all paid antecedents are retained verbatim in scope-status.json; the continuation timestamp is a record of r87, not a backdated scope freeze. Independent gates remain unrequested/pending; no full theorem or substantial-contribution verdict is asserted.
+
+Read all r85 mechanisms. In this continuation read LRS arXiv1207.6582v1 extraction lines960–1095 in full, namely the actual maximal-operator tensor-input reduction, Proposition3.1, Lemma3.2 and the conclusion of Theorem1.2. Earlier r85 primary reading limits remain as stated there. No later primary body or exhaustive literature update was read here. The private PDF and text derivative are externally bound in dependencies.json; the original URL/PDF hash remain in the frozen r85 primary receipt. No third-party body is copied into the public payload.
+
+New direct source body read: source079 section09-physical-wave.tex lines551–649, including cor:full-range and its full proof, common annular amplitude bounds, and both signs of the half-wave. File bytes were freshly retrieved from the pinned URL and checked against the complete preprint tree; new-source-receipt.json records path, Git blob, SHA256 and URL. The rest of section09 was downloaded but not read. Earlier source079 introduction and section10 readings are inherited with their bounded ranges, not expanded into a full source proof read.
+
+Original derivations in this packet: localized finite-family vector restriction with support-size epsilon loss; its continuum extension and a comparable-radius shell estimate for arbitrary radial input profiles on one spatial cluster; a positive-aggregation obstruction; an elementary orthogonal-function counterexample to mixing Lr diagonal estimates with signed L2 cross terms; a shared-profile dyadic maximal L2 tail bound and exact L1/L2 balancing exponent. These are supporting deductions, not a substitute result.
+
+Parent supplied cautions about P's noncompact physical convolution, radial cutoff boundaries, the L1-to-Lq volume factor and q<2 expectation directions. The local lemma explicitly addresses them. This is author collaboration, not independent review. The full phase-preserving multi-cluster/multi-scale bound remains unresolved. Source078/079, scalar endpoint removal and earlier LRS/Lee–Seeger endpoint/convergence ranges are credited as in r85.
+
+Private downloaded source bodies are excluded from public redistribution. Only original research prose/code and source identity receipts are public packet contents. No ledger, staging, commit, acceptance, publication or count change is authorized by these files.
