@@ -1,0 +1,7 @@
+# V3 implementation reading limits
+
+Read AGENTS.md and PDF skill, complete manuscript-r2 review and reading limits, and its verifier before running. Read v2 README, reading limits, editorial crosswalk, packaging provenance, repair receipt and build.py/verify.py/integrity_controls.py before use. Read reproduction paragraph and complete v2-to-v3 diff. The whole v2 theorem/proof and primary bodies were NOT newly read; preservation is exact source-byte comparison. Prior author/reviewer readings remain historical, not current reading claims.
+
+Authenticated externally supplied review-r2 and v2 manifest anchors with their read-only verifiers. Fresh build in /var/tmp; inspected changed page14 at160dpi, compared all16pages at80dpi and text extractions. Other15pages pixel-identical, not newly visually inspected. Initial strict text equality after dash replacement failed due to leading layout whitespace; normalized equality passed and complete text diff retained. An initial broad warning-string assertion matched an innocuous package description; actual warning/overflow/undefined-reference checks were clean.
+
+No mathematical computation, Lean rebuild, new primary search, source audit, novelty assessment or independent verdict. Cached Tectonic dependencies trusted. Original input copies unchanged by comparison with authenticated v2; historical receipts retained. GMN Question3 was new in v2, not retained from v1.

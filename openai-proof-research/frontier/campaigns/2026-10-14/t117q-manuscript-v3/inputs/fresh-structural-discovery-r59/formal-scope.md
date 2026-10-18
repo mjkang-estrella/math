@@ -1,0 +1,7 @@
+# Feasible formal support scope
+
+No Lean/Coq/Isabelle theorem is claimed in this packet. The full result combines finite operator inequalities, Gaussian integration, probabilistic existence, Hilbert features, distributional coarea and trace-class approximation; a finite script does not formalize that chain.
+
+A useful scoped formal obligation would encode the contraction-register calculation for an arbitrary finite pair partition, proving the associated word-sum operator norm bound from sum X_i²<=I. A second finite-dimensional obligation would formalize the selector deduction: moment domination => sum P_s>=S I/2 and ||Z_si P_s||<=sqrt h, followed by the positive trace pairing. Those are meaningful structural invariants, not a restatement of sampled outputs. Gaussian Wick integration, moment-design probability, source kernel compatibility and infinite-dimensional limiting arguments would remain explicit dependencies unless separately formalized.
+
+The current matrix_diagnostics.py is only a floating-point diagnostic with a fixed seed. It checks372 pair-partition word sums across12 tuple/moment cases, Gaussian-Hermite replay, a finite orthonormal-law Bessel/positive-pairing identity, nontrivial spectral cutoffs, and failure when the variance hypothesis is removed. It does not test the enormous actual metric or prove universal asymptotics. Python3 with NumPy is required; author replay used /tmp/agvenv/bin/python and NumPy2.5.3. The base Python lacks NumPy, a recorded environment issue rather than a mathematical failure.
