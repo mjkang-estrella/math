@@ -1,0 +1,9 @@
+# r81 substantive author checkpoint — no nominee
+
+The prospective full fixed-proportion binary arithmetic-progression coloring target remains unproved and was never frozen. No scope change, mathematical impossibility, independent review, or contribution acceptance is claimed. The exact missing geometric operation and a proved abstract-interface obstruction are recorded in working.md and interface-obstruction.md. No vanishing-minority or four-color substitute is nominated. Parent authorized parking this checkpoint before fresh r82 discovery.
+
+The public manifest seals only files outside private/. Canonical and primary bodies remain private and are not release payloads. Source receipts identify 105 non-PDF canonical blobs (92 preliminary excluded family331, 13 source160) at the stipulated pin; actual reading is much narrower and is stated in working.md. All eight source160 mathematical sections were read; source331 bodies were not. Primary reports give bounded reads, not exhaustive literature coverage. No source theorem was audited.
+
+Run `python verify.py --anchor EXTERNAL_SHA256 --tree /path/to/preprints-tree.json`. This checks public identity, exact public inventory, the complete pinned tree, and receipt-to-canonical identities. Add `--cache-root /path/to/original/r81` to authenticate all locally retained canonical and primary bytes. Without that option, private bytes are not read or authenticated. The external manifest anchor must be supplied independently; a self-computed replacement is not an authorization anchor. Integrity is not a proof or novelty check.
+
+Original author analysis: Myeongjin Kang, no affiliation; original prose CC BY 4.0, original verification code MIT. Third-party texts remain under their own rights and are excluded from the public payload. No publication/upload, shared-ledger edit, staging, or commit was performed by this agent.
