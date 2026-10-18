@@ -1,0 +1,14 @@
+# Bounded replacement screen
+
+No replacement candidate was developed or frozen. These checks are exclusions and leads, not a claim that all 372 families have been exhausted.
+
+- Family236 finitary free-Ising coding: actual matching passages in structuralr61/screen236.md and analyticr14 records show the already developed finite-spatial-certificate gap. Excluded before new source reading.
+- Family208 finite symmetric tensor categories: actual I104 target paragraph and I226 matching passages already distinguish the nonfinite finitely tensor-generated moderate-growth BEO problem from the paid finite-category/projective-generator descent. Excluded; no new source body read.
+- Family330 uniformly discrete free spaces: structuralr54/reading-limits.md was read completely. Its Dalet Theorem2.6 comparison already closes the proper/locally finite graph lead. I88's displayed actual block geometry and quantitative rank/support passages were inspected, not its complete report. No bounded-degree graph theorem was proposed.
+- Family149 stochastic recurrence: analyticr43 checkpoint/report matching passages expressly target all weakly reversible stochastic networks and record a boundary-skeleton Lyapunov obstruction. I138/I141/I144 matches also identify the separate older intermittent-rate problem. No source-body reading or new target in this family this round.
+- Family280 VOA orbifold regularity: actual arithmeticr39/screen280.md matching passages identify the C2 descendant-control kernel gap. The finite-index net/VOA transport is already source-paid per catalogue. No orbifold target was developed here.
+- Families269 and276: analyticr25 screen-log matching passages point to I153 Gevrey adiabatic and I273 channel stability/capacity history. Those older full bodies were not read here; these pointers suffice to defer, not to certify complete overlap.
+- Family373: numerous actual Coulomb positive-density campaign matches identify the developed chain. No resurrection attempted.
+- Families071/084: I135 actual relative circle-domain paragraph says retained-test construction is source-paid; I36/I37 matching paragraphs identify all-ratio and supergeometric avoidance chains. A brief primary search for the rigidity converse located Rajala arXiv2409.19103 / PLMS2025 DOI10.1112/plms.70081, whose returned primary abstract states a rigid circle domain with nonremovable boundary. This is abstract-level exclusion only; no whole-paper proof read or source theorem use.
+
+Catalogue family headings and selected full entries were inspected. Some broad terminal displays were truncated; only visible matches are claimed read. No theorem is inferred from a catalogue abstract. Complete canonical tree parsing authenticated one copied source239 blob; it is not a whole-source semantic audit. No absence of keyword hits is offered as novelty clearance.
