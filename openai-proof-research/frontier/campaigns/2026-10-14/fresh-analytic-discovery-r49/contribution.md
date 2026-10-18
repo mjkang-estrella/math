@@ -1,0 +1,35 @@
+# Operation-level comparison and contribution limits
+
+This is author-side analysis, not an independent verdict. The author proposes full T216A for the separate proof and contribution gates. The count remains under parent control. A proof of a consequence of stipulated source truths does not by itself establish substantiality or literature priority.
+
+## Already paid operations
+
+The three pinned source manuscripts supply the exact critical center scale/amplitude, bounded-domain spin-field convergence, finite affine comparisons, slit restoration, arbitrary fixed-k nests, pin localization, integrable collision estimates, and Lee–Yang moment/UI machinery. The neutral multi-arc adaptation in lattice-interface §§1–2 is a finite extension of the source's pinned-rim proof. It is not advertised as a new estimate uniform in k, and cannot alone support a substantiality claim.
+
+Messager–Miracle-Sole–Pfister1978 Proposition1 supplies aligned-boundary domination for XY spins, including arbitrary conditional boundary phases; its thermodynamic discussion supplies the positive-field pressure framework. Ginibre1970's cosine-character inequalities supply the field-increment comparison. Newman–Wu's finite-XY Lee–Yang statement and Proposition13 explain the moment bound. Their operations are credited rather than renamed.
+
+The neutral Coulomb-gas pressure is classical. Fröhlich1976 §4, particularly Lemmas4.1–4.2, Corollary4.3 and Theorems4.4–4.7, already establish positive finite massless neutral pressure and exact activity scaling. LSZW's large-deviation work supplies canonical plasma asymptotics, but its older AppendixA has the tail/exponent issue corrected by Aru–Baverez–Jego–Junnila2024 Theorem1.6 and AppendixB. This packet uses the corrected result. Junnila–Saksman–Webb Theorem1.3 and ABJJ Lemma2.5 supply sharp moments. None is a new lemma of this packet.
+
+The strategy of obtaining a magnetic amplitude from a continuum free energy is also prior work. Camia–Garban–Newman, *Planar Ising magnetization field II*, §§2.2–2.3, Theorem2.7 and Lemmas2.12–2.16, establish boundary-independent continuum pressure using an FKG/RSW shielding event, a fixed interior core and a collar estimate. Scaling and convex secants are standard. Our use of a core, a favorable-event cost and a collar is therefore a close strategic adaptation, not a novel general template. Their Ising argument does not directly give the Gaussian harmonic-phase comparison or the logarithmically normalized critical XY lattice limit.
+
+JSW §4.5's sine-Gordon/XOR-Ising transfer establishes bounded-parameter tilted field laws. Such a transfer alone does not commute a lattice limit with the growing continuum field used in a thermodynamic coefficient. Fröhlich1976 Theorem2.4 uses full-variance normal ordering in its covariance comparison. It must not be treated as an unconditional ultraviolet-only monotonicity theorem. His §3 massive pressure and §4 neutral massless pressure operations are relevant antecedents, not a proof of our exact Dirichlet boundary identification without matching normalization and limits.
+
+## Proposed additional mechanism
+
+The concrete additional estimate is the ultraviolet-only boundary-pressure identity in continuum-boundary-pressure.md, combined with the exact lattice field-on minus field-off increment sandwich. On a fixed core, the harmonic field is forced within epsilon=t^(-2) of a constant at only exp(-C log²t) probability cost. Šidák's classical rectangle inequality proves this cost even for correlated Fourier coefficients. Hölder and the sharp weighted chaos moments make the phase error negligible at scale t^(16/15). A separate neutral-term comparison gives the reverse inequality. Whitney collar moments have exponent delta^(7/8); their log-Laplace cost is C t^(16/15)delta^(14/15). These two estimates permit the prescribed order of limits and remove the boundary without full-variance covariance monotonicity.
+
+The lattice sandwich is valid before any lattice or continuum limit, with zero-field subtraction built into both sides. Thus it avoids an ordinary boundary O(1/n) error, which would swamp an n^(-2) critical pressure. Fixed-tilt block convergence is enough: first take the lattice/full-real-h limit at fixed t, then send t→infinity between equal continuum coefficients. The final scale inversion and secants are expressly technical.
+
+This is a source-essential route to the unchanged full target, but the narrow independent contribution question is whether the harmonic small-ball/phase/collar comparison and this source-specific assembly are substantial after the credited Ising and sine-Gordon operations. An elaborate alternate proof cannot establish that by itself.
+
+## Unresolved closest-primary retrieval limitation
+
+R. Gielerak, *On the DLR equation for the two-dimensional sine-Gordon model*, J. Math. Phys.27 (1986),2892–2902, DOI [10.1063/1.527266](https://doi.org/10.1063/1.527266), is a potentially decisive comparator. Its indexed abstract explicitly claims boundary-independence of infinite-volume free energy. Its full body could not be retrieved: the indexed PDF mirror returned no-route-to-host or timeout, and AIP/web-open attempts failed. A search-index excerpt of §II refers to half-Dirichlet measures and pressure differentiability; it does not resolve the mass, Wick normalization, regularity class or limit-order hypotheses needed here. No scope exclusion is inferred from the title or abstract, and no statement that this antecedent is inapplicable is made. Both author and parent retained this limitation. A contribution reviewer may need this paper to decide whether our continuum operation was already paid.
+
+The remaining primary bibliography is not exhaustive; no absence-of-search-hits priority claim is made. The proof candidate can be assessed independently of whether this particular novelty comparison is resolved. A technical or blocked contribution verdict must not be overridden just because the full proof succeeds.
+
+## History and authorship
+
+This is the authorized continuation of analytic r48, whose magnetic comparability result and scalar nonimplication example remain technical and immutable. R49 initially explored tail and pressure inputs, then froze full T216A after exploration but before complete proof assembly. It has not shrunk the target. Earlier analytic r38 family233 joint Ashkin–Teller chaos is a different unresolved target and is not reused as a new result. Broad history searches also hit I140's nonlinear Green-pressure material and catalogue mentions; none is treated as freshness clearance from a no-hit query.
+
+The analytic agent supplied the lattice neutral extension, sandwich and amplitude assembly and proposed the harmonic small-ball/Hölder strategy. Parent author research supplied the explicit Šidák small-ball proof and continuum comparison assembly; both independently found the collar exponents. Parent checked portions of the lattice proof and the scalar inversion as author assistance. The copied parent note and provenance preserve that attribution. Neither author may provide an independent gate on this candidate.
