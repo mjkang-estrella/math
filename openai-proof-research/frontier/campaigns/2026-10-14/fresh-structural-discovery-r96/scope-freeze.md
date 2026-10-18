@@ -1,0 +1,7 @@
+# Exact scope, frozen before unified proof assembly
+
+Chronology: 2026-10-18. This freeze follows exploratory derivations of both directions, source and primary comparison, and parent author assistance. It is not a pre-discovery prediction. No unified proof existed at this freeze. The expected disposition is a complete TECHNICAL author screen, not nomination.
+
+For every type III_1 factor M admitting a faithful normal state, and every faithful normal state phi, put H=L2(M), xi=phi^(1/2), D=log Delta_phi and U_t=exp(itD). Fix any free-ultrafilter limit of symmetric integer Cesaro averages m. Define BR(phi) to mean: for every T in B(H), s in R, positive delta_n tending to zero, and unit h_n supported for D in [s-delta_n,s+delta_n], positivity of limsup_n m_t ||T U_t h_n||^2 implies that some subsequence n_j admits v_j in M and constants C<infinity, eta>0 with ||v_j||<=C, ||T v_j xi||>=eta and D-support of v_j xi in [s-4delta_(n_j),s+4delta_(n_j)].
+
+Target: BR(phi) holds if and only if M_phi is finite dimensional. This includes arbitrary finite direct sums of matrix blocks, not just matrix-factor centralizers; no separable-predual hypothesis is added. For infinite centralizer, the intended proof constructs, at every prescribed s, an orthogonal projection T commuting with D witnessing failure, for every choice of the above mean simultaneously. There is no claim for general non-III_1 factors. No priority or substantiality claim is frozen.
