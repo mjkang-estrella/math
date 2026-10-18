@@ -1,0 +1,20 @@
+# Reading limits, chronology and provenance
+
+Myeongjin Kang; no affiliation. Original prose CC BY4.0; original code MIT.
+
+Source373 truths at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated. All11 non-PDF blobs in its canonical family were retrieved from pinned raw URLs and checked against Git blob identities. source-receipts.json binds exact bytes. No upstream truth audit. Third-party bodies remain private and excluded.
+
+Actual source reading this round: full introduction.tex, local.tex, certificate.tex, splitting.tex, proof.tex and riesz.tex. infima.tex was displayed fully in a combined output that truncated earlier primary material; its cell-redistribution proof lines1–160 was reread separately. The final conditional-CDF/quantile proof was visible in the earlier full display; no new theorem about such transports is claimed. references.bib was searched at GKR/CDM/Friesecke entries, not read fully. paper.tex, README and figure were acquired only.
+
+Primary bodies downloaded:
+
+* GKR1805.00417v1: text1–220 displayed with part of its tail lost in combined output; Theorem1.1 and shared-component overview were intact. Later text400–590 was read without truncation, covering fullTheorem3.5, Lemma3.6 and the non-Monge part ofTheorem3.4. Text220–400 was displayed in another truncated combined call, so no complete reading of those sections is claimed. The authors' higher-dimensional completion and uniqueness-of-symmetric-optimizer tail were not read here and are not premises.
+* Friesecke2601.02616v1: operative discussion375–435 displayed; the Coulomb paragraph392–401 was reread in a separate combined call and was intact. It records the three-particle higher-dimensional map problem as open at its date. The Euler counterexample proof was not read and is not an input. No absence-of-prior-work inference from that historical statement alone.
+* Cohn–Kumar math/0607446: actual Table1 row listing regular N-gons and Theorem1.2 including uniqueness were read. The complete proof of the general sharp-configuration theorem was not read; our proof supplies the required circle case directly by strict Jensen. No new circle-energy claim is made. The download uses an unversioned arXiv URL; exact PDF and extracted-text hashes are recorded, without an invented version identification.
+* Colombo–Di Marino was not freshly downloaded/read this round. Its credit is explicitly through source373's actual approximation discussion. The source's Borel-map lemma and our reproduced finite-cell argument suffice mathematically; no unread external theorem is required.
+
+History actually inspected: full I220 quantitative-coulomb-continuation.md, full I223 parent contribution disposition (TECHNICAL despite proofPASS), full coulomb-positive-r2/original-scope.md, and operative grep hits in r10/coulomb-positive-r2 and related files. The positive-density target is not answered here. Search hits for p-gradient and kinetic path fluctuations showed these were already developed; a partial p-gradient contribution report was read, and neither was selected. Other catalogue alternatives were brainstorming only. Absence of an all-N keyword hit is not novelty evidence.
+
+Chronology: a feasible polygon construction was derived while pre-freeze; actual source local/calibration/Riesz operations and closest primary GKR/circle statements were then read. original-scope.txt records the exact full quantifiers after this exploration and before full proof.md assembly. Parent was notified of both mechanism and contribution risk. After full assembly, operation-comparison.md found no nonroutine new step. Parent agreed with author-side TECHNICAL/no nominee. This is author collaboration and disposition, not an independent proof or contribution gate.
+
+No broad formalization was run or proposed. The diagnostic only checks exact finite small polygon energies and mass arithmetic; it cannot verify the all-N analytic proof. No finite checks earn count. The complete theorem is retained at author level, with zero campaign count change.
