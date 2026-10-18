@@ -19,3 +19,11 @@ This check does not cover the later still-developing limiting-graph, selector, s
 ## Draft response observed
 
 Author reported D1 repaired; parent inspected the current cap proof and scope paragraphs and confirmed that the path-preservation proof says "In this upward case" and the article now keeps only the stipulated-input/scope qualification. Final frozen statement and downstream uses still belong to manuscript review. Parent also read draft04-reference.tex in full. The author is explicitly extending its lifted coupling lemma to fixed finite original-coordinate kernels with bounded output marginal density, on the upward event, for later source kernels. Parent requested that this generalized wording be marked in the crosswalk for independent manuscript rechecking, with fixed-support/countable-conditioning and pair-marginal obligations exposed.
+
+## D3: later draft and formal-scope checks
+
+Parent subsequently read current sections 05–08 in full and reread sections 03–04. The use-site table expressly separates the unavailable cap finite-energy hypotheses from the original-coordinate replacements. Its bounded-density kernel remark retains the exact underlying pair-and-upward-indicator marginal, deterministic finite support and countable later choices. These are author checks, not independent primary-proof verification; the manuscript reviewer must inspect the operative original proof steps.
+
+Two minor corrections were sent before freeze: section 05 referenced sec:uses while section 08 defined sec:coverage; the finite-change tail proof must handle an empty change set before taking a maximum over its endpoints. Closure is to be checked on the frozen manuscript.
+
+The independent scoped formal review now passes, with no required objections (see formal-r1-adoption.json). Its separately sealed Independent.lean supplies infinite-graph nonvacuity and a metric-uniform threshold corollary. Author Fin 4 controls instantiate finite-segment lemmas, not the main escaping-ray theorem. Keep 14 support plus 17 author control declarations distinct from 60 reviewer constants, and keep all stochastic, coherence and uniform-index application obligations outside formal scope.
