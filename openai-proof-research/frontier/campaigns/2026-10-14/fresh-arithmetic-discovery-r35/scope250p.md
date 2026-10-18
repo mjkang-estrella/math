@@ -1,0 +1,11 @@
+# T250P: frozen full target
+
+Frozen 2026-10-18 07:41:57 UTC, before complete proof assembly. Author-side discovery only; no proof, contribution, or acceptance gate has passed.
+
+For every finitely generated group G whose word problem on a finite generating alphabet is decidable by a deterministic Turing machine in polynomial space, there exist a nontrivial finitely presented simple group S, a finite generating alphabet for S, and an injective homomorphism G → S such that the word problem of S is decidable in deterministic polynomial space. Finite and trivial input groups are included; G need not be finitely presented. The degree and constants of the polynomial for S may depend on the fixed input group, its generating alphabet and its supplied decider. No uniform polynomial bound over all input programs is asserted. The embedding is specified by finite words for the input generators. No type F-infinity, torsion, distortion, conjugacy, membership, retraction, or arbitrary compressed-word guarantee is asserted.
+
+The proposed construction uses the pinned finite-envelope manuscript, choosing its permitted fixed code length D at least 16, with an explicitly effective length-ordered tuple enumeration. Its substantive unpaid step is a polynomial-space evaluator for mutually recursive semantic K/H decorations, including arbitrary K contexts and mixed iterates of the source's nonunital self-embedding. Literal source-query length contraction alone does not prove this.
+
+At freeze: the literal compiler space argument and the semantic identities are understood; the full recursive size invariant, the affine action algorithm, and the twisted Brin–Thompson word algorithm are not yet fully proved. The scope will remain unchanged if any of these fail. A literal/compiler-only result or an exponential-space variant is not a replacement nominee.
+
+History: I89 E89's retraction-preserving target is false and is not revived. The source already pays ordinary decidability and the companion already pays a simple F-infinity overgroup. T253F remains unresolved at its previously frozen scope. Choosing finite presentation here predates this target's proof and is not a weakening of any frozen complexity target.

@@ -1,0 +1,11 @@
+# Feasible scoped formal interfaces (not implemented)
+
+No formal work is authorized before independent proof and contribution gates. This file identifies checkable components and the limits of any later formal claim.
+
+1. Define mutually inductive K/H decorated trees, their native weighted length and semantic interpretation into source monoids. Prove wrapper removal and each listed recursive call strictly decreases weight. The intended theorem is well-founded recursion plus a polynomial sum-of-frame-space bound. A proof of numerical inequalities alone would not verify semantic completeness.
+2. Formalize finite partial functional graphs: weak connectivity iff forward-orbit intersection, with at most the vertex count steps before repetition. Separate its finite-space enumeration interface from the source compiler transition semantics.
+3. State source normal-form contracts explicitly: quiver endpoints, full-sector separation, native normalization, raw-run identity, code self-synchronization, selector confluence. Prove symbolic normalization expands to the literal normal form under those contracts, including singleton raw versus c and literal zeta absorption. If these contracts are axiomatized, the result is a conditional interface theorem, not formal verification of the whole source construction.
+4. Formalize the selected-term syntax for phi iterates and fixed-dimensional matrix products. Prove O(n squared) term size and exhaustive F2 parity equivalence without an exponential dictionary. This applies to the specified family, not arbitrary shared arithmetic circuits.
+5. Formalize common-stage J minus k alignment using injective transition maps, and the brick composition formula with coordinate-equivalence tests. Prove a linear prefix budget and the independent-tail identity criterion under a faithful action.
+
+The source finite presentation, algebraic embedding, kernel killing, action properties and twisted-group simplicity remain named dependencies unless separately formalized. A scoped support theorem must not be presented as a fully formal proof of T250P. The intended full theorem remains exactly scope250p.md, with arbitrary finitely generated PSPACE inputs and no uniform complexity polynomial over program descriptions.
