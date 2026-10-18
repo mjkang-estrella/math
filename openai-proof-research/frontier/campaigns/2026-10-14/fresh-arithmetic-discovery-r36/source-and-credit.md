@@ -1,0 +1,44 @@
+# Source contracts, history, and contribution comparison
+
+Author-side comparison only. Myeongjin Kang; no affiliation. Original prose CC BY4. This file does not give a contribution verdict or worldwide novelty claim.
+
+## Exact pinned input and companions
+
+Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb; source027 is `Integral-points-on-character-varieties-of-curves-September-25-2026`. The complete preprints-tree inventory has one manuscript in this directory; all13 non-PDF blobs are retained privately and checked against canonical Git blob identities. A complete-tree title/path search for character varieties, integral points, mapping class groups and local systems found only this relevant titled manuscript. This bounded title check is not a claim about every unexamined body in the corpus. The source's cited primary predecessors were then checked at operation level.
+
+The source's main theorem already gives potential integral density for every rank, including exact quasi-unipotent boundary classes, over one field. That broad result is paid. T027O chooses closed g>=2 before proof completion and asks for ONE integral orbit, without changing the source's theorem or claiming its other scope.
+
+The source contract actually used for irreducibility is the determinant-one intermediate fiber in surfaces.tex, proof of `prop:surface-irreducibility`, lines197–248. The proposition statement is for the GL_r fiber, and its scalar-extension conclusion follows at249–258. The candidate now cites this distinction exactly. The finite integral character model is in model.tex; the candidate constructs integral matrices directly, so no strict Jordan-locus integrality assertion is imported.
+
+In dynamics.tex16–155, the source first puts the entire fixed-spectrum fiber V_alpha in the closure of ALL integral points, using its diagram theorem. That fiber supplies the kernel of the spectral derivative. Dehn twists then add a centralizer torus, with Baire extension from generic monodromy, and a submersion produces density. Its explicit monomial test point cannot itself have a dense single orbit; the work file proves the dimension obstruction. Source torus saturation, Baire extension, and ambient irreducibility are fully credited. The diagram induction, arithmetic gluing, and boundary reduction are not newly reproduced or claimed here.
+
+## Actual primary comparisons
+
+1. Coccia–Litt, `Density of integral points in the Betti moduli of quasi-projective varieties`, arXiv2507.00167v1: actual §2 defines the orientation-preserving group. Lemma3.1.8 uses a pants-fiber torus; Proposition3.1.10 propagates density using rank-two pants moves. Proposition5.0.1 constructs actual integral good representations; Theorem5.0.2 gives a dense integral orbit. This completely pays r=2 of T027O. Their broader punctured and quasi-projective conclusions are not claimed. Read limits are recorded separately.
+2. Goldman, `Invariant functions on Lie groups and Hamiltonian flows`, Inventiones85 (1986),263–302: actual §§4.3–4.7 give invariant-function Hamiltonians as centralizer twists on a cut surface. Lemma1.11 handles the real/imaginary components of holomorphic invariants. These supply the flow contract, not arithmetic nonresonance or a high-rank finite tangent certificate. The smooth character tangent and trace symplectic form are classical inputs.
+3. Loewy, `Principal minors and diagonal similarity of matrices`, LAA78 (1986),23–64, DOI10.1016/0024-3795(86)90015-7: the publisher abstract states global diagonal-similarity/transposition rigidity under irreducibility and cut-rank hypotheses. The full body request returned403. No unseen proof is claimed read or used as an axiom.
+4. Sapranidis Mantelos, `Determinantally equivalent nonzero functions`, arXiv2302.02471v4: actual Theorem1.1, §§3–4, and Lemma6.2 expose the pair-product and triangle-cycle identities underlying principal-minor rigidity. The candidate's elementary infinitesimal lemma is in this classical operation class. Its independent proof is given to avoid relying on a stronger global theorem with different hypotheses. It is not the claimed substantial increment by itself.
+
+5. Pickrell–Xia, `Ergodicity of mapping class group actions on representation varieties, I. Closed surfaces`, CMH77 (2002),339–362, official primary https://ems.press/content/serial-article-files/42932: Proposition2.1.24 and Lemma2.1.34 use conjugated twist directions, centralizers of h g^n, density in a torus, and BCH/root-component spanning. Section3 adds transverse sewing. These are substantial antecedents to the local-generation template, not merely an abstract ergodicity statement. Their compact-group, generic-fiber argument is not used as a theorem proving the candidate's prescribed (A,B,C,I) certificate or arithmetic selection. A reduction of the candidate to those operations has neither been established nor ruled out; independent contribution review must inspect it. Parent identified this comparator before final seal.
+
+Bounded searches also encountered titles/abstracts concerning other compact-group dynamics, dense surface-group images, Aut(F_n) dynamics, and rank-two arithmetic orbit results. Those do not, merely from snippets, pay the frozen high-rank integral-orbit assertion. Their uninspected bodies are not represented as excluded theorems. No universal literature-completeness claim is made.
+
+## Campaign history reconciliation
+
+I204's full discovery report and parent disposition treat027 congruence free-group density as technical and explain the failure of preserving exact Jordan type at every finite prime from a complex open condition. The example [[1,2],[0,1]] becomes identity mod2. T027O makes no such finite-prime condition and does not rescue that target. I204 already credits Coccia–Litt rank-two dense orbits.
+
+The r39 history index was used only to locate operative records. Its027 pointers also include arithmeticr11 andr23 checkpoints. Both were read: r11 explicitly says027 was catalogue-only, and r23 records I204 as the developed027 predecessor. The earlier r11 screen053 was reread and excluded the opening053 suggestion as already-paid closure operations. No053 target was frozen in r36. The completed T250P packet remains immutable; parent reports its contribution gate TECHNICAL, with no escalation here.
+
+## Proposed residual operation for independent review
+
+The candidate combines two explicit simple-band families, not arbitrary word functions. The first reduces a common tangent kernel to a Cartan-sized residual S; the second imposes (I−Ad_C)S in h+h_C. Their joint system is shown generically injective by a complex symmetric/skew-symmetric degeneration. That is the proposed high-rank local-generation operation. Finite-open selection then chooses integral B,Q with fixed Pisot eigenvalues. A whole complex A-torus is already in the closure of the one arithmetic orbit, so Baire nonresonance is imposed there rather than through an unjustified arithmetic genericity assertion.
+
+The closure-component/ideal argument is standard geometric reasoning assembled explicitly to avoid claiming that a full Zariski tangent space of a singular subvariety proves density. It is not a separate nominee. The field/unit lemma, Vandermonde interpolation, principal-minor cycle identities, extra-handle row interpolation, and finite-open specialization are supporting operations whose individual substantiality is not asserted.
+
+Source-essentiality must be assessed honestly: the source supplies the determinant-one irreducibility contract and the all-rank torus-saturation strategy. Several inputs have classical proofs, and the candidate does NOT logically need the source's entire integral-density theorem. Independent contribution review must judge the actual two-band bridge, not merely the change from 'many integral points' to 'one orbit.'
+
+## Chronology and parent assistance
+
+Scope027o.md was frozen before a tangent certificate. The first proposed family a^k b c^l d0 had an unjustified based-word simplicity claim. It is retained visibly as superseded in orbit-work.md; candidate027o.md uses only u0 andu1 from actual boundary-fixing twists. The correction occurred before candidate completion and does not change the frozen target.
+
+Parent supplied independent author checks of the Pisot multiplicative-independence argument, an unused dense-image root-weight argument, fixed-eigenvalue spectral-dominance requirements, the based-word warning, ribbon boundary/turn conventions, the corrected u1 derivative, the joint symmetric/skew witness, and the spectral-cover closure reasoning. Parent also corrected the precise source irreducibility citation from the GL proposition statement to its SL intermediate proof. These are author assistance, not independent gate results. The suggested arithmetic Hilbert route and the old L=Ad_AB−Ad_B−Ad_C+I witness are not used in the final proof.
