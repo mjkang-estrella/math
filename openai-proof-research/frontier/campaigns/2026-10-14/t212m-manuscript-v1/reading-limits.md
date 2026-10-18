@@ -1,0 +1,11 @@
+# Actual reading and provenance limits
+
+The frozen author's earlier primary/source readings are preserved verbatim in `evidence/author-reading-limits.md`; this is historical evidence, not a claim that every primary was reread for typesetting. Independent proof and contribution reading limits are copied verbatim separately. In particular proof review relied at statement/interface level on portions of AH4,6,7,10 and DH3–5. The manuscript makes these proof uses inspectable; it does not expand the reviewers' actual reading.
+
+During manuscript preparation the complete independent proof/contribution reports, their limits, parent proof adoption and contribution response were read. The candidate, dependency map, AH6–8/AH9–10 integration, same-status lowering, lifted coupling, structural author bridges, parent half-plane and status-perturbation notes, stationary cocycle, cap-core and cap-shape author proofs were read in full. Frozen formal coverage was read; no formal build was repeated. Other frozen identities are checked as bytes and are not automatically body reads.
+
+Actual bounded primary rereads for this article: ADH v2 extracted lines 1225–1524 (Appendix C), Cerf–Théret v2 lines 230–280 and title; DH1209 v1 lines145–180; AHv2 lines375–395; DH1512v2 lines1–75. Source rereads: introduction1–65, main1–50, references in full, section05 lines1–105, section07 lines1–155. These supplement, and do not replace or enlarge, the earlier author reading record. Primary bodies remain in the frozen ignored private cache; no bodies are copied here. No original Boivin, Cox–Durrett, Kesten or Wehr–Woo body reading is asserted.
+
+The compiler/build script was read before execution; compilation occurred only on new copied directories. All 19 rendered pages were visually inspected in contact sheets. This is layout inspection, not a new proof review. No independent manuscript verdict, acceptance, publication, count change, or full formal verification is claimed.
+
+The scoped formal review report and reading limits were subsequently read in full. Its supplement was not rebuilt or source-audited by this manuscript author; the report is credited as reviewer evidence with its own trust limits.
