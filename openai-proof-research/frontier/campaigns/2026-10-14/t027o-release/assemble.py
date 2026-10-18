@@ -13,7 +13,8 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE if (HERE / "frontier").is_dir() else HERE.parents[3]
 OWN = ['README.md','RIGHTS.md','FORMAL-COVERAGE.md','REPRODUCTION.md',
        'bundle_common.py','verify_bundle.py',
-       'PROVENANCE.txt','ERRATA.txt','payload-selection.json','assemble.py','LICENSE-code.txt','release_checks.py','build_review.py']
+       'PROVENANCE.txt','ERRATA.txt','payload-selection.json','assemble.py','LICENSE-code.txt','release_checks.py','build_review.py',
+       'preparation.json','portable-build-check.json','prepared-entry-checks.json','selection-audit.json']
 
 
 def main():
