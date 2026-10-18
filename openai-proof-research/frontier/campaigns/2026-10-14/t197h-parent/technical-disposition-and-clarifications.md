@@ -1,0 +1,28 @@
+# T197H parent disposition
+
+Adopted at the unchanged frozen scope: **PASS_FULL_T197H** and **TECHNICAL**. The proof review finds no required mathematical objection. The contribution review identifies a paid exterior-boundary filling template. This is a valid technical consequence of the stipulated sources, with no acceptance, count increment, formalization or manuscript escalation. Campaign status remains13/20. Frozen author and reviewer packets remain unchanged.
+
+## Required contribution corrections
+
+The closest antecedent is the pinned *A hyperbolic group with no geometric CAT(0) action*, September25,2026, `build/sections/03-diagrams.tex`, especially `thm:diagram`. It explicitly permits a distinguished outside polygon whose interior has no map; constructs pictures for arbitrary null words; preserves the outside word in minimal pictures; fixes the bounded-fragment threshold before the random size; cuts a planar interior graph into bounded fragments; charges outside contacts by B₀≤|w|; ignores outside-to-outside pairings for interior deficit; converts face fillings to a finite letter presentation; and uses one event for every disk word. The parent read lines100–210 and546–671 directly in the independently authenticated comparator.
+
+This template was already developed in project history I89, which read the complete CAT(0) construction and recorded its letter filling constant. The parent read the relevant scope/history passages and the finite-fragment paragraph near line206 of `frontier/iterations/i89-geometric-group-discovery.md`. The r49 operation ledger and author reading limits did not include this antecedent. They must not be used as an exhaustive comparison.
+
+Source197 itself also pays the rooted inner-band surgeries and paired-interval/separator mechanisms. Its `topology.tex` lines142–243 explicitly introduce a formal exterior disk, give the same inner self-band surgery retaining the exterior component and preserve its word. The parent has now read this range directly. T197H drops surgeries involving the outside, keeps only the inner-perimeter minimum, and adds the outside-contact deficit to the source budget. Its interval count uses the same adjacent-inverse exclusions as the source. Changing constants or removing the exceptional short cluster does not supply a new estimate. The source's fixed-epsilon unpaired-position allowance and separator already supply the local-to-global mechanism.
+
+Ollivier and Gruber remain relevant classical references, but the CAT(0) companion is the closer operation-level comparator. No novelty or priority claim follows from the review's bounded749-PDF sofic-word search, which the parent did not rerun. The two models have different outputs; this is a comparison of paid operations, not a claim that the CAT(0) manuscript literally states the T197H theorem. The full new-to-project consequence is retained as technical.
+
+Scope chronology remains exactly as disclosed: the formal target was fixed after mechanism exploration and before complete proof assembly. Parent assistance is author work, not an independent gate. The consequence's significance gives no substantiality credit under the campaign criteria. No weaker target is substituted and no contribution appeal is opened.
+
+## Optional proof clarifications retained
+
+1. For an arbitrary null word w, write it in the free group as a finite product of conjugates of the spanning-tree relators. Realize that equality by a disk with holes mapping to the rose, and cap each hole using its closed graph lift. This supplies the cone picture without invoking the source lemma's extra outer-lift hypothesis.
+2. The minimum is taken over all fillings of the fixed parametrized word, with no homotopy-class restriction. An inner self-band lies in the interior; exactly one complementary disk contains the exterior. Retain that disk, cap through the same graph cone using the closed P or Q path in ePe⁻¹Q, and discard the other component. Admissibility uses the unchanged word, not sphere essentiality.
+3. The number N of original disks is at most the number N* of pieces. A one-letter boundary cannot have both ends of an arc and hence creates no monogon. These observations justify the endpoint cases in the12N* cut bound.
+4. The forbidden-pattern theorem keeps its original ε₀. Choosing ε=min(ε₀,1) strengthens its unpaired budget. Every original inner occurrence was paired, so closure additions, partners of the deleted exterior, and partners of deleted separator pieces exhaust the losses.
+5. The linear-Dehn hyperbolicity criterion is cited through Gruber's statement, which references Alonso et al. The original criterion paper was not independently read here; no stronger bibliographic claim is made.
+6. The cone complex contains2-cells, since the chosen component graphs have cycles. Thus its finite aspherical complex has the stated dimension2, rather than merely an upper bound2.
+
+## Evidence limits
+
+The parent read both complete independent reports and their actual reading limits, checked their separately supplied manifest/verifier anchors, replayed12 proof-review and14 contribution-review controls, and matched the29 author plus13 comparator source blobs against the separately anchored complete canonical tree. Original packets still verify. These are identity checks, not mathematical proof. The author verifier's symlink-ancestor and copied-source-authority limits remain disclosed; a counterfeit accepted under its own new anchor is not a bypass of the actual external anchor. No additional source truth audit, exhaustive literature search or independent formal review is claimed.
