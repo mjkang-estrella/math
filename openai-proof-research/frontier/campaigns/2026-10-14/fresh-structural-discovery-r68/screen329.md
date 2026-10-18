@@ -1,0 +1,11 @@
+# Entropy-ideal screen: no target frozen
+
+Author exploration, not review or nomination. Prior parent-r9 single compact-operator assembly is read fully and excluded as technical. Its read-limits and analytic-r24 quantitative Markov screen were also read. The full catalogue heading list was surveyed; the complete canonical tree was parsed (13223 entries, truncated=false, SHA256 eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b).
+
+Current actual source329 reading: complete sections01 introduction,02 matrix contract,03 compression and05 counterexample. All10 non-PDF source bytes copied from prior authenticated cache and independently checked as canonical Git blobs; section04 partitions, preamble, figure, references and README are not newly read. This is the one exact-title manuscript in the tree; no exhaustive different-title companion read is asserted.
+
+A materially stronger possible target would separate T and T* in one fixed Lorentz entropy ideal (for a fixed exponent), rather than merely at isolated scales. No such target is frozen or proved. The source compression works at a floor controlled by omitted-partition mass and logarithmic-profile dilation. Increasing the prime enlarges the entropy without improving that floor. The ambient dimension is n=|X| times |T|, while the certified primal entropy is only log|X|. Thus an estimate at one radius gives no bound on the high-index tail of n^(1/r)e_n(T*), nor its Lorentz sum. The full-dimensional cube term adds its own tail; deleting it demands working with a quotient and still does not provide the missing multiscale bound. No inference of impossibility is made.
+
+The prior direct-sum trick controls finite heads at selected scales, not the integrated tail. Repeating it does not solve this unpaid bridge and will not be nominated. Web search of adjoint entropy/Lorentz ideals located BPSTJ and convexified-packing primaries, but only search snippets were inspected this round; no new primary theorem is imported.
+
+Other bounded historical screens: r30 screen131 read through its explicit connected-fiber and rarity arguments (the subsequent combined output truncated, so complete primary-comparison reading not claimed); targeted history matches exclude already-developed161 regular/Cayley and206 representation-wrapper routes. No new source131/161/206 body reading is claimed.
