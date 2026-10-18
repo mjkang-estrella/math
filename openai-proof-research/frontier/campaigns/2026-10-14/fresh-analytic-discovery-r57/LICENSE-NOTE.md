@@ -1,0 +1,1 @@
+Author notes: Myeongjin Kang, no affiliation, CC BY4.0. Original diagnostic and integrity scripts: MIT. Third-party source and primary bodies are retained only under private/, ignored by Git; their original rights are unchanged. Integrity is not mathematics.
