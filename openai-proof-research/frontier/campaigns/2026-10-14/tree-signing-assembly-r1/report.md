@@ -1,0 +1,9 @@
+# Conditional assembly completed; no independent gate
+
+assembly-proof.md proves the requested heavy-light bound under the exact joint chain-law hypothesis. It explicitly sums INTERNAL prefixes of distinct ancestor chains, counts exactly L chains, and uses only L starting states in the probabilistic union bound. It includes a centered-MGF conversion from the primary two-sided tail convention and all requested degenerate cases.
+
+The alternate bound is genuinely available: the pinned source097 deterministic prefix theorem plus unary-chain compression and Bansal et al2021v1 Lemma4.1 give O(d+sqrt(d log(1+L))). The operative primary proof and its symmetric-body interface were read. Combining the two constructions in the regimes log(1+L)<=d and log(1+L)>=d gives O(sqrt(d log(1+L))) when the joint chain-law constants are universal. The two regimes may use different signings.
+
+The only local hypothesis left to the structural author is ONE law per whole sequence, supported on signings with ALL hard prefix bounds, with dimension-free subgaussian marginals for EACH fixed prefix. The structural author's prefix-law.md was read in full and matches this contract; this note does not independently certify its proof or claim a separate contribution. All author assistance is attributed.
+
+The finite diagnostic checks heavy/unary chain combinatorics and exact path decompositions for all increasing-label rooted trees through8 vertices, and retains a concrete failing terminal-prefix substitution. These checks are not the mathematical proof. The external-anchor seal authenticates exact files and directories and rejects copied link/nonregular/hardlink/membership mutations. Third-party source bodies are private and Git-ignored. No shared edits, commits, uploads or nested agents were used; r42 remains unchanged.
