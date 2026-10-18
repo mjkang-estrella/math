@@ -1,0 +1,9 @@
+# Prospective full scope, recorded 2026-10-18 19:03:11 UTC
+
+This is a prospective research scope record, not a completed proof freeze, acceptance, or independent review. Earlier r93 already explored the smooth-flow question without freezing a target. The current supporting derivations (rescaled carriers, period maps and stationary clocks) preceded this explicit scope record; nothing is backdated.
+
+Full objective: construct a compact connected finite-dimensional smooth manifold M, a strictly positive smooth probability volume mu, and a C∞ measure-preserving flow Phi_t on M such that its entire complex centered space L²_0(M,mu) is unitarily equivalent to L²(R,dξ), with U_t acting as multiplication by exp(2 pi i t ξ) for every real t. Thus the maximal spectral type is Lebesgue and the multiplicity is one throughout the entire centered representation. The present attempted geometry uses the three-torus, but the full smooth-realization objective does not impose a dimension-minimality claim. Fixed points of volume zero are not excluded a priori.
+
+No conclusion restricted to a spectral component, a smaller invariant Hilbert subspace, a measurable nonsmooth model, or countably infinite multiplicity will replace this objective. Parent-r7 derivative-retention consequences and r93 suspension calculations are antecedents. Source144 is stipulated at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. The measurable flow and smooth infinite-multiplicity primary results are explicitly paid.
+
+The candidate mechanism is a stationary physical clock giving arbitrary real-line jitter with small physical C∞ cost, followed by strong matrix-density control. One-pass formulas do not yet provide iteration, full-space color prediction or the complete flow. All gates remain pending/not requested; count change0. No manuscript/formalization/acceptance claim.
