@@ -1,0 +1,11 @@
+# r43 author-side discovery checkpoint
+
+No target has been frozen and no candidate is nominated. Campaign count remains 13/20. The provisional family149 interface is stochastic positive recurrence for every finite weakly reversible mass-action network, arbitrary positive constants, and every integer communicating class, including boundary states. This is a distinct stochastic operation, not the unresolved deterministic intermittent-rate P138 chain.
+
+The October source affine/trapping/permanence operations and the September companion dynamics have been read. Both require positive monomial weights at every complex. Falling-factorial stochastic weights can vanish at a return source while an outward reaction is enabled. The source source-family tolerances force exact zero slopes on bounded coordinates; that useful flattening does not remove the resulting positive generator drift.
+
+A concrete stronger barrier is now being written: for the reversible deficiency-zero network 0 <-> A, 2A <-> 3A+B, every fixed-step embedded-chain skeleton has positive expected A increment at (N,0) for all sufficiently large N. Odd blocks have increment tending to one; every fixed even block has increment 2/N+O(N^-2), with unit constants. Thus neither the source affine operation shifted away from zero nor the standard entropy can be made a negative-drift fixed-block test by simply taking more jumps. This does NOT refute positive recurrence: this example has a detailed-balanced product-Poisson law. It isolates a need for state-dependent stopping or a boundary corrector, not a failure of the full theorem.
+
+Primary comparison so far: Anderson–Kim2018 supplies continuous-time tier/Foster conditions; ACK2020 supplies a finite embedded-block route under stochastic-top/deterministic-top tier alignment. The alignment fails in this example. Xu2409.05340 was downloaded as v3 (2026-10-12), titled On the regularity of reaction systems, not its older search title; its introductory scope is binary/second-order regularity, not arbitrary weak reversibility. Exact reading limits will be recorded separately. No worldwide novelty inference is made from searches.
+
+Source bodies remain private. All derivation is author-side, not an independent gate. Earlier T332 and TREE097 packets remain unchanged.
