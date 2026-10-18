@@ -1,0 +1,1 @@
+Original prose: Myeongjin Kang, no affiliation, CC BY4.0. Original Python code: MIT. Third-party source manuscripts and primary papers under private/ retain their original rights and are not authorized for redistribution by this packet.
