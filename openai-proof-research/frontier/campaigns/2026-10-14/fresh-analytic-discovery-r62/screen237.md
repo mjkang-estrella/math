@@ -1,0 +1,7 @@
+# 237: force response — excluded by actual source companion
+
+The tempting direction was to use the three-quarter spatial exponent to derive the small-force free-energy exponent4/3 and extension exponent1/3 for honeycomb self-avoiding walks. It was rejected before any freeze.
+
+Actual pinned Renewal-and-changes-of-law-for-critical-honeycomb-walks introduction was read in full. Its responses section is explicitly announced to prove existence of the exact-length free energy f_e(s), the uniform-in-direction law f_e(s)=s^(4/3+o(1)), and both one-sided derivatives s^(1/3+o(1)). The introduction also already states prescribed-endpoint thermal laws and distinguishes density-one fixed-length endpoint lower bounds from all-length upper bounds. Thus none of these conclusions is available as a new nominee. No inference that the density-one qualification can be removed was made; no all-length endpoint target is frozen or pursued.
+
+The source credits Pincus's force-extension prediction, Kesten renewal normalization, and the works of Lawler–Schramm–Werner and Dyhr et al. for half-space limits. Those primary bodies were not newly read here; they are source-attributed references only. The actual source theorem-level inclusion, rather than any search snippet or independent claim about the primary proofs, suffices for exclusion. Only the companion introduction was fetched/read; no full renewal/response proof reading is claimed.
