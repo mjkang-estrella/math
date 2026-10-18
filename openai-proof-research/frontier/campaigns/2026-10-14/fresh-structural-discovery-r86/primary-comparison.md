@@ -1,0 +1,7 @@
+# Operational comparison
+
+Source240's CH companion already gives the bare-AEC endpoint obstruction, including explicit failure of amalgamation and joint embedding. Its positive companion gives a uniform unspecified categoricity threshold, and explicitly derives joint embedding and no maximal models only ON the resulting tail. Neither supplies global no maximal models while preserving the lower endpoint failure.
+
+Vasey's arXiv1805.04068v3 Section10, actually read, develops transfers for classes with no maximal models via extendibility, nice fixed points, superlimits and specified cardinal arithmetic. The frozen target concerns a specific beth endpoint, not the unspecified-threshold result or a nice-fixed-point reformulation. This comparison identifies a different operational demand, not demonstrated literature novelty. The class construction sought here has not been completed.
+
+The source already pays finite-support torsor translations, tuple-dependent countable exceptions, strong extension tests outside the old base, countable diagram coding, local rank approximation, endpoint realization, finite-pattern obstruction, and countable-base matrix absorption. Enlarging the column-translation group would require a replacement for the invariant colors and a single coherent AEC structure. working.md proves that a canonically coded fixed countable-group sector obstructs the proposed route to a full-group tail. This is a failed-operation analysis, not a substantial result offered for review.
