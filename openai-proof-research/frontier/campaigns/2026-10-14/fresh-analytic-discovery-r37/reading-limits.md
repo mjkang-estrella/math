@@ -1,0 +1,16 @@
+# Exact reading and limits
+
+This is an author-side primary antecedent check. No upstream source truth is audited. AGENTS.md and sources/upstream.json were read in this task; the pin is fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. structural-r39 original-scope.txt was read in full and copied as context. It is a historical scope file, including its then-current unfinished status, not a present status claim.
+
+Primary text line numbers refer to the included pdftotext -layout extractions:
+
+* BBH, Model-theoretic independence in the Banach lattices Lp(mu), 14 August 2009 version: lines 1–115, 325–365, 465–530 read. The bounded sections were re-displayed completely after an earlier combined output was truncated. These include the introduction, Convention2.1, Facts3.2–3.3, universal-domain existence and setup, Definition3.13, Theorem3.15 and its full proof, and Remark3.16. The proof relies only on the atomless theory and metric omega-stability. The paper's decomposability convention is explicitly handled by our finite-witness sigma-finite product reduction. Remaining sections not read in full.
+* RandomVC, Continuous and random Vapnik–Chervonenkis classes: lines 238–325, 340–522, 742–790 read in earlier calls of this task. These include fuzzy/fat shattering operations, Theorem2.11 with proof, and uniformity/model-theoretic setup. Lines 326–339 were not covered by those excerpts. No polynomial L-infinity cover theorem is attributed to Theorem2.11 alone. Rest not read in full.
+* Hrushovski, arXiv2406.19513v1: lines 500–565, including section2.16 and nearby context, and reference-search hits for the cited sources read. The polynomial fixed-resolution cover assertion was observed; its general NIP proof was not reconstructed. Rest not read.
+* BU2008 (arXiv0801.4303) and StabGrps: retrieved and text-searched only. No operative body reading or theorem dependency is claimed. These unused acquisitions remain private for honest provenance.
+
+Initial BBH/RandomVC/Hrushovski files were copied from terminal094-parent/private. parent-primary-receipts.json is an unchanged inherited acquisition log; its failed HTTP attempts and read:false fields describe the parent's download stage, not our own attempts or current reading. primary-receipts.json records our two additional downloads. identity-receipts.json supplies current exact file hashes and URLs independently checked against the inherited hashes. The verifier re-extracts every PDF with pdftotext -layout and checks byte identity of the text.
+
+Web searches for fixed-resolution entropy and stability supplied leads only. No search snippet is used as proof. Compactness, saturation and elementary equivalence are used in their standard bounded continuous-logic forms, consistent with BBH's explicitly stated equivalence of frameworks. BU2008 is not cited as independently read proof of those general background facts.
+
+Prior pinned094 and Elkin–Neiman reading belongs to sealed r36 and the structural author's r39. This packet does not claim fresh complete reading of those papers. It makes the local antecedent determination; the full terminal transfer is the existing r36 author construction. No whole-literature novelty clearance is claimed. The inherited scope remains unchanged.

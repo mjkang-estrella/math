@@ -1,0 +1,61 @@
+# Reading, dependencies, and contribution limits
+
+This is an author record. No independent proof, formal, or contribution gate has run on r39. The pinned upstream statements are stipulated truths, not audited claims. A hash records identity; it does not establish that a body was read or a deduction is correct. Third-party bodies remain private reference material and are not authored manuscript text.
+
+## Pinned family 094
+
+The sole family 094 manuscript mapped by the actual catalogue is `Subpolynomial-dimension-reduction-in-Lp-September-23-2026`. Its main mathematical text and both mathematical appendices, lines 1–1288 of the pinned `build/paper.tex`, were read. Bibliography lines 1320–1336 were inspected; no complete bibliography reading is claimed. The README and figure TeX were retrieved and authenticated but no substantive read is claimed. All three non-PDF blobs are pinned by URL, Git blob SHA-1, SHA-256, and byte count in source-receipt.json. The complete preprints tree was searched for companion directory identities, not read as mathematical text; no additional dimension-reduction companion was located. Catalogue absence is not a literature completeness claim.
+
+The source's finite-set theorem supplies dimension exp(C(log n)^gamma(p)) at every fixed distortion D>1, for gamma(p)=2-p below 2 and 1-2/p above 2. Its actual operations include a weighted-moment criterion, convex separation of pair constraints, concentration over finitely many pairs, finite-graph projection/localization and Brouwer reweighting, stable clipping below 2, and truncation/Poisson operations above 2. These operations are paid dependencies. The finite source map depends on the chosen finite set; the source does not simply assert the all-ambient-query terminal conclusion. The source's exact finite-dimensional discretization alone has quadratic rather than subpolynomial dimension. Our candidate calls the finite theorem once, after enrichment, without changing its hypotheses or claiming its operations.
+
+## Primary comparisons actually read
+
+PDF and extracted-text identities are in primary-receipt.json. Line numbers below refer to those exact text extractions, not publication page numbers.
+
+| Primary source | Actual reading | Operative implication and limits |
+|---|---|---|
+| Narayanan–Nelson, *Optimal terminal dimensionality reduction in Euclidean space*, author PDF internally dated October 22, 2018 (filename nn2019 is only a local label) | Lines 1–42, 50–190, 387–498; complete Lemmas 3.1–3.2 and terminal assembly/algorithm in those passages | Convex-hull norm preservation, minimax approximate inner products and a height coordinate pay the Hilbert terminal recipe. Full random concentration section was not read. This is not an all-Lp theorem. |
+| Mahabadi–Makarychev–Makarychev–Razenshteyn, *Nonlinear Dimension Reduction via Outer Bi-Lipschitz Extensions*, arXiv:1811.03591v1 | Lines 1–42 and 366–474, including complete section 3.1 / Lemma 3.1 / Theorem 1.5 | Euclidean polarization/minimax and orthogonal height pay near-isometric outer extension in their stated Hilbert setting. Section 3.2 lower bounds and the rest of the paper were not fully read. |
+| Srebro–Sridharan–Tewari, *On the Universality of Online Mirror Descent*, conference body and arXiv:1107.4080v1 | Conference lines 132–200, uniform convexity and Lemma 2 statement; arXiv lines 394–423 and 674–785, Lr potentials and full Lemma 2 proof | Uniformly convex regularization, Bregman telescoping and Young's inequality pay the linear-observation mistake mechanism. We give its finite-transcript application explicitly; we do not claim a new online-learning method. The arXiv body has a November 27, 2024 internal date despite its v1 sidebar; receipt identifies exact returned bytes, not a resolved editorial history. |
+| Elkin–Neiman, *Near Isometric Terminal Embeddings for Doubling Metrics*, SoCG 2018, article 36 | Lines 215–551: complete section 2.3, Theorem 2 and section 3 construction/analysis including all near/far cases; only opening paragraph of section 4 | Generic finite enrichment, representative extension, empty scale gaps and one shared height coordinate are prior operations. Their local nets use ambient doubling information. Replacing ambient nets by distance-profile representatives is the proposed application interface, not a claim to have invented enrichment. No complete section 4 reading is claimed. |
+
+A failed request to arXiv:1603.02321v3 returned 404. There is no full EFN reading behind that request. An unsuccessful arXiv HTML-version request is likewise not evidence of reading. Receipts retain the recorded failed PDF request. Searches were bounded primary-source comparisons, not a comprehensive novelty search.
+
+The exact four-terminal L4 obstruction in outer-extension-obstruction.md rejects near-unit extension of an arbitrary prescribed finite isometry. It does not reject terminal embeddings that choose a specially enriched finite map. Its quantifiers are deliberately narrower than the unchanged target.
+
+## Classical model-theory antecedent — exact bridge closed author-side
+
+The exact classical input is Ben Yaacov–Berenstein–Henson, *Model-theoretic independence in the Banach lattices Lp(mu)*, August 14, 2009 version, Facts 3.2–3.3 and Theorem 3.15. Its atomless real Lp spaces at fixed p share one complete theory and are metrically omega-stable: one-types over a countable parameter set have a separable norm-induced type metric. This author personally read the introduction and Convention 2.1 at lines 1–127, the setup/Facts 3.2–3.3/universal-domain passage at 325–390, and 449–513 including Definition 3.13 and the complete Theorem 3.15 proof. The last range includes only the beginning of Remark 3.16; no complete atom-case proof or full-paper reading is claimed. An incidental wrong-range read of lines 555–665 was not used as a dependency.
+
+The complete deduction is copied as paid-profile-bridge.md from the complementary author's stable text, with hash and attribution in author-collaboration.json. This author read its entire proof. If fixed-margin bounded distance splitting trees had unbounded finite depth, finite branching and compactness would yield an infinite tree and continuum many types separated by one fixed positive norm distance over countably many centers, contradicting omega-stability. Thus the depth is uniformly finite. A predictor that selects a bin of maximal splitting rank makes only boundedly many large-bin mistakes. Its finite transcripts supply polynomially many profile predictions. Selecting actual members of arbitrary U from occupied balls gives the exact local theorem used here. Finite witness configurations from arbitrary measure spaces have sigma-finite support and embed into atomless product Lp, so the bound is uniform without a global measure regularity assumption. This also meets the source's explicit Convention 2.1 requiring decomposable measures; no unproved global product-measure assertion is used. No effective bound on the exponent is needed by the original target.
+
+This pays the entire qualitative profile interface, not just its p<=2 cases or finite ambient specializations. The explicit Fourier/Holder proof remains an alternative author derivation. It does not supply an indispensable new ingredient to the unchanged existential target. No stronger quantitative side theorem is substituted for that target.
+
+Two other primary comparisons are retained with honest limits. This author read RandomVC Theorem 2.11 and its proof at lines 473–525; that statement directly gives finite fixed-margin shattering, and we do not claim that it alone is the required polynomial supremum-packing theorem. Hrushovski arXiv:2406.19513v1 section 2.16, lines 514–548, was read and explicitly describes polynomial finite-type covers for continuous NIP. Neither is needed by the final direct omega-stability bridge. Their exact private PDF/text copies, copied from the parent's retrieved bodies, are receipted. No full-paper reading, unverified general packing theorem, or independent review is attributed to these sources.
+
+The resulting author-side classification is TECHNICAL / no nominee, also after checking the final EN adaptation below. This is not a claim that the exact terminal theorem has previously appeared in print, and not an independent contribution verdict.
+
+## Dependency/operation ledger
+
+| Operation | Status in this packet |
+|---|---|
+| Finite-set subpolynomial Lp embedding with the pinned exponent | Stipulated family 094 theorem; entirely prior |
+| Hilbert minimax/polarization outer-extension recipe | Prior NN/MMMR; cannot be asserted for arbitrary Lp |
+| Uniform-convexity bounded mistake transcript cover | Classical SST mechanism, explicitly specialized here |
+| Two-end Taylor subtraction and signed Fourier remainder for every non-even p>1 | Explicit author derivation in profile-cover.md; no global novelty claim |
+| Even-integer scalar factorization | Elementary polynomial expansion |
+| Bounded all-Lp distance-profile covers | Full author proof; qualitative statement paid by BBH omega-stability and the explicit splitting/transcript deduction |
+| Generic enrichment and shared-height extension | Prior EN2018 mechanism |
+| Constrained actual profile representatives, polynomial relevant-radius bands, common-scale assembly | Complementary author adaptation in assembly-proof.md; supporting transfer, not an independent finding |
+| Unchanged full terminal theorem | Full author proof conditional only on stipulated 094 and supplied proofs; independent gates not run; author-side TECHNICAL / no nominee |
+| History index, hashes, verifier, finite controls | Reproducibility infrastructure, never mathematical proof or contribution count |
+
+The copied assembly proof is byte-identical to the complementary author's sealed text; author-collaboration.json records its path and hash. Root supplied ideas and source comparisons. All such participants are authors, not independent reviewers. No Lean proof of the functional-analytic construction is claimed. Any future formal support must name its limited scope explicitly.
+
+## The final enrichment interface, assessed separately
+
+Once the local cover is paid, one must still verify that EN's ambient-net argument can use profile representatives. The distinction is real: two unit-shell points with close profiles against nearby terminals need not be close in ambient norm. The assembly does not assert this missing closeness. Instead, for a query x and representative y in the same radius-rho ball about t_i, every nearby terminal gets its additive eta*rho error directly from the profile cover. For a terminal outside radius R*rho, the coarse common-shell bound ||x-y|| <= 2*rho is enough, since its distance to x exceeds (R-1)*rho. Thus the distant-terminal relative error is at most 2/(R-1). No additional geometric property of the representative is used.
+
+The shell constraint and nearest-terminal constraint are imposed on U before choosing actual representatives. This preserves the normalization and makes the nearby error at most kappa times every query-to-terminal distance. Relevant radii occupy only fixed multiplicative neighborhoods of the n(n-1) interterminal distances, so the number of bins is polynomial without any aspect-ratio restriction. Empty scale gaps use the same nearest-terminal/height dichotomy already present in EN. A polynomial rather than linear enrichment is enough for the stipulated subpolynomial finite-set theorem. All representatives and terminals enter one finite embedding with one common scale; the one extra coordinate is then globally normalized.
+
+These inequalities are completely proved in assembly-proof.md. They justify classifying this last step as a supporting adaptation of the prior enrichment method because the qualitative profile bound is paid. The classification is not inferred merely from a local antecedent, and no claim is made that EN states the exact all-Lp terminal theorem. The theorem can still be new to this project as a corollary of the stipulated new finite-set source, while failing the campaign's requirement for a substantial new construction. This is an author-side contribution assessment, not an independent verdict.
