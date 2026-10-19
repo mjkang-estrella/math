@@ -1,0 +1,16 @@
+from pathlib import Path
+import hashlib,json,urllib.request,subprocess,datetime,concurrent.futures
+B=Path(__file__).resolve().parent; D=B/'packet/private/primary'; reg=B/'packet/public/primary-register.json'
+items=[('ahpt-2608.11183v1','https://arxiv.org/pdf/2608.11183v1'),('fln-1606.05923v3','https://arxiv.org/pdf/1606.05923v3'),('linton-2202.11324v3','https://arxiv.org/pdf/2202.11324v3'),('shao-zivny-2301.11761v3','https://arxiv.org/pdf/2301.11761v3')]
+def get(item):
+ name,url=item; rec={'name':name,'requested_url':url,'utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+ try:
+  with urllib.request.urlopen(url,timeout=45) as res: b=res.read();rec['resolved_url']=res.url
+  assert b.startswith(b'%PDF'),b[:30]
+  p=D/(name+'.pdf');p.write_bytes(b);t=D/(name+'.txt');out=subprocess.run(['pdftotext','-layout',str(p),str(t)],capture_output=True,text=True,check=True)
+  rec.update(status='success',pdf=str(p.relative_to(B/'packet')),text=str(t.relative_to(B/'packet')),pdf_sha256=hashlib.sha256(b).hexdigest(),text_sha256=hashlib.sha256(t.read_bytes()).hexdigest(),extraction_stderr=out.stderr)
+ except Exception as e:rec.update(status='failed',error=str(e))
+ return rec
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool: records=list(pool.map(get,items))
+reg.write_text(json.dumps(records,indent=2)+'\n')
+for r in records: print(r['name'],r['status'],r.get('error',''))

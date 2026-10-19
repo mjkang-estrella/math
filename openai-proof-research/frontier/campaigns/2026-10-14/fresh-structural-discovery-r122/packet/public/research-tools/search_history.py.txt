@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+"""Bounded operation vocabulary, no file-size cutoff; search is not reading."""
+from pathlib import Path
+import subprocess,re,json,hashlib,datetime
+BASE=Path(__file__).resolve().parent
+ROOT=BASE.parents[3]
+queries={
+ 'hypergraph':r'hedgehog|hedge.hog|private leaf|expanded clique|clique.{0,40}expansion|subdivid.{0,35}clique|clique.{0,35}subdivid|hypergraph.{0,45}decompos|decompos.{0,45}hypergraph|rooted packing|weighted packing|self.bounding|candidate.list|one.degenerate|1.degenerate',
+ 'matching':r'Bene[sš]|Las.Vegas|zero.error.{0,50}matching|matching.{0,50}zero.error|augmenting.path.{0,45}verif|Micali|general.factor|parity.pair|signed.weight.{0,45}match',
+ 'groups':r'stable hierarchy|decid.{0,40}hyperbol|hyperbol.{0,40}decid|Baumslag.Solitar|cyclic stabilizer graph|primitive.recursive.{0,40}certif',
+ 'kl':r'Barkley.{0,15}Gaetz|parabolic.{0,25}atom|atom.marked|terminal.kernel|terminal portion|Deodhar',
+ 'tiling_automata':r'connectediz|kernel.period|nonzero.period|Pin.Straubing|original.alphabet|one.split|exceptional.episode',
+ 'shuffle':r'biased.{0,35}shuffle|rho.{0,15}s.{0,20}variance|bit.card|Thorp'
+}
+roots=['frontier/campaigns','frontier/iterations','frontier/experiments','proposals']
+roots=[x for x in roots if (ROOT/x).exists()]
+args=['rg','--files',*roots,'-g','*.md','-g','*.tex','-g','*.txt','-g','*.json','-g','*.py']
+paths=subprocess.run(args,cwd=ROOT,check=True,capture_output=True,text=True).stdout.splitlines()
+skip={'private','inputs','upstream','snapshots','controls','node_modules','.git','.lake','vendor','sources'}
+hits=[];scanned=0;total=0;maxsize=0;maxpath='';fail=[]
+regex={k:re.compile(v,re.I) for k,v in queries.items()}
+for s in sorted(paths):
+ p=Path(s)
+ if any(x in skip for x in p.parts) or BASE.name in p.parts:continue
+ try:b=(ROOT/p).read_bytes();t=b.decode('utf-8')
+ except (OSError,UnicodeError) as e:fail.append({'path':s,'error':type(e).__name__});continue
+ scanned+=1;total+=len(b)
+ if len(b)>maxsize:maxsize,maxpath=len(b),s
+ found={k:[] for k in queries}
+ for i,line in enumerate(t.splitlines(),1):
+  for k,r in regex.items():
+   if r.search(line):found[k].append(i)
+ found={k:v for k,v in found.items() if v}
+ if found:hits.append({'path':s,'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'matches':found})
+obj={'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'roots':roots,'inventory_command':args,'excluded_components':sorted(skip),'self_excluded':BASE.name,'size_cutoff':None,'includes_work_directories':True,'json_text_searched_not_semantically_decoded':True,'queries':queries,'scanned_files':scanned,'scanned_bytes':total,'largest_file':{'path':maxpath,'bytes':maxsize},'decode_or_access_failures':fail,'hits':hits,'semantic_limit':'Path/line matches only; actual followed bodies are listed in reading-limits.md. Concurrent lanes may appear but were not adopted as inputs.'}
+(BASE/'packet/private/history/search-final.json').write_text(json.dumps(obj,indent=2)+'\n')
+print(json.dumps({k:obj[k] for k in ['scanned_files','scanned_bytes','largest_file']}));print('matching files',len(hits))
+for h in hits:
+ if any('hedgehog' in x for x in []): print(h['path'])
