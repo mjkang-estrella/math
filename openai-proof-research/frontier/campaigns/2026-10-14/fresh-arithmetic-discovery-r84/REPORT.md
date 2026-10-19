@@ -1,0 +1,11 @@
+# Arithmetic/algebraic discovery r84 handoff
+
+PREFREEZE archive. No target was frozen and no nominee is supplied. No author correctness/contribution gate, rating, acceptance or count is assigned.
+
+Five operative screens were pursued at unequal depths:051,044,035,015,041. The strongest concrete feasibility work is the arbitrary-order paired lattice R direct-sum R^vee and exact Fourier factor [R:R intersection A^{-1}R]^{-1}. It removes a proposed local codifferent/bad-prime obstruction but does not complete the same-packet conductor-uniform global tube estimate. The quartic global Fourier/coset template is already strong and explicitly credited. The quantum screen includes the newer primary's full Coulomb-action proof and leaves the all-descendant trace interface unproved. Normal abundance leaves canonical conductor gluing; the nodal line-bundle example diagnoses only a generic descent shortcut. Singular hyperbolicity still lacks the required global metric/volume/discrepancy interface.
+
+Read packet/public/research.md, pairing.md, quantum.md, geometry.md and reading-limits.md. They preserve preselection calculations, exact missing steps, actual primary versions/proof extents, late stronger reads, failures and history limits. No weakened surrogate or method counterexample is nominated; no exhaustion or priority claim is made.
+
+All pinned OpenAI statements and operative proofs at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb were stipulated true. The complete13223-entry tree with truncated=false controls canonical source identity. Original public prose/code and private source bodies are separate. Only the owned r84 directory was written; no nested agents, git mutation, shared edits, browser UI, contacts, uploads/publication, formal or manuscript work occurred.
+
+MANIFEST.json binds the exact packet files and directories. FINAL.json binds that manifest, this outside-packet report and the verifier. The read-only verifier requires detached finalhash and reporthash and the external complete tree. Copied mutation controls run against temporary copies inside the owned directory and check the original sealed root unchanged. Their receipts remain outside packet. Integrity checks are not mathematical gates. Detached FINAL, MANIFEST and REPORT SHA256 values are provided in the handoff message.

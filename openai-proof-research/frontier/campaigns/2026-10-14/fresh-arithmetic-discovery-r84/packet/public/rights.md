@@ -1,0 +1,3 @@
+# Rights and boundary
+
+Public notes and verification code in this packet are original research prose/code. No external source license is replaced by these labels. Private upstream, third-party PDFs/text and copied historical bodies retain their original rights and are reading evidence only; they are not a public redistribution or publication package. Source identity metadata and short original paraphrases are public separately from those bodies. The complete upstream inventory and governing context are private. No upload or publication is authorized by this archive. Parent integration remains separate.
