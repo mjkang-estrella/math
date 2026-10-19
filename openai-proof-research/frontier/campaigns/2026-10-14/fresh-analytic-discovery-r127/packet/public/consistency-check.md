@@ -1,0 +1,34 @@
+# Resumption internal-consistency check of the T372L127 author proof
+
+This is an author-side record by the resumed runner, Factory Droid (Opus 5.5, high). The original runner was GPT-6 Astra (high). It was interrupted by a user stop after writing most of this packet; that stop was not a mathematical failure. This record is neither an independent correctness review nor a contribution review. It assigns no verdict or count.
+
+## Invariants checked first
+
+frozen-scope.md still has SHA256 6e39d59e65aecf9fc8710244c7eccbe7964e38af10287ad173663585539d790a. freeze.json still binds that hash and prefreeze.md d58e6e8ae9645a2565237b7d606cd41ac5acfa3b5580209b7f9e2756257e623e. Neither file was altered. Neither does any amendment narrow, rename or condition the frozen target.
+
+## What was re-derived, not trusted
+
+The resumed runner reread the retained source372 sections transport-matching, coefficient-recovery, physical-amplitudes, analytic-estimates and boundary-reduction in full. It compared their actual contracts with proof.md:
+
+- Section 1 formulas (1) and (3) agree with lem:augmented-system and lem:transport-normal-form. Q carries m/ell and T=D log(k/ell). Normalization: p=sqrt(m)a, s=-kb/(2sqrt m)-g.p/2.
+- Section 3. The noisy transfer replaces prop:physical-transfer by a pasted field plus an H1_0(B_5r) correction of size C delta exp(C/h). Then u2 is an exact second-medium solution, and u2-u1=-z off closure Omega. The cutoff identity for Lcal2 W was rechecked. The order-one forcing is O(1/h) by the source's weighted derivative bound in prop:physical-amplitudes, and the commutator lives in an exterior annulus. Together with prop:carleman these give (6). The constraint (7) is the source identity theta.a=tau^-1(b-div a).
+- (9). Rewriting R_2^theta=-tau^-1 R_2 with L2-bounded amplitudes gives an O(h) residual in the H^-2 dual norm. The source normal form is an algebraic identity with smooth coefficients, so it carries that residual to D(p,s)-M(p,s). Projection onto H_theta costs O(h) in H^-1 before one derivative. P(V2 Y1^-1)=O(h), and P((V1-Y1)Y1^-1)=O(h) because V1-Y1=O(h) in L2 by the explicit tau^-j expansion in prop:physical-amplitudes. Also P(I)=-f, hence P(G_h-I)-f=P(G_h). The sign conventions match transport-calculation.md, where e=Pw-f=P(I+w).
+- transport-calculation.md. The normal equation, the distributional adjoint equation P^dagger Q_j e=0 on D_R, the vanishing of the cutoff commutator on supp g_h, and the identity (5) with its sign were rechecked. The bound ||e||_{H^j}<=||f||_{H^j} follows from (2). The interpolation exponent b=(1/2)(1/5)=1/10 and the embedding H16 into C12 in five real variables (16>12+5/2) were rechecked.
+- Section 4 patching. Partition-of-unity weights depend only on the direction and on t=x.nu(direction), and theta.nu=0. Hence D_theta annihilates them, and P(sum phi_a G_a)=sum phi_a e_a. Representatives differ by nonvanishing factors, and P is linear in theta.
+- Section 5. Block computation with M=[0,theta;Q^T,T] and Gamma=[F,0;A,f]: the upper-right block is F theta-theta f, the upper-left is D F-theta A, the lower-right gives T1-T2 once F=fI and A=0, and the lower-left gives Q1^T-Q2^T on H_theta. The kernels follow lem:conic-bundle and prop:comparison-rigidity. The quantitative versions use finite-dimensional injectivity at each x. The projection Pi does not commute with D_theta. The argument only needs Gamma-G small in spatial C^k, which holds because spatial derivatives commute with dbar and with Pi.
+- Section 6. The expansion of 2Q_j, the identity g1g1^T-g2g2^T=g1v^T+vg2^T, the coefficients B_ij^a, the value q=-2kappa/c and the commuted equation for d_s q agree with the source's coefficient-recovery and lem:finite-type. Exact equality of c and beta is replaced by C3-small differences. F needs only a C1 bound, which the C4 bound in (11) supplies.
+- Section 7. The collar estimate was rechecked: Taylor to normal order 119 and C220 remainders give C(t eps^-100+eps^20), and eps=t^(1/200) gives t^(1/10). So were the pointwise convexity of the admissible set, the coefficient-to-DN Lipschitz bound, and the choice h=C'/log(1/d) with d exp(C/h)<=d^(1/2). The large-delta case uses the bound 2M, with omega_alpha bounded below on any set with delta>=delta0.
+- boundary-calculation.md. Several normalizations were rechecked: H^(1/2)=O(1) for phi_N, energy O(1), and the scaling y3^m=N^-m s^m. Also rechecked were the profile E(s) with b=(lambda+mu)/(lambda+3mu) and the divergence (b-1)exp(-s). The shear polarization has zero lambda coefficient and a positive mu coefficient. The lambda coefficient (1-b)^2/2^(m+1) is positive, since 1-b=2mu/(lambda+3mu)>0 and lambda+3mu>=(c+7mu)/3. The recursion t_m<=C[(delta+t_(m-1))N^m+N^-1/2] gives b_m=b_(m-1)/(2m+1). The derivative counts are 2m+10<=248 and 119+101=220.
+
+## Outcome
+
+No inconsistency between proof.md, the two calculation files and the frozen scope was found. Nor was any genuine gap found that would require a new mechanism or a weaker statement. Seven clarifications were added as proof.md Section 9 and disclosed there. They concern bounded exterior components, the dual-norm meaning of H^-2, explicit support radii, the support of the dbar derivative, independence of the comparison from h, the m=0 boundary step, and a scratch numeric spot-check. Exponents, derivative budgets and the frozen statement are unchanged.
+
+## Remaining risks for an independent reviewer
+
+1. Section 2 uniformity over the finite-regularity class rests on a compactness argument. This covers the frame cover by neighborhoods of form (4), the Lebesgue-number choice of parameter plateaus, the uniform Carleman and solvability constants, and the uniform supported estimate (5). The argument is sketched at the level of operations, not written line by line. The source states its constants as depending on the coefficients; uniformity is an author deduction.
+2. The derivative budgets (<=80 interior, <=248 boundary, <=220 interpolation) are author counts with wide slack against C1000. They are not audited term by term.
+3. The order-m boundary extraction lists its error sources (subleading envelopes, tangential variation, curvature/Jacobian factors, Taylor remainder, H1 correction) but does not expand every term. Lin–Nakamura was read only after freeze.
+4. The weak-to-strong residual step (9)->(10) is the proposed integrated quantitative operation. It must be checked together with the H^-2 projected constraint, the adjoint pairing and the global direction patching.
+5. Source statements and operative proofs are stipulated. External primaries (Tan–Liu, Lin–Nakamura, Cekic, Ruland–Salo) are not covered by that stipulation, and the proof does not depend on them except as credited comparisons and the optional m=0 cross-check.
+6. No contribution or substantiality claim is made. A compatible generic reduction may classify the full theorem as technical.
