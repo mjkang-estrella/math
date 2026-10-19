@@ -1,0 +1,13 @@
+# r128 analytic research handoff
+
+PREFREEZE. No frozen target and no nominee. No author proof, correctness/contribution gate, self-rating or count assignment. Runner: Factory Droid, Opus 5.5 (high). Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb.
+
+Following the T372L127 lesson, no stability/rate quantification of a source theorem and no source372/Lame variant was considered for nomination. Each screened question was tested against its strongest generic reduction (source, companion, history, classical tools) before any freeze; none failed at an operation that was both unpaid and closable here.
+
+The closest gap is the source090 per-potential sharp auxiliary (the Cohn–Kumar quantifier the source explicitly leaves unclaimed). For integrable completely monotone potentials, it closes routinely: positive-definite bounds, Bernstein, measurable selection and a Bochner integral. For Epstein-singular potentials t^{-p}, p > 1, it needs Gaussian sharp pairs with f_alpha(0) <= C S(alpha) at large alpha. That requires a new boundary-layer sign certificate, which was neither built nor obstructed. Other screens: source331 diamond-bound sharpness (classical Hilbert embedding sketch, routine if true), source090 periodic uniqueness (classical composition, history declined), source262 higher dimensions (r118-paid operator lifting plus Laptev–Weidl, constant compiler), and source143 beyond quintic (degree six is an unbuilt headline; the nonlinear restoring force is the open T143D45 archive, read late and credited). See packet/public/report.md, screens.md and reading-limits.md.
+
+Evidence: authenticated canonical acquisition records with retained bodies and removed unread bodies (marked retained=false); selected history and context copies with read extents; the complete nontruncated preprint tree. Alias searches ran with hidden and ignored files included and no size cutoff; hit receipts are not proof or priority clearance.
+
+FINAL.json binds packet/MANIFEST.json, the complete tree, the public report, screens.md and this outside report. Its SHA256 and this report's SHA256 must be supplied DETACHED to packet/public/verify.py. packet/public/controls.py takes the same explicit anchors and runs copied controls. CONTROL-RESULTS.json is an outside-packet run receipt, not a mathematical gate. The verifier is read-only; work/ is disposable control scratch.
+
+Only this assigned directory was written. Public originals/code are separate from private source/history bodies under original rights. Parent integrates. No nested agents, git mutations, shared-index edits, browser UI, contacts, publication, uploads, formalization or manuscript work occurred.
