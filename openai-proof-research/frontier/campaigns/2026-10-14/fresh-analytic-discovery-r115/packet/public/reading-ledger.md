@@ -1,0 +1,46 @@
+# Reading ledger, versions and limits
+
+Retrieval, parsing and semantic reading are separate. This record makes no exhaustive literature/priority claim. Parent/other-author contribution verdicts are context, not this agent's result.
+
+## Required context
+
+AGENTS.md and sources/upstream.json were read completely. The pin is fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. sources/CONTENTS.md was parsed completely, all numbered headings inspected (including a separate final-heading display), and selected family descriptions read. An initial whole-catalogue display was truncated; not all descriptions were semantically read. sources/preprints-tree.json was parsed and every entry traversed:13,223 entries, truncated=false, SHA256 eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b. The truncated sources/tree.json was not used. An initial path lookup stripped the preprints/ prefix and returned no selections; it was corrected before retrieval.
+
+NEW-TEN opening/current requirements through line220 and a later100-line operational tail were read. Accepted R023–R040 were read at opening statement/contribution level, not as eighteen full manuscripts or review chains. A combined first2,800-character display was truncated in the middle; R027–R034 were separately read through their first1,800 characters. No accepted proof was audited. The detailed exclusions in the dispatch remain controlling.
+
+Analyticr114 research-report.md, radial-calculation.md, operation-comparison.md and reading-ledger.md were read. A later combined redisplay was truncated; radial-calculation was independently redisplayed in full. Its source353 logarithmic radial precision and angular missing inverse,071 exact-K compatible extension,262 fixed spaces/repeated profiles, unequal-screen limits and arithmetic correction are exclusion context. No original third-party body from r114 was freshly read. Its supplied detached manifest/report hashes are recorded in context receipts as user-provided anchors, not adopted as mathematical approval.
+
+## Actual fresh upstream bodies
+
+All retained blobs have canonical pinned raw URL, complete-tree Git blob and independently computed SHA256 in private/upstream/receipts.json. Git blob SHA1 uses the actual `blob <length>\0` prefix. No source statement or operation was truth-audited.
+
+-149 October5 Uniform Permanence: introduction.tex, trapping.tex and permanence.tex read completely. September25 03-dynamics.tex was fetched but NOT semantically read. No claim of complete family proof coverage.
+-354 September24: paper.tex read completely late in the screen (including `intro:main` and its completion paragraph); preliminaries.tex, geometry.tex and early-exclusions.tex read completely. nesting.tex retained but NOT read beyond label navigation. Other included sections, bibliography and numerical appendices were not fetched/read. The full source proof is not being claimed as newly inspected.
+-322 September23: all main.tex read across consecutive ranges, including appendix; references.tex was not fetched/read. The theorem and proof operations were inspected, not only title/abstract.
+-370 September24:01-introduction through06-conclusion read completely.02-preliminaries was redisplayed through its final energy-scaling paragraph to remove an earlier display-limit ambiguity.03-localization and04-intervals were also redisplayed completely. Bibliography/other build files not read.
+
+The twelve other numbered screens have no fresh upstream proof-body reading in this round. Their dispositions in operation-comparison.md reflect that limit.
+
+## Primary versions and semantic extents
+
+All successful PDFs and pdftotext extractions are private. private/primary/receipts.json binds actual URL, final URL, PDF SHA256, bytes, and extraction SHA256. Publication text retains original rights.
+
+1. N.J.Kalton, *A remark on quasi-isometries*, PAMS131(2003),1225–1231, electronically published July26,2002; author memorial PDF at https://kaltonmemorial.missouri.edu/assets/docs/pams2002b.pdf. Read introduction and §2 Proposition2.1 coordinate spiral/compact-group averaging proof, Theorem2.2 and most of its displayed proof. Later proofs were not completely read. Used as a primary warning about linear approximation, not a full proof against an arbitrary radial modulus.
+2. Kadets–Martín, *Extension of isometries between unit spheres of finite-dimensional polyhedral Banach spaces*, arXiv:1206.4839v1, June21,2012, https://arxiv.org/pdf/1206.4839v1. Read the10-page extraction, with a truncated middle repaired by separate lines270–340 and235–275 reads. Operative Lemmas3.1–3.7 and Theorems4.2/4.5 were read. Finite-dimensional tangent/norming arguments do not by themselves provide a uniform approximate all-Banach theorem. References cited there were not recursively read.
+3. Boros–Hofbauer, *Permanence of weakly reversible mass-action systems with a single linkage class*, arXiv:1903.03071v2, March13,2019, https://arxiv.org/pdf/1903.03071v2. Read extracted lines65–145 (bounded kinetics definitions and Theorem4.2) and478–536 (complete §6 face-induction proof). Lower Lemmas5.5/5.8 invoked in that proof were not read in full. Not claimed as complete primary verification of all network geometry.
+4. Acerbi–Fusco–Morini, *Minimality via second variation for a nonlocal isoperimetric problem*, arXiv:1211.0164v1, November1,2012, https://arxiv.org/pdf/1211.0164v1. Read115–163 (second variation modulo translations/Theorem1.1) and1465–1557 (closing penalization proof, Remark4.4 and start of subsequent material). The earlier regularity and graph inputs including Theorem3.9 were not read in full. gamma=0 inclusion checked. This is an operative compiler comparison with explicit limits.
+5. C.-S.Lin, *A classification of solutions of a conformally invariant fourth order equation in Rn*, CMH73(1998),206–231, publisher PDF https://ems.press/content/serial-article-files/42794?nt=1, DOI10.1007/S000140050052. Read intro through printed page210 and extracted1121–1390, covering §4 Kelvin formula, Lemma4.1 and the moving-plane proofs up to the final radial comparison near page230. End of final comparison and earlier §3 input proofs not fully read. Printed introduction uses denominator n-2 in Theorem1.4, whereas §4 uses n-4; a sign in the subcritical discussion also disagrees with its displayed tau definition. Those printed discrepancies are recorded, not silently normalized into an additional relied-upon theorem. No upstream proof is implicated.
+
+Failed retrieval: Liu–Zhang2009 publisher pdfft URL https://www.sciencedirect.com/science/article/pii/S0022247X08011104/pdfft returned HTTP403. Web open also failed. Abstract-level property(m)/sphere-to-ball lead was navigation only; no operative proof or priority clearance from it.
+
+Later web searches on anisotropic Lane–Emden/product fourth-order operators returned adjacent anisotropic p-Laplace, stable/finite-Morse-index and other equations. These were snippets/abstracts only, NOT proof reads and not used to assert that the present exploratory question is open or new. No exhaustive bibliographic clearance was reached; no target was frozen.
+
+## Actual project-body comparisons and timing
+
+Searches used rg --no-ignore on actual campaigns, iterations and experiments, with topic aliases and proof-operation strings, no file-size cutoff. private/history-search.json preserves arguments and counts. Selected generated/private/input directories were excluded. Numeric family searches sometimes produced unrelated large outputs. Stored search hits and their hashes are navigation evidence, not full semantic reads of every matching body. Some combined displays were truncated.
+
+The most important late antecedent is fresh-structural-discovery-r94/working-geometry.md: located early, read completely only after exploratory322 work, then redisplayed completely. It already contains the one-step error estimate, convex-core defect, approximate Darbo, smoothing and terminal compactness attempts. This was disclosed before any freeze; no retrospective freeze or novelty claim followed.
+
+Other actual reading: I12 sphere-stability body complete; I141 large body partial because the combined display truncated; I144 critical-siphon-window relevant selected passages; I137 crystalline coherence partial body including finite periodic heat and missing screening; I225 analytic-attempt partial body including exact dual gap and power-stability interface; r110 prefreeze-screening complete; r44 screen-349 complete; structuralr28 screen-358 complete. I151 relevant Lane–Emden/I146 audit paragraphs were read as historical context, not its linked original evidence. I140 lines85–190 were subsequently read, including all §4 scalar-coefficient pressure proof; I143 lines127–180 were read, including directional reflected pressure, exact virial and stated missing estimate. I346 source/profile/comparison passages were encountered in search output; its full crossover proof was NOT read. I130, I70/I74, r24, structuralr90 and earlier Randers material were located but not fully read here.
+
+No search exclusion is represented as full primary comparison, no finite check as proof of an infinite-dimensional/PDE theorem, and no seal as mathematical validation.
