@@ -1,0 +1,27 @@
+# Attempts, exact source comparisons, and the remaining gap
+
+Status: full T101G69 unresolved; no nomination and no count increase. The stipulated pinned entropy theorem is accepted, not audited. This branch tests a Choi/PPT route and preserves the exact original target.
+
+## Checked entry point
+
+For J(e_r)=X_r, the cubic Gram identity is J*J=B and P=JJ* is positive of rank at most m, with partial trace B. Its nonzero eigenvalues equal those of B. Full symmetry gives P supported on the symmetric tensor square and the precise reshuffling formula P^Gamma=EF. The squared distance to its partial transpose is 2C. A small residual therefore gives proximity to partial-transpose invariance in Hilbert–Schmidt norm; it does not itself give positivity of the partial transpose.
+
+The parent channel-only unitalization was read in full and its inequalities checked. With Q=1_[1/2,2](B), f(B)=B^(-1/2)Q, replacing Kraus X_r by f(B)X_r and adding rank-one low-space projectors makes a unital CP map. The low rank is at most 4beta²; changed-family squared norm is at most 6beta²; old and new slice-Gram bounds are 2 and 5. These yield the stated super-HS bound sqrt(6)(sqrt(2)+sqrt(5))beta. Also ||f(B)²−I||F<=2beta, so ||F*(I)−I||F<=7beta follows from ||E||HS→HS<=2 and the low-rank bound. This operation loses symmetric Kraus matrices and full cubic symmetry. It does not preserve the structured P^Gamma identity needed here. I have not used it as a tensor normalizer.
+
+## Actual low-rank PPT comparisons
+
+[Horodecki–Lewenstein–Vidal–Cirac, quant-ph/0002089v1](https://arxiv.org/abs/quant-ph/0002089v1), Theorem 1, assumes an exactly PPT state of rank N with product support M-by-N, M<=N. It gives a decomposition into N product states. The body uses exact kernels, full-rank product compressions, invertible filters, and commuting normal matrices. It does not state a uniform quantitative approximation bound in the Frobenius residual considered here. In particular, its theorem cannot be applied directly to the indefinite P^Gamma of the simplex family. Nor does it supply a nearby rank-m PPT matrix. Only the actual read theorem and proof portions are used for this comparison; no literature-wide absence assertion is made.
+
+[Chen–Đoković, 1203.1364v4](https://arxiv.org/abs/1203.1364v4), Proposition 39 and Theorems 42–45, give exact rank-(N+1) structure. Theorem 45 decomposes such a PPT state into pure product B-direct summands and a B-irreducible remainder; if entangled, that remainder has A-local rank 2 or 3. The proof relies on exact vanishing blocks and invertible local transformations, with no residual bound imported here. Proposition 39 also illustrates why rank and decomposition length must not be conflated: its length conclusion requires the specified irreducibility/product-range hypotheses. These exact results guide a possible repair but do not construct one with trace-paid extra modes.
+
+Chen–Chu–Qian–Shen, 1812.04182, was consulted for its completely symmetric setting and rank-(N+1) reductions. An external search surfaced a published correction dispute concerning one theorem. Its body was not read, and no result from this manuscript is invoked. The retained 1101.5134 paper was an initially mistaken reference lookup; only locations were screened and it is not relied on. The Cariello and Kitaev leads remain outside this branch's proved deductions. Precise reading limits are recorded separately.
+
+## Why the tested constructions stop
+
+1. Partial-transpose clipping: the simplex calculation proves that negative-mode count and negative trace can be much larger than C. Clipping produces a high-rank positive matrix in the transposed representation; transposing it back does not automatically preserve positivity. The simplex does have a one-extra-mode real separable repair, so this is a failure of the chosen accounting, not evidence against the full target.
+2. Positive addition: the two-dimensional example proves that a positive correction making P PPT may require trace linear in perturbation size while the residual is quadratic. This invalidates that trace budget. Two-sided squared-Frobenius repair remains possible and is not ruled out.
+3. Exact marginal restoration by an invertible local filter: the parent channel filter does not preserve cubic symmetry. A simultaneous symmetric filter on an already separable quartic preserves its real fourth powers, but no exact separable approximant with a well-controlled marginal has yet been constructed. Using such an approximant as input would assume the missing step.
+4. Short real separable factorization: separable-interface.md proves an explicit conditional constant 400. Its polar compression is paid r69 machinery. The required existence assertion is equivalent up to constants to the original target, as shown there. It cannot be used as a standalone full-target result.
+5. Exact rank-(m+1) classification: this might help only after constructing an exact PPT object with controlled rank excess. Neither construction nor a global quantitative version of the exact kernel argument is established. Nonorthogonal direct sums and ill-conditioned filters must not be assigned an unproved universal cost.
+
+No numerical residual is used as a proof gate. Exact diagnostics support index conventions and finite examples; the universal obstruction formulas and conditional lifting are proved in the accompanying prose. The unchanged global noncommuting estimate, including arbitrary B<=2I and arbitrary error density, is still open in this campaign branch.

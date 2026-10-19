@@ -1,0 +1,22 @@
+# Reading limits and provenance
+
+The immutable upstream pin is fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. AGENTS.md and sources/upstream.json were read. Pinned source truth is stipulated; no upstream truth audit was undertaken. Ignored private/ contains source/primary bytes; public files contain original mathematical prose/code and provenance records. Retention and a hash are not claims that an entire source was read.
+
+The continuing worker's source101 reads are unchanged from r70: introduction.tex full 192 lines; rigidity.tex full 254 lines; matrix.tex lines 1–100, 155–205, 526–585. These cover the actual entropy theorem, smooth retained-slack statement, exact linear-Jacobian/commutation argument, equality classification and fixed-dimensional compactness. The other retained source101 files were not read in full. The catalogue family101 entry and complete canonical preprint tree were checked previously; this establishes the listed family scope, not an absence claim about unrelated papers. Source and source companion bytes were copied identically from sealed r70 with its pinned Git blob receipts.
+
+Earlier primary reads, copied identically with receipts: Boralevi–Draisma–Horobet–Robeva, odeco.txt lines 355–425 (Section 3.1 Lemma 11/Proposition 12); Melbourne–Nayar–Roberto, minimum-entropy.txt lines 1–115 (actual Theorem 1.1 and scope). Their exact classification and one-dimensional extremal operations are paid. Neither supplies the full global quantitative cubic theorem.
+
+New primary retrievals and actual boundaries:
+
+- Horodecki–Lewenstein–Vidal–Cirac, quant-ph/0002089v1: abstract/primary page and extracted text lines 109–398, including support definition, Lemmas 1–6, Theorem 1 and its proof. A combined output was truncated; 280–398 was separately read. Only these portions, not the entire paper, are claimed.
+- Chen–Đoković, 1203.1364v4: extracted text 1070–1320 read in full without truncation. This includes Proposition 38, Proposition 39 with proof, Theorems 42 and 43 with proofs, and Theorem 45. Exact B-direct sums and invertible operations are compared; no quantitative corollary is inferred.
+- Chen–Chu–Qian–Shen, 1812.04182: abstract and extracted text 594–645, 1085–1120 (rank-(N+1) reduction and identification of reference 27). A search surfaced a correction/comment concerning Theorem 20; neither the comment nor reply body was read. No theorem from this manuscript is invoked, including unexamined assertions outside the stated range. The exact retained unversioned download is identified by SHA256.
+- Chen–Đoković, 1101.5134: downloaded as an initial reference candidate, searched for theorem locations, not read semantically in a theorem body and not relied on.
+- Cariello 2201.11083v2: abstract and bounded search snippets only. Not downloaded, not used as a theorem.
+- Kitaev 2405.02434v2, Zenodo 22906336, and Gowers–Hatami 1510.04085: parent supplied leads and explicit read limits. This branch did not read their bodies or invoke their results.
+
+The bounded web search covered rank-m PPT separability, approximate/quantitative low-rank PPT, completely symmetric states, and the Chen–Đoković rank-(N+1) reference. It was not exhaustive. No absent-literature claim or novelty clearance follows from it. Source comparisons in the public note describe only actual read statements.
+
+Internal author material: all original r69 Markdown notes had already been read fully in this continuing worker history, including scope and checkpoint plus every correction/obstruction listed in the assignment. In r71 the frame-transfer, high-space-completion, isometric-extension-and-cancellation, simplex-obstruction and scope notes were reread in full. The parent cp-unitalization-interface.md was read fully and its displayed numerical inequalities checked. r100 scope-status, weighted-primitive-reduction, noncommuting-Schur reduction and partial-factor-lifting were previously read; r103 scope/comparison/reading-limits served as unrelated campaign context only. Author-input-receipts.json records file identities without copying those shared files or changing them.
+
+Novelty limit: r71's conditional lifting expressly reuses r69 compression. Its sufficient repair hypothesis is equivalent up to constants to the full target, and is not proved. The new exact partial-transpose spectrum and two-dimensional positive-addition lower bound exclude specified repair arguments; they do not exclude a general two-sided separable repair or the frozen global theorem. No full-scope result is nominated.
