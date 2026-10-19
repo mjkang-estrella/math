@@ -1,0 +1,9 @@
+# Artifact verification
+
+From the assigned r123 directory run `python -B packet/public/verify.py . --finalhash FINAL_HASH --reporthash REPORT_HASH --tree /home/mj-kang/Documents/Dev/math/openai-proof-research/sources/preprints-tree.json`, replacing both capitalized arguments with the detached values supplied in the outside handoff or parent message. Do not derive trust from a hash read inside the packet. The verifier has no sealing or write mode.
+
+`MANIFEST.json` inventories every packet file and directory, including file byte counts, SHA256, permission modes and empty directories. `FINAL.json` binds that manifest and the public report, pin and prefreeze/no-nominee status. Neither is a mathematical gate. The copied canonical tree is also checked against the externally supplied complete tree and a fixed known SHA256.
+
+For copied controls run `python -B packet/public/controls.py . --out scratch/FRESH_OUTPUT_DIRECTORY --finalhash FINAL_HASH --reporthash REPORT_HASH --tree /home/mj-kang/Documents/Dev/math/openai-proof-research/sources/preprints-tree.json`. The output directory must not exist and its parent must exist. It must be inside this owned root and outside packet. The runner rejects an existing output path, preserves original files and deletes only its own disposable case copies. Do not rerun against or remove the original control receipt. Use a fresh path instead.
+
+The final control receipt is outside packet at `scratch/final-controls/receipt.json`. Its baseline and deliberate negative cases test integrity and write/process denial; they are not mathematical tests. The source and primary registers state actual semantic reading limits separately. Private evidence is not a public-release archive, and the copied acquisition/preparation scripts in scratch are historical local programs, not portable release tooling.
