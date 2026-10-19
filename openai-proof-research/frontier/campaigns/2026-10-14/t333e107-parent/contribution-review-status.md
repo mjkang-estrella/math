@@ -1,6 +1,8 @@
-# T333E107 contribution gate: pending after provider failures
+# T333E107 contribution gate: TECHNICAL, no acceptance
 
-No authenticated final contribution verdict exists. The campaign remains 18/20.
+Completed round3 is TECHNICAL conditional on correctness; no substantial-contribution pass. See [parent disposition](contribution-disposition.json). The campaign remains 18/20.
+
+The historical failure/recovery record below predates that completed verdict.
 The author packet is unchanged, with all 36 baseline files matched by the parent.
 
 Round 1 returned terminal failure: `Selected model is at capacity. Please try a different model.`
