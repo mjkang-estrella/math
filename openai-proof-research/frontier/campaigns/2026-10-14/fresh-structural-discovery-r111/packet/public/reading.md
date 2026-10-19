@@ -1,0 +1,48 @@
+# Provenance, semantic reading, and limits
+
+This is a bounded discovery screen. Downloading or hashing a body is not semantic reading. Search hits and abstracts were navigation only. No claim of worldwide priority clearance, independent proof review, or exhaustive historical reading is made.
+
+## Governing records
+
+Read root `AGENTS.md`, `sources/upstream.json`, and the campaign opening/current requirements. Parsed the **entire** `sources/preprints-tree.json`, including every entry; asserted13,223 distinct paths and `truncated=false`. Its SHA256 is `eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b`. No use of the truncated tree. Parsed the full catalogue into372 families and read selected discrete-family descriptions for navigation, then actual selected bodies.
+
+Read the statements and paid-contribution descriptions in R023–R040, with special attention to discrete R026–R028, R031, R035–R037 and current R040. Most release/gate paragraphs for the long records were navigation, not re-audited gates. Selected operational history was read in the campaign ledger, including old failed bridges, technical dispositions, current acceptance requirements, target expansion, and stopped publication. The whole1,838-line history was not semantically reread; no such claim is made. Current file anchors are hash references, not recursive snapshots or verification dependencies on mutable files.
+
+The source-tree and catalogue parsing is complete; semantic manuscript coverage is limited to the ranges below. Five catalogue manuscripts in three families were considered (one120, one168, three175). All20 selected text blobs were fetched from the immutable raw pin and their Git blob SHA1 independently recomputed against the complete tree. SHA256, bytes, lines, exact raw URLs and paths are in `private/upstream-manifest.json`. `private/selected-tree-entries.json` retains only their canonical original tree entries.
+
+## Upstream bodies
+
+- **120:** `01-introduction.tex`1–85, exact model and `thm:main`; `09-uniformization.tex`1–132, complete `uniform:network`, `uniform:cardinality`, and `uniform:degree` proof operations; `10-f-factors.tex`1–155, complete `cor:f-factor` and `factor:reduction`, including uniform word-cost/success conversion. The rest of the algorithm's internal files were not fetched or truth-audited. Bibliography fetched but not fully semantically read.
+- **168:** introduction1–175 and180–243; `02-background.tex`1–35 only; complete452-line `05-comparison.tex`, including `edge:lattice`, `edge:bound`, simultaneous induction, `cor:all-subintervals`, and `rem:terminal-ranks`. Earlier dihedral/localization proof bodies were not fetched; their referenced interfaces remain stipulated, not reconstructed. Bibliography fetched, not fully read. There is one catalogue manuscript.
+- **175a, constant-factor rounding:** full introduction208lines, rounding126lines, consequences50lines, and bibliography122lines. `selector.tex`364lines was authenticated but **not semantically read** and is not a newly verified deduction. The screen uses the available rounding conclusion and the complete read rounding operation, without asserting a new selector theorem.
+- **175b, discrete convexity:** all four substantive sections were read in full: introduction173lines, covering185, weights208, density84. Exact labels: `thm:main`, `cor:two-union`, `lem:covering`, `prop:half-density`, `eq:global-weight-bound`, `eq:signed-identity`, and the complete density-restoration proof. This is the operative input for the product-cost compatibility calculation. References were retrieved but not all followed.
+- **175c, graph-decomposition companion:** `main.tex`1–225, including main statement, actual method description, `thm:discrete` and full `cor:typical-cover` proof. Later compression, embedding and assembly proofs were not newly read. No new graph-transfer claim depends on them. Bibliography fetched, not fully read.
+
+## External primary bodies
+
+`private/primary/manifest.json` records each successful version, URL, raw PDF SHA256, extracted text SHA256 and byte size. These were downloaded directly and extracted with `pdftotext -layout`; no browser UI was opened. Extraction checks support text reading, not geometric or typographic inspection. No primary mathematical conclusion is inferred solely from an abstract.
+
+- **Barkley–Gaetz,2404.04246v2:** all mathematical sections1–4 were read, including exact parameter distinction in Remark1.5, Deodhar formulas in Theorem2.4, Lemma3.4 and the entire proof of Theorem3.3 and Theorem1.6. A long combined display truncated the center; extracted lines215–347 were explicitly reread to recover that proof. The retained source is v2, not a claim that every subsequent publication version was inspected. Primary URL: https://arxiv.org/pdf/2404.04246v2 .
+- **Shao–Živný, ISAAC2023 author proceedings PDF:** introductory model, Theorems1–3 and algorithm overview; complete AppendixA Definition18, Lemma19 statement, Theorem20 and its printed proof, including the displayed interval gadget. Portions of a local-search proof encountered during navigation are not a full algorithm audit. Lemma19's proof and some main local-search cases are omitted/deferred in this proceedings version; they are not claimed read elsewhere. The report independently spells out the elementary alternating-component reasoning needed for the three-port comparison. Primary URL: https://www.cs.ox.ac.uk/standa.zivny/publications/sz23isaac-preprint.pdf . This unversioned author PDF is identified by exact bytes, not an invented arXiv version.
+- **Pham,2412.03540v2:** statement portions around Theorem1.7/Corollary1.8, and Section3's complete Theorem1.7 proof, followed by the displayed large-set sampling construction in the proof of Corollary1.8 through extracted line1225. The later conclusion of that proof and preceding tower/selector proofs were not semantically read. Primary URL: https://arxiv.org/pdf/2412.03540v2 .
+- **Li,2609.08967v1:** Theorem1.9 context and Section2's kernel, vanishing, eigenvalue and Hoffman calculation, especially extracted215–330; not a full-paper read. This is the version cited in pinned source references. Primary URL: https://arxiv.org/pdf/2609.08967v1 .
+- **Li,2609.08967v2:** retrieved after I60/I62 revealed the later version. Read extracted130–185 (Theorems1.14–1.15, Corollaries1.16–1.18 and coupling statement1.19) and290–435 (kernel, Lemmas2.4–2.5, full final Hoffman and LP arguments). The v2 coupling proof was not read or used. A font-type mismatch warning was emitted by extraction, which succeeded; the operative displayed formulas remained legible. Primary URL: https://arxiv.org/pdf/2609.08967v2 .
+
+All25 fresh remote body requests (20upstream, fiveprimary) succeeded. Web search results were not retained as proof. No full current-best algorithm survey or later-version exhaustiveness is claimed. Initial shell displays sometimes exceeded output limits; the ranges above restrict claims to actually inspected/recovered material. One early navigation script had a Python leading-zero integer syntax error and was corrected before producing any catalogue result.
+
+## Historical body comparison
+
+The content search enumerated3,759 authored Markdown files under campaigns, iterations and experiments, excluding repeated input/private/frozen/source snapshots and this owned directory. Four expression groups and exact retained matching lines are in `private/history-search.json`; bounds on snippets and reading are explicit. Every returned group was inspected for relevant body pointers. False positives from generic uses of “factor” are not substantive overlap.
+
+Read actual relevant bodies/passages:
+
+- r110 `public/screening.md` and `public/proof-attempt.md`, including the corrected flag projection and full-seed two-matroid missing subset capacities;
+- r108 `inventory.md`, and r109 `public/inventory.md`; these exclude routine124/138/184 restarts and expose the120history;
+- r35 `matching120.md` in full: the exact weighted objective and the6W-to2W contraction obstruction;
+- restricted-host-mixing-r1 `candidate.md` in full: directed degree fibers, failed pair kernel and sharp row variance, and exact open all-degree bridge; r30 `screen-131.md` through the connected fiber and rare-conditioning arguments;
+- r15 `screening.md`; r18 `source-contracts.md` and `candidate.md`: solution-dependent lattice templates, weak-truth-table versus many-one reduction, whole-congruence fullness, and why this is not a fresh lattice-construction lead;
+- I02 source-contract and transversal/avoidance passages; I60 model/screens and source-operation discussion; I62 original D, actual source/primary comparisons, and selected hypergraph/certificate passages. Not every later I62 proof passage was read. The same-density two-union problem remains excluded as a developed unresolved chain;
+- I72 opening and nonstationary/switching comparisons; I248 actual bounded-support compression and smoothed packing calculation; these prevent renaming product-kernel or rooted-transfer operations;
+- r27 comparison and selected campaign operational entries; these supplement acceptance-record screening, not an exhaustive review of all historical artifacts.
+
+No author's rating or a different candidate's negative verdict was used as a proof of this round's disposition. The screen rests on the specific compatible operations written out here. The supplied recent T333E107/T115E109/T273NC108/T253M73 lessons were retained as task constraints; their separate review files were not all newly read, and none of their families was developed.
