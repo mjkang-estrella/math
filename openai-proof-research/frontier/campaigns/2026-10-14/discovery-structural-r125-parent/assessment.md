@@ -46,3 +46,10 @@ Two concrete review briefs are prepared next to this assessment; both are UNLAUN
 Actual terminal T3 task_status is now saved in task-status.json. Its detached FINAL, outside REPORT, packet MANIFEST and original controls-receipt hashes all match the original author files. The own verifier passed again with those external FINAL/report anchors. This resolves the earlier transport limitation; historical observations and prior controls are retained as dated evidence.
 
 The full unchanged proof review was dispatched to GPT-6 Astra/high/default. Claude Opus contribution round 1 failed immediately with the provider response “Claude API rate limit reached. Try again later.” It supplied no verdict. The authorized Factory Opus fallback is now running in the same exclusively assigned contribution directory; its dispatch retains the complete original brief and records the failed attempt. No mathematical or contribution gate, acceptance or count is inferred from a dispatch. The campaign remains 18/20 and publication remains stopped.
+
+
+## Contribution r1 adopted — 2026-10-19T11:27:43.634218+00:00
+
+The independent Factory Opus review returns TECHNICAL, conditional on correctness, at the full unchanged scope. The parent read its integrated comparison and the decisive actual source03-paths/06-induction/07-analytic contracts. The every-path theorem and placement-fiber proof already support the selected-record change of measure; the shrinking-segment correction uses classical disk Green transfer. Failed fixed-z and crude-comparison shortcuts do not make that compatible integration substantial. Details and reading/packet limits are in contribution-r1-adoption.json.
+
+The detached review SEAL and both payload hashes match. Parent supplemental read-only verification and six copied controls passed; whole author and reviewer original directories retained their bytes, modes and link counts. These are artifact checks. The separate Astra proof review is still running. No acceptance/count or downstream formal/manuscript/release stage opens; structural discovery may proceed on distinct directions.
