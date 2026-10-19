@@ -1,0 +1,13 @@
+# Structural discovery r121 — handoff
+
+PREFREEZE: no target was frozen and no nominee is supplied. No correctness/contribution gate, acceptance, substantiality certification or campaign count is assigned.
+
+Eight families were examined at unequal depths:180,181,184,186,206,256, then243 and259. The main developed routes concern source259 mixing with cheap graphings and source243 exact witness-history handling. The independent-coordinate cost construction has an explicit finite-stabilizer factor-of-iid reduction to the high Bernoulli cost; infinite stabilizers prevent mixing. This is a method boundary, not a refutation of general mixing cost-one actions or a substitute candidate. The recorded-state WSC interpreter loses legal later symmetry; a polynomial exact history-reset mechanism remains unbuilt. Existing I60 slice-transfer, r18 bounded-use lattice reduction, r114 local-palette obstruction and r30/free-lift cost-one construction were read at their actual operative passages and credited.
+
+Read [public report](packet/public/report.md), [mixing route](packet/public/mixing-cost.md), [choice-history route](packet/public/choice-history.md), [other screens](packet/public/other-screens.md), and [reading limits](packet/public/reading-limits.md). Late antecedents, partial semantic reads and removed unused acquisitions are explicit. The round does not claim worldwide-priority or whole-family exhaustion.
+
+The pin is fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. All pinned OpenAI statements and operations are stipulated. The complete13223-entry untruncated tree controls23 retained canonical bodies; acquisition metadata records38 downloads and15 unused removals. Four successful primary PDF/text pairs and11 selected historical copies are separated under private existing rights. Original prose/code and provenance metadata are public.
+
+MANIFEST.json gives exact packet membership and hashes. FINAL.json binds the manifest, this outside-packet report, public report, verifier and complete-tree identity. The verifier requires detached finalhash AND reporthash and is read-only. Copied controls and final replay are separately recorded under controls; the original protected archive is compared before/after. These are integrity checks only. FINAL-ANCHORS.json supplies hashes outside packet, including this report hash.
+
+Only fresh-structural-discovery-r121 was written. No shared indexes/project changes, git mutations, PRs, nested agents, browser UI, uploads, publication, contacts, formalization or manuscript work occurred. Parent integration and all future independent decisions remain separate.
