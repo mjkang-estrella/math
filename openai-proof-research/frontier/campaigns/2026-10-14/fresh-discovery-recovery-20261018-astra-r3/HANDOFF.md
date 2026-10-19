@@ -1,0 +1,11 @@
+# Handoff — full T188U unresolved, no nominee
+
+The full frozen target is uniform terminal-degree asymptotics over EVERY vertex after triangle removal from K_n, through all integer n. Scope anchor: 0275c4b5a280a45ab735782f345f8fbb78c32be0eb8dac44e1095c60e2e372fe. Fixed-vertex and averaged statements from structuralr29 are explicitly paid and are not replacements.
+
+The specific new obstruction in collision-floor.md is exact: the source's complete initial root lists already have a shared triangle with probability (1+o(1))p for two sampled star roots. Therefore discarding every collision in any fixed even centered moment followed by a union bound has a numerical right-hand side at least of order n p q^(-k), which diverges. Increasing the witness exponent or moment order cannot rescue that mechanism. This does not lower-bound total variation, actual bad-degree probability, or the actual centered moment.
+
+shared-triangle.md exactly retains one shared central triangle with arbitrary independent exterior lifetimes. Its source-shaped specialization has covariance asymptotic to -2q^3. It is a finite cavity surrogate, not an independence assertion for the finite process. full-target-attempt.md gives (i) a precise sufficient cumulant budget, (ii) a proved connected-transcript algebraic identity with its unpaid finite-process estimate, and (iii) a second actual-process martingale route whose valid global bound is too weak. These are concrete continuation interfaces, not a full result or narrowed nomination.
+
+checks.py passes5,044 exact graph root-list cases,64 rational lifetime-law triples,25,025 deletion-trace cases and3 rational exponent checks. General proofs are in the prose; these finite checks do not establish T188U or any contribution verdict. Provenance retains eleven Git-verified pinned source blobs, three primary PDF/text pairs and explicit reading limits. scope-freeze.md's source-section count has a transparent metadata correction in reading-and-comparison.md.
+
+Replay: python -B checks.py. Verify immutable bytes with verify.py --manifest-sha256 THE_EXTERNAL_HANDOFF_HASH. The final response supplies that detached manifest hash. The verifier is an integrity checker, not an independent mathematical gate. No count change or acceptance is requested.
