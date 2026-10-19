@@ -1,0 +1,11 @@
+# Arithmetic discovery r91 — prefreeze archive
+
+No target was frozen and no nominee is submitted. This worker assigns no correctness or contribution gate, substantiality rating, finding number or campaign count. All pinned theorem statements AND operative proof operations were stipulated true at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb.
+
+The sustained direction asks for an infinite-dimensional ordinarily finitely presented graded nonunital F2-algebra with nil tensor square. Source247 already provides matrix nilness; actual r61 already handles locally finite-GK coefficient algebras. Neither supplies the required self-tensor compatibility. [Tensor feasibility](tensor-feasibility.md) tests the full source packet/cut/automaton operations, the companion's long-word phases, the prior coefficient-budget construction and Smoktunowicz's actual tensor-ideal alternative.
+
+Two concrete issues remain. Arbitrarily long nonzero clean source words can be paired q positions apart with no simultaneous palette positions. A literal two-tape token buffer preserves correlation only with a state bound that does not fit the available stopping budget. These are limitations of attempted mechanisms, not full-target counterexamples. A denser clean palette does not settle arbitrary-state normalization or weighted compression. The primary linear-ideal method has no constructed bridge to an ordinary finite word presentation preserving infinite dimension. No diagonal, finite-quotient, local-overlap or growth-restricted substitute is nominated.
+
+[Other screens](other-screens.md) credits actual source/history operations for206,207 and043, with unequal primary coverage. [Reading limits](reading-limits.md) distinguishes complete bodies, partial readings, late antecedent confirmation, acquisitions and search metadata. The broad content walk searched36,235 files with no size cutoff; it is not a priority or exhaustion certificate.
+
+All writes stayed in the exclusive r91 directory. No nested agents, shared-index/project edits, git mutations, PRs, contacts, browser UI, uploads, publication or downstream formal/manuscript work occurred. Parent integration and any independent reviews remain separate. Private upstream, primary, history, render and search bodies retain their original rights; only original prose/code/metadata are public materials.
