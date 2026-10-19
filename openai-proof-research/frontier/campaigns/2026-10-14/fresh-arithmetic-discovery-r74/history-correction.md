@@ -1,0 +1,9 @@
+# Post-freeze history correction
+
+A broader content search after the scope freeze found `fresh-arithmetic-discovery-r29/scope-047.md` and `candidate-047.md`, which the initial screen had missed. Both were then read in full. The related t047n contribution review was read for its actual operation comparison, with a small display truncation in its table; its verdict is not adopted as a verdict on this packet.
+
+The r29 family varies all positive thicknesses while retaining the cubic determinant-ring rigidity obstruction. Its proof uses the exact filtered modification, line-bundle lift, recovered divisor/contraction staircase and one-variable cubic rigidity. Those operations remain paid. Here the frozen extra variable t moves under unrestricted actions, and the coefficient is the sum u³+t⁷. The prior argument does not establish the weighted derivation exclusion for that sum. This distinction does not certify eligibility or originality; the full target remains open.
+
+Chronology matters: r29 was not cleared before freeze. `prefreeze.md` is a historical account of the narrower screen and has not been rewritten to imply otherwise. This is a limitation of candidate selection. The immutable scope is preserved, and no new target or restricted repair is nominated.
+
+Other actual-history comparisons read before or during selection include arithmetic r32 `screen-203.md`, r25 `screen-202-history.md`, r20 `payload/root-closure-screen.md`, r5 `checkpoint.md`, and `i226-new-algebraic-bridge.md`. An i28 report display was truncated; only visible portions were used. The bounded content-search evidence in `history-search.json` excludes large files and private/vendor/snapshot directories, clips excerpts, and is navigation rather than comprehensive proof clearance. Later direct reads supersede snippets only for the specified files. The user-supplied recent-review lessons were respected, but their complete review packets were not newly read here.
