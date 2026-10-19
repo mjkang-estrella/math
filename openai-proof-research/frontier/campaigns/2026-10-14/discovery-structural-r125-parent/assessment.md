@@ -39,3 +39,10 @@ The finite diagnostic and artifact controls assign no mathematical gate. Private
 ## Next work
 
 Two concrete review briefs are prepared next to this assessment; both are UNLAUNCHED. Recover T3 task status and detached identities, then obtain independent full-scope proof and separate primary-literature contribution reviews on these exact unchanged bytes. Do not count this candidate or start downstream acceptance work before those gates pass. Preserve the analytic r125 and arithmetic r90 assignments without claiming current liveness.
+
+
+## Recovered handoff and dispatched reviews — 2026-10-19T11:18:42.954535+00:00
+
+Actual terminal T3 task_status is now saved in task-status.json. Its detached FINAL, outside REPORT, packet MANIFEST and original controls-receipt hashes all match the original author files. The own verifier passed again with those external FINAL/report anchors. This resolves the earlier transport limitation; historical observations and prior controls are retained as dated evidence.
+
+The full unchanged proof review was dispatched to GPT-6 Astra/high/default. Claude Opus contribution round 1 failed immediately with the provider response “Claude API rate limit reached. Try again later.” It supplied no verdict. The authorized Factory Opus fallback is now running in the same exclusively assigned contribution directory; its dispatch retains the complete original brief and records the failed attempt. No mathematical or contribution gate, acceptance or count is inferred from a dispatch. The campaign remains 18/20 and publication remains stopped.
