@@ -1,0 +1,15 @@
+# r109 handoff
+
+**T115E109 is closed author-side in the full frozen scope; independent correctness and contribution remain unreviewed. No nomination, acceptance or campaign increment is asserted.** Campaign count remains the parent's 18/20.
+
+The theorem is exact uniform sampling for every explicitly encoded cell-bounded contingency-table instance, with arbitrary binary caps/margins, zeros and variable dimensions, exact polynomial-time emptiness detection, fair bits only, almost-sure termination and a single uniform polynomial expected bit bound. The statement was frozen before development and has not been weakened. See `scope.md` and its original `scope-freeze.json` hash.
+
+`proof.md` gives a complete proposed deduction: use the stipulated bounded FPRAS at fixed inverse-polynomial relative accuracy; amplify only confidence by medians; use path-probability rejection to get a uniform good submeasure; tabulate the actual median-output/macro-history law in 2^{poly(L)}poly(k) bit time; and apply the already-established rare residual correction. No capped-chain full gap, conditional repair theorem or source counting oracle is assumed.
+
+The proof's potential contribution is precisely the confidence-independent scalar-support tabulation interface. The comparison with JVV and GLMP is close and may lead to a TECHNICAL verdict. `comparison.md` makes that issue explicit; this author does not manufacture an independent gate or infer substantiality from the exact-sampling headline. No literature-priority assertion is made. Parent should assess contribution separately from correctness, with particular attention to whether the order-statistic compression is already a compatible paid operation.
+
+Author rechecks covered all bad counter outputs, clipping, exact feasibility, binary prefix length, independence under lazy exposure, geometric normalization, potentially exponential rational denominators, and expected cost of unbounded fair-bit coin/restart loops. No unresolved mathematical gap is identified in the written deduction by the author. This is not an independent proof review. The strongest remaining uncertainty is contribution eligibility and bounded literature coverage, in addition to the required adversarial correctness review.
+
+`checks.json` records nine median-CDF versus tape-enumeration identities, 15 mock tree laws/1,278 macro histories, 1,215 tiny capped-table fibers and 8,100 exact prefix-translation checks. It detects loss of uniformity when Q is omitted. These are finite controls of the interface, not an implementation/test of the full FPRAS or an asymptotic proof. No Lean, manuscript, release or publication gate is claimed.
+
+The source and primary bodies are private evidence; original prose and control code are in `public/`. The manifest and caller-anchored read-only verifier bind exact bytes, complete-tree identities and context. They establish integrity only. Only the assigned r109 directory was written. No nested agent, external message, upload, browser UI, shared-index edit, staging, commit, reset or PR was performed.
