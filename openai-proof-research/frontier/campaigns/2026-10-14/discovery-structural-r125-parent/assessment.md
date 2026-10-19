@@ -53,3 +53,12 @@ The full unchanged proof review was dispatched to GPT-6 Astra/high/default. Clau
 The independent Factory Opus review returns TECHNICAL, conditional on correctness, at the full unchanged scope. The parent read its integrated comparison and the decisive actual source03-paths/06-induction/07-analytic contracts. The every-path theorem and placement-fiber proof already support the selected-record change of measure; the shrinking-segment correction uses classical disk Green transfer. Failed fixed-z and crude-comparison shortcuts do not make that compatible integration substantial. Details and reading/packet limits are in contribution-r1-adoption.json.
 
 The detached review SEAL and both payload hashes match. Parent supplemental read-only verification and six copied controls passed; whole author and reviewer original directories retained their bytes, modes and link counts. These are artifact checks. The separate Astra proof review is still running. No acceptance/count or downstream formal/manuscript/release stage opens; structural discovery may proceed on distinct directions.
+
+
+## Proof r1 adopted; final disposition is technical — 2026-10-19T11:30:56.127374+00:00
+
+The independent Astra review returns PASS for the entire original frozen theorem relative to the stipulated upstream inputs, with no mathematical repairs. It checks every restriction constituent, the full-slot selected-cylinder identity and zero masses, the normalized shrinking-segment Green transfer, nonidentical products, sign/regular multiplicities, all errors, finite dimensions, physical rotation/later times and credited r113 lower bound. The parent read the complete review and exact limits.
+
+All six detached review/receipt anchors and all six actual author anchors match. The independent read-only verifier authenticates37 payloads plus the manifest,18 packet directories,26 selected input records and six pinned sources against the complete13223-entry tree. Parent replay reproduces14 expected controls, including three explicitly reanchored semantic negatives, with added full copied-input snapshots. Entire actual author and review roots retained bytes, modes and link counts. These checks authenticate artifacts only.
+
+The separate TECHNICAL contribution disposition remains in force. The proof review requests no new estimate or repair, so no contribution reround is triggered. No acceptance/count or downstream formal/manuscript/release work opens. Final disposition and limits are in proof-r1-adoption.json. Campaign18/20,two remain; publication stopped.
