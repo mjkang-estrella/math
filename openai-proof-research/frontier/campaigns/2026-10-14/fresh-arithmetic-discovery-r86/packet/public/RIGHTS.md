@@ -1,0 +1,1 @@
+Original research prose in packet/public: CC BY 4.0. Original Python code in this r86 directory: MIT. No new license is imposed on upstream, primary or historical bodies in packet/private; they remain under their original rights. Private bodies are research evidence and are not a public redistribution bundle. No publication was authorized or performed in this round.
