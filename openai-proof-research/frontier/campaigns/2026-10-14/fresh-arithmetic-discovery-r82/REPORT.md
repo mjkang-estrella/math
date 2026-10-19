@@ -1,0 +1,19 @@
+# Arithmetic/algebraic discovery r82
+
+**Prefreeze archive. No frozen target and no nominee.** No mathematical gate, contribution rating or campaign count is assigned. The parent's campaign state is unchanged. All pinned OpenAI theorem statements and operative proof operations at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated true.
+
+The substantive record is [packet/public/research.md](packet/public/research.md), with [reading limits](packet/public/reading-limits.md). The sustained screens were 193/194 multiplicity and symbolic powers, 038 adjoint evaluation, and 039 unequal multipoint positivity. Additional, shorter source/history screens concerned 202/203, 057, 065 and 040. Unequal reading depths are explicit; no worldwide-priority clearance is asserted.
+
+The most concrete retained calculation is the mixed-characteristic cusp A=Z_p[t²] inside B=Z_p[t], t³=p. Its multiplicity is two, its regular coefficient-base rank is three, and its normalization map is not flat. This diagnoses why the actual Sather-Wagstaff finite-regular-base reduction cannot simply keep the needed multiplicity budget. It does not refute symbolic containment or the two-prime dimension inequality.
+
+The stronger source operation was checked: source193 supported rational K-theory descent already allows singular bases without flatness. The separate numerical Euler comparison uses a regular base. I did not construct the compatible numerical evaluation needed to close the two-prime argument on the primary's singular-hypersurface reduction. The primary reduction was read rather than dismissed from a flatness slogan.
+
+For 038, the exact reduced equality-divisor correction and classical lifting comparison were read; no length-two evaluation mechanism was obtained. For 039, actual I142 already supplies level-independent adaptive allocation with prescribed positive volume slack and normal-cone refinement from arbitrary given nef inputs. Its explicit sufficient inequality does not reach the volume boundary with one fixed positive maximum-weight threshold. That limitation is not a non-nef example. No restricted repair or method obstruction is nominated.
+
+All calculations preceded any possible freeze. There is no frozen scope to alter, no full candidate proof and no downstream formal/manuscript work. The latest r81 report/research/limits were read, its three supplied hashes matched, and its source053/209/050 mechanisms were excluded. R80, structural r117 and T152AC116 exclusion materials were read at the recorded extents. Accepted finding records R023–R040 were read in full; their linked complete proof packets were not all reread.
+
+The exact packet contains 63 canonical source blobs checked against the complete 13223-entry, nontruncated tree; four successful versioned primary PDF/text pairs; seven retained historical bodies; context identities; original public prose and integrity code. Raw URLs, Git blobs, SHA256 values, labels, versions and semantic extents are recorded. Private source/primary/history bodies retain original rights. This is local evidence preservation, not publication.
+
+MANIFEST.json binds exact packet files and directories. FINAL.json binds that manifest and this outside-packet report. Its hash must be supplied externally to the read-only verifier; an in-packet self-declaration is insufficient. The copied control runner tests thirteen cases and preserves the original packet and anchors. Its execution receipt belongs outsidepacket under controls/results.json, with a separate hash in the handoff. Integrity controls and finite diagnostics are never mathematical gates.
+
+All writes stayed within fresh-arithmetic-discovery-r82/. No nested agents, shared-index edits, git/staging/reset/commit, PRs, browser UI, contacts, uploads, publication, formalization or manuscript work occurred. Parent integration remains separate.
