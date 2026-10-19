@@ -1,0 +1,11 @@
+# Initial geometric screens, at their actual depth
+
+No fresh source-level proof development was done in these three families. Their acquired but unread bodies were removed from this packet before sealing. The basis for exclusion is the actual authored operation comparison and, for360, the large older analytic attempt, with their stated primary-reading limits. The conclusions below do not adopt a negative author rating as a mathematical premise.
+
+**354.** Analyticr115's operation-comparison identifies the full fixed-volume source classification, explicit Jacobi gaps, and the Acerbi–Fusco–Morini strict-stability-to-L1-local-minimality interface. The last interface matches the proposed local quantitative question once translation modes and volume are handled as in that record. No new global transition stability or uniform crossover estimate was constructed here. The external AFM body was not acquired or read anew.
+
+**357.** Analyticr113's operative comparison states the stronger source chart contract: dimension-only Lipschitz distortion, with a radius depending on the point, giving an open full-measure manifold region. The arbitrary matrix inverse-increment and noncommuting normalization steps are already in the source proof. The exact regular set need not be the asserted open set. Deleting that distinction or restating the distortion constant would not identify a new operation. No fresh topological stability or endpoint radius theorem was proved.
+
+**360.** I225's actual iteration and complete analytic-attempt body were read, in addition to r112/r113's comparisons. It already develops parameter interpolation, all bounded positive density perturbations and power-type stability at the weak-MTW contract, while the desired quadratic sqrt(W1) modulus is blocked at a curvature/coercivity budget. Neither compactness nor the source injectivity-domain convexity by itself supplies that quantitative budget. This round built no new estimate for it and did not freeze that headline. No claim that the full target is false or globally open follows from this method gap.
+
+These checks were made before turning to the four sustained operative screens268/271/263/230. Unequal depth is intentional and explicit. No absence-of-title search or unread primary abstract was used for priority clearance.
