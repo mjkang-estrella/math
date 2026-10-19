@@ -1,0 +1,22 @@
+# Arbitrary cardinality in the Ulam proof
+
+Prefreeze compatibility screen only. The question examined was whether countability can be removed from source251 when strong Ulam stability quantifies over arbitrary complex Hilbert spaces. This does NOT ask for separable witnesses for every uncountable group, measurable representations of nondiscrete groups, or finite-dimensional witnesses. No such stronger variant is inferred or substituted.
+
+The complete monolithic pinned proof was read in three consecutive character windows. Its `thm:main` states countability, and its nonamenable conclusion constructs separable witnesses with arbitrarily small uniform defect and distance greater than1/10 from every genuine representation. Actual proof contracts are stronger than this heading:
+
+* `prop:flags` expressly starts with any nonamenable discrete group. The finite alphabets and finite levels give a compact Hausdorff boundary; metrizability is not required in this contract.
+* `lem:priority` transfers with a prescribed subspace on arbitrary Hilbert spaces. Its Schur-complement estimates are dimension-free and the construction respects orthogonal sums. `lem:truncate` fixes the specified subspace exactly by polar repair, again without a dimension bound.
+* The space in `eq:big-space` is a finite-level orthogonal sum indexed by locations w in G. The proof's sentence “It is separable” uses countability. Dropping that sentence gives a legitimate Hilbert direct sum for arbitrary G. Vectors have at most countable support; bounded block maps with uniformly bounded norm extend from finite-support vectors.
+* `prop:comparison` bounds orthogonal block errors by a maximum, not by the number of group elements. The geometric truncations concern levels, not a finite list exhausting G.
+* `lem:transport` produces finite-label probabilities; `lem:witness` uses finite quadratic cancellation, comparing expectations0 and1/2, with a norm gap at least1/4. These depend on the finite flag/label constants, not |G|.
+* The final choices h=1/(2√L), followed by η and β, use the same uniform estimates. The proof does not take an intersection over countably many full-measure representation identities.
+
+This supplies a compatible direct reading for arbitrary discrete groups and Hilbert dimension at most max(|G|,aleph0), with the original fixed separation constant. The amenable direction uses an invariant mean and uniform operator-norm iteration, which also has no countability premise. This screen identifies no additional construction required to remove the source's separability consequence while retaining its arbitrary-Hilbert-space conclusion. It does not certify a new theorem, and no source truth audit is performed.
+
+## Why the first subgroup shortcut was not enough
+
+An initial feasibility idea was to take a countable nonamenable subgroup and induce its bad approximate representation. The actual primary blocks that shortcut in the needed generality. [Burger–Ozawa–Thom, *On Ulam stability*, published author PDF](https://people.math.ethz.ch/~burger/pub/2013_Ulam_stability.pdf), §2 Lemma2.4 transfers defect under induction. But Proposition2.5 and Lemma2.6 recover a nearby representation on the original space using a FINITE-dimensional projection and its Hilbert–Schmidt orbit. Corollary2.7 therefore propagates the relevant finite-dimensional instability. It is not a ready-made arbitrary-infinite-dimensional obstruction transfer. No unsupported infinite-dimensional subgroup-heredity assertion is used here.
+
+The stronger compatible operation is instead the source's own ANY-group flags and arbitrary-Hilbert-space block construction. This was checked after the initial subgroup idea and before any freeze. The primary §3 Theorem3.2 proof was read through its mean, polar correction and summable iteration, confirming the cardinality-independent amenable interface. Its later applications were not all read.
+
+Historical r47/r76 comparisons concern cost and simultaneous similarity/nuclearity. Those actual checkpoint bodies were read; they do not establish an unpaid operation for this cardinality substitution. Searches of actual campaigns/iterations/experiments included Ulam, sparse flags, prescribed subspace, nonseparable and uncountable stability. Many hits were Borsuk–Ulam or copied metadata; they are not semantic evidence. No complete-family or worldwide absence assertion is made.
