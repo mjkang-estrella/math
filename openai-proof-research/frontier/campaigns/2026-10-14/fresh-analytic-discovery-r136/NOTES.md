@@ -1,0 +1,17 @@
+# Analytic discovery r136 — durable working notes
+
+Authorized provenance: Codex / GPT-6 Astra / high / default service tier, T3 Code Codex harness. User header supersedes the obsolete standing-brief runner and count. Discovery only; parent owns reviews, integration and count. Pin and operative proofs are stipulated, not truth-audited.
+
+Initial instruction read: AGENTS.md in project; no ancestor AGENTS found at enumerated ancestors. Read upstream.json; acceptance/current campaign beginning through line 190; catalogue beginning through line 110 and selected analytic headline navigation. Entire supplied standing brief read in conversation.
+
+Traversal exception: initial rg --files navigation used inadequate copy-tree pruning and listed copied AGENTS/control paths (output truncated); no returned copied bodies were selected or read. No claim of perfect exclusion or historical clearance. Subsequent authored-history scan will prune before descent at every depth and log limitations.
+
+Status: PREFREEZE. No exact theorem frozen and no nominee.
+
+Calabi family screened after full introduction, geometry, flat inverse and compact correction source-body reads. History r31 already contains the nonsymmetric stability target and physical angular calculation. Direct original 352-feasibility.md read full. This question is not renamed or nominated. It motivated selecting family361 as the second and final family.
+
+Search limitations discovered: first broad scan (25,299 text files, 3,679 pruned paths) admitted private/source and copied control derivatives and produced 1,592 hit files; its search bodies were superseded, not retained. Second tightened Calabi scan (19,768 files, 2,654 pruned paths, 672 hits) still admitted flat/compound inventory bodies such as recovery-context/preprints-tree.json and followup/context/preprints-tree.json, plus catalogue titles; these were navigation false admissions, not operative originals. Initial broad output was truncated. No perfect-exclusion claim. The third scan additionally prunes recovery/context/packet/work/search/catalogue roles before descent. All known structural-r143/arithmetic-r107 and specifically banned round names were pruned at every depth in the authored scans; no body from those named roots was intentionally selected. Recent rounds >=125 and parent/review/release trees are coarsely omitted; no historical clearance claimed.
+
+The second family361 fixed-metric infinite-degree question is also already developed, in I130/I133. It is withdrawn from candidate consideration rather than renamed; source bodies acquired, introduction and bibliography read, no new proof inference from unread lower bodies. I133 initial display truncated; sections1–2 and4–5 visible, section3 only partly displayed. Return to family352, now a different operation: forward smoothing of the canonical weak trajectory after the singular time, via a positive expanding core with the SAME shrinker cone parameter. Full nonsymmetric initial-data stability is not the target. No freeze yet.
+
+Third broad scan still admitted vendor .lake/mathlib through formal and some flat task JSON; these are explicitly false admissions. Focused postsingular search uses the prior admitted-path list with additional component pruning; omitted categories and recent roots stay omitted. It reads original authored prose/code/JSON without a size cutoff in this reduced scope, including hidden names. It is not a whole-parent history assertion.
