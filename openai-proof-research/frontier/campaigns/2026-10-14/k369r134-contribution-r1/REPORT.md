@@ -1,0 +1,17 @@
+# K369R134 contribution review r1 handoff
+
+**TECHNICAL, conditional on correctness, at the entire unchanged frozen scope.** This review supplies no separate correctness verdict, acceptance, count change or downstream gate.
+
+Read [the independent review](packet/public/review.md), [the complete compatible reduction](packet/public/technical-reduction.md), and [the actual reading/provenance limits](packet/public/reading-and-limits.md). The frozen scope SHA256 is `690e3b4b2314ac7009a8cf60b24c89961b2e6e01dd21543904156b851e304a88`; the submitted proof SHA256 is `cab6bb9b3fdb27a126cb6a214f52b83936526449c823ac345fe3010aa2dd6700`.
+
+The full signed radial, center-normalized, margin/small-coupling result is assessed jointly, including strictness, necessity, quantitative Fourier bounds and the sign-changing class. Simon's actual L1 half-line nonlinear amplitude theorem and resolvent-path proof, composed with the radial logarithmic transform, supply the critical quadratic moment smoothing. Fourth differences and elementary reciprocal/Sobolev estimates close the all-mode H6 remainder with constants uniform over bounded measurable v. The review explicitly handles the zero mode outside the half-line L2 argument. This is a constructive full-scope technical reduction, not a first-variation or finite-mode dismissal. An exact prior statement of the whole joint theorem was not identified in the read primary bodies, so no REDISCOVERY or demonstrated-literature-novelty claim is made.
+
+Required changes concern credit and positioning, without changing the frozen theorem: credit the strongest source operations, Simon and the radial DtN/Born interface, classical signed weighted Toeplitz positivity, and the elementary special-function/Fourier steps. Retain finite-valued RKHS qualifications, all restricted hypotheses, the endpoint exclusion and bounded reading/search limits. Old I214/I305 scopes remain immutable and are not regraded.
+
+The supplied three author anchors, FINAL-bound verifier, exact39-file packet, complete13223-entry tree and10 pinned blobs were authenticated independently. Fully read stored author controls ran only on a disposable copy inside this root and reproduced9 expected artifact cases (3 positive,6 negative). The outside author controls script has an observed parent-matching hash, not a new external handoff seal. Whole current actual author-root and stable named-original preservation were checked separately; mutable parent records remain observations.
+
+Initial broad navigation had imperfect copied-corpus/old-review pruning, disclosed precisely in the reading limits. No excluded active other-review output is a premise. The additional structural-r141 isolation instruction was recorded at receipt and applies to all subsequent work; earlier searches are honestly dated before it. No T205 review was read or used as a grading analogy.
+
+MANIFEST.json inventories the exact regular files under packet/. FINAL.json binds that manifest, this outside report, the review and the read-only verifier. Final detached anchors and postseal control/preservation receipts are separate artifact records. These checks do not certify mathematics, full proof, formalization or a publication release. No historical whole-parent preservation or complete priority/exclusion certificate is claimed.
+
+Authorized runner: Codex / GPT-6.1-Sol / high / default service tier. No nested agents, shared/old-root edits, git/staging/commit, browser UI, publication, upload, submission or contacts. Parent alone integrates. Publication remains STOPPED.
