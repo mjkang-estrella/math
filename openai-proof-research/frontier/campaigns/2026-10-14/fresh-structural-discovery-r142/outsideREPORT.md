@@ -1,0 +1,15 @@
+# Outside report — structural discovery r142
+
+Final disposition: PREFREEZE / no nominee. No frozen theorem, author-proof intake, independent correctness/contribution verdict, acceptance or count. This report is outside the payload manifest and is authenticated by its detached SHA256 and FINAL linkage.
+
+The run pursued the distinct full ambient interval-quotient lex-plus-powers comparison for finite ideal flags. Actual prefreeze mathematical work gives a stable-pair Betti recursion with map kernels/cokernels and closes the minimal-generator/top rows by compatible source/classical operations. Common monomial transfer and common stabilization are also paid. The coefficientwise global lex comparison in all intermediate rows remains unproved. This is not a newly substantial exact-representation result or a renamed I13/relative-CI retry.
+
+The public handoff, derivation and reading limits are in packet/public. Private upstream/primary/history/search bodies retain original rights. The complete13223-entry tree and25 pinned source blobs were authenticated; authentication is distinguished from semantic reads. Actual primary versions and limited read extents are recorded. Several initial navigation displays were truncated or included derivative false positives; those limitations, successive pruning changes and overwritten earlier navigation logs are disclosed. The t373e135-* exclusion is prospective only, and no new broad scan followed that update. No active review was intentionally consumed.
+
+All task writes were confined to this assigned root. No git action, other-root edit, nested agent, publication, upload, submission, contact, browser UI, downstream formal/manuscript or release work was performed. Thirteen named current originals were bound late and rechecked unchanged; this does not establish an initial or full-project baseline.
+
+The rational recursion check matched120 bounded stable pairs. Earlier modular and integer calculations are finite diagnostics, including explicitly partial timed enumerations. Six copied-fixture artifact controls behaved as expected (original/restored accepted; payload mutation, extra member, missing payload and wrong detached anchor rejected). These checks are neither formal support nor mathematical gates.
+
+MANIFEST.json inventories every payload file by relative path, size and SHA256, excluding only the four root envelopes MANIFEST.json, FINAL.json, outsideREPORT.md and ANCHORS.json. FINAL binds MANIFEST and this report; the three detached digests are supplied separately at handoff and repeated in ANCHORS.json for convenience. The read-only verifier requires all three externally supplied digests and checks exact file membership, sizes, hashes, linkage and absence of symlinks. It does not treat stored anchors alone as external authority.
+
+Runner: Codex / GPT-6 Astra / high / default service tier. Supplied campaign19/20; parent alone integrates/reviews/counts. Pinned theorem and proof operations are stipulated true at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. No upstream truth audit, worldwide-priority or exhaustion claim.
