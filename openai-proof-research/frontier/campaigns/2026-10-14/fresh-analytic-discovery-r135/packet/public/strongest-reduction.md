@@ -1,0 +1,47 @@
+# Strongest compatible reduction and contribution question
+
+This is an author comparison for T373E135, not an independent contribution verdict. The exact statement is the unchanged `FROZEN-SCOPE.md`; the full argument is `author-proof.md`. The source pin and operative source proofs are stipulated true. No upstream truth audit was performed.
+
+## What is already paid
+
+Source373 supplies the entire five-component branching Riesz construction for every fixed d>=2 and alpha>0: the local maps, strict convexity, calibrated potential, equality-set exclusion, common central ball, non-Monge mechanism and approximation operations. Pullback to the common parameter, quadratic detachment from the two diagonal graphs, uniform positive definiteness of K_k and disjoint-component bookkeeping are compatible source consequences. They do not constitute this nomination. I220 already proves sharp deterministic BV/fractional cost-complexity laws in this construction; that contemplated route was abandoned after reading its full proof.
+
+[Nenna–Pegon, arXiv:2307.03023v3](https://arxiv.org/abs/2307.03023v3) provides multi-marginal block approximation, improved quadratic-detachment upper rates and matching-dimensional lower mechanisms. Their actual block construction and relevant upper and lower proofs were read. Although the global Coulomb cost is singular on forbidden cells, the source confines a recovery to finitely many smooth separated cells. On each branch a partition of the common parameter into cubes of diameter h and product conditional laws preserves all three latent marginals. It costs O(h²), with entropy at most 2d log(1/h)+O(1). Setting h=sqrt(epsilon) gives the full leading term d epsilon log(1/epsilon)+O(epsilon). There is no unpaid leading-order bridge. Source geometry and symmetry also give weak selection. Neither is offered separately.
+
+[Pal, arXiv:1905.12206v2](https://arxiv.org/abs/1905.12206v2) already obtains a next-order entropic cost via Gaussian transverse profiles, determinant factors, entropy lower bounds and an exact-marginal reverse-kernel construction. Theorem1 and its actual upper construction, along with the used Gaussian portions of Lemma3, were read. Its two-marginal displacement-cost geometry and hypotheses do not literally state our three-marginal branching theorem. This difference of statement is not proof of substantiality. Gaussian integration, determinant normalization, a reverse-kernel correction and reference-entropy shifts are paid operations.
+
+[Cardoso-Perelló–González-Sanz–Nutz, arXiv:2607.18191v1](https://arxiv.org/abs/2607.18191v1), Theorem2.2, is a stronger compatible antecedent than an argument requiring positive density bounds. For the two-marginal squared-distance problem it assumes finite 2+beta moments and a globally C² uniformly elliptic Brenier Hessian; its entropy conclusion does NOT impose their (H2) lower-density bound. In particular equal flat compactly supported marginals satisfy its map assumption. Its Gaussian subcoupling plus quantization completion and complete EOT upper proof were read. Flat density alone cannot be advertised as a new operation or an obstacle this paper failed to overcome. Quantization can complete suitable subcouplings without imposing a nonvanishing density. The proof should be compared at that full strength.
+
+[Agarwal–Harchaoui–Mulcahy–Pal, arXiv:2505.07647v1](https://arxiv.org/abs/2505.07647v1), Theorem1 and proof, uses stationary Langevin diffusion for the same-marginal Schrödinger bridge and a Girsanov entropy comparison. Its complete proof was a late read after our first draft, explicitly recorded. [Djellout–Guillin–Wu, arXiv:math/0410172v1](https://arxiv.org/abs/math/0410172v1), the transitive entropy/stopped-martingale passages around (5.1),(5.7), were also read late. Stationarity, finite-energy change of drift, data processing and the possibility of an O(time) entropy comparison are credited in full. Their being found late changes the comparison, not the frozen theorem.
+
+[Pascucci–Pesce, author PDF dated March 8, 2018](https://www.dm.unibo.it/~pascucci/web/Ricerca/PDF/SPDE.pdf), deterministic Section4, supplies the bounded uniformly elliptic parametrix, frozen-Gaussian error and Gaussian bounds. We use their proof, not an asserted extension to singular inward drift. Ordinary Itô calculus, Gaussian entropy, joint lower semicontinuity of relative entropy, Laplace integration and concavity secants complete the cost and entropy bookkeeping. All are paid. The coefficient log9 is a component-mass calculation, not an independent discovery.
+
+[Nutz–Zhong, arXiv:2604.21578v2](https://arxiv.org/abs/2604.21578v2) demonstrates a far broader variational selection program for the two-marginal Euclidean-distance cost. Only its stated assumptions/main results and upper-strategy section were read, not its 191-page proof. This is a comparison limitation, not a reason to claim its methods cannot compose here.
+
+## The joint operation submitted for assessment
+
+The author proof supplies one recovery construction, not a list of proposed bridges. For every branch normal Hessian K(t), set A=K^-1 and construct an elliptic covariance C(t) on three latent particles satisfying simultaneously
+
+ C_00=C_11=C_22=beta I,  D C D^T=A,
+
+where D(z0,z1,z2)=(z1-z0,z2-z0). In (z0,h1,h2) coordinates choose the blocks
+
+ S=[[beta I,(-A11/2,-A22/2)],[(-A11/2,-A22/2)^T,A]].
+
+A large common beta makes this positive by the Schur complement. This elementary algebra is explicit; no unresolved covariance-feasibility conjecture remains. Driving three marginal Langevin equations by a square root of C evaluated at the first particle preserves each f marginal exactly while realizing the full variable 2d-dimensional normal covariance. It permits arbitrary off-diagonal blocks of A, rather than a factorized pair of Gaussian kernels.
+
+The exact recovery stays inside the separated component product, which matters for every alpha, including alpha>=d. Its auxiliary driftless process may leave that product; only its density is used for entropy comparison. Lyapunov confinement handles the flat-boundary drift in the actual process. The O(time) KL comparison, a uniform upper bound for the rescaled driftless density and convergence of second moments give full entropy convergence without a lower bound on f. The proof then obtains the exact matching O(epsilon) coefficient on both branches while preserving all physical marginals.
+
+This simultaneous prescription and exact marginal constraint are the concrete operation left for contribution assessment after the credited reductions. A claim of substantiality cannot rest on the length of the proof, branching terminology, the flat density, a failed independent-noise attempt, or the importance of Riesz transport. A reviewer could still find this an elementary compatible application of known diffusion-coupling or Gaussian-completion machinery. No grade is requested or selected here.
+
+## Compatibility test against the strongest alternate recovery
+
+A direct application of the cited two-marginal quadratic theorem does not have the same optimization variables: grouping (t1,t2) into one marginal would fix a 2d-dimensional joint law that our problem leaves free. Applying it separately to (t0,t1) and (t0,t2) and conditionally multiplying kernels would generally prescribe a different off-diagonal normal covariance and hence a different determinant/cost coefficient. This is an exact algebraic limitation of that particular factorized construction, not a claim that the entire literature route fails.
+
+The stronger alternative is to start from the full correlated Gaussian normal profile, trim it to a subcoupling, and use a multi-marginal extension of quantization or reverse-kernel completion to restore three marginals with o(epsilon) cost and o(1) entropy error. Such a completion would be a legitimate reduction and must be credited if available or routinely derivable with this profile. The cited proof was read as a full completion method; no impossibility assertion about its extension is made. Our proof resolves the compatibility requirement by supplying an exact marginal diffusion instead of leaving that extension conditional. Independent contribution review should compare this supplied construction to the strongest multi-marginal adaptation, not stop at the mismatch of theorem titles.
+
+## Scope and remaining status
+
+The author argument covers the complete frozen statement, including all fixed d>=2, alpha>0, every stipulated construction and every admissible cube, the explicit coefficient, separate cost/entropy expansions and unique symmetric zero-temperature selection. It is not a uniform theorem over these parameters or a fluctuation theorem for the actual optimizer. All old frozen scopes remain immutable, including R041 and K369R134. No count or acceptance is assigned.
+
+There is no known unfilled mathematical clause in the author draft. The concrete review obligations are the source Hessian interface, confinement and marginal stationarity, the stopped change-of-drift limit, heat-kernel orientation and entropy transfer, and the full-strength contribution comparison above. These have author proofs; they have not received independent adversarial review here. Partial primary acquisition and nonexhaustive history searching remain limitations. There is no worldwide-priority, current-open or exhaustion certificate.
