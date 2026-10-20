@@ -1,0 +1,13 @@
+# Arithmetic r98 parent intake
+
+PREFREEZE, no frozen target and no nominee. No correctness or contribution gate is assigned. The campaign remains 18/20; publication and uploads remain stopped.
+
+The author read Machala's higher-dimensional place theorem and derived Theorem D for characteristic two compatible maps under which every projective line retains three distinct image points, with nondegenerate symbol image. The author identifies its mechanism as Machala plus r97's lineation reduction, the pinned source's multiplicativity gluing, and elementary valuation theory. This is an author screen, including its assessment of technicality, rather than an independent contribution verdict. The parent has not certified that mathematical derivation.
+
+The collapsing-line stratum and odd-characteristic block geometry remain unresolved in this archive. The reduced-plane example and the odd-characteristic scalar example explain limitations of the attempted route; they do not prove impossibility of a full classification. Carter–Vogt's PNAS announcement was read, but the Mem. AMS proofs, Radó and Brezuleanu–Rădulescu were not obtained. The mod-ell companion was acquired and removed unread. Those omissions remain material before pursuing the broader classification.
+
+The parent inspected the outside/public reports, screens, reading limits, reproduction instructions, primary/history registers and verifier/control changes, then authenticated the original packet against the terminal handoff. The read-only verifier passes for 29 payload files, four retained pinned sources, four primary files and seven history copies. Seventeen removed-source records match pinned tree metadata and acquisition receipts; their removed bytes were unavailable for a new parent body check. All seven copied history files also match their current project originals. Seventeen copied integrity controls behaved as expected, and a separate wrong-FINAL check rejected. The actual complete author root, including unsealed work files, remained unchanged.
+
+The parent did not reread primary proofs or pinned mathematical bodies in this intake. Exact primary retrieval URLs were not retained by the author; identifiers, byte hashes and disclosed read extents are preserved without reconstructing acquisition history. These are artifact checks, not mathematical tests, literature novelty certification or a portable release. Private source, primary and history bodies retain their original rights. Unsealed author work remains preserved locally.
+
+The next Factory arithmetic round should choose a distinct proof-feasible family after actual source, companion, primary and operative history reading. It should not repeat Theorem D or replace a prior frozen full target with a restricted claim.
