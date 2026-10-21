@@ -1,0 +1,17 @@
+# Parent handoff — r158
+
+PREFREEZE/no nominee. No new frozen statement or count. This is a completed research handoff, not a request to open downstream review, formalization, manuscript or release work.
+
+The selected family is Source229 tree broadcasting/capacity. Full source proofs and relevant actual original R009/i08/i11 scopes and proofs were read. The old variable-edge/local-finiteness result is not retried. i09's distinct factor-of-IID original was read to avoid conflating its character quotient with boundary estimation; its target is unchanged.
+
+The mathematical endpoint has three parts: exact coordinate-dependent two-experiment identities; a fully paid annealed random-partition comparison; and an all-depth classical/source composition showing almost-sure oscillation for fixed random markings after perfect-edge stretching. The last calculation refutes the broad quenched-liminf extrapolation, rather than leaving it as a hopeful gap. No general fixed-marking criterion was found. All three parts are declined as substantial nominees; no worldwide-priority or impossibility claim.
+
+The finite standard-library diagnostic checks nine strength pairs, the4x4 randomized-partition channel, all81 four-leaf markings at rational edge parameter1/2, and64 unexpanded core-stage descriptors. No enormous stretched tree is instantiated. These finite checks do not establish asymptotic statements or independent mathematical correctness/contribution grades.
+
+Source evidence authenticates30 selected canonical pinned objects against the complete13223-entry tree, with path,size,Git blob and SHA256. Incoming whole-original identities are separate from11 selected late copies and the acceptance excerpt. Primary reading covers PP10's capacity and binary necessity proofs, JM04's near-product and cutset proof passages, and KR14's compatible fuzzy transition calculation. EKPS retrieval encountered a certificate failure followed by a glyph-garbled alternative PDF extraction; no semantic proof reading is claimed from that object. Three-state companion reading is limited to actual statement/conclusion sections; its remaining acquired proof bodies are unread. All primary/transitive coverage is partial.
+
+Two prospectively pruned history scans have distinct receipts. Initial shared ledger aliases and search/helper derivatives were false admissions; later exclusions cannot erase them. Coarse pruning also omits potentially authored mathematics. Navigation overbreadth, output truncations/recoveries and late capture/recovery details are in note03. There is no perfect-isolation or exhaustive-clearance certificate. No active peer mathematical body/activity/status supplied a premise.
+
+All writes were confined to the assigned root; all shell commands used the actual project root. No git/staging/commits, nested agents, installation, browser UI, publication/uploads/submissions/contacts or downstream work. Parent alone integrates/reviews/counts.
+
+Artifact seal: MANIFEST.json binds exact payload file/directory membership and bytes, with three root envelopes FINAL.md,MANIFEST.json,REPORT.md outside payload membership. code/verify.py requires their detached SHA256 anchors. It performs no writes, rejects symlinks/nonregular/multilink files and extra/missing payload/directories, and does not authenticate modes. Eight small copied controls have newly generated exact membership, not inherited manifests; all expected accept/reject outcomes and nonmutation checks were met. Artifact evidence is not a mathematical gate.
