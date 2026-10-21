@@ -1,0 +1,9 @@
+# Arithmetic discovery r117
+
+PREFREEZE/no nominee. Start with notes/finite-test-reduction.md, then READING.md for boundaries. One Source004 investigation tests compression of the pinned H10 finite-test/oracle proof to one rational polynomial. Finite Boolean compilation, quartic normalization, full fixed-precision localization/height composition and Miller's conditional denominator/padding operations are paid. A uniform finite certificate preserving whole-ring closure, or another full computable many-one construction, remains unproved. No supporting result, frozen theorem, independent grade, new count, exhaustion or impossibility claim.
+
+notes/start.md and feasibility.md retain chronology. source-identities.json, tree-selection.json and identity-recheck.json distinguish canonical upstream authentication from selected-copy membership. incoming-identities.json authenticates capture-time inputs, not first-read stability. READING.md discloses catalogue/journal overruns, false scan admissions, truncations/recoveries, late captures and mutable-journal drift.
+
+All material under private is protected/local source, primary, history, search, extract, render or copied-control content, under original rights. Other original prose/code and named metadata are separated for parent consideration. No publication authorized. No shared originals were edited.
+
+The root has three envelopes outside this packet: FINAL.md,MANIFEST.json,REPORT.md. Run code/verify.py with the root path and all three detached SHA256 anchors from the handoff. It does not write. It binds exact file/directory membership, sizes and hashes and rejects links/nonregular files; it does not bind permission modes or establish mathematics. controls.py creates a disposable THREE-file selection with its OWN manifest, not a reduced copy certified by an original manifest. Do not rerun acquisition/capture/controls/seal writers on the real sealed root.
