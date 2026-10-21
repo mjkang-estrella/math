@@ -1,0 +1,11 @@
+# Analytic discovery r149 — PREFREEZE / no nominee
+
+One selected research family: Source262 one-dimensional matrix Lieb–Thirring near-extremizers. No statement frozen, no author-proof nomination, no independent grade or campaign count. Authorized Codex / GPT-6 Astra / high / default service tier. Campaign19/20/latestR041 remains unchanged; parent alone integrates/reviews/counts.
+
+DERIVATION.md records the strongest integrated source/classical comparison. In addition to the source's full action/trace defects and FGL's actual fixed-rank bubble proof, the gamma1 calculation retains ALL negative eigenstates in an exact kinetic-plus-matrix-Young deficit identity. Carlen's matrix Holder remainder reconstructs the potential near (3pi²/4) times the square of the full occupied density. Read–Schulz's actual cumulative-mass/quartic proof supplies nonnegative kinetic remainders, also retained. These are paid compatible operations, not proposed substantial contributions.
+
+The unpaid operation is uniform conversion to an unrestricted finite soliton sum across arbitrary matrix dimension, binding scales, positions and multiplicities. No adaptive localization/reassembly argument controlling the occupied-density IMS error, internal connection and endpoint balance was closed. Fixed-budget, fixed-profile and finite-cutoff substitutes are not nominated. Exact many-weak-channel optimizers diagnose a failed fixed-scale estimate, not impossibility of the tentative full question.
+
+GAPS.md states the unresolved obligation. READING-LIMITS.md and ISOLATION.md retain the overbroad catalogue screen, derivative/role false admissions, late r118 protected-body limitation, coarse omissions, truncations/recoveries and transitive limits. No perfect-isolation, exhaustive-history, novelty or worldwide-priority claim. All old frozen targets and supplied dispositions remain immutable.
+
+The exact payload manifest excludes this file, MANIFEST.json and REPORT.md as three root envelopes. Their SHA256 anchors are detached in the handoff. verify.py is read-only and requires all three explicit anchors. Protected source/primary/history copies and fixtures remain private/local under original rights. Artifact checks are not mathematical gates. No downstream formal/manuscript/release or external action is authorized by this packet.
