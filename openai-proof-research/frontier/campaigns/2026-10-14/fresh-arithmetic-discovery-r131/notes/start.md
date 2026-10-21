@@ -1,0 +1,13 @@
+# r131 research state
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Campaign19/20, latestR041 supplied; parent alone integrates/reviews/counts. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and operative proofs stipulated true, no truth audit. Complete user standing brief and header overrides read. PREFREEZE; no nominee, no freeze, no independent grade or count.
+
+Read AGENTS/upstream and only the acceptance section (binary selection before decoding); Source202 numbered catalogue bounds selected before display. Complete tree SHA256 and 13223 entries verified; selected exact canonical directory metadata only. This direct tree selection preceded writing/testing history_guard.py: it was not a filesystem walk, but is an ordering limitation relative to the request to guard every filename-selection step. No protected-round body was selected by it. Prospective tested guards preceded mathematical source body acquisition and first filesystem traversal.
+
+All seven named r130 exceptions read; the last two were present in a combined output whose aggregate display truncated elsewhere, so they will be recovered separately if needed. Their given boundaries are preserved, not reassessed. No r6 checkpoint or excluded original accessed.
+
+The source root paper.tex confirms eight included section files and references.bib. All ten acquired source objects match exact tree size/Git blob; SHA256 also recorded. Figures are referenced by section includes but not yet acquired; inspect those include lines before deciding whether their mathematical content is needed.
+
+First guarded walk: 1221 directories and 5187 files pruned; 4782 UTF8 files scanned, 82 nonUTF8/binary rejected, no symlinks encountered, 30 matching files. Hidden/ignored/JSON and large UTF8 were not size-limited. The scan falsely admitted acquire.py and search.py retrieval/search helpers, plus checks.py/checks.json administrative finite-check objects. Their names were displayed; their bodies are not mathematical premises. Search/acquire/screen guards were subsequently added, which does not undo initial byte exposure. Opaque aliases may remain; coarse prefixes deliberately omit genuine originals. No perfect-isolation or exhaustive-clearance certificate.
+
+An overlarge direct read of i104/i108/i110 originals was truncated and exposed adjacent unrelated old-family scopes; these are not developed families or premises. Relevant exact original sections will be recovered in bounded reads before extended calculation. Initial combined source intro/foundations/consequences display was aggregate-truncated; intro recovered fully and foundations recovery underway.
