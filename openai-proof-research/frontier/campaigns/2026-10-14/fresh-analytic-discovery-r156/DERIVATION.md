@@ -1,0 +1,13 @@
+# PREFREEZE / no nominee — Bochner–Riesz radius variation
+
+Authorized Codex / GPT-6 Astra / high / default service tier. User-supplied campaign19/20,latestR041. The immutable pin and its operative proofs are stipulated true. Parent alone integrates, reviews and counts. No frozen new theorem, independent grade, acceptance or count.
+
+The selected operation was full-radius variation of three-dimensional positive-order Bochner–Riesz means. Source078 was selected after one undesired but bounded Source093 catalogue display;093 was not developed. The actual078 introduction identifies its critical-local-smoothing companion, which is the stronger relevant input. Scalar bounds and strict maximal bounds were already in the integrated source/classical package.
+
+The sustained calculation in notes/INTEGRATED-VARIATION.md pays the complete tested radius-variation application. For2<=p<infinity, r>2, and delta>max(0,1-3/p), it derives the all-radius Lp r-variation bound as a source/classical composition, retaining arbitrary Lp input and every positive radius. It also pays the uniform-in-lambda Lp jump estimate, with the supremum outside the norm. These conclusions are not nominated as new substantial results.
+
+The operative chain is explicit: exact temporal Plancherel converts thin radial multipliers to long-time annular half-waves; source local smoothing gives h^(1/2-s(p)-epsilon); the existing logarithmic vector multiplier theorem printed in Jones–Seeger–Wright pays the arbitrary-dilate square sum; its Besov interpolation pays short V2 and dyadic sample l2; fixed epsilon below the positive order margin makes the bump-index sum converge; the smooth low-frequency approximate identity is handled by the classical martingale comparison. The boundary remainder itself has full V2 control, so no false jump-to-variation implication or missing p<2 neighborhood is used for the nonsmooth family.
+
+A candidate global vector-valued gap disappears after reading the strongest primary interface. No endpoint, arbitrary-profile L2 bridge, full V2, or stronger jump norm is parked as a substitute. Actual r85/r87 critical-maximal work was read and remains unchanged. No additional nonroutine closed operation was found after this composition; thus no viable new author-proof nominee was frozen.
+
+Primary-reading limits matter. The actual LRS and BHS TeX proofs and JSW's operative sections were read, with two JSW page images checked. JSW explicitly quotes the transitive logarithmic theorem; the original1988 source could not be retrieved. Full source internal proof coverage and literature/history coverage remain partial. This is no worldwide-priority or exhaustion claim.

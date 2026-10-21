@@ -1,0 +1,15 @@
+# Analytic r156 — PREFREEZE / no nominee
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Campaign19/20,latestR041 is user-supplied. Parent alone integrates/reviews/counts. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and its operative proofs are stipulated true. No author theorem was frozen; no independent correctness/contribution grade, acceptance or count.
+
+The selected full-scope operation was radius variation of three-dimensional Bochner–Riesz means. The strongest integrated reduction pays, as an existing source/classical composition, every2<=p<infinity,r>2,delta>max(0,1-3/p), all radii and arbitrary Lp input. It also pays a uniform-in-lambda Lp jump estimate with the supremum outside the norm. These are not substantial-result nominations.
+
+The actual pinned wave companion is stronger than Source078's scalar theorem. Exact temporal Plancherel converts thin bumps to annular waves. The source smoothing bound, the existing logarithmic vector multiplier theorem in JSW's actual proof, short-variation interpolation, dyadic sample control and smooth approximate-identity variation complete the intended application. The positive order margin absorbs fixed epsilon and logarithmic losses. No global square-function, arbitrary-dilate or long-variation interface remains parked as a new gap. Detailed calculations, hypotheses, constants and limit order are in notes/INTEGRATED-VARIATION.md.
+
+The unresolved discovery obligation is an additional nonroutine operation beyond that composition; none was found and closed here. Critical maximal r85/r87 and every user-listed old target retain their original scopes and dispositions. No weaker replacement, order-zero, full V2 or stronger inside-norm jump claim is offered. No family exhaustion or worldwide-priority claim.
+
+Reading and isolation are partial and materially imperfect: a journal-opening false admission; compound i66 historical summaries; truncated initial displays, subsequently recovered where required; false primitive/helper admissions; coarse omissions and opaque aliases; unread acquired vendor/figures. Actual source078 Section12 and the wave physical proof were read, as were operative LRS/BHS/JSW bodies. JSW quotes the transitive logarithmic theorem; its original1988 proof retrieval failed. Two JSW pages were visually checked. No active-peer premise or perfect-isolation claim.
+
+All writes stayed in this root, with actual project-root command workdirs. No shared edits, git, nested agents, installation, publication/contact/browser UI or downstream stages. Protected originals/metadata stay private/local under original rights.
+
+MANIFEST.json seals exact regular-file payload membership, excluding the three root-level envelopes FINAL.md,MANIFEST.json,REPORT.md. External detached SHA256 values anchor those envelopes. tools/verify.py is read-only and requires all three explicit anchors. Five copied two-member controls behaved as expected; no artifact check is a mathematical gate. Manifest does not bind empty directories or modes.
