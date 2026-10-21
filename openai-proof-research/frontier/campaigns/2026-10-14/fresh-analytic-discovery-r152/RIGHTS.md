@@ -1,0 +1,5 @@
+# Rights and selection identity
+
+DERIVATION.md, GAPS.md, the notes and tools are newly authored research material. Authentication and read-limit records are original descriptions of selected material, not a relicensing of it. Everything under private/ contains upstream/primary/completed-project bodies, excerpts, navigation or derivative records retained privately under the originals' rights. No public redistribution is authorized or performed.
+
+SOURCE-AUTH.json records the exact canonical pin/path/size/Git blob/SHA256 identities. PRIMARY-AUTH.json distinguishes incoming full archive identities from selected-copy membership; ORIGINALS-AUTH.json likewise authenticates only the selected completed originals. A reduced selection never inherits an original manifest. The final manifest authenticates this root's exact own payload only. Its three outside envelopes are FINAL.md, MANIFEST.json and REPORT.md. Detached hashes are supplied to the read-only verifier explicitly and returned to the parent in the final message. Copied controls are a small independently manifested selection, not a replica or seal of the incoming archives.
