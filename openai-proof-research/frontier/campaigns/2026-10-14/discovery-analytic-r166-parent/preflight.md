@@ -1,0 +1,9 @@
+# Immutable scope and review questions
+
+There is no prior independent correctness or contribution review of T366A166 and no prior author repair. No conclusive mathematical defect or counterexample is established by parent intake. No narrowed statement or renamed retry is authorized. The author identifies no remaining proof gap, which is not independent verification.
+
+Both complete independent reviews must retain every frozen hypothesis, minimizer and loose-end quantifier, the zero-coefficient case, bounded measurable fidelity, and all three uniform/essential-uniform limits. Verify especially the applicability and derivation of PROOF §1(i)–(iv), the Riesz completion and graph domain in §3, weighted high-mode and Jordan estimates in §4, the nonlinear finite bootstrap in §5, and the undifferentiated-forcing trace upgrade in §6. The exact polar determinant in §7 must carry the essential-uniform second derivative through the graph coordinates.
+
+For contribution, integrate the strongest actual compatible primary construction before deciding whether anything substantial remains. A standard extension of an already-paid spectral basis by elementary Hilbert-space estimates, Green kernels and elliptic trace estimates may be technical; an unproved hard step cannot establish substantial contribution. Assess the whole unchanged theorem conditional on correctness; do not inspect the correctness sibling's reasoning or verdict. No grade is prescribed by this comparison question.
+
+The inaccessible erratum and actual version/coverage limits must be confronted honestly. A full later monograph proof may supply the needed operations, but unread snippets, copied identities and the author's comparison do not substitute for operative proof reading. Pinned source and upstream proofs are stipulated true; validate new interfaces and deductions.
