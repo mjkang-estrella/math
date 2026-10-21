@@ -1,0 +1,13 @@
+# Arithmetic r118 — PREFREEZE / no nominee
+
+One selected investigation: rational Chow-level specialization of Hodge classes on good-reduction abelian varieties, using Source001 and its Source032 dependency. No theorem was frozen. No full author-proof or supporting nominee, independent correctness/contribution grade, acceptance or count is submitted. Parent alone integrates/reviews/counts.
+
+The strongest integrated reduction is in packet/notes/chow-specialization-reduction.md. Source001/032 supplies one rational cycle in every realization. O'Sullivan's actual distinguished-cycle section supplies canonical rational Chow representatives and all product/pullback/pushforward/correspondence/projector relations. Full Tate, a dual numerical cycle basis and Katz–Messing's Frobenius comparison retain crystalline realization; Milne already expressly records the crystalline analogue. Rational Galois descent and specialization of existing generic distinguished cycles are compatible as well. These are credited operations, not a new substantial theorem.
+
+No coherence or crystalline compatibility defect remains unpaid in that explored rational baseline. What is missing is an identified nonroutine full-scope operation beyond it. Generic algebraicity is not constructed. Uniform integral multipliers would reopen unchanged T001U58, not create a distinct target. All old scopes/dispositions, including H138/T185R144, remain unchanged. No renamed conjecture, restricted substitute, priority, current-open, exhaustion or impossibility claim.
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and operative proofs stipulated true. Campaign19/20/latestR041 context only. All work stayed within the assigned root; no git, nested agents, browser UI, publication/contact or downstream stages.
+
+Reading and isolation limits are material: initial catalogue001–004 and journal1–180 overrun; first-scan uppercase-category and assignment-history false admissions; corrected second scan does not erase these; bounded source/primary/transitive extents, output truncations/recoveries and late incoming capture. See packet/READING.md. No perfect-isolation or exhaustive-search certificate.
+
+Own exact membership is in MANIFEST.json; FINAL.md,MANIFEST.json,REPORT.md are the three outside-packet envelopes. Their detached SHA256 anchors are in the terminal handoff. Verifier takes all three as explicit inputs and writes nothing. Seven small-selection controls and identity rechecks concern artifact integrity only, not mathematics. Protected bodies remain under packet/private with original rights.
