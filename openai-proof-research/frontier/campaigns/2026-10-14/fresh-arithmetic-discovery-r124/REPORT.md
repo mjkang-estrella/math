@@ -1,0 +1,13 @@
+# Outside artifact/report envelope
+
+Outcome: PREFREEZE/no nominee; no theorem freeze, independent mathematical grades, acceptance or count. Authorized Codex / GPT-6 Astra / high / default service tier. Parent alone integrates/reviews/counts.
+
+Mathematical work: full simultaneous-norm torsor interface; signed quotient lattice; exact half-integral extension construction; integral cyclic restriction criterion; classical odd-degree closure; regular-action reduction; Q8 Bockstein nonvanishing pattern; projective-norm reformulation with approximation limits. notes/integrated-norm-reduction.md is the complete developed account. No extra unpaid nonroutine arithmetic bridge was isolated. No old frozen statement is weakened/replaced.
+
+Scope/reading: six selected authenticated pinned blobs, not a complete source tree; full operative norm proofs in both MP manuscripts; selected primary proofs and15 visual pages. Primary/transitive coverage remains partial. Whole-volume Sansuc acquisition is distinguished from selected page reading. Hürlimann access failed; EuDML failed403. Initial plural-category history leakage, overbroad title hits, overwide old-review context, truncations and late reads are disclosed in READING.md. No perfect isolation, exhaustive clearance, project novelty or worldwide-priority claim.
+
+All payload/controls remain inside this exclusive root. Protected incoming/source/primary/history/search/render/copy content and metadata are under private/ and retain original rights. Seven incoming whole-original identities are separate from three selected excerpts. Selected pinned files have their own canonical metadata; no inherited manifest represents a reduced selection as a whole original.
+
+Artifact contract: MANIFEST.json records exact payload file membership, sizes andSHA256, and all subdirectories. Exactly FINAL.md,MANIFEST.json,REPORT.md are outside the manifest and require detached anchors. verify.py is read-only, rejects extra/missing/nonregular/multilink files, symlinks and extra/missing directories, and requires all anchors explicitly. It does not bind permissions or mathematical correctness. The independent reduced copied fixture has two selected payload files, its own exact manifest and three independently hashed envelopes. Baseline/restoration accepted; changed payload, missing payload, hidden extra, empty extra directory and wrong manifest anchor rejected. Every verification preserved its fixture snapshot; selected originals unchanged. See private/copied-controls-results.json.
+
+The main seal is built once after all work. No payload/status updates are made after sealing. Independent SHA256 anchors in the external handoff authenticate all three envelopes. No downstream work or independent review stage is opened.
