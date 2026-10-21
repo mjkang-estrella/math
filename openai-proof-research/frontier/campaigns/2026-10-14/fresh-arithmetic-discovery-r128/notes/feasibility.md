@@ -1,0 +1,9 @@
+# Prefreeze feasibility
+
+Family1 intended polynomial syzygies/Castelnuovo–Mumford regularity: no genuine match. The unqualified regularity query falsely admitted unrelated analytical/geometric catalogue lines, read as navigation only, no bodies selected. This was too coarse and is not represented as a clean single-family output. Family2 and final screen: Mahler measure / Lehmer / Salem–Pisot arithmetic. No third direction permitted.
+
+Family2 confirmed pinned Source153 Arithmetic classification and non-Pisot singularity for Bernoulli convolutions. Initial exact tree prefix omitted preprints/ and returned null; corrected exact-family substring returned canonical metadata. Six TeX/bibliography files authenticated. main.tex and complete salem.tex read before derivation.
+
+Initial guarded history scan decoded4704 files (largest45072338 bytes),40 read/decode errors,28 hits. The history-derivative token guard did not cover history-093/history354 etc; these derivative aliases, git-identities and seal metadata were falsely admitted to matching and excerpts. Guard tightened before subsequent scans to all history/seal/identities substrings. This late repair does not undo the read; no perfect isolation claim. No excluded active-round path was admitted by the literal full-path round predicates. Incidental unrelated original hits were navigation only.
+
+Actual historical overlap found: sextic Salem target T and full symmetric-Markov T153M64. These originals must be read and preserved before developing any neighboring reduction. Prospective question (not a frozen target): what does the complete quartic multiplier/loss proof already pay for independent biased digit arrays and finite convolution powers? These may be routine source operations and are not nominated merely for broader quantifiers. No higher-degree or Markov reattempt is authorized by this question.

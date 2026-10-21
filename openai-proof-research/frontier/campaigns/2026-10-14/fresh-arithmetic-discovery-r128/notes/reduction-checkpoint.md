@@ -1,0 +1,11 @@
+# Working calculation — PREFREEZE
+
+Complete pinned salem.tex read. Actual Cheng–Fang–Ma–Zhang2610.12072v2 main proof read through1300 (last closing lines pending): finite positive-product entropy, norm separation, block cover, reciprocal trace-dual orbits, seeds, mirror estimate, controlled returns, localized restoration. This is stronger compatible composition than source singularity alone.
+
+The source already suggests finite field-scaled independent-sign closure. For a finite coefficient set in K=Q(beta), close it under tau:beta->beta^-1 and clear denominators d. Define u_(a,m,j)=d a A_m beta^j. Trace reflects to tau(a), not a; hence use a finite tau-stable family. Small circle-conjugate constants and negative-tail constants depend on this finite set. Integer traces and no-half-integer algebraic-integral phases give initial positive floor. The source shift identity still holds componentwise. Summing reflected loss over the tau-stable family preserves factor2.0301 versus2.1. This pays simultaneous Fourier lower bounds, subject to writing the finite-constant initialization carefully.
+
+For arbitrary independent biased signs, |p exp(it)+(1-p)exp(-it)|>=|cos t|. Removing distant traces remains deterministic; center the residual phase by its known mean to avoid a linear drift. Disjoint centered windows remain independent. This should give singularity for all nonstationary arrays and finite coefficient sums via the exact source concentration proof. It does not pay Markov T153M64.
+
+For stationary arrays, finite alphabet in K has norm-separated distinct atoms at c beta^-N N^-2. The actual primary positive-product entropy proof accepts complex phases after rotating each Fourier coefficient. It may therefore upgrade the same reduction to strict dimension drop. This is a source/primary composition, not evidence for substantial contribution.
+
+An all-real-coefficient extension cannot follow generally: for the explicit quartic beta1, the even-digit subseries has separated cylinder measure with exponent s0=log2/(2log beta1)>1/2. Its convolution with the odd digits remains s0-Frostman. Product energy>1 plus the classical projection proof gives L2 density for almost every real slope. This contrast is a classical diagnostic, not a new nominee. No Markov or sextic scope is replaced.

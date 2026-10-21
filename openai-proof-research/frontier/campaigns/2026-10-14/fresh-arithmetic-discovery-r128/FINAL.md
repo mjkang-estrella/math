@@ -1,0 +1,15 @@
+# Arithmetic discovery r128 — PREFREEZE / no nominee
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Supplied campaign19/20, latestR041; parent alone integrates, reviews and counts. No frozen statement, full author-proof nominee, independent correctness/contribution grade, acceptance or count.
+
+The developed family is pinned Source153 quartic Salem Bernoulli convolutions. The complete source multiplier/loss proof, actual primary Fourier-to-Shannon proof, finite reciprocal coefficient closure, classical biased-factor comparison and nonstationary block cover already pay the following strong integrated reduction: for each fixed quartic Salem beta in(1,2) and finite tuple a_i in Q(beta), there is eta>0 independent of all prescribed probabilities p_(i,n) in[0,1], such that the law of sum_n beta^(-n)sum_i a_i epsilon_(i,n), with all signs independent, has Hausdorff dimension at most1-eta. Zero tuples are trivial. The gap is qualitative and may depend on beta and the tuple.
+
+notes/integrated-salem-reduction.md gives the complete compatibility calculation, including denominator clearing, a tau-stable finite coefficient family, simultaneous floor initialization, the source2.0301-versus2.1 margin, complex Fourier rotations, exact-atom norm separation, a uniform finite-block entropy deficit, and a proved nonstationary strong-law cover. The strongest compatible primary estimate is used; nonstationarity is not left as a parked obligation.
+
+This is credited source/primary/classical composition. No distinct substantial operation beyond it was isolated. A fully specified proof-feasible substantial new result remains absent, rather than a hidden mathematical bridge inside this calculation. An unrestricted all-real-coefficient extension is false: for the explicit source beta1, a separated-subseries Frostman estimate and the classical energy-projection proof give an L2 density for almost every real slope in mu*(t mu). The complete exceptional slope set is not claimed.
+
+The frozen sextic Salem T, full all-q symmetric-Markov T153M64, prior classification-branching screen and every other old scope/proof/disposition remain unchanged. No restricted substitute or desired-grade retry. No peer premise, priority claim, family exhaustion or universal impossibility claim.
+
+READING.md records actual source/primary/history extents, coarse omissions, false navigation/helper admissions, output truncations and recoveries,40 errors per history scan, failed primary accesses, font warnings and late identity/copy reads. Initial polynomial-regularity screen was null with unrelated false matches; the second/final family screen selected Source153. The stipulated pin is not audited.
+
+All new artifacts remain inside this exclusive root. Protected copies and metadata are private/local. Artifact controls and the exact manifest are not mathematical gates. Three outside envelopes FINAL.md,MANIFEST.json,REPORT.md have separately supplied SHA256 anchors; tools/verify.py requires all three and verifies exact payload membership read-only. No publication, uploads, contacts, browser UI, git mutation, nested agents or downstream stages occurred.
