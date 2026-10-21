@@ -1,0 +1,13 @@
+# Arithmetic discovery r122 — PREFREEZE / no nominee
+
+No theorem was frozen and no author-proof nominee, independent grade or count is submitted. Authorized provenance: Codex / GPT-6 Astra / high / default service tier. Parent alone integrates, reviews and counts.
+
+The first, narrow norm-torus screen found no intended pinned source. The second and final family was anticanonical nonvanishing under semipositive metrics. Sustained derivation tested replacing bounded weights by zero-Lelong weights while retaining the projective Q-factorial klt, effective-boundary, nef and nonzero-Euler hypotheses.
+
+The strongest integrated comparison removes the apparent infinite-moment obstruction. Zero Lelong numbers pay all-power multiplier integrability and the cohomological determinant input. Source affine divisor relations already give a pseudoeffective divisor on a suitable base. Source discrepancy rounding gives adjoint rank one at zero. A Skoda/Hölder mixture, the actual singular direct-image extension and Fubini give a strictly positive corrected base anticanonical metric with integrable distinguished section. The Controlled companion's actual weighted-effectivity proof then pays the return: its correction pulls back exceptionally and disappears under birational pushforward. No bounded base metric or high-moment limit is needed for that composition.
+
+This is recorded as a source/classical composition, not a new substantial result or an independent contribution verdict. No nonroutine unpaid nonvanishing operation was isolated. A stronger finite-exponent nefness calculation was not completed and is not required by the paid route. Mere-nef metric construction, Euler-free/equivariant singular extensions and finite-degree all-discrepancy complements were not frozen or nominated. All older scopes remain unchanged.
+
+Read the actual derivation in packet/notes/integrated-metric-reduction.md and the limits in packet/READING.md. Coverage is partial: relevant source proofs and primary interfaces were read, not all transitive foundations or published-final primary versions. The r6 detailed original checkpoint is expressly excluded and remains uncleared. The initial journal whole-file decode, administrative/derivative alias admissions, wrong r7 receipt selection and recovered display truncations are disclosed; no perfect isolation, exhaustive clearance or priority claim is made.
+
+Exactly three root-level outside envelopes are FINAL.md,MANIFEST.json,REPORT.md. The read-only verifier requires their three independently supplied detached SHA256 hashes. Artifact checks are not mathematical gates. No publication, external contacts, browser UI, git operations, shared edits, nested agents or downstream formal/manuscript/release work occurred.
