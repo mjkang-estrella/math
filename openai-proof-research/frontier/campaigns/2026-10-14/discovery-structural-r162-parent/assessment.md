@@ -1,0 +1,11 @@
+# Structural162 parent archive
+
+PREFREEZE / no nominee. Source selection and sustained source-dependent mathematical discovery were not achieved. The two sandpile/chip-firing and toric-ideal screens selected no confirmed pinned manuscript. Null title/path matches establish neither an obstruction nor absence of a relevant theorem. No proof, new reduction, theorem freeze, independent grade or count is assigned.
+
+The parent read all three notes, the two tools and the outside handoff/report completely. The packet states that all seven required closed r161 originals were read with truncation recovery; their identities were checked here without fresh primary-body reading. Excess journal-heading exposure, recovered combined-display truncation, coarse pruning, unrelated toric history hits and two false combinatorics path matches remain disclosed. The parent initially ran an overbroad AGENTS filename inventory during context recovery; it displayed metadata from unrelated projects, not their bodies. No perfect-isolation or exhaustive-clearance claim is made.
+
+Detached external anchors authenticate 18 payload files plus three envelopes and four subdirectories. Eleven incoming-original identities match, including the seven required r161 originals. No source or primary version was selected. Eight disposable complete-copy controls (two positive, six negative) behaved as expected; all actual packet bytes and modes remained unchanged. Manifest membership, file bytes, directory membership and modes are checked; no mathematical gate follows from these checks.
+
+Structural163 remains uncreated pending the next Arithmetic129 original initial exclusion. Analytic157 already excludes it. Arithmetic128 has now completed and awaits its own intake; its old initial brief has no Structural163 exclusion and will not be rewritten or reinterpreted. The next structural assignment must start from a confirmed canonical manuscript rather than another unanchored two-family search. The r161 full PASS / TECHNICAL disposition with condition discharged remains closed, without a count.
+
+Count remains 19/20, latest R041. All old scopes and grades are unchanged. Publication, uploads, submissions, contact and downstream release remain stopped. Protected inputs and unrelated tracked edits are unchanged; private named metadata and copied fixtures remain local.
