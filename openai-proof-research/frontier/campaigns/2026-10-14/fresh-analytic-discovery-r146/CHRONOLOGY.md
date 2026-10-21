@@ -1,0 +1,12 @@
+# Chronology
+
+2026-10-20; Codex/GPT-6 Astra/high/default-tier authorization. Runtime Astra/high; tier not independently observed. Complete standing brief with header overrides; campaign19/20/latestR041.
+
+1. Direct AGENTS/upstream/acceptance opening read. Required r145 completed exceptions read, with explicit bounded recovery after a truncated combined display. Complete13223-entry tree hash verified. Initial catalogue query returned too many incidental families; only371 developed.
+2. Exclusive root created. First project-root traversal used mandatory active/future/older/category predicates before descent. First derivative false admissions were detected; corrected *history* scan followed before the checkpoint. Eleven exact-pin source bodies acquired and authenticated.
+3. Source main/linear/nonlinear and selected profile/spectrum proofs read. Actual I66 and r122 original scopes/proofs read. Primary Buck/Li/Fan archives acquired; Fanv2 was superseded operationally by v3 before drafting. No frozen target.
+4. Fixed-core cutoff, multi-observation transfer and exterior-interpolation calculations developed. CHECKPOINT written before extended DERIVATION; later third alias scan and I67/I68 original disposition/phase-slice reading occurred before extended DERIVATION. Third scan falsely admitted hash/opaque derivative matches; word-boundary context filtering did not undo that admission.
+5. Primary compact-error/graph, Fan interpolation/synchronization/continuity and Li matching proofs read at the stated spans. Their strongest compatible operations were used in the reduction. The C1 physical synchronization-set question emerged during feasibility, not as a pre-existing frozen scope.
+6. DERIVATION and GAPS written: finite-core and exterior estimates are source/classical compositions; parameter differentiability/rank and nonroutine contribution evidence remain unpaid. No freeze or nominee. Late I68 composition-line recovery and I66 ending reread are disclosed in READING-LIMITS.
+7. Thirteen selected original-byte identities captured late, after semantic reads and drafting. Source/tree, primary incoming/selected members and original/copy identities checked separately. Proportionate six copied-fixture controls test read-only exact-membership verification.
+8. Final own payload manifest sealed once with three outside envelopes and independently computed detached hashes. No post-seal rewrite. Read-only verification and original-identity recheck are artifact checks only, not mathematical gates.

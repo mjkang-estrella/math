@@ -1,0 +1,20 @@
+# Research checkpoint — PREFREEZE
+
+2026-10-20. Codex / GPT-6 Astra / high; authorized default service tier (tier not independently observed). Campaign19/20/latestR041. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and operative proofs stipulated true. No independent grades or count.
+
+One selected family: Source371, scalar defocusing NLS on T^12. Initial investigation asks whether prescribed, separated self-similar cores can be synchronized, with no other singular points. No exact theorem has been frozen. The first catalogue query was too broad for a strict two-family navigation budget: it returned adjacent extension/smoothing, Source080 and a Bloch-law line as well as371; these incidental matches are not developed, and this overrun is not erased. No second developed family.
+
+Required r145 completed originals read; the initial combined display clipped and missing portions were recovered. They remain PREFREEZE/no nominee, with all old Coulomb scopes and dispositions unchanged. Actual C66 original proof and r122 geometric feasibility were identified; C66 is not proposed again, and the old arbitrary-manifold question is not replaced. First broad history scan falsely admitted history-080.json and fourth-history-screen.json derivatives. A second scan pruned all history-named components before descent; both records retained. Neither derivative is a mathematical premise. Literal peer/future exclusions applied from the first traversal.
+
+Source371's complete linear and nonlinear sections have now been read, with the profile statement, slow-tail proof and spectral statement. Free/core/full spectral proof interiors are not fully read. Three primary operations are being checked: Buck et al. v1 stable graph/localization; Fan1510.00961v3 multipoint synchronization and exterior regularity; Li2304.02078v2 symmetry matching. Fan v2 was acquired before v3 was verified; only v3 is operative. Actual read extents will be explicit.
+
+Feasibility calculations so far:
+
+* In a single expanding torus use moving centers c_j(s)=L_s x_j and disjoint fixed-physical cutoffs. The transport derivative of z_j=y-c_j(s) is z_j/2. Polynomial nonlinear cross terms of the approximate profile vanish exactly, not merely asymptotically. Each cutoff residual retains O(L_s^(-2-a)).
+* The source compact-observation estimate should extend by a finite sum of translated observations. Disjoint supports keep the leading high-derivative coefficient bound independent of the number of cores; lower constants may depend on N and separation. The source local-limit argument can then retain the escaping norm and give a block spectral map. This must be written carefully; disjoint supports do not make the Schrödinger propagator block diagonal.
+* A source graph with exponential similarity decay δ>0 would imply exterior amplitude at most C(1+tau^(-a+δ)), hence an integrable exterior nonlinear coefficient tau^(-1+δ/a). This is better than a merely bounded rescaled perturbation.
+* Fan's actual nested-cutoff interpolation operation is compatible. Put B=K/2+a-3. If global H^K is O(tau^(-B)), an exterior H^r bound upgrades to H^(r+h) whenever B(h+1)/(K-r)<1 and B h/(K-r)<κ, with κ=min(δ/a,1). Both inequalities have a positive margin for r<K-B=K/2+3-a. Thus one can reach an exterior exponent >6 by choosing K sufficiently large and finitely many shells. This calculation does NOT establish a new primary operation or independence from Fan.
+
+Potential remaining stronger issue: regularity and codimension of the physical synchronization set after freeing the centers, phases and common time. Dimension counting predicts N−1 relative time conditions, but the source only proves continuous parameter selection by degree. A C1 physical submanifold cannot be inferred merely by counting modes; whether smoother adjoint-coordinate/parameter analysis pays this is still to be examined. This is a question emerging from the reduction, not a frozen theorem or a renamed old scope.
+
+No supporting baseline is nominated. Durable derivation and exact reading/isolation limits will replace neither mathematical proof nor independent contribution review.
