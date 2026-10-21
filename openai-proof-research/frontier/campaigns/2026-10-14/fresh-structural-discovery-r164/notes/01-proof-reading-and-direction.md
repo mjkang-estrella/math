@@ -1,0 +1,25 @@
+# Source157 operative reading and direction (prefreeze)
+
+Provenance and scope are in notes00. No statement is frozen. This is not a truth audit of the stipulated pin.
+
+The complete catalogue's actual bold numeric delimiters were found before display (373 boundaries); only Source157 bytes256795–258914 were decoded/displayed. Exact acceptance bytes4801–6347 only were decoded, with journal preamble and next heading suppressed. The complete tree matches 13223 entries, truncated=false, and the supplied SHA256. Exact chosen canonical objects are authenticated by path, size, Git blob and SHA256 in private/source/authentication.json. No inherited whole-manifest claim for this selection.
+
+The full list-coloring main wrapper, introduction, preliminaries, all eight proof sections and bibliography have been read. A combined sections05/06 output was truncated around the boundary: density lines470–501 and routing lines1–160 were explicitly recovered. Figure inputs and glyph mappings were not acquired; no substantive proof is delegated to those figures. The operative source proves much more than its headline: eligible stable-set thinning with arbitrary prespecified eligibility, connectivity extraction with explicit forbidden-color budget, small-plus-sparse deletion, long-path-history deletion at every snapshot, and full (a,3a)-wovenness under absolute linear connectivity and list-chromatic thresholds. All finite parameter cases and root/pair endpoint coincidences are included.
+
+Key source constants/interfaces:
+- small-list: |V|<=t^(11/10), h<t => ell<=Lt above absolute cutoff.
+- eligible thinning: t/log t<=r<=4t; N=ceil(B r log(2 max(1,t/r))); every vertex eligible in >=N/2 trials; f(P)<=r => residual f<=r/2. Sampling stable sets has size <=ceil(n/r), marginal1/(2r).
+- constrained coloring: every induced k-connected subgraph is m-choosable, lists >=m+6k, precolored A, forbidden B_v of size<k, k|A|+sum|B_v|<=2k² => extension.
+- additive deletion: |X|<=t^1.1, Y dt-degenerate, external Y-degree<=dt => ell(P-X-Y)>=ell(P)-(4L+d+5)t.
+- history deletion: <=ceil(log²t)(ceil(log²t)+1)/2 rounds of two specified freely assigned minimizing systems; all original paths retained; loss <=(4L+6B_*+25)t, independent of path lengths. Exceptional vertices are counted at ALL snapshots, not merely the final one.
+- recursive woven: Ka-connected and ell>=Qa => (a,3a)-woven for every integer a>=1. Final C=2(Q+6K).
+
+Both counterexample companions' full introduction bodies were read, including their full exact main statements and stated graph/matrix interfaces. Hadwiger gives alpha<=2 and connected matching<m/100, with h<26m/75+2/3; CdV already includes the larger well-signed one-negative matrix class without Strong Arnold, fixed-base clique blow-ups, fractional coloring, and linear list bound in mu+1. Those stronger statements prevent treating these wrappers as new. Their full tensor and matrix operative proofs have NOT yet been read; no new deduction relies on them. Authenticated acquisition is not semantic reading.
+
+History screen prospectively guarded all stated full-path wildcards and coarse prefix categories before traversal, directory descent and file decoding; own round, dispatch/integration/checks/diagnostic/stdout/stderr aliases excluded. 3071 UTF8 bodies searched with no size cutoff,43 nonUTF8,7597 pruned paths,25 matching files. Python `list(color)` produced14 false lexical matches in unrelated experiment kernels/toolkits/disabled attempt copies; these were displayed only as matching lines and not followed. Other unrelated geometry, complexity and status-like survey mentions are also not evidence of relevant overlap or clearance. These are false admissions and coarse/opaque omission limits, not an authored-only/exhaustive certificate.
+
+Actual operative overlap read: i22 lines53–62 (full unchanged all-graph all-cover linear DP target) and243–265 (full global-bin obstruction and two unpaid repairs), and r44 preliminary DP screen in full. Their arbitrary-cover quantifiers remain unchanged. The C4 connected cover shows that a bin assignment constant on forbidden pairs can have only one bin, even for arbitrarily large lists and colorable instances. The constraint-budget transfer itself was already paid in r44. This route is not re-nominated, weakened, or renamed.
+
+All five requested r163 direct originals were read: initial combined metadata/exception output was truncated; assessment and notes00/01/02 were recovered in separate complete displays; notes03 was fully visible in the initial output. They remain trace-family context only. No r161/T126S161 or T360S147 original package was opened, and no peer body/status was inspected.
+
+The mathematical direction is to test the strongest compatible list-coloring machinery, especially small-graph stable-set sampling, global palette reservation and recursive routing, before proposing any additional operation. Multifold/weighted/online variants are not presumed available from the title and are not findings merely when naive transfers fail. Primary actual proofs are being read before extended drafting.

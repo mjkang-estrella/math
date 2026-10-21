@@ -1,0 +1,7 @@
+# r164 research start
+
+Authorized provenance: Codex / GPT-6 Astra / high / default service tier. Campaign 19/20; latest R041; parent alone integrates, reviews, and counts. Complete standing brief read in incoming task, with its two obsolete status/provider lines overridden. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and all operative proofs stipulated true; no truth audit. No frozen statement changed.
+
+Scope: confirmed Source157 graph coloring / clique minors only, three named canonical families. No further family screen. Incoming metadata is navigation, not proof reading. All writes, scratch, downloads, copied evidence, and seal material stay in this exclusive root; all commands run at actual project root. No git commands, nested agents, browser UI, publication, contacts, or downstream production.
+
+Isolation before traversal/body selection: full-path case-insensitive guards will prune current analytic r158/arithmetic r130, future analytic r159/arithmetic r131, structural r161 and T126S161, completed structural r163, T360S147, all specified recent ranges and coarse body/administrative aliases. Named r163 originals are direct-read exceptions only. Active peer original-brief exclusions are supplied authenticated context, not independently inspected. No peer body or activity premise. Own aliases, .git and dependencies pruned before broad descent. Broad omissions include coarse category aliases and opaque identities: no perfect-isolation or exhaustive-clearance claim.
