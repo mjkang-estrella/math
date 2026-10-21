@@ -1,0 +1,9 @@
+# Proof status and exact limits
+
+Status: full author-proof nominee at FROZEN-STATEMENT.md; not PREFREEZE. The author derivation purports to close every assertion of that exact statement. There is no remaining selection, regularity, gluing, stability, or limiting bridge assumed as a conditional premise for the stated selected-current annulus theorem. This is not an independent correctness finding.
+
+The essential interface requiring adversarial scrutiny is AUTHOR-PROOF Section 3: using the operative normalized-comparison proofs when c_eff=c_n/H rather than c>c_n. The proof identifies the original strict-mass use and replaces only the supply of a subthreshold quotient by a contradiction assumption. Other scrutiny points are the singular-distribution density integration, the finite-parameter transform inequality, and its asymptotic tangent coefficient. These are explicit author arguments, not deferred obligations.
+
+Unpaid stronger assertions, all excluded before freeze: flat-ball filling asymmetry in arbitrary CAT(0); a quantitative density-rigidity or graphical-regularity theorem; control of original support T; the critical-transform endpoint n=2; nonproper ambient spaces; unbounded-support currents; Q286's full set-asymmetry question. The selected support's annulus containment does not establish those. No optimal exponent or useful endpoint numerical constant is claimed.
+
+Source337's full sharp theorems are stipulated true; no gap is alleged in them. The completed r160 exterior-pressure reduction and every prior full scope remain unchanged. No formal/manuscript/release work or independent review was undertaken, and no count is earned or assigned by this packet. Independent correctness, separate primary-based substantial-contribution review and any later authorized gates belong to the parent.
