@@ -1,0 +1,15 @@
+# Arithmetic135 parent archive
+
+PREFREEZE / no nominee. No statement frozen, no independent correctness or contribution grade, no acceptance or count. Campaign remains 19/20, latest R041. The r58 integral scope and r118 rational-composition disposition remain unchanged.
+
+The full original notes construct universal symplectic flags over one cyclic extension of relative degree 2M, reduce every smaller block over the same extension, retain finite local-field descent and roots-of-unity costs, and supply the source weak-admissibility integration. The relative lower bound is for the stronger universal-subspace problem over the specified coefficient field. The Wronskian alternative and period-fiber orbit/stable-lattice reductions are completed as compatible primary/classical operations. Neither a sharper intermediate number nor its linear-algebra optimality is asserted substantial.
+
+The remaining arithmetic distinction is concrete: no uniform bound for optimized tensor-compatible integral marking or the integral cycle image is proved. A flag-field bound controls neither the independent quasi-isogeny/normalization/cycle denominators nor the old all-places quotient exponents. Central rescaling is not a counterexample to an optimized bound. Source existence and rational Chow coherence are already paid; no generic algebraicity or weakened integral substitute is nominated.
+
+The parent read all six original mathematical notes, FINAL/REPORT, private reading account and verifier. A combined display truncated; the cyclic conclusion and complete osculating/period-fiber notes were recovered separately. The child fully read Source001, with selective companion/primary coverage, failed Kisin access, late captures, recovered truncations, actual false admissions and coarse omissions disclosed. No perfect-isolation, exhaustive-clearance or priority claim.
+
+Read-only verification matched the 94-file payload plus three envelopes, all 22 retained canonical source objects, six primary PDF/text pairs, one rendered member and nineteen stable named originals. Actual packet and existing clean copied fixture checks passed without mutation. The previously modified fixture remains rejected in its recorded control. These checks establish artifact integrity only; finite mathematics was not independently rerun and no gate follows. Protected bodies/identities, reading account, snapshots, replay and navigation remain local unstaged.
+
+Parent metadata corrections: a search for canonical main.tex returned no object in the next selected family; same-family tree metadata confirmed build/paper.tex. The first parent replay assumed an initial-hash field on the two late direct-instruction records; their actual capture-only schema was handled explicitly and the replay passed. Neither failure supplied a mathematical premise or altered the sealed root.
+
+Distinct Arithmetic136 discovery may proceed after this disposition is fixed. Both current peers' original initial briefs explicitly excluded arithmetic r136 before its new brief/root existed. Public actions remain stopped.
