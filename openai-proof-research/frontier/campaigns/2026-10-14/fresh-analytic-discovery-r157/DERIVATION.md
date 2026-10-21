@@ -1,0 +1,13 @@
+# PREFREEZE / no nominee — circle-domain deformation
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Campaign19/20,latestR041 is supplied context; parent alone integrates/reviews/counts. No theorem was frozen or submitted for an independent grade.
+
+One family was selected: Source071, Koebe uniformization and removable-boundary rigidity. The actual pinned retained-test proof and the entire rigidity companion were read, together with Younsi's invariant-reflection proof and the original Ahlfors–Bers dependence proof. The source pin and operative proofs remain stipulated true.
+
+The sustained calculation in notes/INTEGRATED-DEFORMATION.md pays the full tested deformation comparison. For every removable-boundary circle domain normalized to contain0,1,infinity and every measurable Beltrami coefficient of norm<1, invariant extension gives its unique normalized circle-domain solution. On each coefficient k-ball,k<1, the entire labeled disk-radius vector is Lipschitz into l2. No finite connectivity, disk separation, lower radius, dust countability or compact-support condition is imposed.
+
+The apparent stronger operation, real-analytic dependence of all radii simultaneously along elliptic coefficient families, also closes by the compatible classical package. Odd reflections conjugate the parameter, so the correct complexification has independent even/odd variables. Normalize three points per base target disk; Ahlfors–Bers' small-dilatation estimate controls all normalized triangles in one parameter neighborhood. Disjoint image-region packing bounds the sum of squared image chords. The explicit holomorphic circumradius formula and Cauchy estimates then give a convergent l2-valued Taylor series, including arbitrarily small accumulating disks.
+
+The Jacobian square-root estimate pays the full Lipschitz comparison; no generic l1 square-root claim or componentwise-to-norm analyticity inference is used. An explicit principal-normalization compact-support estimate is a diagnostic only; it is not substituted for the arbitrary-coefficient comparison. Most deformation estimates work without removability, with the stipulated source supplying intrinsic uniqueness. This does not by itself identify an additional substantial author operation.
+
+No full author-proof nominee emerged. The unmet discovery obligation is a fully paid nonroutine operation beyond that integrated source/classical construction, not an unpaid reflection, global-coefficient, tail, analyticity or disk-packing interface. This is no independent contribution disposition, exhaustive clearance or impossibility claim. All old scopes and supplied dispositions are unchanged.

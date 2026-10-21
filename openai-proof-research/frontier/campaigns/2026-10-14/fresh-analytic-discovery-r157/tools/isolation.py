@@ -1,0 +1,25 @@
+"""Prospective coarse full-path guard. Run only from actual project root."""
+from pathlib import Path
+import os,fnmatch,re,json
+ROOT=Path.cwd()
+OWN="frontier/campaigns/2026-10-14/fresh-analytic-discovery-r157"
+ROUNDS=['*arithmetic*r128*', '*structural*r162*', '*arithmetic*r129*', '*structural*r163*', '*structural*r161*', '*t126s161*', '*t360s147*', '*analytic*r138*', '*analytic*r139*', '*analytic*r140*', '*analytic*r141*', '*analytic*r142*', '*analytic*r143*', '*analytic*r144*', '*analytic*r145*', '*analytic*r146*', '*analytic*r147*', '*analytic*r148*', '*analytic*r149*', '*analytic*r150*', '*analytic*r151*', '*analytic*r152*', '*analytic*r153*', '*analytic*r154*', '*analytic*r155*', '*analytic*r156*', '*structural*r146*', '*structural*r147*', '*structural*r148*', '*structural*r149*', '*structural*r150*', '*structural*r151*', '*structural*r152*', '*structural*r153*', '*structural*r154*', '*structural*r155*', '*structural*r156*', '*structural*r157*', '*structural*r158*', '*structural*r159*', '*structural*r160*', '*structural*r161*', '*arithmetic*r110*', '*arithmetic*r111*', '*arithmetic*r112*', '*arithmetic*r113*', '*arithmetic*r114*', '*arithmetic*r115*', '*arithmetic*r116*', '*arithmetic*r117*', '*arithmetic*r118*', '*arithmetic*r119*', '*arithmetic*r120*', '*arithmetic*r121*', '*arithmetic*r122*', '*arithmetic*r123*', '*arithmetic*r124*', '*arithmetic*r125*', '*arithmetic*r126*', '*arithmetic*r127*', '*h138-*', '*t185r144-*', '*t177c143-*', '*t373e135-*', '*k369r134-*', '*t088p133-*']
+WORDS=['corpus', 'source', 'primary', 'history', 'search', 'inventory', 'fixture', 'control', 'extract', 'render', 'vendor', 'build', 'copy', 'copied', 'frozen', 'role', 'formal', 'manuscript', 'release', 'parent', 'private', 'input', 'upstream', 'shortlist', 'context', 'fetched', 'scratch', 'preprint', 'catalogue', 'catalog', 'receipt', 'brief', 'intake', 'bundle', 'recovery', 'manifest', 'authentication', 'task', 'work', 'family-title', 'literature', 'venv', 'site-packages', 'packet', 'payload', 'archive', 'cache', 'download', 'external', 'third-party', 'hits', 'index', 'navigation', 'audit', 'log', 'provenance', 'evidence', 'ledger', 'helper', 'readme', 'direct.tex', 'pinned-', 'scan', 'snapshot', 'submissions', 'retention', 'retrieve', 'record_evidence', 'validation', 'invocation', 'checkpoint-output', 'journal', 'status', 'progress', 'final', 'report', 'handoff', 'disposition', 'integrity', 'checkpoint', 'contribution', 'proof-role', 'ten-findings', 'twenty-findings', 'new-ten', 'terminal-summary', 'summary.json', 'history-scout', 'verification', 'canonical-bindings', 'review', 'freeze', 'summary', 'rights']
+DEPENDENCIES={".git","node_modules",".venv","venv","__pycache__",".mypy_cache",".pytest_cache","dist","target","dependencies"}
+def excluded(rel):
+    s=str(rel).lower()
+    if s==OWN or s.startswith(OWN+"/"): return True
+    if any(fnmatch.fnmatchcase(s,p) for p in ROUNDS): return True
+    if any(x in DEPENDENCIES for x in s.split("/")): return True
+    if any(w in s for w in WORDS) or any(x in s for x in ["comparison", "fetch", "diagnostic"]): return True
+    if re.search(r"screen(?:-|[0-9])|proof[-_]?r[0-9]|(?:^|[/_.-])check(?:[/_.-]|$)",s): return True
+    # Known primary names and common compound copied/helper variants.
+    if re.search(r"jones[-_]?seeger|seeger|beltran|hickman|sogge|jstor|lrs[-_0-9]|jsw[-_0-9]|bhs[-_0-9]",s): return True
+    return False
+def paths():
+    for base,dirs,files in os.walk(ROOT,topdown=True,followlinks=False):
+        rel=Path(base).relative_to(ROOT)
+        dirs[:]=[d for d in dirs if not excluded(rel/d) and not (Path(base)/d).is_symlink()]
+        for f in files:
+            p=rel/f
+            if not excluded(p) and not (ROOT/p).is_symlink(): yield p
