@@ -1,0 +1,19 @@
+# Structural discovery r180 — PREFREEZE / no nominee
+
+No viable distinct full-scope theorem was frozen. No author-proof nominee, mathematical self-grade, acceptance, or count is submitted. Work used Codex / GPT-6 Astra / high / default service tier; the supplied campaign context remains 19/20, latestR041.
+
+The exact Source320 manuscript and its operative MT/PD companions were authenticated at the stipulated pin and read in full: 31 TeX/Bib objects. All source and operative upstream proofs were treated as true. The source already gives unmarked nonhomeomorphic closed connected aspherical topological four-manifolds with the same word-hyperbolic group, and that conclusion is not nominated again.
+
+The retained mathematical work is in [the selected notes](packet/notes/01-source-and-paid-interfaces.md):
+
+1. [Full transfer reduction](packet/notes/02-transfer-and-realization-profile.md). Finite-order lifts recover A inside F=A×⟨δ⟩; the normalizer theorem makes F self-normalizing and Sylow. A direct fusion/transfer proof yields Out(Π)=K⋊F with K odd and a canonical retraction. Every model has a realized profile P(X)⊂F avoiding δ. This separates all source linear twists, a source/classical amplification retained as paid work.
+2. [Nonlinear construction](packet/notes/03-nonlinear-pattern-construction.md). Arbitrary Boolean chamber patterns c:A→F2 give explicitly defined closed models M_c≃Q2 by exact boundary identifications and local orthant/cofibration arguments. For q_r=Σ x_(2i−1)x_(2i), the explicit translation subgroup is the graph over the polar radical of dimension n−2r. For q=x1x2 it lies inside four full source graph profiles; it does not determine the entire realized profile.
+3. [Surgery and core calculation](packet/notes/04-surgery-core-and-defect-calculations.md). The boundary gluing cochain is exact, so the quadratic polarization is not odd deck monodromy. The marked normal invariant and assembly obstruction vanish, giving specified s-cobordisms. Actual Quinn core localization moves the remaining geometry into embedded relative graph cores, whose complexity alone is not invariant. Neither this operation nor the stipulated reflection transfer recognizes the original chambers under every homeomorphism.
+
+The unpaid operation in the developed test is a proof controlling arbitrary homeomorphisms of M_(x1x2), sufficient to determine its full realized profile or distinguish its embedded relative cores from the linear models. Equality with the visible translation subgroup is unproved. No nonhomeomorphism, counterexample to that equality, conditional substitute, exhaustion, or global impossibility is asserted.
+
+Primary proof reading includes the full KL v3, final DHHRS v3, Quinn cores v1, Khan's complete map-level s-rigidity interface, the published Bartels–Lück Proposition 0.3 proof, and the classical transfer proof. The published KL paper was additionally read in full as a disclosed late version comparison. Original I07 and I97 operative sections and exactly the seven completed r179 exceptions were read. Older full targets and all supplied dispositions remain unchanged.
+
+[Reading limits and isolation disclosure](packet/private/reading-limits.md) records exact byte/line extents, recovered truncations, access/version failures, late reads, false admissions and coarse omissions. No active-peer bodies/status/activity were inspected; no exhaustive clearance is claimed. Protected material and metadata remain local in private directories under original rights.
+
+The selected packet has its OWN exact [MANIFEST](packet/MANIFEST.json), with [FINAL](FINAL.json) and this REPORT outside the packet. [ANCHORS.json](ANCHORS.json) holds detached SHA256 values and the explicit read-only verification command. Tiny copied controls exercise valid data, tampering, extra membership and wrong anchors; these are artifact checks only. No shared files, git state, downstream artifacts, or public services were changed.
