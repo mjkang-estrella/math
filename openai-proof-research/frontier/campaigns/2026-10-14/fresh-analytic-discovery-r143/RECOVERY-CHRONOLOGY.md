@@ -1,0 +1,7 @@
+# Recovery chronology
+
+2026-10-20 r2 recovery, distinct from cancelled r1. User reports server restart and cancellation; no r1 task remains pending. Initial direct own-root inspection found CHECKPOINT.md, ISOLATION.md, two authentication ledgers, private inputs and scratch scripts, but no FINAL, MANIFEST, REPORT or FROZEN-SCOPE at root or packet locations. RECOVERY-BASELINE.json records all pre-existing own files before any content modification. They remain historical r1 bytes.
+
+Isolation lapse: first r2 command ran rg --files for AGENTS.md from /home/mj-kang/Documents/Dev/math rather than actual project root; its !frontier/** exclusion did not cover nested project frontier paths. Output included excluded derivative archive filenames and was truncated (6479 original tokens, 3000 budget). No returned excluded body was opened, no mathematical premise was taken, and no further broad traversal was performed. This violates the requested prospective filename isolation; no perfect-isolation claim is made. Later own-root inspection and direct body selections exclude all named peer identifiers, including prospective structural149/arithmetic114, and no peer activity is queried.
+
+Fresh r2 governing reads: actual project AGENTS.md, sources/upstream.json, and first 150 lines of acceptance rules. Earlier checkpoint read extents remain r1 observations, not r2 semantic reads. Requested provenance Codex/GPT-6 Astra/high/default service tier; runtime reports Codex/GPT-6 Astra/high, tier not independently observed. Campaign19/20/latestR041; no grade/count.
