@@ -1,0 +1,15 @@
+# Analytic discovery r171 — PREFREEZE / no nominee
+
+The round developed only Source301, trace-cone classification of Razak–Jacelon stabilizations. No exact novel theorem was frozen and no author-proof nominee is submitted. All prior targets and supplied dispositions remain unchanged; the parent alone integrates and assigns grades or counts.
+
+The strongest retained construction is concrete. For a finite group acting contravariantly on the full topological cone T(A⊗W⊗K), independently realized source automorphisms enter an exactly equivariant block inductive system. Its trace pullback is mE for a split idempotent E onto a twisted diagonal. The inverse limit recovers the entire prescribed cone, including infinite weights and arbitrary ideal structure. A regular UHF action supplies Rokhlin towers, and source classification returns the action to the prescribed algebra. This is carried through in [CALCULATIONS.md](CALCULATIONS.md).
+
+For existing finite-group Rokhlin actions, source norm uniqueness combines with the actual stable proper-unitary and coherent-intertwining mechanisms of Girón Pacheco–Szabó, arXiv:2608.09517v1. The resulting cocycle conjugacy realizes the prescribed equivariant full-cone map. This compatible source/primary composition is recorded in [COHERENCE.md](COHERENCE.md), not nominated as a new result.
+
+The next exact relative operation is not implied by the cone. [RELATIVE.md](RELATIVE.md) constructs a trace-trivial Rokhlin involution on an essential ideal whose oscillating fiber maps prevent extension to the ambient algebra. The strongest compatible reduction identifies the precise missing datum: exact covariance of the Busby map. When that covariance is supplied, the ordinary pullback construction already pays extension. No nonroutine method deriving a new valid relative compatibility theorem was closed. The example is a diagnostic, not a nominee or a general impossibility claim.
+
+[COMPARISON.md](COMPARISON.md) records the payment and original-history boundaries. All12 canonical TeX/Bib objects,226971 bytes, were authenticated at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and read in full. Actual operative primary passages and selected original-history sections preceded extended mathematical drafting. [private/READING-LIMITS.md](private/READING-LIMITS.md) records exact extents, recoveries, late rereads, navigation-only acquisitions, access limitations, false admissions and coarse omissions. Protected bodies and metadata stay private/local.
+
+Authorized provenance: Codex / GPT-6 Astra / high / default service tier. The packet was written only in fresh-analytic-discovery-r171. No shared edits, git actions, nested agents, public actions or downstream formal/manuscript/release work occurred.
+
+MANIFEST.json selects this packet once. FINAL.md, MANIFEST.json and the outside-manifest REPORT.md have detached SHA256 anchors in ANCHORS.json and the final handoff. VERIFY.py requires all three explicit anchors. Its copied controls and original-byte checks are artifact checks only, not mathematical gates.
