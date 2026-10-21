@@ -1,0 +1,16 @@
+from pathlib import Path
+from fnmatch import fnmatchcase
+import re
+ROOT=Path('/home/mj-kang/Documents/Dev/math/openai-proof-research')
+OWN=ROOT/'frontier/campaigns/2026-10-14/fresh-structural-discovery-r168'
+WILDCARDS='''*analytic*r162* *structural*r168* *arithmetic*r134* *analytic*r163* *structural*r169* *arithmetic*r135* *analytic*r164* *structural*r170* *arithmetic*r136* *analytic*r144* *analytic*r145* *analytic*r146* *analytic*r147* *analytic*r148* *analytic*r149* *analytic*r150* *analytic*r151* *analytic*r152* *analytic*r153* *analytic*r154* *analytic*r155* *analytic*r156* *analytic*r157* *analytic*r158* *analytic*r159* *analytic*r160* *analytic*r161* *structural*r151* *structural*r152* *structural*r153* *structural*r154* *structural*r155* *structural*r156* *structural*r157* *structural*r158* *structural*r159* *structural*r160* *structural*r161* *structural*r162* *structural*r163* *structural*r164* *structural*r165* *structural*r166* *structural*r167* *arithmetic*r116* *arithmetic*r117* *arithmetic*r118* *arithmetic*r119* *arithmetic*r120* *arithmetic*r121* *arithmetic*r122* *arithmetic*r123* *arithmetic*r124* *arithmetic*r125* *arithmetic*r126* *arithmetic*r127* *arithmetic*r128* *arithmetic*r129* *arithmetic*r130* *arithmetic*r131* *arithmetic*r132* *arithmetic*r133* *t126s161* *t360s147* *t337a161* *h138-* *t185r144-* *t177c143-* *t373e135-* *k369r134-* *t088p133-*'''.split()
+ALIASES='''corpus source primary history derivative search inventory fixture control extract render vendor build copy copied frozen role formal manuscript release parent private input upstream shortlist context fetched scratch preprint catalogue catalog receipt brief intake bundle recovery manifest authentication task work family-title literature venv site-packages packet payload archive cache download external third-party hits index navigation audit log provenance evidence ledger helper readme direct.tex pinned- scan snapshot submissions retention retrieve record_evidence validation invocation checkpoint-output journal status progress final report handoff disposition integrity checkpoint contribution proof-role ten-findings twenty-findings new-ten sharedtasks terminal-summary summary.json summary sawin-2018 tao-teravainen acquire checks verify seal_once exact_moments tools scripts verification prepare metadata contracts bind_passages replay stderr author-completion reading-limit reading-limits verifier fetch-family seal-family isolation reading-and-failures compound-history write_notes diagnostics result-helper reading failure outcome completion retrieval seal diagnostic history-scout history-focused screen review proof-r check- freeze rights dispatch integration reproduce reproduction resume launch scout dependencies node_modules .git __pycache__ toolkit canonical-bindings capture.py bind.py'''.split()
+def excluded(path):
+    s=Path(path).relative_to(ROOT).as_posix().casefold()
+    if any(fnmatchcase(s,w) for w in WILDCARDS):return 'literal-wildcard'
+    if any(a in s for a in ALIASES):return 'literal-substring'
+    if re.search(r'history[0-9]|further-history-|screen(?:-|[0-9])|proof-r[0-9]|(?:^|[/_.-])(?:role|check|freeze|summary|rights)(?:[/_.-]|$)',s):return 'derivative-pattern'
+    return None
+
+# Late conservative tightening; no new broad body scan follows.
+ALIASES.append("check")
