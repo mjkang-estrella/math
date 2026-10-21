@@ -1,0 +1,13 @@
+# Detached artifact report — r140
+
+This report sits outside the selected payload manifest and is bound by its own detached SHA256. FINAL.md and MANIFEST.json also have separate detached anchors. ANCHORS.json is a convenience carrier; callers must supply its three values explicitly to verify_packet.py. A trustworthy external copy of these values is required to detect coordinated replacement of the packet and anchor carrier.
+
+The selected packet consists of this agent's original DERIVATIONS.md and UNRESOLVED.md, the read-only verifier, private reading/isolation records, exact protected source and primary acquisitions, exact copied original-history sections, supplied completed exceptions, navigation metadata, bounded model checks, sealing/control scripts and tiny copied controls. FINAL.md, this REPORT.md, MANIFEST.json, ANCHORS.json and the post-seal VERIFICATION.txt transcript are excluded from the payload manifest to avoid self-reference. The first three are detached-anchor bound; the transcript is only execution output. No inherited manifest is attached to this selection. The full exact entry list is in MANIFEST.json; no claim of directory-wide mathematical completeness is made.
+
+The complete source tree has 13,223 entries and its supplied SHA256 matches. The 49 selected source TeX/Bib files all match immutable pin Git blobs and lengths; their aggregate bytes are340,812. Authentication and inclusion do not certify semantic reading; actual extents are separately recorded in private/READING.md and its extent ledgers. All evidence retains original rights and remains local/private.
+
+Model checks: exact cardinality for degrees1–100; additivity for all100 degree pairs with each degree1–10; 80 Hasse-jet rank calculations (two consecutive orders, degrees1–10, characteristics2,3,5,101). All agree with the written elementary model. This finite check is neither a proof replacement nor adversarial review.
+
+Copied artifact controls: the one-entry copied selection was accepted intact; a one-byte payload mutation was rejected; an incorrect detached FINAL anchor was rejected. The original UNRESOLVED.md remained unchanged and the mutated copy was restored. private/control-results.json records the actual exit codes. Controls do not mutate any source or primary original. These are artifact checks, not mathematical gates.
+
+Discovery disposition: PREFREEZE/no nominee. No mathematical grade, acceptance, count, release, formalization or manuscript result is assigned. Parent integration and independent review remain separate. No active peer was inspected and no nested agent, git operation, public action or downstream work was used.

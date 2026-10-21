@@ -1,0 +1,11 @@
+# PREFREEZE — no nominee
+
+No exact full theorem was frozen and no full author-proof nominee is submitted. This is not an assertion of exhaustion, impossibility, a mathematical grade, acceptance or count.
+
+The concrete integrated construction is in DERIVATIONS.md. Exact source cardinality and additive supports yield an explicit boundary depth C k^(1−1/n), with C=6 sqrt(n)(2B+1)^(1/n), and a complete backwards-transfer ordinary multipoint jet bound. The elementary graded family G_k has exactly (k^2+k+2)/2 monomials, yet exact torus jet order k−ceil((sqrt(8k+9)−3)/2). It prevents deriving a constant-width conductor from those abstract support data alone. It is not asserted to be a transformed source ring or a source counterexample.
+
+The strongest compatible primary payment is stronger than that support estimate: on the blowup of a source-admissible tuple, corrected uniform-nef Fujita vanishing gives s_r(kL)>=kw−C_(X,L,r) for every sufficiently large integer k, in every characteristic. The derivation keeps the real nef boundary but applies vanishing only to integral nef line bundles. Characteristic-zero adjoint vanishing gives the sharper familiar inequality m+n<=(k−a)w. Thus neither sublinear loss nor bounded geometric jet deficit is a distinct unpaid result here.
+
+What is actually unpaid is source-specific extra rank/conductor information at the finite-degree boundary. A constant-width conductor for the actual reshaped supports would need an additional established property; general gradedness and the exact polynomial cardinality do not suffice. A sharp rounded degree-by-degree postulation formula for the complete geometric series would require ranks within the bounded endpoint strip. No proof of either operation was obtained, and no general counterexample to either geometric possibility is asserted. These are precise limitations of this construction, not newly frozen targets.
+
+All original targets/dispositions, including W136 and the supplied abundance, volume-gap, Chow and other scopes, remain unchanged. No weakened or conditional substitute is offered. The unrelated completed r139 K-theory constructions are retained as historical context only; they are not a premise for geometric novelty. The parent alone may review, integrate, assign grades and change campaign counts.
