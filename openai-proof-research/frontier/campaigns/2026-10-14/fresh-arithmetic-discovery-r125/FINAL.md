@@ -1,0 +1,15 @@
+# Arithmetic discovery r125: PREFREEZE / no nominee
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Campaign19/20, latestR041 is incoming context; no count or independent grade is assigned. Parent alone integrates/reviews/counts. Publication and downstream stages remain stopped.
+
+One distinct family was developed: finite-field polynomial arithmetic and roots in explicit finite commutative algebras. The integrated calculation is [notes/integrated-finite-algebra-reduction.md](notes/integrated-finite-algebra-reduction.md); prefreeze chronology is [notes/feasibility.md](notes/feasibility.md).
+
+The strongest paid composition computes the nilradical and canonical coefficient algebra by Frobenius, splits all components using the stipulated prime-field factoring algorithm, and factors over arbitrary explicit extension fields. It gives exact simple-root lifting, the complete square-zero root problem, all pure Frobenius equations, and unit powers p^s m with runtime polynomial in D,log p,m,log(s+1). Dependence on m is numerical, not logarithmic. Existing regular-local algorithms also pay substantial singular lifting. These are source/classical compositions, not substantial nominees.
+
+For nonunit square roots with radical cube zero, the note gives an exact arbitrary-quadratic-system encoding. A3CNF formula with n variables and c clauses produces a local F3-algebra of dimension3+2n+3c and a nonzero square-zero target, with root count2*3^(1+n+2c)*#SAT. This is a routine source-independent algebraization and a diagnostic of what a general solver would have to handle, not a nominated new hardness result. No dimension-uniform singular solver, new nonroutine special-class construction, or substantial source-dependent theorem closed. An uncomputed general solver is not submitted as a finding.
+
+Ten bounded exact diagnostic records matched, including3132 basis-triple associativity identities and one full6561-element enumeration. They do not prove a universal theorem or establish contribution. No frozen theorem/author-proof nominee, independent correctness/contribution grade, acceptance, priority, family-exhaustion or perfect-isolation claim exists.
+
+READING.md records partial source/primary/history coverage, late copies, false navigation admissions, truncations, Lenstra timeout, modern-primary503 failures and limited web-PDF reading. In particular an initial acceptance extractor wrongly displayed journal preamble lines1–19; an opaque history derivative and shared OUTCOME alias entered history scans. Those contents supply no premise, but the admissions cannot be undone. No active/future peer body supplies a mathematical premise. Every old frozen scope/disposition is unchanged.
+
+The packet is private/local where original rights require. MANIFEST.json binds exact payload members; FINAL.md,MANIFEST.json,REPORT.md are its three outside-payload envelopes. Verify with python -B verify.py ROOT FINAL_SHA256 MANIFEST_SHA256 REPORT_SHA256 using all three independently detached terminal anchors. Artifact integrity is not a mathematical gate.
