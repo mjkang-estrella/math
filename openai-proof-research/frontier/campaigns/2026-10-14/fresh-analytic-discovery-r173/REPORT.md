@@ -1,0 +1,13 @@
+# r173 detached artifact report
+
+This REPORT is outside MANIFEST.json's payload and has its own detached SHA256 anchor. FINAL.md and MANIFEST.json are separately anchored. ANCHORS.json is a convenience envelope, not a self-authenticating trust source; the explicit hashes in the handoff are the verifier inputs.
+
+The mathematical outcome is PREFREEZE/no nominee. The main durable derivations are CALCULATIONS.md, MIXED.md and BOUNDARY.md, with strongest-payment analysis in COMPARISON.md. INTERFACES.md records the earlier prefreeze direction. Private evidence includes complete authenticated pinned source objects, actual retained primary PDFs/extracts/operative page renders, selected original-history sections, exact reading records, selection predicates and access failures. They remain local under original rights.
+
+The selected packet is exactly this round's own files, excluding the four detached envelope names FINAL.md, MANIFEST.json, REPORT.md and ANCHORS.json. It is not a reduction of an inherited packet, and no inherited manifest is attached. All payload paths, byte lengths and SHA256 values are individually listed in the new manifest. The verifier also checks that no unlisted file exists in this selected root.
+
+Tiny controls consist of an exact80-byte copy from this round's CALCULATIONS.md and a separate one-byte-changed copy, together with the expected original digest. The originals are not edited. The read-only verifier accepts the positive copy and requires that the changed copy fail the original digest. Exact original project-history and completed-exception hashes were compared without mutation and remained unchanged; the comparison record is private/originals-unchanged.json. No git or staging command was used.
+
+After the single seal, run python -B on verify_packet.py with --final-sha256, --manifest-sha256 and --report-sha256 set to the detached handoff values. A further invocation with a deliberately wrong explicit FINAL anchor must fail without changing any file. These are proportionate artifact checks, not correctness or contribution gates. Post-seal verifier output is emitted to the tool transcript and does not modify this report or the packet.
+
+All writes, downloads, extracts, renders, copies, scripts and scratch for this round stay under frontier/campaigns/2026-10-14/fresh-analytic-discovery-r173/. Commands use the actual project root. There were no nested agents, heavy installations, unbounded jobs, browser UI operations, publications/uploads/submissions/contacts, or downstream formal/manuscript/release work. Parent alone decides integration and review.
