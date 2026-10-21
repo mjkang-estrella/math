@@ -1,0 +1,17 @@
+# Detached artifact report
+
+This report is outside the MANIFEST payload. It reports the research outcome and artifact procedure, not a mathematical verdict.
+
+Outcome: PREFREEZE/no nominee. The exact attempted operation, strongest integrated derivation and missing full action identities are in DERIVATIONS.md and UNRESOLVED.md. No full theorem was frozen, weakened or renamed. No downstream formal, manuscript or release work was performed.
+
+The payload is selected once from this unique root, excluding only FINAL.md, MANIFEST.json, REPORT.md and ANCHORS.txt. It includes the original derivations, private raw source/primary material, exact selected original-history sections, binding/reading records, prospective path predicate, read-only verifier and small copied artifact controls. No inherited manifest is attached to this selection. Metadata and protected bodies stay private/local under their original rights. The downloaded but unread mapping-class-group paper is explicitly marked navigation-only in private/READING.md; its presence is not evidence of semantic reading.
+
+The twelve raw canonical objects were rebound by byte size, SHA256 and Git blob to the pinned complete-tree identities. Seven selected original-history files were hash-compared with their recorded read-time versions and all matched; this hash comparison is not another semantic read. Other explicitly authorized completed originals were read but not mutated; no claim of an unrecorded before/after comparison is made.
+
+Before the one-time packet seal, the read-only entry checker was exercised on a copied canonical main: the exact copy was accepted, a one-byte-mutated copy rejected, and a missing copy rejected. These are proportionate artifact controls, not mathematical tests or acceptance gates. The main read-only verifier checks three externally supplied detached anchors, exact payload membership, safe relative paths, absence of symlinks, byte sizes and SHA256. Its final execution result is reported in the tool transcript and handoff, without rewriting this report after sealing.
+
+Limits and errors: the exact source bodies and the selected primary/original-history extents were semantically read; hashes alone are never counted as reading. The initial combined display of the completed repair DERIVATIONS and the initial Wen pp.1–5 display were truncated and recovered. Two PDF extractions emitted font-type warnings with successful exit. There is no full transitive-bibliography, worldwide-priority or perfect extraction claim. Late primary and history reads are identified as prefreeze feasibility reads.
+
+The full-CONTENTS metadata decode and overbroad adjacent catalogue excerpt violated the intended narrow selection; the next family was not used. The broad literal policy also admitted opaque publication/qa derivative aliases before recognition; they were not selected as operative bodies or used as premises. An incidental out-of-scope sentence in a specifically authorized completed assessment was not followed. These limitations, false admissions and coarse omissions are described in private/selection-limits.md, not concealed by the seal. Prompt chronology was not independently certified by inspecting peers.
+
+Every command used the actual project root as workdir. All task writes, copies, downloads, extracts and controls are under the exclusive r137 root. No shared/old-root mutation, git operation, nested agent, heavy installation, unbounded job, browser UI, publication, upload, submission or contact occurred.
