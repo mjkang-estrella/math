@@ -1,0 +1,20 @@
+# Structural179 — PREFREEZE / no nominee
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Source317 and ALL operative upstream proofs at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated true. No theorem was frozen and no author-proof nominee is submitted. Parent alone integrates and adopts grades/counts.
+
+The sustained construction treats every small discrete group G, every subgroup H, every positive finite strict dimension and omega, every invariant Dwyer-poset sieve A subset B, and every arbitrary equivariant attaching functor U_n(A)->X. It carries through the canonical comparison
+
+  X^H amalg_{U_n(A^H)} U_n(B^H)
+       -> (X amalg_{U_n(A)} U_n(B))^H
+
+as a Street weak equivalence. The complete derivation is in notes02--03. Its compatible operations are the actual primary target-1-path support theorem (including finite reflection), the source stationary Gray prisms and full sieve pieces, an explicit diagram indexed by fixed terminal vertices, contractible simplex-fiber calculations, and source cosieve reattachment. It works for arbitrary infinite groups and posets without interchanging fixed points with general filtered colimits. Direct equivariant transfer, the homotopy orbit-diagram comparison and compatible dimension change are carried through as source/classical consequences. These are not nominated by changing a parameter or extending r41's orbit-template wording.
+
+The further strict operation remains unpaid: prove that EVERY invariant mixed attached-cell class has a representative over the fixed presentation, and that EVERY equality between such representatives descends there, at the SAME all-dimensional/arbitrary-target scope. The canonical weak equivalence does not prove a categorical isomorphism. The actual low-dimensional mixed quotient presentation was read before that analysis; no all-dimensional equivariant normal form was obtained. No counterexample or impossibility is claimed. Note04 gives explicit positive-chain and stationarity tests, while retaining the stronger source zigzag that bypasses the naive single-cylinder failure. The strict operation is exploratory, not a frozen target or a necessary condition for every possible next result.
+
+All11 canonical TeX/Bib objects were authenticated against the complete13223-entry tree and immutable Git blobs, and read completely. Exact operative primary proofs and the eligible r41 original were read; all six authorized completed-r178 originals remain unchanged. Primary version limits, late mixed-presentation reading, transitive-reading limits and failed publisher/author URLs are recorded in private/reading-limits.md. All older full scopes and supplied dispositions, including S176A, remain unchanged. No active-peer body was used.
+
+Isolation limitations are explicit: every supplied literal wildcard and substring, including publication, was installed before traversal; the initial implementation omitted a separate broader check-derivative rule and admitted an unrelated check_algebra.py to lexical navigation. That rule was tightened prospectively, with no rerun; no premise came from the false admission. Other coarse omissions, helper false admissions and truncated navigational output are disclosed. No perfect-isolation or exhaustive-clearance certificate is claimed.
+
+Three exact chain identities and769 finite upper-set fibers were checked. Tiny copied packet controls are artifact checks, not mathematical gates. Protected bodies and named metadata remain private/local under original rights. All work is inside the exclusive r179 root; no shared edit, git operation, nested agent, browser UI, public action or downstream formal/manuscript/release work occurred.
+
+The own exact selected packet is sealed once at private/packet/MANIFEST.json. Its outside final envelope is private/FINAL.json; this REPORT is outside the packet. Detached hashes are in private/ANCHORS.json. private/verify_packet.py is read-only and requires explicit FINAL/MANIFEST/REPORT SHA256 anchors. This handoff claims neither correctness/contribution grades nor acceptance/count.
