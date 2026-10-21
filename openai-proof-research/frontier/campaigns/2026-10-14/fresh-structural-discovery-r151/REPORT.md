@@ -1,0 +1,11 @@
+# Outside report: r151
+
+PREFREEZE/no nominee, no freeze, no independent gates or count. The unchanged full R113 guarantee is unproved and unrefuted. No restricted or renamed substitute is offered. Parent integration/review remains separate.
+
+Review notes/02-integrated-reduction-and-gap.md for the mathematics: exact all-order minimum-basis payoff; insertion threshold; signed product-rate interpolation; compatible heterogeneous source hybrid; and a genuine source-state family invalidating a uniform conditional reference comparison. The useful residual is UNCONDITIONAL: pay the matched-rate benchmark and exchange losses against OPT_D at one K, with all source costs retained. Neither an identity nor a failed conditional route resolves it.
+
+Evidence limits:10 canonical source bodies authenticated (all seven substantive sections read); three exact primary PDF versions acquired with relevant proof spans read, one page visually inspected; remaining transitive primary coverage partial. First traversal used prospective component pruning, later refinements disclosed three derivative false admissions. Initial catalogue and a few history displays incidentally exposed unrelated entries, without developing them. Full details and omissions are in notes00/03. No perfect-isolation/exhaustive search certificate.
+
+Diagnostics:1458 rank-tail checks,1944 insertion checks,18 exact interpolations,2928 four-label preprocessing states,46848 test masks and1124352 permutations;18 separate scalar parallel-layer enumerations and an actual-source-constants rational example. These do not establish a universal robust inequality. The diagnostic prints to stdout and has no file writer.
+
+Seal:MANIFEST.json covers exact payload files and directories, excluding only the three top-level envelopes FINAL.md,MANIFEST.json,REPORT.md. The verifier requires explicit detached hashes for all three. Eight selected-copy controls used a fresh subset manifest and preserved fixture snapshots. Original identities and subset membership are separately recorded. Source/primary/history/search/render/control bodies are private under original rights; parent may integrate original prose/code/named metadata only. No publishing,UI,contacts,git or downstream stages.

@@ -1,0 +1,13 @@
+# Structural r151: PREFREEZE / no nominee
+
+Authorized Codex / GPT-6 Astra / high / default tier (not independently measured). Campaign19/20,latestR041; parent alone integrates/reviews/counts. No statement frozen and no full author-proof nominee. Old full scopes and dispositions unchanged.
+
+One Source111 matroid-prophet family was investigated. The initial implementation lead is already paid by I22. Research retained the complete R113 law-free c/K target: arbitrary known finite matroids, independent two-sided-likelihood-bounded sample/value laws, unbounded nonnegative weights with finite expected optimum, exactly one sample, full-seed/data-aware order, and polynomial rational oracle/bit cost in n,input length,log K. No bounded-spread/rank/support replacement.
+
+The strongest completed new reduction is in notes/02-integrated-reduction-and-gap.md. It expresses the source main branch's exact worst-order payoff as a sum of minimum-weight basis values in its actual layers. A rank-tail identity gives the exact insertion gain/loss, and multilinear interpolation gives the precise replacement and lost-rank costs between likelihood-matched guard/test rates and implementable uniform tests. The source heterogeneous hybrid and classical weighted-witness operations are paid, with no min-rate shortcut.
+
+A positive-probability rank-one family produced by the source's own preprocessing makes the conditional actual/reference payoff ratio arbitrarily small even at fixed K>1. This rules out that uniform conditional comparison only. It does not refute an unconditional budget, the full branch mixture, or R113. The remaining operation is an unconditional law-free one-K welfare budget, including the matched-reference lower bound, signed exchange losses, residual/path/small-group/maximum/rounding accounting. It is not proved here.
+
+The reduction is explained by classical matroid greedy sensitivity and product differentiation; no established nonroutine contribution is claimed. Bounded exact calculations support the identities, not the full target. All seven pinned source sections and the operative primary ABHM/FSZ/KW passages were read; transitive proof coverage is partial. Actual reads, three scan policies/counts, false admissions, incidental overbroad navigation, truncations and late reads are disclosed in notes00/03. No perfect isolation, exhaustion, current-open or priority claim.
+
+The packet includes a read-only exact-membership verifier, a stdout-only mathematical diagnostic and eight copied integrity controls. Protected bodies stay private. Artifact checks assign no mathematical grade or count. Detached FINAL/MANIFEST/REPORT SHA256 anchors are supplied in the terminal handoff; all three are required by code/verify.py.
