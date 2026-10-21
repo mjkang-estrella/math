@@ -1,0 +1,15 @@
+# Prospective isolation and reading incidents
+
+Before traversal, literal active/future and legacy exclusions were installed. No active peer body/activity/status was used. User-supplied reciprocal initial-brief exclusion is stipulated, not audited.
+
+1. Acceptance section reader decoded lines 1–18 while locating heading 19; displayed only acceptance lines 19–28. It decoded the stopping heading. No whole-journal read.
+2. Required r152 combined output was truncated. GAPS, READING-LIMITS and ISOLATION were recovered in full; assessment/DERIVATION and the three calculation notes were visible in the combined output. Exact recovery will be logged if needed.
+3. Catalogue parser incorrectly treated Markdown ## headings as family delimiters. Its Ricci query selected the whole Manuscript map, bytes 132–638727, and emitted a truncated 159656-token display, exposing numerous unrelated families. This VIOLATES the one/two-family navigation budget. The erroneous selected-catalogue.txt is retained as private incident evidence, not used as mathematical premises. Correct delimiters are bold numeric family labels. No perfect compliance claim, no next-heading protection claim for the erroneous display. Subsequent research is restricted to the first Ricci match only, with correct boundaries and no further family shopping.
+4. Steklov keyword search returned no matches and displayed no family. Complete tree JSON was metadata navigation only.
+
+Coarse substring exclusions omit potentially relevant authored material. Opaque aliases can evade detection. No exhaustive or perfect-isolation certificate.
+
+5. First authored-history traversal decoded 3405 UTF8 files, skipped 40 nonUTF8 bodies, and produced 103 overly noisy hits because bare 348 matched hashes/numbers. Output truncated. The policy missed proof_rN, verification/seal/retrieval/anchor administrative aliases; membership includes such derivatives. They were not mathematical premises. A subsequent focused pass over existing membership excludes those additional aliases before reads. This correction is late, not prospective clearance. I27 lines 1–60 also exposed unrelated family names in its introductory source list; only its Source348 section is used.
+
+6. The broad walker also admitted frontier/TEN-FINDINGS.md, a shared journal/ledger alias missed by the token policy, and the focused pass displayed I30 review-disposition snippets from it. This is a false admission, not an authorized narrow exception. No peer information or mathematical operation was taken from it, and no new grade is assigned. Original I30 itself was independently read. Novelty/reproduction/assemble/metadata administrative aliases also survived; no perfect classification is claimed. There will be no further broad history scan.
+7. Primary rg navigation was truncated and exposed commented/trailing material in CCL beyond its operative document. Only bounded passages in the actual main document are used. No full-primary read is inferred from acquisition or grep.
