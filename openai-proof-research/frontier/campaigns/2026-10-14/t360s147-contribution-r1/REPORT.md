@@ -1,0 +1,13 @@
+# Outside-payload review report
+
+T360S147 contribution r1 returns TECHNICAL conditional on correctness, at all unchanged frozen quantifiers. REVIEW.md and DERIVATION.md give the complete operative source/classical reduction. The focal weighted-cofactor removal is paid by the source common midpoint geometry, elementary PSD common-kernel cancellation and classical full distributional derivative calculus; local DPF regularity handles the complementary open region. No correctness PASS, acceptance, count, global priority, current-open or exhaustive-search claim is assigned.
+
+The original statement/proof and incoming FINAL/MANIFEST/REPORT anchors matched their detached supplied values. All50independently selected input-copy records remained stable. Seventeen exact-pin source bodies matched canonical complete-tree path/size/Gitblob/SHA256 metadata. Four incoming primary objects and three selected source members were separately authenticated, with gzip single-source/tar membership handled explicitly. The copied incoming verifier reported76payload/79whole-root files. No incoming root was altered or resealed.
+
+Own manifest contains 110 regular payload files. The three outside-payload envelopes are exactly FINAL.md,MANIFEST.json,REPORT.md. Selected private source/primary/history/search/render/download/control material retains original rights and remains local. Download failures and HTML/empty responses are retained with their actual identities, not represented as primary PDFs read.
+
+Six copied selected-fixture controls accepted baseline/restored and rejected changed payload,missing payload,hidden extra and a wrong detached manifest anchor. Every invocation preserved its before/after snapshot including fixture-root mode, regular-file modes/link counts/mtime and bytes, and directory mode/mtime. This is a proportionate artifact check, not a mathematical test.
+
+verify.py checks explicit detached anchors, exact regular-file byte membership and rejects symlinks/multiply-linked files. It does not seal permissions,empty directories,timestamps,ownership or root mode. Detached hashes are computed separately in the terminal; the final read-only verification must report matched. No seal writer is to be rerun.
+
+Semantic limits are explicit in READING-LIMITS.md: full Global-Support operative mathematical body; bounded actual Holder proof-chain portions including the complete needed midpoint/support/contact/Jacobi operations; full DPF1211proof; bounded FKM/CEMS/transitive and inverse/graph-primary proofs; incomplete thesis/DS/AD access. Broad traversal used prospective exclusions but admitted opaque derivatives and omitted coarse filename classes; ISOLATION.md records these rather than claiming perfect/exhaustive isolation.

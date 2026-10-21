@@ -1,0 +1,27 @@
+# Isolation and rights
+
+Every command used the actual project root /home/mj-kang/Documents/Dev/math/openai-proof-research as workdir. Every intentional write, download, extract, render, note, program, control and final envelope is under frontier/campaigns/2026-10-14/t360s147-contribution-r1/. No git command, staging, commit, shared/old-root mutation, nested agent, installation, unbounded job, publication, upload, submission, external contact, browser UI or downstream formal/manuscript/release work occurred. Reading a local PDF render is not browser UI. PDF skill temp-path conventions were overridden by the exclusive-root instruction.
+
+Direct permitted reads preceded the one broad authored-history scan: project governing files, acceptance opening, author147 packet and named I07/I225/I331 originals, then authenticated source and primary copies. No project ancestor search or traversal of peer review roots occurred. Named source/primary/history exceptions were direct path reads, not exemptions added after a broad corpus search.
+
+## First-traversal predicates
+
+private/history_scan.py contains the actual policy. The sole broad walk started at the actual project root with descent restricted to frontier and its authored campaigns/iterations/experiments/proposals/scouts/notes/findings branches. Casefolded component predicates reject directories before descent and filenames before decoding. Mandatory exclusions include *t360s147* (hence every other role, proof root, alias and this own root), *structural*r153*, *arithmetic*r119*, *analytic*r148*, the full retained original active/copy exclusion set, all listed category substrings, shared status/tasks/ledgers and review-role names. Analytic135--147, structural143--153 and arithmetic107--119 are all excluded broadly. Author147 and this root are accessed only by the explicit direct exceptions, not that walk.
+
+Hidden/ignored/JSON/large eligible UTF8 have no size cutoff. Symlinks are not followed; NUL-containing and nonUTF8 bodies are skipped. The scan recorded5091decoded bodies,1175pruned directories,4545pruned filenames,40NUL skips,zero nonUTF8/symlink/errors and27matching files. These figures describe the actual bounded run, not a clearance certificate. Only selected matching snippets were displayed; complete retained hits are private/history-hits.json. No repeated giant scan was performed.
+
+## Real false admissions and omissions
+
+Filename rules cannot classify opaque semantic derivatives perfectly. The scan actually decoded discrete-discovery/tao-teravainen-2019.txt, a primary/source derivative without a source-like component name, and i58_standard_map_additive_entropy_novelty/diagnostics.py, a diagnostic-code body; matrix-disk-discovery/structural.tex is also a manuscript-like false admission under an opaque name. Unqualified cofactor/adjugate words admitted unrelated algebraic and geometric authored contexts. Displayed hits included i247's matrix resolvent estimate, i115's polynomial adjugates, i27's old significance summary and an r89 cofactor-integration note. None supplies a premise for this review. Relevant follow-through was restricted to the required original I07/I225/I331 material. No inference is made from the absence of other hits.
+
+The broad category substrings also coarsely omit genuine authored mathematics in paths containing terms such as work, log, source, history, formal or review; NUL skips can include text with padding. Restriction to the named authored frontier branches omits other possible project prose. Opaque derivatives or embedded peer summaries could still escape filename predicates. No perfect semantic isolation or exhaustive history-search certificate is claimed. The acceptance opening was a separate expressly authorized direct read of a shared status file, not a broad-scan admission or acceptance authority for this nominee.
+
+Large combined tool displays were clipped on several occasions. Bounded recoveries of operative bodies are recorded in READING-LIMITS.md. The missed FREEZE.md guess, initial source-key prefix error, gzip/tar distinction and unsuccessful primary retrievals are disclosed there. No clipped search dump is treated as body coverage.
+
+## Copies, rights and seal boundaries
+
+Original review prose/code and named metadata are separate from private/. Protected upstream/primary/history/search/extract/render/copied-control bodies under private/ retain their original rights and remain local. No new license or public redistribution is granted. New primary acquisition records distinguish incoming bytes, selected TeX or text extraction and unsuccessful HTML/empty responses.
+
+INPUT-AUTH independently lists this review's selected copies rather than inheriting the author archive's membership. The author verifier's read-only intake match is additional byte context only. Own controls use a fresh small selected-copy fixture and newly enumerated membership, with explicit detached anchors and before/after snapshots. They do not certify mathematical correctness, contribution, priority, file-system properties beyond their stated checks, or the separate proof review.
+
+The own final root is sealed once with an exact payload manifest excluding exactly FINAL.md,MANIFEST.json,REPORT.md. Detached hashes for those three envelopes are returned outside the payload. No writer is to be rerun on the sealed root. The integrity verifier is read-only; its coverage and omissions are explicit in its source and REPORT.md.
