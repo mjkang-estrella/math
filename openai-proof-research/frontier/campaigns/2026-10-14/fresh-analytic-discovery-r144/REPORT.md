@@ -1,0 +1,15 @@
+# Outside report — r144
+
+PREFREEZE/no nominee. The full existing target is unchanged: for every4≤n≤7, every finite-Morse-index C² solution of Δu=u³−u on R^n with values in[-1,1] is a constant well or a planar tanh transition. No author proof of that claim is submitted.
+
+The actual r23 originals already identified automatic energy growth as missing. This round worked within that same distinct-from-r143 family and did not rename the gap. After reading the pinned growth/radial operations, the author obtained a more favorable moving-core calculation: cylinder energy is bounded by CK(w)s^(7−n)w^(n−1), and a fourth-order collar loss would have summable normalized cost O(K(R)^(-(n−3)/2)). The choice w=L+s^(1/50), L=R/√K(R), also fits polynomial buffers. Fourth-power Young/transfer estimates handle zero cutoff values algebraically. These are supporting feasibility calculations, not the necessary exterior PDE estimate.
+
+The full coupled localization is unfinished: physical square-root test admissibility and normal averaging, localized exponential-kernel leakage, cap-branch payments, positive-foot transfer and final radial switching/area comparison have not been proved together with one uniform set of constants and limits. A compatible primary local stable-ball theorem is already available and was read. The earlier dimension-four fixed-cylinder estimate is therefore not presented as an impossibility barrier.
+
+Strongest known compatible classification retains a bounded-energy assumption: Florit-Simon arXiv:2602.03136v1 Theorem1.2 with the stipulated stable input, and Liu et al arXiv:2610.08499v1 finite-index theorem/corollary. Their relevant actual proof bodies were read to the extents recorded; they obtain finite blowdown mass from the assumed energy bound. The full transitive WW proof and all source reach/mean-curvature operations were not freshly read. No literature-wide novelty claim.
+
+Fourteen canonical pinned blobs match complete-tree path,size,Gitblob andSHA256. Three incoming primary archives and five selected members match their separate records. One optional primary request returned404. Thirteen selected local-original records rechecked unchanged from their earlier local-auth record. The initial broad scan falsely admitted derivative aliases; the corrected scan remains coarse. All limits and clipped outputs are disclosed. There is no perfect-isolation or exhaustive-history certificate.
+
+Six separately manifested copied-prose integrity controls behaved as expected. The final exact manifest covers all actual payloads, including private inputs and nested fixture envelopes; it excludes exactly the three root outside envelopes. Detached envelope anchors are computed independently in the terminal and required by the read-only verifier. No inherited original manifest certifies a reduced copy. Protected bodies remain private/local under their original rights.
+
+No independent correctness/contribution grades, acceptance/count, formalization, manuscript or release. No shared-root edits, git or publication. Parent alone decides further work. All old full/technical/failed scopes and stipulated dispositions remain unchanged.
