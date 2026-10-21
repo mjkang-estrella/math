@@ -1,0 +1,9 @@
+# Structural r171 — PREFREEZE
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Campaign 19/20, latest R041. Parent alone integrates, grades and counts. Complete original standing brief and current overrides read. Only SOURCE155 is developed. Pinned statements AND operative proofs are stipulated true. No source-truth audit, peer read, git mutation, nested agents, browser UI, public action, or downstream formal/manuscript/release work.
+
+All eleven canonical mathematical TeX/Bib objects (92126 bytes) were authenticated and read fully, including both nested figure inputs. The complete tree hash matches the supplied anchor. README/PDF were not used as substitutes for operative proof reading. Completed r170 exceptions were read with recovery after display truncation; no old scope is reopened.
+
+Isolation was installed before traversal. Full-project-relative POSIX paths are casefolded before all exclusion predicates, and directories/files are pruned before descent/byte reading. Broad search admitted 1843 UTF8 files and 38 nonUTF8/access failures; five lexical hit files, only one actual SOURCE155 original section identified. Coarse exclusions deliberately omit useful originals. No exhaustive clearance or perfect lexical classification is claimed. Initial acceptance navigation inadvertently displayed the preceding status preamble [0,4801), in addition to the exact acceptance section [4801,6347); this departure is disclosed rather than relabelled as intended reading.
+
+The r78 original already identifies connectivity as supplied by a primary reduction and points to a later connected-three-dimensional undecidability result. Its exact original section is now read. Its primary summaries are navigation: this round is acquiring and reading the actual operations independently. The source's explicit finite selection also already pays bare effectivity. No theorem frozen or nominee drafted.

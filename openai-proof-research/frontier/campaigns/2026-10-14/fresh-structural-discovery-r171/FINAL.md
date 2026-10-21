@@ -1,0 +1,11 @@
+# Structural r171 — PREFREEZE / no nominee
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Campaign19/20/latestR041. No frozen statement, author-proof nominee, independent correctness/contribution grade, acceptance or count. Parent alone integrates and adopts those outcomes. All supplied older scopes/dispositions remain immutable.
+
+The complete integrated calculation is in notes/02-integrated-calculation.md. It eliminates individual-column periods and finite torsion stabilizers, carries trivial stabilizers through cyclic stacking, uses the primary exact quotient lift and connected replacement, and then varies generic sampling phases to force arbitrary real translations onto a common grid. For that replacement tile, every real tiling has the same exact rank-one period group. It also calculates the digit disagreement density p^(-v_p(h))(1-2/(p(p-1))) and corresponding graph bounds and almost-periods. These are fully developed source/primary compositions; no identifiable nonroutine operation is nominated.
+
+The forced quotient-kernel period remains; intersecting two incompatible exact lifts is not a construction. Auxiliary-output fibres are not classified. Discrepancies of exact solutions do not prove robust decoding of approximate tilings. The actual later primary already supplies decorated two-prime finite-pattern encoding and connected3D undecidability. No conditional bridge or renamed prior scope is submitted.
+
+All eleven canonical mathematical objects and the operative primary/history selections were read. Exact versions/extents, late reads, recovery after truncation, unused acquisitions,20 administrative false admissions plus2 conservative flags, coarse omissions, and the accidental acceptance-preamble display are disclosed in private/reading-record.md. No complete literature/history clearance is claimed. Protected bodies and metadata remain private/local under original rights.
+
+The own exact payload is sealed once. REPORT.md is an outside-payload envelope within this exclusive root. verify.py takes explicit detached FINAL, MANIFEST and REPORT SHA256 anchors and writes nothing. The24 finite digit calculations and copied integrity controls are not mathematical gates. No git mutation, peer inspection, nested agent, browser UI, publication/contact, or downstream formal/manuscript/release work occurred.
