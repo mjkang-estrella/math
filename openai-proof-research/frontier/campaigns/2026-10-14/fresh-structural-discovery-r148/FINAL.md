@@ -1,0 +1,13 @@
+# Structural discovery r148 — PREFREEZE / no nominee
+
+One structural family was pursued: the existing i13 connected biregular-pattern Sidorenko counterexample scope, using pinned Source161. No viable full theorem emerged, so no statement was frozen or nominated. All original targets and dispositions remain unchanged. Parent alone reviews, integrates and counts; campaign19/20/latestR041 is supplied context, not a count change.
+
+The strongest integrated comparison credits the complete source construction, the already available Coregliano–Razborov biregular HOST reduction, dense-degree/blowup and reflection compositions, and the actual old i13/r66/r127 mechanisms. Host regularization does not change the pattern. The source's original all-activity rank limit and pinning proof cannot simply be asserted for a new regular pattern.
+
+The durable calculations give (a) an exact fixed-sign formula for collapsed moment coefficients, positive because every cut in the associated 4-regular medial graph is even, and (b) an exact all-point-matrix-collapse contribution with exponent 2f*b(D/2)-(v-1)*b(D). For regular triangular complexes of point degree at least six, that exponent is positive. Thus the native large-field transfer with fixed activation/type parameters fails on those changed patterns. These are exploratory route diagnostics, not substitute results or full-scope impossibility claims.
+
+Two interfaces remain unpaid: the complete signed sum over all type maps, and a stable rank/activation transfer controlling every activity support and singular configuration at the same deficit scale. Field-dependent parameters, other ranks, local representations of conditioning and different constructions are not excluded. AM–GM and rank-threshold calculations explain why the specific repairs considered do not supply a proof.
+
+Read [the integrated derivation](notes/02-integrated-reduction-and-gap.md), [prefreeze calculations](notes/01-prefreeze-calculations.md), and [evidence/reading limits](notes/03-evidence-and-reading-limits.md). Source and primary bodies remain private under their original rights. Isolation/search limitations, false admissions, recovery of truncated displays, partial primary/transitive reading and the failed Hatami v3 fetch are explicitly recorded. No exhaustive search, perfect isolation, current-open or priority claim is made.
+
+Exactly three root envelopes are outside the exact payload manifest: this file, REPORT.md and MANIFEST.json. Their detached SHA256 anchors are handed out separately. Nine copied artifact controls produced their expected outcomes and left the verifier/fixture unchanged during verification. Artifact tests are not mathematical gates; no correctness, contribution or acceptance grade is assigned.

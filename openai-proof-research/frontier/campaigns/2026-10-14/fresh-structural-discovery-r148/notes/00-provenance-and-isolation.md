@@ -1,0 +1,15 @@
+# r148 provenance and policy
+
+Authorized Codex / GPT-6 Astra / high / requested default service tier. Research sub-agent, no nested agents. Campaign19/20, latest R041, one remains; parent alone integrates, reviews and counts. Complete standing brief and overriding header read in the conversation. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and operative proof operations stipulated true; no truth audit.
+
+Only this exclusive root is writable, including scratch/downloads/temp/builds. No git commands, staging, commits, browser UI, publication, uploads, contacts, or downstream formal/manuscript/release. Three final outside-payload envelopes will still be inside this root.
+
+Initial direct reads: applicable project AGENTS (ancestor checks returned no other files), upstream.json; acceptance ledger lines1–190; catalogue lines1–190 (unrelated introductory context, not additional selected families), then only Sidorenko/forcing matched family161. Full tree checked:13223 entries, truncated=false, SHA256 eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b. Truncated tree.json unused.
+
+Five required r147 completed originals read by exact path, as narrow exceptions. Initial combined display truncated the middle of notes01/02; those two were recovered in full separately. They are provenance/overlap context only, not mathematical premises for this round. The supplied reciprocal isolation history is accepted as supplied; peers were not inspected.
+
+FIRST filename traversal ran at the actual project root through code/history_scan.py. Before descent and body selection it tested every component and flat filename with literal fnmatch exclusions for all required rounds/prefixes, including longer suffixes. It skipped symlinks and its own root. No negative-digit guards. Eligible hidden/ignored/JSON/large UTF8 were searched without size cutoff.
+
+Failure disclosed: initial derivative alias list omitted context/fetched/scratch/preprint/catalogue and some role aliases. It falsely admitted copies and inventories there (5123 UTF8,32 nonUTF8,5 symlinks skipped;59 hit files). No peer body supplies a premise. Initial policy/output retained privately. Refined list additionally prunes those names, contribution/review/proof-role aliases and author snapshots;4219 UTF8,29 nonUTF8,5 symlinks skipped;41 hit files. Both reject NUL-bearing UTF8 (none reported). Refined output is not retrospective restoration. Coarse substring exclusions also omit genuine originals. Arbitrarily renamed derivative contents and undiscovered aliases are not certified. Search is navigation, not semantic clearance or exhaustion.
+
+One selected family: Source161 bipartite homomorphism-density counterexample, specifically the EXISTING i13 connected biregular-pattern question. No renamed target or restricted replacement will be nominated. Source proofs, primary comparison and actual history precede extended drafting; no theorem frozen. The source's original irregular H, old i13 regular-pattern scope, old C4-free r66 scope, and all BUC/other historical scopes remain immutable.
