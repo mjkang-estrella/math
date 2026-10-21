@@ -1,0 +1,13 @@
+# r155 provenance and limits
+
+Codex / GPT-6 Astra / high / default service tier. Campaign19/20 latestR041. Complete standing brief read; only obsolete count/provider lines superseded. Pin and operative proofs stipulated true, no truth audit. No nested agents or external publication. All commands use actual project root. All writes stay here.
+
+Before any filename traversal, explicit enumerated full-relative-path predicates are persisted in original/exclusions.json. Required named completed r154 originals are narrow direct exceptions. The initial instruction read incorrectly requested acceptance file lines1–180, exposing shared historical/status paragraphs beyond the exact acceptance section. These are false admissions, not mathematical premises. Subsequent broad scans exclude every listed alias and own root before descent/decoding. No perfect isolation or exhaustive coverage claim.
+
+Initial chromatic-symmetric/Stanley catalogue-only screen returned no lines; it counts as first family. Second and final permitted family screen is sandpile/chip-firing/critical groups. No third direction will be selected. Initial direct exception aggregate output was truncated inside r154 note02; full recovery follows.
+
+An initial guarded full-project scanner was stopped before completion after about one minute, with no hit output or durable results; it failed to exclude .git by name. It may have decoded UTF8 git-internal bodies, none displayed or used. No git command/state mutation occurred. The amended bounded scan starts at frontier and excludes git/dependency directories too. This is a coarse omission of authored material elsewhere, not an exhaustive scan.
+
+Correction of provisional scanner note: the first process had in fact finished normally before pkill; pkill found no process. Polling recovered 4350 decoded UTF8 files,82 nonUTF8,5862 pruned paths and13 hit files. Its durable result was overwritten by the amended scan (4226 UTF8,40 nonUTF8,5933 pruned,13 hits); first stdout is conversation-only. The first process may have traversed git metadata; no git command was executed. Both scans falsely admitted shared NEW-TEN by opaque filename and old retrievals.json,prepare.py,verify.py,rejection_tests.py derivative aliases. These snippets were navigation only, not mathematical premises.
+
+The expanded spanning-tree alias catalogue screen incidentally displayed Source174 and Source211 metadata, beyond the intended two-family navigation boundary. This is an actual screen overreach, not a claim of a clean two-family-only display. Neither source body was selected or developed. Source169 chromatic quasisymmetric functions is the sole developed family; chip-firing/critical groups remain a fruitless navigation screen.
