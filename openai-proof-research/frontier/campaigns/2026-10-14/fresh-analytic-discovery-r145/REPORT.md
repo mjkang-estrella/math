@@ -1,0 +1,9 @@
+# Local handoff report
+
+Outcome: PREFREEZE / no nominee. One developed Coulomb family; an incidental CM275 historical navigation scope was dropped. No third family, new frozen target, independent verdict, acceptance or count. Mathematical details and unpaid exact selection/density obligations are in DERIVATION.md and GAPS.md.
+
+Eleven canonical pinned non-PDF blobs were matched to complete-tree paths, sizes, Git blob hashes and SHA256. The complete tree has 13223 entries and SHA256 eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b. Seven incoming primary acquisitions and thirteen selected/derived members were checked separately; archive members were compared against incoming originals. Twenty-three named old local originals have separately recorded byte identities. These identities do not authenticate an inherited original packet or certify reduced-copy membership.
+
+The final payload manifest covers all actual own-root regular files except the three root envelopes FINAL.md, MANIFEST.json and REPORT.md. Detached hashes are computed independently after sealing. The read-only verifier requires all three explicit anchors, checks exact membership and bytes, and rejects symlinks. Copied controls use a newly enumerated selected-prose fixture; baseline/restored cases accept and altered/missing/extra/wrong-anchor cases reject. It does not execute protected payload or certify mathematics, contribution, modes, hardlinks or empty directories.
+
+All writes stayed within the exclusive r145 root. Arithmetic116 was excluded prospectively before subsequent selection/traversal; no peer activity or body was inspected. No historical seal/freeze, shared index or git state was changed. Source rights and read limits remain as recorded in ISOLATION.md and READING-LIMITS.md. No publishing, browser UI, nested agent or downstream operation occurred.
