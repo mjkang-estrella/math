@@ -1,0 +1,15 @@
+# Outside-payload report
+
+T360S147 is a full author-proof nominee, not a gate verdict. The exact frozen statement has SHA256 `5c36d8a2237f1416282ed5b930cc945ab78ec3fac42214685199c5228dc98ddc` and the author proof has SHA256 `90f07fcca19ff034d9ac46d7dc94fefe85cf57aaf05ee814990b205d2ca0d719`. Its full rough-density/global-bi-W1,1 scope is unchanged; no old target is replaced.
+
+Mathematical reduction: singleton lifted contact logs -> geometric Lipschitz midpoint endpoints X,Y -> positive semidefinite P,Q with dX=L_X P,dY=L_Y Q -> singular P+Q at full conjugacy -> Q adj(P)=0 -> zero focal part of the distributional measure X_#(dY adj(dX) dz). DPF local Sobolev regularity on the genuine non-cut open region completes global membership. Reversal gives the inverse and geometry-only norm bounds. See AUTHOR-PROOF.md for the exact metric/coordinate factors and nonorientable treatment.
+
+No mathematical gap is knowingly left in the author proof. The nonroutine/substantial contribution case is unresolved and expressly separated from proof closure. Strongest compatible source/classical operations are fully credited in CONTRIBUTION.md. There is no independent correctness review, formal proof, manuscript/release, acceptance, count or priority claim.
+
+Authentication matched17 canonical pinned source bodies with complete13223-entry tree metadata,path,size,GitblobSHA1 and SHA256;4 incoming primary objects and3 selected members;13 whole original copies and2 independently enumerated excerpts since their late capture. Incoming-original authentication is separate from copy membership. Frozen statement and prefreeze checkpoint stayed unchanged. All protected upstream/primary/history/search/render/copied-control bodies remain private/local under original rights.
+
+Nine exact Fraction matrix cases and three hypothesis/order diagnostics support only finite algebra. Six independently manifested copied-fixture controls accepted baseline/restored and rejected changed payload,missing payload,hidden extra and incorrect detached manifest anchor. Each invocation left its current fixture unchanged. Sympy was unavailable; no installation was performed.
+
+Limits include incomplete Holder spectral/scalar/jet proof-chain reads,partial FKM transitive reads,partial CEMS rendering,and unacquired DFS/other classical original chains. Source and primary bytes retained do not imply full semantic reading. Broad pre-descent exclusions were present from the first project-root traversal; opaque derivative/shared-status false admissions and clipped output remain disclosed. No perfect isolation,exhaustive search or literature clearance is certified.
+
+This report,FINAL.md and MANIFEST.json are the three outside-payload envelopes. All other regular files are enumerated exactly by MANIFEST.json. The detached SHA256 anchors are computed separately in the terminal, and verify.py checks them without writes. It does not certify file modes,hardlinks,empty directories or mathematics. No seal writer is to be rerun on the sealed original.

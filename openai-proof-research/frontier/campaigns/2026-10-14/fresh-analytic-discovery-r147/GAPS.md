@@ -1,0 +1,11 @@
+# Author-proof nominee; independent gates unreviewed
+
+One full theorem is frozen as T360S147 in STATEMENT.md (SHA2565c36d8a2237f1416282ed5b930cc945ab78ec3fac42214685199c5228dc98ddc). AUTHOR-PROOF.md gives the complete author argument relative to the stipulated source inputs and stated classical/primary dependencies. The author has no known remaining mathematical obligation at that exact scope. This is not an independent correctness grade.
+
+The earlier feasibility gap—singular derivative mass on a volume-null conjugate-contact set—is not retained as unpaid: the strongest midpoint/cofactor reduction pays it. The proof establishes dY adj(dX)=0 on that parameter set using PSD P,Q and singular P+Q, then uses the distributional Piola identity before any inverse Sobolev assumption. No positive midpoint-density lower bound, global cutoff of all conjugacy, or uniform local DPF exponent is required.
+
+Concrete independent-review pressure points are: all-points log uniqueness from the actual source lifted section; DPF localization with the true contact measure and the orthogonal-pair MTW convention; coordinate/metric factors in the two pole derivatives; the equivalence between focality and singular broken-action Hessian; the measure-valued composite identity at critical points of X; and coordinate-independent geometry-only total-variation bounds, including nonorientable M. These are supplied with arguments, not intentionally omitted bridges, and remain for adversarial review.
+
+Substantial contribution is NOT established by this research turn. CONTRIBUTION.md gives the strongest compatible composition and identifies the weighted focal-cofactor cancellation as the proposed residual. Whether that residual is nonroutine requires the parent's separate primary-literature review. No current-open, priority, exhaustive-search or impossibility claim is made. No restricted/smooth/nonfocal substitute is offered. No global W1,1+epsilon, global W2,1 potential, smoothness, approximation, I07 cut avoidance or I225 stability conclusion is claimed.
+
+Finite rational matrix diagnostics and artifact controls do not certify the PDE/Sobolev proof, contribution, formal support, acceptance or count. No nested agents or independent review ran. Parent alone integrates, reviews and counts.
