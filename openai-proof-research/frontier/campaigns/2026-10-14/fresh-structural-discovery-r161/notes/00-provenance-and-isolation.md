@@ -1,0 +1,9 @@
+# Provenance and prospective limits
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Campaign19/20, latestR041; parent alone reviews, integrates and counts. Complete incoming header and standing brief read. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and its operative proofs stipulated true, not audited. All command workdirs are actual project root; writes stay in this r161 root. No Git, nested agents, browser UI, installation or downstream work.
+
+Direct AGENTS/upstream and exact acceptance section (binary-streamed lines19–28; no preamble decoded) read. Catalogue selection uses actual bold numeric labels; only126 was decoded. Four named r160 originals and parent metadata exception all existed and were fully read. Their copies have separate incoming identities; no original whole-archive manifest inherited. Structural160 remains failed source selection/PREFREEZE, not a mathematical result;159's classical routing disposition unchanged.
+
+Isolation policy was written BEFORE first filename traversal/body selection. Direct required files are named exceptions. Complete pinned tree is required metadata; exact canonical Source126 selection is authorized notwithstanding broad source/build/README exclusions. All round predicates apply before selection. Future peer exclusions and reciprocal initial-brief exclusions are supplied facts; peer originals/activity/status were not inspected. Own root is excluded from broad history. No perfect isolation or exhaustive claim: coarse exclusions and opaque aliases remain limits.
+
+Parent navigation exposed087 and126 titles and only126 catalogue block; initial incorrect perfect-matching path query exposed unrelated FPRAS/entropy-matching metadata and missed the selected path before correction. This is inherited metadata exposure, not body reading or a clean two-family search. This round develops126 only; companions serve that mechanism only.
