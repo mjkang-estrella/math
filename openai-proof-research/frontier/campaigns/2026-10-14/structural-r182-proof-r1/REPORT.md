@@ -1,0 +1,13 @@
+# S182P independent correctness review — round 1
+
+**PASS for the entire unchanged frozen statement and unchanged author proof**, under the stipulated truth of Source322 and every operative upstream proof at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. No necessary author correction or essential uncompleted correctness verification remains. No contribution verdict, acceptance or count is assigned; parent alone integrates and adopts grades.
+
+The [complete independent review](packet/REVIEW.md) reconstructs oddness/bijectivity, the projective metric and actual covering, global odd lifting in dimensions1,2 and≥3, including arbitrary nonseparable spaces, planar monotonicity with flat faces, strict branch separation, and the exact ordinary-sphere source application. It verifies uniqueness up to simultaneous global sign, unique normalization at any prescribed unit basepoint, and the converse for every even sign function without regularity. It neither narrows the statement nor repairs/replaces the submitted proof.
+
+The frozen statement is SHA256 `62b6ad633a662a491be617e82f8eb441be8f02069a7dc5289c10996dc8d9bee8`; the author proof is `9f2989669c20bea00260a77dd11a4a4fcb1e7cb0d84f75f8777871ae85d1d38e`. Both original files retain mode0644. Exact original anchors support a read-only recheck.
+
+Actual source main.tex/references.tex were authenticated against the complete tree and pinned Git blobs and read fully. Actual whole-space, C(K), and2026 C0 primary texts and classical covering/monotonicity proof passages were independently read. CL and the2022 min-only original were not read or used as premises; inherited author access failures are not independent review evidence. These limits do not leave an essential correctness verification open. No literature-exhaustion, priority or substantiality claim is made.
+
+The [private reading-and-isolation record](packet/private/reading-and-isolation.md) gives exact extents, versions, recovered initial truncation, incidental displays/renders, access limits, prospective guards and rights. No broad history traversal, peer/review inspection, shared/author edit, git action, nested agent, browser/public action or downstream formal/manuscript/release work occurred. All writes stay inside this review root. Provenance: authorized Codex / GPT-6 Astra / high / default service tier.
+
+This review has its own exact selected [MANIFEST](packet/MANIFEST.json), detached [FINAL](FINAL.json), this outside REPORT, and [ANCHORS](ANCHORS.json). The [read-only verifier](packet/verify_packet.py) requires explicit FINAL/MANIFEST/REPORT SHA256 arguments. Tiny copied controls are artifact checks only. No inherited manifest is attached to a reduced selection; private bodies and named metadata stay local under original rights.
