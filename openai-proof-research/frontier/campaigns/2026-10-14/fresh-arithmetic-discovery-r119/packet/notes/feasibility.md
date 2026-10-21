@@ -1,0 +1,11 @@
+# Feasibility checkpoint — PREFREEZE, no nominee
+
+Selected investigation: Source009, prime-to-characteristic symbol reconstruction and equivariant descent. Not a revival of equal-characteristic finite-p-power T009P102 or the noninjective Hom targets. Actual r102 full scope/proof and comparison read; prior noninjective scopes not directly read because their work/REPORT paths are excluded, and are not claimed cleared.
+
+All mod-ell introduction, section07 field construction and section08 scalar/Frobenius uniqueness read, plus pro-ell companion final reconstruction proof. Strongest primary Topaz1910.03563v1 opening and section5.3 full descent/Isom proofs read; local/Galois valuation foundations not fully read. Primary1408.5194v3 acquired; operative proof reading pending.
+
+Finite action calculation: source gives Aut_M(V)/F_ell^* = Aut(P,k)/<F>, P=K^perf in char p!=ell. Restrict field automorphisms to Fpbar to obtain r:Aut(P,k)->Zhat with r(F)=1. For a finite-order quotient element, any lift beta satisfies beta^m=F^n; hence m*r(beta)=n in Zhat. Reduction modulo m gives m|n, torsionfreeness gives r(beta)=n/m in Z. Thus F^(-n/m)beta is the unique lift fixing Fpbar. Products of these unique lifts are again normalized, so simultaneous noncommuting finite group relations are paid. Actual linear action differs by a character into F_ell^*, not an arbitrary two-cocycle.
+
+Arithmetic descent calculation: if two locally finite actions of any group on P agree modulo Frobenius, their quotient is F^(n(g)); centrality makes n:G->Z a homomorphism. For one transcendental x, the orbits under both actions are finite, so only finitely many possible n(g), because Frobenius powers of every transcendental orbit element are distinct. Thus n=0. Source reconstruction therefore turns projective equivariance of actual geometric Galois actions into exact field equivariance, and fixed fields recover the original base perfections. This is the same final descent operation as the read primary, now supplied with the stronger stipulated source reconstruction.
+
+No nonroutine residual yet identified. Before extended integrated notes, check fixed-field/perfection equality, compatible stable finite models, scalar twisting, and limits for arbitrary non-locally-finite abstract actions. Do not freeze a theorem based on hypothesis removal/dimension reduction alone.
