@@ -1,0 +1,13 @@
+# Parent handoff — r153
+
+Disposition: PREFREEZE/no nominee. No frozen theorem, independent grade, acceptance/count action or downstream work. Parent alone integrates and reviews. All work is local in this exclusive root.
+
+Read notes/02-integrated-reduction-and-gap.md for the full return-aware calculation. Both Source129 proofs are credited; the source finite semigroup induction is not automatically a stochastic induction. The actual r117 restart proof already pays unrestricted O(h)-state bounded-error recognition. The strongest integrated comparison here includes exact first-exit composition, full relation singleton contexts, Dwork--Stockmeyer relative/rare-transition control and its Markov-tree antecedent. Its explicit short-context packing bound leaves the simultaneous long-product loss-budget operation unpaid. No supporting baseline is nominated.
+
+Read notes/00 and03 before interpreting history coverage. There were two scans with pre-descent exclusions, plus named/direct operative reads. Generic ledger/derivative false admissions and coarse omissions remain. r117 packet/public/automata.md was a direct selective completed-original read outside the broad packet filter, located late; it is not claimed as a named r152 exception or initial coverage. The new *t360s147* full-path exclusion was installed prospectively before sealing, with no scan rerun. No active peer mathematical/review/parent material supplied a premise.
+
+Authentication is scoped: canonical pinned identities, primary version/read records, incoming-original byte records, selected-copy membership, and own payload membership are distinct. No inherited manifest certifies a reduced copy. Private sources, primary files, historical copies, search results and renders retain original rights and remain local. Original notes/code and specifically named metadata are available for parent consideration; nothing was staged or published.
+
+The finite diagnostic checked324 segment pairs,120 triples,72 forest identities and4369 small relation words, with singular and false-shortcut cases. Eight small copied-selection integrity controls behaved as expected and preserved each current fixture during verification. Artifact checks and exact arithmetic are not independent mathematical or contribution gates.
+
+Three top-level outside envelopes are FINAL.md, MANIFEST.json and this REPORT.md. The read-only verifier requires all three detached hashes; it checks exact files/directories and rejects symlinks, hardlinks and nonregular objects. It does not certify modes, historical write isolation, completeness of the literature or mathematics. The final seal is performed once and independently replayed without modifying payloads.
