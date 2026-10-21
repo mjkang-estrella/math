@@ -1,0 +1,11 @@
+# PREFREEZE working record
+
+Authorized Codex / GPT-6 Astra / high / default service tier. The complete user brief was read in conversation. The pinned statements and operative proofs are stipulated true; no truth audit is undertaken. No nominee, frozen statement, grade, acceptance or count.
+
+Initial body work: all-length main, introduction, inputs, selected laws, channels, correlations, square argument and tensor-packing appendix read (one combined tool response truncated; square opening recovered separately). Exact statements of the three assigned companions read. Their deeper analytic dependencies remain to be followed, not presumed read.
+
+The actual all-length source already pays arbitrary standard extensions, selected-length joining functoriality, full-distal-parameter conditional laws for at most three slots, three-group tensor packing, saturation of parameter-plus-one-state conditioning, minimal-support regrouping, and row/column amplification. No one of these is author novelty. General probability spaces reduce through the countable translate factor of the fixed tuple.
+
+Original i05 exact Gaussian-action theorem and its full Gaussian conditioning/variation and approximation proofs read; i13 fluctuation scope and complete bounded-observable long-memory counterexample read; i52 exact nilsequence common-set rejection read. These remain immutable. The original i05 already explains the linear selector/polynomial invariance distinction. No Gaussian, rate-free fluctuation, nilsequence rename or polynomial conditional bridge will be nominated.
+
+The active calculation to investigate is whether the source tensor closure can replace bounded-degree correlation exceptions by the density-small exceptions available under qualitative weak mixing, after paying known PID/relative-structure and norm-convergence reductions. This is a hypothesis-removal feasibility calculation within Source154, not a preassigned theorem or a claim that the operation is new. The key scale interaction is the packing factor exp(C epsilon^-2 sqrt(d) log(2+d)) against exceptional degree, together with sum over all selected dyadic scales of 1/d. Actual primary bodies must be read before a strongest-reduction conclusion.
