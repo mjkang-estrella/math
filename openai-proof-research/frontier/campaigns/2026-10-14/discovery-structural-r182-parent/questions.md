@@ -1,0 +1,9 @@
+# S182P independent review questions
+
+These are unresolved review questions, not objections adopted as defects or mathematical grades. Assess the entire unchanged statement.
+
+For correctness, reconstruct oddness and injectivity using surjectivity; the projective metric and genuine two-sheeted covering; local path connectedness and simple connectedness in arbitrary nonseparable normed spaces; parity, bijectivity and inverse continuity of the lift; the dimension-two angular lift and the case when only one space has dimension at least three. Check the two-triangle planar monotonicity inequality with flat faces, the plus-norm reverse semicircle, uniform branch separation, ties and antipodal endpoints. Verify that Source322 is invoked only after ordinary sphere distance preservation. Check all uniqueness/basepoint and converse conclusions without continuity of the original phase map or sign function.
+
+For contribution, independently reconstruct the strongest compatible source/classical/actual-primary derivation at every frozen quantifier. Compare the whole-space phase midpoint/projective proof, C(K) and current C0 signed gluing, CL-space mechanisms, any actual sphere/min-only extension, covering lifts and planar chord monotonicity. Mere use of classical ingredients does not prove the integrated result technical; demonstrate full payment if assigning TECHNICAL. A named open problem or missing search hit does not establish substantiality. Resolve or disclose the inaccessible CL body and late min-only lead. If the full comparison cannot be completed, state INCOMPLETE with its exact missing operation.
+
+Keep correctness and contribution separate; contribution is conditional on full correctness. No author edits, scope narrowing, retrospective freeze, invented priority/exhaustion or campaign count. All operative pinned source proofs are stipulated true; check their applicability and new deductions rather than their truth.
