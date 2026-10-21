@@ -1,0 +1,5 @@
+# r113 initial scope and provenance
+Codex / GPT-6 Astra / high / default service tier, as authorized; campaign 19/20, latest R041. No self-assigned gates or count. PREFREEZE until feasibility closes. User complete standing brief read in conversation; obsolete campaign and Factory provenance overridden.
+Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and operative source proofs stipulated true, no truth audit.
+Before first filename traversal: prune literal fnmatch patterns *analytic*r142*, *structural*r148*, *analytic*r143*, *structural*r149* on EVERY path component, including flat compound aliases. Also broad-scan exclusions from user apply, including arithmetic r107--112, analytic r135--141, structural r143--147 and named old prefixes. Longer numeric suffixes match. No negative-digit guards. No active peer body premises. Named r112 originals are direct-read exceptions only.
+All writes restricted here, including temporary/build/downloads. No git/staging/commits, agents, browser UI, publication or downstream release work. No exhaustive history or perfect isolation claim. Root AGENTS read by exact path before traversal. No traversal occurred before this note.
