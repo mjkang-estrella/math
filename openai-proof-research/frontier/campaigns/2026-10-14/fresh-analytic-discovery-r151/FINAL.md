@@ -1,0 +1,13 @@
+# r151 handoff — PREFREEZE / no nominee
+
+Authorized Codex / GPT-6 Astra / high / default service tier; service tier not independently measured. Supplied campaign context:19/20, latest R041. Parent alone integrates/reviews/counts. No theorem was frozen, no full author-proof nominee is submitted, and no independent grade or count is assigned.
+
+The selected family is Source083, short Hilbert transforms along arbitrary planar Lipschitz directions. The full hard-inner-truncation maximal question is unchanged from actual original r63/r65/r67 work. It is distinct from r150 weighted logBM, but not new to project history.
+
+DERIVATION develops the strongest read composition: source and DPGTZK diagonalization; off-diagonal total variation and fractional short-cutoff square control; preservation of selected one-width tree and reference-line moment bounds; Guo's actual smooth single-annulus variation mechanism; and a transverse-frequency flow comparison below the parabolic time. These are credited source/classical deductions, not claimed substantial results.
+
+The exact unpaid estimate is an all-width diagonal L² maximum over arbitrarily many hard time cutoffs, uniform in the field, number of radii and frequency range (DERIVATION(D)). Neither that estimate nor its structured dyadic-plus-fractional sufficient route is proved. No new nonroutine operation beyond the strongest read composition was established. No finite-band, smooth-cutoff, constant-field, analytic/one-coordinate or flow-curve substitute is nominated. All old frozen statements and supplied dispositions remain immutable.
+
+Reading and isolation limits are material. Whole shared-journal bytes were decoded during acceptance extraction; the catalogue screen displayed more than two narrowly defined families;59 history-containing aliases were decoded, including derivative records. Actual original mathematical bodies, selected pinned/primary proof extents, truncations, late captures, coarse omissions and opaque-alias limits are detailed in READING-LIMITS.md and ISOLATION.md. Full source hierarchy/assembly and transitive primary/history coverage are incomplete. No perfect-isolation, exhaustive-history, worldwide-priority or impossibility claim is made.
+
+Artifact-only authentication binds14 pinned objects,13 late whole-original copies and2 incoming primary objects with2 selected members. Six small copied controls matched expectations. The exact manifest and three independently detached envelope hashes support read-only verification; they are not mathematical gates. No downstream formal/manuscript/release work or stopped external activity occurred.

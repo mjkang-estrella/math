@@ -1,0 +1,7 @@
+# r151 research session
+
+Authorized Codex / GPT-6 Astra / high / default service tier; actual service tier not independently measured. Campaign 19/20 latest R041 supplied context. Complete original standing brief and overrides read in conversation. Pin and operative proofs stipulated true. No nested agents or independent grades/count. All workdir commands use actual project root.
+
+Initial direct acceptance read incorrectly read journal introduction lines 1–19 rather than acceptance body; this exposed shared dispositions and is a false admission, not a premise. Initial combined r150 output was truncated, requiring recovery. Policy materialized before first filename traversal or research body selection; direct required reads preceded it.
+
+Outcome before sealing: PREFREEZE/no nominee. The exact old Source083 hard maximal target remains unproved. Original source/classical reductions were carried through total variation, fractional endpoint error, selected one-width tree/reference-line estimates, and a transverse-frequency flow comparison. No frozen theorem, independent review or count. Actual whole-journal decoding and broad catalogue/history false admissions are disclosed in ISOLATION. Thirteen late original copies, fourteen pinned objects and two incoming primary/selected-member pairs were byte-authenticated. Six small copied artifact controls matched expectations and preserved verifier inputs.
