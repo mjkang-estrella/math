@@ -1,0 +1,15 @@
+# r123 handoff report
+
+Outcome: PREFREEZE/no nominee. The paid mathematical comparison is in notes/integrated-spinor-reduction.md; initial feasibility remains separately preserved. No substantial new operation or precisely nominated unresolved conjecture is asserted. No independent mathematical grade/count is assigned.
+
+Concrete paid operations: MP for quaternion norm-one groups; Cayley-chart finite-product approximation; full local congruence topology induced from quaternion multiplicative groups; completion exactness; full global norm completion; actual scalar closure; diagonal central-sign accounting; unrestricted square-class finite characters. The apparent central-sign difficulty is resolved, not parked. The new-type machinery of the general pinned MP theorem is unnecessary for this quadratic-form calculation; actual primary RSS2002 already supplies its quaternion MP input.
+
+Source and primary limits, original-history overlap, late reads, broad-scan omissions, false admissions and truncated displays are fully listed in READING.md. The most significant access failure was procedural isolation: the acceptance preamble and several aliases/context overreads were admitted. No whole-journal decode occurred and no peer premise was used, but the admission cannot be undone. No all-history or full-transitive-literature clearance is asserted.
+
+Pre-seal authentication:26/26 selected pinned tex/bib blobs match canonical complete-tree path,size,Gitblob and SHA256;4/4 primary PDF/text pairs match;13/13 selected incoming members match;8/8 current whole-original hashes match the late capture;5/5 selected excerpt memberships match. The complete13223-entry tree has the stipulated SHA256. All downloaded/extracted material is private/local. No original or shared file was edited.
+
+Proportionate reduced controls: two files copied into a separate fixture with its own exact manifest and three envelopes. Baseline/restoration accepted. Modified payload, missing payload, hidden extra file, empty extra directory and wrong detached manifest rejected. All seven verifier before/after snapshots were unchanged. The copied source and feasibility bytes match their originals. Results/fixture anchors are in private/controls/results.json. No inherited larger manifest authenticates this selection.
+
+Seal design: exactly three outside envelopes FINAL.md,MANIFEST.json,REPORT.md; every other regular single-link file and every directory is part of the exact payload inventory. The read-only verifier requires all three detached hashes; it rejects membership and digest changes. It does not certify permissions, mathematical truth, contribution, acceptance, provenance completeness or isolation perfection. The root is sealed once after this report; no post-seal payload is written. The final independent sha256sum anchors and read-only replay result are reported outside the sealed root.
+
+Authorized workflow completed without git/staging/commit, nested agents, installation, shared edits, browser UI, contacts, uploads/publication/submission or downstream formal/manuscript/release activity. Parent alone integrates, reviews and counts.

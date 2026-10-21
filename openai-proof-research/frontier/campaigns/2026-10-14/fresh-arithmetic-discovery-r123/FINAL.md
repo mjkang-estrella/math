@@ -1,0 +1,17 @@
+# Arithmetic discovery r123 — PREFREEZE / no nominee
+
+No substantial full-scope author-proof nominee was isolated and no theorem was frozen. No independent correctness, contribution, acceptance or count is assigned. Authorized provenance: Codex / GPT-6 Astra / high / default service tier. Parent-supplied campaign19/20/latestR041 is unchanged by this handoff.
+
+The developed family was rational orthogonal groups of quadratic forms, especially ternary forms/quaternion algebras. The initial arithmetic-dynamics catalogue screen was null; there was no third family. The sustained derivation is notes/integrated-spinor-reduction.md.
+
+The strongest integrated comparison keeps D* and its full global reduced-norm completion before dividing by k*. MP plus local congruence cofinality identifies the completion through a fibre product. Quotienting by the actual closed global scalar image pays the central-isogeny passage. The single diagonal +/-1 survives as the correct quotient of the local norm-one product. The naive adjoint fibre product can lose the finite central group (product mu2)/diagonal mu2, but this issue is fully handled by the same classical completion/scalar construction. The full square-class completion, including arbitrary finite characters, is retained; prime-coordinate characters alone do not suffice.
+
+No further nonroutine operation was found after that composition. There is no new unpaid finite-quotient, diagonal-center, dyadic, scalar-closure or global-character bridge to nominate. The higher-dimensional spinor-kernel comparison is classical as well. This is an author-level no-nomination decision, not an independent TECHNICAL verdict, a new-to-literature claim or an exhaustion claim. Finite-S CSP, higher discrete cohomology, characteristic-two forms and other extensions were not offered as replacement targets.
+
+Required r122 completed exceptions were read, and their closed zero-Lelong composition is unchanged. The late r80 original-scope/proof reading leaves its full all-depth/all-degree target unchanged. Every supplied older frozen scope and disposition remains immutable; parent alone integrates/reviews/counts.
+
+Reading coverage is partial:26 authenticated pinned blobs do not mean26 complete proofs read; four primary PDFs were read only in the stated operative ranges. Long transitive proofs and many protected original archives remain unread. READING.md records exact extents, late captures, output truncations and false admissions: journal preamble, adjacent catalogue context, TEN-FINDINGS ledger alias, historical derivative alias and overwide r72 history context. No peer supplied a premise. No perfect-isolation, exhaustive-history or worldwide-priority certificate is claimed.
+
+All artifacts are local to this r123 root. Protected source/primary/history/extract/render/copy bodies and their metadata remain under private/ and original rights. Thirteen late incoming selections have independent copy membership, not inherited manifests. The artifact checks authenticate26 source blobs,4 PDF/text pairs,13 selections,8 current whole originals and5 excerpt memberships; seven copied controls behaved as expected. These are not mathematical gates.
+
+The three outside envelopes are FINAL.md,MANIFEST.json,REPORT.md. verify.py requires their detached SHA256 anchors and checks exact payload/file/directory membership without writing. Detached anchors are delivered separately in the terminal handoff. No downstream formal/manuscript/release work opens.
