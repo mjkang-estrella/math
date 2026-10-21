@@ -1,0 +1,13 @@
+# Structural discovery r163 — PREFREEZE / no nominee
+
+Codex / GPT-6 Astra / high / default service tier. Campaign19/20,latestR041. No theorem freeze, author-proof nomination, correctness/contribution grade, acceptance or count. Parent alone integrates/reviews/counts; all old scopes and dispositions remain unchanged.
+
+The three exact canonical pinned trace-reconstruction manuscripts were located and authenticated. Their operative proofs were read, including the uniform positive-moment separation/decoder, latest-anchor masks and the quantitative lower-bound construction. This round achieved source reading and sustained integrated derivation; it is not another source-selection failure.
+
+The strongest paid reduction is in notes/02-integrated-calculations.md. A full rank-and-total-length generating identity transfers low-order moments through the classical insertion/deletion/substitution map. Elementary Cauchy bounds control inverse coefficients; length bookkeeping, truncation, rational estimation and the stipulated positive-moment decoder pay the statistical entrance. The strongest compatible local inverse operation also covers the examined fixed bounded one-informative-output channel. These are independent-channel/source/classical compositions, not an identified substantial new operation. No unresolved insertion, unknown-channel or dependence bridge is nominated, and no earlier full target is weakened.
+
+The remaining requirement is a distinct nonroutine operation with complete proof-feasible closure. No mathematical impossibility, exhaustive search or worldwide priority is claimed. Finite diagnostics support only the stated finite calculations.
+
+Read notes/03-reading-limits-and-outcome.md for exact reading extents and limitations. Disclosures include improper initial journal-preamble exposure, a malformed catalogue split with overbroad truncated display, recovered relevant historical/primary truncations, a TLS failure followed by explicit-version recovery, coarse omissions, and three administrative/opaque false history admissions. No active peer body/activity/status supplied a premise. No perfect-isolation or exhaustive-clearance certificate is given.
+
+All material remains local in this exclusive root. Protected bodies and named incoming identity/search metadata are under private/. No shared edits,git,nested agents,installation,publication,contact,browser UI or downstream formal/manuscript/release work occurred. Incoming-original identity is separate from selected-copy membership. MANIFEST.json seals only this packet's exact payload; REPORT.md and this FINAL are separate outside envelopes. Artifact controls are not mathematical gates.
