@@ -1,0 +1,15 @@
+# Research and integrity report
+
+Outcome: PREFREEZE/no nominee. See FINAL.md for the handoff and DERIVATION.md for the actual paid reduction and unpaid full operator equation. GAPS.md states the intended full scope without freezing it. No downstream formal/manuscript/release work, independent mathematical gate, acceptance or count was performed.
+
+Provenance: authorized Codex / GPT-6 Astra / high / default service tier. Runtime identifies Astra/high; service tier not independently observed. Every shell command used /home/mj-kang/Documents/Dev/math/openai-proof-research as workdir. No nested agents, git operations, shared/old-root writes, installation, publication, uploads, submissions, contacts or browser UI.
+
+Identity work: complete13223-entry tree SHA was checked; seven pinned source/companion bodies match canonical path,size,GitblobSHA1,SHA256. Four primary incoming objects are recorded separately from PDF extracts or the selected gzip-source member. Sixteen direct original copies/excerpts have independent membership and late original identities. A subsequent read-only recheck matched those sixteen late identities; this is not a pre-task snapshot or semantic reading of all original bytes.
+
+Six proportionate disposable-copy integrity cases accepted baseline/restored membership and rejected changed payload, missing payload, hidden extra payload and wrong detached manifest anchor. Every verifier invocation preserved its current fixture byte snapshot. The two-file fixture has its own fresh manifest and explicit anchors; no inherited original manifest certifies a reduced selection. Python hashes agree with independent sha256sum for its three envelopes. These are artifact controls only.
+
+Final seal procedure: enumerate exact regular-file payload membership once, excluding only root FINAL.md, MANIFEST.json and REPORT.md; compute all payload sizes and SHA256 values; compute detached anchors for the three envelopes using Python and independently sha256sum; invoke the read-only verifier with those anchors; compare full root byte snapshots before/after that invocation. Actual outcomes and anchors are returned outside this payload. No writer is to be rerun after sealing.
+
+Verifier scope: rejects symbolic links and multiply linked regular files, requires the exact three excluded root envelopes, checks explicit detached anchors, exact regular-file membership, size and SHA256. It does not bind modes, ownership, timestamps, empty directories, mathematical validity, contribution or priority. No theorem/proof truth follows from a successful byte check.
+
+Reading limits are substantive: full rough-source mathematical body read; smooth companion only exact statements/scalar reduction; DKN operative weak conformal proof; BR2012 actual resolvent proof; BR2020 bounded setup/scope; GLKU bounded two-scale/resolvent/collar proof ranges. Classical/transitive chains remain partial. Broad scans had real derivative/role false admissions and coarse omissions. See READING-LIMITS.md and ISOLATION.md, not a clearance certificate.
