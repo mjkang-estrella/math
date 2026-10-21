@@ -1,0 +1,12 @@
+# Neutral questions for the first two independent reviews
+
+These are review questions, not established defects. No independent finding, author response or prior repair exists. Keep every frozen quantifier and the entire unchanged proof.
+
+1. Does the actual classical Lovász reconstruction, including subdivisions, edge replacements, parity augmentation and suppression, give the precise simple-path/endpoint-load interface in polynomial Turing bit time? Confront actual proof legibility and access rather than inheriting the author's attempt.
+2. Does the DFS alternative return its exact small-neighbourhood set or sufficiently long simple cycle for every large input, with all rounding, component and overlap cases? Does its potential accounting preserve the source output contract without a longest-cycle oracle?
+3. Check rational PSD witness construction, median splitting, the sweep inequality and cumulative residual charge. Does the D^.98 change remain compatible with every subsequent scale and sampling hypothesis?
+4. Verify both routing parameter regimes, total endpoint load across all batches, interior/team restrictions, simplicity of lifted cycles, unique original representatives and the full assigned-edge partition.
+5. Verify success probabilities conditional on fixed recursive quotient data; failed local attempts must never repeat recursive work. A certificate need not verify expansion, but must ensure every output and counting property on every accepted execution.
+6. Reconstruct the integer scale product, prefix choice, rounding margins, finite base cases, order savings, potential absorption and noncircular choice of absolute computable constants. Verify almost-sure termination and expected bit complexity uniformly for arbitrary realized children and fair-bit rejection costs.
+
+For contribution, first combine the strongest actual compatible source, BM, CFS, Lovász, GGKO, AABC and LSY mechanisms, their algorithmic content and applicable successors. The source already pays linear part counts and structural savings; CFS pays saturation; short-cycle algorithms can have a different leftover-edge budget. Determine whether the whole algorithmic construction is paid by a compatible standard reduction. A TECHNICAL verdict requires that integrated mathematical derivation. A SUBSTANTIAL verdict requires a fully closed nonroutine surviving operation, not just a named difficulty, new notation or an unread predecessor. INCOMPLETE is appropriate if full-scope comparison cannot be completed. No desired grade is prescribed.

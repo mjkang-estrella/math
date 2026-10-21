@@ -1,0 +1,7 @@
+# Frozen statement S176A: effective linear cycle-and-edge partition
+
+There exist absolute positive integers C,B,q and a randomized algorithm A using independent fair random bits with the following property. For every integer n>=0 and every finite simple undirected graph G on the labelled vertex set {1,...,n}, given by its n by n binary adjacency matrix, A halts with probability one, has expected running time at most B(n+1)^q bit operations, and outputs an explicit list of at most Cn parts whose edge sets partition E(G). Each part is either one edge of G or a simple cycle of G of length at least three, given by its cyclic list of distinct vertex labels. Every output on every terminating execution is such a partition with at most Cn parts. Empty and edgeless graphs have the empty output. No connectedness, degree, expansion, parity or density hypothesis is imposed.
+
+The statement concerns a classical randomized Turing algorithm and its full explicit output, not an oracle, real-RAM, nonuniform advice, expected part count, high-probability correctness or prescribed restricted graph class.
+
+Dependency convention: Source181 and all its operative proofs at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated true. New algorithmic applicability and complexity deductions require review. This frozen statement does not assign correctness, contribution, acceptance or count. No worldwide-priority claim is made. Frozen before author-proof development; bytes will not be revised.
