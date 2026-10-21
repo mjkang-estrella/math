@@ -1,0 +1,23 @@
+# Provenance and isolation
+
+Authorized research: Codex / GPT-6 Astra / high / default service tier (requested). Campaign 19/20, latest R041. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and operative proof operations stipulated true. No truth audit, nested agents, shared writes, git operations or downstream stages.
+
+The complete user standing brief was read in the conversation, including mutually prospective exclusions and the direct named r145 exceptions.
+
+Initial traversal defect: first command ran rg --files from /home/mj-kang/Documents/Dev/math, using an exclusion relative to the project rather than that parent. It returned a truncated filename list (708 reported lines / 18,948 tokens, 3,000-token output budget), including copied-history and a sibling project paths. No bodies were selected or read through this listing. This is not a perfect-isolation or filesystem-history certificate. Subsequent broad traversal uses a pre-descent component predicate and flat-alias exclusions. No mathematical information was inferred from excluded activity.
+
+Direct administrative reads: project AGENTS.md and sources/upstream.json complete; frontier/NEW-TEN-2026-10-14.md lines 1–170 (acceptance rules included), sources/CONTENTS.md lines 1–100 (unselected catalogue context, not a family investigation).
+
+Initial body-navigation predicate was also too permissive for history*.json, context/, catalogue and tasks metadata aliases: 9709 UTF8 candidates; 215 hit files. Output truncated (28505 tokens before a5500 budget). It pruned explicit peer patterns at every component, but admitted copied/search-history derivatives. This is disclosed as a body-selection failure, not retrospectively certified. A tighter prospective scan excludes all history-named, context, catalogue, packet, evidence, ledger, tasks, and administrative-code aliases. Coarse omissions (including original notes named history) are intentional; operative originals are followed by named path when needed.
+
+Required r145 direct reads: assessment and all four named notes; initial combined display truncated in note02, subsequently recovered note02 in full. No unlisted r145 body read.
+
+## Same-turn prospective arithmetic112 addition
+
+Received after the mathematical notes01/02, final focused mechanism scan, three primary-page inspections, and the thirteen late selected-original snapshots, but before evidence-note drafting and final controls/seal. Applied at 2026-10-21T02:11:22.578845+00:00 UTC to both reusable scan policies, at every component before descent and every filename before selection. Flat/compound role aliases remain pruned by the same policy. The initial historical failed-scan script is retained unchanged as historical evidence and must not be rerun; it is not an operative policy. No traversal or external body selection occurred between receipt and this update. All prior exclusions and the original research scope continue. This is prospective only, not retrospective clearance, and supplies no mathematical premise or desired verdict. No new/follow-up turn or delegation was started.
+
+Final policy inspection at 2026-10-21T02:14:46.298692+00:00 removed the negative-digit lookahead from every round-number exclusion in both operative scripts. The user’s wildcard exclusions also cover longer numeric suffixes; the earlier lookahead had unnecessarily narrowed those aliases. No broad scan was rerun between the arithmetic112 update and this correction. Earlier search results retain their actual historical scope, without retrospective clearance. No further broad filename traversal or history body search is planned.
+
+## Same-turn prospective analytic141 addition
+
+Received after the evidence note, copied-control checks, and final named-file byte recheck, but BEFORE final envelopes or seal. Applied at 2026-10-21T02:19:00.428166+00:00 to both operative predicates: *analytic*r141* at every component before descent and every flat filename before body selection, including compound aliases under the same coarse derivative/role filters. No external body selection or filename traversal occurred between receipt and this policy update. The user states the peer brief/root has not yet been created; that state was not inspected. This is the SAME original research turn, no new review round, mathematical premise, reassignment, or desired verdict. All previous exclusions remain. No retrospective certificate is supplied. No further broad scan is planned; the historical failed initial script remains unchanged and must not be rerun. The named completed structural-r141 originals read earlier are distinct from this newly excluded analytic-r141 peer.
