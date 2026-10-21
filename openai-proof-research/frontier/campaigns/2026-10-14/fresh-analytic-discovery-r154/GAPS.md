@@ -1,0 +1,12 @@
+# Unpaid obligations and limits
+
+PREFREEZE / no nominee. No exact author theorem was frozen and no independent grade or campaign count is assigned.
+
+1. Substantiality: no operation beyond the pinned K3 theorem and the actual Venieri/Bright–Dhar/Héra/Oberlin/classical composition was identified. The positive line and codimension-two calculations are paid reductions. The flags, cover margins, measurable-fibre reductions and epsilon bookkeeping are not new gaps.
+2. No full author-proof package is submitted. Detailed feasibility notes do not substitute for a frozen theorem, independent correctness review or separate contribution review. Administrative verification supplies none of those gates.
+3. The unrestricted affine-family variant of the spread expression is false for the explicit common-hyperplane example. This is not an unproved bridge being advertised as a candidate. No weaker substitute or desired-grade retry is proposed.
+4. Original I02's5D Kakeya gain and I124's pinned-distance claims remain as originally scoped. No variable-curvature, Hilbert-transform, original-metric, Einstein, forcing, gauge-measure, endpoint or collapse claim is made. All named old targets/quantifiers/dispositions in the user brief remain unchanged.
+5. Reading is substantial but partial. K3 introduction, full closure/maximal reduction and full consequences were read; its earlier internal stationary/projection prerequisites and much of K4's internal proof were not read in full. The primary Héra counting and support lemmas, BD main proof, Venieri relevant reduction and Oberlin operative proofs were read. Original slicing, Frostman, Choquet/Howroyd, Drury/Christ/Bourgain and the full2026 spread-out proof are not all covered. No globally strongest or exhaustive literature claim follows.
+6. Procedural limits include false admissions of bare primary text and administrative/helper aliases, excess unrelated original-history body exposure, bounded search and display truncations, and coarse path omissions. These are disclosed, not converted into a clean isolation certificate. No active-peer body/activity/status supplied a premise.
+
+A substantial full result would require an actual additional construction or estimate with fully paid compatibility and separate literature assessment. This round does not supply one; that statement neither claims an unresolved conjecture as a finding nor certifies exhaustion of the family.
