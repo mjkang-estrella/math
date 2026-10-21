@@ -1,0 +1,27 @@
+# Structural178 — PREFREEZE / no nominee
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Source315 and all operative upstream proofs at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb remain stipulated true. No theorem was frozen and no author-proof nominee is submitted. Parent alone integrates and adopts grades/counts.
+
+The sustained construction retains the source's EVERY finite connected aspherical integral Poincare complex of formal dimension4 scope, arbitrary orientation character, and hence every closed connected aspherical TOP four-manifold. It develops a finite-matrix operation through all of the following compatible interfaces:
+
+* exact polynomial trace comparison on every finite coset cover, with an explicit fraction beta_H(t) of cosets having short nontrivial stabilizers;
+* orientation-sign twisting with the SAME regular spectral measure, and the exact corrected middle defect
+  (b2(Q_H;Q)+1+e_H)/[Gamma:H]-chi(Q)=(b1+b3)/[Gamma:H],
+  where e_H is1 for an orientable cover and0 otherwise;
+* the strongest read Clair--Whyte Chebyshev estimate, plus a classical positive Fejer-power filter giving the exact exponent2a without a logarithmic loss WHEN mu([0,x])<=C x^a is actually supplied;
+* a simultaneous finite-propagation chain homotopy I-P(Delta/L)=DK+KD, with explicit norm bound ||K_j||<=||D_(j+1)|| k(m^2-1)/(3L), preserving the middle and finite-cover harmonic terms;
+* a determinant-class refinement giving a little-o logarithmic normal-cover estimate in the residual case, without claiming uniform finite-spectrum log integrability or determinant/torsion approximation.
+
+These are retained as feasibility calculations and source/classical compositions, not a restricted or renamed substantial nominee. Notes02--03 contain the actual derivations, constants, coefficient conventions and exact unpaid interface. A product-of-surfaces calculation shows concretely why index growth alone cannot replace local unrolling. A separate explicit slow-spectrum reverse-dual Hilbert complex shows only the limitation of the reduced analytic descriptors; it is expressly NOT a group-ring/PD4 construction, source counterexample or global impossibility claim.
+
+The unresolved operation is a full-scope quantitative bound on the small-spectrum mass (or directly on traces of the positive finite-propagation filters), or an alternative integral/duality operation controlling actual finite-cover kernels that bypasses that spectral bound. Source315 starts from an exact nonzero reduced first-cohomology class. Its scalar potential, selected levels, transfinite cut-point reduction and compactness-based majority threshold do not provide the quantitative correction of approximate cocycles needed in the attempted extension. A power-law spectral bound is sufficient for the displayed transfer, not asserted logically necessary for every possible finite-cover proof. No such bridge has been closed here.
+
+All14 canonical TeX/Bib objects were authenticated against the complete13223-entry tree and immutable Git blobs, and read fully, including the nested annular-chains input. The actual Bowditch, Hruska--Ruane, Lueck and Clair--Whyte operative primary proofs were read at the exact private extents. Clair--Whyte's accessible arXivv1 was read; the publisher final was inaccessible (redirect/access500 and direct403), so final-version clearance is not claimed. Other primary-version, extraction and transitive-reading limits are explicit in private/reading-limits.md.
+
+The six exact completed-r177 exceptions and selected original I07/I97/I98/r11 sections were read without broad admission of their excluded namespaces. The r177 complement/cyclic-filtration reduction, two formulas, three-action example and unresolved optimal matrix construction remain non-nominated and unchanged. Late Fejer/spectral-alias reads were nonoperative false leads and are recorded honestly. All older full targets and supplied dispositions remain immutable; no S176A or active-peer body was read.
+
+The path policy was installed before traversal, enumerating all supplied literal exclusions and publication. Broad scans prune full relative casefolded paths before descent/read, include eligible hidden/ignored/JSON/TeX/Bib/large UTF8 files without a size cutoff, and do not follow symlinks. Coarse omissions and false admissions are disclosed. A local select.py naming collision unintentionally replayed the SAME guarded scan during control setup; the helper was renamed and the replay recorded. No wider admission or new mathematical premise resulted. No perfect-isolation or exhaustive-history certificate is claimed.
+
+Exact rational sanity checks exercised3232 scalar filter evaluations,5 nonacyclic chain homotopies and18 product-surface identities. Tiny copied controls accepted the exact miniature packet and rejected byte tampering, an extra member and a wrong detached report anchor. These are artifact/algebra checks, not independent mathematical gates.
+
+All work is inside this exclusive root; no shared edit, git operation, nested agent, browser UI, publication, upload, submission, contact, formal/manuscript/release work occurred. Protected bodies and metadata remain private/local under original rights. The own exact selected packet is sealed once in private/packet/MANIFEST.json and FINAL.json, with this REPORT outside the packet. ANCHORS.json contains the detached FINAL/MANIFEST/REPORT SHA256 values. The read-only private/verify_packet.py requires all three anchors explicitly.
