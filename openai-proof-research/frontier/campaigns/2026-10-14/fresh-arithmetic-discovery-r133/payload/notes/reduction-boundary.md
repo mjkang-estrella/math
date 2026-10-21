@@ -1,0 +1,16 @@
+# PREFREEZE / no nominee
+
+The authorized work developed Source359 only. Both exact canonical statements and their operative proofs/includes were read under the stipulated-true pin. No further family screen or theorem nomination was made. No frozen claim, author-proof nominee, independent grade, acceptance, count, formal artifact, manuscript or release is produced.
+
+The strongest integrated reduction obtained here has two parts:
+
+1. On the one-sided source's transverse complete-intersection grids, the full evaluation rank is the cumulative coefficient count of (1+...+t^(N-1))^(n-1). The normalized limit is a cube-simplex volume. The source random-phase proof works for any fixed positive residual rank fraction. In combination these pay the phase step at n>=k+1. The exact evaluation image saturates for k>=n, making this projection method incapable of separating any jet there. This is a classical quotient/Hilbert calculation plus the supplied source variance argument; it is not an identified distinct nonroutine discovery.
+2. On the same full tube, any complete metric of the scalar potential form f(Im w-ell) with a uniform strictly negative real sectional upper bound must have unbounded negative curvature if the base has one negative plane. The mixed-plane ODE forces -f' to decay to zero; the horizontal-plane formula then diverges negatively. This closes a scalar repair attempt, not a general metric nonexistence theorem. It is a classical curvature/length calculation, not offered for a desired grade.
+
+What remains unpaid is specific. Dimension reduction beyond the current saturated test space needs a different analytic separation mechanism or a different geometric disk construction with a genuinely smaller exponential budget. A two-sided-pinched Liouville construction needs a new complete all-real-plane metric operation compatible with the analytic tests, beyond scalar tube profiles. The primary bundle and invariant-metric results do not provide that compatibility. No actual deformation/gluing operation with those properties has been closed here.
+
+The threefold cannot fill this gap: its bounded base coordinates are nonconstant, and its conclusion rules out only a bounded C^3 map with nowhere-vanishing Jacobian. W5 already proves a bounded C^5 embedding using the weighted-product primitive. Its full frozen scope remains untouched; no C^4, optimality, properness or renamed substitute is proposed.
+
+The r132 parent and all six specified original notes were read as narrow exceptions. Their below-endpoint reduction, triangular kernel count and fourfold profile at V>3844/25 are paid source/classical work; the near-equality valuation/rounding bridge remains unpaid. Oldscreen037 was not opened, renamed or cleared. T126S161 and T360S147 bodies and aliases stayed excluded; their user-supplied dispositions are not reopened. Other frozen scopes and dispositions remain unchanged.
+
+No worldwide-priority, family exhaustion, exhaustive-history clearance or perfect-isolation claim is made. Search false admissions, coarse omissions, late identity recording, output truncations and recoveries, primary access failures and transitive limits remain material limitations of this handoff. Parent alone integrates, reviews and counts.
