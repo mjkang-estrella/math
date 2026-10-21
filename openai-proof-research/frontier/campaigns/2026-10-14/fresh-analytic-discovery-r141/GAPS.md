@@ -1,0 +1,9 @@
+# PREFREEZE / no nominee
+
+One family was pursued: Source376 forced-fluid computation and its perturbation/control interface. No exact theorem was frozen. No correctness, contribution, acceptance or count is assigned.
+
+The strongest integrated reduction closes time-dependent force errors: exact drift-conjugated smooth solenoidal kicks yield finite-step global reachability on T^3 by volume growth; the source residual and Leray projection turn them into arbitrarily small mean-zero solenoidal forcing errors in any prescribed finite mixed smooth norm. The errors have finite time support and return to the old stationary forcing afterward. This is supporting compatible classical composition, not a substantial nominee. It is stronger than merely noticing failure of a uniform Gronwall tube.
+
+The missing operation is the same construction with the force stationary from the fixed time one, without a later correction stream. The exact stationary residual formula is paid; the required spatial perturbation with both prescribed-particle detector change and sufficiently small derivatives is not. C1 connecting results do not automatically control its viscous second derivatives; transitive/mixing assertions do not automatically control this designated initial point or zero mean. A shear sequence isolates the norm mismatch, not an impossibility theorem. The existing spatial clock repeats one table, so it does not automatically autonomize the new nonrepeating corrections in the same three-dimensional state space.
+
+Source, primary and history readings remain bounded. No exhaustive history, world priority, generic nonrobustness under all errors, stochastic statement, or impossibility of other stationary methods is claimed. Old source scopes and C80/I85/I86 dispositions remain unchanged. The other old full targets named in the standing brief are not reopened.

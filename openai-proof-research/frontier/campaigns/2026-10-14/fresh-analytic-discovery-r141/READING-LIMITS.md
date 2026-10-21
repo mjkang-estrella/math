@@ -1,0 +1,54 @@
+# Actual reading, acquisition and limits
+
+Authorized Codex / GPT-6 Astra / high / default service tier, T3 Code Codex harness. The header overrides the obsolete runner and 18/20 statements in the complete user-supplied standing brief, which was read in the conversation. Campaign19/20, latestR041, one remains; parent alone integrates and counts. No nested agents, git/staging/commit, install, PR, browser UI, upload/submission/contact, or downstream formal/manuscript/release work. All intentional writes and subprocess output files are inside this root; this is not an OS-wide certificate.
+
+## Governing and completed-handoff reads
+
+Project AGENTS.md and sources/upstream.json read completely. Explicit checks found no AGENTS.md at frontier/, frontier/campaigns/ or frontier/campaigns/2026-10-14/. Acceptance journal lines1-145 read, unnecessarily including some progress context; it is mutable navigation and not an immutable proof premise. The complete preprints tree was parsed:13223 entries, truncated=false, SHA256 eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b. The truncated tree.json was not used.
+
+Required direct r140 exceptions: parent assessment plus original DERIVATION, GAPS, READING-LIMITS, ISOLATION. Combined output truncated within DERIVATION; lines80-150 were recovered separately. The complete operative r140 derivation and the other requested files were consumed; their prior source/primary bodies were not reread. The only new direction screened was Source376. The initial contents lines1-100 were unnecessary general catalogue context, not research into those families. Fluid-heading navigation returned Source376, then the nine-companion block was selected. Its displayed lines9041-9095 were read; the later links were parsed for acquisition, not silently counted as body reading.
+
+## Pinned source bodies
+
+73 selected TeX/bibliography/README blobs, 990770 bytes, from the nine catalogue-named Source376 manuscripts were acquired at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. source-authentication.json records canonical pinned URL/path, complete-tree size and Git-blob matches, and independently computed SHA256. Authentication is not semantic reading. All operative source statements and proofs are stipulated true; no upstream truth audit.
+
+Actual semantic reads:
+
+- ES, Universal-Computation-with-Eventually-Stationary-Navier-Stokes-Forcing, build/main.tex: all1-1017, including compiler, reciprocal rectangles, Hamiltonian routing, neighborhood action, finite-time tube, autonomous clock, ramp, force residual, Leray projection and slow-clock proof. Before the first durable derivation,1-321 and740-1017 were read;322-739 were completed later. This timing is not concealed as a pre-drafting complete read.
+- PI, Prefix-Instructions-and-Incompressible-Flows, build/autonomous.tex: all1-338, late. The imported recorder/radix/analysis proofs in other files were not freshly read, so this is not a complete reading of PI. Its actual Hamiltonian extension, mean-zero suspension, quiet observation window and onto-clock proof were read.
+- IB, Incompressible-Box-Transport-and-Finite-Computation-October-6-2026, build/analysis.tex: all1-282, late. The stronger two-spatial-derivative projection estimate was incorporated in the comparison. Other IB geometry/compiler/observer proofs were acquired but not read.
+- RV, Computation-under-Rapidly-Vanishing-Navier-Stokes-Forcing, build/main.tex:80-200 only, late scope/comparison/realization read. Addressed/alternating/lattice full proofs were not read and are not new mathematical premises of the perturbation calculation.
+
+The other five companions and the remainder of these companions are acquired but not semantically read. The September27 IB version was identified by relevant I86 history but was not acquired or read. No full-companion clearance is claimed. The modest new calculation uses the completely read ES interface; there is no full nominee passing a literature gate.
+
+## Primary and transitive reading
+
+Actual bytes and extraction memberships are in primary-authentication.json. Three versioned arXiv source objects (fish, saga, Beltrami) and the Bessa publisher PDF were obtained. Gzip-single-TeX and tar formats were handled explicitly; no failed extraction was hidden. Version labels are the versions actually requested, not a claim of latest-version completeness.
+
+- Burago--Ivanov--Novikov, A survival guide for feeble fish, arXiv1605.01702v2: actual TeX117-800, covering the full mathematical body, accessible-set boundary cones, flux/isoperimetry argument, global controllability, compact travel bound and global Lipschitz proof. Preamble and complete bibliography were not semantic proof reads. Transitive Federer/coarea/isoperimetric texts were not read; the local notebook's finite-volume argument avoids needing them as unproved new premises.
+- Kryzhevich--Stepanov, The saga of a fish, arXiv1801.06200v2: actual TeX300-425,490-660,900-1035. This covers the compact-recurrence control proposition and active proof portions, recurrence statement/proof, the noncompact nonwandering theorem and control application. The Newtonian corrector estimates and the full closing-lemma proof were not read. Omitted425-489 is commented-out earlier proof text. The global corrector is explicitly not generally incompressible; no use as a divergence-free perturbation.
+- Cardona--Miranda--Peralta-Salas, Computability and Beltrami fields in Euclidean space, arXiv2111.03559v3: actual TeX979-1080, complete relevant bounded-computation subsection, inverse-localization interface, robustness proof, exit limitation, and viscous finite-clock remark. Earlier text was searched and selected excerpts displayed, not read in full. The planar robustness, global Beltrami construction and inverse-localization transitive proof were not freshly read; no full primary theorem audit is claimed.
+- Bessa, A generic incompressible flow is topological mixing, C.R.Math.346(2008),1169-1174, official publisher PDF: extracted text1-340, all mathematical sections and references. Page5 (printed1173) rendered and visually inspected, confirming C1 flowbox perturbations and the dependence on Pugh--Robinson/Bonatti--Crovisier. Its Section4 is explicitly proof guidelines, not a self-contained proof of all transitive lemmas. Those long transitive proofs and current C^r literature were not fully read. Some earlier combined navigation output was truncated; it does not certify the lost navigation lines.
+
+BGH raw CiteSeer URL returned404. University repository web landing page returned an Anubis access denial; the author publication page returned403. These failures are not treated as reading. Search metadata exposed a published repository PDF URL, but no bypass was attempted and no BGH full proof is relied upon. The current robustness-complexity literature was navigation only. DGMP2507.07696 and Towards a Fluid Computer2405.20999 landing/abstract navigation was seen but no proof acquired/read. These are same-family context, not additional research directions.
+
+The PDF skill was used read-only; no PDF authored. Search-engine result text remains in the conversation, not reconstructed as exact private response files. Nonprimary hits were not mathematical premises. No current-priority claim follows.
+
+## Authored history and isolation limits
+
+ISOLATION.md records the initial above-project filename-traversal defect and the later derivative-role false admissions. The first prospective body scan read8026 UTF8 files, skipped67 NUL/nonUTF8, reported zero errors and zero file symlinks, with4495 pruned path records and44 matching files. The corrected scan read5460 UTF8 files, skipped19, zero reported errors/symlinks,5576 pruned records and8 matches. Both include hidden, ignored, JSON and large UTF8 files without a size cutoff, within their explicit campaigns/iterations/experiments/proposals/scouts/notes/findings roots. Both active-peer filters were applied to every directory and basename before descent/selection. This does not retroactively cure the initial filename defect.
+
+The first scan falsely admitted literature, recovered/copied contexts, family catalogues, history-number JSON and stored hit lists. The second prospectively excluded these but still admitted some operational original scripts (e.g. finalize_data.py), broad ledger/scout text and lexical Stat376 matches. These are not premises. Solenoidal magnetic tomography, fixed-particle gas terms and other lexical matches were not pursued. Coarse work/packet/role exclusions also omit genuine authored notes; symlink, nonUTF8, NUL, outside-root, absent-root and snapshot limitations remain. No exhaustive or clean-history certificate.
+
+Relevant originals followed directly:
+
+- I80 original report: whole261 lines requested initially; tool output truncated in the middle. Relevant112-199 was recovered, completing its compact-pressure mechanism and full C80 scope. Its unrelated hypersymplectic/Ricci sections were unnecessary false body admissions, not extra pursued screens or premises. No old gap was renamed.
+- I85 original proof review:1-38 only, verifying the historical full-scope ORIGINAL PASS boundary and reading limits. No new proof review performed.
+- I86 original contribution review:1-155, including actual effective compact-Euler-template construction and moving-template reduction at the unchanged C80 scope. Its conclusion is TECHNICAL conditional on correctness; retained as historical disposition, not a new grade. Remaining artifact prose was not read.
+- I20 original227-249 was displayed to recover its Source376 warning; unrelated kinetic text in that excerpt is a false admission, not a premise.
+
+Late current original identities and copied selections are separate: original-authentication.json binds current canonical originals, size, computed Gitblob and SHA256; selected-copy-membership.json binds only the retained full files or exact excerpts. Copied extent is not semantic read extent (especially the contents block). No old manifest certifies this reduced collection. No active peer body or activity inference supplies a premise. User-stipulated H138/T185 and all other full dispositions stay unchanged and were not reopened.
+
+## Rights and seal
+
+Original prose/code and named authentication metadata are separate from private source/primary/history/search/extract/render/copy bodies under original rights. All remain local. The one final seal has exact payload membership and directories plus three outside-payload envelopes (FINAL.md, MANIFEST.json, REPORT.md), all within the exclusive root. The verifier requires three detached SHA256 anchors and writes nothing. Copied controls use their own independently made fixture manifest, never an original copied manifest for reduced membership. Controls and hashes concern artifacts only, not mathematical correctness or contribution.
