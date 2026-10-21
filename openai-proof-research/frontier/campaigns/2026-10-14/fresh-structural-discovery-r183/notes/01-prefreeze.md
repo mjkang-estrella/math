@@ -1,0 +1,50 @@
+# Prefreeze feasibility and strongest integrated reduction
+
+This record precedes theorem freezing and extended author-proof development. Provenance: Codex / GPT-6 Astra / high / default service tier, 2026-10-21. The pinned source and its operative proofs are stipulated true. This is an applicability/new-operation investigation, not a source audit.
+
+## Paid operations and the interface being changed
+
+Source323 builds E=X0* in ZFC on omega1 with coherent finite closures, countably many pure families and one mixed family. Every infinite-dimensional closed F in E has a projection/inverse lift to a pure or mixed block setting. Its prescribed-weight exact pairs yield continuum many separated actual paths on F. The source then uses CH to assign a coordinate to EVERY actual path and perturbs the quotient Q:E*→E*/X0 by a norm-at-most-1/10 map with adjoint range in E. This supplies a different predual without any separable infinite-dimensional Banach quotient. The CH negative headline, measurable-cardinal positive model, both fields, and Con(ZFC)-relative density-omega1 independence are paid.
+
+Counting all paths cannot be relaxed by asserting omega1^omega=omega1 when CH fails. Nor can the finite-closure norming construction simply be placed on continuum: its finite initial closures exhaust countable ordinals, an operative constraint. A ground-model X need not stay norm complete or retain a universal no-quotient property in a forcing extension; no preservation assertion is used. The density-b positive theorem, weak-star basic-sequence quotient constructions, and the source positive perfect-unconditional-family mechanism are comparison constraints, not ways to skip the selected-path problem.
+
+The new proposed operation is a simultaneous SMALL path selection, made once before seeing F. It keeps uncountable norm separation on every infinite-dimensional F. Merely intersecting a small set with each source-produced perfect binary tree fails: those perfect sets can be meager and disjoint from the selector. The needed strengthening is that separation be OPEN DENSE in a suitable full path square, including every pair of prescribed finite prefixes.
+
+## Concrete feasibility calculation
+
+Let gamma<omega1 be a nonzero countable limit and t a family. Let Z(gamma,t) consist of actual paths with supports below gamma cofinal in gamma; require color succession as in the source, and hence unbounded colors in the mixed case. Admit pure pairs when C_k∩gamma is cofinal; admit mixed pairs when for every beta<gamma and l<omega there is alpha∈[beta,gamma) with color(alpha)>l.
+
+The alphabet of actual rational finite pieces, declared weights and integer metadata below gamma is countable. Validity of every finite prefix is closed in its product. Cofinality is a countable intersection of open conditions. Thus Z is Polish. Every valid finite prefix extends: choose a one-child Type I piece e_alpha*/m_J of its already dictated next weight, beyond every required ordinal/color bound, and then large legal metadata. Repeating yields cofinal paths, with at least two incompatible extensions of each prefix. No isolated points occur.
+
+There is an explicit continuous open surjection pi:omega^omega→Z. Fix beta_n cofinal in gamma. At stage n enumerate all finite proper extensions of the current prefix crossing beta_n (and color n when mixed). Use the nth input to select an extension. Every cofinal path can be reached by successively selecting its prefixes. The image of each input cylinder is the full path cylinder above the chosen prefix. This also verifies openness, not just continuity.
+
+Under non(M)=aleph1 choose L⊂omega^omega nonmeager of size aleph1. Every A(gamma,t)=pi[L] is nonmeager, since inverse images of nowhere dense closed sets under open continuous surjections are nowhere dense. It has cardinal aleph1. There are at most aleph1 such pairs; their union A_t over gamma has cardinal at most aleph1. The SAME A_t will serve all F.
+
+Elementary category calculation: for a symmetric open dense R⊂Z², all sections R_z are open and, outside a meager exceptional set, dense. Indeed for a countable base U_n the set B_n={z: ({z}×U_n)∩R=empty} is closed nowhere dense. At each alpha<omega1 avoid the union of B_n, the complements of previous good sections, and previous chosen points. This is a countable union of meager sets. A nonmeager A always has another point outside it. Thus A contains an omega1-sized R-clique. No Luzin intersection property, strong Luzin axiom, or uncountable intersection of dense open sets is needed.
+
+For separable infinite-dimensional F apply source branch:reduction to get gamma<omega1,H,U and t with RU=I. Countable support of F makes gamma countable. The earlier projections on H are strictly singular; in the mixed case the finitely many initial color projections are also strictly singular. This ensures admissibility of (gamma,t).
+
+Given ANY two finite path prefixes r,s in Z, choose source small-perturbation blocks z_i approximating normalized h_i∈H AFTER all ordinal and color supports of BOTH prefixes. The same source calculation yields Vz_i=h_i, ||V-I||≤eta=1/8000, ||V||≤1+eta. With J the next weight already prescribed by r, source pair:exact gives y,phi of that weight, ||y||≤500, phi(y)≥1/2. Append phi to r, with legal metadata. Extend s first beyond the entire support range of y, using its own prescribed weight. Continue both paths cofinally. On y the first path is ≥1/2 and the second zero. After perturbation and inverse lift:
+
+(P-Q)(UVy)=(P-Q)(Vy)≥1/2-2 eta·500=3/8,
+||UVy||≤500 ||U||(1+eta).
+
+Consequently each prescribed product cylinder contains a pair with restriction distance at least 3/[4000||U||(1+eta)]. Put d_F=1/[2000||U||(1+eta)] to have a strict margin. Evaluations P↦P(x) are continuous on the cofinal path space: sufficiently long prefixes fix every finite vector, and all paths have norm≤1, allowing uniform approximation of x∈E. Therefore R_F={(P,Q):||P|F-Q|F||>d_F} is open dense symmetric. The category calculation yields an omega1-sized separated family INSIDE the fixed A(gamma,t). An arbitrary infinite-dimensional F contains a separable infinite-dimensional closed F0, so separation for F0 also separates on F.
+
+## Full analytic continuation checked before freezing
+
+The source map S_t:ell_q(A_t)→W=E*/X0 still contracts: source rigidity gives disjoint-weight tails for each finite selection, and discarded prefixes lie in X0. Selected paths can be injected into the source colors, disjointly, because their number is at most omega1. With positive summable tau_t totaling at most 1/10, set B=sum tau_t S_t b_t, where b_t reads assigned coordinates. The unchanged inequalities s_source'≤q_t and q_t'≤s_source give ||B||≤1/10 and B*(W*)⊂J_EE. Coordinate functionals show closure B(X0)=closure span{QP:selected}; B(E*) lies there. The stipulated source twist lemma yields closed complete X=ker(Q-B), E≅X*, and density B(X) in that span.
+
+For separable F⊂E, coordinate restrictions have separable closure C_F. If the selected-coset image in F*/C_F were separable, its preimage in F* would be separable, contradicting the selected separated family. Density B(X) and Qx=Bx then make the evaluation image of X nonseparable on every separable infinite-dimensional subspace of X*. The source evaluation criterion excludes genuine separable infinite-dimensional Banach quotients. Density X*=omega1 and Hahn–Banach yield density X=omega1. The source finite-sum lemma and complexification preserve the no-quotient conclusion over C; dual density also remains omega1 by the usual two-real-functional identification, which will be supplied explicitly.
+
+## Primary/history payments and chronology
+
+Before this sustained calculation, the complete source, ALAT coherent coding/minimal-ordinal operations, ADK perfect-unconditionality proof, FGS Solovay construction, Brech density-b reduction, JR weak-star basic-sequence construction, and eligible original I88/r94 sections had been read. I88's finite-rank bidual limit does not produce an X-valued right inverse and none is asserted here. All its old approximation/rank/binary-diamond scopes remain intact.
+
+The first selector idea used Luzin sets. AFTER that initial idea and dense-prefix feasibility, but BEFORE this freeze or author proof, actual Miller Handbook pages on Baire coding/Luzin sets and Kojman–Rinot–Steprans v2 Section3 were read. The latter treats non(M)=omega1 and stronger coloring principles and distinguishes that hypothesis from Luzin existence. This prompted the simpler nonmeager-set recursion above. These category principles are classical payments, not claimed new. ALAT Section3 Definitions3.1/3.3 and Propositions3.2/3.4 were additionally read at this late prefreeze stage. Its prescribed-weight operation is paid; Proposition3.2 itself refers to Gowers–Maurey rather than printing a full proof. Our quantitative exact-pair dependency is the complete stipulated source proof, already read, not an unverified extrapolation of that reference. An accidental additional ALAT text window in Section5 was read and will be disclosed; it is not a premise.
+
+A targeted guarded original-history category-word scan found only unrelated occurrences, not clearance of omitted aliases. A bounded external search for separable-quotient/nonmeager/Luzin combinations returned no operative stronger theorem. This is a search limit, not a priority claim.
+
+No Cohen-model corollary is included in the proposed frozen scope: the direct theorem assumes non(M)=omega1 internally, and all spaces/completions/maps are constructed in that same universe. Miller's Cohen assertions and KRS's model theorem are comparison context with the documented proof-access limits. This avoids substituting an unproved forcing preservation statement for the direct construction.
+
+The bridge ready for freezing is therefore the universal small hereditary separator obtained from arbitrary-prefix dense separation, followed by a selected-path predual construction. No correctness/contribution/acceptance grade is assigned here. Whether this bridge is substantial is reserved to independent review.
