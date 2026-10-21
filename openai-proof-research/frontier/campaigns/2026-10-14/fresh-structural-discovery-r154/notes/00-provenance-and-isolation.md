@@ -1,0 +1,17 @@
+# r154 provenance and prospective isolation
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Campaign 19/20, latest R041; no independent grades or count. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and operative source proofs stipulated true. Complete user standing brief read in prompt; header supersedes only campaign count and Factory runner.
+
+Before any filename traversal or family body selection, literal case-insensitive full-path exclusions were written to original/exclusions.json. Directory pruning must precede descent, file pruning precede decoding; active/future roots and T360S147 aliases excluded at every depth. Own root only for own work. Direct required paths are narrow exceptions, not searchable-history admission. No active-peer premises.
+
+Initial direct instruction read: AGENTS.md and sources/upstream.json complete; acceptance file lines 1–150 (broader than needed opening; shared historical/status material incidentally exposed, not used as a mathematical premise). No broad scan yet. No nested agents; no git mutation; no browser/publication. All writes and command workdirs confined as instructed.
+
+## Completed conduct and limits
+
+The preceding “no broad scan yet” records the initial state, not the final state. Two guarded scans were subsequently made; their exact predicates and hit records are private. They match full PROJECT-RELATIVE paths case-insensitively, including compound/flat aliases, before descent and decoding. The literal current/future-round and T360S147 predicates were present from the first traversal. The own-root wildcard excludes this root from authored-history discovery; own files are accessed directly only for this work. No active peer body, activity or status supplied a premise.
+
+The first scan admitted opaque history derivatives and some report snippets because literal `history-derivative` did not match every derivative alias; this was not perfect isolation. The second scan additionally pruned all `*history*` names. Actual false admissions, coarse omissions and output truncations are disclosed in note03. No broad current-round or protected-body exception was manufactured from a filename hit. The five required completed r153 files were direct narrow exceptions. All other followed history originals were eligible completed mathematical documents.
+
+One developed family: Source114 integer-polymatroid common bases. A narrow matroid-title navigation query incidentally exposed Source111 and185 metadata; neither body was selected. Source115 is the operative transitive cell-table companion of the chosen reduction, not a separately proposed discovery. A first section display exposed its opening catalogue summary before companion selection; this is disclosed rather than claiming that navigation saw only one title. No automata/sampler/support/binary/packing result from r153 is offered as new. No T360S147 or other protected scope is reopened.
+
+Original prose/code are under notes/ and original/. Upstream, primary, history bodies and derivative identities/search records remain local under private/ with their original rights. Copied integrity fixtures remain under seal/. There were no edits outside this exclusive root, no git operations, nested agents, installation, browser UI, publication, formalization or manuscript/release work. Shell commands used the actual project root as workdir. This packet records discovery only; parent alone integrates and independently reviews/counts.
