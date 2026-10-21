@@ -1,0 +1,19 @@
+# T054L136 author-proof intake
+
+Disposition: FULL_AUTHOR_PROOF_NOMINEE_PENDING_INDEPENDENT_REVIEWS. The exact frozen statement and author proof remain unchanged. Correctness and substantial-contribution gates are UNREVIEWED. The count remains 19/20, latest R041; public activity remains STOPPED.
+
+The proof proposes infinitely many distinct dimension18 cubic loci, with irrationality and an untwisted geometric K3 category for every exact algebraic lattice member with scalar transcendental Hodge endomorphisms. It combines Source054's whole-transcendental-block and surface-subfield operations with rank20 surface classification and local obstructions for every K3 complement sharing the integral transcendental lattice. This is an author nominee, not a parent proof or substantiality verdict.
+
+Parent reading covered the entire frozen statement, author proof, feasibility/self-check/start notes, diagnostic code, final/report, private reading record and artifact verifier. Source and primary reading extents belong to the author record; the parent has not independently reread their operative proofs here. The two reviewers must do their own needed source, primary and original-history reading. The original Hassett proof was inaccessible to the author; the stipulated source interface must be distinguished from a new deduction. Other reading, navigation, guard and late-capture limitations remain disclosed in the packet.
+
+Open parent question P1 is fixed in preflight.md before either review. Section3 reduces a x²−(a+1)y²=n incorrectly to x²=n at a prime dividing a+1; the reduction is −x²=n. Frozen alternative(ii) has no p=1 modulo4 restriction. The bounded B=3,a=133 illustration only refutes that modular-obstruction step; it is not a counterexample to the frozen theorem or its existential B0. Both first-round reviewers receive the same P1. They must assess all unchanged hypotheses and scope; a constructed subfamily cannot replace the frozen universal statement. No author files or hypotheses were repaired.
+
+Read-only intake matched 77 payloads plus three envelopes, nine pinned source objects, ten primary PDF/text pairs and fourteen stable selected originals. The mutable journal was checked by its recorded historical prefix rather than a false full-file identity. Full selected-tree identities and copied-control observations are local in observed-root.json/replay.json; these are byte checks only. The diagnostic code was read, not rerun inside the sealed root. Its finite examples do not prove the frozen theorem.
+
+First-round correctness and contribution reviews have distinct exclusive roots, reciprocal exclusions and the complete exact statement. Existing Structural172's original initial brief already excludes the whole arithmetic-r136 namespace. Analytic164's terminal notification was read after the initial isolation receipt and before review dispatch, freeing the second slot; its parent archive remains queued separately. No live child status/activity/body was read to certify isolation, and no sibling finding exists at preparation.
+
+A parent navigation lapse after context restoration is disclosed: a root-level AGENTS.md filename inventory exposed unrelated snapshot/context filenames and its output was truncated. No bodies were read or selected from that inventory; subsequent reads used the exact known project instructions and named intake inputs. This does not certify perfect isolation or exhaustive reading. It does not alter the earlier prospective initial-brief receipt.
+
+Frozen SHA256 cde199a706104ed0db542704b0470d451ce5e11bd7ff0cc74d62df68130b4a77.
+Author-proof SHA256 6c9ea784ead7d96835a69a3a41d15f89ec3a13ac4faa83b342a6adcc76c53446.
+Detached author FINAL bab1195e237be196619cee66fb91eb8c6ef0f82354c34bcee4cb8d42841adedf; MANIFEST e254a814525e744bc9d08782af3419b44fc0b4904b155781ee2c1f3207abb8b5; REPORT 45c42a11b87278d573a5f009ffacfd64b6d8292047bb9b80985f9253d873f75a.

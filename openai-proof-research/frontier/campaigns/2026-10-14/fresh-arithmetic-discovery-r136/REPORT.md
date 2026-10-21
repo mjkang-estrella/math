@@ -1,0 +1,13 @@
+# Outside-payload report
+
+Disposition: full author-proof nominee T054L136 at the unchanged scope in FROZEN.md. Proof: notes/author-proof.md. Prefreeze mathematics: notes/feasibility.md and notes/local-calculation.{py,json}. The author's compatibility check is notes/self-check.md; it is not independent review.
+
+The substantive proposed extension is a rank20 whole-center construction using local norm obstructions across the entire integral transcendental-isometry class. Its complete reduction includes surface classification, finite-order automorphisms, bounded pencils/MRC bases, marked residue covers, exact surface-link corrections, uniqueness of eligible embedded subfields, endpoint vanishing, and cubic lattice/categorical compatibility. The existing source and classical operations paying each stage are identified in the proof. Separate reviewers may find the integration technical; no desired grade or count is presumed.
+
+Remaining mathematical obligations identified by the author: none conditional on the stipulated source and cited established inputs. Remaining external determinations: independent correctness and substantial contribution; no downstream formal/manuscript/release work was attempted. The ineffective B0 and unspecified arithmetic fields of definition are explicit limits of the frozen statement, not claimed conclusions.
+
+Reading/isolation limits are in private/READING.md. Hassett's operative association proof could not be fetched. The initial acceptance over-read, timing of guard installation relative to assigned tree navigation, and one falsely admitted historical check.py derivative are actual deviations, disclosed without a perfect-compliance or exhaustive-clearance claim. Source body includes and selected primary operations were read; metadata was navigation only. No active-peer verification was attempted. Original completed exceptions remain byte/mode unchanged.
+
+MANIFEST.json covers the exact payload files, including private material under original rights and the read-only verifier. FINAL.md, MANIFEST.json, and this REPORT.md are three separately anchored envelope files outside that payload list. No inherited full manifest is reused. The final handoff provides all three SHA256 anchors, which must be passed explicitly to the verifier in FINAL, MANIFEST, REPORT order. Copied clean/changed controls are byte-integrity illustrations only.
+
+Provenance: Codex / GPT-6 Astra / high / default service tier. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb stipulated true. Parent alone integrates, grades and counts. Publication, uploads, contacts, browser UI, nested agents, shared edits, git operations, heavy installs and downstream stages were not performed.
