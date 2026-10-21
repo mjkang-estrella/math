@@ -1,0 +1,11 @@
+# r165: source171 operative-proof discovery
+
+Codex / GPT-6 Astra / high / default service tier. Campaign19/20, latest R041; parent alone integrates/reviews/counts. Complete incoming standing brief read, with only its obsolete status/provider lines overridden. The pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb AND operative proofs are stipulated true, without truth audit. No frozen scope or old grade is changed. No nominee has been frozen.
+
+All commands run at actual project root; all writes stay in this exclusive root. No git commands, nested agents, browser UI, publication, contacts or downstream production. Exact acceptance section read by binary line selection, suppressing preamble and next heading before decoding. Direct AGENTS.md and sources/upstream.json read. Five requested completed r164 exceptions read completely; no truncation in that display. Their disposition is immutable context, not new evidence or scope.
+
+Before first filename traversal/body selection, tools/guards.json enumerated literal full-path wildcard guards, and tools/history_guard.py established casefolded substring component guards and pre-descent/pre-read pruning. 37 synthetic protected strings passed, without opening protected bodies. Broad omissions remain substantial; opaque aliases cannot be certified absent. Supplied reciprocal original active-peer exclusions are accepted, not inspected.
+
+The complete tree SHA256 matches eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b, with13223 entries and truncated=false. Only exact confirmed Source171 prefix selected. Source171 canonical main.tex authenticated by size, Git blob and SHA256; its complete wrapper read. Main includes introduction, proof-inputs, regime-table, references. Other objects are acquisition/navigation only until explicit reads.
+
+Initial direct catalogue navigation displayed the single exact canonical link line before numeric delimiters were established: a narrow premature metadata display, not full-catalogue recovery or proof reading. Subsequently numeric bold-dot delimiters selected Source171 bytes271973–272740 before decoding. Regex recognized372 boundaries, not a completeness certificate for the catalogue. No further family selected or developed. All tree traversal was exact-prefix metadata navigation, separate from broad-history body selection.
