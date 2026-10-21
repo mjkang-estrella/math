@@ -1,0 +1,13 @@
+# Structural discovery r150 — PREFREEZE / no nominee
+
+Authorized Codex / GPT-6 Astra / high / default service tier requested. Campaign19/20,latestR041; parent alone integrates/reviews/counts. One family including navigation: arbitrary-degree connected graph realizations and Source131 switch-chain mixing. Source113 was its explicit counting companion, not a separate research family. No theorem frozen, no full author-proof nominee, no independent grade/count or downstream stage.
+
+The full r30/r139 arbitrary-degree question is unchanged. The sustained core/forest derivation gives the exact macrostate weight N_conn(C,s) (m-1)! A/prod c_v!, an exact forest sampler accepting with probability A/m>=1/n, and a compatible mixed-core rejection reduction with acceptance at least1/(2n). These credit classical forest enumeration, the stipulated source sampler and the actual minimum-degree connected comparison. Special-surplus subset summation and binary rational matching-weight compilation are also paid; none is nominated as a substitute.
+
+Unpaid: efficient sampling of the full variable-surplus weighted core law, and separately uniform polynomial restriction/projection or flow control for the actual connected switch chain. A local matching-circuit inequality fails for one proposed signature; that limits this route only. No all-method obstruction, worldwide-priority/current-open claim or exhaustive search certificate.
+
+Read notes/02-integrated-reduction-and-gap.md for the integrated derivation and exact energy comparison; notes/03-evidence-and-reading-limits.md and note00 for actual source/primary/history extents, false admissions, coarse omissions, truncations and late reads. All old full scopes and dispositions remain immutable, including H138 and T185R144 correctnessPASS/contributionTECHNICAL.
+
+Exact finite checks cover33,864 graphs on3–6 vertices,23,864 core/forest groups,476 unicyclic degree vectors and878 parent maps/170 multiplicity fibers. Seven reduced-copy integrity controls passed their expected accept/reject outcomes, with originals stable during the observed window. These are supporting calculations/artifact checks, not mathematical gates.
+
+MANIFEST.json binds exact payload and directory membership. FINAL.md,MANIFEST.json,REPORT.md are the three outside envelopes, all within this exclusive root. Their SHA256 anchors are delivered separately; use code/verify.py read-only with all three detached anchors. Protected bodies remain private/local under original rights. No shared edits,git/staging/commit,nested agents,publication,contacts,browser UI or downstream formal/manuscript/release work.
