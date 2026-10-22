@@ -1,0 +1,19 @@
+# Structural r187 — strongest-payment comparison
+
+PREFREEZE/no nominee. No old target is narrowed, renamed or sent for a desired-grade retry.
+
+The headline Chai/Hovey–Strickland classifications, all primes and heights, open stabilizer subgroups, the finite-residue-field formulation, support containment, the finite chain, and its support map are all paid by the complete pinned source. Neither the all-prime BHN direction nor finite generation of a thick ideal is a nominee.
+
+The formal mechanism is stronger than an assertion of density: the source actually makes a formal subgroup, extracts an endomorphism annihilator, realizes its natural map on bundles, and contradicts the relation with full matrix spanning. Its parameter differential is established through marked connected–etale deformations. Ma's actual Appendix A additionally pays fixed-order uniformity in infinite Cartier output coordinates. Treating that as the remaining gap would understate the primary proof.
+
+The strongest construction retained here is DERIVATIONS §§4–5. After passing to Honda obstruction coordinates, Frobenius closure forces any polynomial-relation ideal over the renormalized field to descend to F_q. This supplies full matrix rank over that field; density over the smaller field alone would not. Applying the construction for every nonprincipal ultrafilter gives finitely many fixed directions and a determinant bound at every sufficiently large depth, with constants selected non-effectively. The adjugate gives an actual polynomial norm detector. This is a derivation from primary operations plus coefficient descent, linear algebra and compactness; no distinct substantial bridge is asserted or self-graded.
+
+The unfinished interface is now precise. The map back to original deformation coordinates is formal and generally infinite. Its Taylor error must be compared to the inverse evaluation determinant. A fixed-order error estimate by itself does not bound that determinant or ensure the tail is smaller than the detected value. Neither formal inversion nor finite-dimensionality gives the missing explicit directions, valuation constant or onset.
+
+On the ideal side, Li already states the finite identity x_1^e=sum b_i rho_gi(f), and a p-power identity in mixed characteristic. The source classification also proves their existence directly. DERIVATIONS §§6–8 retain the actual finite quotient matrix, a valid maximal-primary Nakayama certificate, and exact congruence-depth lower bounds. The matrix has at most binom(M+r-1,r) p^{n^2 max(M-a,0)} columns, but no bound on the sufficient precision M follows. For nonmaximal height support, the m-primary certificate cannot apply. An unbounded search or a finite maximum over polynomials does not supply the intended quantitative operation.
+
+The true-action test f=x_2 forces e>=a for U_a=1+p^a A_n, despite degree one. The finite diagnostic f=x_1+x_2^D gives least exponent ceil(M/D) at precision M<=a. These calculations prevent silently omitting subgroup depth; they do not disprove effective bounds that retain it. The one-variable DVR endpoint is elementary and is not a substitute nominee.
+
+I105/I107's earlier chromatic constructions concern actual spectral maps and ordinary assembly, not a license to transfer this coordinate calculation to E_n-module or nondualizable categories. Arithmetic39's ideal-power realizations also keep their own prime and category restrictions. Completed r186's homology assembly gap is not reopened. No telescope, Bousfield, arbitrary-subgroup, infinite-residue-field, nonradical-classification or full K(n)-local Balmer consequence is asserted.
+
+The handoff therefore retains concrete compatible reductions but no frozen viable full-scope theorem. This is not an exhaustion or impossibility claim, nor an exhaustive literature-priority conclusion.
