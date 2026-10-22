@@ -1,0 +1,17 @@
+# r191 — prefreeze working derivation
+
+No theorem is frozen. All operative source proofs are stipulated true. All source text, completed exceptions (with truncated r190 DERIVATIONS recovered), the selected original-history sections, and the operative primary passages were read before this mathematical note. This note initiates the quantitative exploration; it is not a nominee.
+
+The source supplies qualitative degree-one vanishing through finite-energy compactification, component-localized coordinates, convergence dynamics, group-ring finite-support correction, the parabolic pretree reduction, continuous block retraction and the all-representatives three-anchor path refinement. The source also already states Euler, signature and residual normal-tower Betti consequences.
+
+Developed direction: retain the full finite aspherical integral PD4 scope, and seek structural quantitative control of approximation by finite-support boundaries/co-boundaries, with finite regular-cover Betti decay as its output. A mere rate depending on an uncomputed spectral density, or the existing logarithmic bound of Clair–Whyte, is paid and is not a nominee. A power improvement would require a new bridge; it is not presumed.
+
+Let A=(d_0,d_1^*) from H_0 direct sum H_2 to H_1 on the finite cellular Hilbert complex of the universal cover. Then A A*=Delta_1 and ker(A*) is the reduced harmonic space. Source vanishing and faithfulness of the trace make that space zero, hence the image of A is dense. For the a basis one-cells at the identity and finitely supported input columns V=(v_j), define E=I-A V, delta(V)=sum_j ||E e_j||_2^2 and cost(V)=sum_j ||v_j||_2^2. Finite rational V with delta arbitrarily small exist, by density and rational approximation.
+
+For P_t=1_[0,t](Delta_1), Hilbert-Schmidt column norms give sqrt(F_1(t)) <= sqrt(delta(V))+sqrt(t cost(V)), because ||P_t A|| <= sqrt(t). Thus F_1(t) <= (sqrt(delta)+sqrt(t cost))^2. This exact estimate exposes a cost that qualitative vanishing does not bound. It does not assert a Novikov–Shubin bound.
+
+Take the infimum over V with input support in the word ball B_R. This is a finite rational least-squares problem once the actual marked ball and incidence matrices are supplied; no decision algorithm for the word problem is assumed. Denote its minimum delta_R and choose a minimum-norm minimizer of cost kappa_R. The finite image Gram matrix gives the orthogonal projection, so delta_R decreases to zero. If the minimum-norm minimizer is real, rational matrix data make it rational via Gaussian elimination on a maximal independent column set and orthogonal projection.
+
+For a normal finite quotient with no nonidentity kernel element of length <=2(R+s), where s bounds propagation of A, residual supports inject and their squared norms are unchanged. Harmonic projection annihilates A_i V_i. Summing over translated basis cells yields b_1(Q_i;Q)/[Gamma:Gamma_i] <= delta_R. This gives a finite witness at any chosen scale, but no bound on delta_R in terms of R. The independent Clair–Whyte polynomial trace comparison supplies the strongest paid logarithmic estimate. We must compare it with this finite filling profile before describing an unpaid operation.
+
+Next: derive the exact regularized optimization, test the logarithmic spectral control against it, and track precisely why the source path refinement does or does not bound these witness costs.
