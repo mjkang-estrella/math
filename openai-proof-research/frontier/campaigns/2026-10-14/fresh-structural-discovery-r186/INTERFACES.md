@@ -1,0 +1,45 @@
+# Structural r186 — source and primary interfaces
+
+No nominee is frozen. Source310 and every operative proof at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated true. The canonical wrapper, its actual nested inputs, all same-folder companions, and the compiled PDF were authenticated against the complete pinned tree. All text inputs were read; the PDF was authenticated, not used as a separate proof reading. Exact files, hashes, versions and reading extents are private.
+
+## Canonical source operations used
+
+The source proves rational augmented reduced nonvanishing for every finite G with O_p(G)=1, including the empty complex in degree −1. This headline is paid. It does not specify a universal degree or a nonzero Euler characteristic. The argument's minimal-counterexample reductions are not classifications of arbitrary groups with small nonzero homology.
+
+Section 2 reduces a hypothetical counterexample to stated classical simple components in characteristic at least five, with the precise exceptional branches in later sections. Elementary-abelian, p-subgroup and radical-poset equivalences and solvable/direct-product consequences are paid. No coefficient substitution is a nominee here.
+
+Section 3 gives component-core, faithful-configuration, faithfulness-upgrade, saturated-residue, product-shuffle and propagation operations. A local cycle needs a saturated coefficient at the selected rank; it need not lie in the largest dimension of H or G. Descending deletion of faithful overgroups, followed by the exact centralizer upper-interval retraction, is essential. The maximal-family corollary requires closure under qualifying elementary enlargements and verification for the ACTUAL supported representative A′ with LA′=H. DERIVATIONS §2 keeps all these conditions for a simultaneous detector.
+
+Section 4 builds actual frame coefficient spaces using plane relations, supporting-subspace grading and the PBW/super-Lie construction. The uniform all-type bound (17/25)^h and the small symmetric rank-three bound 3/8 concern these coefficient spaces. They do not directly count ambient homology classes. Single norm-type bounds have their stated field and type conditions.
+
+Section 5 supplies injective-chain-map hypotheses for ordinary and quaternion decorations. Vector-valued partial-data cancellation gives N(h−1)!(F−Σ1/k_i) and 2N(h−1)!(F−3/(2k_T)−ε/k_B). Injectivity is checked separately by actual flags, not inferred from counts. Its opposite-chamber proof and restriction lemma use a MAXIMAL intersection index, a fixed complement R, and B=R×(B∩H) to prevent suffix identification. Nonzero top homology requires the separate rank equality. DERIVATIONS §4 records what this operation does to a whole space.
+
+Section 6 treats linear/unitary components with signs, field/graph decorations, exact semilinear descent and restriction. At two the selected maximal faithful-family rank is the relevant one. In odd unitary rank estimates, noncommuting lifts have an alternating scalar pairing; the inequality excluding a positive pairing rank is actually proved before asserting commuting lifts. The asserted top dimension there is proved locally, not extrapolated to all groups.
+
+Section 7 constructs symplectic cycles INSIDE H. Quaternion local coefficients have dimension two, three retained-line faces, and the sign/quaternion/field data are recovered from actual flags by the commutator radical. This yields the concrete paid multiplicity consequence in DERIVATIONS §3. Its extension from the local proof to any eligible ambient G uses component-core and the now-stipulated source nonvanishing for the centralizer; it does not reuse a global minimal-counterexample classification.
+
+Section 8 tracks determinant and spinor restrictions, coordinate distinction, triality naturality, maximal-index loss at most two, and field descent. At q=5 the admissible norm-color ranges and excluded-coefficient estimates are essential, including the smallest rank's extra relation. An arbitrary residue image is not automatically detected entirely on admissible configurations. The correct retained quantity is the rank of the good-flag evaluation map. DERIVATIONS §4.1 applies the actual exclusion proof to its kernel and obtains an explicit positive rank bound, then propagates it at the fixed H. This interface is paid, not left as an existential gap.
+
+Section 9 resolves PSL_4(5)=PΩ_6^+(5) through the actual D8 outer-action branches, natural orthogonal configurations, the nonsquare graph branch, and the remaining equivalent-poset/prejoin construction. Its full-join injection is already paid. The centralizer-core-positive branches change the order comparisons for a specific purpose. They cannot be cited as a general induced-module decomposition. Section 10 supplies the global conclusion.
+
+## Strong actual primary operations
+
+Piterman, “An approach to Quillen’s conjecture via centralisers of simple groups,” published 2021, DOI 10.1017/fms.2021.41: published §3 full-chain/shuffle development and Lemma 3.14 proof, with §4 propagation/reduction proof, read alongside arXiv v2. The non-QD full-chain operation is already explicit. A new “propagation without top degree” headline would repeat it.
+
+Piterman–Smith, “Some results on Quillen’s conjecture via equivalent-poset techniques,” DOI 10.4171/JCA/95, 2024 online-first PDF associated with the 2025 citation: §5 Z-left conditions, initial shuffle and Theorem 5.10 proof were read in full operative span. The intermediate complex and link condition are stronger compatibility tools than a naive product-only argument. The proof explicitly preserves support; metadata alone was not used.
+
+Piterman, “Components in characteristic p and Quillen’s conjecture,” arXiv:2607.27500v1: all 17 pages read. The equivalent-complex construction and its final support comparison were read, not merely Theorem A. This already permits a finer flag-complex replacement where necessary to enforce normalization. It is not evidence that all replacement complexes work without their specified support checks.
+
+Segev–Webb, “Extensions of G-posets and Quillen’s complex,” 1994, DOI 10.1017/S1446788700036053: complete 16-page author proof, first eight pages of published extraction, and published p.61 visually read. The main theorem gives a cofiber/relative direct sum and a long exact sequence whose connecting map is the sum of actual inclusions of centralizers. The general Steinberg/Lefschetz identity is an alternating-module operation, not a full-homology decomposition. The wreath-product examples and the author's p.74 correction were read. DERIVATIONS §6 specializes the actual maps and then reconstructs the finite exterior-rank attachment filtration.
+
+Díaz Ramos, “On Quillen’s conjecture for p-solvable groups,” arXiv:1604.01922v1 (the exact version cited for equation (17)): pages 1–10, including complete chain/conjugation/cancellation proofs in §§3–4 and the coefficient count, were read. The title-page arXiv stamp and internal date differ; both are retained in the source PDF without inferring a later version. Example 4.9 is the same S3×S3 diagnostic group used here. This was a late primary comparison before extended drafting and rules out any novelty claim for that model.
+
+Díaz Ramos, “Quillen’s conjecture and unitary groups,” arXiv:2303.15613v6: full statements and operative coned-chain coefficient-cancellation proof in the recorded spans were read. The later explicit unitary construction was not read in full and is not claimed as an independently read proof. Source310's complete linear/unitary proof was read and stipulated; no new unitary theorem is attempted.
+
+Piterman–Welker, “Homotopy properties of the complex of frames of a unitary space,” arXiv:2208.12626v2: complete Proposition 7.3 eigenspace/decomposition-retraction proof read, with the subsequent comparison statement only. Its range-dependent connectivity/CM discussion is not a substitute for Source310's uniform frame operation. No full reading of its later comparison proof is claimed.
+
+## Operative original-history limits
+
+The prospectively pruned original-history search and exact selected sections are recorded in private/history-navigation.json and private/history-extents.json. The actual r80 retraction computation and its unsuccessful spectral-sequence/Steinberg compression show why an injection and an upper estimate must be distinguished. The r19 coefficient-change section already treats routine field transfer as paid. The r3 pro-p counting and i07 aspherical-action sections are related vocabulary but do not supply an operative Quillen-poset theorem. No assertion of exhaustive project novelty follows from these coarse exclusions.
+
+The six specifically authorized COMPLETED r185 originals were read in full. Their fixed-obstruction/relative-v1/filtration scope remains untouched and has no nominee. No active peer body, activity or status was consulted or used. Older frozen statements and supplied dispositions remain immutable. This round does not request a new grade for any old target.
