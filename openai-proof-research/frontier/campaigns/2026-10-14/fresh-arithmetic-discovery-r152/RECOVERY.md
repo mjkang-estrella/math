@@ -1,0 +1,9 @@
+# Recovery chronology
+
+2026-10-22 r2: authoritative brief read completely; 23897 bytes and SHA256 ff8cbca852ddba122c0c3378f0ae215e18791f5daa5779ef97d8ccf190846ca8 matched. Guards installed before own-root listing. Actual own root was empty: no r1 notes, frozen scope, or seals. The sole supplied r1 record is an intention to install guards/read sources, not evidence of a semantic read. All subsequent reads and calculations are fresh r2 work. Direct AGENTS.md, upstream.json and acceptance [4801,6347) read. No ancestors traversed.
+
+Provenance: Codex / GPT-6 Astra / high; default service tier requested, runtime tier not independently inspected. User-authorized recovery of the same Source053 task. Publication and downstream work stopped. No agents spawned.
+
+Fresh r2 sequence: authenticated and fully read all twelve Source053 TeX objects; read the six exact completed r150 exceptions (recovered the combined display truncation); performed one narrow, prospectively guarded family-history navigation with no relevant admitted original; retrieved and read the specified primary interfaces; recorded PREFREEZE before extended derivations; confirmed Kong hypotheses and two rendered pages; retained the dimension-free support extension, arbitrary-multiplier iteration, and mixed-divisor calculation. No r1 observation is relabeled as a fresh semantic read. No theorem became viable for freezing. Final disposition: PREFREEZE/no nominee. The final step is one own-packet seal and read-only verification with tiny copied controls.
+
+Preseal completion: exact direct-input integrity rereads and source include-closure check completed. Four tiny copied artifact controls behaved as expected, and the finite arithmetic diagnostics completed. All acquisition/navigation commands have finished; no child run, question or approval is pending. The next write creates the only final MANIFEST/REPORT/ANCHORS envelopes; after it, verification is read-only.
