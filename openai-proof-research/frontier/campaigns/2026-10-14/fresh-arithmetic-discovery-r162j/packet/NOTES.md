@@ -1,0 +1,11 @@
+# Arithmetic162j durable scope record
+
+Authorized Codex / GPT-6 Astra / high / default service tier. Campaign context 19/20, latest R041; parent alone integrates and counts. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and every operative upstream proof are stipulated true. No nominee has been frozen.
+
+The exact direct inputs and four completed exceptions are read. One clipped completed PREFREEZE display was recovered in two contiguous chunks. All 35 canonical blobs authenticate (3,316,571 bytes), against the complete tree. Both READMEs, wrappers, headline interfaces and complete consequences are read. K3 geometric inputs including the entire weighted convex-clustering and full-time plank proof, its complete final maximal-function reduction, and K4 entire framework (65,440 bytes), including current/witness budgets, exact chart density transformations, outer-measure selection, semialgebraic selector and monic-cubic area formula, have been read. Central entropy/critical-path proof sections have not yet been semantically read; authentication is not reading.
+
+The one guarded original-history traversal found 1,665 UTF8 candidates and five matching paths. Relevant I02 Section 5 and I124 Sections 2–3 were read through the next equal-level heading. No protected peer mathematics or live-status query occurred. Coarse omissions and possible opaque aliases prevent exhaustive clearance.
+
+The operation under investigation is the density-sensitive semialgebraic selector/area-formula interface in four dimensions. Its paid source ancestor has whole-block fitting and bounded-complexity geometric tests. The next comparison is actual Katz–Rogers polynomial Wolff proofs before developing any claimed extension. The four-dimensional maximal estimate is not inferred from dimension alone. No old Falconer, sparse-sampling, endpoint affine-law, or plane-direction target is reopened.
+
+End state: PREFREEZE / no nominee. The sustained feasibility calculations are in PREFREEZE.md. All 35 canonical blobs were rechecked; five tiny copied artifact controls behaved as expected. Semantic reading is partial (265,136 canonical text bytes), and the incomplete broad operative-proof reading objective is explicitly disclosed. No theorem freeze or author-proof submission occurred.
