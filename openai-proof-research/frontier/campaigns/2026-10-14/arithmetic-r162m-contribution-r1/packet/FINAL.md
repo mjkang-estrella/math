@@ -1,0 +1,13 @@
+# Arithmetic162m contribution review ROUND1
+
+**TECHNICAL — conditional on correctness of the entire unchanged frozen theorem.** No correctness verdict, acceptance, or count is assigned. Parent alone adopts the independent result.
+
+The full compatible derivation is in [REVIEW.md](REVIEW.md). It covers every normalized rough complex Lp extremizing sequence, every finite 3<p<∞, and every frozen compact definite-curvature smooth surface, including smooth boundary and disconnected chart descriptions. It derives strong Lp subsequence compactness modulo the stated plus-sign modulations, positivity/finiteness, attainment, and qualitative stability relative to the entire normalized extremizer set.
+
+The actual primary proofs already contain the second-output-exponent remainder argument. The paid L3→Lq estimate for all q>3, combined with finite surface measure, applies that argument directly to the untruncated sequence. Localized Hilbert square expansion retains sharp Lp mass and forces distinct profiles to have disjoint supports at equality. The strict complex plus/minus inequality and analytic Fourier injectivity exclude two such exact extremizers. Uniform convexity and modulation invariance give the remaining conclusions. This complete compatible classical composition leaves no essential unpaid contribution bridge. It does not assume uniform Lp residual bounds in the number of profiles or Hilbert-normalized extremality.
+
+All 29 canonical blobs were freshly authenticated against the prescribed complete tree. Both actual wrappers and all operative source text were independently read. Actual primary proofs and the five authorized original-history spans were read at the exact extents recorded privately. Compiled PDFs were authenticated only. Uninvoked transitive primary gaps remain explicitly disclosed; no all-literature or exhaustive-history claim is made. Protected source bodies and their named metadata remain in private/ under their original rights.
+
+The frozen statement remains 1,645 bytes, SHA256 9b967d5563e22bd8b07283d34d574f5eed9d5e2dc696020835e4e12655d003e1, mode 0644. The author proof remains 17,147 bytes, SHA256 6dd830369698429d2d3d713a07a11a895e68e52ee650e231ff7833219e58b3e3, mode 0644. All 21 authorized author inputs match their pre-read bytes and modes. Neither the other gate nor any peer activity was inspected.
+
+The fresh exact packet manifest is ../MANIFEST.json; detached FINAL/MANIFEST/outside-REPORT anchors are ../ANCHORS.json. verify_packet.py is read-only and requires all three explicit anchors. Tiny copied own-text controls concern artifact integrity only. No author manifest is inherited, no author artifact is changed, and artifact checks assign no mathematical gate.
