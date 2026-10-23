@@ -1,0 +1,9 @@
+# Outside report for r196
+
+This report is deliberately outside MANIFEST.json's selected packet. It records a full author-proof nominee, not an adopted result or any grade. The exact immutable statement is FROZEN.md; its quantifiers remain all q>=3, all d>=1, every closed TOP model and marking in degreeq, and all homeomorphisms without an order restriction.
+
+The main claimed operation is a framed, based multicolor chamber with exact q-divisible cyclic filling/model degrees. The author derivation combines a q-clique deficiency obstruction with explicit disjoint-cap positive fillings, full equivariant middle modules, nonreduced 2q-slot gradient memberships, marked reflection covers and cyclic-height transport. The source/classical components and history overlaps are charged explicitly in the proof and REVIEW-NOTES.md. The author supplies a proof at the entire frozen scope; no separate reviewer has assessed it in this task.
+
+Evidence limitations: the prospective guarded scans are not exhaustive clearance, i97 admitted some derivative prose under an opaque eligible name, and initial prefixes included irrelevant material. No peer result or grade was used. All source and operative companion TeX was read, but compiled PDFs were authenticated only. External primary proof reading is bounded to the recorded ranges, with text-extraction glyph limitations and no recursive literature completeness. Some metadata and a PRT definition-section opening were read after freeze and are disclosed. All old scopes are preserved.
+
+The selected packet is sealed once by its own exact manifest and detached FINAL/MANIFEST/REPORT SHA256 anchors. The verifier is read-only and the copied controls are small artifact checks. No proof-assistant support, independent correctness verdict, contribution verdict, acceptance or count is claimed. No publication, uploads, shared edits, git actions, browser UI, nested agents or downstream work occurred.

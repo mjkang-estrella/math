@@ -1,0 +1,17 @@
+# r196 prefreeze working derivations
+
+Authorized provenance: Codex / GPT-6 Astra / high / default service tier. Source and all operative upstream proofs at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are premises. This is discovery only; no grades or count.
+
+## Initial comparison (before extended deduction)
+All 14 Source320 blobs authenticated. Its wrapper, introduction, cyclic, reflection, models, extension, hyperbolicity, normalizer, chambers, tensors, formal, and references have been read. A tool-output truncation in the combined cyclic/reflection/models read was recovered by reflection[9000,12129) and models[0,10000); remaining displayed models text was intact. PDF authenticated, not semantically read.
+
+Source already pays: arbitrary linear twists of doubled chamber fillings; nonrealizable cyclic involution on every double-cover manifold model; finite Out and the label subgroup normalizer; graph endpoint theorem with arbitrary finite law families; marked algebraic edge potentials and mixed-parameter local vertex assembly. Thus counting twists or taking products is insufficient here.
+
+Eligible original I07 sections Candidate E and 2--8 (bytes 7520--40912) were read: its exact old target is every rank r of elementary abelian 2 individually unrealizable classes in fixed dimension four, via channel/bit plumbing and a lattice parity condition. This is kept unchanged. Its claimed proof is not an independently stipulated theorem in this round and is not used as a mathematical premise; it is operative overlap evidence. I97 section2 (10218--11173) identifies the separate exact relative stabilization target; that target is not pursued. Initial direct I07/I97 prefix read crossed section boundaries and included some irrelevant navigation/review prose; those are not premises. Full recovery of the relevant I97 initial scope and operative sections will be bounded by headings.
+
+## Candidate mechanism under examination, not a frozen theorem
+A cyclic odd-order obstruction would require a cover spectrum different from parity. Tentative q-color construction: replace the two upper tori in a bottom-torus body by two rooted binary grope trees, each having one tip of each of q colors. Install all independently conjugated, signed laws with two tips of each color, one per branch. Their leading word is [B_q(X_1,...,X_q),B_q(Y_1,...,Y_q)] with a nonzero comb Lie word B_q. A hypothetical filling and endpoint theorem would force some color to have at most one assigned edge at each vertex.
+
+Use plumbing types (s,c,k), 1<=s<q, 1<=c<=q, 1<=k<=5, with equal endpoint colors c and height s. The graph on Z/d connects v to v+s by five edges of every color. For d sufficiently large, every q consecutive vertices form a clique, so proper q-coloring forces period q and hence q divides d. A q-fold cover has the explicit color v mod q; choosing that color's tips is expected to give disjoint compressions on both branches. This is only a feasibility outline. The full hyperbolic middle-basis calculation for a deeper grope, based cancellation labels, marked boundary maps, and the primary/operative-companion comparison are not yet closed.
+
+The height argument itself extends immediately from modulus 2 to q: on the infinite cyclic cover of any Q_q manifold model, a lift of Ad(gamma^a) commutes with the gamma^q deck translation. Compose with its Rth power to obtain a model for Q_(qR+a). This is a paid source proof adaptation, not the proposed contribution. The possible contribution is a complete new q-divisibility chamber operation, if it closes.
