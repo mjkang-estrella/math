@@ -1,0 +1,17 @@
+# Arithmetic162e — PREFREEZE / no nominee
+
+No viable full theorem was frozen. No author-proof nominee or self-grade is submitted. Source068 and all operative upstream proofs at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb remain stipulated true.
+
+The distinct operation tested was all-degree specialization of the complete relative anticanonical section algebra of a prescribed smooth projective family with fibrewise smooth semipositivity, after a finite étale parameter change and one fixed Veronese. This is not the completed Source067 relative-connection target.
+
+The explicit family is P_(E×Pic^0(E))(O⊕P), with P the normalized Poincaré line and E elliptic. Every surface fibre has a smooth semipositive anticanonical metric and the same nonzero degree-one section a. At a nontorsion parameter its entire anticanonical ring is C[a]. At a parameter of exact order N the ring is C[a,b,c]/(bc-a^(2N)), with degrees 1,N,N. Its degree-m dimension is 2 floor(m/N)+1. The actual relative algebra is O_B[a], so specialization loses exactly 2 floor(m/N) sections at that parameter.
+
+This disproves the tested operation. A fixed Veronese, finite étale parameter cover, base-line twist, finite stratification, and pointwise finite generation do not repair its full all-degree scope. The notes prove each assertion. The derived explanation computes R1 as a free summand plus the skyscraper summands on the finite torsion subgroups; their Tor terms recover exactly the missing sections. Ordinary nonvanishing is fully compatible and holds in degree one throughout.
+
+This mechanism is classical: the actual ruled-bundle calculation of Chen–Filip–Sun–Tosatti–Zhang, Müller's unitary invariant-section construction, Mukai's Poincaré transform, and ordinary/derived base change already supply the decisive operations. The calculation is retained as a failed feasibility test, not offered as a substantial discovery. No alternate full positive bridge closed. The remaining discovery objective is a distinct nonroutine operation beyond those paid constructions, not a missing proof of the false assertion above. No global exhaustion or worldwide-priority claim follows.
+
+Read notes/01-operative-integration.md for the strongest-payment comparison and notes/02-prefreeze-section-algebras.md for the complete derivation and repairs. All 94 canonical blobs were authenticated. Exactly 36 blobs, 288275 bytes, were semantically read, including the full main source proof and selected operative companion dependencies; every unread blob is named in private/canonical-reading-status.json. All seven main statement interfaces were read. The remaining alternate companion proofs and seven PDFs were authenticated only. No claim of full reading of all 94 bodies is made.
+
+The private reading record gives exact direct exceptions, original-history selection, primary versions/extents, late Mukai/Stacks reads, clipping recovery, extraction warning, missing optional parser and isolation limits. The scan is neither exhaustive clearance nor perfect namespace classification. No peer mathematics or activity was used. The four permitted completed originals were not expanded by following links.
+
+REPORT.md, MANIFEST.json and detached anchors bind this exact own packet. Verification is read-only and checks artifacts, not mathematics. Parent alone may integrate and decide further work. No downstream formal/manuscript/release or public action occurred.
