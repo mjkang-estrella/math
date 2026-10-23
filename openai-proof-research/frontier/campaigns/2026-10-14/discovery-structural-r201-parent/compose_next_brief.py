@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+"""Prepare distinct Source326 discovery after Structural201 non-nominee intake."""
+from pathlib import Path
+import datetime,hashlib,json,re
+P=Path(__file__).resolve().parent;C=P.parent;PROJECT=C.parents[2];ET=C/'expanded-target-2026-10-17'
+sha=lambda b:hashlib.sha256(b).hexdigest();read=lambda p:json.loads(p.read_text())
+owner='164b1204-be68-4540-94bb-0b91055c4381';now=datetime.datetime.now(datetime.timezone.utc).isoformat()
+assert read(P/'intake.json')['disposition']=='PREFREEZE_NO_NOMINEE_ARCHIVED'
+oldraw=(ET/'fresh-structural-r201-brief.txt').read_bytes();assert sha(oldraw)=='6f8cfa1b4f2bd4c52033110595d81af3879aa2f33dace599ff6053de3190ae3b'
+old=oldraw.decode().splitlines();header=old[:38]
+brief=ET/'fresh-structural-r202-brief.txt';output=C/'fresh-structural-discovery-r202'
+assert not brief.exists() and not output.exists()
+registry_raw=(C/'tasks.json').read_bytes();registry=json.loads(registry_raw);checks=[]
+for i,e in enumerate(registry['tasks']):
+ if e.get('parent_thread') and e.get('taskId') and e.get('status') in ['running','queued','waiting']:
+  assert e['parent_thread']!=owner,'Owned task still pending'
+  b=(PROJECT/e['brief']).read_bytes();assert b.count(b'*structural*r202*')>=1
+  checks.append({'task_index':i,'brief':e['brief'],'sha256':sha(b),'bytes':len(b),'literal_guard_count':b.count(b'*structural*r202*'),'status_source':'Shared registry metadata only; no task-status request or mathematical body inspection.'})
+assert checks
+header[0]='Structural discovery r202 — Source326: cotype–cotype under the ordinary approximation property.'
+header[1]='Write ONLY frontier/campaigns/2026-10-14/fresh-structural-discovery-r202/.'
+pos=header[9].index('The ORIGINAL INITIAL brief of Arithmetic162u')
+header[9]=header[9][:pos]+('The ORIGINAL INITIAL brief of Arithmetic162v (idx695, foreign owner, recorded running in shared coordination state) contains literal *structural*r202* before this root or brief exists. Exclude the ENTIRE *arithmetic*r162* namespace, *owner-recovery*, and every peer body/parent/brief/copy/derivative/status/activity alias. Do not inspect, poll or steer any peer. Structural201 and200 are archived PREFREEZE/no nominee: all actual common-calculus/density and outer-ell1/endpoint derivations remain unchanged, with no frozen substantial theorem, grade or count; do not rename those calculations as nominees or revisit those families in this round. Structural199,198,197,196,195 remain CLOSED at their entire original scopes, correctness PASS / contribution TECHNICAL, condition DISCHARGED, ZERO count. Exclude all these entire author, review and parent namespaces, including no-r aliases; no body exception is admitted. Do not rename, weaken or seek another grade on closed targets. Every previously listed live or completed namespace remains excluded. Install the no-r twin of EVERY wildcard and compare all literal guards and twins BEFORE traversal, including *k369r134-* and *t185r144-*. Own structural202 namespace is excluded from broad authored-history scans; own files are usable. Exact admitted original-source/history paths do not admit containing directories. No peer result or status may be used as a premise. These are prospective prompt-level guards, not operating-system isolation.')
+start=552844
+with (PROJECT/'sources/CONTENTS.md').open('rb') as f:f.seek(start);nav=f.read(5000)
+end=start+nav.index(b'**327.');body=nav[:end-start]
+assert end==553766 and body.startswith(b'**326.') and b'lean/docs/326.md' in body
+assert sha(body)=='21245be0da9bcf095bab3fd68057f9d6219a848462f16dd14068824f941e178c'
+folder='preprints/The-cotype-cotype-conjecture-under-the-approximation-property-September-23-2026/'
+tb=(PROJECT/'sources/preprints-tree.json').read_bytes();assert sha(tb)=='eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b';tree=json.loads(tb);assert not tree['truncated']
+entries=[e for e in tree['tree'] if e['path'].startswith(folder)];blobs=[e for e in entries if e['type']=='blob'];assert len(entries)==11 and len(blobs)==10
+main=next(e for e in blobs if e['path']==folder+'build/main.tex');assert main['size']==4591 and main['sha']=='ebcd2944f104b196b04fc90fb93a2c73afd1dcb6'
+with (PROJECT/'frontier/NEW-TEN-2026-10-14.md').open('rb') as f:f.seek(4801);acceptance=f.read(6347-4801)
+assert sha(acceptance)=='f147924a01d36cce7ad5ee13bad6ed9ed9109f3bf4b5c2386fc318aae1330984'
+alias=next(s for s in old if s.startswith('Also prospectively prune FULL-PATH substrings .diff,'))
+new_aliases=['matrix-disk-discovery','glm-calibration','frontier/experiments/i251_quantitative_scalarization_proof','frontier/experiments/i291_crouzeix_counterexample_proof','frontier/experiments/i316_quantitative_amplification_proof']
+target=[
+'',alias,'',
+'Also install these additional case-insensitive FULL-PATH substring exclusions BEFORE first traversal/body selection: '+', '.join(new_aliases)+'. They prospectively exclude disclosed opaque source-copy and derivative-result/proof-review roots from completed navigation. They supplement every earlier guard. Do not inspect those bodies or rerun an old broader scan. No perfect classification is claimed.',
+'',
+f'Catalogue access for THIS round, if needed: ONLY direct binary seek/read sources/CONTENTS.md[{start},{end}), exact Source326 body, SHA256 '+sha(body)+'. No whole-catalogue read/decode, new heading search, second family or catalogue traversal. Parent bounded navigation read5000bytes from552844 to locate the327 heading; bytes after326 were not semantically selected. Only326 is selected. Parent has read no mathematical source theorem/proof body for this round.',
+'',
+'Your ONE developed family is Source326, the cotype–cotype conjecture under the approximation property. The complete pinned tree has ONE canonical folder '+folder+' (11 entries/10 blobs; build/main.tex 4591bytes Git blob ebcd2944f104b196b04fc90fb93a2c73afd1dcb6). Authenticate all10 canonical blobs. The folder includes README.md, build/main.tex, build/references.tex, SIX other build/*.tex operative bodies (approximation, coefficient, consequences, introduction, preliminaries, walsh) and paper.pdf. Establish actual include order, theorem labels and all dependencies from the wrapper and read every operative body, references and required companions before extended deductions or drafting. Filenames and catalogue summaries are navigation, not proof reading.',
+'',
+'The catalogue has a Lean link: fetch/read the exact pinned lean/docs/326.md as navigation, authenticate any indicated comparator and determine its actual coverage. Parent has not read this documentation or any formal body for this round. A comparator pointer, declaration or placeholder is not formal proof coverage. Determine genuine companions from actual canonical documents without drifting to another family. No downstream formalization is authorized.',
+'',
+'The source AND ALL operative upstream proofs at pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated TRUE. Catalogue navigation describes a nonzero REAL Banach space with the ORDINARY approximation property: it is K-convex if and only if both it and its dual have finite Rademacher cotype, with possibly different exponents, equivalently nontrivial Rademacher type. These summaries are NOT substitutes for actual quantifiers, constants, approximation operators and construction interfaces. Read the full operative proof. Every proved coefficient/Walsh/approximation or other applicable mechanism is PAID wherever its hypotheses hold. Do not audit upstream truth or challenge stipulated results using external conjectural expectations.',
+'',
+'Develop a DISTINCT substantial full-scope consequence or extension after the strongest compatible source/classical/primary/original-history reduction. First identify what the full source proof already makes routine. Standard equivalences between K-convexity and nontrivial type, their valid duality consequences, exponent weakening, finite direct-sum closure, equivalent renorming, or rephrasing the supplied theorem do not automatically supply substantial contribution. Conversely carry the strongest integrated construction and compatibility steps concretely before declaring a residual unpaid. Keep the real/complex field, nonzero and finite/infinite dimension, separability, primal/dual hypotheses, exact cotype exponents/constants, type exponent/constants, and approximation quantifiers explicit. Ordinary AP is not a uniform lambda-BAP assumption: do not smuggle a uniform operator bound through a compact-set or finite-rank approximation argument. Do not assume AP passes to a dual, subspace or quotient, or infer reflexivity/superreflexivity from a type assertion, without the needed theorem and hypotheses. Quantitative bounds, hypothesis removal or tensor/operator extensions are eligible only after actual strongest source/classical comparison and a proved residual; do not freeze from the catalogue.',
+'',
+'Original-history navigation must use ACTUAL construction and primitive aliases learned from the source, in addition to precise terms cotype–cotype, primal and dual cotype, K-convexity, Rademacher type, ordinary approximation property, bounded approximation property, Walsh projection, coefficient estimate and finite-rank approximation where operative. Avoid bare ubiquitous words where a precise compound identifies the construction. Read strongest actual primary proofs, not abstracts or agent summaries. Any proposed AP removal must confront the actual relevant classical examples rather than memory or a failed naive construction. Install every guard before traversing eligible authored originals; follow operative sections to the next equal/higher heading, record exact read extents and limitations. Inaccessibility or coarse exclusions are not novelty evidence. Preserve every old target encountered. Exclude peer/derivative bodies even if their names resemble this mechanism. No projectwide filename inventory followed by filtering is authorized.',
+'',
+'No completed-round mathematical body is directly admitted. Structural201 and200 remain archived unfrozen non-nominees with their actual derivations preserved. Structural199/198/197/196/195 remain closed full-scope PASS/TECHNICAL zero-count, with no retry or renamed weaker substitute. All previous structural/arithmetic/analytic archives retain exact original scopes. On eligible historical overlap read the actual original scope before claiming distinctness; an excluded root is not licensed by overlap. Disclose resulting limits without inferring acceptance, exhaustion or a favorable grade. The parent has not established history clearance for Source326.',
+'',
+'Carry sustained mathematical work with durable derivations. Complete operative reading and strongest-composition comparison before freezing a viable exact theorem, then prove the ENTIRE frozen scope. If it does not close, preserve that statement and identify the exact unresolved obligation; if no viable theorem emerges, report PREFREEZE/no nominee with actual derivations and gaps. Do not self-assign correctness/contribution/acceptance/count. Seal YOUR OWN exact selected packet ONCE, with detached FINAL/MANIFEST/outside REPORT hashes, a read-only explicit-anchor verifier binding exact selection and modes, and proportionate tiny copied controls. Protected bodies and named metadata remain private/local. No nested agents, git/shared writes, public actions, browser UI, or downstream formal/manuscript/release work.',
+'',
+]
+standing=next(i for i,s in enumerate(old) if s.startswith('--- COMPLETE ORIGINAL STANDING BRIEF'));text='\n'.join(header+target+old[standing:])+'\n'
+patterns=lambda s:set(re.findall(r'\*[^\s,;]+\*',s))
+# build/figures/*.tex in the prior navigation is not an isolation guard and this family has no figure.
+prior_patterns=patterns(oldraw.decode())-{'*.tex'}
+assert prior_patterns<=patterns(text)
+assert header[8]==old[8] and header[12]==old[12] and header[21:38]==old[21:38]
+assert text[text.index('--- COMPLETE ORIGINAL STANDING BRIEF'):]==oldraw.decode()[oldraw.decode().index('--- COMPLETE ORIGINAL STANDING BRIEF'):]
+assert all(s in text for s in ['.diff','state_probe','consolidate','activity','*structural*r202*','*arithmetic*r162*']+new_aliases)
+assert (C/'tasks.json').read_bytes()==registry_raw;brief.write_text(text)
+meta={'observed_utc':now,'path':str(brief.relative_to(C)),'sha256':sha(brief.read_bytes()),'bytes':brief.stat().st_size,'output':'fresh-structural-discovery-r202','catalogue_extent':[start,end],'catalogue_sha256':sha(body),'canonical_folder':folder,'canonical_blobs':10,'tree_entries':11,'main':{k:main[k] for k in ['path','sha','size']},'other_operative_bodies':6,'lean_navigation':'Exact lean/docs/326.md indicated by catalogue; not read by parent. Child must inspect actual documentation and coverage.','source_body_read_by_parent':False,'acceptance_extent':[4801,6347],'acceptance_sha256':sha(acceptance),'provenance':{'providerInstanceId':'codex','model':'gpt-6-astra','options':{'reasoningEffort':'xhigh','serviceTier':'default'}}}
+(P/'next-discovery-preparation.json').write_text(json.dumps(meta,indent=2)+'\n')
+isolation={'observed_utc':now,'brief':meta,'foreign_original_guard_checks':checks,'brief_finalized_and_peer_guard_checked_before_root':True,'all_prior_literal_guards_preserved':True,'complete_original_standing_brief_preserved':True,'additional_substring_guards':new_aliases,'prior_added_substrings_retained':['.diff','state_probe','consolidate','activity'],'mutual_guard':'New brief excludes entire arithmetic162 and owner-recovery namespace; current original peer brief already excludes structural202. All literal/no-r/substring guards retained.','limits':'Prompt-level chronology, not OS/perfect isolation. No foreign result/body/liveness inspection or steering. Exact-root AGENTS-only instruction retained.'}
+(P/'prospective-isolation-structural202.json').write_text(json.dumps(isolation,indent=2)+'\n');print(json.dumps(meta,indent=2));print('Foreign initial guard checks:',len(checks))
