@@ -1,0 +1,13 @@
+# Arithmetic162m — independent proof review ROUND1
+
+**PASS — entire unchanged frozen theorem and proof, relative to the stipulated upstream truth.** No necessary author correction or unpaid essential correctness verification remains. This verdict covers every normalized rough complex Lp extremizing sequence, every finite p>3, and every stipulated compact smooth embedded definite-curvature surface, including smooth boundary and disconnected descriptions.
+
+[REVIEW.md](REVIEW.md) gives the full independent derivation: the actual L³→Lq source interface and chart/Jacobian application; all interpolation cases including 3<p<4; decay and dislocation; nonvanishing and original-sequence weak Lp profiles; nested extraction with one increasing diagonal subsequence; all fixed-J bounds and the uniform-in-J output remainder; weighted square-mass tests and the full equality chain; complex strictness and analytic overlap; the plus-sign modulation and strong Lp convergence; attainment and qualitative stability relative to the entire extremizer set.
+
+All 29 canonical blobs were freshly authenticated against the complete 13,223-entry tree at the stipulated pin. All 27 canonical non-PDF texts, including both actual wrappers and every operative include/companion, were read. Actual relevant primary proofs and the five exact authorized original-history spans were read before extended assessment. PDFs were authenticated but not rendered. The private reading record states precise primary versions and intervals, unread transitive material, and truncation recoveries; it makes no all-literature or all-transitive claim. No unread transitive result is an unpaid essential dependency of the new deduction.
+
+The bound theorem (1645 bytes, SHA256 9b967d5563e22bd8b07283d34d574f5eed9d5e2dc696020835e4e12655d003e1) and proof (17147 bytes, SHA256 6dd830369698429d2d3d713a07a11a895e68e52ee650e231ff7833219e58b3e3) were read as actual files. Pre/post checks of all 21 permitted author inputs agree in bytes, hashes, and modes. The theorem and proof remain mode 0644. Nothing in the author packet was changed.
+
+This packet contains original review prose/code and a separate private evidence directory under original rights. Its manifest is newly made for this exact review packet. The read-only verifier requires explicit detached FINAL, MANIFEST, and outside REPORT hashes. Tiny copied-own-text controls check artifact behavior only. Artifact checks assign no mathematical verdict.
+
+No other review was consulted or queried. No contribution, acceptance, or count is assigned. The parent alone integrates the independent result.
