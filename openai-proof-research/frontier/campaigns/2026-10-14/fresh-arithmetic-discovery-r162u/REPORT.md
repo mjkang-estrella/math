@@ -1,0 +1,13 @@
+# Outside-packet handoff report
+
+Status: PREFREEZE / no nominee. One Source085 family was developed. The full N-independent componentwise L1(l2) centered-disk gradient diagnostic remains unproved. All old scopes and dispositions remain unchanged; campaign context is19/20, latestR041, with no count assigned here.
+
+The substantial research work is in packet/private/derivation.md: precise full quantifiers, all compatible payments, optimizer/contact/tie laws, full rough-input recovery, Gaussian common-radius calculation, explicit compact smooth arbitrary-selector loss, dimension-independent Hilbert input budgets, output-dependent coefficient obstruction, tails and exact residual J. These are comparisons and failed-route diagnostics, not a submitted new theorem. No method failure is an operator counterexample or exhaustion statement.
+
+Canonical authentication and complete operative reading are separated. Source and primary understanding notes explain the actual proof operations; READING-LIMITS.md and authorized-reading-receipts.json identify exact extents and qualifications. The strict-BV and r162t scopes were preserved. Transitive primary reading remains incomplete. The one prospectively pruned eligible-original pass has disclosed coarse omissions and false admissions and does not certify perfect clearance or foreign liveness.
+
+Provenance: authorized Codex / GPT-6 Astra / high reasoning; requested serviceTier default, not independently measured. The obsolete original brief's provider and18/20 lines are superseded. No nested agents, shared writes, git operations, publication, uploads, submissions, contacts, browser UI or downstream work occurred. Every shell command used the specified project workdir. All new material is within the exclusive root.
+
+Sealing scope: MANIFEST.json is a fresh exact inventory of packet/ (files, directories, sizes, modes and SHA256) and binds the read-only verifier's bytes. FINAL.md and this REPORT.md remain outside the packet and have detached SHA256 anchors alongside MANIFEST.json. ANCHORS.json is a convenience copy; the verifier requires explicit hashes and never auto-trusts it. Copied tiny own-text controls live outside the packet; their results are retained inside it. No inherited manifest was reused. One final main-packet seal is performed after all payload edits. Integrity success is not a mathematical gate, review or acceptance.
+
+The copied-text control run accepted its exact baseline, rejected a changed payload, rejected an extra file and rejected a wrong detached anchor, then accepted the restored baseline. Authored originals were unchanged by those controls. These five outcomes are integrity checks only.
