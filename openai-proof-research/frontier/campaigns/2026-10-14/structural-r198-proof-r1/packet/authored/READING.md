@@ -1,0 +1,44 @@
+# Independent review reading and isolation record
+
+Role: full correctness only, Structural198 round1. Authorized Codex / GPT-6 Astra / xhigh / default service tier. Campaign19/20 and latestR041 are user-supplied context, not inspected shared-state evidence. No contribution/acceptance/count decision is made. The complete original standing brief was read in the user message with the current role and header overrides applied.
+
+Every shell command used /home/mj-kang/Documents/Dev/math/openai-proof-research as workdir. Every created file, retained response, copied input, download, extraction and control is inside frontier/campaigns/2026-10-14/structural-r198-proof-r1/. No git, staging, commit, parent/source mutation, peer/task inspection, nested agent, heavy install, browser UI, public submission, contact, formalization, manuscript or release action occurred. PDF skill was read at its supplied exact path for read-only visual inspection; no authoring marker was applicable. Its general temp/output conventions were overridden by the exclusive-root requirement.
+
+## Prospective guards and exact admissions
+
+The only initial reads before guard installation were the explicitly instructed direct AGENTS.md, sources/upstream.json and acceptance bytes[4801,6347). Then private/guards.json installed all 169 distinct supplied literal wildcard patterns, each with its individually enumerated no-r twin, all 151 supplied full-path substrings (including publication, plain check and activity), and explicit derivative patterns. Repeated identical supplied literals have one equivalent predicate. Matching is specified on full project-relative POSIX path.casefold(), at every depth. Checks included the k369r134/k369134 and t185r144/t185144 twins and the entire Arithmetic162 and Structural198 namespaces. Own root is excluded from broad authored-history searches while own files remain usable.
+
+No broad authored-history filename traversal or body scan was performed. Thus there was no rg-then-filter operation, no extension/size/hidden/ignored cutoff and no asymptotic O(n) keyword search. Only individually admitted completed author files, the two exact parent files, the direct inputs, manifest-bound source/primary files and the two exact original-history byte spans were semantically selected. A file/span exception never admitted its directory. The completed author root was traversed solely under the explicit integrity-only exception for read-only byte/mode inventories; its 117 files were not thereby semantically read. No foreign coordination body, status, or activity was examined. No other review verdict was read or inferred.
+
+These are prompt-level selection guards, not OS isolation or perfect semantic classification. Coarse substring rules can exclude useful original history and opaque aliases could evade such rules. No broad scan here means no claim of exhaustive local clearance. Web queries returned unrelated and secondary hits; these were navigation false positives, not proof premises. No further local original-history selection was needed.
+
+## Semantic reads
+
+The complete frozen scope, author proof, DERIVATIONS, COMPARISON, AUTHOR-CHECK, READING, FINAL and outside REPORT were read, along with the complete parent assessment and questions. Their assertions were not treated as a mathematical verdict. Exact full lengths and selected hashes appear in private/reading-extents.json; protected copies are private.
+
+Direct originals: AGENTS.md in full; sources/upstream.json in full; frontier/NEW-TEN-2026-10-14.md only bytes[4801,6347). No journal or catalogue opening was materialized or decoded, and the optional Source322 catalogue span was not needed or read. The complete preprints-tree.json was checked as 4,858,136 bytes, 13,223 entries, SHA256 eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b. Only the exact Source322 folder entries were selected from that metadata. sources/tree.json was ignored.
+
+Canonical Source322: README [0,557), main.tex [0,18000) then [18000,35253), references.tex [0,5302). All four canonical blobs independently matched the complete pinned tree and their recorded Git blob/SHA256 identities, including the 179,799-byte source PDF. The PDF was authenticated, not semantically read; the complete TeX, including all proofs and appendix, supplied the proof reading. The sole operative include is references.tex. The 933-byte Lean scope and 1,287-byte comparator were read entirely. The comparator independently matches Git blob e8d14b099f558d62cffb37f1e6908d8661873ac2 and ends in sorry. No Lean import/build or formal coverage is claimed.
+
+Primary proof reads:
+
+- Ilisevic--Omladic--Turnsek, arXiv:2005.02949v1, PDF title From Mazur-Ulam to Wigner: the entire extracted [0,38291) bytes.
+- Tan--Gao, arXiv:2008.09282v2: the entire extracted [0,38915) bytes.
+- Enami--Matsuzaki, arXiv:2603.00583v1: [0,25000) and [25000,50471), together the entire extracted body.
+- Martini--Swanepoel--Weiss, arXiv:0708.2900v1: exact extracted [50991,55507), complete section3.5 through before section4, full Proposition31 proof and Corollary32. Both admitted rendered pages21 and22 were visually inspected. The broader text file was not semantically read; only the exact selected section was copied into the review packet.
+
+These texts/PDFs/renderings were read from the authenticated admitted packet or identical protected review copies. No claim is made that the other three PDFs were separately visually read page-by-page. Exact URL/version, PDF identities and extraction hashes are retained. Complete text outputs were within tool limits; none was truncated. The split source and C0 outputs recover contiguous exact byte ranges without gaps.
+
+Original history was read by binary seek/read BEFORE UTF8 decoding from frontier/iterations/i13-fresh-discovery.md [1311,4107) and frontier/iterations/i88-nonlinear-banach-discovery.md [1160,6224). These are the admitted heading sections ending at the next equal/higher heading. No bytes from the excluded I88 [0,41299), [30678,36024), original-2.txt, original-3.txt or linked directories were semantically selected. The author's disclosed earlier overmaterialization/truncation is retained as a limitation of the author record, not repeated or retroactively erased. The admitted warnings do not establish the actual I12 theorem scope, grade, or clearance. All closed targets remain closed and uninspected.
+
+## Late bounded general-projective comparison
+
+After the above mandatory body reads and the first durable reconstruction in NOTES.md, three bounded web batches made six queries concerning continuous phase-isometries, antipodal/projective norm-sphere isometries and a named primary paper. Exact queries and returned navigation outputs are in private/review-web-navigation.json. This was a late applicability check, not a discovery campaign or proof premise, and it did not change the frozen input or the reconstructed argument.
+
+The Centaur URL for Gehér's Symmetries of projective spaces and spheres returned “Access Denied: error code 9e4edb5b6b850c41.” This was recovered by downloading https://arxiv.org/pdf/1606.03584v1 to the exclusive private root and extracting locally with existing pdftotext. Exact download/extraction hashes and UTC are in geher-access.json. Semantic reads were extracted bytes[12409,19901) (main statement section, section3 opening and full Lemma3.1 proof) and [33854,38473) (full Lemma3.8 proof and the following transition). No full reading of the single-angle theorems' proofs or complex cases is claimed. The operative checked formulas use inner products/polarization and double orthogonal complements/projective geometry; they do not supply an unproved general normed-sphere lift. The frozen argument already proves the needed general covering construction in full.
+
+The author packet records a CL-space full-PDF HTTP403. I did not newly request or read that full proof and do not adopt the C0 paper's criticism as a verdict. The uniform-algebra2606.22320 body was not read. Neither is a correctness dependency, novelty evidence, or basis for a contribution grade. No comprehensive literature or project-history clearance is claimed.
+
+## Artifact boundaries
+
+Hashing, copying, source-tree parsing and inventories are authentication only. The review's own selected packet gets its own exact manifest once; the retained author manifest is a private input record, not the review selection's seal. Original rights remain in force for all protected bodies and named metadata. Private directories are0700 and protected files0600; authored review prose/verifier, FINAL and outside REPORT are0644. Unselected NOTES.md and tiny copied controls are outside the packet, explicitly not covered by its manifest. Artifact control results do not prove mathematics. Parent alone adopts this correctness recommendation and handles the other gates.
