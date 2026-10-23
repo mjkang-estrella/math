@@ -1,0 +1,11 @@
+# Source072 research boundary
+
+PREFREEZE. Authorized Codex / GPT-6 Astra / high / default service tier; provenance follows the prompt, with no separate introspection. All stipulated upstream proofs at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are accepted as true. Complete standing brief read in prompt; current 19/20 and model header override its obsolete lines. This root is r162h; the prompt chronology alias Arithmetic162f does not authorize inspecting any excluded peer namespace.
+
+Both canonical manuscripts have been read completely in their shipped textual forms before developed deductions: 23 text blobs, all wrappers, nested includes, figure definitions/captions, bibliographies, and theorem interfaces. All 25 blobs including the two PDFs were authenticated. PDFs were not semantically read. The 25-text/27-blob count in the completed r162g exception concerns Source071, not this Source072 selection. Two glyph-to-Unicode inputs in each wrapper are system typography includes, not unexamined mathematical companions.
+
+The inverse-square law is constructed only under rho>2. Its horizontal endpoint cancellation costs C(2/rho)^n; at rho=2 this does not tend to zero. No exact critical law may be inferred from that argument. The escape and geometric transport statements, once an exact affine law is independently supplied, have separate interfaces that must be checked at any new parameter. The first-power companion supplies strict rank gains but no uniform gain per pair.
+
+The eligible original i135 section and both complete routes have now been read. E_gamma/W2, the subpower gauge, boundary-measure criterion, and finite-meromorphic tails remain immutable and are not retried. A loss-free radial endpoint would overlap those routes and is not this operation.
+
+The one prospective new direction is quantitative stability of exact inverse-square affine laws near the critical scaling exponent, including the full normalized univalent half-plane class. Preliminary equality-model exploration suggests a Cauchy family of quadratic maps. Equality classification alone would combine source strict transport with elementary analytic rigidity, and is not being nominated. No viable theorem has been frozen. Primary persistence and analytic comparison reading is in progress before extended derivations or author proof drafting.

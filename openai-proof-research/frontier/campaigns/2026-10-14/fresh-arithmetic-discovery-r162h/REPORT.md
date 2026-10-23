@@ -1,0 +1,19 @@
+# r162h parent handoff
+
+**Full author-proof nominee, pending the parent's independent reviews.** This is the one distinct Source072 operation developed in the assigned r162h root, with the prompt's Arithmetic162f chronology alias retained. It does not reopen prior frozen endpoint, curve-contact, categorical or deformation targets.
+
+The exact theorem is packet/FROZEN-STATEMENT.md (frozen SHA256 1d2799dba1c5bffca37724769974e56dc0e6c6ec2ac0196a01c3f15039ce6133). Its full author development is packet/AUTHOR-PROOF.md. The theorem gives an expected squared compact C^m approximation rate C_(E,m)(1-beta)^(1/4) to normalized real-root quadratics for every exact inverse-square affine law with beta in [3/4,1], and identifies the unique critical law as the Cauchy quadratic law. One Borel model choice works for all compacts and derivative orders.
+
+The proposed additional bridge is a quantitative component-persistence pairing compatible with the source's target weights and affine box transport. It supplies a fourth moment of positive normalized Jacobian. A determinant-Laplacian identity then closes local analytic rigidity without dividing by the pre-Schwarzian. The original persistence rule and all actual source operations remain paid; no separate novelty claim is made for them. The parent should have the full frozen theorem reviewed for correctness, then separately assess contribution against the actual primary construction.
+
+The author text leaves no intentional internal conditional lemma. Review should focus on the two rising germs belonging to distinct components, persistence injection through finite-superlevel exhaustion, Borel component selection and affine covariance, and the cutoff use of the determinant identity. These are interfaces to examine, not independent review findings.
+
+Exact covariance is an explicit hypothesis, satisfied by normalized power families and the critical Cauchy family. This work does not derive it for finite-scale extremizers or the critical source operator. Its boundary cancellation at rho=2 remains unpaid in that different application; no i135 logarithmic/weak endpoint conclusion or new universal radial bound is claimed.
+
+Read limits are explicit: all 25 canonical blobs authenticated, all 23 textual canonical blobs fully read, two compiled PDFs unread; original i135 sections [22410,25351) and [25351,35297) fully read; exactly four completed r162g exceptions; original primary persistence Sections 2--4 and partial Hedenmalm--Shimorin comparison as recorded privately. No broader scan rerun or exhaustive history/literature clearance is claimed. The full supplied standing brief and current overrides were read.
+
+Artifact support is limited to exact polynomial identities and byte integrity. SymPy was unavailable; no installation occurred. A small dependency-free algebra check replaced it. Five copied integrity controls behaved as expected: intact accepted; changed, missing, extra and wrong-anchor cases rejected. The own originals were not modified by these controls. These are not mathematical gates.
+
+MANIFEST.json is a freshly generated manifest for the complete packet/ directory, not an inherited manifest or a manifest for the whole preexisting root. The detached hashes of packet/FINAL.md, MANIFEST.json and this outside REPORT.md are supplied in ANCHORS.json and the final handoff. The verifier is read-only and requires those explicit hashes. Controls have their own tiny exact selections and fresh manifests. Protected bodies and their metadata stay under packet/private.
+
+Authorized provenance: Codex / GPT-6 Astra / high / default service tier, following the current header. All commands used the actual project root; all writes stayed in the assigned r162h root. No git/staging/commit, nested agents, public action or downstream formal/manuscript/release work. No self-grade, acceptance or count. Parent alone integrates and adopts any later disposition.
