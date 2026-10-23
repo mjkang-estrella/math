@@ -1,0 +1,11 @@
+# Outside report — Structural196 independent correctness review, round 1
+
+**Whole-scope correctness: PASS**, relative to stipulated upstream truth at `fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb`. No contribution grade, acceptance or count. No repair or narrowing of the frozen author statement was made.
+
+The reviewed FROZEN.md SHA256 is `3c5dc0b976a4ccd9f7978958e56dcd6e3bc60caf502f28906285e08f8c263037`; the author-proof.md SHA256 is `e1845bb0d890383d0a70a9a5146795b76b865fe723f25dcfef8541626ba5e985`. The full verdict covers q≥3, all d≥1, every model and marking, full equivariant and actual-ideal compatibility, orientations and unrestricted-order homeomorphism nonrealization. `REVIEW.md` gives twelve question-by-question resolutions and durable derivations; `FINAL.md` gives the final scope and limits. No unresolved correctness obligation remains in this review.
+
+Actual pinned operative proof interfaces and companion sections, the six primary antecedents in their recorded versions, and the three exact original-history spans were checked. Higher-dimensional Nielsen-realization theorems were not applied in dimension four. No peer body/status or inherited grade supplied a premise. Primary text extraction limits, no visual PDF check, the nonmathematical utility limit and the nonexhaustive search scope are disclosed. Protected evidence and named metadata remain private/local.
+
+The author packet was left unchanged. Its verifier replay accepted 78 selected files with the supplied anchors; its extra-file/mode limitations remain. This review's exact selected packet uses a separate manifest, explicit-anchor read-only verifier, mode checks, and eleven tiny copied controls. Original-preservation receipts retain the limitation that history modes were not independently recorded before reading. The review's single final seal and detached hashes are in `ANCHORS.json`; this report is deliberately outside the manifest's selected file set and is bound by its separately supplied SHA256.
+
+Reviewer: Codex / GPT-6 Astra / xhigh / default service tier. Work and all copies stayed in `frontier/campaigns/2026-10-14/structural-r196-proof-r1/`. No nested agents, git/shared edits, browser UI, public action, contact, formalization, manuscript or release work. Parent alone integrates or adopts grades and counts.
