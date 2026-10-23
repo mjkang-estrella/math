@@ -1,0 +1,9 @@
+# Outside-packet report
+
+Disposition: PREFREEZE / no nominee. There is no frozen candidate, no author-proof submission, and no self-assigned correctness, contribution, acceptance or count. This report is outside the exact packet and is separately anchored.
+
+Research produced a full-scope hard V³ diagnostic and concrete compatible reductions. The absolute off-band primary estimate controls total variation of the reassembly error. The source's reference-line coefficient and ordinary-tree arguments retain the dual interval law when their maximal synthesis is replaced by their already paid V³ synthesis. The remaining joint diagonal estimate must keep pointwise interval selection through all frequency and bin projections, including hard endpoints. Recorded attempted closures retain sqrt(partition count), sqrt(frequency count), sqrt(bin count), or an absolute Cotlar log-squared frequency bound; these are method residuals, not counterexamples to the diagnostic. The constant-field case is paid and is not a substitute.
+
+Canonical proof reading is complete and canonical authentication covers all 18 blobs. Primary/transitive limits, one unusable PDF extraction and its recovery, exact extents, guarded-history false hits and coarse omissions are disclosed privately. No unseen primary proof or metadata is presented as semantic reading. All earlier frozen and PREFREEZE scopes retain their instructed dispositions.
+
+The packet is new and exact; no inherited manifest is attached to a selection. The manifest authenticates the verifier's bytes as well as exact packet membership. Three explicit external SHA256 values anchor FINAL.md, private/MANIFEST.json and this REPORT.md. Tiny copied own-text controls exercise an unchanged positive packet and a deliberately altered copy; their result is artifact behavior only. All objects remain inside the exclusive r162s root. No downstream or public action was performed.
