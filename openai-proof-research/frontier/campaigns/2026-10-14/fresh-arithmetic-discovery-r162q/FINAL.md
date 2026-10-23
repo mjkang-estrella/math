@@ -1,0 +1,13 @@
+# r162q — PREFREEZE / no nominee
+
+The single developed Source081 direction did not yield a closed nonroutine full-scope theorem. No theorem was frozen and no author-proof nominee is submitted. No correctness, contribution, acceptance, or count is assigned.
+
+The integrated derivation credits the entire quantitative higher-codimension Riesz-transform-to-uniform-rectifiability theorem and its stronger operative mechanisms. It also closes the compatible finite-orthogonal-energy-to-constant-plane reduction without a graph or density-tail assumption, eliminates nondegenerate bounded-support reflectionless inputs, and obtains quantitative flat seeds in every ball of a reflectionless input without an exceptional family. These are credited source/primary compositions, not replacement findings.
+
+The exact unpaid operation is global: for every reflectionless input in the full diagnostic, obtain one fixed plane with finite total orthogonal energy, or another argument that controls the complete measure coherently across scales. A second paid route requires one common flat measure on an entire annular block; independently selected local planes do not meet it. The strongest local energy estimate retains an R^(n+1) budget, and the expanding-balance estimate has no vanishing gain. Neither is a counterexample or an impossibility claim.
+
+The exact diagnostic, normalizations, failed attempts, paid compositions, and residual are in packet/private/derivation.md. Complete canonical text reading and authentication of all fourteen canonical blobs are finished. Complete transitive primary reading is not; actual versions, proof extents, recovery, late reads, false admissions, and coarse omissions are in packet/private/READING-LIMITS.md. Protected bodies and associated metadata remain private/local. No exhaustive clearance, perfect isolation, or priority is claimed.
+
+All earlier scopes and dispositions remain unchanged, including the full r162p temporal-variation diagnostic and its joint cutoff/cardinality gap. No shared files, git state, foreign in-progress bodies, or public services were modified. Parent alone integrates this packet and commissions any future independent reviews.
+
+Provenance: Codex / GPT-6 Astra / reasoningEffort high / serviceTier default; supplied campaign context 19/20, latest R041. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb and all operative upstream proofs were treated as true. This exact packet is sealed once with a fresh MANIFEST.json; REPORT.md is outside the packet, and detached hashes are in ANCHORS.json and the handoff. verify_packet.py requires explicit detached anchors and is read-only. Its checks are artifact checks only.
