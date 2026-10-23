@@ -1,0 +1,17 @@
+# r194 outside-manifest report
+
+Disposition: PREFREEZE / no nominee. This report is deliberately outside MANIFEST.json and has its own detached SHA256 anchor. FINAL.md contains the mathematical handoff. DERIVATIONS.md preserves the sustained calculations; INTERFACES.md and COMPARISON.md explain the premises, strongest payments, and unresolved scope.
+
+The exact selected packet includes original research notes, this round's verifier and helpers, all85 authenticated Source318 blobs, private primary PDFs/text/rendered diagrams, the narrow copied original-history inputs, the prospective policy, source/include/reading ledgers, and private contracts. It does not inherit any earlier round's manifest. The excluded files are the manifest itself, this report, detached anchors, and the tiny copied controls under private/controls/. The manifest records every selected file by its own bytes and SHA256.
+
+Mathematical state: the coherent determinant module reduction and its explicit counit cone are retained at p≥5; the prime-three generic δ pair and the exact failure of an automatic integral realization are retained separately. No half-sphere comparison, extra finite-assembly theorem, explicit new exponent, full author proof, formalization, or substantial nomination is asserted. Actual proof and contribution review remain the parent's responsibility if any part is later pursued.
+
+Source/read limits:85 source blobs authenticated;80 text blobs fully semantically read;five source PDFs authenticated only. Seven primary documents have targeted operative proof-page reading; a downloaded survey is expressly unread. The complete source bodies, stronger available coheight-one primary version, operative i105/i107 originals, exact r193 exceptions, and narrow r39 category section preceded the extended written derivations. Full extents, output recoveries, access failures, version limits, false topical admissions, and coarse exclusions are recorded in private/READING-LIMITS.md. No exhaustive literature or history clearance is claimed.
+
+Isolation and operations: all writes stay inside the assigned root. No nested agents, publication, browser UI, uploads, contacts, git/staging/commits, shared edits, or downstream formal/manuscript/release operations were performed. The single failed read-command cwd deviation is disclosed in FINAL and the private reading record. It read no requested body and wrote nothing. No peer status/activity inspection was used to certify isolation.
+
+The read-only verifier requires root and all three detached hashes explicitly. It does not trust ANCHORS.json automatically. It verifies the selected content and exact selected file set, rejects traversal/symlink paths, and checks FINAL,MANIFEST,REPORT anchors before reporting integrity. It neither evaluates mathematics nor assigns a grade.
+
+Tiny copied controls completed before sealing: an intact two-file copy verified; a changed COMPARISON copy was rejected; a wrong detached REPORT anchor was rejected. The original FINAL and COMPARISON hashes were unchanged. The receipt is private/control-results.json. These are proportionate artifact controls, not mathematical gates.
+
+Provenance: Codex / GPT-6 Astra / high / default service tier. The brief's obsolete provider and campaign lines were overridden as instructed. Parent alone integrates, reviews, adopts any disposition, and counts. No acceptance or count is assigned by this record.
