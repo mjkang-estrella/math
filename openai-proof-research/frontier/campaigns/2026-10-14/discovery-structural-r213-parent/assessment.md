@@ -1,0 +1,25 @@
+# Structural213 parent intake
+
+Disposition: **ARCHIVED_PREFREEZE_NO_NOMINEE**. No frozen theorem, correctness grade, contribution grade, acceptance or count is assigned. Campaign remains **19/20, latest R041, one remaining; publication STOPPED**. This is an archive of useful derivations and exact limits, not an adoption of a new mathematical result.
+
+The parent read the complete author DERIVATIONS, RELATIVE-DERIVATION, STABILITY-REDUCTIONS, READING-LIMITS, FINAL and outside REPORT, and the verifier and control scripts. All operative upstream proofs remain stipulated true. The parent did not semantically inherit the child's source, classical-primary or original-history reading from authentication records.
+
+## Mathematical work retained
+
+The author carries the compatible current compactness, slicing, convex projection and doubling mechanisms through a relative filling problem for a proper CAT(0) space X and a nonempty closed convex subset C. For n-dimensional integer cycles on X minus C, n >= 2, the retained construction includes finite-mass noncompact extension, recovery from locally integral cycles without an assumed global normal trace, and globally integral filling representatives. It separates exterior mass from total mass: the sharp exterior bound does not become a sharp total-mass bound for a thick obstacle.
+
+The central recorded identity identifies relative filling volume with one half of the absolute filling volume of the doubled cycle. The two folding maps select an integral filling with the required exterior mass; the argument does not divide integral currents by two. Existence, the projection-compatible boundary representative when available, compact-support confinement, and hemispherical sharpness are carried along. The eligible old current-equality construction is credited, not reopened, regraded or counted. Transferring a Euclidean equality ball across the double retains the required projection and metric compatibility.
+
+For fixed X, C and a support ball, the author carries compactness and weak-to-filling convergence through the exact identity to an implicit modulus toward actual extremizers. This is not an effective rate or a uniform result over varying CAT(0) ambient spaces. The separated small-hemisphere example explains why deficit alone cannot control support diameter or Hausdorff distance: a component of vanishing mass can be arbitrarily far away. The finite mass-additive decomposition estimates are conditional on such a decomposition and do not assert a general no-cancellation theorem.
+
+No distinct substantial operation beyond the strongest compatible source/classical/original construction is established. Effective geometric stability remains unresolved: a suitable compactness/topology interface and quantitative no-cancellation or distortion estimate still need proof. The old quantitative Cartan-Hadamard scope is not renamed or submitted again.
+
+## Evidence and limits
+
+The parent independently replayed the explicit-anchor verifier against the delivered FINAL, MANIFEST and outside REPORT hashes. It matched **125 selected files and 14 directories**. All **274 files and 31 directories** observed in the author root remained unchanged in bytes and modes. Seven tiny copied controls behaved as expected: the intact fixture passed; incorrect anchor, changed bytes, extra/missing file and file/directory mode changes failed. These are artifact checks, not mathematical certification. No sealed original was rewritten, chmodded or resealed.
+
+Identity checks bound all 32 canonical blobs to the complete pinned tree and the recorded complete coverage of 26 operative blobs, totaling 295,784 bytes. The six excluded blobs are the two READMEs, two glyph-mapping files and two PDFs. The parent also bound 12 primary PDFs, 22 selected primary extraction spans, four exact original mathematical history spans, ten recorded visual pages and three formal-navigation/comparator files. These counts describe identity bindings, not new parent semantic reading or exhaustive history clearance.
+
+The author's limits remain material: the published Ambrosio–Kirchheim URL failed and an MPI preprint was used; some classical intermediary proofs were not read; Almgren recovery supplied only six introductory pages of visual reading, not the full endpoint proof. The Schulze selection displayed **1,193 bytes of editorial backmatter** beyond the intended mathematical endpoint; the correction excludes these bytes from the selected mathematical evidence but does not erase the overread. Other version, encoding, access, targeted-reading and guarded-history limits remain in READING-LIMITS. No priority or exhaustive novelty conclusion follows from unavailable sources or exclusions.
+
+Both recorded Lean comparator endpoints contain `sorry`; no proved formal coverage is claimed. The parent performed no new external retrieval or formalization. This packet receives no independent review pair because it contains no nominee. Continue to a distinct family while preserving the present derivations and unresolved obligation unchanged.
