@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+"""Archive an owned prefreeze discovery, assigning no mathematical grades."""
+from pathlib import Path
+import copy,datetime,hashlib,json,os
+P=Path(__file__).resolve().parent;C=P.parents[1];PROJECT=C.parents[2]
+read=lambda p:json.loads(p.read_bytes());now=datetime.datetime.now(datetime.timezone.utc).isoformat()
+status=read(P/'task-status.json');replay=read(P/'replay.json');assert status['status']=='completed' and status['workState']=='result_available' and not status['hasPendingChildRuns'];assert replay['author_originals_unchanged']
+registry=C/'tasks.json';ledger=PROJECT/'frontier/NEW-TEN-2026-10-14.md';raw=registry.read_bytes();lr=ledger.read_bytes();t=json.loads(raw);old=copy.deepcopy(t);idx=770;e=t['tasks'][idx]
+assert e['taskId']==status['taskId'] and e['parent_thread']=='164b1204-be68-4540-94bb-0b91055c4381' and e['parent_full_intake_pending']
+assert (t['newAccepted'],t['latestAcceptance'],t['remaining'])==(19,'R041',1)
+rel=str(P.relative_to(C));e.update(status='completed',workState='result_available',hasPendingChildRuns=False,parent_full_intake_pending=False,parent_disposition='ARCHIVED_PREFREEZE_NO_NOMINEE',parent_intake=rel+'/intake.json',correctness=None,contribution=None,accepted=False,count_change=0,author_anchors=replay['anchors'])
+note='Structural230 archived PREFREEZE/no nominee after complete authored-prose intake and read-only replay. Finite-perimeter first-order Coulomb phase selection and exact rational certificates retained; effective finite-coupling phase diagram and justified second-order remainder remain unproved. No grades/count. Campaign19/20,latestR041,one remaining; publication STOPPED.'
+t['last_parent_progress']=note;s=t['current_work_snapshot'];s.update(observed_utc=now,note=note)
+if 'active_task_indices' in s:s['active_task_indices']=[x for x in s['active_task_indices'] if x!=idx]
+if 't3_last_polled_running' in s:s['t3_last_polled_running']=[x for x in s['t3_last_polled_running'] if x!=status['taskId']]
+s['structural230_dispatch']['status']='completed';s['structural230_parent_intake']={'task_index':idx,'disposition':e['parent_disposition'],'intake':e['parent_intake'],'count_change':0,'correctness':None,'contribution':None}
+assert all(t['tasks'][i]==old['tasks'][i] for i in range(len(t['tasks'])) if i!=idx)
+assert all(t[k]==old[k] for k in old if k not in ('tasks','current_work_snapshot','last_parent_progress'))
+allowed={'observed_utc','note','active_task_indices','t3_last_polled_running','structural230_dispatch'};assert all(s[k]==v for k,v in old['current_work_snapshot'].items() if k not in allowed)
+heading='## Structural230 prefreeze archive: first-order Coulomb phase selection and effective-coupling gap';assert heading.encode() not in lr
+append="\n## Structural230 prefreeze archive: first-order Coulomb phase selection and effective-coupling gap\n\nParent read all authored derivations, reading limits and handoffs. The finite-perimeter volume correction, first-order moving-volume transition functional, whole-orbit phase selection and exact rational Fourier certificates are retained. The effective finite-coupling diagram and justified second-order remainder remain unproved. Existing AFM/Cristoferi local stability and continuation are credited, and the late Choksi–Sternberg nonroundness comparison is disclosed. No full theorem is frozen or nominated. [Parent assessment](campaigns/2026-10-14/structural-r220-isolated-continuation/discovery-structural-r230-parent/assessment.md).\n\nRead-only replay verified all three anchors and 52 selected files; all 72 author-root files and 11 subdirectories stayed unchanged. Parent bound 13 canonical blobs, 15 source and 21 primary read intervals, five primary PDFs, two formal artifacts and one guarded original-history range. The full rational certificate was reproduced only on a temporary copy; both limiting crossing-shift intervals matched. The clean author fixture and six independent copied controls behaved as expected. Exact selected membership and whole-root inventory are distinguished from the verifier's narrower commitment checks. Artifact/arithmetic checks do not grade the analytic construction or inherit source/primary/visual coverage. Access failures, unread intermediates and actual exposures remain disclosed; the comparator contains sorry. **PREFREEZE/no nominee; no mathematical grades or count. 19/20, latest R041, one remaining; publication STOPPED.**\n"
+
+intake={'observed_utc':now,'task_index':idx,'taskId':status['taskId'],'parent_disposition':e['parent_disposition'],'assessment':str((P/'assessment.md').relative_to(PROJECT)),'artifact_replay':replay,'correctness':None,'contribution':None,'accepted':False,'count_change':0,'publication':'STOPPED'}
+(P/'intake.json').write_text(json.dumps(intake,indent=2)+'\n')
+assert registry.read_bytes()==raw and ledger.read_bytes()==lr;tmp=registry.with_suffix('.structural230-intake.tmp');tmp.write_text(json.dumps(t,indent=2)+'\n');assert registry.read_bytes()==raw;os.replace(tmp,registry);assert ledger.read_bytes()==lr;ledger.write_bytes(lr+append.encode())
+record={'observed_utc':now,'owned_changed_task_indices':[idx],'all_other_tasks_unchanged':True,'foreign_snapshot_entries_preserved':True,'append_only_ledger':True,'count_change':0};(P/'intake-record.json').write_text(json.dumps(record,indent=2)+'\n');print(json.dumps(record))
