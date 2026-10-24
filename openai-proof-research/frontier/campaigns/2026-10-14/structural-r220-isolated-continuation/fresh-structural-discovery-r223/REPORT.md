@@ -1,0 +1,22 @@
+# Structural r223 handoff
+
+**PREFREEZE / no nominee.** No author-proof theorem was frozen, and no mathematical grade or campaign count is assigned. This is the Source347 research round under the authorized r220 isolation wrapper, not a reopening of structural220 or any other closed target.
+
+The retained mathematics is in [packet/DERIVATIONS.md](packet/DERIVATIONS.md). The strongest compatible construction executed here uses disjoint source surfaces in CP^5, blows up their products/points in CP^5 x CP^1, and applies the paid four-component Hamiltonian involution on Y. For every m>=1 it yields a simply connected closed Kähler real16-dimensional M_m with minimal Chern number one,
+
+    #Fix(Phi_m) = beta_Z^cyc(M_m) = 96+1120m,
+    Morse(M_m) = SM(M_m) = 96+1136m.
+
+Every fixed point is nondegenerate and has a contractible orbit loop. Complete integral homology, both prime profiles, normal bundles, Kähler and fundamental-group compatibility, actual Morse realization, Hamiltonian nature and global exclusion of extra fixed points are supplied in the derivation. The more general integer cone is a>=1, 3a<=b<7a/2; its deficit is16(7a-2b). Empty and boundary regimes are checked. The seven-center sharp source combined with simultaneous projection is also executed in CP^9 as a baseline before the stronger ambient-product construction.
+
+A general equality-case argument shows that this specific involution/Morse-extension mechanism cannot be both cyclic-sharp and below SM on X x Y when X is simply connected of real dimension eight or ten and H_2(X;Z) is torsion-free. It covers arbitrary prime powers and does not depend on a presentation by the two source surface types. The dimension-sixteen construction supplies the first possible dimension within that scope. This is not a global lower-dimension theorem. The alternate free affine threefold quotients were actually constructed and their integral homology calculated; their profile and the H_2 obstruction prevent that route from delivering the missing extension.
+
+What remains unpaid is a further nonroutine operation after these combined source/classical constructions. No compatible realization escaping the H_2 obstruction, no all-iterate assertion, and no new fixed-scale Hofer/action/spectral control is proved. The numerical improvements, inverse profile calculation and restricted dimension obstruction are not advanced as a substantial nominee merely because they differ from the five headline statements.
+
+[packet/SOURCE-MAP.md](packet/SOURCE-MAP.md) records all five driver orders, operative labels, dependencies and comparisons. All51 canonical blobs were authenticated against the complete pinned tree; all operative TeX/Bib sections and companions were semantically read, with the one truncated display recovered before deductions. The pinned indicated Lean comparator ends in sorry; no proved formal support or downstream formal work is claimed.
+
+[packet/READING-LIMITS.md](packet/READING-LIMITS.md) records actual primary versions, selected proof extents, unread intermediate arguments, failed endpoints, late visual recoveries and accidental editorial exposures. All protected bodies and named metadata remain local/private under original rights. The guarded original-history pass admitted no operative mathematical section: two administrative headings were rejected and an unrelated involution/torsion candidate failed the refined compound query before body display. This is not exhaustive clearance or a priority claim. No excluded or peer body/status was used.
+
+The packet is sealed exactly once from this round's own selection. MANIFEST.json is detached from packet/, and this REPORT.md is outside packet/. ANCHORS.json records the detached SHA256 values of packet/FINAL.md, MANIFEST.json and REPORT.md. The read-only packet/verify_packet.py requires these hashes as explicit arguments and checks exact file/directory selection, byte hashes, sizes, modes and absence of symlinks. Tiny copied controls have their own newly generated exact-selection manifests; no inherited manifest is attached to a reduced packet. These are artifact checks only. Working files outside packet/ are retained but are not part of the sealed selection.
+
+Provenance: Codex / GPT-6 Astra / xhigh; default service tier authorized. No nested agents, git/shared edits, browser UI, publication, uploads, submissions, contacts, or downstream formal/manuscript/release activity. Parent alone integrates, adopts grades and updates count.
