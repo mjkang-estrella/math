@@ -1,0 +1,9 @@
+# Local artifact protocol
+
+The exact payload is selection.json and the files listed there, including the selection itself and the read-only verifier. MANIFEST.json binds each payload path, size, SHA256 and 0444 mode. FINAL.md binds the manifest and selection. REPORT.md is outside that manifest. FINAL.md, MANIFEST.json, REPORT.md, ANCHORS.json and SEAL-CHECK.json are the only detached files; the two sidecars may be created after the selected payload has been sealed. No payload file is then modified or resealed.
+
+Run `python -I -B` on verify_packet.py with mandatory `--root`, `--final-sha256`, `--manifest-sha256`, and `--report-sha256`, using the detached values returned in the handoff. This tool reads but does not write, traverse author roots, trust a self-supplied anchor as authority, invoke any network, or assign a mathematical verdict. It rejects unselected files/directories, symlinks, mode/size/hash changes, a mismatched selection and incorrect detached bindings. Sidecars are consistency records, not external trust anchors.
+
+check_originals.py is a separate read-only explicit 53-file baseline recheck. It makes no directory inventory of the author root. The preseal result is retained as originals-rechecked.json; the postseal result is retained in the detached SEAL-CHECK.json. The miniature copied controls ran before sealing, copied only this verifier and a tiny artificial payload, and removed their temporary copy afterward. control-results.json records the five outcomes. Do not rerun run_controls.py or read.py on this sealed root: those preseal helpers write their own local control/read records.
+
+All commands are run from the actual project root. Protected bodies and binding metadata remain local/private under their original rights. These controls establish artifact integrity only; full correctness of the entire mathematical statement and proof remains UNDISCHARGED.
