@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+"""Read-only parent replay of the settled correctness review."""
+from pathlib import Path
+import datetime,hashlib,json,os,runpy,stat,subprocess,sys,tempfile
+P=Path(__file__).resolve().parent;W=P.parent;C=P.parents[1];PROJECT=C.parents[2];R=W/'structural-r221-proof-r1';A=W/'fresh-structural-discovery-r221';D=W/'discovery-structural-r221-parent'
+sha=lambda b:hashlib.sha256(b).hexdigest();read=lambda p:json.loads(p.read_bytes())
+anchors={'FINAL.md':'6919fddbfa5fcf1d7b3b0417e537d3c8efe2e399e28ab1439a6274441854be3d','MANIFEST.json':'9623bf50bee582d1ca531ba7692e967f0bb5c930c3b73658eeee98fec54c9741','REPORT.md':'ddd3c956a85207ee97aba94869e134897a398ebff231b34e6e7deb5e5db3a475'}
+def inventory(root):
+ assert root.is_dir() and not root.is_symlink();out={'files':{},'directories':{'':stat.S_IMODE(root.stat().st_mode)}}
+ for base,dirs,files in os.walk(root,followlinks=False):
+  for n in dirs+files:
+   f=Path(base)/n;rel=f.relative_to(root).as_posix();s=f.lstat();assert not stat.S_ISLNK(s.st_mode)
+   if stat.S_ISDIR(s.st_mode):out['directories'][rel]=stat.S_IMODE(s.st_mode)
+   else:
+    assert stat.S_ISREG(s.st_mode);b=f.read_bytes();out['files'][rel]={'bytes':len(b),'sha256':sha(b),'mode':stat.S_IMODE(s.st_mode)}
+ return out
+before=inventory(R);author=inventory(A)
+assert author==read(D/'observed-root.json')==read(R/'private/author-baseline.json')
+assert sha((R/'private/author-baseline.json').read_bytes())==read(R/'private/author-final-unchanged.json')['baseline_sha256']
+for n,h in anchors.items():assert before['files'][n]['sha256']==h
+assert read(R/'ANCHORS.json')==anchors;m=read(R/'MANIFEST.json');outside={'MANIFEST.json','REPORT.md','ANCHORS.json'}
+assert set(before['files'])=={x['path'] for x in m['files']}|outside
+assert before['directories']=={x['path']:x['mode'] for x in m['directories']}
+for x in m['files']:assert before['files'][x['path']]=={k:x[k] for k in ('bytes','sha256','mode')}
+assert m['author_frozen_sha256']==author['files']['FROZEN.md']['sha256']=='0031fe7106971855b2c1b98e3e1bc40574ed249ad8b17e9ac028d1f30bfae1ce'
+def verify(root,vals):
+ cmd=[sys.executable,'-I','-B',str(root/'verify_packet.py'),'--root',str(root),'--final-sha',vals['FINAL.md'],'--manifest-sha',vals['MANIFEST.json'],'--report-sha',vals['REPORT.md']]
+ r=subprocess.run(cmd,capture_output=True,text=True);assert r.returncode==0,(r.stdout,r.stderr);return json.loads(r.stdout)
+verifier=verify(R,anchors);author_verifier=verify(A,read(D/'intake.json')['artifact_replay']['anchors'])
+tree_bytes=(PROJECT/'sources/preprints-tree.json').read_bytes();assert sha(tree_bytes)=='eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b';tree=json.loads(tree_bytes);assert len(tree['tree'])==13223
+auth=read(R/'private/source-authentication.json');assert auth['pin']=='fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb' and auth['tree_sha256']==sha(tree_bytes)
+prefix='preprints/Infinitely-many-closed-geodesic-images-on-every-Riemannian-sphere-September-24-2026';expected=[x for x in tree['tree'] if x['path'].startswith(prefix)];assert auth['selected']==expected
+blobs=[x for x in expected if x['type']=='blob'];assert len(blobs)==auth['canonical_blobs_verified']==17
+for x in blobs:
+ b=(A/'private/canonical'/x['path'][len(prefix)+1:]).read_bytes();assert len(b)==x['size'] and hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()==x['sha']
+reads=[json.loads(x) for x in (R/'private/reads.jsonl').read_text().splitlines()]
+for x in reads:
+ b=(A/x['file']).read_bytes();lines=b.splitlines(keepends=True);i,j=x['lines'];lo,hi=x['bytes'];assert [sum(map(len,lines[:i-1])),sum(map(len,lines[:j]))]==[lo,hi] and sha(b[lo:hi])==x['sha256'];assert all(i<=z<=j for z in x['masked_lines'])
+bib=(A/'private/canonical/build/references.bib').read_bytes();lines=bib.splitlines(keepends=True);refs=read(R/'private/reference-identities.json')
+for x in refs:
+ i,j=x['lines'];assert x['bytes']==[sum(map(len,lines[:i-1])),sum(map(len,lines[:j]))]
+namespace=runpy.run_path(str(R/'verify_packet.py'),run_name='parent_read_only_import');check=namespace['check_selection'];controls=[]
+with tempfile.TemporaryDirectory(dir=P,prefix='proof-copied-controls-') as td:
+ root=Path(td);sample=root/'sample.txt';data=(R/'FINAL.md').read_bytes()[:192];sample.write_bytes(data);sample.chmod(0o644)
+ fixture={'files':[{'path':'sample.txt','bytes':len(data),'sha256':sha(data),'mode':0o644}],'directories':[{'path':'','mode':stat.S_IMODE(root.stat().st_mode)}]}
+ def case(label,reject=False):
+  try:check(root,fixture);ok=True
+  except ValueError:ok=False
+  assert ok!=reject,label;controls.append({'case':label,'observed':'rejected' if reject else 'accepted'})
+ case('unaltered tiny copied payload');sample.write_bytes(bytes([data[0]^1])+data[1:]);case('same-size byte mutation',True);sample.write_bytes(data);sample.chmod(0o600);case('file mode mutation',True);sample.chmod(0o644);(root/'extra').write_text('x');case('extra file',True);(root/'extra').unlink();case('restored copied payload')
+assert inventory(R)==before and inventory(A)==author
+(P/'proof-observed-root.json').write_text(json.dumps(before,indent=2)+'\n')
+out={'observed_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'anchors':anchors,'independent_selection_check':True,'selected_files':len(m['files']),'directories':len(m['directories']),'whole_review_files':len(before['files']),'whole_review_directories':len(before['directories']),'review_sha256':before['files']['REVIEW.md']['sha256'],'review_verifier_sha256':before['files']['verify_packet.py']['sha256'],'verifier':verifier,'canonical_blobs_authenticated':len(blobs),'read_extents_bound':len(reads),'bibliography_ranges_bound':len(refs),'copied_controls':controls,'review_originals_unchanged':True,'author_files':len(author['files']),'author_directories':len(author['directories']),'author_baselines_agree':True,'author_originals_unchanged':True,'author_verifier':author_verifier,'semantic_scope':'Parent read complete REVIEW, FINAL, REPORT, reading/access limits and working-review prose, verifier and append-writing read helper. Identity checks do not inherit source/primary/visual reading. No contribution grade or count from artifact checks.'}
+(P/'proof-replay.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(out,indent=2))
