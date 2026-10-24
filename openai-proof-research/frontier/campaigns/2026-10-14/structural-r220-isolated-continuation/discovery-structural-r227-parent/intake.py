@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+"""Archive an owned prefreeze discovery, assigning no mathematical grades."""
+from pathlib import Path
+import copy,datetime,hashlib,json,os
+P=Path(__file__).resolve().parent;C=P.parents[1];PROJECT=C.parents[2]
+read=lambda p:json.loads(p.read_bytes());now=datetime.datetime.now(datetime.timezone.utc).isoformat()
+status=read(P/'task-status.json');replay=read(P/'replay.json');assert status['status']=='completed' and status['workState']=='result_available' and not status['hasPendingChildRuns'];assert replay['author_originals_unchanged']
+registry=C/'tasks.json';ledger=PROJECT/'frontier/NEW-TEN-2026-10-14.md';raw=registry.read_bytes();lr=ledger.read_bytes();t=json.loads(raw);old=copy.deepcopy(t);idx=762;e=t['tasks'][idx]
+assert e['taskId']==status['taskId'] and e['parent_thread']=='164b1204-be68-4540-94bb-0b91055c4381' and e['parent_full_intake_pending']
+assert (t['newAccepted'],t['latestAcceptance'],t['remaining'])==(19,'R041',1)
+rel=str(P.relative_to(C));e.update(status='completed',workState='result_available',hasPendingChildRuns=False,parent_full_intake_pending=False,parent_disposition='ARCHIVED_PREFREEZE_NO_NOMINEE',parent_intake=rel+'/intake.json',correctness=None,contribution=None,accepted=False,count_change=0,author_anchors=replay['anchors'])
+note='Structural227 archived PREFREEZE/no nominee after complete authored-prose intake and read-only replay. Global concentration and compatible parameter/degree constructions retained; smooth selection and full-time persistence remain unresolved. No grades/count. Campaign19/20,latestR041,one remaining; publication STOPPED.'
+t['last_parent_progress']=note;s=t['current_work_snapshot'];s.update(observed_utc=now,note=note)
+if 'active_task_indices' in s:s['active_task_indices']=[x for x in s['active_task_indices'] if x!=idx]
+if 't3_last_polled_running' in s:s['t3_last_polled_running']=[x for x in s['t3_last_polled_running'] if x!=status['taskId']]
+s['structural227_dispatch']['status']='completed';s['structural227_parent_intake']={'task_index':idx,'disposition':e['parent_disposition'],'intake':e['parent_intake'],'count_change':0,'correctness':None,'contribution':None}
+assert all(t['tasks'][i]==old['tasks'][i] for i in range(len(t['tasks'])) if i!=idx)
+assert all(t[k]==old[k] for k in old if k not in ('tasks','current_work_snapshot','last_parent_progress'))
+allowed={'observed_utc','note','active_task_indices','t3_last_polled_running','structural227_dispatch'};assert all(s[k]==v for k,v in old['current_work_snapshot'].items() if k not in allowed)
+heading='## Structural227 prefreeze archive: curvature concentration and singular-flow parameters';assert heading.encode() not in lr
+append='\n'+heading+'\n\nParent read the complete derivations, reading notes and handoffs. The source-compatible global orbit-volume propagation, critical curvature distribution, exact spacetime integral thresholds and separate Ricci estimates are retained. The parameter comparison includes an actual outer initial-data perturbation and connected set-valued degree continuation. Smooth selection and full-time persistence still require a compatible infinite-time solution operator and difference estimates. No smooth selected singular family or open-set stability is claimed; the old sharp-cap target remains unchanged. [Parent assessment](campaigns/2026-10-14/structural-r220-isolated-continuation/discovery-structural-r227-parent/assessment.md).\n\nRead-only replay matched three detached anchors, 97 selected files, 20 subdirectories and root mode; all 216 author files and 50 subdirectories remained unchanged. Parent authenticated 38 canonical blobs, bound 41 source ranges covering 29 non-driver TeX/bibliography files, checked 27 include edges, bound 28 primary ranges and ten primary artifacts, and matched one original-history range. Four author copied cases and six independent parent copied cases behaved as expected. Artifact/range checks do not inherit semantic or visual coverage or assign grades. Late comparisons, unread intermediates, partial published-version reading, recovered extraction and actual exposures remain disclosed. No formal support is claimed. **PREFREEZE/no nominee; no correctness/contribution grade or count. 19/20, latest R041, one remaining; publication STOPPED.**\n'
+
+intake={'observed_utc':now,'task_index':idx,'taskId':status['taskId'],'parent_disposition':e['parent_disposition'],'assessment':str((P/'assessment.md').relative_to(PROJECT)),'artifact_replay':replay,'correctness':None,'contribution':None,'accepted':False,'count_change':0,'publication':'STOPPED'}
+(P/'intake.json').write_text(json.dumps(intake,indent=2)+'\n')
+assert registry.read_bytes()==raw and ledger.read_bytes()==lr;tmp=registry.with_suffix('.structural227-intake.tmp');tmp.write_text(json.dumps(t,indent=2)+'\n');assert registry.read_bytes()==raw;os.replace(tmp,registry);assert ledger.read_bytes()==lr;ledger.write_bytes(lr+append.encode())
+record={'observed_utc':now,'owned_changed_task_indices':[idx],'all_other_tasks_unchanged':True,'foreign_snapshot_entries_preserved':True,'append_only_ledger':True,'count_change':0};(P/'intake-record.json').write_text(json.dumps(record,indent=2)+'\n');print(json.dumps(record))
