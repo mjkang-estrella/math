@@ -1,0 +1,18 @@
+# Structural210 independent correctness handoff — round 1
+
+**Verdict: full-scope correctness PASS**, relative to the stipulated Source334 truth and the actual read classical smooth local-existence interfaces. The verdict covers the entire unchanged frozen statement and submitted proof; no essential mathematical change or omitted clause is needed. This is a correctness-only review.
+
+The complete reasoning and adversarial objections/resolutions are in REVIEW.md. All twelve requested checks are addressed, including the fixed-exterior source interface, vector/component constants, covariant cofactor sign and boundary mass, finite orientation/spatial capture, noncircular amplitude choices, arbitrary relatively closed nowhere-dense sets, all-order positive-background and tensor sums, the nonlocal curvature ODE, the final curvature zero set, diagonal capture of a single arbitrary hypothetical smooth immersion, actual smooth local realization at every complementary point, the empty-set construction and both classification directions.
+
+Reviewed frozen statement SHA256: cd65e255f9fdb798bb38fd5e3291f2f657e7dae91c0af62fdf366e05ec075295.
+Reviewed submitted proof SHA256: f50ea4216bce7ad43d5a713dcc7fc180ad283ff22cb9dae14a0f1d26e4a24b24.
+
+The decisive compatibility checks are that the disk curvature mass is fixed before patch geometry, while an independently tiny positive collar slope and model amplitudes pay later derivative costs; tensor changes remain in strictly negative central boxes; and the resulting metric has only regular curvature zeros off C. The actual smooth existence theorems therefore prove the reverse inclusion B(g) subset C. A late block captures any one hypothetical smooth local immersion without a compactness limit or a finite-regularity obstruction.
+
+READ-LIMITS.md records independent semantic reading and authentication separately. All 12 source blobs were authenticated and all operative source TeX read. The actual 1986 Nakamura–Maeda report supplies the read Theorems A/C; PDF pages 1,10,26-29 were not read, and no identity with the 1989 published version is asserted. The author's reported 1989 HTTP 403 was not independently repeated. NY2002's stronger claims and NY2008's different regularity/status remain distinguished. Khuri2007's jet-dependent equation is not used as a metric obstruction; Khuri2009's reduction does not supply an already-built nonsolvable profile. The authenticated Lean comparator ends in sorry; no endpoint formal proof or compilation is claimed.
+
+There are no remaining essential mathematical obligations for the frozen scope relative to the stated dependencies. Source and primary reading limits remain explicit. Neither the author's checks nor identity metadata were treated as independent mathematical evidence. No contribution verdict is supplied.
+
+The original author packet was read-only reverified with all three detached anchors: exact 87 files/10 directories, bytes and modes matched. All 75 retained copies matched their original bytes and modes. Tiny synthetic controls accepted intact/restored fixtures and rejected modified bytes, extra/missing files, changed modes and a wrong detached anchor. These are artifact checks only.
+
+This review has its own exact selection, fresh manifest, this FINAL and an outside REPORT, sealed once. Protected bodies, rendered pages, copies and named metadata remain private/local under their original rights. The read-only verifier and detached FINAL/MANIFEST/REPORT anchors are outside the selected packet. No author files or excluded peer/parent material were modified or consulted. Completion returns to the parent through this handoff.
