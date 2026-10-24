@@ -1,0 +1,11 @@
+# r212 outside-packet handoff report
+
+Disposition: PREFREEZE/no nominee; no frozen new statement. This report is deliberately outside the selected packet. FINAL.md is in the selected packet; private/MANIFEST.json lists that packet exactly. ANCHORS.json supplies detached SHA256 values for FINAL, MANIFEST and this REPORT. verify_packet.py requires all three as explicit arguments; it does not trust an automatically loaded local anchor file.
+
+The full mathematical derivations are in CONFORMAL-COMPOSITION.md, with the paid source construction summarized in DERIVATIONS.md. They complete a global conformal variable-scale construction, original-metric whole-fiber comparison, quantified form/IMS costs and the strongest compatible three-dimensional coefficient composition. The unclosed higher-dimensional operation is specified by equations (17)-(20), with an exploratory nonfrozen question at the end. Nothing is submitted for a review grade or acceptance count.
+
+Evidence scope: all38 stipulated canonical blobs authenticated, all35 textual blobs read completely (540220bytes); 3 PDFs authentication-only. Actual relevant primary proof passages and original i14 mathematical sections were read as recorded in READING.md. The entire all-dimensional shield and regularization construction is credited to the paid source. Guarded history is not exhaustive or a novelty certificate. One external PDF text selection overread publisher backmatter, including an issue table of contents; it supplied no mathematical premise and no item was followed. No project catalogue opening or excluded peer body was admitted.
+
+Formal limit: exact pinned lean/docs/336.md HTTP404, no comparator endpoint coverage. Primary access limit: attempted Fischer-Colbrie--Schoen PDF HTTP403. These failures establish no novelty or favorable priority inference.
+
+The seal is a one-time local artifact operation. Verification checks only exact selection, bytes, hashes, modes, regular-file/no-symlink status and explicit detached anchors. Tiny copied fixtures under private/seal-controls test content, mode and selection detection without changing originals. These are artifact checks, not mathematical gates. Protected bodies and metadata remain private/local under original rights. Parent alone integrates, adopts grades and counts.
