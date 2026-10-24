@@ -1,0 +1,13 @@
+# Source350 — structural discovery r226
+
+**PREFREEZE / no nominee.** No new statement was frozen, and no correctness, contribution, acceptance or count is assigned. Parent alone integrates and reviews.
+
+The strongest compatible construction was executed in DERIVATIONS.md. The already written r13 repeatable three-dimensional envelope combines with Source350's arbitrary-accuracy waves, dimension-three scalar correction, coercive positive-factor solve, localized determinant repair, pinned simplicity and summable spectral persistence. The derivative losses are explicitly absorbed before frequency selection. This produces the comparison consequence on one fixed smooth metric on S³, with real exact eigenfunctions and a fixed positive power in the nodal-measure ratio. It is not nominated: the construction uses already available operations, and changing the dimension does not itself supply an unpaid operation.
+
+The same notes carry finite families, a compact Cantor family of pairwise nonisometric metrics, and a smooth circle-connection family preserving every lifted eigenfunction. The connection family has equal volumes and distinct integrated scalar curvatures; its uniform nodal bound follows from sign cylinders, without counting components or replacing full zero sets by complex zeros. These stronger alternatives are also compositions, not nominees.
+
+The remaining unfrozen direction is an intrinsic smooth parameter family on S³. The unpaid interfaces are a smooth simultaneous real-wave selection with quantitative sign gain and compatible critical zeros, and uniform pinned spectral persistence over the whole parameter interval. The scalar elliptic solve and collar repair themselves already extend under uniform finite bounds. A fixed-parameter Gaussian net does not establish the missing parameter selection; this is a proof limitation, not an impossibility result.
+
+COVERAGE.md, LIMITS.md and the exact byte logs record the authenticated 34 canonical blobs, all three operative source proofs, actual original-history selections, primary proof reading and unread intermediates. All indicated Lean comparator targets contain sorry and provide no proved formal support. No source truth was audited; the immutable pin and operative proofs remain stipulated true.
+
+All material is local/private under its original rights. No nested agents, peer-body inspection, git operations, shared edits, public actions, browser UI, or downstream formal/manuscript/release work was performed. The detached REPORT.md is outside the selected packet; explicit FINAL/MANIFEST/REPORT anchors accompany the one-time seal.
