@@ -1,0 +1,13 @@
+# Source333 r209 author handoff
+
+Full author-proof nominee: T333Q209, sharp square-root metric realization near the standard Clifford torus. No correctness, contribution, acceptance or count is assigned.
+
+For every m>=2, k=max(10,2m+2) and r=88k+54, every sufficiently small smooth metric perturbation h has a smooth isometric embedding F into Euclidean R4 with ||F-F0||_Cm <= C_m ||h||_Cr^(1/2). The exact metric, entire perturbation ball, explicit finite derivative budget and global injectivity are covered. An integrated mean-shear identity proves the exponent 1/2 cannot be increased even for C1 output and any finite input derivative order. No parameter selection is claimed.
+
+FROZEN-STATEMENT.md is unchanged, SHA256 9008ac4ac426a6ff7f4419aaab3f6dcd0e48b73b3186f53b0122b3ab3248091a. AUTHOR-PROOF.md carries the full proof. DERIVATIONS.md preserves prefreeze calculations, including the earlier parametric avenue without promoting it to a theorem. No unresolved mathematical obligation is concealed in the frozen statement; independent correctness review must inspect the finite recursion and uniform fixed-reference smoothing bridge. Independent substantial-contribution review remains open.
+
+The strongest paid reduction is the entire Source333 small-mode/exact-correction construction, together with classical finite correction/smoothing and the eligible original r107 embedding argument. The candidate operation is explicit two-sign quadratic resolution of the periodic mean-metric cokernel, carried to arbitrarily high finite residual order and completed with a uniform finite-input estimate. It is not a claim that quadratic cokernel resolution or smoothing is new in general.
+
+All 14 source blobs and both exact Lean-navigation/comparator files are authenticated. All operative source includes were read completely. The comparator endpoint contains `sorry`; no proved endpoint formal support is claimed. Primary and history read limits, inaccessible Hamilton body, incomplete OCR equations, precise section extents, truncation recoveries and coarse history omissions are disclosed in READING-AND-COMPARISON.md and private records. No worldwide-priority or exhaustive-clearance claim is made.
+
+Authorized provenance: Codex / GPT-6 Astra / xhigh / default service tier; campaign 19/20, latest R041 supplied by user. Parent alone integrates, reviews, grades and counts. No git, shared write, peer inspection, nested agents, public action, browser UI or downstream work. All files are local in the exclusive r209 root. Detached FINAL/MANIFEST/outside REPORT anchors are supplied separately; the verifier checks artifacts only.
