@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+"""Archive the completed owned non-nominee; preserve all other registry rows."""
+from pathlib import Path
+import copy, datetime, hashlib, json, os
+P=Path(__file__).resolve().parent; C=P.parent; PROJECT=C.parents[2]
+read=lambda p:json.loads(p.read_bytes())
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+d=read(P/'task-status.json'); r=read(P/'replay.json')
+owner='164b1204-be68-4540-94bb-0b91055c4381'
+now=datetime.datetime.now(datetime.timezone.utc).isoformat()
+assert d['status']=='completed' and not d['hasPendingChildRuns'] and r['originals_bytes_modes_unchanged']
+assert d['providerInstanceId']=='codex' and d['model']=='gpt-6-astra'
+assert {e['id']:e['value'] for e in d['options']}=={'reasoningEffort':'xhigh','serviceTier':'default'}
+registry=C/'tasks.json'; ledger=PROJECT/'frontier/NEW-TEN-2026-10-14.md'
+raw=registry.read_bytes(); t=json.loads(raw); old=copy.deepcopy(t); lr=ledger.read_bytes()
+assert (t['newAccepted'],t['latestAcceptance'],t['remaining'])==(19,'R041',1)
+idx=746; e=t['tasks'][idx]
+assert e['taskId']==d['taskId'] and e['parent_thread']==owner and e['parent_full_intake_pending']
+assert sha(PROJECT/e['brief'])==e['brief_sha256']=='4da60eba1581374f27f0c92a33a107e236306fd6f08e319f61a5fbcc5c78c2be'
+disposition='ARCHIVED_PREFREEZE_NO_NOMINEE'
+intake={'observed_utc':now,'parent_thread':owner,'task_index':idx,'taskId':d['taskId'],'disposition':disposition,'source_index':341,'nominee':False,'frozen_statement':None,'correctness':'NOT_ASSIGNED','contribution':'NOT_ASSIGNED','accepted':False,'count_change':0,'newAccepted':19,'latestAcceptance':'R041','remaining':1,'publication':'STOPPED','anchors':r['anchors'],'assessment_sha256':sha(P/'assessment.md'),'artifact_replay':r,'remaining_obligations':['Fixed-coordinate uniform integrability, passage of closedness and cohomology to the almost-everywhere positive endpoint, and spatial regularity/smooth ODE continuation remain unproved.','The alternative curve-pencil route lacks relative two-parameter replacements and coherent higher-parameter path homotopies.'],'formal_coverage':'Exact pinned Lean API and raw navigation returned HTTP404; no comparator or formal support claimed.','next':'Distinct discovery family; preserve original derivations and gaps without reopening or renaming.'}
+for k in ['status','workState','hasPendingChildRuns','latestTerminalRunId','latestTerminalStatus','latestTerminalSummary','latestTerminalResultContextTransferId','summary','resultContextTransferId','hasPendingQuestion','pendingApproval','waitTimedOut','observed_utc']: e[k]=d[k]
+e.update(parent_disposition=disposition,parent_full_intake_pending=False,parent_intake='discovery-structural-r217-parent/intake.json',parent_intake_utc=now,nominee=False,correctness='NOT_ASSIGNED',contribution='NOT_ASSIGNED',accepted=False,count_change=0,status_provenance='Terminal lookup after delivered owned completion only; no foreign liveness lookup.')
+s=t['current_work_snapshot']
+s['structural217_dispatch'].update(status='completed',disposition=disposition,intake='discovery-structural-r217-parent/intake.json')
+s['structural217_parent_intake']={'task_index':idx,'disposition':disposition,'intake':'discovery-structural-r217-parent/intake.json','count_change':0}
+note='Structural217 archived PREFREEZE/no nominee. Local Gram lifting, relative corrections, exact continuation action and almost-everywhere positive endpoint retained; uniform integrability, endpoint closedness/cohomology and smooth continuation remain unproved. No grades or count. Campaign19/20 latestR041 one remains; publicationSTOPPED. Foreign records preserved.'
+t['last_parent_progress']=note; s.update(observed_utc=now,note=note)
+if 'active_task_indices' in s: s['active_task_indices']=[i for i in s['active_task_indices'] if i!=idx]
+if 't3_last_polled_running' in s: s['t3_last_polled_running']=[x for x in s['t3_last_polled_running'] if x!=d['taskId']]
+changed=[i for i,x in enumerate(old['tasks']) if t['tasks'][i]!=x]
+assert changed==[idx] and len(t['tasks'])==len(old['tasks'])
+assert all(t[k]==old[k] for k in old if k not in ['tasks','current_work_snapshot','last_parent_progress'])
+assert all(s[k]==v for k,v in old['current_work_snapshot'].items() if k not in ['observed_utc','note','active_task_indices','t3_last_polled_running','structural217_dispatch'])
+heading='## Structural217 archived: PREFREEZE / no nominee'; assert heading.encode() not in lr
+append='\n'+heading+'\n\nParent read and preserves the complete [derivations](campaigns/2026-10-14/fresh-structural-discovery-r217/MATH.md): integrated stipulated source construction, local Gram lifting, relative corrections, prescribed-Gram continuation ODE, exact action estimate and almost-everywhere positive endpoint. Fixed-coordinate uniform integrability, passage of closedness/cohomology to the endpoint and smooth continuation remain unproved. The alternative curve-pencil route lacks relative higher-parameter replacement. No theorem was frozen or old target renamed. See [parent assessment](campaigns/2026-10-14/discovery-structural-r217-parent/assessment.md).\n\nExplicit-anchor verification matched 115 selected files and 18 directories including the root; all 123 observed files and 20 directories remained unchanged. Seven tiny copied controls behaved as expected. All 59 canonical source/companion blobs, version-comparison blocks, logged extent identities, corrected primary selections and one original-history span were bound. Line-splitting mistakes, adjacent-section/credit exposures, recovered truncation, primary-version and history limits remain disclosed. Lean navigation returned404, with no formal support claimed. Private records remain local under original rights. Artifact checks do not inherit semantic reading or certify deductions.\n\nNo mathematical grade, acceptance or count is assigned. **19/20, latest R041, one remaining; publication STOPPED.** Continue to a distinct family while preserving the sealed packet and its exact remaining obligations.\n'
+assert registry.read_bytes()==raw and ledger.read_bytes()==lr
+(P/'intake.json').write_text(json.dumps(intake,indent=2)+'\n')
+tmp=registry.with_suffix('.structural217-archive.tmp'); tmp.write_text(json.dumps(t,indent=2)+'\n')
+assert registry.read_bytes()==raw; os.replace(tmp,registry)
+assert ledger.read_bytes()==lr; ledger.write_bytes(lr+append.encode())
+out={'observed_utc':now,'changed_existing_tasks':changed,'new_tasks':0,'all_other_tasks_unchanged':True,'foreign_snapshot_entries_preserved':True,'count_change':0}
+(P/'archive-record.json').write_text(json.dumps(out,indent=2)+'\n'); print(json.dumps(out,indent=2))
