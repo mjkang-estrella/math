@@ -1,0 +1,7 @@
+# Scope and read limits
+
+Source335 only, at the stipulated-true pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb, including the complete rational-inessentiality companion. All 25 canonical blobs authenticated; all 23 textual blobs, 462414 bytes, read completely. Main drivers, operative sections, figures and bibliographies are included. Initial truncated display was recovered. Canonical PDFs were authenticated, not separately read. The exact complete tree metadata was checked; truncated tree.json was ignored. Catalogue access was only the authorized 2350-byte Source335 slice.
+
+Detailed source interfaces, precise primary versions and byte/page extents, access failures, guard predicates and search limits remain local under packet/private/ after packet assembly. The primary reading was targeted, not a full bibliography review. No original authored-history mathematical body was admitted by the guarded queries; no exhaustive history clearance is claimed. The lean/docs/335.md endpoint returned HTTP 404, so no comparator or formal endpoint proof coverage is claimed.
+
+DERIVATIONS.md records completed classical/source constructions and unresolved obligations. No substantial full theorem was frozen, and no review grade, acceptance or count is assigned. The complete standing brief was read, with the current header's provider and 19/20 status overrides honored. The provenance is Codex / GPT-6 Astra / xhigh / default service tier.
