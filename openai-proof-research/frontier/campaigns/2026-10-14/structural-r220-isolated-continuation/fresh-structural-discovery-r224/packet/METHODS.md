@@ -1,0 +1,9 @@
+# Local packet methods
+
+This is the exact r224 author-selected packet, assembled from this round alone. The existing own-root work was moved into packet/ before the one final seal. Copied source/primary/history bytes did not change. The four author reader/navigation helpers were adjusted only to locate their private data relative to their own file after that move; no history scan was rerun. Their earlier execution is recorded in the private extent/navigation files. They are historical research helpers, not post-seal read-only tools: running them can append logs and would invalidate the seal. Do not execute them against a sealed packet.
+
+verify_packet.py is the read-only artifact verifier. It takes an explicit outside root and all three detached SHA256 anchors; it never derives trusted anchors from the packet itself. It authenticates MANIFEST.json, the exact entire packet file/directory selection, regular-file/directory modes, the explicit FINAL.md anchor, and the outside REPORT.md anchor. It rejects symlinks and path traversal. The manifest and outside report must be regular mode-0644 files. Artifact integrity checks do not establish mathematical correctness, contribution or acceptance.
+
+Tiny copied controls have a separately generated synthetic two-file packet and their own anchors. No upstream/inherited manifest is attached to a reduced selection. The controls exercise valid selection, altered bytes, altered mode and an extra file. Only their small result record is selected into the research packet; their original and copied fixtures stay outside packet/ under the same exclusive r224 root.
+
+All metadata and copied bodies remain local/private under original rights. The root author notes contain original prose and calculations and are separate from private source/primary/history material. No public release or downstream manuscript has been made.
