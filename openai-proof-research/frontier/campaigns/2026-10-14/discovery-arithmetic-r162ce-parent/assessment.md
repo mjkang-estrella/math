@@ -1,0 +1,13 @@
+# R162CE parent intake — PREFREEZE / no nominee
+
+No theorem or diagnostic was frozen. Neither the explored unrestricted three-dimensional pinned-distance endpoint nor its negation was proved. The campaign remains **19/20**, latest **R041**. No independent mathematical grade or acceptance is assigned.
+
+The same-configuration comparisons pay local-palette separator polynomials, the common radial function space, source line-plane products, primary pinned cuttings and rich-axis operations. Light-line pruning retains a pinned-isosceles-triple lower bound of order n^3/t. The exact weighted perpendicular-bisector sum and distinguished-diagonal isotropic-line formulations identify the unresolved relation without replacing the original point set or metric.
+
+The needed coupled estimate at the pinned endpoint scale remains unproved. The source rich-motion square sum has a different scale. Actual primary unequal-degree regularization is credited, but the diagonal-star graph does not supply its density threshold. Complete replacement of all source profile/plane-cap hypotheses by local palettes is also unproved. The axis-circle example only rules out dropping the small-palette hypothesis; the abstract colouring example is not a Euclidean counterexample. No weakened or renamed substitute is nominated.
+
+Parent read the complete DERIVATION (21401 bytes), SOURCE-INTERFACES (11342), WORKING (2882), READING-LIMITS (10053), FINAL, REPORT and verifier. The parent did not read the operative next-source proofs. Author read all 18 canonical non-PDF texts (369512 bytes); the compiled source PDF was authenticated only. Primary reading covered 85 distinct pages across four works, including two complete papers and three rendered checks. The five acquired PDFs include an unread conference version with unusable extraction. Late stronger-primary recoveries, incomplete ancestry, incidental search exposures and mode-observation timing are disclosed. Optional original-history traversal was zero.
+
+The original read-only verifier and independent membership/pinned-binding checks matched 61 payloads, 63 files, 12 directories, 19 source blobs, four Git trees, five acquired primary PDFs and five completed original/copy pairs. Three wrong-anchor controls rejected. The before/after inventory preserves all author bytes and full modes. These are artifact checks only.
+
+Archive without mathematical gates or count increment. Continue the distinct Source167 planar-distance/unit-distance family under all prior scope and isolation constraints. The three-dimensional endpoint remains unchanged and unproved. All older frozen statements and dispositions remain immutable. Publication and downstream work remain stopped.
