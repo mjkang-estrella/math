@@ -1,0 +1,15 @@
+# Structural241 parent prefreeze intake
+
+Disposition: **PREFREEZE / no nominee**. No correctness or contribution grade is assigned. The campaign remains **19/20, latest R041, one remaining; publication STOPPED**.
+
+The parent read the complete authored derivations, reading limits, final handoff and outside report. Upstream Source366 remains stipulated true. This intake preserves unreviewed deductions and does not independently certify them as a theorem.
+
+The retained calculation flattens the square-root image of a curved crack tip, applies conormal boundary estimates, and obtains a gradient remainder. For a fixed source minimizer it derives the sharp weak-L4 tip measure, directional semicircle measure, and renormalized fourth-energy limits, including the different spatial and threshold cutoffs. These build on the paid tip classification and classical elliptic operations. Constants are pair-dependent; arbitrary open sets with a tip on their boundary are explicitly excluded from the asserted tail-limit formulation.
+
+The finite-scale translation work tracks the nonzero fidelity divergence, distant cutoff error and exact fidelity difference without differentiating the merely bounded datum. Its promising square-root scale estimate still depends on geometry-sensitive projection/trace constants. Uniform normalization in the jump variable and quantitative propagation through degenerating component geometry remain unproved. Auxiliary closed-loop and discontinuous-datum examples diagnose shortcuts; they are not claimed as counterexamples within the source minimizer class. No narrower replacement theorem is frozen.
+
+Independent artifact replay matched all three detached anchors, the 37-file/7-directory selection, all 11 canonical blob identities and the complete 15-entry source tree. It bound 21 recorded read intervals, covering ten complete source text files, and five primary PDF identities. All 84 author files and 15 subdirectories remained unchanged. Nine independent tiny controls behaved as intended. The parent replay initially assumed a direct path copy for every private file; the documented primary-access relocation was then handled, and the packet-only control log was distinguished from original copies. No author file was repaired.
+
+The author's source include was replayed in driver order after initial whole-section reading. Primary-version changes, the recovered truncated displays, failed IAS accesses, unread downloaded materials, and limited heading-only history comparisons remain disclosed. Neither history clearance nor proved Lean coverage is inferred. The first batched parent metadata display was clipped; focused schema reads and entrywise programmatic verification recovered the artifact checks without claiming semantic reading of protected source bodies. Hash checks establish artifact identity only.
+
+The completed task receipt confirms Codex gpt-6-astra, xhigh, ultrafast. Continue to a distinct source family under the same runtime requirement; do not reopen or relabel this prefreeze scope.
