@@ -1,0 +1,13 @@
+# R162CP nominee intake — no acceptance decision
+
+One frozen author-proof nominee. Count remains19/20, latest R041. Correctness and contribution reviews are both outstanding. Publication/downstream work remains stopped.
+
+On the unchanged Source177 F2 complexes with original intrinsic weights, the statement claims sharp logarithmic optimal sensitivity for one law on all primitive sections, including arbitrary nonlinear sections. A matching affine law has exact uniform marginals on every fiber; separate two-law transport equals the minimum filling norm. Constants depend only on fixed d,q, uniformly on the entire final m-tail. No runtime lower bound or arbitrary coefficient/monodromy extension is claimed.
+
+Parent read the complete frozen STATEMENT, FREEZE, PROOF, COMPARISON, FINAL, REPORT, WORKING, PREFREEZE, DERIVATION, READING-LIMITS, artifact verifier and controls. These reads determine review scope, not a parent correctness or contribution grade. Review must check the affine Fourier boundary support, all-law fixed-pair quantifier, original weighted incidence identities and orbit masses, group-conjugate tree gauge, common uniform cut, and the exact transport ratios at the full frozen scope. The separate literature review must evaluate the entire result against compatible source and actual primary operations, including stronger coupling/chain-homotopy/Fourier results, without presuming novelty.
+
+Author read all9canonical texts52577bytes. Eight primary PDFs were acquired; six were semantically read at133 distinct pages, one complete24-page paper, three visual formula checks. KM and LA v1 bodies unread, source PDF authentication only, transitive ancestry incomplete. Late prefreeze primary reads, recoveries, incidental public snippets and deferred proofs are disclosed. Optional history traversal0. Five exact completed originals were read; no permission extends to their links.
+
+Artifact verification MATCH:66payloads9372207bytes,68files13directories. Ten pinned blobs/five trees, eight primary PDF bindings, five completed original/copy pairs, frozen statement and proof hashes checked; three wrong-anchor controls rejected. All author bytes/full modes unchanged. This is an integrity result only.
+
+The frozen statement SHA256 is ebbecfde0342e866f1401764980ccaf1f3f0c08bc1aea5269e217021774594c9; proof SHA2567331535f72a9c9dbab2da0396af34c78eb0a1065afb5e96d4cfc618a22a052b6. Reviews must preserve both. Separate fresh review conversations will run serially at Codex/GPT-6 Astra/high/default; no peer-review inspection or verdict leakage. No further discovery is being started while this nominee is reviewed.
