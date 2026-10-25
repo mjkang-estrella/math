@@ -1,0 +1,13 @@
+# R162CD parent intake — PREFREEZE / no nominee
+
+The completed author round freezes no theorem or diagnostic. The campaign remains **19/20**, latest acceptance **R041**. This is a disposition of the author's research record, not an independent correctness or contribution grade.
+
+The same-drawing calculation integralizes the cycle pairing before characteristic-two reduction. The source interpolation and arbitrary-subspace proofs then pay the one-part-even parity comparison and a fully charged rank-defect repair. A symmetry compression survives arbitrary adjacent parity but gives less than classical triple averaging. Those closed comparisons do not qualify as a new substantial finding.
+
+For unrestricted parity, generic nonsingularity of the same detector for every binary tournament remains unproved. Common labels for the finitely many actual stars would follow from a product of their nonzero determinant polynomials, so that conditional assembly is not an additional unresolved step. The alternative exact labelled affine parity Hamming-weight bound also remains unproved. The finite singular specialization does not refute generic nonsingularity: the same tournament has invertible specializations. Neither the diagnostic nor its negation has been proved.
+
+Parent read the full DERIVATION (23952 bytes), SOURCE-INTERFACES (9896), WORKING (4812), READING-LIMITS (11479), FINAL, REPORT and verifier. No primary proof or new Source166 proof was semantically read by this parent. Author reading records 17 canonical non-PDF texts (111715 bytes), both complete source proofs/includes, five full primary PDF texts (90 pages across four works), three focused rendered checks, and five exact completed exceptions. Two source PDFs were authenticated only. The longer journal version was recovered after preliminary exploration and before consolidation; incomplete ancestry, extraction, access and initial-permission/later-full-mode limits are explicit. Optional history traversal was zero.
+
+The original read-only verifier and an independent membership/binding check matched: 58 payloads, 60 files, 15 directories, 19 source blobs, seven source trees, five primary PDF acquisitions and five completed original/copy pairs. All three wrong-anchor controls rejected. The before/after snapshot preserves every author byte and full mode. These checks establish artifact integrity only.
+
+Archive the round without a mathematical gate, count increment, repair request or desired-grade retry. Continue a distinct Source166 family under the preserved standing brief and prospective isolation rules. Every older full scope and disposition remains immutable. Publication and downstream work remain stopped.
