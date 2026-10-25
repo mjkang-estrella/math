@@ -1,0 +1,15 @@
+# R162CN parent intake
+
+PREFREEZE / no nominee. Campaign remains 19/20, latest R041. No theorem or diagnostic was frozen; no mathematical correctness/contribution grades or increment assigned. Publication and downstream work remain stopped.
+
+The investigated possibility fixes the original simple graph H on at most n vertices and the integral covering threshold q(H;n), budget 1/2. It asks for one complementary two-piece edge partition with both ordinary containment thresholds at most Lq, uniformly in H,n. Separate embeddings are allowed. This possibility remains unproved; no counterexample is claimed.
+
+Paid comparisons include same-budget threshold equivalence and discrete convexity, the bounded fixed-piece source theorem, simultaneous rooted Hall transfer, the generic two-threshold bound, exact uniform-copy spread and fractional threshold formulas, and Li's full two-product-marginal coupling. Pullback yields an adaptive partition. Conditioning a type of mass w gives only containment probability at least w in each row. Full capacity inequalities and tensorization are retained; they do not establish a constant-mass fixed type. A common typicality bound for the union over all threshold-hard subgraphs would suffice, but is unproved and not asserted necessary.
+
+The even-cycle comparison rejects arbitrary regrouping: merging small good matchings into spanning matchings raises thresholds. The cycle itself admits good contiguous-path pieces. An abstract type example lacks graph structure and is not a graph counterexample. The finite unsupported r2<=q_f assertion failed and was discarded; bounded numerical tests do not decide an unspecified universal constant. The graphic p_E possibility was not selected or frozen. Older scopes remain unchanged.
+
+Parent read complete FINAL, REPORT.json, WORKING, DERIVATION, READING-LIMITS, actual verifier and control record. Parent did not reread upstream/primary proof bodies. Author read all19 canonical texts (105743 bytes), authenticated22blobs in35entries, and read85 distinct primary pages across six PDFs: five complete papers and nine partial Talagrand pages. Three late visual checks, recovered display seams, font warnings, incomplete transitive ancestry and incidental navigation exposure are documented. Optional history traversal zero; five exact completed originals read with full modes bound initially.
+
+Read-only artifact verification MATCH:59payloads,4979425payload bytes,61files,22directories. Independently checked22blobs and13trees against the complete master tree, six primary PDFs, five completed original/copy comparisons and three wrong-anchor rejections. Author bytes and full modes remained unchanged. These are integrity checks, not mathematical gates.
+
+Next source176 is a distinct canonical manuscript in the adjacent expectation-threshold family, not a claim of unrelated subject matter. Its edge-count Kahn–Kalai bound is paid input. One bounded catalogue window decoded only176body and176/177titles;177body remains unread. Parent source176 operative-proof reading: none. The archived fixed-two-piece possibility must not be renamed or reopened for a desired grade.
