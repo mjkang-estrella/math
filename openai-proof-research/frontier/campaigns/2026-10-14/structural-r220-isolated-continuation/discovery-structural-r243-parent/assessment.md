@@ -1,0 +1,15 @@
+# Structural243 parent prefreeze intake
+
+Disposition: **PREFREEZE / no nominee**. No correctness or contribution grade is assigned. The campaign remains **19/20, latest R041, one remaining; publication STOPPED**.
+
+The parent read the entire authored derivation, source-operation comparison, private reading limits, final handoff and outside report. Both Source368 constructions remain stipulated true. This intake retains supporting deductions and does not certify them as a new theorem.
+
+The endpoint reduction uses the inverse cofactor pushforward measure, compact regular Lipschitz pieces and target-image control to handle inverse W1,1 convergence without assuming a globally positive Jacobian or global Lusin properties. It explicitly retains the inverse W1,1 hypothesis. The locally bi-Lipschitz construction fixes both derivative bounds of the finite PL libraries before shrinking exceptional sets, then uses the primary two-sided smoothing theorem. Exact radial examples and collar-fixed conjugation demonstrate compatible two-sided constructions in their stated subclasses.
+
+The unresolved simultaneous W1,2 problem is precise: fill the paired residual source and target regions, preserving the installed affine cores and interfaces, with both derivative-energy budgets under gluing and exhaustion. Strong cofactor convergence and forward energy control do not bound the reciprocal-determinant density needed for inverse exponent greater than one. The source's collapses and strict openings exhibit that cost; the calculation does not show that every alternative construction fails. The positive collar-fixed repair is credited at its actual scope and does not supply arbitrary boundary correspondence. No narrower replacement theorem was frozen, and the earlier i07 scopes are not reopened.
+
+Independent artifact replay matched the three detached anchors, 74 files, 11 selected directories and 7,742,168 selected bytes. All 20 canonical blobs and 26 tree entries were authenticated. It checked 56 read intervals, covering all twelve source section files, twelve primary intervals and two exact admitted i07 intervals, plus four primary PDF identities. Eight independent tiny controls behaved as intended. Every selected copy matches its original; all 158 author files and 23 subdirectories remain unchanged. The first replay used a wrong parent-side key for the Lean access metadata; reading its actual `http_status` field resolved that parser error without changing author files.
+
+Reading limits remain material: the source display recovery, bounded primary versions and sections, late Grochulska comparison, explicit treatment of the printed CHM exponent discrepancy, incidental metadata exposure, and coarse history exclusions are preserved. The parent inherits no source/primary/history semantic or visual coverage from hash checks. The exact Lean document endpoint returned 404; neither formal proof support nor exhaustive literature/history clearance is claimed.
+
+The terminal receipt confirms Codex gpt-6-astra, xhigh, ultrafast. Continue to a distinct source family with the same runtime requirement.
