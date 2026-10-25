@@ -1,0 +1,15 @@
+# Structural242 parent prefreeze intake
+
+Disposition: **PREFREEZE / no nominee**. No correctness or contribution grade is assigned. The campaign remains **19/20, latest R041, one remaining; publication STOPPED**.
+
+The parent read the complete authored derivation, sources-and-limits record, final handoff and outside report. Source367 remains stipulated true. The retained calculations are not independently certified as a new theorem by this intake.
+
+The derivation carries the source's four interior slacks and boundary remainder through Hessian-zero removal to a relative Robin quadratic-form gap for smooth nonflat critical cones in dimension six. It converts that gap into an explicit logarithmic annulus length 3633, negative directions, and persistence under a stated bound on the full quadratic-form perturbation. The explicit rotational stationary cone makes that weaker class nonempty. Its all-scale and subsequential asymptotic implications keep the necessary C2 identification of free boundaries explicit. The fixed-cone Sobolev competitor supplies an actual energy decrease at a cone-dependent amplitude.
+
+The source's difficult certificate and cutoff operations, classical angular/radial instability construction, and the admitted r99 comparison already account for these supporting deductions. The missing stronger operation is uniform nonlinear geometric and competitor control: compatible varying free boundaries, full pulled-back form bounds, collars, remainder constants and admissible amplitudes. A uniform form gap alone does not provide those data. No uniform singularity count, packing result, tangent-cone rate or nonlinear isolation modulus is adopted. No narrower replacement scope was frozen.
+
+Independent artifact replay matched all three detached anchors and the 82-file/13-directory selection. All 42 canonical blobs and the complete 53-entry tree were authenticated; 30 text read intervals cover 13 full source text files, ten primary intervals and three admitted history intervals. Three primary PDF identities and the guarded original-history copies were checked. The small authored rational/ODE helper reproduced its saved output. Nine independent tiny controls behaved as intended. All 91 author files and 16 subdirectories remained unchanged. An initial parent assertion mistakenly expected 14 source text files; the actual inventory is 13, and that parent-only assertion was corrected before the successful replay.
+
+The author's source display recoveries, correction of a numeral-only primary mask, selected rather than complete Fernández-Real–Serra reading, unused packing-source download, later r99 comparisons and actual incidental provenance exposure remain disclosed. The parent inherits no source, primary or history semantic reading or visual coverage from artifact verification. The pinned Lean comparator contains `sorry`; no proved formal support or exhaustive history clearance is claimed.
+
+The completed task receipt confirms Codex gpt-6-astra, xhigh, ultrafast. Continue to a distinct source family under the same runtime requirement; do not reopen or relabel this prefreeze scope.
