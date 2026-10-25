@@ -1,0 +1,13 @@
+# R162BZ parent intake — PREFREEZE / no nominee
+
+Campaign remains **19/20**, latest acceptance R041. No theorem or diagnostic was frozen; no correctness or contribution gate is assigned. All earlier scopes and dispositions remain unchanged.
+
+The retained comparison fixes one finite cyclic group, function and majorant. It combines quantitative dense supersaturation, same-mean dense modelling, the actual densification recurrence and cap-free removal of the zero-difference contribution. These are credited source/primary/classical operations, including the explicit finite-error schedule. The weighted dyadic implication also retains its common set and majorants.
+
+The stronger sparse transfer remains unproved. Direct use of the source's bounded-input construction would need joint control of productive path mass and errors paired against the actual unbounded majorant, all on one compatible scale schedule. The fixed short sampler and small positive patch examples reject specific deductions only. The nonsummability calculation limits the displayed sufficient schedule; none disproves a general sparse theorem or establishes a necessary obstacle for every proof.
+
+Parent read full DERIVATION (24,705 bytes), SOURCE-INTERFACES (11,286 bytes), READING-LIMITS (9,602 bytes), WORKING, FINAL, REPORT, the verifier and control record. No parent source proof was read. Author reports complete reading of 29 source texts/756,340 bytes and 13 explicitly linked companion texts/90,576 bytes, with 44 combined blobs authenticated. Four complete primary extracts total 48 pages, with two visual formula checks. Five exact completed exceptions were read; no optional history traversal occurred. Recovered displays, primary version dates, one corrected binding-key error, incomplete transitive ancestry and contemporary-literature coverage remain disclosed.
+
+Read-only verification returned MATCH: 76 payloads, 78 files, 4,574,604 payload bytes and 15 directories including root. Parent independently checked safe exact membership, hashes, lengths, full modes, 44 pinned blobs and all ten tree identities. Four primary PDF bindings and five unchanged original/copy pairs match. Three wrong detached anchors were rejected; the author's tiny copied corruption controls are recorded. All author bytes and modes match the pre-intake snapshot. Artifact checks are not mathematical gates.
+
+The linked superexponential van der Waerden companion is already paid and will not be used as the next distinct family. Publication and downstream manuscript/formalization/release work remain stopped. Continue at standard speed.
