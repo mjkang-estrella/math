@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+"""Archive an owned prefreeze discovery, assigning no mathematical grades."""
+from pathlib import Path
+import copy,datetime,hashlib,json,os
+P=Path(__file__).resolve().parent;C=P.parents[1];PROJECT=C.parents[2]
+read=lambda p:json.loads(p.read_bytes());now=datetime.datetime.now(datetime.timezone.utc).isoformat()
+status=read(P/'task-status.json');replay=read(P/'replay.json');assert status['status']=='completed' and status['workState']=='result_available' and not status['hasPendingChildRuns'];assert replay['author_originals_unchanged']
+registry=C/'tasks.json';ledger=PROJECT/'frontier/NEW-TEN-2026-10-14.md';raw=registry.read_bytes();lr=ledger.read_bytes();t=json.loads(raw);old=copy.deepcopy(t);idx=804;e=t['tasks'][idx]
+assert e['taskId']==status['taskId'] and e['parent_thread']=='164b1204-be68-4540-94bb-0b91055c4381' and e['parent_full_intake_pending']
+assert (t['newAccepted'],t['latestAcceptance'],t['remaining'])==(19,'R041',1)
+rel=str(P.relative_to(C));e.update(status_provenance='Owned terminal completion read during parent prefreeze intake; result_available, no pending child runs.',status='completed',workState='result_available',hasPendingChildRuns=False,parent_full_intake_pending=False,parent_disposition='ARCHIVED_PREFREEZE_NO_NOMINEE',parent_intake=rel+'/intake.json',correctness=None,contribution=None,accepted=False,count_change=0,author_anchors=replay['anchors'])
+note='Structural239 archived PREFREEZE/no nominee after full authored intake and read-only replay. Initial canonical cumulants, centering bias, count local limit and full-lifespan reduction retained. Uniform spatial-history or joint conditioning/mean estimates remain unproved. No mathematical grades or count. Campaign19/20,latestR041,one remaining; publication STOPPED.'
+t['last_parent_progress']=note;s=t['current_work_snapshot'];s.update(observed_utc=now,note=note)
+if 'active_task_indices' in s:s['active_task_indices']=[x for x in s['active_task_indices'] if x!=idx]
+if 't3_last_polled_running' in s:s['t3_last_polled_running']=[x for x in s['t3_last_polled_running'] if x!=status['taskId']]
+s['structural239_dispatch']['status']='completed';s['structural239_parent_intake']={'task_index':idx,'disposition':e['parent_disposition'],'intake':e['parent_intake'],'count_change':0,'correctness':None,'contribution':None}
+assert all(t['tasks'][i]==old['tasks'][i] for i in range(len(t['tasks'])) if i!=idx)
+assert all(t[k]==old[k] for k in old if k not in ('tasks','current_work_snapshot','last_parent_progress'))
+allowed={'observed_utc','note','active_task_indices','t3_last_polled_running','structural239_dispatch'};assert all(s[k]==v for k,v in old['current_work_snapshot'].items() if k not in allowed)
+heading='## Structural239 prefreeze archive: canonical initial gas and unresolved dynamic estimates';assert heading.encode() not in lr
+append='\n## Structural239 prefreeze archive: canonical initial gas and unresolved dynamic estimates\n\nParent read both complete authored derivation files, reading limits and handoffs. Retained work includes the canonical partition/cumulant construction, initial centering bias and Gaussian law, particle-count local limit, propagated mass-mode covariance correction, and the full regular-lifespan diagram reduction. These remain unreviewed research reasoning. Uniform spatial-history estimates with restart/trace control, or marked joint conditioning with conditional-mean control, remain unproved. No theorem was frozen or narrower nominee substituted. [Parent assessment](campaigns/2026-10-14/structural-r220-isolated-continuation/discovery-structural-r239-parent/assessment.md).\n\nRead-only replay matched the detached anchors and exact five-file packet. All88author files and17subdirectories remained unchanged. All25canonical blobs and40source display intervals covering23text files were bound; nine primary interval coordinates and five guarded history ranges were checked without inheriting semantic reading. Seven independent tiny controls behaved as expected. Primary identity/OCR limits, actual exposures, late reads, coarse history omissions and false derivative navigation admissions remain explicit. The comparator returned404; no formal support or exhaustive clearance is claimed. **PREFREEZE/no nominee; no mathematical grades or count. 19/20, latest R041, one remaining; publication STOPPED.**\n'
+
+intake={'observed_utc':now,'task_index':idx,'taskId':status['taskId'],'parent_disposition':e['parent_disposition'],'assessment':str((P/'assessment.md').relative_to(PROJECT)),'artifact_replay':replay,'correctness':None,'contribution':None,'accepted':False,'count_change':0,'publication':'STOPPED'}
+(P/'intake.json').write_text(json.dumps(intake,indent=2)+'\n')
+assert registry.read_bytes()==raw and ledger.read_bytes()==lr;tmp=registry.with_suffix('.structural239-intake.tmp');tmp.write_text(json.dumps(t,indent=2)+'\n');assert registry.read_bytes()==raw;os.replace(tmp,registry);assert ledger.read_bytes()==lr;ledger.write_bytes(lr+append.encode())
+record={'observed_utc':now,'owned_changed_task_indices':[idx],'all_other_tasks_unchanged':True,'foreign_snapshot_entries_preserved':True,'append_only_ledger':True,'count_change':0};(P/'intake-record.json').write_text(json.dumps(record,indent=2)+'\n');print(json.dumps(record))
