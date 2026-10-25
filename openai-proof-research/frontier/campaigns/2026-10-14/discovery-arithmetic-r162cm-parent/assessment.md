@@ -1,0 +1,15 @@
+# R162CM parent intake
+
+PREFREEZE / no nominee. Campaign remains 19/20, latest R041. No theorem or diagnostic was frozen, no mathematical gates assigned and no acceptance increment follows. Publication and downstream work remain stopped.
+
+The author retains exact-marginal thin-tree exploration on the same labelled graph and fractional spanning-tree point. Paid comparisons include the stronger metric-cone source output, finite separation of the good-tree hull, dominated marginals, the actual Lagrangian weighted-lower-output condition, exact rank-slack conditions for feasible subtraction, and the complementary base criterion. Boundary strongly Rayleigh laws, conditional label allocation and geometric accumulation of a hypothetical same-cut repair are credited to source/primary/classical operations.
+
+Unproved: a distribution supported entirely on uniformly thin trees with the prescribed mean. Sufficient explored routes would require one common face-preserving weighted-lower-output rounding or an exact complementary-base repair controlling every original cut. Neither is asserted necessary. Exact k-tree decomposition for each initial denominator is a stronger sufficient route, not equivalent to arbitrary exact marginals. The triangle refutes only support/thinness implying feasible subtraction; the triangle itself has the required marginal law. No universal counterexample or algorithm lower bound is claimed. Older scopes remain unchanged.
+
+Parent read the complete DERIVATION (18,669 bytes), WORKING (2,396), READING-LIMITS (9,606), FINAL (2,662), REPORT.json (741), verifier and control record. Initial expected REPORT.md and root verify.py paths did not exist; actual REPORT.json and private/verify_packet.py were read instead. No omitted text was treated as read. Parent did not reread operative source or primary proof bodies.
+
+Author reading: all 36 canonical texts, 339,166 bytes, 38 authenticated blobs in two roots. Both compiled source PDFs were authentication-only. Primary reading: 143 distinct pages across seven PDFs, four complete texts, three late visual checks; transitive ancestry incomplete. Documented truncation seams were recovered. Five exact completed exceptions were read, no optional history traversal. Initial completed-file bindings recorded permissions only; later full-mode comparison is explicitly later.
+
+Artifact verification MATCH: 71 payloads, 5,960,738 payload bytes, 73 files, 20 directories; 38 pinned blobs and 11 trees independently checked against the complete master tree, seven primary PDF bindings, five original/copy comparisons. Three wrong-anchor controls rejected. All author bytes and full modes remained unchanged. Integrity verification supplies no mathematical grade.
+
+Next distinct family: Source175, Talagrand expectation thresholds, discrete convexity and graph decompositions. A single bounded catalogue window was recovered after an initial header-pattern mismatch; only Source175 body and titles175/176 decoded. Three canonical roots are confirmed by complete-tree metadata. Their actual mathematical bodies remain unread by the parent.
