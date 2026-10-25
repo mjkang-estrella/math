@@ -1,0 +1,38 @@
+# Arithmetic162bf parent intake
+
+Disposition: **PREFREEZE / no nominee**. No additional theorem or diagnostic was selected or frozen. No correctness or contribution gate is assigned. Campaign **19/20**, latest **R041**, count change zero; publication and downstream work remain STOPPED. Both entire original Subset Sum source scopes, all older full targets and their dispositions remain unchanged.
+
+The parent read the complete 34,522-byte DERIVATIONS.md, WORKING.md, READING-LIMITS.md, FINAL.md, REPORT.md and the bundled verifier. These are author-level calculations and evidence records; the parent did not independently reread the operative source or primary proofs. Artifact authentication supplies no mathematical premise or verdict.
+
+## What the source and primary operations already pay
+
+The fast source's actual algorithm retains indexed positive inputs even with repeated weights, original isolation variables, all target translates, prime, tables and rational scores, original phases, exact frequency multiplicities, own-pattern assignment, coverage/overflow events and numerical threshold slack. The uniform ordinary O(2^(.49n)) statement retains EVERY fixed polynomial input-bit bound and every-execution time, with no advice supplying that polynomial's degree. Its actual stronger guarded .489995 exponent and arbitrary-residue/composite-modulus checksum interfaces are paid. The checksum decision by itself is not a verified one-sided witness algorithm. Ordinary adaptive decision-to-search, amplification, exact final verification, small residual fallback and signed/zero model transfers are compatible paid comparisons, not nominees.
+
+The low-space source's actual stronger u^15 2^(.199n) endpoint, input-length guard, bounded trial fuel, mask-prefix restriction BEFORE joins, unconditional resource accounting, exact equal-weight/mask distinction and nested separator/compression operations are also paid. Separate source algorithms' time and space guarantees cannot be combined for free. The actual primary mechanisms include heavy-weight majority recovery and exact-mask regeneration; these are credited rather than incorrectly left as missing source interfaces.
+
+## Two storage concerns closed in this round
+
+1. The checksum prefix-count array can be removed. A first pass counts all match occurrences; a second replay maps sorted uniform ranks into exactly the original Cartesian groups. A bounded finite-bit order-statistic generator supplies the entire rank multiset within prescribed total-variation coupling error, polynomial retained precision, and charged random-bit/series work. Global mu(k) is retained even when groups are tiled. This does not supply the incidence-group iterator or make replay free.
+2. Alias SET storage can be removed. For every retained trial/k, enumerate small-mixer pairs (Z,X) once, store the least valid mask for each exact residue key, and use earlier-trial tests to retain each original indexed alias exactly once. Total dictionary work/storage is poly(n+b)2^(.08505n), below any strictly larger chosen space exponent after polynomial accounting. Replay the SAME seeds and exact reduced/unreduced tests; draw independent phases only after the original alias extraction succeeds, preserving caps and conditional independence. Large sorted filtered-record arrays still remain.
+
+Both are compatible implementation compositions. Neither is an additional substantial full algorithm.
+
+## Exact remaining sufficient route
+
+One common smaller-memory generation/organization procedure for the actual checksum incidences AND the actual alias reduced/unreduced exclusion relation is unproved. It must preserve original representations, multiplicities, seeds and phases, full forbidden-interval skipping, candidate checks, resource caps and abort law, while charging preprocessing, sorting, repeated generation, random bits, arithmetic precision and all-execution ordinary O(2^(.49n)) time for every fixed polynomial input-bit bound. A different algorithm could avoid this route. No simultaneous-resource theorem, frozen diagnostic, universal lower bound, exact-counting or uniform-sampling substitute is proposed.
+
+The notes retain stronger attempted prefix refinement: intermediate incidence exponent bounds, same-table overflow requirements and an explicit finite-circle modular-orbit autocorrelation sum. The source's independent-phase diagonal moment certificate is not that orbit estimate. A failed first-moment overflow bound or simultaneous-head implementation is not a lower bound on all representations. Product sampling has exact row/column/residual variance terms; its projections do not automatically gain the full product sample count. Random restarts or conditioning on surviving filters must pay one joint success law. These calculations do not refute the source or all possible small-space algorithms.
+
+## Reading and access limits
+
+The child reports all 22 canonical textual objects (244,917 bytes) read completely, including both actual wrappers, every include, leaf figure, bibliography and numerical appendix. All 24 blobs / 29 entries authenticate; two compiled source PDFs were authentication-only. TeX-distribution glyph mappings were not project source or semantically read.
+
+Eight primary PDFs supplied 176 distinct semantically read pages, including five complete extracted papers (118 pages) and four rendered page checks: NW 2010.08576v2, BCKM 2402.13170v3, AKKM 1303.0609v1, AKKN 1508.06019v1 and CJRS 2301.07134v2 completely; RW 2511.10823v1 at specified intervals, LSF 1605.02687v3 selected pages and KLM Journal of Algorithms 10 (1989) selected pages. Exact versions, extraction/date discrepancies, imperfect KLM OCR, late readings, navigation-only pages and truncation recoveries are recorded privately. The RW section-5 enumerator and other transitive ancestors were not fully read. All eight downloads/extracts succeeded; this is not exhaustive primary clearance.
+
+Only five exact completed exceptions were admitted; zero optional original-history traversals occurred. No foreign task/status/activity/body query, perfect-isolation, exhaustive-history or priority claim. Tiny integer/sampler/covariance checks verify identities only; no complete source balanced algorithm, fresh numerical optimization or source-certificate audit was executed.
+
+## Artifact authentication
+
+The original read-only verifier and independent parent checks returned MATCH: 67 payload records including FINAL.md, 8,961,687 payload bytes, 69 total files and 12 directories including root. All three detached anchors matched. Independent checks covered exact safe/unique membership, duplicate JSON keys, hashes, lengths, full modes, immutable complete-tree 29-entry selection, all 24 pinned Git blob identities, and five initial original/copy pairs with unchanged original full modes. Three wrong detached anchors were rejected; the existing restored tiny fixture verified. The entire 69-file root matches the pre-read snapshot in bytes, hashes and full modes. These are artifact checks only. No sealed author bytes were changed.
+
+The next family is distinct Source139 log-concave sampling, selected through one bounded catalogue window decoding only titles139/140 and body139. Source140 body and later remainder were not decoded; a third heading supplied only a byte boundary. Parent operative-source proof reading remains none. All stronger actual sampler/oracle/implementation operations must be read and credited before a fresh claim. Earlier entropy-overlap and modified log-Sobolev full targets remain unchanged and unproved; sampling is not a renamed substitute.
