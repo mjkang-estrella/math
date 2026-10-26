@@ -1,0 +1,11 @@
+# Thirty new mathematical discoveries
+
+Strict accepted tally: **0/30**. The earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
+
+The first substantive candidate is the unrestricted taxicab Erdős–Mordell lower bound (MathDB341671). Its complete five-page paper, all55 Lean declarations, geometric interior bridge, sharpness and independent source/mathematical/formal reviews are in `candidates/taxicab-three-halves/`. The proof packet passes isolated pinned replay and exact ZIP-member readback. Novelty remains on HOLD for the closest2018 comparison; this is not yet an accepted discovery. The matrix lane is investigating a stronger additive-minimum-side bound.
+
+The full geometric Vandermonde conjecture certificate is retained under `candidates/vandermonde-diagonal/`, but is excluded from the strict tally: independent review found that the exact positive-definite matrix fact was published in2006, and the result follows from known ingredients. The real-power Cauchy–Schwarz problem369283 was already solved in October2026. Known cases and wording/sign corrections receive no credit.
+
+Count only substantive new mathematical results after exact primary-source validation, complete proof, full Lean verification, independent adversarial review, serious documented prior-art investigation and a reproducible paper/proof packet. Never infer absolute worldwide priority from an empty search result. Exact criteria and exclusions are in `ledger.json`; live research directions are in `NEXT.md`.
+
+Research uses standard/default speed with parallel native workers and Pi GLM5.3Flash. Agents own unique research lanes; the parent owns integration and acceptance. No external posting, publication or push is authorized. Upstream is pinned at openai/math fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb; no upstream theorem is needed for the current taxicab certificate. Lean4.34.1 and exact dependency revisions are recorded in `pins.json`. PDF authoring was marked once for the requested30-paper campaign before the first candidate manuscript was created.
