@@ -1,0 +1,20 @@
+import PartitionTopCounts
+
+#check KeithMulticolor.missingPairCount
+#print axioms KeithMulticolor.missingPairCount
+#check KeithMulticolor.twoMissingSum
+#print axioms KeithMulticolor.twoMissingSum
+#check KeithMulticolor.twoMissingSum_twentyfive
+#print axioms KeithMulticolor.twoMissingSum_twentyfive
+#check KeithMulticolor.topCutValues
+#print axioms KeithMulticolor.topCutValues
+#check KeithMulticolor.topCutValues_twentyfive
+#print axioms KeithMulticolor.topCutValues_twentyfive
+#check KeithMulticolor.topCutValues_strict_valley
+#print axioms KeithMulticolor.topCutValues_strict_valley
+#check KeithMulticolor.Unimodal
+#print axioms KeithMulticolor.Unimodal
+#check KeithMulticolor.strict_valley_not_unimodal
+#print axioms KeithMulticolor.strict_valley_not_unimodal
+#check KeithMulticolor.topCutValues_not_unimodal
+#print axioms KeithMulticolor.topCutValues_not_unimodal
