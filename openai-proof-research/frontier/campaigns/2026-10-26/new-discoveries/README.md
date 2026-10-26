@@ -1,6 +1,6 @@
 # Thirty new mathematical discoveries
 
-Strict accepted tally: **9/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
+Strict accepted tally: **10/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
 
 The first accepted result resolves Gerhold–Simon Conjecture 3.2 / MathDB 352508: the sharp converse fractional-binomial inequality for all real exponents above 2. Its four-page paper, seven Lean modules with 67 declarations, stronger biased bound, coefficient optimality, independent source/mathematical/formal review and documented prior-art search are in `candidates/fractional-binomial/`. The reproducible ZIP passes byte readback, manifest checks and a fresh isolated Lean replay after extraction. Classical Gamma-ratio convexity is credited; no prior full sharp finite-sum resolution was found. The inaccessible Alzer article and the limits of priority searches are explicitly documented. All corollaries and helpers are one combined outcome.
 
@@ -19,6 +19,8 @@ The seventh accepted result proves the full Edholm–Mathew Conjecture 4.20 / Ma
 The eighth accepted result completely classifies both real-exponent directions for the four classical means, MathDB 338823 / Meštrović–Andjić Conjecture 1.5. The forward inequality holds universally exactly for n≤0 or n≥1; the reverse holds exactly for n=0. Actual positive-input witnesses refute the source's proposed range throughout 1/2≤n<1. The four-page paper, complete 34-declaration Lean proof, two independent Pi reviews and freshly extracted packet replay are in `candidates/classical-means/`. Known integer cases, individual witnesses, the converse and endpoints form one combined outcome. Prior-art access limits remain explicit.
 
 The ninth accepted result refutes Keith's three-color linear-cut conjecture, MathDB 345259. For the 25×25 box at partition size325, a complete literal-source 37-declaration Lean proof gives a strict valley on y45−2x:53130,50600,and at least52900. The three-page manuscript, independent source/math/formal/bounded-prior-art/manuscript review, two separate exact counting checks and extracted packet replay are in `candidates/keith-multicolor/`. The original two-color Dousse–Kim conjecture is not refuted. Final publisher-body and thesis access limits remain explicit; this is one outcome only.
+
+The tenth accepted result refutes Krishna’s C*-algebraic Novak Conjecture4.2 / MathDB351633. Four explicit self-adjoint2×2matrix inputs and a constant second coordinate give a Hermitian8×8source matrix with exact quadratic form cos(pi sqrt15)−3≤−2. Its two-page paper, complete36-declaration exponential/cosine/source-matrix Lean proof, independent five-gate review and fresh extracted-packet replay are in `candidates/cstar-novak/`. The scalar and commutative Novak theorems remain true. Bounded priority-search and numerical-check precision qualifications are explicit; this is one refutation only.
 
 See [RESULTS.md](RESULTS.md) for papers, complete proof packets, verification counts and novelty qualifications.
 

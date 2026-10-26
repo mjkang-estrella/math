@@ -1,13 +1,13 @@
 # Candidate counterexample to C*-algebraic Novak positivity
 
-Status: **research candidate, credit0**. Full3-module36-declaration Lean bridge and strict replay PASS; manuscript built and both2-page final renders inspected. Independent review, bounded novelty investigation and extracted packet remain. Do not count this as discovery10 yet.
+Status: **full source refutation; mathematical, strict Lean, independent review and manuscript gates PASS**. One outcome only. Final acceptance is recorded in the campaign ledger after extracted-packet replay. See reviews/ for the unchanged independent review and parent reconciliation.
 
 ## Exact source
 
 Krishnanagara Mahesh Krishna, *C*-algebraic Schur product theorem, Pólya–Szegő–Rudin question and Novak's conjecture*, J. Korean Math. Soc.59(4)(2022),789–804, DOI10.4134/JKMS.j210627. Actual publisher PDF retrieved and text read: Definition6 gives cos(A)=(exp(iA)+exp(−iA))/2. Published Conjecture4.2 (p799; preprint Conjecture4.3) asserts the literal matrix of products (1+cos(Xjl−Xkl))/2 minus1/n is positive for any unital C*-algebra and all self-adjoint tuples, n,d≥2. Published Theorem4.3 proves only the commutative case. No extra commutation assumption occurs in the conjecture.
 
 Primary publisher PDF: sources/published2022.pdf, SHA256 5f53313dd1dc57481990ff64939e376c4cb0cf1bb7c707047c5c5d3ff4b8a5d6.
-Live MathDB351633 snapshot: SHA256 655dc698bc876ea43dc2784ad17d7369129b6aa4edf5807cfae33336a320ae0d; status open, progress null, no posted solutions. Initial targeted searches found no refutation, but the citation corpus and closest general operator-kernel literature have NOT yet been fully assessed. No claim of priority yet.
+Live MathDB351633 snapshot: SHA256 655dc698bc876ea43dc2784ad17d7369129b6aa4edf5807cfae33336a320ae0d; status open, progress null, no posted solutions. Independent bounded prior-art review found no earlier refutation in its inspected corpus; see reviews/independent-review.md and reviews/parent-addendum.md for the actual sources and limits. No absolute priority claim.
 
 ## Explicit witness
 
@@ -33,6 +33,6 @@ The source matrix is Hermitian, all kernel entries are central scalar multiples 
 
 Independent floating eigendecomposition of the actual 2x2 input differences yields c≈0.921436514468169 and quadratic form≈−2.078563485531832, agreeing with the exact formula. Numerical data are exploratory checks only; the symbolic proof above supplies the proposed sign.
 
-## Formal route underway
+## Complete formal route
 
 `formal/CosineBridge.lean` proves the literal matrix-exponential cosine bridge via SemiconjBy.exp_right on rI±M. NovakWitness proves every cosine evaluation. NovakConclusion proves the literal source-block/flattened-matrix endpoint, self-adjoint inputs, a Hermitian source matrix, exact quadratic form and non-PSD. All36declarations replay strictly with only the standard3axioms. No assumed cosine evaluation remains. Frozen candidate in candidates/cstar-novak.

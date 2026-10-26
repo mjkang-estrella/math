@@ -1,6 +1,6 @@
 # Accepted research outcomes
 
-Strict tally: **9/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
+Strict tally: **10/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
 
 | # | Result | Lean declarations | Paper | Complete proof packet |
 |---|---|---:|---|---|
@@ -13,6 +13,7 @@ Strict tally: **9/30**. Each row is one combined mathematical outcome, with a co
 | 7 | Full Bergman polynomial conjecture, MathDB 368572 | 78 | [Paper](candidates/bergman-unit-circle/paper.pdf) | [ZIP](candidate-packets/368572-bergman-unit-circle-proof.zip) |
 | 8 | Full classical-means real-exponent classification, MathDB 338823 | 34 | [Paper](candidates/classical-means/paper.pdf) | [ZIP](candidate-packets/338823-classical-means-proof.zip) |
 | 9 | Strict-valley refutation of Keith multicolor conjecture, MathDB 345259 | 37 | [Paper](candidates/keith-multicolor/paper.pdf) | [ZIP](candidate-packets/345259-keith-multicolor-proof.zip) |
+| 10 | Hermitian counterexample to C*-algebraic Novak positivity, MathDB351633 | 36 | [Paper](candidates/cstar-novak/paper.pdf) | [ZIP](candidate-packets/351633-cstar-novak-proof.zip) |
 
 Outcome 2 resolves an explicitly open assertion in the source associated with MathDB 363319; the record's different root-simplicity conjecture remains open. Outcome 3 does not refute the separate zero-free conjecture and makes no minimality claim.
 
@@ -29,3 +30,5 @@ Outcome 7 resolves the entire all-coprime-pairs polynomial conjecture, including
 Outcome 8 is one combined resolution of both comparison directions: forward universal exactly n≤0 or n≥1, reverse universal exactly n=0. Every 0<n<1 has both strict sign patterns on actual positive inputs. Classical convexity and the known integer cases are credited. The nearest full primary comparisons were inspected; subscription services and part of a long survey remain inaccessible, so absolute worldwide priority is not asserted. The source/math/formal review, separate final manuscript review, and fresh extracted 34-declaration replay all pass.
 
 Outcome9 refutes Keith's three-color extension, with actual box partitions and the literal generating polynomial. The two-color Dousse–Kim conjecture remains untouched. Two independent integer algorithms additionally give exact third coefficient63112; the formal source proof needs only its proved lower bound52900. The final typeset source and complete Wagner thesis remain unread; independent bounded novelty review and the parent clarification of these limits are included.
+
+Outcome10 refutes the full noncommutative C*-algebraic extension while preserving the scalar/commutative Novak theorem. Both source inputs and the literal source-matrix Hermitian property are proved. The genuine matrix exponential is used; no cosine identity is assumed. The exact witness has a negative quadratic form independently of numerical approximations. The unchanged Pi review, parent corrections to its numerical-precision/index-comment wording, and all36declaration types/axioms are in the packet. Searches found no earlier refutation, with incomplete citation-index/subscription/non-English coverage explicitly disclosed.
