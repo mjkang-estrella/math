@@ -1,6 +1,6 @@
-# One quartic construction for Lachaume Conjectures 1 and 3
+# Quartic refutation of Lachaume diagonal concavity; known companion converse failure
 
-Proposed combined outcome, discovery credit **0** pending all gates. Parent discovery dated 2026-10-26. No external posting. This is ONE construction, not two counted conjectures.
+Proposed Conjecture1 outcome only, discovery credit **0** pending all gates. Parent discovery dated 2026-10-26. No external posting. Only Conjecture1 / MathDB338076 can form the candidate discovery basis. The companion Conjecture3 failure is known by translation of Zaimi2016 and uncredited; see the parent addendum.
 
 ## Literal source and versions
 
@@ -24,7 +24,7 @@ In particular P>0 on x>0, and the genuine real fourth root h=P^(1/4) obeys
 
 Hence h is concave on the entire open positive axis. This is a full universal diagonal-concavity statement, not a finite numerical check.
 
-## Nonreal root: Conjecture3 false
+## Uncredited companion: nonreal root and Conjecture3 failure
 
 Write s=sqrt(3), u=s-2 and v=sqrt(4s-6). Since s>3/2, v>0. The exact factorization is
 
@@ -65,3 +65,7 @@ Parent searched the source title, Lachaume/concavity/counterexample, Conjecture3
 A genuinely relevant public prior is Carptopus, *A Walsh-convolution proof of two conjectures of Lachaume*, public v0.1-beta 4 September2026, DOI10.5281/zenodo.22299983, github.com/Carptopus/MathExplore-Notes/research/lachaume-walsh-convolution. Parent read its actual README and entire relevant LaTeX scope section. It proves Conjectures4/5 and explicitly excludes1/3. Its section on Conjecture2 credits Lachaume's later2018 Lovelock paper for the real-rooted diagonal sufficient criterion. That later primary paper and the author's thesis must be read for duplication/source changes; parent has not yet done so. Do NOT count classical Walsh convolution or Conjecture2 here.
 
 No claim of absolute priority. The quartic could be a known normalized-Laguerre counterexample, and this requires a serious nearest-prior search, not merely empty citation lists. Full Lean endpoint, manuscript, independent review and extracted packet still absent. All claims credit0 until completion.
+
+## Superseding prior-art/scope correction
+
+The preliminary review found MO248816/answer248836 (Zaimi2016). Parent corrects its mistaken claim that the normalized differential condition is not translation invariant: (x+2)^4−1 has strictly positive coefficients and exactly the same known converse failure. Therefore Conjecture3 has NO discovery credit, even in the nonnegative-coefficient setting. Only the substantive Conjecture1 diagonal/global concavity failure remains a prospective discovery. Candidate/reviews/parent-addendum.md contains the exact correction and detailed actual Andrica2019Section5 comparison (full publisherPDF obtained, relevant18pages read). Earlier preliminary searches/limitations above are historical, not final novelty conclusions.

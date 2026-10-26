@@ -11,3 +11,7 @@ Exact supporting Fraction check PASS: literal subset products, quartic different
 Two-page paper builds with zero issues. Parent rendered and visually inspected both revised pages; all equations, references and page boundaries clean. Paper is explicitly marked prior-art audit pending, no priority assertion. Earlier3page rendering was superseded.
 
 Pending independent preliminary source/math/serious novelty review, then independent full formal and final manuscript review, final packet and extracted replay. Never count the two conjecture labels separately.
+
+## Final-scope update
+
+After preliminary review, parent corrected the material translation-invariance error and removed all Conjecture3 novelty credit. Only Conjecture1diagonal/globalconcavity remains prospective. See parent-addendum.md. The final-scope2-page manuscript was rebuilt with zeroissues and bothpages visually reinspected; all61Leanmodule bytes unchanged from the successful strictreplay. final-review-hashes.json is the current final-review binding; frozen-parent-hashes.json preserves the earlier manuscript freeze. No acceptance yet.

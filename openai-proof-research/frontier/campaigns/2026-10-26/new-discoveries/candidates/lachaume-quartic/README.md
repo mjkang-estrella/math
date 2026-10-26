@@ -1,7 +1,7 @@
-# Lachaume quartic candidate
+# Lachaume diagonal-concavity candidate
 
-Discovery credit0. One common construction addressing source1712.10327v1Conjectures1and3, related MathDB338076. Full mathematical proof in PROOF.md; Lean modules in formal/. Main endpoints are `Lachaume.source_nonreal_root_counterexample` and `Lachaume.source_diagonal_concavity_counterexample`.
+Discovery credit0. The prospective outcome is source1712.10327v1Conjecture1 / MathDB338076: positive-coefficient elementary-symmetric sums need not inherit concavity of their fourth root from the positive diagonal. See PROOF.md and reviews/parent-addendum.md.
 
-The polynomial P=x⁴+8x³+6x²+8x+1 satisfies 4PP″−3(P′)²=−144(x²−1)² everywhere on the real line, yet has an explicit nonreal complex root. Its associated literal symmetric sum has a globally concave fourth root on the positive diagonal but violates midpoint concavity at strictly positive inputs. All source coefficients are strictly positive, and C² regularity of the actual fourth root is proved.
+Three Lean modules contain61declarations, fresh strict replay PASS with standard3axioms; parent inspected all61types. The actual C²root and elementary-symmetric/Mathlib bridge are included. Two-page manuscript rendered and inspected, pending final independent review.
 
-Exact rational Python checks supplement the proof. Strict isolated61-declaration Lean replay PASS, standard three axioms; parent inspected all61types. Two-page draft manuscript built without issues. Independent source/mathematics/bounded-novelty review, paper and final packet are separate gates. Do not infer novelty from the MathDB status. Known Walsh/real-rooted-diagonal sufficient results are credited, not claimed here. One construction can receive at most one discovery credit.
+IMPORTANT: the companion sourceConjecture3 nonreal-root endpoint is uncredited. Zaimi's2016MathOverflowexample x⁴−1, after translation x→x+2, already gives strictly positive coefficients and the same converse failure. The original preliminary review missed this translation invariance; the parent addendum corrects it. Candidate discovery credit can depend ONLY on the substantive diagonal/global concavity refutation, after final independent novelty review and extracted packet replay.
