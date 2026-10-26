@@ -1,0 +1,152 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,geometry,microtype,xcolor}
+\geometry{margin=1in}
+\usepackage[colorlinks=true,allcolors=blue!45!black]{hyperref}
+\setlength{\emergencystretch}{3em}
+\newtheorem{theorem}{Theorem}
+\newcommand{\mex}{\operatorname{mex}}
+\title{A direct Lean certificate for Rust's\newline game-sequence counterexample at index twenty}
+\author{Myeongjin Kang}
+\date{October 26, 2026}
+\begin{document}\maketitle
+\begin{abstract}
+Rust conjectured an identity involving two greedily constructed game
+sequences. Shallit disproved it in 2022 and identified index twenty as a
+counterexample. We verify that same finite witness directly in Lean,
+constructing the complete infinite sequences and proving their exact
+greedy selection rule. Their certified values are $X(20)=30$, $Y(20)=56$,
+$X(56)=86$ and $Y(30)=84$. The proposed equality therefore reads $170=171$.
+The certificate uses exact integer computation, rather than an assumed
+automaton or a table detached from the source definition.
+\end{abstract}
+\noindent\textit{Credit and scope.} This is verification of Shallit's known
+counterexample, not a new disproof or first-formalization claim. The source
+also establishes infinitely many counterexamples; that stronger statement
+is not claimed here. This AI-assisted paper has original prose CC BY 4.0
+and original code MIT.
+
+\section{The actual recursive sequences}
+Definition 1 of Shallit's \emph{Some Tribonacci Conjectures} starts with
+$(X(0),Y(0))=(0,0)$ and $(X(1),Y(1))=(1,2)$~\cite{Shallit}.
+At each subsequent index $n$, select positive integers $x<y$ such that
+neither appears among the earlier $X$ or $Y$ values, and $y-x$ appears
+among neither the earlier differences nor earlier sums. Choose $x$ as
+small as possible, then $y$ as small as possible for that $x$. This
+lexicographic reading is explicitly used in the source's Section 3.2
+verification, rather than being an additional convention imposed here.
+
+We give a total construction with finite sets. Immediately before choosing
+pair $n+1$, let
+\[
+ U_n=\{X(k),Y(k):0\le k\le n\},\qquad
+ D_n=\{Y(k)-X(k),Y(k)+X(k):0\le k\le n\}.
+\]
+Both sets contain zero. With $\mex(S)$ denoting the least nonnegative
+integer outside a finite set $S$, put
+\begin{align*}
+ x&=\mex(U_n),\\
+ E_n&=D_n\cup\{\max(u-x,0):u\in U_n\},\\
+ d&=\mex(E_n),\qquad (X(n+1),Y(n+1))=(x,x+d).
+\end{align*}
+Update $U_n$ by inserting $x,x+d$ and $D_n$ by inserting $d,2x+d$.
+The initial state is $U_0=D_0=\{0\}$.
+
+Every mex exists: if $S$ is finite, one plus its largest element is
+missing (with largest value zero for an empty set). In Lean the mex is
+computed by taking the minimum of the missing elements in
+$\{0,\ldots,\max S+1\}$. We prove both that this number is missing and
+that every smaller nonnegative number is present. Thus the construction
+is defined at every index, not just through the finite witness.
+
+\section{Why this is precisely the source construction}
+Since $0\in U_n\cap D_n$, both $x$ and $d$ above are positive.
+The choice gives $x\notin U_n$ and $d\notin D_n$. Also $x+d\notin U_n$:
+otherwise $d=(x+d)-x$ would belong to $E_n$. Hence $(x,x+d)$ is admissible.
+Any other admissible pair $(u,v)$ has $u\notin U_n$, so $x\le u$.
+If $u=x$, then $v-x>0$ lies outside $D_n$ and outside
+$\{\max(w-x,0):w\in U_n\}$: an equality with a truncated difference,
+being positive, would force $w=v$, contrary to $v\notin U_n$.
+Therefore $d\le v-x$ and $x+d\le v$. This proves the exact two-stage
+minimality rule.
+
+Induction on the state updates proves the displayed history-set formulas.
+The first choice is $(1,2)$, as required. Including history index zero
+adds only zero to each forbidden set; all tested numbers $x,y,y-x$ are
+positive, so this changes no admissible pair. The formal proof explicitly
+identifies these histories with zero inserted into the positive-index
+histories of Definition 1, and proves that admissibility and least-pair
+selection are unchanged by this insertion.
+
+Least admissible pairs are unique: applying each pair's minimality to the
+other first equates their first coordinates, then their second coordinates.
+Strong induction on the history consequently proves uniqueness of the
+entire sequence satisfying the source selection rule. The construction
+above therefore computes the actual recursively defined sequences.
+
+\section{The exact finite witness}
+Here are the successive pairs through index 56; within a row they are
+listed in increasing index order. The omitted index-zero pair is $(0,0)$.
+Every entry is obtained by the finite mex rule just proved.
+\[
+\renewcommand{\arraystretch}{1.2}
+\begin{array}{c|rrrrrrrr}
+ n&\multicolumn{8}{c}{(X(n),Y(n))}\\\hline
+1\text{--}8 & (1,2) & (3,5) & (4,8) & (6,11) & (7,13) & (9,16) & (10,19) & (12,22) \\
+9\text{--}16 & (14,25) & (15,28) & (17,31) & (18,33) & (20,36) & (21,39) & (23,42) & (24,45) \\
+17\text{--}24 & (26,48) & (27,50) & (29,53) & (30,56) & (32,59) & (34,62) & (35,65) & (37,68) \\
+25\text{--}32 & (38,70) & (40,73) & (41,76) & (43,79) & (44,81) & (46,84) & (47,87) & (49,90) \\
+33\text{--}40 & (51,93) & (52,96) & (54,99) & (55,101) & (57,104) & (58,107) & (60,110) & (61,113) \\
+41\text{--}48 & (63,116) & (64,118) & (66,121) & (67,124) & (69,127) & (71,130) & (72,133) & (74,136) \\
+49\text{--}56 & (75,138) & (77,141) & (78,144) & (80,147) & (82,150) & (83,153) & (85,156) & (86,158) \\
+\end{array}
+\]
+The finite table can be verified by scanning unused positive integers and
+unused differences at each step. The four required witness entries are also checked in Lean's
+kernel on the actual recursive definitions; no table values are axioms or
+hypotheses.
+
+\begin{theorem}
+The conjectured identity
+\[
+ X(Y(n))+Y(X(n))=2X(n)+2Y(n)-1\qquad(n\ge1)
+\]
+fails at $n=20$.
+\end{theorem}
+\begin{proof}
+The certified entries give
+\[
+ X(20)=30,\quad Y(20)=56,\quad X(56)=86,\quad Y(30)=84.
+\]
+The two sides are $86+84=170$ and
+$2\cdot30+2\cdot56-1=171$, respectively, so they are unequal.
+\end{proof}
+
+\section{Formal coverage and reproducibility}
+The module \texttt{Rust.lean} defines a finite computable mex, the state
+updates, and the complete functions $X,Y$ on natural numbers. It proves
+mex minimality, source admissibility, least-pair uniqueness, the actual
+history formulas, the source rule, global sequence uniqueness, and the
+original positive-history/seed bridge. The exact witness declaration
+\texttt{exact\_values} uses kernel-checked decidable integer computation.
+The main declaration \texttt{rust\_counterexample} combines source-rule
+validity, all four seeds, admissibility of index twenty, and failure of
+the proposed equality. There are no imported witness values or automaton
+correctness assumptions.
+
+Lean 4.34.1 and the pinned mathlib dependencies are required. The isolated
+verifier compiles all source bytes and audits every local declaration's
+type and transitive axioms. Source provenance, independent review and
+reproduction instructions accompany the paper. MathDB 356369 records
+this already refuted conjecture~\cite{MathDB}; only one source question
+is counted, rather than one outcome per computed entry.
+\begin{thebibliography}{9}
+\bibitem{Shallit} J. Shallit, \emph{Some Tribonacci Conjectures},
+arXiv:2210.03996v1, October 8, 2022, Definition 1, Section 3.2 and
+Section 4, Conjecture 5 with its disproof.
+\url{https://arxiv.org/abs/2210.03996v1}.
+\bibitem{MathDB} MathDB, \emph{Rust's conjecture on the Tribonacci
+combinatorial-game sequences}, problem 356369, accessed October 26, 2026.
+\url{https://mathdb.com/p/356369}.
+\end{thebibliography}
+\end{document}
