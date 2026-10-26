@@ -1,0 +1,7 @@
+# Additional means screen — no new outcome
+
+Credit0. Actual latest2405.13618v2 (May24,2024) definitions1.3–1.5, resultant-map definition, Examples4.1–4.10 and Conjectures4.2/4.4/4.7/4.10 read. Literal logarithmic-coordinate formulas used in scan_stabilization.py. Note the HTML1.9formula for Lalpha displays4alpha, inconsistent with definition1.3 and L_(1/2)=G; the literal definition gives2alpha*sinh(x)/sinh(2alpha*x), used here. No credit for that transcription error, alpha0stable equality, or diagonal equality.
+
+80-digit mpmath exploratory scan:563logarithmic input ratios for each of26parameter choices (both M2/M4branches, bothsigns of p for9Lalpha values, bothsigns of p at both exceptionalSalpha values). No unexpected sign or sign change; all source conjectured directions remain numerically supported. These are not proofs, no rigorous interval certification or full novelty review. Do not count any sampled parameter as a theorem.
+
+353636truncated-uniform-mean conjecture already has a complete posted2026August20Patel proof, exact conditional variance deficit identity and sharpness. Do not rediscover/count it. Other downloaded snapshots (361811,380818,372380) are leads only with no result. 338822Seiffert comparison has an apparent endpoint-limit failure (normalized z→1, sqrt2>4/pi), but no claimed new theorem: actual primary source/latestbody and serious known sharp mean bounds must be compared before pursuing, and source-neighbor overlap with accepted classicalmeans outcome8 must be treated honestly. No credit for a boundary-only wording objection.
