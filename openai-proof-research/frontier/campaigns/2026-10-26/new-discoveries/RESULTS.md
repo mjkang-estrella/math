@@ -1,6 +1,6 @@
 # Accepted research outcomes
 
-Strict tally: **8/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
+Strict tally: **9/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
 
 | # | Result | Lean declarations | Paper | Complete proof packet |
 |---|---|---:|---|---|
@@ -12,6 +12,7 @@ Strict tally: **8/30**. Each row is one combined mathematical outcome, with a co
 | 6 | Arbitrary-rank negative-order Vendi–LCR comparison, MathDB371345/371346 | 48 | [Paper](candidates/vendi-negative/paper.pdf) | [ZIP](candidate-packets/371345-vendi-negative-proof.zip) |
 | 7 | Full Bergman polynomial conjecture, MathDB 368572 | 78 | [Paper](candidates/bergman-unit-circle/paper.pdf) | [ZIP](candidate-packets/368572-bergman-unit-circle-proof.zip) |
 | 8 | Full classical-means real-exponent classification, MathDB 338823 | 34 | [Paper](candidates/classical-means/paper.pdf) | [ZIP](candidate-packets/338823-classical-means-proof.zip) |
+| 9 | Strict-valley refutation of Keith multicolor conjecture, MathDB 345259 | 37 | [Paper](candidates/keith-multicolor/paper.pdf) | [ZIP](candidate-packets/345259-keith-multicolor-proof.zip) |
 
 Outcome 2 resolves an explicitly open assertion in the source associated with MathDB 363319; the record's different root-simplicity conjecture remains open. Outcome 3 does not refute the separate zero-free conjecture and makes no minimality claim.
 
@@ -26,3 +27,5 @@ Outcome6 supplies the singular negative-order comparison on the source-evidenced
 Outcome 7 resolves the entire all-coprime-pairs polynomial conjecture, including the exact root count with multiplicity. Almughrabi’s older weighted root sum and other kernel formulas are credited. The actual June 2026 target publication still states the conjecture; the source-mentioned follow-up in preparation was not located. No priority relative to that unread unpublished work is certified. The analytic kernel interpretation uses the published formula outside the formalized polynomial scope.
 
 Outcome 8 is one combined resolution of both comparison directions: forward universal exactly n≤0 or n≥1, reverse universal exactly n=0. Every 0<n<1 has both strict sign patterns on actual positive inputs. Classical convexity and the known integer cases are credited. The nearest full primary comparisons were inspected; subscription services and part of a long survey remain inaccessible, so absolute worldwide priority is not asserted. The source/math/formal review, separate final manuscript review, and fresh extracted 34-declaration replay all pass.
+
+Outcome9 refutes Keith's three-color extension, with actual box partitions and the literal generating polynomial. The two-color Dousse–Kim conjecture remains untouched. Two independent integer algorithms additionally give exact third coefficient63112; the formal source proof needs only its proved lower bound52900. The final typeset source and complete Wagner thesis remain unread; independent bounded novelty review and the parent clarification of these limits are included.

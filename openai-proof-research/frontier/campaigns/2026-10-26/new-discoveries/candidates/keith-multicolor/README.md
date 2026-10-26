@@ -1,4 +1,4 @@
-# Keith multicolor counterexample — candidate, credit 0
+# Keith multicolor counterexample
 
 MathDB 345259 / Keith, Restricted k-color partitions II, arXiv:2001.08351v1, Conjecture 1.
 
@@ -12,4 +12,4 @@ Replay from this folder:
 python3 verification/verify_candidate.py . --lean-bin /path/to/lean --packages /path/to/.lake/packages
 ```
 
-The three-page manuscript and mathematical proof match the finite source refutation. Research notes contain a variable-N family, which is not part of this certificate or a separate discovery count. Independent review, serious bounded novelty investigation, final manuscript gate and extracted proof-packet replay remain required before acceptance. No final proof ZIP is offered yet. Source-access limits are explicit in NOVELTY.md.
+The three-page manuscript and mathematical proof match the finite source refutation. Research notes contain a variable-N family, which is not part of this certificate or a separate discovery count. Independent source, mathematical, formal, bounded-novelty and final-manuscript review pass. Original reports and the parent clarification of access/search scope are in reviews/. The sibling packet receipt records the final extracted replay; campaign acceptance depends on that gate. The complete packet is candidate-packets/345259-keith-multicolor-proof.zip relative to the campaign root. Source-access limits are explicit in NOVELTY.md.
