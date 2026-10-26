@@ -1,6 +1,6 @@
 # Accepted research outcomes
 
-Strict tally: **10/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
+Strict tally: **11/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
 
 | # | Result | Lean declarations | Paper | Complete proof packet |
 |---|---|---:|---|---|
@@ -14,6 +14,7 @@ Strict tally: **10/30**. Each row is one combined mathematical outcome, with a c
 | 8 | Full classical-means real-exponent classification, MathDB 338823 | 34 | [Paper](candidates/classical-means/paper.pdf) | [ZIP](candidate-packets/338823-classical-means-proof.zip) |
 | 9 | Strict-valley refutation of Keith multicolor conjecture, MathDB 345259 | 37 | [Paper](candidates/keith-multicolor/paper.pdf) | [ZIP](candidate-packets/345259-keith-multicolor-proof.zip) |
 | 10 | Hermitian counterexample to C*-algebraic Novak positivity, MathDB351633 | 36 | [Paper](candidates/cstar-novak/paper.pdf) | [ZIP](candidate-packets/351633-cstar-novak-proof.zip) |
+| 11 | One cubic refutation of three C*-polynomial moment conjectures, MathDB355008/355009 | 36 | [Paper](candidates/cstar-polynomial/paper.pdf) | [ZIP](candidate-packets/355008-cstar-polynomial-proof.zip) |
 
 Outcome 2 resolves an explicitly open assertion in the source associated with MathDB 363319; the record's different root-simplicity conjecture remains open. Outcome 3 does not refute the separate zero-free conjecture and makes no minimality claim.
 
@@ -32,3 +33,5 @@ Outcome 8 is one combined resolution of both comparison directions: forward univ
 Outcome9 refutes Keith's three-color extension, with actual box partitions and the literal generating polynomial. The two-color Dousse–Kim conjecture remains untouched. Two independent integer algorithms additionally give exact third coefficient63112; the formal source proof needs only its proved lower bound52900. The final typeset source and complete Wagner thesis remain unread; independent bounded novelty review and the parent clarification of these limits are included.
 
 Outcome10 refutes the full noncommutative C*-algebraic extension while preserving the scalar/commutative Novak theorem. Both source inputs and the literal source-matrix Hermitian property are proved. The genuine matrix exponential is used; no cosine identity is assumed. The exact witness has a negative quadratic form independently of numerical approximations. The unchanged Pi review, parent corrections to its numerical-precision/index-comment wording, and all36declaration types/axioms are in the packet. Searches found no earlier refutation, with incomplete citation-index/subscription/non-English coverage explicitly disclosed.
+
+Outcome11 is one shared nonnormal-involution construction, not six failures or three counted conjectures. Its universal factorization respects the source's ordered deletion derivative on the entire matrix algebra. Full source2.4terms are formalized before centered simplification. The independent report's ancillary alternative-coefficient arithmetic and stale/no-op code comments are corrected in the parent addendum; the complete literal-source proof and reviewed paper are unchanged. No earlier refutation was found in inspected primary/citing/companion sources, with subscription-index/worldwide search limits disclosed.
