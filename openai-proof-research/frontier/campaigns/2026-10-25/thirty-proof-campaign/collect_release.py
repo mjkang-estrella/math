@@ -6,6 +6,8 @@ from pathlib import Path, PurePosixPath
 import re
 import stat
 import zipfile
+import os
+import tempfile
 
 ROOT = Path(__file__).resolve().parent
 PROJECT = ROOT.parents[3]
@@ -37,13 +39,22 @@ def validate_ledger(ledger):
             if path != expected:
                 raise SystemExit("Invalid premagic package path")
         elif e.get("inherited_from") == "twenty-proof-campaign":
-            if not re.fullmatch(r"../twenty-proof-campaign/outcomes/[a-z0-9-]+", path):
+            if not re.fullmatch(r"\.\./twenty-proof-campaign/outcomes/[a-z0-9-]+", path):
                 raise SystemExit("Invalid inherited package path")
         elif not re.fullmatch(r"outcomes/[a-z0-9-]+", path):
             raise SystemExit("Invalid extension package path")
         archive = e.get("archive", "")
         if not re.fullmatch(r"output/release/(?:twenty-proofs/|thirty-proofs/)?[a-z0-9-]+\.zip", archive):
             raise SystemExit("Invalid release archive path")
+    original = json.loads((ROOT.parent / "twenty-proof-campaign/ledger.json").read_text())["verified"]
+    if len(original) != 20:
+        raise SystemExit("Original twenty-outcome acceptance anchor is invalid")
+    for accepted, inherited in zip(original, entries[:20]):
+        package = accepted["package"] if accepted["mathdb_id"] == 336488 else "../twenty-proof-campaign/" + accepted["package"]
+        if (inherited["mathdb_id"] != accepted["mathdb_id"] or
+                inherited["archive_sha256"] != accepted["archive_sha256"] or
+                inherited["package"] != package or inherited.get("inherited_from") != "twenty-proof-campaign"):
+            raise SystemExit("Original accepted outcome identity, path or archive changed")
     return entries
 
 
@@ -58,6 +69,7 @@ def validate_members(z):
     for info in z.infolist():
         path = PurePosixPath(info.filename)
         if (path.is_absolute() or ".." in path.parts or "\\" in info.filename or
+                path.as_posix() != info.filename.removesuffix("/") or
                 not info.filename.startswith(prefix)):
             raise SystemExit("Unsafe archive member path")
         if stat.S_ISLNK(info.external_attr >> 16):
@@ -80,7 +92,8 @@ def validate_members(z):
 
 def replay_records():
     records = []
-    for path in list((ROOT / "build").glob("*replay*.json")) + list((ROOT.parent / "twenty-proof-campaign/build").glob("*replay*.json")):
+    paths = [ROOT / "archive-replays.json"] if (ROOT / "archive-replays.json").is_file() else []
+    for path in paths + list((ROOT / "build").glob("*replay*.json")) + list((ROOT.parent / "twenty-proof-campaign/build").glob("*replay*.json")):
         data = json.loads(path.read_text())
         if isinstance(data, list):
             records.extend(r for r in data if isinstance(r, dict))
@@ -116,6 +129,8 @@ def validate_acceptance(z, prefix, entry, replays):
     for name in [proof_name, "main.tex", "review.md", "verify_outcome.py", "pins.json", "paper.pdf"]:
         if prefix + name not in z.namelist():
             raise SystemExit("Missing required standalone package artifact: " + name)
+    if z.read(prefix + "review.md") != (canonical / "review.md").read_bytes():
+        raise SystemExit("Archived review differs from independently accepted review")
     proof, paper = z.read(prefix + proof_name), z.read(prefix + "main.tex")
     if proof != (canonical / proof_name).read_bytes() or paper != (canonical / "main.tex").read_bytes():
         raise SystemExit("Archived proof or paper differs from accepted source")
@@ -167,6 +182,10 @@ These are not thirty claims of new mathematical discovery. Known-result
 formalizations, counterexamples, and explicitly labeled literal-source
 corrections are included. Read each package's scope and prior-status notes.
 The original twenty releases are preserved byte for byte.
+The additive-count result uses an explicit solution-count interpretation;
+the Fibonacci result uses square-uniform sampling because the source omits
+a law. The printed-sign and non-strict-mean corrections do not settle their
+stronger intended classifications. These limitations remain in the ledger.
 The two arithmetic inequalities share a joint paper and common proof module,
 but have distinct source questions and final theorems. No supporting lemma,
 dimension, or normalization is counted as an extra outcome.
@@ -182,13 +201,16 @@ individual outcomes and limitations.
     sums = "".join(f"{sha(data)}  {name}\n" for name, data in artifacts)
     artifacts.append(("SHA256SUMS", sums.encode()))
     dest = PROJECT / "output/release/thirty-proofs-v1.zip"
-    with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as z:
+    fd, temporary = tempfile.mkstemp(prefix=".thirty-proofs-", suffix=".zip", dir=dest.parent)
+    os.close(fd)
+    temporary = Path(temporary)
+    with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED) as z:
         for name, data in artifacts:
             info = zipfile.ZipInfo("thirty-proofs-v1/" + name, (2026, 10, 25, 0, 0, 0))
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o644 << 16
             z.writestr(info, data)
-    with zipfile.ZipFile(dest) as z:
+    with zipfile.ZipFile(temporary) as z:
         prefix = validate_members(z)
         nested = [n for n in z.namelist() if n.startswith(prefix + "packages/")]
         if len(nested) != 30:
@@ -196,6 +218,7 @@ individual outcomes and limitations.
         for record in records:
             if sha(z.read(prefix + "packages/" + record["archive"])) != record["sha256"]:
                 raise SystemExit("Final collection package readback mismatch")
+    temporary.replace(dest)
     receipt = {"outcomes": 30, "archive": str(dest), "sha256": sha(dest.read_bytes()),
                "packages": records}
     (ROOT / "collection-verification.json").write_text(json.dumps(receipt, indent=2) + "\n")

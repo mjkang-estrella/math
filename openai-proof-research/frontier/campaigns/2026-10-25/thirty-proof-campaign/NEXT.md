@@ -1,14 +1,11 @@
-# Extension active:20/30
+# Complete:30/30
 
-Original twenty releases and their ledger are preserved. New authoritative ledger is this directory's ledger.json. The user requested ten additional complete source-question outcomes, standard/default speed only, including Pi GLM5.3Flash.
+All thirty distinct source-question outcomes are accepted in ledger.json. Every new expressly claimed outcome has a complete Lean certificate, written paper/PDF QA, independent review and successful extracted-archive source rebuild. Original twenty source packets and releases are preserved. No further work remains for the requested target.
 
-Workers:
-- functions cell314: Pi `spark/GLM-5.3-Flash-EXL3`, nonmatrix discovery3concreteproof proposals; owns ../extension-pi-discovery/.
-- native /root/fibonacci_minima_extension: full MathDB371202 recurrence/minimum/count/limit proof, with explicit square-uniform sampling interpretation and source-ambiguity caution.
-- native /root/matrix_extension: two full matrix/linear-algebra outcomes, owns ../extension-matrix-lane/.
-All workers must not start nestedagents or editsharedindexes/stage/commit.
+Final aggregate: openai-proof-research/output/release/thirty-proofs-v1.zip
+SHA256:d03b86529b036f4a2340ff213bbd51b2eb0170bfa444190001c5d9365fce63e1
+Collection verification:collection-verification.json. Every nested archive matches its accepted individual bytes; CRC and member hashes pass. Original20aggregate remains072f1ba954e4d31c5a9e3a5c82193bcfc4ab46828b425bb87296decc10a594b6.
 
-Parent handles other candidates, integration, independentreviews, PDFQA, replaysandcommits. Prefer up to3workers+parent. Original20IDs and duplicates318649/327181/327182 excludedfromnewcounts.
+Retain exact scope/prior-art labels, particularly additive-count interpretation, Fibonacci square-uniform model, printed-sign correction and non-strict mean witness. No duplicate count from helper lemmas, numerical cases or related questions.
 
-Toolchain Lean4.34.1 at /home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin/lean; dependencies ../../2026-10-14/formal/.lake/packages; pinned in pins.json.
-New archive destination openai-proof-research/output/release/thirty-proofs/. Do not overwrite oldtwenty releases. Newcollection script stillneedswriting for30, explicitarchivepaths inledger.
+Standard/default speed used for extension; Pi GLM5.3Flash discovery included. Pi discovery task canceled after its useful Nim/Rust candidates were fully certified and the target completed; no further broad search is needed. Native workers finished. Lean4.34.1 and pinned dependencies unchanged. Each finding committed separately with exact paths. Unrelated workspace changes untouched.
