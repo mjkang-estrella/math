@@ -1,0 +1,38 @@
+import WeakMajorization
+
+#check WeakMajorizationCounterexample.Mat
+#print axioms WeakMajorizationCounterexample.Mat
+#check WeakMajorizationCounterexample.A
+#print axioms WeakMajorizationCounterexample.A
+#check WeakMajorizationCounterexample.B
+#print axioms WeakMajorizationCounterexample.B
+#check WeakMajorizationCounterexample.Q
+#print axioms WeakMajorizationCounterexample.Q
+#check WeakMajorizationCounterexample.R
+#print axioms WeakMajorizationCounterexample.R
+#check WeakMajorizationCounterexample.WeakMajorized
+#print axioms WeakMajorizationCounterexample.WeakMajorized
+#check WeakMajorizationCounterexample.weakMajorized_sum
+#print axioms WeakMajorizationCounterexample.weakMajorized_sum
+#check WeakMajorizationCounterexample.trace_real_eigenvalues
+#print axioms WeakMajorizationCounterexample.trace_real_eigenvalues
+#check WeakMajorizationCounterexample.A_hermitian
+#print axioms WeakMajorizationCounterexample.A_hermitian
+#check WeakMajorizationCounterexample.B_hermitian
+#print axioms WeakMajorizationCounterexample.B_hermitian
+#check WeakMajorizationCounterexample.H_fifth
+#print axioms WeakMajorizationCounterexample.H_fifth
+#check WeakMajorizationCounterexample.Q_fifth
+#print axioms WeakMajorizationCounterexample.Q_fifth
+#check WeakMajorizationCounterexample.R_fifth
+#print axioms WeakMajorizationCounterexample.R_fifth
+#check WeakMajorizationCounterexample.H_fifth_hermitian
+#print axioms WeakMajorizationCounterexample.H_fifth_hermitian
+#check WeakMajorizationCounterexample.R_fifth_hermitian
+#print axioms WeakMajorizationCounterexample.R_fifth_hermitian
+#check WeakMajorizationCounterexample.H_trace
+#print axioms WeakMajorizationCounterexample.H_trace
+#check WeakMajorizationCounterexample.R_trace
+#print axioms WeakMajorizationCounterexample.R_trace
+#check WeakMajorizationCounterexample.source_counterexample
+#print axioms WeakMajorizationCounterexample.source_counterexample
