@@ -21,3 +21,15 @@ Berndt–Sra, Hlawka–Popoviciu Inequalities on Positive Definite Tensors, arXi
 323049: known2020 noncommutative AM–GM counterexamples were located in primary references. Do not pursue a re-refutation; exact remaining palindromic variants would need a separate full source/prior investigation before any claim.
 
 363173–363175 and neighboringM2: actual2405.13618v2 definitions and conjectures reread from primary HTML. The previously known alpha0 equality loophole is excluded. No nontrivial sign failure or uniform proof found; no credit.
+
+## October26 continuation: duplicate endpoints excluded
+
+337925: live API (not the stale indexed page) contains Shivam Patel's full August25,2026 submitted matrix/inertia proof of the complete at-most-two-nonreal-zero statement. A separate elementary auxiliary-polynomial argument independently found here is not new endpoint credit. Snapshot and complete submitted body preserved and read in lanes/parent-two-nonreal/.
+
+370667: the exact diagonal-town monotonicity conjecture is explicitly refuted in Hanlin Zou, arXiv2606.03613v1, abstract and Section3.1, by m_(3,11)(2,2)>m_(3,11)(1,1). Original2510.00251 conjecture and actual successor HTML read. Excluded regardless of MathDB open label.
+
+372423: the original Petersen parity conjecture is no longer a new target. The author's linked current main.tex now replaces it by eventual nonreal-rootedness for each fixed k (actual raw source read); secondary discovery search reports July2026 counterexamples. No credit or formalization pursued.
+
+354787: exact parity log-concavity search through n120 checked52,657,146 inequalities, no counterexample. No universal proof or discovery credit. See lanes/parent-stirling/.
+
+351633: a promising new candidate is now under direct investigation in lanes/parent-novak/. Four explicit self-adjoint2x2 inputs produce a central-entry Hermitian kernel with quadratic form cos(pi sqrt15)−3≤−2. Actual2022 publisher Conjecture4.2p799 visually inspected, source matrix and cosine definition match. Full Lean bridge/review/novelty/manuscript/packet remain; credit0.
