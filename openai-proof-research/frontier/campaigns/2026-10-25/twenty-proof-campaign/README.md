@@ -2,9 +2,9 @@
 
 Target: **20 distinct source problems** with exact stated outcomes, complete Lean proofs, papers, independent reviews, and reproducible verification.
 
-Current fully verified count: **12/20**. The goal remains active.
+Current fully verified count: **15/20**. The goal remains active.
 
-| # | MathDB | Outcome | Package |
+| # | MathDB | Question / outcome | Package |
 |---|---|---|---|
 | 1 | [336488](https://mathdb.com/p/336488) | Diagonalizability conjecture for premagic matrices | [Files](../premagic-diagonalizability/README.md) |
 | 2 | [336487](https://mathdb.com/p/336487) | Norm-one conjecture for dominant eigenvectors of non-negative premagic matrices | [Files](outcomes/norm-one/README.md) |
@@ -13,16 +13,14 @@ Current fully verified count: **12/20**. The goal remains active.
 | 5 | [354537](https://mathdb.com/p/354537) | Scaled Tepper identity | [Files](outcomes/scaled-tepper/README.md) |
 | 6 | [317856](https://mathdb.com/p/317856) | Positive semidefiniteness of monochromatic-box matrices | [Files](outcomes/monochromatic-box/README.md) |
 | 7 | [369281](https://mathdb.com/p/369281) | Nonzero spectrum of the one-shelf position matrix | [Files](outcomes/shuffle-spectrum/README.md) |
-
 | 8 | [366458](https://mathdb.com/p/366458) | Four algebraic properties of signed-set fusion | [Files](outcomes/sigma-fusion/README.md) |
-
 | 9 | [373182](https://mathdb.com/p/373182) | A continuous nonlinear solution of the Matkowski equation | [Files](outcomes/matkowski/README.md) |
-
 | 10 | [371201](https://mathdb.com/p/371201) | Weight preservation for Fibonacci recurrences | [Files](outcomes/fibonacci-weight/README.md) |
-
 | 11 | [369280](https://mathdb.com/p/369280) | Quadratic eigenvector of the one-shelf position matrix | [Files](outcomes/shuffle-quadratic/README.md) |
-
 | 12 | [349070](https://mathdb.com/p/349070) | Graph-normalization adjacency inequality | [Files](outcomes/graph-normalization/README.md) |
+| 13 | [372794](https://mathdb.com/p/372794) | A positive recurrence for the Fill--Janson polynomial | [Files](outcomes/coefficient-positivity/README.md) |
+| 14 | [350342](https://mathdb.com/p/350342) | Thirty-eight prime outputs refute the Ova counting bound | [Files](outcomes/ova-count/README.md) |
+| 15 | [325243](https://mathdb.com/p/325243) | Endpoint correction for positivity rigidity | [Files](outcomes/positivity-rigidity/README.md) |
 
 The [historical audit](HISTORICAL-AUDIT.md) found 0/19 full main-theorem Lean certificates among the earlier campaign's accepted papers. Those papers retain their prior written-proof status; they do not meet this campaign's stronger formal-coverage criterion.
 
@@ -37,3 +35,5 @@ The signed-set entry proves exactly four extensional algebraic properties; it ma
 The recurrence entry verifies Patel’s complete orbit-counting argument. The quadratic shuffle result was already resolved by Tripathi; this entry supplies a full Lean certificate for the specified eigenvector.
 
 The graph-normalization entry is a full proof of a standard majorization consequence, with the later source explicitly credited. It asserts the normalization inequality only.
+
+Coefficient positivity and the 38-prime counterexample verify previously posted results. The positivity-rigidity entry corrects a free endpoint in the literal source statement; it makes no claim about the intended corrected theorem.

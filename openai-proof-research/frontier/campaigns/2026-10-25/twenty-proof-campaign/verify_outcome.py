@@ -52,6 +52,12 @@ def main():
     if re.search(r"\b(sorry|admit|native_decide|axiom|unsafe)\b", text):
         raise RuntimeError("Forbidden proof token")
     names = re.findall(r"^(?:noncomputable )?(?:abbrev|def|theorem|lemma)\s+(\w+)", text, re.M)
+    # Named generated instances can be listed explicitly, so their types and
+    # axioms receive the same audit as the mathematical declarations.
+    extra = manifest.get("extra_declarations", [])
+    if not all(isinstance(n, str) and re.fullmatch(r"[A-Za-z_]\w*", n) for n in extra):
+        raise RuntimeError("Invalid extra declaration inventory")
+    names += extra
     if not names or len(names) != len(set(names)) or manifest["main_theorem"] not in names:
         raise RuntimeError("Incomplete or ambiguous declaration inventory")
     checks = "import " + module + "\n\n" + "\n".join(

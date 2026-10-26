@@ -124,3 +124,46 @@ No discoveryworker active now. Threeactiveworkers = arithmetic, Bernstein, revie
 
 Parent is inspecting matrixquestions savedinqueued-sources, no proofyet.
 Goal remains20fulloutcomes, no budget. Continueuntilactually20qualified.
+
+
+## Latest active state at2026-10-26 06:20+UTC
+
+Arithmeticworker completed and itsresult was recovered via task_status (notrunning).
+Both375256/375257 are fully proved. Canonical `outcomes/simple-arithmetic` and
+`outcomes/mixed-arithmetic` share an identical combined37declaration module
+(namespace-only merge oflaneRealRatios andArithmeticRatios) andjoint3pagepaper.
+Both compiled andPDFsbuilt; PDFsbyteidentical, everypagevisuallyinspected.
+Their dedicatedmain_theorems distinguish thetwo distinctsourceconjectures.
+
+Review218 COMPLETED/PASS forcoefficient372794,ova350342,endpoint325243.
+ParentfixedminorOvapage117->118 andincludedgeneratedinstanceinverifier via
+outcome.extra_declarations. Ova21audited(20named+1instance);proofsourceunchanged.
+All3sealedandpackaged; replaycommand session25903 needsdraining.
+`reviews/positivity-ova-endpoint.md` recordsparentminor-docaddendum/currentOvatexhash.
+
+Active:
+- cell250: review canonicalsimple-arithmetic,mixed-arithmetic,permutation-rigidity;
+  writes reviews/arithmetic-rotation.md.
+- cell244: fullSchur-stabilitycounterexample MathDB370245, own ../schur-stability-lane/.
+  Parentderivedrationalt=1simplification inqueued-sources/stability-brief.md.
+- cell209: Bernstein327180 convexity, own ../bernstein-shape-lane/. Relatedmin/monotonicity
+  areonegroupnotseparatecounts.
+
+Canonicalpermutation-rigidity368725 complete15decl+2pagepaper, allpagesviewed,
+awaitingreview250. SourceusesactualCFC.rpow activeidentity,m1n3rotation;creditsPatel.
+
+Theseaccepted/pendingtargets sumto20 ifallreviews/remaining2proofssucceed.
+Do not prematurelycountorcompletegoal. Morediscoveryonlyifneeded.
+
+## Accepted checkpoint: 15/20
+
+The latest three packets passed extracted-archive replay and are committed:
+- 372794 coefficient-positivity,24declarations:63cdef3daa
+- 350342 ova-count,21declarations includinginstance:ac5cb9dd58
+- 325243 positivity-rigidity,8declarations,literalendpointonly:50a5dd6882
+
+ledger.json andREADME show15. Review250 stillowns3candidates (arithmeticpair+rotation).
+Implementation209 ownsBernstein327180; implementation244ownsSchurstability370245.
+These five outstanding questions wouldbringcountto20. No othersneedcounting.
+`collect_release.py` is prepared to validateandbundleexactly20acceptedarchives;
+it deliberately refuses before20. No collectionhasbeencreatedyet.
