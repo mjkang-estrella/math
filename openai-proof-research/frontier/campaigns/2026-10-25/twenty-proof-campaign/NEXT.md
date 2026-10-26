@@ -100,3 +100,27 @@ already used by Guigues2026AppendixB; no novelty/convergence claim.
 The arithmetic worker remains active; see its exact thread ID above. Do not
 launch a duplicate. User requires20; goal remains active. Parent is screening
 new second-page inequality/polynomial source snapshots under queued-sources.
+
+
+## Latest integration (12 accepted)
+Graph-normalization349070 is accepted after review196, two-page visual QA,
+archive replay. Commit437785dfe1. Root README/ledger reflect12 and await checkpointcommit.
+
+Discovery169 is completed (do not wait again): full candidates
+`outcomes/coefficient-positivity`372794 and `outcomes/ova-count`350342,
+copied from `../next-discovery-lane/{coefficient-positivity,ova-count}`.
+Their originalsource snapshots remain in `../next-discovery-lane/sources/`.
+Parent also completed literalendpointcorrection325243 in
+`outcomes/positivity-rigidity`; compiled8decl,2pagepaperbuilt+allpagesviewed.
+
+Active review cell218 handles thoseTHREE candidates, writes
+`reviews/positivity-ova-endpoint.md`. Do not alter reviewedLean/TeX whileitworks.
+Candidateparentbuild sessions19483,89856 (LeanthenPDF) mayneeddraining.
+
+Active implementation209: Bernstein327180 convexity. Own `../bernstein-shape-lane/`;
+related327181/327182 groupedasONEoutcome, notthree. Activearithmeticworkerstill
+375256/375257 exactthreadidabove; exec-cell idlostfromprecompactiontruncation.
+No discoveryworker active now. Threeactiveworkers = arithmetic, Bernstein, review218.
+
+Parent is inspecting matrixquestions savedinqueued-sources, no proofyet.
+Goal remains20fulloutcomes, no budget. Continueuntilactually20qualified.

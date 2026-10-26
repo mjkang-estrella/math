@@ -2,7 +2,7 @@
 
 Target: **20 distinct source problems** with exact stated outcomes, complete Lean proofs, papers, independent reviews, and reproducible verification.
 
-Current fully verified count: **11/20**. The goal remains active.
+Current fully verified count: **12/20**. The goal remains active.
 
 | # | MathDB | Outcome | Package |
 |---|---|---|---|
@@ -22,6 +22,8 @@ Current fully verified count: **11/20**. The goal remains active.
 
 | 11 | [369280](https://mathdb.com/p/369280) | Quadratic eigenvector of the one-shelf position matrix | [Files](outcomes/shuffle-quadratic/README.md) |
 
+| 12 | [349070](https://mathdb.com/p/349070) | Graph-normalization adjacency inequality | [Files](outcomes/graph-normalization/README.md) |
+
 The [historical audit](HISTORICAL-AUDIT.md) found 0/19 full main-theorem Lean certificates among the earlier campaign's accepted papers. Those papers retain their prior written-proof status; they do not meet this campaign's stronger formal-coverage criterion.
 
 We count each source question once, not each lemma, dimension, or normalization. The norm-one result is explicitly an elementary correction to a literal unnormalized statement. The fair-discrepancy counterexample was previously posted by Shivam Patel and is credited; the contribution here is formal verification. No worldwide-priority assertion is made for any result.
@@ -33,3 +35,5 @@ The monochromatic-box entry records a theorem already resolved in 2017. The shuf
 The signed-set entry proves exactly four extensional algebraic properties; it makes no claim about nonstandard foundations or conventional loop division. The Matkowski entry verifies a published counterexample of Tibor Kiss.
 
 The recurrence entry verifies Patel’s complete orbit-counting argument. The quadratic shuffle result was already resolved by Tripathi; this entry supplies a full Lean certificate for the specified eigenvector.
+
+The graph-normalization entry is a full proof of a standard majorization consequence, with the later source explicitly credited. It asserts the normalization inequality only.
