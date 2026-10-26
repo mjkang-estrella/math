@@ -7,7 +7,7 @@ fields, normalizations or dimensions as separate outcomes. Existing-result
 formalizations and literal-source corrections are allowed in the current
 count but must be labeled; this is not a claim of twenty new discoveries.
 
-## Verified: 7/20
+## Verified: 9/20
 
 Authoritative record: `ledger.json`. Published history is irrelevant to the
 formal count: `HISTORICAL-AUDIT.md` found 0/19 full main-theorem Lean proofs
@@ -20,6 +20,8 @@ among older R023–R041. Their written-proof acceptance is not revoked.
 5. 354537 scaled Tepper identity — commit 73eb170f3e; full source-corollary proof.
 6. 317856 monochromatic-box PSD — commit cd5b1b00b0; known 2017 theorem verification.
 7. 369281 shelf-shuffle spectrum — commit 90aeb4c22b; printed-index correction at n=4.
+8. 366458 signed-set fusion — full four-property proof, conventional-loop and foundation limits explicit.
+9. 373182 Matkowski equation — published Kiss counterexample formally verified.
 
 The six newer release ZIPs and PDFs are in
 `openai-proof-research/output/release/twenty-proofs/`. Their manifests and
@@ -34,22 +36,9 @@ release in `output/release/premagic-diagonalizability-v1.zip`.
 - functions cell **119**: full shuffle quadratic eigenvector proof,
   MathDB369280, owner `../shuffle-quadratic-lane/`. Binomial-moment route is
   in its task. This is distinct from the already-refuted printed spectrum.
-- functions cell **143**: independent review of canonical
-  `outcomes/sigma-fusion` (366458) and `outcomes/matkowski` (373182), writes
-  only `reviews/algebra-two.md`.
+- Arithmetic-ratio worker is running on MathDB375256 and375257, owner `../arithmetic-ratio-lane/`. It was launched before compaction; the exec-cell ID was lost in truncation. Delegated thread id is `thread:delegated-task:command%3Amcp%3Ab58c97f3-30ae-4e2d-a280-66f0ff79a183%3Adelegate-task%3A6a987e3c-6d16-4a8b-8d91-39f5748a60a0`. Do not duplicate or poll the running task; wait for its completion event.
 
-Cells 58, 85 and 129 are COMPLETED/CLOSED; do not wait on them again. The
-three original discovery lanes completed. Reviews `first-three.md` and
-`second-three.md` passed and are included in accepted releases.
-
-The two pending algebra outcomes are fully compiled (25 and12 declarations)
-and their two-page PDFs have been rendered and visually inspected. On a
-PASS review, seal exact reviewed hashes in outcome.json, copy review.md,
-package, replay, update ledger, and commit each finding separately.
-Check sigma-fusion's scope: it proves the four explicit signed-set algebra
-properties; it does not construct the source's nonstandard foundational
-set theory or establish a usual quasigroup loop. Matkowski is explicitly
-verification of Kiss's published counterexample mechanism, not a new disproof.
+Cells58,85,129,143 are completed/closed. Algebra review143 passed; minor docs fixed without changes to reviewed proofs or TeX. Both new archives passed extracted-source rebuild; receipt `build/algebra-replays.json`.
 
 ## Next tasks when a slot frees
 

@@ -2,7 +2,7 @@
 
 Target: **20 distinct source problems** with exact stated outcomes, complete Lean proofs, papers, independent reviews, and reproducible verification.
 
-Current fully verified count: **7/20**. The goal remains active.
+Current fully verified count: **9/20**. The goal remains active.
 
 | # | MathDB | Outcome | Package |
 |---|---|---|---|
@@ -14,6 +14,10 @@ Current fully verified count: **7/20**. The goal remains active.
 | 6 | [317856](https://mathdb.com/p/317856) | Positive semidefiniteness of monochromatic-box matrices | [Files](outcomes/monochromatic-box/README.md) |
 | 7 | [369281](https://mathdb.com/p/369281) | Nonzero spectrum of the one-shelf position matrix | [Files](outcomes/shuffle-spectrum/README.md) |
 
+| 8 | [366458](https://mathdb.com/p/366458) | Four algebraic properties of signed-set fusion | [Files](outcomes/sigma-fusion/README.md) |
+
+| 9 | [373182](https://mathdb.com/p/373182) | A continuous nonlinear solution of the Matkowski equation | [Files](outcomes/matkowski/README.md) |
+
 The [historical audit](HISTORICAL-AUDIT.md) found 0/19 full main-theorem Lean certificates among the earlier campaign's accepted papers. Those papers retain their prior written-proof status; they do not meet this campaign's stronger formal-coverage criterion.
 
 We count each source question once, not each lemma, dimension, or normalization. The norm-one result is explicitly an elementary correction to a literal unnormalized statement. The fair-discrepancy counterexample was previously posted by Shivam Patel and is credited; the contribution here is formal verification. No worldwide-priority assertion is made for any result.
@@ -21,3 +25,5 @@ We count each source question once, not each lemma, dimension, or normalization.
 See [ledger.json](ledger.json) for exact scope and archive hashes, and [NEXT.md](NEXT.md) for current work. All accepted releases have passed an extracted-source Lean rebuild and full file-hash checks. No new external publication is authorized by this continuation.
 
 The monochromatic-box entry records a theorem already resolved in 2017. The shuffle-spectrum entry corrects the printed index endpoint. Each entry retains its prior-status and scope labels.
+
+The signed-set entry proves exactly four extensional algebraic properties; it makes no claim about nonstandard foundations or conventional loop division. The Matkowski entry verifies a published counterexample of Tibor Kiss.
