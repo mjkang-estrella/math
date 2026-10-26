@@ -9,7 +9,7 @@ For actual positive inputs x,y, let H=2xy/(x+y), G=sqrt(xy), A=(x+y)/2, Q=sqrt((
 
 The source instead proposes validity of the first direction throughout n≥1/2. Every0<n<1 has an actual positive-input counterexample near equality, so this is a substantive interval failure and full classification, not an isolated boundary-wording correction. Both sign patterns occur for every0<n<1. Known integer cases, n0 equality, classical majorization, individual witnesses and helpers are not separate outcomes.
 
-All five source-faithful Lean modules pass a fresh strict pinned replay: 34 declarations, warnings as errors, only propext, Classical.choice and Quot.sound. The original four modules are preserved byte-for-byte from the new-screen author's work; the parent added MeanConverse for the full reverse-direction classification. Independent source, mathematics, formal and serious prior-art review remain pending. **Discovery credit0** until every acceptance gate passes. No paper or final proof ZIP is yet offered.
+All five source-faithful Lean modules pass a fresh strict pinned replay: 34 declarations, warnings as errors, only propext, Classical.choice and Quot.sound. The original four modules are preserved byte-for-byte from the new-screen author's work; the parent added MeanConverse for the full reverse-direction classification. Independent Pi source, mathematical, formal and bounded prior-art review passes; the original report and parent corrections are retained in reviews/. The four-page manuscript is built and visually checked. **Discovery credit0** until independent final manuscript review and the extracted proof-packet gate also pass. No final proof ZIP is yet offered.
 
 From this candidate folder with pinned Lean/mathlib:
 

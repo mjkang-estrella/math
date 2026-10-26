@@ -1,0 +1,7 @@
+# Attribution and independent roles
+
+Meštrović and Andjić supplied the exact source conjecture, four literal means, integer cases and sum/product comparisons. Convexity, weak majorization, logarithmic transformations, differentiation and the mean value theorem are classical and explicitly credited.
+
+The earlier new-screen worker authored the original four modules: literal mean algebra, valid-range sufficiency, derivative-based necessity and the original-direction classification/example. Those files are preserved byte-for-byte. The parent authored MeanConverse, completing the source's reverse-direction scope, and wrote the manuscript. The Pi / GLM5.3 Flash reviewer, who authored none of these five modules, independently read the actual source, inspected all existing-solution fields, reviewed the full mathematics, performed a fresh pinned all-declaration replay and investigated prior literature. Its34-declaration receipt and report are included. The parent separately reconciled report-level wording and count errors and expanded closest-primary full-body comparisons; these adjustments do not change any proof module.
+
+The final manuscript receives a separate independent review. The parent renders/inspects all PDF pages and verifies the proof packet after extraction before any acceptance. There is one source-question outcome, not separate credits for integer cases, n0, each witness or the two directions. No publication, author contact, upload or external posting occurred.
