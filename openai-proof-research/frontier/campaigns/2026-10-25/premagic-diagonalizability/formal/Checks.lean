@@ -1,0 +1,115 @@
+import Premagic
+
+/-! Declaration types and kernel dependencies for every local definition and theorem. -/
+
+#check PremagicCounterexample.Diagonalizable
+#print axioms PremagicCounterexample.Diagonalizable
+
+#check PremagicCounterexample.square_kernel
+#print axioms PremagicCounterexample.square_kernel
+
+#check PremagicCounterexample.M
+#print axioms PremagicCounterexample.M
+
+#check PremagicCounterexample.chainVector
+#print axioms PremagicCounterexample.chainVector
+
+#check PremagicCounterexample.kernelVector
+#print axioms PremagicCounterexample.kernelVector
+
+#check PremagicCounterexample.chain_image
+#print axioms PremagicCounterexample.chain_image
+
+#check PremagicCounterexample.kernel_image
+#print axioms PremagicCounterexample.kernel_image
+
+#check PremagicCounterexample.not_diagonalizable
+#print axioms PremagicCounterexample.not_diagonalizable
+
+#check PremagicCounterexample.Premagic
+#print axioms PremagicCounterexample.Premagic
+
+#check PremagicCounterexample.row_sum
+#print axioms PremagicCounterexample.row_sum
+
+#check PremagicCounterexample.column_sum
+#print axioms PremagicCounterexample.column_sum
+
+#check PremagicCounterexample.premagic
+#print axioms PremagicCounterexample.premagic
+
+#check PremagicCounterexample.positive
+#print axioms PremagicCounterexample.positive
+
+#check PremagicCounterexample.main_counterexample
+#print axioms PremagicCounterexample.main_counterexample
+
+#check PremagicCounterexample.diagonalizable_iff_similarity
+#print axioms PremagicCounterexample.diagonalizable_iff_similarity
+
+#check PremagicCounterexample.diagonalizable_iff_inv
+#print axioms PremagicCounterexample.diagonalizable_iff_inv
+
+#check PremagicCounterexample.diagonalizable_sub_scalar
+#print axioms PremagicCounterexample.diagonalizable_sub_scalar
+
+#check PremagicCounterexample.diagonalizable_smul
+#print axioms PremagicCounterexample.diagonalizable_smul
+
+#check PremagicCounterexample.A_t
+#print axioms PremagicCounterexample.A_t
+
+#check PremagicCounterexample.A_t_not_diagonalizable
+#print axioms PremagicCounterexample.A_t_not_diagonalizable
+
+#check PremagicCounterexample.A_t_row_sum
+#print axioms PremagicCounterexample.A_t_row_sum
+
+#check PremagicCounterexample.A_t_column_sum
+#print axioms PremagicCounterexample.A_t_column_sum
+
+#check PremagicCounterexample.A_t_premagic
+#print axioms PremagicCounterexample.A_t_premagic
+
+#check PremagicCounterexample.A_t_positive
+#print axioms PremagicCounterexample.A_t_positive
+
+#check PremagicCounterexample.B_t
+#print axioms PremagicCounterexample.B_t
+
+#check PremagicCounterexample.DoublyStochastic
+#print axioms PremagicCounterexample.DoublyStochastic
+
+#check PremagicCounterexample.B_t_positive
+#print axioms PremagicCounterexample.B_t_positive
+
+#check PremagicCounterexample.B_t_row_sum
+#print axioms PremagicCounterexample.B_t_row_sum
+
+#check PremagicCounterexample.B_t_column_sum
+#print axioms PremagicCounterexample.B_t_column_sum
+
+#check PremagicCounterexample.B_t_doubly_stochastic
+#print axioms PremagicCounterexample.B_t_doubly_stochastic
+
+#check PremagicCounterexample.B_t_premagic
+#print axioms PremagicCounterexample.B_t_premagic
+
+#check PremagicCounterexample.B_t_not_diagonalizable
+#print axioms PremagicCounterexample.B_t_not_diagonalizable
+
+#check PremagicCounterexample.exists_premagic_not_diagonalizable
+#print axioms PremagicCounterexample.exists_premagic_not_diagonalizable
+
+#check PremagicCounterexample.not_all_premagic_diagonalizable
+#print axioms PremagicCounterexample.not_all_premagic_diagonalizable
+
+#check PremagicCounterexample.exists_positive_premagic_not_diagonalizable
+#print axioms PremagicCounterexample.exists_positive_premagic_not_diagonalizable
+
+#check PremagicCounterexample.not_all_positive_premagic_diagonalizable
+#print axioms PremagicCounterexample.not_all_positive_premagic_diagonalizable
+
+#check PremagicCounterexample.exists_positive_doubly_stochastic_not_diagonalizable
+#print axioms PremagicCounterexample.exists_positive_doubly_stochastic_not_diagonalizable
+
