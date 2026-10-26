@@ -2,7 +2,7 @@
 
 Strict accepted tally: **0/30**. The earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
 
-The first substantive candidate is the unrestricted taxicab Erdős–Mordell lower bound (MathDB341671). Its complete five-page paper, all55 Lean declarations, geometric interior bridge, sharpness and independent source/mathematical/formal reviews are in `candidates/taxicab-three-halves/`. The proof packet passes isolated pinned replay and exact ZIP-member readback. Novelty remains on HOLD for the closest2018 comparison; this is not yet an accepted discovery. The matrix lane is investigating a stronger additive-minimum-side bound.
+The first substantive candidate is now an additive-minimum-side refinement of the unrestricted taxicab Erdős–Mordell lower bound (MathDB341671). Its complete five-page paper, all68 Lean declarations, ordinary geometric interior bridge, both optimal coefficients and independent source/mathematical/formal reviews are in `candidates/taxicab-strengthening/`. The proof packet passes isolated pinned replay and exact ZIP-member readback, including replay after extraction. Novelty remains on HOLD for the closest2018 comparison. The earlier55-declaration base-bound packet is preserved as proof history; both versions are the SAME ONE candidate, not two discoveries.
 
 The full geometric Vandermonde conjecture certificate is retained under `candidates/vandermonde-diagonal/`, but is excluded from the strict tally: independent review found that the exact positive-definite matrix fact was published in2006, and the result follows from known ingredients. The real-power Cauchy–Schwarz problem369283 was already solved in October2026. Known cases and wording/sign corrections receive no credit.
 

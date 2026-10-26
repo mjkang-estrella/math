@@ -1,10 +1,11 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **0/30**. Earlier thirty formalizations stay separate.
+Strict accepted tally: **0/30**. Earlier thirty formalizations remain separate.
 
-1. Taxicab341671: full paper and55-declaration certificate pass independent mathematical, exact-source and formal review. Novelty remains on HOLD for closest2018 overlap. Preserve the frozen certificate; investigate a stronger additive-minimum-side inequality in the matrix lane.
-2. Vandermonde347481: full28-declaration certificate is correct, but independent review found the exact matrix PD fact already in Dopico–Koev2006. Excluded from strict count; do not revive as a new discovery without genuinely additional mathematics.
-3. Polynomial worker: regulator maxima344947/8/9, actual1912.08512 source/current literature first. Real-powerCS369283 was solved in October2026 and is excluded.
-4. Pi GLM finite-game lane: active delegated research. Follow its completion wake-up; do not poll or restart it while running.
+1. MathDB341671: minimum-side refinement has a full68-declaration certificate, independent mathematical/source/formalPASS, and five-page paper in `candidates/taxicab-strengthening/`. Formal proof includes ordinary triangle interior and both sharpcoefficients. Closest2018 fulltext comparison remains NOVELTY HOLD; optional user question requests a local path/access link. SameONEcandidate as the earlier55-declaration base theorem, nevercounttwice.
+2. Exclude347481: complete28-declaration proof follows from exact-matrixPD already published2006 plus known localization. Preserve as uncounted connection, not a new discovery.
+3. Native matrix worker: converse fractional-binomial352508, actual publishedGerhold–Simon2023Conj3.2/arXivv2; sourcev1doesnotcontainit. Hino–Namba2024weakbounddoesnotsettleit. Claimed strongerconstantαisfalsefork1, so do not pursue that.
+4. Native polynomial worker: sorted-binomial common roots371324, exactsource/currentliteraturefirst. Regulator n5known; source-exact n6–16searchfoundnocontraryevidence, notproof. Real-powerCS369283 solvedOctober2026, excluded.
+5. Pi GLM finite-game lane remains delegated research; follow completion wakeup, do not poll/restart.
 
-Use standard/default speed, parallel research, exact primary statements and substantive novelty. Count only after all ledger gates. No external posting or publication has been authorized.
+Use standard/default speed, meaningful parallel research and exact primary statements. No external post, publication or push is authorized.
