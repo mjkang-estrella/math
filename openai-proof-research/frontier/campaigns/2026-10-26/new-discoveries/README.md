@@ -1,6 +1,6 @@
 # Thirty new mathematical discoveries
 
-Strict accepted tally: **7/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
+Strict accepted tally: **8/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
 
 The first accepted result resolves Gerhold–Simon Conjecture 3.2 / MathDB 352508: the sharp converse fractional-binomial inequality for all real exponents above 2. Its four-page paper, seven Lean modules with 67 declarations, stronger biased bound, coefficient optimality, independent source/mathematical/formal review and documented prior-art search are in `candidates/fractional-binomial/`. The reproducible ZIP passes byte readback, manifest checks and a fresh isolated Lean replay after extraction. Classical Gamma-ratio convexity is credited; no prior full sharp finite-sum resolution was found. The inaccessible Alzer article and the limits of priority searches are explicitly documented. All corollaries and helpers are one combined outcome.
 
@@ -15,6 +15,8 @@ The fifth accepted result refutes Yuster's polynomial-root Conjecture3.9 / MathD
 The sixth accepted result proves the arbitrary-rank negative-order uniform Vendi–LCR comparison, MathDB371345/371346 as one outcome. Its three-page paper and48-declaration certificate construct the actual matrix spectral coupling, prove exact score normalization, and include the directly defined minus-infinity endpoint. Known nonnegative/full-rank cases and classical Jensen/Hölder–McCarthy are credited. The unread PRE full body and later broad comparison assertion remain explicit novelty limits; the source's positive-spectrum convention is documented. See `candidates/vendi-negative/`.
 
 The seventh accepted result proves the full Edholm–Mathew Conjecture 4.20 / MathDB 368572 for every coprime pair of positive integers m>n. A strict finite sum of squares gives unit-circle nonvanishing; the ordinary-polynomial bridge and reciprocal root multiset give exactly m−n punctured-disc roots with multiplicity. Its four-page paper, complete 78-declaration certificate, independent reviews and extracted packet replay are in `candidates/bergman-unit-circle/`. The old weighted roots-of-unity identity is credited; the source-mentioned unpublished successor remains an explicit novelty-search limit.
+
+The eighth accepted result completely classifies both real-exponent directions for the four classical means, MathDB 338823 / Meštrović–Andjić Conjecture 1.5. The forward inequality holds universally exactly for n≤0 or n≥1; the reverse holds exactly for n=0. Actual positive-input witnesses refute the source's proposed range throughout 1/2≤n<1. The four-page paper, complete 34-declaration Lean proof, two independent Pi reviews and freshly extracted packet replay are in `candidates/classical-means/`. Known integer cases, individual witnesses, the converse and endpoints form one combined outcome. Prior-art access limits remain explicit.
 
 See [RESULTS.md](RESULTS.md) for papers, complete proof packets, verification counts and novelty qualifications.
 

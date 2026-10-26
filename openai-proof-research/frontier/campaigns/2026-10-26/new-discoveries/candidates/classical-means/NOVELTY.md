@@ -1,6 +1,6 @@
 # Documented prior-art assessment and limits
 
-Research date: October26,2026. Candidate338823. One proposed source-question resolution; helpers, witnesses, integer cases, n0 and reverse direction are not separate credits. The current full formal certificate has34 declarations, but the candidate remains unaccepted pending final manuscript and packet gates.
+Research date: October26,2026. Candidate338823. One proposed source-question resolution; helpers, witnesses, integer cases, n0 and reverse direction are not separate credits. The complete formal certificate has 34 declarations. Independent source/proof/formal/bounded-prior-art and final manuscript reviews pass. The campaign ledger and sibling packet receipt record the final extracted-packet gate and acceptance; this is one combined outcome.
 
 ## Exact source and existing solutions
 
