@@ -4,13 +4,25 @@
 **13/30**. The source/math/bounded-novelty preliminary review passed. No full
 Lean endpoint, manuscript, final review, or extracted packet exists yet.
 
-The modules `GraphScalar`, `GraphMatrices`, `TopSums`, `Variational`, and
-`IncidenceBlocks` compile
-with pinned Lean 4.34.1/mathlib and `warningAsError=true`. They establish scalar
-estimates, graph incidence/energy identities, the literal intersection-matrix
-block identity, exact sorted sums for signed arrays, and the finite-dimensional
-Ky Fan variational inequality. These are
-classical infrastructure, and receive no independent discovery credit.
+Ten modules now pass a **fresh isolated strict replay: 135 declarations**, with
+pinned Lean 4.34.1/mathlib and `warningAsError=true`; every declaration type and
+axiom report was read. Only `propext`, `Classical.choice`, and `Quot.sound` occur.
+The main theorem remains absent: the manifest explicitly identifies this as an
+incomplete development checkpoint, with credit 0.
+
+The completed scope includes scalar estimates, graph incidence/energy
+identities, the literal intersection-matrix block identity, exact sorted sums
+for signed arrays, the finite-dimensional Ky Fan inequality, the normalized
+positive connection eigenvector family (including zero/repeated Q eigenvalues),
+both connection lower bounds, and the edgeless comparison. The vertex/edge
+indexing is proved bijective with a downward-closed family of nonempty faces
+of cardinality one or two, and its connection matrix is the literal
+face-intersection matrix. Classical ingredients receive no separate credit.
+
+The positive-Dirac-eigenvector argument and D upper bounds are assigned to a
+Pi/GLM 5.3 Flash implementation worker at standard speed, in its separate lane.
+They and the full graph comparison endpoint are still required. No numerical
+check or already-proved helper is counted as an outcome.
 
 ## Clarifications to the preliminary review
 
@@ -52,7 +64,8 @@ For L, each Q-eigenvector u with eigenvalue q≥0 gives a positive eigenvector
 The identity phi(q)²-q phi(q)-1=0 verifies this uniformly, even at q=0.
 Vectors constructed from an orthonormal Q-eigenbasis are pairwise orthogonal;
 their norms are strictly positive. Ky Fan supplies the needed lower sums.
-These construction and normalization steps are still to be formalized.
+These construction and normalization steps are now formalized in
+`ConnectionLift.lean` and used by `LowConnection.lean`.
 
 For large k one can alternatively avoid a full inertia theorem as follows.
 The quadratic identity xᵀ(L+I)x=||a||²+||a+Ub||² proves every L eigenvalue ≥−1.
@@ -60,5 +73,5 @@ Write g=sum_i 1/phi(q_i)>0. Then sum_i phi(q_i)=2m+g, and Cauchy gives
 v²≤(2m+g)g. Simplicity implies 2m≤v(v−1), hence g≥1. Consequently
 S_v(L)≥2m+1 and S_k(L)≥2m+v+1−k for k≥v. The diagonal Ky Fan bound
 also gives S_k(L)≥k, so S_k(L)≥m+v/2+1/2. Together with the original
-D upper bound m+v/2 this yields gap ≥1/2. These are plans with full
-mathematical arguments, not already-completed Lean declarations.
+D upper bound m+v/2 this yields gap ≥1/2. The L-side argument is now formalized
+in `HighConnection.lean`; the D upper bound and combined endpoint are pending.

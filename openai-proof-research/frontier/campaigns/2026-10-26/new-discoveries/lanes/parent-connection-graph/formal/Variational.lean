@@ -3,7 +3,7 @@ import TopSums
 /- Classical finite-dimensional Ky Fan variational inequality. This is proof
 infrastructure; it is not claimed as a new mathematical result. -/
 
-open Finset
+open Finset Matrix
 open scoped RealInnerProductSpace
 
 namespace ConnectionGraph
@@ -147,6 +147,30 @@ theorem spectralTopSum_diagonal_le {A : Matrix n n ℝ} (hA : A.IsHermitian)
     exact (sortedTopSum_eq_sum_topSet _ _).trans (Finset.sum_coe_sort s _).symm
   rw [hsum]
   simpa only [Fintype.card_coe, hs] using ht
+
+theorem matrix_inner_dot (A : Matrix n n ℝ) (x : EuclideanSpace ℝ n) :
+    ⟪x, A.toEuclideanLin x⟫ = x.ofLp ⬝ᵥ (A *ᵥ x.ofLp) := by
+  simp [EuclideanSpace.inner_eq_star_dotProduct, Matrix.toLpLin_apply,
+    dotProduct_comm]
+
+theorem exists_rayleigh_bound [Nonempty n] {A : Matrix n n ℝ}
+    (hA : A.IsHermitian) (x : EuclideanSpace ℝ n) :
+    ∃ i : n, ⟪x, A.toEuclideanLin x⟫ ≤ hA.eigenvalues i * ‖x‖ ^ 2 := by
+  obtain ⟨i, _, hi⟩ := exists_max_image (univ : Finset n) hA.eigenvalues univ_nonempty
+  have he : ∀ j, A.toEuclideanLin (hA.eigenvectorBasis j) =
+      hA.eigenvalues j • hA.eigenvectorBasis j := by
+    intro j
+    apply PiLp.ext
+    intro t
+    exact congrFun (hA.mulVec_eigenvectorBasis j) t
+  refine ⟨i, ?_⟩
+  rw [basis_quadratic_expansion _ _ _ he]
+  calc
+    _ ≤ ∑ j, hA.eigenvalues i * ⟪hA.eigenvectorBasis j, x⟫ ^ 2 := by
+      apply sum_le_sum
+      intro j _
+      exact mul_le_mul_of_nonneg_right (hi j (mem_univ j)) (sq_nonneg _)
+    _ = _ := by rw [← mul_sum, hA.eigenvectorBasis.sum_sq_inner_right]
 
 end Matrix
 end ConnectionGraph

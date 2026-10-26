@@ -41,6 +41,14 @@ theorem positiveBranch_equation (q : ℝ) :
   unfold positiveBranch
   nlinarith
 
+theorem positiveBranch_eq_add_inv {q : ℝ} (hq : 0 ≤ q) :
+    positiveBranch q = q + (positiveBranch q)⁻¹ := by
+  have hp := positiveBranch_equation q
+  have hn := ne_of_gt (positiveBranch_pos hq)
+  apply mul_right_cancel₀ hn
+  rw [add_mul, inv_mul_cancel₀ hn]
+  nlinarith
+
 theorem branchExcess_two : branchExcess 2 = Real.sqrt 2 - 1 := by
   have h8 := Real.sq_sqrt (show (0 : ℝ) ≤ 8 by norm_num)
   have h2 := Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num)

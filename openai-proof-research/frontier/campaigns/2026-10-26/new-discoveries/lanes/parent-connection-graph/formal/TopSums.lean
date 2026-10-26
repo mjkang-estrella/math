@@ -158,4 +158,36 @@ theorem fractional_sum_le_sortedTopSum (f w : α → ℝ) {k : ℕ}
   change (∑ i, w i * f i) ≤ ∑ i ∈ t, f i
   linarith
 
+theorem sortedTopSum_const (c : ℝ) {k : ℕ} (hk : k ≤ Fintype.card α) :
+    sortedTopSum (fun _ : α => c) k = k * c := by
+  rw [sortedTopSum_eq_sum_topSet]
+  simp [topSet_card _ hk]
+
+theorem topSet_subset (f : α → ℝ) {k l : ℕ} (hkl : k ≤ l) :
+    topSet f k ⊆ topSet f l := by
+  intro i hi
+  have hi' : i ∈ (descendingIndices f).take k := List.mem_toFinset.mp hi
+  have hit : i ∈ ((descendingIndices f).take l).take k := by
+    simpa only [List.take_take, Nat.min_eq_left hkl] using hi'
+  exact List.mem_toFinset.mpr (List.mem_of_mem_take hit)
+
+theorem sortedTopSum_growth_lower (f : α → ℝ) {k l : ℕ}
+    (hkl : k ≤ l) (hl : l ≤ Fintype.card α) {c : ℝ} (hf : ∀ i, c ≤ f i) :
+    sortedTopSum f k + (l - k : ℕ) * c ≤ sortedTopSum f l := by
+  have hsub := topSet_subset f hkl
+  have hcard : (topSet f l \ topSet f k).card = l - k := by
+    rw [card_sdiff_of_subset hsub, topSet_card f hl, topSet_card f (hkl.trans hl)]
+  have hsum : ((l - k : ℕ) : ℝ) * c ≤ ∑ i ∈ topSet f l \ topSet f k, f i := by
+    calc
+      _ = ∑ _i ∈ topSet f l \ topSet f k, c := by simp [hcard]
+      _ ≤ _ := sum_le_sum fun i _ => hf i
+  have he := sum_sdiff hsub (f := f)
+  rw [sortedTopSum_eq_sum_topSet, sortedTopSum_eq_sum_topSet]
+  linarith
+
+theorem sortedTopSum_mono_index (f : α → ℝ) {k l : ℕ}
+    (hkl : k ≤ l) (hl : l ≤ Fintype.card α) (hf : ∀ i, 0 ≤ f i) :
+    sortedTopSum f k ≤ sortedTopSum f l := by
+  simpa using sortedTopSum_growth_lower f hkl hl hf
+
 end ConnectionGraph
