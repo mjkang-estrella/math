@@ -1,0 +1,13 @@
+# Prior-art investigation and material limits
+
+Research date: October26,2026. One comparison, MathDB371345 and equivalent371346; no credit for equivalent formulations or helpers. No absolute worldwide priority guarantee.
+
+The complete latest primary arXiv2511.03849v4 dated March30,2026 and official public PMC12642762 archive were read. Theorem1 already proves all q≥0 and q<0 at full rank. Those cases are old. AppendixC.3 explicitly discards eigenvalues e≤0 before taking powers, with negative-q and low-rank Gram searches, directly evidencing the finite positive-support convention. This is not an invented singular convention. Under a different extended-real convention0^q=+∞, the singular comparison would be trivial and would not be our statement.
+
+The source appeared as Comparing frameworks for similarity-aware generalized entropy (sentropy), PhysicalReviewE113055305, May26,2026, DOI10.1103/n2s3-2g85. Its current public primary abstract retains the negative-order full-rank restriction. The full published body required subscription and returned401, so it was not read or assumed identical to v4. This is an explicit source-access limitation.
+
+Couch–Arnaout–Arnaout, Beyond Size and Class Balance: Alpha as a New Dataset Quality Metric for Deep Learning, Bioengineering13(8)8542026 DOI10.3390/bioengineering13080854, full PMC13510075, broadly asserts VS bounds LCR without the rank qualification. It cites the PRE source and gives no separate proof of the singular negative-order case. The general assertion is therefore old; the claimed contribution is a full proof of the remaining finite-support arbitrary-rank comparison, not priority for asserting it.
+
+Weighted Jensen and Hölder–McCarthy are classical. Dragomir2014 IJPAM32,247–264 Theorem1 and2(iii) supply the generic vector-state ingredient on the positive spectral subspace. That actual full paper does not explicitly state the complete support trace/row comparison. Pasarkar–Dieng Cousins of the Vendi Score,AISTATS2024 defines q≥0 only. Bilmes–Bhatt–Das2605.29448v2 July2026 concerns q1, with no LCR comparison in the inspected full body. These tools and known results are credited, not counted as discoveries.
+
+Independent targeted searches for negative-order Vendi/LCR, singular/pseudoinverse trace/row bounds and complete stronger energy comparisons found no earlier demonstrated resolution. The independent reviewer recommends acceptance under the documented-prior/no-known-resolution standard with the unread PRE full body and prior broad assertion explicitly retained. See reviews/independent-final-review.md and sources/provenance.json for detailed scope and primary URLs/hashes. Full third-party source documents are not redistributed.

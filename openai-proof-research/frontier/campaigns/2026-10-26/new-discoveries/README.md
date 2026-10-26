@@ -1,6 +1,6 @@
 # Thirty new mathematical discoveries
 
-Strict accepted tally: **5/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
+Strict accepted tally: **6/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
 
 The first accepted result resolves Gerhold–Simon Conjecture 3.2 / MathDB 352508: the sharp converse fractional-binomial inequality for all real exponents above 2. Its four-page paper, seven Lean modules with 67 declarations, stronger biased bound, coefficient optimality, independent source/mathematical/formal review and documented prior-art search are in `candidates/fractional-binomial/`. The reproducible ZIP passes byte readback, manifest checks and a fresh isolated Lean replay after extraction. Classical Gamma-ratio convexity is credited; no prior full sharp finite-sum resolution was found. The inaccessible Alzer article and the limits of priority searches are explicitly documented. All corollaries and helpers are one combined outcome.
 
@@ -11,6 +11,8 @@ The third accepted result refutes Kovalev's trigonometric-positivity Conjecture 
 The fourth accepted result proves Wojnar–Wojnar–Brin's odd-degree derivative-root mean identity / MathDB 336466 for every complex polynomial of odd degree, including repeated roots. Its four-page paper, complete 50-declaration certificate, exact source bridge, independent review and extracted packet replay are in `candidates/odd-root-means/`. The unread Toda 1934 precursor is a material, explicit novelty-search limitation; related 1936/1940 formulas and classical apolarity are credited. Acceptance uses the documented no-known-prior-resolution standard, not an absolute priority guarantee.
 
 The fifth accepted result refutes Yuster's polynomial-root Conjecture3.9 / MathDB357503 at k=48. Its literal source polynomial with the canonical irrational parameter has four distinct interior roots, certified with multiplicity by53 Lean declarations. The three-page paper, exact rational data, independent final review and extracted replay are in `candidates/yuster-rootcount/`. No smallest k, exact total root count or new entropy inequality is claimed; later entropy results are credited, and source-access limits remain explicit.
+
+The sixth accepted result proves the arbitrary-rank negative-order uniform Vendi–LCR comparison, MathDB371345/371346 as one outcome. Its three-page paper and48-declaration certificate construct the actual matrix spectral coupling, prove exact score normalization, and include the directly defined minus-infinity endpoint. Known nonnegative/full-rank cases and classical Jensen/Hölder–McCarthy are credited. The unread PRE full body and later broad comparison assertion remain explicit novelty limits; the source's positive-spectrum convention is documented. See `candidates/vendi-negative/`.
 
 See [RESULTS.md](RESULTS.md) for papers, complete proof packets, verification counts and novelty qualifications.
 
