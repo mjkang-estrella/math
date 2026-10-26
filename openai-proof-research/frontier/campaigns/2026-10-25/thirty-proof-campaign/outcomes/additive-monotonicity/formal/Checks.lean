@@ -1,0 +1,26 @@
+import AdditiveMonotonicity
+
+#check AdditiveMonotonicity.identityFn
+#print axioms AdditiveMonotonicity.identityFn
+#check AdditiveMonotonicity.exceptionalFn
+#print axioms AdditiveMonotonicity.exceptionalFn
+#check AdditiveMonotonicity.KAdditive
+#print axioms AdditiveMonotonicity.KAdditive
+#check AdditiveMonotonicity.count
+#print axioms AdditiveMonotonicity.count
+#check AdditiveMonotonicity.identity_additive
+#print axioms AdditiveMonotonicity.identity_additive
+#check AdditiveMonotonicity.exceptional_not_two
+#print axioms AdditiveMonotonicity.exceptional_not_two
+#check AdditiveMonotonicity.exceptional_three
+#print axioms AdditiveMonotonicity.exceptional_three
+#check AdditiveMonotonicity.identity_ne_exceptional
+#print axioms AdditiveMonotonicity.identity_ne_exceptional
+#check AdditiveMonotonicity.family
+#print axioms AdditiveMonotonicity.family
+#check AdditiveMonotonicity.count_two
+#print axioms AdditiveMonotonicity.count_two
+#check AdditiveMonotonicity.count_three
+#print axioms AdditiveMonotonicity.count_three
+#check AdditiveMonotonicity.monotonicity_counterexample
+#print axioms AdditiveMonotonicity.monotonicity_counterexample
