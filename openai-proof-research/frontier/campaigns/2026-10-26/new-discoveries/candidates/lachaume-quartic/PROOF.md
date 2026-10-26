@@ -75,3 +75,7 @@ Parent downloaded/read latest1712.04528v2 (current submission history: v2July9,2
 ## Superseding prior-art/scope correction
 
 The preliminary review found MO248816/answer248836 (Zaimi2016). Parent corrects its mistaken claim that the normalized differential condition is not translation invariant: (x+2)^4−1 has strictly positive coefficients and exactly the same known converse failure. Therefore Conjecture3 has NO discovery credit, even in the nonnegative-coefficient setting. Only the substantive Conjecture1 diagonal/global concavity failure remains a prospective discovery. Candidate/reviews/parent-addendum.md contains the exact correction and detailed actual Andrica2019Section5 comparison (full publisherPDF obtained, relevant18pages read). Earlier preliminary searches/limitations above are historical, not final novelty conclusions.
+
+## Final independent gate update
+
+New independent Pi final review of frozen bd81899bc6: allfivegatesPASS, no decisive objection, own61declaration strict replay receipt identical, all61typesread, both manuscript pages rendered/inspected. Exact Conjecture1scope and uncredited prior Conjecture3failure confirmed. Final packet/extracted replay and acceptance are external to this frozen proof/paper.
