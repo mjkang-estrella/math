@@ -1,0 +1,97 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{lmodern}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\title{A Lean-checked quadratic eigenvector for the single-shelf position matrix}
+\author{Myeongjin Kang}
+\date{25 October 2026}
+\setlength{\emergencystretch}{2em}
+\begin{document}
+\maketitle
+\begin{abstract}
+We give a finite-sum proof and Lean formalization of the quadratic eigenvector in Clay's Conjecture 1. The proof evaluates a quadratic binomial transform by Pascal induction, reflects the second half of the position kernel, and proves nonzeroness from the first coordinate. This is a formal verification of a known result: Tripathi's later spectral theorem already implies the conjecture. No priority claim is made.
+\end{abstract}
+
+\section{Statement and source convention}
+Clay's Theorem 1.1 and Definitions 2.1--2.2 in \cite{clay} specify a deck drawn from the bottom, with each card placed at the top or bottom with probability $1/2$. With positions numbered from $1$ to $n$, the resulting position matrix has entries
+\[
+ M_{ij}=\frac{\binom{i-1}{j-1}+\binom{i-1}{n-j}}{2^i},\qquad 1\leq i,j\leq n.
+\]
+Binomial coefficients outside their natural support are zero. The binomial row parameter is $i-1$. We take this displayed kernel as the definition of $M$; the probabilistic derivation of the kernel is not a dependency of the formal algebraic result.
+
+\begin{theorem}\label{thm:main}
+For every integer $n\geq3$, define $v\in\mathbb R^n$ by
+\[
+ v_k=n^2-3nk+\frac32 k(k+1)-1,\qquad 1\leq k\leq n.
+\]
+Then $Mv=\tfrac14v$ and $v\ne0$. Consequently $1/4$ is an eigenvalue of $M$, and its eigenspace has dimension at least one.
+\end{theorem}
+The statement is exactly the eigenpair assertion of Clay's Conjecture 1. We do not assert that the entire eigenspace has dimension one.
+
+\section{Exact binomial transform}
+For real $a,b,c$ and an integer $r\geq0$, set
+\[
+ B_r(a,b,c)=\sum_{k=0}^r\binom rk(ak^2+bk+c).
+\]
+\begin{lemma}\label{lem:binomial}
+For every $r\geq0$,
+\[
+ B_r(a,b,c)=2^r\left(\frac{ar(r+1)}4+\frac{br}2+c\right).
+\]
+\end{lemma}
+\begin{proof}
+At $r=0$ both sides equal $c$. Pascal's identity, including the zero boundary terms, gives
+\begin{align*}
+ B_{r+1}(a,b,c)
+ &=\sum_{k=0}^r\binom rk\bigl[ak^2+bk+c+a(k+1)^2+b(k+1)+c\bigr]\\
+ &=B_r(2a,2a+2b,a+b+2c).
+\end{align*}
+Substituting the induction hypothesis and expanding gives the claimed formula at $r+1$. This argument proves all three degree-at-most-two moments simultaneously; no moment formula is assumed. If $r<n$, extending the sum through $n-1$ does not change it, since $\binom rk=0$ for $k>r$.
+\end{proof}
+
+\section{Reflection and proof of the eigenpair}
+Write $V_n(x)=n^2-3nx+\tfrac32x(x+1)-1$. Fix a row $i$ and put $r=i-1$. Reindex the second kernel term by the finite-set bijection $k\mapsto n-1-k$. The undivided row sum becomes
+\begin{align*}
+ N_i
+ &=\sum_{k=0}^{n-1}\left[\binom rk+\binom r{n-1-k}\right]V_n(k+1)\\
+ &=\sum_{k=0}^{n-1}\binom rk\bigl[V_n(k+1)+V_n(n-k)\bigr].
+\end{align*}
+The reflection is a bijection of $\{0,\ldots,n-1\}$, including when this set is empty. Expanding the bracket gives
+\[
+ V_n(k+1)+V_n(n-k)
+ =3k^2+3(1-n)k+\frac{(n-1)(n-2)}2.
+\]
+Since $r<n$, Lemma~\ref{lem:binomial} now yields
+\begin{align*}
+ N_i&=2^r\left[\frac{3r(r+1)}4+\frac{3(1-n)r}2+\frac{(n-1)(n-2)}2\right]\\
+ &=\frac{2^r}{2}V_n(r+1).
+\end{align*}
+Dividing by $2^i=2^{r+1}$ proves $(Mv)_i=V_n(i)/4=v_i/4$ for every row. Finally
+\[
+ v_1=(n-1)(n-2)>0\qquad(n\geq3),
+\]
+so $v\ne0$. The span of this vector lies in the $1/4$ eigenspace and has dimension one, proving Theorem~\ref{thm:main}. The lower bound on $n$ matters: at $n=1$ and $n=2$ this displayed vector is zero.
+
+\section{Formal coverage and reproducibility}
+The Lean source is \nolinkurl{formal/ShuffleQuadratic.lean}. It uses real scalars and indices \texttt{Fin n}; an index of value $k$ represents paper position $k+1$. Theorems \nolinkurl{positionMatrix_one_based} and \nolinkurl{quadraticVector_one_based} explicitly check this translation. The general transform, support extension, reflection, and complete row calculation are all proved in Lean. The main theorem \nolinkurl{quadratic_hasEigenvector} uses mathlib's \nolinkurl{Module.End.HasEigenvector}, whose definition includes nonzeroness. The theorem \nolinkurl{quarter_eigenspace_dimension} proves the dimension lower bound.
+
+The isolated build uses Lean 4.34.1 and mathlib revision
+\begin{center}\small\texttt{d13f23b723b8a846827a245b89c10fc7d3f11612}\end{center} Run \texttt{python3 verify\_outcome.py .} from the extracted release root, supplying \nolinkurl{--lean-bin} and \nolinkurl{--packages} for the compiler and dependency locations. All 16 local declarations are checked and audited. Only the standard axioms \nolinkurl{propext}, \nolinkurl{Classical.choice}, and \nolinkurl{Quot.sound} occur. There are no admitted proofs, custom axioms, or native decision procedures.
+
+Supplemental exact-rational checks test deck sizes $1$ through $80$, and exhaustive enumeration of all coin assignments for sizes $1$ through $10$ independently checks the bottom-draw probability convention. Deliberate changes to the eigenvalue, denominator, and nonzero range fail Lean compilation. These finite checks do not replace the universal proof. The probabilistic identification of the source kernel and the interpretation of prior literature remain source-review obligations, not Lean assumptions.
+
+\section{Prior result and novelty limit}
+Tripathi's Theorem I in \cite{tripathi} determines the full spectrum and gives explicit eigenvectors. Its degree-two vector is
+\[
+ \zeta^{(2)}(k)=\frac23(n-1)(n-2)-2(n-2)(k-1)+(k-1)(k-2).
+\]
+Direct expansion gives $v_k=\tfrac32\zeta^{(2)}(k)$. Thus the present mathematical conclusion is already contained in that theorem. The contribution of this package is the explicit elementary finite-sum verification and its Lean proof, not a new-to-literature theorem. No exhaustive search for earlier formalizations has been established. This note concerns MathDB 369280 only.
+
+\begin{thebibliography}{9}
+\bibitem{clay} Alexander Clay, \emph{Guessing Strategies for Shelf-Shuffling Machines}, arXiv:2507.10294v1, 14 July 2025. Theorem 1.1, Definitions 2.1--2.2, Conjecture 1. \url{https://arxiv.org/html/2507.10294v1}.
+\bibitem{tripathi} Raghavendra Tripathi, \emph{On the position matrix of single-shelf shuffle and card guessing}, arXiv:2602.07920v1, 8 February 2026. Theorem I. \url{https://arxiv.org/html/2602.07920v1}.
+\end{thebibliography}
+\end{document}
