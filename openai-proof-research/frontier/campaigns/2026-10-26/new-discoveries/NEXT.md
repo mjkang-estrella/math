@@ -1,14 +1,11 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **3/30**. The goal remains active; 27 further qualifying outcomes are needed.
+Strict accepted tally: **4/30**. The goal remains active; 26 further qualifying discoveries are needed.
 
-1. Accepted fractional-binomial source conjecture 352508: one combined result, 67 Lean declarations, four-page paper and extracted packet replay PASS.
-2. Accepted all-odd randomized subtraction nonconvergence: one primary-source result attached to MathDB 363319, 37 declarations, three-page paper and extracted replay PASS. The neighboring root-simplicity record is NOT resolved. Commit exact owned paths only.
-3. Accepted trig counterexample MathDB 369172: d49,n949,t=arccos(523/527), full55-declaration proof, three-page paper, exact numeric data and extracted replay PASS. Published2026 source comparison is now clear; public publisherPDF was retrieved through a metadata-listed URL. No zero-free claim.
-4. Native polynomial lane: plausible all-degree proof for odd-degree derivative-root mean identity MathDB336466. Newton-moment polynomial continuation plus apolar antisymmetry; full derivative/source bridge and nearest Toda1934/1936 prior work need review. No count yet.
-5. Pi GLM canonical theta-game research remains active in pi-canonical-theta/. Follow its completion wakeup; do not poll/restart it. Old parity counterexamples and rule-gloss variants remain excluded.
-6. Taxicab refinement341671 remains mathematical/source/formal PASS with novelty HOLD for closest2018 full-text comparison. Optional source-access question remains pending while other work continues.
+1. Four accepted packets are indexed in RESULTS.md and ledger.json: fractional-binomial352508 (67 declarations), all-odd randomized subtraction source question (37; separate363319 root-simplicity remains open), trig counterexample369172 (55), and odd derivative-root means336466 (50, explicit Toda1934 access limitation). All papers, independent reviews and extracted packet replays pass. Preserve hashes and exact owned commits.
+2. Strong active counterexample: Yuster2302.12276v1 Conj3.9 / MathDB357503, k48. Polynomial worker has exact rational αinterval and five alternating rational-point signs forcing at least4rootsin(0,1), against atmost2. It is distinct from the entropy inequality proved by Ho2026. Exact latest-source/nearest Wakhare connection, full Lean and independent review still needed. Parent can own generic four-IVT-roots bridge if coordinated.
+3. VendiScore371345/371346 singular negative-q lead: new-screen owns frozen Jensen core and actual PSD-matrix/spectral-support bridge; matrix owns independent exact-source/novelty review; parent owns final VS/LCR power rescaling. Latest source proves q≥0 and full-rank negativeq already; those get no new credit. Positive-spectrum support convention is explicitly evidenced by sourcecode. Latest PRE2026 abstract retains fullranknegativeq restriction; fullpublisherbody requires subscription, July2026 related unqualified bound sentence needs careful scope disclosure. No count yet.
+4. Pi GLM canonical theta-game research remains delegated in pi-canonical-theta/. Follow completion wakeup; do not poll/restart it. Known parity boards and rule-gloss variants remain excluded.
+5. Taxicab refinement341671 remains mathematical/source/formal PASS with novelty HOLD for closest2018 full text. Optional source-access question remains pending; other research continues.
 
-Use standard/default speed, exact primary sources and meaningful parallel research. Preserve historical archives. No external publication or push is authorized.
-
-Next fresh lead: VendiScore 371345/371346, intended positive-eigenvalue support convention for singular negative-q. New-screen owns weighted-Jensen proof/formal work; matrix independently checks exact v4 source/semantics and nearest prior art. Known full-rank and q≥0 portions remain uncounted. Polynomial worker continues a separate fresh screen.
+Use standard/default speed, exact primary sources and meaningful parallel research. No external posting, publication or push is authorized. Never count helpers, equivalent corollaries, stale already-proved conjectures, or convention/wording loopholes as new discoveries.
