@@ -1,0 +1,92 @@
+import SymplecticOrbits
+
+#check SymplecticOrbitCounterexample.Mat
+#print axioms SymplecticOrbitCounterexample.Mat
+#check SymplecticOrbitCounterexample.J
+#print axioms SymplecticOrbitCounterexample.J
+#check SymplecticOrbitCounterexample.A0
+#print axioms SymplecticOrbitCounterexample.A0
+#check SymplecticOrbitCounterexample.A1
+#print axioms SymplecticOrbitCounterexample.A1
+#check SymplecticOrbitCounterexample.K0
+#print axioms SymplecticOrbitCounterexample.K0
+#check SymplecticOrbitCounterexample.K1
+#print axioms SymplecticOrbitCounterexample.K1
+#check SymplecticOrbitCounterexample.IsSymplectic
+#print axioms SymplecticOrbitCounterexample.IsSymplectic
+#check SymplecticOrbitCounterexample.Equivalent
+#print axioms SymplecticOrbitCounterexample.Equivalent
+#check SymplecticOrbitCounterexample.J_squared
+#print axioms SymplecticOrbitCounterexample.J_squared
+#check SymplecticOrbitCounterexample.A0_skew
+#print axioms SymplecticOrbitCounterexample.A0_skew
+#check SymplecticOrbitCounterexample.A1_skew
+#print axioms SymplecticOrbitCounterexample.A1_skew
+#check SymplecticOrbitCounterexample.inverse0
+#print axioms SymplecticOrbitCounterexample.inverse0
+#check SymplecticOrbitCounterexample.inverse1
+#print axioms SymplecticOrbitCounterexample.inverse1
+#check SymplecticOrbitCounterexample.A0_inverse
+#print axioms SymplecticOrbitCounterexample.A0_inverse
+#check SymplecticOrbitCounterexample.A1_inverse
+#print axioms SymplecticOrbitCounterexample.A1_inverse
+#check SymplecticOrbitCounterexample.A0_nonsingular
+#print axioms SymplecticOrbitCounterexample.A0_nonsingular
+#check SymplecticOrbitCounterexample.A1_nonsingular
+#print axioms SymplecticOrbitCounterexample.A1_nonsingular
+#check SymplecticOrbitCounterexample.A0_nonscalar
+#print axioms SymplecticOrbitCounterexample.A0_nonscalar
+#check SymplecticOrbitCounterexample.A1_nonscalar
+#print axioms SymplecticOrbitCounterexample.A1_nonscalar
+#check SymplecticOrbitCounterexample.K0_quadratic
+#print axioms SymplecticOrbitCounterexample.K0_quadratic
+#check SymplecticOrbitCounterexample.K1_not_quadratic
+#print axioms SymplecticOrbitCounterexample.K1_not_quadratic
+#check SymplecticOrbitCounterexample.no_congruence
+#print axioms SymplecticOrbitCounterexample.no_congruence
+#check SymplecticOrbitCounterexample.sourcePf
+#print axioms SymplecticOrbitCounterexample.sourcePf
+#check SymplecticOrbitCounterexample.keep01
+#print axioms SymplecticOrbitCounterexample.keep01
+#check SymplecticOrbitCounterexample.keep02
+#print axioms SymplecticOrbitCounterexample.keep02
+#check SymplecticOrbitCounterexample.keep12
+#print axioms SymplecticOrbitCounterexample.keep12
+#check SymplecticOrbitCounterexample.pair0
+#print axioms SymplecticOrbitCounterexample.pair0
+#check SymplecticOrbitCounterexample.pair1
+#print axioms SymplecticOrbitCounterexample.pair1
+#check SymplecticOrbitCounterexample.pair2
+#print axioms SymplecticOrbitCounterexample.pair2
+#check SymplecticOrbitCounterexample.rawInvariant
+#print axioms SymplecticOrbitCounterexample.rawInvariant
+#check SymplecticOrbitCounterexample.pfaffian
+#print axioms SymplecticOrbitCounterexample.pfaffian
+#check SymplecticOrbitCounterexample.invariant
+#print axioms SymplecticOrbitCounterexample.invariant
+#check SymplecticOrbitCounterexample.invariant_zero
+#print axioms SymplecticOrbitCounterexample.invariant_zero
+#check SymplecticOrbitCounterexample.invariant_one
+#print axioms SymplecticOrbitCounterexample.invariant_one
+#check SymplecticOrbitCounterexample.invariant_two
+#print axioms SymplecticOrbitCounterexample.invariant_two
+#check SymplecticOrbitCounterexample.A0Z
+#print axioms SymplecticOrbitCounterexample.A0Z
+#check SymplecticOrbitCounterexample.A1Z
+#print axioms SymplecticOrbitCounterexample.A1Z
+#check SymplecticOrbitCounterexample.sourcePf_cast
+#print axioms SymplecticOrbitCounterexample.sourcePf_cast
+#check SymplecticOrbitCounterexample.rawInvariant_cast
+#print axioms SymplecticOrbitCounterexample.rawInvariant_cast
+#check SymplecticOrbitCounterexample.A0_cast
+#print axioms SymplecticOrbitCounterexample.A0_cast
+#check SymplecticOrbitCounterexample.A1_cast
+#print axioms SymplecticOrbitCounterexample.A1_cast
+#check SymplecticOrbitCounterexample.integer_invariants_equal
+#print axioms SymplecticOrbitCounterexample.integer_invariants_equal
+#check SymplecticOrbitCounterexample.raw_invariants_equal
+#print axioms SymplecticOrbitCounterexample.raw_invariants_equal
+#check SymplecticOrbitCounterexample.invariants_equal
+#print axioms SymplecticOrbitCounterexample.invariants_equal
+#check SymplecticOrbitCounterexample.source_counterexample
+#print axioms SymplecticOrbitCounterexample.source_counterexample
