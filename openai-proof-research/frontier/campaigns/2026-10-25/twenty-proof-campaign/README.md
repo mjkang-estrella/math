@@ -2,7 +2,7 @@
 
 Target: **20 distinct source problems** with exact stated outcomes, complete Lean proofs, papers, independent reviews, and reproducible verification.
 
-Current fully verified count: **15/20**. The goal remains active.
+Current fully verified count: **18/20**. The goal remains active.
 
 | # | MathDB | Question / outcome | Package |
 |---|---|---|---|
@@ -21,6 +21,9 @@ Current fully verified count: **15/20**. The goal remains active.
 | 13 | [372794](https://mathdb.com/p/372794) | A positive recurrence for the Fill--Janson polynomial | [Files](outcomes/coefficient-positivity/README.md) |
 | 14 | [350342](https://mathdb.com/p/350342) | Thirty-eight prime outputs refute the Ova counting bound | [Files](outcomes/ova-count/README.md) |
 | 15 | [325243](https://mathdb.com/p/325243) | Endpoint correction for positivity rigidity | [Files](outcomes/positivity-rigidity/README.md) |
+| 16 | [375256](https://mathdb.com/p/375256) | Arithmetic-function simple ratio inequality | [Files](outcomes/simple-arithmetic/README.md) |
+| 17 | [375257](https://mathdb.com/p/375257) | Arithmetic-function mixed ratio inequality | [Files](outcomes/mixed-arithmetic/README.md) |
+| 18 | [368725](https://mathdb.com/p/368725) | Inactive-coordinate rotations refute permutation rigidity | [Files](outcomes/permutation-rigidity/README.md) |
 
 The [historical audit](HISTORICAL-AUDIT.md) found 0/19 full main-theorem Lean certificates among the earlier campaign's accepted papers. Those papers retain their prior written-proof status; they do not meet this campaign's stronger formal-coverage criterion.
 
@@ -37,3 +40,5 @@ The recurrence entry verifies Patel’s complete orbit-counting argument. The qu
 The graph-normalization entry is a full proof of a standard majorization consequence, with the later source explicitly credited. It asserts the normalization inequality only.
 
 Coefficient positivity and the 38-prime counterexample verify previously posted results. The positivity-rigidity entry corrects a free endpoint in the literal source statement; it makes no claim about the intended corrected theorem.
+
+The two arithmetic inequalities are distinct source conjectures sharing one joint paper and common lemmas. The rotation counterexample uses a smaller instance of Patel’s previously posted construction.

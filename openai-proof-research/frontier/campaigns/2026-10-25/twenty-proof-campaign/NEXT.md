@@ -167,3 +167,28 @@ Implementation209 ownsBernstein327180; implementation244ownsSchurstability370245
 These five outstanding questions wouldbringcountto20. No othersneedcounting.
 `collect_release.py` is prepared to validateandbundleexactly20acceptedarchives;
 it deliberately refuses before20. No collectionhasbeencreatedyet.
+
+
+## Last pipeline update
+
+Bernstein209 COMPLETED: canonicaloutcomes/bernstein-shape copied, compiled20decl,
+4pagepaperbuiltandallpagesviewed. Review264 active writesreviews/bernstein-shape.md.
+Review250 COMPLETED/PASS forarithmetictwo+rotation. MinorV.Centorrinobibfixed,
+oldarithprovenancepaperrecordrelabeledhistorical, Checks.lean copiedcanonical.
+All3sealed/packaged, replaysession34388 needsdrain, thenappendledger18.
+Collectioncounting/readinessaudit272 active writesreviews/counting-audit.md.
+Schurstability244 stillrunning; sourcebriefhasfullsimplet1rationalwitness.
+No new discoveryneededifthese20plannedoutcomesallqualify.
+
+## Accepted checkpoint: 18/20
+
+Arithmetic375256 and375257, plusrotation368725, passedreview250/currentPDFQA/
+extractedarchivereplay. Commits:b2cb6eafd6,d4c2bd61f4,19c2dd8598.
+They are nowledger16-18. Sharedarithpaperisintentional; sourcequestionsdistinct.
+
+Schurstability244 COMPLETED withfull77declarationLean certificate andexactcomplex
+spectra/radii; canonicaloutcomes/schur-stability copied, currentverify/build session32119.
+Independentreview277active, writesreviews/schur-stability.md.
+Remainingactivecells:264Bernsteinreview,272counting/readinessaudit,277Schurreview.
+Noimplementationworkersremaining. Every plannedtargetnowhascompleteLean source.
+Mustfinishremainingreviews,packetreplays,thenledger20andcollectionverify.
