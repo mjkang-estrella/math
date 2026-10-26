@@ -33,3 +33,11 @@ Berndt–Sra, Hlawka–Popoviciu Inequalities on Positive Definite Tensors, arXi
 354787: exact parity log-concavity search through n120 checked52,657,146 inequalities, no counterexample. No universal proof or discovery credit. See lanes/parent-stirling/.
 
 351633: a promising new candidate is now under direct investigation in lanes/parent-novak/. Four explicit self-adjoint2x2 inputs produce a central-entry Hermitian kernel with quadratic form cos(pi sqrt15)−3≤−2. Actual2022 publisher Conjecture4.2p799 visually inspected, source matrix and cosine definition match. Full Lean bridge/review/novelty/manuscript/packet remain; credit0.
+
+## Exclude336488: premagic diagonalizability has an older explicit counterexample
+
+Actual primary published Kardi Teknomο, *Premagic and Ideal Flow Matrices*, JoCAI3(1)(2019),35–45, DOI10.32734/jocai.v3.i1-621, Conjecture7.2p44 asserts diagonalizability for premagic matrices (row-sum vector equals column-sum vector). Source PDF https://talenta.usu.ac.id/JoCAI/article/download/621/394/2194 was read. The live MathDB post remains open with no posted solutions; this is not evidence of novelty.
+
+David E. Speyer already gave a strictly positive doubly stochastic non-diagonalizable3x3 matrix on January13,2011: [[5/12,5/12,1/6],[1/4,1/4,1/2],[1/3,1/3,1/3]]. His actual primary answer computes A(0,1,−1)=(1/4,−1/4,0)≠0 and A²(0,1,−1)=0, impossible for a diagonalizable matrix. The answer also explains the general nilpotent perturbation mechanism. Every doubly stochastic matrix is premagic, so this directly refutes the source claim before its publication. Actual answer https://mathoverflow.net/questions/51887/non-diagonalizable-doubly-stochastic-matrices read October26,2026. Oliver Knill's Spring2011 Harvard Math19b Lecture33 independently reproduces the transposed matrix and explicit Jordan obstruction, crediting the same answer: https://people.math.harvard.edu/~knill/teaching/math19b_2011/handouts/lecture33.pdf .
+
+An independently derived integer matrix [[4,4,1],[2,2,5],[3,3,3]] uses the same old nilpotent-perturbation mechanism and supplies no new mathematical outcome. No formalization or discovery credit is pursued.
