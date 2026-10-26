@@ -9,6 +9,7 @@ for n in range(1,13):
   L=np.block([[np.eye(n),U],[U.T,U.T@U-np.eye(m)]])
   D=np.block([[np.zeros((n,n)),C],[C.T,np.zeros((m,m))]])
   ls=np.linalg.eigvalsh(L)[::-1];ds=np.linalg.eigvalsh(D)[::-1];g=np.cumsum(ls-ds)
+  assert min(g) >= np.sqrt(2)-1-1e-7
   deg=np.sort(U.sum(axis=1))[::-1]
   for k in range(1,n+1):
    assert ls[:k].sum()+1e-7>=k+deg[:k].sum()/2
