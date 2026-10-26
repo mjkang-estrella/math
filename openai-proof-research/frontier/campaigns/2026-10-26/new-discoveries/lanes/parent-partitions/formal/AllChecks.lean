@@ -1,0 +1,97 @@
+import PartitionTopCounts
+import PartitionSource
+import PartitionWitnesses
+import PartitionConclusion
+import PartitionPolynomial
+import PartitionFinal
+
+#check KeithMulticolor.missingPairCount
+#print axioms KeithMulticolor.missingPairCount
+#check KeithMulticolor.twoMissingSum
+#print axioms KeithMulticolor.twoMissingSum
+#check KeithMulticolor.twoMissingSum_twentyfive
+#print axioms KeithMulticolor.twoMissingSum_twentyfive
+#check KeithMulticolor.topCutValues
+#print axioms KeithMulticolor.topCutValues
+#check KeithMulticolor.topCutValues_twentyfive
+#print axioms KeithMulticolor.topCutValues_twentyfive
+#check KeithMulticolor.topCutValues_strict_valley
+#print axioms KeithMulticolor.topCutValues_strict_valley
+#check KeithMulticolor.Unimodal
+#print axioms KeithMulticolor.Unimodal
+#check KeithMulticolor.strict_valley_not_unimodal
+#print axioms KeithMulticolor.strict_valley_not_unimodal
+#check KeithMulticolor.topCutValues_not_unimodal
+#print axioms KeithMulticolor.topCutValues_not_unimodal
+#check KeithMulticolor.IsSquareBox
+#print axioms KeithMulticolor.IsSquareBox
+#check KeithMulticolor.distinctCount
+#print axioms KeithMulticolor.distinctCount
+#check KeithMulticolor.squareBox
+#print axioms KeithMulticolor.squareBox
+#check KeithMulticolor.sourceArray
+#print axioms KeithMulticolor.sourceArray
+#check KeithMulticolor.distinctCount_le
+#print axioms KeithMulticolor.distinctCount_le
+#check KeithMulticolor.support_subset
+#print axioms KeithMulticolor.support_subset
+#check KeithMulticolor.staircase25
+#print axioms KeithMulticolor.staircase25
+#check KeithMulticolor.staircase25_isBox
+#print axioms KeithMulticolor.staircase25_isBox
+#check KeithMulticolor.staircase25_distinct
+#print axioms KeithMulticolor.staircase25_distinct
+#check KeithMulticolor.full_support_unique
+#print axioms KeithMulticolor.full_support_unique
+#check KeithMulticolor.no_twentyfour_sizes
+#print axioms KeithMulticolor.no_twentyfour_sizes
+#check KeithMulticolor.colorWeight_zero_of_lt
+#print axioms KeithMulticolor.colorWeight_zero_of_lt
+#check KeithMulticolor.sourceArray_first
+#print axioms KeithMulticolor.sourceArray_first
+#check KeithMulticolor.sourceArray_middle
+#print axioms KeithMulticolor.sourceArray_middle
+#check KeithMulticolor.triples25
+#print axioms KeithMulticolor.triples25
+#check KeithMulticolor.kernelSort
+#print axioms KeithMulticolor.kernelSort
+#check KeithMulticolor.witnessParts
+#print axioms KeithMulticolor.witnessParts
+#check KeithMulticolor.decodeParts
+#print axioms KeithMulticolor.decodeParts
+#check KeithMulticolor.triples25_card
+#print axioms KeithMulticolor.triples25_card
+#check KeithMulticolor.witnessParts_certificate
+#print axioms KeithMulticolor.witnessParts_certificate
+#check KeithMulticolor.witnessPartition
+#print axioms KeithMulticolor.witnessPartition
+#check KeithMulticolor.witnessPartition_isBox
+#print axioms KeithMulticolor.witnessPartition_isBox
+#check KeithMulticolor.witnessPartition_distinct
+#print axioms KeithMulticolor.witnessPartition_distinct
+#check KeithMulticolor.witnessPartition_injective
+#print axioms KeithMulticolor.witnessPartition_injective
+#check KeithMulticolor.witnessPartitionSet
+#print axioms KeithMulticolor.witnessPartitionSet
+#check KeithMulticolor.witnessPartitionSet_card
+#print axioms KeithMulticolor.witnessPartitionSet_card
+#check KeithMulticolor.witnessPartitionSet_subset
+#print axioms KeithMulticolor.witnessPartitionSet_subset
+#check KeithMulticolor.sourceArray_third_lower
+#print axioms KeithMulticolor.sourceArray_third_lower
+#check KeithMulticolor.sourceCut
+#print axioms KeithMulticolor.sourceCut
+#check KeithMulticolor.sourceCut_strict_valley
+#print axioms KeithMulticolor.sourceCut_strict_valley
+#check KeithMulticolor.source_not_unimodal
+#print axioms KeithMulticolor.source_not_unimodal
+#check KeithMulticolor.sourcePolynomial
+#print axioms KeithMulticolor.sourcePolynomial
+#check KeithMulticolor.colorPolynomial_coefficient
+#print axioms KeithMulticolor.colorPolynomial_coefficient
+#check KeithMulticolor.sourcePolynomial_coefficient
+#print axioms KeithMulticolor.sourcePolynomial_coefficient
+#check KeithMulticolor.source_full_counterexample_345259
+#print axioms KeithMulticolor.source_full_counterexample_345259
+#check KeithMulticolor.source_polynomial_strict_valley
+#print axioms KeithMulticolor.source_polynomial_strict_valley
