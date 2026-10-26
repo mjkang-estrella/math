@@ -34,9 +34,9 @@ The proof imports `Mathlib.Algebra.Group.ForwardDiff` and the standard polynomia
 
 The retrieved MathDB record lists zero solutions, comments, model attempts, and formalizations. The 2022 source labels equation (13) conjectural, immediately after proving its unit-step counterpart. Targeted live searches on the paper ID, title, and scaled formula did not identify a separate posted resolution. These observations do **not** establish mathematical novelty: the conclusion is an immediate rescaling of the same paper's Theorem 4.3 and a standard finite-difference fact. Claim only a complete answer and local formalization of this distinct MathDB question, not a new-to-literature theorem.
 
-The packet contains a versioned source snapshot and hash manifest, the complete Lean code, compiler/axiom reports, and `paper/main.tex`. The final paper is `main.tex` and its release PDF is `paper.pdf`. Full third-party source bodies are retained locally and are not redistributed.
+The packet contains versioned source references and hashes (full bodies retained in the development lane), the complete Lean code, compiler/axiom reports, and `main.tex`. The final paper is `main.tex` and its release PDF is `paper.pdf`. Full third-party source bodies are retained locally and are not redistributed.
 
 
 ## Reproduce the release
 
-From the campaign root run `python3 verify_outcome.py outcomes/scaled-tepper`. From an extracted standalone release run `python3 verify_outcome.py . --lean-bin /path/to/lean --packages /path/to/.lake/packages`. The release includes pinned dependencies in `pins.json`, exact theorem/axiom logs in `receipts/`, and the complete independent review.
+From the campaign root run `python3 verify_outcome.py outcomes/scaled-tepper`. From an extracted standalone release run `python3 verify_outcome.py . --lean-bin /path/to/lean --packages /path/to/.lake/packages`. The release includes dependency pins in `pins.json`, exact theorem/axiom logs in `receipts/`, and the complete independent review.

@@ -44,9 +44,9 @@ The final positivity step uses `Matrix.posSemidef_self_mul_conjTranspose` and th
 
 The retrieved MathDB record says open and lists no posted solutions. That database status is outdated: the 2017 paper explicitly resolves the question and presents the underlying Gram argument. Count this as one distinct, fully checked mathematical outcome only if the campaign permits known-result formal verification; do not count it as a previously open problem solved here.
 
-The packet contains both original and resolving source snapshots, a hash manifest, complete Lean code, compiler/axiom reports, and `paper/main.tex`. The final paper is `main.tex` and its release PDF is `paper.pdf`. Full third-party source bodies are retained locally and are not redistributed.
+The packet contains both original and resolving versioned source references and hashes (full bodies retained in the development lane), a hash manifest, complete Lean code, compiler/axiom reports, and `main.tex`. The final paper is `main.tex` and its release PDF is `paper.pdf`. Full third-party source bodies are retained locally and are not redistributed.
 
 
 ## Reproduce the release
 
-From the campaign root run `python3 verify_outcome.py outcomes/monochromatic-box`. From an extracted standalone release run `python3 verify_outcome.py . --lean-bin /path/to/lean --packages /path/to/.lake/packages`. The release includes pinned dependencies in `pins.json`, exact theorem/axiom logs in `receipts/`, and the complete independent review.
+From the campaign root run `python3 verify_outcome.py outcomes/monochromatic-box`. From an extracted standalone release run `python3 verify_outcome.py . --lean-bin /path/to/lean --packages /path/to/.lake/packages`. The release includes dependency pins in `pins.json`, exact theorem/axiom logs in `receipts/`, and the complete independent review.
