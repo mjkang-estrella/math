@@ -9,3 +9,11 @@ The actual downloaded embedded published source is in Matthias C. Caro's *Quantu
 The review did not replay Lean; it reported no toolchain in its PATH/environment. The parent's exact absolute Lean binary and packages are available for the next independent replay. The existing four-lemma log was evidence of the parent build only, not an independent compilation. The new strict76-declaration parent receipt records the compiler version, complete declaration types and standard axiom inventory.
 
 The large-dimension theorem is the substantive proposed outcome. Any small-dimension wording discrepancy, helper, finite scan, sharpness example or separate inequality direction receives no extra discovery credit. No absolute priority claim. Candidate remains credit0 until all remaining gates pass.
+
+## Final independent review qualification
+
+The final independent review at337af169cd passes all five gates and supplies a genuinely fresh strict76-declaration replay whose receipt is byte-identical to the parent's. It read all three indexed citing preprint bodies; their complete extracted texts are preserved in the reviewer lane. The published body of2201.12524 was not separately read. Its similar abstract, venue description and absence of a citation in v1 do not prove that the published body has no additional content; the report's “risk negligible” phrase is not relied upon. This access/coverage limit remains explicit. Parent verified the live arXiv history has onlyv1 and a linked publisher DOI.
+
+OpenAlex3 and Crossref2 are index-specific observations, not a worldwide citation census, and do not “supersede” Semantic Scholar's rate-limit or completeness limits. The author's output was screened through listings and relevant metadata; the report is not treated as evidence that every full body of31other works was read. The exact arithmetic/random checks were run inline in the reviewer transcript rather than supplied as a standalone executable in math/; they are supporting evidence, while the full mathematical re-derivation and independent complete Lean replay provide the proof gates. No absolute priority claim.
+
+All proof/manuscript bytes remain unchanged from the frozen independent review. One combined uniform d≥5source-question resolution is eligible, conditional on the final extracted replay. Small-dimension notes and generic helpers are not counted.

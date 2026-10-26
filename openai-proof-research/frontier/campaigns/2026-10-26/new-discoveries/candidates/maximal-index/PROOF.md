@@ -1,6 +1,6 @@
 # Sharp maximal index in every dimension d≥5
 
-Status: **candidate, credit0**. The universal bound and uniform sharpness construction below are completely formalized in12Lean modules. The final theorem classifies EVERY index0≤k≤d² for EVERY dimensiond≥5 using actual independently sorted arrays and the full probability simplex. Source/math/serious novelty review is pending; no acceptance or absolute priority claim. Very small dimensions remain separate research notes and are not claimed by this candidate's classification.
+Status: **candidate, credit0**. The universal bound and uniform sharpness construction below are completely formalized in12Lean modules. The final theorem classifies EVERY index0≤k≤d² for EVERY dimensiond≥5 using actual independently sorted arrays and the full probability simplex. Independent final source/math/formal/bounded-novelty/manuscript review passes. Final acceptance is recorded externally after extracted replay; no absolute priority claim. Very small dimensions remain separate research notes and are not claimed by this candidate's classification.
 
 ## Source
 
@@ -58,4 +58,4 @@ Hence no index larger than2d−5 can hold universally (top sums are nondecreasin
 
 `MaxIndex.source_index_classification` states: for every d≥5 and every k≤d², the inequality holds universally over nonnegative p:Fin d→R with sum1 if and only if k≤2d−5. `source_universal_index` proves the strict bound at2d−5 for d≥3; `source_next_index_counterexample` constructs an actual probability vector on Fin d violating the next index for d≥5. The finite-mask/sorted-array bridge, geometric normalization, maximum inclusion with ties, incidence constraints, row/column extras, mask sizes/sums, index reparameterization and monotonicity are all proved. No combinatorial, analytic or numerical certificate is left as a residual premise. Numerical scripts are supporting evidence only.
 
-Remaining gates: serious independent source/current-published/prior-art review; independent strict Lean review; paper with rendered visual QA; exact proof packet and fresh extracted strict replay. Count remains0 for this candidate.
+Independent final source/math/formal/bounded-novelty/manuscript review passes; the3-pagepaper has clean rendered visual QA. Final acceptance follows exact proof-packet readback and fresh extracted strict replay recorded externally. No separate credit for helpers, dimensions or directions.

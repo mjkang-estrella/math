@@ -1,6 +1,6 @@
 # Accepted research outcomes
 
-Strict tally: **11/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
+Strict tally: **12/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
 
 | # | Result | Lean declarations | Paper | Complete proof packet |
 |---|---|---:|---|---|
@@ -15,6 +15,7 @@ Strict tally: **11/30**. Each row is one combined mathematical outcome, with a c
 | 9 | Strict-valley refutation of Keith multicolor conjecture, MathDB 345259 | 37 | [Paper](candidates/keith-multicolor/paper.pdf) | [ZIP](candidate-packets/345259-keith-multicolor-proof.zip) |
 | 10 | Hermitian counterexample to C*-algebraic Novak positivity, MathDB351633 | 36 | [Paper](candidates/cstar-novak/paper.pdf) | [ZIP](candidate-packets/351633-cstar-novak-proof.zip) |
 | 11 | One cubic refutation of three C*-polynomial moment conjectures, MathDB355008/355009 | 36 | [Paper](candidates/cstar-polynomial/paper.pdf) | [ZIP](candidate-packets/355008-cstar-polynomial-proof.zip) |
+| 12 | Sharp maximal-index classification for every d≥5, MathDB347947 | 76 | [Paper](candidates/maximal-index/paper.pdf) | [ZIP](candidate-packets/347947-maximal-index-proof.zip) |
 
 Outcome 2 resolves an explicitly open assertion in the source associated with MathDB 363319; the record's different root-simplicity conjecture remains open. Outcome 3 does not refute the separate zero-free conjecture and makes no minimality claim.
 
@@ -35,3 +36,5 @@ Outcome9 refutes Keith's three-color extension, with actual box partitions and t
 Outcome10 refutes the full noncommutative C*-algebraic extension while preserving the scalar/commutative Novak theorem. Both source inputs and the literal source-matrix Hermitian property are proved. The genuine matrix exponential is used; no cosine identity is assumed. The exact witness has a negative quadratic form independently of numerical approximations. The unchanged Pi review, parent corrections to its numerical-precision/index-comment wording, and all36declaration types/axioms are in the packet. Searches found no earlier refutation, with incomplete citation-index/subscription/non-English coverage explicitly disclosed.
 
 Outcome11 is one shared nonnormal-involution construction, not six failures or three counted conjectures. Its universal factorization respects the source's ordered deletion derivative on the entire matrix algebra. Full source2.4terms are formalized before centered simplification. The independent report's ancillary alternative-coefficient arithmetic and stale/no-op code comments are corrected in the parent addendum; the complete literal-source proof and reviewed paper are unchanged. No earlier refutation was found in inspected primary/citing/companion sources, with subscription-index/worldwide search limits disclosed.
+
+Outcome12 proves universal sufficiency and exact maximality for the literal independently sorted source arrays in every dimension d≥5. All76declaration types and axioms were inspected in fresh parent and independent replays; the extracted packet passes the same strict verifier. The full bodies of three indexed citing preprints were compared. One published citing body, subscription services and comprehensive worldwide coverage remain unavailable; author listings and citation counts are not treated as proof of novelty. The unchanged independent report and parent qualifications are preserved.

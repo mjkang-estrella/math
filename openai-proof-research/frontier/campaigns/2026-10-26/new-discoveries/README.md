@@ -1,6 +1,6 @@
 # Thirty new mathematical discoveries
 
-Strict accepted tally: **11/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
+Strict accepted tally: **12/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
 
 The first accepted result resolves Gerhold–Simon Conjecture 3.2 / MathDB 352508: the sharp converse fractional-binomial inequality for all real exponents above 2. Its four-page paper, seven Lean modules with 67 declarations, stronger biased bound, coefficient optimality, independent source/mathematical/formal review and documented prior-art search are in `candidates/fractional-binomial/`. The reproducible ZIP passes byte readback, manifest checks and a fresh isolated Lean replay after extraction. Classical Gamma-ratio convexity is credited; no prior full sharp finite-sum resolution was found. The inaccessible Alzer article and the limits of priority searches are explicitly documented. All corollaries and helpers are one combined outcome.
 
@@ -23,6 +23,8 @@ The ninth accepted result refutes Keith's three-color linear-cut conjecture, Mat
 The tenth accepted result refutes Krishna’s C*-algebraic Novak Conjecture4.2 / MathDB351633. Four explicit self-adjoint2×2matrix inputs and a constant second coordinate give a Hermitian8×8source matrix with exact quadratic form cos(pi sqrt15)−3≤−2. Its two-page paper, complete36-declaration exponential/cosine/source-matrix Lean proof, independent five-gate review and fresh extracted-packet replay are in `candidates/cstar-novak/`. The scalar and commutative Novak theorems remain true. Bounded priority-search and numerical-check precision qualifications are explicit; this is one refutation only.
 
 The eleventh accepted result gives one centered cubic in M2(C) refuting Krishna’s three C*-algebraic polynomial moment conjectures, MathDB355008/355009 and source2206.06653v1Conjecture2.4. Its ordered deletion derivative factors for every complex matrix argument. All six literal Loewner defects are Hermitian and have exact negative quadratic forms. The two-page paper,36-declaration Lean proof, independent five-gate review and extracted replay are in `candidates/cstar-polynomial/`. The three labels form ONE outcome. Classical scalar theorems remain true; ancillary review errors are reconciled in the parent addendum.
+
+The twelfth accepted result proves the sharp maximal index h(d)=2d−5 for every d≥5, MathDB347947 / Caro–Graswald Conjecture4.19. Its complete76-declaration/12-module Lean proof covers the full probability simplex and independently sorted d²arrays, including sharpness. The three-page paper, independent five-gate review and fresh extracted replay are in `candidates/maximal-index/`. This is ONE combined outcome. Full-body citing-source coverage and remaining priority-search limits are documented.
 
 See [RESULTS.md](RESULTS.md) for papers, complete proof packets, verification counts and novelty qualifications.
 
