@@ -51,7 +51,7 @@ def main():
     text = source.read_text()
     if re.search(r"\b(sorry|admit|native_decide|axiom|unsafe)\b", text):
         raise RuntimeError("Forbidden proof token")
-    names = re.findall(r"^(?:noncomputable )?(?:def|theorem|lemma)\s+(\w+)", text, re.M)
+    names = re.findall(r"^(?:noncomputable )?(?:abbrev|def|theorem|lemma)\s+(\w+)", text, re.M)
     if not names or len(names) != len(set(names)) or manifest["main_theorem"] not in names:
         raise RuntimeError("Incomplete or ambiguous declaration inventory")
     checks = "import " + module + "\n\n" + "\n".join(

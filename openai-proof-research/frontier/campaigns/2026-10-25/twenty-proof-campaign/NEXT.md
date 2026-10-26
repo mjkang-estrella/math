@@ -81,3 +81,22 @@ Only own new work may be staged. The repository contains extensive unrelated
 tracked and untracked user work. No external publication, posting or push
 is authorized by this continuation. Keep the goal active until20 actually
 qualify; do not mark complete merely to stop, or count an incomplete proof.
+
+## Newest checkpoint (supersedes active-call details above)
+
+Count is now11/20. Fibonacci371201 and shuffle369280 passed independent review,
+visual QA and extracted ZIP rebuilds, and were committed individually as
+2c81e46143 and4e16d8b21e. Review `reviews/recurrence-shuffle.md` was completed
+(cell179 closed). `verify_outcome.py` now also inventories `abbrev`.
+
+Active: cell169, discovery of two additional full MathDB results, owner
+`../next-discovery-lane/`; cell196, independent review of canonical
+`outcomes/graph-normalization` (MathDB349070), writes only
+`reviews/graph-normalization.md`. That proof compiled8declarations; its
+2-page paper was built and every page visually inspected. Do not count it
+until review/package/replay. Its source uses standard diagonal majorization,
+already used by Guigues2026AppendixB; no novelty/convergence claim.
+
+The arithmetic worker remains active; see its exact thread ID above. Do not
+launch a duplicate. User requires20; goal remains active. Parent is screening
+new second-page inequality/polynomial source snapshots under queued-sources.
