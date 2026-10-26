@@ -1,0 +1,26 @@
+import ShuffleSpectrum
+
+#check ShuffleSpectrum.shuffle
+#print axioms ShuffleSpectrum.shuffle
+#check ShuffleSpectrum.countMatrix
+#print axioms ShuffleSpectrum.countMatrix
+#check ShuffleSpectrum.counts_table
+#print axioms ShuffleSpectrum.counts_table
+#check ShuffleSpectrum.enumeratedProbability
+#print axioms ShuffleSpectrum.enumeratedProbability
+#check ShuffleSpectrum.positionMatrix
+#print axioms ShuffleSpectrum.positionMatrix
+#check ShuffleSpectrum.four_cards
+#print axioms ShuffleSpectrum.four_cards
+#check ShuffleSpectrum.enumeration_matches_formula
+#print axioms ShuffleSpectrum.enumeration_matches_formula
+#check ShuffleSpectrum.no_sixteenth_vector
+#print axioms ShuffleSpectrum.no_sixteenth_vector
+#check ShuffleSpectrum.no_sixteenth_eigenvalue
+#print axioms ShuffleSpectrum.no_sixteenth_eigenvalue
+#check ShuffleSpectrum.no_sixteenth_in_actual_shuffle
+#print axioms ShuffleSpectrum.no_sixteenth_in_actual_shuffle
+#check ShuffleSpectrum.SpectrumConjecture
+#print axioms ShuffleSpectrum.SpectrumConjecture
+#check ShuffleSpectrum.not_spectrum_conjecture
+#print axioms ShuffleSpectrum.not_spectrum_conjecture
