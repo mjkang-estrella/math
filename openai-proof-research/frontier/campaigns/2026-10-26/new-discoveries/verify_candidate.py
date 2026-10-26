@@ -58,7 +58,7 @@ def main():
         source = path.read_text()
         if re.search(r"\b(sorry|admit|axiom|unsafe|native_decide)\b", source):
             raise RuntimeError("Forbidden proof token: " + module)
-        names = re.findall(r"^(?:noncomputable )?(?:abbrev|def|theorem|lemma)\s+(\w+)", source, re.M)
+        names = re.findall(r"^(?:noncomputable )?(?:abbrev|def|structure|theorem|lemma)\s+(\w+)", source, re.M)
         if not names or len(names) != len(set(names)):
             raise RuntimeError("Invalid declaration inventory: " + module)
         inventory.extend(namespace + "." + name for name in names)

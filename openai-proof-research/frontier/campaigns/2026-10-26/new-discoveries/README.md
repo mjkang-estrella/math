@@ -1,8 +1,10 @@
 # Thirty new mathematical discoveries
 
-Strict accepted tally: **1/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
+Strict accepted tally: **2/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
 
 The first accepted result resolves Gerhold–Simon Conjecture 3.2 / MathDB 352508: the sharp converse fractional-binomial inequality for all real exponents above 2. Its four-page paper, seven Lean modules with 67 declarations, stronger biased bound, coefficient optimality, independent source/mathematical/formal review and documented prior-art search are in `candidates/fractional-binomial/`. The reproducible ZIP passes byte readback, manifest checks and a fresh isolated Lean replay after extraction. Classical Gamma-ratio convexity is credited; no prior full sharp finite-sum resolution was found. The inaccessible Alzer article and the limits of priority searches are explicitly documented. All corollaries and helpers are one combined outcome.
+
+The second accepted result proves nonconvergence for every nonempty finite all-odd randomized subtraction set, an explicitly open assertion in the source attached to MathDB 363319. Its three-page paper, actual recursively defined game, positive invariant, 37-declaration Lean certificate, independent review and extracted proof packet are in `candidates/odd-subtraction/`. The MathDB record's separate root-simplicity conjecture remains open; it is bypassed and not claimed proved. This is one combined source-question resolution.
 
 The additive-minimum-side taxicab refinement (MathDB 341671) remains a separate candidate with complete proof, 68 Lean declarations, a five-page paper and independent mathematical/source/formal review. Novelty is on HOLD for the closest 2018 comparison. The earlier base-bound version and this refinement are the same candidate, never counted twice.
 

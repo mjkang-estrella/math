@@ -1,13 +1,12 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **1/30**. The goal remains active; 29 further qualifying outcomes are needed.
+Strict accepted tally: **2/30**. The goal remains active; 28 further qualifying outcomes are needed.
 
-1. Accepted MathDB 352508: full fractional-binomial converse, biased bound and optimal coefficient are ONE outcome. Complete 67-declaration certificate, four-page paper, independent review, novelty screen and extracted proof-packet replay pass. Commit the exact owned packet and ledger paths only.
-2. Native new-screen lane: investigate all-odd subtraction sets, actual arXiv:2405.19593 Question 3.4. Candidate adjacent-probability zigzag inequalities may force a nonzero negative −1 amplitude and resolve the full all-odd nonconvergence case. Source, formula, latest literature, full proof and Lean still required. Matrix worker independently reviews this lead.
-3. Native polynomial worker pursues a separate fresh unresolved source in polynomial/new-discovery-screen/. Coordinate to avoid duplicate screening.
-4. Pi GLM lane found the source restricted Game of Cycles conjecture already refuted in published literature. Its exhaustive small-board minimality remains uncounted and rule-gloss counterexamples are excluded. Continue only toward substantive canonical-rule open families, with exact-source and prior-art checks.
-5. MathDB 341671 taxicab refinement: mathematical/source/formal PASS, novelty HOLD for closest 2018 full-text comparison. Optional user source-access question remains pending; other work continues.
+1. Accepted fractional-binomial source conjecture 352508: one combined result, 67 Lean declarations, four-page paper and extracted packet replay PASS.
+2. Accepted all-odd randomized subtraction nonconvergence: one primary-source result attached to MathDB 363319, 37 declarations, three-page paper and extracted replay PASS. The neighboring root-simplicity record is NOT resolved. Commit exact owned paths only.
+3. Active trig counterexample: Kovalev arXiv2507.04544v1 Conjecture1.3 / MathDB369172. Two independent exact algorithms confirm negative d49,n949 at cos(t)=523/527. New-screen owns integer certificate; matrix owns formal source-square-root/ODE bridge and latest-published-source check; parent owns cosine/Horner bridge. Published2026 Arkiv version must be compared; publisher body403 so far. Zero-free369171 is distinct and not claimed refuted.
+4. Native polynomial lane: plausible all-degree proof for odd-degree derivative-root mean identity MathDB336466. Newton-moment polynomial continuation plus apolar antisymmetry; full derivative/source bridge and nearest Toda1934/1936 prior work need review. No count yet.
+5. Pi GLM canonical theta-game research remains active in pi-canonical-theta/. Follow its completion wakeup; do not poll/restart it. Old parity counterexamples and rule-gloss variants remain excluded.
+6. Taxicab refinement341671 remains mathematical/source/formal PASS with novelty HOLD for closest2018 full-text comparison. Optional source-access question remains pending while other work continues.
 
-Do not count 364606: a stronger centered-Beta-moment theorem already gives the source positivity and sharp shift classification. Preserve its independently found proof as an uncounted connection. Other exclusions remain in ledger.json and novelty-rejections.md.
-
-Use standard/default speed, exact primary sources and meaningful parallel research. Preserve old archives. No external publication or push is authorized.
+Use standard/default speed, exact primary sources and meaningful parallel research. Preserve historical archives. No external publication or push is authorized.
