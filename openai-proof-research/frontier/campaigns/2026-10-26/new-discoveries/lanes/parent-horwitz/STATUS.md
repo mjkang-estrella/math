@@ -1,0 +1,1 @@
+Credit0. Full mathematical proposal in PROOF.md, source-faithful normal calculation and exact symbolic checks. No Lean/paper/independent review/packet. Closest1996body unavailable; novelty and substantive eligibility HOLD. Classical Lagrange/mean-value steps credited.
