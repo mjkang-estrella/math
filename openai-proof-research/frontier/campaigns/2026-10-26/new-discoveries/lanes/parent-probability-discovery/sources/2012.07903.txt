@@ -1,0 +1,1611 @@
+                                               SONC Optimization and Exact Nonnegativity Certificates via
+                                                         Second-Order Cone Programming
+
+                                                                                         Victor Magron
+                                                CNRS LAAS, 7 avenue du colonel Roche 31400 Toulouse; Institute of Mathematics, 31400 Toulouse France.
+
+
+
+
+arXiv:2012.07903v4 [math.OC] 28 Apr 2025
+                                                                                             Jie Wang
+                                                                    CNRS LAAS, 7 avenue du colonel Roche 31400 Toulouse France
+
+
+
+
+                                           Abstract
+                                           The second-order cone (SOC) is a class of simple convex cones and optimizing over them can
+                                           be done more efficiently than with semidefinite programming. It is interesting both in theory
+                                           and in practice to investigate which convex cones admit a representation using SOCs, given
+                                           that they have a strong expressive ability. In this paper, we prove constructively that the cone
+                                           of sums of nonnegative circuits (SONC) admits a SOC representation. Based on this, we give
+                                           a new algorithm for unconstrained polynomial optimization via SOC programming. We also
+                                           provide a hybrid numeric-symbolic scheme which combines the numerical procedure with a
+                                           rounding-projection algorithm to obtain exact nonnegativity certificates. Numerical experiments
+                                           demonstrate the efficiency of our algorithm for polynomials with fairly large degree and number
+                                           of variables.
+                                           Keywords: sum of nonnegative circuit polynomials, second-order cone representation,
+                                           second-order cone programming, polynomial optimization, sum of binomial squares,
+                                           rounding-projection algorithm, exact nonnegativity certificate
+
+
+
+                                           1. Introduction
+                                                                                   P
+                                               A circuit polynomial is of the form α∈T cα xα − dxβ ∈ R[x] = R[x1 , . . . , xn ], where cα > 0
+                                           for all α ∈ T , T ⊆ (2N)n comprises the vertices of a simplex and β lies in the relative interior
+                                           of this simplex. The set of sums of nonnegative circuit polynomials (SONC) was introduced by
+                                           Iliman and De Wolff (2016a) as a new certificate of nonnegativity for sparse polynomials, which
+                                           is independent of the well-known set of sums of squares (SOS). Another recently introduced
+                                           alternative certificates by Chandrasekaran and Shah (2016) are sums of arithmetic-geometric-
+                                           exponentials (SAGE), which can be obtained via relative entropy programming. The connection
+                                           between SONC and SAGE polynomials has been recently studied in Murray et al. (2021); Wang
+                                           (2018); Katthän et al. (2021). It happens that SONC polynomials and SAGE polynomials are
+
+
+                                               Email addresses: vmagron@laas.fr (Victor Magron), jwang@laas.fr (Jie Wang)
+                                               URL: https://homepages.laas.fr/vmagron (Victor Magron),
+                                           https://wangjie212.github.io/jiewang (Jie Wang)
+                                           Preprint submitted to Journal of Symbolic Computation                                             April 29, 2025
+actually equivalent, as proved by Wang (2018) and Murray et al. (2021), and that both have
+a cancellation-free representation in terms of generators; see prior research by Wang (2018);
+Murray et al. (2021).
+    One of the significant differences between SONC and SOS is that SONC decompositions
+preserve sparsity of polynomials while SOS decompositions of sparse polynomials are not nec-
+essarily sparse; see Wang (2018). The set of SONC polynomials with a given support forms a
+convex cone, called a SONC cone. Optimization problems over SONC cones can be formulated
+as geometric programs or more generally relative entropy programs. We refer the interested
+reader to Iliman and De Wolff (2016b) for the unconstrained case and to Dressler et al. (2019)
+for the constrained case. Numerical experiments for unconstrained POPs (polynomial optimiza-
+tion problems) in Seidler and de Wolff (2018) have demonstrated the advantage of the SONC-
+based methods compared to the SOS-based methods, especially in the high-degree but fairly
+sparse case. Another recent framework by Dressler et al. (2020) relies on the dual SONC cone
+to compute lower bounds of polynomials by means of linear programming instead of geometric
+programming. As emphasized in the numerical comparison from Dressler et al. (2020), there
+are no general guarantees that the bounds obtained with this framework are always more or less
+accurate than the approach based on geometric programming from Seidler and de Wolff (2018),
+and the same holds for performance.
+    In the SOS case, there have been several attempts to exploit sparsity occurring in POPs. The
+sparse variant developed by Waki et al. (2006) of the moment-SOS hierarchy exploits the correl-
+ative sparsity pattern among the input variables to reduce the support of the resulting SOS de-
+compositions. Such sparse representation results have been successfully applied in many fields,
+such as optimal power flow by Josz (2016), roundoff error bounds by Magron et al. (2017) and
+recently extended to the noncommutative case by Klep et al. (2021). Another way to exploit spar-
+sity is to consider patterns based on terms, rather than variables, yielding an alternative sparse
+variant of Lasserre’s hierarchy. The resulting term-sparsity SOS (TSSOS) hierarchy has been
+developed for polynomial optimization by Wang et al. (2021b,c,a), combined with correlative
+sparsity in Wang et al. (2020), and extended to the noncommutative case in Wang and Magron
+(2020a).
+    One of the similar features shared by SOS/SONC-based frameworks is their intrinsic con-
+nections with conic programming: SOS decompositions are computed via semidefinite pro-
+gramming and SONC decompositions via geometric programming. In both cases, the result-
+ing optimization problems are solved with interior-point algorithms, thus output approximate
+nonnegativity certificates. However, one can still obtain an exact certificate from such output
+via hybrid numerical-symbolic algorithms when the input polynomial lies in the interior of the
+SOS/SONC cone. One way is to rely on rounding-projection algorithms adapted to the SOS
+cone by Peyrl and Parrilo (2008) and the SONC cone by Magron et al. (2019b), or alternatively
+on perturbation-compensation schemes as in Magron et al. (2019a); Magron and Safey El Din
+(2018c). The latter algorithms are implemented within the RealCertify library by Magron and Safey El Din
+(2018a).
+    In this paper, we study the second-order cone representation of SONC cones. An n-dimensional
+(rotated) second-order cone (SOC) is defined as
+                                                         X
+                                                         n
+                   K := {a = (ai )ni=1 ∈ Rn | 2a1 a2 ≥         a2i , a1 ≥ 0, a2 ≥ 0}.
+                                                         i=3
+
+The SOC is well-studied and has mature solvers. Optimizing via second-order cone program-
+                                            2
+ming (SOCP) can be handled more efficiently than with semidefinite programming; see the work
+by Ahmadi and Majumdar (2019) and Alizadeh and Goldfarb (2003). On the other hand, despite
+the simplicity of SOCs, they have a strong ability to express other convex cones. Many such
+examples can be found in Section 3.3 from Ben-Tal and Nemirovski (2001). Therefore, it is in-
+teresting in theory and also important from the view of applications to investigate which convex
+cones can be expressed by SOCs.
+     Given sets of lattice points A ⊆ (2N)n , B1 ⊆ conv(A ) ∩ (2N)n and B2 ⊆ conv(A ) ∩
+(N \(2N)n ) (conv(A ) is the convex hull of A ) with A ∩ B1 = ∅, let SONCA ,B1 ,B2 be the
+   n
+
+SONC cone supported on A , B1 , B2 (see Definition 14). The first main result of this paper is
+the following theorem.
+Theorem 1. For A ⊆ (2N)n , B1 ⊆ conv(A ) ∩ (2N)n and B2 ⊆ conv(A ) ∩ (Nn \(2N)n ) with
+A ∩ B1 = ∅, the convex cone SONCA ,B1 ,B2 admits a SOC representation.
+     The fact that SONC cones admit a SOC characterization was firstly proven by Averkov (2019)
+(see Theorem 17 for more details). However, Averkov’s result is more theoretical. Even though
+Averkov’s proof theoretically allows one to construct a SOC representation for a SONC cone,
+the construction is complicated and was not explicitly given in Averkov’s paper. Our proof
+of Theorem 1, which involves writing a SONC polynomial as a sum of binomial squares with
+rational exponents (Theorem 12), is totally different from Averkov’s and leads to a more concise
+(hence more efficient) SOC representation for SONC cones. This representation also enables us
+to propose a practical algorithm, based on SOCP, providing SONC decompositions for a certain
+class of nonnegative polynomials, which in turn yields lower bounds for unconstrained POPs.
+We emphasize that the number of SOCs used in the algorithm is linear in the number of terms
+(Lemma 29). We test the algorithm on various randomly generated polynomials up to a fairly
+large size, involving n ∼ 40 variables and of degree d ∼ 60. The numerical results demonstrate
+the efficiency of our algorithm.
+     The rest of this paper is organized as follows. In Section 2, we list some preliminaries on
+SONC polynomials. In Section 3, we reveal a key connection between SONC polynomials and
+sums of binomial squares by introducing the notion of T -rational mediated sets. By virtue
+of this connection, we obtain second-order cone representations for SONC cones in Section 4.
+In Section 5, we provide a numerical procedure for unconstrained polynomial optimization via
+SOCP. A hybrid numerical-symbolic certification algorithm, based on combining this numerical
+procedure with a symbolic rounding-projection scheme is given and analyzed in Section 6. We
+evaluate the performance of the resulting certification algorithm in Section 7.
+     This paper is the follow-up of our previous contribution (Wang and Magron, 2020b), pub-
+lished in the proceedings of ISSAC’20. The main theoretical and practical novelties are three-
+fold: (1) we design a hybrid numeric-symbolic algorithm to compute exact nonnegativity cer-
+tificates, (2) provide explicit bounds for its arithmetic complexity analysis and (3) compare its
+efficiency with our numerical optimization procedure. Another more minor novelty is that we
+provide detailed statements for the algorithms to build rational mediated sets and simplex covers,
+respectively in Section 3.1 and Section 5.
+
+2. Preliminaries
+
+   Let R[x] = R[x1 , . . . , xn ] be the ring of real n-variate polynomials, and let R+ be the set of
+positive real numbers. For a finite set A ⊆ Nn , we denote by conv(A ) the convex hull of A .
+                                                 3
+Given a finite set A ⊆ Nn , we consider polynomials f ∈ R[x] supported on A ⊆ Nn , i.e., f is of
+                  P
+the form f (x) = α∈A fα xα with fα ∈ R, xα = xα1 1 · · · xαn n . The support of f is supp( f ) := {α ∈
+A | fα , 0} and the Newton polytope of f is defined as New( f ) := conv(supp( f )). For a polytope
+P, we use V(P) to denote the vertex set of P and use P◦ to denote the interior of P. For a set A,
+we use #A to denote the cardinality of A. A polynomial f ∈ R[x] which is nonnegative over Rn
+is called a nonnegative polynomial, or a positive semi-definite (PSD) polynomial. The following
+definition of circuit polynomials was proposed by Iliman and De Wolff in Iliman and De Wolff
+(2016a).
+Definition 2. A polynomial f ∈ R[x] is called a circuit polynomial if it is of the form f (x) =
+P         α     β
+ α∈T cα x − dx and satisfies the following conditions:
+
+ (i) T ⊆ (2N)n comprises the vertices of a simplex;
+ (ii) cα > 0 for each α ∈ T ;
+(iii) β ∈ conv(T )◦ ∩ Nn .
+
+The support (T , β) satisfying (i), (iii) is called a circuit.
+             P
+    If f = α∈T cα xα −dxβ is a circuit polynomial, then from the definition we can uniquely write
+     P                               P
+β = α∈T λα α with λα > 0 and α∈T λα = 1. We define the corresponding circuit number as
+        Q
+Θ f := α∈T (cα /λα )λα . The nonnegativity of the circuit polynomial f is decided by its circuit
+number alone, that is, f is nonnegative if and only if either β < (2N)n and |d| ≤ Θ f , or β ∈
+(2N)n and d ≤ Θ f , by Theorem 3.8 from Iliman and De Wolff (2016a). To provide a concise
+narrative, we refer to a nonnegative circuit polynomial by a nonnegative circuit and also view a
+monomial square as a nonnegative circuit. An explicit representation of a polynomial being a
+sum of nonnegative circuits, or SONC for short, provides a certificate for its nonnegativity. Such
+a certificate is called a SONC decomposition. A polynomial that admits a SONC decomposition
+is called a SONC polynomial. For simplicity, we denote the set of SONC polynomials by SONC.
+                               P
+    For a polynomial f = α∈A fα xα ∈ R[x], let Λ( f ) := {α ∈ A | α ∈ (2N)n and fα > 0}
+                                                               P               P
+and Γ( f ) := supp( f )\Λ( f ). Then we can write f as f = α∈Λ( f ) cα xα − β∈Γ( f ) dβ xβ . For each
+β ∈ Γ( f ), let
+                           C (β) := {T | T ⊆ Λ( f ) and (T , β) is a circuit}.                     (1)
+As a consequence of Theorem 5.5 from Wang (2018), if f ∈ SONC then it has a decomposition
+                                  X X              X
+                            f =             fT β +      cα x α ,                       (2)
+                                     β∈Γ( f ) T ∈C (β)    α∈A˜
+
+where fT β is a nonnegative circuit polynomial supported on T ∪ {β} and A˜ = {α ∈ Λ( f ) | α <
+∪β∈Γ( f ) ∪T ∈C (β) T }.
+
+3. SONC and sums of binomial squares
+
+   In this section, we give a characterization of SONC polynomials in terms of sums of binomial
+squares (SOBS) with rational exponents.
+
+
+                                                     4
+3.1. Rational mediated sets
+    A lattice point α ∈ Nn is even if it is in (2N)n . For a subset M ⊆ Nn , define A(M) :=
+{ 21 (v + w) | v , w, v, w ∈ M ∩ (2N)n } as the set of averages of distinct even points in M. A subset
+              n
+T ⊆ (2N) is called a trellis if T comprises the vertices of a simplex. For a trellis T , we call
+M a T -mediated set if T ⊆ M ⊆ A(M) ∪ T ; see the work on mediated sets by Hartzer et al.
+(2020); Powers and Reznick (2021); Reznick (1989).
+                         P
+Theorem 3. Let f = α∈T cα xα − dxβ ∈ R[x] with d , 0 be a nonnegative circuit. Then f is
+a sum of binomial squares if and only if there exists a T -mediated set containing β. Moreover,
+suppose that β belongs to a T -mediated set M and for each u ∈ M\T , let us write u = 12 (vu +wu )
+                                                                    P            1         1
+for some vu , wu ∈ M∩(2N)n . Then one has the decomposition f = u∈M\T (au x 2 vu −bu x 2 wu )2 +
+cxα , with au , bu ∈ R, c ≥ 0, α ∈ T .
+Proof: It follows from Theorem 5.2 in Iliman and De Wolff (2016a). 
+
+     By Theorem 3, if we want to represent a nonnegative circuit polynomial as a sum of binomial
+squares, we need to first decide if there exists a T -mediated set containing a given lattice point
+and then to compute one if there exists. However, there are obstacles for each of these two steps:
+(1) there may not exist such a T -mediated set containing a given lattice point; (2) even if such a
+set exists, there is no efficient algorithm to compute it. In order to overcome these two difficulties,
+we introduce the concept of T -rational mediated sets as a replacement of T -mediated sets by
+admitting rational numbers in coordinates.
+     Concretely, for a subset M ⊆ Qn , let us define e     A(M) := { 12 (v + w) | v , w, v, w ∈ M} as the set
+of averages of distinct rational points in M. Let us assume that T ⊆ Qn comprises the vertices
+of a simplex. We say that M is a T -rational mediated set if T ⊆ M ⊆ e                A(M) ∪ T . We shall
+see that for a trellis T and a lattice point β ∈ conv(T )◦ , a T -rational mediated set containing β
+always exists and moreover, there is an effective algorithm to compute it.
+     First, let us consider the one dimensional case. For a sequence of integer numbers A =
+{s, q1 , . . . , qm , p} (arranged from small to large), if every qi is an average of two distinct numbers
+in A, then we say A is an (s, p)-mediated sequence. Note that the property of (s, p)-mediated
+sequences is preserved under translations, that is, there is a one-to-one correspondence between
+(s, p)-mediated sequences and (s + r, p + r)-mediated sequences for any integer number r. So it
+suffices to consider the case of s = 0.
+     For a fixed p and an integer q with 0 < q < p, a minimal (0, p)-mediated sequence containing
+q is a (0, p)-mediated sequence containing q with the least number of elements.
+Example 4. Consider the set A = {0, 2, 4, 5, 8, 11}. One can easily check by hand that A is a
+minimal (0, 11)-mediated sequence containing 2, 4, 5, 8.
+Denote the number of elements in a minimal (0, p)-mediated sequence containing q by N( qp ).
+                                               
+One can then easily show that N( 1p ) = log2 (p) + 2 by induction on p. We conjecture that this
+formula holds for general q.
+                                                      
+Conjecture 5. If gcd(p, q) = 1, then N( qp ) = log2 (p) + 2.
+    Generally we do not know how to compute a minimal (0, p)-mediated sequence containing
+a given q. However, we can design a procedure to compute an approximately minimal (0, p)-
+mediated sequence containing a given q, based on the following lemma.
+                                                     5
+Lemma 6. For integers p, q such that 0 < q < p, there exists a (0, p)-mediated sequence con-
+taining q with the cardinality less than 12 (log2 (p) + 23 )2 .
+Proof: We can assume gcd(p, q) = 1 (otherwise one can consider p/gcd(p, q), q/gcd(p, q) in-
+stead). Let us do induction on p. Assume that for any p′ , q′ ∈ N, 0 < q′ < p′ < p, there exists a
+(0, p′ )-mediated sequence containing q′ with the number of elements less than 21 (log2 (p′ ) + 23 )2 .
+     Case 1: Suppose that p is an even number. If q = 2p , then by gcd(p, q) = 1, we have q = 1 and
+A = {0, 1, 2} is a (0, p)-mediated sequence containing q. Otherwise, we have either 0 < q < 2p or
+ p                          p                                                   p
+ 2 < q < p. For 0 < q < 2 , by the induction hypothesis, there exists a (0, 2 )-mediated sequence
+   ′                     p
+A containing q. For 2 < q < p, since the property of mediated sequences is preserved under
+translations, one can first subtract 2p and obtain a (0, 2p )-mediated sequence containing q− 2p by the
+induction hypothesis. Then by adding 2p , one obtains a ( 2p , p)-mediated sequence A′ containing
+q. It follows that A = A′ ∪ {p} or A = {0} ∪ A′ is a (0, p)-mediated sequence containing q.
+                                                    p
+             0                      q               2                (q)                     p
+
+Moreover, we have
+                                       1       p   3    1           3
+                     #A = 1 + #A′ < 1 + (log2 ( ) + )2 < (log2 (p) + )2 .
+                                       2       2   2    2           2
+    Case 2: Suppose that p is an odd number. Without loss of generality, assume that q is an even
+number (otherwise one can consider p − q instead and then obtain a (0, p)-mediated sequence
+containing q through the map x 7→ p − x which clearly preserves the property of mediated
+sequences).
+    Let q = 2k r for some k, r ∈ N\{0} and 2 ∤ r. If q = p − r, then q = q−r+p   2 . Since gcd(p, q) = 1,
+                                 1   3            1
+we have r = 1. Let A = {0, 2 q, 4 q, . . . , (1 − 2k )q, q, p}. For i = 1, . . . , k, we have (1 − 21i )q =
+1       1        1
+2 (1 − 2i−1 )q + 2 q. Therefore, A is a (0, p)-mediated sequence containing q.
+
+
+             0
+                                             1
+                                             2
+                                               q                   3
+                                                                   4
+                                                                     q · · · (1 − 21k )q q   p
+                                                                               q−r
+
+Moreover, we have
+                                        1                 3    1           3
+                      #A = k + 3 <        (log2 (2k + 1) + )2 = (log2 (p) + )2 .
+                                        2                 2    2           2
+                                                                                        q−r+p
+    If q < p − r, then q lies on the line segment between q − r and q−r+p2 . Since         2    − (q − r) =
+p+r−q                                                                       q−r+p
+   2    < p, then by the induction hypothesis, there exists a (q − r, 2 )-mediated sequence
+A containing q (using translations). It follows that A = {0, 21 q, 34 q, . . . , (1 − 2k−1
+ ′                                                                                     1
+                                                                                           )q, p} ∪ A′ is a
+(0, p)-mediated sequence containing q.
+                                                                                   q−r+p
+             0
+                                          1
+                                          2
+                                            q            3
+                                                         4
+                                                           q · · · (1 − 21k )q q     2       p
+                                                                    q−r
+
+
+
+
+                                                    6
+Moreover, we have
+                                              q         1      p+r−q      3
+                     #A = k + 1 + #A′ < log2 ( ) + 1 + (log2 (         ) + )2
+                                              r         2         2       2
+                                                        1      p   3 2
+                                      < log2 (p) + 1 + (log2 ( ) + )
+                                                        2     2    2
+                                        1             3 2
+                                      = (log2 (p) + ) .
+                                        2             2
+    If q > p−r, then q lies on the line segment between q−r+p    2      and p. Since p− q−r+p  2    = p+r−q
+                                                                                                        2   < p,
+                                                        q−r+p                                     ′
+then by the induction hypothesis, there exists a ( 2 , p)-mediated sequence A containing q
+(using translations). It follows that the set A = {0, 21 q, 34 q, . . . , (1 − 21k )q} ∪ A′ is a (0, p)-mediated
+sequence containing q.
+
+             0
+                                            1
+                                            2
+                                              q            3
+                                                           4
+                                                             q · · · (1 − 21k )q q−r+p
+                                                                                   2   q        p
+                                                                     q−r
+
+As previously, we have #A = k + 1 + #A′ < 21 (log2 (p) + 23 )2 . 
+
+    According to the proof of Lemma 6, the procedure to compute an approximately minimal
+(0, p)-mediated sequence containing a given q is stated as Algorithm 1.
+
+Lemma 7. Suppose that α1 and α2 are two rational points, and β is any rational point on the
+line segment between α1 and α2 . Then there exists an {α1 , α2 }-rational mediated set M contain-
+ing β. Furthermore, if the denominators of coordinates of α1 , α2 , β are odd numbers, and the
+numerators of coordinates of α1 , α2 are even numbers, then we can ensure that the denominators
+of coordinates of points in M are odd numbers and the numerators of coordinates of points in
+M\{β} are even numbers.
+
+Proof: Suppose β = (1 − qp )α1 + qp α2 , p, q ∈ N, 0 < q < p,gcd(p, q) = 1. We then construct a one-
+to-one correspondence between the points on the one-dimensional number axis and the points on
+the line across α1 and α2 via the map: s 7→ (1− ps )α1 + ps α2 , such that α1 corresponds to the origin,
+α2 corresponds to p and β corresponds to q. Then it is clear that a (0, p)-mediated sequence
+containing q corresponds to a {α1 , α2 }-rational mediated set containing β. Hence by Lemma 6,
+there exists a {α1 , α2 }-rational mediated set M containing β with the number of elements less
+than 12 (log2 (p) + 23 )2 . Moreover, we can see that if α1 , α2 , β are lattice points, then the elements
+in M are also lattice points.
+     If the denominators of coordinates of α1 , α2 , β are odd numbers, and the numerators of co-
+ordinates of α1 , α2 are even numbers, assume that the least common multiple of denominators
+appearing in the coordinates of α1 , α2 , β is r and then remove the denominators by multiplying
+the coordinates of α1 , α2 , β by r such that rα1 , rα2 are even lattice points. If rβ is even, let M ′
+be the { 2r α1 , 2r α2 }-rational mediated set containing 2r β obtained as above (the elements in M ′ are
+lattice points). Then M = 2r M ′ := { 2r u | u ∈ M ′ } is an {α1 , α2 }-rational mediated set containing
+β such that the denominators of coordinates of points in M are odd numbers and the numerators
+of coordinates of points in M\{β} are even numbers.
+     If rβ is not even, assume without loss of generality that β lies on the line segment between
+α1 and α1 +α               ′                   ′                              ′         r    r
+             2 . Let β = 2β − α1 with rβ an even lattice point. Let M be the { 2 α1 , 2 α2 }-rational
+                2
+
+                                r ′                                                   ′
+mediated set containing 2 β obtained as above (note that the elements in M are lattice points).
+                                                      7
+Algorithm 1 MedSeq(p, q)
+Input: p, q ∈ N, 0 < q < p
+Output: A set of triples {(ui , vi , wi )}i with ui = 12 (vi + wi ) such that {0, p} ∪ {ui }i is a (0, p)-
+    mediated sequence containing q
+ 1: u := p, v := q, w :=gcd(p, q);
+ 2: u := w u
+             , v := wv ;
+ 3: if 2|u then
+ 4:    if v = u2 then
+ 5:       A := {(1, 0, 2)};
+ 6:    else
+ 7:       if v < u/2 then
+ 8:            A := MedSeq( 2u , v) ∪ {( u2 , 0, u)};
+ 9:       else
+10:            A := {( u2 , 0, u)} ∪ (MedSeq( 2u , v − u2 ) + u2 );
+11:       end if
+12:    end if
+13: else
+14:    if 2|v then
+15:       Let k, r ∈ N\{0} such that v = 2k r and 2 ∤ r;
+16:       if v = u − r then
+17:            A := {( 12 v, 0, v), ( 43 v, 12 v, v), . . . , (v, v − r, u)};
+18:       else
+19:           if v < u − r then
+20:               A := {( 12 v, 0, v), . . . , ( v−r+u                        u+r−v
+                                                    2 , v − r, u)} ∪ (MedSeq( 2 , r) + v − r);
+21:           else
+22:               A := {( 12 v, 0, v), . . . , ( v−r+u                        u+r−v v+r−u
+                                                    2 , v − r, u)} ∪ (MedSeq( 2 , 2 ) +
+                                                                                            v+u−r
+                                                                                              2 );
+23:           end if
+24:       end if
+25:    else
+26:       A := u − MedSeq(u, u − v);
+27:    end if
+28: end if
+29: return wA;
+
+
+
+
+                                                    8
+Then M = 2r M ′ ∪ {β} is an {α1 , α2 }-rational mediated set containing β such that the denominators
+of coordinates of points in M are odd numbers and the numerators of coordinates of points in
+M\{β} are even numbers as desired. 
+
+    The procedure based on Lemma 7 to obtain an {α1 , α2 }-rational mediated set containing β is
+stated in Algorithm 2.
+Algorithm 2 LMedSet(α1 , α2 , β)
+Input: α1 , α2 , β ∈ Qn such that β lies on the line segment between α1 and α2
+Output: A sequence of triples {(ui , vi , wi )}i with ui = 12 (vi + wi ) such that {α1 , α2 } ∪ {ui }i is a
+    {α1 , α2 }-rational mediated set containing β
+                    q      q
+ 1: Let β = (1 − p )α1 + p α2 , p, q ∈ N, 0 < q < p,gcd(p, q) = 1;
+ 2: A := MedSeq(p, q);
+ 3: M := ∪(u,v,w)∈A {((1 − up )α1 + up α2 , (1 − vp )α1 + vp α2 , (1 − wp )α1 + wp α2 )};
+ 4: return M;
+
+
+Lemma 8. For a trellis T = {α1 , . . . , αm } and a lattice point β ∈ conv(T )◦ , there exists a
+T -rational mediated set MT β containing β such that the denominators of coordinates of points
+in MT β are odd numbers and the numerators of coordinates of points in MT β \{β} are even
+numbers.
+                      P qi                   Pm
+Proof: Suppose β = m    i=1 p αi , where p =     i=1 qi , p, qi ∈ N\{0}, gcd(p, q1, . . . , qm ) = 1. If p
+is an even number, then because gcd(p, q1, . . . , qm ) = 1, there must exist an odd number among
+the qi ’s. Without loss of generality assume q1 is an odd number. If p is an odd number and
+there exists an even number among the qi ’s, then without loss of generality assume q1 is an even
+number. In any of these two cases, we have
+                                q1      p − q1 q2                     qm
+                           β=      α1 +       (        α2 + · · · +        αm ).
+                                p         p     p − q1              p − q1
+                               qm
+Let β1 = p−qq2
+               1
+                 α2 + · · · + p−q 1
+                                    αm . Then β = qp1 α1 + p−q1
+                                                            p β1 .
+    If p is an odd number and all qi ’s are odd numbers, then we have
+                                    q1     q1 + q2     q3            qm
+                            β=           (         α1 + α3 + · · · +    αm )
+                                 q1 + q2      p         p             p
+                                    q2     q1 + q2     q3            qm
+                               +         (         α2 + α3 + · · · +    αm ).
+                                 q1 + q2      p        p              p
+                              q3             qm               q1 +q2      q3               qm
+Let β1 = q1 +q       2
+                   p α1 + p α3 + · · · + p αm and β2 =           p α2 + p α3 + · · · + p αm . Then β =
+  q1            q2
+q1 +q2 β1 + q1 +q2 β2 .
+      Apply the same procedure for β1 (and β2 ), and continue iteratively. Eventually we obtain a
+set of points {βi }li=1 such that for each i, βi = λi β j + µi βk or βi = λi β j + µi αk or βi = λi α j + µi αk ,
+where λi + µi = 1, λi , µi > 0. We claim that the denominators of coordinates of βi are odd num-
+bers, and the numerators of coordinates of βi are even numbers. This is because for each βi , we
+                                 P s
+have the expression βi = j rj α j , where r is an odd number and all α j ’s are even lattice points.
+For βi = λβ j + µβk (or βi = λβ j + µαk , βi = λα j + µαk respectively), let Mi be the {β j , βk }- (or
+{β j , αk }-, {α j , αk }- respectively) rational mediated set containing βi obtained by Lemma 7 such
+                                                       9
+that the denominators of coordinates of points in Mi are odd numbers and the numerators of co-
+ordinates of points in Mi \{β} are even numbers for i = 0, . . . , l (set β0 = β). Let MT β = ∪li=0 Mi .
+Then MT β is clearly a T -rational mediated set containing β with the desired property. 
+
+
+3.2. Decomposing SONC with binomial squares
+     For r ∈ N and f (x) ∈ R[x], let f (xr ) := f (xr1 , . . . , xrn ). For an odd r ∈ N, it is clear that
+        P                                                                         P
+ f (x) = α∈T cα xα − dxβ is a nonnegative circuit if and only if f (xr ) = α∈T cα xrα − dxrβ is a
+nonnegative circuit.
+                         P
+Theorem 9. Let f = α∈T cα xα − dxβ ∈ R[x] with d , 0 be a circuit polynomial. Assume that
+MT β is a T -rational mediated set containing β provided by Lemma 8. For each u ∈ MT β \T ,
+let u = 12 (vu + wu ), vu , wu ∈ MT β . Then f is nonnegative if and only if f can be written as
+      P                1         1
+ f = u∈MT β \T (au x 2 vu − bu x 2 wu )2 + cxα , au , bu ∈ R, c ≥ 0, α ∈ T .
+Proof: Assume that the least common multiple of denominators appearing in the coordinates of
+points in MT β is r, which is odd. Then f (x) is nonnegative if and only if f (xr ) is nonnegative.
+Multiply all coordinates of points in MT β by r to remove the denominators, and the obtained
+rMT β := {ru | u ∈ MT β } is an rT -mediated set containing rβ. Hence by Theorem 3, f (xr ) is
+                                                              P                 r           r
+nonnegative if and only if f (xr ) can be written as f (xr ) = u∈MT β \T (au x 2 vu − bu x 2 wu )2 + cxrα ,
+                                                            P              1           1
+au , bu ∈ R, c ≥ 0, α ∈ T , which is equivalent to f (x) = u∈MT β \T (au x 2 vu − bu x 2 wu )2 + cxα . 
+
+
+Example 10. Let f = x4 y2 + x2 y4 + 1 − 3x2 y2 be the Motzkin polynomial and T = {α1 =
+(0, 0), α2 = (4, 2), α3 = (2, 4)}, β = (2, 2). Let β1 = 13 α1 + 23 α2 and β2 = 13 α1 + 32 α3 such that
+β = 21 β1 + 21 β2 . Let β3 = 32 α1 + 31 α2 and β4 = 23 α1 + 31 α3 . Then M = {α1 , α2 , α3 , β, β1 , β2 , β3 , β4 }
+is a T -rational mediated set containing β.
+
+                                                               α3 (2, 4)
+
+
+                                                 ( 34 , 38 )
+                                                       β2           (2, 2)           (4, 2)
+                                        ( 32 , 34 )             β                    α2
+
+                                              β4                      β1 ( 8 , 4 )
+                                                                           3 3
+
+                                  (0, 0)               β3 ( 4 , 2 )
+                                                            3 3
+                                     α1
+
+                                                                                          2   4    4   2
+     By Theorem 9, one has f = x4 y2 + x2 y4 + 1 − 3x2 y2 = (a1 x 3 y 3 − b1 x 3 y 3 )2 + (a2 xy2 −
+     1 2              2 4                              2 1             4 2
+b2 x 3 y 3 )2 + (a3 x 3 y 3 − b3 )2 + (a4 x2 y − b4 x 3 y 3 )2 + (a5 x 3 y 3 − b5 )2 . Comparing coefficients yields
+            2 4      4 2                  1 2             2 4                        2 1           4 2
+ f = 32 (x 3 y 3 − x 3 y 3 )2 + (xy2 − x 3 y 3 )2 + 12 (x 3 y 3 − 1)2 + (x2 y − x 3 y 3 )2 + 21 (x 3 y 3 − 1)2 , a sum of
+five binomial squares with rational exponents.
+
+Lemma 11. Let f (x) ∈ R[x]. For an odd number r, f (x) ∈ SONC if and only if f (xr ) ∈ SONC.
+                                                                 10
+Proof: It comes from the fact that f (x) is a nonnegative circuit if and only if f (xr ) is a nonnega-
+tive circuit for an odd number r. 
+
+                          P                 P
+Theorem 12. Let f = α∈Λ( f ) cα xα − β∈Γ( f ) dβ xβ ∈ R[x]. Let C (β) be as in (1). For every
+β ∈ Γ( f ) and every trellis T ∈ C (β), let MT β be a T -rational mediated set containing β
+provided by Lemma 8. Let M = ∪β∈Γ( f ) ∪T ∈C (β) MT β . For each u ∈ M\Λ( f ), let u = 21 (vu +
+wu ), vu , wu ∈ M. Let A˜ = {α ∈ Λ( f ) | α < ∪β∈Γ( f ) ∪T ∈C (β) T }. Then f ∈ SONC if and
+                                     P           1           1        P                   P
+only if f can be written as f = u∈M\Λ( f ) (au x 2 vu − bu x 2 wu )2 + β∈Γ( f ) c′αβ xαβ + α∈A˜ cα xα ,
+              ′
+au , bu ∈ R, cαβ ≥ 0, αβ ∈ C (β), β ∈ Γ( f ).
+
+Proof: Suppose f ∈ SONC. By Theorem 5.5 in Wang (2018), we can write f as
+                               X X                X
+                           f =             fT β +   cα x α ,
+                                              β∈Γ( f ) T ∈C (β)           α∈A˜
+
+such that every fT β is a nonnegative circuit supported on T ∪ {β}. We have
+                                    X           1           1
+                           fT β =         (au x 2 vu − bu x 2 wu )2 + c′αβ xαβ ,
+                                          u∈MT β \T
+
+
+for some au , bu ∈ R, c′αβ ≥ 0, αβ ∈ C (β) by Theorem 9. Thus there exist au , bu ∈ R, c′αβ ≥
+0, αβ ∈ C (β), β ∈ Γ( f ) such that
+                            X          1           1
+                                                             X            X
+                    f =          (au x 2 vu − bu x 2 wu )2 +   c′αβ xαβ +   cα x α .
+                         u∈M\Λ( f )                                 β∈Γ( f )                α∈A˜
+
+Now suppose that f has the desired form. Assume that the least common multiple of denomi-
+nators appearing in the coordinates of points in M is an odd positive integer r. Then there exist
+au , bu ∈ R, c′αβ ≥ 0, αβ ∈ C (β), β ∈ Γ( f ) such that
+                               X                r           r
+                                                                         X                       X
+                 f (xr ) =                (au x 2 vu − bu x 2 wu )2 +              c′αβ xrαβ +          cα xrα .
+                             u∈M\Λ( f )                                 β∈Γ( f )                 α∈A˜
+
+Thus f (xr ) ∈ SONC since every binomial or monomial square is a nonnegative circuit. Hence
+by Lemma 11, f (x) ∈ SONC. 
+
+
+
+4. SOC representations of SONC cones
+
+     SOCP plays an important role in convex optimization and can be handled via very efficient
+algorithms. If a SOC representation exists for a given convex cone, then it is possible to design
+efficient algorithms for optimization problems over the convex cone. In Fawzi (2019), Fawzi
+proved that PSD cones do not admit any SOC representations in general, which implies that
+SOS cones do not admit any SOC representations in general. In this section, we prove that
+dramatically unlike the SOS cones, SONC cones always admit SOC representations. Let us
+discuss it in more details. Let Qk := Q × · · · × Q be the Cartesian product of k copies of a SOC
+Q. A linear slice of Qk is an intersection of Qk with a linear subspace.
+                                                 11
+Definition 13. A convex cone C ⊆ Rm has a SOC lift of size k (or simply a Qk -lift) if it can be
+written as the projection of a slice of Qk , that is, there is a subspace L of Qk and a linear map
+π : Qk → Rm such that C = π(Qk ∩ L).
+    We give the following definition of SONC cones supported on given lattice points.
+Definition 14. Given sets of lattice points A ⊆ (2N)n , B1 ⊆ conv(A ) ∩ (2N)n and B2 ⊆
+conv(A ) ∩ (Nn \(2N)n ) such that A ∩ B1 = ∅, define the SONC cone supported on A , B1 , B2
+as
+
+                      SONCA ,B1 ,B2 :={(cA , dB1 , dB2 ) ∈ R|A |
+                                                            + × R+
+                                                                     |B1 |
+                                                                           × R|B2 |
+                                         X               X
+                                       |     cα x α −          dβ xβ ∈ SONC},
+                                             α∈A            β∈B1 ∪B2
+
+where cA = (cα )α∈A , dB1 = (dβ )β∈B1 and dB2 = (dβ )β∈B2 . It is easy to check that SONCA ,B1 ,B2
+is indeed a convex cone.
+    Let S2+ be the convex cone of 2 × 2 positive semidefinite matrices
+                            ("    #          "     #                         )
+                              a b              a b
+                     S2+ :=         ∈ R2×2 |         is positive semidefinite .
+                              b c              b c
+
+Lemma 15. S2+ is a 3-dimensional rotated SOC.
+                          "     #
+                           a b
+Proof: The condition for          to be a positive semidefinite matrix is a ≥ 0, c ≥ 0, ac ≥ b2 .
+                           b c
+Thus S2+ is a rotated SOC by the definition. 
+
+    Now we are ready to prove the main theorem.
+Theorem 16. For A ⊆ (2N)n , B1 ⊆ conv(A ) ∩ (2N)n and B2 ⊆ conv(A ) ∩ (Nn \(2N)n) such
+that A ∩ B1 = ∅, the convex cone SONCA ,B1 ,B2 has an (S2+ )k -lift for some k ∈ N.
+Proof: For every β ∈ B1 ∪ B2 , let C (β) be as in (1). Then for every β ∈ B1 ∪ B2 and
+every T ∈ C (β), let MT β be the T -rational mediated set containing β provided by Lemma
+8. Let M = ∪β∈B1 ∪B2 ∪T ∈C (β) MT β . For each ui ∈ M\A , let us write ui = 12 (vi + wi ). Let
+A˜ = {α ∈ A | α < ∪β∈B1 ∪B2 ∪T ∈C (β) T } and k = #M\A + #A˜.
+     Then by Theorem 12, a polynomial f is in SONCA ,B1 ,B2 if and only if f can be written as
+      P            1          1        P                   P
+f = ui ∈M\A (ai x 2 vi − bi x 2 wi )2 + β∈Γ( f ) c′αβ xαβ + α∈A˜ cα xα , ai , bi ∈ R, c′αβ ≥ 0, αβ ∈ C (β), β ∈
+Γ( f ), which is equivalent to the existence of matrices Q1 , · · · , Qk ∈ S2+ such that
+                  X " 1 1 # " 1 1 #T                               X                "
+                                                                                        1
+                                                                                              # "
+                                                                                                  1
+                                                                                                      #T
+            f =         vi , wi Qi vi , wi +                                              α, 0 Qi α, 0 .   (3)
+                       2 2         2 2                                                  2         2
+                u ∈M\A
+                  i                                        α∈A˜∪{αβ }β∈Γ( f ) ,Qi
+
+
+     Let π : (S2+ )k → SONCA ,B1 ,B2 be the linear map that maps an element (Q1 , · · · , Qk ) in (S2+ )k
+to the coefficient vector of f which is in SONCA ,B1 ,B2 via the equality (3). Hence π yields an
+(S2+ )k -lift for SONCA ,B1 ,B2 . 
+
+                                                      12
+     Comparison with Averkov’s construction on the size of SOC lifts. Given a SONC cone,
+the SOC lift due to Averkov (2019) is built on SOC lifts for hypographs of weighted geomet-
+ric means. In his paper, Averkov appealed to the construction given in Ben-Tal and Nemirovski
+(2001) for SOC lifts of weighted geometric means, which is of size O(p) where p is the least
+common denominator of the weights (i.e., the barycentric coordinates {λi }). It is possible to
+produce such lifts of smaller size. Indeed, Sagnol (2013) presented a construction on matrix
+geometric means, which yields a SOC lift of size 2⌊log2 (p)⌋ + 1 for bivariate weighted geometric
+means with p being the denominator of the weight; see also Fawzi and Saunderson (2017). Our
+construction of mediated sequences also equivalently yields a SOC lift for bivariate weighted
+geometric means. Even though we can only prove a quadratic bound in terms of log2 (p) for the
+size of this construction (Lemma 6), we empirically found that it actually depends linearly on
+log2 (p), which is approximately 1.29 log2 (p) − 0.26. The following table provides a comparison
+on the sizes of different constructions for (hypographs of) SOC lifts of bivariate weighted geo-
+metric means for p = 10, 102, . . . , 108, where the average size of our construction is taken over
+all integers q such that the weight t = q/p, 0 < q < p and gcd(p, q) = 1.
+
+           the denominator p                10    102    103     104      105     106     107     108
+  the size predicted by Conjecture 5         4     7      10      14       17      20      24      27
+ the average size of our construction       4.0   8.4    12.5    16.8     21.2    25.4    29.7    34.0
+   the size of Sagnol’s construction         7    13      19      27       33      39      47      53
+
+
+5. SONC optimization via SOCP
+
+  In this section, we tackle the following unconstrained polynomial optimization problem via
+SOCP, based on the representation of SONC cones derived in the previous section:
+
+                              (P) :    sup{ξ : f (x) − ξ ≥ 0,   x ∈ Rn } .                           (4)
+
+Let us denote by ξ∗ the optimal value of (4). Replace the nonnegativity constraint in (4) by the
+following one to obtain a SONC relaxation with optimal value denoted by ξ sonc :
+
+                              (SONC) :      sup{ξ : f (x) − ξ ∈ SONC} .                              (5)
+
+5.1. Conversion to PN-polynomials
+                  P                P
+    Suppose f = α∈Λ( f ) cα xα − β∈Γ( f ) dβ xβ ∈ R[x]. If dβ > 0 for all β ∈ Γ( f ), then we call f a
+PN-polynomial. The prefix “PN” in PN-polynomial is short for “positive part plus negative part”.
+                              P                                                    P
+The positive part is given by α∈Λ( f ) cα xα and the negative part is given by − β∈Γ( f ) dβ xβ . For a
+PN-polynomial f (x), it is clear that f (x) ≥ 0 for all x ∈ Rn if and only if f (x) ≥ 0 for all x ∈ Rn+ .
+Moreover, we have the following lemma.
+Lemma 17. Let f (x) ∈ R[x] be a PN-polynomial. Then for any positive integer k, f (x) ∈ SONC
+if and only if f (xk ) ∈ SONC.
+Proof: It comes from the fact that a polynomial f (x) with exactly one negative term is a nonneg-
+ative circuit if and only if f (xk ) is a nonnegative circuit for any positive integer k. 
+
+
+                                                   13
+                          P                 P
+Theorem 18. Let f = α∈Λ( f ) cα xα − β∈Γ( f ) dβ xβ ∈ R[x] be a PN-polynomial. Let C (β) be
+as in (1). For every β ∈ Γ( f ) and every T ∈ C (β), let MT β be a T -rational mediated set
+containing β. Let M = ∪β∈Γ( f ) ∪T ∈C (β) MT β and A˜ = {α ∈ Λ( f ) | α < ∪β∈Γ( f ) ∪T ∈C (β) T }.
+For each u ∈ M\Λ( f ), let u = 21 (v + w). Then f ∈ SONC if and only if f can be written
+         P              1          1       P                   P
+as f = u∈M\Λ( f ) (au x 2 v − bu x 2 w )2 + β∈Γ( f ) c′αβ xαβ + α∈A˜ cα xα , au , bu ∈ R, c′αβ ≥ 0, αβ ∈
+C (β), β ∈ Γ( f ).
+
+Proof: It follows easily from Lemma 17 and Theorem 3. 
+
+     The significant difference between Theorem 12 and Theorem 18 is that to represent a SONC
+PN-polynomial as a sum of binomial squares, we do not require the denominators of coordinates
+of points in T -rational mediated sets to be odd. By virtue of this fact, for given trellis T =
+{α1 , . . . , αm } and lattice point β ∈ conv(T )◦ , we can then construct a T -rational mediated set
+MT β containing β which is smaller than that the one from Lemma 8.
+Lemma 19. For a trellis T and a lattice point β ∈ conv(T )◦ , there is a T -rational mediated
+set MT β containing β.
+                         P qi                   Pm
+Proof: Suppose that β = m i=1 p αi , where p =    i=1 qi , p, qi ∈ N\{0}, gcd(p, q1 , . . . , qm ) = 1. We
+can write
+                           q1        p − q1 q2                       qm
+                       β = α1 +            (        α2 + · · · +          αm ).
+                            p          p     p − q1                p − q1
+                                   qm
+Let β1 = p−q    q2
+                   1
+                     α2 + · · · + p−q 1
+                                        αm . Then β = qp1 α1 + p−q  1
+                                                                  p β1 . Apply the same procedure for
+                                                                              m−2
+β1 , and continue like this. Eventually we obtain a set of points {βi }i=0        (set β0 = β) such that
+βi = λi αi+1 +µi βi+1 , i = 0, . . . , m−3 and βm−2 = λm−2 αm−1 +µm−2 αm , where λi +µi = 1, λi , µi > 0,
+i = 0, . . . , m − 2. For βi = λi αi+1 + µi βi+1 (resp. βm−2 = λm−2 αm−1 + µm−2 αm ), let Mi be
+the {αi+1 , βi+1 }- (resp. {αm−1 , αm }-) rational mediated set containing βi obtained by Lemma 7,
+                                        m−2
+i = 0, . . . , m − 2. Let MT β = ∪i=0       Mi . Then clearly MT β is a T -rational mediated set contain-
+ing β. 
+
+    The procedure based on Lemma 19 to obtain a T -rational mediated sets is stated in Algo-
+rithm 3.
+Algorithm 3 MedSet(T , β)
+Input: A trellis T = {α1 , . . . , αm } and a lattice point β ∈ conv(T )◦
+Output: A set of triples {(ui , vi , wi )}i with ui = 21 (vi + wi ) such that T ∪ {ui }i is a T -rational
+    mediated set containing β
+             Pm q                         Pm
+ 1: Let β = i=1 pi αi , where p = i=1 qi , p, qi ∈ N\{0}, gcd(p, q1, . . . , qm ) = 1;
+ 2: k := 1, β0 := β;
+ 3: while k < m − 1 do
+ 4:    βk := p−(qq1 +···+q
+                    k+1
+                          k)
+                             αk+1 + · · · + p−(q1q+···+q
+                                                   m
+                                                        k)
+                                                           αm ;
+ 5:    Mk−1 := LMedSeq(αk , βk , βk−1 );
+ 6: end while
+ 7: Mm−2 := LMedSeq(αm−1 , αm , βm−2 );
+            m−2
+ 8: M := ∪i=0   Mi ;
+ 9: return M;
+
+
+
+                                                   14
+Example 20. Let f = x4 y2 + x2 y4 + 1 − 3x2 y2 be the Motzkin polynomial and T = {α1 =
+(4, 2), α2 = (2, 4), α3 = (0, 0)}, β = (2, 2). Then β = 13 α1 + 31 α2 + 13 α3 = 31 α1 + 23 ( 21 α2 + 12 α3 ).
+Let β1 = 21 α2 + 21 α3 such that β = 13 α1 + 23 β1 . Let β2 = 23 α1 + 13 β1 . Then it is easy to check that
+M = {α1 , α2 , α3 , β, β1 , β2 } is a T -rational mediated set containing β.
+
+                                                        α2 (2, 4)
+
+
+
+
+                                         (1, 2)          (2, 2) (3, 2)               (4, 2)
+                                             β1               β           β2         α1
+
+
+
+                               (0, 0)
+                                  α3
+                                                                          1      3
+By a simple computation, we have f = (1 − xy2 )2 + 2(x 2 y − x 2 y)2 + (xy − x2 y)2 . Here we represent
+f as a sum of three binomial squares with rational exponents.
+                                       P              P
+    We associate to a polynomial f = α∈Λ( f ) cα xα − β∈Γ( f ) dβ xβ , the PN-polynomial f˜ =
+P              α P               β
+  α∈Λ( f ) cα x − β∈Γ( f ) |dβ |x .
+                                 P       P
+Lemma 21. Suppose f = α∈Λ( f ) cα xα − β∈Γ( f ) dβ xβ ∈ R[x]. If f˜ is nonnegative, then f is
+nonnegative. Moreover, f˜ ∈ SONC if and only if f ∈ SONC.
+Proof: For any x ∈ Rn , we have
+                                         X                     X
+                              f (x) =              cα x α −              dβ xβ
+                                        α∈Λ( f )              β∈Γ( f )
+                                         X                        X
+                                   ≥               cα |x|α −              |dβ ||x|β = f˜(|x|),
+                                        α∈Λ( f )               β∈Γ( f )
+
+
+where |x| = (|x1 |, . . . , |xn |). It follows that the nonnegativity of f˜ implies the nonnegativity of f .
+   For every β ∈ Γ( f ), let C (β) be as in (1). Let B = {β ∈ Γ( f ) | β < (2N)n and dβ < 0} and
+ ˜
+A = {α ∈ Λ( f ) | α < ∪β∈Γ( f ) ∪T ∈C (β) T }. Assume f˜ ∈ SONC. Then we can write
+                                                                            
+                                     X       X  X                          
+                                                                         β
+                             f˜ =                                       Tβ 
+                                                                  α
+                                                        c T βα x   − d   x   
+                            β∈Γ( f )\B T ∈C (β) α∈T
+                                                            
+                               X X  X                       X
+                             +      
+                                     cT βα x − d̃T β x  +
+                                               α         β
+                                                                  cα x α
+                               β∈B T ∈C (β) α∈T                                         α∈A˜
+              P                               P
+such that each α∈T cT βα xα − dT β xβ and each α∈T cT βα xα − d̃T β xβ are nonnegative circuits.
+          P          α          β                                  P
+Note that α∈T cT βα x + d̃T β x is also a nonnegative circuit and T ∈T (β) d̃T β = |dβ | = −dβ
+
+
+                                                              15
+for any β ∈ B. Hence,
+                                                            
+                         X        X  X                     
+                                                      β
+                 f =                    cT βα x − dT β x 
+                                                α
+
+                       β∈Γ( f )\B T ∈C (β) α∈T
+                                                      
+                         X X  X                       X
+                       +      
+                               cT βα x + d̃T β x  +
+                                         α         β
+                                                            cα xα ∈ SONC.
+                         β∈B T ∈C (β) α∈T                        α∈A˜
+
+   The inverse follows similarly. 
+
+     Hence by Lemma 21, if we replace the polynomial f in (5) by its associated PN-polynomial
+f˜, then this does not affect the optimal value of (5):
+                                              
+                                              
+                                              
+                                              sup ξ
+                             (SONC-PN) :                                                (6)
+                                              s.t. f˜(x) − ξ ∈ SONC .
+
+Remark 22. Lemma 21 tells us that the SONC formulation for the polynomial optimization
+problem (5) always provides the optimal value w.r.t. the corresponding PN-polynomial. See
+also Remark 24.
+
+5.2. Compute a simplex cover
+                              P               P
+    Given a polynomial f = α∈Λ( f ) cα xα − β∈Γ( f ) dβ xβ ∈ R[x], in order to obtain a SONC
+decomposition of f , we use all simplices covering β for each β ∈ Γ( f ) in Theorem 12. In
+practice, we do not need that many simplices, as illustrated by the following example.
+Example 23. Let f = 50x4 y4 + x4 +3y4 +800−100xy2 −100x2 y. Let α1 = (0, 0), α2 = (4, 0), α3 =
+(0, 4), α4 = (4, 4) and β1 = (2, 1), β2 = (1, 2). There are two simplices which cover β1 : one with
+vertices {α1 , α2 α3 }, denoted by ∆1 , and one with vertices {α1 , α2 α4 }, denoted by ∆2 . There are
+two simplices which cover β2 : ∆1 and one with vertices {α1 , α3 α4 }, denoted by ∆3 . One can
+check that f admits a SONC decomposition f = g1 + g2 , where g1 = 20x4 y4 + x4 + 400 − 100x2y,
+supported on ∆2 , and g2 = 30x4 y4 + 3y4 + 400 − 100xy2 , supported on ∆3 , are both nonnegative
+circuit polynomials. Hence the simplex ∆1 is not needed in this SONC decomposition of f .
+                                          α3                α4
+
+                                                 β2
+
+                                                       β1
+
+                                          α1                α2
+
+A recent study by Papp (2019) proposes a systematic method to compute an optimal simplex
+cover. It would be worth trying to combine this framework with our SOC characterization for
+SONC cones to achieve a more accurate algorithm. Here we rely on a heuristics to compute a set
+of simplices with vertices coming from Λ( f ) and that covers Γ( f ). For β ∈ Γ( f ) and α0 ∈ Λ( f ),
+
+
+
+                                                      16
+define an auxiliary linear program:
+
+        SimSel(β, Λ( f ), α0 ) := arg max λα0
+                                                                                                 
+                                       
+                                                                                                 
+                                                                                                  
+                                        X
+                                                             X                                   
+                                                                                                  
+                                  s.t. 
+                                                λα · α = β,          λα = 1, λα ≥ 0, ∀α ∈ Λ( f ) 
+                                                                                                   .
+                                       
+                                       α∈Λ( f )                                                  
+                                                                                                  
+                                                             α∈Λ( f )
+
+
+    Following Seidler and de Wolff (2018), we can ensure that the output of SimSel(β, Λ( f ), α0 )1
+corresponds to a trellis which contains α0 and covers β.
+                     P            P
+    Suppose f˜ = α∈Λ( f ) cα xα − β∈Γ( f ) dβ xβ ∈ R[x] and assume that A˜ = {α ∈ Λ( f ) | α <
+∪β∈Γ( f ) ∪T ∈C (β) T } = ∅. The procedure SimplexCover stated in Algorithm 4 allows one to
+compute a simplex cover {(Tk , βk )}lk=1 for f˜. For each k, let Mk be a Tk -rational mediated set
+containing βk and sk = #Mk \Tk . For each uki ∈ Mk \Tk , let us write uki = 21 (vki + wki ). Let K be
+the 3-dimensional rotated SOC, i.e.,
+
+                            K := {(a, b, c) ∈ R3 | 2ab ≥ c2 , a ≥ 0, b ≥ 0}.                             (7)
+
+    Then we can relax (SONC-PN) to a SOCP problem as follows:
+                                    
+                                    
+                                    
+                                    sup ξ
+                                    
+                                    
+                                                            P Psk           k         k          k
+                (SONC-SOCP) :       
+                                    s.t. f˜(x) − ξ = lk=1 i=1       (2aki xvi + bki xwi − 2cki xui ),   (8)
+                                    
+                                    
+                                    
+                                         (aki , bki , cki ) ∈ K, ∀i, k.
+
+Let us denote by ξ socp the optimal value of (8). Then, we have ξ socp ≤ ξ sonc ≤ ξ∗ .
+
+Remark 24. The quality of obtained SONC lower bounds depends on two successive steps: the
+relaxation to the corresponding PN-polynomial (from ξ∗ to ξ sonc ) and the relaxation to a specific
+simplex cover (from ξ sonc to ξ socp ). The loss of bound-quality at the second step can be improved
+by computing a more optimal simplex cover. Nevertheless, it may happen that the loss of bound-
+quality at the first step is already big, as shown in Example 25, which indicates that the gap
+between nonnegative polynomials and SONC PN-polynomials (see figure 1) may greatly affect
+the quality of SONC lower bounds.
+
+Example 25. Let f = 1 + x41 + x42 − x1 x22 − x21 x2 + 5x1 x2 . Since Λ( f ) forms a trellis, the simplex
+cover for f is unique. One obtains ξ socp = ξ sonc ≈ −6.916501 while ξ∗ ≈ −2.203372. Hence the
+relative optimality gap is near 214%.
+
+
+6. Exact SOBS decompositions of SONC polynomials
+
+6.1. The procedure ExactSOBS
+    Here, we present a procedure, called ExactSOBS, to compute exact rational SOBS decom-
+positions (with rational exponents) of PN-polynomials lying in the interior of the SONC cone
+(if f itself is not a PN-polynomial, then by Lemma 21, an exact rational SOBS decomposi-
+tions of its associated PN-polynomial f˜ also provides a nonnegativity certificate for f ). The
+procedure, stated in Algorithm 5, is a rounding-projection procedure, in the spirit of the one by
+Peyrl and Parrilo (2008) to obtain exact SOS decompositions for polynomials in the interior of
+
+                                                       17
+Algorithm 4 SimplexCover(Λ( f ), Γ( f ))
+Input: Λ( f ), Γ( f )
+Output: {(Tk , βk )}k : a set of circuits such that ∪k Tk = Λ( f ) and {βk }k = Γ( f )
+ 1: U := Λ( f ), V := Γ( f ), k := 0;
+ 2: while U , ∅ and V , ∅ do
+ 3:    k := k + 1;
+ 4:    Choose α0 ∈ U and βk ∈ V;
+ 5:    λ := SimSel(βk , Λ( f ), α0 );
+ 6:    Tk := {α ∈ Λ( f ) | λα > 0};
+ 7:    U := U\Tk , V := V\{βk };
+ 8: end while
+ 9: if V , ∅ then
+10:    while V , ∅ do
+11:       if U = ∅ then
+12:          U := Λ( f );
+13:       end if
+14:       k := k + 1;
+15:       Choose T0 ∈ U and βk ∈ V;
+16:       λ := SimSel(βk , Λ( f ), α0 );
+17:       Tk := {α ∈ Λ( f ) | λα > 0};
+18:       U := U\Tk , V := V\{βk };
+19:    end while
+20: else
+21:    while U , ∅ do
+22:       if V = ∅ then
+23:          V := Γ( f );
+24:       end if
+25:       k := k + 1;
+26:       Choose α0 ∈ U and βk ∈ V;
+27:       λ := SimSel(βk , Λ( f ), α0 );
+28:       Tk := {α ∈ Λ( f ) | λα > 0};
+29:       U := U\Tk , V := V\{βk };
+30:    end while
+31: end if
+32: return {(Tk , βk )}k
+
+
+
+
+                                                   18
+                     PSD polynomials       SONC polynomials                    PN-polynomials
+
+
+
+
+                              Figure 1: Relationship of different classes of polynomials
+
+
+
+
+Algorithm 5 ExactSOBS( f, δ̂, δ̃)
+                                                            P
+Input: A SONC PN-polynomial f = α∈A fα xα ∈ Q[x] with A˜ = ∅, a precision parameter δ̃
+    for the SOCP solver, a rounding precision δ̂
+Output: An exact SOBS decomposition of f
+                                                                            P                   P
+ 1: Determine the sets Λ( f ), Γ( f ) such that f = α∈Λ( f ) cα xα − β∈Γ( f ) dβ xβ ;
+ 2: {(Tk , βk )}lk=1 := SimplexCover(Λ( f ), Γ( f ));
+ 3: for k = 1 : l do
+                                sk
+ 4:    {(uki , vki , wki )}i=1         := MedSet(Tk , βk );
+ 5: end for
+ 6: Obtain {(ãki , b̃ki , c̃ki )}i,k by solving (SONC-SOCP) with ξ = 0 at precision δ̃;
+ 7: {(âki , b̂ki , ĉki )}i,k := round({(ãki , b̃ki , c̃ki )}i,k , δ̃); {rounding step}
+                            sk
+ 8: B := ∪lk=1 ∪i=1             {uki , vki , wki };
+ 9: for γ ∈ B do
+10:    η(γ) := #{(i, k) | γ ∈ {uki , vki , wki }, i = 1, . . . , sk , k = 1, . . . , l};
+11: end for
+12: for k = 1 : l, i = 1 : sk do                                                               
+                                1       P             q   P            q    P          q
+13:    aki := âki − 2η(v          k
+                                     )    u p =vki 2â p + v p =vki b̂ p − w p =vki 2ĉ p − fvki ; {projection step}
+                                            q                q                q
+                                   i                                                             
+                                        P             q   P            q    P            q
+14:    bki := b̂ki − η(w1 k ) uqp =wki 2â p + vqp =wki b̂ p − wqp =wki 2ĉ p − fwki ; {projection step}
+                                  i                                                             
+                                1       P              q  P            q    P           q
+15:    cki := ĉki + 2η(u          k)     uqp =uki 2â p + vqp =uki b̂ p − wqp =uki 2ĉ p − fuki ; {projection step}
+                                   i
+16: end for
+17: for k = 1 : l do
+                    P sk                k           k          k
+18:     fk := i=1            (2aki xvi + bki xwi − 2cki xui );
+19: end for
+                   Pl
+20: return k=1 fk ;
+
+
+
+
+                                                         19
+the SOS cone and by Magron et al. (2019b) to obtain exact SAGE decompositions of polynomi-
+als in the interior of the SAGE cone.
+     After computing a simplex cover in Line 2 with Algorithm 4 and the corresponding rational
+mediated sets in Line 4 with Algorithm 3, the procedure calls a SOCP solver in Line 6 to compute
+a δ̃-approximation (ãki , b̃ki , c̃ki )i,k of the coefficients involved in the SOBS decomposition of f from
+(8). This approximation is then rounded to rational points in Line 7 with a prescribed accuracy of
+δ̂. The three projection steps from Line 13 to Line 15 ensure that the rational points (aki , bki , cki )i,k
+satisfy exactly the equality constraints from (8), namely that for each k = 1, . . . , ℓ and each
+i = 1, . . . , sk , one has
+                                                                                      
+                                                                                    
+                                                    X          X        X             
+                                                                              q       
+                                                                               2c p  ,
+                                                                q      q
+                                            fγ =  2a p +            bp −                                (9)
+                                                                                       
+                                                           p,q
+                                                            q
+                                                                  p,q
+                                                                  q
+                                                                           p,q
+                                                                           q
+                                                                                            
+                                               v p =γ          w p =γ      u p =γ
+
+
+
+for each γ ∈ {uki , vki , wki }i,k . As proved later on, if both numerical SOCP solver accuracy δ̃ and
+rounding accuracy δ̂ are high enough, then each triple (aki , bki , cki ) belongs to the second-order
+cone K = {(a, b, c) : a, b ≥ 0 , 2ab ≥ c2 }.
+
+6.2. Arithmetic complexity
+    The bit size of i ∈ Z is denoted by τ(i) := ⌊log2 (|i|)⌋ + 1 with τ(0) := 1. Given i ∈ Z and
+j ∈ Z\{0} with gcd(i, j) = 1, we define τ(i/ j) := max{τ(i), τ( j)}. For two mappings g, h : Nm →
+R, we use the notation g(v) ∈ O (h(v)) to state the existence of i ∈ N such that g(v) ≤ ih(v),
+for all v ∈ Nm . The expression “g(v) ∈ O     e (h(v))” means that there exists c ∈ N such that
+                       c               m
+g(v) ≤ h(v) log2 (h(v)) , for all v ∈ N .
+
+Lemma 26. Let f ∈ R[x] be a polynomial of degree d and let D be the maximal value of the
+denominators involved in the triples {(uki , vki , wki )}i,k in (8). Then D ≤ (1 + nd2 )n+1 .
+
+Proof: Consider any circuit (T , β) such that T ⊆ Λ( f ) and β ∈ Γ( f ). Without loss of generality,
+                                                         P qi                    Pn+1
+assume that T = {α1 , . . . , αn+1 }. We write β = n+1     i=1 p αi , where p =    i=1 qi , p, qi ∈ N\{0},
+gcd(p, q1, . . . , qn+1 ) = 1.
+    First, one can easily see that the denominators involved in the output {(ui , vi , wi )}i of the al-
+gorithm LMedSet(α′ , α′′ , β′ ) do not exceed the common denominator of α′ , α′′ , β′ . Thus it suf-
+fices to consider the denominators of βi ’s appearing in the algorithm MedSet, which are clearly
+bounded from above by p. Note that λ = ( qp1 , . . . , qn+1  p ) is the unique solution to the system of
+linear equations:                      "                  #      " #
+                                         1 ···         1          1
+                                                            λ=       .
+                                        α1 · · · αn+1             β
+                    "              #
+                      1 ···    1                   n+1
+Hence p ≤ det(                      ) ≤ (1 + nd 2 ) 2 . The latter inequality follows from Hadamard’s
+                     α1 · · · αn+1
+inequality. As a result, D ≤ p2 ≤ (1 + nd 2 )n+1 . 
+
+    For later purpose, we recall the result which bounds the roots of univariate polynomials with
+integer coefficients:
+
+   1 If β lies on a face of New( f ), then we assume α
+                                                         0 lies on the same face.
+                                                               20
+Lemma 27. (Mignotte, 1992, Theorem 4.2 (ii)) Let f ∈ Z[x] of degree d, with coefficient bit
+size bounded from above by τ. If f ( x̃) = 0 and x̃ , 0, then 2τ1+1 ≤ | x̃| ≤ 2τ + 1.
+                       P
+Lemma 28. Let f = α∈A fα xα ∈ Q[x] be a SONC PN-polynomial of degree d ≥ 2 with
+τ = τ( f ). Assume that A˜ = ∅ and f lies in the interior of the SONC cone. Let D be the
+maximal value of the denominators involved in the triples {(uki , vki , wki )}i,k in (8), bounded as in
+                                                                    P P sk uk               k       k
+Lemma 26. Then, there exists N ∈ N such that for ε := 2−N , f − ε lk=1 i=1         (x i + xvi + xwi ) has
+                                                                                              3n+3
+an SOBS decomposition (with rational exponents), with N ≤ τ(ε) ∈ O (τ · (4dD + 6)                  ), thus
+                                            2
+N ≤ τ(ε) ∈ O (τ · (5d)3n+3 (1 + nd 2 )3(n+1) ).
+
+Proof: Let us define g(x) := f (xD ). Note that the degree of g is at most Dd. In addition, for each
+each γ ∈ {uki , vki , wki }i,k involved in the SOBS decomposition of f , one has xDγ ∈ R[x]. Thus g is a
+sum of binomial squares and one has ||Dγ||1 ≤ Dd. Since the polynomial f is in the interior of the
+SONC cone, then the polynomial g is also in the interior of the SONC cone. Then by definition,
+                                                              P P sk Duk              k      k
+there exists N ∈ N such that for ε := 2−N , one has g − ε lk=1 i=1        (x i + xDvi + xDwi ) ∈ SONC.
+                                                       P   P  sk     k       k      k
+Let us define the polynomial h(x, z) := f (xD ) − z lk=1 i=1     (xDui + xDvi + xDwi ) , and consider the
+algebraic set V defined by:
+                                   (                                            )
+                                              n+1         ∂h             ∂h
+                             V := (x, z) ∈ R : h(x, z) =      = ··· =        =0 .
+                                                         ∂x1            ∂xn
+
+The degree of h is also Dd. Using Proposition A.1 from Magron and Safey El Din (2018b), there
+exists a polynomial in Z[z] of degree less than (Dd + 1)n+1 with coefficients of bit size less than
+τ · (4Dd + 6)3n+3 such that its set of real roots contains the projection of V on the z-axis. By
+Lemma 27, it is enough to take N ≤ τ · (4Dd + 6)3n+3 . By Lemma 26, one has D ≤ (1 + nd 2 )n+1 .
+The desired complexity bound follows from the fact that d ≥ 2 implies that 6 ≤ d(1 + nd 2)n+1 . By
+Theorem 18, the polynomial h(x, ε) admits an SOBS decomposition. Therefore h(x1/D , ε) also
+admits an SOBS decomposition, the desired result. 
+
+
+Lemma 29. Let f ∈ R[x] be as in Lemma 28 with t terms. Let L be the total number of triples
+                                              P                                                   e (dn n3 ).
+(uki , vki , wki ) appearing in (8), i.e., L = lk=1 sk . Then L < 18 tn((n+1) log2 (1+nd2 )+3)2 ∈ O
+Proof: First note that the number of circuits produced by the procedure SimplexCover(Λ( f ), Γ( f ))
+is less than t. Consider any circuit (T , β) such that T ⊆ Λ( f ) and β ∈ Γ( f ). Without loss of
+                                                                  P qi                   Pn+1
+generality, assume that T = {α1 , . . . , αn+1 }. We write β = n+1  i=1 p αi , where p =   i=1 qi ,
+                                                                                                         n+1
+p, qi ∈ N\{0}, gcd(p, q1, . . . , qn+1 ) = 1. Then by the proof of Lemma 26, p ≤ (1 + nd 2 ) 2 .
+For each triple (αk , βk , βk−1 ), 1 ≤ k ≤ n − 1 or (αn , αn+1 , βn−1 ) appearing in the algorithm
+MedSet, by Lemma 6 and the proof of Lemma 7, the number of triples (ui , vi , wi ) produced
+by the algorithm LMedSet is less than 12 (log2 (p) + 23 )2 . Putting all above together, we have
+                             n+1
+L < tn · 12 (log2 ((1 + nd2 ) 2 ) + 32 )2 = 81 tn((n + 1) log2 (1 + nd2 ) + 3)2 . Note that the number of
+terms t is less than 2d n :
+                !                                     !            !
+          n+d         (n + d) . . . (n + 1)         d          d
+     t=            =                        = 1+        1+           . . . (1 + d) ≤ dn−1 (1 + d) ≤ 2d n ,
+             n                n!                    n       n−1
+
+yielding the final complexity result. 
+
+                                                     21
+Remark 30. By Lemma 29, the number of second-order cones used in (SONC-SOCP) (8) scales
+linearly in the number of terms of the polynomial.
+
+Theorem 31. Let f, D be as in Lemma 28. Let L be the total number of triples (uki , vki , wki )
+                              P
+appearing in (8), i.e., L = lk=1 sk . There exist δ̂, δ̃ of bit size less than O (τ · (4Dd + 6)3n+3 ),
+such that ExactSOBS( f, δ̂, δ̃) terminates and outputs a rational SOBS decomposition of f within
+O ((τ(L) + τ · (4Dd + 6)3n+3 ) L3.5 ) arithmetic operations, yielding a total number of
+                                                                            
+                               Oe τ · 53n+3 d6.5n+3 n10.5 (1 + nd 2 )3(n+1)2
+
+arithmetic operations.
+                                                                                                                                                      k
+Proof: Let ε be as in Lemma 28. Then, there exist sequences of triples {(aki , bi , cki )}i,k as in (8)
+such that
+               l X
+               X sk                                                 l X
+                                                                    X sk
+                                    k            k           k                   k    k k            k                                            k
+      f −ε                     (xui + xvi + xwi ) =                      (2aki xvi + bi xwi − 2cki xui ),                              (aki , bi , cki ) ∈ K, ∀i, k.
+               k=1 i=1                                              k=1 i=1
+
+                                                         2                                                        k
+(1) Let us define δ := min{ 3ε4 , ε2 }, ãki := aki + 2ε , b̃ki := bi + ε and c̃ki := cki − 2ε . Let us show
+that {(ãki , b̃ki , c̃ki )}i,k is a strictly feasible solution of (8) (with ξ = 0) such that ãki ≥ δ, bki ≥ δ and
+2ãki b̃ki − (c̃ki )2 ≥ δ.
+According to these definitions, one has
+                                                                  l X
+                                                                  X sk
+                                                                                         k                k               k
+                                                         f =                   (2ãki xvi + b̃ki xwi − 2c̃ki xui ) ,
+                                                                  k=1 i=1
+
+and
+                                                         X                  X                 X
+                                                                  2ãqp +            b̃qp −            2c̃qp − fγ = 0 ,                                               (10)
+                                                         p,q                 p,q               p,q
+                                                          q                  q                 q
+                                                         v p =γ             w p =γ            u p =γ
+
+
+                                                                            k
+for each γ ∈ {uki , vki , wki }i,k . Since aki , bi ≥ 0, one has ã ≥ 2ε ≥ δ, b̃ ≥ ε ≥ δ. In addition,
+                                                 2
+                                                                              √             √
+for all (a, b, c) ∈ K, one √ has 2ab    √ − c √ ≥ 2 0, √ which implies that − 2ab ≤ c ≤ 2ab and
+2a + b + c ≥ 2a + b − 2ab = ( 2a − b) + 2ab ≥ 0. Hence, one has
+                                    k              ε           k                      k            3ε2 3ε2
+2ãki b̃ki − (c̃ki )2 = (2aki + ε)(bi + ε) − (cki − )2 = 2aki bi − (cki )2 + (2aki + bi + cki )ε +    ≥    ≥ δ.
+                                                   2                                                4   4
+With this choice, one has τ(δ) ≤ 2τ(ε) + τ( 34 ). So δ has bit size less than O (τ · (4Dd + 6)3n+3 ).
+(2) Let us assume that one relies in Algorithm 5 on a rounding procedure with precision δ̂ so that
+|ãki − âki | ≤ δ̂ (and similarly for b̃ki and c̃ki ). By using the triangular inequality, one obtains
+
+
+   X                  X                 X                             X                                  X                           X
+               q                q                    q                              q       q                         q       q                  q        q
+            2â p +            b̂ p −            2ĉ p − fγ ≤                   2|â p − A˜p | +                  |b̂ p − b̃ p | +            2|ĉ p − c̃ p | ≤ 5η(γ)δ̂ ,
+    p,q                p,q               p,q                           p,q                                p,q                        p,q
+    q                  q                 q                             q                                  q                           q
+   v p =γ             w p =γ            u p =γ                        v p =γ                             w p =γ                      u p =γ
+
+                                                                                                                                                                      (11)
+                                                                                         22
+for each γ ∈ {uki , vki , wki }i,k . Let us consider the projection steps of Algorithm 5. For aki , bki and cki
+defined from Line 13 to Line 15, one has
+                                                            5
+                                               aki ≥ âki − δ̂ ,                                          (12)
+                                                            2
+                                                bki ≥ b̂ki − 5δ̂ ,                                        (13)
+                                                     5
+                                               c̃ki + δ̂ ≥ cki .                                          (14)
+                                                     2
+Let us choose δ̂ = 5ε . Therefore in the worse case scenario, one has aki = ãki − 2ε = aki , bki =
+           k
+b̃ki − ε = bi and cki = c̃ki + 2ε = cki .
+      To conclude, if one solves the SOCP problem in Algorithm 5 at precision δ̃ at least δ and
+rounding accuracy δ̂, then the output will always provide a valid SOBS decomposition. Both
+accuracy parameters have bit size less than O (τ · (4Dd + 6)3n+3 ).
+      The arithmetic complexity of the procedure to solve the SOCP problem at accuracy δ̃ is de-
+rived from § 4.6.2 in Ben-Tal and Nemirovski (2001). There are 3L inequality constraints and
+3L equality constraints (which can themselves be cast    √ as 6L inequality constraints), involving   
+                                                                                                     2
+3L variables, yielding an overall complexity of O 9L + 1 · 3L · ((3L)2 + 9L + 9L) · log L+δ        δ     ,
+                                                                    
+                                                          3n+3   3.5
+which leads to a number of O (τ(L) + τ · (4Dd + 6)             )L      arithmetic operations. Using the
+                                                                                                          
+                                                                  e
+bound on L stated in Lemma 29, we obtain a total number of O τ · 53n+3 d6.5n+3 n10.5 (1 + nd2 )3(n+1)
+                                                                                                         2
+
+
+arithmetic operations. The simplex cover algorithm SimplexCover solves O (t) linear programs
+involving O (t) variables. The complexity of a linear program is O(t2.5 ). So the total complexity is
+                                                                        n+1
+O(t3.5 ). Let p be as in Lemma 26 which is bounded by (1 + nd2 ) 2 . The procedure MedSeq(p, q)
+requires O (log2 p) iterations and each iteration needs O (log2 p) arithmetic operations. Since we
+have O (t) circuits and each circuit corresponds to (at most) n mediated sequences, the total com-
+plexity is O (tn log2 (p)2 ) = O (tn3 log2 (1 + nd2 )2 ). Overall, this shows that the total number of
+arithmetic operations required by these two steps of ExactSOBS have a negligible cost by com-
+parison with the numerical SOCP procedure, yielding the desired result. 
+
+
+7. Numerical experiments
+    In this section we present numerical results of the proposed algorithms for unconstrained
+POPs. Our tool, called SONCSOCP, implements the simplex cover procedure (see Algorithm 4) as
+well as the procedure MedSet (see Algorithm 3) computing rational mediated sets and computes
+the optimal value ξ socp of the SOCP (8) with Mosek; see Andersen and Andersen (2000). All ex-
+periments were performed on an Intel Core i5-8265U@1.60GHz CPU with 8GB RAM memory
+and WINDOWS 10 system. SONCSOCP is available at github:SONCSOCP.
+    Our benchmarks are issued from the database of randomly generated polynomials provided
+by Seidler and de Wolff in Seidler and de Wolff (2018). Depending on the Newton polytope,
+these benchmarks are divided into three classes: the ones with standard simplices, the ones with
+general simplices and the ones with arbitrary Newton polytopes. See Seidler and de Wolff (2018)
+for the details on the construction of these polynomials.
+
+7.1. Computing a lower bound via SONC optimization
+    In this subsection, we perform SONC optimization (8) and compare the performance of
+SONCSOCP with that of POEM, which relies on the ECOS solver to solve geometric programs (see
+                                             23
+                                                           Table 1: The notation
+
+                             n                           number of variables
+                             d                                  degree
+                             t                             number of terms
+                             l                 lower bound on the number of inner terms
+                            opt                             optimal value
+                           time                        running time in seconds
+                            bit                                bit size
+
+Seidler and de Wolff (2018) for more details). To measure the quality of a given lower bound ξlb ,
+we rely on the “local min” function available in POEM which computes an upper bound ξmin on
+the minimum of a polynomial. The relative optimality gap is defined by |ξmin  −ξlb |
+                                                                           |ξmin | .
+
+Standard simplex. For the standard simplex case, we take 10 polynomials of different types
+(labeled by N). Running time and lower bounds obtained with SONCSOCP and POEM are displayed
+in Table 2. Note that for polynomials with Λ(·) forming a trellis, the simplex cover is unique, thus
+the bounds obtained by SONCSOCP and POEM are the same theoretically, which is also reflected
+in Table 2. For each polynomial, the relative optimality gap is less than 1% and for 8 out of 10
+polynomials, it is less than 0.1% (see Figure 3).
+            N                          1         2           3      4           5       6      7       8      9     10
+             n                        10         10         10     20           20     20     30      30     40     40
+             d                        40         50         60     40           50     60     50      60     50     60
+             t                        20         20         20     30           30     30     50      50    100    100
+            SONCSOCP                 0.04       0.04       0.04   0.14         0.14   0.13   0.43    0.40   2.23   2.21
+     time
+               POEM                  0.26       0.27       0.26   0.43         0.44   0.42   1.78    1.79   2.20   2.25
+            SONCSOCP                 3.52       3.52       3.52   2.64         2.64   2.64   2.94    2.94   4.41   4.41
+     opt
+               POEM                  3.52       3.52       3.52   2.64         2.64   2.64   2.94    2.94   4.41   4.41
+
+                                              Table 2: Results for the standard simplex case
+
+
+
+
+                       running time (s)
+                                          2            SONCSOCP
+                                                         POEM
+                                          1
+
+                                          0
+                                                       2          4            6        8       10
+                                                                           N
+
+                                          Figure 2: Running time for the standard simplex case
+
+
+General simplex. Here, we take 10 polynomials of different types (labeled by N). Running time
+and lower bounds obtained with SONCSOCP and POEM are displayed in Table 3. As before, the
+SONC lower bounds obtained by SONCSOCP and POEM are the same. For each polynomial except
+for the one corresponding to N = 7, the relative optimality gap is within 30%, and for 6 out of
+10 polynomials, the gap is below 1% (see Figure 5). POEM fails to obtain a lower bound for the
+                                                                      24
+                   Relative optimality gap (%)
+                                                                                                                SONCSOCP
+                                                                   0.1                                            POEM
+                                                         5 · 10−2
+
+                                                                      0
+                                                                                  2          4           6          8       10
+                                                                                                     N
+
+                                                     Figure 3: Relative optimality gap for the standard simplex case
+
+instance N = 10 by returning −Inf. Figure 4 shows that, overall, the running times of SONCSOCP
+and POEM are close. SONCSOCP is faster than POEM for the instance N = 6, possibly because better
+performance is obtained when the degree is relatively low.
+           N                                                  1         2        3       4         5           6      7       8       9     10
+            n                                                10        10       10       10       10          10     10       10     10     10
+            d                                                20        30       40       50       60          20     30       40     50     60
+            t                                                20        20       20       20       20          30     30       30     30     30
+           SONCSOCP                                         0.32      0.29     0.36     0.48     0.54        0.56   0.73     0.88   1.04   1.04
+    time
+              POEM                                          0.28      0.31     0.31     0.31     0.43        0.74   0.75     0.74   0.72   0.76
+           SONCSOCP                                         1.18      0.22     0.38     0.90     0.06        4.00   −4.64    1.62   2.95   5.40
+    opt
+              POEM                                          1.18      0.22     0.38     0.90     0.06        4.00   −4.64    1.62   2.95   −Inf
+
+                                                                      Table 3: Results for the general simplex case
+
+
+
+
+                                             running time (s)
+                                                                 1            SONCSOCP
+                                                                0.8             POEM
+                                                                0.6
+                                                                0.4
+
+                                                                              2          4           6          8       10
+                                                                                                 N
+
+                                                                 Figure 4: Running time for the general simplex case
+
+
+Arbitrary polytope. For the arbitrary polytope case, we take 20 polynomials of different types
+(labeled by N). With regard to these instances, POEM always throws an error “expected square
+matrix”. Running time and lower bounds obtained with SONCSOCP are displayed in Table 4. The
+relative optimality gap is always within 25% and within 1% for 17 out of 20 polynomials (see
+Figure 6).
+
+7.2. Exact nonnegativity certificates
+    In this subsection, we certify nonnegativity of polynomials by computing an exact SOBS
+decomposition via the procedure ExactSOBS. The benchmarks are selected to be in the interior
+of the SONC cone. We take the number of variables n = 4, 8, 10, the degree d = 10, 20, 30 and
+                                              25
+              relative optimality gap (%)
+                                                   300             SONCSOCP
+                                                   200               POEM
+
+                                                   100
+                                                      0
+                                                                    2          4          6           8          10
+                                                                                      N
+
+                                     Figure 5: Relative optimality gap for the general simplex case
+
+
+
+
+      N                                              1       2         3        4       5         6         7           8      9     10
+      n                                             10       10       10       10       10       10        10          10     10     10
+      d                                             20       20       20       30       30       30        40          40     40     50
+      t                                             30      100      300       30      100      300        30         100    300     30
+      l                                             15       71      231       15       71      231        15          71    231     15
+           time                                    0.38     1.75     6.86     0.64     3.13     11.3      0.72        4.01   14.6   0.76
+SONCSOCP
+            opt                                    0.70     3.32     31.7     3.31     15.3     3.31      0.47        5.42   38.7   1.56
+      N                                             11       12       13       14       15       16        17          18     19     20
+      n                                             10       10       10       10       10       20        20          20     20     20
+      d                                             50       50       60       60       60       30        30          40     40     40
+      t                                            100      300       30      100      300       50       100          50    100    200
+      l                                             71      231       15       71      231        5        15           5     15     35
+           time                                    4.41     16.8     1.84     11.2     42.4     3.20      8.84        2.60   10.5   38.7
+SONCSOCP
+            opt                                    0.20     7.00     3.31     2.52     23.4     0.70      4.91        4.13   2.81   9.97
+
+                                                          Table 4: Results for the arbitrary polytope case
+
+
+
+
+                     relative optimality gap (%)
+                                                                   SONCSOCP
+                                                    20
+
+                                                    10
+
+                                                     0
+                                                           0            5            10          15          20
+                                                                                      N
+
+                           Figure 6: Relative optimality gap for the arbitrary polytope case
+
+
+                                                                                26
+the number of terms t = 20, 30, 50, 100. We set the precision parameter δ̃ for the SOCP solver
+(Mosek) to be 10−8 and the rounding precision δ̂ to be 10−5 . The results are displayed in Table
+5, 6 and 7 respectively. For polynomials in each table, their Newton polytope is either a standard
+simplex or an arbitrary polytope. The notation “-” indicates that the corresponding polynomial
+does not exist in the database.
+    As we can see from the tables, the procedure ExactSOBS is very efficient to compute an
+exact SOBS decomposition. Even for the largest instance (n = 10, d = 30, t = 100), it takes
+around 6 seconds to get the result. We also observe that (somewhat surprisingly) the time spent
+for symbolic computation and the time spent for numerical computation are nearly equal. Note
+that we were not able to compare our certification procedure with the current version of the POEM
+software library, since the rounding-projection procedure from Magron et al. (2019b) seems to
+be not available anymore.
+                 n = 4, standard simplex                           n = 4, arbitrary polytope
+              d = 10         d = 20         d = 30            d = 10         d = 20        d = 30
+       t
+            time    bit    time    bit   time    bit       time    bit    time     bit   time   bit
+       20   0.06 123 0.06 154 0.07 162                     0.07 109 0.07 129 0.13 118
+       30   0.09 189 0.09 193 0.09 199                     0.09 135 0.12 106 0.16 121
+       50   0.09 248 0.12 282 0.14 332                     0.22 195 0.13 124 0.35 226
+      100   0.16 362 0.18 364              -       -         -       -      -       -    0.48 210
+
+                   Table 5: Exact SOBS decompositions for polynomials with four variables
+
+                  n = 8, standard simplex                         n = 8, arbitrary polytope
+               d = 10         d = 20        d = 30           d = 10        d = 20          d = 30
+       t
+             time bit time          bit   time   bit       time   bit    time     bit   time    bit
+       20      -      -     0.07 135 0.07 144              0.13 101 0.27 138 0.19 140
+       30      -      -     0.11 177 0.13 184              0.17 141 0.31 143 0.56 172
+       50      -      -     0.18 273 0.18 279              0.29 144 0.75 212 1.28 206
+      100      -      -     0.45 356 0.46 419              0.81 277 2.61 333 3.45 264
+
+                  Table 6: Exact SOBS decompositions for polynomials with eight variables
+
+                 n = 10, standard simplex                          n = 10, arbitrary polytope
+               d = 10        d = 20        d = 30             d = 10         d = 20          d = 30
+       t
+             time bit time         bit   time   bit        time     bit   time     bit    time    bit
+       20      -      -    0.06 119 0.07 124                 -       -    0.29 158 0.58 186
+       30      -      -    0.16 173 0.13 185               0.11 140 0.84 169 1.46 175
+       50      -      -    0.24 253 0.25 256               0.31 178 1.43 179 2.77 224
+      100      -      -    0.53 431 0.44 401                 -       -    3.98 307 6.38 302
+
+                   Table 7: Exact SOBS decompositions for polynomials with ten variables
+
+
+
+8. Conclusions
+
+    In this paper, we provide a constructive proof that each SONC cone admits a SOC representa-
+tion. Based on this, we propose an algorithm to compute a lower bound for unconstrained POPs
+via SOCP. Numerical experiments demonstrate the efficiency of our algorithm even when the
+number of variables and the degree are fairly large. Even though the complexity of our algorithm
+                                                    27
+depends on the degree in theory, it turns out that this dependency is rather mild. For all numeri-
+cal examples tested in this paper, the running time is below one minute even for polynomials of
+degree up to 60.
+    Since the running time is satisfactory, the main concern of SONC-based algorithms for sparse
+polynomial optimization might be the quality of obtained lower bounds. For many examples
+tested in this paper, the relative optimality gap is within 1%. However, it can happen that the
+SONC lower bound is not accurate and this cannot be avoided by computing an optimal simplex
+cover. To improve the quality of such bounds, it is mandatory to find more complex representa-
+tions of nonnegative polynomials, which involve SONC polynomials. We will investigate it in
+the future.
+    Another line of research is to extend our SONC-SOCP framework to constrained polynomial
+optimization. Note that constrained polynomial optimization based on the SAGE certificate has
+been studied in Murray et al. (2020). It is also worth investigating how the SOCP methodology
+works in the SAGE context.
+
+Acknowledgements. Both authors were supported by the Tremplin ERC Stg Grant ANR-18-
+ERC2-0004-01 (T-COPS project). The second author was supported by the FMJH Program
+PGMO (EPICS project) and EDF, Thales, Orange et Criteo. This work has benefited from the Eu-
+ropean Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-
+Curie Actions, grant agreement 813211 (POEMA) as well as from the AI Interdisciplinary In-
+stitute ANITI funding, through the French “Investing for the Future PIA3” program under the
+Grant agreement n◦ ANR-19-PI3A-0004.
+
+References
+A. A. Ahmadi and A. Majumdar. DSOS and SDSOS optimization: more tractable alternatives to sum of squares and
+    semidefinite optimization. SIAM Journal on Applied Algebra and Geometry, 3(2):193–230, 2019. 3
+F. Alizadeh and D. Goldfarb. Second-order cone programming. Mathematical programming, 95(1):3–51, 2003. 3
+E. D. Andersen and K. D. Andersen. The Mosek Interior Point Optimizer for Linear Programming: An Implementation
+    of the Homogeneous Algorithm. In Hans Frenk, Kees Roos, Tamás Terlaky, and Shuzhong Zhang, editors, High Per-
+    formance Optimization, volume 33 of Applied Optimization, pages 197–232. Springer US, 2000. ISBN 978-1-4419-
+    4819-9. doi: 10.1007/978-1-4757-3216-0 8. URL http://dx.doi.org/10.1007/978-1-4757-3216-0_8. 23
+G. Averkov. Optimal size of linear matrix inequalities in semidefinite approaches to polynomial optimization. SIAM
+    Journal on Applied Algebra and Geometry, 3(1):128–151, 2019. 3, 13
+A. Ben-Tal and A. Nemirovski. Lectures on modern convex optimization: analysis, algorithms, and engineering appli-
+    cations. SIAM, 2001. 3, 13, 23
+V. Chandrasekaran and P. Shah. Relative Entropy Relaxations for Signomial Optimization. SIAM J. Optim., 26(2):
+    1147–1173, 2016. 1
+M. Dressler, S. Iliman, and T. De Wolff. An approach to constrained polynomial optimization via nonnegative circuit
+    polynomials and geometric programming. Journal of Symbolic Computation, 91:149–172, 2019. 2
+Mareike Dressler, Janin Heuer, Helen Naumann, and Timo de Wolff. Global optimization via the dual sonc cone and
+    linear programming. In Proceedings of the 45th International Symposium on Symbolic and Algebraic Computation,
+    pages 138–145, 2020. 2
+H. Fawzi. On representing the positive semidefinite cone using the second-order cone. Mathematical Programming, 175
+    (1-2):109–118, 2019. 11
+Hamza Fawzi and James Saunderson. Lieb’s concavity theorem, matrix geometric means, and semidefinite optimization.
+    Linear Algebra and its Applications, 513:240–263, 2017. 13
+Jacob Hartzer, Olivia Röhrig, Timo de Wolff, and Oğuzhan Yürük. Initial steps in the classification of maximal mediated
+    sets. Journal of Symbolic Computation, 2020. 5
+S. Iliman and T. De Wolff. Amoebas, nonnegative polynomials and sums of squares supported on circuits. Research in
+    the Mathematical Sciences, 3(1):9, 2016a. 1, 4, 5
+S. Iliman and T. De Wolff. Lower bounds for polynomials with simplex newton polytopes based on geometric program-
+    ming. SIAM Journal on Optimization, 26(2):1128–1146, 2016b. 2
+                                                           28
+C. Josz. Application of polynomial optimization to electricity transmission networks. Theses, Université Pierre et Marie
+    Curie - Paris VI, July 2016. URL https://tel.archives-ouvertes.fr/tel-01478431. 2
+Lukas Katthän, Helen Naumann, and Thorsten Theobald. A unified framework of sage and sonc polynomials and its
+    duality theory. Mathematics of Computation, 90(329):1297–1322, 2021. 1
+Igor Klep, Victor Magron, and Janez Povh. Sparse noncommutative polynomial optimization. Mathematical Program-
+    ming, pages 1–41, 2021. 2
+V. Magron and M. Safey El Din. RealCertify: a Maple package for certifying non-negativity. In ISSAC’18: Proceedings
+    of the 2018 ACM International Symposium on Symbolic and Algebraic Computation. ACM, New York, NY, USA,
+    2018a. 2
+V. Magron and M. Safey El Din. On Exact Reznick, Hilbert-Artin and Putinar’s Representations. arXiv preprint
+    arXiv:1811.10062, 2018b. 21
+V. Magron and M. Safey El Din. On Exact Polya and Putinar’s Representations. In ISSAC’18: Proceedings of the 2018
+    ACM International Symposium on Symbolic and Algebraic Computation. ACM, New York, NY, USA, 2018c. 2
+V. Magron, G. Constantinides, and A. Donaldson. Certified Roundoff Error Bounds Using Semidefinite Programming.
+    ACM Trans. Math. Softw., 43(4):1–34, 2017. 2
+V. Magron, M. Safey El Din, and M. Schweighofer. Algorithms for weighted sum of squares decomposition of non-
+    negative univariate polynomials. Journal of Symbolic Computation, 93:200–220, 2019a. 2
+V. Magron, H. Seidler, and T. de Wolff. Exact optimization via sums of nonnegative circuits and arithmetic-geometric-
+    mean-exponentials. In Proceedings of the 2019 on International Symposium on Symbolic and Algebraic Computation,
+    ISSAC ’19, page 291–298, New York, NY, USA, 2019b. 2, 20, 27
+M. Mignotte. Mathematics for Computer Algebra. Springer-Verlag New York, Inc., New York, NY, USA, 1992. 21
+Riley Murray, Venkat Chandrasekaran, and Adam Wierman. Signomial and polynomial optimization via relative entropy
+    and partial dualization. Mathematical Programming Computation, pages 1–39, 2020. 28
+Riley Murray, Venkat Chandrasekaran, and Adam Wierman. Newton polytopes and relative entropy optimization. Foun-
+    dations of Computational Mathematics, pages 1–35, 2021. 1, 2
+D. Papp.       Duality of sum of nonnegative circuit polynomials and optimal SONC bounds.                 arXiv preprint
+    arXiv:1912.04718, 2019. 16
+H. Peyrl and P.A. Parrilo. Computing sum of squares decompositions with rational coefficients. Theoretical Computer
+    Science, 409(2):269–281, 2008. 2, 17
+Victoria Powers and Bruce Reznick. A note on mediated simplices. Journal of Pure and Applied Algebra, 225(7):
+    106608, 2021. 5
+B. Reznick. Forms derived from the arithmetic-geometric inequality. Mathematische Annalen, 283(3):431–464, 1989. 5
+Guillaume Sagnol. On the semidefinite representation of real functions applied to symmetric matrices. Linear Algebra
+    and its Applications, 439(10):2829–2843, 2013. 13
+H. Seidler and T. de Wolff. An experimental comparison of sonc and sos certificates for unconstrained optimization.
+    arXiv preprint arXiv:1808.08431, 2018. 2, 17, 23, 24
+H. Waki, S. Kim, M. Kojima, and M. Muramatsu. Sums of Squares and Semidefinite Programming Relaxations for
+    Polynomial Optimization Problems with Structured Sparsity. SIAM Journal on Optimization, 17(1):218–242, 2006.
+    2
+J. Wang. Nonnegative polynomials and circuit polynomials. arXiv preprint arXiv:1804.09455, 2018. 1, 2, 4, 11
+J. Wang and V. Magron. Exploiting term sparsity in Noncommutative Polynomial Optimization. arXiv preprint
+    arXiv:2010.06956, 2020a. 2
+J. Wang and V. Magron. A second Order Cone Characterization for Sums of Nonnegative Circuits. In ISSAC’20:
+    Proceedings of the 2020 ACM International Symposium on Symbolic and Algebraic Computation, 2020b. 3
+J. Wang, V. Magron, J.-B. Lasserre, and N. H. A. Mai. CS-TSSOS: Correlative and term sparsity for large-scale polyno-
+    mial optimization. arXiv:2005.02828, 2020. 2
+J. Wang, M. Maggio, and V. Magron. SparseJSR: A Fast Algorithm to Compute Joint Spectral Radius via Sparse SOS
+    Decompositions. Accepted by ACC’21, 2021a. 2
+Jie Wang, Victor Magron, and Jean-Bernard Lasserre. Tssos: A moment-sos hierarchy that exploits term sparsity. SIAM
+    Journal on Optimization, 31(1):30–58, 2021b. 2
+Jie Wang, Victor Magron, and Jean-Bernard Lasserre. Chordal-tssos: a moment-sos hierarchy that exploits term sparsity
+    with chordal extension. SIAM Journal on Optimization, 31(1):114–141, 2021c. 2
+
+
+
+
+                                                          29
+
