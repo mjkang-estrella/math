@@ -25,3 +25,7 @@ Conjectures2.1/2.2 and degree2 theorem); fresh arXiv history shows v1 only and
 journal DOI10.26117/2079-6641-2026-54-2-38-47. Published body and MathDB mapping
 are with the independent source review. Public HIGHERMEAN and DUALSMALE
 refutations are different statements and are explicitly uncredited here.
+
+The complete two-page draft main.tex/paper.pdf now builds cleanly and both pages
+were rendered/read by the parent. paper-qa.json binds the exact bytes. It keeps
+credit0 and pending independent source/novelty/eligibility review explicit.
