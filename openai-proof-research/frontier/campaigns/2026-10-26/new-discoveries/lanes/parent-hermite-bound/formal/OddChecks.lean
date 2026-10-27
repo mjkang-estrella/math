@@ -1,0 +1,30 @@
+import OddAssembly
+
+#check HermiteEnvelope.signedOddValue
+#print axioms HermiteEnvelope.signedOddValue
+#check HermiteEnvelope.signedOddSlope
+#print axioms HermiteEnvelope.signedOddSlope
+#check HermiteEnvelope.signedOddValue_hasDerivAt
+#print axioms HermiteEnvelope.signedOddValue_hasDerivAt
+#check HermiteEnvelope.signedOddSlope_hasDerivAt
+#print axioms HermiteEnvelope.signedOddSlope_hasDerivAt
+#check HermiteEnvelope.signedOddValue_zero
+#print axioms HermiteEnvelope.signedOddValue_zero
+#check HermiteEnvelope.signedOddSlope_zero
+#print axioms HermiteEnvelope.signedOddSlope_zero
+#check HermiteEnvelope.signedOddValue_sq
+#print axioms HermiteEnvelope.signedOddValue_sq
+#check HermiteEnvelope.signedOddSlope_sq
+#print axioms HermiteEnvelope.signedOddSlope_sq
+#check HermiteEnvelope.signedOdd_energy
+#print axioms HermiteEnvelope.signedOdd_energy
+#check HermiteEnvelope.weighted_bulk_of_energy_at
+#print axioms HermiteEnvelope.weighted_bulk_of_energy_at
+#check HermiteEnvelope.sine_comparison_bulk_bound
+#print axioms HermiteEnvelope.sine_comparison_bulk_bound
+#check HermiteEnvelope.weighted_bulk_of_quadratic
+#print axioms HermiteEnvelope.weighted_bulk_of_quadratic
+#check HermiteEnvelope.source_odd_large_from_loss
+#print axioms HermiteEnvelope.source_odd_large_from_loss
+#check HermiteEnvelope.source_odd_small_from_comparison
+#print axioms HermiteEnvelope.source_odd_small_from_comparison

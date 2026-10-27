@@ -220,3 +220,12 @@ The even all-x and degree1 source cases are closed and uncredited. This alternat
 tail no longer needs Cramer. Full odd pre-x0/bulk comparison and energy loss remain;
 new full review of the new route, paper and extracted packet still required.
 See lanes/parent-hermite-bound/TAIL-CHECKPOINT.md. Credit0, tally25/30.
+
+Hermite125 supporting declarations/12 modules: signed actual odd ODE/initial
+conditions and small/large source adapters compile; comparison, trig and loss
+hypotheses remain explicit and await the two Pi implementation results.
+Preliminary reviewer source/math/eligibility PASS recorded, BUT parent caught
+its invalid use of a sine LOWER bound as an UPPER bound in the separate
+classical-combination analysis. Do not adopt its claimed n>=11 coverage; redo
+that subsumption argument at final review. Original19freeze unchanged.
+See PRELIMINARY-DECISION.md and ODD-ASSEMBLY-CHECKPOINT.md; credit0,25/30.
