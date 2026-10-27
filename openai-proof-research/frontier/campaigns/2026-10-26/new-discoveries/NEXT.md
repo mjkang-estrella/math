@@ -311,3 +311,18 @@ trace formula. All51 actual types/axioms read standard3; local clean builds.
 Committed e3cd1d4434. Partition multinomial extraction and literal sinh/exp,
 amplitude-domain/sorting source bridge remain; no source Lean endpoint or count.
 The preliminary source/math/novelty review remains on the original13-file freeze.
+
+2026-10-27 peakon all-partition checkpoint:119 declarations/19modules isolated
+strictPASS, receipt717e0fa8f48fbb46e07ec68bbddab5fee494c5664b13c189f0646a0622d60c29.
+All19 module logs0; old51 type/axiom blocks match and all68 new blocks read,
+standard3 only. Full factorial partition coefficient formula, all three printed
+families, particle-count-free partition indexing, actual complex sinh/cosh and
+sign matrices, arbitrary-position sorting/reindexing, rational spectral curve
+proved. Closed coherent_source_expansion (arbitrary complex particle-root
+amplitudes) and nonnegative_source_conjecture_372008 (literal sqrt(p_i*p_j),
+ALL nonnegative real p_i). SOURCE-DOMAIN equivalence still pending independent
+preliminary review: do NOT silently replace the intended source quantifier or
+claim a full source resolution until adjudicated. Three-page scoped draft clean,
+rendered/read; FULL119-CHECKPOINT.md and46-file checkpoint manifest record scope.
+Original13 preliminary frozen bytes unchanged. No final review/packet/count;
+credit0, accepted25/30. Hermite full162 independent final review running.
