@@ -1,0 +1,3 @@
+import SourceCompletion
+#check HermiteEnvelope.source_conjecture_of_odd_bulk
+#print axioms HermiteEnvelope.source_conjecture_of_odd_bulk

@@ -229,3 +229,18 @@ its invalid use of a sine LOWER bound as an UPPER bound in the separate
 classical-combination analysis. Do not adopt its claimed n>=11 coverage; redo
 that subsumption argument at final review. Original19freeze unchanged.
 See PRELIMINARY-DECISION.md and ODD-ASSEMBLY-CHECKPOINT.md; credit0,25/30.
+
+Hermite supporting replay126/13 is now fresh isolated strictPASS, pinned compiler
+and deps checked,13 module logs empty, all126 types/axioms reconciled exactly
+to parent-read reports; standard3 only. SourceCompletion explicitly retains
+the ALL-ODD BULK PREMISE, so this is NOT full source formal completion. Three-
+page working draft paper.pdf/main.tex has been built/rendered/read with no
+overflow or undefined references; all final scopes mark pending/credit0.
+NOVELTY-R2.md records actual Szego theorem-page reads, an additional fifth
+citer missed by the four-work index, and complete397-file text scanning of
+trureturing's update through458aaeee2237c03eff58e0bb81b72d1d7a7431a1 after
+REST/tree truncation was detected. No source/Hermite hits in that update.
+These are bounded checks, not a global novelty assurance. Full odd components
+are with two Pi implementation lanes; pi-discrete-discovery-r7 independently
+seeks fresh outcomes. Root-owned reference caches live under NEW/build and
+are excluded from candidate-source staging. No count change:25/30.
