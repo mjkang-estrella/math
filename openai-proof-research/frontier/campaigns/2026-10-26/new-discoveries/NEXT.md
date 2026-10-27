@@ -1,6 +1,6 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **18/30**. The goal remains active;12further qualifying
+Strict accepted tally: **19/30**. The goal remains active;11further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
@@ -112,3 +112,5 @@ Outcome18 mills-cm ACCEPTED afterfiveindependentgates andfresh extracted47/7 str
 2026-10-27 repeated-integrals FULL endpoint: completed PiMomentOpen implementation integrated byte-identically (24 declarations, frozen MomentDefs unchanged). New SourceEndpoint discharges BOTH residual premises. Fresh isolated129-declaration18-module strict replayPASS, ALL129types/axioms read, all18logs empty, receiptSHA0d0a272f634056e7b8fd5230776e84366848620ef96d325a2e13e4368bb6a5e1. Clean3page manuscript updated/rendered/read.42-file final-review hash freeze prepared. Credit0 pending NEW independent full final review and extracted packet. Earlier103-component partial/HOLD prose is historical; CURRENT-PROVENANCE.json/FORMAL-COMPLETE.md supersede it.
 
 2026-10-27 Davis FULL endpoint: all literal weight/quotient/variance/detailed-balance/fourth-moment identities now proved. Integer-list checker and all38kernel finite certificates close d5..42; source_tail proves all d>=43. Closed source_conjecture_319187 and strict theorem. Fresh isolated100decl19modsPASS, all100types/axioms read, all19logs empty; receiptSHAf499f8723b77920a42950167832268ca47700702919d580cd3f10fdbceabc0d4. Clean3page paper built/rendered/read. Final-review hash freeze ready. Actual author-hosted revised2010 journal-style body retains exact Conj3.1; final pagination unavailable. New independent full review and packet/extracted replay remain; credit0, accepted18/30.
+
+2026-10-27 authoritative checkpoint: repeated-integrals371768 ACCEPTED as outcome19 after independent five-gate PASS and fresh extracted129-declaration18-module strict replay. Parent/independent/extracted receipts byte-identical (0d0a272f634056e7b8fd5230776e84366848620ef96d325a2e13e4368bb6a5e1), all types/axioms read, all module logs empty. Deterministic70-member packet SHA fc7a025de5a87fcd760668689f26f32db4271b18c076943364668f0f0c100e42. Earlier repeated-integral HOLD/partial/review-pending notes are superseded by candidates/repeated-integrals/acceptance.json. Davis100/19 remains credit0 pending NEW full independent review and extracted packet. Two Pi research lanes analysis-r3/discrete-r3 remain running; do not poll.

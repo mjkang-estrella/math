@@ -1,6 +1,6 @@
 # Accepted research outcomes
 
-Strict tally: **18/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
+Strict tally: **19/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
 
 | # | Result | Lean declarations | Paper | Complete proof packet |
 |---|---|---:|---|---|
@@ -22,6 +22,7 @@ Strict tally: **18/30**. Each row is one combined mathematical outcome, with a c
 | 16 | Continuous C*-Sendov counterexample, MathDB353909 and published split variant | 136 | [Paper](candidates/cstar-sendov/paper.pdf) | [ZIP](candidate-packets/353909-cstar-sendov-proof.zip) |
 | 17 | Odd-total SOC representation lower bound, Wang2024 Section7(2) | 41 | [Paper](candidates/wgm-parity/paper.pdf) | [ZIP](candidate-packets/2206-05924-wgm-parity-proof.zip) |
 | 18 | Mills-ratio complete-monotonicity refutation, MathDB351688 | 47 | [Paper](candidates/mills-cm/paper.pdf) | [ZIP](candidate-packets/351688-mills-cm-proof.zip) |
+| 19 | All-order repeated-integral smooth realization, MathDB371768 | 129 | [Paper](candidates/repeated-integrals/paper.pdf) | [ZIP](candidate-packets/371768-repeated-integrals-proof.zip) |
 
 Outcome 2 resolves an explicitly open assertion in the source associated with MathDB 363319; the record's different root-simplicity conjecture remains open. Outcome 3 does not refute the separate zero-free conjecture and makes no minimality claim.
 
@@ -56,3 +57,5 @@ Outcome16 is one source-conjecture refutation in C([0,1],C), not a scalar Sendov
 Outcome17 resolves Wang2024 Section7 open question(2): every positive integer weight tuple with odd total requires at least m simple SOC constraints. The literal projection statement permits arbitrary repeated indices, self-loops and cycles initially; all needed structure follows from soundness and equality counting. Parent/independent/extracted41-declaration7-module strict receipts are byte-identical, all extracted types/axioms were read, and all module logs are empty. The unchanged reviewed two-page paper and50-member deterministic ZIP pass byte readback/manifest/rebuild checks. The archive preserves earlier credit0 checkpoint metadata; the separate post-replay acceptance.json and this authoritative ledger record credit1. The review floor/ceil and publication-year slips are reconciled in the parent addendum. Old MathDB349081 cardinality, helpers and optimality are uncredited; Alzalg full-body and bounded-priority limits remain explicit.
 
 Outcome18 refutes Ferreira--Simon publishedConjecture3 alreadyatn0. The actualGaussian-tail quotient has negative40thderivative on an entire positiveinterval with rprime<0. The degree21 integer polynomial, all22negative rationalBernstein coefficients, pi interval, actual derivative identification and continuity bridge are fullyproved. Parent/independent/extracted47-declaration7-module strict receipts are byte-identical; all47extracted types/axioms were read and allmodulelogs empty. The80-member deterministic ZIP passes rebuild/readback/manifestchecks. All55reviewed originalbytes are preserved through a locationmap; the final two-page manuscript only updates source-access/review-status prose and was rebuilt/rendered/read. Actual AMS publishedHTML removes the former material source-access limitation. Citation coverage and subscription limits remain explicit; no minimalorder, everyindividualn, square-root-variant contradiction or worldwidepriority claim is made.
+
+Outcome19 proves the full all-n source Conjecture1.2. Standard Stieltjes, separation and moment tools are credited; n<=3, helper lemmas and sequel consequences are not additional outcomes. All five independent gates and fresh extracted129/18 strict replay pass with identical receipts. No worldwide priority claim.
