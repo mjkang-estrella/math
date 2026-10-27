@@ -17,7 +17,8 @@ in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
 2. lanes/parent-kadar-yu has the fullprospective arbitrary-partition handproof
    for372352. Completedindependentreview validatesSOURCE/MATH andsupports
    boundedconditionalNOVELTY/ELIGIBILITY; three explanatoryrepairsintegrated.
-   FourteenclassicalJacobi supportdeclarations passstrictreplay, notthefull
+   Forty-fourclassicalJacobi/path/cancellation supportdeclarations in5modules
+   passstrictreplay, notthefull
    sourceidentificationorasymptoticclauses. Thegenerichead-tailresultaloneis
    NOT theliteralallpartitionendpoint; substantialrepresentationtheorybridge
    remains. Nopaper/packet/discoverycredit yet.
