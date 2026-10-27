@@ -8,19 +8,23 @@ in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
 1. Primary formal priority: lanes/parent-sendov has the complete proposed cubic
    counterexample to Krishna C*-Sendov /MathDB353909 and the2026published
    completelysplitderivative variant. IndependentpreliminarySOURCE/MATH/bounded
-   NOVELTY/ELIGIBILITY allPASS. Fourparentmodules/110declarations pass strict
+   NOVELTY/ELIGIBILITY allPASS. Fiveparentmodules/113declarations pass strict
    isolatedreplay; exactcubicConjecturepredicate, actualC*algebra, exponential/sqrt
    functions, genuinepolynomialfactorization, sourceorderdiscs and positive-real
    weightstocomplexorderbridge are proved. The genericselection/convexweight
    implementationlane is running; integrateonlyaftercompletionnotification.
-   Fullclosedendpoint, finalpaper/reviewandpacket remain. Candidatecredit0.
+   Conditionalassemblylemmas nowproveexactrefutationsfromclassification/weight
+   premises. These premises are NOTyetdischarged; fullclosedendpoint, finalpaper,
+   reviewandpacket remain. Candidatecredit0.
    Formal353908 additionally needsdensityofinvertibles; do notinferthat extra
    formalhypothesisfromthe353909certificate. Draft3pagepaperneedsfinalpagination.
 2. Newresearchpriority: lanes/parent-kadar-yu/PROOF.md proposes the FULL arbitrary
    partitionMorris–Martin2512.24535v1Conjecture4.5.1 /MathDB372352, viafixingallbut
    oneSpechttail, cyclicJacobicompression andmonicgcdremoval. Coversk=-1,
    squarefreeness,eventualexteriorcounts,anddensity[-2,2]. Independentpreliminary
-   source/math/boundednovelty/eligibilityreview is running. NoLean/paper/count yet.
+   source/math/boundednovelty/eligibilityreview is running. FourteenclassicalJacobi
+   simplicitysupportdeclarations passfreshstrictreplay, butsourceidentification
+   andasymptoticclauses remainunformalized. Nopaper/discoverycredityet.
    A genericheadtailtheoremaloneisnot a complete literalallpartitionsformalbridge.
 3. Outcome15connection-graph is ACCEPTED after fivegatePASS, all23frozenhashes
    matched, andfresh211declaration17moduleextractedreplay. Packet46members,
@@ -48,3 +52,9 @@ fullliteralLeanendpoint, independentadversarialreview, seriousboundedpriorart,
 renderedpaperandfreshextractedpacketreplay. No knownresults/helpers/typos/endpoints/
 alreadypostedrefutations. EmptyMathDB/searchesdonotcertifynovelty.
 Noexternalposting/contact/messages/publication/upload/pushauthorized.
+
+Renewedparentexploration: matrixShapiro352327 has two independently parameterized
+numerical searches and no counterexample; four-projection332493 search covers
+sevenrealrank/ambientconfigurations with nohit. These are finiteevidenceonly.
+Prior-proofexclusions nowinclude372393 (DeonarineAugust2026exactnestedness),
+322914/324064 (Audenaert2014Theorem1), and324172 (Li--SzeCor2.7).

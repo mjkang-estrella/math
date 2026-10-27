@@ -1,6 +1,6 @@
 # C*-Sendov formalization checkpoint — credit 0
 
-26 October 2026. The accepted campaign tally remains 14/30.
+26 October 2026. The accepted campaign tally is now 15/30. Earlier partial checkpoints below are historical.
 
 The parent has implemented three source modules, with **92 declarations**, and
 replayed all of them in a fresh isolated directory with pinned Lean 4.34.1 and
@@ -61,3 +61,15 @@ new types and axiom reports were read; only the standard three axioms occur.
 Receipts and exact source hashes are in verification/partial110-*. The partial92
 receipt remains the older historical checkpoint. Full selection and convex-weight
 integration, final review, paper/packet, and extracted replay are still pending.
+
+## Subsequent113-declaration checkpoint
+
+EndpointAssembly.lean proves that complete global classification rules out every
+critical element in the source unit disc about root0. It then assembles the two
+source-conjecture refutations, retaining classification and positive-convex-weight
+premises explicitly. These are conditional assembly lemmas, not completed source
+refutations. The running implementation lane must still discharge those premises.
+
+Fresh isolated strict replay passes113 declarations in five modules; the three new
+types and axiom reports were read, with only the standard three axioms. Receipts
+are preserved as verification/partial113-*. Candidate credit remains zero.

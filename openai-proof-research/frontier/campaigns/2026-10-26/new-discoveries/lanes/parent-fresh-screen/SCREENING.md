@@ -110,3 +110,61 @@ companion grouping is misleading: actual1601.04382 is Tran's general rational
 GF root-distribution paper and1510.01758 is Kelley–Owen on finite-field trinomials,
 not earlier statements of the Kadar–Yu conjecture. The classical generic Jacobi
 machinery is not itself new credit. SourceSHA2d6f180bf33021ca6ab819928dfe51c91d44bed2eba8ccf03d2e443ed6bf5c86.
+
+## Prior-proof exclusions confirmed during renewed screening
+
+372393: actual source2601.00916v4 Conjecture5.5 is already proved in Brandon
+Deonarine, *Nested Violation Sets for the Generalized Damascus Inequality*,
+10August2026, Theorem1. The actual primary PDF was read, including the reciprocal
+identity, sign-pattern argument, symmetric Laurent-sum multiplier, and the
+stronger strict improvement S_(n+1)>S_n>0. Its linked public Lean repository is
+https://github.com/M3RCU3Y/damascus-inequality-nestedness . The parent's independent
+multiplier derivation reproduces this already public mechanism and is uncounted.
+Primary https://brandondeonarine.com/papers/nested-violation-sets.pdf
+PDFSHA e7b1d931653ddda947b8fdb2d4d86edf1effc212479092f8fd75a77f4118877f . The live MathDB open status is not novelty evidence.
+
+369283: already excluded in the ledger. Actual2610.12063v1 Corollary3.2 explicitly
+proves the entire source conjecture using Guillot–Khare–Rajaratnam's entrywise
+power superadditivity theorem. The parent independently found the same Gram-matrix
+argument, then checked the exclusion before formalization. No new credit.
+
+335919: the average absolute Rademacher inner-product constant1/sqrt2 is the
+classical sharp Khintchine constant, not a fresh discovery. No credit pursued.
+
+322914/324064: actual Audenaert1410.4941 Theorem1 and introduction read. The
+primary explicitly states that it solves Miao's conjecture, in the stronger form
+with arbitrary increasing index selections. Both initial-segment MathDB versions
+are excluded. PDFSHA d6611d8add448b1ceaf3c75b5875e118d05d278f4bdc10a5da132ac239f399c8.
+
+324172: actual Li--Sze author-hosted *Determinantal and Eigenvalue Inequalities*,
+Corollaries2.6/2.7 and their derivation read. Corollary2.7 explicitly proves the
+exact sharp factor2^m for every accretive-dissipative matrix. Excluded. Primary
+https://cklixx.people.wm.edu/Fischer-final.pdf , PDFSHA
+48cf353b275adece929c665290f5bf978f5d6360b83bab85d38dce98bbf9c21b.
+
+341578: Speyer2022 actual paper's Theorem2 proves diagonalizability and the
+conjectured multiplicities as LOWER BOUNDS. Exactness and absence of other
+repeated eigenvalues are not asserted as proved. Do not conflate this substantial
+partial resolution with the full source statement; no new result obtained here.
+
+362175: actual Pang2610.29240 introduction/Theorem1.1 read. It solves the sharp
+UNWEIGHTED-output RANK-ONE problem, a distinct restriction of the general weighted
+commutator problem, citing Fang--Cheng2025. Those known rank-one constants are
+uncredited; no full general-matrix resolution inferred.
+
+372794: full live MathDB solution46acd5c9-9ae6-4584-a626-588caaf59c7b read.
+Shivam Patel posted the complete positive generating-function proof on20August2026;
+the parent independently checked its common-denominator identity by exact SymPy.
+Excluded. Open status does not override an existing posted proof.
+
+330122: actual Shapiro1503.05295 Conjecture12 formula read, matching the literal
+MathDB claim. The quadratic x²+1 has no real roots and G1=-4, so the statement
+has an elementary quadratic-discriminant defect. The power family
+p=(x²+1)^m also has G1=-4m²(x²+1)^(2m-2)<0. These are not pursued or counted
+as substantive discoveries under the campaign's strict standard. The2023
+preprint on Shapiro's12th conjecture was retrieved for future context checking;
+its mathematical body has not yet been assessed, and no novelty inference is made.
+
+364455: actual source2408.12386 advertises a disproof of the Fischer--Kubitzke
+conjecture; the2026 Transactions record agrees. Its full counterexample body
+has not yet been read here, so no formal resolution credit or new work is pursued.
