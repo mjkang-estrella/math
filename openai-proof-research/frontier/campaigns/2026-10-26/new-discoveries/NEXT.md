@@ -160,3 +160,18 @@ Rootfreshscreen:336243 EXCLUDED by actual arXiv1706.00316v9 Theorem3Eq5.10 (proo
 DeTemple328867ii formal COMPLETED (not accepted): parent-detemple21 declarations/3modules fresh strictPASS, all21actualtypes/axiomsread,3emptylogs, standard3only. Receipt72b9fb283c7587a4810655ba55a4138dcc4e49e6866114976a6e1b07e4fe5a19. Literal realGamma derivative quotient, localcomplexanalytic/realderivative bridge, logarithmic finite-difference divergence, strictinterior parameter continuity and CM->convex allproved; main endpoint premise-free. Clean2page draftpaper rendered/read. Specific rationalwitness remains math-only, paperstatesfullyformalexistentialinteriorclaim. Original25 preliminarybytes unchanged; FORMAL-ADDENDUM supersedes absentformalstatus only. Runningprelimreview does NOT cover newformal/paper; NEW finalfivegatereview and extractedpacket required. Credit0, tally24.
 
 Arcsinh325512 preliminaryreview complete: source/mathPASS, boundedsearch foundno priorwitness, but substantiveeligibilityFAIL because allp<1 liesoutside authors2019 restated livep>1question. Parentacceptscredit0exclusionandstopsLean; proofpreserved. ParentREVIEW-DECISION qualifies limit-vs-flatness, deficit secondderivative formula and unprovedp>1claim; no numerical evidence promoted toproof. Tally24unchanged.
+
+2026-10-27 root exclusions:332191 exact fullhalfline digamma-power result already
+posted Krasniqi2609.33959v1 Cor1.2, actualcompletebodyread.332241 remainingmu
+Bernoulliremainder is directclassicalBrownian-exit-transform plusTaylorcorollary;
+actualALEA2013Prop5.1p381andODEbodyread, p381rendered. Nuhalfalreadyownsource.
+Bothuncredited; noLean/paperinvestment. Hermite346243 hasa completeproposed
+allnargument inparent-hermite-bound/PROOF.md (odddegreeenergy-losscomparison
+plusclassicalCramerclampedtail), butNOindependentreview/formal/eligibilityPASS.
+Even/classicalbounds/helpersuncredited. Accepted24/30unchanged.
+
+DeTemplepreliminaryreviewcomplete: source/math/eligiblePASS, boundedno-prior-found.
+M1caughtomittedc inauxiliaryPythonidentity; original25bytespreserved, new
+check_certificate_corrected.py usesfullQand+c/x2, exactsymbolicPASS. Rational
+product-rulecertificateandfullLeanneverusedwrongidentity. Reconciliationexplicit.
+45-filefinalfreeze nowreadyforNEWfullfivegatereview21/3pluspaper. Credit0.
