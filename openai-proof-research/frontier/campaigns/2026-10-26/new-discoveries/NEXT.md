@@ -21,15 +21,19 @@ Latest acceptance (2026-10-27):
 Both canonical papers clean2pages, all pages read; all27/25 reviewed originals preserved;
 all proof/verifier/source bytes unchanged. Extracted sessions82866/12210 TERMINAL PASS.
 
-Active Pi work: discrete-discovery-r7, strict-cstar-corona-preliminary-review-20261027-v1,
-and analysis-discovery-r19 (all standard/default Pi GLM5.3Flash).
-Corona preliminary13-path freeze359f9ddd6f; exact affine M2 datum, nilpotent-line reciprocal
-obstruction. Crucial substantive gate unresolved: may be classical immediate corollary or
-formulation correction. Full literal25/4 endpoint now passes parentstrictreplay, alltypes
-andaxiomsread, standard3only, all4logs empty; FORMAL-CHECKPOINT.md governs newerformal
-bytes OUTSIDE preliminary13-path review. No paper/finalreview/packet/count. Receipt
-067e9ec0a035e9520b6bd34660a233bcd2ae88f1ce17568c4824d7d2d0495dc5. Never infer novelty from source-open labels. Fresh r18 excludes
-372380 (Gao-Guo explicit public Cor1.3) and345844 (immediate own-source lemma corollary).
+Active Pi work: discrete-discovery-r7 and analysis-discovery-r19 (standard/default
+Pi GLM5.3Flash). The C*-Corona preliminary review COMPLETED substantiveFAIL:
+actual Rosenfeld2000 Theorem2/body retrieved/read, old affine-rigidity obstruction.
+Parent adopts exclusion;25/4 strict certificate and clean2-page note remainuncounted.
+See PRELIMINARY-DECISION.md for corrections of ancillary reviewer inverse formulas
+and matrix notation. Original13-file freeze preserved. Do not seek final review/count
+for this classical/formulation consequence. Bieberbach outcome29 is unaffected.
+
+Current source-access fallback: squaredPolya329636 remains mathematical/formal100/9
+andmanuscriptPASS but noveltyHOLD. Actual publishedLAA491(2016)73-82 body and closest
+JMAA465(2018)267-280 body stillunread; current webfetches403, abstractsnotclearinggate.
+No count. Rootr18exclusions372380(Gao-Guo explicit publicCor1.3),345844(immediate own
+source lemma corollary), r20exclusions362477/362478(source already answers) remain0.
 
 ONLY Pi spark/GLM-5.3-Flash-EXL3 standard/default speed, max4 user / root+3runtime.
 No polling running delegates; follow completion wake. Every NEW review is a NEW delegate.
