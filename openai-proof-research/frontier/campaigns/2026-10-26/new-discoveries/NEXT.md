@@ -391,3 +391,9 @@ worker while cancellation is unconfirmed. On terminal wake, launch a NEW
 strict-bessel-fejer-preliminary-review task on full87 freezea4cd6b75f4,
 43paths. Review source/math/formal/novelty/substantive; manuscript absent.
 Current root full87 processes all TERMINAL PASS; no root shell sessions live.
+
+Polya source-access-r22 COMPLETED: independent JMAA2018 accepted-body text
+assessment clear; LAA2016 published body STILL unread, HOLD/credit0. Root
+SOURCE-ACCESS-R22-DECISION.md qualifies universal absence claims and missing
+math-font glyphs in saved visuals. Completion frees onePi slot independently
+of analysis19 cancellation. New Bessel review may launch once finalpaperfreeze ready.
