@@ -100,3 +100,5 @@ The endpoint is NOT closed until those premises are discharged. See
 lanes/parent-repeated-integrals/FORMAL-PROGRESS.md and REPRESENTATION-PROOF.md.
 Mills final review has been requested on its55-file freeze, with source-access
 and additional prior-art leads explicitly assigned. Accepted tally remains17.
+
+Repeated-integrals manuscript draft now3pages, cleanbuild andallpagesvisuallyinspected; mathematical directseparation proof, source identities, all-order witness andexact103-component formal-limit disclosure. main.tex/paper.pdf/proof-map.json/paper-qa.json inparentlane. Notfinalreviewed orcounted.

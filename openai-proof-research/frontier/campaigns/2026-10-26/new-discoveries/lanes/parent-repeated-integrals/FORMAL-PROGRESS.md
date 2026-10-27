@@ -37,8 +37,11 @@ assigned implementation is working on precisely these facts against the
 unchanged MomentDefs interface. No closed source theorem is claimed while
 these premises remain. All103 declarations are components of ONE prospective
 outcome, not103 discoveries. Discovery credit stays0; accepted tally17/30.
-The final paper, independent full-formal/manuscript review, packet and extracted
-replay must follow the closed theorem. Original10-file preliminary freeze and
+The three-page manuscript draft main.tex/paper.pdf is built and all pages
+visually inspected, with a precise formal-limit disclosure. paper-qa.json and
+proof-map.json bind the draft and all103 formal types to their actual scope.
+Final manuscript acceptance, independent full-formal/manuscript review, packet
+and extracted replay must follow the closed theorem. Original10-file preliminary freeze and
 the earlier43-declaration receipt remain unchanged.
 
 ## Earlier component checkpoint (superseded in scope, evidence retained)
