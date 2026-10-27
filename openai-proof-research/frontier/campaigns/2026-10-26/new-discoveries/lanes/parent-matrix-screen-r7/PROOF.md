@@ -1,7 +1,8 @@
 # Prospective refutation of the squared Pólya–Szegö clause
 
-Status: complete mathematical construction with exact arithmetic checks; **credit 0**.
-No full Lean endpoint, manuscript, independent review, or novelty clearance yet.
+Status: complete mathematical construction and CLOSED Lean first-clause counterexample; **credit 0**.
+Fresh isolated strict replay PASS100/9; parent read all100 types/axioms; only standard3.
+Two-page draft rendered and read. Independent review, novelty clearance, final packet and extracted replay remain pending.
 The separate Diaz–Metcalf clause has older claimed negative examples, but the
 closest examples fail verification at their stated bounds (see correction below).
 It is retained as uncredited supplementary mathematics pending a full prior-art decision. A single possible future credit concerns the first clause only, conditional
@@ -139,7 +140,7 @@ sources include 1610.04162, 1801.08634 and the ScienceAsia2017 article; their fu
 scope clearance is NOT inferred from a keyword search. No external posting or
 communication has occurred.
 
-## Supporting Lean checkpoint (not the source theorem)
+## Historical scalar-only checkpoint (superseded below)
 
 formal/RadicalSign.lean now proves scalarDefect_lt, the literal radical expression
 above is less than −17000. The proof uses coarse rational bounds a<=441/10000,
@@ -160,3 +161,25 @@ cleared by keyword matching. The attempted arXiv1705.09784 is a DIFFERENT paper
 (Mićić–Moradi–Furuichi on Choi–Davis–Jensen), not More accurate operator means
 inequalities; the latter remains unread. Both mistaken retrievals are labeled
 in provenance and cannot support a novelty PASS.
+
+## Full formal and manuscript checkpoint, 2026-10-27
+
+The scalar-only limitation above is now discharged for the FIRST clause. Nine
+modules and100 declarations prove the literal finite-dimensional universal
+assertion false: SourceCounterexample.source_counterexample_329636_first
+(namespace SquaredPolya) has no residual premises. The concrete positive input
+bounds, full-complex-algebra unital positive map, actual CFC square-root geometric
+mean, positive Riccati uniqueness, both input/output mean evaluations, genuine
+quadratic form and strict negative sign are all proved. Fresh isolated strict
+replay checked pinned dependencies and warningsAsError; all9 logs0 bytes; only
+propext/Classical.choice/Quot.sound. Every printed type/axiom report was read by
+the parent. Frozen receipt/types are verification/parent100-audit.json and
+parent100-Checks.log. The manuscript main.tex/paper.pdf has2 clean pages, all
+rendered/read, with all limits and credit0 stated. No formal second-clause, CP
+stronger-than-positive, or optimal-constant assertion is counted. Full independent
+source/math/formal/novelty/manuscript review, packet assembly and extracted replay
+still remain; no acceptance or priority claim. The published LAA body and the
+2018 More accurate operator means inequalities remain unread, despite public
+metadata showing open archives: full-text API requires a key and web routes are
+bot-blocked. The negative prior examples were independently recomputed; do not
+repeat the withdrawn second-clause prior-resolution claim.

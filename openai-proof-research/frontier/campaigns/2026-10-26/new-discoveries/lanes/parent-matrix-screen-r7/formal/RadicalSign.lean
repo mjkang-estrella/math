@@ -52,6 +52,5 @@ theorem scalarDefect_lt : scalarDefect < -17000 := by
       ((1058821 / 1054721 : ℝ) + 2 * b) < -17000
   nlinarith
 
-#print axioms scalarDefect_lt
 
 end SquaredPolya
