@@ -103,3 +103,9 @@ No MathSciNet/zbMATH exhaustive sweep, complete classical-combination exclusion,
 or global priority assurance is claimed. The final reviewer should challenge
 the exact source scope, the new tail proof, valid classical comparison routes,
 the remaining adjacent full-body limits and literature coverage independently.
+
+## Later formal-state update
+
+The incomplete126/odd-bulk status above is historical. FULL162-INTEGRATION.md
+records the now-complete literal source endpoint and fresh isolated162/17 replay.
+All substantive novelty/access limits above remain; no acceptance follows.
