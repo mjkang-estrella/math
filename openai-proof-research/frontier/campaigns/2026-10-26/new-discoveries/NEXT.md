@@ -1,9 +1,13 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **25/30**. The goal remains active;5further qualifying
+Strict accepted tally: **26/30**. The goal remains active;4further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
+
+Current acceptance checkpoint (2026-10-27): Outcome26 Hermite346243 is ACCEPTED after all five independent gates and fresh extracted162/17 strict replay. All types/axioms read, all module logs empty; parent/independent/extracted receipt d409252af9856fafd2410b9473e3e7339544bd96bfe27b388109aed4d4aee3d2. Deterministic123-member packet SHA e912228169c241abc1aeeab5d6fac977f1335359afff1275292b2253640a24a8. Full literal all-n/all-positive-x envelope; classical tools/known cases/helpers uncredited. All105 reviewed bytes preserved, release status-only edits and bounded novelty limits documented. Four qualifying outcomes still required.
+
+Peakon372008 preliminary review now SOURCE/MATH/NOVELTY/SUBSTANTIVE PASS on original21/3 freeze; coherent per-particle-root convention is source-forced, not a positive-momentum narrowing. New119/19 formal proof and three-page manuscript are NOT covered by that preliminary review. NEW full final review and wider subsumption check, then extracted packet remain required; credit0.
 
 1. Outcome16 candidates/cstar-sendov is ACCEPTED after independent five-gate
    review and fresh extracted136-declaration8-module strict replay. All types
