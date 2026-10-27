@@ -257,3 +257,18 @@ Near-origin trig and q-domain premises now discharged. Actual oscillator
 comparison/strict loss remain; SourceCompletion still assumes ALL-ODD BULK.
 Three-page updated draft rendered/read, paper-qa binds bytes. Original19math
 freeze and old13module sources unchanged. Credit0,25/30 unchanged.
+
+R11 source screens:336251 excluded by actual Fu–Li2609.08603 Theorem1.1 plus
+Brevig–Llinares–Seip2402.09787 Theorem1 (all actual relevant bodies read);
+320927 excluded by public2026-08-16 Schlesinger whole solution, exact primitive
+independently rechecked;381835 is direct classical Caratheodory Hankel-bound
+corollary via h=2f/z-1. No credit,25/30 unchanged. Stronger adjacent Zaprawa
+Eq9 has a prospective moment proof, eligibility/prior-art HOLD, no Lean/count.
+
+R11 adjacent Zaprawa2024Eq9: complete proposed all-order Herglotz double-
+moment proof and full support equality classification preserved in ZAPRAWA-
+PROPOSAL.md. Exact2240finite-measure cases/560two-point equalities pass as
+evidence only. Classical determinant Cauchy-Schwarz also gives the bound
+immediately, an explicit substantial eligibility/exclusion risk. Four of eight
+citers actual relevant statements read; four remain unread. No independent
+review/Lean/count, credit0. Do not promote this as discovery without review.
