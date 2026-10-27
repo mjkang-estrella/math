@@ -293,3 +293,21 @@ pp12–13, matchesv3. Preliminary eligibility review needed. Credit0,25/30.
 Gaussian367973 directfinitefield-productcorollary excluded, not a prior-posting
 claim. Strenner340767 stays unresolved: published convexity snippet concerns
 SIMPLEX case only and does not solve general conjecture. No exclusion there.
+
+2026-10-27 completed Hermite source certificate: lanes/parent-hermite-bound now
+has the closed literal source_conjecture_346243, fresh isolated strictPASS162/17,
+receipt d409252af9856fafd2410b9473e3e7339544bd96bfe27b388109aed4d4aee3d2.
+All17 module logs empty; old135 actual type/axiom blocks byte-identical and all27
+new blocks read; standard3 only. Completed Pi ODE comparison/loss integrated
+with all25 declarations exposed for audit; root instantiates actual Hermite ODE
+and closes odd bulk. Clean three-page paper updated/rendered/read. New105-file
+full162-review-hashes.json freeze; original19 bytes preserved. Full independent
+five-gate final review, packet and extracted replay required; credit0,25/30.
+
+Peakon372008 now has51 supporting Lean declarations/10modules: actual algebraic
+family determinant collapse, Hamiltonian generator, dual-number Jacobi identity,
+genuine matrix geometric series, formal trace-log identity, finite every-order
+trace formula. All51 actual types/axioms read standard3; local clean builds.
+Committed e3cd1d4434. Partition multinomial extraction and literal sinh/exp,
+amplitude-domain/sorting source bridge remain; no source Lean endpoint or count.
+The preliminary source/math/novelty review remains on the original13-file freeze.
