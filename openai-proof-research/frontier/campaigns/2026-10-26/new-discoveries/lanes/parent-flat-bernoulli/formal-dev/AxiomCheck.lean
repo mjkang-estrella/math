@@ -1,0 +1,7 @@
+import EvenPropagation
+#check FlatBernoulli.weighted_power_ge_mass
+#print axioms FlatBernoulli.weighted_power_ge_mass
+#check FlatBernoulli.weighted_power_lower
+#print axioms FlatBernoulli.weighted_power_lower
+#check FlatBernoulli.even_propagation
+#print axioms FlatBernoulli.even_propagation

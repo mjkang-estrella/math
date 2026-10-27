@@ -1,0 +1,32 @@
+import WeightedPowers
+import EvenPropagation
+import SpectralPropagation
+import SpectralMoments
+#check FlatBernoulli.weighted_power_ge_mass
+#print axioms FlatBernoulli.weighted_power_ge_mass
+#check FlatBernoulli.weighted_power_lower
+#print axioms FlatBernoulli.weighted_power_lower
+#check FlatBernoulli.even_propagation
+#print axioms FlatBernoulli.even_propagation
+#check FlatBernoulli.spectralIncrement
+#print axioms FlatBernoulli.spectralIncrement
+#check FlatBernoulli.spectralIncrement_odd
+#print axioms FlatBernoulli.spectralIncrement_odd
+#check FlatBernoulli.spectralIncrement_odd_bound
+#print axioms FlatBernoulli.spectralIncrement_odd_bound
+#check FlatBernoulli.positiveWeight
+#print axioms FlatBernoulli.positiveWeight
+#check FlatBernoulli.negativeContribution
+#print axioms FlatBernoulli.negativeContribution
+#check FlatBernoulli.spectralIncrement_even_split
+#print axioms FlatBernoulli.spectralIncrement_even_split
+#check FlatBernoulli.spectralIncrement_even_bound
+#print axioms FlatBernoulli.spectralIncrement_even_bound
+#check FlatBernoulli.spectral_negative_size
+#print axioms FlatBernoulli.spectral_negative_size
+#check FlatBernoulli.spectralIncrement_tail_negative
+#print axioms FlatBernoulli.spectralIncrement_tail_negative
+#check FlatBernoulli.basis_power_eigenvector
+#print axioms FlatBernoulli.basis_power_eigenvector
+#check FlatBernoulli.basis_moment_expansion
+#print axioms FlatBernoulli.basis_moment_expansion
