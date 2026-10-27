@@ -1,7 +1,7 @@
 # Prospective full Kadar–Yu root-distribution theorem — credit 0
 
 26 October 2026. Proposed complete hand argument for MathDB372352,
-Morris–Martin arXiv2512.24535v1 Conjecture4.5.1, p35. **No acceptance or formal
+Morris–Martin arXiv2512.24535v1 Conjecture4.5.1, p35. **No acceptance or complete source formal
 verification claimed.** Source, mathematical, bounded novelty and eligibility
 review must assess the reduction below before formalization is prioritized.
 
@@ -28,7 +28,7 @@ following are established SOURCE statements, not hypotheses invented here:
   old endpoint, and whose diagonal entry is α.
 - Proposition3.25: det Γ_(n_1,…,n_d)=C(α)∏_(i=1)^d P_(n_i)(α).
 - P_n is reduced: consecutive polynomials are coprime. The tail determinant
-  recurrence is P_(n+1)=αP_n−P_(n−1), as explicitly in Eq(3.2.9). The printed
+  recurrence is P_(n+1)=αP_n−P_(n−1), as explicitly in Eqs(3.2.7)/(3.2.9). The printed
   plus sign in Eq(3.1.1) conflicts with that determinant recurrence and the
   classical sine formulas; no credit is sought for correcting that typo.
 
@@ -40,7 +40,7 @@ and no unproved arm formula of §5 are used.
 Let A be any finite real symmetric matrix and e any unit coordinate vector.
 Let K=span{e,Ae,A²e,…}; its orthogonal complement is invariant under A.
 Write r=dim K≥1. Gram–Schmidt on e,Ae,… gives a real Jacobi matrix J on K:
-its subdiagonal entries are strictly positive until dimension r, and e can be
+its subdiagonal entries are nonzero until dimension r, and e can be
 placed at its final coordinate by reversing the basis order. On K^⊥ write A₀.
 
 Now append s new vertices to A by a path: the first is coupled to e with
@@ -147,8 +147,11 @@ in any interval differ by at most 2r (the sharper r is unnecessary).
 Hence J_s has an eigenvalue in I for every sufficiently large s.
 
 Thus the union of the zeros of P_(N+s) in [−2,2], s≥0, meets every open
-subinterval of (−2,2). Its closure also contains both endpoints, proving
-density in [−2,2] exactly as Conjecture4.5.1 requests. The same reasoning
+subinterval of (−2,2). For either endpoint and any epsilon>0, choose 0<delta<min(epsilon,1).
+The interval (2−delta,2−delta/2) lies inside the band and contains a root
+for all sufficiently large s, at distance less than epsilon from2; likewise
+(−2+delta/2,−2+delta) supplies a root near−2. Thus its closure contains
+both endpoints, proving density in [−2,2] exactly as Conjecture4.5.1 requests. The same reasoning
 gives a stronger known-mechanism consequence: the empirical zero measures
 converge to the arcsine law on [−2,2], with only boundedly many exterior
 zeros. This consequence is **not separate discovery credit**.
@@ -179,5 +182,7 @@ Load-bearing checks for an adversarial reviewer:
   source endpoint. The actual source identification, all quantifiers, the
   boundary index, and the two asymptotic clauses need an honest Lean bridge.
 
-No Lean file, manuscript, independent review, complete citation screen,
-packet, or extracted replay yet. Credit remains 0.
+Independent preliminary review supports SOURCE/MATH and bounded NOVELTY/
+ELIGIBILITY, with its access limits documented. The parent has14 strictly
+replayed classical Jacobi supporting declarations, not a full source endpoint.
+No manuscript, final review, packet, or extracted replay yet. Credit remains0.

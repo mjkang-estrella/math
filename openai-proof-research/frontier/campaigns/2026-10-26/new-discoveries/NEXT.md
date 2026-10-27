@@ -5,27 +5,22 @@ outcomes are needed. Historical thirty formalizations remain separate and uncred
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
 
-1. Primary formal priority: lanes/parent-sendov has the complete proposed cubic
-   counterexample to Krishna C*-Sendov /MathDB353909 and the2026published
-   completelysplitderivative variant. IndependentpreliminarySOURCE/MATH/bounded
-   NOVELTY/ELIGIBILITY allPASS. Fiveparentmodules/113declarations pass strict
-   isolatedreplay; exactcubicConjecturepredicate, actualC*algebra, exponential/sqrt
-   functions, genuinepolynomialfactorization, sourceorderdiscs and positive-real
-   weightstocomplexorderbridge are proved. The genericselection/convexweight
-   implementationlane is running; integrateonlyaftercompletionnotification.
-   Conditionalassemblylemmas nowproveexactrefutationsfromclassification/weight
-   premises. These premises are NOTyetdischarged; fullclosedendpoint, finalpaper,
-   reviewandpacket remain. Candidatecredit0.
-   Formal353908 additionally needsdensityofinvertibles; do notinferthat extra
-   formalhypothesisfromthe353909certificate. Draft3pagepaperneedsfinalpagination.
-2. Newresearchpriority: lanes/parent-kadar-yu/PROOF.md proposes the FULL arbitrary
-   partitionMorris–Martin2512.24535v1Conjecture4.5.1 /MathDB372352, viafixingallbut
-   oneSpechttail, cyclicJacobicompression andmonicgcdremoval. Coversk=-1,
-   squarefreeness,eventualexteriorcounts,anddensity[-2,2]. Independentpreliminary
-   source/math/boundednovelty/eligibilityreview is running. FourteenclassicalJacobi
-   simplicitysupportdeclarations passfreshstrictreplay, butsourceidentification
-   andasymptoticclauses remainunformalized. Nopaper/discoverycredityet.
-   A genericheadtailtheoremaloneisnot a complete literalallpartitionsformalbridge.
+1. Primary acceptance priority: candidates/cstar-sendov contains the COMPLETE
+   literal source refutation353909 and publishedConjecture4. Full136declarations
+   in8modules passfreshstrictreplay; alltypes/axiomsread, standard3only. The3page
+   paper builds cleanly and allpageswereviewed. Globalclassificationandstrict
+   continuouspositiveweights aredischarged; sourceCStarPositiveOrder checksactual
+   star-orderinstance. Finalreviewhashesfreeze34files. Independentfinalreview,
+   deterministicpacketandextractedstrictreplaystillrequired;credit0.
+   Originalhandproof/preliminaryreviewfreeze remainsat3c62435432. Noformal353908
+   density-of-invertiblesclaim; noscalarSendov/branchmechanismextra credit.
+2. lanes/parent-kadar-yu has the fullprospective arbitrary-partition handproof
+   for372352. Completedindependentreview validatesSOURCE/MATH andsupports
+   boundedconditionalNOVELTY/ELIGIBILITY; three explanatoryrepairsintegrated.
+   FourteenclassicalJacobi supportdeclarations passstrictreplay, notthefull
+   sourceidentificationorasymptoticclauses. Thegenerichead-tailresultaloneis
+   NOT theliteralallpartitionendpoint; substantialrepresentationtheorybridge
+   remains. Nopaper/packet/discoverycredit yet.
 3. Outcome15connection-graph is ACCEPTED after fivegatePASS, all23frozenhashes
    matched, andfresh211declaration17moduleextractedreplay. Packet46members,
    SHA5600ec36e8b4d690564d67ead1a762e8125ebd08cf69fddd00c602f46ac77a7c.
@@ -58,3 +53,8 @@ numerical searches and no counterexample; four-projection332493 search covers
 sevenrealrank/ambientconfigurations with nohit. These are finiteevidenceonly.
 Prior-proofexclusions nowinclude372393 (DeonarineAugust2026exactnestedness),
 322914/324064 (Audenaert2014Theorem1), and324172 (Li--SzeCor2.7).
+
+Completedgraph-normalizationlane:349070 and349068excludedafteractualauthor
+successor2605.05330Lemma1/Theorem2found; parentcomparisonaddendumcorrects
+twoslipsintheuncountedlane note. No claimedfirst-everpriorityorblanketproof
+certificationisadopted. Completedimplementation/reviewlanes arenotrunning.

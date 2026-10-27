@@ -1,75 +1,29 @@
-# C*-Sendov formalization checkpoint — credit 0
+# Full formal checkpoint — acceptance pending
 
-26 October 2026. The accepted campaign tally is now 15/30. Earlier partial checkpoints below are historical.
+Current:136 declarations in8modules, fresh isolated strict replay PASS, pinned
+Lean4.34.1/mathlib d13f23b7 and all dependencies checked. Every declaration type
+and axiom report was inspected. Only propext, Classical.choice and Quot.sound.
+The two source-refutation endpoints have no residual premises.
 
-The parent has implemented three source modules, with **92 declarations**, and
-replayed all of them in a fresh isolated directory with pinned Lean 4.34.1 and
-mathlib d13f23b723b8a846827a245b89c10fc7d3f11612. The strict replay passed:
-warnings are errors; every declaration was inspected through its reported type
-and axiom dependencies; only propext, Classical.choice and Quot.sound occur.
-The receipt and all 92 reports are preserved in verification/partial92-*.
+The parent implemented explicit exponential/principal-square-root branches, all
+bounds, literal polynomial differentiation/factorization, the concrete C*-algebra
+and its star-order discs, and the source predicates. Pi contributed generic
+connected-selection rigidity and continuous positive convex weights. Parent
+integration proves the global classification, strict real coefficients, actual
+C*-order positivity, and closed literal source negations. No zero-divisor
+cancellation is used: scalar alternatives are obtained after evaluation and
+then connectedness proves the global choice.
 
-## Completed supporting formal proofs
+The two originally private algebraic helpers in the Pi weight module are public
+in the integrated version so the strict verifier inventories/prints them too.
+Two explanatory comments in Selection.lean were corrected: the target is a
+metric space, and a product-zero equation in the function algebra implies a
+pointwise alternative after evaluation, but requires connectedness for a global
+choice. The mathematical proofs are unchanged.
 
-- Explicit exponential phase, principal square root branch, continuity, nonvanishing,
-  the exact square identity, bounds, and the two endpoint obstructions.
-- The literal scalar deleted-factor derivative and classification of its scalar
-  zeros, including the noncollision of roots and critical roots.
-- The actual algebra C(Set.Icc (0:ℝ) 1, ℂ), its explicit roots and critical elements,
-  a genuine monic degree-three polynomial, and its derivative's exact polynomial
-  factorization. The latter is proved coefficientwise after evaluation at time;
-  no integral-domain property of the function algebra is assumed.
-- The equivalence between the source's star-order unit disc and pointwise norm
-  bounds, all input disc hypotheses, strict critical-element norm bounds,
-  and supremum distances greater than 21/20 for both displayed branches.
-
-## Outstanding work
-
-The complete literal MathDB353909 endpoint is **not yet proved**. Integration
-of the generic continuous-selection theorem and the continuous positive convex
-weights remains outstanding, with a dedicated Pi implementation lane working on
-those ingredients. The source/math/bounded-novelty review is independently in
-progress. A final independent formal and manuscript review, deterministic packet,
-and extracted fresh replay will still be required before acceptance.
-
-The manuscript main.tex is a mathematical proof draft. Its three-page PDF builds
-without overflow or undefined references and all pages were rendered and viewed.
-Final pagination and the formal-verification section will be revised when the
-complete endpoint and review are available. The draft is not an accepted packet.
-The original hand-proof/source freeze at 3c62435432 remains unchanged.
-No formal claim about MathDB353908's extra density-of-invertibles hypothesis is made.
-
-
-## Subsequent110-declaration checkpoint
-
-The new SourceStatement.lean makes the degree-three specialization of the
-literal353909 claim explicit, with generic root arrays, exact sourceClosedDisc
-(including sqrt(r)), genuine positive A-valued convex coefficients, and the
-conclusion quantified over all derivative zeros. It also states the published
-completely split derivative variant and proves the bridges to the displayed
-polynomial and critical roots. The sourceCStarStructure term explicitly checks
-that the concrete function algebra is a commutative unital C*-algebra.
-
-The theorem source_positive_convex_from_real_weights bundles continuous real
-weights into continuous complex-valued elements and proves positivity in the
-actual C*-order, their algebraic sum1, and the exact convex combination. It is a
-bridge theorem with hypotheses; those hypotheses must still be discharged by
-the explicit critical-root construction before any final refutation claim.
-
-A new isolated strict replay passed all110 declarations in four modules. All
-new types and axiom reports were read; only the standard three axioms occur.
-Receipts and exact source hashes are in verification/partial110-*. The partial92
-receipt remains the older historical checkpoint. Full selection and convex-weight
-integration, final review, paper/packet, and extracted replay are still pending.
-
-## Subsequent113-declaration checkpoint
-
-EndpointAssembly.lean proves that complete global classification rules out every
-critical element in the source unit disc about root0. It then assembles the two
-source-conjecture refutations, retaining classification and positive-convex-weight
-premises explicitly. These are conditional assembly lemmas, not completed source
-refutations. The running implementation lane must still discharge those premises.
-
-Fresh isolated strict replay passes113 declarations in five modules; the three new
-types and axiom reports were read, with only the standard three axioms. Receipts
-are preserved as verification/partial113-*. Candidate credit remains zero.
+The original partial92/110/113 checkpoints remain in lane verification/ as
+historical receipts; they are not substitutes for the current full136 replay.
+The preliminary review binds the original hand-proof freeze3c62435432; it does
+not review the integrated Lean or final manuscript. Final independent review,
+deterministic packet and extracted strict replay still precede acceptance.
+The campaign is15/30; this candidate has credit0.
