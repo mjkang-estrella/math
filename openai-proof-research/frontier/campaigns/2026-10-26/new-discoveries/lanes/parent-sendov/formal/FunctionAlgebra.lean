@@ -90,7 +90,14 @@ theorem sourceDeleted_minus : sourceDeleted criticalMinusMap = 0 := by
   ext t
   exact criticalMinus_zero t
 
+def sourceClosedDisc (a : FunctionAlgebra) (r : ℝ) (z : FunctionAlgebra) : Prop :=
+  (z - a) * star (z - a) ≤ Real.sqrt r • (1 : FunctionAlgebra)
+
 def sourceUnitDisc (a z : FunctionAlgebra) : Prop := (z - a) * star (z - a) ≤ 1
+
+theorem sourceUnitDisc_eq_radius_one (a z : FunctionAlgebra) :
+    sourceUnitDisc a z ↔ sourceClosedDisc a 1 z := by
+  simp [sourceClosedDisc, sourceUnitDisc]
 
 theorem sourceUnitDisc_iff (a z : FunctionAlgebra) :
     sourceUnitDisc a z ↔ ∀ t : Time, ‖z t - a t‖ ≤ 1 := by

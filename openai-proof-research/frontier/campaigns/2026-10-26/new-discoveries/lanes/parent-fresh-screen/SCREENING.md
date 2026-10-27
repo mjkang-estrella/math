@@ -69,3 +69,44 @@ C*-algebraic Sendov conjecture while retaining completely split derivative,
 strict interior roots/critical roots, and positive continuous convex weights.
 Full hand proof and exact checks are in siblingparent-sendov/. It is credit0,
 needs independent source/math/novelty review and full Lean/paper/packet.
+
+
+## Additional exact-source screening: reciprocal subsums and q-Pythagorean triples
+
+374663: actual latest2605.10512 PDF read for definitions, Proposition3.8,
+Conjecture4, and final Remark11. Actual companion2605.21718 read for its theorem
+statements/status table. The six coprimality and special-value/recurrence questions
+explicitly resolved there are excluded; no re-formalization is pursued. The
+ordinary denominator log-concavity conjecture remains open. Exact Python-integer
+DP through n300 checked6,059,604 inequalities; failures were exactly the stated
+n3,5,6,7. No unexpected failure and no universal proof. See screen_subsum.py and
+subsum-screen.json. LatestsourceSHA539aea158d7f1960e38f6087aacd12b7b7fdd64038d8826b627b2e23fbe2a7e4,
+companionSHA6593c03b6fb85a09c8e5d5a6a4f9a8f9b71d000ad394d1b2ce9292eafc8dae67.
+
+373286: actual2602.20536 formulas12,14,17-19 and unimodality conjecture read.
+Exact q-rational matrix-word search tested42,767 triples: all binary construction
+words through length16 and10,000 random words of length17–100, with exact checks
+against all three Euclidean values at q1 and coefficient nonnegativity. No
+unimodality counterexample. An initial NumPy-padding fixed-width contamination
+was caught by the q1 identity assertions; replaced padding by genuine Python
+integer construction and replayed the complete search with warnings as errors.
+Final successful results use arbitrary-precision integer object arrays. Finite
+screening is not a discovery or universal proof. See screen_pythagorean.py and
+pythagorean-screen.json. SourceSHA51ee8454a7b9e96b92ab6f973760ebf04a44d0101b713b6a29838bfcd435b941.
+
+367933: latest2504.06197v2 actualSection3.1 has Conjecture3.6, but Theorem3.7
+already proves all d1,2,3. Those cases are excluded. Even-d inner products use a
+modified involution, as explicitly stated in the source; the naive density-only
+paraphrase omits this. No general higher-d result or counterexample obtained.
+SourceSHAcd870157b22df765f2cdb4d297dc68b797c846cba9f1258551c28e21c0ce8e3f.
+
+372352: actual2512.24535v1 Conjecture4.5.1p35 visually inspected. A prospective
+complete argument via cyclic compression of the source's mixed-tail Gram pencils
+is now written in lanes/parent-kadar-yu/PROOF.md. This is not yet reviewed or
+formalized and remains credit0. The potentially decisive identification uses
+Proposition3.25 andEq3.2.17, not the conjectured explicit partition formulas.
+The k=-1 boundary and both asymptotic clauses are explicitly addressed. MathDB's
+companion grouping is misleading: actual1601.04382 is Tran's general rational
+GF root-distribution paper and1510.01758 is Kelley–Owen on finite-field trinomials,
+not earlier statements of the Kadar–Yu conjecture. The classical generic Jacobi
+machinery is not itself new credit. SourceSHA2d6f180bf33021ca6ab819928dfe51c91d44bed2eba8ccf03d2e443ed6bf5c86.
