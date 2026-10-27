@@ -38,3 +38,26 @@ Final pagination and the formal-verification section will be revised when the
 complete endpoint and review are available. The draft is not an accepted packet.
 The original hand-proof/source freeze at 3c62435432 remains unchanged.
 No formal claim about MathDB353908's extra density-of-invertibles hypothesis is made.
+
+
+## Subsequent110-declaration checkpoint
+
+The new SourceStatement.lean makes the degree-three specialization of the
+literal353909 claim explicit, with generic root arrays, exact sourceClosedDisc
+(including sqrt(r)), genuine positive A-valued convex coefficients, and the
+conclusion quantified over all derivative zeros. It also states the published
+completely split derivative variant and proves the bridges to the displayed
+polynomial and critical roots. The sourceCStarStructure term explicitly checks
+that the concrete function algebra is a commutative unital C*-algebra.
+
+The theorem source_positive_convex_from_real_weights bundles continuous real
+weights into continuous complex-valued elements and proves positivity in the
+actual C*-order, their algebraic sum1, and the exact convex combination. It is a
+bridge theorem with hypotheses; those hypotheses must still be discharged by
+the explicit critical-root construction before any final refutation claim.
+
+A new isolated strict replay passed all110 declarations in four modules. All
+new types and axiom reports were read; only the standard three axioms occur.
+Receipts and exact source hashes are in verification/partial110-*. The partial92
+receipt remains the older historical checkpoint. Full selection and convex-weight
+integration, final review, paper/packet, and extracted replay are still pending.
