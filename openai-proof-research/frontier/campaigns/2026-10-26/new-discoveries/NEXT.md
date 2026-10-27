@@ -1,6 +1,6 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **22/30**. The goal remains active;8further qualifying
+Strict accepted tally: **23/30**. The goal remains active;7further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
@@ -142,3 +142,5 @@ Root Lin332939 now EXACT rational3x3 counterexample, p3, A SPD B PSD rank2, rati
 Simon threshold checkpoint: lanes/parent-simon-threshold has closed literal convexity endpoint for the source2012.11018v2 p5 final-paragraph question. Fresh isolated26/5strictPASS, all26types/axioms read, all5logs0; receipt7df07ef6ed2de4c16c14925f602a16c00505da8f26e14b77b6bf13e3a9af9bb9. Clean2page manuscript rendered/read. Main MathDB349140 equivalence NOT resolved. Prior-art/source access and substantive eligibility remain pending: after exact rescaling, standard perspective/supremum convexity supplies a short proof; do not count it without an independent known-corollary/novelty judgment. Tally22unchanged.
 
 Delegation resource update: broad pi-discrete-discovery-r3 was stopped with task_cancel; authoritative thread read confirms interrupted and activeRunId=null, partial lane preserved. Its slot is assigned next to a NEW independent five-gate review of the frozen Simon threshold candidate@ff05a8a9d5, including an explicit substantive-eligibility decision. Matrix-r6 and Jacobi shifted-content discovery are not polled or replaced.
+
+2026-10-27 Simon threshold ACCEPTED as outcome23: all five independent gates and fresh extracted26/5 strict replay PASS; receipt 7df07ef6ed2de4c16c14925f602a16c00505da8f26e14b77b6bf13e3a9af9bb9. All26 actual type/axiom reports read, all5modulelogs empty. Deterministic76-member packet 0b0da074bb68cad4e5fc5429b1108eb840ce399f9bdb32abfe7dea513107c23a passes readback/all75payloadhashes/rebuild. All58 reviewed originals preserved; release2-page paper only removes operational pending prose. Main MathDB349140 NOT resolved. Publisher/fourclosedbody and bounded-priority limits remain. Earlier pending Simon notes superseded by candidates/simon-threshold/acceptance.json. Euler338918 has a proposed all-n,j,k mathematical proof and partial supporting Lean only: actual Euler coefficient bridge pending, uncounted. Matrix-r6 and Jacobi shifted-content discovery remain background; do not poll them.
