@@ -70,8 +70,8 @@ positive normalized matrices: the nine 2×2 minors, in lexicographic row/column
 order, are
 
     x−1,  x+b−1,  b,
-    x+c−1,  w−1,  w−x−b,
-    c,  w−x−c,  xw−(x+b)(x+c).
+    x+c−1,  w−1,  w−x−c,
+    c,  w−x−b,  xw−(x+b)(x+c).
 
 Here w=x+b+c+bc/(x−1)+d, so each is positive; for example the last equals
 x d + bc/(x−1)>0. All entries and the full determinant are positive as well.
@@ -157,3 +157,11 @@ determinant, all nineteen nonempty minors of both sharpness families, both
 limits, and 1000 seeded rational TP matrices (all minors checked exactly).
 `algebra-check.json` records the result. These checks support the hand proof;
 they do not replace a full Lean source endpoint or independent novelty review.
+
+## Acceptance update
+
+Integrated as outcome14 in candidates/permanental3 after independentfivegatePASS,
+cosmeticminor-ordercorrection and fresh extracted53-declaration strict replay.
+The source Sihong MathDB363360question remains unresolved. Exact archive/hash
+and bounded prior-art qualifications are in the campaign ledger/packet receipt.
+This lane receives no separate additional credit.

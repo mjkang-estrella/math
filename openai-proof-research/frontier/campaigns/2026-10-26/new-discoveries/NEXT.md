@@ -1,33 +1,51 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **13/30**. The goal remains active;17further qualifying discoveries are needed. The historical thirty formalizations receive no discovery credit.
+Strict accepted tally: **14/30**. The goal remains active;16further qualifying
+outcomes are needed. Historical thirty formalizations remain separate and uncredited.
+The authoritative accepted results, scope, packet hashes and qualifications are
+in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
 
-1. Thirteen complete accepted packets are indexed in RESULTS.md and ledger.json. Declaration counts67,37,55,50,53,48,78,34,37,36,36,76,61 describe formal coverage, not extra discoveries. Each accepted packet has exact-source validation, complete Lean, independent review, paper and a fresh extracted replay. Preserve frozen bytes, reviewer originals and documented priority limits.
-2. Latest user steering: ONLY Pi / GLM5.3Flash subagents, standard/default speed, max4simultaneously. Native workers stopped, files preserved. Respect the named-model concurrency limit; parent works directly. Follow T3 next instructions and never poll running delegates. New reviews/rechecks use new delegate_task calls.
-3. C*-Novak351633 is now outcome10:3modules36declarations, actual exponential/cosine/source-matrix bridge, two-page unchanged reviewed manuscript, five-gate independent review and extracted replay allPASS. Exact archive hash in ledger/receipt. The independent report's double-precision and comment-index errors are corrected in the parent addendum; proof bytes unchanged. Sole-Pi review completed.
-4. Direct mathematical lead: beta-content367740 / Kabluchko–Steigenberger2503.22488Conj6.15. lanes/parent-beta-content/PROOF.md proposes a complete mathematical proof via heterogeneous independent centrally symmetric ray-coverage monotonicity, followed by beta radial stochastic ordering. Mandatory old predecessor Cascos2009Prop6 proves the IID absolutely-continuous version and must be credited. Mixed laws and sphere parameters require full treatment. Actual sourcep52 visually inspected, companion2501.00671v2 compared. Exact finite sign-coverage check150clouds/12600hulls passes; this is evidence only. No full Lean endpoint, independent proof/novelty review, paper or packet exists yet;credit0. Never count a helper with geometric monotonicity as a residual hypothesis.
-5. Further source screen:355008/355009 C*-algebraic Schoenberg/deBruin–Sharma conjectures in2206.06653v1. Actual entire source primary HTML read. Its derivative is an ordered sum deleting one factor and the factorization must hold for ALL z in the algebra, not merely a central polynomial indeterminate. This crucial identity cannot be weakened. Source classical2006solutions refer to complex scalar predecessors, not the C*-extensions. Live snapshots empty/open. No result yet; investigate only source-faithful examples, and inspect current published successors/prior art.
-6. Other uncredited leads:365199 full Grassmannian log-concavity (rank3 enumeration experiment, no full formal bridge/novelty);332493 four-projection trace inequality (rank2..10numerical search nohit);373707 odd zero-cell matrix inequality;354787 typeBqStirling exact search throughn120nohit. Preserve artifacts; finite numerics are not proofs.
-7. Taxicab341671 remains math/source/formalPASS with noveltyHOLD for closest2018fulltext. Known parity game boards, Pinelis373005already-posted uniform counterexample,337925posted full root proof,370667published monotonicity refutation,372423old parity failure and336488old premagic counterexamples are excluded. No stale-open-label credit.
+1. Final-review priority: lanes/parent-connection-graph now has a COMPLETE
+   211-declaration17-module strict Lean proof and rendered3-pagepaper for the
+   dimension-at-most-one case of Knill2601.18071v2Conjecture1 / MathDB372758.
+   Exact literal face-family endpoint, allk, uniformgap sqrt2-1, isolates and
+   disconnected graphs included. Full higher-dimensional conjecture untouched.
+   Preliminary independent source/math/boundednoveltyPASS; final independent
+   review and fresh extracted packet remain. Credit0.
+2. New direct priority: lanes/parent-sendov/PROOF.md supplies a complete proposed
+   cubic counterexample to Krishna C*-Sendov / MathDB353909, and the2026published
+   completelysplitderivative variant. Algebra C([0,1],C), allrootsstrictinside,
+   bothcontinuouscriticalrootsstrictinsideandpositivecontinuousconvexweights.
+   Connectedness forces everyglobalcriticalpoint to be one of two branches;
+   each failsunitdistancefromthechosenroot atoneendpoint by>21/20.
+   Exactsymbolicand70digit401samplechecksPASS. Preliminaryindependent source/math/
+   seriousnoveltyreview, fullLean, paper, finalreview and packet remain. Credit0.
+   Formal353908commutativeclaim additionally needsdensityofinvertibles; do not
+   inferthat extraformalhypothesisfromthe353909certificate.
+3. Outcome14permanental3 is accepted after independentfivegatePASS and final
+   extracted53declarationreplay, deterministic31memberZIP. The informal source
+   optimalconstantquestion is resolved; MathDB363360 Sihong question is not.
+   The known9/8endpoint and older failures are uncounted. Metadata/display-only
+   corrections and limited prior-artcoverage are in the preserved addendum.
+4. Taxicab341671 additive-minimum-side refinement remains math/source/formalPASS
+   with noveltyHOLD for the closest2018fulltext. Never count the oldbaseversion
+   and refinement separately. Beta-content367740 has an unformalized general
+   ray-coverage proof proposal in lanes/parent-beta-content; oldIID Cascos2009
+   case is known and must be credited. Mixed laws/sphere endpoints need full proof.
+5. Other uncredited leads:365199fullGrassmannianlogconcavity;332493fourprojections;
+   373707oddzero-cell matrix;354787typeBqStirling. No universal result found.
+   New freshscreen records372585Le and322910McCarthy as alreadyproved in actual
+   sources;375724reference note conflates different Eulerian assertions. Its
+   A²Newtoncheckthrough350 andpStam numericaloptimizations are evidence only.
+6. ONLY Pi / GLM5.3Flash subagents, standard/defaultspeed, max4simultaneously
+   peruser(andrespectruntimeconcurrencyslots). Nativeworkersstopped, files
+   preserved. FollowT3next/endturninstructions, neverpollrunningdelegates,
+   useNEWdelegate_taskforeveryreview/recheck. Agents own separate lanes,
+   no sharedindexes/git/children; parent integrates and accepts.
 
-No external posting, author contact, messages, publication, upload or push is authorized. Count only substantive new source-question outcomes after all gates; no helpers, equivalent forms, numeral/wording/convention loopholes or known stronger-theorem specializations.
-
-Current priority candidate: candidates/cstar-polynomial now contains a full combined degree3refutation of Krishna2206.06653v1Conjectures2.1,2.3,2.4, related MathDB355008/355009. Two modules36declarations pass strict replay; the actual ordered deletion derivative factors for every complex matrix argument. All six literal defects are Hermitian and nonPSD, roots centered and actual. A two-page paper is built/rendered/visually inspected. Independent review, serious bounded novelty and final extracted packet remain;credit0. Treat the whole common nonnormal-involution construction as ONE outcome. Frozen hashes include unchanged proof/paper/strict audit.
-
-ACCEPTANCE UPDATE: cstar-polynomial is outcome11 after independent five-gate review and fresh extracted36-declaration strict replay. All source/paper bytes unchanged; packetSHA71b02b1d0f76c731050f6b4332d6144daec2c6eb6cd08e03093101d8f178071e. Earlier pending paragraphs are historical. Parent addendum corrects optional ancillary review arithmetic/docstring/no-op loop, with no effect on literal proof.
-
-New direct priority: lanes/parent-maxindex/PROOF.md contains a proposed GENERAL proof of Caro–GraswaldConj4.19 / MathDB347947 in everyd≥5: universal strict bound at2d−5entries plus explicit p=(4m²,1^m,0,0)/(4m²+m),m=d−3, violating next index2d−4 by(m−1)²/(4m²+m)>0. Key split maxp≤2/3 via two largest arithmetic-mask incidence weights, versus maxp>2/3 via star-entry baseline and sharpened geometric Cauchy bound. Main universal sufficiency also worksd3,4; small-d maximality not yet classified and not the discovery basis. Exact840vector/99family checks PASS; no full Lean/review/novelty/manuscript/packet yet,credit0. Actual latest sourcep18 visually inspected and author's2020MSEpost read (no answers). Independent serious math/novelty review needed before formal investment.
-
-Additional screening: cd-index377680 exact degree25failure rediscovered but already postedPatelAugust20→excluded. Weaker377681 searched all coefficients throughdegree30 with both surrounding contexts of length≤1, no violation; universal claim remains unresolved and uncredited. ActualBrazitikos–McIntyre/Joós–Lángi vectorMaclaurin sources compared; avoid equality-wording loophole. CostaRico2310.05726v5universalstateinversion target retainsConj3 and touches longstandingWernerdistillability; do not misread its one-worddistillable/undistillable prose typo as a source refutation.
-
-## Latest: maximal-index full Lean and manuscript
-
-Accepted tally remains11/30. candidates/maximal-index now has a complete76-declaration/12-module Lean certificate for everyd≥5 and every0≤k≤d², actual independently sorted sourcearrays, with sharpness and all bridges proved. Parent fresh strict replay PASS, standard3axioms; all76types read. Three-page paper builds with zero issues and all pages visually inspected. Preliminary independent math/source review PASS; no previous resolution located, but citation coverage was abstracts only and must be extended to full bodies. Parent addendum corrects a thesis attribution and qualifies review scope. Final independent formal/manuscript review and extracted packet are pending. Count0 for this candidate.
-
-ACCEPTANCE UPDATE: maximal-index is outcome12 after independent all-five-gate review and fresh extracted76-declaration strict replay. Packet SHA d1ebb869d50c4ba2804ad177c072bfdf07711f0a1ed06a380e34fd1082fcd69f. Earlier pending paragraphs are historical; complete proof/paper bytes unchanged. Next direct lead: the Lachaume quartic P=x⁴+8x³+6x²+8x+1 satisfies 4PP″−3(P′)²=−144(x²−1)² but has nonreal roots. The related symmetric-polynomial fourth root has a positive off-diagonal curvature direction. Source-version, rigorous witness, full Lean and serious novelty checks remain; credit0.
-
-LACHAUME UPDATE: candidates/lachaume-quartic has complete61-declaration/3-module strict Lean PASS (standard3axioms), actual elementary-symmetric/Mathlib bridge, C²fourth-root regularity, universal diagonal concavity, positive midpoint failure and actual nonreal root with the ALL-real differential inequality. Parent read all61types. Two-page draft paper built with zeroissues and bothpages visually inspected. Independent preliminary source/math/serious novelty review is running; final formal/manuscript and extracted-packet gates pending. Count0; accepted12/30unchanged.
-
-LACHAUME SCOPE CORRECTION: preliminary independent math/source PASS, novelty HOLD for integration of MO248816. Parent found the review's non-translation-invariance claim false: shiftedZaimi(x+2)^4−1 has allpositivecoefficients, so sourceConj3 is known and uncredited. ONLY Conj1diagonal/globalconcavity remains prospective. Actual Andrica2019publisherchapter obtained (HTTP200); parent read allSection5pp166–183 plusTheorem4.17, finding no sourceConj1resolution. Original report preserved and errors qualified in parent-addendum. Full61Leanproofbytes unchanged; final independent replay/manuscript/novelty review and extracted packet remain.12/30unchanged.
-
-ACCEPTANCE UPDATE: lachaume-quartic is outcome13 after final independent all-five-gate review and final extracted61-declaration strict replay. PacketSHAaab52c0df93bf81b3037097e1f71964d6b83654bc498bd5db6b5785376456278. ONLY Conjecture1getscredit; known Conjecture3failureuncredited. Proof/paper unchanged frombd81899bc6. New proposed direction: lanes/parent-connection-graph/PROOF.md proves strict all-k connection/Dirac dominance for ALL finite1-dimensional complexes (uniformgap≥sqrt2−1). Fullhigher-dimensionalconjecture remains open; no formal/source/noveltyacceptanceyet,credit0.
+Count only substantive new source-question outcomes after exactsource validation,
+complete mathematical proof, full literal Lean endpoint, independent adversarial
+review, serious bounded prior-art investigation, renderedpaper and fresh extracted
+packet replay. No known results, helper counts, typo/normalization/endpoints or
+already-posted refutations. EmptyMathDB/search results do not certify novelty.
+No external posting/contact/messages/publication/upload/push authorized.

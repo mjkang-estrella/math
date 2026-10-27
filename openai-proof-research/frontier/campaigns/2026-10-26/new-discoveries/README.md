@@ -1,6 +1,6 @@
 # Thirty new mathematical discoveries
 
-Strict accepted tally: **13/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
+Strict accepted tally: **14/30**. Earlier thirty formalization outcomes remain preserved and receive no discovery credit here.
 
 The first accepted result resolves Gerhold–Simon Conjecture 3.2 / MathDB 352508: the sharp converse fractional-binomial inequality for all real exponents above 2. Its four-page paper, seven Lean modules with 67 declarations, stronger biased bound, coefficient optimality, independent source/mathematical/formal review and documented prior-art search are in `candidates/fractional-binomial/`. The reproducible ZIP passes byte readback, manifest checks and a fresh isolated Lean replay after extraction. Classical Gamma-ratio convexity is credited; no prior full sharp finite-sum resolution was found. The inaccessible Alzer article and the limits of priority searches are explicitly documented. All corollaries and helpers are one combined outcome.
 
@@ -27,6 +27,8 @@ The eleventh accepted result gives one centered cubic in M2(C) refuting Krishna�
 The twelfth accepted result proves the sharp maximal index h(d)=2d−5 for every d≥5, MathDB347947 / Caro–Graswald Conjecture4.19. Its complete76-declaration/12-module Lean proof covers the full probability simplex and independently sorted d²arrays, including sharpness. The three-page paper, independent five-gate review and fresh extracted replay are in `candidates/maximal-index/`. This is ONE combined outcome. Full-body citing-source coverage and remaining priority-search limits are documented.
 
 The thirteenth accepted result refutes Lachaume’s diagonal-concavity Conjecture1 / MathDB338076. A literal positive-coefficient four-variable elementary-symmetric sum has a globally concave fourth root on the positive diagonal but violates midpoint concavity at strictly positive inputs. Its two-page paper,61-declaration Lean proof, independent five-gate review and extracted replay are in `candidates/lachaume-quartic/`. The companion real-rootedness converse failure is already implied by Zaimi2016plus translation and is explicitly uncredited. All prior-art corrections are preserved.
+
+The fourteenth accepted result determines both optimal constants for the full real totally positive3x3 permanental Koteljanskii ratio:2/3<R<9/8. Its three-page paper,53-declaration source-level Lean proof, independent five-gate review and freshly extracted deterministic packet are in `candidates/permanental3/`. This resolves the explicit informal sharpness question following Skandera-Soskin Proposition11 and in the author's slides. The related MathDB363360 Sihong-polynomial question is different and remains untouched. Known boundary value9/8 and older counterexamples receive no credit; the two universal bounds and sharpness form ONE outcome. The minor-list display correction and bounded prior-art limits are documented.
 
 See [RESULTS.md](RESULTS.md) for papers, complete proof packets, verification counts and novelty qualifications.
 
