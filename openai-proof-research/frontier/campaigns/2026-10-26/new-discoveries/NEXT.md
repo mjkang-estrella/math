@@ -68,3 +68,10 @@ certificationisadopted. Completedimplementation/reviewlanes arenotrunning.
 The projection-trace Pi task ended with no assistant result and no saved lane
 artifacts. It provides no proof, exclusion or discovery credit;332493 stays open
 as a research direction. Do not treat a terminal task status as a result.
+
+2026-10-26 later checkpoint:
+- Kadar–Yu bridge review pi-kadar-yu-bridge-review @60ba544d47: SOURCE/MATH/FORMAL190/NOVELTYPASS but exact all-partition formal-instance HOLD. No source partition/actualhead instance endpoint is encoded. No count until repaired; parent-kadar-yu-manuscript draft3pages atf4f23372a2 remainsunaccepted.
+- parent-wgm-parity @a6c169a789: literal sourceWang2024 Section7(2) odd-total bound fullyproved41decl7mods, freshstrictPASS, exact22183configchecks, clean2pagepaper. Independent Pi review strict-wgm-parity-final-review running; credit0. MathDB349081oldcardinality alreadyWangCor4.5anduncounted.
+- parent-mills-cm: prospective Ferreira-Simon Conj3/MathDB351688 refutationalreadyatn0. Exact40th derivativeat0 is negativeintegerP(pi/2), all-negative22term rationalBernsteincertificate onpi6bounds; independentcomplexerfcCauchycheckrelativeerror4e-83. Continuitygivespositiveintervalviolation. LiteralMills+derivativerecurrences compile; fulltable/sign/identification/openpositiveLeanbridgeUNDERDEVELOPMENT. No paper/packet/count.
+- pi-algebra-discovery-r2 completed: no discovery. CstarCasasAlvero355066 requirescommutativealgebra so M2nilpotentleadoutofscope; termwise-norm346741 convexlogscalereduction and finitechecks do not prove conjecture. Retainprecisegap,nohelpercredit.
+- Newpriorresolvedexclusions361902(SimanekTheorem2)and376820(Oliveira2609.00336Theorem1). Earliernewexclusions374749postedcounterexample;350262ONLYmu>=1upperboundpostedcounterexample;349081WangCor4.5. Other350262directionsstillunresolved.
