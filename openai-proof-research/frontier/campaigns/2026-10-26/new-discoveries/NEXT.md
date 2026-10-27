@@ -375,3 +375,8 @@ credit0, accepted25/30. Hermite full162 independent final review running.
 2026-10-27 Clarkson372905 EXCLUDED: normalized search found a genuine2x2 integer witness at p9/4 (exact left>460,right<459), but direct registry check found an earlier public Lean refutation at the SAME exponent, commit22c3b64648689af01fa089a611812a782edcc2ee dated26October. No discovery credit, no local Lean investment. Current2602.01463v3 omits this conjecture; actual v2Conj1.20 and2410.21961v4 are sources. Prior p2.5 blowup remains no evidence; bounded normalized search found no p2.5 failure. See parent-clarkson-r13/FINDINGS.md.
 
 2026-10-27 root research checkpoint:355466 all-order trace positivity already author2310.03227 Cor1.2 and full proofp3 (smoothness unnecessary); actual theorem/proof/source pages rendered/read, target now excluded.324727 was ALREADY excluded inledger; redundant recheck adds original12October public commit and saved exact evidence only.374706 GENERAL q-Fibonomial remains unresolved: only n4 extension is an immediate B2 Weyl-character principal-sl2 corollary (all positive a,b), so do not count that proposed next case. See parent-qfib-r14/FINDINGS.md; no whole-conjecture exclusion or formal claim. Tally26/30 unchanged.
+
+Root candidate r23: parent-bessel-fejer, MathDB365454. Exact rational interior
+M2,alpha2/5,x47/50 counterexample < -1/500; published pp7/11 visually read.
+13-path preliminary freeze, formal/independent/novelty gates OPEN, credit0.
+Pi squared-polya-source-access-r22 also active (now3Pi workers total).
