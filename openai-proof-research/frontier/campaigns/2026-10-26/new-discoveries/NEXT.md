@@ -384,3 +384,10 @@ Pi squared-polya-source-access-r22 also active (now3Pi workers total).
 Bessel follow-on: full87/8 closed parent strict replayPASS; receipt65b88b000b9dc8e42e41305bab83ebd1cc5aef91ffb00a054103992cbcf2fab5.
 full87-review-hashes.json binds40paths; original13 commit7c9ef8c076 historical.
 No paper/independent/final/packet/count yet.
+
+Scheduling checkpoint: task_cancel for analysis-discovery-r19 returned
+cancel_requested (no terminal wake yet). Do NOT poll it or start a fourth Pi
+worker while cancellation is unconfirmed. On terminal wake, launch a NEW
+strict-bessel-fejer-preliminary-review task on full87 freezea4cd6b75f4,
+43paths. Review source/math/formal/novelty/substantive; manuscript absent.
+Current root full87 processes all TERMINAL PASS; no root shell sessions live.
