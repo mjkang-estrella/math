@@ -1,6 +1,6 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **17/30**. The goal remains active;13further qualifying
+Strict accepted tally: **18/30**. The goal remains active;12further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
@@ -104,3 +104,5 @@ and additional prior-art leads explicitly assigned. Accepted tally remains17.
 Repeated-integrals manuscript draft now3pages, cleanbuild andallpagesvisuallyinspected; mathematical directseparation proof, source identities, all-order witness andexact103-component formal-limit disclosure. main.tex/paper.pdf/proof-map.json/paper-qa.json inparentlane. Notfinalreviewed orcounted.
 
 Matrix-screen-r4 exclusions:369147 alreadyZhang/Lin-Zhang;332318 fullweightedLin conjecture alreadySra8October2026 immutablelinconj-v1 Theorem1.1;322910 finite-matrix rangesalreadyLi-Zhou2608.20937Theorem1.1. Vendi371345/371346 nonnegative/positiveorders andfullranknegative alreadyauthor2511.03849v4 Theorem1/Lemma3 (singularnegative interpretationnotdeclaredresolved).371347 exactrealpowerPDcounter alreadyPatel20Aug2026. Fullactualsource/solutionbodiesread; zero newcredit. Taxicab2018fullbody gateunchangedHOLD. See lanes/parent-matrix-screen-r4/FINDINGS.md.
+
+Outcome18 mills-cm ACCEPTED afterfiveindependentgates andfresh extracted47/7 strictPASS; alltypes/axiomsread,modulelogs0,receipt81b42dd13d312ce43ddf6c3c6c5e851a18a2336fc0485a7163afa4ff7aa6363d identicalparent/independent/extracted.80-member packetSHA1721653c54bd6ca2138c14219c716e355d7d2fb120477773fffa9d083563f633. Final2pagepaperSHAab30ab53878e8661a2cea8bbc465c519f51c10d6b7a129dcb7b6a0585bffb251. PublishedAMS HTMLbody actuallyread; oldPDFaccessgatecleared.55reviewedoriginalbytespreserved; onlyprocessparagraph/metadataupdated, allLeanunchanged. ONE n0conjecturerefutation, nominimality/sqrt-variantclaim. Finalreviewer completed; no longer running. Vendi371345/371346 singularnegativecase was alreadyacceptedOutcome6; matrixscreen-r4 onlyexcludesknownsourcepositive/fullrankranges andgivesnoduplicatecredit.

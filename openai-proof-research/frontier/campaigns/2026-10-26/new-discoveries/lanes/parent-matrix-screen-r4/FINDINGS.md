@@ -49,6 +49,10 @@ negativeorders to fullrank. Accordingly, do not mark the unexamined
 singular-negative-order interpretation resolved. The exact known substantive
 parameter ranges above are excluded; changing zero-eigenvalue conventions
 would not earn discovery credit. The old q=1 gap is already closed in v4.
+This screen does not reassess the singular-negative result already accepted
+in this campaign as Outcome6, on the source-evidenced positive spectral
+support. That outcome remains separate from these known source ranges;
+no Vendi result is proposed for another count here.
 
 ## 371347: exact counterexample already posted
 
