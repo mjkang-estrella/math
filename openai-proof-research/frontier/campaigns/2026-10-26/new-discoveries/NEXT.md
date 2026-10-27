@@ -1,19 +1,39 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **27/30**. The goal remains active;3further qualifying
-outcomes are needed. Historical thirty formalizations remain separate and uncredited.
-The authoritative accepted results, scope, packet hashes and qualifications are
-in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
+Strict accepted tally: **29/30**. The goal remains active; one further substantive
+qualifying outcome is required. The historical thirty formalizations remain separate.
+Authoritative acceptance evidence is in ledger.json, RESULTS.md, and each candidate's
+post-extraction acceptance.json. No thirty-distinct-MathDB-conjectures claim is made:
+explicit companion-source questions and substantive general theorems are identified.
 
-Current acceptance checkpoint (2026-10-27): Outcome27 peakon372008 is ACCEPTED after independent five-gatePASS and fresh extracted121/19 strict replay. All types/axioms read, all19 logs empty; parent/independent/extracted receipt0f0d34bf36c11ba23d63260f0ce184f657747e5fab12b6b0d33f90f878f0571d. Deterministic78-member packet SHA b5b17dededcc7c18e3273101de18b87b88a6da68272776d010adb1cf013bb49e. Complete universal coefficient function, one source-question outcome. All64 reviewed bytes preserved; status/citation-only release edits and bounded novelty limits documented. Three qualifying outcomes remain.
+Latest acceptance (2026-10-27):
+- Outcome28 cstar-smale-unbounded: independent final five-gatePASS + fresh extracted49/5
+  strictPASS, all49 actual types/axioms read, all5logs empty. Parent/independent/extracted
+  receipt883a2e6cd1b6bd70004386dc207d00c7aefc84b95df6a00c15ee7cfa46853c7a.
+  42-member packetSHA0343cecf3c8a5dc337a6e6a2f3ba1aa1caf950a3dadebbdc131bd03cf47c9076.
+  ONE full forallC fixed-degree3 infinity theorem, no firstconstant1source resolution;
+  rejectedfixedwitness remainscredit0 and absorbed. Eligibility objection and limits retained.
+- Outcome29 cstar-bieberbach: independent final five-gatePASS + fresh extracted28/4
+  strictPASS, all28 actual types/axioms read, all4logs empty. Parent/independent/extracted
+  receipt9c78a136a4674b7d1491b6ccd6e4165528509b9e894a24f8b0728e9fde6af11f.
+  40-member packetSHA9a46032946dab2785c8397d0c127f658bff46b57649450d7aa4e079d145d4096.
+  ONE source1.2/1.4 refutation, genuine authorZenodoPDF verified; directPreprints403 retained.
+Both canonical papers clean2pages, all pages read; all27/25 reviewed originals preserved;
+all proof/verifier/source bytes unchanged. Extracted sessions82866/12210 TERMINAL PASS.
 
-Current final-review freeze14493cae8ab4b17d74fbff135054816d576bfcc7:
-- parent-cstar-bieberbach: preliminarySOURCE/MATH/boundedNOVELTY/SUBSTANTIVEPASS integrated. GenuineauthorZenodo6917925PDF acquired, md5/SHAverified, parentownsourcepp2–3rendered/read; normalizedwholetextmatchesoldergenuinesourcetext. DirectPreprintsPDF/parentZenodoAPI403 retained, no binaryidentityclaim. Full28/4 parentstrictPASS and refreshed2pagepaper clean. final-review-hashes.json25relativepaths. NEW strict-cstar-bieberbach-final-review-20261027-v1 running inpi-cstar-bieberbach-final-review, mcp ec08f849-19f6-4533-868e-1b88001cdcb5. No inheritedfinalPASS; credit0.
-- parent-smale-unbounded: preliminaryMATH/SUBSTANTIVEeligibleconditionalPASS; boundednoveltynosubsumer. Fullparameterized49/5parentstrictPASS and refreshed2pagepaper clean. final-review-hashes.json27relativepaths. NEW strict-smale-unbounded-final-review-20261027-v1 running inpi-smale-unbounded-final-review, sameec08f849mcp. Independentfinalreviewmustjudgeeligibilityafresh: no source-questionresolutioncredit, fixedconstant1sourcequestionalreadyclosed. PRELIMINARY-DECISION preservesmarginalrefinementcountercaseandcorrectstwoancillaryreviewererrors: priorHIGHERMEANC×Csmallcriticalkeepsfirstorderratio≤2/3, andordinaryscalarMnotknownexact. No count untilnewallfivegatePASS+freshpacketextractedreplay.
+Active Pi work: discrete-discovery-r7 and strict-cstar-corona-preliminary-review-20261027-v1.
+Corona preliminary13-path freeze359f9ddd6f; exact affine M2 datum, nilpotent-line reciprocal
+obstruction. Crucial substantive gate unresolved: may be classical immediate corollary or
+formulation correction. No endpoint/paper/packet/count; root Obstruction.lean dev is outside
+freeze and incomplete. Never infer novelty from source-open labels. Fresh r18 excludes
+372380 (Gao-Guo explicit public Cor1.3) and345844 (immediate own-source lemma corollary).
 
-The old parent-cstar-smale fixed46/5 witness remains REJECTEDcredit0 on publicscalarprior. Its proof/paperarepreservedhistorical; PRIOR-ART-DECISION.md authoritative. InfinitefamilycanonlyONEprospectivetheorem, neverfixedwitnessplusfamilyseparatecredits; no HIGHERMEAN-sidecredit.
+ONLY Pi spark/GLM-5.3-Flash-EXL3 standard/default speed, max4 user / root+3runtime.
+No polling running delegates; follow completion wake. Every NEW review is a NEW delegate.
+No external posting/contact/push/upload. Finish the remaining actual discovery before
+claiming completion; no helpers, stale labels, typo or known-result credits.
 
-OtheractivePidiscovery: discrete-discovery-r7. Broadanalysis-discovery-r13 cancellationrequested/replaced; filespreserved. Standard/defaultPiGLM5.3Flashonly, root+3workers. Neverpollrunningdelegates; awaitcompletionwake. Beforeacceptingeitherfinalcandidate, inspectactualreport/replayandassemblemanifest-onlydeterministicpacketwithnewfreshextractedstrictreplay. Historicalcheckpoint/full28/full49manifestsareexcludedfromcurrentfinalfreeze; onlyfinal-review-hashes.json definesreviewedbytes.
+Historical checkpoints below remain for provenance; the latest acceptance records govern.
 
 1. Outcome16 candidates/cstar-sendov is ACCEPTED after independent five-gate
    review and fresh extracted136-declaration8-module strict replay. All types

@@ -1,6 +1,6 @@
 # Accepted research outcomes
 
-Strict tally: **27/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
+Strict tally: **29/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
 
 | # | Result | Lean declarations | Paper | Complete proof packet |
 |---|---|---:|---|---|
@@ -31,6 +31,8 @@ Strict tally: **27/30**. Each row is one combined mathematical outcome, with a c
 | 25 | Strictly interior DeTemple CM-threshold refutation, MathDB328867 part(ii) | 21 | [Paper](candidates/detemple/paper.pdf) | [ZIP](candidate-packets/328867ii-detemple-proof.zip) |
 | 26 | Full literal Hermite envelope conjecture, MathDB346243 | 162 | [Paper](candidates/hermite/paper.pdf) | [ZIP](candidate-packets/346243-hermite-envelope-proof.zip) |
 | 27 | Complete universal peakon trace-power coefficient formula, MathDB372008 | 121 | [Paper](candidates/peakon-coefficients/paper.pdf) | [ZIP](candidate-packets/372008-peakon-coefficients-proof.zip) |
+| 28 | No finite C*-Smale norm constant at fixed degree three, new general theorem | 49 | [Paper](candidates/cstar-smale-unbounded/paper.pdf) | [ZIP](candidate-packets/cstar-smale-unbounded-proof.zip) |
+| 29 | General-coefficient C*-Bieberbach refutation, source Conjectures1.2/1.4 | 28 | [Paper](candidates/cstar-bieberbach/paper.pdf) | [ZIP](candidate-packets/cstar-bieberbach-proof.zip) |
 
 Outcome 2 resolves an explicitly open assertion in the source associated with MathDB 363319; the record's different root-simplicity conjecture remains open. Outcome 3 does not refute the separate zero-free conjecture and makes no minimality claim.
 
@@ -85,3 +87,8 @@ Outcome26 proves the full published Hermite envelope with literal Rodrigues poly
 
 
 Outcome27 resolves the full published peakon coefficient conjecture with one universal partition formula for all N and positive trace orders. Every hyperbolic, tie, sorting, nilpotence, trace-log and coefficient-support bridge is proved. Parent/independent/extracted121-declaration19-module strict receipts are byte-identical; all extracted type/axiom reports were read and all19 module logs empty. The78-member deterministic packet preserves all64 reviewed originals and excludes unreviewed scratch files. Release three-page manuscript changes only review status and a precise source citation; all proof/verifier bytes unchanged. Coherent complex amplitudes and the literal nonnegative principal-root specialization are both covered. No fixed-N coefficient uniqueness, helper credit, unreliable MathDB metadata inference or worldwide priority is claimed; selective semiseparable/Kostant--Toda and bounded search limits remain explicit.
+
+
+Outcome28 is ONE new fixed-degree3 infinite-constant theorem over the single connected algebra C([0,1],C). It is not a first resolution of the already-publicly-refuted constant1 source conjecture. The old fixed witness remains credit0 and is absorbed; the generic selection tool, degree2 theorem, scalar prior and side consequences receive no separate credit. Parent and two independent reviews weigh and retain the modest-parameterization objection but judge the all-finite-constants impossibility substantive. All49 declarations in5modules pass fresh extracted strict replay with the byte-identical parent/independent receipt; every type/axiom was read and every module log empty. The42-member deterministic packet preserves all27 reviewed originals; only release status prose changed in the clean2page paper. Bounded search limits and no-worldwide-priority framing remain attached.
+
+Outcome29 refutes BOTH general-coefficient Bieberbach1.2/1.4 with ONE globally injective norm-entire function-algebra power series; actual scalar fibers may be noninjective, and connectedness forces global period rigidity. All28 declarations in4modules pass fresh extracted strict replay with the byte-identical parent/independent receipt; every type/axiom was read and every module log empty. The40-member deterministic packet preserves all25 reviewed originals; only release status prose changed in the clean2page paper. Actual authorZenodo6917925 bytes and fresh checksum are verified; directPreprints403 remains a disclosed limit. Invertible-coefficient/polynomial/Robertson/Lebedev-Milin/parameter-family claims are not counted. Reviewer ancillary class/order and fiber-zero wording is corrected in the parent addendum; no proof changed. No worldwide priority claim.
