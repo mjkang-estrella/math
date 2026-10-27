@@ -211,3 +211,12 @@ oddinitialinequalities. Original19mathfreezeand33formalhashesunchanged.
 StillNOallnclampedendpoint/paper/count: oddcomparison,prex0,n1,globaltailremain.
 DLMFofficialtailreferenceSzasz1951identifiedbutactualbodyunread; publicpublisher
 metadataAPIroutefails toretrieveit. Noaccess/noveltyconclusionfromfailedsearch.
+
+Hermite111 supporting-declaration/11-module tail checkpoint: all actual types/axioms
+read, standard3 only, seven new module logs empty. Literal roots-with-multiplicity
+Riccati bridge, stationary-peak obstruction for n>=3, Gaussian decay, compact
+maximum transfer, degrees1/2 global bounds and exact source conversion now compile.
+The even all-x and degree1 source cases are closed and uncredited. This alternative
+tail no longer needs Cramer. Full odd pre-x0/bulk comparison and energy loss remain;
+new full review of the new route, paper and extracted packet still required.
+See lanes/parent-hermite-bound/TAIL-CHECKPOINT.md. Credit0, tally25/30.
