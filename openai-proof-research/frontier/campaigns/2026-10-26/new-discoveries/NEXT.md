@@ -272,3 +272,24 @@ evidence only. Classical determinant Cauchy-Schwarz also gives the bound
 immediately, an explicit substantial eligibility/exclusion risk. Four of eight
 citers actual relevant statements read; four remain unread. No independent
 review/Lean/count, credit0. Do not promote this as discovery without review.
+
+R12 fresh screen:355688 excluded by actual He–Wang2304.00960 Eq1.8/Theorem1.3,
+not just an abstract; published original and successor theorem page visually
+read, whole matching proof read. Independent composite factorial-valuation/d2
+argument uncredited. Peakon372008 now has a complete proposed all-coefficient
+formula via proved rank-two determinant collapse, not just its two named
+families. Exact24determinants/264traces PASS. Sourcev3Conj5.2 rendered/read;
+2023 predecessor and1995 relevant primary sections read, no matching collapse
+yet found. Novelty/eligibility/full Lean pending; no count,25/30 unchanged.
+
+SquaredPolya finalreview completed: four gatesPASS, NOVELTYHOLD on published
+LAA2016 and on-topic JMAA2018 bodies. Parent acceptsHOLD,70frozenbytes intact;
+Yang–Fu2016 new closest-primary bound does not subsume. No packet/count.
+Peakon372008: all-coefficient mathproof complete; supporting21decl/3modules
+compileclean, actual types/axioms read standard3. Strict-upper inverse and
+rank-two skew hypotheses discharged for algebraic family; literal source and
+coefficient-extraction Lean bridges absent. IOP publishedbody obtained/read
+pp12–13, matchesv3. Preliminary eligibility review needed. Credit0,25/30.
+Gaussian367973 directfinitefield-productcorollary excluded, not a prior-posting
+claim. Strenner340767 stays unresolved: published convexity snippet concerns
+SIMPLEX case only and does not solve general conjecture. No exclusion there.
