@@ -1,6 +1,6 @@
 # Accepted research outcomes
 
-Strict tally: **21/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
+Strict tally: **22/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
 
 | # | Result | Lean declarations | Paper | Complete proof packet |
 |---|---|---:|---|---|
@@ -25,6 +25,7 @@ Strict tally: **21/30**. Each row is one combined mathematical outcome, with a c
 | 19 | All-order repeated-integral smooth realization, MathDB371768 | 129 | [Paper](candidates/repeated-integrals/paper.pdf) | [ZIP](candidate-packets/371768-repeated-integrals-proof.zip) |
 | 20 | Full Davis rational-function conjecture, MathDB319187 | 100 | [Paper](candidates/davis/paper.pdf) | [ZIP](candidate-packets/319187-davis-proof.zip) |
 | 21 | Uniform Burnside-Gautschi conjecture for interpolated gamma values, MathDB372858 | 49 | [Paper](candidates/schmidlin/paper.pdf) | [ZIP](candidate-packets/372858-schmidlin-proof.zip) |
+| 22 | All-order flat-Bernoulli adjacent-count conjecture, MathDB319292 | 117 | [Paper](candidates/hetyei/paper.pdf) | [ZIP](candidate-packets/319292-hetyei-proof.zip) |
 
 Outcome 2 resolves an explicitly open assertion in the source associated with MathDB 363319; the record's different root-simplicity conjecture remains open. Outcome 3 does not refute the separate zero-free conjecture and makes no minimality claim.
 
@@ -65,3 +66,5 @@ Outcome19 proves the full all-n source Conjecture1.2. Standard Stieltjes, separa
 Outcome20 proves the full all-d source Conjecture3.1 strictly, including the exact threshold boundary. One combined result, with100 declarations19 modules and38 kernel-checked finite certificates; no helper or critical-point-conjecture credit. All five independent gates and fresh extracted replay pass with byte-identical receipts. Final paginated IJMM body remains unlocated; actual arXiv and revised author manuscript agree. Explicit source difference remainder used, no separate Euclidean-division formalization. No worldwide priority or optimality claim.
 
 Outcome21 resolves the entire SchmidlinConjecture37, with a strict bound for every nonnegative base point and interpolation parameter. The actual Gamma function and literal source ratio are formalized, including the classical remainder and real-variable asymptotic bridge. All49 declaration types/axioms were read; parent/independent/extracted receipts are byte-identical. The56-member deterministic packet passed readback, all55 payload hashes and byte-identical rebuild. Classical helpers and the source-known x>=1 range receive no additional credit. Wang2016 remains unread at body level and bounded prior-art limits are retained; no optimality or worldwide-priority claim.
+
+Outcome22 proves Hetyei Conjecture6.10 for every n>=12 using the literal ordered-composition factorial count. The source enumeration theorem and classical spectral/power/Faulhaber facts are credited. All117 declarations in16modules pass parent, independent and fresh extracted strict replays with byte-identical receipts; every extracted type/axiom report was read. The99-member deterministic packet passes readback, all98 payload hashes and byte-identical rebuild. All69 original reviewed files are preserved; the release paper has presentation-only changes and all3pages were inspected. Published JCTA/Sterling and bounded-search limits remain explicit. No helper, typo, metadata-correction or worldwide-priority claim.
