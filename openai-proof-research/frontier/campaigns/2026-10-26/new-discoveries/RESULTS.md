@@ -1,6 +1,6 @@
 # Accepted research outcomes
 
-Strict tally: **14/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
+Strict tally: **15/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
 
 | # | Result | Lean declarations | Paper | Complete proof packet |
 |---|---|---:|---|---|
@@ -18,6 +18,7 @@ Strict tally: **14/30**. Each row is one combined mathematical outcome, with a c
 | 12 | Sharp maximal-index classification for every d≥5, MathDB347947 | 76 | [Paper](candidates/maximal-index/paper.pdf) | [ZIP](candidate-packets/347947-maximal-index-proof.zip) |
 | 13 | Diagonal/global concavity separation for elementary-symmetric sums, MathDB338076 | 61 | [Paper](candidates/lachaume-quartic/paper.pdf) | [ZIP](candidate-packets/338076-lachaume-quartic-proof.zip) |
 | 14 | Sharp universal3x3permanental Koteljanskii constants, explicit source question | 53 | [Paper](candidates/permanental3/paper.pdf) | [ZIP](candidate-packets/2406-00963-permanental3-sharp-bounds-proof.zip) |
+| 15 | Strict connection–Dirac spectral dominance for every finite graph, MathDB372758 graph case | 211 | [Paper](candidates/connection-graph/paper.pdf) | [ZIP](candidate-packets/2601-18071-connection-graph-proof.zip) |
 
 Outcome 2 resolves an explicitly open assertion in the source associated with MathDB 363319; the record's different root-simplicity conjecture remains open. Outcome 3 does not refute the separate zero-free conjecture and makes no minimality claim.
 
@@ -44,3 +45,5 @@ Outcome12 proves universal sufficiency and exact maximality for the literal inde
 Outcome13 counts ONLY the substantive diagonal-concavity refutation. The polynomial identity proves concavity on the entire positive axis, while an exact rational fourth-root chain gives an interior midpoint violation. Actual coefficients, elementary symmetric functions, C²regularity and all bridges are formalized. The companion real-rootedness-converse endpoint is known by translation of Zaimi’s2016example and receives no novelty credit. Two independent reviews, parent reconciliation, actual citing-chapter section comparison and fresh extracted61-declaration replay are included. Bounded source-access/priority limits remain explicit.
 
 Outcome14 gives both strict universal inequalities and both optimal-constant iff statements for every real totally positive3x3matrix, using literal all-minor and permanent definitions. The source question is explicit but informal (published Proposition11 remark and author slides), and does not solve the separate MathDB363360 Sihong conjecture. Known9/8boundary examples and failures of R<=1 are uncounted. Full53-declaration parent/independent/extracted strict replays PASS. The reviewed minor-list ordering slip is corrected in the three-page paper with all Lean bytes unchanged; parent addendum and bounded source-access/priority limits are preserved.
+
+Outcome15 proves the entire graph/one-dimensional case with the literal intersection and signed boundary matrices, all permitted k, and a uniform strict gap. Every graph/block/face bridge and unused-ground-set restriction is a proved reindex; no rank or eigenvector-existence hypothesis remains. All211declarations in17modules pass parent, independent, and final extracted strict replays with byte-identical receipts. The unchanged three-page reviewed paper and46-member deterministic archive pass byte readback and manifest checks. Higher dimensions are not claimed solved; the canonical orientation is formalized, while sign-conjugation invariance is explained in the paper. Generic known spectral facts and g/radius counterexamples receive no credit. The parent addendum qualifies two informal reviewer notational/optimality comments and extends the bounded literature screen; no worldwide priority or optimal-gap claim is made.

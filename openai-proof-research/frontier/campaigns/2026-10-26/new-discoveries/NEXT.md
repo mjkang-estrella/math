@@ -1,51 +1,50 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **14/30**. The goal remains active;16further qualifying
+Strict accepted tally: **15/30**. The goal remains active;15further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
 
-1. Final-review priority: lanes/parent-connection-graph now has a COMPLETE
-   211-declaration17-module strict Lean proof and rendered3-pagepaper for the
-   dimension-at-most-one case of Knill2601.18071v2Conjecture1 / MathDB372758.
-   Exact literal face-family endpoint, allk, uniformgap sqrt2-1, isolates and
-   disconnected graphs included. Full higher-dimensional conjecture untouched.
-   Preliminary independent source/math/boundednoveltyPASS; final independent
-   review and fresh extracted packet remain. Credit0.
-2. New direct priority: lanes/parent-sendov/PROOF.md supplies a complete proposed
-   cubic counterexample to Krishna C*-Sendov / MathDB353909, and the2026published
-   completelysplitderivative variant. Algebra C([0,1],C), allrootsstrictinside,
-   bothcontinuouscriticalrootsstrictinsideandpositivecontinuousconvexweights.
-   Connectedness forces everyglobalcriticalpoint to be one of two branches;
-   each failsunitdistancefromthechosenroot atoneendpoint by>21/20.
-   Exactsymbolicand70digit401samplechecksPASS. Preliminaryindependent source/math/
-   seriousnoveltyreview, fullLean, paper, finalreview and packet remain. Credit0.
-   Formal353908commutativeclaim additionally needsdensityofinvertibles; do not
-   inferthat extraformalhypothesisfromthe353909certificate.
-3. Outcome14permanental3 is accepted after independentfivegatePASS and final
-   extracted53declarationreplay, deterministic31memberZIP. The informal source
-   optimalconstantquestion is resolved; MathDB363360 Sihong question is not.
-   The known9/8endpoint and older failures are uncounted. Metadata/display-only
-   corrections and limited prior-artcoverage are in the preserved addendum.
+1. Primary formal priority: lanes/parent-sendov has the complete proposed cubic
+   counterexample to Krishna C*-Sendov /MathDB353909 and the2026published
+   completelysplitderivative variant. IndependentpreliminarySOURCE/MATH/bounded
+   NOVELTY/ELIGIBILITY allPASS. Fourparentmodules/110declarations pass strict
+   isolatedreplay; exactcubicConjecturepredicate, actualC*algebra, exponential/sqrt
+   functions, genuinepolynomialfactorization, sourceorderdiscs and positive-real
+   weightstocomplexorderbridge are proved. The genericselection/convexweight
+   implementationlane is running; integrateonlyaftercompletionnotification.
+   Fullclosedendpoint, finalpaper/reviewandpacket remain. Candidatecredit0.
+   Formal353908 additionally needsdensityofinvertibles; do notinferthat extra
+   formalhypothesisfromthe353909certificate. Draft3pagepaperneedsfinalpagination.
+2. Newresearchpriority: lanes/parent-kadar-yu/PROOF.md proposes the FULL arbitrary
+   partitionMorris–Martin2512.24535v1Conjecture4.5.1 /MathDB372352, viafixingallbut
+   oneSpechttail, cyclicJacobicompression andmonicgcdremoval. Coversk=-1,
+   squarefreeness,eventualexteriorcounts,anddensity[-2,2]. Independentpreliminary
+   source/math/boundednovelty/eligibilityreview is running. NoLean/paper/count yet.
+   A genericheadtailtheoremaloneisnot a complete literalallpartitionsformalbridge.
+3. Outcome15connection-graph is ACCEPTED after fivegatePASS, all23frozenhashes
+   matched, andfresh211declaration17moduleextractedreplay. Packet46members,
+   SHA5600ec36e8b4d690564d67ead1a762e8125ebd08cf69fddd00c602f46ac77a7c.
+   ItsolvesALLfinitegraphs/allk withuniformgap sqrt2-1, nothigherdimensions.
+   Nooptimalityclaim or knownhydrogen/g/radiuscredit. Outcome14permanental3
+   remainsacceptedonecombinedsharpconstantquestion; MathDB363360notresolved.
 4. Taxicab341671 additive-minimum-side refinement remains math/source/formalPASS
-   with noveltyHOLD for the closest2018fulltext. Never count the oldbaseversion
-   and refinement separately. Beta-content367740 has an unformalized general
-   ray-coverage proof proposal in lanes/parent-beta-content; oldIID Cascos2009
-   case is known and must be credited. Mixed laws/sphere endpoints need full proof.
-5. Other uncredited leads:365199fullGrassmannianlogconcavity;332493fourprojections;
-   373707oddzero-cell matrix;354787typeBqStirling. No universal result found.
-   New freshscreen records372585Le and322910McCarthy as alreadyproved in actual
-   sources;375724reference note conflates different Eulerian assertions. Its
-   A²Newtoncheckthrough350 andpStam numericaloptimizations are evidence only.
-6. ONLY Pi / GLM5.3Flash subagents, standard/defaultspeed, max4simultaneously
-   peruser(andrespectruntimeconcurrencyslots). Nativeworkersstopped, files
-   preserved. FollowT3next/endturninstructions, neverpollrunningdelegates,
-   useNEWdelegate_taskforeveryreview/recheck. Agents own separate lanes,
-   no sharedindexes/git/children; parent integrates and accepts.
+   with noveltyHOLD for the closest2018fulltext. Nevercountoldbaseandrefinement
+   separately. Beta-content367740 has an unformalized generalraycoverage proposal;
+   oldIID Cascos2009case is knownandcredited. Mixedlaws/sphereendpoints needproof.
+5. Freshexactsearches: reciprocal-subsum374663 no unexpectedfailure throughn300
+   (6,059,604LCchecks);qPythagorean373286 nofailurein42,767exacttriples. Evidence
+   only, no universalproof/count. 369283 generalizedCS and347481Vandermonde are
+   ALREADYEXCLUDED inledger byactualstrongerpriorwork; checkledger before newwork.
+   Otheruncreditedleads365199Grassmannianlogconcavity,332493fourprojections,
+   373707oddzeromatrix,354787qStirling,375724A²Eulerian andpStam remainunresolved.
+6. ONLYPi/GLM5.3Flashsubagents, standard/defaultspeed, max4simultaneouslyperuser
+   andrespectruntimeconcurrencyslots. Nativeworkersstopped/filespreserved.
+   FollowT3next/endturn, neverpollrunningdelegates, NEWdelegateforeveryreview.
+   Agentsownseparatelanes,no sharedindexes/git/children;parentintegratesaccepts.
 
-Count only substantive new source-question outcomes after exactsource validation,
-complete mathematical proof, full literal Lean endpoint, independent adversarial
-review, serious bounded prior-art investigation, renderedpaper and fresh extracted
-packet replay. No known results, helper counts, typo/normalization/endpoints or
-already-posted refutations. EmptyMathDB/search results do not certify novelty.
-No external posting/contact/messages/publication/upload/push authorized.
+Countonlysubstantivenewsourcequestionoutcomesafterexactsource,completeproof,
+fullliteralLeanendpoint, independentadversarialreview, seriousboundedpriorart,
+renderedpaperandfreshextractedpacketreplay. No knownresults/helpers/typos/endpoints/
+alreadypostedrefutations. EmptyMathDB/searchesdonotcertifynovelty.
+Noexternalposting/contact/messages/publication/upload/pushauthorized.
