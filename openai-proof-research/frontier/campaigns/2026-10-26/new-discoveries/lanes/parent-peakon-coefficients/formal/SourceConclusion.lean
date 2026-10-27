@@ -101,4 +101,18 @@ theorem nonnegative_source_conjecture_372008 : NonnegativeSourceConjecture372008
   ⟨universalCoefficient, universalCoefficient_families, fun _ p q nu z gamma hp hz m hm =>
     nonnegative_source_expansion p q nu z gamma hp hz m hm⟩
 
+
+def SourceConjecture372008 : Prop :=
+  ∃ a : Multiset ℕ → ℂ, ConjecturedCoefficientFamilies a ∧
+    ∀ (N : ℕ) (r : Fin N → ℂ) (q : Fin N → ℝ) (nu z gamma : ℂ),
+      2 * z + gamma ≠ 0 → ∀ m : ℕ, 0 < m →
+      Matrix.trace (sourceLax r q nu (spectralLambda z gamma) (spectralXi z gamma) ^ m) =
+        ∑ j ∈ Finset.range m, ∑ k ∈ (Finset.Icc 1 m).sym (j + 1),
+          if k.val.sum = m then a k.val * spectralLambda z gamma ^ (j + 1) *
+            (k.val.map (sourceHamiltonian r q nu gamma)).prod else 0
+
+theorem source_conjecture_372008 : SourceConjecture372008 :=
+  ⟨universalCoefficient, universalCoefficient_families, fun _ r q nu z gamma hz m hm =>
+    coherent_source_expansion r q nu z gamma hz m hm⟩
+
 end PeakonCoefficients
