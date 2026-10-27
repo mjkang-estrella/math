@@ -1,10 +1,10 @@
 # Formal development checkpoint
 
 26 October 2026. Discovery credit remains **0**; accepted campaign tally remains
-**13/30**. The source/math/bounded-novelty preliminary review passed. No full
-Lean endpoint, manuscript, final review, or extracted packet exists yet.
+**13/30**. The source/math/bounded-novelty preliminary review passed. A draft manuscript exists; the full
+Lean endpoint, final review, and extracted packet are still absent.
 
-Fourteen modules now pass a **fresh isolated strict replay: 161 declarations**, with
+Fifteen modules now pass a **fresh isolated strict replay: 185 declarations**, with
 pinned Lean 4.34.1/mathlib and `warningAsError=true`; every declaration type and
 axiom report was read. Only `propext`, `Classical.choice`, and `Quot.sound` occur.
 The main theorem remains absent: the manifest explicitly identifies this as an
@@ -21,15 +21,19 @@ face-intersection matrix. The boundary and Dirac matrices are also defined
 directly on actual faces, and their spectral sums are proved equal to the
 block-indexed sums. A finite family containing every vertex singleton and only
 singleton/pair faces is reconstructed exactly from its canonical graph edges.
-This permits the final endpoint to quantify over the actual source face
-family. Spectral reindexing is proved using characteristic-polynomial roots
+A further support-restriction equivalence removes unused ambient vertices,
+preserves cardinalities, order, boundary signs and both spectral sums, and
+proves that all used vertex singletons occur by downward closure. This permits
+the final endpoint to quantify over the actual source face family without
+assuming that every ambient vertex is used. Spectral reindexing is proved using characteristic-polynomial roots
 with multiplicity and uniqueness of the sorted value list; negative values
 and repeated eigenvalues are included. Classical ingredients receive no
 separate credit.
 
 The earlier 135-declaration checkpoint is preserved in
 `verification/development-audit.json`; the expanded checkpoint is in
-`verification/source-bridge-audit.json` and its corresponding checks log.
+`verification/source-bridge-audit.json` (161 declarations); the new complete
+development replay is `verification/ground-set-audit.json` and its checks log.
 
 The positive-Dirac-eigenvector argument and D upper bounds are assigned to a
 Pi/GLM 5.3 Flash implementation worker at standard speed, in its separate lane.
