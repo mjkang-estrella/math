@@ -1,10 +1,10 @@
 # Formal progress — no discovery credit
 
-The campaign remains15/30. A fresh isolated strict replay passes44 declarations
-in5modules with pinned Lean4.34.1/mathlib and hash-checked dependencies. Every
+The accepted campaign tally is recorded in the ledger. A fresh isolated strict
+replay passes 54 declarations in 6 modules with pinned Lean4.34.1/mathlib and hash-checked dependencies. Every
 declaration type and axiom report was read; only propext, Classical.choice and
-Quot.sound occur. The audit/report are verification/partial44-*. Historical
-partial14/40 receipts remain separately named.
+Quot.sound occur. The audit/report are verification/partial54-*. Historical
+partial14/40/44 receipts remain separately named.
 
 ## Supporting formal work completed
 
@@ -27,6 +27,13 @@ partial14/40 receipts remain separately named.
 - UnitPath: the literal zero-diagonal unit-coupling path matrix has characteristic
   polynomial equal to mathlib's rescaled Chebyshev S_n. Its roots have the exact
   cosine-grid formula, and every eigenvalue lies strictly in(-2,2).
+
+- SpectralCount: a direct positive-eigenspace dimension argument bounds the
+  number of eigenvalues above any threshold by the dimension of a projection
+  target whose kernel has a quadratic-form bound. It also proves spectral-count
+  monotonicity under a linear isometry with quadratic-form domination. Repeated
+  eigenvalues and empty positive spectral sets are included. These are proved
+  classical variational facts; the source head-tail application is still pending.
 
 These are CLASSICAL supporting facts, not new discoveries or a complete source
 proof. They do not justify increasing the accepted tally.
