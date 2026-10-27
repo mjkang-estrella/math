@@ -1,10 +1,10 @@
 # Formal progress — no discovery credit
 
-A fresh isolated strict replay passes **116 declarations in 13 modules** with
+A fresh isolated strict replay passes **190 declarations in 22 modules** with
 pinned Lean 4.34.1/mathlib and hash-checked dependencies. Every declaration type
 and axiom report was read; only propext, Classical.choice and Quot.sound occur.
-The latest audit/report are verification/partial116-*. Historical partial14,
-partial40, partial44, partial54 and partial103 receipts remain separately named.
+The latest audit/report are verification/partial190-*. Historical partial14,
+partial40, partial44, partial54, partial103, partial116 and partial174 receipts remain separately named.
 The accepted campaign tally is controlled by ledger.json, currently 16/30.
 This lane has credit 0.
 
@@ -44,17 +44,39 @@ This lane has credit 0.
 These are CLASSICAL supporting facts, not new discoveries or a complete literal
 source proof. They do not justify increasing the accepted tally.
 
-## Outstanding load-bearing obligations
+## Arbitrary-head Gram/gcd implementation
 
-Construct the literal one-tail mixed Gram family for arbitrary source Specht
-partitions; prove its principal/path structure and fixed monic factorization;
-identify the actual source reduced polynomials and boundary k=-1. An explicit
-cyclic Jacobi compression remains one route. COUNTING-ALTERNATIVE.md records a
-potential shorter proof via principal-submatrix eigenvalue multiplicities and
-fixed-factor cancellation. That alternative is not formalized or independently
-reviewed yet. Generic head-family hypotheses alone are NOT the source endpoint.
+The new route does NOT require the finite head to be cyclic or tridiagonal:
+HeadTail implements every entry of an arbitrary symmetric head plus one path;
+PrincipalMultiplicity proves codimension-one multiplicity differences and
+squarefreeness after removal of a common factor. HeadTailSpectral/Density prove
+exterior stabilization and closed-band density without a Jacobi-head hypothesis.
+ReducedHeadTail/Density transfer the conclusions through fixed factors.
+GcdHeadTail defines the ACTUAL normalized gcd of the first two determinants and
+PROVES its nonzero monicity, divisibility of all determinants, monicity and
+consecutive coprimality of all quotients, and the complete root-distribution
+endpoint with no residual decomposition premises. GramModel constructs the
+literal alpha*I+G polynomial matrix and proves the characteristic-matrix/sign
+identification, real splitting and boundary splitting. ComplexGram defines the
+ACTUAL complex gcd quotient, proves normalized-gcd/scalar-extension agreement,
+transfers every root with multiplicity, proves all complex roots real, and proves
+the full complex squarefreeness/exterior-count/closed-density endpoint.
+The generic monic factor-identification theorem also works over C.
 
-The independent preliminary review of the full hand proof is complete, with
-SOURCE/MATH PASS and bounded conditional NOVELTY/ELIGIBILITY support. Its three
-requested explanatory repairs were integrated; see REVIEW-INTEGRATION.md.
-No full source endpoint, manuscript, final review or packet acceptance yet.
+## Outstanding source interpretation and acceptance
+
+The closed endpoints quantify over EVERY finite real symmetric head, not over a
+Lean Specht-partition type. SOURCE-BRIDGE.md explains the proposed exact
+instantiation using source equations(3.2.3)/(3.2.4)/(3.2.17), construction(3.2.12),
+and Proposition3.25. The complex field issue is formally bridged; no real-
+coefficient assumption on the source factorization is hidden in the complex
+identification theorem. GRAM-PROOF.md gives the full new multiplicity argument.
+
+Independent review must assess the new mathematics and the exact source scope,
+including whether the universal head model and already-proved source structure
+adequately certify all source partitions, or identify a precise missing Lean
+instantiation/reindex. The new route has NOT inherited the earlier preliminary
+review's verdict automatically. All generic spectral/gcd results are classical
+and earn no separate credit. Only a fully eligible literal source resolution
+could count as ONE outcome, after renewed prior art, manuscript/final review,
+packet and fresh extraction replay. Those gates remain pending.

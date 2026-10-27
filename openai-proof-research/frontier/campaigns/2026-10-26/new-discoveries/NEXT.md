@@ -14,18 +14,19 @@ in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
    refutation count as ONE outcome. No formal353908 density claim or scalar
    Sendov contradiction. Retained supplemental review-log and numerical-code
    issues are reconciled in reviews/parent-addendum.md; strict replay is clean.
-2. lanes/parent-kadar-yu has the prospective arbitrary-partition handproof
-   for372352, with preliminary SOURCE/MATH PASS and bounded conditional
-   NOVELTY/ELIGIBILITY support. The classical Jacobi root-distribution component
-   now passes strict replay:116 declarations in13 modules, all types/axioms read.
-   All-degree simplicity, eventual exterior-root counts with multiplicity, and
-   density of the CLOSED band[-2,2] are proved for literal Jacobi heads/free tails.
-   These known supporting facts have credit0. The actual source mixed Gram
-   structure, reduced-series identification and boundary remain load-bearing.
-   COUNTING-ALTERNATIVE.md records a possible replacement for explicit cyclic
-   compression using multiplicity differences and fixed-factor cancellation;
-   this alternative is not formalized/reviewed yet. No source endpoint, paper,
-   final review or packet acceptance for this lane.
+2. lanes/parent-kadar-yu now has a CLOSED arbitrary-head Gram/gcd model,
+  190 declarations in22 modules, fresh strict replay PASS; all types/axioms read.
+   The old116-declaration Jacobi component is retained. The new multiplicity
+   route removes cyclic compression: actual normalized gcd quotients, boundary
+   squarefreeness, exterior count stabilization, closed-band density, full R->C
+   coefficient/root-multiset transfer and complex source-factor identification.
+   No residual factorization/coprimality/cyclicity hypotheses in the closed model
+   endpoints. GRAM-PROOF.md gives the argument; SOURCE-BRIDGE.md explicitly asks
+   independent review whether the universal literal Gram model plus the source's
+   already-proved head/path structure suffices for all Specht partitions, or
+   identifies a precise missing formal instantiation. Earlier preliminary review
+   does NOT automatically cover the new route. Credit0; renewed source/math/
+   formal/novelty review, paper/final review and extracted packet remain required.
 3. Outcome15connection-graph is ACCEPTED after fivegatePASS, all23frozenhashes
    matched, andfresh211declaration17moduleextractedreplay. Packet46members,
    SHA5600ec36e8b4d690564d67ead1a762e8125ebd08cf69fddd00c602f46ac77a7c.
@@ -63,3 +64,7 @@ Completedgraph-normalizationlane:349070 and349068excludedafteractualauthor
 successor2605.05330Lemma1/Theorem2found; parentcomparisonaddendumcorrects
 twoslipsintheuncountedlane note. No claimedfirst-everpriorityorblanketproof
 certificationisadopted. Completedimplementation/reviewlanes arenotrunning.
+
+The projection-trace Pi task ended with no assistant result and no saved lane
+artifacts. It provides no proof, exclusion or discovery credit;332493 stays open
+as a research direction. Do not treat a terminal task status as a result.

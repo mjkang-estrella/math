@@ -1,4 +1,9 @@
-# An alternative to explicit cyclic Jacobi compression — not yet formalized
+# Historical alternative to explicit cyclic Jacobi compression
+
+**Update:** This historical proposal is now implemented in the190-declaration
+Gram/gcd model, including actual normalized-gcd quotients and the complex
+coefficient/root transfer. See GRAM-PROOF.md and SOURCE-BRIDGE.md. Source
+interpretation and eligibility require renewed independent review; credit0.
 
 The parent has proved the full classical root-distribution theorem for Jacobi
 matrices with a finite arbitrary Jacobi head and an eventual free path. This

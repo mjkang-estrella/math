@@ -183,6 +183,17 @@ Load-bearing checks for an adversarial reviewer:
   boundary index, and the two asymptotic clauses need an honest Lean bridge.
 
 Independent preliminary review supports SOURCE/MATH and bounded NOVELTY/
-ELIGIBILITY, with its access limits documented. The parent has116 strictly
-replayed classical Jacobi/path/counting/root-distribution supporting declarations, not a full source endpoint.
+ELIGIBILITY, with its access limits documented. The parent has190 strictly
+replayed declarations, including a closed arbitrary-head Gram/gcd model and
+complex coefficient/root transfer, not a full source endpoint.
 No manuscript, final review, packet, or extracted replay yet. Credit remains0.
+
+
+## New formal route awaiting independent review
+
+GRAM-PROOF.md replaces explicit cyclic compression with the codimension-one
+multiplicity argument and actual gcd quotient. SOURCE-BRIDGE.md records exact
+source interpretation and outstanding scope questions. The closed real and
+complex model endpoints have no residual factorization/coprimality/cyclicity
+premises. Their instantiation as the full source theorem still requires
+independent source/formal-scope and renewed novelty review; credit remains0.
