@@ -1,44 +1,31 @@
-# Formal development checkpoint
+# Complete formal development, pending final review
 
 26 October 2026. Discovery credit remains **0**; accepted campaign tally remains
-**13/30**. The source/math/bounded-novelty preliminary review passed. A draft manuscript exists; the full
-Lean endpoint, final review, and extracted packet are still absent.
+**13/30**. The preliminary source/math/bounded-novelty review passed. The complete
+source-level Lean endpoint and a rendered three-page manuscript now exist.
+Final independent review and an extracted deterministic packet replay remain.
 
-Fifteen modules now pass a **fresh isolated strict replay: 185 declarations**, with
-pinned Lean 4.34.1/mathlib and `warningAsError=true`; every declaration type and
-axiom report was read. Only `propext`, `Classical.choice`, and `Quot.sound` occur.
-The main theorem remains absent: the manifest explicitly identifies this as an
-incomplete development checkpoint, with credit 0.
+**Seventeen modules / 211 declarations pass a fresh isolated strict replay**
+with pinned Lean4.34.1/mathlib and warningsAsError. Every declaration type and
+axiom report has been read; only propext, Classical.choice and Quot.sound occur.
+The record is verification/complete-audit.json and complete-checks.log.
+Historical checkpoints135/161/185 declarations remain in separate receipts.
 
-The completed scope includes scalar estimates, graph incidence/energy
-identities, the literal intersection-matrix block identity, exact sorted sums
-for signed arrays, the finite-dimensional Ky Fan inequality, the normalized
-positive connection eigenvector family (including zero/repeated Q eigenvalues),
-both connection lower bounds, and the edgeless comparison. The vertex/edge
-indexing is proved bijective with a downward-closed family of nonempty faces
-of cardinality one or two, and its connection matrix is the literal
-face-intersection matrix. The boundary and Dirac matrices are also defined
-directly on actual faces, and their spectral sums are proved equal to the
-block-indexed sums. A finite family containing every vertex singleton and only
-singleton/pair faces is reconstructed exactly from its canonical graph edges.
-A further support-restriction equivalence removes unused ambient vertices,
-preserves cardinalities, order, boundary signs and both spectral sums, and
-proves that all used vertex singletons occur by downward closure. This permits
-the final endpoint to quantify over the actual source face family without
-assuming that every ambient vertex is used. Spectral reindexing is proved using characteristic-polynomial roots
-with multiplicity and uniqueness of the sorted value list; negative values
-and repeated eigenvalues are included. Classical ingredients receive no
-separate credit.
+The Pi implementation contributed DiracPositive.lean (22 declarations), copied
+byte-for-byte into the parent and recompiled against the current dependencies.
+It explicitly proves positive-Dirac vertex-component normalization, handles
+repeated eigenvalues, and derives the small-index degree bound and global bound.
+GraphComparison.lean combines these with the two L-side bounds and the edgeless
+case. Its closed source_graph_strict_gap endpoint quantifies over the actual
+finite downward-closed face family, all faces of size1or2, and all1<=k<=#faces.
+Support restriction handles unused ambient vertices. Both matrices are literal
+face-indexed source matrices; signed sorted eigenvalue sums and all reindexing
+are proved, including repeated and negative eigenvalues. No rank/spectral
+existence assumptions survive as endpoint premises.
 
-The earlier 135-declaration checkpoint is preserved in
-`verification/development-audit.json`; the expanded checkpoint is in
-`verification/source-bridge-audit.json` (161 declarations); the new complete
-development replay is `verification/ground-set-audit.json` and its checks log.
-
-The positive-Dirac-eigenvector argument and D upper bounds are assigned to a
-Pi/GLM 5.3 Flash implementation worker at standard speed, in its separate lane.
-They and the full graph comparison endpoint are still required. No numerical
-check or already-proved helper is counted as an outcome.
+The implementation author will not serve as final independent reviewer. No
+helper, constant, finite numerical example or known spectral ingredient is
+counted as a separate discovery. Higher-dimensional source conjecture untouched.
 
 ## Clarifications to the preliminary review
 
@@ -89,5 +76,6 @@ Write g=sum_i 1/phi(q_i)>0. Then sum_i phi(q_i)=2m+g, and Cauchy gives
 v²≤(2m+g)g. Simplicity implies 2m≤v(v−1), hence g≥1. Consequently
 S_v(L)≥2m+1 and S_k(L)≥2m+v+1−k for k≥v. The diagonal Ky Fan bound
 also gives S_k(L)≥k, so S_k(L)≥m+v/2+1/2. Together with the original
-D upper bound m+v/2 this yields gap ≥1/2. The L-side argument is now formalized
-in `HighConnection.lean`; the D upper bound and combined endpoint are pending.
+D upper bound m+v/2 this yields gap ≥1/2. The L-side argument is formalized in `HighConnection.lean`; the D bounds and
+combined endpoint are now formalized in `DiracPositive.lean` and
+`GraphComparison.lean`.
