@@ -1,24 +1,12 @@
-# Collection integrity checkpoint — 29 accepted outcomes
+# Collection integrity checkpoint — 30 accepted outcomes
 
-All 29 accepted archives pass the current read-only integrity audit. This is
-an artifact/evidence coverage check, not a fresh compilation or a new mathematical
-or novelty review. One further qualifying outcome is still required.
+All30 accepted archives pass the current read-only integrity audit. This checks artifact/evidence coverage, not a fresh whole-collection compilation or a new mathematical/novelty review. The final Bessel archive also passed its actual fresh87/8 extracted strict replay in this completion run.
 
-For every entry the audit verifies the archive SHA-256 against the ledger, all
-payload hashes, exact canonical-file agreement, valid PDF signature, retained
-primary-source and independent-review evidence, all module source hashes and
-complete declaration/axiom inventories, and a retained extracted strict replay
-whose entire payload matches the accepted archive and whose module logs are empty.
-No prebuilt proof object is treated as proof of source correctness. The retained
-source/novelty reviews and their candid limits govern each mathematical outcome.
+For every entry, archive SHA/CRC/member/payload hashes agree with the ledger and canonical files. Actual module hashes, complete declaration/axiom inventories, retained primary-source/review evidence and at least one retained exact extracted proof replay match the accepted archive. Every matched replay has complete actual type/axiom reports and empty module logs. No prebuilt proof object substitutes for proof source.
 
-Historical independent receipts for outcomes4–7 differ in prose/dependency-path
-metadata and (for6–7) the list of headline theorems. Their actual source hashes,
-compiler, full compiled declaration/axiom inventories and counts agree exactly.
-The complete inventory includes all parent endpoint names; the audit records
-these harmless metadata differences rather than claiming byte identity there.
+Independent receipt prose/dependency-path/headline-list differences for historical outcomes4–7 are explicit; their core compiled proof data agree. Other current receipt comparisons are byte-identical where recorded. The original independent reports and parent reconciliations govern exact source scope and bounded novelty limits.
 
-| Outcome | Declarations | Modules | Archive payload files | Integrity/evidence |
+| Outcome | Declarations | Modules | Payload files | Integrity/evidence |
 |---:|---:|---:|---:|---|
 | 1 | 67 | 7 | 24 | PASS |
 | 2 | 37 | 6 | 22 | PASS |
@@ -49,8 +37,8 @@ these harmless metadata differences rather than claiming byte identity there.
 | 27 | 121 | 19 | 77 | PASS |
 | 28 | 49 | 5 | 41 | PASS |
 | 29 | 28 | 4 | 39 | PASS |
+| 30 | 87 | 8 | 80 | PASS |
 
-Reproduce with `python3 verification/audit_collection.py`. The machine-readable
-report binds the current ledger hash and records every packet, endpoint, receipt,
-review path and matching extracted replay. It must be rerun after outcome30 is
-accepted; this checkpoint does not assert goal completion or worldwide priority.
+Total formal coverage: 2109 declarations / 259 modules. These are not additional discoveries.
+
+Reproduce with python3 verification/audit_collection.py. Read GOAL-REQUIREMENTS-CHECKPOINT.md, goal-requirements-audit.json and the separate final completion decision. The collection contains30 scoped discovery outcomes, not a claim of30 distinct entire MathDB records resolved or worldwide priority.

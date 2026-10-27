@@ -1,3 +1,40 @@
+# Thirty accepted discovery outcomes
+
+Strict tally: **30/30**. The requested scoped collection is complete after the
+final requirement audit; see RESULTS.md, ledger.json and
+verification/GOAL-REQUIREMENTS-CHECKPOINT.md. Each outcome has a full proof,
+Lean certificate, independent review, bounded prior-art investigation, paper
+and a packet replayed from its extracted bytes. Historical thirty formalizations
+remain separate with zero discovery credit. No claim of30 entire distinct
+MathDB records solved or absolute worldwide priority is made.
+
+Outcome30: Bessel–Fourier kernel positivity is false at M2, alpha2/5, x47/50,
+with certified K<-1/500. All87 declarations /8modules passed fresh extracted
+strict replay; all87 actual types/axioms were read; all8logs empty. Parent,
+independent and extracted receipt65b88b000b9dc8e42e41305bab83ebd1cc5aef91ffb00a054103992cbcf2fab5.
+The81-member packet SHA9587d709fcf3d3370068dffc0eb701f9a91330d8e5a70113fd3e7293bacd1013
+passes all80payload hashes, deterministic duplicate build and readback. All56
+reviewed originals retained. Release3-page paper rebuilt/rendered/read.
+Supplemental reviewer interval multiplication corrected; original review/script
+and all mathematical Lean/manuscript bytes preserved, qualifications explicit.
+
+No further discovery is required for this goal. Held/rejected candidates such
+as squaredPolya, Horwitz and Kadar–Yu remain uncounted and preserved; optional
+future research is outside this completed collection. No new worker is started.
+Bessel review is terminal completed and analysis19 terminal interrupted. A
+legacy discrete handle was not owned by this current thread; root does not claim
+to have cancelled it or assert its current state. The reviewer's accidental
+same-model placeholder launch/cancel-request is recorded in the parent addendum;
+no descendant work contributes to the review or any count.
+
+No external publishing, messages, uploads or push occurred. Each packet retains
+honest source and prior-art access limits. Final status changes are recorded
+outside immutable preacceptance archives.
+
+---
+
+# Historical research checkpoints (superseded by the completion record above)
+
 # Continue toward thirty new discoveries
 
 Strict accepted tally: **29/30**. The goal remains active; one further substantive
