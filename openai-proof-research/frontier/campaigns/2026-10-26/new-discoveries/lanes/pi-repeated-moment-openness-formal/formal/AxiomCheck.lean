@@ -1,0 +1,4 @@
+import MomentOpen
+
+#print axioms RepeatedIntegrals.smoothMomentSet_convex
+#print axioms RepeatedIntegrals.smoothMomentSet_isOpen
