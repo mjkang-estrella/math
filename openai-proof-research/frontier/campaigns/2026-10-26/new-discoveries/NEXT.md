@@ -2,8 +2,8 @@
 
 Strict accepted tally: **29/30**. The goal remains active; one further substantive
 qualifying outcome is required. The historical thirty formalizations remain separate.
-Authoritative acceptance evidence is in ledger.json, RESULTS.md, and each candidate's
-post-extraction acceptance.json. No thirty-distinct-MathDB-conjectures claim is made:
+Authoritative acceptance evidence is in ledger.json, RESULTS.md and acceptance.json
+where present; older entries retain their archived reviews/receipts plus ledger decision. No thirty-distinct-MathDB-conjectures claim is made:
 explicit companion-source questions and substantive general theorems are identified.
 
 Latest acceptance (2026-10-27):
@@ -21,17 +21,26 @@ Latest acceptance (2026-10-27):
 Both canonical papers clean2pages, all pages read; all27/25 reviewed originals preserved;
 all proof/verifier/source bytes unchanged. Extracted sessions82866/12210 TERMINAL PASS.
 
-Active Pi work: discrete-discovery-r7 and strict-cstar-corona-preliminary-review-20261027-v1.
+Active Pi work: discrete-discovery-r7, strict-cstar-corona-preliminary-review-20261027-v1,
+and analysis-discovery-r19 (all standard/default Pi GLM5.3Flash).
 Corona preliminary13-path freeze359f9ddd6f; exact affine M2 datum, nilpotent-line reciprocal
 obstruction. Crucial substantive gate unresolved: may be classical immediate corollary or
-formulation correction. No endpoint/paper/packet/count; root Obstruction.lean dev is outside
-freeze and incomplete. Never infer novelty from source-open labels. Fresh r18 excludes
+formulation correction. Full literal25/4 endpoint now passes parentstrictreplay, alltypes
+andaxiomsread, standard3only, all4logs empty; FORMAL-CHECKPOINT.md governs newerformal
+bytes OUTSIDE preliminary13-path review. No paper/finalreview/packet/count. Receipt
+067e9ec0a035e9520b6bd34660a233bcd2ae88f1ce17568c4824d7d2d0495dc5. Never infer novelty from source-open labels. Fresh r18 excludes
 372380 (Gao-Guo explicit public Cor1.3) and345844 (immediate own-source lemma corollary).
 
 ONLY Pi spark/GLM-5.3-Flash-EXL3 standard/default speed, max4 user / root+3runtime.
 No polling running delegates; follow completion wake. Every NEW review is a NEW delegate.
 No external posting/contact/push/upload. Finish the remaining actual discovery before
 claiming completion; no helpers, stale labels, typo or known-result credits.
+
+Current collection integrity checkpoint: verification/audit_collection.py passes all29
+accepted archives, all canonical payloads, proof hashes/inventories and matching retained
+extracted replays. See verification/COLLECTION-CHECKPOINT.md. Historical independent
+receiptmetadata differences for4–7 are explicit; core proof evidence agrees. This is not
+a new mathematical/novelty review or a fresh recompilation of the entire collection.
 
 Historical checkpoints below remain for provenance; the latest acceptance records govern.
 
