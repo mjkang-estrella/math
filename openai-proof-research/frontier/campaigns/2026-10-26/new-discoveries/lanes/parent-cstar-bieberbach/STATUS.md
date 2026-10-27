@@ -30,3 +30,13 @@ a NEW full final review is required. Genuine local sourcePDF and visual source
 reading are still missing (actual20page primaryPDF text read via web tool;
 direct403/cloudfrontDNSfailure; oldmislabelledPDF isHTML and notused). No
 MathDBid identified, no discovery credit, no priority claim. Tally stays27/30.
+
+## Integrated preliminary review (supersedes earlier pending/access notes)
+
+SOURCE/MATH/boundedNOVELTY/SUBSTANTIVEPASS. Genuine authorZenodoPDF acquired,
+parentmd5/SHAverified and ownsourcepp2–3 rendered/read. DirectPreprintsPDF
+access limitremains, but actualstatements/textagree. Seeparent-source-upgrade
+andPRELIMINARY-DECISION. Refreshed2pagepaper parentQAclean.
+Thelaterfullformal/manuscriptwerenotcoveredbypreliminaryreview. NEWfinal
+reviewmustassessallfivegatesafreshonfinal-review-hashes.json frozenbytes.
+Originalcheckpointmanifestsarehistorical, notcurrentreplayinputs. Credit0.

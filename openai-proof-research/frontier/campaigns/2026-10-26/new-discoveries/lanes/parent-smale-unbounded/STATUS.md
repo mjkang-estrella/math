@@ -31,3 +31,14 @@ NOT cover these later49/5 formal files/manuscript; a NEW full final review is
 required if eligibility clears, followed by deterministic packet/extracted
 replay. A FAIL at substantive/novelty gate remains acceptable and must not be
 weakened to obtain30. Accepted tally stays27/30.
+
+## Integrated preliminary review (supersedes earlier pending/access notes)
+
+Mathematics/substantiveeligibility receiveconditionalPASS; boundednovelty
+screenfindsnosubsumer. Priorfixedwitnessrejectionandmarginalincrementcountercase
+remainexplicit. PRELIMINARY-DECISION corrects twoancillaryreviewerclaims:
+HIGHERMEAN C×C smallcritical keepsfirstorderratiobounded; ordinaryscalarSmale
+constantnotknownexact. Refreshed2pagepaper parentQAclean.
+Thelaterfullformal/manuscriptwerenotcoveredbypreliminaryreview. NEWfinal
+reviewmustassessallfivegatesafreshonfinal-review-hashes.json frozenbytes.
+Originalcheckpointmanifestsarehistorical, notcurrentreplayinputs. Credit0.
