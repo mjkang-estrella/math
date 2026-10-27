@@ -21,8 +21,17 @@ Latest acceptance (2026-10-27):
 Both canonical papers clean2pages, all pages read; all27/25 reviewed originals preserved;
 all proof/verifier/source bytes unchanged. Extracted sessions82866/12210 TERMINAL PASS.
 
-Active Pi work: discrete-discovery-r7 and analysis-discovery-r19 (standard/default
-Pi GLM5.3Flash). The C*-Corona preliminary review COMPLETED substantiveFAIL:
+Current Pi work: strict-bessel-fejer-final-review on the frozen56-file complete
+87-declaration/8-module proof and clean3-page manuscript, plus discrete-discovery-r7.
+The analysis-discovery-r19 cancellation was requested; no terminal wake is yet
+recorded. Do NOT poll any of these tasks or assume cancellation completed.
+Only Pi spark/GLM-5.3-Flash-EXL3, standard/default speed, root+3 maximum.
+Bessel credit0: independent source/math/formal/novelty/substantive/manuscript
+gates and final extracted replay remain pending. See parent-bessel-prior-r24
+for actual Young38-page body and Watsonpp606–616 comparison (not noveltyPASS),
+and parent-bessel-release-prepare for a pending-only conditional release tool.
+
+The C*-Corona preliminary review COMPLETED substantiveFAIL:
 actual Rosenfeld2000 Theorem2/body retrieved/read, old affine-rigidity obstruction.
 Parent adopts exclusion;25/4 strict certificate and clean2-page note remainuncounted.
 See PRELIMINARY-DECISION.md for corrections of ancillary reviewer inverse formulas
@@ -30,10 +39,13 @@ and matrix notation. Original13-file freeze preserved. Do not seek final review/
 for this classical/formulation consequence. Bieberbach outcome29 is unaffected.
 
 Current source-access fallback: squaredPolya329636 remains mathematical/formal100/9
-andmanuscriptPASS but noveltyHOLD. Actual publishedLAA491(2016)73-82 body and closest
-JMAA465(2018)267-280 body stillunread; current webfetches403, abstractsnotclearinggate.
-No count. Rootr18exclusions372380(Gao-Guo explicit publicCor1.3),345844(immediate own
-source lemma corollary), r20exclusions362477/362478(source already answers) remain0.
+and manuscriptPASS but noveltyHOLD. The closest JMAA465(2018)267-280 accepted-body
+text is retrieved and preliminarily clear; the actual published LAA491(2016)73-82
+body STILL unread. JMAA saved visual composites omit mathematical-font glyphs,
+so no clean visual comparison is claimed. See SOURCE-ACCESS-R22-DECISION.md.
+HOLD/credit0; matching abstracts do not clear the published-body gate.
+Rootr18exclusions372380(Gao-Guo explicit publicCor1.3),345844(immediate ownsource
+lemma corollary),r20exclusions362477/362478(source already answers) remain0.
 
 ONLY Pi spark/GLM-5.3-Flash-EXL3 standard/default speed, max4 user / root+3runtime.
 No polling running delegates; follow completion wake. Every NEW review is a NEW delegate.
@@ -403,3 +415,14 @@ final-review-hashes.json binds56currentfiles. All8Lean bytes unchanged from
 87/8 strict receipt65b88b000b9dc8e42e41305bab83ebd1cc5aef91ffb00a054103992cbcf2fab5.
 Polya-r22 terminalcompletion gives freePi slot even ifanalysis19 cancelpending.
 Launch NEW strict-bessel-fejer-final-review (all6gates, no count/acceptance).
+
+2026-10-27 Bessel release/prior checkpoint: final six-gate review RUNNING on
+56-file freeze26b211919f; no polling. Root read actual Youngpp163–200 OCR plus
+visualpp163/171/191 and actual Watsonpp606–616 OCR plus visualpp606/607/610/614.
+Public IA original PDFs/OCR matched metadata MD5; excerpts/renders retained in
+parent-bessel-prior-r24. No immediate finite-kernel subsumer identified in those
+bodies; bounded comparison only, independent eligibility not pre-decided.
+An OCR squared-Riesz-weight misread was explicitly corrected from actual visuals:
+Watson uses1-j_m/A_n. Conditional release tool checks frozen56/87/8 and rejects
+pending decisions before writing a destination (guard verified). No packet or
+acceptance assembled; tally29/30. All56 frozen candidate paths unchanged.
