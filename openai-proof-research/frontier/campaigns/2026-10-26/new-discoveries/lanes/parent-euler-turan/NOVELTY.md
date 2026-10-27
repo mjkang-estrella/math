@@ -1,4 +1,4 @@
-# Bounded novelty checkpoint — not a PASS claim
+# Bounded novelty checkpoint — preliminary review passed, final review pending
 
 Target: Sokal, arXiv:1804.04498v3, Conjecture3.3 on printed page14, the full
 normalized Euler all-n,j,k determinant sign. The source's proved even/odd
@@ -22,9 +22,11 @@ dilated Hankel determinants are a different target, but the entire 103-page
 body and the rest of the citing corpus have NOT been exhaustively compared.
 These files alone do not establish novelty or eligibility.
 
-A NEW independent preliminary review is running in pi-euler-turan-preliminary-review,
-assigned exact-source/math/bounded-prior-art/substantive-eligibility assessment,
+A NEW independent preliminary review completed in pi-euler-turan-preliminary-review,
+passing exact-source/math/bounded-prior-art/substantive-eligibility assessment,
 including actual relevant theorem bodies, citing papers, author successors and
 public registries/GitHub. No verdict is inferred from its task status. No source
 is claimed read merely because it was downloaded. Comprehensive subscription
 indices and worldwide priority are not certified. Credit remains zero.
+
+Parent post-review access update: the actual Olteanu2021 PDF was fetched from MDPI static hosting; Theorems1–5 and conclusion read (general positive-operator/moment criteria, no concrete normalized Euler theorem). The Han–Kitaev–Zhang2025 author manuscript was fetched from Strathprints; Intro1.1/1.2, the Springer-count proof, Theorems4.2/5.2/6.1 and all Sokal citation contexts read. Those are permutation-statistic distribution/enumeration formulas, not the normalized all-index determinant theorem. This removes the prior total body-access failures but does not assert that the final typeset versions or every proof line were read. Receipts/PDFs/text retained. Remaining citing bodies and full registry search need deeper final-review coverage.
