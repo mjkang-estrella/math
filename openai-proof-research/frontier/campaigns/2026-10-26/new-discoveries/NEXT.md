@@ -1,6 +1,6 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **23/30**. The goal remains active;7further qualifying
+Strict accepted tally: **24/30**. The goal remains active;6further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
@@ -150,3 +150,5 @@ Delegation resource update: broad pi-discrete-discovery-r3 was stopped with task
 Euler338918 preliminary review COMPLETED: source/math/boundednovelty/preliminaryeligibilityPASS, frozen18helperformal only and no fullformal verdict. Parent read whole report/provenance and finalT3position99, corrected ancillary finite-pairing/index/precision slips in PRELIMINARY-RECONCILIATION. All25prelimbytes unchanged. New final56-file freeze covers all64declarations/11modules and clean2-page paper; exactEGF HasFPowerSeriesAt closed. MDPI Olteanu actualPDF and JCTA2025 authorbody now obtained/relevanttheoremsread, with typeset/bodycoverage limits preserved. NEW final independent fivegate review is next, then packet/extraction; credit0, accepted23unchanged.
 
 Jacobi shifted-content Pi lane COMPLETED with no all-order theorem, credit0. Parent read discovery/progress; exact verification r<=40 and conjecturalmod2law m<=30 are evidence only. Parent r10jacobi addendum qualifies sufficient-vs-equivalent wording and unsupported global rational-shift exclusion. Matrix-r6 and Euler-final review still background, no polling. Root arcsinh325512 has an exact unformalized interior-p midpoint witness with positive rational certificate; substantive eligibility expressly NOT presumed because p<1/domain-clarification risk. NEW preliminary source/math/novelty/eligibility review is needed before Lean investment.
+
+2026-10-27 authoritative acceptance: Euler338918 ACCEPTED as outcome24, allfive independent gates and fresh extracted64/11 strictPASS. All64 types/axioms read,11emptylogs; parent/independent/extracted receipt f30d53e5c4f421f0d743c1a10395879dc24d61a95eccdd01169535f1da1af7f3 byte-identical. Deterministic73-member packet6ab39a8083fe29a6cd29f5c9f02030cd888a7ac126c1e293077da50b0926911b passes72payloadhashes/readback/rebuild. All56reviewed originals preserved. Release2pages only removes operational pending prose; both rendered/read. Source journal/typeset-citer and bounded-priority limits retained. candidates/euler-turan/acceptance.json supersedes earlier Euler pending notes. Accepted24/30;6further qualifying outcomes needed.
