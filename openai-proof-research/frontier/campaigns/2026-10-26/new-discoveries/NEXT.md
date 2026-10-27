@@ -203,3 +203,11 @@ onlyoperationalprosechanges, rendered/read. Ownshell48006completednorestart.
 Part(i)andfullMathDBrecordresolutionunclaimed; exactrationalpointmath-only.
 RemainingJMAAbody/boundednoveltylimitsretained. EarlierDeTemplependingnotes
 supersededby candidates/detemple/acceptance.json. Accepted25/30,goalactive.
+
+Hermite sourceinitialvalues DONE:52supportingdecl4mods, all52types/axiomsread
+standard3, all4logs0. InitialValues bridgesactualGammaC to bothHermiteparities,
+closesliteral evenbulk, identifiessourceoddenergywithWallis anddischargesboth
+oddinitialinequalities. Original19mathfreezeand33formalhashesunchanged.
+StillNOallnclampedendpoint/paper/count: oddcomparison,prex0,n1,globaltailremain.
+DLMFofficialtailreferenceSzasz1951identifiedbutactualbodyunread; publicpublisher
+metadataAPIroutefails toretrieveit. Noaccess/noveltyconclusionfromfailedsearch.
