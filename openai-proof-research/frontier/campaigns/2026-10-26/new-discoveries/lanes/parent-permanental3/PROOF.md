@@ -1,8 +1,9 @@
 # Proposed sharp 3×3 permanental Koteljanskii ratio
 
-Parent proposal, 26 October 2026. **Credit 0**: mathematical proof and exact
-algebra checks only; serious independent novelty/eligibility review, full
-Lean endpoint, paper, final review and packet remain absent.
+Parent proposal, 26 October 2026. **Credit 0**: complete mathematical proof, exact algebra checks, a fresh strict Lean replay
+(53 declarations, six modules), and a rendered three-page draft manuscript.
+Independent source/math/formal/novelty/manuscript review and the final
+extracted packet remain pending.
 
 ## Exact unresolved source question and limits of attribution
 
