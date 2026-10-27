@@ -380,3 +380,7 @@ Root candidate r23: parent-bessel-fejer, MathDB365454. Exact rational interior
 M2,alpha2/5,x47/50 counterexample < -1/500; published pp7/11 visually read.
 13-path preliminary freeze, formal/independent/novelty gates OPEN, credit0.
 Pi squared-polya-source-access-r22 also active (now3Pi workers total).
+
+Bessel follow-on: full87/8 closed parent strict replayPASS; receipt65b88b000b9dc8e42e41305bab83ebd1cc5aef91ffb00a054103992cbcf2fab5.
+full87-review-hashes.json binds40paths; original13 commit7c9ef8c076 historical.
+No paper/independent/final/packet/count yet.
