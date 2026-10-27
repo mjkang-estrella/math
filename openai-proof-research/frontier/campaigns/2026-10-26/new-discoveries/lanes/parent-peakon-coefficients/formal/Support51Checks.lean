@@ -1,0 +1,113 @@
+import RankTwo
+import NilpotentCollapse
+import UpperFamily
+import TraceGenerator
+import FormalJacobi
+import MatrixSeries
+import TraceLog
+import HamiltonianPolynomial
+import LogCoefficients
+import TraceExpansion
+
+#check PeakonCoefficients.det_one_add_two_outer
+#print axioms PeakonCoefficients.det_one_add_two_outer
+#check PeakonCoefficients.inverse_skew
+#print axioms PeakonCoefficients.inverse_skew
+#check PeakonCoefficients.dot_outer_mulVec
+#print axioms PeakonCoefficients.dot_outer_mulVec
+#check PeakonCoefficients.resolvent_pair_identity
+#print axioms PeakonCoefficients.resolvent_pair_identity
+#check PeakonCoefficients.det_add_two_outer
+#print axioms PeakonCoefficients.det_add_two_outer
+#check PeakonCoefficients.determinant_spectral_collapse
+#print axioms PeakonCoefficients.determinant_spectral_collapse
+#check PeakonCoefficients.strict_upper_power_zero
+#print axioms PeakonCoefficients.strict_upper_power_zero
+#check PeakonCoefficients.strict_upper_scaled_det
+#print axioms PeakonCoefficients.strict_upper_scaled_det
+#check PeakonCoefficients.finiteResolvent
+#print axioms PeakonCoefficients.finiteResolvent
+#check PeakonCoefficients.finiteResolvent_mul
+#print axioms PeakonCoefficients.finiteResolvent_mul
+#check PeakonCoefficients.mul_finiteResolvent
+#print axioms PeakonCoefficients.mul_finiteResolvent
+#check PeakonCoefficients.strict_upper_spectral_collapse
+#print axioms PeakonCoefficients.strict_upper_spectral_collapse
+#check PeakonCoefficients.upperKernel
+#print axioms PeakonCoefficients.upperKernel
+#check PeakonCoefficients.upperKernel_triangular
+#print axioms PeakonCoefficients.upperKernel_triangular
+#check PeakonCoefficients.upperKernel_diagonal
+#print axioms PeakonCoefficients.upperKernel_diagonal
+#check PeakonCoefficients.upperKernel_skew
+#print axioms PeakonCoefficients.upperKernel_skew
+#check PeakonCoefficients.skewPart
+#print axioms PeakonCoefficients.skewPart
+#check PeakonCoefficients.symmetricPart
+#print axioms PeakonCoefficients.symmetricPart
+#check PeakonCoefficients.algebraicLax
+#print axioms PeakonCoefficients.algebraicLax
+#check PeakonCoefficients.algebraicLax_rank_two
+#print axioms PeakonCoefficients.algebraicLax_rank_two
+#check PeakonCoefficients.algebraicLax_det_collapse
+#print axioms PeakonCoefficients.algebraicLax_det_collapse
+#check PeakonCoefficients.trace_outer_mul
+#print axioms PeakonCoefficients.trace_outer_mul
+#check PeakonCoefficients.hamiltonianDirection
+#print axioms PeakonCoefficients.hamiltonianDirection
+#check PeakonCoefficients.trace_hamiltonianDirection
+#print axioms PeakonCoefficients.trace_hamiltonianDirection
+#check PeakonCoefficients.rawHamiltonian
+#print axioms PeakonCoefficients.rawHamiltonian
+#check PeakonCoefficients.hamiltonianGenerator
+#print axioms PeakonCoefficients.hamiltonianGenerator
+#check PeakonCoefficients.det_eq_one_sub_generator
+#print axioms PeakonCoefficients.det_eq_one_sub_generator
+#check PeakonCoefficients.hamiltonianGenerator_finite_sum
+#print axioms PeakonCoefficients.hamiltonianGenerator_finite_sum
+#check PeakonCoefficients.rawHamiltonian_normalization
+#print axioms PeakonCoefficients.rawHamiltonian_normalization
+#check PeakonCoefficients.derivativeJet
+#print axioms PeakonCoefficients.derivativeJet
+#check PeakonCoefficients.det_dual_perturbation
+#print axioms PeakonCoefficients.det_dual_perturbation
+#check PeakonCoefficients.derivation_det_of_inverse
+#print axioms PeakonCoefficients.derivation_det_of_inverse
+#check PeakonCoefficients.matrixGeometric
+#print axioms PeakonCoefficients.matrixGeometric
+#check PeakonCoefficients.matrixGeometric_coeff
+#print axioms PeakonCoefficients.matrixGeometric_coeff
+#check PeakonCoefficients.matrixGeometric_inverse
+#print axioms PeakonCoefficients.matrixGeometric_inverse
+#check PeakonCoefficients.tracePowerSeries
+#print axioms PeakonCoefficients.tracePowerSeries
+#check PeakonCoefficients.trace_matrixGeometric_mul
+#print axioms PeakonCoefficients.trace_matrixGeometric_mul
+#check PeakonCoefficients.determinantSeries_derivative
+#print axioms PeakonCoefficients.determinantSeries_derivative
+#check PeakonCoefficients.determinantSeries_constantCoeff
+#print axioms PeakonCoefficients.determinantSeries_constantCoeff
+#check PeakonCoefficients.derivative_logOf_mul
+#print axioms PeakonCoefficients.derivative_logOf_mul
+#check PeakonCoefficients.traceLog_derivative
+#print axioms PeakonCoefficients.traceLog_derivative
+#check PeakonCoefficients.traceLog_coefficient
+#print axioms PeakonCoefficients.traceLog_coefficient
+#check PeakonCoefficients.hamiltonianPolynomial
+#print axioms PeakonCoefficients.hamiltonianPolynomial
+#check PeakonCoefficients.hamiltonianPolynomial_eval
+#print axioms PeakonCoefficients.hamiltonianPolynomial_eval
+#check PeakonCoefficients.determinant_polynomial_collapse
+#print axioms PeakonCoefficients.determinant_polynomial_collapse
+#check PeakonCoefficients.hamiltonianPolynomial_constantCoeff
+#print axioms PeakonCoefficients.hamiltonianPolynomial_constantCoeff
+#check PeakonCoefficients.determinant_series_collapse
+#print axioms PeakonCoefficients.determinant_series_collapse
+#check PeakonCoefficients.coeff_pow_vanish
+#print axioms PeakonCoefficients.coeff_pow_vanish
+#check PeakonCoefficients.coeff_subst_truncated
+#print axioms PeakonCoefficients.coeff_subst_truncated
+#check PeakonCoefficients.coeff_negative_log
+#print axioms PeakonCoefficients.coeff_negative_log
+#check PeakonCoefficients.trace_all_orders
+#print axioms PeakonCoefficients.trace_all_orders
