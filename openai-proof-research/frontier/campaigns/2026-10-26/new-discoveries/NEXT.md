@@ -244,3 +244,5 @@ These are bounded checks, not a global novelty assurance. Full odd components
 are with two Pi implementation lanes; pi-discrete-discovery-r7 independently
 seeks fresh outcomes. Root-owned reference caches live under NEW/build and
 are excluded from candidate-source staging. No count change:25/30.
+
+2026-10-27 matrix-r7 checkpoint: 324727 excluded after actual public Lean witness and independent rational recheck. MathDB329636 FIRST squared Polya-Szego clause has a complete exact 4x4-to-2x2 unital CP counterexample, scalar radical sign < -17000 now compiled in Lean (supporting only). Entire source endpoint and prior-art/independent review absent, credit0. Its SECOND Diaz-Metcalf clause has an exact supplementary witness (no separate credit); parent caught the closest 2015 Remark1 claimed counterexample is actually positive definite at stated bounds, so earlier prior-resolution wording is WITHDRAWN. Both clauses require independent novelty review. Two similarly titled/wrong-ID PDFs were caught and labeled; 2018 More accurate operator means inequalities remains unread. See lanes/parent-matrix-screen-r7/PROOF.md and status.json. Tally25/30 unchanged.
