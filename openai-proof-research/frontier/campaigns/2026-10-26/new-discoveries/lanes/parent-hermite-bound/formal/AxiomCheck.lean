@@ -1,0 +1,70 @@
+import SourceDefs
+import Energy
+import WallisBounds
+
+#check HermiteEnvelope.hermitePoly
+#print axioms HermiteEnvelope.hermitePoly
+#check HermiteEnvelope.hermiteValue
+#print axioms HermiteEnvelope.hermiteValue
+#check HermiteEnvelope.sourceHermite
+#print axioms HermiteEnvelope.sourceHermite
+#check HermiteEnvelope.weightedHermite
+#print axioms HermiteEnvelope.weightedHermite
+#check HermiteEnvelope.sourceCoefficient
+#print axioms HermiteEnvelope.sourceCoefficient
+#check HermiteEnvelope.sourceCutoff
+#print axioms HermiteEnvelope.sourceCutoff
+#check HermiteEnvelope.sourceEnvelope
+#print axioms HermiteEnvelope.sourceEnvelope
+#check HermiteEnvelope.SourceConjecture346243
+#print axioms HermiteEnvelope.SourceConjecture346243
+#check HermiteEnvelope.hermitePoly_derivative_succ
+#print axioms HermiteEnvelope.hermitePoly_derivative_succ
+#check HermiteEnvelope.hermitePoly_ode
+#print axioms HermiteEnvelope.hermitePoly_ode
+#check HermiteEnvelope.gaussian_derivative
+#print axioms HermiteEnvelope.gaussian_derivative
+#check HermiteEnvelope.iterated_deriv_gaussian
+#print axioms HermiteEnvelope.iterated_deriv_gaussian
+#check HermiteEnvelope.sourceHermite_eq_value
+#print axioms HermiteEnvelope.sourceHermite_eq_value
+#check HermiteEnvelope.weightedSlope
+#print axioms HermiteEnvelope.weightedSlope
+#check HermiteEnvelope.energy
+#print axioms HermiteEnvelope.energy
+#check HermiteEnvelope.exp_weight_hasDerivAt
+#print axioms HermiteEnvelope.exp_weight_hasDerivAt
+#check HermiteEnvelope.polynomial_weight_hasDerivAt
+#print axioms HermiteEnvelope.polynomial_weight_hasDerivAt
+#check HermiteEnvelope.weightedHermite_hasDerivAt
+#print axioms HermiteEnvelope.weightedHermite_hasDerivAt
+#check HermiteEnvelope.weightedSlope_hasDerivAt
+#print axioms HermiteEnvelope.weightedSlope_hasDerivAt
+#check HermiteEnvelope.energy_hasDerivAt
+#print axioms HermiteEnvelope.energy_hasDerivAt
+#check HermiteEnvelope.energy_antitone
+#print axioms HermiteEnvelope.energy_antitone
+#check HermiteEnvelope.weighted_bulk_of_initial_energy
+#print axioms HermiteEnvelope.weighted_bulk_of_initial_energy
+#check HermiteEnvelope.oddEnergyRatio
+#print axioms HermiteEnvelope.oddEnergyRatio
+#check HermiteEnvelope.correctedOddRatio
+#print axioms HermiteEnvelope.correctedOddRatio
+#check HermiteEnvelope.oddEnergyRatio_pos
+#print axioms HermiteEnvelope.oddEnergyRatio_pos
+#check HermiteEnvelope.oddEnergyRatio_succ
+#print axioms HermiteEnvelope.oddEnergyRatio_succ
+#check HermiteEnvelope.oddEnergyRatio_antitone
+#print axioms HermiteEnvelope.oddEnergyRatio_antitone
+#check HermiteEnvelope.correctedOddRatio_succ_sub
+#print axioms HermiteEnvelope.correctedOddRatio_succ_sub
+#check HermiteEnvelope.correctedOddRatio_strictMono
+#print axioms HermiteEnvelope.correctedOddRatio_strictMono
+#check HermiteEnvelope.oddEnergyRatio_tendsto
+#print axioms HermiteEnvelope.oddEnergyRatio_tendsto
+#check HermiteEnvelope.correctedOddRatio_tendsto
+#print axioms HermiteEnvelope.correctedOddRatio_tendsto
+#check HermiteEnvelope.correctedOddRatio_lt_one
+#print axioms HermiteEnvelope.correctedOddRatio_lt_one
+#check HermiteEnvelope.oddEnergyRatio_le_nine_pi
+#print axioms HermiteEnvelope.oddEnergyRatio_le_nine_pi
