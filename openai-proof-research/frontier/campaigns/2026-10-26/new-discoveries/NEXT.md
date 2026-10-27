@@ -1,13 +1,13 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **26/30**. The goal remains active;4further qualifying
+Strict accepted tally: **27/30**. The goal remains active;3further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
 
-Current acceptance checkpoint (2026-10-27): Outcome26 Hermite346243 is ACCEPTED after all five independent gates and fresh extracted162/17 strict replay. All types/axioms read, all module logs empty; parent/independent/extracted receipt d409252af9856fafd2410b9473e3e7339544bd96bfe27b388109aed4d4aee3d2. Deterministic123-member packet SHA e912228169c241abc1aeeab5d6fac977f1335359afff1275292b2253640a24a8. Full literal all-n/all-positive-x envelope; classical tools/known cases/helpers uncredited. All105 reviewed bytes preserved, release status-only edits and bounded novelty limits documented. Four qualifying outcomes still required.
+Current acceptance checkpoint (2026-10-27): Outcome27 peakon372008 is ACCEPTED after independent five-gatePASS and fresh extracted121/19 strict replay. All types/axioms read, all19 logs empty; parent/independent/extracted receipt0f0d34bf36c11ba23d63260f0ce184f657747e5fab12b6b0d33f90f878f0571d. Deterministic78-member packet SHA b5b17dededcc7c18e3273101de18b87b88a6da68272776d010adb1cf013bb49e. Complete universal coefficient function, one source-question outcome. All64 reviewed bytes preserved; status/citation-only release edits and bounded novelty limits documented. Three qualifying outcomes remain.
 
-Peakon372008 preliminary review now SOURCE/MATH/NOVELTY/SUBSTANTIVE PASS on original21/3 freeze; coherent per-particle-root convention is source-forced, not a positive-momentum narrowing. New119/19 formal proof and three-page manuscript are NOT covered by that preliminary review. NEW full final review and wider subsumption check, then extracted packet remain required; credit0.
+Active discovery: parent-cstar-smale proposes a connected C([-1,1],C) cubic counterexample to the weak norm CSMALE conjecture in2206.08154. Polynomial and derivative fully split, both criticalbranches exist; connectedness forces a global choice, each fails with a large norm gap while Pprime(z) is constant invertible. NEW preliminary source/math/novelty/eligibility review running in pi-cstar-smale-preliminary-review. HIGHERMEAN/DUALSMALE public refutations are distinct and uncredited; no formal or novelty PASS yet. Root norm-compression r17 found only roundoff and distinguishes Audenaert2-by-N from Vuong--Osaka3-by-3 trace positivity, no proof/count/exclusion. Other Pi discovery lanes continue at standard speed.
 
 1. Outcome16 candidates/cstar-sendov is ACCEPTED after independent five-gate
    review and fresh extracted136-declaration8-module strict replay. All types

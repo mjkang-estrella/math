@@ -1,6 +1,6 @@
 # Accepted research outcomes
 
-Strict tally: **26/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
+Strict tally: **27/30**. Each row is one combined mathematical outcome, with a complete Lean certificate, manuscript, independent review, documented prior-art investigation and proof packet replayed after extraction. Declaration counts describe formal coverage, not additional discoveries. Worldwide priority is not certified by a finite literature search.
 
 | # | Result | Lean declarations | Paper | Complete proof packet |
 |---|---|---:|---|---|
@@ -30,6 +30,7 @@ Strict tally: **26/30**. Each row is one combined mathematical outcome, with a c
 | 24 | Full alternating Turan inequality for normalized Euler numbers, MathDB338918 | 64 | [Paper](candidates/euler-turan/paper.pdf) | [ZIP](candidate-packets/338918-euler-turan-proof.zip) |
 | 25 | Strictly interior DeTemple CM-threshold refutation, MathDB328867 part(ii) | 21 | [Paper](candidates/detemple/paper.pdf) | [ZIP](candidate-packets/328867ii-detemple-proof.zip) |
 | 26 | Full literal Hermite envelope conjecture, MathDB346243 | 162 | [Paper](candidates/hermite/paper.pdf) | [ZIP](candidate-packets/346243-hermite-envelope-proof.zip) |
+| 27 | Complete universal peakon trace-power coefficient formula, MathDB372008 | 121 | [Paper](candidates/peakon-coefficients/paper.pdf) | [ZIP](candidate-packets/372008-peakon-coefficients-proof.zip) |
 
 Outcome 2 resolves an explicitly open assertion in the source associated with MathDB 363319; the record's different root-simplicity conjecture remains open. Outcome 3 does not refute the separate zero-free conjecture and makes no minimality claim.
 
@@ -81,3 +82,6 @@ Outcome25 refutes Yang--Chu--Zhang Conjecture1(ii) at a strictly positive parame
 
 
 Outcome26 proves the full published Hermite envelope with literal Rodrigues polynomial, Gamma normalization and square-root cutoff for every n>=1 and x>0. Positivity-safe Duhamel comparison, strict odd energy loss and the real-root moment tail discharge every auxiliary premise. Parent/independent/extracted162-declaration17-module strict receipts are byte-identical; all extracted types and axioms were read. The123-member deterministic packet preserves all105 reviewed originals; only two operational status sentences changed in the clean three-page release paper. The rejected preliminary sine-bound coverage claim is not adopted. Classical facts, low-degree cases and helpers receive no separate credit. The independent bounded novelty screen retains the unread adjacent MDPI2026 body and subscription-index limits; no worldwide-priority or universal classical-noncoverage claim is made.
+
+
+Outcome27 resolves the full published peakon coefficient conjecture with one universal partition formula for all N and positive trace orders. Every hyperbolic, tie, sorting, nilpotence, trace-log and coefficient-support bridge is proved. Parent/independent/extracted121-declaration19-module strict receipts are byte-identical; all extracted type/axiom reports were read and all19 module logs empty. The78-member deterministic packet preserves all64 reviewed originals and excludes unreviewed scratch files. Release three-page manuscript changes only review status and a precise source citation; all proof/verifier bytes unchanged. Coherent complex amplitudes and the literal nonnegative principal-root specialization are both covered. No fixed-N coefficient uniqueness, helper credit, unreliable MathDB metadata inference or worldwide priority is claimed; selective semiseparable/Kostant--Toda and bounded search limits remain explicit.
