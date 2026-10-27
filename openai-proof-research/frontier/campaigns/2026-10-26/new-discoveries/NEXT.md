@@ -1,23 +1,23 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **15/30**. The goal remains active;15further qualifying
+Strict accepted tally: **16/30**. The goal remains active;14further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
 
-1. Primary acceptance priority: candidates/cstar-sendov contains the COMPLETE
-   literal source refutation353909 and publishedConjecture4. Full136declarations
-   in8modules passfreshstrictreplay; alltypes/axiomsread, standard3only. The3page
-   paper builds cleanly and allpageswereviewed. Globalclassificationandstrict
-   continuouspositiveweights aredischarged; sourceCStarPositiveOrder checksactual
-   star-orderinstance. Finalreviewhashesfreeze34files. Independentfinalreview,
-   deterministicpacketandextractedstrictreplaystillrequired;credit0.
-   Originalhandproof/preliminaryreviewfreeze remainsat3c62435432. Noformal353908
-   density-of-invertiblesclaim; noscalarSendov/branchmechanismextra credit.
+1. Outcome16 candidates/cstar-sendov is ACCEPTED after independent five-gate
+   review and fresh extracted136-declaration8-module strict replay. All types
+   and axioms were read; parent/independent/extracted receipts are byte-identical.
+   Its49-member deterministic packet SHA is
+   edc55d97791f86b9ef0b14b2253cac98dd919d5bdbbe19872b9c5487c98d3d26.
+   The unchanged3-page paper and full literal353909/publishedConjecture4
+   refutation count as ONE outcome. No formal353908 density claim or scalar
+   Sendov contradiction. Retained supplemental review-log and numerical-code
+   issues are reconciled in reviews/parent-addendum.md; strict replay is clean.
 2. lanes/parent-kadar-yu has the fullprospective arbitrary-partition handproof
    for372352. Completedindependentreview validatesSOURCE/MATH andsupports
    boundedconditionalNOVELTY/ELIGIBILITY; three explanatoryrepairsintegrated.
-   Forty-fourclassicalJacobi/path/cancellation supportdeclarations in5modules
+   Fifty-fourclassicalJacobi/path/cancellation/spectral-count supportdeclarations in6modules
    passstrictreplay, notthefull
    sourceidentificationorasymptoticclauses. Thegenerichead-tailresultaloneis
    NOT theliteralallpartitionendpoint; substantialrepresentationtheorybridge

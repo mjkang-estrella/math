@@ -1,4 +1,4 @@
-# Continuous C*-Sendov counterexample — review candidate, credit0
+# Continuous C*-Sendov counterexample
 
 The concrete algebra is C([0,1],C). A cubic with all roots of norm at most9/10
 has a completely split derivative, two distinct critical elements of norm less
@@ -25,8 +25,13 @@ With the pinned compiler/dependencies installed, run from this directory:
 
     python3 verification/verify_candidate.py . --lean-bin "$LEAN_BIN" --packages "$MATHLIB_PACKAGES"
 
-The preliminary independent source/math/bounded-novelty/eligibility review
-passes, with access limits. The full formal/manuscript review and extracted
-packet replay remain pending. This candidate has credit0; no count or worldwide
-priority claim is made. Source PDFs are retained in the research lane; this
-packet identifies their URLs/hashes rather than distributing third-party papers.
+The independent final source/math/formal/bounded-novelty/eligibility/manuscript
+review passes. Its unchanged report and parent audit-record qualification are
+in reviews/. The exact reviewed theorem and manuscript bytes are unchanged.
+Historical provenance/final-provenance/FORMAL-PROGRESS/PROOF-prelude freeze records
+retain credit0 at that time. frozen-parent-hashes.json binds those historical
+bytes; final-review-hashes.json binds current theorem, manuscript and metadata.
+MANIFEST.json binds every archive member. Final acceptance is controlled by the
+campaign ledger and external packet receipt after a fresh extracted replay.
+Source PDFs remain in research lanes; URLs/hashes identify third-party papers.
+No absolute worldwide priority claim is made.
