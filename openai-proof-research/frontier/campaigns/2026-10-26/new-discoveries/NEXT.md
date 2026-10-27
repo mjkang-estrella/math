@@ -1,6 +1,6 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **16/30**. The goal remains active;14further qualifying
+Strict accepted tally: **17/30**. The goal remains active;13further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
@@ -79,3 +79,5 @@ as a research direction. Do not treat a terminal task status as a result.
 2026-10-26 full Mills checkpoint @82a2730df1: all47declarations/sevenmodules now pass fresh strict replay (audit81b42dd13d312ce43ddf6c3c6c5e851a18a2336fc0485a7163afa4ff7aa6363d), all types/axioms read, clean2page manuscript rendered and inspected. The preliminary review remains limited to its frozen source/math/novelty scope. New final formal/manuscript review and extracted packet replay remain required; credit0. Earlier UNDERDEVELOPMENT/no-paper note is superseded.
 
 Repeated-integrals371768: parent-repeated-integrals/PROOF.md records proposed complete all-n moment-cone argument, with explicit NOVELTY/ELIGIBILITY HOLD because diDio2411.03145v2 Thm2.5/Cor2.7 supplies a close general predecessor. No Lean, no credit; independently decide subsumption before heavy formalization.
+
+Outcome17 wgm-parity ACCEPTED after all five independent gates and fresh extracted41/7 strict replay. Parent/independent/extracted receipt90344f6a0332c92916d0f961efea102b17f528d80a7765ab582e3981aa71ce53 byte-identical, all types/axioms read.50-member packetSHA b5d300aa4414b5406a410a1be9a6ed16edfaf7852e5500a9a3ee788496654dfd; candidate acceptance.json binds latercredit1 to reviewed historicalcredit0 snapshots. Wang Section7(2) ONLY, no new349081 resolution or sharpness claim. The completed WGM reviewer is no longer running.
