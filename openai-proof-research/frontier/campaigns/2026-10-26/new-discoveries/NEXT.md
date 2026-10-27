@@ -14,14 +14,18 @@ in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
    refutation count as ONE outcome. No formal353908 density claim or scalar
    Sendov contradiction. Retained supplemental review-log and numerical-code
    issues are reconciled in reviews/parent-addendum.md; strict replay is clean.
-2. lanes/parent-kadar-yu has the fullprospective arbitrary-partition handproof
-   for372352. Completedindependentreview validatesSOURCE/MATH andsupports
-   boundedconditionalNOVELTY/ELIGIBILITY; three explanatoryrepairsintegrated.
-   Fifty-fourclassicalJacobi/path/cancellation/spectral-count supportdeclarations in6modules
-   passstrictreplay, notthefull
-   sourceidentificationorasymptoticclauses. Thegenerichead-tailresultaloneis
-   NOT theliteralallpartitionendpoint; substantialrepresentationtheorybridge
-   remains. Nopaper/packet/discoverycredit yet.
+2. lanes/parent-kadar-yu has the prospective arbitrary-partition handproof
+   for372352, with preliminary SOURCE/MATH PASS and bounded conditional
+   NOVELTY/ELIGIBILITY support. The classical Jacobi root-distribution component
+   now passes strict replay:116 declarations in13 modules, all types/axioms read.
+   All-degree simplicity, eventual exterior-root counts with multiplicity, and
+   density of the CLOSED band[-2,2] are proved for literal Jacobi heads/free tails.
+   These known supporting facts have credit0. The actual source mixed Gram
+   structure, reduced-series identification and boundary remain load-bearing.
+   COUNTING-ALTERNATIVE.md records a possible replacement for explicit cyclic
+   compression using multiplicity differences and fixed-factor cancellation;
+   this alternative is not formalized/reviewed yet. No source endpoint, paper,
+   final review or packet acceptance for this lane.
 3. Outcome15connection-graph is ACCEPTED after fivegatePASS, all23frozenhashes
    matched, andfresh211declaration17moduleextractedreplay. Packet46members,
    SHA5600ec36e8b4d690564d67ead1a762e8125ebd08cf69fddd00c602f46ac77a7c.

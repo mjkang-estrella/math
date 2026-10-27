@@ -183,6 +183,6 @@ Load-bearing checks for an adversarial reviewer:
   boundary index, and the two asymptotic clauses need an honest Lean bridge.
 
 Independent preliminary review supports SOURCE/MATH and bounded NOVELTY/
-ELIGIBILITY, with its access limits documented. The parent has54 strictly
-replayed classical Jacobi/path/spectral-count supporting declarations, not a full source endpoint.
+ELIGIBILITY, with its access limits documented. The parent has116 strictly
+replayed classical Jacobi/path/counting/root-distribution supporting declarations, not a full source endpoint.
 No manuscript, final review, packet, or extracted replay yet. Credit remains0.
