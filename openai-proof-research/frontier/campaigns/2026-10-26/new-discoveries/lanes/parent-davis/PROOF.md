@@ -2,9 +2,10 @@
 
 Status: prospective resolution of MathDB319187 / Davis2009 Conjecture3.1.
 Discovery credit **0**. Full mathematical argument and exact finite certificates
-are below. Two supporting Lean modules exist; the literal universal endpoint is
-not yet proved. Independent source/math/novelty review, manuscript and packet are
-still required. No assertion of worldwide priority.
+are below. The complete literal universal endpoint is proved in Lean: fresh isolated strict
+replay PASS,100 declarations/19 modules, all types/axioms read and module logs
+empty. A three-page manuscript exists. Independent final review and extracted
+packet replay are still required. No assertion of worldwide priority.
 
 ## Exact target and source
 
@@ -108,9 +109,10 @@ putting t=d−43≥0 gives
 Hence 2T²+BT>Da². Since V≥0, T>0 and B>0, (3) forces V<T. This proves the
 entire infinite range d≥43 without numerical approximation.
 
-`formal/TailBound.lean` proves this scalar argument under precisely (2), M≥V²,
-V≥0, d≥43, a≥1 and 4a²≥d+2. It does not yet prove that the literal weights
-satisfy (2); that is the remaining finite-sum bridge.
+`formal/TailBound.lean` proves this scalar comparison. `Weights.lean`,
+`Moments.lean` and `QuotientBridge.lean` prove the exact literal finite-sum
+identities, normalized moments and remainder bridge. `SourceTail.lean` discharges
+all scalar premises and proves the literal source inequality for every d≥43.
 
 ## 3. The finite range 5≤d≤42: 912 positive integers
 
@@ -143,7 +145,12 @@ arbitrary-precision integers: falling products, binomial convolution, monic exac
 division, integer Taylor shift, integer square root, and coefficient positivity.
 An earlier, separately implemented SymPy rational-polynomial calculation with
 even slightly weaker thresholds r_d confirmed positivity for the same 38 cases.
-Neither implementation is a Lean certificate yet; this distinction is explicit.
+These two supplementary implementations are not the Lean certificate. The Lean
+checker instead constructs the full integer polynomial 2H_d, and checks its
+cleared-denominator translated coefficient list: positive constant and all other
+coefficients nonnegative. All list-operation/evaluation identities and the
+source-polynomial bridge are proved internally; all38 finite checks use
+`decide +kernel`. No external certificate data is trusted.
 
 ## Scope, novelty limits, remaining work
 
@@ -158,7 +165,17 @@ three targeted web queries found no resolution. These are bounded searches,
 **not** a novelty certificate. No subscription-index search or actual final
 journal-body comparison has yet been completed.
 
-Still required: independent adversarial source/math/novelty review; the literal
-Lean finite-sum identities and expectation bounds; kernel-checked finite
-certificate evaluation; a closed source theorem; manuscript and final review;
-deterministic packet plus fresh extracted strict replay. Tally stays18/30.
+Completed formal endpoints: `Davis.source_strict_bound` (all d≥5 and every
+real x in the exact source domain) and `Davis.source_conjecture_319187` (closed).
+Fresh full100/19 receipt SHA:
+f499f8723b77920a42950167832268ca47700702919d580cd3f10fdbceabc0d4.
+Only propext/Classical.choice/Quot.sound occur; some integer-only declarations
+use fewer. All100 types/axioms inspected, all19 module logs empty.
+
+The author-hosted revised2010 journal-style manuscript fredijmm.pdf was also
+retrieved and its p12 Conjecture3.1 visually checked: exact same statement.
+Its blank volume/page header means it is not asserted to be the final paginated
+publisher copy. No source-access limit is silently converted into a proof.
+
+Still required: independent adversarial source/math/formal/novelty/manuscript
+review; deterministic packet and fresh extracted strict replay. Tally stays18/30.
