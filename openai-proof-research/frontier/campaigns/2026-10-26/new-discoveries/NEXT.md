@@ -397,3 +397,9 @@ assessment clear; LAA2016 published body STILL unread, HOLD/credit0. Root
 SOURCE-ACCESS-R22-DECISION.md qualifies universal absence claims and missing
 math-font glyphs in saved visuals. Completion frees onePi slot independently
 of analysis19 cancellation. New Bessel review may launch once finalpaperfreeze ready.
+
+Bessel paper COMPLETE as parent draft:3cleanpages, PDF099c7b02325fd9763789fd8667c3868695d58ff852f1198cbd2160b1441863c9.
+final-review-hashes.json binds56currentfiles. All8Lean bytes unchanged from
+87/8 strict receipt65b88b000b9dc8e42e41305bab83ebd1cc5aef91ffb00a054103992cbcf2fab5.
+Polya-r22 terminalcompletion gives freePi slot even ifanalysis19 cancelpending.
+Launch NEW strict-bessel-fejer-final-review (all6gates, no count/acceptance).
