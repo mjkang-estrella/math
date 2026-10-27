@@ -1,0 +1,12 @@
+import SourceDefs
+open Matrix
+#check Equiv.sum_comp
+#check Equiv.sum_comp_embDomain
+#check Matrix.IsHermitian.trace_eq_sum_eigenvalues
+#check Fin.castOrderIso
+#check Finset.sum_equiv
+#check Matrix.PosDef.posSemidef
+#check Matrix.isHermitian_diagonal
+#check Matrix.IsHermitian.pow
+#check RCLike.re_eq_complex_re
+#check Matrix.IsHermitian.eigenvalues
