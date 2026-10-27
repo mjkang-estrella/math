@@ -27,8 +27,8 @@ log-convex and Hamburger-moment hypotheses fail for this interarrival sequence.
 See renewal-subsumption-checkpoint.json. This only rules out those direct
 applications; broader independent prior-art review remains necessary.
 
-An older Pi analysis-discovery task was asked to stop so its slot can be
-reallocated to a NEW preliminary Hetyei review. The cancellation result was
-cancel_requested, not a terminal result. Do not infer it is stopped, poll its
-running output, or exceed three active children. Other Pi discovery tasks
-continue; no native or ultrafast agents have been started.
+The previous analysis discovery task is now authoritatively terminal:
+T3 task_cancel returned interrupted, and the stopped thread has no active run.
+Its partial numerical investigation did not produce a completed result.
+The freed slot is reserved for a NEW independent preliminary Hetyei review.
+Only Pi GLM5.3Flash, default speed, with at most three active children.
