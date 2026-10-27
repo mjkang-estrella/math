@@ -1,6 +1,8 @@
 # Beta-content monotonicity: proposed complete mathematical proof
 
-Status: **research only, credit0**. Mathematical reasoning below is not yet independently reviewed. The full convex-hull/probability source endpoint is not formalized in Lean. Do not count an analytic helper with a geometric monotonicity premise as a complete source proof.
+Status: **EXCLUDED from discovery credit; direct prior-theorem corollary, credit0**. See PRIOR-ART-EXCLUSION.md and the actual official IMC2024 Problem5 solution. The prior deterministic signed-coverage theorem already supplies the heterogeneous step below. The remaining reasoning is preserved as an uncounted source-corollary derivation.
+
+Historical research status: Mathematical reasoning below is not yet independently reviewed. The full convex-hull/probability source endpoint is not formalized in Lean. Do not count an analytic helper with a geometric monotonicity premise as a complete source proof.
 
 ## Exact source and mandatory nearest prior
 
