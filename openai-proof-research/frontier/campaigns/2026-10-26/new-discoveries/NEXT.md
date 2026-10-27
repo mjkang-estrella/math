@@ -248,3 +248,12 @@ are excluded from candidate-source staging. No count change:25/30.
 2026-10-27 matrix-r7 checkpoint: 324727 excluded after actual public Lean witness and independent rational recheck. MathDB329636 FIRST squared Polya-Szego clause has a complete exact 4x4-to-2x2 unital CP counterexample, scalar radical sign < -17000 now compiled in Lean (supporting only). Entire source endpoint and prior-art/independent review absent, credit0. Its SECOND Diaz-Metcalf clause has an exact supplementary witness (no separate credit); parent caught the closest 2015 Remark1 claimed counterexample is actually positive definite at stated bounds, so earlier prior-resolution wording is WITHDRAWN. Both clauses require independent novelty review. Two similarly titled/wrong-ID PDFs were caught and labeled; 2018 More accurate operator means inequalities remains unread. See lanes/parent-matrix-screen-r7/PROOF.md and status.json. Tally25/30 unchanged.
 
 2026-10-27 matrix329636 FULL checkpoint: literal FIRST-clause counterexample now CLOSED in Lean,100 declarations/9modules, fresh isolated strictPASS, all100type/axiom reports parent-read, all9modulelogs0, only standard3. Receipt1489fc201558987e3427e606979bf245aa338707fc710ae365f5313ae84d3776. Two-page paper rendered/read, cleanbuild, PDFb768fa3913cf5c5349f700c6b0864a4dad80b0d03a8afb31acacd1980e1cb840. Credit0; full independent review/novelty, packet/extracted replay remain. PreOriginTrig Pi lane completed exact7decl bound, not yet integrated; other two Pi lanes remain assigned, no polling.
+
+Hermite support135/15 integration: completed Pi seven-declaration trig proof plus
+two source adapters integrated; fresh isolated strictPASS, all old126 blocks
+reconciled and9 new types/axioms read,15emptylogs, standard3only. Receipt
+f6761e5fe12b8fdf4cf6db70774b41a5a00325dbc739f04eb516092a0abb9e28.
+Near-origin trig and q-domain premises now discharged. Actual oscillator
+comparison/strict loss remain; SourceCompletion still assumes ALL-ODD BULK.
+Three-page updated draft rendered/read, paper-qa binds bytes. Original19math
+freeze and old13module sources unchanged. Credit0,25/30 unchanged.
