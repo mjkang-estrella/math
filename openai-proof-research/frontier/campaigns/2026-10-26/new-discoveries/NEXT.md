@@ -102,3 +102,5 @@ Mills final review has been requested on its55-file freeze, with source-access
 and additional prior-art leads explicitly assigned. Accepted tally remains17.
 
 Repeated-integrals manuscript draft now3pages, cleanbuild andallpagesvisuallyinspected; mathematical directseparation proof, source identities, all-order witness andexact103-component formal-limit disclosure. main.tex/paper.pdf/proof-map.json/paper-qa.json inparentlane. Notfinalreviewed orcounted.
+
+Matrix-screen-r4 exclusions:369147 alreadyZhang/Lin-Zhang;332318 fullweightedLin conjecture alreadySra8October2026 immutablelinconj-v1 Theorem1.1;322910 finite-matrix rangesalreadyLi-Zhou2608.20937Theorem1.1. Vendi371345/371346 nonnegative/positiveorders andfullranknegative alreadyauthor2511.03849v4 Theorem1/Lemma3 (singularnegative interpretationnotdeclaredresolved).371347 exactrealpowerPDcounter alreadyPatel20Aug2026. Fullactualsource/solutionbodiesread; zero newcredit. Taxicab2018fullbody gateunchangedHOLD. See lanes/parent-matrix-screen-r4/FINDINGS.md.
