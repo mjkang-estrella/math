@@ -1,34 +1,28 @@
-# Development checkpoint — no source-level formal claim
+# Current formal checkpoint —117/16 strict PASS, credit0
 
-The finite spectral propagation criterion is now proved in Lean, including its
-all-n>=11 sign conclusion under explicit finite spectral hypotheses. The
-orthonormal eigenbasis power-moment expansion is also proved.
+Supersedes the historical3-helper and14-helper development checkpoints.
+The full finite-source-formula endpoint now exists and passed a fresh isolated
+replay:117 declarations,16modules, all module logs empty under warningsAsError,
+only propext/Classical.choice/Quot.sound. Root read all117 actual type and axiom
+reports in verification/full117-Checks.log.
 
-Four modules compile from source under Lean4.34.1 / pinned mathlibd13f23b7,
-`-DwarningAsError=true`, with empty build logs:
-WeightedPowers, EvenPropagation, SpectralPropagation, SpectralMoments.
-The checkpoint has **14 declarations (11 theorems and3 definitions)**.
-`formal-dev/CheckpointChecks.lean` prints every type and every axiom set;
-root inspected all14 reports in checkpoint-types-axioms.log. All use only
-propext/Classical.choice/Quot.sound. No sorry/admit/newaxiom/native_decide.
+ReceiptSHA256:
+366e3c34a95b54f7047b2a47e8fa1a40717fc52e473dc97dcd478f148ae9c473
 
-These are supporting generic results. The literal source endpoint remains
-absent. Required work: construct the arrowhead matrices and prove their
-spectral structure; actual center-moment recurrence and Riemann convergence;
-source finite composition/count bridge and rank/factorial conversion.
+`source_conjecture_319292` has only n>=12; the definition sourceK is the actual
+ordered-composition factorial formula(16), and sourceKappa uses the source's
+proved count relation. Every composition/recurrence/matrix/spectrum/convolution/
+coefficient-limit/rank-shift bridge is proved. The original game-position type
+and the source's enumeration proof are credited upstream rather than recoded.
+See SourceCounts.lean, FORMAL-ADDENDUM.md and candidate.json.
 
-The 36-file preliminary-review freeze is preserved unchanged. New formal
-modules and this checkpoint are outside that freeze and are not offered as
-a source-level formal PASS. The proof candidate remains credit0.
+A three-page manuscript was built and every rendered page personally inspected.
+The preliminary review SOURCE/MATH/BOUNDED-NOVELTY/ELIGIBILITY is PASS as a
+candidate. Its14-helper formal assessment is historical, not a review of the
+new117-declaration certificate. A NEW final review is required. Original36
+reviewed bytes are retained via preliminary-reviewed-file-locations.json; D1/D2
+prose corrections in PROOF.md are transparent. See parent-preliminary-addendum.
 
-The relevant theorem bodies in Hansen's 1988 doctoral thesis were additionally
-read (renewal-hansen-thesis.pdf, sections2.3 and3.4). Its straightforward DFR,
-log-convex and Hamburger-moment hypotheses fail for this interarrival sequence.
-See renewal-subsumption-checkpoint.json. This only rules out those direct
-applications; broader independent prior-art review remains necessary.
-
-The previous analysis discovery task is now authoritatively terminal:
-T3 task_cancel returned interrupted, and the stopped thread has no active run.
-Its partial numerical investigation did not produce a completed result.
-The freed slot is reserved for a NEW independent preliminary Hetyei review.
-Only Pi GLM5.3Flash, default speed, with at most three active children.
+Remaining: independent final source/math/formal/novelty/manuscript review,
+deterministic final packet, fresh extracted replay and parent acceptance.
+No count yet; campaign remains21/30. No worldwide priority claim.

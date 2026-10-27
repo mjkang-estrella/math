@@ -136,5 +136,19 @@ theorem spectralIncrement_tail_negative (w x : ι → ℝ) {q c : ℝ}
     have hp : 0 < (1/4:ℝ)^k := pow_pos (by norm_num) _
     linarith
 
+theorem exists_negative_spectral (w x : ι → ℝ)
+    (hw : ∀ i, 0 ≤ w i) (hx : ∀ i, x i ≤ 1)
+    (hmean : ∑ i, w i*x i = 0) (hsecond : 0 < ∑ i, w i*x i^2) :
+    ∃ i, x i < 0 := by
+  by_contra hn
+  have hpos : ∀ i, 0 ≤ x i := by simpa only [not_exists, not_lt] using hn
+  have hs : (∑ i, w i*x i^2) ≤ ∑ i, w i*x i := by
+    apply Finset.sum_le_sum
+    intro i _
+    apply mul_le_mul_of_nonneg_left _ (hw i)
+    nlinarith [hpos i, hx i]
+  rw [hmean] at hs
+  linarith
+
 end
 end FlatBernoulli

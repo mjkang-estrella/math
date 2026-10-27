@@ -1,0 +1,15 @@
+import Mathlib
+#check sum_range_pow
+#check tendsto_natCast_atTop_atTop
+#check tendsto_inv_atTop_zero
+#check tendsto_const_nhds
+#check Filter.Tendsto.sum
+#check Filter.Tendsto.congr'
+#check Filter.EventuallyEq
+#check Filter.Eventually
+#check tendsto_pow_atTop_nhds_zero_of_lt_one
+#check tendsto_one_div_add_atTop_nhds_zero_nat
+#check one_div_pow
+#check div_pow
+#check Filter.Eventually.of_forall
+#check Filter.eventually_atTop.2

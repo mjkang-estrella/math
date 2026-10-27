@@ -1,8 +1,10 @@
 # Proposed full proof of Hetyei Conjecture6.10 (MathDB319292)
 
-**Research candidate, credit0. No Lean endpoint or independent review yet.**
-The argument below is a proposed full mathematical proof, not an accepted discovery.
-Exact source, bounded prior-art limits and formal scope must pass separate review.
+**Research candidate, credit0. Closed finite-source-formula Lean endpoint.**
+Fresh isolated replay PASS117 declarations/16modules, standard3 axioms only;
+all117 actual type/axiom reports inspected. Independent preliminary source/math/
+bounded-novelty/eligibility review PASS as a candidate. Final review, packet and
+extracted replay remain pending. This is not an accepted discovery.
 
 ## 1. Literal source target and normalization
 
@@ -103,7 +105,8 @@ For even indices, put
                                   *(lambda/q)^(2*m).
 
 Then b_(12+2m)=q^(2m)*(T-S_m), and S_0=T-b_12.
-The hypothesis b_14<=b_12<0, together with q<=1, gives
+The hypotheses b_14<=b_12<0 and 0<q^2<=1 give
+b_12<=q^2*b_12 (multiplying the negative b_12 by a number<=1). Hence
 
     b_14 <= q^2*b_12,
     S_1 >= S_0.
@@ -120,8 +123,10 @@ center spectral mean is0, sum d_lambda=1. Moreover
     -b_(2m+1) = sum_lambda d_lambda*(lambda^2)^m,
     sum_lambda d_lambda*lambda^2 = -b_3 >=1/4.
 
-Convexity of nonnegative integer powers (or their tangent inequality)
-therefore yields -b_(2m+1)>=(1/4)^m. This includes n=11. All even
+Normalize z_lambda=lambda^2/(1/4). Its d-weighted mean is>=1.
+Applying z^m>=1+m*(z-1) to these NORMALIZED variables gives
+sum d_lambda*z_lambda^m>=1, hence -b_(2m+1)>=(1/4)^m.
+The tangent inequality at the unnormalized lambda^2 alone would not suffice. This includes n=11. All even
 n>=12 and odd n>=11 have the required strict sign. The argument uses
 only finite sums and a positive-weight power inequality.
 
@@ -141,7 +146,10 @@ For each fixed j, the Riemann sums tend to
 
     integral_0^1 (1-t)*t^(j-2) dt = 1/(j*(j-1)).
 
-Induction on n in the finite convolution proves u_n^(N)->u_n and
+The Lean implementation proves these same limits algebraically by the pinned
+classical Faulhaber identity: M_N(k)=(1/N)sum(i/N)^k is a polynomial in1/N
+with constant1/(k+1), and p_(k+2)^(N)=M_N(k)-M_N(k+1). Thus no Riemann
+convergence premise is assumed. Induction on n in the finite convolution proves u_n^(N)->u_n and
 b_n^(N)->b_n for every fixed n. The three exact values in section1
 therefore imply, for all sufficiently large N,
 
@@ -178,14 +186,20 @@ I_n>=(e-1)^(12-n)*J>e/(e-1)^(n+1). This confirms the sign by a
 different mechanism. The spectral proof avoids any need to formalize the
 classical logarithmic Stieltjes identity or a keyhole contour integral.
 
-## 6. Outstanding acceptance gates
+## 6. Current acceptance gates
 
-- Independent adversarial source/math/novelty/eligibility review, including
-  whether a prior renewal-sequence theorem already subsumes the claim.
-- Full Lean source recurrence/composition bridge, finite spectral criterion,
-  arrowhead structure, moment recurrence and actual convergence; no residual
-  spectral or representation hypotheses are allowed at the final endpoint.
-- Final manuscript, rendered visual checks, independent final review,
-  deterministic packet and fresh extracted strict replay.
+- Preliminary independent source/math/bounded-novelty/eligibility review: PASS
+  as a candidate. D1 normalized tangent and D2 negative-sign explanations are
+  corrected above. Original36 reviewed bytes retained via
+  preliminary-reviewed-file-locations.json; the review itself is immutable.
+- Full Lean literal composition/factorial count, actual arrowhead spectrum,
+  exact convolution, coefficient limits and rank-shift endpoint: fresh isolated
+  strict PASS117/16, receipt366e3c34a95b54f7047b2a47e8fa1a40717fc52e473dc97dcd478f148ae9c473.
+  All117 types/axioms inspected; all16module logs0; standard3axioms only.
+- Three-page draft manuscript built/rendered/personally inspected. Final
+  independent source/math/formal/novelty/manuscript review remains pending.
+- Deterministic final packet and fresh extracted replay remain pending.
 
-No formal or discovery acceptance is claimed here. Current campaign total21/30.
+The formal endpoint uses the exact explicit finite formula(16); the author's
+original game-position enumeration theorem is credited, not re-proved. No
+absolute priority claim. Current campaign accepted21/30, candidate credit0.
