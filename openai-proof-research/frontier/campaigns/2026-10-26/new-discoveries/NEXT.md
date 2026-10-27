@@ -31,6 +31,14 @@ No external publishing, messages, uploads or push occurred. Each packet retains
 honest source and prior-art access limits. Final status changes are recorded
 outside immutable preacceptance archives.
 
+Late worker completion received: discrete-discovery-r7-20261027-v1 is now
+terminalcompleted (PiGLM, activeRunIdnull). The prior cancellation used the
+wrong20261026 handle; it did not establish the actual task's ownership/state.
+All artifacts are preserved at credit0. See
+lanes/parent-discrete-r7-integration/integration.md for primary-source and
+finite-search scope corrections. No additional discovery is accepted and
+all30 accepted proof packets remain unchanged.
+
 ---
 
 # Historical research checkpoints (superseded by the completion record above)
