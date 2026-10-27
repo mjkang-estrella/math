@@ -175,3 +175,11 @@ M1caughtomittedc inauxiliaryPythonidentity; original25bytespreserved, new
 check_certificate_corrected.py usesfullQand+c/x2, exactsymbolicPASS. Rational
 product-rulecertificateandfullLeanneverusedwrongidentity. Reconciliationexplicit.
 45-filefinalfreeze nowreadyforNEWfullfivegatereview21/3pluspaper. Credit0.
+
+Hermite346243:33supportingdecl3mods compileclean, alltypes/axiomsreadstandard3.
+LiteralGaussianRodriguesbridgeandODE, actualenergyantitonicity, exactWallis
+ratioestimatesDONE. No fullsourceendpoint; Gamma/initialvalues, oddcomparison,
+tailproofandassemblyremain.19mathfreezeunchanged. HorwitzprelimSOURCE/MATHPASS
+butmaterial1996closestbodyNOVELTYHOLD; parentretainsHOLD/no count. Matrixr6
+completednocount:371031refutationalreadyposted; broadnumericalHOLDS/TRUElabels
+are NOTuniversalproofs. Accepted24/30unchanged.
