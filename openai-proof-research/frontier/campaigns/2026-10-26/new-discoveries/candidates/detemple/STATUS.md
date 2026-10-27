@@ -1,0 +1,3 @@
+# Proposed DeTemple counterexample
+
+Credit0, accepted tally24/30. Complete explicit mathematical argument at a=527/1000, x=1/50, with exact Gsecond>510221/1093750. Actual publisher and preprint definitions agree. No Lean, paper, final review, packet or acceptance. Novelty and substantive eligibility PENDING; fourteen citing works require investigation. Standard scalar facts credited. A quantitative Lean route needs actual digamma/polygamma bridges; the qualitative finite-difference route can instead use local analyticity and prove an existential strictly interior failure. No conditional surrogate may count.

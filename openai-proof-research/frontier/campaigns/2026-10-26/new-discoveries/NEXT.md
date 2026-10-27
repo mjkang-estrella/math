@@ -1,6 +1,6 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **24/30**. The goal remains active;6further qualifying
+Strict accepted tally: **25/30**. The goal remains active;5further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
@@ -192,3 +192,14 @@ compilecleanalllogs0, alltypes/axiomsread; exactsourceconjectureNOTproved.
 Nextparallelassignments: NEW Hermiteprelimmath/eligibilityreview on19filefreeze,
 separatePiimplementationofgenericoddsinecomparison/energyloss usingfrozen
 SourceDefs/Energy/WallisBounds, Horwitz1996sourceaccessresearch. AllPistandard.
+
+2026-10-27 authoritative acceptance: DeTemple328867part(ii) ACCEPTED asoutcome25,
+allfiveindependentPASS andfresh extracted21/3strictPASS. All21actualtypes/axioms
+read,3logs0; receipt72b9fb283c7587a4810655ba55a4138dcc4e49e6866114976a6e1b07e4fe5a19
+identicalparent/independent/extracted.66member deterministicpacketSHA
+c55304d8805c27766eb5d48a598953e0ab535d052763f25e3678314847b34d3e passes65
+payloadhashes/readback/rebuild. All45reviewed originals preserved;release2pages
+onlyoperationalprosechanges, rendered/read. Ownshell48006completednorestart.
+Part(i)andfullMathDBrecordresolutionunclaimed; exactrationalpointmath-only.
+RemainingJMAAbody/boundednoveltylimitsretained. EarlierDeTemplependingnotes
+supersededby candidates/detemple/acceptance.json. Accepted25/30,goalactive.
