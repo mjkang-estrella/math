@@ -87,3 +87,16 @@ Further exclusions:373182 already refuted by its own Kiss2602.15548 Corollary1;3
 Repeated-integrals preliminary review G1-G4PASS after full theorem-body comparison. Parent read report/provenance and retained R1/W2/atomicity qualifications in reviews/parent-addendum.md. Formal all-n source definitions and smooth-moment interface begun; no Lean endpoint/count. Product374707 counterexample EXACTLY already posted PatelAug20, sufficiency already posted PachecoSep5; no credit for either, k<=3necessity and original374706stillopen.
 
 Repeated-integrals source-to-measure component: fresh strict43decl6modsPASS, receipt3abb8ed16658bfe1e6ee9ff4cd46932bdc450732856321c9a152812a5439248e; alltypes/axiomsread. LiteralSourceW n -> finite nonzero atomless supported measure with exact ALL endpoint-kernel identities, via within-Taylor+Fubini. Fullsourceconjecture stillunproved: representation/interiority/openness/primitives/jets remain. PiMomentOpenimplementation running against unchanged MomentDefs. Mills preliminary SOURCE/MATH/NOVELTY/ELIGIBILITYPASS; full47/paper readyforNEWfinalreview, with materialjournalaccesslimit and new2512.04940/Cambridge2025leads.
+
+Repeated-integrals expanded checkpoint: fresh isolated strict103decl16modsPASS,
+receipt9cd85f70ec587d8e5a7f233dfe47117ba3c70af540e461a026f6f197e208290a;
+ALL103types/axiomsread, all16modulelogs0bytes. Concrete endpoint transform,
+all-order smooth primitives/jets, small endpoint-one baselines, atomless dual
+positivity, positive test bumps and separation representation are now proved.
+SourceAssembly's full conclusion has EXACTLY the actual smoothMomentSet
+Convex/IsOpen premises for alln. PiMomentOpen is implementing these lastfacts,
+and received a progress steering message; no duplicated work or count.
+The endpoint is NOT closed until those premises are discharged. See
+lanes/parent-repeated-integrals/FORMAL-PROGRESS.md and REPRESENTATION-PROOF.md.
+Mills final review has been requested on its55-file freeze, with source-access
+and additional prior-art leads explicitly assigned. Accepted tally remains17.
