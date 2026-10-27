@@ -10,7 +10,7 @@ Actual source PDFs and complete live MathDB records are retained in sources/.
 - 414106: newest source2610.33699 already refutes older integer-versus-real degree claims and determines integer parts. Its exact-real-degree question is still separate and unresolved here.
 - 339000: symmetry forces odd derivatives at1/2 to vanish. This endpoint-only correction is uncountable. The substantive all-order interior claim is the prospective proof below.
 
-## Prospective Ramanujan all-order proof (339000), not yet novelty-screened or Lean-proved
+## Ramanujan all-order proof (339000): EXCLUDED by exact prior theorem
 Actual source1804.07712v1 Theorem1.3(3), equation1.19, Conjecture5.3.
 Let y=x(1-x), R=-2gamma-psi(x)-psi(1-x), B=pi/sin(pi*x), F=R-B/(1+y).
 For n>=1 set N_n=n(n+1), epsilon_n=(-1)^n,
@@ -44,3 +44,6 @@ A2022 paper New properties for the Ramanujan R-function DOI10.1515/math-2022-004
 Gao's2026 Conjecture2 extends F_q(s)=zeta(s,q)-psi(1-s) to allq>0 and claims convexity. Numerical q=4 midpoint gap at1/4,1/2,3/4 is0.006336654386601086>0 and F_4second(1/2)=-0.216124261301. This concerns the main convexity assertion; a mere constant-normalization failure is not creditable. For integerN, F_N=F_1-sum_{k=1}^{N-1} k^(-s). Each removed term contributes midpoint gap (k^(1/4)-1)^2/(2k^(3/4))>0. Coarse known zeta integral bounds would allow a rational proof atN256, but have not been formalized. Mathlib periodic UnitAddCircle Hurwitz zeta cannot silently represent q4. Eligibility may fail as an immediate standard-asymptotic consequence; assess before heavy work.
 
 Schmidlin2601.21906 Conjecture37 Burnside refinement: set z=x+1,a=alpha-1/2. The log error is StirlingErrorGamma(z)+a-(z+a)log(1+a/z); RHS denominator12(z+a)-12(exp(1/48)-1). Entropy bound a^2/(2(z+a)) plus refined Stirling error is a possible route for1<=z<=2. No proof, numeric certificate or Lean here.
+
+## Decisive later prior-art finding
+Yang--Wang--Zhao2407.15664v1 Section5 Theorem7 (pp14-15) explicitly identifies Qiu--Ma--Huang Conjecture5.3 and proves it for the exact same F. All Taylor coefficients s_n are strictly positive (shown term-by-term in the actual body), supplying strict interior signs as well. Publisher DOI10.1007/s11139-025-01062-1 confirms2025 publication, including authorship contribution for the conjecture proof. Exact full primary PDF and extracted text saved as ramanujan2025.pdf/.txt. Therefore our partial-fraction argument above is UNCOUNTED and no Lean or reviewer investment is justified. This supersedes all prospective novelty language above. Complete typeset2025 body was not retrieved, but actual prior preprint proof suffices for exclusion.
