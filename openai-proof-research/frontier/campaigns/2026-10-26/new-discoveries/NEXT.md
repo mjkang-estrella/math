@@ -1,6 +1,6 @@
 # Continue toward thirty new discoveries
 
-Strict accepted tally: **19/30**. The goal remains active;11further qualifying
+Strict accepted tally: **20/30**. The goal remains active;10further qualifying
 outcomes are needed. Historical thirty formalizations remain separate and uncredited.
 The authoritative accepted results, scope, packet hashes and qualifications are
 in ledger.json and RESULTS.md. Preserve all accepted proof/review bytes.
@@ -118,3 +118,5 @@ Outcome18 mills-cm ACCEPTED afterfiveindependentgates andfresh extracted47/7 str
 2026-10-27 Schmidlin372858 checkpoint: parent-schmidlin closed literalGamma ratio endpoint,49 declarations12 modules, freshstrictPASS receipt d54c9c328ec3296b18ca0356d04ab2a08017569be172e0e5e681630a4ccf80ed; all49types/axioms read, all12modulelogs empty. Full sourceConjecture37 strictlyproved for allx>=0 andalpha>=0, complete classicalGamma/Stirling bridge proved, no residual hypotheses. Clean3page draft rendered/read, frozen review hashes. Credit0 awaiting NEW full independentreview and extractedpacket. Root excluded339000 after exact Yang--Wang--Zhao2407.15664v1 Theorem7 actualbody;353636 exact posted Patelproof alsoexcluded. Accepted count unchanged19. Davis finalreview and two Pi discovery lanes remain running; no polling.
 
 2026-10-27 Davis finalreview allfivePASS, fullreport read and two ancillary wording slips reconciled in candidates/davis/reviews/parent-final-addendum.md. All51 reviewed files preserved withlocationmap, all formalbytes unchanged. Canonical3pagePDF rebuilt only to remove operational review-status prose; all3pages read. Deterministic78-member packet319187-davis-proof.zip SHA3eecd43a752b5dccca2eab7141b736024d97df36bbb6c6bd5d299c2039a69937 created/extracted. OWN extracted strict replay shellsession87858 nowrunning in build/davis-packet-audit-v1/davis; poll that handle before any restart. Do NOT count untilPASS and all100 types/axioms inspected. Accepted tally19. CompletedDavisPi reviewer frees one slot for NEW Schmidlin finalreview.
+
+2026-10-27 authoritative acceptance: Davis319187 ACCEPTED as outcome20, allfiveindependentPASS and fresh extracted100/19 strictPASS; all100 actual types/axioms read and19 modulelogs empty. Parent/independent/extracted audit bytes identical f499f8723b77920a42950167832268ca47700702919d580cd3f10fdbceabc0d4. Immutable78-member packetSHA3eecd43a752b5dccca2eab7141b736024d97df36bbb6c6bd5d299c2039a69937. Own shell87858completed; no restartneeded. Canonicalacceptance candidates/davis/acceptance.json supersedes pending notes. Schmidlin49/12 NEW Pi finalreview nowrunning, credit0. Rootmatrix-r5 numerical Lin332939 p3 candidate needs highprecision/exactcertificate and fullpriorartscreen; no claim/count.
