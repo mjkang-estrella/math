@@ -1,0 +1,19 @@
+import HSBridge
+#check FourProjection.hsSq
+#print axioms FourProjection.hsSq
+#check FourProjection.hsSq_nonneg
+#print axioms FourProjection.hsSq_nonneg
+#check FourProjection.hsSq_conjTranspose
+#print axioms FourProjection.hsSq_conjTranspose
+#check FourProjection.trace_conjTranspose_mul_self_re
+#print axioms FourProjection.trace_conjTranspose_mul_self_re
+#check FourProjection.trace_mul_conjTranspose_self_re
+#print axioms FourProjection.trace_mul_conjTranspose_self_re
+#check FourProjection.hsSq_isometry_mul
+#print axioms FourProjection.hsSq_isometry_mul
+#check FourProjection.hsSq_mul_coisometry
+#print axioms FourProjection.hsSq_mul_coisometry
+#check FourProjection.trace_frame_products
+#print axioms FourProjection.trace_frame_products
+#check FourProjection.orthonormal_columns
+#print axioms FourProjection.orthonormal_columns
