@@ -1,7 +1,7 @@
 # Mittag-Leffler analytic foundation — complete component, not source resolution
 
-2026-10-28. Fresh strict source replay PASS: 6 modules,37 declarations,
-standard three axioms only, all six module logs empty. Root read every actual
+2026-10-28. Fresh strict source replay PASS: 8 modules,62 declarations,
+standard three axioms only, all eight module logs empty. Root read every actual
 type/axiom report, including printed source definition and CM quantifiers.
 No proof of SourceClaim370772 exists here. No acceptance or discovery credit.
 
@@ -31,13 +31,21 @@ ordinary proof by one extra factor, which tends to1. Monotonicity and
 Gamma domination for this actual shifted definition are proved in Lean;
 no identity with the earlier N-factor expression is assumed.
 
-Remaining: positive angular Laplace identity; actual finite averaging
-operator/measure representation of approxTransform and its squared norm;
-nonnegative mixed finite differences and passage to alternating derivatives.
+- DifferenceCriterion: arbitrary positive mixed lower differences imply all
+  alternating derivative signs for a globally C-infinity function. The
+  property is preserved under positive scalar sums, interval averages and
+  pointwise limits on positive arguments; exponential Laplace kernels satisfy it.
+- SourceAssembly: the actual squared approximants converge to the literal
+  source expression. The final assembly theorem is CONDITIONAL on positive
+  mixed differences of those approximants; its premise is printed explicitly.
+
+Remaining: positive angular Laplace identity and an actual finite averaging
+operator/measure representation proving positive mixed differences of the
+actual squared approximants. The finite-difference-to-CM passage is now proved.
 The source question still has independent source/novelty/substantive review
 running in a separate Pi lane; no PASS inferred from these components.
 
 Run python3 verify_component.py. It asserts the exact Lean binary/version
-and8packagepins, compiles a new source-only temporary copy, checks all37
+and8packagepins, compiles a new source-only temporary copy, checks all62
 names/types/axiom closures, and writes verification/audit.json and Checks.log.
 No source files from the independently reviewed frozen root-r12 were changed.

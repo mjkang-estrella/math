@@ -1,7 +1,7 @@
 # Remaining source-level bridges, with a measure-light implementation option
 
 Use the reviewed full ordinary proof if it survives independent screening.
-The following is an implementation plan, not proved Lean mathematics.
+The averaging/kernel paragraphs below are an implementation plan, not proved Lean mathematics. The finite-difference paragraph describes results now proved in DifferenceCriterion.lean.
 
 For beta=2a in(0,1], define the positive normalized averaging operator
 
@@ -33,14 +33,13 @@ variables, but restriction to a rectangle and angular split remain work.
 Zero v/w are handled by continuous extension or their elementary e^(-St)
 case; do not silently drop the averaging endpoints.
 
-For formal derivative signs it is easier to strengthen the finite-difference
+IMPLEMENTED in DifferenceCriterion.lean: for formal derivative signs strengthen the finite-difference
 premise to arbitrary positive steps h1,...,hk, rather than one repeated h.
 The Laplace kernel yields exp(-tL)*product_j(1-exp(-h_j L))>=0. This survives
 averages and pointwise transform limits. For a C-infinity f, arbitrary mixed
 lower differences imply complete monotonicity by induction: all mixed
 differences of f are antitone, so their negative derivatives are nonnegative;
-derivation commutes with finite shifts/differences. Equivalently prove the
-standard repeated finite-difference normalized limit. sourceExpression is
+derivation commutes with finite shifts/differences. The implemented proof uses the mixed-difference derivative induction, not an assumed normalized-limit lemma. sourceExpression is
 already globally C-infinity, so no analytic premise needs to remain.
 
 These generic tools and all helper declarations remain uncredited. The final

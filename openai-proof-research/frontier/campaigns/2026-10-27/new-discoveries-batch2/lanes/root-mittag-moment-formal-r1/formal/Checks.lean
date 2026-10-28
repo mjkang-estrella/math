@@ -1,4 +1,4 @@
-import Approximation
+import SourceAssembly
 
 #check MittagModulus.momentApprox
 #print axioms MittagModulus.momentApprox
@@ -74,7 +74,58 @@ import Approximation
 #print axioms MittagModulus.approxTransform_summable
 #check MittagModulus.approxTransform_tendsto
 #print axioms MittagModulus.approxTransform_tendsto
+#check MittagModulus.mixedDifference
+#print axioms MittagModulus.mixedDifference
+#check MittagModulus.PositiveMixedDifferences
+#print axioms MittagModulus.PositiveMixedDifferences
+#check MittagModulus.mixedDifference_neg
+#print axioms MittagModulus.mixedDifference_neg
+#check MittagModulus.mixedDifference_contDiff
+#print axioms MittagModulus.mixedDifference_contDiff
+#check MittagModulus.deriv_mixedDifference
+#print axioms MittagModulus.deriv_mixedDifference
+#check MittagModulus.PositiveMixedDifferences.antitone_mixed
+#print axioms MittagModulus.PositiveMixedDifferences.antitone_mixed
+#check MittagModulus.PositiveMixedDifferences.neg_deriv
+#print axioms MittagModulus.PositiveMixedDifferences.neg_deriv
+#check MittagModulus.mixedDifference_tendsto
+#print axioms MittagModulus.mixedDifference_tendsto
+#check MittagModulus.PositiveMixedDifferences.of_tendsto
+#print axioms MittagModulus.PositiveMixedDifferences.of_tendsto
+#check MittagModulus.PositiveMixedDifferences.iteratedDeriv_sign
+#print axioms MittagModulus.PositiveMixedDifferences.iteratedDeriv_sign
+#check MittagModulus.PositiveMixedDifferences.completelyMonotone
+#print axioms MittagModulus.PositiveMixedDifferences.completelyMonotone
+#check MittagModulus.mixedDifference_exp
+#print axioms MittagModulus.mixedDifference_exp
+#check MittagModulus.positiveMixedDifferences_exp
+#print axioms MittagModulus.positiveMixedDifferences_exp
+#check MittagModulus.mixedDifference_add
+#print axioms MittagModulus.mixedDifference_add
+#check MittagModulus.mixedDifference_const_mul
+#print axioms MittagModulus.mixedDifference_const_mul
+#check MittagModulus.PositiveMixedDifferences.add
+#print axioms MittagModulus.PositiveMixedDifferences.add
+#check MittagModulus.PositiveMixedDifferences.const_mul
+#print axioms MittagModulus.PositiveMixedDifferences.const_mul
+#check MittagModulus.mixedDifference_continuousOn_param
+#print axioms MittagModulus.mixedDifference_continuousOn_param
+#check MittagModulus.mixedDifference_intervalIntegral
+#print axioms MittagModulus.mixedDifference_intervalIntegral
+#check MittagModulus.PositiveMixedDifferences.intervalIntegral
+#print axioms MittagModulus.PositiveMixedDifferences.intervalIntegral
+#check MittagModulus.mixedDifference_tendsto_positive
+#print axioms MittagModulus.mixedDifference_tendsto_positive
+#check MittagModulus.PositiveMixedDifferences.of_tendsto_positive
+#print axioms MittagModulus.PositiveMixedDifferences.of_tendsto_positive
+#check MittagModulus.squaredApprox
+#print axioms MittagModulus.squaredApprox
+#check MittagModulus.squaredApprox_tendsto
+#print axioms MittagModulus.squaredApprox_tendsto
+#check MittagModulus.sourceClaim_of_positiveMixedApprox
+#print axioms MittagModulus.sourceClaim_of_positiveMixedApprox
 
 #print MittagModulus.SourceClaim370772
 #print MittagModulus.CompletelyMonotonePositive
 #print MittagModulus.sourceExpression
+#print MittagModulus.sourceClaim_of_positiveMixedApprox
