@@ -1,7 +1,8 @@
 # Alternative positive-kernel route using only one-dimensional integrals
 
-2026-10-28. Ordinary derivation, not yet a Lean certificate. This is a route for
-one missing bridge of the same candidate, not a separate discovery. The frozen
+2026-10-28. Ordinary derivation now fully formalized in RationalKernel.lean and
+KernelIdentification.lean (fresh17modules155declarations PASS). This is one
+bridge of the same candidate, not a separate discovery. The frozen
 ordinary proof and its independent preliminary review remain unchanged.
 
 For v,w>0, write S=v+w and I(x)=integral_0^1 exp(x u²) du. The actual half-order
@@ -48,8 +49,8 @@ Uniformly integrate the exponential series on [0,1], with majorant exp(|x|):
  integral_0^1 exp(-x(1-u²))du = (sqrt(pi)/2) E_(1,3/2)(-x).
 
 Use E_(1,1)(-x)=exp(-x) and the already proved genuine even/odd decomposition.
-This specifies all links to the actual Mittag-Leffler objects; neither the
-half-order formula nor the equality K=J is assumed in the current Lean component.
+This specifies all links to the actual Mittag-Leffler objects; both the
+half-order formula and the equality K=J are now proved in the Lean component.
 
 The analytic differentiations above are justified on every bounded t-interval
 by continuous integrands and uniformly bounded derivatives (v,w fixed positive).

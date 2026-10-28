@@ -1,4 +1,4 @@
-import SquaredAverage
+import KernelIdentification
 set_option autoImplicit false
 
 #check MittagModulus.momentApprox
@@ -235,7 +235,84 @@ set_option autoImplicit false
 #print axioms MittagModulus.averaged_halfCross_continuous_left
 #check MittagModulus.sourceClaim_of_halfCross_positive
 #print axioms MittagModulus.sourceClaim_of_halfCross_positive
+#check MittagModulus.halfBetaMoment
+#print axioms MittagModulus.halfBetaMoment
+#check MittagModulus.halfBetaMoment_zero
+#print axioms MittagModulus.halfBetaMoment_zero
+#check MittagModulus.halfBetaMoment_succ
+#print axioms MittagModulus.halfBetaMoment_succ
+#check MittagModulus.Gamma_three_halves
+#print axioms MittagModulus.Gamma_three_halves
+#check MittagModulus.halfBetaMoment_eq_gamma
+#print axioms MittagModulus.halfBetaMoment_eq_gamma
+#check MittagModulus.hasSum_mittagReal
+#print axioms MittagModulus.hasSum_mittagReal
+#check MittagModulus.mittag_one_eq_exp
+#print axioms MittagModulus.mittag_one_eq_exp
+#check MittagModulus.exp_series_real
+#print axioms MittagModulus.exp_series_real
+#check MittagModulus.halfExp_partial_bound
+#print axioms MittagModulus.halfExp_partial_bound
+#check MittagModulus.integral_halfExp_term
+#print axioms MittagModulus.integral_halfExp_term
+#check MittagModulus.integral_halfExp_eq_mittagReal
+#print axioms MittagModulus.integral_halfExp_eq_mittagReal
+#check MittagModulus.halfExpIntegral
+#print axioms MittagModulus.halfExpIntegral
+#check MittagModulus.halfExpIntegral_continuous
+#print axioms MittagModulus.halfExpIntegral_continuous
+#check MittagModulus.mittagReal_half_integral
+#print axioms MittagModulus.mittagReal_half_integral
+#check MittagModulus.mittag_half_imaginary
+#print axioms MittagModulus.mittag_half_imaginary
+#check MittagModulus.halfProductKernel
+#print axioms MittagModulus.halfProductKernel
+#check MittagModulus.halfCross_eq_halfProductKernel
+#print axioms MittagModulus.halfCross_eq_halfProductKernel
+#check MittagModulus.hasDerivAt_unitIntegral
+#print axioms MittagModulus.hasDerivAt_unitIntegral
+#check MittagModulus.rationalLaplacePiece
+#print axioms MittagModulus.rationalLaplacePiece
+#check MittagModulus.rationalLaplaceKernel
+#print axioms MittagModulus.rationalLaplaceKernel
+#check MittagModulus.rationalLaplacePiece_positive
+#print axioms MittagModulus.rationalLaplacePiece_positive
+#check MittagModulus.rationalLaplaceKernel_positive
+#print axioms MittagModulus.rationalLaplaceKernel_positive
+#check MittagModulus.halfExpIntegral_hasDerivAt
+#print axioms MittagModulus.halfExpIntegral_hasDerivAt
+#check MittagModulus.halfExpIntegral_ode
+#print axioms MittagModulus.halfExpIntegral_ode
+#check MittagModulus.rationalLaplacePiece_hasDerivAt
+#print axioms MittagModulus.rationalLaplacePiece_hasDerivAt
+#check MittagModulus.rationalLaplacePiece_ode
+#print axioms MittagModulus.rationalLaplacePiece_ode
+#check MittagModulus.rationalLaplaceKernel_hasDerivAt
+#print axioms MittagModulus.rationalLaplaceKernel_hasDerivAt
+#check MittagModulus.halfExp_product_hasDerivAt
+#print axioms MittagModulus.halfExp_product_hasDerivAt
+#check MittagModulus.halfProductKernel_hasDerivAt
+#print axioms MittagModulus.halfProductKernel_hasDerivAt
+#check MittagModulus.integral_quadratic_reciprocal
+#print axioms MittagModulus.integral_quadratic_reciprocal
+#check MittagModulus.rationalLaplaceKernel_zero
+#print axioms MittagModulus.rationalLaplaceKernel_zero
+#check MittagModulus.halfProductKernel_zero
+#print axioms MittagModulus.halfProductKernel_zero
+#check MittagModulus.halfProductKernel_eq_rational
+#print axioms MittagModulus.halfProductKernel_eq_rational
+#check MittagModulus.mixedDifference_congr_positive
+#print axioms MittagModulus.mixedDifference_congr_positive
+#check MittagModulus.PositiveMixedDifferences.congr_positive
+#print axioms MittagModulus.PositiveMixedDifferences.congr_positive
+#check MittagModulus.halfProductKernel_positive
+#print axioms MittagModulus.halfProductKernel_positive
+#check MittagModulus.halfCross_positive
+#print axioms MittagModulus.halfCross_positive
+#check MittagModulus.source_conjecture_370772
+#print axioms MittagModulus.source_conjecture_370772
 #print MittagModulus.SourceClaim370772
 #print MittagModulus.CompletelyMonotonePositive
 #print MittagModulus.sourceExpression
-#print MittagModulus.sourceClaim_of_halfCross_positive
+#check MittagModulus.source_conjecture_370772
+#print axioms MittagModulus.source_conjecture_370772

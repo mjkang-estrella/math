@@ -1,70 +1,35 @@
-# Mittag-Leffler analytic foundation — complete component, not source resolution
+# Complete literal Mittag-Leffler source certificate; research acceptance pending
 
-2026-10-28. Fresh strict source replay PASS: 12 modules,117 declarations,
-standard three axioms only, all twelve module logs empty. Root read every actual
-type/axiom report, including printed source definition and CM quantifiers.
-No proof of SourceClaim370772 exists here. No acceptance or discovery credit.
+2026-10-28. Fresh source-only strict replay PASS:17modules155declarations,
+all17module logs empty, permitted standard3 axioms only. Root read all155
+actual type/axiom reports across the incremental audits, including the new38
+and the closed literal source endpoint. No source/math/novelty acceptance
+or discovery credit is assigned by this verifier.
 
-Delivered:
-- EulerMoments: actual positive finite product equals a quotient of Mathlib
-  GammaSeq values, tends to the literal Gamma ratio, is nondecreasing for
-  beta in[0,1], and is bounded above by that ratio for all q>=0.
-- SeriesConvergence: actual complex sum z^n/Gamma(a*n+b) is summable for
-  every a,b>0,z in C; no Stirling assumption. Split into residue classes
-  with stepm*a>=1; Gamma monotonicity and recurrence give an eventual
-  geometric ratio bound. Literal mittagLeffler and HasSum are defined/proved.
-- SourceDefs: genuine even/odd decomposition; literal sourceExpression,
-  completely-monotone-positive definition (C-infinity, not analytic-order
-  omega), and exact SourceClaim370772 quantifiers.
-- RealAnalytic: actual real series has infinite convergence radius and is
-  analytic everywhere; literal sourceExpression is C-infinity globally.
-- NormBridge: the source expression equals the genuine squared modulus
-  |E_a(i sqrt(t))|^2 for a>0,t>=0, not an assumed formal interface.
-- Approximation: actual finite-product coefficient nonnegativity, Gamma
-  domination and convergence; the whole complex transforms converge to
-  the literal E_a(z) by a summable majorant and Tannery's theorem.
+Endpoint: MittagModulus.source_conjecture_370772 : SourceClaim370772.
+The definition quantifies every real0<a<=1/2 and asserts C-infinity plus
+all alternating derivatives >=0 on t>0 for the literal squared two-parameter
+Mittag-Leffler expression. There are NO residual series, measure, positivity,
+kernel, differentiability or existence premises.
 
-Index convention: for n>=0, set N=n+1. momentApprox uses N+1 mixture
-factors (k=1..N+1) with scaleN^(1-beta). This shift makes its GammaSeq
-quotient exact. It differs from the N-factor presentation in the frozen
-ordinary proof by one extra factor, which tends to1. Monotonicity and
-Gamma domination for this actual shifted definition are proved in Lean;
-no identity with the earlier N-factor expression is assumed.
+The certificate proves: genuine entire real/complex series; even/odd and
+source-modulus identities; actual Euler product moments and Gamma limits;
+normalized positive finite Beta averaging with exact moments, contractivity
+and dominated-limit interchange; actual transform and squared-double-average
+identities; the half-order exponential-integral formula; positive rationally
+weighted Laplace kernels identified by common first-order ODE and arctangent
+normalization; both zero-scale cases; arbitrary mixed differences and their
+passage through actual averages/limits to all alternating derivatives.
 
-- DifferenceCriterion: arbitrary positive mixed lower differences imply all
-  alternating derivative signs for a globally C-infinity function. The
-  property is preserved under positive scalar sums, interval averages and
-  pointwise limits on positive arguments; exponential Laplace kernels satisfy it.
-- SourceAssembly: the actual squared approximants converge to the literal
-  source expression. The final assembly theorem is CONDITIONAL on positive
-  mixed differences of those approximants; its premise is printed explicitly.
+Historical conditional interfaces remain in source files as useful proved
+lemmas, but the final KernelIdentification module discharges their premises.
+The old plans/local11-check notes are preserved under history/ and superseded.
+The frozen original root-mittag-modulus-r12 remains byte-identical for its
+independent preliminary review. Its polar proof differs from the simpler
+one-dimensional integral proof implemented here and in the new manuscript.
 
-- BetaAverages: genuine atom/Beta-density interval operators are normalized,
-  continuous and positive on nonnegative intervals, reproduce exact rpow
-  moments, are norm-contractive, preserve mixed-difference positivity, and
-  commute with bounded pointwise limits. The actual finite-product moment
-  is their iterated average, including the chosen index shift.
-- AveragingRepresentation: actual half-order Mittag-Leffler partial sums
-  have a summable uniform majorant; the finite average of the literal
-  E_(1/2)(z sqrt(v)) equals approxTransform, proved through dominated
-  convergence. This is a closed identity, not an assumed representation.
-
-- ComplexAnalytic: the literal complex Mittag-Leffler series is entire,
-  through its actual infinite-radius formal multilinear series, hence continuous.
-- SquaredAverage: continuous real-linear integral commutations identify the
-  actual squared approximant with a double real average of the literal
-  halfCross kernel. All kernel/averaged-kernel continuity requirements are
-  discharged. sourceClaim_of_halfCross_positive supplies the full source
-  conclusion under an EXPLICIT unproved two-scale kernel positivity premise.
-
-Remaining: prove nonnegative mixed differences of the actual halfCross kernel
-for both scales >=0. See CONNECTION-GAPS.md. An alternate positive one-dimensional
-Laplace formula is derived in ONE-DIMENSIONAL-KERNEL.md, with20diagnostic checks;
-it is not yet a Lean theorem. No unconditional source certificate is claimed.
-The source question still has independent source/novelty/substantive review
-running in a separate Pi lane; no PASS inferred from these components.
-
-Run python3 verify_component.py. It asserts the exact Lean binary/version
-and8packagepins, compiles a new source-only temporary copy, checks all117
-names/types/axiom closures, and writes verification/audit.json and Checks.log.
-No source files from the independently reviewed frozen root-r12 were changed.
+Run python3 verify_component.py for an isolated fresh source-only replay using
+absolute Lean4.34.1 and8pinned package revisions. No prebuilt local oleans
+are copied. Independent full formal/source/manuscript and substantive-prior-art
+review, actual journal-body comparison, and a final extracted packet replay
+remain before any counting. Current candidatecredit0,total32/60.
