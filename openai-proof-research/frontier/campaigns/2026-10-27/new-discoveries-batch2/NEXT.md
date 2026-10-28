@@ -1,3 +1,20 @@
+# Root research continuation — Karp331384 still unresolved
+
+root-beta-convolution-r17 records an exact all-shift/all-k positive formula
+for b=3 (uncounted instance),1600 high-precision b>2 diagnostics with no hit,
+and a concrete exact counterexample to the generic logconcavity sufficient
+lemma (h=t², not Karp). Worst1.37e-36 relative gap rechecked170dps usingdirect
+Gamma products. No full b>2 proof, no nomination, no Lean or novelty claim.
+This refines the actual next mathematical obstacle rather than counting a
+partial range. Accepted2/30,total32/60 unchanged;goalACTIVE.
+
+Gaunt full80/14+3pagepaper+deterministic extracted packet frozen@c20af1d79a
+remainsUNACCEPTED, source/novelty/new integratedreview pending. Earlier frozen
+Gauntpreliminary, Mittagfinal and Kilbasclassical Pi tasks remain asynchronous;
+no polling, no scope expansion of old review, no unasked provider substitution.
+
+---
+
 # Latest checkpoint — full Gaunt80/14 and extracted packet
 
 root-gaunt-optimality-r3 now proves source_full_classification_339406: the
