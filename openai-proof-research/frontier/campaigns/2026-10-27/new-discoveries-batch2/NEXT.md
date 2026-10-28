@@ -19,3 +19,17 @@ never poll running delegates. Save actual task IDs/links in tasks.json.
 
 No research-phase external postings/uploads/messages are authorized. All first
 batch proof archives, published files, DOI and problem links remain unchanged.
+
+## Actual delegated tasks
+
+- pi-algebra-matrix-r1: [Batch two: discover a new algebraic or matrix result](t3-thread://v1/thread:delegated-task:command%3Amcp%3Ab6c05d4e-163c-4bbd-b117-b00ca4db20f8%3Adelegate-task%3Anew-discoveries-batch2-20261027-algebra-matrix-r1)
+  taskId: node:delegated-task:command%3Amcp%3Ab6c05d4e-163c-4bbd-b117-b00ca4db20f8%3Adelegate-task%3Anew-discoveries-batch2-20261027-algebra-matrix-r1
+  initiation status: running; Pi/GLM, thinking high, default speed.
+- pi-discrete-r1: [Batch two: discover a new combinatorial result](t3-thread://v1/thread:delegated-task:command%3Amcp%3Ab6c05d4e-163c-4bbd-b117-b00ca4db20f8%3Adelegate-task%3Anew-discoveries-batch2-20261027-discrete-r1)
+  taskId: node:delegated-task:command%3Amcp%3Ab6c05d4e-163c-4bbd-b117-b00ca4db20f8%3Adelegate-task%3Anew-discoveries-batch2-20261027-discrete-r1
+  initiation status: running; Pi/GLM, thinking high, default speed.
+- pi-analysis-r1: [Batch two: discover a new analysis result](t3-thread://v1/thread:delegated-task:command%3Amcp%3Ab6c05d4e-163c-4bbd-b117-b00ca4db20f8%3Adelegate-task%3Anew-discoveries-batch2-20261027-analysis-r1)
+  taskId: node:delegated-task:command%3Amcp%3Ab6c05d4e-163c-4bbd-b117-b00ca4db20f8%3Adelegate-task%3Anew-discoveries-batch2-20261027-analysis-r1
+  initiation status: running; Pi/GLM, thinking high, default speed.
+
+All three initiation results instruct: completion wakes this thread; end the turn, do not wait or poll. This is a research initiation checkpoint, not acceptance.
