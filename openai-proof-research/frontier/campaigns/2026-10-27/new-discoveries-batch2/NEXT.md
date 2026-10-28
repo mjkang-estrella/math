@@ -1,3 +1,25 @@
+# Latest checkpoint — full Gaunt80/14 and extracted packet
+
+root-gaunt-optimality-r3 now proves source_full_classification_339406: the
+literal all-order iff plus eventual strict failure for every larger absolute
+order. No asymptotic theorem assumed: local negative second jet + explicit
+Laplace domination + weighted FTC. Earlier8modules unchanged. Fresh14module
+80declaration/std3 replayPASS; root read all actual reports. Threepagepaper
+rendered/read, clean. Deterministic71entryZIP (70payload) sha
+053334f3dc7aae1bd22c97a603c66b7b5f5f9ca8bd9ba759a3fbb3b5733ce95e;
+fresh hash-verified extraction14/80 replayPASS, audit/Checks byte-identical.
+
+Candidate UNACCEPTED/credit0. Journal body, novelty/subsumption and independent
+integrated review remain open. Running Gaunt preliminary review has OLD
+ordinary27 + supporting20/2 scope; never silently upgrade its verdict. New
+integrated review needs fresh delegate after a useful slot frees.
+
+Three Pi GLMhigh standard/default tasks continue asynchronously: Mittagfinal,
+Kilbasclassical, Gauntpreliminary. Do not poll. Accepted2/30,total32/60;active.
+Original freezes, first30 and public problem/publication links untouched.
+
+---
+
 # New Gaunt formal checkpoint — 28 October 2026
 
 root-gaunt-integration-r2 now proves the literal LOWER BOUND for all source
