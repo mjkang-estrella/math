@@ -1,3 +1,27 @@
+# Current root checkpoint — beta-prime classical bridge; Gaunt final held
+
+Gaunt integrated FINAL review completed: own extracted14/80/std3 replay and
+math/manuscript/packet PASS independently, frozen80/80 unchanged. Published
+AMS body and squared-order classical-subsumption gates remain HOLD. Adopted in
+lanes/root-gaunt-final-review-adoption-r1.md; no acceptance/count change.
+
+Root root-beta-prime-addition-r19 derives a complete ordinary all-a>0,0<b<1/2
+proof of Ferreira–Simon2108.09244v2 Conjecture1 using an inverse-Gamma addition
+identity proved by reciprocal moments/shared ODE.2exactsymbolic+45highprecision
+moment+27Laplace diagnostics PASS. Actual published Conj1 read in cached full
+AMS HTML; actualv2p20render read. BUT Durand1978equation5.2m0 atnu=-b appears
+to subsume the ENTIRE identity via beta change W=sech(phi)^2; complete bridge
+in CLASSICAL-REDUCTION.md. Root recommends routinecorollary EXCLUSION/credit0;
+independent exact-display/hypothesis adjudication is next, before anyLean/paper.
+No new MathDB record identified or status changed. Distinct priorMills family
+not recounted. All19reviewfiles frozen; no public action.
+
+Two unrelated PiGLMhighstandard tasks continue asynchronously: Mittag final
+and Kilbas classical. Third slot freed by Gaunt final; use NEW PiGLMhighstandard
+review of the actual Durand bridge. No polling. Accepted2/30,total32/60;goalACTIVE.
+
+---
+
 # Latest delegation — Gaunt integrated FINAL review
 
 NEW PiGLM5.3Flash high STANDARD/default final review launched for full
