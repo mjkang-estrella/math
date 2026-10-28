@@ -1,3 +1,17 @@
+# Current checkpoint — weighted BW no-result with substantive corrections
+
+Case(i)/Eq14 remains unresolved. Root disproved report's claimed n2 identity
+and rank-one SOS using exact small matrices; corrected full exterior norm
+(sum w_i^2) and first sparse-family SOS. Valid wedge/shear reduction retained;
+cycle coordinates are double-counted in proposed global energy budget.
+No formal endpoint, no nomination, credit0. Adoption/checks in
+lanes/root-weighted-bw-adoption-r4/. Count32/60 unchanged.
+
+BBK and Karp full-target research remain asynchronous; no polling. Freed
+slot may be used for a fresh source/novelty access route on a held full proof.
+
+---
+
 # Current checkpoint — Han–Pedon no-result handback
 
 No full quasi-polynomiality or unboundedness theorem. Root read completed
