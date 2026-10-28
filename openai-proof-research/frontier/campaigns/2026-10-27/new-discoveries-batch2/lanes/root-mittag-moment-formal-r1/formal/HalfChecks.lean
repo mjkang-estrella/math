@@ -1,0 +1,24 @@
+import HalfIntegral
+set_option autoImplicit false
+#check MittagModulus.halfBetaMoment
+#print axioms MittagModulus.halfBetaMoment
+#check MittagModulus.halfBetaMoment_zero
+#print axioms MittagModulus.halfBetaMoment_zero
+#check MittagModulus.halfBetaMoment_succ
+#print axioms MittagModulus.halfBetaMoment_succ
+#check MittagModulus.Gamma_three_halves
+#print axioms MittagModulus.Gamma_three_halves
+#check MittagModulus.halfBetaMoment_eq_gamma
+#print axioms MittagModulus.halfBetaMoment_eq_gamma
+#check MittagModulus.hasSum_mittagReal
+#print axioms MittagModulus.hasSum_mittagReal
+#check MittagModulus.mittag_one_eq_exp
+#print axioms MittagModulus.mittag_one_eq_exp
+#check MittagModulus.exp_series_real
+#print axioms MittagModulus.exp_series_real
+#check MittagModulus.halfExp_partial_bound
+#print axioms MittagModulus.halfExp_partial_bound
+#check MittagModulus.integral_halfExp_term
+#print axioms MittagModulus.integral_halfExp_term
+#check MittagModulus.integral_halfExp_eq_mittagReal
+#print axioms MittagModulus.integral_halfExp_eq_mittagReal
