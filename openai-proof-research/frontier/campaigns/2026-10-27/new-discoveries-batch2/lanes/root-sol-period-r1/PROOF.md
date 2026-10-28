@@ -94,9 +94,17 @@ at h=0 gives lim_{beta->1-}P_alpha(beta)=pi sqrt(2/alpha).
 
 ## Required scrutiny before promotion
 
+Twelve independent real turning-point quadratures agree with numerical inverse
+Laplace transforms to better than 1e-22, for alpha=.1,.37,1,2.5 and h=.3,1,3.
+Twelve direct numerical Binet-kernel integrals agree with the logarithm of the
+Gamma quotient, and 24 positive-kernel grid probes pass. These are diagnostics
+only, not interval certificates or formal proofs; see check_route.py/checks.json.
+Root visually read actual source PDF page15, including Proposition3.5 and the
+literal Conjecture3.6. Latest arXiv remainsv2; journal body comparison is open.
+
 The transform constants, Binet cancellation, uniqueness hypotheses, ordinary
 turning-point regularity and convolution-series interchange all require an
-independent review. No numerical validation has yet run. No full Lean endpoint
+independent review. No full Lean endpoint
 exists. The exact general period statement was not found in an early bounded
 registry/keyword screen, but that is not novelty clearance.
 
