@@ -1,3 +1,21 @@
+# Current checkpoint — Gaunt excluded by public prior proof
+
+Gaunt339406 is EXCLUDED,credit0: immutable public trureturing result at
+856e75895d7a6787260a785b39331a9b2dd78c2e (Oct27) proves exact source and
+optimality, before candidate completionOct28. Root read actual public claim,
+Bessel definition and surplus lemmas; verified80/80candidate bytes unchanged.
+Formal/math/manuscript/packet PASS preserved, published-source HOLD retained;
+no further discovery-source investment or upload. Root disposition:
+lanes/root-gaunt-public-proof-adoption-r2/ADOPTION.md. Count32/60 unchanged.
+
+Pinned registry greps alone missed a material live prior proof. A fresh
+independent CURRENT-registry/same-statement/chronology check of batch2accepted
+31/32 and heldMittag is warranted; no presumption to revoke counts without
+concrete positive evidence. Preserve first30 and all existing artifacts.
+Karp and BBK research remain asynchronous; no polling.
+
+---
+
 # Current checkpoint — weighted BW no-result with substantive corrections
 
 Case(i)/Eq14 remains unresolved. Root disproved report's claimed n2 identity

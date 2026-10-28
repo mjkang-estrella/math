@@ -39,3 +39,12 @@ claims against live primary sources with explicit dates/access limits. Respect
 rate limits, robot checks and access controls. No browser/account mutations,
 new external messages, publishing or uploads are authorized in this research
 phase. Preserve exact URLs/hashes and candid failures.
+
+Before significant new discovery investment or acceptance, check the CURRENT
+public proof registries as well as immutable cached snapshots. Record current
+head, exact statement/scope and relevant commit/publication chronology. A grep
+of an old pinned tree alone cannot clear live prior art. Later independent
+public counterparts and our own already credited publications are not prior
+proofs merely because they are now searchable; compare chronology and content.
+Research delegates must not open preview/browser tabs unless the current user
+request specifically authorizes browser work; use public HTTP/search otherwise.
