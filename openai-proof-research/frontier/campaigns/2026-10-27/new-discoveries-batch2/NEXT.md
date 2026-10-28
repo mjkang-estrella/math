@@ -49,3 +49,27 @@ Do not assume an empty MathDB label/array captures these public works.
 
 Three Pi tasks remain on their original assignments; do not poll them. No new
 delegate was started in this root research turn. Await their completion wakes.
+
+## Latest user steering: Astra ultrafast high
+
+The user explicitly replaced ALL delegate settings with gpt-6-astra,
+reasoningEffort=high, serviceTier=ultrafast, and asked to keep the goal running
+with maximum useful parallelism until revocation. This supersedes Pi-only and
+standard-speed instructions above, including the legacy provider clause in the
+active goal tool's immutable objective text. Active objective remains thirty
+additional genuinely new, fully validated outcomes. Tally0/30; total30/60.
+The three Pi tasks received task_cancel requests; do not poll them or restart
+Pi. Preserve their uncommitted artifacts. Three Astra replacement/review tasks
+will be recorded in tasks.json. Runtime permits root plus three delegates.
+
+## Root Ku torus checkpoint
+
+See lanes/root-nearline-r1: literal Conj5.3 has a complete generic Lean proof;
+Conj5.4 (even intended k>=6) has a complete fourteen-point k=6 Lean refutation.
+Fresh temporary-copy root replay PASS25 declarations/3 modules, standard3 only.
+ONE provisional family, credit0. Halleck2000 Cor7.2.3 directly subsumes orders
+3q with3 not dividing q; full older subsumption/routine-corollary eligibility
+remains unresolved. No paper/independent acceptance. Stronger lower bound2k+2
+has a full proposed math proof, but2k+1 exclusion is not yet formalized.
+No literal infinite-grid density Lean endpoint is claimed. Source hypercube
+Conj5.6 excluded by density Hales–Jewett, no finite-instance credit.

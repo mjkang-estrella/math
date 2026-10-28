@@ -9,8 +9,11 @@ to shared ledgers, shared indexes, other lanes, old campaigns, or existing paper
 No git operations or public posting by workers. No child agents. Root alone
 integrates, accepts, stages and commits.
 
-Only Pi spark/GLM-5.3-Flash-EXL3 delegates, standard/default speed. Maximum three
-delegates alongside root. No switching providers or models to work around errors.
+Latest explicit user instruction supersedes the earlier Pi-only policy: use
+Codex gpt-6-astra delegates with reasoningEffort=high and serviceTier=ultrafast
+until the user revokes it. Keep all three available delegate slots occupied
+when useful work is available (root plus three = runtime maximum four). Never
+substitute another model or tier without user authorization.
 Do not poll asynchronous workers; follow the orchestrator's completion wake.
 
 Each proposed result needs its precise primary-source statement and quantifiers,
