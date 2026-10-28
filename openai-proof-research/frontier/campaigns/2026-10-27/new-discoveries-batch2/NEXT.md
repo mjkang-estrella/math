@@ -1,3 +1,10 @@
+LATEST DELEGATION: newly frozen arcsinh candidate @dcef9ead57 assigned
+independent Pi review arcsinh-positive-preliminary-review-r1-20261028 (receipt
+in arcsinh-positive-review-launch.json). q-Narayana discovery task cancel
+requested to reuse its slot; preserve partial artifacts, do not poll. Other
+two live assignments remain Gamma Euler r2 and series levels r1. Review
+completion wakes root; end turn, no polling. Count0/30 additional, goalACTIVE.
+
 LATEST ROOT RESULT 2026-10-28: root-arcsinh-positive-r1 now has complete
 ordinary proof and literal Lean of the SURVIVING2019 survey Conj5.1 (p>1),
 stronger p>log2/2 allx>0. Fresh isolated5module19decl replayPASS/std3; all actual
