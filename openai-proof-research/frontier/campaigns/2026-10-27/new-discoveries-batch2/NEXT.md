@@ -1,3 +1,18 @@
+LATEST ROOTRESEARCH r12: complete ordinary proof candidate MathDB370772,
+ChorfiEtTahriManiarYamamoto2510.03600Conj3 full0<a<=1/2 complete monotonicity.
+root-mittag-modulus-r12/PROOF.md: half-normal cross-scale angular Laplace
+kernel + arbitrary-real finite Beta-atom products/Euler Gamma limits + entire
+transform domination + finite differences. All numerical identity checksPASS,
+notproofsubstitutes. ActualarxivPDFp23read,v1latest; journalDOI2026.109758
+actualbodyunread (CrossrefcorrectPII S100757042600119X). Credit0/noLean/paper.
+Candidate awaits NEW independent math/source/novelty/substantive review.
+
+SvininreviewCOMPLETED andread: MATHPASS, sourcearxivPASSbutjournalvisualgap;
+NOVELTY/SUBSTANTIVEHOLDbecauseclosest2019bodyunread. RootadoptsHOLD,
+noformal/paperinvestment; correctedExpMathpages437-448 inREVIEW-ADOPTION.md.
+Frozen15candidatebytesunchanged. Extraoutcomes2/30,total32/60 unchanged.
+Thirdslotnowfree toMittagreview; Cauchy/short-threadtasks remainasync,no polls.
+
 LATEST DELEGATION: NEW independent PiGLM5.3Flash high STANDARD Svinin334350
 preliminary review launched (svinin-multiple-sum-review-launch.json), ownlane
 pi-svinin-multiple-sum-preliminary-review-r1, freeze7caaaeecb1. Critical2019
