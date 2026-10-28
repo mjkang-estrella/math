@@ -1,0 +1,924 @@
+                                              SINKHORN ALGORITHM FOR QUANTUM PERMUTATION GROUPS
+
+                                                                 ION NECHITA, SIMON SCHMIDT, AND MORITZ WEBER
+
+
+                                                  Abstract. We introduce a Sinkhorn-type algorithm for producing quantum permutation ma-
+                                                  trices encoding symmetries of graphs. Our algorithm generates square matrices whose entries
+                                                  are orthogonal projections onto one-dimensional subspaces satisfying a set of linear relations.
+                                                  We use it for experiments on the representation theory of the quantum permutation group and
+                                                  quantum subgroups of it. We apply it to the question whether a given finite graph (without
+                                                  multiple edges) has quantum symmetries in the sense of Banica. In order to do so, we run our
+                                                  Sinkhorn algorithm and check whether or not the resulting projections commute. We discuss
+
+
+
+
+arXiv:1911.04912v1 [math.QA] 12 Nov 2019
+                                                  the produced data and some questions for future research arising from it.
+
+
+
+
+                                                                                          Contents
+                                             1. Introduction and main results                                                                        1
+                                             2. The background — Quantum symmetries of finite graphs                                                 3
+                                             2.1. Compact matrix quantum groups                                                                      3
+                                             2.2. Quantum automorphism groups of graphs                                                              4
+                                             2.3. The problem                                                                                        4
+                                             3. The algorithms                                                                                       5
+                                             3.1. The algorithm for finding quantum permutation matrices: Algorithm 1                                5
+                                             3.2. Restriction to uniformly vertex transitive graphs                                                  7
+                                             3.3. A technical lemma                                                                                  7
+                                             3.4. The algorithm for finding quantum symmetries of graphs: Algorithm 2                                9
+                                             4. Experiments and discussion of the results                                                           11
+                                             4.1. Generation of quantum permutation matrices: Algorithm 1                                           11
+                                             4.2. Generation of quantum symmetries of graphs: Algorithm 2                                           12
+                                             References                                                                                             15
+
+
+
+                                                                          1. Introduction and main results
+                                              In the 1980’s, Woronowicz defined compact matrix quantum groups [Wor87] in order to pro-
+                                           vide an extended notion of symmetry in the analytic realm. The starting point is to replace
+                                           compact matrix groups G ⊆ GLn (C) by their algebras C(G) of continuous complex valued
+                                           functions. These algebras are equipped with a Hopf algebra like structure and the crucial point
+                                           is that they are commutative (with respect to pointwise multiplication). Now, a compact ma-
+                                           trix quantum group is a noncommutative algebra sharing certain axiomatic properties with
+                                           these algebras C(G). The class of compact matrix quantum groups contains the class of com-
+                                           pact matrix groups and it provides the right analytic symmetry objects for a whole world of
+                                           quantum mathematics such as quantum topology (C ∗ -algebras), quantum measure theory (von
+                                           Neumann algebras), quantum probability theories (e.g. free probability theory), noncommuta-
+                                           tive geometry (in the sense of Alain Connes) and quantum information theory, just to name a
+                                           few.
+
+                                             Date: November 13, 2019.
+                                             2010 Mathematics Subject Classification. 46L89 (Primary); 20B25, 05C85 (Secondary).
+                                             Key words and phrases. compact quantum groups, quantum automorphism groups of graphs, quantum sym-
+                                           metries of graphs, quantum permutation matrix, Sinkhorn algorithm.
+                                                                                                1
+2                        ION NECHITA, SIMON SCHMIDT, AND MORITZ WEBER
+
+   In the 1990’s, Sh. Wang gave a definition of quantum permutation groups Sn+ [Wan98]. The
+idea is roughly to replace the entries 0 and 1 in a permutation matrix u ∈ Sn ⊆ GLn (C) by
+orthogonal projects onto subspaces of some Hilbert space; one can think of quantum permutation
+matrices as n × n matrices u = (uij )i,j=1,...,n whose entries uij are again matrices rather than
+scalars 0 or 1. The crucial point is that the uij are orthogonal projections summing up to the
+identity 1 on each row and column:
+                                           n
+                                           X             n
+                                                         X
+(1.1)                uij = u2ij = u∗ij ,         uik =         ukj = 1 ∀i, j = 1, . . . , n
+                                           k=1           k=1
+The precise definition may be found in Section 2; it is given in terms of universal C ∗ -algebras
+As (n). The quantum permutation group Sn+ contains the classical permutation group Sn as
+a (quantum) subgroup — in a way, we thus have more quantum permutations than ordinary
+permutations. An important task is to find representations of this C ∗ -algebra — or, a bit more
+on the intuitive level, to find concrete examples of quantum permutation matrices: for instance,
+we would like to find matrices uij ∈ Mm (C) satisfying the above relations. See also [BN17a],
+[BCF18, Sect. 4.1] as well as the recent links with quantum information theory [LMR17, MR19]
+for more questions in this directions.
+   Now,P for bistochastic
+                    P          matrices, i.e. for orthogonal matrices u = (uij ) ∈ On ⊆ GLn (C)
+with k uik = k ukj = 1, the Sinkhorn algorithm [Sin64, SK67] is a useful tool to produce
+such matrices. The main idea is to pick an arbitrary orthogonalPmatrix and then to perform
+normalizations: In Step 1, replace all entries uij by u0ij := uij / k uik and in Step 2, replace
+entries u0ij by u00ij := u0ij / k u0kj . Performing Steps 1 and 2 in an alternating way, one eventually
+                               P
+obtains a bistochastic matrix. An algorithm which is adapted to quantum permutation matrices
+was introduced in [BN17b, BN17a]: Starting with arbitrary orthogonal rank one projections
+uij , orthonormalize the rows in Step 1 and then the columns (using the new entries) in Step 2.
+Approximately, this eventually yields a quantum permutation matrix in the above sense.
+   In this work, we introduce a new Sinkhorn-type algorithm with the help of which we may
+tackle the question of existence of quantum symmetries for finite graphs: Given a (directed)
+graph Γ on n vertices having no multiple edges, its automorphism group Aut(Γ) consists in all
+permutation matrices σ ∈ Sn ⊆ GLn (C) commuting with the adjacency matrix A ∈ Mn ({0, 1})
+of Γ. Similarly, Banica [Ban05] defined the quantum automorphism group QAut(Γ) by adding
+the relation
+(1.2)                                             uA = Au
+to those of Sn+ , see (1.1). Thus, QAut(Γ) is a quantum subgroup of Sn+ containing the classical
+automorphism group Aut(Γ). We then say that Γ has quantum symmetries, if the inclusion of
+Aut(Γ) in QAut(Γ) is strict [Ban05]. In order to prove the existence of quantum symmetries, it
+is sufficient to find an example of a quantum permutation matrix commuting with the adjacency
+matrix and having at least two entries uij and ukl such that
+                                             uij ukl 6= ukl uij .
+We now include the condition (1.2) in our algorithm and obtain a tool for testing a graph for
+quantum symmetry. The main aim of this article is to present a number of examples of cases
+of graphs to which we applied the algorithm and successfully confirmed the existence or non-
+existence of quantum symmetries. It is summarized in Table 1. Here, the parameter τ ∈ (0, 1)
+rules the intensity of enforcing relation (1.2), while ε is the tolerance regarding violations of
+both relations (1.1) and (1.2).
+   A number of questions arise in connection with Table 1 and our Sinkhorn algorithm in general.
+We discuss them in Section 4. For instance, note that our algorithm only produces quantum
+permutation matrices with all entries being rank one projections and its prediction is based
+on this special case. This implies that we may apply it only to graphs which satisfy a certain
+uniformly vertex transitive condition, see Definition 3.3 and [SVW19] for a discussion of this
+property. However, even given these restrictions, our algorithm is surprisingly well-behaved
+and at least for the examples presented in Table 1 it precisely matches the theoretically proved
+                    SINKHORN ALGORITHM FOR QUANTUM PERMUTATION GROUPS                                      3
+
+
+                    Graph                        Performance          Parameters      Has q. symm.?
+                                               Avg.         Avg.                       Alg.
+          Name           |V |      Aut                                  ε       τ               Proof
+                                                iter.     runtime                     pred.
+            K4             4        S4        106.32     0.23 sec.    10−6      1       Y     [Wan98]
+            K5             5        S5        113.15     0.39 sec.    10−6      1       Y     [Wan98]
+            K6             6        S6        1118.25    4.98 sec.    10−6      1       Y     [Wan98]
+        Cube Q3            8       H3          92.11      7.25 sec    10−3     0.5      Y      [Ban05]
+         Petersen         10        S5        402.32     42.4 sec.    10−3     0.5      N     [Sch18a]
+          L(Q3 )          12       H3          71.18     20.53 sec.   10−3     0.5      N         —
+        L(C6 (2))         12     Z2 o S3       67.89     36.37 sec. 10−3       0.5      N         —
+        Trun(K4 )         12        S4        283.87     132.9 sec.   10−3     0.5      N         —
+         K3 C4           12    S 3 × D4       66.31     29.65 sec.   10−3     0.5      Y      [BB07]1
+    antip(Trun(K4 ))      12        S4         95.39     38.29 sec. 10−3       0.5      N         —
+       Icosahedron        12    A5 × Z2        61.89      18 sec.     10−3     0.5      N      [Sch19]
+       co-Heawood         14    PGL(2, 7)      83.69      64 sec.     10−1     0.5      N      [Sch19]
+     Hamming(2,4)         16     S4 o Z2      102.74     48.7 sec.    10−1     0.5      Y      [Sch19]
+       Shrikhande         16    ord. 192      126.73     54.04 sec.   10−1     0.5      N      [Sch19]
+        Cube Q4           16     Z2 o S4       71.63     36.26 sec.   10−1     0.5      Y     [BBC07]
+         Clebsch          16     Z42 o S5      91.07     72.20 sec. 10−1       0.5      Y     [Sch18b]
+
+        Table 1. Some graphs and their quantum symmetries: numerical experiments
+        and theory. In the cases where the result is known, the algorithm predicts the
+        correct answer. The performance of the algorithm is measured by the average
+        number of Sinkhorn iterations in the main function and by the average runtime,
+        for 103 independent runs.
+
+
+
+answer, if known. In the case of the graphs L(Q3 ), L(C6 (2)), Trun(K4 ) and antip(Trun(K4 ))2
+our algorithm predicts an answer going beyond the state of the art; we leave the full proof of
+the lack of quantum symmetries open.
+
+             2. The background — Quantum symmetries of finite graphs
+   In this section, we briefly present the mathematical background of this article: We recall the
+definition of compact (matrix) quantum groups, of the quantum permutation group Sn+ and
+of quantum automorphism groups of finite graphs including the one of quantum symmetries
+of graphs. Readers not particularly interested in C ∗ -algebras or quantum groups may directly
+jump to Section 2.3, the formulation of the problem underlying our algorithm.
+
+2.1. Compact matrix quantum groups. In 1987, Woronowicz [Wor87] defined compact
+matrix quantum groups as follows: A compact matrix quantum group G = (B, u) is given by
+a unital C ∗ -algebra B which is generated by the entries uij of a matrix u = (uij )i,j=1,...,n ∈
+
+  1Here K C denotes the Cartesian product of K and C . This graph has quantum symmetry because of
+         3  4                                  3     4
+Proposition 4.1 in [BB07] and the fact that C4 has quantum symmetry.
+   2By C (2) we mean the cycle graph C , where additionally vertices at distance two in C are connected.
+         6                                 6                                                  6
+The graph denoted Trun(K4 ) is the truncated tetrahedral graph, antip(Trun(K4 )) its distance-three graph. We
+provide the adjacency matrices of all graph appearing in Table 1 in the supplementary material of the arXiv
+submission.
+4                      ION NECHITA, SIMON SCHMIDT, AND MORITZ WEBER
+
+Mn (B) such that the matrix u as well as ū = (u∗ij ) are invertible in Mn (B) and there is a
+∗ -homomorphism ∆ : B → B ⊗ B mapping u 7→
+                                                     P
+                                                 ij    k uik ⊗ ukj .
+    Let us take a look at the classical case. Let G ⊆ GLn (C) be a compact group. Let B = C(G)
+be the algebra of continuous complex valued functions on G and let uij : G → C be the evaluation
+of matrices x ∈ G at their entry xij . Then (C(G), (uij )) is a compact matrix quantum group
+and ∆ corresponds to the matrix multiplication; here we used the isomorphism of C(G) ⊗ C(G)
+with C(G × G). We infer:
+         {G ⊆ GLn (C) compact groups, n ∈ N} ( {compact matrix quantum groups}.
+See [Tim08, NT13, Web17] for more on this subject. A central example for our article was given
+by Wang in 1998 [Wan98].
+Example 2.1. The quantum permutation group Sn+ is given by the universal unital C ∗ -algebra
+                                                                n       n
+                                                                                 !
+                                                                X       X
+                   ∗                                 2     ∗
+        As (n) := C uij , i, j = 1, . . . , n uij = uij = uij ,   uik =   ukj = 1 .
+                                                              k=1       k=1
+
+  The quotient of As (n) by the relations uij ukl = ukl uij is isomorphic to C(Sn ), where Sn is
+the permutation group represented by permutation matrices in GLn (C). We thus view Sn as
+a quantum subgroup of Sn+ . If n ≥ 4, this inclusion is strict and we then have more quantum
+permutations than permutations, in a way.
+2.2. Quantum automorphism groups of graphs. Let Γ = (V, E) be a graph with vertex
+set V = {1, . . . , n} and edges E ⊆ V × V , i.e. we have no multiple edges. Let A ∈ Mn ({0, 1}) be
+its adjacency matrix, i.e. Aij = 1 if and only if (i, j) ∈ E. An automorphism of Γ is an element
+σ ∈ Sn with (i, j) ∈ E if and only if (σ(i), σ(j)) ∈ E. We may thus define the automorphism
+group of Γ by
+                                 Aut(Γ) := {σ ∈ Sn | σA = Aσ} ⊆ Sn .
+This definition has been set in the quantum context by Banica in 2005 [Ban05], see also [Bic03]
+for a previous definition. Banica defined the quantum automorphism group QAut(Γ) by the
+quotient of As (n) from Example 2.1 by the relations uA = Au. We thus have:
+                                       Sn      ⊆      Sn+
+                                       ⊆              ⊆
+                                  Aut(Γ)       ⊆      QAut(Γ)
+If the inclusion on the lower line is strict, we say that Γ has quantum symmetries [Ban05].
+Definition 2.2. A graph Γ is said to have quantum symmetries if the quotient of As (n) by the
+relation uA = Au is a noncommutative algebra.
+  The question whether or not a graph has quantum symmetries is highly non-trivial. There
+are a number of criteria to check it and it has been settled for certain classes of graphs, but in
+general, one has to study this question case by case. See also [SW18, Sch18a, Sch19] for more
+on quantum automorphism groups of graphs and quantum symmetries.
+2.3. The problem. In order to show that a given graph Γ has quantum symmetries, it is
+enough to find a quantum permutation matrix with noncommuting entries, as we will describe
+in this section.
+Definition 2.3. A (concrete finite-dimensional) n × n quantum permutation matrix (also called
+a magic unitary) is a matrix u = (uij )i,j=1,...,n ∈ Mn (Mm (C)) for someP
+                                                                         m ∈ N such
+                                                                                P that all
+uij ∈ Mm (C) are orthogonal projections (uij = u2ij = u∗ij ) and we have k uik = k ukj = 1
+for all i, j = 1, . . . , n.
+Remark 2.4. The (finite-dimensional) magic unitaries of Definition 2.3 also appear in the
+quantum information theory literature. Here they are also called projective permutation ma-
+trices [AMR+ 19, Def. 5.5] or matrices of partial isometries in the setting of [BN17b, Def. 3.2].
+See also [LMR17] or the very remarkable article [MR19].
+                 SINKHORN ALGORITHM FOR QUANTUM PERMUTATION GROUPS                              5
+
+  Given an adjacency matrix A ∈ Mn ({0, 1}) and m ∈ N, we view A ∈ Mn (Mm (C)) as the
+matrix A ⊗ Im , i.e. we replace all entries Aij = 0 by the m × m matrix filled with zeros, and we
+replace Aij = 1 by the m × m identity matrix.
+Lemma 2.5. Let Γ = (V, E) be a finite graph with no multiple edges and let A ∈ Mn ({0, 1})
+be its adjacency matrix. Assume that there is a quantum permutation matrix u = (uij ) ∈
+Mn (Mm (C)) with uA = Au and two entries ui0 j0 and uk0 l0 such that
+                                     ui0 j0 uk0 l0 6= uk0 l0 ui0 j0 .
+Then Γ has quantum symmetries.
+Proof. The quantum permutation matrix u = (uij ) ∈ Mn (Mm (C)) gives rise to a ∗ -homomorphism
+from the quotient B of As (n) by uA = Au to Mn (Mm (C)) mapping the generators of B to the
+entries uij ∈ Mm (C). Thus B (which is the algebra corresponding to QAut(Γ)) is a noncom-
+mutative algebra.                                                                          
+  We may now state the problem motivating our article.
+Problem 2.6. Given a finite graph Γ — does it have quantum symmetries? Can we find a
+noncommutative quantum permutation matrix in the sense of Lemma 2.5?
+   In our article, we restrict our search to the case m = n and to rank one projections for the
+elements uij . Although this seems to be quite a restriction, our algorithm still produces quite
+reliable results when comparing our results with the previously known answers (if they exist).
+More on this in Section 4.
+
+                                     3. The algorithms
+   Inspired by the Sinkhorn algorithm for bistochastic matrices, the following Sinkhorn algo-
+rithm for Sn+ was introduced in [BN17a]. We shall later include the condition uA = Au in
+order to find evidence for the (non-) existence of quantum symmetries of a given graph Γ, see
+Algorithm 2.
+3.1. The algorithm for finding quantum permutation matrices: Algorithm 1. The
+main idea behind the Sinkhorn algorithm for finding quantum permutation matrices is as follows:
+    (1) Pick n2 rank one projections (or rather n2 vectors in Cn ) and put them into an n × n
+         matrix.
+    (2) Orthonormalize the rows.
+    (3) Orthonormalize the columns.
+    (4) Repeat these two orthonormalizations in an alternating way until the error to the magic
+         unitary condition (Def. 2.3) is small, or a pre-defined maximal number of iterations has
+         been reached.
+   The above procedure is reminiscent of the classical Sinkhorn algorithm [Sin64] for obtaining
+bistochastic matrices, by normalizing the row sums and the column sums of a matrix with posi-
+tive entries. We are performing the same alternating minimization procedure, the only difference
+being that we are considering operator entries instead of scalar elements. The normalization
+procedure is performed in a way which preserves hermitian (actually positive semidefinite) op-
+erators:
+(3.1)                               Xij0 := S −1/2 Xij S −1/2 ,
+where S is the matrix corresponding to a row (resp. column) sum. Note that in our case the
+matrix S will be generically positive definite (hence invertible); more general situations would
+require taking a (Moore-Penrose) pseudo-inverse in the equation above. We initialize our matrix
+blocks Xij with random Gaussian rank-one projections Xij = xij x∗ij , the vectors xij ∈ Cn being
+independent, identically distributed Gaussian vectors. Formally, in the procedure described in
+detail below, the variable x is a 3-tensor. The normalization procedure is based on the following
+easy lemma, which provides an explicit Gram-Schmidt orthonormalization procedure. We put
+6                       ION NECHITA, SIMON SCHMIDT, AND MORITZ WEBER
+
+[n] := {1,
+        p2, . . . , n} and we denote the Schatten-2 (or Hilbert-Schmidt) norm on Mn (C) by
+kXk2 := Tr(X ∗ X).
+Lemma 3.1. Let x1 , . . . , xn be arbitrary linearly independent vectors in Cn . Define, for i ∈ [n],
+yi = S −1/2 xi , wherePS = ni=1 xi x∗i . Then, the vectors {y1 , . . . , yn } form an orthonormal basis
+                            P
+of Cn and we have ni=1 yi yi∗ = In .
+Proof. To begin with, note that the linear independence condition for the xi ’s implies that the
+matrix S is positive
+                   P definite, hence it admits a square root inverse. It is then clear that the
+vectors yi satisfy ni=1 yi yi∗ = In ; we show next that such vectors must form an orthonormal
+basis. First, note that, for all i ∈ [n],
+                                      *  n             +
+                                                              n
+                                              X               X
+                 kyi k2 = hyi , yi i = yi ,    yj yj∗  yi =   |hyi , yj i|2 ≥ kyi k4 ,
+                                           j=1                        j=1
+
+implying that kyi k ≤ 1. On the other hand, we have
+                                          n
+                                          X                     n
+                                                                X
+                            n = Tr In =         Tr(yj yj∗ ) =         kyj k2 ≤ n.
+                                          j=1                   j=1
+
+This implies that equality holds in all the above inequalities and thus kyi k = 1 for all i and
+hyi , yj i = 0 for all i 6= j.                                                                
+
+   Note that the iterative scaling procedure we propose will not stop (in the generic case) after
+a finite number of steps (the same holds true for the original Sinkhorn algorithm). Hence,
+one needs to stop after reaching a target precision, or after a pre-defined number of iterations
+(in which case we declare that the algorithm has failed in finding an approximate quantum
+permutation matrix). We measure the distance between a matrix X and the set of quantum
+permutation matrices by the error
+                                         n                     n
+                                (                                            )
+                                    n   X                n    X
+                 error := max max          Xik − In , max        Xkj − In      .
+                                    i=1                         j=1
+                                          k=1              2            k=1         2
+When computing the error in the Algorithm 1 below, note that we only need to take into account
+the row sums, since this computation follows column normalization, hence the column sums are
+(close to being) normalized.
+   We provide in Algorithm 1 a detailed description of the algorithm producing quantum per-
+mutation matrices. The main functions in the algorithm are the row and column normalizations
+procedures. We present next the row normalization routine, leaving the case of columns to the
+reader.
+ 1: procedure NormalizeRows(x)
+ 2:     for i ∈ [n] do                                                       . normalize rows
+ 3:        Ri ← 0n
+ 4:        for j ∈ [n] do                                                . compute row sums
+ 5:            Ri ← Ri + xij x∗ij
+    6:      for j ∈ [n] do                                                       . update elements
+                        −1/2
+ 7:            xij ← Ri      xij
+ 8:     return x
+   We finish this section by re-stating a conjecture from [BN17a]; note that a proof of convergence
+in the setting where unit rank matrices are replaced by positive definite elements is provided in
+[BN17b, Proposition A.1].
+Conjecture 3.2. For any precision parameter ε > 0 and for almost all initializations of the
+alternating normalization procedure from Algorithm 1, the program will terminate sucessfully
+after a finite number of steps.
+                   SINKHORN ALGORITHM FOR QUANTUM PERMUTATION GROUPS                                   7
+
+
+Algorithm 1 Sinkhorn algorithm for Sn+
+ 1: procedure GenerateMagicUnitary(n, ε, Nmax )
+ 2:    x ← random n × n × n complex Gaussian tensor                           . random initialization
+ 3:    iter ← 0                                                                   . iteration counter
+ 4:    repeat
+ 5:        iter ← iter + 1
+ 6:        x ← NormalizeRows(x)                                                     . normalize rows
+ 7:        x ← NormalizeCols(x)                                                 . normalize columns
+ 8:        error ← 0                                                                 . compute error
+ 9:        for i ∈ [n] do                                                  . need to check rows only
+10:            R i ← 0n
+11:            for j ∈ [n] do                                                    . compute row sums
+12:                Ri ← Ri + xij x∗ij
+13:            error ← max(error, kRi − In k2 )                             . compute maximal error
+14:     until error < ε or iter > Nmax                                              . end conditions
+15:     if error < ε then
+16:         return x                                                  . quantum permutation found
+17:     else
+18:         return failure                                                      . too many iterations
+
+3.2. Restriction to uniformly vertex transitive graphs. Before presenting the algorithm
+for quantum automorphisms of graphs, Algorithm 2, we make in this subsection and in the
+following one some important observations. First, it turns out that, given the type of quantum
+permutation matrices we consider, we will have to restrict our attention to graphs of a certain
+type.
+Definition 3.3. Let Γ = (V, E) be a graph with V = {1, . . . , n}.
+                                                                            i            i
+                                           P alli i = 1, . . . , n we find σ1 , . . . , σn ∈ Aut(Γ) such
+   (a) The graph is vertex transitive, if for
+       that all entries of the i-th row of k σk are 1. This expresses the property, that each
+       vertex may be mapped to each other vertex by some automorphism.
+  (b) The graphPis uniformly vertex transitive, if there are σ1 , . . . , σn ∈ Aut(Γ) such that all
+       entries of k σk are 1. We call the set {σ1 , . . . , σn } a maximal Schur set.
+   Note that a uniformly vertex transitive graph is in particular vertex transitive, putting all
+σki = σk . Moreover, the matrix with all entries equal to one is the unit for the Schur product
+(also called Hadamard product), hence the name maximal Schur set. Any Cayley graph of
+a group G (seen as a directed graph with unlabeled edges) is uniformly vertex transitive, its
+maximal Schur set simply being G itself. More generally, any vertex transitive graph whose
+automorphism group has the same cardinality as its vertex set, is uniformly vertex transitive.
+   In [SVW19] we introduce the notion uniformly vertex transitive and study it in detail. In
+particular, we prove the following chain of implications:
+      Cayley graph       =⇒        uniformly vertex transitive        =⇒        vertex transitive
+  Both implications are strict, an example for a uniformly vertex transitive graph which is no
+Cayley graph is the Petersen graph, while an example for a vertex transitive graph which is not
+uniformly vertex transitive is the line graph of the Petersen graph. See [SVW19] for details.
+3.3. A technical lemma. In order to state our algorithm for finding quantum symmetries of
+graphs, we need the following technical lemma on the existence of an optimal transform matrix
+playing the role of the matrix S from (3.1) in the setting of subspaces of Cn . We denote the
+group of r×r complex valued unitary matrices by U (r). By Diag>0r , we denote the r×r diagonal
+matrices with strictly positive diagonal entries.
+   For two given self-adjoint matrices A, B ∈ Mn (C), the equation F AF ∗ = B (in the unknown
+variable F ∈ Mn (C)) has a solution iff rk A ≥ rk B. We shall be interested in finding such
+8                         ION NECHITA, SIMON SCHMIDT, AND MORITZ WEBER
+
+a solution of “minimal disturbance”, i.e. close to the identity on the support of A. For our
+applications to finding quantum symmetries of graphs, we shall consider the special case where
+rk A = rk B =: r and B = B ∗ = B 2 is an orthogonal projection; note however that the ideas
+below can be easily modified to cover the general case. If we write PA , resp. PB , for the
+orthogonal projections on the supports of A, resp. B, it is clear that we can restrict the space
+of solutions F to matrices satisfying
+(3.2)                                        PB F = F PA = F.
+Lemma 3.4. Let A = A∗ , B = B ∗ = B 2 ∈ Mn (C) be matrices of rank r admitting singular
+value decompositions
+                              A = VA ∆A VA∗ and B = VB Ir VB∗ ,
+for some isometries VA , VB : Cr → Cn and some positive diagonal matrix ∆A ∈ Diag>0    r . Then,
+the set of solutions F ∈ Mn (C) of the equation F AF ∗ = B satisfying Eq. (3.2) is parameterized
+by unitary matrices W ∈ U (r) as follows:
+                                             FW = VB W ΣVA∗ ,
+            −1
+with Σ = ∆A 2 ∈ Diag>0
+                    r . Furthermore, for the unitary W0 defined by the polar decomposition
+                                          VB∗ VA Σ = W0 |VB∗ VA Σ|,
+it holds that
+                                   kFW0 − PA k2 = min kFW − PA k2 .
+                                                    W ∈U (r)
+
+Proof. First, let us check that the matrices FW satisfy our matricial equation:
+                                     ∗
+                                FW AFW = VB W ΣVA∗ AVA ΣW ∗ VB∗
+                                          = VB W ΣVA∗ VA ∆A VA∗ VA ΣW ∗ VB∗
+                                          = VB W Σ∆A ΣW ∗ VB∗
+                                          = VB W W ∗ VB∗
+                                          = VB Ir VB∗
+                                          = B,
+where we have used the fact that W is unitary and VA , VB are isometries. Moreover, since
+PA = VA VA∗ , we also have
+                                  FW PA = VB W ΣVA∗ VA VA∗ = FW ,
+showing that the matrices FW also satisfy Eq. (3.2). For the reverse direction, assuming F AF ∗ =
+B, write
+                                                         1/2         1/2
+                        VB Ir VB∗ = B = F AF ∗ = (F VA ∆A )(F VA ∆A )∗ ,
+so there must exist a unitary operator W ∈ U (r) such that
+                                                    1/2
+                                             F VA ∆A = VB W,
+proving the claim that F = FW .
+  For the statement about the minimizer W0 , we have
+                kFW − PA k22 = kVB W ΣVA∗ − VA VA∗ k22
+                                = Tr((VB W ΣVA∗ − VA VA∗ )(VA ΣW ∗ VB∗ − VA VA∗ ))
+                                = Tr(VB W Σ2 W ∗ VB∗ − VB W ΣVA∗ − VA ΣW ∗ VB∗ + VA VA∗ ).
+Since Tr(VB W Σ2 W ∗ VB∗ ) = Tr(Σ2 ) and Tr(VA VA∗ ) = r do not depend on W , we only need to
+minimize Tr(−VB W ΣVA∗ − VA ΣW ∗ VB∗ ) = −2 Re Tr(VB W ΣVA∗ ). We have
+                      min −2 Re Tr(VB W ΣVA∗ ) = −2 max Re Tr(VB W ΣVA∗ )
+                     W ∈U (r)                                W ∈U (r)
+                                                        = −2 max Re Tr(W ΣVA∗ VB ).
+                                                             W ∈U (r)
+                 SINKHORN ALGORITHM FOR QUANTUM PERMUTATION GROUPS                             9
+
+Now, decomposing ΣVA∗ VB =: X = UX ΣX VX∗ with UX , VX ∈ U (r) we deduce
+                      max Re Tr(W ΣVA∗ VB ) = max Re Tr(W UX ΣX VX∗ )
+                    W ∈U (r)                          W ∈U (r)
+                                                    = max Re Tr(VX∗ W UX ΣX )
+                                                      W ∈U (r)
+
+                                                    = max Re Tr(W̃ ΣX ),
+                                                      W̃ ∈U (r)
+
+since VX∗ W UX is unitary. Since ΣX is non-negative, by the matrix Hölder inequality [Bha97,
+Chapter IV], we obtain the maximum by choosing W̃ = Ir :
+                    Re Tr(W̃ ΣX ) ≤ | Tr(W̃ ΣX )| ≤ kW k∞ kΣX k1 = Tr ΣX .
+                                                             ∗.
+This yields that the minimum is attained at FW with W0 = VX UX                                
+3.4. The algorithm for finding quantum symmetries of graphs: Algorithm 2. In order
+to check whether a given graph has quantum symmetries, we need to find noncommutative
+quantum permutation matrices respecting uA = Au, in the sense of Lemma 2.5. We thus need
+to include in Algorithm 1 the condition uA = Au, which is a non-trivial task.
+   We shall use the same idea of Sinkhorn alternating scaling, with an important twist that we
+explain next. In the current setting, we are looking for block matrices X ∈ Mn (Mn (C)) having
+unit-rank blocks Xij = xij x∗ij which should satisfy the following three conditions:
+   (1) Row normalization:
+                                                      n
+                                                      X
+                                       ∀i ∈ [n],            Xij = In
+                                                      j=1
+   (2) Column normalization:
+                                                      n
+                                                      X
+                                      ∀j ∈ [n],             Xij = In
+                                                      i=1
+   (3) The matrix X encodes a graph symmetry:
+                                       X(A ⊗ In ) = (A ⊗ In )X,
+         where A is the adjacency matrix of the graph Γ = (V, E); we shall sometimes abuse
+         notation and write simply XA = AX for the condition above.
+A first idea to produce matrices X satisfying the above three properties is to use Sinkhorn
+alternating normalizations, enforcing at each step one of the three conditions above. It turns
+out that inserting the symmetry condition above directly in Algorithm 1 does not yield a
+converging algorithm. One can understand this negative result as a consequence of the fact
+that enforcing the third condition above destroys the magic unitary property of the matrix X,
+rendering the algorithm unstable.
+   To circumvent this problem, we introduce a parameter τ in the algorithm, which will measure
+the intensity with which the symmetry condition XA = AX will be enforced. The parameter
+τ ∈ [0, 1] will be chosen empirically, depending on the graph Γ at hand. A small value of τ will
+correspond to a “soft” application of the normalization XA = AX, while the maximal value
+τ = 1 corresponds to the strict enforcing of the symmetry condition. In practice, we use the
+value of τ to interpolate between the initial and the target conditions:
+                               Target(τ ) = τ · Target + (1 − τ ) · Initial.
+   Let us now describe in detail the normalization procedures used in Algorithm 2. The main
+idea is to integrate the symmetry condition XA = AX (applied with the softening parameter
+τ ) into the usual row and column normalization routines from Algorithm 1. To do this, note
+that the (i, j) element of the equality XA = AX reads
+                                      X            X
+                                           Xik =        Xlj .
+                                      k : (k,j)∈E      l : (i,l)∈E
+10                     ION NECHITA, SIMON SCHMIDT, AND MORITZ WEBER
+
+Let us assume that we want to perform row normalization on the matrix X, and we would like
+to normalize the sum of the i-th row of X to the identity. It turns out that we could impose a
+stronger constraint than this, by asking, for a fixed j, that the following two conditions hold:
+                                     X               X
+                                              0
+                                            Xik  =         Xlj
+                                  k : (k,j)∈E           l : (i,l)∈E
+                                     X                     X
+                                                 0
+                                                Xik =                 Xlj .
+                                           ∈E
+                                  k : (k,j) /                    ∈E
+                                                        l : (i,l) /
+
+The two constraints above imply together that the i-th row of the updated matrix X 0 is nor-
+malized to the identity, given that the j-th column of the original matrix X was normalized
+(which is true during the execution of our algorithm, since row and column normalizations are
+alternating).
+
+Algorithm 2 Sinkhorn algorithm for QAut(Γ)
+ 1: procedure GenerateQAut(Γ, τ, ε, Nmax )
+ 2:    x ← random n × n × n complex Gaussian tensor               . random initialization
+ 3:    iter ← 0
+ 4:    repeat
+ 5:        iter ← iter + 1
+ 6:        x ← NormalizeRowsSoft(x, Γ, τ )                               . normalize rows
+ 7:        x ← NormalizeColsSoft(x, Γ, τ )                           . normalize columns
+ 8:        errorM agic ← 0                          . compute error w.r.t. magic property
+ 9:        for i ∈ [n]Pdo
+10:            Ri ← j xij x∗ij                          . row sum after col. normalization
+11:           errorM agic ← max(errorM agic, kRi − In k2 )
+12:        errorComm ← 0                                     . compute error w.r.t. symmetry
+13:                        2
+           for (i, j) ∈ [n] do                             . check each element of XA − AX
+14:           errorM agic ← max(errorM agic, k(XA − AX)ij k2 )
+15:        error ← max(errorM agic, errorComm)                                   . total error
+16:    until error < ε or iter > Nmax                                        . end conditions
+17:    if error < ε then
+18:        return x                                        . quantum graph symmetry found
+19:    else
+20:        return failure                                               . too many iterations
+
+   The row and column normalizations are done in a soft way, as described in Lemma 3.4. The
+pseudo-code is given below for the row case; we leave the case of column normalization to the
+reader, as it is very similar.
+ 1: procedure NormalizeRowsSoft(x, Γ, τ )
+ 2:     for i ∈ [n] do
+ 3:        j ← random([n])                                            . pick a random column
+ 4:        Ri ← 0n
+ 5:        Ri⊥ ← 0n
+ 6:        for k ∈ [n] do                                                 . compute row sums
+ 7:             if (k, j) ∈ E(Γ) then
+ 8:                 Ri ← Ri + xik x∗ik
+ 9:             else
+10:                 Ri⊥ ← Ri⊥ + xik x∗ik
+11:        Cj ← 0n
+12:        Cj⊥ ← 0n
+13:        for k ∈ [n] do                                             . compute column sums
+14:             if (i, k) ∈ E(Γ) then
+                     SINKHORN ALGORITHM FOR QUANTUM PERMUTATION GROUPS                            11
+
+15:                Cj ← Cj + xkj x∗kj
+16:             else
+17:                Cj⊥ ← Cj⊥ + xkj x∗kj
+18:        (R̂i , R̂i⊥ ) ← NormalizeSum(Ri , Ri⊥ )                                 . R̂i + R̂i⊥ = In
+             (τ )
+19:        Cj ← InterpolateProjections(R̂i , Cj , τ )
+                                                   (τ )
+20:        F ← OptimalTansformation(Ri , Cj )
+             ⊥(τ )
+21:        Cj        ← InterpolateProjections(R̂i⊥ , Cj⊥ , τ )
+                                                      ⊥(τ )
+22:        F ⊥ ← OptimalTansformation(Ri⊥ , Cj )
+23:        for k ∈ [n] do                                             . update elements
+24:           if (k, j) ∈ E(Γ) then
+25:               xik ← F xik
+26:           else
+27:               xik ← F ⊥ xik
+28:    return x
+   The procedure above makes use of three subroutines, NormalizeSum, InterpolatePro-
+jections, and OptimalTransformation, that we describe next. The first subroutine per-
+forms a standard normalization:
+
+         NormalizeSum(X, Y ) = (S −1/2 XS −1/2 , S −1/2 Y S −1/2 ),     with S := X + Y,
+
+where the inverse square roots are taken in the Moore-Penrose sense (although the matrix S will
+be generically invertible in our scenario). Note that the calls to the InterpolateProjections
+routine on lines 19 and 21 is made with projections R̂i , Cj (resp. R̂i⊥ , Cj⊥ ) of equal rank. This
+follows from the fact that any vertex transitive graph is regular and from the running assumption
+that the vectors xij appearing in each row or column are in general position.
+   The second subroutine, InterpolateProjections, takes as an input two projections P ,
+Q of equal rank r, and an interpolation parameter τ ∈ [0, 1]. It outputs the closest rank-r
+projection to A := τ P + (1 − τ )Q. The way this approximation works is via the eigenvalue de-
+composition of A: the closest rank-r projection to A is obtained by setting the top r eigenvalues
+of A to 1, and all the others to 0.
+   The third subroutine, OptimalTransformation, computes the optimal matrix F from
+Lemma 3.4, with the choice of the unitary W described there. In practice, it uses the singular
+value decomposition several times, the implementation being straightforward.
+
+
+
+                        4. Experiments and discussion of the results
+   We gather in this section the numerical experiments we realized using Algorithms 1 and 2.
+We comment on the theoretical implications of these experiments, and how the results can guide
+future analytical research. All the experimental data and runtimes in this paper was produced
+in Octave 4.0.3. (Debian GNU/Linux 9 64-bit), running on an Intel Core i5-7600 CPU @
+3.50GHz with 16 GB of memory. The code, available in the supplementary material of the
+arXiv submission, is compatible with MATLAB.
+
+
+4.1. Generation of quantum permutation matrices: Algorithm 1. We analyze in this
+section the performance of Algorithm 1 for generating quantum permutation matrices (recall:
+no adjacency matrix A and no graphs are involved here). Let us start by pointing out that
+since the initialization of the matrix of unit-rank projections is random (we use i.i.d. random
+Gaussian vectors), the running time (i.e. the number of iterations), as well as the probability of
+success (whether the algorithm reaches the desired precision after a given number of iterations)
+are random variables. We plot in Figure 1 the data for n = 4 and n = 10.
+12                         ION NECHITA, SIMON SCHMIDT, AND MORITZ WEBER
+
+
+                                         n    ε        Nmax P(failure)
+                                         4   10−6           500          4.9%
+                                         5 10−6         2000             0.2%
+                                     6       10−6
+                                                5000      11.3%
+            Table 2. Probability of failure of Algorithm 1 to produce an ε-approximation
+            of a magic unitary in Nmax iterations, as a function of n, ε, and Nmax .
+
+
+
+
+       Prob.                                                        Prob.
+     0.30
+                                                                  0.15
+     0.25
+
+     0.20
+                                                                  0.10
+     0.15
+
+     0.10                                                         0.05
+
+     0.05
+
+     0.00                                           Iter.         0.00                                        Iter.
+               100   200    300    400       500                         2000   4000   6000   8000   10 000
+
+
+            Figure 1. Histograms for the number of iterations Algorithm 1 needs to pro-
+            duce a quantum permutation matrix. On the left, n = 4, the precision is
+            set to 10−6 , and the maximal number of iterations is Nmax = 500; on the
+            right, n = 10, the precision is 10−2 , and Nmax = 106 . The bars at the right
+            edge of the histograms correspond to failed executions: the desired precision
+            had not been reached after Nmax iterations. The probability of failure reads
+            Pn=4 (failure) = 4.9% and Pn=10 (failure) = 0% respectively. Experiments have
+            been ran 103 times for both values of n.
+
+
+
+  Algorithm 1 was used to produce the rows corresponding to the complete graphs K4 , K5 ,
+K6 in Table 1 (note, for complete graphs, the relation uA = Au is no additional condition).
+We present in Table 2 the probability that the algorithm fails to find an ε-good approximation
+before Nmax iterations, for n = 4, 5, 6, showing the influence of the maximal number of steps
+the algorithm is allowed to take to reach the desired accuracy on the success probability.
+
+
+
+
+4.2. Generation of quantum symmetries of graphs: Algorithm 2. In this section we
+discuss certain aspects as well as the produced data of Algorithm 2. Most of our experiments
+are summarized in Table 1.
+   We first address the parameter τ . In a sense, this parameter tells our algorithm how fast we
+want to insert the relation uA = Au at the cost of destroying the normalized rows and columns.
+There is no natural candidate for an optimal τ . To get an idea, we run the algorithm several
+times for different values of τ and compare how fast it terminates (see Figure 3). Here we have
+the values τ = n · 0.1 for n ∈ {0, . . . , 10} on the x-axis and the number of steps the algorithm
+takes to terminate on the y-axis. We choose to discuss the choice of the hyper-parameter τ
+on two graphs, the Petersen and the Cube Q3 graph. These graphs, depicted in Figure 2 are
+well-known in graph theory, and they are interesting from our perspective because they are
+uniformly vertex transitive and they lack (Petersen) resp. have (Cube) quantum symmetry.
+                       SINKHORN ALGORITHM FOR QUANTUM PERMUTATION GROUPS                               13
+
+
+
+
+                        Figure 2. The Petersen (left) and the Cube Q3 graphs.
+
+
+
+
+    Iter.                                             Failure rate
+   500                                                  1.0
+
+   400                                                  0.8
+
+   300                                                  0.6
+
+   200                                                  0.4
+
+
+   100                                                  0.2
+
+
+                                                  τ                                                τ
+        0.0      0.2     0.4    0.6   0.8   1.0               0.0    0.2   0.4   0.6   0.8   1.0
+    Iter.                                             Failure rate
+   500                                                  1.0
+
+   400                                                  0.8
+
+   300                                                  0.6
+
+   200                                                  0.4
+
+
+   100                                                  0.2
+
+
+                                                  τ                                                τ
+         0.0     0.2     0.4    0.6   0.8   1.0               0.0    0.2   0.4   0.6   0.8   1.0
+
+
+            Figure 3. Number of iterations the algorithm needs to find an approximative
+            quantum symmetry for the Petersen graph (first row) and the Cube Q3 graph
+            (second row).
+
+
+
+
+   Looking at the produced data, we choose τ = 0.5 for both the Petersen graph the Cube graph.
+We use this procedure also for other graphs to get some estimates for τ , finding in general that
+a value of τ = 0.5 works well in practice.
+   Now, we run our algorithm for the chosen τ many times. We plot the probability that the
+algorithm stops (y-axis) at a certain number of steps (x-axis), for the Cube graph and the
+Petersen graph. We do this first for the Cube graph, see Figure 4.
+                                n = Dimensions[x][[1]]
+                                nSteps = x[[ ;; , 1]];
+                                Histogram[nSteps, Automatic, "Probability"]
+                                Max[nSteps]
+    14                          1000
+                                  ION NECHITA, SIMON SCHMIDT, AND MORITZ WEBER
+
+
+                                                              2   processOutputData.nb
+                                0.25
+
+
+                                0.20                                 x = Import["petersen-0.700-0.001-2000.txt", "CSV"];
+                                                                     n = Dimensions[x][[1]]
+                                                                     nSteps = x[[ ;; , 1]];
+                                0.15
+                                                                     Histogram[nSteps, Automatic, "Probability"]
+                                                                     Histogram[nSteps, {1, 200, 5}, "Probability"]
+                                0.10                                 Max[nSteps]
+                                                                     100
+                                0.05
+                                                                     0.5
+2   processOutputData.nb
+
+                                          50     100     150          200
+                                                                     0.4          250          300
+
+                                2130
+      x = Import["petersen-0.700-0.001-2000.txt",
+                  Figure 4. Steps after the"CSV"];             0.3
+                                                    algorithm terminates for the Cube Q3 graph.
+      n = Dimensions[x][[1]]
+      nSteps = x[[ ;; , 1]];                                   0.2
+
+       The probability
+      Histogram[nSteps,     that the
+                         Automatic,    algorithm stops goes down quite smoothly. For the Petersen graph,
+                                    "Probability"]
+      Histogram[nSteps, {1, 200, 5}, "Probability"]
+    however,    the picture looks quite differently.
+      Max[nSteps]
+                                                               0.1
+
+
+
+         100                                                                0       500        1000         1500     2000   2500
+
+                                                                     0.25
+
+         0.5
+
+                                                                     0.20
+         0.4
+
+                                                                     0.15
+         0.3
+
+
+                                                                     0.10
+         0.2
+
+
+                                                                     0.05
+         0.1
+
+
+
+                0      500    1000     1500    2000    2500                 0             50          100          150       200
+
+         0.25                                                        2000
+                    Figure 5. Steps after the algorithm terminates for the Petersen graph, on a
+         0.20       large scale on the left, zoomed in on the right.
+         0.15
+        Note that we stopped the algorithm after 2000 steps. Thus, Figure 5 tells us that the
+    algorithm
+       0.10
+                  either terminates quickly, after around 50 steps, or it does not converge before the
+    2000 allowed steps. One could try to explain the difference in the Figures 4 and 5 by saying that
+    the0.05algorithm is more likely to terminate with “bad” starting data for the Cube graph, because
+    in contrast to the Petersen graph, the Cube graph has quantum symmetry, see [BBC07, Sch18a].
+    We 0   do not know50 if the 100
+                                 algorithm150always 200
+                                                    behaves similar to those two cases for graphs with or
+    without quantum symmetry.
+       2000
+        Another important question is the following: How good is Algorithm 2 in detecting quantum
+    symmetry correctly, i.e. are the matrices we obtain from the algorithm non-commutative exactly
+    for graphs with quantum symmetry and commutative for graphs without quantum symmetry?
+    Looking at Table 1, we see that this is always the case for the graphs with at most 16 vertices
+    whenever we may confirm our findings by theoretical means, i.e. whenever the existence or
+    absence of quantum symmetry has been proven by other means. Thus, first running the algo-
+    rithm several times for the same graph Γ, we can guess whether or not this graph has quantum
+    symmetry in order to obtain a hint whether we should aim at proving or rather disproving the
+    existence of quantum symmetry in this case.
+        For the Hamming graph H(2, 4) on 16 vertices, the algorithm returns twice a commutative
+    matrix despite the fact that this graph has quantum symmetry. For all other graphs with
+    quantum symmetry, this never happens. This raises the question how Aut(H(2, 4)) sits inside
+    QAut(H(2, 4)), in some sense – possibly, Aut(H(2, 4)) is “relatively large”.
+        Finally, let us outline a possible way of circumventing the restrictions that our graphs should
+    be uniformly vertex transitive. Instead of working with blocks of rank one, we could consider
+                    SINKHORN ALGORITHM FOR QUANTUM PERMUTATION GROUPS                                      15
+
+a more general case, where the blocks of the magic unitary encoding the graph symmetry
+could have general ranks. These ranks should be pre-assigned and they should satisfy some
+compatibility condition imposed by the adjacency matrix A of theP  graph Γ. Note that for any
+vertex transitive graph, there is a k ∈ N and I ⊆ Aut(Γ) such that σ∈I σ = kIn . For instance,
+take I = Aut(Γ) and | Aut(Γ)| = k|V |. Thus, uniform vertex transitive graphs are just those
+where k = 1 is the minimal such number. We leave such generalizations of Algorithm 2 for
+future work.
+
+Acknowledgments. The authors would like to thank Piotr Soltan and Laura Mančinska for very
+useful discussions around some of the topics of this work. They would also like to acknowledge
+the hospitality of the Mathematisches Forschungsinstitut Oberwolfach during the workshop 1819
+“Interactions between Operator Space Theory and Quantum Probability with Applications to
+Quantum Information”, where some of this research has been done. I.N.’s research has been
+supported by the ANR, projects StoQ (grant number ANR-14-CE25-0003-01) and NEXT (grant
+number ANR-10-LABX-0037-NEXT). S.Sch and M.W. have been supported by the DFG project
+Quantenautomorphismen von Graphen. M.W. has been supported by SFB-TRR 195.
+
+                                               References
+[AMR+ 19] Albert Atserias, Laura Mančinska, David E Roberson, Robert Šámal, Simone Severini, and Antonios
+          Varvitsiotis. Quantum and non-signalling graph isomorphisms. Journal of Combinatorial Theory,
+          Series B, 136:289–328, 2019. 4
+[Ban05]   Teodor Banica. Quantum automorphism groups of homogeneous graphs. Journal of Functional Anal-
+          ysis, 224(2):243–280, 2005. 2, 3, 4
+[BB07]    Teodor Banica and Julien Bichon. Quantum automorphism groups of vertex-transitive graphs of order
+          ≤ 11. J. Algebraic Combin., 26(1):83–105, 2007. 3
+[BBC07] Teodor Banica, Julien Bichon, and Benoit Collins. The hyperoctahedral quantum group. J. Ramanu-
+          jan Math. Soc., 22:345–384, 2007. 3, 14
+[BCF18]   Michael Brannan, Alexandru Chirvasitu, and Amaury Freslon. Topological generation and matrix
+          models for quantum reflection groups. arXiv preprint arXiv:1808.08611, 2018. 2
+[Bha97]   Rajendra Bhatia. Matrix analysis, volume 169. Springer Science & Business Media, 1997. 9
+[Bic03]   Julien Bichon. Quantum automorphism groups of finite graphs. Proceedings of the American Mathe-
+          matical Society, 131(3):665–673, 2003. 4
+[BN17a]   Teodor Banica and Ion Nechita. Flat matrix models for quantum permutation groups. Advances in
+          Applied Mathematics, 83:24–46, 2017. 2, 5, 6
+[BN17b]   Tristan Benoist and Ion Nechita. On bipartite unitary matrices generating subalgebra-preserving
+          quantum operations. Linear Algebra and its Applications, 521:70–103, 2017. 2, 4, 6
+[LMR17] Martino Lupini, Laura Mančinska, and David E Roberson. Nonlocal games and quantum permutation
+          groups. arXiv preprint arXiv:1712.01820, 2017. 2, 4
+[MR19]    Laura Mančinska and David E Roberson. Quantum isomorphism is equivalent to equality of homo-
+          morphism counts from planar graphs. arXiv:1910.06958, 2019. 2, 4
+[NT13]    Sergey Neshveyev and Lars Tuset. Compact quantum groups and their representation categories, vol-
+          ume 20. Citeseer, 2013. 4
+[Sch18a]  Simon Schmidt. The Petersen graph has no quantum symmetry. Bulletin of the London Mathematical
+          Society, 50(3):395–400, 2018. 3, 4, 14
+[Sch18b]  Simon Schmidt. Quantum automorphisms of folded cube graphs. To appear in Annales de l’Institut
+          Fourier arXiv:1810.11284, 2018. 3
+[Sch19]   Simon Schmidt. On the quantum symmetry of distance-transitive graphs. arXiv preprint
+          arXiv:1906.06537, 2019. 3, 4
+[Sin64]   Richard Sinkhorn. A relationship between arbitrary positive matrices and doubly stochastic matrices.
+          The annals of mathematical statistics, 35(2):876–879, 1964. 2, 5
+[SK67]    Richard Sinkhorn and Paul Knopp. Concerning nonnegative matrices and doubly stochastic matrices.
+          Pacific Journal of Mathematics, 21(2):343–348, 1967. 2
+[SVW19] Simon Schmidt, Chase Vogeli, and Moritz Weber. Uniformly vertex-transitive graphs. In preparation,
+          2019. 2, 7
+[SW18]    Simon Schmidt and Moritz Weber. Quantum symmetries of graph C*-algebras. Canadian Mathemat-
+          ical Bulletin, 61(4):848–864, 2018. 4
+[Tim08]   Thomas Timmermann. An invitation to quantum groups and duality: From Hopf algebras to multi-
+          plicative unitaries and beyond, volume 5. European Mathematical Society, 2008. 4
+[Wan98]   Shuzhou Wang. Quantum symmetry groups of finite spaces. Communications in Mathematical
+          Physics, 195(1):195–211, 1998. 2, 3, 4
+16                        ION NECHITA, SIMON SCHMIDT, AND MORITZ WEBER
+
+[Web17]     Moritz Weber. Introduction to compact (matrix) quantum groups and Banica–Speicher (easy) quan-
+            tum groups. Indian Academy of Sciences. Proceedings. Mathematical Sciences, 127(5):881–933, 2017.
+            4
+[Wor87]     Stanislaw L Woronowicz. Compact matrix pseudogroups. Communications in Mathematical Physics,
+            111(4):613–665, 1987. 1, 3
+
+     I.N.: Laboratoire de Physique Théorique, Université de Toulouse, CNRS, UPS, France
+     E-mail address: nechita@irsamc.ups-tlse.fr
+
+  S.Sch. and M.W. : Saarland University, Fachbereich Mathematik, Postfach 151150, 66041 Saarbrücken,
+Germany
+  E-mail address: simon.schmidt@math.uni-sb.de
+  E-mail address: weber@math.uni-sb.de
+
