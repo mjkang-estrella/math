@@ -151,3 +151,13 @@ Verifier session35672 COMPLETED PASS116 declarations, standard3, actual dependen
 Actual extracted support replay shell session17386 confirmed running. Use write_stdin(session_id=17386) on continuation. The extraction tree is ignored and unstaged; do not confuse a partial tree with a PASS receipt.
 
 Current three Astra high/ultrafast slots: source-endpoint-r1, analysis-r3, an-djokovic-preliminary-review-r1. All exactIDs/links recorded; do not poll. New review must adjudicate source/math/new coefficient cancellation versus routine classical corollary, not infer eligibility from shortness/open label. Root next may finish shell session17386 support extracted replay and deterministic hash-repeat; sourceworker completion handled only on wake.
+
+## Latest user steering: restore GLM 5.3 Flash
+
+User explicitly revoked Astra and restored previous subagent settings: providerpi model spark/GLM-5.3-Flash-EXL3, thinkinghigh, standard/default speed, no ultrafast. Capabilities rechecked after provider change: available/authenticated. All Astra tasks delivered completion wakes and completed; no running Astra task remains to cancel. Preserve their artifacts. Rootplus3runtime maximum. New independent reviews are new delegate tasks.
+
+Literal full four-projection endpoint delivered: source-endpoint-r1 completesrankfree/sourcewrapper, actualCFC and originalrangeconditions,16modules157 actualenv declarations including123 manually named,2private32generated. Root copied to root-fourprojection-complete-r1 and added NormalizationProperties.lean (compiledclean) so manuscript orthogonalprojection assertion is proved. Root strict fresh17modules126publicnamesPASS actualpins+clean9deps. Fullpaperupdated,3pagesvisuallyread, nooverfull; final-review-hashes35corefilesprepared. Root full paper/proof packet replay shell92044 was running; inspect samehandle. Originaljournalbody/novelty HOLD still unresolved.
+
+An-Dokovic independentreview mathematicalPASS but recommendsroutineclassicalcorollary exclusion by explicit all-parameterbridge; root read report, exactdecisionaddendum stillneeded. Analysis-r3 noqualifyingoutcome; rootreadcompletehandoff. Currentrootaccepted0/30.
+
+Full root paper/proof extracted replay92044 COMPLETED PASS126public declarations, standard3; deterministic serialization repeated, paperincluded, source_endpoint_complete=true, accepted=false. Archive899a798f... before adding component provenance and final-reviewmanifest to the explicit archivefilelist. Core proof+paperunchanged; pipeline nowincludesallfrozeninputs, refreshmanifest35files; a new extracted replay is required for this exactpacketrevision.

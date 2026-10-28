@@ -9,9 +9,10 @@ to shared ledgers, shared indexes, other lanes, old campaigns, or existing paper
 No git operations or public posting by workers. No child agents. Root alone
 integrates, accepts, stages and commits.
 
-Latest explicit user instruction supersedes the earlier Pi-only policy: use
-Codex gpt-6-astra delegates with reasoningEffort=high and serviceTier=ultrafast
-until the user revokes it. Keep all three available delegate slots occupied
+Latest explicit user instruction revokes Astra and restores Pi GLM 5.3 Flash:
+use provider pi, model spark/GLM-5.3-Flash-EXL3, thinking=high,
+at standard/default speed (no ultrafast). Preserve completed Astra artifacts.
+Keep all three available delegate slots occupied
 when useful work is available (root plus three = runtime maximum four). Never
 substitute another model or tier without user authorization.
 Do not poll asynchronous workers; follow the orchestrator's completion wake.
