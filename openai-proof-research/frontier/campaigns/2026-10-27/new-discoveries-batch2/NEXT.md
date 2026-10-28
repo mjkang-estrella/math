@@ -1,3 +1,31 @@
+# Current checkpoint — 2026-10-28
+
+Outcome32 ACCEPTED: Gamma level strict convexity, full published Remark16(a).
+Final paper and deterministic54payload archive in candidates/gamma-level-convexity
+and candidate-packets/2025-remark16a-gamma-level-convexity-proof.zip. Fresh final
+extracted9module52declaration replayPASS; all actual types and axioms read;
+three final PDF pages read. Final independent reviewPASS adopted with explicit
+routine-mechanism boundary judgment and bounded novelty limits. Ledger2/30,
+total32/60, next33. Original first30 and accepted31 untouched. No external action.
+
+Root new Svinin334350 Conj3.1 ALL-parameter ordinary proof is saved in
+lanes/root-svinin-shape-r11/PROOF.md: pointed subsets + finite geometric series
++ Laurent inversion/Pascal cancellation; checker20literalcounts/180moments/
+60symbolic identitiesPASS. Credit0, no Lean or paper. CRUCIAL prior-art gate:
+author2019JMathSci239(2)159–171 doi10.1007/s10958-019-04299-6 firstpageonlyread,
+full body may subsume; seek legitimate author/Russian original. Exact source
+journal PDF visual comparison and independent substantive review still needed.
+Svinin5.1/5.2/6.1 remain unproved; alpha positivity finite checks are not results.
+
+Two existing Pi tasks (Cauchystrict and short-threadtree) remain asynchronous;
+no polling. Third slot freed by Gamma review, useful independent Svinin review
+may be launched only with explicit ownlane/nochildren/standard GLM brief.
+Goal active. No root processes remain from final Gamma replay.
+
+---
+The following are historical chronological notes; current checkpoint above
+supersedes earlier tallies and delegate settings.
+
 LATEST DELEGATION: Gamma full52/9 source theorem and3pagepaper/packet frozen
 at c0bbeeddfcac228d7a840107ff0d6d787cc2f253 assigned NEW independentPi high
 standard finalreview gamma-level-final-review-r1-20261028. Actualreceipt in
