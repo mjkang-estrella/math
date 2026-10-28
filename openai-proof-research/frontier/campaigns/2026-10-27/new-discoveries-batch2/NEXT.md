@@ -1,3 +1,17 @@
+# Current checkpoint — q-Motzkin partial result, no credit
+
+q-Motzkin339078 handback contains a shift2/k1 ordinary formula but full
+all-k question remains open. Root supplied correct triangular proof of the
+block reduction and corrected mixed-sign minor from k2 to k3. Actual pinned
+Lean check FAILS on supplied helper (termination). No formal/novelty PASS.
+Fixed-k progress uncredited; no paper/review investment. Adoption and exact
+28-check diagnostics: lanes/root-qmotzkin-adoption-r1/. Count32/60 unchanged.
+
+Han–Pedon higher-shift research and beta-prime classical review remain
+asynchronous; no polling. Freed slot can investigate a distinct full target.
+
+---
+
 # Current checkpoint — Kilbas exclusion independently confirmed
 
 Kilbas–Saigo348998: ordinary proof PASS, but EXCLUDED as a classical
