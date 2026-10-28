@@ -38,7 +38,41 @@ n distinct zeros. References [6] and [7] are respectively B. Stockenberg,
 J. Approx. Theory 22 (1978), 356–359. Their original bodies were not separately
 read. Zwick's body states the exact sufficient theorem used here.
 
-## Complete bridge to the stable factors
+## Shortest bridge: apply the theorem directly to the rational Cauchy kernel
+
+The stable-factor route below is unnecessary for the exclusion. Simon's
+1412.0132 Corollary 1 already proves the non-strict statement K_alpha in TP_n
+for 0 < alpha < 1/n. Fix 1 <= m <= n and distinct positive t_1<...<t_m. Put
+
+    q_i(x)=x^2+2*cos(pi*alpha)*t_i*x+t_i^2,
+    r_i(x)=1/q_i(x),  x>0.
+
+Each r_i is positive and real analytic on (0,infinity). The r_i are independent:
+if sum b_i/q_i(x)=0 for every positive x, multiplication by product q_i shows
+the polynomial sum_i b_i product_(j!=i) q_j is identically zero. Evaluate it at
+rho_i=-t_i*exp(i*pi*alpha). Its modulus is t_i and it is a root of q_i. Each
+root of q_j has modulus t_j, so q_j(rho_i) != 0 for j!=i. It follows that b_i=0.
+The same argument applies if the relation holds only on any nontrivial interval,
+since a polynomial vanishing there is identically zero.
+
+For any compact [a,b] contained in (0,infinity), the m-dimensional span of these
+functions is nondegenerate (alternatively, use their real analyticity), contains
+the positive function r_1, and is a WT-space by the nonnegative evaluation
+determinants in Simon's TP_n conclusion. Zwick Corollary 3.2 makes it a T-space
+on (a,b). Given any positive x_1<...<x_m, choose 0<a<x_1<x_m<b (with the evident
+choice if m=1). A zero determinant [r_i(x_j)] would produce a nonzero member of
+this space with m distinct zeros in (a,b), contrary to the T-space conclusion.
+Its determinant is therefore nonzero; the known non-strict TP_n inequality
+makes it positive. This is the entire source STP_n conjecture.
+
+Thus the full candidate is an immediate application of the actual classical
+WT-to-T theorem to the source's own rational functions, using only the published
+non-strict corollary and elementary independence. No stable-density series,
+stable-factor strictness, Gram formula, or Andreief identity is needed for this
+shortest reduction. The longer bridge below independently checks compatibility
+with the proposed proof and preserves its repaired mathematics.
+
+## Complete alternative bridge to the stable factors
 
 Fix 0 < alpha < 1/n, 1 <= m <= n and x_1 < ... < x_m. Write
 
