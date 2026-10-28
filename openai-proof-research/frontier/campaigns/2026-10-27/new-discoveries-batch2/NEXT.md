@@ -1,3 +1,19 @@
+# Current checkpoint — beta-prime exclusion confirmed
+
+Ferreira–Simon Conjecture1 ordinary all-parameter proof is valid, but the
+actual Durand Bessel-product reduction makes it a classical corollary.
+Independent review adopted;19/19frozen bytes unchanged; unread printed-page
+caveat retained; actual2026erratum does not amend section5. Credit0, no Lean
+or paper investment. Review prose corrected: q->-1/2 FROM ABOVE; tally32/60.
+Adoption: lanes/root-beta-prime-review-adoption-r1.md.
+
+Han–Pedon higher-shift and BBK full-refinement tasks remain asynchronous;
+no polling. Freeslot can attack a distinct full analysis question. Karp331384
+full real-shift b>1 positivity still lacks the b>2 proof; existing partial
+ranges and b3 formula remain uncredited. Accepted2/30additional,total32/60.
+
+---
+
 # Current checkpoint — q-Motzkin partial result, no credit
 
 q-Motzkin339078 handback contains a shift2/k1 ordinary formula but full
