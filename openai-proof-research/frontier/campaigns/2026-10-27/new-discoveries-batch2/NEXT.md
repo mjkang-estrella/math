@@ -1,3 +1,11 @@
+LATEST PACKET 2026-10-28: root-arcsinh-complete-r1 combines2pagepaper+
+19decl/5moduleliteralLean. Deterministic46fileZIP sha6d7ace596617c9deb57c5d12a3f34aabfe0578cbc3ac85b7ba9faba712597a56.
+Independent in-memory rebuild byte-identical; fresh extraction verifies45payload
+hashes and source replayPASS/std3. Both actualtype/axiomChecks and audit
+byte-identical to parentreports already read. No acceptance; active independent
+review and final manuscript/combinedpacketreview remain. Original freeze
+unchanged; root final-review-hashes.json binds new combined package. Count0/30.
+
 LATEST DELEGATION: freed Gamma-Euler slot refilled with Pi high/standard
 cauchy-strict-discovery-r1-20261028. Exact receipt in
 cauchy-strict-discovery-launch.json. Other two tasks: Gamma series levels,
