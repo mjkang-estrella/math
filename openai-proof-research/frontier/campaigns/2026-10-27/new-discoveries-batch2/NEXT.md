@@ -1,3 +1,14 @@
+# Current checkpoint — Riccati bridge validated, full Jacobi bound open
+
+Sol r3 supplies a valid ordinary all-order top-coefficient formula, parity and
+degree bound from the literal formal source equation. Root replayed exact
+checks and re-derived the chain; see lanes/root-jacobi-riccati-adoption-r3/.
+The all-coefficient 2-adic upper bound remains unproved; no credit/Lean/paper.
+Count2/30additional,32/60. A focused Sol continuation may target the remaining
+midpoint valuation using z=t+t^-1, y=t-t^-1; Karp/BBK remain asynchronous.
+
+---
+
 # Current checkpoint — Jacobi incomplete; Sol authorized alongside GLM
 
 Jacobi shifted denominator law remains open, credit0. Root verified n<=9 and
