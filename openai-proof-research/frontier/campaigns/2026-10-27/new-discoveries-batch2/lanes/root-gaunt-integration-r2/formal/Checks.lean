@@ -1,0 +1,114 @@
+import SourceEndpoint
+
+#check GauntIntegral.orderKernel
+#print axioms GauntIntegral.orderKernel
+#check GauntIntegral.orderTerm
+#print axioms GauntIntegral.orderTerm
+#check GauntIntegral.orderKernel_hasSum
+#print axioms GauntIntegral.orderKernel_hasSum
+#check GauntIntegral.orderTerm_convex
+#print axioms GauntIntegral.orderTerm_convex
+#check GauntIntegral.orderKernel_strictConvex
+#print axioms GauntIntegral.orderKernel_strictConvex
+#check GauntIntegral.orderKernel_extrapolation
+#print axioms GauntIntegral.orderKernel_extrapolation
+#check GauntIntegral.orderKernel_hasDerivAt_one
+#print axioms GauntIntegral.orderKernel_hasDerivAt_one
+#check GauntIntegral.orderKernel_tangent
+#print axioms GauntIntegral.orderKernel_tangent
+#check GauntIntegral.besselIntegrand
+#print axioms GauntIntegral.besselIntegrand
+#check GauntIntegral.besselK
+#print axioms GauntIntegral.besselK
+#check GauntIntegral.cosh_le_exp_abs
+#print axioms GauntIntegral.cosh_le_exp_abs
+#check GauntIntegral.half_sq_le_cosh
+#print axioms GauntIntegral.half_sq_le_cosh
+#check GauntIntegral.linear_le_quadratic
+#print axioms GauntIntegral.linear_le_quadratic
+#check GauntIntegral.besselIntegrand_gaussian_bound
+#print axioms GauntIntegral.besselIntegrand_gaussian_bound
+#check GauntIntegral.besselIntegrand_integrable
+#print axioms GauntIntegral.besselIntegrand_integrable
+#check GauntIntegral.besselK_squaredOrder_strictConvex
+#print axioms GauntIntegral.besselK_squaredOrder_strictConvex
+#check GauntIntegral.besselK_neg
+#print axioms GauntIntegral.besselK_neg
+#check GauntIntegral.besselK_abs
+#print axioms GauntIntegral.besselK_abs
+#check GauntIntegral.besselK_sqrt_sq
+#print axioms GauntIntegral.besselK_sqrt_sq
+#check GauntIntegral.besselK_three_order
+#print axioms GauntIntegral.besselK_three_order
+#check GauntIntegral.abs_sinh_le_cosh
+#print axioms GauntIntegral.abs_sinh_le_cosh
+#check GauntIntegral.sinh_boundary_norm_bound
+#print axioms GauntIntegral.sinh_boundary_norm_bound
+#check GauntIntegral.sinh_boundary_tendsto
+#print axioms GauntIntegral.sinh_boundary_tendsto
+#check GauntIntegral.cosh_difference_identity
+#print axioms GauntIntegral.cosh_difference_identity
+#check GauntIntegral.sinh_boundary_hasDerivAt
+#print axioms GauntIntegral.sinh_boundary_hasDerivAt
+#check GauntIntegral.besselK_recurrence
+#print axioms GauntIntegral.besselK_recurrence
+#check GauntIntegral.zeroTangentIntegrand
+#print axioms GauntIntegral.zeroTangentIntegrand
+#check GauntIntegral.zeroTangent_norm_bound
+#print axioms GauntIntegral.zeroTangent_norm_bound
+#check GauntIntegral.zeroTangent_integrable
+#print axioms GauntIntegral.zeroTangent_integrable
+#check GauntIntegral.linear_boundary_hasDerivAt
+#print axioms GauntIntegral.linear_boundary_hasDerivAt
+#check GauntIntegral.linear_boundary_tendsto
+#print axioms GauntIntegral.linear_boundary_tendsto
+#check GauntIntegral.zeroTangent_integral
+#print axioms GauntIntegral.zeroTangent_integral
+#check GauntIntegral.integral_Ioi_strict_mono
+#print axioms GauntIntegral.integral_Ioi_strict_mono
+#check GauntIntegral.besselK_zero_order_comparison
+#print axioms GauntIntegral.besselK_zero_order_comparison
+#check GauntIntegral.cosh_product_identity
+#print axioms GauntIntegral.cosh_product_identity
+#check GauntIntegral.besselIntegrand_cosh_identity
+#print axioms GauntIntegral.besselIntegrand_cosh_identity
+#check GauntIntegral.cosh_besselIntegrand_integrable
+#print axioms GauntIntegral.cosh_besselIntegrand_integrable
+#check GauntIntegral.besselIntegrand_argument_hasDerivAt
+#print axioms GauntIntegral.besselIntegrand_argument_hasDerivAt
+#check GauntIntegral.besselK_hasDerivAt
+#print axioms GauntIntegral.besselK_hasDerivAt
+#check GauntIntegral.besselK_hasDerivAt_lower
+#print axioms GauntIntegral.besselK_hasDerivAt_lower
+#check GauntIntegral.weightedK
+#print axioms GauntIntegral.weightedK
+#check GauntIntegral.besselK_nonneg
+#print axioms GauntIntegral.besselK_nonneg
+#check GauntIntegral.besselK_exponential_bound
+#print axioms GauntIntegral.besselK_exponential_bound
+#check GauntIntegral.weightedK_exponential_bound
+#print axioms GauntIntegral.weightedK_exponential_bound
+#check GauntIntegral.weightedK_continuousOn
+#print axioms GauntIntegral.weightedK_continuousOn
+#check GauntIntegral.weightedK_integrableOn
+#print axioms GauntIntegral.weightedK_integrableOn
+#check GauntIntegral.weightedK_tendsto_zero
+#print axioms GauntIntegral.weightedK_tendsto_zero
+#check GauntIntegral.besselK_differential_comparison
+#print axioms GauntIntegral.besselK_differential_comparison
+#check GauntIntegral.weightedK_hasDerivAt
+#print axioms GauntIntegral.weightedK_hasDerivAt
+#check GauntIntegral.weightedK_derivative_integrableOn
+#print axioms GauntIntegral.weightedK_derivative_integrableOn
+#check GauntIntegral.weightedK_derivative_integral
+#print axioms GauntIntegral.weightedK_derivative_integral
+#check GauntIntegral.tail_strict_lower_bound
+#print axioms GauntIntegral.tail_strict_lower_bound
+#check GauntIntegral.sourceOrder
+#print axioms GauntIntegral.sourceOrder
+#check GauntIntegral.SourceClaim339406Lower
+#print axioms GauntIntegral.SourceClaim339406Lower
+#check GauntIntegral.source_parameter_geometry
+#print axioms GauntIntegral.source_parameter_geometry
+#check GauntIntegral.source_conjecture_339406_lower
+#print axioms GauntIntegral.source_conjecture_339406_lower

@@ -1,3 +1,19 @@
+# New Gaunt formal checkpoint — 28 October 2026
+
+root-gaunt-integration-r2 now proves the literal LOWER BOUND for all source
+parameters, inclusive threshold and zero-order boundary. Fresh source-copy
+replay PASS:8 modules/56 declarations/std3, all8 logs empty, all actual56
+types/axioms read. Actual integral, IBP, dominated argument differentiation,
+exponential tail domination, strict FTC and parameter geometry are proved.
+No formal optimal-order converse, manuscript, independent integrated review,
+final packet, source/novelty clearance or credit is claimed. Original ordinary
+and20/2 review freezes unchanged; do not silently expand the running review.
+
+Three Pi GLM high/standard tasks remain asynchronous: Mittag final, Kilbas
+classical, Gaunt preliminary. Do not poll. Accepted2/30,total32/60;goalACTIVE.
+
+---
+
 # Current root checkpoint — 28 October 2026
 
 Accepted **2/30 additional, 32/60 total**. Goal ACTIVE; no external actions.
