@@ -1,7 +1,7 @@
 # Remaining source-level bridges, with a measure-light implementation option
 
 Use the reviewed full ordinary proof if it survives independent screening.
-The finite averaging operator, exact moments, positivity, bounded-limit interchange, and actual transform representation below are now proved in BetaAverages.lean and AveragingRepresentation.lean. The kernel and squared-average bridges remain a plan, not proved Lean mathematics. The finite-difference paragraph describes results proved in DifferenceCriterion.lean.
+The finite averaging operator, exact moments, positivity, bounded-limit interchange, and actual transform representation below are now proved in BetaAverages.lean and AveragingRepresentation.lean. The squared-average bridge is also implemented in SquaredAverage.lean. Only positivity of the literal two-scale halfCross kernel remains unproved; see ONE-DIMENSIONAL-KERNEL.md for an alternative to the polar proof. The finite-difference paragraph describes results proved in DifferenceCriterion.lean.
 
 For beta=2a in(0,1], define the positive normalized averaging operator
 

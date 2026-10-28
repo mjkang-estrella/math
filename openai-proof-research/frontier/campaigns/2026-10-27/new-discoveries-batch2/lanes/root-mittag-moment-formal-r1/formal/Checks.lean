@@ -1,4 +1,4 @@
-import AveragingRepresentation
+import SquaredAverage
 set_option autoImplicit false
 
 #check MittagModulus.momentApprox
@@ -197,7 +197,45 @@ set_option autoImplicit false
 #print axioms MittagModulus.finiteBetaAverage_halfTerm_at_scale
 #check MittagModulus.approxTransform_eq_finiteBetaAverage
 #print axioms MittagModulus.approxTransform_eq_finiteBetaAverage
+#check MittagModulus.mittagComplexSeries
+#print axioms MittagModulus.mittagComplexSeries
+#check MittagModulus.mittagComplexSeries_radius
+#print axioms MittagModulus.mittagComplexSeries_radius
+#check MittagModulus.mittagComplexSeries_sum
+#print axioms MittagModulus.mittagComplexSeries_sum
+#check MittagModulus.mittagLeffler_analyticAt
+#print axioms MittagModulus.mittagLeffler_analyticAt
+#check MittagModulus.mittagLeffler_continuous
+#print axioms MittagModulus.mittagLeffler_continuous
+#check MittagModulus.betaAverage_map
+#print axioms MittagModulus.betaAverage_map
+#check MittagModulus.finiteBetaAverage_map
+#print axioms MittagModulus.finiteBetaAverage_map
+#check MittagModulus.pairLeft
+#print axioms MittagModulus.pairLeft
+#check MittagModulus.pairRight
+#print axioms MittagModulus.pairRight
+#check MittagModulus.finiteBetaAverage_pair_left
+#print axioms MittagModulus.finiteBetaAverage_pair_left
+#check MittagModulus.finiteBetaAverage_pair_right
+#print axioms MittagModulus.finiteBetaAverage_pair_right
+#check MittagModulus.finiteBetaAverage_normSq
+#print axioms MittagModulus.finiteBetaAverage_normSq
+#check MittagModulus.halfCross
+#print axioms MittagModulus.halfCross
+#check MittagModulus.halfTransform_continuous
+#print axioms MittagModulus.halfTransform_continuous
+#check MittagModulus.squaredApprox_eq_doubleAverage
+#print axioms MittagModulus.squaredApprox_eq_doubleAverage
+#check MittagModulus.halfCross_continuous_left
+#print axioms MittagModulus.halfCross_continuous_left
+#check MittagModulus.halfCross_continuous_right
+#print axioms MittagModulus.halfCross_continuous_right
+#check MittagModulus.averaged_halfCross_continuous_left
+#print axioms MittagModulus.averaged_halfCross_continuous_left
+#check MittagModulus.sourceClaim_of_halfCross_positive
+#print axioms MittagModulus.sourceClaim_of_halfCross_positive
 #print MittagModulus.SourceClaim370772
 #print MittagModulus.CompletelyMonotonePositive
 #print MittagModulus.sourceExpression
-#print MittagModulus.sourceClaim_of_positiveMixedApprox
+#print MittagModulus.sourceClaim_of_halfCross_positive

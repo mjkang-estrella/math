@@ -1,7 +1,7 @@
 # Mittag-Leffler analytic foundation — complete component, not source resolution
 
-2026-10-28. Fresh strict source replay PASS: 10 modules,98 declarations,
-standard three axioms only, all ten module logs empty. Root read every actual
+2026-10-28. Fresh strict source replay PASS: 12 modules,117 declarations,
+standard three axioms only, all twelve module logs empty. Root read every actual
 type/axiom report, including printed source definition and CM quantifiers.
 No proof of SourceClaim370772 exists here. No acceptance or discovery credit.
 
@@ -49,14 +49,22 @@ no identity with the earlier N-factor expression is assumed.
   E_(1/2)(z sqrt(v)) equals approxTransform, proved through dominated
   convergence. This is a closed identity, not an assumed representation.
 
-Remaining: positive angular Laplace identity and squared-average/cross-kernel
-identification proving positive mixed differences of the actual squared
-approximants. See CONNECTION-GAPS.md. The finite-difference-to-CM passage
-and actual transform averaging representation are now proved.
+- ComplexAnalytic: the literal complex Mittag-Leffler series is entire,
+  through its actual infinite-radius formal multilinear series, hence continuous.
+- SquaredAverage: continuous real-linear integral commutations identify the
+  actual squared approximant with a double real average of the literal
+  halfCross kernel. All kernel/averaged-kernel continuity requirements are
+  discharged. sourceClaim_of_halfCross_positive supplies the full source
+  conclusion under an EXPLICIT unproved two-scale kernel positivity premise.
+
+Remaining: prove nonnegative mixed differences of the actual halfCross kernel
+for both scales >=0. See CONNECTION-GAPS.md. An alternate positive one-dimensional
+Laplace formula is derived in ONE-DIMENSIONAL-KERNEL.md, with20diagnostic checks;
+it is not yet a Lean theorem. No unconditional source certificate is claimed.
 The source question still has independent source/novelty/substantive review
 running in a separate Pi lane; no PASS inferred from these components.
 
 Run python3 verify_component.py. It asserts the exact Lean binary/version
-and8packagepins, compiles a new source-only temporary copy, checks all98
+and8packagepins, compiles a new source-only temporary copy, checks all117
 names/types/axiom closures, and writes verification/audit.json and Checks.log.
 No source files from the independently reviewed frozen root-r12 were changed.
