@@ -1,3 +1,18 @@
+# Current checkpoint — Mittag final review adopted with holds
+
+Mittag independent final review completed: own fresh 17-module/155-declaration
+std3 replay, mathematics and three-page paper PASS. Root read the full report
+and reverified all 65 frozen candidate hashes. Published CNSNS body and the
+M-Wright difference/GSM prior-art question remain HOLD; credit 0. Adoption:
+lanes/root-mittag-final-review-adoption-r1.md. Accepted 2/30 additional, 32/60.
+
+Fresh primary screening found Han–Pedon 2610.36132v1 Theorem B proves the
+(n+2)-shift periodic Hankel case of old Conjecture E(1). It must not be pursued
+for rediscovery credit. Higher shifts ell>=n+3 remain open in the actual new
+body, now Conjecture C (quasi-polynomiality), alongside old unboundedness E(2).
+
+---
+
 # Current root checkpoint — beta-prime classical bridge; Gaunt final held
 
 Gaunt integrated FINAL review completed: own extracted14/80/std3 replay and
