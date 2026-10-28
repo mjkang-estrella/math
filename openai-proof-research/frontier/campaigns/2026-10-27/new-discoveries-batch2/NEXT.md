@@ -33,3 +33,19 @@ batch proof archives, published files, DOI and problem links remain unchanged.
   initiation status: running; Pi/GLM, thinking high, default speed.
 
 All three initiation results instruct: completion wakes this thread; end the turn, do not wait or poll. This is a research initiation checkpoint, not acceptance.
+
+## Root checkpoint: two public-prior exclusions
+
+Additional count remains0/30. Root reconstructed the RESOCA115 period9 obstruction
+and the golden-ratio constant-range characterization, then found exact prior
+resolutions for both; see lanes/root-ca115-r1 and lanes/root-floor-r1. Neither
+gets credit. CAPeriods all-k odd/even formulas remain conditional, so only the
+public proved subclaims are excluded there. All range conjectures in2507.14244
+are resolved by Dubickas plus the authors’2026 rational companion.
+
+New prior-art surface to check for future targets: https://ideosphere.ai/explore
+and original dossiers at https://lean.up.railway.app/ (Mazigle/lean-problem-spec).
+Do not assume an empty MathDB label/array captures these public works.
+
+Three Pi tasks remain on their original assignments; do not poll them. No new
+delegate was started in this root research turn. Await their completion wakes.
