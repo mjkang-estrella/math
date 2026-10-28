@@ -1,3 +1,25 @@
+# Current root checkpoint — Gaunt review received; Gamma-ID rediscovery excluded
+
+Gaunt preliminary review COMPLETED and read; ordinary proof/source-arxiv PASS,
+no concrete published subsumer found, recommends fullreview. Root adopts with
+AMS-body/novelty caveats and corrects review4.3 iff sign: needed coefficient
+<=classical iff v+d²<=d*m. Candidate math unaffected. Full80/14+3pagepaper+
+extracted packet@c20af1d79a remains frozen80/80 unchanged and UNACCEPTED.
+A NEW integrated final review should use that actual full scope. Slot freed.
+
+root-gamma-id-r18 found a full exact integer-parameter Gamma-moment/log-ID
+counterexample, but EARLY PRIMARY PRIOR ART EXCLUDES credit: actual published
+Dufresne2010 p2195 item2 already gives positive-real equal-cardinality example;
+Wang2410.19330sec2.2 explicitly cites it. PDF page visuallyread, exact own
+density/Laplace/log35th-derivative and prior-real-root checks pass. No Lean
+investment. Distinct343458convexity remains unresolved. No status-posting.
+
+Accepted2/30additional,total32/60; goalACTIVE. Two earlier Pi tasks remain
+asynchronous (Mittagfinal/Kilbasclassical); no polling. Fill freedslot with
+NEW Gaunt integrated review at PiGLMhigh standard/default only.
+
+---
+
 # Root research continuation — Karp331384 still unresolved
 
 root-beta-convolution-r17 records an exact all-shift/all-k positive formula
