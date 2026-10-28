@@ -1,3 +1,15 @@
+LATEST GAMMA INTEGRATION: Pi Euler/ratio worker completed and read. Root
+copied its two modules unchanged into root-gamma-level-integration-r2 with
+four frozen Jensen modules and new GammaAssembly. Fresh7module28decl audit
+PASS/std3, all actualtypes/axioms read. Real Gamma series identity discharged
+inside strict-mixture theorem. LiteralSourceConvexity still needs strictanti
+and positive level existence from the remaining worker. No countchange.
+
+New root-special-screen-r6: Simon stable followup solves NONSTRICT TP_n
+only; Remark2(b) still explicitly leaves STRICT STP_n open. Do not exclude
+325521 on Corollary1 alone. Analytic-Gram strictification route and incomplete
+beta CM half recorded as unverified research, no result/credit.
+
 LATEST ROOT MANUSCRIPT 2026-10-28: two-page arcsinh-positive draft in
 root-arcsinh-positive-paper-r1 built with zero box warnings; both latest
 pages read visually. Theorem1 = actual stronger Lean endpoint; 2019Conj5.1
