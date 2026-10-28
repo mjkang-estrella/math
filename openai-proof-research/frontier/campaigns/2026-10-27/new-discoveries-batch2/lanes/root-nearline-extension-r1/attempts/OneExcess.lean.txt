@@ -1,0 +1,60 @@
+import Excess
+
+set_option autoImplicit false
+set_option maxRecDepth 100000
+set_option maxHeartbeats 0
+
+namespace KuTorus
+open scoped BigOperators
+
+def LowerTwo {k : ℕ} [NeZero k] (A : Finset (Board k)) : Prop :=
+  (∀ a, 2 ≤ (A.filter (fun z => z.1 = a)).card) ∧
+  (∀ a, 2 ≤ (A.filter (fun z => z.2 = a)).card) ∧
+  (∀ a, 2 ≤ (A.filter (fun z => z.1 + z.2 = a)).card) ∧
+  (∀ a, 2 ≤ (A.filter (fun z => z.1 - z.2 = a)).card)
+
+theorem no_one_excess (k : ℕ) [NeZero k] (hk3 : 3 ∣ k)
+    (A : Finset (Board k)) (hl : LowerTwo A) : A.card ≠ 2*k+1 := by
+  intro hc
+  rcases hl with ⟨hx,hy,hs,hd⟩
+  have hef (f : Board k → ZMod k)
+      (hf : ∀ a, 2 ≤ (A.filter (fun z => f z = a)).card) :
+      ∃ r, ∀ a, (A.filter (fun z => f z = a)).card =
+        2 + if a = r then 1 else 0 := by
+    apply counts_one_excess _ hf
+    simpa only [ZMod.card, hc] using fiber_card_sum A f
+  obtain ⟨r,hr⟩ := hef (fun z => z.1) hx
+  obtain ⟨c,hc'⟩ := hef (fun z => z.2) hy
+  obtain ⟨s,hs'⟩ := hef (fun z => z.1+z.2) hs
+  obtain ⟨d,hd'⟩ := hef (fun z => z.1-z.2) hd
+  have hxs : (∑ z ∈ A, z.1) = r := by
+    simpa only [twice_sum_zmod, zero_add] using
+      fiber_sum_exceptional A (fun z => z.1) (fun a => a) r hr
+  have hys : (∑ z ∈ A, z.2) = c := by
+    simpa only [twice_sum_zmod, zero_add] using
+      fiber_sum_exceptional A (fun z => z.2) (fun a => a) c hc'
+  have hss : (∑ z ∈ A, z.1+z.2) = s := by
+    simpa only [twice_sum_zmod, zero_add] using
+      fiber_sum_exceptional A (fun z => z.1+z.2) (fun a => a) s hs'
+  have hds : (∑ z ∈ A, z.1-z.2) = d := by
+    simpa only [twice_sum_zmod, zero_add] using
+      fiber_sum_exceptional A (fun z => z.1-z.2) (fun a => a) d hd'
+  have hsr : s = r+c := by
+    rw [← hss, Finset.sum_add_distrib, hxs, hys]
+  have hdr : d = r-c := by
+    rw [← hds, Finset.sum_sub_distrib, hxs, hys]
+  have h1 := fiber_sum_exceptional A (fun z => z.1) (fun a => a^2) r hr
+  have h2 := fiber_sum_exceptional A (fun z => z.2) (fun a => a^2) c hc'
+  have h3 := fiber_sum_exceptional A (fun z => z.1+z.2) (fun a => a^2) s hs'
+  have h4 := fiber_sum_exceptional A (fun z => z.1-z.2) (fun a => a^2) d hd'
+  have hp : (∑ z ∈ A, (z.1+z.2)^2) + (∑ z ∈ A, (z.1-z.2)^2) =
+      2*(∑ z ∈ A, z.1^2) + 2*(∑ z ∈ A, z.2^2) := by
+    rw [← Finset.sum_add_distrib, Finset.mul_sum, Finset.mul_sum,
+      ← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro z _
+    ring
+  rw [h1,h2,h3,h4,hsr,hdr] at hp
+  exact sumSquares_obstruction k hk3 (by linear_combination -hp)
+
+end KuTorus

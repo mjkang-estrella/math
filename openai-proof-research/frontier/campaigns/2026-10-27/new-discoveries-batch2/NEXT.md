@@ -73,3 +73,26 @@ remains unresolved. No paper/independent acceptance. Stronger lower bound2k+2
 has a full proposed math proof, but2k+1 exclusion is not yet formalized.
 No literal infinite-grid density Lean endpoint is claimed. Source hypercube
 Conj5.6 excluded by density Hales–Jewett, no finite-instance credit.
+
+## Independent returns and refilled Astra slots
+
+Ku review complete: Johnson1981 Crux7(9) Thms2/4 are decisive all-order prior
+art for Conj5.3, and one-entry subtraction makes2k+2 lower bound routine.
+Root read actual official theorem text; exclude both. Root extension formal
+attempt stopped. Narrow k6 Conj5.4 witness remains HOLD/credit0 for substantive
+threshold-attainment concern; no paper now. Frozen reviewed bytes unchanged.
+
+Astra analysis completed: Zhou367221 is Xu–Zhao2401.01385v2 Lemma4.4 routine
+corollary, no credit. Astra algebra completed with full ordinary proof candidate
+for Banica–Nechita1602.04456v3 Conj6.6 /332493. Root copied/froze it at74f23e9fb2
+under root-fourprojection-r1.8 scalar/spectral Lean declarations; full literal
+projection endpoint absent; source journal body403 gap remains. Independent
+review and polar normalization formalization now launched, each in own lane.
+Discrete research also launched to replace completed Ku review. Three active
+Astra delegates: discrete-r2, fourprojection-preliminary-review-r1,
+fourprojection-polar-formal-r1. Follow completion wakes, no polls.
+
+Next root: four-projection HS/trace and graded spectral/frame integration in a
+SEPARATE root-owned formal lane, preserving frozen74f23e9fb2 candidate. Do not
+claim8decls constitute literal source Lean theorem. If review finds a fatal
+math/source/prior objection, stop formal investment and retain honest exclusion.

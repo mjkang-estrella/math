@@ -1,0 +1,81 @@
+import OneExcess
+
+set_option autoImplicit false
+set_option maxRecDepth 100000
+set_option maxHeartbeats 0
+
+namespace KuTorus
+open scoped BigOperators
+
+theorem counts_zero_excess {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (f : ι → ℕ) (hl : ∀ a, 2 ≤ f a)
+    (hs : ∑ a, f a = 2 * Fintype.card ι) : ∀ a, f a = 2 := by
+  have hd : ∑ a, (f a - 2) = 0 := by
+    rw [Finset.sum_tsub_distrib _ (by intro a _; exact hl a)]
+    simp [hs, mul_comm]
+  intro a
+  have hz := Finset.sum_eq_zero_iff.mp hd a (Finset.mem_univ _)
+  have := hl a
+  omega
+
+theorem lowerTwo_base_bound {k : ℕ} [NeZero k] (A : Finset (Board k))
+    (h : LowerTwo A) : 2*k ≤ A.card := by
+  calc
+    2*k = ∑ _a : ZMod k, 2 := by simp [mul_comm]
+    _ ≤ ∑ a : ZMod k, (A.filter (fun z => z.1 = a)).card :=
+      Finset.sum_le_sum (fun a _ => h.1 a)
+    _ = A.card := fiber_card_sum A (fun z => z.1)
+
+theorem lowerTwo_bound (k : ℕ) [NeZero k] (hk3 : 3 ∣ k)
+    (A : Finset (Board k)) (h : LowerTwo A) : 2*k+2 ≤ A.card := by
+  have hb := lowerTwo_base_bound A h
+  by_contra hn
+  have he : A.card = 2*k ∨ A.card = 2*k+1 := by omega
+  rcases he with hc | hc
+  · have hf (f : Board k → ZMod k)
+        (hl : ∀ a, 2 ≤ (A.filter (fun z => f z = a)).card) :
+        ∀ a, (A.filter (fun z => f z = a)).card = 2 := by
+      apply counts_zero_excess _ hl
+      simpa only [ZMod.card, hc] using fiber_card_sum A f
+    exact no_uniform_two k hk3 A
+      ⟨hf _ h.1, hf _ h.2.1, hf _ h.2.2.1, hf _ h.2.2.2⟩
+  · exact no_one_excess k hk3 A h hc
+
+theorem cover_lowerTwo {k : ℕ} [NeZero k] (hk : 3 ≤ k)
+    (A : Finset (Board k)) (h : TwoFoldCover A) : LowerTwo A := by
+  have h10 : (1 : ZMod k) ≠ 0 := by
+    intro he
+    have hd := (ZMod.intCast_zmod_eq_zero_iff_dvd 1 k).mp (by simpa using he)
+    have he' : (k : ℤ) ≤ 1 := Int.le_of_dvd (by norm_num) hd
+    omega
+  have hf (p v : Board k) (hv : AllowedDirection v)
+      (f : Board k → Prop) [DecidablePred f]
+      (hl : line p v = Finset.univ.filter f) :
+      2 ≤ (A.filter f).card := by
+    have he := h p v hv
+    rw [hl] at he
+    simpa only [Finset.inter_filter, Finset.inter_univ] using he
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> intro a
+  · exact hf (a,0) (0,1) ⟨Or.inr (Or.inl rfl), Or.inr (Or.inr rfl),
+      by intro he; exact h10 (congrArg Prod.snd he)⟩ _ (line_x a)
+  · exact hf (0,a) (1,0) ⟨Or.inr (Or.inr rfl), Or.inr (Or.inl rfl),
+      by intro he; exact h10 (congrArg Prod.fst he)⟩ _ (line_y a)
+  · exact hf (a,0) (-1,1) ⟨Or.inl rfl, Or.inr (Or.inr rfl),
+      by intro he; exact h10 (congrArg Prod.snd he)⟩ _ (line_sum a)
+  · exact hf (a,0) (1,1) ⟨Or.inr (Or.inr rfl), Or.inr (Or.inr rfl),
+      by intro he; exact h10 (congrArg Prod.snd he)⟩ _ (line_diff a)
+
+theorem source_cover_bound (k : ℕ) [NeZero k] (hk3 : 3 ∣ k)
+    (A : Finset (Board k)) (h : TwoFoldCover A) : 2*k+2 ≤ A.card := by
+  have hk : 3 ≤ k := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne k)) hk3
+  exact lowerTwo_bound k hk3 A (cover_lowerTwo hk A h)
+
+theorem sharp_minimum_six :
+    (∃ A : Finset (Board 6), TwoFoldCover A ∧ A.card = 14) ∧
+    ∀ A : Finset (Board 6), TwoFoldCover A → 14 ≤ A.card := by
+  constructor
+  · exact ⟨witness, witness_cover, witness_card⟩
+  · intro A h
+    exact source_cover_bound 6 (by norm_num) A h
+
+end KuTorus

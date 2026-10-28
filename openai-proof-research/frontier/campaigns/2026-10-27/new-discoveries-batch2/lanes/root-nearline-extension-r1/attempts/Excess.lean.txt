@@ -1,0 +1,67 @@
+import SourceUniform
+
+set_option autoImplicit false
+set_option maxRecDepth 100000
+set_option maxHeartbeats 0
+
+namespace KuTorus
+open scoped BigOperators
+
+theorem counts_one_excess {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (f : ι → ℕ) (hl : ∀ a, 2 ≤ f a)
+    (hs : ∑ a, f a = 2 * Fintype.card ι + 1) :
+    ∃ r, ∀ a, f a = 2 + if a = r then 1 else 0 := by
+  have hd : ∑ a, (f a - 2) = 1 := by
+    rw [Finset.sum_tsub_distrib _ (by intro a _; exact hl a)]
+    simp [hs, mul_comm]
+  have hu := Finset.sum_le_one_iff.mp (le_of_eq hd)
+  have hex : ∃ r, f r - 2 ≠ 0 := by
+    by_contra! hn
+    have hz : ∑ a, (f a - 2) = 0 := by simp [hn]
+    omega
+  obtain ⟨r, hr⟩ := hex
+  refine ⟨r, fun a => ?_⟩
+  by_cases ha : a = r
+  · subst a
+    have he := (hu r r (Finset.mem_univ _) (Finset.mem_univ _) hr hr).2
+    simp only [ite_true]
+    omega
+  · have hz : f a - 2 = 0 := by
+      by_contra hn
+      exact ha (hu a r (Finset.mem_univ _) (Finset.mem_univ _) hn hr).1
+    simp only [ha, ite_false, add_zero]
+    have := hl a
+    omega
+
+theorem fiber_card_sum {k : ℕ} [NeZero k] (A : Finset (Board k))
+    (f : Board k → ZMod k) :
+    ∑ a : ZMod k, (A.filter (fun z => f z = a)).card = A.card := by
+  simpa only [Finset.card_eq_sum_ones] using
+    Finset.sum_fiberwise A f (fun _ => (1 : ℕ))
+
+theorem fiber_sum_exceptional {k : ℕ} [NeZero k] (A : Finset (Board k))
+    (f : Board k → ZMod k) (g : ZMod k → ZMod k) (r : ZMod k)
+    (hc : ∀ a, (A.filter (fun z => f z = a)).card =
+      2 + if a = r then 1 else 0) :
+    (∑ z ∈ A, g (f z)) = 2 * ∑ a, g a + g r := by
+  rw [← Finset.sum_fiberwise A f]
+  calc
+    _ = ∑ a : ZMod k, ∑ _z ∈ A.filter (fun z => f z = a), g a := by
+      apply Finset.sum_congr rfl
+      intro a _
+      apply Finset.sum_congr rfl
+      intro z hz
+      rw [(Finset.mem_filter.mp hz).2]
+    _ = _ := by
+      simp only [Finset.sum_const, hc, nsmul_eq_mul, Nat.cast_add,
+        Nat.cast_ofNat, Nat.cast_ite, Nat.cast_one, Nat.cast_zero, add_mul]
+      simp [Finset.sum_add_distrib, Finset.mul_sum]
+
+theorem twice_sum_zmod (k : ℕ) [NeZero k] :
+    (2 : ZMod k) * ∑ a : ZMod k, a = 0 := by
+  have he := Equiv.sum_comp (Equiv.neg (ZMod k)) (fun a : ZMod k => a)
+  simp only [Equiv.neg_apply] at he
+  rw [← Finset.sum_neg_distrib] at he
+  linear_combination -he
+
+end KuTorus
