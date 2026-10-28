@@ -1,3 +1,15 @@
+# Current checkpoint — complete ordinary Jacobi candidate, review pending
+
+Sol r4 closes the all-coefficient bound using an integral quadratic algebra,
+binary-weighted square/twice-product closure and odd-unit primitive inversion.
+Together with r3 source bridge/attainment it proves the full shifted law on
+ordinary review. Root found no gap, wrote independent finite checks (PASS),
+and froze21files for adversarial review. Full literal Lean remains absent.
+See lanes/root-jacobi-full-preliminary-r5/REVIEW-BRIEF.md and review-freeze.json.
+Candidate credit0, count2/30additional,32/60 unchanged. Karp/BBK asynchronous.
+
+---
+
 # Current checkpoint — Riccati bridge validated, full Jacobi bound open
 
 Sol r3 supplies a valid ordinary all-order top-coefficient formula, parity and
