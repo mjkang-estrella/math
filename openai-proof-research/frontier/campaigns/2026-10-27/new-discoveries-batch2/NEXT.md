@@ -1,3 +1,29 @@
+# Current root checkpoint — 28 October 2026
+
+Accepted **2/30 additional, 32/60 total**. Goal ACTIVE; no external actions.
+
+Bessel–Mahler365832 is now EXCLUDED as a routine classical corollary. Actual
+DLMF10.41(ii) is uniform for all positive z; root's complete direct Debye
+bridge includes the exact saddle, both tails, source5.2 and5.1 constants, and
+O_p(log n). Seven exact identities PASS. Preliminary mathematical/source
+PASS adopted; its p-to-zero nonroutine defense rejected (p is fixed). See
+lanes/root-bessel-mahler-adjudication-r2/CLASSICAL-REDUCTION.md. Original7
+frozen candidate files unchanged; no full Lean or manuscript investment.
+
+Three asynchronous Pi GLM5.3Flash high standard/default tasks remain assigned:
+Mittag full155/17 final review; Kilbas classical reduction review; Gaunt
+ordinary/source/novelty preliminary review (plus supporting20/2 checkpoint).
+Do not poll or read their live lane files. Follow completion wakes.
+
+Gaunt literal source theorem is not proved in Lean: current closed support
+is squared-order convexity + integrability + three-order weighted inequality.
+Recurrences, zero-order tangent integration, x derivative/tail integration and
+optimality are still missing; journal body/novelty review remains independent.
+
+Earlier notes below are historical and may describe superseded states.
+
+---
+
 LATEST ROOT FORMAL SUPPORT: root-mittag-moment-formal-r1 freshPASS6modules,
 37actualdeclarationsstd3, allreportsrootread, allmodulelogsempty. Literal
 complexMLseriesconvergesallpositivea,b/complexz; genuineevenodd/normsource
