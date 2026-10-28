@@ -1,3 +1,15 @@
+ACCEPTED 2026-10-28: outcome31, arcsinh parameter concavity, ONE credit.
+Additional1/30, total31/60; nextglobal32. Candidate candidates/arcsinh-positive;
+acceptance.json and root-arcsinh-acceptance-r1/ACCEPTANCE.md map all gates.
+Both independent reviews PASS; exact source Conj5.1 p847, definitionp834.
+Final2page paper status prose updated/visuallychecked; all math/Lean bytes
+unchanged. Final67entry deterministic ZIP sha07c099d68eb618b88e6472be97ea8088ec00f5889758347a79be498c31fc9884;
+66payloadhashes verified fresh extraction then5module19decl strict source
+replayPASS/std3. Actualtype/axiomreports rootread again. No external actions;
+first30ledger preserved. Goal ACTIVE:29additional outcomes still required.
+Two tasks remain on their assignments (Gamma levels, Cauchy strict); freed
+slot may take a new independent research assignment. Do not poll them.
+
 LATEST ROOT RESEARCH 2026-10-28: root-commutator-screen-r7 saves exact
 2x2 obstruction to proposed mixed trace helper (6>5), not a counterexample to
 362175 (same pair attains its actual bound25=25). Public positive/negative

@@ -3,7 +3,7 @@
 The independent preliminary report and completed thread have been read. Source,
 ordinary math and full literal formal replay pass; source interval p>1 is the
 surviving 2019 Conjecture 5.1. The old small-p correction stays credit zero.
-The source definition is printed p.835 (not p.834 in one earlier root note).
+CORRECTION after final visual review: the source definition is printed p.834 (PDF page2). Earlier preliminary/root references to p.835 were wrong.
 
 The bounded novelty/substantive PASS justifies final manuscript/packet review,
 not acceptance. The newly obtained RACSAM 2025 full body clears the closest
