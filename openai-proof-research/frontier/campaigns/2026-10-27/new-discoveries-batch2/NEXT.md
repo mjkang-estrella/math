@@ -1,3 +1,12 @@
+LATEST ROOT RESULT 2026-10-28: root-arcsinh-positive-r1 now has complete
+ordinary proof and literal Lean of the SURVIVING2019 survey Conj5.1 (p>1),
+stronger p>log2/2 allx>0. Fresh isolated5module19decl replayPASS/std3; all actual
+types/axioms read. Exact source PDF visually read, original small-p witness
+remains uncredited. Binary entropy classical, possible generic reciprocal-lp
+norm subsumption is strongest eligibility risk. 18citing records retained,
+not all read. Frozen review-hashes.json and SUMMARY.md; no paper/acceptance.
+Independent preliminary review should be next useful slot; no countchange.
+
 LATEST DELEGATION 2026-10-28: qnarayana-discovery-r1-20261028 launched Pi high
 standard/default in pi-qnarayana-discovery-r1. Exact actual receipt in
 qnarayana-discovery-launch.json and tasks.json. Three useful tasks: Gamma Euler
