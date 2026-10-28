@@ -4,6 +4,7 @@ import datetime
 import json
 from pathlib import Path
 import sys
+from urllib.parse import urlsplit
 
 root = Path(__file__).resolve().parent
 number = int(sys.argv[1])
@@ -14,9 +15,15 @@ plan = json.loads(path.read_text())
 paper = next(x for x in plan['papers'] if x['number'] == number)
 links = paper.setdefault('connections', [])
 existing = next((x for x in links if x['problem_id'] == event['problem_id']), None)
-if existing and existing.get('url') != event.get('url'):
-    raise RuntimeError('Refusing to replace an existing verified problem connection')
-if not existing:
+if existing:
+    old, new = urlsplit(existing['url']), urlsplit(event['url'])
+    if old.fragment != new.fragment or old.path.split('/')[2] != new.path.split('/')[2]:
+        raise RuntimeError('Refusing to replace an existing verified problem connection')
+    event['verified_page_url'] = event['url']
+    event['url'] = existing['url']
+    event['previous_label'] = existing.get('label')
+    existing.update(event)
+else:
     links.append(event)
 paper['status'] = event.get('status', 'CONNECTED')
 tmp = path.with_suffix('.json.tmp')

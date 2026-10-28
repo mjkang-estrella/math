@@ -18,7 +18,7 @@ data['created_exact_question_records'] = sum(bool(p.get('created_problem')) for 
 path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
 lines = ['# MathDB problem connections', '',
          f'{connected}/30 papers have verified problem-level solution entries ({entries} entries).', '',
-         'Labels describe the actual scope. A posted solution is not a MathDB endorsement or automatic Lean verification. Negative-order Vendi results and the graph-only spectral theorem are partial progress on their broader records. The DeTemple refutation concerns part (ii) only.', '',
+         'Labels describe the actual scope. A posted solution is not a MathDB endorsement or automatic Lean verification. Negative-order Vendi results, the maximal-index classification for d>=5, and the graph-only spectral theorem are partial progress on their broader records. The classical-means exponent-range claim is labelled counterexample, with the full corrected classification in the paper. The DeTemple refutation concerns part (ii) only.', '',
          'Six precise question records were added where no exact existing match was found in bounded site searches. Four are separate questions from the same sources as nearby records; one records the general-coefficient C*-Bieberbach conjectures; the Smale record explicitly formulates the stronger finite-constant question, rather than claiming a first refutation of the old constant-one conjecture. This creates no additional discovery credits.', '',
          '| # | Paper | Problem-level entry | Scope label |',
          '|---|---|---|---|']
