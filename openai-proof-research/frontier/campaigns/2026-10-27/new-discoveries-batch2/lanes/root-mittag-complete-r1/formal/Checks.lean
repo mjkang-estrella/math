@@ -1,0 +1,318 @@
+import KernelIdentification
+set_option autoImplicit false
+
+#check MittagModulus.momentApprox
+#print axioms MittagModulus.momentApprox
+#check MittagModulus.momentApprox_pos
+#print axioms MittagModulus.momentApprox_pos
+#check MittagModulus.momentApprox_eq_gammaSeq_ratio
+#print axioms MittagModulus.momentApprox_eq_gammaSeq_ratio
+#check MittagModulus.momentApprox_tendsto
+#print axioms MittagModulus.momentApprox_tendsto
+#check MittagModulus.rpow_successor_lower
+#print axioms MittagModulus.rpow_successor_lower
+#check MittagModulus.momentApprox_succ
+#print axioms MittagModulus.momentApprox_succ
+#check MittagModulus.euler_step_ge_one
+#print axioms MittagModulus.euler_step_ge_one
+#check MittagModulus.momentApprox_monotone
+#print axioms MittagModulus.momentApprox_monotone
+#check MittagModulus.momentApprox_le_gammaRatio
+#print axioms MittagModulus.momentApprox_le_gammaRatio
+#check MittagModulus.gamma_step_ge
+#print axioms MittagModulus.gamma_step_ge
+#check MittagModulus.summable_of_arithmetic_subseries
+#print axioms MittagModulus.summable_of_arithmetic_subseries
+#check MittagModulus.mittag_real_majorant_summable
+#print axioms MittagModulus.mittag_real_majorant_summable
+#check MittagModulus.mittag_complex_series_summable
+#print axioms MittagModulus.mittag_complex_series_summable
+#check MittagModulus.mittagLeffler
+#print axioms MittagModulus.mittagLeffler
+#check MittagModulus.hasSum_mittagLeffler
+#print axioms MittagModulus.hasSum_mittagLeffler
+#check MittagModulus.mittagLeffler_even_odd
+#print axioms MittagModulus.mittagLeffler_even_odd
+#check MittagModulus.sourceExpression
+#print axioms MittagModulus.sourceExpression
+#check MittagModulus.CompletelyMonotonePositive
+#print axioms MittagModulus.CompletelyMonotonePositive
+#check MittagModulus.SourceClaim370772
+#print axioms MittagModulus.SourceClaim370772
+#check MittagModulus.mittagReal
+#print axioms MittagModulus.mittagReal
+#check MittagModulus.mittagScalarSeries
+#print axioms MittagModulus.mittagScalarSeries
+#check MittagModulus.mittagScalarSeries_radius
+#print axioms MittagModulus.mittagScalarSeries_radius
+#check MittagModulus.mittagScalarSeries_sum
+#print axioms MittagModulus.mittagScalarSeries_sum
+#check MittagModulus.mittagReal_analyticAt
+#print axioms MittagModulus.mittagReal_analyticAt
+#check MittagModulus.mittagReal_contDiff
+#print axioms MittagModulus.mittagReal_contDiff
+#check MittagModulus.mittagLeffler_ofReal
+#print axioms MittagModulus.mittagLeffler_ofReal
+#check MittagModulus.sourceExpression_real
+#print axioms MittagModulus.sourceExpression_real
+#check MittagModulus.sourceExpression_contDiff
+#print axioms MittagModulus.sourceExpression_contDiff
+#check MittagModulus.sourceExpression_eq_normSq
+#print axioms MittagModulus.sourceExpression_eq_normSq
+#check MittagModulus.approxCoeff
+#print axioms MittagModulus.approxCoeff
+#check MittagModulus.approxCoeff_nonneg
+#print axioms MittagModulus.approxCoeff_nonneg
+#check MittagModulus.approxCoeff_le
+#print axioms MittagModulus.approxCoeff_le
+#check MittagModulus.approxCoeff_tendsto
+#print axioms MittagModulus.approxCoeff_tendsto
+#check MittagModulus.approxTransform
+#print axioms MittagModulus.approxTransform
+#check MittagModulus.approx_term_norm_le
+#print axioms MittagModulus.approx_term_norm_le
+#check MittagModulus.approxTransform_summable
+#print axioms MittagModulus.approxTransform_summable
+#check MittagModulus.approxTransform_tendsto
+#print axioms MittagModulus.approxTransform_tendsto
+#check MittagModulus.mixedDifference
+#print axioms MittagModulus.mixedDifference
+#check MittagModulus.PositiveMixedDifferences
+#print axioms MittagModulus.PositiveMixedDifferences
+#check MittagModulus.mixedDifference_neg
+#print axioms MittagModulus.mixedDifference_neg
+#check MittagModulus.mixedDifference_contDiff
+#print axioms MittagModulus.mixedDifference_contDiff
+#check MittagModulus.deriv_mixedDifference
+#print axioms MittagModulus.deriv_mixedDifference
+#check MittagModulus.PositiveMixedDifferences.antitone_mixed
+#print axioms MittagModulus.PositiveMixedDifferences.antitone_mixed
+#check MittagModulus.PositiveMixedDifferences.neg_deriv
+#print axioms MittagModulus.PositiveMixedDifferences.neg_deriv
+#check MittagModulus.mixedDifference_tendsto
+#print axioms MittagModulus.mixedDifference_tendsto
+#check MittagModulus.PositiveMixedDifferences.of_tendsto
+#print axioms MittagModulus.PositiveMixedDifferences.of_tendsto
+#check MittagModulus.PositiveMixedDifferences.iteratedDeriv_sign
+#print axioms MittagModulus.PositiveMixedDifferences.iteratedDeriv_sign
+#check MittagModulus.PositiveMixedDifferences.completelyMonotone
+#print axioms MittagModulus.PositiveMixedDifferences.completelyMonotone
+#check MittagModulus.mixedDifference_exp
+#print axioms MittagModulus.mixedDifference_exp
+#check MittagModulus.positiveMixedDifferences_exp
+#print axioms MittagModulus.positiveMixedDifferences_exp
+#check MittagModulus.mixedDifference_add
+#print axioms MittagModulus.mixedDifference_add
+#check MittagModulus.mixedDifference_const_mul
+#print axioms MittagModulus.mixedDifference_const_mul
+#check MittagModulus.PositiveMixedDifferences.add
+#print axioms MittagModulus.PositiveMixedDifferences.add
+#check MittagModulus.PositiveMixedDifferences.const_mul
+#print axioms MittagModulus.PositiveMixedDifferences.const_mul
+#check MittagModulus.mixedDifference_continuousOn_param
+#print axioms MittagModulus.mixedDifference_continuousOn_param
+#check MittagModulus.mixedDifference_intervalIntegral
+#print axioms MittagModulus.mixedDifference_intervalIntegral
+#check MittagModulus.PositiveMixedDifferences.intervalIntegral
+#print axioms MittagModulus.PositiveMixedDifferences.intervalIntegral
+#check MittagModulus.mixedDifference_tendsto_positive
+#print axioms MittagModulus.mixedDifference_tendsto_positive
+#check MittagModulus.PositiveMixedDifferences.of_tendsto_positive
+#print axioms MittagModulus.PositiveMixedDifferences.of_tendsto_positive
+#check MittagModulus.squaredApprox
+#print axioms MittagModulus.squaredApprox
+#check MittagModulus.squaredApprox_tendsto
+#print axioms MittagModulus.squaredApprox_tendsto
+#check MittagModulus.sourceClaim_of_positiveMixedApprox
+#print axioms MittagModulus.sourceClaim_of_positiveMixedApprox
+#check MittagModulus.betaAverage
+#print axioms MittagModulus.betaAverage
+#check MittagModulus.betaAverage_continuous
+#print axioms MittagModulus.betaAverage_continuous
+#check MittagModulus.betaAverage_add
+#print axioms MittagModulus.betaAverage_add
+#check MittagModulus.betaAverage_const_smul
+#print axioms MittagModulus.betaAverage_const_smul
+#check MittagModulus.betaAverage_const
+#print axioms MittagModulus.betaAverage_const
+#check MittagModulus.finiteBetaAverage
+#print axioms MittagModulus.finiteBetaAverage
+#check MittagModulus.finiteBetaAverage_continuous
+#print axioms MittagModulus.finiteBetaAverage_continuous
+#check MittagModulus.finiteBetaAverage_const
+#print axioms MittagModulus.finiteBetaAverage_const
+#check MittagModulus.mul_mem_nonnegative_interval
+#print axioms MittagModulus.mul_mem_nonnegative_interval
+#check MittagModulus.betaAverage_nonneg
+#print axioms MittagModulus.betaAverage_nonneg
+#check MittagModulus.finiteBetaAverage_nonneg
+#print axioms MittagModulus.finiteBetaAverage_nonneg
+#check MittagModulus.betaAverage_rpow
+#print axioms MittagModulus.betaAverage_rpow
+#check MittagModulus.betaAverage_congr_nonneg
+#print axioms MittagModulus.betaAverage_congr_nonneg
+#check MittagModulus.finiteBetaAverage_const_smul
+#print axioms MittagModulus.finiteBetaAverage_const_smul
+#check MittagModulus.finiteBetaAverage_rpow
+#print axioms MittagModulus.finiteBetaAverage_rpow
+#check MittagModulus.momentApprox_eq_finiteBetaAverage
+#print axioms MittagModulus.momentApprox_eq_finiteBetaAverage
+#check MittagModulus.betaAverage_norm_le
+#print axioms MittagModulus.betaAverage_norm_le
+#check MittagModulus.finiteBetaAverage_norm_le
+#print axioms MittagModulus.finiteBetaAverage_norm_le
+#check MittagModulus.betaAverage_positiveMixedDifferences
+#print axioms MittagModulus.betaAverage_positiveMixedDifferences
+#check MittagModulus.finiteBetaAverage_positiveMixedDifferences
+#print axioms MittagModulus.finiteBetaAverage_positiveMixedDifferences
+#check MittagModulus.betaAverage_tendsto
+#print axioms MittagModulus.betaAverage_tendsto
+#check MittagModulus.finiteBetaAverage_tendsto
+#print axioms MittagModulus.finiteBetaAverage_tendsto
+#check MittagModulus.betaAverage_smul_const
+#print axioms MittagModulus.betaAverage_smul_const
+#check MittagModulus.finiteBetaAverage_smul_const
+#print axioms MittagModulus.finiteBetaAverage_smul_const
+#check MittagModulus.finiteBetaAverage_add
+#print axioms MittagModulus.finiteBetaAverage_add
+#check MittagModulus.finiteBetaAverage_sum
+#print axioms MittagModulus.finiteBetaAverage_sum
+#check MittagModulus.halfTerm
+#print axioms MittagModulus.halfTerm
+#check MittagModulus.halfTerm_continuous
+#print axioms MittagModulus.halfTerm_continuous
+#check MittagModulus.halfTerm_eq_series
+#print axioms MittagModulus.halfTerm_eq_series
+#check MittagModulus.hasSum_halfTerm
+#print axioms MittagModulus.hasSum_halfTerm
+#check MittagModulus.halfTerm_norm_le
+#print axioms MittagModulus.halfTerm_norm_le
+#check MittagModulus.finiteBetaAverage_halfTerm
+#print axioms MittagModulus.finiteBetaAverage_halfTerm
+#check MittagModulus.halfTerm_partial_norm_le
+#print axioms MittagModulus.halfTerm_partial_norm_le
+#check MittagModulus.finiteBetaAverage_halfSum_tendsto
+#print axioms MittagModulus.finiteBetaAverage_halfSum_tendsto
+#check MittagModulus.finiteBetaAverage_halfTerm_at_scale
+#print axioms MittagModulus.finiteBetaAverage_halfTerm_at_scale
+#check MittagModulus.approxTransform_eq_finiteBetaAverage
+#print axioms MittagModulus.approxTransform_eq_finiteBetaAverage
+#check MittagModulus.mittagComplexSeries
+#print axioms MittagModulus.mittagComplexSeries
+#check MittagModulus.mittagComplexSeries_radius
+#print axioms MittagModulus.mittagComplexSeries_radius
+#check MittagModulus.mittagComplexSeries_sum
+#print axioms MittagModulus.mittagComplexSeries_sum
+#check MittagModulus.mittagLeffler_analyticAt
+#print axioms MittagModulus.mittagLeffler_analyticAt
+#check MittagModulus.mittagLeffler_continuous
+#print axioms MittagModulus.mittagLeffler_continuous
+#check MittagModulus.betaAverage_map
+#print axioms MittagModulus.betaAverage_map
+#check MittagModulus.finiteBetaAverage_map
+#print axioms MittagModulus.finiteBetaAverage_map
+#check MittagModulus.pairLeft
+#print axioms MittagModulus.pairLeft
+#check MittagModulus.pairRight
+#print axioms MittagModulus.pairRight
+#check MittagModulus.finiteBetaAverage_pair_left
+#print axioms MittagModulus.finiteBetaAverage_pair_left
+#check MittagModulus.finiteBetaAverage_pair_right
+#print axioms MittagModulus.finiteBetaAverage_pair_right
+#check MittagModulus.finiteBetaAverage_normSq
+#print axioms MittagModulus.finiteBetaAverage_normSq
+#check MittagModulus.halfCross
+#print axioms MittagModulus.halfCross
+#check MittagModulus.halfTransform_continuous
+#print axioms MittagModulus.halfTransform_continuous
+#check MittagModulus.squaredApprox_eq_doubleAverage
+#print axioms MittagModulus.squaredApprox_eq_doubleAverage
+#check MittagModulus.halfCross_continuous_left
+#print axioms MittagModulus.halfCross_continuous_left
+#check MittagModulus.halfCross_continuous_right
+#print axioms MittagModulus.halfCross_continuous_right
+#check MittagModulus.averaged_halfCross_continuous_left
+#print axioms MittagModulus.averaged_halfCross_continuous_left
+#check MittagModulus.sourceClaim_of_halfCross_positive
+#print axioms MittagModulus.sourceClaim_of_halfCross_positive
+#check MittagModulus.halfBetaMoment
+#print axioms MittagModulus.halfBetaMoment
+#check MittagModulus.halfBetaMoment_zero
+#print axioms MittagModulus.halfBetaMoment_zero
+#check MittagModulus.halfBetaMoment_succ
+#print axioms MittagModulus.halfBetaMoment_succ
+#check MittagModulus.Gamma_three_halves
+#print axioms MittagModulus.Gamma_three_halves
+#check MittagModulus.halfBetaMoment_eq_gamma
+#print axioms MittagModulus.halfBetaMoment_eq_gamma
+#check MittagModulus.hasSum_mittagReal
+#print axioms MittagModulus.hasSum_mittagReal
+#check MittagModulus.mittag_one_eq_exp
+#print axioms MittagModulus.mittag_one_eq_exp
+#check MittagModulus.exp_series_real
+#print axioms MittagModulus.exp_series_real
+#check MittagModulus.halfExp_partial_bound
+#print axioms MittagModulus.halfExp_partial_bound
+#check MittagModulus.integral_halfExp_term
+#print axioms MittagModulus.integral_halfExp_term
+#check MittagModulus.integral_halfExp_eq_mittagReal
+#print axioms MittagModulus.integral_halfExp_eq_mittagReal
+#check MittagModulus.halfExpIntegral
+#print axioms MittagModulus.halfExpIntegral
+#check MittagModulus.halfExpIntegral_continuous
+#print axioms MittagModulus.halfExpIntegral_continuous
+#check MittagModulus.mittagReal_half_integral
+#print axioms MittagModulus.mittagReal_half_integral
+#check MittagModulus.mittag_half_imaginary
+#print axioms MittagModulus.mittag_half_imaginary
+#check MittagModulus.halfProductKernel
+#print axioms MittagModulus.halfProductKernel
+#check MittagModulus.halfCross_eq_halfProductKernel
+#print axioms MittagModulus.halfCross_eq_halfProductKernel
+#check MittagModulus.hasDerivAt_unitIntegral
+#print axioms MittagModulus.hasDerivAt_unitIntegral
+#check MittagModulus.rationalLaplacePiece
+#print axioms MittagModulus.rationalLaplacePiece
+#check MittagModulus.rationalLaplaceKernel
+#print axioms MittagModulus.rationalLaplaceKernel
+#check MittagModulus.rationalLaplacePiece_positive
+#print axioms MittagModulus.rationalLaplacePiece_positive
+#check MittagModulus.rationalLaplaceKernel_positive
+#print axioms MittagModulus.rationalLaplaceKernel_positive
+#check MittagModulus.halfExpIntegral_hasDerivAt
+#print axioms MittagModulus.halfExpIntegral_hasDerivAt
+#check MittagModulus.halfExpIntegral_ode
+#print axioms MittagModulus.halfExpIntegral_ode
+#check MittagModulus.rationalLaplacePiece_hasDerivAt
+#print axioms MittagModulus.rationalLaplacePiece_hasDerivAt
+#check MittagModulus.rationalLaplacePiece_ode
+#print axioms MittagModulus.rationalLaplacePiece_ode
+#check MittagModulus.rationalLaplaceKernel_hasDerivAt
+#print axioms MittagModulus.rationalLaplaceKernel_hasDerivAt
+#check MittagModulus.halfExp_product_hasDerivAt
+#print axioms MittagModulus.halfExp_product_hasDerivAt
+#check MittagModulus.halfProductKernel_hasDerivAt
+#print axioms MittagModulus.halfProductKernel_hasDerivAt
+#check MittagModulus.integral_quadratic_reciprocal
+#print axioms MittagModulus.integral_quadratic_reciprocal
+#check MittagModulus.rationalLaplaceKernel_zero
+#print axioms MittagModulus.rationalLaplaceKernel_zero
+#check MittagModulus.halfProductKernel_zero
+#print axioms MittagModulus.halfProductKernel_zero
+#check MittagModulus.halfProductKernel_eq_rational
+#print axioms MittagModulus.halfProductKernel_eq_rational
+#check MittagModulus.mixedDifference_congr_positive
+#print axioms MittagModulus.mixedDifference_congr_positive
+#check MittagModulus.PositiveMixedDifferences.congr_positive
+#print axioms MittagModulus.PositiveMixedDifferences.congr_positive
+#check MittagModulus.halfProductKernel_positive
+#print axioms MittagModulus.halfProductKernel_positive
+#check MittagModulus.halfCross_positive
+#print axioms MittagModulus.halfCross_positive
+#check MittagModulus.source_conjecture_370772
+#print axioms MittagModulus.source_conjecture_370772
+#print MittagModulus.SourceClaim370772
+#print MittagModulus.CompletelyMonotonePositive
+#print MittagModulus.sourceExpression
+#check MittagModulus.source_conjecture_370772
+#print axioms MittagModulus.source_conjecture_370772
