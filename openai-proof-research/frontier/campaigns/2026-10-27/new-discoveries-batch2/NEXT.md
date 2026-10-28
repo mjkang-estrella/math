@@ -1,3 +1,11 @@
+LATEST DELEGATION: freed arcsinh-final slot refilled with PiGLM high/standard
+short-thread-parity-discovery-r1-20261028, exactreceipt in
+short-thread-parity-discovery-launch.json. ExactnewXu2610.15145Question11.4,
+initiallyemptytrees/internalthreads<=2/leafthreads<=3; memory-capped source
+research, no oldspider/blockedposition rediscoveries. Other tasks Gamma
+serieslevels and Cauchystrict remain asynchronous; do not poll. Additional
+accepted1/30,total31/60,29stillrequired. GoalACTIVE.
+
 ACCEPTED 2026-10-28: outcome31, arcsinh parameter concavity, ONE credit.
 Additional1/30, total31/60; nextglobal32. Candidate candidates/arcsinh-positive;
 acceptance.json and root-arcsinh-acceptance-r1/ACCEPTANCE.md map all gates.
