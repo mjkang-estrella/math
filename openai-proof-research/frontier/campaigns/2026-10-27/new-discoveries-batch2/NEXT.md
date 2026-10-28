@@ -1,3 +1,14 @@
+LATEST ROOT RESEARCH 2026-10-28: root-commutator-screen-r7 saves exact
+2x2 obstruction to proposed mixed trace helper (6>5), not a counterexample to
+362175 (same pair attains its actual bound25=25). Public positive/negative
+q-commutator refutations independently recomputed from trureturingf8ffe9e;
+no rediscovery credit. Distinct2208.10005 mixed-inner-product sharp-bound
+question and unproved circular joint-range sufficient condition recorded,
+not a theorem. Actual2610.15145v1 source open questions read; its published
+spider formulas/blocked-position Nim results must not be recounted.
+All6primaryHTMLsources/hashreceipts retained. No countchange, no newworker;
+Gamma-levels/Cauchy/arcsinh-final-review continue asynchronously, no polling.
+
 LATEST REVIEW 2026-10-28: arcsinh independent preliminary review completed
 PASS/source/math/formal/boundednovelty/substantive; full report/thread read.
 Root records a precise caveat: dim5 low-p reciprocal-norm counterexample does
