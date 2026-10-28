@@ -1,3 +1,17 @@
+# Current checkpoint — Kilbas exclusion independently confirmed
+
+Kilbas–Saigo348998: ordinary proof PASS, but EXCLUDED as a classical
+killed-subordinator sandwich and a public exact trureturing resolution.
+Root checked26/26 frozen bytes and read immutable Result/Defs. Review's
+c_n-root-limit typo corrected in adoption (limit ZERO, not infinity).
+No credit or new Lean/paper investment. Accepted2/30 additional,total32/60.
+
+Han–Pedon higher-shift research and beta-prime classical review continue
+asynchronously; no polling. Mittag final formal/math/paper PASS remains held
+for source-body and novelty questions. Gaunt holds remain unchanged.
+
+---
+
 # Current checkpoint — Mittag final review adopted with holds
 
 Mittag independent final review completed: own fresh 17-module/155-declaration
