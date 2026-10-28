@@ -72,3 +72,36 @@ thus the source's literal derivative inequality. Check the actual criterion
 or derive its short derivative integral; do not silently replace the source
 derivative statement by strict monotonicity. If this closes, the full source
 statement is an immediate classical oscillator corollary and credit0.
+
+## Pointwise derivative closure
+
+This last logical distinction can be closed directly from the criterion in
+the actual primary Proposition3. For a shifted well potential V with V(0)=0,
+let v=sgn(x)sqrt(V(x)), x=X(v), and phi(x)=V(x)/V'(x)^2, extended smoothly
+at zero. For energy e>0 the canonical period is
+
+    T(e)=sqrt(2) integral_{-pi/2}^{pi/2} X'(sqrt(e) sin(theta)) dtheta.
+
+On the compact orbit this has a smooth integrand, so differentiation gives
+
+    T'(e)=sqrt(2)/(2sqrt(e)) integral_0^{pi/2}
+        [X''(sqrt(e)sin(theta))-X''(-sqrt(e)sin(theta))] sin(theta) dtheta.
+
+But X''(v)=2phi'(X(v)), since phi(X(v))=X'(v)^2/4. The bracket equals
+2 integral_{X(-v)}^{X(v)} phi''(x) dx. Yagasaki Section3 gives phi''>=0
+throughout the well and strictness near its center. Thus every bracket for
+0<theta<pi/2 is strictly positive, and T'(e)>0 at EVERYenergy, not merely
+strict monotonicity. For g(w)=w^p-w,
+
+    phi''(center)=p(p+3)/(6(p-1))>0.
+
+This also verifies the strict-near-center condition for irrationalp in the
+paper's rational-limit argument. The beta-energy derivative and constant
+time scaling above therefore give the literal P_alpha'(beta)<0.
+
+Root decision: EXCLUDE as a routine classical oscillator corollary. The
+new Laplace/Binet route remains a valid ordinary proof candidate, but a new
+proof of an already subsumed endpoint does not create discovery credit.
+No claim that Yagasaki explicitly discusses Coiculescu is made. Known theorem
++ explicit time-preserving reduction, rather than an exact prior paper using
+the same question label, is the reason for this exclusion.

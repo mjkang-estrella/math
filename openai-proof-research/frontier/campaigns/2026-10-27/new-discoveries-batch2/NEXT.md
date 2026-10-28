@@ -1,3 +1,19 @@
+# Latest checkpoint: manuscript and exact classical exclusion
+
+2026-10-28 root: Gamma ordinary-proof draft saved in root-gamma-level-paper-r1;
+three pages built and all latest renders visually inspected, no clipping or
+overfull boxes (one cosmetic bibliography underfull). Root rendered/read actual
+JMAA VoR pp12-13: Lemma15 equation and Remark16(a) match exact source scope.
+No full literal Lean certificate yet; two Pi bridge tasks continue, do not poll.
+
+Sol period EXCLUDED credit0: root-sol-subsumption-r2 addendum now closes the
+pointwise derivative gap with an explicit Chicone derivative integral and
+strict-near-center calculation. Exact power oscillator theorem subsumes the
+source through a time-preserving coordinate change. Original freeze unchanged.
+Unneeded Sol preliminary-review task cancel requested; preserve worker files.
+
+Additional accepted count0/30; total30/60; goalACTIVE. No external changes.
+
 # Continue the second batch of thirty discoveries
 
 LATEST 2026-10-28: Gamma independent r2 review PASS after the explicit xF
