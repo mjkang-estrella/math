@@ -1,3 +1,12 @@
+LATEST ROOT MANUSCRIPT 2026-10-28: two-page arcsinh-positive draft in
+root-arcsinh-positive-paper-r1 built with zero box warnings; both latest
+pages read visually. Theorem1 = actual stronger Lean endpoint; 2019Conj5.1
+= closed source_conjecture. Source scope and independent-review-pending
+status explicit. All38 original proof freeze hashes unchanged. No repeated
+Lean replay needed for prose-only addition. Count0/30; total30/60.
+Three Pi tasks continue asynchronously (Gamma Euler r2, Gamma levels r1,
+arcsinh independent review r1). Do not poll. GoalACTIVE.
+
 LATEST DELEGATION: newly frozen arcsinh candidate @dcef9ead57 assigned
 independent Pi review arcsinh-positive-preliminary-review-r1-20261028 (receipt
 in arcsinh-positive-review-launch.json). q-Narayana discovery task cancel
