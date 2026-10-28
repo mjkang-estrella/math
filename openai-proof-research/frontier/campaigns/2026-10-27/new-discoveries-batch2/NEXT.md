@@ -149,3 +149,5 @@ Root personally rendered/read An-Dokovic0807.3580v2 printedp11: Conj3.6 exact un
 Verifier session35672 COMPLETED PASS116 declarations, standard3, actual dependency revisions+clean tracked trees confirmed. Current support archive extraction replay was started next; actual session handle is in root tool output and should be polled, not restarted on timeout. Source endpoint remains absent in ROOT workspace; worker source-endpoint-r1 not yet delivered.
 
 Actual extracted support replay shell session17386 confirmed running. Use write_stdin(session_id=17386) on continuation. The extraction tree is ignored and unstaged; do not confuse a partial tree with a PASS receipt.
+
+Current three Astra high/ultrafast slots: source-endpoint-r1, analysis-r3, an-djokovic-preliminary-review-r1. All exactIDs/links recorded; do not poll. New review must adjudicate source/math/new coefficient cancellation versus routine classical corollary, not infer eligibility from shortness/open label. Root next may finish shell session17386 support extracted replay and deterministic hash-repeat; sourceworker completion handled only on wake.
