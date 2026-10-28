@@ -1,5 +1,37 @@
 # Continue the second batch of thirty discoveries
 
+LATEST 2026-10-28: Gamma independent r2 review PASS after the explicit xF
+classical-perspective reduction; full report/thread read. Root investment
+decision accepts completing this exact source curve, credits all classical
+tools, and preserves strongest routine-corollary objection for final review.
+New actual Pi high/standard tasks: gamma-euler-formal-r2-20261028 (closed
+Gamma HasSum and ratio bridge), gamma-series-level-formal-r1-20261028 (closed
+actual series continuity/strict anti/limits/unique level). Receipts in
+gamma-formal-parallel-launches.json. Third task Sol-period review r1 still
+running; never poll. Old Euler r1 stopped, matrix r3 completed/no result,
+discrete r4 failed OOM. Full Gamma source endpoint remains absent.
+
+Root period classical-subsumption addendum is OUTSIDE frozen a6e42 lane:
+root-sol-subsumption-r2 @ed3f60771d. Exact time-preserving power change gives
+w''+alpha²(w^(1+2/alpha)-w)=0. Actual Yagasaki RIMS1901(2014) Theorem2 and
+Proposition3 read: all-real-p power-oscillator period monotonicity. Exact
+energy E_beta=-alpha² beta^(2alpha+2)/(2(alpha+1)), derivative negative.
+Check pointwise derivative versus strict-monotonicity wording with Chicone
+criterion before any promotion; likely classical-corollary exclusion.
+Original Sol r1 review may not see this post-freeze objection. No acceptance.
+
+Root exact q-Narayana search maxindex16 orders3-6:841 admissible minors,
+no negative coefficient, two printed anchors verified, 1GiB memory cap.
+Finite evidence only, no proof/no nominated outcome. Latest peak-algebra v3
+credits Zhao-Lin-Zang2507.20965 with the failed-lane identity; safe O(n³)
+count DP matches all51 odd n<=101, but already public/excluded. Henry
+372545/372380, Boros-Moll408844 and superNarayana408819 are also already proved
+in their own current sources; ledger records exclusions. User async request
+for actual published Banica conjecture text remains unanswered; no consent or
+source clearance inferred. Count0/30, total30/60, goalACTIVE. No root shell job
+remains running. Next root integrates closed Gamma bridges on wake, or does
+independent manuscript/source work without reading running-worker progress.
+
 Current goal is ACTIVE: thirty additional substantive outcomes, not a recount
 of the completed first thirty. Additional tally0/30; total accepted30/60.
 Authoritative ledger: this directory's ledger.json. Read AGENTS.md and
