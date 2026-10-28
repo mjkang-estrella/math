@@ -1,7 +1,7 @@
 # Mittag-Leffler analytic foundation — complete component, not source resolution
 
-2026-10-28. Fresh strict source replay PASS: 8 modules,62 declarations,
-standard three axioms only, all eight module logs empty. Root read every actual
+2026-10-28. Fresh strict source replay PASS: 10 modules,98 declarations,
+standard three axioms only, all ten module logs empty. Root read every actual
 type/axiom report, including printed source definition and CM quantifiers.
 No proof of SourceClaim370772 exists here. No acceptance or discovery credit.
 
@@ -39,13 +39,24 @@ no identity with the earlier N-factor expression is assumed.
   source expression. The final assembly theorem is CONDITIONAL on positive
   mixed differences of those approximants; its premise is printed explicitly.
 
-Remaining: positive angular Laplace identity and an actual finite averaging
-operator/measure representation proving positive mixed differences of the
-actual squared approximants. The finite-difference-to-CM passage is now proved.
+- BetaAverages: genuine atom/Beta-density interval operators are normalized,
+  continuous and positive on nonnegative intervals, reproduce exact rpow
+  moments, are norm-contractive, preserve mixed-difference positivity, and
+  commute with bounded pointwise limits. The actual finite-product moment
+  is their iterated average, including the chosen index shift.
+- AveragingRepresentation: actual half-order Mittag-Leffler partial sums
+  have a summable uniform majorant; the finite average of the literal
+  E_(1/2)(z sqrt(v)) equals approxTransform, proved through dominated
+  convergence. This is a closed identity, not an assumed representation.
+
+Remaining: positive angular Laplace identity and squared-average/cross-kernel
+identification proving positive mixed differences of the actual squared
+approximants. See CONNECTION-GAPS.md. The finite-difference-to-CM passage
+and actual transform averaging representation are now proved.
 The source question still has independent source/novelty/substantive review
 running in a separate Pi lane; no PASS inferred from these components.
 
 Run python3 verify_component.py. It asserts the exact Lean binary/version
-and8packagepins, compiles a new source-only temporary copy, checks all62
+and8packagepins, compiles a new source-only temporary copy, checks all98
 names/types/axiom closures, and writes verification/audit.json and Checks.log.
 No source files from the independently reviewed frozen root-r12 were changed.

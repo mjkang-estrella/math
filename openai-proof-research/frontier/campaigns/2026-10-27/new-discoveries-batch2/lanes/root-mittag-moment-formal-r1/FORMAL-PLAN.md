@@ -1,7 +1,7 @@
 # Remaining source-level bridges, with a measure-light implementation option
 
 Use the reviewed full ordinary proof if it survives independent screening.
-The averaging/kernel paragraphs below are an implementation plan, not proved Lean mathematics. The finite-difference paragraph describes results now proved in DifferenceCriterion.lean.
+The finite averaging operator, exact moments, positivity, bounded-limit interchange, and actual transform representation below are now proved in BetaAverages.lean and AveragingRepresentation.lean. The kernel and squared-average bridges remain a plan, not proved Lean mathematics. The finite-difference paragraph describes results proved in DifferenceCriterion.lean.
 
 For beta=2a in(0,1], define the positive normalized averaging operator
 
@@ -19,8 +19,7 @@ The operator preserves constants, positivity, finite sums/scalar multiples,
 complex conjugation and dominated uniform series. The scale stays in[0,C]
 with C=N^(1-beta), so the E_(1/2) power series is uniformly dominated by
 E_(1/2)(|z|sqrt(C)), already summable by SeriesConvergence. Its moment
-image is exactly approxTransform from Approximation. Prove this identity;
-do not assume it as a surrogate for the literal series.
+image is exactly approxTransform from Approximation. This identity is now proved as approxTransform_eq_finiteBetaAverage; it is not an assumed surrogate for the literal series.
 
 For two independent copies (or two commuting iterated averaging operators),
 the squared transform norm is the double average of

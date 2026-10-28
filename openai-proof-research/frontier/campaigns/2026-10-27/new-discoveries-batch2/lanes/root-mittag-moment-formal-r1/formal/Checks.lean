@@ -1,4 +1,5 @@
-import SourceAssembly
+import AveragingRepresentation
+set_option autoImplicit false
 
 #check MittagModulus.momentApprox
 #print axioms MittagModulus.momentApprox
@@ -124,7 +125,78 @@ import SourceAssembly
 #print axioms MittagModulus.squaredApprox_tendsto
 #check MittagModulus.sourceClaim_of_positiveMixedApprox
 #print axioms MittagModulus.sourceClaim_of_positiveMixedApprox
-
+#check MittagModulus.betaAverage
+#print axioms MittagModulus.betaAverage
+#check MittagModulus.betaAverage_continuous
+#print axioms MittagModulus.betaAverage_continuous
+#check MittagModulus.betaAverage_add
+#print axioms MittagModulus.betaAverage_add
+#check MittagModulus.betaAverage_const_smul
+#print axioms MittagModulus.betaAverage_const_smul
+#check MittagModulus.betaAverage_const
+#print axioms MittagModulus.betaAverage_const
+#check MittagModulus.finiteBetaAverage
+#print axioms MittagModulus.finiteBetaAverage
+#check MittagModulus.finiteBetaAverage_continuous
+#print axioms MittagModulus.finiteBetaAverage_continuous
+#check MittagModulus.finiteBetaAverage_const
+#print axioms MittagModulus.finiteBetaAverage_const
+#check MittagModulus.mul_mem_nonnegative_interval
+#print axioms MittagModulus.mul_mem_nonnegative_interval
+#check MittagModulus.betaAverage_nonneg
+#print axioms MittagModulus.betaAverage_nonneg
+#check MittagModulus.finiteBetaAverage_nonneg
+#print axioms MittagModulus.finiteBetaAverage_nonneg
+#check MittagModulus.betaAverage_rpow
+#print axioms MittagModulus.betaAverage_rpow
+#check MittagModulus.betaAverage_congr_nonneg
+#print axioms MittagModulus.betaAverage_congr_nonneg
+#check MittagModulus.finiteBetaAverage_const_smul
+#print axioms MittagModulus.finiteBetaAverage_const_smul
+#check MittagModulus.finiteBetaAverage_rpow
+#print axioms MittagModulus.finiteBetaAverage_rpow
+#check MittagModulus.momentApprox_eq_finiteBetaAverage
+#print axioms MittagModulus.momentApprox_eq_finiteBetaAverage
+#check MittagModulus.betaAverage_norm_le
+#print axioms MittagModulus.betaAverage_norm_le
+#check MittagModulus.finiteBetaAverage_norm_le
+#print axioms MittagModulus.finiteBetaAverage_norm_le
+#check MittagModulus.betaAverage_positiveMixedDifferences
+#print axioms MittagModulus.betaAverage_positiveMixedDifferences
+#check MittagModulus.finiteBetaAverage_positiveMixedDifferences
+#print axioms MittagModulus.finiteBetaAverage_positiveMixedDifferences
+#check MittagModulus.betaAverage_tendsto
+#print axioms MittagModulus.betaAverage_tendsto
+#check MittagModulus.finiteBetaAverage_tendsto
+#print axioms MittagModulus.finiteBetaAverage_tendsto
+#check MittagModulus.betaAverage_smul_const
+#print axioms MittagModulus.betaAverage_smul_const
+#check MittagModulus.finiteBetaAverage_smul_const
+#print axioms MittagModulus.finiteBetaAverage_smul_const
+#check MittagModulus.finiteBetaAverage_add
+#print axioms MittagModulus.finiteBetaAverage_add
+#check MittagModulus.finiteBetaAverage_sum
+#print axioms MittagModulus.finiteBetaAverage_sum
+#check MittagModulus.halfTerm
+#print axioms MittagModulus.halfTerm
+#check MittagModulus.halfTerm_continuous
+#print axioms MittagModulus.halfTerm_continuous
+#check MittagModulus.halfTerm_eq_series
+#print axioms MittagModulus.halfTerm_eq_series
+#check MittagModulus.hasSum_halfTerm
+#print axioms MittagModulus.hasSum_halfTerm
+#check MittagModulus.halfTerm_norm_le
+#print axioms MittagModulus.halfTerm_norm_le
+#check MittagModulus.finiteBetaAverage_halfTerm
+#print axioms MittagModulus.finiteBetaAverage_halfTerm
+#check MittagModulus.halfTerm_partial_norm_le
+#print axioms MittagModulus.halfTerm_partial_norm_le
+#check MittagModulus.finiteBetaAverage_halfSum_tendsto
+#print axioms MittagModulus.finiteBetaAverage_halfSum_tendsto
+#check MittagModulus.finiteBetaAverage_halfTerm_at_scale
+#print axioms MittagModulus.finiteBetaAverage_halfTerm_at_scale
+#check MittagModulus.approxTransform_eq_finiteBetaAverage
+#print axioms MittagModulus.approxTransform_eq_finiteBetaAverage
 #print MittagModulus.SourceClaim370772
 #print MittagModulus.CompletelyMonotonePositive
 #print MittagModulus.sourceExpression

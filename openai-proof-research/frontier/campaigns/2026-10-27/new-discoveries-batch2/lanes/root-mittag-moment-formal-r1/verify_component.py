@@ -1,7 +1,7 @@
 from pathlib import Path
 import hashlib,json,re,subprocess,shutil,tempfile
 p=Path(__file__).resolve().parent
-mods=['EulerMoments','SeriesConvergence','SourceDefs','RealAnalytic','NormBridge','Approximation','DifferenceCriterion','SourceAssembly']
+mods=['EulerMoments','SeriesConvergence','SourceDefs','RealAnalytic','NormBridge','Approximation','DifferenceCriterion','SourceAssembly','BetaAverages','AveragingRepresentation']
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
 pins=json.loads((p/'pins.json').read_text())
 assert sha(Path(pins['lean_binary']))==pins['lean_sha256']
@@ -11,7 +11,7 @@ names=[]
 for m in mods:
     source=(p/'formal'/(m+'.lean')).read_text();assert not re.search(r'\b(sorry|admit|axiom|unsafe|native_decide)\b',source),m
     names+=re.findall(r"^(?:noncomputable )?(?:def|theorem|lemma) ([\w'.]+)",source,re.M)
-assert len(names)==len(set(names))==62
+assert len(names)==len(set(names))==98
 out=p/'verification';out.mkdir(exist_ok=True)
 with tempfile.TemporaryDirectory(prefix='mittag-components-fresh-') as tmp:
     t=Path(tmp)
@@ -25,6 +25,6 @@ with tempfile.TemporaryDirectory(prefix='mittag-components-fresh-') as tmp:
     assert {n for n,_ in reports}=={'MittagModulus.'+n for n in names}
     allowed={'propext','Classical.choice','Quot.sound'}
     for n,axs in reports:assert set(filter(None,axs.split(', ')))<=allowed,(n,axs)
-    audit={'status':'PASS supporting genuine series/Gamma approximation components ONLY','scope':'No proof of SourceClaim370772 or complete monotonicity; positive mixed differences of actual squared approximants remain; angular kernel and actual averaging representation not yet proved','modules':len(mods),'declarations':len(names),'fresh_source_copy':True,'warnings_as_errors':True,'no_local_oleans':True,'allowed_axioms':sorted(allowed),'source_hashes':{m+'.lean':sha(p/'formal'/(m+'.lean')) for m in mods},'pins_sha256':sha(p/'pins.json'),'checks_sha256':sha(out/'Checks.log')}
+    audit={'status':'PASS supporting genuine series/Gamma approximation components ONLY','scope':'No proof of SourceClaim370772 or complete monotonicity; positive mixed differences of actual squared approximants remain; angular kernel and squared-average cross-kernel identification not yet proved','modules':len(mods),'declarations':len(names),'fresh_source_copy':True,'warnings_as_errors':True,'no_local_oleans':True,'allowed_axioms':sorted(allowed),'source_hashes':{m+'.lean':sha(p/'formal'/(m+'.lean')) for m in mods},'pins_sha256':sha(p/'pins.json'),'checks_sha256':sha(out/'Checks.log')}
     (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n')
-print('PASS8 supporting modules/62 declarations; genuine source assembly still has explicit positive-MD premise')
+print('PASS10 supporting modules/98 declarations; genuine source assembly still has explicit positive-MD premise')
