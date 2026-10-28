@@ -1,0 +1,80 @@
+import Approximation
+
+#check MittagModulus.momentApprox
+#print axioms MittagModulus.momentApprox
+#check MittagModulus.momentApprox_pos
+#print axioms MittagModulus.momentApprox_pos
+#check MittagModulus.momentApprox_eq_gammaSeq_ratio
+#print axioms MittagModulus.momentApprox_eq_gammaSeq_ratio
+#check MittagModulus.momentApprox_tendsto
+#print axioms MittagModulus.momentApprox_tendsto
+#check MittagModulus.rpow_successor_lower
+#print axioms MittagModulus.rpow_successor_lower
+#check MittagModulus.momentApprox_succ
+#print axioms MittagModulus.momentApprox_succ
+#check MittagModulus.euler_step_ge_one
+#print axioms MittagModulus.euler_step_ge_one
+#check MittagModulus.momentApprox_monotone
+#print axioms MittagModulus.momentApprox_monotone
+#check MittagModulus.momentApprox_le_gammaRatio
+#print axioms MittagModulus.momentApprox_le_gammaRatio
+#check MittagModulus.gamma_step_ge
+#print axioms MittagModulus.gamma_step_ge
+#check MittagModulus.summable_of_arithmetic_subseries
+#print axioms MittagModulus.summable_of_arithmetic_subseries
+#check MittagModulus.mittag_real_majorant_summable
+#print axioms MittagModulus.mittag_real_majorant_summable
+#check MittagModulus.mittag_complex_series_summable
+#print axioms MittagModulus.mittag_complex_series_summable
+#check MittagModulus.mittagLeffler
+#print axioms MittagModulus.mittagLeffler
+#check MittagModulus.hasSum_mittagLeffler
+#print axioms MittagModulus.hasSum_mittagLeffler
+#check MittagModulus.mittagLeffler_even_odd
+#print axioms MittagModulus.mittagLeffler_even_odd
+#check MittagModulus.sourceExpression
+#print axioms MittagModulus.sourceExpression
+#check MittagModulus.CompletelyMonotonePositive
+#print axioms MittagModulus.CompletelyMonotonePositive
+#check MittagModulus.SourceClaim370772
+#print axioms MittagModulus.SourceClaim370772
+#check MittagModulus.mittagReal
+#print axioms MittagModulus.mittagReal
+#check MittagModulus.mittagScalarSeries
+#print axioms MittagModulus.mittagScalarSeries
+#check MittagModulus.mittagScalarSeries_radius
+#print axioms MittagModulus.mittagScalarSeries_radius
+#check MittagModulus.mittagScalarSeries_sum
+#print axioms MittagModulus.mittagScalarSeries_sum
+#check MittagModulus.mittagReal_analyticAt
+#print axioms MittagModulus.mittagReal_analyticAt
+#check MittagModulus.mittagReal_contDiff
+#print axioms MittagModulus.mittagReal_contDiff
+#check MittagModulus.mittagLeffler_ofReal
+#print axioms MittagModulus.mittagLeffler_ofReal
+#check MittagModulus.sourceExpression_real
+#print axioms MittagModulus.sourceExpression_real
+#check MittagModulus.sourceExpression_contDiff
+#print axioms MittagModulus.sourceExpression_contDiff
+#check MittagModulus.sourceExpression_eq_normSq
+#print axioms MittagModulus.sourceExpression_eq_normSq
+#check MittagModulus.approxCoeff
+#print axioms MittagModulus.approxCoeff
+#check MittagModulus.approxCoeff_nonneg
+#print axioms MittagModulus.approxCoeff_nonneg
+#check MittagModulus.approxCoeff_le
+#print axioms MittagModulus.approxCoeff_le
+#check MittagModulus.approxCoeff_tendsto
+#print axioms MittagModulus.approxCoeff_tendsto
+#check MittagModulus.approxTransform
+#print axioms MittagModulus.approxTransform
+#check MittagModulus.approx_term_norm_le
+#print axioms MittagModulus.approx_term_norm_le
+#check MittagModulus.approxTransform_summable
+#print axioms MittagModulus.approxTransform_summable
+#check MittagModulus.approxTransform_tendsto
+#print axioms MittagModulus.approxTransform_tendsto
+
+#print MittagModulus.SourceClaim370772
+#print MittagModulus.CompletelyMonotonePositive
+#print MittagModulus.sourceExpression

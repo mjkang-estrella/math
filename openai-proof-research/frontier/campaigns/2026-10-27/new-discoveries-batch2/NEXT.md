@@ -1,3 +1,16 @@
+LATEST ROOT FORMAL SUPPORT: root-mittag-moment-formal-r1 freshPASS6modules,
+37actualdeclarationsstd3, allreportsrootread, allmodulelogsempty. Literal
+complexMLseriesconvergesallpositivea,b/complexz; genuineevenodd/normsource
+identity; realanalyticity/globalC-infinity; Euler momentGammaSeqratio,
+monotonicity/upperbound; actualtransformdominatedconvergencetoE_a(z).
+SourceClaim370772 isDEFINEDbutNOTPROVED. No fullformalPASS, no credit.
+Remainingpositiveangularidentity + actualfiniteaveragingrepresentation +
+finite-differenceCMcriterion; implementationplaninFORMAL-PLAN.md. Support
+usesN=n+1scaleandN+1mixturefactors, allshiftedboundsproved; do notsilently
+identifywithfrozenordinaryN-factorpresentation. All20frozenr12hashesunchanged.
+IndependentpreliminaryMittagreviewcontinuesonordinaryfreeze; no polling.
+No rootprocessremaining; componentverify5254terminalPASS. Accepted2/30,total32.
+
 LATEST DELEGATION: NEW independent PiGLM5.3Flash HIGH standard/default
 Mittag-Leffler370772 preliminaryreview, taskmittag-modulus-preliminary-review-r1-20261028.
 Frozenroot-mittag-modulus-r12@2444a7c30220hashes. Independentfullproof,
