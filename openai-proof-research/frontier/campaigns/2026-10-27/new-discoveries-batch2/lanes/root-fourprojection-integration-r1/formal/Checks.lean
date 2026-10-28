@@ -1,4 +1,4 @@
-import GradingConsequences
+import FrameInequality
 import RangeFrames
 #check FourProjection.denominator_pos
 #print axioms FourProjection.denominator_pos
@@ -122,6 +122,52 @@ import RangeFrames
 #print axioms FourProjection.sqrt_relation_of_odd_cross
 #check FourProjection.graded_cross_isometry_bound
 #print axioms FourProjection.graded_cross_isometry_bound
+#check FourProjection.mpInvSqrt_mul_sqrt_of_posDef
+#print axioms FourProjection.mpInvSqrt_mul_sqrt_of_posDef
+#check FourProjection.polarFrame_mul_sqrt
+#print axioms FourProjection.polarFrame_mul_sqrt
+#check FourProjection.crossGram_reconstruction
+#print axioms FourProjection.crossGram_reconstruction
+#check FourProjection.frameSign
+#print axioms FourProjection.frameSign
+#check FourProjection.frameSign_isHermitian
+#print axioms FourProjection.frameSign_isHermitian
+#check FourProjection.frameSign_sq
+#print axioms FourProjection.frameSign_sq
+#check FourProjection.frameGrading
+#print axioms FourProjection.frameGrading
+#check FourProjection.frame_gram_defect
+#print axioms FourProjection.frame_gram_defect
+#check FourProjection.frameSign_offdiag
+#print axioms FourProjection.frameSign_offdiag
+#check FourProjection.frameSign_gram_anticommute
+#print axioms FourProjection.frameSign_gram_anticommute
+#check FourProjection.frameSign_cross_odd
+#print axioms FourProjection.frameSign_cross_odd
+#check FourProjection.hsSq_fromBlocks
+#print axioms FourProjection.hsSq_fromBlocks
+#check FourProjection.hsSq_zero
+#print axioms FourProjection.hsSq_zero
+#check FourProjection.hsSq_double
+#print axioms FourProjection.hsSq_double
+#check FourProjection.frameSign_pinching
+#print axioms FourProjection.frameSign_pinching
+#check FourProjection.trace_fromBlocks
+#print axioms FourProjection.trace_fromBlocks
+#check FourProjection.frame_gram_energy
+#print axioms FourProjection.frame_gram_energy
+#check FourProjection.fromCols_mul_adjoint
+#print axioms FourProjection.fromCols_mul_adjoint
+#check FourProjection.normalizedFrame
+#print axioms FourProjection.normalizedFrame
+#check FourProjection.polarFrame_fromCols
+#print axioms FourProjection.polarFrame_fromCols
+#check FourProjection.normalizedFrame_projection
+#print axioms FourProjection.normalizedFrame_projection
+#check FourProjection.normalized_target_energy
+#print axioms FourProjection.normalized_target_energy
+#check FourProjection.four_frame_inequality
+#print axioms FourProjection.four_frame_inequality
 #check FourProjection.projection_eigenvalue_zero_or_one
 #print axioms FourProjection.projection_eigenvalue_zero_or_one
 #check FourProjection.projectionFrame

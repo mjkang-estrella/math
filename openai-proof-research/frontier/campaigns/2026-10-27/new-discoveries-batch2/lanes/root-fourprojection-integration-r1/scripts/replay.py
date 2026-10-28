@@ -7,7 +7,7 @@ L=Path('/home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/b
 fresh=B/'verification'/'fresh'
 if fresh.exists(): shutil.rmtree(fresh)
 fresh.mkdir(parents=True)
-modules=['ScalarCore','SpectralCore','PolarFrameBridge','HSBridge','ContractiveBridge','GradedSpectralBridge','GradingConsequences','ProjectionFrames','RangeFrames']
+modules=['ScalarCore','SpectralCore','PolarFrameBridge','HSBridge','ContractiveBridge','GradedSpectralBridge','GradingConsequences','FrameReconstruction','FrameBlocks','FrameInequality','ProjectionFrames','RangeFrames']
 names=[]
 for mod in modules:
     p=B/'formal'/f'{mod}.lean';s=p.read_text()
@@ -15,7 +15,7 @@ for mod in modules:
         raise RuntimeError('forbidden proof token')
     names += ['FourProjection.'+v for v in re.findall(r'^\s*(?:@\[[^\n]+\]\s*)?(?:noncomputable\s+)?(?:def|theorem|lemma)\s+([\w.]+)',s,re.M)]
     (fresh/p.name).write_bytes(p.read_bytes())
-checks='import GradingConsequences\nimport RangeFrames\n'+'\n'.join('#check '+n+'\n#print axioms '+n for n in names)+'\n'
+checks='import FrameInequality\nimport RangeFrames\n'+'\n'.join('#check '+n+'\n#print axioms '+n for n in names)+'\n'
 (fresh/'Checks.lean').write_text(checks)
 (B/'formal'/'Checks.lean').write_text(checks)
 env=dict(os.environ,LEAN_PATH=os.pathsep.join([str(fresh)]+[str(x/'.lake/build/lib/lean') for x in sorted(P.iterdir()) if (x/'.lake/build/lib/lean').is_dir()]))
