@@ -1,3 +1,19 @@
+# Current checkpoint — Han–Pedon no-result handback
+
+No full quasi-polynomiality or unboundedness theorem. Root read completed
+report and corrected singular-step minus sign in adoption;192 exact own
+T-system checks. Finite fits/nonperiodicity observations stay conjectural,
+not acceptance or a general unboundedness proof. No Lean endpoint. Credit0.
+Count2/30additional,total32/60. See root-han-pedon-adoption-r1/ADOPTION.md.
+
+Karp full real-shift coefficient-sign research and BBK full-refinement
+research remain asynchronous; no polling. Freed slot can attack weighted
+Böttcher–Wenzel case(i)/Eq14; case(ii)/Eq15 is ALREADY publicly proved in
+trureturing and must be excluded from discovery credit. Old matrix-r3 note
+calling both cases open is superseded on Eq15. No new tally or public action.
+
+---
+
 # Current checkpoint — beta-prime exclusion confirmed
 
 Ferreira–Simon Conjecture1 ordinary all-parameter proof is valid, but the
