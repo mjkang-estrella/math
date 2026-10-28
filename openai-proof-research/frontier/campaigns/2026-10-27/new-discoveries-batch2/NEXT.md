@@ -1,3 +1,16 @@
+LATEST ROOT RESEARCH 2026-10-28: root-beta-convolution-r9 records a complete
+ordinary partial proof for Karp331384 Conjecture2 when1<b<=2 and arbitrary
+positive real shifts/allcoefficients. Generic proof uses strictconcavity of
+sum h(t+i)h(S-t-i) for positive increasing concaveh; sourceLemma1 supplies
+the Gamma-ratio premise. NOT a full discovery: b>2 remains unresolved;
+exact b3/S10/u1over10 curvature2953/100 refutes the simpleextension route.
+20exact b2 identities+90highprecision diagnostics PASS, not a substitute
+for proof. Actual sourceCorollary1 ALREADY proves the whole0<b<1 half;
+root-special-screen-r6's negative-half CM observation is rediscovery only.
+No Lean/sourceendpoint, paper, noveltyclearance or independentreview claimed.
+Count1/30,total31/60 unchanged. Gamma levels/Cauchy strict/short-thread
+Pi tasks continue asynchronously; do not poll. Goal ACTIVE.
+
 LATEST DELEGATION: freed arcsinh-final slot refilled with PiGLM high/standard
 short-thread-parity-discovery-r1-20261028, exactreceipt in
 short-thread-parity-discovery-launch.json. ExactnewXu2610.15145Question11.4,
