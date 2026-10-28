@@ -9,9 +9,12 @@ to shared ledgers, shared indexes, other lanes, old campaigns, or existing paper
 No git operations or public posting by workers. No child agents. Root alone
 integrates, accepts, stages and commits.
 
-Latest explicit user instruction revokes Astra and restores Pi GLM 5.3 Flash:
-use provider pi, model spark/GLM-5.3-Flash-EXL3, thinking=high,
-at standard/default speed (no ultrafast). Preserve completed Astra artifacts.
+Latest explicit user instruction adds GPT-6.1 Sol alongside Pi GLM 5.3 Flash.
+Authorized delegates: provider pi, model spark/GLM-5.3-Flash-EXL3,
+thinking=high; or provider codex, model gpt-6.1-sol,
+reasoningEffort=high. Use standard/default service speed for both (no ultrafast).
+Preserve completed Astra artifacts and ongoing GLM work; use Sol for upcoming
+delegate assignments as slots become available.
 Keep all three available delegate slots occupied
 when useful work is available (root plus three = runtime maximum four). Never
 substitute another model or tier without user authorization.

@@ -1,3 +1,15 @@
+# Current checkpoint — Jacobi incomplete; Sol authorized alongside GLM
+
+Jacobi shifted denominator law remains open, credit0. Root verified n<=9 and
+retained only swap symmetry and axis decomposition. Even-reality inference,
+top-unit equivalence and degree claims need proof; worker quotient checker
+fails on R_5=960. See lanes/root-jacobi-adoption-r2/ADOPTION.md.
+Count2/30 additional,32/60 unchanged. User added GPT-6.1 Sol (high/default)
+alongside GLM5.3Flash; use the freed slot for a fresh corrected all-order attack.
+Karp and BBK remain asynchronous; do not poll.
+
+---
+
 # Current checkpoint — live prior audit complete, count unchanged
 
 Outcomes31/32 accepted decisions stand; no matching prior proof found in the
