@@ -27,3 +27,22 @@ A still broader invalid criterion is that every odd cyclotomic polynomial divide
 A uniform nonnegative coefficient decomposition, partition injection, or valid analytic/integer-tail proof is absent. The simple-pole/eventual-periodicity facts in the previous lane do not alone establish a sign. An attempted residue-amplitude proof would need uniform control in both indices and a proof of the full initial segment, not just eventual positivity. No claimed novelty, resolution, formal endpoint, paper or acceptance. Do not count the symmetry, cancellation identity, finite scans, boundary cases or failed-method obstructions.
 
 Primary source: https://arxiv.org/html/2601.04014v1 . Prior full refinement context: pi-discrete-discovery-r7/FINDINGS.md in the previous campaign. Chern-Wang2601.19845 resolves the motivating sum, not automatically this refinement; root has not independently reread that entire successor in this continuation.
+
+## Further termwise-transformation obstruction
+
+A finite q-Chu-Vandermonde convolution suggests, for k>=2,
+
+    G_(k,n) = sum_(j=0)^n q^((2k-2)j)
+      [k+n-j-2 choose n-j]_(q^2)
+      (q^(2j+2);q^2)_(n-j)/(q^(2j+1);q^2)_(n-j+1).
+
+This is the usual finite convolution (ab;Q)_n = sum_j [n choose j]_Q (a;Q)_j (b;Q)_(n-j) b^j, with Q=q^2,a=q,b=q^(2k-2), followed by elementary cancellation. It is an identity route, not a positive decomposition.
+
+Even in the source-symmetry triangular range k>=n+2, its individual terms need not have nonnegative coefficients. Take k=n+2,j=n-1,n>=3. After removing the positive monomial shift, that term is
+
+    (1+q^2+...+q^(2n)) (1-q^(2n)) /
+       ((1-q^(2n-1))(1-q^(2n+1))).
+
+Its coefficient at degree2n+2 is-1: the numerator has coefficient-1 there, every numerator exponent is even, one denominator part has odd degree, and two denominator parts have degree>=4n-2>2n+2. The positive numerator ends at2n, so no other contribution occurs. The explicit n3,k5,j2 instance was verified by exact integer series arithmetic (-1 atdegree8). Thus a claim that this finite convolution is termwise positive is false, including after the valid source symmetry reduction. This does not refute the full G sum; it identifies unavoidable cancellation in this route.
+
+The still simpler possible assertion (q^2;q^2)_n/(q;q^2)_(n+1)>=_coeff0 is false: n3 has coefficient-1 atdegree12. Chern-Wang's actual denominator length2n in their separate positive theorem cannot be shortened to n+1 without proof. No such theorem is invoked here.
