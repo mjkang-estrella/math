@@ -1,3 +1,19 @@
+# Current checkpoint — live prior audit complete, count unchanged
+
+Outcomes31/32 accepted decisions stand; no matching prior proof found in the
+bounded current-registry review at4e3c47d90fa25b041f5fb8f679e55f32a3089486.
+D5/Problems subtrees untruncated. Root checked18artifact hashes,15targetfile
+hashes and firstbatchledger unchanged. No global absence claim. Mittagsource/
+novelty holds retained. RACSAM2025 was body-read in earlier review; a failed
+refetch does not erase it. Adoption:root-live-prior-audit-adoption-r1.md.
+Gaunt remains excluded by concrete public prior. Count2/30additional,32/60.
+
+Karp and BBK full-target research remain asynchronous; no polling. Freed
+slot may revisit the unresolved all-order shifted Jacobi denominator law,
+using old exact reduction/mod2 conjecture and checking current prior art first.
+
+---
+
 # Current checkpoint — Gaunt excluded by public prior proof
 
 Gaunt339406 is EXCLUDED,credit0: immutable public trureturing result at
