@@ -1,0 +1,41 @@
+import HSBridge
+import CrossGram
+import ProjectionFrames
+#check FourProjection.hsSq
+#print axioms FourProjection.hsSq
+#check FourProjection.hsSq_nonneg
+#print axioms FourProjection.hsSq_nonneg
+#check FourProjection.hsSq_conjTranspose
+#print axioms FourProjection.hsSq_conjTranspose
+#check FourProjection.trace_conjTranspose_mul_self_re
+#print axioms FourProjection.trace_conjTranspose_mul_self_re
+#check FourProjection.trace_mul_conjTranspose_self_re
+#print axioms FourProjection.trace_mul_conjTranspose_self_re
+#check FourProjection.hsSq_isometry_mul
+#print axioms FourProjection.hsSq_isometry_mul
+#check FourProjection.hsSq_mul_coisometry
+#print axioms FourProjection.hsSq_mul_coisometry
+#check FourProjection.trace_frame_products
+#print axioms FourProjection.trace_frame_products
+#check FourProjection.orthonormal_columns
+#print axioms FourProjection.orthonormal_columns
+#check FourProjection.crossGram_column_bound
+#print axioms FourProjection.crossGram_column_bound
+#check FourProjection.crossGram_row_bound
+#print axioms FourProjection.crossGram_row_bound
+#check FourProjection.isometry_mul_unitary
+#print axioms FourProjection.isometry_mul_unitary
+#check FourProjection.crossGram_unitary_coordinates
+#print axioms FourProjection.crossGram_unitary_coordinates
+#check FourProjection.projection_eigenvalue_zero_or_one
+#print axioms FourProjection.projection_eigenvalue_zero_or_one
+#check FourProjection.ProjectionFrameIndex
+#print axioms FourProjection.ProjectionFrameIndex
+#check FourProjection.projectionFrameIndex_fintype
+#print axioms FourProjection.projectionFrameIndex_fintype
+#check FourProjection.projectionFrame
+#print axioms FourProjection.projectionFrame
+#check FourProjection.projectionFrame_orthonormal
+#print axioms FourProjection.projectionFrame_orthonormal
+#check FourProjection.projectionFrame_isometry
+#print axioms FourProjection.projectionFrame_isometry

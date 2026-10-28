@@ -119,3 +119,9 @@ Three Astra ultrafast/high tasks now active: graded matrix spectral bridge,
 four-projection source/novelty clearance, q-Hoggatt independent preliminary
 review. Actual taskIds/links in tasks.json. All prior Astra tasks completed.
 No polls; follow completion wakes. Accepted remains0/30; target60total.
+
+## Current checkpoint after canonical range frames
+
+Additional tally remains 0/30. q-Hoggatt excluded as routine by root after actual Lamprecht Theorem30 read; ROOT-DECISION.md records exact distinction from an already printed resolution. Graded and range components complete. Root HS extension strictly compiles19 named declarations, standard3 only. Combined nine-module polar/graded/range replay is running in root-fourprojection-integration-r1; this is support only, no literal source endpoint. Range worker complete. Frame-level assembly and fresh analysis-r2 discovery continue under requested Astra ultrafast/high; do not poll. Actual round4 task IDs saved in tasks.json and round4-launches.json. Published-body and novelty HOLD remain explicitly unresolved. Next: source endpoint assembly, then fresh adversarial review, paper and extracted packet if all gates clear.
+
+Root combined strict support replay completed PASS: all nine modules compiled, standard3 only,91 machine-audited named definitions/theorems (not exhaustive instances/abbrevs; full type-by-type inspection pending). No full source theorem, no credit. RangeFrames source read and compile checked. Root does not infer source/novelty HOLD clearance from component success.
