@@ -1,0 +1,6 @@
+exec((__import__('pathlib').Path(__file__).parent/'refresh.py').read_text().split('coverage={}')[0])
+log=json.loads((b/'http-log.json').read_text());blocked.add('api.github.com')
+get('li.html','https://arxiv.org/html/2609.03653v1')
+get('li-abs.html','https://arxiv.org/abs/2609.03653')
+get('li-source.tar','https://arxiv.org/src/2609.03653v1')
+get('clopen-polylog.html','https://clopen.solutions/?q=polylogarithm')
