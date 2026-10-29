@@ -1,5 +1,13 @@
 # Current continuation — 29 October 2026
 
+r124 adopted zero nominees. Exact early historical screen identifies public
+Agoh/subsum-coprimality proofs and old unresolved denominator/Koizumi targets.
+Root verifies67 manifest entries and replays12 denominator constructions/eight
+finite Agoh jets with scientific/HTTP hashes. These reproduce old diagnostics,
+not new source resolutions. See root-r124-handback. Sol r127 replaces r124;
+fresh r125/r126 continue. Counts unchanged9additional/39total.
+
+
 r123 adopted zero nominees: noncentralchi-square/Krasniqi public proofs,
 old beta-prime exclusion and already-credited Mills; Xu–Yang natural n>=2
 remainder follows by routine source-kernel two-IBP/Taylor argument. Printed
