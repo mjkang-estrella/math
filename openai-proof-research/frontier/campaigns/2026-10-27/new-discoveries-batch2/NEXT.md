@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+r117 closed with zero nominees: four duplicate/public/routine exclusions. Root
+verified57 manifest entries,16 local source hashes and224 copied exact checks.
+Its failed integrity check is preserved: only mutable NEXT.md changed, matching
+root commits8ea6283938→3a6da5ab09. No mathematical source drift. Root record
+lanes/root-r117-handback/ADOPTION.json. New Sol research r118 launched.
+New registry observation: 0d4df45→5e2dd09b (r11721:51:53UTC) has11commits but
+300files and is CAPPED; no complete-current clearance may use it unqualified.
+Factorial manuscript just delivered; root intake/final review is next. Renyi
+final review continues. Counts unchanged8additional/38total.
+
 Renyi final packet frozen for independent review. Root read all four own PDF
 renders, verified346 frozen delivery files plus descriptor and121 payload files,
 freshly extracted final ZIP, reproduced PDF/ZIP byte-identically and replayed all
