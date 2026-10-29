@@ -1,5 +1,16 @@
 # Current continuation — 29 October 2026
 
+Supertoken root EXCLUDE, credit0: independent review and root adopt the complete
+Bailey–Cameron path-block adaptation. Paths of size>=5 remove the alternating
+singleton/pair ambiguity, yielding n-floor(n/5) landmarks for every n>=10.
+The eight-landmark counterexample is mathematically sound but routine under the
+campaign standard. No exact earlier public supertoken proof is asserted; novelty
+coverage remains bounded. All48 frozen originals verified again;45 review files
+sealed. Stop Lean/paper. Decision lanes/root-supertoken-exclusion-r1/DECISION.md.
+Fresh Sol high research r116 replaces the finished review. Three active: r116,
+Renyi literal formalization, factorial-product preliminary review. No polling.
+Counts unchanged:8 additional/38 total.
+
 r115 factorial-product candidate: root source-text and ordinary mathematics PASS
 for the disjoint nine-versus-seven product collision in published Problem 5.6
 of Aivazidis–Loukaki–Müller. Root independently checked exact rational products,
