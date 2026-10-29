@@ -62,8 +62,11 @@ r77 PECK remains unresolved; root exact fiber-coupling obstruction checked,
 not a source counterexample. See root-fresh-source-r77-handback/ADOPTION.json.
 r78 cluster-scattering C4 remains unresolved: uniform factorial divisibility
 missing, bounded cancellation evidence only; current Omega advanced, freshnessHOLD.
+r79 lasso yields an exact probability separation beating every orthogonal tuning
+parameter; source/general wording, closest-body and substantive holds remain.
+Root rational KKT/Schur/cubic bounds pass; independent review pending, credit0.
 Active Sol high/default: edge-irregulator manuscript/packet r1,
-fresh analytic discovery r79 and fresh finite/arithmetic discovery r80. r74 sharp Chernoff curvature remains unresolved;
+lasso preliminary review r1 and fresh finite/arithmetic discovery r80. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.
