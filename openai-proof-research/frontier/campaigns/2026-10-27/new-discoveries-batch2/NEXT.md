@@ -1,25 +1,20 @@
 # Current continuation — 29 October 2026
 
-Accepted6/30 additional,36/60 total. Outcome36 refutes Cooper–Du reflected
-Steiner tensor positivity with a genuine negative H-eigenpair on K1,29.
-Independent final review, final paper/ZIP reproduction and root extracted
-6-module/118-declaration replay PASS. Bounded source/priority limits and
-elementary-star objection retained. Decision:
-lanes/root-steiner-reflection-acceptance-r1/ACCEPTANCE.json.
-Polyomino57 remains uncounted pending manuscript/final review; substantive
-dissent preserved in root-polyomino57-substantive-adjudication-r2. Fresh r45
-research remains active. No external posting or MathDB action.
+Accepted **7/30 additional, 37/60 total**. Outcome37 is the connected 57-cell
+container for every fixed 11-omino, proving a(11)<=57<58 and refuting OEIS A395495.
+No optimality or general asymptotic claim. Root acceptance:
+lanes/root-polyomino57-acceptance-r1/ACCEPTANCE.json.
+Independent final review, root fresh 2022-module/5924-record replay, final-source
+byte identity and final PDF/ZIP reproduction pass. Substantive dissent, current
+registry freshness gaps and resource-protocol qualifications remain explicit.
+No external publication, upload or MathDB change.
 
-Fenner–Green–Homer Conjecture11.1 is excluded: Jin's complete public proof at
-AIM commit c1f79e312f2b7bae2636469c506376a873100691 (14 October) predates our
-candidate. Root read its full proof and adopted the independent exclusion in
-lanes/root-fenner-preliminary-freeze-r1/EXCLUSION.json. No Lean investment.
-Brugidou all-partition positivity remains unresolved in fresh r21; credit0.
-
-Continue fresh full-scope research with Solhigh/default, up to3 workers.
-Screen current MColbrook/AIM and clopen leads as well as Omega/OpenAI/Count;
-read actual relevant primary proof bodies and compare exact scope/chronology.
-Avoid replaying the failed families without a new mathematical mechanism.
+Bessel-ratio literal series and generic one-crossing formal components are in
+separate Sol high/default lanes. Ordinary proof and provisional investment pass;
+novelty remains HOLD and credit0. Fresh r59 Ferrers-rook research completed
+unresolved, credit0, awaiting root handback processing. Continue new full-scope
+research with up to three useful workers, no children, honoring all exclusions.
+Do not treat older pinned registry searches as complete current-head coverage.
 
 ## Historical continuation notes
 

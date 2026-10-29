@@ -1,7 +1,7 @@
 # Additional discoveries — current accepted results
 
-Accepted additional outcomes: **6/30**. Previous published batch: **30**, unchanged.
-Total accepted outcomes: **36/60**. Last updated 2026-10-29 UTC.
+Accepted additional outcomes: **7/30**. Previous published batch: **30**, unchanged.
+Total accepted outcomes: **37/60**. Last updated 2026-10-29 UTC.
 
 | Global | Result | Certificate | Paper and acceptance |
 |---|---|---|---|
@@ -12,6 +12,8 @@ Total accepted outcomes: **36/60**. Last updated 2026-10-29 UTC.
 
 |35|Full two-branch nested power-mean inequality, published Conjecture37|35 mathematical +35 audit modules,560 unique declarations, final extracted replay|[paper](candidates/log-arctangent-mean/paper.pdf), [decision](lanes/root-log-arctangent-acceptance-r1/ACCEPTANCE.json)|
 |36|Negative H-eigenpair for the order-four reflected Steiner tensor on K1,29; full universal-positivity refutation|6 mathematical modules,118 declarations, final extracted strict replay|[paper](candidates/reflected-steiner/paper.pdf), [decision](lanes/root-steiner-reflection-acceptance-r1/ACCEPTANCE.json)|
+
+|37|Connected 57-cell universal container for every fixed 11-omino; refutes OEIS A395495 formula|2,022 mathematical modules,5,924 declarations; root fresh replay bound to identical final sources|[paper](candidates/polyomino57/paper.pdf), [decision](lanes/root-polyomino57-acceptance-r1/ACCEPTANCE.json)|
 
 Each acceptance has independent adversarial review, exact primary-source scope,
 bounded novelty/subsumption screening and deterministic paper/Lean proof ZIP.
