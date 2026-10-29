@@ -21,6 +21,11 @@ Bessel series partial core adopted after root source-only replay:3 mathematical
 modules,61 actual declarations, byte-identical audit, standard3 only. Literal
 ODE/Wronskian/endpoints remain open and assigned to r2. No candidate credit.
 
+Generic Bessel one-crossing component adopted after root extracted replay:
+3 mathematical modules,31 actual declarations,17,360 dependency constants;
+all safety flags false,std3 only. Literal instantiation still open. Independent
+current-prior/classical-subsumption review r2 now active; credit0.
+
 ## Historical continuation notes
 
 The dated entries below are preserved history, superseded by current status above.
