@@ -1,0 +1,3 @@
+exec(open('fetch.py').read().split('urls=')[0])
+urls={'kmo.html':'https://arxiv.org/html/2501.06415v1','kmo-abs.html':'https://arxiv.org/abs/2501.06415','registry-claim.md':'https://raw.githubusercontent.com/the-omega-institute/trureturing/6c27b0a84f560fa3e43d128d8a7f9e5f247e0be3/Problems/takahashi-et-al-2023-weighted-crown-npa1-gap.md','registry-proof.lean':'https://raw.githubusercontent.com/the-omega-institute/trureturing/6c27b0a84f560fa3e43d128d8a7f9e5f247e0be3/D5/S3/Zeros/NicaCovariance/SemigroupRelations.lean'}
+exec(open('fetch.py').read().split('rows=[]')[1].replace("(root/'sources/fetch.json')","(root/'sources/fetch2.json')").join(['rows=[]','']))
