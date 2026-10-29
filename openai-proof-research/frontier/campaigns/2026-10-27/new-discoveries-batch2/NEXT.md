@@ -25,7 +25,10 @@ the same universal source claims; see lanes/root-fresh-source-r62-handback/ADOPT
 r64 Han-Pedon and r65 Latin-square unimodality remain unresolved. Their exact
 proof gaps and limited root replays are preserved in root-fresh-source-r64-handback
 and root-fresh-source-r65-handback; no counts changed.
-Three fresh Sol high/default research lanes r68 finite structures, r66 analysis,
+r66 Macdonald Turan-ratio monotonicity remains unresolved; generic positive-
+symmetric and Schur-Toda routes fail, not the source claim. Root exact obstruction
+replay and frozen manifest checks are saved in root-fresh-source-r66-handback.
+Three fresh Sol high/default research lanes r68 finite structures, r69 analysis,
 r67 arithmetic/algebra are active; no children. Keep exclusions and actual source
 scopes, and do not equate Blueprint markdown trees with actual Lean trees.
 
