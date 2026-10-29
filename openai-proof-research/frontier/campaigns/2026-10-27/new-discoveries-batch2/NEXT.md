@@ -1,3 +1,20 @@
+# Current continuation — 29 October 2026
+
+Accepted4/30 additional,34/60 total. Outcome34 is the convergent nongeometric
+cascade counterexample. Its source scope, bounded novelty, independent final
+review and final root extracted replay are recorded in
+lanes/root-cascade-acceptance-r1/ACCEPTANCE.json. No external posting.
+
+Mean Conjecture37 has a closed35-module proof and a seven-page paper/packet;
+independent final review is running, so its credit remains0. Fenner–Green–Homer
+Conjecture11.1 has a proposed full ordinary proof in
+lanes/sol-fresh-full-source-discovery-r20/; source/mathematical/subsumption review
+is next, with no formal certificate or credit. Use Solhigh/default delegates.
+
+## Historical continuation notes
+
+The dated entries below are preserved history, superseded by current status above.
+
 ## Formal investment begins for two reviewed candidates — 29 October2026
 
 Cascade: root-cascade-formal-r1/ADOPTION.md adopts independent math/source,
