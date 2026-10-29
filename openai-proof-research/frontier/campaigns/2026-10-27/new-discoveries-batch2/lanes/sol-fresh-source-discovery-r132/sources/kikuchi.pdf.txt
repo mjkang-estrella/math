@@ -1,0 +1,1940 @@
+                                        Smooth Trade-off for Tensor PCA via Sharp Bounds
+                                                      for Kikuchi Matrices
+                                                                    Pravesh K. Kothari ‗                 Jeff Xu†
+
+                                                                                October 6, 2025
+
+
+
+
+arXiv:2510.03061v1 [cs.DS] 3 Oct 2025
+                                                                                      Abstract
+
+                                                  In this work, we revisit algorithms for Tensor PCA: given an order-r tensor of
+                                              the form T = G + λ · v⊗r where G is a random symmetric Gaussian tensor with unit
+                                              variance entries and v is an unknown boolean vector in {±1}n , what’s the minimum λ
+                                              at which one can distinguish T from a random Gaussian tensor and more generally,
+                                              recover v? As a result of a long line of work, we know that for any ℓ ∈ N, there is a nO(ℓ)
+                                              time algorithm that succeeds when the signal strength λ ≳ log n · n−r/4 · ℓ1/2−r/4 .
+                                                                                                               p
+
+                                              The question of whether the logarithmic factor is necessary turns out to be crucial to
+                                              understanding whether larger polynomial time allows recovering the signal at a lower
+                                              signal strength. Such a smooth trade-off is necessary for tensor PCA being a candidate
+                                              problem for quantum speedups [SOKB25]. It was first conjectured by [WAM19] and
+                                              then, more recently, with an eye on smooth trade-offs, reiterated in a blogpost of
+                                              Bandeira [Ban24b, Ban24a].
+                                                  In this work, we resolve these conjectures and show that spectral algorithms based
+                                              on the Kikuchi hierarchy [WAM19] succeed whenever λ ≥ Θr (1) · n−r/4 · ℓ1/2−r/4
+                                              where Θr (1) only hides an absolute constant independent of n and ℓ. A sharp bound
+                                              such as this was previously known only for ℓ ≤ 3r/4 via non-asymptotic techniques in
+                                              random matrix theory inspired by free probability [BCSvH24].
+                                                  Our main technical contribution is a new framework for proving spectral norm
+                                              bounds on Kikuchi matrices that are tight up to an absolute constant. Along the way
+                                              to our result, we also confirm a suspicion that Kikuchi matrices are, in general, not
+                                              intrinsically free – a property necessary for the free probability-inspired techniques
+                                              [BCSvH24] to work when ℓ grows beyond a fixed constant.
+
+
+                                          ‗ Princeton University. Supported by an NSF Career Award # 2047933, an NSF Medium Grant # 2211971,
+
+                                        and a Sloan Research Fellowship.
+                                          † Carnegie Mellon University. Supported by NSF Medium Grant # 2211971.
+      1      Introduction
+      In this work, we study the tensor principal component analysis (PCA) problem. In this
+      setting, the input is a tensor T obtained by adding a “noise" tensor G to a symmetric
+      rank-1 tensor (the “signal") on a boolean vector v ∈ {±1}n . Every entry of G is an
+      independent centered Gaussian random variable with variance 1.
+
+                                               T = G + λ · v ⊗r .
+
+      The central algorithmic question is to understand the minimum λ — a measure of the
+      signal strength — at which it is possible to distinguish T from the background “noise" G
+      and, more generally, recover the planted vector v.
+          The first interesting case of r = 2 is the classical single-spiked Gaussian PCA
+      problem, which, in addition to being the fundamental question in algorithmic statistics,
+      has also been of great interest in statistical physics. A celebrated result [BAP05]
+      establishes the famous BBP sharp phase transition for this model: the planted signal is
+      efficiently recoverable for any λ > √1n 1 and informationally-theoretically impossible
+      to recover when λ < √1n . This phenomenon is often described as the existence of a
+      sharp algorithmic threshold (the minimum strength at which the planted signal can be
+      detected/recovered) for the PCA problem.
+          The case of r > 2 has been extensively studied as a canonical problem in statistical
+      inference, starting with the work of Montanari and Richard [MR14]. On the one
+      hand, the planted signal is information-theoretically detectable2 whenever λ ≳ n− 2 .
+                                                                                           r +1
+
+
+      The best known polynomial-time algorithms[HSS15, HSSS16] (which in fact run in
+      near-linear time!) , however, are known to succeed only when λ ≳ log n · n−r/4 . This
+                                                                         p
+
+      potential gap (which arises only for r ≥ 3) between the signal strength required for
+      information-theoretic and efficient detection/recovery is a major topic of study in
+      average-case algorithm design. [PWB16, ZK16, LML+ 17, MNS18, BBH18, JLM20]
+
+      Can the minimum signal strength be improved? Whether there are algorithms
+      for tensor PCA that succeed at a lower signal strength has been a central question in
+      average-case algorithm design. Indeed, investigations of this question have already led
+      to new techniques that have profound consequences for algorithm design and beyond.
+      About a decade ago, researchers [BGL17a, BGG+ 16, RRS17] found higher order spectral
+      methods that run in subexponential-time algorithms and improve the above algorithmic
+      results. In their landmark work, Wein, Alaoui, and Moore [WAM19] introduced
+      spectral methods based on Kikuchi Matrices to substantially simplify algorithms and
+   1 In particular, this threshold is a factor 1/2 smaller than the spectral norm of the noise matrix G, a finding
+
+that may be surprising at first.
+   2We use ≳ to denote an inequality that holds up to a multiplier that is an absolute constant independent
+
+of n but may depend on r.
+
+
+
+                                                        1
+their analyses. Kikuchi matrices have since had a deep impact on algorithm design
+and beyond [GKM22, HKM23, AGKM23, KM23, KM24].
+
+Theorem 1.1 ([BGL17a, BGG+ 16, RRS17, WAM19]). For any 1 ≤ ℓ ≤ n, there is a nO(ℓ) -
+time algorithm for detection and recovery in tensor PCA model that succeeds with probability
+tending to 1 whenever
+                               λ ≳ log n · n−r/4 · ℓ1/2−r/4 ,
+                                    p
+
+for an absolute constant C > 0.
+
+    On the flip side, lower bounds in various restricted models provide evidence that
+no algorithm could improve the guarantees on λ above by more than a polylogarithmic
+factor[PR22, KWB19, DH21, MR14, AGJ20].
+
+Smooth tradeoffs: can higher polynomial times help? The best polynomial-
+time guarantee for tensor PCA is currently achieved by a near-linear time algorithm.
+Does allowing higher polynomial time help? If true, such a result establishes that there
+is no sharp algorithmic threshold for tensor PCA for r > 2 unlike the case of r = 2
+and other well-studied statistical inference problems such as community detection in
+stochastic block models [DKMZ11, Abb17, GJJ+ 20, Wei22, BBK+ 21].
+    While such a smooth trade-off has been suspected by researchers for half a decade
+now, rigorously establishing it has proved challenging. The key technical difficulty is
+in the analyses of the spectral norms of highly correlated random matrices that arise
+in the spectral methods for the problem. Even with the simplifications offered by the
+Kikuchi matrices, proving sharp bounds has proven difficult. Indeed, in their original
+work that introduced these matrices, Wein, Alaoui, and Moore [WAM19] conjectured
+an improved bound on the minimum signal strength that incurs no logarithmic loss.
+The significance of this result and its consequences for establishing a smooth trade-off
+in algorithmic thresholds for tensor PCA was recently highlighted in a conjecture of
+Bandeira. We state his conjecture below and refer the reader to the accompanying
+blogpost for a more detailed discussion of the context.
+
+Conjecture 1.2 ([Ban24a, Ban24b]). For any even r and ℓ ≥ 2r and any n, let λr,ℓ be the
+threshold given by the spectral norm of the Level-ℓ Kikuchi matrix. For any fixed r, one has
+
+                                      nr/4 · λr,ℓ → 0
+
+as ℓ → ∞ (crucially noting that this is after one has taken n → ∞).
+
+   In addition to being a question of central interest in statistical inference, establishing
+such a smooth trade-off has consequences for establishing potential quantum speedups.
+Indeed, a recent work [SOKB25] shows a quartic (i.e., a factor four improvement, in
+contrast to the expected “Grover-search type" factor two improvement, in the exponent)
+speedup in estimating the top eigenvector of Kikuchi matrices for tensor PCA over
+
+
+                                             2
+the classical power iteration. Their result suggests tensor PCA as a candidate example
+for quartic quantum speedups provided one could establish that higher polynomial
+running times strictly lower the signal strength required for success of the Kikuchi
+spectral methods.
+
+Spectral Norm Bound for Random Matrices as the Bottleneck. Let us describe
+the key technical barrier in establishing the conjecture above in more detail now. At a
+high-level, the main issue is that the level ℓ Kikuchi matrix defined as following has size
+Θ(n2ℓ ) but only O(nr ) independent bits of randomness. When ℓ ≫ r – the previously
+unexplored setting – this matrix has highly correlated entries.
+
+Definition 1.3 (Kikuchi Matrix for Even-r. See definition 2.2 for the definition for odd
+r). For even r, and any ℓ ∈ N, and given tensor G of order-r, Mℓ is the Kikuchi matrix of
+        n       n
+size n( ℓ ) × n( ℓ ) for level-ℓ indexed by subsets I, J ⊆ (nℓ ) with entry Mℓ ( G )[ I, J ] := G I∆J for
+| I∆J | = r, and 0 otherwise..
+    We usually drop the dependence on G when it is clear. For the bulk of our work, unless
+otherwise specified, we will be working with G being a random symmetric Gaussian tensor of
+order-r.
+
+Example 1.4. For indices I = {v1 , v2 , v3 , v4 , v5 , v6 }, J = {v1 , v2 , v3 , v4 , v7 , v8 }, in the case
+of r = 4 and ℓ = 6, we have the corresponding entry of the Kikuchi matrix be
+
+                                   Mℓ [ I, J ] := G I∆J = Gv5 ,v6 ,v7 ,v8 .
+
+    More precisely, the analyses of the Kikuchi spectral method for tensor PCA relates
+a high probability estimate on the spectral norm of the Kikuchi matrix built from G to
+the threshold signal strength at which detection is possible as follows:
+
+Claim 1.5. For a given upper bound B( G ) on a random tensor G that holds with high probability,
+one has a distinguishing algorithm for
+
+                                                            B( G )
+                                       λ ≥ Θr (1) ·                     .
+                                                          nr/2 · ℓr/2
+   In the original line of work establishing the "coarse" thresholds, the spectral norm
+bounds for Kikuchi matrices all suffer a loss of polylog factors, yielding bounds
+
+                      B f olklore ( G ) = Or (1) · nr/4 · ℓr/4+1/2 · log n ,
+                                                                    p
+
+
+as an immediate application of black-box matrix concentration bounds (eg. Matrix
+Bernstein).
+    Let us make two comments about the above bound. First, note that the log n factor
+                                                                        p
+
+dominates the effect of increasing ℓ so long as it is bounded by an absolute constant.
+Thus, one cannot rigorously infer a smooth trade-off in polynomial time regime of the
+algorithm. Secondly, the dependence of ℓ should also be tightly controlled apart from
+
+                                                      3
+the log n factor - restricted to the dependence of ℓ, a bound of o (ℓr/2 ) is necessary to
+    p
+
+establish any trade-off between ℓ and λ.
+    It is important to point out that controlling the dependence on the two key parameters
+simulataneously – log n and the ℓ – turns out to be difficult. For example, the recent
+work of d’Orsi and Trevisan [dT23] introduced an Ihara–Bass-type formula that yields
+sharper spectral norm estimates for the “basic” spectral algorithm in the random k-xor
+setting. However, while their bound does get rid of the log n factor, their analyses,
+when run for larger ℓ has a worse polynomial dependence on ℓ. In retrospect, their
+strategy relies on analyzing the non-backtracking walk matrix and is tied to the setting
+where the input tensor is sparse. In contrast, our input tensor is fully dense.
+
+Recent Progress and Barriers in Free Probability. A series of works [BBvH23,
+BCSvH24, BLNNvH25] introduce techniques from free probability to prove sharp
+bounds on correlated random matrices via improved noncommutative Khintchine
+inequalities. These works have used Kikuchi matrices arising in tensor PCA as a testbed
+for applications. In particular, a recent work [BCSvH24] makes non-trivial progress on
+conjecture 1.2.
+
+Theorem 1.6 ([BCSvH24]). For any even r and any 2r ≤ ℓ < 3r        4 , let G be a random symmetric
+tensor of order-r as defined above, and let Mℓ ( G ) be the Kikuchi-ℓ matrix, with high probability
+
+                               ∥ Mℓ ( G )∥sp ≤ Or (1) · nr/4 ℓr/4 .
+                                               |      {z        }
+                                                    := B f p ( G )
+
+
+   For even r (they do not analyze their algorithm for odd r that often tends to be
+similar but more technically challenging), they prove the conjecture for all ℓ ≤ 3r/4.
+   The bound above is based on non-asymptotic techniques in random matrix theory
+from free probability. In particular, the techniques end up establishing not only a
+spectral norm bound as above but also a semicircular shape of the spectrum as in Wigner
+random matrices. This property is called intrinsic freeness. In their work[BCSvH24],
+the authors suggest that intrinsic freeness is likely false for the Kikuchi matrices above
+when ℓ ≫ r.
+
+      (Remark 3.4) When ℓ is large compared to r, the dependence structure of
+      Mℓ is so strong that it is unclear whether it could be accurately modeled by
+      (the corresponding free matrix) Mfree .
+
+    That said, if the matrix is indeed intrinsically free, its spectrum would have a small
+deviation to that of Mfree , predicting a norm bound of B f p . As we will see, along
+the
+√ way to our main result, we confirm their suspicion and show that an additional
+  ℓ factor is necessary via a lower bound for the expected high trace, establishing
+the the matrix does not exhibit semicircle spectrum. We highlight the lower bound
+construction below lemma 2.10 with formal verification in section 4.
+
+
+                                                4
+    In an incomparable improvement on the above bound, a recent work of Bandeira
+and Nizic-Nikolac shows the following bound that removes the logarithmic factor for
+all ℓ but has a worse polynomial dependence on ℓ. As we discussed above, finding a
+proof strategy that simultaneously eliminates the logarithmic factor while preserving
+the right dependence on ℓ has proven challenging despite significant efforts.
+
+Theorem 1.7 ([BNN25]). In the same set-up as above except now for any ℓ ∈ N,
+
+                               ∥ Mℓ ( G )∥sp ≤ Or (1) · nr/4 · ℓr/2 .
+                                               |        {z        }
+                                                       := B pc ( G )
+
+
+   To summarize, the first bound B f p ( G ) establishes a smooth trade-off but only for
+running time regimes where r/2 ≤ ℓ ≤ 3r/4. The second bound B pc , on the other
+hand, removes the additional constraint on ℓ at the cost of a worse dependence on ℓ
+and does not imply a smooth trade-off between running time and signal strength for
+tensor PCA in polynomial time.
+   In this work, we prove a sharp bound on ∥ Mℓ ( G )∥ (for both even and odd r) for all
+ℓ ≪ nΩ(1) and as a special case, resolve conjecture 1.2.
+
+
+1.1     Our Results
+We are now ready to describe our main result. Firstly, we state our main result on sharp
+spectral norm bounds for Kikuchi matrices, and defer the formal definition of the odd-r
+case to the subsequent section.
+
+Theorem 1.8 (Improved Spectral Norm Bound for Kikuchi Matrix for Even-r). For any
+even r > 2, and G a random symmetric tensor of order-r with entry GS ∼ N (0, 1) for any
+S ∈ (nr), let Mℓ ( G ) be the level-ℓ Kikuchi matrix of G defined in definition 1.3, there exists some
+constant δ > 0 such that for any ℓ ∈ N such that ℓ < nδ , with probability at least 1 − on (1),
+                                                       √          r/2 √
+                            ∥ Mℓ ( G )∥sp ≤ Or (1) ·        n·ℓ        · ℓ.
+
+where Or (1) hides constants independent of n and ℓ but possibly depending on r.
+
+    As noted before, the prior bound of[BCSvH24] worked only when ℓ ≤ 3r/4 and
+was established only for even r. The case of odd r has been challenging in all analyses
+of Kikuchi matrix method [GKM22, HKM23, AGKM23, KM23, KM24].
+
+Theorem 1.9 (Improved Spectral Norm Bound for Kikuchi Matrix for Odd-r). For any
+odd r > 2, and G a random symmetric tensor of order-r in the above normalization, let Mℓ ( G )
+be the level-ℓ Kikuchi matrix of G defined in definition 2.2, there exists some constant δ > 0
+such that for any ℓ ∈ N such that ℓ ≤ nδ , with probability at least 1 − on (1),
+                                                      √      r
+                             ∥ Mℓ ( G )∥sp ≤ Or (1) ·    n·ℓ .
+
+                                                  5
+Remark 1.10. Our bound works to ℓ = nδ for some constant δ > 0 and gives stronger
+                                                                    
+concentration bound that holds with error probability at most exp nδ as opposed to the
+polynomial tail bound from black-box non-commutative Khintchine.
+
+   From our improved norm bounds for Kikuchi matrices, we show that the Kikuchi
+hierarchy gives a smooth trade-off for the Tensor PCA problem in the full polynomial-
+time regime, proving the conjecture of [Ban24b].
+
+Theorem 1.11 (Smooth Tradeoff for Tensor PCA). There exists some constant δ such that
+for any ℓ ≤ nδ , there is an algorithm with runtime nO(ℓ) that solves the detection problem of
+Tensor PCA with probability at least 1 − on (1) for
+
+                                   λ > Cr · n−r/4 · ℓ1/2−r/4
+
+for some absolute constant Cr that depends solely on r.
+                                                   r
+    Concretely, there is an algorithm f ( T ) : Rn → {0, 1} running in time nO(ℓ) that
+satisfies PrG [ f ( G ) = 1] = on (1) if λ = 0 and G is a random symmetric tensor, while
+PrG,v [ f ( G + λ · v⊗r ) = 1] = 1 − on (1) if λ > Cr · n−r/4 · ℓ1/2−r/4 and v is a uniformly
+chosen boolean vector {±1}n .
+
+Downstream Algorithmic Application From Detection. Our sharp threshold
+result for the detection problem also gives rise to the following extensions by combining
+with the known techniques from [WAM19]: 1) extension to more general prior; and 2)
+a recovery algorithm for the same regime.
+
+Theorem 1.12 (Extension to General Prior). Similar to Thmeorem B.1 in [WAM19], our
+result extends to the general prior v with i.i.d. entries drawn from some distribution π on R
+(that does not depend on n) and normalized such that E[π 2 ] = 1 with some constant overhead
+in the range of the signal-noise ratio λ as above.
+
+Remark 1.13. Though not explicitly carried out, our technique extends to settings in which the
+underlying random tensor of i.i.d. entries with mean-0 and variance-1 have weak-yet-polynomial
+dependence in n in the higher-order moments in a fashion similar to norm bounds for adjacency
+matrix of sparse random graphs of at least polylogarithmic average degree [Xu24] .
+
+Theorem 1.14 (Application for Recovery ). For r > 2, and ℓ ∈ N, let v be the planted signal
+in Tensor PCA instance as defined above. Let c > 0 be some absolute constant, and Cr > 0 be
+some constant depending solely on r from our norm bounds. There is an algorithm that outputs
+a vector ve in time nO(ℓ) for all ϵ > 0, δ ∈ (0, 1), and λ ≥ c · Cr · ϵ−4 · n−r/4 · ℓ1/2−r/4 such
+that
+                                      corr (v, ve) ≥ 1 − c · ϵ
+with probability 1 − δ provided ℓ ≤ nϵ2 .
+
+
+
+                                               6
+Tightness of Our Bounds: Kikuchi Matrix is Not Free for ℓ ≫ r. Besides
+the algorithmic applications, we also give a lower bound for the trace calculation to
+demonstrate the tightness of our spectral norm bounds.
+
+Lemma 1.15. For any even r > 2, there exists some constant δ > 0 such that for any ℓ, q ∈ N
+and ℓ, q ≤ nδ , and G is a random symmetric tensor of order r with normalization prescribed as
+above,                                  
+                                       n            √              √ 2q
+                   E Tr ( Mℓ ) 2q
+                                         · Θr (1) · nr/2 · ℓr/2 · ℓ
+                                 
+                                    ≥                                     .
+                                       ℓ
+with probability at least 1 − on (1) where Θr (1) hides constants solely depending on r but
+independent of n, q and ℓ.
+
+Remark 1.16. Since we allow Θr (1) slack in the above, this does not pose a conflict for the
+bound B f p ( G ) for the regime ℓ < r. Moreover, this bound is most interesting for first picking r
+and then choosing ℓ > C · r for some large constant C.
+
+    As a by-product of our techniques, by ruling out the semicircle spectrum, this lower
+bound confirms the suggestion of remark 3.4 in [BCSvH24] that Kikuchi matrix of
+larger-ℓ is not intrinsically free.√To highlight this discrepancy, observe that B f p does
+not contain the extra factor of ℓ in our final norm bound, while as we will show
+in the technical sections, this extra factor in fact admits an intuitive combinatorial √
+interpretation. Moreover, our technique also explains why the additional factor of ℓ
+is absent for the small-ℓ regime of ℓ < r.
+    Furthermore, we showcase that in the case the underlying tensor drawn from i.i.d.
+Rademacher distribution, the above lower bound on the expected trace is sufficient to
+imply a lower tail bound for spectral norm.
+
+Lemma 1.17. For any even r, and for G a random symmetric tensor with each entry being i.i.d.
+from GS ∼ {±1} for S ∈ (nr), with probability at least 1 − on (1),
+                                                  √                   √
+                              ∥ M∥sp ≥ Θr (1) ·       nr/2 · ℓr/2 ·       ℓ.
+
+Organization of Our Work In the next section, we give a technical overview of
+our techniques by featuring the case of even-r, and we present the formal proof in the
+section 3. We present the lower bounds in section 4.
+
+Remark 1.18. Between the submission of our manuscript and its posting on arXiv, we were
+made aware of a concurrent work by [Li25] that solves the distinguishing variant of the question.
+We would like to point out that our result for refutation also implies a similar one for the
+distinguishing question.
+
+
+
+
+                                                 7
+2     Technical Overview
+In this section, we start with some technical preliminaries and set the stage for the
+second half of this section that serves as a technical overview of our work. We will be
+primarily focusing on the even-r case to showcase our techniques. As Kikuchi matrices
+are the primary focus of our study, let’s begin by formally introducing them. To make
+our technical analysis intuitive, we will also introduce the diagram perspective of the
+Kikuchi matrices.
+
+
+2.1     Kikuchi Matrices: Definitions and Diagrams.
+For completeness, we reiterate the definition for Kikuchi matrix for even-r.
+
+Definition 2.1 (Kikuchi Matrix for Even-r). For even r, and any ℓ ∈ N, and given tensor G
+                                                   n      n
+of order-r, Mℓ is the Kikuchi matrix of size n( ℓ ) × n( ℓ ) for level-ℓ indexed by subsets I, J ⊆ (nℓ )
+with entry Mℓ ( G )[ I, J ] := G I∆J for | I∆J | = r, and 0 otherwise..
+    We usually drop the dependence on G when it is clear. For the bulk of our work, unless
+otherwise specified, we will be working with G being a random symmetric Gaussian tensor of
+order-r.
+
+    For odd r, albeit less straightforwardly, one may still define Kikuchi matrix in the
+following way as inspired by the "Cauchy-Schwarz" trick that is standard in this line of
+works.
+
+Definition 2.2 (Kikuchi Matrix for Odd-r). For odd r, and any ℓ ∈ N, and given tensor G
+of order-r, we let Mℓ denote the corresponding Kikuchi matrix indexed by subsets I, J ⊆ (nℓ )
+with entry
+
+            Mℓ [ I, J ] =        ∑               ∑                ∑             GS1 ∪T1 ∪{t} · GS2 ∪T2 ∪{t}
+                            t∈[n]\(S∪ T )       S1 ,S2            T1 ,T2
+                                          partition of S\ T partition of T \S
+                                             |S1 |=|S2 |       | T1 |=| T2 |
+
+for | I∆J | = 2r − 1, and 0 otherwise.
+
+    As a sanity check, observe that in the above definition, each matrix entry is a
+degree-2 polynomial of the underlying input. To facilitate our technical analysis, we
+will borrow the diagram representations from the study of Graph Matrices - a family of
+random matrices with entries being polynomial functions of the underlying input. We
+refer interested readers to [AMP20, HKPX23, KPX24] for a more involved introduction,
+while we briefly review some terminologies in minimality necessary for the discussion
+of our work.
+    In short, one can view the two oval on the left and right as row and column index
+for the corresponding matrix entry, and each circle inside the oval as an index in [n]. In
+this walk, we will refer to them as step-boundaries in the walk as they can be viewed as
+
+
+                                                            8
+      start or destination of some step in the walk. Moreover, we represent the underlying
+      (hyper-)edge 3 (random variable) via the orange rectangle (in the case r = 4), and the
+      dotted line connecting two vertices in the row and column index that share the same
+      index in [n], i.e. any gray vertex is a vertex from the intersection of the row and column
+      indices.
+
+
+
+
+       (a) Kikuchi Matrix for (r = 4, ℓ = 6)                    (b) Kikuchi Matrix for (r = 3, ℓ = 5)
+
+
+
+      2.2    Trace Moment Method and Spectral Norm Bounds
+      Our starting point is the trace moment method, the classic technique from random
+      matrix theory for understanding the spectrum of random matrices. Despite being
+      a rather elementary technique as we shall see, it has been particularly successful in
+      yielding tight asymptotic bounds, usually as the first successful approach, for random
+      matrices. Its versatility and effectiveness span across classical ensembles such as
+      Gaussian Orthogonal Ensembles and (centered) adjacency matrices of sparse random
+      graphs [Fri03, TVW13, BLM15, TY16, Bor19] , as well as structured random matrices
+      with intricate dependencies and significant entry-wise correlations that arise in modern
+      algorithmic applications [HSSS16, RRS17, BGL17b, DMO+ 19, AMP20, MOP20, JPR+ 22,
+      KPX24, HKPX23, Xu24].
+          Trace moment method generally proceeds as following, for any symmetric matrix
+      M, and q ∈ N,
+                                 ∥ M∥sp ≤ ∑ λi ( M)2q = Tr M2q .
+                                      q                          
+                                               i
+
+      When M is a random matrix, it suffices for one to bound E[Tr( M)2q ] by taking a
+      sufficiently high power of the matrix with q = ω (log n). At this point, one can observe
+      that the RHS Tr M2q admits a purely combinatorial interpretation, as
+                            
+
+                          Tr M2q =            ∑           ∏ M [ v i , v i +1 ] .
+                                 
+                                      P:closed-walk of length-2q i ∈[2q]
+                                         P=(v1 ,v2 ,...,v2q =v1 )
+
+   3With some abuse of notation, we will not distinguish between hyperedge and edge in our technical
+
+analysis.
+
+                                                      9
+This is simply the sum of (weighted) closed walks of length-2q on matrix M. Specializing
+to our setting of Kikuchi matrix for even-r and taking expectation on both sides, we
+have                                                                        
+                         
+                                       ∑          E G  ∏ Mℓ [ Si , Si + 1 ]  .
+                       2q
+              EG Tr Mℓ =
+                                P:closed-walk of length-2q    i ∈[2q]
+                                   P=(S1 ,S2 ,...,S2q =v1 )
+                                          Si ∈(nℓ )
+
+Since each hyper-edge corresponds to a Gaussian random variable with odd-moment
+being 0, one can also infer that each hyper-edge must appear for an even number
+of times in the walk ( i.e. used by an even number of steps). Therefore, any closed
+walk with non-zero contribution in the summand admits the following combinatorial
+description.
+
+Definition 2.3 (Trace-walk for even-r). A trace-walk P for Kikuchi matrix of level-ℓ at
+length-2q + 1 is a sequence of ℓ-sized subsets S = {St }t∈[2q+1] such that
+  1. Si ∈ (nℓ ) for any i ∈ [2q];
+  2. |Si ∆Si+1 | = r for any i ∈ [2q], and the i-th step is along the hyperedge (equivalently
+     viewed as the random variable) GSi ∆Si+1 ;
+  3. (Closed-walk) S1 = S2q+1 ;
+  4. (Evenness) Each hyper-edge appears in an even number of steps.
+Equivalently, we view it as a walk of length-(2q) such that at each step-t, we move from the left
+boundary Ut = St to the right boundary Vt = St+1 = Ut+1 .
+
+    For intuition, the following example is a snippet of a trace-walk restricted to the
+first 3 steps for r = 4. This example also highlights a property of working with matrix
+indices being subsets as opposed to order-tuples-adjacent steps may not be incident to
+any common vertex. It prompts us to make the following definition for the each step of
+the walk.
+
+Definition 2.4 (Vertex Status for a Given Step). For any step in the trace-walk in which we
+move from Ut = St ∈ (nℓ ) to Vt = St+1 ∈ (nℓ ), we call
+  1. each vertex in St+1 ∩ St = Ut ∩ Vt dormant;
+  2. each vertex in St+1 ∆St = Ut ∆Vt active.
+In particular, we additionally call each active vertex in St+1 \ St incoming-active, and each
+vertex St \ St+1 outgoing-active. In short, we also refer to each such vertex as "incoming"
+and "outgoing".
+
+   In the above diagram, each gray vertex is a "dormant" vertex in both of the adjacent
+steps, while a vertex is green if it is "active" in either of the adjacent steps.
+   Additionally, for each walk P, we additionally refer to its corresponding expected
+value as walk-value as the following,
+
+                                                 10
+                            Figure 2: Snippet of a Trace-Walk
+
+Definition 2.5 (Walk-value). For each walk P = {S1 , S2 , . . . , S2q−1 , S2q = S1 }, we define its
+walk-value as
+                                           
+
+             val( P) := EG  ∏ Mℓ [Si , Si+1 ] =           ∏             EG [( Ge )mulP (e) ] .
+                              i ∈[2q]                  e=( I,J )∈ E( P)
+
+   And a crucial observation at this point is that there are two kinds of factors one
+needs to control when trying to upper bound the expected trace,
+  1. Combinatorial (Vertex) Factor: this keeps track of the factor that arises from
+     counting the walks (i.e., the cost of identifying each vertex’s label in [n] throughout
+     the trace-walk).
+  2. Analytical (Edge-value) Factor: this corresponds to the walk-value, i.e., the
+     expectation of random variables traversed through the walk.
+
+Tight Bounds from Local Assignment Schemes. Traditionally, trace moment
+analyses typically rely on global structural constraints of the contributing walks. For
+instance, in the case of Gaussian random matrices, the walks that contribute most to
+the trace moment correspond exactly to Dyck paths, where half the steps visit “new”
+vertices and the other half return to previously visited ones. While effective in simple
+settings, this kind of global reasoning becomes cumbersome when dealing with more
+complex graph matrices, and one major source of complication and intimidation is
+arguably the requirement to keep track of long walks. Hypothetically, the analysis
+would feel much more intuitive if, like the case of Frobenius norm, it suffices work with
+length-2 walks as opposed to typically polylog or even longer walks that are usually
+required for spectral norm bounds.
+    This insight lies at the heart of recent advances that aim to streamline trace moment
+calculation, making it more intuitive to use, more amenable to complex dependencies,
+
+                                                11
+and still capable of delivering sharp bounds. Put simply, the core idea of the developed
+scheme is to break the correlations across long walks by using a factor-assignment
+method that distributes the global counting factors to individual steps. This enables
+a local, step-by-step analysis without needing to track the complex dependencies
+spanning the entire walk. That said, most of the technical challenge of the calculation
+arises in designing a valid factor-assignment scheme that strikes a delicate balance:
+  1. Completeness: it must account for all global contributions;
+  2. Sharpness: the induced local bound for each step must match candidate global
+     upper bounds.
+   We are now ready to introduce the up-shot of a given factor-assignment scheme,
+Definition 2.6 (Factor-assignment scheme and Step-Bound Function Bq (·)). For any
+matrix M and q ∈ N, for any factor assignment scheme, we call Bq ( M ) a valid step-bound
+function of the given scheme if
+
+                         E[Tr M2q ] ≤ MatrixDimension · Bq ( M )2q
+                                 
+
+and for each step of the walk, the factor-assignment schemes assigns to the individual step a
+factor at most Bq ( M ). The dependence on q and M is usually dropped when clear.
+    Once such a scheme is specified, finding a spectral norm bound is then fairly
+straightforward: it reduces to verifying that each step of the walk individually satisfies
+the corresponding "global" upper bound Bq (·), which is simply the candidate spectral
+norm bound one is shooting for. This local approach extends naturally to more complex
+matrix structures and has proven quite effective in prior work when the underlying
+shape corresponds to a graph in various settings[JPR+ 22, KPX24, HKPX23, Xu24] .
+    However, the success of the this approach so far has been restricted to random
+matrices with underling input being a matrix or graph , and does not apply well to
+tensor inputs. It is not clear whether the particular approach would yield interesting
+bounds for Kikuchi matrices with underlying input being a tensor or a hypergraph,
+as the design of the local factor-assignment scheme in the previous works is highly
+combinatorial and graph-theoretic. As we shall see, the fine-grained techniques is
+indeed sensitive to the change of the underlying input from matrix to tensor, and
+unique phenomena pop up in the case of tensor input!
+
+Recovering the Folklore Bounds for Rademacher Tensor. To shed light on
+the local factor-assignment scheme that we will be working with, we start with a
+lightweight application in this fashion that allows us to recover the vanilla bound of
+B f olkdlore ( G ) = Or (1) · nr/4 · ℓr/4+1/2 · log n. Undoubtedly, this bound can be readily
+                                               p
+
+obtained by a straightforward application of anyone’s favorite matrix concentration
+bound, while we resort to the heavy machinery of the trace moment method with the
+hope that we may identify what needs to be improved when we seek a tighter bound
+that shaves off the log factor.
+
+                                             12
+Claim 2.7. For any even-r > 3 and ℓ ∈ N , and G a random symmetric tensor such that
+GS ∼ {±1} i.i.d., let M := Mℓ ( G ) be the associated Kikuchi matrix, and any q = Θ(ℓ log n),
+with probability at least 1 − on (1),
+                                      s                   √
+                                         n−ℓ
+                                                
+                                                       ℓ         p
+                    ∥ M∥sp ≤ O(1) ·               ·        · ℓ · log n .
+                                           r/2        r/2
+
+    Before we describe the precise factor-assignment scheme, we make the following
+observation. Since we are working with Rademacher random variables as opposed to
+Gaussians, one convenient simplification is that we can effective ignore the analytical
+factor that comes from the walk-value: for any walk P in which each hyperedge is
+traversed an even number of times, we have
+
+                           EG [val( P)] = EG [ ∏ ( Ge )mulP (e) ] = 1 ,
+                                                e∈ E( P)
+
+and 0 otherwise where mul P (e) is the number of times edge e appears walk P, i.e., the
+number of times the walk traverses along the edge e. From now on, it suffices for us to
+focus on the combinatorial factor that arises from walk-counting.
+                                                                                    −ℓ       ℓ
+    We next observe the following. Given any index S ∈ (nℓ ), it has at most (nr/2     ) · (r/2 )
+neighbors in the Kikuchi matrices. Therefore, at time-t in the walk in which we move
+                                        −ℓ       ℓ
+from St to St+1 , we have at most (nr/2    ) · (r/2 ) choices for identifying the hyper-edge,
+and equivalently, the destination St+1 . Moreover, in the case that the hyper-edge has
+been traversed in some previous step of the walk, such an (hyper-)edge can be more
+efficiently specified at a cost of at most 2q. This culminates in the following bound that
+accounts for the "global" contribution of a hyper-edge to the combinatorial counting,
+Proposition 2.8. In the global combinatorial factor of the walk, for a hyper-edge e appearing
+                                                                                       −ℓ       ℓ
+in the walk for mul P (e) times, it incurs a total cost of at most Bglobal ( Ge ) ≤ (nr/2 ) · (r/2 )·
+(2q) mul P ( e )− 1 .
+   With the above observation, we are now ready to describe the factor-assignment
+scheme that assigns the factors of each hyper-edge to individual steps that traverse
+along the particular hyper-edge.
+
+  (Combinatorial) Factor Assignment Scheme for Hyper-edges
+  Each hyper-edge appears at least twice in the walk, and the first time it appears,
+               −ℓ       ℓ
+  a cost of (nr/2 ) · (r/2 ) is sufficient, and a cost of 2q is sufficient for any subsequent
+  appearance.
+                                q
+                                     −ℓ       ℓ
+     1. Assign a factor of (nr/2                 ) · 2q for the first and the lasta step in which
+                                                    p
+                                        ) · (r/2
+        the hyper-edge appears in the walk;
+     2. Assign a factor of 2q for any step in which the edge is making a middle
+        (non-first/last) appearance.
+
+
+                                                 13
+         a equivalently, the final
+
+
+      We start by showing that this is a complete scheme, and each (combinatorial
+   counting) factor in the global bound is accounted for via the local assignment.
+
+   Proposition 2.9. For any hyper-edge e that appears in the walk, let Blocal (e) be the total factor
+   assigned by the above scheme to this hyper-edge e throughout the walk across its various
+   appearances, we have
+                                    Blocal (e) ≥ Bglobal (e) .
+
+   Proof. By our assignment-scehme, we have
+                                                                   
+                     s                      s
+                        n−ℓ                      n−ℓ
+                                                       
+                                ℓ                        ℓ         
+      Blocal (e) =           ·       · 2q ·           ·       · 2q · (2q)mulP (e)−2 .
+                                                                   
+                       r/2     r/2              r/2     r/2         |     {z      }
+                     |       {z          } |          {z          }       Middle
+                                     First                       Last
+
+   Since each hyper-edge appears at least twice in a contributing walk, we have mulP (e) ≥ 2.
+   And notice that in the base case of mul P (e) = 2, the inequality holds as Bglobal (e) ≤
+      −ℓ       ℓ
+   (nr/2 ) · (r/2 ) · (2q). Moreover, any increment in mul P (e) gives a factor of 2q to the both
+   sides. This completes the proof to our proposition.
+
+        This then allows us to complete the naive bound with ℓ log n-factor for Kikuchi
+                                                                    p
+
+   matrix of random Rademacher tensor.
+
+   Proof to claim 2.7 . Since each step uses exactly 1 hyper-edge, for α ∈ { F, H, L}, let Bq (α)
+   be the local bound for each individual step using a hyper-edge that appears for first (F),
+   middle (H), and last4 time (L). By construction of the above scheme, we have
+                                                s
+                                                   n−ℓ
+                                                               
+                                                              ℓ
+                           Bq ( F ) = Bq ( L) =           ·        · 2q ,
+                                                   r/2       r/2
+
+   and
+                                 Bq ( H ) = 2q = on (1) · ( B( F ) + B( L)) .
+                    −ℓ        ℓ
+   provided q ≪ (nr/2  ) · (r/2 ).
+      Summing over all possible choices for a given step gives us a local bound of
+                                                                  s
+                                                                     n−ℓ
+                                                                               
+                                                                              ℓ
+         Bq ( Mℓ ) ≤ Bq ( F ) + Bq ( H ) + Bq ( L) = (2 + on (1))         ·        · 2q .
+                                                                     r/2     r/2
+
+       By construction of our factor assignment scheme, this yields
+                                            
+                                          2q
+                                  E[Tr Mℓ ] ≤ nℓ · ( Bq )2q .
+
+4 equivalently, the final time
+
+
+
+                                                     14
+Finally, plugging the chosen value of q = Θ(ℓ · log n), taking 1/2q-th root of the
+above and applying Markov’s then gives us a norm bound that holds with probability
+1 − on (1) of
+                                             s
+                                                n−ℓ
+                                                           
+                                                           ℓ
+            ∥ Mℓ ∥sp ≤ (1 + ϵ) · Bq = O(1) ·          ·        · 2q
+                                                r/2      r/2
+                                            s               √
+                                               n−ℓ
+                                                    
+                                                         ℓ          p
+                                    = O (1)         ·        · ℓ · log n .
+                                               r/2      r/2
+
+
+
+    Let us now pause to examine a key bottleneck in the above scheme: where exactly
+does the extra polylog factor arise in the global accounting? The culprit is the factor
+of 2q incurred when an edge appears for the second (and the last) time. For ease
+of the discussion, we call it the last-cost. To understand why it suffices to focus on
+cases where the second and the last appearances coincide, observe that any other
+non-first appearance is treated as a middle appearance in the scheme—and such steps
+are assigned only negligible local contributions, recalling B( H ) = o (1) · B( F ) (and
+analogously B( L)).
+    For readers familiar with the trace moment calculation for G.O.E. matrix, it is
+well-anticipated that the last-cost can be improved: in fact, it may be just 1 as in the
+case of G.O.E. or graph adjacency matrix. This is almost correct except that is is also
+slightly over-optimistic, and it turns out that we are in an intriguing in-between regime:
+the cost can be improved while the last-cost would not just be 1 either!
+
+Identifying the Target Upper Bound from a Lower Bound. To start with,
+notice that suppose last-cost is Or (1), we would obtain final bound of ∥ Mℓ ∥sp ≤
+       q
+            −ℓ       ℓ
+Or (1) · (nr/2 ) · (r/2 ). To rule out this hypothetical bound in the framework of trace
+moment method, it is instructive to take a detour into the lower bound and consider
+the corresponding lower bound for the expected high trace.
+Lemma 2.10 (Lower Bounding the High Trace). A factor of Θr (ℓ) is necessary for the
+Last-Cost. As a result,
+                                              s                √ !2q
+                                                   −
+                                                        
+             
+                  2q
+                                                n    ℓ     ℓ
+        E Tr Mℓ ≥ Matrix-Dimension · Θr (1) ·                     · ℓ
+                                                  r/2      r/2
+
+   We now give a diagram explanation for the extra factor ℓ in the last-cost. For
+simplicity, assume r is even and r/2 divides ℓ. Lett us consider the first 3-steps of some
+walk as described in the above diagram,
+Question 2.11. Suppose that we are at the index S4 and we are to use an edge for the second
+(and last) time in the next step, which edge could we be using? Equivalently, what could S5 be if
+this is an L-step?
+
+                                               15
+                  Figure 3: Confusion about the Upcoming L-Step
+
+
+    It’s fairly straightforward to see that in the above example, any edge among the first
+three edges can be making a second (and last) appearance in the next step. And more
+generally, for larger ℓ, this reveals that we would have a last-cost of Θ( r/2
+                                                                            ℓ
+                                                                               ) = Θr (ℓ) at
+some particular step. Moreover, this bound in fact holds for a typical step along edges
+appearing for the second (and the last) time. Observe that we have a total last-cost for
+       ℓ
+t := r/2   edges being r/2ℓ
+                            ! if we arrange them in the manner of 1) first using r/2ℓ
+                                                                                       new
+edges, and 2) subsequently re-use all of the r/2 new edges to return to the start yet in
+                                                   ℓ
+
+a potentially different ordering. By Stirling approximation, this gives an individual
+bound of(t!)1/t = Θ(1) · t = Θr (ℓ). We defer the formal verification of the lower bound
+to section 4 .
+    Zooming back, the lower bound has identified a clear target for the upper bound,
+that is showing a cost of ℓ for each step we are using an edge appearing for the
+second-and-last time in the walk.
+
+When is ℓ Sufficient for last-cost? It’d be straightforward if one can establish a
+worst-case bound of last-cost being ℓ for any step of any walk. However, that is false.
+However, it turns out that at least in the ideal situation below, one can show that ℓ is
+indeed sufficient.
+
+Definition 2.12 (Ideal Last-Step). Suppose at some step-t in the walk, we are walking from
+St to St+1 along some edge that is promised to be making its last-appearance in the walk, we
+call the step from St to St+1 an ideal last-step if some out-going vertex in St \ St+1 ⊆ [n] is
+appearing for the final time in the walk, i.e., it is not to-be-revisited upon the departure
+from St .
+
+    Let’s now see why this is sufficient to guarantee a cost ℓ for specifying the destination
+of St+1 from St . Note that throughout the walk, we may can easily keep track of which
+
+
+                                              16
+of the "seen" edges so far in the walk have made their final appearances by incurring a
+O(1) bound per-step,
+
+Observation 2.13. As the walk proceeds, it is a cost of 2 per-step to identify whether the edge
+being traveled along at the given step is appearing for the final time.
+
+    Therefore, in an ideal last-step, it suffices for us to identify one of the outgoing
+vertices from St that is not-to-be revisited as guaranteed by our assumption. This incurs
+a cost of ℓ since St is an ℓ-sized subset. Once such a vertex is identified, the edge used
+in the next step to move to St+1 is also identified since any such vertex must be incident
+to a unique edge that has not made their final appearance.
+    We have now shown that the cost of ℓ is sufficient under the ideal condition.
+However, a crucial question remains: why is it sufficient to bound the contribution in
+the ideal case alone? Recall that, in the worst case, the length of the walk can lead to a
+bound of 2q, which we aim to avoid.
+
+Final Strategy. We begin by revisiting the factor-assignment scheme used in the
+vanilla analysis, which assigns a 2q-factor to steps along edges appearing for the middle
+time. However, such middle-time edges can be effectively ignored, as they contribute
+only lower-order terms compared to edges appearing for the first or final time. This
+observation motivates our final strategy: to design a new factor-assignment scheme
+that penalizes last-steps failing to meet the ideal condition. To this end, we go beyond
+the earlier edge-based approach—which uniformly assigned factors to all L-steps
+regardless of the underlying edge—and instead decompose the edge-based cost into
+vertex-level contributions. This shift to a vertex-based analysis provides the flexibility
+to prioritize vertices appearing for the final time, guiding the scheme to favor steps
+aligned with the ideal condition. We formally introduce this new scheme in the next
+section.
+
+
+3 Sharp Norm Bounds from Factor Assignment Scheme
+3.1    Preliminaries for Trace-Walk
+To facilitate the discussion, we begin by reintroducing several key definitions. While
+some of these were previously presented in the technical overview for the special case
+of even r, we now restate them in a more general and formal form to ensure that our
+arguments can be swiftly extended to the case of odd r as well. For convenience, we
+will highlight the distinction each time a definition is reintroduced and generalized.
+    For starters, let’s reintroduce the definition of trace-walks which would immediately
+apply to trace walks of Kikuchi matrices for odd-r as well to incorporate vertices at
+each step of the walk getting summed over while outside the left/right boundaries.
+
+
+                                              17
+For readability purpose, we suggest the reader to focus on the even-r case in the first
+pass and simply adhere to the simplified definition introduced in definition 2.3.
+
+Definition 3.1 (Generalized Definitions of Trace-walk). For any r > 2, A trace-walk for
+Kikuchi matrix of level-ℓ at length-2q is a sequence of sets (S1 , W1 , S2 , W2 , . . . , S2q , W2q , S2q+1 )
+such that
+   1. Walk-boundary sets: Si ∈ (nℓ ) for any i ∈ [2q + 1];
+   2. Intermediate sets : Wi ⊆ [n] for any i ∈ [2q], and additionally, we assume Wi to come
+      with an two equal-partitions U A , UB for Si \ Si+1 and VA , VB for Si \ Si+1 ;
+   3. For even-r, |Si ∆Si+1 | = r for any i ∈ [2q] and Wi = ∅ for any i ∈ [2q];
+   4. For odd-r, |Si ∆Si+1 | = 2r − 1, and |Wi | = 1 for any i ∈ [2q];
+   5. (Closed-walk) S1 = S2q+1 ;
+   6. (Evenness) Each hyper-edge appears in even number of steps.
+Equivalently, we view it as a walk of length-(2q) such that
+   1. at each step-t ∈ [2q], we move from the left boundary Ut = St to the right boundary
+      Vt = St+1 = Ut+1 with potential intermediate-set Wt ;
+   2. For even-r, each step travers along exactly 1 hyper-edge given by St ∆St+1 ;
+   3. for the odd-r, each step travers along 2 hyper-edges given by U A ∪ VA ∪ Wt and UB ∪
+      VB ∪ Wt where we assume that U A , UB are equal partitions for St \ St+1 and VA , VB for
+      St+1 \ St as prescribed by the intermediate set.
+   4. Each hyper-edge appears for an even number of times.
+
+    With the generalized definition of trace-walk, we may now relate the expected trace
+of the Kikuchi matrix to the weighted sum of trace-walks as defined above.
+
+Proposition 3.2. For any r ≥ 3, ℓ ∈ N and any q ∈ N,
+
+                             E[Tr( Mℓ )2q ] ≤              ∑                val( P) .
+                                                P:trace-walk of length 2q
+
+where we recall that
+                                                      
+
+               val( P) := EG  ∏ Mℓ [Si , Si+1 ] =                 ∏             EG [( Ge )mulP (e) ]
+                                    i ∈[2q]                    e=( I,J )∈ E( P)
+
+    We consider the following factor-assignment scheme. For starters, we focus on the
+"combinatorial" factor that arises from counting of the walk, and a crucial observation to
+get us started is to split the cost of specifying random variables (viewed as hyper-edges)
+among vertices, in particular, among the incoming active vertices.
+
+Definition 3.3 (Generalized Vertex Status). For any step in the trace-walk in which we move
+from Ut = St ∈ (nℓ ) to Vt = St+1 ∈ (nℓ ) potentially through intermediate vertex Wt , we call
+
+                                                    18
+  1. each vertex in St+1 ∩ St = Ut ∩ Vt dormant;
+  2. each vertex in (St+1 ∆St ) ∪ Wt = (Ut ∆Vt ) ∪ Wt active.
+In particular, we call each active vertex outside St incoming-active (i.e. vertices from
+(Wt ∪ Vt ) \ Ut , and each active vertex from St outgoing-active (i.e., vertices from Ut \ Vt ).
+In short, we also refer to each such vertex as "incoming" and "outgoing".
+
+    As a remark, each vertex from the intermediate set Wt is considered active at the
+corresponding step by the above definition. With this definition in hand, one can
+observe that each random variable (viewed as a hyper-edge) only depends on the
+active-vertices while independent of the dormant vertices. And this is precisely why
+we call them "active" and "dormant".
+
+Definition 3.4 (Vertex-appearance at a given step). For any step-t in a trace-walk in which
+we move from Ut := St ∈ (nℓ ) to Vt := St+1 ∈ (nℓ ), we call a vertex in St ∪ St+1 ∪ Wt making
+an appearance at step-t. Moreover,
+  1. a vertex v ∈ St ∪ St+1 ∪ Wt with label in [n] is making a first appearance at step-t if there
+     is no t′ < t such that any vertex that makes appearance at step-t′ has the same label in [n];
+  2. a vertex v ∈ St ∪ St+1 ∪ Wt with label in [n] is making a last appearance if there is no
+     t′ > t such that any vertex that makes appearance at step-t′ has the same label in [n];
+  3. a vertex v ∈ St ∪ St+1 ∪ Wt with label in [n] is making a middle appearance at step-t if
+     it is making neither a first nor middle appearance.
+When the step-t is clear, we ignore the dependence of the appearance at t and simply call it a
+vertex making appearance.
+
+   As a sanity check, we observe that following the above definition, at each step-t > 1
+from St = Ut to St+1 = Vt (possibly through some intermediate set Wt , a vertex in
+the (left) boundary-set St makes an appearance in step-t as a vertex from Ut , and also
+an appearance in the previous step-(t − 1) as a vertex from Vt−1 = St . Analogously,
+vertices in the right-boundary set of step-t St+1 = Vt also make appearances in both
+step t and step t + 1.
+
+Proposition 3.5. By paying a one-time cost of nℓ throughout the walk, we can assume the
+following: at each step-t from St = Ut to Vt = St+1 , no vertex in Ut is making a first
+appearance, and no vertex in Vt is making a last appearance.
+
+Remark 3.6. This is immediate for any step except the left-boundary of the first and the
+right-boundary of the final step of the walk following the above discussion. For the special set
+S1 being the start and final destination of the walk, we pay a cost of nℓ up front which would
+then allow us to assume they are not making "first" appearance in step-1 for local accounting
+purpose (and similarly "last" appearance in step-2q).
+
+
+
+
+                                               19
+   Analogously, we extend the definition of "appearance" for vertices to hyper-edges,
+and thereby steps. The partition of steps according to the step-status will later on be
+the cornerstone of our local perspective in the factor-assignment scheme.
+
+Definition 3.7 (Step-Status/Edge-Appearance). We consider the hyper-edge (or hyoeredges
+in the case of odd-r) being traversed along at step-t as making an appearance at the particular
+step. Moreover, a hyper-edge is making first appearance if it does not appear in previous steps;
+and analogously it is making a final appearance if it does not appear in subsequent steps.
+    For each step, we define its status based on the edge-appearance of the edge(s) in the current
+step. In particular, for even-r, a step-status is equivalent to the edge-appearance of the edge it
+travers along, and takes a label in { F, H, L}. For odd-r in which each step is composed of 2
+edges, a step-status is a label in { F, H, L} × { F, H, L}.
+
+   With these perliminaries settled, we are ready to describe our final factor-assignment
+scheme. In the subsequent subsection, we describe the more lightweight component
+concerning edge-values, and then we describe the most technical component of our
+work concerning combinatorial-factor in the subsection after.
+
+
+3.2     Edge-Value Assignment
+Recall that in our toy-example showcased in the previous section for {±1} random
+input, each walk gives expected value 0 or 1 through the defined quantity of walk-value
+val( P) . However, this is no longer true when we consider Gaussian input, more
+generally, inputs with higher moments. That said, it can be readily handled via an
+additional component - edge-value assignment - in our factor assignment scheme.
+
+Fact 3.8. For g ∈ N(0, 1) (and {±1}), we have E[ g] = 0, and E[ g2 ] = 1, and moreover, for
+t > 2,
+                                  |E[ gt ]| ≤ (2t)t/2 .
+
+    Given the higher-moment bound for edges, we consider the following edge-value
+assignment to steps,
+
+  Edge -Value Assignment
+  Each edge (random variable ge that appears for t times in the walks contributes an
+  analytical value of |E[( ge )t ]| ≤ (2t)t/2 , and we assign this value to each individual
+  step that traverses along edge e via factor Bev (i, e)-the factor assigned to step-i from
+  edge-e- as following.
+      1. For each step i in which the edge e is making the first or final appearance
+         ( F/L) , we assign a factor Bev (i, e) = 1;
+      2. For each step i in which the edge e is making a middle appearance ( H ), we
+
+
+
+                                               20
+        assign a factor of Bev (i, e) = 2 · 2q = 4q.
+
+Definition 3.9 (Edge-value Bound for Steps). For each step-i, we define
+
+                                    Bev (i ) :=            ∏
+                                                           e
+                                                                             Bev (i, e)
+                                                  edge appearing in step-i
+
+where Bev (i, e) is the factor assigned to step-i from edge-e in the above scheme.
+
+   We can now verify that all the analytical factors throughout the global walk is
+accounted locally across steps in the walk from the perspective of each edge e that
+appears in the walk.
+
+Claim 3.10 (Edge-value assignment is complete). For each edge e ∈ (nr), let B̃ev (e) be
+the factor assigned to it across its appearances throughout the walk in the above scheme, i.e.,
+Bev (e) := ∏     i ∈[2q]    B(i, e) , we have
+             e appears in step-i
+
+                                            B̃ev (e) ≥ |E[( ge )t ]| .
+
+Proof. This is immediate for edges that make 2 appearances, and edges appearing only
+once (or more generally odd number of times) is zero. For number of appearances
+t > 2 with, we have
+                             Bev (e) = (2 · 2q)t−2 ≥ (2t)t/2
+as we observe that t ≤ 2q trivially, and verify that x t−2 ≥ x t/2 for t ≥ 4. Finally, the
+claim is proven as we recall that
+
+                                               |E[ gt ]| ≤ (2t)t/2
+
+for t > 2 for g ∈ N(0, 1) and {±1}, and noting that for t = 3 the RHS is trivially 0
+while the LHS is 2q.
+
+   From the above, it is straightforward to verify that we can upper bound the global
+walk-value as following once we switch to a step-perspective. This concludes our
+edge-value component of the factor-assignment scheme.
+
+Proposition 3.11 (Verification
+                  h            of Global  i Value Bound from Steps). For any walk P, recall
+that val( P) := EG ∏i∈[2q] Mℓ [Si , Si+1 ] = ∏e=( I,J )∈E( P) EG [( Ge )mulP (e) ], we have
+
+                                   val( P) ≤      ∏ B̃ev (e) = ∏ Bev (i) .
+                                               e∈ E( P)                step-i
+                                                                      i ∈[2q]
+
+
+where we emphasize B̃ev (e) is the accounting from edge-perspective for edge e, and Bev (i ) is the
+accounting from the step-perspective for step-i.
+
+
+                                                           21
+3.3     Combinatorial-Factor Assignment via Vertices
+To identify each step, it is sufficient to identify the following for each edge appearing
+for the first time,
+  1. What are the outgoing active vertices from the current boundary? This is a cost of
+     ℓ for each such vertex.
+  2. What are the incoming active vertices? Each of them could take a cost of [n] if they
+     have not been seen, or a cost of O(q · r ) otherwise.
+On the other hand, for any edge that has been seen, at most a cost of Or (q) is sufficient
+while we note that it can be improved in the ideal-last-step situation to be Or (ℓ).
+Motivated by the above observation, we design a factor-assignment for each of the
+above factors.
+
+3.3.1   Factor of Outgoing Active Vertices
+For starters, we note that the factor regarding outgoing active vertices can be rerouted
+and split over the edge’s first and last appearance by the following scheme,
+  Combinatorial Factor Assignment for Factors of Outgoing Active Vertex in ℓ
+
+  For each edge appearing for the first time, it incurs a factor of ℓ⌊r/2⌋ from identifying
+  the (incidental) outgoing active vertices. We assign them via the following,
+                                                                               √
+    1. For the step in which the edge first appears (F), assign a factor of ℓ for each
+        of its incident incoming active vertex on the step-boundary;
+     2. For
+         √ the step in which the edge appears for the last time (L), assign a factor of
+           ℓ for each of its incident outgoing active vertex on the step-boundary;
+                                            √
+  Remark 3.12. Crucially, notice that no ℓ factor is assigned to the intermediate vertex W
+  for the odd-r case as the vertex is not on the step boundary!
+
+    Since each edge is incident to the same number ⌊r/2⌋ of incoming and outgoing
+active vertices on the boundary by definition of our matrices,
+                                                             √      it is straightforward to
+observe that we indeed pick up a total of 2 · ⌊r/2⌋ many ℓ factors for each hyperedge
+                                                        √ 2·⌊r/2⌋
+across its first and last appearance. That is a total of ℓ        = ℓ⌊r/2⌋ which is precisely
+the combinatorial factor incurred for identifying the outgoing active vertices for each
+edge when it appears for the first time!
+
+3.3.2   Factor of Incoming Active Vertices
+Next, we focus on the factor from incoming vertex for each edge that appears for the
+first time. In fact, our assignment will be more general that allows us to handle factor for
+edges making a middle (non-first/last) appearance and edges making last appearance
+but not in ideal-condition altogether , as they both involved factors in Or (q) as well.
+
+
+                                             22
+  Combinatorial Factor Assignment for Vertex Factor in n and O(q)
+  Each vertex requires a factor n to be specified when it first appears in the walk,
+  and a subsequent factor of O(q) when it appears as an incoming active-vertex of
+  some F edge in the walk. We assign its corresponding factor as the following,
+                         √
+    1. Assign a factor of n for the step if the vertex is appearing for the first time;
+                         √
+    2. Assign a factor of n for the step if the vertex is appearing for the last (final)
+       time;
+     3. Assign a factor of O(q · r ) if the vertex is making a middle appearance as an
+        incoming active vertex.
+  Moreover, for completeness, for vertices incident to some H-edge, i.e. edge
+  appearing for the middle time, or an L-edge but not in ideal-step condition, assign
+  a total cost of Or (q) to all the (incidental) incoming active vertices.
+
+    The crux of the above scheme is that we redistribute the factor of n for a vertex
+incurred up front when it first appears among its first and last appearance, so that we
+attain the usual square-root saving that we anticipate for the spectral norm bound.
+
+Ideal last-cost, and Redistribution With the bounds for vertices incident to some
+edge making the first appearances, we may now focus on the last-cost, the cost of
+specifying an edge appearing for the last time. We formally restate the ideal last-cost
+bound as highlighted in the overview, and show that it can be analogously extended to
+the odd-r case in which we use a single factor of ℓ to identify 2 edges simultaneously in
+the analogous ideal-condition.
+   For convenience, we recall the condition for an ideal last-step.
+
+Definition 3.13 (Ideal Last-Step for even-r). Suppose at some step-t in the walk, we are
+walking from St to St+1 along some edge that is promised to be making the last-appearance
+in the walk, we call the step from St to St+1 an ideal last-step if some out-going vertex in
+St \ St+1 ⊆ [n] is appearing for the final time in the walk, i.e., it is not to-be-revisited
+upon the departure from St .
+
+    We now re-state our observation earlier, that for any fixed vertex, if it is appearing
+for the last time in the boundary, its incident edge can be effortlessly specified.
+
+Claim 3.14 (Final-Appearance Edges is fixed for any given Final-Appearance Vertex).
+Given any vertex with label in [n] at step-t via some edge making its final appearance, if the
+vertex is additionally making its final-appearance, the edge is fixed (i.e., there is a unique edge).
+
+Proof. Throughout the walk, we can keep track of the edges that have appeared yet not
+made its final appearance. To do this, for each subsequent appearance of an edge, one
+may use a cost of 2 to identify whether this is the final appearance.
+
+                                                23
+   With this record, suppose there is any "outgoing"-active vertex making its final
+appearance in Ut , we observe that such candidate "final"-appearance edge is unique
+given the "outgoing"-active vertex.
+
+Corollary 3.15. For even-r, from the Ut -boundary at step-t, a cost of ℓ is sufficient to specify
+a final-appearance edge provided some "out-going" vertex of the edge is making its final
+appearance.
+
+    Let’s now extend the above to the odd-r case in which each step now contains
+2-edges by definition of our Kikuchi matrix. We first modify the ideal last-step condition
+as the following.
+
+Definition 3.16 (Ideal Last-Step for odd-r). For any odd r, suppose at some step-t in the
+walk, we are walking from St to St+1 along some edges via some intermediate vertex Wt , we call
+the step from St to St+1 an ideal last-step if
+  1. some out-going vertex in St \ St+1 ⊆ [n] is appearing for the final time in the walk,
+     i.e., it is not to-be-revisited upon the departure from St ;
+  2. the intermediate vertex Wt (incident to both edges) is appearing for the final time in the
+     current step-t, i.e., it is not to be revisited once we arrive at St+1 .
+
+    Note that for odd-r, the only distinction in the definition of an ideal last-step is that
+we additionally impose the constraint that the intermediate vertex Wt is also making
+a final appearance. As shown below, this condition is crucial for us to identify both
+edges of a single-step via a single factor of Or (ℓ).
+
+Proposition 3.17. For odd-r, a cost of ℓ · r = Or (1) · ℓ is sufficient to identify both edges in an
+ideal last-step.
+
+Proof. This follows by a double application of claim 3.14 as the following. Notice that
+by construction of our matrix, and thereby definition of our walks, the intermediate
+vertex is incident to both edges. Therefore, it suffices for us to specify the first edge
+via a cost of ℓ as in the even-r case via applying claim 3.14 on some out-going vertex
+making its final appearance. Once the edge is identified, the intermediate vertex can
+be specified again by a cost of r. Finally, apply claim 3.14 again but on the specified
+intermediate vertex identifies to us the second edge that is making its final appearance.
+This incurs a total cost of r · ℓ = Or (ℓ).
+
+    Finally, analogously to splitting the factor of q = ℓ log n equally to the first and
+last step in which an edge appears, we redistribute the factor of Or (ℓ) from the ideal
+last-step. Towards this end, we first observe the following bound for number of ideal
+steps,
+
+Proposition 3.18. There can be at most q ideal last-steps in a length-2q walk.
+
+
+                                                24
+Proof. This bound is immediate for even-r as each edge needs to appear at least twice
+in the walk, therefore, at most half of the steps can be last-steps. To extend to the
+odd case, observe that we would have used at least 2q + 2 distinct edges if there are
+≥ q + 1 ideal last steps. However, we use at most 4q edges (counting multiplicities) in
+a length-2q walk, and each distinct edge needs to appear at least twice, leading to a
+contradiction.
+
+    We may now "naively"
+                     √        split the factor of ℓ as following. It should be emphasized
+that the cost of Or ( ℓ) is assigned to the whole step as opposed to an edge alone. This
+does not make a distinction for the even-r case,√ while importantly for odd-r, each step
+of two edges gets assigned a total cost of Or ( ℓ).
+
+  Last-Step Cost Assignment
+
+  For each step that uses
+                      √ some edge making the first or final appearance ( F/L) , we
+  assign a factor Or ( ℓ) to the whole-step.
+
+   Finally, we wrap up this section by recapping our factor assignments and verify
+that this is a complete factor-assignment scheme for the combinatorial factor.
+
+Proposition 3.19. Let Bglobal ( P) be the sufficient cost to identify the whole walk, and Blocal ( P)
+be the cost assigned by our scheme to each step across the walk,
+
+                                     Bglobal ( P) ≥ Blocal ( P) ,
+
+for
+                         Blocal ( P) := MatrixDimension · ∏ Blocal (i ) .
+                                                                i
+
+In other words, each combinatorial factor for counting the walk is assigned to some local step.
+
+Proof. To start with, notice that we use a cost of nℓ to identify the walk-start in both the
+global and local accounting. Next, we prove the the combinatorial factor regarding
+edges that make the first appearance, the cost in ℓ for specifying the out-going active
+vertex is accounted in section 3.3.1, and the cost of specifying incoming active vertices
+is accounted by lemma lemma 3.20. For combinatorial cost regarding edges that make
+H appearance, or non-ideal L-step, we assign a factor of Or (q) to each such edge in
+section 3.3.2. Finally, for each edge making last appearance
+                                                        √          in the step in ideal-step,
+a total factor of ℓ is sufficient and we pick up two ℓ-factors from the first and last
+appearance according to section 3.3.2.
+
+
+Lemma 3.20. This is a complete vertex-assignment scheme regarding combinatorial factor of
+edges appearing for the first time. In other words, for any vertex v, let BF (v) be the total factor
+
+
+
+                                                 25
+assigned to this vertex throughout the walk across its various appearances as an incoming active
+vertex of some edge appearing for the first time, we have
+
+                                   BF (v) ≥ (n) · (2q · r )s(v)
+
+where we recall that s(v) is the number of steps in which v is specified as an incoming vertex of
+some edge beyond the vertex’s first appearance.
+
+Proof. To start with, notice the RHS is the combinatorial factor incurred by F edges
+that arise from specifying the label of v. In the case s(v) = 0 and the vertex appears
+                                                                           √
+only twice in the walk via first and last appearance, we have Bvtx (v) = ( n)2 = n. For
+s(v) ̸= 0, notice we still pick up n from the first and last appearance v which offset the
+contribution of n on the RHS. For the factor depending on s(v), consider each time v
+appears as an incoming active edge beyond the first time, we assign to its particular
+appearance step a factor of 2q · r, which matches the cost assigned to vertex v via that
+particular edge. Taking product over all edges that contribute to s(v) gives the desired.
+
+
+
+3.4    Step-Bound from Factor Assignments
+We are now ready to combine the above components and deduce our local bound in
+the factor assignment scheme. Before that, we observe the following meta-claim about
+vertex-appearance that allows us to exploit the evenness assumption of our walks such
+that each edge (i.e. random variable) needs to appear at least twice.
+Claim 3.21. In the case the edge is via an F (or L)-step, any incidental out-going vertex (or any
+incoming vertex) cannot be making last (or first appearance).
+
+Proof. This follows from the observation that edge needs to appear at least twice
+throughout the walk. Observe that it suffices for us to consider active vertices
+depending on whether they are outgoing or incoming. For an F-step, if any "outgoing"
+active vertex makes the final appearance at step t, the edge used by step-t would only
+appear only once as otherwise any active vertex of this edge would make a subsequent
+appearance.
+    Similarly, for an L-step while any incoming vertex is making a first appearance, the
+edge at step-t would have appeared only once throughout the walk.
+
+Lemma 3.22 (Step Bound for Even-r). For some fixed constant δ > 0 and let Bq (α) be cost
+assigned to step-t with step-status α ∈ { F, H, L}, we have
+                                                       √     r/2 √
+                         Bq ( F ) = Bq ( L) ≤ Or (1) ·    n·ℓ     · ℓ,
+
+and                                                 √         r/2
+                                Bq ( H ) ≤ on (1)        n·ℓ          .
+
+provided q ≪ nδ .
+
+                                               26
+Proof. We case on the step-status from { F, H, L}. For notational convenience, consider
+the step-t move from boundary set Ut = St to Vt = St+1 . In the case this is an F-step,
+we observe the following,
+  1. Each dormant vertex in the intersection of Ut ∩ Vt not contribute any factor;
+  2. By claim 3.21, any outgoing vertex in Ut \ Vt cannot be making its last appearance.
+     Moreover, since each such vertex appears in the previous step and thus cannot
+     be making their first appearance. Finally, note that none of such vertex may be
+     specified via the middle appearance cost for "incoming" active vertex, hence there
+     is no cost for any such vertex.
+  3. Any incoming vertex in Vt \ Ut cannot be making its last appearance, while it can
+     be making its first or middle appearance. In the case this is a first-appearance, we
+                          √
+     assign it a cost of n; and for any subsequent middle appearance, we assign a
+     cost of 2q · r via section 3.3.2,
+                                                                                  √
+  4. Additionally, any incoming vertex in Vt \ Ut is assigned a factor of ℓ via
+     section 3.3.1 for the "split" cost of specifying the out-going active vertex of the
+     edge;
+  5. Therefore, each vertex contributes a cost of
+                             √                √            √
+                            ( n + ℓ · 2q · r ) ℓ = Or (1) · nℓ .
+
+  6. Edge-value is 1 for each F step via section 3.2;
+                                               √
+  7. Each F step gets assigned a factor of Or ( ℓ) from (potential) ideal last-step cost
+     via section 3.3.2;
+  8. Combining the cost for all vertices in this step gives us a bound of
+                                                   √        √
+                              Bq ( F ) ≤ Or (1) · ( nℓ)r/2 · ℓ
+
+     as there are at most r/2 vertices in V \ U.
+   In the case this is an L-step, the factor is essentially the same as the F-step except
+vertices in U may now contribute as last-appearance vertex (as opposed to those in V
+contributing as first-appearance vertex). Formally, we have
+  1. Each dormant vertex in the intersection of Ut ∩ Vt not contribute any factor;
+  2. By claim 3.21, any incoming vertex in Vt \ Ut cannot be making its first appearance.
+     Moreover, since each such vertex appears in the subsequent step, and thus cannot
+     be making their last appearance. Finally, note that none of such vertex may be
+     specified via the middle appearance cost for "incoming" active vertex since such a
+     cost is only incurred for edges appearing for the first time. Therefore, no cost is
+     assigned for any vertex in Vt \ Ut .
+
+
+
+                                           27
+  3. Any outgoing vertex in Ut \ Vt cannot be making its first appearance, while it can
+     be making its last or middle appearance. In the case this is a last-appearance, we
+                          √
+     assign it a cost of n; and for any subsequent middle appearance, we assign a
+     cost of 2q · r via section 3.3.2.
+  4. Any outgoing vertex in Ut \ Vt is on the step-boundary
+                                                      √       of an edge appearing for
+     the last time, and therefore assigned a factor of ℓ via section 3.3.1 for the "split"
+     cost of specifying the out-going active vertex of the edge;
+  5. Therefore, each vertex Ut \ Vt contributes a cost of
+                             √              √             √
+                            ( n + 2q · r ) · ℓ = Or (1) · nℓ .
+
+  6. Edge-value is 1 for each L step via section 3.2;
+                                               √
+  7. Each L step gets assigned a factor of Or ( ℓ) from (potential) ideal last-step cost
+     via section 3.3.2;
+  8. Combining the above, notice that the factor of 2q is only needed if all vertices
+     from U \ V are making
+                       √      middle appearance, in which case we do not pick up any
+     final-appearance nℓ factor. Therefore, we have the total bound of
+              √                √        √          √                     √        √
+     Bq ( L) ≤ ℓ · ((1 + on (1) nℓ)r/2 + ℓ · 2q · ( nℓ)r/2−1 = Or (1) · ( nℓ)r/2 · ℓ .
+
+      provided q ≤ nδ for some δ > 0.
+   Finally, for the case of H-step, it is immediate to observe that all vertices must be
+making a middle appearance with no extra vertex-cost as the edge can be specified at a
+cost of 2q. Combining with the edge-value gives us a bound of
+
+                        Bq ( H ) ≤ (2q) ·           (2q)            = (2q)2 .
+                                   |{z}             |{z}
+                                   edge-val combinatorial factor
+
+
+
+
+Lemma 3.23 (Step Bound for Odd-r). For some fixed constant δ > 0, for any q < nδ , let
+Bq (α) be cost assigned to step-t with step-status α ∈ { F, H, L} × { F, H, L}, we have
+                                                             √     r
+                        Bq ( F × F ) = Bq ( L × L) ≤ Or (1)     n·ℓ ,
+
+and                                                 √         r
+                                 Bq ( β) ≤ on (1)        n·ℓ        .
+for any step-status β ∈ { F, H, L} × { F, H, L} \ { F × F, L × L}. In other words, we treat any
+step other than both edges being simultaneously F or L as a lower-order term.
+
+Proof. The proof is largely identical to the even-r case for the per-vertex factor of each
+active vertex except that the number of active vertices differs, except the factor of ℓ from
+outgoing active vertices of an F-edge warrants extra care as discussed in section 3.3.1 .
+    In the case of F × F status, notice the following change,
+
+                                               28
+  1. There are at most r incoming active vertices that could be making first appearance,
+                                                    √ r
+     so we get assigned a factor of at most Or (1) · n
+  2. There are r − 1 incoming
+                        √      active vertices on the boundary, each of which gets an
+     assigned factor of ℓ from section 3.3.1
+                                            √
+  3. Each step gets assigned a total of Or ( ℓ) from section 3.3.2 .
+                                                    √ √ r
+Combining the above gives us Bq ( F × F ) ≤ Or (1)    n· ℓ .
+   The case of L × L status also warrants attention on its own,
+  1. There are at most r outgoingg active vertices that could be making last appearance,
+                                                     √ r
+     so we get assigned a factor of at most Or (1) · n
+   2. There are r − 1 outgoing
+                         √      active vertices on the boundary, each of which gets an
+      assigned factor of ℓ from section 3.3.1 ;
+                                             √
+   3. Each step gets assigned a total of Or ( ℓ) from section 3.3.2 .
+                                                      √ √ r
+Combining the above gives us Bq ( L × L) ≤ Or (1)       n · ℓ . The bounds for other
+step-status are lower-order term, and follow immediately from the above discussion.
+
+Wrapping Up We are now ready to prove our main theorem.
+
+Proof to theorem 1.8 and theorem 1.9. We focus on the even-r case while the odd-r case
+holds verbatim. Let Bq be our final step-value bound for each step by our factor-
+assignment scheme, summing over all possible step-status, we have
+                                                            √     r/2 √
+                 Bq ≤ Bq ( F ) + Bq ( H ) + Bq ( L) ≤ Or (1) n · ℓ · ℓ
+
+By construction of our factor-assignment scheme definition 2.6, this gives an upper
+bound of
+                     E[Tr( Mℓ )2q ] ≤ MatrixDimension · ( Bq )2q .
+Finally, this translates to a matrix norm bound immediately by Markov’s as we consider
+for any constant ϵ > 0.
+
+                                                   E[Tr( Mℓ )2q ]
+                    Pr ∥ Mℓ ∥sp ≥ (1 + ϵ) · Bq ≤
+                                                   (1 + ϵ)2q · ( Bq )2q
+                                                      nℓ · ( Bq )2q
+                                               ≤
+                                                   (1 + ϵ)2q · ( Bq )2q
+                                               ≤ c−q/ log n
+
+for some constant c > 0 since our q can be taken as q < nδ for some constant δ > 0.
+
+
+
+
+                                          29
+4      Lower Bound
+We now complement our upper bound result by a lower bound. For this section, we
+restrict our attention to the even-r case and note that an analogous argument extends
+to odd-r case.
+
+Lemma 4.1.
+                                                                          s           !2q
+                 
+                      2q
+                                                                              n−ℓ
+          E[Tr       Mℓ        ] ≥ matrix-dimension · (2ℓ/r )r/4 · (2ℓ/r ) ·
+                                                                                r/2
+                                                             √              √ 2q
+                                 = matrix-dimension · Θr (1) · nr/2 · ℓr/2 · ℓ     .
+
+Proof. To give a lower bound, we observe that each term in the expected trace is
+non-negative, and therefore it suffices for us to focus on a specific type of walks in the
+Kikuchi graph (such that it uses each edge twice so that it has expected-value 1), and
+then show that the combinatorial count of such walks is large. Consider the walks of
+the following type,
+    1. It would be useful to consider m := ℓ/0.5r = 2ℓ/r buckets, and consider splitting
+       the length-2q walk into a walk of 2q/(2m) chunks, with each chunk being a walk
+       of length-2m.
+    2. For each chunk of length-2m, this is a walk consist of m many F-steps and m many
+       L steps (moreover, we focus on F-step leading to "new" vertices only).
+                                           ℓ
+    3. For each chunk, there are (r/2,r/2,r/2....,r/2 ) ways to bucket r/2 vertices among ℓ
+       vertices, and each bucket will get to walk twice, once via an F-step and the other
+       via an L-step.
+                                 2m
+    4. Observe that we have (2,2,2...,2 ) many orders to pick which bucket "walks" at each
+       step, and regardless of the ordering, we are guaranteed to return to the start at
+       the end of this chunk. In other words, each arbitrary ordering gives a valid walk.
+                                                      −ℓ
+    5. For each F-step we have the usual factor of (nr/2 ), while notice we no longer have
+                       ℓ
+       the factor of (r/2) since the bucket has been determined.
+Next, we recall the following fact about the center coefficient of multinomials,
+
+Fact 4.2. There exists some constant ck > 0 such that
+                                       
+                                        kn
+                                  log       ≥ ck · kn log k
+                                        n
+for sufficiently large n.
+
+    Thus, we have a total count of the length-2m chunk as
+
+                                                                                         n−ℓ m
+                                                                                        
+            ℓ                     2m
+                          ·                      = exp(ℓ log(2ℓ/r )) · exp(2m log m) ·
+  r/2, r/2, r/2...., r/2     2, 2, 2 . . . , 2                                           r/2
+
+                                                     30
+Taking the 2m-th root gives us the cost per step as
+                                                 s
+                                                               n−ℓ
+                                                                   
+                                     ℓ
+                           Θ(1) · 2 2m ·log(2ℓ/r) · m ·              ,
+                                                               r/2
+
+Recall that m = 2ℓ/r, we have
+                                                              s
+                                                                   n−ℓ
+                                                                       
+                         Θ(1) · (2ℓ/r )   r/4
+                                                · (2ℓ/r ) ·              .
+                                                                   r/2
+
+Recall that our upper bound reads as (per step)
+                                       √
+                               Or (1) · nr/2 · ℓr/2+1 ,
+
+this is tight up to the hidden constant in Or (1).
+
+   Next, analogously to lower bounding spectral
+                                           √       norm √ of a Wigner matrix, to deduce
+the concentration of ∥ Mℓ ∥ within Θr (1) · n · ℓ · ℓ, we use the usual relation
+                                               r/2   r/2
+
+between the spectral norm and trace to lower bound E[∥ Mℓ ∥2q ]. For simplicity, we
+focus on the setting when G is a random symmetric {±1} tensor, while note that the
+analogous bound can be extended to Gaussian via more complicated usage of Gaussian
+concentration inequality. Crucially , since ∥ Mℓ ∥sp is sub-gaussian by proposition 4.9
+and theorem 4.8, we can further deduce
+
+Corollary 4.3. For G an random symmetric tensor of Bernoulli input,
+                                                   √             √
+                      E[|| Mℓ ( G )∥sp ] ≥ Θr (1) · nr/2 · ℓr/2 · ℓ ,
+
+and moreover, with probability at least 1 − on (1),
+                                                   √          √
+                        ∥ Mℓ ( G )∥sp ≥ Θr (1) · nr/2 · ℓr/2 · ℓ .
+
+   We defer the calculation for high-moment-to-mean to the appendix while noting
+that it is analogous to the Lipschitz concentration of random matrix of i.i.d. entries.
+
+
+Acknowledgements
+The authors thank Afonso Bandeira and Petar Nizic-Nikolac for multiple illuminating
+discussions that posed and discussed this problem and for sharing an early version
+of their manuscript [BNN25] with us. We would also like to thank Tim Hsieh for the
+insightful discussions, and the anonymous reviewers from SODA’26 for various helpful
+comments and suggestions.
+
+
+
+
+                                                 31
+References
+[Abb17]     Emmanuel Abbe. Community detection and stochastic block models:
+            Recent developments. Journal of Machine Learning Research, 18(177):1–86,
+            2017.
+[AGJ20]     Gérard Ben Arous, Reza Gheissari, and Aukosh Jagannath. Algorithmic
+            thresholds for tensor pca. The Annals of Probability, 48(4):2052–2087, 2020.
+[AGKM23]    Omar Alrabiah, Venkatesan Guruswami, Pravesh K. Kothari, and Peter
+            Manohar. A near-cubic lower bound for 3-query locally decodable codes
+            from semirandom csp refutation. In Proceedings of the 55th Annual ACM
+            Symposium on Theory of Computing (STOC), pages 1438–1448, Orlando,
+            FL, USA, June 2023. ACM.
+[AMP20]     Kwangjun Ahn, Dhruv Medarametla, and Aaron Potechin. Graph
+            matrices: Norm bounds and applications. abs/1604.03423, 2020.
+[Ban24a]    Afonso S. Bandeira. Ten open problems involving matrices, random-
+            ness, graphs, and more. Oberwolfach Report for Workshop 2417
+            (21.04.2024–26.04.2024), 2024. https://publications.mfo.de/
+            handle/mfo/4149.
+[Ban24b]    Afonso S. Bandeira.  Tensor pca and the kikuchi algorithm
+            (problem 9). Randomstrasse 101: Open Problems 2024, Decem-
+            ber 2024. https://randomstrasse101.math.ethz.ch/posts/
+            Kikuchi-TensorPCA/#MontanariRichardTensorPCA.
+[BAP05]     Jinho Baik, Gérard Ben Arous, and Sandrine Péché. Phase transition of
+            the largest eigenvalue for nonnull complex sample covariance matrices.
+            The Annals of Probability, 33(5):1643–1697, 2005.
+[BBH18]     Matthew Brennan, Guy Bresler, and Wasim Huleihel. Reducibility and
+            computational lower bounds for problems with planted sparse structure.
+            In Conference On Learning Theory, pages 48–166. PMLR, 2018.
+[BBK+ 21]   Afonso S. Bandeira, Jess Banks, Dmitriy Kunisky, Christopher Moore,
+            and Alexander S. Wein. Spectral planting and the hardness of refuting
+            cuts, colorability, and communities in random graphs. In Mikhail Belkin
+            and Samory Kpotufe, editors, Proceedings of the 34th Conference on Learning
+            Theory (COLT), volume 134 of Proceedings of Machine Learning Research,
+            pages 410–473. PMLR, August 2021.
+[BBvH23]    Afonso S. Bandeira, March T. Boedihardjo, and Ramon van Handel.
+            Matrix concentration inequalities and free probability. Inventiones mathe-
+            maticae, 234(1):419–487, June 2023.
+
+
+
+
+                                        32
+[BCSvH24]    Afonso S. Bandeira, Giorgio Cipolloni, Dominik Schröder, and Ramon
+             van Handel. Matrix concentration inequalities and free probability ii.
+             two-sided bounds and applications, 2024.
+[BGG+ 16]    Vĳay Bhattiprolu, Mrinalkanti Ghosh, Venkatesan Guruswami, Eui-
+             woong Lee, and Madhur Tulsiani. Weak decoupling, polynomial folds,
+             and approximate optimization over the sphere. arXiv preprint, 2016.
+             Accepted at FOCS 2017.
+[BGL17a]     Vĳay Bhattiprolu, Venkatesan Guruswami, and Euiwoong Lee. Sum-
+             of-squares certificates for maxima of random tensors on the sphere.
+             In Proceedings of the 11th International Conference on Approximation, Ran-
+             domization and Combinatorial Optimization (APPROX/RANDOM 2017),
+             volume 81 of Leibniz International Proceedings in Informatics (LIPIcs), pages
+             31:1–31:20, 2017.
+[BGL17b]     Vĳay Bhattiprolu, Venkatesan Guruswami, and Euiwoong Lee. Sum-of-
+             Squares Certificates for Maxima of Random Tensors on the Sphere. In
+             APPROX-RANDOM, 2017.
+[BLM15]      Charles Bordenave, Marc Lelarge, and Laurent Massoulié. Non-
+             backtracking spectrum of random graphs: community detection and
+             non-regular Ramanujan graphs. In Foundations of Computer Science
+             (FOCS), 2015 IEEE 56th Annual Symposium on, pages 1347–1357. IEEE,
+             2015.
+[BLNNvH25] Afonso S. Bandeira, Kevin Lucca, Petar Nizic-Nikolac, and Ramon van
+           Handel. Matrix chaos inequalities and chaos of combinatorial type. In
+           Proceedings of the 57th Annual ACM Symposium on Theory of Computing,
+           STOC ’25, page 795–805, New York, NY, USA, 2025. Association for
+           Computing Machinery.
+[BNN25]      Afonso S. Bandeira and Petar Nizić-Nikolac. Norm bounds for kikuchi
+             random matrices, 2025. Personal communication.
+[Bor19]      Charles Bordenave. A new proof of Friedman’s second eigenvalue
+             theorem and its extension to random lifts. Technical Report 1502.04482v4,
+             arXiv, 2019. To appear in Annales scientifiques de l’École normale
+             supérieure.
+[DH21]       Rishabh Dudeja and Daniel Hsu. Statistical query lower bounds for
+             tensor pca. Journal of Machine Learning Research, 22(83):1–51, 2021.
+[DKMZ11]     Aurélien Decelle, Florent Krzakala, Cristopher Moore, and Lenka Zde-
+             borová. Asymptotic analysis of the stochastic block model for modular
+             networks and its algorithmic applications. Physical Review E, 84(6):066106,
+             December 2011.
+
+
+                                         33
+[DMO+ 19]   Yash Deshpande, Andrea Montanari, Ryan O’Donnell, Tselil Schramm,
+            and Subhabrata Sen. The threshold for SDP-refutation of random regular
+            NAE-3SAT. In Proceedings of the Thirtieth Annual ACM-SIAM Symposium
+            on Discrete Algorithms, SODA 2019, San Diego, California, USA, January
+            6-9, 2019, pages 2305–2321, 2019.
+[dT23]      Tommaso d’Orsi and Luca Trevisan. A Ihara-Bass Formula for Non-
+            Boolean Matrices and Strong Refutations of Random CSPs. In Amnon
+            Ta-Shma, editor, 38th Computational Complexity Conference (CCC 2023),
+            volume 264 of Leibniz International Proceedings in Informatics (LIPIcs),
+            pages 27:1–27:16, Dagstuhl, Germany, 2023. Schloss Dagstuhl – Leibniz-
+            Zentrum für Informatik.
+[Fri03]     Joel Friedman. A proof of alon’s second eigenvalue conjecture. In
+            Proceedings of the thirty-fifth annual ACM symposium on Theory of computing,
+            pages 720–724. ACM, 2003.
+[GJJ+ 20]   Mrinalkanti Ghosh, Fernando Granha Jeronimo, Chris Jones, Aaron
+            Potechin, and Goutham Rajendran. Sum-of-squares lower bounds for
+            sherrington–kirkpatrick via planted affine planes. In 61st Annual IEEE
+            Symposium on Foundations of Computer Science (FOCS), pages 954–965.
+            IEEE Computer Society, 2020.
+[GKM22]     Venkatesan Guruswami, Pravesh K. Kothari, and Peter Manohar. Al-
+            gorithms and certificates for boolean csp refutation: Smoothed is no
+            harder than random. In Proceedings of the 54th Annual ACM SIGACT
+            Symposium on Theory of Computing (STOC), pages 678–689, Rome, Italy,
+            June 2022. ACM.
+[HKM23]     Jun-Ting Hsieh, Pravesh K. Kothari, and Sidhanth Mohanty. A simple
+            and sharper proof of the hypergraph moore bound. In Proceedings of
+            the 34th ACM–SIAM Symposium on Discrete Algorithms (SODA), pages
+            2324–2344, Florence, Italy, January 2023. SIAM.
+[HKPX23]    Jun-Ting Hsieh, Pravesh K. Kothari, Aaron Potechin, and Jeff Xu. El-
+            lipsoid Fitting up to a Constant. In Kousha Etessami, Uriel Feige, and
+            Gabriele Puppis, editors, 50th International Colloquium on Automata, Lan-
+            guages, and Programming (ICALP 2023), volume 261 of Leibniz International
+            Proceedings in Informatics (LIPIcs), pages 78:1–78:20, Dagstuhl, Germany,
+            2023. Schloss Dagstuhl – Leibniz-Zentrum für Informatik.
+[HSS15]     Samuel B Hopkins, Jonathan Shi, and David Steurer. Tensor principal
+            component analysis via sum-of-squares proofs. In Conference on Learning
+            Theory, pages 956–1006, 2015.
+[HSSS16]    Samuel B. Hopkins, Tselil Schramm, Jonathan Shi, and David Steurer.
+            Fast spectral algorithms from sum-of-squares proofs: Tensor decompo-
+            sition and planted sparse vectors. In Proceedings of the 48th Annual ACM
+
+                                        34
+            Symposium on Theory of Computing (STOC), pages 178–191. ACM, 2016.
+            Also available as arXiv:1512.02337.
+[JLM20]     Aukosh Jagannath, Patrick Lopatto, and Léo Miolane. Statistical thresh-
+            olds for tensor pca. Annals of Applied Probability, 30(4):1910–1933, 2020.
+[JPR+ 22]   C. Jones, A. Potechin, G. Rajendran, M. Tulsiani, and J. Xu. Sum-of-
+            squares lower bounds for sparse independent set. In 2021 IEEE 62nd
+            Annual Symposium on Foundations of Computer Science (FOCS), pages
+            406–416, Los Alamitos, CA, USA, feb 2022. IEEE Computer Society.
+[KM23]      Pravesh K. Kothari and Peter Manohar. An exponential lower bound for
+            linear 3-query locally correctable codes. CoRR, abs/2311.00558, 2023.
+[KM24]      Pravesh K. Kothari and Peter Manohar. Superpolynomial lower bounds
+            for smooth 3-lccs and sharp bounds for designs. CoRR, abs/2404.06513,
+            2024.
+[KPX24]     Pravesh K. Kothari, Aaron Potechin, and Jeff Xu. Sum-of-squares
+            lower bounds for independent set on ultra-sparse random graphs. In
+            Proceedings of the 56th Annual ACM Symposium on Theory of Computing,
+            STOC 2024, page 1923–1934, New York, NY, USA, 2024. Association for
+            Computing Machinery.
+[KWB19]     Dmitriy Kunisky, Alexander S. Wein, and Afonso S. Bandeira. Notes
+            on computational hardness of hypothesis testing: Predictions using
+            the low-degree likelihood ratio. CoRR abs/1907.11636, arXiv preprint,
+            2019. Presented at ISAAC Congress 2019, later published in Mathematical
+            Analysis, its Applications and Computation (ISAAC 2019), Springer PROMS
+            385 (2022).
+[Li25]      Zhangsong Li. A smooth computational transition in tensor pca, 2025.
+[LML+ 17]   Thibault Lesieur, Léo Miolane, Marc Lelarge, Florent Krzakala, and
+            Lenka Zdeborová. Statistical and computational phase transitions in
+            spiked tensor estimation. In 2017 IEEE International Symposium on
+            Information Theory (ISIT), pages 511–515. IEEE, 2017.
+[MNS18]     Elchanan Mossel, Joe Neeman, and Allan Sly. A proof of the block model
+            threshold conjecture. Combinatorica, 38(3):665–708, jun 2018.
+[MOP20]     Sidhanth Mohanty, Ryan O’Donnell, and Pedro Paredes. Explicit near-
+            Ramanujan graphs of every degree. pages 510–523, 2020.
+[MR14]      Andrea Montanari and Emile Richard. A statistical model for tensor pca.
+            In Proceedings of the 28th International Conference on Neural Information
+            Processing Systems - Volume 2, NIPS’14, page 2897–2905, Cambridge, MA,
+            USA, 2014. MIT Press.
+
+
+
+                                       35
+[PR22]     Aaron Potechin and Goutham Rajendran. Sub-exponential time sum-
+           of-squares lower bounds for principal components analysis. Advances
+           in Neural Information Processing Systems, 35, 2022. Appeared in NeurIPS
+           2022.
+[PWB16]    Amelia Perry, Alexander S. Wein, and Afonso S. Bandeira. Statistical
+           limits of spiked tensor models. arXiv preprint arXiv:1612.07728, 2016.
+[RRS17]    Prasad Raghavendra, Satish Rao, and Tselil Schramm. Strongly Refuting
+           Random CSPs Below the Spectral Threshold. In Proceedings of the 49th
+           Annual ACM SIGACT Symposium on Theory of Computing, STOC 2017,
+           pages 121–131, New York, NY, USA, 2017. ACM.
+[SOKB25]   Alexander Schmidhuber, Ryan O’Donnell, Robin Kothari, and Ryan
+           Babbush. Quartic quantum speedups for planted inference. Phys. Rev.
+           X, 15:021077, Jun 2025.
+[TVW13]    Linh V. Tran, Van H. Vu, and Ke Wang. Sparse random graphs: Eigen-
+           values and eigenvectors. Random Structures & Algorithms, 42(1):110–134,
+           2013.
+[TY16]     Konstantin Tikhomirov and Pierre Youssef. The spectral gap of dense
+           random regular graphs. arXiv e-prints, page arXiv:1610.01765, October
+           2016.
+[vH16]     Ramon van Handel. Probability in high dimension: Apc 550 lecture
+           notes. Lecture Notes APC 550, Princeton University, Princeton, NJ,
+           December 2016. Version: December 21, 2016; taught Spring 2014 &
+           Fall 2016.
+[WAM19]    Alexander S. Wein, Ahmed El Alaoui, and Cristopher Moore. The
+           Kikuchi Hierarchy and Tensor PCA. CoRR, abs/1904.03858, 2019.
+[Wei22]    Alexander S. Wein. Optimal low-degree hardness of maximum in-
+           dependent set. Mathematics of Statistics and Learning, 4(3/4):221–251,
+           2022.
+[Xu24]     Jeff Xu. Switching graph matrix norm bounds: from i.i.d. to random
+           regular graphs, 2024.
+[ZK16]     Lenka Zdeborová and Florent Krzakala. Statistical physics of inference:
+           thresholds and algorithms. Advances in Physics, 65(5):453–552, aug 2016.
+
+
+
+
+                                      36
+Appendix
+4.1     Deferred Proofs
+Claim 4.4 (Detection from Spectarl Norm Bound: even-r). For even r > 3, for a given
+upper bound B( G ) on a random tensor G, there is a spectral algorithm that solves the detection
+question for
+                                      B( G )                   B( G )
+                      λ ≥ Θ(1) · n−ℓ          ℓ
+                                                  = Θr (1) · r/2 r/2 .
+                                  ( r/2 ) · (r/2)           n    ·ℓ
+
+Proof. Consider the tensor with planted spike T
+                                              e = λ · v⊗r + G, we have
+
+                 e)∥sp ≥ ∥ Mℓ (λ · v⊗r )∥sp − ∥ Mℓ ( G )∥sp ≥ ∥ Mℓ (λ · v⊗r )∥ − B( G ) .
+          ∥ Mℓ ( T
+                                             n
+Moreover, consider the vector ṽ ∈ R( ℓ ) with entries ṽ[S] := vS = ∏i∈S v[i ]. By Spectral
+Theorem, for even r, we have
+                               1                                   1
+      ∥ Mℓ (λ · v⊗r )∥sp ≥       2
+                                   · ṽT · Mℓ (λ · v⊗r ) · ṽT =       · ∑ (λ · v⊗ r
+                                                                                 I∆J ) · v I · v J
+                             ∥ṽ∥2                               ∥ṽ∥22 I,J ∈(n)
+                                                                              ℓ
+                                                                        | I∆J |=r
+                                                                  1
+                                                            =         · ∑ λ · v2I∆J · v2I ∩ J
+                                                                ∥ṽ∥22 I,J ∈(n)
+                                                                              ℓ
+                                                                        | I∆J |=r
+                                                                            −ℓ       ℓ
+                                                                 (nℓ ) · (nr/2 ) · (r/2 )
+                                                            = λ·             n
+                                                                            (ℓ)
+                                                                    n−ℓ
+                                                                                      
+                                                                                     ℓ
+                                                            = λ·               ·           ,
+                                                                     r/2            r/2
+where the first equality follows from the expansion of quadratic form and Mℓ (λ ·
+v⊗r )[ I, J ] = λ · v⊗
+                     I∆J , and the second-to-last equality from vi = 1 for any i ∈ [ n ] since
+                       r                                         2
+
+                                                                              −ℓ       ℓ
+v is a boolean vector and observing that for each fixed I ⊆ [n], there are (nr/2 ) · (r/2 )
+                              n
+many adjacent indices J ∈ ( ℓ ) such that | I∆J | = r.
+    On the other hand, for an (unplanted) random symmetric tensor T = G, we have
+∥ Mℓ ( T )∥sp ≤ B( G ) by assumption. Thus, we have a separation as long as
+                               ∥ Mℓ ( T
+                                      e)∥sp > B( G ) ≥ ∥ Mℓ ( T )∥sp ,
+                                −ℓ       ℓ
+which happens as long as λ · (nr/2 ) · (r/2 ) > 2 · B( G ). Rearranging then gives us the
+desired.
+
+   Analogously, we have the following for odd-r.
+Claim 4.5. For odd r ≥ 3, for a given upper bound B( G ) on a random tensor G, there is a
+spectral algorithm that solves the detection question for
+
+                                                   B( G ) 1/2
+                                                             
+                                 λ ≥ Θr (1) ·                   .
+                                                 n r +1 · ℓ r
+
+                                                  37
+Proof. The proof is essentially verbatim, except one verify that for the odd Kikuchi
+matrix, we have
+                     1
+∥ Mℓ (λ · v⊗r )∥sp ≥      · ṽT · Mℓ (λ · v⊗r ) · ṽT
+                   ∥ṽ∥22
+                     1
+                 =        · ∑
+                   ∥ṽ∥22 I ∈(n)
+                                       ∑          ∑                   ∑   n
+                                                                                     v A∪S∪{t} · v B∪T ∪{t} · ·v I · v J · λ2
+                                  ℓ
+                                      A,B⊆ I     t∈[n]            S,T ∈(⌊r/2 ⌋)
+                                       | A|=| B|=⌊r/2⌋                S∩ T =∅
+                                           A∩ B=∅                     S∩ I =∅
+                                                                      T ∩ I =∅
+                                                               J = I \( A∪ B)∪S∪ T
+                         1
+                 =           · ∑
+                       ∥ṽ∥22 I ∈(n)
+                                             ∑           ∑            ∑      n
+                                                                                     v2I · v2J · v2t · λ2
+                                  ℓ
+                                            A,B⊆ I     t∈[n]        S,T ∈(⌊r/2 ⌋)
+                                       | A|=| B|=⌊r/2⌋                S∩ T =∅
+                                           A∩ B=∅                     S∩ I =∅
+                                                                      T ∩ I =∅
+                                                               J = I \( A∪ B)∪S∪ T
+
+                 = Θ r (1 ) · λ 2 · n r +1 · ℓ r .
+
+
+
+   The above two proofs also immediately allow us to prove our main theorem for
+algorithmic application for smooth trade-off of Tensor PCA,
+
+Proof to theorem 1.11. This follows by plugging in our established bound from the main
+lemma for norm bounds theorem 1.8, theorem 1.9 into the above bound that translates
+a high-probability-bound on the Kikuchi matrix to the detection threshold λ.
+
+
+4.2    Extension to Recovery
+Proof Sketch to theorem 1.14 . Our extension result to the recovery question follows
+verbatim from that in A.3 of [WAM19] except that we apply the improved spectral
+norm bound for the noise matrix in the analysis of the voting matrix. We highlight the
+change from our spectral norm bound, that is
+
+Lemmaq 4.6 (Lemma A.5+ A.6 of [WAM19]). For any ϵ > 0, and δ ∈ (0, 1), for λ >
+ϵ · c · Cdℓr , then with probability at least 1 − δ,
+ − 1
+
+
+                                                       ∥ Mℓ ∥        ℓ
+                                      ∥v⊥ ∥22 ≤         n       n  ·
+                                                  λ · (r/2) · (ℓ/2) m
+
+   The subsequent analysis follows from the remaining of section A from [WAM19].
+
+
+4.3    Deferred Proofs for Lower Bound
+We recall the following bounded difference inequalities,
+
+
+                                                      38
+Fact 4.7. For any function f ( X1 , ..., Xn ) of independent random variables { X1 , ..., Xn }, we
+have
+                                                                             n
+                                  Var[ f ( X1 , ..., Xn )] ≤ E[∑( Di− f ( X1 , ..., Xn )2 ]
+                                                                             i
+
+for
+                       Di− f ( X ) := f ( X1 , ..., Xn ) − inf( X1 , .., Xi−1 , z, Xi+1 , ..., Xn ) .
+                                                                         z
+
+Theorem 4.8 (Theorem 4.20 in [vH16])). In the above set-up, f ( X1 , ..., Xn ) is ∥ ∑i ( Di− f )2 ∥∞
+-subgaussian.
+
+  From this point, it suffices for us to verify the variance bound of 1 for the Kikuchi
+matrix in our setting and apply the theorem.
+
+Proposition 4.9.
+                                                 Var[ f ( G1 , ..., G(nr) )] ≤ O(1) .
+
+Proof. We highlight our argument by considering random Bernoulli matrix. Consider
+for the time that we have fixed underlying input G, and we will vary the entry of G
+along the way. For any S ∈ (nr), let GS′ be the tensor obtained by varying entry in G [S]
+while fixing the rest of the entries. For the following, let Mℓ := Mℓ ( G ) be the Kikuchi
+matrix of the fixed input G, and let M− be the Kikuchi matrix obtained as the following,
+
+                                     λmax ( M− ) =                    inf            λmax ( Mℓ ( G ′ ))
+                                                            G ′ ← GS ∈{−1,1}
+
+Let vmax be the top eigenvector for Mℓ := Mℓ ( G ) of unit-norm. Observe that
+
+            DS− λmax ( Mℓ ) = λmax ( Mℓ ) − λmax ( M− )
+                                   ≤ ⟨vmax ( Mℓ )vmax ⟩ − sup ⟨v, M− v⟩
+                                                                          v∈ B2
+                                                                  −
+                                   ≤ ⟨vmax ( Mℓ − M )vmax ⟩
+                                   =2                 ∑                      ∑       vmax [ AS ∪ D ] · vmax [ BS ∪ D ] .
+                                                           S               [s]\S
+                                                 AS ,BS ∈(r/2 )       D ∈(ℓ−  r/2)
+                                            equal partition for S
+
+Taking the square of the above, we have
+
+           ∑                    ∑             vmax [ AS ∪ D ] · vmax [ BS ∪ D ] · vmax [ A′S ∪ D ′ ] · vmax [ BS′ ∪ D ′ ]
+                      S
+  AS ,BS ,A′S ,BS′ ∈(r/2            [s]\S
+                         ) D,D ′ ∈(ℓ−  r/2)
+ equal partition for S
+
+Finally, summing over S, we have
+
+                                      ∑( DS− )2 ≤ O(1) ∑ vmax [T ]2 = O(1)
+                                        S                             T ∈(nℓ )
+
+
+
+
+                                                                       39
+

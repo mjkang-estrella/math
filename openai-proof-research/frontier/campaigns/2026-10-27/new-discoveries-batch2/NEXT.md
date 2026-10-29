@@ -1,5 +1,16 @@
 # Current continuation — 29 October 2026
 
+r131/r132 adopted zero nominees. Total isolation/tree bounds and arbitrary-field
+SK worst-start mixing remain unresolved. Root verifies 89/82 manifest entries,
+replays 288 sampled minimax graphs, five component controls, and SK route
+obstructions. These are not universal bounds or source counterexamples.
+Public weighted-bond, cubic synchronization and Kikuchi exclusions and all
+scope qualifications remain preserved. See root-r131-r132-handback.
+Counts stay 9 additional / 39 total. Sol r135/r136 replace completed slots;
+r134 continues. New briefs reuse qualified history indexes with changed-record
+coverage rather than repeating unchanged inventories.
+
+
 r133 post-Lie nonexistence questions remain unresolved. Root checks the
 curvature -ad_n({x,y})/4 and reproduces 125 rational basis triples; the example
 is not perfect and only blocks a flattening shortcut. All 63 manifest entries
