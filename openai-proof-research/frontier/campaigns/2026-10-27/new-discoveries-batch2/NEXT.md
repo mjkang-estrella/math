@@ -1,5 +1,16 @@
 # Current continuation — 29 October 2026
 
+Factorial final packet frozen: root read all three own PDF renders, verified102
+delivery hashes plus descriptor and70 payload files, reproduced PDF/ZIP exactly,
+and fresh portable replay passed31 actual declarations with unchanged raw audit.
+Legacy replay's historical NEXT hash failure is preserved; portable verifier
+checks shipped sources/copies, exact pins/upstream artifacts and exhaustive audit.
+NEW Sol independent final review sol-factorial-product-full-final-review-r1;
+root evidence lanes/root-factorial-final-review-freeze-r1/ROOT-REBUILD.json.
+Renyi final review has returned math/formal/manuscript PASS but current capped
+registry-delta HOLD; root is inspecting that gap. Fresh research r118 continues.
+Counts remain8additional/38total; neither candidate accepted.
+
 r117 closed with zero nominees: four duplicate/public/routine exclusions. Root
 verified57 manifest entries,16 local source hashes and224 copied exact checks.
 Its failed integrity check is preserved: only mutable NEXT.md changed, matching

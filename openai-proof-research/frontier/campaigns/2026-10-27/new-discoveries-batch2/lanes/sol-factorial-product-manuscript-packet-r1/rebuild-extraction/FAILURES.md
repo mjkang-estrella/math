@@ -1,0 +1,7 @@
+# Preserved failures
+
+1. Initial lane listing reported that the newly assigned lane did not yet exist; setup created only that lane. The initial combined ledger/context listing and later broad NEXT/infrastructure listing exceeded tool display bounds. They are inspection-output truncations, not mathematical evidence. Subsequent bounded current NEXT and exact source statement reads were used. No large audit corpus was read or used as a semantic clearance.
+2. First Lean compilation failed in the product dictionary: Lean's coercion elaboration inferred a real-valued map through a coerced list. The failed diagnostic and resource receipt are retained as `logs/first-failed-FactorialProduct.{log,json}`. Explicit natural binder annotations and a precise multiplicative congruence fixed the proof; no check was weakened.
+3. First added integer-list compilation similarly failed from unannotated coercion-map binders. The failed diagnostic and receipt are retained as `logs/integer-failed-FactorialProduct.{log,json}`. Explicit natural/integer binders fixed it. Neither failure concerned a false arithmetic identity or required a changed witness.
+
+No cap failure, forbidden-axiom exception, sorry/admit, unsafe definition, native_decide, disabled warning, or weakened inventory check was used. Prior literature access and chronology limits are preserved in the complete copied reviews and source receipts; they are not erased by a successful formal replay.
