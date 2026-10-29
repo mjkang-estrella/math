@@ -1,0 +1,44 @@
+import hashlib,json,re,subprocess,sys,zipfile
+from pathlib import Path
+mods=['Pointwise','Majorant','Tail','Density','LogConcavity','InputMoment','Profile','Result']
+def sha(p):
+ h=hashlib.sha256()
+ with p.open('rb') as f:
+  while b:=f.read(65536):h.update(b)
+ return h.hexdigest()
+archive=Path(sys.argv[1]).resolve();dest=Path(sys.argv[2]).resolve();assert not dest.exists()
+with zipfile.ZipFile(archive) as z:
+ assert all(not Path(n).is_absolute() and '..' not in Path(n).parts for n in z.namelist())
+ assert not any(n.endswith(('.olean','.ilean','.ir','.o','.so')) for n in z.namelist())
+ z.extractall(dest)
+manifest=json.loads((dest/'manifest.json').read_text())
+for n,h in manifest.items():assert sha(dest/n)==h,n
+for p in json.loads((dest/'dependency-hashes.json').read_text()):assert sha(Path(p['path']))==p['sha256']
+r=subprocess.run([sys.executable,str(dest/'verify_inputs.py')],capture_output=True,text=True);assert r.returncode==0,r.stderr
+(dest/'pins-and-inputs.json').write_text(r.stdout)
+(dest/'logs').mkdir()
+assert not list(dest.rglob('*.olean'))
+steps=[]
+for m in mods+['OriginAudit']:
+ print('BUILD',m,flush=True)
+ r=subprocess.run([sys.executable,str(dest/'guard.py'),m],capture_output=True,text=True)
+ print(r.stdout,flush=True)
+ assert r.returncode==0,r.stderr
+ steps.append(json.loads((dest/'logs'/f'{m}.json').read_text()))
+ if m!='OriginAudit':assert (dest/'logs'/f'{m}.log').stat().st_size==0
+log=(dest/'logs/OriginAudit.log').read_text()
+rows=re.findall(r'^AUDIT (\S+) (\S+)\nTYPE (.*?)\nAXIOMS \[([^\]]*)\]\nFLAGS unsafe=(\w+) partial=(\w+) axiom=(\w+)$',log,re.M|re.S)
+assert len(rows)==int(re.search(r'AUDIT_TOTAL (\d+)',log)[1])
+assert len({r[1] for r in rows})==len(rows)
+assert {r[0] for r in rows}==set(mods)
+for mod,name,typ,axs,u,p,a in rows:
+ assert typ and set(re.findall(r'[\w.]+',axs))<={'propext','Classical.choice','Quot.sound'}
+ assert (u,p,a)==('false','false','false')
+for n,h in manifest.items():assert sha(dest/n)==h,n
+result={'status':'PARTIAL_COMPONENT_SOURCE_ONLY_REPLAY_PASS','full_target_proved':False,
+ 'source_claim_pass':False,'archive_sha256':sha(archive),'initial_own_prebuilt_artifacts':0,
+ 'modules':mods,'declaration_count':len(rows),'steps':steps,
+ 'declarations':[{'origin':m,'name':n,'actual_type':t,'axioms':re.findall(r'[\w.]+',axs),
+ 'unsafe':False,'partial':False,'axiom':False} for m,n,t,axs,u,p,a in rows]}
+(dest/'replay-receipt.json').write_text(json.dumps(result,indent=2)+'\n')
+print('PARTIAL COMPONENT REPLAY PASS',len(rows),'declarations')

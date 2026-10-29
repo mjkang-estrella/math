@@ -1,5 +1,24 @@
 # Current continuation — 29 October 2026
 
+Factorial-product preliminary review adopted: SOURCE/MATH PASS; scoped provisional
+SUBSTANTIVE PASS with complete smooth-restriction/concentration counting objection
+preserved. Root rederives that bridge and reads Rosser–Schoenfeld(3.6); no inspected
+published theorem yet supplies its assembled distinct-support collision. Novelty
+HOLD remains. NEW Sol targeted prior-clearance r2 closes concrete patch/body and
+closest dissociated-set/subset-product leads. No Lean/paper for factorial yet.
+Root verifies31 review-manifest and44 candidate entries; see
+lanes/root-factorial-preliminary-adoption-r1/DECISION.md.
+
+Renyi formal r1 delivered a PARTIAL component:8 modules/51 audited declarations,
+genuine all-real-p DCT tail cutoff, normalized log-concave density, literal
+convolution profile and positive finite power integrals. SourceClaim still OPEN.
+Root checked manifest/archive/worker audit receipts and read actual key bodies;
+no new root compile claimed. NEW Sol formal r2 must close deficit identity,
+exponential baseline, entropy comparison and threshold negation using unchanged
+inherited definitions. Freeze/receipt in lanes/root-renyi-component-adoption-r1/.
+Three active: Renyi formal r2, factorial prior r2, fresh research r116. No polls.
+Counts unchanged8additional/38total; both candidates credit0.
+
 Supertoken root EXCLUDE, credit0: independent review and root adopt the complete
 Bailey–Cameron path-block adaptation. Paths of size>=5 remove the alternating
 singleton/pair ambiguity, yielding n-floor(n/5) landmarks for every n>=10.
