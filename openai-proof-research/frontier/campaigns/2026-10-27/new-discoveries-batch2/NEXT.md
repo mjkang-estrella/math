@@ -68,7 +68,9 @@ r82 DeWitt–Keith full numbered parity-rank proof is ordinary-math PASS but EXC
 r83 universal group-graph Zagreb Conjecture4.1 remains unresolved. Root verified both centralizer identities on all64four-vertex reflexive graphs and the exact S4PSD obstruction. No full Q bounds or group counterexample. See root-fresh-source-r83-handback/ADOPTION.json.
 r84 Bernoulli fiber-volume independent-parameter interpretation is EXCLUDED as a routine d2 specialization of source Corollary3.1. Actual journal-question attribution remains HOLD; no claim of that question resolved. See root-fresh-source-r84-handback/EXCLUSION.json.
 r79 lasso separation is ordinary-math sound but current nomination EXCLUDED: no clear attributable universal optimized quantifier, and completed source-Lemma2 boundary/cubic specialization is routine. VoR and closest-body gaps retained; no Lean or manuscript. See root-lasso-exclusion-r2/EXCLUSION.json.
-Active Sol high/default: fresh analysis/probability r86, fresh finite/arithmetic r87, and algebraic/structural r85. r74 sharp Chernoff curvature remains unresolved;
+r85 Miller–Reiner remains unresolved; root verified all 38 manifest hashes and the exact same-spectrum integral-cyclicity obstruction. Finite-field checks are necessary conditions only. See root-fresh-source-r85-handback/ADOPTION.json.
+r87 LCM–GCD Conjecture5 remains unresolved: the binary-10 direction is already public; universal binary-11 nonsingularity is missing. Root verified all 57 manifest hashes, 400 exact transformed entry pairs, and the indefinite principal block. See root-fresh-source-r87-handback/ADOPTION.json.
+Active Sol high/default: fresh analysis/probability r86, fresh structural r88, and fresh finite/arithmetic r89. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.
