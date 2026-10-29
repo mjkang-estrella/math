@@ -34,9 +34,13 @@ replay is saved in root-fresh-source-r68-handback.
 r67 Heim-Neuhauser and r69 squared-radius convolution closure remain unresolved.
 Root exact diagnostic replays are preserved; r69 expert-authorship HOLD is
 separate from its missing uniform inequality. No credit added.
-Three fresh Sol high/default research lanes r70 finite structures, r72 analysis,
-r71 arithmetic/algebra are active; no children. Keep exclusions and actual source
-scopes, and do not equate Blueprint markdown trees with actual Lean trees.
+r70 supplies a complete ordinary connected edge-irregulator refutation: 8t edges
+and exactly3t deletions. Root charging proof and exact checks pass; independent
+review in sol-edge-irregulator-preliminary-review-r1 is pending. Credit0.
+r71 determinantal semigroups and r72 Zinn doubling remain unresolved; limited
+root handbacks preserve their gaps and freshness/access holds.
+Active Sol high/default: edge-irregulator review, fresh arithmetic/algebra r73,
+and fresh analysis r74. No children. Do not equate Blueprint and Lean trees.
 
 ## Historical continuation notes
 
