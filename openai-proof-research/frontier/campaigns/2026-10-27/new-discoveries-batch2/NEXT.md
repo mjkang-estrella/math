@@ -14,6 +14,14 @@ log-concavity target remains unresolved; read its SUMMARY before repeating it.
 Use the available Sol slots for full BBK, weighted commutator, and fresh
 analysis work; do not poll asynchronous workers.
 
+Root investigated the completed discrete lane's surviving denominator
+log-concavity question. See lanes/root-denominator-logconcavity-r1/FINDINGS.md:
+a sufficient dyadic-block reduction, exact obstructions to smaller/arbitrary
+blocks, and 524 finite checks. The all-order block assertion remains unproved;
+no credit or formal endpoint. The live registry tree fetch hit429 after HEAD
+succeeded, so no current-body clearance is asserted. Do not repeat generic
+sparse-convolution or arbitrary-four-factor shortcuts.
+
 ---
 
 # Historical checkpoint — Mittag classical bridge ready for review
