@@ -1,0 +1,43 @@
+import MeanSourceDefs
+set_option warningAsError true
+set_option autoImplicit false
+#check LogArctangentSource.mean
+#print axioms LogArctangentSource.mean
+#check LogArctangentSource.powerMean
+#print axioms LogArctangentSource.powerMean
+#check LogArctangentSource.resultant
+#print axioms LogArctangentSource.resultant
+#check LogArctangentSource.SourceClaim
+#print axioms LogArctangentSource.SourceClaim
+#check LogArctangentSource.mean_self
+#print axioms LogArctangentSource.mean_self
+#check LogArctangentSource.mean_symm
+#print axioms LogArctangentSource.mean_symm
+#check LogArctangentSource.mean_pos_of_lt
+#print axioms LogArctangentSource.mean_pos_of_lt
+#check LogArctangentSource.mean_pos
+#print axioms LogArctangentSource.mean_pos
+#check LogArctangentSource.mean_homogeneous
+#print axioms LogArctangentSource.mean_homogeneous
+#check LogArctangentSource.powerMean_symm
+#print axioms LogArctangentSource.powerMean_symm
+#check LogArctangentSource.powerMean_pos
+#print axioms LogArctangentSource.powerMean_pos
+#check LogArctangentSource.powerMean_self
+#print axioms LogArctangentSource.powerMean_self
+#check LogArctangentSource.powerMean_homogeneous
+#print axioms LogArctangentSource.powerMean_homogeneous
+#check LogArctangentSource.powerMean_strict_mono
+#print axioms LogArctangentSource.powerMean_strict_mono
+#check LogArctangentSource.powerMean_strict_mono_left
+#print axioms LogArctangentSource.powerMean_strict_mono_left
+#check LogArctangentSource.powerMean_strict_mono_right
+#print axioms LogArctangentSource.powerMean_strict_mono_right
+#check LogArctangentSource.powerMean_between
+#print axioms LogArctangentSource.powerMean_between
+#check LogArctangentSource.resultant_symm
+#print axioms LogArctangentSource.resultant_symm
+#check LogArctangentSource.resultant_pos
+#print axioms LogArctangentSource.resultant_pos
+#check LogArctangentSource.resultant_homogeneous
+#print axioms LogArctangentSource.resultant_homogeneous
