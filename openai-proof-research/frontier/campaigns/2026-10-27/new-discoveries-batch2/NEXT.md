@@ -46,7 +46,10 @@ root handbacks preserve their gaps and freshness/access holds.
 r73 Sun binomial-coprimality remains unresolved; exact carry/prime-menu
 obstructions and limited root checks preserved in root-fresh-source-r73-handback.
 Active Sol high/default: edge-irregulator current-prior r2, fresh finite/algebra r75,
-and fresh analysis r74. No children. Do not equate Blueprint and Lean trees.
+and fresh analysis r76. r74 sharp Chernoff curvature remains unresolved;
+its generic-density obstruction is not an Airy counterexample. Root handback
+preserves the public-weaker-theorem and sharper-family eligibility limits.
+No children. Do not equate Blueprint and Lean trees.
 
 ## Historical continuation notes
 
