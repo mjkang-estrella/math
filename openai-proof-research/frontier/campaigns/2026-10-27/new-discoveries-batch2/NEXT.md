@@ -1,5 +1,13 @@
 # Current continuation — 29 October 2026
 
+r125 subdivision IMV coloring remains unresolved. The missing-color/K4-free
+translation reduces the question to all-color admissibility; the 12-vertex
+example only blocks global color merges. Root verifies 53 manifest entries and
+seven scientific hashes, replaying 92,913 assignments and six merge failures.
+Classical-body and semantic registry gaps remain. See root-r125-handback.
+Sol r128 replaces r125; r126/r127 continue. Counts unchanged: 9 additional / 39 total.
+
+
 r124 adopted zero nominees. Exact early historical screen identifies public
 Agoh/subsum-coprimality proofs and old unresolved denominator/Koizumi targets.
 Root verifies67 manifest entries and replays12 denominator constructions/eight
