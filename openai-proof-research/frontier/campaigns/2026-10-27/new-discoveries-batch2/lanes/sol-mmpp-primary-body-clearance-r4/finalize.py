@@ -1,0 +1,23 @@
+import pathlib,json,hashlib,datetime
+L=pathlib.Path(__file__).resolve().parent;h=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();d=json.loads((L/'review-freeze.json').read_text());src=pathlib.Path(d['source_lane']);out={}
+for n,v in d['files'].items():
+ assert h(src/n)==v,n;assert h(L/'copy'/n)==v,n
+ out[n]={'original':h(src/n),'copy':h(L/'copy'/n)}
+(L/'after.json').write_text(json.dumps(out,indent=2))
+web={'date':'2026-10-29','mode':'public HTTP/search, no browser','search_families':['Exact Liu–Neuts title and Dan/Liu names, Arizona working-paper/repository, author PDF and Citeseer routes','Exact moment title/DOI, authors, arXiv/UQ/Melbourne repositories','Cox–Lewis exact title and author/year, Euclid/JSTOR, archive volume, NPS/DTIC author copies','AMS exact title and stochastic-domination full paper'], 'web_only_routes':[
+ {'url':'https://www.jstor.org/stable/jj.13110781.24','result':'web reader inaccessible; no body'},
+ {'url':'https://projecteuclid.org/proceedings/berkeley-symposium-on-mathematical-statistics-and-probability/Proceedings-of-the-Sixth-Berkeley-Symposium-on-Mathematical-Statistics-and/toc/bsmsp/1200514326','result':'iframe led to service/challenge notice; stopped; no body; no challenge solved'},
+ {'url':'https://www.maths.uq.edu.au/~yonin/','result':'web reader inaccessible'},
+ {'url':'https://pure.gonzaga.edu/p/en/research-outputs/downward-conditional-monotonicity-gives-survival-and-extinction-f','result':'indexed primary institutional record identifies Stover and DOI10.1214/25-AAP2280; metadata only'},
+ {'url':'https://citeseerx.ist.psu.edu/document?doi=329c12b7ec4c52de30d6071bb29b5f8562e70948&repid=rep1&type=pdf','result':'search-index reference to1990 Arizona working paper; NOT target body; not downloaded'},
+ {'url':'https://digicoll.lib.berkeley.edu/record/113268/files/math_s6_v3_article-22.pdf','result':'prior403 respected; no direct retry; automatically surfaced search excerpt not body clearance'},
+ {'url':'https://meetings.ams.org/math/jmm2024/meetingapp.cgi/Paper/25556','result':'prior502 respected; no open/direct retry; search excerpt only; exact talk version remains unauthenticated'},
+ {'url':'https://www.sciencedirect.com/science/article/pii/S0166531626000222','result':'prior403 respected; no direct retry; automatically surfaced abstract not body clearance'}]}
+(L/'web-route-notes.json').write_text(json.dumps(web,indent=2))
+rows=json.loads((L/'access.json').read_text());inventory={'http_receipts':rows,'web_discovery':'web-route-notes.json','not_retried':['blocked publisher Liu1991','blocked ScienceDirect2026','CORE403/429','Berkeley403','AMS502'],'bodies':{'Liu1991':'NOT OBTAINED','moment2026':'NOT OBTAINED','Cox-Lewis1972':'NOT OBTAINED','AMS2024':'exact talk body NOT OBTAINED; likely related Stover2026 full author preprint obtained','cookbook':'not pursued without concrete relevant body lead'},'stover_scope':'Theorem1.6 pp5-6 and proofpp13-14, Lemmas2.1-2.6 pp8-12 targeted; not full Section4 proof audit'}
+(L/'access-route-inventory.json').write_text(json.dumps(inventory,indent=2))
+prov={'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'decision':'HISTORICAL_HOLD','root_substantive_decision':'PASS retained; r2 dissent preserved; no fresh eligibility vote','credit':0,'counts':[8,38],'candidate_freeze_sha256':h(L/'review-freeze.json'),'verified_originals_and_copies_before_after':55,'guard_sha256':h(L/'helper_guard.py'),'limits':{'AS_MiB':512,'group_RSS_MiB':512,'CPU_seconds':210,'wall_seconds':230,'nominal_sample_ms':40,'BLAS_threads':1,'cap_raises':False},'helpers':['prepare.py','fetch.py','inspect.py','plan_routes.py','registry.py','read_context.py','finalize.py'],'source_bytes':'sourcebyteshashes.json','access_routes':'access-route-inventory.json','current_registry':{'Omega':'28414a3d55d5b97458b138701407d5678e167a8e','OpenAI':'7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a','delta':'9commits/4files, complete API delta and four fetched bodies; inherited baseline chain, no global semantic clearance'},'writes':'assigned lane only','external_mutations':False,'no_children':True,'no_Lean_or_paper':True}
+(L/'provenance.json').write_text(json.dumps(prov,indent=2))
+(L/'sourcebyteshashes.json').write_text(json.dumps({str(p.relative_to(L)):h(p) for p in sorted((L/'sources').rglob('*')) if p.is_file()},indent=2))
+(L/'evidence-hashes.json').write_text(json.dumps({str(p.relative_to(L)):h(p) for p in sorted(L.rglob('*')) if p.is_file() and p.name not in ['evidence-hashes.json','finalize.log','finalize.guard.json']},indent=2))
+print('PASS:55 originals and55 own copies unchanged. Historical HOLD. Credit0; counts8/38.')
