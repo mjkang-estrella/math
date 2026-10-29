@@ -1,3 +1,9 @@
+## Root BBK finite-criterion handoff — 29 October 2026 05:25 UTC
+
+Count stays 3/30 additional,33/60 total. root-bbk-positive-fractions-r1 proves an elementary finite LP equivalence for polynomial Conjecture5.4 numerators, deg z_j<=2n(k-2)+2j, plus reciprocal symmetrization. 103 complete rational-function identities independently checked exactly; no uniform proof/refutation/credit. Source polynomial wording is implicit, MathDB explicit; novelty not cleared. Large solver probes hit enforced512MiB cap and are not mathematical failures. New continuation should seek uniform construction, not more grids.
+
+Completed r10 Sols: RSK r2 disproves universalmod2strategy via public power-of-two cycle family; strict-interior residual-factor shortcut also fails. Semimonotone r7 gives directed-semimetric singular parametrization and exact weakened-hypothesis obstruction, NOT source counterexample. Arithmetic r10 leaves Tian polynomial isolation open; seven-leaf gcd induction fails; Khanh2017 and LTE companion excluded. All credit0. Full reports read; no active old r10 delegate remains.
+
 # Current checkpoint — inverse-sign reduction; full targets remain open
 
 Counts **3/30 additional,33/60 total** unchanged. Root research in
