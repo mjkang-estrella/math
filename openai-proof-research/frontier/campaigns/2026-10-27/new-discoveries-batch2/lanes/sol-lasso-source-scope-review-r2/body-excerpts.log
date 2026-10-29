@@ -1,0 +1,402 @@
+preprints/Memory-and-precision-in-noiseless-Gaussian-regression-September-27-2026/README.md
+# [Memory and precision in noiseless Gaussian regression](paper.pdf)
+
+OpenAI · September 27, 2026
+
+## Citation
+
+```bibtex
+@misc{OAI:Memory-and-precision-in-noiseless-Gaussian-regression-September-27-2026,
+  author = {{OpenAI}},
+  title = {{Memory and precision in noiseless Gaussian regression}},
+  howpublished = {OpenAI Math Release preprint
+                  \href{https://github.com/openai/math/blob/main/preprints/Memory-and-precision-in-noiseless-Gaussian-regression-September-27-2026/paper.pdf}{OAI:Memory-and-precision-in-noiseless-Gaussian-regression-September-27-2026}},
+  year = {2026}
+}
+```
+
+
+preprints/Posterior-replicas-and-conditional-information-in-Gaussian-regression-September-27-2026/README.md
+# [Posterior replicas and conditional information in Gaussian regression](paper.pdf)
+
+OpenAI · September 27, 2026
+
+## Citation
+
+```bibtex
+@misc{OAI:Posterior-replicas-and-conditional-information-in-Gaussian-regression-September-27-2026,
+  author = {{OpenAI}},
+  title = {{Posterior replicas and conditional information in Gaussian regression}},
+  howpublished = {OpenAI Math Release preprint
+                  \href{https://github.com/openai/math/blob/main/preprints/Posterior-replicas-and-conditional-information-in-Gaussian-regression-September-27-2026/paper.pdf}{OAI:Posterior-replicas-and-conditional-information-in-Gaussian-regression-September-27-2026}},
+  year = {2026}
+}
+```
+
+
+preprints/Subsphere-methods-for-memory-sample-lower-bounds-in-noiseless-Gaussian-regression-September-27-2026/README.md
+# [Subsphere methods for memory–sample lower bounds in noiseless Gaussian regression](paper.pdf)
+
+OpenAI · September 27, 2026
+
+## Citation
+
+```bibtex
+@misc{OAI:Subsphere-methods-for-memory-sample-lower-bounds-in-noiseless-Gaussian-regression-September-27-2026,
+  author = {{OpenAI}},
+  title = {{Subsphere methods for memory--sample lower bounds in noiseless Gaussian regression}},
+  howpublished = {OpenAI Math Release preprint
+                  \href{https://github.com/openai/math/blob/main/preprints/Subsphere-methods-for-memory-sample-lower-bounds-in-noiseless-Gaussian-regression-September-27-2026/paper.pdf}{OAI:Subsphere-methods-for-memory-sample-lower-bounds-in-noiseless-Gaussian-regression-September-27-2026}},
+  year = {2026}
+}
+```
+
+
+lean/OAI/Probability/GaussianRegression/Main.lean
+import OAI.Probability.GaussianRegression.Precision
+
+namespace OAI
+
+/-!
+Quadratic and subquadratic memory lower bounds for Gaussian regression.
+-/
+
+open MeasureTheory ProbabilityTheory Set Filter
+open scoped ENNReal NNReal RealInnerProductSpace Topology
+open InnerProductSpace
+open scoped Pointwise
+
+noncomputable section
+
+universe u
+
+namespace NoiselessRegression
+
+theorem fixed_quadratic_memory : FixedQuadraticMemory.{u} := by
+  intro A hA
+  refine ⟨1/(4*(400000+100*A)), by positivity, 32, ?_⟩
+  intro d hd M T hM ε hε hε10 Ω _ ρ hρ L hL hs
+  let : IsProbabilityMeasure ρ := hρ
+  have hT : d ≤ 4*T := by
+    by_contra h
+    have hb := hs.trans (L.linear_success_bound ρ (by omega) (by omega) hε10 hL)
+    have hr := ENNReal.toReal_mono ENNReal.ofReal_ne_top hb
+    norm_num [ENNReal.toReal_div] at hr
+  let q := (d-1)/4
+  let a := 2*q
+  have hq : 2 ≤ q := by dsimp [q]; omega
+  have hqa : 2*q ≤ a := le_rfl
+  have ha : 2*a ≤ d-1 := by dsimp [a, q]; omega
+  have hdq : d ≤ 8*q := by dsimp [q]; omega
+  have hda : d ≤ 4*a := by dsimp [a]; omega
+  exact precision_from_stream_bound hd hT (by omega) hdq hda hM hA hε (by linarith)
+    (L.streaming_success_bound_real ρ hL (by omega) hε ha hq hqa hs)
+
+section LowerFubini
+variable {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
+  {μ : Measure X} {ν : Measure Y} [SFinite μ] [SFinite ν]
+lemma prod_null_set_lower_bound {S : Set (X × Y)} (hS : NullMeasurableSet S (μ.prod ν))
+    {c : ℝ≥0∞} (h : ∀ᵐ x ∂μ, c ≤ ν {y | (x,y) ∈ S}) :
+    c * μ univ ≤ (μ.prod ν) S := by
+  have hm : AEMeasurable (S.indicator (fun _ => (1 : ℝ≥0∞))) (μ.prod ν) :=
+    aemeasurable_const.indicator₀ hS
+  rw [← one_mul ((μ.prod ν) S), ← lintegral_indicator_const₀ hS 1, lintegral_prod _ hm]
+  have hc : c * μ univ = ∫⁻ _ : X, c ∂μ := (lintegral_const c).symm
+  rw [hc]
+  apply lintegral_mono_ae
+  filter_upwards [h, ae_fiber_aemeasurable hm.prod_swap] with x hx hmx
+  have hs : NullMeasurableSet {y | (x,y) ∈ S} ν := by
+    have heq : {y | (x,y) ∈ S} = {y | S.indicator (fun _ => (1 : ℝ≥0∞)) (x,y) = 1} := by
+      ext y
+      by_cases hy : (x,y) ∈ S <;> simp [hy]
+    rw [heq]
+    exact nullMeasurableSet_eq_fun hmx aemeasurable_const
+  change c ≤ ∫⁻ y, ({y | (x,y) ∈ S}).indicator (fun _ => (1 : ℝ≥0∞)) y ∂ν
+  simpa [lintegral_indicator_const₀ hs] using hx
+end LowerFubini
+
+namespace Learner
+lemma uniformSuccess_of_pointwise {d M T : ℕ} {Ω : Type u} [MeasurableSpace Ω]
+    (L : Learner d M T Ω) (ρ : Measure Ω) [IsProbabilityMeasure ρ]
+    (hL : L.Admissible ρ) (hd : 0 < d) (ε : ℝ) {c : ℝ≥0∞}
+    (hs : ∀ s, c ≤ L.success ρ ε s) : c ≤ L.uniformSuccess ρ ε := by
+  let : NeZero d := ⟨hd.ne'⟩
+  have hb := prod_null_set_lower_bound (L.angularSuccess_nullMeasurable ρ ε hL)
+    (c := c) (Filter.Eventually.of_forall hs)
+  simpa only [measure_univ, mul_one, uniformSucce
+lean/OAI/Probability/GaussianRegression/Model.lean
+import OAI.Probability.ProjectionMoments.Model
+
+namespace OAI
+
+/-!
+Finite-state Gaussian regression with noiseless labels and angular accuracy.
+-/
+
+open MeasureTheory ProbabilityTheory Set Filter
+open scoped ENNReal NNReal RealInnerProductSpace
+
+noncomputable section
+
+universe u
+
+namespace NoiselessRegression
+
+namespace Learner
+
+def success {d M T : ℕ} {Ω : Type u} [MeasurableSpace Ω]
+    (L : Learner d M T Ω) (ρ : Measure Ω) (ε : ℝ) (s : UnitSphere d) : ℝ≥0∞ :=
+  (ρ.prod (sampleLaw d T))
+    {z | angularError s (L.estimate s z.1 z.2) ≤ ε}
+
+end Learner
+
+def SubquadraticMemory : Prop :=
+  ∃ c : ℝ, 0 < c ∧ ∀ M : ℕ → ℕ,
+    Asymptotics.IsLittleO atTop (fun d => (M d : ℝ)) (fun d => (d : ℝ) ^ 2) →
+    ∃ d₀ : ℕ, ∀ d : ℕ, d₀ ≤ d → ∀ T : ℕ, ∀ ε : ℝ,
+    0 < ε → ε ≤ 1 / 10 →
+    ∀ (Ω : Type u) [MeasurableSpace Ω] (ρ : Measure Ω), IsProbabilityMeasure ρ →
+    ∀ L : Learner d (M d) T Ω, L.Admissible ρ →
+    (((2 : ℕ) / (3 : ℕ) : ℝ≥0∞) ≤ L.uniformSuccess ρ ε ∨
+      ∀ s, ((2 : ℕ) / (3 : ℕ) : ℝ≥0∞) ≤ L.success ρ ε s) →
+    c * (d : ℝ) * Real.log (1 / ε) ≤ (T : ℝ)
+
+def FixedQuadraticMemory : Prop :=
+  ∀ A₀ : ℝ, 0 < A₀ → ∃ c : ℝ, 0 < c ∧ ∃ d₀ : ℕ,
+    ∀ d : ℕ, d₀ ≤ d → ∀ M T : ℕ, (M : ℝ) ≤ A₀ * (d : ℝ) ^ 2 →
+    ∀ ε : ℝ, 0 < ε → ε ≤ 1 / 10 →
+    ∀ (Ω : Type u) [MeasurableSpace Ω] (ρ : Measure Ω), IsProbabilityMeasure ρ →
+    ∀ L : Learner d M T Ω, L.Admissible ρ →
+    ((2 : ℕ) / (3 : ℕ) : ℝ≥0∞) ≤ L.uniformSuccess ρ ε →
+    c * (d : ℝ) * Real.log (1 / ε) ≤ (T : ℝ)
+
+end NoiselessRegression
+
+end
+
+end OAI
+
+lean/OAI/Probability/GaussianRegression/Support.lean
+import OAI.Probability.GaussianRegression.Nets
+import OAI.Probability.GaussianRegression.Projection
+
+namespace OAI
+
+/-!
+Finite-volume enclosures for Gaussian matrix observations.
+-/
+
+open MeasureTheory ProbabilityTheory Set Filter
+open scoped ENNReal NNReal RealInnerProductSpace Topology
+open InnerProductSpace
+
+noncomputable section
+
+universe u
+
+namespace NoiselessRegression
+
+open scoped Pointwise
+
+def coordinateNorm {m : ℕ} (y : Fin m → ℝ) : ℝ := ‖WithLp.toLp 2 y‖
+
+@[fun_prop] lemma continuous_coordinateNorm {m : ℕ} :
+    Continuous (coordinateNorm (m := m)) := by
+  unfold coordinateNorm
+  fun_prop
+
+lemma coordinateNorm_sq {m : ℕ} (y : Fin m → ℝ) :
+    coordinateNorm y ^ 2 = ∑ j, (y j)^2 := by
+  exact EuclideanSpace.real_norm_sq_eq (WithLp.toLp 2 y)
+
+lemma coordinateNorm_smul {m : ℕ} (c : ℝ) (y : Fin m → ℝ) :
+    coordinateNorm (c • y) = |c| * coordinateNorm y := by
+  simp [coordinateNorm, WithLp.toLp_smul, norm_smul, Real.norm_eq_abs]
+
+def coordinateBall (m : ℕ) (r : ℝ) : Set (Fin m → ℝ) :=
+  {y | coordinateNorm y ≤ r}
+
+lemma measurableSet_coordinateBall (m : ℕ) (r : ℝ) :
+    MeasurableSet (coordinateBall m r) :=
+  measurableSet_le continuous_coordinateNorm.measurable measurable_const
+
+lemma coordinateBall_smul (m : ℕ) (c r : ℝ) (hc : 0 < c) :
+    coordinateBall m (c * r) = c • coordinateBall m r := by
+  ext y
+  constructor
+  · intro hy
+    refine ⟨c⁻¹ • y, ?_, by simp [hc.ne']⟩
+    change coordinateNorm (c⁻¹ • y) ≤ r
+    rw [coordinateNorm_smul, abs_of_pos (inv_pos.mpr hc)]
+    exact (inv_mul_le_iff₀ hc).mpr hy
+  · rintro ⟨y, hy, rfl⟩
+    change coordinateNorm (c • y) ≤ c * r
+    rw [coordinateNorm_smul, abs_of_pos hc]
+    exact mul_le_mul_of_nonneg_left hy hc.le
+
+lemma volume_coordinateBall_smul (m : ℕ) (c r : ℝ) (hc : 0 < c) :
+    volume (coordinateBall m (c * r)) =
+      ENNReal.ofReal (c^m) * volume (coordinateBall m r) := by
+  rw [coordinateBall_smul m c r hc, Measure.addHaar_smul_of_nonneg volume hc.le]
+  simp
+
+lemma gaussianPDF_le_exp (x : ℝ) :
+    gaussianPDF 0 1 x ≤ ENNReal.ofReal (Real.exp (-(x^2)/2)) := by
+  apply ENNReal.ofReal_le_ofReal
+  unfold gaussianPDFReal
+  simp only [NNReal.coe_one, mul_one, sub_zero]
+  apply mul_le_of_le_one_left (Real.exp_nonneg _)
+  apply inv_le_one_of_one_le₀
+  apply (Real.le_sqrt (by norm_num) (by positivity)).mpr
+  nlinarith [Real.pi_gt_three]
+
+lemma lintegral_quarterGaussian_le :
+    (∫⁻ x : ℝ, ENNReal.ofReal (Real.exp (-(x^2)/4))) ≤ 4 := by
+  have he : (fun x : ℝ => Real.exp (-(x^2)/4)) =
+      (fun x : ℝ => Real.exp (-(1/4 : ℝ) * x^2)) := by
+    ext x
+    congr 1
+    ring
+  simp_rw [show ∀ x : ℝ, Real.exp (-(x^2)/4) = Real.exp (-(1/4 : ℝ) * x^2) from congrFun he]
+  rw [← ofReal_integral_eq_lintegral_ofReal
+    (integrable_exp_neg_mul_sq (by norm_num)) (by filter_upwards [] with x; positivity),
+    inte
+lean/OAI/Probability/GaussianRegression/Success.lean
+import OAI.Probability.GaussianRegression.Transfer
+import OAI.Probability.GaussianRegression.Rotational
+
+namespace OAI
+
+/-!
+Uniform-prior success bounds for finite-state estimators.
+-/
+
+open MeasureTheory ProbabilityTheory Set Filter
+open scoped ENNReal NNReal RealInnerProductSpace Topology
+open InnerProductSpace
+open scoped Pointwise
+
+noncomputable section
+
+universe u
+
+namespace NoiselessRegression
+
+namespace Learner
+
+lemma frozen_success_bound {d M T : ℕ} {Ω : Type u} (L : Learner d M T Ω)
+    (ω : Ω) (hd : 3 ≤ d)
+    (htrans : ∀ t j, AEMeasurable (fun obs => (L.transition t ω j obs).2) (observationReference d))
+    {ε : ℝ} (hε : 0 < ε) {a q : ℕ} (ha : 2*a ≤ d-1) (hq : 2 ≤ q) (hqa : 2*q ≤ a) :
+    ((uniformSphere d).prod (sampleLaw d T))
+      {z | angularError z.1 (L.estimate z.1 ω z.2) ≤ ε} ≤
+      (T+1 : ℝ≥0∞) * (ENNReal.ofReal ((3 : ℝ)*4^d) * ENNReal.ofReal (ε^a)) *
+        streamFactor (E := Vector d) (J := State M) q ^ (T/q+1) := by
+  classical
+  let : NeZero d := ⟨by omega⟩
+  let δ : ℕ → State M → (Vector d × ℝ) → State M := fun t j => (htrans t j).mk _
+  have hδ (t : ℕ) (j : State M) : Measurable (δ t j) := (htrans t j).measurable_mk
+  let μ := (uniformSphere d).prod (sampleLaw d T)
+  have hgood : ∀ᵐ z ∂μ, ∀ t j (i : Fin T),
+      (L.transition t ω j (z.2 i,⟪z.1.val,z.2 i⟫)).2 = δ t j (z.2 i,⟪z.1.val,z.2 i⟫) := by
+    simp only [ae_all_iff]
+    intro t j i
+    exact (sphere_sample_observation_quasi (by simpa using hd) i).ae (htrans t j).ae_eq_mk
+  let S : Fin (T+1) → Set (UnitSphere d × Samples d T) := fun t =>
+    {z | dist z.1.val (L.output t ω (streamRoute δ 0 t (L.initialChoice ω).2
+      ((fun i => z.2 (Fin.castLE (by omega) i)),fun i => ⟪z.1.val,z.2 (Fin.castLE (by omega) i)⟫))).val ≤ ε}
+  have hmono : {z : UnitSphere d × Samples d T | angularError z.1 (L.estimate z.1 ω z.2) ≤ ε}
+      ≤ᵐ[μ] ⋃ t, S t := by
+    filter_upwards [hgood] with z hz
+    intro hs
+    rcases L.terminal_forced_witness z.1 ω z.2 with ⟨t,ht,he⟩
+    have hf : L.forcedRun z.1 ω z.2 t = streamRoute δ 0 t (L.initialChoice ω).2
+        ((fun i => z.2 (Fin.castLE ht i)),fun i => ⟪z.1.val,z.2 (Fin.castLE ht i)⟫) := by
+      rw [L.forcedRun_eq_route z.1 ω z.2 ht]
+      exact streamRoute_congr _ _ 0 t _ _ _ (fun n j i => hz n j (Fin.castLE ht i))
+    have hc : dist z.1.val (L.estimate z.1 ω z.2).val ≤ ε := by
+      apply le_trans _ hs
+      simpa only [angularError, dist_comm] using chord_le_arccos (L.estimate z.1 ω z.2) z.1
+    refine Set.mem_iUnion.mpr ⟨⟨t,by omega⟩, ?_⟩
+    change dist z.1.val (L.output t ω _) ≤ ε
+    simpa only [estimate, he, hf] using hc
+  let B : ℝ≥0∞ := (ENNReal.ofReal ((3 : ℝ)*4^d) * ENNReal.ofReal (ε^a)) *
+    streamFactor (E := Vector d) (J := State M) q ^ (T/q+1)
+  have hb (t : Fin (T+1)) : μ (S t) ≤ B := by
+    simpa only [B, μ, S, uniformSphe
+preprints/Memory-and-precision-in-noiseless-Gaussian-regression-September-27-2026/build/sections/alternative-selection.tex
+\section{Selection on a common data domain}
+\label{h:alternatives}
+
+The two applications use the same analytic selection step: several
+continuation measures are supported on one data domain, and a measurable
+route chooses among them. The strong density estimate of
+Theorem~\ref{h:dv:finite-density} is sufficient, but a bound for
+measurable tests already gives the required \(N^{1/p}\) cost.
+
+We state this common step before applying the projection theorem to a
+lower-dimensional cube prior in Section~\ref{h:cube:section}.
+The later sections examine additional exact-label interfaces and
+alternative coefficient normalizations; they do not assert a stronger
+main theorem.
+
+\begin{lemma}[Selection on a common data domain]\label{h:alt:selection}
+Let \((E,\mathcal E,\lambda)\) be a measure space, let
+\(\mathcal D\in\mathcal E\) have finite measure, let \(p>1\), let
+\(U\ge0\), and let \(N\ge1\) be an integer. Suppose finite nonnegative measures
+\(\eta_1,\ldots,\eta_N\) are supported on \(\mathcal D\), and that
+for every measurable \(0\le g\le1\),
+\begin{equation}\label{h:alt:test}
+ \int g\,d\eta_j
+ \le U\left(\int_{\mathcal D}g\,d\lambda\right)^{1-1/p}
+ \qquad(1\le j\le N).
+\end{equation}
+For measurable routes \(g_j\ge0\) with \(\sum_jg_j\le1\),
+\begin{equation}\label{h:alt:selection-bound}
+ \sum_{j=1}^N\int g_j\,d\eta_j
+ \le N^{1/p}U\,\lambda(\mathcal D)^{1-1/p}.
+\end{equation}
+A sufficient condition for \eqref{h:alt:test} is
+\(\eta_j=f_j\lambda\), where \(f_j\ge0\) vanishes outside
+\(\mathcal D\) and \(\|f_j\|_{L^p(\lambda)}\le U\).
+
+In particular, if \(r>0\), \(m,\beta\in\R\), and positive constants
+\(H,V,L\) satisfy
+\[
+ U\le HLr^{\beta-m(1-1/p)},\qquad
+ \lambda(\mathcal D)\le Vr^m,
+\]
+then the right side of \eqref{h:alt:selection-bound} is at most
+\begin{equation}\label{h:alt:scale-cancellation}
+ N^{1/p}H V^{1-1/p}Lr^\beta.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Each \(g_j\) lies in \([0,1]\). Put
+\(b_j=\int_{\mathcal D}g_j\,d\lambda\). Equation
+\eqref{h:alt:test} and H\"older on the finite index set give
+\[
+ \sum_j\int g_j\,d\eta_j
+ \le U\sum_jb_j^{1-1/p}
+ \le U N^{1/p}\left(\sum_jb_j\right)^{1-1/p}.
+\]
+Since \(\sum_jg_j\le1\), we have
+\(\sum_jb_j\le\lambda(\mathcal D)\), proving
+\eqref{h:alt:selection-bound}. Under the density condition,
+H\"older gives
+\[
+ \int g\,d\eta_j
+ \le U\left(\int_{\mathcal D}g^{p/(p-1)}\,d\lambda\right)^{1-1/p}
+ \le U\left(\int_{\mathcal D}g\,d\lambda\right)^{1-1/p},
+\]
+because \(0\le g\le1\). Finally the powers of \(r\) in the two
+assumed bounds add to \(\beta\), giving
+\eqref{h:alt:scale-cancellation}.
+\end{proof}
+
+The test formulation accommodates a direct open-set limit even when
+one chooses not to infer a strong \(L^p\) density from that limit.
+The density formulation applies to the other passages. In both cases,
+the refe

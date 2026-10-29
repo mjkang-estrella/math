@@ -63,10 +63,8 @@ not a source counterexample. See root-fresh-source-r77-handback/ADOPTION.json.
 r78 cluster-scattering C4 remains unresolved: uniform factorial divisibility
 missing, bounded cancellation evidence only; current Omega advanced, freshnessHOLD.
 r80 maximum parking displacement Conjecture6.5 remains unresolved. Root verified the last-car recurrence, 234 Riccati coefficient identities, literal counts through n6 and the two exact stronger-invariant failures; no all-n single-crossing proof. See root-fresh-source-r80-handback/ADOPTION.json.
-r79 lasso yields an exact probability separation beating every orthogonal tuning
-parameter; source/general wording, closest-body and substantive holds remain.
-Root rational KKT/Schur/cubic bounds and independent ordinary review pass; source scope, published/closest bodies, classical eligibility and current prior clearance remain HOLD, credit0. No Lean investment. See root-lasso-review-adoption-r1/ADOPTION.json.
-Active Sol high/default: lasso source-scope review r2, fresh finite/arithmetic discovery r82 and fresh analysis/probability discovery r81. r74 sharp Chernoff curvature remains unresolved;
+r79 lasso separation is ordinary-math sound but current nomination EXCLUDED: no clear attributable universal optimized quantifier, and completed source-Lemma2 boundary/cubic specialization is routine. VoR and closest-body gaps retained; no Lean or manuscript. See root-lasso-exclusion-r2/EXCLUSION.json.
+Active Sol high/default: fresh analysis/probability r81, finite/arithmetic r82, and structural/geometric r83. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.
