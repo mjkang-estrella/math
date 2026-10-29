@@ -1,5 +1,13 @@
 # Current continuation — 29 October 2026
 
+r140 Bellec–Fritz iid inequality remains unresolved: the universal
+quartic upper bound is missing. Root verifies 56 manifest/54 scientific
+entries and reproduces all20 exact records; no repeated floating search or
+universal inference. Empirical-law and dyadic reductions are retained with
+source/access/registry limits. See root-r140-handback. Sol r143 replaces
+r140; r141/r142 continue. No credit; counts remain9 additional/39 total.
+
+
 r139 Achour degree-spread conjecture is refuted by the 12-vertex
 P6 corona, but root adopts routine-classical exclusion after reading the old
 corona theorem and checking the complete private-leaf/matching reduction.
