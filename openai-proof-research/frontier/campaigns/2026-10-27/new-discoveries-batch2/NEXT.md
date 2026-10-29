@@ -12,7 +12,8 @@ No external publication, upload or MathDB change.
 Bessel-ratio literal series and generic one-crossing formal components are in
 separate Sol high/default lanes. Ordinary proof and provisional investment pass;
 novelty remains HOLD and credit0. Fresh r59 Ferrers-rook research completed
-unresolved, credit0, awaiting root handback processing. Continue new full-scope
+unresolved, credit0; root verified29 source hashes and reran copied bounded checks.
+Fresh r60 research is active. Continue new full-scope
 research with up to three useful workers, no children, honoring all exclusions.
 Do not treat older pinned registry searches as complete current-head coverage.
 
