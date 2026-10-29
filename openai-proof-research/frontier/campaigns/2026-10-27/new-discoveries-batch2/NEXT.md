@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r136 Frank-copula attenuation has a complete ordinary refutation candidate.
+Root rederived the smooth regression/Rayleigh/monotone-quantization bridge,
+verified 57 manifest and 21 scientific-freeze entries, and reproduced the exact
+20-category rational separation certificate byte-identically. Substantive
+eligibility remains HOLD: a classical maximal-correlation adaptation may
+subsume it. Independent Sol review is launched before Lean or paper investment.
+See root-frank-attenuation-preliminary-freeze-r1. Credit0; counts9/39.
+
+
 r134 unrestricted zpd/zJpd equivalence and idempotent generation remain
 unresolved. Root verifies 75 manifest entries and 63 scientific-freeze entries,
 replays 6,561 M2(F3) pairs and dual-number controls, and checks the left-ideal,
