@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+r115 factorial-product candidate: root source-text and ordinary mathematics PASS
+for the disjoint nine-versus-seven product collision in published Problem 5.6
+of Aivazidis–Loukaki–Müller. Root independently checked exact rational products,
+240-digit integer cross multiplication, eleven prime valuations, and43 manifest
+entries. Source Theorem4.6's distinct-prime side excludes both witness sets.
+Substantive/novelty HOLD; NEW independent Sol high review launched. No Lean/paper
+or credit. Root evidence: lanes/root-factorial-product-review-freeze-r1/.
+Three active delegates: Renyi full formalization, supertoken review, factorial
+product review. Follow completion wakes; no polls. Counts remain8/38.
+
 Rényi root INVEST (credit0): r3 closes the historical cap and all70 missing-patch
 bodies through pinned Omega0a10157. Root independently verifies310 review-manifest
 entries,279 body SHA256/Git hashes and11 uncapped contiguous comparison responses,
