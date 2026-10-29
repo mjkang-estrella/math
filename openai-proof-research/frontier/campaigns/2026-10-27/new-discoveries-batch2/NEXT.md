@@ -40,8 +40,9 @@ review confirms ordinary math and scoped substantive PASS. Current-prior r2
 clears bounded novelty and publisher wording; root visually checked printedp356.
 Root fresh extracted source refutation PASS10 modules/136 actual declarations,
 standard-three axioms only, no residual premises. Lower bound, actual disjoint
-charges and source vertex transport are closed. Upper witness still running;
-paper/final review/acceptance remain. Credit0. See
+charges and source vertex transport are closed. Upper witness completed with
+117-declaration worker replay; root inspected actual sources and verified archive.
+Combined exact minimum, manuscript and audited packet delegated. Credit0. See
 root-edge-irregulator-source-replay-r2/ADOPTION.json.
 Adoption: root-edge-irregulator-formal-investment-r1/ADOPTION.json. Root public Git reads
 recovered complete current Omega70af5407/OpenAI7ef5c0cc inventories, recorded in
@@ -59,8 +60,10 @@ comparison now passes; equality existence qualification retained. Root decision:
 root-silicosis-exclusion-r1/EXCLUSION.json. No Lean or manuscript investment.
 r77 PECK remains unresolved; root exact fiber-coupling obstruction checked,
 not a source counterexample. See root-fresh-source-r77-handback/ADOPTION.json.
-Active Sol high/default: edge-irregulator upper-witness formal r2,
-fresh finite/algebra discovery r78 and fresh analytic discovery r79. r74 sharp Chernoff curvature remains unresolved;
+r78 cluster-scattering C4 remains unresolved: uniform factorial divisibility
+missing, bounded cancellation evidence only; current Omega advanced, freshnessHOLD.
+Active Sol high/default: edge-irregulator manuscript/packet r1,
+fresh analytic discovery r79 and fresh finite/arithmetic discovery r80. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.
