@@ -1,0 +1,2726 @@
+
+
+
+Constrained Flips in Plane Spanning Trees
+
+
+
+
+
+// Restore the saved color scheme preference, or
+// enact the browser preference if "automatic",
+// without expecting DOM load to have completed.
+//
+// Also restore any saved readingmode and ToC display preferences.
+function initializeReadingPreferences() {
+let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+if (saved_theme === "automatic") {
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+saved_theme = "dark";
+}
+}
+if (saved_theme == "dark") {
+document.documentElement.setAttribute("data-theme", "dark");
+} else {
+document.documentElement.setAttribute("data-theme", "light");
+}
+
+const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+if (tocDisplay) {
+document.documentElement.setAttribute("data-toc-display", tocDisplay);
+}
+const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+if (readingMode) {
+document.documentElement.setAttribute("data-reading-mode", readingMode);
+}
+}
+// Run as soon as JS starts, to minimize repainting
+initializeReadingPreferences();
+
+
+
+
+
+
+
+
+/* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+the marker's display to know which way to toggle. The marker draws no box. */
+.arxiv-html-header { display: contents; }
+html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+/* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+icon by making its span a block). */
+.arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+/* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+arXiv's own render as they are (the logo on the bar, the funder logos on their white
+chips). Important: ar5iv's dark rules are unlayered, as specific as
+:root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+:is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+.ds-site-header img { background-color: transparent !important; }
+
+/* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+header, the paper's bar (no site navigation, the paper's controls), takes the second and
+stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+The controls show their names. */
+@media (min-width: 1280px) {
+html { scroll-padding-top: 80px; }
+.arxiv-html-site-chrome { display: contents; }
+.arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+.arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+.arxiv-html-site-chrome .tool-icon { display: none; }
+}
+/* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+over the header and the paper: it shows only while open, under the chrome, in its place in
+the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+inset; the theme gives it none, so it met the screen edges. */
+@media (max-width: 1279px) {
+.arxiv-html-site-chrome .tool-wide { display: none; }
+.arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+.ltx_page_navbar { position: absolute; top: auto; }
+.arxiv-html-footer { padding-inline: 1rem; }
+}
+
+
+Skip to main content
+
+
+
+Report GitHub Issue
+×
+
+
+
+
+Title:
+
+
+
+Content selection saved. Describe the issue below:
+
+Description:
+
+
+
+
+Submit without GitHub
+Submit in GitHub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Why HTML?
+
+Report Issue
+
+Back to Abstract
+
+
+Download PDF
+
+Contents
+
+
+Reading mode
+
+
+Colour theme
+
+
+
+
+
+
+Abstract
+
+1 Introduction
+
+2 Bounding the Diameter of the Compatible Flip Graph
+
+3 Bounding the Diameter of the Rotation Graph
+
+
+3.1 The Sets LL and RR
+
+3.2 The Sets DD and JJ
+
+
+4 Relations of Happy Edge Properties
+
+5 Happy Edges in Plane Spanning Trees on Convex Sets
+
+6 Fixed-Parameter Tractable Algorithms
+
+7 Conclusion
+
+References
+
+A Proof of Theorem
+
+B Omitted Details from Section
+
+C Omitted Details from Section
+
+D Omitted Details from Section
+
+E Omitted Details from Section
+
+
+
+
+
+
+
+License: arXiv.org perpetual non-exclusive license
+
+
+
+arXiv:2508.15520v1 [cs.CG] 21 Aug 2025
+
+
+
+
+
+
+Graz University of Technology, Austriaoswin.aichholzer@tugraz.athttps://orcid.org/0000-0002-2364-0583
+Graz University of Technology, Austriajoseph.dorfer@tugraz.athttps://orcid.org/0009-0004-9276-7870Austrian Science Foundation (FWF) 10.55776/DOC183
+Graz University of Technology, Austriabirgit.vogtenhuber@tugraz.athttps://orcid.org/0000-0002-7166-4467
+
+
+Constrained Flips in Plane Spanning Trees
+
+
+
+Oswin Aichholzer
+
+
+Joseph Dorfer
+
+
+Birgit Vogtenhuber
+
+
+
+Abstract
+
+
+A flip in a plane spanning tree TT is the operation of removing one edge from TT and adding another edge
+such that the resulting structure is again a plane spanning tree. For trees on a set of points in convex position we study two classic types of constrained flips:
+(1) Compatible flips are flips in which the removed and inserted edge do not cross each other.
+We relevantly improve the previous upper bound of 2​n−O⁡(n)2n-O(\sqrt{n}) on the diameter of the compatible flip graph to 5​n3−O⁡(1)\frac{5n}{3}-O(1),
+by this matching the upper bound for unrestricted flips by Bjerkevik, Kleist, Ueckerdt, and Vogtenhuber [SODA 2025] up to an additive constant of 11. We further show that no shortest compatible flip sequence removes an edge that is already in its target position. Using this so-called happy edge property, we derive a fixed-parameter tractable algorithm to compute the shortest compatible flip sequence between two given trees.
+(2) Rotations are flips in which the removed and inserted edge share a common vertex.
+Besides showing that the happy edge property does not hold for rotations, we improve the previous upper bound of 2​n−O⁡(1)2n-O(1) for the diameter of the rotation graph to 7​n4−O⁡(1)\frac{7n}{4}-O(1).
+
+
+
+ccsMathematics of computing → Discrete mathematics, Combinatorics, Combinatoric problems
+
+
+keywordsNon-crossing spanning trees, Flip Graphs, Diameter, Complexity, Happy edges
+††runningauthor: O. Aichholzer and J. Dorfer and B. Vogtenhuber
+
+
+
+1 Introduction
+
+
+
+
+Let SS be a finite point set in the plane in general position, that is, no three points lie on a common line. We call SS a convex point set if no point in SS lies in the interior of the convex hull of SS.
+A plane straight-line graph of SS is a graph with vertex set SS and whose edges are straight line segments between pairs of points of S such that no two edges intersect, except at a common endpoint. All graphs considered in this paper are straight-line graphs. For brevity we will omit the term straight-line. A plane spanning tree is a plane connected graph with n−1n-1 edges. In a convex point set, edges appear in two forms. Convex hull edges are edges that lie on the boundary of the convex hull of the point set. Edges that are not convex hull edges are diagonals.
+
+
+
+Flip Graphs of Plane Spanning Trees.
+
+
+
+
+A flip between two plane spanning trees of SS is the operation that removes an edge from a tree and adds another edge such that the resulting structure is again a plane spanning tree. We also denote this operation as an unrestricted flip.
+A constrained version of flips are so-called compatible flips, for which the removed edge and the added edge are not allowed to cross. Rotations are a restricted subclass of compatible flips for which we additionally require the removed edge and the added edge to share a common vertex. The most restricted and local operation is a so called slide. A slide is an operation in which the added edge (u,v)(u,v) and the removed edge (v,w)(v,w) are again required to share a common vertex, additionally, the triangle Δ⁡(u,v,w)\Delta(u,v,w) must not contain any other vertex and the edge (u,w)(u,w) has to be contained in the current tree. This can visually be interpreted as sliding the edge (u,v)(u,v) along the edge (u,w)(u,w) into the edge (v,w)(v,w).
+The (compatible) flip graph of plane spanning trees of SS has as its vertex set all such trees.
+Two vertices T1T_{1}, T2T_{2} of this flip graph are connected with an edge if and only if T1T_{1} can be transformed into T2T_{2}
+by a single (compatible) flip. See Figure 1 for an example of flips in plane spanning trees.
+
+
+Figure 1: Four flips in a plane spanning tree. (1) unrestricted flip, (2) compatible flip, (3) rotation, (4) slide
+
+
+
+
+Given an initial tree TinT_{\text{in}} and a target tree TtarT_{\text{tar}}, a (compatible) flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} is a path from TinT_{\text{in}} to TtarT_{\text{tar}} in the (compatible) flip graph. The (compatible) flip distance between TinT_{\text{in}} and TtarT_{\text{tar}} is the length of a shortest path between TinT_{\text{in}} and TtarT_{\text{tar}} in the flip graph.
+Any (compatible) flip sequence of this length is called a shortest (compatible) flip sequence. Similarly, we define the rotation graph, rotation sequences and the rotation distance. See Figure 2 for an illustration of the concepts.
+
+
+Figure 2: Flip graph of plane spanning trees on four vertices in convex position. Dashed edges denote flips that are part of the flip graph, but not the compatible flip graph. The dotted lines are compatible flips, but not rotations and the dash dotted lines are rotations but not slides. One pair of two plane spanning trees is marked in orange. Their shortest flip sequence of length one is marked in red (thicker dashed). A shortest compatible flip sequence of length two is marked in blue (thicker).
+
+
+
+
+For graph reconfiguration problems three natural questions arise: (1) Is the flip graph connected? (2) What is the diameter of the flip graph? (3) What is the complexity of computing shortest flip sequences between two specific configurations?
+
+
+
+
+Connectedness and Diameter.
+
+
+
+
+For any nn-point set SS, the flip graph of plane spanning trees on SS
+is known to be connected and has radius exactly n−2n-2.
+The same holds for the compatible flip graph and the rotation graph; see [4, 5].
+Hence, the diameter always lies between n−2n-2 and 2​n−42n-4.
+Since a lower bound for the diameter of ⌊32​n⌋−5\big\lfloor\frac{3}{2}n\big\rfloor-5 for convex nn-point sets was shown in [11], the flip graph
+of plane spanning trees on convex point sets has received considerable attention.
+However, despite a prevailing conjecture that the diameter is at most 32​n+O⁡(1)\frac{3}{2}n+O(1) [8, 13], even improving the upper bound to 2​n−o⁡(n)2n-o(n) took surprisingly long.
+In the last few years, the upper bound for its diameter was improved to 2​n−Ω⁡(l​o​g​(n))2n-\Omega(log(n)) in [1] and soon after to 2​n−Ω⁡(n)2n-\Omega(\sqrt{n}) in [8].
+The upper bound from [8] is constructive and, though not stated explicitly, only uses compatible flips.
+Hence it also provides an upper bound for the diameter of the according compatible flip graph.
+In [7], the diameter was bounded from above by c​ncn with c=112​(22+2)≈1.95c=\frac{1}{12}\left(22+\sqrt{2}\right)\approx 1.95, which marked the first linear improvement over the initial bound from [4].
+Very recently, a lower bound of 149​n−O⁡(1)\frac{14}{9}n-O(1) and an upper bound of 53​n−3\frac{5}{3}n-3 on the diameter were achieved in [5],
+where the upper bound in general requires non-compatible flips.
+It is also known that any plane spanning tree can be transformed into any other using Θ⁡(n2)\Theta(n^{2}) many slides [3]. For a survey on further flip operations in trees with multiple flips in parallel as well as flips with labeled edges, we refer to [17].
+
+
+
+
+Happy Edges and Complexity.
+
+
+
+
+For any graph reconfiguration problem, happy edges are edges that lie in both the initial and the target graph.
+A flip graph fulfills the happy edge property if there exists a shortest flip sequence between any two graphs that never flips happy edges.
+The happy edge property often is a good indication for the complexity of a graph reconfiguration problem.
+For example, for triangulations of simple polygons [2] and general point sets [15, 18],
+finding shortest flip sequences is computationally hard. The hardness proofs
+use counterexamples to the happy edge property as a key ingredient.
+Conversely, the happy edge property is known to hold for triangulations of convex polygons [19].
+Though the complexity of finding shortest flip sequences is still open, the happy edge property yields multiple fixed-parameter tractable algorithms [6, 10, 14, 16].
+Moreover,
+the happy edge property holds for plane perfect matchings of convex point sets and shortest flip sequences can be found in polynomial time [12]. For plane spanning trees in convex position the happy edge property was conjectured to hold [1, 13] for different types of flips. Up to now, it has only been disproved for slides [1].
+
+
+
+
+Contribution and Outline.
+
+
+
+
+We will start by improving upper bounds on the flip graph for restricted flip types in convex point sets. In Section 2 we improve the upper bound on the diameter of the compatible flip graph from 2​n−n2n-\sqrt{n} in [8] to 53​(n−1)\frac{5}{3}(n-1). Section 3 is dedicated to improving the upper bound on the rotation graph from 2​n−O⁡(1)2n-O(1) in [4] to 74​(n−1)\frac{7}{4}(n-1).
+
+
+
+
+Afterwards we deal with the happy edge property. In Section 4 we provide a more refined framework for happy edge properties and in Section 5 we prove the happy edge property for compatible flips in convex point sets and provide a counterexample to the happy edge property for rotations.
+
+
+
+
+Finally, in Section 6 we use variants of the happy edge property to show fixed-parameter tractability of the flip distance for both unrestricted and compatible flips.
+
+
+
+
+Due to space restrictions many details have been moved to the appendix. Such results will be marked with (⋆)(\star).
+
+
+
+
+
+
+2 Bounding the Diameter of the Compatible Flip Graph
+
+
+
+
+This section is devoted to improving the upper bound on the diameter of the compatible flip graph.
+All the currently known improvements to the upper bound of the length of shortest flip sequences for unrestricted flips are
+based on two different ways to handle edges:
+They either invest two flips to flip an edge from Tin∖TtarT_{\text{in}}\setminus T_{\text{tar}} to a convex hull edge and later flip that convex hull edge to an edge of Ttar∖TinT_{\text{tar}}\setminus T_{\text{in}}, or perform a single perfect flip, that is, a flip from an edge of Tin∖TtarT_{\text{in}}\setminus T_{\text{tar}} to an edge of Ttar∖TinT_{\text{tar}}\setminus T_{\text{in}}.
+Upper bounding the length of a flip sequence is then achieved by lower bounding the number of perfect flips.
+Note that any such flip sequence induces a pairing of the edges of Tin∖TtarT_{\text{in}}\setminus T_{\text{tar}} with edges of Ttar∖TinT_{\text{tar}}\setminus T_{\text{in}}.
+
+
+
+
+To obtain our improved bound for the diameter of the compatible flip graph,
+we build on strategies for bounding the diameter of the flip graph with unrestricted flips from [5]. We give an overview of their proof and highlight the parts where we provide adjustments to make the flip sequence compatible.
+
+
+
+
+The pairing of edges in [5] is obtained as follows: The authors consider the linear representation of a tree TT on a convex point set as illustrated in Figure 3. The linear representation is obtained by cutting the convex point set between two consecutive vertices on the convex hull and unfolding the tree TT such that its vertices are on a straight line.
+
+
+Figure 3: A tree TT on a convex point set (left) and a linear representation of TT (right)
+
+
+
+
+The linear representation induces a linear order v1,…,vnv_{1},\ldots,v_{n} of the vertices of TT.
+With this linear order, the length of an edge e=(vi,vj)e=(v_{i},v_{j}), where i<ji<j, is defined as j−ij-i.
+Further, the edge ee covers all vertices {vi,…,vj}\{v_{i},\ldots,v_{j}\} as well as any edge (vk,vℓ)(v_{k},v_{\ell}) with k,ℓ∈{i,…,j}k,\ell\in\{i,\ldots,j\}.
+
+
+
+
+A gap {vi,vi+1}\{v_{i},v_{i+1}\} is an edge between two consecutive vertices in the linear order (which might or might not be present in the tree TT).
+Next, the authors define a bijection (Lemma 3.1 in [5]) between gaps and edges of TT,
+where each gap is in bijection with the shortest edge of TT that covers that gap.
+The edges are then partitioned into
+categories based on how many vertices they share with their corresponding gap (vi,vi+1)(v_{i},v_{i+1}); see Figure 4 for an illustration.
+
+
+
+
+
+
+Concretely, an edge (u,v)(u,v) is a …
+
+
+•
+
+
+
+short edge if {u,v}={vi,vi+1}\{u,v\}=\{v_{i},v_{i+1}\}
+
+
+•
+
+
+
+near edge if |{u,v}∩{vi,vi+1}|=1\lvert\{u,v\}\cap\{v_{i},v_{i+1}\}\rvert=1
+
+
+•
+
+
+
+wide edge if |{u,v}∩{vi,vi+1}|=0\lvert\{u,v\}\cap\{v_{i},v_{i+1}\}\rvert=0
+
+
+
+
+Figure 4: Edges e1e_{1}, e3e_{3} and e5e_{5} are short edges for gaps g1g_{1}, g3g_{3} and g5g_{5} respectively, e4e_{4} is a near edge for g4g_{4}, and e2e_{2} is a wide edge for g2g_{2}.
+
+
+
+
+The authors show that the number of short edges in any tree TT is always larger than the number of wide edges.
+In a next step, they construct an edge-edge-bijection between the edges in TinT_{\text{in}} and TtarT_{\text{tar}}
+by concatenating the edge-gap-bijection
+for TinT_{\text{in}} with the gap-edge-bijection of TtarT_{\text{tar}}.
+An edge e∈Tine\in T_{\text{in}} and its image from the edge-edge-bijection e′∈Ttare^{\prime}\in T_{\text{tar}}
+form a pair. If an edge ee is in both TinT_{\text{in}} and TtarT_{\text{tar}}, and ee is in bijection to itself, then ee is not flipped at all.
+Note that any edge can be flipped to its assigned gap by a single (compatible) flip.
+The authors use this and the relation between the numbers of short and wide edges in each tree
+to show that all pairs of edges containing at least one short or wide edge can be flipped using an average of 32\frac{3}{2} flips per pair.
+This is done by flipping every edge in such a pair to its corresponding gap and later from its gap to its target edge,
+which takes two flips minus the number of short edges in the pair.
+
+
+
+
+The remaining pairs then only consist of near edges. These pairs can further be partitioned into three sets as illustrated in Figure 5.
+
+
+•
+
+
+
+above pairs, where ee and e′e^{\prime} share a vertex and ee is longer than e′e^{\prime}.
+
+
+•
+
+
+
+below pairs, where ee and e′e^{\prime} share a vertex and ee is shorter than e′e^{\prime}.
+
+
+•
+
+
+
+crossing pairs, where ee and e′e^{\prime} cross, or equivalently, ee and e′e^{\prime} share a different vertex with their gap.
+
+
+
+
+Figure 5: Illustration of above, below and crossing pairs of edges. Edges of TinT_{\text{in}} are drawn above the vertices, while edges of TtarT_{\text{tar}} are drawn below the vertices.
+The respective gap is denoted by gg.
+
+
+
+
+The sets of above, below and crossing pairs are then denoted by AA, BB, and CC, respectively.
+The authors provide a flip sequence that flips all pairs in AA (resp. BB, CC) directly [5, Lemma 3.2].
+Since a direct flip of an above or below pair is compatible, this implies the following lemma.
+
+
+
+Lemma 1.
+
+
+
+Assume that in the linear representation, the trees TinT_{\text{in}} and TtarT_{\text{tar}} consist only of short edges and
+pairs of edges
+in AA (resp. BB).
+Then there is a compatible flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} of length |A|\lvert A\rvert (resp. |B|\lvert B\rvert).
+
+
+
+
+
+In contrast, no direct flip between two edges of a pair in CC is compatible, since any such pair is crossing.
+In Appendix A we develop an approach to flip these edges
+such that the resulting flip sequence is compatible while using only one additional flip.
+
+
+
+Lemma 2 (⋆\star).
+
+
+
+Assume that in the linear representation, the trees TinT_{\text{in}} and TtarT_{\text{tar}} consist only of short edges and
+pairs of edges in CC.
+Then there is a compatible flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} of length |C|+1\lvert C\rvert+1.
+
+
+
+
+
+To obtain their upper bound on the flip distance between two trees TinT_{\text{in}}, TtarT_{\text{tar}},
+the authors cut the original instances TinT_{\text{in}}, TtarT_{\text{tar}} along happy diagonals, handle each of the resulting subinstances separately,
+and then add up the flips needed in each of the subinstances.
+Let bb denote the number of happy convex hull edges, cc the number of happy diagonals, and dd the cardinality of Tin∖TtarT_{\text{in}}\setminus T_{\text{tar}}.
+Using that b+c+d=n−1b+c+d=n-1,
+their resulting bound [5, Theorem 4.1]
+is 53​d+23​b−43≤53​(n−1)−43\frac{5}{3}d+\frac{2}{3}b-\frac{4}{3}\leq\frac{5}{3}(n-1)-\frac{4}{3}.
+With similar calculations, we show the following theorem for compatible flips in Appendix A.
+
+
+
+Theorem 3 (⋆\star).
+
+
+
+Let TinT_{\text{in}} and TtarT_{\text{tar}} be two plane spanning trees in convex point sets with nn vertices.
+Then, there exists a compatible flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} of length at most 53​d+23​b+c−13≤53​(n−1)−13\frac{5}{3}d+\frac{2}{3}b+c-\frac{1}{3}\leq\frac{5}{3}(n-1)-\frac{1}{3}, where d=|Tin∖Ttar|=|Tin​Δ​Ttar|2d=\lvert T_{\text{in}}\setminus T_{\text{tar}}\rvert=\frac{\lvert T_{\text{in}}\Delta T_{\text{tar}}\rvert}{2} and where bb and cc denote the number of happy convex hull edges and happy non-convex-hull edges, respectively.
+
+
+
+
+
+We remark that our bound with respect to the parameters dd, bb, and cc can be relevantly higher than the one in [5, Theorem 4.1] if the two trees share many happy diagonals.
+This behaviour
+was not unexpected due to the following result:
+In [9, Theorem 1.6], the authors provide examples of pairs of plane spanning trees with (unrestricted) flip distance dd and compatible flip distance 2​d2d.
+The according tree pairs have
+c≈n2c\approx\frac{n}{2} happy diagonals.
+However, any pair of trees that could reach the upper bounds in [5, Theorem 4.1] and Theorem 3 must have c=0c=0. So while for certain instances the flip distance and the compatible flip distance may differ strongly, extremal examples that determine the diameter are not affected.
+
+
+
+
+
+3 Bounding the Diameter of the Rotation Graph
+
+
+
+
+Next, we show that for the even more constrained rotation as flip operation, the diameter of the resulting flip graph is linear with leading coefficient less than two.
+
+
+
+
+For this purpose we again construct a pairing of edges such that a perfect flip can be performed for many of them. The challenge that arises, compared to unrestricted or compatible flips, is that rotations require the removed and the added edge to share a vertex. This rules out the gap based pairing from the last section, since in crossing pairs, edges do not share vertices and the same holds for most pairs that contain a wide edge.
+
+
+
+Lemma 4.
+
+
+
+For a plane spanning tree TT on a point set SS and a vertex v∈Sv\in S there exists a bijection ρT,v\rho_{T,v} between vertices in S∖{v}S\setminus\{v\} and edges in TT such that ρT,v​(w)\rho_{T,v}(w) is incident to ww for every vertex w∈S∖{v}w\in S\setminus\{v\}.
+
+
+
+
+Proof.
+
+
+
+We root the tree TT at vv and orient every edge away from vv such that vv forms the unique source of the oriented graph; see Figure 6 for an illustration.
+Now map each vertex in S∖{v}S\setminus\{v\} to its incoming edge.
+∎
+
+
+
+
+Corollary 5.
+
+
+
+Let T1T_{1} and T2T_{2} be two plane spanning trees on a point set SS and let vv be a vertex in SS.
+Then there exists a pairing of edges from T1T_{1} with edges in T2T_{2} such that:
+
+
+•
+
+
+
+Two edges that are paired together share a vertex.
+
+
+•
+
+
+
+Different pairs of edges share a different vertex.
+
+
+•
+
+
+
+No pair of edges has vv as its shared vertex.
+
+
+
+
+
+
+Proof.
+
+
+
+The pairing {(ρT1,v(w),ρT2,v(w)∣w∈S∖{v}}\{(\rho_{T_{1},v}(w),\rho_{T_{2},v}(w)\mid w\in S\setminus\{v\}\} induced by the bijection in Lemma 4 has all the desired properties.
+∎
+
+
+
+Figure 6: Illustration of the bijection from Lemma 4.
+All edges are oriented away from the root vv.
+Each vertex in S∖{v}S\setminus\{v\} is in bijection with its unique incoming edge.
+
+
+
+
+For any two given plane spanning trees TinT_{\text{in}} and TtarT_{\text{tar}}, we apply the bijection from Corollary 5 with v:=vnv:=v_{n} to obtain a pairing of the edges of the two trees with all the mentioned properties.
+For an edge ee that is in bijection with a vertex viv_{i} we say that ee is attached to viv_{i}.
+Note that each vertex viv_{i} with i∈{1,…,n−1}i\in\{1,\ldots,n-1\} has an attached edge from each of TinT_{\text{in}} and TtarT_{\text{tar}}, while vnv_{n} has no attached vertices.
+
+
+
+
+From this point on we consider the two trees presented in their linear representation, see Figure 3, such that vnv_{n} is the rightmost vertex.
+The pairs of edges (ein=(vi,vj),etar=(vi,vk))(e_{\text{in}}=(v_{i},v_{j}),e_{\text{tar}}=(v_{i},v_{k})), where viv_{i} is the vertex where edges eine_{\text{in}} and etare_{\text{tar}} are attached to, can now be subdivided into multiple classes. We say that a pair of edges is …
+
+
+•
+
+
+
+right-attached above if j≤k<ij\leq k<i
+
+
+•
+
+
+
+left-attached above if i<k≤ji<k\leq j
+
+
+•
+
+
+
+right-attached below if k≤j<ik\leq j<i
+
+
+•
+
+
+
+left-attached below i<j≤ki<j\leq k
+
+
+•
+
+
+
+diving if j<i<kj<i<k
+
+
+•
+
+
+
+jumping if k<i<jk<i<j
+
+
+
+
+
+
+We denote the respective sets of pairs in that order by R​ARA, L​ALA, R​BRB L​BLB, DD and JJ.
+Additionally, we set L=L​A∪L​BL=LA\cup LB and R=R​A∪R​BR=RA\cup RB.
+See Figure 7 for an illustration of the six types of edge pairs, as well as the two groups LL and RR.
+We remark that happy edges that are left-attached fulfill both, the definition for left-attached above and the one left-attached below.
+This does not pose any problem, since in the parts of the proof where this is relevant, we will only consider the whole set LL.
+By symmetry, the same can be said about right-attached happy edges.
+Another noteworthy observation is that we do not handle convex hull edges any differently than diagonals.
+There might even be happy convex hull edges that belong to different pairs.
+This will lead to cases in which we rotate happy (convex-hull) edges.
+We allow this on purpose, since we will see in Section 5 that the happy edge property does not hold for rotations.
+
+
+Figure 7: Illustration of pairs of edges in the sets RA, RB, R, LA, LB, L, D and J.
+Edges of TinT_{\text{in}} are drawn above the vertices, while edges of TtarT_{\text{tar}} are drawn below the vertices. Each edge points to the vertex which it is attached to.
+
+
+
+
+The new upper bound on the diameter of the rotation graph is described by the following Theorem.
+
+
+
+Theorem 6.
+
+
+
+There exists a rotation sequence from TinT_{\text{in}} to TtarT_{\text{tar}} of length at most
+2​(n−1)−m​a​x​{|L|,|R|,|J|,|D|}≤74​(n−1)2(n-1)-max\big\{\lvert L\rvert,\lvert R\rvert,\lvert J\rvert,\lvert D\rvert\big\}\leq\frac{7}{4}(n-1)
+
+
+
+
+
+We will use Lemma 7 below to get the edges from three of the sets LL, RR, JJ, and DD “out of the way”. Then we will show that all edges from the remaining set can be perfectly flipped.
+
+
+
+
+We pair the edges and vertices of TT via the bijection ρT,vn\rho_{T,v_{n}}.
+Further, for an arbitrary j∈{1,…,n−1}j\in\{1,\ldots,n-1\}, we assign a gap to every vertex except vnv_{n} by the following function (indices taken modulo nn).
+
+
+
+
+δj:vk↦{(vk,vk+1)if​k>j(vk−1,vk)if​k≤j\delta_{j}:v_{k}\mapsto\begin{cases}(v_{k},v_{k+1})\qquad\text{if}~k>j\\
+(v_{k-1},v_{k})\qquad\text{if}~k\leq j\end{cases}
+
+
+
+
+
+
+In other words, we choose one particular gap (vj,vj+1)(v_{j},v_{j+1}) that is not assigned to any vertex and the other gaps are assigned such that they contain their assigned vertex.
+
+
+
+
+In the following lemma, jj is an arbitrary index, II is a subset of the convex hull edges in TT that behave “nicely” with respect to δj\delta_{j},
+and KK are all edges of TT that are incident to vnv_{n}. I∗I^{\ast} and K∗K^{\ast} are according subsets that are required to be present in the resulting tree T∗T^{\ast}.
+
+
+
+Lemma 7.
+
+
+
+For any j∈{1,…,n−1}j\in\{1,\ldots,n-1\},
+let I={k∈{1,…,n−1}∣ρT,vn​(vk)=δj​(vk)}I=\{k\in\{1,\ldots,n-1\}\mid\rho_{T,v_{n}}(v_{k})=\delta_{j}(v_{k})\} and K={k∈{1,…,n−1}∣ρT,vn​(vk)=(vn,vk)}K=\{k\in~\{1,\ldots,n-1\}\mid\rho_{T,v_{n}}(v_{k})=(v_{n},v_{k})\}.
+Further, let I∗,K∗I^{\ast},K^{\ast} be a partition of {1,…,n−1}\{1,...,n-1\}, that is, I∗∩K∗=∅I^{\ast}\cap K^{\ast}=\emptyset and I∗∪K∗={1,…,n−1}I^{\ast}\cup K^{\ast}=\{1,\ldots,n-1\}.
+Then there exists a rotation sequence from TT to T∗T^{\ast} of length at most n−1−|I∩I∗|−|K∩K∗|n-1-\lvert I\cap I^{\ast}\rvert-\lvert K\cap K^{\ast}\rvert that does not flip edges in ρT,vn​({vk∣k∈(I∩I∗)∪(K∩K∗)})\rho_{T,v_{n}}(\{v_{k}\mid k\in(I\cap I^{\ast})\cup(K\cap K^{\ast})\}) and T∗T^{\ast} has the following properties:
+
+
+•
+
+
+
+For all k∈I∗k\in I^{\ast}, the tree T∗T^{\ast} contains the convex hull edges δj​(vk)\delta_{j}(v_{k}). That is, the convex hull edges attached to vkv_{k} directed away from vnv_{n} with respect to the order of vertices along the path on the convex hull from vnv_{n} to (vj,vj+1)(v_{j},v_{j+1})11
+1
+
+
+
+
+
+
+
+We remark that this direction in general differs from the orientation induced by the tree that is used in the proof of Lemma 4..
+
+
+•
+
+
+
+The tree T∗T^{\ast} contains the edges (vn,vk)(v_{n},v_{k}) for all k∈K∗k\in K^{\ast}. That is, all vertices that are attached to vkv_{k} are connected directly to vnv_{n} via edges that form a fan at vnv_{n}.
+
+
+
+
+
+
+
+We refer to Figure 8 for an illustration of Lemma 7 applied to the tree from Figure 6.
+
+
+
+Proof.
+
+
+
+We set E0=ρT,vn​({vk∣k∈(I∩I∗)∪(K∩K∗)})E_{0}=\rho_{T,v_{n}}(\{v_{k}\mid k\in(I\cap I^{\ast})\cup(K\cap K^{\ast})\}) and T0=T∖E0T_{0}=T\setminus E_{0}. Now consider the forest T0,v​i​sT_{0,vis} of edges that are visible from vnv_{n} in T0T_{0}. These are all edges for which no straight-line segment from vnv_{n} to the edge is intersected by any other edge.
+Further, let vkv_{k} be a vertex of degree one in T0,v​i​sT_{0,vis}. Then the only edge incident to vkv_{k} in T0,v​i​sT_{0,vis} is ρT,vn​(vk)\rho_{T,v_{n}}(v_{k}).
+In particular, if k∈I∗k\in I^{\ast} then δj​(vk)\delta_{j}(v_{k}) does not contain any edge and is visible from vnv_{n},
+and if k∈K∗k\in K^{\ast} then the straight-line segment between vnv_{n} and vkv_{k} is uncrossed.
+
+
+
+
+We can execute a flip that exchanges the edge ρT,vn​(vk)\rho_{T,v_{n}}(v_{k}) with the edge δj​(vk)\delta_{j}(v_{k}) (if k∈I∗k\in I^{\ast}) or (vn,vk)(v_{n},v_{k}) if k∈K∗k\in K^{\ast} to get a valid tree.
+We replace E0←E0∪{δj​(vk)}E_{0}\leftarrow E_{0}\cup\{\delta_{j}(v_{k})\} (resp. E0←E0∪{(vn,vk)}E_{0}\leftarrow E_{0}\cup\{(v_{n},v_{k})\}) and T0←T0∖{δj​(vk)}T_{0}\leftarrow T_{0}\setminus\{\delta_{j}(v_{k})\} (resp. T0←T0∖{(vn,vk)}T_{0}\leftarrow T_{0}\setminus\{(v_{n},v_{k})\}) and repeat the process. We repeat until E0=TE_{0}=T. This takes at most n−1−|I∩I∗|−|K∩K∗|n-1-\lvert I\cap I^{\ast}\rvert-\lvert K\cap K^{\ast}\rvert rotations, since the cardinality of E0E_{0} increases by one in every iteration.
+∎
+
+
+
+Figure 8: Illustration of Lemma 7.
+Left: The tree from Figure 6 with n=8n=8.
+Middle: Target structure of Lemma 7 with K∗=∅K^{\ast}=\emptyset and chosen index j=3j=3. The edges in ρT,vn​(I∩I∗)={(v8,v1),(v1,v2),(v7,v6)}\rho_{T,v_{n}}(I\cap I^{\ast})=\{(v_{8},v_{1}),(v_{1},v_{2}),(v_{7},v_{6})\} that do not get rotated when rotating from the left to the middle tree are marked in red.
+Right: Target structure of Lemma 7 with K∗={2,5}K^{\ast}=\{2,5\} and the same index j=3j=3 as before.
+The edges in ρT,vn​(I∩I∗)={(v8,v1),(v7,v6)}\rho_{T,v_{n}}(I\cap I^{\ast})=\{(v_{8},v_{1}),(v_{7},v_{6})\} that do not get rotated when rotating from the left to the right tree are marked in red.
+
+
+
+
+A gap (vi,vi+1)(v_{i},v_{i+1}) in a tree TT is called empty if the edge (vi,vi+1)(v_{i},v_{i+1}) is not part of TT.
+Note that in the target tree T∗T^{\ast} from Lemma 7, the gap (vj,vj+1)(v_{j},v_{j+1}) is empty.
+Moreover, by setting K∗=∅K^{\ast}=\emptyset, a flip sequence as in Lemma 7 can be used to rotate all edges to the convex hull such that all convex hull edges that point away from vnv_{n} do not have to be rotated.
+
+
+
+
+3.1 The Sets LL and RR
+
+
+
+Proposition 8.
+
+
+
+There exists a flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} that uses 2​(n−1)−m​a​x​{|L|,|R|}2(n-1)-max\big\{\lvert L\rvert,\lvert R\rvert\} rotations.
+
+
+
+
+
+Without loss of generality, let |R|>|L|\lvert R\rvert>\lvert L\rvert. For the sets RR, we will (1) rotate all edges except the ones in RR to the convex hull such that every edge in RR has an empty gap to the left of its attachment point, (2) rotate all edges in pairs in RR to their target position, and (3) obtain the final tree. Steps (1) and (3) are described in Lemma 9, Step (2) happens in Lemma 10. An illustration of the strategy can be seen in Figure 9.
+
+
+
+Lemma 9 (⋆\star).
+
+
+
+There exists a rotation sequence of length at most n−1−|R|n-1-\lvert R\rvert that rotates all edges except the ones in RR to the convex hull such that each edge is rotated into the gap in the convex hull that is left of its assigned vertex. In particular, for an edge e=(vi,vr)e=(v_{i},v_{r}) with i<ri<r that belongs to a pair in RR, the gap (vr−1,vr)(v_{r-1},v_{r}) in the convex hull is empty. A symmetric argument holds for pairs in LL.
+
+
+
+Figure 9: Steps of the proof of Proposition 8. First, rotate all edges except the ones in R (marked in red) to the convex hull, then rotate the pairs in RR. At last, rotate all remaining edges from the convex hull back in.
+
+
+
+
+Lemma 9 is an iterative application of Lemma 7. We apply the lemma with K∗=∅K^{\ast}=\emptyset to every subtree that results from cutting the tree along edges in RR (resp. LL). Let T1T_{1} and T2T_{2} be the trees obtained from applying Lemma 9 to TinT_{\text{in}} and TtarT_{\text{tar}}.
+
+
+
+Lemma 10 (⋆\star).
+
+
+
+There exists a rotation sequence from T1T_{1} to T2T_{2} of length at most |R|\lvert R\rvert (resp. |L|\lvert L\rvert).
+
+
+
+
+
+The proof of Lemma 10 reduces to the notion of conflict graphs from [5]. In Section 2, left-attached and right attached pairs have been combined to above and below pairs, but we also get an acyclic conflict graph, if we pair them according to whether they are right-attached of left-attached.
+
+
+
+
+
+3.2 The Sets DD and JJ
+
+
+
+Proposition 11.
+
+
+
+There exists a flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} that uses 2​(n−1)−m​a​x​{|D|,|J|}2(n-1)-max\big\{\lvert D\rvert,\lvert J\rvert\} rotations.
+
+
+
+
+
+As the first rotation of the rotation sequence we rotate ρTin,vn​(v1)\rho_{T_{\text{in}},v_{n}}(v_{1}) into the edge (v1,vn)(v_{1},v_{n}). From now on, we say that a gap is visible from above if the gap is empty and shares a face in the tree (more specifically a face of the drawing of TinT_{\text{in}} combined with the convex hull) with (v1,vn)(v_{1},v_{n}). The concept is illustrated in Figure 10. Note that there is always a unique gap that is visible from above and that it has an edge eℓe_{\ell} that is attached to its left vertex and (maybe) an edge ere_{r} that is attached to its right vertex. ere_{r} may not exist if gg is the rightmost gap. Further, we show that eℓe_{\ell} and ere_{r} share a face with (v1,vn)(v_{1},v_{n}).
+
+
+
+Lemma 12.
+
+
+
+eℓe_{\ell} and ere_{r} share a face with (v1,vn)(v_{1},v_{n}).
+
+
+
+
+Proof.
+
+
+
+Assume v1v_{1} and vnv_{n} share a face with kk additional vertices. Then it also has to share a face with kk further edges in order for TT to be a tree. Those kk edges are exactly the edges that are attached to the kk vertices and, thus, include eℓe_{\ell} and ere_{r}.
+∎
+
+
+
+Figure 10: Gap that is visible from above
+
+
+
+
+
+Lemma 13 (⋆\star).
+
+
+
+There exists a flip sequence of length at most n−1n-1 that transforms TinT_{\text{in}} into a tree T∗T^{\ast} that only contains the following three types of edges:
+
+
+(A)
+
+
+
+some convex hull edges attached to their right vertex,
+
+
+(B)
+
+
+
+all target edges of jump pairs of (Tin,Ttar)(T_{\text{in}},T_{\text{tar}}), and
+
+
+(C)
+
+
+
+some edges that are attached to their left vertex and have as a second vertex the joint vertex of a jump pair of (Tin,Ttar)(T_{\text{in}},T_{\text{tar}}) or the vertex vnv_{n}.
+
+
+
+
+
+Figure 11: An intermediate tree T∗T^{\ast} as produced by Lemma 13. The target edges from jump pairs are marked in red (and drawn below the vertices to emphasize that they are already at their target position). The edges of type CC from the set K∗K^{\ast} in Lemma 14 and are marked in blue.
+
+
+
+
+A tree T∗T^{\ast} as obtained from Lemma 13 is depicted in Figure 11. The edges that are of special interest for the further application of Lemma 14 are highlighted with colors.
+
+
+
+Lemma 14 (⋆\star).
+
+
+
+We can transform TtarT_{\text{tar}} into T∗T^{\ast} as in Lemma 13 in at most n−1−|J|n-1-\lvert J\rvert rotations.
+
+
+
+
+
+To obtain Lemma 14, we apply Lemma 7 to every face that results from cutting the tree along edges in pairs in JJ.
+
+
+
+
+Combining the rotation sequence from Lemma 13 (going from TinT_{\text{in}} to T∗T^{\ast}) and the reverse rotation sequence from Lemma 14 (going from T∗T^{\ast} to TtarT_{\text{tar}}), we obtain a rotation sequence between TinT_{\text{in}} and TtarT_{\text{tar}} of length at most 2​(n−1)−|J|2(n-1)-\lvert J\rvert, which proves Proposition 11.
+
+
+
+
+
+
+
+
+4 Relations of Happy Edge Properties
+
+
+
+
+In this section, we introduce a more refined distinction of happy edge properties.
+
+
+
+Definition 15.
+
+
+
+A graph reconfiguration problem, in which flips exchange edges,
+fulfills the
+
+
+•
+
+
+
+(weak) happy edge property,
+if, from any initial graph GinG_{\text{in}} to any target graph GtarG_{\text{tar}}, there exists a shortest flip sequence that does not flip happy edges.
+
+
+•
+
+
+
+strong happy edge property,
+if, from any initial graph GinG_{\text{in}} to any target graph GtarG_{\text{tar}}, any shortest flip sequence does not flip happy edges.
+
+
+•
+
+
+
+perfect flip property
+if, whenever we can perform a flip ff in GinG_{\text{in}} such that the resulting graph G1G_{1} has one edge more in common with GtarG_{\text{tar}} than GinG_{\text{in}} has in common with GtarG_{\text{tar}}, then there exists a shortest flip sequence from GinG_{\text{in}} to GtarG_{\text{tar}} that has G1G_{1} as its first intermediate graph (that is, the flip sequence starts with ff and ff is called a perfect flip).
+
+
+
+
+
+
+
+Further, we provide a framework, that allows us to compare the different properties.
+
+
+
+Proposition 16 (⋆\star).
+
+
+
+Let PP be a graph reconfiguration problem where flips exchange one edge at a time.
+
+
+(i)
+
+
+
+If any flip sequence in PP that flips at least one happy edge can be shortened by at least two flips, then PP fulfills the perfect flip property.
+
+
+(ii)
+
+
+
+If for any flip in PP from GG to (G∖{e1})∪{e2}(G\setminus\{e_{1}\})\cup\{e_{2}\}, e1e_{1} and e2e_{2} can never be in the same configuration, then the reverse direction in (i) holds.
+
+
+
+
+
+
+
+We remark that all the introduced properties
+may or may not hold for
+certain graph reconfiguration problems. While the condition in Proposition 16(ii) is not fulfilled for trees, it does hold for example for triangulations.
+
+
+
+
+
+5 Happy Edges in Plane Spanning Trees on Convex Sets
+
+
+
+
+In [1], the authors formulated the Weak Happy Edge Conjecture for trees on convex point sets:
+
+
+
+Conjecture 17 (Conjecture 17 in [1]).
+
+
+
+For any two plane spanning trees TinT_{\text{in}} and TtarT_{\text{tar}} on a convex point set, there is a shortest flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} that does not flip happy edges.
+
+
+
+
+
+Based on an example from [1] for a different context, we first observe that the perfect flip property holds neither for unrestricted flips nor for compatible flips on trees.
+
+
+Figure 12: Counterexample to the perfect flip property based on [1, Figure 7].
+The top shows the shortest flip sequence. The bottom sequence starts with two perfect flips, but reaches a point where no more perfect flips are possible. Since there are two edges in the tree T∗T^{\ast} that both cross two edges from the target tree, at least three additional flips or four additional compatible flips are needed.
+
+
+
+
+In contrast, we will show in this section that the strong happy edge property does hold for compatible flips on trees.
+Our first proof ingredient is the following lemma, which is an extension of [1, Proposition 18] for compatible flips.
+
+
+
+Lemma 18 (⋆\star).
+
+
+
+Consider any point set SS and any two plane spanning trees TinT_{\text{in}} and TtarT_{\text{tar}} on SS and any shortest compatible flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}}. If some edge ee is removed and later added back, then some flip during that subsequence must add an edge ff that crosses ee.
+
+
+
+
+
+In [1], a parking edge is defined as an edge that appears in a flip sequence and that is not contained in Tin∪TtarT_{\text{in}}\cup T_{\text{tar}}.
+A second ingredient of our proof is Lemma 20,
+which verifies the compatible flip analogue of the following conjecture from [1].
+
+
+
+Conjecture 19 (Parking Edge Conjecture, Conjecture 21 in [1]).
+
+
+
+For any convex point set SS and any two plane spanning trees TinT_{\text{in}} and TtarT_{\text{tar}} on SS, there is a shortest flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} that only uses parking edges from the boundary of the convex hull of SS.
+
+
+
+
+
+We remark that in [1, Claim 22] it is shown that for unrestricted flips Conjecture 19 implies Conjecture 17.
+
+
+
+Lemma 20 (⋆\star).
+
+
+
+For any convex point set SS and any two plane spanning trees TinT_{\text{in}} and TtarT_{\text{tar}} on SS, there is a shortest compatible flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} that only uses parking edges from the boundary of the convex hull of SS.
+
+
+
+Figure 13: Reordering flips in Lemma 20. The top path is the part of the original flip sequence that contains ff, the bottom path is the part of the reordered flip sequence that contains hh.
+
+
+
+
+Figure 13 shows the intuition behind the proof: One by one, we replace a parking edge ff that is not on the boundary of the convex hull with a parking edge hh on the convex hull boundary. To make this replacement possible, we change the order of the flips that happen while ff is part of the tree. The edge ff splits the convex point set into two sides, say AA and BB. Flips in either of the two sides can be executed independently from flips in the other side. Assume ff is added when flipping from the tree Ti1−1T_{i_{1}-1} to Ti1T_{i_{1}} and removed in the flip from Ti2T_{i_{2}} to Ti2+1T_{i_{2}+1}. Exactly one of the sides, say side BB, of Ti1−1T_{i_{1}-1} entirely contains a path that connects the two endpoints of ff. The flips in the other side, say side AA, can be executed before ff gets added. Afterwards, we close a cycle in side AA by adding the convex hull parking edge hh and execute all the flips in side BB. We conclude the new subsequence of flips by removing hh and obtain the tree Ti2T_{i_{2}}.
+
+
+
+
+We now show the strong happy edge property for compatible flips on trees.
+
+
+
+Theorem 21.
+
+
+
+For any convex point set SS and any two plane spanning trees TinT_{\text{in}} and TtarT_{\text{tar}} on SS,
+any compatible flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} that removes (and adds) a happy edge is at least one step longer than the shortest compatible flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}}.
+
+
+
+
+Proof.
+
+
+
+Let Tin=T0T_{\text{in}}=T_{0}, T1T_{1},…,Tk=TtarT_{k}=T_{\text{tar}} be a compatible flip sequence that removes a happy edge ee in a flip from TiT_{i} to Ti+1T_{i+1}. By Lemma 20, there exists a shortest compatible flip sequence from Ti+1=Ti+1′T_{i+1}=T_{i+1}^{\prime},Ti+2′T_{i+2}^{\prime},…,Ttar′=TtarT^{\prime}_{\text{tar}}=T_{\text{tar}} that only uses parking edges from the convex hull boundary.
+Since ee crosses neither an edge of Tin∩TtarT_{\text{in}}\cap T_{\text{tar}} nor one on the convex hull boundary, ee crosses no edge in the flip sequence T0T_{0},…,TiT_{i},Ti+1′T^{\prime}_{i+1},…,TtarT_{\text{tar}}. Hence, by Lemma 18, we can construct a shorter flip sequence that preserves ee.
+∎
+
+
+
+
+
+By Proposition 16(i) and the example in Figure 12, Theorem 21 is best possible in the sense that there are flip sequences that flip a happy edge and cannot be shortened by two flips.
+
+
+
+
+When we restrict the flip even further by only allowing edge rotations instead of all compatible exchanges, the happy edge property no longer holds. Also for the more restricted edge slides, the happy edge property does not hold, see [3] for the general case, and [1] for convex point sets.
+
+
+
+
+Figure 14 shows a counterexample to the happy edge property for convex point sets with rotations. Assume the happy edge property would hold. Then the happy edge that passes through the middle of our convex polygon would split the tree into two proper subtrees. In each such subtree, the unhappy edge has a fixed position where it has to go. Since the initial position and the target position of the unhappy edge do not share any vertex, we need at least two rotations to get each unhappy edge from one position to the other. This gives us a minimum length of four for any flip sequence that preserves happy edges.
+
+
+Figure 14: Counterexample to the happy edge property for the reconfiguration of plane spanning trees in convex point sets using rotations.
+
+
+
+
+The flip sequence in Figure 14 only uses three rotations. Therefore, the happy edge property does not hold for the reconfiguration of plane spanning trees with rotations.
+
+
+
+
+
+6 Fixed-Parameter Tractable Algorithms
+
+
+
+
+Next, we show that the flip distance kk and the compatible flip distance kck_{c} are fixed-parameter tractable in kk (resp. kck_{c}). The core ingredient for all proofs is the happy edge property for convex hull edges, which is shown to hold for unrestricted flips in Proposition 18 in [1]. We obtain further improvements on the runtime built on the happy edge property for all edges and the parking edge property.
+
+
+
+
+The upcoming lemma will describe a crucial step in the first two algorithms. Even if we never flip happy convex hull edges, the number of happy edges that are on the convex hull can still be arbitrarily large when compared to the number of unhappy edges. Therefore, we have to reduce that number in order to obtain a reasonable instance size that is bounded by a function in kk. We do this as follows: We mark all vertices that are incident to an unhappy edge that is in the initial configuration or the target configuration. All non-marked vertices are now only incident to convex hull edges. If we have a path between two marked vertices that only travels along convex hull edges incident to only non-marked vertices (except the first and/or last edge that start or end in a marked vertex), then we contract that path into one single edge (if both endpoints are marked) or a single vertex (if only one endpoint is marked). All the non-marked vertices get removed in the process. We call the new reduced instances Tin,rT_{\text{in,r}} and Ttar,rT_{\text{tar,r}}. The following Lemma states that in this contraction step no information about the length of the flip sequence is lost.
+
+
+Figure 15: An example of a tree before (left) and after (right) contracting the path from v2v_{2} to v6v_{6} along the convex hull.
+
+
+
+Lemma 22 (⋆\star).
+
+
+
+The (compatible) flip distance between TinT_{\text{in}} and TtarT_{\text{tar}} has the same length as the flip distance between Tin,rT_{\text{in,r}} and Ttar,rT_{\text{tar,r}}.
+
+
+
+
+
+Now, we are ready to obtain our first FPT-algorithm. We remark that the notation O∗O^{\ast} hides terms that are polynomial in nn.
+
+
+
+Theorem 23.
+
+
+
+The flip distance kk for unrestricted flips is fixed-parameter tractable in kk with runtime O∗​((c​k3)k)O^{\ast}((ck^{3})^{k}), where c=91.125c=91.125. The constant cc can be improved to 88 if the happy edge property holds for unrestricted flips.
+
+
+
+
+Proof.
+
+
+
+For the unrestricted flip we define good happy edges.
+All happy edges on the convex hull are good happy edges.
+Further, a happy edge ee that does not lie on the convex hull splits the point set into two parts.
+If one of the two parts contains only happy edges, then ee is a good happy edge as well.
+
+
+
+Claim 24 (⋆\star).
+
+
+
+No good happy edge is flipped in any shortest flip sequence.
+
+
+
+
+
+Now consider the tree N⁡(Tin)N(T_{\text{in}}) that is obtained from TinT_{\text{in}} from exhaustively contracting happy leaves and paths of happy edges along the convex hull as in Lemma 22. We consider the dual tree of N⁡(Tin)N(T_{\text{in}}), whose vertices are the faces of N⁡(Tin)∪{convex hull edges}N(T_{\text{in}})\cup\{\text{convex hull edges}\} except the outer face and which contains edge between two vertices if and only if their corresponding faces share an edge of N⁡(Tin)N(T_{\text{in}}).
+
+
+
+Claim 25 (⋆\star).
+
+
+
+Let PP be a path in the dual tree that connects two faces containing distinct unhappy edges such that all the edges on traversed faces are happy edges. Then any shortest flip sequence either flips all those happy edges or none of them.
+
+
+
+
+
+Let there be a total of tt unhappy edges. Then there are a total of t−1t-1 paths P1P_{1},…,Pt−1P_{t-1} that fit the form of Claim 25. Let l1l_{1},…,lt−1l_{t-1} denote their number of happy edges in some order. Any flip sequence of length kk gets to spend a total of at most k−tk-t flips on all these happy edges combined. We enumerate all 2t−1<2k2^{t-1}<2^{k} subsets of {P1,…,Pt−1}\{P_{1},...,P_{t-1}\} and if their number of happy edges sums up to less than k−t2\frac{k-t}{2}, then we consider an instance that contains all the faces that contain unhappy edges and the faces along the paths in the subset.
+Then the total remaining tree contains at most kk unhappy edges from TinT_{\text{in}} and kk unhappy edges from TtarT_{\text{tar}}. That gives a total of at most 2​k2k unhappy edges and a total of at most 4​k4k vertices. Additionally, we have a total of less than 0.5​k0.5k edges from faces with only happy edges. This gives another 0.5​k0.5k vertices. So we have at most 4.5​k4.5k vertices in our reduced forest. Brute forcing the optimal solution gives us a total of 4.5​k−14.5k-1 possible edges to remove and a total of at most (4.5​k2)\binom{4.5k}{2} positions to add edges for every flip. This gives us a total runtime of O∗​(2k​(4.5​k​(4.5​k2))k)=O∗​((91.125​k3)k)O^{\ast}\left(2^{k}\left(4.5k\binom{4.5k}{2}\right)^{k}\right)=O^{\ast}((91.125k^{3})^{k}) based on the number of flip sequences that we have to check.
+
+
+
+Claim 26 (⋆\star).
+
+
+
+If Conjecture 17 is true, then the constant cc in Theorem 23 improves to 88.
+
+
+
+Figure 16: We split the initial tree TinT_{\text{in}} along its happy edges (colored in green) into three parts, from there we flip every part individually into its corresponding counterpart in TtarT_{\text{tar}}.
+
+
+
+
+Figure 16 gives an intuitive idea, where the improvement comes from. We cut the point set along all happy diagonals such that the new instances have all their happy edges on the convex hull.
+∎
+
+
+
+
+
+Next, we prove the existence of a faster FPT-algorithm for compatible flips that is based on the parking edge property.
+
+
+
+Theorem 27.
+
+
+
+The compatible flip distance kck_{c} is fixed-parameter tractable in kck_{c} with runtime O∗​(((2+ϵ)​kc2)kc)O^{\ast}(((2+\epsilon)k_{c}^{2})^{k_{c}}), for any fixed ϵ>0\epsilon>0.
+
+
+
+
+Proof.
+
+
+
+We divide the point set into components by cutting along happy edges and then find the shortest flip sequence for every remaining component individually, see Figure 16. Observe that all the happy edges in these components are convex hull edges. If all edges in a component are happy, do not flip any edge in it. By Lemma 20 there exists a shortest flip sequence that only uses edges from TinT_{\text{in}}, TtarT_{\text{tar}} or the convex hull.
+
+
+
+
+Now let ϵ>0\epsilon>0 be fixed and t=⌈1ϵ⌉t=\big\lceil\frac{1}{\epsilon}\big\rceil. Let C1C_{1},…,CmC_{m} be all components with ≤t\leq t unhappy edges. Determine the respective flip distances kjk_{j} from TinCjT_{\text{in}}^{C_{j}} to TtarCjT_{\text{tar}}^{C_{j}} via brute force and discard all the instances. For checking whether the remaining instances have a combined flip distance of k′=kc−k1−…−kmk^{\prime}=k_{c}-k_{1}-...-k_{m} one has to check ((2+ϵ)​k′2)k′((2+\epsilon)k^{\prime 2})^{k^{\prime}} different flip sequences. There are k′k^{\prime} choices to remove an edge and every component with l≥nl\geq n diagonals has l+1≤l⁡(1+1t)≤l⁡(1+ϵ)l+1\leq l(1+\frac{1}{t})\leq l(1+\epsilon) holes in the convex hull where we can add edges.
+∎
+
+
+
+
+
+
+7 Conclusion
+
+
+
+
+In this work, we have considered the compatible flip graph and the rotation graph, by improving the upper bound on the respective diameter from 2​n−o⁡(n)2n-o(n) to 53​(n−1)\frac{5}{3}(n-1) and to 74​(n−1)\frac{7}{4}(n-1), respectively. The constructive upper bounds align with our findings about the happy edge property. On the one hand, we showed that any shortest compatible flip sequence preserves happy edges and that there is a shortest compatible flip sequence that only uses parking edges from the convex hull. The same holds for the compatible flip sequences that we used to obtain our upper bound. On the other hand, shortest rotation sequences may rotate happy edges. This may also happen in our upper bound construction. We further showed an immediate application of happy edge properties in trees, namely, that they can be used to derive fixed-parameter tractable algorithms. Open questions that are related to our work are:
+
+
+
+
+
+1.
+
+
+
+Can we close the gap between upper and lower bounds for the flip distance, for each of the flip types? Do the diameters for different flip types differ or do they coincide?
+
+
+2.
+
+
+
+Does the happy edge property still hold for flipping plane spanning trees if we drop one of the restrictions that either the point set is convex or the flips are all compatible?
+
+
+3.
+
+
+
+What is the time complexity of finding shortest flip sequences for plane spanning trees? Again, this is interesting for each of the flip types.
+
+
+
+
+
+
+
+References
+
+
+
+
+[1]
+
+Oswin Aichholzer, Brad Ballinger, Therese Biedl, Mirela Damian, Erik D.
+Demaine, Matias Korman, Anna Lubiw, Jayson Lynch, Josef Tkadlec, and Yushi
+Uno.
+
+
+Reconfiguration of non-crossing spanning trees.
+
+
+Journal of Computational Geometry, 15:224–253, 2024.
+
+
+doi:10.20382/jocg.v15i1a9.
+
+
+
+
+[2]
+
+Oswin Aichholzer, Wolfgang Mulzer, and Alexander Pilz.
+
+
+Flip distance between triangulations of a simple polygon is
+NP-complete.
+
+
+Discrete & Computational Geometry, 54(2):368–389, June 2015.
+
+
+doi:10.1007/s00454-015-9709-7.
+
+
+
+
+[3]
+
+Oswin Aichholzer and Klaus Reinhardt.
+
+
+A quadratic distance bound on sliding between crossing-free spanning
+trees.
+
+
+Computational Geometry, 37(3):155–161, 2007.
+
+
+Special Issue on the 20th European Workshop on Computational
+Geometry.
+
+
+doi:10.1016/j.comgeo.2004.12.010.
+
+
+
+
+[4]
+
+David Avis and Komei Fukuda.
+
+
+Reverse search for enumeration.
+
+
+Discrete Applied Mathematics, 65(1):21–46, 1996.
+
+
+First International Colloquium on Graphs and Optimization.
+
+
+doi:10.1016/0166-218X(95)00026-N.
+
+
+
+
+[5]
+
+Håvard Bakke Bjerkevik, Linda Kleist, Torsten Ueckerdt, and Birgit
+Vogtenhuber.
+
+
+Flipping non-crossing spanning trees.
+
+
+Proceedings of the 2025 Annual ACM-SIAM Symposium on Discrete
+Algorithms (SODA), pages 2313–2325.
+
+
+arXiv:2410.23809,
+doi:10.1137/1.9781611978322.77.
+
+
+
+
+[6]
+
+Miguel Bosch-Calvo and Steven Kelk.
+
+
+An improved kernel for the flip distance problem on simple convex
+polygons.
+
+
+Inf. Process. Lett., 182(C), 2023.
+
+
+doi:10.1016/j.ipl.2023.106381.
+
+
+
+
+[7]
+
+Nicolas Bousquet, Lucas de Meyer, Théo Pierron, and Alexandra Wesolek.
+
+
+Reconfiguration of Plane Trees in Convex Geometric Graphs.
+
+
+In Wolfgang Mulzer and Jeff M. Phillips, editors, 40th
+International Symposium on Computational Geometry (SoCG 2024), volume 293 of
+Leibniz International Proceedings in Informatics (LIPIcs), pages
+22:1–22:17, Dagstuhl, Germany, 2024. Schloss Dagstuhl – Leibniz-Zentrum
+für Informatik.
+
+
+doi:10.4230/LIPIcs.SoCG.2024.22.
+
+
+
+
+[8]
+
+Nicolas Bousquet, Valentin Gledel, Jonathan Narboni, and Théo Pierron.
+
+
+A note on the flip distance between non-crossing spanning trees.
+
+
+Computing in Geometry and Topology, 2023.
+
+
+doi:10.57717/cgt.v2i1.36.
+
+
+
+
+[9]
+
+Nicolas Bousquet, Lucas De Meyer, Théo Pierron, and Alexandra Wesolek.
+
+
+Reconfiguration of plane trees in convex geometric graphs.
+
+
+2023.
+
+
+arXiv:2310.18518.
+
+
+
+
+[10]
+
+Sean Cleary and Katherine St. John.
+
+
+Rotation distance is fixed-parameter tractable.
+
+
+Inf. Process. Lett., 109(16):918–922, 2009.
+
+
+doi:10.1016/J.IPL.2009.04.023.
+
+
+
+
+[11]
+
+Carmen Hernando, Ferran Hurtado, Alberto Márquez, Mercè Mora, and
+Marc Noy.
+
+
+Geometric tree graphs of points in convex position.
+
+
+Discrete Applied Mathematics, 93(1):51–66, 1999.
+
+
+doi:10.1016/S0166-218X(99)00006-2.
+
+
+
+
+[12]
+
+M. Carmen Hernando, Ferran Hurtado, and Marc Noy.
+
+
+Graphs of non-crossing perfect matchings.
+
+
+Graphs and Combinatorics, 18:517–532, 01 2002.
+
+
+doi:10.1007/s003730200038.
+
+
+
+
+[13]
+
+Ferran Hurtado.
+
+
+CCCG 2003; Paul Erdös Memorial Lecture: Flip, 2003.
+
+
+
+
+[14]
+
+Haohong Li and Ge Xia.
+
+
+An O (3.82k3.82^{k}) time FPT algorithm for convex flip distance.
+
+
+Discrete & Computational Geometry, pages 1–17, 2023.
+
+
+
+
+[15]
+
+Anna Lubiw and Vinayak Pathak.
+
+
+Flip distance between two triangulations of a point set is
+NP-complete.
+
+
+Computational Geometry, 49:17–23, 2015.
+
+
+arXiv:1205.2425,
+doi:10.1016/j.comgeo.2014.11.001.
+
+
+
+
+[16]
+
+Joan Lucas.
+
+
+An improved kernel size for rotation distance in binary trees.
+
+
+Information Processing Letters, 110:481–484, 06 2010.
+
+
+doi:10.1016/j.ipl.2010.04.022.
+
+
+
+
+[17]
+
+Torrie L. Nichols, Alexander Pilz, Csaba D. Tóth, and Ahad N. Zehmakan.
+
+
+Transition operations over plane trees.
+
+
+Discrete Mathematics, 343(8):111929, 2020.
+
+
+doi:10.1016/j.disc.2020.111929.
+
+
+
+
+[18]
+
+Alexander Pilz.
+
+
+Flip distance between triangulations of a planar point set is
+APX-hard.
+
+
+Computational Geometry, 47(5):589–604, 2014.
+
+
+doi:10.1016/j.comgeo.2014.01.001.
+
+
+
+
+[19]
+
+Daniel D. Sleator, Robert E. Tarjan, and William P. Thurston.
+
+
+Rotation distance, triangulations, and hyperbolic geometry.
+
+
+Journal of the American Mathematical Society, 1(3):647–681,
+July 1988.
+
+
+doi:10.1090/S0894-0347-1988-0928904-4.
+
+
+
+
+
+
+
+
+
+
+Appendix A Proof of Theorem 3
+
+
+
+
+This section is devoted to the proof of Theorem 3.
+Our goal is to modify the methods which were introduced and used in [5] to show an upper bound of 53​(n−1)\frac{5}{3}(n-1) for the diameter of the flip graph in order to improve the upper bound on the diameter of the compatible flip graph on a convex nn-point set.
+As in [5], the idea will be to pair edges (e,e′)(e,e^{\prime}) from the initial tree and the target tree such that the edge ee will either be flipped directly to the edge e′e^{\prime} performing one perfect flip or to flip ee to a convex hull edge and later flip the convex hull edge to e′e^{\prime} performing an imperfect flip. The length of the flip sequence will then be #\#perfect flips + 22 #\#imperfect flips. So we want to maximize the number of perfect flips.
+
+
+
+
+We start by introducing some notation and results from [5].
+For two fixed trees TinT_{\text{in}}, TtarT_{\text{tar}} a linear representation is introduced, which can be interpreted as cutting the cyclic order of the points on the convex hull between v1v_{1} and vnv_{n} and unfolding the circle into a horizontal line segment, called spine. Each edge that was a straight-line chord can be thought of a semi-circle above (from TinT_{\text{in}}) or below (from TtarT_{\text{tar}}) the spine. Recall that the linear order v1,…,vnv_{1},...,v_{n} defines a cover relation between edges and vertices. An edge (vi,vj)(v_{i},v_{j}) covers a vertex vkv_{k} if i≤k≤ji\leq k\leq j. An edge ee covers another edge ff if ee covers both vertices of ff.
+A gap gig_{i} is the segment along the spine with endpoints viv_{i} and vi+1v_{i+1}.
+For each gap gg and a set of non-crossing edges EE, let ρE​(g)\rho_{E}(g) be the shortest edge of EE that covers gg.
+
+
+
+Lemma 28.
+
+
+
+[5, Lemma 3.1]
+Let EE be a set of non-crossing edges on a linearly labeled point set SS.
+Then ρE\rho_{E} defines a bijection between the set of gaps and EE if and only if EE forms a tree on SS.
+
+
+
+
+
+For a plane spanning tree TT, the edges are labeled ei=ρT​(gi)e_{i}=\rho_{T}(g_{i}) and categorized into three types. For each i∈[n−1]i\in[n-1] the edge ei=(u,v)e_{i}=(u,v) is a
+
+
+•
+
+
+
+short edge if {u,v}={vi,vi+1}\{u,v\}=\{v_{i},v_{i+1}\}
+
+
+•
+
+
+
+near edge if |{u,v}∩{vi,vi+1}|=1\lvert\{u,v\}\cap\{v_{i},v_{i+1}\}\rvert=1
+
+
+•
+
+
+
+wide edge if {u,v}∩{vi,vi+1}=∅\{u,v\}\cap\{v_{i},v_{i+1}\}=\emptyset
+
+
+
+
+
+
+The sets of short, near, and wide edges of TinT_{\text{in}} are denoted by SS, NN, and WW, respectively.
+Likewise, the sets of short, near, and wide edges of TtarT_{\text{tar}} are denoted by S′S^{\prime}, N′N^{\prime}, and W′W^{\prime}, respectively.
+Next, a set of pairs of edges 𝒫\mathcal{P} is defined,
+with (e,e′)∈𝒫(e,e^{\prime})\in\mathcal{P} if and only if ρTin−1​(e)=ρTtar−1​(e′)\rho_{T_{\text{in}}}^{-1}(e)=\rho_{T_{\text{tar}}}^{-1}(e^{\prime}).
+The set 𝒫\mathcal{P} is further partitioned into
+
+
+
+
+
+•
+
+
+
+𝒫=={(e,e′)∈𝒫∣e=e′}\mathcal{P}_{=}=\{(e,e^{\prime})\in\mathcal{P}\mid e=e^{\prime}\},
+
+
+•
+
+
+
+𝒫N={(e,e′)∈𝒫∣e≠e′,e∈N,e′∈N′}\mathcal{P}_{N}=\{(e,e^{\prime})\in\mathcal{P}\mid e\neq e^{\prime},e\in N,e^{\prime}\in N^{\prime}\}, and
+
+
+•
+
+
+
+𝒫R=𝒫∖(𝒫=∪𝒫N)\mathcal{P}_{R}=\mathcal{P}\setminus(\mathcal{P}_{=}\cup\mathcal{P}_{N})
+
+
+
+
+
+
+For pairs (ei,ei′)∈𝒫N(e_{i},e_{i}^{\prime})\in\mathcal{P}_{N} (and their corresponding gaps gig_{i}), a more refined case distinction is made, depending on the relation between eie_{i} and ei′e_{i}^{\prime}.
+
+
+•
+
+
+
+above pairs, where ee and e′e^{\prime} share a vertex and ee is longer than e′e^{\prime}.
+
+
+•
+
+
+
+below pairs, where ee and e′e^{\prime} share a vertex and e′e^{\prime} is longer than ee.
+
+
+•
+
+
+
+crossing pairs, where ee and e′e^{\prime} cross, or equivalently, ee and e′e^{\prime} share a different vertex with their gap.
+
+
+
+
+
+
+Note that this case distinction is complete, since eie_{i} and ei′e_{i}^{\prime} both cover their gap gig_{i} and, hence, the intervals of the spine which they cover overlap.
+Let AA, BB, and CC denote the set of above, below and, crossing pairs, respectively.
+
+
+
+
+The next lemma follows from a series of results in [5] where the authors produce a perfect flip sequence between two trees that only differ by either above pairs (A), below pairs (B), or crossing pairs (C) in the following way:
+By [5, Lemma 3.2] the sets A, B, and C are acyclic sets in the conflict graph.
+By [5, Proposition 17 (arXiv version)] there exists a perfect flip sequence for collections of pairs of edges that form an acyclic set in the conflict graph, given the rest of the tree consists only of convex hull edges.
+Since any edge pair in AA or BB is compatible, their flip sequences for above and below pairs are compatible, which directly implies the following statement.
+
+
+
+
+See 1
+
+
+
+
+In contrast, no direct flip between two edges of a pair in CC is compatible, since any such pair is crossing.
+Therefore, we have to come up with a different flip sequence in this case. Our main contribution here is the following Lemma.
+
+
+
+
+See 2
+
+
+
+
+To prove Lemma 2, we aim to change the way in which the edges from
+CC are paired.
+Up to now, every edge in TinT_{\text{in}} was flipped to end up in the position of its paired edge in TtarT_{\text{tar}}.
+We will rearrange those target positions.
+
+
+
+
+For this, we revisit the conflict graph from [5].
+In a nutshell, this conflict graph HH has a set of near-near pairs (or, equivalently, the corresponding gaps) as vertices.
+Two vertices (ei,ei′)(e_{i},e_{i}^{\prime}) and (ej,ej′)(e_{j},e_{j}^{\prime}) in HH are connected with a directed edge from (ei,ei′)(e_{i},e_{i}^{\prime}) to (ej,ej′)(e_{j},e_{j}^{\prime}),
+if the direct flip (ej,ej′)(e_{j},e_{j}^{\prime}) is not possible while the edge eie_{i} is in the tree.
+We use a scaled down version of HCH_{C} of HH which has only the edge pairs of CC as vertices.
+In this case, a directed edge from (ei,ei′)(e_{i},e_{i}^{\prime}) to (ej,ej′)(e_{j},e_{j}^{\prime}) exists if the edge ej′e_{j}^{\prime} crosses the edge eie_{i}.
+
+
+
+
+As part of [5, Lemma 3.2], we get the following statement.
+
+
+
+Lemma 29.
+
+
+
+HCH_{C} is acyclic.
+
+
+
+
+Remark 30.
+
+
+
+The proof of [5, Lemma 3.2] actually reveals an even stronger statement than Lemma 29.
+In this proof, the authors observe that for a directed edge from (ei,ei′)(e_{i},e_{i}^{\prime}) to (ej,ej′)(e_{j},e_{j}^{\prime}), in the conflict graph HCH_{C},
+the curve formed by (ei,ei′)(e_{i},e_{i}^{\prime}) in the linear representation must at least partially lie above the according curve formed by (ej,ej′)(e_{j},e_{j}^{\prime}).
+They further show that there is at least one “topmost” pair (ei,ei′)(e_{i},e_{i}^{\prime}) in CC for which no other edge pair (ek,ek′)(e_{k},e_{k}^{\prime}) of CC lies partially above.
+Any such top-most pair (ei,ei′)(e_{i},e_{i}^{\prime}) is a root of HCH_{C} with the properties that
+
+
+•
+
+
+
+the corresponding edge eie_{i} of TinT_{\text{in}} is not covered by any other edge eje_{j} of TinT_{\text{in}} with (ej,ej′)∈C(e_{j},e_{j}^{\prime})\in C,
+
+
+•
+
+
+
+the corresponding edge ei′e_{i}^{\prime} of TtarT_{\text{tar}} covers no other edge ej′e_{j}^{\prime} of TtarT_{\text{tar}} with (ej,ej′)′∈C(e_{j},e_{j}^{\prime})^{\prime}\in C, and
+
+
+•
+
+
+
+the edge ei′e_{i}^{\prime} of TtarT_{\text{tar}} neither covers nor crosses any edge eje_{j} of TinT_{\text{in}} with (ej,ej′)∈C∖(ei,ei′)(e_{j},e_{j}^{\prime})\in C\setminus{(e_{i},e_{i}^{\prime})}.
+
+
+
+Further, removing (ei,ei′)(e_{i},e_{i}^{\prime}) from HCH_{C} yields a new conflict graph that, again, has a top-most root.
+
+
+
+
+
+Every edge e=(u,v)e=(u,v) that does not lie on the boundary of the convex hull splits the vertex set into two parts, the points that appear in clockwise order along the convex hull boundary from uu to vv and those that appear in counterclockwise order. The vertices uu and vv are contained in both parts.
+The term face with regard to a tree will refer to a inclusion-wise maximal subset of the point set such that it cannot be split into smaller parts by any edge of TT.
+An edge is said to border a face, if both its endpoints are contained in the vertex set of a face.
+Every convex hull edge borders exactly one face, every non-convex hull edge borders exactly two faces.
+Observe that every face contains exactly one pair of consecutive vertices of the convex hull that does not form an edge of the tree
+(where except for (vn,v1)(v_{n},v_{1}), all of those pairs of edges form gaps).
+
+
+
+Proof of Lemma 2.
+
+
+
+Let TinT_{\text{in}} and TtarT_{\text{tar}} consist of only common convex hull edges and pairs of edges in CC, and consider the according conflict graph HCH_{C} on CC.
+By Lemma 29, HCH_{C} is acyclic and contains a root (ei,ei′)∈C(e_{i},e_{i}^{\prime})\in C
+such that
+ei′e_{i}^{\prime} is not crossed by any of the initial edges eke_{k} for any other pair (ek,ek′)(e_{k},e_{k}^{\prime})
+in CC, and consequently no edge of our current tree.
+Further, by Remark 30, we can choose (ei,ei′)(e_{i},e_{i}^{\prime}) such that eie_{i} is not covered by any edge in TinT_{\text{in}} and ei′e_{i}^{\prime} does not cover any edge in Tin​Δ​TtarT_{\text{in}}\Delta T_{\text{tar}}.
+Let (ei,ei′)(e_{i},e_{i}^{\prime}) be chosen as above. The edge eie_{i} borders two faces of the tree TT:
+one face has the gap gig_{i} as non-edge
+on the convex hull and the other face has (vn,v1)(v_{n},v_{1}) as non-edge
+on the convex hull.
+We perform a flip that flips eie_{i} to (vn,v1)(v_{n},v_{1}).
+
+
+
+
+Now remove the pair (ei,ei′)(e_{i},e_{i}^{\prime}) from the conflict graph.
+Let (ej,ej′)(e_{j},e_{j}^{\prime}) be a pair of edges that is a
+root of the reduced conflict graph HCH_{C} that fulfills the properties of Remark 30 (for the reduced HCH_{C}).
+We perform a flip that exchanges the edge eje_{j} with the edge ei′e_{i}^{\prime}.
+As gig_{i} and gjg_{j} are each non-edges in different faces of ei′e_{i}^{\prime},
+we do not close a cycle during the flip.
+Further, by the choice of ei′e_{i}^{\prime}, the flip does not create a crossing and hence is compatible.
+
+
+
+
+We remove the pair (ej,ej′)(e_{j},e_{j}^{\prime})
+from HCH_{C} and iterate the process with ej′e_{j}^{\prime} taking the role of ei′e_{i}^{\prime}.
+We repeat the process until HCH_{C} is empty. By the choice of (ej,ej′)(e_{j},e_{j}^{\prime}), adding ej′e_{j}^{\prime} to the graph will never separate edges in pairs in HCH_{C} from the face of ej′e_{j}^{\prime} that contains (v1,vn)(v_{1},v_{n}). Further, since ej′e_{j}^{\prime} is not crossed by any edge in pairs in HCH_{C}, the next flip will be compatible.
+Lastly, gjg_{j} and (v1,vn)(v_{1},v_{n}) (and therefore the convex hull non-edge from the previous step) will always lie in different faces of eje_{j}, so we will not close a cycle in any flip.
+We conclude the flip sequence by performing a flip that exchanges (vn,v1)(v_{n},v_{1}) for the remaining edge ei′e_{i}^{\prime} that is yet to be added.
+In total, we flipped TinT_{\text{in}} into TtarT_{\text{tar}} in |C|+1\lvert C\rvert+1 flips. For an illustration see Figure 17.
+∎
+
+
+
+Figure 17: Example of a compatible flip sequence that fixes 44 crossing pairs in 55 flips.
+
+
+
+
+Before proving Theorem 3, we need two more statements from [5] (or, more exactly, from the arXiv version of the paper, since the conference version does not contain all proofs).
+
+
+
+Observation 31 ([5, Observation 28 (arXiv version)]).
+
+
+
+Consider two plane spanning trees TinT_{\text{in}}, TtarT_{\text{tar}} on a convex point set SS. If Tin∪TtarT_{\text{in}}\cup T_{\text{tar}} contain all convex hull edges of SS, then there exists a compatible
+flip sequence of length |Tin∖Ttar|\lvert T_{\text{in}}\setminus T_{\text{tar}}\rvert.
+
+
+
+
+
+We remark that the text of
+Observation 28 in the arXiv version of [5]
+does not explicitly state that the flip sequence is compatible. However, the according flip sequence described in the text before that observation is clearly compatible, since every flip in it involves at least one convex hull edge.
+
+
+
+Lemma 32 ([5, Lemma 15 (arXiv version)]).
+
+
+
+Let TT be a plane tree on linearly ordered points v1v_{1},…,vnv_{n}. Let kk be the number of uncovered edges of TT. Then |S|≥k\lvert S\rvert\geq k and |W|≤|S|−k\lvert W\rvert\leq\lvert S\rvert-k.
+
+
+
+
+
+Finally, we combine the above lemmata and observations to obtain the desired upper bound on the flip distance.
+
+
+
+
+See 3
+
+
+
+Proof.
+
+
+
+The proof follows the lines of the proof of [5, Theorem 26 (arXiv version)].
+For the sake of self-containment, we include the proof in this appendix.
+
+
+
+
+We start with the case that c=0c=0, where we distinguish two cases.
+If Tin∪TtarT_{\text{in}}\cup T_{\text{tar}} covers all convex hull edges, then by Observation 31, there is a compatible flip sequence of length exactly dd from TinT_{\text{in}} to TtarT_{\text{tar}}.
+Since every tree has at least two convex hull edges, d=0d=0 implies b≥2b\geq 2 and d=1d=1 implies b≥1b\geq 1.
+Therefore the flip distance in this case is d≤53​d+23​b−13d\leq\frac{5}{3}d+\frac{2}{3}b-\frac{1}{3}.
+
+
+
+
+Otherwise there exists a common gap on the convex hull.
+We label the vertices in a way such that this gap corresponds to the edge (vn,v1)(v_{n},v_{1}).
+Then all pairs in 𝒫=\mathcal{P}_{=} correspond to
+happy convex hull edges and there are at least two uncovered edges.
+
+
+
+
+From Lemma 32 we obtain |W|+|W′|≤|S|+|S′|−4\lvert W\rvert+\lvert W^{\prime}\rvert\leq\lvert S\rvert+\lvert S^{\prime}\rvert-4 and therefore |𝒫R|≤|W|+|W′|+|S|+|S′|=2​|S|+2​|S′|−2​b−4\lvert\mathcal{P}_{R}\rvert\leq\lvert W\rvert+\lvert W^{\prime}\rvert+\lvert S\rvert+\lvert S^{\prime}\rvert=2\lvert S\rvert+2\lvert S^{\prime}\rvert-2b-4. Additionally, |S|+|S′|−2​b\lvert S\rvert+\lvert S^{\prime}\rvert-2b gaps in |𝒫R|\lvert\mathcal{P}_{R}\rvert correspond to pairs with one short edge and only require one flip.
+
+
+
+
+By Lemma 1 and Lemma 2 we require at most 53​|𝒫N|+1\frac{5}{3}\lvert\mathcal{P}_{N}\rvert+1 flips to flip all pairs in 𝒫N\mathcal{P}_{N}.
+The sequence is obtained by flipping all edges that belong to pairs of the smaller two components among AA, BB and CC to the convex hull, then flipping the largest component perfectly (or with one additional flip in case CC is the largest) and then flipping all edges from the convex hull to their respective target edge.
+
+
+
+
+The flip sequence now consists of five parts:
+
+
+(1)
+
+
+
+Flip all edges eie_{i} from pairs in 𝒫R\mathcal{P}_{R} to gig_{i}
+
+
+(2)
+
+
+
+Flip all edges eie_{i} from the smaller two components among AA, BB and CC to gig_{i}
+
+
+(3)
+
+
+
+Flip all edges from the largest component among AA, BB and CC perfectly (or with one additional flip in case CC is the largest)
+
+
+(4)
+
+
+
+Flip all edges from the smaller two components among AA, BB and CC from gig_{i} to ei′e_{i}^{\prime}
+
+
+(5)
+
+
+
+Flip all edges gig_{i} from pairs in 𝒫R\mathcal{P}_{R} from gig_{i} to ei′e_{i}^{\prime}
+
+
+
+
+
+
+Let d1=|S|+|S′|−4d_{1}=\lvert S\rvert+\lvert S^{\prime}\rvert-4 the number of pairs in 𝒫R\mathcal{P}_{R} that require one flip, d2=|𝒫R|−d1d_{2}=\lvert\mathcal{P}_{R}\rvert-d_{1} the number of pairs that require two flips, and d3=|𝒫N|d_{3}=\lvert\mathcal{P}_{N}\rvert. Further, we have d2≤d1+2​b−4d_{2}\leq d_{1}+2b-4.
+
+
+
+
+By putting everything together we obtain a flip distance of at most
+
+
+
+
+
+
+
+d1+2​d2+53​d3+1=d1+13​d2+53​(d2+d3)+1\displaystyle d_{1}+2d_{2}+\frac{5}{3}d_{3}+1=d_{1}+\frac{1}{3}d_{2}+\frac{5}{3}(d_{2}+d_{3})+1
+
+
+
+≤d1+13​(d1+2​b)+53​(d2+d3)−13\displaystyle\leq d_{1}+\frac{1}{3}(d_{1}+2b)+\frac{5}{3}(d_{2}+d_{3})-\frac{1}{3}
+
+
+
+=43​d1+53​(d2+d3)+23​b−13\displaystyle=\frac{4}{3}d_{1}+\frac{5}{3}(d_{2}+d_{3})+\frac{2}{3}b-\frac{1}{3}
+
+
+
+≤53​d+23​b−13\displaystyle\leq\frac{5}{3}d+\frac{2}{3}b-\frac{1}{3}
+
+
+
+
+
+
+Now if c≠0c\neq 0, we cut the tree along happy non-convex-hull edges and perform the case c=0c=0 for each face FF individually. For that purpose, let d⁡(F)d(F) denote the number of edges in Tin∖TtarT_{\text{in}}\setminus T_{\text{tar}} restricted to FF and b⁡(F)b(F) the number of common convex hull edges of TinT_{\text{in}} and TtarT_{\text{tar}} of the induced subtrees on FF.
+Note that happy non-convex-hull edges become happy convex hull edges for the two components they border. We get the following upper bound for the flip distance:
+
+
+
+
+
+
+
+∑F53​d​(F)+23​b​(F)−13=53​d+23​(b+2​c)−13​(c+1)=53​d+23​b+c−13\displaystyle\sum_{F}\frac{5}{3}d(F)+\frac{2}{3}b(F)-\frac{1}{3}=\frac{5}{3}d+\frac{2}{3}(b+2c)-\frac{1}{3}(c+1)=\frac{5}{3}d+\frac{2}{3}b+c-\frac{1}{3}
+
+
+
+
+
+
+The bound of 53​(n−1)−13\frac{5}{3}(n-1)-\frac{1}{3} follows since d+b+c=n−1d+b+c=n-1.
+∎
+
+
+
+
+
+
+Appendix B Omitted Details from Section 3
+
+
+
+
+See 9
+
+
+
+Proof.
+
+
+
+Without loss of generality we prove the claim for RR, the argument for LL follows analogously. Every edge ee that belongs to a pair in RR cuts the convex point set SS into two sides, the vertices that appear in clockwise order along the convex hull between the two vertices of ee, and the vertices that appear in counterclockwise order. A face is an inclusion-wise maximal subset of SS that is not cut into two parts by any edge that belongs to a pair in RR.
+Every face FF forms again a convex point set and we get an induced subtree T⁡[F]T[F] of TT on FF since every edge of TT has either both or none of its endpoints in FF.
+All the edges that belong to pairs in RR and have both end vertices in FF are convex hull edges of T⁡[F]T[F].
+
+
+
+
+For each such face FF, we apply Lemma 7 to FF, where we pick vnv_{n} to be the rightmost vertex vrv_{r} of FF in the linear representation, and set the index jj to r−1r-1.
+Further, we set K∗=∅K^{\ast}=\emptyset and let I∗:=I∗​[F]I^{\ast}:=I^{\ast}[F] be the set of all indices of vertices of FF except rr. This application yields a rotation sequence of length |F|−1−|I⁡[F]∩I∗​[F]|\lvert F\rvert-1-\lvert I[F]\cap I^{\ast}[F]\rvert where I⁡[F]I[F] is the set of all indices of vertices that are attached to convex hull edges of T⁡[F]T[F] and are directed away from vrv_{r} in T⁡[F]T[F].
+
+
+
+
+It remains to count how many rotations are performed in total.
+To this end, we split RR into the set RdiagR_{\text{diag}} of edges in RR that are diagonals and the set RCHR_{\text{CH}} of convex hull edges in RR.
+Observe that edges that belong to pairs in RR are all contained in I​[F]∩I∗​[F]I[F]\cap I^{\ast}[F] for every face FF that they bound.
+For calculating the number of rotations, we consider that
+(1) there are |Rdiag|+1\lvert R_{\text{diag}}\rvert+1 faces;
+(2) all the vertices that belong to edges in pairs in RdiagR_{\text{diag}} belong to exactly two faces; and
+(3) pairs in RCHR_{\text{CH}} border exactly one face.
+This gives us a rotation sequence of the following total length.
+
+
+
+
+∑F​face|F|−1−|I⁡[F]∩I∗​[F]|=n+2​|Rdiag|−(|Rdiag|+1)−∑F​face|I⁡[F]∩I∗​[F]|\displaystyle\sum_{F~\text{face}}\lvert F\rvert-1-\lvert I[F]\cap I^{\ast}[F]\rvert=n+2\lvert R_{\text{diag}}\rvert-(\lvert R_{\text{diag}}\rvert+1)-\sum_{F~\text{face}}\lvert I[F]\cap I^{\ast}[F]\rvert
+
+
+
+≤n+2​|Rdiag|−(|Rdiag|+1)−2​|Rdiag|−|RCH|=n−1−|R|\displaystyle\leq n+2\lvert R_{\text{diag}}\rvert-(\lvert R_{\text{diag}}\rvert+1)-2\lvert R_{\text{diag}}\rvert-\lvert R_{\text{CH}}\rvert=n-1-\lvert R\rvert
+
+
+
+The above estimate concludes the proof.
+∎
+
+
+
+
+
+See 10
+
+
+
+Proof.
+
+
+
+Note that for every pair in RR (resp. LL) the gap in the convex hull to the left (resp. right) of its assigned vertex is empty and both edges cover that gap.
+We revisit the conflict graph for RR (resp. LL). This time we use the full version of the conflict graph as defined in [5] where the set of vertices is again given by the pairs of edges in RR (resp. LL) and we add an edge from (e1,e1′)(e_{1},e_{1}^{\prime}) to (e2,e2′)(e_{2},e_{2}^{\prime}) if one of the three conditions holds:
+
+
+•
+
+
+
+e1e_{1} and e2′e_{2}^{\prime} cross
+
+
+•
+
+
+
+e2′e_{2}^{\prime} covers e1e_{1} and e1e_{1} covers the gap left (resp. right) to the vertex assigned to (e2,e2′)(e_{2},e_{2}^{\prime})
+
+
+•
+
+
+
+e1e_{1} covers e2′e_{2}^{\prime} and e2′e_{2}^{\prime} covers the gap left (resp. right) to the vertex assigned to (e1,e1′)(e_{1},e_{1}^{\prime})
+
+
+
+From [5, Lemma 3.2] we get that the set of all above pairs or the set of all below pairs form an acyclic subset of conflict graph, consequently the sets R​ARA and R​BRB (resp. L​ALA and L​BLB) are both acyclic subsets of the conflict graph if regarded separately.
+
+
+
+
+It remains to show that the whole set R=R​A∪R​BR=RA\cup RB (resp. L=L​A∪L​BL=LA\cup LB) combined form an acyclic set in the conflict graph.
+
+
+
+Claim 33.
+
+
+
+The conflict graph on RR (resp. LL) is acyclic.
+
+
+
+{claimproof}
+
+[Proof of Claim 33]
+This follows from the fact that the conflict graph only contains edges directed from pairs in R​ARA to pairs in R​BRB but not the other way around. Let (e1,e1′)(e_{1},e_{1}^{\prime}) be a right-attached below pair and (e2,e2′)(e_{2},e_{2}^{\prime}) be a left-attached above pair. Assume e1e_{1} crosses e2′e_{2}^{\prime} then also e1′e_{1}^{\prime} crosses e2′e_{2}^{\prime} a contradiction. If e2′e_{2}^{\prime} covers e1e_{1} the vertex assigned to (e2,e2′)(e_{2},e_{2}^{\prime}) has to be to the right of the vertex assigned to (e1,e1′)(e_{1},e_{1}^{\prime}). Then also the assigned gap of (e2,e2′)(e_{2},e_{2}^{\prime}) is more right than all of (e1,e1′)(e_{1},e_{1}^{\prime}) therefore e1e_{1} cannot cover the gap. Similarly, if e1e_{1} covers e2′e_{2}^{\prime}, then the gap assigned to (e1,e1′)(e_{1},e_{1}^{\prime}) is too far to the right to be covered.
+
+
+
+
+Recall that each pair of edges in RR shares a common endpoint and hence any direct flip for such a pair is a rotation.
+Since the induced conflict graph of RR (resp. LL) is acyclic, we obtain a sequence of direct rotations of all pairs in RR (resp. LL) by always rotating a source of the current conflict graph; see [5, Proposition 17 (arXiv version)].
+∎
+
+
+
+
+
+See 13
+
+
+
+Proof.
+
+
+
+We use the following algorithmic approach: We consider the gap g=(vi,vi+1)g=(v_{i},v_{i+1}) that is visible from above and its incident edges eℓe_{\ell} and ere_{r} if they exist. Further, let TT be the tree obtained from TinT_{\text{in}} by adding the edge (v1,vn)(v_{1},v_{n}) via one rotation (in case it was not already in TinT_{\text{in}}).
+Throughout the algorithm, we will perform rotations in TT.
+Further, we will modify TT by cutting along edges and contracting edges such that edges that need not be rotated anymore get removed.
+This gives rise to the following case distinction; see Figure 18 for an illustration:
+
+
+
+
+
+(1)
+
+
+
+The edge ere_{r} belongs to a left attached pair: rotate ere_{r} into gg
+
+
+(2)
+
+
+
+The edge ere_{r} belongs to a jump: Consider the edge er′:=ρTtar,vn​(vi+1)=(vj,vi+1)e_{r}^{\prime}:=\rho_{T_{\text{tar}},v_{n}}(v_{i+1})=(v_{j},v_{i+1}), that is, the edge in TtarT_{\text{tar}} that is paired with ere_{r}.
+
+
+
+
+(2a) All edges in TT that are attached to vertices between vj+1v_{j+1} and viv_{i} are convex hull edges. Rotate ere_{r} into er′e_{r}^{\prime}. Next, modify TT by cutting off all vertices that are now covered by er′e_{r}^{\prime} such that er′e_{r}^{\prime} becomes a convex hull edge in the resulting tree.
+
+
+
+
+(2b) There exists an edge that is attached to a vertex between vj+1v_{j+1} and viv_{i} and is not a convex hull edge.
+Among all such edges, let ff be the edge with the rightmost attachment point vkv_{k}.
+We rotate ff into the edge f′=(vk,vi+1)f^{\prime}=(v_{k},v_{i+1}).
+Then, we modify TT by contracting f′f^{\prime} and all edges below it into the vertex vi+1v_{i+1}.
+
+
+(3)
+
+
+
+gg is the rightmost gap.
+
+
+
+
+(3a) If there exists some edge in TT that is not on the convex hull, take the rightmost vertex vkv_{k} with a right attached edge ff attached to it and rotate ff to the edge (vk,vn)(v_{k},v_{n}). Next, modify TT by contracting ff and all the edges below it into the vertex vnv_{n}.
+
+
+
+
+(3b) If all other edges are on the convex hull, terminate.
+
+
+
+
+Figure 18: Case distinction based on the structure on the gap that is visible from above
+
+
+
+Claim 34.
+
+
+
+The algorithm terminates after at most n−1n-1 iterations and the resulting tree after undoing all the cutting and contracting steps is T∗T^{\ast}.
+
+
+
+{claimproof}
+
+[Proof of Claim 34]
+To see that we only execute one rotation per gap, observe that in Case (1) a gap is filled with an edge and never considered again in the remaining cases as the gap is removed from the graph by cutting or contracting.
+
+
+
+
+In Case (1), we only create edges of Type (A).
+
+
+
+
+In Case (2a), we only create edges of the form (A) and (B).
+
+
+
+
+Observe that in the Cases (2b) and (3a) the edge with the rightmost attachment point that is not on the convex hull is a right attached edge. Therefore, all edges between vkv_{k} and vi+1v_{i+1} are convex hull edges in the current state of TT. Therefore, we do not get any edges other than the ones of Types (A) and (C) from those steps. Further, since in Case (2b), we observe that the edge ere_{r} is now attached to vkv_{k}, we look at a strictly shorter target edge for ere_{r} with strictly less right attached non-convex hull edges in the new state of the tree TT. Therefore after finitely many occurrences of Case (2b) ere_{r} will be flipped into its target position.
+
+
+
+
+This concludes the proof of Lemma 13.
+∎
+
+
+
+
+
+See 14
+
+
+
+Proof.
+
+
+
+Similarly to the proof of Lemma 9, we split SS into faces. However, this time, we use edges of pairs in JJ for the splitting:
+In the following, a face is an inclusion-wise maximal subset of SS that is not cut into two parts by any edge in TtarT_{\text{tar}} (or, equivalently, in T∗T^{\ast}) that belongs to a pair in JJ.
+Every such face FF the points on the boundary of FF form a convex subset.
+Since every edge of TtarT_{\text{tar}} has either both or none of its endpoints in FF,
+we get an induced subtree Ttar​[F]T_{\text{tar}}[F] of TtarT_{\text{tar}} on FF.
+All the edges of Ttar​[F]T_{\text{tar}}[F] that belong to pairs in JJ and have both end vertices in FF are hence convex hull edges of Ttar​[F]T_{\text{tar}}[F].
+
+
+
+
+For each such face FF, we apply Lemma 7 to FF,
+where we pick vnv_{n} to be the rightmost vertex vrv_{r} of FF in the linear representation and choose the index jj to be r−1r-1.
+Further, we set K∗:=K∗​[F]K^{\ast}:=K^{\ast}[F]
+to be the set of all indices of vertices that have an edge to vrv_{r} in T∗​[F]T^{\ast}[F]
+and let I:=I∗​[F]I:=I^{\ast}[F] be the set of all indices of vertices that are attached to convex hull edges of T∗​[F]T^{\ast}[F] and are directed away from vrv_{r} in T∗​[F]T^{\ast}[F].
+This application yields a rotation sequence of length at most |F|−1−|Itar​[F]∩I∗​[F]|\lvert F\rvert-1-\lvert I_{\text{tar}}[F]\cap I^{\ast}[F]\rvert where Itar​[F]I_{\text{tar}}[F] is the set of all indices of vertices that are attached to convex hull edges of Ttar​[F]T_{\text{tar}}[F] and are directed away from vrv_{r} in Ttar​[F]T_{\text{tar}}[F].
+
+
+
+
+It remains to count how many rotations are performed in total.
+We split JJ into the set JdiagJ_{\text{diag}} of edges in JJ that are diagonals and the set JCHJ_{\text{CH}} of convex hull edges in JJ.
+Note that all edges that belong to pairs in JJ are contained in Itar​[F]∩I∗​[F]I_{\text{tar}}[F]\cap I^{\ast}[F] for every face FF they belong to.
+For calculating the number of rotations, we consider that
+(1) there are |Jdiag|+1\lvert J_{\text{diag}}\rvert+1 faces;
+(2) all the vertices that belong to edges in pairs in JdiagJ_{\text{diag}} belong to two faces; and
+(3) pairs in JCHJ_{\text{CH}} only border one face.
+This gives us a rotation sequence whose total length is bounded from above by the following expression22
+2
+
+
+
+
+
+
+
+For an exact length, we would need to also substract the terms |Ktar​[F]∩K∗​[F]|\lvert K_{\text{tar}}[F]\cap K^{\ast}[F]\rvert for each face. We omit those, since we do not have a non-zero lower bound on them..
+
+
+
+
+∑F​face|F|−1−|Itar​[F]∩I∗​[F]|=n+2​|Jdiag|−(|Jdiag|+1)−∑F​face|Itar​[F]∩I∗​[F]|\displaystyle\sum_{F~\text{face}}\lvert F\rvert-1-\lvert I_{\text{tar}}[F]\cap I^{\ast}[F]\rvert=n+2\lvert J_{\text{diag}}\rvert-(\lvert J_{\text{diag}}\rvert+1)-\sum_{F~\text{face}}\lvert I_{\text{tar}}[F]\cap I^{\ast}[F]\rvert
+
+
+
+≤n+2​|Jdiag|−(|Jdiag|+1)−2​|Jdiag|−|JCH|=n−1−|J|\displaystyle\leq n+2\lvert J_{\text{diag}}\rvert-(\lvert J_{\text{diag}}\rvert+1)-2\lvert J_{\text{diag}}\rvert-\lvert J_{\text{CH}}\rvert=n-1-\lvert J\rvert
+
+
+
+The above estimate concludes the proof.
+∎
+
+
+
+
+
+
+Appendix C Omitted Details from Section 4
+
+
+
+
+See 16
+
+
+
+Proof.
+
+Figure 19: An improvement by two flips implies the perfect flip property (left) and the perfect flip property implies, under additional assumptions, an improvement by two flips (right)
+
+
+
+
+(i):
+Assume we can execute a perfect flip in G0G_{0} to get to some G1G_{1}. Then any flip sequence from G1G_{1} to GtarG_{\text{tar}} via G0G_{0} has to be at least 2 flips longer than the shortest flip sequence from G1G_{1} to GtarG_{\text{tar}} by assumption. So, if we need kk steps to get from G1G_{1} to GtarG_{\text{tar}}, then we need at least k+2k+2 steps to get from G1G_{1} to GtarG_{\text{tar}} via G0G_{0} and, therefore, at least k+1k+1 steps from G0G_{0} to GtarG_{\text{tar}}. But going from G0G_{0} to G1G_{1} and then performing the sequence of length kk from there gives us a flip sequence of length exactly k+1k~+~1 and, therefore, a shortest flip sequence. For an illustration see Figure 19 (left).
+
+
+
+
+(ii): Let e1e_{1} be an edge that lies in both GinG_{\text{in}}, the initial graph, and GtarG_{\text{tar}}, the target graph. Now let Gin=G0G_{\text{in}}=G_{0}, G1G_{1},…,Gk=GtarG_{k}=G_{\text{tar}} be a flip sequence from GinG_{\text{in}} to GtarG_{\text{tar}} that removes and later adds e1e_{1}. Further, assume without loss of generality that e1e_{1} is removed in the very first flip from G0G_{0} to G1G_{1} and that the edge e2e_{2} is added in the same flip.
+
+
+
+
+Consider the flip sequence from G1G_{1} to GtarG_{\text{tar}}. By the perfect flip property, there exists a shortest flip sequence from G1G_{1} to GtarG_{\text{tar}} via G0G_{0}, since G0G_{0} and GtarG_{\text{tar}} have one edge more in common than G1G_{1} and GtarG_{\text{tar}}, since e1e_{1} is in GtarG_{\text{tar}} and e2e_{2} is not by assumption.
+Thus there is a shortest flip sequence from G1G_{1} to GtarG_{\text{tar}} via G0G_{0} that contains the shortest flip sequence from G0G_{0} to GtarG_{\text{tar}} as a subsequence.
+
+
+
+
+This means that the shortest flip sequence from G0G_{0} to GtarG_{\text{tar}} via G1G_{1} has the same length as a flip sequence that first goes from G0G_{0} to G1G_{1}, then back from G1G_{1} to G0G_{0}, and then executes the shortest flip sequence from G0G_{0} to GtarG_{\text{tar}}. Since the first two steps are redundant, we can remove them and find a flip sequence that is at least two flips shorter then the given one. For an illustration see Figure 19 (right).
+∎
+
+
+
+
+
+
+Appendix D Omitted Details from Section 5
+
+
+
+
+See 18
+
+
+
+Proof.
+
+
+
+The construction used in [1] that proves Lemma 18 works as follows. Consider a flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} and suppose that an edge ee is removed and later added back, and that no edge crossing ee is added during that subsequence. Let T0T_{0},…,TkT_{k} be the trees in this subsequence, where T0T_{0} and TkT_{k} contain ee, but none of the intermediate trees do. Moreover, none of the trees TiT_{i}, 1≤i≤k−11\leq i\leq k-1, contains an edge that crosses ee. We follow the lines in [1] where they construct a shorter flip sequence from T0T_{0} to TkT_{k} using a normalization technique. For each ii with 1≤i≤k−11\leq i\leq k-1 consider adding ee to TiT_{i}. For i≠0,ki\neq 0,k this creates a cycle δi\delta_{i}. Let fif_{i} be the first edge of δi\delta_{i} that is removed during the flip sequence from TiT_{i} to TkT_{k}. Define Ni=Ti∪{e}∖{fi}N_{i}=T_{i}\cup\{e\}\setminus\{f_{i}\} and N0N_{0} = T0T_{0}. This yields a new, shorter flip sequence N0N_{0},…,Nk−1N_{k-1}.
+
+
+
+
+Note that if the original flip sequence uses only compatible flips then the same holds for the normalized one. The reason is that any edge that gets added to some NiN_{i} and that crosses the edge that gets removed from Ni−1N_{i-1} fits into two cases: It either crosses ee, which is not possible by the assumption that no edge crossing ee gets added, or it crosses an edge that also lies in Ti−1T_{i-1} which contradicts the assumption that the original flip was compatible.
+∎
+
+
+
+
+
+See 20
+
+
+
+Proof.
+
+
+
+We repeat the following construction for all parking edges that are introduced in a flip sequence and do not lie on the boundary of the convex hull. Further, we repeat the process for every appearance of such an edge separately, see Figure 13.
+
+
+
+
+Let f=(va,vb)f=(v_{a},v_{b}) be a parking edge that does not lie on the boundary of the convex hull. Let Ti1T_{i_{1}} be the first tree to contain ff and Ti2T_{i_{2}} be the last tree to contain ff such that any tree between Ti1T_{i_{1}} and Ti2T_{i_{2}} contains ff. The trees T0T_{0},…,Ti1−1T_{i_{1}-1} and Ti2+1T_{i_{2}+1},…,TkT_{k} stay as in the original sequence.
+
+
+
+
+We reorder and modify the other steps based on the following observation. The edge ff separates the point set into two sides AA and BB, the vertices that appear in clockwise direction from vav_{a} to vbv_{b} and the vertices that appear in counterclockwise order. While ff is part of the tree, flips in the two sides can be executed independently from the other side. We remark that for this proof we characterize a flip by the two edges involved. Two valid flips are the same if they remove and add the same edges, regardless of the trees to which the edges belong to. Note that every spanning tree contains a unique path between any two vertices. If, in particular, we consider the path PP from vav_{a} to vbv_{b} in Ti1−1T_{i_{1}-1}, we see that this path has to be contained entirely in one side induced by ff, w.l.o.g. in side BB. Otherwise, there would be an edge along the path that crosses ff, introducing a non-compatible flip from Ti1−1T_{i_{1}-1} to Ti1T_{i_{1}}.
+
+
+
+
+If we add the edge ff, the cycle that gets closed is entirely contained in BB. Therefore, the edge that is removed lies in BB. Any flip that is executed from Ti1T_{i_{1}} to Ti2T_{i_{2}} that happens in AA can already be executed in Ti1−1T_{i_{1}-1}. Any cycle that previously involved the edge ff now involves the path PP instead. We order our flips in a way, such that all flips that happen in AA are executed right away starting from Ti1−1T_{i_{1}-1}. After executing all those steps, the side AA already coincides with the side AA in Ti2T_{i_{2}}, except for the edge ff.
+
+
+
+
+Next we consider the part of Ti2T_{i_{2}} that lies in AA. This part consists of ff and two trees TT and T′T^{\prime} (possibly with an empty set of edges) in AA. Since Ti2T_{i_{2}} is plane there exist a unique pair of vertices that appear consecutively along the boundary of the convex hull and one belongs to TT and the other to T′T^{\prime}. We continue our modified flip sequence by adding the convex hull edge hh between the two vertices and remove the edge that would have been removed when adding ff.
+
+
+
+
+Now we execute all the flips in BB from the original flip sequence. Any flip that formed a cycle that involves ff now forms a cycle that involves hh and paths in AA connecting vav_{a} and vbv_{b} to hh. In the last flip, we remove hh and add the edge that would have been added in the original sequence when removing ff. The resulting tree is Ti2T_{i_{2}}.
+
+
+
+
+The new flip sequence is of the same length as the original one, but we replaced the non convex hull edge ff with the convex hull edge hh.
+∎
+
+
+
+
+
+
+Appendix E Omitted Details from Section 6
+
+
+
+
+See 22
+
+
+
+Proof.
+
+
+
+To show this, we observe that for any flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} that preserves happy edges, we can obtain a flip sequence from Tin,rT_{\text{in,r}} to Ttar,rT_{\text{tar,r}} of the same or shorter length and the other way around. For the backward direction, if we have a flip sequence from Tin,rT_{\text{in,r}} to Ttar,rT_{\text{tar,r}}, then we add and remove edges between vertices with the same labels to get from TinT_{\text{in}} to TtarT_{\text{tar}}, pretending the unmarked vertices don’t exist.
+
+
+
+
+For the forward direction, assume we have a flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}}, Tin=T0T_{\text{in}}=T_{0}, T1T_{1},…,Tk=TtarT_{k}=T_{\text{tar}} that preserves happy edges. One by one, we contract a path P=P~= vav_{a},va+1v_{a+1},…,vb−1v_{b-1},vbv_{b} (all indices taken modulo n), where all the viv_{i} are non-marked vertices that appear consecutively on the reduced convex hull, vav_{a} is the marked start and vbv_{b} is the marked end, on the convex hull.
+
+
+
+
+We use a normalization technique, and distinguish two cases.
+
+
+
+
+
+Case 1: Contract a path into an edge See Figure 15 for an example. Given a tree TT on the same vertex set as TinT_{\text{in}} and TtarT_{\text{tar}} that contains a path of edges that are happy with regard to TinT_{\text{in}} and TtarT_{\text{tar}} such that further only the end vertices of the path are incident to non happy edges in TinT_{\text{in}} or TtarT_{\text{tar}}. We normalize with respect to the edge (va,vb)(v_{a},v_{b}) to get the normalization N⁡(T)N(T) of TT by doing the following: Every edge that is not incident to any vertex on the path PP stays the same. All the edges along the path get removed and replaced by the edge (va,vb)(v_{a},v_{b}). Any edge (vc,vd)(v_{c},v_{d}) with vc∈{va+1,…,vb−1}v_{c}\in\{v_{a+1},...,v_{b-1}\} and vd∉{va,vb,va+1,…,vb−1}v_{d}\notin\{v_{a},v_{b},v_{a+1},...,v_{b-1}\} gets replaced by the edge (va,vd)(v_{a},v_{d}).
+
+
+
+
+
+Case 2: Contracting a happy leaf Let (va,vb)(v_{a},v_{b}) be a happy leaf with respect to TinT_{\text{in}} and TtarT_{\text{tar}}. Further, let TT be a tree on the same vertex set as TinT_{\text{in}} and TtarCT_{\text{tar}}^{C} that contains (va,vb)(v_{a},v_{b}). Without loss of generality, let vbv_{b} be the degree one vertex in TinT_{\text{in}} and TtarT_{\text{tar}}. We normalize as follows: Remove the edge (va,vb)(v_{a},v_{b}) from TT and replace any edge (vc,vb)(v_{c},v_{b}) with the edge (vc,va)(v_{c},v_{a}).
+
+
+
+
+In both cases it holds that N⁡(Tin)=Tin,rN(T_{\text{in}})=T_{\text{in,r}} and N⁡(Ttar)=Ttar,rN(T_{\text{tar}})=T_{\text{tar,r}}. Further, the normalizations N⁡(Ti)N(T_{i}) and N⁡(Ti+1)N(T_{i+1}) of two consecutive trees TiT_{i} and Ti+1T_{i+1} along the flip sequence either coincide (if the removed edge and the added edge are incident to vertices of the same contracted path or get slid along a happy leaf) or differ by a flip (all other choices of added and removed edges). After removing consecutive multiples, N⁡(T0)N(T_{0}), N⁡(T1)N(T_{1}),…,N⁡(Tk)N(T_{k}) is a sequence of trees that form a flip sequence from Tin,rT_{\text{in,r}} to Ttar,rT_{\text{tar,r}}. This is true, because, if we have a cycle in some N⁡(Ti)N(T_{i}), then this cycle must have appeared in TiT_{i}. The same holds for crossings.
+
+
+
+
+This concludes that we do not lose any information about the flip distance when contracting long paths along unmarked vertices along the convex hull.
+∎
+
+
+
+
+
+See 24
+
+
+{claimproof}
+
+The claim clearly holds for convex hull edges [1]. We apply the normalization from Lemma 22 to contract a happy leaf on the convex hull without changing the length of the shortest flip sequence. This contraction creates a new convex hull edge. Exhaustively contracting happy leaves, eventually every good happy edge will be a convex hull edge and therefore have the happy edge property holds.
+
+
+
+
+See 25
+
+
+{claimproof}
+
+Consider a path in the dual graph of N⁡(Tin)N(T_{\text{in}}) between two faces that contain non-happy edges, such that all faces that appear at the interior of the path contain only happy edges. Assume that at least one edge ee is not flipped along the path. We cut N⁡(Tin)N(T_{\text{in}}) and N⁡(Ttar)N(T_{\text{tar}}) along ee into two trees N​(Tin)1N(T_{\text{in}})^{1} and N​(Ttar)1N(T_{\text{tar}})^{1}, and N​(Tin)2N(T_{\text{in}})^{2} and N​(Ttar)2N(T_{\text{tar}})^{2}. Now, a shortest flip sequence from N⁡(Tin)N(T_{\text{in}}) to N⁡(Ttar)N(T_{\text{tar}}) induces two shortest flip sequences from N​(Tin)1N(T_{\text{in}})^{1} to N​(Ttar)1N(T_{\text{tar}})^{1} and from N​(Tin)2N(T_{\text{in}})^{2} to N​(Ttar)2N(T_{\text{tar}})^{2}. In both trees ee is a happy leaf that can be contracted without changing the length of the shortest flip sequence. Through the contraction, new happy leaves emerge. We contract happy leaves and happy paths along the convex hull exhaustively.
+
+
+
+
+See 26
+
+
+
+
+{claimproof}
+
+Given two trees TinT_{\text{in}} and TtarT_{\text{tar}}. We cut our convex point set along the happy edges to obtain smaller subsets with formerly happy edges on their boundary and (possibly) unhappy edges in their interior. Afterwards, we discard all subsets that do not contain unhappy edges.
+
+
+
+
+Let CC be a subset that was not discarded in the process. We refer by TinCT_{\text{in}}^{C} to the graph induced by the initial tree on the point set of CC and analogously for TtarCT_{\text{tar}}^{C}.
+
+
+
+
+Finding the shortest flip sequence from TinT_{\text{in}} to TtarT_{\text{tar}} is the same as finding the shortest independent flip sequences from TinCT_{\text{in}}^{C} to TtarCT_{\text{tar}}^{C} for every single subset CC and then executing the respective flip sequences iteratively in TinT_{\text{in}} to obtain TtarT_{\text{tar}}. This is due to the assumption that Conjecture 17 is true. The flips that can be executed on the points of one polygon CC without flipping a happy edge are all among the flips that can be executed in the reduced trees that correspond to CC.
+
+
+
+
+By Lemma 22 we can again reduce the instance size by getting rid of redundant happy edges on the convex hull. We get the following runtime: The total number of marked vertices is at most 4​k4k from having 2​k2k unhappy edges, kk from TinT_{\text{in}} and kk from TtarT_{\text{tar}}, with 22 endpoints each. The bound on the unhappy edges holds, since the flip distance is an upper bound on the number of unhappy edges. This leaves us with solving the instance for a forest with at most 4​k4k vertices and 4​k−14k-1 edges.
+
+
+
+
+The question, whether a flip sequence of length ≤k\leq k can be found, can be answered via brute force. At any given point, we have kk choices to remove an unhappy edge and <(4​k2)<\binom{4k}{2} choices to add an edge. Trying all sequences of length kk gives us a total of <(k​(4​k2))k<\left(k\binom{4k}{2}\right)^{k} sequences.
+
+
+
+
+
+
+
+
+Experimental support, please
+view the build logs
+for errors. Generated by
+
+
+L
+A
+T
+E
+
+xml
+
+.
+
+
+
+
+Instructions for reporting errors
+
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+methods listed below:
+
+
+Click the "Report Issue" (
+
+) button, located in the page header.
+
+
+Tip: You can select the relevant text first, to include it in your report.
+
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+
+
+
+
+
+
+
+
+We gratefully acknowledge support from our major funders,
+member institutions, ,
+and all contributors.
+
+
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+
+
+
+
+
+
+
+
+
+
+
+
