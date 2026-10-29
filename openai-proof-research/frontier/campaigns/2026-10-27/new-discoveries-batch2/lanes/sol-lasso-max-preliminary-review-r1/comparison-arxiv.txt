@@ -1,0 +1,2151 @@
+                                              A Graphical Comparison of Screening Designs using
+                                                       Support Recovery Probabilities
+                                              Kade Young1 , Maria L. Weese2 , Jonathan W. Stallrich1 , Byran J. Smucker3 , and David J.
+                                                                                     Edwards4
+
+
+
+
+arXiv:2311.12685v1 [stat.ME] 21 Nov 2023
+                                                         1 Department of Statistics, North Carolina State University, Raleigh, NC
+                                                  2 Department of Information Systems & Analytics, Miami University, Oxford, OH
+                                                                3 Department of Statistics, Miami University, Oxford, OH
+                                           4 Department of Statistical Sciences and Operations Research, Virginia Commonwealth University,
+
+                                                                                     Richmond, VA
+
+
+
+
+                                                                                        Abstract
+
+                                                      A screening experiment attempts to identify a subset of important effects using a
+
+                                                relatively small number of experimental runs. Given the limited run size and a large
+
+                                                number of possible effects, penalized regression is a popular tool used to analyze screen-
+
+                                                ing designs. In particular, an automated implementation of the Gauss-Dantzig selec-
+
+                                                tor has been widely recommended to compare screening design construction methods.
+
+                                                Here, we illustrate potential reproducibility issues that arise when comparing screening
+
+                                                designs via simulation, and recommend a graphical method, based on screening prob-
+
+                                                abilities, which compares designs by evaluating them along the penalized regression
+
+                                                solution path. This method can be implemented using simulation, or, in the case of
+
+                                                lasso, by using exact local lasso sign recovery probabilities. Our approach circumvents
+
+                                                the need to specify tuning parameters associated with regularization methods, leading
+
+                                                to more reliable design comparisons. This article contains supplementary materials
+
+                                                including code to implement the proposed methods.
+
+                                           Keywords: Screening experiments; constrained-positive V ar(s)-criterion; lasso; reproducible
+                                           research
+
+                                                                                            1
+1     Introduction
+
+A screening design, ideally utilized as the first step in a sequential experimentation process,
+attempts to select which of k factors truly drive a response, using a relatively small number
+of runs, n. For screening scenarios, the linear model of interest is
+
+
+                                     y = 1β0 + Xβ + e,                                     (1)
+
+
+where e ∼ N (0, σ 2 I), X the n × p model matrix, and β a p-vector of parameters. The p
+columns in the model matrix may be comprised solely of the k main effects, or may include
+some or all of the k(k − 1)/2 two-factor interactions. The k main effect columns of X
+represent the experimental design with each row providing the settings of the k factors for
+a given run. For simplicity, in the examples in this work we consider only two-level factors
+taking on values ±1. The analysis goal is to uncover the subset of these factorial effects that
+are active; that is, those effects with non-trivially non-zero parameter values. We define the
+active set A as the set of indices of the active effect columns. To maximize the chance that
+the experiment is a success, we should identify the design and analysis method that is best
+at estimating A.
+    We will focus on designs where n < p + 1 so that a unique least squares estimator for β
+does not exist. It is possible to use an approach like forward selection, but it has notable
+shortcomings (Westfall et al., 1998) and performs poorly compared to other methods (Marley
+and Woods, 2010; Draguljić et al., 2014; Weese et al., 2015). Instead, regularization methods
+are often recommended as a general purpose analysis approach, for which estimation is done
+under a penalty on the magnitude of the elements of β, shrinking them towards zero. The
+amount of shrinkage is controlled by a tuning parameter, λ > 0, with larger λ enforcing
+greater shrinkage. It is common practice to compare the ability of designs to estimate A via
+simulation studies under one or more regularization analysis methods.
+
+                                               2
+   This paper demonstrates the sensitivity of the simulation-based design comparisons to
+different sets of λ’s and tuning parameter selection methods. As an alternative, we rec-
+ommend a robust graphical approach, motivated by Stallrich et al. (2023), which compares
+designs under a regularization method by plotting the probability of perfect estimation of A
+as a function of λ. We will focus our examples and discussion on two types of screening ex-
+periments. The first is supersaturated designs where n ≤ k and an analysis that assumes no
+active two-factor interactions. The second type is screening experiments with k + 1 ≤ n < p
+that assume some active two-factor interactions.
+
+
+1.1    The Gauss-Dantzig Selector
+
+Various analysis methods have been suggested for analyzing screening designs, including the
+Dantzig selector (Candes and Tao, 2007), lasso (Tibshirani, 1996), and other regularization
+or Bayesian methods. The Dantzig selector has been the most omnipresent. This is perhaps
+due to its early introduction to the SSD analysis literature by Phoa et al. (2009). The
+Dantzig selector can be defined as follows. After centering y to have mean 0 and centering
+and scaling the columns of X, estimates of β can be obtained as
+
+
+                  β̂DS = arg min ||β||1 subject to ||XT (y − Xβ)||∞ ≤ λ ,                   (2)
+                             β
+
+
+
+where || · ||∞ denotes the maximum element in absolute value of the vector argument and
+λ ≥ 0 is a tuning parameter. In the context of screening designs, the recommended practice
+is to investigate the plot of the estimates versus values of λ (Phoa et al., 2009; Weese et al.,
+2021). This approach avoids the need to specify a tuning parameter selection method. For
+simulation studies, such as those used to compare design construction and analysis methods,
+viewing plots is, unfortunately, not a viable option. Phoa et al. (2009) suggested a multi-
+stage automated approach known as the Gauss-Dantzig selector (GDS). GDS involves an
+
+
+                                               3
+additional tuning parameter, γ > 0, being a hard threshold applied to the estimates. Weese
+et al. (2021) describes the GDS approach as follows:
+
+
+   1. Solve (2) for d evenly spaced values of λ over the interval [0, ||XT y||∞ ] (excluding the
+      endpoints). Denote the d solutions to (2) as β̂DS (λ).
+
+   2. For each β̂DS (λ) and some γ > 0, set all |β̂j (λ)| < γ to 0. Denote this thresholded
+      solution as β̂DS (λ, γ).
+
+   3. For each β̂DS (λ, γ), calculate the OLS estimates using only the columns of X that
+      correspond to the nonzero β̂j (λ, γ). Calculate the value of some information criteria
+      (e.g., AICc or BIC).
+
+   4. Select the β̂DS (λ, γ) with the smallest information criteria value and classify the effects
+      corresponding to nonzero β̂j (λ, γ) as active, and the others as inactive.
+
+
+   Table 1 lists recent papers that use the GDS to compare screening design construction
+methods and/or analysis methods for screening designs. GDS was implemented in all simu-
+lations in the papers listed in Table 1, but the implementations of this procedure have varied
+substantially. Of course, the implementation of GDS depends on the particular simulation
+scenario and is up to author discretion; however, the choice of the GDS tuning parameters im-
+pact the analyses and thus the simulation results. The choice of γ has obvious consequences
+and is usually reported when GDS is used, but more subtle choices like the coarseness of the
+search grid for values of λ (i.e., the size of d) are often not explicitly discussed.
+   To briefly illustrate the impact of the choice of the tuning parameters on the results
+of GDS, we repeat the simulations from Singh and Stufken (2022) which compared Pareto
+Efficient Designs (PEDs) with V ar(s+) SSDs for n = 14 and k = 24. The signs of the
+truly active effects were assumed to be known and thus set as positive. Two signal-to-noise
+ratios (SN) were considered in which the true model effects were generated according to
+
+                                                4
+              Paper                                   γ             Selection         λ values (d)
+              Phoa et al. (2009)              0 or 0.25*max|βˆj |    mAIC               “hundreds”
+              Marley and Woods (2010)                  σ              BIC                    –
+              Draguljić et al. (2014)          µact − 3.5σact        AIC                    –
+              Chen et al. (2013)                       1             mAIC                    –
+              Phoa (2013)                        0.1*max|βˆj |       mAIC                    –
+SSD           Huang et al. (2014)                      1               –                     –
+n≤k           Weese et al. (2015)                     1.5             BIC         by 1 (0 to max(XT y))
+              Drosou and Koukouvinos (2019)            –             mAIC                    –
+              Weese et al. (2017)                     1.5             BIC         by 1 (0 to max(XT y))
+              Jones et al. (2020)                      σ             AICc                    –
+              Weese et al. (2021)                0.1*max|βˆj |        BIC         by 1 (0 to max(XT y))
+              Singh and Stufken (2022)           0.1*max|βˆj |        BIC       12 steps (0 to max(XT y))
+              Mee et al. (2017)                       0.5             AICc       by 1 (0 to max(XT y))
+Traditional   Errore et al. (2017)                     –              AICc                  –
+n≥k+1         Weese et al. (2018)                      σ            BIC/AICc     by 1 (0 to max(XT y))
+              Vazquez et al. (2021)                   0.5             AICc                  –
+              Hameed et al. (2022)                     σ              AICc                  –
+
+Table 1: Parameters used in the implementation of the Dantzig selector for SSDs (top row)
+and larger screening designs (bottom row).
+
+
+Exp(1) + SN and errors are simulated from a standard normal distribution. The number
+of truly active factors range from 0.25n to 0.75n. Truly inactive effects have βj = 0. For
+each scenario, we randomly generated 1000 response vectors and implemented GDS with
+γ = 0.1 ∗ max(|βˆj |) and BIC, but used two different search grids for λ. The “Fine Grid”
+includes d = 100 values of λ between 0 and max(XT y). The “Coarse Grid” contains d = 12
+values of λ between 0 and max(XT y) where the first and the last values were removed.
+Figure 1 shows the comparisons between the two SSDs in terms of power (proportion of
+correctly selected active factors) and type I error (proportion of incorrectly selected active
+factors). Although the difference is subtle, different conclusions might be reached when
+viewing the results from the fine grid, where there appears to be little difference between
+the PED and V ar(s+) SSD and the coarse grid where the PED design clearly has improved
+power.
+
+
+
+
+                                                  5
+                                          Fine Grid                                                             Coarse Grid
+
+             1.00
+
+
+
+
+             0.75
+
+                                                                                                                                                                 PED
+
+                                                                                                                                                                 Var(s+)
+
+             0.50
+
+
+                                                                                                                                                                 Power
+
+                                                                                                                                                                 Type 1
+             0.25
+
+
+
+
+             0.00
+
+
+
+
+                    SN=3 n/4   SN=1 n/4   SN=3 n/2   SN=1 n/2   SN=3 0.75n   SN=1 0.75n   SN=3 n/4   SN=1 n/4    SN=3 n/2   SN=1 n/2   SN=3 0.75n   SN=1 0.75n
+
+
+
+
+Figure 1: Power and type 1 error of n = 14 and k = 24 PED and Var(s+) SSDs with the
+Gauss-Dantzig selector implemented using a “fine” search grid and a “coarse” search grid.
+
+
+1.2    GDS and Supersaturated Designs
+
+Analyzing supersaturated designs (SSDs) is challenging because not even the main effects
+can be estimated using least-squares. The majority of the SSD construction methods aim
+for designs as close to orthogonal as possible (i.e., XT X ≈ nI). This ideal structure is
+approximated through various heuristic optimality measures, such as the E(s2 ) criterion
+(Booth and Cox, 1962), which chooses among designs with balanced columns (i.e., XT 1 =
+0) the one(s) that minimize the average squared off-diagonal elements of S = XT X =
+(sij ). The unconditional E(s2 ), denoted U E(s2 ), criterion (Jones and Majumdar, 2014)
+also minimizes the squared off-diagonals but includes the intercept column and drops the
+column balance constraint. Many other supersaturated design criteria have been put forth,
+including Bayesian D-optimal supersaturated designs (Jones et al., 2008) and model-robust
+supersaturated designs (Jones et al., 2009).
+
+
+
+
+                                                                                          6
+   Marley and Woods (2010) and Weese et al. (2015) used the simulation-based approach
+and GDS to compare different SSD construction methods known at the time. They found
+no clear optimal design among the different SSDs with respect to power (i.e., true positive
+rate) and false discovery rates. Later, Weese et al. (2017, 2021) proposed and investigated
+the V ar(s+)-criterion that minimizes the variance of the off-diagonal elements of S while
+ensuring a specified U E(s2 ) efficiency and forcing the average off-diagonal to be positive,
+E(s) > 0. Their simulations under the GDS showed their SSDs increased power and de-
+creased false discovery rate compared to existing designs when effect directions are known.
+This improvement was only noted under the GDS analysis, motivating Singh and Stufken
+(2022) to identify SSDs lying on a Pareto front of two heuristic criteria derived from the
+theory of the Dantzig selector. The designs of Singh and Stufken (2022) are the first to
+connect the structure of XT X with a regularization method. They showed via simulation
+that the PEDs were similar or better than the catalogued V ar(s+) designs in terms in power
+and false discovery rate.
+   Section 2 provides more examples of simulation result differences due to tuning parameter
+selection when using regularization methods to analyze screening experiments. This sensi-
+tivity has reproducibility implications, especially if the description of the implementation of
+the GDS is not clearly stated.
+
+
+1.3    GDS and Screening Designs with Interactions
+
+Two-level screening designs that entertain two-factor interaction effects have been studied
+extensively (e.g., Mee, 2009; Mee et al., 2017), including for example, Bayesian D-optimal
+designs (DuMouchel and Jones, 1994; Jones et al., 2008), orthogonal arrays (Hedayat et al.,
+1999), and model robust screening designs (Li and Nachtsheim, 2000; Loeppky et al., 2007;
+Smucker et al., 2012; Smucker and Drew, 2015). These designs allow for estimation of all
+main effects and typically provide for estimation of some two factor interactions. Often,
+
+                                              7
+empirically-based assumptions are made about β when constructing and analyzing the de-
+signs. The effect and factor sparsity principles say that relatively few of the p = k+k(k−1)/2
+effects in the model are truly active, and that the active effects correspond to only a few
+of the k factors. Effect hierarchy suggests only a small proportion of the interaction effects
+are active, and that their magnitude is typically smaller than that of the active main effects
+(Li et al., 2006; Ockuly et al., 2017). Given these assumptions, it is common practice to
+compare designs by partitioning estimation of A into estimation of the active main effects
+and estimation of active interactions.
+   Mee et al. (2017) recently compared two-level screening designs using the GDS, and
+Draguljić et al. (2014) used several regularization methods including the lasso and the GDS.
+Others have used GDS to analyze three-level designs that can entertain quadratic effects.
+Hameed et al. (2022) used the GDS as a baseline analysis method in their analysis of orthog-
+onal minimally aliased response surface designs. Weese et al. (2018) and Errore et al. (2017)
+use the same approach to analyze definitive screening designs. Vazquez et al. (2021) use
+the lasso and the Dantzig selector as a baseline comparison for mixed level designs. Again,
+Table 1 shows the varying implementation of GDS for these papers’ simulation studies.
+
+
+1.4    Paper Overview
+
+The paper is organized as follows. Section 2 illustrates the different conclusions reached for
+SSDs for different implementations of the GDS through simulation. It considers sensitivity
+for both SSDs and screening designs with interactions. Section 3 introduces a new graphical
+analysis of penalized regression models based on simulated and exact screening probabilities,
+with particular attention give to the lasso. In Section 4, we use the proposed approach to
+compare designs, for both supersaturated and larger screening experiments. Lastly, we
+provide a discussion of our work in Section 5.
+
+
+
+                                              8
+2     Simulations to Study Inconsistencies in the Gauss-
+
+      Dantzig Selector
+
+Figure 1 illustrated that differences can arise when the search grid for the Dantzig selector
+tuning parameter is varied. Since the implementation of the GDS also requires the choice
+of a model selection statistic and threshold parameter γ, it is worth investigating differences
+that arise due to those choices as well. Since the GDS has been utilized for both SSDs
+and larger screening designs that include two-factor interactions, in this section we make
+comparisons exclusively using the GDS.
+
+
+2.1    GDS Inconsistencies in SSD Simulation Studies
+
+To investigate the sensitivity of the GDS in the context of SSDs, we repeat the simulation
+studies presented in the seminal work of Marley and Woods (2010) and vary the choice
+of the selection statistic, threshold parameter (γ), and the search grid for λ. This allows
+us to observe how conclusions reached in Marley and Woods (2010) would change with the
+simulation settings. The original goal of the Marley and Woods (2010) study was to compare
+SSD construction and analysis methods to provide design size implications regarding sparsity
+assumptions to SSD users.
+    Marley and Woods (2010) use three different SSD sizes (n, p): (12, 26), (14, 24) and
+(18, 22) and two types of SSDs, Bayesian D-optimal (Jones et al., 2008) and balanced E(s)-
+optimal. We consider the same sparsity and effect size scenarios as Marley and Woods (2010),
+and set γ at either γ = σ or a data driven threshold of γ = 0.1 ∗ max|β̂|. We also consider
+both AICc and BIC as model selection statistics and assume effect directions are unknown.
+Lastly we experiment with a fine and coarse search grid for λ as described in Section 1. The
+true models were generated according to (1) with σ 2 = 1 and the truly inactive factors are
+assigned βj = 0.
+
+                                              9
+   For high sparsity, large effect scenarios, the choice of the tuning parameters generally
+made little to no difference in the conclusions regarding SSD choice. For example, Figure 2
+shows the results for the (18, 22) SSD in the most sparse, largest effect scenario considered
+by Marley and Woods (2010) (3 active factors of magnitude ±5σ). Clearly, in this case, any
+perceived differences in designs are inconsequential. Regardless, it is interesting to note the
+clear impact of search grid choice on Type I error values when making use of a data driven
+threshold.
+
+                            Data Driven        Data Driven        Sigma            Sigma                              Data Driven        Data Driven        Sigma            Sigma
+
+                               AICc                BIC             AICc              BIC                                 AICc                BIC             AICc              BIC
+
+                     1.00                                                                                     0.100
+
+
+
+
+                                                                                                              0.075
+
+                     0.95
+
+
+
+             Power                                                                                   Type 1
+                                                                                                              0.050
+
+
+
+                     0.90
+
+                                                                                                              0.025
+
+
+
+
+                     0.85                                                                                     0.000
+
+
+                              fine    coarse     fine    coarse   fine    coarse   fine    coarse                       fine    coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                                           BayesD                 Es2
+
+
+
+Figure 2: Comparison of (18, 22) Bayesian D-optimal and balanced E(s2 )-optimal SSDs for
+a = 3 active effects with a magnitude of 5 and unknown true effect signs. Note the difference
+in the y-axis values in the two panels.
+
+
+   Figure 3 considers a more challenging scenario with the case of a (14, 24) SSD and six
+active factors (each having a magnitude of ±3σ). In this case, the granularity of the tuning
+grid will change the conclusion regarding the preferred SSD with respect to power if AICc
+is used as the model selection statistic. Furthermore, differences in power and Type I error
+values are evident when using a fine vs. coarse search grid as well as AICc vs. BIC and/or a
+data driven choice of γ vs. γ = σ. These differences alone highlight the need for consistency
+
+                                                                                                    10
+in published simulation studies.
+
+                          Data Driven        Data Driven        Sigma            Sigma                            Data Driven           Data Driven        Sigma            Sigma
+
+                             AICc                BIC             AICc              BIC                                  AICc                BIC             AICc              BIC
+
+                    1.0
+
+
+                                                                                                            0.3
+                    0.9
+
+
+
+
+                    0.8
+                                                                                                            0.2
+
+            Power                                                                                  Type 1
+                    0.7
+
+                                                                                                            0.1
+
+                    0.6
+
+
+
+
+                    0.5                                                                                     0.0
+
+
+                            fine    coarse     fine    coarse   fine    coarse   fine    coarse                     fine       coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                                         BayesD                   Es2
+
+
+
+Figure 3: Comparison of (14, 24) Bayesian D-optimal and balanced E(s2 )-optimal SSD for
+a = 6 active effects with a magnitude of 3 and unknown true effect signs.
+
+
+   Finally, Figure 4 shows results of the (12, 26) case (six active factors each having mag-
+nitude ±3σ). In this case, there is potential confusion regarding design preference when
+making use of the data driven threshold and BIC. With the coarse grid one would conclude
+that the E(s2 )-optimal design was preferred, with both higher Power and lower Type 1 error
+rate, whereas the script is flipped for the fine grid.
+   Although not shown in the body of paper, the results of the complete set of simulations
+based on Marley and Woods (2010) are in the supplementary materials. It is conceivable
+that Marley and Woods (2010) might have reached alternate conclusions if different tuning
+parameter selection strategies were used.
+
+
+2.2    GDS Inconsistencies with Larger Screening Designs
+
+Mee et al. (2017) compare two-level screening designs based on power and false discovery
+
+
+                                                                                                  11
+                          Data Driven        Data Driven        Sigma            Sigma                            Data Driven           Data Driven        Sigma            Sigma
+
+                             AICc                BIC             AICc              BIC                                  AICc                BIC             AICc              BIC
+
+                    0.8
+
+
+                                                                                                            0.3
+
+
+
+
+                    0.6
+                                                                                                            0.2
+
+            Power                                                                                  Type 1
+
+
+
+                    0.4                                                                                     0.1
+
+
+
+
+                                                                                                            0.0
+
+
+                            fine    coarse     fine    coarse   fine    coarse   fine    coarse                     fine       coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                                         BayesD                   Es2
+
+
+
+Figure 4: Comparison of (12, 26) Bayesian D-optimal and balanced E(s2 )-optimal SSD for
+a = 6 active effects with a magnitude of 3 and unknown true effect signs.
+
+
+rates. They use a variety of screening designs (i.e. orthogonal arrays, Bayesian D-optimal,
+model robust), analyzed via the Dantzig selector and forward selection. The authors im-
+plement the GDS using the automated approach as described in Section 1 with the AICc
+statistic, a threshold value of γ = 0.5 and a search grid that steps from 0 to max(X′ y) by 1.
+To quantify the impact of these choices on the outcome of the design comparison study, we
+repeat the simulation scenarios described in Mee et al. (2017) using the fine and course grids
+described in Section 1, as well as both AICc and BIC. We keep γ = 0.5 as in the original work.
+As in Mee et al. (2017) we generate the response according to model (1). Coefficients for the
+truly active main effects are sampled (with replacement) from {2, 2.5, 3, 3.5}. Coefficients for
+truly active two-factor interactions are sampled from either {0.5, 1, 1.5, 2} or {2, 2.5, 3, 3.5}
+for two-factor interaction coefficients that are either smaller or equivalent, respectively, to
+the truly active main effect coefficients. All signs were assumed to be unknown, and thus
+randomly assigned to each parameter with equal probability. Mee et al. (2017) compared
+the power and false discovery rate (FDR) for the subsets of main effects and two-factor in-
+
+                                                                                                  12
+teractions separately and we will follow suit. We highlight only two particularly interesting
+parts of the results here; the entire simulation for the n = 20 and k = 7 designs are provided
+in the Supplementary Materials.
+   Figure 5 shows the case when the two-factor interactions are equal in magnitude to the
+main effects, measuring the differences in FDR between the different λ search grids (“Fine”
+and “Coarse”) and different selection statistics (AICc and BIC). Note that each line in the
+plots represent a different design from Figure 3d in Mee et al. (2017). In this case the
+model selection statistic does not appear to drastically impact the FDR values. However,
+the choice of the search grid shows different FDR behavior across the number of active two-
+factor interactions. The FDR is seemingly constant for the finer search grid and steadily
+increasing for the coarse search grid.
+
+                                               AICc                                BIC
+                            1.00
+
+
+                            0.75
+
+
+                            0.50                                                                     2
+
+
+
+                            0.25
+
+
+
+
+                  2FI FDR
+                            0.00                                                                         fine
+                            1.00                                                                         coarse
+
+
+                            0.75
+
+
+                            0.50                                                                     4
+
+
+
+                            0.25
+
+
+                            0.00
+                                   1   2   3    4     5   6    7      1    2   3    4    5   6   7
+                                                          Number Active 2FIs
+
+
+
+Figure 5: Comparison of n = 20, k = 7 designs from Figure 3d in Mee et al. (2017) using the
+Dantzig selector, comparing AICc and BIC and the previously defined “Fine” and “Coarse”
+search grids, with γ = 0.5. The FDR is compared for 2 and 4 active main effects and 1 to 7
+active two-factor interactions.
+
+
+   Figure 6 illustrates a case where design preference conclusions might change based on
+the choice of selection statistic. Mee et al. (2017) conclude that for the n = 20 and k = 7
+designs the MEPI design has good main effect power and the lowest FDR for main effects.
+
+
+                                                                      13
+Figure 6 shows that if the authors had chosen to use a finer grid with the BIC statistic, the
+MEPI design does not show a better FDR for two active main effects and is slightly better
+when there there are four active main effects.
+                          AICc   AICc               BIC     BIC
+
+                          fine   coarse             fine   coarse
+                    0.5
+
+                    0.4
+
+                    0.3
+                                                                    2
+                    0.2
+
+                    0.1                                                  20.7.Bayes−D
+
+
+
+           ME FDR
+                                                                         20.7.MEPI
+                    0.0
+                                                                         20.7.18
+                    0.5
+                                                                         20.7.1
+                    0.4
+                                                                         20.7.PEC
+
+                    0.3
+                                                                    4
+                    0.2
+
+                    0.1
+
+                    0.0
+                          1
+                          2
+                          3
+                          4
+                          5
+                          6      1
+                                 2
+                                 3
+                                 4
+                                 5
+                                 6            1
+                                              2
+                                              3
+                                              4
+                                              5
+                                              6            1
+                                                           2
+                                                           3
+                                                           4
+                                                           5
+                                                           6
+                          7      7            7            7
+                                    Number Active 2FIs
+
+
+Figure 6: Comparison of n = 20, k = 7 designs from Figure 3d in Mee et al. (2017) using
+the Dantzig selector, and comparing AICc and BIC as well as a “Fine” and “Coarse” search
+grid with γ = 0.5. The FDR is compared for 2 and 4 active main effects and 1 to 7 active
+two-factor interactions.
+
+
+
+
+3    A Graphical Comparison of Screening Probabilities
+
+As noted, simulation studies to compare designs under a regularization method currently
+require specifying several aspects related to the penalty parameter, λ, along with the spec-
+ification of a threshold γ. We have demonstrated that the comparisons can be sensitive to
+different choices of these aspects. What is perhaps even more concerning is that the sim-
+ulation analysis is inconsistent with the recommended analysis for an actual experiment:
+graphically examine the solution path across the λ regularization parameter. Thus, we pro-
+pose a graphical method for estimating A in screening experiments which summarizes a
+
+                                                   14
+design’s solution path in terms of its support recovery probabilities, P (Â = A), where Â is
+the support from β̂DS (or any regularized estimator).
+
+
+3.1    Simulation-Based Support Recovery Probabilities
+
+To compare designs, we recommend estimating these probabilities across a dense grid of λ via
+simulation similar to Section 2, and then plotting these probabilities. If these probabilities
+are high for a wide range of λ, then the design should consistently produce solution paths
+that accurately estimate A.
+   To begin, we fix a (the number of active effects), set σ 2 = 1, and propose a distribution
+for the magnitude and sign of the active effects. Given these settings, simulate niter data
+sets, producing niter solution paths for β̂DS (or any regularized estimator) across a fine grid
+of λ. The solution paths are then checked at each λ value for whether or not they achieve
+support recovery, producing a vector of 0’s and 1’s where 1 indicates Â = A. Averaging these
+niter vectors of 0’s and 1’s provides a vector of estimated probabilities of support recovery.
+This approach is no more computationally demanding than the simulations in Section 2.
+The important difference is that we retain more information about the screening behavior
+by not requiring specification of a thresholding parameter nor a tuning parameter selection
+method.
+   To demonstrate this approach, we revisited the simulation study from Figure 1 with
+SN = 3 and n/2 = 7 active factors. Under a coarse tuning parameter grid, the PED had
+higher power and nearly identical Type 1 error compared to the V ar(s+) design; the fine
+tuning parameter grid implied these designs were on more equal footing with respect to
+power and Type 1 error. Figure 7 shows our graphical comparison approach for these two
+designs as well as two other V ar(s+) designs that reduce the U E(s2 ) efficiency constraint
+from 80% to 40% and 20% (doing so should increase the pairwise column correlations). All
+designs exhibited low overall support recovery probabilities, implying that most solution
+
+                                              15
+paths generated from these designs will not perfectly identify the support. However, this
+is not surprising, since Figure 1 showed that the high power was accompanied by a Type
+1 error rate around 0.20. When it comes to relative design comparisons, the PED shows
+clear improvement in support recovery probability compared to the V ar(s+) designs across
+nearly all λ values. The maximum support recovery probability for the PED is estimated
+to be 0.175, occurring at log(λ) ≈ 1. Ranking the 80% and 40% efficient V ar(s+)-designs
+is not as straightforward. The 40% efficient design has a higher maximum probability, but
+the 80% efficient design has a maximum probability nearly as high and sustains a higher
+probability for smaller λ values. Smaller λ values introduce less penalization in the estimates,
+and hence reduce bias. Therefore, it is desirable to have larger support recovery probabilities
+at smaller λ values. In general, we should expect the solution paths for the 80% efficient
+V ar(s+) designs to better capture the true support than the 40% efficient design.
+
+
+
+
+                                          0.15
+
+
+
+
+           Support Recovery Probability
+                                                                                         PED
+                                          0.10
+                                                                                         Var_s_20
+
+                                                                                         Var_s_40
+
+                                                                                         Var_s_80
+
+
+                                          0.05
+
+
+
+
+                                          0.00
+
+                                                 −2   −1   0                 1   2   3
+                                                               log(λ)
+
+
+Figure 7: Comparison of n = 14 and k = 24 PED and three V ar(s+) designs using simulated
+Dantzig seletor support recovery probability. We assumed a = 7 active effects randomly
+drawn from Exp(1) + 3 for each iteration. The three V ar(s+) designs correspond to three
+U E(s2 )-efficiency constraints: 80%, 40%, and 20%.
+
+
+
+                                                                        16
+3.2    Exact Sign Recovery Probabilities for the Lasso
+
+Although straightforward, one drawback of the above simulation-based approach is that
+niter needs to be large for the estimated probabilities to be accurate and reproducible.
+Direct calculations, when available, are preferred. Recently, Stallrich et al. (2023) developed
+an optimal design framework that targets the probability of support recovery for the lasso.
+Lasso estimates are the solution to
+
+                                        1
+                        β̂ = arg min      (y − Xβ)T (y − Xβ) + λ∥β∥1 .                        (3)
+                                  β    2n
+
+The lasso has been used to analyze SSDs (Draguljić et al., 2014; Zhang et al., 2007; Kouk-
+ouvinos and Mylona, 2008) but it is not as common as the Dantzig selector in the SSD
+literature, even though its performance is quite similar (Draguljić et al., 2014). The lasso is
+well suited for problems where n < p and its properties are well known (Tibshirani, 2012;
+Zhao and Yu, 2006; Jia and Rohe, 2015). There are strong theoretical (Meinshausen et al.,
+2007; Lounici, 2008; Bickel et al., 2009; James et al., 2009; Asif and Romberg, 2010) and
+empirical (Draguljić et al., 2014) links between the Dantzig selector and lasso, so this ap-
+proach is a reasonable proxy for designs analyzed by either method. We adopt this exact
+probability approach for the remainder of the paper.
+   Technically, the criteria in Stallrich et al. (2023) look to maximize the probability the
+lasso estimator recovers the sign of β, which has a simple, closed-form expression (for more
+details, see the Supplementary Materials and Stallrich et al., 2023). Sign recovery implies
+support recovery, requiring that all inactive effects are estimated as zero and all active effects
+are estimated with the correct sign. Stallrich et al. (2023) consider these probabilities for the
+cases of known and unknown effect directions. For known signs, one can assume without loss
+of generality that the active effects are all positive. For unknown signs, they assume each of
+the 2a possible sign vectors are equally likely. The probability of sign recovery for a known
+
+
+                                               17
+sign vector with a active effects and a given β is denoted by Φλ (X | a, β). This probability
+considers all possible supports of size a and all permutations of the active effects of β. In
+the case of unknown signs, they denote the probability of sign recovery with a active effects
+and a given β by Φ±
+                  λ (X | a, β).
+
+   In their optimal design framework, Stallrich et al. (2023) use a user-defined minimum
+signal to noise ratio for the active effects, denoted β, and set the absolute magnitude of all
+active effects to β. If a distribution of active effects were desired instead (as in Figure 1),
+one would need to average the sign recovery probabilities across this β distribution. To
+estimate this averaged probability, we recommend drawing niter β’s, say β1 , . . . , βniter , and
+then average these probabilities across the grid of λ values. We denote the two sets of
+probabilities by
+
+                         1 X                                       1 X ±
+        Φλ (X | a) =           Φλ (X | a, βi )    Φ±
+                                                   λ (X | a) =           Φ (X | a, βi ) .    (4)
+                       niter i                                   niter i λ
+
+   The exact calculation of the lasso sign recovery measure is computationally feasible when
+comparing SSDs, the primary use-case considered by Stallrich et al. (2023). Calculating
+the exact lasso sign recovery probability becomes much more cumbersome in the presence
+of two-factor interactions due to the number of possible submodels. In this scenario, we
+revert back to the original simulation-based approach that began this section to estimating
+Φλ , replacing the Dantzig selector with the lasso, and support recovery with sign recovery.
+In our implementation, we randomly select a set of submodels with k main effects and
+g two-factor interactions (under, say, a weak-heredity assumption). Next, the effect sizes
+for each active main effect and two-factor interaction are randomly generated under some
+distribution. The exact sign recovery probabilities for each of the niter randomly generated
+supports can then be calculated across the grid of λ and then averaged to estimate Φλ or
+Φ±
+ λ . Simulation of the lasso sign recovery probability in this way allows for the evaluation of
+
+
+
+
+                                                 18
+the lasso sign recovery among the main effects and two-factor interactions separately, which
+is consistent with how larger screening designs have been evaluated with other penalized
+estimation approaches.
+
+
+
+4     Examples
+
+We now revisit design comparisons from previous sections and compare designs using the
+graphical Φλ method from Section 3. We start with comparing SSDs using the exact Φλ
+probability calculations. Then we illustrate the simulated lasso sign recovery method for
+larger screening designs that consider detection of two-factor interactions.
+
+
+4.1    Comparing SSDs Using Exact Screening Probabilities
+
+Figure 7 revisited one scenario from Figure 1, demonstrating a more obvious improvement of
+the PED over the V ar(s+) design. Using exact lasso screening probabilities, Figure 8 shows
+the Φλ performance for the four considered designs from Figure 7 over a range of log(λ)
+for a known sign vector for two fixed values β = 1, 3 and three support sizes a = 4, 7, 11.
+Across all situations, the PED demonstrates higher lasso sign recovery performance over a
+larger log(λ) range compared to the V ar(s+)-optimal design. Interestingly, while Weese et al.
+(2017) stated that the efficiency constraint has little impact on screening effectiveness, except
+at the extremes, Figure 8 demonstrates clear differences in lasso sign recovery performance
+as we vary the U E(s2 ) efficiency. However, the 80% efficient V ar(s+) design consistently
+has higher sign recovery probabilities than the other V ar(s+) designs for smaller λ.
+    The bottom middle panel of Figure 8 most closely resembles the settings from Figure 7,
+with the latter visualizing support recovery probability of the Dantzig selector. The behavior
+of the two plots is nearly identical (note the difference in scale between the two plots),
+lending support that one could anticipate behavior of the Dantzig selector’s support recovery
+
+
+                                               19
+                         a=(n/4)                     a=(n/2)                     a=0.75n
+
+         0.6
+
+                                                                                   PED
+
+         0.4                                                                       Var(s+)_20
+
+                                                                                   Var(s+)_40       ß=1
+                                                                                   Var(s+)_80
+         0.2
+
+
+
+         0.0
+    φλ
+         0.6
+
+
+
+         0.4
+
+                                                                                                    ß=3
+
+         0.2
+
+
+
+         0.0
+               −2   −1     0       1   2   −2   −1     0       1   2   −2   −1     0       1    2
+                                                     log(λ)
+
+
+Figure 8: Graphical comparison of the PED and V ar(s+)-optimal designs referenced in
+Figure 1. Note here the active effects were fixed to be either β = 1 or 3.
+
+
+probability using the sign recovery probability of the lasso. Finally, we must also point out
+the overall poor performance of the designs when a = 0.75n = 11. The graphical analysis
+implies that it is highly unlikely for the solution path analysis to reveal the true support.
+Therefore, if a practitioner anticipates a large number of active effects, they should consider
+either reducing the number of factors considered, or increase their run size.
+
+
+4.2      Comparing Larger Screening Designs via Sign Probabilities
+
+In the case where n > k + 1 and two-factor interactions are considered, the simulation based
+procedure described in Section 3 can be used to estimate the lasso sign recovery probability.
+We demonstrate this approach to compare the n = 20 and k = 7 two-level designs in Mee
+et al. (2017). Here, we simulated the lasso sign recovery probabilities in a case where the truly
+
+
+
+                                                     20
+active two-factor interactions are smaller in magnitude than the main effects. Main effect
+sizes were selected from the set {−3.5, 3.5} to help highlight design differences. Two-factor
+interactions were sampled with replacement from {0.5, 1, 1.5, 2} with signs +/− assigned
+randomly according to Mee et al. (2017). The simulated lasso sign recovery values, separated
+for main effects and two-factor interactions, are compared for 2 and 4 active main effects (see
+rows of the Figure 9) and 1 to 7 active interactions assuming weak heredity. For brevity, the
+results for 1, 4, and 7 active two-factor interactions are displayed. The others are available
+in the Supplementary Materials.
+   Figure 9 shows the simulated lasso sign recovery probability across values of log(λ) for
+main effects only. For each scenario in Figure 9, the Bayesian D-optimal and 20.7.18 orthog-
+onal array designs show larger main effect sign recovery probabilities, specifically at lower
+values of log(λ) compared to the other designs compared. While the 20.7.MEPI, 20.7.1 OA,
+and 20.7.PEC designs do see higher main effect sign recovery probabilities for larger log(λ)
+values, they do not achieve the maximum sign recovery probability. Thus, based on this
+measure of main effect screening capability, we prefer the Bayesian D-optimal design and
+the 20.7.18 orthogonal array over the others.
+   Figure 10 shows the simulated lasso sign recovery probability across values of log(λ) for
+two-factor interactions only. Similar to Figure 9, the Bayesian D-optimal design and 20.7.18
+orthogonal array show higher two-factor interaction sign recovery probabilities compared to
+the other designs for the scenarios in Figure 10. While the different scenarios show slight
+differences between the Bayesian D-optimal design and the 20.7.18 orthogonal array, neither
+stands out consistently as best.
+   The GDS simulation for the scenarios in Mee et al. (2017) did not show a dramatic differ-
+ence between any of the five designs compared. However, the lasso sign recovery comparison
+shows a clear favoring of the Bayesian D-optimal design and the 20.7.18 orthogonal array
+over the MEPI, PEC, and 20.7.1 orthogonal array designs. It should be noted that Mee
+
+
+                                              21
+                             1                 4                      7
+            1.00
+
+
+            0.75
+
+
+            0.50                                                              2
+
+
+            0.25
+                                                                                  20.7.Bayes−D
+
+                                                                                  20.7.MEPI
+
+    ME φλ
+            0.00
+            1.00                                                                  20.7.18
+
+                                                                                  20.7.1
+
+            0.75                                                                  20.7.PEC
+
+
+            0.50                                                              4
+
+
+            0.25
+
+
+            0.00
+                   −4   −2       0   −4   −2       0        −4   −2       0
+                                          log(λ)
+
+
+Figure 9: Comparison of n = 20, k = 7 designs using the simulated lasso sign recovery
+probability for the main effects only. The sign recovery probability for main effects is com-
+pared for 2 and 4 active main effects (rows in the figure) and 1, 4, and 7 active two-factor
+interactions (columns in the figure).
+
+
+et al. (2017) recommends the 20.7.1 orthogonal array design over the others because of its
+overall performance when evaluated with the GDS and forward selection.
+
+
+
+5      Discussion
+
+Regularization methods have become a popular tool to analyze screening designs, and to
+compare designs, especially in the SSD literature. While the application of regularization
+methods is appropriate, we have illustrated potential reproducibility issues with tuning pa-
+rameter selection. Including a limited number of possible tuning parameter values, as well
+as different model selection statistics can potentially lead to different conclusions regarding
+design choice and/or analysis. To combat this, we recommend comparing screening designs
+
+                                                       22
+                               1                 4                      7
+             0.125
+
+
+             0.100
+
+
+             0.075
+                                                                                2
+             0.050
+
+
+             0.025                                                                  20.7.Bayes−D
+
+                                                                                    20.7.MEPI
+
+    2FI φλ
+             0.000
+                                                                                    20.7.18
+             0.125
+                                                                                    20.7.1
+             0.100
+                                                                                    20.7.PEC
+
+             0.075
+                                                                                4
+             0.050
+
+
+             0.025
+
+
+             0.000
+                     −4   −2       0   −4   −2       0        −4   −2       0
+                                            log(λ)
+
+
+Figure 10: Comparison of n = 20, k = 7 designs using the simulated lasso sign recovery
+probability for the two factor interactions only. The sign recovery probability for two factor
+interactions is compared for 2 and 4 active main effects (rows in the figure) and 1, 4, and 7
+active two-factor interactions (columns in the figure).
+
+
+with exact lasso sign recovery probabilities for supersaturated designs, and estimating these
+probabilities for larger screening designs using simulation.
+   We have demonstrated a graphical method to compare these probabilities over a range
+of tuning parameter values, which circumvents the need to specify a grid to search over
+as in traditional simulation using regularization methods. Using sign recovery probabilities
+also requires no model selection statistic and no threshold choice. The graphical method
+of comparison allows for a much broader comparison of designs than that based on one or
+two metrics (e.g., power and type 1 error) conditioned on a set of tuning parameter choices.
+We have provided software for researchers and practitioners to use the lasso sign recovery
+probabilities to compare screening designs. For SSDs, the software computes Φλ and Φ±
+                                                                                    λ for
+
+
+
+
+                                                         23
+a user input design, number of active effects, β, and range of log(λ). For computationally
+burdensome scenarios, the package also has functionality to sample from the space of all
+possible active sets using the nearly balanced incomplete block design strategy in Smucker
+and Drew (2015). R software to calculate or simulate lasso sign recovery probabilities can
+be obtained here: https://github.com/kyoungstats/LassoSR.
+   We focused on plots of the lasso sign recovery probabilities because these probabilities
+have a closed form expression for known β. As suggested in Section 3, a simulation-based
+approach could be employed to generate similar plots for other regularization methods (e.g.,
+SCAD) and for other metrics of statistical quality, such as the probability the estimated
+support contains the true support, i.e., P (Â ⊂ A), or the mean-squared error loss, i.e.,
+E[(β̂ − β)2 ]. This is an area of future work.
+
+
+
+References
+
+Asif, M. S. and Romberg, J. (2010), “On the lasso and Dantzig selector equivalence,” in 2010
+  44th Annual Conference on Information Sciences and Systems (CISS), IEEE, pp. 1–6.
+
+Bickel, P. J., Ritov, Y., and Tsybakov, A. B. (2009), “Simultaneous analysis of lasso and
+  Dantzig selector,” The Annals of statistics, 37, 1705–1732.
+
+Booth, K. H. V. and Cox, D. R. (1962), “Some systematic supersaturated designs,” Tech-
+  nometrics, 4, 489–495.
+
+Candes, E. and Tao, T. (2007), “The Dantzig selector: statistical estimations when p is much
+  larger than n,” The Annals of Statistics, 35, 2313–2351.
+
+Chen, R.-B., Weng, J.-Z., and Chu, C.-H. (2013), “Screening procedure for supersaturated
+  designs using a Bayesian variable selection method,” Quality and Reliability Engineering
+  International, 29, 89–101.
+
+                                                 24
+Draguljić, D., Woods, D. C., Dean, A. M., Lewis, S. M., and Vine, A.-J. E. (2014), “Screening
+  strategies in the presence of interactions,” Technometrics, 56, 1–16.
+
+Drosou, K. and Koukouvinos, C. (2019), “Sure independence screening for analyzing su-
+  persaturated designs,” Communications in Statistics-Simulation and Computation, 48,
+  1979–1995.
+
+DuMouchel, W. and Jones, B. (1994), “A Simple Bayesian Modification of D-Optimal De-
+  signs to Reduce Dependence on an Assumed Model,” Technometrics, 36, 37–47.
+
+Errore, A., Jones, B., Li, W., and Nachtsheim, C. J. (2017), “Using definitive screening
+  designs to identify active first-and second-order factor effects,” Journal of Quality Tech-
+  nology, 49, 244–264.
+
+Hameed, M. S. I., Núñez Ares, J., and Goos, P. (2022), “Analysis of data from orthogonal
+  minimally aliased response surface designs,” Journal of Quality Technology, 1–19.
+
+Hedayat, A. S., Sloane, N. J. A., and Stufken, J. (1999), Orthogonal arrays: theory and
+  applications, Springer Science & Business Media.
+
+Huang, H., Yang, J., and Liu, M.-Q. (2014), “Functionally induced priors for componentwise
+  Gibbs sampler in the analysis of supersaturated designs,” Computational Statistics & Data
+  Analysis, 72, 1–12.
+
+James, G. M., Radchenko, P., and Lv, J. (2009), “DASSO: connections between the Dantzig
+  selector and lasso,” Journal of the Royal Statistical Society: Series B (Statistical Method-
+  ology), 71, 127–142.
+
+Jia, J. and Rohe, K. (2015), “Preconditioning the lasso for sign consistency,” Electronic
+  Journal of Statistics, 9, 1150–1172.
+
+
+
+                                             25
+Jones, B., Lekivetz, R., Majumdar, D., Nachtsheim, C. J., and Stallrich, J. W. (2020), “Con-
+  struction, properties, and analysis of group-orthogonal supersaturated designs,” Techno-
+  metrics, 62, 403–414.
+
+Jones, B., Li, W., Nachtsheim, C. J., and Ye, K. Q. (2009), “Model robust supersaturated
+  and partially supersaturated designs,” Journal of Statistical Planning and Inference, 139,
+  45–53.
+
+Jones, B., Lin, D. K. J., and Nachtsheim, C. J. (2008), “Bayesian D-optimal supersaturated
+  designs,” Journal of Statistical Planning and Inference, 138, 86–92.
+
+Jones, B. and Majumdar, D. (2014), “Optimal supersaturated designs,” Journal of the Amer-
+  ican Statistical Association, 109, 1592–1600.
+
+Koukouvinos, C. and Mylona, K. (2008), “A method for analyzing supersaturated designs
+  with a block orthogonal structure,” Communications in Statistics—Simulation and Com-
+  putation®, 37, 290–300.
+
+Li, W. and Nachtsheim, C. J. (2000), “Model-Robust Factorial Designs,” Technometrics, 42,
+  345–352.
+
+Li, X., Sudarsanam, N., and Frey, D. D. (2006), “Regularities in data from factorial experi-
+  ments,” Complexity, 11, 32–45.
+
+Loeppky, J. L., Sitter, R. R., and Tang, B. (2007), “Nonregular designs with desirable
+  projection properties,” Technometrics, 49, 454–467.
+
+Lounici, K. (2008), “Sup-norm convergence rate and sign concentration property of lasso
+  and Dantzig estimators,” Electronic Journal of statistics, 2, 90–102.
+
+
+
+
+                                             26
+Marley, C. J. and Woods, D. C. (2010), “A comparison of design and model selection methods
+  for supersaturated experiments,” Computational Statistics and Data Analysis, 54, 3158–
+  3167.
+
+Mee, R. (2009), A Comprehensive Guide to Factorial Two-Level Experimentation, Springer.
+
+Mee, R. W., Schoen, E. D., and Edwards, D. J. (2017), “Selecting an orthogonal or
+  nonorthogonal two-level design for screening,” Technometrics, 59, 305–318.
+
+Meinshausen, N., Rocha, G., and Yu, B. (2007), “Discussion: A tale of three cousins: lasso,
+  L2Boosting and Dantzig,” The Annals of Statistics, 35, 2373–2384.
+
+Ockuly, R. A., Weese, M. L., Smucker, B. J., Edwards, D. J., and Chang, L. (2017), “Re-
+  sponse surface experiments: A meta-analysis,” Chemometrics and Intelligent Laboratory
+  Systems, 164, 64–75.
+
+Phoa, F. K., Pan, Y.-H., and Xu, H. (2009), “Analysis of supersaturated designs via the
+  Dantzig selector,” Journal of Statistical Planning and Inference, 139, 2362–2372.
+
+Phoa, F. K. H. (2013), “The Stepwise Response Refinement Screener (SRRS),” Statistica
+  Sinica.
+
+Singh, R. and Stufken, J. (2022), “Selection of two-level supersaturated designs for main
+  effects models,” Technometrics, 1–20.
+
+Smucker, B. J., Del Castillo, E., and Rosenberger, J. L. (2012), “Model-robust two-level
+  designs using coordinate exchange algorithms and a maximin criterion,” Technometrics,
+  54, 367–375.
+
+Smucker, B. J. and Drew, N. M. (2015), “Approximate model spaces for model-robust ex-
+  periment design,” Technometrics, 57, 54–63.
+
+
+                                            27
+Stallrich, J. W., Young, K., Weese, M. L., Smucker, B. J., and Edwards, D. J. (2023), “Op-
+  timal Supersaturated Designs for Lasso Sign Recovery,” arXiv preprint arXiv:2303.16843.
+
+Tibshirani, R. (1996), “Regression shrinkage and selection via the lasso,” Journal of the
+  Royal Statistical Society: Series B (Methodological), 58, 267–288.
+
+Tibshirani, R. J. (2012), “The lasso problem and uniqueness,” Electronic Journal of Statis-
+  tics, 7, 1456–1490.
+
+Vazquez, A. R., Schoen, E. D., and Goos, P. (2021), “A mixed integer optimization approach
+  for model selection in screening experiments,” Journal of Quality Technology, 53, 243–266.
+
+Weese, M. L., Edwards, D. J., and Smucker, B. J. (2017), “Powerful supersaturated designs
+  when effect directions are known,” Journal of Quality Technology, 49, 265–277.
+
+Weese, M. L., Ramsey, P. J., and Montgomery, D. C. (2018), “Analysis of definitive screening
+  designs: Screening vs prediction,” Applied Stochastic Models in Business and Industry, 34,
+  244–255.
+
+Weese, M. L., Smucker, B. J., and Edwards, D. J. (2015), “Searching for powerful supersat-
+  urated designs,” Journal of Quality Technology, 47, 66–84.
+
+Weese, M. L., Stallrich, J. W., Smucker, B. J., and Edwards, D. J. (2021), “Strategies for su-
+  persaturated screening: group orthogonal and constrained Var(s) designs,” Technometrics,
+  63, 443–455.
+
+Westfall, P. H., Young, S. S., and Lin, D. K. (1998), “Forward selection error control in the
+  analysis of supersaturated designs,” Statistica Sinica, 101–117.
+
+Zhang, Q.-Z., Zhang, R.-C., and Liu, M.-Q. (2007), “A method for screening active effects
+  in supersaturated designs,” Journal of Statistical Planning and Inference, 137, 2068–2079.
+
+
+                                             28
+Zhao, P. and Yu, B. (2006), “On model selection consistency of lasso,” The Journal of
+  Machine Learning Research, 7, 2541–2563.
+
+
+
+
+                                         29
+                                           SUPPLEMENTARY MATERIAL
+
+
+6              Inconsistencies in SSDs
+This section provides the remainder of the simulations scenarios based on Marley and Woods (2010) from
+Section 2.1 in the main paper.
+
+
+               Data Driven        Data Driven        Sigma            Sigma                             Data Driven           Data Driven        Sigma            Sigma
+
+                  AICc                BIC             AICc              BIC                                   AICc                BIC             AICc              BIC
+
+         1.0                                                                                    0.15
+
+
+
+
+         0.9                                                                                    0.10
+
+
+
+ Power                                                                                 Type 1
+
+         0.8                                                                                    0.05
+
+
+
+
+         0.7                                                                                    0.00
+
+
+                 fine    coarse     fine    coarse   fine    coarse   fine    coarse                         fine    coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                              BayesD                   Es2
+
+
+Figure 11: Comparison of (12, 26) Bayesian D-optimal and balanced E(s2 ) SSD for 3 active
+effects with an effect magnitude of 5 for unknown signs.
+
+
+
+
+                                                                              30
+               Data Driven        Data Driven        Sigma            Sigma                             Data Driven           Data Driven        Sigma            Sigma
+
+                  AICc                BIC             AICc              BIC                                   AICc                BIC             AICc              BIC
+
+         1.0                                                                                    0.25
+
+
+
+
+                                                                                                0.20
+
+
+         0.9
+                                                                                                0.15
+
+
+ Power                                                                                 Type 1
+                                                                                                0.10
+         0.8
+
+
+                                                                                                0.05
+
+
+
+
+         0.7                                                                                    0.00
+
+
+                 fine    coarse     fine    coarse   fine    coarse   fine    coarse                         fine    coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                              BayesD                   Es2
+
+
+Figure 12: Comparison of (12, 26) Bayesian D-optimal and balanced E(s2 ) SSD for 4 active
+effects with an effect magnitude of 4 for unknown signs.
+
+
+
+
+                                                                              31
+               Data Driven        Data Driven        Sigma            Sigma                           Data Driven           Data Driven        Sigma            Sigma
+
+                  AICc                BIC             AICc              BIC                                 AICc                BIC             AICc              BIC
+
+         0.6                                                                                    0.3
+
+
+
+
+         0.5
+                                                                                                0.2
+
+
+
+ Power                                                                                 Type 1
+         0.4
+
+                                                                                                0.1
+
+
+
+         0.3
+
+
+                                                                                                0.0
+
+
+                 fine    coarse     fine    coarse   fine    coarse   fine    coarse                    fine       coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                              BayesD                  Es2
+
+
+Figure 13: Comparison of (12, 26) Bayesian D-optimal and balanced E(s2 ) SSD for 9 active
+effects with an effect magnitude of the following values: 10,8,5,3 and the rest 2 for unknown
+signs.
+
+
+
+
+                                                                              32
+                Data Driven        Data Driven        Sigma            Sigma                             Data Driven        Data Driven        Sigma            Sigma
+
+                   AICc                BIC             AICc              BIC                                AICc                BIC             AICc              BIC
+
+         1.00                                                                                    0.100
+
+
+
+
+                                                                                                 0.075
+
+         0.95
+
+
+
+ Power                                                                                  Type 1
+                                                                                                 0.050
+
+
+
+         0.90
+
+                                                                                                 0.025
+
+
+
+
+         0.85                                                                                    0.000
+
+
+                  fine    coarse     fine    coarse   fine    coarse   fine    coarse                      fine    coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                               BayesD                Es2
+
+
+Figure 14: Comparison of (14, 24) Bayesian D-optimal and balanced E(s2 ) SSD for 3 active
+effects with an effect magnitude of 5 for both known and unknown signs.
+
+
+
+
+                                                                               33
+                Data Driven        Data Driven        Sigma            Sigma                             Data Driven           Data Driven        Sigma            Sigma
+
+                   AICc                BIC             AICc              BIC                                   AICc                BIC             AICc              BIC
+
+         1.00                                                                                    0.15
+
+
+
+
+         0.95                                                                                    0.10
+
+
+
+ Power                                                                                  Type 1
+
+         0.90                                                                                    0.05
+
+
+
+
+         0.85                                                                                    0.00
+
+
+                  fine    coarse     fine    coarse   fine    coarse   fine    coarse                         fine    coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                               BayesD                   Es2
+
+
+Figure 15: Comparison of (14, 24) Bayesian D-optimal and balanced E(s2 ) SSD for 4 active
+effects with an effect magnitude of 4 for both known and unknown signs.
+
+
+
+
+                                                                               34
+               Data Driven        Data Driven        Sigma            Sigma                           Data Driven           Data Driven        Sigma            Sigma
+
+                  AICc                BIC             AICc              BIC                                 AICc                BIC             AICc              BIC
+
+         0.8                                                                                    0.3
+
+
+
+
+         0.7
+
+                                                                                                0.2
+
+
+
+ Power                                                                                 Type 1
+         0.6
+
+
+
+                                                                                                0.1
+
+         0.5
+
+
+
+
+         0.4                                                                                    0.0
+
+
+                 fine    coarse     fine    coarse   fine    coarse   fine    coarse                    fine       coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                              BayesD                  Es2
+
+
+Figure 16: Comparison of (14, 24) Bayesian D-optimal and balanced E(s2 ) SSD for 9 active
+effects with an effect magnitude of the following values: 10,8,5,3 and the rest 2 for unknown
+signs.
+
+
+
+
+                                                                              35
+                Data Driven        Data Driven        Sigma            Sigma                             Data Driven        Data Driven        Sigma            Sigma
+
+                   AICc                BIC             AICc              BIC                                AICc                BIC             AICc              BIC
+
+         1.00                                                                                    0.100
+
+
+
+
+                                                                                                 0.075
+
+         0.95
+
+
+
+ Power                                                                                  Type 1
+                                                                                                 0.050
+
+
+
+         0.90
+
+                                                                                                 0.025
+
+
+
+
+         0.85                                                                                    0.000
+
+
+                  fine    coarse     fine    coarse   fine    coarse   fine    coarse                      fine    coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                               BayesD                Es2
+
+
+Figure 17: Comparison of (18, 22) Bayesian D-optimal and balanced E(s2 ) SSD for 3 active
+effects with an effect magnitude of 5 for unknown signs.
+
+
+
+
+                                                                               36
+                Data Driven        Data Driven        Sigma            Sigma                             Data Driven           Data Driven        Sigma            Sigma
+
+                   AICc                BIC             AICc              BIC                                   AICc                BIC             AICc              BIC
+
+         1.00                                                                                    0.15
+
+
+
+
+         0.95                                                                                    0.10
+
+
+
+ Power                                                                                  Type 1
+
+         0.90                                                                                    0.05
+
+
+
+
+         0.85                                                                                    0.00
+
+
+                  fine    coarse     fine    coarse   fine    coarse   fine    coarse                         fine    coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                               BayesD                   Es2
+
+
+Figure 18: Comparison of (18, 22) Bayesian D-optimal and balanced E(s2 ) SSD for 4 active
+effects with an effect magnitude of 4 for both unknown signs.
+
+
+
+
+                                                                               37
+                Data Driven        Data Driven        Sigma            Sigma                             Data Driven           Data Driven        Sigma            Sigma
+
+                   AICc                BIC             AICc              BIC                                   AICc                BIC             AICc              BIC
+
+         1.00                                                                                    0.25
+
+
+
+
+                                                                                                 0.20
+         0.95
+
+
+                                                                                                 0.15
+
+
+ Power                                                                                  Type 1
+         0.90
+
+                                                                                                 0.10
+
+
+         0.85
+                                                                                                 0.05
+
+
+
+
+         0.80                                                                                    0.00
+
+
+                  fine    coarse     fine    coarse   fine    coarse   fine    coarse                         fine    coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                               BayesD                   Es2
+
+
+Figure 19: Comparison of (18, 22) Bayesian D-optimal and balanced E(s2 ) SSD for 6 active
+effects with an effect magnitude of 3 for both unknown signs.
+
+
+
+
+                                                                               38
+               Data Driven        Data Driven        Sigma            Sigma                             Data Driven           Data Driven        Sigma            Sigma
+
+                  AICc                BIC             AICc              BIC                                   AICc                BIC             AICc              BIC
+
+         1.0                                                                                    0.15
+
+
+
+
+         0.9
+
+
+                                                                                                0.10
+         0.8
+
+
+ Power                                                                                 Type 1
+         0.7
+                                                                                                0.05
+
+
+         0.6
+
+
+
+
+         0.5                                                                                    0.00
+
+
+                 fine    coarse     fine    coarse   fine    coarse   fine    coarse                         fine    coarse     fine    coarse   fine    coarse   fine    coarse
+
+
+                                                                              BayesD                   Es2
+
+
+Figure 20: Comparison of (18, 22) Bayesian D-optimal and balanced E(s2 ) SSD for 9 active
+effects with an effect magnitude of the following values: 10,8,5,3 and the rest 2 for unknown
+signs.
+
+
+
+7              Inconsistencies in Larger Screening Designs
+This section contains the remainder of the simulations from Mee et al. (2017) not shown in Section 2.2 of
+the main paper. These are the complete simulation results for the n = 20, k = 7 designs.
+
+
+
+
+                                                                              39
+                   AICc        AICc               BIC             BIC
+
+                   fine       coarse              fine           coarse
+            1.00
+
+
+            0.75
+
+
+            0.50                                                            2
+
+
+            0.25
+                                                                                       20.7.Bayes−D
+
+
+
+
+ ME Power
+                                                                                       20.7.MEPI
+            0.00
+                                                                                       20.7.18
+            1.00
+                                                                                       20.7.1
+
+            0.75                                                                       20.7.PEC
+
+
+            0.50                                                            4
+
+
+            0.25
+
+
+            0.00
+                   1
+                   2
+                   3
+                   4
+                   5
+                   6      1
+                          2
+                          3
+                          4
+                          5
+                          6                1
+                                           2
+                                           3
+                                           4
+                                           5
+                                           6                 1
+                                                             2
+                                                             3
+                                                             4
+                                                             5
+                                                             6
+                   7      7                7                 7
+                                 Number Active 2FIs
+
+Figure 21: Power of the main effects for 2 or 4 (top row and bottom row, respectively) active
+two-factor interactions with true effects equivalent in magnitude to the main effects.
+
+
+
+
+                                             40
+                 AICc         AICc                BIC            BIC
+
+                 fine         coarse              fine          coarse
+          1.00
+
+
+          0.75
+
+
+          0.50                                                             2
+
+
+          0.25
+                                                                                     20.7.Bayes−D
+
+
+
+ ME FDR
+                                                                                     20.7.MEPI
+          0.00
+                                                                                     20.7.18
+          1.00
+                                                                                     20.7.1
+
+          0.75                                                                       20.7.PEC
+
+
+          0.50                                                             4
+
+
+          0.25
+
+
+          0.00
+                 1
+                 2
+                 3
+                 4
+                 5
+                 6       1
+                         2
+                         3
+                         4
+                         5
+                         6                 1
+                                           2
+                                           3
+                                           4
+                                           5
+                                           6               1
+                                                           2
+                                                           3
+                                                           4
+                                                           5
+                                                           6
+                 7       7                 7               7
+                                 Number Active 2FIs
+
+Figure 22: FDR of the main effects for 2 or 4 (top row and bottom row, respectively) active
+two-factor interactions with true effects equivalent in magnitude to the main effects. This
+figure corresponds to Figure 6 in the main document.
+
+
+
+
+                                             41
+                  AICc         AICc               BIC            BIC
+
+                  fine        coarse              fine          coarse
+           1.00
+
+
+           0.75
+
+
+           0.50                                                             2
+
+
+           0.25
+                                                                                      20.7.Bayes−D
+
+
+
+ 2FI FDR
+                                                                                      20.7.MEPI
+           0.00
+                                                                                      20.7.18
+           1.00
+                                                                                      20.7.1
+
+           0.75                                                                       20.7.PEC
+
+
+           0.50                                                             4
+
+
+           0.25
+
+
+           0.00
+                  1
+                  2
+                  3
+                  4
+                  5
+                  6       1
+                          2
+                          3
+                          4
+                          5
+                          6                1
+                                           2
+                                           3
+                                           4
+                                           5
+                                           6                1
+                                                            2
+                                                            3
+                                                            4
+                                                            5
+                                                            6
+                  7       7                7                7
+                                 Number Active 2FIs
+
+Figure 23: FDR of the two-factor interactions for 2 or 4 (top row and bottom row, respec-
+tively) active two-factor interactions with true effects equivalent in magnitude to the main
+effects. This figure corresponds to Figure 5 in the main document.
+
+
+
+
+                                             42
+                   AICc        AICc               BIC             BIC
+
+                   fine       coarse              fine           coarse
+            1.00
+
+
+            0.75
+
+
+            0.50                                                            2
+
+
+            0.25
+                                                                                       20.7.Bayes−D
+
+
+
+
+ ME Power
+                                                                                       20.7.MEPI
+            0.00
+                                                                                       20.7.18
+            1.00
+                                                                                       20.7.1
+
+            0.75                                                                       20.7.PEC
+
+
+            0.50                                                            4
+
+
+            0.25
+
+
+            0.00
+                   1
+                   2
+                   3
+                   4
+                   5
+                   6      1
+                          2
+                          3
+                          4
+                          5
+                          6                1
+                                           2
+                                           3
+                                           4
+                                           5
+                                           6                 1
+                                                             2
+                                                             3
+                                                             4
+                                                             5
+                                                             6
+                   7      7                7                 7
+                                 Number Active 2FIs
+
+Figure 24: Power of the main effects for 2 or 4 (top row and bottom row, respectively) active
+two-factor interactions with true effects smaller in magnitude to the main effects.
+
+
+
+
+                                             43
+                 AICc         AICc                BIC            BIC
+
+                 fine         coarse              fine          coarse
+          1.00
+
+
+          0.75
+
+
+          0.50                                                             2
+
+
+          0.25
+                                                                                     20.7.Bayes−D
+
+
+
+ ME FDR
+                                                                                     20.7.MEPI
+          0.00
+                                                                                     20.7.18
+          1.00
+                                                                                     20.7.1
+
+          0.75                                                                       20.7.PEC
+
+
+          0.50                                                             4
+
+
+          0.25
+
+
+          0.00
+                 1
+                 2
+                 3
+                 4
+                 5
+                 6       1
+                         2
+                         3
+                         4
+                         5
+                         6                 1
+                                           2
+                                           3
+                                           4
+                                           5
+                                           6               1
+                                                           2
+                                                           3
+                                                           4
+                                                           5
+                                                           6
+                 7       7                 7               7
+                                 Number Active 2FIs
+
+Figure 25: FDR of the main effects for 2 or 4 (top row and bottom row, respectively) active
+two-factor interactions with true effects smaller in magnitude to the main effects.
+
+
+
+
+                                             44
+                  AICc                 AICc                  BIC                  BIC
+
+                  fine                coarse                 fine               coarse
+           1.00
+
+
+           0.75
+
+
+           0.50                                                                               2
+
+
+           0.25
+                                                                                                     20.7.Bayes−D
+
+
+
+ 2FI FDR
+                                                                                                     20.7.MEPI
+           0.00
+                                                                                                     20.7.18
+           1.00
+                                                                                                     20.7.1
+
+           0.75                                                                                      20.7.PEC
+
+
+           0.50                                                                               4
+
+
+           0.25
+
+
+           0.00
+                  1
+                  2
+                  3
+                  4
+                  5
+                  6             1
+                                2
+                                3
+                                4
+                                5
+                                6                     1
+                                                      2
+                                                      3
+                                                      4
+                                                      5
+                                                      6                    1
+                                                                           2
+                                                                           3
+                                                                           4
+                                                                           5
+                                                                           6
+                  7             7                     7                    7
+                                         Number Active 2FIs
+
+Figure 26: FDR of the two-factor interactions for 2 or 4 (top row and bottom row, re-
+spectively) active two-factor interactions with true effects smaller in magnitude to the main
+effects.
+
+
+
+8            Lasso Sign Recovery Probabilities
+Sign recovery at a fixed λ involves two events of normal random variables, denoted Iλ and Sλ . The Iλ event
+represents the event of estimating all inactive effects as 0. The Sλ event represents the event of selecting
+all truly active factors and estimating them with the correct sign. Both events must occur for sign recovery
+under the lasso. These two events are independent and therefore the probability of sign recovery under the
+lasso for a fixed X and β with sign vector z is defined as:
+
+
+                   ϕλ (X|β) = P (ẑ = z|X, β) = P [Iλ ∩ Sλ |X, β] = P [Iλ |X, z] × P [Sλ |X, β],         (1)
+
+
+
+
+                                                        45
+where ẑ is the estimated sign vector. The computation of this probability requires knowledge of λ and β
+which also implicitly requires knowledge of the set of active effects, A. To handle these issues, Stallrich et al.
+(2023) evaluate ϕλ over all possible active sets of size a (or, in some cases, a subset of all possible active
+sets) and sign vectors for a range of λ values. To make the computations even faster, they assumed the
+active effects had a constant absolute magnitude of β, being a user-specified minimum signal-to-noise ratio
+to detect.
+    If the sign vector of the active effects is assumed to be known, then without loss of generality we may
+assume the signs are all positive and Φλ (X|a, β) is defined to be the average of ϕλ (X|β) over all possible
+active sets of size a. Alternatively, when one is unwilling to make the assumption of known effect signs,
+Φ±                                                                                                    a
+ λ (X|a, β) is calculated as the average of ϕλ (X|β) over all possible active sets of size a and all 2 possible
+
+sign vectors for the active factors. Stallrich et al. (2023) do provide some results that halve the number of
+sign vectors (2a−1 )) that need ot be considered in the computation.
+
+
+
+
+9      Comparing Larger Screening Designs via Sign Prob-
+
+       abilities
+The graphs below show the sign recovery probabilities for the entire set of possible two-factor interactions
+from the scenarios presented in Mee et al. (2017).
+
+
+
+
+                                                       46
+                      1         2         3         4           5       6         7
+            1.00
+
+
+            0.75
+
+
+            0.50                                                                         2
+
+
+            0.25
+                                                                                             20.7.Bayes−D
+
+                                                                                             20.7.MEPI
+
+    ME φλ
+            0.00
+            1.00                                                                             20.7.18
+
+                                                                                             20.7.1
+
+            0.75                                                                             20.7.PEC
+
+
+            0.50                                                                         4
+
+
+            0.25
+
+
+            0.00
+                   −4 −2 0   −4 −2 0   −4 −2 0   −4 −2 0   −4 −2 0   −4 −2 0   −4 −2 0
+                                                  log(λ)
+
+
+Figure 27: Comparison of n = 20, k = 7 designs using the simulated lasso sign recovery
+probability for the main effects only. The sign recovery probability for main effects is com-
+pared for 2 and 4 active main effects and 1-7 active two-factor interactions (columns in the
+figure).
+
+
+
+
+                                                           47
+                       1         2         3         4           5       6         7
+
+
+
+
+             0.10
+
+                                                                                          2
+
+             0.05
+
+                                                                                              20.7.Bayes−D
+
+                                                                                              20.7.MEPI
+
+    2FI φλ
+             0.00
+                                                                                              20.7.18
+
+                                                                                              20.7.1
+
+                                                                                              20.7.PEC
+             0.10
+
+                                                                                          4
+
+             0.05
+
+
+
+
+             0.00
+                    −4 −2 0   −4 −2 0   −4 −2 0   −4 −2 0   −4 −2 0   −4 −2 0   −4 −2 0
+                                                   log(λ)
+
+
+Figure 28: Comparison of n = 20, k = 7 designs using the simulated lasso sign recovery
+probability for the two factor interactions only. The sign recovery probability for two factor
+interactions is compared for 2 and 4 active main effects (rows in the figure) and 1-7 active
+two-factor interactions (columns in the figure).
+
+
+
+
+                                                            48
+

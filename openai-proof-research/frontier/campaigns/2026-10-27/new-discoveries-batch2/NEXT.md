@@ -1,6 +1,6 @@
 # Current continuation — 29 October 2026
 
-Accepted **7/30 additional, 37/60 total**; next outcome38. Outcome37 is the
+Accepted **8/30 additional, 38/60 total**; next outcome39. Outcome37 is the
 57-cell universal fixed-11-omino container. No new external posting or MathDB action.
 
 Bessel-ratio full ordinary proof is EXCLUDED from discovery credit as a routine
@@ -42,7 +42,7 @@ Root fresh extracted source refutation PASS10 modules/136 actual declarations,
 standard-three axioms only, no residual premises. Lower bound, actual disjoint
 charges and source vertex transport are closed. Upper witness completed with
 117-declaration worker replay; root inspected actual sources and verified archive.
-Combined exact minimum, manuscript and audited packet delegated. Credit0. See
+Combined exact minimum and packet now ACCEPTED as outcome38: root and independent final replay14 modules/167 declarations, four-page paper and ZIP reproduce byte-identically. See root-edge-irregulator-acceptance-r1/ACCEPTANCE.json. Earlier component record:
 root-edge-irregulator-source-replay-r2/ADOPTION.json.
 Adoption: root-edge-irregulator-formal-investment-r1/ADOPTION.json. Root public Git reads
 recovered complete current Omega70af5407/OpenAI7ef5c0cc inventories, recorded in
@@ -64,9 +64,8 @@ r78 cluster-scattering C4 remains unresolved: uniform factorial divisibility
 missing, bounded cancellation evidence only; current Omega advanced, freshnessHOLD.
 r79 lasso yields an exact probability separation beating every orthogonal tuning
 parameter; source/general wording, closest-body and substantive holds remain.
-Root rational KKT/Schur/cubic bounds pass; independent review pending, credit0.
-Active Sol high/default: edge-irregulator manuscript/packet r1,
-lasso preliminary review r1 and fresh finite/arithmetic discovery r80. r74 sharp Chernoff curvature remains unresolved;
+Root rational KKT/Schur/cubic bounds and independent ordinary review pass; source scope, published/closest bodies, classical eligibility and current prior clearance remain HOLD, credit0. No Lean investment. See root-lasso-review-adoption-r1/ADOPTION.json.
+Active Sol high/default: lasso source-scope review r2, fresh finite/arithmetic discovery r80 and fresh analysis/probability discovery r81. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.

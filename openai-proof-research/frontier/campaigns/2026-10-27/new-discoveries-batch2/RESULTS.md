@@ -1,7 +1,7 @@
 # Additional discoveries — current accepted results
 
-Accepted additional outcomes: **7/30**. Previous published batch: **30**, unchanged.
-Total accepted outcomes: **37/60**. Last updated 2026-10-29 UTC.
+Accepted additional outcomes: **8/30**. Previous published batch: **30**, unchanged.
+Total accepted outcomes: **38/60**. Last updated 2026-10-29 UTC.
 
 | Global | Result | Certificate | Paper and acceptance |
 |---|---|---|---|
@@ -14,6 +14,8 @@ Total accepted outcomes: **37/60**. Last updated 2026-10-29 UTC.
 |36|Negative H-eigenpair for the order-four reflected Steiner tensor on K1,29; full universal-positivity refutation|6 mathematical modules,118 declarations, final extracted strict replay|[paper](candidates/reflected-steiner/paper.pdf), [decision](lanes/root-steiner-reflection-acceptance-r1/ACCEPTANCE.json)|
 
 |37|Connected 57-cell universal container for every fixed 11-omino; refutes OEIS A395495 formula|2,022 mathematical modules,5,924 declarations; root fresh replay bound to identical final sources|[paper](candidates/polyomino57/paper.pdf), [decision](lanes/root-polyomino57-acceptance-r1/ACCEPTANCE.json)|
+
+|38|Connected graphs with 8t edges and exact edge-irregulator minimum 3t; refutes the universal m/3+c bound|14 mathematical modules,167 declarations; root and independent extracted replay|[paper](candidates/edge-irregulator/paper.pdf), [decision](lanes/root-edge-irregulator-acceptance-r1/ACCEPTANCE.json)|
 
 Each acceptance has independent adversarial review, exact primary-source scope,
 bounded novelty/subsumption screening and deterministic paper/Lean proof ZIP.
