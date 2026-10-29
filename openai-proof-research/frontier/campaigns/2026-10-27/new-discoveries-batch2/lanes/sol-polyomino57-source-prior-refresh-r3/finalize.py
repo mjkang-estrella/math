@@ -1,0 +1,24 @@
+import json,hashlib,datetime,resource,signal
+from pathlib import Path
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,)*2);resource.setrlimit(resource.RLIMIT_CPU,(210,210));signal.alarm(220)
+D=Path(__file__).resolve().parent
+p=D/'review.md';s=p.read_text().replace('13:56:41–13:56:45 UTC','13:56 UTC').replace('The campaign explicitly rejects routine finite corrections and mere formalization; sunk certification effort and quota needs have no evidentiary weight.','The campaign explicitly excludes routine corollaries, parameter instances, endpoint corrections and mere formalization. My application of that standard to this finite optimization result is an eligibility interpretation, not a quoted automatic ban on computational counterexamples; sunk certification effort and quota needs have no evidentiary weight.');p.write_text(s)
+http=json.loads((D/'http.json').read_text());body=json.loads((D/'body-http.json').read_text());heads=json.loads((D/'heads.json').read_text())
+prov=dict(date_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),scope='source/prior/substantive review only',source='https://oeis.org/A395495',candidate_checkpoint_utc='2026-10-29T09:47:28.803287Z',registry_heads=heads,early_web_failures=[dict(url='https://oeis.org/history?seq=A395495',result='not accessible via web tool; no fresh history success',exact_time=None),dict(url='https://github.com/pexley-math/oeis-A395495',result='404 Not Found via web tool; author code unread',exact_time=None)],web_body_files=sorted(p.name for p in D.glob('web-*.json')),web_hash_semantics='Serialized tool-returned text, not origin HTTP bytes. Early initial web response not serialized; source recaptured; failures reported honestly.',http_receipts=['http.json','body-http.json'],new_http_failures=[r for r in http+body if 'error' in r],originals_manifest='hash-before.json',integrity_after='hash-after.json',frozen_packet_audit='packet-audit.json',replay_performed=False,manuscript_reviewed=False,external_mutations=False,subagents=False,git=False,resource_wrapper='run.py',limits=dict(address_space_bytes=536870912,cpu_seconds=210,wrapper_alarm_seconds=230,child_alarm_seconds_max=220,group_rss_cap_bytes=2800*1024**2,sample_seconds=.045,group_wall_kill_seconds=225,blas_threads=1))
+(D/'provenance.json').write_text(json.dumps(prov,indent=2)+'\n')
+final=dict(status='REVIEW_COMPLETE_ROOT_DECISION_PENDING',recommendation='EXCLUDE_FOR_SUBSTANTIVE_DISCOVERY_CREDIT_ON_PRESENT_SCOPE',source='CONFIRMED_WITH_HISTORY_AND_CODE_LIMITS',math_scope='a(11)<=57<58; no optimality or first-failure claim',novelty='NO_MATCH_LOCATED_BOUNDED; NO_PRIORITY_GUARANTEE',current_named_registry_trees='COMPLETE_UNTRUNCATED_AT_RECORDED_HEADS',author_code='UNAVAILABLE_404_RETAINED',fresh_history='UNAVAILABLE_RETAINED',formal='FROZEN_RECORD_BYTE_AUDIT_ONLY_NO_NEW_REPLAY',manuscript='OUT_OF_SCOPE_PARALLEL_PENDING',credit=0,acceptance=False,counts_unchanged=True)
+(D/'FINAL-RESULT.json').write_text(json.dumps(final,indent=2)+'\n')
+(D/'SUMMARY.md').write_text('''# SUMMARY / FINAL-RESULT
+
+Independent recommendation: **EXCLUDE from substantive discovery credit on present scope**; root owns eligibility and acceptance. The exact n=11 refutation remains valid within the inherited proof scope. No full formal or manuscript PASS is issued here.
+
+Fresh complete untruncated registry trees replace r2's capped-update coverage: Omega dev 66967414930e220080efa1c07df890cc81a521fb, D5 12549 and Problems 1551; OpenAI preprints 13578; AIM 3541; Count 183. Actual L-polyomino and trace-map bodies do not subsume this problem. No matching public witness located, no priority guarantee.
+
+Current OEIS source fits translations-only, connected containers and holes. Author code remains 404; fresh history remains unavailable. Those residuals are retained. Recommendation rests on the strict substantive standard and the routine finite-optimization objection, not an assertion of prior publication or proof error.
+
+All 2023 frozen archive entries and 5924 reported declaration records checked, without Lean replay. See review.md, packet-audit.json, provenance.json, FINAL-RESULT.json, hash-before.json/hash-after.json and evidence-manifest.json. Reproduce locally with `python run.py audit_packet.py`, `python run.py screen.py`, `python run.py freeze.py after`. Only this lane written; no git, child agents or external mutations. Credit 0; counts unchanged.
+''')
+# Include bytes of all delivery evidence except this manifest and its in-flight run receipt.
+rows={str(p.relative_to(D)):dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(D.rglob('*')) if p.is_file() and p.name not in ['evidence-manifest.json','run-finalize.json']}
+(D/'evidence-manifest.json').write_text(json.dumps(rows,indent=2)+'\n')
+print('review_sha256',hashlib.sha256((D/'review.md').read_bytes()).hexdigest());print('evidence files',len(rows))
