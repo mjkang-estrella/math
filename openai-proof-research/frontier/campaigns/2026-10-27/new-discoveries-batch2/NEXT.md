@@ -1,30 +1,22 @@
 # Current continuation — 29 October 2026
 
-Accepted **7/30 additional, 37/60 total**. Outcome37 is the connected 57-cell
-container for every fixed 11-omino, proving a(11)<=57<58 and refuting OEIS A395495.
-No optimality or general asymptotic claim. Root acceptance:
-lanes/root-polyomino57-acceptance-r1/ACCEPTANCE.json.
-Independent final review, root fresh 2022-module/5924-record replay, final-source
-byte identity and final PDF/ZIP reproduction pass. Substantive dissent, current
-registry freshness gaps and resource-protocol qualifications remain explicit.
-No external publication, upload or MathDB change.
+Accepted **7/30 additional, 37/60 total**; next outcome38. Outcome37 is the
+57-cell universal fixed-11-omino container. No new external posting or MathDB action.
 
-Bessel-ratio literal series and generic one-crossing formal components are in
-separate Sol high/default lanes. Ordinary proof and provisional investment pass;
-novelty remains HOLD and credit0. Fresh r59 Ferrers-rook research completed
-unresolved, credit0; root verified29 source hashes and reran copied bounded checks.
-Fresh r60 research is active. Continue new full-scope
-research with up to three useful workers, no children, honoring all exclusions.
-Do not treat older pinned registry searches as complete current-head coverage.
+Bessel-ratio full ordinary proof is EXCLUDED from discovery credit as a routine
+classical comparison corollary after independent r2 review and root primary-body
+read. Negative orders and singular endpoint limits are covered by defining-series
+coefficients; no substantive residual estimate remains. Earlier INVEST judgment
+and contrary case retained. This is not a claim of a printed exact duplicate;
+current priority remains HOLD. Decision:
+lanes/root-bessel-ratio-final-disposition-r2/EXCLUSION.json.
+Root replay confirms7 literal modules/106 declarations and previously3 generic
+modules/31 declarations. Components preserved; no full source assembly or paper.
 
-Bessel series partial core adopted after root source-only replay:3 mathematical
-modules,61 actual declarations, byte-identical audit, standard3 only. Literal
-ODE/Wronskian/endpoints remain open and assigned to r2. No candidate credit.
-
-Generic Bessel one-crossing component adopted after root extracted replay:
-3 mathematical modules,31 actual declarations,17,360 dependency constants;
-all safety flags false,std3 only. Literal instantiation still open. Independent
-current-prior/classical-subsumption review r2 now active; credit0.
+r60 arbor Ehrhart remains unresolved, credit0, source/freshness holds retained.
+Three fresh Sol high/default research lanes r61 finite structures, r62 analysis,
+r63 arithmetic/algebra are active; no children. Keep exclusions and actual source
+scopes, and do not equate Blueprint markdown trees with actual Lean trees.
 
 ## Historical continuation notes
 
