@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r138 Heffernan–MacHale partition divisibility remains unresolved.
+Root verifies 45 manifest/26 scientific entries and reproduces the exact
+5,000-value controls byte-identically. The classical small-prime estimate
+leaves the all-n large-prime-power obstruction unproved; the earlier source
+search already covers two million. aa026-to-a19a registry paths are capped.
+See root-r138-handback. Sol r141 replaces r138; r139/r140 continue.
+Credit0; counts remain 9 additional /39 total.
+
+
 Frank ordinal attenuation is EXCLUDED from discovery credit after root
 adopts the independent complete one-sided conditional-regression/first-variation
 and monotone quantization bridge. Source and ordinary mathematics pass; both

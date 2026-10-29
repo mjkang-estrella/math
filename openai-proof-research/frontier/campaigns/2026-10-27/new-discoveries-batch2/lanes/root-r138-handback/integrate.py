@@ -1,0 +1,31 @@
+from pathlib import Path
+import hashlib,json,subprocess
+P=Path(__file__).resolve().parent;B=P.parents[1];repo=B.parents[4];S=P.parent/'sol-fresh-source-discovery-r138'
+def sha(p):
+ with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+for p,h in json.loads((S/'finalmanifest.json').read_text())['files'].items():assert sha(S/p)==h,p
+assert sha(P/'replay/checks.json')==sha(S/'checks.json')
+(P/'replay-receipt.json').write_text(json.dumps({'status':'PASS','copied_checker_replay':True,'byte_identical_results':True,'partition_entries':5001,'divisibility_cases':5000,'credit':0},indent=2)+'\n')
+intro='''r138 Heffernan–MacHale partition divisibility remains unresolved.
+Root verifies 45 manifest/26 scientific entries and reproduces the exact
+5,000-value controls byte-identically. The classical small-prime estimate
+leaves the all-n large-prime-power obstruction unproved; the earlier source
+search already covers two million. aa026-to-a19a registry paths are capped.
+See root-r138-handback. Sol r141 replaces r138; r139/r140 continue.
+Credit0; counts remain 9 additional /39 total.
+
+'''
+n=(B/'NEXT.md').read_text();assert 'r138 Heffernan–MacHale partition divisibility remains' not in n
+(B/'NEXT.md').write_text(n.replace('# Current continuation — 29 October 2026\n','# Current continuation — 29 October 2026\n\n'+intro,1))
+paths=[B/'NEXT.md'];bulk=[]
+for base in [P,S]:
+ for p in sorted(base.rglob('*')):
+  if not p.is_file() or '__pycache__' in p.parts or p.name=='commit-paths.txt' or p.suffix in {'.pyc','.olean','.ilean','.ir','.o','.so'}:continue
+  if p.stat().st_size>10485760:bulk.append({'path':str(p.relative_to(repo)),'bytes':p.stat().st_size,'sha256':sha(p)})
+  else:paths.append(p)
+bp=P/'unstaged-bulk-evidence.json';bp.write_text(json.dumps(bulk,indent=2)+'\n');paths.append(bp)
+ps=P/'commit-paths.txt';ps.write_text(''.join(str(p.relative_to(repo))+'\n' for p in sorted(set(paths))))
+git=['git','-c','core.packedGitWindowSize=16m','-c','core.packedGitLimit=64m','-c','index.threads=1','-c','core.preloadIndex=false','-c','gc.auto=0']
+subprocess.run(git+['add','-f','--pathspec-from-file='+str(ps)],cwd=repo,check=True)
+subprocess.run(git+['commit','-m','Record unresolved partition divisibility and exact valuation controls','--pathspec-from-file='+str(ps)],cwd=repo,check=True,stdout=subprocess.DEVNULL)
+subprocess.run(git+['log','-1','--format=%h %s'],cwd=repo,check=True)
