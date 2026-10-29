@@ -1,4 +1,27 @@
-# Current checkpoint — complete literal Jacobi theorem; final packet pending
+# Current checkpoint — Jacobi accepted as outcome 33
+
+The full shifted denominator law is accepted as ONE outcome after independent
+final review and root replay of the final post-review archive. All 35 mathematical
+modules and 1,041 actual-origin declarations pass; only the three permitted axioms.
+The six-page paper, deterministic packet and archive-bound decision are under
+candidates/jacobi-shifted-denominator and lanes/root-jacobi-acceptance-r1.
+Counts: **3/30 additional, 33/60 total**. First thirty and outcomes 31/32 unchanged.
+Original-variable arithmetic, the known binomial valuation and helpers receive
+no extra credit. No analytic phase identification or worldwide priority claim.
+
+Next independent work: the full fractional-exponent Erdos-Lax Conjecture 2,
+arXiv2309.02047v2 / MathDB359807. Root lane root-erdos-lax-r1 records an exact
+reduction to min exponent 1 and a quadratic falsifier of a local proof shortcut.
+The full norm inequality remains open; numerical probes are not proofs. Actual
+published article body is still unread: public theses contain introductions only.
+Use Sol high/default for a focused new lane; Karp and BBK remain asynchronous.
+Do not poll or duplicate those running tasks.
+
+Earlier checkpoints below are historical and do not describe current gaps.
+
+---
+
+# Historical checkpoint — complete literal Jacobi theorem; final packet pending
 
 The closed `JacobiShifted.source_claim : JacobiShifted.SourceClaim` is integrated
 at 4c7d134d30. It proves both the all-coefficient dyadic bound and sharpness for
