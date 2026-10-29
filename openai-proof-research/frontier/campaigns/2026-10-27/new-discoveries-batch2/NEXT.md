@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r122 TI-augmentation Conjecture6.1/7.4 remains unresolved. Root verifies49
+manifest entries/seven scientific hashes and replays2671 exhaustive comparisons,
+219 weak random samples, and three method obstructions. Fixed-I cost formula
+does not establish the universal n/6 bound. Whole r111–r113 historical exclusions
+omit scientific reports; no freshness clearance adopted. See root-r122-handback.
+Sol r125 replaces r122, instructed to skip generated caches rather than entire
+lanes. Fresh r123/r124 continue; counts unchanged9additional/39total.
+
+
 r121 adopted zero nominees: crown/polygon and W2 questions have public proofs;
 Zhao alternating-Motzkin root concavity is an old r87 screen, still incomplete.
 Root verifies66 manifest entries and replays72 finite inequalities/two recurrence
