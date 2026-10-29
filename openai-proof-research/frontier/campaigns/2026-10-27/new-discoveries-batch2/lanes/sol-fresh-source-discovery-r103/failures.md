@@ -1,0 +1,3 @@
+Initial audit.py run: MemoryError buffering `rg --files --hidden` output with check_output under unchanged helper_guard.py. guard exit1, sampled peak RSS248598528, wall0.441044s. Replaced buffering with streaming Popen stdout; caps unchanged. Initial script line is documented here; no failed result used as clearance.
+
+Exact-id regex in initial Fisher screens used a doubled raw-string backslash. Author and Fisher terms worked, but numeric ids were not reliably matched. Original scripts/results retained as initial-*; corrected supplemental screens rerun against the same frozen corpus. Original broad audit regex retained verbatim and its limitation superseded for exact ids by corrected Fisher audit.
