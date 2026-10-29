@@ -38,10 +38,11 @@ r70 supplies a complete ordinary connected edge-irregulator refutation: 8t edges
 and exactly3t deletions. Root charging proof and exact checks pass; independent
 review confirms ordinary math and scoped substantive PASS. Current-prior r2
 clears bounded novelty and publisher wording; root visually checked printedp356.
-Initial formal component replay passes five modules/89 declarations, but the
-unconditional source negation remains absent. Continuation split into global
-lower bound/source transport and explicit upper witness; credit0. See
-root-edge-irregulator-component-handback-r1/ADOPTION.json.
+Root fresh extracted source refutation PASS10 modules/136 actual declarations,
+standard-three axioms only, no residual premises. Lower bound, actual disjoint
+charges and source vertex transport are closed. Upper witness still running;
+paper/final review/acceptance remain. Credit0. See
+root-edge-irregulator-source-replay-r2/ADOPTION.json.
 Adoption: root-edge-irregulator-formal-investment-r1/ADOPTION.json. Root public Git reads
 recovered complete current Omega70af5407/OpenAI7ef5c0cc inventories, recorded in
 root-edge-irregulator-current-prior-r1/CURRENT-REGISTRIES.json. Old API freshness
@@ -58,8 +59,8 @@ comparison now passes; equality existence qualification retained. Root decision:
 root-silicosis-exclusion-r1/EXCLUSION.json. No Lean or manuscript investment.
 r77 PECK remains unresolved; root exact fiber-coupling obstruction checked,
 not a source counterexample. See root-fresh-source-r77-handback/ADOPTION.json.
-Active Sol high/default: edge-irregulator lower/source formal r2, upper-witness
-formal r2, and fresh source discovery r78. r74 sharp Chernoff curvature remains unresolved;
+Active Sol high/default: edge-irregulator upper-witness formal r2,
+fresh finite/algebra discovery r78 and fresh analytic discovery r79. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.
