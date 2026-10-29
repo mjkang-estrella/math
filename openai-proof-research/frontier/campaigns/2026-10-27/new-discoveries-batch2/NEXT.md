@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+r128/r129/r130 adopted zero nominees. Spectral saturation is public; domino
+quotient positivity and even-cycle lower bounds remain unproved. All three r129
+questions are old (Radon r47/r34 and unimodular Jensen r52). The r130 Galois,
+Ulam and ultrafilter questions remain unresolved. Root verifies 67/66/157
+manifest entries, replays twelve known constructions and short Ulam recursion;
+r129 receives documentary checks only. See root-r128-r129-handback decisions.
+Counts stay 9 additional / 39 total. Sol r131/r132/r133 replace completed slots,
+with lightweight original-report duplicate screening required before retrieval.
+
+
 r126/r127 adopted zero nominees. Wallis remainder, Szabó cutoff and centered
 residue progression leads have public proofs; the Gaussian quotient implication
 has a public refutation, leaving its broader classification unproved. Ferreira

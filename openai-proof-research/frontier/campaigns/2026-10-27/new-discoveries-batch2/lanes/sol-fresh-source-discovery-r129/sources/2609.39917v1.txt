@@ -1,0 +1,1284 @@
+
+Log-concavity and Approximate Counting for Totally Unimodular Polytopes
+ // Restore the saved color scheme preference, or
+ // enact the browser preference if "automatic", 
+ // without expecting DOM load to have completed.
+ //
+ // Also restore any saved readingmode and ToC display preferences.
+ function initializeReadingPreferences() {
+ let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+ if (saved_theme === "automatic") {
+ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+ saved_theme = "dark";
+ }
+ }
+ if (saved_theme == "dark") {
+ document.documentElement.setAttribute("data-theme", "dark");
+ } else {
+ document.documentElement.setAttribute("data-theme", "light");
+ }
+ const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+ if (tocDisplay) {
+ document.documentElement.setAttribute("data-toc-display", tocDisplay);
+ }
+ const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+ if (readingMode) {
+ document.documentElement.setAttribute("data-reading-mode", readingMode);
+ }
+ }
+ // Run as soon as JS starts, to minimize repainting
+ initializeReadingPreferences();
+ /* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+ the marker's display to know which way to toggle. The marker draws no box. */
+ .arxiv-html-header { display: contents; }
+ html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+ /* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+ icon by making its span a block). */
+ .arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+ /* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+ arXiv's own render as they are (the logo on the bar, the funder logos on their white
+ chips). Important: ar5iv's dark rules are unlayered, as specific as
+ :root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+ :is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+ .ds-site-header img { background-color: transparent !important; }
+ /* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+ were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+ header, the paper's bar (no site navigation, the paper's controls), takes the second and
+ stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+ The controls show their names. */
+ @media (min-width: 1280px) {
+ html { scroll-padding-top: 80px; }
+ .arxiv-html-site-chrome { display: contents; }
+ .arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+ .arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+ .arxiv-html-site-chrome .tool-icon { display: none; }
+ }
+ /* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+ readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+ bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+ over the header and the paper: it shows only while open, under the chrome, in its place in
+ the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+ inset; the theme gives it none, so it met the screen edges. */
+ @media (max-width: 1279px) {
+ .arxiv-html-site-chrome .tool-wide { display: none; }
+ .arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+ html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+ .ltx_page_navbar { position: absolute; top: auto; }
+ .arxiv-html-footer { padding-inline: 1rem; }
+ }
+Skip to main content
+ Report GitHub Issue
+ ×
+ Title:
+Content selection saved. Describe the issue below:
+ Description:
+ Submit without GitHub
+ Submit in GitHub
+ Why HTML?
+ Report Issue
+ Back to Abstract
+ Download PDF
+ Contents
+ Reading mode
+ Colour theme
+Abstract
+1 Introduction
+1.1 Our Results
+1.2 An Open Question
+1.3 Previous and Related Work
+1.4 AI Declaration
+Before the first draft.
+After the first draft.
+2 \LC VLC\LC Laurent polynomials
+2.1 Definition and capacity bounds
+2.2 Examples and properties
+3 Unimodular and Totally unimodular (TU) polytopes
+3.1 Mid point log-concavity for unimodular polytopes
+3.2 Solution Laurent polynomials of TU matrices
+4 Capacity bounds for lattice points of TU polytopes
+4.1 General capacity bounds for TU polytopes
+4.2 Special cases: non-negative partial row sums
+5 Efficiency of Approximation
+Reduction to \bm{b} 𝒃\bm{b} in the interior.
+Bounding box for the minimizer.
+Approximate evaluation.
+Approximate gradients.
+The algorithm.
+References
+ License: arXiv.org perpetual non-exclusive license
+arXiv:2609.39917v1 [math.CO] 30 Sep 2026
+Log-concavity and Approximate Counting for Totally Unimodular Polytopes
+Jonathan Leake
+Maryam Mohammadi Yekta
+September 2026
+Abstract
+We present a new lower bound on the number of lattice points of all totally unimodular polytopes, generalizing previous lower bounds on contingency tables, integer flows, and beyond. Our bound is based on the Gurvits capacity convex optimization problem, and thus our result implies an efficient deterministic algorithm for approximate counting of the lattice points up to an explicit exponential factor. We achieve our bounds by showing that the associated generating polynomials fit into a new general class of log-concave polynomials called \LC VLC\LC (“variable-wise log-concavity”). This also implies a conjecture of Ferroni and Higashitani on the evaluations of the Ehrhart polynomials of unimodular polytopes. The essential ingredient for these results is the resolution of Barvinok’s log-concavity conjecture for contingency tables on lines, which was proven using ChatGPT 6 Astra. We conjecture a generalization of Barvinok’s conjecture, which we believe will lead to stronger and more general bounds.
+1 Introduction
+Totally unimodular polytopes are integral polytopes defined by a totally unimodular constraint matrix; concretely, a convex polytope Q QQ is totally unimodular (TU) if there exists a totally unimodular matrix M MM (i.e., all minors are in \{-1,0,+1\} {−1,0,+1}\{-1,0,+1\}) and an integral vector \bm{b} 𝒃\bm{b} such that Q=\{\bm{y}\geq 0:M\bm{y}=\bm{b}\} Q={𝒚≥0:M​𝒚=𝒃}Q=\{\bm{y}\geq 0:M\bm{y}=\bm{b}\}. Such polytopes have a wide range of applications, with their lattice points often representing integer solutions to various combinatorial problems. These applications include job assignments, contingency tables, bipartite matchings, bipartite independent sets, network flows, routing configurations, and beyond.
+In this paper, we address two natural questions for such polytopes:
+1. 
+How can we estimate the number of lattice points of such a polytope Q QQ?
+2. 
+How does the number of lattice points of Q QQ vary with the choice of \bm{b} 𝒃\bm{b}?
+Answers to both of these questions arise by proving log-concavity properties of generating functions associated to totally unimodular polytopes.
+Given a totally unimodular polytope Q=\{\bm{y}\geq 0:M\bm{y}=\bm{b}\} Q={𝒚≥0:M​𝒚=𝒃}Q=\{\bm{y}\geq 0:M\bm{y}=\bm{b}\}, there is a natural generating function for its lattice points based on the choice of \bm{b} 𝒃\bm{b}. Concretely, if M MM is m\times n m×nm\times n and has columns \bm{a}_{1},\ldots,\bm{a}_{n} 𝒂1,…,𝒂n\bm{a}_{1},\ldots,\bm{a}_{n} then
+ P_{M}(\bm{x})=\prod_{j=1}^{n}\frac{1}{1-\bm{x}^{\bm{a}_{j}}} PM​(𝒙)=∏j=1n11−𝒙𝒂jP_{M}(\bm{x})=\prod_{j=1}^{n}\frac{1}{1-\bm{x}^{\bm{a}_{j}}}
+is a generating function with the property that the \bm{x}^{\bm{b}} 𝒙𝒃\bm{x}^{\bm{b}} coefficient of P_{M}(\bm{x}) PM​(𝒙)P_{M}(\bm{x}) is precisely the number of lattice points of Q QQ. Both of the above questions then become questions about P_{M} PMP_{M}: how can we estimate the coefficients of P_{M} PMP_{M}, and how can we understand how the coefficients of P_{M} PMP_{M} relate to one another?
+To address these questions, we prove that truncations of P_{M} PMP_{M} satisfy a certain natural log-concavity property called \LC VLC\LC. This property says that, after applying coefficient extractions and positive evaluations to all but one variable of P_{M} PMP_{M}, the coefficients of the remaining polynomial are log-concave. This generalizes various notions of log-concave polynomials (strongly log-concave [30], completely log-concave [2], Lorentzian [13], etc.) which have had widespread applications in mathematics and computer science.
+The fact that truncations of P_{M} PMP_{M} are \LC VLC\LC is then based on the underlying main technical result of the paper: that the coefficients of P_{M} PMP_{M} are log-concave along any rational line. This says in fact that as \bm{b} 𝒃\bm{b} moves along any line, the number of lattice points of Q QQ forms a log-concave sequence. Barvinok originally asked a more general question of this form for the case of contingency tables [9], and we resolve this line version here for all TU polytopes. This gives a nice answer to question 2, while the full strength of Barvinok’s question for TU polytopes is still open Question 1.7.
+The \LC VLC\LC property then enables us also to answer question 1. The Gurvits capacity method was originally developed to give a simple proof of the van der Waerden conjecture for permanents in [29]. This technique implies a deterministic simply exponential approximation algorithm for non-negative matrix permanents as well. Since this original work, the capacity method has seen numerous applications to bounding and deterministically approximating various other combinatorial quantities. The general idea is to use log-concavity properties of a given generating function to approximate its coefficients by an associated convex optimization problem. The \LC VLC\LC property is then tailor-made precisely to allow the Gurvits capacity method to work as usual, and thus we can apply this method to P_{M} PMP_{M} and related generating functions.
+1.1 Our Results
+We now formally answer question 1: how can we estimate the number of lattice points of a TU polytope? We give two results in this direction. The first gives general bounds for all TU polytopes, and the second gives simply exponential bounds in a slightly restricted regime.
+Theorem 1.1 (Corollary 4.5).
+Let M MM be an m\times n m×nm\times n totally unimodular matrix with columns \bm{a}_{1},\ldots,\bm{a}_{n} 𝐚1,…,𝐚n\bm{a}_{1},\ldots,\bm{a}_{n}. For all \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m} such that \#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}<\infty #⁡{𝐲∈ℤ≥0n∣M​𝐲=𝐛}<∞\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}<\infty, we have
+ \mathcal{E}\geq\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}\geq e^{-m}(1+n\|\bm{b}\|_{1})^{-m}\mathcal{E}, ℰ≥#⁡{𝒚∈ℤ≥0n∣M​𝒚=𝒃}≥e−m​(1+n​‖𝒃‖1)−m​ℰ,\mathcal{E}\geq\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}\geq e^{-m}(1+n\|\bm{b}\|_{1})^{-m}\mathcal{E},
+where
+ \mathcal{E}=\inf_{\bm{x}>0}\bm{x}^{-\bm{b}}\prod_{j=1}^{n}\frac{1-(\bm{x}^{\bm{a}_{j}})^{\|\bm{b}\|_{1}+1}}{1-\bm{x}^{\bm{a}_{j}}}=\inf_{\bm{x}>0}\bm{x}^{-\bm{b}}\prod_{j=1}^{n}\sum_{k=0}^{\|\bm{b}\|_{1}}\bm{x}^{k\bm{a}_{j}} ℰ=inf𝒙>0𝒙−𝒃​∏j=1n1−(𝒙𝒂j)‖𝒃‖1+11−𝒙𝒂j=inf𝒙>0𝒙−𝒃​∏j=1n∑k=0‖𝒃‖1𝒙k​𝒂j\mathcal{E}=\inf_{\bm{x}>0}\bm{x}^{-\bm{b}}\prod_{j=1}^{n}\frac{1-(\bm{x}^{\bm{a}_{j}})^{\|\bm{b}\|_{1}+1}}{1-\bm{x}^{\bm{a}_{j}}}=\inf_{\bm{x}>0}\bm{x}^{-\bm{b}}\prod_{j=1}^{n}\sum_{k=0}^{\|\bm{b}\|_{1}}\bm{x}^{k\bm{a}_{j}}
+is a convex program up to \log log\log- \log log\log transformation.
+Corollary 1.2 (Corollary 4.6).
+Let M MM be an m\times n m×nm\times n totally unimodular matrix with columns \bm{a}_{1},\ldots,\bm{a}_{n} 𝐚1,…,𝐚n\bm{a}_{1},\ldots,\bm{a}_{n} and \max\{m,n\}\geq 3 max⁡{m,n}≥3\max\{m,n\}\geq 3. For all \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m} satisfying \lVert\bm{b}\rVert_{1}\geq 6m\cdot\log(\max\{m,n\}) ∥𝐛∥1≥6​m⋅log⁡(max⁡{m,n})\lVert\bm{b}\rVert_{1}\geq 6m\cdot\log(\max\{m,n\}) and such that \#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}<\infty #⁡{𝐲∈ℤ≥0n∣M​𝐲=𝐛}<∞\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}<\infty, we have
+ \mathcal{E}\geq\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}\geq e^{-\|\bm{b}\|_{1}}\mathcal{E}, ℰ≥#⁡{𝒚∈ℤ≥0n∣M​𝒚=𝒃}≥e−‖𝒃‖1​ℰ,\mathcal{E}\geq\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}\geq e^{-\|\bm{b}\|_{1}}\mathcal{E},
+where \mathcal{E} ℰ\mathcal{E} is as in Theorem 1.1.
+Theorem 1.1 and Corollary 1.2 can also be made algorithmic, using the maximum-entropy optimization framework of
+[41].
+Theorem 1.3 (see Section 5).
+There is a deterministic algorithm (based on the ellipsoid algorithm) which, given an m\times n m×nm\times n totally unimodular matrix M MM, a vector \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m} such that \{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\} {𝐲∈ℤ≥0n∣M​𝐲=𝐛}\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\} is nonempty, and an \epsilon\in(0,1) ϵ∈(0,1)\epsilon\in(0,1), computes \mathcal{A} 𝒜\mathcal{A} such that \mathcal{A}-\epsilon\leq\log\mathcal{E}\leq\mathcal{A}+\epsilon 𝒜−ϵ≤log⁡ℰ≤𝒜+ϵ\mathcal{A}-\epsilon\leq\log\mathcal{E}\leq\mathcal{A}+\epsilon in time polynomial in m mm, n nn, \log(1+\|\bm{b}\|_{1}) log⁡(1+‖𝐛‖1)\log(1+\|\bm{b}\|_{1}), and \log\frac{1}{\epsilon} log⁡1ϵ\log\frac{1}{\epsilon}. Here \mathcal{E} ℰ\mathcal{E} is defined as in Theorem 1.1.
+The proofs of Theorem 1.1 and Corollary 1.2 are then based on our answer to question 2: how does the number of lattice points of a TU polytope vary with \bm{b} 𝒃\bm{b}? The following result answers this by generalizing a question of Barvinok [9] on the log-concavity of the counts of contingency tables with various marginals. Our result in fact holds for unimodular polytopes, which are defined like totally unimodular polytopes except that the defining matrix M MM is only required to be unimodular.
+Theorem 1.4 (Theorem 3.1).
+Let M MM be an m\times n m×nm\times n (not necessarily totally) unimodular matrix. For all \bm{b},\bm{b}^{-},\bm{b}^{+}\in\mathbb{Z}^{m} 𝐛,𝐛−,𝐛+∈ℤm\bm{b},\bm{b}^{-},\bm{b}^{+}\in\mathbb{Z}^{m} such that \bm{b}=\frac{\bm{b}^{-}+\bm{b}^{+}}{2} 𝐛=𝐛−+𝐛+2\bm{b}=\frac{\bm{b}^{-}+\bm{b}^{+}}{2}, we have
+ \#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}^{2}\geq\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}^{-}\}\cdot\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}^{+}\}, #​{𝒚∈ℤ≥0n∣M​𝒚=𝒃}2≥#⁡{𝒚∈ℤ≥0n∣M​𝒚=𝒃−}⋅#⁡{𝒚∈ℤ≥0n∣M​𝒚=𝒃+},\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}^{2}\geq\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}^{-}\}\cdot\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}^{+}\},
+given that all of these fibers are finite.
+We note that Theorem 1.4 immediately implies a recent conjecture for TU polytopes on the log-concavity of Ehrhart evaluations. This conjecture comes from [21], where the authors in fact make the conjecture for all IDP lattice polytopes (though this is now false in general by [22]).
+Recall that, given a lattice polytope P PP, the Ehrhart polynomial E_{P}(t) EP​(t)E_{P}(t) is the unique polynomial such that E_{P}(k)=\#\left(kP\cap\mathbb{Z}^{n}\right) EP​(k)=#⁡(k​P∩ℤn)E_{P}(k)=\#\left(kP\cap\mathbb{Z}^{n}\right) for all k\in\mathbb{Z}_{\geq 0} k∈ℤ≥0k\in\mathbb{Z}_{\geq 0}.
+Corollary 1.5 (Conjecture 1.2 of [21]).
+For all (not necessarily totally) unimodular polytopes P PP, we have E_{P}(k)^{2}\geq E_{P}(k-1)\cdot E_{P}(k+1) EP​(k)2≥EP​(k−1)⋅EP​(k+1)E_{P}(k)^{2}\geq E_{P}(k-1)\cdot E_{P}(k+1) for all k\in\mathbb{Z}_{\geq 1} k∈ℤ≥1k\in\mathbb{Z}_{\geq 1}.
+Beyond our main results, we can also prove slightly stronger results under further restrictions. We give various bounds in Section 4, and we give one such result here to demonstrate the sort of thing we can achieve.
+Theorem 1.6 (Corollary 4.14).
+Let M MM be an m\times n m×nm\times n totally unimodular matrix with columns \bm{a}_{1},\ldots,\bm{a}_{n} 𝐚1,…,𝐚n\bm{a}_{1},\ldots,\bm{a}_{n} such that \bm{a}_{i}\neq\bm{0} 𝐚i≠𝟎\bm{a}_{i}\neq\bm{0} for all i\in[n] i∈[n]i\in[n], and let \bm{s}_{i} 𝐬i\bm{s}_{i} be the sum of the first i ii rows of M MM for i\in[m] i∈[m]i\in[m]. If \bm{s}_{i}\geq\bm{0} 𝐬i≥𝟎\bm{s}_{i}\geq\bm{0} for all i\in[m] i∈[m]i\in[m] (for example, if M MM has only 0/1 0/10/1 entries) then for all \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m} we have
+ \mathcal{E}\geq\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}\geq\frac{|\sigma_{m}|^{|\sigma_{m}|}}{(1+|\sigma_{m}|)^{1+|\sigma_{m}|}}\left[\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}\right]^{2}\mathcal{E}, ℰ≥#⁡{𝒚∈ℤ≥0n∣M​𝒚=𝒃}≥|σm||σm|(1+|σm|)1+|σm|​[∏i=1m−1|σi||σi|(1+|σi|)1+|σi|]2​ℰ,\mathcal{E}\geq\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}\geq\frac{|\sigma_{m}|^{|\sigma_{m}|}}{(1+|\sigma_{m}|)^{1+|\sigma_{m}|}}\left[\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}\right]^{2}\mathcal{E},
+where \sigma_{i}=b_{1}+\cdots+b_{i} σi=b1+⋯+bi\sigma_{i}=b_{1}+\cdots+b_{i} for all i\in[m] i∈[m]i\in[m] and
+ \mathcal{E}=\inf_{\begin{subarray}{c}\bm{x}>0\\
+\forall j\,\bm{x}^{\bm{a}_{j}}<1\end{subarray}}\bm{x}^{-\bm{b}}\prod_{j=1}^{n}\frac{1}{1-\bm{x}^{\bm{a}_{j}}}=\inf_{\bm{x}>0}\bm{x}^{-\bm{b}}\prod_{j=1}^{n}\sum_{k=0}^{\infty}\bm{x}^{k\bm{a}_{j}} ℰ=inf𝒙>0∀j​𝒙𝒂j<1𝒙−𝒃​∏j=1n11−𝒙𝒂j=inf𝒙>0𝒙−𝒃​∏j=1n∑k=0∞𝒙k​𝒂j\mathcal{E}=\inf_{\begin{subarray}{c}\bm{x}>0\\
+\forall j\,\bm{x}^{\bm{a}_{j}}<1\end{subarray}}\bm{x}^{-\bm{b}}\prod_{j=1}^{n}\frac{1}{1-\bm{x}^{\bm{a}_{j}}}=\inf_{\bm{x}>0}\bm{x}^{-\bm{b}}\prod_{j=1}^{n}\sum_{k=0}^{\infty}\bm{x}^{k\bm{a}_{j}}
+is a convex program up to \log log\log- \log log\log transformation.
+1.2 An Open Question
+Theorem 1.4 is in fact based upon a stronger coefficient-wise positivity result (Theorem 3.1) which follows from the bijective proof which we give in Section 3. This theorem raises an open question, which is the natural generalization of Barvinok’s question in [9].
+Question 1.7.
+Let M\in\mathbb{Z}^{m\times n} M∈ℤm×nM\in\mathbb{Z}^{m\times n} be a unimodular matrix and \mu μ\mu a probability distribution on \mathbb{Z}^{m} ℤm\mathbb{Z}^{m} (perhaps with finite support) such that its mean is \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m}. Is it that case that
+ \#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}\geq\prod_{\bm{a}\in\mathbb{Z}^{m}}\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{a}\}^{\mu(\bm{a})}? #⁡{𝒚∈ℤ≥0n∣M​𝒚=𝒃}≥∏𝒂∈ℤm#​{𝒚∈ℤ≥0n∣M​𝒚=𝒂}μ⁡(𝒂)​?\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{b}\}\geq\prod_{\bm{a}\in\mathbb{Z}^{m}}\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}\mid M\bm{y}=\bm{a}\}^{\mu(\bm{a})}?
+Note that for functions/distributions over \mathbb{R}^{m} ℝm\mathbb{R}^{m}, Question 1.7 would immediately follow from Theorem 1.4. However, for functions/distributions over \mathbb{Z}^{m} ℤm\mathbb{Z}^{m}, convexity on lines does not imply global convexity in general.
+We believe that a positive answer to Question 1.7 would enable us to obtain stronger capacity bounds (hopefully simply exponential) in general, using the following idea. Currently, most capacity bounds are proved inductively on each variable of a given polynomial or generating series. Because of this, the bounds often depend on distances of the desired marginals or degree vector (e.g. the \bm{b} 𝒃\bm{b} vector) to the boundary of the Newton polyhedron in the coordinate directions. The coordinate direction distance can be very bad for general TU polytopes, and so we need to adapt the application of the capacity bounds to handle this. Given the inequalities of Question 1.7, it is perhaps possible that this capacity induction argument may be able to be exchanged with a geometric argument related to distances to the boundary of the Newton polyhedron in any choice of directions. This would yield much better bounds and approximation factors, if possible.
+1.3 Previous and Related Work
+Bounding and approximately counting lattice points in totally unimodular
+polytopes has attracted considerable attention. A variety of bounds and
+approximation algorithms, both randomized and deterministic, are known
+for important classes of such polytopes. On the randomized side, fully
+polynomial randomized approximation schemes (FPRASs) have been obtained
+for bipartite perfect matchings [33], binary contingency tables
+[12], and nonnegative integer contingency tables under restrictions
+such as a fixed number of rows or sufficiently large margins
+[16, 20, 39]. Related results apply to cell-bounded contingency
+tables with a fixed number of rows and to integral flows with sufficiently
+large tight capacities [15]. For certain classes of smooth margins,
+a randomized approximation algorithm runs in time quasipolynomial in the
+total sum of the table entries [8]. More recently, rapid mixing
+of the natural swap chain was established for binary contingency tables
+with arbitrary feasible margins [23].
+On the deterministic side, matrix scaling and polynomial capacity methods
+give polynomial-time exponential approximations for counting bipartite
+perfect matchings [37, 28, 29], with subsequent improvements
+[27, 4]. Recent preprints obtain a subexponential approximation
+factor [34] and a (1+\varepsilon)^{n} (1+ε)n(1+\varepsilon)^{n} approximation factor for every
+fixed \varepsilon>0 ε>0\varepsilon>0 [19], where n nn is the number of vertices on
+each side of the bipartition. Convex optimization and polynomial capacity
+methods also give (often simply) exponential estimates for contingency tables
+[10, 11, 31, 14] and integer flows [10, 36, 35].
+Computationally efficient asymptotic formulas are available in suitable
+smooth-margin regimes [6]. For contingency tables with a fixed
+number of rows, deterministic fully polynomial-time approximation schemes
+(FPTASs) are known [24], with improved running times in the
+two-row case [1].
+Beyond these special classes, other positive results include polynomial-time
+exact counting in fixed dimension [7], exact counting methods
+for nonnegative totally unimodular systems with a fixed number of equations
+[40], algebraic methods for computing counting
+polynomials for unimodular systems [18], and
+maximum-entropy Gaussian approximations under well-roundedness assumptions [5].
+In contrast, no fully polynomial randomized or deterministic
+approximation scheme is known for arbitrary totally unimodular polytopes; such an
+algorithm would in particular yield an FPRAS for counting
+independent sets in bipartite graphs [26].
+This motivates seeking weaker approximation guarantees that apply uniformly to all bounded TU polytopes, which is what we prove here.
+1.4 AI Declaration
+The AI tool we specifically used was ChatGPT 6 Astra. The authors have verified and take full responsibility for everything written in the paper.
+Before the first draft.
+The resolution of Barvinok’s conjecture/question on the log-concavity on lines of the contingency tables counts (Theorem 1.4) was the main AI input to this paper. We generalized this result to all TU polytopes with upper and lower entrywise bounds on the counted lattice points (Theorem 3.1), and in fact the AI suggested in a remark that this should be possible. Beyond that, the literature review and much of the associated parts of the introduction were written with the help of AI.
+After the first draft.
+We used AI to check for errors or to make suggestions on the flow or style of the paper. From this we fixed a number of errors which were mostly minor; the main issue that was fixed here were proofs regarding limiting arguments for capacity and for sequences of Laurent polynomials and series. In particular Lemma 4.11 and the surrounding results were added at this point. Additionally, AI also suggested a way to improve the bound in Theorem 1.1 via Lemma 4.3. We also originally had referenced [41, 42] as the way to prove algorithmic efficiency in Theorem 1.3, but we had left out the details. We used AI to fill in those details, and now we have the proof of Theorem 1.3 in Section 5. Further, AI also found that the central-fiber argument in our (AI-assisted) proof of Theorem 1.4 has a direct antecedent in the graph-orientation argument of [17]. Finally, AI also suggested many changes to the structure, ordering, and content of the introduction and title. We took many of those suggestions, and then wrote the new introduction ourselves.
+2 \LC VLC\LC Laurent polynomials
+Gurvits’ capacity function has been widely used to obtain lower bounds for various interesting combinatorial quantities.
+The underlying idea of these results is that if a (Laurent) polynomial has a certain log-concavity property, then one could use the theory of log-concave polynomials to derive lower bounds for its coefficients. However, currently studied log-concavity properties (e.g., Lorentzian, denormalized/dually Lorentzian, etc.) are all conditions which are too strong to apply to TU polytopes in general.
+Thus, in Section 2.1 we introduce a class of Laurent polynomials with weaker log-concavity properties, for which capacity lower bounds are still applicable. We further explore basic properties of this class throughout Section 2.2. We then turn our focus to unimodular and totally unimodular (TU) matrices in Section 3 and prove that the cardinalities of the fibers of a unimodular polytope are log-concave along lines.
+2.1 Definition and capacity bounds
+There are two key steps in proving capacity bounds for a denormalized Lorentzian polynomial p pp: first that any evaluation of p pp in all but one variable is a univariate polynomial with log-concave coefficients, and second that [x_{i}^{\alpha_{i}}]p [xiαi]​p[x_{i}^{\alpha_{i}}]p satisfies the first condition for any i,\alpha_{i} i,αii,\alpha_{i}. We will take these two properties and define a new class of Laurent polynomials. Capacity lower bounds then naturally extend to this class.
+Recall that a sequence \{a_{k}\}_{k\in\mathbb{Z}} {ak}k∈ℤ\{a_{k}\}_{k\in\mathbb{Z}} of non-negative numbers is said to be log-concave if it has no internal zeros and a_{k}^{2}\geq a_{k-1}\cdot a_{k+1} ak2≥ak−1⋅ak+1a_{k}^{2}\geq a_{k-1}\cdot a_{k+1} for any valid index k kk. A Laurent polynomial is a sum p(\bm{x})=\sum_{\bm{\alpha}\in\mathbb{Z}^{n}}p_{\bm{\alpha}}\bm{x^{\alpha}} p⁡(𝒙)=∑𝜶∈ℤnp𝜶​𝒙𝜶p(\bm{x})=\sum_{\bm{\alpha}\in\mathbb{Z}^{n}}p_{\bm{\alpha}}\bm{x^{\alpha}} with a finite support, where the support of p pp denoted by \supp(p) supp⁡(p)\supp(p) is the set \{\bm{\alpha}\in\mathbb{Z}^{n}:p_{\bm{\alpha}}\neq 0\} {𝜶∈ℤn:p𝜶≠0}\{\bm{\alpha}\in\mathbb{Z}^{n}:p_{\bm{\alpha}}\neq 0\}. We further say that a univariate Laurent polynomial p(x)=\sum_{k\in\mathbb{Z}}p_{k}x^{k} p⁡(x)=∑k∈ℤpk​xkp(x)=\sum_{k\in\mathbb{Z}}p_{k}x^{k} has a log-concave coefficient sequence if \{p_{k}\}_{k\in\mathbb{Z}} {pk}k∈ℤ\{p_{k}\}_{k\in\mathbb{Z}} is a log-concave sequence.
+Definition 2.1.
+Define:
+ \LC_{1}=\{p(x)\in\mathbb{R}[x^{\pm 1}]:p\text{ has a log-concave coefficient sequence}\}. VLC1={p⁡(x)∈ℝ⁡[x±1]:p​ has a log-concave coefficient sequence}.\LC_{1}=\{p(x)\in\mathbb{R}[x^{\pm 1}]:p\text{ has a log-concave coefficient sequence}\}.
+and for any n\geq 2 n≥2n\geq 2, let \LC_{n} VLCn\LC_{n} contain all n nn-variate Laurent polynomials p(x_{1},\cdots,x_{n})=\sum_{\bm{\alpha}\in\mathbb{Z}^{n}}p_{\bm{\alpha}}\bm{x^{\alpha}} p⁡(x1,⋯,xn)=∑𝜶∈ℤnp𝜶​𝒙𝜶p(x_{1},\cdots,x_{n})=\sum_{\bm{\alpha}\in\mathbb{Z}^{n}}p_{\bm{\alpha}}\bm{x^{\alpha}} with non-negative coefficients such that:
+• 
+Evaluating p pp at any n-1 n−1n-1 variables with positive real numbers belongs to \LC_{1} VLC1\LC_{1},
+• 
+ [x_{i}^{\alpha_{i}}]p [xiαi]​p[x_{i}^{\alpha_{i}}]p is in \LC_{n-1} VLCn−1\LC_{n-1} for any i\in[n] i∈[n]i\in[n] and \alpha_{i}\in\mathbb{Z} αi∈ℤ\alpha_{i}\in\mathbb{Z}.
+Equivalently, p(x_{1},\cdots,x_{n})\in\mathbb{R}_{\geq 0}[\bm{x},\bm{x}^{-1}] p⁡(x1,⋯,xn)∈ℝ≥0​[𝒙,𝒙−1]p(x_{1},\cdots,x_{n})\in\mathbb{R}_{\geq 0}[\bm{x},\bm{x}^{-1}] is an element of \LC_{n} VLCn\LC_{n} if for any S\subseteq[n] S⊆[n]S\subseteq[n] and any \bm{\alpha}\in\mathbb{Z}^{S} 𝜶∈ℤS\bm{\alpha}\in\mathbb{Z}^{S}, any positive evaluation of [\prod_{i\in S}{x}_{i}^{{\alpha}_{i}}]p [∏i∈Sxiαi]​p[\prod_{i\in S}{x}_{i}^{{\alpha}_{i}}]p in all but one variable has log-concave coefficients. In a sense, the coefficients of p pp are log-concave after applying certain variable-wise operations, hence the name \LC VLC\LC.
+More generally, we will say that a polynomial p(x_{1},\cdots,x_{n}) p⁡(x1,⋯,xn)p(x_{1},\cdots,x_{n}) is \LC VLC\LC if it belongs to \LC_{n} VLCn\LC_{n}.
+Lorentzian polynomials and denormalized Lorentzian polynomials are both subclasses of \LC VLC\LC (see [13, §3.1]). In fact, this class of Laurent polynomials is crafted in a way that the capacity bound for the coefficients of denormalized Lorentzian Polynomials extends naturally to \LC VLC\LC Laurent polynomials.
+Proposition 2.2.
+Suppose p(x_{1},\cdots,x_{n})\in\LC_{n} p⁡(x1,⋯,xn)∈VLCnp(x_{1},\cdots,x_{n})\in\LC_{n} and \bm{\alpha}\in\mathbb{Z}^{n} 𝛂∈ℤn\bm{\alpha}\in\mathbb{Z}^{n}, then:
+ [\bm{x^{\alpha}}]p(\bm{x})\geq\cpc_{\bm{\alpha}}(p)\cdot\prod_{i=1}^{n}\frac{|\beta_{i}-\alpha_{i}|^{|\beta_{i}-\alpha_{i}|}}{(1+|\beta_{i}-\alpha_{i}|)^{1+|\beta_{i}-\alpha_{i}|}} [𝒙𝜶]​p​(𝒙)≥cap𝜶⁡(p)⋅∏i=1n|βi−αi||βi−αi|(1+|βi−αi|)1+|βi−αi|[\bm{x^{\alpha}}]p(\bm{x})\geq\cpc_{\bm{\alpha}}(p)\cdot\prod_{i=1}^{n}\frac{|\beta_{i}-\alpha_{i}|^{|\beta_{i}-\alpha_{i}|}}{(1+|\beta_{i}-\alpha_{i}|)^{1+|\beta_{i}-\alpha_{i}|}}
+where \beta_{i} βi\beta_{i} is either a lower bound or an upper bound for \Deg_{i}^{\bm{\alpha}}(p) Degi𝛂⁡(p)\Deg_{i}^{\bm{\alpha}}(p), the set of degrees of x_{i} xix_{i} appearing in [{x_{i+1}^{\alpha_{i+1}}}\cdots x_{n}^{\alpha_{n}}]p [xi+1αi+1⋯xnαn]p[{x_{i+1}^{\alpha_{i+1}}}\cdots x_{n}^{\alpha_{n}}]p.
+Proof.
+The proof is done by induction over the number of variables of p pp. For n=1 n=1n=1, the proof follows from the case for denormalized Lorentzian Laurent polynomials by [35, Lemma 4.20] (see also [14, Lemma 5.7]). Note that the homogenization of the polynomial \sum_{k\in\mathbb{Z}}a_{k}x^{k} ∑k∈ℤak​xk\sum_{k\in\mathbb{Z}}a_{k}x^{k} is denormalized Lorentzian iff \{a_{k}\}_{k\in\mathbb{Z}} {ak}k∈ℤ\{a_{k}\}_{k\in\mathbb{Z}} is a log-concave sequence, i.e. \sum_{k\in\mathbb{Z}}a_{k}x^{k} ∑k∈ℤak​xk\sum_{k\in\mathbb{Z}}a_{k}x^{k} is \LC VLC\LC.
+Suppose n\geq 2 n≥2n\geq 2. Then for any (r_{1},\cdots,r_{n-1})\in\mathbb{R}_{>0}^{n-1} (r1,⋯,rn−1)∈ℝ>0n−1(r_{1},\cdots,r_{n-1})\in\mathbb{R}_{>0}^{n-1}:
+ \displaystyle\cpc_{\bm{\alpha}}(p) cap𝜶⁡(p)\displaystyle\cpc_{\bm{\alpha}}(p)
+ \displaystyle\leq\inf_{x_{n}>0}\frac{p(r_{1},\cdots,r_{n-1},x_{n})}{r_{1}^{\alpha_{1}}\cdots r_{n-1}^{\alpha_{n-1}}x_{n}^{\alpha_{n}}} ≤infxn>0p⁡(r1,⋯,rn−1,xn)r1α1⋯rn−1αn−1xnαn\displaystyle\leq\inf_{x_{n}>0}\frac{p(r_{1},\cdots,r_{n-1},x_{n})}{r_{1}^{\alpha_{1}}\cdots r_{n-1}^{\alpha_{n-1}}x_{n}^{\alpha_{n}}}
+ \displaystyle=\frac{1}{r_{1}^{\alpha_{1}}\cdots r_{n-1}^{\alpha_{n-1}}}\inf_{x_{n}>0}\frac{p(r_{1},\cdots,r_{n-1},x_{n})}{x_{n}^{\alpha_{n}}} =1r1α1⋯rn−1αn−1​infxn>0p⁡(r1,⋯,rn−1,xn)xnαn\displaystyle=\frac{1}{r_{1}^{\alpha_{1}}\cdots r_{n-1}^{\alpha_{n-1}}}\inf_{x_{n}>0}\frac{p(r_{1},\cdots,r_{n-1},x_{n})}{x_{n}^{\alpha_{n}}}
+ \displaystyle=\frac{1}{r_{1}^{\alpha_{1}}\cdots r_{n-1}^{\alpha_{n-1}}}\cpc_{\alpha_{n}}p(r_{1},\cdots,r_{n-1},x_{n}) =1r1α1⋯rn−1αn−1​capαn⁡p⁡(r1,⋯,rn−1,xn)\displaystyle=\frac{1}{r_{1}^{\alpha_{1}}\cdots r_{n-1}^{\alpha_{n-1}}}\cpc_{\alpha_{n}}p(r_{1},\cdots,r_{n-1},x_{n})
+ \displaystyle\leq\frac{1}{r_{1}^{\alpha_{1}}\cdots r_{n-1}^{\alpha_{n-1}}}\cdot\frac{(1+|\beta_{n}-\alpha_{n}|)^{1+|\beta_{n}-\alpha_{n}|}}{|\beta_{n}-\alpha_{n}|^{|\beta_{n}-\alpha_{n}|}}\cdot[x_{n}^{\alpha_{n}}]p(r_{1},\cdots,r_{n-1},x_{n}) ≤1r1α1⋯rn−1αn−1⋅(1+|βn−αn|)1+|βn−αn||βn−αn||βn−αn|⋅[xnαn]​p​(r1,⋯,rn−1,xn)\displaystyle\leq\frac{1}{r_{1}^{\alpha_{1}}\cdots r_{n-1}^{\alpha_{n-1}}}\cdot\frac{(1+|\beta_{n}-\alpha_{n}|)^{1+|\beta_{n}-\alpha_{n}|}}{|\beta_{n}-\alpha_{n}|^{|\beta_{n}-\alpha_{n}|}}\cdot[x_{n}^{\alpha_{n}}]p(r_{1},\cdots,r_{n-1},x_{n})
+Since this is true for any (r_{1},\cdots,r_{n-1}) (r1,⋯,rn−1)(r_{1},\cdots,r_{n-1}), we conclude:
+ \displaystyle\cpc_{\bm{\alpha}}(p) cap𝜶⁡(p)\displaystyle\cpc_{\bm{\alpha}}(p)
+ \displaystyle\leq\frac{(1+|\beta_{n}-\alpha_{n}|)^{1+|\beta_{n}-\alpha_{n}|}}{|\beta_{n}-\alpha_{n}|^{|\beta_{n}-\alpha_{n}|}}\cdot\inf_{r_{1},\cdots,r_{n-1}>0}\frac{[x_{n}^{\alpha_{n}}]p(r_{1},\cdots,r_{n-1},x_{n})}{r_{1}^{\alpha_{1}}\cdots r_{n-1}^{\alpha_{n-1}}} ≤(1+|βn−αn|)1+|βn−αn||βn−αn||βn−αn|⋅infr1,⋯,rn−1>0[xnαn]​p​(r1,⋯,rn−1,xn)r1α1⋯rn−1αn−1\displaystyle\leq\frac{(1+|\beta_{n}-\alpha_{n}|)^{1+|\beta_{n}-\alpha_{n}|}}{|\beta_{n}-\alpha_{n}|^{|\beta_{n}-\alpha_{n}|}}\cdot\inf_{r_{1},\cdots,r_{n-1}>0}\frac{[x_{n}^{\alpha_{n}}]p(r_{1},\cdots,r_{n-1},x_{n})}{r_{1}^{\alpha_{1}}\cdots r_{n-1}^{\alpha_{n-1}}}
+ \displaystyle=\frac{(1+|\beta_{n}-\alpha_{n}|)^{1+|\beta_{n}-\alpha_{n}|}}{|\beta_{n}-\alpha_{n}|^{|\beta_{n}-\alpha_{n}|}}\cdot\cpc_{(\alpha_{1},\cdots,\alpha_{n-1})}([x_{n}^{\alpha_{n}}]p). =(1+|βn−αn|)1+|βn−αn||βn−αn||βn−αn|⋅cap(α1,⋯,αn−1)⁡([xnαn]​p).\displaystyle=\frac{(1+|\beta_{n}-\alpha_{n}|)^{1+|\beta_{n}-\alpha_{n}|}}{|\beta_{n}-\alpha_{n}|^{|\beta_{n}-\alpha_{n}|}}\cdot\cpc_{(\alpha_{1},\cdots,\alpha_{n-1})}([x_{n}^{\alpha_{n}}]p).
+The proof is then completed by the induction hypothesis for [x_{n}^{\alpha_{n}}]p [xnαn]​p[x_{n}^{\alpha_{n}}]p.
+∎
+2.2 Examples and properties
+As mentioned before, any denormalized Lorentzian polynomial is \LC VLC\LC. It is easy to see that any “shift” of a denormalized Lorentzian polynomial is also \LC VLC\LC, i.e. \bm{x^{\alpha}}p(\bm{x}) 𝒙𝜶​p​(𝒙)\bm{x^{\alpha}}p(\bm{x}) is \LC VLC\LC if p pp is denormalized Lorentzian. However, the class of \LC VLC\LC Laurent polynomials contains a much larger set of Laurent polynomials. The following is an example of a Laurent polynomial that is not necessarily denormalized Lorentzian but is \LC VLC\LC:
+Example 2.3.
+Let n,k\in\mathbb{Z}_{\geq 0} n,k∈ℤ≥0n,k\in\mathbb{Z}_{\geq 0} and \bm{b}\in\{0,\pm 1\}^{n} 𝒃∈{0,±1}n\bm{b}\in\{0,\pm 1\}^{n}, then:
+ p(x_{1},\cdots,x_{n})=\sum_{t=0}^{k}\bm{x}^{t\cdot\bm{b}} p⁡(x1,⋯,xn)=∑t=0k𝒙t⋅𝒃p(x_{1},\cdots,x_{n})=\sum_{t=0}^{k}\bm{x}^{t\cdot\bm{b}}
+is \LC VLC\LC. We proceed by induction on n nn. If n=1 n=1n=1, the statement is trivial since the coefficients sequence of p pp is the all ones sequence. Now suppose n\geq 2 n≥2n\geq 2 and assume the statement holds for n-1 n−1n-1. Let us check both of the conditions of Definition 2.1 for p pp.
+First evaluate p pp at all but one variable, say x_{i} xix_{i}. It is easy to check that the coefficients of the polynomial {\left.\kern-1.2ptp(\bm{x})\vphantom{\big|}\right|_{x_{j}=r_{j}\forall j\neq i}} p⁡(𝒙)|xj=rj​∀j≠i{\left.\kern-1.2ptp(\bm{x})\vphantom{\big|}\right|_{x_{j}=r_{j}\forall j\neq i}} form a geometric sequence and thus are log-concave.
+Furthermore, if b_{i}\neq 0 bi≠0b_{i}\neq 0, the Laurent polynomial [x_{i}^{\alpha_{i}}]p(\bm{x}) [xiαi]​p​(𝒙)[x_{i}^{\alpha_{i}}]p(\bm{x}) is either the zero polynomial or just a monomial and is \LC VLC\LC. If b_{i}=0 bi=0b_{i}=0 however, [x_{i}^{\alpha_{i}}]p [xiαi]​p[x_{i}^{\alpha_{i}}]p is really a Laurent polynomial in n-1 n−1n-1 variables which is \LC VLC\LC by the induction hypothesis.
+As another example, suppose \bm{b}_{1},\bm{b}_{2}\in\{0,1\}^{n} 𝒃1,𝒃2∈{0,1}n\bm{b}_{1},\bm{b}_{2}\in\{0,1\}^{n}, then the series:
+ q(\bm{x})=\sum_{t=0}^{k}\bm{x}^{t\cdot\bm{b}_{1}}\cdot\sum_{t=0}^{k}\bm{x}^{t\cdot\bm{b}_{2}} q⁡(𝒙)=∑t=0k𝒙t⋅𝒃1⋅∑t=0k𝒙t⋅𝒃2q(\bm{x})=\sum_{t=0}^{k}\bm{x}^{t\cdot\bm{b}_{1}}\cdot\sum_{t=0}^{k}\bm{x}^{t\cdot\bm{b}_{2}}
+can also be shown to be \LC VLC\LC by basic algebra and some extra effort. We have refrained from including the details of this proof for brevity. One could see that this polynomial is indeed \LC VLC\LC by Proposition 3.8.
+For general \bm{b},\bm{b}_{1},\bm{b}_{2} 𝒃,𝒃1,𝒃2\bm{b},\bm{b}_{1},\bm{b}_{2}, the supports of the Laurent polynomials p pp and q qq in Example 2.3 need not be M MM-convex. Thus, neither is necessarily a denormalized Lorentzian Laurent polynomial. This raises the question of characterizing the support of an \LC VLC\LC Laurent polynomial.
+Proposition 2.4.
+If p(\bm{x})=\sum_{\bm{\alpha}\in\mathbb{Z}^{n}}p_{\bm{\alpha}}\bm{x^{\alpha}} p⁡(𝐱)=∑𝛂∈ℤnp𝛂​𝐱𝛂p(\bm{x})=\sum_{\bm{\alpha}\in\mathbb{Z}^{n}}p_{\bm{\alpha}}\bm{x^{\alpha}} is an \LC VLC\LC Laurent polynomial, then its support is a finite saturated set.
+ S\subseteq\mathbb{Z}^{n} S⊆ℤnS\subseteq\mathbb{Z}^{n} is called a saturated set if S=\conv(S)\cap\mathbb{Z}^{n} S=conv⁡(S)∩ℤnS=\conv(S)\cap\mathbb{Z}^{n}, where \conv(S) conv⁡(S)\conv(S) is the convex hull of S SS.
+Before proving this proposition, let us recall a well-known fact about \newt(p):=\conv(\supp(p)) newt⁡(p):=conv⁡(supp⁡(p))\newt(p):=\conv(\supp(p)), also known as the Newton polytope of p pp.
+Fact 2.5 ([3, Fact 2.18], see also [35, Lemma 4.15]).
+If p pp is a nonzero Laurent polynomial (or a Laurent series with a nonempty domain of convergence and a closed Newton polyhedron) with nonnegative coefficients, then \cpc_{\bm{\alpha}}(p)>0 cap𝜶⁡(p)>0\cpc_{\bm{\alpha}}(p)>0 iff \alpha\in\newt(p) α∈newt⁡(p)\alpha\in\newt(p).
+Proof of Proposition 2.4.
+It suffices to show that p_{\bm{\alpha}}>0 p𝜶>0p_{\bm{\alpha}}>0 for any \bm{\alpha}\in\newt(p)\cap\mathbb{Z}^{n} 𝜶∈newt⁡(p)∩ℤn\bm{\alpha}\in\newt(p)\cap\mathbb{Z}^{n}. By Fact 2.5, for any such \bm{\alpha} 𝜶\bm{\alpha}, \cpc_{\bm{\alpha}}(p)>0 cap𝜶⁡(p)>0\cpc_{\bm{\alpha}}(p)>0. Thus, by Proposition 2.2, we have:
+ p_{\bm{\alpha}}\geq\cpc_{\bm{\alpha}}(p)\cdot\prod_{i=1}^{n}\frac{|\beta_{i}-\alpha_{i}|^{|\beta_{i}-\alpha_{i}|}}{(1+|\beta_{i}-\alpha_{i}|)^{1+|\beta_{i}-\alpha_{i}|}}>0. p𝜶≥cap𝜶⁡(p)⋅∏i=1n|βi−αi||βi−αi|(1+|βi−αi|)1+|βi−αi|>0.p_{\bm{\alpha}}\geq\cpc_{\bm{\alpha}}(p)\cdot\prod_{i=1}^{n}\frac{|\beta_{i}-\alpha_{i}|^{|\beta_{i}-\alpha_{i}|}}{(1+|\beta_{i}-\alpha_{i}|)^{1+|\beta_{i}-\alpha_{i}|}}>0.
+∎
+One would hope that any finite saturated set would be the support of some \LC VLC\LC Laurent polynomial, but this is not the case. For instance, the set S=\{(0,0),(1,0),(2,1)\} S={(0,0),(1,0),(2,1)}S=\{(0,0),(1,0),(2,1)\} is a saturated set, but the polynomial p(x,y)=a+bx+cx^{2}y p⁡(x,y)=a+b​x+c​x2​yp(x,y)=a+bx+cx^{2}y is not \LC VLC\LC no matter the choice of a,b,c>0 a,b,c>0a,b,c>0. This is because evaluating y yy at a large enough r>0 r>0r>0 breaks log-concavity of the sequence a,b,cr a,b,c​ra,b,cr. We currently do not have a necessary and sufficient condition for a set S SS to arise the support of an \LC VLC\LC Laurent polynomial.
+Proposition 2.6.
+The class of \LC VLC\LC Laurent polynomials is closed under scaling variables.
+Proof.
+We proceed by induction on the number of variables. If p(x)=\sum_{k\in\mathbb{Z}}p_{k}x^{k} p⁡(x)=∑k∈ℤpk​xkp(x)=\sum_{k\in\mathbb{Z}}p_{k}x^{k} has a log-concave coefficient sequence, then so does p(cx)=\sum_{k\in\mathbb{Z}}c^{k}p_{k}x^{k} p⁡(c​x)=∑k∈ℤck​pk​xkp(cx)=\sum_{k\in\mathbb{Z}}c^{k}p_{k}x^{k}, and the induction basis holds.
+Let n\geq 2 n≥2n\geq 2 and let p(x_{1},\cdots,x_{n}) p⁡(x1,⋯,xn)p(x_{1},\cdots,x_{n}) be an \LC VLC\LC Laurent polynomial and let c>0 c>0c>0. We want to show that q(\bm{x})=p(cx_{1},x_{2},\cdots,x_{n}) q⁡(𝒙)=p⁡(c​x1,x2,⋯,xn)q(\bm{x})=p(cx_{1},x_{2},\cdots,x_{n}) is also an \LC VLC\LC Laurent polynomial. Any evaluation of q qq at all but the variable x_{i} xix_{i} where i\neq 1 i≠1i\neq 1 has log-concave coefficients, since:
+ {\left.\kern-1.2ptq(\bm{x})\vphantom{\big|}\right|_{x_{j}=r_{j},j\neq i}}={\left.\kern-1.2ptp(\bm{x})\vphantom{\big|}\right|_{x_{1}=cr_{1},x_{j}=r_{j}j\neq i,1}}. q(𝒙)|xj=rj,j≠i=p(𝒙)|x1=cr1,xj=rjj≠i,1.{\left.\kern-1.2ptq(\bm{x})\vphantom{\big|}\right|_{x_{j}=r_{j},j\neq i}}={\left.\kern-1.2ptp(\bm{x})\vphantom{\big|}\right|_{x_{1}=cr_{1},x_{j}=r_{j}j\neq i,1}}.
+If q qq is evaluated at all but variables except x_{1} x1x_{1}, then:
+ q(x_{1},r_{2},\cdots,r_{n})=p(cx_{1},r_{2},\cdots,x_{n})=\sum_{k\in\mathbb{Z}}p_{k}c^{k}x_{1}^{k}, q⁡(x1,r2,⋯,rn)=p⁡(c​x1,r2,⋯,xn)=∑k∈ℤpk​ck​x1k,q(x_{1},r_{2},\cdots,r_{n})=p(cx_{1},r_{2},\cdots,x_{n})=\sum_{k\in\mathbb{Z}}p_{k}c^{k}x_{1}^{k},
+where p_{k} pkp_{k} is the coefficient of x_{1}^{k} x1kx_{1}^{k} in p(x_{1},r_{2},\cdots,r_{n}) p⁡(x1,r2,⋯,rn)p(x_{1},r_{2},\cdots,r_{n}). Since p pp is \LC VLC\LC, the sequence \{p_{k}\}_{k\in\mathbb{Z}} {pk}k∈ℤ\{p_{k}\}_{k\in\mathbb{Z}} is log-concave, and therefore, so is the sequence \{c^{k}p_{k}\}_{k\in\mathbb{Z}} {ck​pk}k∈ℤ\{c^{k}p_{k}\}_{k\in\mathbb{Z}}. Hence any evaluation of q qq in n-1 n−1n-1 variables has log-concave coefficients.
+Furthermore, we know that [x_{i}^{\alpha}]p [xiα]​p[x_{i}^{\alpha}]p is an \LC VLC\LC Laurent polynomial in n-1 n−1n-1 variables for any \alpha\in\mathbb{Z} α∈ℤ\alpha\in\mathbb{Z} and i\in[n] i∈[n]i\in[n]. By the induction hypothesis, for any i\neq 1 i≠1i\neq 1, the Laurent polynomial [x_{i}^{\alpha}]q=([x_{i}^{\alpha}]p)(cx_{1},\cdots,x_{i-1},x_{i+1},\cdots,x_{n}) [xiα]​q=([xiα]​p)​(c​x1,⋯,xi−1,xi+1,⋯,xn)[x_{i}^{\alpha}]q=([x_{i}^{\alpha}]p)(cx_{1},\cdots,x_{i-1},x_{i+1},\cdots,x_{n}) is \LC VLC\LC as well. Lastly, [x_{1}^{\alpha}]q=c^{\alpha}[x_{1}^{\alpha}]p [x1α]​q=cα​[x1α]​p[x_{1}^{\alpha}]q=c^{\alpha}[x_{1}^{\alpha}]p is \LC VLC\LC too and and we are done.
+∎
+Proposition 2.7.
+If a sequence \{p_{i}(\bm{x})\}_{i\geq 0} {pi​(𝐱)}i≥0\{p_{i}(\bm{x})\}_{i\geq 0} of \LC_{n} VLCn\LC_{n} Laurent polynomials converges coefficient-wise to a Laurent polynomial p(\bm{x}) p⁡(𝐱)p(\bm{x}) such that \supp(p_{i})\subseteq\supp(p) supp⁡(pi)⊆supp⁡(p)\supp(p_{i})\subseteq\supp(p) for all i\geq 0 i≥0i\geq 0, then p\in\LC_{n} p∈VLCnp\in\LC_{n}.
+Proof.
+Proceed with induction on n nn. The statement for n=1 n=1n=1 follows from the fact that the limit of any log-concave sequence is a log-concave sequence.
+Let n\geq 2 n≥2n\geq 2. Suppose r_{2},\cdots,r_{n}>0 r2,⋯,rn>0r_{2},\cdots,r_{n}>0. Then:
+ p(x_{1},r_{2},\cdots,r_{n})=\lim_{i\to\infty}p_{i}(x_{1},r_{2},\cdots,r_{n}), p⁡(x1,r2,⋯,rn)=limi→∞pi​(x1,r2,⋯,rn),p(x_{1},r_{2},\cdots,r_{n})=\lim_{i\to\infty}p_{i}(x_{1},r_{2},\cdots,r_{n}),
+since each p_{i}(x_{1},r_{2},\cdots,r_{n}) pi​(x1,r2,⋯,rn)p_{i}(x_{1},r_{2},\cdots,r_{n}) has a log-concave coefficient sequence, the coefficient sequence of p(x_{1},r_{2},\cdots,r_{n}) p⁡(x1,r2,⋯,rn)p(x_{1},r_{2},\cdots,r_{n}) is log-concave as well. Moreover, for any \alpha\in\mathbb{Z} α∈ℤ\alpha\in\mathbb{Z}, j\in[n] j∈[n]j\in[n]:
+ [x_{j}^{\alpha}]p=\lim_{i\to\infty}[x_{j}^{\alpha}]p_{i}. [xjα]​p=limi→∞[xjα]​pi.[x_{j}^{\alpha}]p=\lim_{i\to\infty}[x_{j}^{\alpha}]p_{i}.
+Since \supp([x_{j}^{\alpha}]p_{i})\subseteq\supp([x_{j}^{\alpha}]p) supp⁡([xjα]​pi)⊆supp⁡([xjα]​p)\supp([x_{j}^{\alpha}]p_{i})\subseteq\supp([x_{j}^{\alpha}]p) for all i\geq 0 i≥0i\geq 0, [x_{j}^{\alpha}]p [xjα]​p[x_{j}^{\alpha}]p is \LC_{n-1} VLCn−1\LC_{n-1} by the induction hypothesis, finishing the proof.
+∎
+3 Unimodular and Totally unimodular (TU) polytopes
+The goal of this section is to prove the following log-concavity statement:
+ \left(\sum_{\begin{subarray}{c}M\bm{y}=\frac{\bm{b}^{+}+\bm{b}^{-}}{2}\\
+\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\end{subarray}}\bm{w^{y}}\right)^{2}\geq\sum_{\begin{subarray}{c}M\bm{y}={\bm{b}^{+}}\\
+\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\end{subarray}}\bm{w^{y}}\cdot\sum_{\begin{subarray}{c}M\bm{y}={\bm{b}^{-}}\\
+\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\end{subarray}}\bm{w^{y}}, (∑M​𝒚=𝒃++𝒃−2𝒌1≤𝒚≤𝒌2𝒘𝒚)2≥∑M​𝒚=𝒃+𝒌1≤𝒚≤𝒌2𝒘𝒚⋅∑M​𝒚=𝒃−𝒌1≤𝒚≤𝒌2𝒘𝒚,\left(\sum_{\begin{subarray}{c}M\bm{y}=\frac{\bm{b}^{+}+\bm{b}^{-}}{2}\\
+\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\end{subarray}}\bm{w^{y}}\right)^{2}\geq\sum_{\begin{subarray}{c}M\bm{y}={\bm{b}^{+}}\\
+\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\end{subarray}}\bm{w^{y}}\cdot\sum_{\begin{subarray}{c}M\bm{y}={\bm{b}^{-}}\\
+\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\end{subarray}}\bm{w^{y}},
+where M MM is an m\times n m×nm\times n unimodular matrix and \bm{b}^{+},\bm{b}^{-},\frac{\bm{b}^{+}+\bm{b}^{-}}{2}\in\mathbb{Z}^{m},\bm{w}\in\mathbb{R}_{>0}^{n} 𝒃+,𝒃−,𝒃++𝒃−2∈ℤm,𝒘∈ℝ>0n\bm{b}^{+},\bm{b}^{-},\frac{\bm{b}^{+}+\bm{b}^{-}}{2}\in\mathbb{Z}^{m},\bm{w}\in\mathbb{R}_{>0}^{n} are given vectors. Recall that a matrix M MM is said to be unimodular if all of its non-singular \rank(M)\times\rank(M) rank⁡(M)×rank⁡(M)\rank(M)\times\rank(M) submatrices have determinant \pm 1 ±1\pm 1. We will provide an AI-assisted proof that this sequence is log-concave for any M MM and \bm{b} 𝒃\bm{b} in Section 3.1. In Section 3.2, we will use this log-concavity statement to show that \sum_{\bm{0}\leq\bm{y}\leq\bm{k}}\bm{x}^{M\bm{y}} ∑𝟎≤𝒚≤𝒌𝒙M​𝒚\sum_{\bm{0}\leq\bm{y}\leq\bm{k}}\bm{x}^{M\bm{y}} is an \LC VLC\LC Laurent polynomial for any TU matrix M MM. We will then derive capacity bounds for \#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b},\bm{y}\leq\bm{k}\} #{𝒚∈ℤ≥0n:M𝒚=𝒃,𝒚≤𝒌}\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b},\bm{y}\leq\bm{k}\} using this Laurent polynomial in Section 4.
+3.1 Mid point log-concavity for unimodular polytopes
+The ideas and proofs in this section follow an AI assisted argument for midpoint log-concavity of contingency tables with tweaks to prove what we require for our purposes. In particular, the proofs of Theorem 3.1, Lemma 3.2 and Lemma 3.3 are AI-assisted. We note that the pair-decomposition and induction used in Lemma 3.2 and Lemma 3.3 generalize the argument from Section 5 of [17] from graph orientations to lattice points in boxes subject to unimodular linear constraints.
+For any unimodular matrix M\in\mathbb{Z}^{m\times n} M∈ℤm×nM\in\mathbb{Z}^{m\times n} and any vectors \bm{b},\bm{a},\bm{k}_{1},\bm{k}_{2} 𝒃,𝒂,𝒌1,𝒌2\bm{b},\bm{a},\bm{k}_{1},\bm{k}_{2} of proper dimensions, Define:
+ \displaystyle\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(M,\bm{b}) ℬ(𝒌1,𝒌2)​(M,𝒃)\displaystyle\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(M,\bm{b})
+ \displaystyle=\{\bm{y}:M\bm{y}=\bm{b},\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\}, ={𝒚:M𝒚=𝒃,𝒌1≤𝒚≤𝒌2},\displaystyle=\{\bm{y}:M\bm{y}=\bm{b},\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\},
+ \displaystyle B_{(\bm{k}_{1},\bm{k}_{2})}(M,\bm{b}) B(𝒌1,𝒌2)​(M,𝒃)\displaystyle B_{(\bm{k}_{1},\bm{k}_{2})}(M,\bm{b})
+ \displaystyle=|\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})\cap\mathbb{Z}^{n}|, =|ℬ(𝒌1,𝒌2)​(𝒃)∩ℤn|,\displaystyle=|\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})\cap\mathbb{Z}^{n}|,
+ \displaystyle\mathcal{E}(M,\bm{a}) ℰ⁡(M,𝒂)\displaystyle\mathcal{E}(M,\bm{a})
+ \displaystyle=\{\bm{y}:M\bm{y}=\frac{M\bm{a}}{2},y_{i}\in\{0,a_{i}\}\forall i\in[n]\}, ={𝒚:M𝒚=M​𝒂2,yi∈{0,ai}∀i∈[n]},\displaystyle=\{\bm{y}:M\bm{y}=\frac{M\bm{a}}{2},y_{i}\in\{0,a_{i}\}\forall i\in[n]\},
+ \displaystyle E(M,\bm{a}) E⁡(M,𝒂)\displaystyle E(M,\bm{a})
+ \displaystyle=|\mathcal{E}(M,\bm{a})|, =|ℰ⁡(M,𝒂)|,\displaystyle=|\mathcal{E}(M,\bm{a})|,
+ \displaystyle T(M,\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w}) T⁡(M,𝒃,𝒌1,𝒌2,𝒘)\displaystyle T(M,\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})
+ \displaystyle=\sum_{\begin{subarray}{c}\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\\
+M\bm{y}=\bm{b}\end{subarray}}\bm{w}^{\bm{y}}. =∑𝒌1≤𝒚≤𝒌2M​𝒚=𝒃𝒘𝒚.\displaystyle=\sum_{\begin{subarray}{c}\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\\
+M\bm{y}=\bm{b}\end{subarray}}\bm{w}^{\bm{y}}.
+When the choice of the matrix M MM is clear from context, we will omit M MM from the notation in all of the definitions above. Note that if E(M,\bm{a})\neq 0 E⁡(M,𝒂)≠0E(M,\bm{a})\neq 0, then we must have {M\bm{a}}\in(2\mathbb{Z})^{m} M​𝒂∈(2​ℤ)m{M\bm{a}}\in(2\mathbb{Z})^{m}. We aim to prove the following theorem:
+Theorem 3.1.
+Suppose \bm{b,b^{+},b^{-}} 𝐛,𝐛+,𝐛−\bm{b,b^{+},b^{-}} are integer vectors such that \bm{b}=\frac{\bm{b^{+}}+\bm{b^{-}}}{2} 𝐛=𝐛++𝐛−2\bm{b}=\frac{\bm{b^{+}}+\bm{b^{-}}}{2}. Then for any \bm{k}_{1},\bm{k}_{2} 𝐤1,𝐤2\bm{k}_{1},\bm{k}_{2}:
+ T(\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})^{2}-T(\bm{b^{+}},\bm{k}_{1},\bm{k}_{2};\bm{w})\cdot T(\bm{b^{-}},\bm{k}_{1},\bm{k}_{2};\bm{w}) T​(𝒃,𝒌1,𝒌2,𝒘)2−T⁡(𝒃+,𝒌1,𝒌2,𝒘)⋅T⁡(𝒃−,𝒌1,𝒌2,𝒘)T(\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})^{2}-T(\bm{b^{+}},\bm{k}_{1},\bm{k}_{2};\bm{w})\cdot T(\bm{b^{-}},\bm{k}_{1},\bm{k}_{2};\bm{w})
+is a Laurent polynomial in \bm{w} 𝐰\bm{w} with nonnegative coefficients.
+In fact, we will explicitly express the coefficients of T(\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})^{2}-T(\bm{b^{+}},\bm{k}_{1},\bm{k}_{2};\bm{w})\cdot T(\bm{b^{-}},\bm{k}_{1},\bm{k}_{2};\bm{w}) T​(𝒃,𝒌1,𝒌2,𝒘)2−T⁡(𝒃+,𝒌1,𝒌2,𝒘)⋅T⁡(𝒃−,𝒌1,𝒌2,𝒘)T(\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})^{2}-T(\bm{b^{+}},\bm{k}_{1},\bm{k}_{2};\bm{w})\cdot T(\bm{b^{-}},\bm{k}_{1},\bm{k}_{2};\bm{w}) in terms of B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}) B(𝒌1,𝒌2)​(𝒃)B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}), B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}^{+}) B(𝒌1,𝒌2)​(𝒃+)B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}^{+}) and B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}^{-}) B(𝒌1,𝒌2)​(𝒃−)B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}^{-}) and prove that these coefficients are non-negative using Lemma 3.2, Lemma 3.3 and Lemma 3.4. We then use Theorem 3.1 to prove that the Ehrhart of a unimodular polytope has log-concave evaluations, see Corollary 3.5. We explain why our methods do not work for a general IDP polytope in Remark 3.6.
+Lemma 3.2.
+For any integer vector \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m}, we have:
+ B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})^{2}=\sum_{\begin{subarray}{c}\bm{a}\in\mathbb{Z}^{n}\\
+\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1},\\
+E(\bm{a})>0\end{subarray}}E(\bm{a})B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right). B(𝒌1,𝒌2)​(𝒃)2=∑𝒂∈ℤn𝟎≤𝒂≤𝒌2−𝒌1,E⁡(𝒂)>0E⁡(𝒂)​B(𝒌1,𝒌2−𝒂)​(𝒃−M​𝒂2).B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})^{2}=\sum_{\begin{subarray}{c}\bm{a}\in\mathbb{Z}^{n}\\
+\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1},\\
+E(\bm{a})>0\end{subarray}}E(\bm{a})B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right).
+Proof.
+It suffices to find a bijection:
+ \left[\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})\times\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})\right]\cap\mathbb{Z}^{2n}\overset{\varphi}{\longrightarrow}\left\{(\bm{a},\bm{p},\bm{m}):\begin{subarray}{c}\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1},\,\bm{a}\in\mathbb{Z}^{n}\\
+\bm{p}\in\mathcal{E}(\bm{a})\\
+\bm{m}\in\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right)\cap\mathbb{Z}^{n}\end{subarray}\right\}. [ℬ(𝒌1,𝒌2)​(𝒃)×ℬ(𝒌1,𝒌2)​(𝒃)]∩ℤ2​n​⟶𝜑​{(𝒂,𝒑,𝒎):𝟎≤𝒂≤𝒌2−𝒌1,𝒂∈ℤn𝒑∈ℰ⁡(𝒂)𝒎∈ℬ(𝒌1,𝒌2−𝒂)​(𝒃−M​𝒂2)∩ℤn}.\left[\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})\times\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})\right]\cap\mathbb{Z}^{2n}\overset{\varphi}{\longrightarrow}\left\{(\bm{a},\bm{p},\bm{m}):\begin{subarray}{c}\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1},\,\bm{a}\in\mathbb{Z}^{n}\\
+\bm{p}\in\mathcal{E}(\bm{a})\\
+\bm{m}\in\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right)\cap\mathbb{Z}^{n}\end{subarray}\right\}.
+For any \bm{x,y}\in\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})\cap\mathbb{Z}^{n} 𝒙,𝒚∈ℬ(𝒌1,𝒌2)​(𝒃)∩ℤn\bm{x,y}\in\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})\cap\mathbb{Z}^{n}, define:
+ \bm{a}=|\bm{x}-\bm{y}|,\quad\bm{p}=(\bm{x}-\bm{y})_{+},\quad\bm{m}=\min(\bm{x},\bm{y}) 𝒂=|𝒙−𝒚|,𝒑=(𝒙−𝒚)+,𝒎=min⁡(𝒙,𝒚)\bm{a}=|\bm{x}-\bm{y}|,\quad\bm{p}=(\bm{x}-\bm{y})_{+},\quad\bm{m}=\min(\bm{x},\bm{y})
+where for any number r\in\mathbb{R} r∈ℝr\in\mathbb{R}, we define (r)_{+}=0 (r)+=0(r)_{+}=0 if r<0 r<0r<0 and (r)_{+}=r (r)+=r(r)_{+}=r otherwise. The following facts are easy to check:
+1. 
+ \bm{x}=\bm{m}+\bm{p} 𝒙=𝒎+𝒑\bm{x}=\bm{m}+\bm{p},
+2. 
+ \bm{y}=\bm{m}+\bm{a}-\bm{p} 𝒚=𝒎+𝒂−𝒑\bm{y}=\bm{m}+\bm{a}-\bm{p},
+3. 
+ 2\bm{p}=\bm{a}+\bm{x}-\bm{y} 2​𝒑=𝒂+𝒙−𝒚2\bm{p}=\bm{a}+\bm{x}-\bm{y} so M\bm{p}=\frac{M\bm{a}}{2} M​𝒑=M​𝒂2M\bm{p}=\frac{M\bm{a}}{2} and further p_{i}\in\{0,a_{i}\} pi∈{0,ai}p_{i}\in\{0,a_{i}\}, thus \bm{p}\in\mathcal{E}(\bm{a}) 𝒑∈ℰ⁡(𝒂)\bm{p}\in\mathcal{E}(\bm{a}),
+4. 
+ 2\bm{m}=\bm{x}+\bm{y}-\bm{a} 2​𝒎=𝒙+𝒚−𝒂2\bm{m}=\bm{x}+\bm{y}-\bm{a}, so M\bm{m}=\bm{b}-\frac{M\bm{a}}{2} M​𝒎=𝒃−M​𝒂2M\bm{m}=\bm{b}-\frac{M\bm{a}}{2}. Moreover \bm{k}_{1}\leq\bm{m}\leq\bm{k}_{2}-\bm{a} 𝒌1≤𝒎≤𝒌2−𝒂\bm{k}_{1}\leq\bm{m}\leq\bm{k}_{2}-\bm{a}. Thus \bm{m}\in\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right)\cap\mathbb{Z}^{n} 𝒎∈ℬ(𝒌1,𝒌2−𝒂)​(𝒃−M​𝒂2)∩ℤn\bm{m}\in\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right)\cap\mathbb{Z}^{n}.
+Let:
+ \varphi(\bm{x},\bm{y})=(\bm{a},\bm{p},\bm{m}). φ⁡(𝒙,𝒚)=(𝒂,𝒑,𝒎).\varphi(\bm{x},\bm{y})=(\bm{a},\bm{p},\bm{m}).
+Then \varphi φ\varphi is a bijection between the desired sets by 1 through 4.
+∎
+Lemma 3.3.
+Given integer vectors \bm{k}_{1}\leq\bm{k}_{2} 𝐤1≤𝐤2\bm{k}_{1}\leq\bm{k}_{2} and \bm{b} 𝐛\bm{b} with proper dimensions, define \bm{k}:=\bm{k}_{2}+\bm{k}_{1} 𝐤:=𝐤2+𝐤1\bm{k}:=\bm{k}_{2}+\bm{k}_{1}. If M\bm{k} M​𝐤M\bm{k} is even, then we have:
+ B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})\leq B_{\bm{(\bm{k}_{1},\bm{k}_{2})}}\left(\frac{M\bm{k}}{2}\right). B(𝒌1,𝒌2)​(𝒃)≤B(𝒌𝟏,𝒌𝟐)​(M​𝒌2).B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})\leq B_{\bm{(\bm{k}_{1},\bm{k}_{2})}}\left(\frac{M\bm{k}}{2}\right).
+Proof.
+Proof is done by induction over |\bm{k}_{2}-\bm{k}_{1}| |𝒌2−𝒌1||\bm{k}_{2}-\bm{k}_{1}|. Suppose |\bm{k}_{2}-\bm{k}_{1}|=0 |𝒌2−𝒌1|=0|\bm{k}_{2}-\bm{k}_{1}|=0, i.e. \bm{k}_{2}=\bm{k}_{1} 𝒌2=𝒌1\bm{k}_{2}=\bm{k}_{1}. Then B_{(\bm{k}_{1},\bm{k}_{2})}(\frac{M\bm{k}}{2})=1 B(𝒌1,𝒌2)​(M​𝒌2)=1B_{(\bm{k}_{1},\bm{k}_{2})}(\frac{M\bm{k}}{2})=1, and B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}) B(𝒌1,𝒌2)​(𝒃)B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}) is either zero or one, depending on whether M\bm{k}_{1}=\bm{b} M​𝒌1=𝒃M\bm{k}_{1}=\bm{b} or not. Thus the base case holds.
+By Lemma 3.2, write:
+ B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})^{2}=\sum_{\begin{subarray}{c}\bm{a}\in\mathbb{Z}^{n}\\
+\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1}\\
+E(\bm{a})>0\end{subarray}}E(\bm{a})B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right), B(𝒌1,𝒌2)​(𝒃)2=∑𝒂∈ℤn𝟎≤𝒂≤𝒌2−𝒌1E⁡(𝒂)>0E⁡(𝒂)​B(𝒌1,𝒌2−𝒂)​(𝒃−M​𝒂2),B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})^{2}=\sum_{\begin{subarray}{c}\bm{a}\in\mathbb{Z}^{n}\\
+\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1}\\
+E(\bm{a})>0\end{subarray}}E(\bm{a})B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right),
+and:
+ B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)^{2}=\sum_{\begin{subarray}{c}\bm{a}\in\mathbb{Z}^{n}\\
+\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1}\\
+E(\bm{a})>0\end{subarray}}E(\bm{a})B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\frac{M(\bm{k-a})}{2}\right). B(𝒌1,𝒌2)​(M​𝒌2)2=∑𝒂∈ℤn𝟎≤𝒂≤𝒌2−𝒌1E⁡(𝒂)>0E⁡(𝒂)​B(𝒌1,𝒌2−𝒂)​(M⁡(𝒌−𝒂)2).B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)^{2}=\sum_{\begin{subarray}{c}\bm{a}\in\mathbb{Z}^{n}\\
+\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1}\\
+E(\bm{a})>0\end{subarray}}E(\bm{a})B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\frac{M(\bm{k-a})}{2}\right).
+The term \bm{a}=\bm{0} 𝒂=𝟎\bm{a}=\bm{0} contributes B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}) B(𝒌1,𝒌2)​(𝒃)B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}) and B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right) B(𝒌1,𝒌2)​(M​𝒌2)B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right) to the right hand sides of the first and the second identity respectively. By moving these terms to the left hand side, we get:
+ B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})^{2}-B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})=\sum_{\begin{subarray}{c}\bm{a}\in\mathbb{Z}^{n},\,\bm{a}\neq\bm{0}\\
+\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1}\\
+E(\bm{a})>0\end{subarray}}E(\bm{a})B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right), B(𝒌1,𝒌2)​(𝒃)2−B(𝒌1,𝒌2)​(𝒃)=∑𝒂∈ℤn,𝒂≠𝟎𝟎≤𝒂≤𝒌2−𝒌1E⁡(𝒂)>0E⁡(𝒂)​B(𝒌1,𝒌2−𝒂)​(𝒃−M​𝒂2),B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})^{2}-B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})=\sum_{\begin{subarray}{c}\bm{a}\in\mathbb{Z}^{n},\,\bm{a}\neq\bm{0}\\
+\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1}\\
+E(\bm{a})>0\end{subarray}}E(\bm{a})B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right),
+and:
+ B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)^{2}-B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)=\sum_{\begin{subarray}{c}\bm{a}\in\mathbb{Z}^{n},\,\bm{a}\neq\bm{0}\\
+\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1}\\
+E(\bm{a})>0\end{subarray}}E(\bm{a})B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\frac{M(\bm{k-a})}{2}\right). B(𝒌1,𝒌2)​(M​𝒌2)2−B(𝒌1,𝒌2)​(M​𝒌2)=∑𝒂∈ℤn,𝒂≠𝟎𝟎≤𝒂≤𝒌2−𝒌1E⁡(𝒂)>0E⁡(𝒂)​B(𝒌1,𝒌2−𝒂)​(M⁡(𝒌−𝒂)2).B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)^{2}-B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)=\sum_{\begin{subarray}{c}\bm{a}\in\mathbb{Z}^{n},\,\bm{a}\neq\bm{0}\\
+\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1}\\
+E(\bm{a})>0\end{subarray}}E(\bm{a})B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\frac{M(\bm{k-a})}{2}\right).
+By induction hypothesis, for any \bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1},\bm{a}\neq\bm{0} 𝟎≤𝒂≤𝒌2−𝒌1,𝒂≠𝟎\bm{0}\leq\bm{a}\leq\bm{k}_{2}-\bm{k}_{1},\bm{a}\neq\bm{0}:
+ B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right)\leq B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\frac{M(\bm{k}-\bm{a})}{2}\right), B(𝒌1,𝒌2−𝒂)​(𝒃−M​𝒂2)≤B(𝒌1,𝒌2−𝒂)​(M⁡(𝒌−𝒂)2),B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\bm{b}-\frac{M\bm{a}}{2}\right)\leq B_{(\bm{k}_{1},\bm{k}_{2}-\bm{a})}\left(\frac{M(\bm{k}-\bm{a})}{2}\right),
+implying that:
+ B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)^{2}-B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)\geq B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})^{2}-B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}). B(𝒌1,𝒌2)​(M​𝒌2)2−B(𝒌1,𝒌2)​(M​𝒌2)≥B(𝒌1,𝒌2)​(𝒃)2−B(𝒌1,𝒌2)​(𝒃).B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)^{2}-B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)\geq B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})^{2}-B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}).
+This conclusion completes the proof except for the case that B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)=0 B(𝒌1,𝒌2)​(M​𝒌2)=0B_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right)=0 and B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})=1 B(𝒌1,𝒌2)​(𝒃)=1B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})=1. However, \mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right) ℬ(𝒌1,𝒌2)​(M​𝒌2)\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}\left(\frac{M\bm{k}}{2}\right) is a nonempty polytope since \frac{\bm{k}}{2}\in\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\frac{M\bm{k}}{2}) 𝒌2∈ℬ(𝒌1,𝒌2)​(M​𝒌2)\frac{\bm{k}}{2}\in\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\frac{M\bm{k}}{2}), and therefore has at least one vertex which is integral by Lemma 3.4. Thus B_{(\bm{k}_{1},\bm{k}_{2})}(\frac{M\bm{k}}{2})\geq 1 B(𝒌1,𝒌2)​(M​𝒌2)≥1B_{(\bm{k}_{1},\bm{k}_{2})}(\frac{M\bm{k}}{2})\geq 1 for any \bm{k} 𝒌\bm{k}, fixing the issue.
+∎
+Lemma 3.4.
+Suppose M\in\mathbb{Z}^{m\times n} M∈ℤm×nM\in\mathbb{Z}^{m\times n} is a unimodular matrix and \bm{b}\in\mathbb{Z}^{m},\bm{k}_{1},\bm{k}_{2}\in\mathbb{Z}^{n} 𝐛∈ℤm,𝐤1,𝐤2∈ℤn\bm{b}\in\mathbb{Z}^{m},\bm{k}_{1},\bm{k}_{2}\in\mathbb{Z}^{n}. If the polytope \mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})=\{\bm{y}:M\bm{y}=\bm{b},\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\} ℬ(𝐤1,𝐤2)(𝐛)={𝐲:M𝐲=𝐛,𝐤1≤𝐲≤𝐤2}\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})=\{\bm{y}:M\bm{y}=\bm{b},\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\} is nonempty, then all of its vertices are integral.
+Proof.
+Let r=\rank(M) r=rank⁡(M)r=\rank(M) and fix \bm{y}^{*} 𝒚∗\bm{y}^{*} to be a vertex of \mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(M,\bm{b}) ℬ(𝒌1,𝒌2)​(M,𝒃)\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(M,\bm{b}). We say that a constraint k_{1,i}\leq y_{i} k1,i≤yik_{1,i}\leq y_{i} or y_{i}\leq k_{2,i} yi≤k2,iy_{i}\leq k_{2,i} is active at \bm{y}^{*} 𝒚∗\bm{y}^{*} if it holds with equality for \bm{y}^{*} 𝒚∗\bm{y}^{*}. The equality constraints M\bm{y}^{*}=\bm{b} M​𝒚∗=𝒃M\bm{y}^{*}=\bm{b} are automatically active.
+Without loss of generality, assume that the first r rr rows of M MM are linearly independent, and let M_{[r]} M[r]M_{[r]} be the submatrix of M MM containing these r rr rows, and let \bm{b}_{[r]} 𝒃[r]\bm{b}_{[r]} be the vector \bm{b} 𝒃\bm{b} restricted to its first r rr entries.
+Note that the normal vectors of the active constraints of \mathcal{B}_{\bm{k}_{1},\bm{k}_{2}}(\bm{b}) ℬ𝒌1,𝒌2​(𝒃)\mathcal{B}_{\bm{k}_{1},\bm{k}_{2}}(\bm{b}) at \bm{y}^{*} 𝒚∗\bm{y}^{*} must span \mathbb{R}^{n} ℝn\mathbb{R}^{n}. Otherwise there will exist some \bm{v}\in\mathbb{R}^{n} 𝒗∈ℝn\bm{v}\in\mathbb{R}^{n} orthogonal to all of the active constraints. Therefore, any point \bm{y}^{*}\pm\epsilon\bm{v} 𝒚∗±ϵ​𝒗\bm{y}^{*}\pm\epsilon\bm{v} belongs to P PP for small enough \epsilon\in\mathbb{R}_{\geq 0} ϵ∈ℝ≥0\epsilon\in\mathbb{R}_{\geq 0}, contradicting the assumption that \bm{y}^{*} 𝒚∗\bm{y}^{*} is a vertex of M MM.
+So in addition to the r rr constraints of M_{[r]} M[r]M_{[r]} that are automatically active at \bm{y}^{*} 𝒚∗\bm{y}^{*}, there are (at least) n-r n−rn-r constraints of \bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2} 𝒌1≤𝒚≤𝒌2\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2} that are active at \bm{y}^{*} 𝒚∗\bm{y}^{*} and are linearly independent together with the equality constraints of M_{[r]} M[r]M_{[r]}. After permuting the columns of M MM, assume that y_{i}=d_{i} yi=diy_{i}=d_{i} for i\in[n-r] i∈[n−r]i\in[n-r] where d_{i}\in\{k_{1,i},k_{2,i}\} di∈{k1,i,k2,i}d_{i}\in\{k_{1,i},k_{2,i}\}. For simplicity, let A AA be the submatrix of the first n-r n−rn-r columns of M_{[r]} M[r]M_{[r]} and B BB its last r rr columns, so that M_{[r]}=\begin{bmatrix}A&B\end{bmatrix} M[r]=[AB]M_{[r]}=\begin{bmatrix}A&B\end{bmatrix}. We know that \bm{y}^{*} 𝒚∗\bm{y}^{*} satisfies:
+ \begin{bmatrix}A&B\\
+\mathrm{id}_{(n-r)\times(n-r)}&0_{(n-r)\times r}\end{bmatrix}\bm{y}^{*}=\begin{bmatrix}\bm{b}_{[r]}\\
+\bm{d}\end{bmatrix},\det\begin{bmatrix}A&B\\
+\mathrm{id}_{(n-r)\times(n-r)}&0_{(n-r)\times r}\end{bmatrix}\neq 0, [ABid(n−r)×(n−r)0(n−r)×r]​𝒚∗=[𝒃[r]𝒅],det[ABid(n−r)×(n−r)0(n−r)×r]≠0,\begin{bmatrix}A&B\\
+\mathrm{id}_{(n-r)\times(n-r)}&0_{(n-r)\times r}\end{bmatrix}\bm{y}^{*}=\begin{bmatrix}\bm{b}_{[r]}\\
+\bm{d}\end{bmatrix},\det\begin{bmatrix}A&B\\
+\mathrm{id}_{(n-r)\times(n-r)}&0_{(n-r)\times r}\end{bmatrix}\neq 0,
+In particular, we must have \det{B}\neq 0 detB≠0\det{B}\neq 0. Since B BB is a non-singular r\times r r×rr\times r submatrix of M MM, its determinant is either +1 +1+1 or -1 −1-1 and B^{-1} B−1B^{-1} is an integer matrix. Thus:
+ {y}^{*}_{j}=\left[B^{-1}(\bm{b}_{[r]}-A\bm{d})\right]_{j}\in\mathbb{Z},\quad\forall j\in\{n-r+1,\cdots,n\} yj∗=[B−1​(𝒃[r]−A​𝒅)]j∈ℤ,∀j∈{n−r+1,⋯,n}{y}^{*}_{j}=\left[B^{-1}(\bm{b}_{[r]}-A\bm{d})\right]_{j}\in\mathbb{Z},\quad\forall j\in\{n-r+1,\cdots,n\}
+and \bm{y}^{*} 𝒚∗\bm{y}^{*} is an integer point.
+∎
+We now have all the tools to prove Theorem 3.1.
+Proof of Theorem 3.1.
+Expand T(\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})^{2}-T(\bm{b^{+}},\bm{k}_{1},\bm{k}_{2};\bm{w})\cdot T(\bm{b^{-}},\bm{k}_{1},\bm{k}_{2};\bm{w}) T​(𝒃,𝒌1,𝒌2,𝒘)2−T⁡(𝒃+,𝒌1,𝒌2,𝒘)⋅T⁡(𝒃−,𝒌1,𝒌2,𝒘)T(\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})^{2}-T(\bm{b^{+}},\bm{k}_{1},\bm{k}_{2};\bm{w})\cdot T(\bm{b^{-}},\bm{k}_{1},\bm{k}_{2};\bm{w}):
+ \displaystyle T(\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})^{2} T​(𝒃,𝒌1,𝒌2,𝒘)2\displaystyle T(\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})^{2}
+ \displaystyle=\sum_{2\bm{k}_{1}\leq\bm{\alpha}\leq 2\bm{k}_{2}}\left(\sum_{\begin{subarray}{c}\bm{k}_{1}\leq\bm{x,y}\leq\bm{k}_{2}\\
+M\bm{x}=M\bm{y}=\bm{b}\\
+\bm{x}+\bm{y}=\bm{\alpha}\end{subarray}}1\right)\bm{w^{\bm{\alpha}}} =∑2​𝒌1≤𝜶≤2​𝒌2(∑𝒌1≤𝒙,𝒚≤𝒌2M​𝒙=M​𝒚=𝒃𝒙+𝒚=𝜶1)​𝒘𝜶\displaystyle=\sum_{2\bm{k}_{1}\leq\bm{\alpha}\leq 2\bm{k}_{2}}\left(\sum_{\begin{subarray}{c}\bm{k}_{1}\leq\bm{x,y}\leq\bm{k}_{2}\\
+M\bm{x}=M\bm{y}=\bm{b}\\
+\bm{x}+\bm{y}=\bm{\alpha}\end{subarray}}1\right)\bm{w^{\bm{\alpha}}}
+ \displaystyle=\sum_{\begin{subarray}{c}2\bm{k}_{1}\leq\bm{\alpha}\leq 2\bm{k}_{2}\\
+M\bm{\alpha}=2\bm{b}\end{subarray}}\left(\sum_{\begin{subarray}{c}\bm{k}_{1}\leq\bm{x}\leq\bm{k}_{2}\\
+\bm{k_{1}}\leq\bm{\alpha}-\bm{x}\leq\bm{k}_{2}\\
+M\bm{x}=\bm{b}\end{subarray}}1\right)\bm{w^{\alpha}} =∑2​𝒌1≤𝜶≤2​𝒌2M​𝜶=2​𝒃(∑𝒌1≤𝒙≤𝒌2𝒌𝟏≤𝜶−𝒙≤𝒌2M​𝒙=𝒃1)​𝒘𝜶\displaystyle=\sum_{\begin{subarray}{c}2\bm{k}_{1}\leq\bm{\alpha}\leq 2\bm{k}_{2}\\
+M\bm{\alpha}=2\bm{b}\end{subarray}}\left(\sum_{\begin{subarray}{c}\bm{k}_{1}\leq\bm{x}\leq\bm{k}_{2}\\
+\bm{k_{1}}\leq\bm{\alpha}-\bm{x}\leq\bm{k}_{2}\\
+M\bm{x}=\bm{b}\end{subarray}}1\right)\bm{w^{\alpha}}
+ \displaystyle=\sum_{\begin{subarray}{c}2\bm{k}_{1}\leq\bm{\alpha}\leq 2\bm{k}_{2}\\
+M\bm{\alpha}=2\bm{b}\end{subarray}}B_{(\max\{\bm{k}_{1},\bm{\alpha}-\bm{k}_{2}\},\min\{\bm{k}_{2},\bm{\alpha}-\bm{k}_{1}\})}(\bm{b})\bm{w^{\alpha}}, =∑2​𝒌1≤𝜶≤2​𝒌2M​𝜶=2​𝒃B(max⁡{𝒌1,𝜶−𝒌2},min⁡{𝒌2,𝜶−𝒌1})​(𝒃)​𝒘𝜶,\displaystyle=\sum_{\begin{subarray}{c}2\bm{k}_{1}\leq\bm{\alpha}\leq 2\bm{k}_{2}\\
+M\bm{\alpha}=2\bm{b}\end{subarray}}B_{(\max\{\bm{k}_{1},\bm{\alpha}-\bm{k}_{2}\},\min\{\bm{k}_{2},\bm{\alpha}-\bm{k}_{1}\})}(\bm{b})\bm{w^{\alpha}},
+and:
+ \displaystyle T(\bm{b^{+}},\bm{k}_{1},\bm{k}_{2};\bm{w})\cdot T(\bm{b^{-}},\bm{k}_{1},\bm{k}_{2};\bm{w}) T⁡(𝒃+,𝒌1,𝒌2,𝒘)⋅T⁡(𝒃−,𝒌1,𝒌2,𝒘)\displaystyle T(\bm{b^{+}},\bm{k}_{1},\bm{k}_{2};\bm{w})\cdot T(\bm{b^{-}},\bm{k}_{1},\bm{k}_{2};\bm{w})
+ \displaystyle=\sum_{2\bm{k}_{1}\leq\bm{\alpha}\leq 2\bm{k}_{2}}\left(\sum_{\begin{subarray}{c}\bm{k}_{1}\leq\bm{x,y}\leq\bm{k}_{2}\\
+M\bm{x}=b^{+},M\bm{y}=b^{-}\\
+\bm{x}+\bm{y}=\bm{\alpha}\end{subarray}}1\right)\bm{w^{\alpha}} =∑2​𝒌1≤𝜶≤2​𝒌2(∑𝒌1≤𝒙,𝒚≤𝒌2M​𝒙=b+,M​𝒚=b−𝒙+𝒚=𝜶1)​𝒘𝜶\displaystyle=\sum_{2\bm{k}_{1}\leq\bm{\alpha}\leq 2\bm{k}_{2}}\left(\sum_{\begin{subarray}{c}\bm{k}_{1}\leq\bm{x,y}\leq\bm{k}_{2}\\
+M\bm{x}=b^{+},M\bm{y}=b^{-}\\
+\bm{x}+\bm{y}=\bm{\alpha}\end{subarray}}1\right)\bm{w^{\alpha}}
+ \displaystyle=\sum_{\begin{subarray}{c}2\bm{k}_{1}\leq\bm{\alpha}\leq 2\bm{k}_{2}\\
+M\bm{\alpha}=2\bm{b}\end{subarray}}B_{(\max\{\bm{k}_{1},\bm{\alpha}-\bm{k}_{2}\},\min\{\bm{k}_{2},\bm{\alpha}-\bm{k}_{1}\})}(\bm{b}^{+})\bm{w^{\alpha}}. =∑2​𝒌1≤𝜶≤2​𝒌2M​𝜶=2​𝒃B(max⁡{𝒌1,𝜶−𝒌2},min⁡{𝒌2,𝜶−𝒌1})​(𝒃+)​𝒘𝜶.\displaystyle=\sum_{\begin{subarray}{c}2\bm{k}_{1}\leq\bm{\alpha}\leq 2\bm{k}_{2}\\
+M\bm{\alpha}=2\bm{b}\end{subarray}}B_{(\max\{\bm{k}_{1},\bm{\alpha}-\bm{k}_{2}\},\min\{\bm{k}_{2},\bm{\alpha}-\bm{k}_{1}\})}(\bm{b}^{+})\bm{w^{\alpha}}.
+where the \min,\max min,max\min,\max are taken coordinate-wise.
+For each i ii, if \alpha_{i}\leq k_{1,i}+k_{2,i} αi≤k1,i+k2,i\alpha_{i}\leq k_{1,i}+k_{2,i} then the i ii-th coordinate of \max\{\bm{k}_{1},\bm{\alpha}-\bm{k}_{2}\} max⁡{𝒌1,𝜶−𝒌2}\max\{\bm{k}_{1},\bm{\alpha}-\bm{k}_{2}\} is k_{1,i} k1,ik_{1,i} and the i ii-th coordinate of \min\{\bm{k}_{2},\bm{\alpha}-\bm{k}_{1}\} min⁡{𝒌2,𝜶−𝒌1}\min\{\bm{k}_{2},\bm{\alpha}-\bm{k}_{1}\} is \alpha_{i}-k_{1,i} αi−k1,i\alpha_{i}-k_{1,i}. If \alpha_{i}\geq k_{1,i}+k_{2,i} αi≥k1,i+k2,i\alpha_{i}\geq k_{1,i}+k_{2,i} then the i ii-th coordinate of \max\{\bm{k}_{1},\bm{\alpha}-\bm{k}_{2}\} max⁡{𝒌1,𝜶−𝒌2}\max\{\bm{k}_{1},\bm{\alpha}-\bm{k}_{2}\} is \alpha_{i}-k_{2,i} αi−k2,i\alpha_{i}-k_{2,i} and the i ii-th coordinate of \min\{\bm{k}_{2},\bm{\alpha}-\bm{k}_{1}\} min⁡{𝒌2,𝜶−𝒌1}\min\{\bm{k}_{2},\bm{\alpha}-\bm{k}_{1}\} is k_{2,i} k2,ik_{2,i}. Thus \max\{\bm{k}_{1},\bm{\alpha}-\bm{k}_{2}\}+\min\{\bm{k}_{2},\bm{\alpha}-\bm{k}_{1}\}=\bm{\alpha} max⁡{𝒌1,𝜶−𝒌2}+min⁡{𝒌2,𝜶−𝒌1}=𝜶\max\{\bm{k}_{1},\bm{\alpha}-\bm{k}_{2}\}+\min\{\bm{k}_{2},\bm{\alpha}-\bm{k}_{1}\}=\bm{\alpha}.
+it follows from Lemma 3.3 that all the coefficients of T(\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})^{2}-T(\bm{b^{+}},\bm{k}_{1},\bm{k}_{2};\bm{w})\cdot T(\bm{b^{-}},\bm{k}_{1},\bm{k}_{2};\bm{w}) T​(𝒃,𝒌1,𝒌2,𝒘)2−T⁡(𝒃+,𝒌1,𝒌2,𝒘)⋅T⁡(𝒃−,𝒌1,𝒌2,𝒘)T(\bm{b},\bm{k}_{1},\bm{k}_{2};\bm{w})^{2}-T(\bm{b^{+}},\bm{k}_{1},\bm{k}_{2};\bm{w})\cdot T(\bm{b^{-}},\bm{k}_{1},\bm{k}_{2};\bm{w}) are nonnegative.
+∎
+Corollary 3.5.
+Let M\in\mathbb{Z}^{m\times n} M∈ℤm×nM\in\mathbb{Z}^{m\times n} be a unimodular matrix and \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m}. Suppose P=\{\bm{y}\in\mathbb{R}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} P={𝐲∈ℝ≥0n:M​𝐲=𝐛}P=\{\bm{y}\in\mathbb{R}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} is a bounded polytope. Then E_{P}(t)^{2}\geq E_{P}(t-1)\cdot E_{P}(t+1) EP​(t)2≥EP​(t−1)⋅EP​(t+1)E_{P}(t)^{2}\geq E_{P}(t-1)\cdot E_{P}(t+1) for all t\in\mathbb{Z}_{\geq 1} t∈ℤ≥1t\in\mathbb{Z}_{\geq 1}.
+Proof.
+By Theorem 3.1:
+ T(t\bm{b},\bm{0},\bm{k};\bm{1})^{2}\geq T((t-1)\bm{b},\bm{0},\bm{k};\bm{1})\cdot T\left((t+1)\bm{b},\bm{0},\bm{k};\bm{1}\right) T​(t​𝒃,𝟎,𝒌,𝟏)2≥T⁡((t−1)​𝒃,𝟎,𝒌,𝟏)⋅T⁡((t+1)​𝒃,𝟎,𝒌,𝟏)T(t\bm{b},\bm{0},\bm{k};\bm{1})^{2}\geq T((t-1)\bm{b},\bm{0},\bm{k};\bm{1})\cdot T\left((t+1)\bm{b},\bm{0},\bm{k};\bm{1}\right)
+As \bm{k} 𝒌\bm{k} tends to \infty ∞\infty coordinate-wise we get:
+ \#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=t\bm{b}\}^{2}\geq\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=(t-1)\bm{b}\}\cdot\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=(t+1)\bm{b}\}. #​{𝒚∈ℤ≥0n:M​𝒚=t​𝒃}2≥#⁡{𝒚∈ℤ≥0n:M​𝒚=(t−1)​𝒃}⋅#⁡{𝒚∈ℤ≥0n:M​𝒚=(t+1)​𝒃}.\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=t\bm{b}\}^{2}\geq\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=(t-1)\bm{b}\}\cdot\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=(t+1)\bm{b}\}.
+∎
+Remark 3.6.
+We remark that if M MM is unimodular and \bm{b}\in\mathbb{Z}^{m},\bm{k}_{1},\bm{k}_{2}\in\mathbb{Z}^{n} 𝒃∈ℤm,𝒌1,𝒌2∈ℤn\bm{b}\in\mathbb{Z}^{m},\bm{k}_{1},\bm{k}_{2}\in\mathbb{Z}^{n} are given, the polytope \mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(M,\bm{b}) ℬ(𝒌1,𝒌2)​(M,𝒃)\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(M,\bm{b}) is indeed IDP. However, not all IDP polytopes are obtained this way. Furthermore, Lemma 3.4 is not generally correct for an arbitrary IDP polytope. In particular, with the added assumption that M MM has full row rank, one can show that M MM is unimodular iff \mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}) ℬ(𝒌1,𝒌2)​(𝒃)\mathcal{B}_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b}) has integral vertices for any choice of \bm{b},\bm{k}_{1},\bm{k}_{2} 𝒃,𝒌1,𝒌2\bm{b},\bm{k}_{1},\bm{k}_{2}. Thus, the proof of Theorem 3.1 does not extend to IDP polytopes. In fact, Corollary 3.5 fails for general IDP polytopes, see [22].
+3.2 Solution Laurent polynomials of TU matrices
+Suppose M\in\{0,\pm 1\}^{m\times n} M∈{0,±1}m×nM\in\{0,\pm 1\}^{m\times n} is a totally unimodular matrix. For any \bm{b}\in\mathbb{Z}^{m} 𝒃∈ℤm\bm{b}\in\mathbb{Z}^{m}, we want to find a lower bound for \#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} #⁡{𝒚∈ℤ≥0n:M​𝒚=𝒃}\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\}. We encode these quantities as coefficients of a Laurent polynomial and prove that this Laurent polynomial is \LC VLC\LC. We will then use Proposition 2.2 to obtain lower bounds for its coefficients in Section 4.
+Suppose \bm{a}_{1},\cdots,\bm{a}_{n}\in\mathbb{Z}^{m} 𝒂1,⋯,𝒂n∈ℤm\bm{a}_{1},\cdots,\bm{a}_{n}\in\mathbb{Z}^{m} are the columns of M MM. For any integer vector \bm{k}\in\mathbb{Z}_{\geq 0}^{n} 𝒌∈ℤ≥0n\bm{k}\in\mathbb{Z}_{\geq 0}^{n}, define the \bm{k} 𝒌\bm{k}-solution Laurent polynomial of M MM to be:
+ P_{M,\bm{k}}(x_{i}:i\in[m])=\prod_{j=1}^{n}\left(\sum_{\ell=0}^{k_{j}}\bm{x}^{\ell\bm{a}_{j}}\right)=\sum_{\bm{b}\in\mathbb{Z}^{m}}B_{(\bm{0},\bm{k})}(\bm{b})\bm{x^{b}}, PM,𝒌(xi:i∈[m])=∏j=1n(∑ℓ=0kj𝒙ℓ​𝒂j)=∑𝒃∈ℤmB(𝟎,𝒌)(𝒃)𝒙𝒃,P_{M,\bm{k}}(x_{i}:i\in[m])=\prod_{j=1}^{n}\left(\sum_{\ell=0}^{k_{j}}\bm{x}^{\ell\bm{a}_{j}}\right)=\sum_{\bm{b}\in\mathbb{Z}^{m}}B_{(\bm{0},\bm{k})}(\bm{b})\bm{x^{b}},
+where B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})=\#\{\bm{y}\in\mathbb{Z}^{n}:M\bm{y}=\bm{b},\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\} B(𝒌1,𝒌2)(𝒃)=#{𝒚∈ℤn:M𝒚=𝒃,𝒌1≤𝒚≤𝒌2}B_{(\bm{k}_{1},\bm{k}_{2})}(\bm{b})=\#\{\bm{y}\in\mathbb{Z}^{n}:M\bm{y}=\bm{b},\bm{k}_{1}\leq\bm{y}\leq\bm{k}_{2}\}, as defined in Section 3.1.
+The goal of this section is to prove that P_{M,\bm{k}} PM,𝒌P_{M,\bm{k}} is \LC VLC\LC for any TU matrix M MM and \bm{k}\in\mathbb{Z}^{n} 𝒌∈ℤn\bm{k}\in\mathbb{Z}^{n}. See Remark 3.9 on why we cannot prove a similar statement for unimodular matrices.
+Let us first derive a simpler equivalent condition for P_{M,\bm{k}} PM,𝒌P_{M,\bm{k}} to be \LC VLC\LC. For the sake of simplicity, if M MM is an m\times n m×nm\times n matrix and S\subseteq[m] S⊆[m]S\subseteq[m], we denote by M_{S} MSM_{S} the submatrix of M MM consisting of the rows indexed by S SS.
+Proposition 3.7.
+Suppose M MM is a TU matrix. Then P_{M,\bm{k}} PM,𝐤P_{M,\bm{k}} is \LC VLC\LC if and only if the following condition holds:
+Choose an arbitrary subset S\subseteq[m] S⊆[m]S\subseteq[m] of the rows of M MM. Let B=M_{S} B=MSB=M_{S} and A=M_{[m]\setminus S} A=M[m]∖SA=M_{[m]\setminus S}. Further choose an arbitrary \bm{b}\in\mathbb{Z}^{|S|} 𝐛∈ℤ|S|\bm{b}\in\mathbb{Z}^{|S|}. Then any positive evaluation of the Laurent polynomial \sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=b\end{subarray}}\bm{x}^{A\bm{y}} ∑𝟎≤𝐲≤𝐤B​𝐲=b𝐱A​𝐲\sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=b\end{subarray}}\bm{x}^{A\bm{y}} in all but one variable has log-concave coefficients.
+Proof.
+By Definition 2.1, P_{M,\bm{k}} PM,𝒌P_{M,\bm{k}} is \LC VLC\LC if for any S\subseteq[m] S⊆[m]S\subseteq[m] and \bm{b}\in\mathbb{Z}^{|S|} 𝒃∈ℤ|S|\bm{b}\in\mathbb{Z}^{|S|}, any positive evaluation of [\bm{x}_{S}^{\bm{b}}]p_{M,\bm{k}} [𝒙S𝒃]​pM,𝒌[\bm{x}_{S}^{\bm{b}}]p_{M,\bm{k}} in all but one variable has log-concave coefficients. We can write:
+ \displaystyle[\bm{x}_{S}^{\bm{b}}]p_{M,\bm{k}}(\bm{x}) [𝒙S𝒃]​pM,𝒌​(𝒙)\displaystyle[\bm{x}_{S}^{\bm{b}}]p_{M,\bm{k}}(\bm{x})
+ \displaystyle=[\bm{x}_{S}^{\bm{b}}]\sum_{\bm{0}\leq\bm{y}\leq\bm{k}}\bm{x}^{M\bm{y}} =[𝒙S𝒃]​∑𝟎≤𝒚≤𝒌𝒙M​𝒚\displaystyle=[\bm{x}_{S}^{\bm{b}}]\sum_{\bm{0}\leq\bm{y}\leq\bm{k}}\bm{x}^{M\bm{y}}
+ \displaystyle=\sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=\bm{b}\end{subarray}}\bm{x}^{A\bm{y}}, =∑𝟎≤𝒚≤𝒌B​𝒚=𝒃𝒙A​𝒚,\displaystyle=\sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=\bm{b}\end{subarray}}\bm{x}^{A\bm{y}},
+completing the proof.
+∎
+Proposition 3.7 already reveals the connection between \LC VLC\LC properties of \bm{k} 𝒌\bm{k}-solution Laurent polynomials of TU matrices and midpoint log-concavity for TU polytopes. The following proposition completes this connection.
+Proposition 3.8.
+Suppose \begin{bmatrix}A\\
+B\end{bmatrix} [AB]\begin{bmatrix}A\\
+B\end{bmatrix} is a TU matrix and assume A AA is an m\times n m×nm\times n matrix. Then any positive evaluation of \sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=b\end{subarray}}\bm{x}^{A\bm{y}} ∑𝟎≤𝐲≤𝐤B​𝐲=b𝐱A​𝐲\sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=b\end{subarray}}\bm{x}^{A\bm{y}} in all but one variable has log-concave coefficients.
+Proof.
+Without loss of generality, evaluate \sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=b\end{subarray}}\bm{x}^{A\bm{y}} ∑𝟎≤𝒚≤𝒌B​𝒚=b𝒙A​𝒚\sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=b\end{subarray}}\bm{x}^{A\bm{y}} in all but the last variable, and let q(x) q⁡(x)q(x) be the resulting Laurent polynomial.
+It remains to check that \{[x^{\beta}]q\}_{\beta\in\mathbb{Z}} {[xβ]​q}β∈ℤ\{[x^{\beta}]q\}_{\beta\in\mathbb{Z}} is a log-concave sequence.
+Let \bm{a}_{(1)},\bm{a}_{(2)},\cdots,\bm{a}_{(m)} 𝒂(1),𝒂(2),⋯,𝒂(m)\bm{a}_{(1)},\bm{a}_{(2)},\cdots,\bm{a}_{(m)} be the rows of A AA, and suppose we are evaluating p pp at y_{1}=r_{1},\cdots,y_{m-1}=r_{m-1} y1=r1,⋯,ym−1=rm−1y_{1}=r_{1},\cdots,y_{m-1}=r_{m-1}. Then:
+ \displaystyle q(x) q⁡(x)\displaystyle q(x)
+ \displaystyle=\sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=\bm{b}\end{subarray}}r_{1}^{\bm{a}_{(1)}^{T}\bm{y}}\cdots r_{m-1}^{\bm{a}_{(m-1)}^{T}\bm{y}}x^{\bm{a}_{(m)}^{T}\bm{y}} =∑𝟎≤𝒚≤𝒌B​𝒚=𝒃r1𝒂(1)T​𝒚⋯rm−1𝒂(m−1)T​𝒚x𝒂(m)T​𝒚\displaystyle=\sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=\bm{b}\end{subarray}}r_{1}^{\bm{a}_{(1)}^{T}\bm{y}}\cdots r_{m-1}^{\bm{a}_{(m-1)}^{T}\bm{y}}x^{\bm{a}_{(m)}^{T}\bm{y}}
+ \displaystyle=\sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=b\\
+A\bm{y}=\bm{w}\end{subarray}}r_{1}^{w_{1}}\cdots r_{m-1}^{w_{m-1}}x^{w_{m}} =∑𝟎≤𝒚≤𝒌B​𝒚=bA​𝒚=𝒘r1w1⋯rm−1wm−1xwm\displaystyle=\sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=b\\
+A\bm{y}=\bm{w}\end{subarray}}r_{1}^{w_{1}}\cdots r_{m-1}^{w_{m-1}}x^{w_{m}}
+Since the set \{\bm{y}:B\bm{y}=\bm{b},\bm{0}\leq\bm{y}\leq\bm{k}\} {𝒚:B𝒚=𝒃,𝟎≤𝒚≤𝒌}\{\bm{y}:B\bm{y}=\bm{b},\bm{0}\leq\bm{y}\leq\bm{k}\} is bounded, one can choose some integer vector \bm{\gamma} 𝜸\bm{\gamma} such that -\bm{\gamma}\leq\bm{w}=A\bm{y}\leq\bm{\gamma} −𝜸≤𝒘=A​𝒚≤𝜸-\bm{\gamma}\leq\bm{w}=A\bm{y}\leq\bm{\gamma} for any \bm{y} 𝒚\bm{y} in this set. Then:
+ q(x)=\sum_{\beta\in\mathbb{Z}}\left(\sum r_{1}^{w_{1}}\cdots r_{m-1}^{w_{m-1}}\right)x^{\beta}, q(x)=∑β∈ℤ(∑r1w1⋯rm−1wm−1)xβ,q(x)=\sum_{\beta\in\mathbb{Z}}\left(\sum r_{1}^{w_{1}}\cdots r_{m-1}^{w_{m-1}}\right)x^{\beta},
+where the second sum is over the set:
+ T=\left\{\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}:\begin{bmatrix}B&\bm{0}\\
+{A}&-\mathrm{id}\\
+\end{bmatrix}\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}=\begin{bmatrix}\bm{b}\\
+\bm{0}\end{bmatrix},\quad w_{m}=\beta,\quad\begin{bmatrix}\bm{0}\\
+-\bm{\gamma}\end{bmatrix}\leq\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}\leq\begin{bmatrix}\bm{k}\\
+\bm{\gamma}\end{bmatrix}\right\} T={[𝒚𝒘]:[B𝟎A−id][𝒚𝒘]=[𝒃𝟎],wm=β,[𝟎−𝜸]≤[𝒚𝒘]≤[𝒌𝜸]}T=\left\{\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}:\begin{bmatrix}B&\bm{0}\\
+{A}&-\mathrm{id}\\
+\end{bmatrix}\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}=\begin{bmatrix}\bm{b}\\
+\bm{0}\end{bmatrix},\quad w_{m}=\beta,\quad\begin{bmatrix}\bm{0}\\
+-\bm{\gamma}\end{bmatrix}\leq\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}\leq\begin{bmatrix}\bm{k}\\
+\bm{\gamma}\end{bmatrix}\right\}
+Let M MM be the matrix that is obtained by by appending a row of e_{n+m}^{T}=\begin{bmatrix}0&\cdots&0&1\end{bmatrix} en+mT=[0⋯01]e_{n+m}^{T}=\begin{bmatrix}0&\cdots&0&1\end{bmatrix} row to the end of \begin{bmatrix}B&{0}\\
+A&-\mathrm{id}\\
+\end{bmatrix} [B0A−id]\begin{bmatrix}B&{0}\\
+A&-\mathrm{id}\\
+\end{bmatrix}, i.e. M=\begin{bmatrix}B&0\\
+A&-\mathrm{id}\\
+\lx@intercol\hfil e_{n+m}^{T}\hfil\lx@intercol\end{bmatrix} M=[B0A−iden+mT]M=\begin{bmatrix}B&0\\
+A&-\mathrm{id}\\
+\lx@intercol\hfil e_{n+m}^{T}\hfil\lx@intercol\end{bmatrix}. By basic properties of TU matrices, M MM is TU. Then we can rewrite:
+ T=\left\{\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}:M\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}=\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta\end{bmatrix},\quad\begin{bmatrix}\bm{0}\\
+-\bm{\gamma}\end{bmatrix}\leq\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}\leq\begin{bmatrix}\bm{k}\\
+\bm{\gamma}\end{bmatrix}\right\}=B_{\begin{bmatrix}\bm{0}\\
+-\bm{\gamma}\end{bmatrix},\begin{bmatrix}\bm{k}\\
+\bm{\gamma}\end{bmatrix}}\left(M,\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta\end{bmatrix}\right). T={[𝒚𝒘]:M[𝒚𝒘]=[𝒃𝟎β],[𝟎−𝜸]≤[𝒚𝒘]≤[𝒌𝜸]}=B[𝟎−𝜸],[𝒌𝜸](M,[𝒃𝟎β]).T=\left\{\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}:M\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}=\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta\end{bmatrix},\quad\begin{bmatrix}\bm{0}\\
+-\bm{\gamma}\end{bmatrix}\leq\begin{bmatrix}\bm{y}\\
+\bm{w}\end{bmatrix}\leq\begin{bmatrix}\bm{k}\\
+\bm{\gamma}\end{bmatrix}\right\}=B_{\begin{bmatrix}\bm{0}\\
+-\bm{\gamma}\end{bmatrix},\begin{bmatrix}\bm{k}\\
+\bm{\gamma}\end{bmatrix}}\left(M,\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta\end{bmatrix}\right).
+Further rewrite q(x) q⁡(x)q(x) as follows:
+ q(x)=\sum_{\beta\in\mathbb{Z}}T\left(M,\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta\end{bmatrix},\begin{bmatrix}\bm{0}\\
+-\bm{\gamma}\end{bmatrix},\begin{bmatrix}\bm{k}\\
+\bm{\gamma}\end{bmatrix};\begin{bmatrix}1&1&\cdots&1&r_{1}&\cdots&r_{m-1}&1\end{bmatrix}^{T}\right)x^{\beta}. q⁡(x)=∑β∈ℤT⁡(M,[𝒃𝟎β],[𝟎−𝜸],[𝒌𝜸],[11⋯1r1⋯rm−11]T)​xβ.q(x)=\sum_{\beta\in\mathbb{Z}}T\left(M,\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta\end{bmatrix},\begin{bmatrix}\bm{0}\\
+-\bm{\gamma}\end{bmatrix},\begin{bmatrix}\bm{k}\\
+\bm{\gamma}\end{bmatrix};\begin{bmatrix}1&1&\cdots&1&r_{1}&\cdots&r_{m-1}&1\end{bmatrix}^{T}\right)x^{\beta}.
+So the coefficients of q(x) q⁡(x)q(x) form the following sequence:
+ \left\{T\left(M,\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta\end{bmatrix},\begin{bmatrix}\bm{0}\\
+-\bm{\gamma}\end{bmatrix},\begin{bmatrix}\bm{k}\\
+\bm{\gamma}\end{bmatrix};\begin{bmatrix}1&1&\cdots&1&r_{1}&\cdots&r_{m-1}&1\end{bmatrix}^{T}\right)\right\}_{\beta\in\mathbb{Z}} {T⁡(M,[𝒃𝟎β],[𝟎−𝜸],[𝒌𝜸],[11⋯1r1⋯rm−11]T)}β∈ℤ\left\{T\left(M,\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta\end{bmatrix},\begin{bmatrix}\bm{0}\\
+-\bm{\gamma}\end{bmatrix},\begin{bmatrix}\bm{k}\\
+\bm{\gamma}\end{bmatrix};\begin{bmatrix}1&1&\cdots&1&r_{1}&\cdots&r_{m-1}&1\end{bmatrix}^{T}\right)\right\}_{\beta\in\mathbb{Z}}
+Observe that this sequence does not have any internal zeros. This is because given any integer vectors \bm{\beta}_{1},\bm{\beta}_{2} 𝜷1,𝜷2\bm{\beta}_{1},\bm{\beta}_{2}, the set \{\bm{d}:M\bm{y}=\bm{d}\text{ for some }\bm{\beta_{1}}\leq\bm{y}\leq\bm{\beta}_{2}\} {𝒅:M​𝒚=𝒅​ for some ​𝜷𝟏≤𝒚≤𝜷2}\{\bm{d}:M\bm{y}=\bm{d}\text{ for some }\bm{\beta_{1}}\leq\bm{y}\leq\bm{\beta}_{2}\} is convex, and if \bm{d} 𝒅\bm{d} is an integer vector in this set, then \bm{\beta}_{1}\leq\bm{y}\leq\bm{\beta}_{2},M\bm{y}=\bm{d} 𝜷1≤𝒚≤𝜷2,M​𝒚=𝒅\bm{\beta}_{1}\leq\bm{y}\leq\bm{\beta}_{2},M\bm{y}=\bm{d} has an integer solution by Lemma 3.4.
+Thus, this sequence is log-concave due to Theorem 3.1 and because 2\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta\end{bmatrix}=\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta-1\end{bmatrix}+\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta+1\end{bmatrix} 2​[𝒃𝟎β]=[𝒃𝟎β−1]+[𝒃𝟎β+1]2\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta\end{bmatrix}=\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta-1\end{bmatrix}+\begin{bmatrix}\bm{b}\\
+\bm{0}\\
+\beta+1\end{bmatrix}.
+∎
+Remark 3.9.
+Suppose M MM is a general unimodular matrix. To prove that P_{M,\bm{k}} PM,𝒌P_{M,\bm{k}} is \LC VLC\LC, we need to show that \sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=b\end{subarray}}\bm{x}^{A\bm{y}} ∑𝟎≤𝒚≤𝒌B​𝒚=b𝒙A​𝒚\sum_{\begin{subarray}{c}\bm{0}\leq\bm{y}\leq\bm{k}\\
+B\bm{y}=b\end{subarray}}\bm{x}^{A\bm{y}} is \LC VLC\LC for every partition of the rows of M MM into two submatrices A AA and B BB. However, the proof of Proposition 3.8 does not always for unimodular matrices since \begin{bmatrix}B&0\\
+A&\mathrm{id}\\
+\lx@intercol\hfil e_{n+m}^{T}\hfil\lx@intercol\end{bmatrix} [B0Aiden+mT]\begin{bmatrix}B&0\\
+A&\mathrm{id}\\
+\lx@intercol\hfil e_{n+m}^{T}\hfil\lx@intercol\end{bmatrix} does not necessarily remain unimodular.
+Corollary 3.10.
+By Proposition 3.7 and Proposition 3.8, the \bm{k} 𝐤\bm{k}-solution Laurent polynomial of any TU matrix is \LC VLC\LC for any \bm{k}\geq\bm{0} 𝐤≥𝟎\bm{k}\geq\bm{0}.
+4 Capacity bounds for lattice points of TU polytopes
+With Corollary 3.10 at our disposal, we can use Proposition 2.2 to derive capacity bounds for B_{(\bm{0},\bm{k})}(M,\bm{b}) B(𝟎,𝒌)​(M,𝒃)B_{(\bm{0},\bm{k})}(M,\bm{b}) based on \cpc_{\bm{b}}(P_{M,\bm{k}}) cap𝒃⁡(PM,𝒌)\cpc_{\bm{b}}(P_{M,\bm{k}}) and \Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) Degi𝒃⁡(PM,𝒌)\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}). In this section, we will focus on finding explicit bounds for the set \Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) Degi𝒃⁡(PM,𝒌)\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) based on M MM, \bm{b} 𝒃\bm{b} and \bm{k} 𝒌\bm{k}. We look at general TU matrices in Section 4.1 and find a simply exponential lower bound for B(M,\bm{b}):=\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} B⁡(M,𝒃):=#⁡{𝒚∈ℤ≥0n:M​𝒚=𝒃}B(M,\bm{b}):=\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\}. In Section 4.2, we look at two special classes of TU matrices and find another lower bound for B_{M}(\bm{b}) BM​(𝒃)B_{M}(\bm{b}).
+First, let us find an alternate characterization for both \min\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) min⁡Degi𝒃⁡(PM,𝒌)\min\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) and \max\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) max⁡Degi𝒃⁡(PM,𝒌)\max\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) using LP strong duality. For any matrix M\in\mathbb{R}^{m\times n} M∈ℝm×nM\in\mathbb{R}^{m\times n}, let \bm{m}_{(i)} 𝒎(i)\bm{m}_{(i)} be the i ii-th row of M MM and let M_{[i+1,m]} M[i+1,m]M_{[i+1,m]} denote the submatrix of M MM consisting of the rows i+1,\cdots,m i+1,⋯,mi+1,\cdots,m. Further define \bm{s}_{i} 𝒔i\bm{s}_{i} to be the sum of the first i ii rows of M MM. In particular, if \bm{b}\in\mathbb{R}^{m} 𝒃∈ℝm\bm{b}\in\mathbb{R}^{m} is a vector, then \bm{b}_{[i+1,m]} 𝒃[i+1,m]\bm{b}_{[i+1,m]} is the restriction of \bm{b} 𝒃\bm{b} to its i+1,\cdots,m i+1,⋯,mi+1,\cdots,m-th entries.
+Proposition 4.1.
+Let M MM be an m\times n m×nm\times n TU matrix and \bm{k}\in\mathbb{Z}^{n} 𝐤∈ℤn\bm{k}\in\mathbb{Z}^{n}. For any i\in[m-1] i∈[m−1]i\in[m-1]:
+ \max\Deg_{i}^{\bm{b}}(P_{M,\bm{k}})=\min\{\bm{b}_{[i+1,m]}^{T}\bm{w}+\bm{k}^{T}\bm{z}:(M_{[i+1,m]})^{T}\bm{w}+\bm{z}\geq\bm{m}_{(i)},\,\bm{z}\geq\bm{0}\}, maxDegi𝒃(PM,𝒌)=min{𝒃[i+1,m]T𝒘+𝒌T𝒛:(M[i+1,m])T𝒘+𝒛≥𝒎(i),𝒛≥𝟎},\max\Deg_{i}^{\bm{b}}(P_{M,\bm{k}})=\min\{\bm{b}_{[i+1,m]}^{T}\bm{w}+\bm{k}^{T}\bm{z}:(M_{[i+1,m]})^{T}\bm{w}+\bm{z}\geq\bm{m}_{(i)},\,\bm{z}\geq\bm{0}\},
+Similarly:
+ \min\Deg_{i}^{\bm{b}}(P_{M,\bm{k}})=\max\{\bm{b}_{[i+1,m]}^{T}\bm{w}-\bm{k}^{T}\bm{z}:(M_{[i+1,m]})^{T}\bm{w}-\bm{z}\leq\bm{m}_{(i)},\,\bm{z}\geq\bm{0}\}. minDegi𝒃(PM,𝒌)=max{𝒃[i+1,m]T𝒘−𝒌T𝒛:(M[i+1,m])T𝒘−𝒛≤𝒎(i),𝒛≥𝟎}.\min\Deg_{i}^{\bm{b}}(P_{M,\bm{k}})=\max\{\bm{b}_{[i+1,m]}^{T}\bm{w}-\bm{k}^{T}\bm{z}:(M_{[i+1,m]})^{T}\bm{w}-\bm{z}\leq\bm{m}_{(i)},\,\bm{z}\geq\bm{0}\}.
+Proof.
+The set of degrees of y_{i} yiy_{i} in [{y_{i+1}^{\alpha_{i+1}}}\cdots y_{m}^{\alpha_{m}}]P_{M,\bm{0},\bm{k}} [yi+1αi+1⋯ymαm]PM,𝟎,𝒌[{y_{i+1}^{\alpha_{i+1}}}\cdots y_{m}^{\alpha_{m}}]P_{M,\bm{0},\bm{k}} is as follows:
+ \Deg_{i}^{\bm{b}}(P_{M,\bm{k}})=\{\bm{m}_{(i)}^{T}\bm{x}:M_{[i+1,m]}\bm{y}=\bm{b}_{[i+1,m]},\,\bm{0}\leq\bm{y}\leq\bm{k},\,\bm{y}\in\mathbb{Z}^{n}\}, Degi𝒃(PM,𝒌)={𝒎(i)T𝒙:M[i+1,m]𝒚=𝒃[i+1,m], 0≤𝒚≤𝒌,𝒚∈ℤn},\Deg_{i}^{\bm{b}}(P_{M,\bm{k}})=\{\bm{m}_{(i)}^{T}\bm{x}:M_{[i+1,m]}\bm{y}=\bm{b}_{[i+1,m]},\,\bm{0}\leq\bm{y}\leq\bm{k},\,\bm{y}\in\mathbb{Z}^{n}\},
+since M MM is a TU matrix, a tight upper bound for this set would be the solution to the LP problem:
+ \max\{\bm{m}_{(i)}^{T}\bm{y}:M_{[i+1,m]}\bm{y}=b_{[i+1,m]},\bm{0}\leq\bm{y}\leq\bm{k}\}. max{𝒎(i)T𝒚:M[i+1,m]𝒚=b[i+1,m],𝟎≤𝒚≤𝒌}.\max\{\bm{m}_{(i)}^{T}\bm{y}:M_{[i+1,m]}\bm{y}=b_{[i+1,m]},\bm{0}\leq\bm{y}\leq\bm{k}\}.
+The dual of this LP is:
+ \min\{\bm{b}_{[i+1,m]}^{T}\bm{w}+\bm{k}^{T}\bm{z}:(M_{[i+1,m]})^{T}\bm{w}+\bm{z}\geq\bm{m}_{(i)},\bm{z}\geq\bm{0}\}. min{𝒃[i+1,m]T𝒘+𝒌T𝒛:(M[i+1,m])T𝒘+𝒛≥𝒎(i),𝒛≥𝟎}.\min\{\bm{b}_{[i+1,m]}^{T}\bm{w}+\bm{k}^{T}\bm{z}:(M_{[i+1,m]})^{T}\bm{w}+\bm{z}\geq\bm{m}_{(i)},\bm{z}\geq\bm{0}\}.
+By strong LP duality, the objective value of (P) and (D) are equal, completing the first part of the proof. The argument for \min\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) min⁡Degi𝒃⁡(PM,𝒌)\min\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) is similar.
+∎
+Computing the optimal values of the LPs in Proposition 4.1 for all i\in[m-1] i∈[m−1]i\in[m-1] can be computationally costly. Instead, we evaluate the objective functions of these LPs at feasible points, getting weaker bounds for \Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) Degi𝒃⁡(PM,𝒌)\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}). We can use this looser bound to obtain a capacity lower bound for B_{(\bm{0},\bm{k})}(M,\bm{b}) B(𝟎,𝒌)​(M,𝒃)B_{(\bm{0},\bm{k})}(M,\bm{b}) by Proposition 2.2. We will look at two different sets of feasible points for these LPs. First, we will let \bm{w}=\bm{0} 𝒘=𝟎\bm{w}=\bm{0} and adjust \bm{z} 𝒛\bm{z} accordingly to find a feasible point. This way we get capacity lower bounds for any TU matrix M MM, which are stated in Section 4.1. Second, we will let \bm{z}=\bm{0} 𝒛=𝟎\bm{z}=\bm{0} and adjust \bm{w} 𝒘\bm{w} accordingly. In case a feasible \bm{w} 𝒘\bm{w} exists, we can find an alternate capacity lower bound for B_{(\bm{0},\bm{k})}(M,\bm{b}) B(𝟎,𝒌)​(M,𝒃)B_{(\bm{0},\bm{k})}(M,\bm{b}), see Section 4.2. In particular, we find a lower bound for B_{(\bm{0},\bm{k})}(M,\bm{b}) B(𝟎,𝒌)​(M,𝒃)B_{(\bm{0},\bm{k})}(M,\bm{b}) when M MM has non-negative partial row sums and recover a lower bound for the number of lattice points of a flow polytope already presented in [36] and [35].
+4.1 General capacity bounds for TU polytopes
+As proven in Corollary 3.10, the \bm{k} 𝒌\bm{k}-solution Laurent polynomial of any TU matrix is \LC VLC\LC. Thus we can obtain a lower bound for B_{(\bm{0},\bm{k})}(M,\bm{b}) B(𝟎,𝒌)​(M,𝒃)B_{(\bm{0},\bm{k})}(M,\bm{b}) using Proposition 2.2:
+Theorem 4.2.
+For any m\times n m×nm\times n TU matrix M MM and any integer vectors \bm{k}\in\mathbb{Z}^{n} 𝐤∈ℤn\bm{k}\in\mathbb{Z}^{n}, \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m} we have:
+ B_{(\bm{0},\bm{k})}(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\prod_{i=1}^{m}\max\left\{\frac{|\alpha_{i}-b_{i}|^{|\alpha_{i}-b_{i}|}}{(1+|\alpha_{i}-b_{i}|)^{1+|\alpha_{i}-b_{i}|}},\frac{|\gamma_{i}-b_{i}|^{|\gamma_{i}-b_{i}|}}{(1+|\gamma_{i}-b_{i}|)^{1+|\gamma_{i}-b_{i}|}}\right\}, B(𝟎,𝒌)​(M,𝒃)≥cap𝒃⁡(PM,𝒌)⋅∏i=1mmax⁡{|αi−bi||αi−bi|(1+|αi−bi|)1+|αi−bi|,|γi−bi||γi−bi|(1+|γi−bi|)1+|γi−bi|},B_{(\bm{0},\bm{k})}(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\prod_{i=1}^{m}\max\left\{\frac{|\alpha_{i}-b_{i}|^{|\alpha_{i}-b_{i}|}}{(1+|\alpha_{i}-b_{i}|)^{1+|\alpha_{i}-b_{i}|}},\frac{|\gamma_{i}-b_{i}|^{|\gamma_{i}-b_{i}|}}{(1+|\gamma_{i}-b_{i}|)^{1+|\gamma_{i}-b_{i}|}}\right\},
+where:
+ \alpha_{i}=-\sum_{j\in[n]:M_{i,j}=-1}k_{j},\quad\gamma_{i}=\sum_{j\in[n]:M_{i,j}=1}k_{j}\quad\forall i\in[m]. αi=−∑j∈[n]:Mi,j=−1kj,γi=∑j∈[n]:Mi,j=1kj∀i∈[m].\alpha_{i}=-\sum_{j\in[n]:M_{i,j}=-1}k_{j},\quad\gamma_{i}=\sum_{j\in[n]:M_{i,j}=1}k_{j}\quad\forall i\in[m].
+Proof.
+It follows from Proposition 2.2 that:
+ B_{(\bm{0},\bm{k})}(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\prod_{i=1}^{m}\frac{|\beta_{i}-b_{i}|^{|\beta_{i}-b_{i}|}}{(1+|\beta_{i}-b_{i}|)^{1+|\beta_{i}-b_{i}|}}, B(𝟎,𝒌)​(M,𝒃)≥cap𝒃⁡(PM,𝒌)⋅∏i=1m|βi−bi||βi−bi|(1+|βi−bi|)1+|βi−bi|,B_{(\bm{0},\bm{k})}(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\prod_{i=1}^{m}\frac{|\beta_{i}-b_{i}|^{|\beta_{i}-b_{i}|}}{(1+|\beta_{i}-b_{i}|)^{1+|\beta_{i}-b_{i}|}},
+where \beta_{i} βi\beta_{i} is either a lower bound or an upper bound \Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) Degi𝒃⁡(PM,𝒌)\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}). Recall that for any r\in\mathbb{R} r∈ℝr\in\mathbb{R}:
+ (r)_{+}=\begin{cases}r&\text{ if }r>0\\
+0&\text{ otherwise}\end{cases}\quad\text{and}\quad(r)_{-}=\begin{cases}r&\text{ if }r<0\\
+0&\text{ otherwise}\end{cases}, (r)+={r if ​r>00 otherwiseand(r)−={r if ​r<00 otherwise,(r)_{+}=\begin{cases}r&\text{ if }r>0\\
+0&\text{ otherwise}\end{cases}\quad\text{and}\quad(r)_{-}=\begin{cases}r&\text{ if }r<0\\
+0&\text{ otherwise}\end{cases},
+and for any vector \bm{v}\in\mathbb{R}^{n} 𝒗∈ℝn\bm{v}\in\mathbb{R}^{n}, both (\bm{v})_{+} (𝒗)+(\bm{v})_{+}, (\bm{v})_{-} (𝒗)−(\bm{v})_{-} are applied coordinate-wise. It is easy to check that the pair \bm{w}=\bm{0},\bm{z}=(\bm{m}_{(i)})_{+} 𝒘=𝟎,𝒛=(𝒎(i))+\bm{w}=\bm{0},\bm{z}=(\bm{m}_{(i)})_{+} satisfy (M_{[i+1,m]})^{T}\bm{w}+\bm{z}\geq\bm{m}_{(i)},\bm{z}\geq\bm{0} (M[i+1,m])T​𝒘+𝒛≥𝒎(i),𝒛≥𝟎(M_{[i+1,m]})^{T}\bm{w}+\bm{z}\geq\bm{m}_{(i)},\bm{z}\geq\bm{0}. It follows from Proposition 4.1 that \gamma_{i} γi\gamma_{i} is indeed an upper bound for \Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) Degi𝒃⁡(PM,𝒌)\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) for any i\in[m-1] i∈[m−1]i\in[m-1]. Similarly, \bm{w}=\bm{0},\bm{z}=-(\bm{m}_{(i)})_{-} 𝒘=𝟎,𝒛=−(𝒎(i))−\bm{w}=\bm{0},\bm{z}=-(\bm{m}_{(i)})_{-} is a feasible point for (M_{[i+1,m]})^{T}\bm{w}-\bm{z}\leq\bm{m}_{(i)},\bm{z}\geq\bm{0} (M[i+1,m])T​𝒘−𝒛≤𝒎(i),𝒛≥𝟎(M_{[i+1,m]})^{T}\bm{w}-\bm{z}\leq\bm{m}_{(i)},\bm{z}\geq\bm{0}, implying that \alpha_{i} αi\alpha_{i} is a lower bound for \Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) Degi𝒃⁡(PM,𝒌)\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) for any i\in[m-1] i∈[m−1]i\in[m-1].
+It is also easy to check that \alpha_{m},\gamma_{m} αm,γm\alpha_{m},\gamma_{m} are bounds for \Deg_{m}^{\bm{b}}(P_{M,\bm{k}}) Degm𝒃⁡(PM,𝒌)\Deg_{m}^{\bm{b}}(P_{M,\bm{k}}), since:
+ -\sum_{j\in[n]:M_{m,j}=-1}k_{j}\leq\sum_{j\in[n]}M_{m,j}x_{j}\leq\sum_{j\in[n]:M_{m,j}=1}k_{j},\quad\forall\bm{0}\leq\bm{x}\leq\bm{k} −∑j∈[n]:Mm,j=−1kj≤∑j∈[n]Mm,jxj≤∑j∈[n]:Mm,j=1kj,∀𝟎≤𝒙≤𝒌-\sum_{j\in[n]:M_{m,j}=-1}k_{j}\leq\sum_{j\in[n]}M_{m,j}x_{j}\leq\sum_{j\in[n]:M_{m,j}=1}k_{j},\quad\forall\bm{0}\leq\bm{x}\leq\bm{k}
+Hence proving the statement.
+∎
+Let us assume that the fiber \{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} {𝒚∈ℤ≥0n:M​𝒚=𝒃}\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} is finite. Then there should exist some \bm{k} 𝒌\bm{k} such that any \bm{y} 𝒚\bm{y} in this fiber satisfies \bm{y}\leq\bm{k} 𝒚≤𝒌\bm{y}\leq\bm{k}. For such a \bm{k} 𝒌\bm{k}, the bound of Theorem 4.2 becomes a bound for B(M,\bm{b})=\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} B⁡(M,𝒃)=#⁡{𝒚∈ℤ≥0n:M​𝒚=𝒃}B(M,\bm{b})=\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\}.
+Through the rest of this section, we will explore the properties of TU matrices M MM with finite fibers and prove capacity bounds for B(M,\bm{b}) B⁡(M,𝒃)B(M,\bm{b}).
+Lemma 4.3.
+Suppose M MM is an m\times n m×nm\times n TU matrix and the fiber \{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} {𝐲∈ℤ≥0n:M​𝐲=𝐛}\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} is nonempty and finite for some integer vector \bm{b} 𝐛\bm{b}. Then any point of this fiber satisfies y_{i}\leq\|\bm{b}\|_{1} yi≤‖𝐛‖1y_{i}\leq\|\bm{b}\|_{1} for any i\in[n] i∈[n]i\in[n].
+Proof.
+In fact, we can prove that any point \bm{y} 𝒚\bm{y} of P=\{\bm{y}:M\bm{y}=\bm{b},\bm{y}\geq\bm{0}\} P={𝒚:M𝒚=𝒃,𝒚≥𝟎}P=\{\bm{y}:M\bm{y}=\bm{b},\bm{y}\geq\bm{0}\} satisfies y_{i}\leq\|\bm{b}\|_{1} yi≤‖𝒃‖1y_{i}\leq\|\bm{b}\|_{1}.
+We know that the polyhedron P PP is bounded since M MM is TU and \{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} {𝒚∈ℤ≥0n:M​𝒚=𝒃}\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} is finite. So P PP is the convex hull of its vertices and by convexity, it suffices to show that any vertex \bm{y}^{*} 𝒚∗\bm{y}^{*} of \{\bm{y}:M\bm{y}=\bm{b},\bm{y}\geq\bm{0}\} {𝒚:M𝒚=𝒃,𝒚≥𝟎}\{\bm{y}:M\bm{y}=\bm{b},\bm{y}\geq\bm{0}\} satisfies y_{i}\leq\|\bm{b}\|_{1} yi≤‖𝒃‖1y_{i}\leq\|\bm{b}\|_{1}.
+Let r=\rank(M) r=rank⁡(M)r=\rank(M) and let \bm{y}^{*} 𝒚∗\bm{y}^{*} be a vertex of P PP. The columns of M MM indexed by \supp(\bm{y}^{*}):=\{i\in[n]:y^{*}_{i}\neq 0\} supp⁡(𝒚∗):={i∈[n]:yi∗≠0}\supp(\bm{y}^{*}):=\{i\in[n]:y^{*}_{i}\neq 0\} are linearly independent. Otherwise, there would exist a nonzero vector \bm{v} 𝒗\bm{v} supported on \supp(\bm{y}^{*}) supp⁡(𝒚∗)\supp(\bm{y}^{*}) with M\bm{v}=0 M​𝒗=0M\bm{v}=0, so that \bm{y}^{*}\pm\varepsilon\bm{v}\in P 𝒚∗±ε​𝒗∈P\bm{y}^{*}\pm\varepsilon\bm{v}\in P for sufficiently small \varepsilon>0 ε>0\varepsilon>0, contradicting the fact that \bm{y}^{*} 𝒚∗\bm{y}^{*} is a vertex.
+Let B BB be a set of r rr linearly independent columns of M MM containing \supp(\bm{y}^{*}) supp⁡(𝒚∗)\supp(\bm{y}^{*}) ( B BB is also known as the basis of vertex \bm{y}^{*} 𝒚∗\bm{y}^{*} in linear programming). Then y_{i}=0 yi=0y_{i}=0 for i\notin B i∉Bi\notin B. Let M_{:,B} M:,BM_{:,B} be the submatrix of M MM containing the columns indexed by B BB. M_{:,B} M:,BM_{:,B} still has rank r rr, so choose a R\subseteq[m] R⊆[m]R\subseteq[m] with |R|=r |R|=r|R|=r such that the submatrix of M_{:,B} M:,BM_{:,B} containing the rows indexed by R RR is invertible. Let this r\times r r×rr\times r submatrix be M_{R,B} MR,BM_{R,B}.
+Restricting M\bm{y}^{*}=\bm{b} M​𝒚∗=𝒃M\bm{y}^{*}=\bm{b} to the rows in R RR and columns in B BB gives us that M_{R,B}\bm{y}^{*}_{B}=\bm{b}_{r} MR,B​𝒚B∗=𝒃rM_{R,B}\bm{y}^{*}_{B}=\bm{b}_{r}, thus \bm{y}_{B}=M_{R,B}^{-1}\bm{b}_{R}. 𝒚B=MR,B−1​𝒃R.\bm{y}_{B}=M_{R,B}^{-1}\bm{b}_{R}. Since M MM is TU, M_{R,B}^{-1} MR,B−1M_{R,B}^{-1} is TU as well, and any entry of M_{R,B}^{-1} MR,B−1M_{R,B}^{-1} belongs to \{0,\pm 1\} {0,±1}\{0,\pm 1\}. Consequently, for each i\in B i∈Bi\in B we have:
+ y_{i}\leq\sum_{j\in R}|b_{j}|\leq\|\bm{b}\|_{1}. yi≤∑j∈R|bj|≤‖𝒃‖1.y_{i}\leq\sum_{j\in R}|b_{j}|\leq\|\bm{b}\|_{1}.
+The same bound holds for i\notin B i∉Bi\notin B because y_{i}=0 yi=0y_{i}=0.
+∎
+Corollary 4.4.
+Suppose M\in\{0,\pm 1\}^{m\times n} M∈{0,±1}m×nM\in\{0,\pm 1\}^{m\times n} is a TU matrix. Let r=\rank(M) r=rank⁡(M)r=\rank(M) and c=\|b\|_{1} c=‖b‖1c=\|b\|_{1}. Then:
+ B(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\max\left\{\frac{|\alpha_{i}-b_{i}|^{|\alpha_{i}-b_{i}|}}{(1+|\alpha_{i}-b_{i}|)^{1+|\alpha_{i}-b_{i}|}},\frac{|\gamma_{i}-b_{i}|^{|\gamma_{i}-b_{i}|}}{(1+|\gamma_{i}-b_{i}|)^{1+|\gamma_{i}-b_{i}|}}\right\}, B⁡(M,𝒃)≥cap𝒃⁡(PM,c⋅𝟏)⋅∏i=1mmax⁡{|αi−bi||αi−bi|(1+|αi−bi|)1+|αi−bi|,|γi−bi||γi−bi|(1+|γi−bi|)1+|γi−bi|},B(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\max\left\{\frac{|\alpha_{i}-b_{i}|^{|\alpha_{i}-b_{i}|}}{(1+|\alpha_{i}-b_{i}|)^{1+|\alpha_{i}-b_{i}|}},\frac{|\gamma_{i}-b_{i}|^{|\gamma_{i}-b_{i}|}}{(1+|\gamma_{i}-b_{i}|)^{1+|\gamma_{i}-b_{i}|}}\right\},
+where
+ \alpha_{i}=-c\cdot(\#\text{ of (-1)s in row }i),\quad\gamma_{i}=c\cdot(\#\text{ of (+1)s in row }i)\quad\forall i\in[m]. αi=−c⋅(# of (-1)s in row i),γi=c⋅(# of (+1)s in row i)∀i∈[m].\alpha_{i}=-c\cdot(\#\text{ of (-1)s in row }i),\quad\gamma_{i}=c\cdot(\#\text{ of (+1)s in row }i)\quad\forall i\in[m].
+Proof.
+The bound is trivial if B(M,\bm{b}) B⁡(M,𝒃)B(M,\bm{b}) is not finite. Otherwise, by Lemma 4.3 B(M,\bm{b})=B_{\bm{0},c\cdot\bm{1}}(M,\bm{b}) B⁡(M,𝒃)=B𝟎,c⋅𝟏​(M,𝒃)B(M,\bm{b})=B_{\bm{0},c\cdot\bm{1}}(M,\bm{b}). The result follows from Theorem 4.2.
+∎
+We can further simplify the lower bound of Corollary 4.4 to obtain a simply exponential lower bound for B(M,\bm{b}) B⁡(M,𝒃)B(M,\bm{b}) for large enough integer vectors \bm{b} 𝒃\bm{b}.
+Corollary 4.5.
+Suppose M\in\{0,\pm 1\}^{m\times n} M∈{0,±1}m×nM\in\{0,\pm 1\}^{m\times n} is a TU matrix with finite fibers. Then:
+ B(M,\bm{b})\geq\cpc_{\bm{b}}\left(P_{M,\|b\|_{1}\cdot\bm{1}}\right)\cdot\exp\left(-m-m\log(1+n\lVert\bm{b}\rVert_{1})\right) B⁡(M,𝒃)≥cap𝒃⁡(PM,‖b‖1⋅𝟏)⋅exp⁡(−m−m​log⁡(1+n​∥𝒃∥1))B(M,\bm{b})\geq\cpc_{\bm{b}}\left(P_{M,\|b\|_{1}\cdot\bm{1}}\right)\cdot\exp\left(-m-m\log(1+n\lVert\bm{b}\rVert_{1})\right)
+Proof.
+By Corollary 4.4 with c=\lVert\bm{b}\rVert_{1} c=∥𝒃∥1c=\lVert\bm{b}\rVert_{1}:
+ B(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\max\left\{\frac{|\alpha_{i}-b_{i}|^{|\alpha_{i}-b_{i}|}}{(1+|\alpha_{i}-b_{i}|)^{1+|\alpha_{i}-b_{i}|}},\frac{|\gamma_{i}-b_{i}|^{|\gamma_{i}-b_{i}|}}{(1+|\gamma_{i}-b_{i}|)^{1+|\gamma_{i}-b_{i}|}}\right\}, B⁡(M,𝒃)≥cap𝒃⁡(PM,c⋅𝟏)⋅∏i=1mmax⁡{|αi−bi||αi−bi|(1+|αi−bi|)1+|αi−bi|,|γi−bi||γi−bi|(1+|γi−bi|)1+|γi−bi|},B(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\max\left\{\frac{|\alpha_{i}-b_{i}|^{|\alpha_{i}-b_{i}|}}{(1+|\alpha_{i}-b_{i}|)^{1+|\alpha_{i}-b_{i}|}},\frac{|\gamma_{i}-b_{i}|^{|\gamma_{i}-b_{i}|}}{(1+|\gamma_{i}-b_{i}|)^{1+|\gamma_{i}-b_{i}|}}\right\},
+where:
+ \alpha_{i}=-c\cdot(\#\text{ of (-1)s in row }i),\quad\gamma_{i}=c\cdot(\#\text{ of (+1)s in row }i)\quad\forall i\in[m]. αi=−c⋅(# of (-1)s in row i),γi=c⋅(# of (+1)s in row i)∀i∈[m].\alpha_{i}=-c\cdot(\#\text{ of (-1)s in row }i),\quad\gamma_{i}=c\cdot(\#\text{ of (+1)s in row }i)\quad\forall i\in[m].
+Note that \gamma_{i}\leq nc γi≤n​c\gamma_{i}\leq nc and -nc\leq\alpha_{i} −n​c≤αi-nc\leq\alpha_{i}. Furthermore, z\mapsto\frac{z^{z}}{(1+z)^{1+z}} z↦zz(1+z)1+zz\mapsto\frac{z^{z}}{(1+z)^{1+z}} is a decreasing function over \mathbb{R}_{>0} ℝ>0\mathbb{R}_{>0}. Thus:
+ \displaystyle B(M,\bm{b}) B⁡(M,𝒃)\displaystyle B(M,\bm{b})
+ \displaystyle\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\max\left\{\frac{|\alpha_{i}-b_{i}|^{|\alpha_{i}-b_{i}|}}{(1+|\alpha_{i}-b_{i}|)^{1+|\alpha_{i}-b_{i}|}},\frac{|\gamma_{i}-b_{i}|^{|\gamma_{i}-b_{i}|}}{(1+|\gamma_{i}-b_{i}|)^{1+|\gamma_{i}-b_{i}|}}\right\} ≥cap𝒃⁡(PM,c⋅𝟏)⋅∏i=1mmax⁡{|αi−bi||αi−bi|(1+|αi−bi|)1+|αi−bi|,|γi−bi||γi−bi|(1+|γi−bi|)1+|γi−bi|}\displaystyle\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\max\left\{\frac{|\alpha_{i}-b_{i}|^{|\alpha_{i}-b_{i}|}}{(1+|\alpha_{i}-b_{i}|)^{1+|\alpha_{i}-b_{i}|}},\frac{|\gamma_{i}-b_{i}|^{|\gamma_{i}-b_{i}|}}{(1+|\gamma_{i}-b_{i}|)^{1+|\gamma_{i}-b_{i}|}}\right\}
+ \displaystyle\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\frac{|\sgn(b_{i})nc-b_{i}|^{|\sgn(b_{i})nc-b_{i}|}}{(1+|\sgn(b_{i})nc-b_{i}|)^{1+|\sgn(b_{i})nc-b_{i}|}} ≥cap𝒃⁡(PM,c⋅𝟏)⋅∏i=1m|sgn⁡(bi)​n​c−bi||sgn⁡(bi)​n​c−bi|(1+|sgn⁡(bi)​n​c−bi|)1+|sgn⁡(bi)​n​c−bi|\displaystyle\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\frac{|\sgn(b_{i})nc-b_{i}|^{|\sgn(b_{i})nc-b_{i}|}}{(1+|\sgn(b_{i})nc-b_{i}|)^{1+|\sgn(b_{i})nc-b_{i}|}}
+ \displaystyle\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\frac{(n\lVert\bm{b}\rVert_{1})^{n\lVert\bm{b}\rVert_{1}}}{(1+|n\lVert\bm{b}\rVert_{1}|)^{1+n\lVert\bm{b}\rVert_{1}}}, ≥cap𝒃⁡(PM,c⋅𝟏)⋅∏i=1m(n​∥𝒃∥1)n​∥𝒃∥1(1+|n​∥𝒃∥1|)1+n​∥𝒃∥1,\displaystyle\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\frac{(n\lVert\bm{b}\rVert_{1})^{n\lVert\bm{b}\rVert_{1}}}{(1+|n\lVert\bm{b}\rVert_{1}|)^{1+n\lVert\bm{b}\rVert_{1}}},
+where \sgn(r)=1 sgn⁡(r)=1\sgn(r)=1 if r>0 r>0r>0 and \sgn(r)=-1 sgn⁡(r)=−1\sgn(r)=-1 otherwise. Using the inequality \frac{k^{k}}{(1+k)^{1+k}}\geq\frac{1}{e(1+k)} kk(1+k)1+k≥1e⁡(1+k)\frac{k^{k}}{(1+k)^{1+k}}\geq\frac{1}{e(1+k)} for k>0 k>0k>0 we obtain:
+ \displaystyle B(M,\bm{b}) B⁡(M,𝒃)\displaystyle B(M,\bm{b})
+ \displaystyle\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\frac{(n\lVert\bm{b}\rVert_{1})^{n\lVert\bm{b}\rVert_{1}}}{(1+n\lVert\bm{b}\rVert_{1})^{1+n\lVert\bm{b}\rVert_{1}}} ≥cap𝒃⁡(PM,c⋅𝟏)⋅∏i=1m(n​∥𝒃∥1)n​∥𝒃∥1(1+n​∥𝒃∥1)1+n​∥𝒃∥1\displaystyle\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\frac{(n\lVert\bm{b}\rVert_{1})^{n\lVert\bm{b}\rVert_{1}}}{(1+n\lVert\bm{b}\rVert_{1})^{1+n\lVert\bm{b}\rVert_{1}}}
+ \displaystyle\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\exp({-1-\log(1+n\lVert\bm{b}\rVert_{1}))} ≥cap𝒃⁡(PM,c⋅𝟏)⋅∏i=1mexp⁡(−1−log⁡(1+n​∥𝒃∥1))\displaystyle\geq\cpc_{\bm{b}}(P_{M,c\cdot\bm{1}})\cdot\prod_{i=1}^{m}\exp({-1-\log(1+n\lVert\bm{b}\rVert_{1}))}
+ \displaystyle=\cpc_{\bm{b}}\left(P_{M,c\cdot\bm{1}}\right)\cdot\exp\left(-m-m\log(1+n\lVert\bm{b}\rVert_{1})\right). =cap𝒃⁡(PM,c⋅𝟏)⋅exp⁡(−m−m​log⁡(1+n​∥𝒃∥1)).\displaystyle=\cpc_{\bm{b}}\left(P_{M,c\cdot\bm{1}}\right)\cdot\exp\left(-m-m\log(1+n\lVert\bm{b}\rVert_{1})\right).
+∎
+If \lVert\bm{b}\rVert_{1} ∥𝒃∥1\lVert\bm{b}\rVert_{1} is reasonably large so that m+m\log(1+n\lVert\bm{b}\rVert_{1})=O(\lVert\bm{b}\rVert_{1}) m+m​log⁡(1+n​∥𝒃∥1)=O⁡(∥𝒃∥1)m+m\log(1+n\lVert\bm{b}\rVert_{1})=O(\lVert\bm{b}\rVert_{1}), one could rewrite the bound of Corollary 4.5 as a simply exponential bound in \lVert\bm{b}\rVert_{1} ∥𝒃∥1\lVert\bm{b}\rVert_{1}. The following corollary establishes a bound for \lVert\bm{b}\rVert_{1} ∥𝒃∥1\lVert\bm{b}\rVert_{1} that gives us such a simply exponential bound for B(M,\bm{b}) B⁡(M,𝒃)B(M,\bm{b}).
+Corollary 4.6.
+Suppose m,n m,nm,n are positive integers satisfying \max\{m,n\}\geq 3 max⁡{m,n}≥3\max\{m,n\}\geq 3.
+Given a TU matrix M\in\{0,\pm 1\}^{m\times n} M∈{0,±1}m×nM\in\{0,\pm 1\}^{m\times n} with finite fibers and some \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m} satisfying \lVert\bm{b}\rVert_{1}\geq 6m\cdot\log(\max\{m,n\}) ∥𝐛∥1≥6​m⋅log⁡(max⁡{m,n})\lVert\bm{b}\rVert_{1}\geq 6m\cdot\log(\max\{m,n\}), we have:
+ B(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,\lVert\bm{b}\rVert_{1}\cdot\bm{1}})\cdot\exp\left(-\lVert\bm{b}\rVert_{1}\right) B⁡(M,𝒃)≥cap𝒃⁡(PM,∥𝒃∥1⋅𝟏)⋅exp⁡(−∥𝒃∥1)B(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,\lVert\bm{b}\rVert_{1}\cdot\bm{1}})\cdot\exp\left(-\lVert\bm{b}\rVert_{1}\right)
+Proof.
+Apply Corollary 4.5 to M MM and \bm{b} 𝒃\bm{b}. We just have to check that:
+ \lVert\bm{b}\rVert_{1}\geq m+m\log(1+n\lVert b\rVert_{1}), ∥𝒃∥1≥m+m​log⁡(1+n​∥b∥1),\lVert\bm{b}\rVert_{1}\geq m+m\log(1+n\lVert b\rVert_{1}),
+or the following stronger inequality:
+ \lVert\bm{b}\rVert_{1}-m\log(\lVert\bm{b}\rVert_{1})\geq m+m\log(2)+m\log(n) ∥𝒃∥1−m​log⁡(∥𝒃∥1)≥m+m​log⁡(2)+m​log⁡(n)\lVert\bm{b}\rVert_{1}-m\log(\lVert\bm{b}\rVert_{1})\geq m+m\log(2)+m\log(n)
+The function z\mapsto z-m\log(z) z↦z−m​log⁡(z)z\mapsto z-m\log(z) is increasing for z>m z>mz>m, therefore it suffices to check the above inequality for \lVert\bm{b}\rVert_{1}=6m\cdot\log(q) ∥𝒃∥1=6​m⋅log⁡(q)\lVert\bm{b}\rVert_{1}=6m\cdot\log(q) where q=\max\{m,n\} q=max⁡{m,n}q=\max\{m,n\}. Now we only need to show that:
+ 6\log q\geq 1+\log(2)+\log(q)+\log(6q\log q), 6​log⁡q≥1+log⁡(2)+log⁡(q)+log⁡(6​q​log​q),6\log q\geq 1+\log(2)+\log(q)+\log(6q\log q),
+or equivalently that 5\log q\geq 1+\log(2)+\log(6q\log q) 5​log⁡q≥1+log⁡(2)+log⁡(6​q​log⁡q)5\log q\geq 1+\log(2)+\log(6q\log q). Exponentiate both hand sides of this inequality to get the equivalent statement q^{4}\geq 12e\log q q4≥12​e​log⁡qq^{4}\geq 12e\log q, which holds for any q\geq 3 q≥3q\geq 3.
+∎
+4.2 Special cases: non-negative partial row sums
+In Section 4.1, we employed capacity bounds for \LC VLC\LC polynomials stated in Proposition 2.2 alongside the dual characterization of \max\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) max⁡Degi𝒃⁡(PM,𝒌)\max\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) and \Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) Degi𝒃⁡(PM,𝒌)\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) to find capacity bounds for B(M,\bm{b}) B⁡(M,𝒃)B(M,\bm{b}) when M MM is a general TU matrix. Specifically, we use feasible points with \bm{w}=\bm{0} 𝒘=𝟎\bm{w}=\bm{0} for the dual LPs of Proposition 4.1.
+In this section, rather than placing all of the weight of the choice of the feasible points on \bm{z} 𝒛\bm{z} by taking \bm{w}=\bm{0} 𝒘=𝟎\bm{w}=\bm{0}, we will instead let \bm{z}=\bm{0}\in\mathbb{Z}^{n} 𝒛=𝟎∈ℤn\bm{z}=\bm{0}\in\mathbb{Z}^{n} and search for a feasible \bm{w}\in\mathbb{R}^{m-i} 𝒘∈ℝm−i\bm{w}\in\mathbb{R}^{m-i}. This will not be always possible, however if that M MM has non-negative partial row sums and the sum of all of its rows is the \bm{0} 𝟎\bm{0} vector, such a \bm{w} 𝒘\bm{w} always exists. In this case, we obtain a lower bound for B(M,\bm{b}) B⁡(M,𝒃)B(M,\bm{b}) stated in Corollary 4.12. We can slightly improve this bound when M MM is the incidence matrix of a directed acyclic graph to recover [35, Theorem 1.1], see Corollary 4.13. Lastly, we will state a lower bound for B(M,\bm{b}) B⁡(M,𝒃)B(M,\bm{b}) when M MM is a TU matrix with non-negative partial row sums in Corollary 4.14.
+Theorem 4.7.
+Suppose M\in\{0,\pm 1\}^{m\times n} M∈{0,±1}m×nM\in\{0,\pm 1\}^{m\times n} and is a TU matrix and \bm{k}\in\mathbb{Z}^{n} 𝐤∈ℤn\bm{k}\in\mathbb{Z}^{n}. Let \bm{s}_{i}=\bm{m}_{(1)}+\cdots+\bm{m}_{(i)} 𝐬i=𝐦(1)+⋯+𝐦(i)\bm{s}_{i}=\bm{m}_{(1)}+\cdots+\bm{m}_{(i)} be the sum of the first i ii rows of M MM for i\in[m] i∈[m]i\in[m]. Assume that \bm{s}_{i}\geq\bm{0} 𝐬i≥𝟎\bm{s}_{i}\geq\bm{0} for any i\in[m-1] i∈[m−1]i\in[m-1] and \bm{s}_{m}=\bm{0} 𝐬m=𝟎\bm{s}_{m}=\bm{0}. Then :
+ B_{(\bm{0},\bm{k})}(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}. B(𝟎,𝒌)​(M,𝒃)≥cap𝒃⁡(PM,𝒌)⋅∏i=1m−1|σi||σi|(1+|σi|)1+|σi|.B_{(\bm{0},\bm{k})}(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}.
+where \sigma_{i}=b_{1}+\cdots+b_{i} σi=b1+⋯+bi\sigma_{i}=b_{1}+\cdots+b_{i} for i\in[m] i∈[m]i\in[m].
+Proof.
+If \bm{b}\not\in\supp(P_{M,\bm{k}}) 𝒃∉supp⁡(PM,𝒌)\bm{b}\not\in\supp(P_{M,\bm{k}}), then \cpc_{\bm{b}}(P_{M,\bm{k}})=0 cap𝒃⁡(PM,𝒌)=0\cpc_{\bm{b}}(P_{M,\bm{k}})=0 by Proposition 2.4 and Fact 2.5, and the statement is trivial. Otherwise if there exists \bm{0}\leq\bm{y}\leq\bm{k} 𝟎≤𝒚≤𝒌\bm{0}\leq\bm{y}\leq\bm{k} satisfying M\bm{y}=\bm{b} M​𝒚=𝒃M\bm{y}=\bm{b}, we should have \sigma_{m}=0 σm=0\sigma_{m}=0 since \bm{s}_{m}=\bm{0} 𝒔m=𝟎\bm{s}_{m}=\bm{0}.
+Let i\in[m-1] i∈[m−1]i\in[m-1]. Since \bm{m}_{(i)}+\cdots+\bm{m}_{(m)}=\bm{s}_{m}-\bm{s}_{i-1}\leq\bm{0} 𝒎(i)+⋯+𝒎(m)=𝒔m−𝒔i−1≤𝟎\bm{m}_{(i)}+\cdots+\bm{m}_{(m)}=\bm{s}_{m}-\bm{s}_{i-1}\leq\bm{0} , the vector \bm{w}=-\bm{1}\in\mathbb{Z}^{m-i} 𝒘=−𝟏∈ℤm−i\bm{w}=-\bm{1}\in\mathbb{Z}^{m-i} satisfies:
+ (M_{[i+1,m]})^{T}\bm{w}\geq\bm{m}_{(i)}. (M[i+1,m])T​𝒘≥𝒎(i).(M_{[i+1,m]})^{T}\bm{w}\geq\bm{m}_{(i)}.
+So -\bm{b}_{[i+1,m]}^{T}\bm{1}=\sigma_{i}-\sigma_{m}=\sigma_{i} −𝒃[i+1,m]T​𝟏=σi−σm=σi-\bm{b}_{[i+1,m]}^{T}\bm{1}=\sigma_{i}-\sigma_{m}=\sigma_{i} is an upper bound for the set \Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) Degi𝒃⁡(PM,𝒌)\Deg_{i}^{\bm{b}}(P_{M,\bm{k}}) by Proposition 4.1. Moreover, \bm{m}_{(m)}=-\bm{s}_{(m-1)}\leq\bm{0} 𝒎(m)=−𝒔(m−1)≤𝟎\bm{m}_{(m)}=-\bm{s}_{(m-1)}\leq\bm{0}, thus 0 00 is an upper bound for the set of degrees of x_{m} xmx_{m} appearing in P_{M,\bm{k}}(\bm{x}) PM,𝒌​(𝒙)P_{M,\bm{k}}(\bm{x}). By Proposition 2.2, we get:
+ \displaystyle B_{(\bm{0},\bm{k})}(M,\bm{b}) B(𝟎,𝒌)​(M,𝒃)\displaystyle B_{(\bm{0},\bm{k})}(M,\bm{b})
+ \displaystyle\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\frac{|-b_{m}|^{|-b_{m}|}}{(1+|-b_{m}|)^{1+|-b_{m}|}}\cdot\prod_{i=1}^{m-1}\frac{|\sigma_{i}-b_{i}|^{|\sigma_{i}-b_{i}|}}{(1+|\sigma_{i}-b_{i}|)^{1+|\sigma_{i}-b_{i}|}} ≥cap𝒃⁡(PM,𝒌)⋅|−bm||−bm|(1+|−bm|)1+|−bm|⋅∏i=1m−1|σi−bi||σi−bi|(1+|σi−bi|)1+|σi−bi|\displaystyle\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\frac{|-b_{m}|^{|-b_{m}|}}{(1+|-b_{m}|)^{1+|-b_{m}|}}\cdot\prod_{i=1}^{m-1}\frac{|\sigma_{i}-b_{i}|^{|\sigma_{i}-b_{i}|}}{(1+|\sigma_{i}-b_{i}|)^{1+|\sigma_{i}-b_{i}|}}
+ \displaystyle=\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\frac{|\sigma_{m-1}|^{|\sigma_{m-1}|}}{(1+|\sigma_{m-1}|)^{1+|\sigma_{m-1}|}}\cdot\prod_{i=1}^{m-2}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}} =cap𝒃⁡(PM,𝒌)⋅|σm−1||σm−1|(1+|σm−1|)1+|σm−1|⋅∏i=1m−2|σi||σi|(1+|σi|)1+|σi|\displaystyle=\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\frac{|\sigma_{m-1}|^{|\sigma_{m-1}|}}{(1+|\sigma_{m-1}|)^{1+|\sigma_{m-1}|}}\cdot\prod_{i=1}^{m-2}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}
+ \displaystyle=\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}, =cap𝒃⁡(PM,𝒌)⋅∏i=1m−1|σi||σi|(1+|σi|)1+|σi|,\displaystyle=\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}},
+proving the desired bound.
+∎
+We can apply Theorem 4.7 with a large enough \bm{k} 𝒌\bm{k} to bound B(M,\bm{b}) B⁡(M,𝒃)B(M,\bm{b}). In fact, we can take the limit of the bound of Theorem 4.7 as \bm{k}\to\infty 𝒌→∞\bm{k}\to\infty, by which we mean that every entry of \bm{k} 𝒌\bm{k} tends to infinity. If the lower bound converges as \bm{k}\to\infty 𝒌→∞\bm{k}\to\infty, we get a bound for B(M,\bm{b}) B⁡(M,𝒃)B(M,\bm{b}).
+Lemma 4.8.
+Suppose M MM is an m\times n m×nm\times n TU matrix such that \bm{s}_{i}\geq\bm{0} 𝐬i≥𝟎\bm{s}_{i}\geq\bm{0} for any i\in[m] i∈[m]i\in[m]. If M MM does not have an all zeros column, then all the fibers \{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} {𝐲∈ℤ≥0n:M​𝐲=𝐛}\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} are finite.
+Proof.
+Suppose not, and let \{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} {𝒚∈ℤ≥0n:M​𝒚=𝒃}\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} be infinite. Then by Dickson’s lemma, there exists two distinct integer vectors \bm{z}\geq\bm{y} 𝒛≥𝒚\bm{z}\geq\bm{y} satisfying M\bm{y}=M\bm{z}=\bm{b} M​𝒚=M​𝒛=𝒃M\bm{y}=M\bm{z}=\bm{b}. Thus, there exists some nonzero vector \bm{v}\in\mathbb{R}_{\geq 0}^{n} 𝒗∈ℝ≥0n\bm{v}\in\mathbb{R}_{\geq 0}^{n} satisfying M\bm{v}=\bm{0} M​𝒗=𝟎M\bm{v}=\bm{0}. Let j\in[n] j∈[n]j\in[n] be an index such that v_{j}>0 vj>0v_{j}>0. We have:
+ \begin{bmatrix}\bm{1}_{i}\\
+\bm{0}_{m-i}\end{bmatrix}^{T}M\bm{v}=\bm{s}_{(i)}^{T}\bm{v}=0,\quad\forall i\in[m] [𝟏i𝟎m−i]T​M​𝒗=𝒔(i)T​𝒗=0,∀i∈[m]\begin{bmatrix}\bm{1}_{i}\\
+\bm{0}_{m-i}\end{bmatrix}^{T}M\bm{v}=\bm{s}_{(i)}^{T}\bm{v}=0,\quad\forall i\in[m]
+where \bm{1}_{i}\in\mathbb{Z}^{i} 𝟏i∈ℤi\bm{1}_{i}\in\mathbb{Z}^{i} is the all ones vector and \bm{0}_{m-i}\in\mathbb{Z}^{m-i} 𝟎m−i∈ℤm−i\bm{0}_{m-i}\in\mathbb{Z}^{m-i} the all zeros vector. Note that \bm{s}_{(i)},\bm{v}\geq\bm{0} 𝒔(i),𝒗≥𝟎\bm{s}_{(i)},\bm{v}\geq\bm{0}, so we must have \bm{s}_{(i),j}=0 𝒔(i),j=0\bm{s}_{(i),j}=0 for any i\in[m] i∈[m]i\in[m]. That is:
+ \bm{s}_{(1),j}=\bm{s}_{(2),j}=\cdots=\bm{s}_{(m),j}, 𝒔(1),j=𝒔(2),j=⋯=𝒔(m),j,\bm{s}_{(1),j}=\bm{s}_{(2),j}=\cdots=\bm{s}_{(m),j},
+which means that the j jj-th column of M MM is a zero column, contradicting our assumption.
+∎
+Similar to the terminology of [35], for a Laurent series f(\bm{x}) f⁡(𝒙)f(\bm{x}) with non-negative coefficients, we define its domain of convergence as \Omega_{f}=\{\bm{x}>\bm{0}:f(\bm{x})\text{ converges }\} Ωf={𝒙>𝟎:f⁡(𝒙)​ converges }\Omega_{f}=\{\bm{x}>\bm{0}:f(\bm{x})\text{ converges }\}, and define its capacity as \cpc_{\bm{\alpha}}(f)=\inf_{\bm{x}\in\Omega_{f}}\frac{f(\bm{x})}{\bm{x}^{\bm{\alpha}}} cap𝜶⁡(f)=inf𝒙∈Ωff⁡(𝒙)𝒙𝜶\cpc_{\bm{\alpha}}(f)=\inf_{\bm{x}\in\Omega_{f}}\frac{f(\bm{x})}{\bm{x}^{\bm{\alpha}}}. If we define \bm{f}(\bm{x})=\infty 𝒇⁡(𝒙)=∞\bm{f}(\bm{x})=\infty for any \bm{x}\not\in\Omega_{f} 𝒙∉Ωf\bm{x}\not\in\Omega_{f}, this definition of capacity agrees with the earlier definition \cpc_{\bm{\alpha}}(f)=\inf_{\bm{x}>\bm{0}}\frac{f(\bm{x})}{\bm{x}^{\bm{\alpha}}} cap𝜶⁡(f)=inf𝒙>𝟎f⁡(𝒙)𝒙𝜶\cpc_{\bm{\alpha}}(f)=\inf_{\bm{x}>\bm{0}}\frac{f(\bm{x})}{\bm{x}^{\bm{\alpha}}}.
+Let \bm{a}_{1},\cdots,\bm{a}_{n} 𝒂1,⋯,𝒂n\bm{a}_{1},\cdots,\bm{a}_{n} be the columns of M MM and define:
+ P_{M}(\bm{y}):=\sum_{\bm{y}\geq\bm{0}}\bm{x}^{M\bm{y}}=\prod_{j=1}^{n}\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}. PM​(𝒚):=∑𝒚≥𝟎𝒙M​𝒚=∏j=1n∑ℓ≥0𝒙ℓ​𝒂j.P_{M}(\bm{y}):=\sum_{\bm{y}\geq\bm{0}}\bm{x}^{M\bm{y}}=\prod_{j=1}^{n}\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}.
+Suppose M MM is an m\times n m×nm\times n TU matrix and has finite fibers, i.e. \{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} {𝒚∈ℤ≥0n:M​𝒚=𝒃}\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} is finite for any \bm{b}\in\mathbb{Z}^{m} 𝒃∈ℤm\bm{b}\in\mathbb{Z}^{m}. This holds, for example, when M MM has non-negative partial row sums and no zero columns (see Lemma 4.8). Then P_{M} PMP_{M} is a well defined Laurent series with the domain of convergence \Omega=\{\bm{x}\in\mathbb{R}^{m}_{>0}:\bm{x}^{\bm{a}_{j}}<1\quad\forall j\in[n]\} Ω={𝒙∈ℝ>0m:𝒙𝒂j<1∀j∈[n]}\Omega=\{\bm{x}\in\mathbb{R}^{m}_{>0}:\bm{x}^{\bm{a}_{j}}<1\quad\forall j\in[n]\}. Moreover, \Omega Ω\Omega is a nonempty set. By Motzkin’s transposition theorem [25, Theorem 7.17], there exists some \bm{w} 𝒘\bm{w} such that \bm{w}^{T}\bm{a}_{j}>0 𝒘T​𝒂j>0\bm{w}^{T}\bm{a}_{j}>0 for any j\in[n] j∈[n]j\in[n] since M MM has finite fibers. It follows that e^{-r\bm{w}}\in\Omega e−r​𝒘∈Ωe^{-r\bm{w}}\in\Omega for any r>0 r>0r>0. More precisely, the domain of convergence of each \sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}} ∑ℓ≥0𝒙ℓ​𝒂j\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}} is open and contains e^{-r\bm{w}} e−r​𝒘e^{-r\bm{w}}.
+Lemma 4.9 ([35, Proposition 6.4]
+).
+Suppose f_{1}(\bm{x}),\cdots,f_{n}(\bm{x}) f1​(𝐱),⋯,fn​(𝐱)f_{1}(\bm{x}),\cdots,f_{n}(\bm{x}) are all Laurent series with non-negative coefficients. Let \Omega_{i}\neq\emptyset Ωi≠∅\Omega_{i}\neq\emptyset be the domain of convergence of f_{i} fif_{i}, and suppose \cap_{i=1}^{n}\innt\Omega_{i}\neq\emptyset ∩i=1nintΩi≠∅\cap_{i=1}^{n}\innt\Omega_{i}\neq\emptyset. Then:
+ \cpc_{\bm{\alpha}}\left(\prod_{i=1}^{n}f_{i}\right)=\sup_{\bm{\alpha}_{(1)}+\cdots+\alpha_{(n)}=\bm{\alpha}}\prod_{i=1}^{n}\cpc_{\bm{\alpha}_{(i)}}(f_{i}). cap𝜶⁡(∏i=1nfi)=sup𝜶(1)+⋯+α(n)=𝜶∏i=1ncap𝜶(i)⁡(fi).\cpc_{\bm{\alpha}}\left(\prod_{i=1}^{n}f_{i}\right)=\sup_{\bm{\alpha}_{(1)}+\cdots+\alpha_{(n)}=\bm{\alpha}}\prod_{i=1}^{n}\cpc_{\bm{\alpha}_{(i)}}(f_{i}).
+In fact, after taking the natural logarithm of both hand sides, the two programs are Fenchel primal-dual.
+In our case, this implies a particularly nice expression for the capacity of P_{M} PMP_{M}. We can also obtain a conceptually similar expression for the capacity of P_{M,\bm{k}} PM,𝒌P_{M,\bm{k}}, which we discuss below.
+Corollary 4.10.
+Fix an m\times n m×nm\times n TU matrix M MM with finite fibers and an integer vector \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m}. Letting \mathcal{B}{(M,\bm{b})}=\{\bm{y}\in\mathbb{R}_{\geq 0}^{n}:M\bm{y}=\bm{b}\} ℬ⁡(M,𝐛)={𝐲∈ℝ≥0n:M​𝐲=𝐛}\mathcal{B}{(M,\bm{b})}=\{\bm{y}\in\mathbb{R}_{\geq 0}^{n}:M\bm{y}=\bm{b}\}, we have
+ \cpc_{\bm{b}}(P_{M})=\sup_{\bm{s}\in\mathcal{B}{(M,\bm{b})}}\prod_{j=1}^{n}\frac{(s_{j}+1)^{s_{j}+1}}{s_{j}^{s_{j}}}. cap𝒃⁡(PM)=sup𝒔∈ℬ⁡(M,𝒃)∏j=1n(sj+1)sj+1sjsj.\cpc_{\bm{b}}(P_{M})=\sup_{\bm{s}\in\mathcal{B}{(M,\bm{b})}}\prod_{j=1}^{n}\frac{(s_{j}+1)^{s_{j}+1}}{s_{j}^{s_{j}}}.
+Proof.
+Let \bm{a}_{1},\cdots,\bm{a}_{n}\in\mathbb{Z}^{m} 𝒂1,⋯,𝒂n∈ℤm\bm{a}_{1},\cdots,\bm{a}_{n}\in\mathbb{Z}^{m} be the columns of M MM. By Lemma 4.9 we can write:
+ \cpc_{\bm{b}}(P_{M})=\sup_{\bm{b}_{1}+\cdots+\bm{b}_{n}=\bm{b}}\prod_{j=1}^{n}\cpc_{\bm{b}_{j}}\left(\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}\right). cap𝒃⁡(PM)=sup𝒃1+⋯+𝒃n=𝒃∏j=1ncap𝒃j⁡(∑ℓ≥0𝒙ℓ​𝒂j).\cpc_{\bm{b}}(P_{M})=\sup_{\bm{b}_{1}+\cdots+\bm{b}_{n}=\bm{b}}\prod_{j=1}^{n}\cpc_{\bm{b}_{j}}\left(\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}\right).
+We can further restrict to the case where \bm{b}_{j} 𝒃j\bm{b}_{j} is a non-negative multiple of \bm{a}_{j} 𝒂j\bm{a}_{j} by Fact 2.5, otherwise, \cpc_{\bm{b}_{j}}\left(\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}\right)=0 cap𝒃j⁡(∑ℓ≥0𝒙ℓ​𝒂j)=0\cpc_{\bm{b}_{j}}\left(\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}\right)=0. It follows that:
+ \cpc_{\bm{b}}(P_{M})=\sup_{\bm{s}\in\mathcal{B}(M,\bm{b})}\prod_{j=1}^{n}\cpc_{s_{j}\bm{a}_{j}}\left(\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}\right). cap𝒃⁡(PM)=sup𝒔∈ℬ⁡(M,𝒃)∏j=1ncapsj​𝒂j⁡(∑ℓ≥0𝒙ℓ​𝒂j).\cpc_{\bm{b}}(P_{M})=\sup_{\bm{s}\in\mathcal{B}(M,\bm{b})}\prod_{j=1}^{n}\cpc_{s_{j}\bm{a}_{j}}\left(\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}\right).
+One can see that \cpc_{s_{j}\bm{a}_{j}}\left(\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}\right)=\cpc_{\bm{s}_{j}}\left(\sum_{\ell\geq 0}x^{\ell}\right) capsj​𝒂j⁡(∑ℓ≥0𝒙ℓ​𝒂j)=cap𝒔j⁡(∑ℓ≥0xℓ)\cpc_{s_{j}\bm{a}_{j}}\left(\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}\right)=\cpc_{\bm{s}_{j}}\left(\sum_{\ell\geq 0}x^{\ell}\right) by a change of variables. We further have \cpc_{s_{j}}\left(\sum_{\ell\geq 0}x^{\ell}\right)=\frac{(s_{j}+1)^{s_{j}+1}}{s_{j}^{s_{j}}} capsj⁡(∑ℓ≥0xℓ)=(sj+1)sj+1sjsj\cpc_{s_{j}}\left(\sum_{\ell\geq 0}x^{\ell}\right)=\frac{(s_{j}+1)^{s_{j}+1}}{s_{j}^{s_{j}}} by [35, Example 4.16], completing the proof.
+∎
+We note that there is a similar expression for Corollary 4.10 in the case of the polytope \mathcal{B}_{\bm{0},\bm{k}}{(M,\bm{b})}=\{\bm{y}\in\mathbb{R}^{n}:M\bm{y}=\bm{b},\,\bm{0}\leq\bm{y}\leq\bm{k}\} ℬ𝟎,𝒌(M,𝒃)={𝒚∈ℝn:M𝒚=𝒃, 0≤𝒚≤𝒌}\mathcal{B}_{\bm{0},\bm{k}}{(M,\bm{b})}=\{\bm{y}\in\mathbb{R}^{n}:M\bm{y}=\bm{b},\,\bm{0}\leq\bm{y}\leq\bm{k}\}. In that case, the capacity of P_{M,\bm{k}} PM,𝒌P_{M,\bm{k}} is the \sup sup\sup over \bm{s}\in\mathcal{B}_{\bm{0},\bm{k}}{(M,\bm{b})} 𝒔∈ℬ𝟎,𝒌​(M,𝒃)\bm{s}\in\mathcal{B}_{\bm{0},\bm{k}}{(M,\bm{b})} of the product of e^{\mathcal{H}_{\{0,\ldots,k_{j}\}}(s_{j})} eℋ{0,…,kj}​(sj)e^{\mathcal{H}_{\{0,\ldots,k_{j}\}}(s_{j})}, where \mathcal{H}_{\{0,\ldots,k_{j}\}}(s_{j}) ℋ{0,…,kj}​(sj)\mathcal{H}_{\{0,\ldots,k_{j}\}}(s_{j}) is the entropy of the entropy-maximizing distribution on \{0,\ldots,k_{j}\} {0,…,kj}\{0,\ldots,k_{j}\} with expectation s_{j} sjs_{j} (Note that this is precisely what is given in Corollary 4.10, for the geometric distribution on \mathbb{Z}_{\geq 0} ℤ≥0\mathbb{Z}_{\geq 0} with expectation s_{j} sjs_{j}.)
+Now we can use Lemma 4.9 to prove that capacity is continuous under limiting \bm{k}\to\infty 𝒌→∞\bm{k}\to\infty.
+Lemma 4.11.
+Let M MM be an m\times n m×nm\times n TU matrix with finite fibers and fix \bm{b}\in\mathbb{Z}^{m} 𝐛∈ℤm\bm{b}\in\mathbb{Z}^{m}. Then:
+ \lim_{\bm{k}\to\infty}\cpc_{\bm{b}}(P_{M,\bm{k}})=\cpc_{\bm{b}}P_{M}. lim𝒌→∞cap𝒃⁡(PM,𝒌)=cap𝒃⁡PM.\lim_{\bm{k}\to\infty}\cpc_{\bm{b}}(P_{M,\bm{k}})=\cpc_{\bm{b}}P_{M}.
+Proof.
+Observe that P_{M}(\bm{x})\geq P_{M,\bm{k}_{1}}(\bm{x})\geq P_{M,\bm{k}_{2}}(\bm{x}) PM​(𝒙)≥PM,𝒌1​(𝒙)≥PM,𝒌2​(𝒙)P_{M}(\bm{x})\geq P_{M,\bm{k}_{1}}(\bm{x})\geq P_{M,\bm{k}_{2}}(\bm{x}) for any \bm{x}>\bm{0} 𝒙>𝟎\bm{x}>\bm{0} and \bm{k}_{1}\geq\bm{k}_{2} 𝒌1≥𝒌2\bm{k}_{1}\geq\bm{k}_{2} (for \bm{x}\not\in\Omega 𝒙∉Ω\bm{x}\not\in\Omega, let P_{M}(\bm{x})=\infty PM​(𝒙)=∞P_{M}(\bm{x})=\infty), so \cpc_{\bm{b}}(P_{M})\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\geq 0 cap𝒃⁡(PM)≥cap𝒃⁡(PM,𝒌)≥0\cpc_{\bm{b}}(P_{M})\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\geq 0 for any \bm{k} 𝒌\bm{k}. Since \cpc_{\bm{b}}(P_{M,\bm{k}}) cap𝒃⁡(PM,𝒌)\cpc_{\bm{b}}(P_{M,\bm{k}}) is monotone in \bm{k} 𝒌\bm{k}, the limit \lim_{\bm{k}\to\infty}\cpc_{\bm{b}}(P_{M,\bm{k}}) lim𝒌→∞cap𝒃⁡(PM,𝒌)\lim_{\bm{k}\to\infty}\cpc_{\bm{b}}(P_{M,\bm{k}}) exists and \cpc_{\bm{b}}(P_{M})\geq\lim_{\bm{k}\to\infty}\cpc_{\bm{b}}(P_{M,\bm{k}}) cap𝒃⁡(PM)≥lim𝒌→∞cap𝒃⁡(PM,𝒌)\cpc_{\bm{b}}(P_{M})\geq\lim_{\bm{k}\to\infty}\cpc_{\bm{b}}(P_{M,\bm{k}}).
+For the other direction of the proof, let \bm{a}_{1},\cdots,\bm{a}_{n}\in\mathbb{Z}^{m} 𝒂1,⋯,𝒂n∈ℤm\bm{a}_{1},\cdots,\bm{a}_{n}\in\mathbb{Z}^{m} be the columns of M MM.
+By Lemma 4.9 and Fact 2.5:
+ \displaystyle\cpc_{\bm{b}}(P_{M,\bm{k}}) cap𝒃⁡(PM,𝒌)\displaystyle\cpc_{\bm{b}}(P_{M,\bm{k}})
+ \displaystyle=\sup_{\bm{s}\in\mathcal{B}(M,\bm{b})}\prod_{j=1}^{n}\cpc_{s_{j}\bm{a}_{j}}\left(\sum_{\ell=0}^{k_{j}}\bm{x}^{\ell\bm{a}_{j}}\right), =sup𝒔∈ℬ⁡(M,𝒃)∏j=1ncapsj​𝒂j⁡(∑ℓ=0kj𝒙ℓ​𝒂j),\displaystyle=\sup_{\bm{s}\in\mathcal{B}(M,\bm{b})}\prod_{j=1}^{n}\cpc_{s_{j}\bm{a}_{j}}\left(\sum_{\ell=0}^{k_{j}}\bm{x}^{\ell\bm{a}_{j}}\right),
+ \displaystyle\cpc_{\bm{b}}(P_{M}) cap𝒃⁡(PM)\displaystyle\cpc_{\bm{b}}(P_{M})
+ \displaystyle=\sup_{\bm{s}\in\mathcal{B}(M,\bm{b})}\prod_{j=1}^{n}\cpc_{s_{j}\bm{a}_{j}}\left(\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}\right). =sup𝒔∈ℬ⁡(M,𝒃)∏j=1ncapsj​𝒂j⁡(∑ℓ≥0𝒙ℓ​𝒂j).\displaystyle=\sup_{\bm{s}\in\mathcal{B}(M,\bm{b})}\prod_{j=1}^{n}\cpc_{s_{j}\bm{a}_{j}}\left(\sum_{\ell\geq 0}\bm{x}^{\ell\bm{a}_{j}}\right).
+Note that in the expression for \cpc_{\bm{b}}(P_{M,\bm{k}}) cap𝒃⁡(PM,𝒌)\cpc_{\bm{b}}(P_{M,\bm{k}}), we can take the supremum to be over \mathcal{B}(M,\bm{b}) ℬ⁡(M,𝒃)\mathcal{B}(M,\bm{b}) instead of \mathcal{B}_{(\bm{0},\bm{k})}(M,\bm{b}) ℬ(𝟎,𝒌)​(M,𝒃)\mathcal{B}_{(\bm{0},\bm{k})}(M,\bm{b}) because for any \bm{s}\in\mathcal{B}(M,\bm{b})\setminus\mathcal{B}_{\bm{0},\bm{k}}(M,\bm{b}) 𝒔∈ℬ⁡(M,𝒃)∖ℬ𝟎,𝒌​(M,𝒃)\bm{s}\in\mathcal{B}(M,\bm{b})\setminus\mathcal{B}_{\bm{0},\bm{k}}(M,\bm{b}), the corresponding product of capacities on the right hand side is zero.
+Similar to the proof of Corollary 4.10, write \cpc_{s_{j}\bm{a}_{j}}(\sum_{\ell=0}^{k_{j}}\bm{x}^{\ell\bm{a}_{j}})=\cpc_{s_{j}}(\sum_{\ell=0}^{k_{j}}x^{\ell}) capsj​𝒂j⁡(∑ℓ=0kj𝒙ℓ​𝒂j)=capsj⁡(∑ℓ=0kjxℓ)\cpc_{s_{j}\bm{a}_{j}}(\sum_{\ell=0}^{k_{j}}\bm{x}^{\ell\bm{a}_{j}})=\cpc_{s_{j}}(\sum_{\ell=0}^{k_{j}}x^{\ell}). Therefore, for any choice of \bm{s}\geq\bm{0} 𝒔≥𝟎\bm{s}\geq\bm{0} such that M\bm{s}=\bm{b} M​𝒔=𝒃M\bm{s}=\bm{b} we have:
+ \cpc_{\bm{b}}(P_{M,\bm{k}})\geq\prod_{j=1}^{n}\cpc_{s_{j}}\left(\sum_{\ell=0}^{k_{j}}x^{\ell}\right), cap𝒃⁡(PM,𝒌)≥∏j=1ncapsj⁡(∑ℓ=0kjxℓ),\cpc_{\bm{b}}(P_{M,\bm{k}})\geq\prod_{j=1}^{n}\cpc_{s_{j}}\left(\sum_{\ell=0}^{k_{j}}x^{\ell}\right),
+By [14, Lemma 5.5], \lim_{k_{j}\to\infty}\cpc_{s_{j}}(\sum_{\ell=0}^{k_{j}}x^{\ell})=\cpc_{s_{j}}\left(\sum_{\ell\geq 0}x^{\ell}\right) limkj→∞capsj⁡(∑ℓ=0kjxℓ)=capsj⁡(∑ℓ≥0xℓ)\lim_{k_{j}\to\infty}\cpc_{s_{j}}(\sum_{\ell=0}^{k_{j}}x^{\ell})=\cpc_{s_{j}}\left(\sum_{\ell\geq 0}x^{\ell}\right). Send k_{j}\to\infty kj→∞k_{j}\to\infty for all j\in[n] j∈[n]j\in[n] and write:
+ \lim_{\bm{k}\to\infty}\cpc_{\bm{b}}(P_{M,\bm{k}})\geq\prod_{j=1}^{n}\cpc_{s_{j}}\left(\sum_{\ell\geq 0}x^{\ell}\right), lim𝒌→∞cap𝒃⁡(PM,𝒌)≥∏j=1ncapsj⁡(∑ℓ≥0xℓ),\lim_{\bm{k}\to\infty}\cpc_{\bm{b}}(P_{M,\bm{k}})\geq\prod_{j=1}^{n}\cpc_{s_{j}}\left(\sum_{\ell\geq 0}x^{\ell}\right),
+Note that this is true for any choice of \bm{s}\in\mathcal{B}(M,\bm{b}) 𝒔∈ℬ⁡(M,𝒃)\bm{s}\in\mathcal{B}(M,\bm{b}), so:
+ \displaystyle\lim_{\bm{k}\to\infty}\cpc_{\bm{b}}(P_{M,\bm{k}}) lim𝒌→∞cap𝒃⁡(PM,𝒌)\displaystyle\lim_{\bm{k}\to\infty}\cpc_{\bm{b}}(P_{M,\bm{k}})
+ \displaystyle\geq\sup_{\bm{s}\in\mathcal{B}(M,\bm{b})}\prod_{j=1}^{n}\cpc_{s_{j}}\left(\sum_{\ell\geq 0}x^{\ell}\right) ≥sup𝒔∈ℬ⁡(M,𝒃)∏j=1ncapsj⁡(∑ℓ≥0xℓ)\displaystyle\geq\sup_{\bm{s}\in\mathcal{B}(M,\bm{b})}\prod_{j=1}^{n}\cpc_{s_{j}}\left(\sum_{\ell\geq 0}x^{\ell}\right)
+ \displaystyle=\cpc_{\bm{b}}(P_{M}). =cap𝒃⁡(PM).\displaystyle=\cpc_{\bm{b}}(P_{M}).
+∎
+Using Lemma 4.11, we conclude the following corollary:
+Corollary 4.12.
+Suppose M\in\{0,\pm 1\}^{m\times n} M∈{0,±1}m×nM\in\{0,\pm 1\}^{m\times n} is a TU matrix with no zero columns and \bm{k}\in\mathbb{Z}^{n} 𝐤∈ℤn\bm{k}\in\mathbb{Z}^{n}. Let \bm{s}_{i}=\bm{m}_{(1)}+\cdots+\bm{m}_{(i)} 𝐬i=𝐦(1)+⋯+𝐦(i)\bm{s}_{i}=\bm{m}_{(1)}+\cdots+\bm{m}_{(i)} be the sum of the first i ii rows of M MM for i\in[m] i∈[m]i\in[m]. Assume that \bm{s}_{i}\geq\bm{0} 𝐬i≥𝟎\bm{s}_{i}\geq\bm{0} for any i\in[m-1] i∈[m−1]i\in[m-1] and \bm{s}_{m}=\bm{0} 𝐬m=𝟎\bm{s}_{m}=\bm{0}. Then :
+ B(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M})\cdot\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}. B⁡(M,𝒃)≥cap𝒃⁡(PM)⋅∏i=1m−1|σi||σi|(1+|σi|)1+|σi|.B(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M})\cdot\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}.
+where \sigma_{i}=b_{1}+\cdots+b_{i} σi=b1+⋯+bi\sigma_{i}=b_{1}+\cdots+b_{i} for i\in[m-1] i∈[m−1]i\in[m-1].
+We remark that we took a different approach in Section 4.1 when working with general TU matrices. This is because it is not clear whether the lower bound of Theorem 4.2 converges as \bm{k}\to\infty 𝒌→∞\bm{k}\to\infty, or if it converges, whether it converges to a non-zero number.
+We will explore two applications of Corollary 4.12. We will apply it to incidence matrices of directed acyclic graphs, and to TU matrices with non-negative partial row sums.
+When M MM is the incidence matrix of a directed acyclic graph G GG, B(M,\bm{b}) B⁡(M,𝒃)B(M,\bm{b}) is called the Kostant partition function for integer flows of G GG. We refer to [32] for a more extensive study of these quantities. The following is not a direct corollary of Corollary 4.12, but follows the same steps with a slightly different choice of feasible points for Proposition 4.1.
+Corollary 4.13 ([35, Theorem 1.1], see also [36]).
+Let G=([n],E) G=([n],E)G=([n],E) be a directed acyclic graph with edges directed from the larger to the smaller vertex. For each i\in[n] i∈[n]i\in[n], let G_{i} GiG_{i} be the undirected induced subgraph of G GG on vertices [i,n] [i,n][i,n], and denote by C_{i} CiC_{i} the connected component of i ii in G_{i} GiG_{i}. Then:
+ B(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M})\cdot\prod_{i=2}^{n}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}, B⁡(M,𝒃)≥cap𝒃⁡(PM)⋅∏i=2n|σi||σi|(1+|σi|)1+|σi|,B(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M})\cdot\prod_{i=2}^{n}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}},
+where M\in\{0,\pm 1\}^{n\times|E|} M∈{0,±1}n×|E|M\in\{0,\pm 1\}^{n\times|E|} is the incidence matrix of G GG and \sigma_{i}=\sum_{j\in C_{i}}b_{j} σi=∑j∈Cibj\sigma_{i}=\sum_{j\in C_{i}}b_{j}.
+Proof.
+When G GG is a directed acyclic graph with edges being directed from the larger vertices to smaller vertices, its incidence graph M MM has non-negative partial row sums and the sum of all its rows is the zero vector. In fact, for each i\in[n] i∈[n]i\in[n], since there are no edges going into C_{i} CiC_{i}, we have \sum_{j\in C_{i}}\bm{m}_{(j)}\leq\bm{0} ∑j∈Ci𝒎(j)≤𝟎\sum_{j\in C_{i}}\bm{m}_{(j)}\leq\bm{0},
+that is:
+ -(M_{[i+1,n]})^{T}\bm{1}_{C_{i}\setminus\{i\}}=-\sum_{j\in C_{i}\setminus\{i\}}\bm{m}_{(j)}\geq\bm{m}_{(i)}, −(M[i+1,n])T𝟏Ci∖{i}=−∑j∈Ci∖{i}𝒎(j)≥𝒎(i),-(M_{[i+1,n]})^{T}\bm{1}_{C_{i}\setminus\{i\}}=-\sum_{j\in C_{i}\setminus\{i\}}\bm{m}_{(j)}\geq\bm{m}_{(i)},
+where \bm{1}_{C_{i}\setminus\{i\}} 𝟏Ci∖{i}\bm{1}_{C_{i}\setminus\{i\}} is the indicator vector of the set \bm{C_{i}}\setminus\{i\} 𝑪𝒊∖{i}\bm{C_{i}}\setminus\{i\}. Similar to Theorem 4.7 and by Proposition 2.2, we get:
+ B_{(\bm{0},\bm{k})}(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\prod_{i=2}^{n}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}, B(𝟎,𝒌)​(M,𝒃)≥cap𝒃⁡(PM,𝒌)⋅∏i=2n|σi||σi|(1+|σi|)1+|σi|,B_{(\bm{0},\bm{k})}(M,\bm{b})\geq\cpc_{\bm{b}}(P_{M,\bm{k}})\cdot\prod_{i=2}^{n}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}},
+where \sigma_{i}=\sum_{j\in C_{i}}b_{j} σi=∑j∈Cibj\sigma_{i}=\sum_{j\in C_{i}}b_{j}. Now send \bm{k}\to\infty 𝒌→∞\bm{k}\to\infty, similar to the proof of Corollary 4.12.
+∎
+Lastly, we find a capacity bound for the cardinalities of fibers of TU matrices with nonnegative partial row sums.
+Corollary 4.14.
+Suppose M MM is an m\times n m×nm\times n TU matrix satisfying \bm{s}_{i}\geq\bm{0} 𝐬i≥𝟎\bm{s}_{i}\geq\bm{0} for all i\in[m] i∈[m]i\in[m] (e.g. M MM only has 0,1 entries). Assume further that M MM does not have an all zero column. Then:
+ B_{M}(\bm{b})\geq\cpc_{\bm{b}}(P_{M})\cdot\left[\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}\right]^{2}\cdot\frac{|\sigma_{m}|^{|\sigma_{m}|}}{(1+|\sigma_{m}|)^{1+|\sigma_{m}|}}. BM​(𝒃)≥cap𝒃⁡(PM)⋅[∏i=1m−1|σi||σi|(1+|σi|)1+|σi|]2⋅|σm||σm|(1+|σm|)1+|σm|.B_{M}(\bm{b})\geq\cpc_{\bm{b}}(P_{M})\cdot\left[\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}\right]^{2}\cdot\frac{|\sigma_{m}|^{|\sigma_{m}|}}{(1+|\sigma_{m}|)^{1+|\sigma_{m}|}}.
+where \sigma_{i}=b_{1}+\cdots+b_{i} σi=b1+⋯+bi\sigma_{i}=b_{1}+\cdots+b_{i} for i\in[m] i∈[m]i\in[m].
+Proof.
+Let A=\begin{bmatrix}M\\
+-JM\end{bmatrix} A=[M−J​M]A=\begin{bmatrix}M\\
+-JM\end{bmatrix}, where J JJ has 1 11s in the anti-diagonal and is zero everywhere else (that is, for any matrix B BB with proper dimensions, JB J​BJB reverses the order of the rows of B BB). A AA is TU and satisfies the assumptions of Corollary 4.12. So by this corollary:
+ B_{A}\left(\begin{bmatrix}\bm{b}\\
+-J\bm{b}\end{bmatrix}\right)\geq\cpc_{(\bm{b},-J\bm{b})}(P_{A})\cdot\prod_{i=1}^{m-1}\left[\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}\right]^{2}\cdot\frac{|\sigma_{m}|^{|\sigma_{m}|}}{(1+|\sigma_{m}|)^{1+|\sigma_{m}|}}. BA​([𝒃−J​𝒃])≥cap(𝒃,−J​𝒃)⁡(PA)⋅∏i=1m−1[|σi||σi|(1+|σi|)1+|σi|]2⋅|σm||σm|(1+|σm|)1+|σm|.B_{A}\left(\begin{bmatrix}\bm{b}\\
+-J\bm{b}\end{bmatrix}\right)\geq\cpc_{(\bm{b},-J\bm{b})}(P_{A})\cdot\prod_{i=1}^{m-1}\left[\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}\right]^{2}\cdot\frac{|\sigma_{m}|^{|\sigma_{m}|}}{(1+|\sigma_{m}|)^{1+|\sigma_{m}|}}.
+Note that both P_{A} PAP_{A} and P_{M} PMP_{M} are well-defined Laurent series by Lemma 4.8. We know that P_{A}(x_{i}:i\in[2m])=P_{M}\left(\frac{x_{i}}{x_{2m+1-i}}:i\in[m]\right) PA(xi:i∈[2m])=PM(xix2​m+1−i:i∈[m])P_{A}(x_{i}:i\in[2m])=P_{M}\left(\frac{x_{i}}{x_{2m+1-i}}:i\in[m]\right), therefore:
+ \cpc_{(\bm{b},-J\bm{b})}(P_{A})=\inf_{x_{i}>0\forall i\in[2m]}\frac{P_{M}\left(\frac{x_{i}}{x_{2m+1-i}}:i\in[m]\right)}{\prod_{i\in[m]}\left(\frac{x_{i}}{x_{2m+1-i}}\right)^{b_{i}}}=\cpc_{\bm{b}}(P_{M}). cap(𝒃,−J​𝒃)(PA)=infxi>0​∀i∈[2​m]PM(xix2​m+1−i:i∈[m])∏i∈[m](xix2​m+1−i)bi=cap𝒃(PM).\cpc_{(\bm{b},-J\bm{b})}(P_{A})=\inf_{x_{i}>0\forall i\in[2m]}\frac{P_{M}\left(\frac{x_{i}}{x_{2m+1-i}}:i\in[m]\right)}{\prod_{i\in[m]}\left(\frac{x_{i}}{x_{2m+1-i}}\right)^{b_{i}}}=\cpc_{\bm{b}}(P_{M}).
+Furthermore:
+ \#\left\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:A\bm{y}=\begin{bmatrix}\bm{b}\\
+-J\bm{b}\end{bmatrix}\right\}=\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\}. #⁡{𝒚∈ℤ≥0n:A​𝒚=[𝒃−J​𝒃]}=#⁡{𝒚∈ℤ≥0n:M​𝒚=𝒃}.\#\left\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:A\bm{y}=\begin{bmatrix}\bm{b}\\
+-J\bm{b}\end{bmatrix}\right\}=\#\{\bm{y}\in\mathbb{Z}_{\geq 0}^{n}:M\bm{y}=\bm{b}\}.
+We conclude:
+ B_{M}(\bm{b})\geq\cpc_{\bm{b}}(P_{M})\cdot\left[\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}\right]^{2}\cdot\frac{|\sigma_{m}|^{|\sigma_{m}|}}{(1+|\sigma_{m}|)^{1+|\sigma_{m}|}}. BM​(𝒃)≥cap𝒃⁡(PM)⋅[∏i=1m−1|σi||σi|(1+|σi|)1+|σi|]2⋅|σm||σm|(1+|σm|)1+|σm|.B_{M}(\bm{b})\geq\cpc_{\bm{b}}(P_{M})\cdot\left[\prod_{i=1}^{m-1}\frac{|\sigma_{i}|^{|\sigma_{i}|}}{(1+|\sigma_{i}|)^{1+|\sigma_{i}|}}\right]^{2}\cdot\frac{|\sigma_{m}|^{|\sigma_{m}|}}{(1+|\sigma_{m}|)^{1+|\sigma_{m}|}}.
+∎
+5 Efficiency of Approximation
+We prove the algorithmic assertion of Theorem 1.3 using the
+interiority and ellipsoid argument of [41]
+(see Sections 5,6 of the arXiv version). We verify the
+necessary bounds directly for our Laurent polynomials, rather
+than applying their statements for 0/1 0/10/1 configurations verbatim.
+Throughout this section we assume M MM is full row-rank, but this is without loss of generality since one can always remove linearly dependent rows of M MM without changing the lattice point counts or the value of the capacity (up to consistency of \bm{b} 𝒃\bm{b}).
+Let M\in\mathbb{Z}^{m\times n} M∈ℤm×nM\in\mathbb{Z}^{m\times n} be TU with columns \bm{a}_{1},\ldots,\bm{a}_{n} 𝒂1,…,𝒂n\bm{a}_{1},\ldots,\bm{a}_{n}, let \bm{b}\in\mathbb{Z}^{m} 𝒃∈ℤm\bm{b}\in\mathbb{Z}^{m} and
+ \bm{k}\in\mathbb{Z}_{\geq 0}^{n} 𝒌∈ℤ≥0n\bm{k}\in\mathbb{Z}_{\geq 0}^{n}, and write
+ p(\bm{x})=P_{M,\bm{k}}(\bm{x})=\prod_{j=1}^{n}\sum_{\ell=0}^{k_{j}}x^{\ell\bm{a}_{j}},\qquad\mathcal{E}=\cpc_{\bm{b}}(p). p⁡(𝒙)=PM,𝒌​(𝒙)=∏j=1n∑ℓ=0kjxℓ​𝒂j,ℰ=cap𝒃⁡(p).p(\bm{x})=P_{M,\bm{k}}(\bm{x})=\prod_{j=1}^{n}\sum_{\ell=0}^{k_{j}}x^{\ell\bm{a}_{j}},\qquad\mathcal{E}=\cpc_{\bm{b}}(p).
+We show that a deterministic algorithm can approximate \log\mathcal{E} log⁡ℰ\log\mathcal{E} to additive error
+ 2^{-q} 2−q2^{-q} in time polynomial in
+ m,\quad n,\quad q=\log\frac{1}{\epsilon},\quad\log(1+\|\bm{b}\|_{\infty}),\quad\log(1+\|\bm{k}\|_{\infty}), m,n,q=log⁡1ϵ,log⁡(1+‖𝒃‖∞),log⁡(1+‖𝒌‖∞),m,\quad n,\quad q=\log\frac{1}{\epsilon},\quad\log(1+\|\bm{b}\|_{\infty}),\quad\log(1+\|\bm{k}\|_{\infty}),
+as long as \mathcal{E}\neq 0 ℰ≠0\mathcal{E}\neq 0.
+All inputs are binary encoded and running time is measured in
+bit operations.
+Finally, for Theorem 1.3, set
+ K=\|\bm{b}\|_{1} K=‖𝒃‖1K=\|\bm{b}\|_{1} and k_{j}=K kj=Kk_{j}=K before
+performing any reductions. This gives the stated dependence on
+ \log(1+\|\bm{b}\|_{1}) log⁡(1+‖𝒃‖1)\log(1+\|\bm{b}\|_{1}).
+Reduction to \bm{b} 𝒃\bm{b} in the interior.
+The Newton polytope of p pp is the zonotope Z=M[\bm{0},\bm{k}] Z=M⁡[𝟎,𝒌]Z=M[\bm{0},\bm{k}]; i.e. the sum of the line segments defined by k_{j}\bm{a}_{j} kj​𝒂jk_{j}\bm{a}_{j} for j\in[n] j∈[n]j\in[n].
+Let F FF be the smallest face of Z ZZ containing \bm{b} 𝒃\bm{b}. Minimizing and maximizing each coordinate over Q=\{\bm{y}\in\mathbb{R}^{n}:M\bm{y}=\bm{b},\ \bm{0}\leq\bm{y}\leq\bm{k}\} Q={𝒚∈ℝn:M𝒚=𝒃, 0≤𝒚≤𝒌}Q=\{\bm{y}\in\mathbb{R}^{n}:M\bm{y}=\bm{b},\ \bm{0}\leq\bm{y}\leq\bm{k}\} identifies the set of coordinates forced to equal either 0 00 and k_{j} kjk_{j}. Thus we can remove these columns of M,\bm{k} M,𝒌M,\bm{k} to obtain M^{\prime},\bm{k}^{\prime} M′,𝒌′M^{\prime},\bm{k}^{\prime}, and up to translation the zonotope M^{\prime}[\bm{0},\bm{k}^{\prime}] M′​[𝟎,𝒌′]M^{\prime}[\bm{0},\bm{k}^{\prime}] is equal to F FF. Restricting to F FF and the associated variables preserves the corresponding coefficient and the value of the capacity by a standard optimization argument. Additionally, \bm{b} 𝒃\bm{b} is in the relative interior of the Newton polytope of the new polynomial, up to the same translation between M^{\prime}[\bm{0},\bm{k}^{\prime}] M′​[𝟎,𝒌′]M^{\prime}[\bm{0},\bm{k}^{\prime}] and F FF. Thus we may WLOG assume that \bm{b} 𝒃\bm{b} is in the interior of Z ZZ.
+Finally, note that this removal of columns may decrease the rank of M MM. Thus, we again remove linearly dependent rows of M MM at this point to account for this.
+Bounding box for the minimizer.
+By Lemma 5.1 (see below), each facet inequality of Z ZZ
+can be written with normal \bm{u} 𝒖\bm{u} as
+ \bm{u}^{\top}\bm{y}\leq h,\quad\bm{u}\in\{0,+1,-1\}^{m},\quad h\in\mathbb{Z}. 𝒖⊤​𝒚≤h,𝒖∈{0,+1,−1}m,h∈ℤ.\bm{u}^{\top}\bm{y}\leq h,\quad\bm{u}\in\{0,+1,-1\}^{m},\quad h\in\mathbb{Z}.
+Since \bm{b} 𝒃\bm{b} is in the interior of Z ZZ, its slack in each inequality is at
+least one. Consequently,
+ B_{2}\left(\bm{b},\frac{1}{\sqrt{m}}\right)\subseteq Z. B2​(𝒃,1m)⊆Z.B_{2}\left(\bm{b},\frac{1}{\sqrt{m}}\right)\subseteq Z.
+Now set \Phi(\bm{z})=\log p(e^{\bm{z}})-\bm{b}^{\top}\bm{z} Φ⁡(𝒛)=log⁡p⁡(e𝒛)−𝒃⊤​𝒛\Phi(\bm{z})=\log p(e^{\bm{z}})-\bm{b}^{\top}\bm{z}, noting that \log\cpc_{\bm{b}}(p)=\inf_{\bm{z}\in\mathbb{R}^{m}}\Phi(\bm{z}) log⁡cap𝒃⁡(p)=inf𝒛∈ℝmΦ⁡(𝒛)\log\cpc_{\bm{b}}(p)=\inf_{\bm{z}\in\mathbb{R}^{m}}\Phi(\bm{z}).
+Every nonzero coefficient of p pp is a positive integer, and so
+ \Phi(\bm{z})\geq\max_{\bm{\alpha}\in Z}(\bm{\alpha}-\bm{b})^{\top}\bm{z}\geq\frac{\|\bm{z}\|_{2}}{\sqrt{m}}. Φ⁡(𝒛)≥max𝜶∈Z⁡(𝜶−𝒃)⊤​𝒛≥‖𝒛‖2m.\Phi(\bm{z})\geq\max_{\bm{\alpha}\in Z}(\bm{\alpha}-\bm{b})^{\top}\bm{z}\geq\frac{\|\bm{z}\|_{2}}{\sqrt{m}}.
+Thus \Phi Φ\Phi attains its minimum on \mathbb{R}^{m} ℝm\mathbb{R}^{m}, and every minimizer \bm{z}^{*} 𝒛∗\bm{z}^{*} satisfies
+ \|\bm{z}^{*}\|_{2}\leq\sqrt{m}\cdot\log p(\bm{1})=\sqrt{m}\sum_{j=1}^{n}\log(k_{j}+1). ‖𝒛∗‖2≤m⋅log⁡p⁡(𝟏)=m​∑j=1nlog⁡(kj+1).\|\bm{z}^{*}\|_{2}\leq\sqrt{m}\cdot\log p(\bm{1})=\sqrt{m}\sum_{j=1}^{n}\log(k_{j}+1).
+In particular, we may optimize over [-R,R]^{m} [−R,R]m[-R,R]^{m}, where
+ R=\sqrt{m}\sum_{j=1}^{n}\log(k_{j}+1). R=m​∑j=1nlog⁡(kj+1).R=\sqrt{m}\sum_{j=1}^{n}\log(k_{j}+1).
+This is the interiority-based bounding argument of
+[41], with \log p(\mathbf{1}) log⁡p⁡(𝟏)\log p(\mathbf{1}) replacing the logarithm
+of the number of configurations.
+Lemma 5.1.
+Let M MM be an m\times n m×nm\times n totally unimodular matrix of rank m mm with columns \bm{a}_{1},\ldots,\bm{a}_{n} 𝐚1,…,𝐚n\bm{a}_{1},\ldots,\bm{a}_{n}, fix \bm{k}\in\mathbb{Z}_{>0}^{n} 𝐤∈ℤ>0n\bm{k}\in\mathbb{Z}_{>0}^{n}, and define the zonotope Z=M[\bm{0},\bm{k}]=\sum_{j=1}^{n}\bm{a}_{j}[0,k_{j}] Z=M⁡[𝟎,𝐤]=∑j=1n𝐚j​[0,kj]Z=M[\bm{0},\bm{k}]=\sum_{j=1}^{n}\bm{a}_{j}[0,k_{j}]. Then the normal vectors of the facets of Z ZZ can be chosen to have entries in \{0,+1,-1\} {0,+1,−1}\{0,+1,-1\}.
+Proof.
+Let F FF be some facet of Z ZZ with normal vector \bm{u} 𝒖\bm{u}. By [38], every facet of the zonotope Z ZZ is parallel to a Minkowski sum of some subset of the segments \{\bm{a}_{1}[0,k_{1}],\ldots,\bm{a}_{n}[0,k_{n}]\} {𝒂1​[0,k1],…,𝒂n​[0,kn]}\{\bm{a}_{1}[0,k_{1}],\ldots,\bm{a}_{n}[0,k_{n}]\}. Thus F FF is parallel to \mathrm{span}\{\bm{a}_{j}:\bm{u}^{\top}\bm{a}_{j}=0\} span⁡{𝒂j:𝒖⊤​𝒂j=0}\mathrm{span}\{\bm{a}_{j}:\bm{u}^{\top}\bm{a}_{j}=0\}. WLOG by reindexing let \bm{a}_{1},\ldots,\bm{a}_{m-1} 𝒂1,…,𝒂m−1\bm{a}_{1},\ldots,\bm{a}_{m-1} span the (m-1) (m−1)(m-1)-dimensional space parallel to F FF, and let C CC be the m\times(m-1) m×(m−1)m\times(m-1) submatrix of the corresponding columns of M MM, so that \bm{u}\in\ker C^{\top} 𝒖∈ker⁡C⊤\bm{u}\in\ker C^{\top}. Define v_{i}=(-1)^{i+1}\det C_{\hat{i}} vi=(−1)i+1​detCi^v_{i}=(-1)^{i+1}\det C_{\hat{i}} for all i\in[m] i∈[m]i\in[m], where C_{\hat{i}} Ci^C_{\hat{i}} is the matrix C CC with row i ii missing. A straightforward computation shows that \bm{v}^{\top}\bm{a}_{j}=0 𝒗⊤​𝒂j=0\bm{v}^{\top}\bm{a}_{j}=0 for all j\in[m-1] j∈[m−1]j\in[m-1] (duplicate a given column of C CC and take determinant), and thus \pm\bm{v} ±𝒗\pm\bm{v} can be chosen as the normal vector of F FF. Since M MM, and thus C CC, is TU, this implies the desired result.
+∎
+Approximate evaluation.
+We show that, for rational \bm{z} 𝒛\bm{z} and 0<\tau<1 0<τ<10<\tau<1, the objective
+ \Phi(\bm{z})=-\bm{b}^{\top}\bm{z}+\sum_{j=1}^{n}H_{k_{j}+1}(\bm{a}_{j}^{\top}\bm{z}),\qquad H_{N}(t)=\log\sum_{r=0}^{N-1}e^{rt}, Φ(𝒛)=−𝒃⊤𝒛+∑j=1nHkj+1(𝒂j⊤𝒛),HN(t)=log∑r=0N−1er​t,\Phi(\bm{z})=-\bm{b}^{\top}\bm{z}+\sum_{j=1}^{n}H_{k_{j}+1}(\bm{a}_{j}^{\top}\bm{z}),\qquad H_{N}(t)=\log\sum_{r=0}^{N-1}e^{rt},
+can be evaluated to additive error \tau τ\tau in time polynomial
+in the input length, the encoding length of \bm{z} 𝒛\bm{z}, and
+ \log\frac{1}{\tau} log⁡1τ\log\frac{1}{\tau}. The dot products are computed exactly using
+rational arithmetic. To evaluate H_{N} HNH_{N}, use H_{N}(0)=\log N HN​(0)=log⁡NH_{N}(0)=\log N
+and, for t\neq 0 t≠0t\neq 0, the geometric-series identity
+ H_{N}(t)=(N-1)\max\{t,0\}+\ell(N|t|)-\ell(|t|),\qquad\ell(s)=\log(1-e^{-s}). HN​(t)=(N−1)​max⁡{t,0}+ℓ⁡(N​|t|)−ℓ⁡(|t|),ℓ⁡(s)=log⁡(1−e−s).H_{N}(t)=(N-1)\max\{t,0\}+\ell(N|t|)-\ell(|t|),\qquad\ell(s)=\log(1-e^{-s}).
+This avoids forming exponentials with large positive arguments.
+We describe the precision needed to evaluate either
+ \ell(s) ℓ⁡(s)\ell(s), where s\in\{|t|,N|t|\} s∈{|t|,N​|t|}s\in\{|t|,N|t|\}, to error 2^{-q} 2−q2^{-q}.
+Let B BB be the binary encoding length of the nonzero
+rational number t tt. Since s\geq|t|\geq 2^{-B} s≥|t|≥2−Bs\geq|t|\geq 2^{-B}, we have
+ u:=1-e^{-s}\geq\tfrac{1}{2}\min\{s,1\}\geq 2^{-B-1}. u:=1−e−s≥12​min⁡{s,1}≥2−B−1.u:=1-e^{-s}\geq\tfrac{1}{2}\min\{s,1\}\geq 2^{-B-1}.
+If s\geq q+3 s≥q+3s\geq q+3, then
+ |\ell(s)|\leq 2e^{-s}\leq 2^{-q-2}, |ℓ⁡(s)|≤2​e−s≤2−q−2,|\ell(s)|\leq 2e^{-s}\leq 2^{-q-2},
+so returning zero suffices. Otherwise 0<s<q+3 0<s<q+30<s<q+3.
+Approximate e^{-s} e−se^{-s} to absolute error
+ \eta=2^{-(B+q+4)} η=2−(B+q+4)\eta=2^{-(B+q+4)} via Taylor expansion; note that s ss is of magnitude O(q) O⁡(q)O(q) and
+requires O(B+q) O⁡(B+q)O(B+q) fractional bits. Now subtract this approximation
+from 1 11 to obtain \widetilde{u} u~\widetilde{u}, which implies
+ |\widetilde{u}-u|\leq\eta\leq\frac{u}{2} |u~−u|≤η≤u2|\widetilde{u}-u|\leq\eta\leq\frac{u}{2} and thus \widetilde{u}\geq\frac{u}{2} u~≥u2\widetilde{u}\geq\frac{u}{2}. Therefore by the mean value theorem, for some c cc between u uu and \widetilde{u} u~\widetilde{u} we have
+ |\log\widetilde{u}-\log u|\leq|\widetilde{u}-u|\cdot(\log t)^{\prime}(c)\leq\eta\cdot\frac{2}{u}\leq 2^{-q-2}. |log⁡u~−log⁡u|≤|u~−u|⋅(log⁡t)′​(c)≤η⋅2u≤2−q−2.|\log\widetilde{u}-\log u|\leq|\widetilde{u}-u|\cdot(\log t)^{\prime}(c)\leq\eta\cdot\frac{2}{u}\leq 2^{-q-2}.
+Approximate \log\widetilde{u} log⁡u~\log\widetilde{u} to an additional error of
+ 2^{-q-2} 2−q−22^{-q-2} via Taylor expansion of \log(1-t) log⁡(1−t)\log(1-t), by first scaling the argument \widetilde{u} u~\widetilde{u} to the interval [\frac{1}{2},1] [12,1][\frac{1}{2},1]. This gives the required approximation to \ell(s) ℓ⁡(s)\ell(s).
+The rational term (N-1)\max\{t,0\} (N−1)​max⁡{t,0}(N-1)\max\{t,0\} has encoding length
+polynomial in B+\log N B+log⁡NB+\log N, and errors in the two logarithms
+add without amplification. Thus H_{N}(t) HN​(t)H_{N}(t) is computable to
+error 2^{1-q} 21−q2^{1-q} in time polynomial in B,\log N,q B,log⁡N,qB,\log N,q.
+Taking
+ q=\left\lceil\log_{2}\frac{4n}{\tau}\right\rceil q=⌈log2⁡4​nτ⌉q=\left\lceil\log_{2}\frac{4n}{\tau}\right\rceil
+bounds the error in each term of the sum defining \Phi(\bm{z}) Φ⁡(𝒛)\Phi(\bm{z}) by \frac{\tau}{2n} τ2​n\frac{\tau}{2n};
+the cases t=0 t=0t=0 are evaluated to the same or better accuracy.
+Exact rational summation produces a rational V VV satisfying
+ |V-\Phi(z)|\leq\frac{\tau}{2}<\tau |V−Φ⁡(z)|≤τ2<τ|V-\Phi(z)|\leq\frac{\tau}{2}<\tau.
+Approximate gradients.
+Approximate gradients then follow from finite differences, which we now show. First, since \bm{b}\in M[\bm{0},\bm{k}] 𝒃∈M⁡[𝟎,𝒌]\bm{b}\in M[\bm{0},\bm{k}], let \bm{y}\in[\bm{0},\bm{k}] 𝒚∈[𝟎,𝒌]\bm{y}\in[\bm{0},\bm{k}] be such that \sum_{i=1}^{n}y_{i}\bm{a}_{i}=\bm{b} ∑i=1nyi​𝒂i=𝒃\sum_{i=1}^{n}y_{i}\bm{a}_{i}=\bm{b}.
+For fixed k kk and t tt, the first and second derivatives of
+ H_{k+1} Hk+1H_{k+1} are the mean and variance of the distribution \mu μ\mu
+supported on \{0,\ldots,k\} {0,…,k}\{0,\ldots,k\} with probabilities \mu_{\ell}\propto e^{\ell t} μℓ∝eℓ​t\mu_{\ell}\propto e^{\ell t}. Since \mu μ\mu is supported on \{0,\ldots,k\} {0,…,k}\{0,\ldots,k\}, this implies
+ \|\nabla\Phi(\bm{z})\|_{2}=\left\|\sum_{j=1}^{n}\bm{a}_{j}\left[H_{k_{j}+1}^{\prime}(\bm{a}_{j}^{\top}\bm{z})-y_{j}\right]\right\|_{2}\leq L:=\sqrt{m}\sum_{j=1}^{n}k_{j}. ‖∇Φ​(𝒛)‖2=‖∑j=1n𝒂j​[Hkj+1′​(𝒂j⊤​𝒛)−yj]‖2≤L:=m​∑j=1nkj.\|\nabla\Phi(\bm{z})\|_{2}=\left\|\sum_{j=1}^{n}\bm{a}_{j}\left[H_{k_{j}+1}^{\prime}(\bm{a}_{j}^{\top}\bm{z})-y_{j}\right]\right\|_{2}\leq L:=\sqrt{m}\sum_{j=1}^{n}k_{j}.
+and
+ 0\preceq\nabla^{2}\Phi(\bm{z})=\sum_{j=1}^{n}\bm{a}_{j}\bm{a}_{j}^{\top}H_{k_{j}+1}^{\prime\prime}(\bm{a}_{j}^{\top}\bm{z})\preceq I\cdot m\sum_{j=1}^{n}k_{j}^{2}, 0⪯∇2Φ(𝒛)=∑j=1n𝒂j𝒂j⊤Hkj+1′′(𝒂j⊤𝒛)⪯I⋅m∑j=1nkj2,0\preceq\nabla^{2}\Phi(\bm{z})=\sum_{j=1}^{n}\bm{a}_{j}\bm{a}_{j}^{\top}H_{k_{j}+1}^{\prime\prime}(\bm{a}_{j}^{\top}\bm{z})\preceq I\cdot m\sum_{j=1}^{n}k_{j}^{2},
+so that
+ \|\nabla^{2}\Phi(\bm{z})\|_{\mathrm{op}}\leq H:=m\sum_{j=1}^{n}k_{j}^{2}. ‖∇2Φ​(𝒛)‖op≤H:=m​∑j=1nkj2.\|\nabla^{2}\Phi(\bm{z})\|_{\mathrm{op}}\leq H:=m\sum_{j=1}^{n}k_{j}^{2}.
+For coordinatewise gradient error \delta δ\delta, evaluate \Phi(\bm{z}) Φ⁡(𝒛)\Phi(\bm{z}) and
+ \Phi(\bm{z}+h\bm{e}_{i}) Φ⁡(𝒛+h​𝒆i)\Phi(\bm{z}+h\bm{e}_{i}), so that
+ \left|\partial_{z_{i}}\Phi(\bm{z})-\frac{\Phi(\bm{z}+h\bm{e}_{i})-\Phi(\bm{z})}{h}\right|\leq\frac{Hh}{2}. |∂ziΦ⁡(𝒛)−Φ⁡(𝒛+h​𝒆i)−Φ⁡(𝒛)h|≤H​h2.\left|\partial_{z_{i}}\Phi(\bm{z})-\frac{\Phi(\bm{z}+h\bm{e}_{i})-\Phi(\bm{z})}{h}\right|\leq\frac{Hh}{2}.
+Approximating \Phi(\bm{z}) Φ⁡(𝒛)\Phi(\bm{z}) by V_{0} V0V_{0} and \Phi(\bm{z}+h\bm{e}_{i}) Φ⁡(𝒛+h​𝒆i)\Phi(\bm{z}+h\bm{e}_{i}) by V_{i} ViV_{i} within error \tau τ\tau (as described above) then implies \frac{V_{i}-V_{0}}{h} Vi−V0h\frac{V_{i}-V_{0}}{h} is within error \frac{2\tau}{h} 2​τh\frac{2\tau}{h}. This implies
+ \left|\partial_{z_{i}}\Phi(\bm{z})-\frac{V_{i}-V_{0}}{h}\right|\leq\frac{Hh}{2}+\frac{2\tau}{h} |∂ziΦ⁡(𝒛)−Vi−V0h|≤H​h2+2​τh\left|\partial_{z_{i}}\Phi(\bm{z})-\frac{V_{i}-V_{0}}{h}\right|\leq\frac{Hh}{2}+\frac{2\tau}{h}
+Taking h=\frac{\delta}{4H} h=δ4​Hh=\frac{\delta}{4H} and \tau=\frac{\delta h}{8}=\frac{\delta^{2}}{32H} τ=δ​h8=δ232​H\tau=\frac{\delta h}{8}=\frac{\delta^{2}}{32H}, this implies an overall error of \frac{Hh}{2}+\frac{2\tau}{h}=\frac{\delta}{8}+\frac{\delta}{4}<\delta H​h2+2​τh=δ8+δ4<δ\frac{Hh}{2}+\frac{2\tau}{h}=\frac{\delta}{8}+\frac{\delta}{4}<\delta. Note that H HH is polynomial in m mm and \bm{k} 𝒌\bm{k}, and thus \log\frac{1}{\tau} log⁡1τ\log\frac{1}{\tau} depends polynomially on \log m log⁡m\log m, \log(1+\|\bm{k}\|_{1}) log⁡(1+‖𝒌‖1)\log(1+\|\bm{k}\|_{1}), and \log\frac{1}{\delta} log⁡1δ\log\frac{1}{\delta}.
+The algorithm.
+We now apply the approximate-oracle ellipsoid implementation
+of Section 6.2 (of the arXiv version) of [41] (see also Theorem 2.13), using the
+preceding bounds on the search region and the Lipschitz
+constant L LL of \Phi Φ\Phi. The value and gradient oracles established
+above provide its required numerical approximations.
+The number of oracle calls and the required number of accuracy
+bits are polynomial in the input length and
+ \log\frac{1}{\epsilon} log⁡1ϵ\log\frac{1}{\epsilon}. Since our oracles run in time polynomial
+in these quantities and the encoding length of the query point,
+the resulting algorithm finds \bm{z}^{\circ} 𝒛∘\bm{z}^{\circ} satisfying
+ \Phi(\bm{z}^{\circ})\leq\min\Phi+\frac{\epsilon}{2} Φ⁡(𝒛∘)≤min⁡Φ+ϵ2\Phi(\bm{z}^{\circ})\leq\min\Phi+\frac{\epsilon}{2}
+in polynomial bit complexity.
+Evaluating \Phi(\bm{z}^{\circ}) Φ⁡(𝒛∘)\Phi(\bm{z}^{\circ}) to additive error \frac{\epsilon}{2} ϵ2\frac{\epsilon}{2}
+then gives a rational \mathcal{A} 𝒜\mathcal{A} with
+ |\mathcal{A}-\log\mathcal{E}|\leq\epsilon |𝒜−log⁡ℰ|≤ϵ|\mathcal{A}-\log\mathcal{E}|\leq\epsilon.
+We note that although the total running time stated in [41]
+depends polynomially on \frac{1}{\epsilon} 1ϵ\frac{1}{\epsilon}, its ellipsoid
+iteration bound depends only polynomially on
+ \log\frac{1}{\varepsilon} log⁡1ε\log\frac{1}{\varepsilon} (see Section 6.2, immediately before
+Lemma 6.3). The worse dependence comes from the
+approximate-counting oracle used there. Our value and
+gradient oracles instead run in time polynomial in the
+number of requested accuracy bits, so the same optimization
+framework gives polynomial dependence on
+ \log\frac{1}{\varepsilon} log⁡1ε\log\frac{1}{\varepsilon} in our setting.
+Acknowledgements
+Both authors acknowledge the support of the Natural Sciences and Engineering Research Council of Canada (NSERC), [funding reference number RGPIN-2023-03726]. Cette recherche a été partiellement financée par le Conseil de recherches en sciences naturelles et en génie du Canada (CRSNG), [numéro de référence RGPIN-2023-03726].
+References
+[1]
+T. Alon and N. Halman (2021)
+A faster FPTAS for counting two-rowed contingency tables.
+Discrete Applied Mathematics 303, pp. 161–170.
+External Links: Document,
+Link
+Cited by: §1.3.
+[2]
+N. Anari, K. Liu, S. Oveis Gharan, and C. Vinzant (2024)
+Log-concave polynomials III: Mason’s ultra-log-concavity conjecture for independent sets of matroids.
+Proc. Amer. Math. Soc. 152 (5), pp. 1969–1981.
+External Links: ISSN 0002-9939,1088-6826,
+Document,
+Link
+Cited by: §1.
+[3]
+N. Anari and S. Oveis Gharan (2017)
+A generalization of permanent inequalities and applications in counting and optimization.
+In Proceedings of the 49th Annual ACM SIGACT Symposium on Theory of Computing,
+pp. 384–396.
+Cited by: Fact 2.5.
+[4]
+N. Anari and A. Rezaei (2025)
+A tight analysis of Bethe approximation for permanent.
+SIAM Journal on Computing 54 (4), pp. FOCS19–81–FOCS19–101.
+External Links: Document,
+Link
+Cited by: §1.3.
+[5]
+A. Barvinok and J. A. Hartigan (2010)
+Maximum entropy Gaussian approximations for the number of integer points and volumes of polytopes.
+Advances in Applied Mathematics 45 (2), pp. 252–289.
+External Links: Document,
+Link
+Cited by: §1.3.
+[6]
+A. Barvinok and J. A. Hartigan (2012)
+An asymptotic formula for the number of non-negative integer matrices with prescribed row and column sums.
+Transactions of the American Mathematical Society 364 (8), pp. 4323–4368.
+External Links: Document,
+Link
+Cited by: §1.3.
+[7]
+A. I. Barvinok (1994)
+A polynomial time algorithm for counting integral points in polyhedra when the dimension is fixed.
+Mathematics of Operations Research 19 (4), pp. 769–779.
+External Links: Document,
+Link
+Cited by: §1.3.
+[8]
+A. Barvinok, Z. Luria, A. Samorodnitsky, and A. Yong (2010)
+An approximation algorithm for counting contingency tables.
+Random Structures & Algorithms 37 (1), pp. 25–66.
+External Links: Link
+Cited by: §1.3.
+[9]
+A. Barvinok (2007)
+Brunn–Minkowski inequalities for contingency tables and integer flows.
+Advances in Mathematics 211, pp. 105–122.
+External Links: Document,
+Link
+Cited by: §1.1,
+§1.2,
+§1.
+[10]
+A. Barvinok (2009)
+Asymptotic estimates for the number of contingency tables, integer flows, and volumes of transportation polytopes.
+International Mathematics Research Notices 2009 (2), pp. 348–385.
+Cited by: §1.3.
+[11]
+A. Barvinok (2010)
+On the number of matrices and a random matrix with prescribed row and column sums and 0–1 entries.
+Advances in Mathematics 224 (1), pp. 316–339.
+External Links: Document,
+Link
+Cited by: §1.3.
+[12]
+I. Bezáková, N. Bhatnagar, and E. Vigoda (2007)
+Sampling binary contingency tables with a greedy start.
+Random Structures & Algorithms 30 (1–2), pp. 168–205.
+External Links: Document,
+Link
+Cited by: §1.3.
+[13]
+P. Brändén and J. Huh (2020)
+Lorentzian polynomials.
+Ann. of Math. (2) 192 (3), pp. 821–891.
+External Links: ISSN 0003-486X,1939-8980,
+Document,
+Link
+Cited by: §1,
+§2.1.
+[14]
+P. Brändén, J. Leake, and I. Pak (2023)
+Lower bounds for contingency tables via Lorentzian polynomials.
+Israel J. Math. 253 (1), pp. 43–90.
+External Links: ISSN 0021-2172,1565-8511,
+Document,
+Link
+Cited by: §1.3,
+§2.1,
+§4.2.
+[15]
+M. Cryan, M. Dyer, and D. Randall (2010)
+Approximately counting integral flows and cell-bounded contingency tables.
+SIAM Journal on Computing 39 (7), pp. 2683–2703.
+External Links: Link
+Cited by: §1.3.
+[16]
+M. Cryan and M. Dyer (2003)
+A polynomial-time algorithm to approximately count contingency tables when the number of rows is constant.
+Journal of Computer and System Sciences 67 (2), pp. 291–310.
+External Links: Link
+Cited by: §1.3.
+[17]
+P. Csikvári and A. Imolay (2020)
+Covers, orientations and factors.
+The Electronic Journal of Combinatorics 27 (3), pp. Paper No. 3.25.
+External Links: Document,
+1905.06678
+Cited by: §1.4,
+§3.1.
+[18]
+J. A. De Loera and B. Sturmfels (2003)
+Algebraic unimodular counting.
+Mathematical Programming 96 (2), pp. 183–203.
+External Links: Document,
+Link
+Cited by: §1.3.
+[19]
+D. Dong and V. Jain (2026)
+A deterministic (1+\varepsilon)^{n} (1+ε)n(1+\varepsilon)^{n} approximation for the permanent of a nonnegative matrix.
+External Links: 2609.11049,
+Link
+Cited by: §1.3.
+[20]
+M. Dyer, R. Kannan, and J. Mount (1997)
+Sampling contingency tables.
+Random Structures Algorithms 10 (4), pp. 487–506.
+External Links: ISSN 1042-9832,1098-2418,
+Document,
+Link
+Cited by: §1.3.
+[21]
+L. Ferroni and A. Higashitani (2024)
+Examples and counterexamples in Ehrhart theory.
+EMS Surveys in Mathematical Sciences.
+Note: Published online first
+External Links: Document
+Cited by: §1.1,
+Corollary 1.5.
+[22]
+L. Ferroni (2026)
+Unimodality shenanigans in ehrhart theory.
+arXiv.
+External Links: Link
+Cited by: §1.1,
+Remark 3.6.
+[23]
+W. Fu, Q. Qin, and G. Wang (2026)
+Spectral gap for the binary fixed-margin swap chain.
+External Links: 2606.22636,
+Link
+Cited by: §1.3.
+[24]
+P. Gopalan, A. Klivans, R. Meka, D. Štefankovič, S. Vempala, and E. Vigoda (2011)
+An FPTAS for #Knapsack and related counting problems.
+In 2011 IEEE 52nd Annual Symposium on Foundations
+of Computer Science (FOCS),
+pp. 817–826.
+External Links: Document,
+Link
+Cited by: §1.3.
+[25]
+O. Guler (2010)
+Foundations of optimization.
+Graduate Texts in Mathematics, Vol. 258, Springer, New York.
+External Links: ISBN 978-0-387-34431-7,
+Document,
+Link,
+MathReview (Giorgio Giorgi)
+Cited by: §4.2.
+[26]
+H. Guo and M. Jerrum (2023)
+Counting vertices of integral polytopes defined by facets.
+Discrete & Computational Geometry 70, pp. 975–990.
+External Links: Document,
+Link
+Cited by: §1.3.
+[27]
+L. Gurvits and A. Samorodnitsky (2014)
+Bounds on the permanent and some applications.
+In 2014 IEEE 55th Annual Symposium on
+Foundations of Computer Science,
+FOCS 2014, pp. 90–99.
+External Links: Document,
+Link
+Cited by: §1.3.
+[28]
+L. Gurvits (2006)
+The van der Waerden conjecture for mixed discriminants.
+Adv. Math. 200 (2), pp. 435–454.
+External Links: ISSN 0001-8708,1090-2082,
+Document,
+Link
+Cited by: §1.3.
+[29]
+L. Gurvits (2008)
+Van der Waerden/Schrijver-Valiant like conjectures and stable (aka hyperbolic) homogeneous polynomials: one theorem for all.
+Electron. J. Combin. 15 (1), pp. Research Paper 66, 26.
+Note: With a corrigendum
+External Links: ISSN 1077-8926,
+Document,
+Link
+Cited by: §1.3,
+§1.
+[30]
+L. Gurvits (2009)
+On multivariate Newton-like inequalities.
+pp. 61–78.
+External Links: ISBN 978-3-642-03561-6,
+Document,
+Link
+Cited by: §1.
+[31]
+L. Gurvits (2015)
+Boolean matrices with prescribed row/column sums and stable homogeneous polynomials: combinatorial and algorithmic applications.
+Inform. and Comput. 240, pp. 42–55.
+External Links: ISSN 0890-5401,1090-2651,
+Document,
+Link
+Cited by: §1.3.
+[32]
+J. E. Humphreys (2008)
+Representations of semisimple Lie algebras in the BGG category \mathcal{O} 𝒪\mathcal{O}.
+Graduate Studies in Mathematics, Vol. 94, American Mathematical Society, Providence, RI.
+External Links: ISBN 978-0-8218-4678-0,
+Document,
+Link
+Cited by: §4.2.
+[33]
+M. Jerrum, A. Sinclair, and E. Vigoda (2004)
+A polynomial-time approximation algorithm for the permanent of a matrix with nonnegative entries.
+Journal of the ACM 51 (4), pp. 671–697.
+External Links: Document,
+Link
+Cited by: §1.3.
+[34]
+S. Kudria, J. Luo, and M. Majid (2026)
+Subexponential approximation of the permanent in deterministic polynomial time.
+External Links: 2609.10516,
+Link
+Cited by: §1.3.
+[35]
+J. Leake and M. Mohammadi Yekta (2026)
+New bounds for integer flows and verma modules, via denormalized lorentzian laurent series.
+arXiv.
+External Links: Link
+Cited by: §1.3,
+§2.1,
+Fact 2.5,
+§4.2,
+§4.2,
+§4.2,
+Corollary 4.13,
+Lemma 4.9,
+§4.
+[36]
+J. Leake and A. H. Morales (2026)
+Capacity bounds on integral flows and the Kostant partition function.
+Advances in Applied Mathematics 175, pp. 103002.
+Cited by: §1.3,
+Corollary 4.13,
+§4.
+[37]
+N. Linial, A. Samorodnitsky, and A. Wigderson (2000)
+A deterministic strongly polynomial algorithm for matrix scaling and approximate permanents.
+Combinatorica 20 (4), pp. 545–568.
+External Links: Document,
+Link
+Cited by: §1.3.
+[38]
+P. McMullen (1971)
+On zonotopes.
+Transactions of the American Mathematical Society 159, pp. 91–109.
+External Links: Document,
+Link
+Cited by: §5.
+[39]
+B. J. Morris (2002)
+Improved bounds for sampling contingency tables.
+Random Structures & Algorithms 21, pp. 135–146.
+External Links: Document,
+Link
+Cited by: §1.3.
+[40]
+J. Mount (2000)
+Fast unimodular counting.
+Combinatorics, Probability and Computing 9 (3), pp. 277–285.
+External Links: Document,
+Link
+Cited by: §1.3.
+[41]
+M. Singh and N. K. Vishnoi (2014)
+Entropy, optimization and counting.
+In Proceedings of the Forty-Sixth Annual ACM Symposium
+on Theory of Computing,
+STOC ’14, pp. 50–59.
+External Links: Document,
+Link
+Cited by: §1.1,
+§1.4,
+§5,
+§5,
+§5,
+§5.
+[42]
+D. Straszak and N. K. Vishnoi (2019)
+Maximum entropy distributions: bit complexity and stability.
+In Proceedings of the Thirty-Second Conference
+on Learning Theory, A. Beygelzimer and D. Hsu (Eds.),
+Proceedings of Machine Learning Research, Vol. 99, pp. 2861–2891.
+External Links: Link
+Cited by: §1.4.
+ Experimental support, please
+ view the build logs
+ for errors. Generated by
+ L
+ A
+ T
+ E
+ xml
+ .
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+ support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+ methods listed below:
+ Click the "Report Issue" (
+ ) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+ may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+ should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+ all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+ We gratefully acknowledge support from our major funders,
+ member institutions, ,
+ and all contributors.
+ About ·
+ Help ·
+ Contact ·
+ Subscribe ·
+ Copyright ·
+ Privacy ·
+ Accessibility ·
+ Operational Status (opens in new tab)
