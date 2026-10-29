@@ -1,5 +1,13 @@
 # Current continuation — 29 October 2026
 
+r133 post-Lie nonexistence questions remain unresolved. Root checks the
+curvature -ad_n({x,y})/4 and reproduces 125 rational basis triples; the example
+is not perfect and only blocks a flattening shortcut. All 63 manifest entries
+and 29 scientific-freeze entries verify. No global completeness or transverse
+homomorphism bridge is supplied. See root-r133-handback. Counts stay 9/39.
+Sol r134 replaces r133; r131/r132 continue.
+
+
 r128/r129/r130 adopted zero nominees. Spectral saturation is public; domino
 quotient positivity and even-cycle lower bounds remain unproved. All three r129
 questions are old (Radon r47/r34 and unimodular Jensen r52). The r130 Galois,
