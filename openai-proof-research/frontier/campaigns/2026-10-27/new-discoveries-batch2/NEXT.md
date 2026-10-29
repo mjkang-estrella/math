@@ -64,8 +64,9 @@ r78 cluster-scattering C4 remains unresolved: uniform factorial divisibility
 missing, bounded cancellation evidence only; current Omega advanced, freshnessHOLD.
 r80 maximum parking displacement Conjecture6.5 remains unresolved. Root verified the last-car recurrence, 234 Riccati coefficient identities, literal counts through n6 and the two exact stronger-invariant failures; no all-n single-crossing proof. See root-fresh-source-r80-handback/ADOPTION.json.
 r81 FGR lattice-extension Question42/40 remains unresolved. Root exact interval vertex-law and diamond cross-section checks confirm helper identities only; uniform extension covariance control is missing. See root-fresh-source-r81-handback/ADOPTION.json.
+r82 supplies a full ordinary parity-rank proof of DeWitt–Keith numbered Conjecture1 using known total congruences; root29boundedchecks agree. Routine source-involution adaptation, stronger residue-zero prose scope, journal comparison and current prior clearance require independent review. Frozen29files in root-dewitt-rank-review-freeze-r1; credit0, no Lean/paper.
 r79 lasso separation is ordinary-math sound but current nomination EXCLUDED: no clear attributable universal optimized quantifier, and completed source-Lemma2 boundary/cubic specialization is routine. VoR and closest-body gaps retained; no Lean or manuscript. See root-lasso-exclusion-r2/EXCLUSION.json.
-Active Sol high/default: fresh analysis/probability r84, finite/arithmetic r82, and structural/geometric r83. r74 sharp Chernoff curvature remains unresolved;
+Active Sol high/default: fresh analysis/probability r84, DeWitt–Keith rank preliminary review r1, and structural/geometric r83. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.
