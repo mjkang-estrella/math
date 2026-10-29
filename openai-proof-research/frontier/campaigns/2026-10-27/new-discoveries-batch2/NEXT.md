@@ -1,4 +1,25 @@
-# Current checkpoint — Karp excluded; Erdos–Lax unresolved
+# Current checkpoint — Mittag classical bridge ready for review
+
+Counts remain **3/30 additional, 33/60 total**. The held Mittag-Leffler
+candidate has a new concrete classical-subsumption objection, documented in
+lanes/root-mittag-source-subsumption-r3/CLASSICAL-BRIDGE.md. Published
+unequal-half-normal density formulas, Owen's positive integral, and the exact
+M-Wright subordination theorem give a complete ordinary bridge. Root recommends
+exclusion if independent review confirms the routine-corollary judgment; no
+final eligibility or count change yet. All 65 frozen candidate bytes reverified.
+The corrected BEUN repository is metadata-only (zero attachments); the actual
+journal body remains unread and its source HOLD is not cleared.
+
+Sol's percolation-poisson-discovery-r2 and fresh-analysis-discovery-r5 lanes
+completed without a full result. Their route obstructions/first variations are
+uncredited. Read those SUMMARY files before another attack; do not repeat the
+ultra-log-concavity shortcut or already public Krasniqi Conjecture 23. BBK remains
+assigned. Use Sol high/default for new independent review and fresh discrete
+research; do not poll asynchronous workers.
+
+---
+
+# Historical checkpoint — Karp excluded; Erdos–Lax unresolved
 
 Accepted count remains **3/30 additional, 33/60 total**. Karp331384 has an
 exact public all-real-shift proof at337295b and is excluded. Erdos–Lax359807
