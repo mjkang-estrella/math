@@ -1,0 +1,1866 @@
+                                                    ADAPTIVE HYBRID HIGH-ORDER METHOD FOR
+                                                     GUARANTEED LOWER EIGENVALUE BOUNDS
+
+
+                                                 CARSTEN CARSTENSEN, BENEDIKT GRÄSSLE, AND NGOC TIEN TRAN
+
+
+                                                   Abstract. The higher-order guaranteed lower eigenvalue bounds of the Lapla-
+                                                   cian in the recent work by Carstensen, Ern, and Puttkammer [Numer. Math.
+                                                   149, 2021] require a parameter Cst,1 that is found not robust as the polynomial
+
+
+
+
+arXiv:2404.01228v1 [math.NA] 1 Apr 2024
+                                                   degree p increases. This is related to the H 1 stability bound of the L2 projec-
+                                                   tion onto polynomials of degree at most p and its growth Cst,1 ∝ (p + 1)1/2 as
+                                                   p → ∞. A similar estimate for the Galerkin projection holds with a p-robust
+                                                   constant Cst,2 and Cst,2 ≤ 2 for right-isosceles triangles. This paper utilizes
+                                                   the new inequality with the constant Cst,2 to design a modified hybrid high-
+                                                   order (HHO) eigensolver that directly computes guaranteed lower eigenvalue
+                                                   bounds under the idealized hypothesis of exact solve of the generalized algeb-
+                                                   raic eigenvalue problem and a mild explicit condition on the maximal mesh-size
+                                                   in the simplicial mesh. A key advance is a p-robust parameter selection.
+                                                       The analysis of the new method with a different fine-tuned volume sta-
+                                                   bilization allows for a priori quasi-best approximation and improved L2 error
+                                                   estimates as well as a stabilization-free reliable and efficient a posteriori error
+                                                   control. The associated adaptive mesh-refining algorithm performs superior
+                                                   in computer benchmarks with striking numerical evidence for optimal higher
+                                                   empirical convergence rates.
+
+
+
+
+                                                                                1. Introduction
+                                             This paper proposes and analyzes a new hybrid high-order (HHO) eigensolver
+                                          for the direct computation of guaranteed lower eigenvalue bounds (GLB) for the
+                                          Laplacian.
+
+                                          1.1. Three categories of GLB. The min-max principle enables guaranteed upper
+                                          eigenvalue bounds but prevents a direct computation of a GLB by a conforming
+                                          approximation in a Rayleigh quotient. So GLB shall be based on nonconforming
+                                          finite element methods (FEM), on modified mass and/or stiffness matrices (with
+                                          reduced integration or fine-tuned stabilization terms), or on further post-processing.
+                                          The last decade has seen a few GLB we group in three categories (i)–(iii).
+                                             (i) The a posteriori error analysis for symmetric second-order elliptic eigenvalue
+                                          problems started with [54, 43, 35] under the (unverified) hypothesis of a sufficiently
+                                          small mesh-size. With additional a priori information on spectral gaps, the latest
+                                          a posteriori post-processings [15, 14, 13] provide GLB.
+
+                                              2020 Mathematics Subject Classification. 65N12, 65N30, 65Y20.
+                                              Key words and phrases. hybrid high-order, Laplace eigenvalue, guaranteed lower bounds, a pri-
+                                          ori, a posteriori, adaptive mesh-refining, p-robustness.
+                                              This work has been supported by the German Research Foundation (DFG) in the Priority
+                                          Program 1748 Reliable simulation techniques in solid mechanics: Development of non-standard
+                                          discretization methods, mechanical and mathematical analysis CA 151/22-2 and under Germany’s
+                                          Excellence Strategy – The Berlin Mathematics Research Center MATH+ (EXC-2046/1, project
+                                          ID: 390685689) as well as by the European Union’s Horizon 2020 research and innovation pro-
+                                          gramme (project DAFNE grant agreement No. 891734 and project RandomMultiScales grant
+                                          agreement No. 865751).
+                                                                                           1
+2                      C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+
+
+                       2
+                      Cst,1
+            20         2
+                      Cst,2
+
+
+
+            10
+
+
+
+              2
+              0
+                  0             5            10           15           20
+                                               p
+
+                                             2             2
+        Figure 1. Approximations of Cst,1         and Cst,2     as a function of
+        the polynomial degree p on the equilateral triangle , the right-
+        isosceles triangle ,         := conv{(0, 0), (1.5, 0), (0, 1)}, and   :=
+        {(0, 0), (1, 0), (−1/2, 1)}.
+
+
+   (ii) Classical nonconforming FEM [20, 22, 45] and mixed FEM [39] allow for the
+GLB λh /(1 + δλh ) ≤ λ with the discrete eigenvalue λh and a known parameter
+δ ∝ h2max in terms of the maximal mesh-size hmax . On the positive side, the GLB
+provides unconditional information on the exact eigenvalue λ from the computed
+discrete eigenvalue λh . On the negative side, the global parameter hmax can spoil
+a very accurate approximation λh in this GLB and is of lowest-order only. A fine-
+tuned stabilization of the classical nonconforming FEM in [23], however, provides
+a first (but low-order) remedy of the third category.
+   (iii) Higher-order hybrid discontinuous Galerkin (HDG) or HHO discretizations
+[25, 19] can compute direct GLB λh ≤ λ under the sufficient condition (e.g., in [19]
+for the HHO method and the Laplacian)
+(1.1)                         σ12 β + κ2 h2max min{λ, λh } ≤ α
+with (universal or computed) constants σ1 , κ and known parameters 0 < α <
+1, 0 < β < ∞ (selected in the discrete scheme). If the exact Dirichlet eigenvalue λ
+of number j ∈ N0 of the Laplace operator and the corresponding discrete eigenvalue
+λh satisfy (1.1), then λh ≤ λ is a GLB. The two-fold use of (1.1) is a priori or a
+posteriori. First, given an upper bound µ ≥ λ > 0 of λ (e.g., by some conforming
+approximation or post-processing), (1.1) provides an upper bound h2max ≤ (α −
+σ12 β)/(κ2 µ) for the maximal initial mesh-size. This condition is sufficient for (1.1)
+and guarantees a priori that λh ≤ λ. Second, (1.1) may be checked a posteriori for
+any computed value λh . Then σ12 β + κ2 h2max λh ≤ α implies (1.1) and so, λh ≤ λ.
+This paper presents a new HHO eigensolver of the third category.
+
+1.2. Motivation and outline of Section 2. The constants σ12 := Cst,1       2
+                                                                             − 1 and
+κ := CP Cst,1 in (1.1) depend on the Poincaré constant CP ≤ 1/π and a stability
+constant Cst,1 . The latter has to be contrasted with the constant Cst,2 , where Cst,1
+and Cst,2 are the best possible constants in the stability estimates
+(1.2)    ∥∇(1 − Πp+1 )f ∥L2 (T ) ≤ Cst,1 ∥(1 − Πp )∇f ∥L2 (T )   for all f ∈ H 1 (T ),
+(1.3)    ∥∇(1 − Gp+1 )f ∥L2 (T ) ≤ Cst,2 ∥(1 − Πp )∇f ∥L2 (T )   for all f ∈ H 1 (T )
+                        HHO FOR LOWER EIGENVALUE BOUNDS                                      3
+
+
+in a given simplex T ⊂ Rn with the (component-wise) L2 projection Πm and the
+Galerkin projection Gm onto polynomials of total degree at most m ∈ N0 . The
+two constants Cst,1 and Cst,2 are independent of the diameter hT := diam(T ) of
+T , but might depend on the shape of T and the polynomial degree p. Figure 1
+illustrates the behaviour of Cst,1 and Cst,2 for different triangular shapes and various
+polynomial degrees p. √  Section 2 investigates the p-robustness of Cst,2 and reveals
+that Cst,2
+         √   ≤  Cst,1 ∝    p + 1 tends to infinity as p → ∞, while we conjecture
+Cst,2 ≤ 2 for triangles T with maximum interior angle ω ≤ π/2. Notice that a
+large constant Cst,1 leads to a large σ1 in (1.1) and so, α < 1 enforces small β and
+restricts the GLB to very fine meshes.√ The main motivation of this work arises
+from the convenient bound Cst,2 ≤ 2: Can we design     √      a discretization method of
+the third category (iii) based on σ2 := CP Cst,2 ≤ 2/π in (1.1)?
+
+1.3. A modified HHO method and outline of Section 3. This paper provides
+an affirmative answer with a new fine-tuned stabilization in a modified HHO scheme
+in Section 3 and a new criterion
+
+(1.4)                      σ22 max{β, h2max min{λ, λh }} ≤ α
+
+sufficient for the GLB λh ≤ λ. One advantage of (1.4) over (1.1) is the straight-
+forward and p-robust parameter selection β := α/σ22 . It turns out that σ2 ≤ κ and
+so (1.4) improves on (1.1) in the sense that σ22 h2max λ ≤ α holds on much coarser
+triangulations for higher polynomial degrees p.
+   Given a bounded polyhedral Lipschitz domain Ω ⊂ Rn , let V := H01 (Ω) denote
+the Sobolev space endowed with the energy scalar product a(u, v) := (∇u, ∇v)L2 (Ω)
+and the L2 scalar product b(u, v) := (u, v)L2 (Ω) for all u, v ∈ V . This paper considers
+the model problem that seeks an eigenpair (λ, u) ∈ R+ × (V \ {0}) such that
+
+(1.5)                       a(u, v) = λb(u, v) for any v ∈ V.
+
+The HHO methodology has been introduced in [32, 31] and is related to HDG
+and nonconforming virtual element methods [27]. Given a regular triangulation
+T into simplices, the ansatz space Vh = Pp+1 (T ) × Pp (F(Ω)) consists of piece-
+wise polynomials of (total) degree at most p + 1 attached to the simplices and
+piecewise polynomials of degree at most p attached to the interior faces. Two
+reconstruction operators link the two components of vh ∈ Vh : The potential re-
+construction Rvh ∈ Pp+1 (T ) provides a discrete approximation to v in the space
+of piecewise polynomials Pp+1 (T ) of degree at most p + 1. The gradient recon-
+struction Gvh ∈ RTpw p (T ) approximates the gradient ∇v in the space of piecewise
+Raviart-Thomas functions RTpw  p (T ) [1, 30]. Let Svh := vT − Rvh ∈ Pp+1 (T ) for
+any vh = (vT , vF ) ∈ Vh denote the additional cell-based stabilization. Given posit-
+ive parameters 0 < α < 1 and 0 < β < ∞, the bilinear forms ah : Vh × Vh → R and
+bh : Vh × Vh → R read
+
+(1.6)    ah (uh , vh ) := (Guh , Gvh )L2 (Ω) − α((1 − Πp )Guh , (1 − Πp )Gvh )L2 (Ω)
+                          + β(h−2
+                               T Suh , Svh )L2 (Ω) ,
+(1.7)    bh (uh , vh ) := (uT , vT )L2 (Ω) for any uh = (uT , uF ), vh = (vT , vF ) ∈ Vh .
+
+The discrete eigenvalue problem seeks (λh , uh ) ∈ R+ × (Vh \ {0}) with
+
+(1.8)                 ah (uh , vh ) = λh bh (uh , vh ) for all vh ∈ Vh .
+
+The definitions of R, G, and further details follow in Section 3 below.
+4                        C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+1.4. GLB with p-robust parameters and outline       √ of Section 4. The discrete
+bilinear form ah from [19] with parameter Cst,1 ∝ p + 1 utilizes the different sta-
+bilization β(∇pw Suh , ∇pw Svh )L2 (Ω) instead of β(h−2
+                                                     T Suh , Svh )L2 (Ω) in (1.6). The
+two stabilizations are locally equivalent, but the innovative difference is that the
+parameter selection in the new scheme circumvents an inverse inequality, and rather
+builds it into the scheme. Section 4 verifies the sufficient condition (1.4) for exact
+GLB under the assumption of exact solve.
+
+1.5. A priori error analysis of the new scheme and outline of Section 5.
+A quasi-best approximation for the source problem [38] allows for quasi-best ap-
+proximation results in Theorem 5.1 for a simple eigenvalue λ, namely
+                |λ − λh | + ah (Iu − uh , Iu − uh ) + h−2s          2
+                                                       max ∥u − uT ∥L2 (Ω)
+
+(1.9)                           ≤ C1        min          ∥∇pw (u − vp+1 )∥2L2 (Ω)
+                                       vp+1 ∈Pp+1 (T )
+
+with a positive constant C1 and the minimum 0 < s ≤ 1 of the index of elliptic
+regularity and one; the HHO interpolation I : V → Vh is recalled in Subsection 3.3
+below. Compared to earlier results in [12, 19], (1.9) provides an additional positive
+power s of hmax in the L2 error. This is important as it eventually enables the
+absorption of higher-order terms in the a posteriori error analysis.
+
+1.6. Stabilization-free a posteriori error analysis and outline of Section 6.
+Let ph := Πp Guh ∈ Pp (T ; Rn ) denote the L2 projection of the gradient recon-
+struction Guh ∈ RTpw    p (T ) onto the space of vector-valued piecewise polynomials
+Pp (T ; Rn ). For any T ∈ T of volume |T |, define
+(1.10) η 2 (T ) := |T |2/n ∥div ph + λh uT ∥2L2 (T ) + ∥curl ph ∥2L2 (T )
+                                                                          
+                            X                                X                              
+             + |T |1/n               ∥[ph · νF ]F ∥2L2 (F ) +         ∥[ph × νF ]F ∥2L2 (F )
+                        F ∈F (T )∩F (Ω)                          F ∈F (T )
+
+with the normal jump [ph · νF ]F and the tangential jump [ph × νF ]F of ph across
+a sideP
+      F of T . Theorem 6.1 asserts reliability and efficiency of the error estimator
+η 2 := T ∈T η 2 (T ) for sufficiently small mesh-sizes hmax in the sense that
+             −1
+(1.11)      Ceff η ≤ |λ − λh | + ah (Iu − uh , Iu − uh ) + ∥∇u − ph ∥2L2 (Ω) ≤ Crel η.
+
+1.7. Adaptive mesh-refining algorithm and outline of Section 7. Three 2D
+computer experiments in Section 7 provide striking numerical evidence that the
+criterion (1.4) indeed leads to confirmed lower eigenvalue bounds. The adaptive
+mesh-refining algorithm driven by the refinement indicator η from (1.10) recovers
+the optimal convergence rates of the eigenvalue error λ − λh in all numerical bench-
+marks with singular eigenfunctions. This is the first time that p-robust higher-order
+GLB of the third category are displayed.
+
+1.8. General notation. Standard notation for Lebesgue and Sobolev function
+spaces applies throughout this paper. In particular, (•, •)L2 (ω) denotes the L2 scalar
+product and H(div, ω) is the space of Sobolev functions with weak divergence in
+L2 (ω) for a domain ω ⊂ Rn . Recall the abbreviation V := H01 (Ω) for the space of
+Sobolev functions, endowed with the energy scalar product a(u, v) := (∇u, ∇v)L2 (Ω)
+and the L2 scalar product b(u, v) := (u, v)L2 (Ω) for all u, v ∈ V .
+   For a subset M ⊂ Rn of diameter hM , let Pp (M ) denote the space of polynomials
+of maximal (total) degree p regarded as functions defined in M . Given a simplex
+T ⊂ Rn , the space of Raviart-Thomas finite element functions reads
+                    RTp (T ) := Pp (T ; Rn ) + xPp (T ) ⊂ Pp+1 (T ; Rn ).
+                         HHO FOR LOWER EIGENVALUE BOUNDS                                     5
+
+
+The Galerkin projection G := Gp+1 : H 1 (T ) → Pp+1 (T ) maps f ∈ H 1 (T ) to the
+unique solution Gf to Π0 Gf = Π0 f and
+(1.12)       (∇Gf, ∇pp+1 )L2 (T ) = (∇f, ∇pp+1 )L2 (T ) for all pp+1 ∈ Pp+1 (T )
+with the convention H 1 (T ) := H 1 (int(T )) for the interior int(T ) = T ◦ of T . The
+Poincaré constant CP bounds ∥(1 − Π0 )f ∥L2 (T ) ≤ CP hT ∥∇f ∥L2 (T ) for all f ∈
+H 1 (T ). In 2D, CP ≤ 1/j11 = 0.260980 with the first positive root of the Bessel
+function J1 [44] and CP ≤ 1/π in any space dimension [49, 5]. The context-sensitive
+notation | • | may denote the absolute value of a scalar, the Euclidean norm of a
+vector, the length of a side, or the volume of a simplex. The notation A ≲ B
+abbreviates A ≤ CB for a generic constant C independent of the mesh-size and
+A ≈ B abbreviates A ≲ B ≲ A. Throughout this paper, C1 , . . . , C14 denote positive
+constants independent of the mesh-size.
+
+                               2. Stability estimates
+   This section discusses the behaviour of the constants Cst,1 , Cst,2 from (1.2)–(1.3)
+as p → ∞ and the computation of σ2 := CP Cst,2 with the Poincaré constant CP in
+(1.4) that arises from the stability estimates in Lemma 2.2 below.
+
+2.1. Stability constants and estimates. The following theorem asserts that
+Cst,2 is p-robust (and small in general, see Figure 1) whereas Cst,1 → ∞ as p → ∞.
+Theorem 2.1. For any simplex T , there exist positive constants 1 ≤ Cst,2 ≤
+Cst,1 independent of √
+                     the diameter hT such that (1.2)–(1.3) hold. In n = 2, 3 space
+dimensions, Cst,1 ≈ p + 1 and Cst,2 ≈ 1 as p → ∞.
+Proof. The existence of the constants 1 ≤ Cst,1 ≤ Cst,2 follows from [25, Theorem
+3.1]; cf. Appendix A for further details. The technical proof of the p-robustness of
+Cst,2 involves a linear bounded operator Rcurl : H −1 (T ; R3 ) → L2 (T ; R3 ) from [42,
+28, 46] and is carried out in Appendix B. The robustness holds for n = 2 with a
+simpler and hence omitted proof. The remaining parts of this proof concern the
+growth of Cst,1 . Let X := H 1 (T )/R denote the Hilbert space with inner product
+(∇•, ∇•)L2 (T ) and note that ker(∇(1 − Πp+1 )) = ker((1 − Πp )∇) = Pp+1 (T ). Since
+∥(1 − Πp )∇ϕ∥L2 (T ) ≤ |||ϕ||| for every ϕ ∈ X, the definition of the operator norm of
+the oblique projection 1 − Πp+1 ∈ L(X; X) provides
+                         |||(1 − Πp+1 )ϕ|||                   |||(1 − Πp+1 )ϕ|||
+∥1 − Πp+1 ∥ :=     sup                      ≤    sup                             = Cst,1 .
+                 ϕ∈X\{0}        |||ϕ|||       ϕ∈X\Pp+1 (T ) ∥(1 − Πp )∇ϕ∥L2 (T )
+
+Kato’s oblique projection lemma [52] for the Hilbert space X leads to ∥Πp+1 ∥ =
+∥1 − Πp+1 ∥ ≤ Cst,1 and (1 − Πp+1 )G = 0 in X for the Galerkin projection G shows
+ |||(1 − Πp+1 )f ||| = |||(1 − Πp+1 )(1 − G)f ||| ≤ ∥Πp+1 ∥ |||(1 − G)f ||| for any f ∈ X.
+Since |||(1 − G)f ||| ≤ Cst,2 ∥(1 − Πp )∇f ∥L2 (T ) from (1.3), this proves ∥Πp+1 ∥ ≤
+                                                   √
+Cst,1 ≤ Cst,2 ∥Πp+1 ∥. The growth ∥Πp+1 ∥ ≈ p + 1 is known for tensor-product
+domains and also√holds for simplices in n = 2, 3 dimensions;  √ see [55] and [47, Sec.
+5] for ∥Πp+1 ∥ ≲ p + 1 and Appendix C for the proof of p + 1 ≲ ∥Πp+1 ∥.             □
+
+   The Poincaré inequality with the Poincaré constant CP and (1.3) with Cst,2 ≈ 1
+lead to a p-robust stability estimate with σ2 := CP Cst,2 .
+Lemma 2.2 (p-robust stability). Any f ∈ H 1 (T ), T a simplex, and p ∈ N0 satisfy
+(2.1)             ∥h−1
+                    T (1 − G)f ∥L2 (T ) ≤ σ2 ∥(1 − Πp )∇f ∥L2 (T ) .   □
+6                           C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+                                             2                     2
+                                p          Cst,2        p        Cst,2
+                                1       1.59707221       6    1.99368122
+                                2       1.75             7    1.99787853
+                                3       1.91060394       8    1.99911016
+                                4       1.95679115       9    1.99969758
+                                5       1.98559893      10    1.99987656
+
+           Table 1. The constant Cst,2 = mp on right-isosceles triangles.
+
+
+2.2. Numerical comparison and conjecture. The following theorem considers
+the computation of guaranteed upper bounds of Cst,2 in n = 2, 3 space dimensions
+for a control of σ2 in (2.1). Given v ∈ H 1 (T ; Rn ) and w ∈ H 1 (T ; R2n−3 ), let
+curl v := ∂1 v2 − ∂2 v1 and Curl w := (∂2 w, −∂1 w)t for n = 2 and curl v := (∂2 v3 −
+∂3 v2 , ∂3 v1 − ∂1 v3 , ∂1 v2 − ∂2 v1 )t and Curl w := curl w for n = 3. For any g ∈
+H −1 (T ; R2n−3 ) in the dual space of H01 (T ; R2n−3 ) endowed with the operator norm
+|||•|||∗ , let (−∆)−1 g ∈ H01 (T ; R2n−3 ) denote the weak solution to −∆v = g in T
+componentwise with |||g|||∗ = (−∆)−1 g .
+    The gradients ∇Pp+1 (T ) of polynomials Pp+1 (T ) of degree at most p + 1 form a
+subspace of Pp (T ; Rn ) and give rise to the L2 orthogonal decomposition Pp (T ; Rn ) =
+Qp ⊕∇Pp+1 (T ) with Qp ⊥ ∇Pp+1 (T ) in L2 (T ; Rn ). Let P : Pp (T ; Rn ) → ∇Pp+1 (T )
+denote the L2 orthogonal projection onto ∇Pp+1 (T ) ⊂ Pp (T ; Rn ). The bilinear
+forms a : Qp × Qp → R and b : Qp × Qp → R are defined, for any qp , rp ∈ Qp , by
+
+(2.2)   a(qp , rp ) := (qp , rp )L2 (T )    and b(qp , rp ) := ((−∆)−1 curl qp , curl rp )L2 (T ) .
+
+Theorem 2.3 (stability constant). The maximal eigenvalue
+                                                                                            2
+(2.3)        m2p :=       max               min         ∥qp − ∇vp+1 ∥2L2 (T ) /|||curl qp |||∗
+                      qp ∈Pp (T ;Rn ) vp+1 ∈Pp+1 (T )
+                        curl qp ̸=0
+
+of the eigenvalue problem
+
+(2.4)                       a(qp , rp ) = λb(qp , rp )       for all rp ∈ Qp
+                                                                      √
+leads to the upper bound Cst,2 ≤ max{1, mp Cn } for C2 = 1 and C3 = 2/ 3.
+
+   Notice that (2.4) is a finite-dimensional eigenvalue problem and (−∆)−1 qp in
+b(qp , rp ) can be approximated by, e.g., a conforming FEM. Numerical experiments
+below even suggest that the bound Cst,2 = mp is exact in n = 2 dimensions.
+
+Proof. If p = 0, ∇P1 (T ) = P0 (T ; Rn ) implies ∇Gf = Π0 ∇f for all f ∈ H 1 (T ),
+whence Cst,2 = 1. The remaining parts of the proof therefore assume p ≥ 1.
+Given f ∈ H 1 (T ), assume without loss of generality that ∇f ⊥ ∇Pp+1 (T ) in
+L2 (T ; Rn ) (otherwise substitute g := f − Gf and observe that ∥(1 − Πp )∇f ∥L2 (T ) =
+∥(1 − Πp )∇g∥L2 (T ) ). Throughout this proof, abbreviate qp := Πp ∇f ∈ Pp (T ; Rn ).
+A Helmholtz decomposition leads to qp = ∇a + Curl b with a ∈ H 1 (T ) and b ∈
+H01 (T ; R2n−3 ). For any v ∈ H01 (T ; R2n−3 ), the L2 orthogonality Curl v ⊥ ∇a in
+L2 (T ; Rn ), an integration by parts, and a Cauchy inequality prove
+         ˆ                    ˆ
+             v · curl qp dx =    qp · Curl v dx
+          T
+                              ˆT
+
+(2.5)                       =    Curl b · Curl v dx ≤ ∥Curl b∥L2 (T ) ∥Curl v∥L2 (T ) .
+                                    T
+                               HHO FOR LOWER EIGENVALUE BOUNDS                                                       7
+
+                                                                        √
+In 2D, ∥Curl v∥L2 (Ω) = |||v||| and in 3D, ∥Curl v∥L2 (Ω) ≤ 2|||v|||/ 3. (The proof
+solely involves elementary algebra and is therefore omitted.) Hence, (2.5) implies
+                                        ˆ
+(2.6)    |||curl qp |||∗ =    sup          v · curl qp dx/|||v||| ≤ Cn ∥Curl b∥L2 (T ) .
+                              v∈H01 (T ;R2n−3 )\{0}          T
+
+(Notice that |||qp |||∗ = ∥Curl b∥L2 (T ) = |||b||| in 2D). Since ∇Pp+1 (T ) ⊂ Pp (T ; Rn ),
+the best approximation of qp in ∇Pp+1 (T ) satisfies the L2 orthogonality qp ⊥
+∇Pp+1 (T ). This and the Pythagoras theorem provide
+                                                                                   2
+              min          ∥qp − ∇vp+1 ∥2L2 (T ) = ∥qp ∥2L2 (T ) = |||a||| + ∥Curl b∥2L2 (T ) .
+         vp+1 ∈Pp+1 (T )
+
+On the other hand, the constant mp from (2.3) satisfies
+                                                                                            2
+                              min           ∥qp − ∇vp+1 ∥2L2 (T ) ≤ m2p |||curl qp |||∗ .
+                         vp+1 ∈Pp+1 (T )
+
+Hence, (2.6) implies
+                                        2
+(2.7)                            |||a||| ≤ (m2p Cn2 − 1)∥Curl b∥2L2 (T ) .
+                                                 2
+The Pythagoras identity |||f − a||| + ∥Curl b∥2L2 (T ) = ∥∇f − qk ∥2L2 (T ) , a triangle
+                                                                              2                   2
+inequality, the estimate 2(∇a, ∇(f − a))L2 (T ) ≤ δ|||a||| + |||f − a||| /δ, and (2.7)
+show, for all positive parameters δ > 0, that
+                     2           2                       2                                         2
+        |||f − Gf ||| = |||f ||| = |||f − a||| + 2(∇a, ∇(f − a))L2 (T ) + |||a|||
+                                                     2                    2
+                         ≤ (1 + δ)|||f − a||| + (1 + 1/δ)|||a|||
+                                                                                           2
+                         ≤ max{1 + δ, (1 + 1/δ)(m2p Cn2 − 1)}(|||f − a||| + ∥Curl b∥2 )
+(2.8)                    = max{1 + δ, (1 + 1/δ)(m2p Cn2 − 1)}∥(1 − Πp )∇f ∥2L2 (T ) .
+If mp Cn > 1, then δ := m2p Cn2 −1 leads to max{1+δ, (1+1/δ)(m2p Cn2 −1)} = m2p Cn2 .
+If mp Cn ≤ 1, then inf δ>0 max{1 + δ, (1 + 1/δ)(m2p Cn2 − 1)} = 1. This concludes the
+                                                                               2                                 2
+proof of Cst,2 ≤ max{1, mp Cn }. Notice that |||curl qp |||∗ = (−∆)−1 curl qp =
+b(qp , qp ) and the orthogonal decomposition Pp (T ; Rn ) = Qp ⊕ ∇Pp+1 (T ) with
+curl ∇Pp+1 (T ) ≡ 0 reveal
+                                                                 2
+(2.9)        m2p =         max       ∥qp ∥2L2 (T ) /|||curl qp |||∗ =     max          a(qp , qp )/b(qp , qp )
+                     qp ∈Qp \{0}                                        qp ∈Qp \{0}
+
+with the bilinear forms a and b from (2.2). The min-max principle [4, Sec. 8] and
+(2.9) show that m2p is the maximal eigenvalue of (2.4). This concludes the proof. □
+Example 2.4 (numerical example). Table 1 displays the computed maximal eigen-
+                 2
+value m2p ≥ Cst,2     of the eigenvalue problem (2.4) for the right-isosceles triangle T .
+The right-hand side is approximated by the Courant FEM of polynomial degree 10
+on a uniform triangulation of T with 50721 degrees of freedom. The lower bounds
+                |||(1 − G)f |||                               |||(1 − Πp+1 )f |||
+    sup                             ≤ Cst,2 and     sup                            ≤ Cst,1
+ f ∈PN (T ) ∥(1 −   Π p )∇f ∥  2
+                             L (T )              f ∈PN (T ) ∥(1  − Πp )∇f ∥L2 (T )
+for Cst,2 and Cst,1 from (1.2) are computable Rayleigh quotients and displayed in
+Figure 1. Computer experiments provide numerical evidence for the convergence of
+the lower bounds √ of Cst,2 to mp as N → ∞ and, hence, for Cst,2 = mp . The lower
+bound of Cst,1 ∝ p + 1 displays the expected growth.
+   Undisplayed numerical experiments suggest that a small minimal interior angle
+does not affect the asymptotic bound of Cst,2 , but leads to increased growth of
+                                                                    2
+Cst,1 as p → ∞. We observed Cst,2 = mp and the convergence Cst,2        → 2 as p → ∞
+for different isosceles and various right triangles, whereas an interior angle ω > π/2
+has a mild influence on the maximal value of Cst,2 as shown for isosceles triangles
+8                       C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+                    p=1
+                    p=2
+          6         p=5
+                    p = 10
+                    p = 20
+          4
+
+
+          2
+
+
+                0              π
+                               4
+                                             π
+                                             2
+                                                           3π                1
+                                                            4
+                                             ω
+
+                                       2
+         Figure 2. Dependence of Cst,2     on the interior angle ω of the iso-
+         sceles triangle T = conv{(0, 0), (1, 0), (cos(ω), sin(ω))}
+
+
+in Figure 2. (Recall that the constants Cst,1 and Cst,2 are invariant under scaling.)
+This leads to our following conjecture in accordance with Figure 1 for any p ∈ N0 .
+                                                                               √
+Conjecture. For triangles T with maximal interior angle ω ≤ π/2, Cst,2 ≤ 2.
+
+                          3. The modified HHO method
+    This section introduces the HHO method and the discrete eigenvalue problem.
+
+3.1. Triangulation. Let T be a regular triangulation of Ω into simplices in the
+sense of Ciarlet such that ∪T ∈T T = Ω. Given a simplex T ∈ T of positive volume
+|T | > 0, let F(T ) denote the set of the n+1 hyperfaces of T , called sides of T . Define
+the set of all sides F = ∪T ∈T F(T ) and the set of interior sides F(Ω) = F \{F ∈ F :
+F ⊂ ∂Ω} in T . For any interior side F ∈ F(Ω), there exist exactly two simplices
+T+ , T− ∈ T such that ∂T+ ∩ ∂T− = F . The orientation of the outer normal unit
+νF = νT+ |F = −νT− |F along F is fixed and ωF := int(T+ ∪ T− ) denotes the side
+patch of F . Let [v]F := (v|T+ )|F −(v|T− )|F ∈ L1 (F ) denote the jump of v ∈ L1 (ωF )
+with v ∈ W 1,1 (T± ) across F . For any boundary side F ∈ F(∂Ω) := F \ F(Ω), there
+exists a unique T ∈ T with F ∈ F(T ). Then ωF := int(T ), νF := νT is the exterior
+unit vector of F ∈ F(T ), and [v]F := v|F . The triangulation T gives rise to the
+space H 1 (T ) := {v ∈ L2 (Ω) : v|T ∈ H 1 (T )} of piecewise Sobolev functions. The
+differential operators divpw , ∇pw , and ∆pw denote the piecewise applications of div,
+∇, and ∆ without explicit reference to the triangulation T .
+
+3.2. Discrete spaces. Let Pp (T ), Pp (F), and RTpw    p (T ) denote the space of piece-
+wise functions with restrictions to T ∈ T or F ∈ F in Pp (T ), Pp (F ), and RTp (T ).
+The local mesh-sizes give rise to the piecewise constant function hT ∈ P0 (T ) with
+hT |T ≡ hT = diam(T ) in T ∈ T and hmax := ∥hT ∥L∞ (Ω) abbreviates the maximal
+mesh-size of T . The L2 projections Πp : L1 (Ω) → Pp (T ), ΠpF : L1 (∪F) → Pp (F),
+and ΠRT : L1 (Ω; Rn ) → RTpw                                      pw
+                              p (T ) onto Pp (T ), Pp (F), and RTp (T ) are computed
+cell-wise. For vector-valued functions τ ∈ L1 (Ω; Rn ), the L2 projection Πp onto
+Pp (T ; Rn ) = Pp (T )n applies componentwise. The Pythagoras theorem implies the
+stability of L2 projections, for any τ ∈ L2 (Ω; Rn ) and v ∈ L2 (Ω),
+(3.1)          ∥ΠRT τ ∥2L2 (Ω) ≤ ∥τ ∥L2 (Ω) and ∥Πp v∥L2 (Ω) ≤ ∥v∥L2 (Ω) .
+                       HHO FOR LOWER EIGENVALUE BOUNDS                                 9
+
+
+The Galerkin projection Gf of f ∈ H 1 (T ) is computed cell-wise by (1.12) with
+
+(3.2)       ∥∇pw (1 − G)f ∥L2 (Ω) =         min          ∥∇pw (f − pp+1 )∥L2 (Ω) .
+                                       pp+1 ∈Pp+1 (T )
+
+
+The inclusion ∇pw Pp+1 (T ) ⊂ Pp (T ; Rn ) ⊂ RTpw                         1
+                                               p (T ) leads, for any f ∈ H (T ), to
+
+(3.3)   ∥(1 − ΠRT )∇pw f ∥L2 (Ω) ≤ ∥(1 − Πp )∇pw f ∥L2 (Ω) ≤ ∥∇pw (1 − G)f ∥L2 (Ω) .
+
+3.3. HHO methodology. Let Vh := Pp+1 (T )×Pp (F(Ω)) denote the ansatz space
+of the HHO method for p ∈ N0 . The interior sides F(Ω) give rise to the subspace
+Pp (F(Ω)) of all (vF )F ∈F ∈ Pp (F) with the convention vF ≡ 0 on any boundary
+side F ∈ F(∂Ω) for homogenous boundary conditions.      In other words, the notation
+vh ∈ Vh means vh = (vT , vF ) = (vT )T ∈T , (vF )F ∈F for some vT ∈ Pp+1 (T ) and
+vF ∈ Pp (F(Ω)) with the identification vT = vT |T ∈ Pp+1 (T ) and vF = vF |F ∈
+Pp (F ). Given vh = (vT , vF ) ∈ Vh , the norm ∥vh ∥h of vh in Vh from [32, Eq. (28)]
+or [31, Eq. (41)] reads
+                                            X X
+(3.4)        ∥vh ∥2h := ∥∇pw vT ∥2L2 (T ) +         h−1            2
+                                                      F ∥vF − vT ∥L2 (F ) .
+                                           T ∈T F ∈F (T )
+
+
+The interpolation I : V → Vh maps v 7→ Iv := (Πp+1 v, ΠpF v) ∈ Vh .
+
+Potential reconstruction. The potential reconstruction Rvh ∈ Pp+1 (T ) of vh =
+(vT , vF ) ∈ Vh satisfies, for all discrete test functions φh ∈ Pp+1 (T ), that
+
+           (∇pw Rvh , ∇pw φh )L2 (Ω)
+                                               X ˆ
+(3.5)            = −(vT , ∆pw φh )L2 (Ω) +                    vF [∇pw φh · νF ]F ds.
+                                             F ∈F (Ω)     F
+
+
+The bilinear form (∇pw •, ∇pw •)L2 (Ω) on the left-hand side of (3.5) defines a scalar
+product and the right-hand side of (3.5) is a linear functional in the quotient space
+Pp+1 (T )/P0 (T ). The Riesz representation Rvh ∈ Pp+1 (T ) of this linear functional
+in Pp+1 (T )/P0 (T ) is selected by
+
+(3.6)                             Π0 Rvh = Π0 vT .
+
+The unique solution Rvh ∈ Pp+1 (T ) to (3.5)–(3.6) defines the potential reconstruc-
+tion operator R : Vh → Pp+1 (T ).
+
+Gradient reconstruction. The gradient reconstruction Gvh ∈ RTpw         p (T ) of vh =
+                                                                  pw
+(vT , vF ) ∈ Vh satisfies, for all discrete test functions ϕh ∈ RTp (T ), that
+                                                           X ˆ
+(3.7)       (Gvh , ϕh )L (Ω) = −(vT , divpw ϕh )L (Ω) +
+                        2                         2               vF [ϕh · νF ]F ds.
+                                                              F ∈F (Ω)   F
+
+
+In other words, Gvh is the Riesz representation of the linear functional on the right-
+hand side of (3.7) in the Hilbert space RTpw                         2
+                                          p (T ) endowed with the L scalar product.
+                           pw                         2
+Since ∇pw Pp+1 (T ) ⊂ RTp (T ), (3.7) implies the L orthogonality Gvh − Rvh ⊥
+∇pw Pp+1 (T ). The following lemma recalls the commutativity of G and R [32, 31,
+1, 33]. The Galerkin projection G is defined in (1.12).
+
+Lemma 3.1 (commutativity). Any v ∈ V satisfies GIv = ΠRT ∇v and RIv =
+Gv.                                                                 □
+10                      C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+3.4. Discrete eigenvalue problem. Given positive constants 0 < α < 1 and
+0 < β < ∞, recall ah and bh from (1.6)–(1.7). Notice, for any uh , vh ∈ Vh , that
+(3.8)   ah (uh , vh ) = ((1 − α)Guh + αΠp Guh , Gvh )L2 (Ω) + β(h−2
+                                                                 T Suh , Svh )L2 (Ω) .
+
+The discrete problem seeks a discrete eigenpair (λh , uh ) ∈ R+ × Vh \ {0} such that
+(3.9)                 ah (uh , vh ) = λh bh (uh , vh ) for all vh ∈ Vh .
+Lemma 3.2 (discrete norm). The bilinear form ah : Vh × Vh → R is a scalar
+product in Vh . The induced norm ∥ • ∥a,h := ah (•, •)1/2 ≈ ∥ • ∥h is equivalent to the
+discrete norm ∥ • ∥h from (3.4).
+Proof. The equivalence ∥ • ∥a,h ≈ ∥vh ∥h for all vh ∈ Vh is proven in [19, Lemma
+3.5] for the stabilization β(∇pw Suh , ∇pw Svh )L2 (Ω) instead of β(h−2T Suh , Svh )L2 (Ω)
+in the definition (1.6) of ah . Since the two stabilizations are locally equivalent, this
+leads to the assertion.                                                                 □
+
+   The discrete eigenvalue problem (3.9) gives rise to the symmetric generalized
+algebraic eigenvalue problem
+                                                   
+                    AT T AT F     xT          BT T 0      xT
+(3.10)                                 = λh                   .
+                    AF T AF F     xF            0     0   xF
+The application of the Schur complement as in [19, Section 3.3] leads to the algebraic
+eigenvalue problem (AT T −AT F A−1  F F AF T )xT = λh BT T xT . Hence, (3.10) provides
+N    := dim Pp+1 (T ) = |T | p+1+n   positive discrete eigenvalues 0 < λh (1) ≤ λh (2) ≤
+                               n
+· · · ≤ λh (N ) < ∞; all other eigenvalues λh (j) := ∞ for j > N are infinity.
+
+                           4. Lower eigenvalue bounds
+   This section establishes the sufficient conditions on the parameters α, β in (1.4)
+such that the HHO method from (3.9) provides direct GLB. Let λ (resp. λh ) denote
+the j-th continuous (resp. discrete) eigenvalue of (1.5) (resp. (3.9)) for fixed j ∈ N.
+Recall 0 < α < 1, 0 < β < ∞, and the constant σ2 from (2.1).
+Theorem 4.1 (GLB). If σ22 max{β, h2max min{λh , λ}} ≤ α, then λh ≤ λ.
+Remark 4.2 (GLB for j > N ). The number j ∈ N in the theorem can be larger than
+the dimension N . Then α < σ22 λh2max follows. In other words λ(N +1) > ασ2−2 h−2
+                                                                               max
+is an a priori bound for the exact eigenvalue λ(N + 1) for free.
+Proof of Theorem 4.1. The proof applies the key arguments from [19, Theorem 4.1],
+but then reflects a different stabilization. This enables a different sufficient condi-
+tion in the theorem with a more appropriate precise arrangement of the constants.
+(In fact, G in (1.3)-(2.1) is replaced by Πp+1 in [19], whence Cst,2 in this paper is
+not larger than Cst,1 in [19] and κ from [19] is bounded by σ2 from (2.1).) Besides
+those differences, the first steps in the proof are very analogous and adopted for
+brevity.
+   Observe carefully that, in the beginning, σ22 h2max min{λh , λ} ≤ α does not im-
+mediately imply that 0 < λh ≤ ∞ is finite.
+Step 1: Reduction to h2max σ22 λ < 1. If h2max σ22 λ ≥ 1, then h2max σ22 λh ≤ α <
+1 ≤ h2max σ22 λ, whence λh is finite and λh ≤ λ. The remaining parts of this proof
+therefore assume h2max σ22 λ < 1.
+Step 2: The first j exact and pairwise orthonormal eigenfunctions ϕ1 , . . . , ϕj ∈ V of
+(1.5) satisfy that Πp+1 ϕ1 , . . . , Πp+1 ϕj ∈ Pp+1 (T ) are linear independent. The proof
+follows the lines of Step 2 in the proof of [19, Theorem 4.1] (with δ := σ2 hmax ).
+                       HHO FOR LOWER EIGENVALUE BOUNDS                                11
+
+
+Step 3: There exists ϕ ∈ span{ϕ1 , . . . , ϕj } with ∥ϕ∥L2 (Ω) = 1, ∥∇ϕ∥2L2 (Ω) ≤ λ, and
+(4.1)              0 < λh (1 − ∥(1 − Πp+1 )ϕ∥2L2 (Ω) ) ≤ ah (Iϕ, Iϕ).
+The proof follows the lines of Step 3 in the proof of [19, Theorem 4.1] and con-
+siders the min-max principle for the algebraic eigenvalue problem (3.10) with the
+j-dimensional subspace spanned by Iϕ1 , . . . , Iϕj ∈ Vh . It is the linear independence
+of Πp+1 ϕ1 , . . . , Πp+1 ϕj ∈ Pp+1 (T ) that guarantees j ≤ N = dim Pp+1 (T ) and that
+the algebraic eigenvalue problem (3.10) has at least j finite eigenvalues; whence
+λh = λh (j) < ∞. The bound of λh in the min-max principle by some maximizer
+vh := Iϕ of the Rayleigh quotient in span{Iϕ1 , . . . , Iϕj } ⊂ Vh is rewritten as
+                            λh bh (Iϕ, Iϕ) ≤ ah (Iϕ, Iϕ) < ∞
+for ϕ ∈ span{ϕ1 , . . . , ϕj } with ∥ϕ∥L2 (Ω) = 1 and ∥∇ϕ∥2L2 (Ω) ≤ λ. It follows from
+Step 2 that bh (Iϕ, Iϕ) = ∥Πp+1 ϕ∥2L2 (Ω) > 0 cannot vanish. This and the Pythagoras
+theorem ∥Πp+1 ϕ∥2L2 (Ω) = 1−∥(1−Πp+1 )ϕ∥2L2 (Ω) > 0 (recall 1 = ∥ϕ∥2L2 (Ω) ) conclude
+the proof of (4.1).
+Step 4: First lower bound for λ − λh under the assumption βσ22 ≤ α. The
+commutativity GIϕ = ΠRT ∇ϕ from Lemma 3.1.a and (1 − α)Guh + αΠp Guh =
+(1 − α)(1 − Πp )Guh + Πp Guh for uh = Iϕ prove that ah (Iϕ, Iϕ) in (3.8) is equal to
+(4.2)   (1 − α)∥(1 − Πp )ΠRT ∇ϕ∥2L2 (Ω) + ∥Πp ΠRT ∇ϕ∥2L2 (Ω) + β∥h−1    2
+                                                                  T SIϕ∥L2 (Ω) .
+
+The identity ∥(1 − Πp )ΠRT ∇ϕ∥L2 (Ω) = ∥ΠRT (1 − Πp )∇ϕ∥L2 (Ω) follows from the
+inclusion Pp (T ; Rn ) ⊂ RTpw
+                           p (T ) and Πp ΠRT ∇ϕ = Πp ∇ϕ = ΠRT Πp ϕ. This, (4.2),
+and ∥ΠRT (1 − Πp )∇ϕ∥L2 (Ω) ≤ ∥(1 − Πp )∇ϕ∥L2 (Ω) from (3.1) lead to
+(4.3) ah (Iϕ, Iϕ) ≤ ∥Πp ∇ϕ∥2L2 (Ω) + (1 − α)∥(1 − Πp )∇ϕ∥2L2 (Ω) + β∥h−1    2
+                                                                      T SIϕ∥L2 (Ω) .
+
+The Pythagoras theorem and ∥∇ϕ∥2L2 (Ω) ≤ λ prove
+(4.4)                 ∥Πp ∇ϕ∥2L2 (Ω) ≤ λ − ∥(1 − Πp )∇ϕ∥2L2 (Ω) .
+Recall SIϕ = Πp+1 ϕ − RIϕ = Πp+1 ϕ − Gϕ from Lemma 3.1.b. The piecewise mesh-
+size function hT does not interfere with the projection Πp+1 and so the Pythagoras
+theorem reads
+(4.5)       ∥h−1    2          −1         2          −1             2
+              T SIϕ∥L2 (Ω) = ∥hT (1 − G)ϕ∥L2 (Ω) − ∥hT (1 − Πp+1 )ϕ∥L2 (Ω) .
+
+The combination of (4.1) with (4.3)–(4.5) results in
+         − λh ∥(1 − Πp+1 )ϕ∥2L2 (Ω) + α∥(1 − Πp )∇ϕ∥2L2 (Ω)
+             + β∥h−1             2           −1         2
+                  T (1 − Πp+1 )ϕ∥L2 (Ω) − β∥hT (1 − G)ϕ∥L2 (Ω) ≤ λ − λh .
+                                                −1
+This, the stability estimate (2.1), and h−1
+                                         max ≤ hT in Ω imply
+
+                (β/h2max − λh )∥(1 − Πp+1 )ϕ∥2L2 (Ω)
+(4.6)                      + (α − βσ22 )∥(1 − Πp )∇ϕ∥2L2 (Ω) ≤ λ − λh .
+Recall ∥(1 − Πp+1 )ϕ∥2L2 (Ω) ≤ ∥(1 − G)ϕ∥2L2 (Ω) ≤ σ22 h2max ∥(1 − Πp )∇ϕ∥2L2 (Ω) from
+the best approximation property of Πp+1 and (2.1) as well as α − βσ22 ≥ 0 from the
+assumptions. Consequently, the left-hand side of (4.6) is greater than or equal to
+∥(1 − Πp+1 )ϕ∥2L2 (Ω) times
+             (β/h2max − λh + (α − βσ22 )/(σ22 h2max )) = ασ2−2 h−2
+                                                                max − λh .
+
+In conclusion, 0 ≤ ∥(1 − Πp+1 )ϕ∥L2 (Ω) < 1 (from the end of Step 3) and
+(4.7)             (ασ2−2 h−2                      2
+                          max − λh )∥(1 − Πp+1 )ϕ∥L2 (Ω) ≤ λ − λh .
+12                     C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+   Step 5: Finish of the proof. After the reduction to h2max σ22 λ < 1, the above
+Steps 2–4 of the proof have utilized βσ22 ≤ α, but they carefully avoided any
+assumption on λ and λh , although it is supposed that σ22 h2max min{λh , λ} ≤ α. In
+case that σ22 h2max λh ≤ α, the assertion 0 ≤ λ − λh follows immediately from (4.7).
+In the remaining case σ22 h2max λ ≤ α, the pre-factor in the left-hand side of (4.7) has
+the lower bound λ − λh ≤ ασ2−2 h−2  max − λh . Therefore (4.7) implies
+
+                       (λ − λh )∥(1 − Πp+1 )ϕ∥2L2 (Ω) ≤ λ − λh .
+Recall that 0 ≤ ∥(1 − Πp+1 )ϕ∥L2 (Ω) < 1 from Step 4 to see that the last displayed
+estimate is impossible unless 0 ≤ λ − λh .                                        □
+
+                            5. A priori error analysis
+    The Babuška-Osborn theory [4] for the spectral approximation of compact self-
+adjoint operators leads to a priori convergence rates for the approximation of λ
+and of u in the energy norm [12, 19]. This section establishes the quasi-best ap-
+proximation estimate (1.9) for a simple eigenvalue λ, that eventually allows for the
+absorption of higher-order terms in the a posteriori error analysis of Section 6.
+    Throughout the remaining parts of this paper, suppose that β ≤ α/σ22 with σ2
+from (2.1). Let λ := λ(j) be a simple eigenvalue of (1.5) with the corresponding
+eigenfunction u := u(j) ∈ V . Let (λh , uh ) := (λh (j), uh (j)) denote the j-th discrete
+eigenpair of (3.9) with uh = (uT , uF ) ∈ Vh , ∥u∥L2 (Ω) = 1 = ∥uT ∥L2 (Ω) , and
+(u, uT )L2 (Ω) ≥ 0. Recall that 0 < s ≤ 1 denotes the minimum of the index of
+elliptic regularity and one.
+Theorem 5.1 (a priori). If hmax is sufficiently small, then (1.9) holds. The con-
+stant C1 exclusively depends on p, n, Ω, and the shape regularity of T .
+   The following lemmas precede the proof of Theorem 5.1. The first one recalls
+the enriching operator from [38] and adds the estimate (5.1). Recall the induced
+discrete norm ∥ • ∥a,h := ah (•, •)1/2 from Lemma 3.2.
+Lemma 5.2 (enriching operator). There exists a linear bounded operator J : Vh →
+V that is a right-inverse of I, i.e., vh = IJvh = (Πp+1 Jvh , ΠpF Jvh ) for all vh ∈ Vh ,
+and stable in the sense that ∥∇Jvh ∥L2 (Ω) ≤ ∥J∥∥vh ∥a,h with ∥J∥ ≲ 1. Any v ∈ V
+satisfies
+(5.1)       ∥∇(v − JIv)∥L2 (Ω) ≤ C4        min          ∥∇pw (v − vp+1 )∥L2 (Ω) .
+                                      vp+1 ∈Pp+1 (T )
+
+The constants ∥J∥ and C4 solely depend on p, n, and the shape regularity of T .
+Proof. The construction of the enriching operator J : Vh → V in spirit of [53]
+involves standard averaging and bubble-function techniques from [54] and is ex-
+plained in [38, Section 4.3] for a related HHO method without the proof of (5.1).
+Notice that J from [38] (called stabilized bubble smoother EH therein) only satisfies
+Jvh − vT ⊥ Pp−1 (T ) for any given vh = (vT , vF ) ∈ Vh . However, a straight-forward
+modification of [38, Eq. (4.16)] (in the notation of [38], BK vM ∈ Pp+1 (K) should
+be defined by equation (4.16) therein for all q ∈ Pp+1 (K)) immediately provides a
+right-inverse J of I. The arguments from [38, Propositions 4.5 and 4.7] apply and
+lead to the stability of J with respect to the equivalent discrete norm ∥•∥h ≈ ∥•∥a,h
+from Lemma 3.2.
+   It remains to prove (5.1) which is well-known for the Crouzeix-Raviart finite
+element method with an appropriate interpolation I and the conforming companion
+J from [21, Proposition 2.3] for n = 2 and from [24, Section 5.8] for n = 3. Given
+any vh ∈ Vh , let Avh ∈ S0p+1 (T ) := Pp+1 (T ) ∩ H01 (Ω) denote the nodal average of
+Rvh , cf. [38, Eq. (4.24)]. With [38, Eq. (4.18)] and with the above modification
+                         HHO FOR LOWER EIGENVALUE BOUNDS                                       13
+
+
+in [38, Eq. (4.16)], the bubble smoother B : L2 (Ω) ×S     L2 ( F) → H01 (Ω) from [38,
+                                                               S
+Proposition 4.6] satisfies, for (vM , vΣ ) ∈ L2 (Ω) × L2 ( F), the stability estimate
+                                                                           p
+                                                           X X
+(5.2) ∥∇B(vM , vΣ )∥2L2 (Ω) ≲ ∥h−1T  Π p+1  v M ∥2
+                                                 L 2 (Ω) +         h−1          2
+                                                                    F ∥ΠF vΣ ∥L2 (F )
+                                                                T ∈T F ∈F (T )
+
+with the L projection ΠpF onto Pp (F ) for all faces F ∈ F. A triangle inequality,
+            2
+
+the stability of ΠpF on a face F , and a discrete trace inequality show ∥ΠpF (vF −
+                                                 −1/2
+Avh )∥L2 (F ) ≤ ∥ΠpF (vF − (Rvh )|T )∥L2 (F ) + hF ∥Rvh − Avh ∥L2 (T ) for all F ∈ F(T )
+and T ∈ T . This, a triangle inequality for J := A + B(1 − A), (5.2), and the second
+inequality on [38, p. 2180] result in
+                                    X
+      ∥∇pw (Rvh − Jvh )∥2L2 (Ω) ≲      h−1          2
+                                        F ∥[Rvh ]F ∥L2 (Ω)
+                                      F ∈F
+                                                                    p
+                                              X       X
+(5.3)       + ∥h−1            2
+                T (vT − Rvh )∥L2 (Ω) +                         h−1                     2
+                                                                F ∥ΠF (vF − (Rvh )|T )∥L2 (F ) .
+                                              T ∈T F ∈F (T )
+
+Given v ∈ V , the stability of the L2 projections Πp+1 and ΠpF from (3.1) prove
+∥Πp+1 (v − RIv)∥L2 (T ) ≤ ∥v − RIv∥L2 (T ) and ∥ΠpF (v − R(Iv)|T )∥L2 (F ) ≤ ∥v −
+(RIv)|T ∥L2 (F ) for all T ∈ T and F ∈ F(T ). Given an interior side F = T+ ∩ T− ∈
+F(Ω) for T± ∈ T , the triangle inequality shows
+∥[RIv]F ∥L2 (F ) = ∥[RIv − v]F ∥L2 (F ) ≤ ∥(v − RIv)|T+ ∥L2 (F ) + ∥(v − RIv)|T− ∥L2 (F ) .
+For boundary sides F ∈ F(∂Ω), it holds ∥[RIv]F ∥L2 (F ) = ∥v − RIv∥L2 (F ) . The
+choice vh := Iv in (5.3), the aforementioned inequalities, the trace inequality, and
+the piecewise application of the Poincaré inequality imply ∥∇pw (RIv −JIv)∥L2 (Ω) ≲
+∥∇pw (v − RIv)∥L2 (Ω) . This, the triangle inequality
+        ∥∇(v − JIv)∥L2 (Ω) ≤ ∥∇pw (v − RIv)∥L2 (Ω) + ∥∇pw (RIv − JIv)∥L2 (Ω) ,
+and the L2 orthogonality ∇pw (v − RIv) ⊥ ∇pw Pp+1 (T ) conclude the proof of
+(5.1).                                                                    □
+The second lemma proves quasi-best approximation estimates for a source problem.
+Lemma 5.3 (best-approximation). Given f ∈ L2 (Ω), let u
+                                                      e ∈ V solve −∆e
+                                                                    u = f in
+Ω. The solution u
+                eh = (e    eF ) ∈ Vh to
+                      uT , u
+(5.4)           ah (e
+                    uh , vh ) = (f, vT )L2 (Ω)   for all vh = (vT , vF ) ∈ Vh
+and the data oscillation osc(f, T ) := ∥hT (1 − Πp+1 )f ∥L2 (Ω) satisfy
+(5.5)       C5−1 ∥Ie
+                   u−u
+                     eh ∥a,h ≤          min         ∥∇pw (e
+                                                          u − vp+1 )∥L2 (Ω) + osc(f, T )
+                                  vp+1 ∈Pp+1 (T )
+
+with the constant C5 := max{∥J∥ + (α2 /(1 − α) + βCP2 )1/2 , ∥J∥CP }.
+Proof. Throughout this proof, abbreviate eeh := Ie
+                                                 u−ueh ∈ Vh . Since Πp+1 u − u
+                                                                             eT =
+Πp+1 Jeh ∈ Pp+1 (T ) by Lemma 5.2, the discrete problem (5.4) shows
+(5.6)                        ah (e
+                                 uh , eeh ) = (f, Πp+1 Jeh )L2 (Ω) .
+The commutativity ΠRT ∇v = GIv for v ∈ V from Lemma 3.1 enters this proof in
+two ways. First, it verifies Πp GIe       u with v := u
+                                  u = Πp ∇e           e so that (3.8) reads
+(5.7)      ah (Ie                           u, Geh )L2 (Ω) + β(h−2
+                             u − α(1 − Πp )∇e
+                u, eeh ) = (∇e                                  T SIe
+                                                                    u, Seh )L2 (Ω) .
+Second, for v := Jeh , the resulting L2 orthogonality ∇Jeh − Geh ⊥ RTpw
+                                                                     p (T ) to the
+piecewise Raviart-Thomas functions RTpw   p (T ) provides
+
+           u, Geh )L2 (Ω) = −((1 − ΠRT )∇e
+         (∇e                             u, ∇Jeh )L2 (Ω) + (∇e
+                                                             u, ∇Jeh )L2 (Ω) .
+14                     C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+      e ∈ V solves −∆e
+Since u              u = f in Ω, this and (5.6)–(5.7) verify
+          ∥eh ∥2a,h = (f, (1 − Πp+1 )Jeh )L2 (Ω) − ((1 − ΠRT )∇e
+                                                               u, ∇Jeh )L2 (Ω)
+(5.8)                                u, Geh )L2 (Ω) + β(h−2
+                       − α((1 − Πp )∇e                   T SIe
+                                                             u, Seh )L2 (Ω) .
+The choice ϕ := ue in (4.5) implies ∥h−1  u∥L2 (Ω) ≤ ∥h−1
+                                      T SIe               u − Ge
+                                                       T (e      u)∥L2 (Ω) with the
+Galerkin projection G from (1.12). Hence, the Poincaré inequality shows
+(5.9)                ∥h−1  u∥L2 (Ω) ≤ CP ∥∇pw (e
+                       T SIe                   u − Ge
+                                                    u)∥L2 (Ω) .
+A Cauchy and a piecewise application of the Poincaré inequality reveal
+(5.10)          (f, (1 − Πp+1 )Jeh )L2 (Ω) ≤ CP osc(f, T )∥∇Jeh ∥L2 (Ω) .
+The combination of (5.8)–(5.10) with a Cauchy inequality provides
+ ∥eh ∥2a,h ≤ CP osc(f, T ) + ∥(1 − ΠRT )∇e
+                                                 
+                                         u∥L2 (Ω) ∥∇Jeh ∥L2 (Ω)
+     + α∥(1 − Πp )∇e
+                   u∥L2 (Ω) ∥Geh ∥L2 (Ω) + βCP ∥∇pw (e    u)∥L2 (Ω) ∥h−1
+                                                     u − Ge           T Seh ∥L2 (Ω) .
+
+This, (3.2)–(3.3), the stability ∥∇Jeh ∥L2 (Ω) ≤ ∥J∥∥eh ∥a,h from Lemma 5.2, a
+Cauchy inequality, and (1 − α)∥Geh ∥2L2 (Ω) + β∥h−1     2             2
+                                                 T Seh ∥L2 (Ω) ≤ ∥eh ∥a,h from (1.6)
+conclude the proof.                                                               □
+The final lemma links (3.9) to (5.4). Recall the simple eigenpair (λ, u) of (1.5) and
+the associated discrete eigenpair (λh , uh ) of (3.9) with uh = (uT , uF ) ∈ Vh and
+(u, uT )L2 (Ω) ≥ 0.
+Lemma 5.4 (upper bound for ∥u − uT ∥L2 (Ω) ). If hmax is sufficiently small, then
+u
+eh = (e    eF ) ∈ Vh from Lemma 5.3 with f := λu satisfies
+      uT , u
+                       ∥u − uT ∥L2 (Ω) ≤ C6 ∥u − u
+                                                 eT ∥L2 (Ω)
+                       √
+with the constant C6 := 2(1 + maxk∈{1,...,N }\{j} |λ/(λh (k) − λ)|) < ∞.
+Proof. This follows as in [21, Lem. 2.4] with straight-forward modifications and is
+hence omitted.                                                                   □
+Proof of Theorem 5.1. The proof of (1.9) is split into three steps.
+Step 1 provides the L2 error estimate
+(5.11)        ∥u − uT ∥L2 (Ω) ≤ C10 hsmax        min          ∥∇pw (u − vp+1 )∥L2 (Ω) .
+                                            vp+1 ∈Pp+1 (T )
+
+Recall u
+       eh = (e     eF ) ∈ Vh from Lemma 5.3 with f := λu. Lemma 5.4, a triangle
+              uT , u
+inequality, and (2.1) with ∥(1 − Πp+1 )u∥L2 (Ω) ≤ ∥(1 − G)u∥L2 (Ω) lead to
+(5.12)    ∥u − uT ∥L2 (Ω) ≤ C6 σ2 ∥hT (1 − Πp )∇u∥L2 (Ω) + C6 ∥Πp+1 u − u
+                                                                        eT ∥L2 (Ω) .
+Convergence rates for the error ∥Πp+1 u − u eT ∥L2 (Ω) in HHO methods for a source
+problem are established in [32, 31, 38]. This proof follows [21, 38] and utilizes the
+operator J : Vh → V from Lemma 5.2. Abbreviate eeh = (eT , eeF ) := Iu − u  eh ∈ Vh
+and let z ∈ V solve −∆z = eeT in Ω, i.e., z ∈ V satisfies
+(5.13)              (∇z, ∇v)L2 (Ω) = (eT , v)L2 (Ω)      for all v ∈ V.
+Let zC ∈ S01 (T ) := P1 (T ) ∩ V denote the Scott-Zhang interpolation [50] of z
+and observe that (1 − Πp )∇zC ≡ 0 vanishes. Lemma 3.1 implies SIzC ≡ 0 and
+                                  eh ) = (∇zC , Ge
+therefore, the identity ah (IzC , u               uh ) follows from (3.8) with GIzC =
+∇zC . Lemma 3.1 and IJ = 1 verify ΠRT ∇JIu = GIu = ΠRT ∇u and ΠRT ∇Je            uh =
+ uh . This, ∇zC ∈ P0 (T ; Rn ) ⊂ RTpw
+Ge                                     p (T ), and the symmetry of ah show
+
+(5.14) (∇zC , ∇Jeh )L2 (Ω) = (∇zC , ∇u − Ge
+                                          uh )L2 (Ω) = a(u, zC ) − ah (e
+                                                                       uh , IzC ) = 0
+                         HHO FOR LOWER EIGENVALUE BOUNDS                                    15
+
+
+with a(u, zC ) = λ(u, zC )L2 (Ω) = ah (e
+                                       uh , IzC ) from (1.5) and (5.4) in the last step.
+Hence, (5.13)–(5.14), a Cauchy inequality, and ∥∇Jeh ∥L2 (Ω) ≤ ∥J∥∥eh ∥a,h from
+Lemma 5.2 confirm
+(5.15) (eT , Jeh )L2 (Ω) = (∇(z − zC ), ∇Jeh )L2 (Ω) ≤ ∥J∥∥∇(z − zC )∥L2 (Ω) ∥eh ∥a,h .
+The stability estimate (2.1) proves osc(λu, T ) ≤ λσ2 ∥h2T (1 − Πp )∇u∥L2 (Ω) . This,
+Lemma 5.3, and (3.3) provide
+(5.16)              ∥eh ∥a,h ≤ C5 (1 + λσ2 h2max )∥∇pw (u − Gu)∥L2 (Ω) .
+The elliptic regularity theory establishes z ∈ V ∩ H 1+s (Ω) for 0 < s ≤ 1 on the
+polyhedral Lipschitz domain Ω and the approximation property of the Scott-Zhang
+interpolation zC [50] provides the constants C7 , C8 depending exclusively on the
+domain Ω such that
+               C7−1 h−s
+                     max ∥∇(z − zC )∥L2 (Ω) ≤ ∥z∥H 1+s (Ω) ≤ C8 ∥eT ∥L2 (Ω) .
+
+Since Πp+1 J eeh = eeT = Πp+1 u − u
+                                  eT , the combination of (5.15)–(5.16) verifies
+            eT ∥2L2 (Ω) = (eT , J eeh )L2 (Ω) ≤ C9 hsmax ∥∇pw (u − Gu)∥L2 (Ω) ∥eT ∥L2 (Ω)
+  ∥Πp+1 u − u
+with C9 := ∥J∥C5 C7 C8 (1 + λσ2 h2max ). This and (5.12) conclude the proof of (5.11)
+with C10 := C6 (σ2 h1−s
+                    max + C9 ) and Step 1.
+
+Step 2 discusses the remaining term |λ − λh | + ∥Iu − uh ∥2a,h on the left-hand side of
+(1.9). Abbreviate eh := Iu − uh ∈ Vh . Elementary algebra with the normalization
+∥u∥L2 (Ω) = 1 = ∥uT ∥L2 (Ω) reveals 2λ = λ∥u − uT ∥2L2 (Ω) + 2λ(u, uT )L2 (Ω) . This and
+∥eh ∥2a,h − λh = ∥Iu∥2a,h − 2ah (Iu, uh ) result in
+
+(5.17)       λ − λh + ∥eh ∥2a,h
+                = λ∥u − uT ∥2L2 (Ω) + ∥Iu∥2a,h − λ + 2(λ(u, uT )L2 (Ω) − ah (Iu, uh )).
+Step 2.1 bounds ∥Iu∥2a,h − λ. The commutativity ΠRT ∇u = GIu from Lemma 3.1
+and (3.8) with Πp ΠRT ∇u = Πp ∇u show
+   ∥Iu∥2a,h = (1 − α)(ΠRT ∇u, ∇u)L2 (Ω) + α(Πp ∇u, ∇u)L2 (Ω) + β∥h−1    2
+                                                                  T SIu∥L2 (Ω) .
+
+This and λ = ∥∇u∥2L2 (Ω) prove
+
+          ∥Iu∥2a,h − λ = ∥Iu∥2a,h − ∥∇u∥2L2 (Ω) = −α((1 − Πp )∇u, ∇u)L2 (Ω)
+                         − (1 − α)((1 − ΠRT )∇u, ∇u)L2 (Ω) + β∥h−1    2
+                                                                T SIu∥L2 (Ω) .
+
+Thus, 0 < α < 1 and (5.9) with u
+                               e replaced by u imply
+(5.18)           ∥Iu∥2a,h − λ ≤ β∥h−1    2          2               2
+                                   T SIu∥L2 (Ω) ≤ βCP ∥∇pw (u − Gu)∥L2 (Ω) .
+
+Step 2.2 controls λ(u, uT )L2 (Ω) −ah (Iu, uh ). The weak problem (1.5) and Πp+1 Juh =
+uT reveal
+(5.19)           λ(u, uT )L2 (Ω) = a(u, Juh ) − λ((1 − Πp+1 )u, Juh )L2 (Ω) .
+Lemma 3.1 provides ΠRT ∇Juh = Guh and GIu = ΠRT ∇u. This and (3.8) lead to
+         ah (Iu, uh ) = ((1 − α)ΠRT ∇u + αΠp ∇u, ∇Juh ) + β(h−2
+                                                             T SIu, Suh )L2 (Ω) .
+
+This and (5.19) show
+ λ(u, uT )L2 (Ω) − ah (Iu, uh ) = −λ((1 − Πp+1 )u, Juh )L2 (Ω) − β(h−2
+                                                                    T SIu, Suh )L2 (Ω)
+                  + (1 − α)((1 − ΠRT )∇u, ∇Juh )L2 (Ω) + α((1 − Πp )∇u, ∇Juh )L2 (Ω) .
+16                        C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+Therefore, the Cauchy inequality and Pp (T ; Rn ) ⊂ RTpw      n
+                                                      p (T ; R ) imply
+
+         λ(u,uT )L2 (Ω) − ah (Iu, uh ) ≤ λ∥(1 − Πp+1 )u∥L2 (Ω) ∥(1 − Πp+1 )Juh ∥L2 (Ω)
+(5.20)        + ∥(1 − Πp )∇u∥L2 (Ω) ∥(1 − Πp )∇Juh ∥L2 (Ω) − β(h−2
+                                                                T SIu, Suh )L2 (Ω) .
+
+In the following, we control the terms on the right-hand side of (5.20). The split
+uh = Iu − eh , ∥h−1
+                 T SIu∥L2 (Ω) ≥ 0, and a Cauchy inequality provide
+
+     −(h−2                     −1             −1
+        T SIu, Suh )L2 (Ω) ≤ ∥hT SIu∥L2 (Ω) ∥hT Seh ∥L2 (Ω)
+(5.21)                      ≤ CP t/2∥∇pw (u − Gu)∥2L2 (Ω) + CP /(2t)∥h−1     2
+                                                                      T Seh ∥L2 (Ω)
+
+from (5.9) with ue replaced by u and a Young inequality with arbitrary t > 0 in the
+last step. Notice that Πp ∇JIu = GIu = Πp ∇u by Lemma 3.1. Hence, a triangle
+inequality and ∥∇(u − JIu)∥L2 (Ω) ≤ C4 ∥∇pw (u − Gu)∥L2 (Ω) from a combination of
+(5.1) with (3.2)–(3.3) verify
+           ∥(1 − Πp )∇JIu∥L2 (Ω) ≤ ∥(1 − Πp )∇u∥L2 (Ω) + ∥∇(u − JIu)∥L2 (Ω)
+(5.22)                             ≤ (1 + C4 )∥∇pw (u − Gu)∥L2 (Ω) .
+This, (2.1), a triangle inequality with the split uh = Iu − eh , and the stability
+∥∇Jeh ∥L2 (Ω) ≤ ∥J∥∥eh ∥a,h from Lemma 5.2 provide
+                σ2−1 h−1
+                      max ∥(1 − Πp+1 )Juh ∥L2 (Ω) ≤ ∥(1 − Πp )∇Juh ∥L2 (Ω)
+                          ≤ ∥(1 − Πp )∇JIu∥L2 (Ω) + ∥(1 − Πp )∇Jeh ∥L2 (Ω)
+(5.23)                    ≤ (1 + C4 )∥∇pw (u − Gu)∥L2 (Ω) + ∥J∥∥eh ∥a,h .
+The combination of (5.22)–(5.23) with (2.1) and a Young inequality with t > 0
+result in
+         σ2−2 h−2
+               max ∥(1 − Πp+1 )u∥L2 (Ω) ∥(1 − Πp+1 )Juh ∥L2 (Ω)
+(5.24)             ≤ ∥(1 − Πp )∇u∥L2 (Ω) ∥(1 − Πp )∇Juh ∥L2 (Ω)
+                   ≤ (1 + C4 + ∥J∥t/2)∥∇pw (u − Gu)∥2L2 (Ω) + ∥J∥/(2t)∥eh ∥2a,h .
+Then (5.20)–(5.21), (5.23)–(5.24) with the choice t := 2(1 + λσ22 h2max )∥J∥ + 2CP ,
+and β∥h−1      2            2
+       T Seh ∥L2 (Ω) ≤ ∥eh ∥a,h from (1.6) lead to
+
+(5.25)        λ(u, uT )L2 (Ω) − ah (Iu, uh ) − ∥eh ∥2a,h /4 ≤ C11 ∥∇pw (u − Gu)∥2L2 (Ω)
+with C11 := (1 + λσ22 h2max )(1 + C4 + ∥J∥t/2) + βCP t/2.
+Step 3 finishes the proof. Theorem 4.1 guarantees λh ≤ λ for sufficiently small
+mesh-sizes hmax ≤ (α/(λσ22 ))1/2 . This, the combination of (5.17)–(5.18) and (5.25)
+with the L2 error estimate (5.11) from Step 1 results in
+       |λ − λh | + ∥eh ∥2a,h /2 ≤ (λC10
+                                     2 2s
+                                        hmax + βCP2 + 2C11 )∥∇pw (u − Gu)∥2L2 (Ω) .
+                                                                  2 2s
+Thus, (5.11) and (3.2) conclude the proof of (1.9) with C1 := 2(λC10 hmax + βCP2 +
+          2
+2C11 ) + C10 .                                                                   □
+   Theorem 5.1 implies the following convergence rates and recovers [12, 19] for the
+eigenvalues and eigenfunctions error in the H 1 seminorm.
+Corollary 5.5 (convergence). If u ∈ V ∩ H 1+t (Ω) for s ≤ t ≤ p + 1, then
+   h−s                     −t                        2      t
+                                                        
+    max ∥u − uT ∥L2 (Ω) + hmax |λ − λh | + ∥Iu − uh ∥a,h ≲ hmax as hmax → 0.
+
+Proof. This follows immediately from Theorem 5.1, the stability (1.3), and standard
+approximation properties of piecewise polynomials [11, Lemma 4.3.8].             □
+   The techniques of this section also apply to the HHO method of [19] and lead to
+the optimal rate s + t for the L2 error towards a simple eigenvalue therein.
+                       HHO FOR LOWER EIGENVALUE BOUNDS                                      17
+
+
+                        6. A posteriori error analysis
+   The two assumptions (A1)–(A2) below concern some q ∈ H 1 (T ; Rn ) and lead to
+a stabilization-free a posteriori error control of ∥∇u − q∥L2 (Ω) in two or three space
+dimensions. Let RT0 (T ) := RTpw  0 (T ) ∩ H(div) denote the lowest-order conforming
+Raviart-Thomas space, set S0m (T ) := Pm (T ) ∩ H01 (Ω) for m ∈ N, and suppose
+   (A1) (q, ∇vC )L2 (Ω) = λh (uT , vC )L2 (Ω) for all vC ∈ S01 (T ),
+   (A2) (q, qRT )L2 (Ω) = 0 for all qRT ∈ RT0 (T ) with div qRT = 0.
+Theorem 6.1 (a posteriori). Any q ∈ H 1 (T ; Rn ) with (A1)–(A2) and η from
+(1.10) with ph replaced by q satisfy
+                    −1
+(6.1)              C12 ∥∇u − q∥2L2 (Ω) ≤ η 2 + ∥λu − λh uT ∥2L2 (Ω) .
+The constant C12 only depends on p, n, Ω, and the shape regularity of T .
+Proof. This is an extension of [8] to eigenvalue problems. For the convenience
+of the reader, the main arguments are briefly outlined below. Let ψ ∈ V solve
+−∆ψ = −div q ∈ H −1 (Ω) so that the Pythagoras theorem allows for the split
+(6.2)           ∥∇u − q∥2L2 (Ω) = ∥∇(u − ψ)∥2L2 (Ω) + ∥∇ψ − q∥2L2 (Ω) .
+Upper bound for ∥∇(u − ψ)∥L2 (Ω) . Abbreviate ϱ := u − ψ ∈ V and let ϱC ∈
+S01 (T ) denote the Scott-Zhang interpolation of ϱ [50]. Then (A1), (∇ψ, ∇ϱ)L2 (Ω) =
+(q, ∇ϱ)L2 (Ω) , and (1.5) lead to
+ ∥∇ϱ∥2L2 (Ω) = λb(u, ϱ) − λh (uT , ϱC )L2 (Ω) − (q, ∇(ϱ − ϱC ))L2 (Ω)
+(6.3)        = (λu − λh uT , ϱ)L2 (Ω) + λh (uT , ϱ − ϱC )L2 (Ω) − (q, ∇(ϱ − ϱC ))L2 (Ω) .
+The last two L2 scalar products on the right-hand side of (6.3) arise in the ex-
+plicit residual-based a posteriori error estimation of standard conforming FEM for
+the Poisson model problem, cf., e.g., [2, Section 2.2] or [37, Chapter 34], and are
+controlled by
+                                        X                             1/2
+        ∥hT (divpw q + λh uT )∥2L2 (Ω) +      hF ∥[q · νF ]F ∥2L2 (F )      ∥∇ϱ∥L2 (Ω) .
+                                       F ∈F (Ω)
+
+This, (6.3), a Cauchy inequality, and a Friedrichs inequality result in
+(6.4)               ∥∇(u − ψ)∥2L2 (Ω) ≲ η 2 + ∥λu − λh uT ∥2L2 (Ω) .
+Upper bound for ∥∇ψ − q∥L2 (Ω) . The function ϕ := ∇ψ − q ∈ L2 (Ω; Rn ) is
+divergence-free div ϕ = 0 and orthogonal to the divergence-free Raviart-Thomas
+functions qRT ∈ RT0 (T ) from (A2). The Helmholtz decomposition on a simply
+connected domain Ω immediately implies Curl β = ϕ for some β ∈ H 1 (Ω; R2n−3 ),
+but in this paper, the domain Ω does not need to be simply connected. How-
+ever, the extra condition (A2) ensures the existence of some´ orthogonal correction
+ϕRT ∈ RT0 (T ) with div ϕRT = 0 such that the integrals Γj (ϕ − ϕRT ) · ν ds = 0
+over the J ∈ N connectivity components Γj for j = 1, ..., J of ∂Ω vanish, cf. [8,
+Lemma 2] for further details. Thus classical theorems [40] imply the existence of
+β ∈ H 1 (Ω; R2n−3 ) such that Curl β = ϕ − ϕRT and ∥∇β∥L2 (Ω) ≲ ∥ϕ∥L2 (Ω) . Since
+the Scott-Zhang interpolation βC ∈ S01 (T ; R2n−3 ) of β satisfies Curl βC ∈ RT0 (T )
+and div Curl βC = 0, (A2) shows
+        ∥∇ψ − q∥2L2 (Ω) = (ϕ, Curl β + ϕRT )L2 (Ω) = (ϕ, Curl(β − βC ))L2 (Ω) .
+A piecewise integration by parts, the trace inequality, the approximation property
+of the Scott-Zhang interpolation [50], and the Cauchy inequality lead to
+                                                  X
+(6.5)      ∥∇ψ − q∥2L2 (Ω) ≲ ∥hT curl q∥2L2 (Ω) +   hF ∥[q × νF ]F ∥2L2 (F ) .
+                                                   F ∈F
+18                        C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+The combination of (6.2) with (6.4)–(6.5) concludes the proof of (6.1).                    □
+One key observation is that q := ph := Πp Guh satisfies (A1)–(A2) as shown in
+the proof of Theorem 6.2 below. This leads to reliable a posteriori error control for
+∥∇u − ph ∥L2 (Ω) . Theorem 6.1 can also be applied to the HHO scheme of [12], where
+q := ∇pw Ruh satisfies (A1)–(A2) for p ≥ 1. The lowest-order case p = 0 therein
+can be treated separately as in [8].
+Theorem 6.2 (reliability and efficiency). For sufficiently small mesh-sizes hmax ,
+ph := Πp Guh ∈ Pp (T ; Rn ) and η from (1.10) satisfy (1.11). The constants Ceff and
+Crel exclusively depend on p, n, Ω, and the shape regularity of T .
+Proof. The first part of the proof verifies that ph = Πp Guh satisfies (A1)–(A2).
+Proof of (A1). Any vC ∈ S01 (T ) satisfies ∇vC = GIvC ∈ P0 (T ) and vC = RIvC .
+Thus SIvC = 0 and so,
+         (ph , ∇vC )L2 (Ω) = (Guh , ∇vC )L2 (Ω) = ah (uh , IvC ) = λh (uT , vC )L2 (Ω) .
+Proof of (A2). Given qRT ∈ RT0 (T ) ⊂ H(div, Ω) with div qRT = 0, the normal
+jump [qRT · νF ]F vanishes on any interior side F ∈ F(Ω). Since divergence-free
+functions in RT0 (T ) are piecewise constant, the definition of G from (3.7) shows
+(ph , qRT )L2 (Ω) = (Guh , qRT )L2 (Ω) = 0 and concludes the proof of (A2).
+Proof of reliability. Since q = ph satisfies (A1)–(A2), Theorem 6.1 asserts
+                      −1
+(6.6)                C12 ∥∇u − ph ∥2L2 (Ω) ≤ η 2 + ∥λu − λh uT ∥2L2 (Ω) .
+The normalization ∥u∥L2 (Ω) = 1 = ∥uT ∥L2 (Ω) , elementary algebra, and the com-
+bination of the a priori estimate (1.9) with (3.2) reveal
+                  ∥λu − λh uT ∥2L2 (Ω) = (λ − λh )2 + λλh ∥u − uT ∥2L2 (Ω)
+(6.7)                                   ≤ C13 h2s                2
+                                               max ∥∇pw (u − Gu)∥L2 (Ω)
+
+with the elliptic regularity of u ∈ V ∩ H 1+s (Ω) for the parameter 0 < s ≤ 1 and
+C13 := max{|λ − λh |, λλh }C1 . The inequalities (1.3) and ph ∈ Pp (T ; Rn ) prove
+             −1
+(6.8)       Cst,2 ∥∇pw (u − Gu)∥L2 (Ω) ≤ ∥(1 − Πp )∇u∥L2 (Ω) ≤ ∥∇u − ph ∥L2 (Ω) .
+For sufficiently small mesh-sizes hmax , C14 := C12 C13 h2s   2
+                                                         max Cst,2 < 1 and (6.6)–(6.8)
+lead to
+(6.9)                      ∥∇u − ph ∥2L2 (Ω) ≤ C12 (1 − C14 )−1 η 2 .
+Under the additional assumption hmax ≤ (α/(λσ22 ))1/2 , the quasi-best approxima-
+tion (1.9) and (6.8)–(6.9) conclude the proof of
+(6.10)            |λ − λh | + ∥Iu − uh ∥2a,h + ∥∇u − ph ∥2L2 (Ω) ≤ Crel η 2
+                      2
+with Crel := (1 + C1 Cst,2 )C12 (1 − C14 )−1 .
+Proof of efficiency. The proof of η 2 ≲ ∥∇u − ph ∥2L2 (Ω) utilizes bubble-function
+techniques from [54]. Similar arguments are employed in [29] for the Crouzeix-
+Raviart  FEM and, e.g., in [2, 33, 8, 37] for the source problem. The efficiency
+                           2                   2
+P
+   F ∈F F ∥[ph × νF ]F ∥L2 (F ) ≲ ∥∇u − ph ∥L2 (Ω) follows from the arguments in the
+       h
+proof of [8, Lemma 7] for the Poisson model problem; hence further details are
+omitted. The focus is therefore on the proof of the efficiency of
+                                                           X
+    ∥hT curl ph ∥2L2 (Ω) + ∥hT (div ph + λh uT )∥2L2 (Ω) +    hF ∥[ph · νF ]F ∥2L2 (F ) .
+                                                            F ∈F (Ω)
+                                 n
+Given F ∈ F(Ω), let bF ∈ S (T ) denote the face-bubble function with 0 ≤ bF ≤ 1
+in Ω and supp(bF ) = ωF [54, Section 3.1]. Define ϱ ∈ S0p+n (T ) such that ϱ|F =
+                          HHO FOR LOWER EIGENVALUE BOUNDS                                            19
+
+
+bF [ph · νF ]F ∈ Pp+n (F ), supp(ϱ) = ωF , and ϱ vanishes at all Lagrange points [11]
+in Ω \ F . Inverse estimates [54, Ineq. (3.2)] and an integration by parts prove, for
+any F ∈ F(Ω), that
+
+  ∥[ph · νF ]F ∥2L2 (F ) ≲ (ϱ, [ph · νF ]F )L2 (F ) = (∇ϱ, ph )L2 (ωF ) + (ϱ, divpw ph )L2 (ωF ) .
+
+This, (∇u, ∇ϱ)L2 (ωF ) = λ(u, ϱ)L2 (Ω) , and a Cauchy inequality imply
+
+    ∥[ph · νF ]F ∥2L2 (F ) ≲ ∥∇ϱ∥L2 (ωF ) ∥∇u − ph ∥L2 (ωF )
+          + ∥ϱ∥L2 (ωF ) ∥λu − λh uT ∥L2 (ωF ) + ∥ϱ∥L2 (ωF ) ∥divpw ph + λh uT ∥L2 (ωF ) .
+
+This, the inverse estimate ∥∇ϱ∥L2 (ωF ) ≲ h−1         F ∥ϱ∥L2 (ωF ) [11, Lemma 4.5.3], and
+∥ϱ∥2L2 (ωF ) ≈ hF ∥ϱ∥2L2 (F ) ≤ hF ∥[ph · νF ]F ∥2L2 (F ) [54, Ineq. (3.5)] show
+
+(6.11)          hF ∥[ph · νF ]F ∥2L2 (F ) ≲ ∥∇u − ph ∥2L2 (ωF )
+                      + h2F ∥λu − λh uT ∥2L2 (ωF ) + h2F ∥divpw ph + λh uT ∥2L2 (ωF ) .
+
+Let bT ∈ Pn+1 (T ) ∩ W01,∞ (T ) denote the volume-bubble function in T ∈ T with
+0 ≤ bT ≤ 1 and bT = 0 on ∂T [54, Section 3.1]. Abbreviate vp+1 := div ph + λh uT ∈
+Pp+1 (T ) and define φ := bT vp+1 ∈ S0p+n+2 (T ) := Pp+n+2 (T ) ∩ H01 (T ) ⊂ V . Inverse
+estimates [54, Ineq. (3.1)] and an integration by parts imply
+
+(6.12)       ∥vp+1 ∥2L2 (T ) ≲ (φ, vp+1 )L2 (T ) = −(∇φ, ph )L2 (T ) + (φ, λh uT )L2 (T ) .
+
+Since (the extension by zero of) φ belongs to V , (1.5) provides (∇φ, ∇u)L2 (T ) =
+λ(u, φ)L2 (T ) . This, (6.12), and a Cauchy inequality lead to
+
+      ∥vp+1 ∥2L2 (T ) ≲ ∥∇φ∥L2 (T ) ∥∇u − ph ∥L2 (T ) + ∥φ∥L2 (T ) ∥λu − λh uT ∥L2 (T ) .
+
+Hence ∥φ∥L2 (T ) = ∥bT vp+1 ∥L2 (T ) ≤ ∥vp+1 ∥L2 (T ) from 0 ≤ bT ≤ 1 in T and the
+inverse estimate ∥∇φ∥L2 (T ) ≤ h−1
+                                 T ∥φ∥L2 (T ) [11, Lemma 4.5.3] reveal
+
+(6.13)      h2T ∥div ph + λh uT ∥2L2 (T ) ≲ ∥∇u − ph ∥2L2 (T ) + h2T ∥λu − λh uT ∥2L2 (T ) .
+
+The local estimate hT ∥curl ph ∥L2 (T ) ≲ ∥∇u − ph ∥L2 (T ) follows from similar argu-
+ments as above and details are omitted. The combination of this with the local
+estimates (6.11) and (6.13) results in η 2 ≲ ∥∇u − ph ∥2L2 (Ω) + ∥hT (λu − λh uT )∥2L2 (Ω) .
+This and the control over ∥λu − λh uT ∥L2 (Ω) in (6.7)–(6.8) lead to the efficiency
+η 2 ≲ ∥∇u − ph ∥2L2 (Ω) .                                                                □
+
+
+                                 7. Numerical examples
+   The section presents three numerical benchmarks for the approximation of Di-
+richlet eigenvalues of the Laplacian on nonconvex domains Ω ⊂ R2 .
+                                                                            √
+7.1. Parameter selection. √    For right-isosceles triangles, recall Cst,2 ≤ 2 from
+Example 2.4 and CP = 1/( 2π) from [44]. Throughout this section, let α =
+0.5 and β := α/σ22 = 4.934802 with σ22 = CP2 Cst,2    2
+                                                          = 1/π 2 = 0.101321. The
+                                       2           2
+computable (a posteriori) condition σ2 max{β, hmax λh (j)} ≤ α from Theorem 4.1
+leads to GLB(j) := λh (j) ≤ λ(j). Since the parameters are chosen before-hand, the
+condition h2max λh ≤ α/σ22 = 4.934802 may not be satisfied on a coarse mesh with
+large hmax and j. In this case, GLB(j) := 0 (which is a guaranteed lower eigenvalue
+bound), so only GLB are displayed in this section.
+20                           C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+     1                               3
+
+                                     2
+                                                                       1
+                                     1
+
+     0                               0                                 0
+
+                                    −1
+                                                                      −1
+                                    −2
+
+ −1                                 −3
+
+         −1        0         1           −3 −2 −1   0   1   2   3          −3   −2   −1   0   1   2
+
+
+
+              Figure 3. Initial triangulations of the L-shaped domain in Sub-
+              section 7.3, the isospectral drum in Subsection 7.4, and the
+              dumbbell-slit domain in Subsection 7.5.
+
+                       p=0         p=1              p=2             p=3          p=4
+
+              Figure 4. Polynomial degrees p = 0, . . . , 4 in the numerical
+              benchmarks of Section 7.
+
+
+7.2. Numerical realization. The algebraic eigenvalue problem (3.10) is realized
+with the iterative solver eigs from the MATLAB standard library in an extension
+of the data structures and short MATLAB programs in [3, 17]; the termination and
+round-off errors are expected to be very small and neglected for simplicity.
+     The a posteriori estimate from
+                                P Theorem 6.1 motivates the refinement indicator
+η 2 (T ) from (1.10) with η 2 = T ∈T η 2 (T ). The standard adaptive algorithm [18,
+Algorithm 2.2] is modified in that, if h2max λh ≤ α/σ22 is not satisfied, the mesh is
+uniformly refined. It runs with the initial triangulations from Figure 3, the default
+bulk parameter θ = 0.5, and polynomial degrees p displayed in Figure 4.
+     The uniform and adaptive mesh-refinements lead to convergence history plots
+of the eigenvalue error λ(j) − GLB(j) and the a posteriori estimate η 2 plotted
+against the number of degrees of freedom of Vh (ndof) in log-log plots below; dashed
+(resp. solid) lines represent uniform (resp. adaptive) mesh-refinements.
+
+7.3. L-shaped domain. The first example concerns the principle Dirichlet eigen-
+value on the domain Ω := (−1, 1)2 \ ([0, 1) × [0, −1)) with a re-entering corner at
+(0, 0) and the reference value λ(1) = 9.6397238440219410 from [9]. This leads to
+the suboptimal convergence rate 2/3 for λ(1)−GLB(1) and η 2 (for all p) on uniform
+triangulations in Figure 5. The adaptive mesh-refining algorithm refines towards
+the origin as displayed in Figure 6 and recovers the optimal convergence rates p + 1
+for λ(1) − GLB(1) and η 2 .
+
+7.4. Isospectral domain. The isospectral drums are pairs of non-isometric do-
+mains with identical spectrum of the Laplace operator. This subsection con-
+siders the domain Ω shown in Figure 3.b from [41]; the reference values λ(1) =
+2.53794399980 and λ(25) = 29.5697729132 are from [9] and [34]. Figure 7 shows
+the suboptimal convergence rate 2/3 for λ(1)−GLB(1) and η 2 for the approximation
+of the principle eigenvalue λ(1) on uniformly refined triangulations. The adaptive
+mesh-refining algorithm refines towards four singular corners (for p = 3) as depicted
+in Figure 9 and recovers the optimal convergence rates p + 1 for λ(1) − GLB(1) and
+η 2 . Figure 8 displays the empirical convergence rate 1 for both λ(25) − GLB(25)
+and η 2 in case p = 0, while it is the expected rate 2/3 for p ≥ 1 in the presence of
+a typical corner singularity in the eigenfunction. We conjecture that the singular
+contribution to the corresponding eigenfunction in this particular example has a
+very small coefficient and the reduced asymptotic convergence rate 2/3 is therefore
+                                    HHO FOR LOWER EIGENVALUE BOUNDS                                                                                                21
+
+
+  101
+                                                                                   101
+                                                        3                                                                                     3
+                                                                                                                                                          2
+10−2                                                                 2            10−1
+                                                                                                                                      1
+                                                    1
+     −5
+                                                                                  10−3
+10                                                              2                                                                                 2
+                                                                                  10−5
+10−8                                                                                                                 5
+                                5                                                 10−7
+
+10−11                                   1                                                                                    1
+                                                                                  10−9
+           1          2     3           4           5                6        7               1         2        3           4
+          10     10       10     10             10              10       10              10        10       10        10         105              106         107
+                                ndof                                                                                 ndof
+
+               Figure 5. Convergence history plot of λ(1)−GLB(1) (left) and η 2
+               (right) for polynomial degrees p from Figure 4 on uniform (dashed
+               line) and adaptive (solid line) triangulations of the L-shaped do-
+               main in Subsection 7.3.
+
+  1                                                                                 1
+
+
+
+
+  0                                                                                 0
+
+
+
+
+−1                                                                                −1
+
+               −1                   0                                1                            −1                     0                                1
+
+               Figure 6. Adaptive triangulations of the L-shaped domain in
+               Subsection 7.3 into 1034 triangles for p = 0 (left) and into 1138
+               triangles for p = 3 (right) for the approximation to λ(1).
+
+  100
+                                                                                                                                                  3
+                                                                                  10−1
+                                                                                                                                                              2
+10−3
+                                                2                                                                                         1
+
+  −6
+                                                            3                     10−4                                                                2
+10
+                                                2
+                                                        1
+10−9                                                                              10−7
+                                    5                                                                                        5
+
+
+10−12                                       1
+                                                                                  10−10                                          1
+
+      101        102      103    104            105             106      107           101         102      103       104            105          106             107
+                                ndof                                                                                 ndof
+
+               Figure 7. Convergence history plot of λ(1)−GLB(1) (left) and η 2
+               (right) for polynomial degrees p from Figure 4 on uniform (dashed
+               line) and adaptive (solid line) triangulations of the isospectral do-
+               main in Subsection 7.4.
+22                          C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+
+      101
+                                            1                                                            1
+                                                         1        100                                                1
+     10−2                                       3
+                                                             2
+
+         −5                                                      10−3                                1
+     10
+                                                1
+                                                                                                             3
+                                                      3               −6
+     10  −8                                                      10
+                                                                                           5
+
+                                                                                               1
+ 10−11                                                           10−9
+               102   103   104        105           106                    102   103   104     105       106
+                           ndof                                                        ndof
+
+              Figure 8. Convergence history plot of λ(25) − GLB(25) (left)
+              and η 2 (right) for polynomial degrees p from Figure 4 on uniform
+              (dashed line) and adaptive (solid line) triangulations of the iso-
+              spectral domain in Subsection 7.4.
+
+
+     3                                                            3
+
+     2                                                            2
+
+     1                                                            1
+
+     0                                                            0
+
+ −1                                                              −1
+
+ −2                                                              −2
+
+ −3                                                              −3
+
+              −3 −2 −1     0      1         2        3                     −3 −2 −1    0       1     2           3
+
+              Figure 9. Adaptive triangulations of the isospectral domain in
+              Subsection 7.4 into 1342 triangles for p = 0 (left) and into 1311
+              triangles for p = 3 (right) for the approximation to λ(1).
+
+
+barely visible unless a very high accuracy is reached (e.g., absolute error in the
+eigenvalues much smaller than 5 × 10−4 ). The adaptive mesh-refining algorithm
+refines towards four re-entering corners and recovers the optimal convergence rates
+p + 1 for λ(25) − GLB(25) and η 2 . There are two reasons for the plateau observed
+in the convergence history plot of λ(25) − GLB(25) in Figure 8.a. First, a lar-
+ger pre-asymptotic range is expected and observed for the approximation of larger
+eigenvalues. Second, the condition h2max λh ≤ α is not satisfied for the first triangu-
+lations, whence GLB is set to zero. An asymptotic behaviour is observed beyond
+30,000 degrees of freedom for all displayed polynomial degrees p = 0, . . . , 4.
+
+7.5. Dumbbell-slit domain. The final example approximates the principle Di-
+richlet eigenvalue λ(1) on the domain Ω := (−3, 2) × (−1, 1) \ ((−3, −2] × {0} ∪
+[−1, 1] × [−3/4, 1)) displayed in Figure 3.c. This is a modification of the numerical
+example in [23, Section 4.2]. The reference value λ(1) = 8.367702430882 stems
+from an adaptive computation with the polynomial degree p = 5. The adaptive al-
+gorithm refines towards the reentrant corners at (−1, −3/4) and (−2, 0) as displayed
+in Figure 10, while the triangles in the subdomain (1, 2)×(−1, 1) remain unchanged
+                                 HHO FOR LOWER EIGENVALUE BOUNDS                                                                         23
+
+
+
+
+  1                                                                       1
+
+
+  0                                                                       0
+
+
+ −1                                                                      −1
+
+
+
+
+         −3   −2       −1          0                1                2             −3   −2       −1              0       1           2
+
+          Figure 10. Adaptive triangulations of the dumbbell-slit domain
+          in Subsection 7.5 into 1588 triangles for p = 0 (left) and into 1505
+          triangles for p = 3 (right) for the approximation to λ(1).
+
+
+
+   100                                          2                         101
+                                                             1
+                                                                                                                         1
+                                                                         10−1                                                    1
+  10−3                             1                                                                                 1
+                                                    1                         −3
+                                                                         10
+                                                                                                                             2
+  10−6                                  1
+                                                                              −5
+                                                        3                10
+
+  10−9                                                                   10−7                             5
+
+                                                                                                              1
+ 10−12                                                                   10−9
+                   3        4               5                    6                           3        4
+              10       10              10                   10                          10       10               105        106
+                                ndof                                                                      ndof
+
+          Figure 11. Convergence history plot of λ(1) − GLB(1) (left)
+          and η 2 (right) for polynomial degrees p from Figure 4 on uni-
+          form (dashed line) and adaptive (solid line) triangulations of the
+          dumbbell-slit domain in Subsection 7.5.
+
+
+for p ≥ 1. Hence, there may be no reduction of the maximal mesh-size hmax . Fig-
+ure 11 displays suboptimal convergence rate 0.5 for the errors λ(1) − GLB(1) and
+η 2 for p = 0, . . . , 4. The adaptive mesh-refining recovers the optimal convergence
+rates p + 1.
+
+7.6. Conclusions. The computer experiments provide empirical evidence for op-
+timal convergence rates of the adaptive mesh-refining algorithm. The ad hoc choice
+α = 1/2 is robust in all computer experiments. For β = α/σ22 , the computable con-
+dition σ22 h2max λh (j) ≤ α leads to confirmed lower eigenvalue bounds and holds on
+triangulations into right-isosceles triangles, whenever the maximal mesh-size hmax
+satisfies λh h2max ≤ απ 2 . In all displayed numerical benchmarks, λh is a lower ei-
+genvalue bound of λ even for λh h2max > απ 2 . The computed (but otherwise undis-
+played) efficiency indices 7×10−2 ≤ I := |λ − λh |η −2 ≤ 4×10−3 range in the numer-
+ical examples from .07 to 4×10−3 for an asymptotic range 2×104 ≤ ndof ≤ 105 ;
+the quotient I decreases for larger polynomial degree p. The overall numerical
+experience provides convincing evidence for the efficiency and reliability of the
+24                        C. CARSTENSEN, B. GRÄSSLE, N. T. TRAN
+
+
+stabilization-free a posteriori error estimates of this paper. Higher polynomial de-
+grees p lead to significantly more accurate lower bounds and clearly outperform
+lowest-order discretizations.
+
+                                         References
+ [1]   M. Abbas, A. Ern and N. Pignet. Hybrid high-order methods for finite deformations of
+       hyperelastic materials. Comput. Mech. 62.4 (2018), 909–928.
+ [2]   M. Ainsworth and J. T. Oden. A posteriori error estimation in finite element analysis. John
+       Wiley & Sons, New York, 2000.
+ [3]   J. Alberty, C. Carstensen and S. A. Funken. Remarks around 50 lines of Matlab: short
+       finite element implementation. Numer. Algorithms 20.2-3 (1999), 117–137.
+ [4]   I. Babuška and J. Osborn. Eigenvalue problems. In: Handbook of numerical analysis, Vol.
+       II. North-Holland, Amsterdam, 1991, 641–787.
+ [5]   M. Bebendorf. A note on the Poincaré inequality for convex domains. Z. Anal. Anwendun-
+       gen 22.4 (2003), 751–756.
+ [6]   C. Bernardi and Y. Maday. Polynomial interpolation results in Sobolev spaces. en. J.
+       Comput. Appl. Math. 43.1-2 (Nov. 1992), 53–80.
+ [7]   C. Bernardi and Y. Maday. Spectral methods. en. In: Handbook of Numerical Analysis.
+       Vol. 5. Elsevier, 1997, 209–485.
+ [8]   F. Bertrand, C. Carstensen, B. Gräßle and N. T. Tran. Stabilization-free HHO a posteriori
+       error control. Numer. Math. 154.3-4 (2023), 369–408.
+ [9]   T. Betcke and L. N. Trefethen. Reviving the method of particular solutions. SIAM Rev.
+       47.3 (2005), 469–491.
+[10]   D. Boffi, F. Brezzi and M. Fortin. Mixed finite element methods and applications. Vol. 44.
+       Springer, Heidelberg, 2013.
+[11]   S. C. Brenner and L. R. Scott. The mathematical theory of finite element methods. Third.
+       Vol. 15. Springer, New York, 2008.
+[12]   V. Calo, M. Cicuttin, Q. Deng and A. Ern. Spectral approximation of elliptic operators by
+       the hybrid high-order method. Math. Comp. 88.318 (2019), 1559–1586.
+[13]   E. Cancès, G. Dusson, Y. Maday, B. Stamm and M. Vohralı́k. Guaranteed a posteriori
+       bounds for eigenvalues and eigenvectors: multiplicities and clusters. Math. Comp. 89.326
+       (2020), 2563–2611.
+[14]   E. Cancès, G. Dusson, Y. Maday, B. Stamm and M. Vohralı́k. Guaranteed and robust a
+       posteriori bounds for Laplace eigenvalues and eigenvectors: a unified framework. Numer.
+       Math. 140.4 (2018), 1033–1079.
+[15]   E. Cancès, G. Dusson, Y. Maday, B. Stamm and M. Vohralı́k. Guaranteed and robust
+       a posteriori bounds for Laplace eigenvalues and eigenvectors: conforming approximations.
+       SIAM J. Numer. Anal. 55.5 (2017), 2228–2254.
+[16]   C. Canuto and A. Quarteroni. Approximation Results for Orthogonal Polynomials in So-
+       bolev Spaces. Math. Comp. 38.157 (1982), 67–86.
+[17]   C. Carstensen and S. C. Brenner. Finite Element Methods. In: Encyclopedia of Computa-
+       tional Mechanics Second Edition. Ed. by E. Stein, R. d. Borst and T. J. R. Hughes. John
+       Wiley and Sons, 2017, 1–47.
+[18]   C. Carstensen, M. Feischl, M. Page and D. Praetorius. Axioms of adaptivity. Comput.
+       Math. Appl. 67.6 (2014), 1195–1253.
+[19]   C. Carstensen, A. Ern and S. Puttkammer. Guaranteed lower bounds on eigenvalues of
+       elliptic operators with a hybrid high-order method. Numer. Math. 149.2 (2021), 273–304.
+[20]   C. Carstensen and D. Gallistl. Guaranteed lower eigenvalue bounds for the biharmonic
+       equation. Numer. Math. 126.1 (2014), 33–51.
+[21]   C. Carstensen, D. Gallistl and M. Schedensack. Adaptive nonconforming Crouzeix-Raviart
+       FEM for eigenvalue problems. Math. Comp. 84.293 (2015), 1061–1087.
+[22]   C. Carstensen and J. Gedicke. Guaranteed lower bounds for eigenvalues. Math. Comp.
+       83.290 (2014), 2605–2629.
+[23]   C. Carstensen and S. Puttkammer. Direct guaranteed lower eigenvalue bounds with optimal
+       a priori convergence rates for the bi-Laplacian. SIAM J. Numer. Anal. 61.2 (2023), 812–
+       836.
+[24]   C. Carstensen and S. Puttkammer. How to prove the discrete reliability for nonconforming
+       finite element methods. J. Comput. Math. 38.1 (2020), 142–175.
+[25]   C. Carstensen, Q. Zhai and R. Zhang. A skeletal finite element method can compute lower
+       eigenvalue bounds. SIAM J. Numer. Anal. 58.1 (2020), 109–124.
+                                          REFERENCES                                             25
+
+
+[26]   T. Chaumont-Frelet, A. Ern and M. Vohralı́k. Polynomial-degree-robust H(curl)-stability
+       of discrete minimization in a tetrahedron. C. R. Math. Acad. Sci. Paris 358.9-10 (2020),
+       1101–1110.
+[27]   B. Cockburn, D. A. Di Pietro and A. Ern. Bridging the hybrid high-order and hybridizable
+       dG methods. ESAIM Math. Model. Numer. Anal. 50.3 (2016), 635–650.
+[28]   M. Costabel and A. McIntosh. On Bogovskiı̆ and regularized Poincaré integral operators
+       for de Rham complexes on Lipschitz domains. Math. Z. 265.2 (2010), 297–320.
+[29]   E. A. Dari, R. G. Durán and C. Padra. A posteriori error estimates for non-conforming
+       approximation of eigenvalue problems. Appl. Numer. Math. 62.5 (2012), 580–591.
+[30]   D. A. Di Pietro, J. Droniou and G. Manzini. Discontinuous skeletal gradient discretisation
+       methods on polytopal meshes. J. Comput. Phys. 355 (2018), 397–425.
+[31]   D. A. Di Pietro and A. Ern. A hybrid high-order locking-free method for linear elasticity
+       on general meshes. Comput. Methods Appl. Mech. Engrg. 283 (2015), 1–21.
+[32]   D. A. Di Pietro, A. Ern and S. Lemaire. An arbitrary-order and compact-stencil discret-
+       ization of diffusion on general meshes based on local reconstruction operators. Comput.
+       Methods Appl. Math. 14.4 (2014), 461–472.
+[33]   D. A. Di Pietro and R. Tittarelli. An introduction to hybrid high-order methods. In: Nu-
+       merical methods for PDEs. Vol. 15. Springer, Cham, 2018, 75–128.
+[34]   T. A. Driscoll. Eigenmodes of isospectral drums. SIAM Rev. 39.1 (1997), 1–17.
+[35]   R. G. Durán, C. Padra and R. Rodrı́guez. A posteriori error estimates for the finite element
+       approximation of eigenvalue problems. Math. Models Methods Appl. Sci. 13.8 (2003), 1219–
+       1229.
+[36]   A. Ern and J.-L. Guermond. Finite elements I—Approximation and interpolation. Vol. 72.
+       Springer, 2021.
+[37]   A. Ern and J.-L. Guermond. Finite elements II—Galerkin approximation, elliptic and mixed
+       PDEs. Vol. 73. Springer, 2021.
+[38]   A. Ern and P. Zanotti. A quasi-optimal variant of the hybrid high-order method for elliptic
+       partial differential equations with H −1 loads. IMA J. Numer. Anal. 40.4 (2020), 2163–
+       2188.
+[39]   D. Gallistl. Mixed methods and lower eigenvalue bounds. Math. Comp. 92.342 (2023),
+       1491–1509.
+[40]   V. Girault and P.-A. Raviart. Finite element methods for Navier-Stokes equations. Vol. 5.
+       Theory and algorithms. Springer-Verlag, Berlin, 1986.
+[41]   C. Gordon, D. Webb and S. Wolpert. Isospectral plane domains and surfaces via Rieman-
+       nian orbifolds. Invent. Math. 110.1 (1992), 1–22.
+[42]   R. Hiptmair. Discrete Compactness for p-Version of Tetrahedral Edge Elements. arXiv.org
+       0901.0761 (2009).
+[43]   M. G. Larson. A posteriori and a priori error analysis for finite element approximations of
+       self-adjoint elliptic eigenvalue problems. SIAM J. Numer. Anal. 38.2 (2000), 608–625.
+[44]   R. S. Laugesen and B. A. Siudeja. Minimizing Neumann fundamental tones of triangles:
+       an optimal Poincaré inequality. J. Differential Equations 249.1 (2010), 118–135.
+[45]   X. Liu. A framework of verified eigenvalue bounds for self-adjoint differential operators.
+       Appl. Math. Comput. 267 (2015), 341–355.
+[46]   J. M. Melenk and C. Rojik. On commuting p-version projection-based interpolation on
+       tetrahedra. Math. Comp. 89.321 (2020), 45–87.
+[47]   J. M. Melenk and T. Wurzer. On the stability of the boundary trace of the polynomial
+       L2-projection on triangles and tetrahedra (extended version). arxiv.org 1302.7189 (2013).
+[48]   P. Monk. Finite element methods for Maxwell’s equations. Oxford University Press, New
+       York, 2003.
+[49]   L. E. Payne and H. F. Weinberger. An optimal Poincaré inequality for convex domains.
+       Arch. Rational Mech. Anal. 5 (1960), 286–292 (1960).
+[50]   L. R. Scott and S. Zhang. Finite element interpolation of nonsmooth functions satisfying
+       boundary conditions. Math. Comp. 54.190 (1990), 483–493.
+[51]   S. J. Sherwin and G. E. Karniadakis. A new triangular and tetrahedral basis for high-order
+       (hp) finite element methods. International Journal for Numerical Methods in Engineering
+       38.22 (1995), 3775–3802.
+[52]   D. B. Szyld. The many proofs of an identity on the norm of oblique projections. en. Numer
+       Algor 42.3-4 (Nov. 2006), 309–323.
+[53]   A. Veeser and P. Zanotti. Quasi-optimal nonconforming methods for symmetric elliptic
+       problems. II—Overconsistency and classical nonconforming elements. SIAM J. Numer.
+       Anal. 57.1 (2019), 266–292.
+[54]   R. Verfürth. A Review of A Posteriori Error Estimation and Adaptive Mesh-Refinement
+       Techniques. John Wiley & Sons., Chichester, 1996.
+26                                      REFERENCES
+
+
+[55]   T Wurzer. Stability of the trace of the polynomial L2-projection on triangles. Technical
+       Report 36, Institute for Analysis and Scientific Computing, Vienna (2010).
+                                       REFERENCES                                      27
+
+
+                  Appendix: On p-robustness of constants
+                     in refined H 1 stability estimates
+   This appendix provides details of the proof of Theorem 2.1 in the paper with
+focus on the constants Cst,1 , Cst,2 and their dependence on the polynomial degree
+p ∈ N0 in three space dimensions.
+Overview. Let |||•||| := ∥∇ • ∥L2 (T ) abbreviate the seminorm in the Sobolev space
+H 1 (T ) := H 1 (int(T )) and let Πp denote the L2 projection onto the space Pp (T ) of
+polynomials of total degree at most p ∈ N0 for a fixed tetrahedron T ⊂ R3 . For any
+Sobolev function f ∈ H 1 (T ), the Galerkin projection Gf ∈ Pp+1 (T ) is the unique
+polynomial of degree at most p + 1 with the prescribed integral mean Π0 Gf = Π0 f
+and the orthogonality ∇(f − Gf ) ⊥ ∇Pp+1 (T ) in L2 (T ; R3 ). The constants Cst,1
+and Cst,2 are the best possible constants in the stability estimates
+(1)       |||(1 − Πp+1 )f ||| ≤ Cst,1 ∥(1 − Πp )∇f ∥L2 (T )    for all f ∈ H 1 (T ),
+(2)           |||(1 − G)f ||| ≤ Cst,2 ∥(1 − Πp )∇f ∥L2 (T )    for all f ∈ H 1 (T ).
+Theorem 2.1 asserts the following properties of Cst,1 and Cst,2 .
+  (A) There exist positive constants 1 ≤ Cst,2 ≤ Cst,1 < ∞ that satisfy (1)–(2).
+The constants Cst,1 and Cst,2 are independent of the diameter hT of T .
+  (B) Cst,2 is p√robust, i.e., Cst,2 is uniformly bounded for all p ∈ N0 .
+  (C) Cst,1 ≈ p + 1 is not p robust.
+                                                  √
+          √ ∥Πp+1 ∥ ≤ Cst,1 ≤ Cst,2 ∥Πp+1 ∥ ≲ p + 1 is already explained in the
+The proof of
+paper and p + 1 ≲ ∥Πp+1 ∥ is established below in C.
+A. Proof of existence. The two assumptions (H1)–(H2) from [25, Theorem 3.1]
+imply the existence of the constant Cst,1 < ∞ in [19, Theorem 2.3]. The L2
+orthogonality ∇(1 − G)f ⊥ ∇Pp+1 (T ) implies |||(1 − G)f ||| ≤ ∥∇(1 − Πp+1 )f ∥L2 (T )
+for all f ∈ H 1 (T ), whence Cst,1 ≤ Cst,2 < ∞. The best approximation property
+of the L2 projection Πp proves ∥(1 − Πp )∇f ∥L2 (T ) ≤ |||(1 − G)f ||| and, therefore,
+1 ≤ Cst,1 . Notice that (A) holds in any space dimension.                           □
+B. Proof of p robustness of Cst,2 . Let Np (T ) := Pp (T ; R3 )⊕(Pphom (T ; R3 )×x) =
+Pp (T ; R3 ) ⊕ {q ∈ Pp+1
+                       hom
+                           (T ; R3 ) : x · q(x) = 0 for all x ∈ T } denote the first-kind
+Nédélec finite element space with the space Pphom (T ; R3 ) of homogenous polynomials
+of (total) degree p. Since Pp (T ; R3 ) ⊂ Np (T ), the L2 projection ΠN onto Np (T )
+satisfies ∥(1 − ΠN )∇f ∥L2 (T ) ≤ ∥(1 − Πp )∇f ∥L2 (T ) for all f ∈ H 1 (T ). Hence, the
+existence of a constant C(T ) independent of p and diam(T ) such that
+(3)          |||f − Gf ||| ≤ C(T )∥(1 − ΠN )∇f ∥L2 (T )       for all f ∈ H 1 (T )
+implies (B). Given any f ∈ H 1 (T ), abbreviate qN := ΠN ∇f ∈ Np (T ) and observe
+rRT := curl qN ∈ RTp (T ) with div rRT = 0, e.g., from [36, Lemma 15.10], [10,
+Eq. (2.3.62)], or [48, Lemma 5.40]. It goes back to [28] to define a Bogovskiı̌-type
+integral operator as a pseudo-differential operator of order −1 of a Hörmander
+       −1
+class S1,0 (Rn ) that leads to right-inverses for differential operators. In particular,
+there exists a bounded linear operator Rcurl : H −1 (T ; R3 ) → L2 (T ; R3 ) such that
+RN := Rcurl rRT ∈ Np (T ) satisfies curl RN = rRT . Since RN − qN ∈ Np (T ) is curl-
+free by design, RN − qN = ∇ψ is the gradient of some function ψ ∈ H 1 (T ) in the
+tetrahedron T . The structure of Np (T ) enforces ψ ∈ Pp+1 (T ) (cf. [36, Lemma 15.10]
+and [48, Lemma 5.28] for the proof). Recall that ∇Gf is the best-approximation
+of ∇f in ∇Pp+1 (T ) and deduce (from ∇Pp+1 (T ) ⊂ Pp (T ; R3 ) ⊂ Np (T )) that it is
+also the best-approximation of qN = ΠN ∇f . Hence,
+(4)           ∥ΠN ∇f − ∇Gf ∥L2 (T ) ≤ ∥qN + ∇ψ∥L2 (T ) = ∥RN ∥L2 (T ) .
+28                                         REFERENCES
+
+
+The operator norm ∥Rcurl ∥ of Rcurl allows for ∥RN ∥L2 (T ) ≤ ∥Rcurl ∥|||rRT |||∗ with
+the norm |||•|||∗ in the dual space H −1 (T ; R3 ) of H01 (T ; R3 ) (endowed with the H 1
+seminorm |||•|||), i.e.,
+                                                ˆ
+                       |||rRT |||∗ = sup            rRT · v dx/|||v|||.
+                                     v∈H01 (T ;R3 )\{0}    T
+
+Recall rRT = curl qN . An integration by parts and curl ∇f = 0 ∈ L2 (T ) provide
+        ˆ               ˆ                         ˆ
+          rRT · v dx =     curl(qN − ∇f ) · v dx = (1 − ΠN )∇f · Curl v dx
+         T                T                          T
+             1       3
+for any v ∈ H0 (T ; R ). This, a Cauchy inequality, and the estimate ∥Curl v∥L2 (T ) ≤
+       √                                           √
+2|||v|||/ 3 reveal |||rRT |||∗ ≤ 2∥(1 − ΠN )∇f ∥L2 (T ) / 3. Hence (4) implies
+                                                                         √
+              ∥ΠN ∇f − ∇Gf ∥L2 (T ) ≤ 2∥Rcurl ∥∥(1 − ΠN )∇f ∥L2 (T ) / 3.
+This and the Pythagoras theorem result in
+                         2
+             |||(1 − G)f ||| = ∥(1 − ΠN )∇f ∥2L2 (T ) + ∥ΠN ∇f − ∇Gf ∥2L2 (T )
+                          ≤ (1 + 4∥Rcurl ∥2 /3)∥(1 − ΠN )∇f ∥2L2 (T ) .
+                                 p
+This proves (3) with C(T ) := 1 + 4∥Rcurl ∥2 /3 and, therefore, (B). More details
+on ∥Rcurl ∥ and further applications can be found in [28, Section 3], [42, Section 2],
+and [46, Lemma 6.4].
+   An alternative proof of (3) involves the main result of [26] and was kindly
+provided by A. Ern in private communications from 03/08/2022. For v := ∇f ∈
+H(curl, T ) with curl v = 0, let vh∗ (resp. wh∗ ) denote the minimizer of ∥v − vh ∥L2 (Ω)
+among vh ∈ K := {vh ∈ Np (T ) : curl v = 0} (resp. ∥v − wh ∥L2 (Ω) among wh ∈
+Np (T )). The L2 orthogonality wh∗ − vh∗ ⊥ K from the Euler-Lagrange equations
+associated with these minimization problems implies that the difference wh∗ − vh∗
+minimizes the functional ∥zh ∥L2 (T ) among all zh ∈ wh∗ + K. Invoking the results of
+[28], it is known from [26, Theorem 2] that
+      ∥wh∗ − vh∗ ∥L2 (T ) =         inf          ∥zh ∥L2 (T ) ≤ e
+                                                                C(T )         inf        ∥z∥L2 (T )
+                                zh ∈Np (T )                              z∈H(curl,T )
+                                             ∗                                       ∗
+                              curl zh =curl wh                          curl z=curl wh
+
+with a p-robust constant C(Te ) > 0. Since curl(w∗ − v) = curlw∗ , we infer ∥w∗ −
+                                                       h              h       h
+ ∗                       ∗
+vh ∥L2 (T ) ≤ C(T )∥v − wh ∥L2 (T ) . This and a triangle inequality imply
+              e
+
+                      ∥v − vh∗ ∥L2 (T ) ≤ (1 + C(T
+                                               e ))∥v − wh∗ ∥L2 (T ) .
+                               e ) because w∗ = ΠN ∇f by design and v ∗ = ∇Gf
+This is (3) with C(T ) := 1 + C(T                h                          h
+from K = ∇Pp+1 (T ).                                                               □
+                     √
+C. Lower growth p + 1 ≲ ∥Πp+1 ∥. While a compactness argument in [25, The-
+orem 3.1] leads to the existence of Cst,1 , the dependence of Cst,1 on the polynomial
+degree p remained obscured and only an upper bound for p = 0 was given. The
+proof of Theorem 2.1 in the paper establishes
+                                                                 |||Πp+1 ϕ|||
+                        Cst,1 ≈ ∥Πp+1 ∥ :=              sup                   .
+                                                    ϕ∈H 1 (T )\R     |||ϕ|||
+                               √
+An upper bound ∥Πp+1 ∥ ≲ p + 1 of the growth of the H 1 stability constant
+of the L2 projection is known from [47, Sec. 5] and [55].√ The remaining parts
+of this appendix therefore consider the reverse direction p + 1 ≲ ∥Πp+1 ∥ for a
+tetrahedron and depart with a motivating classical result in 1D. For simplicity, the
+                                                                   √
+following presentation applies an index shift and discusses ∥Πp ∥ ≈ p for arbitrary
+p ≥ 1.
+                                               REFERENCES                                                   29
+
+                                                         √
+Lower bound in 1D. In one space dimension, ∥Πp ∥ ≈ p is established, e.g., in
+[16, Theorem 2.4] and [6, Remark 3.5]. Let Lk for k ∈ N0 denote the Legendre
+polynomials in the reference interval I := (−1, 1). Then Lk satisfies, for all k ∈ N0 ,
+                                   ˆ x
+                     b k (x) :=                         Lk+1 (x) − Lk−1 (x)
+(5)                  L                   Lk (t) dt =                        ,
+                                    −1                        2k + 1
+                                     2     1
+(6)            ∥Lk ∥2L2 (I) =             ≤ ,           and ∥∇Lk ∥2L2 (I) = k(k + 1)
+                                   2k + 1  k
+
+with the convention L−1 ≡ 0 in I, cf., e.g., [7, Eqns (3.11), (3.12), (5.3)]. The
+pairwise L2 orthogonality of Lk and (5)–(6) lead to
+
+                                             ∥∇Lp−1 ∥2L2 (I)            p(p − 1)
+                          b p ∥2 2 =
+                     ∥∇Πp L                                        =             ≈ 1,
+                               L (I)
+                                                  (2p + 1)2            (2p + 1)2
+                                                                   2
+                          b p ∥2 2 = ∥Lp ∥2 2 =
+                        ∥∇L    L (I)      L (I)                         ≈ p−1 ,
+                                                                 2p + 1
+
+whence ∥∇Πp L b p ∥L2 (I) ≈ √p∥∇Lb p ∥L2 (I) for all p ≥ 1. This proves √p ≲ ∥Πp ∥ in
+1D.
+   A similar result holds for the L2 projection Π     e p : L2 (D) → Qp (D) ∼
+                                                                            = Pp (I)n
+onto the space of tensor-product polynomials on the n-cube D := I = (−1, +1)n
+                                                                        n
+
+[16]. For simplicity and because the arguments carry over to triangles as well, the
+following proof considers simplices in n = 3 dimensions only.
+         √
+Proof of p ≲ ∥Πp ∥ for n = 3. Let p ∈ N be arbitrary and let F : Q → T denote
+the coordinate transformation
+
+                           (1 + η1 )(1 − η2 )(1 − η3 )      (1 + η2 )(1 − η3 )
+                                                                                      
+      F (η1 , η, η3 ) :=                               − 1,                    − 1, η3
+                                       4                            2
+
+from the cube Q := (−1, 1)3 onto the reference tetrahedron T := conv{(−1, −1, −1),
+(1, −1, −1), (−1, 1, −1), (−1, −1, 1)} with the Jacobian JF and detJF = (1−η2 )(1−
+η3 )2 /8, see, e.g., [51] and [47, Section 3] for a derivation. An integration by substi-
+tution leads, for any f ∈ L1 (Q), to
+                 ˆ                          ˆ
+                              −1        1
+(7)                    f ◦F        dx =            (1 − η2 )(1 − η3 )2 f d(η1 , η2 , η3 ).
+                   T                    8      Q
+
+
+Define φ(η2 , η3 ) := (1 − η2 )(1 − η3 ), Up (η1 , η2 , η3 ) := φ(η2 , η3 )p−1 L              ep :=
+                                                                               b p (η1 ), and U
+      −1      2                                                 −⊤           −1
+Up ◦ F ∈ L (T ) for p ≥ 1. The chain rule ∇Up = JF ∇Up ◦ F
+                                                        e                         for the gradient
+and (5) provides (∇U   ep ) ◦ F = φ(η2 , η3 )p−2 M (η1 , η2 )G(η1 ) with
+
+                                                                                     Lp (η1 )
+                                                                                                
+                     4                0               0
+M (η1 , η2 ) := 2(1 + η1 )           2               0           and G(η1 ) := (p − 1)L
+                                                                                         b p (η1 ) .
+                 2(1 + η1 )        (1 + η2 )       (1 − η2 )                      (p − 1)L
+                                                                                         b p (η1 )
+
+A Cauchy inequality in R3 proves
+
+                                    3  3
+                                    X  X                    2                        3  3
+                                                                                      X  X             
+  ep |2 ◦ F = φ(η2 , η3 )2p−4
+|∇U                                                Mjk Gk        ≤ 3φ(η2 , η3 )2p−4                 2
+                                                                                                   Mjk   G2k .
+                                    j=1     k=1                                       k=1    j=1
+30                                          REFERENCES
+
+                                                                   ´1 ´1
+This, the integration by substitution formula (7), Rp := −1 −1 (1 − η2 )2p−3 (1 −
+η3 )2p−2 d(η2 , η3 ) ∈ R, and |ηj | ≤ 1 for j = 1, 2, 3 and (η1 , η2 , η3 ) ∈ Q show
+                      ˆ
+      1 e 2         1
+         Up      ≤       (1 − η2 )(1 − η3 )2 c(η2 , η3 )2p−4
+      3             8 Q
+           × (16 + 8(1 − η1 )2 )Lp (η1 )2 + 2(3 + η22 )(p − 1)2 L  b p (η1 )2 d(η1 , η2 , η3 )
+                                                                             
+                       ˆ 1
+                 ≤ Rp       6Lp (η1 )2 + (p − 1)2 L b p (η1 )2 dη1
+                          −1
+
+                 = Rp 6∥Lp ∥2L2 (I) + ∥(p − 1)L
+                                              b p ∥2 2
+                                                        
+(8)                                                L (I) .
+
+The pairwise L2 orthogonality of Legendre polynomials and (5)–(6) verify
+                                             2 
+                       b p ∥2 2 = p(p − 1) ∥Lp+1 ∥2 2 + ∥Lp−1 ∥2 2
+                                                                            
+              p∥(p − 1)L    L (I)                        L (I)        L (I)
+                                    (2p + 1)2
+                                             2
+                                    p(p − 1)
+                                                                
+                                                   2           2
+                                  =          2
+                                                         +
+                                    (2p + 1)     2p + 3 2p − 1
+                                               (p − 1)2 p            1
+                                  =                                ≤
+                                    2(p − 1/2)(p + 1/2)(p + 3/2)     2
+                                                                              2
+for p ≥ 1. This, (6), and (8) provide the bound 2p U
+                                                   ep                             ≤ 39Rp for p ≥ 1.
+It remains to control ∇Πp Ũp from below. Recall from [51] that the polynomials
+ψej,k,ℓ := ψj,k,ℓ ◦ F −1 ∈ Pj+k+ℓ (T ) for j, k, ℓ ∈ N0 with
+                                                j                         j+k
+      ψj,k,ℓ (η1 , η2 , η3 ) := Lj (η1 ) (1 − η2 ) Pk2j+1,0 (η2 ) (1 − η3 )       Pℓ2j+2k+2,0 (η3 )
+
+are L2 (T ) orthogonal and that (ψej,k,ℓ | 0 ≤ j + k + ℓ ≤ p) forms a basis of Pp (T ).
+The pairwise orthogonality of the Legendre polynomials, (5), and (7) imply that
+                           !                                                 
+         ψep−1,0,0 e                                      Lp+1 (η1 )
+   Up +
+   e              , ψj,k,ℓ     = (1 − η2 )p (1 − η3 )p+1             , ψj,k,ℓ         =0
+          2p + 1             2
+                                                           2p + 1              L2 (Q)
+                               L (T )
+
+vanishes for all k, ℓ ∈ N and j ≤ p. Consequently,
+                                       ep = −ψep−1,0,0 ∈ Pp−1 (T ).
+                            (2p + 1)Πp U
+
+This, the chain rule for partial derivatives, and (6)–(7) show
+                     2                    ˆ 1                2
+            ∂                     42 Rp         d
+              Πp Up
+                 e           =                      Lp−1 (η1 ) dη1
+           ∂x        L2 (T )   8(2p + 1)2 −1 dη1
+                                       2Rp                         2Rp
+(9)                              =             ∥∇Lp−1 ∥2L2 (I) =           p(p − 1).
+                                     (2p + 1)2                   (2p + 1)2
+The term 2p(p − 1)(2p + 1)−2 ≥ 0 is monotonically increasing in p ≥ 1 and bounded
+                                                      2
+from below by 4/25 for p ≥ 2. Thus, (9) and 2p U ep     ≤ 39Rp provide
+
+                                2                             2                       2
+                   8                     4      ∂
+                      p U
+                        ep          ≤      Rp ≤    Πp U
+                                                      ep         ≤            Πp U
+                                                                                 ep
+                  975                   25      ∂x       L2 (T )
+                      √
+for all p ≥ 2, whence p ≲ ∥Πp ∥ on the reference tetrahedron T . This and a
+scaling argument with an affine transformation concludes the proof for a general
+tetrahedron.                                                                  □
+                                     REFERENCES                                        31
+
+
+Acknowledgements. The authors gratefully thank Prof. Markus Melenk (Vienna
+University of Technology) for the discussion about the H 1 stability of the L2 pro-
+jection that eventually led to the proof of (C) and Prof. Alexandre Ern (CERMICS,
+ENPC) for his alternative proof of the p-robustness of Cst,2 in (B).
+   (C. Carstensen, B. Gräßle) Institut für Mathematik, Humboldt-Universität zu Berlin,
+10117 Berlin, Germany
+   Email address: cc@math.hu-berlin.de, graesslb@math.hu-berlin.de
+
+  (N. T. Tran) Institut für Mathematik, Universität Augsburg, 86159 Augsburg, Ger-
+many
+  Email address: ngoc1.tran@uni-a.de
+
