@@ -1,4 +1,22 @@
-# Current checkpoint — Mittag classical bridge ready for review
+# Current checkpoint — Mittag excluded; BBK handoff corrected
+
+Counts remain **3/30 additional, 33/60 total**. Mittag-Leffler 370772 is
+excluded as a routine classical corollary after independent review and root
+adoption in lanes/root-mittag-classical-adoption-r3/ADOPTION.md. Its literal
+Lean proof is preserved; the actual journal-source HOLD is not cleared.
+
+Before further BBK work read lanes/root-bbk-handoff-r4/HANDOFF.md at 946186c772.
+Correct symmetry is G(k,n)=G(n+2,k-2); the claimed row transpose covers n<=3,
+not n<=4. The old k=6 probe computed a different series. Full positivity remains
+unresolved; partial rows and numerical evidence earn no credit.
+Fresh Sol discrete r6 completed without a qualifying result. Its denominator
+log-concavity target remains unresolved; read its SUMMARY before repeating it.
+Use the available Sol slots for full BBK, weighted commutator, and fresh
+analysis work; do not poll asynchronous workers.
+
+---
+
+# Historical checkpoint — Mittag classical bridge ready for review
 
 Counts remain **3/30 additional, 33/60 total**. The held Mittag-Leffler
 candidate has a new concrete classical-subsumption objection, documented in
