@@ -17,7 +17,10 @@ r60 arbor Ehrhart remains unresolved, credit0, source/freshness holds retained.
 r63 supplied a sound literal parity refutation of the printed Guday–Sahin
 coefficient formula; root excludes it as a missing determinant-column restriction,
 with source/prior-art holds preserved. See lanes/root-fresh-source-r63-handback/ADOPTION.json.
-Three fresh Sol high/default research lanes r61 finite structures, r62 analysis,
+r61 odd-grid congruence refutation is also excluded: the public same-object
+three-color count and Stanley Corollary1.3 supply a complete routine bridge.
+See lanes/root-fresh-source-r61-handback/ADOPTION.json.
+Three fresh Sol high/default research lanes r65 finite structures, r62 analysis,
 r64 arithmetic/algebra are active; no children. Keep exclusions and actual source
 scopes, and do not equate Blueprint markdown trees with actual Lean trees.
 
