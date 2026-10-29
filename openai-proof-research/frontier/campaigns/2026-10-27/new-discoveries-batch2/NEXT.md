@@ -28,7 +28,10 @@ and root-fresh-source-r65-handback; no counts changed.
 r66 Macdonald Turan-ratio monotonicity remains unresolved; generic positive-
 symmetric and Schur-Toda routes fail, not the source claim. Root exact obstruction
 replay and frozen manifest checks are saved in root-fresh-source-r66-handback.
-Three fresh Sol high/default research lanes r68 finite structures, r69 analysis,
+r68 Rather zero-divisor independence unimodality remains unresolved. Its
+induced-class obstruction is not a source counterexample; exact root route
+replay is saved in root-fresh-source-r68-handback.
+Three fresh Sol high/default research lanes r70 finite structures, r69 analysis,
 r67 arithmetic/algebra are active; no children. Keep exclusions and actual source
 scopes, and do not equate Blueprint markdown trees with actual Lean trees.
 
