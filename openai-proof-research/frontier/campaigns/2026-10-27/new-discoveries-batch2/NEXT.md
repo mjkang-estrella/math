@@ -1,3 +1,15 @@
+## Preliminary reviews received — 29 October 2026
+
+sol-log-arctangent-preliminary-review-r1: full displayed ordinary math PASS,
+journal and substantive/novelty HOLD, stronger between-terminology unproved.
+sol-cascade-rate-preliminary-review-r1: math and scoped substantive PASS,
+supplement and broader novelty HOLD. Both frozen sets unchanged; root read
+both reports and terminal threads. Source-access mean reviewer still owns its
+separate task; do not duplicate that route. No formal investment or count yet.
+Next focused review: shortened E24 certificate; cascade supplement/followup
+closure plus reuse fresh current registry evidence to screen mean candidate.
+Counts3/30 additional,33/60 total.
+
 ## Two complete ordinary candidates under review — 29 October 2026
 
 Counts remain 3/30 additional,33/60 total. Freeze88eb1b426c binds
