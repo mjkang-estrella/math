@@ -1,3 +1,7 @@
+## Four-projection new source evidence — 29 October 2026 05:35 UTC
+
+Root recovered Banica author-hosted mop.pdf via public Wayback, linked from archived2019 author publicationlist to exactAAM83citation. PDFarchived2021/buildmetadata2020,22pages,sha7dace127049add291a7097d15e7fb59106efb995d8bf60fcc77858a2331f68e3; page20 visuallyread, Conj6.6 allsixhypotheses/trace/MPdefinition retained, onlyS0specialcaseknown. This is NOT typesetVoR or provenance-certified acceptedmanuscript; journalSOURCEHOLD retained, no novelty/countchange. Evidence REPORT.md/provenance in root-fourprojection-source-access-r4; do notrepeatarchiveauthorroute. Three Solr11 workers remain background/unpolled (BBK,Tian,freshgeometry); next followscompletionwakes.
+
 ## Root BBK finite-criterion handoff — 29 October 2026 05:25 UTC
 
 Count stays 3/30 additional,33/60 total. root-bbk-positive-fractions-r1 proves an elementary finite LP equivalence for polynomial Conjecture5.4 numerators, deg z_j<=2n(k-2)+2j, plus reciprocal symmetrization. 103 complete rational-function identities independently checked exactly; no uniform proof/refutation/credit. Source polynomial wording is implicit, MathDB explicit; novelty not cleared. Large solver probes hit enforced512MiB cap and are not mathematical failures. New continuation should seek uniform construction, not more grids.
