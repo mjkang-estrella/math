@@ -36,10 +36,14 @@ Root exact diagnostic replays are preserved; r69 expert-authorship HOLD is
 separate from its missing uniform inequality. No credit added.
 r70 supplies a complete ordinary connected edge-irregulator refutation: 8t edges
 and exactly3t deletions. Root charging proof and exact checks pass; independent
-review in sol-edge-irregulator-preliminary-review-r1 is pending. Credit0.
+review confirms ordinary math and scoped substantive PASS. Current-prior r2
+review is pending; no formal investment or credit yet. Root public Git reads
+recovered complete current Omega70af5407/OpenAI7ef5c0cc inventories, recorded in
+root-edge-irregulator-current-prior-r1/CURRENT-REGISTRIES.json. Old API freshness
+limits are historical; these are new dated inventories, not global priority proof.
 r71 determinantal semigroups and r72 Zinn doubling remain unresolved; limited
 root handbacks preserve their gaps and freshness/access holds.
-Active Sol high/default: edge-irregulator review, fresh arithmetic/algebra r73,
+Active Sol high/default: edge-irregulator current-prior r2, fresh arithmetic/algebra r73,
 and fresh analysis r74. No children. Do not equate Blueprint and Lean trees.
 
 ## Historical continuation notes
