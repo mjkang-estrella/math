@@ -43,7 +43,9 @@ root-edge-irregulator-current-prior-r1/CURRENT-REGISTRIES.json. Old API freshnes
 limits are historical; these are new dated inventories, not global priority proof.
 r71 determinantal semigroups and r72 Zinn doubling remain unresolved; limited
 root handbacks preserve their gaps and freshness/access holds.
-Active Sol high/default: edge-irregulator current-prior r2, fresh arithmetic/algebra r73,
+r73 Sun binomial-coprimality remains unresolved; exact carry/prime-menu
+obstructions and limited root checks preserved in root-fresh-source-r73-handback.
+Active Sol high/default: edge-irregulator current-prior r2, fresh finite/algebra r75,
 and fresh analysis r74. No children. Do not equate Blueprint and Lean trees.
 
 ## Historical continuation notes
