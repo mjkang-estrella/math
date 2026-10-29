@@ -1,0 +1,34 @@
+module
+import all BesselRatio
+import all BesselAnalytic
+import all BesselInterfaces
+public import Lean
+set_option autoImplicit false
+set_option warningAsError true
+set_option pp.universes true
+set_option pp.fullNames true
+set_option pp.proofs false
+set_option pp.maxSteps 1000000
+open Lean Elab Command
+run_cmd do
+  let env ← getEnv
+  liftIO <| IO.FS.writeFile "dependencies.txt"
+    (String.intercalate "\n" (env.header.moduleNames.toList.map toString))
+  let mods := #[`BesselRatio, `BesselAnalytic, `BesselInterfaces]
+  let allowed := #[`propext, `Classical.choice, `Quot.sound]
+  let mut names : Array String := #[]
+  for i in [:env.header.moduleNames.size] do
+    let modName := env.header.moduleNames[i]!
+    if mods.contains modName then
+      for name in env.header.moduleData[i]!.constNames do
+        let ci := env.find? name |>.get!
+        let axs ← collectAxioms name
+        for ax in axs do
+          unless allowed.contains ax do
+            throwError "Forbidden dependency {name}: {ax}"
+        if ci.isUnsafe || ci.isAxiom || ci.isPartial then
+          throwError "Forbidden flag {name}"
+        names := names.push name.toString
+        logInfo m!"AUDIT {modName} {name}\nTYPE {ci.type}\nAXIOMS {axs}\nFLAGS unsafe={ci.isUnsafe} partial={ci.isPartial} axiom={ci.isAxiom}"
+  liftIO <| IO.FS.writeFile "declaration-names.txt" (String.intercalate "\n" names.toList)
+  logInfo m!"AUDIT_TOTAL {names.size}"

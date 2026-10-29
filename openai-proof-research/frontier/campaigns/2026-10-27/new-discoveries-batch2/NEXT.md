@@ -17,6 +17,10 @@ Fresh r60 research is active. Continue new full-scope
 research with up to three useful workers, no children, honoring all exclusions.
 Do not treat older pinned registry searches as complete current-head coverage.
 
+Bessel series partial core adopted after root source-only replay:3 mathematical
+modules,61 actual declarations, byte-identical audit, standard3 only. Literal
+ODE/Wronskian/endpoints remain open and assigned to r2. No candidate credit.
+
 ## Historical continuation notes
 
 The dated entries below are preserved history, superseded by current status above.
