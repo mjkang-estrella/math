@@ -1,5 +1,13 @@
 # Current continuation — 29 October 2026
 
+r137 nil-clean integral 3-by-3 exchange and unrestricted formal-series
+closure remain unresolved; tensor closure is a routine source adaptation.
+Root verifies 40 manifest and 37 scientific entries and reproduces the 3,712
+decomposition-pair/512-matrix checks; integral lifting remains unproved.
+See root-r137-handback. Sol r138 replaces r137; r135 and Frank independent
+review continue. Credit0; counts remain 9 additional /39 total.
+
+
 r136 Frank-copula attenuation has a complete ordinary refutation candidate.
 Root rederived the smooth regression/Rayleigh/monotone-quantization bridge,
 verified 57 manifest and 21 scientific-freeze entries, and reproduced the exact
