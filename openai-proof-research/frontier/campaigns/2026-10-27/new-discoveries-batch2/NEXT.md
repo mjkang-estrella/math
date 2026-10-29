@@ -1,5 +1,13 @@
 # Current continuation — 29 October 2026
 
+r123 adopted zero nominees: noncentralchi-square/Krasniqi public proofs,
+old beta-prime exclusion and already-credited Mills; Xu–Yang natural n>=2
+remainder follows by routine source-kernel two-IBP/Taylor argument. Printed
+lower-index ambiguity is not repaired or counted. Root verifies55 manifest
+entries and replays40 coefficient/9kernel checks with HTTP bindings. See
+root-r123-handback. Sol r126 replaces r123; r124/r125 continue. Counts9/39.
+
+
 r122 TI-augmentation Conjecture6.1/7.4 remains unresolved. Root verifies49
 manifest entries/seven scientific hashes and replays2671 exhaustive comparisons,
 219 weak random samples, and three method obstructions. Fixed-I cost formula
