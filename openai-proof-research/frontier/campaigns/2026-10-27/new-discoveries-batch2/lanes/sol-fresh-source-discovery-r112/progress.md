@@ -1,0 +1,21 @@
+# Progress and corrections
+
+Route-check strengthening: the first check used a faithful five-point cyclic action of cycle lengths2,3 (order6, proper fixed sets cover). That observation is true but lacks a distinguished fixed point. The final six-point version adjoins a fixed point, preserving order6 and failure of a regular orbit, so idempotence alone cannot dismiss this route falsifier. Initial result was69 gain cases/1,052,736 rank pairs and permutation[1,0,3,4,2], fix_cube[2,3,4],fix_square[0,1], source_counterexample=false. The final checker/log uses[0,2,1,4,5,3]. Neither example is a source counterexample.
+
+Final supplement receipt:64,105 files,67 term-hit records, guard exit0,77.85s wall,33,304,576 peak sampled RSS. These overlap the required inventory and must not be summed as unique files. Relevant source IDs2409.12404/2503.22377 had zero hits; Filipi substring hits were babel-filipino cache entries, Kubjas hits concerned a different NLA conjecture. No semantic absence inferred. A documentation patch first failed because its exact progress-line context was absent; corrected with a separate patch, no mathematical change.
+
+2026-10-29 UTC. Read ancestor and batch AGENTS, current NEXT, ledger/prior context and pinned catalogue/upstream controls. Root state used:8 additional/38 total,next39; no shared count changed. Scope exclusions from the user and current root handbacks respected.
+
+Early inventory was intentionally broader than the required named-note screen. audit.py streamed content and hashes but reached sampled group CPU>210s at wall213.31s; exit137, peak31,113,216 bytes. This is a failure, not a completed all-repository screen. Its files are retained. Initial literal arXiv regex missed v1 suffixes; audit2.py corrects this and explicitly tests positive versioned IDs, negative adjacent digits/letters and literal dot behavior. Required audit2 completed56,474 files,96 hit records, guard exit0 wall72.65s. Supplement covers all Markdown/Python/shell files and tools/scripts/agent/openproblem text including embedded screening notes; its final receipt must be consulted. No aggregate large-file read was used; content/hash inventories are JSONL streams.
+
+Primary sources fetched20:34:56Z; latest Fu and Lages/classical AHK bodies20:36:21–22Z. Version correction caught before any proof nomination: unrestricted Fu v1 is replaced by the latest admissibility/loop hypotheses. Actual author-hosted Zaslavsky scan acquired20:37:08–09Z after guessed PDF paths404; all errors remain in HTTP logs. PDFs have no extractable Zaslavsky text. tesseract unavailable, so OCR attempt failed; native raster pages were retained and actual theorem/rank/proof pages read visually. AHK publisher text and proof read successfully.
+
+Mathematical work: completed full classical Fu bridge, excluded for routine subsumption. Retained full Hayashi universal noncoverage step and exact cyclic-action falsifier, with explicit distinction between general conjugation subproblem and arbitrary quandles. No unsupported partial novelty. Third neural lead excluded by actual public proof body, not an open-label inference.
+
+Exact check command (from repository root):
+
+    python frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py python frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-fresh-source-discovery-r112/check.py
+
+All helper invocations use that unchanged guard (AS/groupRSS512MiB, CPU210, wall230, nominal40ms, BLAS1). Tests complete in a fraction of a second. Finite tests are not a universal source proof. finalize.py writes streamed manifest/provenance; verify.py checks it with streaming reads. Their logs/guard receipts are not self-included in the manifest. Consult the final receipts for final PASS or failure, rather than assuming this note certifies execution.
+
+Public prior: read18:13 CURRENT-REGISTRIES and r108 refresh receipts. Latest lawful Omega89cda9c274d1122b7676173296af3047c3b64cd1/OpenAI7ef5c0cc; unclosed delta/truncation and access holds inherited. No current semantic clearance. No restricted API repeated; no reset inferred. No public uploads/posts/accounts/browser tabs or messages. Assigned lane only; no git, children, formalization or paper.

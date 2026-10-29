@@ -1,0 +1,15781 @@
+Geometry of polynomial neural networks
+
+  // Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+    // Pre-apply spinout-banner dismissal here, before the banner paints, so it
+    // never flashes in only to be hidden later by the deferred arxiv-header.js.
+    // Key matches arxiv-header.js: "arxiv-banner-dismissed:" + data-banner-name.
+    if (localStorage.getItem('arxiv-banner-dismissed:spinout-nonprofit')) {
+      document.documentElement.setAttribute("data-banner-dismissed", "");
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+
+
+  /* Banner pre-dismissal (set above before paint -> no flash-then-hide) and
+     reading-mode chrome hiding. */
+  html[data-banner-dismissed] .ds-announcement { display: none; }
+  html[data-reading-mode="enabled"] .ds-announcement,
+  html[data-reading-mode="enabled"] .ds-site-footer { display: none; }
+  /* Print keeps the reader header's logo, not its controls: the theme's own print rule
+     (header, nav { display: none }) sits in a layer that its header layer outranks. */
+  @media print { .arxiv-html-header .html-header-nav { display: none; } }
+  /* Keep the announcement text dark on the Open-Blue band in both colour themes
+     (otherwise it inherits the paper's warm-wash text in dark mode and washes out). */
+  .ds-announcement-text { color: var(--arxiv-ink, #1c1a17); }
+
+Report GitHub Issue
+×
+Title:
+Content selection saved. Describe the issue below:
+Description:
+Submit without GitHub
+Submit in GitHub
+arXiv is now an independent nonprofit!
+Learn more
+×
+Back to arXiv
+Why HTML?
+Report Issue
+Back to Abstract
+Download PDF
+Abstract.
+1 
+Introduction
+2 
+Background
+3 
+Neuromanifolds and Symmetric Tensor Decompositions
+3.1 
+Symmetric Tensor Decompositions
+3.2 
+Neuromanifolds for 
+r
+=
+2
+r=2
+3.3 
+Neuromanifolds for 
+r
+∈
+ℕ
+r\in\mathbb{N}
+4 
+Neurovarieties
+5 
+Dimension
+5.1 
+A plethora of conjectures
+5.2 
+A look into the symmetries of an exceptional shallow network
+6 
+Optimization
+6.1 
+The Learning Degree of a PNN
+6.2 
+Gradient-based optimization
+6.3 
+Connecting the learning degree to empirical observations.
+6.4 
+Backpropagation
+6.5 
+Case study: Linear Neural Networks
+References
+
+    License: CC BY-NC-ND 4.0
+  
+
+arXiv:2402.00949v1 [math.AG] 01 Feb 2024
+Geometry of polynomial neural networks
+Kaie Kubjas
+
+Address: 
+Department of Mathematics and Systems Analysis, Aalto University, Espoo
+
+Email address: 
+kaie.kubjas@aalto.fi
+, 
+Jiayi Li
+
+Address: 
+Department of Statistics & Data Science, University of California, Los Angeles
+
+Email address: 
+jiayi.li@g.ucla.edu
+ and 
+Maximilian Wiesmann
+
+Address: 
+Max Planck Institute for Mathematics in the Sciences, Leipzig
+
+Email address: 
+wiesmann@mis.mpg.de
+Abstract.
+We study the expressivity and learning process for polynomial neural networks (PNNs) with monomial activation functions. The weights of the network parametrize the neuromanifold. In this paper, we study certain neuromanifolds using tools from algebraic geometry: we give explicit descriptions as semialgebraic sets and characterize their Zariski closures, called neurovarieties. We study their dimension and associate an algebraic degree, the learning degree, to the neurovariety. The dimension serves as a geometric measure for the expressivity of the network, the learning degree is a measure for the complexity of training the network and provides upper bounds on the number of learnable functions. These theoretical results are accompanied with experiments.
+Keywords:
+ neuromanifold, neural network expressivity, non-linear network, semialgebraic sets, tensor decomposition, optimization, Euclidean distance degree
+MSC2020:
+ 68T07, 14P10, 14N07, 14M12
+1. 
+Introduction
+Over the past decade, neural networks have achieved remarkable success, primarily driven by advancements in deep learning. With the increased computational power, availability of large datasets, and algorithmic innovations, deep learning has led to groundbreaking achievements in areas like image and speech recognition, natural language processing, and autonomous systems. In addition, deep neural networks outperform many traditional statistical models, significantly impacting fields such as healthcare and finance. Despite the empirical triumph, the underlying theoretical behaviors of neural networks remain an open and active field of research.
+In particular, researchers study various activation functions to understand their role in introducing non-linearity, affecting gradient propagation, and influencing computational efficiency. Polynomial activation functions have gained interest for their ability to introduce higher-order interactions between inputs, allowing networks to model complex, non-linear phenomena more effectively 
+[
+OPP03
+]
+. Although feedforward neural networks with polynomial activation functions are well-known to be non-universal approximators 
+[
+HSW89
+]
+, there are many practical tasks where architectures with polynomial activations have outperformed other ones, especially in environments where data relationships are polynomial in nature. In particular, polynomial neural networks have led to state-of-the-art results in engineering tasks like face detection from cluttered images 
+[
+HSHK03
+]
+, image generation 
+[
+CMB+20
+]
+, 3D shape recognition 
+[
+YHN+21
+]
+, as well as financial applications like forecasting trading signals 
+[
+GHL11
+]
+, uncertain natural frequency quantification 
+[
+DNM+16
+]
+, and estimating stock closing indices 
+[
+NM18
+]
+. However, the choice of degree and the potential for overfitting are critical considerations in applying polynomial neural networks to individual practical tasks.
+Compared to other low-degree activation functions, polynomial functions capture intricate patterns within data without the need for additional layers, potentially reducing model complexity and computational costs. In addition, common neural network activation functions, including sigmoid and ReLU, can be effectively approximated using polynomial ratios. Recent work also shows that fully-connected feedforward neural networks using ratios of polynomials as activation functions approximate smooth functions more efficiently than ReLU networks 
+[
+BNT20
+]
+. Our exploration in the realm of polynomial networks lays the groundwork for further investigation of other activation functions.
+In this paper, we perform an algebro-geometric study of neuromanifolds and their Zariski closures, neurovarieties, following the previous work by 
+[
+KTB19
+]
+. In §
+2
+, we give the background on polynomial neural networks, neuromanifolds and neurovarieties. Neuromanifolds provide a natural generalization of the set of symmetric tensors of bounded symmetric rank. In §
+3
+, we recall the connection between homogeneous polynomials and symmetric tensor decompositions, and characterize neuromanifolds for some shallow polynomial neural networks. In §
+4
+, we describe different approaches for studying neurovarieties. The dimension of the neurovariety provides a measure for the expressivity of the network. In §
+5
+, we study these dimensions. For a shallow polynomial neural network with a single output unit, this corresponds to the Alexander–Hirschowitz Theorem in neural network settings. In the deep case, we present conjectures supported by empirical evidence. Finally, in §
+6
+, we study the optimization process of a polynomial neural network: from a static perspective, we describe the complexity of the optimization landscape by its 
+learning degree
+ and compute it for a family of architectures; for the dynamic optimization process, we review the backpropagation algorithm and summarize known results on linear neural networks from previous literature in both the machine learning and algebraic statistics communities.
+We provide code for computations and experiments at 
+[
+KLW24
+]
+.
+Acknowledgments.
+ This paper was written in connection with the “Apprenticeship Week: Varieties from Statistics” which took place at IMSI as part of the long program “Algebraic Statistics and Our Changing World”. We would like to thank Miles Bakenhus and Maksym Zubkov who participated in the work of this group part of the time. 
+Lemma
+3.5
+ is due to Maksym Zubkov. We would like to thank Elizabeth Gross, Leonie Kayser, Joe Kileel, Mark Kong, Guido Montúfar, Alessandro Oneto, Bernd Sturmfels, and Matthew Trager for useful discussions and various suggestions. We thank Lisa Seccia and Nils Sturma for careful reviews of an earlier version of this paper. Part of this research was performed while the authors were visiting the Institute for Mathematical and Statistical Innovation (IMSI), which is supported by the National Science Foundation (Grant No. DMS-1929348).
+2. 
+Background
+A general 
+L
+L
+-layer 
+(feedforward) neural network
+ is a composition of 
+L
+L
+ affine-linear maps with coordinatewise nonlinearity in between 
+[
+Hay98
+]
+. Let 
+F
+𝜽
+F_{\bm{\theta}}
+ be a feedforward neural network with parameters 
+𝜽
+\bm{\theta}
+,
+F
+𝜽
+(
+𝐱
+)
+=
+f
+L
+∘
+σ
+L
+−
+1
+∘
+f
+L
+−
+1
+∘
+⋯
+∘
+f
+2
+∘
+σ
+1
+∘
+f
+1
+(
+𝐱
+)
+,
+F_{\bm{\theta}}(\mathbf{x})=f_{L}\circ\sigma_{L-1}\circ f_{L-1}\circ\cdots\circ f_{2}\circ\sigma_{1}\circ f_{1}(\mathbf{x}),
+where
+f
+l
+​
+(
+𝐱
+)
+:
+ℝ
+d
+l
+−
+1
+→
+ℝ
+d
+l
+,
+𝐱
+↦
+W
+l
+​
+𝐱
++
+b
+l
+f_{l}(\mathbf{x})\colon\mathbb{R}^{d_{l-1}}\rightarrow\mathbb{R}^{d_{l}},\quad\mathbf{x}\mapsto W_{l}\mathbf{x}+\textbf{b}_{l}
+and the function 
+σ
+l
+:
+ℝ
+d
+l
+→
+ℝ
+d
+l
+\sigma_{l}\colon\mathbb{R}^{d_{l}}\rightarrow\mathbb{R}^{d_{l}}
+ is the 
+activation function
+, typically a real function that is applied coordinatewise, i.e., 
+σ
+l
+=
+(
+σ
+l
+,
+1
+,
+…
+,
+σ
+l
+,
+d
+l
+)
+\sigma_{l}=(\sigma_{l,1},\dots,\sigma_{l,d_{l}})
+ with 
+σ
+l
+,
+j
+:
+ℝ
+→
+ℝ
+\sigma_{l,j}\colon\mathbb{R}\rightarrow\mathbb{R}
+. The matrices 
+W
+1
+,
+…
+,
+W
+L
+W_{1},\ldots,W_{L}
+ are the 
+weights
+ of the neural network, and 
+b
+1
+,
+…
+,
+b
+L
+b_{1},\ldots,b_{L}
+ are referred to as the 
+biases
+. Together, they constitute the parameter set 
+𝜽
+\bm{\theta}
+.
+x
+1
+{x}_{1}
+x
+2
+{x}_{2}
+input
+layer
+hidden
+layer
+hidden
+layer
+y
+1
+{y}_{1}
+output
+layer
+Figure 1. 
+A neural network architecture with widths 
+𝐝
+=
+(
+2
+,
+3
+,
+3
+,
+2
+)
+\mathbf{d}=(2,3,3,2)
+, input 
+𝐱
+=
+(
+x
+1
+,
+x
+2
+)
+T
+\mathbf{x}=(x_{1},x_{2})^{T}
+ and output 
+y
+1
+y_{1}
+.
+Pictorially, a neural network architecture can be represented as in Figure 
+1
+. Each node is called a 
+neuron
+ and each column of neurons forms a 
+layer
+ of the network. The first layer is called 
+input layer
+, the last layer is called 
+output layer
+ and the remaining layers are referred to as 
+hidden layers
+. A neural network with exactly one hidden layer is called 
+shallow
+. The number of neurons in the 
+i
+th
+i^{\text{th}}
+ layer is the 
+i
+th
+i^{\text{th}}
+width
+, denoted 
+d
+i
+d_{i}
+. The vector of widths 
+𝐝
+=
+(
+d
+0
+,
+d
+1
+,
+…
+,
+d
+L
+)
+\mathbf{d}=(d_{0},d_{1},\dots,d_{L})
+ together with a choice of activation functions 
+𝝈
+=
+(
+σ
+1
+,
+σ
+2
+,
+…
+,
+σ
+L
+−
+1
+)
+\bm{\sigma}=(\sigma_{1},\sigma_{2},\dots,\sigma_{L-1})
+ constitute the 
+architecture
+ of the network. Arrows between layers represent the maps 
+f
+l
+f_{l}
+.
+The goal of deep learning is to approximate a target function 
+f
+:
+ℝ
+d
+0
+→
+ℝ
+d
+L
+f\colon\mathbb{R}^{d_{0}}\rightarrow\mathbb{R}^{d_{L}}
+ with a neural network 
+F
+𝜽
+F_{\bm{\theta}}
+ of a chosen architecture 
+(
+𝐝
+=
+(
+d
+0
+,
+d
+1
+,
+…
+,
+d
+L
+)
+,
+𝝈
+)
+(\mathbf{d}=(d_{0},d_{1},\dots,d_{L}),\bm{\sigma})
+. This amounts to an optimization task over the space of parameters, the “learning” or “training” process. For more details, see §
+6
+.
+The 
+parameter map
+Ψ
+𝐝
+,
+𝝈
+:
+ℝ
+N
+→
+Fun
+⁡
+(
+ℝ
+d
+0
+,
+ℝ
+d
+L
+)
+,
+𝜽
+↦
+F
+𝜽
+\Psi_{\mathbf{d},\bm{\sigma}}\colon\mathbb{R}^{N}\rightarrow\mathrm{Fun}(\mathbb{R}^{d_{0}},\mathbb{R}^{d_{L}}),\quad\bm{\theta}\mapsto F_{\bm{\theta}}
+associates a tuple of parameters 
+𝜽
+\bm{\theta}
+ with the corresponding neural network 
+F
+𝜽
+F_{\bm{\theta}}
+. Its image is called the 
+neuromanifold
+ℳ
+𝐝
+,
+𝝈
+\mathcal{M}_{\mathbf{d},\bm{\sigma}}
+ and consists of all functions a network with architecture 
+(
+𝐝
+,
+𝝈
+)
+(\mathbf{d},\bm{\sigma})
+ can learn. The neuromanifold is also referred to as 
+functional space
+ in the literature. Note that oftentimes 
+ℳ
+𝐝
+,
+𝝈
+\mathcal{M}_{\mathbf{d},\bm{\sigma}}
+ is not a smooth manifold.
+In practice, typical choices of activation functions are 
+ReLU
+ or 
+sigmoid
+ functions
+σ
+ReLU
+​
+(
+x
+)
+=
+max
+⁡
+{
+0
+,
+x
+}
+,
+σ
+sigmoid
+​
+(
+x
+)
+=
+e
+x
+1
++
+e
+x
+.
+\sigma_{\text{ReLU}}(x)=\max\{0,x\},\quad\sigma_{\text{sigmoid}}(x)=\frac{e^{x}}{1+e^{x}}.
+In this paper, we focus on 
+monomial
+ activations 
+x
+↦
+x
+r
+x\mapsto x^{r}
+. This turns the network 
+F
+𝜽
+F_{\bm{\theta}}
+ into a polynomial map and makes the study of these networks amenable to techniques from algebraic geometry.
+The map 
+f
+l
+f_{l}
+ can be written as 
+f
+l
+​
+(
+𝐱
+)
+=
+W
+l
+​
+𝐱
++
+𝐛
+l
+f_{l}(\mathbf{x})=W_{l}\mathbf{x}+\mathbf{b}_{l}
+, where 
+W
+l
+∈
+ℝ
+d
+l
+×
+d
+l
+−
+1
+W_{l}\in\mathbb{R}^{d_{l}\times d_{l-1}}
+ is a linear map and 
+𝐛
+l
+∈
+ℝ
+d
+i
+\mathbf{b}_{l}\in\mathbb{R}^{d_{i}}
+. We will be considering networks without biases to make the polynomial map 
+F
+𝜽
+F_{\bm{\theta}}
+ homogeneous. Let us summarize the setup in the following.
+Definition 2.1
+.
+A 
+polynomial neural network (PNN)
+p
+𝐰
+p_{\mathbf{w}}
+ with architecture 
+(
+𝐝
+=
+(
+d
+0
+,
+d
+1
+,
+…
+,
+d
+L
+)
+,
+r
+)
+(\mathbf{d}=(d_{0},d_{1},\dots,d_{L}),r)
+ is a feedforward neural network
+p
+𝐰
+=
+W
+L
+∘
+σ
+L
+−
+1
+∘
+W
+L
+−
+1
+∘
+σ
+L
+−
+2
+∘
+⋯
+∘
+σ
+1
+∘
+W
+1
+:
+ℝ
+d
+0
+→
+ℝ
+d
+L
+p_{\mathbf{w}}=W_{L}\circ\sigma_{L-1}\circ W_{L-1}\circ\sigma_{L-2}\circ\dots\circ\sigma_{1}\circ W_{1}\colon\mathbb{R}^{d_{0}}\rightarrow\mathbb{R}^{d_{L}}
+where 
+W
+i
+∈
+ℝ
+d
+i
+×
+d
+i
+−
+1
+W_{i}\in\mathbb{R}^{d_{i}\times d_{i-1}}
+ are linear maps and the activation 
+functions
+σ
+i
+​
+(
+𝐱
+)
+=
+ρ
+r
+​
+(
+𝐱
+)
+≔
+(
+x
+1
+r
+,
+…
+,
+x
+n
+r
+)
+\sigma_{i}(\mathbf{x})=\rho_{r}(\mathbf{x})\coloneqq(x_{1}^{r},\dots,x_{n}^{r})
+are monomial. The number 
+r
+r
+ is called the 
+activation degree
+ of 
+p
+𝐰
+p_{\mathbf{w}}
+. The parameters 
+𝐰
+\mathbf{w}
+ are given by the entries of the matrices 
+W
+i
+W_{i}
+, i.e., 
+𝐰
+=
+(
+W
+1
+,
+W
+2
+,
+…
+,
+W
+L
+)
+\mathbf{w}=(W_{1},W_{2},\dots,W_{L})
+.
+A PNN 
+p
+𝐰
+p_{\mathbf{w}}
+ with architecture 
+(
+𝐝
+,
+r
+)
+(\mathbf{d},r)
+ is a homogeneous polynomial map of degree 
+r
+L
+−
+1
+r^{L-1}
+. Hence, the associated parameter map 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ maps an 
+L
+L
+-tuple of matrices 
+(
+W
+1
+,
+W
+2
+,
+…
+,
+W
+L
+)
+(W_{1},W_{2},\dots,W_{L})
+ to a 
+d
+L
+d_{L}
+-tuple of homogeneous polynomials of degree 
+r
+L
+−
+1
+r^{L-1}
+ in 
+d
+0
+d_{0}
+ variables, i.e.,
+Ψ
+𝐝
+,
+r
+:
+ℝ
+d
+1
+×
+d
+0
+×
+⋯
+×
+ℝ
+d
+L
+×
+d
+L
+−
+1
+→
+(
+Sym
+r
+L
+−
+1
+(
+ℝ
+d
+0
+)
+)
+d
+L
+,
+𝐰
+↦
+p
+𝐰
+=
+(
+p
+𝐰
+(
+1
+)
+p
+𝐰
+(
+d
+L
+)
+)
+.
+\Psi_{\mathbf{d},r}:\mathbb{R}^{d_{1}\times d_{0}}\times\cdots\times\mathbb{R}^{d_{L}\times d_{L-1}}\rightarrow(\Sym_{r^{L-1}}(\mathbb{R}^{d_{0}}))^{d_{L}},\quad\mathbf{w}\mapsto p_{\mathbf{w}}=\begin{pmatrix}p_{\mathbf{w}}^{(1)}\\
+\vdots\\
+p_{\mathbf{w}}^{(d_{L})}\end{pmatrix}.
+We can identify elements in the image with their vectors of coefficients in
+ℝ
+d
+L
+​
+(
+r
+L
+−
+1
++
+d
+0
+−
+1
+d
+0
+−
+1
+)
+.
+\mathbb{R}^{d_{L}\binom{r^{L-1}+d_{0}-1}{d_{0}-1}}.
+Coordinates of this space will be denoted by 
+c
+I
+(
+j
+)
+c^{(j)}_{I}
+ so that 
+c
+I
+(
+j
+)
+c^{(j)}_{I}
+ is the coefficient of the monomial 
+𝐱
+I
+\mathbf{x}^{I}
+ in the polynomial 
+p
+𝐰
+(
+j
+)
+​
+(
+𝐱
+)
+p_{\mathbf{w}}^{(j)}(\mathbf{x})
+; here, 
+I
+I
+ is a multiindex in
+(
+[
+d
+0
+]
+r
+L
+−
+1
+)
+=
+{
+r
+L
+−
+1
+​
+ element subsets in 
+​
+{
+1
+,
+2
+,
+…
+,
+d
+0
+}
+}
+.
+\binom{[d_{0}]}{r^{L-1}}=\left\{r^{L-1}\text{ element subsets in }\{1,2,\dots,d_{0}\}\right\}.
+Definition 2.2
+.
+The image of 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ is the 
+neuromanifold
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+; it is a semialgebraic set inside 
+(
+Sym
+r
+L
+−
+1
+⁡
+(
+ℝ
+d
+0
+)
+)
+d
+L
+(\Sym_{r^{L-1}}(\mathbb{R}^{d_{0}}))^{d_{L}}
+. Its Zariski closure is the 
+neurovariety
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+, an affine variety inside 
+(
+Sym
+r
+L
+−
+1
+⁡
+(
+ℝ
+d
+0
+)
+)
+d
+L
+(\Sym_{r^{L-1}}(\mathbb{R}^{d_{0}}))^{d_{L}}
+.
+Increasing the widths of hidden layers gives a containment of neuromanifolds as shown in the following proposition.
+Proposition 2.3
+.
+Let 
+𝐝
+=
+(
+d
+0
+,
+…
+,
+d
+i
+,
+…
+,
+d
+L
+)
+\mathbf{d}=(d_{0},\dots,d_{i},\dots,d_{L})
+ and let 
+𝐝
+′
+=
+(
+d
+0
+,
+…
+,
+d
+i
+′
+,
+…
+,
+d
+L
+)
+\mathbf{d}^{\prime}=(d_{0},\dots,d^{\prime}_{i},\dots,d_{L})
+ be a tuple which differs from 
+𝐝
+\mathbf{d}
+ precisely in the 
+i
+th
+i^{\text{th}}
+ entry for 
+0
+<
+i
+<
+L
+0<i<L
+ and assume 
+d
+i
+′
+≥
+d
+i
+d^{\prime}_{i}\geq d_{i}
+. Then 
+ℳ
+𝐝
+,
+r
+⊆
+ℳ
+𝐝
+′
+,
+r
+\mathcal{M}_{\mathbf{d},r}\subseteq\mathcal{M}_{\mathbf{d}^{\prime},r}
+, in particular 
+𝒱
+𝐝
+,
+r
+⊆
+𝒱
+𝐝
+′
+,
+r
+\mathcal{V}_{\mathbf{d},r}\subseteq\mathcal{V}_{\mathbf{d}^{\prime},r}
+.
+Proof.
+Let 
+𝐰
+=
+(
+W
+1
+,
+…
+,
+W
+L
+)
+\mathbf{w}=(W_{1},\ldots,W_{L})
+ be a parameter vector for the architecture 
+𝐝
+\mathbf{d}
+ and 
+p
+𝐰
+∈
+ℳ
+𝐝
+,
+r
+p_{\mathbf{w}}\in\mathcal{M}_{\mathbf{d},r}
+ the corresponding polynomial network. Let 
+𝐰
+′
+=
+(
+W
+1
+′
+,
+…
+,
+W
+L
+′
+)
+\mathbf{w}^{\prime}=(W^{\prime}_{1},\ldots,W^{\prime}_{L})
+ be the parameter vector for the architecture 
+𝐝
+′
+\mathbf{d}^{\prime}
+ such that each 
+W
+i
+′
+W^{\prime}_{i}
+ has 
+W
+i
+W_{i}
+ as left-top submatrix and zeros elsewhere. Then 
+p
+𝐰
+=
+p
+𝐰
+′
+∈
+ℳ
+𝐝
+′
+,
+r
+p_{\mathbf{w}}=p_{\mathbf{w}^{\prime}}\in\mathcal{M}_{\mathbf{d}^{\prime},r}
+.
+∎
+As 
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+ is semialgebraic, it has the same dimension as its Zariski closure, 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+. In 
+[
+KTB19
+]
+, the dimension of 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ was proposed as a measure for the 
+expressivity
+ of the network architecture 
+(
+𝐝
+,
+r
+)
+(\mathbf{d},r)
+.
+Definition 2.4
+.
+An architecture 
+(
+𝐝
+,
+r
+)
+(\mathbf{d},r)
+ is 
+filling
+ if 
+𝒱
+𝐝
+,
+r
+=
+(
+Sym
+r
+L
+−
+1
+⁡
+(
+ℝ
+d
+0
+)
+)
+d
+L
+\mathcal{V}_{\mathbf{d},r}=(\Sym_{r^{L-1}}(\mathbb{R}^{d_{0}}))^{d_{L}}
+. In this case, we say that 
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+ is 
+thick
+, i.e., it has positive Lebesgue measure.
+The case of filling architectures is particularly interesting from a machine learning perspective as filling networks have the most expressive power: if 
+ℳ
+𝐝
+,
+r
+=
+(
+Sym
+r
+L
+−
+1
+⁡
+(
+ℝ
+d
+0
+)
+)
+d
+L
+\mathcal{M}_{\mathbf{d},r}=(\Sym_{r^{L-1}}(\mathbb{R}^{d_{0}}))^{d_{L}}
+, any target function in 
+(
+Sym
+r
+L
+−
+1
+⁡
+(
+ℝ
+d
+0
+)
+)
+d
+L
+(\Sym_{r^{L-1}}(\mathbb{R}^{d_{0}}))^{d_{L}}
+ can potentially be learned 
+exactly
+ by the network. In the case of non-filling architectures, a general target function can only be approximated by the network. For more details on the learning process, see §
+6
+. Moreover, from an optimization perspective it is advantageous to work with thick neuromanifolds as non-thick neuromanifolds are known to be non-convex, see 
+[
+KTB19
+, Proposition 7]
+.
+Example 2.5
+.
+For architecture 
+𝐝
+=
+(
+2
+,
+1
+,
+1
+)
+,
+r
+=
+2
+\mathbf{d}=(2,1,1),\ r=2
+ with input 
+𝐱
+=
+(
+x
+1
+,
+x
+2
+)
+T
+\mathbf{x}=(x_{1},\ x_{2})^{T}
+ and parameters
+W
+1
+=
+(
+w
+111
+w
+112
+)
+,
+W
+2
+=
+(
+w
+211
+)
+,
+W_{1}=\begin{pmatrix}w_{111}&w_{112}\end{pmatrix},\ W_{2}=\begin{pmatrix}w_{211}\end{pmatrix},
+the network is
+p
+𝐰
+​
+(
+𝐱
+)
+=
+W
+2
+​
+ρ
+2
+​
+W
+1
+​
+𝐱
+=
+(
+w
+211
+​
+(
+w
+111
+​
+x
+1
++
+w
+112
+​
+x
+2
+)
+2
+)
+.
+p_{\mathbf{w}}(\mathbf{x})=W_{2}\rho_{2}W_{1}\mathbf{x}=\begin{pmatrix}w_{211}(
+w_{111}x_{1}+w_{112}x_{2})^{2}\end{pmatrix}.
+Figure 2. 
+The neuromanifold 
+ℳ
+(
+2
+,
+1
+,
+1
+)
+,
+2
+\mathcal{M}_{(2,1,1),2}
+ in 
+Sym
+2
+​
+(
+ℝ
+2
+)
+≅
+ℝ
+3
+\text{Sym}_{2}(\mathbb{R}^{2})\cong\mathbb{R}^{3}
+.
+There are three parameters in 
+W
+1
+W_{1}
+ and 
+W
+2
+W_{2}
+ which 
+Ψ
+(
+2
+,
+1
+,
+1
+)
+,
+2
+\Psi_{(2,1,1),2}
+ maps to the quadric above with 
+dim
+(
+Sym
+2
+⁡
+(
+ℝ
+2
+)
+)
+=
+3
+\dim(\Sym_{2}(\mathbb{R}^{2}))=3
+ coefficients. Let 
+c
+11
+,
+c
+12
+c_{11},c_{12}
+ and 
+c
+22
+c_{22}
+ be coordinates for this space, representing the coefficients of 
+x
+1
+2
+,
+x
+1
+​
+x
+2
+x_{1}^{2},x_{1}x_{2}
+ and 
+x
+2
+2
+x_{2}^{2}
+, respectively. The neuromanifold is a hypersurface defined by the quadratic equation 
+c
+12
+2
+−
+c
+11
+​
+c
+22
+=
+0
+c_{12}^{2}-c_{11}c_{22}=0
+, which is shown in 
+Figure
+2
+. The neurovariety is equal to the neuromanifold, and hence it is not filling. See Lemma 
+3.3
+ for more details and generalizations.
+Example 2.6
+(
+[
+KTB19
+]
+, Example 3)
+.
+For architecture 
+𝐝
+=
+(
+2
+,
+2
+,
+3
+)
+,
+r
+=
+2
+\mathbf{d}=(2,2,3),\ r=2
+ with input 
+𝐱
+=
+(
+x
+1
+,
+x
+2
+)
+T
+\mathbf{x}=(x_{1},\ x_{2})^{T}
+ and parameters
+W
+1
+=
+(
+w
+111
+w
+112
+w
+121
+w
+122
+)
+,
+W
+2
+=
+(
+w
+211
+w
+212
+w
+221
+w
+222
+w
+231
+w
+232
+)
+,
+W_{1}=\begin{pmatrix}w_{111}&w_{112}\\
+w_{121}&w_{122}\end{pmatrix},\ W_{2}=\begin{pmatrix}w_{211}&w_{212}\\
+w_{221}&w_{222}\\
+w_{231}&w_{232}\end{pmatrix},
+the network is
+p
+𝐰
+​
+(
+𝐱
+)
+=
+W
+2
+​
+ρ
+2
+​
+W
+1
+​
+𝐱
+=
+(
+w
+211
+​
+(
+w
+111
+​
+x
+1
++
+w
+112
+​
+x
+2
+)
+2
++
+w
+212
+​
+(
+w
+121
+​
+x
+1
++
+w
+122
+​
+x
+2
+)
+2
+w
+221
+​
+(
+w
+111
+​
+x
+1
++
+w
+112
+​
+x
+2
+)
+2
++
+w
+222
+​
+(
+w
+121
+​
+x
+1
++
+w
+122
+​
+x
+2
+)
+2
+w
+231
+​
+(
+w
+111
+​
+x
+1
++
+w
+112
+​
+x
+2
+)
+2
++
+w
+232
+​
+(
+w
+121
+​
+x
+1
++
+w
+122
+​
+x
+2
+)
+2
+)
+.
+p_{\mathbf{w}}(\mathbf{x})=W_{2}\rho_{2}W_{1}\mathbf{x}=\begin{pmatrix}w_{211}(w_{111}x_{1}+w_{112}x_{2})^{2}+w_{212}(w_{121}x_{1}+w_{122}x_{2})^{2}\\
+w_{221}(w_{111}x_{1}+w_{112}x_{2})^{2}+w_{222}(w_{121}x_{1}+w_{122}x_{2})^{2}\\
+w_{231}(w_{111}x_{1}+w_{112}x_{2})^{2}+w_{232}(w_{121}x_{1}+w_{122}x_{2})^{2}\end{pmatrix}.
+There are ten parameters in 
+W
+1
+W_{1}
+ and 
+W
+2
+W_{2}
+ which 
+Ψ
+(
+2
+,
+2
+,
+3
+)
+,
+2
+\Psi_{(2,2,3),2}
+ maps to the triple of quadrics above with 
+dim
+(
+Sym
+2
+⁡
+(
+ℝ
+2
+)
+3
+)
+=
+9
+\dim(\Sym_{2}(\mathbb{R}^{2})^{3})=9
+ coefficients. The neurovariety is a hypersurface defined by the cubic equation
+det
+(
+c
+11
+(
+1
+)
+c
+12
+(
+1
+)
+c
+22
+(
+1
+)
+c
+11
+(
+2
+)
+c
+12
+(
+2
+)
+c
+22
+(
+2
+)
+c
+11
+(
+3
+)
+c
+12
+(
+3
+)
+c
+22
+(
+3
+)
+)
+=
+0
+.
+\det\begin{pmatrix}c_{11}^{(1)}&c_{12}^{(1)}&c_{22}^{(1)}\\
+c_{11}^{(2)}&c_{12}^{(2)}&c_{22}^{(2)}\\
+c_{11}^{(3)}&c_{12}^{(3)}&c_{22}^{(3)}\end{pmatrix}=0.
+This variety has dimension eight, implying the architecture 
+𝐝
+=
+(
+2
+,
+2
+,
+3
+)
+,
+r
+=
+2
+\mathbf{d}=(2,2,3),r=2
+ is not filling. For more details, see Proposition 
+4.1
+ below. Note that in this case 
+ℳ
+𝐝
+,
+r
+⊊
+𝒱
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}\subsetneq\mathcal{V}_{\mathbf{d},r}
+, see Proposition 
+4.2
+.
+There is a naïve expectation for the dimension of the neurovariety, namely the number of parameters. However, one immediately observes a symmetry in the parameters for any network architecture, called 
+multi-homogeneity
+.
+Lemma 2.7
+(
+[
+KTB19
+, Lemma 13]
+)
+.
+For all diagonal matrices 
+D
+i
+∈
+ℝ
+d
+i
+×
+d
+i
+D_{i}\in\mathbb{R}^{d_{i}\times d_{i}}
+ and permutation matrices 
+P
+i
+∈
+ℤ
+d
+i
+×
+d
+i
+P_{i}\in\mathbb{Z}^{d_{i}\times d_{i}}
+ (
+i
+=
+1
+,
+…
+,
+L
+−
+1
+i=1,\dots,L-1
+), the parameter map 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ returns the same network under the replacement:
+W
+1
+←
+P
+1
+​
+D
+1
+​
+W
+1
+W
+2
+←
+P
+2
+​
+D
+2
+​
+W
+2
+​
+D
+1
+−
+r
+​
+P
+1
+T
+W
+3
+←
+P
+3
+​
+D
+3
+​
+W
+3
+​
+D
+2
+−
+r
+​
+P
+2
+T
+⋮
+W
+L
+←
+W
+L
+​
+D
+L
+−
+1
+−
+r
+​
+P
+L
+−
+1
+T
+.
+\begin{array}[]{l}W_{1}\leftarrow P_{1}D_{1}W_{1}\\
+W_{2}\leftarrow P_{2}D_{2}W_{2}D_{1}^{-r}P_{1}^{T}\\
+W_{3}\leftarrow P_{3}D_{3}W_{3}D_{2}^{-r}P_{2}^{T}\\
+\hskip 20.00003pt\vdots\\
+W_{L}\leftarrow W_{L}D_{L-1}^{-r}P_{L-1}^{T}.\end{array}
+Hence, a generic fiber of 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ has dimension at least 
+∑
+i
+=
+1
+L
+−
+1
+d
+i
+\sum_{i=1}^{L-1}d_{i}
+. We call the number of parameters subtracted by this dimension the expected dimension of the neurovariety.
+Definition 2.8
+.
+We define the 
+expected dimension
+ of the neurovariety 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ to be
+edim
+⁡
+(
+𝒱
+𝐝
+,
+r
+)
+≔
+min
+⁡
+{
+d
+L
++
+∑
+i
+=
+0
+L
+−
+1
+(
+d
+i
+​
+d
+i
++
+1
+−
+d
+i
++
+1
+)
+,
+d
+L
+​
+(
+d
+0
++
+r
+L
+−
+1
+−
+1
+r
+L
+−
+1
+)
+}
+.
+\edim(\mathcal{V}_{\mathbf{d},r})\coloneqq\min\left\{d_{L}+\sum_{i=0}^{L-1}(d_{i}d_{i+1}-d_{i+1}),d_{L}\binom{d_{0}+r^{L-1}-1}{r^{L-1}}\right\}.
+By Lemma 
+2.7
+, 
+dim
+(
+𝒱
+𝐝
+,
+r
+)
+≤
+edim
+⁡
+(
+𝒱
+𝐝
+,
+r
+)
+\dim(\mathcal{V}_{\mathbf{d},r})\leq\edim(\mathcal{V}_{\mathbf{d},r})
+. The difference 
+edim
+⁡
+(
+𝒱
+𝐝
+,
+r
+)
+−
+dim
+(
+𝒱
+𝐝
+,
+r
+)
+\edim(\mathcal{V}_{\mathbf{d},r})-\dim(\mathcal{V}_{\mathbf{d},r})
+ is the 
+defect
+ of 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+. If the defect is nonzero 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ is called 
+defective
+. We refer to
+dim
+(
+(
+Sym
+r
+L
+−
+1
+⁡
+(
+ℝ
+d
+0
+)
+)
+d
+L
+)
+=
+d
+L
+​
+(
+d
+0
++
+r
+L
+−
+1
+−
+1
+r
+L
+−
+1
+)
+\dim((\Sym_{r^{L-1}}(\mathbb{R}^{d_{0}}))^{d_{L}})=d_{L}\binom{d_{0}+r^{L-1}-1}{r^{L-1}}
+as the 
+ambient dimension
+ of 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+.
+In 
+Table
+1
+ we compute the ideal of the neurovariety and its dimension for shallow polynomial neural networks with 
+d
+i
+∈
+[
+3
+]
+d_{i}\in[3]
+ and 
+r
+=
+2
+r=2
+. We also compare the neurovariety with the neuromanifold.
+𝐝
+\mathbf{d}
+dim
+edim
+amb dim
+ideal
+ℳ
+𝐝
+,
+2
+=
+𝒱
+𝐝
+,
+2
+\mathcal{M}_{\mathbf{d},2}=\mathcal{V}_{\mathbf{d},2}
+?
+(1,1,1)
+1
+1
+1
+⟨
+0
+⟩
+\langle 0\rangle
+yes
+(1,1,2)
+2
+2
+2
+⟨
+0
+⟩
+\langle 0\rangle
+yes
+(1,1,3)
+3
+3
+3
+⟨
+0
+⟩
+\langle 0\rangle
+yes
+(1,2,1)
+1
+1
+1
+⟨
+0
+⟩
+\langle 0\rangle
+yes
+(1,2,2)
+2
+2
+2
+⟨
+0
+⟩
+\langle 0\rangle
+yes
+(1,2,3)
+3
+3
+3
+⟨
+0
+⟩
+\langle 0\rangle
+yes
+(1,3,1)
+1
+1
+1
+⟨
+0
+⟩
+\langle 0\rangle
+yes
+(1,3,2)
+2
+2
+2
+⟨
+0
+⟩
+\langle 0\rangle
+yes
+(1,3,3)
+3
+3
+3
+⟨
+0
+⟩
+\langle 0\rangle
+yes
+(2,1,1)
+2
+2
+3
+determinantal, 
+Lemma
+3.4
+yes, 
+Lemma
+3.4
+(2,1,2)
+3
+3
+6
+determinantal, 
+Lemma
+3.4
+yes, 
+Lemma
+3.4
+(2,1,3)
+4
+4
+9
+determinantal, 
+Lemma
+3.4
+yes, 
+Lemma
+3.4
+(2,2,1)
+3
+3
+3
+⟨
+0
+⟩
+\langle 0\rangle
+yes, 
+Lemma
+3.3
+(2,2,2)
+6
+6
+6
+⟨
+0
+⟩
+\langle 0\rangle
+no, 
+Proposition
+4.2
+(2,2,3)
+8
+8
+9
+determinantal, Proposition 
+4.1
+no, 
+Proposition
+4.2
+(2,3,1)
+3
+3
+3
+⟨
+0
+⟩
+\langle 0\rangle
+yes, 
+Lemma
+3.3
+(2,3,2)
+6
+6
+6
+⟨
+0
+⟩
+\langle 0\rangle
+yes, Proposition 
+3.7
+(2,3,3)
+9
+9
+9
+⟨
+0
+⟩
+\langle 0\rangle
+yes, Proposition 
+3.7
+(3,1,1)
+3
+3
+6
+determinantal, 
+Lemma
+3.4
+yes, 
+Lemma
+3.4
+(3,1,2)
+4
+4
+12
+determinantal, 
+Lemma
+3.4
+yes, 
+Lemma
+3.4
+(3,1,3)
+5
+5
+18
+determinantal, 
+Lemma
+3.4
+yes, 
+Lemma
+3.4
+(3,2,1)
+5
+6
+6
+determinantal, 
+Lemma
+3.3
+yes, 
+Lemma
+3.3
+(3,2,2)
+8
+8
+12
+determinantal, Example 
+2.9
+no, Remark 
+4.3
+(3,2,3)
+10
+10
+18
+Example 
+2.9
+no, Remark 
+4.3
+(3,3,1)
+6
+6
+6
+⟨
+0
+⟩
+\langle 0\rangle
+yes, 
+Lemma
+3.4
+(3,3,2)
+12
+12
+12
+⟨
+0
+⟩
+\langle 0\rangle
+no, Lemma 
+3.5
+(3,3,3)
+15
+15
+18
+Example
+4.4
+no, Lemma 
+3.5
+Table 1. 
+Properties of neurovarieties for shallow polynomial neural networks with 
+d
+i
+∈
+[
+3
+]
+d_{i}\in[3]
+ and 
+r
+=
+2
+r=2
+.
+Most ideals of neurovarieties in 
+Table
+1
+ are described by results in the upcoming sections. The ideals for all but two cases (
+𝐝
+=
+(
+3
+,
+2
+,
+3
+)
+\mathbf{d}=(3,2,3)
+ and 
+𝐝
+=
+(
+3
+,
+3
+,
+3
+)
+\mathbf{d}=(3,3,3)
+) in the table are determinantal. Only the neurovariety for the architecture 
+𝐝
+=
+(
+3
+,
+2
+,
+1
+)
+\mathbf{d}=(3,2,1)
+ does not have expected dimension. The following example describes the cases that are not explained by any results in the rest of the paper.
+Example 2.9
+.
+The ideal of the neurovariety for the architecture 
+𝐝
+=
+(
+3
+,
+2
+,
+2
+)
+,
+r
+=
+2
+\mathbf{d}=(3,2,2),r=2
+ is determinantal and it is generated by the 
+3
+×
+3
+3\times 3
+ minors of
+(
+c
+11
+(
+1
+)
+1
+2
+​
+c
+12
+(
+1
+)
+1
+2
+​
+c
+13
+(
+1
+)
+c
+11
+(
+2
+)
+1
+2
+​
+c
+12
+(
+2
+)
+1
+2
+​
+c
+13
+(
+2
+)
+1
+2
+​
+c
+12
+(
+1
+)
+c
+22
+(
+1
+)
+1
+2
+​
+c
+23
+(
+1
+)
+1
+2
+​
+c
+12
+(
+2
+)
+c
+22
+(
+2
+)
+1
+2
+​
+c
+23
+(
+2
+)
+1
+2
+​
+c
+13
+(
+1
+)
+1
+2
+​
+c
+23
+(
+1
+)
+c
+33
+(
+1
+)
+1
+2
+​
+c
+13
+(
+2
+)
+1
+2
+​
+c
+23
+(
+2
+)
+c
+33
+(
+2
+)
+)
+.
+\begin{pmatrix}c_{11}^{(1)}&\frac{1}{2}c_{12}^{(1)}&\frac{1}{2}c_{13}^{(1)}&c_{11}^{(2)}&\frac{1}{2}c_{12}^{(2)}&\frac{1}{2}c_{13}^{(2)}\\
+\frac{1}{2}c_{12}^{(1)}&c_{22}^{(1)}&\frac{1}{2}c_{23}^{(1)}&\frac{1}{2}c_{12}^{(2)}&c_{22}^{(2)}&\frac{1}{2}c_{23}^{(2)}\\
+\frac{1}{2}c_{13}^{(1)}&\frac{1}{2}c_{23}^{(1)}&c_{33}^{(1)}&\frac{1}{2}c_{13}^{(2)}&\frac{1}{2}c_{23}^{(2)}&c_{33}^{(2)}\end{pmatrix}.
+The ideal of the neurovariety for the architecture 
+𝐝
+=
+(
+3
+,
+2
+,
+3
+)
+,
+r
+=
+2
+\mathbf{d}=(3,2,3),r=2
+ contains the ideal generated by the 
+3
+×
+3
+3\times 3
+ minors of the following 
+3
+×
+9
+3\times 9
+ matrix:
+(
+c
+11
+(
+1
+)
+1
+2
+​
+c
+12
+(
+1
+)
+1
+2
+​
+c
+13
+(
+1
+)
+c
+11
+(
+2
+)
+1
+2
+​
+c
+12
+(
+2
+)
+1
+2
+​
+c
+13
+(
+2
+)
+c
+11
+(
+3
+)
+1
+2
+​
+c
+12
+(
+3
+)
+1
+2
+​
+c
+13
+(
+3
+)
+1
+2
+​
+c
+12
+(
+1
+)
+c
+22
+(
+1
+)
+1
+2
+​
+c
+23
+(
+1
+)
+1
+2
+​
+c
+12
+(
+2
+)
+c
+22
+(
+2
+)
+1
+2
+​
+c
+23
+(
+2
+)
+1
+2
+​
+c
+12
+(
+3
+)
+c
+22
+(
+3
+)
+1
+2
+​
+c
+23
+(
+3
+)
+1
+2
+​
+c
+13
+(
+1
+)
+1
+2
+​
+c
+23
+(
+1
+)
+c
+33
+(
+1
+)
+1
+2
+​
+c
+13
+(
+2
+)
+1
+2
+​
+c
+23
+(
+2
+)
+c
+33
+(
+2
+)
+1
+2
+​
+c
+13
+(
+3
+)
+1
+2
+​
+c
+23
+(
+3
+)
+c
+33
+(
+3
+)
+)
+.
+\begin{pmatrix}c_{11}^{(1)}&\frac{1}{2}c_{12}^{(1)}&\frac{1}{2}c_{13}^{(1)}&c_{11}^{(2)}&\frac{1}{2}c_{12}^{(2)}&\frac{1}{2}c_{13}^{(2)}&c_{11}^{(3)}&\frac{1}{2}c_{12}^{(3)}&\frac{1}{2}c_{13}^{(3)}\\
+\frac{1}{2}c_{12}^{(1)}&c_{22}^{(1)}&\frac{1}{2}c_{23}^{(1)}&\frac{1}{2}c_{12}^{(2)}&c_{22}^{(2)}&\frac{1}{2}c_{23}^{(2)}&\frac{1}{2}c_{12}^{(3)}&c_{22}^{(3)}&\frac{1}{2}c_{23}^{(3)}\\
+\frac{1}{2}c_{13}^{(1)}&\frac{1}{2}c_{23}^{(1)}&c_{33}^{(1)}&\frac{1}{2}c_{13}^{(2)}&\frac{1}{2}c_{23}^{(2)}&c_{33}^{(2)}&\frac{1}{2}c_{13}^{(3)}&\frac{1}{2}c_{23}^{(3)}&c_{33}^{(3)}\end{pmatrix}.
+However, it is not equal to this determinantal ideal. It is minimally generated by 
+94
+94
+ polynomials. The dimension of the determinantal variety is eleven while the neurovariety has dimension ten.
+3. 
+Neuromanifolds and Symmetric Tensor Decompositions
+In this section, we investigate the relationship between shallow PNNs and symmetric tensor decompositions. Building on this connection, we derive results for neuromanifolds for some shallow PNNs. This section has three subsections: §
+3.1
+ on symmetric tensors and homogeneous polynomials, §
+3.2
+ on results for neuromanifolds for 
+r
+=
+2
+r=2
+ and §
+3.3
+ on results for neuromanifolds for general 
+r
+∈
+ℕ
+r\in\mathbb{N}
+. An overview of the results in §
+3.2
+ and §
+3.3
+ can be found in 
+Table
+2
+.
+𝐝
+\mathbf{d}
+r
+r
+Assumptions
+Result
+(
+d
+0
+,
+d
+1
+,
+1
+)
+(d_{0},d_{1},1)
+2
+Lemma
+3.3
+(
+d
+0
+,
+1
+,
+d
+2
+)
+(d_{0},1,d_{2})
+2
+Lemma
+3.4
+(
+d
+0
+,
+d
+0
+,
+d
+2
+)
+(d_{0},d_{0},d_{2})
+2
+d
+0
+,
+d
+2
+≥
+2
+d_{0},d_{2}\geq 2
+Lemma
+3.5
+(
+d
+0
+,
+1
+,
+d
+2
+)
+(d_{0},1,d_{2})
+r
+∈
+ℕ
+r\in\mathbb{N}
+Lemma
+3.6
+(
+d
+0
+,
+d
+1
+,
+d
+2
+)
+(d_{0},d_{1},d_{2})
+r
+∈
+ℕ
+r\in\mathbb{N}
+d
+1
+≥
+(
+r
++
+d
+0
+−
+1
+r
+)
+d_{1}\geq\binom{r+d_{0}-1}{r}
+Proposition
+3.7
+(
+2
+,
+d
+1
+,
+1
+)
+(2,d_{1},1)
+3
+3
+d
+1
+≥
+2
+d_{1}\geq 2
+Corollary
+3.11
+(
+2
+,
+d
+1
+,
+1
+)
+(2,d_{1},1)
+4
+4
+d
+1
+≥
+3
+d_{1}\geq 3
+Corollary
+3.11
+(
+2
+,
+d
+1
+,
+1
+)
+(2,d_{1},1)
+5
+5
+d
+1
+≥
+3
+d_{1}\geq 3
+Corollary
+3.11
+(
+3
+,
+d
+1
+,
+1
+)
+(3,d_{1},1)
+4
+4
+d
+1
+≥
+6
+d_{1}\geq 6
+Corollary
+3.12
+(
+3
+,
+d
+1
+,
+1
+)
+(3,d_{1},1)
+5
+5
+d
+1
+≥
+7
+d_{1}\geq 7
+Corollary
+3.12
+(
+4
+,
+d
+1
+,
+1
+)
+(4,d_{1},1)
+3
+3
+d
+1
+≥
+5
+d_{1}\geq 5
+Corollary
+3.12
+Table 2. 
+An overview of architectures for which we give results about their neuromanifolds in §
+3
+.
+Consider a PNN with architecture 
+𝐝
+=
+(
+d
+0
+,
+d
+1
+,
+1
+)
+\mathbf{d}=(d_{0},d_{1},1)
+. Then 
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+ consists of homogeneous polynomials of degree 
+r
+r
+ in 
+d
+0
+d_{0}
+ many variables that can be represented as a linear combination of 
+d
+1
+d_{1}
+ many linear forms raised to the 
+r
+th
+r^{\text{th}}
+ power. We should emphasize here that the linear combinations are taken over the 
+real
+ numbers. There is a bijection between the set of homogeneous polynomials of degree 
+r
+r
+ in 
+d
+0
+d_{0}
+ many variables and the set of order-
+r
+r
+ symmetric tensors of format 
+d
+0
+×
+d
+0
+×
+⋯
+×
+d
+0
+d_{0}\times d_{0}\times\cdots\times d_{0}
+ as we will explain below. Formulated in the language of tensors, the neuromanifold 
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+ consists of order-
+r
+r
+ symmetric tensors of format 
+d
+0
+×
+d
+0
+×
+⋯
+×
+d
+0
+d_{0}\times d_{0}\times\cdots\times d_{0}
+ with 
+real symmetric rank
+≤
+d
+1
+\leq d_{1}
+.
+3.1. 
+Symmetric Tensor Decompositions
+An order-
+r
+r
+ tensor is a multidimensional array in 
+𝕂
+n
+1
+×
+…
+×
+n
+r
+\mathbb{K}^{n_{1}\times\ldots\times n_{r}}
+, where 
+𝕂
+\mathbb{K}
+ is a field. In this paper, we take 
+𝕂
+=
+ℝ
+\mathbb{K}=\mathbb{R}
+. A tensor 
+T
+=
+(
+T
+j
+1
+​
+…
+​
+j
+r
+)
+∈
+ℝ
+d
+0
+×
+…
+×
+d
+0
+T=(T_{j_{1}\ldots j_{r}})\in\mathbb{R}^{d_{0}\times\ldots\times d_{0}}
+ is symmetric if 
+T
+j
+1
+​
+…
+​
+j
+r
+=
+T
+σ
+⁡
+(
+j
+1
+)
+​
+…
+​
+σ
+​
+(
+j
+r
+)
+T_{j_{1}\ldots j_{r}}=T_{\sigma(j_{1})\ldots\sigma(j_{r})}
+ for all permuations 
+σ
+∈
+S
+d
+0
+\sigma\in S_{d_{0}}
+.
+Given an order-
+r
+r
+ symmetric tensor 
+T
+=
+(
+T
+j
+1
+​
+…
+​
+j
+r
+)
+T=(T_{j_{1}\ldots j_{r}})
+ of format 
+d
+0
+×
+d
+0
+×
+⋯
+×
+d
+0
+d_{0}\times d_{0}\times\cdots\times d_{0}
+, one can associate the following homogeneous polynomial of degree 
+r
+r
+ in 
+d
+0
+d_{0}
+ variables to the tensor 
+T
+T
+:
+(3.1)
+F
+(
+𝐱
+)
+=
+∑
+1
+≤
+j
+1
+,
+j
+2
+,
+…
+,
+j
+r
+≤
+d
+0
+T
+j
+1
+​
+j
+2
+​
+…
+​
+j
+r
+x
+j
+1
+x
+j
+2
+⋯
+x
+j
+r
+.
+F(\mathbf{x})=\sum_{1\leq j_{1},j_{2},\ldots,j_{r}\leq d_{0}}T_{j_{1}j_{2}\ldots j_{r}}x_{j_{1}}x_{j_{2}}\cdots x_{j_{r}}.
+Monomials generally appear more than once in the above sum.
+For a vector 
+𝐢
+=
+(
+i
+1
+,
+…
+,
+i
+d
+0
+)
+∈
+ℕ
+d
+0
+\mathbf{i}=(i_{1},\ldots,i_{d_{0}})\in\mathbb{N}^{d_{0}}
+ with 
+i
+1
++
+…
++
+i
+d
+0
+=
+r
+i_{1}+\ldots+i_{d_{0}}=r
+, the multinominal coefficient is defined as
+(
+r
+i
+1
+,
+…
+,
+i
+d
+0
+)
+=
+r
+!
+i
+1
+!
+⋯
+i
+d
+0
+!
+.
+\binom{r}{i_{1},\ldots,i_{d_{0}}}=\frac{r!}{i_{1}!\cdots i_{d_{0}}!}.
+Using multinomial coefficients, the polynomial (
+3.1
+) can be rewritten as
+(3.2)
+F
+(
+𝐱
+)
+=
+∑
+i
+1
++
+i
+2
++
+…
++
+i
+d
+0
+=
+r
+(
+r
+i
+1
+,
+…
+,
+i
+d
+0
+)
+a
+i
+1
+​
+i
+2
+​
+…
+​
+i
+d
+0
+x
+1
+i
+1
+x
+2
+i
+2
+⋯
+x
+d
+0
+i
+d
+0
+F(\mathbf{x})=\sum_{i_{1}+i_{2}+\ldots+i_{d_{0}}=r}\binom{r}{i_{1},\ldots,i_{d_{0}}}a_{i_{1}i_{2}\ldots i_{d_{0}}}x_{1}^{i_{1}}x_{2}^{i_{2}}\cdots x_{d_{0}}^{i_{d_{0}}}
+such that each monomial appears precisely once in the sum.
+To obtain the converse map from homogeneous polynomials to symmetric tensors, we note that there is a bijection between the monomials of degree 
+r
+r
+ in 
+d
+0
+d_{0}
+ variables and unique entries of a general order-
+r
+r
+ symmetric tensor of format 
+d
+0
+×
+d
+0
+×
+⋯
+×
+d
+0
+d_{0}\times d_{0}\times\cdots\times d_{0}
+. The bijection is given by the map 
+f
+:
+ℕ
+d
+0
+→
+ℕ
+r
+,
+𝐢
+↦
+𝐣
+f:\mathbb{N}^{d_{0}}\rightarrow\mathbb{N}^{r},\mathbf{i}\mapsto\mathbf{j}
+, where 
+i
+k
+i_{k}
+ denotes the number of appearances of 
+k
+k
+ in 
+𝐣
+\mathbf{j}
+ and the entries of 
+𝐣
+\mathbf{j}
+ are in ascending order. The homogeneous polynomial (
+3.2
+)
+maps to the symmetric tensor 
+T
+T
+ with the entries
+T
+𝐣
+=
+a
+f
+−
+1
+​
+(
+𝐣
+)
+,
+T_{\mathbf{j}}=a_{f^{-1}(\mathbf{j})},
+where the entries of 
+𝐣
+\mathbf{j}
+ are in ascending order. The rest of the entries of 
+T
+T
+ are obtained from the symmetry property.
+For more details on the bijection, we refer the reader to 
+[
+CM96
+, 
+CGLM08
+]
+.
+The outer product of 
+r
+r
+ vectors 
+v
+i
+∈
+ℝ
+n
+i
+v_{i}\in\mathbb{R}^{n_{i}}
+ is an order-
+r
+r
+ tensor defined as
+v
+1
+⊗
+…
+⊗
+v
+r
+=
+(
+v
+1
+,
+i
+1
+⋯
+v
+r
+,
+i
+r
+)
+i
+1
+,
+…
+,
+i
+r
+=
+1
+n
+1
+,
+…
+,
+n
+r
+.
+v_{1}\otimes\ldots\otimes v_{r}=(v_{1,i_{1}}\cdots v_{r,i_{r}})_{i_{1},\ldots,i_{r}=1}^{n_{1},\ldots,n_{r}}.
+Definition 3.1
+.
+Let 
+T
+∈
+𝕂
+d
+0
+×
+…
+×
+d
+0
+T\in\mathbb{K}^{d_{0}\times\ldots\times d_{0}}
+ be a symmetric tensor. The 
+symmetric rank
+ of 
+T
+T
+ over a field 
+𝕂
+\mathbb{K}
+ is the smallest 
+k
+∈
+ℕ
+k\in\mathbb{N}
+ such that
+T
+=
+∑
+i
+=
+1
+k
+λ
+i
+​
+v
+i
+⊗
+…
+⊗
+v
+i
+,
+T=\sum_{i=1}^{k}\lambda_{i}v_{i}\otimes\ldots\otimes v_{i},
+where 
+λ
+i
+∈
+𝕂
+\lambda_{i}\in\mathbb{K}
+ and 
+v
+i
+∈
+𝕂
+d
+0
+v_{i}\in\mathbb{K}^{d_{0}}
+ for 
+i
+∈
+[
+k
+]
+i\in[k]
+. If 
+𝕂
+=
+ℝ
+\mathbb{K}=\mathbb{R}
+ (resp. 
+𝕂
+=
+ℂ
+\mathbb{K}=\mathbb{C}
+), then we call it the 
+real
+ (resp. 
+complex
+) 
+symmetric tensor rank
+.
+Note that for symmetric matrices, the symmetric rank is equal to the rank.
+Let 
+I
+1
+∪
+I
+2
+=
+[
+r
+]
+I_{1}\cup I_{2}=[r]
+ be a partition of the set 
+[
+r
+]
+[r]
+. Let 
+D
+j
+=
+∏
+i
+∈
+I
+j
+n
+i
+D_{j}=\prod_{i\in I_{j}}n_{i}
+ for 
+j
+=
+1
+,
+2
+j=1,2
+. Every partition 
+I
+1
+∪
+I
+2
+=
+[
+r
+]
+I_{1}\cup I_{2}=[r]
+ induces a 
+flattening
+ of a tensor 
+T
+∈
+𝕂
+n
+1
+×
+…
+×
+n
+r
+T\in\mathbb{K}^{n_{1}\times\ldots\times n_{r}}
+ to a matrix in 
+𝕂
+D
+1
+×
+D
+2
+\mathbb{K}^{D_{1}\times D_{2}}
+. The importance of tensor flattenings is that their minors give relations for tensor rank. A non-zero tensor has rank one if and only if all 
+2
+×
+2
+2\times 2
+ minors of all its flattenings vanish 
+[
+Lan11
+, §3.4]
+.
+Example 3.2
+.
+Let 
+d
+0
+=
+2
+d_{0}=2
+ and 
+r
+=
+3
+r=3
+. Then we consider cubic forms in two variables or, equivalently, order-
+3
+3
+2
+×
+2
+×
+2
+2\times 2\times 2
+ symmetric tensors. The polynomial 
+x
+1
+3
++
+3
+​
+x
+1
+​
+x
+2
+2
++
+3
+​
+x
+2
+3
+x_{1}^{3}+3x_{1}x_{2}^{2}+3x_{2}^{3}
+ corresponds to the symmetric tensor whose flattening corresponding to the partition 
+{
+1
+,
+2
+}
+∪
+{
+3
+}
+\{1,2\}\cup\{3\}
+ is
+
+(
+1
+0
+0
+1
+0
+1
+1
+3
+)
+T
+\begin{pmatrix}1&0&0&1\\
+0&1&1&3\end{pmatrix}^{T}
+.
+3.2. 
+Neuromanifolds for 
+r
+=
+2
+r=2
+Lemma 3.3
+.
+The neuromanifold for the architecture 
+𝐝
+=
+(
+d
+0
+,
+d
+1
+,
+1
+)
+,
+r
+=
+2
+\mathbf{d}=(d_{0},d_{1},1),r=2
+ consists of 
+(
+d
+0
+×
+d
+0
+)
+(d_{0}\times d_{0})
+ symmetric matrices
+(3.3)
+(
+c
+11
+1
+2
+​
+c
+12
+⋯
+1
+2
+​
+c
+1
+​
+d
+0
+1
+2
+​
+c
+12
+c
+22
+⋯
+1
+2
+​
+c
+2
+​
+d
+0
+⋱
+1
+2
+​
+c
+1
+​
+d
+0
+1
+2
+​
+c
+2
+​
+d
+0
+⋯
+c
+d
+0
+​
+d
+0
+)
+\begin{pmatrix}c_{11}&\frac{1}{2}c_{12}&\cdots&\frac{1}{2}c_{1d_{0}}\\
+\frac{1}{2}c_{12}&c_{22}&\cdots&\frac{1}{2}c_{2d_{0}}\\
+\vdots&\vdots&\ddots&\vdots\\
+\frac{1}{2}c_{1d_{0}}&\frac{1}{2}c_{2d_{0}}&\cdots&c_{d_{0}d_{0}}\\
+\end{pmatrix}
+of rank at most 
+d
+1
+d_{1}
+. It is equal to its neurovariety and the ideal of the neurovariety is generated by all 
+d
+1
++
+1
+d_{1}+1
+ minors of the symmetric matrix. The architecture is filling if and only if 
+d
+1
+≥
+d
+0
+d_{1}\geq d_{0}
+.
+Proof.
+We have 
+p
+𝐰
+​
+(
+x
+)
+=
+w
+211
+​
+(
+w
+111
+​
+x
+1
++
+…
++
+w
+11
+​
+d
+0
+​
+x
+d
+0
+)
+2
++
+…
++
+w
+21
+​
+d
+1
+​
+(
+w
+1
+​
+d
+1
+​
+1
+​
+x
+1
++
+…
++
+w
+1
+​
+d
+1
+​
+d
+0
+​
+x
+d
+0
+)
+2
+p_{\mathbf{w}}(x)=w_{211}(w_{111}x_{1}+\ldots+w_{11d_{0}}x_{d_{0}})^{2}+\ldots+w_{21d_{1}}(w_{1d_{1}1}x_{1}+\ldots+w_{1d_{1}d_{0}}x_{d_{0}})^{2}
+. Each of the summands of 
+p
+𝐰
+​
+(
+x
+)
+p_{\mathbf{w}}(x)
+ corresponds to a rank-1 symmetric matrix. Since there are 
+d
+1
+d_{1}
+ summands, the sum corresponds to a symmetric matrix (
+3.3
+) of rank at most 
+d
+1
+d_{1}
+.
+∎
+The next lemma is a special case of 
+Lemma
+3.6
+ and we state it here separately as the special case is used in 
+Table
+1
+.
+Lemma 3.4
+.
+The neuromanifold for the architecture 
+𝐝
+=
+(
+d
+0
+,
+1
+,
+d
+2
+)
+,
+r
+=
+2
+\mathbf{d}=(d_{0},1,d_{2}),r=2
+ consists of 
+d
+2
+d_{2}
+ tuples of 
+d
+0
+×
+d
+0
+d_{0}\times d_{0}
+ symmetric matrices of rank at most one such that all the rank-1 matrices are multiples of each other. The neuromanifold is equal to the neurovariety and the ideal of the neurovariety is generated by the 
+2
+×
+2
+2\times 2
+ minors of
+(
+c
+11
+(
+1
+)
+1
+2
+​
+c
+12
+(
+1
+)
+⋯
+1
+2
+​
+c
+1
+​
+d
+0
+(
+1
+)
+⋯
+c
+11
+(
+d
+2
+)
+1
+2
+​
+c
+12
+(
+d
+2
+)
+⋯
+1
+2
+​
+c
+1
+​
+d
+0
+(
+d
+2
+)
+1
+2
+​
+c
+12
+(
+1
+)
+c
+22
+(
+1
+)
+⋯
+1
+2
+​
+c
+2
+​
+d
+0
+(
+1
+)
+⋯
+1
+2
+​
+c
+12
+(
+d
+2
+)
+c
+22
+(
+d
+2
+)
+⋯
+1
+2
+​
+c
+2
+​
+d
+0
+(
+d
+2
+)
+⋱
+⋯
+⋱
+1
+2
+​
+c
+1
+​
+d
+0
+(
+1
+)
+1
+2
+​
+c
+2
+​
+d
+0
+(
+1
+)
+⋯
+c
+d
+0
+​
+d
+0
+(
+1
+)
+⋯
+1
+2
+​
+c
+1
+​
+d
+0
+(
+d
+2
+)
+1
+2
+​
+c
+2
+​
+d
+0
+(
+d
+2
+)
+⋯
+c
+d
+0
+​
+d
+0
+(
+d
+2
+)
+)
+.
+\begin{pmatrix}c_{11}^{(1)}&\frac{1}{2}c_{12}^{(1)}&\cdots&\frac{1}{2}c_{1d_{0}}^{(1)}&\cdots&c_{11}^{(d_{2})}&\frac{1}{2}c_{12}^{(d_{2})}&\cdots&\frac{1}{2}c_{1d_{0}}^{(d_{2})}\\
+\frac{1}{2}c_{12}^{(1)}&c_{22}^{(1)}&\cdots&\frac{1}{2}c_{2d_{0}}^{(1)}&\cdots&\frac{1}{2}c_{12}^{(d_{2})}&c_{22}^{(d_{2})}&\cdots&\frac{1}{2}c_{2d_{0}}^{(d_{2})}\\
+\vdots&\vdots&\ddots&\vdots&\cdots&\vdots&\vdots&\ddots&\vdots\\
+\frac{1}{2}c_{1d_{0}}^{(1)}&\frac{1}{2}c_{2d_{0}}^{(1)}&\cdots&c_{d_{0}d_{0}}^{(1)}&\cdots&\frac{1}{2}c_{1d_{0}}^{(d_{2})}&\frac{1}{2}c_{2d_{0}}^{(d_{2})}&\cdots&c_{d_{0}d_{0}}^{(d_{2})}\end{pmatrix}.
+The next lemma is due to Maksym Zubkov.
+Lemma 3.5
+.
+Let 
+d
+0
+,
+d
+2
+≥
+2
+d_{0},d_{2}\geq 2
+, then for 
+𝐝
+=
+(
+d
+0
+,
+d
+0
+,
+d
+2
+)
+,
+r
+=
+2
+\mathbf{d}=(d_{0},d_{0},d_{2}),r=2
+, the parameter map 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ is not surjective.
+Proof.
+We will first prove the statement for 
+𝐝
+=
+(
+d
+0
+,
+d
+0
+,
+2
+)
+,
+r
+=
+2
+\mathbf{d}=(d_{0},d_{0},2),r=2
+. Assume to the contrary that the map 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ is surjective. For 
+i
+∈
+[
+d
+0
+]
+i\in[d_{0}]
+, we write 
+ℓ
+i
+=
+(
+W
+1
+​
+𝐱
+)
+i
+=
+w
+1
+​
+i
+​
+1
+​
+x
+1
++
+⋯
++
+w
+1
+​
+i
+​
+d
+0
+​
+x
+d
+0
+\ell_{i}=(W_{1}\mathbf{x})_{i}=w_{1i1}x_{1}+\dots+w_{1id_{0}}x_{d_{0}}
+. Then for any pair of quadratic forms 
+(
+q
+1
+,
+q
+2
+)
+∈
+Sym
+2
+⁡
+(
+ℝ
+d
+0
+)
+×
+Sym
+2
+⁡
+(
+ℝ
+d
+0
+)
+(q_{1},q_{2})\in\Sym_{2}(\mathbb{R}^{d_{0}})\times\Sym_{2}(\mathbb{R}^{d_{0}})
+, we have some 
+𝐰
+\mathbf{w}
+ such that
+Ψ
+𝐝
+,
+r
+​
+(
+𝐰
+)
+=
+(
+w
+211
+​
+ℓ
+1
+2
++
+⋯
++
+w
+21
+​
+d
+0
+​
+ℓ
+d
+0
+2
+w
+221
+​
+ℓ
+1
+2
++
+⋯
++
+w
+22
+​
+d
+0
+​
+ℓ
+d
+0
+2
+)
+=
+(
+ℓ
+1
+​
+w
+211
+​
+ℓ
+1
++
+⋯
++
+ℓ
+d
+0
+​
+w
+21
+​
+d
+0
+​
+ℓ
+d
+0
+ℓ
+1
+​
+w
+221
+​
+ℓ
+1
++
+⋯
++
+ℓ
+d
+0
+​
+w
+22
+​
+d
+0
+​
+ℓ
+d
+0
+)
+=
+(
+𝐱
+T
+​
+W
+1
+T
+​
+D
+1
+​
+W
+1
+​
+𝐱
+𝐱
+T
+​
+W
+1
+T
+​
+D
+2
+​
+W
+1
+​
+𝐱
+)
+\Psi_{\mathbf{d},r}(\mathbf{w})=\begin{pmatrix}w_{211}\ell_{1}^{2}+\dots+w_{21d_{0}}\ell_{d_{0}}^{2}\\
+w_{221}\ell_{1}^{2}+\dots+w_{22d_{0}}\ell_{d_{0}}^{2}\\
+\end{pmatrix}=\begin{pmatrix}\ell_{1}w_{211}\ell_{1}+\dots+\ell_{d_{0}}w_{21d_{0}}\ell_{d_{0}}\\
+\ell_{1}w_{221}\ell_{1}+\dots+\ell_{d_{0}}w_{22d_{0}}\ell_{d_{0}}\\
+\end{pmatrix}=\begin{pmatrix}\mathbf{x}^{T}W_{1}^{T}D_{1}W_{1}\mathbf{x}\\
+\mathbf{x}^{T}W_{1}^{T}D_{2}W_{1}\mathbf{x}\end{pmatrix}
+where 
+D
+i
+D_{i}
+ is the diagonal matrix with 
+w
+2
+​
+i
+​
+j
+w_{2ij}
+ for 
+i
+=
+1
+,
+2
+i=1,2
+ and 
+j
+=
+1
+,
+…
+,
+d
+0
+j=1,\dots,d_{0}
+. So, if 
+A
+1
+A_{1}
+ and 
+A
+2
+A_{2}
+ are the corresponding matrices for quadratic forms 
+q
+1
+q_{1}
+ and 
+q
+2
+q_{2}
+, then we would have
+A
+1
+=
+W
+1
+T
+​
+D
+1
+​
+W
+1
+,
+A
+2
+=
+W
+1
+T
+​
+D
+2
+​
+W
+1
+.
+A_{1}=W_{1}^{T}D_{1}W_{1},\quad A_{2}=W_{1}^{T}D_{2}W_{1}.
+This tells us that the two symmetric matrices 
+A
+1
+A_{1}
+ and 
+A
+2
+A_{2}
+ can be diagonalized simultaneously which is in general not true as 
+A
+1
+A_{1}
+ and 
+A
+2
+A_{2}
+ do not commute in general for 
+d
+0
+≥
+2
+d_{0}\geq 2
+. Therefore, 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ is not surjective.
+The proof can be extended to the architectures 
+(
+d
+0
+,
+d
+0
+,
+d
+2
+)
+(d_{0},d_{0},d_{2})
+ for any 
+d
+2
+≥
+2
+d_{2}\geq 2
+ as it corresponds to simultaneous diagonalization of 
+d
+2
+d_{2}
+ matrices which is impossible for an arbitrary choice of 
+d
+2
+d_{2}
+ matrices.
+∎
+3.3. 
+Neuromanifolds for 
+r
+∈
+ℕ
+r\in\mathbb{N}
+Lemma 3.6
+.
+The neuromanifold for the architecture 
+𝐝
+=
+(
+d
+0
+,
+1
+,
+d
+2
+)
+,
+r
+∈
+ℕ
+\mathbf{d}=(d_{0},1,d_{2}),r\in\mathbb{N}
+ consists of 
+d
+2
+d_{2}
+ order-
+r
+r
+(
+d
+0
+×
+d
+0
+×
+⋯
+×
+d
+0
+)
+(d_{0}\times d_{0}\times\cdots\times d_{0})
+ symmetric tensors of rank at most one such that all the rank-1 tensors are multiples of each other. The neuromanifold is equal to the neurovariety and the ideal of the neurovariety is generated by the 
+2
+×
+2
+2\times 2
+ minors of the flattenings of the 
+(
+d
+0
+×
+⋯
+×
+d
+0
+×
+d
+0
+d
+2
+)
+(d_{0}\times\cdots\times d_{0}\times d_{0}d_{2})
+ tensor that is obtained from combining the 
+d
+2
+d_{2}
+(
+d
+0
+×
+d
+0
+×
+⋯
+×
+d
+0
+)
+(d_{0}\times d_{0}\times\cdots\times d_{0})
+ symmetric tensors along the last index.
+Proof.
+We have
+p
+𝐰
+​
+(
+x
+)
+=
+(
+w
+211
+​
+(
+w
+111
+​
+x
+1
++
+…
++
+w
+11
+​
+d
+0
+​
+x
+d
+0
+)
+r
+w
+221
+​
+(
+w
+111
+​
+x
+1
++
+…
++
+w
+11
+​
+d
+0
+​
+x
+d
+0
+)
+r
+w
+2
+​
+d
+2
+​
+1
+​
+(
+w
+111
+​
+x
+1
++
+…
++
+w
+11
+​
+d
+0
+​
+x
+d
+0
+)
+r
+)
+.
+p_{\mathbf{w}}(x)=\begin{pmatrix}w_{211}(w_{111}x_{1}+\ldots+w_{11d_{0}}x_{d_{0}})^{r}\\
+w_{221}(w_{111}x_{1}+\ldots+w_{11d_{0}}x_{d_{0}})^{r}\\
+\vdots\\
+w_{2d_{2}1}(w_{111}x_{1}+\ldots+w_{11d_{0}}x_{d_{0}})^{r}\end{pmatrix}.
+The form 
+(
+w
+111
+​
+x
+1
++
+…
++
+w
+11
+​
+d
+0
+​
+x
+d
+0
+)
+r
+(w_{111}x_{1}+\ldots+w_{11d_{0}}x_{d_{0}})^{r}
+ corresponds to an order-
+r
+r
+ rank-1 symmetric tensor. The 
+i
+th
+i^{\text{th}}
+ component of 
+p
+𝐰
+​
+(
+x
+)
+p_{\mathbf{w}}(x)
+ is the symmetric tensor multiplied by the constant 
+w
+2
+​
+i
+​
+1
+w_{2i1}
+. This proves the first statement. For the second statement, we note that combining the rank-1 tensors to a 
+d
+0
+×
+⋯
+×
+d
+0
+×
+d
+0
+d
+2
+d_{0}\times\cdots\times d_{0}\times d_{0}d_{2}
+ tensor along the last index gives another rank-1 tensor. Moreover, any 
+d
+0
+×
+⋯
+×
+d
+0
+×
+d
+0
+d
+2
+d_{0}\times\cdots\times d_{0}\times d_{0}d_{2}
+ tensor of rank one such that each of the 
+d
+2
+d_{2}
+(
+d
+0
+×
+d
+0
+×
+⋯
+×
+d
+0
+)
+(d_{0}\times d_{0}\times\cdots\times d_{0})
+-subtensors is symmetric and can be obtained from symmetric 
+(
+d
+0
+×
+d
+0
+×
+⋯
+×
+d
+0
+)
+(d_{0}\times d_{0}\times\cdots\times d_{0})
+ rank-1 tensors that are multiples of each other. The second statement follows from the result that the ideal of the tensors of rank at most one is generated by 
+2
+×
+2
+2\times 2
+ minors of flattenings 
+[
+Lan11
+, §3.4]
+.
+∎
+Proposition 3.7
+.
+Let 
+𝐝
+=
+(
+d
+0
+,
+d
+1
+,
+d
+2
+)
+\mathbf{d}=(d_{0},d_{1},d_{2})
+ with 
+d
+1
+≥
+(
+r
++
+d
+0
+−
+1
+r
+)
+d_{1}\geq\binom{r+d_{0}-1}{r}
+. Then the neuromanifold itself is filling, i.e., 
+ℳ
+𝐝
+,
+r
+=
+(
+Sym
+r
+⁡
+(
+ℝ
+d
+0
+)
+)
+d
+2
+\mathcal{M}_{\mathbf{d},r}=(\Sym_{r}(\mathbb{R}^{d_{0}}))^{d_{2}}
+.
+Proof.
+Let 
+N
+≔
+(
+r
++
+d
+0
+−
+1
+r
+)
+N\coloneqq\binom{r+d_{0}-1}{r}
+.
+Write the coefficients of 
+p
+𝐰
+=
+Ψ
+𝐝
+,
+r
+​
+(
+𝐰
+)
+p_{\mathbf{w}}=\Psi_{\mathbf{d},r}(\mathbf{w})
+ as
+C
+=
+(
+(
+c
+I
+(
+1
+)
+)
+I
+(
+c
+I
+(
+d
+2
+)
+)
+I
+)
+=
+(
+w
+211
+w
+212
+…
+w
+21
+​
+d
+1
+⋱
+w
+2
+​
+d
+2
+​
+1
+w
+2
+​
+d
+2
+​
+2
+…
+w
+2
+​
+d
+2
+​
+d
+1
+)
+​
+(
+(
+W
+1
+,
+1
+)
+I
+(
+W
+1
+,
+d
+1
+)
+I
+)
+,
+C=\begin{pmatrix}(c_{I}^{(1)})_{I}\\
+\vdots\\
+(c_{I}^{(d_{2})})_{I}\end{pmatrix}=\begin{pmatrix}w_{211}&w_{212}&\ldots&w_{21d_{1}}\\
+\vdots&\vdots&\ddots&\vdots\\
+w_{2d_{2}1}&w_{2d_{2}2}&\ldots&w_{2d_{2}d_{1}}\end{pmatrix}\begin{pmatrix}(W_{1,1})^{I}\\
+\vdots\\
+(W_{1,d_{1}})^{I}\end{pmatrix},
+where 
+I
+I
+ ranges over all multiindices in 
+(
+[
+d
+0
+]
+r
+)
+\binom{[d_{0}]}{r}
+ and 
+(
+W
+1
+,
+i
+)
+I
+(W_{1,i})^{I}
+ denotes the row consisting of all degree-
+r
+r
+ monomials formed by entries of the 
+i
+th
+i^{\text{th}}
+ row of 
+W
+1
+W_{1}
+ with the corresponding multinomial coefficients.
+We want to show that any real 
+d
+2
+×
+N
+d_{2}\times N
+ matrix 
+C
+C
+ can be written in this form.
+If 
+d
+1
+≥
+N
+d_{1}\geq N
+ then for a general choice of parameters 
+W
+1
+W_{1}
+ this matrix has a left-inverse with real entries and hence the system above can be solved over the reals.
+∎
+Definition 3.8
+.
+Let 
+S
+d
+,
+k
+n
+=
+{
+T
+∈
+Sym
+d
+⁡
+(
+ℝ
+n
+)
+:
+ symmetric rank of 
+​
+T
+​
+ is 
+​
+k
+}
+S^{n}_{d,k}=\{T\in\Sym_{d}(\mathbb{R}^{n}):\text{ symmetric rank of }T\text{ is }k\}
+; if 
+S
+d
+,
+k
+n
+⊆
+Sym
+d
+⁡
+(
+ℝ
+n
+)
+S^{n}_{d,k}\subseteq\Sym_{d}(\mathbb{R}^{n})
+ has non-empty interior with respect to the Euclidean topology, 
+k
+k
+ is called a 
+typical symmetric rank
+ for order-
+d
+d
+ tensors of dimension 
+n
+n
+.
+Over the complex numbers, there is a unique typical symmetric rank which is called the generic symmetric rank. However, over the real numbers there can be multiple typical symmetric ranks. A neuromanifold 
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+ having non-empty interior with respect to the Euclidean topology implies that the architecture 
+(
+𝐝
+,
+r
+)
+(\mathbf{d},r)
+ is filling. The importance of typical symmetric ranks for PNNs comes from the following fact which is a consequence of the discussions above and the inclusion 
+S
+d
+,
+k
+n
+⊆
+ℳ
+(
+n
+,
+k
+,
+1
+)
+,
+d
+S^{n}_{d,k}\subseteq\mathcal{M}_{(n,k,1),d}
+.
+Theorem 3.9
+.
+If 
+k
+k
+ is a typical symmetric rank for order-
+d
+d
+ tensors of dimension 
+n
+n
+ then the architecture 
+𝐝
+=
+(
+n
+,
+k
+,
+1
+)
+,
+r
+=
+d
+\mathbf{d}=(n,k,1),\penalty\ r=d
+ is filling, i.e., 
+𝒱
+𝐝
+,
+r
+=
+Sym
+d
+⁡
+(
+ℝ
+n
+)
+\mathcal{V}_{\mathbf{d},r}=\Sym_{d}(\mathbb{R}^{n})
+. Moreover, if there are two typical symmetric ranks 
+k
+<
+k
+′
+k<k^{\prime}
+ then 
+cl
+Eucl
+​
+(
+ℳ
+(
+n
+,
+k
+,
+1
+)
+,
+d
+)
+⊊
+Sym
+d
+⁡
+(
+ℝ
+n
+)
+\mathrm{cl_{Eucl}}(\mathcal{M}_{(n,k,1),d})\subsetneq\Sym_{d}(\mathbb{R}^{n})
+ where 
+cl
+Eucl
+\mathrm{cl_{Eucl}}
+ denotes the closure with respect to the Euclidean topology.
+Let us consider the case 
+n
+=
+2
+n=2
+ first; this is the setting of the paper 
+[
+CO12
+]
+. We summarize their findings below.
+Theorem 3.10
+(
+[
+CO12
+, Proposition 2.2 & Main Theorem]
+)
+.
+(1)
+S
+3
+,
+k
+2
+S^{2}_{3,k}
+ has non-empty interior only for 
+k
+∈
+{
+2
+,
+3
+}
+k\in\{2,3\}
+.
+(2)
+S
+4
+,
+k
+2
+S^{2}_{4,k}
+ has non-empty interior only for 
+k
+∈
+{
+3
+,
+4
+}
+k\in\{3,4\}
+.
+(3)
+S
+5
+,
+k
+2
+S^{2}_{5,k}
+ has non-empty interior only for 
+k
+∈
+{
+3
+,
+4
+,
+5
+}
+k\in\{3,4,5\}
+.
+Using this result we obtain the following.
+Corollary 3.11
+.
+(1)
+𝐝
+=
+(
+2
+,
+d
+1
+,
+1
+)
+,
+r
+=
+3
+\mathbf{d}=(2,d_{1},1),\penalty\ r=3
+ is filling for 
+d
+1
+≥
+2
+d_{1}\geq 2
+ and
+cl
+Eucl
+​
+(
+ℳ
+(
+2
+,
+2
+,
+1
+)
+,
+3
+)
+⊊
+cl
+Eucl
+​
+(
+ℳ
+(
+2
+,
+3
+,
+1
+)
+,
+3
+)
+=
+Sym
+3
+⁡
+(
+ℝ
+2
+)
+.
+\mathrm{cl_{Eucl}}(\mathcal{M}_{(2,2,1),3})\subsetneq\mathrm{cl_{Eucl}}(\mathcal{M}_{(2,3,1),3})=\Sym_{3}(\mathbb{R}^{2}).
+(2)
+𝐝
+=
+(
+2
+,
+d
+1
+,
+1
+)
+,
+r
+=
+4
+\mathbf{d}=(2,d_{1},1),\penalty\ r=4
+ is filling for 
+d
+1
+≥
+3
+d_{1}\geq 3
+ and
+cl
+Eucl
+​
+(
+ℳ
+(
+2
+,
+3
+,
+1
+)
+,
+4
+)
+⊊
+cl
+Eucl
+​
+(
+ℳ
+(
+2
+,
+4
+,
+1
+)
+,
+4
+)
+=
+Sym
+4
+⁡
+(
+ℝ
+2
+)
+.
+\mathrm{cl_{Eucl}}(\mathcal{M}_{(2,3,1),4})\subsetneq\mathrm{cl_{Eucl}}(\mathcal{M}_{(2,4,1),4})=\Sym_{4}(\mathbb{R}^{2}).
+(3)
+𝐝
+=
+(
+2
+,
+d
+1
+,
+1
+)
+,
+r
+=
+5
+\mathbf{d}=(2,d_{1},1),\penalty\ r=5
+ is filling for 
+d
+1
+≥
+3
+d_{1}\geq 3
+ and
+cl
+Eucl
+​
+(
+ℳ
+(
+2
+,
+3
+,
+1
+)
+,
+5
+)
+⊊
+cl
+Eucl
+​
+(
+ℳ
+(
+2
+,
+4
+,
+1
+)
+,
+5
+)
+⊊
+cl
+Eucl
+​
+(
+ℳ
+(
+2
+,
+5
+,
+1
+)
+,
+5
+)
+=
+Sym
+3
+⁡
+(
+ℝ
+2
+)
+.
+\mathrm{cl_{Eucl}}(\mathcal{M}_{(2,3,1),5})\subsetneq\mathrm{cl_{Eucl}}(\mathcal{M}_{(2,4,1),5})\subsetneq\mathrm{cl_{Eucl}}(\mathcal{M}_{(2,5,1),5})=\Sym_{3}(\mathbb{R}^{2}).
+Some similar results on typical symmetric ranks are also known for higher dimensional tensors though the difficulty increases quickly. We summarize some consequences below.
+Corollary 3.12
+.
+(1)
+𝐝
+=
+(
+3
+,
+d
+1
+,
+1
+)
+,
+r
+=
+4
+\mathbf{d}=(3,d_{1},1),\penalty\ r=4
+ is filling for 
+d
+1
+≥
+6
+d_{1}\geq 6
+ and
+cl
+Eucl
+​
+(
+ℳ
+(
+3
+,
+6
+,
+1
+)
+,
+4
+)
+⊊
+cl
+Eucl
+​
+(
+ℳ
+(
+3
+,
+7
+,
+1
+)
+,
+4
+)
+⊆
+cl
+Eucl
+​
+(
+ℳ
+(
+3
+,
+8
+,
+1
+)
+,
+4
+)
+=
+Sym
+4
+⁡
+(
+ℝ
+3
+)
+.
+\mathrm{cl_{Eucl}}(\mathcal{M}_{(3,6,1),4})\subsetneq\mathrm{cl_{Eucl}}(\mathcal{M}_{(3,7,1),4})\subseteq\mathrm{cl_{Eucl}}(\mathcal{M}_{(3,8,1),4})=\Sym_{4}(\mathbb{R}^{3}).
+(2)
+𝐝
+=
+(
+3
+,
+d
+1
+,
+1
+)
+,
+r
+=
+5
+\mathbf{d}=(3,d_{1},1),\penalty\ r=5
+ is filling for 
+d
+1
+≥
+7
+d_{1}\geq 7
+ and
+cl
+Eucl
+​
+(
+ℳ
+(
+3
+,
+7
+,
+1
+)
+,
+5
+)
+⊊
+cl
+Eucl
+​
+(
+ℳ
+(
+3
+,
+8
+,
+1
+)
+,
+5
+)
+⊆
+⋯
+⊆
+cl
+Eucl
+​
+(
+ℳ
+(
+3
+,
+13
+,
+1
+)
+,
+5
+)
+=
+Sym
+5
+⁡
+(
+ℝ
+3
+)
+.
+\mathrm{cl_{Eucl}}(\mathcal{M}_{(3,7,1),5})\subsetneq\mathrm{cl_{Eucl}}(\mathcal{M}_{(3,8,1),5})\subseteq\dots\subseteq\mathrm{cl_{Eucl}}(\mathcal{M}_{(3,13,1),5})=\Sym_{5}(\mathbb{R}^{3}).
+(3)
+𝐝
+=
+(
+4
+,
+d
+1
+,
+1
+)
+,
+r
+=
+3
+\mathbf{d}=(4,d_{1},1),\penalty\ r=3
+ is filling for 
+d
+1
+≥
+5
+d_{1}\geq 5
+ and
+cl
+Eucl
+​
+(
+ℳ
+(
+4
+,
+5
+,
+1
+)
+,
+3
+)
+⊊
+cl
+Eucl
+​
+(
+ℳ
+(
+4
+,
+6
+,
+1
+)
+,
+3
+)
+=
+Sym
+3
+⁡
+(
+ℝ
+4
+)
+\mathrm{cl_{Eucl}}(\mathcal{M}_{(4,5,1),3})\subsetneq\mathrm{cl_{Eucl}}(\mathcal{M}_{(4,6,1),3})=\Sym_{3}(\mathbb{R}^{4})
+Proof.
+The statements follow from Theorem 
+3.9
+ and 
+[
+BBO18
+, Theorem 1.2]
+.
+∎
+Little is known about the algebraic boundaries in these cases. Theorem 4.1 in 
+[
+MMSV16
+]
+ implies that 
+∂
+alg
+(
+ℳ
+(
+3
+,
+6
+,
+1
+)
+,
+4
+)
+\partial_{\text{alg}}(\mathcal{M}_{(3,6,1),4})
+ contains an irreducible component of degree 51.
+4. 
+Neurovarieties
+In this section, we will describe different approaches to studying neurovarieties. We start by studying the fibers of a neurovariety to characterize the neurovariety 
+𝒱
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+\mathcal{V}_{(2,2,d_{2}),2}
+ (
+Proposition
+4.1
+) and partially the neuromanifold 
+ℳ
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+\mathcal{M}_{(2,2,d_{2}),2}
+ (
+Proposition
+4.2
+). We use Grassmannians to describe the neurovariety 
+𝒱
+(
+3
+,
+3
+,
+3
+)
+,
+2
+\mathcal{V}_{(3,3,3),2}
+ (
+Example
+4.4
+) and apply the Hilbert–Burch Theorem to study 
+𝒱
+(
+2
+,
+2
+,
+2
+,
+2
+)
+,
+2
+\mathcal{V}_{(2,2,2,2),2}
+ (
+Example
+4.6
+).
+Proposition 4.1
+.
+The neurovariety 
+𝒱
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+\mathcal{V}_{(2,2,d_{2}),2}
+ is the vanishing locus of all 
+3
+×
+3
+3\times 3
+ minors of
+C
+d
+2
+=
+(
+c
+11
+(
+1
+)
+c
+12
+(
+1
+)
+c
+22
+(
+1
+)
+c
+11
+(
+d
+2
+)
+c
+12
+(
+d
+2
+)
+c
+22
+(
+d
+2
+)
+)
+=
+(
+w
+211
+w
+212
+w
+2
+​
+d
+2
+​
+1
+w
+2
+​
+d
+2
+​
+2
+)
+​
+(
+w
+111
+2
+2
+​
+w
+111
+​
+w
+112
+w
+112
+2
+w
+121
+2
+2
+​
+w
+121
+​
+w
+122
+w
+122
+2
+)
+.
+C_{d_{2}}=\begin{pmatrix}c_{11}^{(1)}&c_{12}^{(1)}&c_{22}^{(1)}\\
+\vdots&\vdots&\vdots\\
+c_{11}^{(d_{2})}&c_{12}^{(d_{2})}&c_{22}^{(d_{2})}\end{pmatrix}=\begin{pmatrix}w_{211}&w_{212}\\
+\vdots&\vdots\\
+w_{2d_{2}1}&w_{2d_{2}2}\end{pmatrix}\begin{pmatrix}w_{111}^{2}&2w_{111}w_{112}&w_{112}^{2}\\
+w_{121}^{2}&2w_{121}w_{122}&w_{122}^{2}\end{pmatrix}.
+Proof.
+Clearly 
+𝒱
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+⊆
+𝒱
+⁡
+(
+⟨
+3
+×
+3
+​
+ minors of 
+​
+C
+d
+2
+⟩
+)
+\mathcal{V}_{(2,2,d_{2}),2}\subseteq\mathcal{V}(\langle 3\times 3\text{ minors of }C_{d_{2}}\rangle)
+ as 
+rk
+⁡
+(
+C
+d
+2
+)
+≤
+2
+\rk(C_{d_{2}})\leq 2
+. Now, 
+𝒱
+⁡
+(
+⟨
+3
+×
+3
+​
+ minors of 
+​
+C
+d
+2
+⟩
+)
+\mathcal{V}(\langle 3\times 3\text{ minors of }C_{d_{2}}\rangle)
+ is irreducible and 
+dim
+(
+𝒱
+⁡
+(
+⟨
+3
+×
+3
+​
+ minors of 
+​
+C
+d
+2
+⟩
+)
+)
+=
+2
+​
+d
+2
++
+2
+\dim(\mathcal{V}(\langle 3\times 3\text{ minors of }C_{d_{2}}\rangle))=2d_{2}+2
+, see e.g. 
+[
+BV06
+, Proposition 1.1]
+. Consider the parameter map and the corresponding neurovariety
+Ψ
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+:
+ℝ
+2
+×
+2
+×
+ℝ
+d
+2
+×
+2
+⏟
+dim
+2
+​
+d
+2
++
+4
+→
+(
+Sym
+2
+⁡
+(
+ℝ
+2
+)
+)
+d
+2
+,
+𝒱
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+=
+im
+⁡
+(
+Ψ
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+)
+¯
+.
+\Psi_{(2,2,d_{2}),2}\colon\underbrace{\mathbb{R}^{2\times 2}\times\mathbb{R}^{d_{2}\times 2}}_{\dim 2d_{2}+4}\rightarrow(\Sym_{2}(\mathbb{R}^{2}))^{d_{2}},\quad\mathcal{V}_{(2,2,d_{2}),2}=\overline{\im(\Psi_{(2,2,d_{2}),2})}.
+The fibers of 
+Ψ
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+\Psi_{(2,2,d_{2}),2}
+ over 
+𝒱
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+\mathcal{V}_{(2,2,d_{2}),2}
+ are at least 
+2
+2
+-dimensional by Lemma 
+2.7
+.
+For 
+d
+2
+=
+2
+d_{2}=2
+, one can computationally check that over a generic matrix 
+C
+d
+2
+C_{d_{2}}
+ the fiber is 2-dimensional. Since generic fibers are at least 2-dimensional, they are exactly 2-dimensional.
+For the case 
+d
+2
+>
+2
+d_{2}>2
+, note that by setting the parameters 
+w
+211
+,
+w
+212
+,
+…
+,
+w
+2
+​
+(
+d
+2
+−
+1
+)
+​
+1
+,
+w
+2
+​
+(
+d
+2
+−
+1
+)
+​
+2
+w_{211},w_{212},\dots,w_{2(d_{2}-1)1},w_{2(d_{2}-1)2}
+ to zero and varying 
+w
+2
+​
+d
+2
+​
+1
+,
+w
+2
+​
+d
+2
+​
+2
+w_{2d_{2}1},w_{2d_{2}2}
+, we obtain a 2-dimensional family not contained in the embedding of 
+ℳ
+(
+2
+,
+2
+,
+d
+2
+−
+1
+)
+,
+2
+\mathcal{M}_{(2,2,d_{2}-1),2}
+ into 
+ℳ
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+\mathcal{M}_{(2,2,d_{2}),2}
+. As the dimension of the parameter space increases by two when passing from 
+d
+2
+−
+1
+d_{2}-1
+ to 
+d
+2
+d_{2}
+, the generic fiber is 2-dimensional by induction.
+Thus 
+dim
+(
+𝒱
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+)
+=
+2
+​
+d
+2
++
+2
+\dim(\mathcal{V}_{(2,2,d_{2}),2})=2d_{2}+2
+ and moreover 
+𝒱
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+\mathcal{V}_{(2,2,d_{2}),2}
+ is irreducible, hence 
+OPEN
+𝒱
+(
+2
+,
+2
+,
+d
+2
+)
+,
+2
+=
+𝒱
+⁡
+(
+⟨
+3
+×
+3
+​
+ minors of 
+​
+C
+d
+2
+⟩
+)
+)
+\mathcal{V}_{(2,2,d_{2}),2}=\mathcal{V}(\langle 3\times 3\text{ minors of }C_{d_{2}}\rangle))
+.
+∎
+Proposition 4.2
+.
+For 
+𝐝
+=
+(
+2
+,
+2
+,
+d
+2
+)
+\mathbf{d}=(2,2,d_{2})
+ (
+d
+2
+≥
+2
+d_{2}\geq 2
+) and 
+r
+=
+2
+r=2
+, the Euclidean closure of 
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+ is strictly included in 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+. In the case 
+𝐝
+=
+(
+2
+,
+2
+,
+2
+)
+\mathbf{d}=(2,2,2)
+, we have
+C
+=
+(
+c
+11
+(
+1
+)
+c
+12
+(
+1
+)
+c
+22
+(
+1
+)
+c
+11
+(
+2
+)
+c
+12
+(
+2
+)
+c
+22
+(
+2
+)
+)
+∈
+ℳ
+(
+2
+,
+2
+,
+2
+)
+,
+2
+C=\begin{pmatrix}c_{11}^{(1)}&c_{12}^{(1)}&c_{22}^{(1)}\\
+c_{11}^{(2)}&c_{12}^{(2)}&c_{22}^{(2)}\end{pmatrix}\in\mathcal{M}_{(2,2,2),2}
+if and only if
+M
+1
+,
+3
+​
+(
+C
+)
+2
+≥
+M
+1
+,
+2
+​
+(
+C
+)
+​
+M
+2
+,
+3
+​
+(
+C
+)
+,
+M_{1,3}(C)^{2}\geq M_{1,2}(C)M_{2,3}(C),
+where 
+M
+i
+,
+j
+​
+(
+C
+)
+M_{i,j}(C)
+ is the 
+2
+×
+2
+2\times 2
+ minor of 
+C
+C
+ obtained by taking the determinant of the 
+i
+th
+i^{\text{th}}
+ and 
+j
+th
+j^{\text{th}}
+ column.
+In particular, the algebraic boundary of 
+ℳ
+(
+2
+,
+2
+,
+2
+)
+,
+2
+\mathcal{M}_{(2,2,2),2}
+ is given by
+∂
+alg
+ℳ
+(
+2
+,
+2
+,
+2
+)
+,
+2
+=
+𝒱
+⁡
+(
+M
+1
+,
+3
+​
+(
+C
+)
+2
+−
+M
+1
+,
+2
+​
+(
+C
+)
+​
+M
+2
+,
+3
+​
+(
+C
+)
+)
+.
+\partial_{\text{alg}}\mathcal{M}_{(2,2,2),2}=\mathcal{V}(M_{1,3}(C)^{2}-M_{1,2}(C)M_{2,3}(C)).
+Proof.
+First consider the case 
+𝐝
+=
+(
+2
+,
+2
+,
+2
+)
+\mathbf{d}=(2,2,2)
+. We are looking for conditions on a matrix 
+A
+∈
+ℝ
+2
+×
+3
+A\in\mathbb{R}^{2\times 3}
+ such that there exists 
+G
+∈
+G
+​
+L
+2
+​
+(
+ℝ
+)
+G\in GL_{2}(\mathbb{R})
+ with
+(4.1)
+(
+g
+11
+g
+12
+g
+21
+g
+22
+)
+​
+(
+a
+11
+a
+12
+a
+13
+a
+21
+a
+22
+a
+23
+)
+=
+(
+w
+111
+2
+2
+​
+w
+111
+​
+w
+112
+w
+112
+2
+w
+121
+2
+2
+​
+w
+121
+​
+w
+122
+w
+122
+2
+)
+.
+\begin{pmatrix}g_{11}&g_{12}\\
+g_{21}&g_{22}\\
+\end{pmatrix}\begin{pmatrix}a_{11}&a_{12}&a_{13}\\
+a_{21}&a_{22}&a_{23}\end{pmatrix}=\begin{pmatrix}w_{111}^{2}&2w_{111}w_{112}&w_{112}^{2}\\
+w_{121}^{2}&2w_{121}w_{122}&w_{122}^{2}\end{pmatrix}.
+We consider two cases: when both 
+w
+111
+,
+w
+121
+w_{111},w_{121}
+ are non-zero and when at least one of them is zero. If 
+w
+111
+w_{111}
+ and 
+w
+121
+w_{121}
+ are non-zero, then after rescaling, w.l.o.g. we can assume 
+w
+111
+=
+w
+121
+=
+1
+w_{111}=w_{121}=1
+. Each matrix entry in (
+4.1
+) yields a polynomial equation; these generate an ideal 
+I
+I
+ in the polynomial ring
+
+ℝ
+⁡
+[
+g
+11
+,
+…
+,
+g
+22
+,
+w
+112
+,
+w
+122
+,
+a
+11
+,
+…
+,
+a
+23
+]
+.
+\mathbb{R}[g_{11},\dots,g_{22},w_{112},w_{122},a_{11},\dots,a_{23}].
+
+Two generators in a Gröbner basis of 
+I
+I
+ with respect to lexicographic ordering are
+(4.2)
+w
+1
+​
+i
+​
+2
+2
+​
+a
+11
+​
+a
+22
+−
+w
+1
+​
+i
+​
+2
+2
+​
+a
+12
+​
+a
+21
+−
+2
+​
+w
+1
+​
+i
+​
+2
+​
+a
+11
+​
+a
+23
++
+2
+​
+w
+1
+​
+i
+​
+2
+​
+a
+13
+​
+a
+21
++
+a
+12
+​
+a
+23
+−
+a
+13
+​
+a
+22
+,
+w_{1i2}^{2}a_{11}a_{22}-w_{1i2}^{2}a_{12}a_{21}-2w_{1i2}a_{11}a_{23}+2w_{1i2}a_{13}a_{21}+a_{12}a_{23}-a_{13}a_{22},
+where 
+i
+∈
+{
+1
+,
+2
+}
+i\in\{1,2\}
+. These quadratic equations in 
+w
+1
+​
+i
+​
+2
+w_{1i2}
+ have discriminant
+Δ
+=
+M
+1
+,
+3
+​
+(
+A
+)
+2
+−
+M
+1
+,
+2
+​
+(
+A
+)
+​
+M
+2
+,
+3
+​
+(
+A
+)
+,
+\Delta=M_{1,3}(A)^{2}-M_{1,2}(A)M_{2,3}(A),
+where 
+A
+A
+ is the 
+2
+×
+3
+2\times 3
+ matrix with entries 
+a
+i
+​
+j
+a_{ij}
+ from (
+4.1
+). The denominator of the quadratic formula for (
+4.2
+) is 
+M
+1
+,
+2
+​
+(
+A
+)
+M_{1,2}(A)
+. Therefore, real solutions to (
+4.1
+) with 
+w
+111
+,
+w
+121
+w_{111},w_{121}
+ non-zero exist if and only if 
+M
+1
+,
+3
+​
+(
+A
+)
+2
+≥
+M
+1
+,
+2
+​
+(
+A
+)
+​
+M
+2
+,
+3
+​
+(
+A
+)
+M_{1,3}(A)^{2}\geq M_{1,2}(A)M_{2,3}(A)
+ and 
+M
+1
+,
+2
+​
+(
+A
+)
+≠
+0
+M_{1,2}(A)\neq 0
+.
+When at least one 
+w
+1
+​
+i
+​
+1
+=
+0
+w_{1i1}=0
+, then possibly after rescaling, the Gröbner basis of 
+I
+I
+ with respect to the lexicographic ordering contains 
+w
+i
+​
+12
+2
+​
+a
+11
+​
+a
+22
+−
+w
+i
+​
+12
+2
+​
+a
+12
+​
+a
+21
+w_{i12}^{2}a_{11}a_{22}-w_{i12}^{2}a_{12}a_{21}
+. This implies 
+w
+i
+​
+12
+=
+0
+w_{i12}=0
+ or 
+M
+1
+,
+2
+​
+(
+A
+)
+=
+0
+M_{1,2}(A)=0
+. The former condition implies 
+M
+1
+,
+2
+​
+(
+A
+)
+=
+0
+M_{1,2}(A)=0
+, so we do not have to consider it separately. When 
+M
+1
+,
+2
+​
+(
+A
+)
+=
+0
+M_{1,2}(A)=0
+, the inequality 
+M
+1
+,
+3
+​
+(
+A
+)
+2
+≥
+M
+1
+,
+2
+​
+(
+A
+)
+​
+M
+2
+,
+3
+​
+(
+A
+)
+M_{1,3}(A)^{2}\geq M_{1,2}(A)M_{2,3}(A)
+ is automatically satisfied. Therefore, real solutions to (
+4.1
+) with at least one of 
+w
+111
+,
+w
+121
+w_{111},w_{121}
+ zero exist if and only if 
+M
+1
+,
+3
+​
+(
+A
+)
+2
+≥
+M
+1
+,
+2
+​
+(
+A
+)
+​
+M
+2
+,
+3
+​
+(
+A
+)
+M_{1,3}(A)^{2}\geq M_{1,2}(A)M_{2,3}(A)
+ and 
+M
+1
+,
+2
+​
+(
+A
+)
+=
+0
+M_{1,2}(A)=0
+. Combining the two cases gives that real solutions to (
+4.1
+) exist if and only if 
+M
+1
+,
+3
+​
+(
+A
+)
+2
+≥
+M
+1
+,
+2
+​
+(
+A
+)
+​
+M
+2
+,
+3
+​
+(
+A
+)
+M_{1,3}(A)^{2}\geq M_{1,2}(A)M_{2,3}(A)
+.
+As this inequality remains unchanged after multiplying 
+A
+A
+ with a 
+2
+×
+2
+2\times 2
+ matrix (both sides get multiplied by the squared determinant of the matrix which is positive), we conclude 
+C
+∈
+ℳ
+(
+2
+,
+2
+,
+2
+)
+,
+2
+C\in\mathcal{M}_{(2,2,2),2}
+ if and only if
+
+M
+1
+,
+3
+​
+(
+C
+)
+2
+≥
+M
+1
+,
+2
+​
+(
+C
+)
+​
+M
+2
+,
+3
+​
+(
+C
+)
+M_{1,3}(C)^{2}\geq M_{1,2}(C)M_{2,3}(C)
+.
+In the case 
+d
+2
+>
+2
+d_{2}>2
+, it is clear that at least for any two rows 
+i
+,
+j
+i,j
+ of 
+C
+C
+, the inequality
+M
+1
+,
+3
+​
+(
+C
+i
+,
+j
+)
+2
+≥
+M
+1
+,
+2
+​
+(
+C
+i
+,
+j
+)
+​
+M
+2
+,
+3
+​
+(
+C
+i
+,
+j
+)
+M_{1,3}(C_{i,j})^{2}\geq M_{1,2}(C_{i,j})M_{2,3}(C_{i,j})
+needs to hold. Thus we get a full-dimensional set of points in 
+𝒱
+𝐝
+,
+r
+∖
+ℳ
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}\setminus\mathcal{M}_{\mathbf{d},r}
+, hence 
+cl
+Eucl
+​
+(
+ℳ
+𝐝
+,
+r
+)
+⊊
+𝒱
+𝐝
+,
+r
+\mathrm{cl_{Eucl}}(\mathcal{M}_{\mathbf{d},r})\subsetneq\mathcal{V}_{\mathbf{d},r}
+.
+∎
+Remark 4.3
+.
+For example, if 
+A
+=
+(
+a
+⋆
+−
+a
+b
+⋆
+−
+b
+)
+A=\begin{pmatrix}a&\star&-a\\
+b&\star&-b\end{pmatrix}
+ in the proof of 
+Proposition
+4.2
+, then the equation
+(
+g
+11
+g
+12
+g
+21
+g
+22
+)
+​
+(
+a
+⋆
+−
+a
+b
+⋆
+−
+b
+)
+=
+(
+w
+111
+2
+2
+​
+w
+111
+​
+w
+112
+w
+112
+2
+w
+121
+2
+2
+​
+w
+121
+​
+w
+122
+w
+122
+2
+)
+\begin{pmatrix}g_{11}&g_{12}\\
+g_{21}&g_{22}\\
+\end{pmatrix}\begin{pmatrix}a&\star&-a\\
+b&\star&-b\end{pmatrix}=\begin{pmatrix}w_{111}^{2}&2w_{111}w_{112}&w_{112}^{2}\\
+w_{121}^{2}&2w_{121}w_{122}&w_{122}^{2}\end{pmatrix}
+does not have a solution.
+This example can be extended to any architecture 
+𝐝
+=
+(
+d
+0
+,
+2
+,
+d
+2
+)
+\mathbf{d}=(d_{0},2,d_{2})
+ with 
+d
+0
+,
+d
+2
+≥
+2
+d_{0},d_{2}\geq 2
+ and activation degree 
+r
+=
+2
+r=2
+ to show that the neuromanifold 
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+ is not equal to 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+.
+In the rest of the section, we use more advanced tools from algebraic geometry to compute neurovarieties. A naïve elimination approach fails to compute these varieties.
+Example 4.4
+.
+Consider the architecture 
+𝐝
+=
+(
+3
+,
+3
+,
+3
+)
+,
+r
+=
+2
+\mathbf{d}=(3,3,3),\penalty\ r=2
+; the image of 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ consists of three linear combinations of three squares of linear forms in three variables.
+Let us take a 
+3
+×
+6
+3\times 6
+ matrix representing the embedding of 
+ℙ
+x
+2
+×
+ℙ
+y
+2
+×
+ℙ
+z
+2
+\mathbb{P}^{2}_{x}\times\mathbb{P}^{2}_{y}\times\mathbb{P}^{2}_{z}
+ via the degree two Veronese map (with corresponding scaling) into 
+ℙ
+5
+×
+ℙ
+5
+×
+ℙ
+5
+\mathbb{P}^{5}\times\mathbb{P}^{5}\times\mathbb{P}^{5}
+:
+(
+x
+0
+2
+2
+​
+x
+0
+​
+x
+1
+2
+​
+x
+0
+​
+x
+2
+x
+1
+2
+2
+​
+x
+1
+​
+x
+2
+x
+2
+2
+y
+0
+2
+2
+​
+y
+0
+​
+y
+1
+2
+​
+y
+0
+​
+y
+2
+y
+1
+2
+2
+​
+y
+1
+​
+y
+2
+y
+2
+2
+z
+0
+2
+2
+​
+z
+0
+​
+z
+1
+2
+​
+z
+0
+​
+z
+2
+z
+1
+2
+2
+​
+z
+1
+​
+z
+2
+z
+2
+2
+)
+\begin{pmatrix}x_{0}^{2}&2x_{0}x_{1}&2x_{0}x_{2}&x_{1}^{2}&2x_{1}x_{2}&x_{2}^{2}\\
+y_{0}^{2}&2y_{0}y_{1}&2y_{0}y_{2}&y_{1}^{2}&2y_{1}y_{2}&y_{2}^{2}\\
+z_{0}^{2}&2z_{0}z_{1}&2z_{0}z_{2}&z_{1}^{2}&2z_{1}z_{2}&z_{2}^{2}\\
+\end{pmatrix}
+By taking all the 
+3
+×
+3
+3\times 3
+ minors (20 in total) of this matrix, we get an embedding into the Grassmannian 
+Gr
+⁡
+(
+3
+,
+6
+)
+\gr(3,6)
+ in its Plücker coordinates.
+The ideal of this variety in Plücker coordinates can be found using elimination. Its dimension is six and its degree is 57.
+Now for each of the 20 Plücker coordinates we substitute a 
+3
+×
+3
+3\times 3
+ minor of a 
+3
+×
+6
+3\times 6
+ matrix of unknowns, where each unknown represents a coefficient of a degree two monomial (we view 
+ℙ
+5
+\mathbb{P}^{5}
+ as the space of all homogeneous quadrics in three variables):
+C
+=
+(
+c
+11
+(
+1
+)
+c
+12
+(
+1
+)
+…
+c
+33
+(
+1
+)
+c
+11
+(
+2
+)
+c
+12
+(
+2
+)
+…
+c
+33
+(
+2
+)
+c
+11
+(
+3
+)
+c
+12
+(
+3
+)
+…
+c
+33
+(
+3
+)
+)
+C=\begin{pmatrix}c_{11}^{(1)}&c_{12}^{(1)}&\dots&c_{33}^{(1)}\\
+c_{11}^{(2)}&c_{12}^{(2)}&\dots&c_{33}^{(2)}\\
+c_{11}^{(3)}&c_{12}^{(3)}&\dots&c_{33}^{(3)}\\
+\end{pmatrix}
+The resulting ideal 
+I
+I
+ gives rise to a variety 
+X
+=
+𝒱
+⁡
+(
+I
+)
+X=\mathcal{V}(I)
+. This variety has two irreducible components: one is given by the vanishing of all 
+3
+×
+3
+3\times 3
+ minors of 
+C
+C
+, the other is the neurovariety 
+𝒱
+(
+3
+,
+3
+,
+3
+)
+,
+2
+\mathcal{V}_{(3,3,3),2}
+ embedded into 
+ℙ
+c
+(
+1
+)
+5
+×
+ℙ
+c
+(
+2
+)
+5
+×
+ℙ
+c
+(
+3
+)
+5
+\mathbb{P}^{5}_{c^{(1)}}\times\mathbb{P}^{5}_{c^{(2)}}\times\mathbb{P}^{5}_{c^{(3)}}
+.
+The codimension of 
+𝒱
+(
+3
+,
+3
+,
+3
+)
+,
+2
+⊆
+ℙ
+c
+(
+1
+)
+5
+×
+ℙ
+c
+(
+2
+)
+5
+×
+ℙ
+c
+(
+3
+)
+5
+\mathcal{V}_{(3,3,3),2}\subseteq\mathbb{P}^{5}_{c^{(1)}}\times\mathbb{P}^{5}_{c^{(2)}}\times\mathbb{P}^{5}_{c^{(3)}}
+ is three, hence the affine dimension is 
+dim
+(
+𝒱
+𝐝
+,
+r
+)
+=
+18
+−
+3
+=
+15
+\dim(\mathcal{V}_{\mathbf{d},r})=18-3=15
+.
+The first part of the computation can be found in 
+[
+BS11
+]
+; we implemented the whole procedure and made it available at 
+[
+KLW24
+]
+.
+We would like to thank Bernd Sturmfels for telling us about the following example; the computation is motivated by the Hilbert–Burch Theorem, see for instance 
+[
+Eis13
+, Theorem 20.15]
+.
+Theorem 4.5
+(Hilbert–Burch)
+.
+Let 
+R
+R
+ be a local ring with an ideal 
+I
+⊂
+R
+I\subset R
+ such that
+R
+n
+→
+𝑓
+R
+m
+→
+R
+→
+R
+/
+I
+→
+0
+R^{n}\xrightarrow{f}R^{m}\rightarrow R\rightarrow R/I\rightarrow 0
+is a free resolution of 
+R
+/
+I
+R/I
+, then 
+m
+=
+n
+−
+1
+m=n-1
+ and 
+I
+=
+a
+​
+J
+I=aJ
+ where 
+a
+a
+ is a regular element of 
+R
+R
+ and 
+J
+J
+ is a depth-two ideal generated by all 
+m
+×
+m
+m\times m
+ minors of the matrix representing 
+f
+f
+.
+Consider the architecture 
+(
+𝐝
+=
+(
+2
+,
+2
+,
+2
+,
+2
+)
+,
+r
+=
+2
+)
+(\mathbf{d}=(2,2,2,2),r=2)
+. We expect that 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ has dimension eight and thus has codimension two in 
+(
+Sym
+4
+⁡
+(
+ℝ
+2
+)
+)
+2
+(\Sym_{4}(\mathbb{R}^{2}))^{2}
+. Therefore, we can hope that by the Hilbert–Burch Theorem we can find a matrix whose minors generate the ideal of 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+. Again, we work in projective space, i.e., we consider 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ as a projective variety inside 
+ℙ
+c
+(
+1
+)
+4
+×
+ℙ
+c
+(
+2
+)
+4
+\mathbb{P}^{4}_{c^{(1)}}\times\mathbb{P}^{4}_{c^{(2)}}
+.
+Example 4.6
+.
+One finds that the ideal cutting out 
+𝒱
+(
+2
+,
+2
+,
+2
+,
+2
+)
+,
+2
+⊆
+ℙ
+c
+(
+1
+)
+4
+×
+ℙ
+c
+(
+2
+)
+4
+\mathcal{V}_{(2,2,2,2),2}\subseteq\mathbb{P}^{4}_{c^{(1)}}\times\mathbb{P}^{4}_{c^{(2)}}
+ is generated by the 
+5
+×
+5
+5\times 5
+ minors of the following matrix
+(
+c
+1112
+(
+2
+)
+−
+c
+1111
+(
+2
+)
+0
+c
+1112
+(
+1
+)
+−
+c
+1111
+(
+1
+)
+0
+4
+​
+c
+1122
+(
+2
+)
+−
+c
+1112
+(
+2
+)
+8
+​
+c
+1111
+(
+2
+)
+4
+​
+c
+1122
+(
+1
+)
+−
+c
+1112
+(
+1
+)
+8
+​
+c
+1111
+(
+1
+)
+8
+​
+c
+1222
+(
+2
+)
+0
+8
+​
+c
+1112
+(
+2
+)
+8
+​
+c
+1222
+(
+1
+)
+0
+8
+​
+c
+1112
+(
+1
+)
+8
+​
+c
+2222
+(
+2
+)
+c
+1222
+(
+2
+)
+4
+​
+c
+1122
+(
+2
+)
+8
+​
+c
+2222
+(
+1
+)
+c
+1222
+(
+1
+)
+4
+​
+c
+1122
+(
+1
+)
+0
+c
+2222
+(
+2
+)
+c
+1222
+(
+2
+)
+0
+c
+2222
+(
+1
+)
+c
+1222
+(
+1
+)
+)
+.
+\begin{pmatrix}[r]c_{1112}^{(2)}&-c_{1111}^{(2)}&\makebox[20.77208pt][c]{0}&c_{1112}^{(1)}&-c_{1111}^{(1)}&\makebox[20.77208pt][c]{0}\\
+4c_{1122}^{(2)}&-c_{1112}^{(2)}&8c_{1111}^{(2)}&4c_{1122}^{(1)}&-c_{1112}^{(1)}&8c_{1111}^{(1)}\\
+8c_{1222}^{(2)}&\makebox[20.77208pt][c]{0}&8c_{1112}^{(2)}&8c_{1222}^{(1)}&\makebox[20.77208pt][c]{0}&8c_{1112}^{(1)}\\
+8c_{2222}^{(2)}&c_{1222}^{(2)}&4c_{1122}^{(2)}&8c_{2222}^{(1)}&c_{1222}^{(1)}&4c_{1122}^{(1)}\\
+\makebox[20.77208pt][c]{0}&c_{2222}^{(2)}&c_{1222}^{(2)}&\makebox[20.77208pt][c]{0}&c_{2222}^{(1)}&c_{1222}^{(1)}\\
+\end{pmatrix}.
+5. 
+Dimension
+5.1. 
+A plethora of conjectures
+Determining dimensions of neurovarieties is a difficult task and there exists a wide range of open conjectures in this direction. A classical result is the Alexander–Hirschowitz Theorem; already conjectured in the late 
+19
+th
+19^{\text{th}}
+ century, the proof was completed about a century later in 1995. Here is a formulation in the language of PNNs.
+Theorem 5.1
+(Alexander–Hirschowitz 
+[
+AH95
+]
+)
+.
+If 
+𝐝
+=
+(
+d
+0
+,
+d
+1
+,
+1
+)
+\mathbf{d}=(d_{0},d_{1},1)
+, 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ attains the expected dimension 
+min
+⁡
+{
+d
+0
+​
+d
+1
+,
+(
+d
+0
++
+r
+−
+1
+r
+)
+}
+\min\{d_{0}d_{1},\binom{d_{0}+r-1}{r}\}
+, except for the following cases:
+(1)
+r
+=
+2
+,
+ 2
+≤
+d
+1
+<
+d
+0
+r=2,\penalty\ 2\leq d_{1}<d_{0}
+,
+(2)
+r
+=
+3
+,
+d
+0
+=
+5
+,
+d
+1
+=
+7
+r=3,\penalty\ d_{0}=5,\penalty\ d_{1}=7
+ where 
+dim
+(
+𝒱
+(
+5
+,
+7
+,
+1
+)
+,
+3
+)
+=
+34
+\dim(\mathcal{V}_{(5,7,1),3})=34
+ (defect 1),
+(3)
+r
+=
+4
+,
+d
+0
+=
+3
+,
+d
+1
+=
+5
+r=4,\penalty\ d_{0}=3,\penalty\ d_{1}=5
+ where 
+dim
+(
+𝒱
+(
+3
+,
+5
+,
+1
+)
+,
+4
+)
+=
+14
+\dim(\mathcal{V}_{(3,5,1),4})=14
+ (defect 1),
+(4)
+r
+=
+4
+,
+d
+0
+=
+4
+,
+d
+1
+=
+9
+r=4,\penalty\ d_{0}=4,\penalty\ d_{1}=9
+ where 
+dim
+(
+𝒱
+(
+4
+,
+9
+,
+1
+)
+,
+4
+)
+=
+34
+\dim(\mathcal{V}_{(4,9,1),4})=34
+ (defect 1),
+(5)
+r
+=
+4
+,
+d
+0
+=
+5
+,
+d
+1
+=
+14
+r=4,\penalty\ d_{0}=5,\penalty\ d_{1}=14
+ where 
+dim
+(
+𝒱
+(
+5
+,
+14
+,
+1
+)
+,
+4
+)
+=
+69
+\dim(\mathcal{V}_{(5,14,1),4})=69
+ (defect 1).
+It is conjectured that the neurovariety attains the expected dimension for large activation degree. Compare this for example with the Alexander–Hirschowitz Theorem which tells us there exist no defective single-output two-layer neurovarieties with activation degree 
+r
+≥
+5
+r\geq 5
+.
+Conjecture 5.2
+(
+[
+KTB19
+]
+, Theorem 14)
+.
+For any fixed widths 
+𝐝
+=
+(
+d
+0
+,
+…
+,
+d
+L
+)
+\mathbf{d}=(d_{0},\dots,d_{L})
+ with 
+d
+i
+>
+1
+d_{i}>1
+ for 
+i
+=
+1
+,
+…
+,
+L
+−
+1
+i=1,\dots,L-1
+, there exists 
+r
+~
+=
+r
+~
+​
+(
+𝐝
+)
+\tilde{r}=\tilde{r}(\mathbf{d})
+ such that whenever 
+r
+>
+r
+~
+r>\tilde{r}
+, the neurovariety 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ attains the expected dimension.
+It is, however, not true that 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ being defective implies that 
+𝒱
+𝐝
+,
+r
+′
+\mathcal{V}_{\mathbf{d},r^{\prime}}
+ is defective for all 
+r
+′
+<
+r
+r^{\prime}<r
+. For example, 
+𝒱
+(
+5
+,
+7
+,
+1
+)
+,
+3
+\mathcal{V}_{(5,7,1),3}
+ has defect one whereas 
+𝒱
+(
+5
+,
+7
+,
+1
+)
+,
+2
+\mathcal{V}_{(5,7,1),2}
+ is non-defective.
+Also note that the assumption 
+d
+i
+>
+1
+d_{i}>1
+ for 
+i
+=
+1
+,
+…
+,
+L
+−
+1
+i=1,\dots,L-1
+ is necessary as is shown by the following example.
+Example 5.3
+.
+Consider the widths 
+𝐝
+=
+(
+2
+,
+1
+,
+2
+,
+1
+)
+\mathbf{d}=(2,1,2,1)
+. We claim that for any 
+r
+>
+1
+r>1
+, 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ has defect one, i.e., 
+dim
+(
+𝒱
+𝐝
+,
+r
+)
+=
+2
+\dim(\mathcal{V}_{\mathbf{d},r})=2
+. Indeed, observe that the parameter map 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ is given by
+𝐱
+\displaystyle\mathbf{x}
+↦
+(
+w
+111
+​
+x
+1
++
+w
+112
+​
+x
+2
+)
+r
+↦
+(
+w
+211
+r
+​
+(
+w
+111
+​
+x
+1
++
+w
+112
+​
+x
+2
+)
+r
+2
+w
+221
+r
+​
+(
+w
+111
+​
+x
+1
++
+w
+112
+​
+x
+2
+)
+r
+2
+)
+\displaystyle\mapsto(w_{111}x_{1}+w_{112}x_{2})^{r}\mapsto\begin{pmatrix}w_{211}^{r}(w_{111}x_{1}+w_{112}x_{2})^{r^{2}}\\
+w_{221}^{r}(w_{111}x_{1}+w_{112}x_{2})^{r^{2}}\\
+\end{pmatrix}
+↦
+(
+w
+311
+​
+w
+211
+r
++
+w
+312
+​
+w
+221
+r
+)
+​
+(
+w
+111
+​
+x
+1
++
+w
+112
+​
+x
+2
+)
+r
+2
+.
+\displaystyle\mapsto(w_{311}w_{211}^{r}+w_{312}w_{221}^{r})(w_{111}x_{1}+w_{112}x_{2})^{r^{2}}.
+As all weights coming from the last two layers can be factored out, we get that 
+𝒱
+𝐝
+,
+r
+≅
+𝒱
+(
+2
+,
+1
+,
+1
+,
+1
+)
+,
+r
+\mathcal{V}_{\mathbf{d},r}\cong\mathcal{V}_{(2,1,1,1),r}
+. The latter neurovariety is immediately seen to have dimension two. This generalizes to the following statement.
+Proposition 5.4
+.
+Let 
+𝐝
+0
+∈
+ℕ
+n
+0
+\mathbf{d}_{0}\in\mathbb{N}^{n_{0}}
+ and 
+𝐝
+2
+∈
+ℕ
+n
+2
+\mathbf{d}_{2}\in\mathbb{N}^{n_{2}}
+. For 
+𝐝
+=
+(
+𝐝
+0
+,
+1
+,
+𝐝
+2
+,
+d
+3
+)
+\mathbf{d}=(\mathbf{d}_{0},1,\mathbf{d}_{2},d_{3})
+, the neuromanifold 
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+ is equal to 
+ℳ
+(
+𝐝
+0
+,
+1
+,
+𝟏
+,
+d
+3
+)
+,
+r
+\mathcal{M}_{(\mathbf{d}_{0},1,\mathbf{1},d_{3}),r}
+ for any 
+r
+r
+. In particular, for 
+d
+3
+=
+1
+d_{3}=1
+, 
+dim
+(
+ℳ
+𝐝
+,
+r
+)
+=
+dim
+(
+ℳ
+(
+𝐝
+0
+,
+1
+)
+,
+r
+)
+\dim(\mathcal{M}_{\mathbf{d},r})=\dim(\mathcal{M}_{(\mathbf{d}_{0},1),r})
+.
+Proof.
+Fix parameters 
+𝐰
+=
+(
+W
+1
+,
+W
+2
+,
+…
+,
+W
+L
+)
+\mathbf{w}=(W_{1},W_{2},\dots,W_{L})
+. Let 
+p
+=
+Ψ
+(
+𝐝
+0
+,
+1
+)
+,
+r
+​
+(
+π
+1
+​
+(
+𝐰
+)
+)
+p=\Psi_{(\mathbf{d}_{0},1),r}(\pi_{1}(\mathbf{w}))
+ and 
+q
+=
+Ψ
+(
+1
+,
+𝐝
+2
+,
+1
+)
+​
+(
+π
+2
+​
+(
+𝐰
+)
+)
+q=\Psi_{(1,\mathbf{d}_{2},1)}(\pi_{2}(\mathbf{w}))
+, where 
+π
+1
+\pi_{1}
+ denotes the projection to the parameter space corresponding to the first 
+n
+0
++
+1
+n_{0}+1
+ layers, and 
+π
+2
+\pi_{2}
+ denotes the projection to the remaining parameters. Then 
+p
+𝐰
+​
+(
+𝐱
+)
+p_{\mathbf{w}}(\mathbf{x})
+ factors as a composition 
+p
+𝐰
+​
+(
+𝐱
+)
+=
+(
+q
+∘
+p
+)
+​
+(
+𝐱
+)
+p_{\mathbf{w}}(\mathbf{x})=(q\circ p)(\mathbf{x})
+. The polynomial 
+q
+q
+ is a single-input neural network, hence we can write 
+(
+q
+∘
+p
+)
+i
+​
+(
+𝐱
+)
+(q\circ p)_{i}(\mathbf{x})
+ as a product 
+α
+i
+​
+(
+π
+2
+​
+(
+𝐰
+)
+)
+⋅
+p
+​
+(
+𝐱
+)
+r
+n
+2
+\alpha_{i}(\pi_{2}(\mathbf{w}))\cdot p(\mathbf{x})^{r^{n_{2}}}
+ where 
+α
+i
+​
+(
+π
+2
+​
+(
+𝐰
+)
+)
+\alpha_{i}(\pi_{2}(\mathbf{w}))
+ only depends on weights corresponding to the last 
+n
+2
++
+2
+n_{2}+2
+ layers and thus
+ℳ
+𝐝
+,
+r
+=
+{
+(
+α
+i
+⋅
+p
+r
+n
+2
+)
+i
+:
+α
+i
+∈
+ℝ
+,
+p
+∈
+ℳ
+(
+𝐝
+0
+,
+1
+)
+,
+r
+}
+.
+\mathcal{M}_{\mathbf{d},r}=\{(\alpha_{i}\cdot p^{r^{n_{2}}})_{i}\colon\alpha_{i}\in\mathbb{R},p\in\mathcal{M}_{(\mathbf{d}_{0},1),r}\}.
+The latter set is by definition equal to 
+ℳ
+(
+𝐝
+0
+,
+1
+,
+𝟏
+,
+d
+3
+)
+,
+r
+\mathcal{M}_{(\mathbf{d}_{0},1,\mathbf{1},d_{3}),r}
+. In the case 
+d
+3
+=
+1
+d_{3}=1
+, its dimension is equal to 
+dim
+(
+ℳ
+(
+𝐝
+0
+,
+1
+)
+,
+r
+)
+\dim(\mathcal{M}_{(\mathbf{d}_{0},1),r})
+.
+∎
+Remark 5.5
+.
+This allows to give a strong bound on the dimension of 
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+ for 
+𝐝
+=
+(
+𝐝
+0
+,
+1
+,
+𝐝
+2
+,
+d
+3
+)
+\mathbf{d}=(\mathbf{d}_{0},1,\mathbf{d}_{2},d_{3})
+:
+dim
+(
+ℳ
+𝐝
+,
+r
+)
+=
+dim
+(
+ℳ
+𝐝
+0
+,
+1
+,
+𝟏
+,
+d
+3
+,
+r
+)
+≤
+edim
+⁡
+(
+ℳ
+(
+𝐝
+0
+,
+1
+,
+𝟏
+,
+d
+3
+)
+,
+r
+)
+=
+dim
+(
+ℳ
+𝐝
+0
+,
+r
+)
++
+d
+3
+−
+1
+.
+\dim(\mathcal{M}_{\mathbf{d},r})=\dim(\mathcal{M}_{\mathbf{d}_{0},1,\mathbf{1},d_{3}},r)\leq\mathrm{edim}(\mathcal{M}_{(\mathbf{d}_{0},1,\mathbf{1},d_{3}),r})=\dim(\mathcal{M}_{\mathbf{d}_{0},r})+d_{3}-1.
+If 
+d
+0
+>
+1
+d_{0}>1
+, this is strictly less than the ambient dimension which is 
+d
+3
+​
+(
+r
+L
+−
+1
++
+d
+0
+−
+1
+r
+L
+−
+1
+)
+d_{3}\binom{r^{L-1}+d_{0}-1}{r^{L-1}}
+, where 
+d
+0
+d_{0}
+ is the width of the first layer. Hence the width one at the 
+(
+n
+0
++
+1
+)
+st
+(n_{0}+1)^{\text{st}}
+ layer is an instance of an 
+asymptotic bottleneck
+, i.e., the architecture is not filling regardless of adding more layers or changing the widths in all other layers except the input and 
+(
+n
+0
++
+1
+)
+st
+(n_{0}+1)^{\text{st}}
+ layer 
+[
+KTB19
+, Def. 18]
+.
+Remark 5.6
+.
+For 
+𝐝
+=
+(
+d
+0
+,
+1
+,
+d
+2
+,
+1
+)
+\mathbf{d}=(d_{0},1,d_{2},1)
+, the neuromanifold 
+ℳ
+𝐝
+,
+r
+\mathcal{M}_{\mathbf{d},r}
+ is equal to 
+ℳ
+(
+d
+0
+,
+1
+,
+1
+,
+1
+)
+,
+r
+\mathcal{M}_{(d_{0},1,1,1),r}
+ for any 
+r
+r
+. In particular, 
+dim
+(
+ℳ
+𝐝
+,
+r
+)
+=
+d
+0
+\dim(\mathcal{M}_{\mathbf{d},r})=d_{0}
+.
+This enables us to compute the dimension of many defective neurovarieties. For example, 
+dim
+(
+𝒱
+(
+3
+,
+1
+,
+5
+,
+1
+)
+,
+3
+)
+=
+3
+\dim(\mathcal{V}_{(3,1,5,1),3})=3
+ and therefore 
+𝒱
+(
+3
+,
+1
+,
+5
+,
+1
+)
+,
+3
+\mathcal{V}_{(3,1,5,1),3}
+ has defect 4.
+In contrast to the asymptotic statement for large activation degree in Conjecture 
+5.2
+, we also conjecture the following.
+Conjecture 5.7
+.
+Let 
+𝐝
+=
+(
+d
+0
+,
+d
+1
+,
+…
+,
+d
+L
+)
+\mathbf{d}=(d_{0},d_{1},\dots,d_{L})
+ be a non-increasing sequence with 
+d
+L
+>
+1
+d_{L}>1
+. Then for any 
+r
+r
+, the neurovariety 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ attains the expected dimension.
+We verified this conjecture using Algorithm 
+1
+ described in §
+6.4
+ for four- and five-layer PNNs with widths up to three and activation degree up to five, see 
+[
+KLW24
+]
+. In the context of feedforward neural networks with ReLU activation this statement has been proved 
+[
+GLMW22
+, Theorem 8.11]
+.
+Using Lemma 
+2.7
+, one can deduce the following recursive dimension bound.
+Proposition 5.8
+(Recursive bound, 
+[
+KTB19
+, Proposition 17]
+)
+.
+For any 
+r
+∈
+ℕ
+r\in\mathbb{N}
+, 
+𝐝
+=
+(
+d
+0
+,
+…
+,
+d
+i
+,
+…
+,
+d
+L
+)
+\mathbf{d}=(d_{0},\dots,d_{i},\dots,d_{L})
+ and 
+i
+∈
+{
+1
+,
+…
+,
+L
+−
+1
+}
+i\in\{1,\ldots,L-1\}
+, we have
+dim
+(
+𝒱
+𝐝
+,
+r
+)
+≤
+dim
+(
+𝒱
+(
+d
+0
+,
+…
+,
+d
+i
+)
+,
+r
+)
++
+dim
+(
+𝒱
+(
+d
+i
+,
+…
+,
+d
+L
+)
+,
+r
+)
+−
+d
+i
+.
+\dim(\mathcal{V}_{\mathbf{d},r})\leq\dim(\mathcal{V}_{(d_{0},\ldots,d_{i}),r})+\dim(\mathcal{V}_{(d_{i},\ldots,d_{L}),r})-d_{i}.
+Corollary 5.9
+.
+Let 
+𝐝
+~
+=
+(
+d
+0
+,
+…
+,
+d
+i
+−
+1
+,
+𝐝
+,
+d
+j
++
+1
+,
+…
+,
+d
+L
+)
+\tilde{\mathbf{d}}=(d_{0},\dots,d_{i-1},\mathbf{d},d_{j+1},\dots,d_{L})
+, where 
+𝐝
+=
+(
+d
+i
+,
+d
+i
++
+1
+,
+…
+,
+d
+j
+)
+\mathbf{d}=(d_{i},d_{i+1},\dots,d_{j})
+ is an architecture such that 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ is defective for some 
+r
+>
+0
+r>0
+. Here we allow 
+i
+=
+0
+i=0
+ or 
+j
+=
+L
+j=L
+. Suppose 
+𝒱
+𝐝
+~
+,
+r
+\mathcal{V}_{\tilde{\mathbf{d}},r}
+ is not filling, then 
+𝒱
+𝐝
+~
+,
+r
+\mathcal{V}_{\tilde{\mathbf{d}},r}
+ is defective.
+Proof.
+It follows from Proposition 
+5.8
+ that
+(5.1)
+dim
+(
+𝒱
+𝐝
+~
+,
+r
+)
+≤
+dim
+(
+𝒱
+(
+d
+0
+,
+…
+,
+d
+i
+)
+,
+r
+)
++
+dim
+(
+𝒱
+𝐝
+,
+r
+)
++
+dim
+(
+𝒱
+(
+d
+j
+,
+…
+,
+d
+L
+)
+,
+r
+)
+−
+d
+i
+−
+d
+j
+\dim(\mathcal{V}_{\tilde{\mathbf{d}},r})\leq\dim(\mathcal{V}_{(d_{0},\ldots,d_{i}),r})+\dim(\mathcal{V}_{\mathbf{d},r})+\dim(\mathcal{V}_{(d_{j},\ldots,d_{L}),r})-d_{i}-d_{j}
+where 
+dim
+(
+𝒱
+(
+d
+0
+,
+…
+,
+d
+i
+)
+,
+r
+)
+\dim(\mathcal{V}_{(d_{0},\ldots,d_{i}),r})
+ or 
+dim
+(
+𝒱
+(
+d
+j
+,
+…
+,
+d
+L
+)
+,
+r
+)
+\dim(\mathcal{V}_{(d_{j},\ldots,d_{L}),r})
+ might not appear in the sum above.
+By 
+Definition
+2.8
+, the expected dimension is defined as
+edim
+⁡
+(
+𝒱
+𝐝
+,
+r
+)
+=
+min
+⁡
+{
+d
+L
++
+∑
+i
+=
+0
+L
+−
+1
+(
+d
+i
+​
+d
+i
++
+1
+−
+d
+i
++
+1
+)
+,
+d
+L
+​
+(
+d
+0
++
+r
+L
+−
+1
+−
+1
+r
+L
+−
+1
+)
+}
+.
+\edim(\mathcal{V}_{\mathbf{d},r})=\min\left\{d_{L}+\sum_{i=0}^{L-1}(d_{i}d_{i+1}-d_{i+1}),d_{L}\binom{d_{0}+r^{L-1}-1}{r^{L-1}}\right\}.
+Since 
+dim
+(
+𝒱
+𝐝
+,
+r
+)
+<
+edim
+⁡
+(
+𝒱
+𝐝
+,
+r
+)
+\dim(\mathcal{V}_{\mathbf{d},r})<\edim(\mathcal{V}_{\mathbf{d},r})
+, it follows from equation (
+5.1
+) that
+dim
+(
+𝒱
+𝐝
+~
+,
+r
+)
+\displaystyle\dim(\mathcal{V}_{\tilde{\mathbf{d}},r})
+<
+d
+L
++
+∑
+α
+=
+0
+i
+−
+1
+(
+d
+α
+​
+d
+α
++
+1
+−
+d
+α
++
+1
+)
++
+∑
+β
+=
+i
+j
+−
+1
+(
+d
+β
+​
+d
+β
++
+1
+−
+d
+β
++
+1
+)
++
+∑
+γ
+=
+j
+L
+(
+d
+γ
+​
+d
+γ
++
+1
+−
+d
+γ
++
+1
+)
+\displaystyle<d_{L}+\sum_{\alpha=0}^{i-1}(d_{\alpha}d_{\alpha+1}-d_{\alpha+1})+\sum_{\beta=i}^{j-1}(d_{\beta}d_{\beta+1}-d_{\beta+1})+\sum_{\gamma=j}^{L}(d_{\gamma}d_{\gamma+1}-d_{\gamma+1})
+=
+d
+L
++
+∑
+α
+=
+0
+L
+−
+1
+(
+d
+α
+​
+d
+α
++
+1
+−
+d
+α
++
+1
+)
+\displaystyle=d_{L}+\sum_{\alpha=0}^{L-1}(d_{\alpha}d_{\alpha+1}-d_{\alpha+1})
+where 
+∑
+α
+=
+0
+i
+−
+1
+(
+d
+α
+​
+d
+α
++
+1
+−
+d
+α
++
+1
+)
+\sum_{\alpha=0}^{i-1}(d_{\alpha}d_{\alpha+1}-d_{\alpha+1})
+ or 
+∑
+γ
+=
+j
+L
+(
+d
+γ
+​
+d
+γ
++
+1
+−
+d
+γ
++
+1
+)
+\sum_{\gamma=j}^{L}(d_{\gamma}d_{\gamma+1}-d_{\gamma+1})
+ might not appear in the sum above.
+Since 
+𝒱
+𝐝
+~
+,
+r
+\mathcal{V}_{\tilde{\mathbf{d}},r}
+ is non-filling, it follows directly that 
+𝒱
+𝐝
+~
+,
+r
+\mathcal{V}_{\tilde{\mathbf{d}},r}
+ is defective.
+∎
+Remark 5.10
+.
+The converse to this statement is not true. For example, consider 
+𝐝
+=
+(
+2
+,
+2
+,
+1
+,
+2
+)
+,
+r
+=
+2
+\mathbf{d}=(2,2,1,2),\penalty\ r=2
+. Then 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ has defect one, but both 
+𝒱
+(
+2
+,
+2
+,
+1
+)
+,
+2
+\mathcal{V}_{(2,2,1),2}
+ and 
+𝒱
+(
+2
+,
+1
+,
+2
+)
+,
+2
+\mathcal{V}_{(2,1,2),2}
+ are non-defective.
+Let 
+≼
+\preccurlyeq
+ be the partial order on the set of widths induced by coordinatewise comparison. The following conjecture suggests a unimodal distribution of layer widths within a neural network is efficient. In the realm of machine learning theory, this architectural pattern is commonly believed to allow the network to initially expand its capacity for feature representation, enabling the network to capture intricate patterns within the data. As the layers narrow, heuristically, the network would refine these features into more sophisticated representations suitable for making predictions. The conjecture agrees with this common heuristic.
+Conjecture 5.11
+(
+[
+KTB19
+]
+, Conjecture 12)
+.
+Fix 
+L
+,
+d
+0
+,
+d
+L
+L,d_{0},d_{L}
+ and 
+r
+r
+; any minimal (with respect to 
+≼
+\preccurlyeq
+) vector of widths 
+𝐝
+=
+(
+d
+0
+,
+d
+1
+,
+…
+,
+d
+L
+)
+\mathbf{d}=(d_{0},d_{1},\dots,d_{L})
+ such that the architecture 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ is filling, is unimodal, i.e. there exists 
+i
+∈
+{
+0
+,
+1
+,
+…
+,
+L
+}
+i\in\{0,1,\dots,L\}
+ such that 
+(
+d
+0
+,
+…
+,
+d
+i
+)
+(d_{0},\dots,d_{i})
+ is weakly increasing and 
+(
+d
+i
+,
+…
+,
+d
+L
+)
+(d_{i},\dots,d_{L})
+ is weakly decreasing.
+5.2. 
+A look into the symmetries of an exceptional shallow network
+We explicitly describe a family of symmetries beyond multi-homogeneity (Lemma 
+2.7
+) for the architecture 
+𝐝
+=
+(
+5
+,
+7
+,
+1
+)
+,
+r
+=
+3
+\mathbf{d}=(5,7,1),\penalty\ r=3
+, one of the exceptional cases of the Alexander–Hirschowitz Theorem. The expected dimension of 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+ is 35, however, its actual dimension is 34. Therefore, there exists a one-dimensional family of symmetries in the parameter space not of the form as in Lemma 
+2.7
+.
+In the following we will use an equivalent formulation of the Alexander–Hirschowitz Theorem as can be found in 
+[
+BO08
+, Theorem 1.1]
+.
+Theorem 5.12
+(Alexander–Hirschowitz, geometric version)
+.
+Let 
+X
+X
+ be a general collection of 
+k
+k
+ double points in 
+ℙ
+n
+\mathbb{P}^{n}
+ and let 
+I
+X
+​
+(
+d
+)
+⊆
+Sym
+d
+⁡
+(
+ℂ
+n
+)
+I_{X}(d)\subseteq\Sym_{d}(\mathbb{C}^{n})
+ be the subspace of polynomials through 
+X
+X
+, i.e., with all first partial derivatives vanishing at the points of 
+X
+X
+. Then the subspace 
+I
+X
+​
+(
+d
+)
+I_{X}(d)
+ has the expected codimension 
+min
+⁡
+{
+(
+n
++
+1
+)
+​
+k
+,
+(
+n
++
+d
+n
+)
+}
+\min\{(n+1)k,\binom{n+d}{n}\}
+ except in the cases as in Theorem 
+5.1
+ (with the notation 
+d
+=
+r
+,
+n
+=
+d
+0
+−
+1
+,
+k
+=
+d
+1
+d=r,\penalty\ n=d_{0}-1,\penalty\ k=d_{1}
+).
+Then geometrically the situation depicts as follows: consider seven points 
+p
+1
+,
+…
+,
+p
+7
+p_{1},\dots,p_{7}
+ in 
+ℙ
+4
+\mathbb{P}^{4}
+. We are interested in cubics singular at these seven points, i.e., we are looking for 
+f
+∈
+Sym
+3
+⁡
+(
+ℂ
+5
+)
+f\in\Sym_{3}(\mathbb{C}^{5})
+ such that 
+f
+⁡
+(
+p
+i
+)
+=
+d
+​
+f
+p
+i
+=
+0
+f(p_{i})=\mathrm{d}f_{p_{i}}=0
+ for 
+i
+=
+1
+,
+…
+,
+7
+i=1,\dots,7
+. One would expect that no such cubic exists: the space of cubics in five variables has dimension 35 and the seven points are expected to impose 35 independent conditions. But through seven points there exists a rational normal curve 
+C
+C
+ which after a suitable coordinate transformation might be given as
+C
+=
+{
+(
+x
+0
+:
+…
+:
+x
+4
+)
+∈
+ℙ
+4
+:
+rk
+(
+x
+0
+x
+1
+x
+2
+x
+1
+x
+2
+x
+3
+x
+2
+x
+3
+x
+4
+)
+≤
+1
+}
+.
+C=\left\{(x_{0}:\dots:x_{4})\in\mathbb{P}^{4}\colon\rk\begin{pmatrix}x_{0}&x_{1}&x_{2}\\
+x_{1}&x_{2}&x_{3}\\
+x_{2}&x_{3}&x_{4}\\
+\end{pmatrix}\leq 1\right\}.
+A different way to write the curve 
+C
+C
+ is as follows. Assume the five points 
+p
+1
+,
+…
+,
+p
+5
+p_{1},\dots,p_{5}
+ are the points 
+(
+1
+:
+0
+:
+0
+:
+0
+:
+0
+)
+,
+…
+,
+(
+0
+:
+0
+:
+0
+:
+0
+:
+1
+)
+(1:0:0:0:0),\dots,(0:0:0:0:1)
+; if 
+p
+1
+,
+…
+,
+p
+7
+p_{1},\dots,p_{7}
+ are in general position 
+p
+6
+p_{6}
+ and 
+p
+7
+p_{7}
+ have non-zero coordinates then. Consider the birational Cremona transformation 
+τ
+:
+(
+x
+0
+:
+…
+:
+x
+5
+)
+↦
+(
+x
+0
+−
+1
+:
+…
+:
+x
+5
+−
+1
+)
+\tau\colon(x_{0}:\dots:x_{5})\mapsto(x_{0}^{-1}:\dots:x_{5}^{-1})
+. Then 
+C
+C
+ is the preimage under 
+τ
+\tau
+ of the line 
+τ
+⁡
+(
+p
+6
+)
+​
+τ
+​
+(
+p
+7
+)
+¯
+\overline{\tau(p_{6})\tau(p_{7})}
+.
+It is well-known that the secant variety of such a determinantal variety is given by
+σ
+(
+C
+)
+=
+{
+(
+x
+0
+:
+…
+:
+x
+4
+)
+∈
+ℙ
+4
+:
+det
+(
+x
+0
+x
+1
+x
+2
+x
+1
+x
+2
+x
+3
+x
+2
+x
+3
+x
+4
+)
+=
+0
+}
+.
+\sigma(C)=\left\{(x_{0}:\dots:x_{4})\in\mathbb{P}^{4}\colon\det\begin{pmatrix}x_{0}&x_{1}&x_{2}\\
+x_{1}&x_{2}&x_{3}\\
+x_{2}&x_{3}&x_{4}\\
+\end{pmatrix}=0\right\}.
+This is a cubic hypersurface with singular locus 
+C
+C
+; in particualar, 
+σ
+⁡
+(
+C
+)
+\sigma(C)
+ is singular at 
+p
+1
+,
+…
+,
+p
+7
+p_{1},\dots,p_{7}
+. See 
+[
+BO08
+, §3]
+.
+Now it is possible to vary 
+p
+7
+p_{7}
+ along 
+C
+C
+ such that the construction of 
+σ
+⁡
+(
+C
+)
+\sigma(C)
+ remains unchanged. Consider the PNN
+W
+2
+∘
+ρ
+3
+∘
+W
+1
+​
+𝐱
+W_{2}\circ\rho_{3}\circ W_{1}\mathbf{x}
+where 
+𝐱
+∈
+ℝ
+5
+,
+W
+1
+∈
+ℝ
+7
+×
+5
+,
+W
+2
+∈
+ℝ
+1
+×
+7
+\mathbf{x}\in\mathbb{R}^{5},\penalty\ W_{1}\in\mathbb{R}^{7\times 5},\penalty\ W_{2}\in\mathbb{R}^{1\times 7}
+. Assume similar to above that the curve 
+τ
+⁡
+(
+C
+)
+\tau(C)
+ is given by the 
+2
+×
+2
+2\times 2
+ minors of
+(5.2)
+(
+w
+161
+−
+1
+…
+w
+165
+−
+1
+w
+171
+−
+1
+…
+w
+175
+−
+1
+)
+.
+\begin{pmatrix}w_{161}^{-1}&\dots&w_{165}^{-1}\\
+w_{171}^{-1}&\dots&w_{175}^{-1}\\
+\end{pmatrix}.
+We are looking for a symmetric matrix 
+G
+∈
+GL
+⁡
+(
+7
+,
+ℝ
+)
+G\in\mathrm{GL}(7,\mathbb{R})
+ such that 
+G
+​
+W
+1
+GW_{1}
+ gives rise to the same curve 
+τ
+⁡
+(
+C
+)
+\tau(C)
+. Again, w.l.o.g., we assume that the first five rows and columns of 
+G
+G
+ are the identity matrix. Thus, restricting to the last two rows and columns of 
+G
+G
+, we require that
+(
+g
+1
+g
+2
+g
+2
+g
+3
+)
+​
+(
+w
+161
+−
+1
+…
+w
+165
+−
+1
+w
+171
+−
+1
+…
+w
+175
+−
+1
+)
+\begin{pmatrix}g_{1}&g_{2}\\
+g_{2}&g_{3}\\
+\end{pmatrix}\begin{pmatrix}w_{161}^{-1}&\dots&w_{165}^{-1}\\
+w_{171}^{-1}&\dots&w_{175}^{-1}\\
+\end{pmatrix}
+have the same 
+2
+×
+2
+2\times 2
+ minors as (
+5.2
+). Normalizing 
+G
+G
+ to have determinant one we can solve this to obtain
+G
+=
+(
+Id
+5
+0
+0
+0
+g
+ϕ
+0
+ϕ
+1
++
+ϕ
+2
+g
+)
+G=\begin{pmatrix}\mathrm{Id}_{5}&0&0\\
+0&g&\phi\\
+0&\phi&\frac{1+\phi^{2}}{g}\\
+\end{pmatrix}
+where 
+ϕ
+=
+(
+1
+2
+​
+(
+−
+1
++
+3
+)
+)
+1
+/
+2
+\phi=(\frac{1}{2}(-1+\sqrt{3}))^{1/2}
+ and 
+g
+∈
+ℝ
+g\in\mathbb{R}
+ is a free parameter. Thus we have obtained a one-dimensional family of symmetries on the parameter space leaving the image of the parameter map 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ unchanged.
+6. 
+Optimization
+In supervised machine learning tasks, a neural network is trained through the process of 
+empirical risk minimization (ERM)
+. Consider a training dataset 
+𝒟
+=
+{
+(
+𝐱
+1
+,
+𝐲
+1
+)
+,
+(
+𝐱
+2
+,
+𝐲
+2
+)
+,
+…
+,
+(
+𝐱
+N
+,
+𝐲
+N
+)
+}
+\mathcal{D}=\{(\mathbf{x}_{1},\mathbf{y}_{1}),(\mathbf{x}_{2},\mathbf{y}_{2}),...,(\mathbf{x}_{N},\mathbf{y}_{N})\}
+, where each 
+𝐱
+i
+\mathbf{x}_{i}
+ is an input vector and 
+𝐲
+i
+\mathbf{y}_{i}
+ is the corresponding output or label. The objective in ERM is to find a function 
+f
+f
+ from a hypothesis space 
+ℋ
+\mathcal{H}
+ that minimizes the empirical risk, which is defined as the average loss over the training data:
+R
+^
+​
+(
+f
+)
+=
+1
+N
+​
+∑
+i
+=
+1
+N
+L
+⁡
+(
+𝐲
+i
+,
+f
+⁡
+(
+𝐱
+i
+)
+)
+.
+\hat{R}(f)=\frac{1}{N}\sum_{i=1}^{N}{L}(\mathbf{y}_{i},f(\mathbf{x}_{i})).
+Here, 
+R
+^
+​
+(
+f
+)
+\hat{R}(f)
+ represents the empirical risk of the function 
+f
+f
+, 
+L
+{L}
+ is a loss function that measures the discrepancy between the predicted value 
+f
+⁡
+(
+𝐱
+i
+)
+f(\mathbf{x}_{i})
+ and the actual label 
+𝐲
+i
+\mathbf{y}_{i}
+, and 
+N
+N
+ is the number of samples in the training dataset.
+The goal of ERM is to select a function 
+f
+∗
+f^{*}
+ from the hypothesis space 
+ℋ
+\mathcal{H}
+ that minimizes this empirical risk:
+(6.1)
+f
+∗
+=
+arg
+⁡
+min
+f
+∈
+ℋ
+​
+R
+^
+​
+(
+f
+)
+.
+f^{*}=\underset{f\in\mathcal{H}}{\arg\min}\ \hat{R}(f).
+In order to minimize the empirical risk, one typically uses gradient-based optimization methods, such as gradient descent (GD), stochastic gradient descent (SGD), and adaptive moment estimation (Adam). With the proper choice of step size, gradient-based algorithms are guaranteed to converge to the global minimum when the objective function is convex. However, when optimizing over a neural network, the loss landscape is often highly non-convex regardless of the choice of 
+L
+L
+. None of the gradient-based algorithms mentioned above are guaranteed to find the optimal 
+f
+∗
+f^{*}
+ for general neural networks.
+There have been two lines of work studying the optimization process of neural networks: One can characterize the geometry of the loss landscape, including the dimension, critical points, local and global minima; we refer to these as the 
+static
+ properties. From another perspective, one can also track the trajectory of the optimization algorithms, understanding the solution an algorithm converges to with respect to different initialization; we refer to this as the 
+dynamic
+ process.
+Note that in the neural network setting, the hypothesis class 
+ℋ
+\mathcal{H}
+ is just the corresponding neuromanifold, and the empirical minimization problem becomes
+(6.2)
+𝜽
+∗
+=
+arg
+⁡
+min
+𝜽
+⁡
+ℓ
+F
+𝜽
+where 
+​
+ℓ
+F
+𝜽
+≔
+1
+N
+​
+∑
+i
+=
+1
+N
+ℓ
+⁡
+(
+𝐲
+i
+,
+F
+𝜽
+​
+(
+𝐱
+i
+)
+)
+{\bm{\theta}}^{*}=\arg\min_{\bm{\theta}}\ell_{F_{\bm{\theta}}}\quad\text{where }\ell_{F_{\bm{\theta}}}\coloneqq\frac{1}{N}\sum_{i=1}^{N}{\ell}(\mathbf{y}_{i},F_{\bm{\theta}}(\mathbf{x}_{i}))
+Considering the 
+ℓ
+2
+\ell_{2}
+ loss, we minimize the average distance between 
+F
+𝜽
+​
+(
+𝐱
+)
+F_{\bm{\theta}}(\mathbf{x})
+ and 
+𝐲
+\mathbf{y}
+. It turns out that, analogously to maximum likelihood estimation or Euclidean distance minimization, there exists a degree of this optimization problem constituting a measure for the algebraic complexity of solving this problem. In §
+6.1
+, we study the static optimization properties of a PNN through the generic ED degree of the corresponding neurovariety. In §
+6.2
+ and §
+6.4
+, we explain the dynamic optimization process of gradient descent, followed by backpropagation. The algorithm biases induced by the optimization methods, known as 
+implicit bias
+, on general neural network architectures are still largely unknown. While limited theoretical results are known for the dynamic optimization process of neural networks in general, recent work has shown that gradient descent finds a global minimum of linear neural networks (i.e., polynomial neural networks with 
+r
+=
+1
+r=1
+) under mild assumptions 
+[
+ACGH18
+]
+. In §
+6.5
+, we review the trajectory-based convergence results on linear neural networks and phrase open questions for polynomial neural networks with activation degree 
+r
+≥
+2
+r\geq 2
+. Sections §
+6.2
+, §
+6.4
+ and §
+6.5
+ are expository and do not contain new results.
+6.1. 
+The Learning Degree of a PNN
+Let us consider the case of PNNs again. Often one tries to solve the optimization problem (
+6.1
+) using gradient based methods, see §
+6.2
+. Therefore, one is interested in computing the critical points on the neurovariety of the loss function 
+ℓ
+p
+𝐰
+\ell_{p_{\mathbf{w}}}
+. In particular, the number of such points provides an upper bound for the number of functions the optimization process can converge to when using gradient descent.
+If there is a finite number of critical points of 
+ℓ
+p
+𝐰
+\ell_{p_{\mathbf{w}}}
+ which is constant for a general choice of training data 
+(
+𝐱
+i
+,
+𝐲
+i
+)
+i
+(\mathbf{x}_{i},\mathbf{y}_{i})_{i}
+, we call this number the 
+learning degree
+ of the network 
+p
+𝐰
+p_{\mathbf{w}}
+ with respect to loss 
+ℓ
+\ell
+.
+In the following we are studying the case of the Euclidean loss function. We show that in this case the learning degree is independent of the choice of training data 
+(
+𝐱
+i
+,
+𝐲
+i
+)
+i
+(\mathbf{x}_{i},\mathbf{y}_{i})_{i}
+ and is in fact equal to the generic Euclidean distance (ED) degree. We would like to thank Matthew Trager for pointing out the connection to the generic ED degree.
+Definition 6.1
+(
+[
+BKS23
+, Definition 2.8]
+)
+.
+Let 
+X
+X
+ be a variety, let 
+Λ
+=
+(
+λ
+1
+,
+…
+,
+λ
+n
+)
+∈
+ℝ
++
+n
+\Lambda=(\lambda_{1},\dots,\lambda_{n})\in\mathbb{R}^{n}_{+}
+ and let 
+𝐮
+∈
+ℝ
+n
+\mathbf{u}\in\mathbb{R}^{n}
+ be a general point. The 
+Λ
+\Lambda
+-weighted Euclidean distance degree of 
+X
+X
+ is the number of (complex) critical points on 
+X
+X
+ of the function
+‖
+𝐱
+−
+𝐮
+‖
+Λ
+2
+≔
+∑
+i
+=
+1
+n
+λ
+i
+​
+(
+x
+i
+−
+u
+i
+)
+2
+.
+\|\mathbf{x}-\mathbf{u}\|_{\Lambda}^{2}\coloneqq\sum_{i=1}^{n}\lambda_{i}(x_{i}-u_{i})^{2}.
+For general weights 
+Λ
+\Lambda
+, this number is independent of 
+Λ
+\Lambda
+, and we call it the 
+generic Euclidean distance (ED) degree
+ of 
+X
+X
+, which we denoted as 
+EDdeg
+gen
+​
+(
+X
+)
+\mathrm{EDdeg}_{\mathrm{gen}}(X)
+.
+Let 
+(
+p
+𝐰
+(
+i
+)
+​
+(
+𝐱
+)
+)
+i
+∈
+(
+Sym
+d
+⁡
+(
+ℝ
+n
+)
+)
+m
+(p_{\mathbf{w}}^{(i)}(\mathbf{x}))_{i}\in(\Sym_{d}(\mathbb{R}^{n}))^{m}
+ be a tuple of polynomials in 
+n
+n
+ variables 
+𝐱
+=
+(
+x
+1
+,
+…
+,
+x
+n
+)
+\mathbf{x}=(x_{1},\dots,x_{n})
+ occurring as the output of a fixed PNN with weight vector 
+𝐰
+\mathbf{w}
+. Suppose we want the PNN to learn the tuple of polynomials 
+(
+f
+i
+​
+(
+𝐱
+)
+)
+i
+∈
+(
+Sym
+d
+⁡
+(
+ℝ
+n
+)
+)
+m
+(f_{i}(\mathbf{x}))_{i}\in(\Sym_{d}(\mathbb{R}^{n}))^{m}
+. For this purpose we will sample 
+N
+N
+ input vectors 
+𝐱
+^
+1
+,
+…
+,
+𝐱
+^
+N
+∈
+ℝ
+n
+\hat{\mathbf{x}}_{1},\dots,\hat{\mathbf{x}}_{N}\in\mathbb{R}^{n}
+ according to some probability distribution of our choice. We evaluate 
+(
+f
+i
+​
+(
+𝐱
+)
+)
+i
+(f_{i}(\mathbf{x}))_{i}
+ at these points to obtain 
+𝐲
+^
+j
+≔
+(
+f
+i
+​
+(
+𝐱
+^
+j
+)
+)
+i
+∈
+ℝ
+m
+\hat{\mathbf{y}}_{j}\coloneqq(f_{i}(\hat{\mathbf{x}}_{j}))_{i}\in\mathbb{R}^{m}
+ for 
+j
+=
+1
+,
+…
+,
+N
+j=1,\dots,N
+; the pairs 
+(
+𝐱
+^
+j
+,
+𝐲
+^
+j
+)
+j
+(\hat{\mathbf{x}}_{j},\hat{\mathbf{y}}_{j})_{j}
+ constitute the training data.
+The learning process is defined by minimizing the average Euclidean distance between the 
+𝐲
+^
+j
+\hat{\mathbf{y}}_{j}
+ and the points obtained from evaluating the network at the samples 
+𝐱
+^
+j
+\hat{\mathbf{x}}_{j}
+. This process corresponds to the empirical risk minimization with 
+ℓ
+2
+\ell_{2}
+ loss. Concretely, we have the following problem:
+(6.3)
+minimize 
+​
+1
+N
+​
+∑
+j
+=
+1
+N
+‖
+(
+p
+𝐰
+(
+i
+)
+​
+(
+𝐱
+^
+j
+)
+)
+i
+−
+𝐲
+^
+j
+‖
+2
+​
+ over weights 
+​
+𝐰
+.
+\text{minimize }\frac{1}{N}\sum_{j=1}^{N}||(p_{\mathbf{w}}^{(i)}(\hat{\mathbf{x}}_{j}))_{i}-\hat{\mathbf{y}}_{j}||^{2}\text{ over weights }\mathbf{w}.
+Note that 
+(
+p
+𝐰
+(
+i
+)
+​
+(
+𝐱
+^
+j
+)
+)
+i
+,
+𝐲
+^
+j
+∈
+ℝ
+m
+(p_{\mathbf{w}}^{(i)}(\hat{\mathbf{x}}_{j}))_{i},\hat{\mathbf{y}}_{j}\in\mathbb{R}^{m}
+ for all 
+j
+=
+1
+,
+…
+,
+N
+j=1,\ldots,N
+, and we have
+1
+N
+​
+∑
+j
+=
+1
+N
+‖
+(
+p
+𝐰
+(
+i
+)
+​
+(
+𝐱
+^
+j
+)
+)
+i
+−
+𝐲
+^
+j
+‖
+2
+=
+1
+N
+​
+∑
+i
+=
+1
+m
+∑
+j
+=
+1
+N
+‖
+p
+𝐰
+(
+i
+)
+​
+(
+𝐱
+^
+j
+)
+−
+(
+𝐲
+^
+j
+)
+i
+‖
+2
+.
+\frac{1}{N}\sum_{j=1}^{N}||(p_{\mathbf{w}}^{(i)}(\hat{\mathbf{x}}_{j}))_{i}-\hat{\mathbf{y}}_{j}||^{2}=\frac{1}{N}\sum_{i=1}^{m}\sum_{j=1}^{N}||p_{\mathbf{w}}^{(i)}(\hat{\mathbf{x}}_{j})-(\hat{\mathbf{y}}_{j})_{i}||^{2}.
+Our goal is to show that for each 
+i
+=
+1
+,
+2
+,
+…
+,
+m
+i=1,2,\ldots,m
+,
+this is a quadratic form in the coefficients of 
+p
+𝐰
+(
+i
+)
+p_{\mathbf{w}}^{(i)}
+ and 
+f
+i
+f_{i}
+ over training data.
+Write
+p
+𝐰
+(
+i
+)
+​
+(
+𝐱
+)
+=
+∑
+I
+∈
+(
+[
+n
+]
+d
+)
+ρ
+I
+i
+​
+𝐱
+I
+and
+f
+i
+​
+(
+𝐱
+)
+=
+∑
+J
+∈
+(
+[
+n
+]
+d
+)
+ϕ
+J
+i
+​
+𝐱
+J
+.
+p_{\mathbf{w}}^{(i)}(\mathbf{x})=\sum_{I\in\binom{[n]}{d}}\rho^{i}_{I}\mathbf{x}^{I}\quad\text{and}\quad f_{i}(\mathbf{x})=\sum_{J\in\binom{[n]}{d}}\phi^{i}_{J}\mathbf{x}^{J}.
+We define a matrix 
+E
+E
+ as follows: 
+E
+E
+ is a block-diagonal matrix with blocks 
+E
+i
+E^{i}
+ for 
+i
+=
+1
+,
+2
+,
+…
+,
+m
+i=1,2,\dots,m
+, and each block 
+E
+i
+E^{i}
+ has as row and column labels the multiindices 
+α
+,
+β
+∈
+(
+[
+n
+]
+d
+)
+\alpha,\beta\in\binom{[n]}{d}
+. Then the entry 
+E
+α
+,
+β
+i
+E^{i}_{\alpha,\beta}
+ is defined as
+E
+α
+,
+β
+i
+≔
+1
+N
+​
+∑
+j
+=
+1
+N
+𝐱
+^
+j
+α
++
+β
+.
+E^{i}_{\alpha,\beta}\coloneqq\frac{1}{N}\sum_{j=1}^{N}\hat{\mathbf{x}}_{j}^{\alpha+\beta}.
+Then we can write
+1
+N
+​
+∑
+j
+=
+1
+N
+‖
+p
+𝐰
+(
+i
+)
+​
+(
+𝐱
+^
+j
+)
+−
+f
+i
+​
+(
+𝐱
+^
+j
+)
+‖
+2
+=
+∑
+α
+,
+β
+(
+ρ
+α
+i
+−
+ϕ
+α
+i
+)
+​
+E
+α
+,
+β
+i
+​
+(
+ρ
+β
+i
+−
+ϕ
+β
+i
+)
+.
+\frac{1}{N}\sum_{j=1}^{N}||p_{\mathbf{w}}^{(i)}(\hat{\mathbf{x}}_{j})-f_{i}(\hat{\mathbf{x}}_{j})||^{2}=\sum_{\alpha,\beta}(\rho^{i}_{\alpha}-\phi^{i}_{\alpha})E^{i}_{\alpha,\beta}(\rho^{i}_{\beta}-\phi^{i}_{\beta}).
+Therefore, the loss function is an 
+E
+α
+,
+β
+i
+E^{i}_{\alpha,\beta}
+-weighted Euclidean distance in the space 
+(
+Sym
+d
+⁡
+(
+ℝ
+n
+)
+)
+m
+(\Sym_{d}(\mathbb{R}^{n}))^{m}
+, the ambient space of the neurovariety 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+. For a general choice of training data 
+(
+𝐱
+^
+i
+,
+𝐲
+^
+i
+)
+i
+(\hat{\mathbf{x}}_{i},\hat{\mathbf{y}}_{i})_{i}
+, the linear transformation 
+E
+E
+ is general, thus, the learning degree equals the generic Euclidean distance degree of 
+𝒱
+𝐝
+,
+r
+\mathcal{V}_{\mathbf{d},r}
+.
+Note that for large number of samples, the quadratic form defined by 
+E
+E
+ is in fact independent of the samples.
+Remark 6.2
+.
+Suppose 
+𝐱
+1
+,
+…
+,
+𝐱
+N
+\mathbf{x}_{1},\ldots,\mathbf{x}_{N}
+ are drawn independently from a fixed distribution 
+𝒟
+\mathcal{D}
+ with known moments 
+μ
+k
+\mu_{k}
+, 
+k
+=
+1
+,
+2
+,
+…
+k=1,2,\ldots
+ Based on the law of large numbers, for any 
+ϵ
+>
+0
+\epsilon>0
+,
+ℙ
+⁡
+(
+|
+E
+α
+,
+β
+i
+−
+μ
+α
++
+β
+|
+>
+ϵ
+)
+→
+0
+​
+ as 
+​
+N
+→
+∞
+.
+\mathbb{P}(|E^{i}_{\alpha,\beta}-\mu_{\alpha+\beta}|>\epsilon)\rightarrow 0\text{ as }N\rightarrow\infty.
+Then for any 
+ϵ
+>
+0
+\epsilon>0
+,
+ℙ
+⁡
+(
+|
+1
+N
+​
+∑
+j
+=
+1
+N
+‖
+p
+𝐰
+(
+i
+)
+​
+(
+𝐱
+^
+j
+)
+−
+f
+i
+​
+(
+𝐱
+^
+j
+)
+‖
+2
+−
+(
+𝝆
+i
+−
+ϕ
+i
+)
+T
+​
+A
+​
+(
+𝝆
+i
+−
+ϕ
+i
+)
+|
+>
+ϵ
+)
+→
+0
+​
+ as 
+​
+N
+→
+∞
+.
+\mathbb{P}\left(\left|\frac{1}{N}\sum_{j=1}^{N}||p_{\mathbf{w}}^{(i)}(\hat{\mathbf{x}}_{j})-f_{i}(\hat{\mathbf{x}}_{j})||^{2}-(\bm{\rho}^{i}-\bm{\phi}^{i})^{T}A(\bm{\rho}^{i}-\bm{\phi}^{i})\right|>\epsilon\right)\rightarrow 0\text{ as }N\rightarrow\infty.
+where 
+A
+A
+ is a fixed matrix of dimension 
+N
+×
+N
+N\times N
+ whose entries are determined by the distribution 
+𝒟
+\mathcal{D}
+.
+Here is an explicit result for the architecture 
+𝐝
+=
+(
+2
+,
+2
+,
+k
+)
+,
+r
+=
+2
+\mathbf{d}=(2,2,k),\penalty\ r=2
+.
+Theorem 6.3
+.
+The generic ED degree of 
+𝒱
+(
+2
+,
+2
+,
+k
+)
+,
+2
+\mathcal{V}_{(2,2,k),2}
+ is 
+8
+​
+k
+2
+−
+12
+​
+k
++
+3
+8k^{2}-12k+3
+, i.e., the learning degree of the PNN with architecture 
+(
+𝐝
+=
+(
+2
+,
+2
+,
+k
+)
+,
+r
+=
+2
+)
+(\mathbf{d}=(2,2,k),r=2)
+ is 
+8
+​
+k
+2
+−
+12
+​
+k
++
+3
+8k^{2}-12k+3
+.
+The generic ED degree of a variety can be computed as the sum of its polar degrees 
+[
+BKS23
+, Corollary 2.14]
+. For a smooth variety 
+X
+X
+, this can be reformulated in terms of degrees of Chern classes of 
+X
+X
+, see 
+[
+BKS23
+, Theorem 4.20]
+. However, 
+V
+≔
+𝒱
+(
+2
+,
+2
+,
+k
+)
+,
+2
+V\coloneqq\mathcal{V}_{(2,2,k),2}
+ is not smooth: recall that 
+V
+V
+ consists of 
+k
+×
+3
+k\times 3
+ matrices with rank 
+≤
+2
+\leq 2
+; this determinantal variety has a nonempty singular locus consisting of all matrices with rank 
+≤
+1
+\leq 1
+. Therefore, we have to make use of the more involved machinery of 
+Chern–Mather classes
+. The reader wishing to learn more about Chern classes in the context of optimization is referred to 
+[
+BKS23
+, §4.3]
+. We give a brief definition of Chern–Mather classes below, for more details the reader is referred to 
+[
+Yok86
+]
+.
+Let 
+X
+↪
+ℙ
+N
+X\hookrightarrow\mathbb{P}^{N}
+ be a projective variety of pure dimension 
+d
+d
+. Let 
+X
+sm
+X_{\text{sm}}
+ denote the open subvariety of 
+X
+X
+ of nonsingular points and consider the embedding
+g
+:
+X
+sm
+↪
+Gr
+⁡
+(
+d
+,
+T
+​
+ℙ
+N
+)
+,
+x
+↦
+T
+x
+​
+X
+sm
+.
+g\colon X_{\text{sm}}\hookrightarrow\Gr(d,T\mathbb{P}^{N}),\quad x\mapsto T_{x}X_{\text{sm}}.
+Then 
+X
+^
+≔
+im
+⁡
+(
+g
+⁡
+(
+X
+sm
+)
+)
+¯
+\hat{X}\coloneqq\overline{\im(g(X_{\text{sm}}))}
+ is called the 
+Nash blow-up
+ of 
+X
+X
+. The restriction of the projection 
+Gr
+⁡
+(
+d
+,
+T
+​
+ℙ
+N
+)
+→
+ℙ
+N
+\Gr(d,T\mathbb{P}^{N})\rightarrow\mathbb{P}^{N}
+ to 
+X
+^
+\hat{X}
+ gives the 
+Nash blow-up map
+ν
+:
+X
+^
+→
+X
+\nu\colon\hat{X}\rightarrow X
+. Restricting the tautological subbundle of 
+Gr
+⁡
+(
+d
+,
+T
+​
+ℙ
+N
+)
+\Gr(d,T\mathbb{P}^{N})
+ to 
+X
+^
+\hat{X}
+ gives the 
+Nash tangent bundle
+T
+​
+X
+^
+\widehat{TX}
+ of 
+X
+^
+\hat{X}
+.
+Definition 6.4
+.
+The 
+i
+th
+i^{\text{th}}
+Chern–Mather class
+c
+i
+M
+​
+(
+X
+)
+c^{M}_{i}(X)
+ of 
+X
+X
+ is the pushforward
+c
+i
+M
+​
+(
+X
+)
+:=
+ν
+∗
+​
+(
+c
+i
+​
+(
+T
+​
+X
+^
+∩
+[
+X
+^
+]
+)
+)
+.
+c^{M}_{i}(X):=\nu_{*}\left(c_{i}(\widehat{TX}\cap[\hat{X}])\right).
+The total Chern–Mather class 
+c
+M
+​
+(
+X
+)
+c^{M}(X)
+ is the sum of all 
+c
+i
+M
+​
+(
+X
+)
+c^{M}_{i}(X)
+.
+The following result expresses the generic ED degree of a determinantal variety in terms of degrees of Chern–Mather classes.
+Lemma 6.5
+(
+[
+Zha18
+, Proposition 5.5]
+)
+.
+Let 
+V
+m
+,
+n
+,
+r
+↪
+ℙ
+m
+​
+n
+−
+1
+V_{m,n,r}\hookrightarrow\mathbb{P}^{mn-1}
+ be the determinantal variety of 
+m
+×
+n
+m\times n
+ matrices with rank 
+≤
+r
+\leq r
+. Then
+EDdeg
+gen
+​
+(
+V
+m
+,
+n
+,
+r
+)
+=
+∑
+l
+=
+0
+(
+m
++
+k
+)
+​
+(
+n
+−
+k
+)
+−
+1
+∑
+i
+=
+0
+l
+(
+−
+1
+)
+i
+​
+(
+(
+m
++
+k
+)
+​
+(
+n
+−
+k
+)
+−
+i
+(
+m
++
+k
+)
+​
+(
+n
+−
+k
+)
+−
+l
+)
+​
+β
+(
+m
++
+k
+)
+​
+(
+n
+−
+k
+)
+−
+1
+−
+i
+,
+\mathrm{EDdeg}_{\mathrm{gen}}(V_{m,n,r})=\sum_{l=0}^{(m+k)(n-k)-1}\sum_{i=0}^{l}(-1)^{i}\binom{(m+k)(n-k)-i}{(m+k)(n-k)-l}\beta_{(m+k)(n-k)-1-i},
+where 
+k
+=
+m
+−
+r
+k=m-r
+ and 
+c
+M
+​
+(
+V
+m
+,
+n
+,
+r
+)
+=
+∑
+l
+=
+0
+m
+​
+n
+−
+1
+β
+l
+​
+H
+l
+∈
+ℤ
+⁡
+[
+H
+]
+/
+⟨
+H
+m
+​
+n
+⟩
+=
+A
+⁡
+(
+ℙ
+m
+​
+n
+−
+1
+)
+c^{M}(V_{m,n,r})=\sum_{l=0}^{mn-1}\beta_{l}H^{l}\in\mathbb{Z}[H]/\langle H^{mn}\rangle=A(\mathbb{P}^{mn-1})
+ with 
+H
+=
+c
+1
+​
+(
+𝒪
+ℙ
+m
+​
+n
+−
+1
+​
+(
+1
+)
+)
+H=c_{1}(\mathcal{O}_{\mathbb{P}^{mn-1}}(1))
+.
+The Chern–Mather class of a determinantal variety has a quite involved, yet very explicit description due to Zhang.
+Theorem 6.6
+(
+[
+Zha18
+, Theorem 4.3]
+)
+.
+With the notation as in Lemma 
+6.5
+,
+c
+M
+​
+(
+V
+m
+,
+n
+,
+r
+)
+=
+trace
+⁡
+(
+A
+⁡
+(
+m
+,
+n
+,
+r
+)
+⋅
+ℋ
+⁡
+(
+m
+,
+n
+,
+r
+)
+⋅
+B
+⁡
+(
+m
+,
+n
+,
+r
+)
+)
+.
+c^{M}(V_{m,n,r})=\mathrm{trace}(A(m,n,r)\cdot\mathcal{H}(m,n,r)\cdot B(m,n,r)).
+Here, 
+A
+,
+B
+A,B
+ and 
+ℋ
+\mathcal{H}
+ are the following 
+(
+m
+⁡
+(
+n
+−
+k
+)
++
+1
+)
+×
+(
+m
+⁡
+(
+n
+−
+k
+)
++
+1
+)
+(m(n-k)+1)\times(m(n-k)+1)
+ matrices (remember 
+k
+=
+m
+−
+r
+k=m-r
+):
+A
+​
+(
+m
+,
+n
+,
+r
+)
+i
+,
+j
+=
+∫
+Gr
+⁡
+(
+k
+,
+n
+)
+c
+⁡
+(
+𝒯
+Gr
+⁡
+(
+k
+,
+n
+)
+)
+​
+c
+i
+​
+(
+𝒬
+∨
+m
+)
+​
+c
+j
+−
+i
+​
+(
+𝒮
+∨
+m
+)
+∩
+[
+Gr
+⁡
+(
+k
+,
+n
+)
+]
+,
+\displaystyle A(m,n,r)_{i,j}=\int_{\Gr(k,n)}c(\mathcal{T}_{\Gr(k,n)})c_{i}(\mathcal{Q}^{\vee m})c_{j-i}(\mathcal{S}^{\vee m})\cap[\Gr(k,n)],
+B
+​
+(
+m
+,
+n
+,
+r
+)
+i
+,
+j
+=
+(
+m
+⁡
+(
+n
+−
+k
+)
+−
+j
+i
+−
+j
+)
+,
+\displaystyle B(m,n,r)_{i,j}=\binom{m(n-k)-j}{i-j},
+ℋ
+​
+(
+m
+,
+n
+,
+r
+)
+i
+,
+j
+=
+H
+m
+​
+k
++
+j
+−
+i
+,
+\displaystyle\mathcal{H}(m,n,r)_{i,j}=H^{mk+j-i},
+where 
+𝒮
+\mathcal{S}
+ and 
+𝒬
+\mathcal{Q}
+ are the universal sub- and quotient bundle of the Grassmannian, respectively, and 
+i
+,
+j
+=
+0
+,
+1
+,
+…
+,
+m
+⁡
+(
+n
+−
+k
+)
+i,j=0,1,\dots,m(n-k)
+.
+Proof of Theorem 
+6.3
+.
+We first need to compute the Chern–Mather class 
+c
+M
+​
+(
+V
+)
+=
+c
+M
+​
+(
+V
+k
+,
+3
+,
+2
+)
+c^{M}(V)=c^{M}(V_{k,3,2})
+. Note that in this case 
+k
+=
+1
+k=1
+, so 
+Gr
+⁡
+(
+k
+,
+n
+)
+=
+Gr
+⁡
+(
+1
+,
+3
+)
+≅
+ℙ
+2
+\Gr(k,n)=\Gr(1,3)\cong\mathbb{P}^{2}
+. Let 
+A
+⁡
+(
+ℙ
+2
+)
+=
+ℤ
+⁡
+[
+h
+]
+/
+⟨
+h
+3
+⟩
+A(\mathbb{P}^{2})=\mathbb{Z}[h]/\langle h^{3}\rangle
+ be the Chow ring of 
+ℙ
+2
+\mathbb{P}^{2}
+ where 
+h
+=
+c
+1
+​
+(
+𝒪
+ℙ
+2
+​
+(
+1
+)
+)
+h=c_{1}(\mathcal{O}_{\mathbb{P}^{2}}(1))
+. The universal subbundle 
+𝒮
+\mathcal{S}
+ is just 
+𝒪
+ℙ
+2
+​
+(
+−
+1
+)
+\mathcal{O}_{\mathbb{P}^{2}}(-1)
+ and we have
+c
+⁡
+(
+𝒯
+ℙ
+2
+)
+=
+1
++
+3
+​
+h
++
+3
+​
+h
+2
+,
+c
+⁡
+(
+𝒮
+∨
+k
+)
+=
+1
++
+k
+​
+h
++
+1
+2
+​
+k
+​
+(
+k
+−
+1
+)
+​
+h
+2
+,
+c
+⁡
+(
+𝒬
+∨
+k
+)
+=
+1
+−
+k
+​
+h
++
+1
+2
+​
+k
+​
+(
+k
++
+1
+)
+​
+h
+2
+.
+c(\mathcal{T}_{\mathbb{P}^{2}})=1+3h+3h^{2},\quad c(\mathcal{S}^{\vee k})=1+kh+\frac{1}{2}k(k-1)h^{2},\quad c(\mathcal{Q}^{\vee k})=1-kh+\frac{1}{2}k(k+1)h^{2}.
+Using these, we compute, for example,
+A
+​
+(
+k
+,
+3
+,
+2
+)
+1
+,
+2
+=
+∫
+ℙ
+2
+(
+1
++
+3
+​
+h
++
+3
+​
+h
+2
+)
+​
+(
+−
+k
+​
+h
+)
+​
+k
+​
+h
+∩
+[
+ℙ
+2
+]
+=
+−
+k
+2
+.
+A(k,3,2)_{1,2}=\int_{\mathbb{P}^{2}}(1+3h+3h^{2})(-kh)kh\cap[\mathbb{P}^{2}]=-k^{2}.
+Similarly, we obtain that 
+A
+⁡
+(
+k
+,
+3
+,
+2
+)
+A(k,3,2)
+ is the 
+(
+2
+​
+k
++
+1
+)
+×
+(
+2
+​
+k
++
+1
+)
+(2k+1)\times(2k+1)
+ matrix
+A
+⁡
+(
+k
+,
+3
+,
+2
+)
+=
+(
+3
+3
+​
+k
+1
+2
+​
+k
+​
+(
+k
+−
+1
+)
+0
+…
+0
+0
+−
+3
+​
+k
+−
+k
+2
+0
+…
+0
+0
+0
+1
+2
+​
+k
+​
+(
+k
++
+1
+)
+0
+…
+0
+0
+0
+0
+0
+…
+0
+⋱
+0
+0
+0
+0
+…
+0
+)
+.
+A(k,3,2)=\begin{pmatrix}3&3k&\frac{1}{2}k(k-1)&0&\dots&0\\
+0&-3k&-k^{2}&0&\dots&0\\
+0&0&\frac{1}{2}k(k+1)&0&\dots&0\\
+0&0&0&0&\dots&0\\
+\vdots&\vdots&\vdots&\vdots&\ddots&\vdots\\
+0&0&0&0&\dots&0\\
+\end{pmatrix}.
+The matrix 
+B
+⁡
+(
+k
+,
+3
+,
+2
+)
+B(k,3,2)
+ is given by
+B
+⁡
+(
+k
+,
+3
+,
+2
+)
+=
+(
+(
+2
+​
+k
+0
+)
+0
+0
+…
+0
+(
+2
+​
+k
+1
+)
+(
+2
+​
+k
+−
+1
+0
+)
+0
+…
+0
+(
+2
+​
+k
+2
+)
+(
+2
+​
+k
+1
+)
+(
+2
+​
+k
+0
+)
+…
+0
+⋱
+(
+2
+​
+k
+2
+​
+k
+)
+(
+2
+​
+k
+−
+1
+2
+​
+k
+−
+1
+)
+(
+2
+​
+k
+−
+2
+2
+​
+k
+−
+2
+)
+…
+(
+0
+0
+)
+)
+B(k,3,2)=\begin{pmatrix}\binom{2k}{0}&0&0&\dots&0\\
+\binom{2k}{1}&\binom{2k-1}{0}&0&\dots&0\\
+\binom{2k}{2}&\binom{2k}{1}&\binom{2k}{0}&\dots&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots\\
+\binom{2k}{2k}&\binom{2k-1}{2k-1}&\binom{2k-2}{2k-2}&\dots&\binom{0}{0}\\
+\end{pmatrix}
+and the matrix 
+ℋ
+⁡
+(
+k
+,
+3
+,
+2
+)
+\mathcal{H}(k,3,2)
+ is
+ℋ
+⁡
+(
+k
+,
+3
+,
+2
+)
+=
+(
+H
+k
+H
+k
++
+1
+H
+k
++
+2
+…
+0
+H
+k
+−
+1
+H
+k
+H
+k
++
+1
+…
+H
+3
+​
+k
+−
+1
+H
+k
+−
+1
+H
+k
+−
+1
+H
+k
+…
+H
+3
+​
+k
+−
+2
+⋱
+0
+0
+0
+…
+H
+k
+)
+,
+\mathcal{H}(k,3,2)=\begin{pmatrix}[l]H^{k}&H^{k+1}&H^{k+2}&\dots&0\\
+H^{k-1}&H^{k}&H^{k+1}&\dots&H^{3k-1}\\
+H^{k-1}&H^{k-1}&H^{k}&\dots&H^{3k-2}\\
+\
+vdots&\vdots&\vdots&\ddots&\vdots\\
+0&0&0&\dots&H^{k}\\
+\end{pmatrix},
+where 
+H
+=
+c
+1
+​
+(
+O
+ℙ
+3
+​
+k
+−
+1
+​
+(
+1
+)
+)
+H=c_{1}(O_{\mathbb{P}^{3k-1}}(1))
+ is the generator of 
+A
+⁡
+(
+ℙ
+3
+​
+k
+−
+1
+)
+A(\mathbb{P}^{3k-1})
+. Carrying out the multiplication 
+B
+⁡
+(
+k
+,
+3
+,
+2
+)
+​
+A
+​
+(
+k
+,
+3
+,
+2
+)
+​
+ℋ
+​
+(
+k
+,
+3
+,
+2
+)
+B(k,3,2)A(k,3,2)\mathcal{H}(k,3,2)
+, one finds that the diagonal has entries
+(
+(
+2
+​
+k
+0
+)
+⁡
+(
+3
+​
+H
+k
++
+3
+​
+k
+​
+H
+k
+−
+1
++
+1
+2
+​
+k
+​
+(
+k
+−
+1
+)
+​
+H
+k
+−
+2
+)
+(
+2
+​
+k
+1
+)
+⁡
+(
+3
+​
+H
+k
++
+1
++
+3
+​
+k
+​
+H
+k
++
+1
+2
+​
+k
+​
+(
+k
+−
+1
+)
+​
+H
+k
+−
+1
+)
++
+(
+2
+​
+k
+−
+1
+0
+)
+⁡
+(
+−
+3
+​
+k
+​
+H
+k
+−
+k
+2
+​
+H
+k
+−
+1
+)
+(
+2
+​
+k
+2
+)
+⁡
+(
+3
+​
+H
+k
++
+2
++
+3
+​
+k
+​
+H
+k
++
+1
++
+1
+2
+​
+k
+​
+(
+k
+−
+1
+)
+​
+H
+k
+)
++
+(
+2
+​
+k
+−
+1
+1
+)
+⁡
+(
+−
+3
+​
+k
+​
+H
+k
++
+1
+−
+k
+2
+​
+H
+k
+)
++
+(
+2
+​
+k
+0
+)
+​
+1
+2
+​
+k
+​
+(
+k
++
+1
+)
+​
+H
+k
+−
+1
+(
+2
+​
+k
+2
+​
+k
+)
+⋅
+0
++
+(
+2
+​
+k
+−
+1
+2
+​
+k
+−
+1
+)
+⁡
+(
+−
+3
+​
+k
+​
+H
+3
+​
+k
+−
+1
+−
+k
+2
+​
+H
+3
+​
+k
+−
+2
+)
++
+(
+2
+​
+k
+−
+2
+2
+​
+k
+−
+2
+)
+​
+1
+2
+​
+k
+​
+(
+k
++
+1
+)
+​
+H
+3
+​
+k
+−
+3
+)
+.
+\scalebox{0.9}{$\begin{pmatrix}\binom{2k}{0}\left(3H^{k}+3kH^{k-1}+\frac{1}{2}k(k-1)H^{k-2}\right)\\
+\binom{2k}{1}\left(3H^{k+1}+3kH^{k}+\frac{1}{2}k(k-1)H^{k-1}\right)+\binom{2k-1}{0}\left(-3kH^{k}-k^{2}H^{k-1}\right)\\
+\binom{2k}{2}\left(3H^{k+2}+3kH^{k+1}+\frac{1}{2}k(k-1)H^{k}\right)+\binom{2k-1}{1}\left(-3kH^{k+1}-k^{2}H^{k}\right)+\binom{2k}{0}\frac{1}{2}k(k+1)H^{k-1}\\
+\vdots\\
+\binom{2k}{2k}\cdot 0+\binom{2k-1}{2k-1}\left(-3kH^{3k-1}-k^{2}H^{3k-2}\right)+\binom{2k-2}{2k-2}\frac{1}{2}k(k+1)H^{3k-3}\\
+\end{pmatrix}$}.
+Computing the trace we find that
+c
+M
+​
+(
+V
+k
+,
+3
+,
+2
+)
+\displaystyle c^{M}(V_{k,3,2})
+=
+∑
+j
+=
+−
+2
+2
+​
+k
+−
+1
+[
+3
+(
+2
+​
+k
+j
+)
++
+3
+k
+(
+(
+2
+​
+k
+j
++
+1
+)
+−
+(
+2
+​
+k
+−
+1
+j
+)
+)
++
+1
+2
+k
+(
+k
+−
+1
+)
+(
+2
+​
+k
+j
++
+2
+)
+\displaystyle=\sum_{j=-2}^{2k-1}\left[3\binom{2k}{j}+3k\left(\binom{2k}{j+1}-\binom{2k-1}{j}\right)+\frac{1}{2}k(k-1)\binom{2k}{j+2}\right.
++
+1
+2
+k
+(
+k
++
+1
+)
+(
+2
+​
+k
+−
+2
+j
+)
+−
+k
+2
+(
+2
+​
+k
+−
+1
+j
++
+1
+)
+]
+\displaystyle\left.+\frac{1}{2}k(k+1)\binom{2k-2}{j}-k^{2}\binom{2k-1}{j+1}\right]
+and hence, by Lemma 
+6.5
+,
+EDdeg
+gen
+(
+𝒱
+(
+2
+,
+2
+,
+k
+)
+,
+2
+)
+=
+∑
+l
+=
+0
+2
+​
+(
+k
++
+1
+)
+−
+1
+∑
+i
+=
+0
+l
+(
+−
+1
+)
+i
+(
+2
+​
+(
+k
++
+1
+)
+−
+i
+2
+​
+(
+k
++
+1
+)
+−
+l
+)
+[
+3
+(
+2
+​
+k
+i
+−
+2
+)
++
+3
+k
+(
+(
+2
+​
+k
+i
+−
+1
+)
+−
+(
+2
+​
+k
+−
+1
+i
+−
+2
+)
+)
++
+1
+2
+k
+(
+k
+−
+1
+)
+(
+2
+​
+k
+i
+)
++
+1
+2
+k
+(
+k
++
+1
+)
+(
+2
+​
+k
+−
+2
+i
+−
+2
+)
+−
+k
+2
+(
+2
+​
+k
+−
+1
+i
+−
+1
+)
+]
+.
+\mathrm{EDdeg}_{\text{gen}}(\mathcal{V}_{(2,2,k),2})=\sum_{l=0}^{2(k+1)-1}\sum_{i=0}^{l}(-1)^{i}\binom{2(k+1)-i}{2(k+1)-l}\left[3\binom{2k}{i-2}+3k\left(\binom{2k}{i-1}\right.\right.\\
+\left.\left.-\binom{2k-1}{i-2}\right)+\frac{1}{2}k(k-1)\binom{2k}{i}+\frac{1}{2}k(k+1)\binom{2k-2}{i-2}-k^{2}\binom{2k-1}{i-1}\right].
+Rearranging the double sum to
+∑
+i
+=
+0
+2
+​
+(
+k
++
+1
+)
+−
+1
+(
+∑
+l
+=
+i
+2
+​
+(
+k
++
+1
+)
+−
+1
+(
+2
+​
+(
+k
++
+1
+)
+−
+i
+2
+​
+(
+k
++
+1
+)
+−
+l
+)
+)
+(
+−
+1
+)
+i
+[
+3
+(
+2
+​
+k
+i
+−
+2
+)
++
+3
+k
+(
+(
+2
+​
+k
+i
+−
+1
+)
+−
+(
+2
+​
+k
+−
+1
+i
+−
+2
+)
+)
++
+1
+2
+k
+(
+k
+−
+1
+)
+(
+2
+​
+k
+i
+)
++
+1
+2
+k
+(
+k
++
+1
+)
+(
+2
+​
+k
+−
+2
+i
+−
+2
+)
+−
+k
+2
+(
+2
+​
+k
+−
+1
+i
+−
+1
+)
+]
+\sum_{i=0}^{2(k+1)-1}\left(\sum_{l=i}^{2(k+1)-1}\binom{2(k+1)-i}{2(k+1)-l}\right)(-1)^{i}\left[3\binom{2k}{i-2}+3k\left(\binom{2k}{i-1}\right.\right.\\
+\left.\left.-\binom{2k-1}{i-2}\right)+\frac{1}{2}k(k-1)\binom{2k}{i}+\frac{1}{2}k(k+1)\binom{2k-2}{i-2}-k^{2}\binom{2k-1}{i-1}\right]
+and noting that
+∑
+l
+=
+i
+2
+​
+(
+k
++
+1
+)
+−
+1
+(
+2
+​
+(
+k
++
+1
+)
+−
+i
+2
+​
+(
+k
++
+1
+)
+−
+l
+)
+=
+2
+2
+​
+(
+k
++
+1
+)
+−
+i
+−
+1
+,
+\sum_{l=i}^{2(k+1)-1}\binom{2(k+1)-i}{2(k+1)-l}=2^{2(k+1)-i}-1,
+one verifies that the above expression indeed equals 
+8
+​
+k
+2
+−
+12
+​
+k
++
+3
+8k^{2}-12k+3
+.
+∎
+We would like to thank Mark Kong for providing the rearrangement argument of the double sum.
+6.2. 
+Gradient-based optimization
+In order to solve for (
+6.1
+), one uses iterative optimization algorithms, including gradient descent and its variants, to find a local minimum of the objective function. In each step, the parameter vector 
+𝜽
+\bm{\theta}
+ is adjusted in the direction opposite to the gradient of the function at the current point, as the gradient points in the direction of the steepest ascent. The update rule can be expressed as
+(6.4)
+𝜽
+(
+t
++
+1
+)
+=
+𝜽
+(
+t
+)
+−
+η
+​
+∇
+𝜽
+ℓ
+F
+𝜽
+(
+t
+)
+.
+\bm{\theta}^{(t+1)}=\bm{\theta}^{(t)}-\eta\nabla_{\bm{\theta}}\ell_{F_{\bm{\theta}^{(t)}}}.
+The tuning parameter 
+η
+\eta
+ is referred to as the 
+learning rate
+ of the optimization process. In practice, the value of 
+η
+\eta
+ is crucial as it determines how big a step is taken on each iteration. If 
+η
+\eta
+ is too small, the algorithm may take too long to converge; if it is too large, the algorithm may overshoot the minimum or fail to converge.
+For a polynomial neural network 
+p
+𝐰
+p_{\mathbf{w}}
+ with weights 
+𝐰
+=
+(
+W
+1
+,
+W
+2
+,
+…
+,
+W
+L
+)
+\mathbf{w}=(W_{1},W_{2},\ldots,W_{L})
+, at time step 
+t
+t
+, each 
+W
+i
+W_{i}
+ is updated by
+(6.5)
+W
+i
+(
+t
++
+1
+)
+=
+W
+i
+(
+t
+)
+−
+η
+​
+∇
+W
+i
+ℓ
+p
+𝐰
+(
+t
+)
+W_{i}^{(t+1)}=W_{i}^{(t)}-\eta\nabla_{W_{i}}\ell_{p_{\mathbf{w}^{(t)}}}
+where 
+∇
+W
+i
+ℓ
+p
+𝐰
+(
+t
+)
+\nabla_{W_{i}}\ell_{p_{\mathbf{w}^{(t)}}}
+ is computed efficiently by backpropagation. In subsection 
+6.4
+, we explain the backpropagation algorithm, which can potentially find its applications in algebraic statistics beyond the neural network settings.
+6.3. 
+Connecting the learning degree to empirical observations.
+We consider a polynomial neural network with architecture 
+𝐝
+=
+(
+2
+,
+2
+,
+3
+)
+\mathbf{d}=(2,2,3)
+ and 
+r
+=
+2
+r=2
+. We generate 5000 random datasets each consisting of 50 input-output pairs 
+(
+𝐱
+,
+𝐲
+)
+(\mathbf{x},\mathbf{y})
+ where 
+𝐱
+=
+(
+x
+1
+,
+x
+2
+)
+∈
+ℝ
+2
+\mathbf{x}=(x_{1},x_{2})\in\mathbb{R}^{2}
+ and 
+𝐲
+=
+(
+y
+1
+,
+y
+2
+,
+y
+3
+)
+∈
+ℝ
+3
+\mathbf{y}=(y_{1},y_{2},y_{3})\in\mathbb{R}^{3}
+. For each data pair, 
+x
+1
+x_{1}
+ and 
+x
+2
+x_{2}
+ are sampled uniformly from 
+[
+−
+1
+,
+1
+]
+[-1,1]
+. For 
+γ
+=
+1
+,
+2
+,
+3
+\gamma=1,2,3
+, each coordinate 
+y
+γ
+y_{\gamma}
+ is a homogeneous polynomial of degree two in two variables 
+x
+1
+x_{1}
+, 
+x
+2
+x_{2}
+, i.e.,
+y
+γ
+=
+c
+γ
+,
+1
+​
+x
+1
+2
++
+c
+γ
+,
+2
+​
+x
+1
+​
+x
+2
++
+c
+γ
+,
+3
+​
+x
+2
+2
+.
+y_{\gamma}=c_{\gamma,1}x_{1}^{2}+c_{\gamma,2}x_{1}x_{2}+c_{\gamma,3}x_{2}^{2}.
+Figure 3. 
+Comparison of the quadratic polynomials learned by a PNN with 
+𝐝
+=
+(
+2
+,
+2
+,
+3
+)
+\mathbf{d}=(2,2,3)
+ and 
+r
+=
+2
+r=2
+ in each coordinate. Blue points are generated based on the ground truth, while red, green, and yellow stand for the top three most frequent functions learned by the architecture.
+For 
+γ
+=
+1
+,
+2
+,
+3
+\gamma=1,2,3
+ and 
+j
+=
+1
+,
+2
+,
+3
+j=1,2,3
+, we draw 
+c
+γ
+,
+j
+c_{\gamma,j}
+ from a standard normal distribution. We initialize the parameters randomly for each dataset and run gradient descent optimization of the mean squared error (MSE) loss with a learning rate of 
+0.01
+0.01
+, and decaying by 
+0.9
+0.9
+ for every 
+2,000
+2,000
+ training epochs. We stop training at a maximum of 
+20,000
+{20,000}
+ epochs, and consider the neural networks whose gradient norm satisfies 
+‖
+∇
+ℓ
+‖
+2
+≤
+10
+−
+5
+\|\nabla\ell\|^{2}\leq 10^{-5}
+ at the end of training. Instances whose gradient norm does not fall below the threshold within 
+20,000
+{20,000}
+ iterations are discarded. The final functions learned by the neural networks satisfying the above criteria are approximately critical points. We recover the quadratic coefficients of the function learned by the neural network on each dataset from its weights at epoch 
+20,000
+{20,000}
+ as follows:
+For each output unit 
+j
+=
+1
+,
+2
+,
+3
+j=1,2,3
+,
+c
+1
+​
+j
+′
+\displaystyle c_{1j}^{\prime}
+=
+w
+2
+​
+j
+​
+1
+​
+w
+111
+2
++
+w
+2
+​
+j
+​
+2
+​
+w
+121
+2
+,
+\displaystyle=w_{2j1}w_{111}^{2}+w_{2j2}w_{121}^{2},
+c
+2
+​
+j
+′
+\displaystyle c_{2j}^{\prime}
+=
+2
+​
+(
+w
+2
+​
+j
+​
+1
+​
+w
+111
+​
+w
+112
++
+w
+2
+​
+j
+​
+2
+​
+w
+121
+​
+w
+122
+)
+,
+\displaystyle=2(w_{2j1}w_{111}w_{112}+w_{2j2}w_{121}w_{122}),
+c
+3
+​
+j
+′
+\displaystyle c_{3j}^{\prime}
+=
+w
+2
+​
+j
+​
+1
+​
+w
+112
+2
++
+w
+2
+​
+j
+​
+2
+​
+w
+122
+2
+.
+\displaystyle=w_{2j1}w_{112}^{2}+w_{2j2}w_{122}^{2}.
+To assess the distinct functions learned by the neural network, we set 
+tol
+=
+0.1
+\texttt{tol}=0.1
+, and consider two solutions are distinct if there exists 
+γ
+=
+1
+,
+2
+,
+3
+\gamma=1,2,3
+ and 
+j
+=
+1
+,
+2
+,
+3
+j=1,2,3
+ such that
+|
+c
+γ
+​
+j
+′
+−
+c
+γ
+​
+j
+′
+¯
+|
+≥
+tol
+|c_{\gamma j}^{\prime}-\overline{c_{\gamma j}^{\prime}}|\geq\texttt{tol}
+where 
+c
+γ
+​
+j
+′
+c_{\gamma j}^{\prime}
+ and 
+c
+γ
+​
+j
+′
+¯
+\overline{c_{\gamma j}^{\prime}}
+ are corresponding coefficients of the function learned by the neural network by the datasets.
+For the architecture 
+𝐝
+=
+(
+2
+,
+2
+,
+3
+)
+\mathbf{d}=(2,2,3)
+ and 
+r
+=
+2
+r=2
+, out of the 
+5,000
+5,000
+ datasets, 
+2713
+2713
+ reached the gradient norm threshold within 
+20,000
+20,000
+ training epochs. Based on the criteria for the coefficients of the final output, we learned 22 distinct functions whose coefficients differ by the tolerance threshold. We sort the distinct functions by descending the number of training nets it corresponds to. For the top three functions (Function 
+1
+1
+, 
+2
+2
+ and 
+3
+3
+) learned by the architecture, they correspond to 
+1,557
+1,557
+, 
+560
+560
+, and 
+241
+241
+ datasets, respectively. In the figure below, we evaluate Function 
+1
+1
+ (green), Function 
+2
+2
+ (red), and Function 
+3
+3
+ (yellow) against the ground truth (blue) on the three coordinates 
+y
+1
+y_{1}
+, 
+y
+2
+y_{2}
+, 
+y
+3
+y_{3}
+ separately.
+The experiment shows that the three most frequently learned functions all align with the ground truth on the 
+y
+1
+y_{1}
+ and 
+y
+2
+y_{2}
+ coordinates, and being slightly off on 
+y
+3
+y_{3}
+. Note that following the formula in 
+6.4
+, the learning degree of the architecture 
+𝐝
+=
+(
+2
+,
+2
+,
+3
+)
+\mathbf{d}=(2,2,3)
+ and 
+r
+=
+2
+r=2
+ is 
+39
+39
+, which provides an upper bound on the number of distinct functions the gradient descent algorithm is able to learn under proper conditions. The experiment implementation is available at
+
+[
+KLW24
+]
+.
+6.4. 
+Backpropagation
+To compute the gradient of the loss function efficiently one uses the 
+backpropagation algorithm
+. Since Werbos introduced this algorithm in his 1974 PhD thesis 
+[
+Wer74
+]
+, backpropagation lies at the heart of modern successes in deep learning. For the computational algebraic geometer backpropagation is of interest as it provides a way to compute Jacobians of a parameter map 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+ exponentially faster than by naïve differentiation. We give a brief overview of the backpropagation algorithm following 
+[
+Nie15
+, Chapter 2]
+ and explain how it can be used to compute Jacobian ranks.
+Let 
+ℓ
+\ell
+ be a loss function (e.g., as in (
+6.3
+)) satisfying the following assumptions:
+(1)
+ℓ
+\ell
+ is smooth;
+(2)
+ℓ
+\ell
+ can be written as a sum of loss functions 
+ℓ
+=
+∑
+j
+=
+1
+N
+ℓ
+𝐱
+^
+j
+\ell=\sum_{j=1}^{N}\ell_{\hat{\mathbf{x}}_{j}}
+,
+where each 
+ℓ
+𝐱
+^
+j
+\ell_{\hat{\mathbf{x}}_{j}}
+ depends only on the sample 
+𝐱
+^
+j
+\hat{\mathbf{x}}_{j}
+;
+(3)
+ℓ
+\ell
+ depends only on the output of the network 
+p
+𝐰
+​
+(
+𝐱
+)
+p_{\mathbf{w}}(\mathbf{x})
+, not on the state of intermediate layers; the training data 
+f
+⁡
+(
+𝐱
+^
+j
+)
+f(\hat{\mathbf{x}}_{j})
+ are considered as parameters.
+Backpropagation provides a way to compute the gradient 
+∇
+𝐰
+ℓ
+​
+(
+𝐱
+^
+1
+,
+…
+,
+𝐱
+^
+N
+)
+\nabla_{\mathbf{w}}\ell(\hat{\mathbf{x}}_{1},\dots,\hat{\mathbf{x}}_{N})
+ efficiently. Note that in particular, if 
+ℓ
+𝐱
+^
+\ell_{\hat{\mathbf{x}}}
+ is just the network 
+F
+𝜽
+​
+(
+𝐱
+^
+)
+F_{\bm{\theta}}(\hat{\mathbf{x}})
+ itself, this gives an algorithm for computing the gradient 
+∇
+𝐰
+F
+𝜽
+​
+(
+𝐱
+^
+)
+\nabla_{\mathbf{w}}F_{\bm{\theta}}(\hat{\mathbf{x}})
+.
+Let 
+z
+j
+l
+z^{l}_{j}
+ denote the input into the 
+j
+th
+j^{\text{th}}
+ neuron of the 
+l
+th
+l^{\text{th}}
+ layer. The 
+error
+δ
+j
+l
+\delta^{l}_{j}
+ of this neuron is defined as
+δ
+j
+l
+≔
+∂
+ℓ
+∂
+z
+j
+l
+.
+\delta^{l}_{j}\coloneqq\frac{\partial\ell}{\partial z^{l}_{j}}.
+Theorem 6.7
+(
+[
+Nie15
+]
+)
+.
+Let 
+a
+j
+l
+a^{l}_{j}
+ be the output of the 
+j
+th
+j^{\text{th}}
+ neuron in the 
+l
+th
+l^{\text{th}}
+ layer, and let 
+L
+L
+ denote the last layer of the network. Then the following equations hold:
+δ
+j
+L
+=
+∂
+ℓ
+∂
+a
+j
+L
+​
+σ
+L
+,
+j
+′
+​
+(
+z
+j
+L
+)
+,
+δ
+j
+l
+=
+σ
+l
+,
+j
+′
+​
+(
+z
+j
+l
+)
+​
+∑
+k
+=
+1
+d
+l
+w
+l
++
+1
+,
+j
+,
+k
+​
+δ
+k
+l
++
+1
+,
+∂
+ℓ
+∂
+w
+l
+,
+j
+,
+k
+=
+a
+k
+l
+−
+1
+​
+δ
+j
+l
+.
+\delta^{L}_{j}=\frac{\partial\ell}{\partial a^{L}_{j}}\sigma^{\prime}_{L,j}(z_{j}^{L}),\quad\delta^{l}_{j}=\sigma^{\prime}_{l,j}(z^{l}_{j})\sum_{k=1}^{d_{l}}w_{l+1,j,k}\delta^{l+1}_{k},\quad\frac{\partial\ell}{\partial w_{l,j,k}}=a^{l-1}_{k}\delta^{l}_{j}.
+Proof.
+These are simple consequences of applying the chain rule.
+∎
+These equations give rise to Algorithm 
+1
+ below. The idea is to first compute the outputs of each neuron 
+a
+j
+l
+a^{l}_{j}
+ via a “forward” run through the network and then compute the errors 
+δ
+j
+l
+\delta^{l}_{j}
+ using the first two equations of Theorem 
+6.7
+ running “backwards” through the network. Finally, the gradient can be computed using the third equation from Theorem 
+6.7
+.
+Algorithm 1
+ Backpropagation
+Input:
+ A neural network 
+F
+𝜽
+F_{\bm{\theta}}
+, a cost function 
+C
+C
+ with single input sample 
+𝐱
+^
+\hat{\mathbf{x}}
+ satisfying the assumptions above 
+
+Output:
+ The gradient 
+∇
+𝐰
+ℓ
+​
+(
+𝐱
+^
+)
+\nabla_{\mathbf{w}}\ell(\hat{\mathbf{x}})
+1:
+a
+0
+←
+𝐱
+^
+a^{0}\leftarrow\hat{\mathbf{x}}
+2:
+for
+l
+l
+ from 
+1
+1
+ to 
+L
+L
+: 
+do
+#
+ forward loop
+3:
+z
+l
+←
+W
+l
+​
+a
+l
+−
+1
+z^{l}\leftarrow W_{l}a^{l-1}
+4:
+a
+l
+←
+σ
+l
+​
+(
+z
+l
+)
+a^{l}\leftarrow\sigma_{l}(z^{l})
+5:
+end
+for
+6:
+δ
+L
+←
+∇
+𝐚
+ℓ
+⊙
+σ
+L
+′
+​
+(
+z
+L
+)
+\delta^{L}\leftarrow\nabla_{\mathbf{a}}\ell\odot\sigma^{\prime}_{L}(z^{L})
+#
+⊙
+\odot
+ denotes the Hadamard (elementwise) product
+7:
+for
+l
+l
+ from 
+L
+−
+1
+L-1
+ to 1: 
+do
+#
+ backward loop
+8:
+δ
+l
+←
+(
+W
+l
+T
+​
+δ
+l
++
+1
+)
+⊙
+σ
+l
+′
+​
+(
+z
+l
+)
+\delta^{l}\leftarrow(W_{l}^{T}\delta^{l+1})\odot\sigma^{\prime}_{l}(z^{l})
+9:
+end
+for
+10:
+return
+∇
+𝐰
+ℓ
+​
+(
+𝐱
+)
+=
+(
+a
+k
+l
+−
+1
+​
+δ
+j
+l
+)
+j
+,
+k
+,
+l
+\nabla_{\mathbf{w}}\ell(\mathbf{x})=(a^{l-1}_{k}\delta^{l}_{j})_{j,k,l}
+If we choose the loss function 
+ℓ
+\ell
+ to be the network 
+F
+𝜽
+F_{\bm{\theta}}
+ itself, backpropagation returns
+the gradient 
+∇
+𝐰
+F
+𝜽
+​
+(
+𝐱
+^
+)
+\nabla_{\mathbf{w}}F_{\bm{\theta}}(\hat{\mathbf{x}})
+. However, when we are interested in computing the Jacobian of 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+, we need to compute the partial derivatives
+
+∂
+w
+j
+,
+k
+,
+l
+c
+I
+(
+i
+)
+\partial_{w_{j,k,l}}c^{(i)}_{I}
+,
+whereas
+(6.6)
+∂
+F
+𝜽
+(
+i
+)
+∂
+w
+j
+,
+k
+,
+l
+​
+(
+𝐱
+^
+)
+=
+∑
+I
+∂
+c
+I
+(
+i
+)
+∂
+w
+j
+,
+k
+,
+l
+​
+𝐱
+^
+I
+.
+\frac{\partial F_{\bm{\theta}}^{(i)}}{\partial w_{j,k,l}}(\hat{\mathbf{x}})=\sum_{I}\frac{\partial c^{(i)}_{I}}{\partial w_{j,k,l}}\hat{\mathbf{x}}^{I}.
+By choosing 
+N
+≔
+(
+r
+L
+−
+1
++
+d
+0
+−
+1
+d
+0
+−
+1
+)
+N\coloneqq\binom{r^{L-1}+d_{0}-1}{d_{0}-1}
+ many samples 
+𝐱
+^
+1
+,
+𝐱
+^
+2
+,
+…
+,
+𝐱
+^
+N
+\hat{\mathbf{x}}_{1},\hat{\mathbf{x}}_{2},\dots,\hat{\mathbf{x}}_{N}
+ and applying backpropagation to each of them, we obtain a linear system from (
+6.6
+) in the unknowns 
+∂
+c
+I
+(
+i
+)
+∂
+w
+j
+,
+k
+,
+l
+\frac{\partial c^{(i)}_{I}}{\partial w_{j,k,l}}
+. For a generic choice of samples, this system has a unique solution and we obtain the Jacobian 
+J
+Ψ
+𝐝
+,
+r
+J_{\Psi_{\mathbf{d},r}}
+.
+This routine allows us to compute Jacobians and in particular the dimension of the neurovariety exponentially faster than via the naïve method of computing all derivatives of the parametrization 
+Ψ
+𝐝
+,
+r
+\Psi_{\mathbf{d},r}
+. It can be easily adapted for computations over finite fields which makes dimension computations even faster. In 
+[
+KTB19
+]
+ this routine has already been implemented, however, their implementation contains a mistake in the set-up of the linear system described above. We provide a corrected implementation at 
+[
+KLW24
+]
+.
+6.5. 
+Case study: Linear Neural Networks
+In addition to static properties of neural network optimization, we are also interested in the trajectory of practical optimization algorithms. This problem presents a more complex challenge, particularly in its general form. Limited results are known for the special subfamily of polynomial neural networks with activation degree 
+r
+=
+1
+r=1
+. In this subsection, we survey prior results on the trajectory of the gradient descent algorithms applied to linear neural networks from literature in the algebraic statistics and machine learning communities separately. An interesting open question is to extend the analysis to polynomial neural networks with general activation degrees.
+Linear neural networks are a special class of polynomial neural networks with the activation function 
+ρ
+1
+​
+(
+𝐱
+)
+=
+𝐱
+\rho_{1}(\mathbf{x})=\mathbf{x}
+. The associated map from the set of parameters to vectors of homogeneous polynomials of degree one in 
+d
+0
+d_{0}
+ many variables is given by
+Ψ
+𝐝
+,
+1
+:
+ℝ
+d
+0
+×
+d
+1
+×
+⋯
+×
+ℝ
+d
+L
+−
+1
+×
+d
+L
+→
+(
+Sym
+1
+(
+ℝ
+d
+0
+)
+)
+d
+L
+,
+𝐰
+↦
+p
+𝐰
+=
+[
+p
+𝐰
+(
+1
+)
+p
+𝐰
+(
+d
+L
+)
+]
+.
+\Psi_{\mathbf{d},1}:\mathbb{R}^{d_{0}\times d_{1}}\times\cdots\times\mathbb{R}^{d_{L-1}\times d_{L}}\rightarrow(\Sym_{1}(\mathbb{R}^{d_{0}}))^{d_{L}},\quad\mathbf{w}\mapsto p_{\mathbf{w}}=\begin{bmatrix}p_{\mathbf{w}}^{(1)}\\
+\vdots\\
+p_{\mathbf{w}}^{(d_{L})}\end{bmatrix}.
+The neuromanifold for the architecture 
+𝐝
+\mathbf{d}
+ is
+ℳ
+𝐝
+,
+1
+=
+{
+M
+∈
+ℝ
+d
+0
+×
+d
+L
+∣
+rk
+⁡
+(
+M
+)
+≤
+min
+⁡
+{
+d
+0
+,
+d
+1
+,
+…
+,
+d
+L
+}
+}
+.
+\mathcal{M}_{\mathbf{d},1}=\{M\in\mathbb{R}^{d_{0}\times d_{L}}\mid\rk(M)\
+leq\min\{d_{0},d_{1},\ldots,d_{L}\}\}.
+Note that in the linear case the neuromanifold is always equal to the neurovariety.
+We denote the map from 
+ℝ
+d
+0
+×
+⋯
+×
+d
+L
+\mathbb{R}^{d_{0}\times\cdots\times d_{L}}
+ to 
+ℝ
+d
+0
+×
+d
+L
+\mathbb{R}^{d_{0}\times d_{L}}
+ as
+μ
+𝐝
+(
+W
+1
+,
+W
+2
+,
+…
+,
+W
+L
+)
+=
+W
+L
+⋯
+W
+2
+W
+1
+.
+\mu_{\mathbf{d}}(W_{1},W_{2},\ldots,W_{L})=W_{L}\cdots W_{2}W_{1}.
+Proposition 6.8
+(
+[
+TKB19
+, Theorem 4]
+)
+.
+Let 
+d
+~
+=
+min
+⁡
+(
+𝐝
+)
+\tilde{d}=\min(\mathbf{d})
+, 
+𝐰
+=
+(
+W
+1
+,
+…
+,
+W
+L
+)
+\mathbf{w}=(W_{1},\ldots,W_{L})
+ and 
+W
+¯
+=
+μ
+𝐝
+​
+(
+𝐰
+)
+\overline{W}=\mu_{\mathbf{d}}(\mathbf{w})
+.
+•
+(Filling case) If 
+d
+~
+=
+min
+⁡
+{
+d
+0
+,
+d
+L
+}
+\tilde{d}=\min\{d_{0},d_{L}\}
+, the differential 
+d
+​
+μ
+d
+​
+(
+𝐰
+)
+d\mu_{d}(\mathbf{w})
+ has maximal rank equal to 
+dim
+(
+ℳ
+𝐝
+,
+1
+)
+=
+d
+0
+​
+d
+L
+\dim(\mathcal{M}_{\mathbf{d},1})=d_{0}d_{L}
+ if and only if for any 
+i
+∈
+[
+L
+−
+1
+]
+i\in[L-1]
+, either 
+rk
+⁡
+(
+W
+j
+)
+=
+d
+L
+\rk(W_{j})=d_{L}
+ for all 
+j
+>
+i
+j>i
+ or 
+rk
+⁡
+(
+W
+j
+)
+=
+d
+0
+\rk(W_{j})=d_{0}
+ for all 
+j
+<
+i
++
+1
+j<i+1
+.
+•
+(Non-filling case) If 
+d
+~
+<
+min
+⁡
+{
+d
+0
+,
+d
+L
+}
+\tilde{d}<\min\{d_{0},d_{L}\}
+, the differential 
+d
+​
+μ
+d
+​
+(
+𝐰
+)
+d\mu_{d}(\mathbf{w})
+ has maximal rank equal to 
+dim
+(
+ℳ
+𝐝
+,
+1
+)
+=
+d
+~
+​
+(
+d
+0
++
+d
+L
+−
+d
+~
+)
+\dim(\mathcal{M}_{\mathbf{d},1})=\tilde{d}(d_{0}+d_{L}-\tilde{d})
+ if and only if 
+rk
+⁡
+(
+W
+¯
+)
+=
+d
+~
+\rk(\overline{W})=\tilde{d}
+.
+Besides static properties of the loss landscape, in the realm of neural networks, optimization often focuses on devising and refining algorithms to efficiently find the best model parameters that minimize a loss function. Key aspects of optimization include developing and analyzing optimization algorithms like gradient descent and its variants, understanding the impact of different loss functions, and ensuring model generalization through regularization.  Additionally, researchers delve into convergence analysis to assess how and when algorithms reach optimal solutions. Since neural networks are, in general, complex models, the loss landscape is often non-convex, resulting in a significant risk of converging to a suboptimal local minimum. Analyzing the convergence trajectory is one of the most challenging problems in machine learning theory. We recall results on the convergence trajectory of deep linear neural networks with respect to 
+ℓ
+2
+\ell_{2}
+ loss in 
+Theorem
+6.9
+. This analysis provides crucial insights into the efficiency and effectiveness of how learning algorithms perform on these architectures.
+Theorem 6.9
+(
+[
+ACGH18
+, Theorem 1]
+, informal)
+.
+Consider training deep linear neural networks with 
+ℓ
+2
+\ell_{2}
+ loss using the gradient descent algorithm. Assume that at initialization, the weight matrices are well-conditioned. In addition, there exists 
+δ
+>
+0
+\delta>0
+ such that at any time step 
+T
+T
+,
+(6.7)
+‖
+W
+j
++
+1
+T
+​
+W
+j
++
+1
+−
+W
+j
+​
+W
+j
+T
+‖
+F
+≤
+δ
+,
+\|W_{j+1}^{T}W_{j+1}-W_{j}W_{j}^{T}\|_{F}\leq\delta,
+for all 
+j
+=
+1
+,
+2
+,
+…
+,
+L
+−
+1
+j=1,2,\ldots,L-1
+. For any 
+ϵ
+>
+0
+\epsilon>0
+, with a sufficiently small learning rate, there exists 
+T
+0
+T_{0}
+ such that the loss is no greater than 
+ϵ
+\epsilon
+ for any 
+T
+≥
+T
+0
+T\geq T_{0}
+.
+Theorem 
+6.9
+ shows that, when minimizing the 
+ℓ
+2
+\ell_{2}
+ loss for a deep linear network over a dataset with zero mean and unit variance, gradient descent converges to the global minimum at a linear rate, given mild assumptions. Similar results have been shown for deep linear neural networks with losses beyond the 
+ℓ
+2
+\ell_{2}
+ loss. In 
+[
+BPAM23
+]
+, the authors consider deep linear neural networks trained with the Bures–Wasserstein distance, a loss function commonly used in generative models. They analyze not only the critical points of the loss landscape but also the convergence of both gradient flow and gradient descent for the Bures–Wasserstein loss.
+The convergence trajectory of polynomial neural networks with activation degree 
+r
+≥
+2
+r\geq 2
+ remains an open problem. Heuristically, having a higher degree of activation reduces the symmetry in the parameter space, which may lead to interesting geometric properties in the trajectory of various optimization algorithms. We aim to establish theoretical guarantees for the convergence of general polynomial neural networks in our future work.
+References
+[ACGH18]
+
+Sanjeev Arora, Nadav Cohen, Noah Golowich, and Wei Hu.
+
+
+A convergence analysis of gradient descent for deep linear neural networks.
+
+
+arXiv preprint arXiv:1810.02281
+, 2018.
+
+
+[AH95]
+
+J Alexander and A Hirschowitz.
+
+
+Polynomial interpolation in several variables.
+
+
+Journal of Algebraic Geometry
+, 4(4):201–222, 1995.
+
+
+[BBO18]
+
+Alessandra Bernardi, Grigoriy Blekherman, and Giorgio Ottaviani.
+
+
+On real typical ranks.
+
+
+Bollettino dell’Unione Matematica Italiana
+, 11:293–307, 2018.
+
+
+[BKS23]
+
+Paul Breiding, Kathlén Kohn, and Bernd Sturmfels.
+
+
+Metric algebraic geometry, 2023+.
+
+
+to appear in Springer Nature.
+
+
+[BNT20]
+
+Nicolas Boullé, Yuji Nakatsukasa, and Alex Townsend.
+
+
+Rational neural networks.
+
+
+Advances in neural information processing systems
+, 33:14243–14253, 2020.
+
+
+[BO08]
+
+Maria Chiara Brambilla and Giorgio Ottaviani.
+
+
+On the Alexander–Hirschowitz theorem.
+
+
+Journal of Pure and Applied Algebra
+, 212(5):1229–1251, 2008.
+
+
+[BPAM23]
+
+Pierre Bréchet, Katerina Papagiannouli, Jing An, and Guido Montúfar.
+
+
+Critical points and convergence analysis of generative deep linear networks trained with bures-wasserstein loss.
+
+
+arXiv preprint arXiv:2303.03027
+, 2023.
+
+
+[BS11]
+
+Sarah B Brodsky and Bernd Sturmfels.
+
+
+Tropical quadrics through three points.
+
+
+Linear algebra and its applications
+, 435(7):1778–1785, 2011.
+
+
+[BV06]
+
+Winfried Bruns and Udo Vetter.
+
+
+Determinantal rings
+, volume 1327.
+
+
+Springer, 2006.
+
+
+[CGLM08]
+
+Pierre Comon, Gene Golub, Lek-Heng Lim, and Bernard Mourrain.
+
+
+Symmetric tensors and symmetric tensor rank.
+
+
+SIAM Journal on Matrix Analysis and Applications
+, 30(3):1254–1279, 2008.
+
+
+[CM96]
+
+Pierre Comon and Bernard Mourrain.
+
+
+Decomposition of quantics in sums of powers of linear forms.
+
+
+Signal Processing
+, 53(2-3):93–107, 1996.
+
+
+[CMB
++
+20]
+
+Grigorios G Chrysos, Stylianos Moschoglou, Giorgos Bouritsas, Yannis Panagakis, Jiankang Deng, and Stefanos Zafeiriou.
+
+
+P-nets: Deep polynomial neural networks.
+
+
+In 
+Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition
+, pages 7325–7335, 2020.
+
+
+[CO12]
+
+Pierre Comon and Giorgio Ottaviani.
+
+
+On the typical rank of real binary forms.
+
+
+Linear and multilinear algebra
+, 60(6):657–667, 2012.
+
+
+[DNM
++
+16]
+
+S Dey, S Naskar, T Mukhopadhyay, U Gohs, A Spickenheuer, L Bittrich, S Sriramula, S Adhikari, and G Heinrich.
+
+
+Uncertain natural frequency analysis of composite plates including effect of noise–a polynomial neural network approach.
+
+
+Composite Structures
+, 143:130–142, 2016.
+
+
+[Eis13]
+
+David Eisenbud.
+
+
+Commutative algebra: with a view toward algebraic geometry
+, volume 150.
+
+
+Springer Science & Business Media, 2013.
+
+
+[GHL11]
+
+Rozaida Ghazali, Abir Jaafar Hussain, and Panos Liatsis.
+
+
+Dynamic ridge polynomial neural network: Forecasting the univariate non-stationary and stationary trading signals.
+
+
+Expert Systems with Applications
+, 38(4):3765–3776, 2011.
+
+
+[GLMW22]
+
+J Elisenda Grigsby, Kathryn Lindsey, Robert Meyerhoff, and Chenxi Wu.
+
+
+Functional dimension of feedforward ReLU neural networks.
+
+
+arXiv preprint arXiv:2209.04036
+, 2022.
+
+
+[Hay98]
+
+Simon Haykin.
+
+
+Neural networks: A comprehensive foundation
+.
+
+
+Prentice Hall PTR, 1998.
+
+
+[HSHK03]
+
+Lin-Lin Huang, Akinobu Shimizu, Yoshihiro Hagihara, and Hidefumi Kobatake.
+
+
+Face detection from cluttered images using a polynomial neural network.
+
+
+Neurocomputing
+, 51:197–211, 2003.
+
+
+[HSW89]
+
+Kurt Hornik, Maxwell Stinchcombe, and Halbert White.
+
+
+Multilayer feedforward networks are universal approximators.
+
+
+Neural networks
+, 2(5):359–366, 1989.
+
+
+[KLW24]
+
+Kaie Kubjas, Jiayi Li, and Maximilian Wiesmann.
+
+
+MathRepo page PolynomialNeuralNetworks.
+
+
+https://mathrepo.mis.mpg.de/PolynomialNeuralNetworks
+, 2024.
+
+
+[KTB19]
+
+Joe Kileel, Matthew Trager, and Joan Bruna.
+
+
+On the expressive power of deep polynomial neural networks.
+
+
+Advances in neural information processing systems
+, 32, 2019.
+
+
+[Lan11]
+
+Joseph M Landsberg.
+
+
+Tensors: geometry and applications
+, volume 128.
+
+
+American Mathematical Soc., 2011.
+
+
+[MMSV16]
+
+Mateusz Michałek, Hyunsuk Moon, Bernd Sturmfels, and Emanuele Ventura.
+
+
+Real rank geometry of ternary forms.
+
+
+Annali di Matematica Pura ed Applicata
+, 196(3):1025–1054, August 2016.
+
+
+[Nie15]
+
+Michael A. Nielsen.
+
+
+Neural Networks and Deep Learning
+.
+
+
+Determination Press, 2015.
+
+
+[NM18]
+
+Sarat Chandra Nayak and Bijan Bihari Misra.
+
+
+Estimating stock closing indices using a ga-weighted condensed polynomial neural network.
+
+
+Financial Innovation
+, 4(1):21, 2018.
+
+
+[OPP03]
+
+Sung-Kwun Oh, Witold Pedrycz, and Byoung-Jun Park.
+
+
+Polynomial neural networks architecture: analysis and design.
+
+
+Computers & Electrical Engineering
+, 29(6):703–725, 2003.
+
+
+[TKB19]
+
+Matthew Trager, Kathlén Kohn, and Joan Bruna.
+
+
+Pure and spurious critical points: a geometric study of linear networks.
+
+
+arXiv preprint arXiv:1910.01671
+, 2019.
+
+
+[Wer74]
+
+Paul Werbos.
+
+
+Beyond regression: New tools for prediction and analysis in the behavioral sciences.
+
+
+PhD thesis, Committee on Applied Mathematics, Harvard University, Cambridge, MA
+, 1974.
+
+
+[YHN
++
+21]
+
+Mohsen Yavartanoo, Shih-Hsuan Hung, Reyhaneh Neshatavar, Yue Zhang, and Kyoung Mu Lee.
+
+
+Polynet: Polynomial neural network for 3d shape recognition with polyshape representation.
+
+
+In 
+2021 International Conference on 3D Vision
+, pages 1014–1023. IEEE, 2021.
+
+
+[Yok86]
+
+Shoji Yokura.
+
+
+Polar classes and Segre classes on singular projective varieties.
+
+
+Transactions of the American Mathematical Society
+, 298(1):169–191, 1986.
+
+
+[Zha18]
+
+Xiping Zhang.
+
+
+Chern classes and characteristic cycles of determinantal varieties.
+
+
+Journal of Algebra
+, 497:55–91, 2018.
+
+
+
+    Experimental support, please
+    
+view the build logs
+
+    for errors. Generated by
+    
+
+        L
+        
+A
+
+        T
+        
+E
+xml
+.
+  
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue" 
+(
+)
+ button, located in the page header.
+Tip:
+ You can select the relevant text first, to include it in your report.
+Our team has already identified 
+the following issues
+. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a 
+list of packages that need conversion
+, and welcome 
+developer contributions
+.
+
+        We gratefully acknowledge support from
+        our 
+major funders
+,
+        
+member institutions
+, 
+,
+        and all contributors.
+      
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status
+ (opens in new tab)
+Major funding support from
