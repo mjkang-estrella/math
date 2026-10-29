@@ -14,8 +14,11 @@ Root replay confirms7 literal modules/106 declarations and previously3 generic
 modules/31 declarations. Components preserved; no full source assembly or paper.
 
 r60 arbor Ehrhart remains unresolved, credit0, source/freshness holds retained.
+r63 supplied a sound literal parity refutation of the printed Guday–Sahin
+coefficient formula; root excludes it as a missing determinant-column restriction,
+with source/prior-art holds preserved. See lanes/root-fresh-source-r63-handback/ADOPTION.json.
 Three fresh Sol high/default research lanes r61 finite structures, r62 analysis,
-r63 arithmetic/algebra are active; no children. Keep exclusions and actual source
+r64 arithmetic/algebra are active; no children. Keep exclusions and actual source
 scopes, and do not equate Blueprint markdown trees with actual Lean trees.
 
 ## Historical continuation notes

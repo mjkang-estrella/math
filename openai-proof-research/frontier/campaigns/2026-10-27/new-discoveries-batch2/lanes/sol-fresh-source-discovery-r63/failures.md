@@ -1,0 +1,7 @@
+# Failures and access limits
+
+* Capped early HTML conversion attempted `from bs4 import BeautifulSoup`; Python raised ModuleNotFoundError: No module named 'bs4'. Exit1, sampled peak10059776 bytes, wall0.050121392s. No experiment ran uncapped; no dependency installation. The source HTML remains saved. The selected source uses pdftotext instead. This receipt is transcribed from tool output; no original stderr file was saved for that early call.
+* Closest2014 publisher full-body HTTP403 on2026-10-29T16:32:32.245761+00:00, logged in http.jsonl. No retry/bypass. The actual full theorem/proof body remains unread; source quotations do not close that gap.
+* Inherited shared GitHub API403: no API calls/retries this lane, no traversal via alternative host. Inspected cached metadata supplies no usable reset information. Current broad proof-registry freshness HOLD. Known immutable raw primary body requests are logged separately.
+* Initial context display exceeded tool output budget. Later targeted source reads and audit.py consumed the full ledger/context bytes; no inference from truncated tool display. audit.py records hashes but is not a substitute for reading source theorem bodies.
+* No numerical/resource failure in check.py. Guard copied unchanged from r60: AS512MiB, summed process-group RSS512MiB, CPU210s, wall230s, 40ms sampling (stricter than45ms), all BLAS thread variables1. This includes all Python helpers (fetch, audit, check, finalize) invoked here. Parent guard itself is the established monitoring wrapper.
