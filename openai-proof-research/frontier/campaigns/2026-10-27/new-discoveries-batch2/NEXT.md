@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r126/r127 adopted zero nominees. Wallis remainder, Szabó cutoff and centered
+residue progression leads have public proofs; the Gaussian quotient implication
+has a public refutation, leaving its broader classification unproved. Ferreira
+Volterra source access remains incomplete. Root verifies 66/54 manifest entries
+and replays 39 rational identities, 20 residue maxima and the exact quotient
+witness in separate copies. See root-r126-r127-handback. Counts unchanged 9/39.
+Sol r129/r130 replace the completed assignments; r128 continues.
+
+
 r125 subdivision IMV coloring remains unresolved. The missing-color/K4-free
 translation reduces the question to all-color admissibility; the 12-vertex
 example only blocks global color merges. Root verifies 53 manifest entries and
