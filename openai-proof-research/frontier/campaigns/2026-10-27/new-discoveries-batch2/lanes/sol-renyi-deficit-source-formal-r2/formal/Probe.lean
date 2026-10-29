@@ -1,0 +1,20 @@
+module
+public import Result
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public section
+open MeasureTheory Set Real
+#check integral_add_right_eq_self
+#check integral_add_left_eq_self
+#check MeasureTheory.MeasurePreserving.integral_comp
+#check measurePreserving_add_right
+#check integral_Ioi_comp_add_right
+#check integrableOn_Ioi_comp_add_right_iff
+#check integral_comp_add_right
+#check integral_indicator
+#check integral_indicator_const
+#check setIntegral_eq_of_subset_of_ae_diff_eq_zero
+#check integral_Ioi_sub_Ioi
+#check integral_union
+#check setIntegral_union
+#check integral_Ici_eq_integral_Ioi
+#check integrableOn_Ici_iff_integrableOn_Ioi

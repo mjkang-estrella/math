@@ -1,5 +1,25 @@
 # Current continuation — 29 October 2026
 
+Latest root integration: Rényi FULL density endpoint freshly replayed from the
+source ZIP: 11 modules, 104 actual declarations, standard-three only; no residual
+premises in every_order_counterexample or not_source_threshold. Paper/packet
+preparation now runs in sol-renyi-threshold-manuscript-packet-r1; independent final
+review and acceptance still pending. Root evidence and decisions are in
+lanes/root-renyi-factorial-r116-adoption-r1/ (ROOT-REPLAY.json, DECISION.md).
+
+Factorial prior r2 adopted CLEAR_BOUNDED through Omega0d4df45. Root read the actual
+Candela–Helfgott concentration proof; its small 1-span hypothesis does not itself
+give the factorial smooth-restriction/two-scale bridge. Scoped substantive PASS
+retained with this serious boundary objection and unread adjacent Jevtic body
+explicit. Literal rational/Gamma source formalization now authorized in
+sol-factorial-product-source-formal-r1; no paper or acceptance yet.
+
+r116 Matkowski unresolved: root verified52 manifest entries and exact1/40 failed
+generator defect, not a source refutation. Fresh research r117 replaces it.
+Three active Sol high delegates: Rényi manuscript, factorial formalization,
+fresh research r117. Follow completion wakes; no polling. Counts unchanged:
+8/30 additional, 38/60 total. Earlier entries below are chronological history.
+
 Factorial-product preliminary review adopted: SOURCE/MATH PASS; scoped provisional
 SUBSTANTIVE PASS with complete smooth-restriction/concentration counting objection
 preserved. Root rederives that bridge and reads Rosser–Schoenfeld(3.6); no inspected
