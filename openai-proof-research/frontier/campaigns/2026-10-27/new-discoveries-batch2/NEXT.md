@@ -1,3 +1,15 @@
+# Current checkpoint — binomial valuation formal dependency integrated
+
+Exact literal rational binomial sum valuation and nonvanishing now proved for
+all m, including0. Root read all sources/types/axioms and rebuilt3proof modules
+plus57-declaration audit: PASS/std3, clean module logs. Full Jacobi endpoint
+still absent. See root-jacobi-formal-r1/BINOMIAL-INTEGRATION.md.
+Next freed Sol slot: binary-weight polynomial filtration and Riccati closure.
+Source bridge, midpoint primitive and full assembly remain. Count32/60 unchanged.
+Karp/BBK remain asynchronous; no polling.
+
+---
+
 # Current checkpoint — Jacobi review adopted; literal Lean work started
 
 Independent preliminary review passes source/math and bounded novelty/substance.
