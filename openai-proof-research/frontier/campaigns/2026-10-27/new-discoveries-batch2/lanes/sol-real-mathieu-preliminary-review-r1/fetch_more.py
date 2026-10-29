@@ -1,0 +1,3 @@
+exec(open(__file__.replace('fetch_more.py','fetch_review.py')).read().split('jobs=')[0])
+jobs=[('lmz1976.pdf','https://www.ams.org/journals/proc/1976-056-01/S0002-9939-1976-0399438-7/S0002-9939-1976-0399438-7.pdf'),('barnard1979.pdf','https://msp.org/pjm/1979/84-1/pjm-v84-n1-p03-s.pdf'),('omega-delta.json','https://api.github.com/repos/the-omega-institute/trureturing/compare/e1d4e12fbc1f1f82e5f88362e931a52c778b4374...b386687d1b21d80059f9b18b696db3503dbfa340')]
+exec(open(__file__.replace('fetch_more.py','fetch_review.py')).read().split('for name,url in jobs:')[1].join(['for name,url in jobs:','']))
