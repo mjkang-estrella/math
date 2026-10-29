@@ -1,3 +1,30 @@
+# Current checkpoint — inverse-sign reduction; full targets remain open
+
+Counts **3/30 additional,33/60 total** unchanged. Root research in
+lanes/root-semimonotone-sign-r1/FINDINGS.md proves an elementary Schur-sign
+trichotomy and, by positive rank-one perturbation, common sign of maximal
+principal minors for exact-order-two matrices. This is uncredited research,
+not a complete source proof or independent novelty review. Remaining steps:
+nonsingularity, negative determinant, and exclusion of a strictly positive
+inverse using the smaller-block E0 hypotheses. Two exact matrices show why
+local inverse signs plus positive diagonal alone are insufficient. Retained
+checker passes125000 finite inputs and both rational examples. No Lean claim.
+
+All r9 workers completed. q-Motzkin full positivity remains unresolved;
+independent-height multivariate positivity and naive Toda-square positivity
+are false, while source q-specialization remains positive in finite checks.
+Analysis r8 excludes signed point-charge376820 through actual public proof
+bodies; Castle radius issue is a zero-credit normalization correction.
+Discrete r9 retains RSK365595 full spectral conjecture; its second-moment
+criterion fails on an interior13-dimensional source block. Mod2 route is
+unproved. Root read these handbacks; no new acceptance or count.
+
+Upcoming Sol tasks: full semimonotone conjecture using the new reduction,
+full RSK spectral question, and a distinct arithmetic/algebra question.
+No polling; exact launch receipts in sol-three-lanes-r10-launches.json.
+
+---
+
 # Current checkpoint — three further lanes completed; full statements unresolved
 
 Counts remain **3/30 additional, 33/60 total**. Root read the handbacks of
