@@ -1,3 +1,15 @@
+# Current checkpoint — Jacobi review adopted; literal Lean work started
+
+Independent preliminary review passes source/math and bounded novelty/substance.
+Root verified21candidate files and75review artifacts; freeze unchanged.
+Literal source definition and r=1 normalization now compile in
+lanes/root-jacobi-formal-r1/formal. No full endpoint yet. Binomial-sum valuation
+is a substantial independent formal dependency to delegate to Sol next.
+Full formal/paper/final review/extracted replay pending; count32/60 unchanged.
+Karp/BBK remain asynchronous; no polling.
+
+---
+
 # Current checkpoint — complete ordinary Jacobi candidate, review pending
 
 Sol r4 closes the all-coefficient bound using an integral quadratic algebra,
