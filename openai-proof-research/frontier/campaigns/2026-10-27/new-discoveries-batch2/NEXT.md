@@ -1,3 +1,26 @@
+## Two complete ordinary candidates under review — 29 October 2026
+
+Counts remain 3/30 additional,33/60 total. Freeze88eb1b426c binds
+root-log-arctangent-candidate-r1 and root-cascade-rate-candidate-r1; supplied
+exact checkers reproduce in independent root copies, without a formal claim.
+Three Sol high/default reviews launched: mean mathematics, cascade full
+source/eligibility, and mean published-source/classical-subsumption. No polling;
+completion messages return results. Both candidates credit0.
+
+Root subsequently derived root-log-arctangent-certificate-r2/FINDINGS.md:
+36 exact positive prefix sums imply E^(24)>0 by finite Abel summation;
+seven positive initial derivatives and a derivative ladder give E(t)>0.
+This avoids the original 145 coefficient checks and asymptotic tail. Independent
+Laurent reconstruction, 24-fold symbolic differentiation, all36 signs and
+initial derivatives pass exact capped verification. It is a separate ordinary
+replacement lemma, not yet independently reviewed; frozen files unchanged.
+
+The cascade candidate refutes geometric convergence rates, not convergence
+itself. Its single fixed alpha-LIS and no infinite stable-subtree conditions
+must survive independent review, as must the classical prefix-code objection.
+No Lean investment or acceptance before eligibility. Tian's latest structured
+experiment tested1988cases with12degree-cap skips: no full theorem, credit0.
+
 ## Root exact tail test and corrected powered-binomial reduction — 29 October 2026
 
 Counts remain3/30 additional,33/60 total. root-bbk-tail-projection-r3 gives
