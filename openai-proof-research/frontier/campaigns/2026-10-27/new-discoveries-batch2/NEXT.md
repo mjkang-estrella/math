@@ -1,4 +1,44 @@
-# Current checkpoint — Mittag excluded; BBK handoff corrected
+# Current checkpoint — three Sol discovery lanes completed without a full result
+
+Root Svinin source-access follow-up is recorded in
+lanes/root-svinin-source-access-r2/REPORT.md. Newly located actual Russian
+publisher mathbooks.ru supplies official contents, rendered/read at PDFpage50,
+but no target body. Publisher attribution corrected to Tamara Rozhkovskaya;
+2018 conference origin does not clear the2019-body novelty HOLD. Do not repeat
+these routes without a new body location. Counts and all candidate gates unchanged.
+
+Three replacement Sol high/default assignments were launched; exact receipts
+are in sol-three-lanes-r8-launches.json. Follow completion wakes, do not poll.
+
+Counts remain **3/30 additional, 33/60 total**. Completed lanes:
+sol-bbk-full-refinement-r4, sol-weighted-bw-discovery-r5, and
+sol-fresh-analysis-discovery-r7. Their partial bounds and route obstructions
+earn no credit. Root read their reports; independently checked the BBK P2
+negative numerator coefficient and the Bouthat mesh derivative/initial
+increment identities. This is not a full independent review of their partials.
+
+BBK: the cleared generating numerator is not coefficient-positive. The actual
+Chern–Wang denominator is a squared q-Pochhammer, not a length-2n product.
+Weighted BW: the proposed sharpened complex quartic SOS route is obstructed;
+this is not a counterexample to the inequality or an exclusion of rational SOS.
+Bouthat360607: both source bodies read, but the transition mesh regime and
+all-n monotonicity remain open. Do not count the routine nonmonotonicity clauses.
+
+Upcoming Sol work targets the full denominator log-concavity statement using
+root-denominator-logconcavity-r1, the remaining Bouthat full classification,
+and a distinct fresh matrix/algebra question. Workers must avoid duplicated
+targets and prior exclusions. No active workers from the preceding three lanes.
+
+Rate-limit correction: weighted-BW's refresh script erroneously continued
+after429; its evidence retains the failure and its handler was corrected.
+Do not repeat that traversal. Stop requests to an affected host on403/429 or
+challenge, retain the access gap, and reuse the fresh cached current-head trees
+from sol-fresh-analysis-discovery-r7 where appropriate. No current full-text
+novelty clearance follows from tree coverage alone.
+
+---
+
+# Historical checkpoint — Mittag excluded; BBK handoff corrected
 
 Counts remain **3/30 additional, 33/60 total**. Mittag-Leffler 370772 is
 excluded as a routine classical corollary after independent review and root
