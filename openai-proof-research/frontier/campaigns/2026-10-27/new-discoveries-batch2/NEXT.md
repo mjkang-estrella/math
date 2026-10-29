@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+Frank ordinal attenuation is EXCLUDED from discovery credit after root
+adopts the independent complete one-sided conditional-regression/first-variation
+and monotone quantization bridge. Source and ordinary mathematics pass; both
+exact finite certificates pass. Beare/Student-t body gaps remain explicit and
+no earlier exact Frank refutation is asserted. No Lean or manuscript investment.
+See root-frank-attenuation-exclusion-r1. Counts unchanged9/39. Sol r140
+replaces the completed review; r138/r139 continue fresh research.
+
+
 r135 Hamming targets are excluded by actual public theorem bodies;
 independent-position coloring Conjecture9.3 remains unresolved. Root verifies
 47 manifest/37 scientific-freeze entries and reproduces 25 graph samples,
