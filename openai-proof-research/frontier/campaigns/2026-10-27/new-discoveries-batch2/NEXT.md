@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+r118 closed with zero nominees. Root verified the corrected72-file manifest,
+44 local source hashes and39 supporting rational identities; public proof scope
+screening is not an independent audit of all external mathematics. Initial
+manifest failure and access limits remain preserved. Root record:
+lanes/root-r118-handback/DECISION.md and CHECKS.json. Sol r119 replaces it.
+Three active: fresh research r119, factorial independent final review, and
+Rényi fixed registry-delta closure. Latest r118 observation d254db has an
+uncapped5e2dd09b→d254db17commit/155path comparison; earlier capped interval
+remains with the dedicated reviewer. No acceptance; counts remain8/38.
+
 Renyi independent final review adopted for source/math/formal/rebuild/manuscript
 PASS and scoped substantive PASS. Current-prior HOLD remains exactly the capped
 0d4df45→d254db interval; failed bc7ac2 midpoint is divergent and not a partition.
