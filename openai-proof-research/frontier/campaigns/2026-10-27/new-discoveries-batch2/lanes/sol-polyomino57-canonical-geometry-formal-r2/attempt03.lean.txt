@@ -1,0 +1,197 @@
+import SignedNormalization
+set_option autoImplicit false
+set_option maxRecDepth 8192
+set_option maxHeartbeats 2000000
+namespace Polyomino57.Diagonal
+open Polyomino57
+
+-- Direction is deliberate: a placement of Q recovers a translation of P.
+def Recoverable (P Q : Finset GridPoint) : Prop :=
+  (∃ t, translate t Q ⊆ witness) → ∃ t, translate t P ⊆ witness
+
+theorem recoverable_refl (P : Finset GridPoint) : Recoverable P P := fun h => h
+
+theorem recoverable_trans {P Q S : Finset GridPoint}
+    (h : Recoverable P Q) (k : Recoverable Q S) : Recoverable P S := fun hs => h (k hs)
+
+def affine (s x y : Bool) (d : GridPoint) (P : Finset GridPoint) :=
+  translate d (P.image (d4 s x y))
+
+theorem affine_recoverable (s x y : Bool) (d : GridPoint) (P : Finset GridPoint) :
+    Recoverable P (affine s x y d P) := by
+  rintro ⟨t,ht⟩
+  exact recover_original_translation s x y P d t ht
+
+theorem translate_recoverable (d : GridPoint) (P : Finset GridPoint) :
+    Recoverable P (translate d P) := by
+  have he : P.image (d4 false false false) = P := by
+    have hf : d4 false false false = id := by funext p; rfl
+    rw [hf,Finset.image_id]
+  simpa only [affine,he] using affine_recoverable false false false d P
+
+theorem affine_card (s x y : Bool) (d : GridPoint) (P : Finset GridPoint) :
+    (affine s x y d P).card = P.card := by rw [affine,translate_card,d4_card]
+
+theorem affine_connected (s x y : Bool) (d : GridPoint) {P : Finset GridPoint}
+    (h : EdgeConnected P) : EdgeConnected (affine s x y d P) :=
+  translate_connected d (d4_connected s x y h)
+
+theorem mem_affine (s x y : Bool) (d p : GridPoint) (P : Finset GridPoint) :
+    p ∈ affine s x y d P ↔ ∃ q ∈ P,
+      ((d4 s x y q).1+d.1,(d4 s x y q).2+d.2) = p := by
+  simp only [affine,translate,Finset.mem_image]
+  constructor
+  · rintro ⟨r,⟨q,hq,rfl⟩,hp⟩; exact ⟨q,hq,hp⟩
+  · rintro ⟨q,hq,hp⟩; exact ⟨_,⟨q,hq,rfl⟩,hp⟩
+
+
+theorem swap_box {P : Finset GridPoint} {a b e : ℤ}
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (he : 0 ≤ e) 
+    (hP : P ⊆ domain a b e) (hx : ExactExtrema P a b e) :
+    let Q := affine false false true (inverse (-e) e) P
+    Q ⊆ domain b a e ∧ ExactExtrema Q b a e := by
+  let f := fun p : GridPoint => ((d4 false false true p).1+(inverse (-e) e).1,(d4 false false true p).2+(inverse (-e) e).2)
+  have coords (p : GridPoint) : u (f p) = v p-e ∧ v (f p) = u p+e := by
+    have hd := inverse_coordinates (s := -e) (t := e) (by dsimp [Parity]; omega)
+    dsimp [f,u,v,d4] at *; omega
+  have member (p : GridPoint) (hp : p ∈ P) : f p ∈ affine false false true (inverse (-e) e) P :=
+    (mem_affine _ _ _ _ _ _).mpr ⟨p,hp,rfl⟩
+  constructor
+  · intro q hq
+    obtain ⟨p,hp,rfl⟩ := (mem_affine _ _ _ _ _ _).mp hq
+    have hh := (mem_domain ha hb (by omega) p).mp (hP hp)
+    have hc := coords p
+    apply (mem_domain (a := b) (b := a) (e := e) (by omega) (by omega) (by omega) _).mpr
+    change 0 ≤ u (f p) ∧ u (f p) ≤ b ∧ e ≤ v (f p) ∧ v (f p) ≤ e+a
+    omega
+  · obtain ⟨⟨p₀,h₀,u₀⟩,⟨p₁,h₁,u₁⟩,⟨p₂,h₂,v₂⟩,⟨p₃,h₃,v₃⟩⟩ := hx
+    have c0 := coords p₀
+    have c1 := coords p₁
+    have c2 := coords p₂
+    have c3 := coords p₃
+    exact ⟨⟨f p₂,member _ h₂,by omega⟩,⟨f p₃,member _ h₃,by omega⟩,⟨f p₀,member _ h₀,by omega⟩,⟨f p₁,member _ h₁,by omega⟩⟩
+
+theorem odd_a_box {P : Finset GridPoint} {a b : ℤ}
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hodd : a % 2 = 1)
+    (hP : P ⊆ domain a b 1) (hx : ExactExtrema P a b 1) :
+    let Q := affine true true true (inverse a (-1)) P
+    Q ⊆ domain a b 0 ∧ ExactExtrema Q a b 0 := by
+  let f := fun p : GridPoint => ((d4 true true true p).1+(inverse a (-1)).1,(d4 true true true p).2+(inverse a (-1)).2)
+  have coords (p : GridPoint) : u (f p) = a-u p ∧ v (f p) = v p-1 := by
+    exact odd_a_map a hodd p
+  have member (p : GridPoint) (hp : p ∈ P) : f p ∈ affine true true true (inverse a (-1)) P :=
+    (mem_affine _ _ _ _ _ _).mpr ⟨p,hp,rfl⟩
+  constructor
+  · intro q hq
+    obtain ⟨p,hp,rfl⟩ := (mem_affine _ _ _ _ _ _).mp hq
+    have hh := (mem_domain ha hb (by omega) p).mp (hP hp)
+    have hc := coords p
+    apply (mem_domain (a := a) (b := b) (e := 0) (by omega) (by omega) (by omega) _).mpr
+    change 0 ≤ u (f p) ∧ u (f p) ≤ a ∧ 0 ≤ v (f p) ∧ v (f p) ≤ 0+b
+    omega
+  · obtain ⟨⟨p₀,h₀,u₀⟩,⟨p₁,h₁,u₁⟩,⟨p₂,h₂,v₂⟩,⟨p₃,h₃,v₃⟩⟩ := hx
+    have c0 := coords p₀
+    have c1 := coords p₁
+    have c2 := coords p₂
+    have c3 := coords p₃
+    exact ⟨⟨f p₁,member _ h₁,by omega⟩,⟨f p₀,member _ h₀,by omega⟩,⟨f p₂,member _ h₂,by omega⟩,⟨f p₃,member _ h₃,by omega⟩⟩
+
+theorem odd_b_box {P : Finset GridPoint} {a b : ℤ}
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hodd : b % 2 = 1)
+    (hP : P ⊆ domain a b 1) (hx : ExactExtrema P a b 1) :
+    let Q := affine true false false (inverse 0 (b+1)) P
+    Q ⊆ domain a b 0 ∧ ExactExtrema Q a b 0 := by
+  let f := fun p : GridPoint => ((d4 true false false p).1+(inverse 0 (b+1)).1,(d4 true false false p).2+(inverse 0 (b+1)).2)
+  have coords (p : GridPoint) : u (f p) = u p ∧ v (f p) = b+1-v p := by
+    exact odd_b_map b hodd p
+  have member (p : GridPoint) (hp : p ∈ P) : f p ∈ affine true false false (inverse 0 (b+1)) P :=
+    (mem_affine _ _ _ _ _ _).mpr ⟨p,hp,rfl⟩
+  constructor
+  · intro q hq
+    obtain ⟨p,hp,rfl⟩ := (mem_affine _ _ _ _ _ _).mp hq
+    have hh := (mem_domain ha hb (by omega) p).mp (hP hp)
+    have hc := coords p
+    apply (mem_domain (a := a) (b := b) (e := 0) (by omega) (by omega) (by omega) _).mpr
+    change 0 ≤ u (f p) ∧ u (f p) ≤ a ∧ 0 ≤ v (f p) ∧ v (f p) ≤ 0+b
+    omega
+  · obtain ⟨⟨p₀,h₀,u₀⟩,⟨p₁,h₁,u₁⟩,⟨p₂,h₂,v₂⟩,⟨p₃,h₃,v₃⟩⟩ := hx
+    have c0 := coords p₀
+    have c1 := coords p₁
+    have c2 := coords p₂
+    have c3 := coords p₃
+    exact ⟨⟨f p₀,member _ h₀,by omega⟩,⟨f p₁,member _ h₁,by omega⟩,⟨f p₃,member _ h₃,by omega⟩,⟨f p₂,member _ h₂,by omega⟩⟩
+
+theorem parity_coverage {P : Finset GridPoint} {a b e : ℤ}
+    (hb : 1 ≤ b) (hba : b ≤ a) (ha : a ≤ 10) (he : e = 0 ∨ e = 1)
+    (hP : P ⊆ domain a b e) (hx : ExactExtrema P a b e)
+    (hc : EdgeConnected P) (hn : P.card = 11) :
+    ∃ E Q, Canonical a b E ∧ Q ⊆ domain a b E ∧ ExactExtrema Q a b E ∧
+      EdgeConnected Q ∧ Q.card = 11 ∧ Recoverable P Q := by
+  rcases he with rfl | rfl
+  · exact ⟨0,P,⟨hb,hba,ha,Or.inl rfl,Or.inl rfl⟩,hP,hx,hc,hn,recoverable_refl P⟩
+  · by_cases hodd : a % 2 = 1
+    · let Q := affine true true true (inverse a (-1)) P
+      have hh := odd_a_box (by omega) (by omega) hodd hP hx
+      exact ⟨0,Q,⟨hb,hba,ha,Or.inl rfl,Or.inl rfl⟩,hh.1,hh.2,
+        affine_connected _ _ _ _ hc,by simpa only [Q,affine_card] using hn,
+        affine_recoverable _ _ _ _ _⟩
+    · by_cases hoddB : b % 2 = 1
+      · let Q := affine true false false (inverse 0 (b+1)) P
+        have hh := odd_b_box (by omega) (by omega) hoddB hP hx
+        exact ⟨0,Q,⟨hb,hba,ha,Or.inl rfl,Or.inl rfl⟩,hh.1,hh.2,
+          affine_connected _ _ _ _ hc,by simpa only [Q,affine_card] using hn,
+          affine_recoverable _ _ _ _ _⟩
+      · exact ⟨1,P,⟨hb,hba,ha,Or.inr rfl,Or.inr ⟨by omega,by omega⟩⟩,
+          hP,hx,hc,hn,recoverable_refl P⟩
+
+-- Every literal connected eleven-cell set, with no geometry premise.
+theorem canonical_coverage {P : Finset GridPoint} (hc : EdgeConnected P)
+    (hn : P.card = 11) :
+    ∃ a b e Q, Canonical a b e ∧ Q ⊆ domain a b e ∧ ExactExtrema Q a b e ∧
+      EdgeConnected Q ∧ Q.card = 11 ∧ Recoverable P Q := by
+  obtain ⟨a,b,e,ha,ha10,hb,hb10,he,d,hP,hx,hcard,hconn⟩ := translate_to_signed_box hc hn
+  by_cases hba : b ≤ a
+  · obtain ⟨E,Q,hcan,hQ,hQx,hQc,hQn,hr⟩ :=
+      parity_coverage hb hba ha10 he hP hx hconn hcard
+    exact ⟨a,b,E,Q,hcan,hQ,hQx,hQc,hQn,
+      recoverable_trans (translate_recoverable d P) hr⟩
+  · let S := affine false false true (inverse (-e) e) (translate d P)
+    have hs := swap_box (by omega) (by omega) (by omega) hP hx
+    have hsc : EdgeConnected S := affine_connected _ _ _ _ hconn
+    have hsn : S.card = 11 := by simpa only [S,affine_card] using hcard
+    obtain ⟨E,Q,hcan,hQ,hQx,hQc,hQn,hr⟩ :=
+      parity_coverage ha (by omega) hb10 he hs.1 hs.2 hsc hsn
+    exact ⟨b,a,E,Q,hcan,hQ,hQx,hQc,hQn,
+      recoverable_trans (translate_recoverable d P)
+        (recoverable_trans (affine_recoverable _ _ _ _ _) hr)⟩
+
+-- Membership, not merely a cardinality computation, connects coverage to the list.
+theorem mem_canonicalCases (a b e : ℤ) :
+    (a,b,e) ∈ canonicalCases ↔ Canonical a b e := by
+  constructor
+  · intro h; exact (Finset.mem_filter.mp h).2
+  · intro h
+    apply Finset.mem_filter.mpr
+    refine ⟨Finset.mem_image.mpr ⟨((a,b),e),?_,rfl⟩,h⟩
+    change ((a,b),e) ∈ ((Finset.Icc 1 10).product (Finset.Icc 1 10)).product (Finset.Icc 0 1)
+    simp only [Finset.mem_product,Finset.mem_Icc]
+    rcases h with ⟨hb,hba,ha,he,_⟩
+    exact ⟨⟨⟨by omega,ha⟩,⟨hb,by omega⟩⟩,by rcases he with rfl | rfl <;> omega⟩
+
+-- Precisely the 70 literal finite-case assertions remain premises.
+def FiniteCases : Prop :=
+  ∀ c ∈ canonicalCases, ∀ Q : Finset GridPoint,
+    Q ⊆ domain c.1 c.2.1 c.2.2 → EdgeConnected Q → Q.card = 11 →
+      ¬ HitsAll Q (groups c.1 c.2.1 c.2.2)
+
+theorem universalContainer_of_finiteCases (finiteCases : FiniteCases) :
+    UniversalContainer 11 witness := by
+  refine ⟨witness_connected,?_⟩
+  intro P hc hn
+  obtain ⟨a,b,e,Q,hcan,hQ,hx,hcQ,hnQ,hr⟩ := canonical_coverage hc hn
+  have hcase := finiteCases (a,b,e) ((mem_canonicalCases a b e).mpr hcan)
+  apply hr
+  exact domain_reduction (by have := hcan.1; have := hcan.2.1; omega)
+    (by have := hcan.1; omega) (by rcases hcan.2.2.2.1 with h | h <;> omega)
+    hcase hQ hcQ hnQ hx
+end Polyomino57.Diagonal
