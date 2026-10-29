@@ -37,7 +37,9 @@ separate from its missing uniform inequality. No credit added.
 r70 supplies a complete ordinary connected edge-irregulator refutation: 8t edges
 and exactly3t deletions. Root charging proof and exact checks pass; independent
 review confirms ordinary math and scoped substantive PASS. Current-prior r2
-review is pending; no formal investment or credit yet. Root public Git reads
+clears bounded novelty and publisher wording; root visually checked printedp356.
+Formal investment begins in sol-edge-irregulator-source-formal-r1; credit0.
+Adoption: root-edge-irregulator-formal-investment-r1/ADOPTION.json. Root public Git reads
 recovered complete current Omega70af5407/OpenAI7ef5c0cc inventories, recorded in
 root-edge-irregulator-current-prior-r1/CURRENT-REGISTRIES.json. Old API freshness
 limits are historical; these are new dated inventories, not global priority proof.
@@ -45,7 +47,7 @@ r71 determinantal semigroups and r72 Zinn doubling remain unresolved; limited
 root handbacks preserve their gaps and freshness/access holds.
 r73 Sun binomial-coprimality remains unresolved; exact carry/prime-menu
 obstructions and limited root checks preserved in root-fresh-source-r73-handback.
-Active Sol high/default: edge-irregulator current-prior r2, fresh finite/algebra r75,
+Active Sol high/default: edge-irregulator source formal r1, fresh finite/algebra r75,
 and fresh analysis r76. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
