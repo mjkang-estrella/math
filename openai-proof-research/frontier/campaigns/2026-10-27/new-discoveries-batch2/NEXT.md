@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r139 Achour degree-spread conjecture is refuted by the 12-vertex
+P6 corona, but root adopts routine-classical exclusion after reading the old
+corona theorem and checking the complete private-leaf/matching reduction.
+All 47 manifest/30 scientific entries verify; eight exact controls reproduce.
+Wild-number source has verified large-order public overlap only; no full
+public-refutation claim is adopted. See root-r139-handback. Sol r142 replaces
+r139; r140/r141 continue. Credit0; accepted counts remain9/39.
+
+
 r138 Heffernan–MacHale partition divisibility remains unresolved.
 Root verifies 45 manifest/26 scientific entries and reproduces the exact
 5,000-value controls byte-identically. The classical small-prime estimate
