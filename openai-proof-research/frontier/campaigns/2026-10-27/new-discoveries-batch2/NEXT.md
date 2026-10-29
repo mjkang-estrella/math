@@ -1,5 +1,16 @@
 # Current continuation — 29 October 2026
 
+r114 supertoken candidate: root source-text/mathematics PASS for eight landmarks
+resolving all 55 vertices of F_2(K_10), refuting Conjecture 4.2's value nine.
+Independent root BFS verified 3,025 distances; all 47 candidate manifest entries
+verified and frozen. Root alternating-kernel proof replaces the finite block table.
+Substantive and novelty HOLD: replacing Bailey–Cameron's P3 construction by P5
+may be a routine classical adaptation. NEW independent Sol high review launched;
+receipt and root evidence in lanes/root-supertoken-review-freeze-r1/.
+No Lean/paper/credit. Current three delegates: r115 fresh research, Renyi registry
+gap closure r3, supertoken preliminary review r1. Follow completion wakes, no polls.
+Counts unchanged at 8 additional / 38 total.
+
 Accepted **8/30 additional, 38/60 total**; next outcome39. Outcome37 is the
 57-cell universal fixed-11-omino container. No new external posting or MathDB action.
 
