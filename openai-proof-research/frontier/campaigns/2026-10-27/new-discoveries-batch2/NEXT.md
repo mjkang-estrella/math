@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r135 Hamming targets are excluded by actual public theorem bodies;
+independent-position coloring Conjecture9.3 remains unresolved. Root verifies
+47 manifest/37 scientific-freeze entries and reproduces 25 graph samples,
+3 controls and 216 public constructions byte-identically. The high-diameter
+clique-cover and induced-path gaps remain explicit. See root-r135-handback.
+Sol r139 replaces r135; r138 and Frank independent review continue.
+No credit; counts remain 9 additional /39 total.
+
+
 r137 nil-clean integral 3-by-3 exchange and unrestricted formal-series
 closure remain unresolved; tensor closure is a routine source adaptation.
 Root verifies 40 manifest and 37 scientific entries and reproduces the 3,712
