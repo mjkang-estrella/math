@@ -1,0 +1,11 @@
+# Progress — 29 October2026 UTC /28 October Los Angeles
+
+1. Read both AGENTS files, full ledger/NEXT/prior-context inputs, immutable upstream receipt and relevant catalogue, r16 discovery/check/provenance, r7 registry receipts. Confirmed count3/30,33/60 and assigned lane only.
+2. Reread live actual source Conjecture4.7, its definitions/example, and closest2016 generic theorem bodies before mathematical investment. Reused authorized dated complete registry snapshots; fresh targeted public searches found no located resolution. Did not retry MathDB403, GitHub API rate limit, journal timeouts/certificate failures.
+3. Derived centered-log resultant and integral log derivative.242 finite diagnostics found no interior falsifier; no proof inference from these.
+4. Examined reciprocal-atan integral literature; actual public theorem bodies read. A sign problem in extracted formula2.5 made that route unattractive; screenshot fetch timed out. Did not depend on this paper.
+5. Found common Stolarsky comparison mean for BOTH branches. Live source search located the classical2011 stabilizability theorem; body and telescoping proof read and credited. Generic2012 comparison theorem bodies also read. Their statements do not themselves compare M with its own resultant.
+6. Derived increasing log-ratio transfer, inverse-atan differential comparison J, and entire exponential polynomial E. First exact coefficients10..80 supported positivity; explicitly did not infer all-order positivity.
+7. Proved a uniform tail using exponent7+sqrt17, then extended finite exact checks through298. Built separate integer derivative-convolution implementation; all finite values agree exactly. Every tail bound verified in Q(sqrt17), no floats. Both checkers PASS under512MiB/40CPU-seconds.
+8. Wrote full proposed exact computer-assisted ordinary proof with every analytic bridge, finite arithmetic recurrences/certificate, and tail estimate. Additional numerical identity consistency checks PASS, explicitly nonproof.
+9. Final scope: proposed full arXivv2 solution, awaiting independent arithmetic/math/novelty/source review. No Lean or paper, no acceptance/count edits, no children/git/accounts/browser tabs/external mutations. No diagnostic limit was raised. Source retrievals and artifact hashes in provenance.
