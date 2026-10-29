@@ -70,7 +70,8 @@ r84 Bernoulli fiber-volume independent-parameter interpretation is EXCLUDED as a
 r79 lasso separation is ordinary-math sound but current nomination EXCLUDED: no clear attributable universal optimized quantifier, and completed source-Lemma2 boundary/cubic specialization is routine. VoR and closest-body gaps retained; no Lean or manuscript. See root-lasso-exclusion-r2/EXCLUSION.json.
 r85 Miller–Reiner remains unresolved; root verified all 38 manifest hashes and the exact same-spectrum integral-cyclicity obstruction. Finite-field checks are necessary conditions only. See root-fresh-source-r85-handback/ADOPTION.json.
 r87 LCM–GCD Conjecture5 remains unresolved: the binary-10 direction is already public; universal binary-11 nonsingularity is missing. Root verified all 57 manifest hashes, 400 exact transformed entry pairs, and the indefinite principal block. See root-fresh-source-r87-handback/ADOPTION.json.
-Active Sol high/default: fresh analysis/probability r86, fresh structural r88, and fresh finite/arithmetic r89. r74 sharp Chernoff curvature remains unresolved;
+r86 Eruguz linear-model retail unimodality is EXCLUDED as routine: source substitution and h' positive for x<b, h'' negative for x>=b settle all parameters. Root verified all 37 manifest entries and four symbolic derivative identities. Hyman and box-fragmentation scope holds retained. See root-fresh-source-r86-handback/EXCLUSION.json.
+Active Sol high/default: fresh analysis/probability r90, fresh structural r88, and fresh finite/arithmetic r89. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.
