@@ -1,0 +1,3548 @@
+
+ 
+ 
+ An Algorithm for Discriminating the Complete Multiplicities of a Parametric Univariate Polynomial 
+ 
+ 
+ 
+   
+ 
+  // Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+    // Pre-apply spinout-banner dismissal here, before the banner paints, so it
+    // never flashes in only to be hidden later by the deferred arxiv-header.js.
+    // Key matches arxiv-header.js: "arxiv-banner-dismissed:" + data-banner-name.
+    if (localStorage.getItem('arxiv-banner-dismissed:spinout-nonprofit')) {
+      document.documentElement.setAttribute("data-banner-dismissed", "");
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  /* Banner pre-dismissal (set above before paint -> no flash-then-hide) and
+     reading-mode chrome hiding. */
+  html[data-banner-dismissed] .ds-announcement { display: none; }
+  html[data-reading-mode="enabled"] .ds-announcement,
+  html[data-reading-mode="enabled"] .ds-site-footer { display: none; }
+  /* Print keeps the reader header's logo, not its controls: the theme's own print rule
+     (header, nav { display: none }) sits in a layer that its header layer outranks. */
+  @media print { .arxiv-html-header .html-header-nav { display: none; } }
+  /* Keep the announcement text dark on the Open-Blue band in both colour themes
+     (otherwise it inherits the paper's warm-wash text in dark mode and washes out). */
+  .ds-announcement-text { color: var(--arxiv-ink, #1c1a17); }
+ 
+ 
+ 
+ 
+ 
+   
+     
+       Report GitHub Issue 
+       × 
+     
+
+     
+       Title: 
+       
+
+       Content selection saved. Describe the issue below: 
+
+       Description: 
+       
+     
+
+     
+       Submit without GitHub 
+       Submit in GitHub 
+     
+   
+ 
+     
+     arXiv is now an independent nonprofit! 
+     Learn more 
+     × 
+   
+
+ 
+   
+     
+       Back to arXiv 
+     
+   
+   
+   
+     Why HTML? 
+     
+       
+         
+       
+       Report Issue 
+     
+     
+       
+         
+         
+       
+       Back to Abstract 
+     
+     
+     
+       
+         
+       
+       Download PDF 
+     
+     
+       
+         
+         
+       
+     
+     
+     
+       
+         
+       
+     
+     
+     
+       
+         
+           
+           
+         
+       
+       
+         
+           
+           
+         
+       
+       
+         
+           
+           
+         
+       
+     
+   
+ 
+ 
+ 
+ Abstract 
+ 1  Introduction 
+ 2  Problem Statement 
+ 3  Preliminaries 
+ 4  Main Results 
+ 5  Proof of Theorem  
+ 
+ 5.1  Converting  R 𝜹 ​ ( 𝑭 ) R_{\boldsymbol{\delta}}(\boldsymbol{F})  into an expression in multiple roots 
+ 5.2  Property of confluent Vandermonde matrices 
+ 5.3  Proof of Theorem  
+ 
+ 6  Algorithm 
+ 
+ 6.1  Non-nested multiplicity discriminants for univariate polynomials 
+ 6.2  The discriminant sequence of a univariate polynomial 
+ 6.3  Algorithm 
+ 
+ 7  Comparison 
+ 
+ 7.1  Review on YHZ’s condition 
+ 7.2  Comparison 
+ 
+ 7.2.1  Comparison on the number of polynomials 
+ 7.2.2  Comparison on the degree of polynomials 
+ 7.2.3  Comparison on performance 
+ 
+ 
+ 8  Conclusion 
+ References 
+ 
+ 
+ 
+ 
+   
+    License: arXiv.org perpetual non-exclusive license
+   
+   
+arXiv:2412.20332v1 [cs.SC] 29 Dec 2024 
+ 
+ 
+ An Algorithm for Discriminating the Complete Multiplicities of a Parametric Univariate Polynomial  
+ 
+ 
+ Simin Qin
+ 
+ Affiliation:  HCIC–School of Mathematical Sciences,
+Center for Applied Mathematics of Guangxi,
+Guangxi Minzu University, Nanning 530006, China 
+ 
+    
+ Bican Xia
+ 
+ Affiliation:  School of Mathematical Sciences, Peking University, Beijing 100091, China 
+ 
+    
+ Jing Yang
+ † † thanks:  Corresponding author: yangjing0930@gmail.com. 
+ Affiliation:  HCIC–School of Mathematical Sciences,
+Center for Applied Mathematics of Guangxi,
+Guangxi Minzu University, Nanning 530006, China 
+ 
+
+ Abstract 
+    
+ In this paper, we tackle the parametric complete multiplicity problem for a univariate polynomial. Our approach to the parametric complete multiplicity problem has a significant difference from the classical method, which relies on repeated gcd computation. Instead, we introduce a novel technique that uses incremental gcds of the given polynomial and its high-order derivatives. This approach, formulated as non-nested subresultants, sidesteps the exponential expansion of polynomial degrees in the generated condition. We also uncover the hidden structure between the incremental gcds and pseudo-remainders. Our analysis reveals that the conditions produced by our new algorithm are simpler than those generated by the classical approach in most cases. Experiments show that our algorithm is faster than the one based on repeated gcd computation for problems with relatively big size. 
+  
+ 
+ 
+ 1  Introduction 
+
+ 
+ Solving univariate polynomials for roots is a very fundamental problem in computer algebra with numerous applications. Depending on whether the coefficients contain indeterminates, we categorize the problem into two sub-problems. 
+ 
+ •  
+ 
+ For polynomials with constant coefficients, “solving” means finding/isolating the roots. 
+ 
+ •  
+ 
+ For polynomials with parametric coefficients, “solving” means classifying the  complete root structures  the given polynomial may have and providing a set of conditions under which each structure occurs. By complete root structure, we mean the
+numbers of real and imaginary roots and their multiplicities.
+Thus complete root structure is also called  complete multiplicity structure . 
+ 
+ 
+ 
+ 
+ In this paper, we tackle the second problem. More explicitly, we consider a polynomial of the form  P = a n ​ x n + ⋯ + a 0 P=a_{n}x^{n}+\cdots+a_{0} , where
+ a n ≠ 0 a_{n}\neq 0  and  a i a_{i} ’s are parameters which take values over the real field  ℝ \mathbb{R} , and
+explore the problem of determining a set of conditions on  a i a_{i} ’s (which provides a partition of the parameter set) so that  P P  exhibits a specific complete multiplicity structure under each condition.
+For instance, we consider a quartic polynomial  P = a 4 ​ x 4 + a 3 ​ x 3 + a 2 ​ x 2 + a 1 ​ x + a 0 P=a_{4}x^{4}+a_{3}x^{3}+a_{2}x^{2}+a_{1}x+a_{0} , where
+ a 4 ≠ 0 a_{4}\neq 0  and  a i a_{i} ’s are real parameters. All the potential complete multiplicity structures of  P P  are: 
+ 
+
+ 
+ 
+ ( ( 1 , 1 , 1 , 1 ) , ( ) ) , ( ( 1 , 1 ) , ( 1 , 1 ) ) , ( ( 2 , 1 , 1 ) , ( ) ) , ( ( 2 ) , ( 1 , 1 ) ) , ( ( 2 , 2 ) , ( ) ) , ( ( ) ; ( 2 , 2 ) ) , ( ( 3 , 1 ) , ( ) ) , ( ( 4 ) , ( ) ) , \begin{array}[]{llll}\left((1,1,1,1);()\right),&\left((1,1);(1,1)\right),&\left((2,1,1);()\right),&\left((2);(1,1)\right),\\
+\left((2,2);()\right),&\left(();(2,2)\right),&\left((3,1);()\right),&\left((4);()\right),\end{array} 
+ 
+ 
+ where  ( 𝝁 𝑹 ; 𝝁 𝑰 ) (\boldsymbol{\mu_{R}};\boldsymbol{\mu_{I}})  with  # ​ 𝝁 𝑹 + # ​ 𝝁 𝑰 = n \#\boldsymbol{\mu_{R}}+\#\boldsymbol{\mu_{I}}=n  is interpreted as follows: 
+ 
+ •  
+ 
+ the real roots of  P P  have the multiplicity structure  𝝁 𝑹 \boldsymbol{\mu_{R}} , and 
+ 
+ •  
+ 
+ the imaginary roots of  P P  have the multiplicity structure  𝝁 𝑰 \boldsymbol{\mu_{I}} . 
+ 
+ 
+ For instance, if  P P  has a complete multiplicity structure  ( ( 2 ) ; ( 1 , 1 ) ) ((2);(1,1)) , then  P P  has a double real root and a pair of simple imaginary roots.
+With this setting, we aim to find a set of conditions  C 0 , C 1 , … C_{0},C_{1},\ldots  on  a i a_{i} ’s so that 
+ 
+
+ 
+ 
+ the complete multiplicity structure of  P = { ( ( 1 , 1 , 1 , 1 ) ; ( ) ) iff  C 0  holds ( ( 1 , 1 ) ; ( 1 , 1 ) ) iff  C 1  holds ⋮ ⋮ ( ( 4 ) ; ( ) ) iff  C 7  holds \text{the complete multiplicity structure of $P$}=\left\{\begin{array}[]{ll}((1,1,1,1);())&\text{iff $C_{0}$ holds}\\
+((1,1);(1,1))&\text{iff $C_{1}$ holds}\\
+\vdots&\vdots\\
+((4);())&\text{iff $C_{7}$ holds}\end{array}\right. 
+ 
+ 
+ 
+ 
+ In general, the problem is stated as follows: 
+ 
+ 
+ Problem :  For every   𝝁 𝒄 = ( 𝝁 𝑹 ; 𝝁 𝑰 ) \boldsymbol{\mu_{c}}=\left(\boldsymbol{\mu_{R}};\boldsymbol{\mu_{I}}\right)   where   𝝁 𝑹 = ( μ R , 1 , … , μ R , m 1 ) \boldsymbol{\mu_{R}}=(\mu_{R,1},\ldots,\mu_{R,m_{1}})   and   𝝁 𝑰 = ( μ I , 1 , … , μ I , m 2 ) \boldsymbol{\mu_{I}}=(\mu_{I,1},\ldots,\mu_{I,m_{2}})   are such that 
+ 
+ •  
+ 
+ μ R , 1 ≥ … ≥ μ R , m 1 > 0 \mu_{R,1}\geq\ldots\geq\mu_{R,m_{1}}>0 , 
+ 
+ •  
+ 
+ μ I , 1 = μ I , 2 ≥ … ≥ μ I , m 2 − 1 = μ I , m 2 > 0 \mu_{I,1}=\mu_{I,2}\geq\ldots\geq\mu_{I,m_{2}-1}=\mu_{I,m_{2}}>0 ,  and 
+ 
+ •  
+ 
+ ∑ i = 1 m 1 μ R , i + ∑ i = 1 m 2 μ I , i = n , \sum_{i=1}^{m_{1}}\mu_{R,i}+\sum_{i=1}^{m_{2}}\mu_{I,i}=n, 
+ 
+ 
+ find a necessary and sufficient condition on the
+coefficients of a polynomial  P P   over  ℝ \mathbb{R}  of degree  n n   such
+that the complete multiplicity structure of   P P   is   𝝁 𝒄 \boldsymbol{\mu_{c}} . 
+ 
+ 
+ This problem is significant as it has numerous applications in various fields, such as mathematics, science, and engineering. Due to its importance, the
+problem and several related problems have already been extensively studied
+(e.g., see  [ 3 ,  6 ,  10 ,  11 ,  12 ,  15 ] ).
+In  [ 15 ] , Yang, Hou and Zeng gave an algorithm to generate a condition for discriminating different complete multiplicity structures of a univariate polynomial (referred to as YHZ’s condition hereinafter) by making use of repeated gcd computation for parametric polynomials  [ 1 ,  2 ,  13 ] .
+A similar idea was adopted by Gonzalez-Vega et al.  [ 3 ]  for solving the real root classification and quantifier elimination problems by using Sturm-Habicht sequences. Roughly speaking, this method computes multiple factors at different levels, which can be realized by repeated gcd computation, i.e., computing the gcd of  P P  and its first derivative, the gcd of the previous gcd and its derivative, and so on.
+For the gcd at each level, we determine the condition that it has a certain number of distinct real roots/pairs of imaginary roots.
+By conjoining all the conditions at different levels, one can get a condition that  P P  has a given complete multiplicity structure.
+It should be pointed out that in YHZ’s method, the polynomials in the conditions are computed from repeated gcds whose coefficients are nested determinants. Thus, the “size” of these polynomials increases dramatically when the degree of  P P  grows, causing a huge computational burden. 
+ 
+ 
+ A coarser version of the problem, which is stated as the parametric multiplicity problem, has been well studied (mainly via repeated gcd computation) in classical subresultant theory (e.g.,  [ 16 ] ). In the parametric multiplicity structure, we do not differentiate real and imaginary roots, and thus, the multiplicity structure considered is called a complex multiplicity structure. Recently, Hong and Yang revisited the problem in  [ 5 ,  8 ] , resulting in two non-nested conditions for determining the multiplicity structure. It is shown that the generated conditions by  [ 5 ,  8 ]  are smaller than that produced via repeated gcd computation. Note that the complete multiplicity can be viewed as the refinement of complex multiplicity. We aim to find conditions with “small” size for the complete multiplicity problem, measured in terms of the number of polynomials appearing in the conditions and their maximum degree. 
+ 
+ 
+ The main contribution of this paper is to provide such a condition,
+which has a
+ smaller  size than that in the previous methods. The key idea for generating the new condition is to replace the repeated gcds with the gcds of  P P  and its high-order derivatives of different orders for describing the multiple factors at different levels. For this purpose, we introduce the concept of incremental gcd and prove that it can be written as some specific subresultant of  P P  and its derivatives (see Theorem  16 ). Then, we devise an algorithm for computing the condition for every possible complete multiplicity structure  P P  may have.
+It is shown that the output condition has a smaller number of polynomials, and the maximal degree of polynomials in the condition is also significantly smaller than those in YHZ’s method. Furthermore, we also explore the relationship among these incremental gcds and identify an interesting structure (see Proposition  20 ) which is similar to the generalized Habicht’s theorem in  [ 7 ] . 
+ 
+ 
+ The paper is structured as follows.
+In Section  2 , we first present the problem to be addressed in a formal way. In Section  3 , we review the concept of subresultant for multiple polynomials and its equivalent form in roots.
+In Section  4 , we present the main result of the paper (Theorem  16 ), which is followed by a detailed proof in Section  5 .
+In Section  6 , we design an algorithm for solving the proposed problem with the newly developed tool.
+In Section  7 , we compare the performance of the algorithm and the size of polynomials output by the algorithm and those
+given by previous works.
+To keep the presentation of the main result in a tight manner,
+we postpone the proofs for two secondary results (which we hope could be useful for tackling other related problems) to Appendices A and B. 
+ 
+ 
+ 
+ 2  Problem Statement 
+
+ 
+ Notation 1 . 
+ 
+ 
+ •  
+ 
+ P = ∑ i = 0 n a i ​ x i P=\sum_{i=0}^{n}a_{i}x^{i} , where  a n ≠ 0 a_{n}\neq 0 ; 
+ 
+ •  
+ 
+ mult ⁡ ( P ) = ( μ 1 , … , μ m ) \operatorname{mult}(P)=(\mu_{1},\dots,\mu_{m})  is the multiplicity vector of  P P , where  μ 1 ≥ ⋯ ≥ μ m ≥ 1 \mu_{1}\geq\cdots\geq\mu_{m}\geq 1 . 
+ 
+ 
+ 
+ 
+ 
+ Without loss of generality, we assume that the polynomial considered in this paper has degree greater than  1 1 . 
+ 
+ 
+ Definition 2   (Complete multiplicity) . 
+ 
+ Given  P ∈ ℝ ⁡ [ x ] P\in\mathbb{R}[x] , assume  P P  has
+ m 1 m_{1}  distinct real roots of  P P  with multiplicities  μ R , 1 , … , μ R , m 1 \mu_{R,1},\dots,\mu_{R,m_{1}} , and
+ m 2 m_{2}  distinct imaginary roots of  P P  with multiplicities  μ I , 1 , … , μ I , m 2 \mu_{I,1},\dots,\mu_{I,m_{2}} , respectively,
+where  μ R , 1 ≥ ⋯ ≥ μ R , m 1 ≥ 1 \mu_{R,1}\geq\dots\geq\mu_{R,m_{1}}\geq 1  and  μ I , 1 = μ I , 2 ≥ ⋯ ≥ μ I , m 2 − 1 = μ I , m 2 ≥ 1 \mu_{I,1}=\mu_{I,2}\geq\dots\geq\mu_{I,m_{2}-1}=\mu_{I,m_{2}}\geq 1 . Then the  complete multiplicity  of  P P , written as  cmult ⁡ ( P ) \operatorname{cmult}(P) , is defined by 
+ 
+
+ 
+ 
+ cmult ⁡ ( P ) = ( ( μ R , 1 , … , μ R , m 1 ) ; ( μ I , 1 , … , μ I , m 2 ) ) . \operatorname{cmult}(P)=((\mu_{R,1},\dots,\mu_{R,m_{1}});(\mu_{I,1},\dots,\mu_{I,m_{2}})). 
+ 
+ 
+ 
+ 
+ 
+ Example 3 . 
+ 
+ Let  P = x 5 − 4 ​ x 4 + 6 ​ x 3 − 6 ​ x 2 + 5 ​ x − 2 P=x^{5}-4x^{4}+6x^{3}-6x^{2}+5x-2 . Then  mult ⁡ ( P ) = ( 2 , 1 , 1 , 1 ) \operatorname{mult}(P)=(2,1,1,1) , since it can be verified that  P = ( x − 1 ) 2 ​ ( x − 2 ) ​ ( x 2 + 1 ) P=(x-1)^{2}(x-2)(x^{2}+1) . It is easy to see that 
+ 
+
+ 
+ 
+ cmult ⁡ ( P ) = ( ( 2 , 1 ) ; ( 1 , 1 ) ) . \operatorname{cmult}(P)=((2,1);(1,1)). 
+ 
+ 
+ 
+ 
+ 
+ Notation 4 . 
+ 
+ 
+ •  
+ 
+ ℳ ( n ) := { ( μ 1 , … , μ m ) : μ 1 + ⋯ + μ m = n , μ 1 ≥ ⋯ ≥ μ m ≥ 1 } \mathcal{M}(n):=\{(\mu_{1},\dots,\mu_{m}):\mu_{1}+\cdots+\mu_{m}=n,\mu_{1}\geq\cdots\geq\mu_{m}\geq 1\} ; 
+ 
+ •  
+ 
+ ℳ ¯ ​ ( n ) := \overline{\mathcal{M}}(n):= 
+ 
+ { ( ( μ R , 1 , … , μ R , m 1 ) ; ( μ I , 1 , … , μ I , m 2 ) ) : ⋀ ( μ R , 1 ≥ ⋯ ≥ μ R , m 1 ≥ 1 μ I , 1 = μ I , 2 ≥ ⋯ ≥ μ I , m 2 − 1 = μ I , m 2 ≥ 1 ∑ i = 1 m 1 μ R , i + ∑ i = 1 m 2 μ I , i = n ) } \left\{((\mu_{R,1},\dots,\mu_{R,m_{1}});(\mu_{I,1},\dots,\mu_{I,m_{2}})):\bigwedge\left(\begin{array}[]{l}\mu_{R,1}\geq\dots\geq\mu_{R,m_{1}}\geq 1\\
+\mu_{I,1}=\mu_{I,2}\geq\dots\geq\mu_{I,m_{2}-1}=\mu_{I,m_{2}}\geq 1\\
+\sum_{i=1}^{m_{1}}\mu_{R,i}+\sum_{i=1}^{m_{2}}\mu_{I,i}=n\end{array}\right)\right\} . 
+ 
+ 
+ 
+ 
+ 
+ Obviously, every  𝝁 𝒄 ∈ ℳ ¯ ​ ( n ) \boldsymbol{\mu_{c}}\in\overline{\mathcal{M}}(n)  can be viewed as a  2 2 -partition of some  𝝁 ∈ ℳ ⁡ ( n ) \boldsymbol{\mu}\in\mathcal{M}(n)  with the first part representing the multiplicities of real roots and the second part representing those of imaginary roots.
+For example,  cmult ⁡ ( P ) = ( ( 2 , 1 ) ; ( 1 , 1 ) ) ∈ ℳ ¯ ​ ( 5 ) \operatorname{cmult}(P)=((2,1);(1,1))\in\overline{\mathcal{M}}(5)  is a  2 2 -partition of  mult ⁡ ( P ) = ( 2 , 1 , 1 , 1 ) ∈ ℳ ⁡ ( 5 ) \operatorname{mult}(P)=(2,1,1,1)\in\mathcal{M}(5) , where  ( 2 , 1 ) (2,1)  indicates that  P P  has two real roots with one of them to be of multiplicity  2 2  and  ( 1 , 1 ) (1,1)  indicates that  P P  has a pair of simple imaginary roots. 
+ 
+ 
+ Now we are ready to give a formal statement of the problem addressed in the current paper. 
+ 
+ 
+ Problem 5   (Parametric complete multiplicity problem) . 
+ 
+ 
+ In:   
+ 
+ 
+ P = ∑ i = 0 n a i ​ x i ∈ ℤ ⁡ [ a 0 , … , a n ] ​ [ x ] P=\sum_{i=0}^{n}a_{i}x^{i}\in\mathbb{Z}[a_{0},\ldots,a_{n}][x]  where  n ≥ 2 n\geq 2  and  a i a_{i} ’s take values over  ℝ \mathbb{R}  with  a n a_{n}  assumed to be nonzero. 
+ 
+ Out: 
+ 
+ 
+ for each  𝝁 𝒄 ∈ ℳ ¯ ​ ( n ) \boldsymbol{\mu_{c}}\in\overline{\mathcal{M}}(n) , find a necessary and sufficient condition  C 𝝁 𝒄 C_{\boldsymbol{\mu_{c}}}  on  a i a_{i} ’s such that  cmult ( P ) = 𝝁 𝒄 \operatorname*{cmult}(P)=\boldsymbol{\mu_{c}} . 
+ 
+ 
+ 
+ 
+ 
+ 
+ 3  Preliminaries 
+
+ 
+ A useful tool for formulating the multiple factors of a polynomial is subresultant for multiple polynomials, which is proposed by Hong and Yang in  [ 6 ,  7 ]  with several variants developed in  [ 14 ]  and is usually defined in the form of determinant polynomial. 
+ 
+ 
+ Definition 6   (Determinant polynomial) . 
+ 
+ Let  𝐌 \boldsymbol{M}  be a  p × q p\times q  matrix where  p ≤ q p\leq q . Then the determinant polynomial of  𝐌 \boldsymbol{M} , written as  dp 𝐌 \operatorname*{dp}\boldsymbol{M} , is defined as 
+ 
+
+ 
+ 
+ dp 𝑴 = ∑ i = 0 q − p 𝑴 ( i ) ​ x i \operatorname*{dp}\boldsymbol{M}=\sum_{i=0}^{q-p}\boldsymbol{M}^{(i)}x^{i} 
+ 
+ 
+ where  𝐌 ( i ) = | 𝐌 1 , … , 𝐌 p − 1 , 𝐌 q − i | \boldsymbol{M}^{(i)}=\left|\boldsymbol{M}_{1},\ldots,\boldsymbol{M}_{p-1},\boldsymbol{M}_{q-i}\right|  and  𝐌 k \boldsymbol{M}_{k}  stands for the  k k -th column of  𝐌 \boldsymbol{M} . 
+ 
+ 
+ 
+ Notation 7 . 
+ 
+ 
+ •  
+ 
+ 𝑭 = ( F 0 , F 1 , … , F t ) ⊆ ℤ ⁡ [ a ] ​ [ x ] \boldsymbol{F}=(F_{0},F_{1},\ldots,F_{t})\subseteq\mathbb{Z}[a][x] , where 
+ 
+ –  
+ 
+ t ≥ 1 t\geq 1 , 
+ 
+ –  
+ 
+ d i = deg ⁡ F i d_{i}=\deg F_{i} , and 
+ 
+ –  
+ 
+ F i = ∑ j = 0 d i a i ​ j ​ x j F_{i}=\sum_{j=0}^{d_{i}}a_{ij}x^{j} ; 
+ 
+ 
+ 
+ •  
+ 
+ 𝒫 ⁡ ( d 0 , t ) = { ( δ 1 , … , δ t ) ∈ ℕ ≥ 0 t : δ 1 + ⋯ + δ t ≤ d 0 } \mathcal{P}(d_{0},t)=\{(\delta_{1},\ldots,\delta_{t})\in\mathbb{N}^{t}_{\geq 0}:\,\delta_{1}+\cdots+\delta_{t}\leq d_{0}\} . 
+ 
+ •  
+ 
+ For  𝜹 = ( δ 1 , … , δ t ) ∈ 𝒫 ⁡ ( d 0 , t ) \boldsymbol{\delta}=(\delta_{1},\ldots,\delta_{t})\in\mathcal{P}(d_{0},t) ,  | 𝜹 | := δ 1 + ⋯ + δ t |\boldsymbol{\delta}|:=\delta_{1}+\cdots+\delta_{t} . 
+ 
+ 
+ 
+ 
+ 
+ Definition 8   (Generalized Sylvester matrix) . 
+ 
+ Given  𝐅 \boldsymbol{F}  as in Notation  7  and  𝛅 ∈ 𝒫 ⁡ ( d 0 , t ) \boldsymbol{\delta}\in\mathcal{P}(d_{0},t) , the  𝛅 \boldsymbol{\delta} -th Sylvester matrix of  𝐅 \boldsymbol{F} , written as  𝐌 𝛅 ​ ( 𝐅 ) \boldsymbol{M}_{\boldsymbol{\delta}}(\boldsymbol{F}) , is defined as 
+ 
+
+ 
+ 
+ 𝑴 𝜹 ​ ( 𝑭 ) = [ 𝑩 0 𝑩 1 𝑩 t ] \boldsymbol{M}_{\boldsymbol{\delta}}(\boldsymbol{F})=\begin{bmatrix}\boldsymbol{B}_{0}\\
+\boldsymbol{B}_{1}\\
+\vdots\\
+\boldsymbol{B}_{t}\end{bmatrix} 
+ 
+ 
+ where 
+ 
+
+ 
+ 
+ 𝑩 i = \displaystyle\boldsymbol{B}_{i}= 
+ [ ⋯ ⋯ a i ​ 1 a i ​ 0 ⋱ ⋱ ⋱ ⋯ ⋯ a i ​ 1 a i ​ 0 ] δ i × ( δ 0 + d 0 ) \displaystyle\begin{bmatrix}\cdots&\cdots&a_{i1}&a_{i0}&&\\
+&\ddots&&\ddots&\ddots&\\
+&&\cdots&\cdots&a_{i1}&a_{i0}\end{bmatrix}_{\delta_{i}\times(\delta_{0}+d_{0})} 
+ 
+ 
+ 
+ δ 0 = \displaystyle\delta_{0}= 
+ { max 1 ≤ i ≤ t δ i ≠ 0 ⁡ ( d i + δ i ) − d 0 , if max 1 ≤ i ≤ t δ i ≠ 0 ⁡ ( d i + δ i ) ≥ d 0 , 1 , otherwise . \displaystyle\left\{\begin{array}[]{cl}\max_{\begin{subarray}{c}1\leq i\leq t\\
+\delta_{i}\neq 0\end{subarray}}(d_{i}+\delta_{i})-d_{0},&\text{if}\ \ \max_{\begin{subarray}{c}1\leq i\leq t\\
+\delta_{i}\neq 0\end{subarray}}(d_{i}+\delta_{i})\geq d_{0},\\[10.0pt]
+1,&\text{otherwise}.\end{array}\right. 
+ 
+ 
+ 
+ 
+ 
+ Remark 9 . 
+ 
+ One may check that the number of rows in  𝐌 𝛅 ​ ( 𝐅 ) \boldsymbol{M}_{\boldsymbol{\delta}}(\boldsymbol{F})  is  δ 0 + | 𝛅 | \delta_{0}+|\boldsymbol{\delta}|  and that of columns is  δ 0 + d 0 \delta_{0}+d_{0} . Since  | 𝛅 | ≤ d 0 |\boldsymbol{\delta}|\leq d_{0} , we immediately see that  𝐌 𝛅 ​ ( 𝐅 ) \boldsymbol{M}_{\boldsymbol{\delta}}(\boldsymbol{F})  is either a wide or square matrix. Thus it is meaningful to compute its determinant polynomial. 
+ 
+ 
+ 
+ Definition 10 . 
+ 
+ The  𝛅 \boldsymbol{\delta} -th subresultant  R 𝛅 R_{\boldsymbol{\delta}}  of  𝐅 \boldsymbol{F}  with respect  x x  is defined as 
+ 
+
+ 
+ 
+ R 𝜹 ​ ( 𝑭 ) := dp ⁡ 𝑴 𝜹 ​ ( 𝑭 ) . R_{\boldsymbol{\delta}}(\boldsymbol{F}):=\operatorname{dp}\boldsymbol{M}_{\boldsymbol{\delta}}(\boldsymbol{F}). 
+ 
+ 
+ The principal leading coefficient of  R 𝛅 ​ ( 𝐅 ) R_{\boldsymbol{\delta}}(\boldsymbol{F}) , i.e., the coefficient of the term  x d 0 − | 𝛅 | x^{d_{0}-|\boldsymbol{\delta}|} , is called the  𝛅 \boldsymbol{\delta} -th principal subresultant coefficient and is denoted by  R 𝛅 ​ ( 𝐅 ) ¯ \overline{R_{\boldsymbol{\delta}}(\boldsymbol{F})} . 
+ 
+ 
+ 
+ Remark 11 . 
+ 
+ 
+ •  
+ 
+ When the meaning of  𝑭 \boldsymbol{F}  is clear from the context,  R 𝜹 ​ ( 𝑭 ) R_{\boldsymbol{\delta}}(\boldsymbol{F})  and  R 𝜹 ​ ( 𝑭 ) ¯ \overline{R_{\boldsymbol{\delta}}(\boldsymbol{F})}  can be abbreviated as  R 𝜹 R_{\boldsymbol{\delta}}  and  R 𝜹 ¯ \overline{R_{\boldsymbol{\delta}}} , respectively. 
+ 
+ •  
+ 
+ If the length of  𝜹 \boldsymbol{\delta}  is  1 1 , that is,  𝜹 = ( δ 1 ) \boldsymbol{\delta}=(\delta_{1}) , we also write  R 𝜹 R_{\boldsymbol{\delta}}  as  R δ 1 R_{\delta_{1}}  for simplicity. 
+ 
+ 
+ 
+ 
+ 
+ In  [ 6 ] , Hong and Yang provided an equivalent expression in the roots of  F 0 F_{0}  for  R 𝜹 ​ ( 𝑭 ) R_{\boldsymbol{\delta}}(\boldsymbol{F}) . To present the formula, we introduce the following notations. 
+ 
+ 
+ Notation 12 . 
+ 
+ 
+ •  
+ 
+ 𝜶 = ( α 1 , … , α d 0 ) \boldsymbol{\alpha}=(\alpha_{1},\ldots,\alpha_{d_{0}})  where  α 1 , … , α d 0 \alpha_{1},\ldots,\alpha_{d_{0}}  are the complex roots of  F 0 F_{0} ; 
+ 
+ •  
+ 
+ 𝑿 ε = ( x ε , … , x 0 ) T \boldsymbol{X}_{\varepsilon}=(x^{\varepsilon},\ldots,x^{0})^{T} ; 
+ 
+ •  
+ 
+ 𝑿 ε ​ ( α i ) = ( α i ε , … , α i 0 ) T \boldsymbol{X}_{\varepsilon}(\alpha_{i})=(\alpha_{i}^{\varepsilon},\ldots,\alpha_{i}^{0})^{T} ; 
+ 
+ •  
+ 
+ 𝑿 ε ​ ( 𝜶 ) = [ 𝑿 ε ​ ( α 1 ) ⋯ 𝑿 ε ​ ( α d 0 ) ] \boldsymbol{X}_{\varepsilon}(\boldsymbol{\alpha})=\begin{bmatrix}\boldsymbol{X}_{\varepsilon}(\alpha_{1})&\cdots&\boldsymbol{X}_{\varepsilon}(\alpha_{d_{0}})\end{bmatrix} ; 
+ 
+ •  
+ 
+ V ⁡ ( 𝜶 ) = | 𝑿 d 0 − 1 ​ ( 𝜶 ) | V(\boldsymbol{\alpha})=|\boldsymbol{X}_{d_{0}-1}(\boldsymbol{\alpha})| . 
+ 
+ 
+ 
+ 
+ 
+ Theorem 13 . 
+ 
+ Given  P P  and  𝛅 ∈ 𝒫 ⁡ ( d 0 , t ) \boldsymbol{\delta}\in\mathcal{P}(d_{0},t)  as in Notation  7 , we have 
+ 
+
+ 
+ 
+ R 𝜹 ​ ( 𝑭 ) = ( − 1 ) ε ⋅ a 0 ​ d 0 δ 0 ⋅ | 𝑴 1 𝑴 t 𝑿 ε ​ ( 𝜶 ) 𝑿 ε | / V ⁡ ( 𝜶 ) R_{\boldsymbol{\delta}}(\boldsymbol{F})=(-1)^{\varepsilon}\cdot a^{\delta_{0}}_{0d_{0}}\cdot\begin{vmatrix}\boldsymbol{M}_{1}\\
+\vdots\\
+\boldsymbol{M}_{t}\\
+\boldsymbol{X}_{\varepsilon}(\boldsymbol{\alpha})&\boldsymbol{X}_{\varepsilon}\end{vmatrix}\Big/V(\boldsymbol{\alpha}) 
+ 
+ 
+ where 
+ 
+ •  
+ 
+ δ 0 \delta_{0}  is as in ( 8 ),  ε = d 0 − | 𝜹 | \varepsilon=d_{0}-|\boldsymbol{\delta}| , 
+ 
+ •  
+ 
+ 𝑴 i = [ ( x δ i − 1 ​ F i ) ​ ( α 1 ) ⋯ ( x δ i − 1 ​ F i ) ​ ( α d 0 ) ( x 0 ​ F i ) ​ ( α 1 ) ⋯ ( x 0 ​ F i ) ​ ( α d 0 ) ] \boldsymbol{M}_{i}=\begin{bmatrix}(x^{\delta_{i}-1}F_{i})(\alpha_{1})&\cdots&(x^{\delta_{i}-1}F_{i})(\alpha_{d_{0}})&\\
+\vdots&&\vdots&\\
+(x^{0}F_{i})(\alpha_{1})&\cdots&(x^{0}F_{i})(\alpha_{d_{0}})\end{bmatrix} , and 
+ 
+ •  
+ 
+ 𝑿 ε \boldsymbol{X}_{\varepsilon} ,  𝑿 ε ​ ( 𝜶 ) \boldsymbol{X}_{\varepsilon}(\boldsymbol{\alpha})  and  V ⁡ ( 𝜶 ) V(\boldsymbol{\alpha})  are as in Notation  12 . 
+ 
+ 
+ 
+ 
+ 
+ 
+ 4  Main Results 
+
+ 
+ Definition 14   (Conjugate) . 
+ 
+ Let  𝛍 = ( μ 1 , … , μ m ) ∈ ℳ ⁡ ( n ) \boldsymbol{\mu}=(\mu_{1},\dots,\mu_{m})\in\mathcal{M}(n) . Then the conjugate of  𝛍 \boldsymbol{\mu}  is defined by  𝛍 ¯ = ( μ ¯ 1 , … , μ ¯ n ) \boldsymbol{\bar{\mu}}=(\bar{\mu}_{1},\dots,\bar{\mu}_{n})  where 
+ 
+
+ 
+ 
+ μ ¯ i = # ⁡ { j ∈ [ 1 , … , m ] : μ j ≥ i } . \bar{\mu}_{i}=\#\{j\in[1,\dots,m]:\mu_{j}\geq i\}. 
+ 
+ 
+ 
+ 
+ 
+ Definition 15   (Incremental gcd) . 
+ 
+ Given  𝐅 \boldsymbol{F}  as in Notation  7 , let 
+ 
+
+ 
+ 
+ G i = gcd ⁡ ( F 0 , F 1 , … , F i ) . G_{i}=\gcd(F_{0},F_{1},\ldots,F_{i}). 
+ 
+ 
+ Then we call  𝐆 = ( G 1 , … , G n ) \boldsymbol{G}=(G_{1},\ldots,G_{n})  the  incremental gcd  of  𝐅 \boldsymbol{F} , written as  icgcd ⁡ 𝐅 \operatorname{icgcd}\boldsymbol{F} . 
+ 
+ 
+ 
+ Theorem 16   (Main theorem) . 
+ 
+ Given  P ∈ ℝ ⁡ [ x ] P\in\mathbb{R}[x]  of degree  n n  with  mult ( P ) = 𝛍 \operatorname*{mult}(P)=\boldsymbol{\mu} , assume  𝛍 ¯ = ( μ ¯ 1 , … , μ ¯ n ) \boldsymbol{\bar{\mu}}=(\bar{\mu}_{1},\ldots,\bar{\mu}_{n}) . Let  𝐅 = ( P ( 0 ) , P ( 1 ) , … 𝐶𝐿𝑂𝑆𝐸 , \boldsymbol{F}=(P^{(0)},P^{(1)},\ldots, 
+ 𝑂𝑃𝐸𝑁 P ( n ) ) P^{(n)})  where  P ( k ) P^{(k)}  is the  k k -th derivative of  P P  with respect to  x x  for  0 ≤ k ≤ n 0\leq k\leq n . Then we have 
+ 
+
+ 
+ 
+ icgcd 𝑭 = ( G 1 , … , G n ) \operatorname*{icgcd}\boldsymbol{F}=(G_{1},\ldots,G_{n}) 
+ 
+ 
+ where 
+ 
+
+ 
+ 
+ G i = R ( μ ¯ 1 , … , μ ¯ i ) ​ ( P ( 0 ) , P ( 1 ) , … , P ( i ) ) G_{i}=R_{(\bar{\mu}_{1},\ldots,\bar{\mu}_{i})}\big(P^{(0)},P^{(1)},\ldots,P^{(i)}\big) 
+ 
+ 
+ 
+ 
+ 
+ Remark 17 . 
+ 
+ It is observed that when  δ i = 0 \delta_{i}=0 ,  F i F_{i}  is not involved in  R 𝛅 ​ ( 𝐅 ) R_{\boldsymbol{\delta}}(\boldsymbol{F}) . Thus for simplicity, we make the convention that 
+ 
+
+ 
+ 
+ R ( δ 1 , … , δ i ) ​ ( 𝑭 ) := R ( δ 1 , … , δ i ) ​ ( F 0 , … , F i ) R_{(\delta_{1},\ldots,\delta_{i})}(\boldsymbol{F}):=R_{(\delta_{1},\ldots,\delta_{i})}(F_{0},\ldots,F_{i}) 
+ 
+ 
+ In other words, we view  δ i + 1 = ⋯ = δ n = 0 \delta_{i+1}=\dots=\delta_{n}=0 . Under this convention,  G i G_{i}  in Theorem  16  can be written as 
+ 
+
+ 
+ 
+ G i = R ( μ ¯ 1 , … , μ ¯ i ) ​ ( 𝑭 ) G_{i}=R_{(\bar{\mu}_{1},\ldots,\bar{\mu}_{i})}(\boldsymbol{F}) 
+ 
+ 
+ where  𝐅 = ( P ( 0 ) , P ( 1 ) , … 𝐶𝐿𝑂𝑆𝐸 , \boldsymbol{F}=\big(P^{(0)},P^{(1)},\ldots, 
+ 𝑂𝑃𝐸𝑁 P ( n ) ) P^{(n)}\big) . Moreover, from now on, we will assume  𝐅 = ( P ( 0 ) , P ( 1 ) , … 𝐶𝐿𝑂𝑆𝐸 , \boldsymbol{F}=\big(P^{(0)},P^{(1)},\ldots, 
+ 𝑂𝑃𝐸𝑁 P ( n ) ) P^{(n)}\big)  in the rest of the paper unless specified in the context. 
+ 
+ 
+ 
+ Example 18 . 
+ 
+ Consider  P = ( x − 1 ) 3 ​ ( x + 1 ) 2 ​ ( x 2 + 1 ) = x 7 − x 6 − x 5 + x 4 − x 3 + x 2 + x − 1 P=(x-1)^{3}(x+1)^{2}(x^{2}+1)=x^{7}-x^{6}-x^{5}+x^{4}-x^{3}+x^{2}+x-1 . Let  𝐅 = ( P ( 0 ) , P ( 1 ) , P ( 2 ) , P ( 3 ) , P ( 4 ) , P ( 5 ) , P ( 6 ) , P ( 7 ) ) \boldsymbol{F}=(P^{(0)},P^{(1)},P^{(2)},P^{(3)},P^{(4)},P^{(5)},P^{(6)},P^{(7)}) . It is easy to see that 
+ 
+
+ 
+ 
+ icgcd ⁡ 𝑭 = ( ( x − 1 ) 2 ​ ( x + 1 ) , x − 1 , 1 , 1 , 1 , 1 , 1 ) \operatorname{icgcd}\boldsymbol{F}=\left((x-1)^{2}(x+1),x-1,1,1,1,1,1\right) 
+ 
+ (3) 
+ 
+ In what follows, we calculate  icgcd ⁡ 𝐅 \operatorname{icgcd}\boldsymbol{F}  by Theorem  16 . 
+ 
+ 
+ Since  𝛍 = ( 3 , 2 , 1 , 1 ) \boldsymbol{\mu}=(3,2,1,1) ,  𝛍 ¯ = ( μ ¯ 1 , μ ¯ 2 , μ ¯ 3 , μ ¯ 4 , μ ¯ 5 , μ ¯ 6 , μ ¯ 7 ) = ( 4 , 2 , 1 , 0 , 0 , 0 , 0 ) \boldsymbol{\bar{\mu}}=(\bar{\mu}_{1},\bar{\mu}_{2},\bar{\mu}_{3},\bar{\mu}_{4},\bar{\mu}_{5},\bar{\mu}_{6},\bar{\mu}_{7})=(4,2,1,0,0,0,0) . Then 
+ 
+
+ 
+ 
+ G 1 = R ( 4 ) ​ ( 𝑭 ) = dp ( x 2 ​ P ( 0 ) , x 1 ​ P ( 0 ) , x 0 ​ P ( 0 ) , x 3 ​ P ( 1 ) , x 2 ​ P ( 1 ) , x 1 ​ P ( 1 ) , x 0 ​ P ( 1 ) ) = dp [ 1 − 1 − 1 1 − 1 1 1 − 1 1 − 1 − 1 1 − 1 1 1 − 1 1 − 1 − 1 1 − 1 1 1 − 1 7 − 6 − 5 4 − 3 2 1 7 − 6 − 5 4 − 3 2 1 7 − 6 − 5 4 − 3 2 1 7 − 6 − 5 4 − 3 2 1 ] = − 1536 ​ ( x − 1 ) 2 ​ ( x + 1 ) G 2 = R ( 4 , 2 ) ​ ( 𝑭 ) = dp ( x 2 ​ P ( 0 ) , x 1 ​ P ( 0 ) , x 0 ​ P ( 0 ) , x 3 ​ P ( 1 ) , x 2 ​ P ( 1 ) , x 1 ​ P ( 1 ) , x 0 ​ P ( 1 ) , x 1 ​ P ( 2 ) , x 0 ​ P ( 2 ) ) = dp [ 1 − 1 − 1 1 − 1 1 1 − 1 1 − 1 − 1 1 − 1 1 1 − 1 1 − 1 − 1 1 − 1 1 1 − 1 7 − 6 − 5 4 − 3 2 1 7 − 6 − 5 4 − 3 2 1 7 − 6 − 5 4 − 3 2 1 7 − 6 − 5 4 − 3 2 1 42 − 30 − 20 12 − 6 2 42 − 30 − 20 12 − 6 2 ] = − 1179648 ​ ( x − 1 ) G 3 = R ( 4 , 2 , 1 ) ​ ( 𝑭 ) = dp ( x 2 ​ P ( 0 ) , x 1 ​ P ( 0 ) , x 0 ​ P ( 0 ) , x 3 ​ P ( 1 ) , x 2 ​ P ( 1 ) , x 1 ​ P ( 1 ) , x 0 ​ P ( 1 ) , x 1 ​ P ( 2 ) , x 0 ​ P ( 2 ) , x 0 ​ P ( 3 ) ) = dp [ 1 − 1 − 1 1 − 1 1 1 − 1 1 − 1 − 1 1 − 1 1 1 − 1 1 − 1 − 1 1 − 1 1 1 − 1 7 − 6 − 5 4 − 3 2 1 7 − 6 − 5 4 − 3 2 1 7 − 6 − 5 4 − 3 2 1 7 − 6 − 5 4 − 3 2 1 42 − 30 − 20 12 − 6 2 42 − 30 − 20 12 − 6 2 210 − 120 − 60 24 − 6 ] = − 56623104 G 4 = R ( 4 , 2 , 1 , 0 ) ( 𝑭 ) = R ( 4 , 2 , 1 ) ( 𝑭 ) G 5 = R ( 4 , 2 , 1 , 0 , 0 ) ( 𝑭 ) = R ( 4 , 2 , 1 ) ( 𝑭 ) G 6 = R ( 4 , 2 , 1 , 0 , 0 , 0 ) ( 𝑭 ) = R ( 4 , 2 , 1 ) ( 𝑭 ) G 7 = R ( 4 , 2 , 1 , 0 , 0 , 0 , 0 ) ​ ( 𝑭 ) = R ( 4 , 2 , 1 ) ​ ( 𝑭 ) \begin{array}[]{rl}G_{1}&=R_{(4)}(\boldsymbol{F})\\[2.0pt]
+&=\operatorname*{dp}(x^{2}P^{(0)},x^{1}P^{(0)},x^{0}P^{(0)},x^{3}P^{(1)},x^{2}P^{(1)},x^{1}P^{(1)},x^{0}P^{(1)})\\[2.0pt]
+&=\operatorname*{dp}\begin{bmatrix}1&-1&-1&1&-1&1&1&-1&&\\
+&1&-1&-1&1&-1&1&1&-1&\\
+&&1&-1&-1&1&-1&1&1&-1\\
+7&-6&-5&4&-3&2&1&&&\\
+&7&-6&-5&4&-3&2&1&&\\
+&&7&-6&-5&4&-3&2&1&\\
+&&&7&-6&-5&4&-3&2&1\end{bmatrix}\\
+\\[-6.0pt]
+&=-1536(x-1)^{2}(x+1)\\[2.0pt]
+G_{2}&=R_{(4,2)}(\boldsymbol{F})\\[2.0pt]
+&=\operatorname*{dp}(x^{2}P^{(0)},x^{1}P^{(0)},x^{0}P^{(0)},x^{3}P^{(1)},x^{2}P^{(1)},x^{1}P^{(1)},x^{0}P^{(1)},x^{1}P^{(2)},x^{0}P^{(2)})\\[2.0pt]
+&=\operatorname*{dp}\begin{bmatrix}1&-1&-1&1&-1&1&1&-1&&\\
+&1&-1&-1&1&-1&1&1&-1&\\
+&&1&-1&-1&1&-1&1&1&-1\\
+7&-6&-5&4&-3&2&1&&&\\
+&7&-6&-5&4&-3&2&1&&\\
+&&7&-6&-5&4&-3&2&1&\\
+&&&7&-6&-5&4&-3&2&1\\
+&&&42&-30&-20&12&-6&2&\\
+&&&&42&-30&-20&12&-6&2\end{bmatrix}\\
+\\[-6.0pt]
+&=-1179648(x-1)\\[2.0pt]
+G_{3}&=R_{(4,2,1)}(\boldsymbol{F})\\[2.0pt]
+&=\operatorname*{dp}(x^{2}P^{(0)},x^{1}P^{(0)},x^{0}P^{(0)},x^{3}P^{(1)},x^{2}P^{(1)},x^{1}P^{(1)},x^{0}P^{(1)},x^{1}P^{(2)},x^{0}P^{(2)},x^{0}P^{(3)})\\[2.0pt]
+&=\operatorname*{dp}\begin{bmatrix}1&-1&-1&1&-1&1&1&-1&&\\
+&1&-1&-1&1&-1&1&1&-1&\\
+&&1&-1&-1&1&-1&1&1&-1\\
+7&-6&-5&4&-3&2&1&&&\\
+&7&-6&-5&4&-3&2&1&&\\
+&&7&-6&-5&4&-3&2&1&\\
+&&&7&-6&-5&4&-3&2&1\\
+&&&42&-30&-20&12&-6&2&\\
+&&&&42&-30&-20&12&-6&2\\
+&&&&&210&-120&-60&24&-6\end{bmatrix}\\
+\\[-6.0pt]
+&=-56623104\\[2.0pt]
+G_{4}&=R_{(4,2,1,0)}(\boldsymbol{F})\ \ \ \ \ \ =R_{(4,2,1)}(\boldsymbol{F})\\[2.0pt]
+G_{5}&=R_{(4,2,1,0,0)}(\boldsymbol{F})\ \ \ \ \,=R_{(4,2,1)}(\boldsymbol{F})\\[2.0pt]
+G_{6}&=R_{(4,2,1,0,0,0)}(\boldsymbol{F})\ \ \;=R_{(4,2,1)}(\boldsymbol{F})\\[2.0pt]
+G_{7}&=R_{(4,2,1,0,0,0,0)}(\boldsymbol{F})\ =R_{(4,2,1)}(\boldsymbol{F})\end{array} 
+ 
+ 
+ Therefore, 
+ 
+
+ 
+ 
+ icgcd 𝑭 = ( G 1 , G 2 , G 3 , G 4 , G 5 , G 6 , G 7 ) \operatorname*{icgcd}\boldsymbol{F}=(G_{1},G_{2},G_{3},G_{4},G_{5},G_{6},G_{7}) 
+ 
+ 
+ which only differs from ( 3 ) by constant factors. 
+ 
+ 
+ 
+ Remark 19 . 
+ 
+ 
+ •  
+ 
+ It is noted that when  μ ¯ i ≠ 0 \bar{\mu}_{i}\neq 0  and  μ ¯ i + 1 = ⋯ = μ ¯ n = 0 \bar{\mu}_{i+1}=\cdots=\bar{\mu}_{n}=0 , 
+ 
+
+ 
+ 
+ G i = R ( μ ¯ 1 , … , μ ¯ i ) ​ ( 𝑭 ) G_{i}=R_{(\bar{\mu}_{1},\ldots,\bar{\mu}_{i})}(\boldsymbol{F}) 
+ 
+ 
+ is a nonzero constant. Obviously, in this case, 
+ 
+
+ 
+ 
+ G i + 1 = ⋯ = G n = G i G_{i+1}=\cdots=G_{n}=G_{i} 
+ 
+ 
+ 
+ •  
+ 
+ Since  k ! k!  is a common factor of the coefficients for  P ( k ) P^{(k)} , we can use  P ( k ) / k ! P^{(k)}/k!  instead of  P ( k ) P^{(k)}  to simplify the computation in practice. So the gcds in Example  18  can be simplified into the followings: 
+ 
+
+ 
+ 
+ G 1 \displaystyle G_{1} 
+ = − 1536 ​ ( x − 1 ) 2 ​ ( x + 1 ) , G 2 = − 589824 ​ ( x − 1 ) , \displaystyle=-1536(x-1)^{2}(x+1),\quad G_{2}=-589824(x-1),\quad 
+ 
+ 
+ 
+ G 3 \displaystyle G_{3} 
+ = G 4 = G 5 = G 6 = G 7 = − 9437184 \displaystyle=G_{4}=G_{5}=G_{6}=G_{7}=-9437184 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ One may wonder whether there are inherent relationships among  R 𝜹 ​ ( 𝑭 ) R_{\boldsymbol{\delta}}(\boldsymbol{F}) ’s. Indeed, we succeed to find such a relationship for polynomials with formal coefficients, which reveals the hidden structures in the potential  G i G_{i} ’s and converts the computation of subresultants into that of pseudo-remainders. We hope this relationship could be useful for exploring more hidden structures among the potential  G i G_{i} ’s and
+can be applied to enhance the efficiency of computing  R 𝜹 ​ ( 𝑭 ) R_{\boldsymbol{\delta}}(\boldsymbol{F}) ’s.
+The proof of the proposition can be found in Appendix A. 
+ 
+ 
+ Proposition 20 . 
+ 
+ Let  P = ∑ i = 0 n a i ​ x i ∈ ℤ ⁡ [ a 0 , … , a n ] ​ [ x ] P=\sum_{i=0}^{n}a_{i}x^{i}\in\mathbb{Z}[a_{0},\ldots,a_{n}][x]  and  𝐅 = ( P ( 0 ) , P ( 1 ) , … 𝐶𝐿𝑂𝑆𝐸 , \boldsymbol{F}=(P^{(0)},P^{(1)},\ldots, 
+ 𝑂𝑃𝐸𝑁 P ( n ) ) P^{(n)}) . Let  𝛅 = ( δ 1 , … , δ t ) ∈ 𝒫 ⁡ ( n , t ) \boldsymbol{\delta}=(\delta_{1},\ldots,\delta_{t})\in\mathcal{P}(n,t)  be such that 
+ 
+ •  
+ 
+ δ 1 ≥ ⋯ ≥ δ t ≥ 1 \delta_{1}\geq\cdots\geq\delta_{t}\geq 1 , and 
+ 
+ •  
+ 
+ δ j > δ j + 1 \delta_{j}>\delta_{j+1}  holds for some  1 ≤ j < t 1\leq j<t . 
+ 
+ 
+ Then 
+ 
+
+ 
+ 
+ R 𝜹 − 𝒆 j − 𝒆 t ​ ( 𝑭 ) ¯ ⋅ R 𝜹 ​ ( 𝑭 ) = prem ( R 𝜹 − 𝒆 j ​ ( 𝑭 ) , R 𝜹 − 𝒆 t ​ ( 𝑭 ) ) \overline{R_{\boldsymbol{\delta}-\boldsymbol{{e}}_{j}-\boldsymbol{{e}}_{t}}(\boldsymbol{F})}\cdot R_{\boldsymbol{\delta}}(\boldsymbol{F})=\operatorname*{prem}(R_{\boldsymbol{\delta}-\boldsymbol{{e}}_{j}}(\boldsymbol{F}),R_{\boldsymbol{\delta}-\boldsymbol{{e}}_{t}}(\boldsymbol{F})) 
+ 
+ 
+ where  𝐞 k \boldsymbol{{e}}_{k}  is the  k k -th unit vector of length  t t . 
+ 
+ 
+ 
+ Example 21 . 
+ 
+ Consider  P = a 3 ​ x 3 + a 2 ​ x 2 + a 1 ​ x + a 0 P=a_{3}x^{3}+a_{2}x^{2}+a_{1}x+a_{0}  and  𝛅 = ( δ 1 , δ 2 ) = ( 2 , 1 ) \boldsymbol{\delta}=(\delta_{1},\delta_{2})=(2,1) .
+Suppose we have 
+ 
+
+ 
+ 
+ R ( 1 , 1 ) ​ ( 𝑭 ) = 6 ​ a 3 ​ ( 3 ​ a 3 ​ x + a 2 ) , R ( 2 , 0 ) ​ ( 𝑭 ) = a 3 ​ ( ( 6 ​ a 1 ​ a 3 − 2 ​ a 2 2 ) ​ x + ( 9 ​ a 0 ​ a 3 − a 1 ​ a 2 ) ) , R ( 1 , 0 ) ​ ( 𝑭 ) ¯ = 3 ​ a 3 . R_{(1,1)}(\boldsymbol{F})=6\,a_{3}(3\,a_{3}x+a_{2}),\ \ R_{(2,0)}(\boldsymbol{F})=a_{3}\big((6\,a_{{1}}a_{{3}}-2\,{a_{{2}}^{2}})x+(9\,a_{{0}}a_{{3}}-a_{{1}}a_{{2}})\big),\ \ \overline{R_{(1,0)}(\boldsymbol{F})}=3\,a_{3}. 
+ 
+ 
+ By Proposition  20 , we can calculate  R ( 2 , 1 ) ​ ( 𝐅 ) R_{(2,1)}(\boldsymbol{F})  via 
+ 
+
+ 
+ 
+ R ( 2 , 1 ) ​ ( 𝑭 ) \displaystyle R_{(2,1)}(\boldsymbol{F}) 
+ = prem ⁡ ( R ( 1 , 1 ) ​ ( 𝑭 ) , R ( 2 , 0 ) ​ ( 𝑭 ) ) / R ( 1 , 0 ) ​ ( 𝑭 ) ¯ \displaystyle=\operatorname{prem}(R_{(1,1)}(\boldsymbol{F}),R_{(2,0)}(\boldsymbol{F}))\big/\overline{R_{(1,0)}(\boldsymbol{F})} 
+ 
+ 
+ 
+ 
+ = − 6 a 3 2 ( 27 a 0 a 3 2 − 9 a 1 a 2 a 3 + 2 a 2 3 ) / ( 3 a 3 ) \displaystyle=-6\,a_{{3}}^{2}\left(27\,a_{{0}}a_{{3}}^{2}-9\,a_{{1}}a_{{2}}a_{{3}}+2\,a_{{2}}^{3}\right)/(3\,a_{3}) 
+ 
+ 
+ 
+ 
+ = − 2 ​ a 3 ​ ( 27 ​ a 0 ​ a 3 2 − 9 ​ a 1 ​ a 2 ​ a 3 + 2 ​ a 2 3 ) \displaystyle=-2\,a_{{3}}\left(27\,a_{{0}}a_{{3}}^{2}-9\,a_{{1}}a_{{2}}a_{{3}}+2\,{a_{{2}}^{3}}\right) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 5  Proof of Theorem  16 
+
+ 
+ This section is devoted to proving the paper’s main result (Theorem  16 ). To achieve this goal, we first rewrite  R 𝜹 ​ ( 𝑭 ) R_{\boldsymbol{\delta}}(\boldsymbol{F}) 
+from an expression in coefficients to that in multiple roots through divided difference. Then we simplify the resulting expression in roots with the multiplicity information (i.e., the evaluation of the  k k -th derivative of  P P  at its multiple root  r i r_{i}  is zero for  0 ≤ k ≤ μ i − 1 0\leq k\leq\mu_{i}-1  and is nonzero when  k = μ i k=\mu_{i}  where  μ i \mu_{i}  is the multiplicity of  r i r_{i} ). It turns out that the simplified expression corresponds to a certain gcd in  icgcd ⁡ 𝑭 \operatorname{icgcd}\boldsymbol{F} . 
+ 
+ 
+ 5.1  Converting  R 𝜹 ​ ( 𝑭 ) R_{\boldsymbol{\delta}}(\boldsymbol{F})  into an expression in multiple roots 
+
+ 
+ Lemma 22   (Subresultant in multiple roots) . 
+ 
+ Let  P P  be of degree  n n  with  m m  distinct roots  r 1 , … , r m r_{1},\dots,r_{m}  whose multiplicities are  μ 1 , … , μ m \mu_{1},\ldots,\mu_{m} , respectively.
+Let  𝐅 = ( P ( 0 ) , P ( 1 ) , … , P ( n ) ) \boldsymbol{F}=(P^{(0)},P^{(1)},\ldots,P^{(n)})  and  𝛅 = ( δ 1 , … , δ n ) ∈ 𝒫 ⁡ ( n , n ) \boldsymbol{\delta}=(\delta_{1},\ldots,\delta_{n})\in\mathcal{P}(n,n) . Then we have 
+ 
+
+ 
+ 
+ R 𝜹 ​ ( 𝑭 ) = c 𝜹 , 𝝁 ⋅ | 𝑯 ( 0 ) ​ ( r 1 ) ⋯ 𝑯 ( μ 1 − 1 ) ​ ( r 1 ) ⋯ ⋯ 𝑯 ( 0 ) ​ ( r m ) ⋯ 𝑯 ( μ m − 1 ) ​ ( r m ) 𝑿 ε ( 0 ) ​ ( r 1 ) ⋯ 𝑿 ε ( μ 1 − 1 ) ​ ( r 1 ) ⋯ ⋯ 𝑿 ε ( 0 ) ​ ( r m ) ⋯ 𝑿 ε ( μ m − 1 ) ​ ( r m ) 𝑿 ε | ∏ 1 ≤ u < v ≤ m ( r v − r u ) μ u ​ μ v R_{\boldsymbol{\delta}}(\boldsymbol{F})=c_{\boldsymbol{\delta},\boldsymbol{\mu}}\cdot\frac{\begin{vmatrix}\boldsymbol{H}^{(0)}(r_{1})&\cdots&\boldsymbol{H}^{(\mu_{1}-1)}(r_{1})&\cdots&\cdots&\boldsymbol{H}^{(0)}(r_{m})&\cdots&\boldsymbol{H}^{(\mu_{m}-1)}(r_{m})&\\
+\boldsymbol{X}_{\varepsilon}^{(0)}(r_{1})&\cdots&\boldsymbol{X}_{\varepsilon}^{(\mu_{1}-1)}(r_{1})&\cdots&\cdots&\boldsymbol{X}_{\varepsilon}^{(0)}(r_{m})&\cdots&\boldsymbol{X}_{\varepsilon}^{(\mu_{m}-1)}(r_{m})&\boldsymbol{X}_{\varepsilon}\end{vmatrix}}{\prod_{1\leq u<v\leq m}(r_{v}-r_{u})^{\mu_{u}\mu_{v}}} 
+ 
+ 
+ where 
+ 
+ •  
+ 
+ c 𝜹 , 𝝁 = ( − 1 ) ( n 2 ) + ε ​ a n δ 0 ∏ u = 1 m ∏ v = 0 μ u − 1 v ! c_{\boldsymbol{\delta},\boldsymbol{\mu}}=(-1)^{\binom{n}{2}+\varepsilon}\dfrac{a^{\delta_{0}}_{n}}{\prod_{u=1}^{m}\prod_{v=0}^{\mu_{u}-1}v!} , 
+ 
+ •  
+ 
+ ε = n − | 𝜹 | \varepsilon=n-|\boldsymbol{\delta}| , 
+ 
+ •  
+ 
+ δ 0 \delta_{0}  is as in ( 8 ), 
+ 
+ •  
+ 
+ 𝑿 ε = ( x ε , … , x 0 ) T \boldsymbol{X}_{\varepsilon}=(x^{\varepsilon},\ldots,x^{0})^{T} , 
+ 
+ •  
+ 
+ 𝑿 ε ( k ) = ( ( x ε ) ( k ) , … , ( x 0 ) ( k ) ) T \boldsymbol{X}_{\varepsilon}^{(k)}=\left((x^{\varepsilon})^{(k)},\ldots,(x^{0})^{(k)}\right)^{T} , and 
+ 
+ •  
+ 
+ 𝑯 ( k ) = ( ( x δ 1 − 1 ​ P ( 1 ) ) ( k ) , … , ( x 0 ​ P ( 1 ) ) ( k ) , … ​ … , ( x δ n − 1 ​ P ( n ) ) ( k ) , … , ( x 0 ​ P ( n ) ) ( k ) ) T \boldsymbol{H}^{(k)}=\left(\left(x^{\delta_{1}-1}P^{(1)}\right)^{(k)},\ldots,\left(x^{0}P^{(1)}\right)^{(k)},\ldots\ldots,\left(x^{\delta_{n}-1}P^{(n)}\right)^{(k)},\ldots,\left(x^{0}P^{(n)}\right)^{(k)}\right)^{T} . 
+ 
+ 
+ 
+ 
+ 
+ Proof. 
+ 
+ Let  P = a n ( x − α 1 ) ⋯ ( x − α n ) P=a_{n}(x-\alpha_{1})\cdots(x-\alpha_{n}) . When  α 1 , … , α n \alpha_{1},\dots,\alpha_{n}  are treated as numbers, without loss of generality, we assume that  α 1 , … , α n \alpha_{1},\dots,\alpha_{n}  are grouped into  m m  sets as follows: 
+ 
+
+ 
+ 
+ I 1 := \displaystyle I_{1}:= 
+ { α 1 ​ … ​ … ​ … ​ … ​ α μ 1 } , \displaystyle\ \{\alpha_{1}\ \dots\ \dots\ \dots\ \dots\ \alpha_{\mu_{1}}\}, 
+ 
+ 
+ 
+ I 2 := \displaystyle I_{2}:= 
+ { α μ 1 + 1 ​ … ​ … ​ … ​ α μ 1 + μ 2 } , \displaystyle\ \{\alpha_{\mu_{1}+1}\ \dots\ \dots\ \dots\ \alpha_{\mu_{1}+\mu_{2}}\}, 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ I m := \displaystyle I_{m}:= 
+ { α μ 1 + ⋯ + μ m − 1 + 1 ​ … ​ α μ 1 + ⋯ + μ m − 1 + μ m } , \displaystyle\ \{\alpha_{\mu_{1}+\dots+\mu_{m-1}+1}\ \dots\ \alpha_{\mu_{1}+\dots+\mu_{m-1}+\mu_{m}}\}, 
+ 
+ 
+ where elements in  I i I_{i}  are all equal to  r i r_{i} . 
+ 
+ 
+ Now we treat  α 1 , … , α n \alpha_{1},\dots,\alpha_{n}  as indeterminates. Let 
+ 
+
+ 
+ 
+ 𝑯 = ( x δ 1 − 1 ​ P ( 1 ) , … , x 0 ​ P ( 1 ) , … , x δ n − 1 ​ P ( n ) , … , x 0 ​ P ( n ) ) T \boldsymbol{H}=\left(x^{\delta_{1}-1}P^{(1)},\ldots,x^{0}P^{(1)},\ldots,x^{\delta_{n}-1}P^{(n)},\ldots,x^{0}P^{(n)}\right)^{T} 
+ 
+ 
+ and  𝑿 ε = ( x ε , … , x 0 ) T \boldsymbol{X}_{\varepsilon}=(x^{\varepsilon},\ldots,x^{0})^{T} . By Theorem  13 , 
+ 
+
+ 
+ 
+ R 𝜹 ​ ( 𝑭 ) = ( − 1 ) ε ⋅ a n δ 0 ⋅ | 𝑯 ⁡ ( α 1 ) ⋯ 𝑯 ⁡ ( α n ) 𝑿 ε ​ ( α 1 ) ⋯ 𝑿 ε ​ ( α n ) 𝑿 ε | / V ⁡ ( 𝜶 ) R_{\boldsymbol{\delta}}(\boldsymbol{F})=(-1)^{\varepsilon}\cdot a^{\delta_{0}}_{n}\cdot\begin{vmatrix}\boldsymbol{H}(\alpha_{1})&\cdots&\boldsymbol{H}(\alpha_{n})&\\
+\boldsymbol{X}_{\varepsilon}(\alpha_{1})&\cdots&\boldsymbol{X}_{\varepsilon}(\alpha_{n})&\boldsymbol{X}_{\varepsilon}\end{vmatrix}\Big/V(\boldsymbol{\alpha}) 
+ 
+ 
+ where  δ 0 \delta_{0}  is as in ( 8 ),  ε = n − | 𝜹 | \varepsilon=n-|\boldsymbol{\delta}| , and
+ 𝑿 ε \boldsymbol{X}_{\varepsilon}  and  V ⁡ ( 𝜶 ) V(\boldsymbol{\alpha})  are as in Notation  12 .
+It follows that 
+ 
+
+ 
+ 
+ R 𝜹 = ( − 1 ) ε ⋅ a n δ 0 ⋅ | 𝑯 ⁡ ( α 1 ) ⋯ 𝑯 ⁡ ( α n ) 𝑿 ε ​ ( α 1 ) ⋯ 𝑿 ε ​ ( α n ) 𝑿 ε | V ⁡ ( 𝜶 ) = ( − 1 ) ε ⋅ a n δ 0 ⋅ | 𝑯 ⁡ ( α 1 ) ⋯ 𝑯 ⁡ ( α n ) 𝑿 ε ​ ( α 1 ) ⋯ 𝑿 ε ​ ( α n ) 𝑿 ε | ( − 1 ) ( n 2 ) ​ ∏ 1 ≤ u < v ≤ n ( α v − α u ) R_{\boldsymbol{\delta}}\ =\ \frac{(-1)^{\varepsilon}\cdot a^{\delta_{0}}_{n}\cdot\begin{vmatrix}\boldsymbol{H}(\alpha_{1})&\cdots&\boldsymbol{H}(\alpha_{n})&\\
+\boldsymbol{X}_{\varepsilon}(\alpha_{1})&\cdots&\boldsymbol{X}_{\varepsilon}(\alpha_{n})&\boldsymbol{X}_{\varepsilon}\end{vmatrix}}{V(\boldsymbol{\alpha})}\ =\ \frac{(-1)^{\varepsilon}\cdot a^{\delta_{0}}_{n}\cdot\begin{vmatrix}\boldsymbol{H}(\alpha_{1})&\cdots&\boldsymbol{H}(\alpha_{n})&\\
+\boldsymbol{X}_{\varepsilon}(\alpha_{1})&\cdots&\boldsymbol{X}_{\varepsilon}(\alpha_{n})&\boldsymbol{X}_{\varepsilon}\end{vmatrix}}{(-1)^{\binom{n}{2}}\prod_{1\leq u<v\leq n}(\alpha_{v}-\alpha_{u})} 
+ 
+ 
+ 
+ 
+ Next, we carry out the exact division so that the differences between the collapsed  α i \alpha_{i} ’s do not appear in the denominator.
+For this purpose, we let  Q ⁡ [ x 1 , … , x u ] Q[x_{1},\dots,x_{u}]  denote the ( u − 1 u-1 )-th divided difference of  Q ∈ ℝ ⁡ [ x ] Q\in\mathbb{R}[x]  at  x 1 , x 2 , … , x u x_{1},x_{2},\dots,x_{u}  which is defined recursively as follows: 
+ 
+
+ 
+ 
+ Q ⁡ [ x 1 , … , x u ] = { Q ⁡ ( x 1 ) , if u = 1 ; Q ⁡ [ x 1 , … , x u − 2 , x u ] − Q ⁡ [ x 1 , … , x u − 2 , x u − 1 ] x u − x u − 1 , if u > 1 . Q[x_{1},\dots,x_{u}]=\left\{\begin{array}[]{ll}Q(x_{1}),&\text{if}\ \ u=1;\\
+\dfrac{Q[x_{1},\dots,x_{u-2},x_{u}]-Q[x_{1},\dots,x_{u-2},x_{u-1}]}{x_{u}-x_{u-1}},&\text{if}\ \ u>1.\end{array}\right. 
+ 
+ 
+ Now we eliminate the factors of the form  α v − α u \alpha_{v}-\alpha_{u}  where  α u , α v ∈ I 1 \alpha_{u},\alpha_{v}\in I_{1}  by using successive divided differences. For the sake of simplicity, let  c ′ = ( − 1 ) ε + ( n 2 ) ⋅ a n δ 0 c^{\prime}=(-1)^{\varepsilon+{\binom{n}{2}}}\cdot a^{\delta_{0}}_{n} . Then we have 
+ 
+
+ 
+ 
+ R 𝜹 = \displaystyle R_{\boldsymbol{\delta}}\ =\  
+ c ′ ​ | 𝑯 ⁡ ( α 1 ) ⋯ 𝑯 ⁡ ( α n ) 𝑿 ε ​ ( α 1 ) ⋯ 𝑿 ε ​ ( α n ) 𝑿 ε | ∏ 1 ≤ u < v ≤ n ( α v − α u ) \displaystyle\frac{c^{\prime}\begin{vmatrix}\boldsymbol{H}(\alpha_{1})&\cdots&\boldsymbol{H}(\alpha_{n})&\\
+\boldsymbol{X}_{\varepsilon}(\alpha_{1})&\cdots&\boldsymbol{X}_{\varepsilon}(\alpha_{n})&\boldsymbol{X}_{\varepsilon}\end{vmatrix}}{\prod_{1\leq u<v\leq n}(\alpha_{v}-\alpha_{u})} 
+ 
+ 
+ 
+ = \displaystyle=\  
+ c ′ ​ | 𝑯 ⁡ [ α 1 ] 𝑯 ⁡ [ α 1 , α 2 ] ⋯ 𝑯 ⁡ [ α μ 1 − 1 , α μ 1 ] 𝑯 ⁡ [ α μ 1 + 1 ] ⋯ 𝑯 ⁡ [ α n ] 𝑿 ε ​ [ α 1 ] 𝑿 ε ​ [ α 1 , α 2 ] ⋯ 𝑿 ε ​ [ α μ 1 − 1 , α μ 1 ] 𝑿 ε ​ [ α μ 1 + 1 ] ⋯ 𝑿 ε ​ [ α n ] 𝑿 ε | ∏ α u , α v ∈ I 1 v − u > 1 ( α v − α u ) ​ ∏ α u , α v ∉ I 1 v − u > 0 ( α v − α u ) ​ ∏ α u ∈ I 1 α v ∉ I 1 ( α v − α u ) \displaystyle\frac{c^{\prime}\left|\begin{array}[]{llll|lll|l}\boldsymbol{H}[\alpha_{1}]&\boldsymbol{H}[\alpha_{1},\alpha_{2}]&\cdots&\boldsymbol{H}[\alpha_{\mu_{1}-1},\alpha_{\mu_{1}}]&\boldsymbol{H}[\alpha_{\mu_{1}+1}]&\cdots&\boldsymbol{H}[\alpha_{n}]&\\
+\boldsymbol{X}_{\varepsilon}[\alpha_{1}]&\boldsymbol{X}_{\varepsilon}[\alpha_{1},\alpha_{2}]&\cdots&\boldsymbol{X}_{\varepsilon}[\alpha_{\mu_{1}-1},\alpha_{\mu_{1}}]&\boldsymbol{X}_{\varepsilon}[\alpha_{\mu_{1}+1}]&\cdots&\boldsymbol{X}_{\varepsilon}[\alpha_{n}]&\boldsymbol{X}_{\varepsilon}\end{array}\right|}{\prod_{\underset{v-u>1}{\alpha_{u},\alpha_{v}\in I_{1}}}(\alpha_{v}-\alpha_{u})\prod_{\underset{v-u>0}{\alpha_{u},\alpha_{v}\notin I_{1}}}(\alpha_{v}-\alpha_{u})\prod_{\underset{\alpha_{v}\notin I_{1}}{\alpha_{u}\in I_{1}}}(\alpha_{v}-\alpha_{u})} 
+ 
+ 
+ 
+ = \displaystyle\ =\  
+ c ′ ​ | 𝑯 ⁡ [ α 1 ] 𝑯 ⁡ [ α 1 , α 2 ] 𝑯 ⁡ [ α 1 , α 2 , α 3 ] ⋯ 𝑯 ⁡ [ α μ 1 − 2 , α μ 1 − 1 , α μ 1 ] 𝑯 ⁡ [ α μ 1 + 1 ] ⋯ 𝑯 ⁡ [ α n ] 𝑿 ε ​ [ α 1 ] 𝑿 ε ​ [ α 1 , α 2 ] 𝑿 ε ​ [ α 1 , α 2 , α 3 ] ⋯ 𝑿 ε ​ [ α μ 1 − 2 , α μ 1 − 1 , α μ 1 ] 𝑿 ε ​ [ α μ 1 + 1 ] ⋯ 𝑿 ε ​ [ α n ] 𝑿 ε | ∏ α u , α v ∈ I 1 v − u > 2 ( α v − α u ) ​ ∏ α u , α v ∉ I 1 v − u > 0 ( α v − α u ) ​ ∏ α u ∈ I 1 α v ∉ I 1 ( α v − α u ) \displaystyle\frac{c^{\prime}\left|\begin{array}[]{lllll|lll|l}\boldsymbol{H}[\alpha_{1}]&\boldsymbol{H}[\alpha_{1},\alpha_{2}]&\boldsymbol{H}[\alpha_{1},\alpha_{2},\alpha_{3}]&\cdots&\boldsymbol{H}[\alpha_{\mu_{1}-2},\alpha_{\mu_{1}-1},\alpha_{\mu_{1}}]&\boldsymbol{H}[\alpha_{\mu_{1}+1}]&\cdots&\boldsymbol{H}[\alpha_{n}]&\\
+\boldsymbol{X}_{\varepsilon}[\alpha_{1}]&\boldsymbol{X}_{\varepsilon}[\alpha_{1},\alpha_{2}]&\boldsymbol{X}_{\varepsilon}[\alpha_{1},\alpha_{2},\alpha_{3}]&\cdots&\boldsymbol{X}_{\varepsilon}[\alpha_{\mu_{1}-2},\alpha_{\mu_{1}-1},\alpha_{\mu_{1}}]&\boldsymbol{X}_{\varepsilon}[\alpha_{\mu_{1}+1}]&\cdots&\boldsymbol{X}_{\varepsilon}[\alpha_{n}]&\boldsymbol{X}_{\varepsilon}\end{array}\right|}{\prod_{\underset{v-u>2}{\alpha_{u},\alpha_{v}\in I_{1}}}(\alpha_{v}-\alpha_{u})\prod_{\underset{v-u>0}{\alpha_{u},\alpha_{v}\notin I_{1}}}(\alpha_{v}-\alpha_{u})\prod_{\underset{\alpha_{v}\notin I_{1}}{\alpha_{u}\in I_{1}}}(\alpha_{v}-\alpha_{u})} 
+ 
+ 
+ 
+ ⋮ \displaystyle\ \vdots\  
+ 
+ 
+ 
+ 
+ = \displaystyle=\  
+ c ′ ​ | 𝑯 ⁡ [ α 1 ] 𝑯 ⁡ [ α 1 , α 2 ] ⋯ 𝑯 ⁡ [ α 1 , … , α μ 1 ] 𝑯 ⁡ [ α μ 1 + 1 ] ⋯ 𝑯 ⁡ [ α n ] 𝑿 ε ​ [ α 1 ] 𝑿 ε ​ [ α 1 , α 2 ] ⋯ 𝑿 ε ​ [ α 1 , … , α μ 1 ] 𝑿 ε ​ [ α μ 1 + 1 ] ⋯ 𝑿 ε ​ [ α n ] 𝑿 ε | ∏ α u , α v ∉ I 1 v − u > 0 ( α v − α u ) ​ ∏ α u ∈ I 1 α v ∉ I 1 ( α v − α u ) \displaystyle\frac{c^{\prime}\left|\begin{array}[]{llll|lll|l}\boldsymbol{H}[\alpha_{1}]&\boldsymbol{H}[\alpha_{1},\alpha_{2}]&\cdots&\boldsymbol{H}[\alpha_{1},\ldots,\alpha_{\mu_{1}}]&\boldsymbol{H}[\alpha_{\mu_{1}+1}]&\cdots&\boldsymbol{H}[\alpha_{n}]&\\
+\boldsymbol{X}_{\varepsilon}[\alpha_{1}]&\boldsymbol{X}_{\varepsilon}[\alpha_{1},\alpha_{2}]&\cdots&\boldsymbol{X}_{\varepsilon}[\alpha_{1},\ldots,\alpha_{\mu_{1}}]&\boldsymbol{X}_{\varepsilon}[\alpha_{\mu_{1}+1}]&\cdots&\boldsymbol{X}_{\varepsilon}[\alpha_{n}]&\boldsymbol{X}_{\varepsilon}\end{array}\right|}{\prod_{\underset{v-u>0}{\alpha_{u},\alpha_{v}\notin I_{1}}}(\alpha_{v}-\alpha_{u})\prod_{\underset{\alpha_{v}\notin I_{1}}{\alpha_{u}\in I_{1}}}(\alpha_{v}-\alpha_{u})} 
+ 
+ 
+ Repeating the same procedure for  α v ′ ​ s \alpha_{v}^{\prime}s  in each  I u I_{u} , for  u = 2 , … , m u=2,\dots,m , successively, we have 
+ 
+
+ 
+ 
+ R 𝜹 = c ′ ​ | 𝑯 ⁡ [ α 1 ] ⋯ 𝑯 ⁡ [ α 1 , … , α μ 1 ] ⋯ 𝑯 ⁡ [ α μ 1 + ⋯ + μ m − 1 + 1 ] ⋯ 𝑯 ⁡ [ α μ 1 + ⋯ + μ m − 1 + 1 , … , α n ] 𝑿 ε ​ [ α 1 ] ⋯ 𝑿 ε ​ [ α 1 , … , α μ 1 ] ⋯ 𝑿 ε ​ [ α μ 1 + ⋯ + μ m − 1 + 1 ] ⋯ 𝑿 ε ​ [ α μ 1 + ⋯ + μ m − 1 + 1 , … , α n ] 𝑿 ε | ∏ 1 ≤ u < v ≤ m ∏ α p ∈ I u α q ∈ I v ( α q − α p ) R_{\boldsymbol{\delta}}=\dfrac{c^{\prime}\left|\begin{array}[]{lll|l|lll|l}\boldsymbol{H}[\alpha_{1}]&\cdots&\boldsymbol{H}[\alpha_{1},\dots,\alpha_{\mu_{1}}]&\cdots&\boldsymbol{H}[\alpha_{\mu_{1}+\dots+\mu_{m-1}+1}]&\cdots&\boldsymbol{H}[\alpha_{\mu_{1}+\cdots+\mu_{m-1}+1},\dots,\alpha_{n}]&\\
+\boldsymbol{X}_{\varepsilon}[\alpha_{1}]&\cdots&\boldsymbol{X}_{\varepsilon}[\alpha_{1},\dots,\alpha_{\mu_{1}}]&\cdots&\boldsymbol{X}_{\varepsilon}[\alpha_{\mu_{1}+\dots+\mu_{m-1}+1}]&\cdots&\boldsymbol{X}_{\varepsilon}[\alpha_{\mu_{1}+\cdots+\mu_{m-1}+1},\ldots,\alpha_{n}]&\boldsymbol{X}_{\varepsilon}\end{array}\right|}{\prod_{1\leq u<v\leq m}\prod_{\underset{\alpha_{q}\in I_{v}}{\alpha_{p}\in I_{u}}}(\alpha_{q}-\alpha_{p})} 
+ 
+ 
+ 
+ 
+ Now we substitute 
+ 
+
+ 
+ 
+ r 1 = α 1 = ⋯ = α μ 1 , ⋮ r m = α μ 1 + ⋯ + μ m − 1 + 1 = ⋯ = α n \begin{array}[]{l}r_{1}=\alpha_{1}=\dots=\alpha_{\mu_{1}},\\
+\ \ \ \ \vdots\\
+r_{m}=\alpha_{\mu_{1}+\dots+\mu_{m-1}+1}=\dots=\alpha_{n}\end{array} 
+ 
+ 
+ into  R 𝜹 R_{\boldsymbol{\delta}}  and obtain 
+ 
+
+ 
+ 
+ R 𝜹 = c ′ ​ | 𝑯 ⁡ [ r 1 ] ⋯ 𝑯 ⁡ [ r 1 , … , r 1 ] ⋯ 𝑯 ⁡ [ r m ] ⋯ 𝑯 ⁡ [ r m , … , r m ] 𝑿 ε ​ [ r 1 ] ⋯ 𝑿 ε ​ [ r 1 , … , r 1 ] ⋯ 𝑿 ε ​ [ r m ] ⋯ 𝑿 ε ​ [ r m , … , r m ] 𝑿 ε | ∏ 1 ≤ u < v ≤ m ( r v − r u ) μ u ​ μ v \displaystyle R_{\boldsymbol{\delta}}=\dfrac{c^{\prime}\left|\begin{array}[]{lll|l|lll|l}\boldsymbol{H}[r_{1}]&\cdots&\boldsymbol{H}[r_{1},\dots,r_{1}]&\cdots&\boldsymbol{H}[r_{m}]&\cdots&\boldsymbol{H}[r_{m},\dots,r_{m}]&\\
+\boldsymbol{X}_{\varepsilon}[r_{1}]&\cdots&\boldsymbol{X}_{\varepsilon}[r_{1},\ldots,r_{1}]&\cdots&\boldsymbol{X}_{\varepsilon}[r_{m}]&\cdots&\boldsymbol{X}_{\varepsilon}[r_{m},\dots,r_{m}]&\boldsymbol{X}_{\varepsilon}\end{array}\right|}{\prod_{1\leq u<v\leq m}(r_{v}-r_{u})^{\mu_{u}\mu_{v}}} 
+ 
+ 
+ 
+ 
+ For any given polynomial  Q ∈ ℝ ⁡ [ x ] Q\in\mathbb{R}[x] , we have 
+ 
+
+ 
+ 
+ Q ⁡ [ r u , … , r u ⏟ k ​ r u ′ ​ s ] = Q ( k − 1 ) ​ ( r u ) ( k − 1 ) ! Q[\underset{k\ r_{u}^{\prime}s}{\underbrace{r_{u},\dots,r_{u}}}]=\frac{Q^{(k-1)}(r_{u})}{(k-1)!} 
+ 
+ 
+ 
+ 
+ Hence 
+ 
+
+ 
+ 
+ 𝑯 ⁡ [ r u , … , r u ⏟ k ​ r u ​ ’s ] = 1 ( k − 1 ) ! \displaystyle\boldsymbol{H}[\underset{k\ r_{u}\text{'s}}{\underbrace{r_{u},\dots,r_{u}}}]\ =\ \dfrac{1}{(k-1)!} 
+ ( ( x δ 1 − 1 ​ P ( 1 ) ) ( k − 1 ) ​ ( r u ) , … , ( x 0 ​ P ( 1 ) ) ( k − 1 ) ​ ( r u ) CLOSE , \displaystyle\left((x^{\delta_{1}-1}P^{(1)})^{(k-1)}(r_{u}),\dots,(x^{0}P^{(1)})^{(k-1)}(r_{u}),\right. 
+ 
+ 
+ 
+ 
+ ⋯ ⋯ , \displaystyle\ \ \ \ \ \ \ \ \ \ \ \cdots\cdots, 
+ 
+ 
+ 
+ 
+ OPEN ( x δ n − 1 ​ P ( n ) ) ( k − 1 ) ​ ( r u ) , … , ( x 0 ​ P ( n ) ) ( k − 1 ) ​ ( r u ) ) T \displaystyle\left.\ \ \ (x^{\delta_{n}-1}P^{(n)})^{(k-1)}(r_{u}),\dots,(x^{0}P^{(n)})^{(k-1)}(r_{u})\right)^{T} 
+ 
+ 
+ 
+ = 1 ( k − 1 ) ! \displaystyle=\ \dfrac{1}{(k-1)!} 
+ 𝑯 ( k − 1 ) ​ ( r u ) \displaystyle\boldsymbol{H}^{(k-1)}(r_{u}) 
+ 
+ (6) 
+ 
+ 
+ 𝑿 ε ​ [ r u , … , r u ⏟ k ​ r u ​ ’s ] = 1 ( k − 1 ) ! \displaystyle\boldsymbol{X}_{\varepsilon}[\underset{k\ r_{u}\text{'s}}{\underbrace{r_{u},\dots,r_{u}}}]\ =\ \frac{1}{(k-1)!} 
+ ( ( x ε ) ( k − 1 ) ​ ( r u ) , … , ( x 0 ) ( k − 1 ) ​ ( r u ) ) T \displaystyle\left((x^{\varepsilon})^{(k-1)}(r_{u}),\dots,(x^{0})^{(k-1)}(r_{u})\right)^{T} 
+ 
+ 
+ 
+ = 1 ( k − 1 ) ! \displaystyle=\ \dfrac{1}{(k-1)!} 
+ 𝑿 ε ( k − 1 ) ​ ( r u ) \displaystyle\boldsymbol{X}_{\varepsilon}^{(k-1)}(r_{u}) 
+ 
+ (7) 
+ 
+ 
+ 
+ The substitution of ( 6 ) and ( 7 ) into ( 5.1 ) yields 
+ 
+
+ 
+ 
+ R 𝜹 = c 𝜹 , 𝝁 ​ | 𝑯 ( 0 ) ​ ( r 1 ) ⋯ 𝑯 ( μ 1 − 1 ) ​ ( r 1 ) ⋯ 𝑯 ( 0 ) ​ ( r m ) ⋯ 𝑯 ( μ m − 1 ) ​ ( r m ) 𝑿 ε ( 0 ) ​ ( r 1 ) ⋯ 𝑿 ε ( μ 1 − 1 ) ​ ( r 1 ) ⋯ 𝑿 ε ( 0 ) ​ ( r m ) ⋯ 𝑿 ε ( μ m − 1 ) ​ ( r m ) 𝑿 ε | ∏ 1 ≤ u < v ≤ m ( r v − r u ) μ u ​ μ v R_{\boldsymbol{\delta}}=\dfrac{c_{\boldsymbol{\delta},\boldsymbol{\mu}}\left|\begin{array}[]{lll|l|lll|l}\boldsymbol{H}^{(0)}(r_{1})&\cdots&\boldsymbol{H}^{(\mu_{1}-1)}(r_{1})&\cdots&\boldsymbol{H}^{(0)}(r_{m})&\cdots&\boldsymbol{H}^{(\mu_{m}-1)}(r_{m})&\\
+\boldsymbol{X}_{\varepsilon}^{(0)}(r_{1})&\cdots&\boldsymbol{X}_{\varepsilon}^{(\mu_{1}-1)}(r_{1})&\cdots&\boldsymbol{X}_{\varepsilon}^{(0)}(r_{m})&\cdots&\boldsymbol{X}_{\varepsilon}^{(\mu_{m}-1)}(r_{m})&\boldsymbol{X}_{\varepsilon}\end{array}\right|}{\prod_{1\leq u<v\leq m}(r_{v}-r_{u})^{\mu_{u}\mu_{v}}} 
+ 
+ 
+ where 
+ 
+
+ 
+ 
+ c 𝜹 , 𝝁 = c ′ ∏ u = 1 m ∏ v = 0 μ u − 1 v ! = ( − 1 ) ( n 2 ) + ε ​ a n δ 0 ∏ u = 1 m ∏ v = 0 μ u − 1 v ! c_{\boldsymbol{\delta},\boldsymbol{\mu}}=\frac{c^{\prime}}{\prod_{u=1}^{m}\prod_{v=0}^{\mu_{u}-1}v!}=(-1)^{{\binom{n}{2}}+\varepsilon}\frac{a^{\delta_{0}}_{n}}{\prod_{u=1}^{m}\prod_{v=0}^{\mu_{u}-1}v!} 
+ 
+ 
+ The proof is completed.
+∎ 
+ 
+ 
+ 
+ 
+ 5.2  Property of confluent Vandermonde matrices 
+
+ 
+ It is seen in Lemma  22  that the numer of the expression  R 𝜹 ​ ( 𝑭 ) R_{\boldsymbol{\delta}}(\boldsymbol{F})  in multiple roots is a generalization of the confluent Vandermonde matrix, which inspires us to consider this particular type of matrices. 
+ 
+ 
+ Let  p p  and  q q  be positive integers. The  p × q p\times q  Vandermonde block in terms of  x x  is defined as 
+ 
+
+ 
+ 
+ 𝑼 ⁡ ( x , p , q ) = ( c i ​ j ) 1 ≤ i ≤ p 1 ≤ j ≤ q \boldsymbol{U}(x;p,q)=(c_{ij})_{\begin{subarray}{c}1\leq i\leq p\\
+1\leq j\leq q\end{subarray}} 
+ 
+ 
+ where  c i ​ j = ( i − 1 j − 1 ) ​ x i − j c_{ij}=\binom{i-1}{j-1}x^{i-j}  with the convention  ( i − 1 j − 1 ) := 0 \binom{i-1}{j-1}:=0  for  i < j i<j . 
+ 
+ 
+ Definition 23   (Confluent Vandermonde matrix) . 
+ 
+ Given  𝐱 = ( x 1 , … , x ℓ ) \boldsymbol{x}=(x_{1},\ldots,x_{\ell})  and  𝛕 = ( τ 1 , … , τ ℓ ) \boldsymbol{\tau}=(\tau_{1},\ldots,\tau_{\ell}) ,
+the  𝛕 \boldsymbol{\tau} - confluent Vandermonde matrix  in terms of  𝐱 \boldsymbol{x}  is defined as the  k × k {k}\times{k}  matrix 
+ 
+
+ 
+ 
+ 𝑽 ⁡ ( 𝒙 , 𝝉 ) := [ 𝑼 ⁡ ( x 1 , k , τ 1 ) ⋯ 𝑼 ⁡ ( x ℓ , k , τ ℓ ) ] \boldsymbol{V}(\boldsymbol{x};\boldsymbol{\tau}):=\begin{bmatrix}\boldsymbol{U}(x_{1};{k},\tau_{1})&\cdots&\boldsymbol{U}(x_{\ell};{k},\tau_{\ell})\end{bmatrix} 
+ 
+ 
+ where  k = τ 1 + ⋯ + τ ℓ {k}=\tau_{1}+\cdots+\tau_{\ell}  and  𝐔 ⁡ ( x i , k , τ i ) \boldsymbol{U}(x_{i};{k},\tau_{i})  is the  k × τ i {k}\times\tau_{i}  Vandermonde block in terms of  x i x_{i} . 
+ 
+ 
+ 
+ Example 24 . 
+ 
+ Consider  𝐱 = ( x 1 , x 2 , x 3 ) , 𝛕 = ( 3 , 1 , 2 ) \boldsymbol{x}=(x_{1},x_{2},x_{3}),\boldsymbol{\tau}=(3,1,2)  and  k = | 𝛕 | = 6 k=|\boldsymbol{\tau}|=6 . It is easy to see that 
+ 
+
+ 
+ 
+ 𝑽 ⁡ ( 𝒙 , 𝝉 ) \displaystyle\boldsymbol{V}(\boldsymbol{x};\boldsymbol{\tau}) 
+ = 𝑽 ⁡ ( ( x 1 , x 2 , x 3 ) , ( 3 , 1 , 2 ) ) \displaystyle=\boldsymbol{V}((x_{1},x_{2},x_{3});(3,1,2)) 
+ 
+ 
+ 
+ 
+ = [ 𝑼 ⁡ ( x 1 , 6 , 3 ) 𝑼 ⁡ ( x 2 , 6 , 1 ) 𝑼 ⁡ ( x 3 , 6 , 2 ) ] \displaystyle=\begin{bmatrix}\boldsymbol{U}(x_{1};6,3)&\boldsymbol{U}(x_{2};6,1)&\boldsymbol{U}(x_{3};6,2)\end{bmatrix} 
+ 
+ 
+ 
+ 
+ = [ 1 0 0 1 1 0 x 1 1 0 x 2 x 3 1 x 1 2 2 ​ x 1 1 x 2 2 x 3 2 2 ​ x 3 x 1 3 3 ​ x 1 2 3 ​ x 1 x 2 3 x 3 3 3 ​ x 3 2 x 1 4 4 ​ x 1 3 6 ​ x 1 2 x 2 4 x 3 4 4 ​ x 3 3 x 1 5 5 ​ x 1 4 10 ​ x 1 3 x 2 5 x 3 5 5 ​ x 3 4 ] \displaystyle=\begin{bmatrix}1&0&0&1&1&0\\
+x_{1}&1&0&x_{2}&x_{3}&1\\
+x_{1}^{2}&2x_{1}&1&x_{2}^{2}&x_{3}^{2}&2x_{3}\\
+x_{1}^{3}&3x_{1}^{2}&3x_{1}&x_{2}^{3}&x_{3}^{3}&3x_{3}^{2}\\
+x_{1}^{4}&4x_{1}^{3}&6x_{1}^{2}&x_{2}^{4}&x_{3}^{4}&4x_{3}^{3}\\
+x_{1}^{5}&5x_{1}^{4}&10x_{1}^{3}&x_{2}^{5}&x_{3}^{5}&5x_{3}^{4}\end{bmatrix} 
+ 
+ 
+ 
+ 
+ 
+ Lemma 25   (​​ [ 9 ] ) . 
+ 
+ With the above settings, we have 
+ 
+
+ 
+ 
+ V ⁡ ( 𝒙 , 𝝉 ) := | 𝑽 ⁡ ( 𝒙 , 𝝉 ) | = ∏ 1 ≤ i < j ≤ ℓ ( x j − x i ) τ i ​ τ j . {V}(\boldsymbol{x};\boldsymbol{\tau}):=|\boldsymbol{V}(\boldsymbol{x};\boldsymbol{\tau})|=\prod_{1\leq i<j\leq\ell}(x_{j}-x_{i})^{\tau_{i}\tau_{j}}. 
+ 
+ 
+ 
+ 
+ 
+ Remark 26 . 
+ 
+ In particular, when  τ 1 = ⋯ = τ ℓ = 1 \tau_{1}=\cdots=\tau_{\ell}=1 ,  V ⁡ ( 𝐱 , 𝛕 ) = ∏ 1 ≤ i < j ≤ k ( x j − x i ) V(\boldsymbol{x};\boldsymbol{\tau})=\prod_{1\leq i<j\leq{k}}(x_{j}-x_{i}) , which is the Vandermonde determinant and thus can be abbreviated as  V ⁡ ( 𝐱 ) V(\boldsymbol{x}) . 
+ 
+ 
+ 
+ 
+ 5.3  Proof of Theorem  16 
+
+ 
+ Proof of Theorem  16 . 
+ 
+ Let  𝝁 = ( μ 1 , … , μ m ) \boldsymbol{\mu}=(\mu_{1},\ldots,\mu_{m}) , i.e.,  P = a n ​ ( x − r 1 ) μ 1 ​ … ​ ( x − r m ) μ m P=a_{n}(x-r_{1})^{\mu_{1}}\dots(x-r_{m})^{\mu_{m}} . It is easy to see that 
+ 
+
+ 
+ 
+ G i = gcd ⁡ ( P ( 0 ) , … , P ( i ) ) = ∏ μ j > i ( x − r j ) μ j − i . G_{i}=\gcd(P^{(0)},\ldots,P^{(i)})=\prod_{\mu_{j}>i}(x-r_{j})^{\mu_{j}-i}. 
+ 
+ 
+ On the other hand, let  𝝁 ¯ = ( μ ¯ 1 , … , μ ¯ n ) \boldsymbol{\bar{\mu}}=(\bar{\mu}_{1},\ldots,\bar{\mu}_{n})  where  μ ¯ j = # ⁡ { j : μ j ≥ i } \bar{\mu}_{j}=\#\{j:\,\mu_{j}\geq i\}  and  𝝁 ¯ i = ( μ ¯ 1 , … , μ ¯ i ) \bar{\boldsymbol{\mu}}_{i}=(\bar{\mu}_{1},\ldots,\bar{\mu}_{i}) . We only need to show that  R 𝝁 ¯ i ​ ( P ( 0 ) , … , P ( i ) ) = c ​ ∏ μ j > i ( x − r j ) μ j − i R_{\bar{\boldsymbol{\mu}}_{i}}(P^{(0)},\ldots,P^{(i)})=c\prod_{\mu_{j}>i}(x-r_{j})^{\mu_{j}-i}  for some constant  c c . For the sake of simplicity, we will omit  ( P ( 0 ) , … , P ( i ) ) (P^{(0)},\ldots,P^{(i)})  in the proof when  R 𝝁 ¯ i R_{\bar{\boldsymbol{\mu}}_{i}}  is mentioned. 
+ 
+ 
+ By Lemma  22 , 
+ 
+
+ 
+ 
+ R 𝝁 ¯ i = \displaystyle R_{\bar{\boldsymbol{\mu}}_{i}}\,=\, 
+ R ( μ ¯ 1 , … , μ ¯ i , 0 , … , 0 ) ​ ( 𝑭 ) \displaystyle R_{(\bar{\mu}_{1},\ldots,\bar{\mu}_{i},0,\ldots,0)}(\boldsymbol{F}) 
+ 
+ 
+ 
+ = \displaystyle=\, 
+ c 𝝁 ¯ i ​ | 𝑯 ( 0 ) ​ ( r 1 ) ⋯ 𝑯 ( μ 1 − 1 ) ​ ( r 1 ) ⋯ 𝑯 ( 0 ) ​ ( r m ) ⋯ 𝑯 ( μ m − 1 ) ​ ( r m ) 𝑿 ε ( 0 ) ​ ( r 1 ) ⋯ 𝑿 ε ( μ 1 − 1 ) ​ ( r 1 ) ⋯ 𝑿 ε ( 0 ) ​ ( r m ) ⋯ 𝑿 ε ( μ m − 1 ) ​ ( r m ) 𝑿 ε | ∏ 1 ≤ u < v ≤ m ( r v − r u ) μ u ​ μ v \displaystyle\dfrac{c_{\bar{\boldsymbol{\mu}}_{i}}\left|\begin{array}[]{lll|l|lll|l}\boldsymbol{H}^{(0)}(r_{1})&\cdots&\boldsymbol{H}^{(\mu_{1}-1)}(r_{1})&\cdots&\boldsymbol{H}^{(0)}(r_{m})&\cdots&\boldsymbol{H}^{(\mu_{m}-1)}(r_{m})&\\
+\boldsymbol{X}_{\varepsilon}^{(0)}(r_{1})&\cdots&\boldsymbol{X}_{\varepsilon}^{(\mu_{1}-1)}(r_{1})&\cdots&\boldsymbol{X}_{\varepsilon}^{(0)}(r_{m})&\cdots&\boldsymbol{X}_{\varepsilon}^{(\mu_{m}-1)}(r_{m})&\boldsymbol{X}_{\varepsilon}\end{array}\right|}{\prod_{1\leq u<v\leq m}(r_{v}-r_{u})^{\mu_{u}\mu_{v}}} 
+ 
+ 
+ for some constant  c 𝝁 ¯ i c_{\bar{\boldsymbol{\mu}}_{i}}  where 
+ 
+
+ 
+ 
+ 𝑯 ( k ) \displaystyle\boldsymbol{H}^{(k)} 
+ = ( ( x μ ¯ 1 − 1 ​ P ( 1 ) ) ( k ) ⋯ ( x 0 ​ P ( 1 ) ) ( k ) ⋯ ⋯ ( x μ ¯ i − 1 ​ P ( i ) ) ( k ) ⋯ ( x 0 ​ P ( i ) ) ( k ) ) T , \displaystyle=\left(\begin{array}[]{ccc|c|ccc}\left(x^{\bar{\mu}_{1}-1}P^{(1)}\right)^{(k)}&\cdots&\left(x^{0}P^{(1)}\right)^{(k)}&\cdots\cdots&\left(x^{\bar{\mu}_{i}-1}P^{(i)}\right)^{(k)}&\cdots&\left(x^{0}P^{(i)}\right)^{(k)}\end{array}\right)^{T}, 
+ 
+ 
+ 
+ 𝑿 ε \displaystyle\boldsymbol{X}_{\varepsilon} 
+ = ( x ε , … , x 0 ) T , 𝑿 ε ( k ) = ( ( x ε ) ( k ) , … , ( x 0 ) ( k ) ) T , and ε = n − | 𝝁 ¯ i | . \displaystyle=\left(x^{\varepsilon},\ldots,x^{0}\right)^{T},\quad\boldsymbol{X}_{\varepsilon}^{(k)}=\left((x^{\varepsilon})^{(k)},\ldots,(x^{0})^{(k)}\right)^{T},\quad\text{and}\quad\varepsilon=n-|\boldsymbol{\bar{\mu}}_{i}|. 
+ 
+ 
+ After reordering the columns, we obtain 
+ 
+
+ 
+ 
+ R ( μ ¯ 1 , … , μ ¯ i ) \displaystyle R_{(\bar{\mu}_{1},\ldots,\bar{\mu}_{i})}\  
+ = ± c 𝝁 ¯ i ​ | 𝑴 ( 1 ) ⋯ 𝑴 ( i ) 𝑴 ( i + 1 ) | ∏ 1 ≤ u < v ≤ m ( r v − r u ) μ u ​ μ v \displaystyle=\ \pm\dfrac{c_{\bar{\boldsymbol{\mu}}_{i}}\left|\begin{array}[]{llllll l|l}\boldsymbol{M}^{(1)}&\cdots&\boldsymbol{M}^{(i)}&\boldsymbol{M}^{(i+1)}\end{array}\right|}{\prod_{1\leq u<v\leq m}(r_{v}-r_{u})^{\mu_{u}\mu_{v}}} 
+ 
+ 
+ where 
+ 
+
+ 
+ 
+ 𝑴 ( j ) = [ 𝑯 ( μ 1 − j ) ​ ( r 1 ) ⋯ 𝑯 ( μ μ ¯ j − j ) ​ ( r μ ¯ j ) 𝑿 ε ( μ 1 − j ) ​ ( r 1 ) ⋯ 𝑿 ε ( μ μ ¯ j − j ) ​ ( r μ ¯ j ) ] \boldsymbol{M}^{(j)}=\begin{bmatrix}\boldsymbol{H}^{(\mu_{1}-j)}(r_{1})&\cdots&\boldsymbol{H}^{(\mu_{\bar{\mu}_{j}}-j)}(r_{\bar{\mu}_{j}})\\
+\boldsymbol{X}_{\varepsilon}^{(\mu_{1}-j)}(r_{1})&\cdots&\boldsymbol{X}_{\varepsilon}^{(\mu_{\bar{\mu}_{j}}-j)}(r_{\bar{\mu}_{j}})\end{bmatrix} 
+ 
+ 
+ for  j = 1 , … , i j=1,\ldots,i , and 
+ 
+
+ 
+ 
+ 𝑴 ( i + 1 ) = [ 𝑯 ( 0 ) ​ ( r 1 ) ⋯ 𝑯 ( μ 1 − ( i + 1 ) ) ​ ( r 1 ) ⋯ 𝑯 ( 0 ) ​ ( r μ ¯ i + 1 ) ⋯ 𝑯 ( μ μ ¯ i + 1 − ( i + 1 ) ) ​ ( r μ ¯ i + 1 ) 𝑿 ε ( 0 ) ​ ( r 1 ) ⋯ 𝑿 ε ( μ 1 − ( i + 1 ) ) ​ ( r 1 ) ⋯ 𝑿 ε ( 0 ) ​ ( r μ ¯ i + 1 ) ⋯ 𝑿 ε ( μ μ ¯ i + 1 − ( i + 1 ) ) ​ ( r μ ¯ i + 1 ) 𝑿 ε ] \boldsymbol{M}^{(i+1)}=\left[\begin{array}[]{lll|l|lll|l}\boldsymbol{H}^{(0)}(r_{1})&\cdots&\boldsymbol{H}^{(\mu_{1}-(i+1))}(r_{1})&\cdots&\boldsymbol{H}^{(0)}(r_{\bar{\mu}_{i+1}})&\cdots&\boldsymbol{H}^{(\mu_{\bar{\mu}_{i+1}}-(i+1))}(r_{\bar{\mu}_{i+1}})&\\
+\boldsymbol{X}_{\varepsilon}^{(0)}(r_{1})&\cdots&\boldsymbol{X}_{\varepsilon}^{(\mu_{1}-(i+1))}(r_{1})&\cdots&\boldsymbol{X}_{\varepsilon}^{(0)}(r_{\bar{\mu}_{i+1}})&\cdots&\boldsymbol{X}_{\varepsilon}^{(\mu_{\bar{\mu}_{i+1}}-(i+1))}(r_{\bar{\mu}_{i+1}})&\boldsymbol{X}_{\varepsilon}\end{array}\right] 
+ 
+ 
+ The column reordering is inspired by the following observation. 
+ 
+ 
+ Since  P P  and its first  μ v − 1 \mu_{v}-1  derivatives are equal to zero at  x = r v x=r_{v} , by the Leibniz rule, we immediately know that for  u = 1 , … , i u=1,\dots,i  and  v v  satisfying  μ v ≥ u , \mu_{v}\geq u, 
+ 
+
+ 
+ 
+ ( x ξ P ( u ) ) ( ℓ ) ( r v ) = { 0 if ​ ℓ + u < μ v ; r v ξ ​ P ( μ v ) ​ ( r v ) if ​ ℓ + u = μ v ; ∗ if ​ ℓ + u > μ v . (x^{\xi}P^{(u)})^{(\ell)}(r_{v})=\left\{\begin{matrix}0&\text{if}\ \ell+u<\mu_{v};\\
+r^{\xi}_{v}P^{(\mu_{v})}(r_{v})&\text{if}\ \ell+u=\mu_{v};\\
+*&\text{if}\ \ell+u>\mu_{v}.\end{matrix}\right. 
+ 
+ 
+ Thus for  k = 0 , … , μ v − 1 k=0,\dots,\mu_{v}-1 , 
+ 
+
+ 
+ 
+ 𝑯 ( k ) ​ ( r v ) = ( 𝟎 1 × μ ¯ 1 ⋯ 𝟎 1 × μ ¯ μ v − k − 1 r v μ ¯ μ v − k − 1 ​ P ( μ v ) ​ ( r j ) ⋯ r v 0 ​ P ( μ v ) ​ ( r v ) ∗ ⋯ ∗ ) T , \boldsymbol{H}^{(k)}(r_{v})=\left(\begin{array}[]{c|c|c|ccc|ccccc}\boldsymbol{0}_{1\times\bar{\mu}_{1}}&\cdots&\boldsymbol{0}_{1\times\bar{\mu}_{\mu_{v}-k-1}}&r^{\bar{\mu}_{\mu_{v}-k}-1}_{v}P^{(\mu_{v})}(r_{j})&\cdots&r^{0}_{v}P^{(\mu_{v})}(r_{v})&*&\cdots&*\end{array}\right)^{T}, 
+ 
+ (11) 
+ 
+ Moreover, we can also derive that 
+ 
+
+ 
+ 
+ 𝑿 ε ( k ) ​ ( r v ) \displaystyle\boldsymbol{X}_{\varepsilon}^{(k)}(r_{v}) 
+ = ( ε ! ( ε − k ) ! ⋅ r v ε − k , … , k ! ⋅ r v 0 , 0 , … , 0 ) T = k ! ​ ( ( ε k ) ⋅ r v ε − k , … , ( k k ) ​ r v 0 , 0 , … , 0 ) T \displaystyle=\left(\dfrac{\varepsilon!}{(\varepsilon-k)!}\cdot r^{\varepsilon-k}_{v},\dots,{k!}\cdot r^{0}_{v},0,\dots,0\right)^{T}=k!\left(\binom{\varepsilon}{k}\cdot r^{\varepsilon-k}_{v},\dots,\binom{k}{k}r^{0}_{v},0,\dots,0\right)^{T} 
+ 
+ (12) 
+ 
+ 
+ 
+ Next we further simplify  𝑴 ( j ) \boldsymbol{M}^{(j)} ’s by making use of ( 11 ) and ( 12 ) and obtain the followings. 
+ 
+ (a)  
+ 
+ When  j ≤ i j\leq i ,
+we have 
+ 
+
+ 
+ 
+ 𝑯 ( μ 1 − j ) ​ ( r 1 ) \displaystyle\boldsymbol{H}^{(\mu_{1}-j)}(r_{1})\  
+ = ( 𝟎 1 × μ ¯ 1 ⋯ 𝟎 1 × μ ¯ j − 1 r 1 μ ¯ j − 1 ​ P ( μ 1 ) ​ ( r 1 ) ⋯ r 1 0 ​ P ( μ 1 ) ​ ( r 1 ) ∗ ⋯ ∗ ) T \displaystyle=\ \left(\begin{array}[]{c|c|c|ccc|ccccc}\boldsymbol{0}_{1\times\bar{\mu}_{1}}&\cdots&\boldsymbol{0}_{1\times\bar{\mu}_{j-1}}&r^{\bar{\mu}_{j}-1}_{1}P^{(\mu_{1})}(r_{1})&\cdots&r^{0}_{1}P^{(\mu_{1})}(r_{1})&*&\cdots&*\end{array}\right)^{T} 
+ 
+ 
+ 
+ 
+ ⋮ \displaystyle\ \,\vdots 
+ 
+ 
+ 
+ 𝑯 ( μ μ ¯ j − j ) ​ ( r μ ¯ j ) \displaystyle\boldsymbol{H}^{(\mu_{\bar{\mu}_{j}}-j)}(r_{\bar{\mu}_{j}})\  
+ = ( 𝟎 1 × μ ¯ 1 ⋯ 𝟎 1 × μ ¯ j − 1 r μ ¯ j μ ¯ j − 1 ​ P ( μ μ ¯ j ) ​ ( r μ ¯ j ) ⋯ r μ ¯ j 0 ​ P ( μ μ ¯ j ) ​ ( r μ ¯ j ) ∗ ⋯ ∗ ) T \displaystyle=\ \left(\begin{array}[]{c|c|c|ccc|ccccc}\boldsymbol{0}_{1\times\bar{\mu}_{1}}&\cdots&\boldsymbol{0}_{1\times\bar{\mu}_{j-1}}&r^{\bar{\mu}_{j}-1}_{\bar{\mu}_{j}}P^{(\mu_{\bar{\mu}_{j}})}(r_{\bar{\mu}_{j}})&\cdots&r^{0}_{\bar{\mu}_{j}}P^{(\mu_{\bar{\mu}_{j}})}(r_{\bar{\mu}_{j}})&*&\cdots&*\end{array}\right)^{T} 
+ 
+ 
+ Thus 
+ 
+
+ 
+ 
+ 𝑴 ( j ) = [ 𝟎 μ ¯ 1 × μ ¯ j ⋮ 𝟎 μ ¯ j − 1 × μ ¯ j 𝑴 j μ ¯ j + 1 × μ ¯ j ⋮ μ ¯ i × μ ¯ j ] \boldsymbol{M}^{(j)}=\left[\begin{array}[]{c}\boldsymbol{0}_{\bar{\mu}_{1}\times\bar{\mu}_{j}}\\
+\vdots\\
+\boldsymbol{0}_{\bar{\mu}_{j-1}\times\bar{\mu}_{j}}\\[3.0pt]
+\boldsymbol{M}_{j}\\
+{}_{\bar{\mu}_{j+1}\times\bar{\mu}_{j}}\\
+\vdots\\
+{}_{\bar{\mu}_{i}\times\bar{\mu}_{j}}\end{array}\right] 
+ 
+ 
+ where 
+ 
+
+ 
+ 
+ 𝑴 j = [ r 1 μ ¯ j − 1 ​ P ( μ 1 ) ​ ( r 1 ) ⋯ r μ ¯ j μ ¯ j − 1 ​ P ( μ μ ¯ j ) ​ ( r μ ¯ j ) r 1 0 ​ P ( μ 1 ) ​ ( r 1 ) ⋯ r μ ¯ j 0 ​ P ( μ μ ¯ j ) ​ ( r μ ¯ j ) ] \boldsymbol{M}_{j}=\begin{bmatrix}r^{\bar{\mu}_{j}-1}_{1}P^{(\mu_{1})}(r_{1})&\cdots&r^{\bar{\mu}_{j}-1}_{\bar{\mu}_{j}}P^{(\mu_{\bar{\mu}_{j}})}(r_{\bar{\mu}_{j}})\\
+\vdots&&\vdots\\
+r^{0}_{1}P^{(\mu_{1})}(r_{1})&\cdots&r^{0}_{\bar{\mu}_{j}}P^{(\mu_{\bar{\mu}_{j}})}(r_{\bar{\mu}_{j}})\end{bmatrix} 
+ 
+ (13) 
+ 
+ 
+ (b)  
+ 
+ The simplification of  𝑴 ( i + 1 ) \boldsymbol{M}^{(i+1)}  relies on the following observations: 
+ 
+ •  
+ 
+ 𝑯 ( 0 ) ​ ( r ℓ ) = ⋯ = 𝑯 ( μ ℓ − ( i + 1 ) ) ​ ( r ℓ ) = 𝟎 ∑ j = 1 i μ ¯ j × 1 = 𝟎 | 𝝁 ¯ i | × 1 \boldsymbol{H}^{(0)}(r_{\ell})=\cdots=\boldsymbol{H}^{(\mu_{\ell}-(i+1))}(r_{\ell})=\boldsymbol{0}_{\sum_{j=1}^{i}{\bar{\mu}_{j}}\times 1}=\boldsymbol{0}_{|{\boldsymbol{\bar{\mu}}}_{i}|\times 1} 
+for  ℓ = 1 , … , μ ¯ i + 1 \ell=1,\ldots,\bar{\mu}_{i+1} , and 
+ 
+ •  
+ 
+ [ 𝑿 ε ( 0 ) ​ ( r ℓ ) ⋯ 𝑿 ε ( μ ℓ − ( i + 1 ) ) ​ ( r ℓ ) ] = 𝑱 ​ 𝑼 ​ ( r ℓ , ε + 1 , μ ℓ − i ) ​ 𝑫 μ ℓ − i \begin{bmatrix}\boldsymbol{X}_{\varepsilon}^{(0)}(r_{\ell})&\cdots&\boldsymbol{X}_{\varepsilon}^{(\mu_{\ell}-(i+1))}(r_{\ell})\end{bmatrix}=\boldsymbol{J}\boldsymbol{U}(r_{\ell};\varepsilon+1,\mu_{\ell}-i)\boldsymbol{D}_{\mu_{\ell}-i} 
+ 
+ 
+ where 
+ 
+
+ 
+ 
+ 𝑱 = [ 1 . ​ . ​ . 1 ] ( ε + 1 ) × ( ε + 1 ) 𝑫 μ ℓ − i = [ 0 ! ⋱ ( μ ℓ − ( i + 1 ) ) ! ] ( μ ℓ − i ) × ( μ ℓ − i ) \boldsymbol{J}=\begin{bmatrix}&&1\\
+&\mathinner{\mkern 2.0mu\raisebox{1.00006pt}{.}\mkern 2.0mu\raisebox{3.99994pt}{.}\mkern 2.0mu\raisebox{6.99997pt}{.}\mkern 2.0mu}&\\
+1&&\end{bmatrix}_{(\varepsilon+1)\times(\varepsilon+1)}\qquad\boldsymbol{D}_{\mu_{\ell}-i}=\begin{bmatrix}0!\\
+&\ddots&\\
+&&(\mu_{\ell}-(i+1))!\end{bmatrix}_{(\mu_{\ell}-i)\times(\mu_{\ell}-i)} 
+ 
+ 
+ Hence 
+ 
+
+ 
+ 
+ 𝑴 ( i + 1 ) = \displaystyle\boldsymbol{M}^{(i+1)}\ = 
+ [ 𝟎 | 𝝁 ¯ 𝒊 | × ( μ 1 − i ) ⋯ 𝟎 | 𝝁 ¯ 𝒊 | × ( μ μ ¯ i + 1 − i ) 𝑱 ​ 𝑼 ​ ( r 1 , ε + 1 , μ 1 − i ) ​ 𝑫 μ 1 − i ⋯ 𝑱 ​ 𝑼 ​ ( r μ ¯ i + 1 , ε + 1 , μ μ ¯ i + 1 − i ) ​ 𝑫 μ μ ¯ i + 1 − i 𝑿 ε ] \displaystyle\ \left[\begin{array}[]{l|l|l|l}\boldsymbol{0}_{|\boldsymbol{\bar{\mu}_{i}}|\times(\mu_{1}-i)}&\cdots&\boldsymbol{0}_{|\boldsymbol{\bar{\mu}_{i}}|\times(\mu_{\bar{\mu}_{i+1}}-i)}&\\
+\boldsymbol{JU}(r_{1};\varepsilon+1,\mu_{1}-i)\boldsymbol{D}_{\mu_{1}-i}&\cdots&\boldsymbol{JU}(r_{\bar{\mu}_{i+1}};\varepsilon+1,\mu_{\bar{\mu}_{i+1}}-i)\boldsymbol{D}_{\mu_{\bar{\mu}_{i+1}}-i}&\boldsymbol{X}_{\varepsilon}\end{array}\right] 
+ 
+ 
+ 
+ 
+ Let 
+ 
+
+ 
+ 
+ 𝑵 = [ 𝑱 ​ 𝑼 ​ ( r 1 , ε + 1 , μ 1 − i ) ​ 𝑫 μ 1 − i ⋯ 𝑱 ​ 𝑼 ​ ( r μ ¯ i + 1 , ε + 1 , μ μ ¯ i + 1 − i ) ​ 𝑫 1 𝑿 ε ] \boldsymbol{N}=\begin{bmatrix}\boldsymbol{JU}(r_{1};\varepsilon+1,\mu_{1}-i)\boldsymbol{D}_{\mu_{1}-i}&\cdots&\boldsymbol{JU}(r_{\bar{\mu}_{i+1}};\varepsilon+1,\mu_{\bar{\mu}_{i+1}}-i)\boldsymbol{D}_{1}&\boldsymbol{X}_{\varepsilon}\end{bmatrix} 
+ 
+ 
+ Using (a) and (b), we simplify ( 5.3 ) and get 
+ 
+
+ 
+ 
+ R ( μ ¯ 1 , … , μ ¯ i ) = ± c 𝝁 ¯ i ​ | 𝑴 1 ⋮ ⋱ ⋅ ⋯ 𝑴 i ⋅ ⋯ ⋅ 𝑵 | ∏ 1 ≤ u < v ≤ m ( r v − r u ) μ u ​ μ v = ± c 𝝁 ¯ i ​ ∏ j = 1 i | 𝑴 j | ⋅ | 𝑵 | ∏ 1 ≤ u < v ≤ m ( r v − r u ) μ u ​ μ v R_{(\bar{\mu}_{1},\ldots,\bar{\mu}_{i})}\ =\ \pm\dfrac{c_{\bar{\boldsymbol{\mu}}_{i}}\left|\begin{array}[]{llllll l|l}\boldsymbol{M}_{1}\\
+\vdots&\ddots\\
+\cdot&\cdots&\boldsymbol{M}_{i}\\
+\cdot&\cdots&\cdot&\boldsymbol{N}\end{array}\right|}{\prod_{1\leq u<v\leq m}(r_{v}-r_{u})^{\mu_{u}\mu_{v}}}=\pm\dfrac{c_{\bar{\boldsymbol{\mu}}_{i}}\prod_{j=1}^{i}|\boldsymbol{M}_{j}|\cdot|\boldsymbol{N}|}{\prod_{1\leq u<v\leq m}(r_{v}-r_{u})^{\mu_{u}\mu_{v}}} 
+ 
+ 
+ where  𝑴 j \boldsymbol{M}_{j}  is as in ( 13 ) for  j = 1 , … , i j=1,\ldots,i . 
+ 
+ 
+ It is easy to derive that 
+ 
+
+ 
+ 
+ | 𝑴 j | = | r 1 μ ¯ j − 1 ​ P ( μ 1 ) ​ ( r 1 ) ⋯ r μ ¯ j μ ¯ j − 1 ​ P ( μ μ ¯ j ) ​ ( r μ ¯ j ) r 1 0 ​ P ( μ 1 ) ​ ( r 1 ) ⋯ r μ ¯ j 0 ​ P ( μ μ ¯ j ) ​ ( r μ ¯ j ) | = ( ∏ 1 ≤ ℓ ≤ μ ¯ j P ( μ ℓ ) ​ ( r ℓ ) ) ⋅ V ⁡ ( r 1 , … , r μ ¯ j ) ≠ 0 |\boldsymbol{M}_{j}|=\begin{vmatrix}r^{\bar{\mu}_{j}-1}_{1}P^{(\mu_{1})}(r_{1})&\cdots&r^{\bar{\mu}_{j}-1}_{\bar{\mu}_{j}}P^{(\mu_{\bar{\mu}_{j}})}(r_{\bar{\mu}_{j}})\\
+\vdots&&\vdots\\
+r^{0}_{1}P^{(\mu_{1})}(r_{1})&\cdots&r^{0}_{\bar{\mu}_{j}}P^{(\mu_{\bar{\mu}_{j}})}(r_{\bar{\mu}_{j}})\end{vmatrix}=\left(\prod_{1\leq\ell\leq\bar{\mu}_{j}}P^{(\mu_{\ell})}(r_{\ell})\right)\cdot V(r_{1},\ldots,r_{\bar{\mu}_{j}})\neq 0 
+ 
+ 
+ Furthermore, noting that 
+ 
+
+ 
+ 
+ 𝑵 = \displaystyle\boldsymbol{N}=\, 
+ 𝑱 ​ [ 𝑼 ⁡ ( r 1 , ε + 1 , μ 1 − i ) ⋯ 𝑼 ⁡ ( r μ ¯ i + 1 , ε + 1 , μ μ ¯ i + 1 − i ) 𝑱 ​ 𝑿 ε ] \displaystyle\boldsymbol{J}\begin{bmatrix}\boldsymbol{U}(r_{1};\varepsilon+1,\mu_{1}-i)&\cdots&\boldsymbol{U}(r_{\bar{\mu}_{i+1}};\varepsilon+1,\mu_{\bar{\mu}_{i+1}}-i)&\boldsymbol{JX}_{\varepsilon}\end{bmatrix} 
+ 
+ 
+ 
+ 
+ ⋅ diag ⁡ [ 𝑫 μ 1 − i ⋯ 𝑫 μ μ ¯ i + 1 − i 𝑰 1 ] \displaystyle\cdot\operatorname{diag}\begin{bmatrix}\boldsymbol{D}_{\mu_{1}-i}&\cdots&\boldsymbol{D}_{\mu_{\bar{\mu}_{i+1}}-i}&\boldsymbol{I}_{1}\end{bmatrix} 
+ 
+ 
+ and  𝑱 ​ 𝑿 ε = [ x 0 ⋯ x ε ] T \boldsymbol{JX}_{\varepsilon}=\begin{bmatrix}x^{0}&\cdots&x^{\varepsilon}\end{bmatrix}^{T} 
+where  𝑰 1 \boldsymbol{I}_{1}  is the identity matrix of size  1 1 ,
+we have 
+ 
+
+ 
+ 
+ | 𝑵 | \displaystyle|\boldsymbol{N}| 
+ = ± ( ∏ j = 1 μ ¯ i + 1 | 𝑫 μ j − i | ) ​ V ​ ( ( r 1 , … , r μ ¯ i + 1 , x ) , ( μ 1 − i , … , μ μ ¯ i + 1 − i , 1 ) ) \displaystyle\ =\ \pm\left(\prod_{j=1}^{\bar{\mu}_{i+1}}|\boldsymbol{D}_{\mu_{j}-i}|\right)V((r_{1},\ldots,r_{\bar{\mu}_{i+1}},x);(\mu_{1}-i,\ldots,\mu_{\bar{\mu}_{i+1}}-i,1)) 
+ 
+ 
+ 
+ 
+ = ± ( ∏ j = 1 μ ¯ i + 1 | 𝑫 μ j − i | ) ( ∏ 1 ≤ u < v ≤ μ ¯ i + 1 ( r v − r u ) ( μ u − i ) ​ ( μ v − i ) ) ⋅ ( ∏ 1 ≤ u ≤ μ ¯ i + 1 ( x − r u ) μ u − i ) . \displaystyle\ =\ \pm\left(\prod_{j=1}^{\bar{\mu}_{i+1}}|\boldsymbol{D}_{\mu_{j}-i}|\right)\left(\prod_{1\leq u<v\leq\bar{\mu}_{i+1}}(r_{v}-r_{u})^{(\mu_{u}-i)(\mu_{v}-i)}\right)\cdot\left(\prod_{1\leq u\leq\bar{\mu}_{i+1}}(x-r_{u})^{\mu_{u}-i}\right). 
+ 
+ 
+ Therefore, 
+ 
+
+ 
+ 
+ R ( μ ¯ 1 , … , μ ¯ i ) \displaystyle R_{(\bar{\mu}_{1},\ldots,\bar{\mu}_{i})} 
+ = c ​ ∏ 1 ≤ u ≤ μ ¯ i + 1 ( x − r u ) μ u − i = c ​ ∏ μ u > i ( x − r u ) μ u − i = G i \displaystyle=c\prod_{1\leq u\leq\bar{\mu}_{i+1}}(x-r_{u})^{\mu_{u}-i}=c\prod_{\mu_{u}>i}(x-r_{u})^{\mu_{u}-i}=G_{i} 
+ 
+ 
+ where 
+ 
+
+ 
+ 
+ c = ± c 𝝁 ¯ i ​ ( ∏ j = 1 μ ¯ i + 1 | 𝑫 μ j − i | ) ​ ∏ j = 1 i ( V ⁡ ( r 1 , … , r μ ¯ j ) ​ ∏ 1 ≤ ℓ ≤ μ ¯ j P ( μ ℓ ) ​ ( r ℓ ) ) ⋅ ( ∏ 1 ≤ u < v ≤ μ ¯ i + 1 ( r v − r u ) ( μ u − i ) ​ ( μ v − i ) ) ∏ 1 ≤ u < v ≤ m ( r v − r u ) μ u ​ μ v c=\pm\dfrac{c_{\bar{\boldsymbol{\mu}}_{i}}\left(\prod_{j=1}^{\bar{\mu}_{i+1}}|\boldsymbol{D}_{\mu_{j}-i}|\right)\prod_{j=1}^{i}\left(V(r_{1},\ldots,r_{\bar{\mu}_{j}})\prod_{1\leq\ell\leq\bar{\mu}_{j}}P^{(\mu_{\ell})}(r_{\ell})\right)\cdot\left(\prod_{1\leq u<v\leq\bar{\mu}_{i+1}}(r_{v}-r_{u})^{(\mu_{u}-i)(\mu_{v}-i)}\right)}{\prod_{1\leq u<v\leq m}(r_{v}-r_{u})^{\mu_{u}\mu_{v}}} 
+ 
+ 
+ which is obviously non-zero due to the assumption  r 1 , … , r m r_{1},\ldots,r_{m}  are distinct.
+∎ 
+ 
+ 
+ 
+ 
+ 
+ 6  Algorithm 
+
+ 
+ In order to design an algorithm to compute the conditions for discriminating all the potential complete multiplicities  P P  may have, we need two more tools developed by Hong et al., which are non-nested multiplicity discriminant  [ 8 ]  and discriminant sequence  [ 15 ] . 
+ 
+ 
+ 6.1  Non-nested multiplicity discriminants for univariate polynomials 
+
+ 
+ Definition 27   ( 𝝀 \boldsymbol{\lambda} -discriminant) . 
+ 
+ Let  P = ∑ i = 0 n a i ​ x i ∈ ℝ ⁡ [ x ] P=\sum_{i=0}^{n}a_{i}x^{i}\in\mathbb{R}[x]  where  a n ≠ 0 a_{n}\neq 0  and  𝐅 = ( P ( 0 ) 𝐶𝐿𝑂𝑆𝐸 , \boldsymbol{F}=(P^{(0)},   𝑂𝑃𝐸𝑁 P ( 1 ) , … , P ( n ) ) P^{(1)},\ldots,P^{(n)})  and  𝛌 ∈ ℳ ⁡ ( n ) \boldsymbol{\lambda}\in\mathcal{M}(n) . Then we call  R 𝛌 ​ ( 𝐅 ) R_{\boldsymbol{\lambda}}(\boldsymbol{F})  the  𝝀 \boldsymbol{\lambda} -discriminant  of  P P . 
+ 
+ 
+ 
+ Theorem 28   (​​ [ 8 ] ) . 
+ 
+ We have 
+ 
+
+ 
+ 
+ mult ( P ) = 𝝁 ⟺ 𝝁 ¯ = max 𝝀 ∈ ℳ ⁡ ( n ) R 𝝀 ​ ( 𝑭 ) ≠ 0 𝝀 , \operatorname{mult}(P)=\boldsymbol{\mu}\ \ \ \Longleftrightarrow\ \ \ \boldsymbol{\bar{\mu}}=\max_{\begin{subarray}{c}\boldsymbol{\lambda}\in\mathcal{M}(n)\\
+R_{\boldsymbol{\lambda}}(\boldsymbol{F})\neq 0\end{subarray}}\boldsymbol{\lambda}, 
+ 
+ 
+ where  max \max  is w.r.t. the lexicographical ordering. 
+ 
+ 
+ 
+ 
+ 6.2  The discriminant sequence of a univariate polynomial 
+
+ 
+ In  [ 15 ] , Yang et al. proposed a method for determining the number of distinct real/imaginary roots for univariate polynomials with parametric coefficients.
+In this subsection, we give a brief review on the work. 
+ 
+ 
+ Definition 29   (Discrimination matrix) . 
+ 
+ Given a polynomial 
+ 
+
+ 
+ 
+ P ⁡ ( x ) = a n ​ x n + a n − 1 ​ x n − 1 + ⋯ + a 1 ​ x + a 0 , P(x)=a_{n}x^{n}+a_{n-1}x^{n-1}+\cdots+a_{1}x+a_{0}, 
+ 
+ 
+ we write the derivative of  P ⁡ ( x ) P(x)  as 
+ 
+
+ 
+ 
+ P ′ ​ ( x ) = 0 ⋅ x n + n ​ a n ​ x n − 1 + ( n − 1 ) ​ a n − 1 ​ x n − 2 + ⋯ + a 1 . P^{\prime}(x)=0\cdot x^{n}+na_{n}x^{n-1}+(n-1)a_{n-1}x^{n-2}+\cdots+a_{1}. 
+ 
+ 
+ Then the Sylvester matrix of  P ⁡ ( x ) P(x)  and  P ′ ​ ( x ) P^{\prime}(x) , 
+ 
+
+ 
+ 
+ Syl ⁡ ( P ) = [ a n a n − 1 a n − 2 ⋯ a 0 n ​ a n ( n − 1 ) ​ a n − 1 ⋯ a 1 a n a n − 1 ⋯ a 2 a 0 n ​ a n ⋯ 2 ​ a 2 a 1 ⋱ ⋱ a n a n − 1 ⋯ a 0 n ​ a n ⋯ a 1 ] {\rm Syl}(P)=\begin{bmatrix}a_{n}&a_{n-1}&a_{n-2}&\cdots&a_{0}&&&\\
+&na_{n}&(n-1)a_{n-1}&\cdots&a_{1}&&&\\
+&a_{n}&a_{n-1}&\cdots&a_{2}&a_{0}&&\\
+&&na_{n}&\cdots&2a_{2}&a_{1}&&\\
+&&&\ddots&&&\ddots&\\
+&&&&a_{n}&a_{n-1}&\cdots&a_{0}\\
+&&&&&na_{n}&\cdots&a_{1}\end{bmatrix} 
+ 
+ 
+ is called the discrimination matrix of  P ⁡ ( x ) P(x) . 
+ 
+ 
+ 
+ Definition 30   (Discriminant sequence) . 
+ 
+ Let  D i D_{i}  denote the  2 ​ i × 2 ​ i 2i\times 2i  principal minor of  Syl ⁡ ( P ) {\rm Syl}(P)  for  i = 1 , … , n i=1,\dots,n .
+Then the  n n -tuple 
+ 
+
+ 
+ 
+ [ D 1 , D 2 , … , D n ] \left[D_{1},D_{2},\dots,D_{n}\right] 
+ 
+ 
+ is called the discriminant sequence of  P ⁡ ( x ) P(x) . 
+ 
+ 
+ 
+ In order to determine the number of distinct real/imaginary roots of  P P  with its discriminant sequence, we recall the concept of revised sign list  [ 15 ] . 
+ 
+ 
+ Given a sign list  [ σ 1 , σ 2 , … , σ n ] ∈ { − 1 , 0 , 1 } n [\sigma_{1},\sigma_{2},\dots,\sigma_{n}]\in\{-1,0,1\}^{n} , its revised sign list
+ [ σ 1 ′ , σ 2 ′ , … , σ n ′ ] [\sigma^{\prime}_{1},\sigma^{\prime}_{2},\dots,\sigma^{\prime}_{n}]  can be constructed as follows. 
+ 
+ •  
+ 
+ If  [ σ i , σ i + 1 , … , σ i + j ] [\sigma_{i},\sigma_{i+1},\dots,\sigma_{i+j}]  is a section of the given list, where  σ i ≠ 0 \sigma_{i}\neq 0 ,  σ i + 1 = ⋯ = σ i + j − 1 = 0 \sigma_{i+1}=\cdots=\sigma_{i+j-1}=0 ,  σ i + j ≠ 0 \sigma_{i+j}\neq 0 , then we replace the section 
+ 
+
+ 
+ 
+ [ σ i + 1 , σ i + 2 , … , σ i + j − 1 ] [\sigma_{i+1},\sigma_{i+2},\dots,\sigma_{i+j-1}] 
+ 
+ 
+ by 
+ 
+
+ 
+ 
+ [ − σ i , − σ i , σ i , σ i , − σ i , − σ i , σ i , σ i , … ] ; [-\sigma_{i},-\sigma_{i},\sigma_{i},\sigma_{i},-\sigma_{i},-\sigma_{i},\sigma_{i},\sigma_{i},\dots]; 
+ 
+ 
+ i.e. let 
+ 
+
+ 
+ 
+ σ i + k ′ = ( − 1 ) k + 1 2 ⋅ σ i \sigma^{\prime}_{i+k}=(-1)^{\frac{k+1}{2}}\cdot\sigma_{i} 
+ 
+ 
+ for  k = 1 , 2 , … , j − 1 k=1,2,\dots,j-1 . 
+ 
+ •  
+ 
+ Otherwise, let  σ i ′ = σ i \sigma^{\prime}_{i}=\sigma_{i} . 
+ 
+ 
+ 
+ 
+ Theorem 31 . 
+ 
+ Given a polynomial  P ∈ ℝ ⁡ [ x ] P\in\mathbb{R}[x] ,
+let  σ \sigma  be the sign list of the discriminant sequence of  P P  and  ν \nu  be the number of the sign changes of the revised sign list of  σ \sigma . Then
+we have 
+ 
+ •  
+ 
+ the number of the pairs of distinct conjugate imaginary roots of  P P  is  ν \nu ; 
+ 
+ •  
+ 
+ the number of the distinct real roots of  P P  equals  η − 2 ​ ν \eta-2\nu  where  η \eta  is the number of non-vanishing members in the revised sign list of  σ \sigma . 
+ 
+ 
+ 
+ 
+ 
+ 
+ 6.3  Algorithm 
+
+ 
+ Combining Theorems  16 ,  28  and  31 , we can derive a new necessary and sufficient condition for a polynomial  P = ∑ i = 0 n a i ​ x i P=\sum_{i=0}^{n}a_{i}x^{i}  having a designated complete multiplicity  ( 𝝁 𝑹 ; 𝝁 𝑰 ) (\boldsymbol{\mu_{R}};\boldsymbol{\mu_{I}}) . This new condition is based on an observation that if  r k r_{k}  is a root of  P P  with multiplicity  μ k \mu_{k} , then it is a root of  G i G_{i}  with multiplicity  max ⁡ ( μ k − i , 0 ) \max(\mu_{k}-i,0) . 
+ 
+ 
+ Let  𝝁 \boldsymbol{\mu}  be the complex multiplicity of  P P  corresponding to  ( 𝝁 𝑹 ; 𝝁 𝑰 ) (\boldsymbol{\mu_{R}};\boldsymbol{\mu_{I}}) . By Theorem  31 , with the premise  mult ⁡ ( P ) = 𝝁 \operatorname{mult}(P)=\boldsymbol{\mu} ,  G i G_{i}  has  ν \nu  pairs of distinct imaginary roots if and only if 
+ 
+
+ 
+ 
+ ν = Var ⁡ ( D 1 ​ ( G i , G i ′ ) , … , D μ ¯ i + 1 ​ ( G i , G i ′ ) ) \nu={\rm Var}\left(D_{1}(G_{i},G_{i}^{\prime}),\ldots,D_{\bar{\mu}_{i+1}}(G_{i},G_{i}^{\prime})\right) 
+ 
+ 
+ where  G 0 := P G_{0}:=P  and  Var ⁡ ( L ) \operatorname{Var}(L)  is the short-hand for the number of sign changes for the revised list of the sign list of  L L . Therefore,
+we have 
+ 
+
+ 
+ 
+ cmult ( P ) = ( 𝝁 𝑹 ; 𝝁 𝑰 ) ⟺ \displaystyle\operatorname*{cmult}\left(P\right)=(\boldsymbol{\mu_{R}};\boldsymbol{\mu_{I}})\ \ \ \Longleftrightarrow\ \ \  
+ ( ⋀ 𝜸 ≻ 𝝁 ¯ 𝜸 ∈ ℳ ⁡ ( n ) R 𝜸 ​ ( 𝑭 ) = 0 ) ∧ R 𝝁 ¯ ​ ( 𝑭 ) ≠ 0 \displaystyle\left(\bigwedge_{\begin{subarray}{c}\boldsymbol{\gamma}\succ\boldsymbol{\bar{\mu}}\\
+\boldsymbol{\gamma}\in\mathcal{M}(n)\end{subarray}}R_{\boldsymbol{\gamma}}(\boldsymbol{F})=0\right)\ \ \ \wedge\ \ R_{\boldsymbol{\bar{\mu}}}(\boldsymbol{F})\neq 0 
+ 
+ 
+ 
+ ∧ \displaystyle\wedge\  
+ ( ⋀ i = 0 μ 1 − 1 Var ( D 1 ( G i , G i ′ ) , … , D μ ¯ i + 1 ( G i , G i ′ ) ) = μ ¯ I , i + 1 / 2 ) \displaystyle\left(\bigwedge\limits_{i=0}^{\mu_{1}-1}\ \ {\rm Var}\left(D_{1}(G_{i},G_{i}^{\prime}),\ldots,D_{\bar{\mu}_{i+1}}(G_{i},G_{i}^{\prime})\right)=\bar{\mu}_{I,i+1}/2\right) 
+ 
+ (14) 
+ 
+ where  μ ¯ I , i \bar{\mu}_{I,i}  is the  i i -th element of  𝝁 ¯ 𝑰 \boldsymbol{\bar{\mu}_{I}} . 
+ 
+ 
+ Now we propose
+the following algorithm as a solution to Problem  5 . 
+ 
+ 
+
+ Algorithm 1     𝖯𝖺𝗋𝖺𝗆𝖾𝗍𝗋𝗂𝖼𝖢𝗈𝗆𝗉𝗅𝖾𝗍𝖾𝖬𝗎𝗅𝗍𝗂𝗉𝗅𝗂𝖼𝗂𝗍𝗒 ⁡ ( P ) {\sf ParametricCompleteMultiplicity}(P) 
+ 
+ 
+ In:   
+ 
+ 
+ P = ∑ i = 0 n a i ​ x i ∈ ℝ ⁡ [ a 0 , … , a n ] ​ [ x ] P=\sum_{i=0}^{n}a_{i}x^{i}\in\mathbb{R}[a_{0},\ldots,a_{n}][x] 
+ 
+ Out: 
+ 
+ 
+ 𝒞 = { ( 𝝁 𝒄 , C 𝝁 𝒄 ) : 𝝁 𝒄 ∈ ℳ ¯ ​ ( n ) } \mathcal{C}=\left\{(\boldsymbol{\mu_{c}},C_{\boldsymbol{\mu_{c}}}):\boldsymbol{\mu_{c}}\in\overline{\mathcal{M}}(n)\right\}  such that  cmult ⁡ ( P ) = 𝝁 𝒄 ⟺ C 𝝁 𝒄 \operatorname{cmult}(P)=\boldsymbol{\mu_{c}}\ \Longleftrightarrow\ C_{\boldsymbol{\mu_{c}}} . 
+ 
+ 
+ 
+ 
+               1: 
+              
+              
+              𝑭 ← ( P ( 0 ) , … , P ( n ) ) \boldsymbol{F}\leftarrow(P^{(0)},\ldots,P^{(n)}) 𝒞 ← ∅ \mathcal{C}\leftarrow\emptyset 
+
+ 
+ 
+               2: 
+              
+              
+              ℳ ( n ) ← { ( δ 1 , … , δ t ) : δ 1 + ⋯ + δ t = n , δ 1 ≥ … ≥ δ t ≥ 1 } \mathcal{M}(n)\leftarrow\left\{(\delta_{1},\ldots,\delta_{t}):\,\delta_{1}+\cdots+\delta_{t}=n,\delta_{1}\geq\ldots\geq\delta_{t}\geq 1\right\} 𝒩 ( n ) ← { ( δ 1 , … , δ t ) : δ 1 + ⋯ + δ t < n , δ 1 ≥ … ≥ δ t ≥ 1 } \mathcal{N}(n)\leftarrow\left\{(\delta_{1},\ldots,\delta_{t}):\,\delta_{1}+\cdots+\delta_{t}<n,\delta_{1}\geq\ldots\geq\delta_{t}\geq 1\right\} 
+
+ 
+ 
+               3: 
+              
+              
+              for   𝜹 ∈ ℳ ⁡ ( n ) ∪ 𝒩 ⁡ ( n ) \boldsymbol{\delta}\in\mathcal{M}(n)\cup\mathcal{N}(n)   do 
+
+
+
+ 
+ 
+               4: 
+              
+              
+               R 𝜹 ← R 𝜹 ​ ( 𝑭 ) R_{\boldsymbol{\delta}}\leftarrow R_{\boldsymbol{\delta}}(\boldsymbol{F}) 
+
+ 
+ 
+               5: 
+              
+              
+              end   for 
+ 
+ 
+               6: 
+              
+              
+              for   𝝁 ∈ ℳ ⁡ ( n ) \boldsymbol{\mu}\in\mathcal{M}(n)   do 
+
+
+
+ 
+ 
+               7: 
+              
+              
+               𝝁 ¯ = ( μ ¯ 1 , μ ¯ 2 , … ) ← \boldsymbol{\bar{\mu}}=(\bar{\mu}_{1},\bar{\mu}_{2},\ldots)\leftarrow  the conjugate of  𝝁 \boldsymbol{\mu} 
+
+ 
+ 
+               8: 
+              
+              
+               for   i = 0 , … , μ 1 − 1 i=0,\ldots,\mu_{1}-1   do 
+
+
+
+ 
+ 
+               9: 
+              
+              
+                G i ← { P if ​ i = 0 R ( μ ¯ 1 , … , μ ¯ i ) if ​ i > 0 G_{i}\leftarrow\left\{\begin{array}[]{ll}P&\text{if}\ i=0\\
+R_{(\bar{\mu}_{1},\ldots,\bar{\mu}_{i})}&\text{if}\ i>0\end{array}\right. 
+
+ 
+ 
+               10: 
+              
+              
+                for   j = 1 , … , μ ¯ i + 1 j=1,\ldots,\bar{\mu}_{i+1}   do 
+
+
+
+ 
+ 
+               11: 
+              
+              
+                 D j ← the  j -th polynomial in the discriminant sequence of ​ G i D_{j}\leftarrow\text{the $j$-th polynomial in the discriminant sequence of}\ G_{i} 
+
+ 
+ 
+               12: 
+              
+              
+                end   for 
+ 
+ 
+               13: 
+              
+              
+               end   for 
+ 
+ 
+               14: 
+              
+              
+               for  each 2-partition of  𝝁 \boldsymbol{\mu} , say  𝝁 𝒄 = ( 𝝁 𝑹 ; 𝝁 𝑰 ) \boldsymbol{\mu_{c}}=(\boldsymbol{\mu_{R}};\boldsymbol{\mu_{I}}) ,  do 
+
+
+
+ 
+ 
+               15: 
+              
+              
+                𝝁 ¯ 𝑰 = ( μ ¯ I , 1 , … ) ← \boldsymbol{\bar{\mu}_{I}}=(\bar{\mu}_{I,1},\ldots)\leftarrow  the conjugate of  𝝁 𝑰 \boldsymbol{\mu_{I}} ;
+
+ 
+ 
+               16: 
+              
+              
+                𝒞 ⁡ ( 𝝁 𝒄 ) ← ( ⋀ 𝜸 ≻ 𝝁 ¯ 𝜸 ∈ ℳ ⁡ ( n ) R 𝜸 ​ ( 𝑭 ) = 0 ) ∧ ( R 𝝁 ¯ ​ ( 𝑭 ) ≠ 0 ) \mathcal{C}(\boldsymbol{\mu_{c}})\ \ \ \leftarrow\ \ \ \left(\bigwedge_{\begin{subarray}{c}\boldsymbol{\gamma}\succ\boldsymbol{\bar{\mu}}\\
+\boldsymbol{\gamma}\in\mathcal{M}(n)\end{subarray}}R_{\boldsymbol{\gamma}}(\boldsymbol{F})=0\right)\ \ \ \wedge\ \ \left(R_{\boldsymbol{\bar{\mu}}}(\boldsymbol{F})\neq 0\right) 
+      ∧ ( ⋀ i = 0 μ 1 − 1 Var ( D 1 , … , D μ ¯ i + 1 ) = μ ¯ I , i + 1 / 2 ) \wedge\ \left(\bigwedge\limits_{i=0}^{\mu_{1}-1}\ \ {\rm Var}\left(D_{1},\ldots,D_{\bar{\mu}_{i+1}}\right)=\bar{\mu}_{I,i+1}/2\right) 
+
+ 
+ 
+               17: 
+              
+              
+                𝒞 ← 𝒞 ​ ⋃ { ( 𝝁 𝒄 , 𝒞 ⁡ ( 𝝁 𝒄 ) ) } \mathcal{C}\leftarrow\mathcal{C}\bigcup\{(\boldsymbol{\mu_{c}},\mathcal{C}(\boldsymbol{\mu_{c}}))\} 
+
+ 
+ 
+               18: 
+              
+              
+               end   for 
+ 
+ 
+               19: 
+              
+              
+              end   for 
+ 
+ 
+               20: 
+              
+              
+              return    𝒞 \mathcal{C} .
+
+ 
+ 
+ 
+ 
+ Remark 32 . 
+ 
+ In   [ 15 ] , Yang et al. proposed a method for discriminating the complete multiplicities of a parametric univariate polynomial by counting the numbers of distinct real/imaginary roots of the repeated gcds (called multiple factors there) of the given polynomials. In the  𝖯𝖺𝗋𝖺𝗆𝖾𝗍𝗋𝗂𝖼𝖢𝗈𝗆𝗉𝗅𝖾𝗍𝖾𝖬𝗎𝗅𝗍𝗂𝗉𝗅𝗂𝖼𝗂𝗍𝗒 {\sf ParametricCompleteMultiplicity}  algorithm, we use the incremental gcds of  𝑭 = ( P ( 0 ) , P ( 1 ) , … , P ( n ) ) \boldsymbol{F}=(P^{(0)},P^{(1)},\ldots,P^{(n)})  instead of repeated gcds. Their equivalence seems to be quite straightforward.
+However, we could not find a reference for its proof and thereby we provide a detailed one in Appendix B for readers’ reference (see Lemma  39 ). 
+ 
+ 
+ 
+ 
+ 
+ 7  Comparison 
+
+ 
+ In this section, we compare the “sizes” of the conditions generated by the Algorithm  ParametricCompleteMultiplicity  and those by  [ 15 ]  (abbreviated as YHZ’s method). 
+ 
+ 
+ 7.1  Review on YHZ’s condition 
+
+ 
+ We start by reproducing the result given by YHZ’s method
+ for readers’ convenience. 
+ 
+ 
+ Assume  P P  is of degree  n n  with the complete multiplicity  𝝁 𝒄 = ( 𝝁 𝑹 ; 𝝁 𝑰 ) \boldsymbol{\mu_{c}}=(\boldsymbol{\mu_{R}};\boldsymbol{\mu_{I}}) . Let  𝝁 \boldsymbol{\mu}  be the complex multiplicity of  P P .
+For the sake of simplicity, we introduce the following shorthand notations. 
+ 
+ 
+ Notation 33 . 
+ 
+ 
+ 
+ •  
+ 
+ G ~ i = { P if  i = 0 ; R μ ¯ i ​ ( G ~ i − 1 , G ~ i − 1 ′ ) if i > 0 ; \tilde{G}_{i}=\left\{\begin{array}[c]{lll}P&\text{if }&i=0;\\
+R_{\bar{\mu}_{i}}\left(\tilde{G}_{i-1},\tilde{G}_{i-1}^{\prime}\right)&\text{if}&i>0;\end{array}\right. 
+ 
+ •  
+ 
+ s i = ∑ k = i + 1 μ 1 μ ¯ k s_{i}=\sum\limits_{k=i+1}^{\mu_{1}}\bar{\mu}_{k} , i,e.,  s i s_{i}  is the degree of  G ~ i \tilde{G}_{i}  in  x x ; 
+ 
+ •  
+ 
+ Let  R k ​ ( G ~ i , G ~ i ′ ) ¯ \overline{R_{k}\left(\tilde{G}_{i},\tilde{G}^{\prime}_{i}\right)}  represent the principal coefficient of  R k ​ ( G ~ i , G ~ i ′ ) R_{k}\left(\tilde{G}_{i},\tilde{G}^{\prime}_{i}\right) , that is, the coefficient of the term  x s i − k x^{s_{i}-k}  in  R k ​ ( G ~ i , G ~ i ′ ) R_{k}\left(\tilde{G}_{i},\tilde{G}^{\prime}_{i}\right) . 
+ 
+ 
+ 
+ 
+ 
+ It is easy to see that
+ G ~ i \tilde{G}_{i}  is the multiple factor of  P P  at the  i i -th level.
+By Theorem  31 , we have 
+ 
+
+ 
+ 
+ 
+ cmult ( P ) = ( 𝝁 𝑹 ; 𝝁 𝑰 ) \displaystyle\operatorname*{cmult}\left(P\right)=(\boldsymbol{\mu_{R}};\boldsymbol{\mu_{I}}) 
+ 
+ 
+ 
+ ⟺ \displaystyle\Longleftrightarrow\ \ \  
+ ( ⋀ i = 0 μ 1 − 2 ⋀ j = μ ¯ i + 1 + 1 s i D j ( G ~ i , G ~ i ′ ) = 0 ) ∧ D s μ 1 − 1 ​ ( G ~ μ 1 − 1 , G ~ μ 1 − 1 ′ ) ≠ 0 \displaystyle\left(\bigwedge\limits_{i=0}^{\mu_{1}-2}\ \ \bigwedge\limits_{j=\bar{\mu}_{i+1}+1}^{s_{i}}D_{j}(\tilde{G}_{i},\tilde{G}_{i}^{\prime})=0\right)\ \ \ \wedge\ \ D_{s_{\mu_{1}-1}\left(\tilde{G}_{\mu_{1}-1},\tilde{G}_{\mu_{1}-1}^{\prime}\right)}\neq 0 
+ 
+ 
+ 
+ ∧ \displaystyle\wedge\  
+ ( ⋀ i = 0 μ 1 − 1 Var ( D 1 ( G ~ i , G ~ i ′ ) , … , D μ ¯ i + 1 ( G ~ i , G ~ i ′ ) ) = μ ¯ I , i + 1 / 2 ) \displaystyle\left(\bigwedge\limits_{i=0}^{\mu_{1}-1}\ \ {\rm Var}\left(D_{1}(\tilde{G}_{i},\tilde{G}_{i}^{\prime}),\ldots,D_{\bar{\mu}_{i+1}}(\tilde{G}_{i},\tilde{G}_{i}^{\prime})\right)=\bar{\mu}_{I,i+1}/2\right) 
+ 
+ (15) 
+ 
+ 
+ 
+ Theoretical analysis on YHZ’s method in the rest of this section is based on the following natural assumption which is also assumed in  [ 4 ] . 
+ 
+ 
+ Assumption 34 . 
+ 
+ We will assume that  ∀ 𝛍 ∈ ℳ ⁡ ( n ) \forall\,\boldsymbol{\mu}\in\mathcal{M}(n) ,  R s i ​ ( G ~ i , G ~ i ′ ) ¯ \overline{R_{s_{i}}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)}  in the above YHZ’s condition is not identically  0 0  as a polynomial
+in terms of the coefficients of  P P . 
+ 
+ 
+ 
+ 
+ 7.2  Comparison 
+
+ 
+ We compare the “sizes” of the polynomial conditions generated by the  𝖯𝖺𝗋𝖺𝗆𝖾𝗍𝗋𝗂𝖼𝖢𝗈𝗆𝗉𝗅𝖾𝗍𝖾𝖬𝗎𝗅𝗍𝗂𝗉𝗅𝗂𝖼𝗂𝗍𝗒 {\sf ParametricCompleteMultiplicity}  algorithm and those given by YHZ’s method from the following two aspects: 
+ 
+ •  
+ 
+ the numbers of polynomials for partitioning the parameter set, and 
+ 
+ •  
+ 
+ the degrees of polynomials appearing in the conditions. 
+ 
+ 
+ Furthermore, we compare the computational efficiency of the two methods via practical examples. 
+ 
+ 
+ 7.2.1  Comparison on the number of polynomials 
+
+ 
+ For simplicity, we introduce the following notations: 
+ 
+ •  
+ 
+ T YHZ ​ ( n ) T_{\rm YHZ}(n) : the number of polynomials appearing in YHZ’s condition; 
+ 
+ •  
+ 
+ T QXY ​ ( n ) T_{\rm QXY}(n) : the number of polynomials appearing in the new condition (produced by Algorithm  1 ). 
+ 
+ 
+ As usual, we assume  P P  to be a univariate polynomial of degree  n ≥ 2 n\geq 2  with formal coefficients. 
+ 
+ 
+ We start by deducing a recursive formula for computing  T YHZ ​ ( n ) T_{\rm YHZ}(n) .
+In YHZ’s method, the main idea is to restore the complete multiplicity of  P P  by counting the number of distinct real/imaginary roots of  G ~ 0 , … , G ~ n − 1 \tilde{G}_{0},\ldots,\tilde{G}_{n-1} . Thus one only needs to discriminate the cases when  G ~ i \tilde{G}_{i}  has different numbers of distinct real roots/pairs of imaginary roots. For this purpose, only the polynomials in the discriminant sequence of  G ~ i \tilde{G}_{i} ’s are needed. 
+ 
+ 
+ In the first step, we compute all the potential gcds of  G 0 ~ \tilde{G_{0}}  and  G ~ 0 ′ \tilde{G}_{0}^{\prime} , i.e.,  R n ​ ( G ~ 0 , G ~ 0 ′ ) R_{n}(\tilde{G}_{0},\tilde{G}_{0}^{\prime}) , …,  R 1 ​ ( G ~ 0 , G ~ 0 ′ ) R_{1}(\tilde{G}_{0},\tilde{G}_{0}^{\prime}) . We also need  D 1 ​ ( G ~ 0 , G ~ 0 ′ ) , … , D n ​ ( G ~ 0 , G ~ 0 ′ ) D_{1}(\tilde{G}_{0},\tilde{G}_{0}^{\prime}),\ldots,D_{n}(\tilde{G}_{0},\tilde{G}_{0}^{\prime})  to discriminate the numbers of real roots/pairs of imaginary roots  G ~ 0 \tilde{G}_{0}  may have.
+In this step, we need  n n  polynomials in the parameters.
+Note that each  R i ​ ( G ~ 0 , G ~ 0 ′ ) R_{i}(\tilde{G}_{0},\tilde{G}_{0}^{\prime})  is a potential gcd of  G ~ 0 \tilde{G}_{0}  and  G ~ 0 ′ \tilde{G}_{0}^{\prime}  with degree  n − i n-i  where  i = 1 , … , n − 1 i=1,\ldots,n-1 . When  i = n − 1 i=n-1 ,  deg ⁡ R i ​ ( G ~ 0 , G ~ 0 ′ ) = 1 \deg R_{i}(\tilde{G}_{0},\tilde{G}_{0}^{\prime})=1 . We immediately know that  R i ​ ( G ~ 0 , G ~ 0 ′ ) R_{i}(\tilde{G}_{0},\tilde{G}_{0}^{\prime})  has only one (real) root and there are no other cases to be discriminated. So we do not need extra polynomials.
+On the other hand, to discriminate all the complete multiplicities of  G ~ i \tilde{G}_{i} , we need  T YHZ ​ ( n − i ) T_{\rm YHZ}(n-i)  polynomials. As a result, when  n ≥ 2 n\geq 2 , we have 
+ 
+
+ 
+ 
+ T YHZ ​ ( n ) = n + ∑ i = 1 n − 2 T YHZ ​ ( n − i ) = n + ∑ i = 2 n − 1 T YHZ ​ ( i ) T_{\rm YHZ}(n)=n+\sum_{i=1}^{n-2}T_{\rm YHZ}(n-i)=n+\sum_{i=2}^{n-1}T_{\rm YHZ}(i) 
+ 
+ 
+ One can easily derive from the relation that when  n ≥ 3 n\geq 3 , 
+ 
+
+ 
+ 
+ T YHZ ​ ( n ) − T YHZ ​ ( n − 1 ) = 1 + T YHZ ​ ( n − 1 ) T_{\rm YHZ}(n)-T_{\rm YHZ}(n-1)=1+T_{\rm YHZ}(n-1) 
+ 
+ 
+ Therefore, 
+ 
+
+ 
+ 
+ T YHZ ​ ( n ) = 3 4 ⋅ 2 n − 1 T_{\rm YHZ}(n)=\frac{3}{4}\cdot 2^{n}-1 
+ 
+ 
+ 
+ 
+ Now we consider the number of polynomials required by the new method to discriminate all the complete multiplicities of  P P , which is denoted by  T QXY ​ ( n ) T_{\rm QXY}(n) . To discriminant all the complex multiplicities
+of  P P , we need  R 𝝁 R_{\boldsymbol{\mu}} ’s where  𝝁 ∈ ℳ ⁡ ( n ) \boldsymbol{\mu}\in\mathcal{M}(n)  and the total number of  R 𝝁 R_{\boldsymbol{\mu}} ’s is  # ​ ℳ ​ ( n ) \#\mathcal{M}(n) . To discriminate all the complete multiplicities of  P P , we need to consider all the possibilities of  G i G_{i} , which form a set  { R 𝜹 : 𝜹 ∈ 𝒩 ⁡ ( n ) } \{R_{\boldsymbol{\delta}}:\boldsymbol{\delta}\in\mathcal{N}(n)\}  by Theorem  16  with 
+ 
+
+ 
+ 
+ 𝒩 ( n ) = { ( δ 1 , … , δ t ) : δ 1 + ⋯ + δ t < n , δ 1 ≥ … ≥ δ t ≥ 1 } . \mathcal{N}(n)=\left\{(\delta_{1},\ldots,\delta_{t}):\,\delta_{1}+\cdots+\delta_{t}<n,\delta_{1}\geq\ldots\geq\delta_{t}\geq 1\right\}. 
+ 
+ 
+ Since  𝒩 ⁡ ( n ) = ⋃ i = 0 n − 1 ℳ ⁡ ( i ) \mathcal{N}(n)=\bigcup_{i=0}^{n-1}\mathcal{M}(i) , we have 
+ 
+
+ 
+ 
+ { R 𝜹 : 𝜹 ∈ 𝒩 ⁡ ( n ) } = ⋃ i = 0 n − 1 { R 𝜹 : 𝜹 ∈ ℳ ⁡ ( i ) } . \{R_{\boldsymbol{\delta}}:\boldsymbol{\delta}\in\mathcal{N}(n)\}=\bigcup_{i=0}^{n-1}\{R_{\boldsymbol{\delta}}:\boldsymbol{\delta}\in\mathcal{M}(i)\}. 
+ 
+ 
+ In each subset of the right-hand side,  R 𝜹 R_{\boldsymbol{\delta}} ’s have the same degree  n − i n-i . When  i = n − 1 i=n-1 ,  R 𝜹 R_{\boldsymbol{\delta}} ’s are of degree  1 1  and we will not add any polynomial to the condition. When  0 ≤ i ≤ n − 2 0\leq i\leq n-2 , to discriminate all the possible numbers of distinct real/imaginary roots for each  R 𝜹 R_{\boldsymbol{\delta}} , we need  D 1 ​ ( R 𝜹 ′ ) , R 𝜹 , … , D n − i ​ ( R 𝜹 , R 𝜹 ′ ) D_{1}(R_{\boldsymbol{\delta}}^{\prime}),R_{\boldsymbol{\delta}},\ldots,D_{n-i}(R_{\boldsymbol{\delta}},R_{\boldsymbol{\delta}}^{\prime})  and thus altogether  # ​ ℳ ​ ( i ) ⋅ ( n − i ) \#\mathcal{M}(i)\cdot(n-i)  polynomials are required to discriminate the numbers of distinct real/imaginary roots for all  R 𝜹 R_{\boldsymbol{\delta}} ’s of degree  n − i n-i . In summary, in the condition generated by the proposed method, the number of polynomials is 
+ 
+
+ 
+ 
+ T QXY ​ ( n ) = # ​ ℳ ​ ( n ) + ∑ i = 0 n − 2 # ​ ℳ ​ ( i ) ⋅ ( n − i ) T_{\rm QXY}(n)=\#\mathcal{M}(n)+\sum_{i=0}^{n-2}\#\mathcal{M}(i)\cdot(n-i) 
+ 
+ 
+ 
+ 
+ Table 1 :  Comparison on the numbers of polynomials in the conditions generated by YHZ’s method and the proposed method, respectively. 
+ 
+ 
+ 
+ n n 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+ 10 
+ 
+ T YHZ T_{\rm YHZ} 
+ 5 
+ 11 
+ 23 
+ 47 
+ 95 
+ 191 
+ 383 
+ 767 
+ 
+ T QXY T_{\rm QXY} 
+ 8 
+ 16 
+ 28 
+ 49 
+ 79 
+ 127 
+ 195 
+ 296 
+ 
+ T YHZ T QXY \dfrac{T_{\rm YHZ}}{T_{\rm QXY}} 
+ 0.625 
+ 0.688 
+ 0.821 
+ 0.959 
+ 1.203 
+ 1.504 
+ 1.964 
+ 2.591 
+ 
+ n n 
+ 11 
+ 12 
+ 13 
+ 14 
+ 15 
+ 16 
+ 17 
+ 18 
+ 
+ T YHZ T_{\rm YHZ} 
+ 1535 
+ 3071 
+ 6143 
+ 12287 
+ 24575 
+ 49151 
+ 98303 
+ 196607 
+ 
+ T QXY T_{\rm QXY} 
+ 437 
+ 639 
+ 914 
+ 1297 
+ 1812 
+ 2510 
+ 3436 
+ 4670 
+ 
+ T YHZ T QXY \dfrac{T_{\rm YHZ}}{T_{\rm QXY}} 
+ 3.513 
+ 4.806 
+ 6.721 
+ 9.473 
+ 13.562 
+ 19.582 
+ 28.610 
+ 42.100 
+ 
+ 
+ 
+ 
+ In Table  1 , we list the two numbers, i.e.,  T YHZ T_{\rm YHZ}  and  T QXY T_{\rm QXY} , for  n = 3 , … , 18 n=3,\ldots,18 .
+In Figure  1 , we show the trend of the two numbers as  n n  increases. It is observed that 
+ 
+ •  
+ 
+ As expected,  T YHZ T_{\rm YHZ}  increases exponentially with  n n  while  T QXY T_{\rm QXY}  is not.
+In fact, it is seen from Figure  1(a)  that  T QXY T_{\rm QXY}  increases significantly slower than  T YHZ T_{\rm YHZ}  as  n n  increases. 
+ 
+ •  
+ 
+ From Fig.  1(b) , we can further see that the ratio of  T YHZ T_{\rm YHZ}  to  T QXY T_{\rm QXY}  is always greater than  1 1  for  n ≥ 7 n\geq 7 , which indicates that  T QXY < T YHZ T_{\rm QXY}<T_{\rm YHZ}  when  n ≥ 7 n\geq 7 . 
+ 
+ •  
+ 
+ Moreover, Fig.  1(b)  exhibits an exponential increase on the ratio  T YHZ / T QXY T_{\rm YHZ}/T_{\rm QXY}  along with  n n . Thus,  T YHZ T_{\rm YHZ}  becomes dramatically smaller than  T YHZ T_{\rm YHZ}  when  n n  grows. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ (a)   The plots of numbers of polynomials in the conditions generated by the two methods 
+ 
+ 
+ (b)   The ratio of the two numbers of polynomials in the conditions generated by the two methods  
+ 
+ Figure 1 :  Comparison on the numbers of polynomials in the conditions generated by YHZ’s method and the proposed method. 
+ 
+ 
+ 
+ 7.2.2  Comparison on the degree of polynomials 
+
+ 
+ In this subsubsection, we compare the degrees of polynomials appearing in the conditions. We choose the maximal degree as an indicator for this assessment. For simplicity, we introduce the following notations: 
+ 
+ •  
+ 
+ d YHZ d_{\text{YHZ}} : the maximal degree of polynomials appearing in YHZ’s condition; 
+ 
+ •  
+ 
+ d QXY d_{\text{QXY}} : the maximal degree of polynomials appearing in the new condition (produced by Algorithm  1 ). 
+ 
+ 
+ 
+ 
+ Under Assumption  34 , we have the following proposition. 
+ 
+ 
+ Proposition 35 . 
+ 
+ d YHZ ≥ 3 ⌊ n / 2 ⌋ d_{\rm YHZ}\geq 3^{\lfloor{n}/{2}\rfloor} . 
+ 
+ 
+ 
+ Proof. 
+ 
+ Note that when  1 ≤ j ≤ deg ⁡ G ~ i − 1 1\leq j\leq\deg\tilde{G}_{i}-1 , 
+ 
+
+ 
+ 
+ D j ( G ~ i , G ~ i ′ ) = ± lcoef ( G ~ i ) ⋅ R j ​ ( G ~ i , G ~ i ′ ) ¯ D_{j}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)=\pm\operatorname*{lcoef}(\tilde{G}_{i})\cdot\overline{R_{j}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)} 
+ 
+ 
+ Thus  deg a ⁡ D j ​ ( G ~ i , G ~ i ′ ) ≥ deg a ⁡ R j ​ ( G ~ i , G ~ i ′ ) ¯ \deg_{a}D_{j}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)\geq\deg_{a}\overline{R_{j}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)} . Thereby, 
+ 
+
+ 
+ 
+ d YHZ = \displaystyle d_{\rm YHZ}\ = 
+ max 𝝁 ∈ ℳ ⁡ ( n ) max ( ⋃ i = 0 μ 1 − 2 ⋃ j = μ ¯ i + 1 + 1 s i { deg a D j ( G ~ i , G ~ i ′ ) } ∪ { deg D s μ 1 − 1 ( G ~ μ 1 − 1 , G ~ μ 1 − 1 ′ ) } \displaystyle\ \max_{\boldsymbol{\mu}\in\mathcal{M}(n)}\max\Bigg(\bigcup\limits_{i=0}^{\mu_{1}-2}\ \ \bigcup\limits_{j=\bar{\mu}_{i+1}+1}^{s_{i}}\left\{\deg_{a}D_{j}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)\right\}\ \cup\ \ \left\{\deg D_{s_{\mu_{1}-1}}\left(\tilde{G}_{\mu_{1}-1},\tilde{G}_{\mu_{1}-1}^{\prime}\right)\right\} 
+ 
+ 
+ 
+ 
+ ∪ ⋃ i = 0 μ 1 − 1 ⋃ j = 1 μ ¯ i + 1 { deg a D j ( G ~ i , G ~ i ′ ) } ) \displaystyle\ \qquad\qquad\qquad\cup\ \bigcup\limits_{i=0}^{\mu_{1}-1}\ \bigcup_{j=1}^{\bar{\mu}_{i+1}}\left\{\deg_{a}D_{j}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)\right\}\Bigg) 
+ 
+ 
+ 
+ ≥ \displaystyle\geq 
+ max 𝝁 ∈ ℳ ⁡ ( n ) max ( ⋃ i = 0 μ 1 − 2 ⋃ j = μ ¯ i + 1 + 1 s i { deg a R j ​ ( G ~ i , G ~ i ′ ) ¯ } ∪ { deg R s μ 1 − 1 ​ ( G ~ μ 1 − 1 , G ~ μ 1 − 1 ′ ) ¯ } \displaystyle\ \max_{\boldsymbol{\mu}\in\mathcal{M}(n)}\max\Bigg(\bigcup\limits_{i=0}^{\mu_{1}-2}\ \ \bigcup\limits_{j=\bar{\mu}_{i+1}+1}^{s_{i}}\left\{\deg_{a}\overline{R_{j}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)}\right\}\ \cup\ \ \left\{\deg\overline{R_{s_{\mu_{1}-1}}\left(\tilde{G}_{\mu_{1}-1},\tilde{G}_{\mu_{1}-1}^{\prime}\right)}\right\} 
+ 
+ 
+ 
+ 
+ ∪ ⋃ i = 0 μ 1 − 1 ⋃ j = 1 μ ¯ i + 1 { deg a D j ( G ~ i , G ~ i ′ ) } ) \displaystyle\ \qquad\qquad\qquad\cup\ \bigcup\limits_{i=0}^{\mu_{1}-1}\ \bigcup_{j=1}^{\bar{\mu}_{i+1}}\left\{\deg_{a}D_{j}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)\right\}\Bigg) 
+ 
+ 
+ For the sake of simplicity, we use the following shorthand
+notation: 
+ 
+
+ 
+ 
+ d 𝝁 = \displaystyle d_{\boldsymbol{\mu}}\ = 
+ max ( ⋃ i = 0 μ 1 − 2 ⋃ j = μ ¯ i + 1 + 1 s i { deg a R j ​ ( G ~ i , G ~ i ′ ) ¯ } ∪ { deg R s μ 1 − 1 ​ ( G ~ μ 1 − 1 , G ~ μ 1 − 1 ′ ) ¯ } \displaystyle\ \max\Bigg(\bigcup\limits_{i=0}^{\mu_{1}-2}\ \ \bigcup\limits_{j=\bar{\mu}_{i+1}+1}^{s_{i}}\left\{\deg_{a}\overline{R_{j}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)}\right\}\ \cup\ \ \left\{\deg\overline{R_{s_{\mu_{1}-1}}\left(\tilde{G}_{\mu_{1}-1},\tilde{G}_{\mu_{1}-1}^{\prime}\right)}\right\} 
+ 
+ 
+ 
+ 
+ ∪ ⋃ i = 0 μ 1 − 1 ⋃ j = 1 μ ¯ i + 1 { deg a D j ( G ~ i , G ~ i ′ ) } ) \displaystyle\ \qquad\quad\cup\ \bigcup\limits_{i=0}^{\mu_{1}-1}\ \bigcup_{j=1}^{\bar{\mu}_{i+1}}\left\{\deg_{a}D_{j}\left(\tilde{G}_{i},\tilde{G}_{i}^{\prime}\right)\right\}\Bigg) 
+ 
+ 
+ Then  d YHZ ≥ max 𝝁 ∈ ℳ ⁡ ( n ) ⁡ d 𝝁 d_{\rm YHZ}\geq\max_{\boldsymbol{\mu}\in\mathcal{M}(n)}d_{\boldsymbol{\mu}} . 
+ 
+ 
+ By  [ 4 , Lemma 17-3] , when  2 ≤ m ≤ n − 2 2\leq m\leq n-2 ,
+ d 𝝁 ≥ 2 ​ n + 3 μ 2 − 4 ​ μ 2 d_{\boldsymbol{\mu}}\geq 2n+3^{\mu_{2}}-4\mu_{2} .
+Thus 
+ 
+
+ 
+ 
+ d YHZ \displaystyle d_{\rm YHZ}\  
+ ≥ max 𝝁 ∈ ℳ ⁡ ( n ) ⁡ d 𝝁 \displaystyle\geq\ \max_{\boldsymbol{\mu}\in\mathcal{M}(n)}d_{\boldsymbol{\mu}} 
+ 
+ 
+ 
+ 
+ ≥ max 𝝁 ∈ ℳ ⁡ ( n ) 2 ≤ m ≤ n − 2 ⁡ d 𝝁 \displaystyle\geq\ \max_{\begin{subarray}{c}\boldsymbol{\mu}\in\mathcal{M}(n)\\
+2\leq m\leq n-2\end{subarray}}d_{\boldsymbol{\mu}} 
+ 
+ 
+ 
+ 
+ ≥  2 ​ n + 3 μ 2 − 4 ​ μ 2 \displaystyle\geq\ 2n+3^{\mu_{2}}-4\mu_{2} 
+ 
+ 
+ 
+ 
+ =  2 ​ n + 3 ⌊ n / 2 ⌋ − 4 ​ ⌊ n / 2 ⌋ \displaystyle=\ 2n+3^{\lfloor{n}/{2}\rfloor}-4\lfloor{n}/{2}\rfloor 
+ 
+ 
+ 
+ 
+ ≥  3 ⌊ n / 2 ⌋ \displaystyle\geq\ 3^{\lfloor{n}/{2}\rfloor} 
+ 
+ 
+ ∎ 
+ 
+ 
+ 
+ For the maximal degree of polynomials in the new condition presented in this paper, we prove the following proposition. 
+ 
+ 
+ Proposition 36 . 
+ 
+ When  n ≥ 3 n\geq 3 ,  d QXY = n ⁡ ( n − 1 ) . d_{\rm QXY}=n(n-1). 
+ 
+ 
+ 
+ Proof. 
+ 
+ Recall ( 14 ). We have 
+ 
+
+ 
+ 
+ d QXY = \displaystyle d_{\text{QXY}}\ = 
+ max 𝝁 ∈ ℳ ⁡ ( n ) ⁡ ( ⋃ 𝜸 ≻ 𝝁 ¯ 𝜸 ∈ ℳ ⁡ ( n ) { deg a ⁡ R 𝜸 ​ ( 𝑭 ) } ∪ { deg a ⁡ R 𝝁 ¯ ​ ( 𝑭 ) } ∪ ⋃ i = 0 μ 1 − 1 ⋃ j = 1 μ ¯ i + 1 { deg a ⁡ D j ​ ( G i , G i ′ ) } ) \displaystyle\ \max_{\boldsymbol{\mu}\in\mathcal{M}(n)}\Bigg(\bigcup_{\begin{subarray}{c}\boldsymbol{\gamma}\succ\boldsymbol{\bar{\mu}}\\
+\boldsymbol{\gamma}\in\mathcal{M}(n)\end{subarray}}\left\{\deg_{a}R_{\boldsymbol{\gamma}}(\boldsymbol{F})\right\}\ \cup\ \{\deg_{a}R_{\boldsymbol{\bar{\mu}}}(\boldsymbol{F})\}\ \cup\ \bigcup\limits_{i=0}^{\mu_{1}-1}\bigcup\limits_{j=1}^{\bar{\mu}_{i+1}}\left\{\deg_{a}D_{j}(G_{i},G_{i}^{\prime})\right\}\Bigg) 
+ 
+ 
+ 
+ = \displaystyle= 
+ max 𝝁 ∈ ℳ ⁡ ( n ) ( max 𝜸 ⪰ 𝝁 ¯ 𝜸 ∈ ℳ ⁡ ( n ) deg a R 𝜸 ( 𝑭 ) , max 0 ≤ i ≤ μ 1 − 1 deg a D μ ¯ i + 1 ( G i , G i ′ ) ) \displaystyle\ \max_{\boldsymbol{\mu}\in\mathcal{M}(n)}\Bigg(\max_{\begin{subarray}{c}\boldsymbol{\gamma}\succeq\boldsymbol{\bar{\mu}}\\
+\boldsymbol{\gamma}\in\mathcal{M}(n)\end{subarray}}\deg_{a}R_{\boldsymbol{\gamma}}(\boldsymbol{F}),\ \ \ \max_{0\leq i\leq\mu_{1}-1}\deg_{a}D_{\bar{\mu}_{i+1}}(G_{i},G_{i}^{\prime})\Bigg) 
+ 
+ 
+ It was shown in  [ 8 ]  that 
+ 
+
+ 
+ 
+ max 𝜸 ⪰ 𝝁 ¯ 𝜸 ∈ ℳ ⁡ ( n ) ⁡ deg a ​ R 𝜸 ​ ( 𝑭 ) = 2 ​ n − μ m \max_{\begin{subarray}{c}\boldsymbol{\gamma}\succeq\boldsymbol{\bar{\mu}}\\
+\boldsymbol{\gamma}\in\mathcal{M}(n)\end{subarray}}\deg_{a}R_{\boldsymbol{\gamma}}(\boldsymbol{F})=2n-\mu_{m} 
+ 
+ 
+ Thus 
+ 
+
+ 
+ 
+ d QXY \displaystyle d_{\text{QXY}}\  
+ = max 𝝁 ∈ ℳ ⁡ ( n ) ( 2 n − μ m , max 0 ≤ i ≤ μ 1 − 1 deg a D μ ¯ i + 1 ( G i , G i ′ ) ) \displaystyle=\ \max_{\boldsymbol{\mu}\in\mathcal{M}(n)}\bigg(2n-\mu_{m},\ \ \max_{0\leq i\leq\mu_{1}-1}\deg_{a}D_{\bar{\mu}_{i+1}}(G_{i},G_{i}^{\prime})\bigg) 
+ 
+ 
+ 
+ 
+ = max ( 2 n − 1 , max 𝝁 ∈ ℳ ⁡ ( n ) max 0 ≤ i ≤ μ 1 − 1 deg a D μ ¯ i + 1 ( G i , G i ′ ) ) \displaystyle=\ \max\bigg(2n-1,\ \ \max_{\boldsymbol{\mu}\in\mathcal{M}(n)}\max_{0\leq i\leq\mu_{1}-1}\deg_{a}D_{\bar{\mu}_{i+1}}(G_{i},G_{i}^{\prime})\bigg) 
+ 
+ 
+ 
+ 
+ = max ( 2 n − 1 , max 𝝁 ∈ ℳ ⁡ ( n ) max 0 ≤ i ≤ μ 1 − 1 2 μ ¯ i + 1 deg a G i ) \displaystyle=\ \max\bigg(2n-1,\ \ \max_{\boldsymbol{\mu}\in\mathcal{M}(n)}\max_{0\leq i\leq\mu_{1}-1}2\bar{\mu}_{i+1}\deg_{a}G_{i}\bigg) 
+ 
+ 
+ 
+ 
+ Note that 
+ 
+
+ 
+ 
+ deg a ⁡ G i = { 1 if  i = 0 ; ( μ ¯ 1 − 1 ) + ( μ ¯ 1 + ⋯ + μ ¯ i ) if  i > 0 . \deg_{a}G_{i}=\left\{\begin{array}[]{ll}1&\text{if $i=0;$}\\
+(\bar{\mu}_{1}-1)+(\bar{\mu}_{1}+\cdots+\bar{\mu}_{i})&\text{if $i>0$}.\\
+\end{array}\right. 
+ 
+ 
+ Hence we can derive that 
+ 
+
+ 
+ 
+ 
+ max 𝝁 ∈ ℳ ⁡ ( n ) ⁡ max 0 ≤ i ≤ μ 1 − 1 ​ deg a ​ D μ ¯ i + 1 ​ ( G i , G i ′ ) \displaystyle\ \max_{\boldsymbol{\mu}\in\mathcal{M}(n)}\max_{0\leq i\leq\mu_{1}-1}\deg_{a}D_{\bar{\mu}_{i+1}}(G_{i},G_{i}^{\prime}) 
+ 
+ 
+ 
+ = \displaystyle= 
+ 2 ​ max 𝝁 ∈ ℳ ⁡ ( n ) ​ max ⁡ ( μ ¯ 1 , max 1 ≤ i ≤ μ 1 − 1 ⁡ μ ¯ i + 1 ​ ( ( μ ¯ 1 − 1 ) + ( μ ¯ 1 + ⋯ + μ ¯ i ) ) ) \displaystyle\ 2\max_{\boldsymbol{\mu}\in\mathcal{M}(n)}\max\left(\bar{\mu}_{1},\ \max_{1\leq i\leq\mu_{1}-1}\bar{\mu}_{i+1}\big((\bar{\mu}_{1}-1)+(\bar{\mu}_{1}+\cdots+\bar{\mu}_{i})\big)\right) 
+ 
+ 
+ 
+ 
+ Now we consider the following three cases. 
+ 
+ 1.  
+ 
+ When  m = 1 m=1 , i.e.,  𝝁 = ( n ) \boldsymbol{\mu}=(n) ,  μ ¯ 1 = ⋯ = μ ¯ n = 1 \bar{\mu}_{1}=\cdots=\bar{\mu}_{n}=1 . It follows that 
+ 
+
+ 
+ 
+ 
+ max ⁡ ( μ ¯ 1 , max 1 ≤ i ≤ μ 1 − 1 ⁡ μ ¯ i + 1 ​ ( ( μ ¯ 1 − 1 ) + ( μ ¯ 1 + ⋯ + μ ¯ i ) ) ) = max ⁡ ( 1 , max 1 ≤ i ≤ μ 1 − 1 ⁡ i ) = n − 1 \displaystyle\max\left(\bar{\mu}_{1},\ \max_{1\leq i\leq\mu_{1}-1}\bar{\mu}_{i+1}\big((\bar{\mu}_{1}-1)+(\bar{\mu}_{1}+\cdots+\bar{\mu}_{i})\big)\right)=\ \max(1,\ \max_{1\leq i\leq\mu_{1}-1}i)\ =\ n-1 
+ 
+ 
+ Thus, 
+ 
+
+ 
+ 
+ max 0 ≤ i ≤ μ 1 − 1 ⁡ deg a ​ D μ ¯ i + 1 ​ ( G i , G i ′ ) =  2 ​ ( n − 1 ) <  2 ​ n − 1 \max_{0\leq i\leq\mu_{1}-1}\deg_{a}D_{\bar{\mu}_{i+1}}(G_{i},G_{i}^{\prime})\ =\ 2(n-1)\ <\ 2n-1 
+ 
+ 
+ 
+ 2.  
+ 
+ When  m = n m=n , i.e.,  𝝁 = ( 1 , … , 1 ) \boldsymbol{\mu}=(1,\ldots,1) , 
+ 
+
+ 
+ 
+ max 0 ≤ i ≤ μ 1 − 1 ⁡ deg a ​ D μ ¯ i + 1 ​ ( G i , G i ′ ) = deg a ⁡ D μ ¯ 1 ​ ( G 0 , G 0 ′ ) =  2 ​ n > 2 ​ n − 1 \max_{0\leq i\leq\mu_{1}-1}\deg_{a}D_{\bar{\mu}_{i+1}}(G_{i},G_{i}^{\prime})\ =\ \deg_{a}D_{\bar{\mu}_{1}}(G_{0},G_{0}^{\prime})\ =\ 2n>2n-1 
+ 
+ 
+ 
+ 3.  
+ 
+ When  2 ≤ m ≤ n − 1 2\leq m\leq n-1 , i.e.,  𝝁 ∉ { ( n ) , ( 1 , … , 1 ) } \boldsymbol{\mu}\notin\{(n),(1,\ldots,1)\} , let  b = μ 1 − 1 b=\mu_{1}-1  and  c = μ ¯ μ 1 c=\bar{\mu}_{\mu_{1}} . Thus  μ ¯ 1 + ⋯ + μ ¯ μ 1 − 1 = n − c \bar{\mu}_{1}+\cdots+\bar{\mu}_{\mu_{1}-1}=n-c . From the Young tableau of  𝝁 \boldsymbol{\mu}  below, 
+ 
+
+ 
+ 
+ n − c { 
+  
+ 
+  
+  
+  
+ 
+  
+ 
+  
+  
+  
+ 
+  
+ 
+  
+ b + 1  
+  
+ 
+  
+ 
+  
+  
+  
+ 
+  
+ 
+  
+  
+  
+ 
+  
+ 
+  
+ μ ¯ 1  
+  
+ 
+  
+ 
+  
+  
+  
+ 
+  
+ 
+  
+ μ ¯ 2  
+  
+ 
+  
+ 
+  
+  
+  
+ 
+  
+ 
+  
+  
+  
+ 
+  
+ 
+  
+  
+  
+ 
+  
+ 
+  
+ ⋮  
+  
+ 
+  
+ 
+  
+ ⋮  
+  
+ 
+  
+ 
+  
+ μ ¯ μ 1 − 1  
+  
+ 
+  
+ 
+  
+  
+  
+ 
+  
+ 
+  
+ μ ¯ μ 1 ( = c )  
+  
+ 
+  
+ 
+  
+  
+  
+ 
+  
+ 
+  
+  
+  
+ n-c\left\{\begin{array}[]{c}\\[40.00006pt]
+\end{array}\right.\hbox{$\vbox{\hbox{\vtop{\halign{&\opttoksa@YT={\font@YT}\getcolor@YT{\save@YT{\opttoksb@YT}}\nil@YT\getcolor@YT{\startbox@@YT\the\opttoksa@YT\the\opttoksb@YT}#\endbox@YT\cr\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$b+1$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont &\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont \cr\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$\bar{\mu}_{1}$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont &\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule height=15.39995pt,width=0.39993pt\kern 15.00002pt\vrule height=15.39995pt,width=0.39993pt}\kern-0.19997pt\kern-15.39995pt\hrule width=15.79988pt,height=0.39993pt\kern 15.00002pt\hrule width=15.79988pt,height=0.39993pt}&&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule height=15.39995pt,width=0.39993pt\kern 15.00002pt\vrule height=15.39995pt,width=0.39993pt}\kern-0.19997pt\kern-15.39995pt\hrule width=15.79988pt,height=0.39993pt\kern 15.00002pt\hrule width=15.79988pt,height=0.39993pt}&&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule height=15.39995pt,width=0.39993pt\kern 15.00002pt\vrule height=15.39995pt,width=0.39993pt}\kern-0.19997pt\kern-15.39995pt\hrule width=15.79988pt,height=0.39993pt\kern 15.00002pt\hrule width=15.79988pt,height=0.39993pt}&\cr\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$\bar{\mu}_{2}$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont &\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont &\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule height=15.39995pt,width=0.39993pt\kern 15.00002pt\vrule height=15.39995pt,width=0.39993pt}\kern-0.19997pt\kern-15.39995pt\hrule width=15.79988pt,height=0.39993pt\kern 15.00002pt\hrule width=15.79988pt,height=0.39993pt}&&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule height=15.39995pt,width=0.39993pt\kern 15.00002pt\vrule height=15.39995pt,width=0.39993pt}\kern-0.19997pt\kern-15.39995pt\hrule width=15.79988pt,height=0.39993pt\kern 15.00002pt\hrule width=15.79988pt,height=0.39993pt}&&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont\cr\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\vdots$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont &\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\vdots$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont \cr\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$\bar{\mu}_{\mu_{1}-1}$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont &\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule height=15.39995pt,width=0.39993pt\kern 15.00002pt\vrule height=15.39995pt,width=0.39993pt}\kern-0.19997pt\kern-15.39995pt\hrule width=15.79988pt,height=0.39993pt\kern 15.00002pt\hrule width=15.79988pt,height=0.39993pt}&\cr\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$\bar{\mu}_{\mu_{1}}(=c)$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont &\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont &\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule height=15.39995pt,width=0.39993pt\kern 15.00002pt\vrule height=15.39995pt,width=0.39993pt}\kern-0.19997pt\kern-15.39995pt\hrule width=15.79988pt,height=0.39993pt\kern 15.00002pt\hrule width=15.79988pt,height=0.39993pt}&\lower 0.39993pt\vbox{\kern 0.19997pt\hbox{\kern 0.39993pt\vbox to15.39995pt{\vss\hbox to15.00002pt{\hss$$\hss}\vss}\kern-15.39995pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt\kern 15.00002pt\vrule width=0.0pt,height=15.39995pt\kern 0.39993pt}\kern-0.19997pt\kern-15.39995pt\kern 0.39993pt\kern 15.00002pt\kern 0.39993pt}\nullfont\crcr}}\kern 1725.4pt}}$} 
+ 
+ (16) 
+ 
+ we have  b + c ≤ n − c b+c\leq n-c . Now we consider the following function 
+ 
+
+ 
+ 
+ f ⁡ ( c , b ) = c ⁡ ( b + n − c ) f(c,b)=c(b+n-c) 
+ 
+ 
+ in  c c  and  b b  whose feasible region (see Fig.  2 ) is bounded by 
+ 
+
+ 
+ 
+ { 1 ≤ c ≤ n − 1 , a natural condition 1 < b + 1 < n , since  1 < μ 1 < n b + 1 ≤ n − c , see ( 16 ) \left\{\begin{array}[]{ll}1\leq c\leq n-1,&\text{a natural condition}\\
+1<b+1<n,&\text{since $1<\mu_{1}<n$}\\
+b+1\leq n-c,&\text{see \eqref{eq:ytableau}}\end{array}\right. 
+ 
+ 
+ 
+ 
+ Figure 2 :  The feasible region of  ( c , b ) (c,b) 
+ 
+ 
+ Then we have 
+ 
+
+ 
+ 
+ ∂ f ∂ c = ( b + n ) − 2 ​ c , ∂ f ∂ b = c . \dfrac{\partial f}{\partial c}\ =\ (b+n)-2c,\qquad\dfrac{\partial f}{\partial b}\ =\ c. 
+ 
+ 
+ Obviously,  ∂ f ∂ b ≥ 1 \dfrac{\partial f}{\partial b}\geq 1 . Moreover,
+ since  c ≤ μ ¯ μ 1 − 1 ≤ n − c c\leq\bar{\mu}_{\mu_{1}-1}\leq n-c  which can be deduced from ( 16 ) , we derive the following: 
+ 
+
+ 
+ 
+ ∂ f ∂ c = b + ( ( n − c ) − c ) ≥ 0 \dfrac{\partial f}{\partial c}=b+\big((n-c)-c\big)\geq 0 
+ 
+ 
+ which indicates that  f ⁡ ( c , b ) f(c,b)  increases w.r.t.  c c  and  b b  in the feasible region. Hence, the maximal value of  f f  is achieved on the right boundary of the region, which is defined by  b + 1 = n − c b+1=n-c . Therefore, the maximal value of  f ⁡ ( c , b ) f(c,b)  over the feasible region is 
+ 
+
+ 
+ 
+ f max = \displaystyle f_{\max}\ = 
+ max c ∈ { 1 , … , n } ⁡ f ⁡ ( c , n − c − 1 ) \displaystyle\ \max_{c\in\{1,\ldots,n\}}f(c,n-c-1) 
+ 
+ 
+ 
+ = \displaystyle\ = 
+ max c ∈ { 1 , … , n } ⁡ c ⁡ ( 2 ​ n − 2 ​ c − 1 ) \displaystyle\ \max_{c\in\{1,\ldots,n\}}c(2n-2c-1) 
+ 
+ 
+ 
+ = \displaystyle\ = 
+ max c ∈ { 1 , … , n } ⁡ ( − 2 ​ ( c − 2 ​ n − 1 4 ) 2 + ( 2 ​ n − 1 ) 2 8 ) . \displaystyle\ \max_{c\in\{1,\ldots,n\}}\left(-2\Big(c-\frac{2n-1}{4}\Big)^{2}+\frac{(2n-1)^{2}}{8}\right). 
+ 
+ 
+ We consider the following two cases. 
+ 
+ (a)  
+ 
+ When  n n  is even, i.e.,  n = 2 ​ k n=2k  for some integer  k ≥ 1 k\geq 1 , 
+ 
+
+ 
+ 
+ max c ∈ { 1 , … , n } ⁡ ( − 2 ​ ( c − 2 ​ n − 1 4 ) 2 + ( 2 ​ n − 1 ) 2 8 ) = max c ∈ { 1 , … , n } ⁡ ( − 2 ​ ( c − 4 ​ k − 1 4 ) 2 + ( 4 ​ k − 1 ) 2 8 ) . \max_{c\in\{1,\ldots,n\}}\left(-2\Big(c-\frac{2n-1}{4}\Big)^{2}+\frac{(2n-1)^{2}}{8}\right)=\max_{c\in\{1,\ldots,n\}}\left(-2\Big(c-\frac{4k-1}{4}\Big)^{2}+\frac{(4k-1)^{2}}{8}\right). 
+ 
+ 
+ The above maximal value is achieved at  c = k = n 2 c=k=\dfrac{n}{2} , which immediately yields 
+ 
+
+ 
+ 
+ f max = c ⁡ ( 2 ​ n − 2 ​ c − 1 ) | c = n 2 = n ⁡ ( n − 1 ) 2 . f_{\max}=c(2n-2c-1)\Big|_{c=\frac{n}{2}}=\frac{n(n-1)}{2}. 
+ 
+ 
+ In this case,  𝝁 = ( n 2 , n 2 ) \boldsymbol{\mu}=\left(\dfrac{n}{2},\dfrac{n}{2}\right) . 
+ 
+ (b)  
+ 
+ When  n n  is odd, i.e.,  n = 2 ​ k + 1 n=2k+1  for some integer  k ≥ 0 k\geq 0 , 
+ 
+
+ 
+ 
+ max c ∈ { 1 , … , n } ⁡ ( − 2 ​ ( c − 2 ​ n − 1 4 ) 2 + ( 2 ​ n − 1 ) 2 8 ) = max c ∈ { 1 , … , n } ⁡ ( − 2 ​ ( c − 4 ​ k + 1 4 ) 2 + ( 4 ​ k + 1 ) 2 8 ) . \max_{c\in\{1,\ldots,n\}}\left(-2\Big(c-\frac{2n-1}{4}\Big)^{2}+\frac{(2n-1)^{2}}{8}\right)=\max_{c\in\{1,\ldots,n\}}\left(-2\Big(c-\frac{4k+1}{4}\Big)^{2}+\frac{(4k+1)^{2}}{8}\right). 
+ 
+ 
+ The above maximal value is achieved at  c = k = n − 1 2 c=k=\dfrac{n-1}{2} , which immediately yields 
+ 
+
+ 
+ 
+ f max = c ⁡ ( 2 ​ n − 2 ​ c − 1 ) | c = n − 1 2 = n ⁡ ( n − 1 ) 2 . f_{\max}=c(2n-2c-1)\Big|_{c=\frac{n-1}{2}}=\frac{n(n-1)}{2}. 
+ 
+ 
+ In this case,  𝝁 = ( n + 1 2 , n − 1 2 ) \boldsymbol{\mu}=\left(\dfrac{n+1}{2},\dfrac{n-1}{2}\right) . 
+ 
+ 
+ 
+ 
+ 
+ 
+ Therefore, 
+ 
+
+ 
+ 
+ d QXY \displaystyle d_{\text{QXY}}\  
+ = max ⁡ ( 2 ​ n ,   2 ​ max 𝝁 ∈ ℳ ⁡ ( n ) 𝝁 ∉ { ( n ) , ( 1 , … , 1 ) } ​ μ ¯ μ 1 ​ ( μ ¯ 1 − 1 + μ ¯ 1 + ⋯ + μ ¯ μ 1 − 1 ) ) \displaystyle=\ \max\bigg(2n,\ \ 2\max_{\begin{subarray}{c}\boldsymbol{\mu}\in\mathcal{M}(n)\\
+\boldsymbol{\mu}\notin\{(n),(1,\ldots,1)\}\end{subarray}}\bar{\mu}_{\mu_{1}}(\bar{\mu}_{1}-1+\bar{\mu}_{1}+\cdots+\bar{\mu}_{\mu_{1}-1})\bigg) 
+ 
+ 
+ 
+ 
+ = max ( 2 n , n ( n − 1 ) ) . \displaystyle=\ \max\big(2n,\ \ n(n-1)\big). 
+ 
+ 
+ 
+ 
+ Since  2 ​ n ≤ n ⁡ ( n − 1 ) 2n\leq n(n-1)  for  n ≥ 3 n\geq 3 , we conclude that  d QXY = n ⁡ ( n − 1 ) d_{\rm QXY}\ =\ n(n-1) .
+∎ 
+ 
+ 
+ 
+ From Propositions  35  and  36 , it is immediately seen that the maximal degree of polynomials in the condition given by YHZ’s method increases in exponential scale w.r.t.  n n  while that given by QXY’s method shows an increase in polynomial scale.
+Furthermore, with the help of Propositions  35  and  36 , one can easily show the following proposition. 
+ 
+ 
+ Proposition 37 . 
+ 
+ When  n ≥ 8 n\geq 8 ,  d YHZ ≥ d QXY d_{\rm YHZ}\geq d_{\rm QXY} . 
+ 
+ 
+ 
+ In Table  2 , we list the two numbers, i.e.,  d YHZ d_{\rm YHZ}  and  d QXY d_{\rm QXY} , for  n = 3 , … , 8 , n=3,\ldots,8,  while
+Fig.  3  shows the trend of the two numbers as  n n  increases. From Table  2  and
+Fig.  3 , we make the following observations. 
+ 
+ 
+ 
+ •  
+ 
+ When  d < 6 d<6 ,  d YHZ ≤ d QXY d_{\rm YHZ}\leq d_{\rm QXY}  and their differences is relatively small (no more than 2, see Table  2 ).
+Roughly speaking,  d QXY ≈ d YHZ d_{\rm QXY}\approx d_{\rm YHZ} . 
+ 
+ •  
+ 
+ When  n n  surpasses  6 6 ,  d QXY d_{\rm QXY}  is significantly smaller than  d YHZ d_{\rm YHZ}  (see Fig.  3(a) ).
+When  n ≥ 4 n\geq 4 , the ratio  d YHZ d QXY \dfrac{d_{\rm YHZ}}{d_{\rm QXY}}  grows as  n n  increases (see Fig.  3(b) ). Therefore, the size of the polynomial with the maximal degree in YHZ’s method becomes even bigger than that in the proposed method. Hence, it is expected that when  n n  is large enough, the new method will be far more efficient than YHZ’s method. 
+ 
+ 
+ 
+ 
+ Table 2 :  Comparison on the maximal degrees of polynomials in the conditions generated by YHZ’s method and the proposed method. 
+ 
+ 
+ 
+ n n 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 
+ d YHZ d_{\rm YHZ} 
+ 6 
+ 10 
+ 18 
+ 30 
+ 54 
+ 90 
+ 
+ d QXY d_{\rm QXY} 
+ 6 
+ 12 
+ 20 
+ 30 
+ 42 
+ 56 
+ 
+ d YHZ d QXY \dfrac{d_{\rm YHZ}}{d_{\rm QXY}} 
+ 1.000 
+ 0.833 
+ 0.900 
+ 1.000 
+ 1.286 
+ 1.607 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ (a)   The plots of numbers of polynomials in the conditions generated by the two methods 
+ 
+ 
+ (b)   The ratio of the two numbers of polynomials in the conditions generated by the two methods  
+ 
+ Figure 3 :  Comparison on the maximal degrees of polynomials in the conditions generated by YHZ’s method and the proposed method, respectively. 
+ 
+ 
+ 
+ 7.2.3  Comparison on performance 
+
+ 
+ In this part, we compare YHZ’s method to the proposed method (i.e., QXY’s method) in terms of computational efficiency.
+For this purpose, we carry out several experiments for  n n  ranging from  3 3  to  9 9 . The experiments are performed on a PC equipped with an Intel(R) Core(TM) i5-7300U processor and an 8GB RAM. 
+ 
+ 
+ Table 3 :  Comparison on the time cost of YHZ’s method and the proposed method (in seconds) 
+ 
+ 
+ 
+ n n 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+ 
+ 
+ 
+ t YHZ t_{\rm YHZ} 
+ 0.000 
+ 0.015 
+ 0.031 
+ 0.078 
+ 4.046 
+ 8772.687 
+ ? 
+ 
+ t QXY t_{\rm QXY} 
+ 0.015 
+ 0.031 
+ 0.093 
+ 0.171 
+ 1.046 
+ 434.468 
+ ? 
+ 
+ t YHZ t QXY \dfrac{t_{\rm YHZ}}{t_{\rm QXY}} 
+ 0.000 
+ 0.484 
+ 0.333 
+ 0.456 
+ 3.868 
+ 20.192 
+ − - 
+ 
+ 
+ 
+ 
+ The experimental results are reported in Table  3  where
+ t YHZ t_{\text{YHZ}}  and  t QXY t_{\text{QXY}}  represent the time cost (in seconds) charged by YHZ’s method and the proposed method, respectively. It is seen that the proposed method outperforms YHZ’s method when solving relatively larger examples (see  n = 7 , 8 n=7,8  in Table  3 ). 
+ 
+ 
+ Although both methods fail on the case  n = 9 n=9 , the new algorithm can still give some positive results. For example, if we take the polynomial of the following form 
+ 
+
+ 
+ 
+ P = x 9 + a 7 ​ x 7 + ⋯ + a 0 P=x^{9}+a_{7}x^{7}+\cdots+a_{0} 
+ 
+ 
+ (which can also be viewed as a generic form of polynomials with degree  9 9 ) as input,
+the algorithm  ParametricCompleteMultiplicity  succeeds after 3009.296 seconds ( < 1 <1  hour) while YHZ’s method does not terminate after running for 10 hours. 
+ 
+ 
+ 
+ 
+ 
+ 8  Conclusion 
+
+ 
+ In this paper, we propose a new algorithm for solving the parametric complete multiplicity problem. Different from using the repeated gcd computation in the classical one  [ 15 ] ,
+the new approach uses incremental gcds instead, which can effectively reduce the size of the polynomials appearing in the condition. 
+ 
+ 
+ It is noted that in the new approach, we also confront with nested determinants/subresultants,
+which requires intensive computation. Thus a natural question is: is it possible to use non-nested determinants to solve the parametric complete multiplicity problem? The investigation along this direction is very attractive not only because it can help to improve the efficiency of the algorithms but also provides a closed form for the parametric complete multiplicity problem.
+Another interesting direction is to explore the hidden structures for subresultant used in the algorithm  𝖯𝖺𝗋𝖺𝗆𝖾𝗍𝗋𝗂𝖼𝖢𝗈𝗆𝗉𝗅𝖾𝗍𝖾𝖬𝗎𝗅𝗍𝗂𝗉𝗅𝗂𝖼𝗂𝗍𝗒 {\sf ParametricCompleteMultiplicity}  which may further enhance the computational efficiency. 
+ 
+ 
+ Acknowledgements.  Bican Xia’s work was supported by the National Key R & D Program of China (No. 2022YFA1005102). Simin Qin and Jing Yang’s work was supported by
+National Natural Science Foundation of China (Grant Nos.: 12326353 and 12261010) and the National Science Cultivation Project of GXMZU (Grant No.: 2022MDKJ001). 
+ 
+ 
+ 
+ Appendix A. 
+
+ 
+ Appendix A is dedicated to proving Proposition  20 . For this purpose, we need the following lemma which is a specialization of  [ 7 , Lemma 29] . 
+ 
+ 
+ Lemma 38 . 
+ 
+ Given  P ∈ ℝ ⁡ [ x ] P\in\mathbb{R}[x]  with degree  n n , let  𝐅 = ( P ( 0 ) , P ( 1 ) , … , P ( t ) ) \boldsymbol{F}=(P^{(0)},P^{(1)},\ldots,P^{(t)})  and  𝛅 = ( δ 1 , … , δ t ) ∈ 𝒫 ⁡ ( n , t ) \boldsymbol{\delta}=(\delta_{1},\ldots,\delta_{t})\in\mathcal{P}(n,t) . Then we have
+ R 𝛅 ∈ ⟨ 𝐅 ⟩ R_{\boldsymbol{\delta}}\in\langle\boldsymbol{F}\rangle . More explicitly, 
+ 
+
+ 
+ 
+ R 𝜹 = ∑ u = 0 t ∑ v = 0 δ u − 1 c u , v ​ x v ​ P ( u ) R_{\boldsymbol{\delta}}=\sum_{u=0}^{t}\sum_{v=0}^{\delta_{u}-1}c_{u,v}x^{v}P^{(u)} 
+ 
+ 
+ where  δ 0 \delta_{0}  is determined as in ( 8 ),  c u , δ u − 1 = ( − 1 ) σ ​ a n τ ​ R 𝛅 − 𝐞 u ¯ c_{u,\delta_{u}-1}=(-1)^{\sigma}a_{n}^{\tau}\overline{R_{\boldsymbol{\delta}-\boldsymbol{e}_{u}}}  for  u ≥ 1 u\geq 1  and 
+ 
+
+ 
+ 
+ σ = 1 + δ u + ⋯ + δ t , and τ = { 1 if ​ d u + δ u > max δ i ≠ 0 i ≠ 0 , u ⁡ ( d i + δ i ) ; 0 otherwise . \sigma=1+\delta_{u}+\cdots+\delta_{t},\ \ \text{and}\ \ \ \tau=\left\{\begin{array}[]{ll}1&\text{if}\ d_{u}+\delta_{u}>\max\limits_{\begin{subarray}{c}\delta_{i}\neq 0\\
+i\neq 0,u\end{subarray}}(d_{i}+\delta_{i});\\
+0&\text{otherwise}.\end{array}\right. 
+ 
+ 
+ 
+ 
+ 
+ Proof of Proposition  20 . 
+ 
+ Recall  𝜹 = ( δ 1 , … , δ t ) \boldsymbol{\delta}=(\delta_{1},\ldots,\delta_{t})  satisfies  | 𝜹 | ≤ n |\boldsymbol{\delta}|\leq n ,  δ t ≥ 1 \delta_{t}\geq 1  and  δ j > δ j + 1 \delta_{j}>\delta_{j+1}  for some  1 ≤ j < t 1\leq j<t .
+Let  𝜸 = 𝜹 − 𝒆 j \boldsymbol{\gamma}=\boldsymbol{\delta}-\boldsymbol{e}_{j}  and  𝜸 ′ = 𝜹 − 𝒆 t \boldsymbol{\gamma^{\prime}}=\boldsymbol{\delta}-\boldsymbol{e}_{t} .
+By Lemma  38 , 
+ 
+
+ 
+ 
+ R 𝜸 = ∑ u = 0 t ∑ v = 0 γ u − 1 c u , v ​ x v ​ P ( u ) , R 𝜸 ′ = ∑ u = 0 t ∑ v = 0 γ u ′ − 1 c u , v ′ ​ x v ​ P ( u ) \displaystyle R_{\boldsymbol{\gamma}}=\sum_{u=0}^{t}\sum_{v=0}^{\gamma_{u}-1}c_{u,v}x^{v}P^{(u)},\quad R_{\boldsymbol{\gamma^{\prime}}}=\sum_{u=0}^{t}\sum_{v=0}^{\gamma_{u}^{\prime}-1}c^{\prime}_{u,v}x^{v}P^{(u)} 
+ 
+ 
+ where  γ 0 \gamma_{0}  and  γ 0 ′ \gamma_{0}^{\prime}  are determined as in ( 8 ),
+and 
+ 
+
+ 
+ 
+ c t , γ t − 1 \displaystyle c_{t,\gamma_{t}-1} 
+ = ( − 1 ) 1 + γ t ​ R 𝜸 − 𝒆 t ¯ \displaystyle=(-1)^{1+\gamma_{t}}\overline{R_{\boldsymbol{\gamma}-\boldsymbol{e}_{t}}} 
+ 
+ 
+ 
+ 
+   ( τ = 0 \tau=0  is implied by  γ t < γ 1 \gamma_{t}<\gamma_{1}  and  d t = n − t < n − 1 = d 1 d_{t}=n-t<n-1=d_{1} ) 
+ 
+ 
+ 
+ 
+ = ( − 1 ) 1 + δ t ​ R 𝜹 − 𝒆 j − 𝒆 t ​ ( 𝑭 ) ¯ , (since  γ t = δ t ) \displaystyle=(-1)^{1+\delta_{t}}\overline{R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}-\boldsymbol{e}_{t}}(\boldsymbol{F})},\hskip 90.00014pt\text{(since $\gamma_{t}=\delta_{t}$)} 
+ 
+ (17) 
+ 
+ 
+ c j , γ j ′ − 1 ′ \displaystyle c^{\prime}_{j,\gamma_{j}^{\prime}-1} 
+ = ( − 1 ) 1 + γ j ′ + ⋯ + γ t ′ ​ a n τ ​ R 𝜸 ′ − 𝒆 j ¯ \displaystyle=(-1)^{1+\gamma^{\prime}_{j}+\cdots+\gamma^{\prime}_{t}}a_{n}^{\tau}\overline{R_{\boldsymbol{\gamma^{\prime}}-\boldsymbol{e}_{j}}} 
+ 
+ 
+ 
+ 
+ = ( − 1 ) δ j + ⋯ + δ t ​ a n τ ​ R 𝜹 − 𝒆 t − 𝒆 j ¯ \displaystyle=(-1)^{\delta_{j}+\cdots+\delta_{t}}a_{n}^{\tau}\overline{R_{\boldsymbol{\delta}-\boldsymbol{e}_{t}-\boldsymbol{e}_{j}}} 
+ 
+ (18) 
+ 
+ 
+ 
+ (since  γ j ′ = δ j  for  j < t  and  γ t ′ = δ t − 1 ) , \displaystyle\hskip 10.00002pt\ \text{(since $\gamma_{j}^{\prime}=\delta_{j}$ for $j<t$ and $\gamma_{t}^{\prime}=\delta_{t}-1$)}, 
+ 
+ 
+ where  τ = { 1 if ​ j = 1 ; 0 otherwise \tau=\left\{\begin{array}[]{ll}1&\text{if}\ j=1;\\
+0&\text{otherwise}\end{array}\right.  (which is a specialization of  τ \tau  in Lemma  38 ). 
+ 
+ 
+ Since  γ t = δ t \gamma_{t}=\delta_{t}  and  γ j ′ = δ j \gamma_{j}^{\prime}=\delta_{j} , the above linear combinations can be further rewritten as 
+ 
+
+ 
+ 
+ 
+ c t , δ t − 1 ​ x δ t − 1 ​ P ( t ) = R 𝜸 − ∑ ( u , v ) ∈ C 1 c u , v ​ x v ​ P ( u ) , \displaystyle c_{t,\delta_{t}-1}x^{\delta_{t}-1}P^{(t)}=R_{\boldsymbol{\gamma}}-\sum_{(u,v)\in C_{1}}c_{u,v}x^{v}P^{(u)}, 
+ 
+ (19) 
+ 
+ 
+ 
+ c j , δ j − 1 ′ ​ x δ j − 1 ​ P ( j ) = R 𝜸 ′ − ∑ ( u , v ) ∈ C 2 c u , v ′ ​ x v ​ P ( u ) . \displaystyle c^{\prime}_{j,\delta_{j}-1}x^{\delta_{j}-1}P^{(j)}=R_{\boldsymbol{\gamma^{\prime}}}-\sum_{(u,v)\in C_{2}}c^{\prime}_{u,v}x^{v}P^{(u)}. 
+ 
+ (20) 
+ 
+ where 
+ 
+
+ 
+ 
+ C 1 \displaystyle C_{1} 
+ = { ( u , v ) :  0 ≤ u ≤ t , 0 ≤ v ≤ γ u − 1 } \ { ( t , δ t − 1 ) } , \displaystyle=\{(u,v):\,0\leq u\leq t,0\leq v\leq\gamma_{u}-1\}\backslash\{(t,\delta_{t}-1)\}, 
+ 
+ 
+ 
+ C 2 \displaystyle C_{2} 
+ = { ( u , v ) :  0 ≤ u ≤ t , 0 ≤ v ≤ γ u ′ − 1 } \ { ( j , δ j − 1 ) } . \displaystyle=\{(u,v):\,0\leq u\leq t,0\leq v\leq\gamma^{\prime}_{u}-1\}\backslash\{(j,\delta_{j}-1)\}. 
+ 
+ 
+ Now we consider  R 𝜹 R_{\boldsymbol{\delta}} , which is 
+ 
+
+ 
+ 
+ R 𝜹 = dp ⁡ ( CLOSE \displaystyle R_{\boldsymbol{\delta}}=\operatorname{dp}( 
+ x δ 1 − 2 ​ P ( 0 ) , … , x 0 ​ P ( 0 ) , x δ 1 − 1 ​ P ( 1 ) , … , x 0 ​ P ( 1 ) , \displaystyle x^{\delta_{1}-2}P^{(0)},\ldots,x^{0}P^{(0)},x^{\delta_{1}-1}P^{(1)},\ldots,x^{0}P^{(1)}, 
+ 
+ 
+ 
+ 
+ OPEN … , x δ j − 1 ​ P ( j ) , … , x 0 ​ P ( j ) , … ​ … , x δ t − 1 ​ P ( t ) , … , x 0 ​ P ( t ) ) . \displaystyle\ldots,x^{\delta_{j}-1}P^{(j)},\ldots,x^{0}P^{(j)},\ldots\ldots,x^{\delta_{t}-1}P^{(t)},\ldots,x^{0}P^{(t)}). 
+ 
+ 
+ For the sake of simplicity, we introduce the following notations. Let 
+ 
+
+ 
+ 
+ P u , v = x v P ( u ) , Q u , v = P u , v − 1 , … , P u , 0 . P_{u,v}=x^{v}P^{(u)},Q_{u,v}=P_{u,v-1},\dots,P_{u,0}. 
+ 
+ 
+ Then we have 
+ 
+
+ 
+ 
+ R 𝜹 \displaystyle R_{\boldsymbol{\delta}} 
+ = dp ( Q 0 , δ 1 − 1 , Q 1 , δ 1 , … , Q j , δ j , … , Q t , δ t , … , Q n , δ n ) \displaystyle=\operatorname*{dp}(Q_{0,\delta_{1}-1},Q_{1,\delta_{1}},\dots,Q_{j,\delta_{j}},\dots,Q_{t,\delta_{t}},\dots,Q_{n,\delta_{n}}) 
+ 
+ 
+ 
+ 
+ = dp ( Q 0 , δ 1 − 1 , Q 1 , δ 1 , … , P j , δ j − 1 , Q j , δ j − 1 ⏟ Q j , δ j , … , P t , δ t − 1 , Q t , δ t − 1 ⏟ Q t , δ t , … , Q n , δ n ) . \displaystyle=\operatorname*{dp}(Q_{0,\delta_{1}-1},Q_{1,\delta_{1}},\dots,\underbrace{P_{j,\delta_{j}-1},Q_{j,\delta_{j}-1}}_{Q_{j,\delta_{j}}},\dots,\underbrace{P_{t,\delta_{t}-1},Q_{t,\delta_{t}-1}}_{Q_{t,\delta_{t}}},\dots,Q_{n,\delta_{n}}). 
+ 
+ 
+ Consider  c t , δ t − 1 ​ c j , δ j − 1 ′ ​ R 𝜹 c_{t,\delta_{t}-1}c^{\prime}_{j,\delta_{j}-1}R_{\boldsymbol{\delta}} . We derive the following: 
+ 
+
+ 
+ 
+ 
+ c t , δ t − 1 ​ c j , δ j − 1 ′ ​ R 𝜹 \displaystyle c_{t,\delta_{t}-1}c^{\prime}_{j,\delta_{j}-1}R_{\boldsymbol{\delta}} 
+ 
+ 
+ 
+ = \displaystyle=\  
+ dp ( Q 0 , δ 1 − 1 , Q 1 , δ 1 , … , c j , δ j − 1 ′ ​ P j , δ j − 1 , Q j , δ j − 1 , … , c t , δ t − 1 ​ P t , δ t − 1 , Q t , δ t − 1 , … , Q n , δ n ) \displaystyle\operatorname*{dp}(Q_{0,\delta_{1}-1},Q_{1,\delta_{1}},\dots,c^{\prime}_{j,\delta_{j}-1}P_{j,\delta_{j}-1},Q_{j,\delta_{j}-1},\dots,c_{t,\delta_{t}-1}P_{t,\delta_{t}-1},Q_{t,\delta_{t}-1},\dots,Q_{n,\delta_{n}}) 
+ 
+ 
+ 
+ 
+ ( pushing  c t , δ t − 1 ​ c j , δ j − 1 ′  into  dp ) \displaystyle\hskip 250.00038pt(\text{pushing $c_{t,\delta_{t}-1}c^{\prime}_{j,\delta_{j}-1}$ into $\operatorname*{dp}$}) 
+ 
+ 
+ 
+ = \displaystyle=\  
+ dp ( Q 0 , δ 1 − 1 , Q 1 , δ 1 , … , R 𝜹 − 𝒆 t , Q j , δ j − 1 , … , R 𝜹 − 𝒆 j , Q t , δ t − 1 , … , Q n , δ n ) \displaystyle\operatorname*{dp}(Q_{0,\delta_{1}-1},Q_{1,\delta_{1}},\dots,R_{\boldsymbol{\delta}-\boldsymbol{e}_{t}},Q_{j,\delta_{j}-1},\dots,R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}},Q_{t,\delta_{t}-1},\dots,Q_{n,\delta_{n}}) 
+ 
+ 
+ 
+ 
+ ( using  ( 19 ) – ( 20 )  and the multi-linearity of determinant polynomial to simplify  R 𝜹 ) \displaystyle\quad(\text{using $\eqref{eqs:C_t}$--$\eqref{eqs:C_j}$ and the multi-linearity of determinant polynomial to simplify $R_{\boldsymbol{\delta}}$}) 
+ 
+ 
+ 
+ = \displaystyle=\  
+ ( − 1 ) δ j + ⋯ + δ t − 1 dp ( Q 0 , δ 1 − 1 , Q 1 , δ 1 , … , Q j , δ j − 1 , … , Q t , δ t − 1 , … , Q n , δ n , R 𝜹 − 𝒆 j , R 𝜹 − 𝒆 t ) \displaystyle(-1)^{\delta_{j}+\dots+\delta_{t-1}}\operatorname*{dp}(Q_{0,\delta_{1}-1},Q_{1,\delta_{1}},\dots,Q_{j,\delta_{j}-1},\dots,Q_{t,\delta_{t}-1},\dots,Q_{n,\delta_{n}},R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}},R_{\boldsymbol{\delta}-\boldsymbol{e}_{t}}) 
+ 
+ 
+ 
+ 
+ ( moving  R 𝜹 − 𝒆 j  and  R 𝜹 − 𝒆 t  to the end ) \displaystyle\hskip 220.00034pt(\text{moving $R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}}$ and $R_{\boldsymbol{\delta}-\boldsymbol{e}_{t}}$ to the end}) 
+ 
+ 
+ 
+ = \displaystyle=\  
+ ( − 1 ) δ j + ⋯ + δ t − 1 a n τ R 𝜹 − 𝒆 j − 𝒆 t ¯ dp ( R 𝜹 − 𝒆 j , R 𝜹 − 𝒆 t ) ( using the block structure of dp ) \displaystyle(-1)^{\delta_{j}+\dots+\delta_{t-1}}a_{n}^{\tau}\overline{R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}-\boldsymbol{e}_{t}}}\operatorname*{dp}(R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}},R_{\boldsymbol{\delta}-\boldsymbol{e}_{t}})\ \hskip 35.00005pt(\text{using the block structure of dp}) 
+ 
+ 
+ where 
+ 
+
+ 
+ 
+ τ = { 1 if ​ j = 1 ; 0 otherwise . \tau=\left\{\begin{array}[]{ll}1&\text{if}\ j=1;\\
+0&\text{otherwise}.\end{array}\right. 
+ 
+ 
+ 
+ 
+ Now we substitute ( 17 ) and ( 18 ) into the first line of the equation and obtain 
+ 
+
+ 
+ 
+ ( − 1 ) δ j + ⋯ + δ t − 1 + 1 a n τ ( R 𝜹 − 𝒆 j − 𝒆 t ​ ( 𝑭 ) ¯ ) 2 R 𝜹 ( 𝑭 ) = ( − 1 ) δ j + ⋯ + δ t − 1 a n τ R 𝜹 − 𝒆 j − 𝒆 t ​ ( 𝑭 ) ¯ dp ( R 𝜹 − 𝒆 j , R 𝜹 − 𝒆 t ) (-1)^{\delta_{j}+\dots+\delta_{t-1}+1}a_{n}^{\tau}\left(\overline{R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}-\boldsymbol{e}_{t}}(\boldsymbol{F})}\right)^{2}R_{\boldsymbol{\delta}}(\boldsymbol{F})=(-1)^{\delta_{j}+\dots+\delta_{t-1}}a_{n}^{\tau}\overline{R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}-\boldsymbol{e}_{t}}(\boldsymbol{F})}\operatorname*{dp}(R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}},R_{\boldsymbol{\delta}-\boldsymbol{e}_{t}}) 
+ 
+ (21) 
+ 
+ Note that  𝜹 \boldsymbol{\delta}  is a decreasing vector and so is  𝜹 − 𝒆 t − 𝒆 j \boldsymbol{\delta}-\boldsymbol{e}_{t}-\boldsymbol{e}_{j} , which implies that for some value of  a i a_{i} ’s,  R 𝜹 − 𝒆 t − 𝒆 j ​ ( 𝑭 ) ¯ ≠ 0 \overline{R_{\boldsymbol{\delta}-\boldsymbol{e}_{t}-\boldsymbol{e}_{j}}(\boldsymbol{F})}\neq 0 . Hence  R 𝜹 − 𝒆 t − 𝒆 j ​ ( 𝑭 ) ¯ \overline{R_{\boldsymbol{\delta}-\boldsymbol{e}_{t}-\boldsymbol{e}_{j}}(\boldsymbol{F})}  is a nonzero polynomial in terms of  a i a_{i} ’s. Therefore, after canceling the common factors from both sides of ( 21 ), we have 
+ 
+
+ 
+ 
+ − R 𝜹 − 𝒆 t − 𝒆 j ​ ( 𝑭 ) ¯ ​ R 𝜹 ​ ( 𝑭 ) = dp ⁡ ( R 𝜸 ​ ( 𝑭 ) , R 𝜸 ′ ​ ( 𝑭 ) ) . -\overline{R_{\boldsymbol{\delta}-\boldsymbol{e}_{t}-\boldsymbol{e}_{j}}(\boldsymbol{F})}R_{\boldsymbol{\delta}}(\boldsymbol{F})=\operatorname{dp}(R_{\boldsymbol{\gamma}}(\boldsymbol{F}),R_{\boldsymbol{\gamma^{\prime}}}(\boldsymbol{F})). 
+ 
+ 
+ Note that 
+ 
+
+ 
+ 
+ deg ⁡ R 𝜸 ​ ( 𝑭 ) \displaystyle\deg R_{\boldsymbol{\gamma}}(\boldsymbol{F}) 
+ = n − | 𝜸 | = n − | 𝜹 | + 1 , \displaystyle=n-|\boldsymbol{\gamma}|=n-|\boldsymbol{\delta}|+1, 
+ 
+ 
+ 
+ deg ⁡ R 𝜸 ′ ​ ( 𝑭 ) \displaystyle\deg R_{\boldsymbol{\gamma^{\prime}}}(\boldsymbol{F}) 
+ = n − | 𝜸 ′ | = n − | 𝜹 | + 1 . \displaystyle=n-|\boldsymbol{\gamma^{\prime}}|=n-|\boldsymbol{\delta}|+1. 
+ 
+ 
+ which implies  deg ⁡ R 𝜸 ​ ( 𝑭 ) = deg ⁡ R 𝜸 ′ ​ ( 𝑭 ) \deg R_{\boldsymbol{\gamma}}(\boldsymbol{F})=\deg R_{\boldsymbol{\gamma^{\prime}}}(\boldsymbol{F}) . Therefore,
+we deduce that 
+ 
+
+ 
+ 
+ dp ⁡ ( R 𝜸 ​ ( 𝑭 ) , R 𝜸 ′ ​ ( 𝑭 ) ) = − prem ( R 𝜸 ​ ( 𝑭 ) , R 𝜸 ′ ​ ( 𝑭 ) ) \operatorname{dp}(R_{\boldsymbol{\gamma}}(\boldsymbol{F}),R_{\boldsymbol{\gamma^{\prime}}}(\boldsymbol{F}))=-\operatorname*{prem}(R_{\boldsymbol{\gamma}}(\boldsymbol{F}),R_{\boldsymbol{\gamma^{\prime}}}(\boldsymbol{F})) 
+ 
+ 
+ which indicates that 
+ 
+
+ 
+ 
+ R 𝜹 − 𝒆 j − 𝒆 t ​ ( 𝑭 ) ¯ ​ R 𝜹 ​ ( 𝑭 ) = prem ( R 𝜹 − 𝒆 j ​ ( 𝑭 ) , R 𝜹 − 𝒆 t ​ ( 𝑭 ) ) . \overline{R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}-\boldsymbol{e}_{t}}(\boldsymbol{F})}R_{\boldsymbol{\delta}}(\boldsymbol{F})=\operatorname*{prem}(R_{\boldsymbol{\delta}-\boldsymbol{e}_{j}}(\boldsymbol{F}),R_{\boldsymbol{\delta}-\boldsymbol{e}_{t}}(\boldsymbol{F})). 
+ 
+ 
+ ∎ 
+ 
+ 
+ 
+ 
+ Appendix B. 
+
+ 
+ Given a polynomial  P P , the repeated gcd of  P P  and  P ′ P^{\prime}  is defined as  ( G ~ 1 , … , G ~ n ) (\tilde{G}_{1},\ldots,\tilde{G}_{n})  where 
+ 
+
+ 
+ 
+ G ~ i = gcd ⁡ ( G ~ i − 1 , G ~ i − 1 ′ ) \tilde{G}_{i}=\gcd(\tilde{G}_{i-1},\tilde{G}^{\prime}_{i-1}) 
+ 
+ 
+ with
+ G ~ 0 := P \tilde{G}_{0}:=P .
+In this paper, we use the incremental gcds of  P ( 0 ) , P ( 1 ) , … P^{(0)},P^{(1)},\ldots  instead of repeated gcds. In the appendix, we provide a detailed proof on their equivalence. 
+ 
+ 
+ Lemma 39 . 
+ 
+ Let  G 0 = P G_{0}=P . Then for  i ≥ 0 i\geq 0 , we have  G i ∼ G ~ i G_{i}\sim\tilde{G}_{i} . 
+ 
+ 
+ 
+ Proof. 
+ 
+ Without loss of generality, we assume 
+ 
+
+ 
+ 
+ P = a n ​ ∏ k = 1 m ( x − r k ) μ k . P=a_{n}\prod_{k=1}^{m}(x-r_{k})^{\mu_{k}}. 
+ 
+ 
+ To prove
+ G i ∼ G ~ i G_{i}\sim\tilde{G}_{i} ,
+we only need to show 
+ 
+ •  
+ 
+ G i ∼ ∏ μ k > i ( x − r k ) μ k − i G_{i}\sim\prod_{\mu_{k}>i}(x-r_{k})^{\mu_{k}-i} , and 
+ 
+ •  
+ 
+ G ~ i ∼ ∏ μ k > i ( x − r k ) μ k − i , \tilde{G}_{i}\sim\prod_{\mu_{k}>i}(x-r_{k})^{\mu_{k}-i}, 
+ 
+ 
+ whose proof will be given in an inductive manner. 
+ 
+ 
+ Base case. 
+When  i = 0 i=0 , we have 
+ 
+
+ 
+ 
+ G 0 = G ~ 0 = P = a n ​ ∏ μ k > 0 ( x − r k ) μ k G_{0}=\tilde{G}_{0}=P=a_{n}\prod_{\mu_{k}>0}(x-r_{k})^{\mu_{k}} 
+ 
+ 
+ which is obviously true. 
+ 
+ 
+ Induction step. 
+We assume the claim holds when  i = j i=j , i.e. 
+ 
+
+ 
+ 
+ G j \displaystyle G_{j} 
+ = gcd ⁡ ( G j − 1 , P ( j ) ) ∼ ∏ μ k > j ( x − r k ) μ k − j , \displaystyle=\gcd(G_{j-1},P^{(j)})\sim\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j}, 
+ 
+ 
+ 
+ G ~ j \displaystyle\tilde{G}_{j} 
+ = gcd ⁡ ( G ~ j − 1 , G ~ j − 1 ′ ) ∼ ∏ μ k > j ( x − r k ) μ k − j . \displaystyle=\gcd(\tilde{G}_{j-1},\tilde{G}^{\prime}_{j-1})\sim\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j}. 
+ 
+ 
+ Then for  i = j + 1 i=j+1 , 
+ 
+
+ 
+ 
+ G j + 1 = gcd ⁡ ( G j , P ( j + 1 ) ) , G ~ j + 1 = gcd ⁡ ( G ~ j , G ~ j ′ ) . G_{j+1}=\gcd(G_{j},P^{(j+1)}),\qquad\tilde{G}_{j+1}=\gcd(\tilde{G}_{j},\tilde{G}^{\prime}_{j}). 
+ 
+ 
+ Next we deduce the expressions for  G j + 1 G_{j+1}  and  G ~ j + 1 \tilde{G}_{j+1} , respectively. 
+ 
+ 
+ By assumption,  G j ∼ ∏ μ k > j ( x − r k ) μ k − j G_{j}\sim\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j} .
+Obviously, we have 
+ 
+ •  
+ 
+ ∏ μ k > j + 1 ( x − r k ) μ k − ( j + 1 ) | G j \prod_{\mu_{k}>j+1}(x-r_{k})^{\mu_{k}-(j+1)}\mid G_{j} , and 
+ 
+ •  
+ 
+ when  μ k > j \mu_{k}>j , 
+ 
+
+ 
+ 
+ ( x − r k ) μ k | P ( 0 ) , ( x − r k ) μ k − 1 | P ( 1 ) , … , ( x − r k ) μ k − j | P ( j ) (x-r_{k})^{\mu_{k}}\mid P^{(0)},(x-r_{k})^{\mu_{k}-1}\mid P^{(1)},\ldots,(x-r_{k})^{\mu_{k}-j}\mid P^{(j)} 
+ 
+ 
+ 
+ 
+ Next we show that  ∏ μ k > j + 1 ( x − r k ) μ k − ( j + 1 ) | P ( j + 1 ) \prod_{\mu_{k}>j+1}(x-r_{k})^{\mu_{k}-(j+1)}\mid P^{(j+1)} .
+The key for verifying the claim is the observation that when  μ k > j + 1 \mu_{k}>j+1 , 
+ 
+
+ 
+ 
+ P ( j + 1 ) ​ ( r k ) = ⋯ = P ( μ k − 1 ) ​ ( r k ) = 0 , P^{(j+1)}(r_{k})=\cdots=P^{(\mu_{k}-1)}(r_{k})=0, 
+ 
+ 
+ but  P ( μ k ) ​ ( r k ) ≠ 0 P^{(\mu_{k})}(r_{k})\neq 0 , which indicates that
+ x = r k x=r_{k}  is the multiple roots of  P ( j + 1 ) ​ ( x ) P^{(j+1)}(x)  with multiplicity  μ k − ( j + 1 ) \mu_{k}-(j+1) . Thereby,  ( x − r k ) μ k − ( j + 1 ) | P ( j + 1 ) ​ ( x ) (x-r_{k})^{\mu_{k}-(j+1)}\mid P^{(j+1)}(x) . Moreover, we also have  ( x − r k ) μ k − j ∤ P ( j + 1 ) (x-r_{k})^{\mu_{k}-j}\nmid P^{(j+1)} . Hence 
+ 
+ 
+ 
+
+ 
+ 
+ G j + 1 = gcd ⁡ ( G j , P ( j + 1 ) ) ∼ ∏ μ k > j + 1 ( x − r k ) μ k − ( j + 1 ) G_{j+1}=\gcd(G_{j},P^{(j+1)})\sim\prod_{\mu_{k}>j+1}(x-r_{k})^{\mu_{k}-(j+1)} 
+ 
+ 
+ 
+ 
+ Again, by assumption,  G ~ j ∼ ∏ μ k > j ( x − r k ) μ k − j \tilde{G}_{j}\sim\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j} .
+Thus 
+ 
+
+ 
+ 
+ G ~ j ′ ∼ ( ∏ μ k > j ( x − r k ) μ k − j ) ′ \displaystyle\tilde{G}^{\prime}_{j}\sim\left(\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j}\right)^{\prime} 
+ = ∑ μ k > j ( ( μ k − j ) ​ ( x − r k ) μ k − j − 1 ​ ∏ ℓ ≠ k μ ℓ > j ( x − r ℓ ) μ ℓ − j ) \displaystyle=\sum_{\mu_{k}>j}\left((\mu_{k}-j)(x-r_{k})^{\mu_{k}-j-1}\prod_{\underset{\mu_{\ell}>j}{\ell\neq k}}(x-r_{\ell})^{\mu_{\ell}-j}\right) 
+ 
+ 
+ 
+ 
+ = ( ∑ μ k > j ( μ k − j ) ​ ∏ ℓ ≠ k μ ℓ > j ( x − r ℓ ) ) ​ ( ∏ μ k > j ( x − r k ) μ k − j − 1 ) . \displaystyle=\left(\sum_{\mu_{k}>j}(\mu_{k}-j)\prod_{\underset{\mu_{\ell}>j}{\ell\neq k}}(x-r_{\ell})\right)\left(\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j-1}\right). 
+ 
+ 
+ It follows that 
+ 
+
+ 
+ 
+ G ~ j + 1 \displaystyle\tilde{G}_{j+1} 
+ = gcd ⁡ ( G ~ j , G ~ j ′ ) \displaystyle=\gcd(\tilde{G}_{j},\tilde{G}^{\prime}_{j}) 
+ 
+ 
+ 
+ 
+ ∼ gcd ⁡ ( ∏ μ k > j ( x − r k ) μ k − j , ( ∏ μ k > j ( x − r k ) μ k − j ) ′ ) \displaystyle\sim\gcd\left(\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j},\left(\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j}\right)^{\prime}\right) 
+ 
+ 
+ 
+ 
+ = gcd ⁡ ( ∏ μ k > j ( x − r k ) μ k − j , ( ∑ μ k > j ( μ k − j ) ​ ∏ ℓ ≠ k μ ℓ > j ( x − r ℓ ) ) ​ ( ∏ μ k > j ( x − r k ) μ k − j − 1 ) ) \displaystyle=\gcd\left(\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j},\left(\sum_{\mu_{k}>j}(\mu_{k}-j)\prod_{\underset{\mu_{\ell}>j}{\ell\neq k}}(x-r_{\ell})\right)\left(\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j-1}\right)\right) 
+ 
+ 
+ 
+ 
+ = gcd ⁡ ( ∏ μ k > j ( x − r k ) , ∑ μ k > j ( μ k − j ) ​ ∏ ℓ ≠ k μ ℓ > j ( x − r ℓ ) ) ⋅ ( ∏ μ k > j ( x − r k ) μ k − j − 1 ) . \displaystyle=\gcd\left(\prod_{\mu_{k}>j}(x-r_{k}),\sum_{\mu_{k}>j}(\mu_{k}-j)\prod_{\underset{\mu_{\ell}>j}{\ell\neq k}}(x-r_{\ell})\right)\cdot\left(\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j-1}\right). 
+ 
+ 
+ It remains to show that 
+ 
+
+ 
+ 
+ gcd ⁡ ( ∏ μ k > j ( x − r k ) , ∑ μ k > j ( μ k − j ) ​ ∏ ℓ ≠ k μ ℓ > j ( x − r ℓ ) ) = 1 \gcd\left(\prod_{\mu_{k}>j}(x-r_{k}),\sum_{\mu_{k}>j}(\mu_{k}-j)\prod_{\underset{\mu_{\ell}>j}{\ell\neq k}}(x-r_{\ell})\right)=1 
+ 
+ 
+ which can be proved with the following verification 
+ 
+
+ 
+ 
+ ( ∑ μ k > j ( μ k − j ) ​ ∏ l ≠ k μ l > j ( x − r ℓ ) ) | x = r u = ( μ u − j ) ​ ∏ ℓ ≠ k μ ℓ > j ( r u − r ℓ ) ≠ 0 \left(\sum_{\mu_{k}>j}(\mu_{k}-j)\prod_{\underset{\mu_{l}>j}{l\neq k}}(x-r_{\ell})\right)\Bigg|_{x=r_{u}}=(\mu_{u}-j)\prod_{\underset{\mu_{\ell}>j}{\ell\neq k}}(r_{u}-r_{\ell})\neq 0 
+ 
+ 
+ for  u ∈ { μ k : μ k > j } u\in\{\mu_{k}:\,\mu_{k}>j\} . Hence 
+ 
+
+ 
+ 
+ G ~ j + 1 ∼ ∏ μ k > j ( x − r k ) μ k − j − 1 ∼ G j + 1 . \tilde{G}_{j+1}\sim\prod_{\mu_{k}>j}(x-r_{k})^{\mu_{k}-j-1}\sim G_{j+1}. 
+ 
+ 
+ ∎ 
+ 
+ 
+ 
+ 
+ References 
+
+ 
+      
+ [1] 
+ 
+W. S. Brown and J. F. Traub.
+
+ 
+ On Euclid’s algorithm and the theory of subresultants.
+
+ 
+ Journal of the Association for Computing Machinery ,
+18:505–514, 1971.
+
+ 
+      
+ [2] 
+ 
+G. E. Collins.
+
+ 
+ Subresultants and reduced polynomial remainder sequences.
+
+ 
+ Journal of the Association for Computing Machinery ,
+14:128–142, 1967.
+
+ 
+      
+ [3] 
+ 
+L. González-Vega, T. Recio, H. Lombardi, and M. F. Roy.
+
+ 
+ Sturm-Habicht Sequences, Determinants and Real Roots of
+Univariate Polynomials.
+
+ 
+ In  Quantifier Elimination and Cylindrical Algebraic
+Decomposition. Texts and Monographs in Symbolic Computation (A Series of the
+Research Institute for Symbolic Computation, Johannes-Kepler-University,
+Linz, Austria) , pages 300–316. Springer, 1998.
+
+ 
+      
+ [4] 
+ 
+H. Hong and J. Yang.
+
+ 
+ A condition for multiplicity structure of univariate polynomials.
+
+ 
+ CoRR , abs/2001.02388, 2020.
+
+ 
+      
+ [5] 
+ 
+H. Hong and J. Yang.
+
+ 
+ A condition for multiplicity structure of univariate polynomials.
+
+ 
+ Journal of Symbolic Computation , 104:523–538, 2021.
+
+ 
+      
+ [6] 
+ 
+H. Hong and J. Yang.
+
+ 
+ Subresultant of several univariate polynomials.
+
+ 
+ CoRR , abs/2112.15370, 2021.
+
+ 
+      
+ [7] 
+ 
+H. Hong and J. Yang.
+
+ 
+ Computing greatest common divisor of several parametric univariate
+polynomials via generalized subresultant polynomials.
+
+ 
+ CoRR , abs/2401.00408, 2024.
+
+ 
+      
+ [8] 
+ 
+H. Hong and J. Yang.
+
+ 
+ Parametric “non-nested” discriminants for multiplicities of
+univariate polynomials.
+
+ 
+ Science China Mathematics , 67(8):1911–1932, 2024.
+
+ 
+      
+ [9] 
+ 
+R. A. Horn and C. R. Johnson.
+
+ 
+ Topics in Matrix Analysis .
+
+ 
+ Cambridge University Press, 1991.
+
+ 
+      
+ [10] 
+ 
+S. Liang and D. J. Jeffrey.
+
+ 
+ An algorithm for computing the complete root classification of a
+parametric polynomial.
+
+ 
+ In J. Calmet, T. Ida, and D. Wang, editors,  Artificial
+Intelligence and Symbolic Computation , pages 116–130, Berlin, Heidelberg,
+2006. Springer Berlin Heidelberg.
+
+ 
+      
+ [11] 
+ 
+S. Liang, D. J. Jeffrey, and M. M. Maza.
+
+ 
+ The complete root classification of a parametric polynomial on an
+interval.
+
+ 
+ In  International Symposium on Symbolic and Algebraic
+Computation , 2008.
+
+ 
+      
+ [12] 
+ 
+S. Liang and J. Zhang.
+
+ 
+ A complete discrimination system for polynomials with complex
+coefficients and its automatic generation.
+
+ 
+ Science in China Series E: Technological Sciences , 42:113–128,
+1999.
+
+ 
+      
+ [13] 
+ 
+R. Loos.
+
+ 
+ Generalized polynomial remainder sequences.
+
+ 
+ In B. Buchberger, G. E. Collins, R. Loos, and R. Albrecht, editors,
+ Computer Algebra: Symbolic and Algebraic Computation , pages 115–137.
+Springer Vienna, Vienna, 1983.
+
+ 
+      
+ [14] 
+ 
+W. Wang and J. Yang.
+
+ 
+ Two variants of Bézout subresultants for several univariate
+polynomials.
+
+ 
+ In F. Boulier, M. England, I. Kotsireas, T. M. Sadykov, and E. V.
+Vorozhtsov, editors,  Computer Algebra in Scientific Computing , pages
+350–369, Cham, 2023. Springer Nature Switzerland.
+
+ 
+      
+ [15] 
+ 
+L. Yang, X. Hou, and Z. Zeng.
+
+ 
+ A complete discrimination system for polynomials.
+
+ 
+ Science in China (Series E): Technological Sciences ,
+39:628–646, 1996.
+
+ 
+      
+ [16] 
+ 
+C. K. Yap.
+
+ 
+ Fundamental Problems of Algorithmic Algebra .
+
+ 
+ Oxford University Press, Inc., USA, 1999.
+
+ 
+    
+ 
+ 
+ 
+ 
+ 
+ 
+   
+    Experimental support, please
+     view the build logs 
+    for errors. Generated by
+     
+       
+        L
+         A 
+        T
+         E 
+       
+       xml 
+       
+     .
+   
+   
+     Instructions for reporting errors 
+     We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below: 
+     
+       Click the "Report Issue"  ( 
+             
+           )  button, located in the page header. 
+     
+     Tip:  You can select the relevant text first, to include it in your report. 
+     Our team has already identified  the following issues . We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all. 
+     Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a  list of packages that need conversion , and welcome  developer contributions . 
+   
+ 
+   
+     
+       
+        We gratefully acknowledge support from
+        our  major funders ,
+         member institutions ,  ,
+        and all contributors.
+       
+       
+         About 
+         · 
+         Help 
+         · 
+         Contact 
+         · 
+         Subscribe 
+         · 
+         Copyright 
+         · 
+         Privacy 
+         · 
+         Accessibility 
+         · 
+         Operational Status  (opens in new tab) 
+       
+     
+
+     
+       Major funding support from 
+       
+         
+           
+         
+         
+           
+         
+         
+           
+         
+       
+     
+   
+ 
+   
+     
+       
+     
+   
+ 
+ 

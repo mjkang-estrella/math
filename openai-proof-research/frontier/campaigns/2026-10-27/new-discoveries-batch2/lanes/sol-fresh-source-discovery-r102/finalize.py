@@ -1,0 +1,11 @@
+from pathlib import Path
+import json,hashlib,datetime
+P=Path(__file__).resolve().parent
+sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
+http=json.loads((P/'http.json').read_text());audit=json.loads((P/'duplicate-audit-focus.json').read_text());reg=json.loads((P/'registry-screen.json').read_text())
+prov=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),status='UNRESOLVED',credit=0,counts=dict(additional=8,total=38),questions=[dict(source='https://arxiv.org/html/2610.34990v1',label='Conjecture 1.1',scope='all integers s,k>=3, n>=a_k+s; all finite simple hosts; ordinary noninduced saturation'),dict(source='https://arxiv.org/html/2610.34990v1',label='Section 4 classification question',scope='all minimum K3-join-Pk saturated graphs in paper domain k>=3,n>=a_k+3')],ordinary_proof=False,PROOF_md=False,Lean=False,paper=False,duplicate_files=len(audit['files']),duplicate_focus_hits=len(audit['hits']),registry=reg,http=http,prior_limits=['Original s2 journal body not obtained: ordinary publisher403, no retry','Original Kaszonyi-Tuza1986 proof body unread; actual classical survey theorem/structure text read','Complete18:13baseline and r99/r101 older dated chains inherited; no semantic global clearance','Public searches bounded; no worldwide priority claim'],resource=dict(guard_sha256=sha(P/'helper_guard.py'),address_space_bytes=512*1024*1024,group_RSS_bytes=512*1024*1024,cpu_seconds=210,wall_seconds=230,sampling_ms=40,BLAS_threads=1,raised_caps=False,deviations=['One trivial parser-file-edit Python invocation unguarded; no substantive computation/retrieval.','Some early guard output retained in tool transcript only.'],failures=['Missing bs4; stdlib replacement','sed replacement ampersand expansion caused syntax failure before retrieval']),verification=json.loads((P/'check-results.json').read_text()))
+(P/'provenance.json').write_text(json.dumps(prov,indent=2))
+(P/'sourcebytes.sha256').write_text(''.join(f'{sha(f)}  {f.relative_to(P)}\n' for f in sorted((P/'sources').rglob('*')) if f.is_file()))
+files=[f for f in P.rglob('*') if f.is_file() and f.name!='manifest.sha256']
+(P/'manifest.sha256').write_text(''.join(f'{sha(f)}  {f.relative_to(P)}\n' for f in sorted(files)))
+print('finalized',len(files),'files',len(http),'HTTP records')
