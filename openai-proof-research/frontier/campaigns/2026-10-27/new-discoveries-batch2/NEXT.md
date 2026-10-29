@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+Renyi independent final review adopted for source/math/formal/rebuild/manuscript
+PASS and scoped substantive PASS. Current-prior HOLD remains exactly the capped
+0d4df45→d254db interval; failed bc7ac2 midpoint is divergent and not a partition.
+NEW targeted Sol closure sol-renyi-final-delta-closure-r4 must certify ancestry,
+uncapped paths and relevant missing/actual bodies for that fixed head, no HEAD
+chasing. Review frozen208files; original347candidatepaths reverified. Root record
+lanes/root-renyi-final-review-adoption-r1/ADOPTION.json. Node marker procedural
+qualification preserved. Three active: this closure, factorial final review,
+fresh research r118. No acceptance; counts unchanged8additional/38total.
+
 Factorial final packet frozen: root read all three own PDF renders, verified102
 delivery hashes plus descriptor and70 payload files, reproduced PDF/ZIP exactly,
 and fresh portable replay passed31 actual declarations with unchanged raw audit.
