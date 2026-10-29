@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+Renyi final packet frozen for independent review. Root read all four own PDF
+renders, verified346 frozen delivery files plus descriptor and121 payload files,
+freshly extracted final ZIP, reproduced PDF/ZIP byte-identically and replayed all
+11 modules/104 actual declarations. Source/math scope and prior qualifications
+retained; PDF author's failed Node marker remains disclosed. Root evidence:
+lanes/root-renyi-final-review-freeze-r1/ROOT-REBUILD.json and freeze.json.
+NEW independent Sol final review sol-renyi-threshold-full-final-review-r1.
+Three active: Renyi final review, factorial manuscript, fresh research r117.
+No acceptance yet; counts unchanged8additional/38total.
+
 Factorial literal Gamma component freshly replayed by root: one mathematical
 module,31 actual declarations, standard-three only, empty compilelog; actual
 audit byte-identical to worker. Integer-list source negation and nonempty disjoint
