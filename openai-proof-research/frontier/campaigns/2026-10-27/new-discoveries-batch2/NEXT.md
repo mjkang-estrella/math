@@ -1,5 +1,13 @@
 # Current continuation — 29 October 2026
 
+r134 unrestricted zpd/zJpd equivalence and idempotent generation remain
+unresolved. Root verifies 75 manifest entries and 63 scientific-freeze entries,
+replays 6,561 M2(F3) pairs and dual-number controls, and checks the left-ideal,
+flip and inheritance distinctions. These are method obstructions, not source
+counterexamples. See root-r134-handback. No credit; counts remain 9/39.
+Sol r137 replaces r134; r135/r136 continue.
+
+
 r131/r132 adopted zero nominees. Total isolation/tree bounds and arbitrary-field
 SK worst-start mixing remain unresolved. Root verifies 89/82 manifest entries,
 replays 288 sampled minimax graphs, five component controls, and SK route
