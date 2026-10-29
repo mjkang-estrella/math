@@ -1,0 +1,9 @@
+# Progress
+
+1. Read root/campaign constraints, parsed both ledgers/context and NEXT, read recent geometry/selection rejection summaries and prior discrete target notes. No selected-family conflict found. All prohibited/active targets avoided.
+2. Selected one distinct source family: translation-only universal polyomino containers. Read full public registry statement before proof investment; author code404, live registry roots and matching pinned proof bodies screened. No reliance on MathDB status.
+3. Independently derived tree-center/box bounds; these did not establish punctured-container universality. Restricted exact search D5 minus four off-axis interior cells,8882connected candidates. One survived all135268fixed11-ominoes: remove(±2,±2), leaving57cells.
+4. Wrote separate streaming enumeration and root-image translation verifier; saved135268literal witnesses. Third audit checks certificate family exactly equals complete normalized growth family and all witnesses are valid. Every one-cell deletion has an explicit nonembedding obstruction; this is inclusion-minimality only.
+5. Ordinary container cardinality/connectivity and small-box embedding arguments completed. Residual hard box types explicitly unproved geometrically. No PROOF.md or Lean investment.
+6. Read closest2022 MathOverflow proof bodies; quadratic lower bounds do not imply exact coefficient or n11value. Misleading Kakeya-comment shortcut rejected. Current Omega head changed; public330file diff screen obtained, fresh-tree gap retained. OpenAI/AIM/Count heads unchanged, complete cached trees verified.
+7. Wrote handoff and provenance. All computations terminated successfully; no accepted result/count change. Recommend independent review of substantive literal candidate and computational-proof status, not immediate acceptance.
