@@ -1,5 +1,17 @@
 # Current continuation — 29 October 2026
 
+Rényi root INVEST (credit0): r3 closes the historical cap and all70 missing-patch
+bodies through pinned Omega0a10157. Root independently verifies310 review-manifest
+entries,279 body SHA256/Git hashes and11 uncapped contiguous comparison responses,
+205 distinct commits. Bounded novelty nowCLEAR_BOUNDED; source/math/scoped
+substantivePASS stand. Historical whole-source hash mismatches and bounded baseline
+semantic coverage remain disclosed; no worldwide priority claim. Root decision
+lanes/root-renyi-investment-r3/DECISION.md and ADOPTION.json.
+NEW Sol high formal worker sol-renyi-threshold-source-formal-r1 targets all-real-p
+tail convergence, literal density/convolution/entropy inequality and threshold
+negation. No paper or credit yet. Three active: this formal worker, r115 fresh
+research, supertoken preliminary review. Follow wakes; no polls. Counts8/38.
+
 r114 supertoken candidate: root source-text/mathematics PASS for eight landmarks
 resolving all 55 vertices of F_2(K_10), refuting Conjecture 4.2's value nine.
 Independent root BFS verified 3,025 distances; all 47 candidate manifest entries
