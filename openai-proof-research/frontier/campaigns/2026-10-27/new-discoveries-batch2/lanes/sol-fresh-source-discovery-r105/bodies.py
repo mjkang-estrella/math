@@ -1,0 +1,8 @@
+exec((__import__('pathlib').Path(__file__).parent/'read.py').read_text().split('for name,url in')[0])
+paths=['Blueprint/D5/S3/Combinatorics/MeshPattern/MeshPatternS21Defs.md','D5/S3/Combinatorics/MeshPattern/MeshPatternS21Defs.lean','Blueprint/D5/S3/Combinatorics/MeshPattern/Class69InvolutionRefutation.md','D5/S3/Combinatorics/MeshPattern/Class69InvolutionRefutation.lean','Blueprint/D5/S3/Combinatorics/MeshPattern/UlfarssonAlternatingMeshBasis.md','D5/S3/Combinatorics/MeshPattern/UlfarssonAlternatingMeshBasis.lean','Blueprint/D5/S3/Combinatorics/PanSkanderaWangBruhat.md','D5/S3/Combinatorics/PanSkanderaWangBruhat.lean']
+log=[]
+for i,p in enumerate(paths):
+ u='https://raw.githubusercontent.com/the-omega-institute/trureturing/73a5033dd654a16a14fcd1b13277f1a03d81d826/'+p;b=get(f'literal-{i}.txt',u);log.append({'url':u,'file':f'sources/literal-{i}.txt','bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()});print(p,b.decode(errors='replace')[:6500],flush=True)
+(L/'literal-bodies.json').write_text(json.dumps(log,indent=2))
+# Freeze inherited registry path evidence; this is a bounded screen, not global absence clearance.
+R=pathlib.Path('/home/mj-kang/Documents/Dev/math/openai-proof-research');p=L.parent/'root-edge-irregulator-final-freeze-r1/omega-tree.txt';b=p.read_bytes();ls=[s for s in b.decode().splitlines() if re.search(r'mesh|boxed|bruhat|heilbronn|kitaev|sudermann',s,re.I)];(L/'registry-path-screen.json').write_text(json.dumps({'inherited_tree':str(p.relative_to(R)),'sha256':hashlib.sha256(b).hexdigest(),'matching_paths':ls,'limit':'18:13 baseline, inherited dated delta chain, current zero delta only; no exhaustive semantic clearance'},indent=2))
