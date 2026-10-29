@@ -47,8 +47,12 @@ r71 determinantal semigroups and r72 Zinn doubling remain unresolved; limited
 root handbacks preserve their gaps and freshness/access holds.
 r73 Sun binomial-coprimality remains unresolved; exact carry/prime-menu
 obstructions and limited root checks preserved in root-fresh-source-r73-handback.
-Active Sol high/default: edge-irregulator source formal r1, fresh finite/algebra r75,
-and fresh analysis r76. r74 sharp Chernoff curvature remains unresolved;
+r75 q-Fibonomial revisit remains unresolved; late first-campaign duplicate
+identification invalidates its initial freshness claim. No credit.
+r76 supplies a complete ordinary silicosis multiplicity candidate, with
+classical-subsumption/source-scope holds; independent review pending, credit0.
+Active Sol high/default: edge-irregulator source formal r1, fresh finite/algebra r77,
+and silicosis preliminary review r1. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.
