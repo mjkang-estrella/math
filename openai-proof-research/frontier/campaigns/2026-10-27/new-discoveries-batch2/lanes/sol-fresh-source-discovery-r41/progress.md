@@ -1,0 +1,13 @@
+# Progress and limits
+
+1. Read ancestor/batch rules, parsed ledger and prior-campaign context, reconciled recent actual r37-r40 summaries and exclusions. Retained byte copies/hashes of relevant inputs. Pinned upstream accepted as true; no upstream-truth audit. Read catalogue header and complete pinned preprint path listing metadata; current exact scopes independently refreshed.
+2. Public search emphasized finite groups, finite fields and posets. Early body reads caught already-public circular/poset counterexamples and the source's own Deaconescu refutation. No polynomial-shape positive census substituted for a proof.
+3. Selected group Q6.1(5) with regular-wreath mechanism; completed ordinary proof, including nonabelian monolith and exact-order density. Source's definitions and full existential quantifiers preserved. Self-screen recommends routine exclusion, not acceptance. No children or purported independent review.
+4. Saved current five heads, Omega compare, fresh complete D5 and unchanged named cached subtrees. Read the actually matching Sun proof and path history. False-positive filename hits are not theorem matches; no whole-registry absence claim.
+5. Exact independent capped checks all passed; results in check-results.json. No large group enumeration. No Lean build or helper investment.
+
+Access/technical failures: first text extraction attempted bs4, unavailable; replaced by standard HTMLParser and then PDF extraction. Sun's2019 author-hosted PDF connection refused, logged once; no retry loop. arXivv9 is authentic but does not certify published-version equality. Poppler font-type warnings were followed by rendered-page review. No403/429/challenge bypasses.
+
+Exact remaining gap: no mathematical gap in the explicitly scoped wreath answer; the discovery-standard problem is its routine construction. An independent eligibility review has not occurred, no novelty clearance is established, no literal Lean endpoint is closed. Q6.1(1)-(4) and corrected circular classification remain outside claims. Do not count this lane or repurpose its exact checks as novelty/formal certificates.
+
+Search audit (29Oct2026UTC; queries submitted through public web search): finite-group element-order conjectures2025/2026; finite-field permutation binomials; finite-poset conjectures2025; exact2610.06289 title plus proof/counterexample; Sun Some new problems additive combinatorics Conj3.8; McCulloch Young monolithic60;2602.19340 wreath; Question6.1 monolithic; regular wreath monolithic exponent; exact group title journal. Authentic selected source bodies saved; search-engine result streams themselves not archived as authentic page bytes. Search coverage is bounded and not a universal prior-art clearance.
