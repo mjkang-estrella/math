@@ -1,5 +1,23 @@
 # Current continuation — 29 October 2026
 
+Outcome39 ACCEPTED: full subunit Rényi threshold refutation. For each real0<p<1,
+a normalized truncated exponential beats the exponential iid positive-sum entropy
+increment. Root and independent final replay11modules/104actual declarations,
+four-page PDF and deterministic ZIP pass. Dedicated closure removes fixed
+0d4df45→d254db cap:9steps/28commits/538paths. Bounded semantic/priority and
+failed authoring-marker qualifications retained. Reviewed draft bytes unchanged;
+acceptance sidecar supersedes pending prose. See root-renyi-acceptance-r1.
+
+Factorial final review adopted SUBSTANTIVE FAIL: complete classical concentration
+box/two-scale valuation bridge reaches exact distinct-support conclusion. Earlier
+provisional PASS superseded; source/math/31declaration portable replay/paper remain
+valid zero-credit artifacts. See root-factorial-final-exclusion-r1/DECISION.md.
+
+Accepted9/30 additional,39/60 total; next40. Three active Sol high/default:
+fresh research r119 (finite/arithmetic),r120 (analytic/geometric),r121
+(structural/algebraic). All other pending wording below is historical.
+
+
 r118 closed with zero nominees. Root verified the corrected72-file manifest,
 44 local source hashes and39 supporting rational identities; public proof scope
 screening is not an independent audit of all external mathematics. Initial
