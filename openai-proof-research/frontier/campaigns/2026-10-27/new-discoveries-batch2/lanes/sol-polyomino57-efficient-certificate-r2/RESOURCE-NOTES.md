@@ -1,0 +1,5 @@
+The original monitor records all development Lean calls in runs.jsonl. The monolithic numeric1024 run was manually SIGTERM'd after about two minutes; rc=-15 and kill_reason=null denote that manual cancellation. It did not hit a relaxed limit. Subsequent terminal certificates split reductions into 32-row leaves. Their one-module development check used 8.380092717 seconds and 1960230912 sampled group RSS bytes. The strictly serial extracted replay is separately recorded in extracted/runs.jsonl.
+
+Initial development proof failures are ordinary Lean errors and warningAsError failures; no placeholder proof was accepted. Shell path mistakes and a dependent rewrite failure were corrected. A short development compile overlapped the monolithic pilot before it was cancelled; no final replay compile overlaps another. No process from another lane was signaled. Only the known NumericPilot Lean process group was terminated.
+
+SortedCertificate.lean subsequently passed its separate source-only extracted replay and actual-origin audit; see ADDON-RECEIPT.json. It is packaged in source-only-sorted-addon.zip, separately from the unchanged main archive.
