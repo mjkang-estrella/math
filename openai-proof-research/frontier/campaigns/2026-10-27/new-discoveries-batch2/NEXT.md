@@ -1,15 +1,21 @@
 # Current continuation — 29 October 2026
 
-Accepted4/30 additional,34/60 total. Outcome34 is the convergent nongeometric
-cascade counterexample. Its source scope, bounded novelty, independent final
-review and final root extracted replay are recorded in
-lanes/root-cascade-acceptance-r1/ACCEPTANCE.json. No external posting.
+Accepted5/30 additional,35/60 total. Outcome35 proves the full displayed
+strict two-branch inequality of published mean Conjecture37; the separate
+between-means terminology condition is outside its formal endpoint. Decision:
+lanes/root-log-arctangent-acceptance-r1/ACCEPTANCE.json. Outcome34 remains the
+convergent nongeometric cascade counterexample. No external posting.
 
-Mean Conjecture37 has a closed35-module proof and a seven-page paper/packet;
-independent final review is running, so its credit remains0. Fenner–Green–Homer
-Conjecture11.1 has a proposed full ordinary proof in
-lanes/sol-fresh-full-source-discovery-r20/; source/mathematical/subsumption review
-is next, with no formal certificate or credit. Use Solhigh/default delegates.
+Fenner–Green–Homer Conjecture11.1 is excluded: Jin's complete public proof at
+AIM commit c1f79e312f2b7bae2636469c506376a873100691 (14 October) predates our
+candidate. Root read its full proof and adopted the independent exclusion in
+lanes/root-fenner-preliminary-freeze-r1/EXCLUSION.json. No Lean investment.
+Brugidou all-partition positivity remains unresolved in fresh r21; credit0.
+
+Continue fresh full-scope research with Solhigh/default, up to3 workers.
+Screen current MColbrook/AIM and clopen leads as well as Omega/OpenAI/Count;
+read actual relevant primary proof bodies and compare exact scope/chronology.
+Avoid replaying the failed families without a new mathematical mechanism.
 
 ## Historical continuation notes
 

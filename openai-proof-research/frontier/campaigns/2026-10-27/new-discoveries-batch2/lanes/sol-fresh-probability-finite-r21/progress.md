@@ -1,0 +1,7 @@
+# Progress
+
+2026-10-29 UTC. Read both governing AGENTS files, immutable catalogue pin, ledger/prior context and completed r20/audit receipts. Screened three immutable catalogue introductions. MathDB direct access returned403; stopped direct requests. Refreshed all three requested registry heads at08:45:52; fetched complete current Omega subtrees and verified unchanged OpenAI/count heads against complete cached bases. Added the on-point AI-Has-Taste registry after public search exposed it.
+
+At08:46:49 retrieved latest v7 source and v1 companion. At08:47:36 retrieved v2 companion; actual current metadata subsequently confirms the DFS conjecture was removed because false. Excluded that lead. Read public hook-partial manuscript and focused on the original all-partition positivity conjecture. Derived exact signed expansion; deletion/merge domination failed at(2,1). Capped exact checks passed. No general cancellation argument was obtained. No unfinished worker lanes read, no helper promoted, no acceptance work begun.
+
+Final artifacts: SUMMARY.md, discovery.md, provenance.json, registry-screen.json, check.py/check.log/checks.json, public HTTP receipts, saved actual bodies and scripts. Outcome unresolved; root may review the precise failed mechanism and version exclusion. A return to this target needs a different complete mechanism, not a larger census or extension of already-public hook prefixes.
