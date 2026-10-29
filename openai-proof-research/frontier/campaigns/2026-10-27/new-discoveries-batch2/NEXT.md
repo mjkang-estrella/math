@@ -1,3 +1,50 @@
+## Characteristic filtration and latest handbacks — 29 October 2026
+
+Root saved root-tian-characteristic-r1/FINDINGS.md: exact 2-/3-adic contents
+of individual diagonal gradients equal left/right path depths; characteristic
+2/3 derivatives recover extreme labels. A fixed-left-depth F2 independence
+criterion would imply full Tian Conjecture3, but is UNPROVED. It passes all
+23714 trees through11 leaves; six-leaf repeated leading degrees defeat the
+easy degree argument. Literal multivariate differentiation independently
+checks that witness. Helpers/evidence only, credit0, count3/30 and33/60.
+
+Completed Sol q-Motzkin r3: full A4 remains open; exact Christoffel coefficient
+determinant/q-Lommel reformulation retained, geometric coefficient-array
+positivity is false. Completed fresh probability r12: hyperenergetic finite-ring
+example is partial/routine, full source classification open. Completed analysis
+r13: Miyamoto361811 quotient ordering open, generic pointwise-order and all-index
+positive-moment shortcuts false; Laplace–Polya lead is routine. Root read all
+completed threads/summaries and q-Motzkin/Miyamoto full discovery reports.
+No new acceptance, no source hold cleared, no completed old worker left active.
+New Sol high/default tasks: sol-tian-characteristic-filtration-r3 (prove or
+falsify root criterion), sol-qmotzkin-tableaux-full-r4 (verify proposed flagged
+root-of-unity reformulation before using it), sol-miyamoto-full-quotients-r2
+(full four-iterate ordering). Receipts: sol-three-lanes-r14-launches.json.
+These are async; follow completion wakes, never poll.
+
+## Completed r11 handbacks and two new Sol lanes — 29 October 2026
+
+Root read both completed threads and summaries; full BBK discovery report also
+read. Counts remain 3/30 additional, 33/60 total. BBK r5 verifies the 103 root
+identities and proves an obstruction to adaptive single-factor additive
+cancellation trees on G(m+1,m-1), m>=4. This is NOT a counterexample to BBK5.4;
+arbitrary multi-factor positive constructions remain open. Fresh geometry r11
+reports Tao334668 subsumed by Naseri Sadr2610.24376 Cor6.3 plus Tao Thm6.10;
+no candidate nominated, no independent root primary-body clearance claimed here.
+
+Root re-read q-Motzkin adoption corrections. New Sol high/default lanes:
+sol-qmotzkin-geometric-full-r3 seeks a full geometric-weight argument beyond
+the disproved independent-height and naive Toda-square strategies;
+sol-fresh-probability-algebra-r12 screens a distinct untouched target.
+Tian r11 subsequently completed: full target unresolved, uncredited gradient
+criteria/substitution closure and an infinite-family obstruction reported.
+Root read its completed thread and summary; no independent full proof review
+or source clearance claimed. Its freed slot now runs sol-fresh-real-analysis-r13,
+restricted to fresh real-analysis targets to avoid the other two lanes.
+Exact launch receipts are sol-two-lanes-r12-launches.json and
+sol-real-analysis-r13-launch.json. Follow completion wakes, do not poll.
+No ledger, accepted packet or source-hold change.
+
 ## Four-projection new source evidence — 29 October 2026 05:35 UTC
 
 Root recovered Banica author-hosted mop.pdf via public Wayback, linked from archived2019 author publicationlist to exactAAM83citation. PDFarchived2021/buildmetadata2020,22pages,sha7dace127049add291a7097d15e7fb59106efb995d8bf60fcc77858a2331f68e3; page20 visuallyread, Conj6.6 allsixhypotheses/trace/MPdefinition retained, onlyS0specialcaseknown. This is NOT typesetVoR or provenance-certified acceptedmanuscript; journalSOURCEHOLD retained, no novelty/countchange. Evidence REPORT.md/provenance in root-fourprojection-source-access-r4; do notrepeatarchiveauthorroute. Three Solr11 workers remain background/unpolled (BBK,Tian,freshgeometry); next followscompletionwakes.
