@@ -20,7 +20,9 @@ with source/prior-art holds preserved. See lanes/root-fresh-source-r63-handback/
 r61 odd-grid congruence refutation is also excluded: the public same-object
 three-color count and Stanley Corollary1.3 supply a complete routine bridge.
 See lanes/root-fresh-source-r61-handback/ADOPTION.json.
-Three fresh Sol high/default research lanes r65 finite structures, r62 analysis,
+r62 Kalmykov-Karp gamma-shift variants are excluded by actual public proofs of
+the same universal source claims; see lanes/root-fresh-source-r62-handback/ADOPTION.json.
+Three fresh Sol high/default research lanes r65 finite structures, r66 analysis,
 r64 arithmetic/algebra are active; no children. Keep exclusions and actual source
 scopes, and do not equate Blueprint markdown trees with actual Lean trees.
 
