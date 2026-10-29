@@ -22,8 +22,11 @@ three-color count and Stanley Corollary1.3 supply a complete routine bridge.
 See lanes/root-fresh-source-r61-handback/ADOPTION.json.
 r62 Kalmykov-Karp gamma-shift variants are excluded by actual public proofs of
 the same universal source claims; see lanes/root-fresh-source-r62-handback/ADOPTION.json.
-Three fresh Sol high/default research lanes r65 finite structures, r66 analysis,
-r64 arithmetic/algebra are active; no children. Keep exclusions and actual source
+r64 Han-Pedon and r65 Latin-square unimodality remain unresolved. Their exact
+proof gaps and limited root replays are preserved in root-fresh-source-r64-handback
+and root-fresh-source-r65-handback; no counts changed.
+Three fresh Sol high/default research lanes r68 finite structures, r66 analysis,
+r67 arithmetic/algebra are active; no children. Keep exclusions and actual source
 scopes, and do not equate Blueprint markdown trees with actual Lean trees.
 
 ## Historical continuation notes
