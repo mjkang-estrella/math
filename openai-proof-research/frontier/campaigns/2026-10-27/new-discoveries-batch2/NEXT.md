@@ -1,3 +1,29 @@
+# Current checkpoint — three further lanes completed; full statements unresolved
+
+Counts remain **3/30 additional, 33/60 total**. Root read the handbacks of
+sol-denominator-dyadic-discovery-r1, sol-bouthat-full-discovery-r2 and
+sol-fresh-matrix-discovery-r6. No proof, refutation, Lean endpoint or credit
+was nominated. Their reports retain exact reductions and route obstructions;
+this checkpoint does not certify an independent review of those reductions.
+
+Denominator: mixed-term positivity already fails on D8 -> D9, while the full
+log-concavity deficit stays positive. Ultra-log-concavity fails on the proposed
+blocks. Do not repeat either stronger invariant as a proof strategy.
+Bouthat: moment convex-order and standalone reflected-cotangent monotonicity
+fail; all-n adjacent inequalities remain unresolved.
+Chauhan–Dubey373375: local almost-E0 inverse signs do not yet prove global
+nonsingularity/determinant/inverse signs; singular smaller blocks remain a gap.
+Actual journal-body and closest-companion access limits remain.
+
+Next Sol high/default lanes: full q-Motzkin A.4, fresh analysis, and fresh
+combinatorics. Read root-qmotzkin-adoption-r1 before using the original Pi
+report: mixed-sign example is k=3, not k=2; old Lean does not compile;
+fixed-k partials earn no credit. Do not duplicate the three unresolved lanes
+above without a genuinely different concrete route. Launch receipts will be
+saved in sol-three-lanes-r9-launches.json. Follow completion wakes, never poll.
+
+---
+
 # Current checkpoint — three Sol discovery lanes completed without a full result
 
 Root Svinin source-access follow-up is recorded in
