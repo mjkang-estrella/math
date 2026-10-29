@@ -1,0 +1,15 @@
+# Implementation complete; independent final review pending
+
+Delivered a three-page rigorous manuscript (paper.pdf, paper.tex), deterministic final source-only archive, provenance/freeze manifests, offline reproducibility scripts, all final page renders and QA, plus a fresh replay from the final extracted packet. Credit 0; counts unchanged at 5/30 additional and 35/60 total.
+
+The theorem is ONE negative H-pair at order4 on K1,29 for the literal last-slot-reflected tensor with first free index. The paper gives the minimum-subgraph/cut argument, all30 coordinate equations, exact polynomial endpoint integers and IVT negativity proof. It does not infer nonsymmetric eigenvalue negativity from a quartic, refute the determinant-sign conjecture, claim failure at every even order, minimality, or a general all-n library.
+
+All six mathematical modules and the actual origin audit are byte-identical to root's frozen sources. Final extracted replay PASS: six modules, 118 declarations, exactly std3 axioms; all actual unsafe/partial/axiom flags false. Actual audit log is byte-identical to root. Lean binary SHA/version and all9package revisions checked. Peak sampled group RSS2703436KiB below2800MiB; unsampled transients cannot be excluded. Candidate compilation begins with zero own compiled objects. Reused upstream source/cache hashes do not certify rebuilding upstream.
+
+Both the PDF and final ZIP rebuilt byte-identically from final-extracted-r3/. Read final-source-only-replay/final-packet-receipt.json and replay-receipt.json. The final ZIP SHA is 8ba0587322d6818cb31a13ef71ea8fade78df902377b19bcf4f42e6369f72483. PDF SHA is d5781ad0a3c5eab44b57f8221291bf4c2c88852f67bb3bc60ebfd16d55966bf3. All payload hashes are in packet-manifest.json; artifact-hashes.json covers external final receipts/results. Results stay outside the archive to avoid circular hashes.
+
+Preserved the inherited preliminary review and strongest elementary-star/two-orbit/ancillary-question objection. No final novelty clearance or acceptance is invented. Root retains independent final source/math/formal/prior/manuscript review, current registry/source refresh, eligibility and acceptance. Source arXivv1 PDF hash, metadata15May2025/internal13June2025 discrepancy and lack of a located journal counterpart remain explicit. Classical edge-cut and IVT tools credited.
+
+Failures: inherited broad-import RSS kill disclosed with missing original log; two extracted-runner version checks aborted under Python AS512MiB, then passed with the existing separate monitored Lean policy, without increasing caps. Failed extractions remain locally. Initial reference-only fourth page fixed; all three final pages visually inspected. No resource failures in either complete mathematical replay.
+
+All writes confined to this lane. Solo; no children, git, shared edits/counts, external access/contact/posting/upload/account/browser action. See REPRODUCE.md for the exact command and local-cache prerequisites. This packet is ready for root's final independent reviewer, not accepted or counted.

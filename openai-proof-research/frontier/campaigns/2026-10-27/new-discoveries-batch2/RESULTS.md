@@ -1,7 +1,7 @@
 # Additional discoveries — current accepted results
 
-Accepted additional outcomes: **5/30**. Previous published batch: **30**, unchanged.
-Total accepted outcomes: **35/60**. Last updated 2026-10-29 UTC.
+Accepted additional outcomes: **6/30**. Previous published batch: **30**, unchanged.
+Total accepted outcomes: **36/60**. Last updated 2026-10-29 UTC.
 
 | Global | Result | Certificate | Paper and acceptance |
 |---|---|---|---|
@@ -11,6 +11,7 @@ Total accepted outcomes: **35/60**. Last updated 2026-10-29 UTC.
 |34|Convergent fixed cascade series without geometric decay; refutes Bernoulli2021 Conjecture4.2 rate clause|9 mathematical modules,360 actual-origin declarations, final extracted replay|[paper](candidates/cascade-rate/paper.pdf), [decision](lanes/root-cascade-acceptance-r1/ACCEPTANCE.json)|
 
 |35|Full two-branch nested power-mean inequality, published Conjecture37|35 mathematical +35 audit modules,560 unique declarations, final extracted replay|[paper](candidates/log-arctangent-mean/paper.pdf), [decision](lanes/root-log-arctangent-acceptance-r1/ACCEPTANCE.json)|
+|36|Negative H-eigenpair for the order-four reflected Steiner tensor on K1,29; full universal-positivity refutation|6 mathematical modules,118 declarations, final extracted strict replay|[paper](candidates/reflected-steiner/paper.pdf), [decision](lanes/root-steiner-reflection-acceptance-r1/ACCEPTANCE.json)|
 
 Each acceptance has independent adversarial review, exact primary-source scope,
 bounded novelty/subsumption screening and deterministic paper/Lean proof ZIP.

@@ -1,10 +1,14 @@
 # Current continuation — 29 October 2026
 
-Accepted5/30 additional,35/60 total. Outcome35 proves the full displayed
-strict two-branch inequality of published mean Conjecture37; the separate
-between-means terminology condition is outside its formal endpoint. Decision:
-lanes/root-log-arctangent-acceptance-r1/ACCEPTANCE.json. Outcome34 remains the
-convergent nongeometric cascade counterexample. No external posting.
+Accepted6/30 additional,36/60 total. Outcome36 refutes Cooper–Du reflected
+Steiner tensor positivity with a genuine negative H-eigenpair on K1,29.
+Independent final review, final paper/ZIP reproduction and root extracted
+6-module/118-declaration replay PASS. Bounded source/priority limits and
+elementary-star objection retained. Decision:
+lanes/root-steiner-reflection-acceptance-r1/ACCEPTANCE.json.
+Polyomino57 remains uncounted pending manuscript/final review; substantive
+dissent preserved in root-polyomino57-substantive-adjudication-r2. Fresh r45
+research remains active. No external posting or MathDB action.
 
 Fenner–Green–Homer Conjecture11.1 is excluded: Jin's complete public proof at
 AIM commit c1f79e312f2b7bae2636469c506376a873100691 (14 October) predates our
