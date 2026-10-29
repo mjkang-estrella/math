@@ -52,12 +52,14 @@ r73 Sun binomial-coprimality remains unresolved; exact carry/prime-menu
 obstructions and limited root checks preserved in root-fresh-source-r73-handback.
 r75 q-Fibonomial revisit remains unresolved; late first-campaign duplicate
 identification invalidates its initial freshness claim. No credit.
-r76 supplies a complete ordinary silicosis multiplicity candidate, with
-classical-subsumption/source-scope holds; independent review pending, credit0.
+r76 silicosis full intended multiplicity is ordinary-math sound but EXCLUDED
+as a routine classical variation-diminishing/Descartes reduction. Published VoR
+comparison now passes; equality existence qualification retained. Root decision:
+root-silicosis-exclusion-r1/EXCLUSION.json. No Lean or manuscript investment.
 r77 PECK remains unresolved; root exact fiber-coupling obstruction checked,
 not a source counterexample. See root-fresh-source-r77-handback/ADOPTION.json.
 Active Sol high/default: edge-irregulator lower/source formal r2, upper-witness
-formal r2, and silicosis preliminary review r1. r74 sharp Chernoff curvature remains unresolved;
+formal r2, and fresh source discovery r78. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.
