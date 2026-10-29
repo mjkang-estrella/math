@@ -1,0 +1,19 @@
+from pathlib import Path
+import json,hashlib,datetime,sys,platform
+import sympy,scipy,mpmath
+p=Path(__file__).resolve().parent;b=p.parent.parent
+sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
+paths=['AGENTS.md','ledger.json','prior-campaign-context.json','NEXT.md','lanes/root-polyomino57-acceptance-r1/ACCEPTANCE-PRIOR-LIMITS.json']+[f'lanes/sol-fresh-source-discovery-r{i}/SUMMARY.md' for i in [64,65,66]]
+ctx={z:{'sha256':sha(b/z)} for z in paths}
+for z in ['ledger.json','prior-campaign-context.json']:
+ d=json.loads((b/z).read_text());ctx[z]['accepted']=[{k:x.get(k) for k in ['number','title','scope']} for x in d.get('accepted',[])];ctx[z]['excluded']=[x.get('id',x) if isinstance(x,dict) else x for x in d.get('excluded',[])]
+trees=b/'lanes/sol-polyomino57-source-prior-refresh-r3/live'
+for z in ['omega-Problems.json','omega-D5.json']:
+ f=trees/z;d=json.loads(f.read_text());ctx[str(f)]={'sha256':sha(f),'tree_sha':d.get('sha'),'truncated':d.get('truncated'),'matches':[x['path'] for x in d.get('tree',[]) if any(s in x['path'].lower() for s in ['convol','palmer','supergauss','zaporozhets','mean-distance'])]}
+(p/'context-screen.json').write_text(json.dumps(ctx,indent=2))
+http=[json.loads(x) for x in (p/'http.jsonl').read_text().splitlines()]
+for row in http:
+ if 'headers' in row:row['headers']={k:v for k,v in row['headers'].items() if k.lower() in ['last-modified','etag','content-type','date']}
+prov={'created_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'lane':'sol-fresh-source-discovery-r69','credit':0,'campaign_additional':7,'campaign_total':37,'status':'unresolved; not nominated','source_reads':http,'additional_author_source':{'url':'https://sccn.ucsd.edu/~jason/ica2010_sg.pdf','version':'author-hosted2010 eight-page manuscript; conference VoR not authenticated','sha256':sha(p/'sources/palmer-2010.pdf'),'retrieval_utc_window':'2026-10-29T16:50:00Z/2026-10-29T16:56:00Z','exact_request_timestamp_retained':False},'web_reading_receipts':'sources/source-read.md','registry':{'status':'freshness HOLD','latest_observed_head':'6c27b0a84f560fa3e43d128d8a7f9e5f247e0be3','latest_observed_utc':'2026-10-29T15:49:00Z','current_head':None,'inherited_shared_API403_respected':True,'API_requests_this_lane':0,'reset_clearance':'not available in inspected inherited evidence','actual_lean_tree_screened':True,'Blueprint_tree_used_as_Lean':False,'external_Lean_recompiled':False},'eligibility':{'expert_identity':'HOLD: japalmer not verifiably linked to Jason A Palmer','full_ordinary_proof':False,'source_latest_MO_body_read':True,'novelty_clearance':False},'runtime':{'python':sys.version,'platform':platform.platform(),'sympy':sympy.__version__,'scipy':scipy.__version__,'mpmath':mpmath.__version__},'caps':{'AS_MiB':512,'groupRSS_MiB':512,'CPU_seconds':210,'wall_seconds':230,'sample_ms':40,'BLAS_threads':1},'checks':'sh run.sh','strongest_objection':'No uniform sign for conditional mean curvature plus variance; known class closures do not transfer.','precise_gap':'Prove folded Var A >= -E B for every SS+ input pair and close nonsmooth approximation, or give legal rigorous negative witness.','falsifier':'Legal SS+ pair and a certified interior negative curvature or three-point convexity violation.','limits':['No current registry delta clearance','Direct MO HTTP403; actual body read via public web tool, manually recorded','No named poster identity verified','Finite numerical signs are not proof','Author-hosted2010 conference VoR not authenticated','No complete ordinary result, Lean or independent review']}
+prov['artifacts']={str(f.relative_to(p)):sha(f) for f in sorted(p.rglob('*')) if f.is_file() and f.name not in ['provenance.json','SHA256SUMS.json','finalize.log','finalize-guard.json','seal.log','seal-guard.json']}
+(p/'provenance.json').write_text(json.dumps(prov,indent=2));print('provenance files',len(prov['artifacts']))

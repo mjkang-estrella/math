@@ -31,8 +31,11 @@ replay and frozen manifest checks are saved in root-fresh-source-r66-handback.
 r68 Rather zero-divisor independence unimodality remains unresolved. Its
 induced-class obstruction is not a source counterexample; exact root route
 replay is saved in root-fresh-source-r68-handback.
-Three fresh Sol high/default research lanes r70 finite structures, r69 analysis,
-r67 arithmetic/algebra are active; no children. Keep exclusions and actual source
+r67 Heim-Neuhauser and r69 squared-radius convolution closure remain unresolved.
+Root exact diagnostic replays are preserved; r69 expert-authorship HOLD is
+separate from its missing uniform inequality. No credit added.
+Three fresh Sol high/default research lanes r70 finite structures, r72 analysis,
+r71 arithmetic/algebra are active; no children. Keep exclusions and actual source
 scopes, and do not equate Blueprint markdown trees with actual Lean trees.
 
 ## Historical continuation notes
