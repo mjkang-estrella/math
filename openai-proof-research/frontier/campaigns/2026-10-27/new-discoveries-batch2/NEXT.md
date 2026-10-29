@@ -1,4 +1,30 @@
-# Current checkpoint — binomial valuation formal dependency integrated
+# Current checkpoint — complete literal Jacobi theorem; final packet pending
+
+The closed `JacobiShifted.source_claim : JacobiShifted.SourceClaim` is integrated
+at 4c7d134d30. It proves both the all-coefficient dyadic bound and sharpness for
+every r >= 1. Root's fresh source-only replay passed all 35 mathematical modules;
+the 58 declarations added by the final assembly use only the three allowed
+axioms. See lanes/root-jacobi-formal-r1/SOURCE-CLAIM-INTEGRATION.md.
+
+The source and current public-proof screen was refreshed at 97b21e8550. Fresh
+primary and companion bodies match the independent preliminary review. No
+matching public proof was found in that bounded screen; generic subsumption
+and novelty limits still require final independent adjudication. The paper must
+use the current primary v2 title recorded in
+lanes/root-jacobi-final-prior-r1/REVIEW.md.
+
+The manuscript, consolidated audit of all module origins, complete deterministic
+packet and extracted replay are assigned to the existing Sol manuscript lane
+(jacobi-manuscript-packet-sol-r1-launch.json). Do not poll or duplicate that task.
+After its completion notification, root must inspect the deliverables and obtain
+a fresh independent final review before any acceptance. Karp and BBK also remain
+asynchronous. Accepted count stays 2/30 additional, 32/60 total; Jacobi credit 0.
+
+Earlier checkpoints below are historical and do not describe current gaps.
+
+---
+
+# Historical checkpoint — binomial valuation formal dependency integrated
 
 Exact literal rational binomial sum valuation and nonvanishing now proved for
 all m, including0. Root read all sources/types/axioms and rebuilt3proof modules
