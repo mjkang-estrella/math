@@ -1,3 +1,17 @@
+## Formal investment begins for two reviewed candidates — 29 October2026
+
+Cascade: root-cascade-formal-r1/ADOPTION.md adopts independent math/source,
+supplement,substantive and boundedpriorPASS. Shared DepthDefs.lean compiles
+clean; literalmodel/tree and depth/rate arithmetic are distinct formal components.
+Mean: actual publisher Conjecture37 obtained at canonical validTLS hostname;
+root-log-arctangent-source-r3 commit5bd9a36b72 has PDF/renders andsimpleA/limits/
+between-means bridges. Independent investmentreviewr3 saysINVEST/substantivePASS.
+root-log-arctangent-formal-r1/ADOPTION.md adopts formal investment; initial closed
+Epositivity component uses reviewed finite24th-derivative certificate.
+No full formal endpoint yet; credit0,3/30 additional,33/60 total unchanged.
+Freshdiscrete r19 finished: Kahane circularfence identity remainsunresolved,
+finitechecksnotproof; rootreadterminalreportandSUMMARY. No count.
+
 ## Preliminary reviews received — 29 October 2026
 
 sol-log-arctangent-preliminary-review-r1: full displayed ordinary math PASS,
