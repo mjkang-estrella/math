@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r141 Entin–Landsberg function-field LCM remains unresolved. Root
+verifies91 manifest entries and reproduces 65,536 polynomial identities,
+52 large-prime collision pairs and9 LCM cross-checks. The constant-per-shift
+resultant bound is only O(q^n), not the needed o(q^n); the finite collision
+is a method obstruction. Both registry intervals remain capped. A root
+manifest-schema error was corrected and preserved. See root-r141-handback.
+Sol r144 replaces r141; r142/r143 continue. Credit0; counts9/39.
+
+
 r140 Bellec–Fritz iid inequality remains unresolved: the universal
 quartic upper bound is missing. Root verifies 56 manifest/54 scientific
 entries and reproduces all20 exact records; no repeated floating search or
