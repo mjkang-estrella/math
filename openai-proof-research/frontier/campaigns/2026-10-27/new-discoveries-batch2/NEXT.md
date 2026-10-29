@@ -71,7 +71,8 @@ r79 lasso separation is ordinary-math sound but current nomination EXCLUDED: no 
 r85 Miller–Reiner remains unresolved; root verified all 38 manifest hashes and the exact same-spectrum integral-cyclicity obstruction. Finite-field checks are necessary conditions only. See root-fresh-source-r85-handback/ADOPTION.json.
 r87 LCM–GCD Conjecture5 remains unresolved: the binary-10 direction is already public; universal binary-11 nonsingularity is missing. Root verified all 57 manifest hashes, 400 exact transformed entry pairs, and the indefinite principal block. See root-fresh-source-r87-handback/ADOPTION.json.
 r86 Eruguz linear-model retail unimodality is EXCLUDED as routine: source substitution and h' positive for x<b, h'' negative for x>=b settle all parameters. Root verified all 37 manifest entries and four symbolic derivative identities. Hyman and box-fragmentation scope holds retained. See root-fresh-source-r86-handback/EXCLUSION.json.
-Active Sol high/default: fresh analysis/probability r90, fresh structural r88, and fresh finite/arithmetic r89. r74 sharp Chernoff curvature remains unresolved;
+r88 Fuss–Narayana six-matrix Conjecture4.1 remains unresolved. Root verified all 40 manifest hashes, 216 square-collocation identities and the signed production row (-8,-9,10,1). All-minor positivity and closest-successor body comparisons remain open. See root-fresh-source-r88-handback/ADOPTION.json.
+Active Sol high/default: fresh analysis/probability r90, fresh structural r91, and fresh finite/arithmetic r89. r74 sharp Chernoff curvature remains unresolved;
 its generic-density obstruction is not an Airy counterexample. Root handback
 preserves the public-weaker-theorem and sharper-family eligibility limits.
 No children. Do not equate Blueprint and Lean trees.
