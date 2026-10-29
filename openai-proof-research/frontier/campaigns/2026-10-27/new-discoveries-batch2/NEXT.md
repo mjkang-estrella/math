@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r121 adopted zero nominees: crown/polygon and W2 questions have public proofs;
+Zhao alternating-Motzkin root concavity is an old r87 screen, still incomplete.
+Root verifies66 manifest entries and replays72 finite inequalities/two recurrence
+constructions. Method obstructions are not source counterexamples. New Sol r124
+must perform an uncapped target-specific duplicate pass before sustained work.
+Fresh r122/r123 continue; counts unchanged9additional/39total. Root record:
+lanes/root-r121-handback/DECISION.md and ADOPTION.json.
+
+
 r120 adopted zero nominees: Nielsen beta Problems2/3 already have public proofs;
 Problem1 is an old r51 target and its all-order nonmonotonicity follows by one
 source-kernel IBP and elementary endpoint bounds. Root checks the argument,
