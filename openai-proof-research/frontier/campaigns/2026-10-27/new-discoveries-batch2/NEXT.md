@@ -1,3 +1,28 @@
+## Root exact tail test and corrected powered-binomial reduction — 29 October 2026
+
+Counts remain3/30 additional,33/60 total. root-bbk-tail-projection-r3 gives
+a proved rational projection of the literal BBK eventual tail onto period105,
+and a necessary cube-dual inequality for5.4. All2520duals pass on each of
+three larger source products; independent444exact residue/series comparisons
+PASS. No BBK proof/refutation or novelty clearance; larger grids are lower
+priority than a uniform mechanism.
+
+IMPORTANT: sol-fresh-finite-source-r15's displayed A-monotonicity inequality
+has wrong signs. Read root-powered-binomial-adoption-r1/ADOPTION.md before
+using it. Correct E=(r+2)^l Dr Dr+2-((r+2)^l-(r+1)^l)Dr Dr+1
+-(r+1)^l Dr+1^2. The unproved all-r,j weak majorization of SQUARED explicit
+binomial-product lists would prove E coefficientwise positive for all integer
+l>=2; l1 is E=x(1+x)^(2r+1). Unsquared majorization fails r4,j2.
+240identities,19320coefficients,3843squared-majorization cases pass exactly,
+but NONE is an all-order proof or credited result.
+
+Root read completed r15finite, r16analytic and r17matrix/geometry threads
+through terminal reports. All credit0: full powered-binomial unimodality,
+logarithm-arctangent resultant inequality, and Vigh chord-quadrilateral
+conjecture remain unresolved. Existing source/novelty limits retained.
+Root fourprojection HDR route e4736293ec found slides only; journalHOLD stands.
+No old delegate remains active; next launch receipts identify replacements.
+
 ## BBK periodic-cone obstruction — 29 October 2026
 
 root-bbk-periodic-cone-r2/FINDINGS.md constructs a strictly positive integer
