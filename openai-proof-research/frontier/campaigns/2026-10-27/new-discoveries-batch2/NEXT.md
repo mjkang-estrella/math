@@ -1,5 +1,13 @@
 # Current continuation — 29 October 2026
 
+r119 adopted zero nominees: general minimum-period conjecture has a public
+refutation; repeated divisibility-chain question remains unresolved. Root read
+the source and actual seven-weight proof, verified39 manifest entries/four source
+hashes and replayed458 copied exact chain diagnostics. No universal chain proof.
+See lanes/root-r119-handback. Sol r122 replaces r119; r120/r121 continue.
+Latest r119 Omega observation a7769c3: d254db→a77647commits207paths uncapped,
+but no actual-body semantic clearance. Counts remain9additional/39total.
+
 Outcome39 ACCEPTED: full subunit Rényi threshold refutation. For each real0<p<1,
 a normalized truncated exponential beats the exponential iid positive-sum entropy
 increment. Root and independent final replay11modules/104actual declarations,
