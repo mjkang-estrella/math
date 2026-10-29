@@ -1,5 +1,12 @@
 # Current continuation — 29 October 2026
 
+r120 adopted zero nominees: Nielsen beta Problems2/3 already have public proofs;
+Problem1 is an old r51 target and its all-order nonmonotonicity follows by one
+source-kernel IBP and elementary endpoint bounds. Root checks the argument,
+verifies54 manifest entries and replays13 exact rational witnesses. Source2023
+access and historical semantic limits retained. See lanes/root-r120-handback.
+Sol r123 replaces r120; fresh r121/r122 continue. Counts unchanged9/39.
+
 r119 adopted zero nominees: general minimum-period conjecture has a public
 refutation; repeated divisibility-chain question remains unresolved. Root read
 the source and actual seven-weight proof, verified39 manifest entries/four source
