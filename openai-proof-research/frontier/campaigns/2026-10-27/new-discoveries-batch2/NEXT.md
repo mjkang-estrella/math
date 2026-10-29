@@ -1,3 +1,15 @@
+# Current checkpoint — Karp excluded; Erdos–Lax unresolved
+
+Accepted count remains **3/30 additional, 33/60 total**. Karp331384 has an
+exact public all-real-shift proof at337295b and is excluded. Erdos–Lax359807
+remains unresolved; auxiliary route obstructions are not counterexamples.
+Root adoption: lanes/root-karp-erdos-handback-r1/ADOPTION.md. Historical
+worker2/30 counts do not supersede outcome33. Upcoming Sol work may pursue
+Gladkov364374 or a fresh nonduplicative full source question. BBK remains
+assigned; do not poll or duplicate it.
+
+---
+
 # Current checkpoint — Jacobi accepted as outcome 33
 
 The full shifted denominator law is accepted as ONE outcome after independent
