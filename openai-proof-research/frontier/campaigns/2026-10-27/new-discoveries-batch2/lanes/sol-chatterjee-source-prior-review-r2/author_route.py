@@ -1,0 +1,5 @@
+exec(open(__file__.replace('author_route.py','fetch.py')).read().split('for name,repo,old in')[0])
+rows=json.loads((D/'http-receipts.json').read_text())
+get('https://drive.google.com/uc?export=view&id=1EbhRIBo3hoERFLHWUOVwIv4IiJgUDXTX','coauthor-linked.pdf')
+get('https://iris.uniroma1.it/simple-search?query=On+the+Metricity+of+the+Chatterjee+Correlation+Coefficient','iris-title-search.html')
+print(json.dumps(rows[-2:],indent=2))
