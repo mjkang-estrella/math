@@ -1,0 +1,18 @@
+import pathlib,hashlib,json,datetime
+L=pathlib.Path(__file__).resolve().parent;B=L.parent
+def sha(p):
+ h=hashlib.sha256()
+ with p.open('rb') as f:
+  for s in iter(lambda:f.read(65536),b''):h.update(s)
+ return h.hexdigest()
+deps=[B/'root-edge-irregulator-final-freeze-r1/CURRENT-REGISTRIES.json',B/'sol-fresh-source-discovery-r108/http.json',B/'sol-fresh-source-discovery-r108/refresh-http.json',B/'sol-fresh-source-discovery-r107/http.json',B/'root-renyi-preliminary-adoption-r1/ADOPTION.json',B/'root-renyi-threshold-review-freeze-r1/primary-receipts.json',B/'sol-renyi-threshold-preliminary-review-r1/live-receipts.jsonl',B/'sol-renyi-threshold-preliminary-review-r1/closest-receipts.jsonl']
+rows=[]
+for p in deps:
+ rows.append({'path':str(p),'sha256':sha(p),'bytes':p.stat().st_size})
+ # Small inherited receipts only, no bulk cache.
+ dest=L/'receipts'/p.parent.name/p.name;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(p.read_bytes())
+files={str(p.relative_to(L)):{'sha256':sha(p),'bytes':p.stat().st_size} for p in sorted(L.rglob('*')) if p.is_file() and p.name!='provenance.json'}
+before=json.loads((L/'before.json').read_text());after=json.loads((L/'after.json').read_text())
+out={'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'recommendation':'HOLD','checked_bodies_recommendation':'CLEAR_BOUNDED only for explicitly read bodies; no full subsumer located','acceptance':False,'credit':0,'counts':{'additional':8,'total':38},'proof_sha256':'ca72b385e83d919fbaa97af4d55f0e7d00e949c01c8c4af07fd93ef30fef977a','guard':{'path':str(B/'sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py'),'sha256':sha(B/'sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py'),'AS_bytes':536870912,'group_RSS_bytes':536870912,'cpu_seconds':210,'wall_seconds':230,'nominal_sample_ms':40,'BLAS_threads':1,'all_helper_exits':0,'observed_peak_RSS_max_bytes':46014464,'observed_wall_max_seconds':2.2443869119742885},'freeze_verification':{'before_utc':before['utc'],'after_utc':after['utc'],'candidate_paths':61,'preliminary_paths':46,'all_before_after_match':all(v['all_match'] for audit in [before,after] for v in audit['sets'].values())},'fresh_http':[json.loads(s) for s in (L/'http.jsonl').read_text().splitlines()],'inherited_receipts':rows,'coverage_gaps':{'old_cap_endpoint':'https://api.github.com/repos/the-omega-institute/trureturing/compare/1b999d9fda71df7537b62327147496d64a6f66ef...2130bf544f7858fc3c142bb9623b7ba9464e22ba','new_delta_missing_patch_bodies':'70 exact paths in registry-audit.json delta.missing_patches','no_claim':'No worldwide absence or full current semantic audit; no current access-block claim.'},'failures_and_corrections':['No fresh HTTP403/429 occurred; all six fresh primary/registry jobs plus three citer jobs returned200.','pdftotext rs.pdf emitted font-type/embedded-file mismatch warning; official HTML retained separately.','Initial inventory screen used older350009-line current-prior Omega inventory; corrected to actual350197-line final-freeze inventory and verified advertised SHA256.','Some combined console reads were truncated; essential proof sections subsequently read in targeted bounded selections.','Inherited r105 tree403, r106/r107 HEAD403, prior CMU404 and old compare300 cap not erased or represented as clearance.'],'scope_restrictions':{'solo':True,'children':0,'git_commands':0,'shared_edits':0,'browser':False,'contacts_posts_uploads_accounts':False,'bulk_cache_copied':False},'files':files}
+(L/'provenance.json').write_text(json.dumps(out,indent=2)+'\n')
+print(json.dumps({'files_bound':len(files),'provenance_sha256':sha(L/'provenance.json'),'all_freezes_match':out['freeze_verification']['all_before_after_match']}))
