@@ -1,0 +1,186 @@
+import Bounds
+import Witness
+import Mathlib.Data.Int.Interval
+import Mathlib.Data.Finset.Prod
+set_option autoImplicit false
+namespace Polyomino57.Diagonal
+open Polyomino57
+
+def u (p : GridPoint) : ℤ := p.1 + p.2
+def v (p : GridPoint) : ℤ := p.1 - p.2
+def inverse (s t : ℤ) : GridPoint := ((s+t)/2,(s-t)/2)
+def Parity (s t : ℤ) : Prop := s % 2 = t % 2
+instance (s t : ℤ) : Decidable (Parity s t) := inferInstanceAs (Decidable (_ = _))
+
+theorem parity (p : GridPoint) : Parity (u p) (v p) := by
+  dsimp [Parity,u,v]; omega
+
+theorem inverse_coordinates {s t : ℤ} (h : Parity s t) :
+    u (inverse s t) = s ∧ v (inverse s t) = t := by
+  dsimp [Parity] at h
+  dsimp [u,v,inverse]; omega
+
+theorem inverse_signed (p : GridPoint) : inverse (u p) (v p) = p := by
+  apply Prod.ext <;> dsimp [inverse,u,v] <;> omega
+
+theorem signed_injective {p q : GridPoint} (hu : u p = u q) (hv : v p = v q) : p = q := by
+  rw [← inverse_signed p, ← inverse_signed q,hu,hv]
+
+theorem lattice_iff (s t : ℤ) : (∃ p, u p = s ∧ v p = t) ↔ Parity s t := by
+  constructor
+  · rintro ⟨p,rfl,rfl⟩; exact parity p
+  · intro h; exact ⟨inverse s t,inverse_coordinates h⟩
+
+theorem adjacency (p q : GridPoint) : Adj p q ↔
+    (u q-u p).natAbs = 1 ∧ (v q-v p).natAbs = 1 := by
+  dsimp [Adj,u,v]; omega
+
+theorem norm (p : GridPoint) :
+    p.1.natAbs + p.2.natAbs = max (u p).natAbs (v p).natAbs := by
+  dsimp [u,v]; omega
+
+theorem grown_signed_bound {P : Finset GridPoint} (h : Grown P) :
+    ∀ p ∈ P, ∀ q ∈ P,
+      (u p-u q).natAbs ≤ P.card-1 ∧ (v p-v q).natAbs ≤ P.card-1 := by
+  induction h with
+  | singleton a =>
+    intro p hp q hq
+    have hp' := Finset.mem_singleton.mp hp
+    have hq' := Finset.mem_singleton.mp hq
+    subst p; subst q; simp
+  | @insert Q a b _ ha hb hab ih =>
+    intro p hp q hq
+    rw [Finset.card_insert_of_notMem hb]
+    have hc : 1 ≤ Q.card := Finset.card_pos.mpr ⟨a,ha⟩
+    have had := (adjacency a b).mp hab
+    rcases Finset.mem_insert.mp hp with hpB | hpOld
+    · subst p
+      rcases Finset.mem_insert.mp hq with hqB | hqOld
+      · subst q; simp
+      · have he := ih a ha q hqOld; omega
+    · rcases Finset.mem_insert.mp hq with hqB | hqOld
+      · subst q
+        have he := ih p hpOld a ha; omega
+      · have he := ih p hpOld q hqOld; omega
+
+theorem eleven_signed_bound {P : Finset GridPoint} (h : EdgeConnected P)
+    (hc : P.card = 11) (p : GridPoint) (hp : p ∈ P) (q : GridPoint) (hq : q ∈ P) :
+    (u p-u q).natAbs ≤ 10 ∧ (v p-v q).natAbs ≤ 10 := by
+  have hb := grown_signed_bound (growth_complete h) p hp q hq
+  simpa [hc] using hb
+
+-- Literal finite Cartesian domains, with no quotient vertices.
+def domain (a b e : ℤ) : Finset GridPoint :=
+  ((Finset.Icc (-(a+b+e+1)) (a+b+e+1)).product
+    (Finset.Icc (-(a+b+e+1)) (a+b+e+1))).filter
+    (fun p => 0 ≤ u p ∧ u p ≤ a ∧ e ≤ v p ∧ v p ≤ e+b)
+
+theorem mem_domain {a b e : ℤ} (ha : 0 ≤ a) (hb : 0 ≤ b) (he : 0 ≤ e)
+    (p : GridPoint) : p ∈ domain a b e ↔
+    0 ≤ u p ∧ u p ≤ a ∧ e ≤ v p ∧ v p ≤ e+b := by
+  simp only [domain,Finset.mem_filter,Finset.mem_product,Finset.mem_Icc]
+  dsimp [u,v]; omega
+
+def centers (a b e : ℤ) : Finset GridPoint :=
+  ((Finset.Icc (a-5) 5).product (Finset.Icc (e+b-5) (e+5))).filter
+    (fun c => Parity c.1 c.2)
+
+theorem mem_centers (a b e : ℤ) (c : GridPoint) :
+    c ∈ centers a b e ↔ a-5 ≤ c.1 ∧ c.1 ≤ 5 ∧
+      e+b-5 ≤ c.2 ∧ c.2 ≤ e+5 ∧ Parity c.1 c.2 := by
+  simp only [centers,Finset.mem_filter,Finset.mem_product,Finset.mem_Icc]
+  tauto
+
+def ExactExtrema (P : Finset GridPoint) (a b e : ℤ) : Prop :=
+  (∃ p ∈ P, u p = 0) ∧ (∃ p ∈ P, u p = a) ∧
+  (∃ p ∈ P, v p = e) ∧ (∃ p ∈ P, v p = e+b)
+
+def DiamondAt (P : Finset GridPoint) (c : GridPoint) : Prop :=
+  ∀ p ∈ P, (u p-c.1).natAbs ≤ 5 ∧ (v p-c.2).natAbs ≤ 5
+
+theorem centers_sufficient {P : Finset GridPoint} {a b e : ℤ}
+    (hP : ∀ p ∈ P, 0 ≤ u p ∧ u p ≤ a ∧ e ≤ v p ∧ v p ≤ e+b)
+    {c : GridPoint} (hc : c ∈ centers a b e) : DiamondAt P c := by
+  have hh := (mem_centers a b e c).mp hc
+  intro p hp
+  have hb := hP p hp; omega
+
+theorem centers_complete {P : Finset GridPoint} {a b e : ℤ}
+    (he : ExactExtrema P a b e) {c : GridPoint} (hc : Parity c.1 c.2)
+    (hd : DiamondAt P c) : c ∈ centers a b e := by
+  obtain ⟨⟨p,hp,hpu⟩,⟨q,hq,hqu⟩,⟨r,hr,hrv⟩,⟨s,hs,hsv⟩⟩ := he
+  have h1 := hd p hp; have h2 := hd q hq
+  have h3 := hd r hr; have h4 := hd s hs
+  apply (mem_centers a b e c).mpr
+  exact ⟨by omega,by omega,by omega,by omega,hc⟩
+
+def Collision (c p : GridPoint) : Prop :=
+  (u p-c.1 = 4 ∧ v p-c.2 = 0) ∨
+  (u p-c.1 = -4 ∧ v p-c.2 = 0) ∨
+  (u p-c.1 = 0 ∧ v p-c.2 = 4) ∨
+  (u p-c.1 = 0 ∧ v p-c.2 = -4)
+instance (c p : GridPoint) : Decidable (Collision c p) := inferInstanceAs (Decidable (_ ∨ _))
+def collisionGroup (a b e : ℤ) (c : GridPoint) : Finset GridPoint :=
+  (domain a b e).filter (Collision c)
+def boundaryGroups (a b e : ℤ) : Finset (Finset GridPoint) :=
+  {(domain a b e).filter (fun p => u p = 0),
+   (domain a b e).filter (fun p => u p = a),
+   (domain a b e).filter (fun p => v p = e),
+   (domain a b e).filter (fun p => v p = e+b)}
+def groups (a b e : ℤ) : Finset (Finset GridPoint) :=
+  boundaryGroups a b e ∪ (centers a b e).image (collisionGroup a b e)
+def HitsAll (P : Finset GridPoint) (G : Finset (Finset GridPoint)) : Prop :=
+  ∀ g ∈ G, ∃ p ∈ P, p ∈ g
+
+theorem mem_collisionGroup (a b e : ℤ) (c p : GridPoint) :
+    p ∈ collisionGroup a b e c ↔ p ∈ domain a b e ∧ Collision c p := by
+  simp [collisionGroup]
+
+theorem mem_groups (a b e : ℤ) (g : Finset GridPoint) :
+    g ∈ groups a b e ↔ g ∈ boundaryGroups a b e ∨
+      ∃ c ∈ centers a b e, collisionGroup a b e c = g := by
+  simp [groups]
+
+theorem boundary_hits_iff {P : Finset GridPoint} {a b e : ℤ}
+    (hP : P ⊆ domain a b e) :
+    HitsAll P (boundaryGroups a b e) ↔ ExactExtrema P a b e := by
+  simp only [HitsAll,boundaryGroups,Finset.mem_insert,Finset.mem_singleton,
+    forall_eq_or_imp,forall_eq,Finset.mem_filter,ExactExtrema]
+  constructor
+  · rintro ⟨h1,h2,h3,h4⟩
+    exact ⟨by obtain ⟨p,hp,_,hh⟩ := h1; exact ⟨p,hp,hh⟩,
+      by obtain ⟨p,hp,_,hh⟩ := h2; exact ⟨p,hp,hh⟩,
+      by obtain ⟨p,hp,_,hh⟩ := h3; exact ⟨p,hp,hh⟩,
+      by obtain ⟨p,hp,_,hh⟩ := h4; exact ⟨p,hp,hh⟩⟩
+  · rintro ⟨h1,h2,h3,h4⟩
+    exact ⟨by obtain ⟨p,hp,hh⟩ := h1; exact ⟨p,hp,hP hp,hh⟩,
+      by obtain ⟨p,hp,hh⟩ := h2; exact ⟨p,hp,hP hp,hh⟩,
+      by obtain ⟨p,hp,hh⟩ := h3; exact ⟨p,hp,hP hp,hh⟩,
+      by obtain ⟨p,hp,hh⟩ := h4; exact ⟨p,hp,hP hp,hh⟩⟩
+
+theorem pruning_transfer {P : Finset GridPoint} {original retained : Finset (Finset GridPoint)}
+    (hdom : ∀ g ∈ original, ∃ r ∈ retained, r ⊆ g)
+    (hhit : HitsAll P retained) : HitsAll P original := by
+  intro g hg
+  obtain ⟨r,hr,hrg⟩ := hdom g hg
+  obtain ⟨p,hp,hpr⟩ := hhit r hr
+  exact ⟨p,hp,hrg hpr⟩
+
+theorem pruning_iff {P : Finset GridPoint} {original retained : Finset (Finset GridPoint)}
+    (hsub : retained ⊆ original)
+    (hdom : ∀ g ∈ original, ∃ r ∈ retained, r ⊆ g) :
+    HitsAll P retained ↔ HitsAll P original :=
+  ⟨pruning_transfer hdom,fun h g hg => h g (hsub hg)⟩
+
+theorem empty_group_impossible {P : Finset GridPoint} {G : Finset (Finset GridPoint)}
+    (h : ∅ ∈ G) : ¬ HitsAll P G := by
+  intro hh; obtain ⟨p,_,hp⟩ := hh ∅ h; exact Finset.notMem_empty p hp
+
+theorem empty_centers_groups {a b e : ℤ} (h : centers a b e = ∅) :
+    groups a b e = boundaryGroups a b e := by simp [groups,h]
+
+theorem exceptional_empty_centers : centers 10 10 1 = ∅ := by decide
+
+theorem exceptional_groups : groups 10 10 1 = boundaryGroups 10 10 1 :=
+  empty_centers_groups exceptional_empty_centers
+end Polyomino57.Diagonal
