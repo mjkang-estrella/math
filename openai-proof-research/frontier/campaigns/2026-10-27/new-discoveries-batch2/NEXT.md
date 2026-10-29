@@ -1,3 +1,23 @@
+## BBK periodic-cone obstruction — 29 October 2026
+
+root-bbk-periodic-cone-r2/FINDINGS.md constructs a strictly positive integer
+coefficient rational function with constant1, allowed simple poles, and the
+same Q/degree/reciprocity as G(107,17), but no nonnegative polynomial fractions
+over odd denominators<=35. An exact eight-residue inequality proves this for
+arbitrary numerator degrees; checker PASS. It is NOT the literal BBK product
+and NOT a BBK counterexample. Thus generic positivity/poles/reciprocity alone
+cannot prove5.4. Consecutive-product structure remains essential. Credit0;
+counts3/30 additional,33/60 total unchanged.
+
+Tian-characteristic r3, q-Motzkin-tableaux r4 and Miyamoto r2 completed with no
+full result. Their summaries retain exact conditional Hasse criteria, a negative
+fixed tableau-class contribution, and a normalized-gap recurrence with a failed
+uniform likelihood-ratio shortcut respectively. These are not source refutations.
+Root read all three terminal threads and summaries. New Sol high/default lanes:
+sol-qmotzkin-pair-content-r5 tests cancellation across whole pair-content classes;
+sol-fresh-finite-source-r15 and sol-fresh-analytic-source-r16 seek distinct untouched
+full statements. Receipts sol-three-lanes-r15-launches.json; no polling.
+
 ## Characteristic filtration and latest handbacks — 29 October 2026
 
 Root saved root-tian-characteristic-r1/FINDINGS.md: exact 2-/3-adic contents
