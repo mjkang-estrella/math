@@ -1,0 +1,47 @@
+# CM275 independent scoped formal audit
+
+**Verdict: PASS_SCOPED_SUPPORT. Required repairs: none.** This verdict covers the exact finite sampling, algebraic character projection and conditional scalar margin contracts in the authenticated implementation. It does not certify a Lean formalization of continuum Coulomb membership, QMA completeness, quantum circuits or the whole human theorem. It grants no campaign acceptance or count.
+
+The reviewed implementation manifest is `c834b31ddf0c9c5665146d4456ee792a876f446341ad00da681cb1981a3c76e6`; production source is `c55d2b1607dec1e7040c522400b8eb0fdc1e02a57a98f0dbfe63f7d70e5a7396`; coverage is `109cd6e8632b2650268c72e467d0bd00dc76a3cd6d6d879c654cc74d3ff5fab6`. Exact unchanged candidate and scope identities appear in dependencies.json. All 36 support declarations (30 theorems and six definitions), their proofs/types, and all 14 author control theorems were inspected. Coverage matches those declarations.
+
+## Independence and chronology
+
+This reviewer authored the previous human full-proof review, but none of the candidate, contribution review, formal implementation or manuscript. The earlier mathematical verdict was not imported as a Lean verdict. Implementation was initially inspected while active. The first displayed source had 181 lines and the subsequently captured snapshot had 262; all added content was read. Three genuine transient elaboration failures were observed and preserved, then fixed by the implementer. They are not counted as semantic mutant failures. The stable 285-line source was supplied and freshly compiled before sealing; its hash is exactly the final source hash. Independent semantic controls were written in this review directory. Two reviewer-control elaboration fixes and warning cleanup are preserved in the logs. No implementation bytes were edited.
+
+After final anchors arrived, the original packet passed exact 90-file/five-directory authentication. A copy was made inside this review directory and its production source rechecked. The final runner rebuilt all four project source/audit files in a new temporary directory, using no old CM275 objects. The fresh result was 30 support theorems, 36 declarations and 14 author controls, with no warnings. Every final type and axiom output was read. Only propext, Classical.choice and Quot.sound occur. The copied runner receipt retains its author's `independent_audit: false` field; that describes the runner's own claim, not this separately performed review.
+
+## Sampling contracts
+
+`sample`, the two weighted-sum identities, `character_parseval` and `sample_energy` use actual finite additive characters and the library's finite-character orthogonality. Injectivity is a meaningful explicit premise, not a restatement of Parseval. The real energy theorem includes the exact inverse-cardinality normalization. Empty coefficient families are allowed; nonempty independent controls show the result is not vacuous. Two coincident modes with coefficients one have actual sampled energy four versus coefficient energy two.
+
+`phase_parseval` explicitly requires star(u_i)*u_i=1; the factor two counterexample confirms why this matters. `discrete_translation` is the character map-add identity with a shift in the finite group. `mode` is the standard ZMod character, and `mode_injective` evaluates at one. `grid_parseval` exposes frequency-map injectivity; `initial_modes_injective` and `centered_modes_injective` prove it under K<=q and 2K+1<=q respectively. Actual aliases occur for five centered frequencies modulo three, while the sharp five-modulo-five endpoint is injective. The standalone q=0 arithmetic cases are harmless; the character/grid declarations separately require NeZero q.
+
+These results do not instantiate the D-dimensional product grid and spin coefficients of the manuscript, continuous exponential phase factors, physical torus L2 normalization, h^(D/2) sampling, shifted-cell averaging, quadrature or the analytic Fourier cutoff. Those are human interfaces. No assumed analytic estimate is mistaken for a formal proof of it.
+
+## Character and sign projection
+
+`twist` takes an actual representation and a multiplicative character into complex units. `characterProjector` is actual finite-group averaging of this representation; its apply formula has inverse character coefficients. `twist_invariant_iff`, eigen, fixes, range and idempotence derive the advertised eigenspace property. The commutation theorem correctly assumes the external linear map intertwines the representation. `complexSign`, its inverse identity and the sign apply/eigen formulas specialize to the genuine permutation-sign character.
+
+These are algebraic projectors. There is no inner-product or unitarity hypothesis, hence no formal proof of self-adjointness, contractivity or orthogonal measurement. Independent controls demonstrate this boundary concretely: A(x,y)=(x+2y,-y) satisfies A²=id, and (id+A)/2=(x+y,0) is idempotent but not self-adjoint in the usual complex inner product. Separate S2 controls distinguish trivial-character fixed vectors from annihilation by the sign projector under the trivial action. Physical particle/spin-register permutation, a unitary implementation and the actual commuting cutoff are not supplied by these generic declarations. The README and coverage state the limitation accurately.
+
+## Conditional verifier arithmetic
+
+`acceptance` is the specified real scalar expression. `total_error_budget` and `total_energy_transfer` combine four supplied inequalities with the correct signs and constants; they do not prove Hardy, IMS, potential capping, Ritz or quadrature bounds. `yes_margin` and `no_margin` require a positive scale, threshold separation and the stated energy-error premises. The two approximation lemmas lose gamma/10 in the correct direction.
+
+`subnormalized_no` and `subnormalized_approximation_no` keep the surviving probability weight, require w<=1 and p>=0, and never divide by the success probability. Missing either restriction produces explicit false inequalities. The w>=0 assumption is redundant for the upper-bound algebra but appropriate to probability semantics. `fair_test_identity` is exact arithmetic for the fair mixture; `probability_bounds` is conditional on the stated energy interval. Neither constructs a quantum measurement. No continuum form estimate, circuit synthesis, uniform bit complexity, amplification over entangled blocks or QMA conclusion is formalized.
+
+## Adversarial and infrastructure checks
+
+All nine actual false proof files were replayed and their complete outputs inspected: duplicate modes, centered aliasing, nonunit phase, missing sign, noncharacter weight, missing subnormalization, missing nonnegative probability, an excessive acceptance margin, and omitted approximation loss. Eight terminate at an unsolved False goal; the alias test reports that decidability proves its injectivity claim false. These are mathematical rejections, with no parser/import/unknown-identifier failures. They test concrete counterexamples, not arbitrary mutations of every production theorem.
+
+All four actual wrapper cases were exercised: a zero-exit child printing SOME FAIL, a zero-exit stderr error, and exit seven reject; a clean child passes. ROOT-CM275-RUNNER-01 is resolved in final bytes: the runner demands the exact nine filenames and derives counts from executed rows. Independently deleting one mutant and emptying the directory both reject with the precise inventory error before compiler invocation (the configured compiler path was deliberately nonexistent). Missing tests cannot masquerade as nine passes.
+
+Sixteen additional reviewer-authored semantic theorems and three definitions were compiled independently and all their transitive axioms inspected. They add actual finite-frequency collisions, endpoint injectivity, phase energy, S2 sign-sector examples, missing-probability counterexamples and the nonorthogonal involution example. These controls supplement rather than replace reading the production proof terms.
+
+Positive package verification and separate wrong-anchor, changed-source, missing-source, extra-file, extra-empty-directory and symlink controls behaved as required. Integrity is evidence of bytes, not a mathematical proof. All writes and builds occurred in this review directory.
+
+## Trust and remaining limits
+
+Lean 4.34.1 commit 5045d0056413266e57c625dcd7c365b10e377c52 and the prebuilt dependency cache are trusted setup. The runner checks all nine dependency checkout revisions and tracked cleanliness, including mathlib d13f23b723b8a846827a245b89c10fc7d3f11612. It does not rebuild mathlib or cryptographically demonstrate that every cached object corresponds to the checkout. All claimed project modules were freshly compiled. No sorry, admit, unsafe, native_decide, conclusion axiom or hidden conclusion typeclass was found in production support.
+
+The full frozen human target remains unrestricted unit-nuclear continuum membership for arbitrary distinct rational nuclei and unary electron number, without a binding, separation, supplied-basis, chosen-spin or preparation promise. Binary-charge hardness is not imported. Pinned upstream hardness remains stipulated, not audited here. No worldwide novelty, external peer review, full formalization or campaign-count assertion is made. There are no required or optional implementation corrections from this audit; the documented exclusions must remain attached to any public description.
