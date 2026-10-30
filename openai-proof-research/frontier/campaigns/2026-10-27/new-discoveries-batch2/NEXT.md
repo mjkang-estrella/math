@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r144 fixed-multiplicity infinite-chain quasipolynomiality remains
+unresolved. Root verifies all 75 manifest entries and reproduces 11,340 states,
+2,861 quotient checks, 9,907 compositions and 77 count comparisons (only the
+execution timestamp differs). The earlier overlapping public abstract is
+recorded with its unread 403-blocked proof body; no verified prior-proof claim
+is adopted. See root-r144-handback. Sol r147 replaces r144; r145/r146 continue.
+No credit; counts remain 9 additional / 39 total.
+
+
 r142 Laplacian product/equality conjecture and r143 theta-convolution
 optimal interval remain unresolved. Root verifies25 and59 manifest entries
 and reproduces exact checks. Root's initial claim of a sum-check error was
