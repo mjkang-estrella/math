@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r157 general-H entropy-bound conjecture remains unresolved. The scalar
+first variation defeats a lower-bound shortcut but supplies no admissible metric
+or entropy counterexample. Curvature CM, mass dependence and normalization gaps
+remain. Root verifies 53 manifest / 52 freeze paths and replays 40 variation,
+303 rational and four symbolic controls. See root-r157-handback.
+Sol r160 replaces r157; r158 and r159 continue. Counts remain 9 additional /
+39 total, next 40. New uncapped registry deltas do not close old capped gaps.
+
+
 r156 scope correction: printed Malik–Qureshi Conjecture 5.1(i) includes
 the same paper's known non-Hamiltonian n=t+2, t=0 mod4 exception (Theorem 5.1).
 This is an uncredited formulation correction; the intended exception-removed
