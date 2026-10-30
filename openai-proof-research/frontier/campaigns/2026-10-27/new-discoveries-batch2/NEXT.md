@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r148 Matuzas pure fifth-Bessel-moment identity remains unresolved;
+the individual modular period comparison is missing. Li–Morgan–Siegrist is
+excluded by its actual earlier public refutation, whose original/current
+bytes agree. Root verifies 92 manifest/87 scientific entries and reproduces
+the curvature coefficients, four signs and five determinant-only controls.
+A root manifest-schema error was corrected and retained. See root-r148-handback.
+Sol r151 replaces r148; r149/r150 continue. Counts remain 9 additional / 39 total.
+
+
 r147 Kiro–Nishry critical prefactor-one polynomial infinitude remains
 unresolved. Root verifies 36 manifest/32 scientific entries and independently
 checks all 21 explicit polynomials through degree 20: 13,525 exact prefix
