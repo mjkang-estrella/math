@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r175: Xu fractional-power means conjecture excluded by complete source sum/product integral bridge; one-bit estimation remains unresolved despite periodic information shortcut obstruction. Root exact checks byte-identical and full scientific/manifest freeze pass; see root-r175-handback. Fresh analytic r178 assigned; r176/r177 continue. Counts 9 additional /39 total, next40.
+
+
 DSBS source review r2: retain ordinary mathematics PASS and qualified positive substantive assessment, but investment HOLD. Three journal-body comparisons remain open; author listings and arXiv bodies do not authenticate VoR changes. Park repeated access searches absent a concrete new route. Root read-only verifier and full manifest/freeze pass; see root-dsbs-source-hold-r2. Fresh structural r177 assigned; r175/r176 continue. Counts 9 additional /39 total, next40.
 
 

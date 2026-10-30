@@ -1,0 +1,2619 @@
+                                                                                                                                                                                     1
+
+
+
+                                                               Mean Estimation from One-Bit Measurements
+                                                                                         Alon Kipnis and John C. Duchi
+
+
+
+                                                                                                          Abstract
+                                                   We consider the problem of estimating the mean of a symmetric log-concave distribution under the constraint
+                                              that only a single bit per sample from this distribution is available to the estimator. We study the mean squared
+                                              error as a function of the sample size (and hence the number of bits). We consider three settings: first, a centralized
+                                              setting, where an encoder may release n bits given a sample of size n, and for which there is no asymptotic
+
+
+
+
+arXiv:1901.03403v4 [cs.IT] 9 May 2022
+                                              penalty for quantization; second, an adaptive setting in which each bit is a function of the current observation
+                                              and previously recorded bits, where we show that the optimal relative efficiency compared to the sample mean is
+                                              precisely the efficiency of the median; lastly, we show that in a distributed setting where each bit is only a function
+                                              of a local sample, no estimator can achieve optimal efficiency uniformly over the parameter space. We additionally
+                                              complement our results in the adaptive setting by showing that one round of adaptivity is sufficient to achieve
+                                              optimal mean-square error.
+
+
+                                                                                                   I. I NTRODUCTION
+                                           We consider estimation of parameters from data collected by multiple units under communication constraints
+                                        between the units. Such scenarios arise in sensor arrays, where sensor motes collect information, which they transmit
+                                        to a central estimation unit [2], [3]. More generally, communication is substantially more expensive than computation
+                                        in modern computing infrastructure [4]. It is thus of interest to understand the extent to which communication
+                                        constraints induce fundamental accuracy and efficiency limits in parametric estimation problems.
+                                           We answer this question in a sylized version of this problem: the estimation of the mean θ of a symmetric
+                                        log-concave distribution under the constraint that only a single bit can be communicated about each observation
+
+                                           Alon Kipnis is with the School of Computer Science at Reichman University, Herzliya, Israel (alon.kipnis@idc.ac.il).
+                                           J. Duchi is with the Department of Statistics and the Department of Electrical Engineering at Stanford University, Stanford, CA, 94035
+                                        (jduchi@stanford.edu).
+                                           Copyright (c) 2017 IEEE. Personal use of this material is permitted. However, permission to use this material for any other purposes must
+                                        be obtained from the IEEE by sending a request to pubs-permissions@ieee.org.
+                                           This paper was presented in part at the 55th Annual Allerton Conference on Communication, Control, and Computing (Allerton) [1].
+                                           The work of A. Kipnis was supported in part by funding from the NSF under Grant No. DMS-1418362 and DMS-1407813, and by a
+                                        fellowship from the Koret Foundation.
+
+
+
+                                                                                                                     B1                                       B1
+                                            X1                                            X1        enc                                     X1       enc
+
+
+                                                           B1 , . . . , Bn                                      B2                                            B2
+                                            X2       enc                     est    θn    X2        enc                     est      θn     X2       enc              est      θn
+                                             ..                                             ..                                               ..
+                                              .                                              .                                                .
+                                                                                                            B1 , . . . , Bn−1
+                                                                                                                     Bn                                       Bn
+                                            Xn                                            Xn        enc                                    Xn        enc
+
+                                                    (i) Centralized                                 (ii) Adaptive                                   (iii) Distributed
+
+
+
+                                        Fig. 1. Three encoding settings: (i) Centralized – an encoder sends n bits after observing n samples. (ii) Adaptive (sequential) – the ith
+                                        encoder sends the bit Bi depending on its private sample Xi and previous bits B1 , . . . , Bi−1 . (iii) Distributed – each encoder send the bit
+                                        Bi based on its private sample Xi only.
+                                                                                                                         2
+
+
+
+from this distribution. Different information sharing schemes strongly affect the performance of estimators for θ ;
+we illustrate the three main settings we consider in Figure 1.
+  (i) Centralized encoding: all n encoders confer and produce a single message consists of n bits.
+ (ii) Adaptive or sequential encoding: The nth encoder observes the nth sample and the n − 1 previous bits.
+(iii) Distributed encoding: The nth message is only a function of the nth sample.
+The distributed setting (iii) is the most restrictive; as it turns out, (ii) is slightly more restrictive than the fully
+centralized setting (i), and in our setting, a variant of the adaptive setting (ii) in which there is only one round of
+adaptivity—as we make formal later—is enough to achieve the same efficiency as the fully sequential setting (ii).
+Each setting has natural applications:
+  • Signal acquisition (i): A quantity is measured n times at different instances. The results are averaged in order
+    to reduce measurement noise and the averaged result is then stored or communicated using n bits.
+  • Analog-to-digital conversion (ii): A sigma-delta modulator (SDM) converts an analog signal into a sequence
+    of bits by sampling the signal at a very high rate and then using one-bit threshold detector combined with a
+    feedback loop to update an accumulated error state [5]. Therefore, the expected error in tracking an analog
+    signal using an SDM falls under our setting (ii) when we assume that the signal at the input to the modulator
+    is a constant (direct current) corrupted by, say, thermal noise [6]. Since the sampling rates in SDM are usually
+    many times more than the bandwidth of its input, analyzing SDM under a constant input provides meaningful
+    lower bound even for non-constant signals.
+  • Privacy (ii)–(iii): A business entity is interested in estimating the average income of its clients. In order to
+    keep this information as confidential as possible, each client independently provides an answer to a yes/no
+    question related to its income [7].
+  Let us provide an informal description of our results and setting. For an estimator θn with finite quadratic risk
+(mean squared error (MSE)) Rn = Eθ [(θn − θ)2 ], we study the limit
+
+                                                      lim sup nRn .                                                    (1)
+                                                        n→∞
+
+By comparing this quantity to achievable rates of convergence without communication constraints, we can evaluate
+the efficiency losses—asymptotic relative efficiency—of the estimator to appropriately optimal (unconstrained)
+estimators. (We shall be more formal in the sequel.) By lower bounding the quantity (1), we also provide limits on
+estimation of single-bit-per-measurement constrained signals in more general settings [8], [9], [10], [11], [12].
+    In setting (i), the estimator can evaluate any optimal estimator of location (e.g., the sample mean if the data is
+Gaussian), then quantize it using n bits. As the accuracy in describing the empirical mean decreases exponentially
+in the number of bits, the quantization error is negligible compared to the statistical error in mean estimation [13],
+[14]. That is, centralized encoding induces no asymptotic efficiency loss. The story is different in settings (ii) and
+(iii). Precisely, we show that in the adaptive setting (ii), the optimal efficiency of a one-bit scheme is (asypmtotically)
+precisely that of the sample median, and that this efficiency is achievable. As a concrete example, when Xi are
+i.i.d. Gaussian, we necessarily lose a factor of π/2 ≈ 1.57 in the asymptotic risk; the one-bit constraint decreases
+the effective sample size by a factor of π/2 compared to estimating it without the bit constraint. It turns out that,
+in the settings we consider, only a single round of adaptivity (see Fig. 3 for an illustration) is sufficient to achieve
+optimal convergence rates. In distinction from setting (ii), in setting (iii) when the messages must be independent,
+there is no distributed estimation scheme that achieves the efficiency of the sample median uniformly over θ . We
+establish this result via Le Cam’s local asyptotic normality theory, allowing us to provide exact characterizations
+of the asymptotic efficiency of suitably regular encoding schemes.
+    Our asymptotic setting is important in that it allows us to elide difficulties present in finite sample settings. For
+example, in setting (i), developing an optimal quantizer at finite n requires choosing a 2n level scalar quantizer,
+which is non-trivial [15]. In interactive and sequential settings (e.g. (ii)), the situation is more challenging, as it is
+unclear whether any type of compositionality applies, in that an n − 1-step optimal estimator may be only vaguely
+related to the n-step optimal estimator. Thus, to provide our lower bounds, we rely on stronger information-based
+inequalities, including the Van Trees inequality [16] and Le Cam’s local asymptotic normality theory [17], [18],
+[19].
+                                                                                                                           3
+
+
+
+Related Work
+   The many challenges of estimation under communication constraints have given rise to a large literature
+investigating different aspects of constrained estimation. While our setting—in which we observe a single bit
+per signal Xi —is restrictive, it inspires substantial work. Perhaps the most related is that of Wong and Gray [6],
+who study one-bit analog-to-digital conversion of a constant input corrupted by Gaussian noise using a Sigma-Delta
+Modulator (SDM). They show almost sure convergence, but provide no rate (and no rates follow from their analysis);
+in contrast, we provide an optimal procedure and matching lower bound achieving risk π2 σ 2 in the limit (1) when
+    iid
+Xi ∼ N (θ, σ 2 ). A growing literature on one-bit measurements in high-dimensional problems [8], [20], [21] shows
+how to reconstruct sparse signals, where Baraniuk et al. [8] show that in noiseless settings, exponential decay in
+MSE is possible; our results make precise the penalty for noise under one-bit sensing, showing that the error can
+                                                 2
+decay (under Gaussian noise) at best as π2 σn .
+   In fully distributed settings (iii), the challenges are different, and there is also a substantial literature with one-bit
+(quantized) measurements [22], [23], [24], [25], [26]. We complement these results by providing precise lower
+bounds and optimality results; previous performance bounds are suboptimal. Work on the remote multiterminal
+source coding problem, or CEO problem [27], [28], [29], [30], provides lower bounds on the MSE in setting (iii);
+because of the somewhat distinct setting, these bounds are looser than ours (which have optimal constants). In
+settings more similar to our statistical estimation scenario—such as estimation of parameters in a multi-dimensional
+linear model—a line of work provides lower bounds on statistical estimation [31], [32], [33], [34], [35], [36], [37],
+[38]. These results are finite sample and apply more broadly than ours, but as a consequence, they have unusable
+constants, while our stylized model allows precise identification of exact constants. Work subsequent to the initial
+draft of this paper [39] uses an approach similar to ours—bounding quantized Fisher information—to derive lower
+bounds on the error in parametric estimation problems from quantized measurements in non-adaptive settings.
+   Testing (and discrete estimation) problems also enjoy a robust literature, though as a consequence of our results
+to come, the results for testing, i.e., when the parameter space Θ is finite, are quite different from those for
+estimation, as it is possible to construct optimal decision (testing) rules in a completely distributed fashion. In this
+context, Longo et al. [40] propose procedures for distributed testing based on optimizing a Bhattacharyya distance.
+Tsitsiklis [41] shows that when the cardinality of Θ is at most M and the probability of error criterion is used,
+then no more than M (M − 1)/2 different detection rules are necessary in order to attain probability of error with
+optimal exponent. Moreover, in a distributed setting, feedback is unnecessary for optimal testing/detection [42], in
+strong distinction to the estimation case we consider.
+   The remainder of this paper is organized as follows. In Section II we describe the problem, notation, and our
+basic assumptions. In Section III we provide two simple bounds on the efficiency and MSE. Our main results for
+the adaptive and distributed cases are given in Sections IV and V, respectively. In Section VI we provide concluding
+remarks.
+
+                                    II. P ROBLEM F ORMULATION AND N OTATION
+    Let f : R → R+ be a symmetric and log-concave probability density, which necessarily has finite second moment
+σ 2 , and let Θ ⊂ R be closed and convex. For θ ∈ R, let Pθ be the probability distribution with density f (x − θ),
+so that θ indexes the location family {Pθ }θ∈Θ . The log-concavity and symmetry f (x) imply that Pθ has a unique
+                                                                          iid
+mean and median at θ [43]. We observe a sample X1 , . . . , Xn ∼ Pθ , where θ is unknown, and wish to estimate θ
+given only binary messages B1 , . . . , Bn ∈ {0, 1} about each Xi . We study this under three distinct computational
+scenarios, which we illustrate in Figure 1:
+   (i) Centralized, where Bi = Bi (X1 , . . . , Xn ), i = 1, . . . , n.
+  (ii) Adaptive, where Bi = Bi (Xi , B1 , . . . , Bi−1 ), i = 2, . . . , n.
+ (iii) Distributed, where Bi = Bi (Xi ), i = 1, . . . , n.
+We also consider a hybrid of the fully distributed setting (where the bits Bi are independent) and the adaptive
+setting (where each bit Bi may depend on the previous bits) to a one-step adaptive setting, where the quantization
+scheme may be modified to depend on one fixed function of the previous information.
+  (ii’) One-step adaptive, where for some function g and a (fixed) t, if i ≤ t then Bi = Bi (Xi ) while if i > t, then
+        Bi = Bi (Xi , g(B1 , . . . , Bt )).
+                                                                                                                        4
+
+
+
+  We measure the performance of an estimator θn , θn (B1 , . . . , Bn ) by one of a few notions. In the simplest case,
+we assume a prior π on θ (which may be a point mass) and consider the quadratic risk
+                                                   Z
+                                   Rn = Rn (π) , Eθ (θn − θ)2 dπ(θ),                                               (2)
+
+                                                                                iid
+where the expectation is taken with respect to the distribution of X1 , . . . , Xn ∼ Pθ . The main problems we consider
+in this paper are the minimal value of the risk (2) as a function of the sample size n and the density f , under
+different choices of the encoding functions in cases (i)–(iii). The quadratic risk (2) may be infinite in some cases;
+we defer discussion of this case to later sections, as it is technically demanding and detracts from the presentation
+here.                  ′
+                         (X)2
+   Now, let σf2 , E[ ff (X) 2 ] be the Fisher information for the location in the family {Pθ }, which is finite when f is
+
+log-concave and symmetric. We give particular attention to the asymptotic relative efficiency (ARE) of estimators
+with respect to asymptotically normal efficient estimators achieving the information bound [19]. In this case, if
+{m(n), n ∈ N} is a sequence such that
+                                                                 d
+                                                                    N (0, σf2 ),
+                                               p
+                                                  m(n)(θn − θ)
+
+then the ARE of the estimator is [44, Def. 6.6.6]
+                                                                m(n)
+                                               ARE(θn ) , lim inf    .                                               (3)
+                                                            n→∞  n
+In the special case where there exists V ∈ R such that
+                                     m(n)Rn = m(n)Eθ (θn − θ)2 = V + o(1),
+
+the ARE of θn is σf2 /V , so that θn requires a sample V /σf2 -times larger than that of an efficient estimator for
+comparable accuracy to the (information) efficient estimator.
+
+Notation and basic assumptions
+  To describe our results and make them formal, we require some additional notation and one Rmain assumption,
+                                                                                                 x
+which restricts the class of distributions we consider. We use the typical notation that F (x) = −∞ f (t)dt is the
+cumulative distribution function of the Xi , and we let
+                                                        f (x)      f (x)
+                                             h(x) ,             =
+                                                      1 − F (x)   F (−x)
+be the hazard function (or the failure rate or force of mortality), which is monotone increasing as f is log-
+concave [45]. Given the centrality of the median to our efficiency bounds, it is unsurprising that the quantity
+                                                    f 2 (x)     (⋆) f (x)f (−x)
+                                      η(x) ,                    =                                                    (4)
+                                               F (x)(1 − F (x))     F (x)F (−x)
+appears throughout our development (equality (⋆) is immediate by the symmetry of f ). For p ∈ (0, 1) and x =
+F −1 (p),
+                                      1            1          p(1 − p)
+                                           =              =                                               (5)
+                                     η(x)     η(F −1 (p))   f (F −1 (p))2
+is of course the familiar asymptotic variance of the pth quantile of the sample X1 , . . . , Xn (cf. [19], Ch. 21).
+   For f the normal density, classical results [46], [47] show that η(x) is a strictly decreasing function of |x|, as we
+illustrate in Fig. 2. We consider log-concave symmetric distributions sharing this property. Specifically, we require
+the following.
+   Assumption A1: The density f is log-concave and symmetric. Additionally, the origin x = 0 uniquely maximizes
+η(x), and η(x) is non-increasing in |x|.
+Under this assumption,
+                                                4f 2 (x) ≤ η(x) ≤ η(0),
+                                                                                                                         5
+
+
+
+                                                                  η(x)     0                              log η(x)
+                                                                  φ(x)                                    log φ(x)
+                                     2/π                         4φ2 (x)
+
+                                     √1
+                                      2π
+
+
+
+
+                                       0
+                                            -2   -1   0     1     2            -3   -2   -1   0   1   2      3
+                                                      x                                       x
+
+
+Fig. 2.   The function η(x) = f 2 (x)/F (x)F (−x) for f (x) = φ(x) the standard normal density.
+
+
+
+where η(0) = 4f 2 (0) is the asymptotic variance of the sample median (Eq. (5) at p = 1/2). Combined with
+log-concavity of f (x), Assumption A1 implies that η(x) vanishes as |x| → ∞. Several distributions satisfy
+Assumption A1, including the generalized normal distributions with a shape parameter between 1 and 2 (including
+the normal and Laplace distributions). Symmetric log-concave distributions failing Assumption A1 include the
+uniform distribution and the generalized normal distribution with shape parameter greater than 2. Some restriction
+on the class of distributions is necessary to develop our results; indeed, in Appendix VII we provide a brief
+discussion on the uniform distribution, where a one-step adaptive estimator with single bit observations can achieve
+                                          √
+convergence rates faster than the familiar n paramateric rate.
+
+                              III. C ONSISTENT E STIMATION AND O FF - THE - SHELF B OUNDS
+  We begin our technical treatment by deriving a few bounds on the efficiency of estimators in setting (iii). These
+bounds establish the following facts:
+1. A consistent estimator with an asymptotically normal distribution always exists in setting (iii), and hence in the
+   adaptive settings (ii) and (ii’).
+2. For the normal distribution, the asymptotic relative efficiency (3) in the distributed setting (iii) is at most 3/4.
+   No estimator can be as efficient as the sample mean.
+
+A. Consistent Estimation
+   The simplest estimator is simply to invert a quantile. Indeed, fix θ0 ∈ R and define the ith message by
+                                                           Bi = 1{Xi < θ0 } ,
+where 1{A} is the indicator of the event A. We have
+                                                  n
+                                               1X      a.s.
+                                         B̄n ,      Bi → F (θ0 − θ),
+                                               n
+                                                                i=1
+so that
+                                                          θn = θ0 − F −1 B̄n
+                                                                                     
+                                                                                                                      (6)
+is a consistent estimator for θ in the distributed setting of Figure 1-(iii), where we note that F is invertible over the
+support of f . As the variance of B̄n is F (θ0 − θ) (1 − F (θ0 − θ)), a delta method calculation [19, Ch. 23] implies
+that θn is asymptotically normal with variance
+                                       F (θ0 − θ) (1 − F (θ0 − θ))            1
+                                                                     =            .
+                                                f 2 (θ0 − θ)            η(θ0 − θ)
+                                           iid
+In the Gaussian case where the Xi ∼ N (θ, σ 2 ), the ARE of θn is η(θ0 − θ)σ 2 .
+  Assumption A1 implies that the optimal asymptotic variance for an estimator of the form (6) is 1/η(0), the
+asymptotic of the sample median. Unfortunately, as θ is (by definition) a priori unknown and η(x) monotonically
+decreases in |x|, this naive estimator θn may be very inefficient when θ is far from the initial guess θ0 . As an
+example, when f is a the normal density, √  the ARE of θn is less than 0.15 when |θ0 − θ| ≥ 2σ , and more broadly,
+ARE(θn ) asymptotes to |θ0 | exp(−θ02 /2)/ 2π as |θ0 − θ| gets large. Yet that θ0 = θ minimizes this asymptotic
+variance, and η is continuous, is suggestive: if we can use a suitably good initial estimate θninit for θ , it is possible
+that a one-step adaptive estimator (recall (ii’)) may be asymptotically strong, as we see in Section IV.
+                                                                                                                           6
+
+
+
+B. Multiterminal Source Coding
+  A related problem is the CEO problem, which considers the estimation of a sequence θ1 , θ2 . . ., where a noisy
+version of each θj is available at n terminals. At each terminal i, an encoder observes the k noisy samples
+                                 Xi,j = θj + Zi,j ,      j = 1, . . . , k,   i = 1, . . . , n,
+and transmits ri k bits to a central estimator [27]. The central estimator produces estimates θ̂1 , . . . , θ̂k with the goal
+of minimizing the quadratic risk:
+                                                        k             2 
+                                                      1X
+                                            RCEO =         E θ̂j − θj        .
+                                                      k
+                                                         j=1
+
+Note that any distributed encoding scheme using one-bit per sample can be replicated k times and thus leads
+to a legitimate encoding and estimation scheme for the CEO problem with r1 = . . . = rn = 1. It follows that,
+assuming that θ is drawn once from the prior π , our mean estimation problem from one-bit samples under distributed
+encoding corresponds to the CEO setting with k = 1 realization of θ observed under noise at n different locations,
+and communicated at each location using an encoder sending a single bit. Consequently, a lower bound on the MSE
+in estimating θ in the distributed encoding setting is given by the minimal MSE in the CEO setting as k → ∞.
+Note that the difference between the CEO setting and ours lays in the privilege of each of the encoders to describe
+k realizations of θ using k bits with MSE averaged over these realizations, rather than a single realization using a
+single bit in ours.
+   When the prior on θ and the noise corrupting it at each location are Gaussian, Prabhakaran et al. [30] characterize
+the optimal encoding and its asymptotic risk as k → ∞. Chen et al. [48] also provide an expression for the quadratic
+risk in the CEO setting under Gaussian priors. Adapting to our setting, this expression provides the following
+proposition:
+   Proposition 1: Assume that Θ = R and π(θ) = N (0, σθ2 ) where σθ2 ∈ R is arbitrary. Then any estimator θn of
+θ in the distributed setting satisfies
+                                               h           i 4
+                                          n · E (θ − θn )2 ≥ σ 2 + O(n−1 ),                                        (7)
+                                                                 3
+where the expectation is with respect to θ and X1 , . . . , Xn .
+See Appendix VII-A for a proof.
+   As we shall see, this bound is loose: the difference between the MSE lower bound (7) and the actual MSE in the
+distributed setting (case (iii)) occurs because in the CEO setting, each encoder may encode an arbitrary number of
+k independent realizations of θ using k bits; in our situation, k = 1. That blocking allows more efficient encoding
+and exploiting the high-dimensional geometry of the product probability space in the CEO problem is perhaps
+unsurprising, and our goal in the sequel will be to characterize the performance degradation one bit encoding
+engenders.
+
+                                              IV. A DAPTIVE E STIMATION
+   The first main result of this paper (Theorem 2) gives that the asymptotic variance of any adaptive estimator must
+be at least η(0)σ 2 , which is precisely the efficiency of the median of the sample X1 , . . . , Xn . Conveniently, the
+stochastic (sub)gradient estimator for the median—which minimizes E[|X − θ|]—is a sequence of signs (single
+bits), so that we can exhibit an asymptotically optimal adaptive estimation scheme.
+   We begin with our first theorem, whose proof we provide in Appendix VIII.
+   Theorem 2 (Fundamental limits): Let Assumption A1 hold. Let θn be any estimator of θ in the adaptive setting
+of Figure 1(ii). Assume that the prior density π(·) on θ converges to zero at the endpoints of the interval Θ and
+define the prior Fisher information I0 , Eπ [(π ′ (θ)/π(θ))2 ]. Then
+                                                                   1
+                                           E (θ − θn )2 ≥ 2
+                                                       
+                                                                          .
+                                                             4f (0)n + I0
+   We now turn to asymptotically optimal estimators, first showing how a simple stochastic gradient scheme is
+asymptotically optimal (in the fully adaptive setting), after which we show that a one-round adaptive scheme can
+also achieve this optimal efficiency.
+                                                                                                                       7
+
+
+
+A. Asymptotically optimal estimator
+  The starting point for our first estimator is to note that the median of a distribution minimizes E[|X − θ|] over
+                                                                                                          iid
+θ ∈ R, and moreover, we have the familiar result (cf. [19], Ch. 21) that given a sample X1 , . . . , Xn ∼ P , if
+θ = med(P ) and P has continuous density f (· − θ) near θ , then
+                                       √
+                                                                            
+                                                   n        d           1
+                                         n(med(X1 ) − θ)       N 0,            ,
+                                                                     4f (0)2
+which is precisely the variance lower bound in Theorem 2. Thus, it is natural to consider a stochastic gradient
+procedure for minimizing E[|X − θ|]. To that end, let {γn }n∈N be a strictly positive sequence of stepsizes, and
+define the sequence
+                                      θn = θn−1 + γn Bn , n = 1, 2, . . . ,                                   (8)
+where
+                                                Bn = sgn(Xn − θn−1 ).
+We make one of two assumptions on the stepsizes γn , which are relatively standard: we always have γn non-
+increasing, and For some 0 < λ ≤ 1,
+                                                                   1+λ
+
+                                        γn − γn+1           X γn 2
+                                                  → 0,         √ < ∞ or                                             (9a)
+                                           γn2              n
+                                                                 n
+                                                            X
+                                         γn = o(n−2/3 ),      γn = ∞.                                               (9b)
+                                                              n
+
+   Then we can adapt the results of Polyak and Juditsky [49] on the asymptotic normality of averaged stochastic
+gradient estimators to establish the following  theorem.
+                                          1 Pn
+   Theorem 3: Define the average θ̄n , n i=1 θi . Assume that in a neighborhood of θ = med(P ), the distribution
+P has a Lipschitz continuous density f . Then
+  (i) Assume that {γn }n∈N satisfies condition (9a). Then
+                                            √
+                                                                         
+                                                          d         1
+                                               n θ̄n − θ     N 0,           .
+                                                                  4f (0)2
+ (ii) Let {Pθ }θ∈R be the family of distributions with density f (· − θ), where f has median 0. Let hn → h ∈ R,
+                                          n
+      and define the distributions Pn = Pθ+h   √ . Then
+                                             n/ n
+
+
+                                       √                 √  d
+                                                                                
+                                                                            1
+                                         n θ̄n − θ − hn / n      N 0,              ,
+                                                              Pn         4f (0)2
+     and for any bounded, symmetric, and quasi-convex function L,
+                                                              √         
+                                   sup lim sup    sup    Eτ L n(θ̄n − τ )
+                                       c<∞ n→∞ τ : |θ−τ |≤ √c
+                                                             n
+
+                                                            = E [L(Z/2f (0))] ,                                     (10)
+      where Z ∼ N (0, 1).
+(iii) Assume the stepsizes γn satisfy both conditions (9a) and (9b). Let π be a distribution on R with a finite
+      second moment. Then
+                                                                1
+                                     Z h           i
+                                       E (θ̄n − θ)2 π(dθ) =           + o(n−1 ).                          (11)
+                                                             4nf (0)2
+We provide the proofs of items (i)-(iii) in Appendices IX-A, IX-B, IX-C, respectively.
+   As an immediate corollary to Theorem 3, we obtain the following asymptotic optimality results of the averaged
+stochastic gradient sequence. Specifically, the average of the stochastic gradient iterates (8) is locally asymptotically
+minimax, and they achieve the lower bound of Theorem 2.
+   Corollary 4: Let the conditions of Theorem 2 hold and θn be defined by the iteration (8). Let {Pθ }θ∈R be the
+family of distributions with densities f (· − θ).
+                                                                                                                                         8
+
+
+
+                                                        B1
+                                       X1       enc
+                                        ..
+                                         .
+                                                       Bn 1             θ n1
+                                      Xn1       enc             est1
+
+                                                                                     Bn1 +1
+                                                         Xn1 +1         enc
+                                                           ..            ..
+                                                            .             .
+                                                                                Bn
+                                                           Xn           enc              est2     θn
+
+Fig. 3. Distributed encoding with one round of threshold adaptation. The estimation obtained from the first n1 bits in a distributed manner
+is utilized in obtaining another n − n1 bits in a distributed manner.
+
+
+                                 n
+  (i) Define the shorthand Pn = Pθ+h   √ . If the stepsizes satisfy condition (9a), then
+                                     n/ n
+
+
+                                       √                 √ d
+                                                                            
+                                                                           1
+                                         n(θ̄n − θ − hn / n) N 0,               .
+                                                              Pn        η(0)
+ (ii) If in addition the stepsizes satisfy condition (9b), then they achieve the lower bound of Theorem 2 for any
+      prior π on R.
+
+B. Maximal Efficiency using One Round of Threshold Adaptation
+   In the encoding and estimating procedure (8), each one-bit message Bn depends on its private sample as well as
+the current gradient descent estimate θn−1 . In this sense, each encoder in this algorithm interacts with previous one
+by using the current estimate. This amount of adaptivity is unnecessary: as we now consider, a similar encoding
+yields an asymptotically normal estimator attaining the lower variance bound 1/η(0), provided we allow one adaptive
+update to the threshold value θ0 based on previously observed bits. In this procedure we separate the sample into
+the disjoint sets X1 , . . . , Xn1 and Xn1 +1 , . . . , Xn for some n1 < n. We first use the estimator (6) to obtain an
+estimate θn1 based on B1 , . . . , Bn1 , and then use θn1 as the new threshold value to obtain messages Bn1 +1 , . . . , Bn .
+Figure 3 illustrates a diagram of this procedure.
+   More formally, we consider the following estimation scheme. Given n1 ∈ {1, . . . , n}, set the individual bits
+                                                (
+                                                   1{Xi ≤ θ0 } i = 1, . . . , n1 ,
+                                          Bi =
+                                                   1{Xi ≤ Tn } i = n1 + 1, . . . , n,
+where
+                                                                          n
+                                                                                 !
+                                                                          1
+                                                                       1 X
+                                               Tn , θ0 − F −1               Bi
+                                                                       n1
+                                                                         i=1
+                                                                                 n
+                                                                                         !
+                                                                         1    X
+                                               θn , Tn − F −1                   Bi            .
+                                                                       n − n1
+                                                                               i=n1
+
+The intuition here is that the estimator θn is a one-step correction (cf. [44, Thm. 6.4.3]) of the initial estimator Tn ,
+which approximately estimates θ0 − F −1 (F (θ0 − θ)) = θ . We then have the following convergence result.
+  Theorem 5: Assume that Xi = Zi + θ , where Zi are i.i.d. with density f and CDF F and med(Zi ) = 0. Assume
+that f is continuous at 0, and that as n → ∞, n1 (n) → ∞ and n1 /n → 0. Then
+                                          √
+                                                                          
+                                                         d            1
+                                             n (θn − θ)    N 0,              .
+                                                                   4f (0)2
+That is, under Assumption A1, the method is asymptotically optimal.
+                                                                                                                     9
+
+
+
+     Proof: We abuse notation and instead of assuming we receive n observations,         assume we receive the n + n1
+observations X−n1 , . . . , X−1 and X1 , . . . , Xn , defining Tn = θ0 − F −1 ( n11 −1
+                                                                                    P
+                                                                                     i=−n1 Bi ) and Bi = 1{Xi ≤ Tn }
+                                                                             ′                   a.s.
+    i ≥ 1. Letting Xi = Zi + θ for Zi i.i.d. with fixed density f = F , we have E [Bi ] → F (θ0 − θ), so that
+for P
+ 1    −1       a.s.                                                                     a.s.
+n1    i=−n1 Bi → F (θ − θ0 ) and by the continuous mapping theorem we have Tn → θ as n1 → ∞.
+   Now let En = E[Bi | Tn ] = P (Xi ≤ Tn ), so that Var(Bi | Tn ) = En (1 − En ). Define also the random variable
+                                                                      n
+                                               √
+                                                                   X              
+                                                          1        1
+                                     Yn , n p                            Bi − En ,
+                                                      En (1 − En ) n i=1
+
+and let Fn (· | Tn ) be its cumulative distribution function. Then because
+
+                                          E |Bi − En |3 | Tn ≤ En (1 − En ),
+                                                             
+
+we have
+                                          |Bi − En |3
+                                                             
+                                                                      1
+                                      E               3/2
+                                                          | Tn ≤ p             .
+                                        (En (1 − En ))            En (1 − En )
+The Berry-Esseen theorem implies that there exists a constant C ≤ 1 such that
+                                                                     C
+                                  sup |Fn (t | Tn ) − Φ(t)| ≤ p            √ ∧ 2,
+                                   t                           En (1 − En ) n
+                                                               a.s.
+where Φ is the standard Gaussian CDF. As En (1 − En ) → 14 by definition of the median, we have that (with
+probability 1)
+                                                             C
+                                 sup |Fn (t | Tn ) − Φ(t)| ≤ √ eventually.
+                                  t                           n
+By dominated convergence and Jensen’s inequality we thus obtain
+                                                                           
+                        sup |P(Yn ≤ t) − Φ(t)| ≤ E sup |Fn (t | Tn ) − Φ(t)| → 0,
+                              t                               t
+
+                      d
+which gives that Yn       N (0, 1). Now, Slutsky’s lemmas imply
+                                               n
+                                  √        2X
+                                      n·      (Bi − En )                                                         (12)
+                                           n
+                                               i=1
+                                                            n
+                                              1 + oP (1)   X              d
+                                           =p                  (Bi − En )   N (0, 1).                            (13)
+                                             nEn (1 − En ) i=1
+
+where oPP
+        (1) denotes sequence of random variables converging to zero in probability as n goes to infinity. With
+B̄n , n ni=1 Bi and using that En = E[Bi | Tn ] = F (Tn − θ), we may use the delta method to write
+      1
+
+                         √               √
+                            n(θn − θ) = n Tn − F −1 B̄n − θ
+                                                                 
+                               √ 
+                             = n Tn − F −1 F (Tn − θ) + B̄n − F (Tn − θ) − θ
+                                                                                
+                               √
+                             = n [Tn − (Tn − θ)
+                          +(F −1 )′ (Tn − θ + oP (1)) · B̄n − En − θ
+                                                                    
+                               √
+                             = n(F −1 )′ (0)(B̄n − En ) + oP (1)
+                                              
+                             d            1
+                                N 0,             ,
+                                       4f (0)2
+where we have used the limiting distribution (13).                                                                  
+
+  Figure 4 illustrates the empirical risks of the estimator (8) and an estimator obtained using one round of threshold
+adaptation under a series of Monte Carlo simulations when f (x) is the standard normal desnity.
+                                                                                                                                    10
+
+
+                                                                                            asymptotically optimal
+                                                 h           i                                 one adaptation
+
+                                            n · E (θ − θn )2
+                                                        π/2
+
+                                                                 1
+
+
+                                                                 0
+                                                                 200     300   400    500       600     700      800
+                                                                                       n
+
+
+Fig. 4. Normalized empirical risk versus number of samples n for 10, 000 Monte Carlo trials with f (x) the standard normal√ density. In
+each trial, θ is chosen uniformly over the interval (−1.64, 1.64). The one round threshold adaptation strategy uses n1 = ⌊ n⌋ samples
+before adapting the threshold.
+
+
+
+                                                         V. D ISTRIBUTED E STIMATION
+  We now consider the distributed encoding setting in Figure 1-(iii) where each one-bit message Bi is a function
+only of its private sample Xi . In this case, the ith encoder is of the form Bi = 1{Xi ∈ Ai }, where the detection
+region Ai is a Borel set independent of X1 , X2 , . . ..
+
+A. Optimal Efficiency
+  We begin by making a few restrictions on the collections of the sets Ai , which we believe not unreasonable, but
+which allow us to develop fundamental limits for estimation. We require a bit of notation to define the assumptions.
+As we work with a location family based on a density f with associated probability distribution P on variables Z ,
+we define
+                                            Pθ (A) , P (Z − θ ∈ A)
+for Z with density f . Whenever A is a collection of disjoint intervals A = ∪i [t−    +
+                                                                                 i , ti ], we may define
+                                        ∂            X
+                             Ṗθ (A) ,                    f (t−            +
+                                                                                   
+                                           Pθ (A) =           i − θ) − f (ti − θ) ,
+                                        ∂θ
+                                                                                 i
+
+and similarly we define the score function ℓ̇θ (A) , Ṗθ (A)/Pθ (A). For B = 1{X ∈ A}, we abuse notation and
+also write ℓ̇θ (B) = ℓ̇θ (A) and similarly for Ṗθ . With this, we may define the variance of the scores ℓ̇θ (Bi ) under
+Pθ via
+                                                                n
+                                                              1X         Ṗθ (Ai )2
+                                   Ln (A1 , . . . , An ; θ) ,                            .                          (14)
+                                                              n   Pθ (Ai )(1 − Pθ (Ai ))
+                                                                                     i=1
+
+We then make the following assumption.
+   Assumption A2: The density and detection regions satisfy
+  (i) The density function f of Xn − θ is Lipschitz continuous.
+ (ii) Each set Ai is the finite union of ki disjoint intervals (which may include ±∞), where
+                                                           1                 ki3
+                                                             · max                         → 0.
+                                                           n i≤n Pθ (Ai )4 (1 − Pθ (Ai ))4
+(iii) The limit
+                                                                     κ(θ) , lim Ln (A1 , . . . , An ; θ)                          (15)
+                                                                               n→∞
+
+      exists and is finite.
+Roughly speaking, (ii) above holds whenever the intervals consisting each Ai are appropriately seperated and
+their number is relatively small. For example, it applies when each set Ai is a half-bounded interval (ti , ∞)
+with min{Pθ ((ti , ∞)), Pθ ((−∞, ti ])} = ω(1/n) as we dicscuss in more detail below. More generally, let ∆i the
+minimal distance between any two interval endpoints in Ai . Then, if Ai = ∪kj=1     i
+                                                                                      [t−      +
+                                                                                        i,j , ti,j ], we have that Pθ (Ai ) ≥
+   P ki
+∆i j=1 F (t−    ) and 1 − Pθ (Ai ) ≥ ∆i kj=1     F (t+                                                      3 −4
+                                           P
+                                                     i,j ). Therefore, A2(ii) holds whenever maxi≤n ki ∆i = o(n) as
+                                               i
+
+         Pki i,j −          P ki
+long as j=1 F (ti,j ) and j=1 F (t+   i,j ) are bounded away of zero.
+                                                                                                                        11
+
+
+
+  Under Assumption A2, we have the following theorem, which provides a local asymptotic minimax lower bound
+on the efficiency of any non-adaptive estimator.
+  Theorem 6: Let Assumption A2 hold, and let θn be an estimator of θ ∈ Θ from observations Bi = 1{Xi ∈ Ai }.
+Then for Z ∼ N (0, 1) and any symmetric and quasi-convex function L,
+                                                           √             
+                                  lim inf lim inf sup   E L n(θn − τ )
+                                     c→∞      n→∞ τ : |θ−τ |≤ √c
+                                                                n
+                                                                  h    p     i
+                                                               ≥ E L(Z/ κ(θ)) .
+
+See Appendix X for a proof.
+   Theorem 6 shows that the limiting variance term κ(θ) provides a strong lower bound on the efficiency of any
+non-adaptive estimator, and moreover, that this bound necessarily depends on θ . As a particular consequence, for
+the squared error L(x) = x2 , for any δ > 0 and θ , there exists a c < ∞ such that sup|τ −θ|≤c/√n Eτ [(θn − τ )2 ] ≥
+(1−δ)
+ nκ(θ) + o(1/n). Consequently, attaining any type of good (uniform) efficiency with non-adaptive estimators will
+be challenging.
+   Yet, Theorem 6 limits non-adaptive strategies in stronger ways. Under the density models we have considered,
+with the additional Assumption A1, we can show stronger optimality results that adaptivity is essential for achieving
+                                                                                                            f 2 (x)
+optimal convergence guarantees. Recall the transformation (4) of the hazard rate function, η(x) = F (x)(1−F         (x)) ,
+which has unique maximum at x = 0 under Assumption A1. When each detection region An consists of a bounded
+number of intervals, the next theorem shows that the minimal risk 1/η(0) can only be attained at finitely many
+points within Θ. In particular, distinct from the adaptive setting, no distributed estimation scheme can achieve
+asymptotic variance η(0) uniformly in θ ∈ Θ.
+   Theorem 7: Let Assumptions A1 and A2 hold. Additionally, assume that Ai is the union of at most K intervals.
+The number of points θ ∈ Θ satisfying κ(θ) = η(0) is at most 2K .
+See Appendix XI for a proof.
+
+
+B. Threshold Detection
+  We now consider a restricted case where each detection region is a half-open interval, i.e., the ith message is
+obtained by comparing Xi against a single threshold. Under the adaptive signal acquisition setting, this is sufficient
+for asymptotic optimality; in non-adaptive settings, it is not sufficient, though we may characterize a few additional
+optimality results. Assume now that each Bi is of the form
+                                                                (
+                                                                 1      Xi < ti ,
+                                      Bi = sgn(ti − Xi ) =                                                        (16)
+                                                                 −1 Xi ≥ ti ,
+
+where ti ∈ R is the threshold of the ith encoder. In other words, the detection region of Bi is Ai = (ti , ∞) and
+P(Xi ∈ Ai ) = F (Bi (ti − θ)). It follows that
+                                                                    n
+                                                               1X     (f (ti − θ))2
+                                  Ln (A1 , . . . , An ; θ) =                                                         (17)
+                                                               n  F (ti − θ) F (θ − ti )
+                                                                   i=1
+                                                                    n
+                                                               1   X
+                                                         =               η(ti − θ).                                  (18)
+                                                               n
+                                                                   i=1
+
+A natural condition for the existence of the limit (18) as n → ∞ is that the empirical distribution of the threshold
+values converges to a probability measure. Specifically, for an interval I ⊂ R, define
+                                                       card (I ∩ {t1 , t2 , . . .})
+                                            λn (I) =                                .
+                                                                 n
+Then an investigation of the proof of Theorem 6 in Section X, specifically Sec. X-B and the bounds (51), show
+that as η(t) ≤ η(0) for all t ∈ R under Assumption A1, the following corollary follows. (The corollary relies on
+local asymptotic normality [19, Ch. 7]; see Appendix IX-B for some brief discussion of such conditions.)
+                                                                                                                         12
+
+
+
+ Corollary 8: Let {tn }∞
+                       n=1 be a sequence of threshold values such that λn converges (weakly) to a probability
+measure λ on R. Then the conclusions of Theorem 6 apply with
+                                                 Z
+                                         κ(θ) =    η(t − θ)λ(dt).
+                                                            R
+Moreover, the family of laws of {Bi = sgn(Xi − ti )}ni=1 under {Pθ }θ∈Θ is locally asymptotically normal with
+information κ(θ).
+   The condition that λn converges to a probability measure is satisfied, for example, whenever t1 , . . . , tn are drawn
+independently from a probability distribution λ(dt) on R.
+   When the conclusions of Corollary 8 hold, local asymptotic normality of {Bn }∞     n=1 implies that the maximum
+                                                                       M L
+likelihood estimator (ML) of θ from B1 , . . . , Bn , denoted here by θn , is local asymptotic minimax in the sense
+that                                     √                d
+                                           n θnM L − θ        N (0, 1/κ(θ)) .
+We note that θnM L solves
+                                                     n
+                                                     X            f (ti − θ)
+                                                0=         Bi                   .                                     (19)
+                                                                F (Bi (ti − θ))
+                                                     i=1
+If the collection {t1 , t2 . . .} is bounded (for example {t1 , t2 . . .} ⊂ Θ), then
+                                                      h             2 i
+                                             lim n · E θnM L − θ          = 1/κ(θ),
+                                           n→∞
+so that the ML estimator attains the local asymptotic MSE of Theorem 6.
+  By Assumption A1, η(x) attains its maximum at the origin, so we conclude that
+                                               κ(θ) ≤ sup η (t − θ) = η(0).
+                                                        t∈R
+
+Moreover, this upper bound on κ(θ) is attained only when λ is the point mass at θ . Since θ is a priori unknown,
+estimation in the distributed setting using threshold detection is strictly suboptimal compared to the adaptive setting;
+the ability to choose the thresholds ti adaptively conditional on previous messages is necessary for optimal efficiency.
+
+C. Minimax Threshold Density
+   We conclude this section by considering theR distribution of the threshold values that maximizes the worst-case
+information inf θ κ(θ) = κλ (θ) where κλ (θ) = η(t − θ)λ(dt). The optimal distribution λ⋆ solves the optimization
+problem
+                                                       Z
+                                      maximize inf         η(t − θ)λ(dt)
+                                                   θ∈Θ
+                                                                 Z                                            (20)
+                                     subject to λ(dt) ≥ 0,          λ(dt) ≤ 1.
+
+The objective function (20) is concave in λ(dt) and continuous in the weak topology over measures on Θ, so
+that by discretizing, we can approximately solve this problem using convex optimization. We let κ⋆ denote the
+                                                                                                                    iid
+maximal value of problem (20) and λ⋆ (dt) be the density achieving the maximum. By drawing thresholds ti ∼ λ⋆ ,
+Corollary 8 guarantees that for any θ ∈ Θ, the maximum likelihood estimator using {Bi = sgn(Xi − ti )}i∈N is at
+least κ⋆ .
+   Figure 5 illustrates an approximation to λ⋆ (dt) obtained by solving a discretized version of (20) for the case when
+f (x) is the normal density with variance σ 2 and Θ = [−1/2, 1/2]. The minimax asymptotic precision parameter κ⋆
+obtained this way is illustrated in Fig. 6 as a function of σ . Also illustrated in these figures is κunif , the precision
+parameter corresponding to threshold values uniformly distribution over Θ,
+                                                           Z T
+                                                         1
+                                     κunif , min                η (t − θ) dt
+                                              θ∈[−T,T ] 2T −T
+                                             Z T                      Z 2T
+                                          1                         1
+                                      =           η (t ± T ) dt =            η(t)dt.                                   (21)
+                                         2T −T                     2T 0
+                                                                                                                                          13
+
+
+
+                                                                             σ = .5                             σ = .2
+                                                                                                  2
+                                                                                                  π
+
+
+                                                                   2
+
+                                     λ(dt)
+                                                                   π
+
+
+
+
+                                                                   0                              0
+                                                                   −.5          0            .5   −.5             0               .5
+                                                                               dt                                 dt
+                                                                             σ = .1                            σ = .05
+                                                                   2                              2
+                                                                   π                              π
+
+
+
+
+                                    λ(dt)
+
+
+
+                                                                   0                              0
+                                                                   −.5         0             .5   −.5             0               .5
+                                                                               dt                                 dt
+
+Fig. 5. Optimal threshold density under distributed encoding. The threshold density λ⋆ (dt) (blue) that maximizes the asymptotic relative
+efficiency for f (x) the normal density with variance σ 2 and Θ = [−1/2, 1/2]. The continuous curve (red) is the ARE for each θ ∈ [−1/2, 1/2]
+under the optimal density, hence the minimax ARE is the minimal value of this curve. The dashed curve (green) is the ARE when the threshold
+values are uniformly distributed over [−1/2, 1/2]; its minimal value is κunif (21).
+
+
+
+                                                                         1
+                                                                                                    optimal threshold density
+                                                                                                   uniform threshold density
+                                                                                                  attained in the adaptive case
+
+
+
+
+                                             Relative Efficiency
+                                                                         2
+                                                                         π
+
+
+
+
+                                                                         0
+                                                                                      10−1                        100
+                                                                                                   σ
+
+Fig. 6. Minimax relative efficiency under distributed encoding. ARE versus σ for f (x) the standard normal density with variance σ 2 and
+parameter space Θ = [−1/2, 1/2]. The dashed curve (green) is the ARE under a uniform threshold density over Θ given by Kunif σ 2 of
+(21). The line π/2 is attained under adaptive encoding uniformly over the parameter space for any σ.
+
+
+
+
+                                                                               VI. C ONCLUSIONS
+
+   We considered the risk and efficiency in estimating the mean of a symmetric and log-concave distribution from
+a sequence of bits, where each bit is obtained by encoding a single sample from this distribution. In an adaptive
+encoding setting, we showed that, asymptotically, no estimator can be more efficient than the median of the samples.
+We also showed that this bound is tight by presenting two adaptive encoding and estimation procedures that are
+as efficient as the median. Furthermore, we showed that only one round of adaptivity is required to attain optimal
+efficiency. In the distributed setting we provided conditions for local asymptotic normality of the encoded samples,
+which implies asymptotic minimax bound on both the risk and efficiency relative to the mean. Under local asymptotic
+normality, the optimal estimation performance derived for the adaptive case can only be attained over a finite number
+of points, i.e., no scheme is uniformly optimal in this setting. We further considered the special case where the
+sequence of bits is obtained in a distributed manner by comparing against a prescribed sequence of thresholds. We
+                                                                                                                  14
+
+
+
+characterized the performance of the optimal estimator from such bit-sequence using the density of the thresholds
+and considered the density that minimizes the minimax risk.
+   Natural extensions of this work include situations when the communication bit-budget b is larger than one and
+when each sample is a d-dimensional vector. Bounds on rate of convergence of the MSE in this general case follow
+from several recent works (e.g. [31], [50], [51], [52], [53], [14]), that in particular imply that in some cases the
+MSE decreases in the regular parametric rate of 1/n when b and d are held fixed in the sample size n. Nevertheless,
+the coefficient of the leading 1/n term corresponding to the ARE, which we characterized here in the case b = 1
+and d = 1, is still unknown in the general case.
+                                                                                                                         15
+
+
+
+                                                      A PPENDICES
+                 VII. FAST CONVERGENCE OF UNIFORM ESTIMATORS UNDER BIT CONSTRAINTS
+   Here we consider the uniform distribution as our location family, demonstrating that in the adaptive setting (ii)
+                                                                                                       √
+or even the one-step adaptive setting (ii’), constrained estimators can attain rates faster than the 1/ n rates regular
+estimands allow. Indeed, define c(x) = − log 2 for x ∈ [−1, 1] and c(x) = −∞ for x 6∈ [−1, 1]. Then f (x) = e−c(x)
+is log-concave and symmetric, and we may consider the location family with densities f (x − θ). For notational
+simplicity, we assume we have a sample of size 2n. We provide a proof sketch that there is a one-step adaptive
+estimator θn such that                                                  
+                                                                16 log n       2
+                                         sup Pθ |θn − θ| ≥          3/4
+                                                                           ≤ 2.                                    (22)
+                                      |θ|≤log n                  n            n
+
+for all large n, and so (by the Borel-Cantelli lemmas), for         √ any θ ∈ R we have Pθ (|θn − θ| ≤
+16 log n/n3/4 eventually) = 1. This is of course faster than the 1/ n rates we prove throughout.
+   To prove inequality (22), we proceed in two steps, both quite similar. First, we define an initial estimator θninit.
+Let ǫ > 0, which we will determine presently, though we will take nǫ → ∞ as n → ∞, so that we may assume
+w.l.o.g. that θ ∈ [−nǫ/2, nǫ/2]. Take the interval [−nǫ, nǫ], and construct m thresholds at intervals of size 2nǫ/m;
+let the j th such threshold be
+                                                           2n(j − 1)ǫ
+                                               tj , −nǫ +
+                                                                m
+Then we “assign” observations to each pair of thresholds, so that threshold j corresponds to observations Ij ,
+{ n(j−1)
+    m    + 1, . . . , nj
+                      m }, of which there are n/m. For each index i ∈ Ij , we set
+                                                     (
+                                                       1 if Xi −1 ≥ tj
+                                                Bi =
+                                                       0 otherwise.
+
+Then we simply set θninit to be the minimal threshold for which Bi = 0 for all observations Xi corresponding to
+that threshold. Denote by j ∗ the index of the threshold corresponding to θninit.
+  Let us now consider the probability that θninit is substantially wrong. Set θM ≡ maxi∈Ij∗ Xi − 1. Note that we
+always have θninit ≥ θM because no observations will be above t∗j + 1, and that θninit ≤ θM + 2nǫ/m. In addition,
+
+                                                              2nǫ n/m
+                                                              
+                                                    2nǫ
+                                      Pθ |θM − θ| ≥      = 1−         .
+                                                     m         m
+Putting it all together using the triangle inequality, we have
+
+                                                                 2nǫ n/m
+                                                                   
+                                                   4nǫ                           n2
+                                        init
+                                Pθ θn − θ ≥                 ≤ 1−           ≤ e−2 m2 ǫ .
+                                                    m              m
+                                                √
+Therefore, setting the number of bins m = n and the resolution ǫ = log n/n,
+                                                                       
+                                                       init     4 log n     1
+                                          sup Pθ |θn − θ| ≥ √             ≤ 2.                                        (23)
+                                       |θ|≤log n                    n      n
+
+  The second stage estimator follows roughly the same strategy, except that the resolution of the bins is tighter.
+In particular, let us assume that |θninit − θ| ≤ 8 √
+                                                   log n
+                                                     n
+                                                         , which happens eventually by inequality (23). (We will assume
+                                                                                               n 16√
+this tacitly for the remainder of the argument.) Consider the interval Θn , θninit + [− 16√log
+                                                                                             n
+                                                                                                , logn
+                                                                                                       n
+                                                                                                         ] centered at
+θninit ; we know that the interval includes [θ − 8 √ log n
+                                                       n
+                                                           , θ + 8√
+                                                                  log n
+                                                                    n
+                                                                        ]. Without loss of generality we assume θninit = 0.
+Following precisely the same discretization strategy as that for θninit , we divide Θn into m equal intervals, with
+thresholds tj = − 16√log
+                       n
+                         n
+                           + 32(j−1)
+                                   √
+                                 m n
+                                     log n
+                                           ; let ǫn = 32mlog
+                                                          √ n be the width of these intervals. Then following exactly the
+                                                            n
+same reasoning as above, we assign indices Ij = { n(j−1)
+                                                    m    + 1, . . . , nj
+                                                                      m } and for i ∈ Ij , set Bi = 1 if Xi −1 ≥ tj . We
+                                                                                                                16
+
+
+
+define θn to be the minimal threshold tj for which Bi = 0 for all observations Xi ∈ Ij . Then following precisely
+the reasoning above, we have (on the event that |θninit − θ| ≤ 8 √
+                                                                 log n
+                                                                   n
+                                                                       )
+                                                                          nǫ 
+                                                                  n          n
+                                Pθ (|θn − θ| ≥ 2ǫn ) ≤ (1 − ǫn ) m ≤ exp −
+                                               √                          m
+                                              32 n log n
+                                    = exp −                   .
+                                                  m2
+Set m = 4n1/4 to obtain the claimed result (22).
+
+A. Proof of Proposition 1
+  Denote by D ⋆ the optimal MSE in the Gaussian CEO with L observers and under a total sum-rate r = r1 +. . .+rL .
+An expression for D ⋆ as a function of r is give as [48, Eq. 10]:
+                                             "                                L #
+                                                2 
+                                     1     + σθ               D⋆ L
+                                 r = log                                           .                          (24)
+                                     2         D ⋆ D ⋆ L − σ 2 + D ⋆ σ 2 /σθ2
+For the special case where r = n and L = n, we have
+                                           2                             n 
+                                     1      σθ           D⋆ n
+                                n = log2                                        .                            (25)
+                                     2      D ⋆ D ⋆ n − σ 2 + D ⋆ σ 2 /σθ2
+Consider the distributed encoding setting (iii) in the case where f (x) = N (0, σ 2 ) and the prior on Θ is π =
+N (0, σθ2 ). The Gaussian CEO problem of [28] with a unit bitrate r1 = . . . = rn = 1 at each terminal and
+blocklength k = 1 reduces to our distributed setting (iii). Since D ⋆ satisfying (25) describes the MSE in the CEO
+setting under an optimal allocation of the sum-rate r = n among n encoders, it provides a lower bound to the
+minimal MSE in estimating θ in the distributed setting. By noting that 1/D ⋆ grows no faster than a polynomial in
+n [28], we rely on the expansion
+                                                     2             
+                                                      σθ           2 σθ2
+                              2 1/n
+                                σθ              log   D⋆       log    D⋆
+                                                                           + O n−3 ,
+                                                                                     
+                                  ⋆
+                                         =1+                +         2
+                               D                    n              2n
+to obtain that, in limit n → ∞, (25) behaves as
+                                                                            2
+                                                                            σθ
+                                       4σ 2       16σ 2         4σ 2 log    D⋆
+                                D⋆ =          +             −                     + O(n−3 ).
+                                        3n        9n2 σθ2            9n2
+This implies Proposition 1.
+
+                                          VIII. P ROOF OF T HEOREM 2
+  We begin with two technical lemmas.
+  Lemma 9: Let f be a log-concave and symmetric density function for which Assumption A1 holds. For any
+x1 ≥ . . . ≥ xn ∈ R,
+                                                      k+1 f (x ) 2
+                                           Pn
+                                              k=1 (−1)        k
+                               Pn                       Pn
+                              ( k=1 (−1) F (xk )) (1 − k=1 (−1)k+1 F (xk ))
+                                        k+1
+
+                                  ≤ 4f (0)2 .                                                      (26)
+  Lemma 10: Let X be a random variable with a symmetric, log-concave, and continuously differentiable density
+function f (x) such that Assumption A1 holds. For a Borel measurable set A, define
+                                                   (
+                                                     1    if x ∈ A,
+                                          B(x) ,
+                                                     −1 if x ∈ / A.
+The Fisher information of B with respect to θ is bounded from above by η(0).
+  Lemma 9 is the special case δ = 0 of Lemma 11 to come in Section VIII-A. We now prove Lemma 10.
+                                                                                                                     17
+
+
+
+    Proof of Lemma 10: We first note that in the special case where f is a normal density, Lemma 10 follows
+from [39, Thm. 3]. The proof below, valid for any log-concave symmetric density satisfying Assumption A1, is
+based on a different techique than that of [39].
+   Write the Fisher information of B with respect to θ as
+                                       "                   2 #
+                                            d
+                               Iθ = E          log P (B|θ) |θ
+                                            dθ
+                                       d
+                                                      2       d
+                                                                                 2
+                                      dθ P (B = 1|θ)           dθ P (B = −1|θ)
+                                  =                       +
+                                         P (B = 1|θ)             P (B = −1|θ)
+                                       d
+                                          R                 2      d
+                                                                      R                2
+                                             f  (x − θ) dx                f (x − θ) dx
+                                  = dθ A                       + dθ A
+                                           P (B = 1|θ)                P (B = −1|θ)
+                                          R ′               2                          2
+                                                                    − A f ′ (x − θ) dx
+                                                                      R
+                                  (a) − A f (x − θ) dx
+                                  =                            +
+                                            P (B = 1|θ)               P (B = −1|θ)
+                                             R ′               2
+                                               A f (x − θ) dx
+                                  =                                     ,
+                                     P (B = 1|θ) (1 − P (B = 1|θ))
+                                        R ′                R ′                
+                                          A f (x − θ) dx       A f (x − θ) dx
+                                  = R                          R                ,                     (27)
+                                       A f (x − θ) dx 1 − A f (x − θ) dx
+where differentiation under the integral sign in (a) is justified since f is log-concave hence a.e. differentiable
+(cf. [54]) with a.e. derivative f ′ (x). By regularity of the Lebesgue, for any ǫ > 0 there exists a finite number k of
+disjoint open intervals I1 , . . . Ik such that      Z
+                                                               dx < ǫ.
+                                                       A\∪kj=1 Ij
+
+It follows that for any ǫ′ > 0, the set A in (27) can be replaced by a finite union of disjoint intervals without
+increasing Iθ by more than ǫ′ . Consequently, we may proceed assuming that A is of the form
+                                                     A = ∪kj=1 (t+    −
+                                                                 j , tj ),
+
+with ∞ ≤ t−            − +               +          −    +
+          1 ≤ . . . ≤ tk , t1 ≤ . . . ≤ tk ≤ ∞ and tj ≤ tj for j = 1, . . . , k . Under this assumption,
+
+                                                    k  
+                                                    X                         
+                                 Pθ (Bn = 1) =         F t+
+                                                          j − θ   − F   t −
+                                                                          j − θ    ,
+                                                    j=1
+
+so we may rewrite Eq. (27) as
+                                         P   h                          i2
+                                              k
+                                               f t+
+                                              j=1 j   − θ   − f   t −
+                                                                    j   − θ
+                                  Iθ = P     h                           i
+                                          k         +                 −
+                                          j=1  F  t j − θ   − F     t j  − θ
+                                                               1
+                                     ×        P        h                       i
+                                                    k        +               −
+                                         1−         j=1  F t j − θ   − F   t j − θ
+
+It follows from Lemma 9 that for any θ ∈ R and any choice of the intervals’ endpoints,
+                                          Iθ ≤        max          4f (t)2 ≤ 4f (0)2 .
+                                                 t∈{t±       ±
+                                                     1 ,...,tk }
+
+
+                                                                                                                     
+
+  We now prove Theorem 2. Write the Fisher information of B1 , . . . , Bn with respect to θ as
+                                                              n
+                                                              X
+                                    Iθ (B1 , . . . , Bn ) =         Iθ (Bi |B1 , . . . , Bi−1 ),
+                                                              i=1
+                                                                                                                              18
+
+
+
+where Iθ (Bi |Bi−1 , . . . , B1 ) is the Fisher information of the distribution of Bi given B1 , . . . , Bi−1 . By the definition
+of the adaptive setting, Pθ (Bi |B1 , . . . , Bi−1 ) = Pθ (Xi ∈ Ai ) for some Borel measurable Ai . Consequently,
+Lemma 10 applies, leading to the bound
+
+                                                 Iθ (Bi |Bi−1 , . . . , B1 ) ≤ 4f (0)2 ,
+
+We conclude
+
+                                                   Iθ (B1 , . . . , Bn ) ≤ 4f (0)2 n.                                       (28)
+
+The Van Trees inequality in the version of [55] holds under the regularity conditions on π(·), which implies
+                                     h          i                  1
+                                   E (θn − θ)2 ≥                                    .
+                                                    Eπ [Iθ (B1 , . . . , Bn )] + I0
+Combining the last display with (28), we get
+                                          h        i                             1
+                                        E (θn − θ)2 ≥                                          .
+                                                                         4f (0)2 n + I    0
+
+
+A. Isoperimetric Lemma
+  The following lemma is essential to the proofs of Theorems 2 and 7.
+  Lemma 11: Let f be a log-concave and symmetric density function. Let δ ≥ 0. Assume that the function
+                                                                                   (f (x))2+δ
+                                    ηδ (x) , η 1+δ (x)/f δ (x) =
+                                                                           (F (x)(1 − F (x)))1+δ
+is non-increasing in |x|. Then for any x1 ≥ . . . ≥ xn ∈ R,
+                                                           i+1 f (x ) 2+δ
+                                               Pn
+                                                  i=1 (−1)         i
+                                                     1+δ
+                                                         |1 − k=1 (−1)i+1 F (xi )|1+δ
+                               Pn         i+1
+                                                               Pn
+                              | i=1 (−1) F (xi )|
+                                    ≤ max ηδ (xi ).                                                                         (29)
+                                             i
+
+In particular,
+                                                            i+1 f (x ) 2+δ
+                                                      Pn
+                                                  i=1 (−1)          i
+                                                      1+δ
+                                                          |1 − i=1 (−1)i+1 F (xi )|1+δ
+                                   Pn       i+1
+                                                                 Pn
+                                  | i=1 (−1) F (xi )|
+                                      ≤ ηδ (0) = 41+δ f 2+δ (0).
+
+     Proof of Lemma 11: Denote
+                                                                           n
+                                                                           X
+                                                 δn (x1 , . . . , xn ) ,         si f (xi ),
+                                                                           i=1
+                                                                           n
+                                                                           X
+                                                 ∆n (x1 , . . . , xn ) ,         si F (xi ),
+                                                                           i=1
+
+where si , (−1)i+1 . We use induction on n ∈ N to show that
+
+                                                          |δn (x1 , . . . , xn )|2+δ
+                                        |∆n (x1 , . . . , xn ) (1 − ∆n (x1 , . . . , xn ))|1+δ
+                                             ≤ max ηδ (xi ).                                                                (30)
+                                                      i
+
+Since
+                                                                     |δ1 (x)|2+δ
+                                             ηδ (x) =                                              ,
+                                                            |∆1 (x)(1 − ∆1 (x))|1+δ
+                                                                                                                          19
+
+
+
+The case n = 1 is trivial. Assume that (30) holds for all integers up to n = N and for any x1 ≥ . . . ≥ xN .
+Consider the case n = N + 1. Let i∗ be the index such that xi∗ has minimal absolute value among x1 , . . . , xN .
+The assumption on ηδ (x) implies that
+                                           ηδ (xi∗ ) = max ηδ (xi ).
+                                                                       i
+
+Since the LHS of (29) is invariant to a sign flip of all x1 , . . . , xN +1 , we may assume that xi∗ is positive without
+loss of generality. Set x∗ = xi∗ and let k = i∗ − 1. Consider the function
+                                    g(y1 , . . . , yN ) , g(y1 , . . . , yN |x∗ , k)                                   (31)
+                                                                                         2+δ
+                                         |δN +1 (y1 , . . . , yk , x∗ , yk+1 . . . , yN )|
+                                     ,
+                                           |∆N +1 (y1 , . . . , yk , x∗ , yk+1 . . . , yN )|
+                                                                        1
+                                     ×
+                                         |1 − ∆N +1 (y1 , . . . , yk , x∗ , yk+1 . . . , yN )|1+δ
+The LHS of (30) is obtained by taking yi = xki where ki is the ith element in {1, . . . , N + 1} \ {i∗ }. It is therefore
+enough to prove that
+                                          max       g(y1 , . . . , yN ) ≤ ηδ (x∗ ),
+                                         (y1 ,...,yN )∈AN (x∗ ,k)
+
+where
+                           AN (x∗ , k) , (y1 , . . . , yN ) ∈ RN
+                                        
+
+                                               : y1 ≥ . . . ≥ yk ≥ x∗ ≥ −x∗ ≥ yk+1 . . . ≥ yN } .
+Since f (x) is log-concave and symmetric, we may write f (x) = ec(x) where c(x) is concave, symmetric, and
+superdifferentiable on the interior of its domain with supergradient set ∂c(x) = {v ∈ R | c(y) ≤ c(x) + v(y −
+x) for all y}; c is also differentiable a.e. with derivative
+                                                                       f ′ (x)
+                                                            c′ (x) ,
+                                                                       f (x)
+(when it exists), and we otherwise simply treat f ′ (x)/f (x) = c′ (x) ∈ ∂c(x) as an arbitrary element of the
+superdifferential. The supergradient sets ∂c(x) are increasing, in that v0 ∈ ∂c(x0 ) and v1 ∈ ∂c(x1 ) implies that
+(v1 − v0 )(x1 − x0 ) ≤ 0. We first prove the lemma under the assumption that c is strictly concave, or, equivalently,
+that vi ∈ ∂c(xi ) implies that (v1 − v0 )(x1 − x0 ) < 0 whenever x1 6= x0 ; that is, c′ is strictly decreasing.
+  The maximal value of g(y1 , . . . , yN ) is attained for the same (y1 , . . . , yN ) ∈ AN (x∗ , k) that maximizes
+                           log(g)(y1 , . . . , yN )
+                           = (2 + δ) log (δN ) − (1 + δ) log (∆N ) − (1 + δ) log (1 − ∆N ) ,
+where in the last display and henceforth we suppress the arguments y1 , . . . , yk , x∗ , yk+1 , . . . , yN of the functions
+δN and ∆N . Within the interior of AN (x∗ , k), all three expressions in (31) within an absolute value are positive.
+It follows that partial derivative of log(g)(y1 , . . . , yN ) with respect to yi within the interior of AN (x∗ , k) is
+                           ∂ log(g)   (2 + δ)si f ′ (xi ) (1 + δ)si f (xi ) (1 + δ)si f (yi )
+                                    =                    −                 +                  .
+                              ∂yi           δN                 ∆N              1 − ∆N
+We conclude that the gradient of log(g) vanishes if and only if
+                                           f ′ (yi )
+                                                                            
+                                                       1 + δ δN   1      1
+                                c′ (yi ) =           =              −          ,                                       (32)
+                                           f (yi )     2 + δ 2 ∆N     1 − ∆N
+for i = 1, . . . , N . Since we assumed that ∂c(x) is injective, equality (32) holds if and only if y1 = . . . = yN . In
+this case, g(y1 , . . . , yN ) = ηδ (x∗ ) if N is even. If N is odd and y1 = . . . = yN > x∗ , then
+                                 g(y1 , . . . , yN )
+                                                            |f (y1 ) − f (x∗ )|2+δ
+                                     =
+                                         |F (y1 ) − F (x∗ )|1+δ |1 − (F (y1 ) − F (x∗ ))|1+δ
+                                                                                                                          20
+
+
+
+which is bounded from above by ηδ (x∗ ) by the induction hypothesis. The case where N is odd and −x∗ ≤ y1 =
+. . . = yN is similar. We now consider the possibility that the maximum of g(y1 , . . . , yN ) is attained at the boundaries
+of AN (x∗ , k). At boundary points for which yi = yi+1 for some i, the contribution of yi and yi+1 to g(y1 , . . . , yN )
+is zero and the induction assumption for n = N − 1 implies that
+
+                                                      g(y1 , . . . , yN ) ≤ ηδ (x∗ ).
+
+The remaining boundary points of AN (x∗ , k) are covered by the following cases:
+  (i) yN = −∞.
+ (ii) y1 = ∞.
+(iii) yk = x∗ .
+(iv) yk+1 = −x∗ .
+For case (i),
+
+                                g(y1 , . . . , yN )
+                                       Pk                                 PN −1             2+δ
+                                                                     ∗
+                                            i=1 si f (yi ) + si∗ f (x ) −  i=k+1 si f (yi )
+                                 →                                                           1+δ
+                                      Pk                             ∗
+                                                                          PN −1
+                                           i=1 si F (yi ) + si∗ F (x ) −   i=k+1 si F (yi )
+                                                                        1
+                                ×        Pk                                        PN−1                   1+δ     ,
+                                    1−       i=1 si F (yi ) − si
+                                                                  ∗   F (x∗ ) +        i=k+1 si F (yi )
+
+
+
+which is smaller than ηδ (x∗ ) by the induction hypothesis. Similarly, under case (ii),
+
+                                g(y1 , . . . , yN )
+                                         Pk                                        PN                     2+δ
+                                              i=2 si f (yi ) + si
+                                                                   ∗   f (x∗ ) −       i=k+1 si f (yi )
+                                 →           Pk                                        PN                     1+δ
+                                        1+      i=2 si F (yi ) + si
+                                                                       ∗   F (x∗ ) −     i=k+1 si F (yi )
+
+                                                                           1
+                                ×       P                                PN                             1+δ
+                                             k
+                                    −        i=2 si F (yi ) + si F (x ) −  i=k+1 si F (yi )
+                                                                ∗    ∗
+
+                                                                                          2+δ
+                                      − ki=2 si f (yi ) − si∗ f (x∗ ) + N
+                                       P                               P
+                                                                         i=k+1 si f (yi )
+                                 =     P                                                    1+δ
+                                   1 − − ki=2 si F (yi ) − si∗ F (x∗ ) + N
+                                                                        P
+                                                                           i=k+1 si F (yi )
+
+                                                                       1
+                                ×
+                                        Pk                                     PN                       1+δ   ,
+                                    −    i=2 si F (yi ) − si
+                                                              ∗   F (x∗ ) +        i=k+1 si F (yi )
+
+
+
+which is smaller than ηδ (x∗ ) by the induction hypothesis. Under case (iii), the terms in δN and ∆N corresponding
+to yk and x∗ cancel each other. As a result, g(y1 , . . . , yN ) reduces to an expression with N − 2 variables hence
+this case is handled by the induction hypothesis. Finally, under case (iv), set
+
+                                    d , sk F (−x∗ ) + si∗ F (x∗ ) = si∗ (1 − 2F (−x∗ )) ,
+
+                                                       k−1
+                                                       X                           N
+                                                                                   X
+                                                σ,           si f (yi ) −                 si f (yi ).
+                                                       i=1                      i=k+1
+
+and
+                                                      k−1
+                                                      X                            N
+                                                                                   X
+                                                Σ,           si F (yi ) −                 si F (yi ).
+                                                       i=1                      i=k+1
+                                                                                                                     21
+
+
+
+We have
+                                g(y1 , . . . , yN ) =
+                                             Pk−1                   PN                  2+δ
+                                                 i=1 si f (yi ) −     i=k+1 si f (yi )
+                                 =                                                             1+δ
+                                    Pk−1                           ∗) −
+                                                                        PN
+                                         i=1    s i F (y i ) + d(x        i=k+1   s i F (y i )
+                                                                 1
+                                                                                              1+δ
+                                                                                                     ,
+                                      Pk−1                    ∗
+                                                                        PN
+                                 1−       i=1 si F (yi ) − d(x ) +         i=k+1 si F (yi )
+
+                                                 |σ|2+δ
+                                =
+                                    |Σ + d|1+δ |1 − Σ − d|1+δ
+                                                                                       1+δ
+                                            |σ|2+δ                   Σ(1 − Σ)
+                                =                                                          .
+                                    |Σ|1+δ |1 − Σ|1+δ        Σ(1 − Σ) + d(1 − 2Σ) − d2
+By the induction hypothesis,
+                                                          |σ|2+δ
+                                                                           ≤ ηδ (x∗ ),
+                                                  |Σ|1+δ |1 − Σ|1+δ
+hence it is left to show that
+                                                       Σ(1 − Σ)
+                                                                         ≤ 1.
+                                               Σ(1 − Σ) + d(1 − 2Σ) − d2
+Whenever d > 0,
+                                     Σ(1 − Σ) + d(1 − 2Σ) − d2
+                                                               ≥ 1 ⇔ 1 − 2Σ ≥ d,
+                                             Σ(1 − Σ)
+while for d < 0,
+                                     Σ(1 − Σ) + d(1 − 2Σ) − d2
+                                                               ≥ 1 ⇔ 1 − 2Σ ≤ d.
+                                             Σ(1 − Σ)
+Therefore, it is enough to show that Σ ≤ F (−x∗ ) if si∗ = 1 and Σ ≥ F (−x∗ ) if si∗ = −1. Indeed, if si∗ = 1,
+then sk+1 = −1 and monotonicity of F (x) implies that
+                         Σ + d ≤ F (y1 ) − F (yk ) + F (x∗ ) − F (−x∗ ) + F (yk+2 ) − F (yN ),
+and hence
+                                                   Σ ≤ 1 − F (x∗ ) = F (−x∗ ).
+Similarly, if si∗ = −1 then
+                                                       1 − Σ ≤ 1 − F (−x∗ ).
+This conclude the proof in the case where c′ (x) is an injection.
+  In the case where c(x) is not strictly concave, so that c′ does not strictly decrease, we approximate c using
+another concave symmetric function with decreasing derivative. We assume w.l.o.g. that c(0) = 0 maximizes c.
+                                                         1+α
+For α > 0 consider the function fα (x) = κ(α)e−|c(x)| , where κ(α) normalizes fα . Then cα (x) is concave,
+symmetric, and a.e. differentiable with
+                                                       fα′ (x)
+                                           c′α (x) ,           = (1 + α)|c(x)|α c′ (x).
+                                                       fα (x)
+Now c′α (x) is non-increasing since it is the derivative of a concave function. Furthermore, since c(x) is non-constant
+on any interval and c′ (x) is non-increasing, c′α (x) is non-constant on any interval hence an injection. It follows
+from the first part of the proof that, for any α > 0,
+                                                    (δn,α )2+δ
+                                                                         ≤ max ηδ,α (xi ),                        (33)
+                                            (∆n,α (1 − ∆n,α ))1+δ              i
+                                                                                                                 22
+
+
+
+where                                                 n
+                                                      X
+                                            δn,α ,          (−1)k+1 fα (xk ),
+                                                      k=1
+                                                      n
+                                                      X
+                                           ∆n,α ,       (−1)k+1 Fα (xk ),
+                                                      k=1
+and
+                                                              (fα (x))2+δ
+                                        ηδ,α (x) ,                                .
+                                                     (Fα (x)(1 − F (x)))1+δ
+The proof is completed by noting that
+                                            (δn,α )2+δ                      (δn )2+δ
+                                 lim                         1+δ
+                                                                 =                       ,
+                                α→0 (∆
+                                         n,α (1 − ∆n,α ))            (∆n (1 − ∆n ))1+δ
+and, since the maximum is over a finite set,
+                                         lim max ηδ,α (xi ) = max ηδ (xi ).
+                                         α→0    i                    i
+                                                                                                                 
+
+
+                                           IX. P ROOF OF T HEOREM 3
+  The estimation algorithm (8) is a special case of the stochastic gradient procedures in the papers [49], [56].
+We rely on several of their results. Throughout this proof, we assume without loss of generality that the median
+θ = med(P ) = 0.
+
+A. Proof of Theorem 3(i)
+  Consider the following simplified version of [49, Thm. 4]:
+  Corollary 12: [49, Thms. 3 & 4] Let ϕ : R → R and {Zi } be i.i.d. zero-mean random variables, and
+                                                     Xi = θ + Zi .
+Define
+                                           θi = θi−1 + γi ϕ(Xi − θi−1 ),
+                                                     n−1
+                                                    1X                                                        (34)
+                                           θ̄n =       θi ,
+                                                    n
+                                                     i=0
+where in addition,
+  (i) There exists K1 such that |ϕ(x)| ≤ K1 (1 + |x|) for all x ∈ R.
+ (ii) The sequence {γi }∞ i=1 satisfies condition (9a).
+(iii) The function ψ(x) , E [ϕ(x + Z1 )] satisfies ψ(0) = 0 and xψ(x) > 0 for x 6= 0. Moreover, ψ is differentiable
+      at 0 with ψ ′ (0) > 0 and there exists K2 , 0 < λ ≤ 1, and r > 0, such that
+                                               ψ(x) − ψ ′ (0)x ≤ K2 |x|1+λ                                    (35)
+      for all |x| < r .
+ (iv) The function χ(x) , E ϕ2 (x + Z1 ) is continuous at zero.
+                                         
+          a.s.       √          d
+Then θ̄n → θ and n(θn − θ)         N (0, V ) for V = ψχ(0)
+                                                      ′ (0)2 .
+
+   Using the notation in Corollary 12, we set ϕ(x) = sgn(x) and Zi = Xi − θ , where θ = med(P ). Without loss
+                                                    2 for the remainder of this derivation that θ = 0. As a
+of generality and for notational convenience, we assume
+consequence, we have med(Z) = 0, and χ(x) = E sgn (x + Z1 ) = 1, so χ(0) = 1. In addition,
+                              ψ(x) = E [sgn(x + Z1 )] = P (Z ≥ −x) − P (Z < −x)
+                                   = 1 − 2P (Z ≤ −x).
+                                                                                                                        23
+
+
+
+Using that P has a density f near its median, it follows that ψ ′ (x) = 2f (−x) and thus ψ ′ (0) = 2f (0) > 0. We
+may now verify that the conditions in Corollary 12 hold for λ = 1. Condition (i) is obvious, and the convexity of
+| · | gives most of condition (iii) excepting inequality (35). For that, note that as f is Lipschitz near 0 with constant
+Lip0 (f ), we have for small x that
+                                            Z x               Z x
+                                   ψ(x) = 2     f (−t)dt ≤ 2      [f (0) + Lip0 (f )t] dt
+                                                0                    0
+                                        = 2f (0)x + Lip0 (f )x2 = ψ ′ (0)x + Lip0 (f )x2 ,
+                                               Z x                  Z x
+                                 ψ(x) = 2            f (−t)dt ≥ 2         [f (0) − Lip0 (f )t] dt
+                                                0                    0
+                                        = 2f (0)x − Lip0 (f )x = ψ ′ (0)x − Lip0 (f )x2 ,
+                                                                    2
+
+                                                               1
+so that condition (iii) holds. As evidently χ(0)/ψ ′ (0)2 = 4f (0)2 , Corollary 12 gives Theorem 3(i).
+
+
+
+
+B. Proof of Theorem 3(ii)
+   This proof requires somewhat more technicality than the first part of the theorem, including a brief detour into
+local asymptotic normality theory, regular estimators, and quadratic-mean differentiability [19, cf.]. We assume
+without loss of generality that the median of the density f is 0, so that if Pθ has density f (· − θ), the median of
+Pθ is θ . We begin by recalling the statistical concepts we require.
+   Definition 1: A sequence of estimators Tn for a parameter θ in the parametric family {Pθ }θ∈Θ is regular at θ
+if there exists a distribution Q such that for any bounded sequence hn ,
+                                         √                  √        d
+                                           n(Tn − (θ + hn / n))        √
+                                                                          Q.
+                                                                            Pθ+hn / n
+
+   Definition 2: Let {Pθ }θ∈Θ have densities pθ with respect to a base measure µ. The family is quadratic mean
+differentiable (QMD) at θ with score ℓ̇θ if
+                                Z                              2
+                                    √         √      1 ⊤ √
+                                       pθ+h − pθ − h ℓ̇θ pθ dµ = o(khk2 )                                  (36)
+                                                     2
+as h → 0.
+  Definition 3: A family of distributions {Pθ }θ∈Θ is locally asymptotically normal with information matrix Iθ
+(LAN) at θ if there exists a sequence of random vectors {Zn } such that for all hn → h,
+                                n
+                                X            dPθ+hn /√n                    1
+                                       log                  (Xi ) = h⊤ Zn − h⊤ Iθ h + oP (1)
+                                                dPθ                        2
+                                 i=1
+
+           d                                        iid
+where Zn      N (0, Iθ ) under Pθ , where Xi ∼ Pθ .
+   These three definitions are linked in our case by a few important results. First [19,        Theorem 7.2], if {Pθ } is
+                                                                                         1 Pn
+QMD (Def. 2) at the point θ , then it is locally asymptotically normal with Zn = n i=1 ℓ̇θ (Xi ) and information
+                                                                                        √
+
+matrix Iθ = Eθ [ℓ̇θ ℓ̇⊤
+                      θ ]. Moreover, in any family {Pθ } that is LAN (Def. 3) at θ , if Tn is a regular estimator (Def. 1)
+at θ with limiting distribution Q, then for any bounded, symmetric, quasi-convex loss L and c < ∞,
+                                                            √                 √ 
+                                    lim sup sup EPθ+h/√n L( n(Tn − θ − h/ n))
+                                        n     khk≤c
+                                                          = E[L(W )] for W ∼ Q                                       (37)
+(see Beran [57], Eq. (4.2)). Thus, we show two results: first, that the family {Pθ } of distributions defined by
+the shifted densities {f (· − θ)}θ∈R is quadratic-mean-differentiable at any θ , and second, that θ̄n is regular and
+asymptotically normal. The combination evidently gives the theorem.
+   For quadratic mean differentiability, we have the following lemma, somewhat more general than we need; we
+defer proof to Sec. IX-E.
+                                                                                                                    24
+
+
+
+   Lemmap 13 (Extension of [19], Lemma 7.6): Let pθ be a density with respect to µ, and assume that θ 7→
+sθ (x) , pθ (x) is absolutely continuous for all x. Let ṗθ (x) = ∇θ pθ (x) (when it exists), and assume that
+                                            µ({x : ṗθ (x) fails to exist}) = 0.
+Assume that Iθ , EPθ [ṗθ ṗ⊤   2
+                            θ /pθ ] is continuous at θ0 . Then Pθ is QMD (Definition 2) at θ = θ0 with ℓ̇θ = ṗθ /pθ .
+√ By the assumption in Theorem 3 that the density f is Lipschitz continuous, f is absolutely continuous hence
+  f is absolutely continuous. We see that the location family {Pθ }θ∈R defined by dPθ (x) = f (x − θ) satisfies the
+conditions of Lemma 13.
+  It remains to show that the average θ̄n is regular at θ with the limiting distribution N (0, (4f (0)2 )−1 ):
+  Lemma 14: Let hn → h ∈ R, and define Pn,h = Pθ+h         n     √ . Then
+                                                               n/ n
+
+
+                                           √
+                                                                            
+                                                        d              1
+                                             n θ̄n − θ         N h,            .                                  (38)
+                                                          Pn,h       4f (0)2
+     Proof: To show the convergence (38) we use the following refinement of Corollary 12, which provides a
+generalized convergence result for iteratively defined θn , and whose proof we defer to Section IX-D.
+  Corollary 15: Let the conditions of Corollary 12 hold, meaning that θi = θi−1 + γi ϕ(Xi − θi−1 ) for Xi = θ + Zi ,
+where {Zi } are i.i.d. with E[Z1 ] = 0 and E[ϕ(Z1 )] = 0. Additionally assume the local smoothness condition that
+there exist 0 < λ ≤ 1 and K < ∞ such that
+                                     E[|ϕ(x + Z1 ) − ϕ(Z1 )|2 ] ≤ K(|x|λ + x2 ).                                 (39)
+                    ¯ n , 1 Pn ∆i . Then
+Set ∆i , θi − θ and ∆      n   i=1
+ (i) The sequence {∆i } is regular, that is,
+                                                                   n−1
+                                        √
+                                             ¯ n = − √1
+                                            n∆
+                                                            1 X
+                                                                 ϕ(Zi ) + oP,n (1).                              (40)
+                                                       n ψ ′ (0)
+                                                                   i=1
+                                                                                                            ′
+ (ii) Let {Zi } as in Corollary 12 have absolutely continuous density p with median 0, define ℓ̇h (z) = pp(z−h)
+                                                                                                          (z−h)
+                                                                                                                , and
+                                    2
+      assume that Ih , Ep [ℓ̇h (Z1 ) ] is continuous in h near 0. Then for any converging sequence hn → h,
+                                   √
+                                                                                           
+                                        ¯      d          −h                           χ(0)
+                                      n ∆n n         N           Ep [ϕ(Z1 )ℓ̇0 (Z1 )], ′2     .
+                                           Pθ+hn /√n     ψ ′ (0)                      ψ (0)
+  We now verify that the setting of Theorem 3 (and Lemma 14) satisfies the conditions of Corollary 15. First, we
+have the obvious fact that
+                                    |sgn(z) − sgn(x + z)| ≤ 2 · 1{|x| ≥ |z|} .
+Recalling that the density f is Lipschitz with median 0, for ϕ(z) = sgn(z), and Z = X − θ distributed with density
+f , we have
+                                E [|ϕ(Z) − ϕ(x + Z)|] ≤ 2P (|Z1 | ≤ |x|)
+                                       Z |x|                         Z |x|
+                                    =2       f (t)dt ≤ 4f (0)|x| + 2       Lip(f )tdt
+                                            −|x|                          −|x|
+                                                               2
+                                    = 4f (0)|x| + 2Lip(f )x
+where Lip(f ) is the Lipschitz constant of f . It follows that condition (39) holds. In addition, we have
+                                                    Z                   Z
+                             Ep [ϕ(Z1 )ℓ̇0 (Z1 )] =             ′
+                                                        ϕ(x)f (x)dx =       sgn(x)f ′ (x)dx
+                                                      R                   R
+                                   Z ∞                Z 0
+                                 =       f ′ (x)dx −       f ′ (x)dx = −2f (0) = −ψ ′ (0).
+                                    0                  −∞
+Corollary 15 now implies the convergence (38).                                                                      
+
+  Combining Lemmas 13 and 14 with the limit (37) gives Theorem 3(ii).
+                                                                                                                      25
+
+
+
+C. Proof of Theorem 3(iii)
+  We begin with the following result from [56]:
+  Corollary 16 ([56], Theorem 2): Define the iteration
+                               (
+                                 Un = Un−1 − γn ϕ(Yn ),             Yn = g ′ (Un−1 ) + Zn
+                                                                                                                   (41)
+                                 Ūn = n1 ni=1 Un ,
+                                         P
+                                                                    n = 1, 2, . . . .
+
+Assume that the function g is C 2 , strictly convex, has Lipschitz derivative, and is minimized by x⋆ . Moreover,
+assume that the noises {Zn } are i.i.d. with density p and that the Fisher information E[(p′ (Z1 ))2 /p(Z1 )2 ] exists
+and is finite. Let ψ(x) and χ(x) be defined as in Corollary 12 and satisfy the conditions in the corollary. Assume
+in addition that χ(0) > 0, condition (35) with λ = 1, and there exits K3 such that
+                                         E |ϕ(x + Z1 )|4 ≤ K3 (1 + |x|4 ).
+                                                        
+
+Finally, assume that the sequence {γn } satisfies conditions (9a) and (9b). Then
+                                   h              i              χ(0)
+                            Vn , E (Ūn − x⋆ )2 = n−1 ′                         + o(n−1 ).
+                                                          (ψ (0))2 (g′′ (x⋆ ))2
+  Fix θ ∈ R. Apply Corollary 16 with g(x) = 0.5(x − θ)2 , ϕ(x) = sgn(x), Zn = θ − Xn . The update (41) gives
+                                           Un = Un−1 + γn sgn(Xn − Un−1 ),
+so the estimator Ūn is identical to the stochastic gradient estimator (8) with θ̄n = n1 ni=1 θi . We have E[ϕ(x+Z)4 ] =
+                                                                                        P
+1 and by assumption the Fisher information E[(f ′ (Z))2 /f (Z)2 ] exists, and the functions ψ and χ have the desired
+conditions of Corollary 12 (as we verify in Section IX-A). Finally, the function θ 7→ EPθ [(θ̄n − θ)2 ] is continuous
+in θ , so that for x⋆ = θ and g′′ , 1, we may apply Corollary 16 to obtain
+                                                                 1
+                                            E (θ̄n − θ)2 =             + o(n−1 ).
+                                                        
+                                                              4nf (0)2
+From here, existence of the second moment of π implies (11).
+
+D. Proof of Corollary 15
+  Proof of Corollary 15(i): The proof of part (i) requires two additional lemmas of Polyak and Juditsky [49].
+  Lemma 17 ([49], Lemma 2): Define the process ∆1i = ∆1i−1 − γP            1
+                                                                      i (A∆i−1 + ξi ) for i = 1, 2, . . . . Assume that
+                                                            ¯     1      n
+A > 0 and the stepsizes γi satisfy condition (9a). Then for ∆n = n i=1 ∆1i , we have
+                                                              1
+
+                                                                  n−1          n−1
+                                  √
+                                       ¯1 = α  ∆1    1 X       1 X n
+                                      n∆ n  √n 0 + √     ξi + √   wi ξi ,                                          (42)
+                                              nγ0    nA         n
+                                                                   i=1         i=1
+
+where αn Pand win are real numbers such that |αn | ≤ K and |win | ≤ K for some K < ∞, and
+           n−1
+limn→∞ n1 i=1  |win | = 0.
+   Lemma 18 ([49]): Under the conditions of Corollary 15, with probability 1,
+                                                          ∞
+                                                         X   |∆i |1+λ
+                                                               √      < ∞.
+                                                         i=1
+                                                                  i
+Lemma 18 follows from the proof of Theorem 2 in [49, page 851].
+   We separate the proof of part (i) into two lemmas, which mirror the proofs of Polyak and Juditsky [49]; together
+they immediately give the result.
+  Lemma 19: The expansion (40) holds for the process ∆    ¯ 1n defined by the iteration
+
+                                ∆1i = ∆1i−1 − γi ψ ′ (0)∆1i−1 − γi ϕ(Zi ),       ∆10 = ∆0
+                                           n−1
+                                ¯ 1n = 1
+                                           X
+                                ∆                ∆1i .                                                             (43)
+                                       n
+                                           i=0
+                                                                                                                      26
+
+
+
+     Proof: To prove this claim, use Lemma 17 with A = ψ ′ (0) and ξi = −ϕ(Zi ), which       √ by condition (iii) in
+Corollary 12 gives that E[ξi ] = 0 and that the ξi are independent. The first term αn ∆10 /γ0 n → 0 in Eq. (42). In
+addition, by independence and that the ξi are mean-zero, we have
+                                  
+                                         n−1
+                                                    !2 
+                                      1  X
+                                E √          win ξi 
+                                       n
+                                            i=1
+                                           n                         n
+                                     1     X                  2 1 X
+                                   =             (win )2 E    ξi +     win wjn E [ξi ξj ]
+                                     n                             n
+                                           i=1                                i6=j
+                                        n                                             n
+                                       1X                                            1X n 2
+                                                 (win )2 E            2
+                                                                         
+                                   =                             ϕ(Zi )       = χ(0)   (wi ) → 0
+                                       n                                             n
+                                           i=1                                       i=1
+by Lemma 17. Thus, the expansion (42) in Lemma 17 gives
+                                                                          n−1
+                                       √             1    1 X
+                                           n¯
+                                            ∆1n = − √ ′       ϕ(Zi ) + oP,n (1)
+                                                      n ψ (0)
+                                                                          i=1
+as desired.                                                                                                          
+
+  We then have the following asymptotic equivalence.
+  Lemma 20: The sequences ∆          ¯ 1n are asymptotically equivalent, meaning that √n(∆
+                             ¯ n and ∆                                                   ¯n − ∆      p
+                                                                                              ¯ 1n ) → 0.
+    Proof: From the recursions (34) and (43), the difference δi = ∆i − ∆1i satisfies
+                                 δi = δi−1 − γi ψ ′ (0)δi−1
+                                          + γi ψ ′ (0)∆i−1 + ϕ(Zi ) − ϕ(∆i−1 + Zi ) ,
+                                                                                   
+
+where δ0 = 0. Applying Lemma 17 with the choices ξi = ψ ′ (0)∆i−1 + ϕ(Zi ) − ϕ(∆i−1 + Zi ) yields
+                                        n−1 
+                          √
+                                                                
+                                    1 X             1         n
+                            nδ̄n = √                     + wi ξi
+                                     n          ψ ′ (0)
+                                        i=1
+                                    n−1                    
+                                 1  X         1           n       ′
+                                                                                        
+                             =√                      +  wi      ψ   (0)∆ i−1 − ψ(∆ i−1 )                           (44)
+                                  n        ψ ′ (0)
+                                    i=1
+                                       n−1                    
+                                    1 X            1         n
+                                 +√                     + wi                                                       (45)
+                                     n          ψ ′ (0)
+                                                  i=1
+                                            × (ψ(∆i−1 ) + ϕ(Zi ) − ϕ(∆i−1 + Zi ))
+For the term (44), the assumption (35) that |ψ(x) − ψ ′ (0)x| = O(x1+λ ) and that supi,n |win | < ∞ by Lemma 17
+give that there exists K < ∞ such that |ψ ′ (0)−1 + win ||ψ ′ (0)∆i−1 − ψ(∆i−1 )| ≤ K|∆i |1+λ . Lemma 18 gives that
+P  n   1      1+λ < ∞, and so the Kronecker lemma gives that
+   i=1 i |∆i |
+       √
+
+                                 n−1                
+                              1 X         1        n
+                                                                                a.s.
+                             √           ′
+                                               + wi      ψ ′ (0)∆i−1 − ψ(∆i−1 ) → 0.
+                               n       ψ (0)
+                                    i=1
+  The term (45) is somewhat more challenging to control. We define
+                                       ǫi , ψ(∆i−1 ) + ϕ(Zi ) − ϕ(∆i−1 + Zi ),
+and let Fi = σ(Z1 , . . . , Zi ) be the σ -field of the randomness through time i. We use a square integrable martingale
+convergence theorem [58, Exercise 5.3.35]. Noting that ∆i ∈ Fi , we have
+                              E[ǫ2i | Fi−1 ]
+                                 = E[(ψ(∆i−1 ) + ϕ(Zi ) − ϕ(∆i−1 + Zi ))2 | Fi−1 ]
+                                 ≤ 2ψ(∆i−1 )2 + 2E[(ϕ(∆i−1 + Zi ) − ϕ(Zi ))2 | Fi−1 ]
+                                     h                            i
+                                 ≤ K |∆i−1 |1+λ + |∆i−1 |λ + ∆2i−1 ,                                               (46)
+                                                                                                                     27
+
+
+
+where inequality (46) follows by the conditions (35) and (39), and E[εi | Fi−1 ] = 0 for all i by definition of
+ψ(x) = E[ϕ(x + Z)] and that ψ(0) = 0. We now control the expectations of these quantities. For R < ∞,
+define the the stopping time τR , inf{i : |∆i | > R}, which satisfies {τR ≤ i} ∈ Fi for each i. Then using [49,
+Eq. (A13-A14)], we have
+                                            E[∆2i 1{τR > i}] ≤ Kγi ,
+and so inequality (46) gives that
+                                         ∞                            ∞
+                                                                        γiλ
+                                        X                       
+                                                1 2                   X
+                                    E             |εi | 1{τR > n} ≤ K       <∞
+                                                i                        i
+                                          i=1                                      i=1
+                                             ∞
+                                             X 1
+                                        so           ǫ2 1{τR > n} < ∞ a.s.
+                                                    i i
+                                             i=1
+by Condition (9a). As in the proof of Theorems 2 and 4 in [49], the Robbins-Siegmund Theorem [59] applied to
+the increment of |∆t |2 implies that for every ǫ > 0 there exists some R′ > 0 such that
+                                                              
+                                                             ′
+                                            P sup |∆i | ≤ R ≥ 1 − ǫ.                                    (47)
+                                                         i
+Consequently, there exists some R′′ < ∞ such that τR′′ = ∞. We obtain that
+                                              ∞
+                                             X    1 2
+                                                   ε < ∞ a.s..
+                                                  i i
+                                                         i=1
+Applying the square integrable martingale convergence theorem of [58, Ex. 5.3.35], we have
+                                             n               
+                                         1 X        1       n    a.s.
+                                        √          ′
+                                                        + wi ǫi → 0,
+                                          n       ψ (0)
+                                                    i=1
+so that both equations (44) and (45) converge almost surely to 0.                                                    
+
+  Proof of Corollary 15(ii): This is essentially an immediate consequence of Le Cam’s third lemma [19, Example
+6.7]. Recall [19, Thm. 7.2] that if a family {Pθ }θ∈Θ is quadratic mean differentiable at θ with score ℓ̇θ , then it is
+LAN at θ (Definition 3) with information matrix Iθ = E[ℓ̇θ ℓ̇⊤
+                                                             θ ].
+  The regularity result (40) gives
+                                                         n
+                                        √            1 X ϕ(Zi )
+                                            ¯
+                                          n ∆n = − √                + oP,n (1).
+                                                      n     ψ ′ (0)
+                                                                     i=1
+
+The conditions in Corollary 15(ii) imply that the Fisher information Ih = Eh [ℓ̇h (Z1 )2 ] exists and is continuous for
+            ′
+ℓ̇h (z) = pp(z−h)
+              (z−h)
+                    , and the asymptotic expansion Definitions 2 and 3 combined with the preceding display, give the
+joint convergence
+                                                 n
+                                                                    !
+                                         √             Phn /√n         d
+                                            ¯ n,
+                                                 X
+                                          n∆       log         (Zi )     N (µ, Σ) ,
+                                                          P0
+                                                   i=1
+
+
+
+where
+                                       h2
+                                         
+                               µ = 0, − I0 ,                   and
+                                       2
+                                                    χ(0)
+                                                                                                         !
+                                                                            −h
+                                                   ψ′ (0)2                 ψ′ (0) Ep [ϕ(Z1 )ℓ̇0 (Z1 )]
+                              Σ=         −h                                                                  .
+                                        ψ′ (0) Ep [ϕ(Z1 )ℓ̇0 (Z1 )]                   h2 I0
+Le Cam’s third lemma [19, Exm. 6.7] then implies the convergence
+                             √
+                                                                                  
+                                  ¯     d         −h                       χ(0)
+                                n∆n n        N           E p [ϕ(Z)ℓ̇(Z)],
+                                     Phn /√n     ψ ′ (0)                  ψ ′ (0)2
+under the alternatives Phnn /√n , which gives Corollary 15(ii).
+                                                                                                                      28
+
+
+
+E. Proof of Lemma 13
+                                                                                                 √
+  The proof is essentially completely parallel to that of [19, Lemma 7.6]. Define ṡθ = 12 ṗpθθ pθ , which exists
+µ-almost surely, so that ṡθ ṡ⊤
+                        R
+                               θ dµ is well-defined (though it may be infinite). By Lebesgue’s integration theorem,
+we have                                                    Z         1
+                                        sθ+h (x) − sθ (x) =              h⊤ ṡθ+th (x)dt,
+                                                                 0
+
+and so By Jensen’s inequality (or Cauchy-Schwartz) we have
+                                                     Z 1
+                              (sθ+h (x) − sθ (x))2 ≤     h⊤ ṡθ+th (x)ṡθ+th (x)⊤ hdt.
+                                                             0
+
+Thus, for any ht we have
+                                           sθ+tht (x) − sθ (x) 2
+                                     Z                           
+                                                                       dµ(x)
+                                                      t
+                                             Z Z 1
+                                                                       2
+                                           ≤           (h⊤t ṡθ+utht ) dudµ
+                                                   0
+                                             Z 1        Z
+                                           =       h⊤t      ṡθ+utht ṡ⊤
+                                                                       θ+utht dµ(x)ht du
+                                               0
+                                                    Z 1                 
+                                              1 ⊤
+                                           = ht              Iθ+utht du ht .
+                                              4          0
+
+By continuity, as ht → h and t → 0 the assumed continuity of θ 7→ Iθ gives that the final display converges to
+h⊤ Iθ h.
+  Now, we note that                                                    2
+                                        sθ+tht (x) − sθ (x)
+                                 lim                        − h⊤ ṡθ (x) = 0
+                                  t↓0            t
+for all x excepting a µ-null set, and the variant of the dominated convergence theorem in [19, Prop. 2.29] implies
+that
+                                   1                                      2
+                                     Z 
+                              lim 2      sθ+tht (x) − sθ (x) − th⊤ ṡθ (x) dµ(x)
+                             t→0 t
+                                       Z                                  2
+                                           sθ+tht (x) − sθ (x)     ⊤
+                                = lim                          − h ṡθ (x) dµ(x) = 0,
+                                   t→0              t
+completing the proof.
+
+                                              X. P ROOF OF T HEOREM 6
+  We follow a similar outline to the optimality results we establish in the proof of Theorem 3(ii) in Sec. IX-B.
+Roughly, we establish that the family Pθ of distributions on the bits Bi is locally asymptotically normal (Definition 3)
+via a quadratic mean differentiability argument. After this, the result follows by standard local asymptotic minimax
+theory.
+  We begin with an argument on the smoothness properties of the densities, which is important for our Taylor
+expansions to come.
+  Lemma 21: Let Assumption A2(i) hold. Then for any A = ∪ki=1 [ai , bi ] and h ∈ R,
+
+                                    Pθ+h (A) − Pθ (A) − Ṗθ (A)h ≤ k · Lip(f )h2 ,                                 (48)
+
+where
+                                                     k
+                                                     X
+                                         Ṗθ (A) =         f (ai − θ) − f (bi − θ).
+                                                     i=1
+                                                                                                                              29
+
+
+
+Additionally, we have the bounds
+
+                                                                    p
+                                                 |f (b) − f (a)| ≤ 2 Lip(f )P ([a, b])                                     (49)
+                                                                     p
+                                                   and |Ṗθ (A)| ≤ 2 kLip(f ).
+
+
+See Section X-A for a proof.
+  The second lemma provides the local asymptotic normality we require.
+  Lemma 22: Let Assumption A2(i) and (ii) hold, and let Bi = 1{Xi ∈ Ai }. Let hn → h ∈ R. Then for any
+θ ∈ intΘ,
+
+                                          n
+                                          X           Pθ+hn /√n (Bi )
+                                                log
+                                                           Pθ (Bi )
+                                          i=1
+                                                             n                      n
+                                                   h X             h2 X
+                                                 =√    ℓ̇θ (Bi ) −      Var(ℓ̇θ (Bi ))
+                                                    n              4n
+                                                            i=1                    i=1
+                                                                n
+                                                            h2 X
+                                                        −               ℓ̇θ (Bi )2 + oP (1).
+                                                            4n
+                                                                  i=1
+
+
+
+If additionally Assumption A2(iii) holds, then
+
+                              n                                             n
+                              X           Pθ+hn /√n (Bi )           h X            h2
+                                    log                           =√    ℓ̇θ (Bi ) − κ(θ) + oP (1).
+                                                Pθ (Bi )             n             2
+                              i=1                                         i=1
+
+
+
+The proof of Lemma 22 is quite technical, so we defer it to Section X-B.
+  With this lemma, it is not too challenging to demonstrate the local      p asymptotic normality (Definition 3) of3 the
+family {Pθ }. Indeed, Lemma 21 guarantees that |Ṗθ (An )| ≤ 2 kn Lip(f ) for all n, so that Eθ [|ℓ̇θ (Bi )| ] ≤
+        3/2
+              Lip(f )3/2
+C Pθ (Akii )2 (1−P  θ (Ai ))
+                                                                        1 Pn
+                            2 , while Assumption A2(ii) guarantees that n3
+                                                                                               3
+                                                                            i=1 Eθ [|ℓ̇θ (Bi )| ] → 0. Because E[ℓ̇θ (Bi )] = 0,
+the Lyapunov central limit theorem applies to give
+
+                                                            n
+                                                       1 X           d
+                                                      √    ℓ̇θ (Bi )   N (0, κ(θ))
+                                                        n
+                                                            i=1
+
+
+
+under Assumption A2(iii), so that the family {Pθ } is locally asymptotically normal (Def. 3).
+   We now recall the familiar Hájek-Le-Cam local asymptotic minimax result [19, Thm. 8.11]: if the family {Pθ }
+is LAN with precision κ(θ), then
+
+                                                                            √            
+                                      lim inf lim inf              sup √ Eτ L( n(θn − τ ))
+                                          c→∞          n     kτ −θk≤c/ n
+                                                                   p
+                                                           ≥ E[L(Z/ κ(θ))]
+
+
+for any symmetric quasi-convex loss L, where Z ∼ N (0, 1). This immediately gives Theorem 6.
+                                                                                                                        30
+
+
+
+A. Proof of Lemma 21
+  To see the first claim of the lemma, we consider the simpler special case that A = [a, b]. Then as f is Lipschitz
+(and hence absolutely continuous and a.e. differentiable with kf ′ k∞ ≤ Lip(f )), we have
+                                                     Z b
+                              Pθ+h (A) − Pθ (A) =        (f (z − θ − h) − f (z − θ))dz
+                                                       a
+                                        Z bZ h
+                                   =−           f ′ (z − θ − u)dudz
+                                         a   0
+                                        Z hZ b
+                                   =−           f ′ (z − θ − u)dzdu
+                                         0    a
+                                     Z h
+                                   =     f (a − θ − u) − f (b − θ − u)du
+                                       0
+                                     Z h                                 Z h
+                                   ⋚     (f (a − θ) − f (b − θ))du ± 2        Lip(f )udu
+                                           0                                                  0
+                                      = [f (a − θ) − f (b − θ)] h ± Lip(f )h2 .
+This gives the first two claims of the lemma.
+  For the second, we require a bit more work. Let L = Lip(f ) for shorthand. Let a < b. Then we always have
+                                           Z b
+                              P ([a, b]) ≥     f (z)dz                                                   (50)
+                                            a
+                                     Z b
+                                 ≥       max{f (b) − L(b − z), f (a) − L(z − a), 0}dz.
+                                       a
+                                                   f (b)−f (a)
+If f (a)+f (b) ≥ L(b−a), then the point ẑ = a+b
+                                               2 −      2L     satisfies both f (b)−L(b− ẑ) ≥ 0 and f (a)−L(ẑ−a) ≥
+0. The integral (50) then becomes
+                               Z ẑ                           Z b
+                                    (f (a) − L(z − a)dz) +        (f (b) − L(b − z))dz
+                                  a                                          ẑ
+                                                                                   2
+                                                                                            (f (b) − f (a))2
+                                                                       
+                                    f (a) + f (b)       b−a                  b−a
+                                  =                               −L                    +                    ,
+                                          2              2                    2                    4L
+
+and using the assumption that f (a)+f
+                                   2
+                                      (b)
+                                          ≥ L(b − a), we obtain
+                                (f (b) − f (a))2   f (b) + f (b) b − a
+                                                 ≤
+                                       4L                2         2
+                                                                   2
+                                                                        (f (b) − f (a))2
+                                                           
+                                                             b−a
+                                                     −L               +
+                                                               2               4L
+                                                 ≤ P ([a, b]).
+                            p
+That is, |f (b) − f (a)| ≤ 2 Lip(f )P ([a, b]). In the converse case that f (a) + f (b) ≤ L(b − a), then the integral (50)
+becomes
+                                                  Z a+ f (a)
+                                                         L
+                                    P ([a, b]) ≥             (f (a) − L(z − a))dz
+                                                    a
+                                                       Z b
+                                                     +           (f (b) − L(b − z))dz
+                                                              b− f L
+                                                                   (b)
+
+
+                                                    f (a)2         f (a)2 f (b)2 f (b)2
+                                               =               −         +      −       ,
+                                                        L            2L     L     2L
+so that
+                                f (a) + f (b) p                  p
+                                     √       ≤ f (a)2 + f (b)2 ≤ 2Lip(f )P ([a, b]),
+                                       2
+                                                   √
+where the left inequality follows from concavity of ·. In sum, we have
+                                                                   P demonstrated that always the first bound (49)
+holds. To show the second inequality in expression (49), note that i P ([ai , bi ]) ≤ 1, and apply Cauchy-Schwarz.
+                                                                                                                       31
+
+
+
+B. Proof of Lemma 22
+   Our proof follows that of [19, Thm. 7.2] closely. We first demonstrate a type of uniform quadratic mean
+differentiability
+   √              (Definition 2) for sets A that are finite unions of intervals. By a Taylor approximation and concavity
+of ·, we have
+                                      √       b         b2      √          √        b
+                                        a + √ − 3/2 ≤ a + b ≤ a + √
+                                             2 a 4a                               2 a
+
+for any a > 0 and |b| ≤ 3a/4. Consequently, recalling that ℓ̇θ (A) = Ṗθ (A)/Pθ (A), for any h ∈ R and A =
+∪ki=1 [t−    +
+        i , ti ] the union of k intervals, the expansion (48) yields
+                                                                                   2
+                                     p               p          1          p
+                                        Pθ+h (A) − Pθ (A) −       hℓ̇ θ (A)  Pθ (A)
+                                                                2
+                                                                                      !2
+                                             kLip(f ) 2 (|Ṗθ (A)h| + h2 Lip(f ))2
+                                      ≤               h +                                ,
+                                                                   Pθ (A)3/2
+                                             p
+                                            2 Pθ (A)
+
+valid for h such that |Ṗθ (A)h| ≤ Pθ (A)/4 and kh2 Lip2 (f ) ≤ Pθ (A)/4. Thus, under Assumption A2(ii), there
+exists a numerical constant C < ∞ such that
+                                                                             2
+                               p               p            1        p
+                                  Pθ+h (A) − Pθ (A) − hℓ̇θ (A) Pθ (A)
+                                                            2
+                                                                                   !2
+                                     h2 k · Lip(f ) (|Ṗθ (A)h| + kh2 Lip(f ))2
+                                 ≤                  +
+                                                                Pθ (A)3/2
+                                        p
+                                       2 Pθ (A)
+                                                                     k4 h4 Lip4 (f )
+                                                                                    
+                                     C
+                                 ≤            2    2             2
+                                             k Lip (f ) + ℓ̇θ (A) +                    · h4 ,            (51a)
+                                   Pθ (A)                               Pθ (A)2
+
+valid whenever |Ṗθ (A)h| ≤ Pθ (A)/4 and kh2 Lip2 (f ) ≤ Pθ (A)/4, and similarly, we have
+                                                                                        2
+                              p
+                                          c
+                                                p
+                                                           c
+                                                                   1       c
+                                                                             p
+                                                                                      c
+                                 Pθ+h (A ) − Pθ (A ) − hℓ̇θ (A ) Pθ (A )
+                                                                   2
+                                                                            k4 h4 Lip4 (f )
+                                                                                           
+                                    C
+                               ≤            k 2
+                                                Lip 2
+                                                      (f ) + ℓ̇ θ (A c 2
+                                                                      )  +                    · h4 .               (51b)
+                                 Pθ (Ac )                                     Pθ (Ac )2
+That is, the family {Pθ } with bit observations Bn satisfies a uniform type of quadratic-mean differentiability (Def. 2).
+   For shorthand, define Pn = Pθ+hn /√n and P = Pθ , and let pn , p be shorthand for the p.m.f.s of the two
+distributions. For the sets Ai we recall that Bi = 1{Xi ∈ Ai }. The random variables
+                                                        r                
+                                                              pn
+                                              Wn,i , 2           (Bi ) − 1
+                                                               p
+are with P -probability 1 well-defined, and by the inequalities (51), we have that
+                                                           
+                                                 hn
+                                    Var Wn,i − √ ℓ̇θ (Bi )                                                          (52)
+                                                   n
+                                            k2 Lip2 (f ) + ℓ̇θ (Ai )2 + ℓ̇θ (Aci )2 h4n
+                                          ≤C i                                     · 2
+                                                      Pθ (Ai )Pθ (Aci )             n
+                                                    4     4          8
+                                                   k Lip (f )       hn
+                                           +C
+                                               Pθ (Ai )3 Pθ (Aci )3 n4
+                                            k2 Lip2 (f ) + ℓ̇θ (Ai )2 + ℓ̇θ (Aci )2 h4n
+                                          ≤C i                                     · 2                              (53)
+                                                      Pθ (Ai )Pθ (Aci )             n
+                                                    4    4           8
+                                                   k Lip (f )      hn
+                                           +C                  c                                                    (54)
+                                               Pθ (Ai ) Pθ (Ai ) n4
+                                                       3         3
+                                                                                                                32
+
+
+
+whenever
+                                          h                             1
+                                         √ max{ℓ̇θ (Ai ), ℓ̇θ (Aci )} ≤
+                                           n                            4
+                                                  2
+                                              ki hn                min{Pθ (Ai ), Pθ (Aci )}
+                                          and       Lip2 (f ) ≤
+                                                n                           4
+Now, we use Assumption A2(ii), coupled with Lemma 21 to show that the summed variances converge to zero.
+Indeed, Lemma 21 and inequality (52) give that
+                                                                      ki2
+                                                           
+                                           hn                                     1
+                            Var Wn,i − √ ℓ̇θ (Bi ) ≤ C ·                       c
+                                             n                 Pθ (Ai )Pθ (Ai ) n
+                                                                ki4
+                                                                                
+                                           ki         1                      1 1
+                                  +                     +                           ,
+                                    Pθ (Ai )Pθ (Aci ) n Pθ (Ai )3 Pθ (Aci )3 n3 n
+
+where C < ∞ depends only on Lip(f ) and hn (both of which are uniformly bounded) whenever
+                                                               ki        1  1
+                                                                     c     ≤ .
+                                                        Pθ (Ai )Pθ (Ai ) n  C
+
+Assumption A2(ii) thus implies that E[ℓ̇θ (Bi )] = 0 and
+                                                  n
+                                                                   !
+                                                  X     hn
+                                         Var     Wn,i − √ ℓ̇θ (Bi )
+                                                         n
+                                             i=1
+                                                 n                           
+                                               X                hn
+                                             =     Var Wn,i −   √    ℓ̇θ (Bi ) → 0.                           (55)
+                                                                   n
+                                                      i=1
+
+  We now control the expectation of the Wn,i . Defining µi to be the induced counting measure on Bi = 1{Xi ∈ Ai },
+                         n
+                         X                  n Z p
+                                            X           p
+                                                                        
+                               E[Wn,i ] = 2       pn (b) p(b)dµi (b) − 1
+                         i=1                      i=1
+                               n Z p
+                               X             p    2
+                            =−       pn (b) − p(b) dµi (b)
+                                   i=1
+                                       n
+                                   h2n X
+                            =−                  E[ℓ̇θ (Bi )2 ]
+                                   4n
+                                          i=1
+                                 n Z p                              2
+                                 X             p       hn       p
+                               −       pn (b) − p(b) − √ ℓ̇θ (b) p(b) dµi (b)
+                                                        n
+                                    i=1
+                                   n Z                                              
+                                   X    p                   p          hn       p      hn      p
+                               −                 pn (b) −       p(b) − √ ℓ̇θ (b) p(b) √ ℓ̇θ (b) p(b)dµi (b)
+                                   i=1
+                                                                        n               n
+                               n
+                            h2 X
+                                             
+                                            2
+                         =−      E[ℓ̇θ (Bi ) ] − o(1)
+                            4n
+                                         i=1
+
+uniformly in h, with a derivation completely paralleling that above. Therefore, we obtain
+                            n           n                              n
+                           X           X              hn             hn X
+                                Wn,i =      Wn,i − √ ℓ̇θ (Bi ) + √          ℓ̇θ (Bi )
+                                                       n              n
+                            i=1                 i=1                                     i=1
+                                                     n                            n
+                                                  h2 X                   2     h X
+                                           =−                 E[ℓ̇θ (Bi ) ] + √     ℓ̇θ (Bi ) + oP (1),
+                                                  4n                            n
+                                                        i=1                       i=1
+
+where we have used that hn → h.
+                                                                                                                  33
+
+
+
+  Now, we write the log-likelihood ratio. We have
+                              n                       n             
+                              X           pn (Bi )    X        1
+                                    log            =2   log 1 + Wn,i
+                                           p(Bi )              2
+                              i=1                        i=1
+                                          n                 n                 n
+                                          X              1 X
+                                                                    2       1X 2
+                                     =          Wn,i −             Wn,i +     Wn,i R(Wn,i )
+                                                         4                  2
+                                          i=1                i=1             i=1
+                                                                                              √
+where the remainder |R(Wn,i )| ≤ |Wn,i | for |Wn,i | ≤ 1. Using the Taylor expansions of          · and Lemma 21, we
+have
+                             1          1           hn
+                               Wn,i ≤ ℓ̇θ (Bi ) √
+                             2          2            n
+                                    h2n ki Lip(f ) h2n               h4 k2 Lip(f )2
+                                +                 +     ℓ̇θ (Bi )2 + n2 i
+                                     n p(Bi )        n               n p(Bi )2
+                                 1         hn
+                               = ℓ̇θ (Bi ) √
+                                 2           n
+                                          √                         √
+                                            ki         ki            ki          ki2
+                                +C √              +           +           +                                     (56)
+                                          np(Bi ) np(Bi ) p(Bi )2 n p(Bi )2 n2
+where |C| < ∞ depends only on Lip(f ) and hn and so is uniformly bounded. From Assumption A2(ii) we get
+                                √                     √
+                                  ki        ki          ki         ki2
+                          C √           +        +           +            → 0.
+                               np(Bi ) np(Bi ) p(Bi )2 n p(Bi )2 n2
+Consequently maxi Wn,i → 0, so that
+                              n                               n                    n
+                              X         pn (Bi )  hn X             1X
+                                    log          =√    ℓ̇θ (Bi ) −    E[ℓ̇θ (Bi )2 ]                            (57)
+                                         p(Bi )     n              4
+                              i=1                            i=1                  i=1
+                                                                   n
+                                                           1X 2
+                                                         −   Wn,i + oP (1).
+                                                           4
+                                                                   i=1
+                                                                      √
+                           2 ]. Using the bounds that |ℓ̇ (B )| ≤ C k /p(B ) from Lemma 21, the expansion (56)
+  It remains to compute E[Wn,i                              θ   i        i    i
+yields
+                                         h2n
+                                                        
+                                   2                   2
+                            E Wn,i −         ℓ̇θ (Bi )
+                                         2n
+                                                 3/2                      3/2
+                                  "
+                                C              ki                       ki
+                           ≤                               √ +                  √
+                                n p(Ai )(1 − p(Ai )) n p(Ai )2 (1 − p(Ai ))2 n
+                                                  ki2
+                                                                  
+                                                              1
+                                     +
+                                       p(Ai )(1 − p(Ai )) n3/2
+                                                    ki2
+                                       
+                                     C                        1            ki      1
+                                  +                               +    3         3
+                                     n p(Ai )(1 − p(Ai )) n p(Ai ) (1 − p(Ai )) n
+                                                   ki4
+                                                                  
+                                                               1
+                                     +                              ,
+                                       p(Ai )3 (1 − p(Ai ))3 n3
+where C depends only on h and Lip(f ). Thus
+                                          n               n
+                                          X
+                                               2     h2n X
+                                              Wn,i =         ℓ̇θ (Bi )2 + o(1),
+                                                     n
+                                          i=1            i=1
+
+giving Lemma 22.
+                                                                                                                             34
+
+
+
+                                                XI. P ROOF OF T HEOREM 7
+   Let Ξ be the set of points θ ∈ Θ for which κ(θ) = η(0). Since B1 , B2 , . . . satisfy the conditions in Theorem 6,
+θ is in Ξ if and only if limn→∞ Ln (A1 , . . . , An ; θ) = η(0). By assumption, we have Bi = 1{Xi ∈ Ai }, Ai =
+        −      +             −      +              −      +               −   +
+∪Kk=1 (ti,k , ti,k ), where ti,1 ≤ ti,1 ≤ . . . ≤ ti,K ≤ ti,K , and ti,1 and ti,K may take the values −∞ and ∞,
+respectively. Denote the set of endpoints
+                                                         K
+                                                         [
+                                                    Ei =    {t−       +
+                                                               i,k , ti,k },
+                                                             k=1
+
+and for θ and ǫ > 0, define
+                                     Sn (θ, ǫ) , {i ≤ n s.t. (θ − ǫ, θ + ǫ) ∩ Ei 6= ∅}
+
+In words, Sn contains all integers smaller than n in which an ǫ-ball around θ contains an endpoint of one of the
+intervals defining Ai . We now claim that if θ ∈ Ξ then card(Sn (θ, ǫ))/n → 1. Indeed, for such θ we have
+
+                                   Ln (A1 , . . . , An ; θ)
+                                                     P                                       2
+                                                           K            +                −
+                                       1    X              k=1 f (θ − t i,k ) − f (θ − t i,k )
+                                   =                                                          
+                                       n             P   K
+                                                               F (θ − t ) − F (θ − t− )
+                                                                         +
+                                          i∈Sn (ǫ,θ)   k=1              i,k               i,k
+                                                                   1
+                                        ×         PK                                        
+                                             1 − k=1 F (θ − t+       i,k ) − F  (θ  −  t −
+                                                                                         i,k )
+                                                   P                                        2
+                                                      K        +                  −
+                                      1    X          k=1 f (t i,k −  θ)   − f (t i,k −  θ)
+                                    +                                                         
+                                      n            P K               +                   −
+                                        i/
+                                         ∈Sn (ǫ,θ)   k=1 F (θ − ti,k ) − F (θ − ti,k )
+                                                          1
+                                          ×   PK                                
+                                            1 − k=1 F (θ − t+
+                                                            i,k ) − F (θ − t −
+                                                                             i,k )
+                                        card (Sn (θ, ǫ))        n − card (Sn (θ, ǫ))
+                                    ≤                    η(0) +                      η(ǫ)                                 (58)
+                                               n                        n
+where the last transition follows from Lemma 11 with δ = 0 and the fact that for i ∈ Sn (θ, ǫ),
+                                                                  
+                                          +                −
+                               max max η(ti,k − θ), max η(ti,k − θ) ≤ η(ǫ) < η(0).
+                                          k                   k
+
+Unless card (Sn (θ, ǫ)) /n → 1, we get that (58), hence Ln (A1 , . . . , An ; θ), are bounded from above by a constant
+that is smaller then η(0) in contradiction to the fact that θ ∈ Ξ.
+  Assume for the sake of contradiction that there exists N ≥ 2K + 1 distinct elements θ1 , . . . , θN ∈ Ξ. Since each
+Ai consists of at most K intervals, we have that
+                                                        n
+                                                             !
+                                                       [
+                                               card       Ai ≤ 2nK.                                               (59)
+                                                            i=1
+
+Fix ǫ > 0 such that
+                                                            1
+                                                       ǫ<     min |θi − θj |.
+                                                            2 i6=j
+Since for each θ ∈ Θ we have card (Sn (θ, ǫ)) → 1, there exists n large enough such that
+                                                                      
+                                                                    1
+                                       card (Sn (θi , ǫ)) ≥ n 1 −
+                                                                   2N
+for all i = 1, . . . , N . However, Sn (θ1 , ǫ), . . . Sn (θN , ǫ) are disjoint, so the cardinality of their union is at least
+         1
+n 1 − 2N    N > 2nK + n/2, a contradiction to inequality (59).
+                                                                                                                                           35
+
+
+
+                                                              R EFERENCES
+ [1] A. Kipnis and J. C. Duchi, “Mean estimation from adaptive one-bit measurements,” in 55th Annual Allerton Conference on
+     Communication, Control, and Computing (Allerton), Oct 2017, pp. 1000–1007.
+ [2] V. Lesser, C. Ortiz, and M. Tambe, Eds., Distributed Sensor Networks: A Multiagent Perspective. Kluwer Academic Publishers, 2003,
+     vol. 9.
+ [3] D. Li, K. Wong, Y. Hu, and A. Sayeed, “Detection, classification and tracking of targets in distributed sensor networks,” in IEEE Signal
+     Processing Magazine, 2002, pp. 17–29.
+ [4] S. Fuller and L. Millett, The Future of Computing Performance: Game Over or Next Level? National Academies Press, 2011.
+ [5] J. Candy, “A use of limit cycle oscillations to obtain robust analog-to-digital converters,” IEEE Transactions on Communications,
+     vol. 22, no. 3, pp. 298–305, Mar 1974.
+ [6] P. W. Wong and R. M. Gray, “Sigma-delta modulation with i.i.d. Gaussian inputs,” IEEE Transactions on Information Theory, vol. 36,
+     no. 4, pp. 784–798, Jul 1990.
+ [7] J. C. Duchi, M. I. Jordan, and M. J. Wainwright, “Minimax optimal procedures for locally private estimation (with discussion),” Journal
+     of the American Statistical Association, vol. 113, no. 521, pp. 182–215, 2018.
+ [8] R. G. Baraniuk, S. Foucart, D. Needell, Y. Plan, and M. Wootters, “Exponential decay of reconstruction error from binary measurements
+     of sparse signals,” IEEE Transactions on Information Theory, vol. 63, no. 6, pp. 3368–3385, 2017.
+ [9] L. Jacques, J. N. Laska, P. T. Boufounos, and R. G. Baraniuk, “Robust 1-bit compressive sensing via binary stable embeddings of
+     sparse vectors,” IEEE Transactions on Information Theory, vol. 59, no. 4, pp. 2082–2102, 2013.
+[10] Y. Plan and R. Vershynin, “One-bit compressed sensing by linear programming,” Communications on Pure and Applied Mathematics,
+     vol. 66, no. 8, pp. 1275–1297, 2013.
+[11] Y. Li, C. Tao, G. Seco-Granados, A. Mezghani, A. L. Swindlehurst, and L. Liu, “Channel estimation and performance analysis of
+     one-bit massive mimo systems,” IEEE Trans. Signal Process, vol. 65, no. 15, pp. 4075–4089, 2017.
+[12] J. Choi, J. Mo, and R. W. Heath, “Near maximum-likelihood detector and channel estimator for uplink multiuser massive mimo systems
+     with one-bit adcs,” IEEE Transactions on Communications, vol. 64, no. 5, pp. 2005–2018, 2016.
+[13] T. Han and S. Amari, “Statistical inference under multiterminal data compression,” IEEE Transactions on Information Theory, vol. 44,
+     no. 6, pp. 2300–2324, Oct 1998.
+[14] T. T. Cai and H. Wei, “Distributed gaussian mean estimation under communication constraints: Optimal rates and communication-
+     efficient algorithms,” arXiv preprint arXiv:2001.08877, 2020.
+[15] R. Gray and D. Neuhoff, “Quantization,” IEEE Transactions on Information Theory, vol. 44, no. 6, pp. 2325–2383, Oct 1998.
+[16] A. B. Tsybakov, Introduction to Nonparametric Estimation. Springer, 2009.
+[17] L. Le Cam, Asymptotic Methods in Statistical Decision Theory. Springer-Verlag, 1986.
+[18] L. Le Cam and G. L. Yang, Asymptotics in Statistics: Some Basic Concepts. Springer, 2000.
+[19] A. W. van der Vaart, Asymptotic Statistics, ser. Cambridge Series in Statistical and Probabilistic Mathematics. Cambridge University
+     Press, 1998.
+[20] M. A. Davenport, Y. Plan, E. van den Berg, and M. Wootters, “One-bit matrix completion,” Information and Inference, p. to appear,
+     2015.
+[21] Y. Plan and R. Vershynin, “Robust 1-bit compressed sensing and sparse logistic regression: A convex programming approach,” IEEE
+     Transactions on Information Theory, vol. 59, no. 1, pp. 482–494, 2013.
+[22] W. Shi, T. W. Sun, and R. D. Wesel, “Quasi-convexity and optimal binary fusion for distributed detection with identical sensors in
+     generalized Gaussian noise,” IEEE Transactions on Information Theory, vol. 47, no. 1, pp. 446–450, Jan 2001.
+[23] P. Venkitasubramaniam, L. Tong, and A. Swami, “Quantization for maximin are in distributed estimation,” IEEE Transactions on Signal
+     Processing, vol. 55, no. 7, pp. 3596–3605, July 2007.
+[24] A. Vempaty, H. He, B. Chen, and P. K. Varshney, “On quantizer design for distributed bayesian estimation in sensor networks,” IEEE
+     Transactions on Signal Processing, vol. 62, no. 20, pp. 5359–5369, Oct 2014.
+[25] H. Chen and P. K. Varshney, “Performance limit for distributed estimation systems with identical one-bit quantizers,” IEEE Transactions
+     on Signal Processing, vol. 58, no. 1, pp. 466–471, 2010.
+[26] ——, “Performance limit for distributed estimation systems with identical one-bit quantizers,” IEEE Transactions on Signal Processing,
+     vol. 58, no. 1, pp. 466–471, Jan 2010.
+[27] T. Berger, Z. Zhang, and H. Viswanathan, “The CEO problem [multiterminal source coding],” IEEE Transactions on Information
+     Theory, vol. 42, no. 3, pp. 887–902, 1996.
+[28] H. Viswanathan and T. Berger, “The quadratic Gaussian CEO problem,” IEEE Transactions on Information Theory, vol. 43, no. 5, pp.
+     1549–1559, 1997.
+[29] Y. Oohama, “The rate-distortion function for the quadratic Gaussian CEO problem,” IEEE Transactions on Information Theory, vol. 44,
+     no. 3, pp. 1057–1070, 1998.
+[30] V. Prabhakaran, D. Tse, and K. Ramachandran, “Rate region of the quadratic Gaussian CEO problem,” in Information Theory, 2004.
+     ISIT 2004. Proceedings. International Symposium on. IEEE, 2004, p. 119.
+[31] Y. Zhang, J. Duchi, M. I. Jordan, and M. J. Wainwright, “Information-theoretic lower bounds for distributed statistical estimation with
+     communication constraints,” in Advances in Neural Information Processing Systems, 2013, pp. 2328–2336.
+[32] J. C. Duchi, M. I. Jordan, M. J. Wainwright, and Y. Zhang, “Optimality guarantees for distributed statistical estimation,” arXiv preprint
+     arXiv:1405.0782, 2014.
+[33] A. Garg, T. Ma, and H. L. Nguyen, “On communication cost of distributed statistical estimation and dimensionality,” in Advances in
+     Neural Information Processing Systems 27, 2014.
+[34] M. Braverman, A. Garg, T. Ma, H. L. Nguyen, and D. P. Woodruff, “Communication lower bounds for statistical estimation problems
+     via a distributed data processing inequality,” in Proceedings of the Forty-Eighth Annual ACM Symposium on the Theory of Computing,
+     2016. [Online]. Available: https://arxiv.org/abs/1506.07216
+                                                                                                                                               36
+
+
+
+[35] Y. Han, A. Özgür, and T. Weissman, “Geometric lower bounds for distributed parameter estimation under communication constraints,”
+     CoRR, vol. abs/1802.08417, 2018. [Online]. Available: http://arxiv.org/abs/1802.08417
+[36] Z. Zhang and T. Berger, “Estimation via compressed information,” IEEE Transactions on Information Theory, vol. 34, no. 2, pp.
+     198–211, 1988.
+[37] Y. Han, P. Mukherjee, A. Ozgur, and T. Weissman, “Distributed statistical estimation of high-dimensional and nonparametric
+     distributions,” in 2018 IEEE International Symposium on Information Theory (ISIT). IEEE, 2018, pp. 506–510.
+[38] A. Xu and M. Raginsky, “Information-theoretic lower bounds on Bayes risk in decentralized estimation,” IEEE Transactions on
+     Information Theory, vol. 63, no. 3, pp. 1580–1600, 2017.
+[39] L. Barnes, Y. Han, and A. Ozgur, “A geometric characterization of fisher information from quantized samples with applications to
+     distributed statistical estimation,” in 2018 56st Annual Allerton Conference on Communication, Control, and Computing (Allerton), Oct
+     2018.
+[40] M. Longo, T. D. Lookabaugh, and R. M. Gray, “Quantization for decentralized hypothesis testing under communication constraints,”
+     IEEE Transactions on Information Theory, vol. 36, no. 2, pp. 241–255, Mar 1990.
+[41] J. N. Tsitsiklis, “Decentralized detection by a large number of sensors,” Mathematics of Control, Signals, and Systems (MCSS), vol. 1,
+     no. 2, pp. 167–182, 1988.
+[42] W. P. Tay and J. N. Tsitsiklis, “The value of feedback for decentralized detection in large sensor networks,” in International Symposium
+     on Wireless and Pervasive Computing, Feb 2011, pp. 1–6.
+[43] I. A. Ibragimov, “On the composition of unimodal distributions,” Theory of Probability & Its Applications, vol. 1, no. 2, pp. 255–260,
+     1956.
+[44] E. L. Lehmann and G. Casella, Theory of Point Estimation, Second Edition. Springer, 1998.
+[45] M. Bagnoli and T. Bergstrom, “Log-concave probability and its applications,” Economic theory, vol. 26, no. 2, pp. 445–469, 2005.
+[46] M. R. Sampford, “Some inequalities on mill’s ratio and related functions,” The Annals of Mathematical Statistics, vol. 24, no. 1, pp.
+     130–132, 1953.
+[47] J. Hammersley, “On estimating restricted parameters,” Journal of the Royal Statistical Society. Series B (Methodological), vol. 12,
+     no. 2, pp. 192–240, 1950.
+[48] J. Chen, X. Zhang, T. Berger, and S. Wicker, “An upper bound on the sum-rate distortion function and its corresponding rate allocation
+     schemes for the CEO problem,” Selected Areas in Communications, IEEE Journal on, vol. 22, no. 6, pp. 977–987, Aug 2004.
+[49] B. T. Polyak and A. B. Juditsky, “Acceleration of stochastic approximation by averaging,” SIAM Journal on Control and Optimization,
+     vol. 30, no. 4, pp. 838–855, 1992.
+[50] O. Shamir, “Fundamental limits of online and distributed algorithms for statistical learning and estimation,” in Advances in Neural
+     Information Processing Systems, 2014, pp. 163–171.
+[51] M. Braverman, A. Garg, T. Ma, H. L. Nguyen, and D. P. Woodruff, “Communication lower bounds for statistical estimation problems
+     via a distributed data processing inequality,” in Proceedings of the forty-eighth annual ACM symposium on Theory of Computing, 2016,
+     pp. 1011–1020.
+[52] Y. Han, A. Özgür, and T. Weissman, “Geometric lower bounds for distributed parameter estimation under communication constraints,”
+     in Conference On Learning Theory. PMLR, 2018, pp. 3163–3188.
+[53] L. P. Barnes, Y. Han, and A. Ozgur, “Lower bounds for learning distributions under communication constraints via fisher information,”
+     Journal of Machine Learning Research, vol. 21, no. 236, pp. 1–30, 2020.
+[54] D. P. Bertsekas, “Stochastic optimization problems with nondifferentiable cost functionals,” Journal of Optimization Theory and
+     Applications, vol. 12, no. 2, pp. 218–231, 1973.
+[55] R. D. Gill and B. Y. Levit, “Applications of the van Trees inequality: a Bayesian Cramér-Rao bound,” Bernoulli, pp. 59–79, 1995.
+[56] B. T. Polyak, “New stochastic approximation type procedures,” Automat. i Telemekh, vol. 7, no. 98-107, p. 2, 1990.
+[57] R. Beran, “The role of Hájek’s convolution theorem in statistical theory,” Kybernetika, vol. 31, no. 3, pp. 221–237, 1995.
+[58] A. Dembo, “Lecture notes on probability theory: Stanford statistics 310,” 2016, accessed October 1, 2016. [Online]. Available:
+     http://statweb.stanford.edu/∼adembo/stat-310b/lnotes.pdf
+[59] H. Robbins and D. Siegmund, “A convergence theorem for non negative almost supermartingales and some applications,” in Optimizing
+     methods in statistics. Elsevier, 1971, pp. 233–257.
+
+
+
+
+Alon Kipnis is a Senior Lecturer (Assistant Professor) at the School of Computer Science at Reichman University. Previously, he was a
+postdoctoral research scholar at the Department of Statistics at Stanford University, advised by David Donoho. He completed his Ph.D. in
+electrical engineering from Stanford University in 2017. His research is in the areas of mathematical statistics and information theory.
+
+
+
+
+John Duchi is an associate professor of Statistics and Electrical Engineering and (by courtesy) Computer Science at Stanford University. His
+work spans statistical learning, optimization, information theory, and computation, with a few driving goals. (1) To discover statistical learning
+procedures that optimally trade between real-world resources—computation, communication, privacy provided to study participants—while
+maintaining statistical efficiency. (2) To build efficient large-scale optimization methods that address the spectrum of optimization, machine
+learning, and data analysis problems we face, allowing us to move beyond bespoke solutions to methods that robustly work. (3) To develop
+tools to assess and guarantee the validity of—and confidence we should have in—machine-learned systems.
+                                                                                                                                  37
+
+
+
+   He has won several awards and fellowships. His paper awards include the SIAM SIGEST award for ”an outstanding paper of general
+interest” and best papers at the Neural Information Processing Systems conference, the International Conference on Machine Learning,
+and an INFORMS Applied Probability Society Best Student Paper Award (as advisor). He has also received the Society for Industrial and
+Applied Mathematics (SIAM) Early Career Prize in Optimization, an Office of Naval Research (ONR) Young Investigator Award, an NSF
+CAREER award, a Sloan Fellowship in Mathematics, the Okawa Foundation Award, the Association for Computing Machinery (ACM)
+Doctoral Dissertation Award (honorable mention), and U.C. Berkeley’s C.V. Ramamoorthy Distinguished Research Award.
+
