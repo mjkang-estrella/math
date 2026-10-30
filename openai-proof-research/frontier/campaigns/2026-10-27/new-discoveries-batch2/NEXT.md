@@ -1,5 +1,16 @@
 # Current continuation — 29 October 2026
 
+Pendulum publication-history HOLD CLOSED: changed-title AfrikaMatematika
+32(2021)645–672 DOI10.1007/s13370-020-00851-9 retains literalConjecture1,
+eq26 and fullclosed zinterval. OrdinaryPASSwithendpoint supplement retained.
+Actual Schaaf/Smoller/rivulet bodies supply no fullbridge; substantive/prior
+adjudication assigned to Sol using NEWpublishedsource/title/Mottramaliases.
+Root verifies243payload entries;251reviewfiles frozen. See
+root-pendulum-published-source-adoption-r2. NoLean/paper/countchange.
+Steinerfixedgapclosure and clique-coronapreliminaryreview run alongside.
+Counts9additional/39total,next40.
+
+
 r168: full ordinary clique-corona refutation candidate frozen. Connected
 leaf corona of (100000 disjoint triangles) joined with225985 independent
 vertices gives separated coefficient windows by exact concentration bounds.
