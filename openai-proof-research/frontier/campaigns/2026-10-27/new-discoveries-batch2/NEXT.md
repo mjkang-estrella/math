@@ -1,5 +1,16 @@
 # Current continuation — 29 October 2026
 
+Steiner general-position review adopted: ordinary proofs PASS for both.
+Problem7.1 maximum-monotonicity amplification has provisional substantive
+PASS; closest Changat body and current-prior HOLD remain. Focused Sol source
+and prior clearance assigned before Lean investment. Problem7.3 six-vertex
+lexicographic example excluded as routine source adaptation. Independent
+checker replay matches;54 originals and81 review-manifest paths verify;
+82 review files frozen. See root-steiner-gp-preliminary-adoption-r1.
+Pendulum preliminary review and Sol r167 research run alongside it.
+Counts unchanged:9 additional/39 total,next40. No acceptance.
+
+
 r166: full pendulum time-map convexity candidate frozen for independent review.
 Root replay passes: 63 curvature and 24 convolution controls, byte-identical
 outputs; 55 manifest /54 scientific entries and all57 originals verified.
