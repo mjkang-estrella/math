@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+DSBS preliminary review adopted: ordinaryMATH PASS, qualified substantivepositive. Arbitrary-block converse survives; source unused Bernoulli prose defect avoided via underlying region theorem. Root independent diagnostics byte-identical,94originals/119reviewmanifest/121reviewfiles verify. INVESTMENT HOLD for 2025/2023 published-companion bodies; focused Sol comparison assigned, no retry of IEEE418. Large formal infrastructure and exact relaxed-Wyner lower bound remain necessary. See root-dsbs-preliminary-adoption-r1. Counts9additional/39total,next40.
+
+
 Pendulum independent merged review SOURCE/MATH/strict certificate PASS:14modules139actualdecl, scoped substantiveINVEST. Original mandatory replay failed on live NEXT.md drift; root repaired only administrative-context verification in a separate source edition. Revised mandatory fresh replay and byte-identical rebuild PASS; mathematical sources/guards/pins/audits unchanged, snapshot/scientific tamper controls reject. Original failure preserved. Historical coverage and authored PDF/visual QA HOLD remain. See root-pendulum-replay-context-fix-r2. Fresh finite/algebraic r174 assigned; DSBS review and analytic r173 continue. Counts9additional/39total,next40.
 
 
