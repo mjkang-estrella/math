@@ -1,0 +1,1 @@
+Initial inventory command pwd/rg/head was inadvertently run outside helper_guard, before guarded work. It made no writes. Initial bounded instruction/guard reads were native reads. Large first combined read output was truncated; handbacks were re-read separately. No attempt to erase these deviations.

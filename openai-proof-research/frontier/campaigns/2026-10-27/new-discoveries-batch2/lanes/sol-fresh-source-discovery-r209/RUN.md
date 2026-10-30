@@ -1,0 +1,5 @@
+Run from /home/mj-kang/Documents/Dev/math. Every command requires the prescribed guard, not direct Python:
+
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py python /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-fresh-source-discovery-r209/verify.py
+
+The same prefix can run checks.py. verify.py writes only verification-receipt.json. It verifies frozen scientific source originals/copies, assigned report bindings and historical external immutable snapshots, then replays all three PDF extractions and the exact checker. Historical live report paths are not scientific inputs; snapshots are checked. Administrative ledger/NEXT originals are deliberately not bound. Caps are inherited AS/RSS512MiB CPU210s wall230s; do not raise them. Requires system pdftotext and Python standard library only. Network retrieval is not part of replay; do not rerun denied routes.

@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r209 BCC global lattice moment optimality for every real p>=1 remains unresolved. Pointwise radial-tail domination is false against FCC; the sufficient integrated-tail comparison is unproved. Dajani collar separation is routine under its literal interpretation and does not settle stronger free-boundary structure. Root source/extraction/exact replay and references pass. See root-r209-handback; fresh analytic r212 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r208 Casas–Madrid–Rosales Conjecture41 remains unresolved. Ratio deletion enumerates the fixed-invariant family but the first-internal-ancestor map is not injective; uniform inclusion-neighborhood Hall inequality is missing. Root exact replay and scientific/manifest/reference verification pass. See root-r208-handback; fresh arithmetic r211 assigned. Counts 9 additional / 39 total, next 40.
 
 
