@@ -1,5 +1,16 @@
 # Current continuation — 29 October 2026
 
+Steiner source review: full Changat2010 body obtained; specific unread-body
+hold CLOSED. It supplies the convex-set base, not maximum-arity amplification.
+Ordinary PASS/provisional substantive INVEST retained. Prior HOLD narrowed to
+two fixed capped registry intervals and the19-item citation set. Sol closure
+task assigned; no endless worldwide/HEAD requirement. Root verifies196review
+manifest entries,136 original/copy records and all integrity receipt fields;
+197 reviewfiles frozen. See root-steiner-gp-source-review-adoption-r2.
+Pendulum source review and Solr168 research continue. Counts9/39,next40.
+No Lean,manuscript,credit or acceptance change.
+
+
 Pendulum ordinary proof PASS adopted with independent endpoint supplement:
 literal Conjecture1 holds on z in[0,2], every0<phi<pi/2. Additional branch
 expectations remain outside scope. Root independent-checker replay is byte
