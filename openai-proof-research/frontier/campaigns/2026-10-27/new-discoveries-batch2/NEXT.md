@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r166: full pendulum time-map convexity candidate frozen for independent review.
+Root replay passes: 63 curvature and 24 convolution controls, byte-identical
+outputs; 55 manifest /54 scientific entries and all57 originals verified.
+Source includes z endpoints0 and2; root provides a continuous-extension
+bridge for independent checking. Full ordinary/substantive/publication/prior
+review now assigned to Sol. No Lean or paper investment; no credit.
+See root-r166-preliminary-freeze-r1. Counts9 additional/39 total,next40.
+
+
 r165: complete ordinary Steiner general-position counterexamples frozen.
 49-vertex false-twin amplification gives sgp2>=40>39>=sgp3; a later rise
 also occurs. P3 composed with K2 has sgp4=5 versus source bound4.
