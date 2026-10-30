@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Claude Opus5.5 high, standard speed is now the focused solver in claude-projection-packing-full-r1; r213/r214 remain broad scouts. r215 source inequality unresolved; symmetric cut cubes are excluded as counterexamples, arbitrary weighted-inverse shortcut fails, full column-packing lemma remains. Root scientific/reference/exact verification retained. See root-r215-handback. Breadth-plus-solving continues; counts 9 additional / 39 total, next 40.
+
+
 User authorized Claude. Direct claudeAgent capability discovery succeeded; use claude-opus-5-5 effort high, fastMode false for the NEXT FREE useful research/review slot. Preserve running r213/r214 scouts and r215 focused solver; do not exceed root plus three. See root-claude-authorization-r1. Breadth-plus-solving policy continues; counts 9 additional / 39 total, next 40.
 
 
