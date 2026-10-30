@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+r145 Paone–Paone line-graph signature bound remains unresolved;
+root verifies 66 manifest/37 scientific entries and reproduces 2,000 sampled
+graphs and 4,980 attachment checks. The singular attachment diagnostic is
+not a source counterexample. r146 Firey equality is excluded by the exact
+earlier Kitamura public proof; 57 manifest/33 scientific entries verify and
+168 exact controls reproduce. No root audit of all public Lean dependencies
+is claimed. See root-r145-handback and root-r146-handback. Sol r149/r148
+replace them; r147 continues. Counts remain 9 additional / 39 total.
+
+
 r144 fixed-multiplicity infinite-chain quasipolynomiality remains
 unresolved. Root verifies all 75 manifest entries and reproduces 11,340 states,
 2,861 quotient checks, 9,907 compositions and 77 count comparisons (only the

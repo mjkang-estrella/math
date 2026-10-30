@@ -1,0 +1,625 @@
+import LpRogersShephardLean4Web
+
+/-! Kernel-checked proofs built from the standalone definitions. -/
+
+open MeasureTheory Real Set
+open scoped Pointwise ENNReal
+
+namespace LpRogersShephardLean4Web
+noncomputable section
+
+noncomputable def parameterGraph {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q : ℝ) (K L : Set E) : Set (E × ℝ) :=
+  {w | w.2 ∈ Set.Icc (0 : ℝ) 1 ∧ w.1 ∈ weightedSlice q w.2 K L}
+
+noncomputable def parameterFiber {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q : ℝ) (K L : Set E) (z : E) : Set ℝ :=
+  (fun t ↦ (z, t)) ⁻¹' parameterGraph q K L
+
+lemma parameterGraph_isCompact {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q : ℝ} (hq : 0 < q) {K L : Set E} (hK : IsCompact K) (hL : IsCompact L) :
+    IsCompact (parameterGraph q K L) := by
+  let domain : Set (ℝ × (E × E)) := Set.Icc (0 : ℝ) 1 ×ˢ (K ×ˢ L)
+  let F : ℝ × (E × E) → E × ℝ := fun w ↦
+    ((1 - w.1) ^ (1 / q) • w.2.1 + w.1 ^ (1 / q) • w.2.2, w.1)
+  have hexp : 0 ≤ 1 / q := one_div_nonneg.mpr hq.le
+  have hpow : Continuous (fun t : ℝ ↦ t ^ (1 / q)) := Real.continuous_rpow_const hexp
+  have hfirst : Continuous (fun w : ℝ × (E × E) ↦
+      (1 - w.1) ^ (1 / q) • w.2.1 + w.1 ^ (1 / q) • w.2.2) :=
+    ((hpow.comp (continuous_const.sub continuous_fst)).smul
+      (continuous_fst.comp continuous_snd)).add
+      ((hpow.comp continuous_fst).smul (continuous_snd.comp continuous_snd))
+  have hF : Continuous F := hfirst.prodMk continuous_fst
+  have hdom : IsCompact domain := isCompact_Icc.prod (hK.prod hL)
+  have himage : F '' domain = parameterGraph q K L := by
+    ext w
+    rcases w with ⟨z, t⟩
+    change (z, t) ∈ F '' domain ↔
+      t ∈ Set.Icc (0 : ℝ) 1 ∧ z ∈ weightedSlice q t K L
+    constructor
+    · rintro ⟨⟨s, ⟨x, y⟩⟩, ⟨hs, hx, hy⟩, heq⟩
+      have hst : s = t := congrArg Prod.snd heq
+      have hsz : (1 - s) ^ (1 / q) • x + s ^ (1 / q) • y = z := congrArg Prod.fst heq
+      subst t
+      refine ⟨hs, ?_⟩
+      rw [← hsz]
+      exact ⟨_, ⟨x, hx, rfl⟩, _, ⟨y, hy, rfl⟩, rfl⟩
+    · rintro ⟨ht, hz⟩
+      rcases hz with ⟨ax, ⟨x, hx, rfl⟩, byv, ⟨y, hy, rfl⟩, rfl⟩
+      exact ⟨⟨t, ⟨x, y⟩⟩, ⟨ht, hx, hy⟩, rfl⟩
+  rw [← himage]
+  exact hdom.image hF
+
+lemma radial_interval_subset_fiber {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q : ℝ} (hq : 0 < q) {K L : Set E}
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L)
+    {t₀ τ : ℝ} (ht₀ : t₀ ∈ Set.Icc (0 : ℝ) 1) (hτ : τ ∈ Set.Icc (0 : ℝ) 1)
+    {x y : E} (hx : x ∈ K) (hy : y ∈ L) :
+    Set.Icc (τ ^ q * t₀) (1 - τ ^ q * (1 - t₀)) ⊆
+      parameterFiber q K L
+        (τ • ((1 - t₀) ^ (1 / q) • x + t₀ ^ (1 / q) • y)) := by
+  intro t ht
+  change t ∈ Set.Icc (0 : ℝ) 1 ∧
+    τ • ((1 - t₀) ^ (1 / q) • x + t₀ ^ (1 / q) • y) ∈ weightedSlice q t K L
+  have htI : t ∈ Set.Icc (0 : ℝ) 1 := by
+    constructor
+    · exact le_trans (mul_nonneg (Real.rpow_nonneg hτ.1 _) ht₀.1) ht.1
+    · exact ht.2.trans (sub_le_self _ (mul_nonneg (Real.rpow_nonneg hτ.1 _)
+        (sub_nonneg.mpr ht₀.2)))
+  have hr0 : 0 ≤ 1 / q := one_div_nonneg.mpr hq.le
+  have hleftBase : τ ^ q * (1 - t₀) ≤ 1 - t := by linarith [ht.2]
+  have hrightBase : τ ^ q * t₀ ≤ t := ht.1
+  have hleftCoeff :
+      τ * (1 - t₀) ^ (1 / q) ≤ (1 - t) ^ (1 / q) := by
+    calc
+      τ * (1 - t₀) ^ (1 / q) = (τ ^ q * (1 - t₀)) ^ (1 / q) := by
+        rw [Real.mul_rpow (Real.rpow_nonneg hτ.1 _) (sub_nonneg.mpr ht₀.2),
+          one_div, Real.rpow_rpow_inv hτ.1 hq.ne']
+      _ ≤ _ := Real.rpow_le_rpow (mul_nonneg (Real.rpow_nonneg hτ.1 _)
+        (sub_nonneg.mpr ht₀.2)) hleftBase hr0
+  have hrightCoeff : τ * t₀ ^ (1 / q) ≤ t ^ (1 / q) := by
+    calc
+      τ * t₀ ^ (1 / q) = (τ ^ q * t₀) ^ (1 / q) := by
+        rw [Real.mul_rpow (Real.rpow_nonneg hτ.1 _) ht₀.1,
+          one_div, Real.rpow_rpow_inv hτ.1 hq.ne']
+      _ ≤ _ := Real.rpow_le_rpow (mul_nonneg (Real.rpow_nonneg hτ.1 _) ht₀.1)
+        hrightBase hr0
+  obtain ⟨x', hx', hxeq⟩ := exists_scaled_combination_mem hK h0K hx h0K
+    (mul_nonneg hτ.1 (Real.rpow_nonneg (sub_nonneg.mpr ht₀.2) _)) (le_refl 0)
+    (Real.rpow_nonneg (sub_nonneg.mpr htI.2) _) (by simpa using hleftCoeff)
+  obtain ⟨y', hy', hyeq⟩ := exists_scaled_combination_mem hL h0L hy h0L
+    (mul_nonneg hτ.1 (Real.rpow_nonneg ht₀.1 _)) (le_refl 0)
+    (Real.rpow_nonneg htI.1 _) (by simpa using hrightCoeff)
+  refine ⟨htI, _, ⟨x', hx', rfl⟩, _, ⟨y', hy', rfl⟩, ?_⟩
+  change (1 - t) ^ (1 / q) • x' + t ^ (1 / q) • y' =
+    τ • ((1 - t₀) ^ (1 / q) • x + t₀ ^ (1 / q) • y)
+  have hxeq' : (1 - t) ^ (1 / q) • x' =
+      (τ * (1 - t₀) ^ (1 / q)) • x + 0 • 0 := by simpa [one_div] using hxeq
+  have hyeq' : t ^ (1 / q) • y' =
+      (τ * t₀ ^ (1 / q)) • y + 0 • 0 := by simpa [one_div] using hyeq
+  rw [hxeq', hyeq']
+  simp only [zero_smul, add_zero]
+  module
+
+lemma ofReal_one_sub_rpow_le_fiber_volume {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q : ℝ} (hq : 0 < q) {K L : Set E}
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L)
+    {w : E} (hw : w ∈ parameterBody q K L) {τ : ℝ} (hτ : τ ∈ Set.Icc (0 : ℝ) 1) :
+    ENNReal.ofReal (1 - τ ^ q) ≤ volume (parameterFiber q K L (τ • w)) := by
+  rcases hw with ⟨t₀, ht₀, x, hx, y, hy, rfl⟩
+  have hsub := radial_interval_subset_fiber hq hK hL h0K h0L ht₀ hτ hx hy
+  calc
+    ENNReal.ofReal (1 - τ ^ q) =
+        volume (Set.Icc (τ ^ q * t₀) (1 - τ ^ q * (1 - t₀))) := by
+          rw [Real.volume_Icc]
+          congr 1
+          ring
+    _ ≤ _ := measure_mono hsub
+
+noncomputable def fiberLength {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q : ℝ) (K L : Set E) (z : E) : ℝ :=
+  (volume (parameterFiber q K L z)).toReal
+
+lemma parameterFiber_subset_Icc {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q : ℝ) (K L : Set E) (z : E) :
+    parameterFiber q K L z ⊆ Set.Icc (0 : ℝ) 1 := by
+  intro t ht
+  exact ht.1
+
+lemma parameterFiber_volume_lt_top {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q : ℝ) (K L : Set E) (z : E) :
+    volume (parameterFiber q K L z) < ∞ := by
+  calc
+    volume (parameterFiber q K L z) ≤ volume (Set.Icc (0 : ℝ) 1) :=
+      measure_mono (parameterFiber_subset_Icc q K L z)
+    _ < ∞ := by rw [Real.volume_Icc]; simp
+
+lemma measurable_fiberLength {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasurableSpace E] [BorelSpace E]
+    {q : ℝ} (hq : 0 < q) {K L : Set E} (hK : IsCompact K) (hL : IsCompact L) :
+    Measurable (fiberLength q K L) := by
+  exact ENNReal.measurable_toReal.comp
+    (measurable_measure_prodMk_left (parameterGraph_isCompact hq hK hL).measurableSet)
+
+lemma parameterGraph_volume_eq_lintegral_fibers {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [MeasureSpace E] [BorelSpace E]
+    {q : ℝ} (hq : 0 < q) {K L : Set E} (hK : IsCompact K) (hL : IsCompact L) :
+    (volume.prod volume) (parameterGraph q K L) =
+      ∫⁻ z, volume (parameterFiber q K L z) ∂volume := by
+  rw [Measure.prod_apply (parameterGraph_isCompact hq hK hL).measurableSet]
+  rfl
+
+lemma parameterGraph_volume_eq_lintegral_slices {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [MeasureSpace E] [BorelSpace E]
+    [SFinite (volume : Measure E)]
+    {q : ℝ} (hq : 0 < q) {K L : Set E} (hK : IsCompact K) (hL : IsCompact L) :
+    (volume.prod volume) (parameterGraph q K L) =
+      ∫⁻ t in Set.Icc (0 : ℝ) 1, volume (weightedSlice q t K L) ∂volume := by
+  rw [Measure.prod_apply_symm (parameterGraph_isCompact hq hK hL).measurableSet]
+  rw [← lintegral_indicator measurableSet_Icc]
+  apply lintegral_congr
+  intro t
+  by_cases ht : t ∈ Set.Icc (0 : ℝ) 1
+  · have hsec : (fun x : E ↦ (x, t)) ⁻¹' parameterGraph q K L =
+        weightedSlice q t K L := by
+      ext z
+      change (t ∈ Set.Icc (0 : ℝ) 1 ∧ z ∈ weightedSlice q t K L) ↔
+        z ∈ weightedSlice q t K L
+      exact and_iff_right ht
+    rw [hsec, Set.indicator_of_mem ht]
+  · have hsec : (fun x : E ↦ (x, t)) ⁻¹' parameterGraph q K L = ∅ := by
+      ext z
+      change (t ∈ Set.Icc (0 : ℝ) 1 ∧ z ∈ weightedSlice q t K L) ↔ False
+      simp only [ht, false_and, iff_self]
+    rw [hsec, measure_empty, Set.indicator_of_notMem ht]
+
+lemma smul_parameterBody_subset_fiberLength_level {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q : ℝ} (hq : 0 < q) {K L : Set E}
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L)
+    {s : ℝ} (hs : s ∈ Set.Icc (0 : ℝ) 1) :
+    ((1 - s) ^ (1 / q)) • parameterBody q K L ⊆
+      {z | s ≤ fiberLength q K L z} := by
+  rintro z ⟨w, hw, rfl⟩
+  let τ : ℝ := (1 - s) ^ (1 / q)
+  have hr0 : 0 ≤ 1 / q := one_div_nonneg.mpr hq.le
+  have hτ : τ ∈ Set.Icc (0 : ℝ) 1 := by
+    exact ⟨Real.rpow_nonneg (sub_nonneg.mpr hs.2) _,
+      Real.rpow_le_one (sub_nonneg.mpr hs.2) (by linarith [hs.1]) hr0⟩
+  have hτq : 1 - τ ^ q = s := by
+    dsimp [τ]
+    rw [one_div, Real.rpow_inv_rpow (sub_nonneg.mpr hs.2) hq.ne']
+    ring
+  have hvol := ofReal_one_sub_rpow_le_fiber_volume hq hK hL h0K h0L hw hτ
+  rw [hτq] at hvol
+  have hreal := (ENNReal.toReal_le_toReal (by simp)
+    (parameterFiber_volume_lt_top q K L (τ • w)).ne).2 hvol
+  change s ≤ fiberLength q K L (τ • w)
+  simpa [fiberLength, ENNReal.toReal_ofReal hs.1] using hreal
+
+lemma lintegral_Ioc_one_sub_rpow {r : ℝ} (hr : 0 ≤ r) :
+    ∫⁻ s in Set.Ioc (0 : ℝ) 1, ENNReal.ofReal ((1 - s) ^ r) ∂volume =
+      ENNReal.ofReal (1 / (r + 1)) := by
+  let f : ℝ → ℝ := fun s ↦ (1 - s) ^ r
+  have hfcont : ContinuousOn f (Set.uIcc (0 : ℝ) 1) := by
+    apply Continuous.continuousOn
+    exact (Real.continuous_rpow_const hr).comp (continuous_const.sub continuous_id)
+  have hfint : IntervalIntegrable f volume (0 : ℝ) 1 := hfcont.intervalIntegrable
+  have hfIoc : Integrable f (volume.restrict (Set.Ioc (0 : ℝ) 1)) :=
+    (intervalIntegrable_iff_integrableOn_Ioc_of_le (by norm_num : (0 : ℝ) ≤ 1)).mp hfint
+  have hnonneg : 0 ≤ᵐ[volume.restrict (Set.Ioc (0 : ℝ) 1)] f := by
+    filter_upwards [ae_restrict_mem measurableSet_Ioc] with s hs
+    exact Real.rpow_nonneg (by linarith [hs.2]) _
+  rw [← MeasureTheory.ofReal_integral_eq_lintegral_ofReal hfIoc hnonneg]
+  congr 1
+  rw [← intervalIntegral.integral_of_le (by norm_num : (0 : ℝ) ≤ 1)]
+  change (∫ s in (0 : ℝ)..1, (1 - s) ^ r) = 1 / (r + 1)
+  rw [intervalIntegral.integral_comp_sub_left (fun x : ℝ ↦ x ^ r) 1]
+  norm_num
+  rw [integral_rpow (Or.inl (by linarith))]
+  rw [Real.zero_rpow (by linarith : r + 1 ≠ 0)]
+  simp
+
+lemma lintegral_volume_rpow_smul {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)]
+    {q : ℝ} (hq : 0 < q) {D : Set E} (hD : IsCompact D) :
+    ∫⁻ s in Set.Ioc (0 : ℝ) 1,
+        volume (((1 - s) ^ (1 / q)) • D) ∂volume =
+      ENNReal.ofReal (q / ((Module.finrank ℝ E : ℝ) + q)) * volume D := by
+  have hDtop : volume D ≠ ∞ := hD.measure_lt_top.ne
+  calc
+    (∫⁻ s in Set.Ioc (0 : ℝ) 1,
+        volume (((1 - s) ^ (1 / q)) • D) ∂volume) =
+        ∫⁻ s in Set.Ioc (0 : ℝ) 1,
+          ENNReal.ofReal ((1 - s) ^ ((Module.finrank ℝ E : ℝ) / q)) * volume D ∂volume := by
+            apply lintegral_congr_ae
+            filter_upwards [ae_restrict_mem measurableSet_Ioc] with s hs
+            rw [MeasureTheory.Measure.addHaar_smul_of_nonneg volume
+              (Real.rpow_nonneg (by linarith [hs.2]) _)]
+            congr 2
+            rw [← Real.rpow_natCast, ← Real.rpow_mul (by linarith [hs.2] : 0 ≤ 1 - s)]
+            congr 1
+            ring
+    _ = (∫⁻ s in Set.Ioc (0 : ℝ) 1,
+          ENNReal.ofReal ((1 - s) ^ ((Module.finrank ℝ E : ℝ) / q)) ∂volume) * volume D := by
+            exact lintegral_mul_const' (volume D) _ hDtop
+    _ = ENNReal.ofReal (1 / ((Module.finrank ℝ E : ℝ) / q + 1)) * volume D := by
+          rw [lintegral_Ioc_one_sub_rpow (div_nonneg (Nat.cast_nonneg _) hq.le)]
+    _ = ENNReal.ofReal (q / ((Module.finrank ℝ E : ℝ) + q)) * volume D := by
+          rw [show 1 / ((Module.finrank ℝ E : ℝ) / q + 1) =
+              q / ((Module.finrank ℝ E : ℝ) + q) by
+            field_simp [hq.ne']]
+
+lemma ofReal_fiberLength {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q : ℝ) (K L : Set E) (z : E) :
+    ENNReal.ofReal (fiberLength q K L z) = volume (parameterFiber q K L z) := by
+  exact ENNReal.ofReal_toReal (parameterFiber_volume_lt_top q K L z).ne
+
+lemma lintegral_fiber_volume_eq_lintegral_levels {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [MeasureSpace E] [BorelSpace E]
+    {q : ℝ} (hq : 0 < q) {K L : Set E} (hK : IsCompact K) (hL : IsCompact L) :
+    (∫⁻ z, volume (parameterFiber q K L z) ∂volume) =
+      ∫⁻ s in Set.Ioi (0 : ℝ), volume {z | s ≤ fiberLength q K L z} ∂volume := by
+  calc
+    (∫⁻ z, volume (parameterFiber q K L z) ∂volume) =
+        ∫⁻ z, ENNReal.ofReal (fiberLength q K L z) ∂volume := by
+          apply lintegral_congr
+          intro z
+          exact (ofReal_fiberLength q K L z).symm
+    _ = _ := MeasureTheory.lintegral_eq_lintegral_meas_le volume
+      (Filter.Eventually.of_forall fun z ↦ ENNReal.toReal_nonneg)
+      (measurable_fiberLength hq hK hL).aemeasurable
+
+lemma lintegral_scaled_parameterBody_le_fibers {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [MeasureSpace E] [BorelSpace E]
+    {q : ℝ} (hq : 0 < q) {K L : Set E}
+    (hKc : IsCompact K) (hLc : IsCompact L)
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L) :
+    (∫⁻ s in Set.Ioc (0 : ℝ) 1,
+        volume (((1 - s) ^ (1 / q)) • parameterBody q K L) ∂volume) ≤
+      ∫⁻ z, volume (parameterFiber q K L z) ∂volume := by
+  rw [lintegral_fiber_volume_eq_lintegral_levels hq hKc hLc]
+  rw [← lintegral_indicator measurableSet_Ioc, ← lintegral_indicator measurableSet_Ioi]
+  apply lintegral_mono
+  intro s
+  by_cases hs : s ∈ Set.Ioc (0 : ℝ) 1
+  · have hsIoi : s ∈ Set.Ioi (0 : ℝ) := hs.1
+    rw [Set.indicator_of_mem hs, Set.indicator_of_mem hsIoi]
+    exact measure_mono (smul_parameterBody_subset_fiberLength_level hq hK hL h0K h0L
+      ⟨hs.1.le, hs.2⟩)
+  · rw [Set.indicator_of_notMem hs]
+    exact bot_le
+
+/-- Lemma 5.3 in the multiplicative form best suited to the layer-cake proof. -/
+theorem lemma53_lower {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)]
+    {q : ℝ} (hq : 0 < q) {K L : Set E}
+    (hKc : IsCompact K) (hLc : IsCompact L)
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L) :
+    ENNReal.ofReal (q / ((Module.finrank ℝ E : ℝ) + q)) *
+        volume (parameterBody q K L) ≤
+      ∫⁻ t in Set.Icc (0 : ℝ) 1, volume (weightedSlice q t K L) ∂volume := by
+  calc
+    ENNReal.ofReal (q / ((Module.finrank ℝ E : ℝ) + q)) *
+        volume (parameterBody q K L) =
+        ∫⁻ s in Set.Ioc (0 : ℝ) 1,
+          volume (((1 - s) ^ (1 / q)) • parameterBody q K L) ∂volume := by
+            symm
+            exact lintegral_volume_rpow_smul hq (parameterBody_isCompact hq hKc hLc)
+    _ ≤ ∫⁻ z, volume (parameterFiber q K L z) ∂volume :=
+      lintegral_scaled_parameterBody_le_fibers hq hKc hLc hK hL h0K h0L
+    _ = (volume.prod volume) (parameterGraph q K L) :=
+      (parameterGraph_volume_eq_lintegral_fibers hq hKc hLc).symm
+    _ = ∫⁻ t in Set.Icc (0 : ℝ) 1, volume (weightedSlice q t K L) ∂volume :=
+      parameterGraph_volume_eq_lintegral_slices hq hKc hLc
+
+lemma lintegral_Ioo_beta_rpow {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) :
+    (∫⁻ x in Set.Ioo (0 : ℝ) 1,
+        ENNReal.ofReal (x ^ (α - 1) * (1 - x) ^ (β - 1)) ∂volume) =
+      ENNReal.ofReal (ProbabilityTheory.beta α β) := by
+  have hbeta : 0 < ProbabilityTheory.beta α β := ProbabilityTheory.beta_pos hα hβ
+  have hnorm :
+      (∫⁻ x in Set.Ioo (0 : ℝ) 1,
+        ENNReal.ofReal ((1 / ProbabilityTheory.beta α β) *
+          x ^ (α - 1) * (1 - x) ^ (β - 1)) ∂volume) = 1 := by
+    rw [← ProbabilityTheory.lintegral_betaPDF]
+    exact ProbabilityTheory.lintegral_betaPDF_eq_one hα hβ
+  have hfactor :
+      (∫⁻ x in Set.Ioo (0 : ℝ) 1,
+        ENNReal.ofReal ((1 / ProbabilityTheory.beta α β) *
+          x ^ (α - 1) * (1 - x) ^ (β - 1)) ∂volume) =
+      ENNReal.ofReal (1 / ProbabilityTheory.beta α β) *
+        ∫⁻ x in Set.Ioo (0 : ℝ) 1,
+          ENNReal.ofReal (x ^ (α - 1) * (1 - x) ^ (β - 1)) ∂volume := by
+    rw [← lintegral_const_mul' (ENNReal.ofReal (1 / ProbabilityTheory.beta α β)) _
+      ENNReal.ofReal_ne_top]
+    apply lintegral_congr
+    intro x
+    rw [← ENNReal.ofReal_mul (one_div_nonneg.mpr hbeta.le)]
+    congr 1
+    ring
+  rw [hfactor, one_div, ENNReal.ofReal_inv_of_pos hbeta] at hnorm
+  let B : ℝ≥0∞ := ENNReal.ofReal (ProbabilityTheory.beta α β)
+  have hB0 : B ≠ 0 := ENNReal.ofReal_ne_zero_iff.mpr hbeta
+  have hBtop : B ≠ ∞ := ENNReal.ofReal_ne_top
+  calc
+    (∫⁻ x in Set.Ioo (0 : ℝ) 1,
+        ENNReal.ofReal (x ^ (α - 1) * (1 - x) ^ (β - 1)) ∂volume) =
+        1 * (∫⁻ x in Set.Ioo (0 : ℝ) 1,
+          ENNReal.ofReal (x ^ (α - 1) * (1 - x) ^ (β - 1)) ∂volume) := by simp
+    _ = (B * B⁻¹) * (∫⁻ x in Set.Ioo (0 : ℝ) 1,
+          ENNReal.ofReal (x ^ (α - 1) * (1 - x) ^ (β - 1)) ∂volume) := by
+          rw [ENNReal.mul_inv_cancel hB0 hBtop]
+    _ = B * (B⁻¹ * (∫⁻ x in Set.Ioo (0 : ℝ) 1,
+          ENNReal.ofReal (x ^ (α - 1) * (1 - x) ^ (β - 1)) ∂volume)) := by
+          rw [mul_assoc]
+    _ = B * 1 := by rw [hnorm]
+    _ = ENNReal.ofReal (ProbabilityTheory.beta α β) := by simp [B]
+
+lemma lintegral_Ioo_slice_monomial (n i : ℕ) {q : ℝ} (hq : 0 < q) :
+    (∫⁻ t in Set.Ioo (0 : ℝ) 1,
+        ENNReal.ofReal
+          ((((1 - t) ^ (1 / q)) ^ i) * ((t ^ (1 / q)) ^ (n - i))) ∂volume) =
+      ENNReal.ofReal
+        (ProbabilityTheory.beta (((n - i : ℕ) : ℝ) / q + 1) ((i : ℝ) / q + 1)) := by
+  have hα : 0 < ((n - i : ℕ) : ℝ) / q + 1 := by positivity
+  have hβ : 0 < (i : ℝ) / q + 1 := by positivity
+  calc
+    (∫⁻ t in Set.Ioo (0 : ℝ) 1,
+        ENNReal.ofReal
+          ((((1 - t) ^ (1 / q)) ^ i) * ((t ^ (1 / q)) ^ (n - i))) ∂volume) =
+        ∫⁻ t in Set.Ioo (0 : ℝ) 1,
+          ENNReal.ofReal
+            (t ^ ((((n - i : ℕ) : ℝ) / q + 1) - 1) *
+              (1 - t) ^ (((i : ℝ) / q + 1) - 1)) ∂volume := by
+            apply setLIntegral_congr_fun measurableSet_Ioo
+            intro t ht
+            change ENNReal.ofReal
+                ((((1 - t) ^ (1 / q)) ^ i) * ((t ^ (1 / q)) ^ (n - i))) =
+              ENNReal.ofReal
+                (t ^ ((((n - i : ℕ) : ℝ) / q + 1) - 1) *
+                  (1 - t) ^ (((i : ℝ) / q + 1) - 1))
+            congr 1
+            rw [← Real.rpow_natCast, ← Real.rpow_mul (by linarith [ht.2] : 0 ≤ 1 - t),
+              ← Real.rpow_natCast, ← Real.rpow_mul ht.1.le]
+            ring_nf
+    _ = _ := lintegral_Ioo_beta_rpow hα hβ
+
+lemma lintegral_Icc_slice_power_eq_sum_beta (n : ℕ) {q : ℝ} (hq : 0 < q) :
+    (∫⁻ t in Set.Icc (0 : ℝ) 1,
+        ENNReal.ofReal (((1 - t) ^ (1 / q) + t ^ (1 / q)) ^ n) ∂volume) =
+      ∑ i ∈ Finset.range (n + 1), (Nat.choose n i : ℝ≥0∞) *
+        ENNReal.ofReal
+          (ProbabilityTheory.beta (((n - i : ℕ) : ℝ) / q + 1) ((i : ℝ) / q + 1)) := by
+  rw [← restrict_Ioo_eq_restrict_Icc]
+  calc
+    (∫⁻ t in Set.Ioo (0 : ℝ) 1,
+        ENNReal.ofReal (((1 - t) ^ (1 / q) + t ^ (1 / q)) ^ n) ∂volume) =
+        ∫⁻ t in Set.Ioo (0 : ℝ) 1,
+          ∑ i ∈ Finset.range (n + 1),
+            ENNReal.ofReal
+              ((((1 - t) ^ (1 / q)) ^ i) * ((t ^ (1 / q)) ^ (n - i)) *
+                (Nat.choose n i : ℝ)) ∂volume := by
+          apply setLIntegral_congr_fun measurableSet_Ioo
+          intro t ht
+          change ENNReal.ofReal (((1 - t) ^ (1 / q) + t ^ (1 / q)) ^ n) =
+            ∑ i ∈ Finset.range (n + 1),
+              ENNReal.ofReal
+                ((((1 - t) ^ (1 / q)) ^ i) * ((t ^ (1 / q)) ^ (n - i)) *
+                  (Nat.choose n i : ℝ))
+          rw [add_pow, ENNReal.ofReal_sum_of_nonneg]
+          intro i hi
+          exact mul_nonneg
+            (mul_nonneg (pow_nonneg (Real.rpow_nonneg (by linarith [ht.2]) _) _)
+              (pow_nonneg (Real.rpow_nonneg ht.1.le _) _))
+            (Nat.cast_nonneg _)
+    _ = ∑ i ∈ Finset.range (n + 1),
+          ∫⁻ t in Set.Ioo (0 : ℝ) 1,
+            ENNReal.ofReal
+              ((((1 - t) ^ (1 / q)) ^ i) * ((t ^ (1 / q)) ^ (n - i)) *
+                (Nat.choose n i : ℝ)) ∂volume := by
+          rw [MeasureTheory.lintegral_finset_sum]
+          intro i hi
+          fun_prop
+    _ = ∑ i ∈ Finset.range (n + 1), (Nat.choose n i : ℝ≥0∞) *
+          ENNReal.ofReal
+            (ProbabilityTheory.beta (((n - i : ℕ) : ℝ) / q + 1) ((i : ℝ) / q + 1)) := by
+          apply Finset.sum_congr rfl
+          intro i hi
+          calc
+            (∫⁻ t in Set.Ioo (0 : ℝ) 1,
+                ENNReal.ofReal
+                  ((((1 - t) ^ (1 / q)) ^ i) * ((t ^ (1 / q)) ^ (n - i)) *
+                    (Nat.choose n i : ℝ)) ∂volume) =
+                ∫⁻ t in Set.Ioo (0 : ℝ) 1,
+                  ENNReal.ofReal
+                    ((((1 - t) ^ (1 / q)) ^ i) * ((t ^ (1 / q)) ^ (n - i))) *
+                    (Nat.choose n i : ℝ≥0∞) ∂volume := by
+                      apply lintegral_congr_ae
+                      filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
+                      rw [← ENNReal.ofReal_natCast]
+                      exact ENNReal.ofReal_mul
+                        (mul_nonneg
+                          (pow_nonneg (Real.rpow_nonneg (by linarith [ht.2]) _) _)
+                          (pow_nonneg (Real.rpow_nonneg ht.1.le _) _))
+            _ = (∫⁻ t in Set.Ioo (0 : ℝ) 1,
+                  ENNReal.ofReal
+                    ((((1 - t) ^ (1 / q)) ^ i) * ((t ^ (1 / q)) ^ (n - i))) ∂volume) *
+                  (Nat.choose n i : ℝ≥0∞) := by
+                    exact lintegral_mul_const' _ _ (by simp)
+            _ = (Nat.choose n i : ℝ≥0∞) *
+                ENNReal.ofReal
+                  (ProbabilityTheory.beta (((n - i : ℕ) : ℝ) / q + 1)
+                    ((i : ℝ) / q + 1)) := by
+                    rw [lintegral_Ioo_slice_monomial n i hq]
+                    exact mul_comm _ _
+
+lemma beta_slice_eq_div_generalizedBinomial (n i : ℕ) {q : ℝ} (hq : 0 < q)
+    (hi : i ∈ Finset.range (n + 1)) :
+    ProbabilityTheory.beta (((n - i : ℕ) : ℝ) / q + 1) ((i : ℝ) / q + 1) =
+      (q / ((n : ℝ) + q)) /
+        generalizedBinomial ((n : ℝ) / q) ((i : ℝ) / q) := by
+  have hin : i ≤ n := Nat.le_of_lt_succ (Finset.mem_range.mp hi)
+  have hsub : (((n - i : ℕ) : ℝ)) = (n : ℝ) - (i : ℝ) := by
+    exact Nat.cast_sub hin
+  have hApos : 0 < ((n : ℝ) / q - (i : ℝ) / q + 1) := by
+    rw [← sub_div, ← hsub]
+    positivity
+  have hBpos : 0 < (i : ℝ) / q + 1 := by positivity
+  have hNpos : 0 < (n : ℝ) / q + 1 := by positivity
+  have hsum :
+      ((n - i : ℕ) : ℝ) / q + 1 + ((i : ℝ) / q + 1) =
+        ((n : ℝ) / q + 1) + 1 := by
+    rw [hsub]
+    field_simp [hq.ne']
+    ring
+  rw [ProbabilityTheory.beta, generalizedBinomial, hsum,
+    Real.Gamma_add_one hNpos.ne']
+  rw [hsub]
+  have hAeq : ((n : ℝ) - (i : ℝ)) / q + 1 =
+      (n : ℝ) / q - (i : ℝ) / q + 1 := by ring
+  rw [hAeq]
+  field_simp [hq.ne', (Real.Gamma_pos_of_pos hApos).ne',
+    (Real.Gamma_pos_of_pos hBpos).ne', (Real.Gamma_pos_of_pos hNpos).ne']
+
+lemma generalizedBinomial_slice_pos (n i : ℕ) {q : ℝ} (hq : 0 < q)
+    (hi : i ∈ Finset.range (n + 1)) :
+    0 < generalizedBinomial ((n : ℝ) / q) ((i : ℝ) / q) := by
+  have hin : i ≤ n := Nat.le_of_lt_succ (Finset.mem_range.mp hi)
+  have hcastle : (i : ℝ) ≤ (n : ℝ) := by exact_mod_cast hin
+  have hsub : (0 : ℝ) ≤ (n : ℝ) - (i : ℝ) := sub_nonneg.mpr hcastle
+  rw [generalizedBinomial]
+  exact div_pos (Real.Gamma_pos_of_pos (by positivity))
+    (mul_pos (Real.Gamma_pos_of_pos (by positivity))
+      (Real.Gamma_pos_of_pos (by
+        have : 0 ≤ (n : ℝ) / q - (i : ℝ) / q := by
+          rw [← sub_div]
+          exact div_nonneg hsub hq.le
+        linarith)))
+
+lemma lintegral_Icc_slice_power_eq_constant (n : ℕ) {q : ℝ} (hq : 0 < q) :
+    (∫⁻ t in Set.Icc (0 : ℝ) 1,
+        ENNReal.ofReal (((1 - t) ^ (1 / q) + t ^ (1 / q)) ^ n) ∂volume) =
+      ENNReal.ofReal (q / ((n : ℝ) + q)) *
+        ENNReal.ofReal (symmetricRSConstant n q) := by
+  rw [lintegral_Icc_slice_power_eq_sum_beta n hq, symmetricRSConstant,
+    ENNReal.ofReal_sum_of_nonneg]
+  · rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro i hi
+    rw [beta_slice_eq_div_generalizedBinomial n i hq hi]
+    rw [← ENNReal.ofReal_natCast,
+      ← ENNReal.ofReal_mul (Nat.cast_nonneg (Nat.choose n i)),
+      ← ENNReal.ofReal_mul (div_nonneg hq.le (add_nonneg (Nat.cast_nonneg n) hq.le))]
+    congr 1
+    ring
+  · intro i hi
+    exact div_nonneg (Nat.cast_nonneg _) (generalizedBinomial_slice_pos n i hq hi).le
+
+lemma volume_weightedSlice_neg_of_central_symmetry {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)]
+    {q t : ℝ} (hq : 0 < q) (ht : t ∈ Set.Icc (0 : ℝ) 1)
+    {K : Set E} (hK : Convex ℝ K) {c : E}
+    (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K) :
+    volume (weightedSlice q t K (-K)) =
+      ENNReal.ofReal
+        ((((1 - t) ^ (1 / q)) + t ^ (1 / q)) ^ Module.finrank ℝ E) * volume K := by
+  let C : Set E := translate (-c) K
+  have hCneg : -C = C := centered_neg_eq hsym
+  have hCconv : Convex ℝ C := (convex_translate_iff (-c) K).2 hK
+  have hKrepr : translate c C = K := by
+    dsimp [C]
+    exact translate_neg_cancel c K
+  have hCvol : volume C = volume K := by
+    dsimp [C]
+    exact volume_translate (-c) K
+  change volume (slice q t K) = _
+  have hvol := volume_slice_translate_of_neg_eq q t c C hCneg hCconv hq ht
+  rw [hKrepr, hCvol] at hvol
+  exact hvol
+
+lemma lintegral_weightedSlice_neg_of_central_symmetry {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)]
+    {q : ℝ} (hq : 0 < q) {K : Set E} (hKc : IsCompact K) (hK : Convex ℝ K)
+    {c : E} (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K) :
+    (∫⁻ t in Set.Icc (0 : ℝ) 1, volume (weightedSlice q t K (-K)) ∂volume) =
+      (ENNReal.ofReal (q / ((Module.finrank ℝ E : ℝ) + q)) *
+        ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ E) q)) * volume K := by
+  calc
+    (∫⁻ t in Set.Icc (0 : ℝ) 1, volume (weightedSlice q t K (-K)) ∂volume) =
+        ∫⁻ t in Set.Icc (0 : ℝ) 1,
+          ENNReal.ofReal
+            ((((1 - t) ^ (1 / q)) + t ^ (1 / q)) ^ Module.finrank ℝ E) *
+            volume K ∂volume := by
+              apply setLIntegral_congr_fun measurableSet_Icc
+              intro t ht
+              exact volume_weightedSlice_neg_of_central_symmetry hq ht hK hsym
+    _ = (∫⁻ t in Set.Icc (0 : ℝ) 1,
+          ENNReal.ofReal
+            ((((1 - t) ^ (1 / q)) + t ^ (1 / q)) ^ Module.finrank ℝ E) ∂volume) *
+          volume K := by
+            exact lintegral_mul_const' _ _ hKc.measure_lt_top.ne
+    _ = _ := by rw [lintegral_Icc_slice_power_eq_constant (Module.finrank ℝ E) hq]
+
+theorem central_symmetric_lpSum_bound {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)]
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K : Set E}
+    (hKc : IsCompact K) (hK : Convex ℝ K) (h0K : 0 ∈ K)
+    {c : E} (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K) :
+    volume (lpSumE p K (-K)) ≤
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ E) q) * volume K := by
+  have h0neg : (0 : E) ∈ -K := by simpa using h0K
+  have hq : 0 < q := hpq.symm.pos
+  let a : ℝ := q / ((Module.finrank ℝ E : ℝ) + q)
+  have ha : 0 < a := by
+    dsimp [a]
+    exact div_pos hq (add_pos_of_nonneg_of_pos (Nat.cast_nonneg _) hq)
+  have hlower := lemma53_lower hq hKc hKc.neg hK hK.neg h0K h0neg
+  rw [lintegral_weightedSlice_neg_of_central_symmetry hq hKc hK hsym] at hlower
+  change ENNReal.ofReal a * volume (parameterBody q K (-K)) ≤
+    (ENNReal.ofReal a *
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ E) q)) * volume K at hlower
+  rw [mul_assoc] at hlower
+  have hbody : volume (parameterBody q K (-K)) ≤
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ E) q) * volume K :=
+    (ENNReal.mul_le_mul_iff_right (ENNReal.ofReal_ne_zero_iff.mpr ha)
+      ENNReal.ofReal_ne_top).mp hlower
+  rw [lpSumE_eq_parameterBody hpq hKc hKc.neg hK hK.neg h0K h0neg]
+  exact hbody
+
+theorem conjecture4_proved : Conjecture4Target := by
+  intro n hn K hK hKc hinter hsym h0K p q hp hrecip
+  obtain ⟨c, hcenter⟩ := hsym
+  have hpq : p.HolderConjugate q :=
+    Real.holderConjugate_iff.mpr ⟨hp, by simpa [one_div] using hrecip⟩
+  have hcenterR : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K := by
+    intro x
+    simpa [two_smul ℝ, two_nsmul] using hcenter x
+  have hbound := central_symmetric_lpSum_bound hpq hKc hK h0K hcenterR
+  simpa [lpSumN] using hbound
+
+lemma symmetricRSConstant_two_eq_rsConstant {q : ℝ} (hq : 0 < q) :
+    symmetricRSConstant 2 q = rsConstant q := by
+  norm_num [symmetricRSConstant, rsConstant, generalizedBinomial, Finset.sum_range_succ]
+  have h1 : Real.Gamma (1 / q + 1) ≠ 0 :=
+    (Real.Gamma_pos_of_pos (by positivity)).ne'
+  have h2 : Real.Gamma (2 / q + 1) ≠ 0 :=
+    (Real.Gamma_pos_of_pos (by positivity)).ne'
+  field_simp [hq.ne', h1, h2]
+  ring
+
+#print axioms conjecture4_proved
+
+end
+end LpRogersShephardLean4Web

@@ -1,0 +1,2102 @@
+import LpRogersShephardProof
+
+/-! Equality-case geometry for Conjecture 5. -/
+
+open MeasureTheory Real Set Filter Topology
+open scoped Pointwise ENNReal LpRogersShephardPlane
+
+namespace LpRogersShephardLean4Web
+noncomputable section
+
+noncomputable def planarOrthogonal (c : ℝ²) : ℝ² :=
+  if c = 0 then (EuclideanSpace.equiv (Fin 2) ℝ).symm ![1, 0]
+  else (EuclideanSpace.equiv (Fin 2) ℝ).symm
+    ![-(EuclideanSpace.equiv (Fin 2) ℝ c) 1, (EuclideanSpace.equiv (Fin 2) ℝ c) 0]
+
+lemma planarOrthogonal_ne_zero (c : ℝ²) : planarOrthogonal c ≠ 0 := by
+  by_cases hc : c = 0
+  · intro h
+    have he := congrArg (EuclideanSpace.equiv (Fin 2) ℝ) h
+    have h0 := congrFun he 0
+    norm_num [planarOrthogonal, hc] at h0
+  · intro h
+    apply hc
+    apply (EuclideanSpace.equiv (Fin 2) ℝ).injective
+    ext i
+    have he := congrArg (EuclideanSpace.equiv (Fin 2) ℝ) h
+    have h0 := congrFun he 0
+    have h1 := congrFun he 1
+    fin_cases i <;> simp [planarOrthogonal, hc] at h0 h1 ⊢ <;> simp [h0, h1]
+
+lemma inner_planarOrthogonal (c : ℝ²) : inner ℝ c (planarOrthogonal c) = 0 := by
+  by_cases hc : c = 0
+  · simp [hc]
+  · simp [planarOrthogonal, hc, EuclideanSpace.inner_eq_star_dotProduct]
+    change -((EuclideanSpace.equiv (Fin 2) ℝ c) 1 *
+        (EuclideanSpace.equiv (Fin 2) ℝ c) 0) +
+        (EuclideanSpace.equiv (Fin 2) ℝ c) 0 *
+          (EuclideanSpace.equiv (Fin 2) ℝ c) 1 = 0
+    ring
+
+lemma parameterGraph_convex {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q : ℝ} (hq : 1 ≤ q) {K L : Set E}
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L) :
+    Convex ℝ (parameterGraph q K L) := by
+  rintro ⟨z₁, t₁⟩ ⟨ht₁, hz₁⟩ ⟨z₂, t₂⟩ ⟨ht₂, hz₂⟩ a b ha hb hab
+  change t₁ ∈ Set.Icc (0 : ℝ) 1 at ht₁
+  change t₂ ∈ Set.Icc (0 : ℝ) 1 at ht₂
+  change z₁ ∈ weightedSlice q t₁ K L at hz₁
+  change z₂ ∈ weightedSlice q t₂ K L at hz₂
+  rcases hz₁ with ⟨ax₁, ⟨x₁, hx₁, rfl⟩, by₁, ⟨y₁, hy₁, rfl⟩, hz₁⟩
+  rcases hz₂ with ⟨ax₂, ⟨x₂, hx₂, rfl⟩, by₂, ⟨y₂, hy₂, rfl⟩, hz₂⟩
+  subst z₁
+  subst z₂
+  let t : ℝ := a * t₁ + b * t₂
+  have ht : t ∈ Set.Icc (0 : ℝ) 1 := by
+    constructor
+    · exact add_nonneg (mul_nonneg ha ht₁.1) (mul_nonneg hb ht₂.1)
+    · calc
+        t ≤ a * 1 + b * 1 := add_le_add (mul_le_mul_of_nonneg_left ht₁.2 ha)
+          (mul_le_mul_of_nonneg_left ht₂.2 hb)
+        _ = 1 := by rw [mul_one, mul_one, hab]
+  have hqpos : 0 < q := zero_lt_one.trans_le hq
+  have hr0 : 0 ≤ 1 / q := one_div_nonneg.mpr hqpos.le
+  have hr1 : 1 / q ≤ 1 := (div_le_one hqpos).mpr hq
+  have hconc := Real.concaveOn_rpow hr0 hr1
+  have hleft :
+      a * (1 - t₁) ^ (1 / q) + b * (1 - t₂) ^ (1 / q) ≤
+        (1 - t) ^ (1 / q) := by
+    have hc := hconc.2 (sub_nonneg.mpr ht₁.2) (sub_nonneg.mpr ht₂.2) ha hb hab
+    have hbase : a * (1 - t₁) + b * (1 - t₂) = 1 - t := by
+      dsimp [t]
+      calc
+        a * (1 - t₁) + b * (1 - t₂) = (a + b) - (a * t₁ + b * t₂) := by ring
+        _ = 1 - (a * t₁ + b * t₂) := by rw [hab]
+    simpa only [smul_eq_mul, hbase] using hc
+  have hright : a * t₁ ^ (1 / q) + b * t₂ ^ (1 / q) ≤ t ^ (1 / q) := by
+    exact hconc.2 ht₁.1 ht₂.1 ha hb hab
+  obtain ⟨x, hx, hxeq⟩ := exists_scaled_combination_mem hK h0K hx₁ hx₂
+    (mul_nonneg ha (Real.rpow_nonneg (sub_nonneg.mpr ht₁.2) _))
+    (mul_nonneg hb (Real.rpow_nonneg (sub_nonneg.mpr ht₂.2) _))
+    (Real.rpow_nonneg (sub_nonneg.mpr ht.2) _) hleft
+  obtain ⟨y, hy, hyeq⟩ := exists_scaled_combination_mem hL h0L hy₁ hy₂
+    (mul_nonneg ha (Real.rpow_nonneg ht₁.1 _))
+    (mul_nonneg hb (Real.rpow_nonneg ht₂.1 _))
+    (Real.rpow_nonneg ht.1 _) hright
+  change (a • ((1 - t₁) ^ (1 / q) • x₁ + t₁ ^ (1 / q) • y₁) +
+      b • ((1 - t₂) ^ (1 / q) • x₂ + t₂ ^ (1 / q) • y₂),
+      a * t₁ + b * t₂) ∈ parameterGraph q K L
+  refine ⟨ht, ?_⟩
+  refine ⟨_, ⟨x, hx, rfl⟩, _, ⟨y, hy, rfl⟩, ?_⟩
+  change (1 - t) ^ (1 / q) • x + t ^ (1 / q) • y =
+    a • ((1 - t₁) ^ (1 / q) • x₁ + t₁ ^ (1 / q) • y₁) +
+      b • ((1 - t₂) ^ (1 / q) • x₂ + t₂ ^ (1 / q) • y₂)
+  rw [hxeq, hyeq]
+  module
+
+lemma parameterFiber_isCompact {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q : ℝ} (hq : 0 < q) {K L : Set E} (hK : IsCompact K) (hL : IsCompact L) (z : E) :
+    IsCompact (parameterFiber q K L z) := by
+  apply isCompact_Icc.of_isClosed_subset
+  · exact (parameterGraph_isCompact hq hK hL).isClosed.preimage
+      (continuous_const.prodMk continuous_id)
+  · exact parameterFiber_subset_Icc q K L z
+
+lemma parameterFiber_convex {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q : ℝ} (hq : 1 ≤ q) {K L : Set E}
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L) (z : E) :
+    Convex ℝ (parameterFiber q K L z) := by
+  intro t₁ ht₁ t₂ ht₂ a b ha hb hab
+  have h := parameterGraph_convex hq hK hL h0K h0L ht₁ ht₂ ha hb hab
+  change (a • z + b • z, a * t₁ + b * t₂) ∈ parameterGraph q K L at h
+  have hz : a • z + b • z = z := by rw [← add_smul, hab, one_smul]
+  change (z, a * t₁ + b * t₂) ∈ parameterGraph q K L
+  rw [← hz]
+  exact h
+
+lemma mem_parameterBody_iff_parameterFiber_nonempty {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} {K L : Set E} {z : E} :
+    z ∈ parameterBody q K L ↔ (parameterFiber q K L z).Nonempty := by
+  rw [mem_parameterBody_iff_mem_weightedSlice]
+  constructor
+  · rintro ⟨t, ht, hzt⟩
+    exact ⟨t, ht, hzt⟩
+  · rintro ⟨t, ht, hzt⟩
+    exact ⟨t, ht, hzt⟩
+
+lemma compact_convex_real_eq_Icc {S : Set ℝ} (hS : IsCompact S) (hSc : Convex ℝ S)
+    (hSn : S.Nonempty) : S = Set.Icc (sInf S) (sSup S) := by
+  apply Set.Subset.antisymm
+  · intro x hx
+    exact ⟨(hS.isGLB_sInf hSn).1 hx, (hS.isLUB_sSup hSn).1 hx⟩
+  · exact hSc.ordConnected.out (hS.sInf_mem hSn) (hS.sSup_mem hSn)
+
+lemma fiberLength_eq_sSup_sub_sInf {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} (hq : 1 ≤ q)
+    {K L : Set E} (hKc : IsCompact K) (hLc : IsCompact L)
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L)
+    {z : E} (hz : z ∈ parameterBody q K L) :
+    fiberLength q K L z = sSup (parameterFiber q K L z) - sInf (parameterFiber q K L z) := by
+  have hqpos : 0 < q := zero_lt_one.trans_le hq
+  have hFc := parameterFiber_isCompact hqpos hKc hLc z
+  have hFv := parameterFiber_convex hq hK hL h0K h0L z
+  have hFn := mem_parameterBody_iff_parameterFiber_nonempty.mp hz
+  have hle : sInf (parameterFiber q K L z) ≤ sSup (parameterFiber q K L z) :=
+    (hFc.isGLB_sInf hFn).1 (hFc.sSup_mem hFn)
+  calc
+    fiberLength q K L z =
+        (volume (Set.Icc (sInf (parameterFiber q K L z))
+          (sSup (parameterFiber q K L z)))).toReal := by
+            unfold fiberLength
+            conv_lhs => rw [compact_convex_real_eq_Icc hFc hFv hFn]
+    _ = sSup (parameterFiber q K L z) - sInf (parameterFiber q K L z) := by
+          rw [Real.volume_Icc, ENNReal.toReal_ofReal (sub_nonneg.mpr hle)]
+
+theorem concaveOn_fiberLength {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} (hq : 1 ≤ q)
+    {K L : Set E} (hKc : IsCompact K) (hLc : IsCompact L)
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L) :
+    ConcaveOn ℝ (parameterBody q K L) (fiberLength q K L) := by
+  refine ⟨parameterBody_convex hq hK hL h0K h0L, ?_⟩
+  intro z₁ hz₁ z₂ hz₂ a b ha hb hab
+  have hqpos : 0 < q := zero_lt_one.trans_le hq
+  let F₁ := parameterFiber q K L z₁
+  let F₂ := parameterFiber q K L z₂
+  have hF₁c : IsCompact F₁ := parameterFiber_isCompact hqpos hKc hLc z₁
+  have hF₂c : IsCompact F₂ := parameterFiber_isCompact hqpos hKc hLc z₂
+  have hF₁n : F₁.Nonempty := mem_parameterBody_iff_parameterFiber_nonempty.mp hz₁
+  have hF₂n : F₂.Nonempty := mem_parameterBody_iff_parameterFiber_nonempty.mp hz₂
+  have hl₁ : sInf F₁ ∈ F₁ := hF₁c.sInf_mem hF₁n
+  have hu₁ : sSup F₁ ∈ F₁ := hF₁c.sSup_mem hF₁n
+  have hl₂ : sInf F₂ ∈ F₂ := hF₂c.sInf_mem hF₂n
+  have hu₂ : sSup F₂ ∈ F₂ := hF₂c.sSup_mem hF₂n
+  let z := a • z₁ + b • z₂
+  let lo : ℝ := a * sInf F₁ + b * sInf F₂
+  let hi : ℝ := a * sSup F₁ + b * sSup F₂
+  have hlo : lo ∈ parameterFiber q K L z := by
+    have h := parameterGraph_convex hq hK hL h0K h0L hl₁ hl₂ ha hb hab
+    exact h
+  have hhi : hi ∈ parameterFiber q K L z := by
+    have h := parameterGraph_convex hq hK hL h0K h0L hu₁ hu₂ ha hb hab
+    exact h
+  have hsub : Set.Icc lo hi ⊆ parameterFiber q K L z :=
+    (parameterFiber_convex hq hK hL h0K h0L z).ordConnected.out hlo hhi
+  have hle₁ : sInf F₁ ≤ sSup F₁ := (hF₁c.isGLB_sInf hF₁n).1 hu₁
+  have hle₂ : sInf F₂ ≤ sSup F₂ := (hF₂c.isGLB_sInf hF₂n).1 hu₂
+  have hlohi : lo ≤ hi := by
+    dsimp [lo, hi]
+    exact add_le_add (mul_le_mul_of_nonneg_left hle₁ ha)
+      (mul_le_mul_of_nonneg_left hle₂ hb)
+  have hmeasure : volume (Set.Icc lo hi) ≤ volume (parameterFiber q K L z) :=
+    measure_mono hsub
+  have hreal : hi - lo ≤ fiberLength q K L z := by
+    have h := (ENNReal.toReal_le_toReal
+      (by rw [Real.volume_Icc]; exact ENNReal.ofReal_ne_top)
+      (parameterFiber_volume_lt_top q K L z).ne).2 hmeasure
+    rw [Real.volume_Icc, ENNReal.toReal_ofReal (sub_nonneg.mpr hlohi)] at h
+    exact h
+  rw [fiberLength_eq_sSup_sub_sInf hq hKc hLc hK hL h0K h0L hz₁,
+    fiberLength_eq_sSup_sub_sInf hq hKc hLc hK hL h0K h0L hz₂]
+  change a * (sSup F₁ - sInf F₁) + b * (sSup F₂ - sInf F₂) ≤
+    fiberLength q K L z
+  dsimp [lo, hi] at hreal
+  linarith
+
+lemma parameterBody_neg_mem_nhds_zero {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} (hq : 0 < q)
+    {K : Set E} (hKi : (interior K).Nonempty) :
+    parameterBody q K (-K) ∈ 𝓝 (0 : E) := by
+  obtain ⟨x, hx⟩ := hKi
+  let r : ℝ := (1 / 2 : ℝ) ^ (1 / q)
+  have hr : 0 < r := Real.rpow_pos_of_pos (by norm_num) _
+  let U : Set E := r • interior K + r • interior (-K)
+  have hnegx : -x ∈ interior (-K) := by
+    have himage : -x ∈ (Homeomorph.neg E) '' interior K := ⟨x, hx, rfl⟩
+    rw [(Homeomorph.neg E).image_interior] at himage
+    simpa [Homeomorph.neg, Set.image_neg_eq_neg] using himage
+  have h0U : (0 : E) ∈ U := by
+    refine ⟨r • x, ⟨x, hx, rfl⟩, r • (-x), ⟨-x, hnegx, rfl⟩, ?_⟩
+    change r • x + r • (-x) = 0
+    rw [smul_neg, add_neg_cancel]
+  have hUopen : IsOpen U := by
+    exact (isOpen_interior.smul₀ hr.ne').add_right
+  have hUD : U ⊆ parameterBody q K (-K) := by
+    rintro z ⟨rx, ⟨y, hy, rfl⟩, rw, ⟨w, hw, rfl⟩, rfl⟩
+    refine ⟨(1 / 2 : ℝ), by norm_num, y, interior_subset hy, w, interior_subset hw, ?_⟩
+    change r • y + r • w =
+      (1 - (1 / 2 : ℝ)) ^ (1 / q) • y + (1 / 2 : ℝ) ^ (1 / q) • w
+    norm_num [r]
+  exact mem_interior_iff_mem_nhds.mp (interior_maximal hUD hUopen h0U)
+
+lemma gauge_radial_decomposition {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {D : Set E}
+    (hDc : IsCompact D) (hDv : Convex ℝ D) (hD0 : D ∈ 𝓝 (0 : E))
+    {z : E} (hz : z ∈ D) :
+    ∃ τ ∈ Set.Icc (0 : ℝ) 1, ∃ w ∈ D, z = τ • w ∧ τ = gauge D z := by
+  let τ : ℝ := gauge D z
+  have hτ0 : 0 ≤ τ := gauge_nonneg z
+  have hτ1 : τ ≤ 1 := gauge_le_one_of_mem hz
+  by_cases hz0 : z = 0
+  · refine ⟨τ, ⟨hτ0, hτ1⟩, 0, mem_of_mem_nhds hD0, ?_, rfl⟩
+    subst z
+    simp [τ]
+  · have hτpos : 0 < τ := by
+      rw [gauge_pos (absorbent_nhds_zero hD0)
+        (NormedSpace.isVonNBounded_of_isBounded ℝ hDc.isBounded)]
+      exact hz0
+    let w : E := τ⁻¹ • z
+    have hgw : gauge D w = 1 := by
+      dsimp [w]
+      rw [gauge_smul_of_nonneg (inv_nonneg.mpr hτ0)]
+      change τ⁻¹ * τ = 1
+      exact inv_mul_cancel₀ hτpos.ne'
+    have hw : w ∈ D := by
+      have hwc : w ∈ closure D :=
+        (gauge_le_one_iff_mem_closure hDv hD0).mp (hgw.le)
+      simpa [hDc.isClosed.closure_eq] using hwc
+    refine ⟨τ, ⟨hτ0, hτ1⟩, w, hw, ?_, rfl⟩
+    dsimp [w]
+    rw [smul_smul, mul_inv_cancel₀ hτpos.ne', one_smul]
+
+lemma gauge_lower_le_fiberLength {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} (hq : 1 ≤ q)
+    {K L : Set E} (hKc : IsCompact K) (hLc : IsCompact L)
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L)
+    (hD0 : parameterBody q K L ∈ 𝓝 (0 : E)) {z : E}
+    (hz : z ∈ parameterBody q K L) :
+    1 - gauge (parameterBody q K L) z ^ q ≤ fiberLength q K L z := by
+  have hqpos : 0 < q := zero_lt_one.trans_le hq
+  let D := parameterBody q K L
+  have hDc : IsCompact D := parameterBody_isCompact hqpos hKc hLc
+  have hDv : Convex ℝ D := parameterBody_convex hq hK hL h0K h0L
+  obtain ⟨τ, hτ, w, hw, hzw, hτg⟩ := gauge_radial_decomposition hDc hDv hD0 hz
+  have hvol := ofReal_one_sub_rpow_le_fiber_volume hqpos hK hL h0K h0L hw hτ
+  rw [← hzw] at hvol
+  have hpowle : τ ^ q ≤ 1 := Real.rpow_le_one hτ.1 hτ.2 (zero_le_one.trans hq)
+  have hreal := (ENNReal.toReal_le_toReal (by simp)
+    (parameterFiber_volume_lt_top q K L z).ne).2 hvol
+  rw [ENNReal.toReal_ofReal (sub_nonneg.mpr hpowle)] at hreal
+  change 1 - gauge D z ^ q ≤ fiberLength q K L z
+  rw [← hτg]
+  change 1 - τ ^ q ≤ (volume (parameterFiber q K L z)).toReal
+  exact hreal
+
+noncomputable def gaugeBaseline {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q : ℝ) (D : Set E) (z : E) : ℝ :=
+  max (1 - gauge D z ^ q) 0
+
+lemma gauge_le_iff_mem_smul {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {D : Set E}
+    (hDc : IsCompact D) (hDv : Convex ℝ D) (hD0 : D ∈ 𝓝 (0 : E))
+    {a : ℝ} (ha : 0 ≤ a) (z : E) :
+    gauge D z ≤ a ↔ z ∈ a • D := by
+  constructor
+  · intro hga
+    obtain rfl | hapos := ha.eq_or_lt
+    · have hgz : gauge D z = 0 := le_antisymm hga (gauge_nonneg z)
+      have hz0 : z = 0 := (gauge_eq_zero (absorbent_nhds_zero hD0)
+        (NormedSpace.isVonNBounded_of_isBounded ℝ hDc.isBounded)).mp hgz
+      subst z
+      exact ⟨0, mem_of_mem_nhds hD0, by simp⟩
+    · let w : E := a⁻¹ • z
+      have hgw : gauge D w ≤ 1 := by
+        dsimp [w]
+        rw [gauge_smul_of_nonneg (inv_nonneg.mpr ha)]
+        change a⁻¹ * gauge D z ≤ 1
+        rw [inv_mul_le_one₀ hapos]
+        exact hga
+      have hwc : w ∈ closure D := (gauge_le_one_iff_mem_closure hDv hD0).mp hgw
+      have hw : w ∈ D := by simpa [hDc.isClosed.closure_eq] using hwc
+      refine ⟨w, hw, ?_⟩
+      dsimp [w]
+      rw [smul_smul, mul_inv_cancel₀ hapos.ne', one_smul]
+  · exact gauge_le_of_mem ha
+
+lemma gaugeBaseline_level_eq_smul {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} (hq : 0 < q)
+    {D : Set E} (hDc : IsCompact D) (hDv : Convex ℝ D) (hD0 : D ∈ 𝓝 (0 : E))
+    {s : ℝ} (hs : s ∈ Set.Ioc (0 : ℝ) 1) :
+    {z | s ≤ gaugeBaseline q D z} = ((1 - s) ^ (1 / q)) • D := by
+  let τ : ℝ := (1 - s) ^ (1 / q)
+  have hbase : 0 ≤ 1 - s := sub_nonneg.mpr hs.2
+  have hτ0 : 0 ≤ τ := Real.rpow_nonneg hbase _
+  have hτq : τ ^ q = 1 - s := by
+    dsimp [τ]
+    rw [one_div, Real.rpow_inv_rpow hbase hq.ne']
+  ext z
+  rw [← gauge_le_iff_mem_smul hDc hDv hD0 hτ0]
+  have hgz0 : 0 ≤ gauge D z := gauge_nonneg z
+  have hrpow : gauge D z ^ q ≤ τ ^ q ↔ gauge D z ≤ τ :=
+    Real.rpow_le_rpow_iff hgz0 hτ0 hq
+  change s ≤ max (1 - gauge D z ^ q) 0 ↔ gauge D z ≤ τ
+  have hmax : s ≤ max (1 - gauge D z ^ q) 0 ↔ s ≤ 1 - gauge D z ^ q := by
+    constructor
+    · intro h
+      rcases (le_max_iff.mp h) with hraw | hzero
+      · exact hraw
+      · exact False.elim (not_le_of_gt hs.1 hzero)
+    · exact fun h ↦ h.trans (le_max_left _ _)
+  rw [hmax]
+  constructor
+  · intro h
+    apply hrpow.mp
+    rw [hτq]
+    linarith
+  · intro h
+    have hp := hrpow.mpr h
+    rw [hτq] at hp
+    linarith
+
+lemma measurable_gaugeBaseline {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [MeasurableSpace E] [BorelSpace E]
+    {q : ℝ} (hq : 0 ≤ q)
+    {D : Set E} (hDv : Convex ℝ D) (hD0 : D ∈ 𝓝 (0 : E)) :
+    Measurable (gaugeBaseline q D) := by
+  exact Measurable.max
+    (measurable_const.sub
+      ((Real.continuous_rpow_const hq).comp (continuous_gauge hDv hD0)).measurable)
+    measurable_const
+
+lemma lintegral_gaugeBaseline_eq_scaled {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)]
+    {q : ℝ} (hq : 0 < q) {D : Set E}
+    (hDc : IsCompact D) (hDv : Convex ℝ D) (hD0 : D ∈ 𝓝 (0 : E)) :
+    (∫⁻ z, ENNReal.ofReal (gaugeBaseline q D z) ∂volume) =
+      ∫⁻ s in Set.Ioc (0 : ℝ) 1,
+        volume (((1 - s) ^ (1 / q)) • D) ∂volume := by
+  calc
+    (∫⁻ z, ENNReal.ofReal (gaugeBaseline q D z) ∂volume) =
+        ∫⁻ s in Set.Ioi (0 : ℝ), volume {z | s ≤ gaugeBaseline q D z} ∂volume :=
+      MeasureTheory.lintegral_eq_lintegral_meas_le (f := gaugeBaseline q D) volume
+        (Filter.Eventually.of_forall fun z ↦ le_max_right _ _)
+        (measurable_gaugeBaseline hq.le hDv hD0).aemeasurable
+    _ = _ := by
+      rw [← lintegral_indicator measurableSet_Ioc, ← lintegral_indicator measurableSet_Ioi]
+      apply lintegral_congr
+      intro s
+      by_cases hs : s ∈ Set.Ioc (0 : ℝ) 1
+      · have hs0 : s ∈ Set.Ioi (0 : ℝ) := hs.1
+        simp only [Set.indicator_apply, hs, if_true]
+        rw [if_pos hs0]
+        rw [gaugeBaseline_level_eq_smul hq hDc hDv hD0 hs]
+      · simp only [Set.indicator_apply, hs, if_false]
+        by_cases hs0 : s ∈ Set.Ioi (0 : ℝ)
+        · simp only [hs0, if_true]
+          have hs1 : 1 < s := lt_of_not_ge (fun hsle ↦ hs ⟨hs0, hsle⟩)
+          have hempty : {z | s ≤ gaugeBaseline q D z} = ∅ := by
+            ext z
+            have hbasele : gaugeBaseline q D z ≤ 1 := by
+              dsimp [gaugeBaseline]
+              exact max_le (sub_le_self _ (Real.rpow_nonneg (gauge_nonneg z) q)) zero_le_one
+            simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+            exact not_le_of_gt (hbasele.trans_lt hs1)
+          rw [hempty, measure_empty]
+        · simp only [hs0, if_false]
+
+lemma gaugeBaseline_le_fiberLength {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} (hq : 1 ≤ q)
+    {K L : Set E} (hKc : IsCompact K) (hLc : IsCompact L)
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L)
+    (hD0 : parameterBody q K L ∈ 𝓝 (0 : E)) (z : E) :
+    gaugeBaseline q (parameterBody q K L) z ≤ fiberLength q K L z := by
+  let D := parameterBody q K L
+  by_cases hz : z ∈ D
+  · dsimp [gaugeBaseline]
+    exact max_le (gauge_lower_le_fiberLength hq hKc hLc hK hL h0K h0L hD0 hz)
+      ENNReal.toReal_nonneg
+  · have hqpos : 0 < q := zero_lt_one.trans_le hq
+    have hDc : IsCompact D := parameterBody_isCompact hqpos hKc hLc
+    have hDv : Convex ℝ D := parameterBody_convex hq hK hL h0K h0L
+    have hg : 1 < gauge D z := lt_of_not_ge fun hg ↦ hz <| by
+      have : z ∈ closure D := (gauge_le_one_iff_mem_closure hDv hD0).mp hg
+      simpa [hDc.isClosed.closure_eq] using this
+    have hpow : 1 ≤ gauge D z ^ q := by
+      simpa using Real.rpow_le_rpow (by norm_num : (0 : ℝ) ≤ 1) hg.le (zero_le_one.trans hq)
+    have hbase : gaugeBaseline q D z = 0 := by
+      dsimp [gaugeBaseline]
+      rw [max_eq_right]
+      linarith
+    have hfiber : parameterFiber q K L z = ∅ := by
+      apply Set.eq_empty_iff_forall_notMem.mpr
+      intro t ht
+      exact hz (mem_parameterBody_iff_parameterFiber_nonempty.mpr ⟨t, ht⟩)
+    rw [hbase]
+    simp [fiberLength, hfiber]
+
+lemma lintegral_fiber_eq_gaugeBaseline_of_sharp_volume {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)]
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K : Set E}
+    (hKc : IsCompact K) (hK : Convex ℝ K) (hKi : (interior K).Nonempty)
+    (h0K : 0 ∈ K) {c : E} (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K)
+    (hsharp : volume (lpSumE p K (-K)) =
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ E) q) * volume K) :
+    (∫⁻ z, volume (parameterFiber q K (-K) z) ∂volume) =
+      ∫⁻ z, ENNReal.ofReal
+        (gaugeBaseline q (parameterBody q K (-K)) z) ∂volume := by
+  have hq : 0 < q := hpq.symm.pos
+  have h0neg : (0 : E) ∈ -K := by simpa using h0K
+  have hD0 := parameterBody_neg_mem_nhds_zero hq hKi
+  have hDc := parameterBody_isCompact hq hKc hKc.neg
+  have hDvol : volume (parameterBody q K (-K)) =
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ E) q) * volume K := by
+    rw [← lpSumE_eq_parameterBody hpq hKc hKc.neg hK hK.neg h0K h0neg]
+    exact hsharp
+  let a : ℝ := q / ((Module.finrank ℝ E : ℝ) + q)
+  calc
+    (∫⁻ z, volume (parameterFiber q K (-K) z) ∂volume) =
+        (volume.prod volume) (parameterGraph q K (-K)) :=
+      (parameterGraph_volume_eq_lintegral_fibers hq hKc hKc.neg).symm
+    _ = ∫⁻ t in Set.Icc (0 : ℝ) 1,
+        volume (weightedSlice q t K (-K)) ∂volume :=
+      parameterGraph_volume_eq_lintegral_slices hq hKc hKc.neg
+    _ = (ENNReal.ofReal a *
+        ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ E) q)) * volume K := by
+      exact lintegral_weightedSlice_neg_of_central_symmetry hq hKc hK hsym
+    _ = ENNReal.ofReal a * volume (parameterBody q K (-K)) := by
+      rw [mul_assoc, hDvol]
+    _ = ∫⁻ s in Set.Ioc (0 : ℝ) 1,
+        volume (((1 - s) ^ (1 / q)) • parameterBody q K (-K)) ∂volume := by
+      symm
+      exact lintegral_volume_rpow_smul hq hDc
+    _ = ∫⁻ z, ENNReal.ofReal
+        (gaugeBaseline q (parameterBody q K (-K)) z) ∂volume :=
+      (lintegral_gaugeBaseline_eq_scaled hq hDc
+        (parameterBody_convex hpq.symm.lt.le hK hK.neg h0K h0neg) hD0).symm
+
+theorem fiberLength_eq_one_sub_gauge_rpow_on_interior_of_sharp_volume {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)]
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K : Set E}
+    (hKc : IsCompact K) (hK : Convex ℝ K) (hKi : (interior K).Nonempty)
+    (h0K : 0 ∈ K) {c : E} (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K)
+    (hsharp : volume (lpSumE p K (-K)) =
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ E) q) * volume K) :
+    ∀ z ∈ interior (parameterBody q K (-K)),
+      fiberLength q K (-K) z = 1 - gauge (parameterBody q K (-K)) z ^ q := by
+  have hq : 0 < q := hpq.symm.pos
+  have hq1 : 1 ≤ q := hpq.symm.lt.le
+  have h0neg : (0 : E) ∈ -K := by simpa using h0K
+  let D := parameterBody q K (-K)
+  have hD0 : D ∈ 𝓝 (0 : E) := parameterBody_neg_mem_nhds_zero hq hKi
+  have hDc : IsCompact D := parameterBody_isCompact hq hKc hKc.neg
+  have hDv : Convex ℝ D := parameterBody_convex hq1 hK hK.neg h0K h0neg
+  have hintEq := lintegral_fiber_eq_gaugeBaseline_of_sharp_volume hpq hKc hK hKi h0K hsym hsharp
+  have hle : ∀ z : E,
+      ENNReal.ofReal (gaugeBaseline q D z) ≤ ENNReal.ofReal (fiberLength q K (-K) z) := by
+    intro z
+    exact ENNReal.ofReal_le_ofReal
+      (gaugeBaseline_le_fiberLength hq1 hKc hKc.neg hK hK.neg h0K h0neg hD0 z)
+  have hbaseFinite : (∫⁻ z, ENNReal.ofReal (gaugeBaseline q D z) ∂volume) ≠ ∞ := by
+    rw [lintegral_gaugeBaseline_eq_scaled hq hDc hDv hD0,
+      lintegral_volume_rpow_smul hq hDc]
+    exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top hDc.measure_lt_top.ne
+  have hfiberMeas : AEMeasurable (fun z ↦ ENNReal.ofReal (fiberLength q K (-K) z)) volume :=
+    (measurable_fiberLength hq hKc hKc.neg).aemeasurable.ennreal_ofReal
+  have hintEq' : (∫⁻ z, ENNReal.ofReal (fiberLength q K (-K) z) ∂volume) =
+      ∫⁻ z, ENNReal.ofReal (gaugeBaseline q D z) ∂volume := by
+    calc
+      (∫⁻ z, ENNReal.ofReal (fiberLength q K (-K) z) ∂volume) =
+          ∫⁻ z, volume (parameterFiber q K (-K) z) ∂volume := by
+            apply lintegral_congr
+            exact fun z ↦ ofReal_fiberLength q K (-K) z
+      _ = _ := hintEq
+  have haeENN : (fun z ↦ ENNReal.ofReal (gaugeBaseline q D z)) =ᵐ[volume]
+      (fun z ↦ ENNReal.ofReal (fiberLength q K (-K) z)) :=
+    ae_eq_of_ae_le_of_lintegral_le (Filter.Eventually.of_forall hle) hbaseFinite hfiberMeas
+      hintEq'.le
+  have haeReal : gaugeBaseline q D =ᵐ[volume] fiberLength q K (-K) := by
+    filter_upwards [haeENN] with z hz
+    exact (ENNReal.ofReal_eq_ofReal_iff (le_max_right _ _)
+      ENNReal.toReal_nonneg).mp hz
+  have hbaseCont : Continuous (gaugeBaseline q D) := by
+    exact (continuous_const.sub
+      ((Real.continuous_rpow_const hq.le).comp (continuous_gauge hDv hD0))).max continuous_const
+  have hfiberCont : ContinuousOn (fiberLength q K (-K)) (interior D) :=
+    (concaveOn_fiberLength hq1 hKc hKc.neg hK hK.neg h0K h0neg).continuousOn_interior
+  have heqOn : Set.EqOn (gaugeBaseline q D) (fiberLength q K (-K)) (interior D) :=
+    Measure.eqOn_open_of_ae_eq (ae_restrict_of_ae haeReal) isOpen_interior
+      hbaseCont.continuousOn hfiberCont
+  intro z hz
+  have hglt : gauge D z < 1 := (gauge_lt_one_iff_mem_interior hDv hD0).mpr hz
+  have hpowlt : gauge D z ^ q < 1 := by
+    simpa using Real.rpow_lt_rpow (gauge_nonneg z) hglt hq
+  have hbase : gaugeBaseline q D z = 1 - gauge D z ^ q := by
+    dsimp [gaugeBaseline]
+    rw [max_eq_left (sub_nonneg.mpr hpowlt.le)]
+  rw [← hbase]
+  exact (heqOn hz).symm
+
+lemma one_le_centeredScale {q t : ℝ} (hq : 1 ≤ q) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    1 ≤ (1 - t) ^ (1 / q) + t ^ (1 / q) := by
+  have hqpos : 0 < q := zero_lt_one.trans_le hq
+  have hexp0 : 0 ≤ 1 / q := one_div_nonneg.mpr hqpos.le
+  have hexp1 : 1 / q ≤ 1 := (div_le_one hqpos).mpr hq
+  have htleft : 1 - t ≤ (1 - t) ^ (1 / q) := by
+    simpa only [Real.rpow_one] using Real.rpow_le_rpow_of_exponent_ge'
+      (sub_nonneg.mpr ht.2) (by linarith [ht.1]) hexp0 hexp1
+  have htright : t ≤ t ^ (1 / q) := by
+    simpa only [Real.rpow_one] using Real.rpow_le_rpow_of_exponent_ge'
+      ht.1 ht.2 hexp0 hexp1
+  linarith
+
+lemma common_point_mem_weightedSlice {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} (hq : 1 ≤ q)
+    {K L : Set E} (hK : Convex ℝ K) (hL : Convex ℝ L)
+    (h0K : 0 ∈ K) (h0L : 0 ∈ L) {v : E} (hvK : v ∈ K) (hvL : v ∈ L)
+    {t : ℝ} (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    v ∈ weightedSlice q t K L := by
+  let s : ℝ := (1 - t) ^ (1 / q) + t ^ (1 / q)
+  have hs1 : 1 ≤ s := one_le_centeredScale hq ht
+  have hspos : 0 < s := zero_lt_one.trans_le hs1
+  let w : E := s⁻¹ • v
+  have hinv : s⁻¹ ∈ Set.Icc (0 : ℝ) 1 :=
+    ⟨inv_nonneg.mpr hspos.le, (inv_le_one₀ hspos).mpr hs1⟩
+  have hwK : w ∈ K := hK.smul_mem_of_zero_mem h0K hvK hinv
+  have hwL : w ∈ L := hL.smul_mem_of_zero_mem h0L hvL hinv
+  refine ⟨(1 - t) ^ (1 / q) • w, ⟨w, hwK, rfl⟩,
+    t ^ (1 / q) • w, ⟨w, hwL, rfl⟩, ?_⟩
+  change (1 - t) ^ (1 / q) • w + t ^ (1 / q) • w = v
+  rw [← add_smul]
+  change s • w = v
+  dsimp [w]
+  rw [smul_smul, mul_inv_cancel₀ hspos.ne', one_smul]
+
+lemma parameterFiber_eq_Icc_of_common_point {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} (hq : 1 ≤ q)
+    {K L : Set E} (hK : Convex ℝ K) (hL : Convex ℝ L)
+    (h0K : 0 ∈ K) (h0L : 0 ∈ L) {v : E} (hvK : v ∈ K) (hvL : v ∈ L) :
+    parameterFiber q K L v = Set.Icc (0 : ℝ) 1 := by
+  apply Set.Subset.antisymm (parameterFiber_subset_Icc q K L v)
+  intro t ht
+  exact ⟨ht, common_point_mem_weightedSlice hq hK hL h0K h0L hvK hvL ht⟩
+
+lemma fiberLength_eq_one_of_common_point {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} (hq : 1 ≤ q)
+    {K L : Set E} (hK : Convex ℝ K) (hL : Convex ℝ L)
+    (h0K : 0 ∈ K) (h0L : 0 ∈ L) {v : E} (hvK : v ∈ K) (hvL : v ∈ L) :
+    fiberLength q K L v = 1 := by
+  rw [fiberLength, parameterFiber_eq_Icc_of_common_point hq hK hL h0K h0L hvK hvL,
+    Real.volume_Icc]
+  norm_num
+
+theorem zero_mem_extremePoints_of_sharp_volume {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)]
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K : Set E}
+    (hKc : IsCompact K) (hK : Convex ℝ K) (hKi : (interior K).Nonempty)
+    (h0K : 0 ∈ K) {c : E} (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K)
+    (hsharp : volume (lpSumE p K (-K)) =
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ E) q) * volume K) :
+    (0 : E) ∈ K.extremePoints ℝ := by
+  refine ⟨h0K, ?_⟩
+  intro x₁ hx₁ x₂ hx₂ hseg
+  by_contra hx₁0
+  rcases hseg with ⟨a, b, ha, hb, hab, heq⟩
+  let v : E := a • x₁
+  have hv0 : v ≠ 0 := by
+    intro hv
+    apply hx₁0
+    exact (smul_eq_zero.mp hv).resolve_left ha.ne'
+  have ha1 : a ≤ 1 := by linarith
+  have hb1 : b ≤ 1 := by linarith
+  have hvK : v ∈ K := hK.smul_mem_of_zero_mem h0K hx₁ ⟨ha.le, ha1⟩
+  have hnegv : -v = b • x₂ := by
+    dsimp [v]
+    rw [neg_eq_iff_add_eq_zero]
+    exact heq
+  have hnegvK : -v ∈ K := by
+    rw [hnegv]
+    exact hK.smul_mem_of_zero_mem h0K hx₂ ⟨hb.le, hb1⟩
+  have hq : 0 < q := hpq.symm.pos
+  have hq1 : 1 ≤ q := hpq.symm.lt.le
+  let D := parameterBody q K (-K)
+  have hD0 : D ∈ 𝓝 (0 : E) := parameterBody_neg_mem_nhds_zero hq hKi
+  have hD0int : (0 : E) ∈ interior D := mem_interior_iff_mem_nhds.mpr hD0
+  have hinterN : interior D ∈ 𝓝 (0 : E) := isOpen_interior.mem_nhds hD0int
+  obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp hinterN
+  have hnv : 0 < ‖v‖ := norm_pos_iff.mpr hv0
+  let δ : ℝ := ε / (2 * (ε + ‖v‖))
+  have hden : 0 < 2 * (ε + ‖v‖) := mul_pos (by norm_num) (add_pos hε hnv)
+  have hδ : 0 < δ := div_pos hε hden
+  have hδ1 : δ ≤ 1 := by
+    apply (div_le_one hden).mpr
+    nlinarith
+  let u : E := δ • v
+  have hu0 : u ≠ 0 := by
+    dsimp [u]
+    exact (smul_ne_zero_iff_right hδ.ne').mpr hv0
+  have huK : u ∈ K := hK.smul_mem_of_zero_mem h0K hvK ⟨hδ.le, hδ1⟩
+  have hneguK : -u ∈ K := by
+    change -(δ • v) ∈ K
+    rw [← smul_neg]
+    exact hK.smul_mem_of_zero_mem h0K hnegvK ⟨hδ.le, hδ1⟩
+  have huNegK : u ∈ -K := by
+    simpa only [Set.mem_neg, neg_neg] using hneguK
+  have huInt : u ∈ interior D := by
+    apply hball
+    rw [Metric.mem_ball, dist_zero_right]
+    change ‖δ • v‖ < ε
+    rw [norm_smul, Real.norm_eq_abs, abs_of_pos hδ]
+    dsimp [δ]
+    rw [div_mul_eq_mul_div]
+    apply (div_lt_iff₀ hden).mpr
+    nlinarith
+  have hfiber : fiberLength q K (-K) u = 1 :=
+    fiberLength_eq_one_of_common_point hq1 hK hK.neg h0K (by simpa using h0K) huK huNegK
+  have hpoint := fiberLength_eq_one_sub_gauge_rpow_on_interior_of_sharp_volume
+    hpq hKc hK hKi h0K hsym hsharp u huInt
+  have hDc : IsCompact D := parameterBody_isCompact hq hKc hKc.neg
+  have hgpos : 0 < gauge D u := (gauge_pos (absorbent_nhds_zero hD0)
+    (NormedSpace.isVonNBounded_of_isBounded ℝ hDc.isBounded)).mpr hu0
+  have hgpow : 0 < gauge D u ^ q := Real.rpow_pos_of_pos hgpos q
+  rw [hfiber] at hpoint
+  linarith
+
+lemma center_mem_interior {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {K : Set E}
+    (hK : Convex ℝ K) (hKi : (interior K).Nonempty) {c : E}
+    (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K) :
+    c ∈ interior K := by
+  obtain ⟨x, hx⟩ := hKi
+  have hy : (2 : ℝ) • c - x ∈ K := hsym x |>.mp (interior_subset hx)
+  have hmid := hK.combo_interior_self_mem_interior hx hy
+    (a := (1 / 2 : ℝ)) (b := (1 / 2 : ℝ)) (by norm_num) (by norm_num) (by norm_num)
+  convert hmid using 1 <;> module
+
+lemma centered_body_mem_nhds_zero {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {K : Set E}
+    (hK : Convex ℝ K) (hKi : (interior K).Nonempty) {c : E}
+    (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K) :
+    translate (-c) K ∈ 𝓝 (0 : E) := by
+  have hcint : c ∈ interior K := center_mem_interior hK hKi hsym
+  have hKn : K ∈ 𝓝 c := mem_interior_iff_mem_nhds.mp hcint
+  have hf : ContinuousAt (fun z : E ↦ z + c) 0 := continuousAt_id.add continuousAt_const
+  have hKn' : K ∈ 𝓝 ((fun z : E ↦ z + c) 0) := by simpa using hKn
+  have hpre : (fun z : E ↦ z + c) ⁻¹' K ∈ 𝓝 (0 : E) := hf hKn'
+  have hset : translate (-c) K = (fun z : E ↦ z + c) ⁻¹' K := by
+    ext z
+    simp only [mem_translate, Set.mem_preimage, sub_neg_eq_add]
+  rw [hset]
+  exact hpre
+
+lemma centered_body_isCompact {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {K : Set E}
+    (hKc : IsCompact K) (c : E) : IsCompact (translate (-c) K) := by
+  exact hKc.image (continuous_id.add continuous_const)
+
+lemma supportFunctionE_pos_of_mem_nhds_zero {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {C : Set E} (hCc : IsCompact C) (hC0 : C ∈ 𝓝 (0 : E))
+    {ell : E} (hell : ell ≠ 0) : 0 < supportFunctionE C ell := by
+  obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp hC0
+  have hnell : 0 < ‖ell‖ := norm_pos_iff.mpr hell
+  let δ : ℝ := ε / (2 * ‖ell‖)
+  have hδ : 0 < δ := div_pos hε (mul_pos (by norm_num) hnell)
+  let x : E := δ • ell
+  have hx : x ∈ C := by
+    apply hball
+    rw [Metric.mem_ball, dist_zero_right]
+    change ‖δ • ell‖ < ε
+    rw [norm_smul, Real.norm_eq_abs, abs_of_pos hδ]
+    dsimp [δ]
+    field_simp
+    linarith
+  have hinner : 0 < inner ℝ x ell := by
+    dsimp [x]
+    rw [inner_smul_left, real_inner_self_eq_norm_sq]
+    positivity
+  exact hinner.trans_le (inner_le_supportFunctionE hCc hx ell)
+
+lemma exists_centered_support_point (K : Set ℝ²) (hKc : IsCompact K)
+    (hK : Convex ℝ K) (hKi : (interior K).Nonempty) {c : ℝ²}
+    (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K) :
+    ∃ u ∈ translate (-c) K,
+      inner ℝ u (planarOrthogonal c) = supportFunctionE (translate (-c) K) (planarOrthogonal c) ∧
+      0 < supportFunctionE (translate (-c) K) (planarOrthogonal c) ∧
+      u ≠ c ∧ u ≠ -c := by
+  let C := translate (-c) K
+  let ell := planarOrthogonal c
+  have hCc : IsCompact C := centered_body_isCompact hKc c
+  have hC0 : C ∈ 𝓝 (0 : ℝ²) := centered_body_mem_nhds_zero hK hKi hsym
+  have h0C : (0 : ℝ²) ∈ C := mem_of_mem_nhds hC0
+  have hpos : 0 < supportFunctionE C ell :=
+    supportFunctionE_pos_of_mem_nhds_zero hCc hC0 (planarOrthogonal_ne_zero c)
+  obtain ⟨u, hu, hueq⟩ := exists_inner_eq_supportFunctionE hCc ⟨0, h0C⟩ ell
+  refine ⟨u, hu, hueq, hpos, ?_, ?_⟩
+  · intro huc
+    subst u
+    rw [inner_planarOrthogonal] at hueq
+    linarith
+  · intro huc
+    subst u
+    rw [inner_neg_left, inner_planarOrthogonal] at hueq
+    linarith
+
+lemma continuousAt_mem_frontier_preimage_imp_mem_frontier
+    {α β : Type*} [TopologicalSpace α] [TopologicalSpace β]
+    {f : α → β} {C : Set β} {x : α} (hf : ContinuousAt f x)
+    (hx : x ∈ frontier (f ⁻¹' C)) : f x ∈ frontier C := by
+  change x ∈ closure (f ⁻¹' C) \ interior (f ⁻¹' C) at hx
+  change f x ∈ closure C \ interior C
+  refine ⟨?_, ?_⟩
+  · exact closure_mono (image_preimage_subset f C) (mem_closure_image hf hx.1)
+  · intro hfi
+    have hpre : f ⁻¹' interior C ∈ 𝓝 x := hf (isOpen_interior.mem_nhds hfi)
+    have hpreC : f ⁻¹' C ∈ 𝓝 x := Filter.mem_of_superset hpre (preimage_mono interior_subset)
+    exact hx.2 (mem_interior_iff_mem_nhds.mpr hpreC)
+
+noncomputable def centeredScale (q t : ℝ) : ℝ :=
+  (1 - t) ^ (1 / q) + t ^ (1 / q)
+
+noncomputable def centeredDrift (q t : ℝ) : ℝ :=
+  (1 - t) ^ (1 / q) - t ^ (1 / q)
+
+noncomputable def normalizedFiberPoint {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q : ℝ) (c z : E) (t : ℝ) : E :=
+  (centeredScale q t)⁻¹ • (z - centeredDrift q t • c)
+
+lemma centeredScale_le_mid {q t : ℝ} (hq : 1 < q) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    centeredScale q t ≤ centeredScale q (1 / 2 : ℝ) := by
+  have hr0 : 0 ≤ 1 / q := one_div_nonneg.mpr (zero_le_one.trans hq.le)
+  have hr1 : 1 / q ≤ 1 := (div_le_one (zero_lt_one.trans hq)).mpr hq.le
+  have hc := (Real.concaveOn_rpow hr0 hr1).2
+    (sub_nonneg.mpr ht.2) ht.1 (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num)
+    (by norm_num : (1 / 2 : ℝ) + 1 / 2 = 1)
+  have hbase : (1 / 2 : ℝ) * (1 - t) + 1 / 2 * t = 1 / 2 := by ring
+  change (1 / 2 : ℝ) * (1 - t) ^ (1 / q) + 1 / 2 * t ^ (1 / q) ≤
+    ((1 / 2 : ℝ) * (1 - t) + 1 / 2 * t) ^ (1 / q) at hc
+  rw [hbase] at hc
+  dsimp [centeredScale]
+  rw [show (1 : ℝ) - 1 / 2 = 1 / 2 by norm_num]
+  linarith
+
+lemma centeredScale_eq_mid_iff {q t : ℝ} (hq : 1 < q) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    centeredScale q t = centeredScale q (1 / 2 : ℝ) ↔ t = 1 / 2 := by
+  constructor
+  · intro heq
+    by_contra htne
+    have hbaseNe : 1 - t ≠ t := by
+      intro h
+      apply htne
+      linarith
+    have hrpos : 0 < 1 / q := one_div_pos.mpr (zero_lt_one.trans hq)
+    have hrlt : 1 / q < 1 := (div_lt_one (zero_lt_one.trans hq)).mpr hq
+    have hs := (Real.strictConcaveOn_rpow hrpos hrlt).2
+      (sub_nonneg.mpr ht.2) ht.1 hbaseNe (by norm_num : (0 : ℝ) < 1 / 2) (by norm_num)
+      (by norm_num : (1 / 2 : ℝ) + 1 / 2 = 1)
+    have hbase : (1 / 2 : ℝ) * (1 - t) + 1 / 2 * t = 1 / 2 := by ring
+    change (1 / 2 : ℝ) * (1 - t) ^ (1 / q) + 1 / 2 * t ^ (1 / q) <
+      ((1 / 2 : ℝ) * (1 - t) + 1 / 2 * t) ^ (1 / q) at hs
+    rw [hbase] at hs
+    dsimp [centeredScale] at heq
+    rw [show (1 : ℝ) - 1 / 2 = 1 / 2 by norm_num] at heq
+    linarith
+  · rintro rfl
+    rfl
+
+lemma centeredScale_pos {q t : ℝ} (hq : 0 < q) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    0 < centeredScale q t := by
+  dsimp [centeredScale]
+  have ha : 0 ≤ (1 - t) ^ (1 / q) := Real.rpow_nonneg (sub_nonneg.mpr ht.2) _
+  by_cases ht0 : t = 0
+  · subst t
+    simp [hq.ne']
+  · exact add_pos_of_nonneg_of_pos ha (Real.rpow_pos_of_pos (lt_of_le_of_ne ht.1 (Ne.symm ht0)) _)
+
+lemma mem_smul_set_iff_inv_smul_mem {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {a : ℝ} (ha : a ≠ 0) {C : Set E} {z : E} :
+    z ∈ a • C ↔ a⁻¹ • z ∈ C := by
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    simpa [smul_smul, ha]
+  · intro hz
+    refine ⟨a⁻¹ • z, hz, ?_⟩
+    simp [smul_smul, ha]
+
+lemma mem_centered_weightedSlice_iff_normalized {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q t : ℝ} (hq : 0 < q) (ht : t ∈ Set.Icc (0 : ℝ) 1)
+    {c z : E} {C : Set E} (hCneg : -C = C) (hC : Convex ℝ C) :
+    z ∈ weightedSlice q t (translate c C) (-(translate c C)) ↔
+      normalizedFiberPoint q c z t ∈ C := by
+  change z ∈ slice q t (translate c C) ↔ _
+  rw [slice_translate_of_neg_eq q t c C hCneg hC hq ht, mem_translate]
+  change z - centeredDrift q t • c ∈ centeredScale q t • C ↔
+    normalizedFiberPoint q c z t ∈ C
+  rw [mem_smul_set_iff_inv_smul_mem (centeredScale_pos hq ht).ne']
+  rfl
+
+lemma inner_le_centered_slice_support {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {q t : ℝ} (hq : 0 < q) (ht : t ∈ Set.Icc (0 : ℝ) 1)
+    {c z ell : E} {C : Set E} (hCc : IsCompact C) (hCneg : -C = C) (hC : Convex ℝ C)
+    (hcell : inner ℝ c ell = 0)
+    (hz : z ∈ weightedSlice q t (translate c C) (-(translate c C))) :
+    inner ℝ z ell ≤ centeredScale q t * supportFunctionE C ell := by
+  let w := normalizedFiberPoint q c z t
+  have hw : w ∈ C := (mem_centered_weightedSlice_iff_normalized hq ht hCneg hC).mp hz
+  have hsw : centeredScale q t • w = z - centeredDrift q t • c := by
+    dsimp [w, normalizedFiberPoint]
+    rw [smul_smul, mul_inv_cancel₀ (centeredScale_pos hq ht).ne', one_smul]
+  have hzrepr : z = centeredScale q t • w + centeredDrift q t • c := by
+    exact ((eq_sub_iff_add_eq).mp hsw).symm
+  rw [hzrepr, inner_add_left, inner_smul_left, inner_smul_left, hcell, mul_zero, add_zero]
+  exact mul_le_mul_of_nonneg_left (inner_le_supportFunctionE hCc hw ell)
+    (centeredScale_pos hq ht).le
+
+lemma parameterFiber_centered_mid_eq_singleton {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {q : ℝ} (hq : 1 < q) {c u ell : E} {C : Set E}
+    (hCc : IsCompact C) (hCneg : -C = C) (hC : Convex ℝ C) (hu : u ∈ C)
+    (hueq : inner ℝ u ell = supportFunctionE C ell)
+    (hpos : 0 < supportFunctionE C ell) (hcell : inner ℝ c ell = 0) :
+    parameterFiber q (translate c C) (-(translate c C))
+        (centeredScale q (1 / 2 : ℝ) • u) = {(1 / 2 : ℝ)} := by
+  apply Set.Subset.antisymm
+  · intro t ht
+    have htIcc : t ∈ Set.Icc (0 : ℝ) 1 := ht.1
+    have hzle := inner_le_centered_slice_support (zero_lt_one.trans hq) htIcc
+      hCc hCneg hC hcell ht.2
+    have hinner : inner ℝ (centeredScale q (1 / 2 : ℝ) • u) ell =
+        centeredScale q (1 / 2 : ℝ) * supportFunctionE C ell := by
+      rw [real_inner_smul_left, hueq]
+    rw [hinner] at hzle
+    have hle : centeredScale q (1 / 2 : ℝ) ≤ centeredScale q t := by
+      nlinarith
+    have heq : centeredScale q t = centeredScale q (1 / 2 : ℝ) :=
+      le_antisymm (centeredScale_le_mid hq htIcc) hle
+    exact Set.mem_singleton_iff.mpr ((centeredScale_eq_mid_iff hq htIcc).mp heq)
+  · rintro t rfl
+    have ht : (1 / 2 : ℝ) ∈ Set.Icc (0 : ℝ) 1 := by norm_num
+    refine ⟨ht, (mem_centered_weightedSlice_iff_normalized (zero_lt_one.trans hq) ht hCneg hC).mpr ?_⟩
+    have hspos := centeredScale_pos (zero_lt_one.trans hq) ht
+    dsimp [normalizedFiberPoint, centeredDrift]
+    norm_num
+    rw [smul_smul, inv_mul_cancel₀ hspos.ne', one_smul]
+    exact hu
+
+lemma support_maximizer_mem_frontier {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {D : Set E} (hDc : IsCompact D) {z ell : E} (hell : ell ≠ 0)
+    (hz : z ∈ D) (hmax : ∀ x ∈ D, inner ℝ x ell ≤ inner ℝ z ell) :
+    z ∈ frontier D := by
+  rw [frontier, hDc.isClosed.closure_eq]
+  refine ⟨hz, ?_⟩
+  intro hzint
+  obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp
+    (mem_interior_iff_mem_nhds.mp hzint)
+  have hnell : 0 < ‖ell‖ := norm_pos_iff.mpr hell
+  let δ : ℝ := ε / (2 * ‖ell‖)
+  have hδ : 0 < δ := div_pos hε (mul_pos (by norm_num) hnell)
+  let y : E := z + δ • ell
+  have hy : y ∈ D := by
+    apply hball
+    rw [Metric.mem_ball, dist_eq_norm]
+    change ‖z + δ • ell - z‖ < ε
+    rw [add_sub_cancel_left, norm_smul, Real.norm_eq_abs, abs_of_pos hδ]
+    dsimp [δ]
+    field_simp
+    linarith
+  have hle := hmax y hy
+  have hgain : 0 < δ * ‖ell‖ ^ 2 := mul_pos hδ (sq_pos_of_pos hnell)
+  dsimp [y] at hle
+  rw [inner_add_left, real_inner_smul_left, real_inner_self_eq_norm_sq] at hle
+  nlinarith
+
+lemma centered_mid_mem_frontier_parameterBody {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {q : ℝ} (hq : 1 < q) {c u ell : E} {C : Set E}
+    (hCc : IsCompact C) (hCneg : -C = C) (hC : Convex ℝ C) (hu : u ∈ C)
+    (hueq : inner ℝ u ell = supportFunctionE C ell)
+    (hpos : 0 < supportFunctionE C ell) (hcell : inner ℝ c ell = 0)
+    (hell : ell ≠ 0) :
+    centeredScale q (1 / 2 : ℝ) • u ∈
+      frontier (parameterBody q (translate c C) (-(translate c C))) := by
+  let z₀ := centeredScale q (1 / 2 : ℝ) • u
+  have hfiber := parameterFiber_centered_mid_eq_singleton hq hCc hCneg hC hu hueq hpos hcell
+  have hzD : z₀ ∈ parameterBody q (translate c C) (-(translate c C)) := by
+    apply mem_parameterBody_iff_parameterFiber_nonempty.mpr
+    rw [hfiber]
+    exact Set.singleton_nonempty _
+  have hKc : IsCompact (translate c C) := hCc.image (continuous_id.add continuous_const)
+  have hDc : IsCompact (parameterBody q (translate c C) (-(translate c C))) :=
+    parameterBody_isCompact (zero_lt_one.trans hq) hKc hKc.neg
+  apply support_maximizer_mem_frontier hDc hell hzD
+  intro x hx
+  rw [mem_parameterBody_iff_mem_weightedSlice] at hx
+  obtain ⟨t, ht, hxt⟩ := hx
+  have hxle := inner_le_centered_slice_support (zero_lt_one.trans hq) ht
+    hCc hCneg hC hcell hxt
+  have hsle := centeredScale_le_mid hq ht
+  have hscale : centeredScale q t * supportFunctionE C ell ≤
+      centeredScale q (1 / 2 : ℝ) * supportFunctionE C ell :=
+    mul_le_mul_of_nonneg_right hsle hpos.le
+  have hzinner : inner ℝ z₀ ell =
+      centeredScale q (1 / 2 : ℝ) * supportFunctionE C ell := by
+    dsimp [z₀]
+    rw [real_inner_smul_left, hueq]
+  rw [hzinner]
+  exact hxle.trans hscale
+
+lemma compact_convex_real_eq_Icc_of_subset_volume {S : Set ℝ} {a b : ℝ}
+    (hSc : IsCompact S) (hSv : Convex ℝ S) (hab : a ≤ b)
+    (hsub : Set.Icc a b ⊆ S) (hvol : (volume S).toReal = b - a) :
+    S = Set.Icc a b := by
+  have hSn : S.Nonempty := ⟨a, hsub ⟨le_rfl, hab⟩⟩
+  have hSIcc := compact_convex_real_eq_Icc hSc hSv hSn
+  have hinf : sInf S ≤ a := (hSc.isGLB_sInf hSn).1 (hsub ⟨le_rfl, hab⟩)
+  have hsup : b ≤ sSup S := (hSc.isLUB_sSup hSn).1 (hsub ⟨hab, le_rfl⟩)
+  have hinfsup : sInf S ≤ sSup S := hinf.trans (hab.trans hsup)
+  have hvol' : (volume S).toReal = sSup S - sInf S := by
+    conv_lhs => rw [hSIcc]
+    rw [Real.volume_Icc, ENNReal.toReal_ofReal (sub_nonneg.mpr hinfsup)]
+  have haeq : sInf S = a := by linarith
+  have hbeq : sSup S = b := by linarith
+  simpa [haeq, hbeq] using hSIcc
+
+theorem scaled_centered_support_fiber_eq_Icc_of_sharp_volume
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K : Set ℝ²}
+    (hKc : IsCompact K) (hK : Convex ℝ K) (hKi : (interior K).Nonempty)
+    (h0K : (0 : ℝ²) ∈ K) {c u : ℝ²}
+    (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K)
+    (hu : u ∈ translate (-c) K)
+    (hueq : inner ℝ u (planarOrthogonal c) =
+      supportFunctionE (translate (-c) K) (planarOrthogonal c))
+    (hpos : 0 < supportFunctionE (translate (-c) K) (planarOrthogonal c))
+    (hsharp : volume (lpSumE p K (-K)) =
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ ℝ²) q) * volume K)
+    {τ : ℝ} (hτ : τ ∈ Set.Ioo (0 : ℝ) 1) :
+    parameterFiber q K (-K)
+        (τ • (centeredScale q (1 / 2 : ℝ) • u)) =
+      Set.Icc (τ ^ q * (1 / 2 : ℝ))
+        (1 - τ ^ q * (1 - (1 / 2 : ℝ))) := by
+  have hq : 0 < q := hpq.symm.pos
+  have hq1 : 1 ≤ q := hpq.symm.lt.le
+  have hqstrict : 1 < q := hpq.symm.lt
+  let C : Set ℝ² := translate (-c) K
+  let z₀ : ℝ² := centeredScale q (1 / 2 : ℝ) • u
+  let D : Set ℝ² := parameterBody q K (-K)
+  have hCneg : -C = C := centered_neg_eq hsym
+  have hC : Convex ℝ C := (convex_translate_iff (-c) K).2 hK
+  have hCc : IsCompact C := centered_body_isCompact hKc c
+  have hKrepr : translate c C = K := by
+    dsimp [C]
+    exact translate_neg_cancel c K
+  have hsingleC :
+      parameterFiber q (translate c C) (-(translate c C)) z₀ = {(1 / 2 : ℝ)} := by
+    exact parameterFiber_centered_mid_eq_singleton hqstrict hCc hCneg hC hu hueq hpos
+      (inner_planarOrthogonal c)
+  have hfrontC : z₀ ∈ frontier
+      (parameterBody q (translate c C) (-(translate c C))) := by
+    exact centered_mid_mem_frontier_parameterBody hqstrict hCc hCneg hC hu hueq hpos
+      (inner_planarOrthogonal c) (planarOrthogonal_ne_zero c)
+  rw [hKrepr] at hsingleC hfrontC
+  have hsingle : parameterFiber q K (-K) z₀ = {(1 / 2 : ℝ)} := hsingleC
+  have hfront : z₀ ∈ frontier D := hfrontC
+  have h0neg : (0 : ℝ²) ∈ -K := by simpa using h0K
+  have hD0 : D ∈ 𝓝 (0 : ℝ²) := parameterBody_neg_mem_nhds_zero hq hKi
+  have hDv : Convex ℝ D := parameterBody_convex hq1 hK hK.neg h0K h0neg
+  have hgz₀ : gauge D z₀ = 1 := (gauge_eq_one_iff_mem_frontier hDv hD0).mpr hfront
+  have hτIcc : τ ∈ Set.Icc (0 : ℝ) 1 := ⟨hτ.1.le, hτ.2.le⟩
+  have hgτ : gauge D (τ • z₀) = τ := by
+    rw [gauge_smul_of_nonneg hτ.1.le, hgz₀]
+    simp
+  have hzτint : τ • z₀ ∈ interior D := by
+    apply (gauge_lt_one_iff_mem_interior hDv hD0).mp
+    rw [hgτ]
+    exact hτ.2
+  have ht₀mem : (1 / 2 : ℝ) ∈ parameterFiber q K (-K) z₀ := by
+    rw [hsingle]
+    simp
+  rcases ht₀mem.2 with ⟨ax, ⟨x, hx, rfl⟩, byv, ⟨y, hy, rfl⟩, hxy⟩
+  have hsub := radial_interval_subset_fiber hq hK hK.neg h0K h0neg
+    (show (1 / 2 : ℝ) ∈ Set.Icc (0 : ℝ) 1 by norm_num) hτIcc hx hy
+  change (1 - (1 / 2 : ℝ)) ^ (1 / q) • x +
+    (1 / 2 : ℝ) ^ (1 / q) • y = z₀ at hxy
+  rw [hxy] at hsub
+  have hpowle : τ ^ q ≤ 1 := Real.rpow_le_one hτ.1.le hτ.2.le hq.le
+  have hab : τ ^ q * (1 / 2 : ℝ) ≤ 1 - τ ^ q * (1 - (1 / 2 : ℝ)) := by
+    nlinarith
+  have hFc : IsCompact (parameterFiber q K (-K) (τ • z₀)) :=
+    parameterFiber_isCompact hq hKc hKc.neg _
+  have hFv : Convex ℝ (parameterFiber q K (-K) (τ • z₀)) :=
+    parameterFiber_convex hq1 hK hK.neg h0K h0neg _
+  have hpoint := fiberLength_eq_one_sub_gauge_rpow_on_interior_of_sharp_volume
+    hpq hKc hK hKi h0K hsym hsharp (τ • z₀) hzτint
+  have hvol : (volume (parameterFiber q K (-K) (τ • z₀))).toReal =
+      (1 - τ ^ q * (1 - (1 / 2 : ℝ))) - τ ^ q * (1 / 2 : ℝ) := by
+    change fiberLength q K (-K) (τ • z₀) = _
+    rw [hpoint, hgτ]
+    ring
+  exact compact_convex_real_eq_Icc_of_subset_volume hFc hFv hab hsub hvol
+
+noncomputable def endpointLambda (q τ : ℝ) : ℝ :=
+  τ * centeredScale q (1 / 2 : ℝ) /
+    centeredScale q (τ ^ q * (1 / 2 : ℝ))
+
+lemma endpointLambda_zero {q : ℝ} : endpointLambda q 0 = 0 := by
+  simp [endpointLambda]
+
+lemma endpointLambda_one {q : ℝ} (hq : 0 < q) : endpointLambda q 1 = 1 := by
+  have hs : centeredScale q (1 / 2 : ℝ) ≠ 0 :=
+    (centeredScale_pos hq (by norm_num)).ne'
+  rw [endpointLambda, one_mul, one_rpow, one_mul, div_self hs]
+
+lemma continuousOn_endpointLambda {q : ℝ} (hq : 0 < q) :
+    ContinuousOn (endpointLambda q) (Set.Icc (0 : ℝ) 1) := by
+  have hpow : Continuous (fun τ : ℝ ↦ τ ^ q) := Real.continuous_rpow_const hq.le
+  have hexp : 0 ≤ 1 / q := one_div_nonneg.mpr hq.le
+  have hrpow : Continuous (fun s : ℝ ↦ s ^ (1 / q)) := Real.continuous_rpow_const hexp
+  have hscale : Continuous (centeredScale q) := by
+    change Continuous (fun s : ℝ ↦ (1 - s) ^ (1 / q) + s ^ (1 / q))
+    exact (hrpow.comp (continuous_const.sub continuous_id)).add hrpow
+  have harg : Continuous (fun τ : ℝ ↦ τ ^ q * (1 / 2 : ℝ)) :=
+    hpow.mul continuous_const
+  have hnum : Continuous (fun τ : ℝ ↦ τ * centeredScale q (1 / 2 : ℝ)) :=
+    continuous_id.mul continuous_const
+  change ContinuousOn (fun τ : ℝ ↦
+    (τ * centeredScale q (1 / 2 : ℝ)) /
+      centeredScale q (τ ^ q * (1 / 2 : ℝ))) (Set.Icc (0 : ℝ) 1)
+  apply hnum.continuousOn.div (hscale.comp harg).continuousOn
+  intro τ hτ
+  have hpowle : τ ^ q ≤ 1 := Real.rpow_le_one hτ.1 hτ.2 hq.le
+  exact (centeredScale_pos hq ⟨
+    mul_nonneg (Real.rpow_nonneg hτ.1 _) (by norm_num),
+    (mul_le_mul_of_nonneg_right hpowle (by norm_num)).trans (by norm_num)⟩).ne'
+
+lemma endpointLambda_surjective_Ioo {q lam : ℝ} (hq : 0 < q)
+    (hlam : lam ∈ Set.Ioo (0 : ℝ) 1) :
+    ∃ τ ∈ Set.Ioo (0 : ℝ) 1, endpointLambda q τ = lam := by
+  have himage := intermediate_value_Ioo (show (0 : ℝ) ≤ 1 by norm_num)
+    (continuousOn_endpointLambda hq)
+  rw [endpointLambda_zero, endpointLambda_one hq] at himage
+  obtain ⟨τ, hτ, hτeq⟩ := himage hlam
+  exact ⟨τ, hτ, hτeq⟩
+
+lemma lower_endpoint_rpow {q τ : ℝ} (hq : 0 < q) (hτ : 0 ≤ τ) :
+    (τ ^ q * (1 / 2 : ℝ)) ^ (1 / q) = τ * (1 / 2 : ℝ) ^ (1 / q) := by
+  rw [Real.mul_rpow (Real.rpow_nonneg hτ _) (by norm_num), one_div,
+    Real.rpow_rpow_inv hτ hq.ne']
+
+lemma centeredScale_mid_eq_two_mul (q : ℝ) :
+    centeredScale q (1 / 2 : ℝ) = 2 * (1 / 2 : ℝ) ^ (1 / q) := by
+  dsimp [centeredScale]
+  norm_num
+  ring
+
+lemma normalized_lower_endpoint_eq {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q τ : ℝ} (hq : 0 < q) (hτ : τ ∈ Set.Icc (0 : ℝ) 1) (c u : E) :
+    normalizedFiberPoint q c (τ • (centeredScale q (1 / 2 : ℝ) • u))
+        (τ ^ q * (1 / 2 : ℝ)) =
+      endpointLambda q τ • u + (1 - endpointLambda q τ) • (-c) := by
+  let t : ℝ := τ ^ q * (1 / 2 : ℝ)
+  have hpowle : τ ^ q ≤ 1 := Real.rpow_le_one hτ.1 hτ.2 hq.le
+  have ht : t ∈ Set.Icc (0 : ℝ) 1 := ⟨
+    mul_nonneg (Real.rpow_nonneg hτ.1 _) (by norm_num),
+    (mul_le_mul_of_nonneg_right hpowle (by norm_num)).trans (by norm_num)⟩
+  have hspos : 0 < centeredScale q t := centeredScale_pos hq ht
+  have hpow : t ^ (1 / q) = τ * (1 / 2 : ℝ) ^ (1 / q) := by
+    exact lower_endpoint_rpow hq hτ.1
+  have hmid := centeredScale_mid_eq_two_mul q
+  have hucoeff : (centeredScale q t)⁻¹ *
+      (τ * centeredScale q (1 / 2 : ℝ)) = endpointLambda q τ := by
+    dsimp [endpointLambda, t]
+    rw [div_eq_mul_inv]
+    ring
+  have hccoeff : (centeredScale q t)⁻¹ * centeredDrift q t =
+      1 - endpointLambda q τ := by
+    have hsne : ((1 - t) ^ (1 / q) + t ^ (1 / q)) ≠ 0 := by
+      simpa [centeredScale] using hspos.ne'
+    rw [endpointLambda, centeredScale_mid_eq_two_mul]
+    change ((1 - t) ^ (1 / q) + t ^ (1 / q))⁻¹ *
+      ((1 - t) ^ (1 / q) - t ^ (1 / q)) =
+        1 - τ * (2 * (1 / 2 : ℝ) ^ (1 / q)) /
+          ((1 - t) ^ (1 / q) + t ^ (1 / q))
+    have hsne' : ((1 - t) ^ (1 / q) +
+        τ * (1 / 2 : ℝ) ^ (1 / q)) ≠ 0 := by
+      rw [← hpow]
+      exact hsne
+    rw [hpow]
+    field_simp [hsne']
+    ring
+  change (centeredScale q t)⁻¹ •
+      (τ • (centeredScale q (1 / 2 : ℝ) • u) - centeredDrift q t • c) = _
+  rw [smul_sub, smul_smul, smul_smul]
+  rw [smul_smul]
+  change ((centeredScale q t)⁻¹ * τ * centeredScale q (1 / 2 : ℝ)) • u -
+      ((centeredScale q t)⁻¹ * centeredDrift q t) • c = _
+  rw [show (centeredScale q t)⁻¹ * τ * centeredScale q (1 / 2 : ℝ) =
+    endpointLambda q τ by calc
+      _ = (centeredScale q t)⁻¹ * (τ * centeredScale q (1 / 2 : ℝ)) := by ring
+      _ = _ := hucoeff, hccoeff, smul_neg]
+  module
+
+lemma normalized_upper_endpoint_eq {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q τ : ℝ} (hq : 0 < q) (hτ : τ ∈ Set.Icc (0 : ℝ) 1) (c u : E) :
+    normalizedFiberPoint q c (τ • (centeredScale q (1 / 2 : ℝ) • u))
+        (1 - τ ^ q * (1 / 2 : ℝ)) =
+      endpointLambda q τ • u + (1 - endpointLambda q τ) • c := by
+  let t : ℝ := τ ^ q * (1 / 2 : ℝ)
+  have hpowle : τ ^ q ≤ 1 := Real.rpow_le_one hτ.1 hτ.2 hq.le
+  have ht : t ∈ Set.Icc (0 : ℝ) 1 := ⟨
+    mul_nonneg (Real.rpow_nonneg hτ.1 _) (by norm_num),
+    (mul_le_mul_of_nonneg_right hpowle (by norm_num)).trans (by norm_num)⟩
+  have hthi : 1 - t ∈ Set.Icc (0 : ℝ) 1 := ⟨sub_nonneg.mpr ht.2, by linarith [ht.1]⟩
+  have hscale : centeredScale q (1 - t) = centeredScale q t := by
+    change (1 - (1 - t)) ^ (1 / q) + (1 - t) ^ (1 / q) =
+      (1 - t) ^ (1 / q) + t ^ (1 / q)
+    rw [show 1 - (1 - t) = t by ring]
+    ring
+  have hdrift : centeredDrift q (1 - t) = -centeredDrift q t := by
+    change (1 - (1 - t)) ^ (1 / q) - (1 - t) ^ (1 / q) =
+      -((1 - t) ^ (1 / q) - t ^ (1 / q))
+    rw [show 1 - (1 - t) = t by ring]
+    ring
+  have hspos : 0 < centeredScale q t := centeredScale_pos hq ht
+  have hucoeff : (centeredScale q t)⁻¹ *
+      (τ * centeredScale q (1 / 2 : ℝ)) = endpointLambda q τ := by
+    dsimp [endpointLambda, t]
+    rw [div_eq_mul_inv]
+    ring
+  have hccoeff : (centeredScale q t)⁻¹ * centeredDrift q t =
+      1 - endpointLambda q τ := by
+    have hpow : t ^ (1 / q) = τ * (1 / 2 : ℝ) ^ (1 / q) :=
+      lower_endpoint_rpow hq hτ.1
+    have hsne : ((1 - t) ^ (1 / q) + t ^ (1 / q)) ≠ 0 := by
+      simpa [centeredScale] using hspos.ne'
+    rw [endpointLambda, centeredScale_mid_eq_two_mul]
+    change ((1 - t) ^ (1 / q) + t ^ (1 / q))⁻¹ *
+      ((1 - t) ^ (1 / q) - t ^ (1 / q)) =
+        1 - τ * (2 * (1 / 2 : ℝ) ^ (1 / q)) /
+          ((1 - t) ^ (1 / q) + t ^ (1 / q))
+    have hsne' : ((1 - t) ^ (1 / q) +
+        τ * (1 / 2 : ℝ) ^ (1 / q)) ≠ 0 := by
+      rw [← hpow]
+      exact hsne
+    rw [hpow]
+    field_simp [hsne']
+    ring
+  change (centeredScale q (1 - t))⁻¹ •
+      (τ • (centeredScale q (1 / 2 : ℝ) • u) - centeredDrift q (1 - t) • c) = _
+  rw [hscale, hdrift, smul_sub, smul_smul, smul_smul]
+  rw [smul_smul]
+  change ((centeredScale q t)⁻¹ * τ * centeredScale q (1 / 2 : ℝ)) • u -
+      ((centeredScale q t)⁻¹ * (-centeredDrift q t)) • c = _
+  rw [show (centeredScale q t)⁻¹ * τ * centeredScale q (1 / 2 : ℝ) =
+    endpointLambda q τ by calc
+      _ = (centeredScale q t)⁻¹ * (τ * centeredScale q (1 / 2 : ℝ)) := by ring
+      _ = _ := hucoeff]
+  have hnegcoeff : (centeredScale q t)⁻¹ * (-centeredDrift q t) =
+      -(1 - endpointLambda q τ) := by rw [mul_neg, hccoeff]
+  rw [hnegcoeff]
+  module
+
+lemma continuousAt_normalizedFiberPoint {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q t : ℝ} (hq : 0 < q) (ht : t ∈ Set.Icc (0 : ℝ) 1) (c z : E) :
+    ContinuousAt (normalizedFiberPoint q c z) t := by
+  have hexp : 0 ≤ 1 / q := one_div_nonneg.mpr hq.le
+  have hp : Continuous (fun s : ℝ ↦ s ^ (1 / q)) := Real.continuous_rpow_const hexp
+  have ha : Continuous (fun s : ℝ ↦ (1 - s) ^ (1 / q)) :=
+    hp.comp (continuous_const.sub continuous_id)
+  have hs : Continuous (centeredScale q) := by
+    change Continuous (fun s : ℝ ↦ (1 - s) ^ (1 / q) + s ^ (1 / q))
+    exact ha.add hp
+  have hd : Continuous (centeredDrift q) := by
+    change Continuous (fun s : ℝ ↦ (1 - s) ^ (1 / q) - s ^ (1 / q))
+    exact ha.sub hp
+  exact (hs.continuousAt.inv₀ (centeredScale_pos hq ht).ne').smul
+    (continuousAt_const.sub (hd.continuousAt.smul continuousAt_const))
+
+/-- A fiber endpoint at an interior parameter maps to the boundary of the centered body. -/
+lemma parameterFiber_endpoint_normalized_mem_frontier {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q t : ℝ} (hq : 0 < q) (ht : t ∈ Set.Ioo (0 : ℝ) 1)
+    {c z : E} {C : Set E} (hCc : IsCompact C) (hCneg : -C = C) (hC : Convex ℝ C)
+    (htmem : t ∈ parameterFiber q (translate c C) (-(translate c C)) z)
+    (htend : t ∉ interior (parameterFiber q (translate c C) (-(translate c C)) z)) :
+    normalizedFiberPoint q c z t ∈ frontier C := by
+  have htIcc : t ∈ Set.Icc (0 : ℝ) 1 := ⟨ht.1.le, ht.2.le⟩
+  have hslice : z ∈ weightedSlice q t (translate c C) (-(translate c C)) := htmem.2
+  have hnorm : normalizedFiberPoint q c z t ∈ C :=
+    (mem_centered_weightedSlice_iff_normalized hq htIcc hCneg hC).1 hslice
+  change normalizedFiberPoint q c z t ∈ closure C \ interior C
+  refine ⟨subset_closure hnorm, ?_⟩
+  intro hnormInt
+  have hpre : (normalizedFiberPoint q c z) ⁻¹' interior C ∈ 𝓝 t :=
+    (continuousAt_normalizedFiberPoint hq htIcc c z) (isOpen_interior.mem_nhds hnormInt)
+  have hIoo : Set.Ioo (0 : ℝ) 1 ∈ 𝓝 t := isOpen_Ioo.mem_nhds ht
+  have hsub : (normalizedFiberPoint q c z) ⁻¹' interior C ∩ Set.Ioo (0 : ℝ) 1 ⊆
+      parameterFiber q (translate c C) (-(translate c C)) z := by
+    intro s hs
+    change s ∈ Set.Icc (0 : ℝ) 1 ∧
+      z ∈ weightedSlice q s (translate c C) (-(translate c C))
+    have hsIcc : s ∈ Set.Icc (0 : ℝ) 1 := ⟨hs.2.1.le, hs.2.2.le⟩
+    exact ⟨hsIcc, (mem_centered_weightedSlice_iff_normalized hq hsIcc hCneg hC).2
+      (interior_subset hs.1)⟩
+  apply htend
+  exact mem_interior_iff_mem_nhds.mpr
+    (Filter.mem_of_superset (inter_mem hpre hIoo) hsub)
+
+theorem centered_support_endpoints_mem_frontier_of_sharp_volume
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K : Set ℝ²}
+    (hKc : IsCompact K) (hK : Convex ℝ K) (hKi : (interior K).Nonempty)
+    (h0K : (0 : ℝ²) ∈ K) {c u : ℝ²}
+    (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K)
+    (hu : u ∈ translate (-c) K)
+    (hueq : inner ℝ u (planarOrthogonal c) =
+      supportFunctionE (translate (-c) K) (planarOrthogonal c))
+    (hpos : 0 < supportFunctionE (translate (-c) K) (planarOrthogonal c))
+    (hsharp : volume (lpSumE p K (-K)) =
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ ℝ²) q) * volume K)
+    {τ : ℝ} (hτ : τ ∈ Set.Ioo (0 : ℝ) 1) :
+    endpointLambda q τ • u + (1 - endpointLambda q τ) • (-c) ∈
+        frontier (translate (-c) K) ∧
+      endpointLambda q τ • u + (1 - endpointLambda q τ) • c ∈
+        frontier (translate (-c) K) := by
+  have hq : 0 < q := hpq.symm.pos
+  have hτIcc : τ ∈ Set.Icc (0 : ℝ) 1 := ⟨hτ.1.le, hτ.2.le⟩
+  have hpowpos : 0 < τ ^ q := Real.rpow_pos_of_pos hτ.1 q
+  have hpowlt : τ ^ q < 1 := by
+    simpa using Real.rpow_lt_rpow hτ.1.le hτ.2 hq
+  let C : Set ℝ² := translate (-c) K
+  let z : ℝ² := τ • (centeredScale q (1 / 2 : ℝ) • u)
+  let lo : ℝ := τ ^ q * (1 / 2 : ℝ)
+  let hi : ℝ := 1 - τ ^ q * (1 / 2 : ℝ)
+  have hlohi : lo ≤ hi := by dsimp [lo, hi]; nlinarith
+  have hloIoo : lo ∈ Set.Ioo (0 : ℝ) 1 := by dsimp [lo]; constructor <;> nlinarith
+  have hhiIoo : hi ∈ Set.Ioo (0 : ℝ) 1 := by dsimp [hi]; constructor <;> nlinarith
+  have hfiberK := scaled_centered_support_fiber_eq_Icc_of_sharp_volume hpq
+    hKc hK hKi h0K hsym hu hueq hpos hsharp hτ
+  have hfiberK' : parameterFiber q K (-K) z = Set.Icc lo hi := by
+    dsimp [z, lo, hi]
+    convert hfiberK using 1 <;> norm_num
+  have hKrepr : translate c C = K := by
+    dsimp [C]
+    exact translate_neg_cancel c K
+  have hfiberC : parameterFiber q (translate c C) (-(translate c C)) z =
+      Set.Icc lo hi := by
+    rw [hKrepr]
+    exact hfiberK'
+  have hloMem : lo ∈ parameterFiber q (translate c C) (-(translate c C)) z := by
+    rw [hfiberC]
+    exact ⟨le_rfl, hlohi⟩
+  have hhiMem : hi ∈ parameterFiber q (translate c C) (-(translate c C)) z := by
+    rw [hfiberC]
+    exact ⟨hlohi, le_rfl⟩
+  have hloEnd : lo ∉ interior
+      (parameterFiber q (translate c C) (-(translate c C)) z) := by
+    rw [hfiberC, interior_Icc]
+    intro h
+    exact (lt_irrefl lo) h.1
+  have hhiEnd : hi ∉ interior
+      (parameterFiber q (translate c C) (-(translate c C)) z) := by
+    rw [hfiberC, interior_Icc]
+    intro h
+    exact (lt_irrefl hi) h.2
+  have hCc : IsCompact C := centered_body_isCompact hKc c
+  have hCneg : -C = C := centered_neg_eq hsym
+  have hC : Convex ℝ C := (convex_translate_iff (-c) K).2 hK
+  have hloFront := parameterFiber_endpoint_normalized_mem_frontier hq hloIoo
+    hCc hCneg hC hloMem hloEnd
+  have hhiFront := parameterFiber_endpoint_normalized_mem_frontier hq hhiIoo
+    hCc hCneg hC hhiMem hhiEnd
+  constructor
+  · rw [← normalized_lower_endpoint_eq hq hτIcc c u]
+    simpa [z, lo] using hloFront
+  · rw [← normalized_upper_endpoint_eq hq hτIcc c u]
+    simpa [z, hi] using hhiFront
+
+theorem centered_support_two_boundary_segments_of_sharp_volume
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K : Set ℝ²}
+    (hKc : IsCompact K) (hK : Convex ℝ K) (hKi : (interior K).Nonempty)
+    (h0K : (0 : ℝ²) ∈ K) {c u : ℝ²}
+    (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K)
+    (hu : u ∈ translate (-c) K)
+    (hueq : inner ℝ u (planarOrthogonal c) =
+      supportFunctionE (translate (-c) K) (planarOrthogonal c))
+    (hpos : 0 < supportFunctionE (translate (-c) K) (planarOrthogonal c))
+    (hsharp : volume (lpSumE p K (-K)) =
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ ℝ²) q) * volume K) :
+    (∀ lam ∈ Set.Icc (0 : ℝ) 1,
+        lam • u + (1 - lam) • (-c) ∈ frontier (translate (-c) K)) ∧
+      (∀ lam ∈ Set.Icc (0 : ℝ) 1,
+        lam • u + (1 - lam) • c ∈ frontier (translate (-c) K)) := by
+  have hq : 0 < q := hpq.symm.pos
+  let C : Set ℝ² := translate (-c) K
+  have hopen : ∀ lam ∈ Set.Ioo (0 : ℝ) 1,
+      (lam • u + (1 - lam) • (-c) ∈ frontier C) ∧
+        (lam • u + (1 - lam) • c ∈ frontier C) := by
+    intro lam hlam
+    obtain ⟨τ, hτ, hτeq⟩ := endpointLambda_surjective_Ioo hq hlam
+    have hends := centered_support_endpoints_mem_frontier_of_sharp_volume hpq
+      hKc hK hKi h0K hsym hu hueq hpos hsharp hτ
+    rw [hτeq] at hends
+    exact hends
+  have hIooClosure : closure (Set.Ioo (0 : ℝ) 1) = Set.Icc (0 : ℝ) 1 :=
+    closure_Ioo (by norm_num)
+  constructor
+  · intro lam hlam
+    let f : ℝ → ℝ² := fun s ↦ s • u + (1 - s) • (-c)
+    have hf : Continuous f :=
+      (continuous_id.smul continuous_const).add
+        ((continuous_const.sub continuous_id).smul continuous_const)
+    have hlamCl : lam ∈ closure (Set.Ioo (0 : ℝ) 1) := by
+      rw [hIooClosure]
+      exact hlam
+    have himageCl : f lam ∈ closure (f '' Set.Ioo (0 : ℝ) 1) :=
+      mem_closure_image hf.continuousAt hlamCl
+    exact (closure_minimal (by
+      rintro x ⟨s, hs, rfl⟩
+      exact (hopen s hs).1) isClosed_frontier) himageCl
+  · intro lam hlam
+    let f : ℝ → ℝ² := fun s ↦ s • u + (1 - s) • c
+    have hf : Continuous f :=
+      (continuous_id.smul continuous_const).add
+        ((continuous_const.sub continuous_id).smul continuous_const)
+    have hlamCl : lam ∈ closure (Set.Ioo (0 : ℝ) 1) := by
+      rw [hIooClosure]
+      exact hlam
+    have himageCl : f lam ∈ closure (f '' Set.Ioo (0 : ℝ) 1) :=
+      mem_closure_image hf.continuousAt hlamCl
+    exact (closure_minimal (by
+      rintro x ⟨s, hs, rfl⟩
+      exact (hopen s hs).2) isClosed_frontier) himageCl
+
+lemma neg_mem_frontier_of_neg_eq {E : Type*} [NormedAddCommGroup E]
+    {C : Set E} (hCneg : -C = C) {x : E} (hx : x ∈ frontier C) :
+    -x ∈ frontier C := by
+  have himage : -x ∈ (Homeomorph.neg E) '' frontier C := ⟨x, hx, rfl⟩
+  rw [(Homeomorph.neg E).image_frontier] at himage
+  simpa [Homeomorph.neg, Set.image_neg_eq_neg, hCneg] using himage
+
+theorem centered_support_four_boundary_segments_of_sharp_volume
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K : Set ℝ²}
+    (hKc : IsCompact K) (hK : Convex ℝ K) (hKi : (interior K).Nonempty)
+    (h0K : (0 : ℝ²) ∈ K) {c u : ℝ²}
+    (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K)
+    (hu : u ∈ translate (-c) K)
+    (hueq : inner ℝ u (planarOrthogonal c) =
+      supportFunctionE (translate (-c) K) (planarOrthogonal c))
+    (hpos : 0 < supportFunctionE (translate (-c) K) (planarOrthogonal c))
+    (hsharp : volume (lpSumE p K (-K)) =
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ ℝ²) q) * volume K) :
+    (∀ lam ∈ Set.Icc (0 : ℝ) 1,
+        lam • u + (1 - lam) • (-c) ∈ frontier (translate (-c) K)) ∧
+      (∀ lam ∈ Set.Icc (0 : ℝ) 1,
+        lam • u + (1 - lam) • c ∈ frontier (translate (-c) K)) ∧
+      (∀ lam ∈ Set.Icc (0 : ℝ) 1,
+        lam • (-u) + (1 - lam) • c ∈ frontier (translate (-c) K)) ∧
+      (∀ lam ∈ Set.Icc (0 : ℝ) 1,
+        lam • (-u) + (1 - lam) • (-c) ∈ frontier (translate (-c) K)) := by
+  let C : Set ℝ² := translate (-c) K
+  have hCneg : -C = C := centered_neg_eq hsym
+  have htwo := centered_support_two_boundary_segments_of_sharp_volume hpq
+    hKc hK hKi h0K hsym hu hueq hpos hsharp
+  refine ⟨htwo.1, htwo.2, ?_, ?_⟩
+  · intro lam hlam
+    have hneg := neg_mem_frontier_of_neg_eq hCneg (htwo.1 lam hlam)
+    convert hneg using 1 <;> module
+  · intro lam hlam
+    have hneg := neg_mem_frontier_of_neg_eq hCneg (htwo.2 lam hlam)
+    convert hneg using 1 <;> module
+
+lemma exists_supporting_functional_at_frontier {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] [LocallyConvexSpace ℝ E]
+    {C : Set E} (hCc : IsCompact C) (hC : Convex ℝ C)
+    (hCi : (interior C).Nonempty) {x : E} (hx : x ∈ frontier C) :
+    ∃ f : StrongDual ℝ E, f ≠ 0 ∧ ∀ y ∈ C, f y ≤ f x := by
+  have hxnot : x ∉ interior C := hx.2
+  obtain ⟨f, hf⟩ := geometric_hahn_banach_open_point hC.interior
+    isOpen_interior hxnot
+  have hf0 : f ≠ 0 := by
+    intro hzero
+    obtain ⟨y, hy⟩ := hCi
+    have hlt := hf y hy
+    subst f
+    simp at hlt
+  refine ⟨f, hf0, ?_⟩
+  intro y hy
+  have hycl : y ∈ closure (interior C) := by
+    rw [hC.closure_interior_eq_closure_of_nonempty_interior hCi,
+      hCc.isClosed.closure_eq]
+    exact hy
+  exact le_on_closure (fun z hz ↦ (hf z hz).le) f.continuous.continuousOn
+    continuousOn_const hycl
+
+lemma linearIndependent_center_support {c u ell : ℝ²} (hc : c ≠ 0)
+    (hcell : inner ℝ c ell = 0) {h : ℝ}
+    (hueq : inner ℝ u ell = h) (hpos : 0 < h) :
+    LinearIndependent ℝ ![c, u] := by
+  rw [LinearIndependent.pair_iff]
+  intro a b hab
+  have hinner := congrArg (fun z : ℝ² ↦ inner ℝ z ell) hab
+  change inner ℝ (a • c + b • u) ell = inner ℝ 0 ell at hinner
+  rw [inner_add_left, real_inner_smul_left, real_inner_smul_left,
+    hcell, hueq, inner_zero_left] at hinner
+  have hb : b = 0 := by nlinarith
+  subst b
+  simp only [zero_smul, add_zero] at hab
+  have ha : a = 0 := (smul_eq_zero.mp hab).resolve_right hc
+  exact ⟨ha, rfl⟩
+
+lemma exists_pair_coordinates {c u x : ℝ²} (hcu : LinearIndependent ℝ ![c, u]) :
+    ∃ a b : ℝ, x = a • c + b • u := by
+  have hcard : Fintype.card (Fin 2) = Module.finrank ℝ ℝ² := by simp
+  let B : Module.Basis (Fin 2) ℝ ℝ² :=
+    basisOfLinearIndependentOfCardEqFinrank hcu hcard
+  let a : ℝ := B.repr x 0
+  let b : ℝ := B.repr x 1
+  refine ⟨a, b, ?_⟩
+  have hsum := B.sum_repr x
+  rw [Fin.sum_univ_two] at hsum
+  have hB : (B : Fin 2 → ℝ²) = ![c, u] := by
+    exact coe_basisOfLinearIndependentOfCardEqFinrank hcu hcard
+  rw [hB] at hsum
+  simpa [a, b] using hsum.symm
+
+theorem centered_body_eq_convexHull_four_of_boundary_segments
+    {C : Set ℝ²} (hCc : IsCompact C) (hC : Convex ℝ C)
+    (hC0 : C ∈ 𝓝 (0 : ℝ²)) (hCneg : -C = C)
+    {c u ell : ℝ²} (hcell : inner ℝ c ell = 0)
+    {h : ℝ} (hueq : inner ℝ u ell = h) (hpos : 0 < h)
+    (hseg1 : ∀ lam ∈ Set.Icc (0 : ℝ) 1,
+      lam • u + (1 - lam) • (-c) ∈ frontier C)
+    (hseg2 : ∀ lam ∈ Set.Icc (0 : ℝ) 1,
+      lam • u + (1 - lam) • c ∈ frontier C)
+    (hseg3 : ∀ lam ∈ Set.Icc (0 : ℝ) 1,
+      lam • (-u) + (1 - lam) • c ∈ frontier C)
+    (hseg4 : ∀ lam ∈ Set.Icc (0 : ℝ) 1,
+      lam • (-u) + (1 - lam) • (-c) ∈ frontier C) :
+    LinearIndependent ℝ ![c, u] ∧ C = convexHull ℝ {c, u, -c, -u} := by
+  have hfrontC : frontier C ⊆ C := by
+    intro x hx
+    simpa [hCc.isClosed.closure_eq] using hx.1
+  have hcFront : c ∈ frontier C := by
+    simpa using hseg2 0 (by norm_num)
+  have hnegcFront : -c ∈ frontier C := by
+    simpa using hseg1 0 (by norm_num)
+  have huFront : u ∈ frontier C := by
+    simpa using hseg1 1 (by norm_num)
+  have hneguFront : -u ∈ frontier C := by
+    simpa using hseg3 1 (by norm_num)
+  have hcC : c ∈ C := hfrontC hcFront
+  have hnegcC : -c ∈ C := hfrontC hnegcFront
+  have huC : u ∈ C := hfrontC huFront
+  have hneguC : -u ∈ C := hfrontC hneguFront
+  have h0int : (0 : ℝ²) ∈ interior C := mem_interior_iff_mem_nhds.mpr hC0
+  have hCi : (interior C).Nonempty := ⟨0, h0int⟩
+  have hc0 : c ≠ 0 := by
+    intro hc
+    subst c
+    exact hcFront.2 h0int
+  have hcu : LinearIndependent ℝ ![c, u] :=
+    linearIndependent_center_support hc0 hcell hueq hpos
+  refine ⟨hcu, ?_⟩
+  let m₁ : ℝ² := (1 / 2 : ℝ) • u + (1 / 2 : ℝ) • c
+  let m₂ : ℝ² := (1 / 2 : ℝ) • (-u) + (1 / 2 : ℝ) • c
+  have hm₁Front : m₁ ∈ frontier C := by
+    dsimp [m₁]
+    convert hseg2 (1 / 2 : ℝ) (by norm_num) using 1 <;> norm_num
+  have hm₂Front : m₂ ∈ frontier C := by
+    dsimp [m₂]
+    convert hseg3 (1 / 2 : ℝ) (by norm_num) using 1 <;> norm_num
+  obtain ⟨f, hf0, hf⟩ := exists_supporting_functional_at_frontier hCc hC hCi hm₁Front
+  obtain ⟨g, hg0, hg⟩ := exists_supporting_functional_at_frontier hCc hC hCi hm₂Front
+  have hfm₁ : f m₁ = (f u + f c) / 2 := by
+    simp [m₁]
+    ring
+  have hfc := hf c hcC
+  have hfu := hf u huC
+  have hfcu : f c = f u := by
+    rw [hfm₁] at hfc hfu
+    linarith
+  let A : ℝ := f c
+  have hfm₁A : f m₁ = A := by rw [hfm₁, ← hfcu]; simp [A]
+  have hA0 : 0 ≤ A := by
+    have hn := hf (-c) hnegcC
+    rw [hfm₁A] at hn
+    simp only [map_neg] at hn
+    dsimp [A]
+    linarith
+  have hAne : A ≠ 0 := by
+    intro hAz
+    apply hf0
+    ext x
+    obtain ⟨a, b, hx⟩ := exists_pair_coordinates (x := x) hcu
+    rw [hx, map_add, map_smul, map_smul]
+    have hfc0 : f c = 0 := by simpa [A] using hAz
+    have hfu0 : f u = 0 := hfcu.symm.trans hfc0
+    simp [hfc0, hfu0]
+  have hApos : 0 < A := lt_of_le_of_ne hA0 (Ne.symm hAne)
+  have hgm₂ : g m₂ = (-g u + g c) / 2 := by
+    simp [m₂]
+    ring
+  have hgc := hg c hcC
+  have hgnegu := hg (-u) hneguC
+  have hgcu : g c = -g u := by
+    rw [hgm₂] at hgc hgnegu
+    simp only [map_neg] at hgnegu
+    linarith
+  let B : ℝ := g c
+  have hgm₂B : g m₂ = B := by rw [hgm₂, ← hgcu]; simp [B]
+  have hB0 : 0 ≤ B := by
+    have hn := hg (-c) hnegcC
+    rw [hgm₂B] at hn
+    simp only [map_neg] at hn
+    dsimp [B]
+    linarith
+  have hBne : B ≠ 0 := by
+    intro hBz
+    apply hg0
+    ext x
+    obtain ⟨a, b, hx⟩ := exists_pair_coordinates (x := x) hcu
+    rw [hx, map_add, map_smul, map_smul]
+    have hgc0 : g c = 0 := by simpa [B] using hBz
+    have hgu0 : g u = 0 := by nlinarith [hgcu]
+    simp [hgc0, hgu0]
+  have hBpos : 0 < B := lt_of_le_of_ne hB0 (Ne.symm hBne)
+  apply Set.Subset.antisymm
+  · intro x hx
+    obtain ⟨a, b, hxrepr⟩ := exists_pair_coordinates (x := x) hcu
+    have hnegx : -x ∈ C := by
+      have hxneg : -x ∈ -C := by simpa only [Set.mem_neg, neg_neg] using hx
+      rw [hCneg] at hxneg
+      exact hxneg
+    have hfx := hf x hx
+    have hfneg := hf (-x) hnegx
+    have hfxeq : f x = A * (a + b) := by
+      rw [hxrepr, map_add, map_smul, map_smul]
+      dsimp [A]
+      rw [← hfcu]
+      ring
+    rw [hfm₁A, hfxeq] at hfx
+    rw [hfm₁A, map_neg, hfxeq] at hfneg
+    have hrlo : -1 ≤ a + b := by nlinarith
+    have hrhi : a + b ≤ 1 := by nlinarith
+    have hgx := hg x hx
+    have hgneg := hg (-x) hnegx
+    have hgxeq : g x = B * (a - b) := by
+      rw [hxrepr, map_add, map_smul, map_smul]
+      dsimp [B]
+      rw [hgcu]
+      ring
+    rw [hgm₂B, hgxeq] at hgx
+    rw [hgm₂B, map_neg, hgxeq] at hgneg
+    have hslo : -1 ≤ a - b := by nlinarith
+    have hshi : a - b ≤ 1 := by nlinarith
+    let v : Fin 4 → ℝ² := ![c, u, -c, -u]
+    let w : Fin 4 → ℝ := ![
+      (1 + (a + b)) * (1 + (a - b)) / 4,
+      (1 + (a + b)) * (1 - (a - b)) / 4,
+      (1 - (a + b)) * (1 - (a - b)) / 4,
+      (1 - (a + b)) * (1 + (a - b)) / 4]
+    have hw : ∀ i ∈ (Finset.univ : Finset (Fin 4)), 0 ≤ w i := by
+      intro i hi
+      fin_cases i <;> dsimp [w]
+      · exact div_nonneg (mul_nonneg (by linarith) (by linarith)) (by norm_num)
+      · exact div_nonneg (mul_nonneg (by linarith) (by linarith)) (by norm_num)
+      · exact div_nonneg (mul_nonneg (by linarith) (by linarith)) (by norm_num)
+      · exact div_nonneg (mul_nonneg (by linarith) (by linarith)) (by norm_num)
+    have hwsum : ∑ i ∈ (Finset.univ : Finset (Fin 4)), w i = 1 := by
+      rw [Fin.sum_univ_four]
+      dsimp [w]
+      ring
+    have hcomb : (Finset.univ : Finset (Fin 4)).affineCombination ℝ v w = x := by
+      rw [affineCombination_eq_centerMass hwsum,
+        Finset.centerMass_eq_of_sum_1 _ _ hwsum, Fin.sum_univ_four]
+      dsimp [v, w]
+      rw [hxrepr]
+      module
+    have hmem := affineCombination_mem_convexHull (s := (Finset.univ : Finset (Fin 4)))
+      (v := v) (w := w) hw hwsum
+    rw [hcomb] at hmem
+    have hrange : Set.range v = {c, u, -c, -u} := by
+      ext y
+      constructor
+      · rintro ⟨i, rfl⟩
+        fin_cases i <;> simp [v]
+      · intro hy
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hy
+        rcases hy with rfl | rfl | rfl | rfl
+        · exact ⟨0, by simp [v]⟩
+        · exact ⟨1, by simp [v]⟩
+        · exact ⟨2, by simp [v]⟩
+        · exact ⟨3, by simp [v]⟩
+    rwa [hrange] at hmem
+  · apply convexHull_min
+    · intro x hx
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+      rcases hx with rfl | rfl | rfl | rfl
+      · exact hcC
+      · exact huC
+      · exact hnegcC
+      · exact hneguC
+    · exact hC
+
+theorem parallelogram_at_origin_of_sharp_volume
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K : Set ℝ²}
+    (hKc : IsCompact K) (hK : Convex ℝ K) (hKi : (interior K).Nonempty)
+    (h0K : (0 : ℝ²) ∈ K) {c : ℝ²}
+    (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K)
+    (hsharp : volume (lpSumE p K (-K)) =
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ ℝ²) q) * volume K) :
+    IsParallelogramAtOrigin K := by
+  let C : Set ℝ² := translate (-c) K
+  obtain ⟨u, hu, hueq, hpos, huc, hunegc⟩ :=
+    exists_centered_support_point K hKc hK hKi hsym
+  have hfour := centered_support_four_boundary_segments_of_sharp_volume hpq
+    hKc hK hKi h0K hsym hu hueq hpos hsharp
+  have hCc : IsCompact C := centered_body_isCompact hKc c
+  have hC : Convex ℝ C := (convex_translate_iff (-c) K).2 hK
+  have hC0 : C ∈ 𝓝 (0 : ℝ²) := centered_body_mem_nhds_zero hK hKi hsym
+  have hCneg : -C = C := centered_neg_eq hsym
+  have hshape := centered_body_eq_convexHull_four_of_boundary_segments
+    hCc hC hC0 hCneg (inner_planarOrthogonal c) hueq hpos
+    hfour.1 hfour.2.1 hfour.2.2.1 hfour.2.2.2
+  let a : ℝ² := u + c
+  let b : ℝ² := c - u
+  have hab : LinearIndependent ℝ ![a, b] := by
+    rw [LinearIndependent.pair_iff]
+    intro s t hst
+    have hst' : (s + t) • c + (s - t) • u = 0 := by
+      dsimp [a, b] at hst
+      convert hst using 1 <;> module
+    have hcoeff := LinearIndependent.pair_iff.mp hshape.1 (s + t) (s - t) hst'
+    exact ⟨by linarith [hcoeff.1, hcoeff.2], by linarith [hcoeff.1, hcoeff.2]⟩
+  refine ⟨a, b, hab, ?_⟩
+  have hKrepr : translate c C = K := by
+    dsimp [C]
+    exact translate_neg_cancel c K
+  rw [← hKrepr, hshape.2]
+  change (fun x : ℝ² ↦ x + c) '' convexHull ℝ {c, u, -c, -u} = _
+  have hfun : (fun x : ℝ² ↦ x + c) = (fun x : ℝ² ↦ c + x) := by
+    funext x
+    abel
+  rw [hfun]
+  change ((AffineEquiv.constVAdd ℝ ℝ² c).toAffineMap : ℝ² → ℝ²) ''
+      convexHull ℝ {c, u, -c, -u} = _
+  rw [(AffineEquiv.constVAdd ℝ ℝ² c).toAffineMap.image_convexHull]
+  congr 1
+  have hcc : c + c = a + b := by dsimp [a, b]; module
+  have hcu : c + u = a := by dsimp [a]; abel
+  have hcnegc : c + (-c) = 0 := by abel
+  have hcnegu : c + (-u) = b := by dsimp [b]; abel
+  ext x
+  simp only [Set.mem_image, Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨y, (rfl | rfl | rfl | rfl), rfl⟩
+    · simp [hcc]
+    · simp [hcu]
+    · simp [hcnegc]
+    · simp [hcnegu]
+  · intro hx
+    rcases hx with rfl | rfl | rfl | rfl
+    · exact ⟨-c, by simp, by simp⟩
+    · exact ⟨u, by simp, by simpa [hcu]⟩
+    · exact ⟨-u, by simp, by simpa [hcnegu]⟩
+    · exact ⟨c, by simp, by simpa [hcc]⟩
+
+/-! ## The equality case in Conjecture 4: the unit cube -/
+
+lemma mem_unitCube_iff {n : ℕ} {x : Ambient n} :
+    x ∈ unitCube n ↔ ∀ i, 0 ≤ x i ∧ x i ≤ 1 := by
+  simp only [unitCube, Set.mem_preimage, Set.mem_Icc, Pi.le_def]
+  constructor
+  · rintro ⟨h0, h1⟩ i
+    exact ⟨h0 i, h1 i⟩
+  · intro h
+    exact ⟨fun i ↦ (h i).1, fun i ↦ (h i).2⟩
+
+lemma mem_neg_unitCube_iff {n : ℕ} {x : Ambient n} :
+    x ∈ -(unitCube n) ↔ ∀ i, -1 ≤ x i ∧ x i ≤ 0 := by
+  rw [Set.mem_neg]
+  simp only [mem_unitCube_iff, PiLp.neg_apply]
+  constructor
+  · intro h i
+    constructor <;> linarith [h i |>.1, h i |>.2]
+  · intro h i
+    constructor <;> linarith [h i |>.1, h i |>.2]
+
+lemma mem_smul_unitCube_add_smul_neg_unitCube_iff {n : ℕ} {a b : ℝ}
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : 0 < a + b) {z : Ambient n} :
+    z ∈ a • unitCube n + b • (-(unitCube n)) ↔
+      ∀ i, -b ≤ z i ∧ z i ≤ a := by
+  constructor
+  · rintro ⟨ax, ⟨x, hx, rfl⟩, byv, ⟨y, hy, rfl⟩, rfl⟩ i
+    have hxi := mem_unitCube_iff.mp hx i
+    have hyi := mem_neg_unitCube_iff.mp hy i
+    simp only [PiLp.add_apply, PiLp.smul_apply]
+    constructor
+    · change -b ≤ a * x i + b * y i
+      have hax : 0 ≤ a * x i := mul_nonneg ha hxi.1
+      have hby : -b ≤ b * y i := by
+        have := mul_le_mul_of_nonneg_left hyi.1 hb
+        simpa using this
+      linarith
+    · change a * x i + b * y i ≤ a
+      have hax : a * x i ≤ a := by
+        have := mul_le_mul_of_nonneg_left hxi.2 ha
+        simpa using this
+      have hby : b * y i ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hb hyi.2
+      linarith
+  · intro hz
+    let f : Fin n → ℝ := fun i ↦ (z i + b) / (a + b)
+    let x : Ambient n := WithLp.toLp 2 f
+    let y : Ambient n := WithLp.toLp 2 (fun i ↦ f i - 1)
+    have hx : x ∈ unitCube n := by
+      rw [mem_unitCube_iff]
+      intro i
+      dsimp [x, f]
+      constructor
+      · exact div_nonneg (by linarith [(hz i).1]) hab.le
+      · exact (div_le_one hab).2 (by linarith [(hz i).2])
+    have hy : y ∈ -(unitCube n) := by
+      rw [mem_neg_unitCube_iff]
+      intro i
+      dsimp [y]
+      have hxi := mem_unitCube_iff.mp hx i
+      dsimp [x] at hxi
+      constructor <;> linarith [hxi.1, hxi.2]
+    refine ⟨a • x, ⟨x, hx, rfl⟩, b • y, ⟨y, hy, rfl⟩, ?_⟩
+    ext i
+    simp only [PiLp.add_apply, PiLp.smul_apply]
+    dsimp [x, y, f]
+    field_simp [hab.ne']
+    ring
+
+lemma mem_weightedSlice_unitCube_iff {n : ℕ} {q t : ℝ}
+    (hq : 0 < q) (ht : t ∈ Set.Icc (0 : ℝ) 1) {z : Ambient n} :
+    z ∈ weightedSlice q t (unitCube n) (-(unitCube n)) ↔
+      ∀ i, -(t ^ (1 / q)) ≤ z i ∧ z i ≤ (1 - t) ^ (1 / q) := by
+  let a : ℝ := (1 - t) ^ (1 / q)
+  let b : ℝ := t ^ (1 / q)
+  have ha : 0 ≤ a := Real.rpow_nonneg (sub_nonneg.mpr ht.2) _
+  have hb : 0 ≤ b := Real.rpow_nonneg ht.1 _
+  have hab : 0 < a + b := by
+    by_cases ht0 : t = 0
+    · subst t
+      have hexp : 0 < 1 / q := one_div_pos.mpr hq
+      simp [a, b, Real.zero_rpow hexp.ne']
+    · have htpos : 0 < t := lt_of_le_of_ne ht.1 (Ne.symm ht0)
+      exact add_pos_of_nonneg_of_pos ha (Real.rpow_pos_of_pos htpos _)
+  exact mem_smul_unitCube_add_smul_neg_unitCube_iff ha hb hab
+
+lemma unitCube_isCompact (n : ℕ) : IsCompact (unitCube n) := by
+  have hset : unitCube n = WithLp.toLp 2 '' Set.Icc (0 : Fin n → ℝ) 1 := by
+    ext x
+    constructor
+    · intro hx
+      exact ⟨WithLp.ofLp x, hx, rfl⟩
+    · rintro ⟨x, hx, rfl⟩
+      exact hx
+  rw [hset]
+  exact isCompact_Icc.image (PiLp.continuous_toLp 2 (fun _ : Fin n ↦ ℝ))
+
+lemma unitCube_convex (n : ℕ) : Convex ℝ (unitCube n) := by
+  intro x hx y hy a b ha hb hab
+  rw [mem_unitCube_iff] at hx hy ⊢
+  intro i
+  simp only [PiLp.add_apply, PiLp.smul_apply]
+  change 0 ≤ a * x i + b * y i ∧ a * x i + b * y i ≤ 1
+  have hxa0 : 0 ≤ a * x i := mul_nonneg ha (hx i).1
+  have hyb0 : 0 ≤ b * y i := mul_nonneg hb (hy i).1
+  have hxa1 : a * x i ≤ a := by
+    simpa using mul_le_mul_of_nonneg_left (hx i).2 ha
+  have hyb1 : b * y i ≤ b := by
+    simpa using mul_le_mul_of_nonneg_left (hy i).2 hb
+  constructor <;> linarith
+
+lemma zero_mem_unitCube (n : ℕ) : (0 : Ambient n) ∈ unitCube n := by
+  rw [mem_unitCube_iff]
+  simp
+
+lemma unitCube_central_symmetry (n : ℕ) :
+    ∀ x, x ∈ unitCube n ↔
+      (2 : ℝ) • WithLp.toLp 2 (fun _ : Fin n ↦ (1 / 2 : ℝ)) - x ∈ unitCube n := by
+  intro x
+  rw [mem_unitCube_iff, mem_unitCube_iff]
+  constructor <;> intro h i
+  · have hi := h i
+    simp only [PiLp.sub_apply, PiLp.smul_apply]
+    change 0 ≤ 2 * (1 / 2 : ℝ) - x i ∧ 2 * (1 / 2 : ℝ) - x i ≤ 1
+    norm_num
+    constructor <;> linarith
+  · have hi := h i
+    simp only [PiLp.sub_apply, PiLp.smul_apply] at hi
+    change 0 ≤ 2 * (1 / 2 : ℝ) - x i ∧ 2 * (1 / 2 : ℝ) - x i ≤ 1 at hi
+    norm_num at hi
+    constructor <;> linarith
+
+lemma volume_unitCube (n : ℕ) : volume (unitCube n) = 1 := by
+  rw [unitCube, (PiLp.volume_preserving_ofLp (Fin n)).measure_preimage
+    (show MeasurableSet (Set.Icc (0 : Fin n → ℝ) 1) from measurableSet_Icc).nullMeasurableSet]
+  simp [Real.volume_Icc_pi]
+
+lemma fiberLength_level_subset_smul_parameterBody_unitCube
+    {n : ℕ} {q s : ℝ} (hq : 1 ≤ q) (hs : s ∈ Set.Ioo (0 : ℝ) 1) :
+    {z | s ≤ fiberLength q (unitCube n) (-(unitCube n)) z} ⊆
+      ((1 - s) ^ (1 / q)) •
+        parameterBody q (unitCube n) (-(unitCube n)) := by
+  intro z hz
+  change s ≤ fiberLength q (unitCube n) (-(unitCube n)) z at hz
+  let K := unitCube n
+  change s ≤ fiberLength q K (-K) z at hz
+  let F := parameterFiber q K (-K) z
+  have hqpos : 0 < q := zero_lt_one.trans_le hq
+  have hKc : IsCompact K := unitCube_isCompact n
+  have hK : Convex ℝ K := unitCube_convex n
+  have h0K : (0 : Ambient n) ∈ K := zero_mem_unitCube n
+  have h0neg : (0 : Ambient n) ∈ -K := by simpa using h0K
+  have hFn : F.Nonempty := by
+    by_contra h
+    have hFempty : F = ∅ := Set.not_nonempty_iff_eq_empty.mp h
+    have hzero : fiberLength q K (-K) z = 0 := by
+      simp [fiberLength, F, hFempty]
+    rw [hzero] at hz
+    exact (not_le_of_gt hs.1) hz
+  have hzD : z ∈ parameterBody q K (-K) :=
+    mem_parameterBody_iff_parameterFiber_nonempty.mpr hFn
+  have hFc : IsCompact F := parameterFiber_isCompact hqpos hKc hKc.neg z
+  have hFconv : Convex ℝ F := parameterFiber_convex hq hK hK.neg h0K h0neg z
+  let lo : ℝ := sInf F
+  let hi : ℝ := sSup F
+  have hloMem : lo ∈ F := hFc.sInf_mem hFn
+  have hhiMem : hi ∈ F := hFc.sSup_mem hFn
+  have hloI : lo ∈ Set.Icc (0 : ℝ) 1 :=
+    parameterFiber_subset_Icc q K (-K) z hloMem
+  have hhiI : hi ∈ Set.Icc (0 : ℝ) 1 :=
+    parameterFiber_subset_Icc q K (-K) z hhiMem
+  have hlen : fiberLength q K (-K) z = hi - lo := by
+    simpa [F, lo, hi] using
+      fiberLength_eq_sSup_sub_sInf hq hKc hKc.neg hK hK.neg h0K h0neg hzD
+  have hwidth : s ≤ hi - lo := by
+    rw [← hlen]
+    exact hz
+  let d : ℝ := 1 - s
+  have hdpos : 0 < d := by dsimp [d]; linarith [hs.2]
+  have hlod : lo ≤ d := by dsimp [d]; linarith [hwidth, hhiI.2]
+  let t₀ : ℝ := lo / d
+  have ht₀ : t₀ ∈ Set.Icc (0 : ℝ) 1 := by
+    dsimp [t₀]
+    exact ⟨div_nonneg hloI.1 hdpos.le, (div_le_one hdpos).2 hlod⟩
+  let r : ℝ := d ^ (1 / q)
+  have hrpos : 0 < r := Real.rpow_pos_of_pos hdpos _
+  let w : Ambient n := r⁻¹ • z
+  have hwSlice : w ∈ weightedSlice q t₀ K (-K) := by
+    apply (mem_weightedSlice_unitCube_iff hqpos ht₀).2
+    intro i
+    have hloBounds :=
+      (mem_weightedSlice_unitCube_iff hqpos hloI).1 hloMem.2 i
+    have hhiBounds :=
+      (mem_weightedSlice_unitCube_iff hqpos hhiI).1 hhiMem.2 i
+    have hlot₀ : r * t₀ ^ (1 / q) = lo ^ (1 / q) := by
+      dsimp [r, t₀]
+      rw [← Real.mul_rpow hdpos.le (div_nonneg hloI.1 hdpos.le)]
+      congr 1
+      field_simp [hdpos.ne']
+    have hbase : 1 - hi ≤ d * (1 - t₀) := by
+      have heq : d * (1 - t₀) = d - lo := by
+        dsimp [t₀]
+        field_simp [hdpos.ne']
+      rw [heq]
+      linarith [hwidth]
+    have hbase0 : 0 ≤ 1 - hi := sub_nonneg.mpr hhiI.2
+    have hdt0 : 0 ≤ d * (1 - t₀) :=
+      mul_nonneg hdpos.le (sub_nonneg.mpr ht₀.2)
+    have hupperCoeff :
+        (1 - hi) ^ (1 / q) ≤ r * (1 - t₀) ^ (1 / q) := by
+      calc
+        (1 - hi) ^ (1 / q) ≤ (d * (1 - t₀)) ^ (1 / q) :=
+          Real.rpow_le_rpow hbase0 hbase (one_div_nonneg.mpr hqpos.le)
+        _ = r * (1 - t₀) ^ (1 / q) := by
+          dsimp [r]
+          rw [Real.mul_rpow hdpos.le (sub_nonneg.mpr ht₀.2)]
+    dsimp [w]
+    change -(t₀ ^ (1 / q)) ≤ r⁻¹ * z i ∧
+      r⁻¹ * z i ≤ (1 - t₀) ^ (1 / q)
+    constructor
+    · rw [inv_mul_eq_div]
+      apply (le_div_iff₀ hrpos).2
+      rw [neg_mul, mul_comm, hlot₀]
+      exact hloBounds.1
+    · rw [inv_mul_eq_div]
+      apply (div_le_iff₀ hrpos).2
+      rw [mul_comm]
+      exact hhiBounds.2.trans hupperCoeff
+  have hwD : w ∈ parameterBody q K (-K) :=
+    mem_parameterBody_iff_mem_weightedSlice.mpr ⟨t₀, ht₀, hwSlice⟩
+  refine ⟨w, hwD, ?_⟩
+  change r • w = z
+  dsimp [w]
+  rw [smul_smul]
+  rw [mul_inv_cancel₀ hrpos.ne', one_smul]
+
+lemma fiberLength_le_one {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q : ℝ) (K L : Set E) (z : E) : fiberLength q K L z ≤ 1 := by
+  have hmeasure : volume (parameterFiber q K L z) ≤ (1 : ℝ≥0∞) := by
+    calc
+      volume (parameterFiber q K L z) ≤ volume (Set.Icc (0 : ℝ) 1) :=
+        measure_mono (parameterFiber_subset_Icc q K L z)
+      _ = 1 := by rw [Real.volume_Icc]; norm_num
+  have hreal := (ENNReal.toReal_le_toReal
+    (parameterFiber_volume_lt_top q K L z).ne (by simp)).2 hmeasure
+  simpa [fiberLength] using hreal
+
+lemma lintegral_scaled_parameterBody_eq_fibers_unitCube
+    {n : ℕ} {q : ℝ} (hq : 1 ≤ q) :
+    (∫⁻ s in Set.Ioc (0 : ℝ) 1,
+        volume (((1 - s) ^ (1 / q)) •
+          parameterBody q (unitCube n) (-(unitCube n))) ∂volume) =
+      ∫⁻ z, volume
+        (parameterFiber q (unitCube n) (-(unitCube n)) z) ∂volume := by
+  let K := unitCube n
+  have hqpos : 0 < q := zero_lt_one.trans_le hq
+  have hKc : IsCompact K := unitCube_isCompact n
+  have hK : Convex ℝ K := unitCube_convex n
+  have h0K : (0 : Ambient n) ∈ K := zero_mem_unitCube n
+  have h0neg : (0 : Ambient n) ∈ -K := by simpa using h0K
+  change (∫⁻ s in Set.Ioc (0 : ℝ) 1,
+      volume (((1 - s) ^ (1 / q)) • parameterBody q K (-K)) ∂volume) =
+    ∫⁻ z, volume (parameterFiber q K (-K) z) ∂volume
+  rw [lintegral_fiber_volume_eq_lintegral_levels hqpos hKc hKc.neg]
+  rw [← lintegral_indicator measurableSet_Ioc, ← lintegral_indicator measurableSet_Ioi]
+  apply lintegral_congr_ae
+  filter_upwards [volume.ae_ne (1 : ℝ)] with s hsone
+  by_cases hs : s ∈ Set.Ioo (0 : ℝ) 1
+  · have hsIoc : s ∈ Set.Ioc (0 : ℝ) 1 := ⟨hs.1, hs.2.le⟩
+    have hsIoi : s ∈ Set.Ioi (0 : ℝ) := hs.1
+    rw [Set.indicator_of_mem hsIoc, Set.indicator_of_mem hsIoi]
+    exact congrArg volume (Set.Subset.antisymm
+      (smul_parameterBody_subset_fiberLength_level hqpos hK hK.neg h0K h0neg
+        ⟨hs.1.le, hs.2.le⟩)
+      (by simpa [K] using
+        (fiberLength_level_subset_smul_parameterBody_unitCube hq hs)))
+  · have hsIoc : s ∉ Set.Ioc (0 : ℝ) 1 := by
+      intro h
+      apply hs
+      exact ⟨h.1, lt_of_le_of_ne h.2 hsone⟩
+    rw [Set.indicator_of_notMem hsIoc]
+    by_cases hspos : s ∈ Set.Ioi (0 : ℝ)
+    · have hsge : 1 ≤ s := by
+        apply le_of_not_gt
+        intro hslt
+        exact hs ⟨hspos, hslt⟩
+      have hsgt : 1 < s := lt_of_le_of_ne hsge (Ne.symm hsone)
+      have hset : {z : Ambient n | s ≤ fiberLength q K (-K) z} = ∅ := by
+        ext z
+        simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+        exact not_le_of_gt ((fiberLength_le_one q K (-K) z).trans_lt hsgt)
+      rw [Set.indicator_of_mem hspos, hset, measure_empty]
+    · rw [Set.indicator_of_notMem hspos]
+
+theorem lemma53_eq_unitCube {n : ℕ} {q : ℝ} (hq : 1 ≤ q) :
+    ENNReal.ofReal (q / ((n : ℝ) + q)) *
+        volume (parameterBody q (unitCube n) (-(unitCube n))) =
+      ∫⁻ t in Set.Icc (0 : ℝ) 1,
+        volume (weightedSlice q t (unitCube n) (-(unitCube n))) ∂volume := by
+  have hqpos : 0 < q := zero_lt_one.trans_le hq
+  have hKc := unitCube_isCompact n
+  calc
+    ENNReal.ofReal (q / ((n : ℝ) + q)) *
+        volume (parameterBody q (unitCube n) (-(unitCube n))) =
+        ∫⁻ s in Set.Ioc (0 : ℝ) 1,
+          volume (((1 - s) ^ (1 / q)) •
+            parameterBody q (unitCube n) (-(unitCube n))) ∂volume := by
+              symm
+              simpa using lintegral_volume_rpow_smul hqpos
+                (parameterBody_isCompact hqpos hKc hKc.neg)
+    _ = ∫⁻ z, volume
+          (parameterFiber q (unitCube n) (-(unitCube n)) z) ∂volume :=
+      lintegral_scaled_parameterBody_eq_fibers_unitCube hq
+    _ = (volume.prod volume)
+          (parameterGraph q (unitCube n) (-(unitCube n))) :=
+      (parameterGraph_volume_eq_lintegral_fibers hqpos hKc hKc.neg).symm
+    _ = ∫⁻ t in Set.Icc (0 : ℝ) 1,
+          volume (weightedSlice q t (unitCube n) (-(unitCube n))) ∂volume :=
+      parameterGraph_volume_eq_lintegral_slices hqpos hKc hKc.neg
+
+theorem volume_parameterBody_unitCube_eq {n : ℕ} {q : ℝ} (hq : 1 ≤ q) :
+    volume (parameterBody q (unitCube n) (-(unitCube n))) =
+      ENNReal.ofReal (symmetricRSConstant n q) * volume (unitCube n) := by
+  have hqpos : 0 < q := zero_lt_one.trans_le hq
+  have hKc := unitCube_isCompact n
+  have hK := unitCube_convex n
+  have hsym := unitCube_central_symmetry n
+  have heq := lemma53_eq_unitCube (n := n) hq
+  have hslices :
+      (∫⁻ t in Set.Icc (0 : ℝ) 1,
+          volume (weightedSlice q t (unitCube n) (-(unitCube n))) ∂volume) =
+        (ENNReal.ofReal (q / ((n : ℝ) + q)) *
+          ENNReal.ofReal (symmetricRSConstant n q)) * volume (unitCube n) := by
+    simpa using
+      (lintegral_weightedSlice_neg_of_central_symmetry hqpos hKc hK hsym)
+  rw [hslices] at heq
+  let a : ℝ := q / ((n : ℝ) + q)
+  have ha : 0 < a := by
+    dsimp [a]
+    exact div_pos hqpos (add_pos_of_nonneg_of_pos (Nat.cast_nonneg _) hqpos)
+  change ENNReal.ofReal a *
+      volume (parameterBody q (unitCube n) (-(unitCube n))) =
+    (ENNReal.ofReal a * ENNReal.ofReal (symmetricRSConstant n q)) *
+      volume (unitCube n) at heq
+  rw [mul_assoc] at heq
+  apply le_antisymm
+  · exact (ENNReal.mul_le_mul_iff_left (ENNReal.ofReal_ne_zero_iff.mpr ha)
+      ENNReal.ofReal_ne_top).mp (by simpa [mul_comm] using heq.le)
+  · exact (ENNReal.mul_le_mul_iff_left (ENNReal.ofReal_ne_zero_iff.mpr ha)
+      ENNReal.ofReal_ne_top).mp (by simpa [mul_comm] using heq.ge)
+
+theorem volume_lpSum_unitCube_eq {n : ℕ} {p q : ℝ}
+    (hpq : p.HolderConjugate q) :
+    volume (lpSumN p (unitCube n) (-(unitCube n))) =
+      ENNReal.ofReal (symmetricRSConstant n q) * volume (unitCube n) := by
+  have hKc := unitCube_isCompact n
+  have hK := unitCube_convex n
+  have h0K := zero_mem_unitCube n
+  have h0neg : (0 : Ambient n) ∈ -(unitCube n) := by simpa using h0K
+  rw [lpSumN, lpSumE_eq_parameterBody hpq hKc hKc.neg hK hK.neg h0K h0neg]
+  exact volume_parameterBody_unitCube_eq hpq.symm.lt.le
+
+/-- The equality clause of Conjecture 4, with the paper's explicit `p,q` hypotheses. -/
+theorem conjecture4_unitCube_eq_proved : Conjecture4SharpnessTarget := by
+  intro n _ p q hp hrecip
+  have hpq : p.HolderConjugate q :=
+    Real.holderConjugate_iff.mpr ⟨hp, by simpa [one_div] using hrecip⟩
+  exact volume_lpSum_unitCube_eq hpq
+
+/-- Conjecture 4 in full: the general bound and its stated unit-cube equality case. -/
+theorem conjecture4_full_proved : Conjecture4FullTarget :=
+  ⟨conjecture4_proved, conjecture4_unitCube_eq_proved⟩
+
+theorem conjecture5_proved : Conjecture5Target := by
+  intro K hK hKc hKi hsym h0K p q hp hrecip hsharp
+  obtain ⟨c, hcenter⟩ := hsym
+  have hpq : p.HolderConjugate q :=
+    Real.holderConjugate_iff.mpr ⟨hp, by simpa [one_div] using hrecip⟩
+  have hcenterR : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K := by
+    intro x
+    simpa [two_smul ℝ, two_nsmul] using hcenter x
+  have hconst : symmetricRSConstant (Module.finrank ℝ ℝ²) q = rsConstant q := by
+    simpa using symmetricRSConstant_two_eq_rsConstant hpq.symm.pos
+  have hsharp' : volume (lpSumE p K (-K)) =
+      ENNReal.ofReal (symmetricRSConstant (Module.finrank ℝ ℝ²) q) * volume K := by
+    change volume (lpSumE p K (-K)) = ENNReal.ofReal (rsConstant q) * volume K at hsharp
+    rwa [hconst]
+  exact parallelogram_at_origin_of_sharp_volume hpq hKc hK hKi h0K hcenterR hsharp'
+
+#print axioms conjecture4_full_proved
+#print axioms conjecture5_proved
+
+end
+end LpRogersShephardLean4Web

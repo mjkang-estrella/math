@@ -1,0 +1,565 @@
+import Mathlib
+
+#eval Lean.versionString
+
+/-!
+# Lp Rogers--Shephard Conjectures 4 and 5: standalone development
+
+This file uses mathlib only. It reproduces the exact Conjecture 5 definitions and records the
+dimension-generic Conjecture 4 target.  The proofs are in `LpRogersShephardProof` and
+`LpRogersShephardEquality`; no Formal Conjectures theorem is imported.
+-/
+
+open MeasureTheory Real Set
+open scoped Pointwise ENNReal
+scoped[LpRogersShephardPlane] notation "ℝ²" => EuclideanSpace ℝ (Fin 2)
+open scoped LpRogersShephardPlane
+
+namespace LpRogersShephardLean4Web
+
+noncomputable section
+
+/-! ## The centered-slice algebra used by both proofs -/
+
+/-- Translation written as an image, to keep all subsequent set identities explicit. -/
+def translate {E : Type*} [Add E] (c : E) (C : Set E) : Set E :=
+  (fun x ↦ x + c) '' C
+
+/-- The one-parameter Minkowski slice from Lemma 5.3 of arXiv:2607.20387. -/
+noncomputable def slice {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q t : ℝ) (K : Set E) : Set E :=
+  (1 - t) ^ (1 / q) • K + t ^ (1 / q) • (-K)
+
+/-- The two-body weighted slice. -/
+noncomputable def weightedSlice {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q t : ℝ) (K L : Set E) : Set E :=
+  (1 - t) ^ (1 / q) • K + t ^ (1 / q) • L
+
+/-- The parameter-body presentation of the Firey sum. -/
+noncomputable def parameterBody {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q : ℝ) (K L : Set E) : Set E :=
+  {z | ∃ t ∈ Set.Icc (0 : ℝ) 1, ∃ x ∈ K, ∃ y ∈ L,
+    z = (1 - t) ^ (1 / q) • x + t ^ (1 / q) • y}
+
+lemma mem_parameterBody_iff_mem_weightedSlice {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {q : ℝ} {K L : Set E} {z : E} :
+    z ∈ parameterBody q K L ↔
+      ∃ t ∈ Set.Icc (0 : ℝ) 1, z ∈ weightedSlice q t K L := by
+  simp only [parameterBody, weightedSlice, Set.mem_setOf_eq]
+  constructor
+  · rintro ⟨t, ht, x, hx, y, hy, rfl⟩
+    exact ⟨t, ht, _, ⟨x, hx, rfl⟩, _, ⟨y, hy, rfl⟩, rfl⟩
+  · rintro ⟨t, ht, ax, ⟨x, hx, rfl⟩, bz, ⟨y, hy, rfl⟩, rfl⟩
+    exact ⟨t, ht, x, hx, y, hy, rfl⟩
+
+lemma parameterBody_neg (q : ℝ) {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] (K : Set E) :
+    parameterBody q K (-K) = ⋃ t ∈ Set.Icc (0 : ℝ) 1, slice q t K := by
+  ext z
+  simp only [mem_parameterBody_iff_mem_weightedSlice, Set.mem_iUnion, slice, weightedSlice]
+  aesop
+
+/-- Generic support function.  The specialized definitions below unfold to this expression. -/
+noncomputable def supportFunctionE {E : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℝ E] (K : Set E) (u : E) : ℝ :=
+  ⨆ x : K, inner ℝ (x : E) u
+
+/-- Generic half-space definition of the Firey `L_p` sum. -/
+noncomputable def lpSumE {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (p : ℝ) (K L : Set E) : Set E :=
+  {x | ∀ u : E,
+    inner ℝ x u ≤ (supportFunctionE K u ^ p + supportFunctionE L u ^ p) ^ (1 / p)}
+
+lemma bddAbove_inner_range {E : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℝ E] {K : Set E} (hK : IsCompact K) (u : E) :
+    BddAbove (Set.range (fun x : K ↦ inner ℝ (x : E) u)) := by
+  have hcont : ContinuousOn (fun x : E ↦ inner ℝ x u) K := by fun_prop
+  have hbdd := hK.bddAbove_image hcont
+  rw [show Set.range (fun x : K ↦ inner ℝ (x : E) u) =
+      (fun x : E ↦ inner ℝ x u) '' K by
+    ext r
+    constructor
+    · rintro ⟨x, rfl⟩
+      exact ⟨x, x.property, rfl⟩
+    · rintro ⟨x, hx, rfl⟩
+      exact ⟨⟨x, hx⟩, rfl⟩]
+  exact hbdd
+
+lemma inner_le_supportFunctionE {E : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℝ E] {K : Set E} (hK : IsCompact K) {x : E} (hx : x ∈ K) (u : E) :
+    inner ℝ x u ≤ supportFunctionE K u := by
+  exact le_ciSup (bddAbove_inner_range hK u) ⟨x, hx⟩
+
+lemma supportFunctionE_nonneg {E : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℝ E] {K : Set E} (hK : IsCompact K) (h0 : 0 ∈ K) (u : E) :
+    0 ≤ supportFunctionE K u := by
+  simpa using inner_le_supportFunctionE hK h0 u
+
+lemma exists_inner_eq_supportFunctionE {E : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℝ E] {K : Set E} (hK : IsCompact K) (hKn : K.Nonempty) (u : E) :
+    ∃ x ∈ K, inner ℝ x u = supportFunctionE K u := by
+  letI : Nonempty K := hKn.to_subtype
+  obtain ⟨x, hx, hmax⟩ := hK.exists_isMaxOn hKn (by fun_prop : ContinuousOn (fun z : E ↦ inner ℝ z u) K)
+  refine ⟨x, hx, le_antisymm (inner_le_supportFunctionE hK hx u) ?_⟩
+  exact ciSup_le fun y ↦ hmax y.property
+
+set_option maxHeartbeats 800000
+
+/-- The two-coordinate Hölder inequality in exactly the normalization used by the slices. -/
+lemma holder_slice_bound (p q t A B : ℝ) (hpq : p.HolderConjugate q)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    (1 - t) ^ (1 / q) * A + t ^ (1 / q) * B ≤ (A ^ p + B ^ p) ^ (1 / p) := by
+  have ht0 : 0 ≤ t := ht.1
+  have ht1 : t ≤ 1 := ht.2
+  have hsub : 0 ≤ 1 - t := sub_nonneg.mpr ht1
+  let f : Fin 2 → NNReal := ![(⟨A, hA⟩ : NNReal), (⟨B, hB⟩ : NNReal)]
+  let g : Fin 2 → NNReal :=
+    ![(⟨(1 - t) ^ (1 / q), Real.rpow_nonneg hsub _⟩ : NNReal),
+      (⟨t ^ (1 / q), Real.rpow_nonneg ht0 _⟩ : NNReal)]
+  have f0coe : (f 0 : ℝ) = A := rfl
+  have f1coe : (f 1 : ℝ) = B := rfl
+  have g0coe : (g 0 : ℝ) = (1 - t) ^ (1 / q) := rfl
+  have g1coe : (g 1 : ℝ) = t ^ (1 / q) := rfl
+  have h := NNReal.inner_le_Lp_mul_Lq (Finset.univ : Finset (Fin 2)) f g hpq
+  have hg : ∑ i, g i ^ q = 1 := by
+    apply NNReal.eq
+    rw [NNReal.coe_one, NNReal.coe_sum, Fin.sum_univ_two,
+      NNReal.coe_rpow, NNReal.coe_rpow, g0coe, g1coe]
+    rw [← Real.rpow_mul hsub, ← Real.rpow_mul ht0]
+    rw [one_div]
+    rw [inv_mul_cancel₀ hpq.symm.ne_zero]
+    simp
+  rw [hg] at h
+  have hR := (NNReal.coe_le_coe).2 h
+  simp only [Fin.sum_univ_two, NNReal.coe_add, NNReal.coe_mul, NNReal.coe_rpow,
+    NNReal.coe_one, one_div] at hR
+  rw [f0coe, f1coe, g0coe, g1coe] at hR
+  simpa [mul_comm] using hR
+
+lemma parameterBody_isCompact {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q : ℝ} (hq : 0 < q) {K L : Set E} (hK : IsCompact K) (hL : IsCompact L) :
+    IsCompact (parameterBody q K L) := by
+  let domain : Set (ℝ × (E × E)) := Set.Icc (0 : ℝ) 1 ×ˢ (K ×ˢ L)
+  let F : ℝ × (E × E) → E := fun w ↦
+    (1 - w.1) ^ (1 / q) • w.2.1 + w.1 ^ (1 / q) • w.2.2
+  have hexp : 0 ≤ 1 / q := one_div_nonneg.mpr hq.le
+  have hpow : Continuous (fun t : ℝ ↦ t ^ (1 / q)) := Real.continuous_rpow_const hexp
+  have hF : Continuous F := by
+    dsimp [F]
+    exact ((hpow.comp (continuous_const.sub continuous_fst)).smul
+      (continuous_fst.comp continuous_snd)).add
+      ((hpow.comp continuous_fst).smul (continuous_snd.comp continuous_snd))
+  have hdom : IsCompact domain := isCompact_Icc.prod (hK.prod hL)
+  have himage : F '' domain = parameterBody q K L := by
+    ext z
+    simp only [domain, F, parameterBody, Set.mem_image, Set.mem_prod, Set.mem_setOf_eq]
+    constructor
+    · rintro ⟨⟨t, x, y⟩, ⟨ht, hx, hy⟩, rfl⟩
+      exact ⟨t, ht, x, hx, y, hy, rfl⟩
+    · rintro ⟨t, ht, x, hx, y, hy, rfl⟩
+      exact ⟨(t, x, y), ⟨ht, hx, hy⟩, rfl⟩
+  rw [← himage]
+  exact hdom.image hF
+
+lemma exists_scaled_combination_mem {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {K : Set E} (hK : Convex ℝ K) (h0 : 0 ∈ K) {x y : E} (hx : x ∈ K) (hy : y ∈ K)
+    {a b R : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hR : 0 ≤ R) (habR : a + b ≤ R) :
+    ∃ z ∈ K, R • z = a • x + b • y := by
+  by_cases hR0 : R = 0
+  · have hab0 : a + b = 0 := le_antisymm (hR0 ▸ habR) (add_nonneg ha hb)
+    have ha0 : a = 0 := (add_eq_zero_iff_of_nonneg ha hb).mp hab0 |>.1
+    have hb0 : b = 0 := (add_eq_zero_iff_of_nonneg ha hb).mp hab0 |>.2
+    exact ⟨0, h0, by simp [hR0, ha0, hb0]⟩
+  · have hRpos : 0 < R := lt_of_le_of_ne hR (Ne.symm hR0)
+    obtain ⟨w, hw, hweq⟩ := hK.exists_mem_add_smul_eq hx hy ha hb
+    let c : ℝ := (a + b) / R
+    have hc : c ∈ Set.Icc (0 : ℝ) 1 :=
+      ⟨div_nonneg (add_nonneg ha hb) hRpos.le, (div_le_one hRpos).mpr habR⟩
+    refine ⟨c • w, hK.smul_mem_of_zero_mem h0 hw hc, ?_⟩
+    rw [smul_smul]
+    have hRc : R * c = a + b := by
+      dsimp [c]
+      rw [mul_comm, div_mul_cancel₀ _ hR0]
+    rw [hRc, hweq]
+
+lemma parameterBody_convex {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {q : ℝ} (hq : 1 ≤ q) {K L : Set E}
+    (hK : Convex ℝ K) (hL : Convex ℝ L) (h0K : 0 ∈ K) (h0L : 0 ∈ L) :
+    Convex ℝ (parameterBody q K L) := by
+  rintro z₁ ⟨t₁, ht₁, x₁, hx₁, y₁, hy₁, rfl⟩ z₂ ⟨t₂, ht₂, x₂, hx₂, y₂, hy₂, rfl⟩ a b ha hb hab
+  let t : ℝ := a * t₁ + b * t₂
+  have ht : t ∈ Set.Icc (0 : ℝ) 1 := by
+    constructor
+    · exact add_nonneg (mul_nonneg ha ht₁.1) (mul_nonneg hb ht₂.1)
+    · calc
+        t ≤ a * 1 + b * 1 := add_le_add (mul_le_mul_of_nonneg_left ht₁.2 ha)
+          (mul_le_mul_of_nonneg_left ht₂.2 hb)
+        _ = 1 := by rw [mul_one, mul_one, hab]
+  have hqpos : 0 < q := zero_lt_one.trans_le hq
+  have hr0 : 0 ≤ 1 / q := one_div_nonneg.mpr hqpos.le
+  have hr1 : 1 / q ≤ 1 := (div_le_one hqpos).mpr hq
+  have hconc := Real.concaveOn_rpow hr0 hr1
+  have hleft :
+      a * (1 - t₁) ^ (1 / q) + b * (1 - t₂) ^ (1 / q) ≤
+        (1 - t) ^ (1 / q) := by
+    have hc := hconc.2 (sub_nonneg.mpr ht₁.2) (sub_nonneg.mpr ht₂.2) ha hb hab
+    have hbase : a * (1 - t₁) + b * (1 - t₂) = 1 - t := by
+      dsimp [t]
+      calc
+        a * (1 - t₁) + b * (1 - t₂) = (a + b) - (a * t₁ + b * t₂) := by ring
+        _ = 1 - (a * t₁ + b * t₂) := by rw [hab]
+    simpa only [smul_eq_mul, hbase] using hc
+  have hright : a * t₁ ^ (1 / q) + b * t₂ ^ (1 / q) ≤ t ^ (1 / q) := by
+    exact hconc.2 ht₁.1 ht₂.1 ha hb hab
+  obtain ⟨x, hx, hxeq⟩ := exists_scaled_combination_mem hK h0K hx₁ hx₂
+    (mul_nonneg ha (Real.rpow_nonneg (sub_nonneg.mpr ht₁.2) _))
+    (mul_nonneg hb (Real.rpow_nonneg (sub_nonneg.mpr ht₂.2) _))
+    (Real.rpow_nonneg (sub_nonneg.mpr ht.2) _) hleft
+  obtain ⟨y, hy, hyeq⟩ := exists_scaled_combination_mem hL h0L hy₁ hy₂
+    (mul_nonneg ha (Real.rpow_nonneg ht₁.1 _))
+    (mul_nonneg hb (Real.rpow_nonneg ht₂.1 _))
+    (Real.rpow_nonneg ht.1 _) hright
+  refine ⟨t, ht, x, hx, y, hy, ?_⟩
+  rw [hxeq, hyeq]
+  module
+
+lemma exists_slice_weights {q : ℝ} (hq : 0 < q) (a b : NNReal)
+    (hab : a ^ q + b ^ q ≤ 1) :
+    ∃ t ∈ Set.Icc (0 : ℝ) 1,
+      (a : ℝ) ≤ (1 - t) ^ (1 / q) ∧ (b : ℝ) ≤ t ^ (1 / q) := by
+  let t : ℝ := (b ^ q : NNReal)
+  have habR : (a : ℝ) ^ q + (b : ℝ) ^ q ≤ 1 := by exact_mod_cast hab
+  have ht0 : 0 ≤ t := by positivity
+  have ht1 : t ≤ 1 := by
+    dsimp [t]
+    exact le_trans (le_add_of_nonneg_left (Real.rpow_nonneg a.coe_nonneg _)) habR
+  refine ⟨t, ⟨ht0, ht1⟩, ?_, ?_⟩
+  · rw [one_div]
+    apply (Real.le_rpow_inv_iff_of_pos a.coe_nonneg (sub_nonneg.mpr ht1) hq).2
+    dsimp [t]
+    linarith
+  · have hb : ((b : ℝ) ^ q) ^ q⁻¹ = (b : ℝ) :=
+      Real.rpow_rpow_inv b.coe_nonneg hq.ne'
+    simpa [t, one_div, NNReal.coe_rpow] using hb.ge
+
+/-- Every directional support value of the parameter body is attained by an actual slice point. -/
+lemma parameterBody_has_support_point {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K L : Set E}
+    (hKc : IsCompact K) (hLc : IsCompact L) (hK : Convex ℝ K) (hL : Convex ℝ L)
+    (h0K : 0 ∈ K) (h0L : 0 ∈ L) (u : E) :
+    ∃ z ∈ parameterBody q K L,
+      inner ℝ z u =
+        (supportFunctionE K u ^ p + supportFunctionE L u ^ p) ^ (1 / p) := by
+  let A : NNReal := ⟨supportFunctionE K u, supportFunctionE_nonneg hKc h0K u⟩
+  let B : NNReal := ⟨supportFunctionE L u, supportFunctionE_nonneg hLc h0L u⟩
+  let f : Fin 2 → NNReal := ![A, B]
+  have f0coe : (f 0 : ℝ) = supportFunctionE K u := rfl
+  have f1coe : (f 1 : ℝ) = supportFunctionE L u := rfl
+  obtain ⟨x, hx, hxA⟩ := exists_inner_eq_supportFunctionE hKc ⟨0, h0K⟩ u
+  obtain ⟨y, hy, hyB⟩ := exists_inner_eq_supportFunctionE hLc ⟨0, h0L⟩ u
+  obtain ⟨g, hg, hdot⟩ :=
+    (NNReal.isGreatest_Lp (Finset.univ : Finset (Fin 2)) f hpq).1
+  have hgq : g 0 ^ q + g 1 ^ q ≤ 1 := by simpa using hg
+  obtain ⟨t, ht, hga, hgb⟩ := exists_slice_weights hpq.symm.pos (g 0) (g 1) hgq
+  obtain ⟨x', hx', hxeq⟩ := exists_scaled_combination_mem hK h0K hx h0K
+    (show 0 ≤ (g 0 : ℝ) from (g 0).coe_nonneg) (le_refl 0)
+    (Real.rpow_nonneg (sub_nonneg.mpr ht.2) _) (by simpa using hga)
+  obtain ⟨y', hy', hyeq⟩ := exists_scaled_combination_mem hL h0L hy h0L
+    (show 0 ≤ (g 1 : ℝ) from (g 1).coe_nonneg) (le_refl 0)
+    (Real.rpow_nonneg ht.1 _) (by simpa using hgb)
+  let z := (1 - t) ^ (1 / q) • x' + t ^ (1 / q) • y'
+  refine ⟨z, ⟨t, ht, x', hx', y', hy', rfl⟩, ?_⟩
+  have hdotR :
+      (g 0 : ℝ) * supportFunctionE K u + (g 1 : ℝ) * supportFunctionE L u =
+        (supportFunctionE K u ^ p + supportFunctionE L u ^ p) ^ (1 / p) := by
+    have hdot' := congrArg ((↑) : NNReal → ℝ) hdot
+    simp only [Fin.sum_univ_two, NNReal.coe_add, NNReal.coe_mul,
+      NNReal.coe_rpow] at hdot'
+    rw [f0coe, f1coe] at hdot'
+    simpa [mul_comm] using hdot'
+  have hxi :
+      (1 - t) ^ (1 / q) * inner ℝ x' u = (g 0 : ℝ) * supportFunctionE K u := by
+    have hh := congrArg (fun v : E ↦ inner ℝ v u) hxeq
+    simpa [inner_add_left, inner_smul_left, hxA] using hh
+  have hyi : t ^ (1 / q) * inner ℝ y' u = (g 1 : ℝ) * supportFunctionE L u := by
+    have hh := congrArg (fun v : E ↦ inner ℝ v u) hyeq
+    simpa [inner_add_left, inner_smul_left, hyB] using hh
+  dsimp [z]
+  rw [inner_add_left, inner_smul_left, inner_smul_left]
+  change (1 - t) ^ (1 / q) * inner ℝ x' u + t ^ (1 / q) * inner ℝ y' u = _
+  rw [hxi, hyi]
+  exact hdotR
+
+lemma parameterBody_subset_lpSumE {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K L : Set E}
+    (hKc : IsCompact K) (hLc : IsCompact L) (h0K : 0 ∈ K) (h0L : 0 ∈ L) :
+    parameterBody q K L ⊆ lpSumE p K L := by
+  rintro z ⟨t, ht, x, hx, y, hy, rfl⟩ u
+  have hsK := inner_le_supportFunctionE hKc hx u
+  have hsL := inner_le_supportFunctionE hLc hy u
+  have hA := supportFunctionE_nonneg hKc h0K u
+  have hB := supportFunctionE_nonneg hLc h0L u
+  calc
+    inner ℝ ((1 - t) ^ (1 / q) • x + t ^ (1 / q) • y) u =
+        (1 - t) ^ (1 / q) * inner ℝ x u + t ^ (1 / q) * inner ℝ y u := by
+          simp [inner_add_left, inner_smul_left]
+    _ ≤ (1 - t) ^ (1 / q) * supportFunctionE K u +
+        t ^ (1 / q) * supportFunctionE L u := by
+          exact add_le_add
+            (mul_le_mul_of_nonneg_left hsK (Real.rpow_nonneg (sub_nonneg.mpr ht.2) _))
+            (mul_le_mul_of_nonneg_left hsL (Real.rpow_nonneg ht.1 _))
+    _ ≤ _ := holder_slice_bound p q t _ _ hpq hA hB ht
+
+/-- Equation (8) of arXiv:2607.20387, proved from the half-space definition used by Formal
+Conjectures.  The reverse inclusion uses strong separation and an attained Hölder maximizer. -/
+lemma lpSumE_eq_parameterBody {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    {p q : ℝ} (hpq : p.HolderConjugate q) {K L : Set E}
+    (hKc : IsCompact K) (hLc : IsCompact L) (hK : Convex ℝ K) (hL : Convex ℝ L)
+    (h0K : 0 ∈ K) (h0L : 0 ∈ L) :
+    lpSumE p K L = parameterBody q K L := by
+  apply Set.Subset.antisymm ?_ (parameterBody_subset_lpSumE hpq hKc hLc h0K h0L)
+  intro x hx
+  by_contra hxp
+  have hq1 : 1 ≤ q := hpq.symm.lt.le
+  obtain ⟨f, c, hfc, hcfx⟩ := geometric_hahn_banach_closed_point
+    (parameterBody_convex hq1 hK hL h0K h0L)
+    (parameterBody_isCompact hpq.symm.pos hKc hLc).isClosed hxp
+  let u : E := (InnerProductSpace.toDual ℝ E).symm f
+  obtain ⟨z, hz, hzu⟩ :=
+    parameterBody_has_support_point hpq hKc hLc hK hL h0K h0L u
+  have hfxu : f x = inner ℝ x u := by
+    dsimp [u]
+    rw [← InnerProductSpace.toDual_symm_apply]
+    exact real_inner_comm _ _
+  have hfzu : f z = inner ℝ z u := by
+    dsimp [u]
+    rw [← InnerProductSpace.toDual_symm_apply]
+    exact real_inner_comm _ _
+  have hzx : inner ℝ z u < inner ℝ x u := by
+    rw [← hfzu, ← hfxu]
+    exact (hfc z hz).trans hcfx
+  have hxu := hx u
+  rw [← hzu] at hxu
+  exact (not_lt_of_ge hxu) hzx
+
+lemma mem_translate {E : Type*} [AddCommGroup E] {c : E} {C : Set E} {z : E} :
+    z ∈ translate c C ↔ z - c ∈ C := by
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    simpa using hx
+  · intro hz
+    exact ⟨z - c, hz, by abel⟩
+
+lemma neg_translate {E : Type*} [AddCommGroup E] (c : E) (C : Set E) :
+    -(translate c C) = translate (-c) (-C) := by
+  ext z
+  simp only [mem_neg, mem_translate]
+  constructor <;> intro h
+  · simpa only [sub_neg_eq_add, sub_eq_add_neg, neg_add_rev, neg_neg, add_comm] using h
+  · simpa only [sub_neg_eq_add, sub_eq_add_neg, neg_add_rev, neg_neg, add_comm] using h
+
+lemma translate_neg_cancel {E : Type*} [AddCommGroup E] (c : E) (K : Set E) :
+    translate c (translate (-c) K) = K := by
+  ext z
+  simp only [mem_translate]
+  constructor <;> intro h
+  · simpa only [sub_neg_eq_add, sub_add_cancel] using h
+  · simpa only [sub_neg_eq_add, sub_add_cancel] using h
+
+lemma centered_neg_eq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {K : Set E} {c : E} (hsym : ∀ x, x ∈ K ↔ (2 : ℝ) • c - x ∈ K) :
+    -(translate (-c) K) = translate (-c) K := by
+  ext z
+  simp only [mem_neg, mem_translate, sub_neg_eq_add]
+  have h := hsym (z + c)
+  constructor
+  · intro hz
+    apply h.mpr
+    convert hz using 1 <;> module
+  · intro hz
+    have hz' := h.mp hz
+    convert hz' using 1 <;> module
+
+lemma convex_translate_iff {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (c : E) (C : Set E) : Convex ℝ (translate c C) ↔ Convex ℝ C := by
+  change Convex ℝ ((fun x : E ↦ x + c) '' C) ↔ Convex ℝ C
+  rw [show (fun x : E ↦ x + c) = (fun x : E ↦ c + x) by
+    funext x
+    exact add_comm x c]
+  exact convex_vadd (𝕜 := ℝ) (s := C) c
+
+lemma volume_translate {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)] (c : E) (C : Set E) :
+    volume (translate c C) = volume C := by
+  have hset : translate c C = (fun z : E ↦ z + (-c)) ⁻¹' C := by
+    ext z
+    simp only [mem_translate, mem_preimage]
+    constructor <;> intro h
+    · simpa [sub_eq_add_neg] using h
+    · simpa [sub_eq_add_neg] using h
+  rw [hset, measure_preimage_add_right]
+
+/-- For a centrally symmetric body `C`, every parameter slice is a translate of one homothet
+of `C`.  This is the algebraic specialization behind Conjecture 4. -/
+lemma slice_translate_of_neg_eq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (q t : ℝ) (c : E) (C : Set E) (hC : -C = C)
+    (hconv : Convex ℝ C) (hq : 0 < q) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    slice q t (translate c C) =
+      translate ((((1 - t) ^ (1 / q)) - t ^ (1 / q)) • c)
+        ((((1 - t) ^ (1 / q)) + t ^ (1 / q)) • C) := by
+  let a : ℝ := (1 - t) ^ (1 / q)
+  let b : ℝ := t ^ (1 / q)
+  have ha : 0 ≤ a := Real.rpow_nonneg (sub_nonneg.mpr ht.2) _
+  have hb : 0 ≤ b := Real.rpow_nonneg ht.1 _
+  have hab : 0 < a + b := by
+    by_cases htz : t = 0
+    · have hqi : q⁻¹ ≠ 0 := inv_ne_zero hq.ne'
+      simp [a, b, htz, hqi]
+    · have htpos : 0 < t := lt_of_le_of_ne ht.1 (Ne.symm htz)
+      exact add_pos_of_nonneg_of_pos ha (Real.rpow_pos_of_pos htpos _)
+  ext z
+  constructor
+  · rintro ⟨ax, hax, bz, hbz, rfl⟩
+    rcases hax with ⟨kx, hkx, rfl⟩
+    rcases hkx with ⟨x, hx, rfl⟩
+    have hneg : -(translate c C) = translate (-c) C := by rw [neg_translate, hC]
+    rw [hneg] at hbz
+    rcases hbz with ⟨ky, hky, rfl⟩
+    rcases hky with ⟨y, hy, rfl⟩
+    rw [mem_translate]
+    change a • (x + c) + b • (y + -c) - (a - b) • c ∈ (a + b) • C
+    refine ⟨(a / (a + b)) • x + (b / (a + b)) • y, ?_, ?_⟩
+    · exact hconv hx hy (div_nonneg ha hab.le) (div_nonneg hb hab.le) (by field_simp)
+    · have hax : (a + b) * (a / (a + b)) = a := by field_simp
+      have hby : (a + b) * (b / (a + b)) = b := by field_simp
+      symm
+      calc
+        a • (x + c) + b • (y + -c) - (a - b) • c = a • x + b • y := by module
+        _ = (a + b) • ((a / (a + b)) • x + (b / (a + b)) • y) := by
+          rw [smul_add, smul_smul, smul_smul, hax, hby]
+  · rw [mem_translate]
+    rintro ⟨w, hw, hwz⟩
+    change (a + b) • w = z - (a - b) • c at hwz
+    have hneg : -(translate c C) = translate (-c) C := by rw [neg_translate, hC]
+    refine ⟨a • (w + c), ?_, b • (w + -c), ?_, ?_⟩
+    · exact ⟨w + c, ⟨w, hw, rfl⟩, rfl⟩
+    · rw [hneg]
+      exact ⟨w + -c, ⟨w, hw, rfl⟩, rfl⟩
+    · change a • (w + c) + b • (w + -c) = z
+      have hz : (a + b) • w + (a - b) • c = z := (eq_sub_iff_add_eq).mp hwz
+      rw [← hz]
+      module
+
+lemma volume_slice_translate_of_neg_eq {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasureSpace E] [BorelSpace E]
+    [Measure.IsAddHaarMeasure (volume : Measure E)]
+    (q t : ℝ) (c : E) (C : Set E) (hC : -C = C)
+    (hconv : Convex ℝ C) (hq : 0 < q) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    volume (slice q t (translate c C)) =
+      ENNReal.ofReal
+        ((((1 - t) ^ (1 / q)) + t ^ (1 / q)) ^ Module.finrank ℝ E) * volume C := by
+  rw [slice_translate_of_neg_eq q t c C hC hconv hq ht, volume_translate,
+    MeasureTheory.Measure.addHaar_smul]
+  have hs : 0 ≤ ((1 - t) ^ (1 / q)) + t ^ (1 / q) :=
+    add_nonneg (Real.rpow_nonneg (sub_nonneg.mpr ht.2) _)
+      (Real.rpow_nonneg ht.1 _)
+  rw [abs_of_nonneg (pow_nonneg hs _)]
+
+/-! ## Definitions matching the current planar Formal Conjectures file -/
+
+noncomputable def supportFunction (K : Set ℝ²) (u : ℝ²) : ℝ :=
+  supportFunctionE K u
+
+noncomputable def lpSum (p : ℝ) (K L : Set ℝ²) : Set ℝ² :=
+  lpSumE p K L
+
+def HasCentreOfSymmetry (K : Set ℝ²) : Prop :=
+  ∃ c : ℝ², ∀ x, x ∈ K ↔ (2 • c - x) ∈ K
+
+noncomputable def rsConstant (q : ℝ) : ℝ :=
+  2 * Real.Gamma (1 + 1 / q) ^ 2 / Real.Gamma (1 + 2 / q) + 2
+
+def IsParallelogramAtOrigin (K : Set ℝ²) : Prop :=
+  ∃ a b : ℝ², LinearIndependent ℝ ![a, b] ∧
+    K = convexHull ℝ {0, a, b, a + b}
+
+/-! ## A dimension-generic Formal Conjectures target for Conjecture 4 -/
+
+abbrev Ambient (n : ℕ) := EuclideanSpace ℝ (Fin n)
+
+noncomputable def supportFunctionN {n : ℕ} (K : Set (Ambient n)) (u : Ambient n) : ℝ :=
+  supportFunctionE K u
+
+noncomputable def lpSumN {n : ℕ} (p : ℝ) (K L : Set (Ambient n)) : Set (Ambient n) :=
+  lpSumE p K L
+
+def HasCentreOfSymmetryN {n : ℕ} (K : Set (Ambient n)) : Prop :=
+  ∃ c : Ambient n, ∀ x, x ∈ K ↔ (2 • c - x) ∈ K
+
+/-- The Gamma-function extension of `choose x y` used in the source paper. -/
+noncomputable def generalizedBinomial (x y : ℝ) : ℝ :=
+  Real.Gamma (x + 1) / (Real.Gamma (y + 1) * Real.Gamma (x - y + 1))
+
+/-- The conjectured sharp symmetric-body coefficient in dimension `n`. -/
+noncomputable def symmetricRSConstant (n : ℕ) (q : ℝ) : ℝ :=
+  ∑ i ∈ Finset.range (n + 1),
+    (Nat.choose n i : ℝ) / generalizedBinomial ((n : ℝ) / q) ((i : ℝ) / q)
+
+/-- The unit cube `[0,1]^n`, transported to the Euclidean-space model used by the theorem. -/
+noncomputable def unitCube (n : ℕ) : Set (Ambient n) :=
+  WithLp.ofLp ⁻¹' Set.Icc (0 : Fin n → ℝ) 1
+
+/--
+The universal-inequality clause of Conjecture 4.
+
+Keeping the proposition as a named definition makes the theorem statement reusable by both the
+mathlib-only package and the Formal Conjectures bridge.  Its proof is `conjecture4_proved`;
+the full paper statement is `Conjecture4FullTarget` below.
+-/
+def Conjecture4Target : Prop :=
+  ∀ (n : ℕ), 1 ≤ n → ∀ (K : Set (Ambient n)),
+    Convex ℝ K → IsCompact K → (interior K).Nonempty →
+    HasCentreOfSymmetryN K → (0 : Ambient n) ∈ K →
+    ∀ p q : ℝ, 1 < p → 1 / p + 1 / q = 1 →
+      volume (lpSumN p K (-K)) ≤
+        ENNReal.ofReal (symmetricRSConstant n q) * volume K
+
+/-- The sharpness clause in Conjecture 4: the unit cube attains the bound. -/
+def Conjecture4SharpnessTarget : Prop :=
+  ∀ (n : ℕ), 1 ≤ n → ∀ p q : ℝ, 1 < p → 1 / p + 1 / q = 1 →
+    volume (lpSumN p (unitCube n) (-(unitCube n))) =
+      ENNReal.ofReal (symmetricRSConstant n q) * volume (unitCube n)
+
+/-- Conjecture 4 exactly as stated in the paper: the bound together with cube equality. -/
+def Conjecture4FullTarget : Prop :=
+  Conjecture4Target ∧ Conjecture4SharpnessTarget
+
+/-! ## Conjecture 5 -/
+
+def Conjecture5Target : Prop :=
+  ∀ (K : Set ℝ²), Convex ℝ K → IsCompact K → (interior K).Nonempty →
+    HasCentreOfSymmetry K → (0 : ℝ²) ∈ K →
+    ∀ p q : ℝ, 1 < p → 1 / p + 1 / q = 1 →
+      volume (lpSum p K (-K)) = ENNReal.ofReal (rsConstant q) * volume K →
+        IsParallelogramAtOrigin K
+
+/-- A definitional audit that the copied target has exactly the intended statement. -/
+theorem conjecture5_target_unfolds :
+    Conjecture5Target ↔
+      ∀ (K : Set ℝ²), Convex ℝ K → IsCompact K → (interior K).Nonempty →
+        HasCentreOfSymmetry K → (0 : ℝ²) ∈ K →
+        ∀ p q : ℝ, 1 < p → 1 / p + 1 / q = 1 →
+          volume (lpSum p K (-K)) = ENNReal.ofReal (rsConstant q) * volume K →
+            IsParallelogramAtOrigin K := by
+  rfl
+
+#print axioms conjecture5_target_unfolds
+
+end
+
+end LpRogersShephardLean4Web
