@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Sparse reliability novelty HOLD retained: actual 2025 arXiv induction uses false Lemma 23(iii), independently checked at n8,m12,x1,rho1/2; this does not clear unread published2025 and Networks2018 bodies. No concrete accessible body route remains; park source/priority gap, no formal or paper investment. Fresh structural r202 assigned. See root-sparse-reliability-source-hold-r2. Counts 9 additional / 39 total, next 40.
+
+
 r200 radial convexity / fixed-degree matrix monotonicity Conjecture 4.10 remains unresolved. Global derivative positivity recovery for all n>=3 and arbitrary-function regularity remain unproved; positive Hadamard-square rational witness is only a pointwise method obstruction. Root replay and actual final-freeze verification pass; first-read freezing deviation retained. See root-r200-handback. Fresh analytic r201 assigned. Counts 9 additional / 39 total, next 40.
 
 
