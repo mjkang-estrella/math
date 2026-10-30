@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r195: Higher convex-order separation remains unresolved. The all-order probability-transform interpolation lemma is missing. The admissible n=4 example defeats direct maximum gluing but has zero moment deficit and admits Z=X; it is not a source counterexample. Translation covers common bounded-below laws only. The 2014 predecessor body remains unread; the new source’s allegation of an incomplete prior proof is attributed, not independently certified. No nomination or formal investment. Root replay and freeze verification pass; see root-r195-handback. Fresh replacement r198 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r194: Matrix-ring recognition remains unresolved. The source covers even matrix sizes; the conditional composite-size transfer does not prove the missing odd-prime bases. The triangular bimodule ring has the same order and center size as M3(F2), but different commuting-graph degree counts, so it is only a method countermodel. Preserve the unread 2024 predecessor and 2004 attribution qualifications. No nomination or formal investment. Root replay and freeze verification pass; see root-r194-handback. Fresh replacement r197 assigned. Counts 9 additional / 39 total, next 40.
 
 
