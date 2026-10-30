@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+r163: full Sirola Dumas-valuation conjecture has a complete ordinary proof
+candidate and explicit classical-subsumption bridge through signed valuation,
+fraction field, reciprocal normalization and El Fadil2023 Theorem3.1.
+Root reproduced2378 product /5768 lattice controls;48 manifest /46 scientific
+paths match,50 originals frozen. Independent Sol review pending before final
+routine-exclusion adjudication. No Lean/paper investment or credit.
+See root-r163-preliminary-freeze-r1. Sol r164/r165 research continues.
+Counts unchanged:9 additional/39 total,next40.
+
+
 r162 Achour saturation Conjecture1 remains unresolved: independent exposed
 set with a sufficiently large size and perfectly matchable complement is
 missing. Root replays 771 small graphs, 48 cubic samples and 31 triangle
