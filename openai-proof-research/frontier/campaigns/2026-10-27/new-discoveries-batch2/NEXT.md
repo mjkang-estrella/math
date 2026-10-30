@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r185 full power-sum nonnormal-domain classification candidate retained; independent mathematical and classical-adaptation review assigned. Root exact replay and frozen originals pass; no Lean or acceptance. See root-r185-handback. Counts 9 additional / 39 total, next 40.
+
+
 r184 Gauss–Legendre uniform circle and Cheeger–Kohler–Jobin questions remain unresolved. Sonin correction and rearrangement support/rigidity gaps explicit; hypothetical envelope control is not source counterexample. Root symbolic replay and local/external freeze pass; see root-r184-handback. Fresh analytic r187 assigned; r185/r186 continue. Counts9additional/39total,next40.
 
 
