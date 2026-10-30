@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r203 almost-perfect additive-complement gap Conjecture1.3 remains unresolved. Perfect-subclass radix gap and global3/2 lower bound are known; subsequential factorization gives no all-scale upper bound. Root exact replay and primary/manifest/reference integrity pass. Finch Conjecture14 also unresolved, small-index correction uncredited. See root-r203-handback; fresh arithmetic r205 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r201 Nielsen–Okamura smooth dual-midpoint rigidity remains unresolved; rank-one cubic has nontrivial pointwise derivative kernel, not an exact midpoint counterexample. Degenerate strata and smooth higher-order control remain open. Fractional Korn extension excluded by actual public full bridge. Root symbolic replay and primary/manifest/snapshot integrity pass. See root-r201-handback; fresh analytic r204 assigned. Counts 9 additional / 39 total, next 40.
 
 

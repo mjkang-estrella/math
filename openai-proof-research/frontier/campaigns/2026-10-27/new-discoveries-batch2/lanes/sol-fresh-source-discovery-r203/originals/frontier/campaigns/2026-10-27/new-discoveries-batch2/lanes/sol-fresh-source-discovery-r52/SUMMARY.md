@@ -1,0 +1,11 @@
+# r52 — global unimodular-fiber Jensen unresolved; credit0
+
+Selected one fresh primary target: Leake–Mohammadi Yekta2609.39917v1 Question1.7, global geometric-mean inequality for all unimodular nonnegative integer fibers and all integer-mean demand distributions. Actual source statement and midpoint proof bodies read before investment. Current closest Schubr edition4 actual theorem/transfer proof body already claims central fiber dimension<=3; those cases excluded.
+
+No full proof or literal source counterexample. Sustained work gives a supporting-hyperplane reduction and an exact obstruction to the natural multicolor TU proof: the genuine dimension4 binary3x3 table source system has a three-color marginal polytope with an explicit fractional vertex. Ordinary extremality proof is in discovery.md. This is NOT a source refutation: the central integer coefficient is12 and is maximal in the bounded diagnostic.
+
+Capped exact checks PASS:3,613,632 prescribed network triangles across four fixed tables,19683 colorings, fractional-array line sums and rational rank17. Finite checks do not prove global Jensen. AS512MiB/CPU210/wall230/BLAS1/process-group guard; main check~7.9s/~14.1MB sampled groupRSS. Run `bash run.sh python3 check.py` and `bash run.sh python3 multicolor.py`.
+
+Live five heads refreshed; Omega devb386687d… has2commits/one documentation-file delta from supplied baseline; D5(12552)/Problems(1551) inherited complete scoped hashes reused. Other four heads unchanged. No whole-dev or semantic novelty clearance. Actual orientation antecedent and matching OpenAI counting-algorithm theorem compared; closest low-dimensional PDF archived. All HTTP200; no access bypass.
+
+Precise remaining gap: arbitrary-dimensional supporting affine majorants or a multicolor central-marginal comparison that tolerates fractional vertices; neither is proved. Strongest objection: method failure does not contradict the actual count inequality. No PROOF.md, Lean, paper, nomination, eligibility/novelty PASS or count edit. Root owns acceptance;6additional/36total unchanged. Solo; all writes onlyr52; no git/children/browser/contact/post/upload/accounts. Exact URLs/UTC/sourcebytes/SHA256/access limits and runnable checks retained in this lane.

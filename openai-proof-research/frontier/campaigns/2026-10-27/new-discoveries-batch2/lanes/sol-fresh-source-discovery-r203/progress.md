@@ -1,0 +1,3 @@
+# Progress and handback
+
+Read mandated handbacks; retained exclusions and parked routes. Refreshed corrected original/alias history before source investment. Frozen latest arithmetic sources and read closest factorization/discrete/radix proof bodies. Sustained additive-complement Conjecture1.3; Finch Conjecture14 secondary. Known complete classical bridges documented, residual global transfer unproved. Exact diagnostics PASS; no full ordinary candidate and zero nominations. Do not invest in Lean/manuscript. Root alone decides acceptance/counts/staging. Separate final scientific and manifest verification follows all writes.
