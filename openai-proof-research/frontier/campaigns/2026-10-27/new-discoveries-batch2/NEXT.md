@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r189 full Guo divisibility Conjecture 2 ordinary candidate retained; factorial-basis and valuation bridge needs independent math/substantive adjudication. Root exact replay and 2577 original/copy pairs pass. Independent Guo review assigned; analytic r190 and structural r191 continue. See root-r189-handback. No Lean or manuscript; counts 9 additional / 39 total, next 40.
+
+
 r188 Bonnet triangle-partition sidestep Question 5 remains unresolved. Wedge-factor and matching-blocker reductions do not supply uniform polynomial search; exact method counterexamples retained. Root 32768-graph replay and frozen evidence pass. See root-r188-handback. Fresh structural r191 assigned; arithmetic r189 and analytic r190 continue. Counts 9 additional / 39 total, next 40.
 
 
