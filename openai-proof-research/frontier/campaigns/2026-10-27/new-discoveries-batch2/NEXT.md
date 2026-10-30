@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r161 Ulas two-parameter Stern irreducibility remains unresolved. Root
+reproduces all 185 sparse-identity/factorization/polygon controls and verifies
+42 manifest / 38 scientific entries. The two Newton slopes only restrict factor
+degrees; no uniform exclusion of those rational factors is proved. Revised
+published-source comparison remains subscription HOLD. See root-r161-handback.
+Sol r163 replaces r161; r162 and Xu–Sun–Chen review continue.
+Counts unchanged: 9 additional / 39 total, next40.
+
+
 r160 full Xu–Sun–Chen arctan/arctanh proof candidates frozen for independent
 source/math/substantive review. Root reproduces the 215-positive-coefficient
 certificate and all 219 numerator coefficients; 28 files frozen. Prose erratum:
