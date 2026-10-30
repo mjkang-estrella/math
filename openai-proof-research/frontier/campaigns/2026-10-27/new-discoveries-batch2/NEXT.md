@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r158 normalized integral Macdonald elementary positivity (Haglund–Kim–Oh–Yoo
+2610.34772 Conjecture 1.1) remains unresolved. Root reproduces 132 functions,
+132 source e_n controls, 29 orthogonal-definition comparisons and both method
+obstructions; four outputs match byte-identically. Freeze: 46 manifest / 34
+scientific entries. Generic Schur positivity and unchanged hook ribbons do not
+supply the missing all-shape transform positivity. See root-r158-handback.
+Sol r161 replaces r158; r159 and r160 continue. Counts unchanged: 9/39, next40.
+
+
 r157 general-H entropy-bound conjecture remains unresolved. The scalar
 first variation defeats a lower-bound shortcut but supplies no admissible metric
 or entropy counterexample. Curvature CM, mass dependence and normalization gaps
