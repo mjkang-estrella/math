@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Clique-corona remains HOLD: the material Levit–Mandrescu 2016 body was not obtained. Source/math PASS and provisional substantive investment assessment remain; no full classical bridge supports exclusion. Fixed d36-to-2b delta qualification is closed using cached complete evidence; older historical obligations remain parked. Root verifies 181 frozen records and 136 manifest entries. No repeated denied searches commissioned. See root-clique-corona-source-hold-r2. Counts 9 additional / 39 total, next 40.
+
+
 Clique-corona source and ordinary mathematics PASS adopted; root exact checker reproduces byte-identically. The 2017 survey body gap is closed. Investment remains HOLD pending the material 2016 body and bounded prior qualifications; no complete classical adaptation yet warrants exclusion. Focused Sol source/subsumption review commissioned, with no denied-object retries or repeated historical reconstruction. See root-clique-corona-preliminary-adoption-r1. Pendulum formal work and fresh r169 research continue. Counts 9 additional / 39 total, next 40.
 
 

@@ -1,0 +1,27 @@
+import pathlib,json,hashlib,datetime
+L=pathlib.Path(__file__).parent
+def h(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def write(name,d):(L/name).write_text(json.dumps(d,indent=2)+'\n')
+support=[]
+for r in json.loads((L/'registry-copy-receipt.json').read_text()):
+ p=pathlib.Path(r['original']);q=pathlib.Path(r['copy']);assert h(p)==r['sha256']==h(q)
+ support.append({k:v for k,v in r.items() if k!='hits'})
+write('support-after-freeze.json',{'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'all_match':True,'count':len(support),'records':support})
+src=[]
+for line in (L/'copies/http.jsonl').read_text().splitlines():
+ r=json.loads(line)
+ if any(k in r['name'] for k in ['corona','generic','zhu','brown','forest','omega']):src.append(r)
+coverage=json.loads((L/'body-coverage.json').read_text())
+for r in coverage:r['coverage_kind']='selected form-feed pages; displayed by read.py; combined output truncations noted in review, decisive pages reread'
+for name in ['copies/PROOF.md','copies/discovery.md','copies/sources/generic.txt','survey.txt','copies/sources/omega-byun.md','copies/sources/omega-karp.md','omega-current.md']:
+ p=L/name;coverage.append({'file':str(p),'sha256':h(p),'char_start':0,'char_end':len(p.read_text()),'coverage_kind':'full text displayed and read'})
+guard=L.parent/'sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py'
+write('provenance.json',{'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'local_date':'2026-10-29','review_lane':str(L),'candidate_lane':str(L.parent/'sol-fresh-source-discovery-r168'),'decision':{'overall':'HOLD','ordinary_math':'PASS','source_scope':'PASS','substantive':'provisional INVEST; no complete classical exclusion bridge established','credit':0,'counts':'9 additional /39 total; next40; root only'},'source_target':{'doi':'10.26493/1855-3974.3383.3c7','label':'Conjecture6.1','page':20,'quantifiers':'every finite simple graph without isolated vertices, every integer p>=1','counterexample':'r=100000 disjoint triangles joined to s=225985 independent vertices; p=1','vertices_base':525985,'vertices_corona':1051970,'degree':525985,'no_all_p_or_minimality_claim':True},'guard':{'path':str(guard),'sha256':h(guard),'environment':{'OPENBLAS_NUM_THREADS':'1','OMP_NUM_THREADS':'1','PYTHONDONTWRITEBYTECODE':'1'},'AS_bytes':536870912,'group_RSS_bytes':536870912,'CPU_seconds':210,'wall_seconds':230,'nominal_sample_ms':40,'limits_raised':False,'largest_observed_sampled_group_RSS':179343360,'guard_failures':0,'note':'Original guard used directly, never edited. Tool execution outputs retain individual guard receipts.'},'freeze_before':'before-freeze.json','freeze_after':'after-freeze.json','support_before':'registry-copy-receipt.json','support_after':'support-after-freeze.json','independent_check':'own-checks.json','original_source_urls_hashes':src,'new_http':json.loads((L/'http.json').read_text()),'survey_http':json.loads((L/'survey-http.json').read_text()),'current_registry_attempt':json.loads((L/'registry-current-receipt.json').read_text()),'fixed_heads':{'Omega':'2b143c68ca72fcaccfe71d6233cb2c6db4c8c059','OpenAI':'4eaee87548250b2682affda7d05d947c05554bae'},'body_coverage':coverage,'extra_exact_coverage':'extra-body-coverage.jsonl','residuals':['2016 DOI10.1016/j.dam.2015.09.021 complete body unread; metadata and successor attribution do not clear it','published versions of older arXiv antecedents not independently audited','two historical capped intervals assigned elsewhere, not duplicated or polled','d36a-to2b comparison failed403 once; only selected actual current body independently obtained','no full graph-corona subsumption/priority clearance'], 'gap_closed':'2017 survey full published9-page body obtained via actual publisher volume index link; Conjecture3.3 and relevant theorems read','failures_deviations':['Initial unguarded broad rg and directory listings; overlarge native reads truncated; no scientific computation/hash in those calls','Orientation display of proof/discovery before freeze; mathematical reasoning/calculation started after71-original verification','Combined source output truncated; decisive Zhu/Brown pages reread, later original-corona matrix display also truncated','New GitHub comparison403 rate limit once; stopped, no bypass or retry','Inherited ScienceDirect403, guessed survey404 and metadata-only2016 response preserved, not retried'],'no_external_mutation':True,'no_children':True,'no_git_Lean_manuscript':True})
+# Manifest intentionally excludes itself and its verification receipt, avoiding self-hash recursion.
+excluded={'final-manifest.json','final-verified-manifest.json'}
+entries=[{'path':str(p.relative_to(L)),'bytes':p.stat().st_size,'sha256':h(p)} for p in sorted(L.rglob('*')) if p.is_file() and p.name not in excluded]
+write('final-manifest.json',{'exclusions':sorted(excluded),'files':entries})
+for r in entries:
+ p=L/r['path'];assert p.stat().st_size==r['bytes'] and h(p)==r['sha256']
+write('final-verified-manifest.json',{'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'manifest_sha256':h(L/'final-manifest.json'),'verified_entries':len(entries),'all_match':True,'candidate_originals_and_copies':71,'registry_originals_and_copies':8,'self_exclusions':sorted(excluded),'finalization_complete':True})
+print(json.dumps({'all_match':True,'manifest_entries':len(entries),'manifest_sha256':h(L/'final-manifest.json')}))
