@@ -1,0 +1,59 @@
+# r137: fresh ring-theory questions, no substantive resolution
+
+Solo source research; zero nominees, zero credit. No Lean or manuscript investment. Root alone decides acceptance. Baseline remains 9 additional / 39 total; next outcome 40.
+
+## Source selection and freshness
+
+Before retrieving the leads, native exact author/title/source-ID searches were run on original SUMMARY.md, discovery.md, PROOF.md, review.md and DECISION.md files for centrally essential, nil-clean matrices, Calugareanu/Călugăreanu, Markov–Tuganbaev and 2607.14270. Those initial expressions had no matches. A subsequent guarded, broader complete-body pass reused the r133 retained SHA256/path alias index and refreshed these original report roles, including new/changed records. It queried 1,016 distinct bodies, 1,688 paths, with no hit cutoff. The sole matching path is the ORIGINAL r113 discovery report, not a generated echo. It was read in full: Danchev's nil-clean-ring arbitrary-idempotent-difference regularity question is different from the integral-matrix exchange question. None of that report's bounded-index or direct-limit observations resolves our targets. No old disposition was overridden.
+
+Coverage is limited to the original named report roles, not all scripts or arbitrary source text; excluded copied inputs/evidence/replays and generated inventories do not become scientific exclusions. r111–r113 original reports remain in scope. `history-receipt.json` preserves all queried hashes/aliases and new/changed paths. This is lexical freshness within this scope, not mathematical novelty. Deviation: the expanded history pass completed after the first two source downloads; initial lightweight exact queries preceded them as required. No substantive investment depended on the preliminary negatives.
+
+After learning the final source IDs, `exact-alias-receipt.json` reopens the 1,016 complete representative bodies with exact arXiv/DOI/title aliases, verifying every representative hash unchanged. No hits or drift; complete ledger/prior-context bodies also queried. This supplements the original pre-retrieval screen; it does not retroactively turn it into a complete source-ID screen.
+
+Sources actually retrieved: Tuganbaev, arXiv:2204.12127, current v2 dated 30 May 2022 (actual 112-page PDF; source labels below); his two-page conference report; Călugăreanu–Pop's author-hosted 16-page 2021 manuscript; Călugăreanu's 16-page 2022 manuscript, correction and TWO addenda; and the 2026 author manuscript `new-short.pdf`. The 2022-paper addendum is dated **3 September 2026**, and must not be treated as an old unresolved example list. URLs, observation dates, hashes and failures are in `http.jsonl`. Author copies are not asserted byte-identical to journal versions. The 2021 journal download failed TLS verification; no certificate bypass was attempted. The MDPI web reader returned 429; no retry. An arXiv v1 HTML reader timed out; actual latest PDF and metadata were used instead.
+
+## Q1. Tensor-product closure: excluded as a routine source adaptation
+
+Exact question: Tuganbaev v2, Open Question 1.1.11, immediately after Propositions 1.1.7–1.1.8: is the tensor product of centrally essential algebras centrally essential? In the surrounding explicit setting, F is a field, the algebras are associative unital F-algebras, and centrally essential means every nonzero a admits c in the center with 0 != ac central. No finite-dimensional restriction occurs here.
+
+For any finite tuple (a_i), one can find central c such that all a_i c are central and at least one is nonzero. If some noncentral a_i remains, multiply by a central element that sends this a_i to a nonzero central element. Already central entries stay central; the number of noncentral entries strictly decreases; the selected entry guarantees that the tuple is still nonzero. This is exactly the finite coefficient reduction in the nearby Proposition 1.1.7, with its evident typography corrected only for reading, not nominated as a correction.
+
+Apply this to a nonzero tensor written with linearly independent B-coefficients: multiplication by c tensor 1 leaves a nonzero element of Z(A) tensor B. Rewrite it using linearly independent Z(A)-coefficients and apply the same reduction to the B-coefficients. Multiplication by 1 tensor d leaves a nonzero element of Z(A) tensor Z(B), which lies in Z(A tensor B). Both multipliers are central in the tensor product; their product is nonzero since its product with the original tensor is nonzero. Thus the ordinary field-based closure follows by two applications of the source's own coefficient trick. Iterate for finite products.
+
+The decisive objection is routine/source adaptation, not an open badge or an absence of a web hit. No discovery is nominated, no claim over arbitrary base rings is substituted for the field setting, and no worldwide-priority claim is made. Substantial alternative-base-ring questions were not sourced here.
+
+## Q2. Formal-power-series closure: unresolved, lower priority
+
+Exact question: the conference report, section 3, asks whether for EVERY associative unital centrally essential ring R, R[[x]] is centrally essential, x central. The later actual v2 source gives Proposition 3.1.5 and Theorem 3.1.6 for finite-dimensional algebras. Their proof explicitly uses the finite-basis isomorphism F[[x]] tensor R = R[[x]]. This is not a proof in unrestricted dimension; it is not a new candidate case.
+
+The finite coefficient reduction in Q1 does not centralize infinitely many coefficients in finitely many steps. Nor does failure of a common constant multiplier refute Q2: an allowed central multiplier is a whole series c(x) in Z(R)[[x]], and coefficient convolutions can cancel. Precisely, the missing step is to construct, for each nonzero f=sum a_i x^i, a series c=sum c_j x^j with every c_j central such that every sum_{i+j=n} a_i c_j is central and at least one is nonzero; or exhibit a centrally essential ring and f for which every such convolution is zero whenever central. No such construction or counterexample was found. Product/direct-sum rings with available central component idempotents do not automatically supply an obstruction: they permit projection onto a finite-dimensional component.
+
+## Q3. Every nil-clean integral 3×3 matrix is exchange: strongest survivor, unresolved
+
+Exact source statement: Călugăreanu–Pop 2021 Conjecture 1.1, repeated as Călugăreanu 2022 Conjecture 3.1 and in the 2026 introduction. For EVERY E,N in M3(Z) with E²=E and N nilpotent, set A=E+N. Does there exist M in M3(Z) such that F=A+M(A-A²) satisfies F²=F? No bound on entries, denominators, nilpotence index beyond automatic N³=0, or special triangular shape is inserted.
+
+Closest actual proofs read: 2021 Proposition 3.3, Theorems 4.1 and surrounding completion/exchanger derivations; 2022 Theorem 3.6 for a nilpotent similar to the ordinary shift and the later general weighted-shift calculation that ends without an exchanger. The correction removes the ID hypothesis in Theorem 2.2, not the conjecture. The September 2026 addendum makes the older undecided numerical matrix CLEAN and lists explicit clean decompositions for all five examples; these are excluded before any new counterexample claim. The 2026 paper gives a lower-triangle idempotent-completion strategy and proves an obstruction for its source-known nonexchange families. It explicitly remains partial. We do not extend that theorem to all nil-clean matrices or nominate errors in its displayed special cases.
+
+### Sustained arithmetic route
+
+Put B=A-A² and let L be the Z-row lattice of B. The exchange problem is precisely to find an integral idempotent F all of whose row differences F_i-A_i lie in L. Rational exchange, finite-field exchange and approximate solutions do not solve this lattice problem.
+
+An informative necessary condition is compatible across every prime p. Integral idempotents are unimodularly diagonalizable over Z, so E mod p has the same rank r as E. On ker(A-I) over F_p, E is injective: E v=0 would imply Nv=v, impossible for nilpotent N unless v=0. On ker A, I-E is injective: (I-E)v=0 would imply Nv=-v, again impossible. Consequently
+
+    dim ker(A-I mod p) <= r <= rank(A mod p)      for every prime p.
+
+Any integral exchange witness F necessarily obeys the same inequalities with rank F in place of r, because Fv=0 for Av=0 and Fv=v for Av=v. Thus the nil-clean decomposition supplies a single rank compatible with all these elementary local obstructions. This explains why trying to force incompatible modular ranks is unlikely to produce a nil-clean counterexample. It is an uncredited necessary-condition observation, not an integral lifting theorem.
+
+The tempting choice F=E already fails in a trivial source-known positive case. Take E=diag(1,0,0), N=E12+E23. Then B has rows (0,0,-1),(0,0,1),0, whereas E-A has a row (0,-1,0), outside its row lattice. However M=diag(0,-1,0) gives F with first row (1,1,0) and other rows zero, an idempotent. This blocks only retaining the original idempotent, not exchange.
+
+`checks.py` exactly tests 3,712 nil-clean decomposition pairs in M3(F2), verifies all rank bounds, and checks all 512 matrices over F2: the attainable exchange-idempotent ranks equal the integer interval between the two displayed bounds. It also checks the integer obstruction and alternative exchanger above. These finite controls do not prove sufficiency over Z/p^k or Z. They are not new parameter-case nominees.
+
+The exact missing step is to construct a rank-compatible integral idempotent in A+M3(Z)B, including singular B and all Smith invariants, or to produce an explicit nil-clean A for which that entire coset has no idempotent. One possible route would prove compatible lifting over prime powers and a justified integral patching statement; neither is established here. Rational solvability, ranks modulo primes and a finite search cannot replace either bridge. The strongest objection remains this absence of a global lattice lift, compounded by the fact that the completed computations are only classical finite-ring controls.
+
+## Registry observation and chronology
+
+One default-HEAD observation at 23:30:02 UTC gives Omega aa026efa802f4361758b827d6b68231ac353948f (commit time 23:28:43 UTC), beyond r134's 8a9f34a98b9b36553571808bf4187356a94a25ae. A fixed comparison 8a9f→aa026 returns 12/12 commits and 7 paths, status ahead, correct merge base, below commit/file caps. It changes Wang's semigroup-algebra Conjecture 5.3 refutation and a spectral-defect document. Actual Wang problem, library note and proof blueprint sections were read; the statement is an ordinary semigroup-algebra Davenport-constant equality, not Q1–Q3. No formal audit of Wang is claimed; it is public prior material and ineligible for nomination. The mistaken initial organization spelling returned 404, preserved before the correct retained URL was used.
+
+OpenAI default HEAD remains 7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a. Retained r133 2108→e1ff (14 commits /15 paths) and r134 e1ff→8a9f (12/154) are qualified ancestry/path receipts only, not semantic clearance for our questions. Earlier r129/r130 and r125/r119/r3/r4 coverage is not promoted beyond its documented scope. We did not rebuild huge unchanged inventories or chase a moving HEAD. No complete historic registry-body query for Q1–Q3 was performed; current-registry novelty clearance remains HOLD. The original-report history search does not fill that separate gap.
+
+Searches used exact author/object/conjecture aliases and primary author/source pages; no exact full public settlement of Q2/Q3 was located in this bounded screen. This is not an absence theorem, a specialist citation audit, or a novelty PASS. The short Q1 argument is excluded independently of that limit. No root investment clearance was requested because no substantive complete survivor was obtained.

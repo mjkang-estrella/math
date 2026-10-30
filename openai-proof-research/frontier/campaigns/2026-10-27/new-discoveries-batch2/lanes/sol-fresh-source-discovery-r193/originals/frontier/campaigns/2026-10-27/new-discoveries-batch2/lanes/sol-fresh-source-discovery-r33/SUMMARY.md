@@ -1,0 +1,11 @@
+# Full sharp permutation target unresolved — credit0
+
+Fresh full target: Oswald–Zhou correction, Numer.Math154(2023)521–525, Section1 Eq2/p522: EVERY complex Hermitian PSD unit-diagonal matrix admits a simultaneous coordinate permutation whose strictly lower triangular part has spectral norm<=(2/pi)||B||. Actual publisher HTML/PDF, current AIM568/clopenOP00384 and author follow-ups read. No full proof or strict every-permutation counterexample found.
+
+Early closest-body screen: actual2016extremal truncation,2017SOR,2022conjugate-transform, latest25October2026Long Cor8.11/proof, and accepted-true pinned OpenAI quadratic paving main theorem. Concrete fixed-order, Schatten-to-op and paving-induction bridges do not close the sharp universal question. No bounded noveltyPASS or worldwide priority claim.
+
+Exact capped checker PASS270source-average entry identities/2616permutations, exact known two-basis Gram check, and rational512dimensional CLASSICAL FIXED-ORDER obstruction. None refutes the existential source claim. Floating diagnostics88matrices/39228order evaluations, additional8x8all40320orders and32x32sample1000orders found no source counterexample. Finite diagnostics are not proofs. Structured half-Fourier candidates admit the known basis-block ordering with ratio1/2; no credit.
+
+Current Omega dev5f94e981243583f47844e82a3f385c15372fb4b7; complete3commit/7filedelta fromr32 (FibonacciAtomic/documentation; latest11:03:40UTC). Other roots unchanged. Complete inherited scoped inventories and prior delta hashes retained; whole-dev never claimed complete. Exact source URLs/SHA256/UTC/failures recorded. Wrong-repo422, category404, missingbs4 corrected without bypass/retryloops.
+
+`bash run-checks.sh` reproduces exact checks and deterministic diagnostics with512MiBAS/CPU/wall/BLAS1, serial process-group RSS45ms/2800MiBguard. No Lean or inherited candidate oleans; no type/axiom certificate claimed. Strongest objection: absence of an all-dimension sharp ordering theorem or exact every-permutation violating matrix. No PROOF.md, paper, formal investment, nomination or independent review warranted. Root owns acceptance;5/30additional,35/60total unchanged. Solo, onlyr33written; no git, tabs, messages/uploads/accounts or other mutations. See discovery.md/provenance.json.

@@ -1,0 +1,11 @@
+# Root adoption of the merged pendulum source packet
+
+The complete unconditional literal theorem is preserved: PendulumTimeMap.source_claim : PendulumTimeMap.SourceClaim. Root independently replayed the final archive from a fresh source-only extraction: all 14 mathematical modules and 139 actual declaration records pass. The rebuilt archive is byte-identical (SHA256 cd5c7e4ce387b810dcd5b96f307a23b9ab688db3bb4b4908373496e28eee1fd6). The 51 payload hashes, 68 delivery-manifest entries and 69 frozen original files verify unchanged. The actual audit includes types, origins, transitive permitted axioms and safety, including helpers/private declarations.
+
+Root read the complete manuscript source. It proves the literal closed-interval convexity claim using the paired M0/M1 identities, higher positive-part moments, finite positive binomial expansion, justified integration and literal endpoint continuity. No formal strictness or C2 strengthening is claimed. The published successor title, Mottram's authorship, equation (26) and Conjecture 1 are retained.
+
+Production is incomplete: no authored PDF exists and no visual QA was performed. The PDF skill requires the authoring marker to run successfully before creation. Its Node startup failed under the unchanged 512 MiB guard; the failure and unsupported-option attempt remain preserved. No marker success, deterministic PDF or completed manuscript-production claim is made. The text manuscript remains available for independent mathematical review.
+
+An independent Sol review is commissioned for exact source fidelity, ordinary mathematics, literal theorem, exhaustive formal audit, source manuscript, and substantive eligibility. It must retain production and historical-priority holds. The capped historical merge intervals and incomplete OpenAI tree/patch coverage remain explicit; no global novelty or acceptance is inferred from fresh formal replay. No counts change: nine additional /39 total, next40.
+
+Root helper guard sampled 35,848,192 bytes over 39.522 seconds for replay/rebuild supervision. This is not the Lean peak and not a continuous peak guarantee; individual Lean receipts are retained under fresh-extraction/logs. The predecessor resource and PDF qualifications remain unchanged.

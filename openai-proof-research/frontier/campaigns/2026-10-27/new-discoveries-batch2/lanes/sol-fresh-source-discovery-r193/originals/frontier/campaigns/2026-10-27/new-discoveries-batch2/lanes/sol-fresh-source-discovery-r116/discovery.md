@@ -1,0 +1,59 @@
+# Matkowski's full converse Minkowski question: unresolved
+
+No discovery nomination. Credit 0; observed counts remain 8 additional / 38 total; next outcome39 belongs to root. No PROOF.md, Lean or paper.
+
+## Exact primary target and attribution
+
+Janusz Matkowski, *Convexity of Generators of L^p-like Paranorms*, Journal of Convex Analysis 33 (2026), nos.1–2,293–301, DOI10.68381/jca33018, Conjecture2.4, printed p299. Received7February2024; accepted7April2025. Actual publisher PDF obtained at https://www.heldermann-verlag.de/jca/jca33-oa/jca2591-b.pdf, redirected to https://journalofconvexanalysis.com/articles/jca33018/jca33018.pdf. Exact bytes, UTC, final URL and SHA256 in http.jsonl. Read the full nine-page text, especially definition p293, Theorems2.1/2.2 and their proofs pp294–298, Example2.3, Conjecture2.4 and Remarks2.5/2.6 pp299–300. No scope is inferred from a search snippet.
+
+Let (Omega,Sigma,mu) be any measure space admitting two disjoint measurable sets of finite strictly positive measure. For any bijection phi:(0,infinity)->(0,infinity), define P_phi(x) on integrable simple real functions by phi^{-1}(integral over {x!=0} of phi(|x|)), or zero if the support has measure zero. In particular S+ includes zero-valued coordinates and the zero function. Conjecture2.4 asks: if P_phi(x+y)<=P_phi(x)+P_phi(y) for EVERY x,y in S+, must phi be convex on (0,infinity)? No monotonicity, continuity, strictness, growth or probability-space normalization is part of that conjecture.
+
+Selected the entire Conjecture2.4, not just an increasing/differentiable version or an atomic positive result. Adjacent Conjecture3.4 reverses P's inequality and asks for concavity; it is not a second nomination and is not resolved here.
+
+## Early screens and reconciliation
+
+Gaussian Radon Conjecture7.2(2) of Chan–Kalai–Narayanan–Ter-Saakov–White, arXiv2507.01353v1 / DOI10.1007/s00454-026-00870-6, was screened and REJECTED AS A FRESH TARGET after actual prior r47 SUMMARY/discovery reading. That lane already sustained exactly the full prescribed-split question, with a precise failed intrinsic-volume-row inequality. r32/r34 are additional source screenings. Current arXiv abs lists v1 only; journal body obtained too. No claim that this open question is solved, routine or new to the campaign.
+
+Matkowski's name also occurs throughout the October25 twenty-proof campaign and its release copies. Actual source.json and PROOF.md show this is MathDB373182, the scalar quasi graph-additive equation f(f(-x)+x)=f(-f(x))+f(x), with Kiss's public counterexamples. That is not the paranorm question. Other matches concern Himmel–Matkowski beta/gamma characterizations, classical m-convexity references, paranormed-space bibliography, and paranormal groups. These are not semantic matches to Conjecture2.4. Source-name overlap is not family identity.
+
+All-date original reconciliation: audit.py streams originals under openai-proof-research, including copied review/context mathematics, old campaigns, SCREENED-OUT, scripts, agent/open-problem notes and sources. It records path/SHA256/size/mtime and at most three bounded excerpts per original; no content corpus dump. priority_scan.py separately completed64,142 small Markdown/Python/shell originals before target investment. Full pass continued in three fixed-cap runs; first two hit the voluntary175s checkpoint, not a raised resource cap. Audit3 completes traversal at335,966 paths. See audit-receipts.jsonl, originals.jsonl, audit.sqlite, excluded-echoes.jsonl and coverage.json. Exact DOI/alternate publisher-ID supplement uses hash representatives with full path mapping retained. This is bounded semantic screening, not global absence. Binary-only bodies, excluded generated metadata and concurrent changes remain explicit gaps. Generated inventory-content, required-content, semantic-hit and duplicate-corpus files were never recursively read as mathematics. Historical JSON search/catalogue responses that matched a topic are not mathematical source evidence.
+
+## Closest source proofs and exclusions
+
+Theorem2.1 requires increasing phi, strict inequality for nonproportional functions and limsup phi(r)/r=infinity. Its proof uses strict superadditivity and an unbounded-increment argument to obtain midpoint concavity of the inverse. Dropping those premises is exactly an unclosed step, not a new corollary. Theorem2.2 handles sets with 0<min(a,b)<=1<=a+b. Its a=1 proof shifts an arbitrary midpoint; its a+b=1 proof iterates complementary affine means toward the arithmetic mean. Neither makes arbitrary fixed masses a,b normalize to these values. Scaling mu changes P_phi, and there is no authorization to assume the rescaled functional still satisfies the hypothesis. No classical exclusion is claimed from resemblance to Jensen or Mulholland.
+
+The source itself cites the1990 converse Minkowski theorem for measures taking values on both sides of1. An attempted guessed AMS endpoint returned404 (not a read of that theorem); full antecedent remains a prior-art gap. Author-record HTTP attempt timed out. Bounded title/author follow-up searches found the2026 source record and older mean/functional-inequality works; that does not exhaust citations or establish absence of a successor. The actual source's closest theorem proofs were inspected before numerical candidate investment.
+
+## Sustained routes and exact failures
+
+1. **Disjoint-support reduction and regularity.** For arbitrary bijective phi put g=phi^{-1}. Taking x=g(s/a)1_A and y=g(t/b)1_B gives g(s+t)<=g(s)+g(t). This alone neither supplies monotonicity nor Jensen concavity of g. The source's Remark2.5 explicitly supplies additional regularity alternatives; its Remark2.6 excludes decreasing monotone bijections, which does not exclude nonmonotone bijections. No monotonicity assumption is smuggled into the universal endpoint.
+
+2. **Finite-slope linearization.** Restrict temporarily to increasing phi, extended by phi(0)=0. Disjoint support gives superadditivity of phi. If kappa=lim phi(t)/t exists and 0<kappa<infinity, then for F(u,v)=g(a phi(u)+b phi(v)), F(nu,nv)/n tends to au+bv (also on axes). Subadditivity gives F(nu,nv)<=nF(u,v); hence F(u,v)>=au+bv and phi(au+bv)<=a phi(u)+b phi(v). This is a necessary weighted inequality, not ordinary Jensen when a+b!=1. It does not complete arbitrary-phi regularity or the remaining convexity argument. No result under this extra hypothesis is nominated. The source's own convex examples with finite slope show why its infinite-growth route cannot just be reused.
+
+3. **Concrete nonconvex superadditive generator.** Try phi(t)=min(t^2,t), t>0, an increasing continuous bijection. It is superadditive: if u+v<=1, the quadratic inequality applies; if u+v>=1, phi(u)+phi(v)<=u+v=phi(u+v). It is nonconvex: at(3/4,1,5/4), the center exceeds the endpoint average by3/32. Its inverse is max(sqrt(s),s). Thus the scalar inverse subadditivity condition holds, but the full P hypothesis fails. On a two-point measure space with each atom1/10, take x=(1/2,100),y=(10,0). Then P(x)=401/40, P(y)=1, P(x+y)=221/20, so P(x+y)-P(x)-P(y)=1/40>0. This is a complete exact rejection of the attempted generator, NOT a refutation of the source conjecture. The square-root component alone can be bounded by Minkowski after applying min(t,sqrt(t)); the linear inverse branch defeats that incomplete proof.
+
+4. **Smooth localized perturbation / robustness.** Try the explicit rational function
+
+phi_*(t)=t^2/(1+t) - (1/1000) [t^2/(1+t)^2]/[1+10000(t-2)^2].
+
+It is positive and onto: it lies between (1-.001)t^2/(1+t) and t^2/(1+t), tends to0 at0 and to infinity at infinity. It is strictly increasing: write q=t^2/(1+t)^2,R=(1+10000(t-2)^2)^{-1}; |R'|<=100, q'/phi0'<=1, q/phi0'<=1, so |(qR)'|<=101 phi0' and phi_*'>=.899 phi0'>0. It is nonconvex: exact phi_*''(201/100)=-17578551005/8208541201<0. This verifies that the object is an admissible nonconvex bijection, but DOES NOT verify the functional hypothesis. Seed116 exploratory bisection checks of12,000 random input pairs per mass choice found no positive defect for(1/10,1/10) or(1/100,1/5), and a clear violation for(2,2). These are floating diagnostics without interval guarantees or universal coverage. There is no claimed counterexample or candidate proof.
+
+The robustness approach would need a lower bound on the base subadditivity margin strong enough to absorb perturbations uniformly near zero inputs, proportional pairs, and at infinity. Strict sampled margins are not such a bound. Differentiability of the generator does not make a four-variable global inequality follow from its Hessian; P need not be homogeneous or convex. No such substitution is made.
+
+## Missing universal step, strongest objection and falsifier
+
+The most concrete remaining step is to prove or disprove, for ALL u1,u2,v1,v2>=0, with a=b=1/10,
+
+phi_*^{-1}(a phi_*(u1+v1)+b phi_*(u2+v2)) <= phi_*^{-1}(a phi_*(u1)+b phi_*(u2)) + phi_*^{-1}(a phi_*(v1)+b phi_*(v2)).
+
+If proved, that would refute the FULL intended Conjecture2.4 on a genuine two-atom measure space, since every nonnegative simple function there is a pair, and phi_* is genuinely nonconvex. It has not been proved. A single exact violating pair would kill this generator, not the conjecture. Conversely a positive source resolution must cover arbitrary bijections and arbitrary nontrivial measure spaces; the necessary scalar/weighted inequalities above do not do so. Strongest substantive objection: all finished positive deductions are classical/source reductions; none is a full source resolution. No partial or parameter-restricted theorem is nominated.
+
+## Current registries: precise limits
+
+Fresh HTTP at21:29:57UTC: Omega ab0fa0287d4fcc5416699ceb07e4ce97ffbff4b4 (commit21:28:23UTC), OpenAI7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a unchanged. The new Omega comparison from7f200dc has14commits/19paths, below cap; cached0a10157→7f200dc has44commits/253paths. Reused r3 structural receipts cover1b999d9f→0a10157 across11uncapped comparisons/205commits and70missing-patch bodies. This is structural history only. registry.py hashes the supplied five receipt files and screens the complete350197/174524 baseline tree paths and the two newer comparison patches using target/subject terms. The first script mistakenly used the earlier350009-path root-current tree and a nonexistent sources/ subdirectory for the cached delta; registry-run.log records this, and registry-corrected.log uses the final-freeze baseline and correct delta. No stale blanket403/cap claim.
+
+Actual current bodies read: Omega Carlen–Lieb trace-convexity supplier and Minkowski null-cone rigidity; these state matrix trace and quadratic-form conclusions, with no arbitrary scalar generator or paranorm implication. OpenAI log-Brunn–Minkowski README is bibliographic only, not a theorem-body clearance. No complete semantic audit of unnamed/misnamed registry bodies, or worldwide-priority claim, is made. Target-specific registry freshness remains HOLD despite improved structural coverage. No assertion that later public counterparts would be prior without comparing dates.
+
+## Reproduction and resource scope
+
+Run checks.py, audit.py, supplement.py, registry.py and fetch.py ONLY through the unchanged ../sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py. AS/group RSS512MiB, CPU210s, wall230s, nominal40ms, BLAS1. audit.py resumes through its own path/size/mtime records; exact hashes are retained. No cap was raised. Bisection checks are explicitly floating. Exact rational checks use Python Fraction. Source HTML parsing initially failed because bs4 was unavailable; corrected with standard HTMLParser. Failure is preserved in progress/provenance and tool receipt, not presented as success. All writes remain in this lane; no children, git, shared edits, posting, accounts, uploads, contact or browser tabs.

@@ -1,0 +1,13 @@
+# Frank ordinal attenuation: root exclusion
+
+29 October 2026. Adopt the independent review's substantive exclusion. Candidate credit remains zero; accepted counts remain 9 additional / 39 total. Stop Lean and manuscript investment.
+
+SOURCE and ordinary MATH pass at the inspected published scope. The construction genuinely gives conventional consecutive-score ordinal margins with positive category probabilities whose correlation exceeds the latent uniform correlation. It does not merely change score labels. Preserve both the analytic existence proof and the exact twenty-category witness.
+
+Root independently checked the review's simpler complete reduction. For uniform U,V and C1 conditional mean m, put l=u-1/2, s=1/12, r=Corr(U,V), h=m-1/2-r*l and A=integral h². Orthogonal projection gives integral h=integral h*l=0 and Cov(h(U),V)=A. Hence Corr(U+e*h(U),V)=(r*s+e*A)/sqrt(s*(s+e²*A)), whose derivative at zero is A/s. Nonaffine regression makes A positive. Bounded h' keeps a sufficiently small signed perturbation increasing. Normalize its range and quantize both margins separately into consecutive integer scores; uniform approximation preserves the strict correlation gain and positive bin probabilities. The same number of categories may be used on both sides. Exchangeability and a maximal-correlation optimizer are not needed.
+
+Frank's required hypotheses follow from the smooth positive density and elementary endpoint mean/derivative evaluations already rederived in the root preliminary record. Thus the complete target follows from elementary conditional-expectation projection, first variation, and monotone quantization. The conventional-score bridge is explicitly closed; there is no remaining source-specific structural or optimization step. Under this campaign's strict routine-adaptation standard, this is excluded. This decision is not based on proof length, finite numerical evidence, or an assertion that an unread paper contains the theorem.
+
+The independent reviewer-written integer interval checker is replayed here on a copy. This root replay is reproducibility of the independent checker, not a third independent implementation. Both checkers certify separation by 201/250.
+
+Full Beare and Student-t bodies remain unread; historical priority and broader literature coverage remain bounded. No earlier exact Frank refutation is asserted. Those access gaps are preserved and do not erase the complete routine-adaptation objection. Reopen only on concrete evidence of a missing/nonroutine bridge or a materially different literal source scope, not another opinion-only review.

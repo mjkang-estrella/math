@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r193 Romero–Petingi Conjecture 10 remains unresolved in full scope. Exact equivalence requires a clique component in every regular triangle maximizer at all feasible N>=2(d+1); large-order comparison does not close it. Corrected checker and root freeze verification pass; initial faulty pruning preserved. See root-r193-handback. Fresh structural r196 assigned; arithmetic r194 and analytic r195 continue. Counts 9 additional / 39 total, next 40.
+
+
 r192 Kovalev linear Lipschitz clustering Question 6.5 remains unresolved. Per-space/uniform reduction and collision criterion retained; all-space linear stability missing. Method obstructions are not source refutations. Root exact replay and scientific/manifest verification pass. See root-r192-handback. Fresh analytic r195 assigned; structural r193 and arithmetic r194 continue. Counts 9 additional / 39 total, next 40.
 
 

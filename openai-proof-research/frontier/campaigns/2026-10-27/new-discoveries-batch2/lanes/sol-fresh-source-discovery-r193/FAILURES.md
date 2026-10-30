@@ -1,0 +1,7 @@
+# Preserved failures and limits
+
+Initial read-only pwd/rg inventory ran without helper_guard, contrary to the command restriction; output was overbroad/truncated. The next bounded cat read of guard/instructions used the native-bounded-read allowance. All later commands use the specified guard/environment. No claim of perfect workflow compliance.
+
+Initial recursive checker wrongly required every remaining vertex to satisfy its residual degree using only later-numbered vertices, eliminating valid graphs. It printed PASS on only8 empty base graphs. Preserved checks-initial-invalid.py/json, explicitly INVALID and superseded. Corrected feasibility uses all unprocessed vertices; independent mask-distribution census plus known labeled counts now passes. PDF extraction emitted two font-mismatch warnings; mathematical text was readable.
+
+Latest withdrawn star PDF404; Abrego institutional guessed homepage404; Romero institutional homepage404; Washington institutional route certificate-verification failure. No TLS bypass, retry or access-control challenge. Exact errors/URLs/UTC in http.jsonl. Bing RSS returned irrelevant200 bodies; no search clearance inferred. Registry fetch was suppressed by inherited-URL filter before network, so this lane has NO fresh registry head. No prohibited GitHub/publisher/challenge retries, historical reconstruction or UWA2014 retry. Material2002/2006/2025/2026 predecessor bodies remain unread.
