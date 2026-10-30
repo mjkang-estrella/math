@@ -1,0 +1,9 @@
+# r61 — complete ordinary grid refutation; routine bridge excludes credit
+
+Two fresh primary conjectures screened. Selected Mühlherr–Poullot latest2609.02249v2 Conjecture1(1), actual PDFp17/HTML. Complete ordinary proof in PROOF.md: the7x7 Cartesian grid has acyclic-orientation count divisible by4, contradicting the universal2mod4 assertion for odd dimensions>=3. No claim about actual AO-Hamiltonicity or the other conjectured families.
+
+Independent routes: chromatic evaluation at3 and a reflection bijection on color orbits, reducing to a fully explicit4-state certificate at4x4. Exact row recurrence gives C_7x7(3)=41869995708; independent normalized backtracking gives C_4x4(3)/6=1302. Four exact orbit-enumeration folding checks pass. run.sh reproduces all checks under unchanged AS/groupRSS512MiB,CPU210/wall230,40ms sampling,BLAS1. One missing-bs4 failure retained; stdlib repair passes.
+
+**Recommendation EXCLUDE/credit0:** actual Stanley Cor1.3 and the already-public SAME-OBJECT OEIS7x7 three-color count give a complete routine bridge to the entire refutation. No new generic tool claimed. Gao published Conj4.1 independently fails by simple scaling and is also excluded. Root decides acceptance; counts remain7additional/37total.
+
+Current-registry freshnessHOLD remains: inherited403 respected, no API retry/bypass/reset evidence; latest-observed Omega6c27b0a… at15:49 is not currentHEAD. Actual source/latest history, closest SSW and Stanley bodies, known count, URLs/UTC/versions/SHA/access limits retained in provenance.json. No journal-body equivalence, immutable2012 OEIS snapshot, exhaustive registry or worldwide priority claim. No Lean, nomination, paper, shared edit or external action. Precise scope/strongest objections in discovery.md. Full ordinary refutation is complete; eligibility fails the routine-corollary screen.

@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r205 Buczynski–Teitler–Woo Conjecture6.1 remains unresolved. Middle catalecticant injectivity in every dimension, degree and allowed characteristic is missing. Rational rank34/35 defeats the proposed moment-curve specialization, not the generic conjecture. Root private replay and original/copy/manifest verification pass. See root-r205-handback; fresh arithmetic r208 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r204 medial-axis rectifiability Question2 remains unresolved. Rank preservation is publicly sufficient; derivative rank loss alone does not realize an exact higher-dimensional equidistance fiber. Root replay and frozen primary/manifest integrity pass. See root-r204-handback; fresh analytic r207 assigned. Counts 9 additional / 39 total, next 40.
 
 
