@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r200 radial convexity / fixed-degree matrix monotonicity Conjecture 4.10 remains unresolved. Global derivative positivity recovery for all n>=3 and arbitrary-function regularity remain unproved; positive Hadamard-square rational witness is only a pointwise method obstruction. Root replay and actual final-freeze verification pass; first-read freezing deviation retained. See root-r200-handback. Fresh analytic r201 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r199 normalized totient deficiency full ordinary candidate retained for independent source-scope and routine-adaptation review. Claimed mean absolute error and natural-density limits at 1; no pointwise or finite-cutoff distribution claim. Complete classical cofactor bridge supplied. Root exact replay and final integrity pass; no Lean, manuscript or credit. See root-r199-handback. Counts 9 additional / 39 total, next 40.
 
 

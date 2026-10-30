@@ -1,0 +1,13 @@
+from work import *
+guard=B/'lanes/sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py'
+save('guard-binding.json',dict(path=str(guard),sha256=sha(guard.read_bytes()),environment=dict(OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1',PYTHONDONTWRITEBYTECODE='1'),AS_MiB=512,RSS_MiB=512,CPU_seconds=210,wall_seconds=230,limits='Guard samples group RSS; unsampled transients not ruled out. Caps never raised.'))
+p=subprocess.run([sys.executable,str(L/'checks.py')],capture_output=True)
+(L/'checks.json').write_bytes(p.stdout);save('checks-execution.json',dict(utc=now(),exit=p.returncode,stderr=p.stderr.decode(),limits='One exact matrix control only, no uniform theorem.'))
+assert p.returncode==0
+http=[json.loads(s) for s in (L/'http.jsonl').read_text().splitlines()]
+save('source-receipt.json',dict(utc=now(),retrievals=http,primary_freeze='primary-freeze.json',latest_target='Unversioned abstract lists only v1, 12 Oct 2026 20:57:57 UTC',publisher_comparison='Ok actual Cambridge full text accessible, online 2024-12-17, publication 2025-02; Hansen/Audenaert published bodies not authenticated',first_read_limit='Primary copy freeze occurred after first primary reads; current freeze only verified.'))
+save('access-receipt.json',dict(utc=now(),attempts=len(http),failed=[r for r in http if 'error' in r],denied_routes_not_attempted=['GitHub API/raw/codeload/diff/patch','ScienceDirect','Google challenge'],current_registry='No current complete public proof registry or GitHub head authenticated',historical_caps='Parked; not reopened',policy='No retries after denial; no proxies, browser, challenges, TLS disabling or external writes'))
+save('provenance.json',dict(utc=now(),status='FRESH_UNRESOLVED_PRIMARY_QUESTION; ZERO_NOMINATIONS',counts=dict(additional=9,total=39,next=40,lane_credit=0),scientific_freeze='scientific-freeze.json',primary_freeze='primary-freeze.json',coverage='coverage-receipt.json',target_alias_screen='full-target-alias-screen.json',sources='source-receipt.json',access='access-receipt.json',failures='FAILURES.md',checks='checks.json',administrative_snapshots=['snapshot-NEXT.md','snapshot-ledger.json','snapshot-prior-campaign-context.json'],final_verification='verification-receipt.json',limitations=['Full source conjecture unresolved','Global positivity-recovery and regularity lemmas unproved','Bounded history and live prior-art coverage only','Workflow deviations explicitly preserved']))
+excluded={'finalmanifest.json','verification-receipt.json'}
+save('finalmanifest.json',dict(utc=now(),exclusions=sorted(excluded),files={str(p.relative_to(L)):sha(p.read_bytes()) for p in sorted(L.rglob('*')) if p.is_file() and str(p.relative_to(L)) not in excluded}))
+print('Final payload written; separate guarded verify required.')
