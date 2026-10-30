@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r194: Matrix-ring recognition remains unresolved. The source covers even matrix sizes; the conditional composite-size transfer does not prove the missing odd-prime bases. The triangular bimodule ring has the same order and center size as M3(F2), but different commuting-graph degree counts, so it is only a method countermodel. Preserve the unread 2024 predecessor and 2004 attribution qualifications. No nomination or formal investment. Root replay and freeze verification pass; see root-r194-handback. Fresh replacement r197 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r193 Romero–Petingi Conjecture 10 remains unresolved in full scope. Exact equivalence requires a clique component in every regular triangle maximizer at all feasible N>=2(d+1); large-order comparison does not close it. Corrected checker and root freeze verification pass; initial faulty pruning preserved. See root-r193-handback. Fresh structural r196 assigned; arithmetic r194 and analytic r195 continue. Counts 9 additional / 39 total, next 40.
 
 

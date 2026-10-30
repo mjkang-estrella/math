@@ -1,0 +1,37 @@
+# r100 disposition: no campaign-eligible discovery
+
+Counts remain **8 additional / 38 total**. All work is in this lane; no shared files or git operations. Solo, no children. Graph optimization r99, Chatterjee review and parked MMPP were untouched.
+
+## Early all-date duplicate screen
+
+`audit.py` screened 21,812 md/json/txt/tex reports, 18,802 distinct byte contents, under the entire research root, without a date/file cap. Selection includes filenames containing SUMMARY, discovery, FINDINGS, PROOF, review or ledger, and Markdown under review paths. `duplicate-corpus.json` hashes every selected file; `duplicate-audit.json` retains exact matching lines. This is an exhaustive lexical screen of that stated text selection, not semantic clearance or a screen of image-only PDFs.
+
+Before investment, Bergeron/Gaussian inequality was retired on first-campaign pi-discrete-discovery-r2 FINDINGS; Gyenge–Rimányi bow divisibility was retired on the copied r89 discovery report (inside sol-bajnok-beatty-preliminary-review-r1). Neither was renamed or pursued. Other broad hits for “Tian” are mostly “Hermitian”; Noferini hits concern a different matrix-functional-calculus source. Matveeva/2511.02121 and the specific Smith-power question had no previous investigation in these reports. The current public registry, checked separately, has an actual Matveeva body: see below.
+
+Tian prime-factorization was only a preliminary lead. The publisher returned HTTP429 via web fetch; no retry, alternative access route, proof claim or count was made. It is not one of the two completed primary-statement screens.
+
+## Two fresh exact source questions
+
+1. **Bruner's Smith-power question**, as explicitly stated and answered in Noferini 2511.22814v2, Introduction and Proposition1.2: for every integer square matrix A, do its nonnegative Smith forms S_n satisfy S_(n+1)=D_n*S_n with a periodic sequence of integral diagonal matrices D_n for all n>=1? Read the actual counterexample proof in Section2.3. A companion block plus the scalar2 forces the first invariant-factor ratio to switch after an arbitrarily long initial segment. The weaker eventual version is proved in Theorem1.1; the compound-matrix reduction, Jordan-block valuation proof and truncation mechanism in Sections2–3 were also read. **Excluded: public full original-claim refutation and public eventual theorem.** Latest observed version is v2, dated11June2026. No claimed discovery here.
+
+2. **Matveeva 2511.02121v1, Conjecture4.1**, selected in full. For every finite d, rational a_k!=0 and b_k and every rational sequence satisfying sum_(k=0)^d(a_k*n+b_k)s_(n-k)=0 at the applicable indices, its generating function is algebraic iff it is a rational-function diagonal iff it is globally bounded, including positive radius. Definition1.1 fixes Q[n] coefficients. No minimal recurrence assumption or restriction to order2 is added. Actual Definition1.4/1.5, Proposition3.2/3.3, Theorem4.2 and Section4.2 proof bodies read. Latest observed abs/body is v1,3November2025; no subsequent version or universal public proof was located in the bounded queries. This is not an assertion of literature-wide openness.
+
+## Sustained full-scope work and outcome
+
+`PROOF.md` supplies an all-d ordinary argument using established arithmetic differential-equation theorems. Summing gives x*A*S'+B*S=P; after separating the rational branch, the minimal homogeneous annihilator has order1 or2. Chudnovsky–Katz gives regular singularities and rational exponents. The rank-one factor's solution H is therefore algebraic. Ramification gives rational Laurent series S(t^N)/H(t^N); subtracting its finite principal part permits André's integral-primitive theorem. This establishes algebraicity and the classical diagonal implications supply the other directions.
+
+This goes beyond a screen, parameter instance or finite test: no bound on d, recurrence starting index, parameters or sequence length occurs in the argument. Its classical dependencies are explicit and the singular origin, rational solution, q=0 and d=0 branches are treated. **Nevertheless the result is self-excluded from discovery credit**: it is a short structural consequence of deep standard theorems. There is no new-to-literature claim, no candidate/ledger/count edit and no formal/manuscript recommendation. An independent reviewer has not checked the ordinary argument.
+
+## Actual current public bodies and chronology
+
+Fresh default HEADs: Omega `9aef67a59dec08d1ff04a18a3d23560525ab023d`, commit29October2026 19:40:58UTC; OpenAI `7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a`, commit26October2026 21:18:03UTC. Exact pinned raw URLs, bodies and hashes are in registry-bodies-http.json. Omega Blueprint, Scribe, Lean, frozen metadata, Library and Problem bodies were fetched and read. These refute a **different** literal nonzero-parameter belief using s_n=n+1. The Lean `claim` explicitly quantifies that belief, and `result : Not claim` negates it. Neither that Lean statement nor its Blueprint proves or refutes Conjecture4.1; the public prose expressly says so. We do not claim its rational witness, rename it, or equate Blueprint and Lean coverage.
+
+The one OpenAI path hit is a Smith–Toda topology section, not Smith normal forms of powers; actual pinned TeX inspected. Complete frozen baseline inventories were searched and hashed. The c80→dce segment has3commits/191files and the fresh dce→9aef segment3commits/24files, both below300. Earlier segments were saved separately. The 1b999→2130 segment remains88commits/300files, potentially capped; no reconciliation by assumption. Thus global semantic current-registry coverage remains HOLD despite the actual relevant-body comparison.
+
+Closest classical bodies: Beukers AWS2008 Lecture3 slides10/17, with theorem and proof-sketch passages; Bostan–Caruso–Roques 2304.05061v2 Proposition3.1 proof and Theorem5.6; Matveeva's own Section4.2 argument; Yurkevich's dissertation Theorem3.14 corroborates the distinct logarithmic-derivative theorem. Exact downloaded bytes and extracted texts retained. The Beukers theorem is used as an established named dependency, not purportedly reproved by a finite checker.
+
+## Verification, strongest objection and precise gap
+
+Run `bash run.sh` for the network-free exact replay:2,298 assertions, including2,160 coefficient-transform comparisons, the nonrational-residue denominator diagnostic and the already-public rational witness. A prime denominator in exp(arctan x) is an obstruction to a tempting invalid route, not a source counterexample. The finite checks do not prove Conjecture4.1. `helper_guard.py` is the mandated improved guard, byte-copied from the packet: AS/group RSS512MiB, CPU210s, wall230s, nominal40ms sampling, BLAS1; no caps increased.
+
+Strongest objection: the all-scope proof, if correct, is a routine classical reduction and hence ineligible. Mathematical review should focus on minimality before the G-function theorem and global boundedness after ramification/Laurent-pole removal. `PROOF.md` gives those bridges rather than leaving them as hypotheses. There is no asserted open mathematical lemma in that ordinary argument; independent validation of the classical theorem applications is outstanding. Source chronology/novelty completeness remains HOLD because the registry history is capped and web/citation coverage bounded. No worldwide priority, journal-version clearance, formal PASS or independent-review PASS is asserted. Sourcebytes and lane manifests are finalized separately.
