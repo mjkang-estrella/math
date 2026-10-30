@@ -1,5 +1,11 @@
 # Current continuation — 29 October 2026
 
+r204 medial-axis rectifiability Question2 remains unresolved. Rank preservation is publicly sufficient; derivative rank loss alone does not realize an exact higher-dimensional equidistance fiber. Root replay and frozen primary/manifest integrity pass. See root-r204-handback; fresh analytic r207 assigned. Counts 9 additional / 39 total, next 40.
+
+
+r202 regular-sequence additive-bases boundary conjecture remains unresolved. Known upper bounds do not attain the target; the p=3 defect argument does not extend uniformly. Root exact replay and primary/manifest integrity pass; local nonprogression witness is not a source refutation. See root-r202-handback; fresh structural r206 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r203 almost-perfect additive-complement gap Conjecture1.3 remains unresolved. Perfect-subclass radix gap and global3/2 lower bound are known; subsequential factorization gives no all-scale upper bound. Root exact replay and primary/manifest/reference integrity pass. Finch Conjecture14 also unresolved, small-index correction uncredited. See root-r203-handback; fresh arithmetic r205 assigned. Counts 9 additional / 39 total, next 40.
 
 

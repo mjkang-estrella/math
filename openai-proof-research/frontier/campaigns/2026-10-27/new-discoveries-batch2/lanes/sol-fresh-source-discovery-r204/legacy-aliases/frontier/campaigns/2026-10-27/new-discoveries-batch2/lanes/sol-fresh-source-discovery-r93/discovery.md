@@ -1,0 +1,58 @@
+# Scope, early screen and substantive work
+
+This lane works only on finite permutation classes, with asymptotics quantifying over every positive size. No discovery is nominated. Numerical observations and formal-registry badges are not novelty evidence.
+
+## Context and all-date overlap
+
+Ancestor and batch AGENTS, both campaign ledgers, prior-campaign-context, NEXT and pinned upstream identity were read/decoded; their bytes and decoded contents are in context.json. The immutable starting corpus is openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb, with CONTENTS read as a catalogue, not theorem evidence. Current instructions supersede old acceptance totals and old delegate rules. No other campaign family was reopened.
+
+Initial project-wide rg searches preceded source investment. A focused search located first-campaign pi-discrete-discovery-r7/FINDINGS.md: its Section3 already tested layered permutations while investigating Vatter2.1. That actual report was read, and composition2.6 was retired before any mathematical computation. No fresh-family claim is made for it. duplicate-audit.json subsequently records a case-insensitive, all-date traversal of every matching SUMMARY/discovery/FINDINGS/PROOF/review/ledger/NEXT text or JSON filename under openai-proof-research, excluding only this lane. Stored path/hashes and matched lines allow review of lexical coverage. This is not a semantic exhaustive duplicate proof. Filename variants outside those categories and unmentioned equivalent results remain limits.
+
+## Four attributed screens
+
+1. **Tom Conjecture5.6 / Abreu–Nigro5.3:** for every natural unit interval graph, each elementary coefficient of its chromatic quasisymmetric function is log-concave in q. EXCLUDED: Kafidov arXiv2607.20595 current fetched body is v2, despite search results describing v1. Theorem1.2 gives h=(2,4,4,6,7,10,10,10,10,12,12,13,13), coefficient indexed by (6,5,1,1), with first nonzero entries1,6,38. AppendixA.1–A.3 was read: independent color-class subset recurrence, zero-one-matrix elementary/monomial conversion, rational elimination and full certificate vector. Thus36<38 is an actual public same-scope refutation. Its positive rank≤3 abelian theorem does not rescue the universal assertion. The original Tom publisher fetch returned403, so exact original-body comparison is incomplete; the successor explicitly attributes and refutes the universal formulation. No independent replay of its large certificate is claimed.
+2. **Vatter arXiv2602.16355v2 Conjecture2.6, p7:** every composition's principal downset in generalized subword order is rank-unimodal, equivalently every layered permutation's principal downset. Read definitions, Theorem2.4, its proof and Corollary2.5. The componentwise theorem only covers monotone hosts after the stated bridge; it is not a general proof. EXCLUDED as project overlap as above. Chen's September2026 SSRN successor reports arbitrary ≤6-part hosts and certain bitonic regimes, with unrestricted conjecture open. Its actual body could not be obtained (403); no clearance based on abstract. No further work on this family.
+3. **Pantone/Vatter Conjecture4.1, p16:** d_n/C_n→9/16 for uniformly chosen 123-avoiders. EXCLUDED as known: Hoffman–Rizzolo–Slivken1506.04174 actual Theorem1.1(b), Section3, Theorem3.2 and Lemma3.4 were read. Lemma3.4 explicitly proves joint convergence of the lower-half and upper-half fixed-point indicators to independent Bernoulli(1/4) variables. Derangement is exactly both indicators zero; the limiting probability is(3/4)^2. This uses the actual indicator statement, avoiding any unjustified inference from vague convergence of measures. Lemma3.3/3.4 proof mechanism uses Dyck local minima, good equivalence classes, and asymptotic conditional independence. This2015 public source predates the2026 nomination. No new proof or credit. Closest2026 two-corner distance-formula announcement was identified but not needed for this exclusion and its body was not audited.
+4. **Vatter Problem4.4/Question4.5, pp17–18**, with **Dougherty-Bliss–Galván–Polley–Shuster2608.27583v1 Conjecture15, p12:** separable permutations are exactly Av(2413,3142); if s_n is their number and b_n counts those with no i satisfying π(i)=i, does b_n/s_n tend to0? Read successor Definitions2–6, Theorem7 equations(2)–(5), Propositions8/9, Theorem10 proof, Lemma11, Theorems12/13 and Conjectures14/15. Their polynomial-time diagonal algorithm answers an effective enumeration question already; reproducing that algorithm cannot be a discovery. Their bounds βn^(-3/2)≤b_n/s_n≤.69 and common exponential growth do not prove the zero limit. The current author-repository paper at pinned930540959f2ee64de53757ffaf5993159c7bb468 has the same Section6/Conjecture14 and unnumbered zero-limit question in Section7 rather than numbered Conjecture15. Its README and actual C recurrence were read. The all-size zero-limit question is the selected target, not any parameter instance or an assertion of monotonicity.
+
+## Exact structural reconstruction
+
+Let e(n,k), p(n,k), m(n,k) count empty diagonal k=i−π(i) in respectively all separables, direct-decomposables and skew-decomposables. Let s,u,v be the corresponding unrestricted counts. For |k|≥n, emptiness is automatic: e=s, p=u, m=v. At n1, e(1,0)=0 and e(1,k)=1 for k≠0, while u=v=p=m=0. For n≥2, use the unique decomposition with minimal nonempty left block. A direct root has a singleton or skew-decomposable left child, and arbitrary right child; a skew root has a singleton or direct-decomposable left child. Consequently
+
+p(n,k)=Σ_(i+j=n,i,j>0) ([i=1][k≠0]+m(i,k)) e(j,k),
+
+m(n,k)=Σ_(i+j=n,i,j>0) ([i=1][k+j≠0]+p(i,k+j)) e(j,k−i),
+
+e(n,k)=p(n,k)+m(n,k).
+
+These are the complementary version of public Proposition9, explicitly anticipated by its implementation discussion. No novelty claim. The skew shifts follow i−π(i) directly; the two child diagonal ranges have a gap, so they cannot both occupy one target diagonal.
+
+A single triple tracks emptiness and first two factorial moments of diagonal multiplicity X. For left/right triples(e,f,g),(h,i,j) and class sizes a,b, their product triple is(eh,fb+ai,gb+2fi+aj). This follows from X=X_L+X_R and X(X−1)=X_L(X_L−1)+2X_LX_R+X_R(X_R−1). The same canonical decomposition transports the triple through both signs and all offsets. The checker independently constructs literal separable permutations as sets, deduplicating all direct/skew constructions, through n8. Every diagonal's triple agrees. Public first18 derangement terms agree. It checks the recurrence to n60 using exact integers, under the required guard.
+
+## Route 1: critical generating functions and endpoint limits
+
+Set E_k(x)=Σ e(n,k)x^n, M_k(x)=Σ m(n,k)x^n, and I_k(x)=x[k≠0]+M_k(x). Direct convolution gives E_k=I_k/(1−I_k), since e's singleton term is x[k≠0]. At k0, E_0=M_0/(1−M_0). This identity is already implicit in the public algorithm. It does not eliminate the infinitely many shifted offsets in the skew equation. Complementation swaps sum/skew classes but does not preserve a fixed diagonal: already n2 has p(2,0)=0,m(2,0)=1. Treating these as equal gives a false scalar closure.
+
+A more precise conditional endpoint system can be derived. Write r=3−2√2, t=√2−1, and i_j=[j=1]+u_j. Suppose for EVERY fixed integer k the three normalized sequences e(n,k)/s_n, p(n,k)/s_n, m(n,k)/s_n have limits f_k,g_k,h_k. Put a_k=Σ_(j≥1)([j=1][k≠0]+m(j,k))r^j. Then
+
+f_k=g_k+h_k,
+
+g_k=a_k f_k+t h_k,
+
+h_k=Σ_(j≥1)s_j r^j g_(k+j)+Σ_(i≥1)i_i r^i f_(k−i).
+
+The endpoint derivation is justified under the stated existence premise: fixed-shift Schroder ratios tend to r^j; summands are bounded by unrestricted convolution; the middle region vanishes after normalization as the endpoint cutoff tends to infinity, using s_n=Θ(r^(−n)n^(−3/2)). Thus the two endpoint limits exhaust the convolution. This is not a proof of limit existence or of f_0=0. The tail coefficients have unbounded shifts and critical mass, so replacing them by finitely many offsets leaves an uncontrolled escape term. Even uniqueness of an admissible bounded solution needs a genuine killing/occupation argument. This system is only a conditional reduction, not a nominated lemma.
+
+Fresh registry-body comparison strengthens the objection: Omega's actual occupied-comparison theorem and endpoint-history kernel already build critical masses, exact actual-shape recurrences, fixed-point equations, fixed-shift ratios and finite conditional history laws. The Problem record explicitly leaves a uniform occupied lower bound c/(sqrt(2+|k|)log(2+|k|)) open and explicitly disclaims settling Conjecture15. Our endpoint manipulation does not supply that missing global estimate or the survival-to-hitting bridge. These are actual read statement bodies, not inferences from filenames or badges; the associated Lean proofs were not replayed or audited here.
+
+## Route 2: multiplicity moments and concentration
+
+Let X_n be the actual number of fixed points in a uniform separable permutation. The independent triple reconstruction computes μ_n=E X_n and E[X_n(X_n−1)]. Chebyshev gives P(X_n=0)≤Var(X_n)/μ_n². A proof that this last ratio tends to0 would settle the full target; no such estimate is proved. At n60 its exact ratio is the rational recorded in check-results.json, greater than9/10, whereas b_n/s_n<1/4. Thus this finite computation supplies no shrinking concentration bound; it does not prove the bound stays large for all n. Expectation growth alone is insufficient: even bounded-above-by-n variables can have mean→∞ and a persistent atom at zero. No independence of fixed-point events or analogy with unrestricted permutations is justified. Higher-moment or Laplace-transform control must treat the recursive correlations, not merely repeat larger tables.
+
+## Current sources, chronology, access and remaining gap
+
+All HTTP bytes and timestamps are in http.json; sourcebytes.sha256 binds downloaded sources. Source chronology: Vatter v2 February2026; separable successor v1 August2026; author repository at actual default HEAD930540959f2ee64de53757ffaf5993159c7bb468. Live default HEAD requests at19:14UTC give Omega d2b0ee6e958cf646530d3476088494e349570b46 and OpenAI unchanged7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a. The comparison from supplied2130bf544f7858fc3c142bb9623b7ba9464e22ba returns one changed documentation path; stored actual response includes its patch. Root freeze's complete1b999d9/OpenAI inventories were searched. Several highly relevant bodies were then fetched immutably and read. Intermediate r86/r90/r92/MMPP deltas were not independently fully re-audited; baseline→current semantic coverage is incomplete. No worldwide priority clearance or absence-based novelty claim.
+
+The source403s were respected without retry or alternate proxies. Public author-repository manuscript is independently linked by the source, not a bypass of a blocked host. No browser/account/contact/post/upload action occurred.
+
+Strongest objection: exact recurrences, critical masses and finite-history machinery are already public. Recasting them as an infinite system does not pay the asymptotic gap. A full result requires an unconditional all-n survival bound b_n=o(s_n), or a rigorous contradictory asymptotic along an infinite subsequence. Neither is present. Finite ratios cannot falsify an asymptotic statement. A literal-recursion/brute-force disagreement would falsify our checker; an earlier same-scope asymptotic proof would exclude the target. A rigorous nonzero surviving mass for the actual offset process would refute the selected conjecture. No such falsifier was established.

@@ -1,0 +1,34 @@
+# r89: full ordinary candidate; credit zero pending eligibility
+
+2026-10-29 UTC. Solo, assigned-lane-only research. Existing counts remain 8 additional / 38 total. No acceptance, Lean, paper, children, git, browser, accounts, contacts, posting, or uploads.
+
+## Sources screened before investment
+
+1. **Bajnok–Beatty Conjecture 1.6**, arXiv2406.04045v1 and actual publisher Combinatorics and Number Theory14(2025)1–12, DOI10.2140/cnt.2025.14.1. For every integer s>=3, determine the maximum order over ALL finite noncyclic abelian groups with a signed s-spanning two-element set. Prime 2s+1 gives 2s²; composite 2s+1 with least prime divisor p gives 2s²+2s-(p²-1)/2. Selected and pursued. Actual publisher Conjecture1.6, Lemma2.1, Proposition2.3, Theorem2.4/Corollary2.5, and Theorems3.1–3.3/proofs read. The closest upper proofs count one linear-coordinate fiber and require s-regularity. Their lower constructions already attain the conjectured values. These are explicitly credited, not rediscovered outcomes.
+2. **Gallardo–Rahavandrainy repeated-degree question**, arXiv2308.01181v2 Conjecture3.12, with actual published 2026 Conjecture3.2 (and associated length Conjecture3.3). All n>=4, all positive t<=s-1, s maximal with n-2^(s+1)>=0 in the publisher version: powers-of-two blocks of odd iterates have common degrees. Older preprint uses >=1 instead. These versions are preserved rather than silently reconciled. Read actual polynomial iteration and publisher statements. Current Omega actual Blueprint body proves a DIFFERENT family (M²+M+1)^n, and actual Lean length-bound body proves a DIFFERENT universal polynomial degree bound. Those public results do not establish the repeated-degree claim. Deferred without claiming a novel or solved residual; no investment in excluded family variants.
+3. **Gyenge–Rimányi Conjecture7.16**, arXiv2409.03859v1: all positive n,m, arbitrary integer vectors e,f and fixed core c, its quotient generating series has the specified infinite-product divisor with a remaining series having nonnegative integer coefficients. Read actual pp26–27, including Corollary7.15, examples and the explicit meaning of divisibility; this is stronger than formal power-series division by a unit. No full combinatorial construction. Deferred as less tractable. No novelty/VoR clearance claimed.
+
+## Duplicate and context gates
+
+Read ancestor/batch AGENTS, current ledger, prior context, NEXT, root-edge-irregulator-final-freeze-r1 registry evidence, and available r85–r88 notes/files only to avoid overlap. NEXT's active-lane listing is historical: available r86/r87 handoffs are already zero. No polling of workers. Broad all-date rg-l search preceded downloads/investment; all-date FINDINGS/discovery/SUMMARY/provenance/REPORT searches then refined exact authors/IDs. The initial Gallardo match was r75's DIFFERENT restricted-sumset paper, whose actual report paragraph was read and retired as a false match. Saved search files document scope, not priority clearance. No filename-absence novelty claim.
+
+## Strongest route
+
+PROOF.md gives a complete ordinary argument for the Bajnok–Beatty endpoint, not merely a special case. Noncyclic two-generator G has G/pG=F_p² for some prime p. Surjectivity of the radius-s integer diamond forces every coefficient class modulo p to contain at least |G|/p² representatives. For odd p, rotate the diamond to an integer square with same-parity coordinate constraint. Count even/odd terms in the p arithmetic progressions inside [-s,s]. The exact minimum is q²/2 (q even), (q²-1)/2 (q odd, r<=p-2), or (q²+1)/2 (q odd, r=p-1), where 2s+1=qp+r. This yields the full required upper bound for every prime, including the small exceptional arithmetic branch eliminated by s>=3. The authors' explicit constructions supply attainment. Prime2 is handled separately by their parity count.
+
+The initial idea was HNF lattice coverage. Exact exhaustive search above the conjectured maximum for s=3..18 found no counterexamples. Full two-coordinate prime-fiber counts proved stronger than anticipated: the attempted search for a survivor of that shortcut found none, and led to the symbolic proof. A null diagnostic survivor is NOT an obstruction and NOT a proof by itself.
+
+## Checks and falsifiers
+
+- 9,696 noncyclic HNF lattices of orders strictly above the conjectured bound and at most |D_s|, s=3..18: none covers the diamond quotient. This enumerates lattices/generator-coordinate presentations, not distinct isomorphism classes.
+- 6,125 exact lattice-transport identities.
+- 3,278 prime-fiber cases, s=3..300, p in {2,3,5,7,11,13,17,19,23,29,31}; 2,980 exact odd-prime formula checks. Numerical limits do not restrict the ordinary proof's quantifiers.
+- `bash run.sh` reproduces offline checks with the unchanged copied improved guard: AS/group RSS512MiB, CPU210s, wall230s, nominal40ms sampling, BLAS1. No cap raises. Saved guard receipts all pass.
+
+A contrary finite group/lattice, failed exact progression minimum, failure of quotient-basis transport, or contrary source construction would falsify the mathematics. Independent review must in particular inspect the one-short-progression case and the composite-maximum comparison.
+
+## Eligibility and novelty limits: HOLD, zero credit
+
+The strongest objection is that the key step is a short two-coordinate refinement of the source's own one-coordinate fiber counting, combined with classical finite-abelian quotient structure. It may be classified as a routine source/classical adaptation, which is EXCLUDED under this task, despite closing the full stated conjecture. This lane does not adjudicate that objection in its own favor. No candidate is represented as an eligible discovery; independent eligibility and mathematics review must precede any investment. If review finds the bridge routine, exclude it outright with zero credit.
+
+Live HTTP heads retrieved18:49UTC: Omega e9c949019b00eb22ab88e81d6ac6b1047925d95d (commit18:42:16UTC); OpenAI7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a. Omega compare from supplied6f8ee... lists13commits/194changed files. Changes and returned patches were inspected for target terms; no exhaustive body search is asserted. Root18:13UTC complete inventories remain the complete-tree baseline, not a current semantic proof catalogue. Current adjacent Bajnok–Berson–Just body is about unique restricted distinct-element bases of size s+1, a different quantifier/object; it does not directly subsume signed two-generator balls. No current Bajnok–Beatty resolution located in the bounded inspected material; worldwide priority, full classical subsumption, and complete current registry coverage remain HOLD. Source2024/publisher2025 precede this2026 lane; current registry evidence is recorded with its own chronology, not backdated. No403/429/challenge bypass or retry loops were used.
