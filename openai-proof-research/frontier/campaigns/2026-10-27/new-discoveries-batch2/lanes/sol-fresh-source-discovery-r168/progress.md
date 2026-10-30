@@ -1,0 +1,9 @@
+# Progress and restrictions
+
+- Read ancestor/campaign rules, full JSON context bytes and current NEXT; preserved context copies. Initial terminal display of large context was truncated, then bounded JSON/key/tail reads were used; no missing-text novelty claim.
+- Reused r167 plus four underlying all-history indexes; refreshed 19 records. Duplicate plucking lead stopped before primary retrieval. Two fresh exact statements read; sustained clique corona after fixed-endpoint longest-path route showed no tractable closure.
+- Retrieved actual 2026 accepted source and published companion. Read closest old join construction and preservation theorems before large investment. No coefficient census: developed exact two-phase concentration proof.
+- Exact proof arithmetic checks PASS; independent tiny graph formula controls PASS. No failed mathematics is hidden as a result; unresolved Zhan route remains unresolved. No prohibited family reopened.
+- Retained 404 survey attempt, metadata-only2016 XML, ScienceDirect403, Google challenge/unhelpful Bing, and harmless Poppler font warning. No retries/access bypass/TLS changes/browser.
+- All Python, retrieval, extraction, hashing, writes and checks run under unchanged required helper_guard.py; native bounded reads allowed. AS/group sampled RSS512MiB, CPU210s, wall230s, nominal40ms, required thread env1; no increases. Largest observed guarded registry operation peak206446592 bytes; no kill/resource deviation. Unsampled transients not certified absent. Initial shell read combined commands with semicolons; this was a presentation-rule deviation, not an unguarded helper or scientific check.
+- Full ordinary candidate only. Eligibility HOLD, no Lean/manuscript; final manifest/scientific freeze verified by guard. No git/shared/count changes or external mutations/messages.

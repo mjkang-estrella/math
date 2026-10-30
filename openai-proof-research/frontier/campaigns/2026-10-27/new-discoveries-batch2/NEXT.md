@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r168: full ordinary clique-corona refutation candidate frozen. Connected
+leaf corona of (100000 disjoint triangles) joined with225985 independent
+vertices gives separated coefficient windows by exact concentration bounds.
+Root checker replay byte-identical;69manifest/55science entries verified,
+71 originals frozen. Independent Sol mathematics/source/adaptation review
+assigned before Lean/paper. See root-r168-preliminary-freeze-r1.
+Counts unchanged:9 additional/39 total,next40;credit0.
+
+
 Steiner source review: full Changat2010 body obtained; specific unread-body
 hold CLOSED. It supplies the convex-set base, not maximum-arity amplification.
 Ordinary PASS/provisional substantive INVEST retained. Prior HOLD narrowed to
