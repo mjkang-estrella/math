@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Clique-corona source and ordinary mathematics PASS adopted; root exact checker reproduces byte-identically. The 2017 survey body gap is closed. Investment remains HOLD pending the material 2016 body and bounded prior qualifications; no complete classical adaptation yet warrants exclusion. Focused Sol source/subsumption review commissioned, with no denied-object retries or repeated historical reconstruction. See root-clique-corona-preliminary-adoption-r1. Pendulum formal work and fresh r169 research continue. Counts 9 additional / 39 total, next 40.
+
+
 Steiner historical clearance is PARKED on HOLD: missing merge trees prevent an exhaustive transition certificate; citations 10 and 19 remain unread. Root replay verifies 617 originals/copies, 654 manifest entries, 446 mail blocks and the 14,133-block / 14,633-hunk census. Ordinary mathematics and provisional substantive investment judgments stand; no formal investment or credit. Do not repeat denied registry/publisher searches. See root-steiner-gp-parked-hold-r4. Fresh r169 research assigned to Sol. Counts 9 additional / 39 total, next 40.
 
 
