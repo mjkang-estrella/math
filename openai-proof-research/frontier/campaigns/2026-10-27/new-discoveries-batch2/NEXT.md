@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r178 zero nominees: Gaussian split target duplicates r47; Karp–Sitnik Kummer ratio and Nikolov snake positivity have exact public resolutions. Root actual-scope review, exact certificate replay and full freeze pass; see root-r178-handback. Fresh analytic r181 assigned; r179/r180 continue. Counts9additional/39total,next40.
+
+
 r177 irregularising-walk Conjecture7.1 unresolved: joint Euler support/parity, budget and neighbor-separation existence missing. Root replay of 770 graphs and18247 restricted trees byte-identical; full freeze passes. Source/companion gaps preserved; no partial-family credit. See root-r177-handback. Fresh structural r180 assigned; r178/r179 continue. Counts9additional/39total,next40.
 
 
