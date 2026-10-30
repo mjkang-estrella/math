@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r153 Sun's Catalan least-prime bound remains unresolved. Root verifies
+45 manifest/43 scientific entries and reproduces degrees1–40: 1,010 Rabin
+trials, 143 independent SymPy tests, 1,019 local factorization controls and
+45 Frobenius-square checks. Prior rational/Galois conclusions do not imply
+the explicit prime bound; local unusable primes are route obstructions only.
+See root-r153-handback. Sol r155 replaces r153; r154 and Kazemi review continue.
+Counts remain 9 additional / 39 total.
+
+
 r151 geometric smooth-form lifting remains unresolved; Viakhirev is
 excluded by an earlier actual public proof. Root verifies 64 manifest/45
 scientific entries and replays 432 monomial controls and source checks.
