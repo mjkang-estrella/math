@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Brownian affine scalar formula: root adopts ordinary SOURCE/MATH PASS and routine classical-adaptation exclusion after independent compensation/martingale bridge. Full joint-process Conjecture 1.4 remains outside proof; Grandits priority body unread/HOLD. Root exact replay and 60 original/copy pairs pass. See root-brownian-affine-review-adoption-r1. Fresh analytic r190 assigned; structural r188 and arithmetic r189 continue. Counts 9 additional / 39 total, next 40.
+
+
 Power-sum Remark 3.3(4): root adopts full ordinary proof/source PASS and routine source/classical-adaptation exclusion after independent complete bridge. Novelty remains bounded/HOLD; no Lean or manuscript. Root exact replay, 81 original/copy pairs and 102-entry review manifest pass. See root-power-sums-domain-review-adoption-r1. Fresh arithmetic r189 assigned; Brownian review and structural r188 continue. Counts 9 additional / 39 total, next 40.
 
 
