@@ -1,5 +1,16 @@
 # Current continuation — 29 October 2026
 
+r151 geometric smooth-form lifting remains unresolved; Viakhirev is
+excluded by an earlier actual public proof. Root verifies 64 manifest/45
+scientific entries and replays 432 monomial controls and source checks.
+r152 supplies a complete ordinary Kazemi hypercube-coloring proof but proposes
+routine-source exclusion. Root freezes34 files, verifies29 manifest/27 science
+entries and reproduces controls; independent source/math/eligibility review
+is pending, not presumed excluded or accepted. See root-r151-handback and
+root-r152-preliminary-freeze-r1. Sol r154 research and Kazemi review replace
+the two completed slots; r153 continues. Counts remain 9 additional / 39 total.
+
+
 r150 McDermott's conditional Gaussian stability conjecture remains
 unresolved. The public unconditional-square refutation has reducible second
 iterate and does not refute the selected implication. Root verifies 60
