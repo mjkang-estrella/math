@@ -1,5 +1,16 @@
 # Current continuation — 29 October 2026
 
+Steiner fixed-gap attempt remains HOLD:17/19 citation records classified;
+two explicit DOI bodies unresolved. Historical6/8commits enumerated, but
+three first-parent netdiffs and complete change/bodycoverage uncertified.
+Root verifies560manifest entries,251frozenrecords,14133diffblocks/14633hunks;
+563reviewfiles frozen. Access-discipline violations preserved, not endorsed.
+Narrow Sol offline-reconstruction/two-citation follow-up assigned: NO new
+GitHub/ScienceDirect requests or bypass; missingbytes must remain HOLD.
+See root-steiner-gp-gap-hold-r3. OrdinaryPASS/provisionalINVEST unchanged.
+Pendulum investment and clique-corona reviews continue. Counts9/39,next40.
+
+
 Pendulum publication-history HOLD CLOSED: changed-title AfrikaMatematika
 32(2021)645–672 DOI10.1007/s13370-020-00851-9 retains literalConjecture1,
 eq26 and fullclosed zinterval. OrdinaryPASSwithendpoint supplement retained.
