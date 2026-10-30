@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r212 Karam common-center ConjectureD remains unresolved. Exact cubic averaging gives a root at each radius; the finite-intersection property needed for one root at every radius is unproved. Entropy supplies eventual growth only; dumbbell refutes all-root strengthening, not source. Root exact/extraction/scientific/reference checks pass. See root-r212-handback; fresh analytic r215 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r211 Krasniqi factorial separation remains unresolved. Square cases require uniform exclusion of consecutive coprime factorial-divisor partitions; residual odd-prime exponents also remain. Fixed finite congruences cannot eliminate n!+1. Root exact replay and scientific/manifest/reference checks pass; claimed public Brocard proof defect retained without worldwide priority clearance. See root-r211-handback; fresh arithmetic r214 assigned. Counts 9 additional / 39 total, next 40.
 
 
