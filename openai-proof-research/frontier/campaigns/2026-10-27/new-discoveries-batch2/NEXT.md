@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r206 Easlick minimal-winning dice maximum-cycle conjecture remains unresolved. Common padding fails beyond even-to-odd single-face embedding; unrestricted probability realization does not preserve face and label budgets. Root graph replay and scientific/manifest/reference verification pass. See root-r206-handback; fresh structural r210 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r207 Angelini lower intermediate-spectrum Question1 remains unresolved. Necessity and fixed-theta realizations are known; one prescribed-gap set realizing every theta still lacks simultaneous allocation and tail covers. Exact homogeneous-construction obstruction is not a source counterexample. Root replay and scientific/manifest/reference verification pass. See root-r207-handback; fresh analytic r209 assigned. Counts 9 additional / 39 total, next 40.
 
 
