@@ -1,0 +1,13 @@
+# Preserved failures and workflow deviations
+
+- Initial native `pwd` command was outside the guard. Native bounded cat reads were permitted; missing workspace AGENTS.md returned exit1. Thereafter helper/retrieval/Python/hash commands used the prescribed guard and BLAS1/no-bytecode environment. No caps were raised.
+- Both arXiv recent-list queries returned HTTP400, recorded in http.jsonl; no retry. The distinct public arXiv search endpoint worked. Bing returned unrelated search bodies, saved and not used as scientific evidence. No challenge, denied GitHub/ScienceDirect/Google route, proxy, TLS override or browser was used.
+- Optional bs4 parser failed with ModuleNotFoundError. Standard-library parsing replaced it; no package installed. Tool traceback preserved in session and here.
+- Initial history scanner was overbroad, creating redundant copied histories and excessive truncated output. initial-unqualified-scan.json, changed-records.json and redundant bytes remain as failure evidence. history-aliases.json requires matching original directory/name suffix AND byte identity; rejected-unqualified-new-records.json removes embedded new copy records. The corrected scientific-freeze.json is operative. These redundant bytes are not counted as independent source investigations. This does not retroactively make the initial copy operation compliant.
+- Coverage source was first read from downloaded bytes before explicit original/copy freeze; subsequent mathematical work used verified copies. The deviation is not hidden. Robin/Fano and predecessor primary copies were frozen before their body reads.
+- A finalization helper guessed r193/history-coverage.json and failed FileNotFoundError. No cap hit; corrected to the actual history-receipt.json. Partial outputs retained; final receipt creation subsequently completed.
+- pdftotext warned of a font-type mismatch while extracting a source. Text extraction succeeded; no claim of publisher-PDF authentication or visual QA.
+- Early six-vertex coverage search preceded discovery of the public Fano refutation. The finite example and initial checks.json remain, explicitly uncredited. This is not a surviving fresh candidate.
+- Initial command guard receipts live in the session; checks-final.stderr supplies a persisted resource receipt for the final exact checker. No unsampled-transient guarantee is claimed for the guard's process-group RSS sampling.
+
+- First final verification failed because concurrently active r196/PROOF.md changed. concurrent-refresh.json retains old/new hashes and initial-copy location. The new original was recopied and re-screened; no claim that its initial freeze stayed immutable. All other original pairs matched. A fresh final verification follows the refreshed binding.

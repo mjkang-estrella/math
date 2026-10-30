@@ -1,0 +1,11 @@
+# r72 — full Zinn doubling question unresolved; credit 0
+
+Selected one genuinely fresh probability target: expert-attributed Zinn/Pinelis MO208349, every finite real unit-variance Rademacher sum and every2<p<3. Named expert identity and actual current primary question/answer checked early. Older-summary search found no target hit. Pinelis MO451831 excluded on its actual public River Li proof; repeated Jekl and credited DeTemple leads retired immediately, no repeat investigation.
+
+Four rigorous routes retained: exact all-vector characteristic-function Mellin criterion with initial-interval positivity; Laplace transform of squares; synchronized splitting interpolation; subgaussian/low-moment comparison. Actual n2 equal-weight source example gives an EXACT negative initial splitting derivative atp5/2 (radical certificate2<169/81), although its full doubled-minus-original moment is positive for everyp>2. Genuine Laplace difference also changes sign. A separate subgaussian three-point law has doubling ratio59/60, but is rigorously outside the Rademacher source family. None is a source counterexample.
+
+Precise gap: uniform nonnegativity of the full oscillatory Mellin integral for all coefficient vectors and2<p<3, or a certified admissible strict negative witness. Closest actual Pinelis expanded-preprint Theorem4.1/Cor4.4 and appendix proof read; convex-second-derivative hypothesis excludes this p-range. Original Annals printed body and Figiel lemma remain accessHOLD. Actual pinned registry L1-convolution proof body is a different objective, not a subsumer; no matching source proof found or registry absence certified.
+
+sh run.sh PASS800 exact assertions,160 independent DP/enumeration vectors;4800 vector scans at six exponents and8000 interpolation diagnostics are floating evidence only. Reused capped runner512MiB AS/groupRSS,CPU210s,wall230s,40ms,BLAS1. Failures/access gaps preserved. No PROOF.md, Lean, nomination or credit.
+
+Registry freshnessHOLD remains: no documented API reset, zero API calls/retries/bypass; observedOmega6c27b0a… at15:49 is not currentHEAD. r57 Blueprint markdown is not Lean. Exact URLs/UTC/versions/hashes/limits in provenance.json. Root owns unchanged7additional/37total. Solo, assigned-lane-only; no git, children, browser, contact, posting, uploads, account/shared/other-lane changes.

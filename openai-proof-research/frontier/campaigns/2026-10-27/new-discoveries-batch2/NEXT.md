@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r198: The full Robin fixed-perimeter question remains unresolved. The phase trial space has a positive shifted-energy diagonal for noncircular convex obstacles; this defeats that method, not the spectral conjecture. A uniform conformal weighted variational bound and the nonconvex scope remain open. Coverage is excluded by the actual public Fano refutation. Concurrent r196 PROOF change was preserved with old and refreshed copies; only the refreshed final freeze is verified, with no retroactive initial-freeze PASS. Root replay and final integrity checks pass. See root-r198-handback; fresh replacement r200 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r197: Hu–Liu Question 4.4 remains unresolved. Completion doubling and strong-m results do not supply anisotropy detection over all target rational-function fields. The universal Pfister examples obstruct a fixed coordinate completion, not the existential detection lemma or source claim. The published 2026 predecessor comparison remains unread/HOLD. Root replay and final integrity checks pass. See root-r197-handback; fresh replacement r199 assigned. Counts 9 additional / 39 total, next 40.
 
 
