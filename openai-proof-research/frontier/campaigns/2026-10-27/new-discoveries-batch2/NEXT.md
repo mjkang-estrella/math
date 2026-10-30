@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r174 handback: reverse permutation game all-k separation remains unproved; exact hypermatrix public proof excludes that target. Root selected-shadow replay byte-identical; payload and scientific hashes verify. See root-r174-handback. Fresh finite/algebraic r176 assigned; analytic r175 and DSBS published-source comparison continue. Counts 9 additional / 39 total, next 40.
+
+
 r173 triangle median questions remain unresolved: exact convex dual formulation lacks all-shape certificate; relaxed-data method countermodels are not geometric source refutations. Root exact replay byte-identical,43scientific/44manifest/46original files verify. See root-r173-handback. Fresh analytic/probabilistic r175 assigned; r174 and DSBS published-source comparison continue. Counts9additional/39total,next40.
 
 
