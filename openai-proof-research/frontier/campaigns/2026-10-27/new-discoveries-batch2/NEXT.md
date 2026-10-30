@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r187 Brownian scalar crossing formula retained; proposed routine-adaptation exclusion sent for independent review. Full joint-process conjecture not proved; boundary-momentum question unresolved. Root replay and frozen originals pass. Active: power-sums review, Brownian review, fresh structural r188. See root-r187-handback. Counts 9 additional / 39 total, next 40.
+
+
 r186 uniform exact vertex-cover graph-counting question unresolved. Apex-family closed sum does not close global overlap compression or bit complexity. Root replay, 2527 originals/copies and manifest pass; fresh structural r188 assigned. See root-r186-handback. Counts 9 additional / 39 total, next 40.
 
 
