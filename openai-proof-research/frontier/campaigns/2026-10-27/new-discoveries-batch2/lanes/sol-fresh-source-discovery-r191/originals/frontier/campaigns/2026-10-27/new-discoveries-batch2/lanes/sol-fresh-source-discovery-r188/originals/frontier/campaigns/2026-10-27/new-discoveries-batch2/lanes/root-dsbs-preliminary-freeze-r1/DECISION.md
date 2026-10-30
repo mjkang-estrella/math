@@ -1,0 +1,11 @@
+# Root preliminary handoff: negative-order DSBS separation
+
+Preserve the full ordinary proof candidate for Lei Yu, arXiv:2407.06132v1, Conjecture 1 / equation (19). The proposed explicit range is every 0<epsilon<=1/1024 and every beta>=1, including infinity. This addresses the numbered sufficiently-small-crossover/sufficiently-large-order statement; it does not establish the proposed sharp numerical phase threshold. Root read the full proof, research report, source definitions and actual Conjecture 1/Proposition 1/converse excerpts.
+
+The central assertion is an arbitrary-block converse using seed-posterior transport under Q^n and entropy tensorization, followed by the exact relaxed-Wyner formula and a positive perturbation slope. Root identifies no immediate algebraic defect, but assigns no independent mathematical PASS yet. The converse appears to match the source's general upper-bound expression for fully supported finite targets; this stronger implication is a concrete adversarial review target, not a second nominated result.
+
+The complete classical-adaptation objection is preserved: the KL/Renyi variational identity, posterior KL chain rule, independent-coordinate entropy rules and published mutual-information-region formula might furnish a routine full bridge. The fixed-channel companion's relation to arbitrary correlated block processors must be assessed precisely. Actual published-version and prior-body coverage remain incomplete. No novelty, substantive eligibility or formal feasibility clearance is granted.
+
+Root verified 91 scientific records, 92 manifest records and all 94 frozen originals. A private replay of all diagnostics is byte-identical: 12 high-precision slope controls at three perturbations, three derivative identities and 30 correlated-block posterior controls. These are high-precision/floating-point diagnostics, not exact arithmetic certificates or universal proof. Guard sampled 34,045,952 bytes over 0.762 seconds; this is a sampled value, not a continuous peak guarantee.
+
+Independent Sol preliminary review is assigned, including source/math, the full adaptation objection, bounded prior evidence and honest formal feasibility. No Lean or manuscript investment is authorized yet. Counts remain nine additional /39 total, next40. Pendulum independent review and fresh finite/algebraic r172 continue separately.

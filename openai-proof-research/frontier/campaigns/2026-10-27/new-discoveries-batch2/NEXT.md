@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r191 semisymmetric graph semiregular-automorphism question remains unresolved. Two-coset route lacks full automorphism control; double cover/subdivision/product transfers fail. Root exact replay and freezes pass; overinclusive retained history is not qualified unique coverage. See root-r191-handback. Fresh structural r193 assigned; Guo review and analytic r192 continue. Counts 9 additional / 39 total, next 40.
+
+
 r190 five-frequency cosine sign-agreement optimum remains unresolved; published possible-candidate attribution is not a numbered conjecture. Joint correlation/classification gap remains despite parity/scale reductions. Root exact replay and 5119 original/copy pairs pass. See root-r190-handback. Fresh analytic r192 assigned; Guo review and structural r191 continue. Counts 9 additional / 39 total, next 40.
 
 

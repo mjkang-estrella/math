@@ -1,0 +1,3 @@
+# Progress
+
+UTC 2026-10-30T04:52:54.630470+00:00. Read instructions/context/recent history; snapshot administrative data. Freeze originals/copies before scientific work. Refresh qualified originals and screen aliases before investment. Broad source discovery from two current arXiv subject lists, six primary bodies; sustain one precise semisymmetric question and latest counterexample companion. Derive all-order transfer obstructions and exact coset route; run capped diagnostics PASS. No full source proof or refutation. Write report, verify original/copy scientific freeze, write final manifest excluding itself and its verification receipt explicitly, then perform a separate guarded verification after final writes. Counts9/39,next40 unchanged.
