@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r159 induced-F irregularity Conjecture3 remains unresolved. Root reproduces
+1,096 labeled graphs / 5,400 vertex identities and the unequal-expectation
+without-realization falsifier; 63 manifest / 32 scientific paths match.
+Integer-collision control and an all-vertex-distinguishing construction remain
+missing. Tournament Conjecture3.7 excluded by an actual earlier public proof;
+delta-complement source remains access HOLD. See root-r159-handback.
+Sol r162 replaces r159; r160 and r161 continue. Counts unchanged: 9/39, next40.
+
+
 r158 normalized integral Macdonald elementary positivity (Haglund–Kim–Oh–Yoo
 2610.34772 Conjecture 1.1) remains unresolved. Root reproduces 132 functions,
 132 source e_n controls, 29 orthogonal-definition comparisons and both method
