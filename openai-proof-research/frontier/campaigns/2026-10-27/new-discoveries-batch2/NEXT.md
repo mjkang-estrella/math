@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r208 Casas–Madrid–Rosales Conjecture41 remains unresolved. Ratio deletion enumerates the fixed-invariant family but the first-internal-ancestor map is not injective; uniform inclusion-neighborhood Hall inequality is missing. Root exact replay and scientific/manifest/reference verification pass. See root-r208-handback; fresh arithmetic r211 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r206 Easlick minimal-winning dice maximum-cycle conjecture remains unresolved. Common padding fails beyond even-to-odd single-face embedding; unrestricted probability realization does not preserve face and label budgets. Root graph replay and scientific/manifest/reference verification pass. See root-r206-handback; fresh structural r210 assigned. Counts 9 additional / 39 total, next 40.
 
 
