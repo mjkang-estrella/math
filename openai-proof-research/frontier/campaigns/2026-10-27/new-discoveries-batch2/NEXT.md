@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r180 zero nominees: TI augmentation duplicates r122; weighted-bond difference already retired; Potechin–Tsang Cayley conjecture refuted by Lehner–Verret2020 exact dihedral-cover construction. Root exact replay and full freeze pass; see root-r180-handback. Fresh structural r183 assigned with duplicates screened before fresh-target selection; r181/r182 continue. Counts9additional/39total,next40.
+
+
 r179 zero nominees: Yamamura Galois target duplicates r130; Catalan irreducibility and Fayers divisibility have exact public proof bodies. Root full Fayers bridge review, private exact checks and freeze pass; see root-r179-handback. Fresh arithmetic/algebraic r182 assigned; r180/r181 continue. Counts9additional/39total,next40.
 
 
