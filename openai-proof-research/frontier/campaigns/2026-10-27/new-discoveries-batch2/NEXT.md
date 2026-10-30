@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r147 Kiro–Nishry critical prefactor-one polynomial infinitude remains
+unresolved. Root verifies 36 manifest/32 scientific entries and independently
+checks all 21 explicit polynomials through degree 20: 13,525 exact prefix
+comparisons and 42 integer-cleared tail inequalities. These establish each
+individual all-n bound, not unbounded degrees. The circle-supremum obstruction
+does not exclude coefficient cancellation. See root-r147-handback. Sol r150
+replaces r147; r148/r149 continue. Counts remain 9 additional / 39 total.
+
+
 r145 Paone–Paone line-graph signature bound remains unresolved;
 root verifies 66 manifest/37 scientific entries and reproduces 2,000 sampled
 graphs and 4,980 attachment checks. The singular attachment diagnostic is
