@@ -1,0 +1,15 @@
+# r171: cycle congruence remains unresolved
+
+No nomination, complete source proof, counterexample, Lean or manuscript. Credit 0; shared counts remain 9 additional /39 total, next40.
+
+One sustained target: Boris Shapiro–Ilya Smirnov–Arkady Vaintrob, *Hilbert functions of filtered graphical zonotopal algebras*, arXiv:2610.38469v1 (28 October 2026), Section7.6 Conjecture7.8 (Cycle congruence). Actual full HTML and TeX source, definitions, normalization, complete cycle section and material matching-algebra companion were read. The unversioned abstract reports only v1, no journal reference. This establishes the accessed version, not an exhaustive publication search.
+
+The question is whether, for every characteristic-zero field, every normalized nondegenerate f=u+alpha*u^2+... with alpha nonzero, every n>=3 and every d with 2d<n, the degree-d Hilbert coefficient of the literal cycle filtration equals the sum of 3^c(S) over independent d-subsets, minus delta(d,2). Higher coefficients of f vanish on these degree-two graphs. The source's normalization reduces the target to Y_i=x_(i+1)-x_i-x_i*x_(i+1) in the square-zero edge algebra. No generic-only, fixed-degree or fixed-n weakening is proposed.
+
+The strongest route studied was exact multivariate Newton elimination on the source's interpolation matrix. It preserves rank over Q, but its transformed columns are precisely the original word products in the Y_i. Thus it does not remove the joint cyclic compatibility problem. A potential straightening approach needs a uniform all-degree basis and confluence proof; none was obtained. See discovery.md for the exact missing identity and the failed bridges.
+
+Bounded diagnostics reproduce cumulative ranks 20,98,435 over F_1000003 at (n,d)=(5,2),(7,3),(9,4); 912 exact Newton evaluation identities and 136 exact local quartic identities pass. The degree-four naive relation extension leaves 54 additional kernel dimensions over that finite field. These are diagnostics, not a characteristic-zero or universal certificate; the source already reports much larger finite checks. No finite instance receives credit.
+
+The exact target/title/authors/arXiv/DOI/statement-alias audit found no same-target match in the qualified indexed ORIGINAL reports. That is a bounded historical-screen result only. Cached registry tree/body evidence was screened early; no matching selected body was identified. Current whole-registry and historical missing-merge/OpenAI gaps remain HOLD. No absence of a path, badge or open label is used as novelty evidence. The material companion proves a different quotient formula, not the full cycle claim. Classical-adaptation judgment remains pending: neither a complete classical bridge nor a substantive result has been supplied.
+
+All output is confined to this lane. sources/ retains actual retrieved bytes and the companion archive; http.jsonl records exact UTC, URLs and SHA256. run-checks.sh is bounded and runnable. scientific-freeze.json, finalmanifest.json and manifest-verification.json bind the delivered evidence. No shared, git, count, external communication, browser, Lean or manuscript changes.

@@ -1,0 +1,9 @@
+# r69 — squared-radius log-convex convolution unresolved; credit0
+
+Screened two primary questions. Excluded planar interior/boundary mean-distance inequality using actual Shen2608.06470v3 Theorem1.2/Cor3.10. Pursued MO476529's full two-input closure question for positive even densities with convex log p(sqrt t). Actual Palmer2010 class/closure theorem bodies and Brascamp–Lieb integration/convolution theorem bodies read; GSM is a strict subclass, M²(2) a strict superclass. Neither closure transfers. Named expert identity of poster japalmer remains unverified: eligibilityHOLD.
+
+Three analytic routes: conditional-score curvature criterion; folded-integrand mean-curvature plus score-variance criterion; Gaussian heat-flow PDE. Exact Gaussian example disproves pointwise folded-log-convexity: mean curvature -2a⁴/(a+b)² cancels variance +2a⁴/(a+b)². This blocks a direct Brascamp–Lieb proof, not the source claim. Missing sign Var A >= -E B for all source inputs, plus general approximation, remains precise full-scope gap.
+
+18000 piecewise-Gaussian floating diagnostics are not proof. Worst tiny negative was cancellation:65-digit analytic recomputation gives positive5.16e-25; independently scaled quadrature agrees relatively1.65e-64. Exact symbolic reductions and64 rational cancellations PASS. Original unscaled-tail quadrature failure retained. `sh run.sh` reproduces under unchanged AS/groupRSS512MiB,CPU210/wall230,40ms sampling,BLAS1.
+
+Actual pinned finite-convolution L1 registry body read and distinguished. SharedAPI403 respected, no retry/bypass/reset clearance; freshnessHOLD, latest observedOmega6c27b0a... not currentHEAD. No PROOF.md/Lean/nomination/count. Root decides acceptance;7additional/37total unchanged. Solo/lane-only, no git/browser/children/contact/post/account/upload action. Detailed strongest objection, falsifier, exact gap, URLs/UTC/versions/SHA/access limits in discovery.md/provenance.json.

@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r196 full sparse three-constrained terminal-reliability ordinary proof candidate retained for independent adversarial review. Conditional TP2 association and edge-budget replacement bridge supplied; printed graph-indexing qualification and unread 2025 proceedings remain HOLD. Root exact replays and scientific/manifest integrity pass. See root-r196-handback; sparse-reliability preliminary review assigned. No Lean, paper or credit; counts 9 additional / 39 total, next 40.
+
+
 r195: Higher convex-order separation remains unresolved. The all-order probability-transform interpolation lemma is missing. The admissible n=4 example defeats direct maximum gluing but has zero moment deficit and admits Z=X; it is not a source counterexample. Translation covers common bounded-below laws only. The 2014 predecessor body remains unread; the new source’s allegation of an incomplete prior proof is attributed, not independently certified. No nomination or formal investment. Root replay and freeze verification pass; see root-r195-handback. Fresh replacement r198 assigned. Counts 9 additional / 39 total, next 40.
 
 
