@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r172 honest zero adopted: Reed–Solomon universal degree-label step remains open; GF(9) obstruction fails repair constraints and is not a conjecture refutation. Monomial descent excluded by explicit 2018 public example. Root private checks byte-identical;46scientific/47manifest/49original files verify. See root-r172-handback. Fresh analytic/geometric r173 assigned; pendulum and DSBS independent reviews continue. Counts9additional/39total,next40.
+
+
 DSBS negative-order common-information full ordinary candidate preserved: all0<epsilon<=2^-10, allbeta>=1 includinginfinity. Root diagnostics reproduce byte-identically;91scientific/92manifest/94original files verify. Arbitrary-block posterior converse and its apparent match to the general upper bound sent to independent Sol review, together with classical-adaptation/source-prior objections. No Lean/manuscript clearance or credit. See root-dsbs-preliminary-freeze-r1. Pendulum review and fresh r172 research continue. Counts9additional/39total,next40.
 
 
