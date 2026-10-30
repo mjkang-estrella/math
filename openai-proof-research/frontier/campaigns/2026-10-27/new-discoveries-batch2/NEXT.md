@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Latest user steering: explore widely alongside solving; speed takes priority over repetitive handback paperwork. Existing r213/r214 now broad scouts, r215 focused solver. Two complementary scouting shortlists feed sustained full-scope attacks. Use compact rejects and verified immutable references; acceptance standards unchanged. See root-breadth-depth-steering-r1 and updated AGENTS.md. Counts 9 additional / 39 total, next 40.
+
+
 r212 Karam common-center ConjectureD remains unresolved. Exact cubic averaging gives a root at each radius; the finite-intersection property needed for one root at every radius is unproved. Entropy supplies eventual growth only; dumbbell refutes all-root strengthening, not source. Root exact/extraction/scientific/reference checks pass. See root-r212-handback; fresh analytic r215 assigned. Counts 9 additional / 39 total, next 40.
 
 

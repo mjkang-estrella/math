@@ -20,6 +20,26 @@ when useful work is available (root plus three = runtime maximum four). Never
 substitute another model or tier without user authorization.
 Do not poll asynchronous workers; follow the orchestrator's completion wake.
 
+## Latest user steering: breadth alongside sustained solving
+
+The user says progress is too slow and explicitly requests wide exploration
+alongside solving a new problem. Run two complementary broad scouting lanes and
+one focused solving lane within the existing three-delegate limit. Scouts should
+quickly screen multiple papers and subjects (typically 12–20 distinct attributed
+statements), then rank a short list of tractable full-scope candidates with exact
+sources, prior/duplicate status, concrete proof mechanisms and decisive next steps.
+Do not inflate this target with invented, duplicated or publicly resolved questions.
+Unpromising candidates need compact rejection entries, not a separate large dossier.
+
+The solving lane should sustain a promising universal proof/counterexample route
+beyond one failed shortcut or finite sweep. Pivot promptly when a target hides a
+famous hard problem and there is no new mechanism. Use scout shortlists to feed
+subsequent solving assignments. Root prioritizes mathematical work and targeted
+verification over repetitive administrative rewriting. Reuse verified immutable
+source/index references; do not recursively duplicate historical evidence trees.
+Keep source fidelity, scientific integrity, resource caps, access discipline,
+independent acceptance review and the substantive credit standard unchanged.
+
 Each proposed result needs its precise primary-source statement and quantifiers,
 a complete rigorous proof, a literal Lean endpoint with no residual unproved
 bridges, independent adversarial review, a documented bounded prior-art and
