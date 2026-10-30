@@ -1,0 +1,11 @@
+# Factorial-product final adjudication
+
+Root adopts the independent final review's substantive FAIL and excludes discovery credit. Source, exact arithmetic, the unconditional literal Gamma certificate, all 31 declaration audits, the portable extracted replay, manuscript visuals and byte-identical rebuild remain PASS. This is not a mathematical retraction or a claim that an earlier printed factorial collision was located.
+
+The complete classical bridge is decisive under this campaign's strict adaptation standard. Restrict t≤N to integers with prime factors ≤N/(log N)²; elementary reciprocal-prime estimates discard only o(N) choices. Small-prime subset coordinates occupy exp(o(N)) boxes. For larger primes the factorial coordinates are floor(t/p), at most (log N)². The weighted Hoeffding concentration-box proof already present in Candela–Helfgott bounds the logarithm of the remaining box count by (1.25506/2+o(1))N, strictly below N log 2. Two distinct subsets therefore have identical prime valuations. Cancelling their intersection produces the required disjoint supports; neither is empty because every t!/t^t lies strictly between zero and one.
+
+This reaches the exact distinct-factor conclusion, not just a relation with unrestricted integer coefficients. The published proposition's small 1-span hypothesis does not literally apply, but its weighted proof and these elementary two-scale estimates do. Root's earlier opposing judgment—that the almost-full smooth restriction and coordinate split merit substantive credit—is preserved in the frozen manuscript and prior decisions. On final review, that assembly does not clear the strict campaign threshold. The explicit sixteen-entry witness and formalization remain useful zero-credit artifacts.
+
+The final review's bounded registry clearance is adopted without asserting worldwide priority. The unread adjacent Jevtic body, historical NEXT-based legacy replay failure, sampled resource limitations and failed PDF-authoring marker remain disclosed. The portable replay checks shipped immutable inputs and proof obligations; it does not erase the failed historical-context check.
+
+No candidate bytes are edited. No new opinion review or further investment is commissioned. Counts change only for the separately accepted Rényi result.

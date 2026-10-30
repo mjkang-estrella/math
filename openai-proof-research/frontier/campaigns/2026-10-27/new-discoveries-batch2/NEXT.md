@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r149 Kaneko's full leaf-distance conjecture remains unresolved. Root
+verifies 359 manifest/33 scientific entries and reproduces 524,287 deletion
+sets, six windmill controls and 220 star exchanges. The family demonstrates
+why bounded-leaf and strict one-edge-improvement shortcuts are insufficient;
+it satisfies the source conclusion. Original-source/2017 body and registry
+gaps remain. See root-r149-handback. Sol r152 replaces r149; r150/r151 continue.
+Counts remain 9 additional / 39 total.
+
+
 r148 Matuzas pure fifth-Bessel-moment identity remains unresolved;
 the individual modular period comparison is missing. Li–Morgan–Siegrist is
 excluded by its actual earlier public refutation, whose original/current
