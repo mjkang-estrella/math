@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r181 zero nominations: Poisson mean-constant and two Wasserstein/Poincare assertions retired by actual public bodies, with original-question attribution limit preserved. Root exact positive-test replay matches all mathematical fields; local/external science and manifest pass. See root-r181-handback. Fresh analytic r184 assigned; r182/r183 continue. Counts9additional/39total,next40.
+
+
 r180 zero nominees: TI augmentation duplicates r122; weighted-bond difference already retired; Potechin–Tsang Cayley conjecture refuted by Lehner–Verret2020 exact dihedral-cover construction. Root exact replay and full freeze pass; see root-r180-handback. Fresh structural r183 assigned with duplicates screened before fresh-target selection; r181/r182 continue. Counts9additional/39total,next40.
 
 
