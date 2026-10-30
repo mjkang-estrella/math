@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r190 five-frequency cosine sign-agreement optimum remains unresolved; published possible-candidate attribution is not a numbered conjecture. Joint correlation/classification gap remains despite parity/scale reductions. Root exact replay and 5119 original/copy pairs pass. See root-r190-handback. Fresh analytic r192 assigned; Guo review and structural r191 continue. Counts 9 additional / 39 total, next 40.
+
+
 r189 full Guo divisibility Conjecture 2 ordinary candidate retained; factorial-basis and valuation bridge needs independent math/substantive adjudication. Root exact replay and 2577 original/copy pairs pass. Independent Guo review assigned; analytic r190 and structural r191 continue. See root-r189-handback. No Lean or manuscript; counts 9 additional / 39 total, next 40.
 
 

@@ -1,0 +1,9 @@
+# r133 handback: no nominee
+
+Selected a different algebraic source pool after early numerical-semigroup history hits: Burde–Dekimpe–Monadjem, *Post-Lie algebra structures for perfect Lie algebras*, arXiv2311.08985 / Communications in Algebra52(2024),4255–4267. Read actual published source and closest2016/2026 companions. The three precise unrestricted complex questions (nilpotent, simple, semisimple second bracket with perfect non-semisimple first bracket) remain unresolved. No previous project attempt at these exact questions was found in the bounded screen.
+
+The strongest investment was the full nilpotent question. The standard corrected product has exact curvature −ad({x,y})/4. It closes class≤2 only; the supplied exact125-triple checker confirms the obstruction at class3. Neither trace-zero nor the global Lie-skew-brace theorem supplies the missing completeness/pre-Lie bridge. discovery.md gives the full attempted reduction, nonlinear correction equation, quotient-induction obstruction, semisimple transverse-homomorphism gap and exact falsifiers. All closed helpers are classical/uncredited.
+
+All-date SHA256 screen:426515paths/278029distinct bodies;45matches reopened, four numeric false hits removed in secondary boundary screen; aliases and omissions retained. Original r111–r113 science included. Registry fixed default-HEAD update2108→e1ff281c:14commits/15paths, ancestry verified; OpenAI7ef5 unchanged. Semantic coverage remains bounded, not a novelty clearance.
+
+No PROOF.md, Lean, manuscript, acceptance or count edits. Recommendation: do not nominate these unresolved reductions. Counts inherited9additional/39total,next40. Runnable capped diagnostics: `sh run-checks.sh`. finalmanifest.json binds the complete lane; scientific-freeze.json separately excludes mutable context.
