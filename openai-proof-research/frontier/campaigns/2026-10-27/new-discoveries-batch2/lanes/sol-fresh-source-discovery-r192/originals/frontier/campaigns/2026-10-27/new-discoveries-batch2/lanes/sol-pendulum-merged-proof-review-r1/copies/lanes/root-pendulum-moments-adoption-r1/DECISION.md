@@ -1,0 +1,12 @@
+# Root component adoption
+
+Adopt the completed mandatory pendulum source and exceptional-moment component. Root read the literal definitions, source bridge proof, exact interfaces and audit/replay code. The actual SourceClaim quantifies every phi in (0,pi/2) and asks convexity of the actual two source interval integrals on Icc 0 2. It is defined, not proved by this component.
+
+Root fresh extracted source-only replay PASS: Defs, Substitution, Moments and Source compile; all 46 actual origin declarations, including generated helpers, match the delivered full types and audits. Only propext, Classical.choice and Quot.sound occur; unsafe/partial/axiom flags are false. All 411 frozen input entries and nine package pins verify; actual upstream dependency hashes match. No own prebuilt artifacts were present. Archive SHA256: 05cef5c6617e1372f925340e70d5f4c5444afe2844840eb0fbc8ac902bd5fcb0. Root froze 121 source/report files and retains extracted replay receipts and compile logs.
+
+The weighted monotone substitution certifies both integrability and equality, discarding only null endpoints. Natural moment integrability and combined exceptional identities M0=pi and M1=pi(a+z)/2-2sqrt(az) are unconditional on positive parameters. The literal source/transformed identity is proved on the interior. No endpoint continuity, higher-moment convexity or series identity is inferred from these facts alone.
+
+Authorize two disjoint next components with GPT-6.1 Sol, high reasoning, default service. NEXT-INTERFACES.md fixes their precise scope: (1) all-n moment convexity, actual positive binomial expansion and literal interior convexity; (2) actual one-sided endpoint continuity/integrability and closed convexity transfer from the separately proved interior theorem. Inherited four mathematical modules remain byte-identical. No manuscript, stronger C2/strictness target or acceptance is commissioned.
+
+Root replay used the unchanged replay guard and serial nested Lean guards: helper sampled peak group RSS 42,188,800 bytes, wall 24.366 s, exit 0; actual per-module Lean samples are in extracted/logs. These are sampled maxima, not continuous guarantees. Failed development attempts and snapshot limitations remain in the inherited report. The separate root integrity checker also passes. No shared counts changed: credit 0; 9 additional / 39 total, next 40. Historical and primary prior-art acceptance qualifications remain as previously recorded.
+

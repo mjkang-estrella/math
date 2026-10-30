@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r192 Kovalev linear Lipschitz clustering Question 6.5 remains unresolved. Per-space/uniform reduction and collision criterion retained; all-space linear stability missing. Method obstructions are not source refutations. Root exact replay and scientific/manifest verification pass. See root-r192-handback. Fresh analytic r195 assigned; structural r193 and arithmetic r194 continue. Counts 9 additional / 39 total, next 40.
+
+
 Guo divisibility review: root adopts SOURCE/ordinary MATH PASS and routine complete-adaptation exclusion. Published stronger endpoint preserved, historical novelty HOLD separate. Root independent-checker replay, 75 original/copy pairs and 109-entry manifest pass. See root-guo-divisibility-review-adoption-r1. Fresh arithmetic r194 assigned; analytic r192 and structural r193 continue. Counts 9 additional / 39 total, next 40.
 
 
