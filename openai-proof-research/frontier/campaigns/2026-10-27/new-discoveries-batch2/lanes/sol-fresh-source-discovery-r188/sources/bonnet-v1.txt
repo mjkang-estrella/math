@@ -1,0 +1,1131 @@
+                                         Answering Related Questions
+                                         Édouard Bonnet # Ñ
+                                         CNRS, ENS de Lyon, Université Claude Bernard Lyon 1, LIP UMR 5668, 69342 Lyon, France
+
+                                               Abstract
+                                         We introduce the meta-problem Sidestep(Π, dist, d) for a problem Π, a metric dist over its inputs,
+                                         and a map d : N → R+ ∪ {∞}. A solution to Sidestep(Π, dist, d) on an input I of Π is a pair
+                                         (J, Π(J)) such that dist(I, J) ⩽ d(|I|) and Π(J) is a correct answer to Π on input J. This formalizes
+                                         the notion of answering a related question (or sidestepping the question), for which we give some
+                                         practical and theoretical motivations, and compare it to the neighboring concepts of smoothed
+                                         analysis, planted problems, and edition problems. Informally, we call hardness radius the “largest” d
+                                         such that Sidestep(Π, dist, d) is NP-hard. This framework calls for establishing the hardness radius
+                                         of problems Π of interest for the relevant distances dist.
+                                             We exemplify it with graph problems and two distances dist∆ and diste (the edge edit distance)
+                                         such that dist∆ (G, H) (resp. diste (G, H)) is the maximum degree (resp. number of edges) of the
+
+
+
+
+arXiv:2501.10633v1 [cs.DS] 18 Jan 2025
+                                         symmetric difference of G and H if these graphs are on the same vertex set, and +∞ otherwise.
+                                         Thus when solving Sidestep(Π, dist∆ , d) (resp. Sidestep(Π, diste , d)) on an n-vertex input G,
+                                         acceptably-close graphs H are obtained by XORing G with a graph of maximum degree at most d(n)
+                                         (resp. having at most d(n) edges). We show that the decision problems Independent Set, Clique,
+                                                                                                                  1                     4
+                                         Vertex Cover, Coloring, Clique Cover have hardness radius n 2 −o(1) for dist∆ , and n 3 −o(1)
+                                         for diste , that Hamiltonian Cycle (or Hamiltonian Path) has hardness radius 0 for dist∆ , and
+                                                                   1
+                                         somewhere between n 2 −o(1) and n/3 for diste , and that Dominating Set has hardness radius
+                                           1−o(1)
+                                         n        for diste . We leave several open questions.
+
+
+
+
+                                          1     Introduction
+                                         At the end of a talk or in everyday life, we can be asked three kinds of well-formed questions:
+                                         easy ones, to which we can quickly provide an answer, hard ones, which we cannot directly
+                                         address but are still able to mention something related, and very hard ones, for which even
+                                         the latter is beyond us. In this paper, we formalize the distinction between hard and very
+                                         hard questions for computational problems. To agree on the meaning of “related” we need to
+                                         specify a metric on the input space of the problem at hand, as well as a radius—possibly
+                                         depending on the input size—below which we are acceptably close to the original question.
+                                         If the radius is the constant zero function, we are in fact solving the original problem. At
+                                         the other extreme, if the radius is infinite, then we shall simply find a trivially solvable
+                                         instance; an easy task for most problems. It is then natural to determine how small this
+                                         radius can be while keeping the meta-problem of “sidestepping the question” tractable. To
+                                         a first approximation, we call hardness radius the supremum of the radius below tractability.
+                                             This paper serves as a theoretical basis for answering related questions with the following
+                                         motivations in mind.
+                                             First and main motivation. On the one hand, efficiently solving the meta-problem
+                                         for some task Π (in the regime where the radius allows it) permits to build a customized
+                                         dataset of graphs each labeled by the adequate answer to Π. Indeed, if one wants the dataset
+                                         on which Π is solved to be some precise set D or to be sampled according to a chosen
+                                         distribution, one at least gets a dataset D′ that is pointwise close to the desired target. This
+                                         can be useful to create benchmarks, curate instances for a programming competition, or
+                                         enable supervised learning for Π. Depending on the exact use case, we may ask for more
+                                         properties from the instances of D′ . Ideally, solving Π on the inputs of D′ should remain
+2   Answering Related Questions
+
+
+    as challenging as on general inputs. Or, at the very least, D′ should not contain too many
+    trivial instances. This can in principle be favored by tweaking the distance function between
+    inputs.
+        Second motivation. On the other hand, the magnitude of the hardness radius somehow
+    informs, at least for relevant input metrics, on the degree of difficulty of a problem. For
+    instance, for a chosen distance between inputs of NP-hard graph problems, this draws
+    a hierarchy of increasingly hard problems. We wish to explore how this hierarchy1 compares
+    with those obtained through the prisms of approximability, parameterized complexity, and
+    smoothed analysis.
+        We will later elaborate on our motivations, and how our new meta-problem and the
+    hardness radius relate to well-established concepts: smoothed analysis, planted problems,
+    and edge modification problems. We now get more formal. Given a problem Π, a distance
+    dist over its inputs, and a non-decreasing function d : N → R+ ∪ {∞}, we introduce the
+    following problem.
+
+
+        Sidestep(Π, dist, d)
+        Input: An input I of Π.
+        Output: A pair (J, Π(J)) with dist(I, J) ⩽ d(|I|).
+
+
+        In the above, |I| denotes the size of input I, defined as a natural number. When the
+    main part of I is a graph, |I| denotes its number of vertices. Note that Π can be a decision
+    or a function problem. And in both cases Sidestep(Π, dist, d) is itself a function problem.
+    Thus Π(J) lies in {true, false} if Π is a decision problem, and it is the correct solution to Π
+    on input J, or a special symbol nil indicating the absence of solution, when Π is a function
+    problem. Often, there may be several correct solutions. We denote the set of all correct
+    solutions to Π on J by SolΠ (J), and Π(J) should be thought as any fixed element of SolΠ (J).
+    We make the slight abuse of notation of writing the expression d(n) instead of the function d
+    in the third field of Sidestep.
+        Considered metrics. We will exclusively deal with problems Π whose input is a weight-
+    less undirected graph, and optionally an integer threshold, and consider two distances between
+    graphs. Both require that two graphs have the same vertex set for the distance between
+    them to be finite. For every two graphs G, H, diste (G, H) := ∞ if V (G) ̸= V (H) and
+
+                                        diste (G, H) := |E(G)△E(H)|,
+
+    otherwise, where △ denotes the symmetric difference. For two graphs G, H on the same
+    vertex set, V (G), we may denote by G△H the graph with vertex set V (G) and edge set
+    E(G)△E(H). We set dist∆ (G, H) := ∞ if V (G) ̸= V (H) and
+
+                                          dist∆ (G, H) := ∆(G△H),
+
+    otherwise, where ∆(·) denotes the maximum degree of its graph argument. If the whole
+    input consists of a graph together with some additional integral, rational, or real parameters
+    (typically serving as thresholds for a graph property), a finite distance between (G, k) and
+    (H, ℓ) implies that k = ℓ. Specifically, for every considered distance dist, dist((G, k), (H, ℓ)) =
+
+
+    1
+        or these hierarchies since more than one input distance can be considered
+É. Bonnet                                                                                                     3
+
+
+dist(G, H) if k = ℓ, and dist((G, k), (H, ℓ)) = ∞ otherwise. In particular, we will often
+exclude the parameters (when they exist at all) from the expressed distances.
+
+    Hardness and tractability radii. A function problem is said NP-hard if every problem
+in NP reduces to it via a polynomial-time (not necessarily many-one) reduction. The
+hardness radius of a problem Π for (or under) distance dist is at least some non-negative,
+non-decreasing function d if Sidestep(Π, dist, d) is NP-hard. Similarly, the tractability
+radius of Π for distance dist is at most some non-negative, non-decreasing function d if
+Sidestep(Π, dist, d) is in FP, the polynomial-time class for function problems. As the
+hardness and tractability radii are functions, formalizing what they are equal to through
+infimum and supremum would require a total order over maps. However, two non-decreasing
+functions f, g : N → R+ can be asymptotically incomparable, in the sense that for every
+n ∈ N there are nf , ng ⩾ n such that f (nf ) > g(nf ) and f (ng ) < g(ng ). Rather than
+defining the family of allowed maps, we will leave the definition as is: mere lower and upper
+bounds.
+    In some situations, though, we will be able to “pinpoint” more or less precisely the
+hardness or tractability radius. We may say that Π has for distance dist hardness radius
+    γ if Sidestep(Π, dist, γ) is NP-hard, and for all ε > 0 such that γ + ε is in the image
+    of dist, Sidestep(Π, dist, γ + ε) is in FP,
+    nγ−o(1) if Sidestep(Π, dist, nγ ) is in FP, and for all ε ∈ (0, γ], Sidestep(Π, dist, nγ−ε )
+    is NP-hard.
+Note that the hardness and tractability radii can in principle be separated by a “zone” of
+NP-intermediate problems. While our main distances, dist∆ and diste , only take integral
+values, and we could have given simplified definitions for them, the above supports the
+general case when the metric is valued in R+ ∪ {∞}.
+
+
+1.1      Related concepts
+Here we detail how our meta-problem relates to and differs from well-established concepts.
+
+     Smoothed analysis. Introduced by Spielman and Teng to explain the practical effect-
+iveness of the simplex algorithm despite its worst-case exponential runtime [14], smoothed
+analysis has been successful in serving a similar purpose for several algorithms operating
+over a continuous input space,2 such as the k-means method [2] or the 2-opt heuristic for the
+Euclidean TSP [8]; also see [15]. The (worst-case) complexity of Sidestep(Π, dist, d) can be
+seen as an adversary choosing the worst input I, and our replying the most convenient input
+I ′ at distance at most d(|I|) from I, and then solving Π on input I ′ . Smoothed analysis
+can be thought as following the above process with the twist that I ′ is instead chosen by
+Nature, according to some probability distribution. We refer the interested reader to [14, 15]
+for formal definitions.
+     While the aim of smoothed analysis is to model real data, and thus to better describe the
+practical performance of an algorithm, the main motivation of solving Sidestep(Π, dist, d)
+lies elsewhere. However, both endeavors are comparable in that they hierarchize NP-hard
+problems by a finer-grained complexity notion departing from worst-case analysis. In fact,
+smoothed analysis also has its own “hardness radius” in the supremum of the variance for
+
+
+2
+    hence, in practice, taking rationals or floats as input, which approximate the reals that would ideally
+    constitute the instance
+4   Answering Related Questions
+
+
+        Input space of Π                                      Input space of Π
+
+
+
+
+                     I
+                                                                                           I′
+                                                                                       I
+           perturbation support
+                                                                                       d
+
+                                                                             nearby instances
+
+
+    (a) Smoothed analysis.                                 (b) Sidestep(Π, dist, d).
+
+       Figure 1 Comparison of the smoothed analysis of Π and Sidestep(Π, dist, d). The moves of the
+    adversary, Nature, and ours are depicted in red, blue, and green, respectively.
+
+
+    which the average-complexity around the worst instance I is at least superpolynomial.3
+        We believe that, at least for problems on weightless graphs, our framework has its merits
+    compared to smoothed analysis. Even if theory has been developed to extend smoothed
+    analysis to algorithms on exclusively4 discrete inputs [5], the resulting smoothed complexity is
+    less appealing than that of continuous problems or combinatorial problems with a continuously
+    perturbed objective function. Bläser and Manthey [5] consider the random perturbation
+    consisting of XORing the edge set of the input graph with a graph drawn from the Erdős-
+    Rényi model G(n, p = ε) with ε ∈ (0, 1/2]. Applied to k-Coloring, this leads to the
+    perhaps undesired conclusion that this problem is “easy”—as far as smoothed complexity is
+    concerned—for the somewhat unsatisfactory reason that if ε is above a constant ε0 bounded
+    away from 0, then the perturbed n-vertex graph has cliques of size Ω(log n) (like G(n, ε0 )
+                                                                                                 2
+    itself) hence is a negative instance, whereas if ε ⩽ ε0 , the allowed time is actually 2Θ(n ) ,
+    way above the time the exact exponential algorithms take.
+        Admittedly, also leveraging that the clique number lower bounds the chromatic         num-
+                                                                                      k+1
+                                                                                          
+    ber, Sidestep(k-Coloring, dist∆ , k − 1) and Sidestep(k-Coloring, diste , 2 − k) are
+    tractable. One can indeed check that these radius bounds allow to plant a clique of size
+    k + 1 in a previously connected vertex subset (of size k + 1). This makes for a rather low
+    hardness radius for a NP-hard problem that is not particularly easy to solve in practice. More
+    unsettlingly, the fact that for any fixed k, most graphs have clique number larger than k
+    should not presume anything on the actual complexity of k-Coloring. This is handier to
+    remediate in our setting: simply tweak the metric by setting an infinite distance between two
+    graphs of distinct clique numbers. (In the next couple of paragraphs, we further incentivize
+    to tweak the distance function for such a problem.) Lastly, the hardness radius is easier to
+    extract in our framework—where it appears naturally—than in that of smooth analysis.
+        Planted problems. Planted problems, and their main representative, the planted clique
+
+
+    3
+      And smoothed polynomial time is reached when below the “hardness radius” the variance is low enough
+      that the allowed time exceeds that of the brute-force approach.
+    4
+      By that we exclude combinatorial problems with real (or rational) weights that can naturally be
+      continuously perturbed, as in [3, 4].
+É. Bonnet                                                                                          5
+
+
+problem [12], ask to distinguish between a (plain) random graph (usually G(n, 1/2)) and the
+“same” random graph augmented by some edges forming a solution to an NP-hard problem;
+be it by adding all the edges on a selected vertex subset (Clique) or the edges of a spanning
+cycle (Hamiltonian Cycle). The search variant consists of actually reporting this planted
+solution. In some way, Sidestep(Π, dist, d) is a planting problem instead. It is about editing
+the inputs with features that make them—at least to the editor—easily identifiable as positive
+or as negative instances.
+    For the sake of our first motivation, it is desirable that the edited instances remain
+as typical as possible. In particular, it is highly preferable that they are challenging to
+solve for other parties than the editor. In that respect, the abovementioned suggested
+solution to Sidestep(k-Coloring, dist∆ , k − 1) and Sidestep(k-Coloring, diste , k+1
+                                                                                          
+                                                                                        2   − k)
+is dissatisfying. As previously observed, a way to not pollute the k-Coloring dataset with
+trivial instances all containing a clique of size k + 1 is to tune the metric. A more relevant
+problem is then Sidestep(k-Coloring, dist, d) where dist sets a large distance (possibly
+infinite) between two graphs with distinct clique numbers.
+    Another similarly displeasing solution is that of Theorem 7: when handling Sidestep(Ha-
+miltonian Cycle, diste , d) with d = n/3, we sometimes create trivially negative instances
+by disconnecting the graph, and more specifically by isolating a vertex. Again, this can
+be prevented by modifying the distance function. For example, one could impose that two
+graphs at a finite distance from each other have the same vertex subsets of connected and
+2-connected components.
+    These more problem-specific metrics are suggestions for potential future work. In this
+paper, we chose to limit the distances between graphs to dist∆ and diste . Besides, we find
+interesting the question of the minimum d for which Sidestep(Hamiltonian Cycle, diste , d)
+is polynomial-time solvable, that is, in plain English: How many edge editions are necessary
+and sufficient to be efficiently conclusive on whether a graph is Hamiltonian? We like that our
+framework encompasses many fairly natural questions like this one, which, to our knowledge,
+have not been explored in this exact form.
+
+    Edge modification problems. Edge modification problems ask, given a graph G and
+a non-negative integer k, whether at most k edges of G can be edited (i.e., added or removed)
+for the resulting graph to land on a particular graph class C. Most often, the parameterized
+complexity of these problems with respect to k is investigated. There is a recent survey on
+the topic [6].
+    Conceptually, this is close to Sidestep(ΠC , diste , k), where ΠC is the recognition problem
+of class C. Let us highlight the key differences. The most obvious one is that, unlike in
+the edge modification problem to C, instances of Sidestep(ΠC , diste , k) can be addressed
+by creating a negative instance. Another important difference is that edge modification
+problems almost exclusively focus on classes C that are easy to recognize, such as forests,
+interval graphs, or cographs. Indeed, if the problem is already NP-hard when k = 0, there is
+not much to be done. On the contrary, in Sidestep(ΠC , diste , k), k is part of the problem not
+of the input, and we try and establish the smallest k such that a polynomial-time algorithm
+exists. Therefore in our case, ΠC shall be hard.
+
+
+1.2    Our results
+In Section 3 we illustrate the new framework with the hamiltonicity problem. We first observe
+that Sidestep(Hamiltonian Cycle, dist∆ , 1) is tractable, while Sidestep(Hamiltonian
+Cycle, dist∆ , 0) is not, since it coincides with Hamiltonian Cycle.
+6   Answering Related Questions
+
+
+    ▶ Theorem 1. Hamiltonian Cycle has hardness radius 0 under dist∆ .
+
+       For establishing the hardness radius of Hamiltonian Cycle, diste proves to be a more
+    challenging distance. We improve the tractability radius from n/2 (due to a simple perfect
+    matching argument used to obtain Theorem 1) to n/3.
+
+    ▶ Theorem 2. Sidestep(Hamiltonian Cycle, diste , n/3) is in FP.
+
+        The algorithm of Theorem 2 uses a path-growing argument reminiscent of some proofs
+    of Dirac’s theorem [7] or Ore’s theorem [18]. We do not manage to match Theorem 2 with
+    a tight lower bound. However we show that the hardness radius of Hamiltonian Cycle
+                              1
+    under diste is at least n 2 −o(1) .
+                                                                                 1
+    ▶ Theorem 3. For any β > 0, Sidestep(Hamiltonian Cycle, diste , n 2 −β ) is NP-hard.
+
+        Theorem 3 offers a first example of what we call a robust reduction, i.e., in the particular
+    case of the metric diste , a reduction whose positive (resp. negative) instances can withstand
+                                                        1
+    the edition of some number of edges (in that case n 2 −β ). In the proof of Theorem 3, we indeed
+    design a reduction where the produced Hamiltonian graphs cannot be made non-Hamiltonian
+                               1
+    by removing at most n 2 −β edges, and the produced non-Hamiltonian graphs cannot be
+                                              1
+    made Hamiltonian by adding at most n 2 −β edges. The former is ensured by applying Ore’s
+    theorem on some specific induced subgraphs, while the latter is arranged by piecing together
+    copies of the same 2-connected component.
+        We further give some evidence (see Theorem 12) that lowering the tractability radius
+    at n1−β for some fixed β > 0 may be challenging since that would imply beating the current
+    polynomial-time best approximation algorithm for Longest Path in Hamiltonian graphs.
+        Turning our attention to the Dominating Set problem, we prove the following.
+
+    ▶ Theorem 4. Dominating Set has hardness radius n1−o(1) for diste .
+
+    The upper bound of n − 1 for the tractability radius of Dominating Set under diste is
+    trivial, we give a simple argument to bring this upper bound down to n/e, where e is Euler’s
+    number.
+        Section 4 is devoted to establishing the hardness (or tractability) radii for dist∆ and diste
+    of five central graph problems.
+
+    ▶ Theorem 5. Independent Set, Clique, Vertex Cover, Coloring, and Clique
+                                 1                                         4
+    Cover have hardness radius n 2 −o(1) under dist∆ and hardness radius n 3 −o(1) under diste .
+
+        Theorem 5 comprises twenty substatements: two algorithms and two hardness results
+    for five problems. Let us first note that all the problems of Theorem 5 should be thought
+    as decision problems. They take a graph and an integer threshold, and ask for a feasible
+    solution at that threshold; see Section 4 for the definitions. However, since Theorem 5 even
+    works when a feasible solution is required in output (not just a yes/no answer), we deal with
+    this function variant of the decision problem.
+        Solving Sidestep(Max Independent Set, dist, d), where Max Independent Set
+    is the optimization variant, is in principle much harder (see Section 1.3) than solving
+    Sidestep(Independent Set, dist, d). In the latter, one can edit the input graph to be
+    clearly below or clearly above the threshold. In the former, whichever nearby graph ends up
+    being selected for the output, its independence number should be precisely known.
+        We start by establishing Theorem 5 for Independent Set. The algorithms are simple
+    win-wins planting witnesses of low or of high independence number. The matching lower
+É. Bonnet                                                                                       7
+
+
+bounds are based on the famously high inapproximability of Max Independent Set [11, 17].
+We then show that a restricted form of polynomial-time reductions, namely polynomial-time
+isomorphisms both preserving the input size and the distance between inputs, transfers the
+hardness radius; see Theorem 21 for a precise statement. As a consequence, we obtain The-
+orem 5 for Clique and Vertex Cover.
+    The algorithms for Independent Set almost readily work for Clique Cover, and
+hence for Coloring via Theorem 21. We finally adapt the hardness results for Coloring
+(and hence for Clique Cover via Theorem 21). This requires a bit more work, especially
+for the distance diste where we leverage a classical upper bound of the chromatic number of
+m-edge graphs (Observation 25), and the Cauchy–Schwarz inequality.
+    As far as approximation algorithms and parameterized complexity are concerned, Ver-
+tex Cover, which admits fixed-parameter tractable algorithms and polynomial-time
+2-approximation algorithms, is “much more tractable” than the other problems of The-
+orem 5. On the contrary, the complexity measure of ascending hardness radius (for, say,
+diste ) groups Vertex Cover together with Independent Set and Coloring, higher up
+than Dominating Set and Hamiltonian Cycle.
+
+1.3    Open questions and potential future work
+Section 3 suggests the following question.
+
+▶ Question 1. What is the hardness radius of Hamiltonian Cycle under diste ?
+
+  Toward answering Question 1, is it true that for any positive k, Sidestep(Hamiltonian
+Cycle, diste , n/k) is in FP? We ask the same question for Dominating Set.
+
+▶ Question 2. For any positive k, is Sidestep(Dominating Set, diste , n/k) in FP?
+
+   In Theorem 13, we show Question 2 for k = e.
+
+▶ Question 3. What is the hardness radius of Dominating Set under dist∆ ?
+
+    It is easy to see that for every integer s > 0, Sidestep(Dominating Set, dist∆ , n/s)
+is in FP. On inputs (G, k) with k ⩽ s, use the brute-force approach to decide if G has
+a dominating set of size k. When instead k > s, pick any k vertices and make each adjacent
+to n/k < n/s distinct vertices; the original k vertices now form a dominating set.
+
+▶ Question 4. What is the hardness radius of Max Clique under dist∆ and under diste ?
+
+More generally, we ask Question 4 for the optimization versions of the problems of Theorem 5.
+    The NP-hard Triangle Partition problem inputs an n-vertex graph G with n divis-
+ible by 3, and asks for a partition of V (G) into n/3 triangles. It is straightforward that
+Sidestep(Triangle Partition, dist∆ , 2) is in FP.
+
+▶ Question 5. Is Sidestep(Triangle Partition, dist∆ , 1) in FP?
+
+   It is easy to see that Sidestep(Triangle Partition, diste , 2n/3) is in FP. How much
+can the tractability radius be pushed?
+
+▶ Question 6. What is the hardness radius of Triangle Partition under diste ?
+
+    For some applications when Π is a decision problem, one may prefer the one-sided variants
+of Sidestep(Π, dist, d), where one forces nearby instances to always be positive or always be
+negative.
+8   Answering Related Questions
+
+
+
+      Sidestep-Pos(Π, dist, d)
+      Input: An input I of Π.
+      Output: A positive instance J for Π with dist(I, J) ⩽ d(|I|).
+
+
+
+
+      Sidestep-Neg(Π, dist, d)
+      Input: An input I of Π.
+      Output: A negative instance J for Π with dist(I, J) ⩽ d(|I|).
+
+
+       These problems are one step closer to edition problems, especially Sidestep-Pos(Π, dist, d),
+    but still the settings are somewhat distinct. One can ask for hardness/tractability radii for
+    these one-sided variants.
+       Finally, even if we only consider graph problems in the current paper, one can tackle
+    the hardness/tractability radii of Sidestep(Π, dist, d) for formula, hypergraph, string, or
+    geometric problems (to name a few) with the relevant distances dist between inputs. Besides,
+    the chosen dividing line to define these radii need not be FP vs NP-hard.
+
+
+     2     Graph and set notation and definitions
+
+    If i and j two integers, we denote by [i, j] the set of integers that are at least i and at most j.
+    For every integer i, [i] is a shorthand for [1, i].
+         We denote by V (G) and E(G) the vertex and the edge set, respectively, of a graph G.
+    If G is a graph and S ⊆ V (G), we denote by G[S] the subgraph of G induced by S, and
+    use G − S as a short-hand for G[V (G) \ S]. We denote the open and closed neighborhoods
+    of a vertex v in G by NG (v) and NG [v], respectively. For S ⊆ V (G), we set NG (S) :=
+    S
+       v∈S NG (v) \ S and NG [S] := NG (S) ∪ S. A dominating set of G is a subset S ⊆ V (G)
+    such that NG [S] = V (G). We say that v ∈ V (G) (resp. S ⊆ V (G)) dominates X ⊆ V (G) if
+    X ⊆ NG [v] (resp. X ⊆ NG [S]). In every notation with a graph subscript, we may omit it if
+    the graph is clear from the context.
+         If e ∈ E(G), we denote by G − e the graph G deprived of edge e, but the endpoints of e
+    remain. More generally, if F ⊆ E(G), G − F is the graph obtained from G by removing all
+    the edges of F (but not their endpoints). We denote by G + e (resp. G + F ) the graph with
+    vertex set V (G) and edge set E(G) ∪ {e} (resp. E(G) ∪ F ).
+         The clique number of a graph G, denoted by ω(G), is the maximum size of a clique of G,
+    i.e., a set of pairwise adjacent vertices. The independence number of G, denoted by α(G), can
+    be defined as the clique number of G, the complement of G, which flips edges and non-edges.
+    The chromatic number of G, denoted by χ(G), is the least number of colors required to
+    properly color G, i.e., give a color to each vertex such that no edge has its two endpoints
+    of the same color, or equivalently the least number of parts in a partition of V (G) into
+    independent sets of G. We will often use the simple fact that any graph G of maximum
+    degree ∆ has chromatic number at most ∆ + 1, and has an independent set of size at least
+    |V (G)|/(∆ + 1).
+         A vertex cover of G is a subset S ⊆ V (G) such that every edge of G has at least one
+    endpoint in S. A Hamiltonian cycle (resp. Hamiltonian path) is a cycle (resp. path) passing
+    through each vertex exactly once. A graph is said Hamiltonian if it admits a Hamiltonian
+    cycle. A perfect matching of G is a matching of G with ⌊|V (G)|/2⌋ edges.
+É. Bonnet                                                                                                      9
+
+
+    We denote by A△B the symmetric difference of A and B, i.e., (A \ B) ∪ (B \ A). If
+two graphs G, H have the same vertex set, then G△H denotes the graph with vertex set
+V (G) = V (H) and edge set E(G)△E(H). A useful simple fact about the symmetric difference
+is that A = B△C implies A△B = C. This holds when A, B, C are sets or graphs.
+
+ 3      Hamiltonicity and Domination
+We treat Hamiltonian Cycle (and similarly Hamiltonian Path) as a function problem.
+In particular, an algorithm for Sidestep(Hamiltonian Cycle, dist, d) returns, on input G,
+a pair (G′ , C) where C is a Hamiltonian cycle of G′ , or (G′ , nil) if G′ is not Hamiltonian.
+    We first observe that the hardness radius of Hamiltonian Cycle under dist∆ is 0. (The
+same holds with some small adjustments for Hamiltonian Path.) As the distance dist∆ only
+takes integral values, we shall simply show that Sidestep(Hamiltonian Cycle, dist∆ , 1) is
+tractable. Indeed, Sidestep(Π, dist, 0) is equivalent to Π for every problem Π and distance
+dist; hence Sidestep(Hamiltonian Cycle, dist∆ , 0) is NP-hard.
+
+▶ Theorem 6. Sidestep(Hamiltonian Cycle, dist∆ , 1) is in FP.
+
+Proof. If G is disconnected, simply output (G, nil) as a disconnected graph cannot be
+Hamiltonian. We now assume that G is connected. Compute a perfect matching of G in
+polynomial time. If this step reports that G has no perfect matching, again output (G, nil).
+Indeed a Hamiltonian cycle yields a perfect matching by taking every other edge on the cycle.
+    We now assume that G is connected, and that we have found a perfect matching M :=
+{u1 v1 , u2 v2 , . . . , up vp } of G. If V (G) is odd, we further assume without loss of generality (as
+G is connected) that the unique vertex u of G outside M is adjacent to u1 . We build the
+following graph J: Start with the edgeless graph on vertex set V (G), and for every i ∈ [p − 1]
+if vi ui+1 ∈/ E(G) then add the edge vi ui+1 to E(J). Finally if V (G) is odd and vp u ∈       / E(G),
+add vp u to E(J). If V (G) is even and vp u1 ∈          / E(G), add vp u1 to E(J).
+    We set H := G△J, thus G△H = J. It can be observed that J has maximum degree
+at most 1. Therefore dist∆ (G, H) ⩽ 1. And we can output (H, (u)u1 v1 u2 v2 . . . up vp ).            ◀
+
+    Note that the proof of Theorem 6 shows that Sidestep(Hamiltonian Cycle, diste , n/2)
+is in FP. We now see that we can improve on the n/2 bound.
+
+▶ Theorem 7. Sidestep(Hamiltonian Cycle, diste , n/3) is in FP.
+
+Proof. Greedily grow a path P in the n-vertex input G. That is, while an endpoint of
+P has a neighbor outside V (P ), add this neighbor to the path. When this process ends,
+we get a path P = v1 v2 . . . vh . If h = n, we output (G + v1 vh , v1 v2 . . . vh ). Similarly, if
+|V (G) \ V (P )| = n − h is smaller than n/3, it is easy to add at most n/3 edges to G to make
+it Hamiltonian. We therefore assume that h ⩽ 2n/3, and further assume, as before, that G
+is connected.
+    We will now show that either at least one endpoint v1 , vh has degree at most h/2 ⩽ n/3,
+or we can find a strictly longer path P ′ and restart the argument. First, we observe that v1
+and vh have, by construction, no neighbors in V (G) \ V (P ) (otherwise P could be extended).
+
+▷ Claim 8. If both v1 vi+1 , vi vh are edges of G, then one can effectively find in G a path on
+h + 1 vertices.
+
+Proof: As G is connected (and P is not a Hamiltonian path), there is a vertex vj ∈ V (P )
+with a neighbor v ∈ V (G) \ V (G). By symmetry, we can assume that 1 ⩽ j ⩽ i. Then,
+vvj vj+1 . . . vi−1 vi vh vh−1 . . . vi+2 vi+1 v1 v2 . . . vj−2 vj−1 is the desired P ′ on h + 1 vertices. ♢
+10   Answering Related Questions
+
+
+         While Claim 8 applies, we proceed with the longer path P ′ (this will happen fewer than
+     n times). If it does not apply, then the sum of the degrees of v1 and vh is upper bounded
+     by h. Hence one of v1 , vh has degree at most h/2 ⩽ n/3. In this case, we isolate v1 or vh by
+     at most n/3 edge deletions, thereby producing a clearly negative instance.                 ◀
+
+         We next see how to make robust reductions for Hamiltonian Cycle, which can
+     essentially sustain a square root number of edge editions (in the number of vertices). There
+     is still some room between this lower bound and the upper bound of Theorem 7. We will
+     later explain why a truly sublinear upper bound might be difficult to obtain.
+                                                                                            1
+     ▶ Theorem 9. For any β > 0, Sidestep(Hamiltonian Cycle, diste , n 2 −β ) is NP-hard.
+     Proof. We reduce from Hamiltonian Path on subcubic graphs with two vertices of degree 1.
+     In particular, any Hamiltonian path has to have these vertices as endpoints. This problem
+     is NP-hard; see for instance [10, 1], which in fact proves that Hamiltonian Cycle is
+     NP-complete in subcubic graphs. In the latter paper—which shows a stronger result—the
+     constructed graphs have two adjacent vertices of degree 2. Thus the edge between them can
+     be removed to show the NP-hardness of our Hamiltonian path problem.
+         Let H be an ν-vertex subcubic graph, and s, t ∈ V (H) be its two vertices of degree 1.
+                                                                                 1
+     We build an n-vertex instance G of Sidestep(Hamiltonian Cycle, diste , n 2 −β ).
+                                                  1
+         Construction of G. Let q := ⌊n 2 −β ⌋ + 1, and make 2q copies H1 , . . . , H2q of H. For
+     every i ∈ [2q], denote by si , ti the copies of s, t, respectively, in Hi . Identify ti and si+1 for
+     every i ∈ [2q − 1], and s1 and t2q . Let us call G′ the graph obtained at this stage.
+         Now turn every vertex u in V (G′ ) \ i∈[2q] {si , ti } (actually i∈[2q] {si , ti } = i∈[2q] {si })
+                                                  S                           S                      S
+
+     into a clique Cu of size q + 2. The vertices si and ti remain single vertices. For every edge
+     uv ∈ E(G′ ) not incident to an si or ti , add a new vertex xuv (= xvu ). Make xuv fully
+     adjacent to Cu and to Cv (there is no edge between Cu and Cv ). For every i ∈ [2q], let s′i
+     (resp. t′i ) be the unique neighbor of si (resp. of ti ) in Hi . Make si fully adjacent to Cs′i , and ti
+     fully adjacent to Ct′i . For convenience, we may use xsi s′i , xti t′i as aliases for si , ti , respectively.
+     This finishes the construction of G.
+
+                           v             w                                            Cv    xvw    Cw
+                                                                                xuv
+
+
+       s         u                                    t          si        Cu         xvy          xwz        ti
+
+
+                           y             z                                            Cy    xyz    Cz
+
+
+
+
+        Figure 2 Top left: A subcubic graph H with two degree-1 vertices s and t. Top right: The graph
+     isomorphic to each Gi . Larger blue vertices are cliques of size q + 2, and edges incident to them go
+     toward all their vertices. Bottom: The obtained graph G with q = 3, where the leftmost vertex s1
+     and the rightmost vertex t2q are in fact the same vertex.
+
+
+           We denote by Gi the induced subgraph of G derived from Hi . Observe that
+                         |V (G)| = 2q((|V (H)| − 2)(q + 2) + |E(H)| − 1) = Θ(q 2 ν),
+                                             1
+     thus n = Θ(n1−2β ν) and n = Θ(ν 2β ). As β > 0 is a fixed constant, this defines a polynomial-
+     time reduction. See Figure 2 for illustrations.
+É. Bonnet                                                                                               11
+
+
+   Correctness. The reduction relies on the following two claims.
+
+▷ Claim 10. If H admits an s–t Hamiltonian path, then deleting (equivalently, editing)
+fewer than q edges in G cannot make it non-Hamiltonian.
+
+Proof: Let G− be any graph obtained from G by deleting at most q − 1 edges. We show
+the following two properties that for every xuv ̸= xvw ∈ V (G)
+    there is a path in G− , starting at xuv , ending at xvw , and whose vertex set is Cv ∪
+    {xuv , xvw }, and
+    if v has a third neighbor y (in its copy Hi ), then there is a path in G− , starting at xuv ,
+    ending at xvw , and whose vertex set is Cv ∪ {xuv , xvw , xvy }.
+We can then conclude by mimicking an s–t Hamiltonian path P of H in every Gi . More
+precisely, we start at si = xsi s′i (for i going from 1 to 2q), and obey the following rules, where
+Pi is the path P in copy Hi . When in xuv , if the successor of v along Pi is w, we continue in
+Gi with the xuv –xvw path of the second item if v has a third neighbor y in Hi and xvy was
+not traversed yet. We instead go with the xuv –xvw path of the first item, otherwise.
+
+   First item. Recall that Ore’s theorem [18] is that every n-vertex simple graph such that
+the sum of the degrees of any two non-adjacent vertices is at least n is Hamiltonian. This
+implies that G− [Cv ] is Hamiltonian. Indeed, a non-adjacent pair of vertices in G− [Cv ] has
+combined degree at least 2q − (q − 2) = q + 2. We fix a Hamiltonian cycle C of G− [Cv ].
+   The bipartite graph G− [{xuv , xvw }, Cv ] has at least 2(q + 2) − (q − 1) = q + 5 edges. This
+ensures that there are two consecutive vertices u′ , w′ along C such that xuv u′ , xvw w′ are
+edges of G− [Cv ∪ {xuv , xvw }]. If not, G− [{xuv , xvw }, Cv ] would have at most q + 2 edges.
+The edge xuv u′ , the (q + 2)-vertex path along C from u′ to w′ , and the edge xvw w′ define
+our desired spanning path.
+
+   Second item. Observe that Cv ∪ {xvy } is a clique on q + 3 vertices. Again by Ore’s
+theorem there is a Hamiltonian cycle C in G− [Cv ∪ {xvy }]. In G, vertices xuv , xvw both
+have q + 2 neighbors in C. Let s ⩾ 3 be the number of neighbors of xuv in C remaining
+in G− ; hence q + 2 − s edges between xuv and Cv are removed in G− . These s neighbors
+have themselves a combined neighborhood N in C − {xvy } of size at least s − 1. As at most
+s − 3 edges incident to xvw can be deleted, at least one vertex of N is still adjacent to xvw .
+We make the xuv –xvw Hamiltonian path in G− [Cv ∪ {xuv , xvw , xvy }] as in the previous
+paragraph.                                                                                  ♢
+
+▷ Claim 11. If H has no s–t Hamiltonian path, then adding (equivalently, editing) fewer
+than q edges in G cannot make it Hamiltonian.
+
+Proof: Let G+ be any graph obtained from G by adding at most q − 1 edges. By the
+pigeonhole principle, there is at least one Gi such that no vertex of Gi − {si , ti } is incident
+to an edge added in G+ . Thus the set {si , ti } separates V (Gi ) \ {si , ti } from the rest of G+ .
+So, for G+ to be Hamiltonian, it should be that Gi admits an si –ti Hamiltonian path. We
+shall then just prove that if Gi admits an si –ti Hamiltonian path, then so does Hi (hence H
+has an s–t Hamiltonian path).
+    Let u1 , u2 , . . . , uν−2 be the vertices of Hi − {si , ti } in the order in which the cliques
+Cu are visited for the first time, in some fixed si –ti Hamiltonian path P of Gi . For each
+clique Cu , there is a vertex subset Xu of size at most 3 (the up to 3 vertices of the form xu,• )
+that disconnects Cu from the rest of the graph in Gi . This implies that Cu ∪ Xu cannot be
+exited and reentered by P . In particular, this means that u1 = s′i , uν−2 = t′i , and for every
+12   Answering Related Questions
+
+
+     j ∈ [ν − 3], uj uj+1 ∈ E(Hi ). Therefore si , u1 , u2 , . . . , uν−2 , ti is an si –ti Hamiltonian path
+     in Hi .                                                                                               ♢
+         Thus, by Claims 10 and 11, if a positive (resp. negative) instance is reported by the
+                                                             1
+     algorithm solving Sidestep(Hamiltonian Cycle, diste , n 2 −β ), then H has an s–t Hamilto-
+     nian path (resp. has no s–t Hamiltonian path).                                          ◀
+
+        We observe that pushing the tractability radius for diste (from n/3) down to n.99 requires to
+     improve the current polynomial-time approximation factor for Longest Path in Hamiltonian
+                                                                                   2
+                                                                                     n
+     graphs. The current best polytime algorithm returns paths of length Ω( loglog
+                                                                                 2 log n ) in n-vertex
+
+     Hamiltonian graphs [16]. While better guarantees can be obtained in bounded-degree
+     Hamiltonian graphs [9], for any β > 0, no polytime algorithm is known to output paths of
+     length nβ even in subcubic Hamiltonian graphs.
+
+     ▶ Theorem 12. For any β > 0, a polynomial-time algorithm for Sidestep(Hamiltonian
+     Cycle, diste , n1−β ) implies a polynomial-time detection of paths of length ⌊nβ ⌋ in Hamiltonian
+     graphs.
+
+     Proof. We make the same reduction as in Theorem 9 with only two copies. Let H, s, t be as
+     in the previous proof, and ν be the number of vertices of H. Let q := ⌊n1−β ⌋ + 3. We build
+     an n-vertex instance G of Sidestep(Hamiltonian Cycle, diste , n1−β ) as shown in Figure 2
+     with cliques Cu of size q and solely two copies H1 , H2 (and G1 , G2 ). So s1 = t2 and s2 = t1 .
+     We observe that G has 2((|V (H)| − 2)q + |E(H)| − 1) = O(qν) vertices. This implies that
+     n = O(ν 1/β ), so the reduction is indeed polynomial for any fixed β > 0.
+         If the algorithm A for Sidestep(Hamiltonian Cycle, diste , n1−β ) outputs a negative
+     instance (of the form (G′ , nil)), then we know from the proof of Theorem 9 that H has no s–t
+     Hamiltonian path, thus G is not Hamiltonian; which does not happen within Hamiltonian
+     graphs. The only remaining case is that A outputs a positive instance (G′ , C). Among the n
+     edges of C, at most ⌊n1−β ⌋ were added to G. This still leaves at least nβ consecutive edges
+     of G in C. We thus obtain the sought path of length ⌊nβ ⌋.                                  ◀
+
+        We now move to the Dominating Set problem, where given a graph G and an integer
+     k ∈ [0, |V (G)|], one is asked for a dominating set of size k, or to output nil if none exists.
+
+     ▶ Theorem 13. Sidestep(Dominating Set, diste , n/e) is in FP(where e is Euler’s number).
+
+     Proof. Let (G, k) be any input of Sidestep(Dominating Set, diste , n/e) with n = |V (G)|.
+     We first run the known polynomial-time (1 − 1e )-approximation algorithm (actually the greedy
+     algorithm) for Max k-Coverage [13], the problem of picking k sets from a given list so as
+     to maximize the cardinality of their union, on the closed-neighborhood set system of G, i.e.,
+     {NG [v] : v ∈ V (G)}.
+         If this outputs k sets whose union has size less than (1 − 1e )n, we can safely output
+     ((G, k), nil), as this gives a guarantee that no dominating set of size k exists in G. Otherwise,
+     we obtain a set S of k vertices such that X := V (G) \ NG [S] is of size at most ne . Let us
+     fix some v ∈ S. Build the graph H by adding |X| edges to G: the edge vx for every x ∈ X.
+     We can output ((H, k), S) as diste (G, H) = |X| ⩽ n/e and S is a dominating set of H of
+     size k.                                                                                       ◀
+
+        The blow-up operation (i.e, replacing every vertex by a clique) provides a simple robust
+     reduction for Dominating Set under diste .
+
+     ▶ Theorem 14. For any β > 0, Sidestep(Dominating Set, diste , n1−β ) is NP-hard.
+É. Bonnet                                                                                           13
+
+
+Proof. Let H be an ν-vertex instance of Dominating Set. We build the n-vertex graph
+G by replacing each vertex v ∈ V (H) by a clique Cv of size q := 2⌊n1−β ⌋ + 1. Thus, two
+distinct vertices x ∈ Cu , y ∈ Cv are adjacent in G whenever u = v or uv ∈ E(H). We have
+n = qν, thus n = O(ν 1/β ). This reduction is polynomial for any fixed β > 0.
+    We give to G the same threshold as H, say k. We claim that a polynomial-time
+algorithm solving Sidestep(Dominating Set, diste , n1−β ) on input (G, k) would also solve
+Dominating Set on input (H, k). The correctness is given by the following two claims.
+▷ Claim 15. If H admits a dominating set of size k, then every graph G′ obtained from G
+by removing at most ⌊n1−β ⌋ edges has a dominating set of size k.
+Proof: Note that for every v ∈ V (H), there is at least one vertex of Cv , say xv , not incident
+to any edge of G△G′ (removed edge). This is because |Cv | = 2⌊n1−β ⌋ + 1. Let S ⊆ V (H)
+be a dominating set of H, and S ′ := {xv : v ∈ S}. By construction, |S ′ | = |S| and xv
+dominates in G′ the set w∈NH [v] Cv . As S is a dominating set of H, S ′ is a dominating set
+                       S
+
+of G′ .                                                                                       ♢
+
+▷ Claim 16. If H has no dominating set of size k, then every graph G′ obtained from G by
+adding at most ⌊n1−β ⌋ edges has no dominating set of size k.
+Proof: Let S ⊆ V (G′ ) be any set of size k. Consider the set S ′ := {v ∈ V (H) : S ∩Cv ̸= ∅}
+of size at most k. By assumption, S ′ is not a dominating set of H. So there is a v ∈ V (H)
+such that NH [v] ∩ S ′ = ∅. By the observation in Claim 15, there is a vertex xv ∈ Cv such
+that xv is not incident to any edge of G△G′ (added edge). Vertex xv is thus not dominated
+by S ′ .                                                                                    ♢
+   We can conclude as a positive (resp. negative) answer to Sidestep(Dominating Set, diste ,
+n1−β ) on input (G, k) implies a positive (resp. negative) answer to Dominating Set on
+input (H, k).                                                                           ◀
+
+ 4     Independent Set, Clique, Vertex Cover, and Coloring
+                                                               1                          4
+We first show that Independent Set has hardness radius n 2 −o(1) under dist∆ , and n 3 −o(1)
+under diste . We recall that Independent Set inputs a pair (G, k) where G is a graph and
+k is a non-negative integer, and asks for an independent set of size k in G. We could treat
+Independent Set purely as a decision problem (with output in {true, false}). However all
+the results presented in this section extend to the setting where the desired output is an
+actual independent set of size k in G, and nil if none exists.
+                                √
+    We start by observing that n upper bounds the tractability radius for dist∆ .
+                                                           1
+▶ Theorem 17. Sidestep(Independent Set, dist∆ , n 2 ) is in FP.
+                                                         √
+Proof. Let (G, k) be the input, with n = |V (G)|. If k ⩽ n + 1, fix any subset S ⊆ V (G) of
+       √
+size ⌊ n⌋ + 1. Build the graph H with vertex set V (G) such that H[S] is an independent set,
+                                                       √
+and H − S = G − S. By construction, dist∆ (G, H) ⩽ n. We can thus output ((H, k), S).
+                      √
+     If instead k > n + 1, arbitrarily partition V (G) into k − 1 parts V1 , . . . , Vk−1 of size
+   n           n
+⌊ k−1  ⌋ or ⌈ k−1 ⌉. Build the graph H, obtained from G by turning each Vi into a clique. As
+             √                               √
+|Vi | − 1 ⩽ n, it holds that dist∆ (G, H) ⩽ n. The partition into k − 1 cliques V1 , . . . , Vk−1
+in H implies that α(H) ⩽ k − 1. We can thus output ((H, k), nil).                              ◀
+
+   Perhaps surprisingly, the easy scheme of Theorem 17 is essentially best possible. Using the
+known strong inapproximability of Max Independent Set, we show that the sidestepping
+problem becomes NP-hard as soon as the radius gets only slightly smaller.
+14   Answering Related Questions
+
+
+                                                                                   1
+     ▶ Theorem 18. For any β > 0, Sidestep(Independent Set, dist∆ , n 2 −β ) is NP-hard.
+
+     Proof. For any ε ∈ (0, 1/2], given n-vertex input graphs G satisfying either α(G) ⩽ nε or
+     α(G) ⩾ n1−ε it is NP-hard to tell which of the two outcomes holds [11, 17].
+                              √                                             1
+        Consider inputs (G, ⌊ n⌋) of Sidestep(Independent Set, dist∆ , n 2 −β ) with n = |V (G)|
+     and G satisfies the above promise. We show that if these instances could be solved in
+     polynomial time, this would contradict, under P ̸= NP, the latter hardness-of-approximation
+                                                                                   √
+     result with ε := β/2. Assume that the supposed algorithm returns ((H, ⌊ n⌋), S) such
+                           1                                                 √
+     that dist∆ (G, H) ⩽ n 2 −β and S is an independent set of H of size ⌊ n⌋. An important
+                                                               1
+     observation is that G[S] has maximum degree at most n 2 −β . Hence, in polynomial time,
+                                 ′                 ′
+     one can compute a subset S ⊆ S such that S is an independent set of G of size at least
+             √
+           ⌊ n⌋       nβ
+           1        ⩾    > nε .
+         n 2 −β + 1    2
+
+     For the last inequality to hold, we assume that n > 21/ε , which we can safely do, as
+     otherwise the instance can be solved by the brute-force approach. Therefore S ′ witnesses
+     that α(G) ⩽ nε does not hold. We can thus report that α(G) ⩾ n1−ε .
+                                                                 √
+          Now we assume instead that the algorithm returns ((H, ⌊ n⌋), nil) such that dist∆ (G, H) ⩽
+       1                √
+     n 2 −β and α(H) < n. We claim that α(G) < n1−ε . Indeed, symmetrically to what has been
+                                                                             β             1
+     previously observed, if G had an independent set S of size at least n1− 2 , then a (n 2 −β + 1)−1
+     fraction of S would form an independent set in H. Again, assuming that n > 21/ε , this
+                                √
+     would contradict α(H) < n. Hence, we can report that the outcome α(G) ⩽ nε holds. ◀
+
+         We can adapt the proof of Theorem 17 to yield an essentially optimal upper bound for
+                                                                                               2
+     distance diste . For that, we simply set the demarcation on the independent-set size at n 3
+                  √
+     rather than n.
+                                                                 4
+     ▶ Theorem 19. Sidestep(Independent Set, diste , n 3 ) is in FP.
+                                                                       2
+     Proof. Let (G, k) be the input, with n = |V (G)|. If k ⩽ n 3 , fix any subset S ⊆ V (G) of
+            2                          2/3    4
+     size n 3 . Remove the at most n 2 ⩽ n 3 edges of G[S] from G, and let H be the obtained
+                                                                4
+     graph. We can output ((H, k), S) since diste (G, H) ⩽ n 3 and S is an independent set of
+     size k in H.
+                           2                                      2
+         If instead k > n 3 , arbitrarily partition V (G) into ⌊n 3 ⌋ parts V1 , . . . , V⌈n2/3 ⌉ each of
+                      1
+     size at most ⌈n 3 ⌉ + 1. Turn each Vi into a clique, and call the obtained graph H. This
+                                     1/3         4
+     adds to G at most ⌊n2/3 ⌋ · ⌈n 2 ⌉+1 ⩽ n 3 edges, for large enough n. Thus we can output
+                                             
+
+     ((H, k), nil).                                                                                    ◀
+
+         Finally we show the counterpart of Theorem 18 for diste .
+                                                                                  4
+     ▶ Theorem 20. For any β > 0, Sidestep(Independent Set, diste , n 3 −β ) is NP-hard.
+
+     Proof. As in Theorem 18, we use the hardness of distinguishing, for any ε ∈ (0, 1/2], n-vertex
+     graphs G such that α(G) ⩽ nε from those such that α(G) ⩾ n1−ε .
+                                                                                  4
+         Consider inputs (G, ⌊n2/3 ⌋) of Sidestep(Independent Set, diste , n 3 −β ) with n =
+     |V (G)| and G satisfies one of the previous outcomes. We show that solving these instances
+     in polynomial time would contradict, unless P = NP, the above hardness-of-approximation
+     result with ε := β/4. Assume that the supposed algorithm returns ((H, ⌊n2/3 ⌋), S) such that
+                      4
+     diste (G, H) ⩽ n 3 −β and S is an independent set of H of size ⌊n2/3 ⌋.
+É. Bonnet                                                                                                     15
+
+                                               4
+    We observe that G[S] has at most n 3 −β edges. Hence every (induced) subgraph of G[S]
+                                   4              2
+has a vertex of degree at most 2(n 3 −β )1/2 = 2n 3 −2ε . Thus G[S] has an independent set of
+size at least
+       ⌊n2/3 ⌋
+        2
+          −2ε
+                 > nε ,
+     2n 3     +1
+for n at least a fixed function of ε. Therefore α(G) ⩽ nε cannot hold, so we can conclude
+that α(G) ⩾ n1−ε .
+    We now assume that the algorithm returns instead ((H, ⌊n2/3 ⌋), nil) such that diste (G, H) ⩽
+  4
+    −β
+n3     and α(H) < ⌊n2/3 ⌋. We claim that α(G) < n1−ε . Suppose for the sake of contradiction
+                                                  β                                    4
+that G has an independent set S of size n1− 4 . Note that H[S] has at most n 3 −β edges.
+                                                                          1
+                                     1−2ε                                   −2ε
+In particular, H[S] has at most n         vertices of degree at least 2n 3      , thus more than
+                                               1
+  1−ε     1−2ε                                   −2ε
+n      −n      vertices of degree less than 2n 3     . Therefore H[S] has an independent set of
+size at least
+     n1−ε − n1−2ε   1 2 +ε
+         1
+           −2ε
+                  >    n 3 > n2/3 ,
+      2n 3     +1   10
+
+for some large enough n. This would contradict that α(H) < ⌊n2/3 ⌋. Hence, we can conclude
+that α(G) ⩽ nε holds.                                                                   ◀
+
+    We now introduce the necessary formalism to show that all the previous results of this
+section carry over to Clique and Vertex Cover.
+    A polynomial-time isomorphism φ from Π to Π ′ (where Π and Π ′ are not necessarily
+decision problems) is a bijective map from the inputs of Π to the inputs of Π ′ that is
+a polynomial-time reduction, with inverse φ−1 also computable in polynomial time.5 Specific-
+ally when Π and Π ′ are function problems, the bijection φ is accompanied by a polynomial-
+time function ψ, called output pullback (of φ), such that for any x ∈ SolΠ ′ (φ(I)), it holds
+that ψ(x) ∈ SolΠ (I). Note that if instead Π and Π ′ are decision problems the function ψ
+would simply map true to true and false to false, and can remain implicit. We say that φ is
+length-preserving if for every input I of Π, |φ(I)| = |I|.
+
+▶ Theorem 21. Let Π and Π ′ be two problems, φ, a length-preserving polynomial-time
+isomorphism from Π to Π ′ , ψ, its output pullback, dist, a metric on the inputs of Π, and
+dist′ , a metric on the inputs of Π ′ such that for every pair of inputs I, J of Π it holds that
+dist(I, J) = dist′ (φ(I), φ(J)).
+    For any map d, if Sidestep(Π ′ , dist′ , d) is in FP, then Sidestep(Π, dist, d) is in FP.
+
+Proof. The polynomial-time algorithm solving Sidestep(Π, dist, d) works as follows. On
+input I of Π, compute the instance I ′ := φ(I) of Π ′ in polynomial time. Run the
+polynomial-time algorithm for Sidestep(Π ′ , dist′ , d) on input I ′ . It outputs (J ′ , Π ′ (J ′ ))
+with dist′ (I ′ , J ′ ) ⩽ d(|I ′ |). Now compute J := φ−1 (J ′ ), and x := ψ(Π ′ (J ′ )). Finally out-
+put (J, x). By definition of the output pullback, x is indeed a correct solution to Π on J.
+Furthermore, dist(I, J) = dist′ (φ(I), φ(J)) = dist′ (I ′ , J ′ ) ⩽ d(|I ′ |) = d(|φ(I)|) = d(|I|), since
+φ is length-preserving.                                                                                ◀
+
+   We now use Theorem 21 for Clique and Vertex Cover. Similarly to Independent Set,
+Clique (resp. Vertex Cover) inputs a pair (G, k) where G is a graph and k ∈ [0, |V (G)|],
+
+
+5
+    For decision problems, this notion is at the core of the Berman–Hartmanis conjecture stating that there
+    is a polynomial-time isomorphism between any two NP-complete languages.
+16   Answering Related Questions
+
+
+     and a clique of G (resp. vertex cover of G) of size k is expected as output, and nil if none
+     exists.
+                                                                                          1
+     ▶ Theorem 22. Clique and Vertex Cover also have hardness radius n 2 −o(1) for dist∆ ,
+           4
+     and n 3 −o(1) for diste .
+
+     Proof. We start with the case of Clique. The map φ : (G, k) 7→ (G, k), where G is the
+     complement of graph G and k is a non-negative integer, is a length-preserving polynomial-
+     time isomorphism from Clique to Independent Set and from Independent Set to
+     Clique (as φ is an involution), and output pullback ψ defined as the identity map. Indeed
+     |V (G)| = |V (G)|, G = G, and an independent set in G is a clique in G. Moreover G△H =
+     G△H, so dist((G, k), (H, k ′ )) = dist(φ(G, k), φ(H, k ′ )) for dist ∈ {diste , dist∆ }.
+         Thus the assumptions of Theorem 21 are met by φ and ψ for
+
+              (Π, Π ′ ) ∈ {(Clique, Independent Set), (Independent Set, Clique)}
+
+     and dist = dist′ ∈ {diste , dist∆ }. Hence Theorems 17, 19, and 21 imply that Sidestep(Clique,
+               1                                  4
+     dist∆ , n 2 ) and Sidestep(Clique, diste , n 3 ) are in FP. Now considering the reduction from
+     Independent Set to Clique, Theorems 18, 20, and 21 imply that, for any β > 0,
+                                     1                                    4
+     Sidestep(Clique, dist∆ , n 2 −β ) and Sidestep(Clique, diste , n 3 −β ) are NP-hard.
+         We now deal with Vertex Cover. We define the involutive map φ : (G, k) 7→
+     (G, |V (G)| − k). Map φ is a length-preserving polynomial-time isomorphism from Ver-
+     tex Cover to Independent Set and from Independent Set to Vertex Cover, with
+     output pullback ψ defined as the involution X 7→ V (G) \ X. Indeed X is a vertex cover of G
+     if and only if V (G) \ X is an independent set of G. We have that
+
+        dist((G, k), (H, k ′ )) = dist((G, |V (G)| − k), (H, |V (H)| − k ′ )) = dist(φ(G, k), φ(H, k ′ ))
+
+     for dist ∈ {diste , dist∆ }. This holds since these distances are infinite if V (G) ̸= V (H) or
+     k ̸= k ′ , and are equal to dist(G, H) otherwise.
+                                                                                              1
+         Thus Theorems 17, 19, and 21 imply that Sidestep(Vertex Cover, dist∆ , n 2 ) and
+                                            4
+     Sidestep(Vertex Cover, diste , n 3 ) are in FP, whereas Theorems 18, 20, and 21 imply
+                                                                     1
+     that, for any β > 0, Sidestep(Vertex Cover, dist∆ , n 2 −β ) and Sidestep(Vertex
+                       4
+                         −β
+     Cover, diste , n 3 ) are NP-hard.                                                            ◀
+
+         We finish this section with the case of Coloring and Clique Cover.
+         We first observe that Theorems 17 and 19 also hold for Coloring, which takes as input
+     a graph G and an integer k ∈ [0, |V (G)|], and asks for a partition of V (G) into k independent
+     sets if one exists, and to output nil otherwise. To do so, one can adapt these theorems for
+     the Clique Cover problem, which boils down to Coloring in the complement graph, and
+     invoke Theorem 21. Indeed, in the algorithms of Theorems 17 and 19, the used witnesses of
+     small independence number (negative instances for Independent Set) are vertex-partitions
+     into cliques (positive instances for Clique Cover), whereas a large independent set (positive
+     instances for Independent Set) is always a witness that the graph needs a large number of
+     cliques to be vertex-partitioned (negative instances for Clique Cover).
+                                                                                                     1
+     ▶ Theorem 23. For any Π ∈ {Coloring, Clique Cover}, Sidestep(Π, dist∆ , n 2 ) and
+                           4
+     Sidestep(Π, diste , n 3 ) are in FP.
+
+        Theorems 18 and 20 also hold for Coloring (and Clique Cover), but their proofs
+     require a bit more adjustments.
+É. Bonnet                                                                                             17
+
+                                                                    1
+▶ Theorem 24. For any β > 0, Sidestep(Coloring, dist∆ , n 2 −β ) is NP-hard.
+
+Proof. For any ε ∈ (0, 1/2], given n-vertex input graphs G satisfying either χ(G) ⩽ nε
+or χ(G) ⩾ n1−ε , it is NP-hard to tell which of the two outcomes holds [11, 17]. Consider
+            √                                        1
+inputs (G, ⌊ n⌋) of Sidestep(Coloring, dist∆ , n 2 −β ) with n = |V (G)| and G satisfies that
+χ(G) ⩽ nε or χ(G) ⩾ n1−ε . We show that a polynomial-time algorithm for these instances
+would contradict, unless P = NP, the above hardness-of-approximation result with ε := β/2.
+                                                          √
+    Assume that the supposed algorithm returns ((H, ⌊ n⌋), P) such that dist∆ (G, H) ⩽
+  1                                        √
+n 2 −β and P is a partition of V (H) into ⌊ n⌋ independent sets of H. As G′ := G−E(H) (the
+                                                                        1
+graph G deprived of the edges of H) has maximum degree at most n 2 −β , there is a partition
+                             1
+Q of V (G′ ) = V (H) into n 2 −β + 1 independent sets of G′ . Partition Q refines P (split each
+part of P into its intersections with parts of Q) into a partition P ′ of V (G) = V (H) with
+          √        1
+at most ⌊ n⌋ · (n 2 −β + 1) parts. By construction, each part of P ′ is an independent set of G.
+            √         1                   √
+Moreover ⌊ n⌋ · (n 2 −β + 1) ⩽ n1−β + n < n1−ε for large enough n. Thus we can report
+that χ(G) ⩽ nε .
+                                                             √
+     Now we assume instead that the algorithm returns ((H, ⌊ n⌋), nil) such that dist∆ (G, H) ⩽
+  1                  √
+n 2 −β and χ(H) > n. We claim that χ(G) > nε . Assume, for the sake of contradiction, that
+there is a partition P of V (G) = V (H) into ⌊nε ⌋ independent sets of G. As H ′ := H − E(G)
+                                    1                                                   1
+has maximum degree at most n 2 −β , there is a partition Q of V (H ′ ) = V (H) into n 2 −β + 1
+independent sets of H ′ . Then the refinement P ′ of P by Q is a partition of V (H) into
+                   1              1            √
+at most ⌊nε ⌋ · (n 2 −β + 1) ⩽ n 2 −β+ε + nε < n independent sets of H; a contradiction to
+         √
+χ(H) > n. Hence, we can report that χ(G) ⩾ n1−ε holds.                                        ◀
+
+  We finally adapt Theorem 20 for Coloring. We need the following folklore observation.
+                                                                    √
+▶ Observation 25. Every m-edge graph has chromatic number at most ⌈ 2m⌉.
+
+Proof.
+ √      It is in fact enough to show that any m-edge graph   √ G has a vertex   of√degree at most
+                                                                             1
+⌈ 2m⌉−1.
+     √       If all the vertices of G have degree
+                                                √ at least ⌈  2m⌉, then m ⩾ √2 n⌈  2m⌉. But also
+                                                                                   √
+                                                                          1
+n ⩾ ⌈ 2m⌉+1 for a vertex to possibly have ⌈ 2m⌉ neighbors. So m ⩾ 2 2m( 2m+1) > m;
+a contradiction.                                                                               ◀
+
+   The main additional difference compared to the adaptation of Theorem 24 is the use of
+the Cauchy–Schwarz inequality to get better upper bounds on some chromatic numbers.
+                                                                   4
+▶ Theorem 26. For any β > 0, Sidestep(Coloring, diste , n 3 −β ) is NP-hard.
+
+Proof. As in Theorem 24, we rely on the hardness of distinguishing, for any ε ∈ (0, 1/2],
+n-vertex graphs G such that χ(G) ⩽ nε from those such that χ(G) ⩾ n1−ε . Consider inputs
+                                                  4
+(G, ⌊n2/3 ⌋) of Sidestep(Coloring, diste , n 3 −β ) with n = |V (G)| and G satisfies χ(G) ⩽ nε
+or χ(G) ⩾ n1−ε . We show that solving these instances in polynomial time would contradict,
+unless P = NP, the above hardness-of-approximation result with ε := β/4.
+    Assume that the supposed algorithm returns ((H, ⌊n2/3 ⌋), P) such that diste (G, H) ⩽
+  4
+    −β
+n 3    and P := {P1 , . . . , Pt } is a partition of V (H) into t := ⌊n2/3 ⌋ independent sets of H.
+Here we need to be more delicate than in the proof of Theorem 24 in upper bounding the
+chromatic number of G. We will rely on Observation 25 and the Cauchy–Schwarz inequality.
+                                                                                       4
+     For every i ∈ [t], let ai be the number of edges in G[Pi ]. As diste (G, H) ⩽ n 3 −β ,
+                  4
+    X
+           ai ⩽ n 3 −β .
+   i∈[t]
+18   Answering Related Questions
+
+                                                                     √
+     By Observation 25, G[Pi ] can be properly colored with at most ⌈ 2ai ⌉ colors. Hence the
+     chromatic number of G is at most
+                         X √            X √                 √ X√
+                              ⌈ 2ai ⌉ ⩽    ( 2ai + 1) ⩽ t + 2        ai .
+                                   i∈[t]                    i∈[t]                     i∈[t]
+
+
+     In Rt , the Cauchy–Schwarz inequality is that
+                      2                                   
+              X                   X                 X
+                   xi yi  ⩽            x2i             yi2  .
+            i∈[t]                 i∈[t]             i∈[t]
+
+                       √
+     Setting xi :=   ai and yi := 1, we get that
+                         v                            v         
+                         u                                u
+                      √ u X√ 2
+                         u                  X             u     X           p
+                                                                                    4
+            χ(G) ⩽ t + 2t          ai       12  = t + t2t    ai  ⩽ t + 2t · n 3 −β .
+                                                          u
+                                      i∈[t]                   i∈[t]               i∈[t]
+
+
+     Thus                                       √                                     √
+                                                                      2
+                        χ(G) ⩽ ⌊n2/3 ⌋ +             2 · n1/3 · n 3 −2ε ⩽ ⌊n2/3 ⌋ +       2n1−2ε < n1−ε ,
+     for large enough n. And we can conclude that χ(G) ⩽ nε .
+         We now assume that the algorithm returns instead ((H, ⌊n2/3 ⌋), nil) such that diste (G, H) ⩽
+       4
+         −β
+     n3      and χ(H) > n2/3 . We claim that χ(G) > nε . Suppose for the sake of contradiction
+     that there is a partition Q := {Q1 , . . . , Qs } of V (G) into s := ⌊nε ⌋ independent sets
+                                                                                                  4
+     of G. For every i ∈ [s], let bi be the number of edges in H[Qi ]. As diste (G, H) ⩽ n 3 −β ,
+                     4                                                  √
+                     3 −β . By Observation 25, we have χ(H) ⩽
+     P                                                        P
+        i∈[s] bi ⩽ n                                             i∈[s] ⌈ 2bi ⌉. A similar application
+                                                     √
+     of the Cauchy–Schwarz inequality with xi := bi and yi := 1 yields
+                           p
+                                  4
+                                                √          2               √      2  3ε
+            χ(H) ⩽ s + 2s · n 3 −β ⩽ ⌊nε ⌋ + 2 · nε/2 · n 3 −2ε = ⌊nε ⌋ + 2 · n 3 − 2 < n2/3 ,
+
+     for large enough n; a contradiction to χ(H) > n2/3 . Hence, we can conclude that χ(G) ⩽ n1−ε
+     holds.                                                                                    ◀
+
+        One can extend Theorems 24 and 26 to Clique Cover by Theorem 21. This finishes
+     the proof of Theorem 5.
+
+              References
+      1     Esther M. Arkin, Sándor P. Fekete, Kamrul Islam, Henk Meijer, Joseph S. B. Mitchell,
+            Yurai Núñez Rodríguez, Valentin Polishchuk, David Rappaport, and Henry Xiao. Not
+            being (super)thin or solid is hard: A study of grid hamiltonicity. Comput. Geom., 42(6-
+            7):582–605, 2009. URL: https://doi.org/10.1016/j.comgeo.2008.11.004, doi:10.1016/J.
+            COMGEO.2008.11.004.
+      2     David Arthur, Bodo Manthey, and Heiko Röglin. Smoothed analysis of the k-means method.
+            J. ACM, 58(5):19:1–19:31, 2011. doi:10.1145/2027216.2027217.
+      3     Cyril Banderier, René Beier, and Kurt Mehlhorn. Smoothed analysis of three combinatorial
+            problems. In Branislav Rovan and Peter Vojtás, editors, Mathematical Foundations of Computer
+            Science 2003, 28th International Symposium, MFCS 2003, Bratislava, Slovakia, August 25-29,
+            2003, Proceedings, volume 2747 of Lecture Notes in Computer Science, pages 198–207. Springer,
+            2003. doi:10.1007/978-3-540-45138-9\_14.
+      4     René Beier and Berthold Vöcking. Typical properties of winners and losers in discrete
+            optimization. SIAM J. Comput., 35(4):855–881, 2006. doi:10.1137/S0097539705447268.
+É. Bonnet                                                                                         19
+
+
+ 5   Markus Bläser and Bodo Manthey. Smoothed complexity theory. ACM Trans. Comput.
+     Theory, 7(2):6:1–6:21, 2015. doi:10.1145/2656210.
+ 6   Christophe Crespelle, Pål Grønås Drange, Fedor V. Fomin, and Petr A. Golovach. A survey
+     of parameterized algorithms and the complexity of edge modification. Comput. Sci. Rev.,
+     48:100556, 2023. URL: https://doi.org/10.1016/j.cosrev.2023.100556, doi:10.1016/J.
+     COSREV.2023.100556.
+ 7   Gabriel Andrew Dirac. Some theorems on abstract graphs. Proceedings of the London
+     Mathematical Society, 3(1):69–81, 1952.
+ 8   Matthias Englert, Heiko Röglin, and Berthold Vöcking. Smoothed analysis of the 2-opt
+     algorithm for the general TSP. ACM Trans. Algorithms, 13(1):10:1–10:15, 2016. doi:10.1145/
+     2972953.
+ 9   Tomás Feder, Rajeev Motwani, and Carlos S. Subi. Finding long paths and cycles in sparse
+     hamiltonian graphs. In F. Frances Yao and Eugene M. Luks, editors, Proceedings of the
+     Thirty-Second Annual ACM Symposium on Theory of Computing, May 21-23, 2000, Portland,
+     OR, USA, pages 524–529. ACM, 2000. doi:10.1145/335305.335368.
+10   M. R. Garey, David S. Johnson, and Larry J. Stockmeyer. Some simplified NP-complete graph
+     problems. Theor. Comput. Sci., 1(3):237–267, 1976. doi:10.1016/0304-3975(76)90059-1.
+11   Johan Håstad. Clique is hard to approximate within n1−ε . In 37th Annual Symposium on
+     Foundations of Computer Science, FOCS ’96, Burlington, Vermont, USA, 14-16 October,
+     1996, pages 627–636. IEEE Computer Society, 1996. doi:10.1109/SFCS.1996.548522.
+12   Mark Jerrum. Large cliques elude the metropolis process. Random Struct. Algorithms,
+     3(4):347–360, 1992. URL: https://doi.org/10.1002/rsa.3240030402, doi:10.1002/RSA.
+     3240030402.
+13   George L. Nemhauser, Laurence A. Wolsey, and Marshall L. Fisher. An analysis of approx-
+     imations for maximizing submodular set functions - I. Math. Program., 14(1):265–294, 1978.
+     doi:10.1007/BF01588971.
+14   Daniel A. Spielman and Shang-Hua Teng. Smoothed analysis of algorithms: Why the simplex
+     algorithm usually takes polynomial time. J. ACM, 51(3):385–463, 2004. doi:10.1145/990308.
+     990310.
+15   Daniel A. Spielman and Shang-Hua Teng. Smoothed analysis: an attempt to explain the
+     behavior of algorithms in practice. Commun. ACM, 52(10):76–84, 2009. doi:10.1145/1562764.
+     1562785.
+16   Sundar Vishwanathan. An approximation algorithm for finding long paths in hamiltonian
+     graphs. J. Algorithms, 50(2):246–256, 2004. doi:10.1016/S0196-6774(03)00093-2.
+17   David Zuckerman. Linear degree extractors and the inapproximability of max clique and
+     chromatic number. Theory Comput., 3(1):103–128, 2007. URL: https://doi.org/10.4086/
+     toc.2007.v003a006, doi:10.4086/TOC.2007.V003A006.
+18   Øystein Ore. Note on hamilton circuits. The American Mathematical Monthly, 67(1):55–55,
+     1960. URL: http://www.jstor.org/stable/2308928.
+

@@ -1,0 +1,13 @@
+# Root handback and scope correction: directed Toeplitz Hamiltonicity
+
+Zero credit. The intended residual conjecture is UNRESOLVED. The literal printed Conjecture 5.1(i) contains a known exception and must not be called fully unresolved without qualification. Counts remain 9 additional / 39 total, next 40.
+
+Root read the actual retained publisher text, the research report and solver. Malik–Qureshi, Discrete Math. Lett. 16 (2025), 35–42, DOI 10.47443/dml.2025.109, Conjecture 5.1 asks Hamiltonicity for even t >=16 and admissible n congruent to 1 or 2 modulo 4, plus n congruent to 3 when t congruent to 2. Edges have increments +1,+3,+7,-t and the standing order assumption is n>max(7,t).
+
+SOURCE CORRECTION: the printed part (i) does not exclude n=t+2 when t is divisible by 4. Its own Theorem 5.1 explicitly proves those graphs non-Hamiltonian; the paragraph following the conjecture states the intended classification with that exception. Thus (n,t)=(18,16) already contradicts the literal printed formulation by a theorem in the same source. This is an ineligible formulation correction, not a discovery. The delegate mentions the known exception but its SUMMARY and full-target wording do not consistently distinguish literal and intended scope. Frozen originals are preserved; this root record supersedes that scope description. Do not nominate the known exception as a refutation or silently count an amended statement as literal.
+
+The increasing-path-cover reformulation keeps the indispensable one-cycle endpoint permutation. For two backward edges and even t,n with t<n<=2t, intervening monochromatic runs of lengths 2 or 6 force n divisible by 4; the alternating length-two construction gives the converse. This is a helper for known cases. At (18,16), the only possible backward heads are 1,2 and both are forced, so the exact two-head failure agrees with the source exception.
+
+The corrected search supplies 323 directly verified finite cycles, not a uniform construction. The original fixed-start and incorrect residue-choice failures remain preserved. The source extension requires a distinguished edge, which arbitrary cycles need not contain. Uniform all-t seeds and a compatible all-n extension are still missing for the intended exception-removed target.
+
+Root replays baseline, initial/corrected exploration and independent DFS controls in a private copy, compares outputs apart from UTC, and verifies all 34 manifest payload hashes before/after. See replay-receipt.json. No source novelty clearance, Lean or manuscript investment; inherited registry caps remain explicit. Sol r159 replaces r156; r157 and r158 continue.

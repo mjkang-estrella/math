@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r188 Bonnet triangle-partition sidestep Question 5 remains unresolved. Wedge-factor and matching-blocker reductions do not supply uniform polynomial search; exact method counterexamples retained. Root 32768-graph replay and frozen evidence pass. See root-r188-handback. Fresh structural r191 assigned; arithmetic r189 and analytic r190 continue. Counts 9 additional / 39 total, next 40.
+
+
 Brownian affine scalar formula: root adopts ordinary SOURCE/MATH PASS and routine classical-adaptation exclusion after independent compensation/martingale bridge. Full joint-process Conjecture 1.4 remains outside proof; Grandits priority body unread/HOLD. Root exact replay and 60 original/copy pairs pass. See root-brownian-affine-review-adoption-r1. Fresh analytic r190 assigned; structural r188 and arithmetic r189 continue. Counts 9 additional / 39 total, next 40.
 
 
