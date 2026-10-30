@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+r142 Laplacian product/equality conjecture and r143 theta-convolution
+optimal interval remain unresolved. Root verifies25 and59 manifest entries
+and reproduces exact checks. Root's initial claim of a sum-check error was
+incorrect: lower and upper forms are equivalent by complement/index reversal;
+both pass. Scalar zero-endpoint profiles do not settle geometric realizability,
+and the truncation shape derivative remains heuristic. See root-r142-handback
+and root-r143-handback. Sol r145/r146 replace them; r144 continues.
+No credit; counts remain9 additional/39 total.
+
+
 r141 Entin–Landsberg function-field LCM remains unresolved. Root
 verifies91 manifest entries and reproduces 65,536 polynomial identities,
 52 large-prime collision pairs and9 LCM cross-checks. The constant-per-shift

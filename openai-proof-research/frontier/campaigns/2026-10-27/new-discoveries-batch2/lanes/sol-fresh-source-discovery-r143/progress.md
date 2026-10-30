@@ -1,0 +1,10 @@
+# Progress and limits
+
+- Read ancestor/batch AGENTS, immutable upstream descriptor, relevant catalogue passages, full machine-parsed ledger and prior context, and mutable NEXT snapshot. Counts9/39,next40.
+- Early exact source screens: Gaussian Radon and Krasniqi match prior originals; no downloads of these abandoned primary sources. Selected convolution-body source has zero matches in complete original-role bodies before download. Final r140-based scan refreshes7 changed/new paths; all19 matching originals reopened as full bytes.
+- Downloaded primary abstract/history and v1PDF; source history lists v1 only. PDF datedOctober28, submissionOctober27. Read literal statement and all supporting proof sections. pdftotext warning: `Syntax Warning: Mismatch between font type and embedded font file`; exit0, retained text; no rendered-page audit claimed.
+- Downloaded old arXiv precursor and actual full published article. Full journal proof is present despite final cookie-error URL. Read source theorem bodies and chronology. Exact-title and author-follow-up search bounded; no exhaustive citation sweep.
+- Guarded checks PASS40 endpoint profiles, 2 square comparisons and180 rational polygon-clipping controls. No allocation/timeout/guard failure in these runs. Standard-output truncations while initially reading large context/history files were corrected by structured full-body scans, retained snapshots and bounded specific passages; no truncated absence conclusion used.
+- Fixed Omega a19a Library2509/Problems1566/docs1126 tree entries, all `truncated:false`; unrelated nearest convolution bodies read in full. No new HEAD call. Inherited300-file cap and non-Markdown/formal/Meta gaps remain. No full semantic registry clearance.
+- Decision: zero nominees. Need a genuinely new geometric universal inequality plus sharp global competitors; endpoint relaxation and local truncations are insufficient. No PROOF, formalization or manuscript.
+- Final manifest and scientific freeze generated after checks. Verification receipt records exact payload hashes. Guard sampled RSS is an observation at nominal40ms, not a guarantee about unobserved transients.
