@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r184 Gauss–Legendre uniform circle and Cheeger–Kohler–Jobin questions remain unresolved. Sonin correction and rearrangement support/rigidity gaps explicit; hypothetical envelope control is not source counterexample. Root symbolic replay and local/external freeze pass; see root-r184-handback. Fresh analytic r187 assigned; r185/r186 continue. Counts9additional/39total,next40.
+
+
 r183 induced-matching Conjecture4.1 remains unresolved: clique-star count/splitting helpers lack universal connected extremal reduction, all-n optimization and equality classification. Root exact replay and full freeze pass; repaired checker failures and source holds retained. See root-r183-handback. Fresh structural r186 assigned; r184/r185 continue. Counts9additional/39total,next40.
 
 
