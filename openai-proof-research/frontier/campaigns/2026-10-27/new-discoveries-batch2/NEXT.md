@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Steiner historical clearance is PARKED on HOLD: missing merge trees prevent an exhaustive transition certificate; citations 10 and 19 remain unread. Root replay verifies 617 originals/copies, 654 manifest entries, 446 mail blocks and the 14,133-block / 14,633-hunk census. Ordinary mathematics and provisional substantive investment judgments stand; no formal investment or credit. Do not repeat denied registry/publisher searches. See root-steiner-gp-parked-hold-r4. Fresh r169 research assigned to Sol. Counts 9 additional / 39 total, next 40.
+
+
 Pendulum scopedINVEST adopted: publishedsource/ordinarymathPASS, substantive
 construction merits finiteformalstage. Root verifies353payloadentries,
 308frozenoriginals;354reviewfilesfrozen. FirstSolformalcomponentassigned:
