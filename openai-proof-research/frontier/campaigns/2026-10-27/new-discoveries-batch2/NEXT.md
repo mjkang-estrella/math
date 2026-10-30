@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+Sirola Dumas conjecture: full ordinary proof and complete El Fadil2023
+bridge independently PASS; root adopts routine classical EXCLUDE. Arbitrary
+domains require only persistence of factors into Frac(R), not converse Gauss.
+First-kind reciprocal and value-group normalization close all hypotheses.
+Root independent replay18506 initial-form products/1592 normalization cases;
+50 originals/63 review payload paths unchanged. No Lean/paper investment.
+See root-sirola-dumas-exclusion-r1. Sol r167 replaces review; r165/r166 continue.
+Counts unchanged9 additional/39 total,next40.
+
+
 r164: Ma–Weigert Conjecture4.6 and Li Split CIF all-even-order claims have
 matching actual public proof bodies. Reopened Matkowski Conjecture2.4 remains
 unresolved;196 necessary-gradient diagnostics are not interval or universal
