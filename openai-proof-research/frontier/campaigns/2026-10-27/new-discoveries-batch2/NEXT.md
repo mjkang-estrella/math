@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+DSBS negative-order common-information full ordinary candidate preserved: all0<epsilon<=2^-10, allbeta>=1 includinginfinity. Root diagnostics reproduce byte-identically;91scientific/92manifest/94original files verify. Arbitrary-block posterior converse and its apparent match to the general upper bound sent to independent Sol review, together with classical-adaptation/source-prior objections. No Lean/manuscript clearance or credit. See root-dsbs-preliminary-freeze-r1. Pendulum review and fresh r172 research continue. Counts9additional/39total,next40.
+
+
 Pendulum final merged source archive: ROOT fresh extracted replay PASS,14 mathematical modules/139 actual audited declarations; rebuilt ZIP byte-identical. Full literal source_claim closed. Manuscript text delivered; authored PDF and visual QA NOT completed because required Node marker fails under fixed memory guard. Independent source/math/formal/manuscript-source review assigned; production and historical-priority holds remain. See root-pendulum-merged-packet-adoption-r1. Fresh r170/r172 research continues. No acceptance/count change:9additional/39total,next40.
 
 

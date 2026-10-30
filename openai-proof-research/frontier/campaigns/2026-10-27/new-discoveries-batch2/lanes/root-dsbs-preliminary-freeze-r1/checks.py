@@ -1,0 +1,63 @@
+import mpmath as m,json,random,itertools
+from pathlib import Path
+L=Path(__file__).resolve().parent;m.mp.dps=65
+log=lambda x:m.log(x,2)
+def h(x):return -x*log(x)-(1-x)*log(1-x) if 0<x<1 else m.mpf(0)
+def cw(r):return 1+h(r)-2*h((1-m.sqrt(1-2*r))/2)
+def div(r,e):return r*log(r/e)+(1-r)*log((1-r)/(1-e))
+def b(r):return (1-r-m.sqrt(1-2*r))/(2*(1-r))
+def t(r,q):return 2*h((1-r)*q+r/2)-(1-r)*h(q)-r-h(r)
+def C(r,z):
+ lo=b(r);hi=m.mpf(.5)
+ for _ in range(220):
+  mid=(lo+hi)/2
+  if t(r,mid)<z:lo=mid
+  else:hi=mid
+ return (1-r)*(1-h((lo+hi)/2))
+rows=[]
+for e in [m.mpf(1)/1024,m.mpf(1)/4096,m.mpf(1)/65536]:
+ s=m.sqrt(1-2*e);a=(1-s)/2;ell=log((1-a)/a)
+ A=ell/s-log((1-e)/e);B=ell*m.sqrt(e/((1-e)*(1-2*e)))
+ assert A>m.sqrt(2)*B
+ tt=4*(1-e)**2*(1-2*e)/(e**2*m.log(2))
+ assert abs(m.diff(lambda q:t(e,q),b(e),2)/tt-1)<m.mpf(1e-50)
+ for beta in [1,2,10,100]:
+  c=1+m.mpf(1)/beta;expected=A-m.sqrt(c)*B
+  ds=[]
+  for k in [4,7,10]:
+   delta=e*m.mpf(10)**(-k);value=(C(e-delta,c*div(e-delta,e))-cw(e))/delta
+   assert value>0
+   ds.append(str(value))
+  assert abs(m.mpf(ds[-1])-expected)<m.mpf(1e-7)
+  rows.append(dict(epsilon=str(e),beta=beta,predicted_slope=str(expected),observed_slopes=ds))
+# Direct finite-block posterior transport, including correlated coordinates in each processor.
+rng=random.Random(170);tensor=[]
+for z in range(30):
+ e=.01+rng.random()*.4;r=.01+rng.random()*.4;beta=1+rng.random()*4
+ px=[];py=[]
+ for _ in range(3):
+  a=[.1+rng.random() for _ in range(4)];px.append([x/sum(a) for x in a])
+  a=[.1+rng.random() for _ in range(4)];py.append([x/sum(a) for x in a])
+ pi=lambda x,y:((1-e) if x==y else e)/2
+ q=lambda x,y:((1-r) if x==y else r)/2
+ joint=[];P=[];Q=[];PI=[]
+ for x,y in itertools.product(range(4),repeat=2):
+  v=[px[w][x]*py[w][y]/3 for w in range(3)];p=sum(v)
+  qq=q(x//2,y//2)*q(x%2,y%2);pp=pi(x//2,y//2)*pi(x%2,y%2)
+  P.append(p);Q.append(qq);PI.append(pp)
+  for w in range(3):joint.append(((w,x//2,x%2,y//2,y%2),qq*v[w]/p))
+ def H(ids):
+  d={}
+  for row,v in joint:
+   k=tuple(row[i] for i in ids);d[k]=d.get(k,0)+v
+  return -sum(v*float(log(v)) for v in d.values())
+ def I(a,bb,w=()):return H(tuple(a)+tuple(w))+H(tuple(bb)+tuple(w))-H(tuple(w))-H(tuple(a)+tuple(bb)+tuple(w))
+ block=I((1,2),(3,4),(0,));single=I((1,),(3,),(0,))+I((2,),(4,),(0,1,3))
+ mi=I((1,3),(0,))+I((2,4),(0,1,3));total=I((1,2,3,4),(0,))
+ kl=sum(x*float(log(x/y)) for x,y in zip(Q,P));d=sum(x*float(log(x/y)) for x,y in zip(Q,PI))
+ ren=float(log(sum(pp**(1+beta)*p**(-beta) for pp,p in zip(PI,P)))/beta)
+ assert single<=block+1e-12 and block<=kl+1e-12 and abs(mi-total)<1e-12
+ assert kl-(1+1/beta)*d<=ren+1e-12
+ tensor.append(dict(block_cmi=block,single_cmi=single,KL=kl,renyi=ren))
+(L/'checks.json').write_text(json.dumps(dict(status='PASS diagnostics only',local_slope_rows=rows,posterior_tensorization=tensor),indent=2)+'\n')
+print('PASS: 12 slope controls at 3 perturbations, 3 derivative identities, 30 correlated-block posterior controls')
