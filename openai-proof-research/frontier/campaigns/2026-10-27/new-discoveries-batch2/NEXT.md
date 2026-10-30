@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r167 Kametaka normalized Yablonskii–Vorobiev irreducibility remains unresolved.
+Root replay passes all46 Newton controls;50 manifest/48 scientific paths
+verify unchanged. Uniform coefficient valuations and all-n degree exclusion
+remain missing; finite cases receive no credit. See root-r167-handback.
+Sol r168 fresh source research replaces r167 alongside pendulum preliminary
+review and Steiner maximum-monotonicity source/prior clearance.
+Counts unchanged:9 additional/39 total,next40. No Lean or paper.
+
+
 Steiner general-position review adopted: ordinary proofs PASS for both.
 Problem7.1 maximum-monotonicity amplification has provisional substantive
 PASS; closest Changat body and current-prior HOLD remain. Focused Sol source

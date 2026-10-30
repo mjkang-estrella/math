@@ -1,0 +1,48 @@
+Initial run failed before computation: unmatched ')' on T=S.Poly line.
+import json,sys,math
+from pathlib import Path
+import sympy as S
+L=Path(__file__).resolve().parent
+z,x=S.symbols('z x'); P=[S.Poly(1,z,domain=S.ZZ),S.Poly(1,z,domain=S.ZZ)]
+rows=[];prime_controls=[]
+for n in range(1,24):
+ a=P[n];num=S.Poly(z,z)*a*a+4*a.diff()*a.diff()-4*a*a.diff().diff()
+ q,r=num.div(P[n-1]);assert r.is_zero;P.append(q)
+for n in range(3,25):
+ d=n*(n-1)//2;f=d//3;g=d%3;a=P[n]
+ assert a.degree()==d and a.LC()==1 and g in [0,1]
+ co=[]
+ for j in range(f+1):
+  c=int(a.nth(d-3*j));assert c%4**j==0;co.append(c//4**j)
+ F=S.Poly.from_list(co,x,domain=S.ZZ)
+ assert S.Poly(4**f*z**g*F.as_expr().subs(x,z**3/4),z)==a
+ assert S.Poly(F.as_expr().subs(x,0),x).LC()!=0
+ fac=S.factor_list(F,modulus=2)[1]
+ row={'n':n,'degree':f,'F_coefficients':co,'mod2_factor_degrees':sorted([h.degree() for h,e in fac for _ in range(e)])}
+ rows.append(row)
+# Published modular congruence, translated to the exact Kametaka F, bounded controls.
+for p in [5,7,11,13,17,19,23]:
+ for m in range(p,24,p):
+  n=m+1;row=rows[n-3];f=row['degree'];co=row['F_coefficients']
+  assert all(c%p==0 for c in co[1:]);prime_controls.append({'p':p,'n':n,'degree':f,'reduction':'X^degree'})
+# Raw irrationality is weaker than normalized irreducibility: explicit generic witness.
+H=S.Poly((x*x+1)*(x*x+2),x);assert H.degree()==4
+# H(t^3/4)=(t^6/16+1)(t^6/16+2)>0 on R, no real/rational root, but reducible.
+assert S.expand(256*H.as_expr().subs(x,z**3/4))==z**12+48*z**6+512
+# independently generate +1 normalization via determinant, only m<=7
+bridges=[]
+for m in range(2,8):
+ def h(k):
+  if k<0:return S.Integer(0)
+  return sum(z**(k-3*i)/(3**i*S.factorial(i)*S.factorial(k-3*i)) for i in range(k//3+1))
+ M=S.prod(S.factorial2(2*k-1) for k in range(1,m+1))
+ T=S.Poly(S.expand(M*S.det(S.Matrix(m,m,lambda i,j:h((j+1)-2*(i+1)+m+1))))),z)
+ row=rows[m-2];f=row['degree'];g=m*(m+1)//2%3
+ F=S.Poly.from_list(row['F_coefficients'],x)
+ assert T==S.Poly((-1)**f*z**g*F.as_expr().subs(x,-z**3),z)
+ bridges.append(m)
+out={'scope':'finite diagnostics only; no universal proof','rows':rows,'modular_collapse_controls':prime_controls,'determinant_bridge_m':bridges,'generic_nonimplication':str(H.as_expr()),'sympy':S.__version__}
+s=json.dumps(out,indent=2)+'\n'
+if len(sys.argv)>1 and sys.argv[1]=='verify':
+ assert json.loads((L/'checks.json').read_text())==out;print('exact mathematical checks reproduce')
+else:(L/'checks.json').write_text(s);print('rows',len(rows),'collapse',len(prime_controls),'bridges',len(bridges));print('F7 mod2 degrees',rows[4]['mod2_factor_degrees'])
