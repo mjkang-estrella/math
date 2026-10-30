@@ -1,5 +1,16 @@
 # Current continuation — 29 October 2026
 
+Pendulum scopedINVEST adopted: publishedsource/ordinarymathPASS, substantive
+construction merits finiteformalstage. Root verifies353payloadentries,
+308frozenoriginals;354reviewfilesfrozen. FirstSolformalcomponentassigned:
+literal sourceintegrals, singularsubstitution, all-nmomentintegrability and
+exactM0/M1 identities. RootINTERFACE fixesfullclosed-intervalSourceClaim.
+No componentcredit or acceptance. Historicalcaps/OpenAI tree403 and176
+missingpatches remain acceptanceconditions; no blockedrequestretry.
+See root-pendulum-investment-adoption-r3. Clique-coronareview and Steiner
+offline/citationclosure continue. Counts9additional/39total,next40.
+
+
 Steiner fixed-gap attempt remains HOLD:17/19 citation records classified;
 two explicit DOI bodies unresolved. Historical6/8commits enumerated, but
 three first-parent netdiffs and complete change/bodycoverage uncertified.
