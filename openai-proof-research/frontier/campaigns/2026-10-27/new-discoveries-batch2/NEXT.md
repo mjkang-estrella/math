@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r197: Hu–Liu Question 4.4 remains unresolved. Completion doubling and strong-m results do not supply anisotropy detection over all target rational-function fields. The universal Pfister examples obstruct a fixed coordinate completion, not the existential detection lemma or source claim. The published 2026 predecessor comparison remains unread/HOLD. Root replay and final integrity checks pass. See root-r197-handback; fresh replacement r199 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r196 full sparse three-constrained terminal-reliability ordinary proof candidate retained for independent adversarial review. Conditional TP2 association and edge-budget replacement bridge supplied; printed graph-indexing qualification and unread 2025 proceedings remain HOLD. Root exact replays and scientific/manifest integrity pass. See root-r196-handback; sparse-reliability preliminary review assigned. No Lean, paper or credit; counts 9 additional / 39 total, next 40.
 
 

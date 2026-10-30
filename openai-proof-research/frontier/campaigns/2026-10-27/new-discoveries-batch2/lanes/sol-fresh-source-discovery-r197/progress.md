@@ -1,0 +1,3 @@
+# Progress
+
+Completed ancestor/batch/admin and root-r194/r195 decision reads; refreshed corrected original provenance and read changed recent source reports. Screened exact aliases before investment. Rejected Han–Pedon duplicate and public reconnaissance results. Sustained only Hu–Liu Question4.4; read primary and closest actual proof bodies. Developed conditional universal route and uniform completion countermodel, leaving the detection lemma explicit. Repaired diagnostic checker; preserved failure. No ordinary full candidate. Final freeze/manifest written; a separate guarded verification runs after these final writes. manifest-verification.json records the actual outcome. Counts9/39,next40 unchanged.
