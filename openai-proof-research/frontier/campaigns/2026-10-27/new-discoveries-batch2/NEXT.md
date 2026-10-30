@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Prefix-reversal row maximum: SOURCE/MATH PASS, root adopts SUBSTANTIVE EXCLUDE after complete source/classical adaptation bridge. Preserve full proof; no Lean or manuscript investment. Matching missing registry bodies leave historical novelty HOLD, not a prior-proof finding. Root replay matches 18,865 orbit controls, 1,099 boundary cases and 1,050 tree block controls; 84 originals/copies and 102 review manifest entries verify. See root-prefix-reversal-routine-exclusion-r1. Fresh finite/algebraic r171 assigned to Sol. Counts 9 additional /39 total,next40.
+
+
 Prefix-reversal Conjecture 5 full ordinary proof candidate preserved for independent review. Root checks reproduce both diagnostic JSONs byte-identically; 81 scientific /82 manifest entries verified,84 files frozen. Source statement and quoted classical bound read. Eligibility remains HOLD for complete classical-adaptation and matching unread registry-body objections; no Lean investment. Sol adversarial review assigned; two pendulum formal components continue. See root-r169-preliminary-freeze-r1. Counts 9 additional /39 total,next40.
 
 
