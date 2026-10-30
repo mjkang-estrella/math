@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r173 triangle median questions remain unresolved: exact convex dual formulation lacks all-shape certificate; relaxed-data method countermodels are not geometric source refutations. Root exact replay byte-identical,43scientific/44manifest/46original files verify. See root-r173-handback. Fresh analytic/probabilistic r175 assigned; r174 and DSBS published-source comparison continue. Counts9additional/39total,next40.
+
+
 DSBS preliminary review adopted: ordinaryMATH PASS, qualified substantivepositive. Arbitrary-block converse survives; source unused Bernoulli prose defect avoided via underlying region theorem. Root independent diagnostics byte-identical,94originals/119reviewmanifest/121reviewfiles verify. INVESTMENT HOLD for 2025/2023 published-companion bodies; focused Sol comparison assigned, no retry of IEEE418. Large formal infrastructure and exact relaxed-Wyner lower bound remain necessary. See root-dsbs-preliminary-adoption-r1. Counts9additional/39total,next40.
 
 
