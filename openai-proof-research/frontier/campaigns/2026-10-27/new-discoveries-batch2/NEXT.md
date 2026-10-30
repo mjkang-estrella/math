@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r210 four-color t-chromatic caterpillar reconstruction remains unresolved. Exact transfer and color-subset inversion give four scalar polynomials, but rigidity up to spine reversal is unproved; full U-polynomial reconstruction does not decode this specialization. Root checks and scientific/manifest/reference verification pass. See root-r210-handback; fresh structural r213 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r209 BCC global lattice moment optimality for every real p>=1 remains unresolved. Pointwise radial-tail domination is false against FCC; the sufficient integrated-tail comparison is unproved. Dajani collar separation is routine under its literal interpretation and does not settle stronger free-boundary structure. Root source/extraction/exact replay and references pass. See root-r209-handback; fresh analytic r212 assigned. Counts 9 additional / 39 total, next 40.
 
 
