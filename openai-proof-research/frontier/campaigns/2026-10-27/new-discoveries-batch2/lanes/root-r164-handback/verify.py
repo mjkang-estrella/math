@@ -1,0 +1,20 @@
+from pathlib import Path
+import hashlib,json,shutil,subprocess,sys
+P=Path(__file__).resolve().parent;S=P.parent/'sol-fresh-source-discovery-r164'
+def sha(p):
+ with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+def verify():
+ counts={}
+ for name in ['finalmanifest.json','scientific-freeze.json']:
+  rows=json.loads((S/name).read_text())['files']
+  for r in rows:
+   p=S/r['path'];assert sha(p)==r['sha256'] and p.stat().st_size==r['bytes'],str(p)
+  counts[name]=len(rows)
+ return counts
+before=verify();Q=P/'replay';Q.mkdir(exist_ok=True);shutil.copyfile(S/'checks.py',Q/'checks.py')
+r=subprocess.run([sys.executable,str(Q/'checks.py')],capture_output=True,text=True,check=True)
+(P/'replay.log').write_text(r.stdout+r.stderr)
+a=json.loads((S/'checks.json').read_text());b=json.loads((Q/'checks.json').read_text());a.pop('utc');b.pop('utc');assert a==b
+after=verify();assert before==after
+out={'status':'PASS','before':before,'after':after,'checks_equal_except_utc':True,'grid_points':b['grid_points'],'precision':b['precision'],'numerics_not_interval_certificate':True,'phi_second_derivative':b['phi_second_derivative'],'credit':0}
+(P/'replay-receipt.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(out))

@@ -1,5 +1,12 @@
 # Current continuation — 29 October 2026
 
+r164: Ma–Weigert Conjecture4.6 and Li Split CIF all-even-order claims have
+matching actual public proof bodies. Reopened Matkowski Conjecture2.4 remains
+unresolved;196 necessary-gradient diagnostics are not interval or universal
+certificates. Root replay matches,69 payload/68 scientific hashes unchanged.
+See root-r164-handback. Sol r166 replaces r164; counts remain9/39,next40.
+
+
 r163: full Sirola Dumas-valuation conjecture has a complete ordinary proof
 candidate and explicit classical-subsumption bridge through signed valuation,
 fraction field, reciprocal normalization and El Fadil2023 Theorem3.1.
