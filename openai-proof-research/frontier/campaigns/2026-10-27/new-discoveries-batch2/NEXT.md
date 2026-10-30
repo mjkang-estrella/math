@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r155 Su read-once factorial-divisibility Conjecture 2.2 remains unresolved.
+Root verifies 65 manifest / 47 scientific entries and reproduces four seven-input
+witnesses plus 100 bounded pairing checks. Signed-pair induction lacks a factor;
+Vandermonde repeats leaves and CRT does not combine competing expression trees.
+No full source result or credit. See root-r155-handback.
+Sol r158 replaces r155; r156 and r157 continue. Counts remain 9 additional /
+39 total, next 40.
+
+
 r154 weighted Bernoulli Conjecture 1 (Milojević–Sudakov 2606.30287)
 remains unresolved. Root reproduces 1,176 bounded rational weight vectors over
 6,120 exact parameter chambers and verifies 63 manifest / 62 scientific entries.
