@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+Kazemi hypercube Conjecture 6.1: root adopts routine-source-bridge exclusion
+after independent ordinary mathematics PASS. The weighted capacity bound,
+active representatives and strict inactive equality case close the full scope;
+this is not a claim of an earlier published proof. Root reproduces the independent
+checks and verifies 34 candidate / 45 review evidence paths before and after.
+See root-kazemi-hypercube-exclusion-r1/DECISION.md; novelty limits remain explicit.
+No Lean or paper investment. Sol r156 replaces the review; r154 and r155 continue.
+Counts remain 9 additional / 39 total; next 40.
+
+
 r153 Sun's Catalan least-prime bound remains unresolved. Root verifies
 45 manifest/43 scientific entries and reproduces degrees1–40: 1,010 Rabin
 trials, 143 independent SymPy tests, 1,019 local factorization controls and
