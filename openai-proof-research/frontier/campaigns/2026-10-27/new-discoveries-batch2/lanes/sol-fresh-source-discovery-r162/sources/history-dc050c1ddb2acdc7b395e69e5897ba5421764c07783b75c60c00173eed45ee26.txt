@@ -1,0 +1,11 @@
+# r65 handback — unresolved; credit0
+
+Screened four claims: powered-binomial target discarded as already investigated; Ai et al. tree conjecture excluded by an actual public diameter-four refutation; crown f-vector conjecture excluded by the actual later source Theorem3.12. Pursued Mirzavaziri–Yaqubi2609.25100v1 Conjecture4.15 on **all** Latin-square column-ascent totals.
+
+Read the exact latest source and companion, then pinned actual Omega Lean theorem bodies: LatinEulerianMultiples.result already proves every interior multiple is attained by a single-swapped cyclic construction. Together with source Cor4.7, this covers attainment but not full-distribution unimodality. No credit for that existing bridge.
+
+Two independent routes retained. Exact normalized all-square enumeration through order6 confirms unimodality but disproves stronger log-concavity (at9:521²−82·4462=−94443). A cyclic isotopy orbit at order7 has strict central valley99894,97440,99894, blocking orbitwise-unimodality proofs. Direct literal-square enumeration independently reproduces that entire orbit vector. This proper-subset valley is **not** a full-source counterexample. A separate cell recursion cross-checks orders3–5.
+
+No full ordinary proof/refutation; no PROOF.md, Lean investment or nomination. Precise gap: compare aggregate all-square coefficients for arbitrary n below their symmetry center. Strongest objection: attainment is already public, and neither finite confirmation nor an orbit valley resolves aggregate unimodality. Campaign remains7additional/37total; root decides acceptance.
+
+`bash run.sh` reproduces exact checks under AS/groupRSS512MiB,CPU210/wall230,40ms sampling,BLAS1. All mathematical experiment guards pass; no cap increased. Initial manifest finalization failed on its own empty live guard JSON; repaired with failure logs preserved. Sources, versions, UTC, SHA256, exclusions, runnable checks and candid access limits in discovery.md/provenance.json. Registry API403 respected without retry/bypass; no reset available in inherited evidence inspected; freshnessHOLD remains and15:49-observedOmega6c27... is not currentHEAD. No git/shared/other-lane edit, child, browser or external posting/contact/account action.

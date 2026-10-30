@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+r162 Achour saturation Conjecture1 remains unresolved: independent exposed
+set with a sufficiently large size and perfectly matchable complement is
+missing. Root replays 771 small graphs, 48 cubic samples and 31 triangle
+systems; no universal result. Planar graphical Stirling unimodality is
+excluded by an actual earlier public counterexample. All 54 payload / 50
+scientific paths match; failures and coverage gaps retained.
+See root-r162-handback. Sol r165 replaces r162; r163 and r164 continue.
+Counts unchanged: 9/39, next40.
+
+
 Xu–Sun–Chen Conjectures 2/3: source and ordinary mathematics PASS, but root
 adopts routine-source-method EXCLUDE. The source cubic-to-candidate quartic
 sign change is fully checked, not assumed. All 215 positive coefficients
