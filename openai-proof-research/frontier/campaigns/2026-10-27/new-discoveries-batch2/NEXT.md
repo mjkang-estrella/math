@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Pendulum final merged source archive: ROOT fresh extracted replay PASS,14 mathematical modules/139 actual audited declarations; rebuilt ZIP byte-identical. Full literal source_claim closed. Manuscript text delivered; authored PDF and visual QA NOT completed because required Node marker fails under fixed memory guard. Independent source/math/formal/manuscript-source review assigned; production and historical-priority holds remain. See root-pendulum-merged-packet-adoption-r1. Fresh r170/r172 research continues. No acceptance/count change:9additional/39total,next40.
+
+
 Cycle congruence r171 remains unresolved: universal cyclic rank identity missing. Root private replay is byte-identical; 58 scientific/59 manifest entries and61 original files verify. Finite modular ranks are not characteristic-zero all-order proof. Zero credit; fresh finite/algebraic r172 assigned. See root-r171-handback. Counts9additional/39total,next40.
 
 
