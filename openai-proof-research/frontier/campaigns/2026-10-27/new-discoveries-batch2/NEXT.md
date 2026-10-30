@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r154 weighted Bernoulli Conjecture 1 (Milojević–Sudakov 2606.30287)
+remains unresolved. Root reproduces 1,176 bounded rational weight vectors over
+6,120 exact parameter chambers and verifies 63 manifest / 62 scientific entries.
+The arbitrary-dimension and arbitrary-denominator inequality remains missing;
+coupling and coalescence obstructions are already public method failures.
+See root-r154-handback. Sol r157 replaces r154; r155 and r156 continue.
+Counts unchanged: 9 additional / 39 total, next 40.
+
+
 Kazemi hypercube Conjecture 6.1: root adopts routine-source-bridge exclusion
 after independent ordinary mathematics PASS. The weighted capacity bound,
 active representatives and strict inactive equality case close the full scope;
