@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r182 Fernando–Kousik Q6.2 retained unresolved: Frobenius normal form and linearized derivative reduce full classification but all-odd-degree collision existence/curve threshold remain missing. Source convolution Conj5.23 excluded by complete classical bridge. Root private replay, original copies and freeze pass; see root-r182-handback. Fresh arithmetic/algebraic r185 assigned; r183/r184 continue. Counts9additional/39total,next40.
+
+
 r181 zero nominations: Poisson mean-constant and two Wasserstein/Poincare assertions retired by actual public bodies, with original-question attribution limit preserved. Root exact positive-test replay matches all mathematical fields; local/external science and manifest pass. See root-r181-handback. Fresh analytic r184 assigned; r182/r183 continue. Counts9additional/39total,next40.
 
 
