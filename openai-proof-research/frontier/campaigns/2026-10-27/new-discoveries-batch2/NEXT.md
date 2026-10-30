@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r186 uniform exact vertex-cover graph-counting question unresolved. Apex-family closed sum does not close global overlap compression or bit complexity. Root replay, 2527 originals/copies and manifest pass; fresh structural r188 assigned. See root-r186-handback. Counts 9 additional / 39 total, next 40.
+
+
 r185 full power-sum nonnormal-domain classification candidate retained; independent mathematical and classical-adaptation review assigned. Root exact replay and frozen originals pass; no Lean or acceptance. See root-r185-handback. Counts 9 additional / 39 total, next 40.
 
 

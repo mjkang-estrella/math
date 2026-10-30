@@ -1,0 +1,14 @@
+# MathDB 358595: a full symplectic quadratic-difference counterexample
+
+The primary source is Clément de Seguins Pazzis, *The quadratic sum problem for symplectic pairs*, arXiv:2305.19340v1. Read Section 1.2 and Definition 1.1 for the exact definitions, and Conjecture 1 and the immediately following disproof in Section 1.3. The source itself disproves the conjecture, contrary to MathDB’s introductory unresolved-status wording. The author’s MathDB reply points this out. The present proof is the dimension-two real specialization of the original source’s counterexample family; no discovery or first-formalization claim is made. Exact snapshots and hashes are inventoried in `source.json` and stored in the separate local source audit `extension-matrix-second/sources`.
+
+Let V=R², b(x,y)=x0*y1-x1*y0, p=q=X²+1, and u=0. The form b is bilinear, alternating and nondegenerate, so (b,0) is a symplectic pair. The polynomial p is monic of degree two. The rotation J=[[0,1],[-1,0]] satisfies p(J)=J²+I=0. Therefore 0=J-J is an ordinary (p,p)-difference.
+
+If M is b-alternating, then b(x,Mx)=0 for every x. Substitution of (1,0), (0,1), and (1,1) forces M10=M01=0 and M11=M00, respectively. Thus M=aI. But p(aI)=(a²+1)I cannot vanish over R. Hence there is no b-alternating root of p at all, and in particular 0 cannot be a difference of two b-alternating roots. This refutes the sufficiency direction of the full claimed equivalence at an admissible pair (b,u), with all source hypotheses certified.
+
+`formal/QuadraticDifference.lean` first proves the matrix facts. It then bridges to the exact source endomorphism setting: `EndBAlternating`, `EndDifference`, and `EndSymplecticDifference` use actual `Module.End R V` maps and polynomial `aeval`. The matrix/end algebra equivalence is used to prove `root_end_iff`, including the polynomial-annihilation bridge. Surjectivity of this equivalence reduces an arbitrary hypothetical endomorphism root to the scalar-matrix obstruction. The main theorem is `source_endomorphism_counterexample`; it bundles alternation/nondegeneracy of b, monicity/degree of p, alternation of u, the ordinary decomposition, and nonexistence of the symplectic decomposition. It contains no assumptions about an unproved classification theorem.
+
+Replay from repository root: `python3 openai-proof-research/frontier/campaigns/2026-10-25/thirty-proof-campaign/verify_outcome.py openai-proof-research/frontier/campaigns/2026-10-25/extension-matrix-second/quadratic-difference`. The checker compiles every local declaration against pinned Lean 4.34.1 and audits standard logical axioms. Independent review and PDF production are parent integration steps.
+
+
+Full third-party manuscripts and post bodies are retained in the local source audit, outside the standalone package. The source manifest records reproducible primary URLs, hashes and existing solution identifiers.

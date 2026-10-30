@@ -1,0 +1,1370 @@
+                                                  SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS
+                                                           NEAR THE CRITICAL DENSITY
+
+                                              MATTHEW JENSSEN, WILL PERKINS, ADITYA POTUKUCHI, AND MICHAEL SIMKIN
+
+
+                                                Abstract. We study the following combinatorial counting and sampling problems: can
+                                                we efficiently sample from the Erdős-Rényi random graph G(n, p) conditioned on triangle-
+
+
+
+
+arXiv:2410.22951v1 [cs.DS] 30 Oct 2024
+                                                freeness? Can we efficiently approximate the probability that G(n, p) is triangle-free? These
+                                                are prototypical instances of forbidden substructure problems ubiquitous in combinatorics.
+                                                The algorithmic questions are instances of approximate counting and sampling for a hyper-
+                                                graph hard-core model.
+                                                    Estimating the probability that G(n, p) has no triangles is a fundamental question in
+                                                probabilistic combinatorics and one that has led to the development of many important
+                                                tools in the field. Through the work of several authors, the asymptotics of the logarithm of
+                                                this probability are known if p = o(n−1/2 ) or if p = ω(n−1/2 ). The regime p = Θ(n−1/2 )
+                                                is more mysterious, as this range witnesses a dramatic change in the the typical structural
+                                                properties of G(n, p) conditioned on triangle-freeness. As we show, this change in structure
+                                                has a profound impact on the performance of sampling algorithms.
+                                                    We give two different efficient sampling algorithms for triangle-free graphs (and comple-
+                                                mentary algorithms to approximate the triangle-freeness large deviation probability), one
+                                                                                √                                            √
+                                                that is efficient when p < c/ n and one that is efficient when p > C/ n for constants
+                                                c, C > 0. The latter algorithm involves a new approach for dealing with large defects in the
+                                                setting of sampling from low-temperature spin models.
+                                                    An extended abstract of this paper appeared at FOCS 2024 [39].
+
+
+
+
+                                                                                   1. Introduction
+
+                                            Let T = T (n) denote the set of (labeled) triangle-free graphs on n vertices. Understanding
+                                         properties of this set is a central topic in extremal and probabilistic combinatorics. Mantel’s
+                                         Theorem [44], one of the earliest results in extremal graph theory, solves an optimization
+                                         problem: which G ∈ T (n) has the most edges? Erdős, Kleitman, and Rothschild [23] gave an
+                                         asymptotic formula for |T (n)| and proved an important structural property of the uniform
+                                         distribution on T (n): almost all triangle-free graphs are bipartite. More generally, one can
+                                         study µp (T ), the probability that the Erdős-Rényi random graph G(n, p) is triangle-free, a
+                                         question considered already in the papers of Erdős and Rényi initiating the study of random
+                                         graphs [24].
+
+
+                                            King’s College London, Department of Mathematics
+                                            Georgia Institute of Technology, School of Computer Science
+                                            York University, Department of Electrical Engineering and Computer Science
+                                            Massachusetts Institute of Technology, Department of Mathematics
+                                            E-mail addresses: matthew.jenssen@kcl.ac.uk, math@willperkins.org, apotu@yorku.ca,
+                                         msimkin@mit.edu.
+                                            Date: October 30, 2024.
+                                                                                             1
+2     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+   Understanding such non-existence probabilities and more general large deviation proba-
+bilities for subgraphs in random graphs often involves deep mathematical tools from com-
+binatorics and probability theory, including regularity lemmas, nonlinear large deviations,
+container methods, and entropic methods (e.g. [13, 11, 3, 49, 12, 22, 18, 41]). These tech-
+niques often connect large deviation probabilities to structural information about graphs
+drawn from the appropriate conditional distribution.
+   Here we will be interested in the connection between structural properties of the condi-
+tional distribution, algorithms to sample from the conditional distribution, and algorithmic
+approximations of the large-deviation probability.
+   In our case, the distribution of interest is that of G(n, p) conditioned on triangle-freeness.
+We denote this distribution by µT ,p . The result of Erdős, Kleitman, and Rothschild not
+only gives an asymptotic formula for µ1/2 (T ), but also gives an efficient algorithm to sample
+approximately from µT ,1/2 : sample a nearly balanced partition of a set of n vertices and
+include each crossing edge independently with probability 1/2. This gives a random bipartite
+graph on n vertices, whose distribution is very close to µT ,1/2 . Osthus, Prömel, and Taraz [47]
+later showed√that an√analogous result holds for much smaller p: for any fixed ε > 0, if
+p ≥ (1 + ε) 3 log n/ n then G ∼ µT ,p is bipartite whp. In the same way as above, this
+immediately yields an efficient approximate sampling algorithm.
+                                                                                              √
+   What happens for smaller p? T. Luczak [43] had previously showed that if p ≥ C/ n
+for large C, then whp G has a cut containing most of the edges; that is, it is approximately
+bipartite. On the other hand, when p = o(n−1/2 ), no such large cut or global structure exists,
+and instead behavior is captured by the ‘Poisson paradigm’ and Janson’s Inequality [35].
+   Here we will be interested in the regime p = Θ(n−1/2 ), in which this global structure
+emerges. Beyond Luczak’s result and consequences of Janson’s Inequality, very little is known
+in this regime about either the properties of µT ,p , the value of µp (T ), or the existence of
+efficient sampling algorithms. In this paper we will show that these three questions are
+closely related.
+   In different settings, very similar questions about approximation of probabilities and un-
+derstanding conditional probability measures are studied in computer science in the area of
+approximate counting and sampling. Here a canonical object is the partition function of the
+hard-core model or the generating function for independent sets of a graph or hypergraph G:
+                                                 X
+(1.1)                                  ZG (λ) =      λ|I| ,
+                                                I∈I(G)
+
+where I(G) is the set of independent sets of G. The related sampling question is about
+sampling from the hard-core measure, the probability measure on I(G) defined by
+                                                     λ|I|
+                                       µG,λ (I) =          .
+                                                    ZG (λ)
+The complexity of approximate sampling and counting for the hard-core model on graphs of
+                                                                                              e
+maximum degree ∆ is now very well understood: when λ is below a threshold λc (∆) ≈ ∆            ,
+there are efficient sampling and counting algorithms [54, 2, 17, 1, 14], and when λ is above
+this threshold no such algorithms exist unless NP=RP [51, 52, 29]. The critical value λc
+marks a phase transition of the hard-core model on the infinite ∆-regular tree. The phase
+transition behavior is also reflected in finite graphs: when λ < λc , the hard-core model on any
+graph of maximum degree ∆ exhibits several ‘nice’ behaviors including decay of correlations
+      SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS                 NEAR THE CRITICAL DENSITY       3
+
+and rapid convergence of local dynamics (Markov chains), while there exist graphs for which
+these properties fail for λ > λc (in particular, for the random ∆-regular bipartite graph [46]).
+   The probability that G(n, p) is triangle-free and its conditional distribution given this event
+can be written in terms of a hard-core partition function and measure. Given a graph G on
+vertex set [n], we will often identify G with its edge set and let |G| denote the number of
+edges in G. Let µp denote the distribution of the Erdős-Rényi random graph G(n, p), that
+                          n
+is, µp (G) = p|G| (1 − p)( 2 )−|G| . Let
+                                                 X
+                                         Z(λ) =      λ|G| .
+                                                  G∈T
+          p
+With λ = 1−p , we have the identities
+                                                     Z(λ)
+                                      µp (T ) =           n ,
+                                                  (1 + λ)( 2 )
+and
+                                                λ|G|
+                                  µT ,p (G) =        ,   G∈T .
+                                                Z(λ)
+  From this perspective, µT ,p may be viewed as a hypergraph hard-core measure. Let H =
+(V, E) be the hypergraph with V = [n]
+                                          
+                                        2   where {x, y, z} ∈ E if and only if x, y, z form
+a triangle (when viewed as edges of a graph on vertex set [n]). Then µT ,p = µH,λ where
+λ = p/(1 − p).
+   The algorithmic and probabilistic behavior of hypergraph hard-core models on bounded-
+degree, uniform hypergraphs is more complex and less well understood than that of graphs.
+While for graphs λc (∆) marks a computational threshold, a phase transition on a particular
+infinite graph, a threshold for fast mixing of local dynamics, and a threshold for a strong
+form of correlation decay (strong spatial mixing), in hypergraphs these thresholds need not
+coincide (see, e.g., the results and discussion in [34, 6, 30, 5]).
+   Our main results combine these points of view and give some understanding of triangle-
+free graphs in this critical regime p = Θ(n−1/2 ). We will give efficient approximate counting
+and sampling algorithms when p ≤ cn−1/2 and p ≥ Cn−1/2 for constants c, C > 0. In
+the paper [38], we use algorithmic ideas to prove an asymptotic formula for log µp (T ) when
+p ≤ cn−1/2 (and treat more general lower-tail problems for triangles in the critical regime).
+   To state our algorithmic results we need a couple of definitions. The Glauber dynamics
+is a Markov chain defined by a probability distribution µ on vectors (in our case indicator
+functions of edges of a graph) that proceeds by choosing a random coordinate and updating
+this coordinate according to the conditional distribution of µ given all other coordinates. The
+mixing time of a Markov chain is the number of steps required to guarantee convergence to the
+stationary distribution µ (to within 1/4 total variation distance) from a worst-case starting
+point. See Section 2 for full definitions. We say that Ẑ > 0 is an ε-relative approximation to
+Z > 0 if e−ε Ẑ ≤ Z ≤ eε Ẑ.
+                             √
+Theorem 1.1. Let c < 1/ 2 be fixed and suppose p ≤ cn−1/2 . The Glauber dynamics for
+sampling from µT ,p has mixing time O(n2 log n).
+  In particular, this gives randomized algorithms running in time polynomial in n and 1/ε
+that
+4     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+    (1) Output M so that with probability at least 2/3, M is an ε-relative approximation to
+        µp (T ).
+    (2) Output G ∈ T with distribution µ̂ so that ∥µ̂ − µT ,p ∥T V < ε .
+
+   In the terminology of approximate counting and sampling, these are a Fully Polynomial-
+time Randomized Approximation Scheme (FPRAS) and an efficient sampling scheme.
+                         √
+   Up to the constant 1/ 2, Theorem 1.1 is sharp. When p ≥ Cn−1/2 for C a large constant,
+the Glauber dynamics mix slowly due to the emergence of global structure (large max-cuts)
+in triangle-free graphs.
+Theorem 1.2. There exists C > 0 so√ that for p ≥ Cn−1/2 , the Glauber dynamics for
+sampling from µT ,p has mixing time Ω(e n ).
+
+  On the other hand, even in this higher density regime we can still sample from µT ,p and
+approximate µp (T ) efficiently.
+                                                                                  √
+Theorem 1.3. There exist C, C ′ > 0, so that for p ≥ Cn−1/2 and ε ≥ C ′ e− n there are
+randomized algorithms running in time polynomial in n and 1/ε that
+    (1) Output M so that with probability at least 2/3, M is an ε-relative approximation to
+        µp (T ).
+    (2) Output G ∈ T with distribution µ̂ so that ∥µ̂ − µT ,p ∥T V ≤ ε .
+
+  Note that Theorem 1.1 applies to all p ≤ cn−1/2 , and Theorems 1.2 and 1.3 apply to all
+p ≥ Cn−1/2 , not just p = Θ(n−1/2 ).
+
+1.1. Techniques. The techniques we use to prove the main two results (algorithms at low
+densities, algorithms at high densities) are related and combine ideas from computer science,
+statistical physics, and combinatorics.
+   Proving the first result is somewhat straightforward: using the path coupling technique of
+Bubley and Dyer [8] along with an initial ‘burn-in’ period [19] to control the max degree of
+a graph, we show that the Glauber dynamics for µT ,p are rapidly mixing.
+   For the second result, efficient sampling at high densities, a different algorithm is needed.
+In fact, using structural
+                     √ results from [37] we prove that the Glauber dynamics for µT ,p mix
+slowly when p ≥ C/ n (Theorem 1.2). These structural results (following those in [43]) say
+that almost all G ∼ µT ,p have a unique max-cut (A, B) that contains almost all of its edges,
+and moreover, the graphs induced by A and by B have controlled maximum degree. In the
+language of statistical physics we can say almost all G ∼ µT ,p are close to some ‘ground
+state’ collection of bipartite graphs with bipartition (A, B). We call the edges within the
+parts of a max-cut (A, B) ‘defect edges’. While the existence of a large cut is a bottleneck for
+the Glauber dynamics, we use the same structural result as an algorithmic tool in proving
+Theorem 1.3, reducing the sampling problem to that of sampling from µT ,p conditioned on a
+max cut (A, B) and a small max degree among the defect edges.
+   With this approach, the main technical step is to show that one can efficiently sample defect
+edges from (approximately) the correct distribution. There is a rough duality to the problem
+in that defect√edges approximately behave like a disordered triangle-free graph H ∼ µT ,p
+where p = c/ n and c is small. However in reality the distribution is significantly more
+complex. The probability of seeing a set of defect edges H is proportional to a certain hard-
+core model partition function determined by H. Using the machinery of the cluster expansion
+     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS              NEAR THE CRITICAL DENSITY         5
+
+(see Section 2.3), the defect distribution can be viewed as an exponential random graph with
+an unbounded number of subgraph counts in the exponent, conditioned on a max-degree
+bound and on triangle-freeness. In a similar spirit to Theorem 1.1, we sample defect edges
+via edge-update Glauber dynamics. However, the implementation is more complicated here.
+A key step is to use the cluster expansion to accurately estimate edge marginals needed in
+the implementation of the dynamics. This use of cluster expansion can be viewed as a way
+to study an exponential random graph as a perturbation of an Erdős-Rényi random graph.
+   There is a line of previous algorithmic results (e.g. [33, 36, 15, 27, 28, 32, 10, 16]) on
+efficient approximate counting and sampling for spin models (hard-core, Potts, coloring, etc.)
+on structured instances (expanders, lattices, random graphs) in low-temperature (i.e. strong
+interaction strength) or high-density regimes that are computationally hard (more precisely
+#BIS-hard [21, 9]) in the worst-case. These algorithms are based on the framework of abstract
+polymer models in which defects from a ground state configuration or set of configurations
+are modeled as an auxiliary spin model and then analyzed or sampled from using cluster
+expansion or Markov chain algorithms. Other low-temperature algorithms include suitably
+initialized Markov chains [31, 7, 26]. In both cases, it is crucial to the algorithms or to the
+analysis that defects from the appropriate ground state in the spin model are small: at most
+logarithmic size. See the discussion in [16, Section 2.2] and the percolation conditions in [7].
+  What is new in our approach to proving Theorem 1.3 is that we can efficiently sample
+even though the defect edges form connected graphs with large degrees. At a high level, the
+novelty of our approach is that in previous works, the algorithms or analyses were based on
+perturbations around the empty set of defects; here one can interpret our analysis of Glauber
+dynamics on defect edges as a perturbation around a measure of independent (Erdős-Rényi)
+defect edges, and instead of needing to bound the size of their connected components, we
+need to bound their distance from independence, measured in terms of the mixing time of
+Glauber dynamics.
+
+1.2. Open questions. In this paper we only consider sampling triangle-free graphs, but is
+also natural to consider sampling graphs with forbidden subgraphs H other than triangles.
+If H is non-bipartite, the ‘critical density’ is determined by the 2-density of H, m2 (H) =
+                  |E(F )|−1
+maxF ⊆H;|E(F )|≥2 |V (F )|−2 .
+
+Question 1. For non-bipartite graph H, can one sample efficiently from G(n, p) conditioned
+on the event {XH = 0} in the critical regime p = Θ(n−1/m2 (H) )?
+
+  We anticipate that our approach to high-density sampling will be useful more generally in
+the setting of low-temperature or high-density spin systems mentioned above. Concretely,
+we ask if this approach can be used to find efficient algorithms for the hard-core model on
+random bipartite graphs.
+Question 2. Can the high-level approach of the algorithm of Theorem 1.3 be used to sample
+from the hard-core model on random ∆-regular bipartite graphs for all λ > λc (∆)?
+
+  Currently efficient algorithms are known for λ = Ω(log ∆/∆) from [16] where the authors
+point out the barrier of polymers of polynomial size at smaller values of λ.
+
+1.3. Organization. In Section 2 we provide some preliminaries on Markov chain mixing and
+the cluster expansion. In Section 3 we prove Theorem 1.1 via a path coupling argument with
+burn-in. In Section 4 we prove Theorem 1.3, showing the existence of efficient sampling and
+6     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+counting algorithms at high densities. In Section 7 we prove Theorem 7, showing that the
+Glauber dynamics for sampling from µT ,p mixes slowly for large p.
+
+                                       2. Preliminaries
+
+2.1. Notation. For a graph G = (V, E) we denote the number of edges by |G| and its
+maximum degree by ∆(G). All graphs in this paper will have n vertices unless specified
+otherwise. For v ∈ V we let dG (v) denote the degree of the vertex v and we let dG = 2|G|/n
+denote the average degree. We use µp to refer to the distribution of the Erdős-Rényi random
+                                               n
+graph G(n, p); that is, µp (G) = p|G| (1 − p)( 2 )−|G| . We let T denote the set of triangle-free
+graphs on n vertices or the event that a random graph is triangle-free.        The conditional
+distribution µp (·|T ) is denoted µT ,p . The partition function Z(λ) = G∈T λ|G| will always
+                                                                         P
+                                                                   n
+be used with λ = p/(1 − p) giving the identity µ (T ) = (1 − p)( 2 ) Z(λ).
+                                                   p
+
+2.2. Markov chains and mixing times. Our sampling algorithms for both the low density
+and high density cases will use Markov chains. In the low density case, the Markov chain
+approach will directly give an efficient sampling algorithm, while in the high density case,
+Markov chains will be one part of a more complicated algorithm.
+   The basic idea to approximately sample from a target distribution µ is to design a Markov
+chain with µ as the stationary distribution so that a single step of the chain can be imple-
+mented efficiently, and so that the chain converges quickly. The convergence time is often
+quantified by the mixing time. With µX  0
+                                      t denoting the t-step distribution of the Markov chain
+starting from the state X0 , the mixing time is
+                                          n                       o
+                         τmix = max min t : µX  t
+                                                  0
+                                                    − µ    <  1/4   .
+                                  X0                      TV
+
+Here ∥ · − · ∥T V denotes the total variation distance between probability measures on the
+same space, and the choice of 1/4 is arbitrary and can be reduced to any ε > 0 by running
+the chain a factor O(log(1/ε)) more than τmix . For background on Markov chains and mixing
+times see [45, 42].
+   We will consider Markov chains on graphs; these will have   the form of the Glauber dy-
+                                                         V
+                                                           
+namics: at each step we choose a potential edge e ∈ 2 uniformly at random and then
+resample it (whether it is in the graph or not) conditioned on the status of all other edges.
+More generally, the Glauber dynamics can be applied to any high-dimensional probability
+distribution by choosing a random coordinate and resampling the value of that coordinate
+conditioned on the rest of the vector.
+   For the Erdős-Rényi distribution G(n, p) the Glauber dynamics are particularly simple: at
+each step one of the n2 possible edges is chosen uniformly; with probability p the edge is
+                         
+included in G and with probability 1 − p it is not included.
+   For µT ,p , the Glauber dynamics are similar: at each step one of the n2 possible edges is
+                                                                            
+chosen uniformly; with probability p the edge is included in G, but only if its inclusion would
+not form a triangle with other edges already present.
+
+2.3. Cluster expansion and the hard-core model. Recall ZG (λ), the partition function
+of the hard-core model on a graph G from (1.1). The cluster expansion is a formal power
+series for log ZG (λ); in fact, it is the Taylor series around λ = 0. Conveniently, the terms of
+the cluster expansion have a nice combinatorial interpretation (see e.g. [50, 25]). A cluster
+     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS                          NEAR THE CRITICAL DENSITY     7
+
+Γ = (v1 , . . . , vk ) is a tuple of vertices from G such that the induced graph G[{v1 , . . . , vk }] is
+connected. We let C(G) denote the set of all clusters of G. We call k the size of the cluster
+and denote it by |Γ|. Given a cluster Γ, the incompatibility graph GΓ is the graph on vertex
+set Γ (considered as a multiset) with an edge between vi , vj if either vi , vj are adjacent on G
+or i ̸= j and vi , vj correspond to the same vertex in G. In particular, by the definition of a
+cluster, the incompatibility graph GΓ is connected.
+  As a formal power series, the cluster expansion is the infinite series
+                                             X
+                               log ZG (λ) =       ϕG (Γ)λ|Γ| ,
+                                                    Γ∈C(G)
+
+where
+                                           1            X
+                               ϕG (Γ) =                                (−1)|A| .
+                                          |Γ|!
+                                                     A⊆E(GΓ )
+                                                 spanning, connected
+
+If the graph G is clear from the context we will often write ϕ(Γ) in place of ϕG (Γ).
+   The cluster expansion converges absolutely if λ lies inside a disk D ⊂ C so that ZG (ξ) ̸= 0
+for all ξ ∈ D. We will use the following lemma, [37, Lemma 4.1], which gives a sufficient
+condition for convergence and bounds the error in truncating the cluster expansion.
+Lemma 2.1. Suppose G is a graph on n vertices with maximum degree ∆, and suppose |λ| ≤
+   1
+2e(∆+1) . Then the cluster expansion converges absolutely. Moreover, for any set U ⊆ V (G)
+such that 1 ≤ |U | ≤ min{2, k} we have
+                             X
+                                  |ϕ(Γ)||λ||Γ| ≤ (2e)k ∆k−|U | |λ|k .
+                               Γ:Γ⊇U,
+                                |Γ|≥k
+
+  We remark that the conclusion of [37, Lemma 4.1] is slightly weaker than the statement
+above (the absolute value signs appear outside of the sum), however, it is readily checked
+that the proof from [37] gives the statement of Lemma 2.1.
+
+                                  3. Sampling at low density
+
+   In this section we prove Theorem 1.1. Our proof will proceed by a path coupling argument
+where we use an initial burn-in period to make sure that the graphs in the coupling have
+reasonable maximum degree. To this end it will be useful to observe that µT ,p is stochastically
+dominated by µp .
+Lemma 3.1. For every p ∈ [0, 1], the measure µp stochastically dominates µT ,p . That is,
+there is a coupling of the two distributions so that with probability 1, G ⊆ G′ , where G ∼ µT ,p
+and G′ ∼ µp .
+
+Proof. Sample G ∼ µT ,p by sampling one edge at a time given the previous history. At
+any step, the conditional probability of any edge is at most p. We can therefore couple the
+sampling with an edge-by-edge sampling of G(n, p) so that an edge is present in the sample
+from µT ,p only if it is present in the sample from µp .                                 □
+
+   This fact combined with Chernoff’s inequality and a union bound over vertices yields the
+following corollary which will allow us to condition on the event ∆(G) ≤ (1 + ε)np.
+8     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+Corollary 3.2. Let p, ε ∈ [0, 1] and let G ∼ µT ,p . Then with µ = (n − 1)p
+                                                            2
+                               P(∆(G) ≥ (1 + ε)µ) ≤ ne−ε µ/3 .
+
+  It will also be useful to observe that we can couple the triangle-free Glauber dynamics for
+µT ,p with the Glauber dynamics for µp , in which one of the n2 potential edges is chosen at
+                                                                
+random and resampled at each step.
+Lemma 3.3. There exists a coupling (Xt , Yt )t≥0 of the Glauber dynamics for µT ,p with the
+Glauber dynamics for µp such that if X0 is a subgraph of Y0 , then Xt is a subgraph of Yt for
+all t ≥ 0.
+
+Proof. We make the same edge updates in both chains, unless a pair {u, v} ∈ [n]
+                                                                                  
+                                                                                2 is chosen
+such that u, v have a common neighbour in Xt , in which case we set Xt+1 = Xt .            □
+
+   A coupon collector argument gives us that the mixing time for Glauber dynamics for µp
+is O(n2 log n). As a result, we have the following corollary.
+                                                                                       √
+Corollary 3.4. There exists C > 0 so that the following holds for any c > 0. Let p ≤ c/ n.
+Let (Xt )t≥0 be a run of the Glauber dynamics for µT ,p on n vertices with X0 arbitrary. If
+t ≥ Cn2 log(n/ε),
+                                                         2/3
+                          P(∆(Xt ) ≥ np + n1/3 ) ≤ ne−n /(3np) + ε .
+
+Proof. Consider the coupling (Xt , Yt )t≥0 from Lemma 3.3 with X0 = Y0 . Let Y be sampled
+from µp . For t ≥ Cn2 log(n/ε) we have
+                                       ∥Y − Yt ∥T V ≤ ε .
+                                                                                        2/3
+By the Chernoff bound and the union bound, we have P(∆(Y ) ≥ np + n1/3 ) ≤ ne−n /(3np) .
+                                                2/3
+So it follows that P(∆(Yt ) ≥ np + n1/3 ) ≤ ne−n /(3np) + ε. Since Xt is a subgraph of Yt the
+result follows.                                                                            □
+
+  Now let Ω(p) ⊆ T be the set of graphs in T whose maximum degree is at most np + n1/3 .
+                                      √               √
+Lemma 3.5. Let p = (1 + o(1))c/ n where c < 1/ 2 is fixed. Let (Xt , Yt ) ∈ Ω(p) × Ω(p)
+and let (Xt+1 , Yt+1 ) be copies of the Glauber dynamics for µT ,p coupled to attempt the same
+updates. Then                                           !
+                                                      δ
+                            E [d(Xt+1 , Yt+1 )] ≤ 1 − n d(Xt , Yt ) ,
+                                              2
+                      1/3         2
+where δ = 1 − 2(np + n )p = 1 − 2c − o(1) and d(·, ·) is the Hamming distance between
+graphs.
+
+Proof. By the path coupling technique [8], it suffices to consider the case where d(Xt , Yt ) = 1
+i.e. Xt , Yt differ in one edge. Suppose WLOG that {i, j} is an edge of Xt , but not Yt . Let
+di , dj denote the degree of i, j in Yt respectively and note that di , dj ≤ np + n1/3 . If the
+update was performed on {i, j}, then Xt+1 = Yt+1 . If the update was performed on one of
+the di + dj − 2 potential edges that form a triangle together with {i, j}, then this edge would
+be added to Yt+1 but not to Xt+1 with probability at most p. If the update is performed on
+any other potential edge, then d(Xt+1 , Yt+1 ) = d(Xt , Yt ). Thus
+                                                  di + dj     1         δ
+                        E [d(Xt+1 , Yt+1 )] ≤ 1 +    n
+                                                       · p − n ≤ 1 − n ,
+                                                 2           2          2
+     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS                NEAR THE CRITICAL DENSITY          9
+
+as claimed.                                                                                      □
+
+  We are now ready to prove Theorem 1.1.
+
+Proof of Theorem 1.1. Let (Xt , Yt )t≥0 be a coupling of the Glauber dynamics for µT ,p to
+attempt the same updates with X0 , Y0 chosen arbitrarily. Now let T = 6Cn2 log n where C
+is as in Corollary 3.4.
+  For t ≥ T , let Et denote the event {Xt , Yt ∈ Ω(p)} and note that by Corollary 3.4 (with
+                                                        2/3
+ε = n−5 ) and a union bound we have P(Etc ) ≤ 2(ne−n /(3np) + n−5 ) = O(n−5 ). We then
+have,
+                 P(X2T ̸= Y2T ) ≤ E [d(X2T , Y2T )]
+                                 ≤ E [d(X2T , Y2T ) | E2T −1 ] + O(n−3 )
+                                             !
+                                          δ
+                                 ≤ 1 − n E [d(X2T −1 , Y2T −1 )] + O(n−3 ).
+                                              2
+
+For the first inequality we used Markov. For the second inequality we used that d(X2T , Y2T ) ≤
+n2 and P(E2Tc             −5
+               −1 ) = O(n ). For the third inequality we used Lemma 3.5. Iterating the above
+T − 1 more times, we conclude that
+                                              !T
+                                            δ
+                     P(X2T ̸= Y2T ) ≤ 1 − n      E [d(XT , YT )] + O(T n−3 )
+                                                  2
+                                   = o(1) ,
+where for the final inequality we used that E [d(XT , YT )] ≤ n2 .
+  It follows that
+                                           τmix ≤ 2T .
+The existence of an efficient sampling scheme follows immediately, since a single step of the
+Glauber dynamics can be implemented efficiently.
+   The existence of an FPRAS for approximating µp (T ) follows from a standard reduction
+of approximate counting to sampling. Using the adaptive simulated annealing technique
+from [53], which requires an efficient approximate sampling algorithm for µT ,p′ for all 0 ≤
+p′ ≤ p, one obtains an FPRAS for µp (T ) running in time O(n3 ε−2 log6 n). The algorithm
+proceeds by using samples from µT ,p′ to estimate the ratio µp′′ (T )/µp′ (T ) for adaptively
+chosen pairs p′ , p′′ along a ‘cooling schedule’, then multiplying these estimates in a telescoping
+product.                                                                                         □
+
+                      4. Overview for sampling at high densities
+
+   In this section we give an overview of the proof of Theorem 1.3, with the remaining proof
+details to follow in Section 5. The proof relies on a√structural result for graphs drawn from
+µT ,p established in [37] in the regime where p = C/ n and C is large. To state the result we
+introduce some notation and definitions from [37].
+Definition 4.1. Call a partition (A, B) of [n] weakly balanced if |A| − |B| ≤ n/10. Let
+Πweak denote the set of weakly balanced partitions of [n].
+10         SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+                   1
+  We set α = 96e     3 . This constant is taken from [37]. Its precise form does not matter, only
+that it is sufficiently small. For a partition (A, B) of [n] let
+                           w
+(4.1)                     TA,B,λ = {G ∈ T : ∆(G[A] ∪ G[B]) ≤ α/λ} ,
+where G[A], G[B] denote the induced subgraphs of G on vertex sets A, B respectively.
+                           w
+  We think of the set TA,B,λ    as those graphs G ∈ T which ‘align well’ with the bipartition
+(A, B) (i.e. (A, B) is a large cut for G).
+     Let
+                                                    X
+                                     w
+                                    ZA,B (λ) :=              λ|G| .
+                                                     w
+                                                  G∈TA,B,λ
+
+                 w (λ) is the contribution to the partition function Z(λ) =            |G| from
+                                                                                P
+In other words, ZA,B                                                              G∈T λ
+graphs that align with (A, B).
+     Now define a distribution µweak,λ on T as follows.
+                                                                    w (λ).
+      (1) Sample (A, B) ∈ Πweak with probability proportional to ZA,B
+                       w
+      (2) Sample G ∈ TA,B,λ with probability proportional to λ|G| .
+      (3) Output G.
+     Let                                          X
+                                                             w
+                                Zweak (λ) =                 ZA,B (λ) .
+                                              (A,B)∈Πweak
+Throughout this section we set C > 0 to be a sufficiently large constant.
+Theorem 4.2 ([37, Theorem 2.9]). For λ ≥ Cn−1/2 ,
+                                   ∥µT ,p − µweak,λ ∥T V = o(1) ,
+           λ
+where p = 1+λ .
+
+     Here we make the error estimate explicit.
+Proposition 4.3. For λ ≥ Cn−1/2 ,
+                                                                 √
+                                ∥µT ,p − µweak,λ ∥T V = O(e− n ) ,
+           λ
+where p = 1+λ . Moreover
+                                                    √
+                                Z(λ) = (1 + O(e− n ))Zweak (λ) .
+
+     We defer the proof of Proposition 4.3 to Section 6.
+   With Proposition 4.3 in hand, we turn our attention to sampling from the measure µweak,λ .
+For this, we split Step 2 in the definition of µweak,λ into two substeps: first we sample the
+‘defect edges’ within parts A and B and then we sample edges crossing the partition (A, B).
+The second of these substeps will be relatively simple. As we will see, the crossing edges have
+the distribution of a (graph) hard-core model, and the condition in (4.1) ensures that this
+model is subcritical in the sense that λ is small enough as a function of the max degree that
+the cluster expansion converges and efficient sampling algorithms exist. Most of the work in
+proving Theorem 1.3 will come from implementing the first step and showing we can sample
+defect edges efficiently. To make this more precise, we make some further definitions.
+     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS                       NEAR THE CRITICAL DENSITY   11
+
+                                                                       A          B
+                                                                                   
+   Given a partition (A, B) of [n] and a pair of graphs S ⊆ 2 , T ⊆ 2 , we write S  T as a
+shorthand for the Cartesian product of the graphs (A, S), (B, T ), i.e., the graph with vertex
+set V (S  T ) = A × B and edge set E(S  T ) equal to
+                {{(a, b), (a, b′ )} : {b, b′ } ∈ T } ∪ {{(a, b), (a′ , b)} : {a, a′ } ∈ S} .
+
+   The significance of the Cartesian product for us comes from the following lemma.
+Lemma 4.4. Let (A, B) be a partition of [n] and suppose S ⊆ A2 , T ⊆ B2 such that S ∪T is
+                                                                             
+
+triangle-free. Let G(S, T ) be the set of triangle-free graphs G so that G[A] = S and G[B] = T .
+Then                               X
+                                           λ|G| = λ|S|+|T | ZST (λ) ,
+                                 G∈G(S,T )
+where ZST (λ) is the hard-core partition function on the graph S  T .
+
+Proof. In what follows we identify the vertex (u, v) ∈ V (S  T ) = A × B with the edge
+{u, v} ∈ [n]
+             
+           2 . The proof follows from the observation that if I is an independent set in the
+graph S  T , then the graph on [n] with edge set S ∪ T ∪ I is a triangle-free graph in G(S, T ),
+and likewise for any G ∈ G(S, T ), E(G) ∩ (A × B) forms an independent set in S  T , giving
+a one-to-one correspondence.                                                                  □
+         w     denote the set of pairs (S, T ) such that S ⊆ A2 , T ⊆ B2 , ∆(S ∪ T ) ≤ α/λ
+                                                                           
+   Let DA,B,λ
+and S ∪ T is triangle free. In other words,
+                               w                            w
+                              DA,B,λ = {(G[A], G[B]) : G ∈ TA,B,λ },
+the set of possible defect graphs with respect to (A, B). By Lemma 4.4 we see that
+                                          X
+                              w
+                            ZA,B (λ) =            λ|S|+|T | ZST (λ) ,
+                                                   w
+                                           (S,T )∈DA,B,λ
+
+and we may rewrite the definition of µweak,λ as
+                                                                 w (λ).
+   (1) Sample (A, B) ∈ Πweak with probability proportional to ZA,B
+                         w
+   (2) Sample (S, T ) ∈ DA,B,λ with probability proportional to λ|S|+|T | ZST (λ).
+   (3) Sample Ecr ⊆ A × B from the hard-core model on S  T at activity λ.
+   (4) Let E = S ∪ T ∪ Ecr and output the graph G = ([n], E).
+As mentioned above, Step 2 will be our main focus. Given a weakly balanced partition (A, B)
+                                   w
+let νA,B,λ be the distribution on DA,B,λ defined by
+                                                    λ|S|+|T | ZST (λ)
+                                 νA,B,λ (S, T ) =         w (λ)        .
+                                                        ZA,B
+
+   Our main task is to show that we can sample from νA,B,λ efficiently. First we show that
+for λ ≥ Cn−1/2 , the edge-update Glauber dynamics for νA,B,λ mixes rapidly.
+Proposition 4.5. For λ ≥ Cn−1/2 , the mixing time of the edge-update Glauber dynamics
+for νA,B,λ is O(n2 log n), uniformly over weakly balanced (A, B).
+
+   We prove Proposition 4.5 in the next section. We use path coupling in a similar spirit
+to the proof of Theorem 1.1, however now the task is significantly more difficult due to the
+complex interactions between edges under the measure νA,B,λ . In particular, if we condition
+12      SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+on the entire graph outside of the edge e, computing the conditional marginal of e to sufficient
+accuracy is a non-trivial task (whereas this is trivial for µT ,p ). Our proof of Proposition 4.5
+leans heavily on the cluster expansion to estimate these edge marginals.
+   Once we have proved Proposition 4.5, we show that we can approximately implement the
+steps of the Glauber dynamics efficiently to obtain a sampling algorithm for νA,B,λ .
+                             √
+Proposition 4.6. If λ > C/ n and (A, B) is weakly balanced then there are randomized
+algorithms running in time polynomial in n, 1/ε and log(1/δ) (uniformly over all (A, B))
+that
+      (1) Output M so that with probability at least 1 − δ, M is an ε-relative approximation to
+           w
+          ZA,B,λ (λ).
+      (2) Output G ∈ T with distribution ν̂ so that ∥ν̂ − νA,B,λ ∥T V ≤ ε .
+
+     We prove Proposition 4.6 in the next section.
+
+                         5. Proofs for sampling at high density
+
+  In this section we prove Propositions 4.5 and 4.6 and deduce Theorem 1.3. We begin with
+Proposition 4.5.
+
+5.1. Glauber dynamics for the defect distribution. A key step in the proof of Propo-
+sition 4.5 is to show that νA,B,λ is stochastically dominated by two independent copies of rel-
+atively sparse Erdős-Rényi random graphs on A, B respectively. Given a set V and q ∈ [0, 1],
+we let µ(V, q) denote the measure associated to the Erdős-Rényi random graph on vertex set
+V and edge probability q.
+Lemma 5.1. For λ ≥ Cn−1/2 , the measure νA,B,λ is stochastically dominated by µ(A, q) ×
+                       2
+µ(B, q) where q = λe−nλ /5 .
+
+   Lemma 5.1 shows that as λ gets larger samples from the defect measure νA,B,λ become
+increasingly sparse. We will prove Lemma 5.1 in the following subsection (Section 5.2). We
+record the following corollary.
+Corollary 5.2. Let λ ≥ Cn−1/2 . There exists C ′ > 0 so that the following holds. Let (Xt )t≥0
+be a run of the Glauber dynamics for νA,B,λ with X0 arbitrary. If t ≥ C ′ n2 log(n/ε),
+                                 P(∆(Xt ) ≥ 2nq) ≤ ne−nq/3 + ε
+                   2
+where q = λe−nλ /5 .
+                                                                                    A         B
+                                                                                                 
+  We will prove Proposition 4.5 via path coupling. For (S, T) ∼ νA,B,λ , S ⊆        2 , T ⊆   2
+and e ∈ A2 ∪ B2 , define the conditional edge marginal
+               
+
+                         p(e|S, T ) := P(e ∈ S ∪ T | (S ∪ T)\e = S ∪ T ) .
+If P((S ∪ T)\e = S ∪ T ) = 0 then we define p(e|S, T ) to be 0.
+   Let (Xt , Yt )t ≥ 0, denote two runs of the Glauber dynamics of νA,B,λ coupled so that given
+t ≥ 0 and (Xt , Yt ) we perform the following update:
+      • Pick e ∈ A2 ∪ B2 uniformly at random and let U ∼ U [0, 1].
+                           
+
+      • If U ≤ p(e|Xt ) then set Xt+1 = Xt ∪ e. Otherwise set Xt+1 = Xt \e.
+        SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS                    NEAR THE CRITICAL DENSITY   13
+
+        • Similarly, if U ≤ p(e|Yt ) then set Yt+1 = Yt ∪ e. Otherwise set Yt+1 = Yt \e.
+  We refer to this as the optimal coupling. Let
+                           (                                                           )
+                                           w                                 −nλ2 /5
+(5.1)                 Ω(λ) =    (S, T ) ∈ DA,B,λ : ∆(S ∪ T ) ≤ 2nλe                        .
+
+  In analogy to Lemma 3.5, our goal is to prove the following path coupling result.
+Lemma 5.3. Let λ ≥ Cn−1/2 . Let (Xt , Yt ) ∈ Ω(λ) × Ω(λ) and let (Xt+1 , Yt+1 ) be copies of
+the optimally coupled Glauber dynamics for νA,B,λ . Then
+                                                     
+                                                    1
+                          E [d(Xt+1 , Yt+1 )] ≤ 1 − 2 d(Xt , Yt ) ,
+                                                    n
+where d(·, ·) is the Hamming distance between graphs.
+
+  We note that Proposition 4.5 follows from Lemma 5.3 via the same burn-in argument that
+was used to deduce Theorem 1.1 from Lemma 3.5 (only now we use Corollary 5.2 in place of
+Corollary 3.4).
+  To prove Lemma 5.3 we need a good understanding of the edge marginals that appear in
+the definition of the optimal coupling above. This will be a goal of the next subsection.
+
+5.2. Stochastic domination and computing edge marginals in νA,B,λ . Throughout
+this section we fix a weakly balanced partition (A, B). For the proofs    to come, it will be
+                                                                   A    B
+                                                                     
+convenient to use the following shorthand. Given a graph G ⊆ 2 ∪ 2 we let G denote
+the graph G[A]  G[B]. We will identify G with the pair (G[A], G[B]) and write νA,B,λ (G)
+in place of νA,B,λ (G[A], G[B]) and p(e|G) in place of p(e|G[A], G[B]).
+  Lemma 5.1 follows immediately from the following.
+Lemma 5.4. Let λ ≥ Cn−1/2 . For e ∈ A2 ∪ B2 , G ⊆                 A
+                                                                          ∪ B2 ,
+                                                                           
+                                                                  2
+                                                            2
+                                        p(e|G) ≤ λe−nλ /5 .
+
+Proof. We may assume that νA,B,λ (G ∪ e) > 0 and e ̸∈ G else the result is trivial. In this
+case,
+                                          νA,B,λ (G ∪ e)
+(5.2)                    p(e|G) =
+                                   νA,B,λ (G) + νA,B,λ (G ∪ e)
+                                     λZ(G∪e) (λ)/ZG (λ)
+                                =                             .
+                                   1 + λZ(G∪e) (λ)/ZG (λ)
+Let us estimate the numerator in the expression above. First note that ∆((G ∪ e) ) ≤
+                                 w
+2∆(G ∪ e) ≤ 2α/λ since G ∪ e ∈ DA,B,λ by assumption. Since λ ≤ (2e(1 + α/λ))−1 , we may
+apply Lemma 2.1 (the cluster expansion).
+  Let C ′ (G ) denote the set of non-constant clusters of G and let
+(5.3)                               C ′′ = C ′ ((G ∪ e) )\C ′ (G ) .
+Assume WLOG that e ∈ A2 , then
+                       
+
+                      Z(G∪e) (λ)
+                                    X
+                log                 =     ϕ(Γ)λ|Γ|
+                       ZG (λ)         ′′       Γ∈C
+14      SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+                                                                        X
+(5.4)                                           = −λ2 |B| +                         ϕ(Γ)λ|Γ| .
+                                                                    Γ∈C ′′ :|Γ|≥3
+
+For the second equality we used that there are no clusters of size one in C ′′ and the clusters
+of size two are of the form (γ1 , γ2 ) where {γ1 , γ2 } is an edge of (G ∪ e) but not of G , and
+there are |B| such edges. Call such an edge {γ1 , γ2 } an e-edge. Now note that if Γ ∈ C ′′ , then
+Γ must contain an e-edge {γ1 , γ2 }. By Lemma 2.1 (applied with k = 3 and U = {γ1 , γ2 } an
+e-edge) we have
+                               X
+                                           ϕ(Γ)λ|Γ| ≤ |B|(2e)3 ∆((G ∪ e) )λ3
+                           Γ∈C ′′ :|Γ|≥3
+
+                                                    ≤ |B|24 e3 αλ2
+                                                    ≤ λ2 |B|/2 ,
+where for the second inequality we used that ∆((G ∪ e) ) ≤ 2∆(G ∪ e) ≤ 2α/λ since G ∪ e ∈
+  w
+DA,B,λ by assumption. Returning to (5.4) we conclude that
+                                     Z(G∪e) (λ)
+                                                
+(5.5)                          log                 ≤ −λ2 |B|/2
+                                      ZG (λ)
+and so by (5.2)
+                                                            2               2
+                               p(e|G) ≤ λe−|B|λ /2 ≤ λe−nλ /5 ,
+where for the last inequality we used that (A, B) is weakly balanced.                                   □
+
+   With Lemma 5.3 in mind, we now prove a result that compares the marginals of an edge
+e in two configurations that differ in exactly one edge f . First we introduce some notation.
+   For e ∈ A2 , we call a pair in A × B of the form {(u, x), (v, x)} an e-pair (and similarly if
+             
+
+e ∈ B2 ). For e, f ∈ A2 ∪ B2 , let Ce,f (G ) denote the set
+                            
+
+                   {Γ ∈ C(G ) : Γ contains both an e-pair and an f -pair} .
+Recall the definition of Ω(λ) from (5.1).
+                                                    A
+Lemma 5.5. Let λ ≥ Cn−1/2 . Let e, f ∈                      ∪ B2 , G ∈ Ω(λ). If p(e|G ∪ f ) > 0, then
+                                                               
+                                                    2
+                                                                            2
+                                |p(e|G) − p(e|G ∪ f )| ≤ 2λe−λ n/5 R
+where
+                                X                                      X
+                   R :=                      |ϕ(Γ)|λ|Γ| +                             |ϕ(Γ)|λ|Γ| .
+                          Γ∈Ce,f ((G∪e) )                      Γ∈Ce,f ((G∪e∪f ) )
+
+Proof. We continue with the notation in the proof of Lemma 5.4, with the additional as-
+sumption that f ̸∈ G. Let C ′′ be as in (5.3) and let
+                             C˜ := C ′ ((G ∪ e ∪ f ) )\C ′ ((G ∪ f ) )
+By (5.4) we have
+                                  Z(G∪e) (λ)           Z(G∪e∪f ) (λ)
+                                                                    
+                             log                − log
+                                   ZG (λ)               Z(G∪f ) (λ)
+                                 X               X
+(5.6)                        =      ϕ1 (Γ)λ|Γ| −    ϕ2 (Γ)λ|Γ| ,
+                                Γ∈C ′′                  Γ∈C˜
+     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS                      NEAR THE CRITICAL DENSITY   15
+
+
+where ϕ1 = ϕ(G∪e) and ϕ2 = ϕ(G∪e∪f ) . We note that if Γ ∈ C ′′ ∪ C˜ then Γ must contain an
+e-pair. Note also that if Γ ∈ C˜ does not contain an f -pair, then Γ ∈ C ′′ and ϕ1 (Γ) = ϕ2 (Γ).
+Similarly if Γ ∈ C ′′ does not contain an f -pair, then Γ ∈ C˜ and ϕ1 (Γ) = ϕ2 (Γ). We conclude
+that for a cluster Γ ∈ C ′′ ∪ C˜ to contribute to the difference of sums in (5.6), Γ must contain
+both an e-pair and an f -pair. Thus (dropping the subscripts from ϕ1 , ϕ2 )
+                               Z(G∪e) (λ)           Z(G∪e∪f ) (λ)
+                                                                 
+                         log                 − log                    ≤ R.
+                                 ZG (λ)              Z(G∪f ) (λ)
+
+We note that if Γ contains both an e-pair and an f -pair then then |Γ| ≥ 3 (we may assume
+that e ̸= f else the lemma is trivial). Since there are at most n e-pairs an application of
+Lemma 2.1 (applied with k = 3 and U an e-pair) shows that
+                         X
+                                    |ϕ(Γ)|λ|Γ| = O(n∆((G ∪ e ∪ f ) )λ3 )
+                     Γ∈Ce,f ((G∪e∪f ) )
+
+                                                     = O(n2 qλ3 )
+                                                                 2
+                                                     = O(C 4 e−C /5 )
+
+where for the penultimate inequality we used that ∆((G ∪ e ∪ f ) ) = O(nq) since G ∈
+Ω(λ). The same bound also holds holds for Γ∈Ce,f ((G∪e) ) |ϕ(Γ)|λ|Γ| . It follows that R =
+                                          P
+         2
+O(C 4 e−C /5 ) and so R ≤ 1 for C sufficiently large. As a consequence
+                    λZ(G∪e) (λ) λZ(G∪e∪f ) (λ)   λZ(G∪e) (λ) R
+                                −                ≤              e −1
+                      ZG (λ)     Z(G∪f ) (λ)       ZG (λ)
+                                                                     2
+                                                         ≤ 2λe−λ n/5 R
+
+where for the second inequality we used (5.5) and the fact that R ≤ 1. The result now follows
+from (5.2) and the fact that |x/(1 + x) − y/(1 + y)| < |x − y| for x, y > 0.               □
+
+5.3. Bounding cluster sums. As in the previous section, we fix a weakly balanced partition
+(A, B).
+  Our goal in this section is to effectively bound the sums over clusters appearing in
+Lemma 5.5.
+   Given a graph H, let Q(H) denote the set of labeled spanning trees of H. The following
+is the tree–graph bound of Penrose which will be convenient when bounding sums of Ursell
+functions.
+
+Lemma 5.6 ([48]). For a graph H = (V, E),
+
+                                       X
+                                                   (−1)|A| ≤ |Q(H)| .
+                                      A⊆E:
+                                 (V,A) connected
+
+
+   Given a graph G and cluster Γ ∈ C(G) such that |Γ| = k, we identify the vertex set of GΓ
+(the incompatibility graph of Γ) with [k].
+16       SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+
+Lemma 5.7. Let k ≥ 1 and let Q be a tree on vertex set [k]. Let G ⊆ A2 ∪ B2 , f ∈        A
+                                                                                                 ∪ B2 .
+                                                                                                  
+                                                                                         2
+                 X               X
+(5.7)                                         1Q∈Q(He,Γ ) ≤ 2k 5 n2 (∆ + 1)k−3 ,
+              e∈(A ∪ B , Γ∈Ce,f ((G∪e∪f ) ):
+                 2) (2)
+                       e̸=f          |Γ|=k
+
+where ∆ = ∆((G ∪ f ) ) and He,Γ is the incompatibility graph of Γ with respect to the graph
+(G ∪ e ∪ f ) .
+
+Proof. Recall that a cluster Γ of size k is a k-tuple of elements of A × B, i.e., Γ is a map
+[k] → A × B.
+   We pick an f -pair f˜ = {u, v} (there are at most n choices for f˜) and z, w ∈ [k], {x, y} ∈
+E(Q) (thereare at most 2k 3 choices for (x, y, w, z)) and construct a cluster Γ such that for
+some e ∈ A2 ∪ B2 where e ̸= f :
+      (1) Q ∈ Q(He,Γ ).
+      (2) Γ ∈ Ce,f ((G ∪ e ∪ f ) ).
+      (3) Γ(z) = u, Γ(w) = v.
+      (4) Either
+           (a) Γ(a) = Γ(b) or Γ({a, b}) is an edge of (G ∪ f ) for all {a, b} ∈ E(Q) (in other
+               words, Q is a labeled spanning tree of the incompatibility graph of Γ with respect
+               to (G ∪ f ) ), or
+          (b) Γ({x, y}) is not an edge of (G ∪ f ) and Γ(x) ̸= Γ(y) and {x, y} is the closest
+               edge of Q to {w, z} (in terms of graph distance in Q) with these properties.
+   Suppose without loss of generality that δQ ({x, y}, {w, z}) = δQ (x, w) where δQ denotes
+graph distance in Q. Let {z ′ , z} be an edge of Q such that z is in a separate component
+to x, y, w in the graph Q with the edge {z, z ′ } removed. Consider the graph obtained by
+deleting edges {z, z ′ } and {x, y} from Q and call its three components Q1 , Q2 , Q3 . Assume
+without loss of generality that Q1 contains w and x, Q2 contains z, and Q3 contains y. Let P
+be the path in Q1 from w to x. By (4), Γ(a) = Γ(b) or Γ({a, b}) is an edge of (G ∪ f ) for all
+{a, b} ∈ E(P ). Since Γ(w) is fixed, there are at most (∆ + 1)|P | choices for (Γ(v) : v ∈ V (P )).
+Given (Γ(v) : v ∈ V (P )) (and so in particular Γ(x)) there are at most n choices for Γ(y) since
+Γ({x, y}) need not be an edge of (G ∪ f ) but does need to be an edge of (G ∪ e ∪ f ) for
+some e. If Γ({x, y}) is not an edge of (G ∪ f ) then Γ({x, y}) specifies the pair e for which
+(1) and (2) hold.
+   Observe that since Q ∈ Q(He,Γ ) we have that either Γ(a) = Γ(b) or Γ({a, b}) is an edge
+of (G ∪ e ∪ f ) for all {a, b} ∈ E(Q). We conclude that there are at most (∆ + 2)|Q1 |−|P |
+choices for (Γ(v) : v ∈ V (Q1 )\V (P )) since (G ∪ e ∪ f ) has maximum degree at most ∆ + 1.
+Similarly there are at most (∆ + 2)|Q2 | choices for (Γ(v) : v ∈ V (Q2 )), and at most (∆ + 2)|Q3 |
+choices for (Γ(v) : v ∈ V (Q3 )) (since Γ(y) has been specified). In total there are at most
+                          2k 3 n2 (∆ + 2)|Q1 |+|Q2 |+|Q3 | = 2k 3 n2 (∆ + 2)k−3
+choices
+ A
+       B
+           Γ satisfying (1)-(4) for some f -pair {u, v}, some {x, y} ∈ E(Q) and
+         for
+                                                                              2
+                                                                                 some e ∈
+ 2 ∪ 2 , e ̸= f . Finally we note that every such cluster is counted at most k times in the
+sum (5.7).                                                                               □
+
+     Let Qk denote the set of all labeled trees on vertex set [k].
+    SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS                              NEAR THE CRITICAL DENSITY   17
+
+                          A       B             A       B
+                                                       
+Lemma 5.8. If G ⊆         2     ∪ 2 ,f∈         2 ∪     2     , then
+                                X                X
+                                                                |ϕ(Γ)| ≤ 20k n2 ∆k−3 ,
+                       e∈(A  ∪ B , Γ∈Ce,f ((G∪e∪f ) ):
+                          2) (2)
+                          e̸=f            |Γ|=k
+
+where ∆ = ∆((G ∪ f ) ).
+
+Proof. By Lemma 5.6, the LHS of 5.8 is at most
+
+
+                     1          X                   X                  X
+                                                                                 (−1)|A|
+                     k!
+                          e∈(A  ∪ B , Γ∈Ce,f ((G∪e∪f ) ):
+                             2) (2)
+                                                              A⊆E(He,Γ ):
+                             e̸=f            |Γ|=k         ([k],A) connected
+
+                           1       X                  X                X
+                     ≤                                                     1Q∈Q(He,Γ )
+                           k!      A
+                                e∈( )∪(
+                                   2
+                                        B
+                                        2   ), Γ∈Ce,f ((G∪e∪f ) ): Q∈Qk
+                                   e̸=f               |Γ|=k
+
+                           1 X              X                  X
+                     ≤                                                     1Q∈Q(He,Γ )
+                           k!
+                                Q∈Qk e∈(A)∪(B ), Γ∈Ce,f ((G∪e∪f ) ):
+                                        2    2
+                                        e̸=f            |Γ|=k
+
+                     ≤ 20k n2 ∆k−3
+
+where for the final inequality we used Lemma 5.7 and Cayley’s formula: |Qk | = k k−2 .                  □
+
+  In the next subsection, we prove Lemma 5.3 and hence also Proposition 4.5.
+
+5.4. Proof of Lemma 5.3. As before, it suffices to consider the case where d(Xt , Yt ) = 1 i.e.
+Xt and Yt differ in one edge.
+                           Suppose WLOG that f is an edge of Xt , but not Yt . Consider
+a randomly chosen e ∈ A2 ∪ B2 chosen for update. There are three cases to consider:
+                              
+
+  Case 1: e = f . In this case
+                                 E[d(Xt+1 , Yt+1 ) − d(Xt , Yt ) | e] = −1 .
+
+  Case 2: Xt ∪ e contains a triangle: In this case
+                                  E[d(Xt+1 , Yt+1 ) − d(Xt , Yt ) | e] ≤ q
+since the distance increases only if Yt+1 = Yt ∪ e which happens with probability at most q
+by Lemma 5.4. We note that the number of pairs e such that Xt ∪ {e, f } contains a triangle
+is at most 2qn (it is here that we use the assumption Xt ∈ Ω(λ)).
+  Case 3: Xt ∪ e does not contain a triangle and e ̸= f . Given such an e we have
+                    E[d(Xt+1 , Yt+1 ) − d(Xt , Yt ) | e] ≤ |p(e|Xt ) − p(e|Yt )|
+since the only way for the distance to increase is if Xt+1 = Xt ∪ e and Yt+1 = Yt which occurs
+with probability at most |p(e|Xt ) − p(e|Yt )| by the definition of the optimal coupling. Here
+                                                          2
+we have used that Xt ∈ Ω(λ) so that ∆(Xt ) ≤ 2nλe−nλ /5 ≤ α/λ − 1 and so Xt ∪ e does not
+18       SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+                                                           w
+violate the maximum degree condition in the definition of DA,B,λ . Let H denote the set of
+                                                                               2
+all e ̸= f such that Xt ∪ e does not contain a triangle. Let q := λe−λ n/5 and for e ∈ H let
+                              X                          X
+                   Re :=               |ϕ(Γ)|λ|Γ| +               |ϕ(Γ)|λ|Γ| .
+                           Γ∈Ce,f ((Yt ∪e) )             Γ∈Ce,f ((Xt ∪e) )
+
+By Lemmas 5.5 and 5.8 (recalling that Xt = Yt ∪ f ) we conclude that
+                           X
+                               E[d(Xt+1 , Yt+1 ) − d(Xt , Yt ) | e]
+                                 e∈H
+                                         X
+                                  ≤ 2q          Re
+                                         e∈H
+                                             X
+                                  ≤ 4qn2         20k (2nq)k−3 λk
+                                             k≥3
+                                         5    2 3
+                                  ≤ 10 qn λ
+where for the final inequality we used that 40λnq ≤ 1/2. Letting N = |A|            |B|
+                                                                                       
+                                                                                2 + 2 , it follows
+that,
+                                                1
+                                                     −1 + 2q 2 n + 105 qn2 λ3
+                                                                              
+                       E[d(Xt+1 , Yt+1 )] − 1 ≤
+                                                N
+                                                   1
+                                              ≤−
+                                                  2N
+                                                   1
+                                              ≤− 2,
+                                                  n
+for C sufficiently large.                                                                       □
+
+5.5. Sampling from the defect distribution. With Proposition 4.5 in hand, we now prove
+Proposition 4.6 and show that we can approximately sample from the defect distributions
+νA,B,λ . We will show that we can implement each step of the Glauber dynamics efficiently and
+up to small error. For this, we need the following lemma that will allow us to approximate
+edge marginals in νA,B,λ .
+Lemma 5.9. [[14], [40]] Let G be a graph on n vertices and let λ ≤ 1/∆(G). Given ε, δ > 0
+there exist randomized algorithms that runs in time polynomial in n, log(1/ε), log(1/δ) that
+      (1) Output M so that with probability at least 1 − δ, M is an ε-relative approximation to
+          ZG (λ).
+      (2) Output G with distribution µ̂ so that ∥µ̂ − µ∥T V ≤ ε where µ is the hard-core measure
+          on G at activity λ .
+
+Proof of Proposition 4.6. Part (1) of the Proposition 4.6 follows from part (2) via a standard
+reduction of approximate counting to sampling. We now prove part (2). Let (Xt )t≥0 be a run
+of the Glauber dynamics for νA,B,λ with X0 arbitrary. By Proposition 4.5 there exists K > 0
+such that if T := Kn2 log(n/ε) then ∥L(XT ) − νA,B,λ ∥T V ≤ ε. We will define a dynamic (Yt )
+that will serve as an approximation to (Xt ).
+     Recall from (5.2) that if νA,B,λ (G ∪ e) > 0 then
+                                                     λZ(G∪e) (λ)
+                                  p(e|G) =                             ,
+                                                ZG (λ) + λZ(G∪e) (λ)
+    SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS                 NEAR THE CRITICAL DENSITY     19
+
+and p(e|G) = 0 otherwise. Let δ = 1/T and let ε′ = ε/T . By Lemma 5.9, in poly(n, 1/ε)
+time we can compute M1 , M2 in so that with probability ≥ 1 − δ, M1 , M2 are ε′ -relative
+approximations to Z(G∪e) (λ), ZG (λ) respectively. Let
+                                                    λM1
+                                      p̂(e|G) =            ,
+                                                  M2 + λM1
+and note that with probability ≥ 1 − δ, p̂(e|G) is a 2ε′ -relative approximation to p(e|G) and
+                           ′
+so |p(e|G) − p̂(e|G)| ≤ e2ε − 1 ≤ 3ε′ since p(e|G) ≤ 1.
+  Define (Yt ) as follows. Given Yt perform the following update:
+    • Pick e ∈ A2 ∪ B2 uniformly at random and let U ∼ U [0, 1].
+                          
+
+    • Compute p̂(e|Yt ). If U ≤ p̂(e|Yt ) then set Yt+1 = Yt ∪ e. Otherwise set Yt+1 = Yt \e.
+We note that we can compute YT in poly(n, 1/ε) time and by coupling (Yt ), (Xt ) in the
+obvious way we see that
+                P(XT = YT ) ≥ [(1 − δ)(1 − 3ε)]T ≥ 1 − T (δ + 3ε′ ) ≥ 1 − 4ε .
+By the coupling inequality we conclude that
+                         ∥L(YT ) − L(XT )∥T V ≤ P(XT ̸= YT ) ≤ 4ε ,
+and so by the triangle inequality
+                                    ∥L(YT ) − νA,B,λ ∥T V ≤ 5ε.                              □
+
+5.6. Proof of Theorem 1.3. First we prove part (1) of the theorem. First observe that by
+             w (λ) depends only on the level of imbalance ||A| − |B|| of the partition (A, B).
+symmetry, ZA,B
+If k = ||A| − |B|| for some weakly balanced partition (A, B) we set Zk (λ) := ZA,B  w (λ) (so
+
+in particular k ≤ n/10). By Proposition 4.6, for each k ∈ [0, n/10] we can compute Mk in
+poly(n, 1/ε) time such that with probability ≥ 1 − 1/n, Mk is an ε-relative approximation to
+Zk (λ). We can therefore compute
+                                         n/10              
+                                          X           n
+                                 M :=                        Mk
+                                                  n/2 + k/2
+                                          k=0
+
+in poly(n, 1/ε) time and, by a union bound, with probability ≥ 9/10, M is an ε-relative
+approximation to
+                                       n/10           
+                                       X         n
+                           Zweak (λ) =                  Zk (λ) .
+                                             n/2 + k/2
+                                           k=0
+Part (1) of the theorem now follows from Proposition 4.3.
+   We now turn to part (2). Let ε > 0. By Proposition 4.3 it suffices to show that we can
+sample from µweak,λ up to total variation distance ε in time polynomial in n and 1/ε. For this,
+we show that we can implement each step in the definition of µweak,λ up to total variation
+distance ε in time polynomial in n and 1/ε.
+Sampling a partition. Step 1 in the definition of µweak,λ can be rewritten as:
+   (1) Sample an integer k with probability proportional to Zk (λ).
+   (2) Sample a partition (A, B) of [n] such that ||A| − |B|| = k uniformly at random.
+20       SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+As above it suffices to observe that for each k ∈ [0, n/10] we can compute Mk in poly(n, 1/ε)
+time such that with probability ≥ 1 − 1/n, Mk is an ε-relative approximation to Zk (λ).
+
+Sampling defects. Proposition 4.6 shows that we can implement Step 2 in the definition of
+µweak,λ , i.e., we can sample from νA,B,λ up to ε total variation distance in poly(n, 1/ε) time.
+
+                                                       w
+Sampling crossing edges. Given (A, B) and (S, T ) ∈ DA,B,λ from Steps 1 and 2, we note that
+                                                                           w
+λ ≤ 1/∆(S  T ) since ∆(S  T ) ≤ 2∆(S ∪ T ) ≤ 2α/λ (by the definition of DA,B,λ ). We may
+therefore apply Lemma 5.9 to output sample from the hard-core model on S  T at activity
+λ up to total variation distance ε in poly(n, 1/ε) time.
+
+                                6. Proof of Proposition 4.3
+
+     We begin with a special case of [3, Theorem 1.7].
+Theorem 6.1. For all δ > 0 there exist C, c > 0 so that if m ≥ Cn3/2 , then all but a e−cm
+proportion of graphs in T (n, m) admit a cut of size at least (1 − δ)m.
+  We note that in [3] the result is stated with o(1) in place of the effective error e−cm .
+However, as noted by in previous works (see e.g. the comment following [4, Theorem 1.2])
+the proof in [3] gives the error stated above. We remark that Theorem 6.1 was first proved
+(with o(1) in place of e−cm ) by T. Luczak [43].
+   We will in fact need a slight refinement of Theorem 6.1 (Theorem 6.3 below) which follows
+from combining [4, Proposition 6.1] and [4, Claim 6.2]. To state the result we need a definition.
+Definition 6.2. Let G be a graph and (A, B) a partition of its vertex set. We say (A, B) is
+a dominating cut of G if
+                                dG (v, B) ≥ dG (v, A) for all v ∈ A
+and similarly with A, B swapped.
+     Recall also the definition of a weakly balanced partition from Definition 4.1.
+Theorem 6.3. For all δ > 0 sufficiently small, there exist C, c > 0 so that if m ≥ Cn3/2 ,
+then all but a e−cm proportion of graphs in T (n, m) admit a dominating, weakly balanced cut
+of size at least (1 − δ)m.
+   The results of [4] are also stated with a o(1) error in place of e−cm . However one readily
+checks that the short proof of Theorem 6.3 from Theorem 6.1 presented in [4] yields the error
+stated here.
+  For λ, δ > 0, let L(λ, δ) denote the set of all G ∈ T such that G admits a weakly balanced,
+dominating cut of size ≥ |G| − 2δλn2 .
+     For a subset R ⊆ T and λ > 0 we define the measure on R given by
+                                                     λ|G|
+                                       µR,λ (G) =           ,
+                                                    Z(R, λ)
+where                                               X
+                                       Z(R, λ) =          λ|G| .
+                                                    G∈R
+We use the following result from [37] (Proposition 3.4). Recall that we let Z(λ) = Z(T , λ).
+      SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS             NEAR THE CRITICAL DENSITY      21
+
+                                                                                            √
+Proposition 6.4. For all δ > 0 sufficiently small, there exists C, c > 0 such that if λ ≥ C/ n
+then
+                                                           2
+                                ∥µT ,p − µL,λ ∥T V ≤ e−cλn ,
+and
+                                                    2
+                             Z(λ) = (1 + O(e−cλn ))Z(L, λ) ,
+where L = L(λ, δ) and p = λ/(1 + λ)
+
+   The proposition is an easy consequence of Theorem 6.3. Here we have included the effective
+error that the proof in [37] gives.
+  Finally we note the following result from [37] (Proposition 3.5).
+                                                                                         √
+Proposition 6.5. For all δ > 0 sufficiently small, there exists C > 0 such that if λ ≥ C/ n
+then                                                      √
+                            ∥µL,λ − µweak,λ ∥TV = O(e− n ) ,
+and                                            √ 
+                           Z(L, λ) = 1 + O(e− n ) Zweak (λ) ,
+where L = L(λ, δ).
+
+  Combining the above two propositions, we immediately arrive at a proof of Proposition 4.3.
+
+                            7. Slow mixing at high density
+
+   In this section we prove Theorem 1.2. We import some structural results from [37]. Roughly
+speaking, these results will show that almost all graphs in T (n) have a unique max cut in a
+rather robust sense.
+  First we need a definition. Given a graph G and subsets X, Y ⊆ V (G), we let E(X, Y )
+denote the set of edges with one endpoint in X and one endpoint in Y .
+Definition 7.1. Given a graph G and a partition (A, B), we call G an (A, B)-λ-expander if
+                              dG (v, B) ≥ λn/30 for all v ∈ A ,
+and
+                              |E(X, Y )| ≥ λ|X||Y |/10
+whenever X ⊆ A, |X| ≥ λn/100, and Y ⊆ B, |Y | ≥ n/6, and both statements hold also with
+A, B swapped.
+
+  We use Lemma 5.3 from [37].
+                                                        √
+Lemma 7.2. There exists C > 0 so that if λ ≥ C/ n the following holds. Let (A, B) be
+                                                w
+a weakly balanced partition, and let (S, T ) ∈ DA,B,λ . Sample Ecr ⊆ A × B according to the
+hard-core model on S  T at activity λ. Let G be the graph ([n], Ecr ). Then
+                                                                  √
+                         P(G is an (A, B)-λ-expander) ≥ 1 − e− n .
+
+  For a weakly balanced partition (A, B), let EA,B,λ denote the set of G ∈ T (n) such that
+                w
+(G[A], G[B]) ∈ DA,B,λ and G is an (A, B)-λ-expander. Let
+                                              [
+                            E0 := T (n)\              EA,B,λ .
+                                               (A,B)
+                                           weakly balanced
+22       SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+  Let p = λ/(1 + λ). We will use a conductance argument using E0 as a ‘bottleneck’ to lower
+bound the mixing time of the Glauber dynamics of µT ,p .
+     If G ∈ E0 then either
+      (1) (G[A], G[B]) ∈  w
+                       / DA,B,λ for all weakly balanced (A, B), or
+                           w
+      (2) (G[A], G[B]) ∈ DA,B,λ for some weakly balanced (A, B) but G is not an (A, B)-λ-
+          expander.
+Let E01 , E02 denote the √set of G ∈ E0 satisfying (1), (2) respectively. Proposition 4.3 shows
+               1        −
+that µT ,p (E0 ) = √O(e n ) and Proposition 4.3 taken together with Lemma 7.2 shows that
+µT ,p (E02 ) = O(e− n ). We conclude that
+                                                          √
+                                       µT ,p (E0 ) = O(e− n ) .
+
+  Note that by symmetry, if (A, B), (A′ , B ′ ) are two partitions such that ||A| − |B|| = ||A′ | −
+|B ′ || then µ
+            T ,p (EA,B,λ) = µT ,p (EA′ ,B ′ ,λ ). Moreover, if (A, B) is weakly balanced then there
+                   n
+are at least n/2−n/10     = eΩ(n) other partitions with the same imbalance. It follows that
+
+                                      µT ,p (EA,B,λ ) ≤ e−Ω(n)
+for all weakly balanced (A, B). It follows that we can take a union of sets EA,B,λ , call it E1 ,
+so that
+                                      1                 1
+                                        ≤ µT ,p (E1 ) ≤ .
+                                      4                 2
+We will show that for the Glauber dynamics to leave the set E1 it must pass through E0 . By
+a standard conductance argument (see [20, Claim 2.3]) this implies that the mixing time is
+at least
+                                     µT ,p (E1 )       √
+                                                 ≥ Ω(e n ) .
+                                    8µT ,p (E0 )
+   It remains to show that for the Glauber dynamics to leave the set E1 it must pass through
+E0 . Since the Glauber dynamics updates a single edge at a time, it suffices to show that if
+G1 ∈ EA,B,λ and G2 ∈ EA′ ,B ′ ,λ for distinct weakly balanced partitions (A, B), (A′ , B ′ ) then
+|E(G1 )∆E(G2 )| ≥ 2. This is what we show now.
+ Since the partitions (A, B), (A′ , B ′ ) are distinct, either A ∩ B ′ ̸= ∅ or B ∩ A′ ̸= ∅. Assume
+WLOG that B ∩ A′ ̸= ∅.
+  Suppose first that |A ∩ B ′ | < λn/100. By assumption there exists v ∈ B ∩ A′ . Since G1 is
+an (A, B)-λ-expander we then have
+                             dG1 (v, A′ ) ≥ dG1 (v, A) − dG1 (v, A ∩ B ′ )
+                                         ≥ λn/30 − |A ∩ B ′ |
+                                         ≥ λn/50 .
+                               w
+On the other hand, since G2 ∈ DA                      ′
+                                 ′ ,B ′ ,λ , dG2 (v, A ) ≤ α/λ and so
+
+
+                              |E(G1 )∆E(G2 )| ≥ λn/50 − α/λ ≥ 2.
+We may therefore assume that |A∩B ′ | ≥ λn/100. In particular A∩B ′ ̸= ∅, and so by a similar
+argument to the above, we may assume that |A′ ∩B| ≥ λn/100 also. By symmetry (swapping
+the roles of A and B) we may also assume that |A ∩ A′ | ≥ λn/100 and |B ∩ B ′ | ≥ λn/100.
+     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS                       NEAR THE CRITICAL DENSITY            23
+
+   Since (A, B) is weakly balanced we have |B| ≥ n/3. Suppose WLOG that |B∩B ′ | ≥ |B∩A′ |
+so that in particular |B ∩ B ′ | ≥ n/6. Since G1 is an (A, B)-λ-expander we then have
+                           |EG1 (A ∩ B ′ , B ∩ B ′ )| ≥ λ|A ∩ B ′ ||B ∩ B ′ |/10 ,
+and so there exists v ∈ A ∩ B ′ such that dG1 (v, B ∩ B ′ ) ≥ λ|B ∩ B ′ |/10 ≥ λn/60. On the
+other hand, since G2 ∈ DAw                     ′
+                          ′ ,B ′ ,λ , dG2 (v, B ) ≤ α/λ and so
+
+
+                                 |E(G1 )∆E(G2 )| ≥ λn/60 − α/λ ≥ 2.
+This concludes the proof. □
+
+
+                                          Acknowledgments
+
+  MJ is supported by a UK Research and Innovation Future Leaders Fellowship
+MR/W007320/2. WP supported in part by NSF grant CCF-2309708. AP is supported
+by an NSERC Discovery grant. MS supported in part by NSF grant DMS-2349024.
+
+
+                                               References
+ [1] N. Anari, V. Jain, F. Koehler, H. T. Pham, and T.-D. Vuong. Entropic independence: optimal mixing
+     of down-up random walks. In Proceedings of the 54th Annual ACM SIGACT Symposium on Theory of
+     Computing, pages 1418–1430, 2022. 2
+ [2] N. Anari, K. Liu, and S. O. Gharan. Spectral independence in high-dimensional expanders and applica-
+     tions to the hardcore model. SIAM Journal on Computing, (0):FOCS20–1, 2021. 2
+ [3] J. Balogh, R. Morris, and W. Samotij. Independent sets in hypergraphs. Journal of the American Math-
+     ematical Society, 28(3):669–709, 2015. 2, 20
+ [4] J. Balogh, R. Morris, W. Samotij, and L. Warnke. The typical structure of sparse Kr+1 -free graphs.
+     Transactions of the American Mathematical Society, 368(9):6439–6485, 2016. 20
+ [5] F. Bencs and P. Buys. Optimal zero-free regions for the independence polynomial of bounded degree
+     hypergraphs. arXiv preprint arXiv:2306.00122, 2023. 3
+ [6] I. Bezáková, A. Galanis, L. A. Goldberg, H. Guo, and D. Stefankovic. Approximation via correlation
+     decay when strong spatial mixing fails. SIAM Journal on Computing, 48(2):279–349, 2019. 3
+ [7] A. Blanca and R. Gheissari. Sampling from the Potts model at low temperatures via Swendsen–Wang
+     dynamics. In 2023 IEEE 64th Annual Symposium on Foundations of Computer Science (FOCS), pages
+     2006–2020. IEEE, 2023. 5
+ [8] R. Bubley and M. Dyer. Path coupling: A technique for proving rapid mixing in Markov chains. In
+     Proceedings 38th Annual Symposium on Foundations of Computer Science, pages 223–231. IEEE, 1997.
+     4, 8
+ [9] J.-Y. Cai, A. Galanis, L. A. Goldberg, H. Guo, M. Jerrum, D. Štefankovič, and E. Vigoda. # BIS-hardness
+     for 2-spin systems on bipartite bounded degree graphs in the tree non-uniqueness region. Journal of
+     Computer and System Sciences, 82(5):690–711, 2016. 5
+[10] C. Carlson, E. Davies, N. Fraiman, A. Kolla, A. Potukuchi, and C. Yap. Algorithms for the ferromagnetic
+     Potts model on expanders. In 2022 IEEE 63rd Annual Symposium on Foundations of Computer Science
+     (FOCS), pages 344–355. IEEE, 2022. 5
+[11] S. Chatterjee. Large deviations for random graphs. Lecture Notes in Mathematics, 2197, 2017. 2
+[12] S. Chatterjee and A. Dembo. Nonlinear large deviations. Advances in Mathematics, 299:396–450, 2016. 2
+[13] S. Chatterjee and S. S. Varadhan. The large deviation principle for the Erdős-Rényi random graph.
+     European Journal of Combinatorics, 32(7):1000–1017, 2011. 2
+[14] Y. Chen and R. Eldan. Localization schemes: A framework for proving mixing bounds for Markov chains.
+     In 2022 IEEE 63rd Annual Symposium on Foundations of Computer Science (FOCS), pages 110–122.
+     IEEE, 2022. 2, 18
+[15] Z. Chen, A. Galanis, L. A. Goldberg, W. Perkins, J. Stewart, and E. Vigoda. Fast algorithms at low
+     temperatures via Markov chains. Random Structures & Algorithms, 58(2):294–321, 2021. 5
+24     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS NEAR THE CRITICAL DENSITY
+
+[16] Z. Chen, A. Galanis, D. Štefankovič, and E. Vigoda. Sampling colorings and independent sets of random
+     regular bipartite graphs in the non-uniqueness region. In Proceedings of the 2022 Annual ACM-SIAM
+     Symposium on Discrete Algorithms (SODA), pages 2198–2207. SIAM, 2022. 5
+[17] Z. Chen, K. Liu, and E. Vigoda. Optimal mixing of Glauber dynamics: Entropy factorization via high-
+     dimensional expansion. In Proceedings of the 53rd Annual ACM SIGACT Symposium on Theory of Com-
+     puting, pages 1537–1550, 2021. 2
+[18] N. Cook and A. Dembo. Large deviations of subgraph counts for sparse Erdős–Rényi graphs. Advances
+     in Mathematics, 373:107289, 2020. 2
+[19] M. Dyer and A. Frieze. Randomly coloring graphs with lower bounds on girth and maximum degree.
+     Random Structures & Algorithms, 23(2):167–179, 2003. 4
+[20] M. Dyer, A. Frieze, and M. Jerrum. On counting independent sets in sparse graphs. SIAM Journal on
+     Computing, 31(5):1527–1541, 2002. 22
+[21] M. Dyer, L. A. Goldberg, C. Greenhill, and M. Jerrum. The relative complexity of approximate counting
+     problems. Algorithmica, 38(3):471–500, 2004. 5
+[22] R. Eldan. Gaussian-width gradient complexity, reverse log-Sobolev inequalities and nonlinear large devi-
+     ations. Geometric and Functional Analysis, 28(6):1548–1596, 2018. 2
+[23] P. Erdős, D. Kleitman, and B. Rothschild. Asymptotic enumeration of Kn -free graphs. Colloquio Inter-
+     nazionale sulle Teorie Combinatorie (Rome, 1973), (17):19–27, 1973. 1
+[24] P. Erdős and A. Rényi. On the evolution of random graphs. Publ. Math. Inst. Hung. Acad. Sci, 5(1):17–60,
+     1960. 1
+[25] W. G. Faris. Combinatorics and cluster expansions. Probability Surveys, 7:157–206, 2010. 6
+[26] A. Galanis, L. A. Goldberg, and P. Smolarova. Sampling from the random cluster model on random regular
+     graphs at all temperatures via Glauber dynamics. In Approximation, Randomization, and Combinato-
+     rial Optimization. Algorithms and Techniques (APPROX/RANDOM 2023). Schloss Dagstuhl-Leibniz-
+     Zentrum für Informatik, 2023. 5
+[27] A. Galanis, L. A. Goldberg, and J. Stewart. Fast algorithms for general spin systems on bipartite ex-
+     panders. ACM Transactions on Computation Theory (TOCT), 13(4):1–18, 2021. 5
+[28] A. Galanis, L. A. Goldberg, and J. Stewart. Fast mixing via polymers for random graphs with unbounded
+     degree. Information and Computation, 285:104894, 2022. 5
+[29] A. Galanis, D. Štefankovič, and E. Vigoda. Inapproximability of the partition function for the antifer-
+     romagnetic Ising and hard-core models. Combinatorics, Probability and Computing, 25(4):500–559, July
+     2016. 2
+[30] D. Galvin, G. McKinley, W. Perkins, M. Sarantis, and P. Tetali. On the zeroes of hypergraph independence
+     polynomials. Combinatorics, Probability and Computing, 33(1):65–84, 2024. 3
+[31] R. Gheissari and A. Sinclair. Low-temperature Ising dynamics with random initializations. In Proceedings
+     of the 54th Annual ACM SIGACT Symposium on Theory of Computing, pages 1445–1458, 2022. 5
+[32] T. Helmuth, M. Jenssen, and W. Perkins. Finite-size scaling, phase coexistence, and algorithms for the
+     random cluster model on random graphs. In Annales de l’Institut Henri Poincare (B) Probabilites et
+     statistiques, volume 59, pages 817–848. Institut Henri Poincaré, 2023. 5
+[33] T. Helmuth, W. Perkins, and G. Regts. Algorithmic Pirogov-Sinai theory. Probability Theory and Related
+     Fields, 176:851–895, 2020. 5
+[34] J. Hermon, A. Sly, and Y. Zhang. Rapid mixing of hypergraph independent sets. Random Structures &
+     Algorithms, 54(4):730–767, 2019. 3
+[35] S. Janson, T. Luczak, and A. Ruciński. An exponential bound for the probability of nonexistence of a
+     specified subgraph in a random graph. Random graphs’ 87, Proceedings, Poznán, 1987, eds. M. Karonński,
+     J. Jaworski and A.Ruciński, pages 73–87, 1987. 2
+[36] M. Jenssen, P. Keevash, and W. Perkins. Algorithms for #BIS-hard problems on expander graphs. SIAM
+     Journal on Computing, 49(4):681–710, 2020. 5
+[37] M. Jenssen, W. Perkins, and A. Potukuchi. On the evolution of structure in triangle-free graphs. arXiv
+     preprint arXiv:2312.09202, 2023. 4, 7, 9, 10, 20, 21
+[38] M. Jenssen, W. Perkins, A. Potukuchi, and M. Simkin. Lower tails for triangles inside the critical window.
+     preprint, 2024. 3
+[39] M. Jenssen, W. Perkins, A. Potukuchi, and M. Simkin. Sampling, counting, and large deviations for
+     triangle-free graphs near the critical density. In Foundations of Computer Science (FOCS 2024), 2024. 1
+[40] M. R. Jerrum, L. G. Valiant, and V. V. Vazirani. Random generation of combinatorial structures from a
+     uniform distribution. Theoretical Computer Science, 43:169–188, 1986. 18
+     SAMPLING AND COUNTING TRIANGLE-FREE GRAPHS                       NEAR THE CRITICAL DENSITY            25
+
+[41] G. Kozma and W. Samotij. Lower tails via relative entropy. The Annals of Probability, 51(2):665–698,
+     2023. 2
+[42] D. A. Levin and Y. Peres. Markov chains and mixing times, volume 107. American Mathematical Soc.,
+     2017. 6
+[43] T. Luczak. On triangle-free random graphs. Random Structures & Algorithms, 16(3):260–276, 2000. 2, 4,
+     20
+[44] W. Mantel. Problem 28. Wiskundige Opgaven, 10(60-61):320, 1907. 1
+[45] R. Montenegro and P. Tetali. Mathematical aspects of mixing times in Markov chains. Foundations and
+     Trends in Theoretical Computer Science, 1(3):237–354, 2006. 6
+[46] E. Mossel, D. Weitz, and N. Wormald. On the hardness of sampling independent sets beyond the tree
+     threshold. Probability Theory and Related Fields, 143(3-4):401–439, 2009. 3
+[47] D. Osthus, H. J. Prömel, and A. Taraz. For which densities are random triangle-free graphs almost surely
+     bipartite? Combinatorica, 23(1):105–150, 2003. 2
+[48] O. Penrose. Convergence of fugacity expansions for classical systems. Statistical mechanics: foundations
+     and applications, page 101, 1967. 15
+[49] D. Saxton and A. Thomason. Hypergraph containers. Inventiones mathematicae, 201(3):925–992, 2015. 2
+[50] A. D. Scott and A. D. Sokal. The repulsive lattice gas, the independent-set polynomial, and the Lovász
+     local lemma. Journal of Statistical Physics, 118(5-6):1151–1261, 2005. 6
+[51] A. Sly. Computational transition at the uniqueness threshold. In 2010 IEEE 51st Annual Symposium on
+     Foundations of Computer Science, pages 287–296, Las Vegas, NV, USA, Oct. 2010. IEEE. 2
+[52] A. Sly and N. Sun. Counting in two-spin models on d-regular graphs. Ann. Probab., 42(6):2383–2416,
+     Nov. 2014. 2
+[53] D. Štefankovič, S. Vempala, and E. Vigoda. Adaptive simulated annealing: A near-optimal connection
+     between sampling and counting. Journal of the ACM (JACM), 56(3):1–36, 2009. 9
+[54] D. Weitz. Counting independent sets up to the tree threshold. In Proceedings of the Thirty-Eighth Annual
+     ACM Symposium on Theory of Computing, STOC 2006, pages 140–149. ACM, 2006. 2
+
