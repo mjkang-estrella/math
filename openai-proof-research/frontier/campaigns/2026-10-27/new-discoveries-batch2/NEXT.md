@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r156 scope correction: printed Malik–Qureshi Conjecture 5.1(i) includes
+the same paper's known non-Hamiltonian n=t+2, t=0 mod4 exception (Theorem 5.1).
+This is an uncredited formulation correction; the intended exception-removed
+target remains unresolved. Root reproduces 323 finite cycles and 46 literal
+DFS controls, verifies 34 payload paths, and preserves failed ansätze.
+See root-r156-handback/DECISION.md. No uniform construction or extension proved.
+Sol r159 replaces r156; r157 and r158 continue. Counts unchanged: 9/39, next 40.
+
+
 r155 Su read-once factorial-divisibility Conjecture 2.2 remains unresolved.
 Root verifies 65 manifest / 47 scientific entries and reproduces four seven-input
 witnesses plus 100 bounded pairing checks. Signed-pair induction lacks a factor;
