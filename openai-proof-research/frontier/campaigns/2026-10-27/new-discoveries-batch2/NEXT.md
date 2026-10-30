@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+Pendulum ordinary proof PASS adopted with independent endpoint supplement:
+literal Conjecture1 holds on z in[0,2], every0<phi<pi/2. Additional branch
+expectations remain outside scope. Root independent-checker replay is byte
+identical;57 candidate originals/96 review payload entries verified;
+100 review files frozen. Publication history and classical subsumption HOLD.
+Focused Sol source/subsumption review assigned; no Lean/paper investment.
+See root-pendulum-preliminary-adoption-r1. Steiner source/prior review and
+Sol r168 research continue. Counts9 additional/39 total,next40;credit0.
+
+
 r167 Kametaka normalized Yablonskii–Vorobiev irreducibility remains unresolved.
 Root replay passes all46 Newton controls;50 manifest/48 scientific paths
 verify unchanged. Uniform coefficient valuations and all-n degree exclusion
