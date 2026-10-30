@@ -1,5 +1,15 @@
 # Current continuation — 29 October 2026
 
+r165: complete ordinary Steiner general-position counterexamples frozen.
+49-vertex false-twin amplification gives sgp2>=40>39>=sgp3; a later rise
+also occurs. P3 composed with K2 has sgp4=5 versus source bound4.
+Root exact replay passes;52 payload/26 scientific files match,54 originals
+frozen. Independent Sol review must assess full proof and substantive
+adaptation objection; worker exclusion is not adopted automatically.
+See root-r165-preliminary-freeze-r1. Sol r166/r167 research continues.
+Counts unchanged:9 additional/39 total,next40. No Lean/paper investment.
+
+
 Sirola Dumas conjecture: full ordinary proof and complete El Fadil2023
 bridge independently PASS; root adopts routine classical EXCLUDE. Arbitrary
 domains require only persistence of factors into Frac(R), not converse Gauss.
