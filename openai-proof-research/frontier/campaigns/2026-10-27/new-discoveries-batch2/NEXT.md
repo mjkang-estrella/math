@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+Xu–Sun–Chen Conjectures 2/3: source and ordinary mathematics PASS, but root
+adopts routine-source-method EXCLUDE. The source cubic-to-candidate quartic
+sign change is fully checked, not assumed. All 215 positive coefficients
+reproduce independently; minimum 584325 (constant 786520). All 28 candidate
+and 45 review payload paths match. Novelty HOLD remains; no Lean investment.
+See root-xu-sun-chen-exclusion-r1. Sol r164 replaces the review.
+Counts unchanged: 9/39, next40.
+
+
 r161 Ulas two-parameter Stern irreducibility remains unresolved. Root
 reproduces all 185 sparse-identity/factorization/polygon controls and verifies
 42 manifest / 38 scientific entries. The two Newton slopes only restrict factor

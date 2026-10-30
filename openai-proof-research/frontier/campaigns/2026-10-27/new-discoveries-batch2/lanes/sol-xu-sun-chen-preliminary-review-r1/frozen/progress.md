@@ -1,0 +1,5 @@
+# Final progress — r160
+
+2026-10-30 UTC: context and qualified original-role index refreshed (1,652 bodies, nine changes); exact source aliases clear within that scope. Published current journal PDF obtained; online-first timed out. Read source Conjectures1–3 and closest same-paper Theorems1,2,5, relevant remarks and definitions. Selected Conjecture2; shared polynomial also proves Conjecture3. Full ordinary arguments and exact integer certificate supplied. Recommend routine-source-method exclusion, credit0. No qualifying full-scope discovery nominated; no Lean/manuscript. Shared counts remain9/39,next40.
+
+Final checks: 215 positive integer quotient coefficients; 219 reconstructed numerator coefficients; independent sparse derivative identity. Manifest and scientific freeze verification recorded in manifest-verification.json. No ongoing process or unfinished dependent retrieval. Known protocol errors, sampling caveat, public coverage gaps and chronology are retained in discovery.md. r158/r159 and every shared file untouched.
