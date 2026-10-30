@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r150 McDermott's conditional Gaussian stability conjecture remains
+unresolved. The public unconditional-square refutation has reducible second
+iterate and does not refute the selected implication. Root verifies 60
+manifest/58 scientific entries and reproduces 39,354 numerator checks,
+6,479 eligible parameters and ten fixed-modulus controls. The uniform
+all-parameter/all-iterate bridge remains missing. See root-r150-handback.
+Sol r153 replaces r150; r151/r152 continue. Counts remain 9 additional / 39 total.
+
+
 r149 Kaneko's full leaf-distance conjecture remains unresolved. Root
 verifies 359 manifest/33 scientific entries and reproduces 524,287 deletion
 sets, six windmill controls and 220 star exchanges. The family demonstrates
