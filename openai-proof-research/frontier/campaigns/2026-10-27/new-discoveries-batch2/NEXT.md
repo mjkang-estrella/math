@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r176 switching-rook Conjecture2.4 remains unresolved: all-degree monomial-congruence reduction lacks uniform counting identity and separate regularity bridge. Karapetyan even-degree correction excluded as source adaptation. Root private exact replay and full freeze verify; initial extra-log verification failure preserved. See root-r176-handback. Fresh arithmetic/algebraic r179 assigned; r177/r178 continue. Counts9additional/39total,next40.
+
+
 r175: Xu fractional-power means conjecture excluded by complete source sum/product integral bridge; one-bit estimation remains unresolved despite periodic information shortcut obstruction. Root exact checks byte-identical and full scientific/manifest freeze pass; see root-r175-handback. Fresh analytic r178 assigned; r176/r177 continue. Counts 9 additional /39 total, next40.
 
 
