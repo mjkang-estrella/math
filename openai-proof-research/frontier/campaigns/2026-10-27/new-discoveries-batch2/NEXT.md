@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r207 Angelini lower intermediate-spectrum Question1 remains unresolved. Necessity and fixed-theta realizations are known; one prescribed-gap set realizing every theta still lacks simultaneous allocation and tail covers. Exact homogeneous-construction obstruction is not a source counterexample. Root replay and scientific/manifest/reference verification pass. See root-r207-handback; fresh analytic r209 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r205 Buczynski–Teitler–Woo Conjecture6.1 remains unresolved. Middle catalecticant injectivity in every dimension, degree and allowed characteristic is missing. Rational rank34/35 defeats the proposed moment-curve specialization, not the generic conjecture. Root private replay and original/copy/manifest verification pass. See root-r205-handback; fresh arithmetic r208 assigned. Counts 9 additional / 39 total, next 40.
 
 
