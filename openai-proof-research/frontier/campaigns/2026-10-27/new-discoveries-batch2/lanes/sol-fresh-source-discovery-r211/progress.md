@@ -1,0 +1,3 @@
+# Progress
+
+Read inherited instructions, administrative ledger/context, rootr205–208 decisions and r206–208 source-discovery handbacks. Refreshed qualified originals with compact historical references; no copied-history promotion. Selected one fresh-to-bounded-screen arithmetic statement; left prior evolution-algebra lead as reconnaissance. Frozen primary bytes before extraction and reading. Read actual classical/public proof passages early and sustained square factorization beyond numerical tests. Identified exact missing universal square and odd-exponent lemmas. Preserved initial parser/check failure and access denial. No full nomination; no Lean or paper. Final writes followed by independent guarded verification.

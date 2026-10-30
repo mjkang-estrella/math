@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r211 Krasniqi factorial separation remains unresolved. Square cases require uniform exclusion of consecutive coprime factorial-divisor partitions; residual odd-prime exponents also remain. Fixed finite congruences cannot eliminate n!+1. Root exact replay and scientific/manifest/reference checks pass; claimed public Brocard proof defect retained without worldwide priority clearance. See root-r211-handback; fresh arithmetic r214 assigned. Counts 9 additional / 39 total, next 40.
+
+
 r210 four-color t-chromatic caterpillar reconstruction remains unresolved. Exact transfer and color-subset inversion give four scalar polynomials, but rigidity up to spine reversal is unproved; full U-polynomial reconstruction does not decode this specialization. Root checks and scientific/manifest/reference verification pass. See root-r210-handback; fresh structural r213 assigned. Counts 9 additional / 39 total, next 40.
 
 
