@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Power-sum Remark 3.3(4): root adopts full ordinary proof/source PASS and routine source/classical-adaptation exclusion after independent complete bridge. Novelty remains bounded/HOLD; no Lean or manuscript. Root exact replay, 81 original/copy pairs and 102-entry review manifest pass. See root-power-sums-domain-review-adoption-r1. Fresh arithmetic r189 assigned; Brownian review and structural r188 continue. Counts 9 additional / 39 total, next 40.
+
+
 r187 Brownian scalar crossing formula retained; proposed routine-adaptation exclusion sent for independent review. Full joint-process conjecture not proved; boundary-momentum question unresolved. Root replay and frozen originals pass. Active: power-sums review, Brownian review, fresh structural r188. See root-r187-handback. Counts 9 additional / 39 total, next 40.
 
 
