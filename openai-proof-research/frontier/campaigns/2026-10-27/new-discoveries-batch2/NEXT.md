@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Pendulum independent merged review SOURCE/MATH/strict certificate PASS:14modules139actualdecl, scoped substantiveINVEST. Original mandatory replay failed on live NEXT.md drift; root repaired only administrative-context verification in a separate source edition. Revised mandatory fresh replay and byte-identical rebuild PASS; mathematical sources/guards/pins/audits unchanged, snapshot/scientific tamper controls reject. Original failure preserved. Historical coverage and authored PDF/visual QA HOLD remain. See root-pendulum-replay-context-fix-r2. Fresh finite/algebraic r174 assigned; DSBS review and analytic r173 continue. Counts9additional/39total,next40.
+
+
 r172 honest zero adopted: Reed–Solomon universal degree-label step remains open; GF(9) obstruction fails repair constraints and is not a conjecture refutation. Monomial descent excluded by explicit 2018 public example. Root private checks byte-identical;46scientific/47manifest/49original files verify. See root-r172-handback. Fresh analytic/geometric r173 assigned; pendulum and DSBS independent reviews continue. Counts9additional/39total,next40.
 
 

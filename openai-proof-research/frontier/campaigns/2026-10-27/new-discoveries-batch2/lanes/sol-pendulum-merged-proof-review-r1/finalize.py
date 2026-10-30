@@ -1,0 +1,29 @@
+from pathlib import Path
+import hashlib,json,datetime
+R=Path(__file__).resolve().parent;L=R.parent;D=R/'fresh-extraction'
+def sha(p):
+ with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+def now():return datetime.datetime.now(datetime.timezone.utc).isoformat()
+rows=json.loads((R/'before-originals.json').read_text())['files'];changed=[]
+for r in rows:
+ p=Path(r['path']);h=sha(p)
+ if h!=r['sha256'] or p.stat().st_size!=r['bytes']:changed.append(dict(r,after_sha256=h))
+ assert sha(R/'copies'/p.relative_to(L.parent))==r['sha256']
+scientific=json.loads((D/'originals-before.json').read_text())
+for r in scientific:assert sha(Path(r['path']))==r['sha256']
+for n,h in json.loads((D/'manifest.json').read_text()).items():assert sha(D/n)==h
+for r in json.loads((D/'dependency-hashes.json').read_text()):assert sha(Path(r['path']))==r['sha256']
+assert all(x['path']==str(L.parent/'NEXT.md') for x in changed),changed
+(R/'final-originals-verification.json').write_text(json.dumps({'utc':now(),'frozen_packet_and_scientific_originals_unchanged':True,'all_copies_unchanged':True,'shared_context_changes':changed,'review_input_entries':len(rows),'scientific_original_entries':len(scientific),'dependency_files':len(json.loads((D/'dependency-hashes.json').read_text()))},indent=2)+'\n')
+receipt=json.loads((R/'strict-modules-receipt.json').read_text())
+maxrss=max(s['peak_group_rss_kib'] for s in receipt['steps'])
+provenance={'actualUTC':now(),'role':'independent solo review; root owns acceptance','model':'GPT-6.1 Sol','reasoning':'high','service':'standard/default requested; no model or tier switch performed','counts':{'additional':9,'total':39,'next':40,'credit_awarded':0},'primary_archive_sha256':sha(R/'reproduced.zip'),'root_freeze_sha256':sha(L/'root-pendulum-merged-packet-adoption-r1/review-freeze.json'),'source_only_manuscript':'packet/paper/paper.txt','gates':{'SOURCE':'PASS','MATH':'PASS','FORMAL':'PASS: qualified independent strict modules and full actual-declaration audit','mandatory_packet_replay':'HOLD: live NEXT.md original mismatch','manuscript_source':'PASS with reproduction qualification','substantiveness':'scoped INVEST sustained','bounded_novelty':'HOLD: historical/current registry conditions','production':'HOLD','visual_QA':'NOT_PERFORMED'},'input_drifts':receipt['input_drifts'],'originals_preserved':True,'archive_byte_identical_rebuild':True,'mathematical_modules':14,'actual_declarations':139,'upstream_dependency_files':15042,'formal_max_sampled_group_RSS_KiB':maxrss,'resource_caveat':'sampled RSS is not a continuous peak guarantee','strict_replay_guard':{'wall_seconds':40.35875407909043,'sampled_peak_group_rss_bytes':40693760,'exit':0,'receipt_location':'tool transcript'},'outer_helper_guard':{'wall_seconds':40.916843716055155,'sampled_peak_group_rss_bytes':33792000,'exit':0,'receipt_location':'tool transcript'},'all_helper_commands':'unchanged sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py; AS/groupRSS512MiB CPU210 wall230 nominal40ms','lean_commands':'unchanged extracted replay_guard.py and guard.py; serial j1 M2700 warningAsError true autoImplicit false; RSS2800MiB CPU210 wall230 nominal45ms','network_research':False,'browser':False,'children':False,'external_messages_uploads_public_actions':False,'git_or_shared_mutations':False,'production_qualifications':['authored PDF absent','visual QA NOT_PERFORMED','original Node/V8 marker failure preserved','pdflatex/reportlab/pypdf absence retained'],'coverage':'All 14 mathematical source bodies plus FullAudit; all139 actual full type/origin/axiom/safety rows checked by fresh audit/equality; complete three prior reviews; primary equation24/26, conjecture and Appendix; selected actual classical bodies, not whole literature'}
+(R/'provenance.json').write_text(json.dumps(provenance,indent=2)+'\n')
+(R/'failures.json').write_text(json.dumps({'utc':now(),'failures':[{'action':'mandatory unchanged packet replay','result':'failed before compilation','reason':'NEXT.md original differs from content-addressed archived snapshot','log':'replay.log','disposition':'HOLD; original and tooling not changed'},{'action':'first alternate strict coordinator','result':'failed before compilation','reason':'attempted dependencies.txt read before FullAudit generated it','disposition':'own coordinator corrected to hash recorded dependency-file list first; full inventory compared after build'},{'action':'temporary own checker edit','result':'indentation corrected before execution','disposition':'no frozen source changed'},{'action':'native read inventories and combined reads','result':'some displays truncated','disposition':'no write; scientific mathematical source and three reviews reread in bounded groups'}],'inherited_PDF_failures':'Unchanged packet evidence retains unsupported Node flag, then V8 SegmentedTable initialization OOM; no retry or authoring performed'},indent=2)+'\n')
+excluded={'final-manifest.json','final-manifest-verification.json'}
+manifest={str(p.relative_to(R)):{'sha256':sha(p),'bytes':p.stat().st_size} for p in sorted(R.rglob('*')) if p.is_file() and p.name not in excluded}
+(R/'final-manifest.json').write_text(json.dumps({'utc':now(),'excludes':sorted(excluded),'files':manifest},indent=2)+'\n')
+for n,r in manifest.items():assert sha(R/n)==r['sha256'] and (R/n).stat().st_size==r['bytes']
+assert {str(p.relative_to(R)) for p in R.rglob('*') if p.is_file() and p.name not in excluded}==set(manifest)
+(R/'final-manifest-verification.json').write_text(json.dumps({'utc':now(),'status':'PASS','entries':len(manifest),'manifest_sha256':sha(R/'final-manifest.json'),'all_bytes_and_hashes_verified':True,'exhaustive_except_explicit_self_receipts':True},indent=2)+'\n')
+print(json.dumps({'utc':now(),'review':'complete','manifest_entries':len(manifest),'max_sampled_Lean_RSS_KiB':maxrss,'overall':'HOLD; no acceptance'}))

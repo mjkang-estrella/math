@@ -1,0 +1,18 @@
+--- original/verify_inputs.py
++++ revised/verify_inputs.py
+@@ -17,6 +17,12 @@
+ assert sha(pathlib.Path(pins['lean_binary']))==pins['lean_sha256']
+ for p in pins['packages']:assert rev(pathlib.Path(p['path']))==p['rev'],p['name']
+ for row in json.loads((R/'originals-before.json').read_text()):assert sha(pathlib.Path(row['path']))==row['sha256'],row['path']
+-for row in json.loads((R/'input-records.json').read_text()):
+- assert sha(R/row['copy'])==sha(pathlib.Path(row['original']))==row['sha256'],row
+-print(json.dumps({'pins_verified':len(pins['packages']),'frozen_entries_verified':len(json.loads((R/'originals-before.json').read_text())),'originals_and_copies_unchanged':True}))
++records=json.loads((R/'input-records.json').read_text())
++policy=json.loads((R/'context-snapshot-policy.json').read_text())['records']
++assert len(policy)==4 and len({row['original'] for row in policy})==4
++assert {pathlib.Path(row['original']).name for row in policy}=={'AGENTS.md','ledger.json','NEXT.md','prior-campaign-context.json'}
++assert all(row in records for row in policy)
++for row in records:
++ assert sha(R/row['copy'])==row['sha256'],row
++ if row not in policy:assert sha(pathlib.Path(row['original']))==row['sha256'],row
++print(json.dumps({'pins_verified':len(pins['packages']),'frozen_entries_verified':len(json.loads((R/'originals-before.json').read_text())),'scientific_originals_and_copies_unchanged':True,'archived_context_snapshots_verified':len(policy),'live_context_required':False}))
