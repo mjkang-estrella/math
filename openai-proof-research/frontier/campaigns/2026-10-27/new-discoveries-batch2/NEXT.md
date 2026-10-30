@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+Prefix-reversal Conjecture 5 full ordinary proof candidate preserved for independent review. Root checks reproduce both diagnostic JSONs byte-identically; 81 scientific /82 manifest entries verified,84 files frozen. Source statement and quoted classical bound read. Eligibility remains HOLD for complete classical-adaptation and matching unread registry-body objections; no Lean investment. Sol adversarial review assigned; two pendulum formal components continue. See root-r169-preliminary-freeze-r1. Counts 9 additional /39 total,next40.
+
+
 Pendulum literal source/moment component root replay PASS: 4 mathematical modules, 46 actual declaration audits, std3-only, safe/nonpartial; 411 frozen entries and 9 package pins unchanged. Root confirms actual source definitions and singular change-of-variables interfaces. Full SourceClaim remains unproved. Two Sol components assigned: all-n convexity/positive-series/interior transfer, and literal endpoint continuity/closed-interval transfer. No strictness or C2 scope expansion. See root-pendulum-moments-adoption-r1. Fresh r169 research continues. Counts 9 additional / 39 total, next 40.
 
 
