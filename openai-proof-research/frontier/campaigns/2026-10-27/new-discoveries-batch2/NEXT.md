@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+User authorized Claude. Direct claudeAgent capability discovery succeeded; use claude-opus-5-5 effort high, fastMode false for the NEXT FREE useful research/review slot. Preserve running r213/r214 scouts and r215 focused solver; do not exceed root plus three. See root-claude-authorization-r1. Breadth-plus-solving policy continues; counts 9 additional / 39 total, next 40.
+
+
 Latest user steering: explore widely alongside solving; speed takes priority over repetitive handback paperwork. Existing r213/r214 now broad scouts, r215 focused solver. Two complementary scouting shortlists feed sustained full-scope attacks. Use compact rejects and verified immutable references; acceptance standards unchanged. See root-breadth-depth-steering-r1 and updated AGENTS.md. Counts 9 additional / 39 total, next 40.
 
 

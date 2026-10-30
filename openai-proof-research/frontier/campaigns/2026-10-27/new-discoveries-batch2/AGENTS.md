@@ -15,6 +15,12 @@ thinking=high; or provider codex, model gpt-6.1-sol,
 reasoningEffort=high. Use standard/default service speed for both (no ultrafast).
 Preserve completed Astra artifacts and ongoing GLM work; use Sol for upcoming
 delegate assignments as slots become available.
+The user subsequently authorized Claude subagents as well. Capability discovery
+confirmed provider `claudeAgent`, model `claude-opus-5-5`, with effort `high` and
+fastMode `false` available. Use Claude Opus 5.5 for the next available useful
+research or independent-review slot, retaining Sol in complementary lanes.
+Do not cancel productive active work merely to change models, and do not exceed
+the root-plus-three runtime limit. Standard/default speed remains in force.
 Keep all three available delegate slots occupied
 when useful work is available (root plus three = runtime maximum four). Never
 substitute another model or tier without user authorization.
