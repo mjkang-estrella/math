@@ -1,5 +1,14 @@
 # Current continuation — 29 October 2026
 
+r160 full Xu–Sun–Chen arctan/arctanh proof candidates frozen for independent
+source/math/substantive review. Root reproduces the 215-positive-coefficient
+certificate and all 219 numerator coefficients; 28 files frozen. Prose erratum:
+minimum coefficient is 584325, not 786520 (the latter is the constant).
+Worker proposes routine-source exclusion; root has not adopted it yet.
+See root-r160-preliminary-freeze-r1. No Lean/paper/count change; 9/39, next40.
+Sol Xu–Sun–Chen review runs alongside the ongoing research lanes.
+
+
 r159 induced-F irregularity Conjecture3 remains unresolved. Root reproduces
 1,096 labeled graphs / 5,400 vertex identities and the unequal-expectation
 without-realization falsifier; 63 manifest / 32 scientific paths match.
