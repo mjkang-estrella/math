@@ -1,5 +1,8 @@
 # Current continuation — 29 October 2026
 
+r201 Nielsen–Okamura smooth dual-midpoint rigidity remains unresolved; rank-one cubic has nontrivial pointwise derivative kernel, not an exact midpoint counterexample. Degenerate strata and smooth higher-order control remain open. Fractional Korn extension excluded by actual public full bridge. Root symbolic replay and primary/manifest/snapshot integrity pass. See root-r201-handback; fresh analytic r204 assigned. Counts 9 additional / 39 total, next 40.
+
+
 Totient normalized-deficiency ordinary MATH PASS retained; root adopts substantive EXCLUDE via complete classical mean, generic squarefree divisor second-moment bound and Cauchy–Schwarz bridge. Mean/limiting-law scope qualified; no exact prior-publication claim, novelty HOLD. No Lean/manuscript or credit. Fresh arithmetic r203 assigned. See root-totient-deficiency-review-adoption-r1. Counts 9 additional / 39 total, next 40.
 
 

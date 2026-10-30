@@ -1,0 +1,3 @@
+# Progress
+
+Read ancestor/batch instructions, ledger/prior context, and root r200/r198/r197/r199 handbacks first. Refreshed qualified originals and retained legacy alias indexes. Selected a precise fresh geometric statement after duplicate and public-resolution screens. Froze every mathematically consulted primary PDF before extraction/reading. Read actual target, source proofs and closest companion. Investigated the fourth-order route with bounded exact rational algebra; found a pointwise kernel and stopped before treating diagnostics as a uniform proof. Wrote zero-nomination handback. Final separate guarded verification covers scientific originals/copies, report snapshots and full manifest after final writes.

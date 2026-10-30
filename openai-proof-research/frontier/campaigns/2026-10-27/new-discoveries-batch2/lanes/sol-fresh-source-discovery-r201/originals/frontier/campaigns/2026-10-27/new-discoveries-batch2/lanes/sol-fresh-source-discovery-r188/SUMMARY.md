@@ -1,0 +1,9 @@
+# r188 — fresh triangle-partition question unresolved; zero nominations
+
+Sustained Bonnet, Answering Related Questions, arXiv:2501.10633v2, Question5: a polynomial-time algorithm for Sidestep(Triangle Partition, dist_delta,1), for every finite simple labeled graph of order divisible by3. The exact numbered question survives v1, v2 and the author-hosted body. Author lists ESA2026, but an authenticated publisher body was not obtained. No full ordinary proof or refutation; no PROOF.md.
+
+Universal monotonicity gives an exact positive wedge-factor / negative matching-blocker reformulation. This does not solve either search branch in polynomial time. The source matching-to-Hamilton-cycle construction has an explicit domain mismatch: a perfect matching does not yield a partition into triples. The radius2 source construction requires two incident additions on edgeless triples. A concrete negative-neighbor example keeps every vertex in a triangle, refuting the proposed local test. Bounded exact diagnostics agree on all32768 labeled graphs of order6; these are not a full proof of Question5.
+
+Refreshed2545 qualified scientific history records,17 changed/new,0 missing, including retained r111–113 originals. All copied and checked before use. Exact DOI/arXiv/title/author/statement aliases screened across the full qualified campaign history. Reconnaissance includes the public K5-minus-edge induced-minor algorithm, never a fresh target slot; the all-t question remains distinct. Search and access gaps prevent novelty clearance.
+
+No shared edits, git, children, messages/posts/uploads, MathDB edits, browser, Lean or manuscript investment. Initial unguarded read-only inventory deviation and retrieval failures are disclosed in FAILURES.md. Counts9additional/39total,next40 unchanged; root owns review/count/staging.
