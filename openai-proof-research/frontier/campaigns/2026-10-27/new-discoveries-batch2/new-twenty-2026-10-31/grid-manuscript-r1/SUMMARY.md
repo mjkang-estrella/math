@@ -1,0 +1,15 @@
+# DRAFT manuscript and reproducible dossier - root review required
+
+MathDB 343536, Neuberger-Sieben-Swift Conjecture 5.6. Zero accepted credit; root reads the paper and decides.
+
+Delivered a ten-page paper.pdf with editable paper.md, consolidated PROOF.md, STATEMENT-CORRESPONDENCE.md, the exact raw MathDB line, source copies and original retrieval receipts, byte-identical grid-formal-r6-source.zip, safe-extraction receipt, small-grid diagnostic, REPRODUCE.md, manifests, all ten page PNGs and visual-QA receipt, and grid-full-dossier.zip. The paper contains complete ordinary proofs of all three sentences, the natural orbit-map strengthening, small counts, six-round correspondence, audits/controls/trust limits and bounded related work.
+
+Endpoint: GridFinal6.mathdb_343536. Source packet SHA-256 a4068de99037028f817f2f5d1652a97d7508c4419353da95abea04b45b977953. There are 47 src modules plus four separate negative controls. No Lean, lake or leanchecker was run here. Safe extraction and direct finite diagnostics passed. All ten final PDF pages were rendered and visually inspected. A dropped counts-table rendering was corrected before final QA.
+
+The fidelity REVIEW.md is present and all six gate-E items were applied. Its A/B gates are PASS, C/D still await final logs, E is QUALIFIED_PASS, and final review.json is absent. The root registry refresh and late-arriving replay-result.json are copied. The replay receipt reports PASS, 4/4 expected failures and the allowed endpoint axioms, but its build field says 46/47 modules PASS. That discrepancy requires root reconciliation; a complete 47-module root replay is not asserted here. Auditor deprecation warnings despite requested warningAsError flags are disclosed. The locally rebuilt pinned mathlib Bound.Attribute artifact and the historical development-audit/replay overlap remain explicit qualifications.
+
+New content is restricted to sentence 1 for m,n >= 2. Paths are known via reported Brito-Manoel 2026 abstract evidence; the full bodies of that paper, Godsil and the SIADS version were not accessed. The compact-graph prior-art channel remains unresolved. Significance is modest; no priority claim or new exhaustive clearance is made.
+
+All immutable inputs are unchanged at the final hash check. The active optional fidelity REVIEW.md appended a diagnostic note during work; both initial and final snapshots and their hashes are preserved, and the final snapshot is rebound separately. Initial prose orientation preceded the baseline; short initial reads and file-authoring shell calls were not all under the sampled cap wrapper. These procedural limits are disclosed rather than claiming perfect all-call enforcement. Capped generation/checks were serial and small. No child agents, git, network, browser, external messages, publication, upload, shared-ledger or other-lane writes were used. No lane job remains running at handback.
+
+DOSSIER-MANIFEST.json inventories the ZIP snapshot; DELIVERY-SHA256.json and package-validation.json bind and validate delivery outside the ZIP to avoid self-reference. The packaging call's own completion receipt also follows that snapshot.
