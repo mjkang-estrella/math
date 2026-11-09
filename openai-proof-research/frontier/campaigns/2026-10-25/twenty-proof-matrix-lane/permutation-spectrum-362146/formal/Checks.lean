@@ -1,0 +1,42 @@
+import PermutationSpectrum
+
+#check PermutationSpectrum.IsPermutationLike
+#print axioms PermutationSpectrum.IsPermutationLike
+#check PermutationSpectrum.IsPermutationMatrix
+#print axioms PermutationSpectrum.IsPermutationMatrix
+#check PermutationSpectrum.IsEigenvalue
+#print axioms PermutationSpectrum.IsEigenvalue
+#check PermutationSpectrum.transition
+#print axioms PermutationSpectrum.transition
+#check PermutationSpectrum.representation
+#print axioms PermutationSpectrum.representation
+#check PermutationSpectrum.transition_is_permutation_like
+#print axioms PermutationSpectrum.transition_is_permutation_like
+#check PermutationSpectrum.transition_mul
+#print axioms PermutationSpectrum.transition_mul
+#check PermutationSpectrum.transition_id
+#print axioms PermutationSpectrum.transition_id
+#check PermutationSpectrum.transition_pow
+#print axioms PermutationSpectrum.transition_pow
+#check PermutationSpectrum.powers_repeat
+#print axioms PermutationSpectrum.powers_repeat
+#check PermutationSpectrum.eigenvector_power
+#print axioms PermutationSpectrum.eigenvector_power
+#check PermutationSpectrum.eigenvalue_zero_or_root_of_unity
+#print axioms PermutationSpectrum.eigenvalue_zero_or_root_of_unity
+#check PermutationSpectrum.isEigenvalue_iff_library
+#print axioms PermutationSpectrum.isEigenvalue_iff_library
+#check PermutationSpectrum.transition_mulVec_single
+#print axioms PermutationSpectrum.transition_mulVec_single
+#check PermutationSpectrum.zero_eigenvalue_iff_not_injective
+#print axioms PermutationSpectrum.zero_eigenvalue_iff_not_injective
+#check PermutationSpectrum.transition_permutation_iff_injective
+#print axioms PermutationSpectrum.transition_permutation_iff_injective
+#check PermutationSpectrum.zero_eigenvalue_iff_not_permutation
+#print axioms PermutationSpectrum.zero_eigenvalue_iff_not_permutation
+#check PermutationSpectrum.identity_is_permutation
+#print axioms PermutationSpectrum.identity_is_permutation
+#check PermutationSpectrum.main_conjecture
+#print axioms PermutationSpectrum.main_conjecture
+#check PermutationSpectrum.exact_mathdb_conclusion
+#print axioms PermutationSpectrum.exact_mathdb_conclusion
