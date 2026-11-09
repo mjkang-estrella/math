@@ -1,0 +1,7 @@
+# Dormant only; no dispatch, Lean execution or new credit
+
+ID351165 cannot enter formal acceptance while the exact equality clause remains unresolved. Preserve the literal. First adjudicate its source meaning and significance independently; a corrected nearby statement is not this campaign's target.
+
+If later explicitly authorized after qualification, the numerical endpoint would use a finite simple connected graph, cycle blocks and bridges, real Randić sum over undirected edges, shortest-path diameter, natural counts k,b,n, and the two exact radical constants. Required bridges: block-cut tree decomposition, isometric full-block skeleton, leaf-block ordering, defect identity with undirected edges counted once, degree changes under additions, chain charge bounds, tree-to-first-cycle transition, positive denominators and real square-root identities. The generic sB-aN estimate must be a literal theorem, not a numerical test. Equality semantics and source figures remain unpaid; no theorem endpoint matching the full literal is presently supplied.
+
+352883 has an actual matching public ordinary proof and is excluded. 351851 is a source-sign correction and excluded. Formalization of either is zero credit. No fallback provider, children, compiler, CAS, solver or mathematical programs were used. Any eventual acceptable certificate requires only propext/Classical.choice/Quot.sound, adversarial fidelity/significance review, a source-only extracted replay, paper and root acceptance. None occurred here.
