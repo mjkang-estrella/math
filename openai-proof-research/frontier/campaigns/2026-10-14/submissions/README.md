@@ -1,4 +1,30 @@
-# Public submissions: R023–R030
+# Public submissions: R023–R041
+
+## Completed submissions — 2026-10-25
+
+All eleven remaining accepted papers R031–R041 were published on Zenodo and MathDB under the user’s renewed authorization. This completes publication of all nineteen currently accepted results in this campaign; the separate research target remains 19/20.
+
+| Paper | Zenodo PDF and supporting ZIP | MathDB |
+| --- | --- | --- |
+| R031: A superquadratic sensitivity separation for transitive Boolean functions | [DOI](https://doi.org/10.5281/zenodo.23647058) | [Paper](https://mathdb.com/abs/2610.00751) |
+| R032: Quantum verification of full-continuum Coulomb energy with unit nuclei | [DOI](https://doi.org/10.5281/zenodo.23647069) | [Paper](https://mathdb.com/abs/2610.00752) |
+| R033: Fourth-moment comparison of zero-field SK free-energy fluctuations | [DOI](https://doi.org/10.5281/zenodo.23647085) | [Paper](https://mathdb.com/abs/2610.00753) |
+| R034: Advanced Mukai classification from independent quantum correspondences | [DOI](https://doi.org/10.5281/zenodo.23647094) | [Paper](https://mathdb.com/abs/2610.00754) |
+| R035: A source-relative factor-two approximation for reverse-complement superstrings | [DOI](https://doi.org/10.5281/zenodo.23647098) | [Paper](https://mathdb.com/abs/2610.00755) |
+| R036: One integral mapping-class orbit in every rank | [DOI](https://doi.org/10.5281/zenodo.23647103) | [Paper](https://mathdb.com/abs/2610.00756) |
+| R037: The sharp minimum multiplicity in a staircase tensor square | [DOI](https://doi.org/10.5281/zenodo.23647109) | [Paper](https://mathdb.com/abs/2610.00757) |
+| R038: Spectral chart selection and average trace-class distortion | [DOI](https://doi.org/10.5281/zenodo.23647118) | [Paper](https://mathdb.com/abs/2610.00758) |
+| R039: Removing the moment assumption from a stipulated planar no-bigeodesics theorem | [DOI](https://doi.org/10.5281/zenodo.23647122) | [Paper](https://mathdb.com/abs/2610.00759) |
+| R040: A finite free-entropy gap for two self-adjoint variables | [DOI](https://doi.org/10.5281/zenodo.23647124) | [Paper](https://mathdb.com/abs/2610.00760) |
+| R041: Projection-body volume for four-dimensional polytopes with at most six facets | [DOI](https://doi.org/10.5281/zenodo.23647127) | [Paper](https://mathdb.com/abs/2610.00761) |
+
+All titles, descriptions, authors, DOIs and both Zenodo file checksums match the prepared metadata and original files. All **156 pages** of the eleven downloaded MathDB PDFs preserve the original body text and render identically at72dpi outside the left30-pixel platform-stamp margin. A contact sheet of all public first pages was visually inspected.
+
+Receipts: [publication links](publications-2026-10-25.json), [Zenodo checks](zenodo-verification-2026-10-25.json), [MathDB PDF comparison](mathdb-verification-2026-10-25.json), [resumption and completion](resumed-2026-10-25.json). Frozen reviewed manuscripts, release archives and historical acceptance metadata remain unchanged. These are AI-assisted preprints, not external peer-reviewed journal acceptances.
+
+## Historical submission record — 2026-10-17
+
+The status and pause statements below describe the earlier session and are superseded by the completed submissions above.
 
 The first eight accepted campaign papers were published on Zenodo and MathDB on 2026-10-17 UTC (2026-10-16 local), under the user’s explicit submission authorization.
 

@@ -2,7 +2,7 @@
 
 ## Active target: twenty additional frontier results
 
-The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **19/20 internally accepted results**: R023–R041. One further substantial result is required. [R041](findings/R041-four-polytope-six-facet-projection.md) proves the reverse projection-body volume inequality for four-dimensional convex polytopes with at most six actual facets, with equality exactly for simplices. Proof, contribution, scoped formal-support, manuscript and local release checks passed; the full geometric theorem is not formalized. R023–R030 are [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md); R031–R041 remain local and unpublished. Uploads and submissions remain stopped at the user’s instruction. Internal acceptance is not external peer review or worldwide-priority certification.
+The [2026-10-14 campaign](NEW-TEN-2026-10-14.md) has **19/20 internally accepted results**: R023–R041. One further substantial result is required. [R041](findings/R041-four-polytope-six-facet-projection.md) proves the reverse projection-body volume inequality for four-dimensional convex polytopes with at most six actual facets, with equality exactly for simplices. Proof, contribution, scoped formal-support, manuscript and local release checks passed; the full geometric theorem is not formalized. R023–R041 are all [published on Zenodo and MathDB](campaigns/2026-10-14/submissions/README.md). The user resumed submissions on2026-10-25; all eleven outstanding papers and supporting packages were published and verified. Internal acceptance is not external peer review or worldwide-priority certification.
 
 ## Historical target: twenty substantial findings
 

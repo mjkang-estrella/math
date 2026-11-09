@@ -9,39 +9,45 @@ to shared ledgers, shared indexes, other lanes, old campaigns, or existing paper
 No git operations or public posting by workers. No child agents. Root alone
 integrates, accepts, stages and commits.
 
-Latest explicit user instruction adds GPT-6.1 Sol alongside Pi GLM 5.3 Flash.
-Authorized delegates: provider pi, model spark/GLM-5.3-Flash-EXL3,
-thinking=high; or provider codex, model gpt-6.1-sol,
-reasoningEffort=high. Use standard/default service speed for both (no ultrafast).
-Preserve completed Astra artifacts and ongoing GLM work; use Sol for upcoming
-delegate assignments as slots become available.
-The user subsequently authorized Claude subagents as well. Capability discovery
-confirmed provider `claudeAgent`, model `claude-opus-5-5`, with effort `high` and
-fastMode `false` available. Use Claude Opus 5.5 for the next available useful
-research or independent-review slot, retaining Sol in complementary lanes.
-Do not cancel productive active work merely to change models, and do not exceed
-the root-plus-three runtime limit. Standard/default speed remains in force.
+Latest user model instruction (2026-10-30) authorizes multiple GPT-6.1 Sol and
+Claude Opus 5.5 subagents in addition to the previously authorized Pi model.
+It supersedes the earlier Pi-only restriction. Current allocation: two Codex
+`gpt-6.1-sol` workers and one Claude `claude-opus-5-5` worker, high effort and
+standard/default speed. Preserve all earlier artifacts regardless of provider.
+At most three active delegates may run alongside the root.
 Keep all three available delegate slots occupied
 when useful work is available (root plus three = runtime maximum four). Never
 substitute another model or tier without user authorization.
 Do not poll asynchronous workers; follow the orchestrator's completion wake.
 
-## Latest user steering: breadth alongside sustained solving
+## Latest user steering: MathDB breadth and hypothesis delegation
 
-The user says progress is too slow and explicitly requests wide exploration
-alongside solving a new problem. Run two complementary broad scouting lanes and
-one focused solving lane within the existing three-delegate limit. Scouts should
-quickly screen multiple papers and subjects (typically 12–20 distinct attributed
-statements), then rank a short list of tractable full-scope candidates with exact
-sources, prior/duplicate status, concrete proof mechanisms and decisive next steps.
-Do not inflate this target with invented, duplicated or publicly resolved questions.
+The user requests technical investigation across MathDB to identify low-hanging
+fruit, and explicitly asks the root to work ONLY as an orchestrator. Delegate
+mathematical investigation and proof attempts; do not solve targets serially at
+the root. Build an inventory of the accessible MathDB corpus and a coverage
+ledger, then screen disjoint subjects or record shards in parallel. Distinguish
+automated tags, actual statement review, primary-body review and unresolved
+coverage. Never claim exhaustive technical review from a sample or a mirror's
+unverified record count.
+
+Rank exact hypotheses with MathDB IDs, source URLs and literal quantifiers,
+duplicate/prior status, a concrete proof or counterexample mechanism, a decisive
+next calculation, expected certificate size and formalization dependencies.
+Prefer small exact counterexamples and short full-scope constructive proofs;
+do not equate shortness with routine adaptation or presume eligibility from an
+open label. Allocate separate hypothesis-specific delegate tasks to the strongest
+tractable candidates, with independent reviews as separate tasks. Keep broad
+coverage advancing alongside these attempts as slots become available.
+Do not inflate coverage with invented, duplicated or publicly resolved questions.
 Unpromising candidates need compact rejection entries, not a separate large dossier.
 
-The solving lane should sustain a promising universal proof/counterexample route
-beyond one failed shortcut or finite sweep. Pivot promptly when a target hides a
-famous hard problem and there is no new mechanism. Use scout shortlists to feed
-subsequent solving assignments. Root prioritizes mathematical work and targeted
-verification over repetitive administrative rewriting. Reuse verified immutable
+Hypothesis delegates should sustain a promising full-scope proof/counterexample
+route beyond one failed shortcut or finite sweep, but park hard targets when no
+concrete tractable mechanism survives. Existing long formal chains do not take
+priority automatically over the requested MathDB triage. Root assigns, reconciles
+coverage, routes objections and adjudicates acceptance; mathematical work stays
+delegated. Reuse verified immutable
 source/index references; do not recursively duplicate historical evidence trees.
 Keep source fidelity, scientific integrity, resource caps, access discipline,
 independent acceptance review and the substantive credit standard unchanged.
