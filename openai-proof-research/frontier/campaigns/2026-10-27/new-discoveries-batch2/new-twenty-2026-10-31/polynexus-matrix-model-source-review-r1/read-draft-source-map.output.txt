@@ -1,0 +1,257 @@
+import Mathlib.Tactic.Ring
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Finset.Card
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+/-!
+# Polynexus: the exact ordered-pair count, MathDB 352496
+
+Source semantics (Fikioris--Fikioris, *A subsemigroup of the rook monoid*,
+Sections 3-4, 8): the nonzero matrices of `M_n` are exactly the blocks with
+ones `x[i,j] = 1` iff `k <= i <= m` and `j = i + d`; 0-based this is: rows
+`a..a+e`, columns `b..b+e`, with `a+e+1 <= n` and `b+e+1 <= n`.
+Multiplication is ordinary matrix multiplication.
+
+Part 1: the actual matrix model and the algebraic bridge (the product of
+two blocks is nonzero iff the column interval of the first meets the row
+interval of the second).
+-/
+set_option linter.unusedVariables false
+
+/-- The matrix type: `Fin n → Fin n → ℕ`, entries in `Nat`. -/
+def pxMat (n : ℕ) := Fin n → Fin n → ℕ
+
+/-- The zero matrix. -/
+def pxZero (n : ℕ) : pxMat n := fun _ _ => 0
+
+/-- The block with rows `a..a+e` and columns `b..b+e`; length `e+1 ≥ 1`. -/
+def pxBlk (n a b e : ℕ) : pxMat n := fun i j =>
+  if a ≤ (i : ℕ) ∧ (i : ℕ) ≤ a + e ∧ b ≤ (j : ℕ) ∧ (j : ℕ) ≤ b + e then 1 else 0
+
+/-- Ordinary matrix multiplication: `(AB) i h = ∑ k, A i k * B k h`. -/
+def pxMul {n : ℕ} (A B : pxMat n) : pxMat n := fun i h => ∑ k, A i k * B k h
+
+theorem pxBlk_one {n a b e : ℕ} {i j : Fin n}
+    (h1 : a ≤ (i : ℕ)) (h2 : (i : ℕ) ≤ a + e) (h3 : b ≤ (j : ℕ)) (h4 : (j : ℕ) ≤ b + e) :
+    pxBlk n a b e i j = 1 := by
+  simp [pxBlk, h1, h2, h3, h4]
+
+theorem pxBlk_eq {n a b e : ℕ} {i j : Fin n} (h : pxBlk n a b e i j = 1) :
+    a ≤ (i : ℕ) ∧ (i : ℕ) ≤ a + e ∧ b ≤ (j : ℕ) ∧ (j : ℕ) ≤ b + e := by
+  by_cases hc : a ≤ (i : ℕ) ∧ (i : ℕ) ≤ a + e ∧ b ≤ (j : ℕ) ∧ (j : ℕ) ≤ b + e
+  · exact hc
+  · exfalso
+    have h0 : pxBlk n a b e i j = 0 := by simp [pxBlk, hc]
+    omega
+
+/-- Nonzero entry: the index is in the block and the value is `1`. -/
+theorem pxBlk_one_of_ne_zero {n a b e : ℕ} {i j : Fin n} (h : pxBlk n a b e i j ≠ 0) :
+    a ≤ (i : ℕ) ∧ (i : ℕ) ≤ a + e ∧ b ≤ (j : ℕ) ∧ (j : ℕ) ≤ b + e ∧
+      pxBlk n a b e i j = 1 := by
+  by_cases hc : a ≤ (i : ℕ) ∧ (i : ℕ) ≤ a + e ∧ b ≤ (j : ℕ) ∧ (j : ℕ) ≤ b + e
+  · exact ⟨hc.1, hc.2.1, hc.2.2.1, hc.2.2.2, by simp [pxBlk, hc]⟩
+  · exfalso
+    have h0 : pxBlk n a b e i j = 0 := by simp [pxBlk, hc]
+    omega
+
+/-- Legal triples: the block lies in the `n × n` box. -/
+def pxLeg (n : ℕ) : Finset ((ℕ × ℕ) × ℕ) :=
+  Finset.filter
+    (fun p : (ℕ × ℕ) × ℕ => p.1.1 + p.2 + 1 ≤ n ∧ p.1.2 + p.2 + 1 ≤ n)
+    ((Finset.range n ×ˢ Finset.range n) ×ˢ Finset.range n)
+
+/-- A single nonnegative summand is at most the whole sum. -/
+theorem pxSum_ge {n : ℕ} (g : Fin n → ℕ) (k : Fin n) : g k ≤ ∑ i, g i :=
+  Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ _)
+
+/-- A single entry of a product is at most the product entry. -/
+theorem pxSingleLower {n : ℕ} (X Y : pxMat n) (i j k : Fin n) :
+    X i k * Y k j ≤ ∑ t, X i t * Y t j := by
+  refine le_trans ?_ (pxSum_ge (fun t => X i t * Y t j) k)
+  exact le_rfl
+
+/-- Unfolded entry at explicit natural indices: no `Fin` cast appears in
+any side condition. -/
+theorem pxBlk_apply_nat {n a b e i j : ℕ} (hi : i < n) (hj : j < n) :
+    pxBlk n a b e (⟨i, hi⟩ : Fin n) (⟨j, hj⟩ : Fin n) =
+      if a ≤ i ∧ i ≤ a + e ∧ b ≤ j ∧ j ≤ b + e then 1 else 0 := by
+  simp [pxBlk]
+
+/-- Entry `1` at natural indices. -/
+theorem pxBlk_one_nat {n a b e i j : ℕ} (hi : i < n) (hj : j < n)
+    (h1 : a ≤ i) (h2 : i ≤ a + e) (h3 : b ≤ j) (h4 : j ≤ b + e) :
+    pxBlk n a b e (⟨i, hi⟩ : Fin n) (⟨j, hj⟩ : Fin n) = 1 := by
+  rw [pxBlk_apply_nat hi hj, if_pos ⟨h1, h2, h3, h4⟩]
+
+/-- The entry condition is necessary for entry `1`, at natural indices. -/
+theorem pxBlk_eq_nat {n a b e i j : ℕ} (hi : i < n) (hj : j < n)
+    (h : pxBlk n a b e (⟨i, hi⟩ : Fin n) (⟨j, hj⟩ : Fin n) = 1) :
+    a ≤ i ∧ i ≤ a + e ∧ b ≤ j ∧ j ≤ b + e := by
+  by_cases hc : a ≤ i ∧ i ≤ a + e ∧ b ≤ j ∧ j ≤ b + e
+  · exact hc
+  · exfalso
+    rw [pxBlk_apply_nat hi hj, if_neg hc] at h
+    omega
+
+theorem pxZero_apply (n : ℕ) (i j : Fin n) : pxZero n i j = 0 := rfl
+
+/-- A legal block is not the zero matrix: its `(a, b)` entry is `1`. -/
+theorem pxBlk_ne_zero {n a b e : ℕ} (h : a + e + 1 ≤ n) (hb : b + e + 1 ≤ n) :
+    (pxBlk n a b e : pxMat n) ≠ pxZero n := by
+  intro hz
+  have hAn : a < n := by omega
+  have hBn : b < n := by omega
+  have h1 : pxBlk n a b e ⟨a, hAn⟩ ⟨b, hBn⟩ = 1 :=
+    pxBlk_one_nat hAn hBn (by omega) (by omega) (by omega) (by omega)
+  have h2 := congrFun (congrFun hz ⟨a, hAn⟩) ⟨b, hBn⟩
+  rw [h1, pxZero_apply] at h2
+  omega
+
+/-- Blocks are injective on the legal box: row supports `a..a+e` and column
+supports `b..b+e` are read off the matrix. -/
+theorem pxBlk_inj {n : ℕ} : ∀ ⦃x y : (ℕ × ℕ) × ℕ⦄, x ∈ pxLeg n → y ∈ pxLeg n →
+    pxBlk n x.1.1 x.1.2 x.2 = pxBlk n y.1.1 y.1.2 y.2 → x = y := by
+  rintro ⟨⟨a, b⟩, e⟩ ⟨⟨c, d⟩, f⟩ hx hy hEq
+  obtain ⟨ha, hb⟩ := (Finset.mem_filter.1 hx).2
+  obtain ⟨hc, hd⟩ := (Finset.mem_filter.1 hy).2
+  have hEq' : pxBlk n a b e = pxBlk n c d f := hEq
+  have hE : ∀ i j : Fin n, pxBlk n a b e i j = pxBlk n c d f i j :=
+    fun i j => congrFun (congrFun hEq' i) j
+  have hAn : a < n := by omega
+  have hBn : b < n := by omega
+  have hCn : c < n := by omega
+  have hDn : d < n := by omega
+  -- the (a, b) entry of the second block and the (c, d) entry of the first are one
+  have yAb : pxBlk n c d f ⟨a, hAn⟩ ⟨b, hBn⟩ = 1 := by
+    rw [← hE ⟨a, hAn⟩ ⟨b, hBn⟩]
+    exact pxBlk_one_nat hAn hBn (by omega) (by omega) (by omega) (by omega)
+  have xCd : pxBlk n a b e ⟨c, hCn⟩ ⟨d, hDn⟩ = 1 := by
+    rw [hE ⟨c, hCn⟩ ⟨d, hDn⟩]
+    exact pxBlk_one_nat hCn hDn (by omega) (by omega) (by omega) (by omega)
+  obtain ⟨h11, h12, h13, h14⟩ := pxBlk_eq_nat hAn hBn yAb
+  obtain ⟨h21, h22, h23, h24⟩ := pxBlk_eq_nat hCn hDn xCd
+  have hac : a = c := le_antisymm h21 h11
+  have hbd : b = d := le_antisymm h23 h13
+  -- the row extents agree: the entry one row past each block's rows
+  have hAEn : a + e < n := by omega
+  have xAEn : pxBlk n a b e ⟨a + e, hAEn⟩ ⟨b, hBn⟩ = 1 :=
+    pxBlk_one_nat hAEn hBn (by omega) (by omega) (by omega) (by omega)
+  have yAEn : pxBlk n c d f ⟨a + e, hAEn⟩ ⟨b, hBn⟩ = 1 := by
+    rw [← hE ⟨a + e, hAEn⟩ ⟨b, hBn⟩]
+    exact xAEn
+  obtain ⟨_, hAF1, _, _⟩ := pxBlk_eq_nat hAEn hBn yAEn
+  -- hAF1 : a + e ≤ c + f
+  have hAFn : a + f < n := by omega
+  have yAF : pxBlk n c d f ⟨a + f, hAFn⟩ ⟨d, hDn⟩ = 1 :=
+    pxBlk_one_nat hAFn hDn (by omega) (by omega) (by omega) (by omega)
+  have xAF : pxBlk n a b e ⟨a + f, hAFn⟩ ⟨d, hDn⟩ = 1 := by
+    rw [hE ⟨a + f, hAFn⟩ ⟨d, hDn⟩]
+    exact yAF
+  obtain ⟨_, hAE1, _, _⟩ := pxBlk_eq_nat hAFn hDn xAF
+  -- hAE1 : a + f ≤ a + e
+  have eLeF : e ≤ f := by omega
+  have fLeE : f ≤ e := by omega
+  have hfe : f = e := le_antisymm fLeE eLeF
+  simp [hac, hbd, hfe]
+
+theorem pxMul_apply {n : ℕ} (A B : pxMat n) (i j : Fin n) :
+    pxMul A B i j = ∑ k, A i k * B k j :=
+  rfl
+
+/-- The algebraic bridge: for legal blocks, the ordinary product is nonzero
+iff the column interval `b..b+e` of the first meets the row interval
+`c..c+f` of the second (source Theorem 3, transported). -/
+theorem pxMul_ne_zero_iff {n a b e c d f : ℕ}
+    (ha : a + e + 1 ≤ n) (hb : b + e + 1 ≤ n) (hc : c + f + 1 ≤ n) (hd : d + f + 1 ≤ n) :
+    (pxMul (pxBlk n a b e) (pxBlk n c d f)) ≠ pxZero n ↔ b ≤ c + f ∧ c ≤ b + e := by
+  constructor
+  · -- a nonzero product has a nonzero entry, whose index lies in both intervals
+    intro hprod
+    by_contra hcon
+    have hdisj : c + f < b ∨ b + e < c := by
+      rcases Nat.lt_or_ge (c + f) b with h | h
+      · exact Or.inl h
+      · refine Or.inr ?_
+        have hnc : ¬ (c ≤ b + e) := fun h' => hcon ⟨h, h'⟩
+        omega
+    have hall : ∀ i j : Fin n, pxMul (pxBlk n a b e) (pxBlk n c d f) i j = 0 := by
+      intro i j
+      show ∑ k, pxBlk n a b e i k * pxBlk n c d f k j = 0
+      apply Finset.sum_eq_zero
+      intro k _
+      by_cases hX : pxBlk n a b e i k = 0
+      · simp [hX]
+      · obtain ⟨hi1, hi2, hk1, hk2, hX1⟩ := pxBlk_one_of_ne_zero hX
+        by_cases hY : pxBlk n c d f k j = 0
+        · simp [hY]
+        · obtain ⟨hk1', hk2', hj1, hj2, hY1⟩ := pxBlk_one_of_ne_zero hY
+          exfalso
+          omega
+    exact hprod (funext fun i => funext fun j => hall i j)
+  · -- overlapping intervals give a common index with a nonzero product entry
+    rintro ⟨hov1, hov2⟩
+    have hAn : a < n := by omega
+    have hDn : d < n := by omega
+    have hKn : max b c < n := by omega
+    have hXk : pxBlk n a b e ⟨a, hAn⟩ ⟨max b c, hKn⟩ = 1 :=
+      pxBlk_one_nat hAn hKn (by omega) (by omega) (by omega) (by omega)
+    have hYk : pxBlk n c d f ⟨max b c, hKn⟩ ⟨d, hDn⟩ = 1 :=
+      pxBlk_one_nat hKn hDn (by omega) (by omega) (by omega) (by omega)
+    intro hz
+    have h0 : ∑ k : Fin n, pxBlk n a b e ⟨a, hAn⟩ k * pxBlk n c d f k ⟨d, hDn⟩ = 0 := by
+      have h0' := congrFun (congrFun hz ⟨a, hAn⟩) ⟨d, hDn⟩
+      rw [pxMul_apply, pxZero_apply] at h0'
+      exact h0'
+    have h2 := pxSingleLower (pxBlk n a b e) (pxBlk n c d f) ⟨a, hAn⟩ ⟨d, hDn⟩ ⟨max b c, hKn⟩
+    rw [hXk, hYk] at h2
+    omega
+
+SOURCE LINES 1415
+255                xij =                                                        ,   i, j ∈ N.   (4)
+262   are given by (4). We can thus consider the set of elements of S∞ to be
+308 terms of the vectors Vq introduced in Section 2, it is apparent from (4) that
+337 x 6= 0; furthermore, comparison of (16) and (10) to (4) and (5) gives the top equality,
+362                 Mn = {0} ∪ {x ∈ S∞ \ {0} : m ≤ n − max(0, d)}.                      (17)
+368 Any nonzero x ∈ Mn has matrix entries xij that are given by (4), but with
+375                                                                       (18)
+377 In addition to k, m ∈ {1, 2, . . . , n}, the restrictions written in (18) imply
+379                                − (n − 1) ≤ d ≤ n − 1,                               (19)
+386 for any hd, k, mi ∈ Mn \ {0}; (19) is the range of the diagonal d, as expected.
+391 Theorem 3 Mn is a noncommutative monoid with 1 = h0, 1, ni. The product of two
+392 nonzero monoid elements hd, k, mi and hd0 , k0 , m0 i—see (18)—is given by
+403                  1 − min(0, d00 ) ≤ k00        and   m00 ≤ n − max(0, d00 ).            (24)
+407 Proof As hd, k, mi and hd0 , k0 , m0 i belong to Mn \ {0}, (18) gives
+410 d, d0 , and d00 ) that d00 and m00 satisfy the second inequality in (24). Since Mn is a
+412 inequality in (24). Since h0, 1, ni represents the n × n identity matrix, the equality
+414 (18) to show that xh0, 1, ni = h0, 1, nix = x for every x = hd, k, mi ∈ Mn \ {0}.)
+434 The first and last of the four were known beforehand from (18). The second and
+443 using Theorem 3, Remark 1, and induction:
+565 Proof We take d ≥ 0. Then (18) and x = hd, k, mi ∈ Mn \ {0} yield
+571 which, because of (18), must also satisfy
+583 tents. For nonzero nilpotents and for j ≥ 2, the theorem and (19) (or, alternatively,
+610 written in the right-hand side of (35). Alternatively, (19) and (18) give
+643 The table given above can then be verified using Theorem 3 (or by multiplying the
+741 with 0 ≤ rnk(x) ≤ n. By Theorem 3 (or by the identical result in Rn [6]),
+774 Now write the conditions in (18) for d, k, m, and again for d , k , m . Upon invoking
+840 By (18) and Corollary 1, ψ(n) is given by
+846                                                                                           (53)
+858                                  r(n) =                      .                            (54)
+866 Conjecture 1 For n ∈ N, ψ(n) equals the (n + 1)th Polynexus number of order 7
+869                    ψ(n) =                               .                (55)
+872    This conjecture was verified for all n ≤ 70. Provided that it is true, (54),
+873 (35), and (55) give a closed-form expression for r(n):
+880 Conditional Proposition 1 If Conjecture 1 is true, then the ratio r(n) of nonzero
+921 Remark 3 The three sums in the second line of (53) form a triple sum which depends
+929 verified from Theorem 3 that, for n ≥ 3, the following subset of Mn
+972 where the second expression follows from (18). As another example,
+989 Proof The first statement is evident from Theorem 3 and the table’s third column,
+1117    i=1 di ≥ p by (59); eqn. (69) and Theorem 3 then show that the product       i=1 xi
+1166 which are consequences of Theorem 3. By Proposition 5, any set generating Mn must
+1189 which follows from Theorem 3 and Corollary 2. This proves that we can generate
+1325 resentation of the product of two monoid elements (Theorem 3). Our results
+REVIEW TAIL
+
+Ordinary proof PASS. Source definition and ordered-pair binding PASS. Literal standalone wording QUALIFIED/HOLD pending explicit source-bound adjudication. Original final journal authentication PASS. Material companion subsumption check PASS (no target implication found). Bounded named prior comparison PASS as a non-subsumption analysis, not worldwide clearance. Current registry prior gate HOLD. Novelty UNESTABLISHED. Significance QUALIFIED PASS, root decides. Formal endpoint, literal bridges, axiom audit, strict extracted replay and manuscript NOT DONE. Operational and frozen-integrity results are separate machine records, not proof of these scientific gates. Acceptance HOLD, credit 0.
+
+No Pi brief is dispatched or supplied as ready for execution while these gates remain unresolved. A future authorized formalization must represent actual source matrices or prove a multiplicative equivalence from the literal source monoid to interval pairs; include zero and identity; define psi as ordered operand-pair cardinality; prove the overlap criterion and every gap/convolution/polynomial bridge; use positive n with the explicit n=1 definition; state an integer multiplied equality before deriving the rational quotient; pin dependencies; audit allowed axioms; and undergo independent fidelity review and extracted replay. An abstract interval count by itself is insufficient.
+
+All writes are inside this assigned lane using the supplied writer, including source downloads and rendered pages. The first bootstrap and frozen-before records were preserved. Only assigned cached bodies and relevant inventories were read; protected worker/crown/bunkbed/tournament bodies were neither investigated nor hashed. Fixed 126-input hashing is performed only by the mandated verifier. No children, dispatch, mathematical program, numerical experiment, solver, CAS, Lean/compiler, git, install, external mutation or paper was used. Receipt and source hashes are verified in the final manifest; explicit self-exclusions avoid self-hash claims. Resource sampling can miss fast processes and does not establish an aggregate child CPU or cgroup bound. All launched jobs are synchronous and reaped. See the final verification and inventories for actual exits and limits.

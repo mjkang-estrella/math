@@ -1,0 +1,3 @@
+# Visual QA
+
+All four final 110-dpi PNGs were visually inspected. PASS: consistent A4 top/side margins, Roman body with bold headings, readable ASCII formulas and source-bound interpretation, no clipping/overlap/missing glyphs, and footers Page1-4. The complete independently reviewed statement/proof is present. Stale campaign count was removed in favor of the separate root accounting record. No mathematical or production Lean edits were made. ReportLab was unavailable in the system Python; the recorded failed runtime inspection is preserved, and the already available groff/ps2pdf toolchain produced the final document.

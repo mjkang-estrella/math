@@ -1,0 +1,30 @@
+from pathlib import Path
+import json,re,hashlib,subprocess,sys,os
+lane=Path.cwd()
+def save(p,x):
+ s=x if isinstance(x,str) else json.dumps(x,indent=2)+'\n'
+ subprocess.run([sys.executable,'-I','-B','write_lane.py',p],input=s,text=True,check=True)
+def digest(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+mode=sys.argv[1]
+if mode=='inventory':
+ receipts=[]
+ for p in sorted(Path('receipt').glob('*.json')):
+  r=json.loads(p.read_text()); lp=Path(r['log']); assert digest(lp)==r['log_sha256']; assert r['group_members_left']==[]
+  receipts.append({'path':str(p),'sha256':digest(p),'label':r['label'],'exit':r['exit'],'guard':r['guard'],'wall_ms':r['wall_ms'],'sampled_group_rss':r['peak_group_rss_bytes_sampled'],'reaped_child_cpu_s':r['cpu_reaped_child_delta_s'],'group_members_left':r['group_members_left']})
+ save('results/receipt-inventory.json',{'completed_receipts':receipts,'terminal_receipts_added_to_manifest_later':True})
+ sm={str(p):{'sha256':digest(p),'declarations':{m.group(2):p.read_text()[:m.start()].count('\n')+1 for m in re.finditer(r'^(def|abbrev|theorem) (\w+)',p.read_text(),re.M)}} for p in sorted(Path('src').glob('*.lean'))}
+ save('results/source-map.json',sm)
+ save('results/read-resource-inventory.json',{'production':'All twelve full module sources read in dependency order, including proofs. Exact source hashes/declaration lines in source-map.json.','primary_reads':{'input/source-arxiv.txt':[[65,110],[170,245],[355,442],[825,930]],'input/original-journal.txt':[[838,850],[885,925],[1010,1082],[1454,1512]],'input/original-journal.html':'Equation (4), bound, conjecture, Remark3 snippets directly compared','input/companion-journal.txt':'entire mathematical body from Introduction through final theorem and references in two slices','input/prior-2014.txt':'complete text in two slices'},'reviews':'Complete copied MODEL-AND-BRIDGES, independent-count-review, current-prior-review, REVIEW, author-count-proof, author-manuscript, SUMMARY; root preparation, model integration, inventories, clean setup, keyed results and audit sources/results. Some first combined tool responses truncated; material texts reread in bounded outputs. No full original-journal/arxiv whole-paper read claimed.','author_evidence':'Only exact author r11 files authorized by full manifest. Sixteen final full audit logs parsed, hash-bound, exhaustive types/bodies/origins/safety checked; old failure receipts retained in immutable evidence. No other old formal bodies followed.','own_execution':'12 source-only rebuilds; 12 module-name kernel checker runs; 16 whole-closure body-output shards; separate partial/safety audit; ControlsV2; two expected-failure negatives. Audit tooling is metaprogramming outside production.','resources':'Every substantive operation via unchanged runner: affinity<=2, CPU120, devguard130, wall140, AS12GiB, sampled group RSS6GiB, arena2. No whole-cgroup/aggregate process CPU guarantee. Completed receipts validate empty remaining process groups.','startup_deviations':['First exact bootstrap and second before verifier passed.','Initial capped inspection output captured only to log; attempted /dev/tty visible output failed because new session has no controlling terminal. Diagnostic-driven output uses capped reader opening runner parent stdout through /proc; caps and wrappers unchanged. Read bodies displayed live, not duplicated in those reader logs.','One inventory inline Python had an extra closing parenthesis and failed; corrected once.','One tool call supplied an unset orchestration working-directory store while another exec was running, so Python could not find runner.py from workspace root; no reader/writer ran. Reran with explicit assigned directory.','Own Controls initial attempt rejected deprecated if_pos/if_neg under warnings-as-errors; original retained, ControlsV2 uses documented ite_eq_left/right. Production untouched.'],'prohibited_actions':'No children/model change, network, external math software, enumeration/CAS/solver, git, install, external messages, shared ledger/parent/dependency/source writes. tmp/cache directories were only supplied runner-managed sandbox locations; no system /tmp access.','pdf':'No PDF generated; optional rendition omitted. Manuscript reviewed as immutable Markdown, no PDF skill marker or rendering/visual-QA claim.'})
+elif mode=='seal':
+ active=next(Path('logs').glob('*_seal-manifest.log')); stamp=active.name.split('_')[0]
+ exclusions={'results/manifest.json':'manifest self exclusion','results/manifest-verification.json':'terminal verification result',str(active):'active sealing log',f'receipt/{stamp}_seal-manifest.json':'receipt completes after sealing'}
+ # Future verification log/receipt are excluded by precisely named label, since its timestamp does not exist yet.
+ files={str(p):{'bytes':p.stat().st_size,'sha256':digest(p)} for p in sorted(lane.rglob('*')) if p.is_file() and str(p.relative_to(lane)) not in exclusions}
+ files={str(Path(k).relative_to(lane)):v for k,v in files.items()}
+ save('results/manifest.json',{'files':files,'exclusions':exclusions,'future_terminal_patterns':{'logs/*_verify-manifest.log':'active terminal verification log','receipt/*_verify-manifest.json':'terminal verification receipt'},'all_completed_preseal_receipt_jsons_included':True,'credit':0})
+elif mode=='verify':
+ m=json.loads(Path('results/manifest.json').read_text()); bad=[p for p,v in m['files'].items() if digest(Path(p))!=v['sha256'] or Path(p).stat().st_size!=v['bytes']]
+ extras=[str(p.relative_to(lane)) for p in lane.rglob('*') if p.is_file() and str(p.relative_to(lane)) not in m['files'] and str(p.relative_to(lane)) not in m['exclusions'] and not any(p.match(pat) for pat in m['future_terminal_patterns'])]
+ assert not bad and not extras,(bad,extras)
+ save('results/manifest-verification.json',{'verified_files':len(m['files']),'mismatches':bad,'unnamed_extras':extras,'manifest_sha256':digest(Path('results/manifest.json')),'exclusions':m['exclusions'],'terminal_patterns':m['future_terminal_patterns']})
+print('DONE',mode,file=open(f'/proc/{os.getppid()}/fd/1','w'))

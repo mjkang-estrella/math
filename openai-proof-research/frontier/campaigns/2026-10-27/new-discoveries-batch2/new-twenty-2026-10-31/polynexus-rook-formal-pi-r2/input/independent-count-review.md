@@ -1,0 +1,76 @@
+# Independent review: MathDB 352496
+
+Disposition: **HOLD for acceptance; PASS for the ordinary theorem under the authenticated source semantics.** Credit 0; campaign stays 52/60 beyond the prior 39. This is an independent source/ordinary/prior/significance review, not a formal certificate or acceptance. No mathematical code was executed. The author proof was challenged at every counting and algebraic step below.
+
+## Literal statement and source gate
+
+The frozen record calls M_n the monoid of rook diagrams and psi the number of nonzero products. Taken as a self-contained definition this is ambiguous: the entire rook monoid R_n contains partial injections with holes and with several diagonals. Counting distinct outputs is also different from counting operand pairs. I do not silently redefine either phrase. The record explicitly cites Fikioris–Fikioris, arXiv:2111.01863, mentions its sextuple sum and gives exactly Conjecture 1's formula. These references uniquely identify the intended source question. Thus source-bound intended fidelity PASS; autonomous literal wording remains qualified and must be explicitly adjudicated by root before an exact MathDB formal endpoint is claimed.
+
+The actual original version of record is George Fikioris and Giannis Fikioris, A subsemigroup of the rook monoid, Semigroup Forum 105, 191–216 (2022), DOI https://doi.org/10.1007/s00233-022-10302-5. Publisher body acquired November 7, 2026 UTC; publication July 7, 2022, accepted June 20, received November 19, 2021. Its §4 (17)–(24) and §8 (53)–(55), Remark 3 agree with the cached May 25, 2022 arXiv v3 on the material definitions and conjecture. The journal retains the conjecture; it does not provide its analytic evaluation. DOI 10.1007/s00233-022-10280-8 previously acquired by the author is unrelated and contributes no clearance. Cached 2112.15587 is unrelated and was not used.
+
+Specifically, source §3 (4) defines nonzero matrices by x_ij=1 iff k<=i<=m and j=i+d. In §4 (18), d is integral, k,m positive integral, and
+1-min(0,d)<=k<=m<=n-max(0,d).
+These are precisely uninterrupted blocks on a single diagonal, together with zero. Multiplication is ordinary matrix multiplication, not a Boolean convention substituted by the reviewer. Theorem 1's proof computes its entries, and Theorem 3 gives the finite matrix formula. §8 (53) counts each admissible pair of triples once. Remark 3 says the inner sum counts the y for a fixed x. Identity multiplicities in (54) give a second check. Distinct nonzero outputs would instead number |M_n|-1, since every x occurs as 1*x; that interpretation cannot support this theorem and any wording correction alone earns zero credit.
+
+Source §2 uses N for positive integers. §4 initially fixes n>=2; Conjecture 1 states n in N. The printed matrix definition extends canonically to n=1, where there are zero and identity and a single nonzero operand pair. The proof below explicitly covers that extension. This does not assert that source Theorem 3's noncommutativity survives n=1. No n=0 convention is imported, and no endpoint repair is credited.
+
+## Standalone all-positive-n proof and adversarial checks
+
+Fix n>=1. For each nonzero source matrix define I=[k,m] and J=[k+d,m+d] as nonempty integer intervals in [n]. They have the same length. Conversely, for any such pair I=[u,u+a-1], J=[v,v+a-1], set k=u,m=u+a-1,d=v-u. Membership of both intervals in [n] gives k>=1, k+d>=1, m<=n, m+d<=n. These four inequalities are equivalent to the printed lower and upper bounds. The matrix with ones (i,i+d), i in I, then belongs to M_n. The maps are inverse: row and column supports recover I,J, while their minima recover d. This includes length one and the full identity interval. There is no quotient by translations or by equal products.
+
+For x=(I,J), y=(K,L), let their shifts be d and e. In the ordinary product, the (i,h) entry is sum_j x_ij y_jh. Its only possible nonzero summand has j=i+d in J intersect K and h=j+e. There is at most one such j, so no cancellation, multiplicity of entries, or Boolean reinterpretation is involved. Conversely each j in J intersect K gives one product entry equal to one. Thus xy!=0 iff J intersect K is nonempty. Its row support is I intersect (K-d), with endpoints max(k,k'-d), min(m,m'-d), and its shift is d+e. This reproduces Theorem 3 with the actual operand order. Closure and all finite-bound constraints follow because both the intermediate and output indices remain in [n].
+
+For length a there are n-a+1 possible row intervals and independently as many column intervals. Therefore the number of nonzero operands is
+T_n=sum_{a=1}^n(n-a+1)^2=sum_{r=1}^n r^2=n(n+1)(2n+1)/6.
+For completeness the polynomial F(n)=n(n+1)(2n+1)/6 has F(0)=0 and F(n)-F(n-1)=n^2 by factoring n/6 times ((n+1)(2n+1)-(n-1)(2n-1))=n/6 times 6n. This proves the square sum by induction, not sampling.
+
+Every disjoint pair of nonempty intervals J,K has exactly one strict ordering. Let D_n count ordered operands whose J is left of K. The map
+((I,J),(K,L)) -> ((L,K),(J,I))
+is an involution on nonzero operand pairs, obtained by reversing order and transposing both matrices. It interchanges the two strict orderings, because the new intermediate intervals are K,J. It does not assume xy=yx. Therefore the number of zero pairs is exactly 2D_n, and psi(n)=T_n^2-2D_n. Zero operands were excluded throughout, and identity operands are included.
+
+Fix lengths a=|J|, b=|K|. Disjointness requires a,b>=1 and a+b<=n. Put t=n-a-b. For J left of K write g0,g1,g2 for unused positions before J, between J and K, after K. They are nonnegative with sum t. Conversely such a triple reconstructs J starting at g0+1 and K starting at g0+a+g1+1, with prescribed lengths a,b. Thus it reconstructs the placement uniquely, including adjacency g1=0. Two separators among t+2 positions count these triples as binom(t+2,2). Independently choose I of length a in n-a+1 ways and L of length b in n-b+1 ways. There are no extra restrictions on d,e: the already proved interval-to-matrix inverse ensures all are legal. Hence
+D_n=sum_{a,b>=1,a+b<=n} binom(n-a-b+2,2)(n-a+1)(n-b+1).
+Each ordered operand pair has unique lengths, gaps and remaining intervals, proving both surjectivity and absence of overcounting. If a+b>n there is no placement, not a negative gap.
+
+All series now lie in Q[[z]]. Geometric inverses exist because 1-z has constant coefficient one. Every coefficient in the following sums is finite: a,b>=1 and t>=0 force a+b+t=n. Termwise formal differentiation and regrouping are therefore legitimate; no convergence assertion is used. Define A=sum_{a>=1}z^a=z/(1-z) and B=sum_{a>=1}az^a=z/(1-z)^2, the latter by differentiating A and multiplying by z. Let c_t=binom(t+2,2). The three-gap bijection gives U0=sum c_t z^t=(1-z)^(-3). For theta=z*d/dz, (theta+1) acts coefficientwise by t+1. Thus
+U1=(theta+1)U0=(1+2z)/(1-z)^4,
+U2=(theta+1)U1=(1+7z+4z^2)/(1-z)^5.
+The second numerator is explicitly (1+4z)(1-z)+4z(1+2z)=1+7z+4z^2; this checks the weighted derivative rather than citing it.
+
+Since n=a+b+t, the placement weight is (b+t+1)(a+t+1)=ab+(a+b)(t+1)+(t+1)^2. Cauchy multiplication therefore yields
+D(z)=B^2 U0+2AB U1+A^2 U2
+=z^2[1+2(1+2z)+(1+7z+4z^2)]/(1-z)^7
+=z^2(4+11z+4z^2)/(1-z)^7.
+Seven nonnegative gaps show [z^r](1-z)^(-7)=binom(r+6,6) for r>=0, zero for negative r. Consequently
+D_n=4 binom(n+4,6)+11 binom(n+3,6)+4 binom(n+2,6).
+These shifts are respectively z^2,z^3,z^4. For n>=1 each upper argument is nonnegative; whenever below 6, the six-factor falling product has a zero factor. Thus the factorial polynomial expressions remain valid at every small n; they do not use an inappropriate generalized binomial for a negative upper argument.
+
+Here is an independently hand-checked expansion valid including the boundary zeroes:
+720D_n = n(n-1)(n+1)(n+2) times
+[4(n+3)(n+4)+11(n-2)(n+3)+4(n-3)(n-2)]
+= n(n-1)(n+1)(n+2)(19n^2+19n+6)
+=19n^6+57n^5+25n^4-45n^3-44n^2-12n.
+Also 36T_n^2=n^2(n+1)^2(2n+1)^2=4n^6+12n^5+13n^4+6n^3+n^2. If P and Q denote respectively these last two coefficient polynomials (P for 36T_n^2, Q for 720D_n), then
+120(T_n^2-2D_n)=(10P-Q)/3
+=7n^6+21n^5+35n^4+35n^3+18n^2+4n.
+Expanding (n+1)^7-n^7 gives coefficients 7,21,35,35,21,7,1 in descending degrees 6 through 0. Subtracting (n+1)^3-n^3=3n^2+3n+1 leaves exactly the preceding polynomial. Therefore for every positive n,
+psi(n)=((n+1)^7-n^7-(n+1)^3+n^3)/120.
+At n=1 the gap sum is empty, T=1 and psi=1. At n=2 the only length pair in D is a=b=1,t=0: one middle placement times two choices each of I,L gives D=4; T=5, so psi=17. These boundary checks supplement the all-n argument; no finite-value inference or enumeration was used. There is no division in N truncating a rational count: the primary statement is the multiplied-by-120 equality in Z or Q.
+
+## Prior-body audit and significance judgment
+
+The actual companion is arXiv:2302.09496v2, August 30, 2023; the publisher version is DOI https://doi.org/10.1007/s00233-023-10393-8, October 19, 2023. Its (2)–(5) allow real triples; imposing integer coordinates recovers M_n. Product formula (4) preserves the same zero criterion. Height (16), rank relation (21), and product-height inequality (20) do not enumerate operand pairs. Corollary 4 concerns equality of intermediate supports for a restricted groupoid product, a stricter condition than nonempty intersection. Real scaling in Proposition 2 does not preserve the integer lattice for arbitrary n,q, and uncountable monoid cardinalities supply no integer point convolution. Theorems 4–9 concern structural properties, ideals, roots, Brandt structure and Sierpinski rank; their bodies give no finite pair-count evaluation. This is a material scope analysis, not term-grep clearance. Full cached text was visibly read in two bounded parts; publisher material passages were compared, with truncation limits in the read inventory.
+
+A precise named earlier comparison was acquired: Al-Kharousi–Kehinde–Umar, Combinatorial results for certain semigroups of partial isometries of a finite chain, Australas. J. Combin. 58(3), 365–375 (2014). Definitions (1),(2) permit arbitrary domains, including holes. M_n embeds in ODP_n by i -> i+d on an interval; zero maps to the empty map and products agree. The embedding is not onto for n>=3: the identity restricted to {1,3} lies outside M_n. Proposition 2.4 counts individual maps by image size, Theorem 2.6 counts all maps, and §3 counts D-classes through gap vectors. None provides the ordered zero/nonzero pair incidence restricted to consecutive supports. Rank-only marginals cannot specify whether two particular intermediate supports intersect. The required extra transport is precisely the independent-interval and gap-weight computation above; it is not delivered by that earlier theorem. Hence this named paper does not justify exclusion by a completed earlier-result bridge. All 11 pages were extracted and read; formula pages 368,369,372 were rendered and inspected.
+
+The strongest routine objection is that source Theorem 3 already reduces the problem to overlap of two translated intervals; after that recognition, gap compositions and elementary weighted convolutions finish it. The essential contribution is the complete reduction of the six constrained source parameters to disjoint middle intervals with independent outer placements, including multiplicity. This resolves the exact source conjecture for all n and is more than changing its wording, endpoint, or a parameter instance. I judge significance a qualified PASS for further root consideration: the available named prior bodies do not subsume that reduction. I do not recommend routine exclusion merely from standard tools, shortness or the source's age. Conversely the proof and the old conjecture label establish neither worldwide novelty nor the campaign's final substantive credit determination. Root retains adjudication.
+
+Three targeted public search batches (eight queries) identified the correct DOI and the named 2014 primary body. Four explicit GET attempts were made: original journal, companion journal, 2014 journal PDF, and OEIS A083200. The first three succeeded; OEIS returned 403 and was not retried or accessed through an alternate route. Its unread current comments remain a narrow sequence-specific coverage limit, not proof of an applicable earlier solution. Search transport telemetry and internal fetch counts are unavailable; no invented HTTP receipts or retrospective cap claims are made for the search service. No additional web opens, browser, APIs or registry-root scans were used. No matching current public-proof theorem was identified, so no verified current registry head, exact theorem scope or proof commit chronology is claimed. The required registry clearance remains unpaid. Search non-discovery is not an absence theorem. No new-to-world assertion is warranted.
+
+## Separate remaining gates and integrity
+
+Ordinary proof PASS. Source definition and ordered-pair binding PASS. Literal standalone wording QUALIFIED/HOLD pending explicit source-bound adjudication. Original final journal authentication PASS. Material companion subsumption check PASS (no target implication found). Bounded named prior comparison PASS as a non-subsumption analysis, not worldwide clearance. Current registry prior gate HOLD. Novelty UNESTABLISHED. Significance QUALIFIED PASS, root decides. Formal endpoint, literal bridges, axiom audit, strict extracted replay and manuscript NOT DONE. Operational and frozen-integrity results are separate machine records, not proof of these scientific gates. Acceptance HOLD, credit 0.
+
+No Pi brief is dispatched or supplied as ready for execution while these gates remain unresolved. A future authorized formalization must represent actual source matrices or prove a multiplicative equivalence from the literal source monoid to interval pairs; include zero and identity; define psi as ordered operand-pair cardinality; prove the overlap criterion and every gap/convolution/polynomial bridge; use positive n with the explicit n=1 definition; state an integer multiplied equality before deriving the rational quotient; pin dependencies; audit allowed axioms; and undergo independent fidelity review and extracted replay. An abstract interval count by itself is insufficient.
+
+All writes are inside this assigned lane using the supplied writer, including source downloads and rendered pages. The first bootstrap and frozen-before records were preserved. Only assigned cached bodies and relevant inventories were read; protected worker/crown/bunkbed/tournament bodies were neither investigated nor hashed. Fixed 126-input hashing is performed only by the mandated verifier. No children, dispatch, mathematical program, numerical experiment, solver, CAS, Lean/compiler, git, install, external mutation or paper was used. Receipt and source hashes are verified in the final manifest; explicit self-exclusions avoid self-hash claims. Resource sampling can miss fast processes and does not establish an aggregate child CPU or cgroup bound. All launched jobs are synchronous and reaped. See the final verification and inventories for actual exits and limits.

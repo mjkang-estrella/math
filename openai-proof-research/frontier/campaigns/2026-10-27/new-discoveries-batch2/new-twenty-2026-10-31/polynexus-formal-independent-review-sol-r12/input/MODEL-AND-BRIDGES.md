@@ -1,0 +1,88 @@
+# Faithful model and complete ordinary bridges — 352496
+
+This is an ordinary mathematical specification, not executable formal code. Fix an integer n>=1. All subtraction in signed formulas below is in Z, not truncated natural subtraction. Source: copied arXiv:2111.01863v3, §2, §3 (4)–(16), §4 (17)–(24), §8 (53)–(55), Remark 3. The cached literal record is interpreted through that cited source. No entire-rook-monoid or distinct-output interpretation is asserted.
+
+## 1. Source parameters and exact index dictionary
+
+Let Trip_n consist of triples (d,k,m) with d in Z, k,m positive integers and
+1-min(0,d)<=k<=m<=n-max(0,d).
+The matrix X(d,k,m), indexed by 1<=i,j<=n, has entry 1 exactly when k<=i<=m AND j=i+d, otherwise 0. M_n is {zero} union these matrices, with ordinary finite matrix multiplication. This is one uninterrupted segment on one diagonal. The source's n>=2 construction extends by this same definition to n=1; no claim of noncommutativity at n=1 and no n=0 target is needed.
+
+The printed inequalities are equivalent to the five inequalities k<=m, k>=1, k+d>=1, m<=n, m+d<=n: the lower bound is max(1,1-d), the upper bound min(n,n-d). Thus -(n-1)<=d<=n-1 follows from the first occupied pair (k,k+d) in [n]^2. For fixed d, k ranges from 1-min(0,d) to n-max(0,d), and m ranges from k to the latter upper bound, exactly as in (53).
+
+Define L_n of natural triples (a,b,e) satisfying a+e+1<=n and b+e+1<=n. Length is ell=e+1. At zero-based natural coordinates 0<=r,s<n define
+B(a,b,e)[r,s]=1 iff there exists t with 0<=t<=e, r=a+t, s=b+t; otherwise 0.
+Equivalently a<=r<=a+e, b<=s<=b+e AND s+a=r+b. The last equality is essential. It is also equivalent to the row bounds together with s+a=r+b; column bounds then follow. No natural subtraction is needed in this entry predicate.
+
+Dictionary: a=k-1, b=k+d-1, e=m-k; inverse k=a+1, m=a+e+1, d=b-a in Z. Source inequalities ensure all three forward quantities are nonnegative; the inverse gives k+d=b+1, m+d=b+e+1 and hence every source bound. Composing in either direction gives the original triple. For arbitrary coordinates i=r+1,j=s+1, j=i+d iff s+a=r+b. Bounds k<=i<=m iff a<=r<=a+e. Thus entries agree at EVERY coordinate, not just corner entries. Fin-index representations use the unique element with value r; proof witnesses for r<n do not change the coordinate. Reindexing the middle sum by j=t+1 preserves all n terms and their order-independent sum.
+
+Each legal B is nonzero: B[a,b]=1, since t=0 and a,b<n. Its row support is exactly [a,a+e]: any supported row is in that interval; for every row a+t its column b+t is valid and occupied. Its column support is exactly [b,b+e] by the converse argument. Consequently equal legal matrices have equal support minima a,b and equal support maxima a+e, so equal e. The one-based triples are also unique. This proves parameter injectivity, not just existence of representations. Singleton e=0 is one occupied cell. Length n forces a=b=0,e=n-1 and gives the identity, NOT a filled n-square. Zero is separate, never an empty or illegal parameter. The image of L_n is exactly the set of nonzero source matrices.
+
+Equivalently an operand is an ordered pair (I,J) of nonempty integer intervals of equal length in [n], with the unique increasing translation I->J. Forward I=[k,m], J=[k+d,m+d]; inverse k=min I, m=max I, d=min J-min I. All bounds and entry agreement have just been proved. No arbitrary rook matrix, interval with holes, independent Cartesian support, or quotient by output is introduced.
+
+## 2. Ordinary product entries, explicit coupled witnesses, closure
+
+Take legal X=B(a,b,e), Y=B(c,q,f), with zero-based shifts delta=b-a, epsilon=q-c in Z. Put J=[b,b+e], K=[c,c+f]. For any fixed r,h in [0,n-1], a summand X[r,j]Y[j,h] is nonzero iff there are u in [0,e], v in [0,f] such that
+r=a+u, j=b+u=c+v, h=q+v.
+Then it equals 1. For fixed r there is at most one u and hence at most one j, since r=a+u. Every other term equals zero. Therefore the ordinary sum is EXACTLY 1 when these coupled u,v exist and EXACTLY 0 otherwise. This proves support and entry values, including the all-zero case, without appealing to positivity of an arbitrary coefficient domain. It also proves there is no multiplicity of summands or cancellation.
+
+More explicit formula: set H=max(b,c), U=min(b+e,c+f), using ordinary integer endpoints. If H>U, J and K are disjoint; every possible nonzero summand would require j in both and is impossible, so XY=zero. If H<=U, set
+A=a+(H-b), C=q+(H-c), E=U-H.
+All differences here are nonnegative. A+E=a+U-b<=a+e<n and C+E=q+U-c<=q+f<n; A,C,E are natural and form a legal triple. For each 0<=w<=E the coupled indices are
+j=H+w, r=a+(H-b)+w=A+w, h=q+(H-c)+w=C+w.
+They lie in their required boxes because b<=j<=b+e and c<=j<=c+f. Thus the product entry at (A+w,C+w) has exactly its j-th term 1 and every other term 0. Conversely any nonzero term has j in [H,U], so w=j-H in [0,E] and exactly these r,h. Hence XY=B(A,C,E), as equality of actual matrices at all entries. This is both support and closure, with length E+1. Its shift C-A=delta+epsilon. It is nonzero, for example at the coupled witness (A,C), intermediate H. The obsolete witness (a,q) generally fails when H>b or H>c.
+
+In particular
+XY!=zero iff H<=U iff b<=c+f AND c<=b+e iff J intersects K.
+XY=zero iff U<H iff b+e<c OR c+f<b.
+The forward implication does not assume a nonzero sum has a positive term in an arbitrary ring: the explicit 0/1 entry formula already proves that implication. The reverse uses the actual coupled witness r=a+H-b,h=q+H-c,j=H, all valid. If product were zero, this entry would be simultaneously 1 and 0.
+
+In one-based source notation, with shifts d,d' and rows [k,m],[k',m'], put
+k''=max(k,k'-d), m''=min(m,m'-d), d''=d+d'.
+The entry formula is 1 iff k''<=i<=m'' and h=i+d'', otherwise 0. Indeed the unique candidate j=i+d must lie in [k',m']; its output is h=j+d'. This is exactly the same formula above after reindexing. If k''>m'', all entries vanish. If k''<=m'', the output triple is legal. In fact the outer bounds (24) hold even before the nonempty test: k''>=k>=1 and k''+d+d'=max(k+d+d',k'+d')>=1; m''<=m<=n and m''+d+d'=min(m+d+d',m'+d')<=n. These yield 1-min(0,d'')<=k'', m''<=n-max(0,d''). Empty intervals are handled as zero, not as nonzero triples.
+
+Zero absorbs since every term has a zero factor. Identity is B(0,0,n-1); its usual Kronecker entries give IX=XI=X by a unique middle index. Associativity is inherited from finite ordinary matrix multiplication (finite distributivity and reordering of the double sum); closure just proved makes M_n a monoid.
+
+## 3. Coefficient domain correspondence
+
+The source §2 specifies entries zero and one and ordinary inner products, not a separate scalar field or Boolean addition. A precise convenient model is matrices over N with usual addition and multiplication. Every product on M_n has only 0/1 entries by §2 above. Mapping entries by the canonical N->Z, Q, R, or C map preserves each finite product sum, and is injective on the restricted values {0,1}. More generally any nontrivial unital semiring (0!=1) gives exactly the same support and multiplication, because each entry has either no 1 term or one 1 term. Thus even a ring of positive characteristic has no cancellation issue here. No order is required for the semantic bridge. A trivial semiring is excluded. N is faithful to the source, while a Boolean replacement is unnecessary. Injectivity on all natural numbers is not asserted for arbitrary semirings. Source infinite zero-padding causes no additional terms: all occupied middle indices are <=n.
+
+## 4. Actual pair cardinalities and complete count
+
+Define NZ_n as the actual nonzero source matrices, and
+P_n={(X,Y) in NZ_n x NZ_n : ordinary XY!=zero}, psi(n)=|P_n|.
+This is the definition BEFORE any answer formula. Unique parameters and the interval equivalence give genuine finite bijections. Neither repeated outputs nor identity operands are removed. In (53) the inner bounds say k'<=m+d and m'>=max(k',k+d), together with source legality; these are precisely k'<=m+d and k+d<=m', i.e. intersection of [k+d,m+d] and [k',m']. Thus the source sextuple sum equals this cardinality, once each ordered pair, including equal operands. Remark 3 states this interpretation explicitly. Distinct outputs instead number |NZ_n| because identity produces every operand, and are not the source psi.
+
+Length ell ranges over 1..n. For each ell, row start and column start independently range over 0..n-ell, so
+T_n=|NZ_n|=sum_{ell=1}^n(n-ell+1)^2=sum_{r=1}^n r^2=n(n+1)(2n+1)/6.
+The bijection uses diagonal translations, not filled rectangles. F(n)=n(n+1)(2n+1)/6 has F(0)=0 and F(n)-F(n-1)=n[(n+1)(2n+1)-(n-1)(2n-1)]/6=n^2, proving the last equality inductively over Q.
+
+Zero pairs partition into strict J<K and K<J, by the proven product criterion and nonemptiness. The bijection (X,Y)->(Y^T,X^T) corresponds to ((I,J),(K,L))->((L,K),(J,I)); it swaps intermediate intervals K,J, preserves legality and is its own inverse. This is reverse operand order plus transpose, NOT commutativity and NOT swapping operands alone. Let D_n count J<K. Then the disjoint partition gives |P_n|+2D_n=T_n^2, an equality of natural cardinalities. Use its Z/Q coercion for subtraction.
+
+For fixed a=|J|>=1,b=|K|>=1 with a+b<=n, let t=n-a-b. In zero-based coordinates write starts of J,K as s,u and let
+(g0,g1,g2)=(s,u-s-a,n-u-b).
+J<K means u>=s+a, so all gaps are nonnegative and sum t. Inverse: s=g0,u=g0+a+g1, with g0+g1+g2=t. Adjacency is g1=0 and is disjoint. Pair this gap data with arbitrary starts v of I and w of L in 0..n-a and 0..n-b. The actual matrices are B(v,s,a-1), B(u,w,b-1), hence legal by the bounds. Forward and inverse recover EVERY coordinate; parameter injectivity proves no overcount. No residual diagonal-shift restriction survives. If a+b>n no placement exists. The gap triple is bijective to two positions 1<=p<q<=t+2 by p=g0+1,q=g0+g1+2; inverse g0=p-1,g1=q-p-1,g2=t+2-q. Therefore
+D_n=sum_{a,b>=1,a+b<=n} binom(n-a-b+2,2)(n-a+1)(n-b+1).
+
+The earlier evaluation is unaffected. Here are its full algebraic dependencies, retained and rechecked manually. Work in Q[[z]], coefficientwise finite since a+b+t=n. Let A=z/(1-z), B=z/(1-z)^2 be the series for 1 and a at positive a. Three geometric factors give U0=sum_{t>=0}binom(t+2,2)z^t=(1-z)^(-3). Applying theta+1, theta=z*d/dz, once and twice yields
+U1=(1+2z)/(1-z)^4,
+U2=(1+7z+4z^2)/(1-z)^5.
+Indeed theta U0+U0 has numerator 3z+(1-z)=1+2z, and the next derivative gives numerator (1+4z)(1-z)+4z(1+2z)=1+7z+4z^2. For n=a+b+t the weight (n-a+1)(n-b+1)=ab+(a+b)(t+1)+(t+1)^2. Consequently
+sum D_n z^n=B^2 U0+2AB U1+A^2 U2=z^2(4+11z+4z^2)/(1-z)^7.
+Seven geometric factors count seven-gap compositions: coefficient r>=0 is binom(r+6,6), by the six-separator bijection; negative coefficient indices contribute zero, not truncated exponents. Thus
+D_n=4 binom(n+4,6)+11 binom(n+3,6)+4 binom(n+2,6).
+For n>=1 all upper entries are nonnegative. If upper entry <6 its six-factor falling product has a zero factor, so the same Z polynomial expansion remains valid at the small boundaries.
+
+Explicit expansion, with all factors in Z/Q:
+720D_n=n(n-1)(n+1)(n+2)[4(n+3)(n+4)+11(n-2)(n+3)+4(n-3)(n-2)]
+=n(n-1)(n+1)(n+2)(19n^2+19n+6)
+=19n^6+57n^5+25n^4-45n^3-44n^2-12n.
+The bracket coefficients follow by expanding its three quadratics: 4n^2+28n+48, 11n^2+11n-66, 4n^2-20n+24. Also
+36T_n^2=n^2(n+1)^2(2n+1)^2=4n^6+12n^5+13n^4+6n^3+n^2.
+Writing these polynomials as Q and P respectively, 360psi=10P-Q, hence
+120psi=(10P-Q)/3=7n^6+21n^5+35n^4+35n^3+18n^2+4n.
+The binomial expansion of (n+1)^7-n^7 has descending coefficients 7,21,35,35,21,7,1; subtracting (n+1)^3-n^3=3n^2+3n+1 gives precisely that polynomial. This proves
+120*(psi(n) coerced to Z)=(n+1)^7-n^7-(n+1)^3+n^3
+for every positive n, and division by nonzero 120 in Q proves the source rational formula. No answer-defined psi, natural truncated subtraction or quotient proxy is used.
+
+Boundary audit: n=1 has only (a,b,e)=(0,0,0), identity; one ordered pair, D=0, and numerator 128-1-8+1=120. For n=2, the disjoint-length condition forces a=b=1,t=0, giving D=1*2*2=4; T=5 and psi=17. This is a symbolic boundary check, not program enumeration. Length n is the unique identity interval; edge and singleton operands are included in every bridge. Adjacent middle intervals are zero-product cases; a shared endpoint belongs to the overlap and supplies the unique coupled witness. If t=0 the unique triple is (0,0,0). The ordinary proof has no residual mathematical gap found in this focused review; formal implementation and all acceptance gates remain separate.
