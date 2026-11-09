@@ -1,0 +1,13 @@
+# MathDB 365710 — complete literal Lean endpoint
+
+The formal proof is complete. `Sigma365710.extremal_completeBipartite` proves the requested assertion for every n >= 2 and every maximizing positive proper part a. The actual graph `completeBipartite n a` is connected and CliqueFree 3, and every connected CliqueFree 3 graph on Fin n has sigmaT at most its value. `Sigma365710.attainer_classification` proves that every attainer has nonempty complementary independent parts with every cross pair adjacent. `Sigma365710.mathdb_365710` supplies the existential source-review endpoint. The singleton is treated separately by `sigmaT_singleton`.
+
+The definitions use all unordered vertex pairs, actual graph degrees, and integer subtraction before squaring. There are no assumed deficit, path, injection, bracketing, relabeling, or optimization bridges. See PROOF-MAP.md for the complete map.
+
+The packet pins Lean 4.34.1 and mathlib d13f23b723b8a846827a245b89c10fc7d3f11612. Replay is sequential: strict Lean -j1 -DwarningAsError=true, per-module leanchecker, a full declaration audit, explicit #print axioms, and three expected-rejection mutations. Run `python3 scripts/replay.py` from an extracted packet. It removes local oleans, verifies manifest and binary hashes, and constructs a sanitized environment using only the pinned cache. Every Lean/checker subprocess has affinity to at most two CPUs, CPU 120 seconds, wall 140 seconds, sampled process-group RSS 6 GiB, MALLOC_ARENA_MAX=2, and a 64 GiB virtual-address limit. Source compilation uses one Lean thread.
+
+Fresh extracted replay evidence is recorded in receipts/extracted-replay.json and extracted-replay/replay-logs in the delivery directory. The ZIP manifest hashes its source, scripts, pins, documentation and included input-preservation receipts; generated oleans are excluded. The replay receipt is external to the ZIP to avoid self-reference. The full audit output includes generated declarations and allows only propext, Classical.choice and Quot.sound.
+
+Read-only r1, the author proof, and the source review are hash-bound before and after the work. Selected source material was read before the initial baseline; this timing is explicitly recorded. No input was modified. No child agents, git, shared ledger edits, literature access, external messages, browser tabs, uploads, or publication were used.
+
+Campaign count remains 5/20 beyond 39; zero credit is assigned here. Formal implementation is complete, but root acceptance, independent formal review, and the source review's unresolved novelty/prior-art questions remain outside this implementation packet.
