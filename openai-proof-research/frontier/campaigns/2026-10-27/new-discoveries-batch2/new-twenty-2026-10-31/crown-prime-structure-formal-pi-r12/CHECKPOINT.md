@@ -1,0 +1,1 @@
+Reuse verified read-only r11/r10/r9/r7 imports, no baseline rebuild. Next actual algebra milestone: computed family Pc ideals, coordinate-family quotient kernel and primality, advance determinantal kernel foundation. Definitions and inclusion J<=Pc already exist, not proofs of primarity/colon equality. New compile receipts none yet.
