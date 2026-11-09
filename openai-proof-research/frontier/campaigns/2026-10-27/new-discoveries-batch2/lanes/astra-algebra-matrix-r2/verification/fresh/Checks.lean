@@ -1,0 +1,13 @@
+import ParameterObstruction
+#check MultiplicativeBasisObstruction.no_polynomial_parametrization
+#print axioms MultiplicativeBasisObstruction.no_polynomial_parametrization
+#check MultiplicativeBasisObstruction.parameter_card
+#print axioms MultiplicativeBasisObstruction.parameter_card
+#check MultiplicativeBasisObstruction.coefficient_card
+#print axioms MultiplicativeBasisObstruction.coefficient_card
+#check MultiplicativeBasisObstruction.chart
+#print axioms MultiplicativeBasisObstruction.chart
+#check MultiplicativeBasisObstruction.chart_evaluation
+#print axioms MultiplicativeBasisObstruction.chart_evaluation
+#check MultiplicativeBasisObstruction.generic_coefficients_not_in_any_chart
+#print axioms MultiplicativeBasisObstruction.generic_coefficients_not_in_any_chart
