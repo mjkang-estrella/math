@@ -1,0 +1,3 @@
+# Parent disposition
+
+Read final delegate transcript, SUMMARY.md, full ORDINARY-PROOFS.md and selected result entries. Exact reservation membership and zero-credit/no-endpoint invariants checked. No accepted result. The reported B-spline proof is retained as an unaccepted routine-corollary exclusion, not independently certified mathematics. Boolean compression obstruction and Weyl uniform-rank/full-type gaps remain explicit. Do not repeat already inherited public-proof targets 319961 or 320753 merely because current review depth is cached-only. Assign a sustained full-scope Weyl construction attempt, with mandatory exact Lean formalization if mathematics closes. No new cumulative corpus coverage claim.
