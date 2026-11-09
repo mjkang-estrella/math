@@ -1,0 +1,34 @@
+import SupportData072
+import SignedSupport072_000
+import FiniteSupport072
+import SupportData073
+import SignedSupport073_000
+import FiniteSupport073
+import SupportData074
+import SignedSupport074_000
+import FiniteSupport074
+import SupportData075
+import SignedSupport075_000
+import FiniteSupport075
+set_option pp.all true
+set_option pp.proofs true
+set_option pp.universes true
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let mut count : Nat := 0
+  for (n, ci) in env.constants.toList do
+    let mod := (env.getModuleIdxFor? n).bind (env.header.moduleNames[·]?)
+    if mod.any (fun m => #[`SupportData072, `SignedSupport072_000, `FiniteSupport072, `SupportData073, `SignedSupport073_000, `FiniteSupport073, `SupportData074, `SignedSupport074_000, `FiniteSupport074, `SupportData075, `SignedSupport075_000, `FiniteSupport075].contains m) then
+      count := count + 1
+      logInfo m!"MODULE {mod} DECL {n} TYPE {ci.type}"
+      logInfo m!"BODY {n} {ci.value? (allowOpaque := true)}"
+      logInfo m!"FLAGS unsafe={ci.isUnsafe} partial={ci.isPartial} axiom={ci.isAxiom}"
+      if ci.isUnsafe || ci.isPartial || ci.isAxiom then throwError "forbidden declaration {n}"
+      let axs ← Lean.collectAxioms n
+      logInfo m!"AXIOMS {n} {axs}"
+      for ax in axs do
+        unless ax == ``propext || ax == ``Classical.choice || ax == ``Quot.sound do
+          throwError "forbidden axiom {ax} in {n}"
+      elabCommand (← `(command| #print axioms $(mkIdent n)))
+  logInfo m!"LOCAL_TOTAL {count}"
