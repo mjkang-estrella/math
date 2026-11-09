@@ -1,0 +1,12 @@
+import ShoeMinorization
+#check ENNReal.summable_toReal
+#check ENNReal.tsum_toReal
+#check PMF.toReal_tsum_coe
+#check PMF.tsum_toReal
+#check PMF.summable_coe
+#check PMF.summable_toReal
+#check Summable.of_nonneg_of_le
+#check tsum_le_tsum
+#check tsum_sub
+#check tsum_add
+#check Summable.tsum_sub
