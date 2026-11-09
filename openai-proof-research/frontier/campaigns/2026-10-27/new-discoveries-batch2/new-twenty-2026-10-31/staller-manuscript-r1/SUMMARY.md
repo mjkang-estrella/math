@@ -1,0 +1,18 @@
+# MathDB355140 manuscript/dossier handback
+
+**Draft only; zero credit. Count remains 3/20 beyond 39.** Root paper review, final root replay and acceptance are separate pending gates. No publication or global priority certification.
+
+The seven-vertex simple connected bipartite theta has branches 1-0-5, 1-6-5 and 1-2-3-4-5, edges 01,05,12,16,23,34,45,56, and minimum degree 2. Its exact Staller-start winning number is 4 > ceil(7/2)-2+1 = 3. This refutes Bujtas-Dokyeesun Conjecture 7.2(i) and the MathDB conjunction; clause (ii) remains separately unresolved. It attains the unrestricted ceiling at degree two. No minimum-order, family, asymptotic, general bound or second credit claim.
+
+- `paper.tex` / `paper.pdf`: eight-page manuscript, exact definitions/source scope, graph figure/neighborhood table, all 26 terminal upper histories (70-node tree) and 35-row lower completion table covering all 105 possibilities. Corrected reviewed prose used. The ordinary proof stands independently of Lean compilation.
+- `355140-proof-source.zip`: source-only two-module packet with unchanged Game.lean and separately attributed unchanged reviewer Bridge.lean, all-declaration audit, finite ordinary verifier/tree, pins and instructions. Distinct from the frozen original one-module ZIP.
+- `355140-full-dossier.zip`: paper, proof packet, selected primary/review evidence, complete replay/axiom logs and resource receipts, references and hashes. No recursive historical tree/cache duplication.
+- `results.json`, `manifest.json`, `integrity-before.json`, `integrity-after.json`, `environment-verification.json`, `declaration-audit.json`, `pdf-qa.json`: machine-readable scope and verification.
+
+Fresh safely extracted sanitized strict builds PASS for Game and Bridge; both module leanchecker checks PASS. All 63 main declarations plus the supplement's sole retained declaration are audited with full explicit types/values/proof terms and individual axiom reports. The five anonymous controls compile but are not retained declarations. Only propext, Classical.choice, Quot.sound occur. Negative controls reject a false three-move win, absent module and corrupt module. Game build 6.61s / 3.83GiB sampled RSS; Bridge 1.52s; audit 33.20s. Every invocation stays under the explicit two-CPU, 6GiB sampled RSS, 12GiB AS, 120 CPU/140 wall-second limits, -j1 and MALLOC_ARENA_MAX=2. No job remains.
+
+Lean4.34.1 and mathlib d13f23b723b8a846827a245b89c10fc7d3f11612 are pinned. External caches remain trusted; hashes do not prove source-to-olean correspondence. Same-kernel leanchecker is not an independent foundation. No upstream rebuild or standalone dependency distribution claimed. Both independent complete reports and root integrations are retained; novelty/significance remain qualifiedPASS with literature/access/history limitations. No new network retries.
+
+All 213 frozen bindings match before/after. Game bytes and original ZIP match requested SHA256s; Bridge is unchanged. Every final PDF page rendered and visually inspected; final TeX build has zero warnings, no overflow or broken math glyphs. The final table transcription independently verifies against exact game sets (`python3 verify-paper.py`).
+
+To reproduce formal checks, extract the proof ZIP into a new directory and run `python3 replay.py`; then `python3 ordinary-proof.py`. See its README and pin-evidence.json. `build-paper.sh` rebuilds/render the PDF with an available Tectonic installation and resource bundle; the local preparation used an existing cached installation, offline. Source/reference pin manifests are included; the TeX tool distribution is not bundled. All writes confined to this lane; no git, child agents, shared/frozen edits, external communication or uploads.

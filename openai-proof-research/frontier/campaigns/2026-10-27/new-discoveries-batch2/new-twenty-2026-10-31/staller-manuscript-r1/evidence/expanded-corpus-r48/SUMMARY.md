@@ -1,0 +1,38 @@
+# Expanded corpus r48 — research handback
+
+One full Lean candidate is ready for independent review: **MathDB355140**, a seven-vertex counterexample to Bujtas–Dokyeesun Conjecture7.2(i). Its actual Staller-start winning number is4, while the asserted bound is3. See proof.md, Game.lean and355140-proof-source.zip. No result is selfaccepted; credit is0 and campaign counts remain3/20 beyond39.
+
+The graph has edges01,05,12,16,23,34,45,56 and minimum degree2. This refutes the literal full conjunction by refuting clause(i); it does not separately settle clause(ii). The source has no large-order restriction. Both the preprint and actual published institutional manuscript retain the target bound. A complete ordinary strategy certificate and lower-bound response table accompany the proof. An independent exact-set script verifies all70 upper-tree nodes/26 winning leaves and the lower-bound table. Lean separately proves the generic checker/strategy equivalence, exact optimal winning number and literal source negation; the numerical sweep is not used as a theorem.
+
+Fresh extracted source-only replay PASS:63 local declarations including generated declarations audited; only propext, Classical.choice, Quot.sound. Pinned Lean4.34.1, commit5045d0056413266e57c625dcd7c365b10e377c52; pinned mathlib d13f23b723b8a846827a245b89c10fc7d3f11612. environment.json records actual binary and dependency-manifest hashes. Cached external oleans are trusted, not rebuilt. Strict warningAsError; no sorry/admit/new axioms/unsafe/native_decide/ofReduceBool. Two CPUs,6GiB sampled RSS cap,12GiB virtual cap,120 CPU seconds and140 wall seconds; replay took about6.5s and sampled peak RSS about3.83GiB. A preliminary3GiB RSS run was killed and its receipt/log retained; the finite6GiB budget completed. Initial development diagnostics are in tool history; retained file logs cover final audited builds and fresh replay. No job is left running.
+
+## Coverage and inherited exclusions
+
+Exactly40 ID-keyed entries are in results.json, matching reservation.json unchanged. All40 literal cached statements were read and their exact raw lines preserved, including newline, one-based chunk line, chunk hash, raw-line hash and statement hash. literal-provenance.json and raw/ hold the evidence. This is not40 primary reviews:31 remain literal-only. Nine have targeted primary discussion/definition/theorem/proof review of varying depth, explicitly distinguished in each entry. Downloading a paper is not counted as full proof review.
+
+The40 IDs are outside the checked historical9133 entries and old10000 queue according to the reservation. The full inventory is95675 historical distinct IDs,87990 retrieved records and7685 stubs. Neither assignment-index absence nor a metadata score establishes novelty or global nonreview. input-hash-checks.json distinguishes immutable metadata bindings from mutable ledger context.
+
+The older campaign search located an **unindexed exact public refutation of354603** in inherited Omega sources. Its full problem note and actual Lean proof body were read in this pass. The current D5 tree still lists CrossFrameWelchBoundRefutation. The one-dimensional unequal-norm mechanism independently considered here is already explicitly in that note. The route was stopped and its exclusion retained; no credit or new formalization.
+
+Other exclusions:355149 is already refuted by the target paper's Lemmas3.1/3.2 and Theorem1.7, whose construction/count/amplification proofs were read;354792 is already refuted by the target paper's C4 Corollary2, with its Hilbert-series/characterization proofs read;354957 is already refuted by the source's odd-like optimal LCD codes, with construction/enumerators and Remark3.9 inspected (earlier optimality table not independently read).354657 has an immediate K3 equality-wording defect, excluded under the campaign standard; the intended upper-bound problem is not replaced by that correction. Cached literals354458 and355124 explicitly report prior refutations, but their primary bodies were not read, so they remain parked rather than independently source-cleared.
+
+## Sustained routes and remaining gaps
+
+355140 survived statement, primary published-body, ordinary exact proof and literal Lean checks. Remaining work is independent fidelity/significance/prior-art review and root adjudication; the lane makes no publication or priority claim.
+
+355039 was pursued through actual spectral norm definitions, Proposition3.3, UIT/UPT construction/proof and both preprint and revised published Section3.3. Balanced support plus at most one entry per fiber is insufficient: the published2x2x4x4 example has spectral norm at least2/sqrt3. The missing integral balanced-split theorem cannot be supplied by those necessary conditions. Linear-code/matroid and product/Finner approaches cover restricted mechanisms, not arbitrary support. No certified norm-one nonsplittable witness or full proof emerged; this route is parked. Do not use the paper's norm>1 example as a counterexample to the actual conjecture.
+
+355255/355256 share an extremal family. The actual Definition4.2 defines Z(d) as a *smallest* threshold, contrary to the database's largest-matching wording. The integer-program decomposition proof is conditional on the intermediate extremal graph bound; it cannot prove that input. Source definitions, conditional optimization and revised scope were inspected; no credit for correcting metadata, no family double counting.
+
+## Live prior-art and access limits
+
+Fresh HTTP receipts confirm OpenAI/math HEAD4eaee87548250b2682affda7d05d947c05554bae and Omega HEAD e9b39e568e8e0b68788ec0f007bc0107069db513. OpenAI's complete preprints tree3f56f68a176b4494c346091ea0a319651bc217ec is reused by actual file hash under the unchanged head; the truncated root cache is not used for completeness. Fresh complete current Omega D5 and Problems recursive trees are retained with URL/status/hash receipts. They are path inventories, not all proof/history clearance. Searches were broadened to game/domination/tensor paths; nearby unrelated files do not imply subsumption.
+
+The bounded public searches found no matching355140 settlement, but most registry proof bodies, deleted history, specialist/citing literature and live MathDB solutions were not cleared. Relevant search queries and primary links are recorded in search-scope.json. The accessible published game body was read directly. Publisher Cross-Frame PDF and older Welch institutional PDF returned403; each denial was retained and not retried or bypassed. MathDB/Palomar inherited403 is not clearance. No author contact, tabs, upload, external message, git operation, shared edit or count change occurred.
+
+## Reproduction
+
+- run-lean.py rebuilds Game.lean with strict warnings and finite process limits; package.py creates a source-only ZIP and freshly extracts/rebuilds it under fresh-replay/.
+- diagnostics.py performs the finite graph-atlas diagnostic, using the existing read-only networkx vendor directory documented by the command in diagnostics invocation; results and full output are game-atlas-results.json/game-atlas.log. It checks587 minimum-degree-at-least-two graphs through order7 and finds two diagnostic witnesses. Only the first is developed; the second receives no separate credit.
+- strategy.py emits the full upper strategy tree to strategy.log. ordinary-proof.py independently validates it and constructs/checks the lower-bound response table; ordinary-proof.log and ordinary-certificate.json retain the complete output.
+- build-report.py recreates exactly40 dispositions from preserved literal provenance and records input-hash checks. No accepted ledger is written.

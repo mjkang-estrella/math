@@ -1,0 +1,81 @@
+# Independent fidelity and strict replay review: MathDB355140
+
+Decision: **PASS for exact-source fidelity, ordinary mathematics, Lean semantics, declaration safety, fresh strict replay and scoped source-package integrity.** No blocking objection was found. The independent first review's novelty/significance disposition remains **qualified PASS**, with its stated literature/access limits. This audit does not upgrade that disposition, accept a paper, award credit or certify worldwide priority. Count remains **3/20 beyond 39**.
+
+## Inputs and scope
+
+Read project, batch and current campaign AGENTS; project upstream pin/catalogue; batch ledger/prior-campaign context and current campaign ledger. Inspected author SUMMARY.md, original proof.md, full Game.lean, source ZIP, raw355140, source/registry receipts, independent first REVIEW.md/review.json, and root revision.json/revised proof.md. All **169 frozen-inputs.json bindings match before and after** (integrity-before.json, integrity-after.json). Original frozen files remain unchanged. All writes are inside this assigned review lane. No children, git operations, shared/author edits, publication, upload, external messages or browser tabs.
+
+Exact source Game.lean SHA256:
+`d544e48fd0285dc5a132518f429d2108c2f04866b1ee1b67aaf977bac82e5b50`.
+ZIP SHA256:
+`fb77568d66a9cab5e73b0fc3ea205d3fd2c5e2ce79a4a0b235e89aa20ca4897a`.
+Root revised proof SHA256:
+`561af4aac3c3505f8181eb3d588a03ce2758de2ad3bfc898a8c69e8134993236`.
+Actual binary, manifests, direct-import caches, source and revision hashes are in environment-hashes.json. The frozen manifest itself is hashed in final-integrity.json.
+
+## Gate 1 — literal source and versions: PASS
+
+Read actual §§1.2–1.3 and Conjecture7.2 in both cached arXiv2206.12812v1 (header dated26 June2022) and Discrete Applied Mathematics344(2024)10–22, DOI10.1016/j.dam.2023.11.015. The accessible institutional published PDF sources/game-published.pdf has SHA2567888330345663c5768528277b5bf16734de232b33cc822c76a6a28cb37d2be3a. The first independent review's frozen institutional record/authentication receipts identify the Version of Record; this audit relies on those bounded authentication receipts, and directly reads the published definitions/conjecture. It does not assert a fresh publisher-wide correction search.
+
+The source says players alternately choose an unplayed vertex. Dominator wins by owning a dominating set. Staller wins by owning a whole closed neighborhood. Section1.2 explicitly optimizes the winning player's number of moves against an opponent with the opposite goal. Section1.3 defines Staller's winning number as infinity when she cannot force a win; the primed invariant is Staller-start. There is no passing rule. This is not the ordinary domination game or merely an outcome test.
+
+Conjecture7.2(i) uses ceiling(n/2)−δ(G)+1 conditional on a finite primed winning number. Clause(ii) uses floor(n/2)−δ(G)+1 for Dominator-start. The published and preprint statements agree. No asymptotic, minimum-order, connectedness or bipartiteness restriction rescues clause(i). The cached raw355140 is the conjunction of those clauses. Its older reference list/2009 metadata is not evidence for the date of this exact conjecture.
+
+A finite simple graph on Fin7 is a legitimate source graph. Negating the conjunction by refuting(i) suffices. The package does not separately refute(ii), prove minimum counterexample order, or establish a family, improved general bound or asymptotic theorem.
+
+## Gate 2 — independent ordinary reconstruction: PASS
+
+independent-game.py imports no author solver. Starting only from edges01,05,12,16,23,34,45,56 it derives closed neighborhoods015,0126,123,234,345,0456,156 and degrees2,3,2,2,2,3,2. Minimum degree is exactly2. The graph is simple; its two length2 branches and one length4 branch join1 to5.
+
+The independent minimax uses separate S,D sets and both terminal conditions. At a Staller turn it minimizes1+remaining cost over all unclaimed choices; at a Dominator turn it maximizes remaining cost over all unclaimed choices, including infinity. It stops with0 if S owns a neighborhood and infinity if D meets every neighborhood. Disjointness makes these terminal conditions incompatible. A full board must have one winner: if S contains no neighborhood, every neighborhood meets its complement D. Thus the recursion terminates by available-set cardinality and cannot manufacture an empty-board win.
+
+The initial Staller-start value is4; only opening3 forces a win. The independently computed Dominator-start value is infinity (diagnostic only, no separate source-clause resolution). A separately implemented reduced-board budget checker agrees with explicit-ownership minimax at every one of3^7 disjoint ownership partitions, both turns, and budgets0 through5: **26,244 comparisons**. This finite cross-check supports the semantic audit; it is not a general Lean equivalence theorem or an independent foundational proof checker.
+
+Also independently validated the author's entire upper tree: **70 nodes,26 leaves, maximum4 Staller moves**, every legal D response covered, every S choice legal, every leaf containing an actual closed neighborhood and no earlier D win. The leaf `win` masks record S occupations, which may contain a neighborhood strictly; an initial reviewer checker incorrectly demanded equality to a neighborhood and was corrected to subset containment before the successful full check. No author defect resulted.
+
+Read the revised lower table directly. All35 second-response positions are legal, and all105 legal third S completions contain **none** of the seven neighborhoods. A win with fewer than3 S vertices is impossible because each neighborhood has size≥3. Therefore no strategy forces a win within3 moves, while the upper tree forces one within4. The arithmetic is4>ceil(7/2)−2+1=3.
+
+## Gate 3 — actual Lean semantics and bridges: PASS
+
+* `owns` is an existential vertex whose entire closed neighborhood belongs to S. Its adjacency direction is immaterial because SimpleGraph is symmetric; the central vertex is included explicitly.
+* `Wins.done` requires actual ownership. `Wins.staller` selects one member of available a, inserts it in S, erases it from a, flips to D and spends exactly one budget unit. `Wins.dominator` requires a.Nonempty and quantifies over **every** remaining legal vertex; it erases that vertex, flips to S and spends no budget. There is no pass or cooperative D choice. Inductive inhabitants are finite strategy trees, not infinite/vacuous successful plays.
+* From S=empty and a=univ, legal transitions preserve S∩a=empty. Reconstruct D as univ minus(S∪a): an S move leaves D unchanged and a D move adds exactly its chosen vertex to D. All occupations remain disjoint and partition the board; no repeated move is legal. The formal relation allows artificial overlapping states as general arguments, but endpoints use the valid initial state and transitions cannot enter them.
+* `terminal_incompatibility` proves that disjoint D meeting every neighborhood excludes `owns`. `Wins.not_after_dominator` inducts through an arbitrary alleged strategy, retaining the old dominating D disjoint from S and a, to rule out any subsequent successful tree. Thus omitting explicit D/early stopping does not add a spurious win. These terminal lemmas are not dependencies of the computational endpoint: they justify the external game interpretation. Their being unused by that endpoint is expected, not a hidden assumption.
+* `check_iff` is a full iff for arbitrary finite G,s,a,turn,b, proved by strong induction on a.card. Every recursive erase has a membership proof and strictly smaller cardinality. It handles both turns, zero budget, done and the nonempty D requirement. The independent edge controls include empty Fin0 board, exhausted nonwinning Fin1 board, and both starting players on a singleton. No empty universal D branch yields success.
+* `four_check` and `three_check` use kernel decision. Both feed `check_iff`; no surrogate graph property replaces Wins. `Wins.mono` inducts on the strategy and proves “at most” budget monotonicity on either turn.
+* `winningNumber` returns Nat.find of an existing successful budget in WithTop Nat, else top. Finite play means that an actual forced win has some finite move bound. Nat.find is the minimum and monotonicity identifies a bound on that minimum with a successful budget. Independently compiled `Review.number_le_iff` in extracted/Bridge.lean proves **winningNumber G turn ≤ B iff Wins G empty univ turn B** for arbitrary n,G,turn,B, with the allowed axioms only. This closes the quantitative interpretation independently of the author's prose. The existential branch is finite by construction; absence of every finite successful budget yields infinity.
+* `winning_number_four` proves an equality in WithTop Nat, using a successful4 and monotone exclusion of every budget<4. Its explicit type has no conjectural assumptions. `SourceClaim` expresses the two conditional additive inequalities using actual Wins budgets, not an outcome Boolean. Existential bounded budgets are equivalent to a bound on the minimum by the preceding bridge. Additive b+δ≤ceil(n/2)+1 is the integer inequality b≤ceil(n/2)−δ+1 without truncated natural subtraction. (n+1)/2 is ceiling(n/2); n/2 is floor(n/2). At n7,δ2 this is exactly b≤3. The auxiliary `BudgetClaim` uses natural subtraction; source_refutation does not depend on it or on an unproved global equivalence involving it.
+* `source_refutation` specializes the actual universal source conjunction to graph7,δ2, obtains the finite witness from wins_four, and derives a forbidden3-budget strategy using mono. It genuinely negates SourceClaim. Restricting finite graphs to Fin n is sufficient for this counterexample; no formal arbitrary-label relabeling theorem is needed to exhibit a source counterexample on a finite labeled set. MinDegree demands both the lower bound and an attained degree, excluding a fake choice of δ.
+
+## Gate 4 — all declarations, assumptions and safety: PASS
+
+Fresh import enumeration filters by the actual defining module Game, not a name prefix. All **63 local declarations** are included: instances, graph proof fields, compiler auxiliaries, private equation/splitter lemmas, inductive constructors/recursors/below declarations and final theorems. inventory.log contains full explicit types and available values under **pp.all=true, pp.proofs=true**, plus individual `#print axioms` and transitive collectAxioms results for every declaration. The API rejects unsafe declarations and local axiom declarations. audit-summary.json lists all names and results.
+
+Only **propext, Classical.choice, Quot.sound** occur transitively. No sorry/admit/new axiom/unsafe declaration/native_decide/ofReduceBool is used. The generated name check._unsafe_rec has its unsafe **flag false**; spelling alone is not an unsafe proof primitive. Scanner word matches in audit error strings are diagnostics, not added axioms. Manual inspection of the definitions, proofs and endpoint types found no residual hypotheses, unused unproved bridge disguised as an assumption, or surrogate endpoint. Trusted imported declarations are a distinct upstream limitation below.
+
+## Gate 5 — clean source-only strict replay: PASS
+
+Safely inspected all ZIP members for absolute paths, traversal and symlinks, and rejected binary cache suffixes. The archive contains only Game.lean, run-lean.py and environment.json (zip-members.json). Game.lean in the fresh extraction is byte-identical to the frozen source. No author olean or old local cache was copied. The archive's runner was read, not executed; the independent runner uses a sanitized explicit environment and own limits.
+
+Pinned Lean4.34.1 commit5045d0056413266e57c625dcd7c365b10e377c52; actual binary SHA256e8baaa71855a616dc351028f3ad2200051b0671f423a1696a100e809302d5550. The external manifest pins mathlib d13f23b723b8a846827a245b89c10fc7d3f11612; actual manifest/cache hashes are recorded. LEAN_PATH includes only the fresh extraction and the designated external packages' build/lib/lean directories. MALLOC_ARENA_MAX=2; Lean -j1 and -DwarningAsError=true.
+
+Every managed replay/control has affinity CPUs0,1,6GiB sampled RSS threshold,12GiB address-space limit,120 CPU seconds,140 wall seconds; 25ms sampling may miss transient RSS peaks. OS address-space/CPU limits apply per process; this is not a cgroup aggregate memory attestation. Full stdout/stderr logs and commands/exit/resource receipts are retained. Strict rebuild succeeds in **6.77s**, sampled peak **4,107,087,872 bytes** (~3.83GiB). Independent inventory succeeds in20.75s. Module `leanchecker Game` succeeds in6.60s, sampled peak3,661,623,296 bytes. No job remains running.
+
+Negative controls: absent module rejected; deliberately truncated review-only Corrupt.olean rejected with invalid header; false three-move claim rejected after rewriting with three_check, explicitly proving false=true is false. An initial unreduced imported-check decide attempt was also rejected but stopped on reduction rather than proving falsity; retained separately and not counted as the substantive negative control. Singleton/empty-board positive controls and the quantitative bridge pass strictly.
+
+leanchecker rechecks the freshly generated module using the **same Lean kernel implementation**. It is additional replay evidence, not an independent foundation or separately implemented kernel. External upstream prebuilt oleans remain trusted; no full upstream source rebuild, exhaustive cache-content attestation or imported proof rechecking claim is made. Direct-import cache/manifest hashes identify what was used without proving source-to-olean correspondence.
+
+## Gate 6 — revised prose and package scope: PASS, integration note
+
+prose-revision.diff confirms precisely one sentence changed from the ambiguous “fails to contain every one” to “contains none of the seven closed neighborhoods.” Both original and revision hashes agree with revision.json. Independent105-case verification validates the **revised** sentence. No mathematical statement, table or Lean change was made. The frozen original is unchanged.
+
+The source-only ZIP correctly remains byte-identical and contains no prose. For any later manuscript/dossier, root should use staller-parent-revision-r1/proof.md rather than copy the ambiguous sentence from the frozen original. This is a packaging integration instruction, not a failed mathematical gate. The present ZIP is not a stand-alone upstream environment distribution: external pinned Lean/package caches are required and explicitly documented.
+
+The first review's qualified novelty/significance assessment remains separate. This audit reads its evidence/disposition, source and registry receipts but does not repeat worldwide literature review, refresh registry heads or treat old path inventories as all-proof/history clearance. In particular live MathDB/Palomar access, uninspected specialist/citing bodies and full registry histories remain outside clearance. Paper preparation/review and final root acceptance remain separate gates.
+
+## Reproduction and evidence
+
+Run `python3 replay.py` from this review lane in a fresh lane-local extraction state (the script intentionally refuses to overwrite an existing extracted directory). It safely extracts the frozen ZIP, builds strictly, prints the63-declaration audit and runs leanchecker with managed caps. Then `python3 controls.py` runs the quantitative bridge, edge controls and bad-input tests. `python3 rerun-negative.py` reproduces the explicit false=true negative control. `timeout 30s python3 independent-game.py > independent-game.log` runs the independent game and full tree/table validation; the script enforces two CPUs,512MiB AS and20 CPU seconds. No uncontrolled sweep is used.
+
+Reports: review.json, integrity-before/after.json, final-integrity.json, environment-hashes.json, audit-summary.json, zip-members.json, prose-revision.diff, independent-game.json/log, upper-tree.json; replay/control scripts, complete *.log and resource *.json; exact extracted source and review-only Lean diagnostics. No credit/count file was edited. No blocking actionable objection remains for these scoped gates.
