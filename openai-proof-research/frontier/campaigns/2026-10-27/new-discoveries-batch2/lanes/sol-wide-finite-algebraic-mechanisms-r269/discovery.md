@@ -1,0 +1,49 @@
+# Global sum: two exact obstructions, unresolved universal endpoint
+
+Status: research only, no discovery credit. Source: Vance Faber, https://arxiv.org/pdf/1201.4153v1, pp1–2 Problem A/conjecture, pp3–5 Problems B/C and Theorem6/Corollary7. Inputs and derived text are hash-bound in access.jsonl/derived.jsonl. The universal question concerns every finite connected vertex-transitive graph, arbitrary scalar data, simultaneous use of every directed wire, local retention, and diameter-many rounds. The source bounds message bit length informally in terms of n times the largest allowed input; its real-algebraic spectral calculations do not themselves settle finite-precision representation. No bit-model theorem is claimed here. Both examples below are undirected graphs with both directed wires available, so are within that restricted network subclass.
+
+## Route A: Fourier annihilation; an exact obstruction to symmetry reduction
+
+Let G=Cay(Z/13Z,{±1,±5}), S={0,1,5,8,12}. Its diameter is two: the values 0,±1,±5,±2,±4,±6,±10 exhaust the residue classes. A translation-invariant one-state-per-vertex linear update has a circulant matrix W whose kernel is supported on S, with arbitrary complex coefficients allowed. Its eigenvalues are evaluations of a five-term polynomial at the thirteen Fourier roots.
+
+**Exact claim. Every nonzero such W kills at most four Fourier modes among the twelve nonconstant modes. Consequently W2 W1 cannot equal J, even with complex coefficients.**
+
+Certificate and proof: set q=1001027, z=688177 mod q. The runnable check proves by trial division that q is prime, verifies z≠1 and z^13=1, and computes all 792 five-by-five minors with rows indexed by five distinct nonzero frequencies and columns S. Every determinant is nonzero mod q. For a primitive complex thirteenth root ζ, each corresponding determinant is an integer polynomial D(ζ). If it were zero, monic irreducibility of Φ13 over Q implies Φ13 divides D in Z[x]. Since Φ13(z)=0 mod q, D(z) would be zero, contradiction. Hence any five Fourier evaluation equations on the five kernel coefficients are independent. A nonzero kernel cannot vanish on five frequencies. Two nonzero factors annihilate at most eight of the required twelve modes; a zero factor cannot yield J. This is an exact finite certificate, not a floating-point rank diagnosis.
+
+This does **not** contradict the source conjecture. Its model permits separate outgoing messages, retention of several received values, and arbitrary local linear combinations. Indeed Theorem6 already gives two-round summation for this graph. check.py independently verifies its full 13×13 transfer matrix over Fraction: source s contributes 1/|N(s)∩N(t)| along each two-step path to a nonneighbor t, while t retains its own value and its neighbors' values. All entries are exactly one. Thus restricting to commuting circulant scalar-state matrices loses valid protocols even in the already-solved diameter-two case.
+
+Strongest complete classical adaptation objection: the Fourier observation is a small finite uncertainty calculation, obtainable from classical prime Fourier-minor nonsingularity; the success protocol is literally Faber's Theorem6. Neither is nominated as new mathematics or a solution of ProblemA or the general optimization ProblemC. Averaging a successful protocol over translations can enlarge memory/messages and does not produce a factorization W2 W1 with the same state restriction. Therefore failure of this restricted route cannot be promoted to an impossibility proof for general protocols.
+
+## Route B: endpoint-dependent path weights with retained memory
+
+For a simple undirected graph of diameter three, write N3(s,t) for the number of length-three walks from s to t when dist(s,t)=3. They are shortest paths. Fix a directed middle edge a→b. A natural extension of the diameter-two proof would assign every shortest path s→a→b→t weight 1/N3(s,t). To implement this using one round-two scalar on a→b and one round-three scalar on b→t, these weights would need a factorization U_ab(s)V_ab(t) on the valid endpoint pairs: a knows all x_s with s∈N(a), sends Σ_s U_ab(s)x_s, and b can subsequently multiply that message by V_ab(t).
+
+This naive factorization is false. In G=Cay(Z/14Z,{±1,±3}), take a=0, b=3, sources s=11,13 and targets t=4,6. All four source-target distances are three, and their exact path-count matrix is
+
+    [6 7]
+    [7 6].
+
+The corresponding reciprocal matrix has determinant 1/36−1/49=13/1764, so is not rank one. check.py constructs the graph, proves diameter three by BFS, checks the four distances, and counts all length-three walks exactly. Thus the equal-weight shortest-path extension cannot have this separability. The bounded search stops at this first witness (orders9–14, two-generator cyclic examples); no exhaustive counterexample claim is made.
+
+A less rigid, still concrete mechanism allows unequal path weights. Seek real U_ab(s), V_ab(t) satisfying
+
+    Σ_(s~a~b~t) U_ab(s)V_ab(t) = 1  whenever dist(s,t)=3,
+    Σ_(s~a~b~t) U_ab(s)V_ab(t) = 0  whenever dist(s,t)<3,
+
+where s is a neighbor of a, t a neighbor of b, and there is a separate U,V for each directed middle edge. The zero equations are needed: omitting them produces uncontrolled pollution of the nearer-distance coefficients. These are explicit finite quadratic equations, not a vague dimension count. If they have a solution, the above three-round protocol computes the distance-three layer exactly. In round three b can add the usual reciprocal-common-neighbor distance-two sum, which it can compute from its round-one retained neighbor values; t adds its own/neighbor values retained from round one. All outgoing traffic still consists of one scalar per wire per round. Thus the equations are a sufficient condition for diameter-three sum optimality in the source real-linear arithmetic model. They are not asserted necessary for all possible memory protocols.
+
+**Precise missing lemma for this route:** every finite connected undirected vertex-transitive diameter-three graph admits U,V satisfying both displayed sets of equations, with constants compatible with the source message-size convention. Neither vertex transitivity nor positive path counts proves it. Even that lemma would cover only diameter three, not Faber's full all-D question.
+
+**Precise full-scope missing lemma:** for every finite connected vertex-transitive network of diameter D there is a causal D-round edge-message computation of Jx for all initial x, with each edge carrying only one source-admissible scalar per round and unrestricted retained local memory. A sufficient stronger linear version asks for real coefficient vectors m^r_(u→v) in span{e_u, m^j_(w→u):j<r}, and e_t plus received vectors spanning the all-ones vector at every t by round D, with the message-size proviso. The restricted Fourier failure neither proves nor disproves this causal statement.
+
+Decisive next calculation: solve the displayed unequal-weight equations exactly for the 14-vertex witness, or provide an exact algebraic inconsistency certificate. A numerical least-squares residual would not certify either. No large sweep, universal assertion, or claimed bit-precision resolution is supplied here.
+
+## Ranked alternatives and complete adaptation objections
+
+2. Gerbner Conjecture1.2, 2301.01137v1 p2. Every fixed F with χ(F)>k≥3 should have eventual exact equality between Berge and clique extremal functions. The strongest available complete argument is the source's red-blue reduction plus Theorem1.7: all red edges of an extremizer lie in bounded B, so the excess is O(1). Color-critical vertex implies σ(F)=1, hence B empty, already proving that case. For k≤4 or sufficiently large χ(F), the source's clique-through-red-edge inequality eliminates all red edges. A genuine new mechanism must eliminate the remaining bounded defect for every other k,F; integer-valuedness does not turn O(1) into zero. The proposed profile-replacement idea must establish: every sufficiently large F-free red-blue extremizer in the source structural class admits an F-free recoloring/vertex replacement with larger g if it has a red edge. This lemma is missing. Routine copies of the source's successful cases are excluded. Current metadata only found neighboring expansion papers, which concern a different hypergraph forbidden family.
+
+3. Clarke–Forkin–Hurlbert Conjecture32, 2301.00434v5. The source's tree proof supplies ⌈2n/3⌉, but adding edges gives the robber new escape moves. The exact valid extension (Theorem8) places one stationary guard on each vertex outside an induced winning subgraph, saving only that subgraph's deficiency. Disjoint winning gadgets cannot simply be run independently if the robber can cross their interfaces. A missing lemma would partition every connected graph into induced capture gadgets and a boundary B with |B|=o(n), with cops totaling at most2|V\B|/3+o(n) that maintain capture while B is guarded; then the target follows. No such partition or strategy is established. This is a proposed route, not a theorem, and an arbitrary bounded-order game census cannot establish the asymptotic uniform quantifier.
+
+## Prior/freshness and chronology limits
+
+All current API searches were made 30Oct2026; exact URLs/UTC/hashes are preserved. Same-author Faber1305.6349v3 actual §5 spectral proof was checked; 1407.0908v1's spanning-factorization work is not taken as a solution merely from its abstract. The 2012 paper's diameter-two proof is fully public and is the strongest adaptation objection. No new result is claimed for its scope. Bounded history matching did not locate the two exact examples as credited outcomes; absence of a hit is not novelty evidence. No current public proof-registry head was obtainable without revisiting denied routes, so all three leads remain HOLD even independently of their mathematical gaps.

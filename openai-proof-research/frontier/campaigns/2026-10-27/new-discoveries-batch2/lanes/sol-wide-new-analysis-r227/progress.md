@@ -1,0 +1,3 @@
+# Progress
+
+Frozen compact coordination reports and administrative snapshots; screened author/object aliases before target investment, with supplemental aliases after Ramm/Gasull retrieval. Retrieved versioned primary bodies once and bound extraction bytes before reading. Read source questions and bounded actual proof contexts, keeping inaccessible older originals explicit. Developed exact wavelet coefficient formula and two routes; preserved unsuccessful cancellation balls. Completed sharp-constant and sparse-density calculations, then rejected their nomination as routine. Wrote compact source/chronology/history receipts. Final source and manifest verification is a separate guarded invocation; only its receipt states pass/fail.

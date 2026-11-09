@@ -1,0 +1,9 @@
+# Failures and bounded access limits
+
+- Initial file inventory was excessively broad, producing truncated output; replaced by bounded lane/admin reads. Several multi-source extraction outputs also exceeded display limits; targeted bounded re-reads supplied the actual statements used. No inference from unseen truncated bodies.
+- The second history scan originally overwrote its first alias-results file. The initial screen's nonempty generic support-points/Hunt hits remain in tool output; no such target was invested in. Final history scan records the survivor/object aliases and819 hash-bound references. This is bounded coverage, not a campaign-wide nonduplication certificate.
+- Fixed-block convolution route fails the all-tilt necessity test (discovery.md). Homogeneous and uniform-parameter approximation are already excluded by the primary source; no rebranded success is claimed.
+- Source0911.2418v1 and1110.2437v1 carry interior dates later than their version labels. Source Problem4.6's n/2n discrepancy is substantive for literal scope. These discrepancies are preserved, not silently corrected.
+- Forbidden GitHub API/raw/codeload/diff/patch, ScienceDirect and challenged Google routes were never requested. No proxy/TLS-disable/browser access. Current public proof-registry heads and old inaccessible historical intervals remain uncleared; no repeated HEAD loops.
+- arXiv API queries are bounded keyword/title searches, not complete citation indexes. No failed HTTP request occurred in this lane as of finalization; access-failures.jsonl may therefore be absent. No request after403/429/challenge is authorized.
+- Finite transport diagnostics omit residual masses below1e-80. They do not certify W_infinity or the stronger bounded-error conjecture. Only the analytic argument supports o(n).

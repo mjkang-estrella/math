@@ -1,0 +1,11 @@
+# Preserved limitations and unsuccessful routes
+
+- No universal proof/refutation; Apéry reflection does not yet bound four-generator corners, and RF zero patterns alone do not replace absent NG rows. Missing lemmas in discovery.md.
+- Known canonical type-four example disproves canonical⇒nearly-Gorenstein and the stronger type≤3 shortcut. Ordinary six-generated semigroup disproves dropping embedding dimension; <9,10,12,13> disproves dropping canonical reduction. These are method countermodels, not source refutations.
+- Largest-generator deletion is not a fixed-(m,F) leaf→internal injection: removing6 from <5,6> yields <5,12,18>, still a leaf at F=19. No new result for I.
+- Exact source discrepancy: N Question4.3 admits four generators in type2; M Problem23's literal {5,6} statement is not the same source claim. No substitution made.
+- Initial lane ls returned absent directory; apply_patch created the assigned lane. Initial native catalogue-header/upstream read preceded scientific freezing; no deduction or novelty assertion uses that material. Main paper bodies and historical r272/root reports were bound before reading. No claim of a flawless prefreeze for that preliminary header.
+- pdftotext emitted font-type mismatch warnings for several PDFs. Retained originals and derived hashes permit inspection; no inference from garbled binomial glyphs without surrounding formulas. Some broad read outputs were truncated; focused ranges/labels used for the invested proofs. Unread historical original proofs remain explicitly unverified.
+- Source selection achieved14 grouped screens in one specialist area, not wide subject coverage. Several survey-level screens lack original proof bodies. They are deferred, not manufactured survivors. Search false positives retained in feed files.
+- All permitted retrievals returned200 in this run. No403/429/challenge was encountered. No retries of previously denied GitHub/raw/codeload/diff/patch, ScienceDirect or Google challenge routes. No historical HEAD loops, browser, proxy or TLS bypass. Current complete registry and exhaustive citing-literature gaps remain open.
+- Bound finite checks cannot certify a universal theorem or worldwide novelty; no parameter/helper credit.

@@ -1,0 +1,5 @@
+# Progress
+
+Completed governing/handback reads; refreshed compact qualified originals and aliases. Rejected duplicate reconnaissance. Froze current primary/closest bodies before reading. Selected all-parameter Jacobi–Stirling real-rootedness; read actual original, 2026 interlacing and 2020 stability proofs. Derived exact insertion/compatibility route and two method obstructions. Preserved serialization and parser failures; capped corrected exact controls pass. Final separate guarded verifier follows final writes. No full source proof/refutation, no PROOF.md, no Lean/manuscript. Root alone decides any acceptance/count; current9/39,next40.
+
+User steering received after initial verifier PASS. Preserved pre-steering reports/manifest/receipt. Shifted to16-lead broad triage, downloaded/froze six new primary PDFs, read targeted bodies of retained/deferred sources, checked live searches/chronology, produced ranked five-lead shortlist. No new long diagnostics. Updated final verification follows.

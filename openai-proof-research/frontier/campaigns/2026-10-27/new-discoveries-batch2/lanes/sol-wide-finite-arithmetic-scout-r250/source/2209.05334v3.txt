@@ -1,0 +1,1943 @@
+                                              Polynomial time multiplication and normal forms in free bands
+
+                                                                                  R. Cirpons and J. D. Mitchell
+
+
+                                                                                                 Abstract
+                                                   We present efficient computational solutions to the problems of checking equality, performing multiplica-
+                                               tion, and computing minimal representatives of elements of free bands. A band is any semigroup satisfying
+                                               the identity x2 ≈ x and the free band FB(k) is the free object in the variety of k-generated bands. Ra-
+                                               doszewski and Rytter developed a linear time algorithm for checking whether two words represent the same
+                                               element of a free band. In this paper we describe an alternate linear time algorithm for the same problem.
+
+
+
+
+arXiv:2209.05334v3 [cs.FL] 22 Mar 2023
+                                               The algorithm we present utilises a representation of words as synchronous deterministic transducers that
+                                               lend themselves to efficient (quadratic in the size of the alphabet) multiplication in the free band. This rep-
+                                               resentation also provides a means of finding the short-lex least word representing a given free band element
+                                               with quadratic complexity.
+
+
+                                         1    Introduction
+                                         This paper is about efficient computational solutions to the problems of checking equality, performing mul-
+                                         tiplication, and computing minimal representatives of elements of free bands. This paper arose from that of
+                                         Radoszewski and Rytter [23], and is related to the papers of Neto and Sezinando [20, 21]. We will discuss in
+                                         more detail below the interactions of [20, 21, 23] and the current paper.
+                                         A band is any semigroup satisfying the identity x2 ≈ x and a free band FB(k) of rank k is the free object
+                                         in the variety of k-generated bands. Bands have been widely studied in the literature, some highlights include:
+                                         the lattice of varieties of bands is completely classified [1, 7, 9, 10] and every such variety is defined by a single
+                                         identity. Siekmann and Szabó [26] provide an infinite complete rewriting system for every free band; rewriting
+                                         in further varieties of bands has also been considered in [14]. More recently, combinatorial structures such as
+                                         hyperplane arrangements, interval greedoids, and matroids have been endowed with the structure of left regular
+                                         bands (i.e. those bands belonging to the variety defined by the identity xy ≈ xyx), and this connection has
+                                         been used in several disparate areas of mathematics; see, for example [16] and the references therein. Other
+                                         recent references related to bands include [5, 22, 25].
+                                         In the context of the famous Burnside problem for semigroups, Green and Rees [11] showed that if every k-
+                                         generated group, where k ∈ N, satisfying the identity xm−1 ≈ 1 is finite, then every k-generated semigroup
+                                         satisfying the identity xm ≈ x is finite. Brown [2] gave a simple proof of Green and Rees’ result. In the case that
+                                         m = 2, every k-generated group satisfying the identity x1 ≈ 1 is trivial, by virtue of which, every k-generated
+                                         semigroup satisfying the identity x2 ≈ x is finite. In particular, every finitely generated band is finite, including
+                                         every free band FB(k). The size of FB(k) grows super-exponentially with k the number of generators; a closed
+                                         form for | FB(k)| is given in [12, Theorem 4.5.3], see also [13]. For example, the free band FB(5) has size
+                                         2, 751, 884, 514, 765 ≈ 241 .
+                                         The ability to compute efficiently with elements in a free band is a fundamental prerequisite for any further
+                                         computational tools for the study of bands; such as determining the least variety of bands containing a given
+                                         band, or computing with finite band presentations. However, the vast number of elements renders it impossible
+                                         to practically apply to free bands, with 5 or more generators, any of the known general purpose algorithms
+                                         for finite semigroups such as, for example, the Froidure-Pin Algorithm [8] or the algorithms described in [6].
+                                         When it is possible to readily multiply and check equality of elements of a finitely generated semigroup S, the
+                                         Froidure-Pin Algorithm [8] can be used to exhaustively enumerate S. Even assuming that the question of how
+                                         to multiply and check the equality of elements in the free band is resolved, the Froidure-Pin Algorithm [8]
+                                         requires too much space to compute FB(k) with k ≥ 5. If it were possible (and it is not) to store every one of
+                                         the approximately 241 elements of FB(5) in a single bit, this would require more than 274GB of RAM, a figure
+                                         that is unlikely to be commonplace any time in the near future. The algorithms in [6] are most effective for
+                                         semigroups containing large subgroups, but alas every subgroup of a band is trivial, so the algorithms from [6]
+                                         are of little practical use for bands.
+                                         Semigroup presentations provide a possible alternative approach to computing with free bands, for example,
+                                         using the Todd-Coxeter [27], Knuth-Bendix [15] or other rewriting methods. If A is any non-empty alphabet,
+
+
+                                                                                                     1
+                   |A|            |FB(A)|     Number of relations      Total length of relations
+                    1                    1                      1                              1
+                    2                    6                      4                             20
+                    3                  159                     45                            468
+                    4              332,380                11,080                        217,072
+                    5    2,751,884,514,765                      ?                              ?
+
+Table 1.1: Number of relations and total length of relations in the unique finite complete rewriting system of
+FB(A) for some small values of |A|.
+
+
+then the collection A+ of all finite non-empty words over A forms a semigroup where the operation is juxtapo-
+sition; A+ is called the free semigroup on A. If w ∈ A+ , then the length of w is denoted by |w|. We denote
+the free band generated by A by FB(A) and henceforth will not use the notation FB(k) where k ∈ N. One, not
+particularly illuminating, description of the free band FB(A) on A is the quotient of A+ by the least congruence
+∼ containing (w2 , w) for all w ∈ A+ . In other words, FB(A) has the infinite presentation
+
+                                              hA | x2 = x, x ∈ A+ i.                                           (1)
+
+Of course, since FB(A) is finite, it is finitely presented, although it is not immediately clear how to find a
+finite presentation when |A| ≥ 5. Siekmann and Szabó [26] show that the following length reducing infinite
+conditional rewriting system for FB(A) is complete:
+
+                                    x2 → x                                                                     (2)
+                                   xyz → xz if cont(y) ⊆ cont(x) = cont(z)                                     (3)
+
+where x, y, z range over all appropriate words in A+ and where cont(w) = {b1 , b2 , . . . , bn } is the content of
+the word w = b1 b2 · · · bn ∈ A+ . A simpler proof that the rewriting system of Siekmann and Szabó [26] is
+complete was given by Neto and Sezinando in [20, Theorem 6.1]. Although the papers [20, 21, 26] make a
+valuable contribution to the study of bands, their focus is mainly on the mathematical aspects. In particular, it
+is claimed in [20] that there is a polynomial-time solution for the word problem in all relatively free bands other
+than FB(A), and that Siekmann and Szabó provide a quadratic time algorithm for solving the word problem in
+the free band in [26]. However, the algorithm is not explicitly given in [20], or elsewhere in the literature, nor
+is its time complexity formally analysed. Since Siekmann and Szabó’s rewriting system is complete and length
+reducing, it can be used to solve the word problem by rewriting a given word w in O(|w|) steps. However,
+it is unclear what the time complexity of each rewriting step is, since the rewriting system is infinite, and so
+it is non-trivial to detect which rewrite rules apply to any given word w. This question is not addressed in
+[26]. It is possible to detect all subwords x2 where x is primitive (not of the form x = y e for some y ∈ A+ ,
+e ≥ 2) of a given w in O(|w| log |w|) time; see [4]. It is unclear how to efficiently find occurrences of xyz with
+cont(y) ⊆ cont(x) = cont(z) in w. One approach might be to iterate through the subwords of w, to find a
+single subword of the form xyz where cont(y) ⊆ cont(x) = cont(z). The time complexity of this approach is, at
+best, O(|w|2 ) yielding an algorithm with time complexity at best O(|w|3 ) for finding a normal form for w. Hence
+for words u, v ∈ A∗ solving the word problem using this approach has complexity at best O(|u|3 + |v|3 ).
+Rather than using the infinite rewriting system given in (2), it is possible to compute the unique finite complete
+rewriting system for FB(A) when |A| < 5 with respect to the short-lex reduction ordering on A+ obtained from
+any linear order of A (using, for example, the Froidure-Pin Algorithm [8], as implemented in [17]); see Table 1.1.
+The Froidure-Pin Algorithm [8] stores every element of the semigroup it is enumerating, and so, as discussed
+above, it was not possible to compute a finite complete rewriting system for FB(A) when |A| ≥ 5. For reference,
+the time complexity of the Froidure-Pin Algorithm is O(|A| · | FB(A)|).
+With the preceding comments in mind, it seems unlikely that presentations or rewriting systems would allow for
+practical computation of the word problem, or normal forms, when |A| ≥ 5. On the other hand, Radoszewski
+and Rytter’s algorithm from [23] (as implemented in [18], and available in [17] and [19]) can test equality of
+words in FB(A) when |A| ≥ 100 with relative ease.
+In this paper, we will show how to use a representation of elements of a free band as transducers in linear time
+algorithms for equality checking and the computation of normal forms, and an algorithm for multiplication that
+is quadratic in the size of the alphabet and linear in the size of the representations of the elements; see below
+for a formal description of the complexity. This representation is similar to the “admissible maps” of [20, 21]
+and the “factor automata” of [23].
+The starting point for the development of the representation of free band elements by transducers (and the
+other representations in [20, 21, 23]), is the solution to the word problem given by Green and Rees in [11]; we
+
+                                                        2
+                                                                 pref(w)  ltof(w)
+                                                            z }| {
+                                         w = ababdbddcccb = aba bdbdd
+                                                                | {zcccb}
+                                                       ftol(w)       suff(w)
+
+
+
+Figure 1: An illustration of the functions pref, suff, ftol, and ltof applied to the word w = ababdbddcccb.
+
+
+will restate this description in Section 2. Recall that we denoted by ∼ the least congruence on A+ containing
+{(x2 , x) : x ∈ A+ }. We refer to the problem of determining whether or not u ∼ v for any u, v ∈ A+ as checking
+equality in the free band. If w ∈ A+ , then we define pref(w) to be the longest prefix of w containing one
+fewer unique letters than w itself (i.e. cont(pref(w)) = cont(w) − 1) and suff(w) is defined analogously for
+suffixes. We denote the letter immediately after pref(w) in w by ltof(w) (from “last letter to occur first”),
+which is the unique letter in the content of w not in the content of pref(w). The first letter ftol(w) ∈ A to
+occur last in w is defined analogously with respect to suff(w). Green and Rees [11] showed that u ∼ v if and
+only if pref(u) ∼ pref(v), ltof(u) = ltof(v), ftol(u) = ftol(v), and suff(u) ∼ suff(v). This is illustrated
+in Fig. 1.
+It is trivial to check whether or not two letters in A are equal. If ltof(u) = ltof(v) and ftol(u) = ftol(v),
+then the Green-Rees Theorem reduces the problem of checking u ∼ v for u, v ∈ A+ to the problem of check-
+ing pref(u) ∼ pref(v) and suff(u) ∼ suff(v) where pref(u), pref(v) ∈ (A \ {ltof(u) = ltof(v)})+ and
+suff(u), suff(v) ∈ (A \ {ftol(u) = ftol(v)})+ . In particular, the size of the underlying alphabet is reduced
+by one, and therefore, by repeatedly applying the Green-Rees Theorem, we eventually reduce the size of the
+alphabet to one. Performing this naı̈vely requires O((|u| + |v|) · 2|A| ) time and |u| + |v| space. A similar recursive
+approach was found by Gerhard and Petrich [9] to solve the word problem in relatively free bands (the free
+objects in sub-varieties of bands). Suppose that A is any fixed alphabet and that u, v ∈ A+ are such that
+|u| + |v| = k for some k ∈ N. Neto and Sezinando [20] estimate the time complexity of Gerhard and Petrich’s
+approach for the free band to be O(2k ), which is worse than the naı̈ve approach using the Green-Rees Theorem.
+However, for other relatively free bands, Neto and Sezinando [20] estimate the time complexity of Gerhard and
+Petrich’s approach to be O((k + 1)n−2 ) where n ∈ N is the height of the relatively free band in the lattice of all
+varieties of bands.
+In contrast to the exponential time algorithms described in the previous paragraph, Radoszewski and Rytter [23]
+gave a O(|A| · (|u| + |v|)) time and O(|u| + |v|) space algorithm for checking equality in the free band on A. Their
+method constructs an acyclic automaton, called the interval automaton, for each element to be compared.
+In [23] it is shown that u ∼ v if and only if the corresponding interval automata recognize the same language.
+It is possible to check whether two acyclic automata recognize the same language in O(n) time where n is the
+total number of states in both automata; see, for example, [24]. At least from the perspective of the asymptotic
+time complexity, it seems extremely unlikely that a better solution than that of Radoszewski and Rytter exists
+for checking whether or not u ∼ v where u, v ∈ A+ . At best we could hope to replace the |A| factor by a
+lesser function of |A|. But |u| + |v| can be significantly larger than |A| and so the |A| factor does not contribute
+significantly to the overall time complexity in such cases.
+Radoszewski and Rytter’s approach does not immediately give rise to an efficient representation of elements in
+the free band. In particular, the only representation of elements in the free band considered in [23] is by words
+in a free semigroup. Representing elements by words has the advantage of a very simple and (time) efficient
+multiplication algorithm: simply concatenate the words u, v ∈ A+ in constant time and O(|u| + |v|) space. The
+main drawback of this representation is that the length of these words is unbounded. Of course, given any word
+w ∈ A+ and any well-ordering ≺ on A+ , the equivalence class w/∼ contains a ≺-minimum word, and since
+FB(A) is finite, this means that length of such minimum words is also bounded. Therefore, any method for
+finding such minimum words would provide a bound for the space required to store an element represented as
+a word. The rewriting system of [26] gives a way of finding the ≺-minimum word with respect to the short-lex
+ordering. As discussed above, in practice, this only works for alphabets A with |A| ≤ 4. Assuming this was not
+the case, Neto and Sezinando’s claim in [21] implies that minimizing a word w ∈ A+ has time complexity at
+best O(|w|2 ).
+In this paper, we derive an alternative space efficient representation for an element in the free band by using
+synchronous deterministic acyclic transducers based on the interval automata of Radoszewski and Rytter [23] and
+related to the admissible maps of [20, 21]. This representation lends itself to efficient solutions to the problems of
+checking equality and multiplication of elements of the free band, and to an algorithm for determining min(w)
+— the short-lex minimum representative of the ∼-class of a given word w. In Section 2, we establish some
+notation, and state the Green-Rees Theorem in terms of this notation. In Section 3, we describe the novel
+transducer based representation of elements of the free band that is the central notion of this paper. We also
+
+
+                                                          3
+describe how Radoszewski and Rytter’s construction from [23] relates to these transducers. In Section 4, we
+describe how to check equality of the elements in the free band represented by transducers in O(|A| · (|u| + |v|))
+space and time. The procedure for checking equality is called EqualInFreeBand and given in Algorithm 4.1.
+Although the O(|A|·(|u|+|v|)) space representation by transducers we present is worse than the O(|u|+|v|) space
+complexity of Radoszewski and Rytter in [23], we will show that the same representation can be used efficiently
+for multiplication and finding short-lex least words. In Section 5, we describe how to obtain a transducer
+representing the product of two free band elements x and y given transducers representing each of the elements.
+This algorithm is called Multiply and is given in Algorithm 5.11. Multiply has time and space complexity
+O(m + n + |A|2 ) where m and n are the number of states in any transducers representing x and y. We will
+show that the number of states of the minimal transducer representing a free band element w/∼ is | min(w)||A|
+where min(w) is the length of the short-lex least word belonging to w/∼. Hence the best case time and space
+complexity of the multiplication algorithm Multiply in Section 5 is O(| min(u)||A| + | min(v)||A| + |A|2 ) and the
+worst case is O(|u||A| + |v||A| + |A|2 ). Finally, in Section 6, we give the MinWord algorithm, Algorithm 6.6, for
+computing the short-lex least word min(w) in w/∼ given any transducer T representing w/∼. This algorithm
+has time and space complexity O(n · |A|) where n is the number of states of T .
+We conclude the introduction by stating some open problems. Clearly, any algorithm deciding whether or not
+words u, v ∈ A∗ represent the same element of a free band has time complexity bounded below by Ω(|u| + |v|).
+On the other hand, EqualInFreeBand given in Algorithm 4.1 has time complexity O(|A| · (|u| + |v|)) time, so
+it is natural to ask if there is a way of reducing or removing the |A| factor?
+
+Question 1.1. What is the lower bound for an algorithm checking the equality of two elements in the free band?
+
+In a similar vein, any algorithm computing min(w) for w ∈ A∗ must take at least Ω(|w|) time to read the input,
+if nothing else. The algorithm MinWord Algorithm 6.6 (together with the construction of the interval transducer
+that is the input to MinWord) solves this problem in O(|A| · |w| + |A|2 · | min(w)|) time.
+
+Question 1.2. What is the lower bound for an algorithm for finding min(w) given w ∈ A∗ ?
+
+A variety of bands is a collection of bands that is closed under taking subsemigroups, homomorphic images
+and arbitrary Cartesian products. Given that the lattice of varieties of bands is completely determined (as
+mentioned above), we ask the following question.
+
+Question 1.3. Are there analogues for any of the algorithms EqualInFreeBand, Multiply, and MinWord for
+the free object in other varieties of bands?
+
+If such algorithms do exist, then they could serve as an entry point for the further development of computational
+tools for finitely presented bands.
+
+
+2      Preliminaries
+In this section, we introduce some notation and preliminary results from the literature that will be used through-
+out the remainder of this paper.
+As mentioned in the previous section, the Green-Rees Theorem [11] characterizes elements of the free band
+in terms of the functions pref, suff, ltof, and ftol. This characterisation is one of the key components
+in this paper, but we require slightly different (and more general) notation for these functions, which we now
+introduce.
+If A is any non-empty alphabet, then the collection A∗ of all finite words over A forms a monoid with juxtapo-
+sition being the operation. This monoid is called the free monoid over A; the identity element of A∗ is the
+empty word ε; and A∗ = A+ ∪ {ε}.
+If X and Y are sets, then a partial function f : X → Y is just a function from some subset of X to Y . If
+f : X → Y is any partial function, and f is not defined at x ∈ X, then we will write f (x) = ⊥ and we also
+assume that f (⊥) = ⊥.
+
+    Definition 2.1. We define the partial function ◦ : A∗ × {0, 1}∗ → A∗ such that for all w ∈ A∗ the following
+    hold:
+      (i) ε ◦ α = ⊥ for all α ∈ {0, 1}+ and w ◦ ε = w;
+     (ii) w ◦ 0 is the longest prefix of w such that | cont(w ◦ 0)| = | cont(w)| − 1;
+
+
+
+
+                                                          4
+                                               ◦                                        ∗
+                            A∗ × {0, 1}∗               A∗          A∗ × {0, 1}∗             A
+                                                                                  ∗
+                            /∼×id                        /∼        /∼×id
+
+                                               ◦
+                         FB1 (A) × {0, 1}∗          FB1 (A)     FB1 (A) × {0, 1}∗
+
+Figure 2: Commutative diagrams giving the definition of the partial functions ◦ and ∗ for the free band FB1 (A).
+
+
+    (iii) w ◦ 1 is the longest suffix of w such that | cont(w ◦ 1)| = | cont(w)| − 1;
+    (iv) if α = βγ ∈ {0, 1}+, for some β ∈ {0, 1} and γ ∈ {0, 1}∗ , then w ◦ α = (w ◦ β) ◦ γ.
+
+Note that w ◦ 0 = pref(w) and w ◦ 1 = suff(w) in the notation of the Green-Rees Theorem.
+
+    Definition 2.2. We define the partial function ∗ : A∗ × {0, 1}∗ → A so that for all w ∈ A∗ the following
+    hold:
+      (i) ε ∗ α = ⊥ and w ∗ ε = ⊥ for all α ∈ {0, 1}+;
+     (ii) w ∗ 0 ∈ A is such that w = (w ◦ 0)(w ∗ 0)w′ for some w′ ∈ A∗ ;
+    (iii) w ∗ 1 ∈ A is such that w = w′′ (w ∗ 1)(w ◦ 1) for some w′′ ∈ A∗ ;
+    (iv) if α = βγ ∈ {0, 1}+, for some β ∈ {0, 1} and γ ∈ {0, 1}∗ , then w ∗ α = (w ◦ β) ∗ γ.
+
+As above, w ∗ 0 = ltof(w) and w ∗ 1 = ftol(w) in the notation of the Green-Rees Theorem.
+We now state the Green-Rees Theorem using ◦ and ∗ instead of pref, ltof, ftol, and suff; for a proof see
+Lemma 4.5.1 in [12].
+
+    Theorem 2.3 (Green-Rees). Let v, w ∈ A+ . Then v ∼ w if and only if the following hold:
+      (i) cont(v) = cont(w);
+     (ii) v ◦ α ∼ w ◦ α for all α ∈ {0, 1}; and
+    (iii) v ∗ α = w ∗ α for all α ∈ {0, 1}.
+
+For technical reasons, it is preferable to consider the free band with identity adjoined; which we denote
+                                                                                                         by
+FB1 (A). Clearly FB1 (A) is the quotient of the free monoid A∗ by the least congruence containing w, w2 for
+                                                 1
+all w ∈ A∗ . Henceforth we will only consider
+                                            FB (A) and    as such we write ∼ without ambiguity to denote the
+least congruence on A containing w, w for all w ∈ A∗ ; and we will refer to FB1 (A) as the free band.
+                      ∗                  2
+
+
+If v, w ∈ A∗ are such that v ∼ w, then cont(v) = cont(w) by Theorem 2.3. Hence we may define the content
+of w/∼ in FB1 (A) as being cont(w); we denote this by cont(w/∼) also.
+The partial function ◦ : A∗ × {0, 1}∗ → A∗ induces a partial function from FB1 (A)× {0, 1}∗ to FB1 (A). Abusing
+our notation, we will also denote the induced partial function by ◦. Specifically, ◦ : FB1 (A) × {0, 1}∗ → FB1 (A)
+is defined by
+                                             (w/∼) ◦ α = (w ◦ α)/∼
+for all w ∈ A∗ such that w ◦ α is defined; see Fig. 2.
+The domain of the function ◦ : FB1 (A) × {0, 1}∗ → FB1 (A) is {(x, α) ∈ FB1 (A) × {0, 1}+ : |α| ≤ | cont(x)|}.
+It follows from Theorem 2.3 that ◦ : FB1 (A) × {0, 1}∗ → FB1 (A) satisfies the analogue of Definition 2.1 where
+w ∈ A∗ is replaced by w/∼ in FB1 (A). Similarly, we may define ∗ : FB1 (A) × {0, 1}∗ → A by
+                                                   (w/∼) ∗ α = w ∗ α
+for every w ∈ A∗ such that w ∗ α is defined; see Fig. 2. Theorem 2.3 ensures that ∗ is well-defined, and satisfies
+the appropriate analogue of Definition 2.2.
+
+
+3      Representation by synchronous transducers
+If w ∈ A∗ is arbitrary, then naı̈vely computing all possible values of w ◦ α and w ∗ α for α ∈ {0, 1}∗ has
+exponential time complexity because there are an exponential number 2| cont(w)| of α ∈ {0, 1}∗ such that w ◦ α
+and w ∗ α are defined.
+
+                                                            5
+In this section, we introduce a means of representing an element x = w/∼ of FB1 (A) which will permit us to
+efficiently compute all the possible values of w ◦ α and w ∗ α for α ∈ {0, 1}∗ in Section 4. We will associate to
+every word w ∈ A∗ a partial function fw : {0, 1}∗ → A∗ . This will yield a bijection from FB1 (A) to the partial
+functions with domain {0, 1}k and codomain Ak for 1 ≤ k ≤ |A|.
+
+  Definition 3.1. For a given w ∈ A∗ , define the partial function fw : {0, 1}∗ → A∗ recursively by letting
+  fε (ε) = ε and fε (α) = ⊥ for all α ∈ {0, 1}+. If w ∈ A+ , then we define fw : {0, 1}∗ → A∗ by fw (ε) = ⊥
+  and fw (α) = (w ∗ β) fw◦β (γ) for all α ∈ {0, 1}+ where α = βγ for some β ∈ {0, 1} and γ ∈ {0, 1}∗.
+
+For α = α1 · · · αn ∈ {0, 1}∗, we write α(i,j) = αi αi+1 · · · αj to be the subword starting at index i ∈ {1, . . . , n}
+and ending at index j ∈ {i, . . . , n}. If j < i, then we define α(i,j) = ε. By Definition 3.1,
+                                                       n
+                                                                      !
+                                                       Y
+                                          fw (αβ) =      (w ∗ α(1,i) ) fw◦α (β)
+                                                        i=1
+
+                      ∗
+for all α, β ∈ {0, 1} where α = α1 α2 · · · αn and αi ∈ {0, 1} for 1 ≤ i ≤ n. As an example, we compute
+fabac (010) as follows:
+
+                          fabac (010) = (abac ∗ 0) fabac◦0 (10) = cfaba (10) = c(aba ∗ 1)faba◦1 (0)
+                                     = cbfa (0) = cb(a ∗ 0)fa◦0 (ε) = cbafε (ε) = cba.
+
+In a similar way, it is possible to determine fabac (α) for any α ∈ {0, 1}3:
+
+         fabac (000) = cba,            fabac (001) = cba,          fabac (010) = cba,         fabac (011) = cba,
+         fabac (100) = bca,            fabac (101) = bca,          fabac (110) = bac,         fabac (111) = bac.
+
+We will show that the partial function fw can be realized by a transducer for every w ∈ A∗ . For the sake of
+completeness, we next give a definition of a synchronous deterministic transducer.
+
+  Definition 3.2. A deterministic synchronous transducer is a septuple T = (Q, Σ, Γ, q0 , T, ◦ , ∗ )
+  where
+    (i) Q is a non-empty set called the set of states;
+    (ii) Σ is a set called the input alphabet;
+   (iii) Γ is a set called the output alphabet;
+   (iv) q0 ∈ Q is called the initial state;
+    (v) ∅ 6= T ⊆ Q is called the set of terminal states;
+   (vi) a partial function ◦ : Q × Σ → Q called the state transition function;
+  (vii) a partial function ∗ : Q × Σ → Γ called the letter transition function;
+  where for all q ∈ Q, α ∈ Σ, q ◦ α 6= ⊥ is if and only if q ∗ α 6= ⊥.
+
+Since the only type of transducers we consider are deterministic synchronous transducers, we will write “trans-
+ducer” to mean “deterministic synchronous transducer”.
+The definition of ◦ can be extended recursively for inputs in Q×Σ∗ by letting q ◦ ε = q and q ◦ αβ = (q ◦ α) ◦ β for
+all α ∈ Σ, and β ∈ Σ∗ . Similarly, we may extend ∗ to inputs in Q×Σ∗ by letting q ∗ ε = ⊥ and q ∗ αβ = (q ◦ α)β
+for all α ∈ Σ, β ∈ Σ∗ . Let T = (Q, Σ, Γ, q0 , T, ◦ , ∗ ) be a transducer. Then the language accepted by T is
+L(T ) = {α ∈ Σ∗ : q0 ◦ α ∈ T }. We say that a partial function f : Σ∗ → Γ∗ is realized by T if and only if
+f (α) = q0 ∗ α for all α ∈ L(T ) and f (α) = ⊥ for all α 6∈ L(T ). If A is any set, and w ∈ A∗ , then there are many
+transducers realising the function fw given in Definition 3.1; one such transducer is defined as follows.
+
+  Example 3.3. Let w ∈ A∗ be arbitrary and let k = | cont(w)|. Then we define the transducer
+                                                                         
+                                          ≤k                     k
+                                    {0, 1} , {0, 1}, A, ε, {0, 1} , ∗ , ◦
+                             Sk
+  with states {0, 1}≤k =                 i
+                               i=0 {0, 1} , input alphabet {0, 1}, output alphabet A, initial state ε, terminal states
+
+
+
+
+                                                              6
+                                                          ε
+                                           0|c                            1|b
+
+                       0|b    0       1|b                                    0|c      1       1|a
+
+            0|a   00   1|a           0|a     01   1|a            0|a    10      1|a          0|c    11   1|c
+
+        000             001         010           011           100             101        110           111
+
+Figure 3: A transducer realizing fabac . Note that transitions on input 0 are drawn with a solid arrow and
+transitions on input 1 are drawn with a dashed and reversed arrow for visual differentiation. In subsequent
+diagrams we will omit the node labels and part of the edge labels for the sake of brevity.
+
+        k
+  {0, 1} , and state and letter transition functions given respectively by:
+
+                              q ◦ x = qx                               q ∗ x = w ∗ (qx).
+
+  It is routine to verify that this transducer realises fw . A picture of the corresponding transducer realizing
+  fabac can be found in Fig. 3.
+
+The relevance of the functions fw to free bands is established in the next result.
+
+  Lemma 3.4. Let v, w ∈ A∗ . Then v ∼ w if and only if fv = fw .
+
+Proof. If | cont(v)| 6= | cont(w)|, then cont(v) 6= cont(w), so v 6∼ w by Theorem 2.3. Also fv 6= fw , since the
+domains of fv and fw disagree. Therefore we only need to prove the lemma in the case | cont(v)| = | cont(w)|.
+We proceed by induction on the size of the content. Clearly if | cont(w)| = | cont(v)| = 0, then v = w = ε and
+fv = fw = fε , so the statement holds. Assume that the statement of the lemma holds for all v, w ∈ A∗ with
+| cont(v)| = | cont(w)| < k for some k ≥ 1.
+Let v, w ∈ A∗ with | cont(v)| = | cont(w)| = k. If v ∼ w, then, by Theorem 2.3, v ◦ β ∼ w ◦ β and v ∗ β = w ∗ β
+for all β ∈ {0, 1}. By the inductive hypothesis, since | cont(v ◦ β)|, | cont(w ◦ β)| < k, it follows that fv◦β = fw◦β
+for all β ∈ {0, 1}. But then fv (α) = (v ∗ β)fv◦β (γ) = (w ∗ β)fw◦β (γ) = fw (α) for all α ∈ {0, 1}k , so fv = fw .
+On the other hand, if fv = fw , then (v ∗ β)fv◦β (γ) = (w ∗ β)fw◦β (γ) for all β ∈ {0, 1}, γ ∈ {0, 1}k−1 . But then
+v ∗ β = w ∗ β for all β ∈ {0, 1}, and fv◦β (γ) = fw◦β (γ) for all γ ∈ {0, 1}k−1, so fv◦β = fw◦β for all β ∈ {0, 1}.
+Hence, by the inductive hypothesis, v ◦ β ∼ w ◦ β for all β ∈ {0, 1}. Finally, by Theorem 2.3, v ◦ 0 ∼ w ◦ 0
+implies cont(v ◦ 0) = cont(w ◦ 0) so that cont(v) = {v ∗ 0} ∪ cont(v ◦ 0) = {w ∗ 0} ∪ cont(w ◦ 0) = cont(w).
+It follows, again by Theorem 2.3, that v ∼ w.
+
+It follows from Lemma 3.4 that if x ∈ FB1 (A), then we may denote by fx any of the functions fw where w ∈ A∗
+and w/∼ = x without ambiguity. In the same vein, we say that a transducer T represents x ∈ FB1 (A) if T
+realizes fx .
+For a transducer T = (Q, Σ, Γ, q0 , T, ◦ , ∗ ) and a state p0 ∈ Q, we define the induced subtransducer rooted
+at p0 to be the transducer T ′ = (Q, Σ, Γ, p0 , T, ◦ , ∗ ), i.e. the transducer with the same states, transitions and
+terminal states, but whose initial state is p0 instead of q0 . Let g be the function realized by T , and let g ′ be
+the function realized by the subtransducer T ′ . It can be shown that if q0 ◦ α = p0 for some α ∈ Σ∗ , then g ′ (β)
+is the suffix of g(αβ) of length |β| for all β ∈ Σ∗ such that g(αβ) 6= ⊥; and where g ′ (β) = ⊥ otherwise.
+If a transducer T represents x ∈ FB1 (A), it would be convenient if the subtransducer rooted at q0 ◦ α represented
+x◦α for any α ∈ {0, 1}∗ , wherever x◦α is defined. This is indeed the case, which we establish in the next lemma.
+This lemma will allow us to determine properties of elements of the free band by considering the structure of a
+representative transducer directly, rather than considering the function realized by that transducer.
+
+  Lemma 3.5. Let T = (Q, {0, 1}, A, q0 , T, ◦ , ∗ ) be a transducer representing x ∈ FB1 (A). If α ∈ {0, 1}∗ is
+  such that q0 ◦ α = q, then the induced subtransducer rooted at q realizes fx◦α .
+
+Proof. Let x ∈ FB1 (A), let T = (Q, {0, 1}, A, q0, T, ◦ , ∗ ) be a transducer realizing the function fx , let q ∈ Q
+be reachable, and let α ∈ {0, 1}∗ be such that q0 ◦ α = q.
+
+                                                          7
+                                                ◦
+                           A∗ × {0, 1}∗                 A∗             A∗ × {0, 1}∗
+                            /∼×id                         /∼            /∼×id           ∗
+
+                                                ◦                                           ∗
+                         FB1 (A) × {0, 1}∗           FB1 (A)        FB1 (A) × {0, 1}∗           A
+                             Ψ×id                         Ψ              Ψ×id           ∗
+                                                ◦
+                            Q × {0, 1}∗                 Q               Q × {0, 1}∗
+
+Figure 4: Commutative diagrams giving correspondence between states in a transducer and elements of the free
+band.
+
+
+Suppose that g is the function realized by the induced subtransducer rooted at q. To compute g for β ∈ {0, 1}∗
+we take the suffix of fx (αβ) obtained by removing the first |α| output letters. But, by the definition of fx ,
+                                                              
+                                                   |α|
+                                                   Y
+                                       fx (αβ) =  x ∗ α(1,i)  fx◦α (β).
+                                                       i=1
+
+      Q|α|
+Since i=1 x ∗ α(1,i) is the length |α| prefix of fx (αβ), g(β) = fx◦α (β) for all β ∈ {0, 1}∗. In particular, g is
+the function fx◦α realized by the induced subtransducer rooted at q. Therefore the subtransducer rooted at q
+represents x ◦ α.
+
+Let Tx = (Q, {0, 1}, A, q0, T, ◦ , ∗ ) be a transducer representing x ∈ FB1 (A). If we define the partial function
+Ψ : Q → FB1 (A) by                        (
+                                            x ◦ α if q = q0 ◦ α for some α ∈ {0, 1}∗
+                                Ψ(q) =
+                                            ⊥     otherwise,
+then it follows from Lemma 3.5 that the diagrams in Fig. 4 commute. Consequently, we may refer to a state q
+in a transducer as representing the element Ψ(q) of FB1 (A).
+
+
+4    Equality Checking
+In this section we give a method using transducers for checking equality in the free band. The algorithm we
+describe in this section is heavily based on that of Radoszewski and Rytter from [23]. Roughly speaking, in [23],
+to compare two words u, v ∈ A∗ for equality in the free band, the authors construct an automaton, called the
+interval automaton that has O((|u| + |v|) · |A|) states. Equality of u and v in the free band is then established
+by checking the equivalence of two states corresponding to u and v within the interval automaton. This is done
+without storing the entire automaton, but only the relevant parts at every step. In this section, we adapt this
+idea, constructing one transducer for each word and then comparing the transducers. The principal difference
+is that we retain the whole transducer, which leads to worse space complexity than Radoszewski and Rytter’s
+approach, but has the benefit of permitting us to define multiplication in Section 5 and obtain the short-lex
+least word in a ∼-class in Section 6.
+We start this section by recasting the interval automaton for w ∈ A∗ as a transducer using the notation
+established in the previous section. Let w ∈ A+ . A content-k subword of w is a subword v of w such that
+| cont(v)| = k. A content-k subword is called prefix maximal if it is not a proper prefix of any other content-k
+subword. Similarly, a subword is suffix maximal if it is not the proper suffix of any content-k subword. There
+are at most |w| prefix maximal content-k subwords of w for any given k, since each letter of w can be the start
+of at most one such word. An analogous statement holds for suffix maximal content-k subwords also.
+Let w = a1 · · · an ∈ A+ where a1 , . . . , an ∈ A and k ∈ N0 . Then we define the partial function
+
+                                          RIGHTk : {1, . . . , n} → {1, . . . , n}
+
+such that w(i,RIGHTk (i)) is the unique prefix maximal content-k subword of w starting at index i if such a sub-
+word exists, and w(i,RIGHTk (i)) = ⊥ otherwise. The partial function LEFTk : {1, . . . , n} → {1, . . . , n} is defined
+dually.
+The interval transducer of w ∈ A∗ is defined as follows:
+
+                                             T = (Q, {0, 1}, A, q0, T, ◦ , ∗ )
+
+where
+
+                                                              8
+                                                                                (1, 4)                 (2, 4)
+                                                                          0|c            1|b     0|c
+                                                                                                             1|b
+
+
+
+                                (1, 2)                (1, 3)                    (2, 3)                 (3, 4)
+                                         1|a    0|b            1|b        0|a                    0|c
+                               0|b                                                    1|b                    1|a
+
+
+
+                                (1, 1)                (2, 2)                    (3, 3)                 (4, 4)
+                                               1|a              1|b                              0|c
+                                                         0|b               0|a         1|a             1|c
+                                               0|a
+
+
+                                                                                  0
+
+
+                                     Figure 5: The interval transducer realizing fabac .
+
+
+  (i) the set of states Q consists of a symbol 0 and all of the pairs (i, j) ∈ {1, . . . , n} × {1, . . . , n} such that
+      w(i,j) is either a prefix maximal or suffix maximal content-k subword of w for some k ∈ N;
+ (ii) the initial state is q0 = (1, n) (corresponding to the whole word w);
+ (iii) the set of terminal states is T = {0};
+ (iv) if (i, j) ∈ Q where | cont(w(i,j) )| = k > 1, then the state and letter transition functions are given by
+
+                         (i, j) ◦ 0 = (i, RIGHTk−1 (i))                                      (i, j) ◦ 1 =(LEFTk−1 (j), j)
+                         (i, j) ∗ 0 = aRIGHTk−1 (i)+1                                        (i, j) ∗ 1 =aLEFTk−1 (j)−1 ;
+
+ (v) (i, j) ∈ Q where | cont(w(i,j) )| = 1, then
+
+                            (i, j) ◦ α = 0                                 (i, j) ∗ α = ai ;
+
+ (vi) 0 ◦ α = 0 ∗ α = ⊥ for all α ∈ {0, 1}.
+The transducer has a linear number of states in |A| · |w| since |Q| ≤ 2 · |A| · |w| + 1, since there are at most |w|
+prefix or suffix maximal content-k subwords for any given k, and no prefix or suffix maximal content-k subwords
+for k ≥ |A|. The proof that T realizes fw is the same as that given in [23, Lemmas 1 and 2], and for the sake
+of brevity, we will not duplicate the proof here. An algorithm is given in [23, Theorem 2] that constructs the
+interval transducer T for w ∈ A∗ in O(|A| · |w|) time; we denote this algorithm by IntervalTransducer.
+A transducer is trim if every state belongs to some path starting at the initial state and ending at a terminal
+state. Any trim transducer T realizing fw for w ∈ A+ is acyclic, since the domain of fw is finite. A linear
+time algorithm for minimizing acyclic deterministic synchronous transducers, such as those in this paper, can
+be derived from Revuz [24]; we refer to this algorithm as Minimize.
+We say that transducers T = (Q, Σ, Γ, q0 , T, ◦ , ∗ ) and T ′ = (Q′ , Σ′ , Γ′ , q0′ , T ′ , ◦ ′ , ∗ ′ ) are isomorphic if the
+input and output alphabets coincide, Σ = Σ′ , Γ = Γ′ , and there exists a bijection f : Q → Q′ such that
+f (q0 ) = q0′ , f (T ) = T ′ , f (q ◦ α) = f (q) ◦ ′ α and q ∗ α = f (q) ∗ ′ α for all q ∈ Q, α ∈ Σ. In other words, two
+transducers are isomorphic if they differ only by the labelling of states.
+Just as with automata, the minimal deterministic synchronous transducer realizing a given function is unique
+up to isomorphism. It is also possible to check if two trim deterministic synchronous transducers are isomorphic
+in linear time in the number of transitions of the transducers. Essentially we treat the synchronous transducer
+as an automaton by making each transition be labelled by the pair containing both the input and output
+symbol, then apply the isomorphism algorithm for connected trim automata. We will call this algorithm
+TrimTransducerIsomorphism.
+
+
+                                                                      9
+The algorithms TrimTransducerIsomorphism, Minimize, and IntervalTransducer can now be combined into
+an algorithm for checking equality in the free band, Algorithm 4.1.
+
+ Algorithm 4.1: EqualInFreeBand
+   Arguments: words v, w ∈ A∗ ;
+   Returns    : if v ∼ w or not.
+ 1 Let T = Minimize(IntervalTransducer(v))
+        ′
+ 2 Let T = Minimize(IntervalTransducer(w))
+ 3 return TrimTransducerIsomorphism(Tv , Tw )
+
+
+
+The total time and space complexity of this algorithm is O((|v| + |w|) · |A|). A version of EqualInFreeBand
+is present in [23, Theorem 2]. However, the algorithm described in [23] achieves a better space complexity
+(O(|v|+|w|)) than Algorithm 4.1 by processing the transducers T and T ′ layer by layer. Whereas in the method
+described here, we store the full transducers, and so our algorithm has complexity O((|v| + |w|) · |A|).
+The preceding discussion also allows us to specify the size of the minimal transducer. Recall that if A is any set,
+then the short-lex ordering on A∗ is defined by u ≤ v if |u| < |v| or if |u| = |v| and u is lexicographically less
+than v (with respect to some underlying ordering on A) for all u, v ∈ A∗ . For w ∈ A+ let min(w) ∈ A+ denote
+the short-lex least word such that w ∼ min(w). Applying IntervalTransducer to min(w) gives a transducer
+T with at most 2 · | min(w)| · |A| + 1 states realizing fmin(w) = fw . The minimal transducer realizing fw will
+have no more states than T ; we record this in the next theorem.
+
+    Theorem 4.2. If A is any non-empty set, and w ∈ A∗ is arbitrary, then the minimal transducer realizing
+    fw has at most 2 · | min(w)| · |A| + 1 states.
+
+Note that it is not necessary to compute (or even know) min(w) when constructing the minimal transducer
+realizing fw .
+
+
+5      Multiplication
+In this section, we describe how to multiply elements of the free band using transducers representing the elements.
+Suppose that · denotes the multiplication within FB1 (A) for some alphabet A. One approach to finding a
+transducer representing x · y given x, y ∈ FB1 (A) arises from the algorithms described in Section 4. If v, w ∈ A∗
+represent x, y ∈ FB1 (A), respectively, then a transducer for x · y is given by IntervalTransducer(vw). This
+construction has complexity O((|v| + |w|) · |A|). Concatenating words, in all but the most trivial cases, produces
+a word that is not a minimal representative of the product. Therefore repeated multiplications using words can
+quickly lead to very long representatives. In this section, we give an algorithm that constructs a transducer Tx·y ,
+representing the product x · y, from any transducers Tx and Ty representing x, y ∈ FB1 (A), respectively. The
+complexity of this approach is O(|Tx | + |Ty | + |A|2 ) where |Tx | and |Ty | are the number of states of transducers
+Tx and Ty respectively. By Theorem 4.2, if Tx and Ty are minimal transducers, then Minimize(Tx·y ) can be
+found in O((| min(x)| + | min(y)| + |A|) · |A|) time and | Minimize(Tx·y )| ≤ 2 · |A| · | min(x · y)| + 1. The number
+of states in the minimal transducer for Tx·y is hence within a constant multiple of the minimum possible length
+of any word in A∗ representing x · y. This resolves the issue of the representative length blow-up in repeated
+multiplications.
+In the following series of results, we establish some necessary properties of the product x · y and show how to
+compute these properties.
+
+    Lemma 5.1. Let x, y ∈ FB1 (A) with x, y 6= ε. Then
+                    (                                                         (
+                      x · (y ◦ 0)       if y ∗ 0 6∈ cont(x)                       y∗0                 if y ∗ 0 6∈ cont(x)
+      (x · y) ◦ 0 =                                         (x · y) ∗ 0   =
+                      (x · (y ◦ 0)) ◦ 0 otherwise,                                (x · (y ◦ 0)) ∗ 0   otherwise,
+                    (                                                         (
+                      (x ◦ 1) · y       if x ∗ 1 6∈ cont(y)                       x∗1                 if x ∗ 1 6∈ cont(y)
+      (x · y) ◦ 1 =                                         (x · y) ∗ 1   =
+                      ((x ◦ 1) · y) ◦ 1 otherwise,                                ((x ◦ 1) · y) ∗ 1   otherwise.
+
+Proof. We will prove the first two statements, the second two statements follow by a similar argument.
+Let x, y ∈ FB1 (A) and let v, w ∈ A∗ such that v/∼ = x and w/∼ = y. Then (vw)/∼ = x · y is a representative
+of x · y. Hence it suffices by the commutative diagram in Fig. 2 to prove the result for v and w instead of x and
+y. By assumption x 6= ε and y 6= ε, and so v ∗ α and v ◦ α are defined for all α ∈ {0, 1} and similarly for w.
+
+                                                           10
+If w ∗ 0 6∈ cont(v), then | cont(v(w ◦ 0))| = | cont(vw)| − 1, since w ∗ 0 6∈ cont(v) by assumption, and
+w ∗ 0 6∈ cont(w ◦ 0) by definition. Furthermore, v(w ◦ 0) is the largest prefix of vw with content strictly
+contained in cont(vw), since the next letter in vw is w ∗ 0. So (vw) ◦ 0 = v(w ◦ 0) and (vw) ∗ 0 = w ∗ 0.
+If w ∗ 0 ∈ cont(v), then cont(v(w ◦ 0)) = cont(vw). Since v(w ◦ 0) is a prefix with the same content as vw, the
+first letter to occur last in vw must occur somewhere within v(w ◦ 0). Therefore (vw) ◦ 0 = (v(w ◦ 0)) ◦ 0 and
+(vw) ∗ 0 = (v(w ◦ 0)) ∗ 0.
+
+Recall that Theorem 2.3 essentially allows us to reconstruct z ∈ FB1 (A) given cont(z), z ◦α, and z ∗α for all α ∈
+{0, 1}. Consider the case when z = x · y for some x, y ∈ FB1 (A). We know that cont(x · y) = cont(x) ∪ cont(y).
+Lemma 5.1 allows us to compute (x · y) ◦ α and (x · y) ∗ α for α ∈ {0, 1}. However, using Lemma 5.1 naı̈vely to
+compute x · y requires exponential time, since in order to compute (x · y) ◦ 0 and (x · y) ◦ 1 we must compute
+x · (y ◦ 0) and (x ◦ 1) · y. We will show that it is possible to reduce the complexity by iterating Lemma 5.1 and
+considering the possible values of (x · y) ◦ α for all α ∈ {0, 1}∗. In Corollary 5.5, we will show that:
+
+(x · y) ◦ α ∈ {(x ◦ 1i ) · (y ◦ 0j ) : 0 ≤ i ≤ | cont(x)|, 0 ≤ j ≤ | cont(y)|} ∪ {x ◦ β : β ∈ {0, 1}∗} ∪ {y ◦ γ : γ ∈ {0, 1}∗}
+
+for all α ∈ {0, 1}∗. So, to compute (x · y) ◦ α for α ∈ {0, 1}∗, requires O(| cont(x)| · | cont(y)|) = O(|A|2 )
+products of the form (x ◦ 1i ) · (y ◦ 0j ), and the finitely many values in
+
+                                       {x ◦ β : β ∈ {0, 1}∗} ∪ {y ◦ γ : γ ∈ {0, 1}∗}
+
+which are represented in the given transducers for x and y. We will show in Lemma 5.4 that the values of
+((x ◦ 1i ) · (y ◦ 0j )) ◦ α and ((x ◦ 1i ) · (y ◦ 0j )) ∗ α for α ∈ {0, 1} can be derived by considering how cont(x ◦ 1i ) and
+cont(y ◦ 0j ) interact. Taken together, this will allow us to construct a transducer representing x · y, by taking
+the transducers representing x and y, adding O(|A|2 ) states, and the necessary transitions corresponding to the
+products {(x ◦ 1i ) · (y ◦ 0j ) : 0 ≤ i ≤ | cont(x)|, 0 ≤ j ≤ | cont(y)|}.
+We will make use of the following partial functions.
+
+  Definition 5.2. Let K0 , K1 : FB1 (A) × FB1 (A) → N be partial functions defined by:
+                            (
+                              min{k ∈ N : y ∗ 0k 6= ⊥ and y ∗ 0k 6∈ cont(x)} if such k exists
+               K0 (x, y) =
+                              ⊥                                                otherwise,
+                            (
+                              min{l ∈ N : x ∗ 1l 6= ⊥ and x ∗ 1l 6∈ cont(y)} if such l exists
+               K1 (x, y) =
+                              ⊥                                              otherwise.
+
+  for every x, y ∈ FB1 (A).
+
+The following lemma gives a recursive way of calculating the values of K0 (x, y) and K1 (x, y) for any x, y ∈
+FB1 (A).
+
+  Lemma 5.3. Let x, y ∈ FB1 (A). Then:
+                             
+                             1
+                                                         if y ∗ 0 6= ⊥ and y ∗ 0 6∈ cont(x)
+                K0 (x, y) = 1 + K0 (x, y ◦ 0)             if y ∗ 0 ∈ cont(x) and K0 (x, y ◦ 0) 6= ⊥
+                             
+                             
+                              ⊥                           otherwise,
+                             
+                             1
+                                                         if x ∗ 1 6= ⊥ and x ∗ 1 6∈ cont(y)
+                K1 (x, y) = 1 + K1 (x ◦ 1, y)             if x ∗ 1 ∈ cont(y) and K1 (x ◦ 1, y) 6= ⊥
+                             
+                             
+                              ⊥                           otherwise.
+
+Proof. We will only prove the lemma for K0 ; the proof for K1 is analogous.
+If y ∗ 0 6= ⊥ and y ∗ 0 6∈ cont(x), then, by definition, K0 (x, y) = 1 since there is no positive integer less than 1.
+If y ∗ 0 6= ⊥ and y ∗ 0 ∈ cont(x), then K0 (x, y) = ⊥ or K0 (x, y) ≥ 2. If K0 (x, y ◦ 0) 6= ⊥, then K0 (x, y ◦ 0) is the
+least positive integer such that (y ◦ 0) ∗ 0K0 (x,y◦0) 6= ⊥ and (y ◦ 0) ∗ 0K0 (x,y◦0) 6∈ cont(x). But, by the definition
+of ◦ and ∗, (y ◦ 0) ∗ 0K0(x,y◦0) = y ∗ 01+K0 (x,y◦0) and so k = 1 + K0(x, y ◦ 0) is the least positive integer such that
+y ∗ 0k 6= ⊥ and y ∗ 0k 6∈ cont(x), as required. If K0 (x, y ◦ 0) = ⊥, then there is no k ≥ 1 such that y ∗ 01+k 6= ⊥
+
+
+
+                                                             11
+and y ∗ 01+k 6∈ cont(x). This implies that there is no k ≥ 2 such that y ∗ 0k 6= ⊥ and y ∗ 0k 6∈ cont(x). But
+K0 (x, y) = ⊥ or K0 (x, y) ≥ 2, and since the latter does not hold, we conclude that K0 (x, y) = ⊥.
+Finally, if y ∗ 0 = ⊥, then y ∗ 0k = ⊥ for all k ≥ 1, so by definition K0 (x, y) = ⊥.
+
+With the preceding lemma in mind, we now consider ((x ◦ 1i ) · (y ◦ 0j )) ◦ α and ((x ◦ 1i ) · (y ◦ 0j )) ∗ α for
+α ∈ {0, 1}.
+
+  Lemma 5.4. Let x, y ∈ FB1 (A) and let 0 ≤ i ≤ | cont(x)| and 0 ≤ j ≤ | cont(y)|. If i 6= | cont(x)| or
+  j 6= | cont(y)|, then
+                                              (
+                                               (x ◦ 1i ) · (y ◦ 0j+k ) if k = K0 (x ◦ 1i , y ◦ 0j ) 6= ⊥
+                ((x ◦ 1i ) · (y ◦ 0j )) ◦ 0 =
+                                               x ◦ 1i 0                otherwise,
+                                              (
+                                               y ∗ 0j+k                if k = K0 (x ◦ 1i , y ◦ 0j ) 6= ⊥
+                ((x ◦ 1i ) · (y ◦ 0j )) ∗ 0 =
+                                               x∗1 0i                  otherwise,
+                                              (
+                                                      i+k          j
+                                               (x ◦ 1 ) · (y ◦ 0 )     if k = K1 (x ◦ 1i , y ◦ 0j ) 6= ⊥
+                ((x ◦ 1i ) · (y ◦ 0j )) ◦ 1 =
+                                               y ◦ 0j 1                otherwise,
+                                              (
+                                                    i+k
+                                               x∗1                     if k = K1 (x ◦ 1i , y ◦ 0j ) 6= ⊥
+                ((x ◦ 1i ) · (y ◦ 0j )) ∗ 1 =
+                                               y∗0 1j                  otherwise.
+
+  On the other hand, if i = | cont(x)| and j = | cont(y)|, then ((x◦1i )·(y◦0j ))◦α = ⊥ and ((x◦1i )·(y◦0j ))∗α =
+  ⊥ for α ∈ {0, 1}.
+
+Proof. We will show that if the result holds for (x ◦ 1i+1 ) · (y ◦ 0j ) and (x ◦ 1i ) · (y ◦ 0j+1 ), then it holds for
+(x ◦ 1i ) · (y ◦ 0j ). For the base case, let i = | cont(x)| or j = | cont(y)|.
+If i = | cont(x)| and j = | cont(y)|, then, since every application of ◦ reduces the content of x by 1, | cont(x ◦
+1i )| = | cont(x)| − i = 0 and so x ◦ 1i = ε. Similarly y ◦ 0j = ε. It follows that (x ◦ 1i ) · (y ◦ 0j ) = ε and so
+((x ◦ 1i ) · (y ◦ 0j )) ◦ α and ((x ◦ 1i ) · (y ◦ 0j )) ∗ α are undefined for α ∈ {0, 1}.
+If i = | cont(x)| and 1 ≤ j < | cont(y)|. This implies that x ∗ 1i+k = (x ◦ 1i ) ∗ 0k = ε ∗ 0k is undefined for all
+k ≥ 1. So K1 (x ◦ 1i , y ◦ 0j ) is undefined and
+                           ((x ◦ 1i ) · (y ◦ 0j )) ◦ 1 = ε · (y ◦ 0j ) ◦ 1 = (y ◦ 0j ) ◦ 1 = y ◦ 0j 1
+                           ((x ◦ 1i ) · (y ◦ 0j )) ∗ 1 = ε · (y ◦ 0j ) ∗ 1 = (y ◦ 0j ) ∗ 1 = y ∗ 0j 1.
+Since j < | cont(y)|, y ◦ 0j 6= ε so that y ◦ 0j+1 is defined and y ◦ 0j+1 6∈ cont(x ◦ 1i ) = ∅. Hence by Lemma 5.3,
+K0 (x ◦ 1i , y ◦ 0j ) = 1. In this case, since x ◦ 1i = ε,
+                ((x ◦ 1i ) · (y ◦ 0j )) ◦ 0 = (x ◦ 1i ) · (y ◦ 0j+1 ) and ((x ◦ 1i ) · (y ◦ 0j )) ∗ 0 = y ∗ 0j+1 ,
+as required. We have established the base case when i = | cont(x)|, the proof when j = | cont(y)| is analogously.
+Suppose that 0 ≤ i < | cont(x)|, 0 ≤ j < | cont(y)| and assume that the conclusion of the lemma holds for
+(x ◦ 1i+1 ) · (y ◦ 0j ) and (x ◦ 1) · (y ◦ 0j+1 ). Since i < | cont(x)| and j < | cont(y)|, x ◦ 1i , y ◦ 0j 6= ε and we can
+apply Lemma 5.1 to (x ◦ 1i ) · (y ◦ 0j ). The value of y ∗ 0j+1 is defined since y ◦ 0j 6= ε. If y ∗ 0j+1 6∈ cont(x ◦ 1i ),
+then K0 (x ◦ 1i , y ◦ 0j ) = 1 by Lemma 5.3. But then Lemma 5.1 implies that
+                        ((x ◦ 1i ) · (y ◦ 0j )) ◦ 0 = (x ◦ 1i ) · ((y ◦ 0j ) ◦ 0) = (x ◦ 1i ) · (y ◦ 0j+1 )
+                        ((x ◦ 1i ) · (y ◦ 0j )) ∗ 0 = (y ◦ 0j ) ∗ 0 = y ∗ 0j+1 ,
+as required. If y ∗ 0j+1 ∈ cont(x ◦ 1i ), then, by Lemma 5.1,
+                  ((x ◦ 1i ) · (y ◦ 0j )) ◦ 0 = ((x ◦ 1i ) · ((y ◦ 0j ) ◦ 0)) ◦ 0 = ((x ◦ 1i ) · (y ◦ 0j+1 )) ◦ 0
+                  ((x ◦ 1i ) · (y ◦ 0j )) ◦ 0 = ((x ◦ 1i ) · ((y ◦ 0j ) ◦ 0)) ∗ 0 = ((x ◦ 1i ) · (y ◦ 0j+1 )) ∗ 0
+and so by the inductive hypothesis on (x ◦ 1i ) · (y ◦ 0j+1 ) the following holds
+                                           (
+                                             (x ◦ 1i ) · (y ◦ 0j+1+k ) if k = K0 (x ◦ 1i , y ◦ 0j+1 ) 6= ⊥
+             ((x ◦ 1i ) · (y ◦ 0j )) ◦ 0 =
+                                             x◦1 0i                    otherwise,
+                                           (
+                                                  j+1+k
+                                             y∗0                       if k = K0 (x ◦ 1i , y ◦ 0j+1 ) 6= ⊥
+             ((x ◦ 1i ) · (y ◦ 0j )) ∗ 0 =
+                                             x∗1 0i                    otherwise.
+
+
+                                                                12
+Lemma 5.3 implies that K0 (x ◦ 1i , y ◦ 0j ) = 1 + K0 (x ◦ 1i , y ◦ 0j+1 ) if K0 (x ◦ 1i , y ◦ 0j+1 ) is defined and
+K0 (x ◦ 1i , y ◦ 0j ) is undefined otherwise. Therefore
+                                                 (
+                           i          j            (x ◦ 1i ) · (y ◦ 0j+k ) if k = K0 (x ◦ 1i , y ◦ 0j ) 6= ⊥
+                   ((x ◦ 1 ) · (y ◦ 0 )) ◦ 0 =
+                                                   x ◦ 1i 0                otherwise,
+                                                 (
+                                                   y ∗ 0j+k                if k = K0 (x ◦ 1i , y ◦ 0j ) 6= ⊥
+                   ((x ◦ 1i ) · (y ◦ 0j )) ∗ 0 =
+                                                   x∗1 0i                  otherwise
+
+which is exactly what we set out to show.
+An analogous proof establishes the conclusion of the lemma for ((x ◦ 1i ) · (y ◦ 0j )) ◦ 1 and ((x ◦ 1i ) · (y ◦ 0j )) ∗ 1,
+completing the induction.
+                                                                                                                 ′         ′
+Lemma 5.4 implies that for every α ∈ {0, 1} one of the following holds: ((x ◦ 1i ) · (y ◦ 0j )) ◦ α = (x ◦ 1i ) · (y ◦ 0j )
+for some i′ , j ′ ; ((x ◦ 1i ) · (y ◦ 0j )) ◦ α = x ◦ β for some β ∈ {0, 1}∗; or ((x ◦ 1i ) · (y ◦ 0j )) ◦ α = y ◦ γ for some
+γ ∈ {0, 1}∗. By iteratively applying Lemma 5.4, we extend this observation in the following corollary.
+
+  Corollary 5.5. If (x · y) ◦ α 6= ⊥ for some α ∈ {0, 1}∗, then
+
+     (x · y) ◦ α ∈ {(x ◦ 1i ) · (y ◦ 0j ) : 0 ≤ i ≤ | cont(x)|, 0 ≤ j ≤ | cont(y)|}
+                                                                  ∪ {x ◦ β : β ∈ {0, 1}∗} ∪ {y ◦ γ : γ ∈ {0, 1}∗}.
+
+Lemma 5.4 and Corollary 5.5 allow us to describe a transducer representing the product x · y given trans-
+ducers for x and y as follows. Let x, y ∈ FB1 (A) and let Tx = (Qx , {0, 1}, A, qx, Tx , ◦ x , ∗ x ) and Ty =
+(Qy , {0, 1}, A, qy , Ty , ◦ y , ∗ y ) be any transducers representing x and y, respectively. We define:
+
+                                            Tx·y = (Q, {0, 1}, A, q0, T, ◦ , ∗ )                                         (4)
+
+where:
+  (i) the set of states Q = Qx ∪ Qy ∪ Q′ consists of all the states of Tx and Ty together with the states
+      Q′ = {(i, j) : 0 ≤ i ≤ | cont(x)| and 0 ≤ j ≤ | cont(y)|}, where {(| cont(x)|, j) : 0 ≤ j ≤ | cont(y)|} and
+      {(i, | cont(y)|) : 1 ≤ i ≤ | cont(x)|} are identified with the original states {qy ◦ y 0j : 0 ≤ j ≤ | cont(y)|}
+      and {qx ◦ x 1i : 0 ≤ i ≤ | cont(x)|}. Each state in (i, j) ∈ Q′ corresponds to the element (x ◦ 1i ) · (y ◦ 0j )
+      in Lemma 5.4;
+ (ii) the initial state is q0 = (0, 0);
+ (iii) the terminal states are exactly those of Tx and Ty , i.e. T = Tx ∪ Ty ;
+ (iv) the state and letter transition functions ◦ and ∗ for the states in Qx and Qy are defined exactly as their
+      counterparts in Tx and Ty ;
+ (v) if (i, j) ∈ Q′ , then the state transition and letter transition functions are given by
+                                            (
+                                              (i, j + k)       if k = K0 (x ◦ 1i , y ◦ 0j ) 6= ⊥
+                               (i, j) ◦ 0 =
+                                              q ◦ 10   i       otherwise,
+                                            ( x x
+                                                       j+k
+                                              qy ∗ y 0         if k = K0 (x ◦ 1i , y ◦ 0j ) 6= ⊥
+                               (i, j) ∗ 0 =
+                                              q ∗ 1i 0         otherwise,
+                                            ( x x
+                                              (i + k, j)       if k = K1 (x ◦ 1i , y ◦ 0j ) 6= ⊥
+                               (i, j) ◦ 1 =
+                                              q ◦ 0 1  j       otherwise,
+                                            ( y y
+                                                       i+k
+                                              qx ∗ x 1         if k = K1 (x ◦ 1i , y ◦ 0j ) 6= ⊥
+                               (i, j) ∗ 1 =
+                                              qy ∗ y 0j 1      otherwise.
+
+
+The next lemma establishes that Tx·y is indeed a transducer.
+
+  Lemma 5.6. If x, y ∈ FB1 (A) are arbitrary, and Tx and Ty are transducers representing x and y respec-
+  tively, then Tx·y defined in (4) is a transducer.
+
+
+
+
+                                                             13
+Proof. It suffices to show that the state transition function ◦ only takes values in Q and that ◦ and ∗ are
+well-defined.
+Clearly, if (i, j) ◦ α ∈ Qx ∪ Qy , then (i, j) ◦ α ∈ Q. On the other hand, if (i, j) ◦ 0 = (i, j + k) where
+k = K0 (x ◦ 1i , y ◦ 0j ) 6= ⊥, then y ∗ 0j+k 6= ⊥ so j + k ≤ | cont(y)| and (i, j + k) ∈ Q′ . Similarly, if
+(i, j) ◦ 1 = (i + k, j), then it can be shown that i + k ≤ | cont(x)| and so (i, j) ◦ 1 ∈ Q′ also.
+To show that ◦ and ∗ are well-defined, it suffices to show that for all α ∈ {0, 1}, (| cont(x)|, j) ◦ α = (qy ◦ y 0j ) ◦ α,
+(| cont(x)|, j) ∗ α = (qy ◦ y 0j ) ∗ α and the analogous statements hold for (i, | cont(y)|) and qx ◦ x 1i .
+If i = | cont(x)| and 1 ≤ j ≤ | cont(y)|, then x ∗ 1i = ε and so x ∗ 1i+k = (x ◦ 1i ) ∗ 0k = ⊥ for all k ≥ 1. But
+then
+
+                                   (| cont(x)|, j) ◦ 1 = qy ◦ y 0j 1 = (qy ◦ y 0j ) ◦ 1
+                                   (| cont(x)|, j) ∗ 1 = qy ∗ y 0j 1 = (qy ◦ y 0j ) ∗ 1.
+
+If y ◦ 0j+1 6= ⊥, then y ◦ 0j+1 6∈ cont(x ◦ 1i ) = ∅ and so K0 (x ◦ 1i , y ◦ 0j ) = 1. In this case,
+
+                       (| cont(x)|, j) ◦ 0 = (| cont(x)|, j + 1) = qy ◦ y 0j+1 = (qy ◦ y 0j ) ◦ 0
+                       (| cont(x)|, j) ∗ 0 = qy ∗ 0j+1 = (qy ◦ y 0j ) ◦ 0.
+
+If, on the other hand, y ◦ 0j+1 = ⊥, then y ◦ 0j+k = ⊥ for all k ≥ 1. Therefore
+
+                            (| cont(x)|, j) ◦ 0 = qx ◦ x 1| cont(x)| 0 = (qx ◦ x 1| cont(x)| ) ◦ 0
+                            (| cont(x)|, j) ∗ 0 = qx ∗ x 1| cont(x)| 0 = (qx ◦ x 1| cont(x)| ) ∗ 0.
+
+Since qx ◦ x 1| cont(x)| represents x ◦ 1| cont(x)| = ε, and Tx represents x, it follows that qx ◦ x 1| cont(x)| is terminal
+and so (| cont(x)|, j) ◦ 0 = ⊥ and (| cont(x)|, j) ∗ 0 = ⊥. But this is exactly what we wanted, since y ◦ 0j+1 is
+undefined, y ◦ 0j = ε, so qy ◦ y 0j is terminal and therefore (qy ◦ 0j ) ◦ 0 = ⊥ (qy ◦ 0j ) ◦ 1 = ⊥ as well.
+
+To show that Tx·y does indeed represent x · y we require the following lemma.
+
+  Lemma 5.7. Let T = (Q, {0, 1}, A, q0, T, ◦ , ∗ ) be a transducer and let Ψ : Q → FB1 (A) be any partial
+  function such that Ψ(q0 ) 6= ⊥; Ψ(q) = ε if and only if q ∈ T ; and Ψ satisfies the commutative diagram in
+  Fig. 4. Then T represents Ψ(q0 ).
+
+Proof. We show that for every q ∈ Q with Ψ(q) 6= ⊥, the induced subtransducer rooted at q realizes the function
+fΨ(q) . Since Ψ(q0 ) 6= ⊥ and the induced subtransducer rooted at q0 realizes the same function as T , this will
+imply that T realizes fΨ(q0 ) and so represents Ψ(q0 ), as required. Note that for every state q ∈ Q, if Ψ(q) 6= ⊥,
+then either: Ψ(q) = ε, and q ◦ 0 = q ◦ 1 = ⊥; or Ψ(q) 6= ε, q ◦ 0 6= ⊥, and q ◦ 1 6= ⊥. This is because Ψ respects
+the commutative diagram in Fig. 4, and the only element of FB1 (A) with x ◦ 0 = x ◦ 1 = ⊥ is ε.
+We proceed by induction on | cont(Ψ(q))|. For the base case, let q ∈ Q be such that Ψ(q) 6= ⊥ and
+| cont(Ψ(q))| = 0. Then Ψ(q) = ε and since Ψ respects the diagram in Fig. 4, it follows that q ◦ α = ε ◦ α = ⊥
+for all α ∈ {0, 1}. By assumption, Ψ(q) = ε if and only if q is terminal. It follows that the induced subtransducer
+rooted at q realizes the function which maps ε to itself and every other input to ⊥, which is exactly fε .
+Now fix 1 ≤ k ≤ | cont(Ψ(q0 ))| and assume that the statement holds for all q ∈ Q with Ψ(q) 6= ⊥ and
+| cont(Ψ(q))| = k − 1. Let q ∈ Q with Ψ(q) 6= ⊥ be such that | cont(Ψ(q))| = k. Since k ≥ 1, Ψ(q) 6= ε
+and so q ◦ α 6= ⊥ for all α ∈ {0, 1}. But then | cont(Ψ(q ◦ α))| = | cont(Ψ(q) ◦ α)| = | cont(Ψ(q))| − 1 for
+all α ∈ {0, 1}. It follows that the induced subtransducer rooted at q ◦ α realizes fΨ(q ◦ α) = fΨ(q)◦α for all
+α ∈ {0, 1}. The subtransducer rooted at q realizes the partial function f : {0, 1}∗ → A∗ given by f (ε) = ⊥ and
+f (αβ) = (q ∗ α)fΨ(q ◦ α) (β) for all α ∈ {0, 1} and β ∈ {0, 1}∗. But this is exactly the partial function fΨ(q) .
+
+We now prove that the transducer Tx·y represents x · y as claimed.
+
+  Theorem 5.8. Let x, y ∈ FB1 (A) and let Tx and Ty be transducers representing x and y, respectively.
+  Then the transducer Tx·y defined in (4) represents x · y.
+
+Proof. Suppose that Tx = (Qx , {0, 1}, A, qx, Tx , ◦ x , ∗ x ), that Ty = (Qy , {0, 1}, A, qy , Ty , ◦ y , ∗ y ), and that
+Tx·y = (Q, {0, 1}, A, q0, T, ◦ , ∗ ).
+
+
+
+                                                              14
+To show that Tx·y represents x · y we will define a function Ψ : Q → FB1 (A) such that Ψ(q0 ) = x · y, Ψ satisfies
+the commutative diagrams given in Fig. 4, and Ψ(q) = ε if and only if q ∈ T . It will follow from this that Tx·y
+realizes fx·y and therefore Tx·y represents x · y by Lemma 5.7.
+Let Ψx : Qx → FB1 (A) and Ψy : Qy → FB1 (A) be the functions realizing the commutative diagram in Fig. 4
+for Tx and Ty respectively. We define Ψ : Q → FB1 (A) by
+                                        
+                                                i         j                    ′
+                                        (x ◦ 1 ) · (y ◦ 0 ) if q = (i, j) ∈ Q
+                                        
+                                Ψ(q) = Ψx (q)                if q ∈ Qx
+                                        
+                                        
+                                          Ψy (q)             if q ∈ Qy .
+
+Since we identified the states {(| cont(x)|, j) : 0 ≤ j ≤ | cont(y)|} and {(i, | cont(y)|) : 1 ≤ i ≤ | cont(x)} with
+the states {qy ◦ y 0j : 0 ≤ j ≤ | cont(y)} and {qx ◦ x 1i : 0 ≤ i ≤ | cont(x)|} within Q, we must check that Ψ is well-
+defined. In particular, we must show that Ψ((i, | cont(y)|)) = Ψ(qx ◦ 1i ) and Ψ((| cont(x)|, j)) = Ψ(qy ◦ 0j ) for all
+relevant values of i and j. Every application of ◦ reduces the content of y by 1 letter, and so | cont(y◦0| cont(y)| )| =
+| cont(y)|−| cont(y)| = 0. In other words, y ◦0| cont(y)| = ε. But then Ψ((i, | cont(y)|)) = (x◦1i )·(y ◦0| cont(y)| ) =
+(x◦1i )·ε = x◦1i for all i. On the other hand, since Tx represents x, Ψ(qx ◦ 1i ) = Ψx (qx ◦ 1i ) = Ψx (qx )◦1i = x◦1i
+for all i. Therefore Ψ((i, | cont(y)|)) = Ψ(qx ◦ 1i ) for all i. Similarly, Ψ((| cont(x)|, j)) = Ψ(qy ◦ 0j ) for all j,
+and so Ψ is well-defined.
+Next, we establish that the 3 conditions of Lemma 5.7 hold for Ψ. By the definition of Ψ, Ψ(q0 ) = Ψ((0, 0)) =
+(x ◦ 10 ) · (y ◦ 00 ) = x · y 6= ⊥.
+We now show that Ψ(q) = ε if and only if q ∈ T = Tx ∪ Ty . Since, for any q ∈ Qx , Ψx (q) = ε if and only
+if q ∈ Tx , and the analogously for Ψy , it follows that, for all q ∈ Qx ∪ Qy , Ψ(q) = ε if and only if q ∈ T .
+Let q = (i, j) ∈ Q′ . Then cont(Ψ(q)) = cont((x ◦ 1i ) · (y ◦ 0j )) = cont(x ◦ 1i ) ∪ cont(y ◦ 0j ). If Ψ(q) = ε,
+then | cont(x ◦ 1i )| = | cont(y ◦ 0j )| = 0. But | cont(x ◦ 1i )| = | cont(x)| − i, and so i = | cont(x)|. Similarly
+j = | cont(y)|. Therefore q is the state that was identified with both qx ◦ 1| cont(x)| and qy ◦ 0| cont(y)| . The
+former state is terminal in Tx since Ψx (qx ◦ 1| cont(x)| ) = Ψx (qx ) ◦ 1| cont(x)| = x ◦ 1| cont(x)| = ε.
+It remains to show that Ψ satisfies the commutative diagram in Fig. 4. It suffices to show that Ψ(q ◦ α) = Ψ(q)◦α
+and q ∗ α = Ψ(q) ∗ α for all q ∈ Q and α ∈ {0, 1}, since the recursive definitions of ◦ , ∗ , ◦ and ∗ imply the
+result for all α ∈ {0, 1}∗. If q ∈ Qx , then q ◦ α = q ◦ x α ∈ Qx and q ∗ α = q ∗ x α ∈ A for all α ∈ {0, 1} since
+◦ and ∗ coincide with ◦ x and ∗ x on Qx . This implies that
+
+                             Ψ(q ◦ α) = Ψ(q ◦ x α) = Ψx (q ◦ x α) = Ψx (q) ◦ α = Ψ(q) ◦ α,
+
+and
+                                          q ∗ α = q ∗ x α = Ψx (q) ∗ α = Ψ(q) ∗ α
+for all α ∈ {0, 1}. Hence the equalities represented in the commutative diagram are satisfied for q ∈ Qx . A
+similar argument shows that the commutative diagram holds for q ∈ Qy also.
+Suppose that q = (i, j) ∈ Q′ . If k = K0 (x ◦ 1i , y ◦ 0j ) 6= ⊥, then by applying Lemma 5.4
+
+              Ψ((i, j) ◦ 0) = Ψ((i, j + k)) = (x ◦ 1i ) · (y ◦ 0j+k ) = ((x ◦ 1i ) · (y ◦ 0j )) ◦ 0 = Ψ(q) ◦ 0
+                  (i, j) ∗ 0 = qy ∗ 0j+k = Ψy (qy ) ∗ 0j+k = y ∗ 0j+k = ((x ◦ 1i ) · (y ◦ 0j )) ∗ 0 = Ψ(q) ∗ 0.
+
+On the other hand, if K0 (x ◦ 1i , y ◦ 0j ) = ⊥, then
+
+      Ψ((i, j) ◦ 0) = Ψ(qx ◦ 1i 0) = Ψx (qx ◦ 1i 0) = Ψx (qx ) ◦ 1i 0 = x ◦ 1i 0 = ((x ◦ 1i ) · (y ◦ 0j )) ◦ 0 = Ψ(q) ◦ 0
+         (i, j) ∗ 0 = qx ∗ 1i 0 = Ψx (qx ) ∗ 1i 0 = x ∗ 1i 0 = ((x ◦ 1i ) · (y ◦ 0j )) ∗ 0 = Ψ(q) ∗ 0.
+
+Hence Ψ(q ◦ 0) = Ψ(q)◦0 and q ∗ 0 = Ψ(q)∗0 for all q ∈ Q′ . Similarly, it is routine to verify that Ψ(q ◦ 1) = Ψ(q)◦1
+and q ∗ 1 = Ψ(q) ∗ 1 for all q ∈ Q′ .
+
+We will in Algorithm 5.11 turn the definition in (4) into an algorithm for computing Tx·y from Tx and Ty .
+Algorithm 5.11 involves computing (i, j) ◦ α and (i, j) ∗ α for α ∈ {0, 1}, which in turn require us to calculate
+Kα (x ◦ 1i , y ◦ 0j ).
+We cannot compute Kα directly, since it is defined on pairs of elements in FB1 (A) and these have no representa-
+tion here other than transducers. In particular, computing transducers (or another representation of) the input
+
+
+
+
+                                                              15
+                  i       0         1       2     3             j                 0             1         2       3    4
+      cont(x ◦ 1i )   {a, e, c}   {e, c}   {c}    ∅        cont(y ◦ 0j )     {b, c, a, d}   {b, c, a}   {b, c}   {b}   ∅
+    0       d             1         1       1     1        0      a               1             1         1       2    2
+    1       a             3         1       1     1        1      e               1             1         1       1    1
+    2       c             2         2       2     1        2      c               1             1         ⊥       ⊥    ⊥
+    3       b             1         1       1     1        3      ⊥               ⊥            ⊥          ⊥       ⊥    ⊥
+    4       ⊥            ⊥          ⊥       ⊥     ⊥        i qx ∗ 1i+1
+    j qy ∗ 0j+1
+
+Table 5.1: The functions K0 (left) and K1 (right) of x = eaec, y = bcacbcd ∈ FB1 (a, b, c, d, e). ComputeK0 and
+ComputeK1 fill in their respective tables column-by-column, starting from the right, filling each column from
+bottom to top.
+
+
+values x ◦ 1i and y ◦ 0j defeats the purpose of the algorithm presented in this section. However, if x, y ∈ FB1 (A)
+are fixed, then Lemma 5.3 tells us that
+                             
+                             1
+                                                         if y ∗ 0j+1 6= ⊥ and y ∗ 0j+1 6∈ cont(x ◦ 1i )
+      K0 (x ◦ 1i , y ◦ 0j ) = 1 + K0 (x ◦ 1i , y ◦ 0j+1 ) if y ∗ 0j+1 ∈ cont(x ◦ 1i ) and K0 (x ◦ 1i , y ◦ 0j+1 ) 6= ⊥
+                             
+                             
+                               ⊥                          otherwise
+                             
+                             1
+                                                         if x ∗ 1i+1 6= ⊥ and x ∗ 1i+1 6∈ cont(y ◦ 0j )
+               i        j
+      K1 (x ◦ 1 , y ◦ 0 ) = 1 + K1 (x ◦ 1i+1 , y ◦ 0j ) if x ∗ 1i+1 ∈ cont(y ◦ 0j ) and K1 (x ◦ 1i+1 , y ◦ 0j ) 6= ⊥
+                             
+                             
+                               ⊥                          otherwise.
+
+We can effectively compute, as follows, the values Kα (x ◦ 1i , y ◦ 0j ) for any i, j ∈ N0 from any transducers
+Tx and Ty representing x and y, respectively. If qx and qy are the initial states and ∗ x and ∗ y are the letter
+transition functions of Tx and Ty , respectively, then qx ∗ x 1i = x ∗ 1i and qy ∗ y 0i = y ∗ 0i for all i, j, and so we
+can compute Kα (x ◦ 1i , y ◦ 0j ) given i, j ∈ N0 . For the remainder of this section we suppose that x, y ∈ FB1 (A)
+are fixed. We define Kα : N0 × N0 → N by
+
+                                              Kα (i, j) = Kα (x ◦ 1i , y ◦ 0j ).
+
+Computing Kα (i, j) naively by considering all possible values k ≥ 1 and checking if y ∗ 0j+k is defined, for
+example, requires at least O(|A|) steps per (i, j) ∈ Q′ . This would require a total of O(|A|3 ) to compute
+Kα (i, j) for all (i, j) ∈ Q′ . However, by utilizing Lemma 5.3 and traversing (i, j) in reverse lexicographic order,
+we can precompute the values of Kα (i, j) for all (i, j) ∈ Q′ in O(|A|2 ) time. Storing the values will take O(|A|2 )
+space and we can then retrieve each value in O(1) time. This is exactly what we do to compute K0 in ComputeK0
+given in Algorithm 5.9. A function ComputeK1 to compute K1 can be defined analogously.
+To illustrate, if x = eaec and y = bcacbcd are elements in FB1 (a, b, c, d, e), then the minimal transducers
+representing each x and y are shown in Fig. 6 and the values of K0 and K1 are shown in Table 5.1.
+
+  Lemma 5.10. Let x, y ∈ FB1 (A), α ∈ {0, 1} and let Tx and Ty be transducers representing x and y,
+  respectively. Then ComputeKα (Tx , Ty ) = Kα and ComputeKα has time complexity O(|A|2 ).
+
+Proof. We prove the lemma for ComputeK0 , the proof for ComputeK1 is analogous.
+We begin by showing that the value of c equals cont(x ◦ 1i ) at the start of each iteration of the loop in line 3.
+When i = | cont(x)| at the start of the first loop, | cont(x ◦ 1i )| = | cont(x)| − i = 0 and so cont(x ◦ 1i ) = ∅ = c.
+Assume that c = cont(x ◦ 1i ) holds for some 0 < i ≤ | cont(x)| at the start of the loop in line 3. Since i 6= 0,
+in line 12 we set c to be c ∪ {qx ∗ x 1i }. Since Tx represents x, qx ∗ x 1i = x ∗ 1i and so c ∪ {qx ∗ x 1i } =
+cont(x ◦ 1i ) ∪ {x ∗ 1i } = cont(x ◦ 1i−1 ), as required.
+Since c = cont(x ◦ 1i ) for every value of i, and Ty represents y, it follows that checking qy ∗ y 0j+1 6= ⊥ and
+qy ∗ y 0j+1 6∈ c in line 5 is the same as checking y ∗ 0j+1 6= ⊥ and y ∗ 0j+1 6∈ cont(x ◦ 1i ).
+We will show that K 0 (i, j) = K0 (x ◦ 1i , y ◦ 0j ) at the end of the loop that starts in line 4 for all values of i and j.
+Suppose that 0 ≤ i ≤ | cont(x)| is arbitrary and j = | cont(y)|. Then y ∗ 0j+1 = ⊥ and so K0 (x ◦ 1i , y ◦ 0j ) = ⊥
+and the checks in line 5 and line 7 both fail. Since the value of K 0 (i, j) is not changed during the first iteration
+of the loop, K 0 (i, j) = ⊥ = K0 (x ◦ 1i , y ◦ 0j ) when j = | cont(y)|. Assume that at the start of the loop in line
+4, K 0 (i, j + 1) = K0 (x ◦ 1i , y ◦ 0j+1 ) for some i and j. Then we can translate the checks and assignments in
+
+
+
+                                                             16
+                  x0                                                                               y0
+            0|c         1|a                                                                 0|d          1|a
+
+
+
+  x1 1|a                             x2                                          y1                                  y2
+                               0|c        1|e                              0|a        1|a                      0|d        1|b
+  0|a
+
+
+                  x3 1|e                        0|c x4         y3                                  y4                              y5
+                                                                          1|b                                              0|d
+                  0|e                              1|c   0|c                                 0|b        1|b                             1|c
+
+
+                                     x5                        y6                                  y7                              y8
+                                                                          1|b                                              0|d
+                                                                    0|b                      0|c        1|c                      1|d
+
+
+                                                                                                   y9
+
+
+                              Figure 6: The minimal transducers for x = eaec and y = bcacbcd.
+
+
+
+
+ Algorithm 5.9: ComputeK0
+   Arguments: a pair of transducers Tx = (Qx , {0, 1}, A, qx, Tx , ◦ x , ∗ x ) and
+                   Ty = (Qy , {0, 1}, A, qy , Ty , ◦ y , ∗ y ) representing some x, y ∈ FB1 (A) respectively.
+   Returns       : the partial function K0 .
+ 1 Let K0 : N0 × N0 → N be such that K0 (i, j) = ⊥ for all i, j.
+ 2 Let c ← ∅ # The content of x seen so far
+ 3 for i ∈ {| cont(x)|, . . . , 0} do
+ 4    for j ∈ {| cont(y)|, . . . , 0} do
+ 5        if qy ∗ y 0j+1 6= ⊥ and qy ∗ y 0j+1 6∈ c then
+ 6             K0 (i, j) := 1
+ 7        else if qy ∗ y 0j+1 6= ⊥ and K0 (i, j + 1) 6= ⊥ then
+ 8             K0 (i, j) := 1 + K0 (i, j + 1)
+ 9        end if
+10    end for
+11    if i 6= 0 then
+12        c ← c ∪ {qx ∗ x 1i }
+13    end if
+14 end for
+15 return K0
+
+
+
+
+                                                            17
+lines 5-9 into
+                      
+                      1
+                                                    if y ∗ 0j+1 6= ⊥ and y ∗ 0j+1 6∈ cont(x ◦ 1i )
+          K 0 (i, j) = 1 + K0 (x ◦ 1i , y ◦ 0j+1 )   if y ∗ 0j+1 ∈ cont(x ◦ 1i ) and K0 (x ◦ 1i , y ◦ 0j+1 ) 6= ⊥
+                      
+                      
+                        ⊥                            otherwise
+
+the right hand of which is exactly the definition of K0 (x ◦ 1i , y ◦ 0j ). So K 0 (i, j) is correct at the end of the
+loop starting in line 4. This completes the proof that the values of K 0 are correct by the end of the algorithm.
+To show that the time complexity is O(|A|2 ), note that the values of cont(x), cont(y), qy ∗ x 0j and qx ∗ x 1i for
+1 ≤ i ≤ | cont(x)| and 1 ≤ j ≤ | cont(y)| can be precomputed in O(A) time. The assignments in lines 1 and 2,
+the checks in lines 5 and 7, and the assignment in line 12 are all constant time. The lines within the loops are
+executed at most (| cont(x)| + 1)(| cont(y)| + 1) ∈ O(|A|2 ) times, as required.
+
+The multiplication algorithm Multiply for transducers is given in Algorithm 5.11. Informally, we start with
+an initially empty transducer, then copy all the states and transitions from Tx and Ty into Tx·y so that Tx·y
+coincides with each of Tx and Ty on the states Qx and Qy respectively. We then add all the states (i, j) ∈ Q′ to
+Tx·y , and assign their transitions according to Lemma 5.4. Although, in some sense, this informal description of
+the algorithm is not far away from the pseudo-code given in Algorithm 5.11, we require the precise formulation
+given in Algorithm 5.11 to describe its time complexity in Theorem 5.12. It is clear from the definition of Tx·y
+in (4), and the preceding discussion, that the value returned by Multiply(Tx , Ty ) is Tx·y .
+
+ Algorithm 5.11: Multiply
+   Arguments: a pair of transducers Tx = (Qx , {0, 1}, A, qx, Tx , ◦ x , ∗ x ) and
+                    Ty = (Qy , {0, 1}, A, qy , Ty , ◦ y , ∗ y ) representing x, y ∈ FB1 (A) respectively,
+   Returns        : the product transducer Tx·y = (Q, {0, 1}, A, q0, T, ◦ , ∗ ).
+ 1 Let T = (Q = ∅, {0, 1}, A, q0 = ε, T = ∅, ◦ , ∗ ) be the empty transducer.
+ 2 Copy all the states and transitions from Tx and Ty into T
+ 3 K0 ← ComputeK0 (Tx , Ty ) and K1 ← ComputeK1 (Tx , Ty )
+ 4 for i ∈ {| cont(x)|, . . . , 0} do
+ 5    for j ∈ {| cont(y)|, . . . , 0} do
+ 6        Add state (i, j) to T
+ 7        if K0 (i, j) 6= ⊥ then
+ 8             (i, j) ◦ 0 := (i, j + K0 (i, j)) and (i, j) ∗ 0 := qy ∗ y 0j+K0 (i,j)
+ 9        else
+10             (i, j) ◦ 0 := qx ◦ x 1i 0 and (i, j) ∗ 0 := qx ∗ x 1i 0
+11        end if
+12        if K1 (i, j) 6= ⊥ then
+13             (i, j) ◦ 1 := (i + K1 (i, j), j) and (i, j) ∗ 1 := qx ∗ x 1i+K1 (i,j)
+14        else
+15             (i, j) ◦ 1 := qy ◦ y 0j 1 and (i, j) ∗ 1 := qy ∗ y 0j 1
+16        end if
+17    end for
+18 end for
+19 q0 ← (0, 0), T ← Tx ∪ Ty
+20 # Perform an identification of the relevant states.
+21 Remove the states (i, | cont(y)|) for all i ∈ {| cont(x)|, . . . , 0}
+22 Remove the states (| cont(x)|, j) for all j ∈ {| cont(y)|, . . . , 0}
+23 for q ∈ Q do
+24    for α ∈ {0, 1} do
+25        if q ◦ α = (i, | cont(y)|) for some i then
+26             q ◦ α = qx ◦ x 1i
+27        else if q ◦ α = (| cont(x)|, j) for some j then
+28             q ◦ α = qy ◦ y 0j
+29        end if
+30    end for
+31 end for
+32 return T
+
+
+
+
+                                                             18
+                                    (0, 0)                                                                            (0, 0)
+
+                           (0, 1)            (1, 0)                                                          (0, 1)            (1, 0)
+
+                  (0, 2)            (1, 1)            (2, 0)                                        (0, 2)            (1, 1)            (2, 0)
+
+         (0, 3)            (1, 2)            (2, 1)            (3, 0)                      (0, 3)            (1, 2)            (2, 1)            (3, 0)
+
+(0, 4)            (1, 3)            (2, 2)            (3, 1)                      (0, 4)            (1, 3)            (2, 2)            (3, 1)            y2
+
+         (1, 4)            (2, 3)            (3, 2)                          x1            (1, 4)            (2, 3)            (3, 2)             y4
+
+                  (2, 4)            (3, 3)                                         x3               (2, 4)            (3, 3)             y7
+
+                           (3, 4)                                                           x5               (3, 4)             y9
+
+
+(a) Transitions for (i, j) ∈ Q′ , K 0 (i, j) 6= ⊥ or K 1 (i, j) 6= ⊥.         (b) Transitions for (i, j) ∈ Q′ , K 0 (i, j) = ⊥ = K 1 (i, j).
+
+Figure 7: The second and third steps in the construction of the product transducer Txy for x = eaec and
+y = bcacbcd constructed from the minimal transducers Tx and Ty in Fig. 6. The pinkish-red transitions are
+labelled by a, the light-green ones by b, the blue ones by c, the yellow ones by d and purple ones by e.
+
+
+
+    Theorem 5.12. Let x, y ∈ FB1 (A), α ∈ {0, 1}, and let Tx and Ty be transducers representing x and y
+    respectively. Then Multiply has time complexity O(|Tx | + |Ty | + |A|2 ) where |Tx | and |Ty | are the numbers
+    of states in Tx and Ty , respectively.
+
+Proof. Note that line 1 is constant time. Since there are at most twice as many transitions as states in any
+transducer, line 2 requires O(|Tx | + |Ty |) time. Line 3 takes O(|A|2 ) time by Lemma 5.10.
+As we already noted in the proof of Lemma 5.10 we can precompute the values qx ◦ x 1i 0, qy ◦ y 0j 1, qx ∗ x 1i ,
+and qy ∗ y 0j for 1 ≤ i ≤ | cont(x)| and 1 ≤ j ≤ | cont(y)| in O(|A|) time. Since Kα is also precomputed, each
+of the checks and assignments in lines 6-16 can be done in constant time. This means that the for loop in lines
+4-18 takes a total of O(|A|2 ) time.
+Line 19 takes at most O(|Tx | + |Ty |) time since each transducer can have no more terminal states than states in
+total. Lines 21 and 22 are at most O(A) time, since we can remove a state in constant time.
+Finally, since we can check if a state is equal to (| cont(x)|, j) or (i, | cont(y)|) in constant time, lines 25-29 are
+constant time. So lines 23-31 take time proportional to the total number of states in T which by construction
+is O(|Tx | + |Ty | + |A|2 ). Therefore the overall time complexity is O(|Tx | + |Ty | + |A|2 ), as required.
+
+
+    Example 5.13. Let x = eaec and y = bcacbcd ∈ FB1 (a, b, c, d, e). We illustrate the operation of Multiply
+    in four steps. First, we construct Q′ , initially with no transitions. In the second step, the values in the
+    tables for K 0 and K 1 in Table 5.1 are used to find the transitions between the states in Q′ . For example,
+    since K 0 (0, 0) = 1, we can add the 0-transition from (0, 0) to (0, 1) labelled by qy ∗ y 01 = d. Similarly,
+    K 1 (0, 0) = 2, so there is a 1-transition from (0, 0) to (0, 2) labelled by qy ∗ 02 = e. In the same way, the
+    remaining transitions between the states in Q′ can be defined whenever K 0 (i, j) 6= ⊥ or K 1 (i, j) 6= ⊥; see
+    Fig. 7a. In the third step, we consider those states (i, j) ∈ Q′ such that K 0 (i, j) = ⊥ and K 1 (i, j) = ⊥.
+    For example, K 1 (2, 0) = ⊥ and so (2, 0) ◦ 1 = y0 ◦ y 00 1 = y2 and (i, j) ∗ 1 = y0 ∗ y 00 1 = a. Similarly,
+    K 1 (2, 1) = ⊥, so (2, 1) ◦ 1 = y0 ◦ y 01 = y4 and (2, 1) ∗ 1 = y0 ∗ y 01 = a; see Fig. 7b. Finally, the remaining
+    transitions are essentially those from Tx and Ty but with some states identified; see Fig. 8.
+
+
+
+6      Minimal Word Representative
+In this section, we present an algorithm for determining the short-lex least word min(w) belonging to the
+∼-class of w ∈ A∗ . We will abuse our notation, by writing min(x) to mean the short-lex least word such
+
+
+                                                                        19
+                                                                        (0, 0)
+
+                                                               (0, 1)            (1, 0)
+
+                                                      (0, 2)            (1, 1)            (2, 0)
+
+                                             (0, 3)            (1, 2)            (2, 1)            (3, 0)
+
+                                    (0, 4)            (1, 3)            (2, 2)            (3, 1)            y2
+
+                             x1              (1, 4)            (2, 3)            (3, 2)             y4
+
+                                                      (2, 4)            (3, 3)             y7               Ty
+                                  Tx
+                                              x3               (3, 4)                               y5
+
+                                                                         y8
+
+Figure 8: The complete product transducer Txy for x = eaec and y = bcacbcd constructed from the minimal
+transducers Tx and Ty in Fig. 6. The colors of the edges correspond to the generators labeling them in the same
+way as in Fig. 7.
+
+
+that min(x)/∼ = x, where x ∈ FB1 (A). Clearly, min(w/∼) = min(w). Given a transducer Tx representing x ∈
+FB1 (A), the algorithm for computing min(x), that we introduce in this section, has O(|Tx |·|A|) time complexity.
+This leads to a O(|w| · |A| + | min(w)| · |A|2 ) time algorithm for computing min(w) given w ∈ A∗ .
+To establish our algorithm we first show some technical results about the structure of min(x). The following
+lemma was first suggested to the authors by T. Conti-Leslie in the summer of 2020; it is possible that this result
+is known, but that authors could not locate it in the literature.
+
+  Lemma 6.1 (Conti-Leslie Lemma). Let w ∈ A∗ and let s = min(w ◦ 0)(w ∗ 0) and t = (w ∗ 1) min(w ◦ 1). If
+  i ∈ {1, . . . , |s|} is such that s(i,|s|) is the longest suffix of s that is also a prefix of t, then min(w) = s(1,i−1) t.
+
+Lemma 6.1 says, in other words, that to find a minimal word representative, it suffices to minimize the prefix
+and suffix, and then overlap them as much as possible. To prove Lemma 6.1 we require the following.
+
+  Lemma 6.2. For all w ∈ A∗ and for all α ∈ {0, 1}∗, min(w ◦ α) = min(w) ◦ α.
+
+Proof. Note that for all w ∈ A∗ and α ∈ {0, 1}∗, there exist u, v ∈ A∗ such that w = u(w ◦ α)v. Since
+w ◦ α ∼ min(w ◦ α) by definition, w = u(w ◦ α)v ∼ u min(w ◦ α)v and u min(w ◦ α)v ≤ u(w ◦ α)v = w.
+Repeating this process for min(w) yields u min(min(w) ◦ α)v ≤ u(min(w) ◦ α)v = min(w). By the minimality of
+min(w), u min(min(w)◦α)v = u(min(w)◦α)v and so min(min(w)◦α) = min(w)◦α. By the Green-Rees Theorem
+(Theorem 2.3), min(w)◦ α ∼ w ◦ α and so min(min(w)◦ α) = min(w ◦ α). It follows that min(w)◦ α = min(w ◦ α)
+for all w ∈ A∗ and α ∈ {0, 1}∗.
+
+Proof of Lemma 6.1. By Lemma 6.2, it follows that min(w) ◦ 0 = min(w ◦ 0) and min(w) ◦ 1 = min(w ◦ 1). By
+the Green-Rees Theorem, min(w) ∗ 0 = w ∗ 0 and min(w) ∗ 1 = w ∗ 1. Hence from the definitions of ◦ and ∗,
+min(w) has a prefix s = (min(w) ◦ 0) (min(w) ∗ 0) = (min(w ◦ 0)) (w ∗ 0) and a suffix t = (w ∗ 1) (min(w ◦ 1)).
+There are now two possible cases. Either s and t overlap within min(w) or they do not. If there is no overlap,
+then min(w) = su′ t for some u′ ∈ A∗ . Note, however, that st = min(w ◦ 0)(w ∗ 0)(w ∗ 1) min(w ◦ 1) ∼ w by the
+Green-Rees Theorem. So if s, t do not overlap within min(w), then u′ = ε and min(w) = st.
+Otherwise, if there is some overlap of s and t within min(w), then min(w) = s′ v ′ t′ for some s′ , t′ ∈ A∗ and
+v ′ ∈ A+ such that s′ v ′ = s and v ′ t′ = t. If s′′ , t′′ ∈ A∗ and v ′′ ∈ A+ with |v ′ | < |v ′′ | are such that s′′ v ′′ = s and
+v ′′ t′′ = t, then min(w) ∼ s′′ v ′′ t′′ and |s′′ v ′′ t′′ | < |s′ v ′ t′ |, contradicting the minimality of min(w). Therefore v ′ is
+the largest suffix of s that is also a prefix of t, as required.
+
+                                                                    20
+In order to later use Lemma 6.1 in a computational manner, we will fully classify the possible types of overlap
+between s and t in Lemma 6.3. In general, there are many different suffixes of a given word that are also
+prefixes of other words, e.g. for bbababa, each of the proper suffixes a, aba, ababa is a prefix of ababaa. Perhaps
+surprisingly, as it will turn out in Lemma 6.3, at most one suffix s = min(w ◦ 0)(w ∗ 0) (from Lemma 6.2)
+is a prefix of t = (w ∗ 1) min(w ◦ 1). This is key to the linear complexity of the algorithm presented in this
+section.
+We require the following observation in the proof of Lemma 6.3. If w ∈ A∗ , then w ∗ 0 6∈ cont(w ◦ 0), and so
+                                                                                 S| cont(w)|
+cont(w) = cont(w ◦ 0) ∪ {w ∗ 0}. By repeatedly applying this, we get cont(w) = k=1           {w ∗ 0k }. Hence if
+                           k
+a ∈ cont(w), then a = w ∗ 0 for some k. An analogous statement holds when 0 is replaced by 1.
+
+  Lemma 6.3. Let w ∈ A∗ , let s = min(w ◦ 0)(w ∗ 0), and let t = (w ∗ 1) min(w ◦ 1). Then there is at most
+  one non-empty suffix v ′ of s that is also a prefix of t.
+     (i) If w ∗ 0 = w ∗ 1, then v ′ = w ∗ 0 and so min(w) = min(w ◦ 0)(w ∗ 0) min(w ◦ 1).
+  If w ∗ 0 6= w ∗ 1, then there exist k, l > 0 such that w ∗ 01k = w ∗ 1 and w ∗ 10l = w ∗ 0 and either:
+    (ii) k = l, min(w ◦ 01k ) = min(w ◦ 10k ), and v ′ = (w ∗ 1) min(w ◦ 01k )(w ∗ 0) and so min(w) is the unique
+         word with prefix min(w◦0)(w∗0) and suffix (w∗1) min(w◦1) whose overlap is (w∗1) min(w◦01k )(w∗0);
+         or
+   (iii) no non-empty suffix of s is a prefix of t, and so min(w) = min(w ◦ 0)(w ∗ 0)(w ∗ 1) min(w ◦ 1).
+
+Proof. Assume that s = s′ v ′ and t = v ′ t′ for some s′ , v ′ , t′ ∈ A∗ .
+  (i) If w ∗ 0 = w ∗ 1, then we will show that v ′ = w ∗ 0. Clearly, v ′ = w ∗ 0 is a suffix of s = (w ◦ 0)(w ∗ 0) and
+      a prefix of t = (w ∗ 1)(w ◦ 1).
+      Assume that there is another non-empty suffix v ′′ of s that is a prefix of t not equal to v ′ . Since v ′′ is
+      distinct from w ∗ 0, |v ′′ | > 1. Then v ′′ t′′ = t = (w ∗ 1) min(w ◦ 1) for some t′′ ∈ A∗ , and so the first letter
+      of v ′′ is w ∗ 1 = w ∗ 0. On the other hand, s′′ v ′′ = s = min(w ◦ 0)(w ∗ 0) for some s′′ ∈ A∗ , |v ′′ | > 1, and
+      so the first letter of v ′′ , w ∗ 0, occurs somewhere in min(w ◦ 0). But by definition, cont(min(w ◦ 0)) =
+      cont(w ◦ 0) = cont(w) \ {w ∗ 0}, a contradiction.
+      So if w ∗ 0 = w ∗ 1, then v ′ = w ∗ 0 is the only suffix of s that is also a prefix of t, which implies that
+      min(w) = min(w ◦ 0)(w ∗ 0) min(w ◦ 1).
+For the remainder of the proof we suppose that w ∗ 0 6= w ∗ 1. We establish that there is at most one non-empty
+suffix v ′ of s that is also a prefix of t.
+Assume that such a suffix v ′ exists. Clearly |v ′ | > 1 since v ′ is non-empty and if |v ′ | = 1, then we would have
+w ∗ 0 = w ∗ 1, a contradiction.
+Since s′ v ′ = s = min(w ◦ 0)(w ∗ 0) and v ′ t′ = t = (w ∗ 1) min(w ◦ 1), it follows that v ′ = (w ∗ 1)v ′′ (w ∗ 0)
+for some v ′′ ∈ A∗ . By considering the content of min(w ◦ 0) and min(w ◦ 1), we deduce that cont(v ′′ ) =
+cont(w) \ {w ∗ 0, w ∗ 1}. Since w ∗ 1 is the first letter of v ′ and w ∗ 1 does not occur anywhere else in v ′ , v ′
+starts at the rightmost occurrence of w ∗ 1 in s. Similarly, v ′ must end at the leftmost occurrence of w ∗ 0 in t.
+In particular, v ′ is the unique suffix of s that is also a prefix of t.
+Next, we establish the existence of the values k and l in the statement of the lemma. By the comment
+immediately before the lemma, and because w ∗ 1 ∈ cont(w) \ {w ∗ 0} = cont(min(w) ◦ 0), there exists k > 0
+such that (w ◦ 0) ∗ 1k = w ∗ 1. But w ∗ 01k = (w ◦ 0) ∗ 1k by definition, and so w ∗ 01k = w ∗ 1. In a similar
+manner, there exists l > 0 such that w ∗ 10l = w ∗ 0.
+Before proving cases (ii) and (iii) of the lemma, we determine the rightmost occurrence of w ∗ 1 in s and the
+leftmost occurrence of w ∗ 0 in t. Since w ∗ 01k = w ∗ 1, the definition of ◦ implies that there is a prefix s′′ of
+min(w) ◦ 0 with
+
+      min(w) ◦ 0 = s′′ (min(w) ∗ 01k )(min(w) ◦ 01k ) = s′′ (w ∗ 01k ) min(w ◦ 01k ) = s′′ (w ∗ 1) min(w ◦ 01k ).
+
+Since (min(w) ◦ 0)(w ∗ 0) = min(w ◦ 0)(w ∗ 0) = s, the word s′′ is also a prefix of s, and so
+
+                                            s = s′′ (w ∗ 1) min(w ◦ 01k )(w ∗ 0).
+
+Since w ∗ 1 = w ∗ 01k = min(w) ∗ 01k 6∈ cont(min(w ◦ 01k )) and s = s′′ (w ∗ 1) min(w ◦ 01k )(w ∗ 0), the rightmost
+occurrence of w ∗ 1 in s is just after s′′ . In a similar manner, t = (w ∗ 1) min(w ◦ 10l )(w ∗ 0)t′′ for some suffix
+t′′ , and the leftmost occurrence of w ∗ 0 in t is just before t′′ .
+
+                                                              21
+ (ii) If k = l and min(w ◦ 01k ) = min(w ◦ 10k ), then from the above v ′ = (w ∗ 1) min(w ◦ 01k )(w ∗ 0) is a suffix
+      of s and a prefix of t, and hence the unique word with this property.
+(iii) Assume that k 6= l or min(w ◦ 01k ) 6= min(w ◦ 10k ).
+      If there exists a non-empty suffix v ′ of s that is also a prefix of t, then since v ′ must begin at the rightmost
+      occurrence of w ∗ 1 in s, it follows that v ′ = (w ∗ 1) min(w ◦ 01k )(w ∗ 0). Similarly, by considering the
+      content of min(w ◦ 10l ), we can establish that v ′ = (w ∗ 1) min(w ◦ 10l )(w ∗ 0). Hence (w ∗ 1) min(w ◦
+      01k )(w ∗ 0) = (w ∗ 1) min(w ◦ 10l )(w ∗ 0) and so min(w ◦ 01k ) = min(w ◦ 10l ). Since | cont(w)| − (l + 1) =
+      | cont(min(w ◦10l ))| = | cont(min(w ◦01k ))| = | cont(w)|−(k +1), this implies that k = l, a contradiction.
+      Therefore v ′ does not exist, and there is no non-empty suffix of s that is a prefix of t, as required.
+
+Let x ∈ FB1 (A) and let Tx = (Q, {0, 1}, A, q0, T, ◦ , ∗ ) be the minimal transducer representing x. Note that by
+the Green-Rees Theorem (Theorem 2.3), it follows that any two v, w ∈ A∗ with v/∼ = w/∼ = x will be in the
+same case of Lemma 6.3, and if they are in case (ii), then they will have the same value for k. So we may refer
+to these cases applying to x ∈ FB1 (A). If q ∈ Q is any state and y ∈ FB1 (A) is the element represented by q
+(i.e. y is not necessarily equal to x), then Lemma 6.3 can be applied to y. We say that Lemma 6.3 applies to a
+state q of Tx to mean that it applies to the element of the free band represented by q.
+In Algorithm 6.4, we present a O(| cont(x)|) time algorithm named ClassifyCase for determining which of the
+cases (i), (ii), or (iii) of Lemma 6.3 applies to a given q ∈ Q. If case (ii) applies, then the algorithm also finds
+1 ≤ k < | cont(x)| such that min(y ◦ 01k ) = min(y ◦ 10k ) where y ∈ FB1 (A) is represented by q. For convenience
+when presenting Algorithm 6.6 later, ClassifyCase returns both the case of Lemma 6.3 that applies to q and
+an integer. In case (ii) this integer is k, and in cases (i) and (iii) it is | cont(y)| where y ∈ FB1 (A) is represented
+by the argument q ∈ Q.
+
+ Algorithm 6.4: ClassifyCase
+   Arguments: a minimal transducer Tx = (Q, {0, 1}, A, q0, T, ◦ , ∗ ) representing some x ∈ FB1 (A), and a
+                    state q ∈ Q,
+   Returns        : the case c of Lemma 6.3 that applies to the element of FB1 (A) represented by q, and the
+                    corresponding integer k if c is (ii).
+ 1 if q ∗ 0 = q ∗ 1 then
+ 2     return case (i) and | cont(Ψ(q))|
+ 3 end if
+ 4 u ← q ◦ 0, v ← q ◦ 1
+ 5 for k ∈ {1, . . . , | cont(Ψ(q))|} do
+ 6     if u ∗ 1 = q ∗ 1, v ∗ 0 = q ∗ 0, and u ◦ 1 = v ◦ 0 then
+ 7         return case (ii) and k
+ 8     end if
+ 9     u ← u ◦ 1, v ← v ◦ 0
+10     if u or v is terminal then
+11         return case (iii) and | cont(Ψ(q))|
+12     end if
+13 end for
+
+
+
+  Theorem 6.5. Algorithm 6.4 is correct and has time complexity O(|A|).
+
+Proof. Let y = Ψ(q) be the element of FB1 (A) represented by q. Since q ∗ α = y ∗ α for all α ∈ {0, 1}∗,
+q ∗ 0 = q ∗ 1 in line 1 if and only if y ∗ 0 = y ∗ 1. If this holds, then case (i) of Lemma 6.3 applies to y and the
+algorithm returns in line 2.
+Supposing that q ∗ 0 6= q ∗ 1, we will show that u = q ◦ 01k−1 and v = q ◦ 10k−1 at the start of the loop in line
+5 for every value of k. In line 4, the states u and v represent y ◦ 0 and y ◦ 1, respectively, so the statement is
+true when k = 1. In line 9 we set the values of u and v to be u ◦ 1 and v ◦ 0, respectively. So if u = q ◦ 01k−1
+and v = q ◦ 10k−1 prior to line 9, then u = q ◦ 01k , v = q ◦ 10k after line 9, as required.
+Since u and v represent y ◦ 01k−1 and y ◦ 10k−1 , respectively, by Lemma 3.5, u ◦ 1 = v ◦ 0 holds if and only if
+y ◦ 01k = y ◦ 10k . Additionally, u ∗ 1 = (y ◦ 01k−1 ) ∗ 1 = y ∗ 01k and q ∗ 1 = y ∗ 1, and so u ∗ 1 = q ∗ 1 if and
+only if y ∗ 01k = y ∗ 1. Similarly, v ∗ 0 = q ∗ 0 if and only if y ∗ 10k = y ∗ 0. So the condition in line 6 holds if
+and only if we are in case (ii) of Lemma 6.3 and y ◦ 01k = y ◦ 10k .
+Finally for the correctness of the algorithm, if we terminate at line 11, it follows that the condition of case (ii)
+does not hold for any k, and so we must be in case (iii).
+
+                                                          22
+For the complexity, | cont(y)| can be computed once at the start of the algorithm in time O(| cont(y)|) by
+simply traversing Tx starting from the state q until we reach a terminal state. The checks and operations done
+at each step of Algorithm 6.4 are constant time. The loop in line 5 will execute at most | cont(y)| ≤ |A| times.
+So the time complexity of the algorithm is O(|A|) as required.
+
+We now present an algorithm MinWord for computing min(x) given a minimal transducer representing x ∈
+FB1 (A). The input to MinWord consists of:
+   • a minimal transducer Tx = {Q, {0, 1}, A, q0, T, ◦ , ∗ } representing x;
+   • a state q ∈ Q;
+   • a word w ∈ A∗ that is a prefix of min(x);
+   • a non-negative integer l;
+   • a partial function B : Q → N0 × N0 .
+In Lemma 6.7, we will show that MinWord(Tx , q, w, l, B) produces the minimum word corresponding to the
+element represented by the state q, assuming that the input satisfies certain constraints. It will follow that
+min(x) = MinWord(Tx , q, ε, 0, B), where B is defined B(q) = (0, 0) for all terminal states q ∈ T and B(q) = ⊥
+otherwise.
+The algorithm MinWord is stated formally in Algorithm 6.6.
+
+ Algorithm 6.6: MinWord
+   Arguments: Tx , q, w, l, B as described above.
+   Returns       : a word w′ and a partial function B ′ .
+ 1 s ← |w| − l + 1
+ 2 if q ∈ dom(B) then
+ 3     (i, j) ← B(q)
+ 4     return ww(i+l,j) , B
+ 5 end if
+ 6 w, B ← MinWord(Tx , q ◦ 0, w, l, B)
+ 7 c, k := ClassifyCase(Tx , q)
+ 8 if c indicates that Lemma 6.3(i) applies then
+ 9     w ← w(q ∗ 0)
+10     l′ ← 0
+11 else if c indicates that Lemma 6.3(ii) applies then
+12     l′ ← |wB(q ◦ 01k ) |
+13 else
+14     w ← w(q ∗ 0)(q ∗ 1)
+15     l′ ← 0
+16 end if
+                                  ′
+17 w, B ← MinWord(Tx , q ◦ 1, w, l , B)
+18 B(q) := (s, |w|)
+19 return w, B
+
+
+
+
+Informally, the idea of MinWord is to build up min(x) from its constituent parts min(x)∗0 = x∗0, min(x)∗1 = x∗1,
+min(x) ◦ 0, and min(x) ◦ 1. Since min(x) ◦ 0 = min(x ◦ 0) and similarly for 1, min(x) ◦ 0 and min(x) ◦ 1 can
+be computed recursively by considering the transducer states representing x ◦ 0 and x ◦ 1, respectively. In this
+way, the recursion proceeds by traversing the states of Tx . The parameter q represents the current state in the
+recursion.
+The parameter w represents the prefix of min(x) found so far. In MinWord, w is extended to be a longer and
+longer prefix of min(x) until the two words coincide.
+The first recursive call in MinWord will compute min(x ◦ 0). How min(x ◦ 0) is combined with x ∗ 0, x ∗ 1
+and min(x ◦ 1) depends on the case of Lemma 6.3 that applies. If case (i) or (iii) applies, then there is no
+overlap in min(x ◦ 0) and min(x ◦ 1), and so having recursively computed them, min(x) is obtained by taking
+the appropriate concatenation of min(x ◦ 0), x ∗ 0, x ∗ 1, and min(x ◦ 1). On the other hand, if case (ii) of
+Lemma 6.3 occurs, then there is non-trivial overlap between min(x ◦ 0) and min(x ◦ 1). In this case, we find
+min(x ◦ 0) initially and then compute min(x ◦ 1) in a way which avoids recomputing the overlap.
+
+
+                                                        23
+This is where the fourth parameter l comes into play. We set l to be equal to the size of the overlap of Lemma 6.3
+when computing MinWord of x ◦ 1. The value of l indicates the size of the prefix min(x ◦ 1k ) of min(x ◦ 1) that
+has already been calculated, and allows us to pick up the calculation from there.
+The function B is used to avoid repeatedly recomputing recursive calls; in other words, B implements the
+well-known memoization paradigm. In particular, the minimum word min(y) corresponding to the element y
+of the free band represented by each state q ∈ Q is only computed once, and, in some sense, the value is stored
+in B. If the state q corresponding to y has been visited by MinWord already, then the word w contains min(y).
+Hence rather than storing min(y) itself, it is only necessary to store the start and end index of min(y) in w.
+More precisely, B(q) = (i, j) if and only if w(i,j) = min(y) where y is the element of the free band corresponding
+to the state q.
+In order to prove that MinWord is correct, we require the following notation. A partial function B : Q → N0 × N0
+is closed under reachability if dom(B) contains all terminal states in Q, and {r ◦ α : α ∈ {0, 1}∗} ⊆ dom(B)
+for all r ∈ dom(B). A pair (w, B) where w ∈ A∗ and B : Q → N0 × N0 is closed under reachability is
+min-compatible wB(r) = min(Ψ(r)) for every r ∈ dom(B).
+Suppose that (w, B) is min-compatible and w′ ∈ A∗ has w as a prefix. If B(r) = (i, j) and i ≤ j, since
+                                                                   ′                     ′
+w(i,j) = min(Ψ(r)), then j ≤ |w| and w(i,j) 6= ε. It follows that w(i,j) = w(i,j) since w(1,|w|) = w. If B(r) = (i, j)
+with i > j, then w(i,j) = ε = min(Ψ(r)) and so w(i,j) = ε = min(Ψ(r)) also. We have shown that (w′ , B) is
+                                                      ′
+
+min-compatible.
+The next lemma provides a crucial component in the proof of correctness of MinWord.
+
+  Lemma 6.7. Suppose that x ∈ FB1 (A) and that Tx = (Q, {0, 1}, A, q0, T, ◦ , ∗ ) is the minimal transducer
+  representing x. If w ∈ A∗ , B : Q → N0 × N0 , q ∈ Q, and l ∈ N0 are such that there exists a K ∈ N0 where:
+    (i) (w, B) is min-compatible;
+    (ii) q ◦ 0K ∈ dom(B);
+   (iii) w(s,|w|) = min(Ψ(q ◦ 0K )) where s = |w| − l + 1;
+  then the pair (w′ , B ′ ) = MinWord(Tx , q, w, l, B) is min-compatible, q ∈ dom(B ′ ), w is a prefix of w′ , and
+    ′
+  w(s,|w ′ |) = min(Ψ(q)).
+
+
+
+
+Proof. We will proceed recursively on the states reachable from q ∈ Q. It suffices to show that the lemma holds
+for those states q ∈ Q that have no child states, and that if the statement holds for q ◦ 0 and q ◦ 1, then the
+statement holds for q also.
+For the assumptions of the lemma to hold, q ◦ 0K has to be defined. Therefore, if q has no child states, then
+q ◦ 0K is defined if and only if K = 0. But in this case, q ◦ 00 = q ◦ ε = q ∈ dom(B). Thus to establish this
+case it suffices to prove the lemma for all states q ∈ dom(B).
+Note that the s calculated in line 1 is exactly the s in (iii) of the lemma.
+Suppose that q ∈ dom(B). Then the check in line 2 will pass. In line 3 we set (i, j) = B(q) so that w(i,j) =
+min(Ψ(q)) since (w, B) is min-compatible by assumption. In line 4 we return w′ = ww(i+l,j) and B ′ = B.
+Since q ∈ dom(B) = dom(B ′ ) and w is trivially a prefix of w′ , in order to show the lemma holds, we need to
+ensure that (w′ , B ′ ) is min-compatible and that w(s,|w
+                                                        ′
+                                                             ′ |) = min(Ψ(q)). For the former, the input pair (w, B) is
+
+min-compatible, w is a prefix of w , and B = B, and so, by the comments before the lemma, (w′ , B ′ ) is min-
+                                      ′         ′
+
+compatible also. For the latter, recall that w(i,j) = min(Ψ(q)) and w(s,|w|) = min(Ψ(q ◦ 0K )) = min(Ψ(q)) ◦ 0K .
+Since w(i,j) ◦ 0K = min(Ψ(q)) ◦ 0K = w(s,|w|) is a prefix of w(i,j) with length |w| − s + 1 = l, it follows that
+w(s,|w|) = w(i,i+l−1) . This implies that w(s,|w|) w(i+l,j) = w(i,i+l−1) w(i+l,j) = w(i,j) = min(Ψ(q)). So the returned
+w′ = ww(i+l,j) has the suffix w(s,|w
+                                  ′
+                                      ′ |) = min(Ψ(q)) as required.
+
+
+Next, we assume that the lemma holds for q ◦ 0 and q ◦ 1 and any w ∈ A∗ , l ∈ N0 , and B : Q → N0 × N0 that
+satisfy the hypotheses of the lemma.
+We already covered the case when q ∈ dom(B), so we may assume that q 6∈ dom(B). The check in line 2 will now
+fail and in line 6 we calculate MinWord(Tx , q ◦ 0, w, l, B). We will show that the assumptions of the lemma hold
+for this invocation of MinWord. The pair (w, B) is min-compatible, by assumption, and so condition (i) holds.
+Since q 6∈ dom(B), K ≥ 1 and so (q ◦ 0) ◦ 0K−1 = q ◦ 0K ∈ dom(B), and condition (ii) holds. In the same vein,
+w(s,|w|) = min(Ψ((q ◦ 0) ◦ 0K−1 )) and condition (iii) holds. Therefore if (w′ , B ′ ) = MinWord(Tx , q ◦ 0, w, l, B),
+then (w′ , B ′ ) satisfy the conclusion of the lemma, i.e. (w′ , B ′ ) is min-compatible, q ◦ 0 ∈ dom(B ′ ), the input w
+is a prefix of w′ and w(s,|w
+                           ′
+                               ′ |) = min(Ψ(q ◦ 0)).
+
+
+
+
+                                                          24
+In line 7 we use ClassifyCase to calculate c and k. By Theorem 6.5 , c represents the case of Lemma 6.3 that
+applies to Ψ(q). Depending on the case, we will append some letters to w and set the value of the parameter l′
+in lines 8-16 and then calculate MinWord(Tx , q ◦ 1, w, l′ , B) on line 17.
+We will show that after calculating MinWord(Tx , q ◦ 1, w, l′ , B) in line 17, that the following hold: (w, B) is
+min-compatible; q ◦ 1 ∈ dom(B); the input w is a prefix of the current w; and w(s,|w|) = min(Ψ(q)). Having
+established that this holds in line 17, after executing line 18, q ∈ dom(B) and B is still reachability closed, since
+q ◦ 0, q ◦ 1 ∈ dom(B). Also (w, B) will be min-compatible since B(q ◦ 0k ) = (s, |w|) and w(s,|w|) = min(Ψ(q)).
+Hence w and B returned in line 19 will satisfy the conclusions of the lemma, and the proof will be complete.
+Therefore it suffices to show that after computing MinWord(Tx , q ◦ 1, w, l′ , B) in line 17, the following hold:
+(w, B) is min-compatible; q ◦ 1 ∈ dom(B); the input w is a prefix of the current w; and w(s,|w|) = min(Ψ(q)).
+We will consider each of the cases as they apply to Ψ(q) in Lemma 6.3 separately.
+(i) In this case,
+
+           min(Ψ(q)) = min(Ψ(q) ◦ 0)(Ψ(q) ∗ 0) min(Ψ(q) ◦ 1) = min(Ψ(q ◦ 0))(q ∗ 0) min(Ψ(q ◦ 1))
+
+and lines 9 and 10 are executed. After line 9, w(s,|w|) = min(Ψ(q ◦ 0))(q ∗ 0).
+Since l′ = 0, in line 17 we invoke MinWord(Tx , q ◦ 1, w, 0, B). We now check that the assumptions of the lemma
+hold for this invocation. Since (w, B) is min-compatible after line 6 and we have only appended letters to w,
+(w, B) is min-compatible before line 17, and so condition (i) holds. Since Tx is minimal, there exists K ′ such
+                   ′                                          ′                     ′
+that (q ◦ 1) ◦ 0K is terminal. Hence min(Ψ((q ◦ 1) ◦ 0K )) = ε and (q ◦ 1) ◦ 0K ∈ dom(B) since B is closed
+under reachability. This shows that condition (ii) holds. To see that condition (iii) holds, note that l′ = 0 (line
+                                                                     ′
+10) and so w(|w|−l′ +1,|w|) = w(|w|+1,|w|) = ε = min(Ψ((q ◦ 1) ◦ 0K )).
+We can recursively apply the lemma to conclude that if (w′ , B ′ ) = MinWord(Tx , q ◦ 1, w, 0, B), then (w′ , B ′ ) is
+min-compatible, q ◦ 1 ∈ dom(B ′ ), w is a prefix of w′ and w(|w|+1,|w
+                                                            ′
+                                                                      ′ |) = min(Ψ(q ◦ 1)).
+
+                           ′                                             ′                   ′
+It remains to show that w(s,|w ′ |) = min(Ψ(q)). Since w is a prefix of w , it follows that w(1,|w|) = w and so
+  ′
+w(s,|w|) = w(s,|w|) = min(Ψ(q ◦ 0))(q ∗ 0). Thus
+                ′             ′        ′
+               w(s,|w ′ |) = w(s,|w|) w(|w|+1,|w ′ |) = min(Ψ(q ◦ 0))(q ∗ 0) min(Ψ(q ◦ 1)) = min(Ψ(q)).
+
+
+
+
+(ii) Since Lemma 6.3(ii) holds for Ψ(q), min(Ψ(q)) is the unique word that has prefix min(Ψ(q) ◦ 0))(Ψ(q) ∗ 0) =
+min(Ψ(q ◦ 0))(q ∗ 0) and suffix (Ψ(q) ∗ 1) min(Ψ(q) ◦ 1)) = (q ∗ 1) min(Ψ(q ◦ 1)) such that this prefix and suffix
+overlap exactly on the word (q ∗ 1) min(Ψ(q) ◦ 01k )(q ∗ 0), where k is the same as the value we computed in
+line 7 (by the correctness of ClassifyCase).
+Since we are in case (ii), in line 12 we set l′ = |wB(q ◦ 01k ) |. Note that q ◦ 01k ∈ dom(B) since q ◦ 0 ∈ dom(B)
+after line 6, and B is reachability-closed.
+In line 17 we invoke MinWord(Tx , q ◦ 1, w, l′ , B). We now check that the assumptions of the lemma hold for
+this invocation. As in the proof when Lemma 6.3(i) held, (w, B) is min-compatible since it was after line 6 and
+we have only appended letters to w and left B unchanged. In other words, condition (i) of the current lemma
+holds.
+It is part of the assumption of Lemma 6.3(ii) that min(Ψ(q) ◦ 10k ) = min(Ψ(q) ◦ 01k ). Hence since elements of
+the free band, such as Ψ(q) ◦ 10k and Ψ(q) ◦ 01k , are equal if and only if their minimum word representatives
+are equal, it follows that Ψ(q) ◦ 10k = Ψ(q) ◦ 01k . Since Tx is minimal, q ◦ 10k = q ◦ 01k and so (q ◦ 1) ◦ 0k =
+q ◦ 10k = q ◦ 01k ∈ dom(B). This shows that condition (ii) of the hypothesis of the current lemma holds.
+Finally, we will show that condition (iii) of the current lemma holds for MinWord(Tx , q ◦ 1, w, l′ , B). Since
+min(Ψ(q) ◦ 01k ) is a suffix of min(Ψ(q) ◦ 0) and, as we showed above, w(s,|w|) = min(Ψ(q ◦ 0)) = min(Ψ(q) ◦ 0)
+after line 6, it follows that w(|w|−| min(Ψ(q)◦01k )|+1,|w|) = min(Ψ(q) ◦ 01k ) as the only length | min(Ψ(q) ◦ 01k )|
+suffix of w. Note that l′ = |wB(q ◦ 01k ) | = | min(Ψ(q) ◦ 01k )| by min-compatibility. But then w(|w|−l′ +1,|w|) =
+min(Ψ(q) ◦ 01k ) = min(Ψ(q) ◦ 10k ) = min(Ψ((q ◦ 1) ◦ 0k )) and condition (iii) holds.
+So all the assumptions of the lemma hold and so we can recursively apply it to conclude that if (w′ , B ′ ) =
+MinWord(Tx , q ◦ 1, w, l′ , B) in line 17, then (w′ , B ′ ) is min-compatible, q ◦ 1 ∈ dom(B ′ ), w is a prefix of w′ and
+ ′                                     ′         ′
+w(s′ ,|w ′ |) = min(Ψ(q ◦ 1)) where s = |w| − l + 1.
+
+                           ′                                                                   ′
+It remains to show that w(s,|w ′ |) = min(Ψ(q)) where s = |w| − l + 1. Since w is a prefix of w , it follows that
+  ′
+w(s,|w|) = w(s,|w|) = min(Ψ(q ◦ 0)). This implies that
+                     ′                                                        k                 k−1
+                    w(s′ ,|w|) = w(s′ ,|w|) = w(|w|−l′ +1,|w|) = min(Ψ(q) ◦ 01 ) = min(Ψ(q ◦ 01     )) ◦ 1
+
+                                                             25
+                ′
+is a suffix of w(s,|w|) . So, by Lemma 6.3(ii),
+
+            ′                            k−1
+           w(s′ −1,s′ −1) = min(Ψ(q ◦ 01     )) ∗ 1 = Ψ(q ◦ 01k−1 ) ∗ 1 = Ψ(q) ∗ 01k = Ψ(q) ∗ 1 = q ∗ 1.
+
+                  ′                        k−1                        ′
+Similarly, since w(s′ ,|w|) = min(Ψ(q ◦ 10     )) ◦ 0 is a prefix of w(s′ ,|w ′ |) = min(Ψ(q ◦ 1)), it follows that
+  ′                         k
+w(|w|+1,|w|+1) = Ψ(q) ∗ 10 = Ψ(q) ∗ 0 = q ∗ 0.
+            ′                                            ′                                               ′
+Therefore w(s,|w ′ |) is exactly the word with prefix w(s,|w|+1) = min(Ψ(q ◦ 0))(q ∗ 0) and suffix w(s′ −1,|w ′ |) =
+                                                   ′                                    k
+(q ∗ 1) min(Ψ(q ◦ 1)) whose common overlap is w(s    ′ −1,|w|+1) = (q ∗ 1) min(Ψ(q) ◦ 01 ))(q ∗ 0). Hence Lemma 6.3
+              ′
+implies that w(s,|w′ |) = min(Ψ(q)).
+(iii) The proof in the case that Lemma 6.3(iii) holds is similar to the proof given above when Lemma 6.3(i)
+holds. In this case,
+
+  min(Ψ(q)) = min(Ψ(q) ◦ 0)(Ψ(q) ∗ 0)(Ψ(q) ∗ 1) min(Ψ(q) ◦ 1) = min(Ψ(q ◦ 0))(q ∗ 0)(q ∗ 1) min(Ψ(q ◦ 1)).
+
+After line 6, w(s,|w|) = min(Ψ(q ◦ 0)) and because of the assumption of this case lines 14 and 15 are applied.
+After line 15, w(s,|w|) = min(Ψ(q ◦ 0))(q ∗ 0)(q ∗ 1). So as in case (i) it remains to show that after line 17 we
+have appended min(Ψ(q ◦ 1)) to w.
+It is possible to verify, using the same argument as in the proof of case (i), that (w, B) is min-compatible and
+                                   ′                                   ′
+if K ′ is such that (q ◦ 1) ◦ 0K is terminal, then (q ◦ 1) ◦ 0K ∈ dom(B) and w(|w|−l′ +1,|w|) = w(|w|+1,|w|) =
+                        ′
+ε = min(Ψ(q ◦ 0K )) (the latter equality holds since l′ is defined to be 0 in line 15). In other words, the
+conditions of the lemma apply in line 17. Therefore we can recursively apply the lemma to conclude that if
+(w′ , B ′ ) = MinWord(Tx , q ◦ 1, w, 0, B), then (w′ , B ′ ) is min-compatible, q ◦ 1 ∈ dom(B ′ ), w is a prefix of w′ and
+  ′
+w(|w|+1,|w   ′ |) = min(Ψ(q ◦ 1)).
+
+                           ′                                                                   ′
+It remains to show that w(s,|w ′ |) = min(Ψ(q)) where s = |w| − l + 1. Since w is a prefix of w , it follows that
+  ′
+w(s,|w|) = w(s,|w|) = min(Ψ(q ◦ 0))(q ∗ 0)(q ∗ 1). Therefore
+             ′             ′        ′
+            w(s,|w ′ |) = w(s,|w|) w(|w|+1,|w ′ |) = min(Ψ(q ◦ 0))(q ∗ 0)(q ∗ 1) min(Ψ(q ◦ 1)) = min(Ψ(q)).
+
+
+
+
+For the purposes of the following theorem, we assume the RAM model of computation. This is quite a modest
+assumption in the sense that the time complexity is realized in the implementation of MinWord in [3]; see
+Appendix A for more details.
+
+  Corollary 6.8. Let x ∈ FB1 (A), let Tx = (Q, {0, 1}, A, q, T, ◦ , ∗ ) be the minimal transducer representing
+  x, and let B : Q → N0 × N0 be such that B(q) = (0, 0) for all q ∈ T and B(q) = ⊥ on all other inputs.
+  Then the first component of MinWord(Tx , q0 , ε, 0, B) is equal to min(x) and MinWord has time complexity
+  O(|A| · |Q| + | min(x)|) = O(|A|2 · | min(x)|) and space complexity O(|Q| + | min(x)|) = O(|A| · | min(x)|).
+
+Proof. We show that the conditions of Lemma 6.7 applies to MinWord(Tx , q0 , ε, 0, B) with the parameters as
+stated. The initial partial function B is defined only on the terminal states T of the minimal transducer Tx .
+Hence B is reachability closed since terminal states have no child states. By assumption, B(q) = (0, 0) for all
+q ∈ T and w = ε, and so wB(q) = ε. Since q is terminal, q ◦ α and q ∗ α are undefined for all α ∈ {0, 1}∗.
+In particular, min(Ψ(q)) = ε = wB(q) for all q ∈ T and so (w, B) is min-compatible. This establishes that
+Lemma 6.7(i) holds. Since Ψ(q0 ) = x and | cont(x ◦ 0| cont(x)| )| = | cont(x)| − | cont(x)| = 0, q0 ◦ 0| cont(x)| is
+terminal and so q0 ◦ 0| cont(x)| ∈ dom(B). Therefore Lemma 6.7(ii) holds with K = | cont(x)|. Since l = 0 and
+|w| = 0, s = |w| − l + 1 = 1 and so w(s,|w|) = w(1,0) = ε = min(Ψ(q ◦ 0| cont(x)| )). This shows that Lemma 6.7(iii)
+holds. Hence the hypothesis of Lemma 6.7 is satisfied. Therefore if (w′ , B ′ ) = MinWord(Tx , q0 , ε, 0, B), then
+  ′            ′             ′
+w(s,|w ′ |) = w(1,|w ′ |) = w = min(x), as required.
+
+
+For the time and space complexities, we start by elaborating some of the assumptions in the model of compu-
+tation. In particular, in the RAM model, we may assume that the following operations are constant time for
+all q ∈ Q and α ∈ {0, 1}: access a letter in w, retrieve a value of B(q), q ◦ α, or q ∗ α, append a letter to w, and
+define a value B(q). We may also assign w and/or B in constant time in lines 6, 9, 14, and 17 by modifying w
+and B in-place. Changing w or B in-place in a recursive call, will modify w and B in the original call, but this
+does not cause any issues since upon reentering the original function, in line 6 or 17, we immediately assign the
+returned w and B to the current w and B.
+We denote by ttotal the total number of steps taken by MinWord(Tx , q0 , ε, 0, B) with the inputs given in the
+statement of the corollary. We split ttotal = tword + tmain , where tword is the total number of steps taken to
+
+
+                                                           26
+write letters of w and tmain accounts for all of the other steps. Since w is only modified by appending letters,
+and appending a letter is constant time, it follows that tword ∈ O(| min(x)|).
+In the remainder of the proof, we will exclude the time taken to append letters to w, since it is already accounted
+for in tword . For tmain , note the role played by B. If a particular state q belongs to dom(B), then the check
+in line 2 passes, and line 3 is O(1) and we return in line 4. If q 6∈ dom(B), then, irrespective of which case of
+Lemma 6.3 applies, B(q) is defined in line 18 and so q ∈ dom(B) upon completion of the call to MinWord when
+q is first considered.
+We denote by tbody the number of steps taken in MinWord excluding steps taken by the recursive calls in lines 6
+and 17 (and excluding the time taken to append to w). For every state q ∈ Q and every invocation of MinWord
+with input q, either q ∈ dom(B) at a cost of O(1) or q 6∈ dom(B) incurring tbody . The latter occurs precisely
+once as described in the previous paragraph. Hence tmain ∈ O(|Q| · tbody ).
+To determine tbody , note that apart from lines 7 and 12, the remaining steps are constant time. Line 7
+takes O(|A|) steps as per Theorem 6.5. In line 12, we calculate |wB(q ◦ 01k ) |. By assumption q ◦ 01k requires
+O(k + 1) = O(|A|) steps since k ≤ | cont(x)| ≤ |A|. The subsequent lookup of B(q ◦ 01k ) is constant time.
+The calculation of |w(i,j) | for any i, j is constant time, since if 0 < i ≤ j, then |w(i,j) | = j − i + 1 and otherwise
+|w(i,j) | = 0. So the total for the calculation in line 12 is O(|A|) steps.
+Therefore tmain ∈ O(|Q| · tbody ) = O(|Q| · |A|), and so the total time complexity is O(| min(x)| + |Q| · |A|). Since
+Tx is minimal, by Theorem 4.2, O(|Q|) = O(|Tx |) = O(|A| · | min(x)|). It follows that O(| min(x)| + |Q| · |A|) =
+O(| min(x)| + | min(x)| · |A|2 ) = O(|A|2 · | min(x)|).
+For the space complexity, storing Tx already requires O(| min(x)| · |A|) space. Since w is a prefix of min(x), the
+space taken by w is O(| min(x)|). The partial function B has at most |Q| values where it is defined, and each
+B(q) is a pair of integers. Hence B requires O(|Q|) = O(| min(x)| · |A|) space. Thus in total O(| min(x)| · |A|)
+space is required.
+
+
+Acknowledgements
+The authors would like to thank the anonymous referee for their helpful comments, and for highlighting the
+several important articles in the literature related to the content of this paper. The authors would also like to
+thank Carl-Fredrik Nyberg-Brodda for pointing out some inaccuracies in the introduction, and for his helpful
+comments on the historical aspects of the Burnside problems. This work was supported by the UK Engineering
+and Physical Sciences Research Council (EPSRC) doctoral training grant EP/V520123/1 for the University of
+St Andrews, which funded the first author’s research on this paper.
+
+
+References
+ [1] A. P. Biryukov. “Varieties of idempotent semigroups”. In: Algebra and Logic 9.3 (May 1970), pp. 153–164.
+     doi: 10.1007/bf02218673.
+ [2] Thomas C. Brown. “On the finiteness of semigroups in which xr = x”. In: Mathematical Proceedings of
+     the Cambridge Philosophical Society 60.4 (Oct. 1964), pp. 1028–1029. doi: 10.1017/s0305004100038482.
+     url: https://doi.org/10.1017/s0305004100038482.
+ [3] Reinis Cirpons and James D. Mitchell. reiniscirpons/freebandlib: v0.0.2 release. Version v0.0.2. Sept. 2022.
+     doi: 10.5281/zenodo.7071676.
+ [4] Max Crochemore. “An optimal algorithm for computing the repetitions in a word”. In: Information Pro-
+     cessing Letters 12.5 (1981), pp. 244–250. issn: 0020-0190. doi: https://doi.org/10.1016/0020-0190(81)90024-7.
+     url: https://www.sciencedirect.com/science/article/pii/0020019081900247.
+ [5] Igor Dolinka and Nik Ruškuc. “Every group is a maximal subgroup of the free idempotent generated
+     semigroup over a band”. In: International Journal of Algebra and Computation 23.03 (Apr. 2013), pp. 573–
+     581. doi: 10.1142/s0218196713500100.
+ [6] James East, Attila Egri-Nagy, James D. Mitchell, and Yann Péresse. “Computing finite semigroups”. In:
+     Journal of Symbolic Computation 92 (May 2019), pp. 110–155. doi: 10.1016/j.jsc.2018.01.002.
+ [7] Charles Fennemore. “All varieties of bands”. In: Semigroup Forum 1.1 (Dec. 1970), pp. 172–179. doi:
+     10.1007/bf02573031.
+ [8] Véronique Froidure and Jean-Eric Pin. “Algorithms for computing finite semigroups”. In: Foundations of
+     computational mathematics (Rio de Janeiro, 1997). Berlin: Springer, 1997, pp. 112–126. isbn: 978-3-642-
+     60539-0.
+
+                                                          27
+ [9] J. A. Gerhard and Mario Petrich. “Varieties of Bands Revisited”. In: Proceedings of the London Mathemati-
+     cal Society s3-58.2 (Mar. 1989), pp. 323–350. doi: 10.1112/plms/s3-58.2.323. url: https://doi.org/10.1112/plms/
+[10] J.A Gerhard. “The lattice of equational classes of idempotent semigroups”. In: Journal of Algebra 15.2
+     (June 1970), pp. 195–224. doi: 10.1016/0021-8693(70)90073-6.
+[11] J. A. Green and D. Rees. “On semi-groups in which xr = x”. In: Mathematical Proceedings of the Cam-
+     bridge Philosophical Society 48.1 (1952), pp. 35–40. doi: 10.1017/S0305004100027341.
+[12] J.M. Howie. Fundamentals of Semigroup Theory. LMS monographs. Clarendon Press, 1995. isbn: 9780198511946.
+[13] OEIS Foundation Inc. Sequence A030449. 2023. url: http://oeis.org/A030449.
+[14] Ondřej Klı́ma, Miroslav Korbelář, and Libor Polák. “Rewriting in Varieties of Idempotent Semigroups”.
+     In: Algebraic Informatics. Ed. by Franz Winkler. Berlin, Heidelberg: Springer Berlin Heidelberg, 2011,
+     pp. 185–200. isbn: 978-3-642-21493-6.
+[15] D. E. Knuth and P. B. Bendix. “Simple Word Problems in Universal Algebras”. In: Automation of Rea-
+     soning: 2: Classical Papers on Computational Logic 1967–1970. Ed. by Jörg H. Siekmann and Graham
+     Wrightson. Berlin, Heidelberg: Springer Berlin Heidelberg, 1983, pp. 342–376. isbn: 978-3-642-81955-1.
+     doi: 10.1007/978-3-642-81955-1_23.
+[16] Stuart Margolis, Franco Saliola, and Benjamin Steinberg. “Cell complexes, poset topology and the rep-
+     resentation theory of algebras arising in algebraic combinatorics and discrete geometry”. In: Memoirs of
+     the American Mathematical Society 274.1345 (Nov. 2021). doi: 10.1090/memo/1345.
+[17] J. D. Mitchell et al. Semigroups - GAP package, Version 5.2.0. Dec. 2022. doi: 10.5281/zenodo.592893.
+     url: http://dx.doi.org/10.5281/zenodo.592893.
+[18] James Mitchell et al. libsemigroups v2.5.1. Version v2.5.1. Oct. 2022. doi: 10.5281/zenodo.7260939.
+     url: https://doi.org/10.5281/zenodo.7260939.
+[19] James Mitchell and Chinmaya Nagpal and Maria Tsalakou and Murray Whyte. libsemigroups pybind11
+     v0.7.2. 2023. doi: 10.5281/ZENODO.7307278. url: https://zenodo.org/record/7307278.
+[20] O. Neto and H. Sezinando. “Band Monoid Languages Revisited”. In: Semiroup Forum 61.1 (July 2000),
+     pp. 32–45. doi: 10.1007/pl00006013. url: https://doi.org/10.1007/pl00006013.
+[21] O. Neto and H. Sezinando. “Trees, band monoids and formal languages”. In: Semigroup Forum 52.1 (Dec.
+     1996), pp. 141–155. doi: 10.1007/bf02574091. url: https://doi.org/10.1007/bf02574091.
+[22] Thomas Quinn-Gregson. “Homogeneous bands”. In: Advances in Mathematics 328 (Apr. 2018), pp. 623–
+     660. doi: 10.1016/j.aim.2018.02.005.
+[23] J. Radoszewski and W. Rytter. “Efficient Testing of Equivalence of Words in a Free Idempotent Semi-
+     group”. In: SOFSEM 2010: Theory and Practice of Computer Science. Jan. 2010, pp. 663–671. doi:
+     10.1007/978-3-642-11266-9_55.
+[24] D. Revuz. “Minimisation of acyclic deterministic automata in linear time”. In: Theoretical Computer
+     Science 92.1 (1992), pp. 181–189. issn: 0304-3975. doi: 10.1016/0304-3975(92)90142-3.
+[25] Franco V. Saliola. “The quiver of the semigroup algebra of a left regular band”. In: International Journal
+     of Algebra and Computation 17.08 (Dec. 2007), pp. 1593–1610. doi: 10.1142/s0218196707004219.
+[26] J. Siekmann and P. Szabó. “A Noetherian and confluent rewrite system for idempotent semigroups”. In:
+     Semigroup Forum 25.1 (Dec. 1982), pp. 83–110. doi: 10.1007/bf02573590. url: https://doi.org/10.1007/bf025735
+[27] J. A. Todd and H. S. M. Coxeter. “A practical method for enumerating cosets of a finite abstract group”. In:
+     Proceedings of the Edinburgh Mathematical Society 5.01 (Oct. 1936), pp. 26–34. doi: 10.1017/s0013091500008221.
+
+
+A     Benchmarks
+The Python package [3] implements the algorithms EqualInFreeBand, Multiply, and MinWord. In this section
+we describe some benchmarks for these algorithms. The purpose of [3] is to provide a reference implementation,
+and the benchmarks are included to demonstrate that even a relatively naı̈ve implementation in a high-level
+language, such as Python, exhibits the asymptotic time complexity described in this paper. The implementation
+in [3] is not optimised, and the absolute times provided in this section can almost certainly be improved
+significantly.
+All the benchmarks in this section were run on a 2021 MacBook Pro with an Apple M1 processor and 16GB of
+RAM running Python 3.9.12. Instructions for how to reproduce the benchmarks in this section can be found
+in [3].
+
+
+
+                                                      28
+In order to benchmark our code, we generated the following set of sample data: for each alphabet of size
+m ∈ {2, 7, 12, . . . , 47} and each length l ∈ {20, 520, 1020, . . ., 4520} we generated a sample of 100 words of length
+l (selected uniformly at random) over an alphabet of size m using the Python random library for randomness.
+We will refer to these as the word samples. The interval transducer for each word in each sample was computed
+using IntervalTransducer; we refer to this as the interval transducer sample. Finally, each of the interval
+transducer samples was run through the Minimize algorithm, forming the minimal transducer sample. The
+benchmarks were produced using the pytest-benchmark Python library. Any quoted time is the mean of a
+number of runs of the benchmark using the same input data. This makes the results more reproducible and
+less susceptible to random variation in the device used to run them.
+The algorithm EqualInFreeBand is the composition of the 3 algorithms defined in Section 4: IntervalTransducer,
+Minimize, and TrimTransducerIsomorphism.
+
+                                                                                                 1
+
+                     150                                                                        0.8
+
+
+
+
+Mean runtime t, s                                                           Mean runtime t, s
+                                                                                                0.6
+                     100
+
+                                                                                                0.4
+                      50
+                                                                                                0.2
+
+                       0                                                                         0
+                            0        0.5      1         1.5      2                                    0              1            2           3
+                                            |A| · |w|            ·10   5                                                   |T |               ·105
+                    (a) IntervalTransducer(w) runtime versus |A| · |w|.                                   (b) Minimize(T ) runtime vs |T |.
+
+                                 Figure 9: Benchmarks for the IntervalTransducer and Minimize algorithms.
+
+Fig. 9a shows run times of IntervalTransducer(w) for the words w in the word samples described above.
+Each data point in Fig. 9a shows the cumulative run time for a sample consisting of 100 words. This is plotted
+against |A| · |w| which is the theoretical asymptotic complexity of the algorithm. The red line is the line of best
+fit obtained by running a linear regression in Python.
+Fig. 9b shows the run times of Minimize(T ) for transducers T in the interval transducer samples. This is
+plotted against the number of states of |T | which is the theoretical asymptotic complexity of the Minimize
+algorithm. Each point represents a single transducer T . The line of best fit is shown in red. The fit of the
+line in Fig. 9b might not seem very good, with a fairly wide range of times for the given transducers of each
+number of states. However the linear regression has an R2 value of 0.8368, which is perhaps not as bad as it
+first appeared.
+Fig. 10a shows run times of TrimTransducerIsomorphism(T , T ) for a transducer T in the interval transducer
+samples. This is plotted against |T | which is the theoretical asymptotic complexity of the algorithm. The line
+of best fit is shown in red. We chose to run the isomorphism of a transducer against itself since this represents
+the longest execution path in the code.
+Fig. 10b shows the run times of EqualInFreeBand(u, v) for words u and v obtained by randomly sampling
+10000 pairs from the word samples. This is plotted against (|u| + |v|) · |A| which is the theoretical asymptotic
+complexity of the algorithm. The line of best fit is shown in red. We chose to only sample 10000 pairs to reduce
+the total run time of the benchmark.
+
+
+
+
+                                                                           29
+                        ·10−2
+                                                                                                    5
+                    5
+                                                                                                    4
+                    4
+
+
+
+
+                                                                                Mean runtime t, s
+Mean runtime t, s
+                                                                                                    3
+                    3
+
+                                                                                                    2
+                    2
+
+                                                                                                    1
+                    1
+
+                    0                                                                               0
+
+                                                                                                            0    1         2          3        4
+                          0     0.2     0.4    0.6 0.8           1   1.2
+                                                                                                                     (|u| + |v|) · |A|         ·105
+                                                |T |                 ·104
+                                                                                                (b) EqualInFreeBand(u, v) runtime vs (|u| + |v|) · |A|.
+          (a) TrimTransducerIsomorphism(T , T ) runtime vs |T |.
+
+                        Figure 10: Benchmarks for the TrimTransducerIsomorphism and EqualInFreeBand algorithms.
+
+
+                        ·10−2
+                                                                                                        2
+
+
+                    4                                                                               1.5
+
+
+
+
+Mean runtime t, s                                                               Mean runtime t, s
+                                                                                                        1
+                    2
+
+                                                                                                    0.5
+
+                    0
+                                                                                                        0
+                          0           0.5        1         1.5         2                                    0    1           2             3        4
+                                        |T1 | + |T2 | + |A|2         ·10   4                                         |T1 | + |T2 | + |A|   2
+                                                                                                                                                   ·105
+(a) Multiply(T1 , T2 ) runtime vs |T1 | + |T2 | + |A|2 . The trans- (b) Multiply(T1 , T2 ) runtime vs |T1 | + |T2 | + |A|2 . The trans-
+ducers T1 and T2 sampled from the minimal transducer sam- ducers T1 , T2 sampled from the interval transducer sample.
+ple.
+
+Figure 11: Benchmarks for the Multiply algorithm when applied to minimal and interval transducers respec-
+tively.
+
+
+Fig. 11a shows the runtime of Multiply(T1 , T2 ) for transducers T1 and T2 obtained by randomly sampling 50
+transducers from the minimal transducer samples and considering all possible pairs of these transducers (2500
+pairs total). This is plotted against |T1 | + |T2 | + |A|2 which is the theoretical asymptotic complexity of the
+algorithm. The line of best fit is shown in red. We chose to only sample 2500 pairs to reduce the total runtime
+of the benchmark.
+Fig. 11b shows the runtime of Multiply(T1 , T2 ) for transducers T1 and T2 obtained by batching the interval
+transducer samples into 20 batches, randomly sampling 5 transducers from each batch and considering all
+possible pairs of these transducers in each batch (500 pairs total). This is plotted against |T1 | + |T2 | + |A|2
+which is the theoretical asymptotic complexity of the algorithm. The line of best fit is shown in red. We chose
+to only sample 500 pairs to reduce the total runtime of the benchmark.
+Fig. 12 shows the runtime of MinWord(T ) for transducers T in the minimal word samples. This is plotted
+against |T | · |A| which is the theoretical asymptotic complexity of the algorithm. The line of best fit is shown
+in red.
+
+
+                                                                               30
+                        ·10−2
+
+
+
+                    6
+
+
+
+
+Mean runtime t, s
+                    4
+
+
+                    2
+
+
+                    0
+
+                          0     1   2        3     4   5     6
+                                        |T | · |A|         ·105
+
+       Figure 12: MinWord(T ) runtime versus |T | · |A|.
+
+
+
+
+                                        31
+

@@ -1,0 +1,7 @@
+# r246 handback — mathematical counterexample; novelty/credit HOLD
+
+Twelve distinct attributed source-question families screened. The fresh strongest survivor is Nikolov–Savov2307.00545v2 Conjecture3.7, universal polynomial-minorant maximality for renewal masses. At k4, Q4=x(x+y)(x+y+z) is globally dominated by P=x²(x+y+z)+xy=Q4+xy*p4, a degree-three polynomial below EVERY renewal mass for EVERY probability vector. Strict gain1/64 at uniform p. PROOF.md gives direct inequalities/all-n induction and a separate positive-coefficient barycentric certificate. Exact diagnostics pass1,771 simplex points plus symbolic identities.
+
+The robust maximality refutation is independent of source typos and subclass ambiguity. Literal v2 specialization-defined subclass also contains P, while a different v1 prose termwise interpretation may exclude it; no stronger intended-subclass result is asserted. Full source/journal/current registry novelty clearance and independent substantive review are still needed. The elementary-shortness objection is explicit; no discovery credit proposed automatically.
+
+Counts unchanged9 additional/39 total/next40; root alone accepts/counts. All writes in assigned lane. Solo; no children, git, public/browser/MathDB, shared, Lean or manuscript edits. Search-response overwrite failure is documented in FAILURES.md. Final manifest excludes itself and verification receipt, with separate guarded verification after writes.

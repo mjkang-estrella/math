@@ -1,0 +1,3 @@
+Completed: rules/admin snapshots, recent-scout comparison, early exact-ID/alias history screen, twelve-family breadth report, both primary target versions frozen/read, source closest proof comparison, two full-scope mathematical routes, exact bounded diagnostics, primary-access/chronology ledger, final manifest.
+
+Remaining acceptance gates: independent adversarial source/prior-art review, journal body/version check, available lawful current registry comparison, novelty and substantive credit ruling. These are not performed by this scout. Do not retry denied access routes. No claim on other questions or the stronger intended cumulative subclass. No request to update counts.

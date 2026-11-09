@@ -1,0 +1,3 @@
+# Progress
+
+Administrative ledger and prior campaign context snapshotted; source freeze established before source reading. Recent/broader history checked with immutable references, without recursive evidence duplication. Current arXiv source query retrieved; exact identifiers and semantic aliases screened before sustained work. Twelve families body-screened, historical propeller removed and replaced by Li–Zhao. No eligible full result found. Pavlenkov route sustained through truncation, stable characteristic products and normalized iid realization constraints; mathematical gaps retained. Final artifacts and bounded checks written; separate final-byte/source/reference verification follows. Counts9/39/next40 remain unchanged.

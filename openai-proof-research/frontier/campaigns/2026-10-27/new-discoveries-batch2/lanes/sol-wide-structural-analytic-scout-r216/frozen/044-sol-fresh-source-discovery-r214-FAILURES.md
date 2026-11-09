@@ -1,0 +1,8 @@
+# Preserved failures and limits
+
+- Initial `pwd; rg --files ... | head -80` inventory was run outside helper_guard before setup. This violated the stricter routing requirement; no writes occurred. Ancestor/batch/handback cat reads were native bounded reads. All later helper operations were guarded.
+- Search extraction initially failed with `ModuleNotFoundError: No module named 'bs4'`; command only imported and never wrote output. Replaced with standard-library tag stripping. Original error text: `from bs4 import BeautifulSoup ... ModuleNotFoundError: No module named 'bs4'`. Search bytes remained untouched.
+- First symbolic checker failed with `AttributeError: 'int' object has no attribute 'numer'`. Exact failed checker, stdout and stderr preserved as initial-failed-checks.py, initial-failed-symbolic.json and initial-failed-symbolic.stderr. Corrected by coercing pivot scalars into the rational function field.
+- Poppler emitted `Syntax Warning: Mismatch between font type and embedded font file` for some PDFs; extraction returned0. Formula typography can be damaged; Richardson Conjecture6.1 is referenced to its frozen displayed source rather than promoted from a damaged exponent transcription.
+- D4 ordinary-fiber tensor shortcut fails its categorical hypotheses; no contradiction obtained. Generic-rank computation leaves specialization factors and concerns the public contact calculus only.
+- Access denials inherited, not retried. No new403/429/challenge observed. Search absence is not prior-art clearance; author forthcoming study and missing journal comparisons remain material.

@@ -1,0 +1,21 @@
+# Rank1: quasiperiodic fixed-point converse, unresolved
+
+Source: Florence Levé and Gwénaël Richomme, https://arxiv.org/pdf/1304.6280v1 (23 April2013), final paragraph Section7 p10, with definitions Section2 and Proposition7.1. All morphisms below are nonerasing endomorphisms of a finite alphabet. Fix a prolongation letter a, require |f^n(a)|→infinity and f(a) not in {a}*. Put U=f^omega(a). The suspected endpoint is: if a nonempty finite q covers every position of U by its occurrences, then there is an infinite W with no finite covering prefix for which f(W) is quasiperiodic. Do not substitute a finite-word or two-sided convention.
+
+Nearest actual proof: Proposition7.1 requires a nonperiodic U and all letters growing, so some f^k has every letter image at least2|q|. Lemma6.5 then gives a nonquasiperiodic ultimately periodic witness unless input U is a repetition of pairwise distinct letters. Lemma7.2 pulls weak quasiperiodicity back from f^k to f. The proof of Lemma6.5 is omitted in this source; its statement, not an independently reconstructed proof, is the cited bridge. The conjecture also contains periodic U cases; no assumption silently discards them.
+
+## Mechanism A: covering automaton and ultimately periodic witnesses
+
+PROOF.md gives an exact finite safety automaton for one fixed q, and inverse substitution by f. This permits exact certification of eventual periodic witnesses. checks.py uses W=ab^omega: every prefix of W contains its unique a, hence none can cover W, so W is rigorously nonquasiperiodic. For images A=f(a), B=f(b), the program follows the q-covering automaton on AB^omega to a period-boundary repeated state, with no floating point or finite-prefix inference.
+
+196 maps with nonempty binary images of length<=3 were screened, q length<=12. Exactly50 have a witness of this restricted form. This means neither that remaining146 preserve nonquasiperiodicity nor that any of50 is new. Witnesses, parameter limits and exact cycle computations are in checks.json.
+
+Gap: inverse-q-covering paths can have every cycle visit every input letter, so ordinary automaton pumping does not imply a unique-letter input witness. Even existence of some ultimately periodic accepted input need not make it nonquasiperiodic: purely periodic inputs are always quasiperiodic. No uniform bound on q or on a useful nonquasiperiodic witness has been proved. Decisive next calculation: characterize safe strongly connected components supporting an eventually periodic input whose prefix cannot recur in the tail; prove such a component exists from the growing fixed-point start, or give a genuine preserving morphism. A finite search alone will not close that implication.
+
+## Mechanism B: growing-letter blocks and source power reduction
+
+Partition letters into growing and bounded under f. A q-covered U has bounded gaps between occurrences of each letter occurring in q; in particular a occurs with bounded gaps because a is the first symbol of U and hence belongs to q. Thus bounded-letter runs in U have bounded length. Encode U by return blocks between consecutive growing letters; only finitely many blocks occur. Their images under powers are long, apparently restoring Lemma6.5's scale premise on macroletters.
+
+Critical failed bridge: a nonquasiperiodic macroletter word supplied by that lemma need not decode to a nonquasiperiodic original-letter word. A variable-length code can introduce new overlapping covers, and even an injective code does not preserve quasiperiodicity both ways. Also return-block closure under f needs an explicit boundary synchronization argument. Neither bridge is proved. The all-growing source proof therefore cannot simply be reapplied after deleting bounded letters.
+
+Strongest classical objection: a fixed-q safety automaton, its inverse morphism, lasso criterion and source power-minimality lemma are classical finite-state arguments. Completing those helpers is uncredited. If a universal proof is found, it must establish the missing input nonquasiperiodicity implication in the literal arbitrary nonerasing scope, and compare current specialist literature. The present no-hit arXiv query and sparse campaign aliases do not clear either priority or duplication.
