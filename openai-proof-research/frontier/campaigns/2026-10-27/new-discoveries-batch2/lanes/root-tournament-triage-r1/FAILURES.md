@@ -1,0 +1,1 @@
+A bounded source-file inventory and broad source excerpt display were truncated. The scientific copies were bound before reading; focused complete ranges were then read for Section2 and Propositions6.7–6.8. This is an initial triage, not full-source or novelty clearance. No failed arithmetic checks occurred.
