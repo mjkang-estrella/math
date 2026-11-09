@@ -1,0 +1,15 @@
+# MathDB330264 manuscript dossier — DRAFT ONLY
+
+Completed paper.tex / paper.pdf (7 pages), with explicit edge lists, all three common characteristic-polynomial coefficient lists, a presented-group normal-form argument, exact clique automaton and individual-word recurrence, literature comparison, source-version disposition, review outcomes and reproducibility/trust limits. Every final rendered PDF page was inspected; final TeX log has zero overfull/underfull boxes.
+
+**Published-source body HOLD remains. Candidate credit0; campaign unchanged at1/20.** The bounded lawful search located no distinct authenticated institutional/author-deposited journal body. Crossref/OpenAlex response URLs, UTC timestamps and SHA256 hashes are preserved. No Springer/HAL denial route was retried, no controls bypassed and no author contacted. All arXiv versions retain the claim, but that does not authenticate the 2016 journal body. See source-comparison.md.
+
+The theorem is one exact result: two19-vertex trees are triple-cospectral for actual adjacency, complement and intrinsic line graphs, while actual standard-generator shortest individual-word RACG counts at18 are37769749324097905710910 and37769749324097905710906. Endpoint: MathDB330264.conjecture_false. No global priority, minimum-size, infinite-family or new-normal-form claim.
+
+The original full packet is preserved byte-for-byte at frozen/330264-r3-FULL-LEAN.zip, SHA2562cab69a4914f29fb3f934b8f57c8807bcb3298bea7e1b535246e9e205e3acaab. All ten Lean source files are unchanged. Our fresh extraction proof/ compiled all ten local modules in171.33seconds on at most2CPUs with strict warnings and audited24declarations: only propext, Classical.choice, Quot.sound. No bundled oleans are needed or included in the dossier. The independent arithmetic corroboration passed. All3097 external source/olean pairs match original dependency pins; no external rebuild or source-to-olean provenance verification is claimed. See REPRODUCE.md and logs.
+
+The independent fidelity review passes four assigned gates (its own172.33s replay/24audits); the significance review gives qualified PASS/conditional1 subject to material source-body and remaining gates. Those unchanged review reports are evidence, not manuscript acceptance. McKay's source family has equal growth; Godsil's unequal-growth family lacks line-spectrum protection and differs at10, unlike this pair. The paper retains bounded literature and registry qualifications.
+
+Before/after checks match all132 frozen input files with zero mismatches. dossier.zip contains source, original packet, selected nonrecursive reviews/receipts, dependency pins, exact source bodies, logs and manifests; it excludes compiler/cache/render intermediates and compiled oleans. Run verify_dossier.py after extraction, then replay the original frozen packet in a new directory as instructed. archive-receipt.json supplies the ZIP hash.
+
+Root manuscript review, root final replay, journal-body resolution/adjudication and acceptance are separate pending work. No shared files, ledger or index edited; no git, subagents, browser tabs, messages, publishing or uploads.
