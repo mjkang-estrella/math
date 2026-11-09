@@ -1,0 +1,103 @@
+--- r1/search.py
++++ r2/search.py
+@@ -105,7 +105,9 @@
+ 
+ 
+ def apply_flip(eid, red, rnb, bnb):
+-    """Flip edge eid; update masks; return affected pair indices."""
++    """Flip edge eid; update supplied bits and masks; return affected pairs."""
++    if red is not None:
++        red[eid] = not red[eid]
+     u, v = EDGES[eid]
+     rnb[u] ^= BIT[v]; rnb[v] ^= BIT[u]
+     bnb[u] ^= BIT[v]; bnb[v] ^= BIT[u]
+@@ -135,13 +137,15 @@
+             s[(a, (a + d) % NP)] = cycle_s
+         for d in (2, 3):
+             s[(a, (a + d) % NP)] = skip_s
++    choices = {(a,b): set(rng.sample(range(PS), s[(a,b)]))
++               for a in range(NP) for b in range(a+1, NP)}
+     bits = [False] * 250
+     for e, (u, v) in enumerate(EDGES):
+         a, b = u // PS, v // PS
+         i, j = u % PS, v % PS
+         if a > b:
+             a, b, i, j = b, a, j, i
+-        D = sorted(rng.sample(range(PS), s[(a, b)]))
++        D = choices[(a, b)]
+         if ((j - i) % PS) in D:
+             bits[e] = True
+     return bits
+@@ -152,7 +156,7 @@
+ 
+ 
+ def init_degree10(rng):
+-    """Random per-vertex-exactly-10-red attempt via greedy edge packing."""
++    """Greedy initial edge packing with red degrees at most 10."""
+     bits = [False] * 250
+     deg = [0] * N
+     order = list(range(250))
+@@ -180,7 +184,7 @@
+     while True:
+         now = time.monotonic()
+         cpu = time.process_time()
+-        if now >= t_end or cpu > CPU_BUDGET:
++        if best == 0 or now >= t_end or cpu > CPU_BUDGET:
+             break
+         frac = min(1.0, (now - T_START) / max(1e-9, t_end - T_START))
+         temp = t0 * (t1 / t0) ** frac
+@@ -208,6 +212,7 @@
+         if d <= 0 or rng.random() < pow(2.718281828459045, -d / temp):
+             for pi, cr1, cb1 in newcounts:
+                 counts[pi] = (cr1, cb1)
++            red[e] = not red[e]
+             rnb[u] ^= BIT[v]; rnb[v] ^= BIT[u]
+             bnb[u] ^= BIT[v]; bnb[v] ^= BIT[u]
+             score += d
+@@ -225,7 +230,7 @@
+             rnb, bnb = colors_to_masks(red)
+             score, counts = full_counts(rnb, bnb)
+             for _ in range(6):
+-                apply_flip(rng.randrange(250), None, rnb, bnb)
++                apply_flip(rng.randrange(250), red, rnb, bnb)
+             score, counts = full_counts(rnb, bnb)
+             imp_since_kick = 0
+         now2 = time.monotonic()
+@@ -268,7 +273,8 @@
+                 # virtual apply then compare
+                 aff = FLIP_AFF[u * N + v]
+                 rnb2, bnb2 = rnb[:], bnb[:]
+-                apply_flip(e, None, rnb2, bnb2)
++                apply_flip(e, bits, rnb2, bnb2)
++                assert colors_to_masks(bits) == (rnb2, bnb2)
+                 s1, c1 = full_counts(rnb2, bnb2)
+                 d = 0
+                 for pi in aff:
+@@ -280,6 +286,7 @@
+                 if s0 + d != s1:
+                     bad += 1
+                 s0, c0 = s1, c1
++                rnb, bnb = rnb2, bnb2
+         # static structure checks
+         same_part = sum(1 for a, b, m in PAIRS if a // PS == b // PS)
+         cross = 300 - same_part
+@@ -288,6 +295,7 @@
+               'cross_part_pairs': cross, 'eligible_counts_ok': elig_ok,
+               'edges': len(EDGES), 'pairs': len(PAIRS)}
+         print(json.dumps(st))
++        assert bad == 0 and elig_ok and same_part == 50 and cross == 250
+         return
+ 
+     # -------- the one full search run --------
+@@ -322,7 +330,10 @@
+             best_overall, best_bits_overall = s, bb[:]
+     ranking.sort(key=lambda x: x[0])
+     # phase 2: long anneal from best, fresh temperature schedule
+-    s, bb, it2, traj = anneal(rng, ranking[0][2], T_START + args.wall_deadline, t0=1.0, t1=0.05)
++    if best_overall == 0:
++        s, bb, it2, traj = best_overall, best_bits_overall, 0, []
++    else:
++        s, bb, it2, traj = anneal(rng, ranking[0][2], T_START + args.wall_deadline, t0=1.0, t1=0.05)
+     if s < best_overall:
+         best_overall, best_bits_overall = s, bb
+     wall = time.monotonic() - T_START
