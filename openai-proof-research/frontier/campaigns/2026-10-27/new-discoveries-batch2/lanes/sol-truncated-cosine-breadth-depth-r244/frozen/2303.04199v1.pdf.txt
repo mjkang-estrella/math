@@ -1,0 +1,1686 @@
+                                                     Diversity Embeddings and the Hypergraph Sparsest Cut
+
+
+                                                                        Adam D. Jozefiak1 ,             F. Bruce Shepherd2
+
+
+
+                                                                                               Abstract
+
+
+
+
+arXiv:2303.04199v1 [cs.DS] 7 Mar 2023
+                                                Good approximations have been attained for the sparsest cut problem by rounding solutions to convex
+                                            relaxations via low-distortion metric embeddings [4, 20]. Recently, Bryant and Tupper showed that this
+                                            approach extends to the hypergraph setting by formulating a linear program whose solutions are so-called
+                                            diversities which are rounded via diversity embeddings into ℓ1 [26]. Diversities are a generalization of
+                                            metric spaces in which the nonnegative function is defined on all subsets as opposed to only on pairs of
+                                            elements.
+                                                We show that this approach yields a polytime O(log n)-approximation when either the supply or de-
+                                            mands are given by a graph. This result improves upon Plotkin et al.’s O(log (kn) log n)-approximation
+                                            [24], where k is the number of demands, for the setting where the supply is given by a graph and the
+                                            demands are given by a hypergraph. Additionally, we provide a polytime O(min {rG , rH } log rH log n)-
+                                            approximation for when the supply and demands are given by hypergraphs whose hyperedges are bounded
+                                            in cardinality by rG and rH respectively.
+                                                To establish these results we provide an O(log n)-distortion ℓ1 embedding for the class of diversities
+                                            known as diameter diversities. This improves upon Bryant and Tupper’s O(log2 n)-distortion embedding
+                                            [26]. The smallest known distortion with which an arbitrary diversity can be embedded into ℓ1 is O(n).
+                                            We show that for any ε > 0 and any p > 0, there is a family of diversities which cannot be embedded into
+                                            ℓ1 in polynomial time with distortion smaller than O(n1−ε ) based on querying the diversities on sets of
+                                            cardinality at most O(log p n), unless P = NP.
+                                                                                        √ This disproves (an algorithmic refinement of) Bryant and
+                                            Tupper’s conjecture that there exists an O( n)-distortion ℓ1 embedding based off a diversity’s induced
+                                            metric. In addition, we demonstrate via hypergraph cut sparsifiers that it is sufficient to develop a low-
+                                            distortion embedding for diversities induced by sparse hypergraphs to obtain good approximations for
+                                            the sparsest cut in hypergraphs.
+
+
+
+
+                                        1 Massachusetts Institute of Technology, jozefiak@mit.edu
+                                        2 University of British Columbia, fbrucesh@cs.ubc.ca
+
+
+
+                                                                                                    1
+1 Introduction
+The sparsest cut problem is a fundamental problem in theoretical computer science. In this paper we consider
+the sparsest cut problem in the most general hypergraph setting. That is, where an instance is defined by two
+hypergraphs, a supply hypergraph and a demand hypergraph.
+    Let G = (V, EG , wG ) be a hypergraph with node set V , hyperedge set EG , and nonnegative hyperedge
+weights wG : EG → R+ and H = (V, EH , wH ) be a hypergraph with node set V , hyperedge set EH , and
+nonnegative hyperedge weights wH : EH → R+ . We refer to G and H as the supply hypergraph and the
+demand hypergraph, respectively. In the following, the rank of a hypergraph is the cardinality of a largest
+hyperedge. We use the notation rG for the rank of G and rH for the rank H. In settings where G or H is a
+graph (rG = 2 or rH = 2) we state explicitly that G is a supply graph and H is a demand graph, respectively.
+    Similar to graph settings, a cut is determined by A ⊆ V such that A 6= /0,V . We say that an edge J of (G
+or H) is cut by A if J ∩ A, J ∩ AC 6= /0; the cut induced by A consists of these edges. The sparsity of a cut,
+relative to supply G and demand H, is then the ratio of the supply edges cut by A and the demand edges cut.
+More formally:
+                                                ∑U∈EG wG (U )1{U∩A6= /0,U}
+                                       φ (A) =                                                             (1)
+                                                 ∑S∈EH wH (S)1{S∩A6= /0,S}
+The sparsest cut of G and H is then defined as
+
+                                              φ=      min         φ (A)                                       (2)
+                                                   A⊆V:A6= /0,V
+
+If the underlying hypergraphs are ambiguous we may use the notation φG,H and φG,H (A).
+     Computing the sparsest cut is NP-hard, even when G and H are graphs [23]. Consequently, there is
+a rich history of approximation algorithms for the sparsest cut problem in the graph setting which has
+                       √
+culminated in an O( log n log log n)-approximation factor for general supply and demand graphs [2]. A
+common approach to achieve such bounds begins with formulating a convex relaxation, such as a linear
+program (LP) or a semidefinite program (SDP), and then rounding its optimal solution to obtain an integral,
+but approximate, sparsest cut. Often, solutions of these convex relaxations form a metric space for the nodes
+V and the rounding step involves embedding this metric into another metric space such as the ℓ1 or the ℓ2
+metric.
+     Bryant and Tupper [8] have described a framework which extends such “metric-relaxations” to the hy-
+pergraph setting. This results in a convex relaxation whose solutions are vectors δ which assign nonnegative
+values to arbitrary subsets as opposed to only pairwise distances d(u, v) from a metric space (V, d). The vec-
+tor δ does satisfy certain triangle inequalities and the ordered tuples (V, δ ) are termed “diversities” by Bryant
+and Tupper (see Definition 3.1). Analogous to the approach based on metric embeddings into ℓ1 [4, 20], one
+can extract an approximate sparsest cut in the hypergraph setting via diversity embeddings into so-called ℓ1
+diversities. Our work’s focus is largely concerned with low-distortion embeddings of diversities into ℓ1 and
+their application to the sparsest cut in hypergraphs.
+     In the remainder of this section we list our contributions. Formal definitions for some of the objects are
+only introduced later.
+
+1.1 Approximating the Sparsest Cut in Hypergraphs
+Our contributions for the sparsest cut problem are in the setting where the supply and demand hypergraphs
+are in general hypergraphs, namely Theorem 1.1. This more general hypergraph setting has received rela-
+tively little investigation except for recent work in the setting where G is a supply hypergraph and H is a
+demand graph [16, 21, 22].
+
+
+
+                                                        2
+Theorem 1.1. (Section 4.5) Let G = (V, EG , wG ) be a supply hypergraph with rank rG and H = (V, EH , wH )
+be a demand hypergraph with rank rH . Then there is a randomized polynomial-time O(min{rG , rH } log n log rH )-
+approximation algorithm for the sparsest cut of G and H.
+    We follow the basic approach of Bryant and Tupper [26] who gave a similar but existential bound. In
+order to establish a polytime algorithm we must lose an O(log rH ) factor in order to solve (separate) the LP
+relaxation in polytime (see Section 1.3). This is the first polynomial-time approximation algorithm in the
+general setting.
+    We next consider the restricted case where the supply is a graph, but the demands arise from a hyper-
+graph.
+Theorem 1.2. (Section 4.5) Let G = (V, EG , wG ) be a supply graph (equivalently rank rG = 2) and H =
+(V, EH , wH ) be a demand hypergraph. Then there is a randomized polynomial-time O(log n)-approximation
+algorithm for the sparsest cut of G and H.
+    Theorem 1.2 is an improvement upon an existing polynomial time O(log n log (|EH |rH ))-approximation
+algorithm due to Plotkin et al. [24]. Specifically, the approximation factor guaranteed by Plotkin et al.’s
+algorithm has a logarithmic dependence on |EH |, which is exponentially large in general, while Theorem
+1.2 truly guarantees a polylogarithmic approximation factor. We mention that hypergraph demands arise in
+VLSI optimization research [14].
+
+1.2 Diversity Embeddings
+We shall see that Theorem 1.1 relies critically on the following embedding result. It improves upon the
+O(log2 n)-distortion embedding of a diameter diversity (Definition 3.6) into the ℓ1 diversity, (RO(log n) , δ1 )
+(see Definition 3.4) in [26].
+Theorem 1.3. (Section 5.2) Let (X , δdiam ) be a diameter diversity with induced metric (X , d) and with
+|X | = n. Then there exists a randomized polynomial time embedding of (X , δdiam ) into the ℓ1 diversity
+       2
+(RO(log n) , δ1 ) with distortion O(log n).
+    In contrast, we give bad news in terms of embedding a general diversity.
+Theorem 1.4. (Section 5.1) For any p ≥ 0 and for any ε > 0, there does not exist a polynomial-time diversity
+ℓ1 embedding that queries a diversity on sets of cardinality at most O(log p n) and achieves a distortion of
+O(n1−ε ), unless P=NP.
+    Theorem 1.4 provides an inapproximability result for embedding diversities into ℓ1 based only on their
+induced metric space. This answers an algorithmic-refinement of Bryant and Tupper’s conjecture that there
+            √
+exists an O( n)-distortion embedding into ℓ1 solely using the induced metric of a diversity [7], see Conjec-
+ture 5.5.
+
+1.3 The Minimum Cost Hypergraph Steiner Problem
+Solving the diversity relaxation for hypergraph sparsest cuts requires a subroutine for separating over expo-
+nentially many “hypergraph Steiner tree constraints”. The following result is used to establish a O(log rH )-
+approximate separation oracle.
+Theorem 1.5. (Section 6) There exists a polynomial time O(log n)-approximation algorithm for the mini-
+mum cost hypergraph Steiner problem. Specifically, for a hypergraph G = (V, E, w) with nonnegative hy-
+peredge weights w : E → R+ and for a set of Steiner nodes S ⊆ V , HSP(G, S) can be approximated up to a
+factor of O(log |S|) in polynomial time.
+
+                                                       3
+    To our knowledge, this is the first polynomial-time approximation algorithm for the minimum-cost
+hypergraph Steiner problem, a generalization of the classical Steiner tree problem. One special case which
+has been studied is the spanning connected sub-hypergraph problem for which a (tight) logarithmic approx-
+imation is known [5].
+
+1.4 A Diversity Embedding Conjecture
+While there exist polylogarithmic distortion embeddings for special types of diversities (such as diameter
+diversities) we are missing a result for general diversities. Indeed Theorem 1.4 is an inapproximability result
+in that case. We propose a conjecture which offers a work-around.
+     It turns out that any diversity can be implicitly defined by some (weighted) hypergraph as we describe
+now. Given a hypergraph H = (V, E) and S ⊆ V we let TS denote the collection of subsets of hyperedges
+that induce connected subhypergraphs whose nodes include S.
+
+Definition 1.6 (Hypergraph Steiner Diversity). Let H = (V, E, w) be a hypergraph with node set V , hyper-
+edge set E, and nonnegative hyperedge weights w : E → R+ . The hypergraph Steiner diversity (V, δH ) is
+defined as
+                                        (
+                                          mint∈TA ∑U∈t w(U ) if |A| ≥ 2
+                              δH (A) =                                                                (3)
+                                          0                     otherwise.
+
+    We conjecture that there is a diversity embedding into ℓ1 with distortion polylogarithmic in the encoding
+size of any hypergraph which induces the embedding. For our applications, the hypergraph weights are
+polynomially bounded, i.e., have encoding size polynomial in n = |V (H)| and m = |E(H)|.
+
+Conjecture 1.7. There is an algorithm which embeds an arbitrary diversity (V, δH ) into the ℓ1 diversity
+with distortion polylogarithmic in the encoding size of H . If the weights are polynomially bounded, this
+distortion is poly(log(m, n)).
+
+    This conjecture is partly motivated by the fact that hypergraph cut sparsifiers allow us to replace an
+instance of the sparsest cut on dense hypergraphs by an instance on sparse hypergraphs. This can be achieved
+in polynomial time and with an arbitrarily small approximation loss using [12]. Hence the diversity that
+arises as the solution to the sparsest-cut convex-relaxation is one that is defined by a sparse hypergraph. We
+believe that this sparse structure may be easier to obtain low-distortion embeddings.
+
+
+2 Related Work and History
+The most significant work for general (hypergraph) sparsest cut is for the case when G is a hypergraph and
+H is a demand graph (in contrast to Theorem 1.2 where the supply and demand roles are reversed). In this
+                                                       √
+setting, Louis [21] shows a randomized polytime O( log n log rG log log n) approximation, where rG is the
+rank of the supply hypergraph G.
+     Expansion. A closely related property to the sparsity of a cut is the expansion of the cut. This is defined
+as the ratio of the weight of the (hyper)edges crossing the cut to the number of nodes in the smaller partition
+of the cut. Formally,
+
+Definition 2.1. Let G = (V, E, w) be a (hyper)graph with nonnegative hyperedge weights w : E → R+ and
+let A ⊆ V such that A 6= /0,V . Then the expansion of the cut A, Φ(A), is defined as
+
+                                                ∑U∈E w(U )1{U∩A6= /0,U}
+                                       Φ(A) =                                                               (4)
+                                                   min{|A|, |AC |}
+
+                                                       4
+    Then the (hyper)graph expansion of G is defined as
+
+Definition 2.2. Let G = (V, E) be (hyper)graph with nonnegative hyperedge weights w : E → R+ . Then the
+expansion of the (hyper)graph G, denoted by Φ, is defined as
+
+                                                                      ∑U∈E w(U )1{U∩A6= /0,U}
+                          Φ=      min          Φ(A) =      min                                              (5)
+                               A⊆V :A6= /0,V            A⊆V :A6= /0,V    min{|A|, |AC |}
+
+    Often, when discussing (hyper)graph expansion, the supply (hyper)graph G has unit weights and the
+expansion of a cut is simply the ratio of the number of (hyper)edges crossing the cut to the number of
+nodes in the smaller partition of the cut. The expansion of a cut is closely related to the sparsity of the cut
+when the demand network is a complete graph with unit weights, called uniform demands. The problem of
+computing the minimum expansion cut, even with uniform demands, is NP-hard [23]. It is easy to verify
+that for uniform demands, and A ⊆ V we have that
+
+                                          ∑ wH (S)1{S∩A6= /0,S} = |A||AC |                                  (6)
+                                         S∈EH
+
+Thus for each A ⊆ V with |A| ≤ |AC |, that 2n |A| ≤ |A||AC | ≤ n|A|. Hence up to a factor of 2, approximability
+of the sparsest cut and the minimum expansion cut is equivalent. In particular, existence of an O(α )-
+approximation algorithm for the sparsest cut is also an O(α )-approximation algorithm for the (hyper)graph
+expansion problem and vice-versa.
+     Sparsest cut when G/H are graphs. Leighton and Rao gave an O(log n) approximation algorithm for
+the sparsest cut problem with uniform demands [19]. Moreover, they show that the flow-cut gap in this
+setting is Ω(log n) due to an example where the supply graph is a unit-capacity constant-degree expander
+graph. This established that the flow-cut gap for the uniform demand multicommodity flow problem and the
+sparsest cut problem is Θ(log n). Later, Linial, London, and Rabinovich [20] and Aumann and Rabani [4]
+generalize Leighton and Rao’s result to the setting of arbitrary demand graphs. In particular, they show that
+the flow-cut gap is bounded by the minimum distortion of embedding a finite metric space into the ℓ1 metric.
+According to Bourgain, the minimum distortion of embedding a finite metric into ℓ1 is O(log n). However,
+before [20] it remained open as to whether this distortion factor is tight; this is answered in the affirmative
+due to Linial et al.’s work coupled with Leighton and Rao lower bound. Moreover, Linial et al. also gave
+the first polynomial time implementation of Bourgain’s O(log n)-distortion ℓ1 embedding.
+     One can strengthen the metric relaxation of the sparsest cut problem, by adding negative-type
+                                                                                                √        metric
+constraints. This leads to an SDP relaxation. (X , d) is a metric of the negative-type if (X , d) is a subset
+of the ℓ2 metric space. We let ℓ22 denote the class of metrics of the negative-type. The minimum distortion
+of embedding these metrics into ℓ1 yields the integrality gap for this SDP approach, and a polynomial time
+algorithm embedding algorithm yields a polynomial time approximation algorithm for the sparsest cut prob-
+                                                                             √
+lem. This is the approach of Arora, Rao, and Vazirani [3] who give a O( log n)-approximation algorithm
+for sparsest cut problem with uniform demands. However, their approach is a randomized rounding scheme
+of their SDP relaxation as opposed to directly embedding an arbitrary ℓ22 metric into ℓ1 . Chawla, Gupta,
+and Räcke prove that a finite ℓ22 metric can indeed be polytime embedded into the ℓ1 metric with distortion
+       3
+O(log 4 n) [11]. Arora, Lee, and Naor [2] further improve this by showing that a finite ℓ22 metric can be
+                                     √
+embedded into ℓ1 with distortion O( log n log log n); this yields a corresponding approximation for sparsest
+cut.
+     G hypergraph and H a graph. In this setting, Kapralov et al. [16] give a polynomial time O(log n) ap-
+proximation algorithm for the hypergraph expansion problem and the sparsest cut problem with uniform de-
+mands. They use a rounding scheme of an LP relaxation of the hypergraph expansion problem that optimizes
+over pseudo metrics. We note that Kapralov et al.’s result actually comes after Louis and Makarychev’s
+
+
+                                                            5
+   √
+O( log n) approximation [22]. Kapralov et al.’s approximation algorithm is an LP (as opposed to SDP)
+and is motivated by the construction of spectral sparsifiers for hypergraphs. The randomized polytime
+   √
+O( log n)-approximation algorithm of Louis and Makarychev [22] for hypergraph expansion (and hence
+the sparsest cut problem with uniform demands) matches the approximation factor for graph expansion and
+sparsest cut with uniform demand. Similar to the progression of [3] to [2], Louis gives a randomized poly-
+                                                                                       √
+nomial time approximation algorithm for the sparsest cut problem that obtains an O( log rG log n log log n)
+approximation factor [21].
+     G a graph and H a hypergraph. Plotkin et al. provided a polynomial time O(log n log (|EH |rH ))-
+approximation algorithm. Their approach rounds a fractional solution of an LP relaxation without the use
+of metric embeddings. To our knowledge, there is no polynomial-time algorithm in the hypergraph demand
+setting that utilizes metric embeddings. We are not aware of any other polynomial-time approach in this
+setting, or indeed the general setting where G and H are arbitrary hypergraphs.
+     G/H are both hypergraphs. Bryant and Tupper [8] introdcue diversities as a generalization of met-
+ric spaces where instead of a nonnegative function defined on pairs of elements, it is defined on arbitrary
+finite sets of elements. They have developed a substantial theory on diversities [7–9, 26] including around
+the notion of diversity embedding. For instance, they demonstrate that several types of diversities attain
+polynomial-time low-distortion embeddings into ℓ1 . Most pertinent to our discussion, in [26] they gener-
+alized the work of Linial et al. [20] whereby the flow-cut gap in the hypergraph setting is equivalent to
+the minimum distortion of embedding some finite diversity into the ℓ1 diversity. Notably, this work pro-
+vides an approach to approximating the sparsest cut in hypergraphs However, Bryant and Tupper did not
+focus on the tractability of this framework. In particular, whether this approach even has a polynomial-time
+implementation for the hypergraph setting.
+
+2.1 Organization
+In Chapter 3 we introduce the notion of a diversity and their properties relevant to this work. In Chapter 5 we
+introduce diversity embeddings; this chapter includes proofs of Theorem 1.3, in Section 5.2, and Theorem
+1.4, in Section 5.1.
+    In Chapter 4 we describe the approach of approximating the hypergraph sparsest cut via an LP relaxation
+whose solutions are diversities. One then extracts an approximate sparsest cut via embedding such diversities
+into ℓ1 . In Section 4.4 we characterize the optimal solutions of the LP relaxation. This is used in the proofs
+of Theorems 1.1 and 1.2 (see Section 4.5). In Section 6 we establish tractability of the LP by showing an
+algorithm for the minimum-cost hypergraph Steiner problem (Theorem 1.5).
+
+
+3 Diversities
+Recently introduced by Bryant and Tupper [8], diversities are a generalization of metric spaces where instead
+of a nonnegative function defined on pairs of elements, it is defined on arbitrary finite sets of elements.
+Definition 3.1. A diversity is a pair (X , δ ) where X is a set and δ is a real-valued function defined over the
+finite subsets of X satisfying the following three axioms:
+
+   1. ∀A ∈ P(X ), δ (A) ≥ 0
+
+   2. δ (A) = 0 if and only if |A| ≤ 1
+
+   3. ∀A, B,C ∈ P(X ),C 6= /0 ⇒ δ (A ∪ B) ≤ δ (A ∪C) + δ (B ∪C)
+
+    We refer to the third axiom as the triangle inequality. It is the property that makes diversities a gen-
+eralization of metrics. Similar to the notion of a pseudo-metric there is a definition of a pseudo diversity.
+
+                                                       6
+Formally, (V, δ ) is a pseudo diversity if (X , δ ) satisfies the three axioms of Definition 3.1 with the second
+axiom being weakened to
+
+                                               δ (A) = 0 if |A| ≤ 1                                            (7)
+Henceforth when we refer to (X , δ ) as being a “diversity” we mean that (X , δ ) is a pseudo diversity; we
+make this assumption since the LP relaxation optimizes over pseudo diversities.
+     We note that any (pseudo) diversity (X , δ ) yields an induced (pseudo) metric space (X , d) where for any
+x, y ∈ X we define d as
+                                               d(x, y) = δ ({x, y})                                          (8)
+Conversely, a metric can induce an infinite number of diversities for whom it is the induced metric.
+
+Definition 3.2 (D(X,d) ). For a metric space (X , d), D(X,d) is the family of diversities for whom (X , d) is their
+induced metric. For contexts where the set X is unambiguous the notation Dd may be used.
+
+    A consequence of the triangle inequality is that (pseudo) diversities are monotone increasing set func-
+tions.
+
+Proposition 3.3. [see Appendix A] (Pseudo) diversities are monotone increasing. That is, if (X , δ ) is a
+(pseudo) diversity, then for any A, B ∈ P(X ) we have that
+
+                                             A ⊆ B ⇒ δ (A) ≤ δ (B)                                             (9)
+
+
+3.1 Examples of Diversities
+As described in Section 1.4, any diversity can be defined by some (sometimes many) hypergraph. In this
+section, we define several important examples of diversities with a considerably simpler structure.
+
+3.1.1   The ℓ1 and Cut Diversities
+Just as the hypergraph Steiner diversity is a generalization of the shortest path metric of a graph, the ℓ1
+diversity is a natural generalization of the ℓ1 metric. For context, we first define the ℓ1 metric. Recall that a
+metric space (Rm , d) is the ℓ1 metric if for any x, y ∈ Rm d(x, y) = ∑m
+                                                                       i=1 |xi − yi |.
+    Similarly, the ℓ1 diversity is defined as follows
+
+Definition 3.4 (ℓ1 Diversity). (Rm , δ1 ) is an ℓ1 diversity if for any A ∈ P(Rm )
+                                                      m
+                                            δ1 (A) = ∑ max |ai − bi |                                         (10)
+                                                     i=1 a,b∈A
+
+    Likewise, the cut pseudo metric is generalized by the cut pseudo diversity.
+
+Definition 3.5 (Cut Diversity). Let X be a set and let U ⊆ X be a nonempty subset. Then (X , δU ) is a cut
+pseudo diversity (induced by U ) if for any A ∈ P(X )
+                                                 (
+                                                  1 if A ∩U 6= /0, A
+                                        δU (A) =                                                      (11)
+                                                  0 otherwise
+
+    A classic property of the ℓ1 metric is that it can be represented as sum of cut pseudo metrics. Similarly,
+there is an analogous generalization, due to Bryant and Tupper [26], for the ℓ1 diversity and cut pseudo
+diversities as Theorem 3.15.
+
+                                                          7
+3.1.2   Extremal Diversities
+Given a (pseudo) metric space, (X , d), a natural extension of the (pseudo) metric space to a (pseudo) diversity
+is to define a diversity (X , δ ) where δ (A) is simply the diameter of the set A in the metric space (X , d).
+Unsurprisingly, these are referred to as diameter diversities.
+Definition 3.6 (Diameter Diversity). Given a (pseudo) metric space (X , d), a (pseudo) diameter diversity
+(X , δdiam ) satisfies for each A ∈ P(X )
+
+                                             δdiam (A) = max d(x, y)                                         (12)
+                                                          x,y∈A
+
+   Alternatively, one case also extend the (pseudo) metric (X , d) to a (pseudo) diversity based on the mini-
+mum cost Steiner trees in the complete graph induced by the weights d(u, v). These are a special case of the
+hypergraph Steiner diversity in which the hyperedge-weighted hypergraph H = (V, E, w) is simply a graph.
+Definition 3.7 (Steiner Diversity). Let G = (V, E, w) be a graph with node set V , edge set E, and nonnegative
+edge weights w : E → R+ . Then the Steiner diversity (V, δSteiner ) is a Steiner diversity if for any A ∈ P(V )
+we have
+                                               (
+                                                 mint∈TA ∑e∈t w(e) if |A| ≥ 2
+                                δSteiner (A) =                                                             (13)
+                                                 0                   otherwise
+where TA is the collection of subsets of edges that correspond to connected subgraphs of G that contain the
+nodes A (cf. Section 1.4). Or in other words, δSteiner (A) is defined to be the minimum weight of a subtree of
+G containing the nodes A.
+   A special case of Steiner diversities and a generalization of tree metrics are the tree diversities; Bryant
+and Tupper introduced these and refer to them as phylogenetic diversities.
+Definition 3.8 (Tree Diversity). Let G = (V, E, w) be a graph with node set V , edge set E, and nonnegative
+edge weights w : E → R+ . Let (V, δSteiner ) be the corresponding Steiner diversity. If (V, E) is a tree then
+(V, δSteiner ) is a tree diversity, for which we may use the notation (V, δtree ).
+    The following extremal result characterizes the (pseudo) diameter diversity as being the “minimal"
+(pseudo) diversity and characterizes the (pseudo) Steiner diversity as being the “maximal" (pseudo) diversity
+among the family of (pseudo) diversities sharing an induced (pseudo) metric.
+Theorem 3.9 (Bryant and Tupper in [26]). let (X , d) be a (pseudo) metric space. Let D(X,d) be the family of
+diversities for whom (X , d) is their induced (pseudo) metric space. Let (X , δdiam ) ∈ D(X,d) be the (pseudo)
+diameter diversity and (X , δSteiner ) ∈ D(X,d) . Then for any (X , δ ) ∈ D(X,d) and any A ∈ P(X ) it follows that
+
+                                         δdiam (A) ≤ δ (A) ≤ δSteiner (A)                                    (14)
+    We also use the notion of k-diameter diversity which generalizes the diameter diversity and satisfies a
+similar extremal result to Theorem 3.9. Bryant and Tupper introduced this definition and used the name
+truncated diversity.
+Definition 3.10 (k-Diameter Diversity). Given a (pseudo) diversity (X , δ ) and k ∈ Z≥0 , we say that (X , δk-diam )
+is the k-diameter (pseudo) diversity of (X , δ ) if for any A ∈ P(X )
+
+                                          δk-diam (A) =       max δ (B)                                      (15)
+                                                          B⊆A:|B|≤k
+
+Furthermore, if a (pseudo) diversity satisfies equation (15), then it is referred to as a k-diameter (pseudo)
+diversity.
+
+                                                          8
+    It is easy to see that a diameter diversity is a 2-diameter diversity.
+
+Fact 3.11. A 2-diameter (pseudo) diversity is a diameter (pseudo) diversity. Furthermore if (X , δ ) is a
+diversity with the induced metric space (X , d) then D(X,d) = D(X,δ ,2) .
+
+    Additionally, we generalize D(X,d) to a k-diameter setting.
+
+Definition 3.12 (D(X,δ ,k) ). For a (pseudo) diversity (X , δ ) and k ∈ Z≥0 , D(X,δ ,k) is the family of (pseudo)
+diversities which are equivalent to δ on subsets of X of cardinality at most k. For contexts where the set X
+is unambiguous the notation D(δ ,k) may be used.
+
+    Next, we prove that a k-diameter diversity (X , δ ) is the minimal diversity of the family D(X,δ ,k) , gener-
+alizing Theorem 3.9 due to Bryant and Tupper. We use this extremal property of the k-diameter diversity in
+order to characterize the optimal solutions of the diversity-relaxation for the sparsest cut, Theorem 4.2.
+
+Theorem 3.13. [see Appendix A] Given a (pseudo) diversity (X , δ ) and k ∈ Z≥0 we let (X , δk-diam ) be the
+k-diameter (pseudo) diversity of (X , δ ). Then for any (X , δ ′ ) ∈ D(X,δ ,k) and any A ∈ P(X ) it follows that
+
+                                               δk-diam (A) ≤ δ ′ (A)                                        (16)
+Or in other words (X , δk-diam ) is the minimal (pseudo) diversity of the family D(X,δ ,k) .
+
+
+3.2 Diversity Embeddings
+In this section we introduce the notion of diversity embeddings since low distortion embedding into the ℓ1
+diversity play a key role in finding an approximation for sparsest cuts.
+
+Definition 3.14 (Diversity Embedding). Let (X , δX ) and (Y, δY ) be two diversities. Let f be a map from X
+to Y . We say that f is an embedding of the diversity (X , δX ) into the diversity (Y, δY ) with distortion c if
+there are constants c1 , c2 ≥ 1 such that c = c1 c2 and for any A ∈ P(X ) we have that
+
+                                        1
+                                           δX (A) ≤ δY ( f (A)) ≤ c2 δX (A)                                 (17)
+                                        c1
+For convenience, when referring to such an embedding we may use the notation (X , δX ) → (Y, δY ) and
+          c
+(X , δX ) −
+          → (Y, δY ), where the latter specifies the distortion of the embedding. We may also precede such
+notation with “ f :” in order to specify the map.
+
+    If we restrict (17) in Definition 3.14 to sets A of cardinality two, then we recover the exact definition
+of a metric embedding. This is significant since facts about metric embeddings can extend to facts about
+diversity embeddings since each diversity “encodes” an induced metric space.
+    We use the term ℓ1 -embeddable to mean embedding into ℓ1 isometrically, i.e., distortion c = 1. The
+following analogue for the metric case is also key for our results.
+
+Theorem 3.15 (Bryant and Tupper [26]). Let (X , δ ) be a diversity where |X | = n < ∞. Then the following
+are equivalent.
+
+   1. (X , δ ) is embeddable into ℓm
+                                   1.
+
+   2. (X , δ ) is a nonnegative combination of O(nm) cut diversities.
+
+
+
+
+                                                         9
+    As for the time-complexity of a diversity embedding, we can assume that we have access to an oracle
+α(X,δX ) : P(X ) → R+ which computes δX (A) for some subset of A ⊆ P(X ) in polynomial time with respect
+to the size of the representation of (X , δX ) that we are given. For instance, (X , δX ) may be a hypergraph
+Steiner diversity given by a hyperedge-weighted hypergraph or as a |P(X )|-long enumeration of the values
+of δX . We say that an embedding f : (X , δX ) → (Y, δY ) is a polynomial time embedding if we have an
+algorithm that computes f in time that is polynomial of the representation of (X , δX ) while querying the
+oracle α(X,δX ) a polynomial number of times on the subsets A . As we demonstrate in Section 5.1, one can
+construct a family of diversities and a corresponding representation such that any low-distortion embedding
+is necessarily polytime-intractable.
+
+3.2.1   A Steiner Diversity Embedding
+Bryant and Tupper give a Steiner diversity embedding utilizing two ingredients. First is Fakcharoenphol,
+Rao, and Talwar’s probabilistic embedding of n-node metric spaces into dominating tree metrics with dis-
+tortion O(log n) in expectation [13], which we refer to as the FRT algorithm. Given that tree metrics are
+isometrically embeddable into the ℓ1 metric, the FRT algorithm provides an alternate O(log n)-distortion
+metric embedding into ℓ1 .
+     The second ingredient is an argument that tree diversities embed isometrically into ℓ1 .
+
+Theorem 3.16. Let (X , δtree ) be a tree diversity. Then there exists an embedding of (X , δtree ) into the ℓ1
+diversity with distortion 1. Moreover, this embedding is computable in polynomial-time with respect to |X |.
+
+    Theorem 3.16 and the FRT algorithm are then combined to prove the following.
+
+Theorem 3.17 (Restatement of Theorem 2 in [7]). Let (X , δSteiner ) be a Steiner diversity where |X | = n.
+Then there is a randomized polynomial-time algorithm that embeds (X , δSteiner ) into the ℓ1 diversity with
+O(log n) distortion.
+
+
+3.2.2   A Hypergraph Steiner Diversity Embedding
+Bryant and Tupper [7] show that a hypergraph Steiner diversity corresponding to a rank k hypergraph can
+be embedded into the ℓ1 diversity with distortion O(k log n). At a high level, this O(k log n)-distortion em-
+bedding follows by approximating a hyperedge-weighted rank-k hypergraph with an edge-weighted graph
+while incurring an O(k) approximation factor. Or in other words, embedding a hypergraph Steiner diversity
+into a Steiner diversity with distortion O(k). Then, the additional O(log n) factor is incurred by embedding
+this Steiner diversity into the ℓ1 diversity.
+
+Theorem 3.18. Let H = (V, E, w) be a rank k hypergraph with node set V , edge set E, and nonnegative
+hyperedge weights w : E → R+ . Let (V, δH ) be the corresponding hypergraph Steiner diversity. Then there
+is a Steiner diversity (V, δSteiner ) into which (V, δH ) can be polynomial-time embedded with distortion O(k).
+
+    Then the main result of this section follows as a corollary of Theorems 3.17 and 3.18.
+
+Corollary 3.19 (Bryant and Tupper in [7]). Let H = (V, E, w) be a rank-k hypergraph with node set V ,
+edge set E, and nonnegative hyperedge weights w : E → R+ . Let (V, δH ) be the corresponding hyper-
+graph Steiner diversity. Then (V, δH ) can be embedded into the ℓ1 diversity with distortion O(k log n), in
+randomized polynomial-time.
+
+Proof. We let f : (V, δH ) → (V, δSteiner ) be a polynomial-time O(k)-distortion embedding of (V, δH ) into
+some Steiner diversity (V, δSteiner ), due to Theorem 3.18. We let g : (V, δSteiner ) → (Rm , δ1 ) be a randomized
+polynomial-time O(log n)-distortion embedding of (V, δSteiner ) into the ℓ1 diversity for some dimension m,
+
+                                                       10
+due to Theorem 3.17. Then the map g · f is an embedding of (V, δH ) into the ℓ1 diversity with distortion
+O(k log n). Moreover, this embedding is computable in randomized polynomial-time. This completes the
+proof.
+
+
+3.3 Subadditive Set Functions as Diversities
+In this section we answer two questions. First, when is a subadditive set function a diversity? Secondly,
+when can a subadditive set function be modified into a diversity? This is a necessary technical lemma for
+the inapproximability result Theorem 1.4.
+    Recall that a set function f : 2X → R is subadditive if for any A, B ⊆ X , f satisfies:
+
+                                          f (A ∪ B) ≤ f (A) + f (B).                                    (18)
+Subadditive functions are closely related to diversities if we consider the third axiom of diversities, the
+triangle inequality. Specifically, that axiom could be recast as requiring subadditivity for sets A, B with
+non-empty intersection. (In that case A ∩ B 6= /0 plays the role of C.) Replacing the third axiom with this
+condition does not quite give an equivalent definition of diversity however. There are minor nuances, but
+nonetheless, there is a close relationship between diversities and subadditive set functions.
+    Due to Proposition 3.3, in order for a subadditive set function to be, or even “resemble”, a diversity it
+must be nonnegative and increasing.
+Lemma 3.20. [see Appendix A] Let X be a set and let f : 2X → R be a nonnegative, increasing, and
+subadditive set function. Then (X , δ ) is a pseudo-diversity where δ is defined as
+                                                   (
+                                                     f (A) if |A| ≥ 2
+                                           δ (A) =                                           (19)
+                                                    0       otherwise
+
+
+4 Approximating Sparsest Cuts via Diversity Embeddings
+We present the framework of Bryant and Tupper [26] for studying sparsest cuts (flow-cut gaps) when both the
+supply and demand are hypergraphs. This is based on an LP relaxation that optimizes over pseudo-diversities
+and then gives a low-distortion embedding of the diversity corresponding to an optimal LP solution into
+the ℓ1 diversity. An approximate sparsest cut is then extracted due to the fact that ℓ1 diversities are a
+nonnegative sum of cut diversities. Ultimately one can show that the flow-cut gap of the sparsest cut and the
+maximum concurrent multicommodity flow (we do not formally define here - see [26]) is bounded above by
+the distortion of the ℓ1 embedding. We first give an overview of the ingredients.
+    In Section 4.1 we introduce the relaxation and point out the missing elements to make it polytime
+solvable. Section 4.2 discusses rounding a solution (a diversity) into an approximate cut and Section 4.3
+puts the pieces together to give a generic approximation algorithm for sparsest cut. The quality of the
+approximation depends on how well one can round the diversity produced by the LP. In Section 4.4 we
+show that the optimal solution for the LP relaxation when G is a graph and H is a hypergraph is actually a
+diameter diversity. In Theorem 1.3 we then show that such diversities have an O(log n) polytime embedding
+into ℓ1 . A similar bound is achievable for G hypergraph and H a graph due to the optimal diversity being
+a Steiner diversity. We do not focus on this since in this case, bounds for sparsest cut due to Louis are
+superior. Section 4.5 then gives algorithmic details which show that this results in a randomized polynomial-
+time O(log n)-approximation algorithm for the sparsest cut problem in the setting where either the supply or
+demand hypergraphs is a graph.
+    Throughout this chapter we consider an instance of the sparsest cut problem defined by a supply hyper-
+graph G = (V, EG , wG ) with rank rG and a demand hypergraph H = (V, EH , wH ) with rank rH .
+
+                                                     11
+4.1 A Linear Programming Relaxation
+According to the definition of sparsest cut φ , the definition of a cut pseudo diversity, and Definition 3.5, we
+have that the sparsest cut φ is equivalent to
+
+                                                ∑U∈EG wG (U )δA (U )
+                                                 φ = min                                                   (20)
+                                            A⊆V ∑S∈EH wH (S)δA (S)
+
+    This can be further relaxed to optimizing over all pseudo diversities (not just cuts):
+
+                                                               ∑U∈EG wG (U )δ (U )
+                                                     min                                                  (21)
+                                   (V,δ ) is a pseudo-diversity ∑S∈EH wH (S)δ (S)
+We call (21) the sparsest cut diversity-relaxation. Moreover, since (21) is a relaxation of (20) we have that
+                                                                          ∑U∈EG wG (U )δ (U )
+                                         φ≥             min                                                (22)
+                                              (V,δ ) is a pseudo-diversity ∑S∈EH wH (S)δ (S)
+
+    It can be shown (see [26]) that (21) is equivalent to the following optimization problem
+
+                                                min ∑ wG (U )δ (U )
+                                                     U∈EG
+
+                                                 s.t. ∑ wH (S)δ (S) ≥ 1                                    (23)
+                                                       S∈EH
+                                                     (V, δ ) is a pseudo-diversity
+    Recall that T(G,S) is the collection of subsets of hyperedges of G that correspond to connected subhy-
+pergraphs that contain the nodes S. Then (23) can be shown to be equivalent to the following LP
+
+                                         min ∑ w(U )dU
+                                              U∈EG
+
+                                         s.t. ∑ wH (S)yS ≥ 1
+                                              S∈EH
+                                                                                                           (24)
+                                              ∑ dU ≥ yS                 ∀S ∈ EH ,t ∈ T(G,S)
+                                              U∈t
+                                              dU ≥ 0                              ∀U ∈ EG
+                                              yS ≥ 0                              ∀S ∈ EH
+We can take a feasible solution of (24), {dU }U∈EG and {yS }S∈EH , and define a corresponding feasible solution
+to (23) with an equivalent objective value. This solution corresponds to a hypergraph Steiner diversity (see
+Definition 1.6)
+                   (V, δG ) where G = (V, EG , w) with w : EG → R+ is defined as w(U ) = dU .              (25)
+     This LP relaxation has polynomially many variables3 but in general has exponentially many constraints.
+Specifically, for S ∈ EH , T(G,S) may have exponentially many subsets. Hence, the set of constraints {∑U∈t dU ≥
+yS }t∈T(G,S) is exponentially large in general. We can approximately solve this LP however if there is a poly-
+nomial time (approximate) separation oracle for
+                                                           min   ∑ dU ≥ yS
+                                                         t∈T(G,S) U∈t
+                                                                                                           (26)
+
+for each S ∈ EH . This is the hypergraph Steiner problem (HSP) which is NP-complete [5]. We give an
+O(log rH )-approximate separation oracle (the first as far as we know) in Chapter 6. In the remainder, we
+assume that the solutions we obtain for the LP has an encoding size which is polynomially bounded in m, n.
+  3 If G and H are defined explicitly.
+
+
+
+                                                                  12
+4.2 Rounding the Linear Programming Relaxation
+Given a solution to (24) we immediately have a solution to the sparsest cut diversity-relaxation (21), namely
+the diversity (V, δ ) from (25). An approximate sparsest cut can be extracted as follows. Let f : V → Rm
+be an embedding from (V, δ ) to the ℓ1 diversity (Rm , δ1 ) with distortion c ≥ 1. This yields the following
+inequalities
+
+                            ∑U∈EG wG (U )δ1 ( f (U ))    ∑U∈EG wG (U )δ (U )
+                                                      ≤c                     ≤ cφ                          (27)
+                            ∑S∈EH wH (S)δ1 (  f (S))     ∑S∈EH wH (S)δ (S)
+where the first inequality follows by the fact that f is an embedding with distortion c and the second in-
+equality follows by the fact that (V, δ ) is a feasible solution to (21) which is a relaxation of φ according to
+Equation (22).
+    By Theorem 3.15, δ1 is a nonnegative sum of O(nm) cut pseudo-diversities. Therefore, there exists some
+collection F of subsets of 2 f (V ) , where |F | ∈ O(nm), such that for any A ⊆ V
+
+                                           δ1 ( f (A)) = ∑ αB δB ( f (A))                                  (28)
+                                                       B∈F
+
+where {αB }B∈F are positive scalars and {( f (V ), δB )}B∈F is a collection of cut pseudo-diversities. This
+immediately yields that
+                                                                                   
+                      ∑U∈EG wG (U )δ1 ( f (U )) ∑U∈EG wG (U ) ∑B∈F αB δB ( f (U ))
+                                               =                                                     (29)
+                       ∑S∈EH wH (S)δ1 ( f (S))    ∑S∈EH wH (S) ∑B∈F αB δB ( f (S))
+
+Next, rearranging the order of the summations, we have that (29) is equivalent to
+                                                                     
+                                     ∑B∈F αB ∑U∈EG wG (U )δB ( f (U ))
+                                                                                                         (30)
+                                     ∑B∈F αB ∑S∈EH wH (S)δB ( f (S))
+
+    Finally, it can be shown that there exists some cut B0 ⊆ V where f (B0 ) ∈ F such that
+                                                                                       
+                      ∑U∈EG wG (U )δ f (B0 ) ( f (U )) ∑B∈F αB ∑U∈EG wG (U )δB ( f (U ))
+                                                      ≤                                                  (31)
+                       ∑S∈EH wH (S)δ f (B0 ) ( f (S))   ∑B∈F αB ∑S∈EH wH (S)δB ( f (S))
+
+We note that the left side of the inequality (31) is simply
+
+                                    ∑U∈EG wG (U )δB0 (U ) ∑U∈EG wG (U )δ f (B0 ) ( f (U ))
+                        φ (B0 ) =                        =                                                 (32)
+                                    ∑S∈EH wH (S)δB0 (S)    ∑S∈EH wH (S)δ f (B0 ) ( f (S))
+
+where the second equality follows by the fact that cuts are preserved under the map f : V → Rm .
+   Hence putting together (27), (29), (30), (31), (32), and the fact that φ ≤ φ (B0 ) we have that
+
+                                                 φ ≤ φ (B0 ) ≤ cφ                                          (33)
+
+
+4.3 An Approximation Algorithm for the Sparsest Cut
+Theorem 4.1. Let G = (V, EG , wG ) be a supply hypergraph with rank rG and H = (V, EH , wH ) be a demand
+hypergraph with rank rH .
+
+   1. Let αLP be the approximation factor for some (randomized) polynomial-time algorithm that (approx-
+      imately) solves LP Relaxation (24).
+
+                                                        13
+   2. Let αdiv be the approximation factor for some (randomized) polynomial-time algorithm that computes
+      the hypergraph Steiner diversity corresponding to the optimal solution of LP Relaxation 24, as defined
+      according to Equation (25).
+
+   3. Let αemb be the distortion of embedding the aforementioned diversity into the ℓ1 diversity for some
+      (randomized) polynomial time algorithm.
+
+Then the approach outlined in this section forms a (randomized) polynomial-time O(αLP αdiv αemb )-approximation
+algorithm for the sparsest cut problem in hypergraphs.
+
+
+4.4 Characterizing the Optimal Solutions of the Sparsest Cut Diversity-Relaxation
+In this section we provide characterizations for the optimal solutions of the sparsest cut diversity-relaxation,
+Equation (21). The algorithmic implications are discussed in the next section. We show that if the supply
+hypergraph is a graph, then the optimal diversity is a Steiner diversity and if the demand hypergraph is a
+graph, then the optimal diversity is a diameter diversity. Notably, both of these diversities have O(log n)-
+distortion polynomial-time embeddings into ℓ1 .
+    Key structural properties of optimal diversities are derived in Theorems 4.2 and 4.4.
+
+Theorem 4.2. Let G = (V, EG , wG ) be a supply hypergraph and let H = (V, EH , wH ) be a demand hypergraph
+with rank rH . Let (V, δ ) be a (pseudo) diversity attaining (some approximation to) the optimal objective
+value to the sparsest cut diversity-relaxation, Equation (21). Let (V, δrH -diam ) be the rH -diameter diversity
+of (V, δ ). Then (V, δ ) can be asummed to be (V, δrH -diam ).
+
+Proof. According to Theorem 3.13, (V, δ ) and (V, δrH -diam ) are both members of D(V,δ ,rH ) , and moreover,
+(V, δrH -diam ) is the minimal diversity of this family. By definition of D(V,δ ,rH ) and by the fact that ∀S ∈
+EH , |S| ≤ rH , it follows that
+
+                                    ∑ wH (S)δ (S) = ∑ wH (S)δr -diam (S)
+                                                                     H                                      (34)
+                                   S∈EH                S∈EH
+
+    Now edges U of G may be larger than rH , but in this case we use the minimality of (V, δrH -diam ) among
+the family D(V,δ ,rH ) . We have:
+
+                                  ∑ wG (U )δr -diam (U ) ≤ ∑ wG (U )δ (U )
+                                                H                                                           (35)
+                                 U∈EG                         U∈EG
+
+Then (34) and (35) imply that
+
+                               ∑U∈EG wG (U )δrH -diam (U ) ∑U∈EG wG (U )δ (U )
+                                                          ≤                                                 (36)
+                               ∑S∈EH wH (S)δrH -diam (S)    ∑S∈EH wH (S)δ (S)
+    Therefore, the optimal diversity for the sparsest cut diversity-relaxation, (V, δ ), can be assumed to be its
+rH -diameter diversity (V, δrH -diam ), thus completing the proof.
+
+Corollary 4.3. Let G = (V, EG , wG ) be a supply hypergraph and let H = (V, EH , wH ) be a demand graph,
+that is it has rank rH = 2. Let (V, δ ) be a (pseudo) diversity attaining (an approximation to) the optimal
+objective value to the sparsest cut diversity-relaxation, Equation (21). Let (V, d) be the induced metric
+space of (V, δ ) and let (V, δdiam ) ∈ D(V,d) be the diameter diversity whose induced metric space is (V, d).
+Then (V, δ ) can be assumed to be (V, δdiam ), a diameter diversity.
+
+Proof. This corollary follows by Fact 3.11 and Theorem 4.2.
+
+
+                                                       14
+Theorem 4.4. Let G = (V, EG , wG ) be a supply graph, that is it has rank rG = 2, and let H = (V, EH , wH ) be a
+demand hypergraph. Let (V, δ ) be a (pseudo) diversity attaining (an approximation to) the optimal objective
+value to the sparsest cut diversity-relaxation, Equation (21). Let (V, d) be the induced metric space of (V, δ )
+and let (V, δSteiner ) ∈ D(V,d) be the Steiner diversity whose induced metric space is (V, d). Then (V, δ ) can
+be assumed to be (V, δSteiner ), a Steiner diversity.
+
+Proof. Let U ∈ EG be arbitrary. Since rG = 2 then |U | = 2 and we let U = {u, v}. Then it follows that
+
+                                           δ (U ) = d(u, v) = δSteiner (U )                                  (37)
+where the equalities follow by the fact that both δ , δSteiner ) have induced metric d. From this we have that
+
+                                    ∑ wG (U )δ (U ) = ∑ wH (S)δSteiner (U )                                  (38)
+                                  U∈EG                    U∈EG
+
+    By Theorem 3.9, (V, δSteiner ) is the maximal diversity of the family D(V,d) (diversities with induced metric
+d) and so it follows that
+
+                                     ∑ wH (S)δ (S) ≤ ∑ wH (S)δSteiner (S)                                    (39)
+                                    S∈EH                  S∈EH
+
+    Then (38) and (39) imply that
+
+                               ∑U∈EG wG (U )δSteiner (U ) ∑U∈EG wG (U )δ (U )
+                                                         ≤                                                   (40)
+                               ∑S∈EH WH (S)δSteiner (S)    ∑S∈EH wH (S)δ (S)
+    Therefore, the optimal diversity for the sparsest cut diversity-relaxation (V, δ ) can be assumed to be the
+Steiner diversity (V, δSteiner ). This completes the proof.
+
+
+4.5 Algorithmic Implications
+Based on this approach, we present a polynomial-time approximation algorithm for the case where the
+supply and demand hypergraphs are arbitrary hypergraphs with ranks rG and rH , respectively.
+
+Theorem 1.1. Let G = (V, EG , wG ) be a supply hypergraph with rank rG and H = (V, EH , wH ) be a de-
+mand hypergraph with rank rH . Then there is a randomized polynomial-time O(min{rG , rH } log n log rH )-
+approximation algorithm for the sparsest cut of G and H.
+
+Proof. According to Theorem 4.1 there is a polynomial-time O(αLP αdiv αemb )-approximation algorithm for
+the sparsest cut of G and H, where αLP , αdiv , and αemb are as defined in Theorem 4.1.
+    According to Corollary B.2, there is an O(log rH )-approximation algorithm for the LP Relaxation (24),
+hence αLP = O(log rH ).
+    We let (V, δ ) be an optimal solution to the sparsest cut diversity-relaxation (21). We note that (V, δ ) is a
+hypergraph Steiner diversity corresponding to a rank rG hyperedge-weighted hypergraph, namely (V, EG , w)
+where w(U ) = dU and {dU }U∈EG are from an optimal solution to LP Relaxation (24). Then according to
+Corollary 3.19 there exists a randomized polynomial-time O(rG log n)-distortion embedding of (V, δ ) into
+the ℓ1 diversity.
+    Alternatively, according to Theorem 4.2 (V, δ ) is a rH -diameter diversity. Then according to Corollary
+5.17 there is a randomized polynomial-time O(rH log n)-distortion embedding of (V, δ ) into the ℓ1 diversity.
+Thus, we can choose whether to embed (V, δ ) into ℓ1 as a hypergraph Steiner diversity or a rH -diameter
+diversity based on whether rG or rH is smaller. Therefore, αemb = O(min{rG , rH } log n).
+
+
+                                                         15
+    Since the two embeddings, Corollary 3.19 and 5.17 only require the induced metric space of (V, δ )
+then we only need to compute δ (A) for A ∈ P(V ) where |A| = 2. Thus, by Corollary B.1 we have that
+αemb = O(log 2) = O(1).
+    Hence, we have a randomized polynomial-time O(min{rG , rH } log n log rH )-approximation algorithm
+for the sparsest cut problem in G and H. This completes the proof
+
+    This is the first randomized polynomial-time approximation algorithm for the setting where G and H are
+arbitrary hypergraphs. An immediate corollary of this result is an O(log n)-approximation algorithm for the
+case where the demand hypergraph is simply a graph
+
+Corollary 4.5. Let G = (V, EG , wG ) be a supply hypergraph and H = (V, EH , wH ) be a demand graph, that
+is it has rank rH = 2. Then there is a randomized polynomial-time O(log n)-approximation algorithm for
+the sparsest cut of G and H.
+
+Proof. This corollary follows immediately by Theorem 1.1 and the fact that rH = 2.
+
+    For this setting where G is a hypergraph and H is a graph, there is a randomized polynomial-time
+   √
+O( log rG log n log log n)-approximation algorithm due to Louis [21] which is based on an SDP relaxation.
+However, among LP-based approaches our algorithm is the first to attain an O(log n)-approximation when
+H is an arbitrary graph. Specifically, Kapralov et al. [16] attain an O(log n)-approximation when H has
+uniform demands. We note that this corollary can be proven alternatively by our characterization of the
+optimal diversity to the sparsest cut diversity-relaxation (21) being a diameter diversity for the case when
+the demand hypergraph is a graph, Corollary 4.3.
+    Our characterization Theorem 4.4 also underpins a randomized polynomial-time O(log n)-approximation
+algorithm for the case where the supply hypergraph is a graph.
+
+Theorem 1.2. Let G = (V, EG , wG ) be a supply graph, that is it has rank rG = 2, and H = (V, EH , wH ) be
+a demand hypergraph. Then there is a randomized polynomial-time O(log n)-approximation algorithm for
+the sparsest cut of G and H.
+
+Proof. According to Theorem 4.1 there is a polynomial-time O(αLP αdiv αemb )-approximation algorithm for
+the sparsest cut of G and H, where αLP αdiv , and αemb are as defined in Theorem 4.1.
+    We recall that for each S ∈ EH the LP Relaxation (24) may have exponentially many constraints of the
+form
+                                           { ∑ dU ≥ yS }t∈T(G,S)                                    (41)
+                                            U∈t
+
+Approximately separating over these constraints amounts to approximating the minimum cost Steiner tree
+for the nodes S. Therefore, we can approximately separate over these constraints in polynomial time using a
+polynomial-time O(1)-approximation algorithm for the minimum-cost Steiner tree problem [10, 18, 25, 27].
+Hence αLP = O(1).
+     Let (V, δ ) be the (approximately) optimal diversity of the sparsest cut diversity-relaxation. Then ac-
+cording to Theorem 4.4 (V, δ ) is a Steiner diversity, and moreover, we can compute δ (A) for any A ⊆ V in
+polynomial time up to a factor of O(1), again, by a polynomial-time O(1)-approximation algorithm for the
+Steiner tree problem. Therefore, αdiv = O(1).
+     Finally, according to Theorem 3.17, there is a randomized polynomial-time O(log n)-distortion embed-
+ding of (V, δ ), a Steiner diversity, into ℓ1 . Hence αemb = O(log n).
+     Hence, we have a randomized polynomial-time O(log n)-approximation algorithm for the sparsest cut
+problem in G and H. This completes the proof.
+
+
+
+                                                    16
+    The previous state-of-the-art algorithm for the setting where G is a graph and H is a hypergraph is a
+polynomial-time O(log n log (|EH |rH ))-approximation algorithm due to Plotkin et al. [24]. Our O(log n)-
+approximation is a notable improvement due to the fact that |EH | may be exponentially large.
+    In the next section we establish the remaining diversity embedding theorems needed to obtain the pre-
+ceding results.
+
+
+5 Low Distortion Embeddings of Diversities into ℓ1
+The framework from Chapter 4 establishes that approximation for sparsest cut is directly linked to the
+distortion of embedding a diversity into the ℓ1 diversity. Here we discuss a general investigation originally
+posed by Bryant and Tupper [7].
+
+Problem 5.1. Let (X , δ ) be an arbitrary diversity where |X | = n. What is the minimum distortion with which
+(X , δ ) can be embedded into an ℓ1 diversity?
+
+    We strengthen their question about existential bounds by additionally asking for a tractable bound, which
+implicitly requires the dimension m of the ℓ1 diversity (Rm , δ1 ) to be bounded by a polynomial factor. We
+formalize this as follows.
+
+Problem 5.2. Let (X , δ ) be an arbitrary diversity where |X | = n. What is the minimum distortion with which
+(X , δ ) can be embedded into an ℓ1 diversity in polynomial-time.
+
+    A polynomial-time O(n) distortion embedding is achievable, provided that the induced metric of the
+diversity can be queried in polynomial-time.
+
+Theorem 5.3 (Theorem 1 in [7]). Let (X , δ ) be an arbitrary diversity where |X | = n. Then there is an
+embedding of (X , δ ) into the ℓ1 diversity, (Rn , δ1 ), with distortion n.
+
+    As noted in [7], there is an Ω(log n) lower bound for distortion of ℓ1 embeddings. However, they ask
+                                                     √
+whether there exist lower distortion (specifically O( n)) embeddings based on a diversity’s induced metric.
+In Section 5.1 we show this is not possible, at least not via a tractable embedding. We close the section
+with a positive result. We give an improved diameter diversity embedding result. Its extension to k-diameter
+diversities is needed in the proof of Theorem 1.1.
+
+5.1 An Inapproximability Result for Diversity Embeddings
+In this section we provide an inapproximability result for diversity embeddings into ℓ1 . In short, our re-
+sult states that there are diversities which cannot be embedded into ℓ1 with distortion smaller than Ω(n) by
+a polynomial-time algorithm that only queries the induced metric of the diversity, unless P=NP. A conse-
+quence of this result is that the O(n)-distortion ℓ1 embedding, Theorem 5.3, is asymptotically optimal among
+algorithms that query only the induced metric of a diversity. We start by stating a conjecture of Bryant and
+Tupper [7] whose algorithmic refinement is disproved by our inapproximability result.
+                                                                                               √
+Conjecture 5.4 (Restatement of Bryant and Tupper’s Conjecture in [7]). There exists an O( n)-distortion
+diversity embedding into ℓ1 that is based solely on the induced metric of a diversity.
+
+    Bryant and Tupper conjecture the existence of a diversity embedding that attains low-distortion, specif-
+         √
+ically O( n), and that this embedding utilizes only a diversity’s induced metric. However, Bryant and
+Tupper do not insist on any algorithmic requirements, notably time complexity. We provide the following
+algorithmic refinement of their conjecture.
+
+
+                                                     17
+                                                                                            √
+Conjecture 5.5 (Algorithmic Refinement of Conjecture 5.4). There exists a polynomial-time O( n)-distortion
+diversity embedding into ℓ1 that is based solely on the induced metric of a diversity.
+
+   We refute this refinement with the following inapproximability result.
+
+Theorem 1.4. For any p ≥ 0 and for any ε > 0, there does not exist a polynomial-time diversity ℓ1 embed-
+ding that queries a diversity on sets of cardinality at most O(log p n) and achieves a distortion of O(n1−ε ),
+unless P=NP.
+
+    This theorem statement is quite cumbersome and so we provide the following corollary which more
+clearly disproves Conjecture 5.5.
+
+Corollary 5.6. For any ε > 0, there does not exist a polynomial-time diversity ℓ1 embedding that is based
+solely on the induced metric of a diversity with a distortion of O(n1−ε ).
+
+    Therefore, Conjecture 5.5 is disproved. An interesting observation is that existing diversity embeddings
+into ℓ1 are both computable in polynomial-time and are computed solely using the induced metric of a
+diversity. Notably, these include Bryant and Tupper’s O(n)-distortion embedding of an arbitrary diversity
+into ℓ1 , Theorem 5.3, and the two O(log n)-distortion embeddings of the diameter and Steiner diversities
+into ℓ1 , Theorems 3.17 and 1.3. This naturally posits the observation that if one were to improve upon the
+O(n)-distortion of embedding an arbitrary diversity into ℓ1 , say for a hypergraph Steiner diversity, one must
+construct an algorithm that utilizes the value of the diversity on sets of arbitrary size.
+    The proof of Theorem 1.4 rests upon a reduction from the notorious independent set problem to the
+problem of embedding a diversity into ℓ1 . In Section 5.1.1 we introduce the independent set problem, state
+an inapproximability result for it, and define the independent set diversity. In Section A we give the proof
+of Theorem 1.4.
+
+5.1.1   The Independent Set Diversity
+In this section we introduce the independent set problem, state an inapproximability result for it, and con-
+clude with defining the independent set diversity.
+
+Definition 5.7 (Independent Set). Given a graph G = (V, E), a subset of nodes S ⊆ V is an independent set
+of G if for all u, v ∈ S there does not exist an edge (u, v) ∈ E.
+
+    Thus, the independent set problem is simply the problem of computing the maximum cardinality of an
+independent set of a graph.
+
+Definition 5.8 (Independent Set Problem). Given a graph G = (V, E), the independent set problem, ISP(G),
+is defined as
+                            ISP(G) = max{|S| : S is an independent set of G}                        (42)
+
+    For any ε > 0, the independent set problem is inapproximable up to a factor of O(n1−ε ), unless P = NP
+[1, 15].
+
+Theorem 5.9 (Inapproximability of the Independent Set Problem). For any ε > 0, there does not exist a
+polynomial-time approximation algorithm for the independent set problem with an approximation factor
+smaller than O(n1−ε ), unless P=NP.
+
+    In order to construct the independent set diversity we require the following technical lemma that char-
+acterizes an independent set function as being nonnegative, increasing, and subadditive.
+
+
+
+                                                     18
+Lemma 5.10. [see Appendix A] Let G = (V, E) be a graph. We define the independent set function fIS :
+2V → Z≥0 as
+
+                            fIS (A) = max{|S| : S ⊆ A, S is an independent set of G}                             (43)
+    Then the set function fIS is nonnegative, increasing, and subadditive.
+    Next, we define the independent set diversity. By Lemmas 3.20 and 5.10 it follows that this is in fact a
+diversity.
+Definition 5.11 (Independent Set Diversity). Let G = (V, E) be a graph and let fIS be defined as in Lemma
+5.10. Then we define the independent set diversity, (V, δI S), as
+                                               (
+                                                   fIS (A) if |A| ≥ 2
+                                     δIS (A) =                                                        (44)
+                                                  0           otherwise
+
+Proof. We prove that (V, δIS ) is in fact a diversity. According to Lemma 5.10, fIS is nonnegative, increasing,
+and subadditive set function over the ground set V . Then, according to Lemma 3.20 and the definition of
+(V, δIS ) it follows that (V, δ ) is a (pseudo)-diversity. In fact, (V, δIS ) is a diversity since for any A ⊆ V where
+|A| ≥ 2 it follows that δIS (A) = fIS (A) ≥ 1 > 0.
+
+   Theorem 1.4 now follows by a reduction of the independent set problem to the problem of computing a
+low-distortion diversity embedding. We point the reader to Appendix A for the complete proof.
+
+5.2 An O(log n) Diameter Diversity Embedding
+In this section we prove Theorem 1.3 in Section 5.2.2. The distortion achieved by the latter embedding is
+asymptotically optimal given the Ω(log n) lower bound.
+
+5.2.1   Fréchet Embeddings
+Our ℓ1 embedding of the diameter diversity is based off polynomial-time implementations of Bourgain’s
+original O(log n)-distortion metric embedding into ℓ1 [6].
+Theorem 5.12 (Restatement of Proposition 1 of [6]). Let (X , d) be a finite metric space where |X | = n.
+There exists an embedding of (X , d) into the ℓ1 metric (Rk , d1 ), where k ∈ O(2n ), with distortion O(log n).
+    We remark that Bourgain’s embedding is a scaled Fréchet embedding.
+Definition 5.13. Let (X , d) be a metric space. A Fréchet embedding is a map f : (X , d) → (Rk , d ′ ) where
+each coordinate, fi : X → R, of the embedding is defined as
+
+                                           fi (x) = d(x, Ai ) = min d(x, y)                                      (45)
+                                                                y∈Ai
+
+for some nonempty Ai ⊆ X .
+   Due to the triangle inequality of metrics, a Fréchet embedding is coordinate-wise non-expansive, which
+we define and prove below.
+Proposition 5.14. Let (X , d) be a metric space and let f : (X , d) → (Rk , d ′ ) be a Fréchet embedding. Then
+for any coordinate, i ∈ {1, 2, . . . , k} and any x, y ∈ X , it follows that
+
+                                              | fi (x) − fi (y)| ≤ d(x, y)                                       (46)
+
+                                                          19
+    The original embedding due to Bourgain is an existential result that is algorithmically intractable. Linial,
+London, and Rabinovich [20] provided a randomized polynomial-time implementation by sampling a rela-
+tively small subset of the of coordinate maps
+
+                                            { fi (x) = d(x, Ai )}Ai ⊆X                                     (47)
+in order to achieve a randomized polynomial-time complexity.
+    The fact that Bourgain’s embedding is a scaled Fréchet embedding is key since Theorem 1.3 is based off
+the following implementation of Bourgain’s embedding.
+
+Theorem 5.15 (Lemma 3 in [4]). Let (X , d) be a metric space with |X | = n. Then there exists an embedding,
+              2                                          2
+f : X → RO(log n) , of (X , d) into the ℓ1 metric (RO(log n) , d1 ) with distortion O(log n). That is,
+
+                                    1
+                                          d(x, y) ≤ k f (x) − f (y)k1 ≤ d(x, y)                            (48)
+                                 O(log n)
+Furthermore, the embedding f is a scaled Fréchet embedding where for an arbitrary coordinate i ∈ {1, 2, . . . , O(log2 n)},
+fi is defined as
+
+                                                          1
+                                           fi (x) =             d(x, Ai )                                  (49)
+                                                      O(log2 n)
+where Ai ⊆ X .
+
+    Scaling the Fréchet embedding, in the above theorem, is a necessary step. In fact, the original embedding
+of Bourgain is also scaled proportionally to the exponentially large dimension of the ℓ1 metric space being
+embedded into.
+
+5.2.2   The O(log n)-Distortion Embedding
+Theorem 1.3. Let (X , δdiam ) be a diameter diversity with |X | = n and induced metric d. Then there exists a
+                                                                                  2
+randomized polynomial-time embedding of (X , δdiam ) into the ℓ1 diversity (RO(log n) , δ1 ) with (an optimal)
+distortion O(log n).
+                                                 2
+Proof. By Theorem 5.15, we let f : X → RO(log n) be a scaled Fréchet embedding of (X , d) into the ℓ1 metric
+        2
+(RO(log n) , d1 ) with distortion O(log n). We then define our diversity embedding from (X , δdiam ) to the ℓ1
+                   2
+diversity (RO(log n) , δ1 ) to be simply the map f . Given that Theorem 5.15 guarantees that f is computable
+in randomized polynomial-time, it remains to verify that the corresponding diversity embedding attains a
+distortion of O(log n). That is, for any A ∈ P(X ), we show that
+
+                                      1
+                                            δdiam (A) ≤ δ1 ( f (A)) ≤ δdiam (A)                            (50)
+                                   O(log n)
+    We choose x, y ∈ A such that
+
+                                       δdiam (A) = max d(a, b) = d(x, y)                                   (51)
+                                                      a,b∈A
+
+We begin with the first inequality.
+
+
+
+
+                                                         20
+           1                      1
+                 δdiam (A) =            max d(u, v)                 by definition of a diameter diversity         (52)
+        O(log n)             O(log n) u,v∈A
+                                  1
+                           =           d(x, y)                                          by choice of x, y         (53)
+                             O(log n)
+                           ≤ k f (x) − f (y)k1                         by (48), the metric embedding f            (54)
+                                           2
+                                   O(log n)
+                               =     ∑ | fi (x) − fi (y)|                  by definition of the ℓ1 metric         (55)
+                                     i=1
+                                   O(log2 n)
+                               ≤     ∑ a,b∈A
+                                       max | fi (a) − fi (b)|                                                     (56)
+                                     i=1
+                               = δ1 ( f (A))                            by definition of the ℓ1 diversity         (57)
+
+   This completes the first inequality. Then, for each i ∈ {1, 2, . . . , O(log2 n)} we let ai , bi ∈ A be chosen
+such that
+                             |d(ai , Ai ) − d(bi , Ai )| = max |d(a, Ai ) − d(b, Ai )|                       (58)
+                                                            a,b∈A
+
+We continue with the second inequality.
+
+
+                   O(log2 n)
+   δ1 ( f (A)) =     ∑ a,b∈A
+                       max | fi (a) − fi (b)|                              by definition of the ℓ1 diversity      (59)
+                     i=1
+                                       2
+                         O(log n)
+                    1
+              =            ∑ max |d(a, Ai ) − d(b, Ai )|
+                O(log2 n) i=1 a,b∈A
+                                                                                    by (49), definition of f      (60)
+                                       2
+                         O(log n)
+                    1
+              =            ∑ |d(ai , Ai) − d(bi , Ai)|
+                O(log2 n) i=1
+                                                                                        by choice of ai , bi ’s   (61)
+                                       2
+                         O(log n)
+                    1
+              ≤            ∑ d(ai , bi )
+                O(log2 n) i=1
+                                                                                       by Proposition 5.14        (62)
+                                       2
+                         O(log n)
+                    1
+              ≤            ∑ max d(a, b)
+                O(log2 n) i=1 a,b∈A
+                                                                                                by ai , bi ∈ A    (63)
+
+              = max d(a, b)                                                                                       (64)
+                   a,b∈A
+
+              = δdiam (A)                                            by definition of the diameter diversity      (65)
+
+    This completes the proof
+
+
+5.2.3   A k-Diameter Diversity Embedding
+In this section we provide a proof of the fact that a k-diameter diversity can be embedded into the ℓ1 diversity
+with distortion O(k log n).
+    At a high level, this O(k log n)-distortion embedding follows by approximating a k-diameter diversity
+with a diameter diversity, incurring an O(k) approximation factor. Or in other words, embedding a k-
+diameter diversity into a diameter diversity with distortion O(k). Then, the additional O(log n) factor is
+incurred by embedding this diameter diversity into the ℓ1 diversity.
+
+                                                            21
+Theorem 5.16. [see Appendix A] Let (X , δk-diam ) be a k-diameter diversity, where k ∈ Z≥0 . Then there is a
+diameter diversity into which (X , δk-diam ) can be embedded with distortion O(k), in polynomial-time.
+
+    Then the main result of this section follows as a corollary of Theorems 5.16 and 1.3.
+
+Corollary 5.17. Let (X , δk-diam ) be a k-diameter diversity, where k ∈ Z≥0 . Then (X , δk-diam ) can be embedded
+into the ℓ1 diversity with distortion O(k log n), in randomized polynomial-time.
+
+Proof. We let f : (X , δk-diam ) → (X , δdiam ) be a polynomial-time O(k)-distortion embedding of (X , δk-diam )
+into some diameter diversity (X , δdiam ), due to Theorem 5.16. We let g : (X , δdiam ) → (Rm , δ1 ) be a random-
+ized polynomial-time O(log n)-distortion embedding of (X , δdiam ) into the ℓ1 diversity for some dimension
+m, due to Theorem 1.3. Then the map g· f is an embedding of (X , δk-diam ) into the ℓ1 diversity with distortion
+O(k log n). Moreover, this embedding is computable in randomized polynomial-time. This completes the
+proof.
+
+
+6 The Minimum Cost Hypergraph Steiner Problem
+In this chapter we give an asymptotically optimal approximation algorithm for the minimum cost hypergraph
+Steiner problem. As far as we know, this is the first approximation algorithm for this problem (bar the case
+where S = V ).
+
+Definition 6.1 (Minimum Cost Hypergraph Steiner Problem (HSP)). Let G = (V, E, w) be a hypergraph
+with nonnegative hyperedge weights w : E → R+ . For a set of Steiner nodes S ⊆ V , we define TS to be
+the collection of connected subhypergraphs of G that contain the Steiner nodes S. Then the minimum cost
+hypergraph Steiner Problem, HSP(G, S) is defined as
+
+                                          HSP(G, S) = min ∑ w(U )                                           (66)
+                                                        t∈TS U∈t
+
+    For convenience we may refer to the minimum cost hypergraph Steiner problem as simply the hypergraph
+Steiner problem, hence the use of the abbreviation HSP.
+
+   This problem is a natural generalization of both the Steiner tree problem in graphs and the minimum cost
+spanning subhypergraph problem (MSSP) [5], and yet surprisingly, it has not been explicitly investigated.
+We give the following logarithmic approximation.
+
+Theorem 1.5. There exists a polynomial time O(log n)-approximation algorithm for the minimum cost hy-
+pergraph Steiner problem. Specifically, for a hypergraph G = (V, E, w) with nonnegative hyperedge weights
+w : E → R+ and for a set of Steiner nodes S ⊆ V , HSP(G, S) can be approximated up to a factor of O(log |S|)
+in polynomial time.
+
+    We remark that this is tight due to the reduction from set cover used in [5].
+    Before proving the result, we note that the minimum cost hypergraph Steiner problem is a computational
+bottleneck for our approach of utilizing diversity embeddings for the sparsest cut problem in hypergraphs
+(see Appendix B for more details). It arises in the following two computational problems.
+
+   1. Given a hypergraph Steiner diversity (V, δH ) defined by a hypergraph H = (V, E, w) with nonnegative
+      hyperedge weights w : E → R+ , for any S ⊆ V , the diversity value δH (S) is precisely defined as
+      δ (S) = HSP(H, S). If one is given (V, δH ) by the hypergraph H then to (approximately) query δH (S)
+      one must (approximately) solve HSP(H, S).
+
+
+
+                                                       22
+   2. The sparsest cut LP Relaxation (24) has polynomially many variables but exponentially many con-
+      straints. Specifically, for each demand S ∈ EH , there may be an exponential number of constraints of
+      the form
+
+
+                                             ∑ dU ≥ yS , ∀t ∈ T(G,S) .                                 (67)
+                                             U∈t
+
+      Hence, obtaining polytime solutions to the relaxation requires, at a polynomial time (approximate)
+      separation oracle for these constraints. This amounts to solving a minimum cost hypergraph Steiner
+      problem for each S.
+
+
+6.1 Proof of Theorem 1.5
+We proceed by reducing to the minimum cost node-weighted Steiner tree problem defined as follows.
+
+Definition 6.2. Let G = (V, E, w) be a graph with nonnegative node weights w : V → R+ . For a set of Steiner
+nodes S ⊆ V we define TS to be the set of minimally connected subgraphs of G containing the Steiner nodes
+S, or simply subtrees of G spanning S. Then the minimum cost node-weighted Steiner tree problem (NSTP),
+NSTP(G, S), is defined as
+
+                                      NSTP(G, S) = min      ∑ w(v)
+                                                      t∈TS v∈∪
+                                                                                                       (68)
+                                                              e∈t e
+
+
+   Klein and Ravi [17] establish the following approximation algorithm for this problem.
+
+Theorem 6.3 (Restatement of Theorem 1.1 of [17]). Let G = (V, E, w) be a graph with nonnegative node
+weights w : V → R+ . For a set of Steiner nodes S ⊆ V there is a polynomial time O(log |S|)-approximation
+algorithm for the minimum-cost node-weighted Steiner tree problem NSTP(G, S).
+
+    We now reduce the minimum-cost hypergraph Steiner problem to the minimum-cost node-weighted
+Steiner tree problem.
+
+Lemma 6.4. Let G = (V, E, w) be a hypergraph with nonnegative hyperedge weighted w : E → R+ and let
+S ⊆ V be a set of Steiner nodes. Then the minimum-cost hypergraph Steiner problem HSP(G, S) can be
+reduced to an instance of the minimum-cost node-weighted Steiner tree problem in polynomial time.
+
+Proof. We first construct the instance of the minimum-cost node-weighted Steiner tree problem to ‘simulate’
+HSP(G, S). We may trivially assume |S| ≥ 2. For each hyperedge U ∈ E we define an associated node vU
+and we denote these nodes by VE := {vU : U ∈ E}
+   We then define V ′ = V ∪ VE . Next, for each vU ∈ VE we create an edge between vU and each v ∈ U .
+Specifically, we define this collection of edges E ′ as
+
+                                          E ′ = {{v, vU } : v ∈ U }                                    (69)
+   Finally, we define the nonnegative node-weights w′ : V ′ → R+ as
+                                      (
+                               ′        0      if v ∈ V
+                              w (v) =                                                                  (70)
+                                        w(U ) if v = vU for some vU ∈ VE
+    Thus, our node-weighted graph is defined to be G′ = (V ′ , E ′ , w′ ) and the instance of the minimum-
+cost node-weighted Steiner tree problem that we are reducing to is NSTP(G′ , S). It is easy to see that this
+
+
+                                                     23
+reduction can be computed in polynomial time with respect to G. It remains to prove the correctness of this
+reduction.
+    We first prove that HSP(G, S) ≥ NSTP(G′, S). Let t be subset of hyperedges of G that correspond
+to a connected subhypergraph of G that contains the Steiner nodes S. We define a feasible solution to
+NSTP(G′ , S) as
+
+                                                 t ′ = {{v, vU } : v ∈ U,U ∈ t}                                             (71)
+    Then the objective value of this solution to NSTP(G′ , S) is
+
+                                             ∑ w′(v) = ∑ w′(vU ) = ∑ w(U )                                                  (72)
+                                          v∈∪e∈t ′ e             U∈t                  U∈t
+
+where the first equality follows by the fact that w(v) = 0 for all v ∈ V and the second equality follows by the
+fact that w′ (vU ) = w(U ) for all vU ∈ VE . Thus, the objective value of t ′ is at most that of t in HSP(G, S). It
+remains to show that t ′ is a feasible solution to NSTP(G′, S), that is t ′ is connected and t ′ contains the nodes
+S.
+     We first prove the latter condition on t ′ . Let v ∈ S be arbitrary. Since t is subhypergraph of G that
+contains the nodes S there is some U ∈ t such that v ∈ U . Since t ′ is connected and |S| ≥ 2, there is an edge
+(v, vU ) ∈ t ′ and so t ′ contains v.
+     As for the former condition on t ′ , we let v, v′ ∈ ∪e∈t ′ e be two arbitrary but distinct nodes of the graph de-
+fined by t ′ . Without loss of generality, we can assume that v, v′ ∈ V since there is always an edge from any vU
+to a v ∈ U . Since t is a connected subhypergraph of G, there is a sequence of hyperedges U1 ,U2 , . . . ,Uk such
+that v ∈ U1 , v′ ∈ Uk , and for each i ∈ {1, 2, . . . , k − 1}, Ui ∩Ui+1 6= /0. By the last property of U1 ,U2 , . . . ,Uk ,
+we can create a sequence of nodes v1 , v2 , . . . , vk such that for each i ∈ {1, 2, . . . , k − 1}, vi ∈ Ui ∩Ui+1 . Then,
+by the construction of t ′ , it follows that the sequence
+
+                                               v, vU1 , v1 , vU2 , v2 , . . . , vk−1 , vUk , v′                             (73)
+of nodes of G′ forms a path in the subgraph t ′ of G′ . Hence HSP(G, S) ≥ NSTP(G′, s).
+    We now prove the other inequality, HSP(G, S) ≤ NSTP(G′, s). Let t ′ be a connected subgraph of G′
+containing the Steiner nodes S. We define a feasible solution to HSP(G, S) as t = {U : vU ∈ VE ∩ t ′ }. Then
+the objective value of this solution to HSP(G, S) is
+
+                                          ∑ w(U ) = ∑                     w′ (vU ) = ∑ w′ (v)                               (74)
+                                         U∈t                vU ∈VE ∩t ′                v∈t ′
+
+where the first equality follows by the fact that w(U ) = w′ (vU ) for all vU ∈ VE ∩ t ′ and the second equality
+follows by the fact that w′ (v) = 0 for all v ∈ V . Thus, the objective value of t to HSP(G, S) is at least as
+small as that of t ′ to NSTP(G′ , S). It remains to show that t is a feasible solution to HSP(G, S), that is, t is
+connected and t contains the Steiner nodes S.
+      We first prove the latter condition on t. Let v ∈ S be arbitrary. Due to the fact that t ′ contains the Steiner
+nodes S, and in particular v, and that t ′ is connected there must be some edge (v, v′ ) ∈ t ′ . Furthermore, G′ is
+a bipartite graph by construction, with the partitions V ⊆ V ′ and VE ⊆ V ′ , and since v ∈ S ⊆ V then v′ ∈ VE .
+Therefore, v′ = vU for some vU ∈ VE where U is a hyperedge of G that contains the node v. Finally, U ∈ t
+by construction of t and so the subhypergraph t contains the node v.
+      As for the former condition on t, we let v, v′ ∈ ∪U∈t U be two arbitrary but distinct nodes of the sub-
+hypergraph defined by t. Since t ′ is a connected bipartite subgraph of G′ there is a sequence of nodes
+v1 , vU1 , v2 , vU2 , . . . , vUk−1 , vk where v = v1 , v′ = vk and for each i ∈ {1, 2, . . . , k − 1} there are edges (vi , vUi )
+and (vi , vUi+1 ) ∈ t ′ . Hence vi ∈ Ui ∩ Ui+1 . Or in other words, the sequence of hyperedge U1 ,U2 , . . . ,Uk−1
+
+
+                                                                     24
+forms a path from v ∈ U1 to v ∈ Uk−1 , where the membership of v ∈ U1 and v ∈ Uk−1 follows by construction
+of the edges of G′ . Hence t is connected and we have proved HSP(G, S) ≤ NSTP(G′ , S).
+
+
+       Theorem 1.5 now follows immediately by this reduction and the Klein and Ravi algorithm, Theorem
+6.3.
+
+
+
+References
+ [1] S. Arora, C. Lund, R. Motwani, M. Sudan, and M. Szegedy. Proof verification and the hardness of
+     approximation problems. Journal of the ACM (JACM), 45(3):501–555, 1998.
+
+ [2] S. Arora, J. Lee, and A. Naor. Euclidean distortion and the sparsest cut. Journal of the American
+     Mathematical Society, 21(1):1–21, 2008.
+
+ [3] S. Arora, S. Rao, and U. Vazirani. Expander flows, geometric embeddings and graph partitioning.
+     Journal of the ACM (JACM), 56(2):1–37, 2009.
+
+ [4] Y. Aumann and Y. Rabani. An O(log k) approximate min-cut max-flow theorem and approximation
+     algorithm. SIAM Journal on Computing, 27(1):291–301, 1998.
+
+ [5] G. Baudis, C. Gröpl, S. Hougardy, T. Nierhoff, and H. J. Prömel. Approximating minimum spanning
+     sets in hypergraphs and polymatroids. In Proc. ICALP. Citeseer, 2000.
+
+ [6] J. Bourgain. On Lipschitz embedding of finite metric spaces in Hilbert space. Israel Journal of
+     Mathematics, 52(1):46–52, 1985.
+
+ [7] D. Bryant and P. Tupper. Open problem statement: Minimal distortion embeddings of diversities in
+     ℓ1 . arXiv preprint arXiv:1712.01960, 2017.
+
+ [8] D. Bryant and P. F. Tupper. Hyperconvexity and tight-span theory for diversities. Advances in
+     Mathematics, 231(6):3172?3198, Dec 2012. ISSN 0001-8708. doi:10.1016/j.aim.2012.08.008. URL
+     http://dx.doi.org/10.1016/j.aim.2012.08.008.
+
+ [9] D. Bryant and P. F. Tupper. Constant distortion embeddings of symmetric diversities. Analysis and
+     Geometry in Metric Spaces, 4(1), 2016.
+
+[10] J. Byrka, F. Grandoni, T. Rothvoß, and L. Sanita. An improved LP-based approximation for Steiner
+     tree. In Proceedings of the forty-second ACM symposium on Theory of computing, pages 583–592,
+     2010.
+
+[11] S. Chawla, A. Gupta, and H. Racke. Embeddings of negative-type metrics and an improved
+     approximation to generalized sparsest cut. 2005.
+
+[12] Y. Chen, S. Khanna, and A. Nagda. Near-linear size hypergraph cut sparsifiers. In 2020 IEEE 61st
+     Annual Symposium on Foundations of Computer Science (FOCS), pages 61–72. IEEE, 2020.
+
+[13] J. Fakcharoenphol, S. Rao, and K. Talwar. A tight bound on approximating arbitrary metrics by tree
+     metrics. Journal of Computer and System Sciences, 69(3):485–497, 2004.
+
+[14] M. Grötschel, A. Martin, and R. Weismantel. Packing steiner trees: separation algorithms. SIAM
+     Journal on Discrete Mathematics, 9(2):233–257, 1996.
+
+                                                    25
+[15] J. Hastad. Clique is hard to approximate within n1−ε . In Proceedings of 37th Conference on
+     Foundations of Computer Science, pages 627–636. IEEE, 1996.
+
+[16] M. Kapralov, R. Krauthgamer, J. Tardos, and Y. Yoshida. Towards tight bounds for spectral
+     sparsification of hypergraphs. In Proceedings of the 53rd Annual ACM SIGACT Symposium on
+     Theory of Computing, pages 598–611, 2021.
+
+[17] P. Klein and R. Ravi. A nearly best-possible approximation algorithm for node-weighted Steiner
+     trees. Journal of Algorithms, 19(1):104–115, 1995.
+
+[18] L. Kou, G. Markowsky, and L. Berman. A fast algorithm for Steiner trees. Acta informatica, 15(2):
+     141–145, 1981.
+
+[19] T. Leighton and S. Rao. Multicommodity max-flow min-cut theorems and their use in designing
+     approximation algorithms. Journal of the ACM (JACM), 46(6):787–832, 1999.
+
+[20] N. Linial, E. London, and Y. Rabinovich. The geometry of graphs and some of its algorithmic
+     applications. Combinatorica, 15(2):215–245, 1995.
+
+[21] A. Louis. Hypergraph markov operators, eigenvalues and approximation algorithms. In Proceedings
+     of the forty-seventh annual ACM symposium on Theory of computing, pages 713–722, 2015.
+
+[22] A. Louis and Y. Makarychev. Approximation algorithms for hypergraph small set expansion and
+     small set vertex expansion. In Approximation, Randomization, and Combinatorial Optimization.
+     Algorithms and Techniques (APPROX/RANDOM 2014). Schloss Dagstuhl-Leibniz-Zentrum fuer
+     Informatik, 2014.
+
+[23] D. W. Matula and F. Shahrokhi. Sparsest cuts and bottlenecks in graphs. Discrete Applied
+     Mathematics, 27(1-2):113–123, 1990.
+
+[24] P. N. K. S. A. Plotkin, S. Rao, and E. Tardos. Bounds on the max-flow min-cut ratio for directed
+     multicommodity flows. 1993.
+
+[25] H. Takahashi. An approximate solution for the Steiner problem in graphs. Math. Japonica., 6:
+     573–577, 1990.
+
+[26] P. Tupper and D. Bryant. Diversities and the geometry of hypergraphs. Discrete Mathematics &
+     Theoretical Computer Science, 16, 2014.
+
+[27] Y.-F. Wu, P. Widmayer, and C.-K. Wong. A faster approximation algorithm for the Steiner problem in
+     graphs. Acta informatica, 23(2):223–229, 1986.
+
+
+
+A    Omitted Proofs
+Proposition 3.3. (Pseudo) diversities are monotone increasing. That is, if (X , δ ) is a (pseudo) diversity then
+for any A, B ∈ P(X ) we have that
+
+                                            A ⊆ B ⇒ δ (A) ≤ δ (B)                                          (75)
+
+
+
+
+                                                      26
+Proof. We let A, B ∈ P(X ) be arbitrary and we assume that A ⊆ B. Then we let B \ A = {x1 , x2 , . . . , xk }.
+We define A0 = A and for each i ∈ {1, 2, . . . , k} we define Ai = A ∪ {x1 , x2 , . . . , xi }. For any arbitrary i ∈
+{0, 1, 2, . . . , k − 1} we show that δ (Ai ) ≤ δ (Ai+1 ).
+
+
+           δ (Ai ) ≤ δ (Ai ∪ {xi+1 }) + δ ({xi+1 })                  by the triangle inequality of diversities      (76)
+                   = δ (Ai ∪ {xi+1 })                                         δ ({xi+1 }) = 0 since |{xi+1 }| = 1   (77)
+                   = δ (Ai+1 )                                                                                      (78)
+
+    Since Ak = B, the above result implies that
+
+                                      δ (A) ≤ δ (A1 ) ≤ δ (A2 ) ≤ . . . ≤ δ (Ak−1 ) ≤ δ (B)                         (79)
+thus completing the proof.
+
+Theorem 3.13. Given a (pseudo) diversity (X , δ ) and k ∈ Z≥0 we let (X , δk-diam ) be the k-diameter (pseudo)
+diversity of (X , δ ). Then for any (X , δ ′ ) ∈ D(X,δ ,k) and any A ∈ P(X ) it follows that
+
+                                                      δk-diam (A) ≤ δ ′ (A)                                         (80)
+Or in other words (X , δk-diam ) is the minimal (pseudo) diversity of the family D(X,δ ,k) .
+
+Proof. For an arbitrary k ∈ Z≥0 , we let (X , δk-diam ) be the k-diameter diversity of (X , δ ). First, we argue that
+(X , δk-diam ) is in fact a member of D(X,δ ,k) . We consider an arbitrary A ∈ P(X ) such that |A| ≤ k. Then it
+follows that
+
+
+      δk-diam (A) =     max δ (B)                                      by definition of a k-diameter diversity      (81)
+                      B⊆A:|B|≤k
+
+                 = δ (A)                       by |A| ≤ k and diversities being increasing, Proposition 3.3         (82)
+
+   Hence, ∀A ∈ P(X ) such that |A| ≤ k it follows that δk-diam (A) = δ (A) and so (X , δk-diam ) ∈ D(X,δ ,k) .
+Next, we establish the minimality of (X , δk-diam ) with regards to this family of diversities. We let (X , δ ′ ) ∈
+D(X,δ ,k) and A ∈ P(X ) be arbitrary. Then it follows that
+
+
+               δk-diam (A) = δ (B)                                      for some B ⊆ A such that |B| ≤ k            (83)
+                           = δ ′ (B)                                                            ′
+                                                                       by definition of (X , δ ) ∈ D(X,δ ,k)        (84)
+                                  ′
+                           ≤ δ (A)                      by diversities being increasing, Proposition 3.3            (85)
+
+    This completes the proof.
+
+
+Lemma 3.20. Let X be a set and let f : 2X → R be a nonnegative, increasing, and subadditive set function.
+Then (X , δ ) is a pseudo-diversity where δ is defined as
+                                                  (
+                                                     f (A) if |A| ≥ 2
+                                         δ (A) =                                                     (86)
+                                                    0      otherwise
+
+
+
+
+                                                               27
+Proof. Let δ be defined as in the lemma statement. We begin by showing that (X , δ ) satisfies the first two
+axioms of a pseudo-diversity. By the nonnegativity of f , δ is likewise nonnegative by its construction, thus
+(X , δ ) satisfies the first axiom of pseudo-diversities. Likewise by construction, δ (A) = 0 if |A| ≤ 1 and thus
+(X , δ ) satisfies the second axiom.
+     In order to prove that (X , δ ) satisfies the third axiom of a pseudo-diversity we first establish that δ is an
+increasing set function. Let A ⊆ B ∈ P(X ) be arbitrary. For the case where |A| ≤ 1 then
+
+                                                δ (A) = 0 ≤ δ (B)                                              (87)
+by the nonnegativity of δ . As for the case where |A| ≥ 2 then
+
+                                      δ (A) = f (A) ≤ f (A ∪ B) = δ (A ∪ B)                                    (88)
+where the two equalities follow by the fact that |A|, |A ∪ B| ≥ 2 and the inequality follows by the fact that f
+is increasing. This concludes the proof that δ is an increasing set function.
+     We now prove that (X , δ ) satisfies the third axiom of pseudo-diversities. Let A, B,C ⊆ X be arbitrary
+where C 6= /0. We consider several cases.
+
+   1. The first case is where one of A and B is empty. Without loss of generality, we assume that A = /0.
+      Then,
+
+                      δ (A ∪ B) = δ (B)                                                                        (89)
+                                ≤ δ (B ∪C)                                  by δ being increasing              (90)
+                                ≤ δ (A ∪C) + δ (B ∪C)                     by δ being nonnegative               (91)
+
+   2. The second case that we consider is where |A| = |B| = 1. There are two subcases that we consider.
+      The first is where A = B in which case |A ∪ B| = 1 and so
+
+
+                      δ (A ∪ B) = 0                                                 by |A ∪ B| = 0             (92)
+                                ≤ δ (A ∪C) + δ (B ∪C)                     by δ being nonnegative               (93)
+
+      Then the second subcase is where A 6= B and so |A ∪ B| ≥ 2. Additionally, we divide this subcase
+      into two more sub-subcases. The first sub-subcase is where A ∩ C = /0 and B ∩ C = /0, in which case
+      |A ∪C|, |B ∪C| ≥ 2 and so
+
+
+                       δ (A ∪ B) = f (A ∪ B)                                        by |A ∪ B| ≥ 2             (94)
+                                 ≤ f (A) + f (B)                            by subadditivity of f              (95)
+                                 ≤ f (A ∪C) + f (B ∪C)                      by f being increasing              (96)
+                                 = δ (A ∪C) + δ (B ∪C)                     by |A ∪C|, |B ∪C| ≥ 2               (97)
+
+      The second sub-subcase is where, without loss of generality, B ⊆ C, and so
+
+
+                      δ (A ∪ B) ≤ δ (A ∪C)                                  by δ being increasing              (98)
+                                ≤ δ (A ∪C) + δ (B ∪C)                     by δ being nonnegative               (99)
+
+                                                        28
+   3. The final case is where, without loss of generality, |A| ≥ 2 and |B| ≥ 1. Furthermore, we consider two
+      subcases. The first is where |B ∪C| = 1 in which case B = C and so
+
+
+                        δ (A ∪ B) = f (A ∪ B)                                         by |A ∪ B| ≥ 2        (100)
+                                  = f (A ∪C)                                               by B = C         (101)
+                                  = δ (A ∪C)                                          by |A ∪C| ≥ 2         (102)
+                                  ≤ δ (A ∪C) + δ (B ∪C)                      by δ being nonnegative         (103)
+
+      Then the second subcase is where |B ∪C| ≥ 2. Then,
+
+
+                         δ (A ∪ B) = f (A ∪ B)                                        by |A ∪ B| ≥ 2        (104)
+                                   ≤ f (A) + f (B)                           by f being subadditive         (105)
+                                   ≤ f (A ∪C) + f (B ∪C)                      by f being increasing         (106)
+                                   = δ (A ∪C) + δ (B ∪C)                      by |A ∪C|, |B ∪C| ≥ 2         (107)
+
+   This completes the proof.
+
+Theorem 5.16. Let (X , δk-diam ) be a k-diameter diversity, where k ∈ Z≥0 . Then there is a diameter diversity
+into which (X , δk-diam ) can be embedded with distortion O(k), in polynomial-time.
+Proof. We let (X , d) be the induced metric space of (X , δk-diam ). We let (X , δdiam ) ∈ D(X,d) be the cor-
+responding diameter diversity whose induced metric space is (X , d). It suffices to show that (X , δk-diam )
+embeds into (X , δdiam ) with distortion k. That is, for any A ∈ P(X ) it suffices to show that
+
+                                          δdiam (A) ≤ δk-diam ≤ kδdiam                                      (108)
+   We let A ∈ P(X ) be arbitrary and we choose B ⊆ A where |B| ≤ k and
+                                            δk-diam (A) = δk-diam (B)                                       (109)
+Without loss of generality we enumerate the elements of B as
+                                              B = {v1 , v2 , . . . , v j }                                  (110)
+where j ≤ k. Then it follows that
+
+
+      δdiam (A) ≤ δk-diam (A)                by minimality of the diameter diversity, Theorem 3.9           (111)
+                = δk-diam (B)                                                             by choice of B    (112)
+                   j
+               ≤ ∑ d(v1 , vi )                               by the triangle inequality, Proposition 3.3    (113)
+                  i=2
+                    j
+               ≤ ∑ max d(u, v)                                                                              (114)
+                        u,v∈B
+                  i=2
+               ≤ k max d(u, v)                                                                  by j ≤ k    (115)
+                   u,v∈B
+
+               = kδdiam (B)                                       by definition of the diameter diversity   (116)
+               ≤ kδdiam (A)             by B ⊆ A and diversities being increasing, Proposition 3.3          (117)
+
+
+                                                          29
+    The induced metric space of (X , d) of (X , δk-diam ) can be computed in polynomial-time. Then the cor-
+responding diameter diversity (X , δdiam ) can be computed in polynomial-time given the (X , d). Hence, this
+embedding is polynomial-time computable. This completes the proof.
+
+Lemma 5.10. Let G = (V, E) be a graph. We define the independent set function fIS : 2V → Z≥0 as
+
+                            fIS (A) = max{|S| : S ⊆ A, S is an independent set of G}                            (118)
+    Then the set function fIS is nonnegative, increasing, and subadditive.
+
+Proof. By construction, fIS is clearly nonnegative. As for the increasing property of fIS , it suffices to show
+that for any any arbitrary A ⊆ B ⊆ V , fIS (A) ≤ fIS (B). We let A ⊆ B ⊆ V be arbitrary and we suppose that
+S ⊆ A is an independent set of G such that fIS (A) = |S|. Since S ⊆ A ⊆ B, it also follows that |S| ≤ fIS (B).
+Hence fIS (A) ≤ fIS (B) and thus fIS is increasing.
+      Next, to prove that fIS is subadditive we first argue that independent sets of G are downwards closed.
+That is, if S ⊆ V is an independent of G, then for any S′ ⊆ S it follows that S′ is an independent set of G. Let
+u, v ∈ S′ be arbitrary, since u, v ∈ S′ ⊆ S and S is an independent set of G then (u, v) 6∈ E and so S′ is also an
+independent set of G.
+      Now we proceed to prove that fIS is subadditive. Let A, B ⊆ V be arbitrary. It suffices to show that
+ fIS (A ∪ B) ≤ fIS (A) + fIS (B). We define A′ = A \ B and B′ = B. Then A′ ∩ B′ = /0 and A′ ∪ B′ = A ∪ B. Hence,
+
+                                                  f (A ∪ B) = f (A′ ∪ B′ )                                      (119)
+    We let SA′ ∪B′ ⊆ A′ ∪ B′ , SA′ ⊆ A′ , SB′ ⊆ B′ be independent sets of G such that
+
+                              fIS (A′ ∪ B′ ) = |SA′ ∪B′ |, fIS (A′ ) = |SA′ |, fIS (B′ ) = |SB′ |               (120)
+    Since SA′ ∪B′ ⊆ A′ ∪ B′ then
+
+                                        SA′ ∪B′ = (SA′ ∪B′ ∩ A′ ) ∪ (SA′ ∪B′ ∩ B′ )                             (121)
+    Moreover, since A′ ∩ B′ = /0 then
+
+                                        |SA′ ∪B′ | = |SA′ ∪B′ ∩ A′ | + |SA′ ∪B′ ∩ B′ |                          (122)
+    We also note that by the downwards closed property of independent sets, SA′ ∪B′ ∩ A′ and SA′ ∪B′ ∩ B′ are
+independent sets of G. Furthermore, this implies that
+
+                                |SA′ ∪B′ ∩ A′ | ≤ fIS (A′ ) and |SA′ ∪B′ ∩ B′ | ≤ fIS (B′ )                     (123)
+    Putting everything together, we have that
+
+
+             fIS (A ∪ B) = fIS (A′ ∪ B′ )                                                           by (119)    (124)
+                        = |SA′ ∪B |                                                                 by (120)    (125)
+                                        ′                 ′
+                        = |SA′ ∪B′ ∩ A | + |SA′ ∪B′ ∩ B |                                           by (122)    (126)
+                                   ′          ′
+                        ≤ fIS (A ) + fIS (B )                                                       by (123)    (127)
+                        ≤ fIS (A) + fIS (B)                                by the fact that fIS is increasing   (128)
+
+This completes the proof.
+
+
+
+                                                              30
+Theorem 1.4. For any p ≥ 0 and for any ε > 0, there does not exist a polynomial-time diversity ℓ1 embed-
+ding that queries a diversity on sets of cardinality at most O(log p n) with a distortion of O(n1−ε ), unless
+P=NP.
+
+Proof. For this proof, we assume that P6=NP, and for the sake of contradiction, we assume the negation of
+the theorem statement. That is, we suppose that for some p ≥ 0 and for some ε > 0 there is a polynomial-
+time diversity embedding into ℓ1 that queries the diversity on sets of cardinality at most O(log p n) with a
+distortion of O(n1−ε ).
+    We let G = (V, E) be an arbitrary graph with |V | = n. We let (V, δIS ) be the corresponding independent
+set diversity as defined by Definition 5.7. (V, δIS ) is defined implicitly by the graph G and, at this point, we
+are not insisting on being able to explicitly compute δIS (A) for any A ⊆ V . We note that by definition of
+(V, δIS ) we have that
+
+                     δIS (V ) = max{|S| : S ⊆ V , S is an independent set of G} = ISP(G)                   (129)
+    Therefore, any approximation of δIS (V ) yields an approximation of the instance of the independent
+set problem, ISP(G). In particular, we show how an algorithm that embeds a diversity into ℓ1 yields an
+approximation algorithm for δIS (V ) and in turn for ISP(G).
+    We let f : V → Rd , for some d ∈ Z≥0 , be the diversity embedding of (V, δIS ) into (Rd , δ1 ) given by our
+algorithm at the beginning of this proof. By assumption we can compute f in polynomial-time, provided
+we can query δIS (A) for sets A ⊆ V where |A| ∈ O(log p n) in polynomial-time. Although, (V, δIS ) is defined
+implicitly by the graph G, we can compute δIS (A) for every A ⊆ V where |A| ∈ O(log p n) in polynomial-
+time, specifically O(n p ), using a brute-force enumeration of all independent sets of G that are subsets of A.
+Therefore, f is computable in polynomial-time.
+    Furthermore, the distortion of the embedding f is of the factor O(n1−ε ). Specifically, we have the
+following guarantee on the value of δIS (V ) with respect to δ1 ( f (V )),
+
+                                       1
+                                          δIS (V ) ≤ δ1 ( f (V )) ≤ c2 δIS (V )                            (130)
+                                       c1
+where c1 , c2 > 0 and c1 c2 = O(n1−ε ). Given that δIS (V ) = ISP(G) and that f is computable in polynomial-
+time, this implies that we have a polynomial-time approximation algorithm for the independent set problem
+with an approximation factor of O(n1−ε ). However, this contradicts Theorem 5.9. This completes the proof.
+
+
+
+B Applications of the Hypergraph Steiner Problem
+In this section we provide two applications of our approximation algorithm for the minimum cost hypergraph
+Steiner problem, Theorem 1.5. The first application is that of approximately computing a hypergraph Steiner
+diversity given a hyperedge-weighted hypergraph.
+
+Corollary B.1. Let H = (V, E, w) be a hypergraph with node set V , hyperedge set E, and nonnegative
+hyperedge weights w : E → R+ . Let (V, δH ) be the corresponding hypergraph Steiner diversity defined by
+H. Then for any A ∈ P(V ), δ (A) can be computed up to a factor of O(log |A|) in polynomial time.
+
+Proof. This corollary follows immediately from Theorem 1.5 and by the fact that for any A ∈ P(V ) we
+have that
+                                 δ (A) = min ∑ w(U ) = HSP(H, A)                               (131)
+                                             t∈T(H,A) U∈t
+
+and so computing δ (A) is equivalent to solving HSP(H, A).
+
+                                                         31
+   The second application of Theorem 1.5 is that LP Relaxation (24) can be approximated up to an approx-
+imation factor of O(log rH ) in polynomial time.
+
+Corollary B.2. Let G = (V, EG , wG ) be a supply hypergraph and let H = (V, EH , wH ) be a demand hyper-
+graph with rank rH . Then the sparsest cut LP Relaxation (24) can be be approximated up to a factor of
+O(log rH ) in polynomial time.
+
+Proof. LP Relaxation (24) has polynomially many variables and, in general, exponentially many constraints.
+Specifically, for each S ∈ EH the following set of constraints may be exponentially large
+
+                                           { ∑ dU ≥ yS }t∈T(G,S)                                      (132)
+                                            U∈t
+
+Separating over these constraints amounts to the decision problem
+
+                                     HSP(G, S) = min       ∑ dU ≥ yS
+                                                   t∈T(G,S) U∈t
+                                                                                                      (133)
+
+We can use Theorem 1.5 to approximate HSP(G,S) up to an O(log rH ) factor, as |S| ≤ rH . Hence, up to a
+factor of O(log rH ), we can verify whether the set of constraints (132) are approximately satisfied, and if
+not, we can find an approximate separating hyperplane. Then by the ellipsoid algorithm we can solve the
+LP Relaxation (24) up to an O(log rH ) approximation factor in polynomial time.
+
+
+
+
+                                                    32
+
