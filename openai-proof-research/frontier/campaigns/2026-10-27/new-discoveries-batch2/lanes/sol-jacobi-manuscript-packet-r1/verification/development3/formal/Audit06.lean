@@ -1,0 +1,49 @@
+import SourceClaim
+set_option autoImplicit false
+set_option warningAsError true
+set_option pp.privateNames true
+set_option linter.auxLemma false
+#check JacobiShifted.ParameterDegree.h_odd_top
+#print axioms JacobiShifted.ParameterDegree.h_odd_top
+#check JacobiShifted.ParameterDegree.h_odd_top._proof_1_1
+#print axioms JacobiShifted.ParameterDegree.h_odd_top._proof_1_1
+#check JacobiShifted.ParameterDegree.h_odd_top._proof_1_2
+#print axioms JacobiShifted.ParameterDegree.h_odd_top._proof_1_2
+#check JacobiShifted.ParameterDegree.h_odd_top_coeff
+#print axioms JacobiShifted.ParameterDegree.h_odd_top_coeff
+#check JacobiShifted.ParameterDegree.oddTop
+#print axioms JacobiShifted.ParameterDegree.oddTop
+#check JacobiShifted.ParameterDegree.oddTop.eq_1
+#print axioms JacobiShifted.ParameterDegree.oddTop.eq_1
+#check JacobiShifted.ParameterDegree.oddTop_catalan
+#print axioms JacobiShifted.ParameterDegree.oddTop_catalan
+#check JacobiShifted.ParameterDegree.oddTop_catalan._proof_1_1
+#print axioms JacobiShifted.ParameterDegree.oddTop_catalan._proof_1_1
+#check JacobiShifted.ParameterDegree.oddTop_catalan._proof_1_2
+#print axioms JacobiShifted.ParameterDegree.oddTop_catalan._proof_1_2
+#check JacobiShifted.ParameterDegree.oddTop_catalan._proof_1_3
+#print axioms JacobiShifted.ParameterDegree.oddTop_catalan._proof_1_3
+#check JacobiShifted.ParameterDegree.oddTop_catalan._proof_1_4
+#print axioms JacobiShifted.ParameterDegree.oddTop_catalan._proof_1_4
+#check JacobiShifted.ParameterDegree.oddTop_recurrence
+#print axioms JacobiShifted.ParameterDegree.oddTop_recurrence
+#check JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_2
+#print axioms JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_2
+#check JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_3
+#print axioms JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_3
+#check JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_4
+#print axioms JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_4
+#check JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_5
+#print axioms JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_5
+#check JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_6
+#print axioms JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_6
+#check JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_7
+#print axioms JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_7
+#check JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_8
+#print axioms JacobiShifted.ParameterDegree.oddTop_recurrence._proof_1_8
+#check JacobiShifted.ParameterDegree.oddTop_zero
+#print axioms JacobiShifted.ParameterDegree.oddTop_zero
+#check JacobiShifted.ParameterDegree.sum_range_parity
+#print axioms JacobiShifted.ParameterDegree.sum_range_parity
+#check JacobiShifted.ParameterDegree.sum_range_parity._proof_1_1
+#print axioms JacobiShifted.ParameterDegree.sum_range_parity._proof_1_1

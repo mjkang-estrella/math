@@ -1,0 +1,35 @@
+import SourceClaim
+set_option autoImplicit false
+set_option warningAsError true
+set_option pp.privateNames true
+set_option linter.auxLemma false
+#check JacobiShifted.ParameterDegree.coefficientOperator_totalDegree
+#print axioms JacobiShifted.ParameterDegree.coefficientOperator_totalDegree
+#check JacobiShifted.ParameterDegree.exponent_degree
+#print axioms JacobiShifted.ParameterDegree.exponent_degree
+#check JacobiShifted.ParameterDegree.h_bidegree_eq_zero
+#print axioms JacobiShifted.ParameterDegree.h_bidegree_eq_zero
+#check JacobiShifted.ParameterDegree.h_coeff_eq_zero
+#print axioms JacobiShifted.ParameterDegree.h_coeff_eq_zero
+#check JacobiShifted.ParameterDegree.h_totalDegree
+#print axioms JacobiShifted.ParameterDegree.h_totalDegree
+#check JacobiShifted.ParameterDegree.h_totalDegree._proof_1_2
+#print axioms JacobiShifted.ParameterDegree.h_totalDegree._proof_1_2
+#check JacobiShifted.ParameterDegree.h_totalDegree._proof_1_3
+#print axioms JacobiShifted.ParameterDegree.h_totalDegree._proof_1_3
+#check JacobiShifted.ParameterDegree.h_totalDegree._proof_1_4
+#print axioms JacobiShifted.ParameterDegree.h_totalDegree._proof_1_4
+#check JacobiShifted.ParameterDegree.h_totalDegree._proof_1_5
+#print axioms JacobiShifted.ParameterDegree.h_totalDegree._proof_1_5
+#check JacobiShifted.ParameterDegree.h_totalDegree._proof_1_6
+#print axioms JacobiShifted.ParameterDegree.h_totalDegree._proof_1_6
+#check JacobiShifted.ParameterDegree.h_totalDegree._proof_1_7
+#print axioms JacobiShifted.ParameterDegree.h_totalDegree._proof_1_7
+#check JacobiShifted.ParameterDegree.initial_totalDegree
+#print axioms JacobiShifted.ParameterDegree.initial_totalDegree
+#check JacobiShifted.ParameterDegree.top_mul
+#print axioms JacobiShifted.ParameterDegree.top_mul
+#check JacobiShifted.ParameterDegree.top_mul._proof_1_1
+#print axioms JacobiShifted.ParameterDegree.top_mul._proof_1_1
+#check JacobiShifted.ParameterDegree.top_mul._proof_1_2
+#print axioms JacobiShifted.ParameterDegree.top_mul._proof_1_2

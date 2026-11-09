@@ -1,0 +1,79 @@
+import SourceClaim
+set_option autoImplicit false
+set_option warningAsError true
+set_option pp.privateNames true
+set_option linter.auxLemma false
+#check JacobiShifted.BinaryFiltration.bidegree
+#print axioms JacobiShifted.BinaryFiltration.bidegree
+#check JacobiShifted.BinaryFiltration.bidegree.eq_1
+#print axioms JacobiShifted.BinaryFiltration.bidegree.eq_1
+#check JacobiShifted.BinaryFiltration.bidegree_one_coordinate
+#print axioms JacobiShifted.BinaryFiltration.bidegree_one_coordinate
+#check JacobiShifted.BinaryFiltration.bidegree_zero_coordinate
+#print axioms JacobiShifted.BinaryFiltration.bidegree_zero_coordinate
+#check JacobiShifted.BinaryFiltration.coefficient_product_expansion
+#print axioms JacobiShifted.BinaryFiltration.coefficient_product_expansion
+#check JacobiShifted.BinaryFiltration.coefficient_square_expansion
+#print axioms JacobiShifted.BinaryFiltration.coefficient_square_expansion
+#check JacobiShifted.BinaryFiltration.initial
+#print axioms JacobiShifted.BinaryFiltration.initial
+#check JacobiShifted.BinaryFiltration.initial._proof_1
+#print axioms JacobiShifted.BinaryFiltration.initial._proof_1
+#check JacobiShifted.BinaryFiltration.initial.eq_1
+#print axioms JacobiShifted.BinaryFiltration.initial.eq_1
+#check JacobiShifted.BinaryFiltration.initial_eq_variables
+#print axioms JacobiShifted.BinaryFiltration.initial_eq_variables
+#check JacobiShifted.BinaryFiltration.odd_bidegree_weight
+#print axioms JacobiShifted.BinaryFiltration.odd_bidegree_weight
+#check JacobiShifted.BinaryFiltration.odd_bidegree_weight._proof_1_1
+#print axioms JacobiShifted.BinaryFiltration.odd_bidegree_weight._proof_1_1
+#check JacobiShifted.BinaryFiltration.odd_bidegree_weight._proof_1_2
+#print axioms JacobiShifted.BinaryFiltration.odd_bidegree_weight._proof_1_2
+#check JacobiShifted.BinaryFiltration.odd_bidegree_weight._proof_1_3
+#print axioms JacobiShifted.BinaryFiltration.odd_bidegree_weight._proof_1_3
+#check JacobiShifted.BinaryFiltration.riccati_degree_odd_coefficient
+#print axioms JacobiShifted.BinaryFiltration.riccati_degree_odd_coefficient
+#check JacobiShifted.BinaryFiltration.riccati_initial_weighted
+#print axioms JacobiShifted.BinaryFiltration.riccati_initial_weighted
+#check JacobiShifted.BinaryFiltration.riccati_odd_coefficient
+#print axioms JacobiShifted.BinaryFiltration.riccati_odd_coefficient
+#check JacobiShifted.BinaryFiltration.riccati_weighted
+#print axioms JacobiShifted.BinaryFiltration.riccati_weighted
+#check JacobiShifted.BinaryFiltration.riccati_weighted._proof_1_1
+#print axioms JacobiShifted.BinaryFiltration.riccati_weighted._proof_1_1
+#check JacobiShifted.BinaryFiltration.riccati_weighted._proof_1_2
+#print axioms JacobiShifted.BinaryFiltration.riccati_weighted._proof_1_2
+#check JacobiShifted.BinaryFiltration.riccati_weighted._proof_1_3
+#print axioms JacobiShifted.BinaryFiltration.riccati_weighted._proof_1_3
+#check JacobiShifted.BinaryFiltration.spectral_endpoints_zero
+#print axioms JacobiShifted.BinaryFiltration.spectral_endpoints_zero
+#check JacobiShifted.BinaryFiltration.spectral_fixed_even_iff
+#print axioms JacobiShifted.BinaryFiltration.spectral_fixed_even_iff
+#check JacobiShifted.BinaryFiltration.spectral_fixed_even_iff._proof_1_1
+#print axioms JacobiShifted.BinaryFiltration.spectral_fixed_even_iff._proof_1_1
+#check JacobiShifted.BinaryFiltration.spectral_fixed_even_iff._proof_1_2
+#print axioms JacobiShifted.BinaryFiltration.spectral_fixed_even_iff._proof_1_2
+#check JacobiShifted.BinaryFiltration.spectral_fixed_even_iff._proof_1_3
+#print axioms JacobiShifted.BinaryFiltration.spectral_fixed_even_iff._proof_1_3
+#check JacobiShifted.BinaryFiltration.spectral_fixed_iff
+#print axioms JacobiShifted.BinaryFiltration.spectral_fixed_iff
+#check JacobiShifted.BinaryFiltration.spectral_fixed_iff._proof_1_1
+#print axioms JacobiShifted.BinaryFiltration.spectral_fixed_iff._proof_1_1
+#check JacobiShifted.BinaryFiltration.spectral_pair_identity
+#print axioms JacobiShifted.BinaryFiltration.spectral_pair_identity
+#check JacobiShifted.BinaryFiltration.weighted_convolution
+#print axioms JacobiShifted.BinaryFiltration.weighted_convolution
+#check JacobiShifted.BinaryFiltration.weighted_convolution._proof_1_1
+#print axioms JacobiShifted.BinaryFiltration.weighted_convolution._proof_1_1
+#check JacobiShifted.BinaryFiltration.weighted_convolution._proof_1_2
+#print axioms JacobiShifted.BinaryFiltration.weighted_convolution._proof_1_2
+#check JacobiShifted.BinaryFiltration.weighted_convolution._proof_1_3
+#print axioms JacobiShifted.BinaryFiltration.weighted_convolution._proof_1_3
+#check JacobiShifted.BinaryFiltration.weighted_initial
+#print axioms JacobiShifted.BinaryFiltration.weighted_initial
+#check JacobiShifted.BinaryFiltration.weighted_involution_products
+#print axioms JacobiShifted.BinaryFiltration.weighted_involution_products
+#check JacobiShifted.BinaryFiltration.weighted_odd_coefficient
+#print axioms JacobiShifted.BinaryFiltration.weighted_odd_coefficient
+#check JacobiShifted.BinaryFiltration.weighted_odd_coefficient._proof_1_1
+#print axioms JacobiShifted.BinaryFiltration.weighted_odd_coefficient._proof_1_1

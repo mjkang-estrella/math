@@ -1,0 +1,113 @@
+import NonSubring
+
+set_option autoImplicit false
+set_option warningAsError true
+
+#check JacobiShifted.BinaryFiltration.sigma
+#print axioms JacobiShifted.BinaryFiltration.sigma
+#check JacobiShifted.BinaryFiltration.sigma_zero
+#print axioms JacobiShifted.BinaryFiltration.sigma_zero
+#check JacobiShifted.BinaryFiltration.sigma_one
+#print axioms JacobiShifted.BinaryFiltration.sigma_one
+#check JacobiShifted.BinaryFiltration.sigma_pos
+#print axioms JacobiShifted.BinaryFiltration.sigma_pos
+#check JacobiShifted.BinaryFiltration.sigma_double
+#print axioms JacobiShifted.BinaryFiltration.sigma_double
+#check JacobiShifted.BinaryFiltration.sigma_odd
+#print axioms JacobiShifted.BinaryFiltration.sigma_odd
+#check JacobiShifted.BinaryFiltration.sigma_odd_pred
+#print axioms JacobiShifted.BinaryFiltration.sigma_odd_pred
+#check JacobiShifted.BinaryFiltration.sigma_add_le
+#print axioms JacobiShifted.BinaryFiltration.sigma_add_le
+#check JacobiShifted.BinaryFiltration.Exponent
+#print axioms JacobiShifted.BinaryFiltration.Exponent
+#check JacobiShifted.BinaryFiltration.P
+#print axioms JacobiShifted.BinaryFiltration.P
+#check JacobiShifted.BinaryFiltration.weight
+#print axioms JacobiShifted.BinaryFiltration.weight
+#check JacobiShifted.BinaryFiltration.sigma_coords_pos
+#print axioms JacobiShifted.BinaryFiltration.sigma_coords_pos
+#check JacobiShifted.BinaryFiltration.weight_add_le
+#print axioms JacobiShifted.BinaryFiltration.weight_add_le
+#check JacobiShifted.BinaryFiltration.weight_double
+#print axioms JacobiShifted.BinaryFiltration.weight_double
+#check JacobiShifted.BinaryFiltration.Weighted
+#print axioms JacobiShifted.BinaryFiltration.Weighted
+#check JacobiShifted.BinaryFiltration.weighted_zero
+#print axioms JacobiShifted.BinaryFiltration.weighted_zero
+#check JacobiShifted.BinaryFiltration.weighted_add
+#print axioms JacobiShifted.BinaryFiltration.weighted_add
+#check JacobiShifted.BinaryFiltration.weighted_neg
+#print axioms JacobiShifted.BinaryFiltration.weighted_neg
+#check JacobiShifted.BinaryFiltration.weightedSubgroup
+#print axioms JacobiShifted.BinaryFiltration.weightedSubgroup
+#check JacobiShifted.BinaryFiltration.weighted_sum
+#print axioms JacobiShifted.BinaryFiltration.weighted_sum
+#check JacobiShifted.BinaryFiltration.weighted_monomial
+#print axioms JacobiShifted.BinaryFiltration.weighted_monomial
+#check JacobiShifted.BinaryFiltration.support_nonzero
+#print axioms JacobiShifted.BinaryFiltration.support_nonzero
+#check JacobiShifted.BinaryFiltration.weighted_support_monomial
+#print axioms JacobiShifted.BinaryFiltration.weighted_support_monomial
+#check JacobiShifted.BinaryFiltration.double_monomial_product
+#print axioms JacobiShifted.BinaryFiltration.double_monomial_product
+#check JacobiShifted.BinaryFiltration.weighted_two_mul
+#print axioms JacobiShifted.BinaryFiltration.weighted_two_mul
+#check JacobiShifted.BinaryFiltration.weighted_monomial_square
+#print axioms JacobiShifted.BinaryFiltration.weighted_monomial_square
+#check JacobiShifted.BinaryFiltration.square_add_identity
+#print axioms JacobiShifted.BinaryFiltration.square_add_identity
+#check JacobiShifted.BinaryFiltration.weighted_sum_square
+#print axioms JacobiShifted.BinaryFiltration.weighted_sum_square
+#check JacobiShifted.BinaryFiltration.weighted_square
+#print axioms JacobiShifted.BinaryFiltration.weighted_square
+#check JacobiShifted.BinaryFiltration.coefficientOperator
+#print axioms JacobiShifted.BinaryFiltration.coefficientOperator
+#check JacobiShifted.BinaryFiltration.coefficientOperator_coeff
+#print axioms JacobiShifted.BinaryFiltration.coefficientOperator_coeff
+#check JacobiShifted.BinaryFiltration.additive_nat_mul
+#print axioms JacobiShifted.BinaryFiltration.additive_nat_mul
+#check JacobiShifted.BinaryFiltration.weighted_coefficientOperator
+#print axioms JacobiShifted.BinaryFiltration.weighted_coefficientOperator
+#check JacobiShifted.BinaryFiltration.coefficient_product_expansion
+#print axioms JacobiShifted.BinaryFiltration.coefficient_product_expansion
+#check JacobiShifted.BinaryFiltration.coefficient_square_expansion
+#print axioms JacobiShifted.BinaryFiltration.coefficient_square_expansion
+#check JacobiShifted.BinaryFiltration.weighted_involution_products
+#print axioms JacobiShifted.BinaryFiltration.weighted_involution_products
+#check JacobiShifted.BinaryFiltration.spectral_fixed_iff
+#print axioms JacobiShifted.BinaryFiltration.spectral_fixed_iff
+#check JacobiShifted.BinaryFiltration.spectral_fixed_even_iff
+#print axioms JacobiShifted.BinaryFiltration.spectral_fixed_even_iff
+#check JacobiShifted.BinaryFiltration.spectral_pair_identity
+#print axioms JacobiShifted.BinaryFiltration.spectral_pair_identity
+#check JacobiShifted.BinaryFiltration.spectral_endpoints_zero
+#print axioms JacobiShifted.BinaryFiltration.spectral_endpoints_zero
+#check JacobiShifted.BinaryFiltration.weighted_convolution
+#print axioms JacobiShifted.BinaryFiltration.weighted_convolution
+#check JacobiShifted.BinaryFiltration.initial
+#print axioms JacobiShifted.BinaryFiltration.initial
+#check JacobiShifted.BinaryFiltration.initial_eq_variables
+#print axioms JacobiShifted.BinaryFiltration.initial_eq_variables
+#check JacobiShifted.BinaryFiltration.weighted_initial
+#print axioms JacobiShifted.BinaryFiltration.weighted_initial
+#check JacobiShifted.BinaryFiltration.riccati_weighted
+#print axioms JacobiShifted.BinaryFiltration.riccati_weighted
+#check JacobiShifted.BinaryFiltration.riccati_initial_weighted
+#print axioms JacobiShifted.BinaryFiltration.riccati_initial_weighted
+#check JacobiShifted.BinaryFiltration.bidegree
+#print axioms JacobiShifted.BinaryFiltration.bidegree
+#check JacobiShifted.BinaryFiltration.bidegree_zero_coordinate
+#print axioms JacobiShifted.BinaryFiltration.bidegree_zero_coordinate
+#check JacobiShifted.BinaryFiltration.bidegree_one_coordinate
+#print axioms JacobiShifted.BinaryFiltration.bidegree_one_coordinate
+#check JacobiShifted.BinaryFiltration.odd_bidegree_weight
+#print axioms JacobiShifted.BinaryFiltration.odd_bidegree_weight
+#check JacobiShifted.BinaryFiltration.weighted_odd_coefficient
+#print axioms JacobiShifted.BinaryFiltration.weighted_odd_coefficient
+#check JacobiShifted.BinaryFiltration.riccati_odd_coefficient
+#print axioms JacobiShifted.BinaryFiltration.riccati_odd_coefficient
+#check JacobiShifted.BinaryFiltration.riccati_degree_odd_coefficient
+#print axioms JacobiShifted.BinaryFiltration.riccati_degree_odd_coefficient
+#check JacobiShifted.BinaryFiltration.filtration_not_subring
+#print axioms JacobiShifted.BinaryFiltration.filtration_not_subring

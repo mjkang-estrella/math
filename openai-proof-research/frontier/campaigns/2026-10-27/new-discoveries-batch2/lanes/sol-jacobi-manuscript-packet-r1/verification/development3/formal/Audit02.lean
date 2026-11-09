@@ -1,0 +1,73 @@
+import SourceClaim
+set_option autoImplicit false
+set_option warningAsError true
+set_option pp.privateNames true
+set_option linter.auxLemma false
+#check JacobiShifted.BinaryFiltration.Exponent
+#print axioms JacobiShifted.BinaryFiltration.Exponent
+#check JacobiShifted.BinaryFiltration.P
+#print axioms JacobiShifted.BinaryFiltration.P
+#check JacobiShifted.BinaryFiltration.Weighted
+#print axioms JacobiShifted.BinaryFiltration.Weighted
+#check JacobiShifted.BinaryFiltration.Weighted._proof_1
+#print axioms JacobiShifted.BinaryFiltration.Weighted._proof_1
+#check JacobiShifted.BinaryFiltration.additive_nat_mul
+#print axioms JacobiShifted.BinaryFiltration.additive_nat_mul
+#check JacobiShifted.BinaryFiltration.coefficientOperator
+#print axioms JacobiShifted.BinaryFiltration.coefficientOperator
+#check JacobiShifted.BinaryFiltration.coefficientOperator._proof_1
+#print axioms JacobiShifted.BinaryFiltration.coefficientOperator._proof_1
+#check JacobiShifted.BinaryFiltration.coefficientOperator._proof_2
+#print axioms JacobiShifted.BinaryFiltration.coefficientOperator._proof_2
+#check JacobiShifted.BinaryFiltration.coefficientOperator_coeff
+#print axioms JacobiShifted.BinaryFiltration.coefficientOperator_coeff
+#check JacobiShifted.BinaryFiltration.double_monomial_product
+#print axioms JacobiShifted.BinaryFiltration.double_monomial_product
+#check JacobiShifted.BinaryFiltration.sigma_coords_pos
+#print axioms JacobiShifted.BinaryFiltration.sigma_coords_pos
+#check JacobiShifted.BinaryFiltration.sigma_coords_pos._proof_1_1
+#print axioms JacobiShifted.BinaryFiltration.sigma_coords_pos._proof_1_1
+#check JacobiShifted.BinaryFiltration.sigma_coords_pos._proof_1_2
+#print axioms JacobiShifted.BinaryFiltration.sigma_coords_pos._proof_1_2
+#check JacobiShifted.BinaryFiltration.square_add_identity
+#print axioms JacobiShifted.BinaryFiltration.square_add_identity
+#check JacobiShifted.BinaryFiltration.support_nonzero
+#print axioms JacobiShifted.BinaryFiltration.support_nonzero
+#check JacobiShifted.BinaryFiltration.weight
+#print axioms JacobiShifted.BinaryFiltration.weight
+#check JacobiShifted.BinaryFiltration.weight._proof_1
+#print axioms JacobiShifted.BinaryFiltration.weight._proof_1
+#check JacobiShifted.BinaryFiltration.weight.eq_1
+#print axioms JacobiShifted.BinaryFiltration.weight.eq_1
+#check JacobiShifted.BinaryFiltration.weight_add_le
+#print axioms JacobiShifted.BinaryFiltration.weight_add_le
+#check JacobiShifted.BinaryFiltration.weight_add_le._proof_1_2
+#print axioms JacobiShifted.BinaryFiltration.weight_add_le._proof_1_2
+#check JacobiShifted.BinaryFiltration.weight_double
+#print axioms JacobiShifted.BinaryFiltration.weight_double
+#check JacobiShifted.BinaryFiltration.weight_double._simp_1_2
+#print axioms JacobiShifted.BinaryFiltration.weight_double._simp_1_2
+#check JacobiShifted.BinaryFiltration.weightedSubgroup
+#print axioms JacobiShifted.BinaryFiltration.weightedSubgroup
+#check JacobiShifted.BinaryFiltration.weighted_add
+#print axioms JacobiShifted.BinaryFiltration.weighted_add
+#check JacobiShifted.BinaryFiltration.weighted_coefficientOperator
+#print axioms JacobiShifted.BinaryFiltration.weighted_coefficientOperator
+#check JacobiShifted.BinaryFiltration.weighted_monomial
+#print axioms JacobiShifted.BinaryFiltration.weighted_monomial
+#check JacobiShifted.BinaryFiltration.weighted_monomial_square
+#print axioms JacobiShifted.BinaryFiltration.weighted_monomial_square
+#check JacobiShifted.BinaryFiltration.weighted_neg
+#print axioms JacobiShifted.BinaryFiltration.weighted_neg
+#check JacobiShifted.BinaryFiltration.weighted_square
+#print axioms JacobiShifted.BinaryFiltration.weighted_square
+#check JacobiShifted.BinaryFiltration.weighted_sum
+#print axioms JacobiShifted.BinaryFiltration.weighted_sum
+#check JacobiShifted.BinaryFiltration.weighted_sum_square
+#print axioms JacobiShifted.BinaryFiltration.weighted_sum_square
+#check JacobiShifted.BinaryFiltration.weighted_support_monomial
+#print axioms JacobiShifted.BinaryFiltration.weighted_support_monomial
+#check JacobiShifted.BinaryFiltration.weighted_two_mul
+#print axioms JacobiShifted.BinaryFiltration.weighted_two_mul
+#check JacobiShifted.BinaryFiltration.weighted_zero
+#print axioms JacobiShifted.BinaryFiltration.weighted_zero

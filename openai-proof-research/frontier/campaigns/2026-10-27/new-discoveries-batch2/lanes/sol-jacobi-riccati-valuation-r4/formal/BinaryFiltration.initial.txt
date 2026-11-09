@@ -1,0 +1,99 @@
+import Mathlib.NumberTheory.Padics.PadicVal.Basic
+import Mathlib.Tactic.Omega
+import Mathlib.Tactic.Ring
+
+/-! Arithmetic start for the all-coefficient proof. No literal-source endpoint is
+claimed. These are actual binary weights, not assumed abstract valuation laws. -/
+namespace JacobiShifted
+
+local instance : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+
+def sigma (n : ℕ) : ℕ := (Nat.digits 2 n).sum
+
+@[simp] theorem sigma_zero : sigma 0 = 0 := by simp [sigma]
+
+@[simp] theorem sigma_double (n : ℕ) : sigma (2*n) = sigma n := by
+  by_cases hn : n = 0
+  · simp [hn]
+  · simp [sigma, Nat.digits_base_mul (by decide : 1 < 2) (Nat.pos_of_ne_zero hn)]
+
+@[simp] theorem sigma_odd (n : ℕ) : sigma (2*n+1) = sigma n + 1 := by
+  have h := Nat.digits_add 2 (by decide : 1 < 2) 1 n (by decide : 1 < 2)
+    (Or.inl (by decide : (1:ℕ) ≠ 0))
+  simpa [sigma, Nat.add_comm, List.sum_cons] using congrArg List.sum h
+
+theorem sigma_le (n : ℕ) : sigma n ≤ n := Nat.digit_sum_le 2 n
+
+theorem sigma_pos {n : ℕ} (hn : n ≠ 0) : 0 < sigma n := by
+  have h := sub_one_mul_padicValNat_factorial_lt_of_ne_zero 2 hn
+  have hleg := sub_one_mul_padicValNat_factorial (p := 2) n
+  simp only [Nat.reduceSub, one_mul] at h hleg
+  have hle := sigma_le n
+  change padicValNat 2 n.factorial = n - sigma n at hleg
+  omega
+
+theorem sigma_add_le (m n : ℕ) : sigma (m+n) ≤ sigma m + sigma n := by
+  have hd : 2 ^ (padicValNat 2 m.factorial + padicValNat 2 n.factorial) ∣
+      (m+n).factorial := by
+    rw [← padicValNat.mul (Nat.factorial_ne_zero m) (Nat.factorial_ne_zero n)]
+    exact pow_padicValNat_dvd.trans (Nat.factorial_mul_factorial_dvd_factorial_add m n)
+  have hv := (padicValNat_dvd_iff_le (p := 2) (Nat.factorial_ne_zero (m+n))).mp hd
+  have hm := sub_one_mul_padicValNat_factorial (p := 2) m
+  have hn := sub_one_mul_padicValNat_factorial (p := 2) n
+  have hmn := sub_one_mul_padicValNat_factorial (p := 2) (m+n)
+  simp only [Nat.reduceSub, one_mul] at hm hn hmn
+  change padicValNat 2 m.factorial = m - sigma m at hm
+  change padicValNat 2 n.factorial = n - sigma n at hn
+  change padicValNat 2 (m+n).factorial = m+n - sigma (m+n) at hmn
+  have h1 := sigma_le m
+  have h2 := sigma_le n
+  have h3 := sigma_le (m+n)
+  omega
+
+def weight (i j : ℕ) : ℕ := sigma i + sigma j - 1
+
+theorem weight_double (i j : ℕ) : weight (2*i) (2*j) = weight i j := by
+  simp [weight]
+
+theorem weight_add_le (i j k l : ℕ) (hij : i+j ≠ 0) (hkl : k+l ≠ 0) :
+    weight (i+k) (j+l) ≤ weight i j + weight k l + 1 := by
+  have h1 := sigma_add_le i k
+  have h2 := sigma_add_le j l
+  have hp1 : 0 < sigma i + sigma j := by
+    by_cases hi : i = 0
+    · simp only [hi, zero_add] at hij
+      simpa [hi] using sigma_pos hij
+    · exact lt_of_lt_of_le (sigma_pos hi) (Nat.le_add_right _ _)
+  have hp2 : 0 < sigma k + sigma l := by
+    by_cases hk : k = 0
+    · simp only [hk, zero_add] at hkl
+      simpa [hk] using sigma_pos hkl
+    · exact lt_of_lt_of_le (sigma_pos hk) (Nat.le_add_right _ _)
+  unfold weight
+  omega
+
+theorem odd_weight_bound (i k : ℕ) : sigma (i+2*k) ≤ weight i (2*k+1) := by
+  have h := sigma_add_le i (2*k)
+  simp only [sigma_double] at h
+  simpa [weight, sigma_odd, Nat.add_assoc] using h
+
+-- The two scalar divisibility steps used in the weighted square argument.
+theorem doubled_product_dvd {R : Type*} [CommRing R] {p q z : ℕ} {f g : R}
+    (hf : (2:R)^p ∣ f) (hg : (2:R)^q ∣ g) (hz : z ≤ p+q+1) :
+    (2:R)^z ∣ 2*f*g := by
+  apply dvd_trans (pow_dvd_pow 2 hz)
+  rcases hf with ⟨a, rfl⟩
+  rcases hg with ⟨b, rfl⟩
+  refine ⟨a*b, ?_⟩
+  simp only [pow_add, pow_one]
+  ring
+
+theorem diagonal_square_dvd {R : Type*} [CommRing R] {p : ℕ} {f : R}
+    (hf : (2:R)^p ∣ f) : (2:R)^p ∣ f*f := hf.mul_right f
+
+#print axioms sigma_add_le
+#print axioms weight_add_le
+#print axioms odd_weight_bound
+#print axioms doubled_product_dvd
+#print axioms diagonal_square_dvd
+end JacobiShifted

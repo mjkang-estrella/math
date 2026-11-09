@@ -1,0 +1,139 @@
+import Mathlib.Data.Nat.Digits.Defs
+import Mathlib.Algebra.Ring.Basic
+import Lean.Elab.Tactic.Omega
+
+/-! Arithmetic start for the all-coefficient proof. No literal-source endpoint is
+claimed. These are actual binary weights, not assumed abstract valuation laws. -/
+namespace JacobiShifted
+
+def sigma (n : ℕ) : ℕ := (Nat.digits 2 n).sum
+
+@[simp] theorem sigma_zero : sigma 0 = 0 := by simp [sigma]
+
+@[simp] theorem sigma_double (n : ℕ) : sigma (2*n) = sigma n := by
+  by_cases hn : n = 0
+  · simp [hn]
+  · simp [sigma, Nat.digits_base_mul (by decide : 1 < 2) (Nat.pos_of_ne_zero hn)]
+
+@[simp] theorem sigma_odd (n : ℕ) : sigma (2*n+1) = sigma n + 1 := by
+  have h := Nat.digits_add 2 (by decide : 1 < 2) 1 n (by decide : 1 < 2)
+    (Or.inl (by decide : (1:ℕ) ≠ 0))
+  simpa [sigma, Nat.add_comm, List.sum_cons] using congrArg List.sum h
+
+theorem sigma_le (n : ℕ) : sigma n ≤ n := Nat.digit_sum_le 2 n
+
+theorem sigma_succ_le (n : ℕ) : sigma (n+1) ≤ sigma n + 1 := by
+  induction n using Nat.strong_induction_on with
+  | h n ih =>
+    have hr := Nat.mod_lt n (by decide : 0 < 2)
+    have he := Nat.mod_add_div n 2
+    by_cases h0 : n % 2 = 0
+    · have hn : n = 2*(n/2) := by omega
+      rw [hn, sigma_odd, sigma_double]
+    · have hn : n = 2*(n/2)+1 := by omega
+      have hk : n/2 < n := by omega
+      have hh := ih (n/2) hk
+      have hh' : sigma (2*(n/2+1)) ≤ sigma (2*(n/2)+1)+1 := by
+        simpa using (show sigma (n/2+1) ≤ sigma (n/2)+1+1 by omega)
+      convert hh' using 1 <;> congr 1 <;> omega
+
+theorem sigma_pos {n : ℕ} (hn : n ≠ 0) : 0 < sigma n := by
+  induction n using Nat.strong_induction_on with
+  | h n ih =>
+    have hr := Nat.mod_lt n (by decide : 0 < 2)
+    have he := Nat.mod_add_div n 2
+    by_cases h0 : n % 2 = 0
+    · have hn' : n = 2*(n/2) := by omega
+      have hk : n/2 < n := by omega
+      have hk0 : n/2 ≠ 0 := by omega
+      simpa [hn'] using ih (n/2) hk hk0
+    · have hn' : n = 2*(n/2)+1 := by omega
+      rw [hn', sigma_odd]
+      omega
+
+theorem sigma_add_le (m n : ℕ) : sigma (m+n) ≤ sigma m + sigma n := by
+  have aux : ∀ N m n : ℕ, m+n=N → sigma (m+n) ≤ sigma m + sigma n := by
+    intro N
+    induction N using Nat.strong_induction_on with
+    | h N ih =>
+      intro m n hsum
+      by_cases hzero : N = 0
+      · have hm : m = 0 := by omega
+        have hn : n = 0 := by omega
+        simp [hm, hn]
+      have hm := Nat.mod_add_div m 2
+      have hn := Nat.mod_add_div n 2
+      have hmr := Nat.mod_lt m (by decide : 0 < 2)
+      have hnr := Nat.mod_lt n (by decide : 0 < 2)
+      have hs : m/2+n/2 < N := by omega
+      have hh := ih (m/2+n/2) hs (m/2) (n/2) rfl
+      by_cases hm0 : m % 2 = 0 <;> by_cases hn0 : n % 2 = 0
+      · have em : m = 2*(m/2) := by omega
+        have en : n = 2*(n/2) := by omega
+        have ee : m+n = 2*(m/2+n/2) := by omega
+        simpa [em, en, ee] using hh
+      · have em : m = 2*(m/2) := by omega
+        have en : n = 2*(n/2)+1 := by omega
+        have ee : m+n = 2*(m/2+n/2)+1 := by omega
+        rw [ee, em, en, sigma_odd, sigma_double, sigma_odd]
+        omega
+      · have em : m = 2*(m/2)+1 := by omega
+        have en : n = 2*(n/2) := by omega
+        have ee : m+n = 2*(m/2+n/2)+1 := by omega
+        rw [ee, em, en, sigma_odd, sigma_odd, sigma_double]
+        omega
+      · have em : m = 2*(m/2)+1 := by omega
+        have en : n = 2*(n/2)+1 := by omega
+        have ee : m+n = 2*(m/2+n/2+1) := by omega
+        rw [ee, em, en, sigma_double, sigma_odd, sigma_odd]
+        have hsuc := sigma_succ_le (m/2+n/2)
+        omega
+  exact aux (m+n) m n rfl
+
+def weight (i j : ℕ) : ℕ := sigma i + sigma j - 1
+
+theorem weight_double (i j : ℕ) : weight (2*i) (2*j) = weight i j := by
+  simp [weight]
+
+theorem weight_add_le (i j k l : ℕ) (hij : i+j ≠ 0) (hkl : k+l ≠ 0) :
+    weight (i+k) (j+l) ≤ weight i j + weight k l + 1 := by
+  have h1 := sigma_add_le i k
+  have h2 := sigma_add_le j l
+  have hp1 : 0 < sigma i + sigma j := by
+    by_cases hi : i = 0
+    · simp only [hi, zero_add] at hij
+      simpa [hi] using sigma_pos hij
+    · exact lt_of_lt_of_le (sigma_pos hi) (Nat.le_add_right _ _)
+  have hp2 : 0 < sigma k + sigma l := by
+    by_cases hk : k = 0
+    · simp only [hk, zero_add] at hkl
+      simpa [hk] using sigma_pos hkl
+    · exact lt_of_lt_of_le (sigma_pos hk) (Nat.le_add_right _ _)
+  unfold weight
+  omega
+
+theorem odd_weight_bound (i k : ℕ) : sigma (i+2*k) ≤ weight i (2*k+1) := by
+  have h := sigma_add_le i (2*k)
+  simp only [sigma_double] at h
+  simpa [weight, sigma_odd, Nat.add_assoc] using h
+
+-- The two scalar divisibility steps used in the weighted square argument.
+theorem doubled_product_dvd {R : Type*} [CommRing R] {p q z : ℕ} {f g : R}
+    (hf : (2:R)^p ∣ f) (hg : (2:R)^q ∣ g) (hz : z ≤ p+q+1) :
+    (2:R)^z ∣ 2*f*g := by
+  apply dvd_trans (pow_dvd_pow 2 hz)
+  rcases hf with ⟨a, rfl⟩
+  rcases hg with ⟨b, rfl⟩
+  refine ⟨a*b, ?_⟩
+  simp only [pow_add, pow_one]
+  ac_rfl
+
+theorem diagonal_square_dvd {R : Type*} [CommRing R] {p : ℕ} {f : R}
+    (hf : (2:R)^p ∣ f) : (2:R)^p ∣ f*f := hf.mul_right f
+
+#print axioms sigma_add_le
+#print axioms weight_add_le
+#print axioms odd_weight_bound
+#print axioms doubled_product_dvd
+#print axioms diagonal_square_dvd
+end JacobiShifted

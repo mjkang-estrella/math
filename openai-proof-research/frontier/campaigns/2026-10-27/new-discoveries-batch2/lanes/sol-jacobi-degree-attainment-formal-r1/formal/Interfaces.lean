@@ -1,0 +1,25 @@
+import LiteralPureCoefficient
+
+set_option autoImplicit false
+set_option warningAsError true
+
+#check JacobiShifted.ParameterDegree.h_totalDegree
+#print axioms JacobiShifted.ParameterDegree.h_totalDegree
+#check JacobiShifted.ParameterDegree.h_bidegree_eq_zero
+#print axioms JacobiShifted.ParameterDegree.h_bidegree_eq_zero
+#check JacobiShifted.ParameterDegree.h_odd_top
+#print axioms JacobiShifted.ParameterDegree.h_odd_top
+#check JacobiShifted.ParameterDegree.h_odd_top_coeff
+#print axioms JacobiShifted.ParameterDegree.h_odd_top_coeff
+#check JacobiShifted.SourceBridge.scaledH_coeff_eq_zero
+#print axioms JacobiShifted.SourceBridge.scaledH_coeff_eq_zero
+#check JacobiShifted.SourceBridge.scaledH_odd_top
+#print axioms JacobiShifted.SourceBridge.scaledH_odd_top
+#check JacobiShifted.SourceBridge.scaledH_odd_pure_u
+#print axioms JacobiShifted.SourceBridge.scaledH_odd_pure_u
+#check JacobiShifted.SourceBridge.literal_pure_primitive
+#print axioms JacobiShifted.SourceBridge.literal_pure_primitive
+#check JacobiShifted.SourceBridge.sourceLogCoeff_pure_u
+#print axioms JacobiShifted.SourceBridge.sourceLogCoeff_pure_u
+#check JacobiShifted.SourceBridge.sourceKappa_pure_u
+#print axioms JacobiShifted.SourceBridge.sourceKappa_pure_u
