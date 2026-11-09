@@ -1,0 +1,1398 @@
+                                                                   Advances on Strictly ∆-Modular IPs*
+                                                Martin Nägele†           Christian Nöbel‡            Richard Santiago‡             Rico Zenklusen ‡
+
+
+
+                                                                                                Abstract
+                                                    There has been significant work recently on integer programs (IPs) min{c> x : Ax ≤ b, x ∈
+                                                  n
+                                                Z } with a constraint marix A with bounded subdeterminants. This is motivated by a well-known
+                                                conjecture claiming that, for any constant ∆ ∈ Z>0 , ∆-modular IPs are efficiently solvable, which
+                                                are IPs where the constraint matrix A ∈ Zm×n has full column rank and all n × n minors of
+
+
+
+
+arXiv:2302.07029v1 [cs.DS] 14 Feb 2023
+                                                A are within {−∆, . . . , ∆}. Previous progress on this question, in particular for ∆ = 2, relies
+                                                on algorithms that solve an important special case, namely strictly ∆-modular IPs, which further
+                                                restrict the n × n minors of A to be within {−∆, 0, ∆}. Even for ∆ = 2, such problems include
+                                                well-known combinatorial optimization problems like the minimum odd/even cut problem. The
+                                                conjecture remains open even for strictly ∆-modular IPs. Prior advances were restricted to prime ∆,
+                                                which allows for employing strong number-theoretic results.
+                                                    In this work, we make first progress beyond the prime case by presenting techniques not relying
+                                                on such strong number-theoretic prime results. In particular, our approach implies that there is a
+                                                randomized algorithm to check feasibility of strictly ∆-modular IPs in strongly polynomial time if
+                                                ∆ ≤ 4.
+
+
+
+
+                                            * Funded through the Swiss National Science Foundation grants 200021 184622 and P500PT 206742, the European Re-
+
+                                         search Council (ERC) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No
+                                         817750), and the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany’s Excellence Strat-
+                                         egy – EXZ-2047/1 – 390685813.
+                                            †
+                                              Research Institute for Discrete Mathematics and Hausdorff Center for Mathematics, University of Bonn, Bonn, Germany.
+                                         Email: mnaegele@uni-bonn.de.
+                                            ‡
+                                              Department of Mathematics, ETH Zurich, Zurich, Switzerland. Email: {cnoebel, rtorres, ricoz}@ethz.ch.
+1     Introduction
+Integer Programs (IPs) min{c> x : Ax ≤ b, x ∈ Zn } are a central NP-hard problem class in Com-
+binatorial Optimization. There is substantial prior work and interest in identifying special classes of
+polynomial-time solvable IPs while remaining as general as possible. One of the best-known such
+classes are IPs with a constraint matrix that is totally unimodular (TU), i.e., the determinant of any of
+its square submatrices is within {−1, 0, 1}. A long-standing open conjecture in the field is whether this
+result can be generalized to ∆-modular constraint matrices for constant ∆. Here, we say that a matrix
+A ∈ Zk×n is ∆-modular if it has full column rank and all n × n submatrices have determinants in
+{−∆, . . . , ∆}.1 For brevity, we call an IP with ∆-modular constraint matrix a ∆-modular IP. We recap
+the above-mentioned conjecture below. Unfortunately, we do not know its precise origin; it may be
+considered folklore in the field.
+Conjecture 1. For constant ∆ ∈ Z≥0 , ∆-modular IPs can be solved in polynomial time.
+    First progress on Conjecture 1 was made by Artmann, Weismantel, and Zenklusen [AWZ17], who
+showed that it holds for ∆ = 2 (the bimodular case). Fiorini, Joret, Weltge, and Yuditsky [FJWY22]
+show that the conjecture is true for an arbitrary constant ∆ under the extra condition that the constraint
+matrix has at most two non-zero entries per row or column. Through a non-trivial extension of the
+techniques in [AWZ17], it was shown by Nägele, Santiago, and Zenklusen [NSZ22] that there is a ran-
+domized algorithm to check feasibility of an IP with a strictly 3-modular constraint matrix in polynomial
+time. Here, a matrix A ∈ Zk×n is called strictly ∆-modular if it has full column rank and all its n × n
+submatrices have determinants in {−∆, 0, ∆}.
+    As a key ingredient, all these prior approaches solve certain combinatorial optimization problems
+with congruency constraints. This is not surprising, as even strictly ∆-modular IPs include the following
+class of MCCTU problems:2
+
+    Multi-Congruency-Constrained TU Problem (MCCTU): Let T ∈ Zk×n be TU, b ∈ Zk ,
+    c ∈ Rk , m ∈ Zq>0 , γi ∈ Zn for i ∈ [q], r ∈ Zq . Solve
+
+                         min{c> x : T x ≤ b, γi> x ≡ ri (mod mi ) ∀i ∈ [q], x ∈ Zn } .
+
+Unless mentioned otherwise, we assume that in the context of MCCTU problems, q and mi are constant.
+Even MCCTU with just a single congruency constraint, i.e., q = 1, already contains the classical and
+well-studied odd and even cut problems, and, more generally, the problem of finding a minimum cut
+whose number of vertices is r (mod m). (See [PR82; BC87; GLS84; GR95; NSZ19; NZ20] for related
+work.) It can also capture the minimum T -join problem, congruency-constrained flow problems, and
+many other problems linked to TU matrices.
+    Combinatorial optimization problems with congruency constraints are highly non-trivial and many
+open questions remain. As they are already captured by strictly ∆-modular IPs, this motivates the
+following weakening of Conjecture 1.
+Conjecture 2. Strictly ∆-modular IPs can be solved in polynomial time for constant ∆ ∈ Z≥0 .
+   Even resolving this weaker conjecture would settle several open problems, including congruency-
+constrained min cuts (in both directed and undirected graphs), or the problem of efficiently and deter-
+ministically finding a perfect matching in a red/blue edge-colored bipartite graph such that the number
+    1
+      A weaker variant of the conjecture claims efficient solvability of IPs with totally ∆-modular constraint matrices, where
+all subdeterminants are bounded by ∆ in absolute value. The conjecture involving ∆-modular matrices implies the weaker
+variant. Indeed, an IP min{c> x : Ax ≤ b, x ∈ Zn } with a totally ∆-modular constraint matrix can be reformulated as
+min{c> (x+ − x− ) : A(x+ − x− ) ≤ b, x+ , x− ∈ Zn     ≥0 }. It is not hard to see that the constraint matrix of the new LP remains
+totally ∆-modular; moreover, it has full column rank because of the non-negativity constraints.
+    2
+      To capture an MCCTU problem as a strictly ∆-modular IP, replace each congruency constraint γi> x ≡ ri (mod mi )
+by anQ  equality constraint γi> x + mi yi = r with yi ∈ Z. The corresponding constraint matrix is strictly ∆-modular for
+∆ = qi=1 mi .
+
+
+                                                                1
+of red matching edges is r (mod m). (This is a simplified version of the famous red-blue matching
+problem, where the task is to find a perfect matching with a specified number of red edges; for both
+versions, randomized algorithms are known.) Interestingly, for the bimodular case (∆ = 2), a result by
+Veselov and Chirkov [VC09] implies that Conjecture 1 and Conjecture 2 are equivalent (see [AWZ17]).
+    Our goal is to shed further light on Conjecture 2 and overcome some important hurdles of prior
+approaches. In a first step, we note that a positive resolution of Conjecture 2 does not only imply efficient
+solvability of MCCTU problems, but also vice versa, and this reduction works in strongly polynomial
+time.
+
+Lemma 3. Let ∆ > 0. Every strictly ∆-modularQ
+                                            IP can, in strongly polynomial time, be reduced to an
+MCCTU problem with moduli mi such that ∆ = qi=1 mi .
+
+     Without the strongly polynomial time condition, this also follows from very recent work of Grib-
+anov, Shumilov, Malyshev, and Pardalos [GSMP22, Lemma 4].
+     Further, we are interested in making progress regarding the feasibility version of Conjecture 2, i.e.,
+efficiently deciding whether a strictly ∆-modular IP is feasible. Prior approaches settle this question for
+∆ = 2 [AWZ17] and—using a randomized algorithm—for ∆ = 3 [NSZ22]. A main hurdle to extend
+these is that they crucially rely on ∆ being prime, for example through the use of the Cauchy-Davenport
+Theorem. Our main contribution here is to address this. In particular, we can check feasibility for ∆ = 4
+with a randomized algorithm, which is the first result in this context for non-prime ∆. More importantly,
+our techniques will hopefully prove useful for future advances on this challenging question.
+
+Theorem 4. There exists a strongly polynomial-time randomized algorithm to find a feasible solution of
+a strictly 4-modular IP, or detect that it is infeasible.
+
+    We remark that the randomization appearing in the above theorem comes from the fact that one build-
+ing block of our result is a reduction to a problem class that includes the aforementioned congruency-
+constrained red/blue-perfect matching problem, for which only randomized approaches are known.
+
+1.1     Group-constrained problems and proof strategy for Theorem 4
+To show Theorem 4, we exploit its close connection to MCCTU. Capturing the congruency constraints
+of an MCCTU problem through an abelian group constraint, we attain the following group-constrained
+TU feasibility problem.
+
+      Group-Constrained TU Feasibility (GCTUF): Let T ∈ Rk×n be a TU matrix, let b ∈ Zk , let
+      (G, +) be a finite abelian group, and let γ ∈ Gn and r ∈ G. The task is to show infeasibility or
+      find a solution of the system
+
+                                       T x ≤ b, γ > x = r, x ∈ Zn .
+
+Here, the scalar product γ > x denotes the linear combination of the group elements γ1 , . . . , γn with
+multiplicities x1 , . . . , xn in G. Group constraints generalize congruency constraints, which are obtained
+in the special case where G is cyclic. More generally, by the fundamental theorem of finite abelian
+groups, a finite abelian group G is, up to isomorphism, a direct product of cyclic groups. Hence, a
+group constraint can be interpreted as a set of congruency constraints and vice versa. Thus, GCTUF and
+MCCTU feasibility are two views on the same problem. We stick to GCTUF mostly for convenience
+of notation. Moreover, the GCTUF setting also allows for an elegant use of group-related results later
+on. One may assume that the group is given through its multiplication table (the Cayley table). In fact,
+the precise group representation is not of great importance to us. Concretely, for constant ∆, strictly
+∆-modular IP feasibility problems reduce to GCTUF problems with a constant size group. Many of our
+polynomial-time algorithmic results can even be extended to settings where the group size is not part of
+the input, and access to group operations is provided through an oracle.
+
+
+                                                     2
+    By a slight extension of Lemma 3 (see Section 2) and the aforementioned equivalent viewpoint of
+multiple congruency constraints and a group constraint, in order to prove Theorem 4, it is enough for us
+to show the equivalent statement below.
+Theorem 5. There exists a strongly polynomial time randomized algorithm for GCTUF problems with
+a group of cardinality at most 4.
+    On a high level, we follow a well-known strategy for TU-related problems by employing Seymour’s
+decomposition [Sey80] to decompose the problem into problems on simpler, more structured TU matri-
+ces. (See, e.g., [DK14; AWZ17; AF21; NSZ22].) Roughly speaking, Seymour’s decomposition states
+that a TU matrix is either very structured—in which case we call it a base block—or can be decomposed
+into smaller TU matrices through a small set of well-defined operations. (See the discussion following
+Theorem 15 for more details.) The use of Seymour’s decomposition typically comes with two main
+challenges, namely (i) solving the base block cases, and (ii) propagating solutions of the base block
+cases back through the decomposition efficiently to solve the original problem. First, we show that this
+propagation can be done efficiently for our problem.
+Theorem 6. Let G be an abelian group of size at most 4. Given an oracle for solving base block GCTUF
+problems with group G, we can solve GCTUF problems with group G in strongly polynomial time with
+strongly polynomially many calls to the oracle.
+     In fact, our approach underlying Theorems 5 and 6 operates in a hierarchy of GCTUF problems
+with increasingly relaxed group constraints of the form γ > x ∈ R for subsets R ⊆ G of increasing size,
+and allows for proving the above results for such relaxed GCTUF problems for arbitrary constant-size
+groups G as long as |G|−|R| ≤ 3. (See Section 4 for more details.) In principle, this is along the lines of
+the approach to congruency-constrained TU problems in [NSZ22], but incorporates the new viewpoint
+of group constraints, and additionally improves over earlier results in two ways: First, our approach
+applies to arbitrary finite abelian groups, while previous setups heavily relied on the group cardinality
+being a prime. Secondly, in the setting with relaxed group constraints, we extend the admissible range
+of |G| − |R| by one, thus proceeding further in the hierarchy of GCTUF problems, and newly covering
+GCTUF problems with groups of cardinality 4.
+     Besides being a key part of our approach, Theorem 6 underlines that base block GCTUF problems
+are not merely special cases, but play a key role in progress on general GCTUF problems. There are
+only two non-trivial types of such base block GCTUF problems, namely when the constraint matrix is
+a so-called network matrix or a transpose thereof. Both cases cover combinatorial problems that are
+interesting on their own, and their complexity status remains open to date. If the constraint matrix is
+a network matrix, GCTUF can be cast as a circulation problem with a group constraint. By reducing
+to and exploiting results of Camerini, Galbiati, and Maffioli [CGM92] on exact perfect matching prob-
+lems, a randomized algorithm for the congruency-constrained case has been presented in [NSZ22]. We
+observe that these results extend to the group-constrained setting. The other base block case, where the
+constraint matrix is the transpose of a network matrix, can be cast as a group-constrained directed min-
+imum cut problem by leveraging a result in [NSZ22]. Prior work combined this reduction with results
+on congruency-constrained submodular minimization [NSZ19] to solve the optimization version of the
+problem for congruency-constraints of prime power modulus. We show that the feasibility question on
+this base block can be solved efficiently on any finite abelian group of constant order, thus circumventing
+the prime power restriction that is intrinsic in prior approaches.
+Theorem 7. Let G be a finite abelian group. There is a strongly polynomial time algorithm for solving
+GCTUF problems with group G where the constraint matrix is the transpose of a network matrix.
+
+1.2   Further related work
+The parameter ∆ has been studied from various viewpoints. While efficient recognition of (totally)
+∆-modular matrices is open for any ∆ ≥ 2, approaches to approximate the largest subdeterminant in
+
+                                                    3
+absolute value were studied [DEFM15; Nik15]. Also, focusing on more restricted subdeterminant pat-
+terns proved useful [VC09; AEGOVW16; GSW21]. Aiming at generalizing a bound of Heller [Hel57]
+for ∆ = 1, bounds on the maximum number of rows of a ∆-modular matrix were obtained [GWZ18;
+LPSX22; AS22]. Also, the influence of the parameter ∆ on structure and properties of IPs and polyhe-
+dra is multi-faceted (see, e.g., [BDEHN14; EV17; GV16; GZ21; Gri21; LPSX20; PSW22; Tar86] and
+references therein).
+
+1.3   Structure of the paper
+We prove the strongly polynomial time reduction from Lemma 3 in Section 2. In Section 3, we prove
+Theorem 7. Section 4 illustrates our approach and new contributions towards Theorem 6 on a more
+technical level, and explains the main new ingredients of our proof. Throughout Section 4, we build on
+several results from [NSZ22] that are proved there for congruency-constrained TU problems, i.e., the
+case of a cyclic group constraint. In Appendix B, we show how these proofs can be adapted to the group
+setting.
+
+
+2     Reducing to group-constrained problems
+We prove the following slightly strengthened version of Lemma 3.
+
+Lemma 8. Let ∆ > 0. Given a strictly ∆-modular IP of the form min{c> x : Ax ≤ b, x ∈ Zn }, one
+can, in strongly polynomial time, determine an MCCTU problem
+
+                      min{c̄> y : T y ≤ b, γi> y ≡ ri (mod mi ) ∀i ∈ [q], y ∈ Zn }
+
+together with a non-singular n × n submatrix H of A such that the following holds:
+            Q
+   (i) ∆ = i∈[q] mi .
+  (ii) c̄> = c> H −1 .
+ (iii) The map x 7→ Hx is a bijection between feasible solutions of the strictly ∆-modular IP and the
+       MCCTU problem.
+
+    We remark that the one-to-one correspondence of feasible solutions given in Item (iii) of Lemma 8 is
+(besides Item (i)) precisely what we need to deduce our main result, Theorem 4, from Theorem 5. More-
+over, Items (ii) and (iii) of Lemma 8 together imply that x 7→ Hx is not only a bijection between feasible
+solutions, but also a bijection between optimal solutions of the two involved problems, so Lemma 3 is
+indeed also implied by Lemma 8.
+
+Proof of Lemma 8. We show how to transform the given strictly ∆-modular problem into an MCCTU
+problem. Let H be an n × n submatrix of A with |det(H)| = ∆. After a variable transformation to
+y = Hx, we can equivalently rewrite the original integer program in the form
+
+                                  min{c̄> y : T y ≤ b, H −1 y ∈ Zn } ,
+
+where c̄> = c> H −1 , and T = AH −1 . By definition, the map x 7→ Hx is a bijection between feasible
+solutions of the original IP and the above problem. Note that T is unimodular and contains an identity
+submatrix; hence T is totally unimodular. To complete the proof, it thus suffices to show that the con-
+straint H −1 y ∈ Zn can be transformed to multiple congruency constraints with moduli whose product
+equals ∆.
+    To this end, we first write H −1 = HI + HF with an integer matrix HI ∈ Zn×n and a fractional
+matrix HF ∈ [0, 1)n×n , i.e., matrices whose entries are given by
+                               j       k
+                    (HI )i,j := H −1 i,j     and (HF )i,j := H −1 i,j − (HI )i,j ,
+                                                                    
+
+
+
+                                                    4
+where, for x ∈ R, bxc is the integer part of x, i.e., the unique number n ∈ Z with n ≤ x < n + 1. Using
+this decomposition, we obtain
+                     H −1 y ∈ Zn        ⇐⇒        HI y + HF y ∈ Zn           ⇐⇒         HF y ∈ Zn .
+Because det(H) = ∆, we have ∆H −1 ∈ Zn×n by Cramer’s rule, and thus also H                 e F := ∆HF ∈
+Z n×n . Furthermore, the entries of H    e F are bounded by the constant ∆ in absolute value. Consequently,
+using a weakly polynomial time algorithm for computing the Smith normal form of an integer ma-
+trix [KB79], we can in strongly polynomial time determine the Smith normal form of H         e F , i.e., we can
+in strongly polynomial time find unimodular matrices S, U ∈ Zn×n and integers m           e i ∈ Z such that
+D = diag(m               e n ) = S −1 H
+            e 1, . . . , m            e F U −1 . Using this decomposition, we get
+
+                      HF y ∈ Zn         ⇐⇒        SDU y ∈ ∆Zn            ⇐⇒        DU y ∈ ∆Zn .
+Here, the last equivalence exploits unimodularity of S. Letting γi> denote the ith row of U , we can
+further rewrite
+    DU y ∈ ∆Zn          ⇐⇒                   e i γi> y ∈ ∆Zn
+                                  ∀i ∈ [n] : m                   ∀i ∈ [n] : γi> y ≡ 0 (mod mi ) ,
+                                                                        ⇐⇒
+                                  3
+                                                                Qn
+where we use mi := ∆/gcd(∆, m
+                            e i ). It is thus left to show ∆ =     i=1 mi . To this end, consider the
+composed map
+                                                        n  .
+                                       n U     n π
+                                                       Y
+                                  Φ : Z −→ Z −→           Z
+                                                            mi Z ,
+                                                                  i=1
+where, for z ∈ Zn , the first map is defined by z 7→ U z, and the second is the component-wise projection
+given by π(z) := (π1 (z1 ), . . . , πn (zn )), where πi denotes the natural projection from Z to Z/mi Z. As
+U is unimodular, the first map is an isomorphism of groups. Furthermore, π is a surjective group
+homomorphism. By the isomorphism theorem, we thus get an isomorphism
+                                         n
+                                                           Zn
+                                            .                .
+                                                         ∼
+                                         Y
+                                           Z      = im Φ
+                                             mi Z        =    ker Φ .
+                                         i=1
+
+Note that the cardinality of the left-hand side group is ni=1 mi . Therefore, we may finish the proof by
+                                                        Q
+showing that |Zn/ker Φ| = ∆. To this end, observe that ker Φ is the set of y ∈ Zn fulfilling the congruency
+constraints, i.e., γi> y ≡ 0 (mod mi ) for all i ∈ [n]. By the above discussion, this is precisely the set
+{y ∈ Zn : H −1 y ∈ Zn } = HZn . Consequently, |Zn/ker Φ| = |Zn/HZn | = |det(H)| = ∆, as desired.
+
+
+3       GCTUF with transposed network constraint matrices
+In the setting with a congruency constraint instead of a group constraint, [NSZ22] shows that every
+base block problem with a constraint matrix that is a transposed network matrix can be reduced to a
+node-weighted minimization problem over a lattice with a congruency constraint,4 i.e., a problem of the
+form
+                             min{w(S) : S ∈ L, γ(S) ≡ r (mod m)} ,                                  (1)
+where L ⊆ 2N is P                                  N , γ : N → Z, r ∈ Z, m ∈ Z>0 , w : N → R, and
+                a lattice on some finite ground setP
+we use γ(S) :=                                                5
+                   v∈S γ(v) as well as w(S) :=      v∈S w(v). Being a special case of congruency-
+constrained submodular minimization, it is known that such problems, and thus the corresponding
+    3
+      Note we might have m   e i = 0 for some i ∈ [n]. In this case, gcd(∆, me i ) = ∆ and hence mi = 1, so the corresponding
+congruency constraint is always satisfied.
+    4
+      In fact, the proof in [NSZ22] claims a reduction to a submodular minimization problem, but shows the stronger one
+presented here.
+    5
+      We recall that a lattice L ⊆ 2N is a set family such that for any A, B ∈ L, we have A ∩ B, A ∪ B ∈ L. We assume such
+a lattice to be given by a compact encoding in a directed acyclic graph H on the vertex set N such that X ⊆ N is an element
+                               −
+of the lattice if and only if δH (X) = ∅ (cf. [GLS93, Section 10.3]). Here, as usual, in a digraph G = (V, A) and for X ⊆ V ,
+we denote by δ + (X) and δ − (X) the arcs in A leaving and entering X, respectively. Moreover, we write δ ± (v) := δ ± ({v})
+for v ∈ V .
+
+
+                                                             5
+congruency-constrained TU problems with a transposed network constraint matrix, can be solved in
+strongly polynomial time for constant prime power moduli m, while the case of general constant com-
+posite moduli remains open [NSZ19]. The progress on GCTUF, particularly the reduction to base block
+feasibility problems through Theorem 6 and its generalization (Theorem 16 in Section 4), motivates
+studying these reductions and results in the feasibility setting and with a group constraint instead of a
+congruency constraint, giving rise to the following problem.
+
+    Group-Constrained Lattice Feasibility (GCLF): Let N be a finite set, L ⊆ 2N a lattice,
+    (G, +) a finite abelian group, γ : N → G, r ∈ G. The task is to find X ∈ L with γ(X) = r, or
+    decide infeasibility.
+
+We observe that the reduction in [NSZ22] from congruency-constrained TU problems with transposed
+network constraint matrices to problems of the form given in (1) extends to the group-constrained case.
+In particular, we obtain the following result in the feasibility setting. (See Appendix B.2 for some
+details.)
+
+Proposition 9. Let G be a finite abelian group. Any GCTUF problem with group G and a constraint
+matrix that is a transposed network matrix can in strongly polynomial time be reduced to a GCLF
+problem with group G.
+
+    Thus, it remains to study GCLF problems. Interestingly, for the pure feasibility question, we can
+circumvent the barriers present in the optimization setting, and obtain the following result through a
+concise argument.
+
+Theorem 10. Let G be a finite abelian group. GCLF problems with group G can be solved in strongly
+polynomial time.
+
+   Clearly, Proposition 9 and Theorem 10 together imply Theorem 7. The main observation towards a
+proof of Theorem 10 is the following elementary lemma.
+
+Lemma 11. Let G be a finite P abelian group, and let γ1 , . . . , γ` ∈ G. If ` ≥ |G|, then there is a non-empty
+subset I ⊆ [`] such that i∈I γi = 0.
+                        P
+Proof. Either si := j≤i γj = 0 for some i ∈ [`], or there exist i < j with si = sj ; hence I = [i] or
+I = {i + 1, . . . , j}, respectively, has the desired properties.
+
+    To prove Theorem 10, we work with a representation of the lattice L through an acyclic digraph
+H (see Footnote 5). We exploit that every X ∈ L is uniquely defined by the subset CX := {x ∈
+X : δ + (x) ⊆ δ + (X)}.
+
+Proof of Theorem 10. We claim that if the given GCLF problem is feasible, there is a feasible X with
+|CX | < |G|. If so, we obtain an efficient procedure for GCLF with group G through enumerating all
+such CX and checking if γ(X) = r. To prove the claim, assume for contradiction that it is wrong,
+and let X ∈ L be minimal with γ(X) = r. Then |CX | ≥ |G|, and applying Lemma 11 to CX gives
+a non-empty subset Y ⊆ CX with γ(Y ) = 0. Thus, X \ Y is a strictly smaller lattice element with
+γ(X \ Y ) = γ(X) − γ(Y ) = γ(X) = r, a contradiction.
+
+
+4    Approaching GCTUF problems and a proof of Theorem 6
+In order to tackle GCTUF problems, following ideas from [NSZ22], we introduce a hierarchy of slightly
+relaxed GCTUF problems by weakening the group constraint.
+
+
+
+
+                                                      6
+   R-Group-Constrained TU Feasibility (R-GCTUF): Let T ∈ {−1, 0, 1}k×n be TU, b ∈ Zk ,
+   let (G, +) be a finite abelian group, γ ∈ Gn and R ⊆ G. The task is to show infeasibility or find
+   a solution of
+                                      T x ≤ b, γ > x ∈ R, x ∈ Zn .
+
+Here, we typically call R the set of target elements. The above setup allows us to measure progress
+between GCTUF (the case of |R| = 1) and an unconstrained IP with TU constraint matrix (captured
+by setting R = G). In particular, the difficulty of an R-GCTUF problem increases as the size of R,
+i.e., the number of target elements, decreases. The main parameter capturing this hardness is the depth
+d := |G| − |R| of the problem. We show the following generalization of Theorem 5.
+
+Theorem 12. Let G be a finite abelian group. There is a strongly polynomial randomized algorithm
+solving R-GCTUF problems with group G and |G| − |R| ≤ 3.
+
+   Our approach exploits uses Seymour’s decomposition theorem for TU matrices. To state this result,
+we first introduce the additional notions of a 3-sum of matrices, and pivoting operations.
+
+Definition 13 (3-sum). Let A ∈ ZkA ×nA , B ∈ ZkB ×nB ,e ∈ 
+                                                              ZkA , f ∈ ZnB , g ∈ ZkB , h ∈ ZnA . The
+                              >                        >              >
+3-sum of hA> 0e 1e and g0 g1 fB is hA> 0e 1e ⊕3 g0 g1 fB := ghA> efB .
+                                           
+
+
+Definition 14 (Pivoting).
+                       Let  C ∈ Zk×n , p ∈ Zn , q ∈ Zk , and ε ∈ {−1, 1}. The matrix obtained from 
+                           >                                                                    εp>
+pivoting on ε in T := qε pC , i.e., pivoting on the element T11 of T , is pivot11 (T ) := −ε
+                                                                                          εq C−εqp  >   .
+More generally, pivotij (T ) for indices i and j such that Tij ∈ {−1, 1} is obtained from T by first
+permuting rows and columns such that the element Tij is permuted to the first row and first column,
+then performing the above pivoting operation on the permuted matrix, and finally reversing the row and
+column permutations.
+
+   With this notation at hand, we can state Seymour’s TU decomposition theorem as follows.
+
+Theorem 15 (Seymour’s TU decomposition). Let T ∈ Zk×n be a totally unimodular matrix. Then, one
+of the following cases holds.
+  (i) T or T > is a network matrix.
+ (ii) T is, possibly after iteratively applying the operations of
+         – deleting a row or column with at most one non-zero entry,
+         – deleting a row or column that appears twice or whose negation also appears in the matrix,
+            and
+         – changing the sign of a row or column,
+      equal to one of
+                                     1 −1 0 0 −1      !         11111
+                                                                     !
+                                    −1 1 −1 0 0                 11100
+                                     0 −1 1 −1 0        and     10110       .
+                                     0 0 −1 1 −1                10011
+                                    −1 0 0 −1 1                 11001
+
+(iii) T can, possibly after row and column permutations and pivoting once, be decomposed into a 3-sum
+      of totally unimodular matrices with nA , nB ≥ 2.
+Additionally, we can in time poly(n) decide which of the cases holds and determine the involved matri-
+ces.
+                                                           >
+                                                              
+     We remark that typically, a 3-sum of the form ghA> efB     would be called a 1- or 2-sum if both
+or one of the off-diagonal blocks ef > and gh> were zero, respectively. However, as we treat those
+special cases in the same way as 3-sums, there is no need for us to further distinguish between them.
+Generally, we refer to matrices covered by Items (i) and (ii) of Theorem 15 as base block matrices. By
+porting results on congruency-constrained base block problems of [NSZ22] to the group-constrained
+setting and combining them with our new Theorem 7, it follows that GCTUF problems can be solved in
+strongly polynomial time if the constraint matrix is a base block matrix. The potential pivoting step in
+
+                                                   7
+Item (iii) of Theorem 15 can also be handled by extending a result from [NSZ22] to the group setting.
+For the sake of completeness, we comment on how to extend the arguments from [NSZ22] for base
+block constraint matrices or pivot steps in Appendices B and C, respectively. Showing how to deal with
+R-GCTUF problems with constraint matrices that are 3-sums will lead to the following generalization of
+Theorem 6 which, in combination with the aforementioned results on base block problems, immediately
+implies Theorem 12. We devote the rest of this section to a discussion of its proof.
+
+Theorem 16. Let G be a finite abelian group and ` ∈ Z≥1 with ` ≥ |G| − 3. Given an oracle for solving
+base block R-GCTUF problems with group G and any R ⊆ G with |R| ≥ `, we can solve R-GCTUF
+problems with group G and R ⊆ G with |R| ≥ ` in strongly polynomial time with strongly polynomially
+many calls to the oracle.
+
+4.1   Reducing to a simpler problem when the target elements form a union of cosets
+If R, the set of target elements, is a union of cosets of the same non-trivial proper subgroup H of G (i.e.,
+it is of the form R = ki=1 (gi + H) for some g1 , . . . , gk ∈ G, or equivalently, R = R + H), we can
+                         S
+directly reduce to a simpler problem. We formalize this in the following lemma.
+
+Lemma 17. Assume we are given an R-GCTUF problem
+
+                                       T x ≤ b, γ > x ∈ R, x ∈ Zn
+
+such that R = R + H for a non-trivial proper subgroup H of G. Then, the set of feasible solutions
+                                                                                  b = G/H , R by
+of the given R-GCTUF problem is invariant under replacing G by the quotient group G
+                                  n
+b     R                     b ∈ G under the quotient map.
+R = /H , and γ by its image γ   b
+
+Proof. Let P denote the original R-GCTUF problem, and let Pb denote the modified one. The inequality
+system T x ≤ b is the same in P and Pb, hence it is enough to show that γ > x ∈ R if and only if γ
+                                                                                                 b> x ∈ R.
+                                                                                                        b
+    To this end, first note that for x ∈ Zn , γ > x ∈ R immediately implies γ b> x ∈ Rb by definition. For
+                                     n            >
+the other direction, assume x ∈ Z satisfies γ   b x ∈ R. Then, by definition of γ  b and R,
+                                                                                         b we know that
+                                        >                   >
+there is an element h ∈ H such that γ x + h ∈ R. Then γ x ∈ R − h = R, as desired.
+
+    The depth of the new problem given by Lemma 17 in the corresponding hierarchy is db = |G/H | −
+|R/H | = |G|−|R|
+           |H|   < |G| − |R|, so we indeed end up with a simpler problem in that respect. Since the
+existence of such a subgroup H can be checked efficiently (given that G has constant size), we can
+always and in constant time determine upfront whether the R-GCTUF problem at hand is reducible
+using Lemma 17, and if so, reduce it to a simpler R-GCTUF problem. Thus, for the rest of this section,
+we assume R is not a union of cosets. This assumption allows us to apply a special case of the Cauchy-
+Davenport theorem that holds despite the fact that the group order may not be prime. We refer to
+Lemma 19 for details.
+
+4.2   Decomposing the problem
+We now focus on an R-GCTUF
+                                  problem
+                                           with a constraint matrix T that can be decomposed into a
+                            A ef >
+3-sum of the form T = gh> B . The decomposition allows for splitting x, b, and γ into two parts
+accordingly, giving the equivalent formulation
+
+                 A ef >                                                         xA ∈ ZnA
+                               
+                               xA   b
+                             ·    ≤ A ,                >
+                                                      γA       >
+                                                         xA + γB xB ∈ R     ,               .           (2)
+                gh> B          xB   bB                                          xB ∈ ZnB
+
+In the inequality system, the variables xA and xB interact only through the rank-one blocks ef > and
+gh> . Fixing values of α := f > xB and β := h> xA allows for rephrasing (2) through the following two
+
+
+
+                                                     8
+almost independent problems
+
+                            AxA ≤ bA − αe                         BxB ≤ bB − βg
+                           h> xA = β                  and        f > xB = α               ,                    (3)
+                                      nA                                     nB
+                              xA ∈ Z                                xB ∈ Z
+                                                                                                    >
+where we seek to find solutions xA and xB such that their corresponding group elements rA := γA       xA
+              >
+and rB := γB xB , respectively, satisfy rA + rB ∈ R. Hence, this desired relation between the target
+elements rA and rB is the only dependence between the two problems once α and β are fixed. We
+assume without loss of generality that A has no fewer columns than B, and refer to the problem on the
+left as the A-problem, and the problem on the right as the B-problem. We denote by Π the set of all
+(α, β) ∈ Z2 such that both the A- and B-problem are feasible. (Note that both problems are described
+through a TU constraint matrix; hence, feasibility can be checked efficiently.) Also, for (α, β) ∈ Π, let
+πA (α, β) ⊆ G be all group elements rA ∈ G for which there is a solution xA to the A-problem with
+γ > xA = rA , and define πB analogously. We refer to πA and πB as patterns. Hence, (2) is feasible if
+and only if there is a pair (α, β) ∈ Π such that, for some rA ∈ πA (α, β) and rB ∈ πB (α, β), we have
+rA + rB ∈ R. Thus, patterns contain all information needed to decide feasibility.
+     Using techniques from [NSZ22], we can restrict our search for feasible solutions to a constant-size
+subset Πb ⊆ Π. More precisely, one can show the following (we give more details in Appendix A.1).
+
+Lemma 18. One can in strongly polynomial time find `i , ui ∈ Z for i ∈ {0, 1, 2}, with ui − `i ≤ d such
+that
+              Π := (α, β) ∈ Z2 : `0 ≤ α + β ≤ u0 , `1 ≤ α ≤ u1 , `2 ≤ β ≤ u2
+                    
+              b                                                                                      (4)
+          b ⊆ Π, and if (2) is feasible, then there is a pair (α, β) in Π
+satisfies Π                                                             b for which there is a solution xA to
+                                                              >         >
+the A-problem and a solution xB to the B-problem with γ xA + γ xB ∈ R.
+
+     Therefore, the challenges lie less in the size of Π, but rather in how to obtain information on the
+sets πA (α, β) and πB (α, β) for pairs (α, β) ∈ Π. Opposed to previous techniques, which almost solely
+focused on πB , we investigate both πA and πB and their interplay—see Section 4.3.
+     As B has at most half the columns of the constraint matrix T of the original R-GCTUF problem (2),
+we can afford (runtime-wise) to recursively call our algorithm multiple times on the B-problem for
+different targets RB of the same depth d = |G| − |R| as the original problem, i.e., with |RB | = |R|.
+(We refrain from using larger depths, as GCTUF become harder with increasing depth.) This allows us
+to compute a set π̄B (α, β) ⊆ πB (α, β) of size |π̄B (α, β))| = min{d + 1, πB (α, β)}. Indeed, we can
+start with π̄B (α, β) = ∅ and, as long as |π̄B (α, β)| < min{d + 1, πB (α, β)}, we solve an RB -GCTUF
+B-problem (i.e., we look for a B-problem solution xB with γ > xB ∈ RB ) with RB = G \ π̄B (α, β)
+being a set of size at least |G| − d. If RB ∩ πB (α, β) 6= ∅, then we find an element in RB ∩ πB (α, β) that
+can be added to π̄B (α, β) and we repeat; otherwise, RB ∩ πB (α, β) = ∅ and we know that we computed
+π̄B (α, β) = πB (α, β).
+     To the contrary, note that the A-problem may be almost as big as the original GCTUF problem (pos-
+sibly with just two fewer columns). Hence, here we cannot afford (runtime-wise) a similar computation
+as for the B-problem. However, we can afford to solve multiple RA -GCTUF A-problems of smaller
+depth, i.e., |RA | > |R|, because the runtime decreases significantly with decreasing depth. By using
+the same approach as in the B-problem, but with sets RA of size |RA | ≥ |R| + 1, we obtain a set
+π̄A (α, β) ⊆ πA (α, β) of size |π̄A (α, β)| = min{d, πA (α, β)}.
+                                                                                                  1            `A
+     Let us next take a closer look at patterns. Fix some (α, β) ∈ Π and let πA (α, β) = {rA        , . . . , rA  }
+                                               i                  1        `A
+for some `A ≥ 1 and pairwise different rA ∈ G, and let xA , . . . , xA be corresponding solutions of
+                         > i        i                i
+the A-problem with γA      xA = rA    . Define `B , rB , and xiB analogously. Observe that if `A ≤ d and
+`B ≤ d + 1, we have π̄X (α, β) = πX (α, β) for both X ∈ {A, B}. Hence, we can compute all feasible
+                                                  i      j
+group elements and check explicitly whether rA       + rB  ∈ R for some i ∈ [`A ] and j ∈ [`B ], i.e., whether
+a solution exists. If `B ≥ d + 1, we can (independently of `A ) even show that there always exists a
+
+
+                                                        9
+feasible solution, and we can also find one: Indeed, we can compute d + 1 solutions xi := (x1A , xiB )
+                               1      i                                            1    i
+with pairwise different sums rA   + rB  ∈ G, at least one of which must satisfy rA   + rB ∈ R. If `A ≥ d
+and `B ≥ 2, we can argue similarly: We show that among any d elements of π̄A (α, β), and any two
+                                                                 i    j       i    j
+elements of π̄B (α, β) (which we can compute), there is a pair rA  , rB with rA + rB ∈ R. Note that while
+for groups of prime order this can be shown via the Cauchy-Davenport theorem, the above result does
+not hold in general. We show, however, that as long as R is not a union of cosets in G, we can recover
+the implication (cf. Section 4.1 for why this assumption is legit).
+
+Lemma 19. Let G be a finite abelian group, and let R ⊆ G be such that R 6= R + H for any non-trivial
+subgroup H of G. Then, for any subsets X, Y ⊆ G with |X| = |G| − |R| and |Y | ≥ 2, we have
+(X + Y ) ∩ R 6= ∅.
+
+Proof. Let b1 , b2 ∈ Y with b1 6= b2 , and set h = b1 − b2 . Assume (X + Y ) ∩ R = ∅. Then |X| =
+|G| − |R| implies |X + Y | = |X|. Thus, X + b1 = X + b2 and hence X = X + h. Iterating
+gives X = X + hhi, where hhi denotes the subgroup generated by h. As R = G \ (X + b1 ), we get
+R = R + hhi, a contradiction.
+
+      The following observation summarizes the above discussion.
+
+Observation 20. Let (α, β) ∈ b  Π. If |π̄A (α, β)| ≤ d − 1 or |π̄B (α, β)| ≥ 2, we can immediately
+determine whether a feasible solution to the original R-GCTUF problem exists for such (α, β), and if
+so, obtain one by combining solutions computed for the A- and B-subproblem when determining π̄A
+and π̄B .
+
+    Thus, the only case in which we cannot immediately check whether a feasible solution exists for
+some (α, β), is when `B = 1 and `A ≥ d + 1 (which imply |π̄A (α, β)| = d and |π̄B (α, β)| = 1). This is
+the only case where we may have (πA (α, β) + πB (α, β)) ∩ R 6= ∅ but (π̄A (α, β) + π̄B (α, β)) ∩ R = ∅,
+in which case we say that (α, β) contains a hidden solution.
+
+4.3     New insights towards overcoming previous barriers for d = 3
+We now describe how our new techniques allow for overcoming barriers restricting previous approaches
+to depth d = 2. Recall that we focus on a constant size subset Π   b as defined in (4). We call sets of this
+form, for any choice of `i and ui , pattern shapes, and denote by
+                                                               1
+                                                                   
+                                       D := ±( 10 ), ±( 01 ), ± −1                                       (5)
+
+the possible edge directions of conv(Π).
+                                      b Focusing on Π   b allows for efficiently computing π̄X (α, β) for
+X ∈ {A, B} and all (α, β) ∈ b  Π to the extent discussed earlier. In order to proceed, we use a structural
+result from [NSZ22], called averaging, that allows us to relate solutions—and thus elements of πX —
+across different (α, β). Despite being true in more generality, the exposition here requires the following
+special case only.
+
+Proposition 21 ([NSZ22, special case of Lemma 5.3]). Consider an R-GCTUF problem as described
+in (2). Let X ∈ {A, B}, v ∈ D, and (α, β) ∈ Π    b with (α, β) + 2v ∈ b Π. Given a solution x1 of the
+X-problem for (α, β) and, similarly, x2 for (α, β) + 2v, there are solutions x3 , x4 for the X-problem
+for (α, β) + v such that x1 + x2 = x3 + x4 .
+
+    We remark that the proof of the above result for congruency-constrained problems given in [NSZ22]
+only exploits that congruency-constraints are linear constraints; therefore, the result carries over to
+group-constraints seamlessly.
+    In previous approaches for depth d = 2, it was enough to only compute a single element from πA
+(e.g., by solving the A-problem after dropping the group constraint). Concretely, consider patterns of
+the shape as given in Figure 1. For d = 2, Proposition 21 can be used to show that, if there is a hidden
+feasible solution for (α, β) = (0, 0) or (α, β) = (2, 0), then there must also be a feasible solution for
+
+                                                    10
+                 β            πA                                     β            πB
+
+                 0    0,1,2 0, 1      0                              0       1    0, 1    0
+
+                        0      1     2     α                                 0     1      2    α
+
+  Figure 1: Possible patterns πA and πB for a problem with group G = Z/4Z. Every square corresponds to a
+  pair (α, β) ∈ Π,
+                b and the numbers in the box indicate elements of πA (α, β) and πB (α, β), respectively. For
+  R = {3}, there is a feasible solution with (α, β) = (0, 0), but this cannot be detected without studying πA .
+
+
+(α, β) = (1, 0). The example in Figure 1 shows that this is no longer true if the depth d exceeds 2, as
+only (α, β) = (0, 0) admits a feasible solution.
+    This problem can be circumvented by analyzing the A-pattern π̄A . As argued in Section 4.2, if a pair
+(α, β) has a hidden solution, then |πA (α, β)| ≥ d + 1 (and hence |π̄A (α, β)| = d), hence we assume
+that there exists at least one such pair. The following result uses averaging (i.e., Proposition 21) to show
+that pairs (α0 , β 0 ) adjacent to such a pair (α, β) containing a hidden solution also have large π̄A (α0 , β 0 ).
+
+Lemma 22. Let d ∈ {1, 2, 3}, v ∈ D, and (α, β) ∈ Π
+                                                 b such that |πA (α, β)| ≥ d+1 and (α, β)+2v ∈ b
+                                                                                               Π.
+Then |π̄A ((α, β) + v)| = d.
+
+Proof. It is enough to show that |πA ((α, β) + v)| ≥ d. To this end, for each of the at least d + 1 elements
+r ∈ πA (α, β), let xr1 be a corresponding solution of the A-problem, and let x2 denote any fixed solution
+for the A-problem on the pair (α, β) + 2v. Proposition 21 applied to xr1 and x2 gives solutions xr3 and
+                                  > r     > r                           > r      > r
+xr4 corresponding to elements γA    x3 , γA x4 ∈ πA ((α, β) + v) with γA  x3 + γA  x4 taking at least d + 1
+different values. Assume for the sake of deriving a contradiction that |πA ((α, β) + v)| ≤ d − 1. Then,
+since the number of different sums of pairs of elements in πA ((α, β) + v) is bounded by d−1   2   +d−1 =
+(d − 1)d/2 < d + 1 for d ∈ {1, 2, 3}, this contradicts the above construction.
+
+
+Remark 23. For depth d = 4, one can find GCTUF problems with G = Z/5Z and patterns that fail to
+satisfy Lemma 22; we present one such example in Figure 2. Moreover, we remark that Lemma 22 is the
+only place in our proofs where we use the assumption that d = |G| − |R| ≤ 3.
+
+
+                 β            πA                                     β            πB
+                      0, 1, 0, 1,
+                 0
+                      2,3,4 2         0                              0       1    0, 1    0
+
+                        0      1     2     α                                 0     1      2    α
+
+  Figure 2: Possible patterns πA and πB for a problem with group G = Z/5Z. Every square corresponds to a
+  pair (α, β) ∈ b
+                Π, and the numbers in the box indicate the elements of πA (α, β) and πB (α, β), respectively.
+  For d = 4, Lemma 22 fails to hold for (α, β) = (0, 0) and v = (1, 0).
+
+    To proceed, we observe that if, on top of the assumption in Lemma 22, |πB ((α, β) + v)| ≥ 2 holds,
+then Lemma 19 guarantees (π̄A ((α, β) + v) + π̄B ((α, β) + v)) ∩ R 6= ∅, i.e., existence of a feasible
+solution. Thus, from now on, we analyze both the A- and B-patterns in detail, in particular through
+averaging, to find a pattern constellation as mentioned above, or identify additional properties that allow
+for direct progress.
+
+4.4   Analyzing pattern structure
+Before getting to an exhaustive analysis of patterns based on the insights laid out earlier, we introduce
+notions that will allow us to distinguish patterns from a structural point of view (also see Figure 3).
+
+
+
+                                                        11
+Definition 24. Let D be the possible edge directions of a pattern shape as defined in (5). We call
+(α, β) ∈ Π
+         b an interior pair if (α, β) + v ∈ Π b for all v ∈ D, a border pair if (α, β) ± v ∈ Π
+                                                                                             b for exactly
+two v ∈ D, and a vertex pair if it is not an interior or border pair.
+
+                                              β
+
+                                                    x x
+                                                    b    i   x
+                                                    x   b    x
+                                                                   α
+
+       Figure 3: A pattern shape with interior, border, and vertex pairs (marked i, b, and x, respectively).
+
+    Note that for a border pair (α, β), due to symmetry, the two directions v ∈ D satisfying (α, β) ± v ∈
+b will always be antiparallel, i.e., v and −v for some v ∈ D. Next, we summarize results of [NSZ22]
+Π
+that we reuse here. We remark that these results were proved in a congruency-constrained setting,
+but translate to problems with group constraints straightforwardly. For the sake of completeness, we
+comment on how to adapt the proofs in Appendix A.2.
+Theorem 25 ([NSZ22]). Consider an R-GCTUF problem as described in (2).
+  (i) If there is some (α, β) ∈ Π   b with |π̄B (α, β)| ≥ 2, then for each (α0 , β 0 ) ∈ Π,
+                                                                                         b there exists v ∈
+                                  0   0
+      D ∪ {0} such that |π̄B ((α , β ) + v)| ≥ 2. If in addition, b
+                                                                  Π contains an interior pair, then for each
+      (α , β ) ∈ Π, v can be chosen such that we additionally have (α0 , β 0 ) + 2v ∈ Π.
+          0  0    b                                                                      b
+ (ii) If |πB (α, β)| = 1 for all (α, β) ∈ Π, or Π only contains vertex pairs and there are no solutions for
+                                           b     b
+      (α, β) ∈ b Π with |π̄B (α, β)| ≥ 2, then the problem can be reduced to a single R-GCTUF problem
+      with the same group G and at the same depth d, and strictly fewer variables.
+    The two statements in the above theorem serve a complimentary purpose: While Item (ii) allows
+for direct progress (by reducing the number of variables), particularly in the case where no (α, β) ∈ Π    b
+satisfies |πB (α, β)| ≥ 2, Item (i) shows that whenever such (α, β) are present, then they are, in a certain
+sense, well spread over the pattern. We will exploit the latter in combination with Lemma 22.
+    To formally analyze patterns, based on Observation 20, we may assume that we face an R-GCTUF
+problem for which b   Π contains at least one (α, β) such that |πA (α, β)| ≥ d + 1 and |πB (α, β)| = 1.
+Starting from there, we distinguish four different types of pattern structure as follows: (I) |πB (α, β)| = 1
+for all (α, β) ∈ bΠ, or this is not the case and (II) Π                                Π has no interior but
+                                                      b has an interior pair, or (III) b
+border pairs, or (IV) Π has only vertex pairs. The remainder of this section is devoted to presenting how
+                       b
+to achieve progress in each of these four cases.
+
+Pattern structure of type I
+Pattern structure of type I is covered by Theorem 25 (ii), which allows to reduce the problem to a new
+GCTUF problem with same group G and same depth d, and at least one variable less, thus allowing to
+make progress in that respect.
+
+Pattern structure of type II
+For pattern structure of type II, we argue that if the R-GCTUF problem is feasible, then (π̄A + π̄B )∩R 6=
+∅. More precisely, we show that there must exist (α, β) ∈ Π          b with |π̄A (α, β)| = d and |π̄B (α, β)| ≥ 2.
+This then implies the desired result by Lemma 19. Concretely, assume that there exist (α0 , β 0 ) ∈
+Π
+b containing a hidden solution. Then, since Π           b contains an interior pair, and there exists (α, β) ∈
+b with |πB (α, β)| ≥ 2, by Theorem 25 (i) there exists v ∈ D such that (α0 , β 0 ) + 2v ∈ Π
+Π                                                                                                           b and
+        0    0                                                     0   0
+|πB ((α , β ) + v)| ≥ 2. As Lemma 22 implies that |π̄A ((α , β ) + v)| = d, it follows by Lemma 19 that
+(π̄A ((α0 , β 0 ) + v) + π̄B ((α0 , β 0 ) + v)) ∩ R 6= ∅; thus we can find a solution at (α0 , β 0 ) + v.
+
+                                                        12
+Pattern structure of type III
+In this case, we show that if π̄A + π̄B does not hit the target set R, i.e., we fail to find a solution by
+combining solutions of the A- and B-problem that we computed recursively, then we can reduce to a
+smaller pattern shape Π0 , and recurse. Through such a reduction, we will after constantly many steps
+reach pattern structures of type I or type IV, and therefore achieve progress through the techniques
+presented for the corresponding type.
+    To start with, we show the following structural auxiliary result. We remark that this result can be
+seen as an implication of [NSZ22, Lemma 5.12], but we provide a more direct proof here.
+
+Lemma 26. Assume that Π                                       Π contains at most four vertex pairs.
+                      b does not contain interior pairs. Then b
+
+Proof. Through shifting, we may assume that `1 = `2 = 0, and thus also `3 ≥ 0 (if `3 < 0, we may set
+it to zero without changing bΠ). Similarly, we may assume u3 ≤ u1 + u2 . Note that if u1 − `1 ≤ 1 there
+are at most four vertex pairs: At most two pairs (α, β) may satisfy α = `1 , and at most two further pairs
+may have α = u1 . Similarly, we are done if u2 − `2 ≤ 1, or u3 − `3 ≤ 1. Thus, we assume ui − `i ≥ 2
+for i ∈ {1, 2, 3}. Consider the pair
+                                     (
+                                        (1, `3 )                 if `3 < u2
+                            (α, β) =                                          .
+                                        (`3 − u2 + 2, u2 − 1) if `3 ≥ u2
+
+By definition, 0 < α, β < u2 , and `3 < `3 + 1 = α + β < u3 . Because (α, β) can not be an interior
+pair, we must either have α ≥ u1 , or β ≤ 0. Because u1 ≥ 2 + `1 = 2, we can only have α ≥ u1 in the
+case `3 ≥ u2 , which implies `3 + 2 ≥ u1 + u2 . As also, `3 + 2 ≤ u3 ≤ u1 + u2 , these inequalities must
+be tight, implying that there are precisely the three vertex pairs (u1 , u2 ), (u1 − 2, u2 ), and (u1 , u2 − 2).
+Similarly, because u2 − 1 ≥ 1 + `2 ≥ 1, we can only have β ≤ 0 in the case `3 < u2 , which implies
+`3 = 0. Consequently, we must also have u2 = 2; otherwise (1, 1) is an interior pair. This implies that
+there are precisely the three vertex pairs (0, 0), (2, 0), (0, 2), and completes the proof.
+
+    With the above at hand, we can achieve the desired progress for pattern structure of type III.
+
+Lemma 27. Consider an R-GCTUF instance of the form given in (2), and let the corresponding pattern
+shape Πb be of type III. Then either (π̄A (α, β) + π̄B (α, β)) ∩ R 6= ∅ for some (α, β) ∈ b
+                                                                                          Π, or we can in
+                                                  0
+strongly polynomial time find a pattern shape Π ( Π such that the R-GCTUF instance is feasible on Π
+                                                       b                                               b
+                                  0
+if and only if it is feasible on Π .
+
+Proof. First assume there is a border pair (α, β) with |πB (α, β)| ≥ 2. Consider the unique constraint
+in the inequality description of Π   b that is tight at (α, β), and assume (α0 , β 0 ) ∈ Π
+                                                                                         b \ {(α, β)} is another
+pair satisfying the same constraint with equality, and such that there is a hidden solution at (α0 , β 0 ).
+Let v ∈ D be the direction pointing from (α0 , β 0 ) to (α, β). By applying Proposition 21 repeatedly,
+we get |π̄B ((α0 , β 0 ) + v)| ≥ 2. Moreover, as (α, β) is a border pair, we have that (α, β) + v lies in
+b and hence so does (α0 , β 0 ) + 2v. It then follows from Lemma 22 that |π̄A ((α0 , β 0 ) + v)| = d, and
+Π,
+hence (π̄A ((α0 , β 0 ) + v) + π̄B ((α0 , β 0 ) + v)) ∩ R 6= ∅ by Lemma 19. Thus, if we do not find a solution
+right away by combining elements from π̄A (α, β) and π̄B (α, β), then there cannot be a hidden solution
+anywhere on the tight constraint. Thus, strengthening the tight constraint by one unit leads to the desired
+pattern shape Π0 ( b    Π.
+    It is left to study the case where no border pair (α, β) ∈ Π    b satisfies |πB (α, β)| ≥ 2. Since Π
+                                                                                                       b has no
+                                                       0  0                  0   0
+interior pairs, there must exist a vertex pair (α , β ) ∈ Π with |π̄B (α , β )| ≥ 2 (otherwise Π would be
+                                                               b                                    b
+of type I). We now distinguish two cases:
+    Case 1: There are at least three vertex pairs with |π̄B (α, β)| = 1. Combining the above discussion
+with Lemma 26, it follows that there is exactly one (α0 , β 0 ) ∈ b       Π with |πB (α0 , β 0 )| ≥ 2. Then by
+Theorem 25 (i), for each of the other at least four pairs (α, β) ∈ Π           b there exists v ∈ D such that
+(α, β) + v = (α , β ), since (α, β) + v must satisfy |πB ((α, β) + v)| ≥ 2 and (α0 , β 0 ) is the only such
+                    0   0
+
+
+
+
+                                                      13
+pair. But (α0 , β 0 ) is a vertex pair, and hence it can have at most three such adjacent pairs, a contradiction
+(also see Figure 4a).
+     Case 2: There are at most two vertex pairs with |π̄B (α, β)| = 1. Consider a border pair (α0 , β 0 ) and
+v ∈ D such that (α0 , β 0 )±v ∈ b   Π. The tight constraint of (α0 , β 0 ) contains two vertex pairs. Both of them
+must satisfy |π̄B (α, β)| = 1, for otherwise, Proposition 21 would imply |π̄B (α0 , β 0 )| ≥ 2, contradicting
+our assumption. Additionally, since we assumed to have at most two vertex pairs with |π̄B (α, β)| = 1,
+it follows that any vertex pair (α, β) outside this tight constraint must satisfy |π̄B (α, β)| ≥ 2. But
+then, from an argument analogous to the one in the first case above, it follows that there can not be a
+border pair (α, β) ∈ Π     b that does not satisfy the tight constraint with equality, as otherwise we would get
+|π̄B (α, β)| ≥ 2. Consequently, all pairs (α, β) ∈ Π      b with |π̄B (α, β)| = 1 (those are the only ones where
+there might be a hidden solution) satisfy the constraint that is tight at (α0 , β 0 ) with equality. Thus, we
+can let Π0 be the pattern shape defined by all (α, β) that satisfy the tight constraint with equality (see
+Figure 4b for an example).
+
+
+                β                                                        β
+                1     1    2                                             1     2    2
+                0     1    1    1                                        0     1    1    1
+
+                       0   1    2    α                                         0    1    2    α
+
+  (a) The pair marked in red is not adjacent to any         (b) Hidden solutions may only occur for the pairs
+  (α, β) with πB (α, β) ≥ 2, hence this pattern can-        marked in red.
+  not occur.
+
+  Figure 4: The two cases arising in the proof of Lemma 27. Every square corresponds to a pair (α, β) ∈ b
+                                                                                                        Π,
+  and the numbers inside indicate the value of |π̄B (α, β)|.
+
+
+
+Pattern structure of type IV
+For type IV pattern structure, we first observe that, by Observation 20, if there are any solutions for pairs
+(α, β) ∈ Πb with |πB (α, β)| ≥ 2, we can also find one efficiently by combining solutions computed for
+the A- and B-subproblem when determining π̄A and π̄B . The other case, i.e., when no solutions exist
+for such (α, β), is covered by Theorem 25 (ii). Again, that statement allows to reduce the problem to
+a new GCTUF problem with the same group G and at the same depth d, but at least one variable less.
+Therefore, it allows us to make progress with respect to the number of variables.
+
+Summary
+The above discussion can be summarized in the following theorem. Recall that the depth of an R-
+GCTUF problem is defined as d := |G| − |R|.
+
+Theorem 28. Let G be a finite abelian group. Consider an R-GCTUF problem P with n variables,
+group G, set of target residues R, depth d ≤ 3, and a constraint matrix T that is a 3-sum of two
+matrices with nA and nB many columns, respectively, such that n = nA + nB and nA , nB ≥ 2. Let
+p := min{nA , nB }. Assume furthermore that there is no non-trivial subgroup H of G with R = R + H.
+Then, after solving at most (d + 1)3 many R-GCTUF problems with p variables, group G and depth at
+most d, as well as at most d(d + 1)2 R-GCTUF problems with n − p variables, group G and depth at
+most d − 1, one can either
+    – find a solution of P in strongly polynomial time, or
+
+
+
+
+                                                       14
+   – determine a single R-GCTUF problem P 0 with at most n − p + 1 variables, group G and depth
+      d, such that P is feasible if and only if P 0 is feasible. Additionally, a solution of P 0 can be
+      transformed into a solution of P in strongly polynomial time.
+Furthermore, all involved R-GCTUF problems can be constructed in strongly polynomial time.
+
+4.5   Proof of Theorem 16
+Consider an R-GCTUF problem with group G, n variables, and depth d = |G| − |R| ≤ 3. If d = 0,
+then the problem is an unconstrained TU problem, and thus it is enough to find a vertex solution of the
+linear relaxation. This can be done in strongly polynomial time using the algorithm of Tardos [Tar86].
+If d > 0, we apply Theorem 15 to the constraint matrix T . If T is covered by one of Items (i) and (ii),
+then it is a base block matrix itself, so a single call to the oracle suffices. Else, T is covered by Item (iii)
+of Theorem 15, and we may assume that T decomposes into a 3-sum of two matrices with at least two
+columns each (see Appendix C for the case where a pivot step is necessary). In particular, note that in
+this case, we have n ≥ 4. Using Lemma 17 or Theorem 28, we now reduce the problem to one or more
+smaller problems, until we eventually obtain base block problems, which we solve by an oracle call.
+    We bound the number of oracle calls triggered by our procedure. Let f (n, d) be the smallest upper
+bound on the number of oracle calls when starting from an instance with n variables and depth d. We
+claim that
+                                   f (n, d) ≤ (d + 1)3d nd+3 log2 (d+1)+2 .
+To prove this bound, we use induction on n + d. First observe that, by the above discussion, f (n, 0) = 0
+for any n ≥ 1, and f (n, d) = 1 for n ≤ 3 and d > 0 (in the latter case, we cannot attain Item (iii)
+of Theorem 15). Now consider an R-GCTUF problem with n variables and depth d. If R = R + H
+for a non-trivial subgroup H of G, Lemma 17 allows for a reduction to a single R-GCTUF problem at
+smaller depth. Thus, we end up with at most f (n, d0 ) many base block problems for some d0 < d. In
+this case, the induction hypothesis implies the claimed bound on f (n, d) because it is monotone in d. In
+the other case, we apply Theorem 28. Thus, there is a p ∈ {2, . . . , bn/2c} such that the number of base
+block problems we have to solve is bounded by
+
+  (d + 1)3 f (p, d) + d(d + 1)2 f (n − p, d − 1) + f (n − p + 1, d)
+                                                                    !
+                                     p 2 n − p  n − p + 1 2
+              3d d+3 log2 (d+1)+2
+   ≤ (d + 1) n                            +     2
+                                                   +                  ≤ (d + 1)3d nd+3 log2 (d+1)+2 ,
+                                      n       n             n
+                                  |                {z               }
+                                                      ≤1
+
+proving the claimed bound on f (n, d). Here, we use that
+
+             (d + 1)3 f (p, d) ≤ (d + 1)3d+3 pd+3 log2 (d+1)+2
+                                           p d+3 log2 (d+1)                              p 2
+                               = (d + 1)3                     (d + 1)3d nd+3 log2 (d+1)+2
+                                 |          n{z             }                               n
+                                               ≤1
+                                                               p 2
+                                          3d
+                               ≤ (d + 1) nd+3 log2 (d+1)+2             ,
+                                                                n
+as p/n ≤ 1/2 and hence (p/n)d+3 log2 (d+1) ≤ (d + 1)−3 , together with
+
+  d(d + 1)2 f (n − p, d − 1) ≤ d(d + 1)2 d3d−3 (n − p)d−1+3 log2 d+2
+                               d(d + 1)2 n − p d+3 log2 (d+1)
+                                                                                               
+                                                                        3d d+3 log2 (d+1)+2   n−p
+                             ≤                                   (d + 1) n
+                                (d + 1)3      n                                                n2
+                               |              {z               }
+                                              ≤1
+                                                                 
+                                      3d d+3 log2 (d+1)+2   n−p
+                             ≤ (d + 1) n                             .
+                                                             n2
+
+                                                      15
+References
+[AEGOVW16]   S. Artmann, F. Eisenbrand, C. Glanzer, T. Oertel, S. Vempala, and R. Weismantel. “A
+             note on non-degenerate integer programs with small sub-determinants”. In: Operations
+             Research Letters 44.5 (2016), pp. 635–639. DOI: 10.1016/j.orl.2016.07.004 (cit. on
+             p. 4).
+[AF21]       M. Aprile and S. Fiorini. “Regular Matroids Have Polynomial Extension Complexity”.
+             In: Mathematics of Operations Research 47.1 (2021), pp. 540–559. DOI: 10 . 1287 /
+             moor.2021.1137 (cit. on p. 3).
+[AS22]       G. Averkov and M. Schymura. “On the Maximal Number of Columns of a ∆-modular
+             Matrix”. In: Proceedings of the 23rd International Conference on Integer Program-
+             ming and Combinatorial Optimization (IPCO ’22). Eidhoven, 2022, pp. 29–42. DOI:
+             10.1007/978-3-031-06901-7 3 (cit. on p. 4).
+[AWZ17]      S. Artmann, R. Weismantel, and R. Zenklusen. “A Strongly Polynomial Algorithm for
+             Bimodular Integer Linear Programming”. In: Proceedings of the 49th Annual ACM
+             Symposium on Theory of Computing (STOC ’17). Montreal, 2017, pp. 1206–1219.
+             DOI : 10.1145/3055399.3055473 (cit. on pp. 1–3).
+
+[BC87]       F. Barahona and M. Conforti. “A construction for binary matroids”. In: Discrete Math-
+             ematics 66.3 (1987), pp. 213–218. ISSN: 0012-365X. DOI: 10.1016/0012- 365X(87)
+             90097-5 (cit. on p. 1).
+[BDEHN14]    N. Bonifas, M. Di Summa, F. Eisenbrand, N. Haehnle, and M. Niemeier. “On Sub-det-
+             erminants and the Diameter of Polyhedra”. In: Discrete Computational Geometry 52.1
+             (2014), pp. 14. 102–115. DOI: 10.1007/s00454-014-9601-x (cit. on p. 4).
+[CGM92]      P. M. Camerini, G. Galbiati, and F. Maffioli. “Random Pseudo-Polynomial Algorithms
+             for Exact Matroid Problems”. In: Journal of Algorithms 13 (1992), pp. 258–273. DOI:
+             10.1016/0196-6774(92)90018-8 (cit. on pp. 3, 21).
+[DEFM15]     M. Di Summa, F. Eisenbrand, Y. Faenza, and C. Moldenhauer. “On Largest Volume
+             Simplices and Sub-determinants”. In: Proceedings of the 26th Annual ACM-SIAM
+             Symposium on Discrete Algorithms (SODA ’15). San Diego, 2015, pp. 315–323. DOI:
+             10.1137/1.9781611973730.23 (cit. on p. 4).
+[DK14]       M. Dinitz and G. Kortsarz. “Matroid Secretary for Regular and Decomposable Ma-
+             troids”. In: SIAM Journal on Computing 43.5 (2014), pp. 1807–1830. DOI: 10.1137/
+             13094030X (cit. on p. 3).
+[EV17]       F. Eisenbrand and S. Vempala. “Geometric random edge”. In: Mathematical Program-
+             ming 164.1 (2017), pp. 325–339. DOI: 10.1007/s10107-016-1089-0 (cit. on p. 4).
+[FJWY22]     S. Fiorini, G. Joret, S. Weltge, and Y. Yuditsky. “Integer programs with bounded sub-
+             determinants and two nonzeros per row”. In: Proceedings of the 62nd Annual Sym-
+             posium on Foundations of Computer Science (FOCS ’22). 2022, pp. 13–24. DOI: 10.
+             1109/FOCS52979.2021.00011 (cit. on p. 1).
+[GLS84]      M. Grötschel, L. Lovász, and A. Schrijver. “Corrigendum to our paper ‘The ellipsoid
+             method and its consequences in combinatorial optimization’”. In: Combinatorica 4.4
+             (1984), pp. 291–295. ISSN: 1439-6912. DOI: 10.1007/BF02579139 (cit. on p. 1).
+[GLS93]      M. Grötschel, L. Lovász, and A. Schrijver. Geometric algorithms and combinatorial
+             optimization. Vol. 2. Algorithms and combinatorics. Springer, 1993. DOI: 10 . 1007 /
+             978-3-642-78240-4 (cit. on p. 5).
+[GR95]       M. X. Goemans and V. S. Ramakrishnan. “Minimizing Submodular Functions over
+             Families of Sets”. In: Combinatorica 15.4 (1995), pp. 499–513. DOI: 10 . 1007 /
+             BF01192523 (cit. on p. 1).
+
+                                             16
+[Gri21]    D. V. Gribanov. “An FPTAS for the ∆-Modular Multidimensional Knapsack Prob-
+           lem”. In: Proceedings of the International Conference on Mathematical Optimization
+           Theory and Operations Research (MOTOR). 2021, pp. 79–95. DOI: 10.1007/978- 3-
+           030-77876-7 6 (cit. on p. 4).
+[GSMP22]   D. Gribanov, I. Shumilov, D. Malyshev, and P. Pardalos. “On ∆-modular integer lin-
+           ear problems in the canonical form and equivalent problems”. In: Journal on Global
+           Optimization (2022). DOI: 10.1007/s10898-022-01165-9 (cit. on p. 2).
+[GSW21]    C. Glanzer, I. Stallknecht, and R. Weismantel. “On the Recognition of {a, b, c}-
+           Modular Matrices”. In: Proceedings of the 22nd International Conference on Integer
+           Programming and Combinatorial Optimization (IPCO ’21). Atlanta, 2021, pp. 238–
+           251. DOI: 10.1007/978-3-030-73879-2 17 (cit. on p. 4).
+[GV16]     D. V. Gribanov and S. I. Veselov. “On integer programming with bounded determi-
+           nants”. In: Optimization Letters 10.6 (2016), pp. 1169–1177. DOI: 10.1007/s11590-
+           015-0943-y (cit. on p. 4).
+[GWZ18]    C. Glanzer, R. Weismantel, and R. Zenklusen. “On the Number of Distinct Rows of a
+           Matrix with Bounded Subdeterminants”. In: SIAM Journal on Discrete Mathematics
+           32.3 (2018), pp. 1706–1720. DOI: 10.1137/17M1125728 (cit. on p. 4).
+[GZ21]     D. V. Gribanov and N. Y. Zolotykh. “On lattice point counting in ∆-modular polyhe-
+           dra”. In: Optimization Letters 16 (2021), pp. 1991–2018. DOI: 10.1007/s11590-021-
+           01744-x (cit. on p. 4).
+[Hel57]    I. Heller. “On linear systems with integral valued solutions”. In: Pacific Journal of
+           Mathematics 7.3 (1957), pp. 1351–1364. DOI: 10.2140/pjm.1957.7.1351 (cit. on p. 4).
+[KB79]     R. Kannan and A. Bachem. “Polynomial Algorithms for Computing the Smith and
+           Hermite Normal Forms of an Integer Matrix”. In: SIAM J. Comput. 8 (Nov. 1979),
+           pp. 499–507. DOI: 10.1137/0208040 (cit. on p. 5).
+[LPSX20]   J. Lee, J. Paat, I. Stallknecht, and L. Xu. “Improving Proximity Bounds Using Spar-
+           sity”. In: Proceedings of the 6th International Symposium on Combinatorial Optimiza-
+           tion (ISCO ’20). Montreal, 2020, pp. 115–127. DOI: 10.1007/978-3-030-53262-8 10
+           (cit. on p. 4).
+[LPSX22]   J. Lee, J. Paat, I. Stallknecht, and L. Xu. “Polynomial Upper Bounds on the Number of
+           Differing Columns of ∆-Modular Integer Programs”. In: Mathematics of Operations
+           Research (2022). DOI: 10.1287/moor.2022.1339 (cit. on p. 4).
+[Nik15]    A. Nikolov. “Randomized Rounding for the Largest Simplex Problem”. In: Proceed-
+           ings of the 47th Annual ACM Symposium on Theory of Computing (STOC ’15). Port-
+           land, 2015, pp. 861–870. DOI: 10.1145/2746539.2746628 (cit. on p. 4).
+[NSZ19]    M. Nägele, B. Sudakov, and R. Zenklusen. “Submodular Minimization Under Con-
+           gruency Constraints”. In: Combinatorica 39.6 (2019), pp. 1351–1386. DOI: 10.1007/
+           s00493-019-3900-1 (cit. on pp. 1, 3, 6).
+[NSZ22]    M. Nägele, R. Santiago, and R. Zenklusen. “Congruency-Constrained TU Problems
+           Beyond the Bimodular Case”. In: Proceedings of the 33rd Annual ACM-SIAM Sym-
+           posium on Discrete Algorithms (SODA ’22). 2022, pp. 2743–2790. DOI: 10.1137/1.
+           9781611977073.108 (cit. on pp. 1–10, 12, 13, 18–23).
+[NZ20]     M. Nägele and R. Zenklusen. “A new contraction technique with applications to
+           congruency-constrained cuts”. In: Mathematical Programming 183 (2020), pp. 455–
+           481. DOI: 10.1007/s10107-020-01498-x (cit. on p. 1).
+[PR82]     M. W. Padberg and M. R. Rao. “Odd Minimum Cut-Sets and b-Matchings”. In: Math-
+           ematics of Operations Research 7.1 (1982), pp. 67–80. DOI: 10.1287/moor.7.1.67
+           (cit. on p. 1).
+
+                                           17
+[PSW22]            J. Paat, M. Schlöter, and R. Weismantel. “The integrality number of an integer pro-
+                   gram”. In: Mathematical Programming 192 (2022), pp. 271–291. DOI: 10 . 1007 /
+                   s10107-021-01651-0 (cit. on p. 4).
+[Sey80]            P. D. Seymour. “Decomposition of regular matroids”. In: Journal of Combinatorial
+                   Theory, Series B 28.3 (1980), pp. 305–359. DOI: 10 . 1016 / 0095 - 8956(80 ) 90075 - 1
+                   (cit. on p. 3).
+[Tar86]            É. Tardos. “A Strongly Polynomial Algorithm to Solve Combinatorial Linear Pro-
+                   grams”. In: Operations Research 34.2 (1986), pp. 250–256. DOI: 10.1287/opre.34.2.
+                   250 (cit. on pp. 4, 15).
+[VC09]             S. I. Veselov and A. J. Chirkov. “Integer program with bimodular matrix”. In: Discrete
+                   Optimization 6.2 (2009), pp. 220–222. DOI: 10.1016/j.disopt.2008.12.002 (cit. on
+                   pp. 2, 4).
+
+
+A     Adapted proofs of structural results
+This section is devoted to the proofs of Lemma 18 and Theorem 25. More precisely, given that these
+statements were proved in a congruency-constrained setting in [NSZ22], we mainly recall proof ideas
+and comment on how to adapt them to the group constraint setting that we work with.
+
+A.1    Proof of Lemma 18
+Lemma 18 is the group-constrained analogue of [NSZ22, Lemmas 2.5 and 5.1]. To obtain the result,
+[NSZ22] exploits a decomposition theorem for solutions of totally unimodular systems [NSZ22, Lemma
+2.1] combined with the following fact for the special case of G = Z/mZ [NSZ22, Lemma 2.2], which is
+indeed the only property of Z/mZ used throughout the proof.
+                                                                                        P
+Lemma 29. Let G be a finite abelian group, R ⊆ G, and r1 , . . . , r`      P∈ G with i∈[`] ri ∈ R. If there is
+no interval I = {i1 , . . . , i2 } with i1 , i2 ∈ [`] and i1 < i2 such that i∈[`]\I ri ∈ R, then ` ≤ |G| − |R|.
+
+    Consequently, through Lemma 29, the proofs of [NSZ22, Lemmas 2.5 and 5.1] immediately extend
+to the group constraint setting, and thereby imply Lemma 18. We also remark that Lemma 29 is in fact
+just a slightly generalized and more constructive version of Lemma 11. Moreover, the original proof for
+G = Z/mZ directly generalizes. We repeat it here for completeness.
+
+ProofPof Lemma 29. Assume for the sake of deriving a contradiction that there is no interval I ⊆ [`]
+with i∈[`]\I ri ∈ R, but ` ≥ |G| − |R| + 1. Consider the ` group elements s0 = 0, s1 = r1 , . . . ,
+s`−1 = r1 + . . . + r`−1 . Observe that sj ∈   / R for P all j ∈ [` − 1]; for otherwise, there is an interval
+I = {j + 1, . . . , `} for some j ∈ [` − 1] such that i∈[`]\I = sj ∈ R, contradicting the assumption.
+Thus, sj ∈ G \ R for all j ∈ [` − 1]. Hence, because ` ≥ |G| − |R| + 1, we have by the pigeonhole
+principle that P            1 , j2 ∈ [`−1] with j1 < j2 P
+               there exist jP                           such that sj1 = sj2 . Thus, I = {j1 +1, . . . , j2 } is an
+interval with i∈[`]\I = i∈[`]I ri − (sj2 − sj1 ) = i∈[`]\I ri ∈ R, again contradicting the assumption
+and hence completing the proof.
+
+A.2    Proof of Theorem 25
+The statements in Theorem 25 are closely linked to a GCTUF problem in the form presented in (2). In
+the following, we say that a solution x = (xA , xB ) of a problem in that form is a solution for (α, β) if
+α = f > xB and β = h> xA .
+
+
+
+
+                                                       18
+Item (i) of Theorem 25
+In the congruency-constrained setting, the first part of Theorem 25 (i) was proved in [NSZ22, Lemma
+5.9], while the second part is implicit in [NSZ22, Proof of Lemma 5.8]. The argument uses a general-
+ized version of Proposition 21, which states that given distinct pairs (α1 , β1 ), (α2 , β2 ) ∈ b   Π, there are
+(α3 , β3 ), (α4 , β4 ) ∈ Π such that for any solutions x1 for (α1 , β1 ) and x2 for (α2 , β2 ), there exist solu-
+                         b
+tions x3 for (α3 , β3 ) and x4 for (α4 , β4 ) such that x1 + x2 = x3 + x4 (in fact, (α3 , β3 ) and (α4 , β4 ) are
+equal to 21 ((α1 , β1 ) + (α2 , β2 )) up to rounding, see [NSZ22, Lemma 5.3]).
+     Towards a proof of Theorem 25 (i), we may assume that (α0 , β 0 ) 6= (α, β)+v for all v ∈ D∪{0}, and
+apply the above with (α1 , β1 ) = (α0 , β 0 ) and (α2 , β2 ) = (α, β). This gives that (α3 , β3 ) and (α4 , β4 )
+are both different from (α1 , β1 ) and (α2 , β2 ), but “closer” to (α0 , β 0 ) than (α, β) was. The result will
+follow by iteratively applying this argument after showing that |πB (α3 , β3 )| ≥ 2 or |πB (α4 , β4 )| ≥ 2.
+In the congruency-constrained case, the latter is concluded from the assumption that |πB (α, β)| ≥ 2,
+i.e., that there are two feasible residues at (α, β). Indeed, if we had |πB (α3 , β3 )| = |πB (α4 , β4 )| = 1,
+then γ > (x3 + x4 )—and hence also γ > (x1 + x2 )—would have to yield the same residue for all solutions
+x1 for (α1 , β1 ) and x2 for (α2 , β2 ). This reasoning holds analogously for any finite abelian group
+other than the cyclic groups Z/mZ, by well-definedness of addition to be precise. Because no other
+properties of congruency-constraints are exploited, the proofs of [NSZ22] directly translate to a proof of
+Theorem 25 (i).
+
+Item (ii) of Theorem 25
+Theorem 25 (ii) gives two sufficient conditions that allow for reduction to a problem with fewer variables.
+The conditions are precisely that the pattern structure is of type I, or that it is of type IV and that there
+are no solutions for pairs (α, β) ∈ Π b with |π(α, β)| ≥ 2.
+     For pattern structure of type I, [NSZ22, Corollary 5.1] shows that—in the congruency-constrained
+setting—there exist r0 , r1 , r2 ∈ Z/mZ such that πB (α, β) = {r0 + r1 α + r2 β} for all (α, β) ∈ Π, b and πB
+is called linear in this case. Again, the proof is based on an averaging argument (i.e., Proposition 21)
+that seamlessly carries over to the more general group-constrained setting with a finite abelian group G
+by simply replacing calculations in Z/mZ by calculations in G. The same applies to showing that in case
+of a linear pattern, a GCTUF problem can be reduced to an equivalent problem with the same group G,
+at the same depth d, and strictly fewer variables [NSZ22, Theorems 2.4 and 2.5].
+     For pattern structure of type IV, Lemma 26 gives that Π b consists of at most four pairs, and all of them
+are vertex pairs. This pattern family is very restricted, and is in fact a subset of the patterns covered by an
+analysis of certain small patterns in [NSZ22, Proof of Lemma 5.11]. Concretely, for the type IV pattern
+structure that we consider here, it was concluded (using another averaging argument, i.e., Proposition 21)
+that one can choose for every (α, β) ∈ Π  b a singleton-subset π̃B (α, β) ⊆ πB (α, β) such that π̃B is linear
+in the sense introduced above. Now recall that we also assume here that there are no solutions for pairs
+(α, β) ∈ Π b with |π(α, β)| ≥ 2, i.e., solutions can only occur for (α, β) ∈ Π    b with |πB (α, β)| = 1. For
+those (α, β), we have πB (α, β) = π̃B (α, β), so it is enough to look for solutions compatible with π̃B .
+But then, linearity of π̃B allows for the same reduction to an equivalent problem with fewer variables
+as discussed above (the congruency-constrained version is given in [NSZ22, Theorems 5.2 and 2.5]).
+Again, in all involved proofs of [NSZ22], all calculations in Z/mZ can directly be replaced by calculations
+in any fixed finite abelian group G without affecting correctness of the proofs, hence the results carry
+over as desired.
+
+
+B    Adapted proofs of base block results
+In this section, we discuss how to extend the proofs of [NSZ22, Section 4] for congruency-constrained
+TU problems with a base block constraint matrix, i.e., matrices covered by Items (i) and (ii) of The-
+orem 15. The congruency constraints that were used previously may equivalently be formulated as
+constraints in a cyclic group Z/mZ, and it turns out that all arguments extend to general finite abelian
+
+                                                       19
+groups, i.e., the setting that we need for our purposes. In this appendix, we recall the proofs of [NSZ22]
+and comment on the mostly straightforward modifications for the sake of completeness.
+    To this end, let us first define group-constrained TU problems (GCTU problems) to be the optimiza-
+tion variant of GCTUF problems, i.e., where additionally to the GCTUF setup, we are given an objective
+c ∈ Rn that we want to minimize over all feasible solutions of the GCTUF problem. Note that we can
+always assume to start with a GCTU problem whose relaxation (i.e., the problem obtained after drop-
+ping the group constraint) is feasible, which we can check in strongly polynomial time; for otherwise,
+the GCTU problem is clearly infeasible. Hence, we assume feasibility of the relaxation throughout this
+section. To start with, let us recall the definition of a network matrix.
+
+Definition 30. A matrix T is a network matrix if the rows of T can be indexed by the edges of a directed
+spanning tree (V, U ), and the columns can be indexed by the edges of a directed graph (V, A) on the
+same vertex set, such that for every arc a = (v, w) ∈ A and every arc u ∈ U ,
+                       
+                       1
+                               if the unique v-w path in U passes through u forwardly,
+               Tu,a = 0         if the unique v-w path in U does not pass through u,
+                       
+                         −1 if the unique v-w path in U passes through u backwardly.
+                       
+
+    In the subsequent three sections, we distinguish the three different cases of base block matrices,
+namely whether the constraint matrix T of the GCTU problem that we consider is a network matrix, the
+transpose of a network matrix, or a matrix stemming from the constant-size matrices given in Item (ii)
+of Theorem 15.
+
+B.1     Network matrix base block GCTU problems
+In this section, we discuss the extension from congruency constraints to group constraints in the case
+where the constraint matrix is a network matrix. Concretely, this will provide the following result.
+
+Theorem 31. Let G be a finite abelian group. There is a strongly polynomial time randomized algorithm
+for GCTU problems with group G, unary encoded objectives, and constraint matrices that are network
+matrices.
+
+     In this case, one can exploit the graph structure that comes with network matrices to interpret GCTU
+problems with network constraint matrices as minimum-cost group-constrained circulation problems in
+certain directed graphs. To get started, let us recall that a circulation f in a directed graph H = (V, A)
+with capacities u : A → Z≥0 is a mapping f : A → Z≥0 such that f (a) ≤ u(a) for every arc a ∈ A, and
+                   −
+f (δ + (v)) =Pf (δ (v)) for every vertex v ∈ V . Given arc lengths ` : A → Z, the length of a circulation f
+is `(f ) := a∈A `(a)f (a). Note that here, arc lengths are allowed to be negative. A group-constrained
+circulation problem is formally defined as follows.
+
+      Group-Constrained Circulation (GCC): Let H = (V, A) be a directed graph with capaci-
+      ties u : A → Z≥0 , arc lengths ` : A → Z, and let G be a finite abelian group, η : A → G
+      and r ∈ G. Find a minimum-length circulation f : A → Z≥0 in the given network such that
+      P
+         a∈A η(a)f (a) = r.
+
+
+In [NSZ22, Lemma 4.2], a reduction from GCTU problems with a network matrix as constraint matrix
+to GCC is presented for the case of a cyclic group G = Z/mZ. In this reduction, the only property of
+Z/mZ that is exploited is [NSZ22, Lemma 2.2]. Thus, replacing this statement by its group-constrained
+
+analogue Lemma 29 proved earlier immediately gives the following.
+
+Lemma 32. GCTU problems with group G, objective vector c, and constraint matrices that are network
+matrices can be reduced in strongly polynomial time to GCC problems with group G, capacities u within
+{0, . . . , |G| − 1}, and arc lengths ` with k`k∞ ≤ kck∞ .
+
+
+                                                    20
+    Now, one can finish the proof of Theorem 31 by exploiting a connection to the so-called exact length
+circulation problem, where the goal is to find a circulation whose length is equal to a given value. The
+reduction follows the one given in [NSZ22, Lemma 4.3], but needs to be slightly adapted in order to
+capture group constraints.
+
+    Exact Length Circulation (XLC): Let H = (V, A) be a digraph with capacities u : A → Z>0
+    and arc lengths ` : A → Z. Given L ∈ Z, find a circulation f in the given network such that
+    `(f ) = L.
+
+Exact length circulation problems can be solved using a randomized pseudopolynomial algorithm, as
+shown by Camerini, Galbiati, and Maffioli [CGM92]. They reduce the problem to an exact cost perfect
+matching problem, which can then be reduced to computing the coefficients of a well-defined polyno-
+mial. The following theorem summarizes the result of Camerini, Galbiati, and Maffioli [CGM92] for
+XLC.
+
+Theorem 33 ([CGM92]). There is a randomized algorithm for XLC problems in a directed graph H =
+(V, A) with capacities u : A → Z≥0 in time poly(|V |, maxa∈A u(a), maxa∈A |`(a)|).
+
+    Thus, it remains to extend the connection between GCC and XLC problems from the congruency-
+constrained to the group-constrained setting. To this end, we recall the reduction for a single congruency
+constraint modulo m: Taking an integer representative in {0, . . . , m−1} for each residue modulo m, we
+may construct new arc lengths that capture the residue representative r(a) and original arc lengths `(a)
+                                ˜ = c · `(a) + r(a) for a large enough constant c). Guessing both the
+independently (e.g., by using `(a)
+length and the residue class of an optimal solution of the GCC problem is then equivalent to guessing a
+target L with respect to the new lengths, hence the reduction can be achieved by binary search.
+    For group constraints, we recall that we may equivalently interpret a group constraint as multiple
+congruency constraints, which can then be integrated into new arc lengths `˜ at different orders of mag-
+nitude. Formally, this leads to the following lemma, which is an analogue of [NSZ22, Lemma 4.3].
+
+Lemma 34. A GCC problem in a graph H = (V, A) with group G, arc lengths ` : A → Z, and ca-
+pacities u : A → {0, 1, . . . , |H| − 1} can be polynomially reduced to poly(|G|, |V |, |A|, maxa∈A |`(a)|)
+many XLC problems in G with the same capacities.
+
+Proof. First, we may decompose G ∼     = Z/m1 Z × · · · × Z/mk Z for some k ∈ Z≥1 . For every i ∈ [k],
+let ϕi : G → /mi Z → Z denote the corresponding natural projection maps composed with the natural
+               Z
+
+mapping of a residue in Z/mi Z to a representative in {0, . . . , mi − 1}. Set m := |G|.
+    Define `˜: A → Z for every arc a ∈ A as
+                                                       k
+                                                       X
+                           ˜
+                           `(a) = `(a) · m2k |A|k +          m2i−2 |A|i−1 ϕi (η(a)) .
+                                                       i=1
+
+                                         Pk
+We thus have ˜ `(f ) = `(f )·m2k |A|k + i=1 m2i−2 |A|i−1 ϕi (η(f )). Observe that a∈A ϕi (η(a))f (a) <
+                                                                                         P
+
+m2 |A| for every 1 ≤ i ≤ k, hence from `(f ˜ ), one can retrieve `(f ) as well as P
+                                                                           P               a∈A ϕi (η(a))f (a) for
+every i ∈ [k]. Consequently, finding a circulation of length L with a∈A η(a)f (a) = r is equivalent
+to
+Pksolving   XLC problems in H with respect to lengths `˜ and with target length L̃ = L · m2k |A|k +
+         2i−2
+   i=1 m      |A|i−1 (di mi + ϕi (r)) for all tuples (d1 , . . . , dk ) ∈ {0, . . . , m|A| − 1}k . We can find
+the smallest L for which there is a GCC solution  P of length L by binary search in O(k log(m|A| ·
+maxa∈A |`(a)|)) iterations, because |`(f )| =        a∈A `(a)f (a) ≤ m|A| · maxa∈A |`(a)|. Altogether,
+this gives the desired result.
+
+    Combining Lemmas 32 and 34 and Theorem 33 readily implies Theorem 31.
+
+
+
+
+                                                       21
+B.2     Transposed network matrix base block GCTU problems
+For GCTU problems with a constraint matrix that is the transpose of a network matrix, we recall from
+Section 3 that we aim for a reduction to a lattice problem of the form given in (1). For the sake of
+completeness, let us restate that problem in the optimization setting here.
+
+      Group-Constrained Lattice Optimization (GCLO): Let N be a finite set, L ⊆ 2N a lattice,
+                     abelian group, γ : N → G, rP∈ G, and w : N → Z. The task is to find X ∈ L
+      (G, +) a finiteP
+      with γ(X) := x∈X γ(x) = r minimizing x∈X w(x), or decide infeasibility.
+
+In [NSZ22, Section 4.2], the following result was shown implicitly for the case of a cyclic group G. It
+turns out, though, that no properties of cyclic groups beyond them being finite abelian groups are used
+in the proofs, hence by substituting all occurrences of congruency constraints, i.e., constraints in a cyclic
+group Z/mZ, with group constraints, the original proofs also imply the theorem for a general finite abelian
+group.
+
+Theorem 35. Given a finite abelian group G, consider a GCTU problem on n variables and a constraint
+matrix that is the transpose of a network matrix. One can in strongly polynomial time determine a GCLO
+problem over a ground set N with |N | = n|G| such that from an optimal solution of the GCLO problem,
+we can in strongly polynomial time compute an optimal solution of the GCTU problem.
+
+    In particular, Theorem 35 implies the reduction claimed in Proposition
+                                                                    P      9 by observing that we can
+in strongly polynomial time determine w : N → R such that f (A) = x∈A w(x).
+
+B.3     Matrices stemming from particular constant-size matrices
+To complete the discussion of base block GCTU problems, we now cover GCTU problems with con-
+straint matrices covered by Item (ii) of Theorem 15. In other words, these are matrices T that can be
+obtained from the two matrices
+                                                                          
+                          1 −1        0    0 −1               1 1 1 1 1
+                       −1      1 −1       0    0          1 1 1 0 0
+                                                                          
+                        0 −1         1 −1      0 and     1 0 1 1 0                           (6)
+                                                                            
+                       
+                        0      0 −1       1 −1             1 0 0 1 1      
+                         −1     0     0 −1      1             1 1 0 0 1
+
+by repeatedly appending unit vector rows or columns, appending a copy of a row or column, and invert-
+ing the sign of a row or column.
+     To tackle problems with such constraint matrices, [NSZ22, Section 4.3] more generally considers
+constraint matrices T that are obtained from a core matrix C through the above operations. (Concretely,
+in the case relevant here, C will be one of the two matrices in (6).) It is shown that if C has ` columns,
+then there are integral vectors s1 , . . . , s` such that once the values s>
+                                                                           i x are known for all i ∈ [`], the
+inequality system T x ≤ b can be reduced to an equivalent system T 0 x ≤ b0 on the same variables x,
+where T 0 is a network matrix and the transpose of a network matrix at the same time, and b0 is integral.
+By exploiting a proximity statement for congruency-constrained TU problems, [NSZ22] observe that it
+suffices to consider values s>
+                             i x ∈ {−m + 1, . . . , m − 1}, where m is the modulus of the congruency-
+constraint, and they conclude that there are only (2m − 1)` possible combinations of values for s>        i x
+to be enumerated, which can be done in polynomial time for constant `. To extend this reasoning
+from congruency constraints (i.e., constraints in a cyclic group G = Z/mZ) to constraints in general
+finite abelian groups, we observe that the aforementioned proximity statement relies on a decomposition
+theorem for solutions of totally unimodular systems [NSZ22, Lemma 2.1] and the property of cyclic
+groups that we generalized in Lemma 29. Thereby, it is again a matter of replacing modular arithmetic
+by calculations in a general finite abelian group G to obtain the following result.
+
+
+                                                     22
+Lemma 36. Let G be a finite abelian group and consider a GCTU problem with group G and a con-
+straint matrix T that can be obtained from a matrix C with ` columns by repeatedly appending unit
+vector rows or columns, appending a copy of a row or column, and inverting the sign of a row or col-
+umn. Then, the GCTU problem can be reduced to (2|G| − 1)` many GCTU problems with group G and
+constraint matrices of size linear in the size of T that are network matrices and transposes of network
+matrices at the same time.
+
+    For feasibility problems, we may thus exploit Theorem 7 to obtain the following direct corollary.
+
+Corollary 37. Let G be a finite abelian group. There is a strongly polynomial time algorithm for solving
+GCTUF problems with group G and a constraint matrix covered by Item (ii) of Theorem 15.
+
+
+C    Pivoting steps
+By Theorem 15 (concretely, Item (iii)), we may face pivoting operations when applying Seymour’s
+decomposition. For congruency-constrained TU problems, [NSZ22, Theorem 2.7] shows that such op-
+erations can be dealt with in the following sense: After the addition of a single variable upper bound to
+a given congruency-constrained TU problem, there is a unimodular variable transformation that trans-
+forms the problem into an equivalent congruency-constrained TU problem such that (up to one extra
+constraint that is an upper bound on a variable), the new constraint matrix is the desired pivoted form of
+the original constraint matrix.
+    The transformation argument sketched above only exploits that congruency constraints are con-
+straints on a linear combination of the variables, and thus immediately extends to group constraints.
+Adding an upper bound constraint on a variable can be done without changing the problem due to a
+proximity result for congruency-constrained TU problems [NSZ22, Lemma 3.2]. The latter is again
+based on a decomposition theorem for solutions of TU systems [NSZ22, Lemma 2.1] and the property
+of cyclic groups that we generalized in Lemma 29, and thus translates to group constraints.
+
+
+
+
+                                                   23
+

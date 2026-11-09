@@ -1,0 +1,1350 @@
+                                                  Submodular Minimization Under Congruency Constraints
+                                                               Martin Nägele*              Benny Sudakov †                Rico Zenklusen‡
+
+                                                                                           November 27, 2018
+
+
+
+
+arXiv:1707.06212v2 [cs.DS] 23 Nov 2018
+                                                                                                   Abstract
+                                                     Submodular function minimization (SFM) is a fundamental and efficiently solvable problem in com-
+                                                binatorial optimization with a multitude of applications in various fields. Surprisingly, there is only very
+                                                little known about constraint types under which SFM remains efficiently solvable. The arguably most rel-
+                                                evant non-trivial constraint class for which polynomial SFM algorithms are known are parity constraints,
+                                                i.e., optimizing only over sets of odd (or even) cardinality. Parity constraints capture classical combina-
+                                                torial optimization problems like the odd-cut problem, and they are a key tool in a recent technique to
+                                                efficiently solve integer programs with a constraint matrix whose subdeterminants are bounded by two
+                                                in absolute value.
+                                                     We show that efficient SFM is possible even for a significantly larger class than parity constraints, by
+                                                introducing a new approach that combines techniques from Combinatorial Optimization, Combinatorics,
+                                                and Number Theory. In particular, we can show that efficient SFM is possible over all sets (of any given
+                                                lattice) of cardinality r mod m, as long as m is a constant prime power. This covers generalizations
+                                                of the odd-cut problem with open complexity status, and has interesting links to integer programming
+                                                with bounded subdeterminants. To obtain our results, we establish a connection between the correctness
+                                                of a natural algorithm, and the nonexistence of set systems with specific combinatorial properties. We
+                                                introduce a general technique to disprove the existence of such set systems, which allows for obtaining
+                                                extensions of our results beyond the above-mentioned setting. These extensions settle two open questions
+                                                raised by Geelen and Kapadia [Combinatorica, 2017] in the context of computing the girth and cogirth
+                                                of certain types of binary matroids.
+
+
+
+
+                                            * Department of Mathematics, ETH Zurich, Zurich, Switzerland. Email: martin.naegele@ifor.math.ethz.ch.
+                                            †
+                                               Department of Mathematics, ETH Zurich, Zurich, Switzerland. Email: benjamin.sudakov@math.ethz.ch. Research supported
+                                         in part by the Swiss National Science Foundation grant 200021 175573.
+                                             ‡
+                                               Department of Mathematics, ETH Zurich, Zurich, Switzerland. Email: ricoz@math.ethz.ch. Research supported in part by the
+                                         Swiss National Science Foundation grant 200021 165866.
+
+
+                                                                                                       1
+1 Introduction
+Submodular function minimization (SFM) is a central combinatorial optimization problem with numerous
+applications in many fields, including speech analysis, image segmentation, combinatorial optimization, and
+integer programming (see [25, 22, 16, 4, 1] and references therein). A set function f : 2N → R on a finite
+ground set N is submodular if
+
+                               f (A) + f (B) ≥ f (A ∪ B) + f (A ∩ B) ∀A, B ⊆ N .
+
+The high relevance of SFM is explained by the fact that the above condition, which defines submodularity,
+is equivalent to the diminishing returns property, which is a very natural property of set functions appearing
+in various contexts.1 Typical examples of submodular functions include valuation functions in economics,
+cut functions, matroid rank functions, the Shannon entropy of joint distributions, and coverage functions,
+just to name a few.
+     A cornerstone result in Combinatorial Optimization, known since the early ’80s, is that SFM is efficiently
+solvable, only assuming value oracle access to the submodular function [13], which is the usual model in
+the field and assumed throughout this paper. Typically, results on SFM easily carry over to lattices, implying
+that efficient SFM is possible over any lattice of the ground set.2 Since the early results on SFM, there has
+been exciting progress on the subject with some recent impressive speedups in the best-known running times
+for solving SFM [6, 24, 17, 18, 21, 4].
+     Unfortunately, the picture is much less satisfactory for constrained SFM. A canonical extension of the
+unconstrained case is obtained by only considering non-empty sets, a problem that can easily be reduced
+to unconstrained SFM by guessing one element of an optimal solution. Another relatively direct extension
+that includes the case of non-empty sets is that SFM is efficiently solvable over intersecting or crossing set
+families (see [25, Volume B]).3 Surprisingly, very little is known beyond these relatively direct extensions.
+     In particular, Grötschel, Lovász, and Schrijver [13] (see also [14, 15]) showed that SFM can be solved
+efficiently over all odd or even sets. This extended a well-known earlier result by Padberg and Rao [23],
+showing that minimum odd cuts can be found efficiently, and also a later extension by Barahona and Con-
+forti [2] to even cuts. More precisely, Grötschel, Lovász, and Schrijver [14] show that SFM can be solved
+efficiently over any family of sets F ⊆ 2N that is a triple family, which they define as follows: For any
+A, B ⊆ N , if three of the four sets A, B, A ∪ B, and A ∩ B are not in F, then none of the four sets are in F.
+One can easily check that all even or odd sets indeed form a triple family. The most general constraint family
+under which SFM is known to be efficiently solvable was introduced by Goemans and Ramakrishnan [10].
+They showed that SFM can be efficiently solved over a generalization of triple families, which they called
+parity family. A set family F ⊆ 2N is a parity family if for any pair of sets A, B ⊆ N with A ∈       / F and
+B 6∈ F, either both of A ∪ B and A ∩ B are in F, or none of the two.
+     The difficulty in identifying relevant constraint classes under which SFM can be done efficiently is
+partially explained by the fact that SFM can quickly become very hard, even under constraint types for
+which other problems, like submodular maximization, can still be solved approximately. More precisely,
+Svitkina and Fleischer [26] showed that even with a single cardinality lower bound, monotone SFM is
+    1
+      A set function f : 2N → R on a finite ground set N satisfies the diminishing returns property if f (A ∪ {e}) − f (A) ≥
+f (B ∪ {e}) − f (B) for all A ⊆ B ⊆ N and e ∈ N \ B. For more information on submodular functions, we refer the interested
+reader to [25, 22, 8].
+    2
+      A lattice L ⊆ 2N over a ground set N is a set family that is closed under unions and intersections, i.e., for any A, B ∈ L, we
+have A ∪ B, A ∩ B ∈ L. Whenever a lattice is given, we make the standard assumption that it is given by a compact encoding
+in terms of a digraph (see [15, Section 10.3]). What we call a lattice is sometimes also called a lattice family, a ring family, or a
+distributive lattice.
+    3
+      A set family F ⊆ N is intersecting if for any A, B ⊆ F such that A \ B, B \ A, A ∩ B 6= ∅, we have A ∪ B, A ∩ B ∈ F.
+Moreover, F is crossing if for any A, B ∈ F with A \ B, B \ A, A ∩ B, N \ (A ∪ B) 6= ∅, we have A ∪ B, A ∩ B ∈ F.
+
+
+
+                                                                 2
+                                                               p
+impossible to approximate in the oracle model up to a factor o( n/log n), where n := |N | is the size of the
+ground set.
+   The goal of this work is to present a new natural constraint class under which efficient submodular
+minimization is possible, and which is motivated by recent progress in linear integer programming with
+bounded subdeterminants, and by recent open questions related to binary matroids. More precisely, we
+consider the following natural generalization of parity-constrained submodular minimization.
+
+          Congruency-Constrained Submodular Minimization (CCSM): Let f : L → Z be a
+          submodular function defined on a lattice L ⊆ 2N , and let m ∈ Z>0 , r ∈ {0, . . . , m − 1}.
+          The task is to find a minimizer of
+
+                                       min{f (S) | S ∈ L, |S| ≡ r (mod m)} .                               (CCSM)
+
+We call m the modulus of the (CCSM) problem. Moreover, we highlight that N is a finite ground set
+throughout this paper. Notice that the case m = 2 captures odd/even submodular minimization, and thus in
+particular the odd cut problem. More generally, one can observe that also the T -cut problem, which only
+considers cuts with an odd number of vertices within a vertex set T , can easily be cast as (CCSM).4 Apart
+from naturally extending known SFM settings, our study of (CCSM) is motivated by an open question in
+integer programming, namely whether integer linear programs (ILPs) with constraint matrices having con-
+stantly bounded subdeterminants can be solved efficiently. More precisely, it was recently shown in [1] that
+bimodular ILPs can be solved efficiently, which are problems of the form max{cT x | Ax ≤ b, x ∈ Zn },
+where A has full column rank and each n × n submatrix of A has a determinant within {−2, −1, 0, 1, 2}.
+This result implies that any ILP such that all subdeterminants of A are within {−2, −1, 0, 1, 2} can be solved
+efficiently (see [1] for more details), thus extending the well-known fact that ILPs with totally unimodular
+constraint matrices are efficiently solvable. However, whether ILPs with larger subdeterminants can still be
+solved efficiently seems to be a question beyond current techniques. Interestingly, a key algorithmic tool
+used in [1] to show that bimodular ILPs are efficiently solvable is efficient odd submodular minimization, or
+at least efficient algorithms to find minimum directed T -cuts, since the submodular minimization problems
+appearing in [1] can be reformulated as directed T -cut problems. Conversely, a directed T -cut problem
+can naturally be modeled as a bimodular ILP. ILPs with subdeterminants up to m include a natural exten-
+sion of the directed T -cut problem, namely the problem of finding a cut of smallest value among all cuts
+of cardinality r mod m. This is clearly a special case of (CCSM), by choosing f to be the directed cut
+function. Hence, to make progress on the question of ILPs with bounded subdeterminants, one needs to be
+able to solve (CCSM) for f being an arbitrary directed cut function. Furthermore, due to the approach pre-
+sented in [1], there is hope that this subproblem may be an important building block for finding an efficient
+procedure to solve ILPs with bounded subdeterminants.
+     Moreover, we consider the following generalized version of (CCSM), which nicely highlights the versa-
+tility of our approach and captures several open problems raised by Geelen and Kapadia [9] in the context
+of computing the girth and cogirth of perturbed graphic matroids. In the definition below, as well as later in
+the paper, we use the shorthand [k] := {1, . . . , k}.
+
+
+
+   4
+     Indeed, we can observe that any problem of the form min{f (S) | S ∈ L, |S ∩ T | ≡ r (mod 2)}, for a submodular function
+f : L → Z with L ⊆ 2N and a given set T ⊆ N , can be cast as a (CCSM) problem with respect to an auxiliary submodular
+function g over a lattice L′ as follows. For every x ∈ N \ T , introduce a new element x′ , let N ′ := N ∪ {x′ | x ∈ N \ T }, and
+let L′ := {S ⊆ N ′ | S ∩ N ∈ L and |S ∩ {x, x′ }| 6= 1 ∀x ∈ N \ T }. Define g : L′ → Z by g(S) = f (S ∩ N ) for all S ⊆ N ′ .
+Then, for any S ∗ ∈ argmin{g(S) | S ∈ L′ , |S| ≡ r (mod 2)}, we can observe that S ∗ ∩ N solves the original problem. The
+same construction can be applied for moduli m different from 2 by introducing m − 1 copies for each element in N \ T .
+
+
+                                                               3
+        Generalized Congruency-Constrained Submodular Minimization (GCCSM): Let
+        f : L → Z be a submodular function defined on a lattice L ⊆ 2N , and let m ∈ Z>0 .
+        Moreover, let k ∈ Z>0 , S1 , . . . , Sk ⊆ N and r1 , . . . , rk ∈ {0, . . . , m − 1}. The task is to
+        find a minimizer of
+
+                    min{f (S) | S ∈ L, |S ∩ Si | ≡ ri (mod m) ∀i ∈ [k]} .                      (GCCSM)
+
+In particular, (GCCSM) captures the t-Set Even-Cut Problem and t-Set Odd-Cut Problem defined in [9].
+There, one is given a constant t, an undirected graph G = (V, E), and sets T1 , . . . , Tt ⊆ V . The task is
+to find a cut S ⊆ V with a minimum number of edges |δ(S)| among all cuts whose intersections with the
+sets Ti are all even or all odd, respectively. Geelen and Kapadia identified the t-Set Even-Cut Problem as a
+special case of the so-called t-Dimensional Even-Cut Problem. While the latter is key to their algorithm for
+computing the cogirth of perturbed graphic matroids, they consider the t-Set Even-Cut problem as a purer
+form of the problem, which they believe to be of independent interest, as well as the natural variation of
+the t-Set Odd-Cut problem. Geelen and Kapadia present a randomized algorithm for the t-Set Even-Cut
+Problem, based on an adaptation of Karger’s contraction algorithm [19, 20], and they raise the following
+open questions which we address through our work:
+
+  (i) They ask about a deterministic procedure for the t-Set Even-Cut problem, which they mention as one
+      of the main shortcomings of their approach. As noted in [9], Conforti and Rao [5] found an efficient
+      deterministic algorithm for the 1-Set Even-Cut Problem. However, even for the 2-Set version, no
+      deterministic procedure is known.
+
+  (ii) They raise the question about the complexity of the Odd-Cut problem, stating that the method of
+       Padberg and Rao [23] for finding an odd cut extends to the 2-Set Odd-Cut setting; however, even for
+       the 3-Set Odd-Cut problem, the complexity remains open.
+
+  The main technical contribution of this paper is to introduce a new approach based on techniques from
+Combinatorics and Number Theory to analyze a natural algorithm for (CCSM) and (GCCSM).
+
+1.1 Our results
+We start by stating the implications of our techniques on (CCSM) and (GCCSM), and provide an overview
+of the techniques in Section 1.2. Our main result for (CCSM) is the following.
+
+Theorem 1.1. For any m ∈ Z>0 that is a prime power, (CCSM) can be solved in time n2m+O(1) .
+
+    Hence, we can efficiently solve (CCSM) for any modulus m that is a prime power bounded by a constant.
+Notice that an upper bound on m is required to obtain an efficient algorithm. Indeed, in particular if m =
+n := |N |, the congruency constraint simply models a cardinality constraint. However, as mentioned in
+thepintroduction, SFM subject to a cardinality constraint is impossible to approximate up to any factor
+o( n/log n) in the oracle model. It is not hard to observe that this implies that even for any ǫ > 0, (CCSM)
+with modulus m = Ω(nǫ ) cannot be solved exactly in polynomial time.
+    Our key contribution, which leads to Theorem 1.1, is a connection of the correctness of a natural pro-
+cedure, which we introduce in Section 1.2, and the nonexistence of certain set systems. To disprove the
+existence of such set systems, we employ tools from Combinatorics and Number Theory, in particular Fer-
+mat’s Little Theorem. A main advantage of our techniques is that they are very versatile, and allow in
+particular for an adaptation to (GCCSM), leading to the following result.
+
+Theorem 1.2. For any m ∈ Z>0 that is a prime power, (GCCSM) can be solved in time n2km+O(1) .
+
+                                                         4
+     Notice that Theorem 1.2 solves the two open questions by Geelen and Kapadia [9] mentioned in the in-
+troduction. Moreover, we want to highlight that our algorithms for solving (CCSM) and (GCCSM) consist
+of repeatedly solving unconstrained submodular function minimization problems, namely at most n2(m−1)
+many for (CCSM) and n2k(m−1) many for (GCCSM). Using a strongly polynomial algorithm for submodu-
+lar function minimization, the running time guarantees of Theorems 1.1 and 1.2 are achieved.
+
+1.2 Overview of main steps of our technique
+We start by stating a natural algorithm, Enum(d) highlighted below, that we use to derive both of our main
+results, Theorems 1.1 and 1.2. Our algorithm is parameterized by an integer d ∈ Z>0 , which we call
+the depth of the algorithm. Its input is a value oracle for a submodular function f : L → Z defined on a
+lattice L ⊆ 2N , and a family F ⊆ 2N , capturing additional constraints we want to satisfy. In particular,
+for (CCSM) we have F = {S ⊆ N | |S| ≡ r (mod m)}, and for (GCCSM), the set F is given by
+F = {S ⊆ N | |S ∩ Si | ≡ ri (mod m) ∀i ∈ [k]}. We assume that F is given by a membership oracle,
+which can be queried for any set S ⊆ N , and returns whether S ∈ F.
+
+   Enum(d): Enumeration algorithm of depth d for submodular minimization over F
+   1. For all A, B ⊆ N with |A|, |B| ≤ d and A ∩ B = ∅, compute a minimal minimizer of f over the
+      lattice
+                                   LAB := {S ∈ L | A ⊆ S ⊆ N \ B} .
+      Let S be the family of all computed minimal minimizers for all pairs of A and B.
+
+   2. Return a set S ∈ S of minimum value among all sets in S ∩ F.
+
+
+     The algorithm is a natural extension of a procedure suggested in [10], which corresponds to Enum(1).
+In step 1, we repeatedly solve unconstrained submodular minimization problems for minimal minimizers.
+To this end, one can observe that many submodular function minimization algorithms do actually return
+minimal minimizers. Alternatively, for integer-valued submodular functions, we can observe that a set is
+a minimal minimizer of f if and only if it is a minimizer of the submodular function g given by g(S) =
+(n + 1)f (S) + |S|. Hence, it suffices to find any minimizer of g to obtain a minimial minimizer of f . Notice
+that Enum(d) is clearly a polynomial time algorithm for any constant depth d. However, depending on
+the structure of the constraint set F, and the choice of d, the above algorithm may fail to return a set in F
+with minimum submodular value. In particular, it may even happen that no feasible solution is found, i.e.,
+S ∩ F = ∅. In the following, we show the main steps that we used to derive our main result for (CCSM),
+i.e., Theorem 1.1. In Section 4, we show how to extend the results to (GCCSM).
+     To analyze the correctness of Enum(d) for (CCSM), we show that if Enum(d) fails to return an optimal
+solution to (CCSM), then this implies the existence of a set system with the following properties. For brevity,
+we call a set system satisfying these properties an (m, d)-system.
+
+Definition 1.3 ((m, d)-system (on N )). Let N be a finite ground set, and let m, d ∈ Z>0 . We say that a set
+system H ⊆ 2N is an (m, d)-system (on N ) if
+   (i) H is closed under intersection, i.e., H1 ∩ H2 ∈ H ∀H1 , H2 ∈ H,
+  (ii) |H| 6≡ |N | (mod m) ∀H ∈ H, and
+ (iii) for any S ⊆ N with |S| ≤ d, there is a set H ∈ H with S ⊆ H.
+
+   Note that in particular, we require property (i) also for disjoint sets: If there are H1 , H2 ∈ H with
+H1 ∩ H2 = ∅, then ∅ ∈ H. On the other hand, if ∅ 6∈ H, we can conclude that all sets have at least one
+
+
+                                                      5
+element in common. Also observe thatSproperty (iii) implies that the sets of an (m, d)-system H cover the
+ground set, i.e., we always have N = H∈H H. The following theorem formalizes a crucial link between
+nonexistence of (m, d)-systems and correctness of Enum(d), and reduces the correctness of Enum(d) to a
+purely combinatorial question. Here (and throughout the rest of this paper), nonexistence of (m, d)-systems
+without explicit reference to a ground set is to be understood to hold for any ground set, i.e., no matter what
+finite ground set N is chosen, there does not exist an (m, d)-system on N .
+
+Theorem 1.4. Let m, d ∈ Z>0 . If no (m, d)-system exists, then Enum(d) returns an optimal solution to
+any (CCSM) problem with modulus m.
+
+     Notice that Theorem 1.4 does not depend on the lattice L underlying the (CCSM) problem. For specific
+lattices L ⊆ 2N , the above conditions can be slightly weakened. In particular, it suffices to consider a weaker
+definition of (m, d)-systems, where H needs to be a subfamily of L. Section 2 provides further details on this.
+However, for the congruency constraints we consider, we do not need the weaker requirements for specific
+lattices, and we thus decided to avoid these details here in the interest of simplifying the presentation.
+     Finally, our approach is completed by deriving the following result, which completes the last step of our
+proof, and, together with Theorem 1.4, implies Theorem 1.1.
+
+Theorem 1.5. For m ∈ Z>0 being a prime power, there is no (m, m − 1)-system.
+
+    Moreover, we want to mention that Gopi [11], after hearing a presentation of this paper, found an
+elegant proof showing that for m not being a prime power, there do exist (m, m − 1)-systems. This shows
+an interesting discrepancy between prime power moduli and non-prime power moduli, and it suggests that
+an extension of our techniques to the latter case requires new ideas.
+
+1.3 Organization of the paper
+In Section 2, we show how the correctness of Enum(d) can be reduced to the nonexistence of (m, d)-
+systems, thus proving Theorem 1.4. Section 3 shows Theorem 1.5, the nonexistence of (m, m − 1)-systems
+for m being a prime power. The techniques presented in Section 3 comprise a general framework based
+on results from Combinatorics and Number Theory to disprove existence of certain types of set systems.
+In Section 4, we show how these techniques can be extended to (GCCSM), thus implying our main result
+for (GCCSM), Theorem 1.2. Section 5 identifies a combinatorial barrier to extending our proof techniques
+beyond m being a prime power. Section 6 shows that our choice of the depth d of Enum(d) is smallest
+possible for the problems we consider.
+
+
+2 Reducing correctness of Enum(d) to properties of set systems
+The main goal of this section is to prove Theorem 1.4. In fact, we show a slight strengthening, which allows
+us to derive results for (GCCSM), and may lead to further applications for constraints beyond congruency
+constraints. For this we generalize the notion of (m, d)-system to the notion of an (F, d)-system, where the
+role of all sets of cardinality r mod m is replaced by a general constraint family F ⊆ 2N on N . Moreover,
+we will be explicit about the underlying lattice, which leads to stronger statements that may be helpful for
+extending our results to further contexts.
+
+Definition 2.1 ((F, d)-system). Let L ⊆ 2N be a lattice, SF ⊆ L, and let d ∈ Z>0 . A family H ⊆ L is
+called an (F, d)-system if the following holds, where Q := H∈H H:
+   (i) Q ∈ F,
+  (ii) H is closed under intersection,
+
+                                                       6
+ (iii) H 6∈ F ∀H ∈ H, and
+ (iv) for any S ⊆ Q with |S| ≤ d, there is a set H ∈ H with S ⊆ H.
+
+   Using the notion of (F, d)-systems, we can now define the following strengthening of Theorem 1.4,
+where for any set family F ⊆ L defined on a lattice L, we denote by comp(F) the complement family, i.e.,
+comp(F) := {N \ F | F ∈ F}, which we will interpret as a subfamily of the lattice comp(L).
+
+Theorem 2.2. Let L ⊆ 2N and F ⊆ L, and let d ∈ Z>0 . If no (F, d)-system and no (comp(F), d)-system
+exists, then Enum(d) returns an optimal solution to any submodular function minimization problem over
+F.
+
+    We start by observing that Theorem 2.2 indeed implies Theorem 1.4.
+
+Proof of Theorem 1.4. Consider a (CCSM) problem min{f (S) | S ∈ L, |S| ≡ r (mod m)}. Hence, the
+set family F over which we want to minimize the function f is given by
+
+                                   F = {S ∈ L | |S| ≡ r (mod m)} ,
+
+and its complement family is therefore
+
+ comp(F) = {S ∈ comp(L) | |N \ S| ≡ r (mod m)} = {S ∈ comp(L) | |S| ≡ |N | − r (mod m)} .
+
+The proof now follows by observing that any (F, d)-system or (comp(F), d)-system is also an        S (m, d)-
+system on a potentially different ground set. Indeed, consider an (F, d)-system H, and let Q = H∈H H.
+(The case of a (comp(F), d)-system is analogous.) Then H is an (m, d)-system on Q because properties (ii)
+and (iv) of the definition of an (F, d)-system correspond to properties (i) and (iii) of an (m, d)-system on
+Q, respectively; moreover, properties (i) and (iii) of an (F, d)-system imply property (ii) of an (m, d)-
+system.
+
+    It remains to prove Theorem 2.2.
+
+2.1 Proof of Theorem 2.2
+We start by stating a key property of set systems F ⊆ L that is crucial in our analysis to show that Enum(d)
+returns an optimal solution. This is an extension of a property used in [10] for parity constraints.
+
+Definition 2.3 (d-good set system). Let L ⊆ 2N be a lattice and F ⊆ L. We say that the tuple (F, L) is
+d-good—or simply that F is d-good if L is clear from context—if for any submodular function f : L → Z,
+and any minimizer S ∗ of min{f (S) | S ∈ F}, there exists a set A ⊆ S ∗ with |A| ≤ d satisfying
+
+                               f (S) ≥ f (S ∗ )   ∀S ∈ L with A ⊆ S ⊆ S ∗ .
+
+   We now prove Theorem 2.2 in two steps. First, we show that if a set system F and its complement
+family comp(F) are d-good, then our algorithm will return an optimal solution.
+
+Lemma 2.4. Let L ⊆ 2N be a lattice, F ⊆ L, and d ∈ Z>0 . If (F, L) and (comp(F), comp(L)) are both
+d-good, then Enum(d) returns an optimal solution to any submodular minimization problem on F.
+
+     Conversely, if a constraint set F is not d-good, then we can derive the existence of an (F, d)-system out
+of it as shown by the following lemma, which, together with Lemma 2.4, immediately implies Theorem 2.2,
+as desired.
+
+
+                                                      7
+Lemma 2.5. Let L ⊆ 2N be a lattice, F ⊆ L, and d ∈ Z>0 . If (F, L) is not d-good, then there exists an
+(F, d)-system.
+
+    The proof strategies for Lemmas 2.4 and 2.5 are heavily inspired by an approach presented in [10] for
+parity families. We remark that the proof of Lemma 2.4 strengthens the proof approach presented in [10],
+which allows us to use simpler requirements for the definition of a d-good system than what would have
+been necessary by following the proof approach in [10] more closely.
+    To prove Lemma 2.4, we show that under the assumption that (F, L) and (comp(F), comp(L)) are both
+d-good, Enum(d) returns a set with function value equal to the function value of a minimal optimal solution.
+As the following lemma shows, arguing about minimal (with respect to inclusion) optimal solutions allows
+us to obtain a stronger result from (F, L) being a d-good set system.
+
+Lemma 2.6. Let (F, L) be a d-good set system. Then, for any submodular function f : L → Z, and any
+minimal minimizer S ∗ of min{f (S) | S ∈ F}, there exists a set A ⊆ S ∗ with |A| ≤ d satisfying
+
+                                 f (S) > f (S ∗ )   ∀S ∈ L with A ⊆ S ( S ∗ .
+
+Proof. Fix a submodular function f : L → Z, and a minimal minimizer S ∗ of min{f (S) | S ∈ F}.
+Consider the function g : L → Z given by
+
+                           g(S) = |N |f (S) + |N ||S \ S ∗ | + |S| for all S ∈ L .
+
+The function g is submodular because it is a conic combination of the three submodular functions S 7→ f (S),
+S 7→ |S \ S ∗ |, and S 7→ |S|. Moreover, we claim that S ∗ is a minimizer of min{g(S) | S ∈ F}. Indeed, by
+definition of S ∗ , we have f (S) ≥ f (S ∗ ) for all S ∈ F. If f (S) ≥ f (S ∗ ) + 1, we get
+
+                     g(S) ≥ |N |f (S) ≥ |N |(f (S ∗ ) + 1) ≥ |N |f (S ∗ ) + |S ∗ | = g(S ∗ ) .
+
+If, in the other case, f (S) = f (S ∗ ), then minimality of S ∗ implies that S \ S ∗ 6= ∅, hence |S \ S ∗ | ≥ 1, so
+
+            g(S) ≥ |N |f (S) + |N ||S \ S ∗ | ≥ |N |f (S ∗ ) + |N | ≥ |N |f (S ∗ ) + |S ∗ | = g(S ∗ ) .
+
+   Applying the property that (F, L) is d-good to the submodular function g and the minimizer S ∗ of
+min{g(S) | S ∈ F}, we obtain that there exists a set A ⊆ S ∗ with |A| ≤ d satisfying
+
+                                 g(S) ≥ g(S ∗ )     ∀S ∈ L with A ⊆ S ⊆ S ∗ .
+
+To conclude, it suffices to see that for all S ∈ L with S ( S ∗ , the inequality g(S) ≥ g(S ∗ ) implies
+f (S) > f (S ∗ ). Note that S ( S ∗ implies |S \ S ∗ | = 0, so the inequality g(S) ≥ g(S ∗ ) can be rewritten as
+
+                                     |N |f (S) + |S| ≥ |N |f (S ∗ ) + |S ∗ | .
+
+The assumption S ( S ∗ also implies |S| < |S ∗ |, hence, from the last inequality, we conclude f (S) >
+f (S ∗ ).
+
+    With the above strengthening, we are ready to prove Lemma 2.4.
+
+Proof of Lemma 2.4. Let f : L → Z be a submodular function and let S ∗ be a minimal minimizer of
+min{f (S) | S ∈ F}. Using that (F, L) is d-good and applying Lemma 2.6, we obtain existence of a
+set A ⊆ S ∗ with |A| ≤ d satisfying
+
+                                 f (S) > f (S ∗ ) ∀S ∈ L with A ⊆ S ( S ∗ .                                     (1)
+
+                                                         8
+Note that the function g : comp(L) → Z given by g(S) = f (N \ S) is submodular, and N \ S ∗ is a
+minimizer of min{g(S) | S ∈ comp(F)}. So using the assumption that (comp(F), comp(L)) is d-good,
+we obtain existence of a set B ⊆ N \ S ∗ with |B| ≤ d satisfying
+
+                       g(S) ≥ g(N \ S ∗ ) ∀S ∈ comp(L) with B ⊆ S ⊆ N \ S ∗ .
+
+Rewriting the above in terms of f and replacing S by N \ S, we get
+
+                              f (S) ≥ f (S ∗ ) ∀S ∈ L with S ∗ ⊆ S ⊆ N \ B .                                   (2)
+
+     Let T be a minimal minimizer of f over the lattice LAB = {S ∈ L | A ⊆ S ⊆ N \ B}. Note that sets of
+this type are found in the first step of Enum(d) when considering the sets A and B given above. We claim
+that in fact T = S ∗ , proving that the minimizer S ∗ is found in the first step of Enum(d). Consequently, the
+set returned by Enum(d) is a set of optimal value f (S ∗ ), which is what we wanted to prove.
+     It remains to see that T = S ∗ . As S ∗ ∈ LAB , we have f (S ∗ ) ≥ f (T ). Together with submodularity of
+f , we get
+                            2f (S ∗ ) ≥ f (S ∗ ) + f (T ) ≥ f (S ∗ ∩ T ) + f (S ∗ ∪ T ) .
+If S ∗ ∩ T ( S ∗ , (1) implies f (S ∗ ∩ T ) > f (S ∗ ). Moreover, (2) implies f (S ∗ ∪ T ) ≥ f (S ∗ ). Together, we
+obtain a contradiction to the previous inequality. Consequently, we have S ∗ ∩ T = S ∗ or, in other words,
+S ∗ ⊆ T . Minimality of T implies S ∗ = T , as desired.
+
+    Finally, we prove Lemma 2.5, which is the last missing piece in our proof of Theorem 2.2.
+
+Proof of Lemma 2.5. Assume that (F, L) is not d-good. Hence, there is a submodular function f : L → Z
+and a minimizer S ∗ of min{f (S) | S ∈ F} such that for any set A ⊆ S with |A| ≤ d, there is a set
+SA ∈ L with A ⊆ SA ⊆ S ∗ satisfying f (SA ) < f (S ∗ ). Among all such sets SA , we choose one that is
+maximal (inclusion-wise). Let H ⊆ L be the family of all sets that can be obtained as intersections of the
+sets {SA }A⊆S ∗ ,|A|≤d , where we include the sets SA themselves also in the family H. We claim that H is an
+(F, d)-system.
+    Clearly, H ⊆ L, because S each set SA    satisfies SA ∈ L and the lattice L is closed under intersection.
+Moreover, we have Q = H∈H H = S because each set in H is contained in S ∗ , and for each element
+                                           ∗
+
+e ∈ S ∗ , the set S{e} ∈ H contains e. Property (i) of an (F, d)-system follows from Q = S ∗ ∈ F.
+Moreover, (ii) holds because H is intersection-closed by construction. Property (iv) is fulfilled because for
+each A ⊆ Q with |A| ≤ d, the set SA ∈ H fulfills A ⊆ SA . It remains to show that H fulfills property (iii)
+of an (F, d)-system, i.e., that each set H ∈ H satisfies H 6∈ F. Recall that each set H ∈ H can be written
+as
+                                                       k
+                                                       \
+                                                H=       S Ai ,                                           (3)
+                                                       i=1
+
+where k ∈ Z≥1 , and A1 , . . . , Ak ∈ L with Ai ⊆ S ∗ and |Ai | ≤ d for i ∈ [k]. We show that f (H) < f (S ∗ )
+by induction on k. Notice that this implies H 6∈ F because S ∗ is a minimizer of min{f (S) | S ∈ F}, and
+hence, no other set in F can have a smaller f -value.
+    The case k = 1 corresponds to sets H = SA , where A ∈ L, A ⊆ S ∗ , and |A| ≤ d. By our choice of the
+sets SA , we have f (SA ) < f (S ∗ ) for these sets. Now consider a set H as described in (3) for k ≥ 2, and
+assume that for any set H ′ T
+                            that can be described as the intersection of at most k − 1 sets SAi , it holds that
+     ′        ∗         ′     k−1
+f (H ) < f (S ). Let H = i=1       SAi , and hence, H = H ′ ∩ SAk . By submodularity of f we have
+
+                                 f (H ′ ) + f (SAk ) ≥ f (H ′ ∪ SAk ) + f (H) .                                (4)
+
+
+
+                                                        9
+By definition, SAk is a maximal subset of S ∗ containing Ak and satisfying f (SAk ) < f (S ∗ ). The chain
+Ak ⊆ SAk ⊆ H ′ ∪ SAk ⊆ S ∗ of inclusions thus lets us conclude f (SAk ) ≤ f (H ′ ∪ SAk ). Combined
+with (4), this implies
+                                           f (H ′ ) ≥ f (H) ,
+and the result now follows by the induction hypothesis, which implies f (S ∗ ) > f (H ′ ).
+
+
+3 Disproving the existence of (m, m − 1)-systems
+In this section we prove Theorem 1.5, i.e., that no (m, m − 1)-system exists for m being a prime power.
+To this end, we present a variety of techniques to transform set systems into more structured ones. Using
+those transformations, we show that any (m, m − 1)-system, for m = pα being a prime power, could be
+transformed into a (p, 1)-system H, on a possibly different ground set, such that each set H ∈ H is in the
+same congruence class with respect to mod p, i.e., there is an r ∈ {0, . . . , p−1} with |H| ≡ r (mod p) for
+all H ∈ H. Such systems can quite easily be seen not to exist, which is shown by the next lemma. Notice
+that the lemma does not depend on p being a prime or prime power; only the transformations we introduce
+later depend on this.
+
+Lemma 3.1. Let N be a finite set. There is no non-empty intersection-closed set system H ⊆ 2N , and
+integers p ∈ Z>0 , r ∈ {0, . . . , p − 1} such that
+   (i) |N | 6≡ r (mod p),
+  (ii) |H| ≡ r (mod p) ∀H ∈ H, and
+                                                                 S
+ (iii) for any e ∈ N , there is a set H ∈ H with e ∈ H, i.e., N = H∈H H.
+
+Proof. Assume for the sake of contradiction that there exists a set system H ⊆ 2N with the properties
+stated in the lemma. We first observe that we can assume without loss of generality that r = 0. Indeed, by
+introducing p − r new elements that we add to N and
+                                                 S every set in H, a new set system is obtained that fulfills
+the properties of the lemma with r = 0. As N = H∈H H, we can compute |N | by the inclusion-exclusion
+principle:
+                                             |H|
+                                             X               X     \
+                                    |N | =         (−1)k+1               F   .
+                                             k=1             F ⊆H F ∈F
+                                                             |F |=k
+                                                                                                     T
+However, when considering the above equation modulo p, a contradiction arises    T because  each set   F ∈F F
+on the right-hand side is contained in H, as H is intersection-closed, and thus | F ∈F F | ≡ 0 (mod p); this
+implies that the right-hand side is 0 mod p, which contradicts |N | 6≡ 0 (mod p).
+
+     To illustrate some of our techniques, we first present a transformation of sets systems that proves Theo-
+rem 1.5 for m being a prime. Later, in Section 3.2, we introduce a general framework of set transformations,
+which we can use, as we will show in Section 3.3, to handle prime powers. Moreover, the versatility of these
+set transformations also allows us to extend our results to (GCCSM), which we show in Section 4.
+
+3.1 Set transformations and nonexistence of (m, m − 1)-systems for m prime
+To prove that no (m, m − 1)-system exists for m prime, assume for the sake of contradiction that there is an
+(m, m − 1)-system H ⊆ 2N . Notice that without loss of generality we can assume that |N | ≡ 0 (mod m),
+and consequently |H| 6≡ 0 (mod m) for H ∈ H. Indeed, if |N | ≡ r (mod m), then we can construct a
+
+
+                                                        10
+new set system by introducing m − r new elements which get added to the ground set N and also to every
+set in H. One can easily observe that this leads to another (m, m − 1)-system with |N | ≡ 0 (mod m).
+     Our goal is now to transform H into a new set system, on a different ground set W , such that the
+cardinality of each set changes in a well-defined way. More precisely, we want that a set of cardinality
+x gets transformed into a set of cardinality g(x) = xm−1 . For m being prime, Fermat’s Little Theorem
+implies xm−1 ≡ 1 (mod m) for any x 6≡ 0 (mod m). Hence, such a transformation would have the
+desired effect that any set H ∈ H will be transformed to a set in the same congruence class; moreover, the
+cardinality of the image of the ground set would remain 0 (mod m). Furthermore, for the resulting system
+to be an (m, 1)-system, we need two additional properties: First, each element of the new ground set needs
+to be contained in at least one transformed set, and additionally, the transformed system needs to retain the
+property of being intersection-closed.
+     We now describe how a set transformation G : 2N → 2W with the properties described above can be
+obtained. The new ground set is
+                                   W = N m−1 := N × N × . . . × N .
+                                                |     {z         }
+                                                           m − 1 times
+
+Moreover, a set S ⊆ N gets transformed into the set
+                          G(S) = {(e1 , . . . , em−1 ) | e1 , . . . , em−1 ∈ S} ⊆ W .
+Clearly, the cardinality of the transformed set G(S) is |G(S)| = |S|m−1 . Hence, the change of cardinalities
+is indeed described by the function g(x) = xm−1 , as desired. Hence, if we look at the transformed set
+system G(H) := {G(H) | H ∈ H} ⊆ 2W on the new ground set W , we have
+(i) |W | = g(|N |) = |N |m−1 ≡ 0 (mod m), because |N | ≡ 0 (mod m), and
+(ii) |G(H)| = g(|H|) = |H|m−1 ≡ 1 (mod m) ∀H ∈ H, by Fermat’s Little Theorem and |H| 6≡ 0
+     (mod m).
+Moreover, G(H) is indeed intersection-closed because the definition of G implies
+                                G(S ∩ T ) = G(S) ∩ G(T ) ∀S, T ⊆ N .
+Finally, G(H) is an (m, 1)-system, as each element (e1 , . . . , em−1 ) ∈ W is covered by a set in G(H) due to
+the following. Because H is an (m, m−1)-system, there is a set H ∈ H such that {e1 , . . . , em−1 } ⊆ H, and
+hence (e1 , . . . , em−1 ) ∈ G(H). Hence, G(H) is an (m, 1)-system with all sets in G(H) being in the same
+congruence class mod m, which, by Lemma 3.1, does not exist and thus leads to the desired contradiction.
+This disproves the existence of (m, m − 1)-systems for m being a prime, and implies via Theorem 1.4 that
+our enumeration procedure works for prime moduli.
+Corollary 3.2. For m being a prime, Enum(d) with d = m − 1 returns an optimal solution to (CCSM)
+with modulus m.
+    Whereas the above product space transformation was enough to deal with prime moduli and allowed
+for highlighting several important ideas, we need more involved transformations to deal with prime powers
+and (GCCSM). In the next section, we therefore formalize and discuss in more generality a large class of
+cardinality transformations g that can be achieved, and how they can be combined.
+
+3.2 A general framework based on set transformations
+We start by formalizing the idea of a transformation that changes the cardinality of a set S in a well-defined
+way by some function g and will also maintain the intersection-closed property, analogous to the transforma-
+tion described in Section 3.1. Moreover, the notion of the level of g, which we also define below, allows us
+
+                                                      11
+to give a simple condition to guarantee that elements in the new ground set remain covered by transformed
+sets.
+Definition 3.3. A map g : Z≥0 → Z≥0 is a cardinality transformation function if for every finite set N , there
+is a finite set W and a map G : 2N → 2W such that
+    (i) G(N ) = W ,
+   (ii) |G(S)| = g(|S|) ∀S ⊆ N , and
+  (iii) G(S) ∩ G(T ) = G(S ∩ T ) ∀S, T ⊆ N .
+Moreover, for ℓ ∈ Z≥0 , we say that g is of level ℓ if G can be chosen such that for every w ∈ W , there exists
+a set S ⊆ N with |S| ≤ ℓ such that w ∈ G(S). In this case we call G a set transformation of level ℓ.
+      We call G a g-realizing set transformation for the ground set N . Conversely, g is called the cardinality
+transformation function corresponding to G.
+    Notice that property (iii) implies that for any intersection-closed family H ⊆ 2N , its image G(H) is as
+well intersection-closed. Furthermore, a set transformation function is always monotone, i.e., G(S) ⊆ G(T )
+for S ⊆ T ⊆ N . This follows from G(S) = G(S ∩ T ) = G(S) ∩ G(T ) ⊆ G(T ) for any S ⊆ T . Moreover,
+we recall that we want to find a set transformation G that would transform an (m, m − 1) system, for m
+being a prime power, to a system with the properties stated in Lemma 3.1, which leads to a contradiction by
+the same lemma. Hence, we want to find a set transformation G such that the transformed set system still
+covers the ground set. For this, observe that by applying a set transformation of level ℓ to any set system
+H ⊆ 2N satisfying that for any U ⊆ N with |U | ≤ ℓ, there is a set S ∈ H such that U ⊆ S, a new set
+system that covers the whole ground set is obtained. To better quantify this property in a way that allows us
+later to combine several set transformations, we introduce the notion of a k-covering set system.
+Definition 3.4. For k ∈ Z≥1 , a set family H ⊆ 2N is k-covering if, for any U ⊆ N with |U | ≤ k, there
+exists a set S ∈ H such that U ⊆ S.
+    Hence, any (m, d)-system (and also any (F, d)-system) is a d-covering set system by definition. More-
+over, a 1-covering set system is a system covering the whole ground set. The following observation high-
+lights how the coverage of a set system changes through set transformations of a certain level.
+Lemma 3.5. Let H ⊆ 2N be a k-covering set system, and let G be a set transformation of level ℓ ∈ Z≥1 .
+Then G(H) is a kℓ -covering system.
+Proof. Let W = G(N ) be the ground set of the transformed set system G(H), and let U ⊆ W with
+|U | ≤ ⌊ kℓ ⌋. We have to show that there is a set Y ∈ G(H) with U ⊆ Y . Because G is of
+                                                                                      S level ℓ, for each
+element u ∈ U there is a set Su ⊆ N with |Su | ≤ ℓ and u ∈ G(Su ). Notice that S := u∈U Su has thus
+size at most |S| ≤ ℓ|U | ≤ k. Because H is k-covering, there exists X ∈ H with S ⊆ X. We finish the
+proof by showing that for Y = G(X) we indeed have U ⊆ Y , which holds because we have that for all
+u ∈ U,
+                                       G(X) ⊇ G(S) ⊇ G(Su ) ∋ u ,
+where we use monotonicity of G on the sets X ⊇ S ⊇ Su , and the fact that u ∈ G(Su ).
+
+    In summary, the following provides a sufficient condition to disprove the existence of an (m, m − 1)-
+system. Note that in the following statement, the number p is not required to be prime.
+Theorem 3.6. Let m ∈ Z≥1 and d ∈ Z≥1 . There does not exist an (m, d)-system if there exists an integer
+p ∈ Z≥1 and a cardinality transformation function g of level d such that for x ∈ Z≥0 :
+                                     (
+                                       0 (mod p) if x ≡ 0 (mod m),
+                              g(x) ≡                                                                (5)
+                                       1 (mod p) if x 6≡ 0 (mod m).
+
+                                                      12
+Proof. With the goal of deriving a contradiction, assume that there exists both a cardinality transformation
+function as stated in the theorem and an (m, d)-system H ⊆ 2N on some finite ground set N . Let r ∈
+{0, . . . , m−1} be such that |N | ≡ r (mod m). Notice that, as in the proof of the above statement for prime
+numbers m in Section 3.1, we can assume r = 0, because if r 6= 0, then we can add m − r new elements
+to N and each set in H, thus obtaining an (m, d)-system on a larger ground set with r = 0. Hence, assume
+r = 0. The theorem now follows by observing that G(H), where G is a g-realizing set transformation for
+N of level d, is a set system system fulfilling the conditions of Lemma 3.1 with r = 1, which is impossible
+by the same lemma. Notice that the fact of G(H) covering the whole transformed ground set G(N ) follows
+by Lemma 3.5, as any (m, d)-system is by definition d-covering, and G is of level d.
+
+    The following two lemmas present a large class of cardinality transformation functions with low level.
+In Section 3.3, we will see that this class is rich enough to disprove the existence of (m, m − 1)-systems for
+m being a prime power via Theorem 3.6.
+
+Lemma 3.7. The following cardinality transformation functions g : Z≥0 → Z≥0 exist for every k ∈ Z≥1 :
+   (i) g(x) = k of level 0,
+  (ii) g(x) = xk of level k, and
+                
+ (iii) g(x) = xk of level k.5
+
+Proof. Throughout this proof, let N be an arbitrary finite ground set. We have to show that there is a
+g-realizing cardinality transformation function G for N of the claimed level.
+   (i) Let W be a set of cardinality k, and we define G(S) = W for every S ⊆ N . One can easily verify
+       that G is a g-realizing cardinality transformation function for g(x) = k; moreover, it has level 0 since
+       G(∅) = W .
+  (ii) The existence of such a cardinality transformation function was shown in our example in Section 3.1,
+       where k corresponds to m − 1.
+                                                        
+ (iii) For a finite set A and a ≥ 1, we denote by Aa the family of all subsets of A of cardinality a. The
+                                                                       
+       transformed ground set W = G(N ) is set to be W = Nk , and we define G : 2N → 2W to be
+                    
+       G(S) = Sk , i.e., this is the family of all subsets of size k of elements in S, also called k-subsets of
+       S. This G clearly fulfills G(N ) = W and |G(S)| = g(S) for all S ⊆ N . Moreover, for S, T ⊆ N ,
+       we have
+
+        G(S)∩G(T ) = {all k-subsets of S}∩{all k-subsets of T } = {all k-subsets of S ∩ T } = G(S∩T ) .
+
+        Finally, the level of G is indeed k, because any w ∈ W corresponds to a k-subset of N , i.e., w =
+        {e1 , . . . , ek } ⊆ N , and we have G({e1 , . . . , ek }) = {w}.
+
+Lemma 3.8. Let g1 , g2 : Z≥0 → Z≥0 be two cardinality transformation functions of level ℓ1 and ℓ2 , respec-
+tively. Then g1 + g2 is a cardinality transformation function of level max{ℓ1 , ℓ2 }.
+
+Proof. Let N be a finite ground set, and let Gi : 2N → 2Wi for i ∈ {1, 2} be a gi -realizing set transformation
+of level ℓi . Moreover, we choose the sets W1 = G1 (N ) and W2 = G2 (N ) to be disjoint. We claim that
+G : 2N → 2W1 ∪W2 defined by G(S) = G1 (S) ∪ G2 (S) is a (g1 + g2 )-realizing set transformation of level
+max{ℓ1 , ℓ2 } as desired. Indeed, G(N ) = G1 (N ) ∪ G2 (N ) = W1 ∪ W2 . Moreover, for any S ⊆ N ,
+
+           |G(S)| = |G1 (S) ∪ G2 (S)| = |G1 (S)| + |G2 (S)| = g1 (|S|) + g2 (|S|) = (g1 + g2 )(|S|) ,
+  5                                         n
+                                            
+      We employ the usual convention that   k
+                                                = 0 for k > n.
+
+
+
+
+                                                                 13
+where the second equality follows from Gi (S) ⊆ Wi for i ∈ {1, 2} and W1 and W2 were chosen to be
+disjoint. Furthermore, for any S, T ⊆ N , we have
+
+    G(S) ∩ G(T ) = (G1 (S) ∪ G2 (S)) ∩ (G1 (T ) ∪ G2 (T )) = (G1 (S) ∩ G1 (T )) ∪ (G2 (S) ∩ G2 (T ))
+                     = G1 (S ∩ T ) ∪ G2 (S ∩ T ) = G(S ∩ T ) ,
+
+again exploiting disjointness of images with respect to G1 and G2 , and the fact that G1 and G2 fulfill the
+intersection property of set transformations. Finally, G is indeed of level max{ℓ1 , ℓ2 }, because for any
+element w ∈ W1 ∪ W2 there is an i ∈ {1, 2} such that w ∈ Wi , and due to the fact that Gi is of level ℓi ,
+there exists a set S ⊆ N with |S| ≤ ℓi and w ∈ Gi (S) ⊆ G(S).
+
+    By combining Lemma 3.7 and Lemma 3.8, we obtain the following.
+Corollary 3.9. For any k ∈ Z≥1 and a, b1 , . . . , bk , c1 , . . . , ck ∈ Z≥0 , the function
+                                                      k            k     
+                                                      X
+                                                                 i
+                                                                   X     x
+                                        g(x) = a +          bi x +   ci
+                                                                         i
+                                                      i=1              i=1
+
+is a cardinality transformation function of level k.
+    Theorem 3.6 together with the existence of a rich set of cardinality transformation functions of low level,
+as stated by the above corollary, lead to a general approach to disprove the existence of (m, d)-systems in a
+concise way. Moreover, the approach can be adjusted to further settings, as we will see in Section 4, when
+talking about (GCCSM).
+    In particular, the proof of why no (m, m − 1)-system exists for m being prime can now be rephrased
+as follows in a concise way. By Corollary 3.9 (or even just by Lemma 3.7) the function g(x) = xm−1 is a
+cardinality transformation function of level m − 1; moreover, it has property (5) stated in Theorem 3.6 for
+p = m, due to Fermat’s Little Theorem. Thus, by Theorem 3.6, an (m, m − 1)-system, for m prime, does
+not exist, which, by Theorem 1.4, implies that Enum(m − 1) returns an optimal solution to any (CCSM)
+problem with modulus m, as desired.
+
+3.3 Proof of Theorem 1.5
+To disprove the existence of an (m, m − 1)-system for m = pα being a prime power, we consider the
+following cardinality transformation function of level m−1, whose existence is guaranteed by Corollary 3.9:
+                                        X x                  X x
+                               g(x) =                + (p − 1)             .                           (6)
+                                                 k                     k
+                                          1≤k<m,                           1≤k<m,
+                                           k odd                            k even
+
+    To show in Lemma 3.11 that g fulfils the conditions of Theorem 3.6, we use the following relation for
+binomial coefficients over a field Fp for p prime, which follows from elementary techniques.
+Lemma 3.10. Let p be a prime, and let a, b ∈ Z≥0 and α ∈ Z≥1 with b < pα . Then, it holds that
+                                                    
+                                      a       a mod pα
+                                          ≡                (mod p) .
+                                      b           b
+                                                                   α
+Proof. As a first step, we show that if a − pα ≥ 0, then ab ≡ a−p b    (mod p). Using Vandermonde’s
+identity, we obtain
+                                                  X  b          α 
+                             a       (a − pα ) + pα          a − pα    p
+                                =                    =                     .
+                             b              b                 b−k       k
+                                                                     k=0
+
+
+                                                            14
+                                   α     α  α −1
+Note that pα > k ≥ 1 implies that pk = pk pk−1        is divisible by p. As b < pα , we see that after reducing
+                                                                            α
+the above equation mod p, the only possibly non-zero summand is a−p       b   , as desired. Iteratively applying
+ a     a−pα 
+ b ≡      b    (mod p), we immediately obtain that for all ℓ ∈ Z≥0 satisfying a − ℓpα ≥ 0, we have
+                                                      
+                                     a       a − ℓpα
+                                         ≡                    (mod p) .
+                                     b             b
+               j k
+Choosing ℓ = paα , we get that a − ℓpα ∈ {0, . . . , pα − 1} is the residue class of a mod pα , and the result
+follows.
+
+Lemma 3.11. Let m = pα be a prime power. Then, the function g defined by (6) fulfills property (5), i.e.,
+for x ∈ Z we have               (
+                                  0 (mod p) if x ≡ 0 (mod m),
+                         g(x) ≡
+                                  1 (mod p) if x 6≡ 0 (mod m).
+
+Proof. Let x ∈ Z. Due to Lemma 3.10, we have g(x) = g(x mod p). Hence, we can assume x ∈
+{0, . . . , m − 1}. For x = 0 we clearly have g(x) = 0. Thus, assume x ∈ {1, . . . , m − 1}, and it remains to
+show g(x) ≡ 1 (mod p), which holds due to
+                             X x                  X x
+                    g(x) =              + (p − 1)
+                                    k                      k
+                           1≤k<m,                     1≤k<m,
+                            k odd                      k even
+                            X x   X x
+                       ≡          −                                                 (mod p)
+                               k       k
+                           1≤k<m,           1≤k<m,
+                            k odd            k even
+                               m−1   
+                                X     x k
+                       =1−     (−1)
+                                      k
+                           k=0
+                            x          
+                                  k x
+                           X
+                       =1−    (−1)
+                                      k
+                              k=0
+                       = 1 − (1 − 1)x = 1 .
+
+    Combining the results of Lemma 3.11 and Theorem 3.6, we obtain that for any prime power m = pα ,
+there does not exist an (m, m − 1)-system, which finishes the proof of Theorem 1.5.
+
+
+4 Extension to (GCCSM)
+The methods for proving Theorem 1.2, which states polynomial time solvability of (GCCSM) for prime
+power moduli, closely follow those presented above for (CCSM). As before, we establish a link between
+failure of the algorithm Enum(d) and set systems with certain properties. While this link leads to (m, d)-
+systems for (CCSM) problems, we need the more general notion of (m, k, d)-systems for (GCCSM). For
+two vectors x, y ∈ Zk , we write x 6≡ y (mod m) if there exists i ∈ [k] with xi 6≡ yi (mod m).
+
+Definition 4.1 ((m, k, d)-system (with respect to (S1 , . . . , Sk ) on N )). Let N be a finite ground set, let
+m, k, d ∈ Z>0 , and let S1 , . . . , Sk ⊆ N . We say that a set system H ⊆ 2N is an (m, k, d)-system (with
+respect to (S1 , . . . , Sk ) on N ) if
+   (i) H is closed under intersections,
+
+
+                                                         15
+  (ii) (|H ∩ S1 |, . . . , |H ∩ Sk |) 6≡ (|S1 |, . . . , |Sk |) (mod m) ∀H ∈ H, and
+ (iii) for any S ⊆ N with |S| ≤ d, there is a H ∈ H with S ⊆ H.
+
+    Note that property (iii) precisely states that every (m, k, d)-system is d-covering. Using the tools de-
+veloped in Section 2, we can immediately prove the following analogon to Theorem 1.4, thus reducing
+correctness of Enum(d) to a combinatorial question about nonexistence of (m, k, d)-systems. As for (m, d)-
+systems, nonexistence of (m, k, d)-systems without explicit reference to a ground set is to be understood to
+hold for any ground set, i.e., for every finite ground set N , there does not exist an (m, k, d)-system on N .
+
+Theorem 4.2. Let m, k, d ∈ Z>0 . If no (m, k, d)-system exists, then Enum(d) returns an optimal solution
+to any (GCCSM) problem with modulus m and k congruency constraints.
+
+Proof. Consider a (GCCSM) problem min{f (S) | S ∈ L, |S ∩ Si | ≡ ri (mod m) ∀i ∈ [k]} with k
+congruency constraints. Consequently, the set family F over which we want to minimize the function f is
+given by
+                          F = {S ∈ L | |S ∩ Si | ≡ ri (mod m) ∀i ∈ [k]} .
+By Theorem 2.2, it is sufficient to see that no (F, d)-systems and no (comp(F), d)-systems exist. To finish
+the proof, we show that each of  S these two systems are also (m, k, d)-systems. To this end, consider an
+(F, d)-system H, and let Q = H∈H H. Without loss of generality, we may assume that Si ⊆ Q for all
+i ∈ [k] (if not, we simply delete the elements in Si \ Q for all i ∈ [k]). By property (i) of an (F, d)-system,
+we have Q ∈ F, and hence |Si | = |Q ∩ Si | ≡ ri (mod m) ∀i ∈ [k]. Together with property (iii) of
+(F, d)-systems, this implies property (ii) of an (m, k, d)-system. Moreover, properties (ii) and (iv) of an
+(F, d)-system correspond to properties (i) and (iii) of an (m, k, d)-system.
+    Moreover, for a (comp(F), d)-system, note that we have
+
+              comp(F) = {S ∈ comp(L) | |(N \ S) ∩ Si | ≡ ri (mod m) ∀i ∈ [k]}
+                         = {S ∈ comp(L) | |S ∩ Si | ≡ |N ∩ Si | − ri (mod m) ∀i ∈ [k]} ,
+
+so comp(F) has the same form as F, and is therefore also an (m, k, d)-system.
+
+    The previous theorem implies that in order to prove Theorem 1.2, it remains to show that no (m, k, d)-
+systems exist for m being a prime power and some d = km + O(1). This is the content of the following
+theorem.
+
+Theorem 4.3. For m ∈ Z>0 being a prime power, there is no (m, k, k(m − 1))-system.
+
+    The idea for proving Theorem 4.3 is to assume existence of an (m, k, k(m − 1))-system and apply set
+system transformations to obtain more structured systems. More precisely, our proof involves two transfor-
+mations. First, we apply a transformation very similar to the one given in (6) that we used in the proof of
+Theorem 1.5. Through this transformation, we obtain a well-structured (m, k, k)-system in which the vec-
+tors (|H ∩S1 |, . . . , |H ∩Sk |) take only very restricted values mod p, where p is the prime such that m = pα
+for some α ∈ Z≥1 . In a second step, we show that the previously obtained system can in turn be transformed
+to a system contradicting Lemma 3.1. This step requires a more general type of transformation functions
+than the ones seen before, which we introduce in the next section, before finally proving Theorem 4.3.
+
+4.1 Set transformations for the generalized setting
+Generalized cardinality transformation functions are very similar to the cardinality transformation functions
+seen earlier in Definition 3.3. Here, the cardinality |G(S)| of a transformed set S ⊆ N depends on the sizes
+of |S ∩ Si | for i ∈ [k], instead of just the size of S. Formally, the definition is as follows.
+
+                                                       16
+Definition 4.4. A map g : Zk≥0 → Z≥0 is a generalized cardinality transformation function if for every finite
+set N and all sets S1 , . . . , Sk ⊆ N , there is a finite set W and a map G : 2N → 2W such that
+    (i) G(N ) = W ,
+   (ii) |G(S)| = g(|S ∩ S1 |, . . . , |S ∩ Sk |) ∀S ⊆ N , and
+  (iii) G(S) ∩ G(T ) = G(S ∩ T ) ∀S, T ⊆ N .
+Moreover, for ℓ ∈ Z≥1 , we say that g is of level ℓ if G can be chosen such that for every w ∈ W , there exists
+a set S ⊆ N with |S| ≤ ℓ such that w ∈ G(S). In this case we call G a set transformation of level ℓ.
+      We call G a g-realizing set transformation for the ground set N and the sets S1 , . . . , Sk . Conversely, g
+is called the cardinality transformation function corresponding to G.
+
+     As pointed out before, the only difference to cardinality transformation functions as introduced in Def-
+inition 3.3 is property (ii). For this reason, the properties that we proved for cardinality transformation
+functions also hold true for generalized cardinality transformation functions. In particular, if G is a set
+transformation function of level ℓ realizing a generalized cardinality transformation function, and F is a set
+system, we have the following. If F is intersection-closed, then so is G(F) (this follows from property (iii)
+above), and if F is k-covering, then G(F) is ⌊ kℓ ⌋-covering (analogous to Lemma 3.5). Moreover, G is a
+monotone function.
+     There are various ways to construct generalized cardinality transformation functions, but we restrict our
+attention to the precise function that we need for our proofs.
+
+Lemma 4.5. For every k ∈ Z≥1 , the function g(x1 , . . . , xk ) = x1 x2 · · · xk is a generalized cardinality
+transformation function of level k.
+
+Proof. Let N be a finite set and let S1 , . . . , Sk ⊆ N . Let W = S1 × . . . × Sk and define G : 2N → 2W by
+
+                                      G(S) = (S ∩ S1 ) × . . . × (S ∩ Sk )
+
+for all S ⊆ N . We claim that G is a g-realizing set transformation function. Indeed, it is easy to see that
+G(N ) = W by definition. Moreover, we have
+
+     |G(S)| = |(S ∩ S1 ) × . . . × (S ∩ Sk )| = |S ∩ S1 | · . . . · |S ∩ Sk | = g(|S ∩ S1 |, . . . , |S ∩ Sk |) .
+
+To see that G also fulfills property (iii) in Definition 4.4, note that for all sets S, T ⊆ N , having e ∈ (S ∩ T ∩
+S1 )×. . .×(S ∩T ∩Sk ) is equivalent to having e ∈ (S ∩S1 )×. . .×(S ∩Sk ) and e ∈ (T ∩S1 )×. . .×(T ∩Sk ).
+Hence, G(S ∩ T ) = G(S) ∩ G(T ), as desired.
+    To see that g is of level k, note that every w ∈ W is a sequence of elements (s1 , . . . , sk ) with si ∈ Si
+for i ∈ [k]. Let Sw = {s1 , . . . , sk }, then w ∈ G(Sw ) and |Sw | ≤ k (notice that we may have |Sw | < k,
+because some of si may be identical). Thus g is of level k.
+
+4.2 Disproving existence of (m, k, k(m − 1))-systems
+As outlined above, the proof of Theorem 4.3, namely that there do not exist (m, k, k(m − 1))-systems, has
+two steps. In a first step, we disprove the existence of a very structured version of an (m, k, k)-system. In
+a second step, we prove Theorem 4.3 by showing that any (m, k, k(m − 1))-system for m being a prime
+power can be reduced to this structured version of an (m, k, k)-system.
+
+Lemma 4.6. Let m, k, p ∈ Z≥0 , let N be a finite set and let S1 , . . . , Sk ⊆ N . There does not exist a
+non-empty (m, k, k)-system H with respect to (S1 , . . . , Sk ) on N such that
+  (i) |Si | ≡ 1 (mod p) ∀i ∈ [k], and
+
+
+                                                         17
+  (ii) (|H ∩ S1 |, . . . , |H ∩ Sk |) ∈ {0, 1}k \ {(1, . . . , 1)} (mod p) ∀H ∈ H.
+
+Proof. Fix m, k ∈ Z≥0 , a finite set N and S1 , . . . , Sk ⊆ N , and assume with the goal of deriving a contra-
+diction that the system H specified in Lemma 4.6 exists. Consider the generalized cardinality transformation
+function g(x1 , . . . , xk ) = x1 · · · xk , and let G be a g-realizing set transformation of level k for the ground
+set N and the sets S1 , . . . , Sk , whose existence is guaranteed by Lemma 4.5.
+     The lemma now follows by observing that G(H) is a set system that satisfies all conditions of Lemma 3.1
+with r = 0. Indeed, we see that the new ground set G(N ) has cardinality |G(N )| = g(|S1 |, . . . , |Sk |) =
+|S1 | · . . . · |Sk | ≡ 1 (mod p) by the first assumption, settling property (i) in the assumptions of Lemma 3.1.
+On the other hand, every set in G(H) is of the form G(H) for some H ∈ H, and has cardinality |G(H)| =
+g(|H ∩S1 |, . . . , |H ∩Sk |) = |H ∩S1 |·. . .·|H ∩Sk | ≡ 0 (mod p) because, by the second assumption, at least
+one of the factors vanishes mod p. This proves that G(H) has property (ii) of Lemma 3.1. Property (iii)
+follows from the fact that H is k-covering and g is of level k, hence G(H) is still 1-covering. Moreover,
+as the image of a non-empty intersection-closed set system, G(H) is non-empty and intersection-closed, as
+well. This shows that G(H) fulfills all conditions of Lemma 3.1. Consequently, by the same lemma, we
+obtain the desired contradiction.
+
+Proof of Theorem 4.3. We assume for the sake of contradiction that for some prime power m = pα , there
+exists an (m, k, k(m − 1))-system H with respect to (S1 , . . . , Sk ) on N for some finite ground set N and
+subsets Si ⊆ N for i ∈ [k]. If, for some i ∈ [k], |Si | 6≡ 0 (mod m), let ri ∈ {1, . . . , m − 1} such that
+|Si | ≡ ri (mod m). We introduce m − ri new elements and add them to Si and all sets in H to obtain a new
+(m, k, k(m − 1))-system with |Si | ≡ 0 (mod m). After doing so for all i ∈ [k] with |Si | 6≡ 0 (mod m),
+we obtain a corresponding set system with |Si | ≡ 0 (mod m) for all i ∈ [k].
+     Let g be the cardinality transformation function of level m − 1 defined in (6), and let g ′ : Z≥0 → Z≥0
+be defined by g′ (x) = 1 + (p − 1)g(x). By Lemma 3.8, g′ is a cardinality transformation function of level
+m − 1. Moreover, by Lemma 3.11, we have
+                                              (
+                                                1 (mod p) if x ≡ 0 (mod m),
+                         g′ (x) ≡ 1 − g(x) ≡                                                              (7)
+                                                0 (mod p) if x 6≡ 0 (mod m).
+
+Let G′ be a g ′ -realizing set transformation function, and note that G′ (H) is an (m, k, k)-system with respect
+to (G′ (S1 ), . . . , G′ (Sk )) on G′ (N ). To see this, we verify the properties in Definition 4.1. Note that G′ (H)
+is indeed closed under intersections because H is, and G′ preserves intersections. Furthermore, by (7), we
+have
+                                           |G′ (Si )| ≡ g ′ (|Si |) ≡ 1 (mod p)                                    (8)
+for all i ∈ [k]. Moreover, any set in G′ (H), which is of the form G′ (H) for some H ∈ H, fulfills
+
+    (|G′ (H) ∩ G′ (S1 )|, . . . , |G′ (H) ∩ G′ (Sk )|) = (|G′ (H ∩ S1 )|, . . . , |G′ (H ∩ Sk )|)
+                                                      = (g ′ (|H ∩ S1 |), . . . , g′ (|H ∩ Sk |))                 (9)
+                                                      6≡ (1, . . . , 1) ,                           (mod p)
+
+which follows from (7) and the assumption (|H ∩ S1 |, . . . , |H ∩ Sk |) 6≡ (0, . . . , 0) (mod m). Together, (8)
+and (9) imply property (ii) in Definition 4.1. Finally, observe that G′ (H) is k-covering because H is k(m−1)-
+covering and G′ is of level m − 1. Hence, G′ (H) is indeed an (m, k, k)-system. Together with (8) and (9),
+we see that G′ (H) fulfills all conditions of Lemma 4.6, and hence we obtain the desired contradiction.
+
+
+
+
+                                                          18
+5 Barriers for extensions beyond prime powers
+In this section, we reveal limits of our techniques by showing that they cannot extend beyond prime power
+moduli. This points to an interesting structural difference for m being a prime power versus m having at least
+two different prime factors, and opens up the question whether (CCSM) or (GCCSM) may be substantially
+harder for m not being a prime power. This may also shed further light on the complexity of ILPs with a
+constraint matrix containing subdeterminants that are not prime powers.
+    When proving correctness of Enum(d) for (CCSM) and (GCCSM), a crucial step that requires the
+restriction to prime power moduli m is Lemma 3.11, where we prove that a suitable transformation function
+g : Z≥0 → Z≥0 has the property
+                                        (
+                                           0 (mod p) if x ≡ 0 (mod m),
+                                g(x) ≡                                                                    (10)
+                                           1 (mod p) if x 6≡ 0 (mod m)
+
+for some prime number p. The following two theorems present strong implications that result from imposing
+the above condition with composite moduli m.
+
+Theorem 5.1. Let m, p, r ∈ Z>0 , where p is prime, and m is a composite number with r different prime
+factors. There is a constant c = c(m) > 0 such that for every cardinality transformation function g : Z≥0 →
+Z≥0 fulfilling (10) with respect to p and m, there is a constant κ ∈ Z≥0 with the property that for all n ∈ Z
+with n ≥ κ,                                                         r−1
+                                                            log n
+                                                     c·
+                                          g(n) ≥ n        log log n
+                                                                            .                            (11)
+
+     Notice that the cardinality transformation functions that we used, which are all of the form described
+by Corollary 3.9, have the property that for any constant level, they are polynomially bounded. Hence, the
+above theorem implies that for an extension beyond prime power moduli based on the cardinality trans-
+formation functions we introduced, we would need a superconstant level. As our algorithmic approach
+relies on Theorems 3.6 and 1.4, this would in turn imply that the corresponding enumeration procedure has
+superconstant depth, prohibiting our algorithm to be efficient.
+     However, the above theorem does not exclude that there may be other cardinality transformation func-
+tions, not covered by Corollary 3.9, that have constant level and fulfill (10). The next theorem rules out
+this possibility. More precisely, the next theorem shows that no cardinality transformation function with
+property (10) exists even if the level is allowed to depend on n, i.e., the size of the ground set, and grows
+moderately in terms of n. To capture this setting in the following, we allow the level ℓ of a cardinality
+transformation function g to be a function ℓ : Z≥0 → Z≥0 , with the semantics that on any ground set of
+cardinality n, there is a g-realizing set transformation of level ℓ(n). To emphasize this difference to our
+original definition of level, which did not depend on n, we will also talk about generalized level.
+
+Theorem 5.2. Let m, p, r ∈ Z>0 such that p is prime, and m is a composite number with r different prime
+factors. Every cardinality transformation function g : Z≥0 → Z>0 fulfilling (10) with respect to p and m
+has a generalized level ℓ that satisfies
+                                                          r−1 !
+                                                   log n
+                                         ℓ=Ω                      .
+                                                 log log n
+
+    We highlight that in the above Ω-notation, m and p are considered to be constant. The barriers high-
+lighted by the above theorems originate from combinatorial results on set systems with restricted intersec-
+tions. On the one hand, we have the following classical result by Frankl and Wilson.
+
+
+                                                          19
+Theorem 5.3 (Frankl and Wilson [7]). Let p be a prime number, let s ∈ [p − 1], and let µ0 , . . . , µs ∈
+{0, . . . , p − 1} be distinct numbers. Let H be a set system on a ground set of n elements such that for some
+k ∈ Z≥0 with k ≡ µ0 (mod p),
+   (i) H is a k-uniform set system, i.e., |H| = k for all H ∈ H, and
+  (ii) for all distinct H1 , H2 ∈ H, we have |H1 ∩ H2 | ≡ µi for some i ∈ [s].
+                   
+Then, |H| ≤ ns .
+
+    While the above theorem shows that restricting the cardinalities of intersections modulo a prime number
+reduces the size of the set system to a polynomial in the size of the ground set, the situation changes if the
+prime modulus is replaced by a composite number. This surprising fact was observed by Grolmusz, who
+proved the following theorem.
+
+Theorem 5.4 (Grolmusz [12]). Let m ∈ Z≥0 be a composite number with r > 1 different prime divisors.
+Then, there is a constant c0 = c0 (m) > 0 with the property that for every n ∈ Z>0 , there exists a set system
+H on a ground set of n elements such that
+                                     r−1
+                            log n
+               c0 ·
+   (i) |H| ≥ n                  ,
+                          log log n
+
+
+  (ii) for all H ∈ H, we have |H| ≡ 0 (mod m), and
+ (iii) for all distinct H1 , H2 ∈ H, we have |H1 ∩ H2 | 6≡ 0 (mod m).
+
+    The value of the constant c0 in the above theorem equals roughly p−r   r , where pr is the largest prime
+divisor of m [12], and the constant c in Theorem 5.1 depends on c0 . We actually show that c < c0 is a
+feasible choice. The proofs of Theorems 5.1 and 5.2 follow a common idea. In both, we assume existence
+of the respective transformation functions, and then use these functions to transform a set system of the type
+given by Theorem 5.4 to a new set system. Adjusting the new set systems so that they fulfill the assumptions
+of Theorem 5.3 gives an upper bound on their size, and combining these bounds with the lower bound
+coming from Theorem 5.4 allows for deducing the results.
+
+Proof of Theorem 5.1. We show that for every composite number m, we can choose any constant c < c0 ,
+where c0 is the corresponding constant guaranteed by Theorem 5.4. Let m be a composite number, and let
+g : Z≥0 → Z≥0 be a cardinality transformation function fulfilling property (10) with respect to the prime
+number p and m. For n ∈ Z, let H be a set system on a ground set of size n fulfilling the properties listed
+in Theorem 5.4 with respect to the composite number m. The set system H is not necessarily a uniform set
+system, but it contains a large uniform subsystem. To see this, define Hi = {H ∈ H | |H| = i} for i ∈ [n]
+and let ℓ ∈ argmaxi∈[n] |Hi |. Then Hℓ is an ℓ-uniform set system with |Hℓ | ⩾ n1 |H|.
+    Let G be a g-realizing set system transformation function and consider the set system G(Hℓ ). We
+claim that G(Hℓ ) is a set system on a ground set of size g(n) that fulfills the assumptions of Theorem 5.3.
+Obviously, G(Hℓ ) is a uniform system, as for all H ∈ Hℓ , we have |H| = ℓ and hence |G(H)| = g(|H|) =
+g(ℓ), so the set system is g(ℓ)-uniform. Moreover, as by assumption, |H| ≡ 0 (mod m), property (10)
+implies g(ℓ) = g(|H|) ≡ 0 (mod p). Note that for any two distinct sets H1 , H2 ∈ H, we have
+
+                          |G(H1 ) ∩ G(H2 )| = |G(H1 ∩ H2 )| = g(|H1 ∩ H2 |) ≡ 1 (mod p) ,                (12)
+
+where we used the assumption that |H1 ∩ H2 | 6≡ 0 (mod m) for all distinct H1 , H2 ∈ H, and property (10).
+Hence, G(Hℓ ) fulfills the conditions of Theorem 5.3 with s = 1, µ0 = 0, µ1 = 1, and k = g(ℓ). As Hℓ is
+a system on a ground set of size n, G(Hℓ ) is one on a ground set of size g(n). By Theorem 5.3, we thus
+obtain the upper bound |G(Hℓ )| ≤ g(n).
+    Note that if in (12), G(H1 ) and G(H2 ) are not distinct, then |G(H1 ) ∩ G(H2 )| = |G(H1 )| = g(|H1 |) ≡
+0 (mod p). This contradicts (12), hence H1 = H2 whenever G(H1 ) = G(H2 ), so G is injective when
+
+
+                                                        20
+restricting its domain to H. Injectivity of G on H implies
+                                                                                          r−1
+                                                  |H|
+                                                                           
+                                                         c · log n                               −1
+                               |G(Hℓ )| = |Hℓ | ≥     ≥ n 0 log log n                                 .
+                                                   n
+Combining the obtained upper and lower bounds on |G(Hℓ )|, we get the inequality
+                                                                         r−1
+                                                                log n
+                                                   c0 ·                          −1
+                                        g(n) ≥ n              log log n
+                                                                                      .
+
+From the above, it is easy to see that whenever c < c0 , there exists a constant κ ∈ Z≥0 such that every
+n ∈ Z with n ≥ κ satisfies                                               r−1
+                                                                 log n
+                                                     c·
+                                          g(n) ≥ n             log log n
+                                                                                  .
+
+    To present the proof of Theorem 5.2, we introduce the concept of atoms of a set system. When applying
+a set system transformation of level ℓ, we cannot directly bound the size of the ground set of the new set
+system. Nonetheless, we can show that the size of the new ground set can be reduced to a polynomial in
+the size of the ground set of the initial set system without loosing the system’s structure. The key ingredient
+for this procedure is bounding the number of atoms in the transformed set system. This is formalized in
+Lemma 5.6 and will be an important building block for the proof of Theorem 5.2.
+
+Definition 5.5. Let H be a set system on a finite ground set N . A non-empty set A ⊆ N is an atom of H if
+it is a maximal set with the property that for all H ∈ H, we have A ⊆ H or A ⊆ N \ H.
+
+     In particular, the above definition implies that two elements of the ground set N are not in the same atom
+if and only if the set system H contains a set separating the two elements.
+
+Lemma 5.6. Let g : Z≥0 → Z≥0 be a cardinality transformation function of level ℓ ∈ Z≥0 . Let N be a set
+of size n, and let G be a g-realizing set transformation function for the ground set N . Then, G(2N ) has at
+most 1 + ℓnℓ many atoms.
+
+Proof. Since g is of level ℓ, for every w ∈ W there is a set Sw ⊆ N with w ∈ G(Sw ) and |Sw | ≤ ℓ. Among
+all such sets, let Sw be one that is inclusion-wise minimal. (Actually, one can observe that Sw is unique;
+however, we do not need this later.) Moreover, we denote by Aw ⊆ G(N ) the atom of G(2N ) containing w.
+     Because |Sw | ≤ ℓ for all w ∈ W , the number of different sets Sw can be bounded from above by the
+number of subsets of N of size at most ℓ, i.e.,
+                                                              ℓ  
+                                                              X  n
+                                 |{Sw | w ∈ W }| ≤                             ≤ 1 + ℓnℓ .
+                                                                      i
+                                                              i=0
+
+To finish the proof, we show that the map Aw 7→ Sw is an injection. If so, we get |{Aw | w ∈ W }| ≤ |{Sw |
+w ∈ W }|, which, together with the above bound, proves the lemma. To see injectivity, let w1 , w2 ∈ W with
+Aw1 6= Aw2 , i.e., w1 and w2 are not in the same atom. Then, there is a set G(S) ∈ G(2N ) separating the
+two elements, for some set S ⊆ N . Without loss of generality, assume that w1 ∈ G(S), while w2 6∈ G(S).
+    On the one hand, this implies w1 ∈ G(S) ∩ G(Sw1 ) = G(S ∩ Sw1 ), hence by minimality of Sw1 , we get
+S ∩ Sw1 = Sw1 . On the other hand, we have w2 ∈   / G(S) ∩ G(Sw2 ) = G(S ∩ Sw2 ), hence S ∩ Sw2 ( Sw2 .
+This implies Sw1 6= Sw2 , and hence injectivity of the map Aw 7→ Sw , as desired.
+
+   Before we start the proof of Theorem 5.2, we remark that both the statement and the proof of the previous
+lemma remain unchanged even if we allow for using the notion of generalized level, thus leading to an upper
+bound of 1 + ℓ(n)nℓ(n) many atoms.
+
+                                                          21
+Proof of Theorem 5.2. Let m be a composite number, and let g : Z≥0 → Z≥0 be a cardinality transformation
+function that fulfills the property (10) for some prime number p. Moreover, let ℓ : Z → Z denote the
+(generalized) level of g.
+     We know that for every n ∈ Z≥0 , there exists a set system H on a ground set N of size n fulfilling
+the properties listed in Theorem 5.4 with respect to the composite number m. Let G be a g-realizing set
+transformation function on N and consider G(H). Note that by property (10) and the assumptions on H,
+every set G(H) ∈ G(H) satisfies |G(H)| ≡ 0 (mod p), while for every two distinct sets G(H1 ), G(H2 ) ∈
+G(H), we have |G(H1 ) ∩ G(H2 )| = |G(H1 ∩ H2 )| = g(|H1 ∩ H2 |) ≡ 1 (mod p).
+     As we are only interested in the size of sets in G(H) and their intersections mod p, and because every
+such set is a disjoint union of atoms of G(H), we can delete elements of the ground set in the following
+way without loosing the observed properties. For every atom A of G(H), if |A| ≡ a (mod p) with a ∈
+{1, . . . , p}, we can delete any |A| − a elements of A from the ground set G(N ), and update the sets in
+G(H) correspondingly by removing the deleted elements from all sets containing them. By doing so, we
+thus obtain a new set system I with atoms of cardinality at most p. Note that none of the atoms were deleted
+completely, and thus distinct sets in G(H) before the deletion of elements remain distinct after the deletion,
+i.e., in I. Thus
+                                                |I| = |G(H)| .                                           (13)
+In particular, the number of atoms in I equals the number of atoms in G(H), which, by Lemma 5.6, is
+bounded by 1 + ℓnℓ . Altogether, I is a set system on a ground set of size at most p(1 + ℓnℓ ) such that
+|I| ≡ 0 (mod p) for all I ∈ I, and |I1 ∩ I2 | ≡ 1 (mod p) for all distinct sets I1 , I2 ∈ I.
+    In order to apply Theorem 5.3, we need a large uniform subsystem of I. Thereto, let Ii = {I ∈ I |
+|I| = i} for i ∈ [p(1 + ℓnℓ )] be all uniform subsystems, and let k ∈ [p(1 + ℓnℓ )] be such that |Ik | is the one
+of maximum cardinality. The k-uniform set system Ik satisfies the assumptions of Theorem 5.3 with s = 1,
+µ0 = 0 and µ1 = 1, so by the same theorem, we get
+
+                                              |Ik | ≤ p(1 + ℓnℓ ) .                                             (14)
+                                                       1
+    For a lower bound, first note that that |Ik | ≥ p(1+ℓn ℓ ) |I|. Furthermore, as already observed in the proof
+
+of Theorem 5.1, G is injective over the domain H, and thus, we have |G(H)| = |H|. Putting this together
+and using the lower bound on the size of H, we get
+                                                                                                    r−1
+                                                                                           log n
+                                                                              c0 ·
+                                         |I|         |H|       n                         log log n
+                           |Ik | ≥           ℓ
+                                                =         ℓ
+                                                             ≥                                              ,
+                                     p(1 + ℓn )   p(1 + ℓn )     p(1 + ℓnℓ )
+
+where the equality follows from (13) and |G(H)| = |H|. Combining this with (14) and rearranging terms,
+we obtain                                               r−1
+                                                      c0       log n
+
+                                                ℓ    n2      log log n
+                                         1 + ℓn ≥                                    .
+                                                                 p
+Note that when transforming a system on a ground set of size n, the level is always at most n, i.e., n ≥ ℓ.
+Using this and absorbing constants into the asymptotic notation, we obtain
+                                                                           r−1 
+                                                                   log n
+                                                        Ω
+                                   nℓ+1 ≥ ℓnℓ = n
+                                                                 log log n
+                                                                                           ,
+                                           r−1 
+                                     log n
+which implies the desired ℓ = Ω    log log n        .
+
+
+
+
+                                                       22
+6 Minimality of the enumeration depth d
+In this section, we show that for any m ∈ Z>0 , Enum(d) does in general not solve (CCSM) with modulus
+m correctly if d < m − 1. This shows in particular that our choice d = m − 1 of the depth of Enum(d) is
+the smallest depth for which Enum(d) successfully solves (CCSM) for prime power moduli m. This also
+implies the existence of (m, m − 2)-systems for m ∈ Z>0 ; this follows from Theorem 1.4, but can also be
+seen directly from our construction.
+    We show that d ≥ m − 1 is necessary by constructing an explicit example where d = m − 2 is not
+enough for Enum(d) to solve (CCSM). Thereto, let N = {0, 1, . . . , n} for some n ∈ Z with n ≥ m.
+Consider the lattice L = 2N and define the modular (and thus also submodular) function f : L → Z by
+                                             (
+                                              |S|            if 0 ∈
+                                                                  / S,
+                                     f (S) =
+                                              |S| − 1 − m if 0 ∈ S
+
+for all S ⊆ N . This function is indeed modular since it assigns weight −m to the element 0, and weight 1
+to all other elements of N , and the weight f (S) of a subset S ⊆ N is obtained by summing the weights of
+all elements. The (CCSM) problem that we consider is minimizing the function f over the subfamily
+
+                                  F = {S ∈ L | |S| ≡ 0      (mod m)} .
+
+It is easy to see that min{f (S) | S ∈ F} = −1, with minimizers being precisely all m-element subsets of
+N containing 0.
+     However, Enum(m − 2) does not solve this (CCSM) problem, as we now show. Consider a step of
+Enum(m − 2), i.e., fix A, B ⊆ N with |A|, |B| ≤ m − 2 and A ∩ B = ∅. It is easy to see that
+                                                      (
+                                                        {A}          if 0 ∈ B,
+                           argmin{f (S) | S ∈ LAB } =
+                                                        {A ∪ {0}} if 0 ∈  / B.
+
+In all cases, the minimizers found will be sets of size at most m − 1, while the actual minimizers of f over
+F are of size m. So Enum(m − 2) does indeed not solve this (CCSM) problem.
+    As indicated above, existence of an (m, m − 2)-system thus follows from Theorem 1.4. This system can
+be constructed by following the proof of Lemma 2.5, resulting in a system on a ground set of m elements
+containing all sets of size at most m − 1 containing a fixed element.
+
+
+7 Conclusions
+We presented a new approach to deal with submodular function minimization problems under congruency
+constraints. The core of our approach is the analysis of a very natural algorithm, that enumerates over small
+subsets of elements to be included, respectively excluded, in a minimizer. Our analysis reduces the cor-
+rectness of this procedure to a purely combinatorial question about the nonexistence of certain set systems,
+which we can settle when the modulus of the involved congruency constraints is a prime power, by using
+techniques from Combinatorics and Number Theory. This leads to polynomial time algorithms for (CCSM)
+and (GCCSM) when the modulus m is a prime power bounded by a constant. The techniques we intro-
+duced to disprove such set systems can be seen as a general framework, which we hope may be useful for
+future extensions to solve submodular function minimization problems under even more general constraint
+families.
+    It remains open whether (CCSM) and (GCCSM) can be solved efficiently for a constant modulus m that
+is not a prime power. However, as we highlighted in Section 5, this would require new ingredients. A recent
+
+
+                                                     23
+construction by Gopi [11], which was found after submission of this work, strengthens the barriers pointed
+out in Section 5 by showing that (m, m − 1)-systems do actually exist if m is not a prime power. Gopi’s
+construction is based on results by Barrington, Beigel, and Rudich [3] on the representation of boolean
+functions. Results in [3] were also leveraged by Grolmusz in his proof of Theorem 5.4.
+     Moreover, we highlight that our proofs imply that our enumeration algorithm, when applied to (CCSM)
+or (GCCSM), enumerates all minimal optimal solutions. In particular, this shows that in the discussed
+settings where our approach finds an optimal minimal solution in polynomial time, the total number of
+minimal solutions is polynomially bounded.
+     Since both (CCSM) for m ≥ 3 and (GCCSM) for m ≥ 2 are not captured by triple or parity families,
+and neither do they generalize these families, it remains open to find a common generalization. In particular,
+submodular function minimization over the intersection of a constant number of parity families would be
+such a common generalization. It remains open whether this problem can be solved efficiently.
+
+
+Acknowledgments
+We thank Karthekeyan Chandrasekaran for interesting discussions on related topics. Moreover, we are
+grateful to the anonymous referees for various comments and suggestions that helped to improve the quality
+of the presentation.
+
+
+References
+ [1] S. Artmann, R. Weismantel, and R. Zenklusen. A strongly polynomial algorithm for bimodular integer
+     linear programming. In Proceedings of the 49th Annual ACM Symposium on Theory of Computing
+     (STOC), pages 1206–1219, 2017.
+
+ [2] F. Barahona and M. Conforti. A construction for binary matroids. Discrete Mathematics, 66(3):213 –
+     218, 1987.
+
+ [3] D. A. Mix Barrington, R. Beigel, and S. Rudich. Representing boolean functions as polynomials
+     modulo composite numbers. Computational Complexity, 4(4):367–382, 1994.
+
+ [4] D. Chakrabarty, A. Sidford, Y. T. Lee, and Wong S. C. Subquadratic submodular function minimization.
+     In Proceedings of 49th Annual ACM Symposium on the Theory of Computing (STOC), pages 1220–
+     1231, 2017.
+
+ [5] M. Conforti and M. R. Rao. Some new matroids on graphs: Cut sets and the max cut problem. Mathe-
+     matics of Operations Research, 12(2):193–204, 1987.
+
+ [6] W. H. Cunningham. On submodular function minimization. Combinatorica, 5(3):185–192, 1985.
+
+ [7] P. Frankl and R. M. Wilson. Intersection theorems with geometric consequences. Combinatorica,
+     1(4):357–368, 1981.
+
+ [8] S. Fujishige. Submodular Functions and Optimization. Elsevier, 2005.
+
+ [9] J. Geelen and R. Kapadia. Computing girth and cogirth in perturbed graphic matroids. Combinatorica,
+     2017. Available online at http://dx.doi.org/10.1007/s00493-016-3445-3.
+
+[10] M. X. Goemans and V. S. Ramakrishnan. Minimizing submodular functions over families of sets.
+     Combinatorica, 15(4):499–513, 1995.
+
+
+                                                     24
+[11] S. Gopi. Private communication, 2017.
+
+[12] V. Grolmusz. Superpolynomial size set-systems with restricted intersections mod 6 and explicit ramsey
+     graphs. Combinatorica, 20(1):71–86, 2000.
+
+[13] M. Grötschel, L. Lovász, and A. Schrijver. The ellipsoid method and its consequences in combinatorial
+     optimization. Combinatorica, 1(2):169–197, 1981.
+
+[14] M. Grötschel, L. Lovász, and A. Schrijver. Corrigendum to our paper “The ellipsoid method and its
+     consequences in combinatorial optimization”. Combinatorica, 4(4):291–295, 1984.
+
+[15] M. Grötschel, L. Lovász, and L. Schrijver. Geometric Algorithms and Combinatorial Optimization,
+     volume 2 of Algorithms and Combinatorics. Springer, second corrected edition, 1993.
+
+[16] S. Iwata. Submodular function minimization. Mathematical Programming, Series B, 112(1):45–64,
+     March 2008.
+
+[17] S. Iwata, L. Fleischer, and S. Fujishige. A combinatorial strongly polynomial algorithm for minimizing
+     submodular functions. Journal of the ACM, 48:761–777, July 2001.
+
+[18] S. Iwata and J. B. Orlin. A simple combinatorial algorithm for submodular function minimization.
+     In Proceedings of the 20th Annual ACM-SIAM Symposium on Discrete Algorithms (SODA), pages
+     1230–1237, 2009.
+
+[19] D. R. Karger. Global min-cuts in RNC, and other ramifications of a simple min-out algorithm. In
+     Proceedings of the 4th Annual ACM-SIAM Symposium on Discrete Algorithms (SODA), pages 21–30,
+     1993.
+
+[20] D. R. Karger and C. Stein. A new approach to the minimum cut problem. Journal of the ACM,
+     43(4):601–640, 1996.
+
+[21] Y. T. Lee, A. Sidford, and S. C. Wong. A faster cutting plane method and its implications for combina-
+     torial and convex optimization. In Proceedings of the 56th Annual IEEE Symposium on Foundations
+     of Computer Science (FOCS), pages 1049–1065, 2015.
+
+[22] S. T. McCormick.     Submodular function minimization.    In Discrete Optimiza-
+     tion, volume 12 of Handbooks in Operations Research and Management Sci-
+     ence, pages 321–391. Elsevier, 2005.     Updated version of 2013 available at:
+     https://pdfs.semanticscholar.org/903d/12346be328623e41e7bea2791a6e6df570fc.pdf.
+
+[23] M. W. Padberg and M. R. Rao. Odd minimum cut-sets and b-matchings. Mathematics of Operations
+     Research, 7(1):67–80, 1982.
+
+[24] A. Schrijver. A combinatorial algorithm minimizing submodular functions in strongly polynomial
+     time. Journal of Combinatorial Theory, Series B, 80(2):346 – 355, 2000.
+
+[25] A. Schrijver. Combinatorial Optimization, Polyhedra and Efficiency. Springer, 2003.
+
+[26] Z. Svitkina and L. Fleischer. Submodular approximation: Sampling-based algorithms and lower
+     bounds. SIAM Journal on Computing, 40(6):1715–1737, 2011.
+
+
+
+
+                                                    25
+

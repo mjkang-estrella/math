@@ -1,0 +1,1174 @@
+                                                CNF Satisfiability in a Subspace and Related Problems
+
+                                                                       V. Arvind*             Venkatesan Guruswami†
+
+
+
+
+arXiv:2108.05914v1 [cs.DS] 12 Aug 2021
+                                                                                              Abstract
+                                                    We introduce the problem of finding a satisfying assignment to a CNF formula that must
+                                                further belong to a prescribed input subspace. Equivalent formulations of the problem in-
+                                                clude finding a point outside a union of subspaces (the Union-of-Subspace Avoidance (USA)
+                                                problem), and finding a common zero of a system of polynomials over F2 each of which is a
+                                                product of affine forms.
+                                                    We focus on the case of k-CNF formulas (the k-S UB -S AT problem). Clearly, k-S UB -S AT
+                                                is no easier than k-SAT, and might be harder. Indeed, via simple reductions we show that
+                                                2-S UB -S AT is NP-hard, and W[1]-hard when parameterized by the co-dimension of the sub-
+                                                space. We also prove that the optimization version Max-2-S UB -S AT is NP-hard to approxi-
+                                                mate better than the trivial 3/4 ratio even on satisfiable instances.
+                                                    On the algorithmic front, we investigate fast exponential algorithms which give non-trivial
+                                                savings over brute-force algorithms. We give a simple branching algorithm with runtime
+                                                (1.5)r for 2-S UB -S AT, where r is the subspace dimension, as well as an O∗ (1.4312)n time algo-
+                                                rithm where n is the number of variables.
+                                                    Turning to k-S UB -S AT for k ⩾ 3, while known algorithms for solving a system of degree k
+                                                polynomial equations already imply a solution with runtime ≈ 2r(1−1/2k) , we explore a more
+                                                combinatorial approach. Based on an analysis of critical variables (a key notion underly-
+                                                ing the randomized     k-SAT algorithm of Paturi, Pudlak, and Zane), we give an algorithm with
+                                                               n
+                                                                  n−n/k
+                                                runtime ≈ ⩽t      2       where n is the number of variables and t is the co-dimension of the
+                                                subspace. This improves upon the runtime of the polynomial equations approach for small
+                                                co-dimension. Our combinatorial approach also achieves polynomial space in contrast to
+                                                the algebraic approach that uses exponential space. We also give a PPZ-style algorithm for
+                                                k-S UB -S AT with runtime ≈ 2n−n/2k . This algorithm is in fact oblivious to the structure of
+                                                the subspace, and extends when the subspace-membership constraint is replaced by any
+                                                constraint for which partial satisfying assignments can be efficiently completed to a full sat-
+                                                isfying assignment. Finally, for systems of O(n) polynomial equations in n variables over F2 ,
+                                                we give a fast exponential algorithm when each polynomial has bounded degree irreducible
+                                                factors (but can otherwise have large degree) using a degree reduction trick.
+
+
+
+
+                                            * Institute of Mathematical Sciences (HBNI), Chennai, x1India. Email: arvind@imsc.res.in
+                                            †
+                                             Computer Science Department, Carnegie Mellon University, Pittsburgh, USA. Email: venkatg@cs.cmu.edu. Por-
+                                         tions of this work were done during visits to the Institute of Mathematical Sciences, Chennai. Research supported in
+                                         part by the US National Science Foundation grant CCF-1908125 and a Simons Investigator Award.
+1   Introduction
+
+Given an n-variate Boolean formula Φ along with an affine subspace A ⊆ Fn2 (given by a system
+of F2 -linear equations) as input, we explore the complexity of testing if Φ has a satisfying assign-
+ment in A. This is a natural twist on Boolean constraint satisfaction problems that studies the
+effects of linear algebra on Boolean logic. Our focus shall be on the case when Φ is presented
+in Conjunctive Normal Formal (CNF). We refer to this problem as satisfiability in a subspace
+and denote it by S UB -S AT . This framework can capture non-Boolean problems such as Graph
+K-Colorability indicating the richness of combining the problem of Boolean CNF-satisfiability
+with a linear-algebraic constraint. We also note that in the area of practical SAT solvers there is
+interest in CNF satisfiability conjuncted with XOR constraints [27, 26].
+    Further, S UB -S AT has two other equivalent interesting formulations. The first of these is
+union of subspace avoidance, USA for   short: Given affine subspaces A1 , A2 , . . . , Am ⊆ Fn2 is there
+                                      m
+an x ∈ Fn2 that is not in the union i=1 Ai ? A different formulation is a special case of finding
+                                    S
+a solution to a bunch of polynomial equations pi = 0 over Fn2 , namely when each pi is a prod-
+uct of affine forms. We refer to this reformulation as PAF-S AT . We will describe these (easy)
+equivalences in Section 1.3.
+    For most of the paper, we restrict attention to the case when Φ is a k-CNF formula (a CNF
+formula with clauses of width at most k) for a fixed k, referred to as the k-S UB -S AT problem.
+Clearly, k-S UB -S AT is a generalization of the well-studied k-S AT (k-CNF satisfiability). In terms
+of the two reformulations above, k-S UB -S AT corresponds to the USA problem when the spaces
+Ai have co-dimension at most k, and for the PAF-S AT problem, each polynomial pi is the product
+of up to k affine forms.
+   We present both hardness results and algorithms for k-S UB -S AT , described in Sections 1.1
+and 1.2 below respectively. Owing to the NP-hardness of the problems, the algorithmic focus is
+on exponential time algorithms that give non-trivial improvements over brute-force.
+    There are two possible angles from which to view the study of k-S UB -S AT . The first is as a
+problem intermediate between satisfiability of k-CNF formula and a system of degree k poly-
+nomial equations. The second is as a specific instance of a constraint satisfaction problem
+(CSP) obtained by combining two fundamental types of constraints. There have been a few
+works [21, 6] giving algorithms beating brute-force for some natural problems with mixed con-
+straints, but we are still far from a general picture of how to obtain fast exponential algorithms
+for a combined template of constraints when each constraint type does admit such non-trivial
+algorithms. In this context, tackling the combination of k-CNF formulas and linear equations is
+a good starting point, and one that could hopefully spur a more systematic study in the future.
+There have been a few investigations [15, 18, 7, 16] into the fine-grained complexity of CSPs via
+the algebraic approach based on (partial) polymorphisms. This theory has developed the tools
+to compare the optimal exponents of different constraint types, identifying for instance the “eas-
+iest” NP-hard CSP within some classes. However, with the exception of [3], polymorphisms have
+not been leveraged to design fast exponential algorithms with competitive exponents.
+
+
+
+
+                                                   2
+1.1 Hardness results
+
+Since k-S UB -S AT is a generalization of k-S AT , k-S UB -S AT inherits all the intractability results of
+k-S AT for k ⩾ 3. This leaves the interesting case of 2-S UB -S AT . This turns out to be much harder
+than the polynomial time solvable 2-S AT . We establish the following, showing not just hardness
+(even for FPT algorithms) of the exact version, but also a tight inapproximability for the approxi-
+mation version (even on satisfiable instances). The proofs are based on short, simple reductions,
+once an appropriate problem to reduce from is chosen.1 The W[1]-hardness answers a question
+posed in [2] on the fixed-parameter complexity of 2-S AT with a global modular constraint, pa-
+rameterized by the modulus.
+
+Theorem 1.   1. 2-S UB -S AT is NP-hard. It is further W[1]-hard when parameterized by the co-
+    dimension of the affine space A in which we seek a satisfying assignment.
+
+   2. Given a satisfiable instance of 2-S UB -S AT , it is NP-hard to find an assignment in the input
+      space A that satisfies more than 3/4 + ǫ of the 2SAT clauses, for any ǫ > 0.
+
+
+1.2 Algorithmic results
+
+Analogous to seeking k-S AT algorithms faster than brute-force, we investigate fast exponential
+time algorithms for k-S UB -S AT that beat the naive brute-force 2dim(A) time algorithm, where
+A ⊆ Fn2 is the subspace in which we seek a solution. Algorithms for k-S AT have received much
+attention and are central to the burgeoning field of fast exponential-time algorithms. The algo-
+rithmic theory is closely connected to fixed parameter tractability and parameterized complex-
+ity [11, 9]. The accompanying hardness theory [13, 14], based on the exponential-time hypoth-
+esis (ETH) and the strong exponential-time hypothesis (SETH), is a sanity check to the quest for
+faster algorithms for k-S AT and other NP-complete problems.
+    There are several interesting k-S AT algorithms with running time O ∗ (2n(1−Θ(1/k)) ).2 We only
+mention two significant algorithms from among these: one by Paturi, Pudlak, Zane [22] and
+another due to Schöning [24]. Both algorithms are simple to describe with delightfully clever
+and elegant analyses. The PPZ algorithm considers variables in a random order, and gives each
+a random value unless its value is forced by a clause and previously set values. It achieves a
+runtime of O ∗ (2n(1−1/k) ). Schöning’s algorithm starts with a random assignment and in each
+step fixes an unsatisfied clause by flipping the value of a random one of its variables. It achieves
+a runtime of O ∗ ((2 − 2/k)n ).
+    Given that k-S UB -S AT generalizes k-S AT , it is natural to seek exponential algorithms with
+similar runtimes for k-S UB -S AT . For S UB -S AT with input space A ⊆ Fn2 , the brute-force algorithm
+in fact runs in time O∗ (2dim(A) ). A natural question is whether we can get similar improvements
+in the exponent of the O∗ (2dim(A) ) runtime.
+    An algorithm [19] with running time about O∗ (2r(1−1/5k) ) is known for checking satisfiability
+of a collection of arbitrary degree k polynomial equations in r variables: Let Pi ∈ F2 [x1 , x2 , . . . , xr ],
+1 ⩽ i ⩽ m, be polynomials over the field F2 . Following [19], the P OLY-E QS problem is solving the
+  1
+     The NP-hardness would also follow from Schaefer’s dichotomy theorem for Boolean CSP [23], though that is an
+overkill hammer for this result.
+   2
+     The notation O∗ (f (n)) for runtime bounds suppresses polynomial factors.
+
+
+                                                       3
+system of polynomial equations Pi = 0, 1 ⩽ i ⩽ m over F2 : to check if there exists a solution in Fr2
+and compute one if it exists. When Pi are all of degree bounded by k we denote this special case
+by k-P OLY-E QS . The k-P OLY-E QS problem generalizes k-S UB -S AT by the following easy transfor-
+mation: Suppose the subspace A where we seek a satisfying assignment is r dimensional. Then
+we can express the ith clause in the k-S UB -S AT instance as a disjunction of k affine linear
+                                                                                          Q forms in
+r variables: Ci = (ℓi,1 ∨ℓi,2 ∨· · ·∨ℓi,k ). We define the corresponding polynomial Pi = kj=1 (ℓi,j +1).
+Now, the k-S UB -S AT instance is satisfiable iff the k-P OLY-E QS instance Pi = 0, 1 ⩽ i ⩽ m has a
+solution in Fr2 .
+    The algorithm [19] is a novel application of the Razborov-Smolensky “polynomial method,”
+originally developed as a lower bound technique, used to define low-degree probabilistic poly-
+nomials for approximating the OR gate. The same idea allows for replacing a system of poly-
+nomial equations by a single probabilistic polynomial (without significant increase in degree),
+followed by a partial table lookup search. The article [19] presents more general results applica-
+ble to all finite fields Fq . Recently, in [8], the running time for the case of F2 has been improved
+to O∗ (2r(1−1/2k) ) by a refinement of the search method in [19].
+    Since k-S UB -S AT is a special case of solving a system of polynomial equations over F2 , it raises
+the natural question of improving the running time further to match the O∗ (2r(1−1/k) ) runtime
+of the PPZ randomized algorithm for k-S AT . We are only able to achieve this speed-up in some
+special cases. However, on the positive side, our algorithms turn out to be polynomial space
+bounded, unlike the polynomial equations based method which requires exponential space [19,
+8].
+
+
+1.2.1     Algorithms for 2-S UB -S AT
+
+For 2-S UB -S AT a simple deterministic branch-and-bound algorithm achieves a runtime of O∗ (3r/2 )
+where r is the dimension of the subspace A. We can improve on this with a randomized branch-
+ing strategy to a runtime of O ∗ (1.5r ). This improves over the randomized O∗ (1.6181r ) algorithm
+given by the polynomial method [8] for solving a system of quadratic
+                                                                   √   equations over F2 . There is
+also a simple deterministic branching algorithm with O∗ (((1 + 5)/2)r ) runtime for 2-S UB -S AT .
+This is based on the same branching strategy for k-S AT [20, Theorem, pp. 295] with its runtime
+governed by the generalized Fibinacci numbers.
+   When dim(A) = n − t, we can adapt the algorithm from [2, Algorithm 4.1] (for solving 2-SAT
+                                                          n
+with a single abelian group constraint) to obtain an O∗ ( ⩽t ) time algorithm. 3
+    The result of Theorem 1 shows that this problem is not in FPT parameterized by the co-
+dimension t, answering a question posed in [2] on whether 2-SAT with a global abelian group
+constraint might be fixed-parameter tractable, parameterized by the group size. More generally,
+the work [2] systematically studied the effect of a global modular constraint on the complexity of
+Boolean constraint satisfaction problems, exposing many interesting phenomena and connec-
+tions.
+                                                         n 
+    Balancing the two runtimes of O ∗ (1.5r ) and O ∗ ( n−r  ) algorithm when r ⩾ n/2 (the expo-
+nents of the two bounds become equal at r = (1 − η)n for η ≈ 0.115816) yields a O ∗ (1.4312n ) time
+randomized algorithm for 2-S UB -S AT on n variables. The following records these results.
+  3                                               n
+                                                       stands for ti=0 ni .
+                                                                P       
+      For nonnegative integers n, t, the notation ⩽t
+
+
+
+                                                            4
+Theorem 2. There is a randomized O∗ (1.5r ) algorithm     for 2-S UB -S AT where r is the dimension
+                                             ∗   n
+of the input space, as well a deterministic O ( ⩽t ) time algorithm where t is the co-dimension.
+Together, these imply a randomized O ∗ (1.4312n ) time algorithm as a function of the number n of
+variables.
+
+
+1.2.2   Algorithms for k-S UB -S AT
+
+We explore combinatorial algorithms for k-S UB -S AT based on the notion of critical variables
+(which was introduced in [22] and plays an important role in their satisfiability algorithm). Let
+Φ be a satisfiable CNF formula in n variables xi , i ∈ [n], and let ā ∈ Fn2 be a satisfying assignment.
+
+Definition 3. [22] We say xi is a critical variable for ā with respect to Φ if the assignment ā + ei
+falsifies Φ, where ei is the ith elementary vector with 1 in the ith coordinate and zero elsewhere
+(so ā + ei is just ā with xi flipped). If the formula Φ is clear from context, we simply say that xi is
+a critical variable for assignment ā.
+
+    The key idea in our combinatorial algorithms is plucking of non-critical variables based on
+the following simple observation: if Φ is an n-variate CNF formula and ā is a satisfying assign-
+ment such that variable xi is non-critical for it, then the formula Φ′ obtained by plucking xi (i.e.,
+dropping all occurrences of xi and its complement from Φ) remains satisfiable with ā′ ∈ F2n−1 as
+a satisfying assignment, where ā′ is obtained from ā by dropping the ith coordinate.
+    The important property of Φ′ is that given any satisfying assignment for Φ′ we can set xi to
+either 0 or 1 to recover a satisfying assignment for Φ. This facilitates searching for a satisfying
+assignment in an affine space A: if the plucked variable xi occurs in a linear constraint defining
+A then we can drop that linear constraint while seeking a satisfying assignment for Φ′ , because
+that linear constraint can always be satisfied by choosing the right value of xi which still remains
+overall a satisfying assignment for Φ. Based on this idea we obtain the following algorithms for
+k-S UB -S AT :
+
+   • The first result here is a randomized O ∗ ( nt 2n−n/k ) time algorithm for k-S UB -S AT where
+                                                   
+
+     t = codim(A). This algorithm is essentially governed by the running time of the PPZ satisfi-
+     ability algorithm [22] combined with an iterative “search and pluck” operation to remove t
+     non-critical variables from the t linear equations defining A. This running time is superior
+     to the O ∗ (2r−r/2k ) time randomized algorithm based on solving polynomial equations for
+     small values of t = o(n).
+                                                                     2
+   • The second result is a general randomized O∗ (2n−n/2k+n/2k ) time algorithm for k-S UB -S AT ,
+     nearly matching the ≈ 2r−r/2k run time of the polynomial equations algorithm [8, 19] for
+     r close to n. It again uses the PPZ satisfiability algorithm as a subroutine combined with
+     simple applications of the plucking step: if the number of critical variables is fewer than
+     n/2, it randomly guesses and plucks non-critical variables. This algorithm does not need
+     to look at the linear equations defining A. In fact, it works for any Boolean constraint
+     C(x1 , x2 , . . . , xn ) (replacing membership in the affine space A) with a polynomial-time al-
+     gorithm that takes a partial assignment and extends it to an assignment that satisfies C.
+     For example, C can be a HORN or dual HORN formula.
+
+
+
+                                                   5
+      • It is pleasing to note that we can apply the idea of plucking non-critical variables to 2-S UB -S AT
+                           ∗  n
+        and obtain an O ( ⩽t ) deterministic algorithm (cf. [2]), where t = codim(A). Exploiting the
+        structure of 2-CNF formulas, we can find the non-critical variables efficiently.
+Theorem 4. The k-S UB -S AT problem admits two      randomized algorithms, one running in time
+                2
+O∗ (2n−n/2k+n/2k ), and another running in O ∗ ( nt 2n−n/k ) when the input subspace has co-dimension
+t ⩽ n/2.4 Both algorithms use space bounded by a polynomial in n.
+Remark 5. Satisfiability algorithms based on the switching lemma (which converts k-CNF to
+decision trees of moderate term size and number of terms) are known in the literature (e.g., see
+[12]). We can easily adapt this algorithm to solve k-S UB -S AT , because once we have a decision
+tree for the underlying k-CNF formula, for the k-S UB -S AT instance each path of the decision
+tree will give rise to a system of linear equations over F2 . For each path, therefore, we can even
+count the number of satisfying assignments. Counting over all the paths of the decision tree
+gives the total number of satisfying assignments for the k-S UB -S AT instance in randomized time
+O∗ (2n(1−1/c·k) ) for some suitable large constant c > 0. Furthermore, the algorithm is also poly-
+nomial space-bounded. In terms of running time, however, it is a much weaker bound in com-
+parison to [19] or even the algorithms of Theorem 4. In this context, we note that for #k-S AT
+there is a deterministic O ∗ (2n(1−1/c·k) ) time algorithm based on the polynomial method (albeit
+using exponential space) [5]. We do not know of any such deterministic algorithm for counting
+satisfying assignments to k-S UB -S AT .
+
+    Finally, motivated by the (unbounded CNF) S UB -S AT problem, we revisit the general problem
+solving a system of polynomial equations pi = 0, 1 ⩽ i ⩽ m over F2 , where m = O(n), where each
+pi is given by an arithmetic circuit of poly(n) degree. In the case when each pi has small degree
+irreducible factors, we get a 2r(1−α) time randomized algorithm, where α depends on the number
+of equations m and the degree bound on the irreducible factors (Theorem 28).
+
+
+1.3 Equivalent and related problems to S UB -S AT
+
+Recall the USA problem: Given a collection of affine subspaces A1 , A2 , . . . , Am ⊆ Fn2 (where each
+Ai is given by aSbunch of affine linear equations over F2 ) the problem is to determine if there is a
+point x ∈ Fn2 \ m  i=1 Ai .
+    Clearly, the complement Fn2 \ m
+                                     S
+                                       i=1 Ai is expressible as an AND of ORs of affine linear forms
+⊕i∈S xi + b, b ∈ {0, 1}. Thus, USA is clearly reducible to S UB -S AT . The converse reduction is also
+easy: given a CNF formula Φ and an affine subspace A ⊆ Fn2 we first convert it to an AND of ORs
+of affine linear forms. An assignment x ∈ A satisfies Φ if and only if it satisfies C1 ∧ C2 ∧ · · · ∧ Cm ,
+where each clause Ci is an OR of affine linear forms. The set Ai of satisfying assignments of
+the complement
+     Sm             Ci is an affine subspace of Fn2 , and Φ is satisfiable by x ∈ A if and only if x ∈
+ n
+F2 \ i=1 Ai .
+    For the equivalence to PAF-S AT , suppose Φ = C1 ∧ C2 ∧ · · · ∧ Cm , where each clause Ci is
+an OR of affine linear forms Ci = ∨tj=1 Lij . As already discussed inQ  Section 1.2, the assignment
+x ∈ Fn2 satisfies Ci if and only if it satisfies the polynomial equation m
+                                                                         j=1 (Lij + 1) = 0. Thus, the
+satisfiability of Φ is reducible to a system of m polynomial equations pi = 0, where each pi is a
+product of affine linear forms. The converse reduction is also easy which we omit.
+  4
+      Of course, there is also a trivial O∗ (2n−t ) time brute force algorithm.
+
+
+                                                               6
+Organization of the paper. We present the results in a different order than in the introduction.
+In Section 2 we first present the algorithms for k-S UB -S AT and then for 2-S UB -S AT . In Section 3
+we present our hardness results for 2-S UB -S AT . Finally, in Section 4 we present the algorithm for
+P OLY-E QS for O(n) equations pi = 0, where each pi has unrestricted degree but constant-degree
+irrreducible factors.
+
+
+2    Algorithmic results for k-S UB -S AT
+
+As mentioned in the introduction, the k-S UB -S AT problem seems intermediate in difficulty, be-
+tween k-S AT and the problem k-P OLY-E QS of solving a system of degree-k polynomial equa-
+tions over F2 . The latter problem has an O∗ (2r(1−1/2k) ) time algorithm [19, 1, 8], which yields an
+O∗ (2r(1−1/2k) ) time algorithm for k-S UB -S AT , where r = dim(A).
+    Ideally, we would like an algorithm for k-S UB -S AT with run time O ∗ (2r(1−1/k) ), with savings
+in the exponent similar to that of the PPZ algorithm [22] for k-S AT .
+    We present some algorithms in this direction: For 2-S UB -S AT there is a simple O∗ (1.5r ) time
+randomized algorithm which improves on the O∗ (2r(1−1/2k) ) bound for k = 2. For a special case
+of k-S UB -S AT , when r = dim(A) is close to the number of variables n, we are able to adapt the
+PPZ algorithm to essentially get  an O∗ (2r(1−1/2k) ) time algorithm. Writing t = n − r = codim(A),
+                              n
+we can even obtain an O∗ ( ⩽t · 2n(1−1/k) time algorithm for the problem, also based on the PPZ
+                                
+
+satisfiability algorithm, which yields the desired 1/k savings in the exponent for small t.
+
+
+2.1 An O ∗( nt · 2n(1−1/k) ) time randomized algorithm: co-dimension t case
+              
+
+As outlined in Section 1.2, the algorithm will use the PPZ satisfiability algorithm [22] as a sub-
+routine, combined with variable plucking steps to solve k-S UB -S AT in randomized time O∗ ( nt ·
+                                                                                                
+
+2n(1−1/k) ), when codim(A) = t. In particular, for codim(A) = o(n) the algorithm has run time
+O∗ (2n(1−1/k+o(1)) ).
+    The variable plucking is based on analyzing the critical variables for a solution ā ∈ Fn2 of a
+given k-S UB -S AT instance (Φ, A), depending on whether or not they occur in the linear equa-
+tions defining A.
+    For an instance (Φ, A) we partition the variables into two sets
+
+                                     {xi | i ∈ [n]} = Vin ⊔ Vout ,
+
+where Vin is the subset of variables that have nonzero coefficient in at least one of the t linear
+equations defining A, and Vout is the remaining set of variables. By abuse of notation, we will
+also treat Vin ⊔ Vout as a partition of the index set [n]. We consider the following two cases.
+
+Case 1. Suppose (Φ, A) has the property that for every solution ā ∈ Fn2 each variable in Vin is
+critical for ā w.r.t Φ. There is no variable plucking required in this case. It only involves the
+application of the PPZ satisfiability algorithm on Φ and checking that the assignment found
+belongs to A. We need the following lemma which is analogous to [22, Lemma 4]. The proof
+of the lemma is by an induction argument like in [22].
+
+
+                                                  7
+Lemma 6. Let S be a nonempty subset of Fn2 . For each ā ∈ S, let Iout (ā) = {i ∈ Vout | ā + ei ∈
+                                                                                                  / S},
+                 th
+where ei is the i elementary vector. Then we have
+                                      X
+                                          2|Iout (ā)|−|Vout | ⩾ 1.                                 (1)
+                                                      ā∈S
+
+Proof. If |Vout | = 0, then Iout (ā) = ∅ for every ā ∈ S, and the left hand side of (1) equals |S| which
+is at least 1.
+   So assume |Vout | ⩾ 1 and without loss of generality that 1 ∈ Vout . Let S0 = {ā ∈ S | a1 = 0}
+                                              ′ =V
+and S1 = {ā ∈ S | a1 = 1}, and also denote Vout   out \ {1}.
+                                                                                                            (0)
+    First consider the case when both S0 and S1 are nonempty. For ā ∈ S0 , define Iout (ā) = {i ∈
+  ′                                                        (1)             ′ | ā + e ∈
+               / S0 } and likewise for ā ∈ S1 , define Iout (ā) = {i ∈ Vout
+Vout | ā + ej ∈                                                                     j / S1 }. By induction
+                              ′                        (0)                         (1)
+hypothesis, applied w.r.t Vout , and pairs S0 and Iout (ā), as well as S1 and Iout (ā), we know that
+                               X         (0)      ′
+                                                                        X         (1)         ′
+                                      2|Iout (ā)|−|Vout | ⩾ 1 and             2|Iout (ā)|−|Vout | ⩾ 1 .         (2)
+                              ā∈S0                                    ā∈S1
+
+                               (0)
+    Now if index j ∈ Iout (ā) for some ā ∈ S0 ⊂ S, then ā + ej ∈           / S0 and as the first coordinate
+                                                                                                     (0)
+of ā + ej is also 0, we have ā + ej ∈      / S, and thus j ∈ Iout (ā). Thus |Iout (ā)| ⩾ |Iout (ā)| for all
+                                    (1)                                  ′ | = |V
+ā ∈ S0 . Likewise, |Iout (ā)| ⩾ |Iout (ā)| for all ā ∈ S1 . Since |Vout       out | − 1, using these in (2), we
+conclude (1) in this case, as desired.
+    Next, suppose S = S0 and S1 = ∅ (the case when S0 = ∅ is handled the same way). In this
+case, for every ā ∈ S, 1 ∈ Iout (ā), as S1 = ∅ and thus flipping the first bit will always lead to a
+                                        (0)                                       ′ | = |V
+vector outside S. Thus |Iout (ā)| = |Iout (ā)| + 1. Using this together with |Vout       out | − 1 in the
+first inequality of (2), we conclude (1) in this case as well.
+
+    Now, let ā ∈ Fn2 be some solution of the k-S UB -S AT instance (Φ, A). Then, by the assumption
+of Case 1 and the preceding discussion ā has |Vin | + |Iout (ā)| critical variables w.r.t Φ.
+   Following the analysis in [22], if we now run one iteration of the PPZ algorithm on the in-
+stance Φ, the probability that ā is output is at least
+                                                  1
+                                                     · 2−n+(|Vin |+|Iout (ā)|)/k .
+                                                  n2
+
+   Let S ⊂ Fn2 denote the subset of solutions to the instance (Φ, A). Summing up over all ā ∈ S,
+the probability that some solution ā is output is given by
+         X 1                                                 1 −n+n/k X (−|Vout |/k+|Iout (ā)|)/k
+                    2
+                      · 2−n+(|Vin |/k+|Iout(ā)|/k) =            2   ·      2
+                n                                            n2
+         ā∈S                                                          ā∈S
+                                                             1 −n+n/k X (−|Vout |+|Iout (ā)|)     1
+                                                      ⩾        2
+                                                                 2   ·      2                  ⩾ 2 2−n+n/k ,
+                                                             n                                    n
+                                                                           ā∈S
+
+where the last step uses Lemma 6. This finishes the analysis of Case 1.
+
+
+
+                                                                  8
+Remark 7. Notice in the probability analysis that S is the set of solutions to (Φ, A) and not all
+solutions to Φ. The crucial property that for every ā ∈ S, each variable in Vin is critical w.r.t Φ
+yields that there are |Vin | + |Iout (ā)| critical variables for ā w.r.t Φ. Intuitively, as the variables
+in Vout do not occur in the linear equations, the PPZ algorithm when run on Φ will be able to
+deterministically set, on average, |Iout (ā)|/k many of the critical variables in Vout without any
+interaction with the linear equations defining A.
+
+Case 2. We now consider the case when not all variables in Vin are critical to all solutions to
+(Φ, A). We will show that there is a subset of at most t variables in Vin that can be plucked from
+Φ and reduce the transformed instance to Case 1. We will argue that the algorithm can do an
+exhaustive search for this subset of Vin of size at most t.
+
+Lemma 8. In the k-S UB -S AT instance (Φ, A), let Bx = P     b be the system of t linear equations defining
+A. Suppose variable x1 occurs in the first equation nj=1 B1j xj = b1 (i.e., B11 6= 0). Further,
+suppose x1 is not critical for some solution to (Φ, A). Let Φ′ be the formula obtained by plucking
+                     ′
+x1 from Φ.PnLet A be the affine space of co-dimension t − 1 defined by dropping the first linear
+equation j=1 B1j xj = b1 after eliminating x1 from the other linear equations by row operations.
+Then (Φ′ , A′ ) is satisfiable and any solution ā′ to (Φ′ , A′ ) can be extended to a solution ā of (Φ, A).
+
+Proof. By assumption, there is a solution â to (Φ, A) for which x1 is non-critical. Let â′ ∈ F2n−1
+be the assignment to x2 , x3 , . . . , xn obtained from â by dropping the x1 -coordinate. Clearly, â′ is
+a solution to (Φ′ , A′ ). Hence, (Φ′ , A′ ) is satisfiable. Furthermore, suppose ā′ is some solution to
+(Φ′ , A′ ). Then the assignment      ′
+                              Pān to the n − 1 variables x2 , x3 , . . . , xn can be extended by choosing
+x1 such that the constraint j=1 B1j xj = b1 is satisfied. The resulting assignment ā satisfies Φ
+and all t constraints defining A.
+
+   Lemma 8 describes a pluck/eliminate step applied to the non-critical variable x1 : namely,
+pluck x1 from Φ and eliminate it from the equations describing A.
+    Clearly, for some sequence of s ⩽ t pluck/eliminate steps applied successively transforms
+(Φ, A) to (Φs , As ) for which Case 1 holds. Since we do not have an efficient test for checking
+non-criticality, the algorithm has to do an exhaustive search for the sequence of s variables to
+pluck/eliminate. The number of variable sequences to consider is bounded by nt . However, as
+we argue in the next claim, it suffices to consider each unordered subset U of size s ⩽ t variables
+and apply pluck/eliminate steps to its variables in the natural order x1 , . . . , xn . Thus, we can
+                                    n
+bound the exhaustive search to ⩽t      subsets of variables. Let (ΦU , AU ) be the resulting instance
+after pluck/eliminate applied to variables in U in the natural order.
+
+Lemma 9. Let (Φ, A) be a satisfiable instance of k-S UB -S AT with codim(A) = t. There is a subset
+U of variables of size at most t, such that (ΦU , AU ) is a satisfiable Case 1 instance of k-S UB -S AT .
+
+Proof. Suppose xi1 , xi2 , . . . , xis is a sequence of s ⩽ t variables to which the pluck/eliminate
+steps applied results in a satisfiable Case 1 instance (Φs , As ). Let the t equations Bx = b define
+the affine space A. The row operations applied with the pluck/eliminate steps transforms this
+system into the following equations (also defining A):
+
+                              ℓj = xij , 1 ⩽ j ⩽ s and ℓj = 0, s + 1 ⩽ j ⩽ t,                            (3)
+
+                                                     9
+for affine linear forms ℓj , j ∈ [t] in which none of the variables xi1 , xi2 , . . . , xis occur. Moreover,
+the t − s equations ℓj , j > s define As , and for every solution ā to (Φs , As ) all variables occurring
+in these t − s equations are critical for ā w.r.t Φs .
+    Now, suppose we apply the pluck/eliminate steps in the natural order to the variable sub-
+set U = {xi1 , xi2 , . . . , xis } resulting in (ΦU , AU ). Formulas ΦU and Φs are identical (as both
+are obtained by plucking variables from U ). The accompanying row operations for the elim-
+inate steps could result in a different set of equations (defining A): ℓ′j = xij , 1 ⩽ j ⩽ s and
+ℓ′j = 0, s + 1 ⩽ j ⩽ t. The variables in U do not occur in ℓ′j , j ∈ [t], and the affine space AU is
+defined by the t − s equations ℓ′j = 0, j > s. Since any solution to these equations uniquely de-
+termines the values to the variables in U , and all equations together define A, we can conclude
+that AU = As .
+
+         n
+The O∗ ( ⩽t · 2n−n/k ) time Algorithm.
+On input (Φ, A), the algorithm proceeds as follows:
+
+For each subset U ⊂ Vin of size at most t do the following:
+
+   1. Pluck the variables in U from Φ to obtain ΦU .
+   2. For each variable xi ∈ U (in any order): pick some equation in which xi occurs; remove xi
+      from other equations by adding the picked equation to it; drop the picked equation from
+      the system.
+   3. Run the PPZ algorithm on the resulting instance (ΦU , AU ) as if Case 1 were applicable.
+      More precisely, run PPZ on ΦU for O∗ (2n−n/k ) steps; for each solution obtained, if it satisfies
+      AU then output an extension of it to a solution to (Φ, A) and exit,5 else continue the for-
+      loop for the next choice of subset U .
+
+     To see the correctness, suppose (Φ, A) is satisfiable. By Lemma 9, for some choice of U with
+|U | ⩽ t, (ΦU , AU ) is a Case 1 instance. Hence, the PPZ satisfiability algorithm will output a so-
+lution to (ΦU , AU ) in time O ∗ (2n−n/k ) with high probability. This solution can be uniquely ex-
+tended to a solution to (Φ, A) using the linear equations.
+       We have thus shown the following.
+Theorem 10. There is a randomized O∗ ( nt · 2n−n/k ) time algorithm for k-S UB -S AT for subspaces
+                                            
+
+of co-dimension t. In particular, for t = o(n) we have a randomized O∗ (2n(1−1/k+o(1)) ) time algo-
+rithm.
+
+                                2
+2.2 An O ∗(2n−n/2k+n/2k ) time PPZ-based algorithm for k-S UB -S AT
+
+Let (Φ, A) be a k-S UB -S AT instance. Our objective is a randomized algorithm with run time
+2n−(1−ν)n/k for as small an ν as possible (ideally, tending to zero).
+    To this end, we can first apply Valiant-Vazirani Lemma [28] to increase the number of con-
+straints (thereby reducing the rank of A) and getting an instance (Φ, A′ ) such that Φ has a unique
+   5
+    From a solution to (ΦU , AU ) we can reconstruct the solution to (Φ, A) as the values to variables in U are uniquely
+determined via the linear equations from the values to the other variables.
+
+
+                                                          10
+solution in A′ with high probability (i.e., inverse polynomial probability as guaranteed by Valiant-
+Vazirani).
+                                                                                                                     ′
+   If dim(A′ ) ⩽ n − (1 − ν)n/k we can brute force search in A′ in deterministic time 2dim(A ) ⩽
+2n−(1−ν)n/k . Thus, we can assume that dim(A′ ) = n − t and A′ is the solution space of t < (1 −
+ν)n/k independent affine linear equations.
+   Let now ā ∈ Fn2 be the unique solution to the k-S UB -S AT instance (Φ, A′ ). We partition the
+variable set into Vin ⊔ Vout as before.
+Claim 11. Every variable in Vout is critical for the satisfying assignment ā of Φ.
+
+Proof of Claim. Suppose xi ∈ Vout is not critical for ā. Then ā + ei is also a satisfying assignment
+for Φ. Moreover, since xi does not occur in Vin , ā + ei satisfies the linear equations defining A′ .
+Hence ā + ei is a solution to (Φ, A′ ) contradicting the uniqueness of ā.
+
+The variable plucking algorithm. If ā has more than (1 − ν)n many critical variables (ν to be
+fixed in the analysis) then by running the PPZ satisfiability algorithm [22] for O ∗ (2n−(1−ν)n/k )
+iterations we will find it with high probability.
+   Otherwise, there are more than νn many variables in Vin that are not critical for Φ at ā.
+
+  1. Repeat the following two steps at most t times.
+
+  2. (The plucking step) Randomly pluck a variable xi from Vin and drop it from the formula
+     Φ to obtain its shrinking Φ1 . Take a linear equation ℓ = b in which xi occurs. By row
+     operations eliminate xi from all other linear equations in which xi occurs and then drop
+     the equation ℓ = b. Let the affine space described by the new set of at most t − 1 linear
+     equations be A1 . We claim that (Φ1 , A1 ) also has a unique solution ā1 (obtained from ā by
+     dropping the ith coordinate).
+
+  3. Let n1 = n − 1. Run the PPZ algorithm for 2n1 −(1−ν)n1 /k time on Φ1 . If we do not find the
+     unique solution ā1 then repeat the plucking step.
+
+   At the end of t successful plucking steps we are left with a k-S AT instance Φt with a unique
+solution (the subspace At is Fn2 ) and PPZ will find that solution from which we can compute ā by
+recovering the unique values of the plucked variables using the linear equations.
+
+Analysis. At the j th iteration of the plucking step, the probability that all j steps pluck off non-
+critical variables is at least ν j . Thus, the
+                                            Ptrunning time of the search for unique solutions for the
+                                                    1
+(Φj , Aj ) over all t steps is bounded by j=0 O ( ν j · 2nj −(1−ν)nj /k ).
+                                                  ∗
+
+   Letting α = 21−(1−ν)/k and noting that nj = n − j we can rewrite and bound the above sum as
+                                 t
+                                 X        1                                         1
+           ∗
+         O (2  n−(1−ν)n/k
+                            )·                    ⩽ O ∗ (2n−(1−ν)n/k ) · t ·
+                                       ν j · αj                                 ν t · αt
+                                 j=0
+                                                                                        (1−ν)n/k
+                                                                                     1                          2
+                                                  ⩽ O (2∗   n−(1−ν)n/k
+                                                                         )·t·                        · 2(1−ν)n/k ,
+                                                                                    2ν
+                Pt       1                       1
+   as the sum     j=0 ν j ·αj is bounded by t ν t ·αt for να < 1 and t ⩽ (1 − ν)n/k.
+
+
+                                                            11
+                                                                                       1 (1−ν)n/k
+    The overall running time of the algorithm is, therefore, O∗ (2n−n/k ) · 2νn/k · 2ν
+                                                                                         
+                                                                                                  ·
+         2                                                                                    2
+2(1−ν)n/k , which is minimized at ν = 1/2 as we argue below, and is given by O∗ (2n−n/2k+n/2k ).
+                                                           1 (1−ν)n/k
+    Ignoring the last factor, we need to minimize 2νn/k · 2ν
+                                                             
+                                                                      . In other words, we need to
+minimize                                        1−ν
+                                                 1
+                                          2ν ·          ,
+                                                2ν
+Or, equivalently, minimize
+
+                                  ν log(4ν) − log(2ν) over ν ∈ [0, 0.5].
+
+   This is minimized at ν = 0.5 and the minimum value is also 0.5.
+Remark 12 (Extension beyond linear-algebraic constraints). We note some aspects about the
+algorithm and explain its adaptation to the more general setting of k-CNF satisfiability in the
+presence of a global boolean constraint C(x1 , x2 , . . . , xn ) with the property that given a partial
+assignment to the variables xi we can extend the assignment to the remaining variables that sat-
+isfies the constraint C, if such an extension exists. We set ν = 1/2 and t = n/2k. Note that the
+algorithm need not partition the variables into Vin and Vout . If there are over n/2 non-critical
+variables, the algorithm can ”obliviously” pluck one with probability 1/2. Oblivious in the sense
+that it does not need to see the constraint C. After t = n/2k plucking steps, there are at most
+n − n/2k remaining variables. We add a final step to the algorithm which is a brute-force search
+over all 2n−n/2k assignments to the remaining variables. For each assignment to these that sat-
+isfies Φt we can check, in polynomial time, if there is an extension to it that satisfies C. This
+search will succeed for the unique solution ā. An interesting example for constraint C would be
+HORN formulas. As clause size is unrestricted in HORN formulas, notice that neither a direct
+application of the PPZ satisfiability algorithm, nor an application of the polynomial equations
+algorithms would give constant savings in the exponent for the runtime bound.
+
+   More generally, call a Boolean constraint C(x1 , x2 , . . . , xn ) T (n)-easy if there is a T (n) time-
+bounded algorithm that searches for a satisfying extension of a given partial assignment to the
+variables xi .
+                                                         2
+Theorem 13. There is a randomized O ∗ (2n−n/2k+n/2k ·T (n)) time algorithm that takes any k-CNF
+formula and a T (n)-easy boolean constraint C(x1 , x2 , . . . , xn ) as input and computes a satisfying
+assignment for the formula and C.
+                                                             2
+Corollary 14. There is a randomized O ∗ (2n−n/2k+n/2k ) time algorithm for k-S UB -S AT .
+
+
+2.3 An O ∗(1.5r ) time algorithm for 2-S UB -S AT
+
+Theorem 15. Given a 2-S UB -S AT instance (Φ, A), where Φ is a 2-CNF formula and A ⊂ Fn2 is
+an r-dimensional affine subspace given by linear equations, there is a randomized O ∗ (1.5r ) time
+algorithm to check if Φ has a satisfying assignment in A and if so to compute it.
+
+Proof. Let X = {x1 , x2 , . . . , xr , . . . , xn } be the variable set. Without loss of generality, we can
+assume that x1 , x2 , . . . , xr are independent variables and for j > r we have xj = ℓj , where ℓj is a
+linear form in x1 , x2 , . . . , xr . The literal x̄j is the affine linear form ℓj + 1.
+
+                                                    12
+    Thus, we can treat the instance (Φ, A) as a conjunction Ψ of disjunctions (ℓ ∨ ℓ′ ), where ℓ and
+ℓ′ are affine linear forms in x1 , x2 , . . . , xr . We can think of this satisfiability problem as picking
+one affine form from each such 2-disjunction (ℓ ∨ ℓ′ ) and setting it to true such that the resulting
+equations are all consistent (i.e. the equations have a solution in Fr2 ).
+    We describe below a randomized algorithm that builds a system of independent linear equa-
+tions over x1 , x2 , . . . , xr such that any satisfying assignment ā is a solution to this system of linear
+equations with probability at least (2/3)r , and, moreover, any solution to this system satisfies Ψ.
+Clearly repeating this algorithm O∗ (1.5r ) times will find a satisfying assignment to the 2-S UB -S AT
+instance Ψ if one exists.
+    Here is a description of the algorithm to convert Ψ to a system of linear equations:
+
+   1. The algorithm runs in stages i = 0, 1, . . . where in the ith Stage, it has a system of linear
+      equations ℓ′j = 1, 1 ⩽ j ⩽ i for a collection of linearly independent affine forms ℓ′j . We start
+      off with the empty system at stage 0.
+
+   2. (Stage i + 1): Take a clause (ℓ ∨ ℓ′ ). If either ℓ = 1 or ℓ′ = 1 is implied by the equations
+      from stage i (which can be checked by solving linear equations) then we can discard that
+      clause as satisfied and examine the next clause. If both ℓ = 0 and ℓ′ = 0 are implied by the
+      equations then this is a rejecting computation and algorithm outputs “fail”.
+      If ℓ = 0 is implied by the equations and ℓ′ is independent of the ℓ′j then we include the
+      equation ℓ′ = 1 and go to Stage i + 2 (if there are any clauses left). Finally, if both ℓ and ℓ′
+      are independent of the ℓ′j then we randomly pick one of three linear forms ℓ, ℓ′ and ℓ + ℓ′ ,
+      include the equation setting it to 1 and go to Stage i + 2 (if there are any clauses left).
+
+   3. Let the final stage be r ′ . Note that r ′ ⩽ r since the equations ℓ′j = 1 are all independent. At
+      this stage we have no clauses left and any solution to the linear equations ℓ′j = 1, 1 ⩽ j ⩽ r ′
+      satisfies Ψ. Output an arbitrary such solution.
+
+We now analyze the success probability of the algorithm. Suppose ā ∈ Fr2 is a satisfying as-
+signment for Ψ. We claim that the probability that ā satisfies the final system of equations
+ℓ′j = 1, 1 ⩽ j ⩽ r ′ is at least (2/3)r . We will prove this by an induction on the stage number
+i: the induction hypothesis is that ā satisfies the set of equations at stage i with probability at
+least (2/3)i . Clearly, it holds at i = 0.
+    For the induction step, suppose after Stage i, the assignment ā satisfies ℓ′j = 1, 1 ⩽ j ⩽ i.
+Then notice that in Stage i + 1 we either deterministically add the equation ℓ′ = 1 which ā must
+satisfy since it does not satisfy ℓ = 1 (indeed ℓ must evaluate to 0 at ā), or we randomly pick one
+of ℓ, ℓ′ and ℓ + ℓ′ . Clearly, ā must satisfy exactly two of these three linear forms. Hence at the end
+of Stage i + 1 the assignment ā satisfies the system ℓ′j = 1, 1 ⩽ j ⩽ i + 1 with probability at least
+(2/3)i+1 . It follows that at the end of stage r ′ ⩽ r, ā satisfies the equations with probability at
+least (2/3)r .
+
+Remark 16. The run time of O ∗ (1.5r ) that we obtain improves on the polynomial equations
+based algorithms, where for k = 2 the best run time so far is O ∗ (1.618r ) [8]. For k = 3 a similar
+randomized branching strategy gives an algorithm with run time O∗ ((7/4)r ). For larger k the run
+time degrades to O∗ ((2 − 1/2k−1 )r ). This runtime bound is obtained similarly as for Theorem 15:
+fix a satisfying assignment ā of the k-S UB -S AT instance. For a clause (ℓ1 ∨ ℓ2 ∨ · · · ∨ ℓk ) of k linearly
+
+                                                      13
+                                                                          Pk
+independent linear forms a random (nonzero) linear combination               i=1 αi ℓi evaluates to 1 at ā
+                           k−1
+with probability exactly 22k −1 .
+
+
+2.4 2-S UB -S AT in a co-dimension t subspace
+
+In this section we consider 2-S UB -S AT where we are seeking a solution in an affine space A such
+that codim(A) = t.
+    Given a formula Φ we will identify a canonical satisfying assignment ā for Φ based on which
+we will define critical variables. Since 2-S AT is in polynomial-time, we can detect non-critical
+variables in Φ w.r.t. ā in polynomial time. Now the plucking step will try all the possible nt
+choices of plucking non-critical variables, recalling that a non-critical variable plucked from a
+linear constraint defining A allows us to drop that constraint.
+
+Theorem 17. There is an O ∗ ( nt ) time deterministic algorithm for checking if a 2-S UB -S AT in-
+                                  
+
+stance (Φ, A) is satisfiable where the affine space A has co-dimension t.
+
+Proof. Let Φ be a 2-CNF formula in variables xi , i ∈ [n].
+    We first do a standard preprocessing of Φ by considering its implication graph on the 2n
+literals xi , xi , i ∈ [n], where for each clause u ∨ u′ , for literals u and u′ , we have two directed
+edges (u, u′ ) and u′ , u). The literals that form strongly connected components must all take the
+same value in any satisfying assignment and, therefore, can be replaced by a single variable. This
+shrinks the implication graph to a DAG and also reduces the number of variables. Thus, without
+loss of generality, we can assume the implication graph of Φ is a DAG, and we refer to Φ as a
+reduced 2-S AT formula.
+Computing a canonical satisfying assignment. A standard linear-time 2-S AT algorithm computes
+a canonical satisfying assignment ā for Φ (if satisfiable) by the following algorithm:
+
+ (a) All literals of outdegree 0 in the implication DAG are assigned true.
+
+ (b) The formula Φ is simplified after this substitution and the new implication DAG computed.
+     If the DAG is non-empty we repeat Step(a).
+
+    The following claim uses the above algorithm to identify non-critical variables for some sat-
+isfying assignment for Φ.
+Claim 18. Let Φ be a 2-S AT formula with implication DAG G. Let u ∈ {xi , xi } be an outdegree 0
+literal in G. If Φ is not satisfiable with u = 0 then xi is critical for every satisfying assignment of Φ,
+and if Φ is satisfiable with u = 0 then xi is non-critical for every satisfying assignment for Φ that
+sets u = 0.
+
+Proof of Claim. If there is no satisfying assignment for Φ with u = 0 then clearly xi is critical for
+every satisfying assignment. Conversely, suppose ā is a satisfying assignment with u = 0. Then
+we note that xi is not critical for ā because ā + ei is also a satisfying assignment for Φ. More
+precisely, because u has outdegree 0 in the implication graph we can set u = 1, while retaining
+the other values in ā, and it remains a satisfying assignment.
+
+
+
+                                                   14
+    More generally, given Φ we can partition the literals occurring in its implication DAG G as
+S0 ⊔ S1 ⊔ · · · ⊔ Sw , where S0 is the set of outdegree 0 literals in G, S1 is the set of outdegree 0 literals
+in DAG G1 = G \ S0 , and in general Si is the set of outdegree 0 literals in the DAG Gi+1 = Gi \ Si .
+For a variable xi let depth(xi ) be the least index j such that xi or its complement is in Sj .
+    We observe the following claim which is an easy consequence of the previous one.
+Claim 19. Let Φ′ be the 2-S AT formula obtained by setting all literals in S0 ⊔ Si · · · ⊔ Si−1 to true.
+For u ∈ Si , if Φ′ has no satisfying assignment with u = 0 then u is critical for every satisfying
+assignment for Φ that sets all literals in S0 ⊔ Si · · · ⊔ Si−1 to true. If Φ′ has a satisfying assignment
+with u = 0 then u is non-critical for every satisfying assignment of Φ that sets all literals in S0 ⊔
+Si · · · ⊔ Si−1 to true.
+
+    We can immediately conclude the following.
+Claim 20. If there is a satisfying assignment for Φ in which all variables are critical that has to be
+the canonical satisfying assignment.
+
+    We describe the basic search procedure used by the algorithm.
+    1. Let Φ0 = Φ and A0 = A.
+    2. Repeat the following for steps s = 0 to t − 1.
+    3. Find the canonical satisfying assignment for Φs .
+    4. If it satisfies the linear equations ℓi = 0, i ∈ [t − s] defining As then output and stop (we can
+       extend it uniquely to the s plucked non-critical variables using the linear equations).
+    5. Else a variable occurring in some ℓi is non-critical for Φs in the solution assignment.
+    6. Pick a non-critical variable xj with minimum depth(xj ) and pluck it from Φs to get Φs+1 .
+       We take a linear equation ℓi = 0 where xj occurs in ℓi , eliminate xj from all other equations
+       by row operations using ℓi , and finally drop the constraint ℓi = 0 to obtain a new affine
+       space As+1 . Continue with the repeat step.
+   Clearly, as long as the canonical satisfying assignment for Φs does not satisfy the system of
+equations ℓi = 0 we can remove a non-critical variable occurring in one of the ℓi from Φs .
+    Correctness of the algorithm follows from noting that (Φs , As ) is satisfiable if and only if
+(Φs+1 , As+1 ) is satisfiable, and if t non-critical variables are plucked then the problem reduces to
+a 2-S AT instances (without any linear constraints).
+    To complete the overall algorithm, in the basic iteration procedure we need to cycle through
+all possible choices of non-critical xj at minimum depth depth(xj ). Since we are going
+                                                                                       to pluck
+at most t non-critical variables, this can be done by a brute-force search over all nt subsets of
+the variables. The running time bound also follows.
+
+
+3     Hardness results
+
+In this section we prove our hardness results for subspace satisfiability. Since k-S AT itself is NP-
+hard for k ⩾ 3, so is k-S UB -S AT for k ⩾ 3. So we focus on the case k = 2.
+
+                                                     15
+3.1 NP-hardness of 2-S UB -S AT
+
+While 2-S AT is polynomial time solvable, the following theorem shows that 2-S UB -S AT is NP-
+hard. Note that this follows from Schaefer’s dichotomy theorem for Boolean CSP as the com-
+bination of 2-S AT constraints and linear equations (even with 3 variables per equation) is not
+one of the six tractable cases, and thus NP-hard. Below we give a direct proof based on a simple
+reduction.
+
+Theorem 21. 2-S UB -S AT is NP-hard.
+
+Proof. We show that we can express the NP-hard problem Graph 4-Colorability as an instance
+of 2-S UB -S AT , or equivalently 2 − PAF-S AT . Indeed, given a graph G = (V, E), the instance of
+2 − PAF-S AT consists of two Boolean variables xu,1 , xu,2 for each u ∈ V , which will encode the
+2-bit representation of the 4 possible colors we can assign to u. For each edge e = (u, v) ∈ E, we
+include the polynomial equation
+
+                                  (xu,1 + xv,1 + 1) · (xu,2 + xv,2 + 1) = 0 .                                   (4)
+
+Note that this equation is satisfied iff xu,1 6= xv,1 or xu,2 6= xv,2 , i.e., when (xu,1 , xu,2 ) 6= (xv,1 , xv,2 ),
+which captures the fact the vertices u and v get different colors. The simultaneous satisfiability
+of the equations (4) for all e ∈ E is thus equivalent to G being 4-colorable.
+
+
+3.2 W[1]-hardness of 2-S UB -S AT parameterized by co-dimension
+
+We now strengthen the hardness result of Theorem 21 and show that 2-S UB -S AT is unlikely to
+even be fixed-parameter tractable when parameterized by the co-dimension t of the subspace
+in which we seek a satisfying assignment to the 2CNF formula. On the other hand, recall that (as
+shown in [2] and also Section 2.4), for fixed co-dimension t, 2-S UB -S AT can be solved in polyno-
+mial time. Our W[1]-hardness answers (in the negative) a question posed in [2] on whether 2-S AT
+with a single modular constraint modulo M is fixed-parameter tractable when parameterized by
+M (they gave an algorithm with complexity nO(M ) ).
+
+Theorem 22. Consider the 2-S UB -S AT where the input subspace within which one has to satisfy
+the 2-S AT formula has co-dimension t. Parameterized by t, 2-S UB -S AT is W[1]-hard.
+
+Proof. We give a reduction from the problem M ULTICOLORED -C LIQUE . The input to M ULTICOLORED -
+C LIQUE consists of a graph G, an integer t, and a partition (V1 , V2 , . . . , Vt ) of the vertices of G, and
+the task is to decide if there is a t-clique in G containing exactly one vertex from each part Vi .
+The parameter associated with the problem is t. The problem M ULTICOLORED -C LIQUE parame-
+terized by t is known to be W[1]-hard [10, Lemma 1].
+    The variables in the 2-S UB -S AT instance correspond to the vertices of the graph. Let us de-
+note these variables by xv for v ∈ V := V1 ∪ V2 ∪ · · · ∪ Vk . The 2CNF clauses in the instance will
+be the following:
+
+    • For all i ∈ {1, 2, . . . , t} and v 6= v ′ ∈ Vi , the clause (¬xv ∨ ¬xv′ ). These clauses ensure that at
+      most one xv can be set to 1 in each part.
+
+
+                                                        16
+   • If (u, v) is not an edge in the graph with G, the clause (¬xu ∨ ¬xv ). These clauses ensure
+     that the set {u | xu = 1} must induce a clique in G.
+
+Note that this instance of 2-S AT is trivial to satisfy by setting all variables to 0. The affine space A
+we will use to make this an instance of 2-S UB -S AT is defined by the following equations:
+                                    X
+                                         xu = 1 for i = 1, 2, . . . , t .                             (5)
+                                    u∈Vi
+
+We stress that the above equations are over F2 , and thus stipulate that there are an odd number
+of variables set to 1 in each part. But together with the 2CNF clauses which ensure that at most
+one variable in each part can be set to 1, it follows that satisfying assignments of this 2-S UB -S AT
+instance are in one-one correspondence with t-cliques of G that include exactly one vertex from
+each Vi . The proof is now complete by noting that the co-dimension of the affine space A defined
+by (5) equals t. Parameterizing M ULTICOLORED -C LIQUE by the clique size is thus equivalent to
+parameterizing the constructed 2-S UB -S AT instance by the co-dimension.
+
+
+3.3 Approximability of Max-2-S UB -S AT
+
+Given the hardness of deciding exact satisfiability of 2-S UB -S AT instance, we now turn to approx-
+imate satisfiability. In the M AX -2-S UB -S AT problem, the goal is to satisfy the maximum number
+of 2SAT clauses with an assignment that belongs to the input affine space A. Thus, the affine
+constraints are treated as hard constraints. We allow clauses of width 1. If unary clauses are dis-
+allowed in the 2CNF formula, and each clause involves exactly two distinct variables, we call the
+problem M AX -E2-S UB -S AT .
+
+
+3.3.1   Easy approximation algorithms
+
+We can assume that no variable is forced to 0 or 1 by the affine space A, since if that happens
+we can just set and remove that variable and work on the reduced instance. If we pick a random
+assignment from A, it will satisfy at least 1/2 of the clauses of the 2CNF formula in expectation,
+and in fact at least an expected fraction 3/4 of the clauses when each clause involves two distinct
+variables. The algorithms are easily derandomized. For satisfiable instances of M AX -2-S UB -
+S AT, one can find a 3/4 approximate solution, as one can eliminate all the unary clauses, and
+add those conditions to the subspace inside which we want to find an assignment to the 2CNF
+formula. So we get the following trivial algorithmic guarantees.
+
+Observation 23. In polynomial time, one can get a factor 1/2 approximate solution to instances
+of M AX -2-S UB -S AT, a factor 3/4 approximate solution to instances of M AX -E2-S UB -S AT, and a
+factor 3/4 approximate solution to satisfiable instances of M AX -2-S UB -S AT.
+
+We will now show that all the above guarantees are best possible, with matching NP-hardness
+results.
+
+
+
+
+                                                   17
+3.3.2   Tight inapproximability via simple reductions
+
+For the hardness results and rest of the section, it is convenient to work with the PAF-S AT for-
+mulation of S UB -S AT . The Max-LIN2 problem, of maximizing the number of satisfied equations
+in a system of affine equations mod 2, trivially reduces to M AX -2-PAF-S AT (with each equation
+being degree 1 instead of degree 2). By Håstad’s seminal tight inapproximability for Max-LIN2,
+we have the following.
+
+Observation 24. For any ǫ > 0, M AX -2-PAF-S AT (and thus M AX -2-S UB -S AT) is NP-hard to ap-
+proximate within a factor of (1/2 + ǫ), and this holds for almost satisfiable instances that admit
+an assignment satisfying a fraction (1 − ǫ) of equations.
+
+   We also get a tight hardness (matching Observation 23) for the M AX -E2-S UB -S AT or equiva-
+lently when each polynomial equation is the product of exactly two (linearly independent) affine
+forms.
+
+Lemma 25. For any ǫ > 0, M AX -E2-PAF-S AT is NP-hard to approximate within a factor of (3/4 +
+ǫ), and this holds for almost satisfiable instances that admit an assignment satisfying a fraction
+(1 − ǫ) of equations.
+
+Proof. This follows from a simple reduction from Max-LIN2. Suppose we are given a system
+of affine equations A1 = 0, A2 = 0, · · · , Am = 0, where the Ai ’s are distinct affine forms in
+Boolean variables x1 , x2 , . . . , xn . We produce a system of m 2 quadratic equations Ai · Aj = 0 for
+1 ⩽ i < j ⩽ m in the same variables x1 , x2 , . . . , xn . If an assignment to the xi ’s violates r affine
+constraints Aj = 0, then the same assignment violates 2r of the quadratic constraints. When
+                                                                  
+
+r = ǫm, the fraction of violated quadratic constraints is ≈ ǫ2 , and when r = 1/2−ǫ, the fraction of
+violated quadratic constraints is ≈ 3/4 − O(ǫ). The claimed hardness now follows from Håstad’s
+inapproximability result for Max-LIN2.
+
+
+3.3.3   Inapproximability for satisfiable instances
+
+The above inpproximability results do not apply to satisfiable instances of 2-S UB -S AT . They are
+obtained by reductions from linear equations whose exact satisfiability can be easily checked.
+We now prove that approximating M AX -2-S UB -S AT doesn’t get easier on satisfiable instances.
+
+Theorem 26. For every ǫ > 0, it is NP-hard to approximately solve satisfiable instance of M AX -
+E2-S UB -S AT within a factor of 3/4 + ǫ. That is, it is NP-hard to find, given as input a satisfiable
+instance of 2-S UB -S AT, an assignment satisfying a fraction 3/4 + ǫ of the 2SAT constraints.
+
+Proof. Consider the arity 3 Boolean CSP which is defined by the predicate OXR : {0, 1}3 → {0, 1},
+defined by
+                                OXR(x1 , x2 , x3 ) = x1 ∨ (x2 ⊕ x3 )
+applied to literals. En route his celebrated tight inapproximability for satisfiable Max-3SAT,
+Håstad proved that the CSP defined by OXR (and with negations allowed on variables) is NP-
+hard to approximate within a factor of (3/4 + ǫ) even on satisfiable instances, for arbitrary ǫ > 0.
+(Note that independent random choices of the bits x1 , x2 , x3 makes OXR(x1 , x2 , x3 ) = 1 with
+
+
+                                                   18
+probability 3/4, so the hardness factor of 3/4 is tight.) Now the constraint OXR(x1 , x2 , x3 ) = 1 is
+equivalent to the equation
+                                    (x1 + 1)(x2 + x3 + 1) = 0
+stipulating that a product of two affine forms vanishes. Thus the CSP defined by OXR can be
+equivalently expressed as a 2-S UB -S AT instance, and the claimed inapproximability of M AX -E2-S UB -S AT
+on satisfiable instances follows.
+
+
+4    System of polynomial equations over binary field: effect of reducibil-
+     ity
+
+We now examine a special case of the problem of solving a system of polynomial equations over
+F2 studied in [19, 1, 8]. For motivating background, we recall according to the strong exponen-
+tial time hypothesis (SETH) that S AT , that is n-variable CNF satisfiability of unrestricted clause
+width, cannot be essentially solved faster than 2n time. However, Schuler [25] and Calabro et
+al [4] have shown the special case that sparse instances of S AT (with c · n clauses) can be solved
+in O∗ (2n(1−α) ) time, where α is a constant depending on the clause density c. It is natural to ask
+if there is an analogous result for S UB -S AT (satisfiability of conjunctions of unbounded disjunc-
+tions of affine linear forms). In this section we show a more general algorithmic result in the
+setting of systems of polynomial equations over F2 .
+   Let Pi ∈ F2 [x1 , x2 , . . . , xn ], 1 ⩽ i ⩽ m be polynomials over the field F2 as input instance to
+the P OLY-E QS problem. The problem is denoted k-P OLY-E QS when the degrees are bounded by
+k which generalizes k-S UB -S AT as already explained in the introduction.
+   The unrestricted degree case is significantly different, because we can easily combine the m
+equations into a single equation as follows. Define
+                                              m
+                                              Y
+                                        P =1+   (1 + Pi ).
+                                                  i=1
+
+Clearly, the system Pi = 0, 1 ⩽ i ⩽ m has a solution iff P = 0 has a solution.
+    Thus, assuming SETH, there is no algorithm essentially faster than 2n for solving P = 0.
+Remark 27. There is also the question of how the polynomials Pi are given as part of the input.
+If deg Pi ⩽ k for all Pi then we can in polynomial-time compute their sparse representation as
+a linear combination of the nk many monomials of degree at most k. However, in the above
+reduction of combining the Pi into a single polynomial, P is a small arithmetic formula. In fact,
+for the case of P OLY-E QS we consider, where the instance is a system of equations Pi = 0, 1 ⩽ i ⩽
+m such that m = O(n) and each Pi has constant degree irreducible factors, we can assume that
+the Pi are given as arithmetic circuits.
+
+     We now show that P OLY-E QS instances Pi = 0, 1 ⩽ i ⩽ m can be solved faster than 2n if
+m is linear in n and the irreducible factors of each Pi are of constant degree. This can be seen
+as a “polynomial equations” analogue of Schuler’s S AT algorithm for spare instances with unre-
+stricted clause width [25, 4]. We note that a different degree reduction method, based on a rank
+argument, is used in [19, Section 4] to solve systems of polynomial equations pi = 0, where each
+pi is given by a sum of product of affine linear forms.
+
+                                                  19
+Theorem 28. Let Pi = 0, 1 ⩽ i ⩽ c · n, for a constant c > 0, be an instance of P OLY-E QS , such that
+the degree of each irreducible factor of each Pi is bounded by a constant b. There is a randomized
+algorithm for P OLY-E QS that runs in time 2n(1−α) for such instances, where α > 0 is a constant
+that depends on c and b.
+
+Proof. We can factorize each polynomial Pi into its irreducible factors in randomized polyno-
+mial time using Kaltofen’s algorithm [17]. Let
+                                                          ri
+                                                          Y
+                                                   Pi =         Qij
+                                                          j=1
+
+be this factorization for each i. Define polynomials Rij = 1 + Qij for each i and j, and note that
+deg Rij ⩽ b. For aijs ∈ F2 picked independently and uniformly at random define polynomials
+                                          ri
+                                          X
+                                 R̃is =         aijs Rij , 1 ⩽ s ⩽ log m + 2.
+                                          j=1
+
+Finally, we define the polynomials
+                                          (β+1) log c
+                                             Y
+                                 R̃i =                  (1 + R̃is ), 1 ⩽ i ⩽ m,
+                                             s=1
+
+where β > 0 is a constant to be fixed later in the analysis.
+   Notice that deg R̃i ⩽ b · (β + 1) log c for each i.
+Claim 29. If Pi = 0, 1 ⩽ i ⩽ m is unsatisfiable then R̃i = 0, 1 ⩽ i ⩽ m is also unsatisfiable.
+
+   To see this, suppose Pi (ā) = 1 at assignment ā ∈ Fr2 . Then Qij (ā) = 1 for each j which implies
+each Rij (ā) = 0 for each j. It follows that R̃is = 0 for all s and hence R̃i = 1.
+   On the other hand, we have:
+Claim 30. If ā ∈ Fn2 is a solution to the system of equations Pi = 0, 1 ⩽ i ⩽ m then with probability
+              β
+at least e−n/c ā is a solution to the sytem of equations R̃i = 0, 1 ⩽ i ⩽ m.
+                                                                                          1
+   The probability that ā is a solution to the single equation R̃i = 0 is given by 1 − cβ+1 . Since the
+events are independent, the probability that ā is a solution to the system R̃i , 1 ⩽ i ⩽ m is given
+by
+                                              1                           1
+                                   (1 −            )m = (1 −                  )cn
+                                           cβ+1                       cβ+1
+                                                                      β
+                                                          ≈ e−n/c .
+
+     Now the system of equations R̃i , 1 ⩽ i ⩽ m is an instance of k-P OLY-E QS , where k = b(β +
+1) log c is a constant. Applying one of the algorithms [19, 1, 8] yields an O ∗ (2n(1−1/2k) ) algorithm
+                                  β
+with success probability e−n/c . We can boost the success probability to a constant with an over-
+                                      β
+all run time of O ∗ (2n(1−1/2k) · en/c ), which can be optimized by choosing β appropriately.
+
+
+                                                          20
+Acknowledgment
+
+We thank anonymous reviewers for useful comments and pointers to the literature.
+
+
+References
+
+ [1] Andreas Björklund, Petteri Kaski, and Ryan Williams. Solving systems of polynomial equa-
+     tions over GF(2) by a parity-counting self-reduction. In Christel Baier, Ioannis Chatzigian-
+     nakis, Paola Flocchini, and Stefano Leonardi, editors, 46th International Colloquium on
+     Automata, Languages, and Programming, ICALP 2019, July 9-12, 2019, Patras, Greece, vol-
+     ume 132 of LIPIcs, pages 26:1–26:13. Schloss Dagstuhl - Leibniz-Zentrum für Informatik,
+     2019.
+
+ [2] Joshua Brakensiek, Sivakanth Gopi, and Venkatesan Guruswami. CSPs with global modular
+     constraints: algorithms and hardness via polynomial representations. In Proceedings of the
+     51st Annual ACM Symposium on Theory of Computing (STOC), pages 590–601, 2019.
+
+ [3] Joshua Brakensiek and Venkatesan Guruswami. Bridging between 0/1 and linear program-
+     ming via random walks. In Proceedings of the 51st Annual ACM Symposium on Theory of
+     Computing, pages 568–577, 2019.
+
+ [4] Chris Calabro, Russell Impagliazzo, and Ramamohan Paturi. A duality between clause
+     width and clause density for SAT. In 21st Annual IEEE Conference on Computational Com-
+     plexity (CCC 2006), 16-20 July 2006, Prague, Czech Republic, pages 252–260. IEEE Computer
+     Society, 2006.
+
+ [5] Timothy M. Chan and R. Ryan Williams. Deterministic APSP, orthogonal vectors, and more:
+     Quickly derandomizing Razborov-Smolensky. ACM Trans. Algorithms, 17(1):2:1–2:14, 2021.
+
+ [6] Ruiwen Chen and Rahul Santhanam. Satisfiability on mixed instances. In Proceedings of
+     the 2016 ACM Conference on Innovations in Theoretical Computer Science, pages 393–402,
+     2016.
+
+ [7] Miguel Couceiro, Lucien Haddad, and Victor Lagerkvist. Fine-grained complexity of con-
+     straint satisfaction problems through partial polymorphisms: A survey. In 2019 IEEE 49th
+     International Symposium on Multiple-Valued Logic (ISMVL), pages 170–175, 2019.
+
+ [8] Itai Dinur. Improved algorithms for solving polynomial systems over GF(2) by multiple
+     parity-counting. In Dániel Marx, editor, Proceedings of the 2021 ACM-SIAM Symposium on
+     Discrete Algorithms, SODA 2021, Virtual Conference, January 10 - 13, 2021, pages 2550–2564.
+     SIAM, 2021.
+
+ [9] Rodney G. Downey and M. R. Fellows. Parameterized Complexity. Springer Publishing
+     Company, Incorporated, 2012.
+
+[10] Michael R. Fellows, Danny Hermelin, Frances A. Rosamond, and Stéphane Vialette. On
+     the parameterized complexity of multiple-interval graph problems. Theor. Comput. Sci.,
+     410(1):53–61, 2009.
+
+                                               21
+[11] J. Flum and M. Grohe. Parameterized Complexity Theory (Texts in Theoretical Computer
+     Science. An EATCS Series). Springer-Verlag, 2006.
+
+[12] Russell Impagliazzo, William Matthews, and Ramamohan Paturi. A satisfiability algorithm
+     for AC0 . In Yuval Rabani, editor, Proceedings of the Twenty-Third Annual ACM-SIAM Sympo-
+     sium on Discrete Algorithms, SODA 2012, Kyoto, Japan, January 17-19, 2012, pages 961–972.
+     SIAM, 2012.
+
+[13] Russell Impagliazzo and Ramamohan Paturi. On the complexity of k-sat. J. Comput. Syst.
+     Sci., 62(2):367–375, 2001.
+
+[14] Russell Impagliazzo, Ramamohan Paturi, and Francis Zane. Which problems have strongly
+     exponential complexity? J. Comput. Syst. Sci., 63(4):512–530, 2001.
+
+[15] Peter Jonsson, Victor Lagerkvist, Gustav Nordh, and Bruno Zanuttini. Strong partial clones
+     and the time complexity of SAT problems. J. Comput. Syst. Sci., 84:52–78, 2017.
+
+[16] Peter Jonsson, Victor Lagerkvist, and Biman Roy. Fine-grained time complexity of con-
+     straint satisfaction problems. ACM Trans. Comput. Theory, 13(1):2:1–2:32, 2021.
+
+[17] Erich Kaltofen. Factorization of polynomials given by straight-line programs. Adv. Comput.
+     Res., 5:375–412, 1989.
+
+[18] Victor Lagerkvist and Magnus Wahlström. Which NP-hard SAT and CSP problems
+     admit exponentially improved algorithms?     CoRR, abs/1801.09488, 2018. URL:
+     http://arxiv.org/abs/1801.09488, arXiv:1801.09488.
+
+[19] Daniel Lokshtanov, Ramamohan Paturi, Suguru Tamaki, R. Ryan Williams, and Huacheng
+     Yu. Beating brute force for systems of polynomial equations over finite fields. In Proceedings
+     of the Twenty-Eighth Annual ACM-SIAM Symposium on Discrete Algorithms, pages 2190–
+     2202, 2017.
+
+[20] Burkhard Monien and Ewald Speckenmeyer. Solving satisfiability in less than 2n steps. Dis-
+     cret. Appl. Math., 10(3):287–295, 1985.
+
+[21] Mihai Patrascu and Ryan Williams. On the possibility of faster SAT algorithms. In Pro-
+     ceedings of the Twenty-First Annual ACM-SIAM Symposium on Discrete Algorithms, pages
+     1065–1075, 2010.
+
+[22] Ramamohan Paturi, Pavel Pudlák, and Francis Zane. Satisfiability coding lemma. In 38th
+     Annual Symposium on Foundations of Computer Science (FOCS), pages 566–574, 1997.
+
+[23] Thomas J. Schaefer. The complexity of satisfiability problems. In Richard J. Lipton, Wal-
+     ter A. Burkhard, Walter J. Savitch, Emily P. Friedman, and Alfred V. Aho, editors, Proceedings
+     of the 10th Annual ACM Symposium on Theory of Computing, May 1-3, 1978, San Diego,
+     California, USA, pages 216–226. ACM, 1978.
+
+[24] Uwe Schöning. A probabilistic algorithm for k-sat and constraint satisfaction problems. In
+     40th Annual Symposium on Foundations of Computer Science, pages 410–414, 1999.
+
+
+
+                                                22
+[25] Rainer Schuler. An algorithm for the satisfiability problem of formulas in conjunctive nor-
+     mal form. J. Algorithms, 54(1):40–44, 2005.
+
+[26] Mate Soos, Stephan Gocht, and Kuldeep S. Meel. Tinted, detached, and lazy CNF-XOR
+     solving and its applications to counting and sampling. In Shuvendu K. Lahiri and Chao
+     Wang, editors, Computer Aided Verification - 32nd International Conference, CAV 2020, Los
+     Angeles, CA, USA, July 21-24, 2020, Proceedings, Part I, volume 12224 of Lecture Notes in
+     Computer Science, pages 463–484. Springer, 2020.
+
+[27] Mate Soos and Kuldeep S. Meel. BIRD: engineering an efficient CNF-XOR SAT solver and
+     its applications to approximate model counting. In The Thirty-Third AAAI Conference on
+     Artificial Intelligence, AAAI 2019, The Thirty-First Innovative Applications of Artificial In-
+     telligence Conference, IAAI 2019, The Ninth AAAI Symposium on Educational Advances in
+     Artificial Intelligence, EAAI 2019, Honolulu, Hawaii, USA, January 27 - February 1, 2019,
+     pages 1592–1599. AAAI Press, 2019.
+
+[28] Leslie G. Valiant and Vijay V. Vazirani. NP is as easy as detecting unique solutions. Theor.
+     Comput. Sci., 47(3):85–93, 1986.
+
+
+
+
+                                                23
+
