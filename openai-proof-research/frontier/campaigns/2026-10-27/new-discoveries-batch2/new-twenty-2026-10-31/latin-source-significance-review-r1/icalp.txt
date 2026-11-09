@@ -1,0 +1,1351 @@
+Haystack Hunting Hints and Locker Room
+Communication
+Artur Czumaj #
+Department of Computer Science and DIMAP, University of Warwick, Coventry, UK
+George Kontogeorgiou #
+Mathematics Institute, University of Warwick, Coventry, UK
+Mike Paterson #
+Department of Computer Science and DIMAP, University of Warwick, Coventry, UK
+
+        Abstract
+We want to efficiently find a specific object in a large unstructured set, which we model by a random
+n-permutation, and we have to do it by revealing just a single element. Clearly, without any help
+this task is hopeless and the best one can do is to select the element at random, and achieve the
+success probability n1 . Can we do better with some small amount of advice about the permutation,
+even without knowing the object sought? We show that by providing advice of just one integer in
+{0, 1, . . . , n−1}, one can improve the success probability considerably, by a Θ( logloglogn n ) factor.
+    We study this and related problems, and show asymptotically matching upper and lower bounds
+for their optimal probability of success. Our analysis relies on a close relationship of such problems
+to some intrinsic properties of random permutations related to the rencontres number.
+
+2012 ACM Subject Classification Mathematics of computing → Permutations and combinations;
+Theory of computation → Communication complexity
+
+Keywords and phrases Random permutations, Search, Communication complexity
+
+Digital Object Identifier 10.4230/LIPIcs.ICALP.2021.58
+
+Category Track A: Algorithms, Complexity and Games
+
+Related Version Full Version: https://arxiv.org/abs/2008.11448
+
+Funding Artur Czumaj: Research partially supported by the Centre for Discrete Mathematics and
+its Applications (DIMAP), by an IBM Faculty Award, and by EPSRC award EP/V01305X/1.
+George Kontogeorgiou: Research partially supported by an EPSRC Doctoral Training Partnership.
+
+
+    1    Introduction
+Understanding basic properties of random permutations is an important concern in modern
+data science. For example, a preliminary step in the analysis of a very large data set presented
+in an unstructured way is often to model it assuming the data is presented in a random order.
+Understanding properties of random permutations would guide the processing of this data
+and its analysis. In this paper, we consider a very natural problem in this setting. You are
+given a set of n objects ([n−1], say1 ) stored in locations x0 , . . . , xn−1 according to a random
+permutation σ of [n−1]. This is the haystack, and you want to find one specific object, not
+surprisingly called the needle, by drawing from just one location.
+    Clearly, the probability of finding the right object in a single draw is always n1 (whichever
+location you choose, since the permutation σ is random, the probability that your object is
+there is exactly n1 ). But can I give you any advice or hint about σ – without knowing which
+object you are seeking – to improve the chance of you finding the specific object? If I could
+
+
+1
+    Throughout the paper we use the standard notation [n−1] := {0, . . . , n−1}, and we write log for log2 .
+            © Artur Czumaj, George Kontogeorgiou, and Mike Paterson;
+            licensed under Creative Commons License CC-BY 4.0                                             EA
+
+                                                                                                          TC S
+48th International Colloquium on Automata, Languages, and Programming (ICALP 2021).
+Editors: Nikhil Bansal, Emanuela Merelli, and James Worrell; Article No. 58; pp. 58:1–58:20
+                   Leibniz International Proceedings in Informatics
+                   Schloss Dagstuhl – Leibniz-Zentrum für Informatik, Dagstuhl Publishing, Germany
+58:2   Haystack Hunt and Locker Room
+
+
+       tell you the entire σ (which can be encoded with log(n!) = Θ(n log n) bits) then this task is
+       trivial and you would know the location of the object sought. But what if I give you just
+       a small hint (on the basis of σ), one number h from [n−1] (or equivalently, one log n-bit
+       sequence) – even when I know nothing about the object sought?
+           Formally, the goal is to design a strategy to choose a hint h = h(σ) and an index i = i(h, s),
+       with both h, i ∈ [n−1], such that for a given s ∈ [n−1], Pr[σ(i) = s] is maximized, where
+       the probability is over the random choice of σ and over the randomness in the choice of the
+       strategy (since h = h(σ) and i = i(h, s) may be randomized functions), see also Section 2.2.
+
+       1.1                     Related puzzle: communication in the locker room
+       The needle in a haystack problem is closely related to the following locker room problem (see
+       Figure 1): The locker room has n lockers, numbered 0, . . . , n−1. A set of n cards, numbered
+       0, . . . , n−1, is inserted in the lockers according to a uniformly random permutation σ. Alice
+       and Bob are a team with a task. Alice enters the locker room, opens all the lockers and
+       can swap the cards between just two lockers, or may choose to leave them unchanged. She
+       closes all the lockers and leaves the room. Bob is given a number s ∈ [n−1] and his task is
+       to find card s. He can open at most two lockers. Before the game begins, Alice and Bob may
+       communicate to decide on a strategy. What is their optimal strategy, and how efficient is it?
+            As in the needle in a haystack problem, without help from Alice, Bob can do no better
+       than open lockers at random. If he opens one locker his probability of success is n1 and if
+       he opens two lockers this probability is n2 . With the help of Alice, he can do better when
+       opening one locker. E.g., their strategy could be that Bob will open locker s, where s is his
+       given number. Alice would then try to increase the number of fixed points in the permutation
+       above the expected number of 1. If there is a transposition she can reverse it, increasing the
+       number of fixed points by two, and if not she can produce one more fixed point (unless the
+                                                                                            12
+       permutation is the identity). This strategy succeeds with probability just under 5n     . When
+       Bob can open two lockers, the challenge is to increase the success probability to ω( n1 ).
+            The answer involves viewing Bob’s first locker opening in a different way: not as looking
+       for his card but as receiving a communication from Alice. The interest is in finding what kind
+       of information Alice can send about the permutation which could help Bob in his search.
+           Now, we invite the reader to stop for a moment: to think about this puzzle, to find any
+       strategy that could ensure the success probability would be ω( n1 ).
+
+       Q         6             3 ♣          A            3            9             10 q q        A             8              5            A            J             Jr             Q             K             9              Q             10 ♣ ♣         9             7           2 q          4r r         2 r            3            4            7
+       ♠♠        qq q          ♣            r            r r          ♣♣ ♣          q qqq         q             ♠ ♠♠♠          ♣♣ ♣         ♠            ♣♣            r              rr            ♣♣            r rr rr        qq            ♣    ♣         ♠♠ ♠          q qqq       q            r            r              q q          ♣♣ ♣         ♣ ♣♣♣
+                                                                          ♣ ♣                                                                                                                                                                      ♣ ♣            ♠ ♠
+                     q q           ♣            r             r            ♣                           q             ♠ ♠           ♣            ♠                                                                      r                                           ♠            q q                                                   q                         ♣ ♣
+                                                                          ♣ ♣                                                                                                                                                                       ♣             ♠ ♠
+            ♠♠       qq q              ♣            r         r r         ♣♣ ♣
+                                                                                        q qqq              q         ♠ ♠♠♠         ♣♣ ♣             ♠            ♣♣             r              rr           ♣♣        r rr rr             qq       ♣ ♣   ♣        ♠♠ ♠                                                                            ♣♣ ♣          ♣♣ ♣
+            Q              6       3 ♣              A             3             9       10 q q             A               8           5            A            J              Jr             Q            K               9             Q        10 ♣ ♣               9       7            2 q         4r r
+                                                                                                                                                                                                                                                                                                             r
+                                                                                                                                                                                                                                                                                                                        2 r
+                                                                                                                                                                                                                                                                                                                            r         q q
+                                                                                                                                                                                                                                                                                                                                          3           4               7
+                                                                                                                                                                                                                                                                                qq q         q
+            Q              2 ♠         J            8r r          5r r          3 ♠          8q q          6               A           4            K            6              8              Jq           10 r r          7             Kq             4q q           5q q          9q q       2 ♣         10 ♠ ♠         6r r          5           7r r            Kr
+            ♣♣             ♠           ♠♠           r r           r             ♠            q q           ♣♣ ♣            ♣           ♠♠ ♠         ♠♠           ♠♠ ♠           ♣ ♣♣♣          q            r rrr           ♠ ♠♠♠         q              q              q             qq q       ♣           ♠    ♠         r             ♠♠ ♠        r r             r
+                                                                                                                                                                                                                                                                                                                 ♠ ♠
+                                                        r r           r             ♠            q q           ♣ ♣             ♣                                      ♠ ♠            ♣ ♣                                        ♠ ♠                                         q           q                                       r r           ♠           r r
+                                                        r rrr                                    q qqq                                                                               ♣ ♣♣♣                       r rrrrr                                                               q qq qq                   ♠ ♠♠♠
+                 ♣♣                ♠        ♠♠                        rr r              ♠                      ♣♣ ♣                ♣       ♠♠ ♠          ♠♠           ♠♠ ♠                          qq                          ♠♠ ♠            qq                                                       ♣                                    ♠♠ ♠
+                     Q         2 ♠              J             8           5         3 ♠                8             6             A            4            K              6              8            J             10              7            K         4              5                9       2 ♣
+                                                                                                                                                                                                                                                                                                                   ♠ ♠
+                                                                                                                                                                                                                                                                                                                       10
+                                                                                                                                                                                                                                                                                                                                rr r
+                                                                                                                                                                                                                                                                                                                                      6           5       7                rr
+                                                                                                                                                                                                                                                                                                                                                                           K
+                                                                                                                                                                                                                                                             qq q           qq q                                                                          rr r
+
+
+       Figure 1: 1
+           Figure Consider
+                     Considerthethe
+                                 following  randomly
+                                     following         shuffled
+                                                randomly        deck of
+                                                            shuffled        oneincard
+                                                                         cards
+                                                                     deck,        the per
+                                                                                      locker room, one
+                                                                                          locker.  Whatcard        locker.
+                                                                                                               per should
+                                                                                                          advice
+       Alicecan
+       Alice giveopen
+                  to all  lockers
+                      Bob –          by so she
+                               justand  swappingcan see
+                                                    the the  entire of at
+                                                         locations  permutation,  but the
+                                                                           most one        cards
+                                                                                      pair of    are –
+                                                                                               cards  notovisible to Bob.
+                                                                                                            increase  the
+       What  advice that
+       probability   aboutBob
+                            the will
+                                 deckfind
+                                       should
+                                          his Alice  give to
+                                               randomly      Bob —
+                                                           chosen  card    byopening
+                                                                      justby  swappingatlocation
+                                                                                          most twoof at most one pair of
+                                                                                                     lockers?
+       cards — to increase the probability that Bob will find a randomly chosen card in the deck by opening at
+       most two lockers (uncovering at most two cards)?
+            It is easy to see that a solution to the needle in a haystack search problem immediately
+       yields a solution to the locker room problem: Alice just takes the card corresponding to
+       in [5]. An early version giving the problem where each prisoner can open half of the lockers was
+       the advice and swaps it into the first locker. For example, the shuffled deck from Figure 1
+       published by [14] (see also [15, p. 18]). If each prisoner begins with the locker corresponding to
+       corresponds
+       the number theyto the
+                          seekfollowing
+                               then theypermutation    σ of
+                                         will all succeed   52 numbers:
+                                                          provided that there is no cycle in the permutation
+       which is longer than n/2. It is easy to show that a helpful prison warder or Alice can always find
+            σ(0, 1, . . . , 51)
+       an appropriate           = ⟨49, 17,of1, the
+                            transposition      38, 27, 7, 21, of
+                                                   contents   25,two
+                                                                  45, lockers
+                                                                      3, 51, 9,so
+                                                                                35,that
+                                                                                     36, 11,
+                                                                                         the 33, 23, permutation has
+                                                                                              resulting
+       no cycle longer than 8,    n/2.46,We   were28,
+                                          18, 13,   told
+                                                       26,of
+                                                           14,this observation
+                                                               2, 5, 10,          recently
+                                                                         39, 48, 32,  29, 40,by19, 4,
+                                                                                                 Kazuo Iwama and this
+       stimulated the current 50,   paper,   in  which  we  subvert   the  locker   problem    tradition
+                                       43, 6, 22, 34, 44, 24, 15, 16, 20, 0, 47, 30, 42, 31, 37⟩         with a problem
+       which has little to do with the cycle structure of permutations and is more concerned with some
+       basic communication complexity and rather different properties of permutations.
+           In this paper we consider the following locker problem (see Figure 1): The locker room has n
+       lockers, numbered 0, . . . , n−1. A set of n cards, numbered 0, . . . , n−1, is inserted in the lockers
+       according to a uniformly random permutation σ. Alice and Bob are a team with a task. Alice
+       enters the locker room, opens all the lockers and can swap the cards in just two lockers, or may
+       choose to leave them unchanged. She closes all the lockers and leaves the room. Bob is given a
+       random number k, 0 ≤ k < n and his task is to find card k. He can open at most two lockers.
+       Before the game begins, Alice and Bob can communicate to decide on a strategy. What is the
+A. Czumaj, G. Kontogeorgiou, and M. Paterson                                                            58:3
+
+
+with mapping: ♣: 0–12 (in order 2,3,4,5,6,7,8,9,10,J,Q,K,A), ♢: 13–25, ♡: 26–38, ♠: 39–51.
+We see, for example, that ♠Q, card number 49 is in locker 0. If in the needle in a haystack
+search problem the advice is a number h ∈ [n−1], then Alice swaps the contents of locker 0
+and the locker containing the card corresponding to number h. This way, Bob gets the advice
+h by opening locker 0.
+   For the strategy we propose in Theorem 5, Alice would swap ♠Q and ♡5. But can we do
+better?
+
+
+1.2    Results for the needle in a haystack and locker room problems
+We present a tight analysis of the needle in a haystack search problem. While some basic
+examples suggest that it is difficult to ensure success probability ω( n1 ), we will show that
+one can improve this probability considerably. Our main results are tight (up to lower order
+terms) lower and upper bounds for the maximum probability that with a single number hint
+one can find the object sought. First, we will show that for any strategy, the probability
+that one can find the sought object is at most (1+o(1))   log n
+                                                  n log log n   (Theorem 5). Next, as the main
+result of this paper, we will complement this by designing a simple strategy that with a hint
+ensures that the sought object is found with probability at least (1+o(1))     log n
+                                                                       n log log n   (Theorem 6).
+    Further, we demonstrate essentially the same results for the locker room problem. Theo-
+rem 6 for the needle in a haystack search problem immediately implies that there is a simple
+strategy for Alice and Bob which ensures that Bob finds his card with probability at least
+(1+o(1)) log n
+  n log log n . We will complement this claim and extend in Theorem 21 the result from
+Theorem 5 for the needle in a haystack search problem to prove that for any           strategyfor
+                                                                                         log n
+Alice and Bob, the probability that Bob finds the required card is at most O n log          log n .
+
+
+
+Techniques. Our analysis exploits properties of random permutations to ensure that some
+short advice can reveal information about the input permutation, which can be used to
+increase the success probability substantially. Our approach relies on a close relationship
+between the needle in a haystack search problem and some intrinsic properties of random
+permutations related to the rencontres number, the number of n-permutations with a given
+number of fixed points. The two parts of our analysis for the needle in a haystack problem, the
+upper bound and the lower bound for the success probability, use quite different techniques.
+    To show the upper bound for the success probability (Theorem 5), we first observe that
+every deterministic strategy corresponds to a unique partition of Sn (set of all permutations
+of [n−1]) into n parts, with part h containing exactly those permutations that cause the
+choice of hint h. By a careful analysis of the properties of this partition, we devise a metric for
+the best possible accuracy of the prediction counting instances in each part of the partition
+in which a permutation maps a given choice i to s. By combining these estimation with
+the bounds for the rencontres number, we prove the desired upper bound for the success
+probability in the needle in a haystack search problem. An application of Yao’s principle
+shows that our results are also valid for randomized strategies.
+    To show the lower bound for the success probability (Theorem 6), we first present
+a simple shift strategy, and then provide a non-trivial analysis of random permutations
+that demonstrates desirable properties of this strategy. The analysis here is related to
+the maximum load problem for balls and bins, where one allocates n balls into n bins,
+chosen independently and uniformly at random (i.u.r.). However, the dependencies between
+locations of distinct elements in the random permutations make this analysis more complex
+(cf. Remark 11 for more detailed discussion).
+
+
+
+                                                                                                      ICALP 2021
+58:4   Haystack Hunt and Locker Room
+
+
+           Finally, while a solution to the needle in a haystack search problem immediately yields a
+       solution to the locker room problem with the same success probability, we complement our
+       analysis by showing (Theorem 21) that no strategy of Alice and Bob can do much better.
+       We show that Alice can do little more than just to send a few numbers to Bob, which is
+       essentially the setup of the needle in a haystack search problem.
+
+       1.3    Background: Permutations, puzzles, and locker rooms
+       Our locker room problem follows a long line of the study of combinatorial puzzles involving
+       the analysis of properties of permutations. One such example is the following locker problem
+       involving prisoners and lockers: There are n lockers into which a random permutation of n
+       cards are inserted. Then n prisoners enter the locker room one at a time and are allowed to
+       open half of the lockers in an attempt to find their own card. The team of prisoners wins if
+       every one of them is successful. The surprising result is that there is a strategy which wins
+       with probability about 1 − ln 2. This problem was initially considered by Peter Bro Miltersen
+       and appeared in his paper with Anna Gál [7], which won a best paper award at ICALP 2003.
+       In that paper they refer to a powerful strategy approach suggested by Sven Skyum but it was
+       left to the readers to find it for themselves. This is the idea of using the number contained in
+       each locker as a pointer to another locker. Thus using a sequence of such steps corresponds
+       to following a cycle in the permutation. Solutions to these problems are of a combinatorial
+       and probabilistic flavor and involve an analysis of the cycle structure of random permutations.
+       The original paper [7] stimulated many subsequent papers considering different variants (see,
+       e.g., [4, 8]), including a matching upper bound provided in [5]. An early version giving the
+       problem where each prisoner can open half of the lockers was published by [14] (see also [15,
+       p. 18]). If each prisoner begins with the locker corresponding to the number they seek then
+       they will all succeed provided that there is no cycle in the permutation which is longer than
+       n
+        2 . It is easy to show that a helpful prison warder, Alice, can always find an appropriate
+       transposition of the contents of two lockers so that the resulting permutation has no cycle
+       longer than n2 . We were told of this observation recently by Kazuo Iwama and this stimulated
+       the current paper, in which we subvert the locker problem tradition with a problem which
+       has little to do with the cycle structure of permutations and is more concerned with some
+       basic communication complexity and rather different properties of permutations.
+            Various results about permutations have found diverse applications in computer science,
+       especially for sorting algorithms (for example, see [10, Chapter 5]). In this paper, we are
+       particularly interested in two such questions. Firstly, to apply known results concerning
+       the asymptotic growth of the rencontres numbers, in order to approximate the optimal
+       success probabilities in both the needle in a haystack problem and the locker room problem.
+       Secondly, to use the concept of the rencontres numbers to examine the way in which the
+       sizes of “shift sets” (sets of elements which a permutation displaces by the same number of
+       positions “to the right”) are distributed in permutations of Sn for a fixed natural number n.
+       In particular, to determine the mean size of the largest shift set of a permutation chosen
+       uniformly at random from Sn , as well as to show that it is typical, i.e., that the variance
+       of the size of the largest shift set is small. These results are useful for providing a concrete
+       optimal strategy for both of the titular search problems.
+
+        2     Preliminaries
+       In this section, we prepare a framework for the study of strategies to prove an upper bound
+       for the success probability for the needle in a haystack search problem (cf. Section 3). For
+       the simplicity of the analysis, we will consider (in Sections 2, 3, and 6) the setting when s
+A. Czumaj, G. Kontogeorgiou, and M. Paterson                                                                 58:5
+
+
+is chosen i.u.r. from [n−1]; see Section 2.2 for justification that this can be done without
+loss of generality. First, let us rephrase the original problem in a form of an equivalent
+communication game between Alice and Bob: Bob, the seeker, has as his input a (random)
+number s ∈ [n−1]. Alice, the adviser, sees a permutation σ chosen i.u.r. from Sn , and uses σ
+to send advice to Bob in the form of a number h ∈ [n−1]. Bob does not know σ, but on the
+basis of s and h, he picks some i ∈ [n−1] trying to maximize the probability that σ(i) = s.
+    First we will consider deterministic strategies (we will later argue separately that ran-
+domized strategies cannot help much here). Since we consider deterministic strategies, the
+advice sent is a function Sn → [n−1], which can be defined by a partition of Sn into n sets.
+This naturally leads to the following definition of a strategy.
+▶ Definition 1. A strategy C for Sn is a partition of Sn into n sets C0 , C1 , . . . , Cn−1 . Such
+a strategy C is denoted by C = ⟨C0 , C1 , . . . , Cn−1 ⟩.
+   Given a specific strategy C, we examine the success probability. Let V be the event that
+the sought number is found, Ah the event that h is the received advice, and Bs the event
+                                                                                 |C |
+that s is the sought number. Notice that for every h ∈ [n−1] we have Pr[Ah ] = n!h and for
+                                  1
+every s ∈ [n−1] we have Pr[Bs ] = n . Therefore, since the events Ah and Bs are independent,
+              n−1
+              X n−1
+                  X                                       n−1
+                                                          X n−1
+                                                              X
+   Pr[V] =              Pr[V|Ah ∩ Bs ] · Pr[Ah ∩ Bs ] =             Pr[V|Ah ∩ Bs ] · Pr[Ah ] · Pr[Bs ]
+              s=0 h=0                                     s=0 h=0
+                n−1      n−1
+              1 X |Ch | X
+          =            ·     Pr[V|Ah ∩ Bs ] .                                                        (1)
+              n     n! s=0
+                h=0
+
+▶ Definition 2. Let C = ⟨C0 , C1 , . . . , Cn−1 ⟩ be a strategy. The magneticity of an element i
+for an element k in the class Cj is defined as mag(Cj , i, k) = |{σ ∈ Cj : σ(i) = k}|.
+    The element with the greatest magneticity for k in the class Cj is called the magnet
+in Cj of k and is denoted max-mag(Cj , k); ties are broken arbitrarily. The magneticity of
+max-mag(Cj , k) is called the intensity of k in Cj , denoted by int(Cj , k); that is, int(Cj , k) =
+maxi∈[n−1] {mag(Cj , i, k)}.
+This can be extended in a natural way to any C = ⟨A0 , A1 , . . . , An−1 ⟩ of n subsets of Sn .
+    Let us discuss the intuitions. Firstly, the magneticity in the class Cj of an element i for
+an element k, mag(Cj , i, k), denotes the number of permutations in Cj with k in position i.
+Therefore, the magnet in Cj of k is an index i ∈ [n−1] such that among all permutations in
+Cj , k is most likely to be in position i. The intensity in Cj of k denotes just the number of
+times (among all permutations in Cj ) that k appears in the position of the magnet i.
+    In the needle in a haystack search problem, Alice sends to Bob a message h which points
+to a class Ch of their agreed strategy C, and Bob has to choose a number i in order to find
+whether σ(i) is the number s ∈ [n−1] which he seeks. The maximum probability that they
+            int(C ,s)
+succeed is |Chh| , realized if Bob opts for the magnet of s in Ch . Thus, by (1), we obtain
+              1 1        X
+   Pr[V] ≤     ·                  int(Ch , s) .
+              n n!
+                      s,h∈[n−1]
+                                                                             P
+▶ Definition 3. Let the field of Sn be F (n) = maxC=⟨C0 ,C1 ,...,Cn−1 ⟩         s,h∈[n−1] int(Ch , s).
+
+With this definition, a strategy which yields the field of Sn is called optimal, and
+            1 1       X                   1 F (n)
+   Pr[V] ≤ ·                 int(Ch , s) ≤ ·       .                                                 (2)
+            n n!                          n   n!
+                      s,h∈[n−1]
+
+   We will use this bound to prove Theorem 5 in Section 3, that whatever the strategy, we
+always have Pr[V] ≤ (1+o(1))·log  n
+                       n log log n .
+
+
+                                                                                                           ICALP 2021
+58:6   Haystack Hunt and Locker Room
+
+
+       2.1     Derangements
+       We use properties of random permutations related to derangements and rencontres numbers.
+       ▶ Definition 4. A permutation σ ∈ Sn with no fixed points is called a derangement. The
+       number of derangements in Sn is denoted Dn . A permutation σ ∈ Sn with exactly r fixed
+       points is called an r-partial derangement. The number of r-partial derangements in Sn
+       (also known as the rencontres number) is denoted Dn,r .
+           Definition 4 yields Dn,0 = Dn and it is easy to see that Dn,r = nr · Dn−r . It is also
+                                                                                
+                                                      1
+       known (see, e.g., [9, p. 195]) that Dn = ⌊ n!                                            n!
+                                                  e + 2 ⌋, and hence one can easily show Dn,r ≤ r! .
+
+
+       2.2     Formal framework and justification about worst-case vs. random s
+       We consider the problem with two inputs: a number s ∈ [n−1] and a permutation σ ∈ Sn .
+       We are assuming that σ is a random permutation in Sn ; no assumption is made about s.
+           For the needle in a haystack search problem (a similar framework can be easily set up
+       for the locker room problem), a strategy (or an algorithm) is defined by a pair of (possibly
+       randomized) functions, h = h(σ) and i = i(h, s), with both h, i ∈ [n−1].
+           For a fixed strategy, let p(s) be the success probability for a given s and for a randomly
+       chosen σ ∈ Sn . That is,
+            p(s) = Pr[σ(i) = s] ,
+       where the probability is over σ taken i.u.r. from Sn , and over the randomness in the choice
+       of the strategy (since both h = h(σ) and i = i(h, s) may be randomized functions).
+           The goal is to design an algorithm (find a strategy) that will achieve some success
+       probability for every s ∈ [n−1]. That is, we want to have a strategy which maximizes
+            Pr[V] = min {p(s)} .
+                    s∈[n−1]
+
+           In our analysis for the upper bounds in Sections 2 and 3 (Theorem 5) and Section 6
+       (Theorem 21), for simplicity, we will be making the assumption that s, the input to the
+       needle in a haystack search problem and to the locker room problem, is random, that is, is
+       chosen i.u.r. from [n−1]. (We do not make such assumption in the lower bound in Section 4
+       (Theorem 6), where the analysis is done explicitly for arbitrary s.) Then the main claim
+       (Theorem 5) is that if we choose s i.u.r. then p(s) ≤ (1+o(1))  log n
+                                                               n log log n , though in fact, one can read
+                                            (1+o(1)) log n
+       this claim as that s∈[n−1] p(s)
+                          P
+                                     n ≤      n log log n . However, notice that this trivially yields
+                                        X       p(s)
+            Pr[V] = min {p(s)} ≤                     ,
+                    s∈[n−1]                      n
+                                      s∈[n−1]
+
+       and therefore Theorem 5 yields Pr[V] ≤ (1+o(1))        log n
+                                                      n log log n , as required.
+           Observe that such arguments hold only for the upper bound.                           Indeed, since
+       mins∈[n−1] {p(s)} may be much smaller than s∈[n−1] p(s)
+                                                          P
+                                                                       n , in order to  give   a  lower bound
+       for the success probability, Theorem 6 proves that there is a strategy that ensures that
+       p(s) ≥ (1+o(1))  log n
+                n log log n   for every s ∈ [n−1]; this clearly yields Pr[V] ≥ (1+o(1))     log n
+                                                                                    n log log n , as required.
+
+
+
+        3      Upper bound for the success probability for needle in a haystack
+       We will use the framework set up in the previous section, in particular the tools in Definition 2
+       and inequality (2) and that s is chosen i.u.r. from [n−1], to bound from above the best
+       possible success probability in the needle in a haystack search problem.
+A. Czumaj, G. Kontogeorgiou, and M. Paterson                                                                       58:7
+
+
+▶ Theorem 5. For any strategy in the needle in a haystack problem, the success probability is
+
+               (1 + o(1)) · log n
+   Pr[V] ≤                        .
+                  n log log n
+
+Proof. We will first consider only deterministic strategies and, only at the end, we will argue
+that this extends to randomized strategies.
+    Consider an optimal strategy C = ⟨C0 , . . . , Cn−1 ⟩. First, we will modify sets C0 , . . . , Cn−1
+to ensure that each Cj has n distinct magnets.
+    Fix j ∈ [n−1]. Suppose that there are two elements k1 < k2 ∈ [n−1] with the same
+magnet i1 in Cj . Since there are exactly n elements and n possible magnets, there is
+some i2 ∈ [n−1] which is not a magnet in Cj of any element. For every σ ∈ Cj with
+σ(i1 ) = k2 , calculate σ ′ = σ(i1 i2 ) (that is, σ ′ is the same as σ, except that the images of i1
+and i2 are exchanged). Now, if σ ′ ∈    / Cj , then remove σ from Cj and add σ ′ to Cj . We notice
+the following properties of the resulting set Cj′ in the case that some σ is replaced by σ ′ :
+  (i) |Cj′ | = |Cj |.
+ (ii) i2 can be chosen as the new magnet of k2 . Indeed, for every i ̸= i1 , i2 , we have
+
+         mag(Cj′ , i2 , k2 ) > mag(Cj , i1 , k2 ) = int(Cj , k2 ) ≥ mag(Cj , i, k2 ) = mag(Cj′ , i, k2 ), so
+         mag(Cj′ , i2 , k2 ) = int(Cj′ , k2 ) > int(Cj , k2 ) .
+
+(iii) None of the intensities decreases. Indeed the only differences are due to changes to
+      permutations σ ∈ Cj with σ(i1 ) = k2 . Such a permutation where σ(i2 ) = k3 , say, is
+      replaced by σ ′ , where σ ′ (i2 ) = k2 and σ ′ (i1 ) = k3 , if σ ′ is not already in Cj . As shown
+      in (ii), the intensity of k2 increases. For k3 , only mag(Cj , i2 , k3 ) decreases, but since i2
+      was not a magnet in Cj , the magnet in Cj′ of k3 , and hence int(Cj , k3 ), is unchanged.
+
+    We repeat this operation for every remaining pair of elements which share a magnet in
+Cj until we arrive at a set of permutations which has n distinct magnets. Then, we perform
+the same process for every other class in C.
+    To see that this algorithm indeed terminates, (ii) shows that if in any iteration the magnet
+of an element i changes, then int(Cj′ , i) > int(Cj , i). As the maximum intensity of any element
+within a class Cj is |Cj | and the minimum is 1, the algorithm terminates after n · n! iterations.
+    Let us consider the collection C = ⟨A0 , . . . , An−1 ⟩ obtained. From (i), we see that the
+sets of C contain a total of n! permutations of Sn . Permutations belonging to the same set
+Aj are necessarily distinct, but two different sets of C may have non-trivial intersection.
+Hence, C may not be a strategy. Every Aj has n distinct magnets, one for each element of
+[n−1]. Most importantly, by (iii), we have
+      X                      X
+            int(Aj , i) ≥         int(Cj , i) = F (n) .
+   i,j∈[n−1]                i,j∈[n−1]
+
+                                         P
+Hence, calculating an upper bound for i,j∈[n−1] int(Aj , i) yields an upper bound for F (n).
+   The set Aj has exactly n magnets, one for each element of [n−1]. For a permutation
+σ ∈ Aj to contribute r to i∈[n−1] int(Aj , i), σ −1 must map exactly r elements to their
+                            P
+
+magnets in Aj . Hence, (cf. Definition 4) there are at most Dn,r permutations in Aj which
+contribute exactly r to i∈[n−1] int(Aj , i). Recall that Dn,r ≤ n!
+                       P
+                                                                r! and thus for any natural ℓ,
+
+                                         n                                n
+     X                                   X                                X          n!                  en!
+             int(Aj , i) ≤ ℓ · |Aj | +           r · Dn,r = ℓ · |Aj | +                    ≤ ℓ · |Aj | +     .
+                                                                                  (r − 1)!                ℓ!
+   i∈[n−1]                               r=ℓ+1                            r=ℓ+1
+
+
+
+
+                                                                                                                 ICALP 2021
+58:8   Haystack Hunt and Locker Room
+
+
+       We will choose some ℓ = (1+o(1)) log n
+                                 log log n    to ensure that ℓ! = ω(n), giving
+                      X                     X                                                       (1 + o(1)) log n
+            F (n) ≤         int(Aj , i) ≤       (ℓ · |Aj | + o((n − 1)!)) = (ℓ + o(1))n! =                           n! (3)
+                                                                                                       log log n
+                   i,j∈[n−1]            j∈[n−1]
+
+            We can combine (2) and (3) to obtain the following,
+
+                          1 F (n)   (1 + o(1)) log n
+            Pr[V] ≤         ·     ≤                  .
+                          n   n!       n log log n
+
+           The upper bound of (1+o(1))    log n
+                                  n log log n   is valid not only for deterministic strategies, but also for
+       randomized strategies. Let c(C, (σ, i)) be the indicator function of the event that the strategy
+       C fails to guess the image of i under the permutation σ. Let us consider a probability measure
+       P over the set D of all deterministic strategies, and the distribution U = (USn , U[n−1] ) over
+       Sn × [n−1], where US denotes the uniform probability measure over the set S. Let S be a
+       random strategy chosen according to P , and let X be a random set-up chosen according
+       to U . Then, by Yao’s principle, max(σ,i)∈Sn ×[n−1] E[c(S, (σ, i))] ≥ minC∈D E[c(C, X)]. That
+       is, the probability that a randomized strategy fails for the worst-case input exceeds the
+       probability that an optimal deterministic strategy fails. Hence, the worst-case probability
+       that a randomized strategy succeeds is also bounded above by (1+o(1))           log n
+                                                                               n log log n .              ◀
+
+
+        4       Lower bound: solution for the needle in a haystack search problem
+       In Theorem 5, we showed that whatever strategy we use in the needle in a haystack problem,
+       the best success probability we can hope for is (1+o(1))  log n
+                                                         n log log n . In this section we will show that
+       such success probability is achievable by a simple strategy, which we call the shift strategy.
+
+                               Let h ∈ [n−1] maximize |{ℓ ∈ [n−1] : ℓ = σ(ℓ + h (mod n))}|.
+                               In order to find number s ∈ [n−1] in σ, check σ(s + h (mod n)).
+
+       (Our choice of h is equivalent to maximizing |{ℓ ∈ [n−1] : (ℓ − h (mod n)) = σ(ℓ)}|.)
+          We will prove that the shift strategy ensures a success probability of at least (1+o(1))  log n
+                                                                                            n log log n .
+       Notice that this is equivalent to saying that Pr[σ(s + h (mod n)) = s] ≥ (1+o(1))  log n
+                                                                                  n log log n , and
+       hence, by the definition of h, that with probability 1 − o(1),
+                      n                                                   o       (1 + o(1)) log n
+             max          {ℓ ∈ [n−1] : ℓ − σ(ℓ) = s (mod n)}                  ≥                    .
+            s∈[n−1]                                                                  log log n
+       This also implies, by Theorem 5 in Section 3, that the shift strategy is asymptotically optimal.
+
+       ▶ Theorem 6. For any s ∈ [n−1], the shift strategy satisfies Pr[V] ≥ (1+o(1))  log n
+                                                                              n log log n .
+
+           In order to prove Theorem 6, we introduce some notation. For every i ∈ [n−1], let
+       v(i) = i − σ(i) (mod n). Since σ is random, v(i) has uniform distribution over [n−1].
+           Let Sℓ = |{i ∈ [n−1] : v(i) = ℓ}|. Notice that in the shift strategy C = ⟨C0 , C1 , . . . , Cn−1 ⟩,
+       if σ ∈ Ch then Sh = maxℓ∈[n−1] {Sℓ }. Therefore, our goal is to study basic properties of the
+       distribution of Sh , and in particular, to estimate the largest value of Sj over all j ∈ [n−1].
+
+       ▶ Example 7. Using the example presented in Figure 1 with
+
+            σ(0, 1, . . . , 51) = ⟨49, 17, 1, 38, 27, 7, 21, 25, 45, 3, 51, 9, 35, 36, 11, 33, 23, 8, 46, 18, 13, 28, 26,
+            14, 2, 5, 10, 39, 48, 32, 29, 40, 19, 4, 12, 41, 50, 43, 6, 22, 34, 44, 24, 15, 16, 20, 0, 47, 30, 42, 31, 37⟩,
+A. Czumaj, G. Kontogeorgiou, and M. Paterson                                                                               58:9
+
+
+we have
+
+   v(0, 1, . . . , 51) = ⟨3, 36, 1, 17, 29, 50, 37, 34, 15, 6, 11, 2, 29, 29, 3, 34, 45, 9, 24, 1, 7, 45, 48, 9,
+   22, 20, 16, 40, 32, 49, 1, 43, 13, 29, 22, 46, 38, 46, 32, 17, 6, 49, 18, 28, 28, 25, 46, 0, 18, 7, 19, 14⟩.
+
+Then
+
+   S0,1,2,...,50,51 = ⟨1, 3, 1, 2, 0, 0, 2, 2, 0, 2, 0, 1, 0, 1, 1, 1, 1, 2, 2, 1, 1, 0, 2, 0, 1, 1,
+                        0, 0, 2, 4, 0, 0, 2, 0, 2, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 2, 3, 0, 1, 2, 1, 0⟩,
+
+so h = 29 and Sh = 4. Alice delivers this hint to Bob by exchanging cards ♡5 and ♠Q. Then,
+                                                    4
+over all s ∈ [n−1], Pr[σ(s + 29 (mod 52)) = s] = 52   .                                ⊠
+
+
+   Let us first notice the following simple auxiliary lemma which should give the intuition
+behind our approach (see the end of this section for a standard and elementary proof).
+
+▶ Lemma 8. The expected number of values j ∈ [n−1] with Sj ≥ (1+o(1))·log
+                                                                log log n
+                                                                          n
+                                                                            is at least one.
+
+   Lemma 8 tells us that in expectation, there is at least one value j such that Sj ≥
+(1+o(1)) log n
+  log log n    . Notice however that in principle, we could have that the expectation is high but
+only because with small probability the random variable takes a very high value. Therefore
+the bound in Lemma 8 is fairly weak. We will now prove, using the second moment method,
+that with high probability there is some j such that Sj ≥ (1+o(1)) log n
+                                                            log log n    . This yields Theorem 6.
+
+▶ Lemma 9. With probability 1 − o(1) there is some j ∈ [n−1] such that Sj ≥ (1+o(1)) log n
+                                                                              log log n    .
+                                                                                                 Pn−1
+Proof. Let Zjt be the indicator random variable that Sj = t. Let Rt =           t
+                                                                           j=0 Zj . With this
+notation, our goal is to show that Rt = 0 is unlikely for our choice of some t = (1+o(1))  log n
+                                                                                    log log n
+                                                                        
+(since if Rt > 0 then maxj∈[n−1] Sj ≥ t, and hence Pr maxj∈[n−1] Sj ≥ t ≥ Pr[Rt > 0]). We
+use the second moment method relying on a standard implication of Chebyshev’s inequality,
+
+                                 Var[Rt ]
+   Pr        max Sj < t ≤ Pr Rt = 0 ≤         .                                                                    (4)
+            j∈[n−1]                   E[Rt ]2
+
+Let us recall that
+                        n−1
+                        X               n−1
+                                        X                       X
+   Var[Rt ] = Var[            Zjt ] =         Var[Zjt ] +                    Cov[Zit , Zjt ] .                     (5)
+                        j=0             j=0                 i,j∈[n−1],i̸=j
+
+
+Next, since every Zjt is a 0-1 random variable, we obtain the following,
+
+   Var[Zjt ] = Pr[Zjt = 1] · Pr[Zjt = 0] ≤ Pr[Zjt = 1] = E[Zjt ] .                                                 (6)
+
+Our main technical claim is that the covariance of random variables Zjt , Zit is small. Although
+the proof of Lemma 10 is the main technical contribution of this section, for the clarity of
+the presentation, we defer its proof to Section 5.
+
+▶ Lemma 10. Let t ≤ O(log n). Then, the following holds for any i ̸= j, i, j ∈ [n−1]:
+
+   Cov[Zit , Zjt ] = E Zit · Zjt − E Zit · E[Zjt ] ≤ o(1) · E Zit · E[Zjt ] .
+                                                          
+                                                                                                                   (7)
+
+
+
+                                                                                                                         ICALP 2021
+58:10   Haystack Hunt and Locker Room
+
+
+           Therefore, if we combine (6) and Lemma 10 in identity (5), then (assuming t ≤ O(log n))
+                       n−1
+                       X                X                       n−1
+                                                                X                     X
+                               t                     t    t
+                                                                    E[Zjt ] + o(1)            E Zit E[Zjt ]
+                                                                                                 
+           Var[Rt ] =     Var[Zj ] +            Cov[Zi , Zj ] ≤
+                      j=0          i,j∈[n−1],i̸=j               j=0              i,j∈[n−1],i̸=j
+
+                     = E[Rt ] + o(1) · E[Rt ]2 .
+
+        If we plug this in (4), then we will get the following (assuming t ≤ O(log n)),
+                    Var[Rt ]     1
+           Pr Rt = 0 ≤         ≤        + o(1) .                                                         (8)
+                       E[Rt ]2   E[Rt ]
+
+            Therefore, if for some ς >0 we have E[Rt ] ≥ ς (with t ≤ O(log n)) then the bound above
+        yields Pr maxi∈[n−1] Si < t ≤ 1ς + o(1). Hence we can combine this with (9) to obtain
+                 
+                Pn−1             Pn−1                 n
+        E[Rt ] = j=0 E[Zjt ] = j=0 Pr[Sj = t] > 2et!     , which is ω(1) for any t such that t! = o(n).
+        This in particular holds for some t = (1+o(1)) log n
+                                                log log n    , and thus concludes Lemma 9.                ◀
+
+        ▶ Remark 11. A reader may notice a close similarity of the problem of estimating maxi∈[n−1] Si
+        to the maximum load problem for balls and bins, where one allocates n balls into n bins i.u.r.
+        Indeed, random variables S0 , . . . , Sn−1 have similar distribution to the random variables
+        B0 , . . . , Bn−1 , where Bi represents the number of balls allocated to bin i. However, the
+        standard approaches used in the analysis of balls-and-bins processes seem to be more
+        complicated in our setting. The main reason is that while every single random variable
+        Si has approximately Poisson distribution with mean 1, as has Bi too, the analysis of
+        maxi∈[n−1] Si is more complicated than the analysis of maxi∈[n−1] Bi because of the intricate
+        correlation of random variables S0 , . . . , Sn−1 . For example, one standard approach to show
+        that maxi∈[n−1] Bi ≥ (1+o(1))      log n
+                                    log log n    with high probability relies on the fact that the load of a
+        set of bins Bi with i ∈ I decreases if we increase the load of bins Bj with j ∈ J, I ∩ I = ∅.
+        However, the same property holds only approximately for S0 , . . . , Sn−1 (and in fact, the o(1)
+        error term in Lemma 10 corresponds to this notion of “approximately”; for balls and bins
+        the covariance is known to be always non-positive). To see the difficulty (see also the classic
+        reference for permutations [13, Chapters 7–8]), notice that, for example, if σ(i) = i + ℓ then
+        we cannot have σ(i + 1) = i + ℓ, meaning that there is a special correlation between Sℓ (which
+        counts i with σ(i) = i + ℓ) and Sℓ−1 (which counts i with σ(i + 1) = i + ℓ). In particular,
+        from what we can see, random variables S0 , . . . , Sn−1 are not negatively associated [6]. In a
+        similar way, we do not expect the Poisson approximation framework from [1] (see also [11,
+        Chapter 5.4]) to work here. Our approach is therefore closer to the standard second moment
+        method, see, e.g., [2, Chapter 3] and [12].
+
+        Elementary proof of Lemma 8. Let us recall Definition 4 for derangements and r-partial
+        derangements. The probability that a random permutation in Sn is a derangement is
+                        1        1                      1
+        Dn /n! = ⌊ n!                              n!       n!
+                   e + 2 ⌋/n! ∼ e . Let u(n) = ⌊ e + 2 ⌋/ e and note that Dn = u(n) n!/e, that
+        u(n) = 1 + o(1), and u(n) > 0.9 for all n > 1. Since the permutation σ ∈ Sn is chosen i.u.r.,
+                                     n             n (n−k)!
+                                                    
+                        Dn,k         k Dn−k        k   e    u(n − k)       u(n − k)
+           Pr[S0 = k] =      =                 =                       =            .
+                         n!               n!              n!                 ek!
+           The same bound can be obtained for Sj for every j ≥ 0. For any permutation σ ∈ Sn and
+        any integer ℓ ∈ [n−1], define permutation σℓ ∈ Sn such that σℓ (i) = σ(i) + ℓ (mod n). For
+        any permutation σ ∈ Sn and any ℓ, the operator σ 7→ σℓ is a bijection from Sn to Sn , and a
+A. Czumaj, G. Kontogeorgiou, and M. Paterson                                                                    58:11
+
+
+permutation σ ∈ Sn with ℓ ∈ [n−1] has exactly k fixed points if and only if permutation σℓ
+has exactly k points with σℓ (i) = i + ℓ (mod n). Hence for every j, j ′ ∈ [n−1] and k ∈ [n],
+we have Pr[Sj = k] = Pr[Sj ′ = k]. Therefore, for any integers j ∈ [n−1] and k ∈ [n − 2],
+
+                    u(n − k)    1
+     Pr[Sj = k] =            >      .                                                                    (9)
+                      ek!      2ek!
+Let k(n) be the largest k such that 2ek! ≤ n. Then Pr[Sj = k(n)] > 1/n. Hence, if we let
+Qj be the indicator random variable that Sj = k(n), then Pr[Qj = 1] > 1/n, and hence
+   Pn−1         Pn−1           Pn−1
+E[ j=0 Qj ] = j=0 E[Qj ] = j=0 Pr[Qj = 1] > 1. Therefore, in expectation, there is at
+least one value j such that Sj = k(n). It is easy to show that k(n) = logloglogn n (1 + o(1)). ◀
+
+
+ 5      Proof of Lemma 10: bounding the covariance of Zit and Zjt
+The main technical part of the analysis of the lower bound for the needle in a haystack search
+problem in Section 4 (cf. Theorem 6) relies on the proof Lemma 9. This proof, in turn, is
+quite simple except for one central claim, Lemma 10, bounding the covariance of Zit and Zjt .
+The proof of Lemma 10 is rather lengthly, and because of space considerations, some proofs
+are deferred to the full version of the paper (cf. https://arxiv.org/abs/2008.11448).
+    Let Zjt be the indicator                                        t        t
+                      t t random variable that Sj =t t. Since Zi and Zj aret 0-1 random
+variables, we have E Zi · Zj = Pr[Si = t, Sj = t], E Zi = Pr[Si = t] and E[Zj ] = Pr[Sj =
+t]. Since Pr[Si = t] = Pr[Sj = t] = u(n−t)
+                                        et!    = 1+o(1)
+                                                   et!  by (9), to complete the proof of
+Lemma 10, we only have to show that, for i ̸= j,
+                                           1
+     Pr[Si = t, Sj = t] ≤ (1 + o(1)) ·          .                                                   (10)
+                                         (et!)2
+
+We will prove this claim in Lemma 19 in Section 5.2.4 below.
+
+5.1     Notation and key intuitions
+For any set I ⊆ [n−1] and any integer ℓ ∈ [n−1], let FI,ℓ = {σ ∈ Sn : σ(i) = i + ℓ
+                          ∗                                                              ∗
+(mod n) iff i ∈ I} and FI,ℓ  = {σ ∈ Sn : ∀i∈I σ(i) = i + ℓ (mod n)}. Notice that FI,ℓ ⊆ FI,ℓ .
+Further, |FI,ℓ | = Dn−t,0 where t = |I|, and
+                                                                     n
+                    S                       P
+                   | I⊆[n−1],|I|=t FI,i |    I⊆[n−1],|I|=t |FI,i |
+                                                                       
+                                                                     t · Dn−t,0
+   Pr[Si = t] =                           =                        =            .
+                            n!                     n!                    n!
+Next, with this notation and for i ̸= j, we also have
+
+                            1            [                       1           X
+     Pr[Si = t, Sj = t] =                        FI,i ∩ FJ,j =                        |FI,i ∩ FJ,j | .
+                            n!                                   n!
+                                 I,J⊆[n−1],|I|=|J|=t                  I,J⊆[n−1],|I|=|J|=t
+
+
+Notice that in the sum above one can restrict attention only to I ∩ J = ∅, since FI,i ∩ FJ,j = ∅
+otherwise. In view of this, our goal is to estimate |FI,i ∩ FJ,j | for disjoint sets I, J ⊆ [n−1].
+    In what follows, we will consider sets Si and Sj with i = 0 and j = s for some s ∈
+[n−1] \ {0}. By symmetry, we can consider the first shift to be 0 without loss of generality; s
+is an arbitrary non-zero value. As required in our analysis (cf. Lemma 10), we will consider
+t ≤ O(log n).
+    Our approach now is to focus on a typical pair I and J, and consider some atypical
+pairs separately. We will show in Lemma 13 that almost all pairs of disjoint sets I and
+J are so-called compatible for shift s. As a result, the contribution of pairs I and J that
+
+
+                                                                                                               ICALP 2021
+58:12   Haystack Hunt and Locker Room
+
+
+        are not compatible for s is negligible, and so we will focus solely on pairs compatible for
+        s. Then, for the pair of indices I and J we will estimate |FI,i ∩ FJ,j | using the Principle
+        of Inclusion-Exclusion. For that, we will have to consider the contributions of all possible
+                                                                   ∗     ∗
+        sets K ⊆ [n−1] \ (I ∪ J) to the set of permutations in FI,i  ∩ FJ,j . As before, contributions
+        of some sets are difficult to be captured and so we will show in Lemma 15 that almost all
+        sets K ⊆ [n−1] \ (I ∪ J) are so-called feasible for I, J, and s. As a result, the contribution
+        of sets K that are not feasible for I, J, and s is negligible, and so we will focus on sets
+        that are feasible for I, J, and s. The final simplification follows from the fact that we do
+        not have to consider all such sets K, but only small sets K, of size O(log n). Once we
+        have prepared our framework, we will be able to use the Principle of Inclusion-Exclusion to
+                   S
+        estimate | I,J⊆[n−1],|I|=|J|=t FI,i ∩ FJ,j | in Lemmas 18 and 19.
+
+        5.2     The analysis
+        For any integer ℓ and any subset L ⊆ [n−1] we write L + ℓ to denote the set of elements in L
+        shifted by ℓ, in the arithmetic modulo n, that is, L + ℓ = {i + ℓ (mod n) : i ∈ L}. Similarly,
+        L − ℓ = {i − ℓ (mod n) : i ∈ L}.
+            Let Φ0,s (I, J) = FI,0 ∩FJ,s = {σ ∈ Sn : σ(i) = i iff i ∈ I and σ(j) = j +s (mod n) iff j ∈
+        J}. Let Φ∗0,s (I, J) = FI,0
+                                  ∗       ∗
+                                     ∩ FJ,s  = {σ ∈ Sn : ∀i∈I σ(i) = i and ∀j∈J σ(j) = j + s (mod n)}.
+            It is easy to compute the size of Φ∗0,s (I, J). Notice first that if I ∩ J ̸= ∅ or I ∩ (J + s) ̸= ∅,
+        then Φ∗0,s (I, J) = Φ0,s (I, J) = ∅. Otherwise, if I ∩ J = ∅ and I ∩ (J + s) = ∅, then
+        |Φ∗0,s (I, J)| = (n − |I ∪ J|)! (see also Lemma 12).
+            However, our main goal, that of computing the size of Φ0,s (I, J), is significantly more
+        complicated, because this quantity cannot be reduced to an intersection test and a simple
+        formula over n, |I|, |J|, and s.
+
+        5.2.1     Disjoint sets I ⊆ [n−1] and J ⊆ [n−1] \ I compatible for shift s
+        Let I and J be two arbitrary subsets of [n−1] of size t each. We say I and J are compatible
+        for shift s if the four sets I, J, I − s, and J + s are all pairwise disjoint. With this notation,
+        we have the following lemma.
+        ▶ Lemma 12. If I and J are compatible for shift s then Φ0,s (I, J) ̸= ∅ and |Φ∗0,s (I, J)| =
+        (n − |I ∪ J|)!.
+        Proof. If I and J are compatible for shift s then any permutation σ ∈ Sn with σ(i) = i for
+        all i ∈ I, σ(j) = j + s (mod n) for all j ∈ J and complemented by an arbitrary permutation
+        [n−1] \ (I ∪ J) is in Φ∗0,s (I, J). Hence the claim follows from the fact that since I, J, and
+        J + s are pairwise disjoint, such permutations always exist.                                 ◀
+
+           The following lemma shows that almost all pairs of disjoint sets of size t ≤ O(log n) are
+        compatible.
+        ▶ Lemma 13. Let s be an arbitrary non-zero integer in [n−1]. If we choose two disjoint
+        sets I, J ⊆ [n−1] of size t i.u.r., then the probability that I and J are compatible for shift
+                                2t
+                             4t
+        s is at least 1 − (n−2t)     . In particular, if t ≤ O(log n), then this probability is at least
+                2 
+        1 − O logn n .
+
+           Because of Lemma 13, our goal will be to compute the sizes of sets Φ0,s (I, J) only for
+        compatible sets I and J. Next, for given disjoint sets I and J compatible for shift s, we will
+        consider all sets K ⊆ [n−1] \ (I ∪ J) and argue about their contributions to |Φ∗0,s (I, J)| using
+        the Principle of Inclusion-Exclusion.
+A. Czumaj, G. Kontogeorgiou, and M. Paterson                                                                              58:13
+
+
+5.2.2      Properties of sets K ⊆ [n−1] feasible for I, J , and s
+Define PI,J,0,s (K) = {σ ∈ Φ∗0,s (I, J) : for every ℓ ∈ K it holds that: σ(ℓ) ∈ {ℓ, ℓ + s
+(mod n)}}. While it is difficult to study PI,J,0,s (K) for all sets K ⊆ [n−1] \ (I ∪ J),
+we will want to focus our attention only on subsets with some good properties. We call a set
+K ⊆ [n−1] feasible for I, J, and s, if I and J are compatible for shift s, K ∩ (K + s) = ∅,
+and K ∩ (I ∪ J ∪ (I − s) ∪ (J + s)) = ∅.
+   To justify the definition of feasible sets, we begin with the following simple lemma.
+
+▶ Lemma 14. If K ⊆ [n−1] is feasible for I, J, and s, then |PI,J,0,s (K)| = 2|K| · (n − |I ∪
+J ∪ K|)!.
+
+   Next, similarly to Lemma 13, we argue that almost all suitably small sets are feasible for
+pairs of disjoint small sets.
+
+▶ Lemma 15. Let s be an arbitrary non-zero integer in [n−1]. Let I and J be a pair of
+compatible sets for s with |I| = |J| = t. Let k be a positive integer with 2k ≤ n − 4t. If we
+choose set K ⊆ [n−1] \ (I ∪ J) of size k i.u.r., then the probability that K is feasible for I, J,
+                             k
+                        2t+k
+and s is at least 1 − n−2t−k     . In particular, if t, k ≤ O(log n), then this probability is at
+             2 
+              log n
+least 1 − O     n   .
+
+
+5.2.3      Approximating |Φ0,s (I, J )| for compatible sets I, J for s
+In this section we will complete our analysis to provide a tight bound for the size of Φ0,s (I, J)
+for any pair I and J of compatible sets for shift s with |I| = |J| ≤ O(log n). Our analysis
+relies on properties of sets feasible for I, J, and s, as proven in Lemmas 14 and 15.
+    We begin with the two auxiliary claims. For both, let r be the smallest integer such that
+2r ≥ log n and let t = |I| = |J| ≤ O(log n).
+
+▷ Claim 16.
+   2r
+                                                                        log2 n
+   X                       X                                                   
+         (−1)k+1                     |PI,J,0,s (K)| ≥         1−O                      · (n − 2t)! · (1 − e−2 ) . (11)
+                                                                          n
+   k=1      K⊆[n−1]\(I∪J),|K|=k
+            K feasible for I, J, and s
+
+
+▷ Claim 17.
+   2r
+                                                                                     log2 n
+   X                              X                                                          
+                k+1
+         (−1)                                          |PI,J,0,s (K)| ≥ −O                        · (n − 2t)! .
+                                                                                       n
+   k=1                  K⊆[n−1]\(I∪J),|K|=k
+                      K not feasible for I, J, and s
+
+
+    In order to approximate the size of Φ0,s (I, J) for compatible sets I and J for shift s, let
+us first notice that
+                                        [
+   Φ0,s (I, J) = Φ∗0,s (I, J) \                PI,J,0,s ({ℓ}) .                                                   (12)
+                                  ℓ∈[n−1]\(I∪J)
+
+
+Therefore, since we know that |Φ∗0,s (I, J)| = (n − (|I| + |J|))! by Lemma 12, we only have to
+               S
+approximate | ℓ∈[n−1]\(I∪J) PI,J,0,s ({ℓ})|; we need a good lower bound.
+
+
+
+                                                                                                                         ICALP 2021
+58:14   Haystack Hunt and Locker Room
+
+                            S
+           We compute |         ℓ∈[n−1]\(I∪J) PI,J,0,s ({ℓ})| using the Principle of Inclusion-Exclusion,
+               [                                      X                          \
+           |         PI,J,0,s ({ℓ})| =                           (−1)|K|+1 |          PI,J,0,s ({ℓ})|
+          ℓ∈[n−1]\(I∪J)                    K⊆[n−1]\(I∪J),K̸=∅                   ℓ∈K
+                                                      X
+                                       =                         (−1)|K|+1 |PI,J,0,s (K)|
+                                           K⊆[n−1]\(I∪J),K̸=∅
+                                           n−(|I|+|J|)
+                                                X                            X
+                                       =                  (−1)k+1                       |PI,J,0,s (K)| .
+                                                k=1              K⊆[n−1]\(I∪J),|K|=k
+
+
+            We will make further simplifications; since computing |PI,J,0,s (K)| for arbitrary non-
+        empty sets K ⊆ [n−1] \ (I ∪ J) is difficult, we restrict our attention only to small sets K
+        which are feasible for I, J, and s. For that, we will need to show that by restricting only to
+        small sets K feasible for I, J, and s, we will not make too big errors in the calculations.
+            Let r be the smallest integer such that 2r ≥ log n. We can use the Bonferroni inequality
+        [3] to obtain the following,
+
+               [                                  2r
+                                                  X                        X
+           |         PI,J,0,s ({ℓ})|       ≥            (−1)k+1                          |PI,J,0,s (K)|
+            ℓ∈[n−1]\(I∪J)                         k=1          K⊆[n−1]\(I∪J),|K|=k
+                          2r
+                                                                                                                         !
+                          X                               X                                   X
+                                    k+1
+                      =         (−1)                                 |PI,J,0,s (K)| +                   |PI,J,0,s (K)|
+                          k=1               K⊆[n−1]\(I∪J),|K|=k                    K⊆[n−1]\(I∪J),|K|=k
+                                            K feasible for I, J, and s           K not feasible for I, J, and s
+
+                          log2 n
+                                                     2 
+                                                          log n
+                      ≥ −O         (n − 2t)! + 1 − O             (n − 2t)! · (1 − e−2 )
+                            n                               n
+                            2 
+                              log n
+                      = 1−O             (n − 2t)! · (1 − e−2 ) ,                                                             (13)
+                                 n
+
+        where the last inequality follows from the auxiliary Claims 16 and 17.
+           If we combine (12) and (13), then we get the following lemma.
+
+        ▶ Lemma 18. If I and J are compatible for shift s and |I| = |J| = t = O(log n), then
+                                                                                    2 
+                                              [                   (n − 2t)!          log n
+           |Φ0,s (I, J)| = |Φ∗0,s (I, J)| − |   PI,J,0,s ({ℓ})| ≤      2
+                                                                              1 + O         .
+                                                                     e                 n
+                                               ℓ∈[n−1]\(I∪J)
+
+
+        Proof. Indeed, by (12), we have
+                                                      [
+           |Φ0,s (I, J)| = |Φ∗0,s (I, J)| − |                PI,J,0,s ({ℓ})| ,
+                                               ℓ∈[n−1]\(I∪J)
+
+        by Lemma 12 we get
+
+           |Φ∗0,s (I, J)| = (n − (|I| + |J|))! ,
+
+        and by (13) we have
+
+                                                            log2 n
+               [                                                   
+           |         PI,J,0,s ({ℓ}) | ≥        1−O                        · (n − 2t)! · (1 − e−2 ) .
+                                                              n
+          ℓ∈[n−1]\(I∪J)
+
+        Putting these three bounds together yields the promised bound.                                                         ◀
+A. Czumaj, G. Kontogeorgiou, and M. Paterson                                                                                        58:15
+
+
+5.2.4     Completing the proof of inequality (10)
+Now, with Lemma 18 at hand, we are ready to complete our analysis in the following lemma.
+
+▶ Lemma 19. For any i, j ∈ [n−1], i ̸= j, and for t ≤ O(log n), we have,
+                              2 
+                               log n        1
+   Pr[Si = t, Sj = t] ≤ 1 + O                    .
+                                 n        (et!)2
+
+Proof. Without loss of generality we assume that i = 0 and j ∈ [n−1] \ {0}.
+   First, let us recall the following
+              X                           X
+                   |FI,0 ∩ FJ,j | =           |Φ0,j (I, J)|
+   I,J⊆[n−1],|I|=|J|=t,I∩J=∅                  I,J⊆[n−1],|I|=|J|=t,I∩J=∅
+                                                             X                                      X
+                                          =                          |Φ0,j (I, J)| +                         |Φ0,j (I, J)| .
+                                              I,J⊆[n−1],|I|=|J|=t,I∩J=∅                  I,J⊆[n−1],|I|=|J|=t
+                                              I and J not compatible for j             I and J compatible for j
+
+    Next, let us notice that if I and J are not compatible for shift j and I ∩ J = ∅, then we
+clearly have |Φ0,s (I, J)| ≤ (n − 2t)! (since once we have fixed 2t positions, we can generate
+at most (n − 2t)! distinct n-permutations). Further, by Lemma
+                                                                  18, weknow that if I and
+J are compatible for shift j, then |Φ0,s (I, J)| ≤ (n−2t)!
+                                                     e2    · 1+O                             log2 n
+                                                                                               n        . Next, we notice
+that by Lemma 13, we have,
+
+   |{I, J ⊆ [n−1] : |I| = |J| = t, I ∩ J = ∅ and I, J not compatible for j}|
+                                                                                                                
+               log2 n                                                                      log2 n       n        n−t
+      =O                    {I, J ⊆ [n−1] : |I| = |J| = t, I ∩ J = ∅} = O                                                  .
+                 n                                                                           n          t         t
+
+This immediately gives,
+
+                                                   log2 n
+                                                                                2 
+                X                                              n n−t                  log n  n!
+                        |Φ0,j (I, J)| ≤ O                              (n − 2t)! = O
+                                                     n         t   t                    n   (t!)2
+   I,J⊆[n−1],|I|=|J|=t,I∩J=∅
+   I and J not compatible for j
+
+and
+                                                                 2 
+               X                           n n − t (n − 2t)!          log n
+                        Φ0,j (I, J)| ≤                  2
+                                                               1 + O
+                                           t   t      e                 n
+     I,J⊆[n−1],|I|=|J|=t
+   I and J compatible for j
+                                            2 
+                                             log n   n!
+                                      = 1+O               .
+                                               n   (et!)2
+   Therefore,
+        X                                              X                                       X
+             |FI,0 ∩ FJ,j | =                                |Φ0,j (I, J)|      +                     |Φ0,j (I, J)|
+   I,J⊆[n−1],I∩J=∅                    I,J⊆[n−1],|I|=|J|=t,I∩J=∅                       I,J⊆[n−1],|I|=|J|=t
+       |I|=|J|=t                      I and J not compatible for j                  I and J compatible for j
+
+                                                       log2 n
+                                                              
+                                                                       n!
+                                  ≤       1+O                               .
+                                                         n           (et!)2
+   Hence, we can conclude that for i ̸= j we have,
+
+                                                                                               log2 n
+                                                                                                      
+                        1                     X                                                                    1
+   Pr[Si = t, Sj = t] =                                     |FI,i ∩ FJ,j | ≤        1+O                      ·          .      ◀
+                        n!                                                                       n               (et!)2
+                                   I,J⊆[n−1],I∩J=∅
+                                       |I|=|J|=t
+
+
+
+
+                                                                                                                                   ICALP 2021
+58:16   Haystack Hunt and Locker Room
+
+
+         6     Analysis of the communication in the locker room setting
+        A lower bound for the success probability in the locker room problem is provided by a
+        straightforward adaptation of the shift strategy: Alice enters her message relaying the most
+        common shift h to locker 0, and Bob opens locker 0 and uses Alice’s message to check location
+        (s + h) mod n for his card. This strategy ensures a success probability of (1+o(1))   log n)
+                                                                                      n log log n .
+            As in Sections 2 and 3, we will consider the case when s is chosen i.u.r. from [n−1](cf.
+        Section 2.2). In order to obtain an upper bound for the success chance in the locker room
+        problem, we shall introduce some intermediate settings, or “protocols”. In the CLR protocol
+        Alice views the contents of all the lockers, interchanges the contents of two lockers, then
+        Bob is given a number and can open two lockers in search of it (i.e., the CLR protocol is
+        the set of rules which govern the locker room problem). In the NH protocol Alice views
+        the contents of all the lockers, communicates a message of length log n to Bob, then Bob is
+        given a number and can open one locker in search of it (i.e., the NH protocol is the set of
+        rules which govern the needle in a haystack game). Moreover, we can append the modifier
+        “-with-r-bits” to NH, which substitutes r for log n in the above description.
+            We write Pr[V(P)] for the optimal probability of success in protocol P and Pr[V(C, P)]
+        for the probability of success for strategy C in protocol P. For example, we have already
+        shown that Pr[V(N H)] = (1+o(1))      log n
+                                      n log log n .
+
+        ▶ Lemma 20. Pr[V(CLR)] ≤ Pr[V(NH-with-4 log n-bits)].
+
+        Proof. We will interpolate between CLR and NH-with-4 log n-bits with two other protocols.
+             In the protocol CLR0, Alice views the contents of all the lockers, interchanges the contents
+        of two lockers, then Bob is given a number and can open two lockers in search of it, and he
+        can recognize upon seeing the content of the first locker whether it has been altered by Alice.
+             In the protocol CLR1, Alice views the contents of all the lockers, interchanges the contents
+        of two lockers, leaves these two lockers open with their contents visible to Bob, then Bob is
+        given a number and can open one locker in search of it.
+             Also, let Sim be the strategy in NH-with-4 log n-bits in which Alice uses her message
+        to communicate to Bob the cards whose positions she would exchange, and the positions
+        of these cards, if she encountered the permutation σ while working in the CLR1 protocol,
+        simulating an optimal strategy C in CLR1. Since this is an ordered quadruple in [n−1]4 , it
+        can indeed be communicated in at most 4 log n bits.
+             The proof is in four parts:
+           (i) Pr[V(CLR)] ≤ Pr[V(CLR0)],
+          (ii) Pr[V(CLR0)] ≤ Pr[V(CLR1)] + O( n1 ),
+         (iii) Pr[V(CLR1)] ≤ Pr[V(Sim, NH-with-4logn-bits)],
+         (iv) Pr[V(Sim, NH-with-4logn-bits)] ≤ Pr[V(NH-with-4logn-bits)].
+            (i), (iii), (iv) are straightforward and so we only have to show (ii). Let pt be the maximum
+        probability that Bob finds his sought number in the tth locker that he opens, t ∈ {1, 2}.
+            Firstly, we bound p1 . Suppose that Alice and Bob have settled on a specific strategy. Let
+        ex,w be the probability that σ is such that Alice’s transposition sends the locker w to card x.
+        Evidently, 0 ≤ ex,w ≤ n−1
+                                                                  P
+                                     n for all x, w ∈ [n−1] and     x,w∈[n−1] ex,w ≤ 2.
+            Having received his number s, Bob has to open a specific locker, let us say b = b(s). The
+        probability that Bob happens upon the card s in the locker b is at most es,b(s) + n1 (either
+        Alice substitutes the content of b(s) for s, or the content of b(s) is initially s and Alice does
+        not interfere). Thus, choosing s i.u.r. from [n−1], the probability that Bob finds s at his
+        first try is at most n1 ( s,b∈[n−1] es,b(s) + n1 ) < n3 = O( n1 ).
+                                   P
+A. Czumaj, G. Kontogeorgiou, and M. Paterson                                                                               58:17
+
+
+     Then, we bound p2 . If Bob opens first one of the lockers whose contents have been altered
+by Alice, then there is one remaining locker for him to open, and he has at most as much
+information as in the CLR0 protocol. Hence, in this case, p2 ≤ Pr[V(CLR0)].
+     Alternatively, Bob first opens one of the lockers whose contents have not been altered by
+Alice. This requires a more detailed analysis of the CLR0 protocol.
+     Alice’s choice of a transposition is informed solely by the initial permutation    σ of the
+cards inside the lockers. Hence, there should be a function a : Sn → [n−1]
+                                                                                 
+                                                                              2    which directs
+Alice to a pair of lockers. Then, Bob’s choice of a first locker to open is informed only by his
+sought number. Thus, there should be a function b : [n−1] → [n−1] which directs Bob to his
+first locker. Finally, Bob chooses his second locker by considering his sought number and the
+content of the first locker, so there should be a function b′ : {0, 1} × [n−1]2 → [n−1] which
+directs Bob to his second locker (the binary factor distinguishes whether Bob’s first locker
+has had its content altered by Alice or not). The strategy which Alice and Bob employ in
+the CLR0 protocol can therefore be identified with a triple [a, b, b′ ].
+     Let Eu,v = a−1 ({u, v}) be the event that Alice transposes the contents of the uth and
+v lockers, and let Fw = b−1 (w) be the event that Bob opens the wth locker first. Let
+  th
+
+s(y, w) ⊆ Sn be the permutations which map w to y, and let Gy be the event that the
+                                                                                                 −1
+                                                                                                      ({u,v})∩s(y,w)|
+initial content of Bob’s first locker is y. Notice that Pr[Eu,v |Fw ∩ Gy ] = |a                         (n−1)!        ,
+             −1
+Pr[Fw ] = |b n(w)| , and Pr[Gy ] = n1 . Then, the probability that Bob finds his sought number
+in his second attempt given that his first locker was not altered by Alice is
+             X
+    p2 ≤               Pr[Eu,v |Fw ∩ Gy ] · Pr[Fw ] · Pr[Gy ] · Pr[V(CLR0)|Eu,v ∩ Fw ∩ Gy ] .
+          u,v,w,y∈[n−1]
+          u,v,w distinct
+
+Observe that
+                                                                  (n − 2)!                            2
+   Pr[V(CLR0)|Eu,v ∩ Fw ∩ Gy ] ≤                                                               +      .
+                                             Sn \
+                                                    S
+                                                                  a−1 ({w, ℓ})       ∩ s(y, w)        n
+                                                        ℓ∈[n−1]
+
+    This holds because, barring the n2 probability for Bob’s sought card to be in a locker whose
+content was changed by Alice, Bob is only going to find his sought card in his second locker
+if the permutation σ maps both w to y and Bob’s second locker to his sought card. There
+are exactly (n − 2)! such permutations, which yields the numerator. For the denominator,
+when Bob opens the locker w and views the card inside, he sees that its content is y and
+that it has not been touched by Alice, so he knows that σ is a permutation which maps w
+to y and which does not prompt Alice to transpose y with some other card, and there are
+                          −1
+               S
+exactly Sn \ ℓ∈[n−1] a ({w, ℓ}) ∩ s(y, w) such permutations.
+    Also, note that
+        [                                         [
+               (a−1 ({u, v}) ∩ s(y, w)) = (Sn \         a−1 ({w, ℓ})) ∩ s(y, w) ⇒
+     u,v∈[n−1]                                          ℓ∈[n−1]
+   u,v,w distinct
+        X                                                   [
+                    |a−1 ({u, v}) ∩ s(y, w)| = |(Sn \              a−1 ({w, ℓ})) ∩ s(y, w)| .
+     u,v∈[n−1]                                           ℓ∈[n−1]
+   u,v,w distinct
+
+Combining the above, we obtain that
+        X 1 |a−1 ({u, v}) ∩ s(y, w)| |b−1 (w)|                                                             2
+                                                                                                                
+   p2 ≤                 ·                       ·            · Pr[V(CLR0)|Eu,v ∩ Fw ∩ Gy ] +
+                    n          (n − 1)!              n                                                      n
+     u,v,w,y∈[n−1]
+     u,v,w distinct
+                                                    X       1   1   |b−1 (w)|  2   1    2
+                                            ≤                 ·   ·           + =     +   .
+                                                            n n−1      n       n  n−1   n
+                                                w,y∈[n−1]
+
+
+
+                                                                                                                          ICALP 2021
+58:18   Haystack Hunt and Locker Room
+
+
+        Thus, in this case, p2 ≤ n4 .
+           Ultimately, p2 ≤ Pr[V(CLR1)] + n4 , and hence Pr[V(CLR0)] ≤ p1 + p2 ≤ Pr[V(CLR1)] +
+           1
+        O( n ), concluding the proof.                                                       ◀
+
+        ▶ Theorem 21. Pr[V(CLR)] ≤ (4+o(1))  log n
+                                     n log log n .
+
+        Proof. We use Lemma 20 along with the fact that Pr[V(NH-with-4logn-bits)] ≤ (4+o(1))  log n
+                                                                                      n log log n ,
+        which can be immediately derived from Theorem 22 in Section 7.1 by setting m = n4 . ◀
+
+         7     Conclusions and generalizations
+        In this paper we presented a new search problem and provided a comprehensive analysis
+        of its optimal strategy. The core of our analysis is a novel study of properties of random
+        permutations with a given number of fixed points.
+            There are several natural generalizations of the problem studied in this paper and related
+        questions about properties of random permutations, which we will discuss in the full version
+        of the paper (cf. https://arxiv.org/abs/2008.11448). Here we discuss a couple of them.
+
+        7.1    Simple generalization: longer message
+        In the needle in a haystack problem, when Alice sends the message h to Bob, there is no reason
+        why she must choose a number in [n−1]; instead, she could transmit a number h ∈ [m − 1]
+        for an arbitrary integer m. One can easily generalize the analysis from Theorems 5 and 6 in
+        this setting for a large range of m.
+             Let us denote the maximum attainable sum of intensities received from partitioning Sn
+        to m parts the m-field of Sn , and denote it by F (n, m). Fields are simply diagonal m-fields
+        (fields of the form F (n, n)).
+             We have F (n, 1) = n! (yielding a success probability of n1 , corresponding to not receiving
+        advice) and F (n, m) = n · n! for every m ≥ n! (yielding a success probability of 1, corre-
+        sponding to obtaining full information). For other values of m we can follow the approach
+        used in Theorem 5. First, notice that there is ℓ = (1+o(1))     log m
+                                                                 log log m    , such that m ℓ! = o(1). Then,
+        using the techniques from the proof of Theorem 5, we obtain
+                                                                            n
+                                                                                          !
+                              X                      X                    X
+             F (n, m) ≤                int(Aj , i) ≤        ℓ · |Aj | +          r · Dn,r
+                         i∈[n−1],j∈[m−1]                j∈[m−1]                  r=ℓ+1
+                           X                                                                
+                                                 (1 + o(1))n!                    (1 + o(1))m
+                     ≤             ℓ · |Aj | +                      ≤ n! · ℓ +
+                                                      ℓ!                              ℓ!
+                         j∈[m−1]
+
+                                                 (1 + o(1)) log m
+                     ≤ ℓ · n! · (1 + o(1)) =                      · n! .r
+                                                    log log m
+
+        By (2), this yields the success probability of (1+o(1))  log m
+                                                         n log log m , giving the following theorem.
+
+        ▶ Theorem 22. If Alice can choose a number h ∈ [m], then the maximum attainable
+        success probability is at most (1+o(1))  log m
+                                         n log log m . In particular, if m = poly(n), then the maximum
+                                                                   
+                                                           log n
+        attainable success probability is at most O n log     log n .
+
+           Observe that Theorem 22 implies that since for the algorithm presented in Theorem 6,
+           is, oneusing the shift strategy with hint h ∈ [n], the success probability is already
+        that
+             log n
+        Ω n log log n , the shift strategy is asymptotically optimal to within a constant factor for
+A. Czumaj, G. Kontogeorgiou, and M. Paterson                                                                58:19
+
+
+any hint h polynomial in n. A similar conclusion holds also for the communication in the
+locker room setting: even if Alice leaves Bob a message by altering the contents of a constant
+number c of lockers rather than just one, this message is c log n bits long, and hence the
+                                           log n
+success probability is still at most O( n log log n ).
+    Asymptotic results for several other interesting domains of m could be found in a similar
+way. However, for super-polynomial domains, the upper bound derived in the above manner
+is far away from the lower bound that we currently can provide in Theorem 6. Determining
+some properties of the rate of growth of F (n, m) for fixed n would be a good step towards
+determining its values. With this in mind, we have the following natural conjecture.
+
+▶ Conjecture 23. For any fixed n, the function f (m) = F (n, m) is concave.
+
+7.2    Optimal strategies
+Although we have successfully calculated the maximum field and the maximum success
+probability for the needle in a haystack problem, the problem of determining a characterization
+of, or at least some major properties for, optimal strategies remains. Indeed, the only optimal
+strategy that we have explicitly described so far is the shift strategy (which is in fact a set of
+different strategies, since, for permutations which have several Sh ’s of maximum size, there
+are multiple legitimate options for their class). A natural generalization of shift strategies
+are latin strategies; in these, Alice and Bob decide on a n × n latin square S, and Alice’s
+message indicates the row of S which coincides with σ at the maximum number of places.
+    We present a couple of interesting questions concerning the optimal strategies for Sn in
+needle in a haystack.
+
+▶ Conjecture 24. For every natural number n, there is an optimal strategy for Sn whose
+parts all contain exactly (n − 1)! permutations.
+
+▶ Conjecture 25. Optimal strategies are exactly latin strategies.
+
+
+      References
+ 1    Micah Adler, Soumen Chakrabarti, Michael Mitzenmacher, and Lars Eilstrup Rasmussen.
+      Parallel randomized load balancing. In Proceedings of the 27th Annual ACM Symposium on
+      Theory of Computing (STOC), pages 238–247, 1995.
+ 2    Béla Bollobás. Random Graphs. Cambridge University Press, Cambridge, UK, 2nd edition,
+      2001.
+ 3    Carlo Emilio Bonferroni. Teoria statistica delle classi e calcolo delle probabilità. Pubblicazioni
+      del R Istituto Superiore di Scienze Economiche e Commerciali di Firenze, 8:3–62, 1936.
+ 4    Joe P. Buhler. Hat tricks. The Mathematical Intelligencer, 24(4):44–49, 2002.
+ 5    Eucene Curtin and Max Warshauer. The locker puzzle. The Mathematical Intelligencer,
+      28(1):28–31, March 2006.
+ 6    Devdatt P. Dubhashi and Desh Ranjan. Balls and bins: A study in negative dependence.
+      Random Structures and Algorithms, 13(2):99–124, 1998.
+ 7    Anna Gál and Peter Bro Miltersen. The cell probe complexity of succinct data structures.
+      In Proceedings of the 30th Annual International Colloquium on Automata, Languages and
+      Programming (ICALP), pages 332–344, 2003.
+ 8    Navin Goyal and Michael E. Saks. A parallel search game. Random Structures and Algorithms,
+      27(2):227–234, 2005.
+ 9    Ronald L. Graham, Donald E. Knuth, and Oren Patashnik. Concrete Mathematics: A
+      Foundation for Computer Science. Addison-Wesley, Reading, MA, 2nd edition, 1994.
+
+
+
+
+                                                                                                           ICALP 2021
+58:20   Haystack Hunt and Locker Room
+
+
+        10   Donald E. Knuth. The Art of Computer Programming: Sorting and Searching, volume III.
+             Addison-Wesley, Reading, MA, 2nd edition, 1998.
+        11   Michael Mitzenmacher and Eli Upfal. Probability and Computing: Randomized and Probabilistic
+             Techniques in Algorithms and Data Analysis. Cambridge University Press, Cambridge, UK,
+             2nd edition, 2017.
+        12   Martin Raab and Angelika Steger. “Balls into bins” – A simple and tight analysis. In Proceedings
+             of the 2nd International Workshop on Randomization and Approximation Techniques in
+             Computer Science (RANDOM), pages 159–170, 1998.
+        13   John Riordan. An Introduction to Combinatorial Analysis. John Wiley & Sons, Inc., New
+             York, NY, 1958.
+        14   Peter Winkler. Names in boxes puzzle. College Mathematics Journal, 37(4):260, 285, 289,
+             September 2006.
+        15   Peter Winkler. Mathematical Mind-Benders. A K Peters, Ltd., Wellesley, MA, 2007.
+
