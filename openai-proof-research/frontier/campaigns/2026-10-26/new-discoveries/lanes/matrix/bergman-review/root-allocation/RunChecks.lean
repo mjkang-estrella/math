@@ -1,0 +1,9 @@
+import Mathlib
+#check inv_lt_one₀
+#check one_lt_inv₀
+#check Polynomial.Splits.natDegree_eq_card_roots
+#check Multiset.card_filter_add_card_filter_not
+#check Multiset.filter_add_not
+#check Multiset.filter_map
+#check Polynomial.reverse_eq_zero
+#check Multiset.bind_congr
