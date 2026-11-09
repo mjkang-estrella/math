@@ -1,0 +1,22 @@
+# 337705: ordinary refutation proposal, zero credit
+
+Exact target: Every 1-degenerated connected hypergraph is 2-cordial.
+All hypergraphs here are finite, with a set of distinct edges of size at least two. A subhypergraph has a vertex subset and an edge subset, retaining each included edge as its original set; edges are not intersected with the new vertex set. This is the convention on source pages 2–3 and 13. Degeneracy quantifies over nonempty subhypergraphs; the vacuous empty object is excluded in the usual definition.
+
+Primary source: Tuczynski, Wenus, Wesek, On cordial labeling of hypertrees, DMTCS21:4 (2019) #1. Section2 definitions, Section5 Conjecture20, page13. Actual final journal PDF from https://dmtcs.episciences.org/5658/pdf redirects to /articles/5658/download. SHA256 0fc0944685fc5b6112e1ef10e17868eb00abbd904e1d7abdd96914d9aa0490f2. It is byte-identical to arXiv1711.06294v4 acquired here. This is a nonuniform conjecture, not the already-proved hypertree theorem.
+
+Witness: six distinct vertices a,b,p1,p2,p3,p4.
+e1={a,p1}, e2={a,b,p2}, e3={a,b,p3}, e4={b,p4}.
+These four edges are distinct, have sizes 2,3,3,2, and none contains another.
+
+Connectivity: e1 meets e2 at a, e2 meets e3 at a and b, and e3 meets e4 at b. Every vertex is in an edge, so the incidence graph is connected. Explicit incidence routes go from p1 through e1,a,e2,b to e4,p4, and from p2 or p3 through their own edges to a or b. Thus all six vertex nodes and four edge nodes belong to one incidence component.
+
+1-degeneracy: each ei has the private vertex pi, contained in no other edge. In any subhypergraph with an edge ei, pi must remain a vertex because the whole edge ei remains. Its degree is exactly one. If a nonempty subhypergraph has no edges, any vertex has degree zero. This proves the universal subhypergraph assertion, not just that H itself has a leaf.
+
+Noncordiality: suppose f:V→Z2 is cordial. On six vertices, balance forces exactly three labels to be 1 and three to be 0. Hence the sum of vertex labels in Z2 is 1. Degrees are deg(a)=deg(b)=3 and deg(pi)=1. Double-counting incidences, the sum over all four induced edge labels equals the sum over vertices of deg(v)f(v), hence equals the sum of all vertex labels, namely 1 in Z2. But edge balance on four edges forces precisely two labels of each kind, making that sum 0. Contradiction. Equivalently, writing out the four edge sums makes a and b occur three times and each private vertex once, leaving total f(a)+f(b)+sum f(pi). No finite search or mathematical program was used.
+
+All scope obligations of the literal conjecture are paid in ordinary reasoning. The source hypertree theorem does not subsume this: a,e2,b,e3,a is a cycle in the incidence graph, so this H is not a hypertree. It is nevertheless 1-degenerate under the source's retained-edge subhypergraph definition. An induced-trace convention that shrinks edges would be a different notion; it is not silently substituted.
+
+Sustained route: I first considered an elimination proof using private vertices to prescribe edge parities. That pays edge balance but does not pay vertex balance. The obstruction above explains the exact failure. When all degrees are odd and both sizes are even, cordiality requires |V|/2 and |E|/2 to have the same parity. Here they do not. Connecting two disjoint even-edge obstructions by an arbitrary additional edge does not preserve that parity; instead the two shared triple-degree vertices above preserve odd degrees and connect the incidence graph while keeping private leaves. This is the completed full-scope refutation route, not a helper claimed as a solution.
+
+Qualification: PROPOSAL ONLY, not independent PASS. Search used all three permitted calls/nine queries before this final witness was isolated; exact queries/full responses are saved. Search results and live registry root heads do not establish absence of a prior counterexample. A focused witness-specific prior-art search was not made because the lane search budget was exhausted. No worldwide novelty claim. No applicable earlier counterexample body was read. This leaves a specific bounded-prior/significance qualification gap, rather than proving novelty from an open record. The witness meets the full universal statement's negation, but root must adjudicate whether the parity obstruction is a substantive new solution or a known/routine family. Independent fidelity, significance, deep proof audit, literal Lean all bridges, extracted replay and paper remain unpaid. No formal dispatch is authorized.
