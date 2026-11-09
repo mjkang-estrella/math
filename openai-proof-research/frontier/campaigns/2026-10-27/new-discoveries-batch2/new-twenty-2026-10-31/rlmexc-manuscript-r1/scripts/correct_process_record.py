@@ -1,0 +1,20 @@
+import sys
+sys.dont_write_bytecode=True
+from pathlib import Path
+import json,datetime,hashlib
+r=Path.cwd();site=Path('/home/mj-kang/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages')
+rows=[]
+for f in site.rglob('*.cpython-315.pyc'):
+ dt=datetime.datetime.fromtimestamp(f.stat().st_mtime,datetime.timezone.utc)
+ if '2026-11-05T10:19:39'<=dt.isoformat()<'2026-11-05T10:19:40':rows.append({'path':str(f),'mtime_utc':dt.isoformat(),'bytes':f.stat().st_size,'sha256':hashlib.sha256(f.read_bytes()).hexdigest()})
+(r/'receipts/outside-lane-bytecode-violation.json').write_text(json.dumps({'status':'PROCESS_VIOLATION','cause':'Failed system Python 3.15 ReportLab import wrote .pyc into installed Python 3.12 packages; -I ignores PYTHONDONTWRITEBYTECODE.','files':rows,'remediation':'No further modification of outside files; explicit -B and sys.dont_write_bytecode=True now enforced. Root must assess violation.'},indent=2)+'\n')
+for name in ['scripts/cap.py','scripts/build_pdf.py']:
+ p=r/name;s=p.read_text();p.write_text('import sys\nsys.dont_write_bytecode=True\n'+s)
+p=r/'scripts/cap.py';s=p.read_text().replace('p=subprocess.Popen(sys.argv[2:],start_new_session=True)',"command=sys.argv[2:]\nif 'python' in pathlib.Path(command[0]).name and '-B' not in command: command.insert(1,'-B')\np=subprocess.Popen(command,start_new_session=True)").replace("'command':sys.argv[2:]","'command':command");p.write_text(s)
+p=r/'manuscript.xml';s=p.read_text();old='All computation drivers in this lane impose at most two CPUs, a CPU limit, a wall deadline, sampled RSS monitoring and a memory ceiling; scratch and cache paths are lane-local. No network request, solver, child agent, publication or shared-ledger change was used. Acceptance remains solely with the campaign root.'
+new='Numerical and rendering drivers impose the requested resource caps. A failed rendering setup import created bytecode caches outside the lane in the installed runtime; the dossier records this process violation. Bytecode writes are now explicitly disabled. No network, solver, child agent or shared-ledger change was used. Acceptance remains solely with the campaign root.'
+assert old in s;p.write_text(s.replace(old,new))
+p=r/'REPRODUCE.md';s=p.read_text().replace('and no bytecode writes','and explicit -B bytecode suppression').replace('The failed ReportLab imports performed no external writes.','The failed system-Python ReportLab import DID write bytecode caches outside the lane, because -I ignored PYTHONDONTWRITEBYTECODE. See receipts/outside-lane-bytecode-violation.json for the observed files. No cleanup outside the lane was attempted. The wrapper now explicitly inserts -B for Python child commands, and the PDF source sets sys.dont_write_bytecode=True.').replace('all writes were confined to this lane.','the external bytecode-cache writes violate the write-only-in-lane requirement and require root assessment.');p.write_text(s)
+p=r/'SUMMARY.md';s=p.read_text().replace('Status: **DRAFT, AI-assisted, ready for root review; NOT self-accepted.**','Status: **DRAFT, AI-assisted, WITH PROCESS VIOLATION for root review; NOT self-accepted.**').replace('No writes outside this lane and no other-lane or shared-ledger changes were made.','A failed rendering import created bytecode caches outside the lane in the installed runtime. This violated the lane-write constraint; the affected files and cause are recorded in receipts/outside-lane-bytecode-violation.json. No external cleanup was attempted. No other-lane source or shared-ledger changes were made.');p.write_text(s)
+p=r/'results.json';a=json.loads(p.read_text());a['status']='DRAFT_WITH_PROCESS_VIOLATION_ROOT_REVIEW';a['process_limitations'].append('Failed rendering import wrote bytecode cache files outside lane; see receipts/outside-lane-bytecode-violation.json; no external cleanup attempted');a['remaining']='Root scientific review, process-violation assessment and acceptance decision; no self-acceptance';p.write_text(json.dumps(a,indent=2)+'\n')
+print('Recorded outside-lane bytecode files:',len(rows))

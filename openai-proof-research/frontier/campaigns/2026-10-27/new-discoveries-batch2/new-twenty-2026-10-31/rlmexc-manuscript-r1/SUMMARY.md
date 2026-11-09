@@ -1,0 +1,13 @@
+# MathDB 350721 manuscript dossier
+
+Status: **DRAFT, AI-assisted, WITH PROCESS VIOLATION for root review; NOT self-accepted.** No fabricated human authors, affiliation, publication or priority claim. Zero acceptance credit is assigned by this lane.
+
+The six-page manuscript proves by hand that the coefficient of x_{1,n−4,n−2,n−1} y_{2,…,n−5,n−3,n} in F_{n,3} is −1 for every n ≥ 8. It includes the full forcing argument, eight tails, cycle decompositions, surviving signs and n = 7 boundary. It distinguishes the refereed conjecture from arXiv v1/v2, v3 and MathDB wording, and treats the trivial wording/sign defects as unclaimed.
+
+Fresh Python computations reproduce every displayed experimental count: all k for n ≤ 7 are nonnegative; at k = 3, n = 8 has 256 positive and 2 negative coefficients, n = 9 has 707 and 15, n = 10 has 1931 and 89; at (10,4), 2997 positive and 3 negative. Full S_8 and S_9 counts and the eight target permutations are saved. The S_10 sum was recomputed in ten disjoint first-value chunks and aggregated before sign counting. The family dossier gives words, literal inversion counts and cycle partitions at n = 7 through 16. The source polynomial typo was independently checked.
+
+The Lean packet is reused byte-identically, SHA-256 82262a7aa3f6548ebe9e15c3d8f0fef0feb120c5f0f45cc4a6e31eb6a3840a75. Safe extraction passed, with 17 files and nine modules; no packet code was executed. The inherited root replay reports PASS and registry refresh CLEAN with bounded path-screen scope. The endpoint AK350721.conjecture_refuted proves the n = 9 dual negation. The infinite family remains a hand proof. No Lean, lake, leanchecker, SAT/ILP solver, network or child agent was used here.
+
+Every final PDF page was rendered and individually visually inspected after fixing a missing-math-glyph issue. See receipts/visual-qa.json and qa/. The 242 frozen original inputs have equal before/after hashes. REPRODUCE.md records tooling paths, resource controls, inherited trust limits and the process limitations (initial uncapped read-only operations and hashing after first read). A failed rendering import created bytecode caches outside the lane in the installed runtime. This violated the lane-write constraint; the affected files and cause are recorded in receipts/outside-lane-bytecode-violation.json. No external cleanup was attempted. No other-lane source or shared-ledger changes were made.
+
+Main outputs: manuscript.pdf; manuscript.xml; scripts/build_pdf.py; PROOF.md; REPRODUCE.md; mathdb-350721.jsonl; lean-source.zip; paper-source.zip; full-dossier.zip; MANIFEST.sha256; archives.sha256; results.json. The full dossier includes source copies, raw record, receipts, numerical outputs and page images.

@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+source scripts/env
+mkdir -p build logs tmp
+start=${1:-Definitions}
+active=false
+while read -r module; do
+  if [ "$module" = "$start" ]; then active=true; fi
+  if ! "$active"; then continue; fi
+  echo "Compiling $module"
+  /usr/bin/time -v scripts/capped lean -M3500 -DwarningAsError=true -o "build/$module.olean" "$module.lean" > "logs/$module.log" 2>&1
+  echo "Checking $module"
+  /usr/bin/time -v scripts/capped leanchecker "$module" > "logs/check-$module.log" 2>&1
+  printf '%s\n' "$module" > logs/last-completed.txt
+done < module-order.txt
+if ! "$active"; then echo "Unknown start module: $start" >&2; exit 2; fi
