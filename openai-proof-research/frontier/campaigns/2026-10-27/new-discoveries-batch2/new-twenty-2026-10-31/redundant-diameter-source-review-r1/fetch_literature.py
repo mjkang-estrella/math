@@ -1,0 +1,4 @@
+exec(open(__file__.replace('fetch_literature.py','fetch_review.py')).read().split('jobs=')[0])
+from urllib.parse import quote
+jobs={'omega-root':'https://api.github.com/repos/the-omega-institute/trureturing/git/trees/'+json.loads((p/'omega-head.body').read_text())['sha'], 'crossref-title':'https://api.crossref.org/works?rows=5&query.title='+quote('Distance-critical and distance-redundant graphs'), 'openalex-title':'https://api.openalex.org/works?per-page=5&search='+quote('Distance-critical and distance-redundant graphs'), 'crossref-product':'https://api.crossref.org/works?rows=8&query='+quote('distance redundant graphs direct product'), 'crossref-predecessor':'https://api.crossref.org/works?rows=5&query.title='+quote('Threat support and dead edges in the Shannon game')}
+exec(open(__file__.replace('fetch_literature.py','fetch_review.py')).read().split('def get')[1].join(['def get','']))
