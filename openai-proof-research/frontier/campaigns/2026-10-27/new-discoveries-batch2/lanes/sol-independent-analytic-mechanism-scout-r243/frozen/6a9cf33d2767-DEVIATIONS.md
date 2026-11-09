@@ -1,0 +1,1 @@
+Initial pwd/rg inventory ran outside guard before guard contract was read. It was read-only, truncated and did not inspect scientific bodies. Preserved in session tool record. All subsequent helper commands guarded.

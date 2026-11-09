@@ -1,0 +1,3 @@
+Initial protocol deviations/failures: an unguarded pwd was run before reading the guard; it only printed cwd. Guard --help failed because guard treats argv as an executable; no retry of denied network. Both retained here.
+
+Exact guard-help failure: FileNotFoundError: [Errno 2] No such file or directory: --help (exit1). Initial pwd exit0 printed /home/mj-kang/Documents/Dev/math. Two pdftotext warnings on later source retrieval: Syntax Warning: Mismatch between font type and embedded font file; extraction completed exit0. An accidental extra unused PYTHONDONTWRITECODE=1 environment variable on one read did not replace the required PYTHONDONTWRITEBYTECODE=1. No denied HTTP route or resource-cap failure occurred.
