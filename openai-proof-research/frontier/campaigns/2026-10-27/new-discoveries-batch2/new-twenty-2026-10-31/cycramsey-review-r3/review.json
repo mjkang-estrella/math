@@ -1,0 +1,83 @@
+{
+  "374241": {
+    "reviewer": "cycramsey-review-r3 (Claude Opus 5.5, independent adversarial reviewer; no child agents)",
+    "date_utc": "2026-11-02",
+    "candidate": "expanded-corpus-r112: PROOF-374241.md and formal/ (CycDefs, CycRot, CycLower, CycUpper, CycMain); endpoint CycRamsey.cycRamsey_startStar_monPath",
+    "input_binding": "335 input files hash-bound before and after (receipts/input-hashes-before.txt and -after.txt are identical). All 8 hashes in cycramsey-root-check-r1.json match. The five parent-check src/*.lean files are byte-identical to formal/*.lean.",
+    "gates": {
+      "A_source_and_mathdb_fidelity": {
+        "verdict": "PASS",
+        "findings": [
+          "Source 2604.16188v1 (sha256 491cb4b9...) defines R_cyc as the least n such that every k-edge-colouring of K_n contains H_j in colour j, through an embedding with some t such that (phi(t),...,phi(|H_j|-1),phi(0),...,phi(t-1)) is increasing. S_n^sc is the star of order n with centre 0. P_n^mon has edges {i,i+1}. Before Proposition 2.2 the source says any two stars of the same order are equivalent cyclically.",
+          "Conjecture 4.16: for any a >= 3 and b >= 4, R_cyc(S_a, P_b^mon) = 1 + (a-1)(b-2). The MathDB text has the same quantifiers and formula. Its phrase 'star with parameter a' is resolved by the source as order a (a vertices), which Table 11 and my own exhaustive checks confirm.",
+          "Lean Colouring := Sym2 (Fin n) -> Fin 2. Diagonal entries are never queried, because H is irreflexive and phi is injective, so they are harmless.",
+          "IsCyclicEmbedding := Injective and exists t, StrictMono (j => phi (t + j)), where Fin k addition is mod k. That is exactly the source's rotated sequence.",
+          "ContainsCyc maps each H-edge to c s(phi u, phi v) = i. Sym2 is unordered, so orientation is irrelevant.",
+          "In CycRamseyProp, code 0 is colour 1 and is used for H1 = startStar; code 1 is colour 2 and is used for H2 = monPath. The order of the arguments matches R_cyc(S_a, P_b^mon).",
+          "cycRamsey is defined by sInf, and the endpoint proves IsLeast, so the 0-of-empty-set degeneracy is excluded. IsLeast also exhibits colourings without either structure for every m < N, so ContainsCyc is not trivially true.",
+          "startStar is fromRel (u = 0 and v != 0). monPath is fromRel (u + 1 = v).",
+          "Centre irrelevance and the degree and clockwise-path shortcuts were checked against the literal definition, for every centre position, on 4350 random instances with n <= 7: 0 mismatches (logs/defcheck.log)."
+        ]
+      },
+      "B_ordinary_mathematics": {
+        "verdict": "PASS (the theorem is true and the candidate proof is correct)",
+        "findings": [
+          "I re-proved Theorem A independently. J and K are at most t+1 since t+1 <= N-1. The two non-neighbour runs, at offsets 1..J-1 and N-K+1..N-1, are disjoint iff J+K <= N+1, which holds because 2t+2 <= (t+1)(b-2)+2 for b >= 4; hence J+K <= t+2. The b-vertex sequence s-K(s), s, g(s), ..., g^{b-2}(s) has strictly increasing offsets and colour-2 consecutive pairs, so with no path its span is at least N. The span is also at most (t+2)+(b-3)(t+1) = N, so equality is forced, and J(g(s)) = t+1 because b-3 >= 1. The orbit from u = g(0) has K(u) = 1, and J(u + k(t+1)) = t+1 for every k; at k = b-2 the orbit reaches u-1 with J(u-1) >= 2, which contradicts u ~ u-1.",
+          "The lower bound (source Theorem 4.5, block colouring) re-checked, including the wrap pair (b-1, 0) and the case t = 0.",
+          "The star application holds: a vertex with a-1 colour-1 neighbours, listed clockwise from the centre, gives a cyclic S_a; otherwise every vertex has at most a-2 colour-1 neighbours and Theorem A applies with t = a-2.",
+          "Own exhaustive pure-Python backtracking (scripts/rcyc_search.py, logs/rcyc-grid.log) gives SAT at N-1 and UNSAT at N for (a,b) = (3,3..9), (4,3..6), (5,3..5), (6,3..4) and (7,4) at n = 12. That is 16 UNSAT and 17 SAT verdicts, all equal to Table 11. (7,4) at n = 13 and (8,4) at n = 14 and 15 timed out at the 140 s wall limit and give no verdict."
+        ]
+      },
+      "C_lean_audit": {
+        "verdict": "PASS (source review plus root replay evidence; no recompilation in this review, by instruction)",
+        "findings": [
+          "All five modules read. There is no sorry, admit, axiom, unsafe, partial, native_decide, implemented_by, extern, opaque, set_option, notation, macro, instance or attribute. Imports are Mathlib plus the local chain only.",
+          "The endpoint statement and all definitions are exactly as in gate A. Intermediate lemmas cannot weaken a kernel-checked endpoint.",
+          "Root's run.py asserts that src contains no .olean, then builds each module and AuditFull with -j1 -DwarningAsError=true (rc 0, empty logs), then runs leanchecker per module (rc 0). Lean 4.34.1 is at commit 5045d005.",
+          "I parsed AuditFull's log robustly, joining wrapped lines: 148 DECL records, split CycDefs 10, CycRot 18, CycLower 38, CycUpper 56, CycMain 26. All have UNSAFE false, PARTIAL false and BODY true. Axiom sets are contained in {propext, Classical.choice, Quot.sound}. The endpoint depends on exactly these three.",
+          "Residual trust limits: the prebuilt Mathlib cache d13f23b7 was not rebuilt, and leanchecker was run per module rather than with --fresh, so imported Mathlib declarations are trusted from the cache.",
+          "The negative controls are only syntactic smoke tests. NegWrongFormula fails with 'unsolved goals 1 + (3-1)*(4-2) = 7', and NegB3 fails with a type mismatch on '4 <= 3'. Neither tests semantics."
+        ],
+        "proposed_extra_controls": [
+          "Semantic b = 3 control: prove cycRamsey (startStar 4) (monPath 3) = 5 (Table 11), so the b >= 4 hypothesis is shown to be necessary under these exact definitions.",
+          "Cyclicity is load-bearing: prove that an ordered-only mutation (t fixed to 0) fails at n = 5 for (a,b) = (3,4), i.e. exhibit a colouring of K_5 with no ordered colour-1 S_3^sc and no ordered colour-2 P_4^mon. R_ord = 7 by source Corollary 4.4.",
+          "Rotation actually permitted: an example of ContainsCyc for monPath 3 using an embedding that needs t != 0.",
+          "Same-colour mutation (ContainsCyc H1 c 0 or ContainsCyc H2 c 0) should be refutable at N, which catches colour-index collapse. Swapping both colours is not a useful control, because R(H1,H2) = R(H2,H1)."
+        ]
+      },
+      "D_prior_art": {
+        "verdict": "PASS for literal publication priority; no published resolution was found",
+        "findings": [
+          "arXiv 2604.16188 has only v1 (17 Apr 2026).",
+          "Follow-up arXiv 2607.06817v2 (Damnjanovic and Djordjevic, 12 Jul 2026): body read. Its Table 2 still lists the cyclic star versus monotone path case as 'conjectured [4, Conjecture 4.16]'.",
+          "openai/math HEAD 4eaee875 is unchanged, with no relevant files in the HEAD commit. Omega HEAD has moved to 2c68091d (2026-11-02T21:39Z); the HEAD commit has no relevant files, and intervening commits since e51c7d81 were NOT screened because of the /commits/HEAD-only rule.",
+          "Three web searches found no Dirac-type theorem for clockwise paths in cyclically ordered or convex geometric graphs. Brass-Karolyi-Valtr's convex-geometric Turan theory is asymptotic only, and its body is unread.",
+          "However, see objection O1: the upper bound IS derivable from the source's own Corollary 4.19. That is a derivability issue, not prior publication."
+        ]
+      },
+      "E_significance": {
+        "verdict": "FAIL",
+        "reason": "The full conjecture is a one-paragraph bridge from source results. The lower bound is source Theorem 4.5. For the upper bound, source Corollary 4.19 (via Theorem 4.18 and Proposition 1.5) applied with b' = b-1 >= 3 gives R_cyc(S_a, C_{b-1}^mon) <= 1 + (a-1)(b-2) = N, so any colouring of K_N with no colour-1 cyclic S_a has a colour-2 clockwise cycle x_1 < ... < x_{b-1}. Each of the N-(b-1) = (a-2)(b-2) remaining vertices y lies in a unique gap (x_i, x_{i+1}). If y is joined in colour 2 to x_i, then x_{i+1}, ..., x_{b-1}, x_1, ..., x_i, y is a colour-2 cyclic P_b; if it is joined to x_{i+1}, then y, x_{i+1}, ..., x_i is one. Otherwise x_i has colour-1 degree at least g_{i-1} + g_i, which must be at most a-2. Summing gives 2(a-2)(b-2) <= (b-1)(a-2), i.e. b <= 3, a contradiction. This is exactly the excluded pattern: a one-paragraph bridge from source lemmas plus an elementary count, as with precedents 369221, 374488 and 371637 and the same-paper sibling 374246. Theorem A, the candidate's Dirac-type reformulation, is equivalent to the Ramsey statement under t = a-2 and follows from the same bridge, so it adds no separate significance. Counter-consideration for root: the source authors still listed 4.16 as open on 12 Jul 2026 and the candidate missed Corollary 4.19, which shows the bridge was not noticed by them. The standard, however, judges the derivation, not whether anyone noticed it."
+      }
+    },
+    "objections": [
+      "O1 (decisive, significance): the upper bound follows in one paragraph from source Corollary 4.19 (Theorem 4.18) by a gap-counting argument (see E). Checked exhaustively in scripts/bridge_check.py and logs/bridge-check.log: in 12 configurations, 0 violations of the bridge inequality among all P_b-free, colour-1 degree <= a-2 colourings. PROOF-374241.md says the upper-bound argument is 'not in the source' and that 'the source has only the ordered upper bound via Theorem 4.1'; that is incomplete, because it overlooks Corollary 4.19 and Theorem 4.18.",
+      "O2 (minor, documentation): Omega moved past e51c7d81. Root should record that HEAD 2c68091d was screened only at the level of the HEAD commit.",
+      "O3 (minor, Lean): the negative controls are syntactic only. See the proposed semantic controls. This does not affect correctness of the endpoint.",
+      "O4 (minor, trust): the Mathlib cache was not rebuilt and leanchecker was not run with --fresh. This is a standard, disclosed limit."
+    ],
+    "diagnostics": {
+      "definitional_crosscheck": "logs/defcheck.log: 4350 trials, 0 mismatches",
+      "rcyc_grid": "logs/rcyc-grid.log: 16 UNSAT at N and 17 SAT at N-1, all matching 1+(a-1)(b-2) and Table 11 (b = 3 column also matches); 3 timeouts with no verdict",
+      "bridge": "logs/bridge-check.log: 12 configurations, 0 violations. The extremal colouring at N-1 is unique up to rotation in every case tested and contains no colour-2 C_{b-1} when (a-2)(b-3) > 2."
+    },
+    "recommendation": "REJECT for credit (zero credit). The mathematics (B) and the Lean endpoint (A, C) are correct, but under the campaign standard the result is a one-paragraph bridge from source Corollary 4.19 plus an elementary count, matching the 374246 exclusion. Do not count it toward 40.",
+    "next_actions": [
+      "Root: adjudicate O1. Verify for yourself that source Corollary 4.19 / Theorem 4.18 with b' = b-1 plus the gap count yields the upper bound, and record 374241 as EXCLUDED: one-paragraph bridge from source Corollary 4.19 (Theorem 4.18).",
+      "If root nonetheless considers crediting, require a written significance argument that distinguishes this case from 374246, and screen Omega commits e51c7d81..2c68091d.",
+      "Optional: keep the Lean development as a verified formalization (no credit), and add the semantic negative controls listed under C.",
+      "Screen the other conjectures of 2604.16188 (4.10, 4.13, 4.14, 4.17, 4.22, 4.23, ...) for the same Corollary-4.19 or Theorem-4.18 style bridges before investing in them."
+    ],
+    "resource_and_access_notes": "No Lean, lake, leanchecker, SAT binaries or Java were run. All computation was pure Python under scripts/wrap.sh (2 CPUs, 120 s CPU, 140 s wall, 500 MB address space, MALLOC_ARENA_MAX=2), one process at a time. HTTP was limited to GitHub /commits/HEAD (2 calls) and arXiv abs and html (3 calls). No git, no ledger edits, no background jobs."
+  }
+}
