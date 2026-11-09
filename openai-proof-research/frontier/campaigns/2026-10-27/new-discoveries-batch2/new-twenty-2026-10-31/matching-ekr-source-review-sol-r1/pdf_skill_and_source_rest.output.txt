@@ -1,0 +1,1110 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+ORIGINAL REST
+                      n                                                       (n)
+                                                                               1
+By Lemma 4.6, ωλ1 = 1 ∀λ ⊢ n, so it suffices to show such that ωλ 6= − 2(n−1)      for
+all λ 6= (n) or (n − 1, 1). To this end, we prove that ω(n−1,1) (C) = 0, then show
+                   (n)       (n)              (n)
+                |ω(n) | > |ω(n−1,1) | > |ωλ | for all λ 6= (n) or (n − 1, 1).
+
+By Lemma 4.7 it follows that ω(n−1,1) (C) = 0 since
+
+                              (n)            −|Hn−2 |       1
+                             ω(n−1,1) =               =−          .
+                                             |Hn−1 |     2(n − 1)
+It suffices to show that |Hn−2 | is the largest value that the numerator of Lemma 4.7
+can assume and this occurs only when λ = (n − 1, 1). Lemma 4.7 states that the
+only λ ⊢ n that do not evaluate to zero must be of the form (n − k, 1k ) where
+0 ≤ k < n or (n − j, j − k, 1k ) where 0 ≤ k < j < n.
+                                                              (n)      (n)
+   For any shape λ = (n − k, 1k ) where k > n2 , we have |ωλ | < |ωλ′ | where λ′ ⊢ n
+                                                      (n)          (n)
+is the transpose of λ. It is also the case that |ω(n−k,1k ) | < |ω(n−k+1,1k−1 ) | where
+                                    (n)             (n)
+1 ≤ k ≤ n2 . It follows that |ω(n−1,1) | > |ωλ | holds for all λ = (n − k, 1k ), k > 1.
+   Let λ = (n−j, j−k, 1k ) where 2 < k < j < n and let µ = λ\λ1 be shape obtained
+by removing the first row. For µ = (j − k, 1k ) where k > 2j , using similar reasoning,
+            (j)          (j)                                (n)                 (n)
+we have |ω(λ1 ,µ) | < |ω(λ1 ,µ′ ) |. It is also true that |ω(λ1 ,j−k,1k ) | < |ω(λ1 ,j−k+1,1k−1 ) |
+where 1 ≤ k < 2j . For the case where 1 ≤ k ≤ 2, it is easy to see that removing the
+bottom left cell of λ and placing it in the upper right hand corner always gives a
+                                                  (n)         (n)
+new shape with a larger character sum, hence |ω(n−1,1) | > |ωλ | for all valid shapes
+of the form (n − j, j − k, 1k ), which completes the proof.                        
+
+Corollary 5.2. The minimum eigenvalue of A(n) ∈ A is p(n−1,1) ((n)) = −|Hn−2 |.
+                                      (n)                             (n)
+Proof. Since pλ ((n)) = |Ω(n) |ωλ and p(n) ((n)) = |Ω(n) |ω(n) = |Ω(n) | is always pos-
+itive, it follows that p(n−1,1) ((n)) is the unique least eigenvalue of A(n) . Moreover,
+                                                (n)
+                   p(n−1,1) ((n)) = |Ω(n) |ω(n−1,1)
+                                                      |Hn−2 |
+                                     = |Hn−1 | −                (Lemma 4.5)
+                                                      |Hn−1 |
+                                     = −|Hn−2 |
+
+                                                                                                
+
+The corollary above along with Theorem 2.2 implies the following EKR-type result.
+
+Theorem 5.3. Let F be a family of matchings such that for any two members
+x, y ∈ F , x ∪ y is disconnected. Then |F | ≤ (2(n − 1) − 1)!!. This bound is tight.
+10                                   NATHAN LINDZEY
+
+
+Proof. By the ratio bound, we have
+                                        |Hn−2 |            (2n − 1)!
+                |F | ≤ (2n − 1)!!                     =
+                                    |Hn−1 | + |Hn−2 |   |Hn−2 |(2n − 1)
+                                                      = (2(n − 1) − 1)!!
+Any family of the form Fij is maximum independent set of Γ of size (2(n − 1) − 1)!!.
+Since A(n) is a subgraph of Γ, Fij must also be a maximum independent set of
+A(n) , hence the bound is tight.                                                 
+This is somewhat surprising since it tells us that a maximum independent set of the
+matching derangement graph does not increase in size even if we remove all edges
+except those that belong to the (n)-associate. A similar result has been observed in
+the conjugacy class association scheme of Sn [1]. Later, we will observe the stronger
+result that a non-Hamiltonian family F is largest if and only if F is a trivially
+intersecting family.
+
+                6. The Perfect Matching Polytope of K2n
+   We now complete the final part of the proof of the Erdős-Ko-Rado theorem for
+intersecting families of perfect matchings. The proof of the theorem below follows
+a polyhedral method of Godsil and Meagher that can be found in [25].
+Theorem 6.1. If F is a maximum intersecting family of matchings, then F is a
+trivially intersecting family of matchings.
+    Let G = (V, E) be a graph on an even number of vertices. For every perfect
+matching m of G there is an associated incidence vector x defined such that xi = 1
+if i ∈ m; otherwise, xi = 0. The convex hull of the incidence vectors of perfect
+matchings of G is denoted P M (G) and is known as the perfect matching polytope
+of G. The following terminology is necessary in order to define P M (K2n ) as the
+solution set of a system of linear inequalities.
+    For any S ⊆ V or vertex S ∈ V , let δ(S) denote the set of edges with exactly
+one endpoint incident to S. An odd cut C of a graph G is a set of edges of the
+form δ(S) where S is a non-empty proper subset of V of odd size, |V \ S| > 1, and
+|S| > 1. Let C be the set of all odd cuts of a graph. If G is a connected graph such
+that every edge belongs to some perfect matching, then x ∈ P M (G) if and only if
+it satisfies the set of linear inequalities below [8].
+(6.1)                                      xi ≥ 0 ∀i ∈ E
+                                    X
+(6.2)                                      xi = 1 ∀v ∈ V
+                                i∈δ(v)
+                                     X
+(6.3)                                      xi ≥ 1 ∀C ∈ C
+                                     i∈C
+A special case of this polytope that has been thoroughly studied is Birkhoff polytope,
+otherwise known as the perfect matching polytope of Kn,n . We refer the reader
+to [21] for a succinct but thorough exposition of this polytope as well as its import
+to several branches of mathematics.
+   Let r(G) denote the maximum number of perfect matchings in graph G whose
+incidence vectors are linearly independent over R. In [7], it is observed that
+                              r(G) = 1 + dim P M (G)
+                     ERDŐS-KO-RADO FOR PERFECT MATCHINGS                             11
+
+
+Theorem 6.2. [7] Let G = (V, E) be a connected graph such that every edge belongs
+to some perfect matching. Then dim P M (G) = |E| − |V | + 1 − β where β is the
+number of bricks in the brick decomposition of G.
+Since the size of the brick decomposition of a non-trivial clique on an even number of
+vertices is 1 [7], with a little representation theory, we have the following corollary.
+Corollary 6.3.
+                                    
+                                    2n                       M
+      r(K2n ) = 1 + dim M (K2n ) =     − 2n + 1 = dim S 2(n)   S 2(n−1,1)
+                                     2
+   Using highly non-trivial graph theory, the facet-inducing inequalities of P M (G)
+are also characterized in [7]. Their characterization of the facet-inducing inequalities
+is much too involved to be stated in full, so we refer the interested reader to Theorem
+6.3 of [7] for the full graph-theoretical characterization of the facets of P M (G).
+Fortunately, when G = K2n the situation is drastically simplified, leading to the
+following straightforward corollary of Theorem 6.2 of [7].
+Corollary 6.4. The inequalities (6.1) and (6.3) are precisely the facet-inducing in-
+equalities of P M (K2n ). Moreover, each facet of P M (K2n ) can be written in strictly
+one of the following forms.
+                         Fe = {x ∈ P M (K2n ) : xe = 0}
+                                                X
+                         FC = {x ∈ P M (K2n ) :     xe = 1}
+                                                  e∈C
+
+Finally, recall that any face of a polytope P can be expressed as the intersection of
+P with a hyperplane H. In particular, if we let h ∈ Rn , then for each a ∈ R,
+                              Ha = {x ∈ Rn : hT x = a}
+form hyperplanes that partition Rn . If P is a polytope, then there is some a ∈ R
+such that P ∩ Ha 6= ∅. It follows that by finding the maximum and minimum values
+of a such that P ∩ Ha 6= ∅, we find parallel faces of P .
+Lemma 6.5. Let P be the convex hull of the rows of a matrix M , then M h = z
+and
+                           Fmin = {x ∈ P : hT x = min(z)}
+                          Fmax = {x ∈ P : hT x = max(z)}
+are parallel faces of P where min(z) and max(z) denotes the minimum and maxi-
+mum value of any component of z. Moreover, if z is a 0/1 vector, then Fmin and
+Fmax partition the vertices of P .
+Proof of Theorem 6.1. Let M be a N !! × 2n
+                                                
+                                              2 binary matrix whose columns are the
+characteristic vectors vij of the trivially intersecting families Fij . By Theorem 5.1,
+the columns of M live in the sum of the trivial and standard modules, and by
+Corollary 6.3, the columns of M span the sum of the trivial and standard modules.
+It follows that for any maximum independent set Z of Γ, its characteristic vector
+can be written as z = M h. Since z is a 0/1 vector, it follows by Lemma 6.5 that
+F0 and F1 are parallel faces that partition the vertices of P M (K2n ). Every face
+is contained in a facet, so there is some facet F such that F0 ⊆ F . The following
+shows that if z is the characteristic vector of a maximum independent set, then F
+is of the form Fe for some e ∈ E.
+12                                 NATHAN LINDZEY
+
+                                                               P
+   Suppose that F0 ⊆ F = FC for some odd cut C. Then e∈C xe = 1 for every
+vertex x ∈ F0 , or equivalently, each vertex of F0 uses precisely
+                                                          P       one edge of C. Since
+F0 and F1 partition the vertices of P M (K2n ), we have e∈C xe > 1 for all vertices
+x ∈ F1 . Let S be an odd set induced by C and define s := |S| = 2k + 1 for some
+k > 0. A simple counting argument reveals that there are (2n − 1)!! − s!!(2n − s)!!
+vertices of F1 , each of which corresponds to a non-zero component of z. This gives us
+a contradiction as z now has too many non-zero components to be the characteristic
+vector of a maximum independent set, that is,
+                    (2n − 1)!! − s!!(2n − s)!! > (2(n − 1) − 1)!!
+                              (2n − 1)!!       (2(n − 1) − 1)!!
+                                           −1>
+                             s!!(2n − s)!!       s!!(2n − s)!!
+which by induction is true for n > 2 and any valid choice of s.
+    It follows that F0 ⊆ Fe for some e = {i, j}. Since xe = 0 ∀x ∈ F0 , we have xe = 1
+∀x ∈ F1 . The vertices of F1 form the support of z, and since there are precisely
+(2(n − 1) − 1)!! matchings of the form xe = 1, it must be that z = vij for some
+i, j ∈ [2n], which completes the proof of the main result.
+    Notice that the proof of the main result only depended on properties of the
+(n)-associate A(n) ∈ A, so it is not difficult to see that the proofs of Theorems 5.1
+and 6.1 remain true when the graph in question is the (n)-associate rather than Γ.
+Indeed, a Lucas clique of Γ is also a maximum clique of A(n) and we only needed
+zonal spherical function values over the (n)-sphere.
+Theorem 6.6. Theorem 5.3 is met with equality if and only if F is a trivially
+intersecting family of matchings.
+
+                                7. Open Questions
+   Let η be the minimum eigenvalue of the permutation derangement graph D. By
+Theorem 2.2, we have η ≤ −!n/(n − 1), which prompted Ku to conjecture that
+η = −!n/(n − 1). Renteln later proved this conjecture using non-trivial symmetric
+function theory [24]. For n < 8, it has been verified in GAP [11] that Γ meets the
+Theorem 2.2 with equality which motivates the following conjecture.
+                                                                              !!n
+Conjecture 7.1. The least eigenvalue of the matching derangement graph is − 2(n−1) .
+
+In [15], Ku and Wales show that the spectrum of D possesses the so-called alter-
+nating sign property. For any λ ⊢ n, define the depth of λ to be d(λ) := n − λ1 , i.e.,
+the number of cells under the first row of λ. For n < 8, the matching derangement
+graph too possesses this property and so the following is likely true.
+Conjecture 7.2. Γ has the alternating sign property, that is, for any λ ⊢ n
+                                  sign(ηλ ) = (−1)d(λ)
+where ηλ is an eigenvalue of Γ.
+   For future work, one would expect the next step to be toward an algebraic proof
+of the EKR theorem for n/k-uniform partitions of [kn] for k > 2; however, the
+following theorem of Saxl is something of an albatross.
+Theorem 7.3. Let n > 18 and H ≤ Sn . If 1SHn is multiplicity free, then one of the
+following holds:
+                       ERDŐS-KO-RADO FOR PERFECT MATCHINGS                                 13
+
+
+    (1) An−k × Ak ≤ H ≤ Sn−k × Sk for some k with 0 ≤ k < n/2;
+    (2) n = 2k and Ak × Ak < H ≤ Sk ≀ S2 ;
+    (3) n = 2k and H ≤ S2 ≀ Sk with [S2 ≀ Sk : H] ≤ 4;
+    (4) n = 2k + 1 and H fixes a point of [1, n] and is one of the subgroups in (2)
+        or (3) on the rest of [1, n];
+    (5) An−k ×Gk ≤ H ≤ Sn−k ×Gk where k = 5, 6, 9 and Gk is AGL(1, 5), GL(2, 5)
+        or P ΓL(2, 8) respectively.
+   Theorem 7.3 has been further refined by Godsil and Meagher, who in [12] provide
+a complete list of the multiplicity-free permutation representations of Sn for all n.
+By Theorem 4.1 this gives a complete list of the infinite families of finite Gelfand
+pairs of the form (Sn , K) where K ≤ Sn . For k > 2, we see that 1SSkn       k ≀Sn
+                                                                                   is not
+multiplicity-free, hence the (Sk ≀ Sn )\Skn /(Sk ≀ Sn )-association scheme is typically
+not commutative. In general, determining the multiplicities of the irreducibles of
+1GK for arbitrary K ≤ G is difficult, even if K is restricted to be of the form Sk ≀ Sn .
+Progress in this direction is related to Folkes’ conjecture; however, most of the
+techniques in this area do not seek upper bounds on multiplicities, which would be
+beneficial in our setting.
+   Recall that the module method relies on a union of members of an association
+scheme A meeting the clique-coclique bound with equality. From [14] and this
+work, we know that if Γ is the union of fixed-point-free associates of the conjugacy
+class association scheme of Sn or the matching association scheme, then the clique-
+coclique bound is always met with equality. This is because for every order there
+always exists degenerate finite geometries, namely latin squares and 1-factorizations
+of K2n , which are in one-to-one correspondence with cliques of size n and 2n − 1
+respectively of Γ. If Γ is a union of associates that have at most a single fixed
+point, then maximum cliques are cryptomorphic to unwieldy finite geometries such
+as projective planes and abstract hyperovals that do not exist for all orders [22].
+The nonexistence of these geometric objects for certain orders implies that there
+is no clique in Γ large enough to meet the clique-coclique bound with equality.
+Unfortunately, knowing precisely when this happens is equivalent to the intractable
+problems of classifying projective planes and abstract hyperovals.
+   Finally, we note that the method used by Ellis, Friedgut, and Pilpel in [9] ignores
+clique structure, making it better suited for solving t-intersecting problems with
+the tradeoff that the results hold only for sufficiently large n. Plausible future work
+would be to use their method over the Gelfand pair (S2n , S2 ≀ Sn ) to give a proof of
+the full version of the Erdős-Ko-Rado theorem for t-intersecting families of perfect
+matchings.
+
+                                       References
+ [1] Bahman Ahmadi. Maximum Intersecting Families of Permutations. PhD thesis, University
+     of Regina, 7 2013.
+ [2] E. Bannai and T. Itō. Algebraic combinatorics I: association schemes. Mathematics lecture
+     note series. Benjamin/Cummings Pub. Co., 1984.
+ [3] Claude Berge. Two theorems in graph theory. Proceedings of the National Academy of Sci-
+     ences, 43(9):842–844, 1957.
+ [4] P.J. Cameron. Parallelisms of Complete Designs. Cambridge Commonwealth Series. Cam-
+     bridge University Press, 1976.
+ [5] V Chvtal. On certain polytopes associated with graphs. Journal of Combinatorial Theory,
+     Series B, 18(2):138 – 154, 1975.
+14                                     NATHAN LINDZEY
+
+
+ [6] Persi Diaconis. Group representations in probability and statistics. Institute of Mathemat-
+     ical Statistics Lecture Notes—Monograph Series, 11. Institute of Mathematical Statistics,
+     Hayward, CA, 1988.
+ [7] J. Edmonds, W.R. Pulleyblank, and L. Lovsz. Brick decompositions and the matching rank
+     of graphs. Combinatorica, 2(3):247–274, 1982.
+ [8] Jack Edmonds. Paths, trees, and flowers. Canadian Journal of Mathematics, 17:449–467,
+     February 1965.
+ [9] D. Ellis, E. Friedgut, and H. Pilpel. Intersecting families of permutations. J. Amer. Math.
+     Soc., 24:649–682, 2011.
+[10] Peter Frankl and Mikhail Deza. On the maximum number of permutations with given maxi-
+     mal or minimal distance. Journal of Combinatorial Theory, Series A, 22(3):352 – 360, 1977.
+[11] The GAP Group. GAP – Groups, Algorithms, and Programming, Version 4.7.5, 2014.
+[12] Chris Godsil and Karen Meagher. Multiplicity-free permutation representations of the sym-
+     metric group. Annals of Combinatorics, 13(4):463–490, 2010.
+[13] Chris Godsil and Gordon Royle. Algebraic graph theory, volume 207 of Graduate Texts in
+     Mathematics. Springer-Verlag, New York, 2001.
+[14] Chris D. Godsil and Karen Meagher. A new proof of the erdös-ko-rado theorem for intersecting
+     families of permutations. Eur. J. Comb., 30(2):404–414, 2009.
+[15] Cheng Yeaw Ku and David B. Wales. Eigenvalues of the derangement graph. Journal of
+     Combinatorial Theory, Series A, 117(3):289 – 312, 2010.
+[16] Cheng Yeaw Ku and Kok Bin Wong. Solving the kuwales conjecture on the eigenvalues of
+     the derangement graph. European Journal of Combinatorics, 34(6):941 – 956, 2013.
+[17] E. Lucas. Récréations mathématiques. Number v. 2 in Récréations mathématiques. A. Blan-
+     chard, 1892.
+[18] I.G. Macdonald. Symmetric functions and Hall polynomials. Oxford mathematical mono-
+     graphs. Clarendon Press, 1995.
+[19] Karen Meagher and Lucia Moura. Erdos-ko-rado theorems for uniform set-partition systems.
+     Electr. J. Comb., 12, 2005.
+[20] Michael Newman. Independent Sets and Eigenspaces. PhD thesis, University of Waterloo, 7
+     2004.
+[21] I. Pak. Four questions on birkhoff polytope. Annals of Combinatorics, 4(1):83–90, 2000.
+[22] Burkard Polster. Abstract hyperovals and hadamard designs. Australas. J. Combin., 16:29–
+     33, 1997.
+[23] B.M.I Rands. An association scheme for the 1-factors of the complete graph. Journal of
+     Combinatorial Theory, Series A, 34(3):301 – 312, 1983.
+[24] Paul Renteln. On the spectrum of the derangement graph. Electr. J. Comb., 14(1), 2007.
+[25] Brendan Rooney. Spectral Aspects of Cocliques in Graphs. PhD thesis, University of Waterloo,
+     5 2014.
+[26] Thomas Rothvoß. The matching polytope has exponential extension complexity. In STOC,
+     pages 263–272, 2014.
+[27] R. M. Thrall. On symmetrized kronecker powers and the structure of the free lie ring. Amer-
+     ican Journal of Mathematics, 64(1):pp. 371–388, 1942.
+
+     Department of Mathematics, Colorado State University
+     E-mail address: lindzey@uwaterloo.ca
+     URL: www.cs.colostate.edu/∼lindzey
+
+SLIDES
+                                         Intersecting Sets of Uniform Partitions
+
+
+                       Karen Meagher: joint work with Mahsa Shirazi and Brett Stevens
+
+                                                                     University of Regina
+
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   1 / 23
+   Partitions
+
+
+    Definition
+    A (k, `)-partition is a set partition of {1, 2, . . . , k`} with exactly ` blocks each of size k.
+
+                                                               P = {P1 , P2 , . . . , P` }
+
+    These are also called uniform set partitions.
+    The set of all uniform-(k, `) partitions is denoted by U(k, `).
+
+    Two set partitions
+
+                                    P = {P1 , P2 , . . . , P` } and Q = {Q1 , Q2 , . . . , Q` }
+
+
+       1    are intersecting if Pi = Qj for some i and j.
+       2    are t-intersecting if Pi1 = Qj1 , Pi2 = Qj2 , . . . , Pit = Qjt
+            for distinct i1 , . . . , it and distinct j1 , . . . , jt .
+       3    are partially-t intersecting if |Pi ∩ Qj | ≥ t for some i and j.
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   2 / 23
+   Intersecting sets
+
+    Example
+
+                                                P1 :             1 2 3 | 4 5 6 | 7 8 9 | 10 11 12
+
+
+                                                P2 :             1 2 3 | 4 5 6 | 7 8 10 | 9 11 12
+
+
+                                                P3 :             1 4 7 | 2 5 10 | 3 8 11 | 6 9 12
+
+
+
+
+    Definition
+    A set of partitions is ( intersecting / t-intersecting / t-partially intersecting ) if the
+    partitions are pairwise ( intersecting / t-intersecting / t-partially intersecting).
+
+
+          What is a maximum set of ( intersecting / t-intersecting / t-partially intersecting )
+                                            partitions?
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   3 / 23
+   Previous Results for t-intersection
+    The total number of (k, `)-partitions is
+                                                                             !                 !         !
+                                                           1 k`                     k` − k             k
+                                                U (k, `) =                                         ···    .
+                                                           `! k                        k               k
+
+    Definition
+    A canonical t-intersecting set is all partitions containing a fixed set of t disjoint parts.
+
+    Example (1-intersecting (3, 3)-partitions)
+
+                  123|456|789                                    123|457|689                             123|458|689
+                  123|459|678                                    123|467|589                             123|468|579
+                  123|469|578                                    123|478|569                             123|479|568
+                  123|489|567
+
+    The size of a canonical t-intersecting (k, `)-partition is
+                                                   !                  !       !
+                                     1     k` − kt      k` − k(t + 1)       k
+                   U (k, ` − t) =                                       ···    .
+                                  (` − t)!     k               k            k
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions                  4 / 23
+   Previous Results for t-intersection
+
+    If k = 2, the partitions are perfect matchings.
+
+    Theorem
+    The largest t-intersecting set of perfect matchings are the canonical sets in the
+    following cases:
+            for t = 1 (Godsil and Meagher, 2017)
+            for t = 2 (Fallat, Meagher and Shirazi, 2021; Lindzey, 2023 ).
+            for all t and n sufficiently large (Lindzey, 2017)
+
+    Proofs are algebraic, using eigenvalues of a related graph.
+
+    Proposition
+    If n is small relative to t there are examples of t-intersecting sets larger than the
+    canonical sets.
+
+    Conjecture
+    If k ≥ 3t/2 + 1 then the largest set of t-intersecting perfect matchings are the canonical.
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   5 / 23
+   Trivial Cases for Partially Intersection
+
+
+
+       1    Any two (k, `)-uniform partially 1-intersecting.
+
+                               1 2 3 | 4 5 6 | 7 8 9 | 10 11 12                           1 4 7 | 3 5 10 | 2 8 11 | 6 9 12
+       2    If t = k, then partially-t intersecting and intersecting are the same.
+       3    If k > `(t − 1), then any two (k, `)-partitions are partially t-intersecting.
+
+                                   1 2 3 4 5 6 | 7 8 9 10 11 12                           1 2 3 7 8 9 | 4 5 6 10 11 12
+
+            if the parts are really big, any two partitions will be partially t-intersecting.
+
+
+                        Focus on (k, `)-uniform partially 2-intersecting sets with k > 2.
+    P = {P1 , P2 , . . . , P` } and Q = {Q1 , Q2 , . . . , Q` } have some i, j with |Pi ∩ Qj | ≥ 2.
+
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions                        6 / 23
+   Canonical Intersecting Sets of Partitions
+
+    Definition
+    For t ≤ k, fix a t-subset T ⊂ {1, . . . , k`}. The set of all partitions that have a part
+    containing T is a canonical t-intersecting set of partitions.
+
+
+    Example
+    Canonical partially 2-intersecting set of (3, 3)-partitions:
+
+                  123|456|789                        123|457|689                        123|458|679     123|459|678
+                  123|467|589                        123|468|579                        123|469|578     123|567|489
+                                  ...
+                  129|356|478                        129|367|458                        129|368|457     129|378|456
+
+
+    The size of a canonical partially t-intersecting set of partitions is
+                                                !          !         !
+                                 1       k` − t     k` − k         k
+                                                             ···       .
+                             (` − 1)! k − t            k           k
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions                 7 / 23
+   Canonical Intersecting Sets of Partitions
+
+
+
+
+    Conjecture
+    If k ≤ `(t − 1), then the largest set of intersecting (k, `)-partitions is a canonical set of
+    t-intersecting partitions.
+
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   8 / 23
+   Derangement Graph
+
+
+    Definition
+    For any k, ` define the partition derangement graph, ΓG(k,`) .
+            The vertices are the uniform (k, `)-partitions.
+            Vertices P, Q ∈ U (k, `) are adjacent if and only if P and Q are not partially
+            t-intersecting.
+
+
+    A set of uniform partitions is a coclique (independent set) in ΓG(k,`) , exactly if the set is
+                             a partially t-intersecting set of partitions.
+
+    Graph Properties:
+       1    The graph ΓG(k,`) is regular, denote the degree by dk,`
+       2    The derangement graph is vertex-transitive, the group Sym(k`) acts transitively on
+            the vertices of ΓG(k,`) .
+       3    A resolvable balanced incomplete block t-design on k` points with blocksize k and
+            index λ = 1, if it exists, is a maximum clique.
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   9 / 23
+   Resolvable Designs
+
+    Definition
+    Suppose B is a t-(n, k, λ) design.
+            A parallel class in B is a collection of disjoint sets whose union is the n-set.
+                                        (n−1
+                                          t−1 )
+            A partition of B into r = λ k−1     parallel classes is called a resolution.
+                                        ( t−1 )
+            A t-(n, k, λ) design is resolvable if a resolution exists.
+
+
+    Example (Resolvable 2 − (9, 3, 1) Design)
+
+      123 | 456 | 789                 (orange)
+
+      147 | 258 | 369                 (red)
+
+      159 | 267 | 348                 (green)
+
+      168 | 249 | 357                 (blue)
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   10 / 23
+   Clique/Coclique Bound
+
+    Theorem
+    If X is a vertex-transitive graph and α(X) is the size of the maximum coclique and
+    ω(X) the size of the maximum clique, then
+
+                                                             α(X) ω(X) = |V (X)|.
+
+
+
+    Theorem
+    If there is a resolvable balanced incomplete block t-design on k` points with blocksize
+    k, then a canonical partially t-intersecting partitions is a largest intersecting set.
+
+    Proof. By the clique/clique bound, a coclique is no larger than
+                                                       !         !          !         !
+         number vertices    U (k, `)      1     k` − t    k` − k    k` − 2k         k
+                         =      k`
+                                     =                                        · · ·
+           clique size       1 (t)     (` − 1)! k − t        k         k            k
+                             ` (k )
+                                 t
+
+                                                            = the size of a canonical partially t-intersecting set
+
+                                                                                                                      
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions                11 / 23
+   Ratio Bound
+
+
+    Theorem (Delsarte-Hoffman bound)
+    Let A be the adjacency matrix for a d-regular graph X on vertex set V (X). If the least
+    eigenvalue of A is τ , then
+                                                |V (X)|
+                                       α(X) ≤           .
+                                                 1 − τd
+    If equality holds for some coclique S with characteristic vector νS , then
+                                                                                 |S|
+                                                                     νS −              1
+                                                                               |V (X)|
+    is an eigenvector with eigenvalue τ .
+
+    Master Plan:
+       1    find 3 specific eigenvalues of the graph,
+       2    show all other eigenvalues are smaller, (in absolute value)
+       3    apply the ratio bound.
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   12 / 23
+   Eigenspaces of the Derangement graphs
+
+
+       1    The eigenspaces of Xk,` are invariant under the action of Sym(k`) and thus a
+            union of irreducible modules in the decomposition of
+
+                                                              ind (1Sym(k)oSym(`) )Sym(k`) .
+
+            Every irreducible representation of Sym(n) is labelled by an integer partition of n.
+       2    For each irreducible representation in ind (1Sym(k)oSym(`) )Sym(k`) has a
+            corresponding eigenvalue:
+                                                                              d` X X
+                                                           ηφ (A` ) =                φ(x` h),
+                                                                             |H| x
+                                                                                        `   h∈H
+
+            This includes a sum of characters over group cosets which is hard.
+       3    The irreducible representations [k`], [k` − 2, 2] and [k` − 3, 3] are included in
+            ind (1Sym(k)oSym(`) )Sym(k`)
+       4    The irreducible representations [1k` ] , [k` − 1, 1], [2, 1k`−2 ], [2, 2, 1k`−4 ],
+            [k` − 2, 1, 1], [3, 1k`−3 ], [2, 2, 2, 1k`−6 ] are not.
+            Proof by orbit counting.
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   13 / 23
+   Eigenvalues of the Derangement graphs
+
+    Theorem
+    For any k, `,
+       1    The eigenvalue belonging to [k`] is the degree d = d(k, `).
+       2    The eigenvalue belonging to [k` − 2, 2] is
+
+                                                                                   (k − 1)d
+                                                                       τ =−                 .
+                                                                                   k(` − 1)
+       3    The eigenvalue belonging to [k` − 3, 3] is
+                                                                          2(k − 1)(k − 2)d
+                                                                  θ=                        .
+                                                                          k2 (` − 1)(` − 2)
+       4    For any other representation, the eigenvalue is smaller in absolute value τ .
+
+    By the ratio bound, the maximum size of coclique in Xk,` is
+                                                                                                               !
+              |V (Xk,` )|       v            v        v(k − 1)                                          k` − 2
+                          =            =            =          =                                                U (k, ` − 1).
+                1 − τd            d
+                            1 − (k−1)d   1 + k(`−1)
+                                              k−1
+                                                       k` − 1                                           k−2
+                                             − k(`−1)
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions                           14 / 23
+   Quotient Graphs
+
+       1    The action of a subgroup of the automorphism group on the partitions forms orbits.
+       2    These orbits can be used to build a quotient graph.
+
+
+
+
+                                     i
+
+                                     C
+
+                                                                                              A         B   C
+                   c                                   h                                                     
+                               g           f                                              A   a         b   c
+                                                                                          Bd           e   f 
+                                     b                                                    C   g         h   i
+                   A                                   B
+
+            a                                                 e                        The quotient matrix
+                                     d
+            Partition the vertices in
+             the graph into orbits.
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions             15 / 23
+   Quotient Graphs
+
+           Young’s subgroup Sym(k`) :
+                   Has one orbit, so the quotient graph is
+                                                          
+                                                        d
+
+                   This means d is the eigenvalue corresponding to [k`].
+
+
+           Young’s subgroup Sym([k` − 2, 2]) = Sym(k` − 2) × Sym(2)
+                   Has two orbits: the partitions with 1 and 2 together in one part and the
+                   partitions where they are in two parts.
+                   The quotient matrix is the 2 × 2 matrix
+                                                            
+                                                     0     d
+                                                    −τ d + τ
+
+                   The eigenvalues are d and τ = − d(k−1)
+                                                   k(`−1)
+                                                          .
+                   This means −τ is the eigenvalue corresponding to [k` − 2, 2].
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   16 / 23
+   Eigenvalues of the Derangement graphs
+
+
+
+           Young’s subgroup Sym([k` − 3, 3]) = Sym(k` − 3) × Sym(3)
+                   For [k` − 3, 3], the Young’s subgroup is Sym(k` − 3, 3) has three orbits:
+                   partitions where 1,2,3 are in one part, two parts or three parts.
+                   The quotient matrix is the 3 × 3 matrix
+                                                              
+                                                    0 0     d
+                                            M = 0 a       d−a 
+                                                    b c d−b−c
+
+                   The eigenvalues are d, −τ , θ.
+                   tr(M ) = d − b − c + a = d − τ + θ
+                   Counting edges between the orbits gives equations for a, b, c, then
+                                                                          2(k − 1)(k − 2)d
+                                                                  θ=                        .
+                                                                          k2 (` − 1)(` − 2)
+
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   17 / 23
+   Bound on the Multiplicity
+
+
+
+
+    Theorem
+    Assume k` ≥ 13 and k ≥ 3. Then the only partitions in the decomposition    of
+    ind (1Sym(k)oSym(`) )Sym(k`) with dimension less than or equal to k`    k`
+                                                                        
+                                                                      3
+                                                                          − 2
+                                                                                are
+
+                                                        χ[k`] ,       χ[k`−2,2] ,          χ[k`−3,3] .
+
+    Proof. Use induction and the "branching rule".                                                        
+
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions    18 / 23
+   Bound on the Multiplicity
+
+
+
+
+    Theorem
+    The eigenvalues d, τ and θ are the three largest, in absolute value, in the derangement
+    graph. The smallest eigenvalue for Γ(k,`) is τ .
+
+    Proof. By squaring the adjacency matrix and taking the trace, we have
+                                                                                                 j
+                                                                                                 X
+                                                vd = d2 + mτ τ 2 + mθ θ2 +                              mi λ2i .
+                                                                                                 i=2
+
+    Hence for every 2 ≤ i ≤ j we have
+
+                                                    vd − d2 − mτ τ 2 − mθ θ2 ≥ mi λ2i .
+
+    This gives an upper bound on |λi | in terms of d.                                                               
+
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions              19 / 23
+   Bound on Degree
+
+
+    Theorem (Bender)
+    Let Mk,` be the number of all ` × ` matrices with entries either 0 or 1, and row and
+    columns sums equal to k. For positive integers k, `
+
+                                                          (k!)2`             (k−1)2
+                                                       lim       |Mk,` | = e− 2 .
+                                                      `→∞ (k`)!
+
+
+
+    Lemma
+    For positive integers k, ` with k ≤ `, let d be the degree of Γ(k,`) . Then
+
+                                                                            k!`
+                                                                    d=          |Mk,` |.
+                                                                            `!
+    Further, for a fixed integer k with k ≥ 2,
+                                                                U (k, `)   (k−1)2
+                                                             lim         =e 2 .
+                                                            `→∞    d
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   20 / 23
+   Bound on Degree
+
+
+
+    We had
+                                                                     2                                 2  21
+                                    2                        d(k−1)                        2(k−1)(k−2)d
+                             vd − d − mτ                    k(`−1)
+                                                                             − mθ          k2 (`−1)(`−2)
+                                                                                                               ≥ |λi |
+                                                                                                              
+                                                                        mi
+                            
+
+
+
+                                             (k−1)2
+       1    lim`→∞ U (k,`)
+                      d
+                           =e                   2        gives an upper bound for λi .
+       2    If another eigenvalue is larger than τ , in absolute value, that eigenvalue has to
+            have a multiplicity smaller than k`   − k`
+                                                          
+                                              3         2
+                                                           ,
+       3    Only d, τ or θ have multiplicity this small.
+       4    So τ is the least eigenvalue of Γk,` .
+       5    Apply the ratio bound.
+
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions                     21 / 23
+   Final Summary
+
+
+    Theorem
+    Fix an integer k ≥ 3. For ` sufficiently large, the largest set of partially 2-intersecting
+    uniform (k, `)-partitions has size k`−2
+                                             
+                                        k−2
+                                              U k,`−1 .
+
+
+
+    Conjecture
+    For k ≥ 3 and ` sufficiently large, the only sets of partially 2-intersecting (k, `)-partitions
+    with size k`−2
+               k−2
+                    Uk,`−1 are the sets Si,j .
+
+
+    With a more tedious calculation on the degree approximation we get the follow:
+
+    Theorem
+    For k = 3 and all ` ≥ 3 the largest set of partially 2-intersecting uniform partitions has
+    size
+                                         (3` − 2)U3,`−1 .
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   22 / 23
+   Future Work
+
+
+
+
+    There are two obvious questions:
+
+    Question
+    Can a non-canonical 2-partially intersecting set also have the maximum size?
+
+
+    Question
+    Can this method be extended t-partially intersecting uniform partitions for large values
+    of t?
+
+
+
+
+Karen Meagher: joint work with Mahsa Shirazi and Brett StevensIntersecting
+                                                                (University of
+                                                                           Sets of
+                                                                               Regina)
+                                                                                   Uniform Partitions   23 / 23
+
