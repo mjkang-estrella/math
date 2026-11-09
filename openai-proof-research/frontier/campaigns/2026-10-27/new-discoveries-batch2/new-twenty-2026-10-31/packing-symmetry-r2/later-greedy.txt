@@ -1,0 +1,1258 @@
+On Greedily Packing Anchored Rectangles
+Christoph Damerius #
+University of Hamburg, Germany
+
+Dominik Kaaser #
+University of Hamburg, Germany
+
+Peter Kling #
+University of Hamburg, Germany
+
+Florian Schneider #
+University of Hamburg, Germany
+
+      Abstract
+Consider a set P of points in the unit square U = [1, 0), one of them being the origin. For each point
+p ∈ P you may draw an axis-aligned rectangle in U with its lower-left corner being p. What is the
+maximum area such rectangles can cover without overlapping each other?
+    Freedman [18] posed this problem in 1969, asking whether one can always cover at least 50% of
+U. Over 40 years later, Dumitrescu and Tóth [12] achieved the first constant coverage of 9.1%; since
+then, no significant progress was made. While 9.1% might seem low, the authors could not find any
+instance where their algorithm covers less than 50%, nourishing the hope to eventually prove a 50%
+bound. While we indeed significantly raise the algorithm’s coverage to 39%, we extinguish the hope
+of reaching 50% by giving points for which its coverage stays below 43.3%.
+    Our analysis studies the algorithm’s average and worst-case density of so-called tiles, which
+represent the staircase polygons in which a point can freely choose its maximum-area rectangle. Our
+approach is comparatively general and may potentially help in analyzing related algorithms.
+
+2012 ACM Subject Classification Theory of computation → Computational geometry
+
+Keywords and phrases lower-left anchored rectangle packing, greedy algorithm, charging scheme
+
+Digital Object Identifier 10.4230/LIPIcs.ICALP.2021.61
+
+Category Track A: Algorithms, Complexity and Games
+
+Related Version Full Version: https://arxiv.org/abs/2102.08181
+
+
+ 1      Introduction
+
+The Lower-Left Anchored Rectangle Packing (LLARP) problem considers a finite
+set P ⊆ U := [0, 1)2 of input points with (0, 0) ∈ P . The goal is to find a set of non-empty,
+axis-aligned interior-disjoint rectangles (rp )p∈P with p being the lower-left corner of rp ⊆ U
+                                 P
+and such that their total area p∈P |rp | is maximized.
+    This problem was first introduced by Freedman [18, Unsolved Problem 11, page 345]
+in 1969. He asked the question whether, for any point set P , the rectangles can always be
+chosen such that they cover at least 50% of U. It is easy to see that this is the best one can
+hope for, since putting n equally spaced points along the ascending diagonal of U yields a
+maximum coverable area of 1/2 + o(1) for n → ∞.
+    Over the years, the LLARP problem reoccurred in the form of geometric challenges [14]
+and in miscellaneous books and journals about mathematical puzzles [19, 20, 21]. Still, it
+took more than 40 years until the first constant lower bound was established: Dumitrescu
+and Tóth [12] considered a natural greedy algorithm, called GreedyPacking, and proved
+that it achieves a coverage of 9.1%.
+            © Christoph Damerius, Dominik Kaaser, Peter Kling, and Florian Schneider;
+                                                                                                     EA
+            licensed under Creative Commons License CC-BY 4.0
+                                                                                                     TC S
+48th International Colloquium on Automata, Languages, and Programming (ICALP 2021).
+Editors: Nikhil Bansal, Emanuela Merelli, and James Worrell; Article No. 61; pp. 61:1–61:20
+                   Leibniz International Proceedings in Informatics
+                   Schloss Dagstuhl – Leibniz-Zentrum für Informatik, Dagstuhl Publishing, Germany
+61:2   On Greedily Packing Anchored Rectangles
+
+
+           This caused a surge of interest in this old problem, resulting in numerous findings for
+       variants or special cases of the problem (see Section 1.1). Since then, no further significant
+       progress was made towards the original question1 , and even the question whether a maximum
+       area covering can be found in polynomial time remains elusive.
+           While [12] themselves observed that “a sizable gap to the conjectured 50% remains”, they
+       were unable to find instances where their algorithm does not reach 50%. This led them and
+       others to conjecture a much better quality of their algorithm, making it a natural candidate to
+       answer Freedman’s question positively, albeit [12] also mentioned that “obtaining substantial
+       improvements probably requires new ideas”.
+           Our results indeed attest the greedy algorithm a much better coverage of 39%. However,
+       at the same time, we show that there are instances where the coverage stays below 43.3%.
+
+
+       1.1      Related Work
+       LLARP falls into the class of geometric packing problems, where a typical question is how
+       much of a container can be covered using a set of geometric shapes in two or more dimensions.
+       We concentrate on two-dimensional packing problems with rectangular containers and shapes.
+
+       Complexity of LLARP. The GreedyPacking algorithm by Dumitrescu and Tóth [12]
+       considers the input points step by step from top-right to bottom-left, always choosing the
+       maximum-area rectangle. They showed that this achieves the same worst-case coverage as an
+       algorithm called TilePacking. The latter partitions the unit square into staircase-shaped
+       tiles, one per input point, and chooses a maximal rectangle within each tile (see Section 2 for
+       the formal algorithm description).
+            While the complexity of LLARP remains unknown, [12] also showed that there is an
+       order of the input points for which the greedy algorithm achieves an optimal packing (albeit
+       of unknown value); how to find that ordering remains unclear. [7] studied the combinatorial
+       structure of optimal solutions, proving that the worst-case number of maximal rectangle
+       packings is exponential in the number of input points.
+
+       LLARP Variants. After [12], a series of papers studied special cases and variants of LLARP.
+       [6] allowed rectangles to be anchored in any of the four corners and showed that here the
+       worst-case coverage lies in [7/12, 2/3] and in [5/32, 7/27] if the rectangles are restricted to
+       squares. [4] showed that the union of all (possibly overlapping) squares covers at least 1/2 and
+       proved that finding a maximum corner-anchored square packing is NP-hard. Interestingly,
+       there is only one other LLARP-variant known to be NP-hard, namely if the rectangle’s
+       anchors lie in their center [5]. Other results consider specific classes of input points, like
+       points with certain ascending/descending structures [8] or points that lie on the unit square’s
+       boundary (for corner-anchored rectangles) [9].
+
+       Further Related Problems and Applications. Further related problems include the maxi-
+       mum weight independent set of rectangles problem [2, 10, 1] (which was used, e.g., in [5] to
+       derive a PTAS for center-anchored rectangle packings) or geometric knapsack [3, 17] and
+       strip packing problems [15]. In contrast to LLARP and its variants, the size of the objects
+       to be packed is typically part of the input and object placement is less constrained.
+
+
+       1
+           A very recent, still unpublished result slightly raised the greedy algorithm’s coverage to 10.39% [13].
+C. Damerius, D. Kaaser, P. Kling, and F. Schneider                                                    61:3
+
+
+    Note that LLARP-like problems are not of pure theoretical interest, but have applications
+in, e.g., map labeling. Here, rectangular text labels must be placed under certain constraints
+(e.g., labels might be scalable but require a fixed ratio and must be placed at a specific
+anchor) within a given container. We refer to the relatively recent survey [16] for details.
+
+1.2     Our Contribution and Techniques
+We analyze the greedy algorithm TilePacking from [12] (formally described in Section 2).
+From a high-level view, TilePacking partitions the unit square into staircase-shaped tiles,
+each anchored at an input point, and chooses an area-maximal rectangle in each tile. A
+natural way to analyze such an algorithm is to consider the tiles’ densities (the ratio between
+their area-maximal rectangles and their own area) and prove a lower bound on the average
+tile density (which immediately yields the covering guarantee).
+    Dumitrescu and Tóth [12] follow this approach by defining suitable charging areas Ct
+for each tile t (trapezoids below/beneath the tile). We also use such a charging scheme,
+but rely on a much more complex charging area which we refer to as a tile’s crown. But
+instead of directly analyzing a tile’s charging area, we first extract the critical properties
+that determine the charging scheme’s quality. This general approach (described in Section 3)
+requires a bound ξ on the tile’s charging ratio |Ct |/|t| together with some simple properties
+(basically a form of local convexity characterizing the average tile density).
+    We derive such a charging ratio bound ξs and describe simple, symmetric tiles for which
+it is tight (Figures 8 and 9). We then take an arbitrary tile and show how to gradually
+transform it into one of these tiles without increasing its charging ratio. This establishes
+that ξs is indeed a charging ratio bound and allows us to conclude the following theorem.
+
+▶ Theorem 1. Given any set of input points, TilePacking covers at least 39% of U.
+
+    While the aforementioned transformations to worst-case tiles require some care, we
+showcase the versatility of our approach by first proving a slightly weaker bound of only 25%
+(Section 4.2). Its analysis is not only much simpler but, in fact, takes us halfway to Theorem 1,
+as the used charging ratio bound ξw (Proposition 11) is tight for high-density tiles and all
+that remains is to refine our charging ratio bound for low-density tiles (Proposition 15).
+    Our second major result constructs an input instance (depicted in Figure 14) for which
+TilePacking covers significantly less than 50% of the unit square.
+
+▶ Theorem 2. There is a set P of input points for which TilePacking covers at most
+43.3% of the unit square.
+
+   By the aforementioned worst-case equivalence of TilePacking and GreedyPacking,
+both Theorems 1 and 2 also hold for the latter.
+
+ 2      Preliminaries and Algorithm Description
+Let U := [0, 1)2 denote the unit square. For a point p ∈ R2 define x(p) and y(p) as the x-
+and y-coordinates of p, respectively. For two points p, p′ ∈ R2 we use the notation p ⪯ p′ to
+indicate that x(p) ≤ x(p′ ) and y(p) ≤ y(p′ ). Similarly, p ≺ p′ means that x(p) < x(p′ ) and
+y(p) < y(p′ ). The relations “⪰” and “≻” are defined analogously. For a set S we denote its
+closure by S. If S is measurable, we use |S| to denote its area.
+    To simplify some geometric arguments, we use the following line-notation: We define the
+line ℓq ⊆ R2 as the line through q ∈ R2 of slope +1. Similarly, we define the lines ℓ−
+      − −
+                                                                                             −
+                                                                                       q , ℓq ,
+and ℓq through q with slope 0, −1, and ∞, respectively. For lines of type R ∈ { , }, we
+                                                                                    −   −
+
+
+
+                                                                                                    ICALP 2021
+61:4   On Greedily Packing Anchored Rectangles
+
+
+
+           q1
+                                                                                            t
+
+
+           p1    q2                                                                                       qi qi+1
+
+                      t                                                                    Ct         1)
+                                                                                                     i+
+                          q3                                                           p         ,q
+          At     p2                                                                             qi
+                                                                                                p(
+                          p3   q4                                                           T
+                               p4    q5
+
+       (a) Staircase points pi , qj and rect- (b) A tile packing produced by (c) A tile t, its crown Ct , and a
+       angle At .                             TilePacking.                   tower Tp (qi , qi+1 ).
+
+          Figure 1 Tiles, packings, crowns, and towers. In our figures, tiles are shaded light blue. Upper
+       and lower stair case points are shown in red and black, respectively. A dark blue rectangle represents
+       a (maximal) rectangle of a tile. Crowns are shown in yellow and towers are possibly labeled.
+
+
+       write ℓR        R    R       R
+               q < ℓq ′ if ℓq ′ = ℓq + (x, 0) (using element-wise addition) with x > 0 and say ℓq is
+                                                                                                     R
+                R                                                       R    R      R     R
+       left of ℓq′ . Similarly, for lines of type R ∈ { , − } we write ℓq < ℓq′ if ℓq′ = ℓq + (0, y) with
+                                                       −
+       y > 0 and say ℓR                R
+                         q is below ℓq ′ . Analogous definitions apply for “>”, “≤”, and “≥”.
+
+
+       Input Sets in General Position. Remember the problem description from Section 1. We
+       say that the input set P is in general position if there are no two (different) points p, p′ ∈ P
+       with x(p) = x(p′ ), y(p) = y(p′ ), or x(p) + y(p) = x(p′ ) + y(p′ ). That is, no two points may
+       share an x- or y-coordinate and may not lie on the same diagonal of slope −1. W.l.o.g., we
+       restrict P to be in general position (see the full version [11] for why this is ok).
+
+       Tiles and Tile Packings. A tile t is a staircase polygon in U (see Figure 1a). More
+       formally, t is defined using its anchor p ∈ U and a set of k upper staircase points Γt :=
+       { q1 , q2 , . . . , qk } ⊆ U ordered by increasing x-coordinate and such that qi ≻ p for all qi as
+       well as qi ̸⪯ qj for all qi ̸= qj. With this we define t = { q ∈ U | q ⪰ p ∧ ∃q ′ ∈ Γt : q ≺ q ′ }.
+       A point pi = x(qi−1 ), y(qi ) is called a lower staircase point. We define At ⊆ t as an
+       (arbitrary) area-maximal rectangle in t and ρt := |At |/|t| as the tile’s density. For indexed
+       upper staircase points qi we often use the shorthands xi := x(qi ) and yi := y(qi ).
+           If p and Γt do not adhere to qi ≻ p and qi ̸⪯ qj , but only to the weaker requirements
+       qi ⪰ p, qi ̸⪯ qj for all qi ̸= qj ), then we say that t is degenerate. We show in Lemma 13 that
+       we can transform such tiles into non-degenerate ones without affecting our arguments.
+           The hyperbola of t is ht := { (x + x(p), y + y(p)) ∈ R2>0 | y = |At |/x }. Note that all upper
+       staircase points lie between p and ht . Moreover, the points from Γt ∩ ht span all area-maximal
+       rectangles in t. If, p = (0, 0) and |At | = 1, then t is called normalized.
+                                                                                              P
+           A tile packing of the unit square is a partition of U into tiles. In particular, t∈T |t| =
+                                        P
+       |U| = 1. We use A(T ) := t∈T |At | to denote the area covered by choosing an area-maximal
+       rectangle At for each tile t (the area covered by T ).
+
+       A Greedy Tile Packing Algorithm. Let us revisit the algorithm TilePacking by Du-
+       mitrescu and Tóth [12]. TilePacking processes the points P from top-right to bottom-left.
+       More formally, it orders P = { p1 , p2 , . . . , pn } such that ℓpi ≥ ℓpi+1 . It then defines for each
+                                                                       −      −
+                                                    Si−1
+       pi ∈ P the tile ti := { q ∈ U | q ⪰ pi } \ j=1 tj , yielding a tile packing T = { t1 , t2 , . . . , tn }.
+C. Damerius, D. Kaaser, P. Kling, and F. Schneider                                                          61:5
+
+
+To build its solution to LLARP, TilePacking picks for each p ∈ P the rectangle rp as an
+(arbitrary) area-maximal rectangle At ⊆ t in the tile t containing p. Thus, the total area
+covered by TilePacking is A(T ). Figure 1b illustrates the resulting tile packing.
+    Note that, by this construction, the lower staircase points of each tile t are input points.
+Moreover, as already mentioned in [12], for each tile we can define a certain exclusive area
+that does not contain an input point.
+▶ Observation 3. Consider the tile packing T produced by TilePacking for a set P of input
+points. Fix a tile t ∈ T and let p ∈ P denote its anchor point. Then the tile’s exclusive area
+Et := { q ∈ R2 | ℓq > ℓp ∧ ∃q ′ ∈ Γt : q ≺ q ′ } does not contain any point from P .
+                  −       −
+This observation follows by noting that any such input point p′ ∈ Et would be processed
+before p by TilePacking and “shield” at least one upper staircase point q ′ ∈ Γt from p,
+preventing it from becoming an upper staircase point of tile t.
+
+ 3     A General Approach for Lower Bounds
+Here we present a general approach to derive lower bounds for the area covered by a given
+tile packing T . Our approach relies on a suitable charging scheme (ct )t∈T that charges the
+area of each tile t ∈ T to a charging area ct > 0.
+
+▶ Definition 4. For a given charging scheme, we define c∗ := t∈T ct as the total charged
+                                                                   P
+
+area and ct /|t| as the charging ratio of tile t. We call a function ξ : (0, 1] → R≥0 a charging
+ratio bound with critical density ρ∗ ∈ (0, 1] if
+1. ξ is point-convex at ρ∗ with ξ ′ (ρ∗ ) < 0,
+2. ξ(ρ∗ ) ≥ c∗ and
+3. for any t ∈ T : ξ(ρt ) ≤ ct /|t|.
+Note that a function f : I → R,I ⊆ R is said to be point-convex at x ∈ I if f is differentiable
+at x and the tangent t of f at x satisfies t(x) ≤ f (x) for all x ∈ I.
+
+The following lemma uses a charging ratio bound to show that ρ∗ is a lower bound on A(T ).
+
+▶ Lemma 5. Consider a tile packing T with a charging scheme (ct )t∈T together with a
+charging ratio bound ξ with critical density ρ∗ . Then A(T ) ≥ ρ∗ .
+
+Proof. Since ξ is point-convex in ρ∗ , the tangent τ (ρ) := ξ(ρ∗ ) + ξ ′ (ρ∗ ) · (ρ − ρ∗ ) of ξ in ρ∗
+                                                            P             P
+satisfies τ (ρ) ≤ ξ(ρ) for all ρ ∈ (0, 1]. Using A(T ) = t∈T |At | = t∈T |t| · ρt we calculate
+                                !
+                    X               X                   X                X       ct
+                                                                                     = c∗ ≤ ξ(ρ∗ ), (1)
+             
+    τ A(T ) = τ         |t| · ρt ≤      |t| · τ (ρt ) ≤   |t| · ξ(ρt ) ≤   |t| ·
+                                                                                 |t|
+                    t∈T             t∈T              t∈T              t∈T
+
+where the second inequality        follows from applying Jensen’s  Inequality to the convex function
+τ . Combining τ A(T ) = ξ(ρ∗ ) + ξ ′ (ρ∗ ) · A(T ) − ρ∗ with Inequality 1 and rearranging gives
+                                                          
+
+ξ ′ (ρ∗ ) · A(T ) ≤ ξ(ρ∗ ) · ρ∗ , which yields the desired result after dividing by ξ(ρ∗ ) < 0.    ◀
+
+ 4     Charging Scheme and Weak Covering Guarantee
+This section introduces the charging scheme we will use to derive our lower bounds for
+TilePacking’s coverage (via the approach presented in Section 3). Then we derive a weak
+charging ratio bound ξw , as described in Section 3. While comparatively simple, this already
+yields that TilePacking covers at least a quarter of the unit square, almost tripling the
+original guarantee from [12]. Section 5 will refine ξw to derive our main result (Theorem 1).
+
+
+
+                                                                                                          ICALP 2021
+61:6   On Greedily Packing Anchored Rectangles
+
+
+
+
+                                  q1            w2
+                                               +
+                                            h 1√ 2                                               q1
+                                  h1
+                                                                                Et          p∗                q2
+                        h1              w2                                                             q10
+                             p0                      q2                     p        Tp (q1 , q2 )
+                 x1+
+                  √ y             y2
+                  2 2
+                                                                                           (q 0              q20
+                                                                                            1,
+                                                                                                q2 0   p0∗
+         p         x1                  y2                                                          )
+                                                                                           p0
+                                                                                      T
+
+                                                                                      p0
+
+          Figure 2 |Tp (q1 , q2 )| is computed via               Figure 3 Example for Lemma 8. The shown tower
+       the catheti of the blue triangles.                     overlap has p′∗ ∈ Et , violating t’s exclusive area.
+
+
+       4.1     Charging Scheme
+       Given a tile packing T constructed by TilePacking, our charging scheme defines an area Ct
+       for each tile t ∈ T and charges t’s area to ct := |Ct |. We first explain how Ct is constructed
+       from t. Afterward, we prove useful properties about these areas and their relation to T .
+
+       Construction of Ct . Consider three points p, q1 = (x1 , y1 ), q2 = (x2 , y2 ) ∈ R2 with q1 , q2 ⪰
+       p, x1 ≤ x2 , and y1 ≥ y2 . The tower Tp (q1 , q2 ) with base point p and peak p∗ = (x1 , y2 ) is
+                                                                     −                            −
+       the interior of the rectangle enclosed by the lines ℓp (the tower’s base), ℓq1 (the tower’s left
+             −                                            −
+       side), ℓq2 (the tower’s right side), and ℓp∗ (the tower’s top). If the subscript p is omitted, the
+       base point is assumed to be the origin (0, 0).
+           For a tile t with anchor p and Γt = { q1 , q2 , . . . , qk } being ordered by increasing
+       x-coordinate, we define the charging area as the disjoint union of towers, i.e., Ct :=
+       Sk−1
+         i=1 Tp (qi , qi+1 ). We refer to Ct as the crown of tile t. (See Figure 1c.)
+
+           The width and height of a tower Tp (q1 , q2 ) correspond to the side lengths of isosceles
+       triangles (see Figure 2), which yields a formula for |Tp (q1 , q2 )|. By taking derivatives, we get
+       formulas for the change of the tower’s area when moving q1 or q2 horizontally or vertically.
+       ▶ Observation 6. Consider Tp (q1 , q2 ) with qj − p = (xj , yj ), j ∈ { 1, 2 }. Let w2 := x2 − x1 ,
+       and h1 := y1 − y2 . Then |Tp (q1 , q2 )| = (x1 + y2 ) · (w2 + h1 )/2.
+       ▶ Observation 7. Consider Tp (q1 , q2 ) with qj − p = (xj , yj ), j ∈ { 1, 2 }. Let w2 := x2 − x1 ,
+       and h1 := y1 − y2 . Fix α ∈ R and consider the change of |Tp (q1 , q2 )| if either q1 or q2 are
+       moved horizontally or vertically as a linear function of ε:
+       (a) If either q1 (ε) := q1 +(0, α·ε) or q2 (ε) := q2 +(α·ε, 0), then ∂|Tp (q1 , q2 )|/∂ε = α·(x1 +y2 )/2
+           and ∂ 2 |Tp (q1 , q2 )|/∂ε2 = 0.
+       (b) If either q1 (ε) := q1 +(α · ε, 0) or q2 (ε) := q2 + (0, α · ε), then ∂|Tp (q1 , q2 )|/∂ε =
+           α · w2 + h1 − (x1 + y2 ) /2 and ∂ 2 |Tp (q1 , q2 )|/∂ε2 = −α2 .
+
+       Properties of the Charging Scheme. The following results capture basic properties of our
+       charging scheme. First, we show that the defined crowns are pairwise disjoint.
+
+       ▶ Lemma 8. Consider the tile packing T produced by algorithm TilePacking for a set P
+       of input points. For any two different tiles t, t′ ∈ T , we have Ct ∩ Ct′ = ∅.
+C. Damerius, D. Kaaser, P. Kling, and F. Schneider                                                                    61:7
+
+
+Proof. Fix t, t′ ∈ T and let p, p′ ∈ P denote their respective anchors. W.l.o.g., assume
+ℓp > ℓp′ , such that TilePacking processes p before p′ . As crowns consist of towers, it is
+−       −
+sufficient to show Tp (q1 , q2 ) ∩ Tp′ (q1′ , q2′ ) = ∅ for consecutive q1 , q2 ∈ Γt and q1′ , q2′ ∈ Γt′ . Let
+p∗ , p′∗ ∈ P be the respective peaks of these towers. W.l.o.g., we assume ℓp∗ < ℓp′∗ (p∗ lies left
+                                                                                      −       −
+    −
+of ℓp′∗ ); the other case follows symmetrically.
+     If ℓp′∗ < ℓp , the towers are separated (the top of Tp′ (q1′ , q2′ ) lies below the base of Tp (q1 , q2 ))
+        −     −
+and cannot intersect. So assume ℓp′∗ > ℓp . Then we cannot have p′∗ ≺ q2 , since this would
+                                          −      −
+imply that p′∗ lies in the exclusive area of t, violating Observation 3 (see Figure 3).
+     Let ∆y := q1′ − p′∗ and note that x(∆y ) = 0. Define q̃1 := p∗ − ∆y and note that p′∗ ̸≻ q̃1 ,
+since otherwise q1′ = p′∗ + ∆y ≻ q̃1 + ∆y = p∗ , which (together with ℓp∗ > ℓp > ℓp′ ) would
+                                                                                     −       −       −
+mean that p∗ lies in the exclusive area of t′ (again violating Observation 3).
+     So ℓp′∗ > ℓp∗ , p′∗ ̸≺ q2 , and p′∗ ̸≻ q̃1 . Together, these imply x(p′∗ ) > x(q2 ) and y(p′∗ ) < y(q̃1 ),
+        −      −
+                        −       −                                                            −
+which in turn imply ℓp′∗ > ℓq2 −∆y . But then, the towers are separated, since ℓq′ = ℓp′ +∆y >       −
+                                                                                                 1       ∗
+
+ℓq2 −∆y +∆y = ℓq2 (Tp (q1 , q2 )’s right side lies left of Tp′ (q1′ , q2′ )’s left side).
+−               −                                                                                             ◀
+
+    The next lemma’s proof shows that all crowns lie inside a pentagon formed by U and two
+isosceles triangles left and below of U (see Figure 4). With Lemma 8 this implies that the
+total charging area is bounded by the pentagon’s area.
+▶ Lemma 9. Consider the tile packing T produced by algorithm TilePacking for a set P
+of input points. The total charging area of T is c∗ ≤ 3/2. Moreover, this bound is tight, since
+for arbitrarily small ε > 0 there are input points Pε with c∗ ≥ 3/2 − ε.
+Proof. Define the points SW := (0, 0), NW := (0, 1), and SE := (1, 0). Let D denote the
+pentagon enclosed by the lines ℓSW , ℓNW , ℓSE , ℓ−
+                                      −     −      −                   −
+                                                                NW , and ℓSE (see Figure 4). Since |D| = 3/2
+and using Lemma 8, it is sufficient to show that Ct ⊆ D for any t ∈ T . For this, in turn, it is
+sufficient to show that any tower Tp (q1 , q2 ) of Ct lies in D.
+                                                                    −      −
+    Fix such a tower Tp (q1 , q2 ). Since p ⪰ SW, we have ℓp ≥ ℓSW (the base of Tp (q1 , q2 ) lies
+        −                                                                  −
+above ℓSW ). Similarly, since q1 , q2 ∈ U ⊆ D, we have ℓq1 ≥ ℓNW (the left side of Tp (q1 , q2 )
+                                                                   −
+                                          −      −
+lies right of the left side of D) and ℓq2 ≤ ℓSE (the right side of Tp (q1 , q2 ) lies left of the right
+side of D). Finally, the topmost point q1 ∈ U of Tp (q1 , q2 ) lies below ℓ−              N W and the rightmost
+                                                       −
+point q2 ∈ U of Tp (q1 , q2 ) lies to the left of ℓSE . Together, we get Tp (q1 , q2 ) ⊆ D.
+    For the tightness of the bound, choose δ > 0, 1/δ ∈ N and define P δ = { SW } ∪
+{ (k · δ, 1 − k · δ 2 ), (1 − k · δ 2 , k · δ) | k ∈ { 1, 2, . . . , 1/δ − 1 } }. As illustrated in Figure 4, the
+crown Ct of tile t with anchor SW converges towards D as δ → 0. Therefore, for each ε > 0,
+we can choose δ such that, for point set Pε := P δ , we have c∗ ≥ |Ct | ≥ 3/2 − ε.                             ◀
+
+
+4.2     Weak Covering Guarantee for Greedy Tile Packings
+This section proves the following, slightly weaker version of Theorem 1:
+▶ Theorem 10. For any set of input points, TilePacking covers at least 25% of U.
+Proving this not only serves as a warm-up to illustrate our approach before proving our main
+result, but – as we will see in Section 5 – brings us halfway towards proving Theorem 1.
+   So consider a tile packing T produced by algorithm TilePacking for some set P of
+input points. To prove Theorem 10, we follow the approach outlined in Section 3, using the
+charging scheme from Section 4.1. That is, the area of t ∈ T is charged to ct = |Ct |, where
+Ct represents the crown of t. To this end, define ρ∗ := 1/4 and the weak charging ratio bound
+
+    ξw : (0, 1] → R≥0 ,     ξw (ρ) := 2 · (1 − ρ).
+
+
+
+                                                                                                                    ICALP 2021
+61:8   On Greedily Packing Anchored Rectangles
+
+
+
+                                                                                      qi−1
+                     NW                                                                        −            −
+                                                                                               `qi          `qi+1
+                                                                                      pi−1
+                                                                             )            qi         qi+1
+         − 12 , 12
+                                                                           qi
+                                                                           −1,
+                                                                                       i+              −
+                                                                      qi
+                                                                      p(                 1)           `qi
+                                                                  T                  ,q            −
+                     SW               SE                                         qi                `pi−1
+                                                                                 p(
+                                                                  p          T
+                              1    1
+                                     
+                              2, −2
+
+          Figure 4 Pentagon D and                   Figure 5 Removing superfluous points from Γt reduces |Ct |
+       point set Pε from Lemma 9.                                                −    −        −
+                                                 by the rectangle between ℓqi , ℓqi+1 , ℓqi , and ℓpi−1 .   −
+
+
+
+          As a linear function, ξw is trivially point-convex in ρ∗ . Moreover, ξw (ρ∗ ) = 3/2 and
+       thus, by Lemma 9, ξw (ρ∗ ) ≥ c∗ . In the remainder of this section we prove the following
+       Proposition 11, stating that ξw represents a lower bound on the charging ratio of any t ∈ T .
+       Once this is proven, Theorem 10 follows immediately by applying Lemma 5.
+
+       ▶ Proposition 11. For any tile t we have ct /|t| ≥ ξw (ρt ).
+
+       A Lower Bound on the Charging Ratio. To prove that ξw bounds from below the charging
+       ratio ct /|t| of any tile t ∈ T , we gradually transform t into a “simpler” tile t̃. Our transfor-
+       mations ensure ρt̃ = ρt and ct̃ /|t̃| ≤ ct /|t|. Eventually, t̃ will be simple enough to directly
+       prove ct̃ /|t̃| ≥ ξw (ρt̃ ). The following notation expresses progress via such a transformation:
+
+           t̃ ⪯ t        :⇔   ρt̃ = ρt and ct̃ /|t̃| ≤ ct /|t|.
+
+          As a simple example, note that both a tile’s density and charging-ratio are invariant
+       under translation and concentric scaling w.r.t. its anchor. This gives rise to the following
+       transformation, which allows us to restrict our analysis to normalized tiles.
+       ▶ Observation 12. Translate a tile t such that it is anchored in the origin, then scale it by
+       1/|At | around the origin. We call the resulting tile t̃ normalized. Then t̃ ⪯ t.
+           Consider a tile t with anchor p. A transformation may move one of t’s upper staircase
+       points to the same x- or y-coordinate as another point from Γt ∪{ p }, resulting in a degenerate
+       tile with superfluous points in Γt (see Section 2). The next lemma states that removing such
+       superfluous points maintains an equal tile with a smaller crown.
+
+       ▶ Lemma 13. Consider a degenerate tile t. The tile t̃ with same anchor p but Γt̃ :=
+       { q ∈ Γt | q ≻ p and ∄q ′ ∈ Γt : q ⪯ q ′ } covers the same points, is non-degenerate, and t̃ ⪯ t.
+
+       Proof. Order Γt = { q1 , q2 , . . . , qk } by non-decreasing x-coordinate and let q0 = qk+1 = p.
+       W.l.o.g. assume there is some i ∈ { 1, . . . , k } with y(qi ) = y(qi+1 ); the case of identical
+       x-coordinates follows analogously. Let t̃ denote the (possibly still degenerate) tile with anchor
+       p and Γt̃ = Γt \ { qi }. Note that { q ∈ U | q ⪰ p ∧ q ≺ qi } ⊆ { q ∈ U | q ⪰ p ∧ q ≺ qi+1 },
+       which implies t̃ = t and, thus, ρt = ρt̃ . Removing qi affects the towers Tp (qi , qi+1 ) with peak
+       qi (only if i < k) and Tp (qi−1 , qi ) with peak pi−1 . Figure 5 illustrates the situation.
+           We now show that ct̃ ≤ ct , such that t̃ ⪯ t; the lemma’s statement then follows by
+       iteration. If i = k, then ct̃ = ct − |T (qi−1 , qi )| ≤ ct . So assume i < k. Then ct̃ = ct − |□| ≤ ct ,
+                                                                  −   −          −             −
+       where □ is the rectangle enclosed by the lines ℓqi , ℓqi+1 , ℓqi , and ℓpi−1 (see Figure 5).        ◀
+C. Damerius, D. Kaaser, P. Kling, and F. Schneider                                                               61:9
+
+
+                        qi−1                                            q−3
+                        wi qi                                     R−3
+                        αi                                            q−2
+               qi )                      ht                       R−2 q
+             −                      qi+1                                −1
+              1,
+                    i+
+                                                                  R−1 ht
+          qi
+        p(            1)
+      T        ,q                              qj−1                      q0
+             p(
+               qi                                qj                             q1
+          T                                                                           q2 q
+                                          )    hj αj q              R0                    3   q4 q5
+                           t        −
+                                     qj               j+1
+                                                                              R1 R2
+                               qj
+                                     1,
+                                               1)                                     R3 R4 R5
+                               p(             j+
+                    p      T             ,q
+                                    qj
+                                    p(
+                                T
+
+
+   Figure 6 Moving inner points in Lemma 14.                    Figure 7 Notation for Proposition 11 with
+Note that αj > 0 and αi < 0 in this case.                   l = 3 and m = 5.
+
+
+   Note that ht ∩ Γt consists of the upper staircase points that form maximum rectangles in
+the tile. We now prove that we can transform t such that at most one q ∈ Γt lies not on ht .
+
+▶ Lemma 14. A normalized tile t can be transformed into a tile t̃ ⪯ t with |Γt̃ \ ht̃ | ≤ 1.
+
+Proof. Assume |Γt \ ht | > 1 and order Γt = { q1 , q2 , . . . , qk } by increasing x-coordinate. To
+simplify border cases, define q0 = q1 and qk+1 = qk . Choose qi , qj ∈ Γt \ ht with i < j.
+Consider the transformation qi (ε) := qi + (0, αi · ε) and qj (ε) := qj + (αj · ε, 0) with αi , αj ∈ R.
+Then the tile and crown areas become functions t(ε) and ct (ε) of ε. We show that there are
+non-zero αi , αj such that t(ε) and, thus, ρt(ε) remain constant and ct (ε) does not increase.
+Eventually, this results in a tile t̃ ⪯ t that has an additional point on ht or that has a
+degenerate staircase point which we can remove by Lemma 13. In both cases |Γt \ ht | is
+decreased and the lemma follows by iteration. Figure 6 illustrates the transformation.
+    The transformation changes only the towers T (qi−1 , qi ), T (qi , qi+1 ), T (qj−1 , qj ), and
+T (qj , qj+1 ). (i < j ensures that these changes do not interfere with each other.) For
+l ∈ { 0, 1, . . . , k + 1 } let ql = (xl , yl ) and define wl := xl − xl−1 for l ̸= 0 and hl := yl − yl+1
+for l ̸= k + 1. Then the transformation changes the area of the tile according to ∂t(ε)/∂ε =
+αi · wi + αj · hj . To keep |t| constant, we make this zero by setting αj = −αi · wi /hj .
+    It remains to find a non-zero αi such that ct (ε) is non-increasing in ε. For this let Ti (ε) :=
+|T (qi−1 , qi )| + |T (qi , qi+1 )| and define Tj (ε) analogously. By Observation 7, ∂ 2 Tl (ε)/∂ε2 =
+−αl2 for l ∈ { i, j }. This yields ∂ 2 ct (ε)/∂ε2 = −αi2 − αj2 < −αi2 , which is a negative constant.
+This allows us to choose αi ∈ { −1, +1 } such that ct (ε) is non-increasing.                           ◀
+
+With these results, we are ready to prove our first covering guarantee for TilePacking.
+
+Proof of Proposition 11. Let t be a tile. By Observation 12 and Lemma 14, we can assume
+that t is normalized and |Γt \ ht | ≤ 1. If |Γt \ ht | = 1, let q0 ∈ Γt \ ht , otherwise let q0 ∈ Γt
+arbitrary. Relabel the points Γt = { q−l , . . . , qm } in increasing order of their x-coordinates.
+To simplify border cases, let q−l−1 = q−l and qm+1 = qm . Let further wi := xi − xi−1
+for i ̸= l − 1 and hi := yi − yi+1 for i ̸= m + 1 (using qi = (xi , yi )). For i = −l, . . . , m
+                                                                     S
+inductively define the rectangles Ri := { q ∈ t | q ≺ qi } \ |j|<|i| Rj . Finally, for i = 1, . . . , m,
+let Ti := T (qi−1 , qi ); for i = −l, . . . , −1 let Ti := T (qi , qi+1 ). See Figure 7 for an illustration.
+
+
+
+
+                                                                                                               ICALP 2021
+61:10   On Greedily Packing Anchored Rectangles
+
+                                 P−1             Pm                    Pm
+            Note that ct =          i=−l |Ti | +   i=1 |Ti | and |t| =   j=−l |Rj |. We will first show that
+        for i ∈ { −l, . . . , m } \ { −1, 0, 1 } we have |Ti | ≥ 2|Ri |. Afterward, we show |T−1 | + |T1 | ≥
+        2(|R−1 | + |R0 | + |R1 | − 1). With these inequalities and since ρt = |At |/|t| = 1/|t| due to the
+        normalization, the desired statement follows via
+                    −1
+                    X                m
+                                     X         m
+                                               X
+             ct =          |Ti | +     |Ti | ≥   2|Ri | − 2 = 2|t| − 2 = 2|t| · (1 − ρt ) = |t| · ξw (ρt ).
+                    i=−l             i=1       i=−l
+
+            We now show the above bounds, starting with |Ti | ≥ 2|Ri | for |i| ≥ 2. W.l.o.g. we assume
+        i ≥ 2; the case i ≤ −2 follows by symmetry. Note that i ≥ 2 implies qi , qi−1 ∈ ht and thus
+        (since t is normalized) yj = 1/xj for j ∈ { i − 1, i }. This yields xi−1 /yi = xi−1 · xi as well
+        as wi /hi−1 = (xi − xi−1 )/(yi−1 − yi ) = xi−1 · xi . We use these identities together with
+        |Ri | = wi · yi to bound the formula for |Ti | from Observation 6:
+
+             |Ti | = 1/2 · (xi−1 + yi )(wi + hi−1 ) = wi · yi · 1/2 · (1 + xi−1 /yi )(1 + hi−1 /wi )
+                                                                                              2
+                            1                             1                 1 (1 + xi−1 · xi )
+                   = |Ri | · · (1 + xi−1 · xi ) · 1 +              = |Ri | · ·                    ≥ 2|Ri |,
+                            2                         xi−1 · xi             2       xi−1 · xi
+                                                        2
+        using that the function x 7→ (1 + x) /x over [0, ∞) has a minimum value of 4 at x = 1.
+             It remains to show that |T−1 | + |T1 | ≥ 2(|R−1 | + |R−1 | + |R0 | − 1). Note that, if m = 0,
+        we have qm+1 = qm by definition and |R1 | = 0 and |T1 | = 0 hold. Similarly, if l = 0 then
+        |R−1 | = 0 and |T−1 | = 0. We assume that l > 0 or m > 0, as otherwise ξw (ρt ) = ξw (1) = 0
+        and the proposition becomes trivial. W.l.o.g. let m > 0; the other case follows symmetrically.
+             For α ∈ { −1, +1 } (which we fix later) and ε ≥ 0 define the transformation y0 (ε) :=
+        y0 + α · ε, where ε is chosen such that y0 (ε) ∈ [y1 , 1/x0 ] 2 , which moves q0 either up- or
+        downward, depending on α. Thus, with f (ε) := |T−1 | + |T1 | − 2(|R−1 | + |R1 | + |R0 | − 1),
+        where the Ti and Ri depend on y0 and thus ε, our goal becomes to prove f (0) ≥ 0. To
+        this end, consider how f (ε) changes with ε. The rectangles |Rj | (j ∈ { −1, 0, 1 }) change
+        linearly or remain constant. By Observation 7, ∂ 2 |T1 |/∂ε2 = 0. Similarly, if l > 0 we have
+        ∂ 2 |T−1 |/∂ε2 = −α2 = −1 by Observation 7, and if l = 0 we have ∂ 2 |T−1 |/∂ε2 = 0 (because
+        |T−1 | remains zero). Thus, in all cases ∂ 2 f (ε)/∂ε2 ≤ 0, meaning its minimum fmin lies at
+        one of the borders, where either y0 = y1 or y0 = 1/x0 . We consider both possibilities and
+        show that each time fmin ≥ 0 (which finishes the proof, since f (0) ≥ fmin ≥ 0).
+             If at fmin we have y0 = 1/x0 , let thigh denote the corresponding tile. Note that q0 lies
+        on the hyperbola ht . But then |R0 | = 1 and, thus, fmin = |T−1 | + |T1 | − 2(|R−1 | + |R1 |).
+        Moreover, with q0 ∈ ht we can apply the calculations for |i| > 1 to get |T−1 | ≥ 2|R−1 | and
+        |T1 | ≥ 2|R1 |, such that fmin ≥ 0.
+             So assume that at fmin we have y0 = y1 and let tlow denote the corresponding tile.
+        Note that R0 and R1 form a rectangle from the origin to the point q1 on ht , such that
+        |R0 | + |R1 | = 1. Thus, fmin = |T−1 | + |T1 | − 2|R−1 |. Define the (degenerate) tile t′ with
+        Γt′ = { q−1 , q0 , q1 } and anchor p, such that its crown area is ct′ = |T1 | + |T2 |. By Lemma 13,
+        for the (non-degenerate) tile t̃′ with Γt̃′ = Γt′ \ { q0 } we have ct̃′ ≤ ct′ . The crown ct̃′ consists
+        of the single tower T (q−1 , q1 ). Since q−1 , q1 ∈ ht , we can apply the calculations for |i| > 1 to
+        get ct̃′ = |T (q−1 , q1 )| ≥ 2|R−1 |. Putting everything together we get
+
+             fmin = |T−1 | + |T1 | − 2|R−1 | = ct′ − 2|R−1 | ≥ ct̃′ − 2|R−1 | ≥ 0.                            ◀
+
+        2
+            These boundaries ensure that the tile remains valid and normalized. Note that if l = 0, moving q0
+            upward also causes the dummy point q−1 to move upward, such that |R−1 | and |T−1 | remain zero.
+C. Damerius, D. Kaaser, P. Kling, and F. Schneider                                                                  61:11
+
+
+ 5      Strong Covering Guarantee for Greedy Tile Packings
+This section proves our strong covering guarantee for TilePacking, namely Theorem 1. We
+use the same approach as for our weak covering guarantee from Section 4.2 but derive a
+stronger charging ratio bound. More exactly, instead of ξw we use
+                                  (                          
+                                   1 − ρ · 1 + sinh(1 − 1/ρ)   if ρ ≤ 1/2
+    ξs : (0, 1] → R≥0 , ξs (ρ) :=                                                    (2)
+                                   ξw (ρ) = 2 · (1 − ρ)        if ρ > 1/2.
+
+     Most properties required for our approach from Definition 4 are easily verified for ξs
+(whose function graph can be seen in Figure 12). Indeed, for ρ∗ := ξs−1 (3/2) ≈ 0.3901, we
+have ∂ξs (ρ)/∂ρ|ρ=ρ∗ ≈ −5.1 < 0. Moreover, ξs is point-convex at ρ∗ , since it is convex on
+(0, 1/2] and on (1/2, 1] its tangent tξ at ρ∗ lies below ξs (tξ is steeper and tξ (1/2) ≈ 0.94 <
+1 = ξw (1/2)). Also, by choice of ρ∗ and by Lemma 9, we have ξs (ρ∗ ) = 3/2 ≥ c∗ for the total
+charged area c∗ of a tile packing T produced by algorithm TilePacking.
+     The following proposition states the remaining required property of Definition 4.
+
+▶ Proposition 15. For any tile t we have ct /|t| ≥ ξs (ρt ) and this bound is tight.
+
+With this, Theorem 1 follows by applying Lemma 5. The remainder of this section outlines
+the analysis of this proposition.
+
+Transformation to Worst-case Tiles. For tiles t of density ρt larger than 1/2, Proposition 15
+follows from Proposition 11, since in this regime ξs (ρt ) = ξw (ρt ). The tightness for such
+high densities follows since for any ρt ∈ (1/2, 1] there is a (symmetric) step tile t = tl (ρt ) of
+density ρt (depicted in Figure 9) with ct /|t| = ξs (ρt ). Thus, we restrict our further study to
+tiles of density at most 1/2. We will show how to gradually transform any such tile t into
+a (symmetric) hyperbola tile th (ρt ) ⪯ t (depicted in Figure 8). Again, the tightness follows
+from the existence of a tile t = th (ρt ) with ct /|t| = ξs (ρt ).
+    Before we outline the transformation process into such worst-case low-density tiles, we
+need to cope with the fact that th (ρt ) is not a staircase polygon and, thus, not captured by
+our tile definition. However, one can see th (ρt ) as the result of defining Γt as k equally spaced
+points from the hyperbola { (x, y) ∈ [0, s) | y = 1/x } and taking the limit k → ∞. The next
+paragraph formalizes this intuition by introducing generalized tiles and some related notions.
+
+Generalized Tiles and Crown Contribution. A generalized tile t is defined equivalently to
+"normal" tiles, with the only difference that Γt may be infinite. All other tile definitions (e.g.,
+point set definition of t, maximum-area rectangle At , or density ρt ) stay intact.
+     From now on the term tile always refers to a normalized and non-degenerate generalized
+tile. (Note that the points which cause a generalized tile to be degenerate, cannot reside in a
+slide. As such Observation 12 and Lemma 13 easily transfer to generalized tiles.) We require
+that the x-coordinates of Γt can be partitioned into k inclusion-wise maximal, closed intervals
+I1 , I2 , . . . , Ik , ordered by increasing x-coordinates. For i ∈ { 1, 2, . . . , k } let qi− , qi+ ∈ Γt
+denote the points realizing the left- and rightmost x-coordinate of Ii , respectively. Note that
+Ii may be a point interval, such that qi− = qi+ . A section of Γt is a tuple as follows:
+                         −               −
+     a step (qi+ , qi+1    ), if qi+ , qi+1   ∈ ht ;
+                     − +          −       +
+     a slide (qi , qi ), if qi ̸= qi and { q ∈ Γt | x(q) ∈ Ii } ⊆ ht ;
+     a double step (qi−1    +
+                                , qi− , qi+1
+                                         −           +
+                                             ), if qi−1    −
+                                                        , qi+1 ∈ ht and qi− = qi+ ∈
+                                                                                  / ht ; or
+     the corners (q1 , q2 ), if q1 ∈      / ht and q2 ∈ ht as well as (qk−1 , qk ) if qk ∈  / ht and qk−1 ∈ ht .
+
+
+
+                                                                                                                   ICALP 2021
+61:12       On Greedily Packing Anchored Rectangles
+
+
+
+                                                                                         z
+
+
+        h                h(x) = x1           h                                                   h(x) = x1
+
+                                                                                    z   Hr (x)
+                                                                                  1/
+                  |t| = ρ1t                                                     z−√ 2
+
+                                                   |t| = ρ1t
+
+                              w                                 w                                   w
+               Figure 8 Symmetric (w = h)        Figure 9 Symmetric (w = h)          Figure 10 Crown contribu-
+            low-density tile t = th (ρt ) for high-density tile t = tl (ρt ) for tion of a slide.
+            which ξs is tight.                which ξs is tight.
+
+
+            We further define t(xL , xR ) = { (x, y) ∈ t | xL ≤ x ≤ xR }. After applying Lemma 14, all
+            tiles resulting from our transformations can be described as a sequence of such sections.
+            Figure 13 illustrates generalized tiles and the different sections.
+                Note that a slide can be understood as the limit case of k → ∞ equally spaced upper
+            staircase points. As the slide is the only part of a generalized tile which differs from normal
+            tiles, our charging scheme from Section 4.1 naturally extends to generalized tiles. This yields
+            the following tower complement for slides:
+            ▶ Definition 16. For a tile t with a slide (q1 , q2 ), rotate√ the hyperbola by π/4 around the
+            anchor of t, to obtain the rotated hyperbola hr (x) = x2 + 2. The area under hr between
+            q1 and q2 will be denoted as H(q1 , q2 ).
+                                                                                                                  x2
+            ▶ Observation 17. For a tile t with slide (q1 , q2 ) we get |H(q1 , q2 )| := 14 · (z 2 − z −2 ) + ln z x1 .
+                                                                                        
+
+
+            Proof.
+            √      |H(q1 , q2 )| can
+                                   R be calculated via√integration: The indefinite
+                                                                              √       integral under hr (x)√=
+               2                                                2
+              x + 2 is Hr (x) := √ hr (x) dx = x/2 · 2 + x + arsinh (x/ 2), and for x = (z − 1/z)/ 2,
+            we get Hr ((z − 1/z)/ 2) = 1/4 · (z 2 − z −2 ) + ln z, where z = x1 or z = x2 (see Figure 10). ◀
+
+
+            Overview of the Transformation Process.3 Figure 11 gives an overview of how we gradually
+            transform an arbitrary tile t with density ρt ≤ 1/2 into a worst-case hyperbola tile th (ρt ).
+            Starting with an arbitrary tile t (I), Lemma 18 either enforces Γt ⊆ ht or Γt \ ht = { q }.
+            ▶ Lemma 18. Let t be a tile. Then either there exists a tile t̃ ⪯ t with Γt̃ ⊂ ht̃ , or t contains
+            a double step (q1 , q2 ) with x1 ≤ 1 ≤ x2 or a corner (q1 , q2 ) with x1 < 1 (if q2 ∈
+                                                                                                / ht , x2 > 1 if
+            q1 ∈
+               / ht ).
+                 This lemma yields two different cases: In the first case (II), t contains a double-step
+            (q1 , q, q2 ) and we can enforce x(q1 ) ≤ 1 ≤ x(q2 ). In the second case (III), q is part of a corner
+            where x(q ′ ) ≥ 1 or x(q ′ ) ≤ 1 can be enforced for corners (q, q ′ ) or (q ′ , q), respectively. (The
+            case where Γt̃ ⊂ ht̃ will be dealt with later, in case (VIII).)
+                 The next step from cases (II)/(III) to cases (IV)/(V) is based on smaller transforma-
+            tion/property statements about adjacent sections:
+
+
+            3
+                Due to space limitations, the proofs for the following Lemmas 18–29 can only be found in the arXiv
+                version of this paper (see [11]).
+C. Damerius, D. Kaaser, P. Kling, and F. Schneider                                                           61:13
+
+
+▶ Lemma 19. Let t be a tile, q1 , q2 , q3 ∈ Γt the leftmost three points (in order) such that
+q1 = q2 or (q1 , q2 ) is a step; and q2 = q3 or (q2 , q3 ) is a slide. Then these sections can be
+replaced by up to one step s = (q1 , q2 ) and up to one slide h = (q2 , q3 ) such that
+                                 √
+ 1. If s exists, then x1 x2 ≥ 1/ 2
+                                  √
+ 2. If h exists, then x1 x2 ≤ 1/ 2
+giving us a tile t̃ ⪯ t.
+
+    Intuitively Lemma 19 states that the leftmost sections will only be a step and hyperbola
+when they satisfy precise properties and otherwise the tile can be transformed such that one
+of the sections vanished.
+
+▶ Lemma 20. Let t be a tile with a step (q1 , q2 ) and a slide (q2 , q3 ). If x1 ≥ 1/x3 , then the
+two sections can be replaced by a slide (q1 , q4 ) and a step (q4 , q2 ), resulting in a tile t̃ ⪯ t.
+
+   Lemma 20 describes when “swapping” steps with an adjacent slide lowers ct .
+
+▶ Lemma 21. Let t be a tile and (q1 , q2 ),(q2 , q3 ) be steps with x3 ≤ 1. Then the two steps
+can be replaced with a step (q1 , q4 ) and a slide (q4 , q3 ), resulting in a tile t̃ ⪯ t.
+
+
+
+
+                                                 (II)
+                                                        Lemma 22             (IV)   Lemma 23
+
+
+
+
+                          Lemma 18
+
+                             (I)
+                                                 (III) Lemma 22              (V)    Lemma 24
+
+
+
+
+                                                                                                 Lemma 25
+
+
+
+
+                             (VI)                 (VII)                   (VIII)                   (IX)
+
+
+
+
+               Lemma 28               Lemma 27                 Lemma 30               Lemma 29
+
+
+
+
+                                                             (X)
+
+
+
+    Figure 11 Transforming low-density tiles t with ρt ≤ 1/2 to a corresponding worst-case hyperbola
+tile th (s) ⪯ t. For the normalized tiles in Cases (II) and later, the blue dot marks the point (1, 1).
+
+
+
+
+                                                                                                            ICALP 2021
+61:14   On Greedily Packing Anchored Rectangles
+
+
+           Lemma 21 describes when “merging” two adjacent steps into a step and adjacent slide
+        lowers ct . Note that each of these lemmas hold up to reflection on the x=y axis, due to
+        symmetry. Using the transformations/properties in these lemmas we can show the following
+        Lemma 22, which allows us to only consider tiles containing a single step.
+
+        ▶ Lemma 22. Consider a tile t with ρt ≤ 1/2. Then there exists a tile t̃ ⪯ t, containing at
+        most one step. Furthermore, if Γt ⊆ ht then Γt̃ ⊆ ht̃ .
+
+           Now down to only one step, the following two lemmas (Lemmas 23 and 24) show that we
+        can transform the tiles from (IV) and (V), respectively, such that either Γt ⊆ ht or t contains
+        no slides:
+
+        ▶ Lemma 23. Let t be a tile with a double step (q1 , q2 , q3 ) and a slide (q3 , q4 ). We can
+        replace both sections by a double step (q1 , q4 ) or a sequence of steps and slides between q1
+        and q4 , obtaining a tile t′ ⪯ t.
+
+        ▶ Lemma 24. Let t be a tile with a slide (q1 , q2 ) and a corner (q2 , q3 ). We can replace both
+        sections by a corner (q1 , q2′ ) or a sequence of steps and slides between q1 and q2′ , obtaining a
+        tile t′ ⪯ t.
+
+           These lemmas, together with the following Lemma 25, can then be used to reduce the
+        remaining cases to those illustrated in (VI) to (IX):
+
+        ▶ Lemma 25. Let t be a tile with ρt ≤ 1/2, then there exists a tile t̃ ⪯ t with Γt̃ ⊆ ht̃ or t̃
+        consists of a step and a corner or a double step and possibly a step.
+
+            The following Lemma 26 allows us to restrict ourselves to tiles t with ρt = 1/2 or where
+        all points in Γt are on t’s hyperbola, and is essential to proving the subsequent lemmas.
+
+        ▶ Lemma 26. Let t be a tile with ρt ≤ 1/2. Then there exists a tile t̃ with Γt̃ ⊆ ht̃ or
+        ρt̃ = 1/2 such that, if |Ct̃ |/|t̃| ≥ ξs (ρt̃ ) then also |Ct |/|t| ≥ ξs (ρt ).
+
+              For each of the four cases we then separately show th (ρ) ⪯ t (Lemmas 27–30).
+
+
+
+
+        1.5
+
+
+                                           ξs
+                                      τξ
+
+                                                      ρ
+          0.0              ρ∗ 0.5                                     I1 I2 I3       I4             I5
+           Figure 12 The charging ratio bound ξs from          Figure 13 A generalized tile with four sec-
+        Section 5 and its tangent τξ at ρ∗ = ξs−1 (3/2).   tions formed by the five intervals I1 to I5 (of
+        This illustrates that ξs is point-convex at ρ∗ .   which only I4 is a proper interval). They form a
+                                                           step (between I1 and I2 ), a double-step (between
+                                                           I2 and I4 ), a slide (I4 ), and a corner (I4 , I5 ).
+C. Damerius, D. Kaaser, P. Kling, and F. Schneider                                                        61:15
+
+
+▶ Lemma 27. Let t be a tile with ρt ≤ 1/2 consisting only of a double-step (q1 , q2 , q3 ). Then
+|Ct |/|t| ≥ ξs (ρt ).
+
+▶ Lemma 28. Let t be a tile with ρt ≤ 1/2 consisting only of a double step (q1 , q2 , q3 ) and a
+step (q3 , q4 ). Then |Ct |/|t| ≥ ξs (ρt )
+                                                                                               √
+▶ Lemma 29. Let t be a tile with ρt ≤ 1/2 consisting only of a step (q1 , q2 ) where x1 x2 ≥ 1/ 2
+and a corner (q2 , q3 ). Then there exists a tile t′ ⪯ t only consisting of two steps.
+
+▶ Lemma 30. Let t be a tile with ρt ≤ 1/2 with Γt ⊆ ht . Then |Ct |/|t| ≥ ξs (ρt ).
+
+Proof. By Lemma 22 we can assume that t contains at most one step. Since Γt ⊆ ht , t can
+only consist of steps and slides. Then t must contain at least one slide, as otherwise t consists
+of exactly one step, contradicting ρt ≤ 1/2. Using Lemma 20, we can then ensure that t has at
+most one slide: Assuming this is not the case, t has a slide (q1 , q2 ), a step (q2 , q3 ) and another
+slide (q3 , q4 ). Using the constraints of Lemma 20 we get x1 > 1/x3 > 1/x4 > x2 > x1 , a
+contradiction, so t has exactly one slide and possibly one step.
+    It is enough to show ∆ := |t|ξs (ρt ) − |Ct | < 0, since the statement follows by rearranging.
+First assume that t’s only section is a slide (q1 , q2 ). Then |t| = |t(0, x1 )| + |t(x1 , x2 )| =
+1 + ln(x2 /x1 ), and we get:
+                                                                                          x2
+    ∆ = |t|ξs (ρt ) − |H(q1 , q2 )| = |t| − 1 + sinh(|t| − 1) − 1/4 · (z 2 − z −2 ) + ln z x1
+                                                                 
+
+      = x−2         2    2      −2
+                                    
+           2 − x2 + x1 − x1           /4 + sinh(|t| − 1) + |t| − (1 + ln(x2 /x1 ))
+           −2       2    2      −2
+                                    
+      = x2 − x2 + x1 − x1 /4 + sinh(ln(x2 /x1 ))
+                                       2
+      = 2 sinh((ln(x1 ) + ln(x2 ))/2) sinh(ln(x1 /x2 )) < 0
+
+where the last inequality directly follows from x1 < x2 .
+   Now assume that t consists of a step (q1 , q2 ) and a slide (q2 , q3 ) (w.l.o.g. ordered in this
+way). In such a case we have |t| = |t(x0 , x1 )| + |t(x1 , x2 )| + |t(x2 , x3 )| = 1 + (x2 − x1 )/x2 +
+ln(x3 /x2 ), or rearranged, x3 = x2 ex1 /x2 +|t|−2 . Again we calculate
+
+    ∆ = |t|ξs (ρt ) − (|T (q1 , q2 )| + |H(q2 , q3 )|)
+                                                                                               x3
+                                                                               z − z −2
+                                                                           2
+                                       1 1          1                    1
+      = |t| − 1 + sinh(|t| − 1) −              −       + x2 − x1    x1 +     −          + ln z     .
+                                       2 x1        x2                    x2       4             x2
+
+Taking the derivative of ∆ w.r.t. |t| (after inserting x3 = x2 ex1 /x2 +|t|−2 ), we obtain ∂∆/∂|t| =
+                                  2
+−2 cosh(x1 /x2 + |t| − 2 + ln x2 ) < 0. This indicates that ∆ is maximized for smallest |t|.
+              = 2 now, or equivalently, x3 = x2 ex1 /x2 . By Lemma 19 we can further assume
+So assume |t| √
+                                                            √
+that x2 = 1/( 2x1 ). Using the substitution x1 = 2−3/4 u we get
+                        √
+                          2 √           1 − eu
+                                                         
+            1                                           u
+     ∆ = √ −3 −             + 2e +               +u+ u         with the derivative
+          2 2            e                u            2e
+    ∂∆    (1 − u)(u2 + 2e2u − 2eu (1 + u))
+        =               √                      .
+    ∂u                 4 2u2 eu
+                                                                                          √
+The derivative above has only one zero, namely u = 1: From 0 < x21 ≤ x1 x2 = 1/ 2, we can
+deduce u ∈ (0, 2] by the substitution. For the right factor of the derivative’s numerator we
+then get u2 + 2e2u − 2eu (1 + u) > 2eu (eu − (1 + u)) > 0 from the Taylor series of eu . Hence
+checking ∆ at u’s boundaries and u = 1 is sufficient, where we get limu→0 ∆ ≈ −0.24 < 0
+(apply L’Hospital’s rule on (1 − eu )/u), ∆|u→1 ≈ −0.07 < 0 and ∆|u→2 ≈ −0.26 < 0.                 ◀
+
+
+
+                                                                                                         ICALP 2021
+61:16   On Greedily Packing Anchored Rectangles
+
+
+                                                                                          x(p)           x(p) + ε
+             y
+                                                       fk
+
+                                      qk−1                                                        fi+1
+                                                  fk−1
+                                                 ...
+
+                                                                ... ...
+                                                                                                              Zw
+                                 hA              ...                                          h
+                                 q1                                                                      Yw
+                                                       f1                                 p        X
+                                                            ε             u       x                fi           p0
+        (0, 0)                  q0                                            √               w
+                                                       f0                             
+                                                                                                           Yh
+                                                                                  2, 0
+                                q−1                                                                             Zh
+                                                   f−1                                                               t
+                                                 ...            ...
+                            A
+                                                 ...            ...
+                                                  f−k+1
+                                     q−k+1                                                        fi−1
+
+
+                                                       f−k
+
+
+           Figure 14 Left: Our construction. Right: A tile anchored at p ∈ Pε,k \{ (0, 0) }. For demonstration
+        purposes, the areas are not shown to scale; in truth X, Zw , Zh are significantly smaller than Yw , Yh .
+
+
+             With all previous lemmas combined, we are now ready to give the proof for Proposition 15.
+
+        Proof of Proposition 15. By Proposition 11 we already get the result for ρt > 1/2. It
+        remains to show the result for tiles with ρt ≤ 1/2. Lemma 25 allows us to limit ourselves to
+        certain tiles t: Tiles with Γt ⊆ ht (Lemma 30 yields the result), tiles with only a double step
+        (use Lemma 27), tiles with a step and a double step (use Lemma 28) and tiles that consist of
+        a step and a corner (use Lemma 29). As such the bound follows.
+             It remains to show the tightness. First note that for ρt = 1, the tightness is trivial (choose
+        an arbitrary tile t with |Γt | = 1). For ρ < 1, we show that ξs exactly corresponds to the tiles
+        tl (ρ) and th (ρ) shown in Figures 8 and 9.
+             Let t = tl (ρ) with Γt = { q1 , qp   2 } ⊂ ht , x1 = y2 . We have |t| = |t(0, x1 )| + |t(x1 , x2 )| =
+                     2
+        1 + (1 − x1 ), or rearranged x1 = 2 − 1/ρ and we get
+
+             |Ct |/|t| = |T (q1 , q2 )|/|t| = 1/2 · (1/x1 − x1 + 1/x1 − x1 )(x1 + x1 )/ 2 − x21 = 2 − 2ρ.
+                                                                                                 
+
+            Now let t = th (ρ). t consists of a slide (q1 , q2 ) = ((x1 , 1/x1 ), (1/x1 , x1 )), hence |t| =
+        |t(0, x1 )| + |t(x1 , x2 )| = 1 + ln((1/x1 )/x1 ) = 1 − 2 ln x1 , or rearranged, x1 = e(1−1/ρ)/2 . So
+                                                              e(1/ρ−1)/2
+                                            1 2    −2
+                                                                                              1
+             |Ct |/|t| = |H(q1 , q2 )|ρ = ρ   z −z      + ln z             = 1 − ρ(1 + sinh(1 − )).
+                                            4                   e(1−1/ρ)/2                     ρ
+             Note that t is only valid in the sense of generalized tiles. However, t can be arbitrarily well
+        approximated by a non-generalized tile with area and crown size arbitrarily close to |t| and
+        |Ct |, respectively, by densely placing an increasing number of points on the hyperbola. ◀
+
+
+         6       Upper Bound
+        To show Theorem 2, we construct a point set where TilePacking covers at most roughly
+        (1 − e−2 )/2. Our goal is to construct a tile t̂ at the origin where each maximal rectangle
+        has the same size A. We therefore place 2k + 1 points qi into U densely on a hyperbola hA
+        centered at the origin. The remaining tiles will have a density close to 1/2.
+C. Damerius, D. Kaaser, P. Kling, and F. Schneider                                                                61:17
+
+
+    Such tiles can be realized when they have two nearly equal-sized maximal rectangles with
+minimum overlap. Hence, we add for each point qi on hA a set of (almost) evenly spaced
+points pi,j with distance roughly ε between each other. To get two maximal rectangles
+of roughly same area for each such tile, the exact coordinates of the points pi,j must be
+chosen carefully, as the placement of such points influences the size of maximal rectangles for
+surrounding points. That is why we place the points on arcs of functions fi described by
+differential equations, where each fi depends on the two neighboring curves fi−1 and fi+1 .
+    We may only use finitely many points qi ∈ hA and pi,j ∈ fi . Both discretizations introduce
+an error term. Exploiting our choice of the functions fi and how they relate to each other,
+we can show that both error terms vanish as k goes to infinity and ε goes to zero.
+    To aid the analysis, we rotate U by π/4 around the origin, obtaining a rotated unit square
+Ur (see Figure 14). Here, TilePacking processes the points from right to left.
+    We start by formally defining the point set Pε,k and the functions fi . Let hA =
+{ (x, y) ∈ Ur | x2 − y 2 = 2A } be the right branch of a hyperbola centered at the origin
+that lives in Ur . First we define the upper part of the construction with non-negative y
+coordinates.
+√              For i = 0, . . . , k − 1, densely choose k points qi ∈ hA such that y(q
+                                                                                    √i ) ≥ 0 and
+  2A = x(q0 ) < x(q1 ) <√· · · < x(qk−1 ). Define further f0 (x) = 0 and fk (x) = 2 − x. For
+0 < i < k, define fi : [0, 2) → R using
+
+     fi (x(qi )) = y(qi ) and                                                                              (3)
+                    
+                    −1                            for x ≤ x(qi )
+          fi′ (x) =          f (x) − fi−1 (x)                                                              (4)
+                    1 − 2 i                       for x > x(qi ).
+                            fi+1 (x) − fi−1 (x)
+This means, each fi with 0 < i < k has slope −1 in [0, x(qi )), then it intersects hA at qi
+according to Equation (3), and then it has a slope depending on the current values of fi−1 , fi
+and fi+1 according to Equation (4). For the symmetric part with negative y coordinates we
+define q−i = (x(qi ), −y(qi )) and f−i (x) = −fi (x) for 0 < i ≤ k. Observe that, for 0 ≤ i < k,
+we get q−i ∈ hA and the f−i adhere to Equation (4). We are now ready to define the point
+set Pε,k for ε > 0 and k ∈ N as
+                        [n                                           √ o
+    Pε,k = { (0, 0) } ∪         jδ, fi (jδ) −k < i < k, x(qi ) ≤ jδ < 2 .
+                          i,j∈Z
+
+We require that qi ∈ Pε,k for all −k < i < k, so we choose ε such that it divides all x(qi ).
+                             √ Pε,k as shown above, we need that the fi are well-behaved:
+    In order to be able to choose
+They must be defined in [0, 2), and should only intersect hA at qi . Intuitively, this is true,
+since the differential equation drives each function fi to the midpoint of the functions fi−1
+and fi+1 . The proof is given in the following lemma.
+▶ Lemma 31. Each function fi intersects hA exactly once, namely at qi . Furthermore,           √ fi (x)
+is differentiable for all i = −k, . . . , k, and f−k (x) < · · · < fk (x) holds for all x ∈ [0, 2).4
+    We are now able to show Lemma 32: All tiles t ̸= t̂ have a density of close to 1/2, unless
+they are too close to the right corner of Ur , in which case their area is negligible. Afterwards,
+it only remains to optimize the parameter A, which is done in Theorem 33.
+▶ Lemma 32. Let u, k > 0 and Û = ( p∈Pε,k ,x(p)≤√2−u tp ) \ t̂. Then TilePacking covers
+                                        S
+
+|Û|/2 + ck (ε) area in Û for Pε,k where limε→0 ck (ε) = 0.
+
+4
+    Due to space limitations, the proof can only be found in the arXiv version of this paper (see [11]).
+
+
+
+
+                                                                                                                 ICALP 2021
+61:18   On Greedily Packing Anchored Rectangles
+
+                                                         √
+        Proof. Consider a point p ̸= (0, 0), x(p) ≤ 2 − u that lies on some curve fi and creates the
+        tile t. Assuming ε < u, there exists another point p′ = (x(p) + ε, fj (x(p) + ε)) ∈ P√        ε,k . By
+        Lemma 31, we can assume that fi+1 (x) − fi (x) > ε for all i = −k, . . . , k − 1, x ≤ 2 − u.
+        It follows from |fi′ | ≤ 1 that p′ is a lower staircase point of t. (For the same reason there
+        cannot be points further to the right that are lower staircase points.) The tile t is therefore
+        only restricted by the tiles from points with x-coordinate x(p′ ). Therefore, t has exactly two
+        maximal rectangles which TilePacking can choose from (see Figure 14).
+            TilePacking will choose the larger one of the two maximal rectangles (call them R1
+        and R2 ). Since there are multiple points with the same x-coordinate as p, any of them can
+        be processed first by TilePacking. This gives rise to areas Zw ,Zh that may be covered
+        by the tile t or by tiles directly above or below it (see Figure 14). W.l.o.g. we assume that
+        TilePacking covers both Zw and Zh when choosing the maximal rectangle for t (since
+        assuming this for all such tiles may only increase the covered area).
+                                                   √
+            Since all fi are differentiable in [0, 2), Taylor’s Theorem provides a function g(x) with
+        limx→0 g(x) = 0 such that fi (x+ε) = fi (x)+fi′ (x)·ε+g(ε)·ε. Denote by       √ w, h the dimensions
+                                                                                                  ′
+        of the rectangle
+                √          X = R1 ∩ R2 . Then √   w = (ε + fi (x(p) + ε) − fi (x(p)))/ 2 = (ε + f√i (x(p))ε +
+                               ′                                                ′
+        g(ε)ε)/ 2 = (1 + fi (x(p)) + g(ε))ε/ 2 and similarly h = (1 − fi (x(p)) − g(ε))ε/ 2.
+            From |fi′ | ≤ 1 for all fi , one can easily see that the rectangles X, Zw and Z  h have widths
+        and heights in O(ε), giving them a total area of W := X + Zw + Zh = O ε2 .
+            The tile √ t also contains two additional rectangles with   √ an area of Yw = w((fi (x(p)) −
+        fi−1 (x(p)))/ 2 − h) and Yh = h((fi+1 (x(p)) − fi (x(p)))/ 2 − w). Note that this also holds
+        if x(qi±1 ) > x(p), as we extended fi∓1 with lines of slope ±1. In this case the two rectangles
+        are restricted by qi∓1 ’s tile, respectively. Hence, when evaluating the functions at x(p):
+                                       √                  √
+           |Yw − Yh | = |w(fi − fi−1 )/ 2 − h(fi+1 − fi )/ 2|
+                       = |(1 + fi′ + g(ε))(ε(fi − fi−1 ))/2 − (1 − fi′ − g(ε))(ε(fi+1 − fi ))/2|
+                       = |(fi+1 (g(ε) + fi′ − 1) − fi−1 (g(ε) + fi′ + 1)) + 2fi | · ε/2
+                       = |(g(ε)(fi+1 − fi−1 ) + fi′ (fi+1 − fi−1 ) − fi−1 − fi+1 + 2fi )| · ε/2
+                                                                √
+                       = |g(ε)||fi+1 − fi−1 | · ε/2 ≤ |g(ε)| · ε 2,
+
+                    √ inequality√holds by Lemma 31, which gives us fi+1 (x) − fi−1 (x) ≤ fk (x) −
+        where the last
+        f−k (x) ≤ 2 2 for x ∈ [0, 2).
+            W.l.o.g. assume Yw > Yh . Then for the tile t with √ area |t| = W + Yw + Yh , TilePacking
+        covers at most W + Yw ≤ W + Yw /2 + (Yh + |g(ε)| · ε 2)/2 = |t|/2 + O(ε(|g(ε)| + ε)). As Û is
+        the union of such tiles and |Pε,k | = O(k/ε), we have a total coverage of |Û|/2+O(k(|g(ε)| + ε)).
+        This immediately gives us the function ck (ε) = O(k(|g(ε)| + ε)) with limε→0 ck (ε) = 0. ◀
+
+        ▶ Theorem 33. TilePacking has no better lower bound than (1 − e−2 )/2.
+
+        Proof. We analyze the area ρ covered by TilePacking on Pε,k for some fixed k and u as ε
+        approaches 0. The bound then follows from letting k go to ∞ and u go to 0.
+            By Lemma 32, TilePacking covers half of Û = ( p∈Pε,k ,x(p)≤√2−u tp ) \ t̂ (plus ck (ε)
+                                                                   S
+                                                                              2
+        that approaches 0 for ε → 0) for√ each u > 0. Additionally, at most u area is covered from all
+        tiles at points p with x(p) > 2 − u. TilePacking covers A + Q area in t̂, where an error
+        term Q is introduced because the qi points only provide an approximation of hA . Q can
+        easily be bounded by, e.g., Q ≤ maxi (x(qi ) − x(qi−1 )) + maxi (y(qi ) − y(qi−1 )) (the biggest
+        rectangular strip that fits between two consecutive qi points, in U). (Note that all qi lie in
+        Pε,k , so no additional error is introduced.) In total, using E = Q + ck (ε) + u2 ,
+C. Damerius, D. Kaaser, P. Kling, and F. Schneider                                                  61:19
+
+                                                                 Z 1
+                                                                    A
+     ρ ≤ A + |Û|/2 + E ≤ A + (1 − |t̂|)/2 + E ≤ A + (1 − (A +        dx))/2 + E
+                                                                  A x
+      ≤ (1 + A + A ln A)/2 + E.
+
+Minimizing the last term leads to ρ ≤ (1 − e−2 )/2 + E at A = e−2 . Q approaches 0 when
+k → ∞ since the qi lie densely on hA . Hence E approaches 0 for large k and small u, ε. ◀
+
+ 7      Conclusion
+We have shown that TilePacking’s worst-case coverage lies between 39% and 43.3%. Our
+lower bound substantially improves over the previous best lower bound of roughly 9.1% [12],
+while our upper bound is the first non-trivial upper bound for TilePacking. Note that
+both bounds easily transfer to the (arguably more natural) GreedyPacking algorithm [12].
+    Our analysis crucially relies on a novel charging scheme and on a new analysis framework.
+The latter reduces the task of proving good coverage to finding good lower bounds on the
+tiles’ charging ratios (see Section 3). The versatility of this approach shows in the fact that
+already a comparatively simple and short analysis yields a lower bound of 25%. Moreover,
+our approach provides structural insights: e.g., it allows us to characterize the exact shape
+of worst-case tiles as a function of their density (see Figures 8 and 9). We believe that our
+framework might help to analyze similar algorithms for (variants of) LLARP.
+    Concerning the remaining gap of size roughly 4 percentage points between our bounds,
+we believe that both bounds can be improved. For the lower bound, one shortcoming of our
+analysis is that tiles are analyzed individually, ignoring their local relationships in the unit
+square. Our lower bound basically predicts that the worst-case instance of TilePacking
+should consist solely of tiles whose shapes resemble Figure 8, which seems impossible.
+    Regarding the upper bound, there is still a noticeable gap between the maximal area that
+is coverable by the crowns (see Figure 4) and the area into which the crowns fall in our upper
+bound construction (see Figure 14). In particular, our construction uses only one tile (in
+the origin) with a large charging ratio, while all other tiles can be shown to have a charging
+ratio of roughly 1. Also note that our upper bound construction might be of interest with
+respect to the approximation variant of LLARP: an optimal solution should be able to fill
+most of the unit square, such that our results would imply a corresponding bound on the
+approximation ratio of TilePacking.
+    We leave as a major open question to find new algorithms for LLARP that might tackle
+the 50% conjecture. Note that our upper bound is tailored towards a specific greedy algorithm,
+so there is reasonable hope that other (possibly also greedy) algorithms might still achieve a
+coverage of 50%.
+
+
+       References
+ 1    Anna Adamaszek, Parinya Chalermsook, and Andreas Wiese. How to Tame Rectangles: Solving
+      Independent Set and Coloring of Rectangles via Shrinking. In Approximation, Randomization,
+      and Combinatorial Optimization. Algorithms and Techniques (APPROX/RANDOM), pages
+      43–60, 2015. doi:10.4230/LIPIcs.APPROX-RANDOM.2015.43.
+ 2    Anna Adamaszek and Andreas Wiese. Approximation Schemes for Maximum Weight Inde-
+      pendent Set of Rectangles. In 54th Annual IEEE Symposium on Foundations of Computer
+      Science (FOCS), pages 400–409, 2013. doi:10.1109/FOCS.2013.50.
+ 3    Anna Adamaszek and Andreas Wiese. A quasi-PTAS for the Two-Dimensional Geometric
+      Knapsack Problem. In Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on
+      Discrete Algorithms (SODA), pages 1491–1505, 2015. doi:10.1137/1.9781611973730.98.
+
+
+
+
+                                                                                                   ICALP 2021
+61:20   On Greedily Packing Anchored Rectangles
+
+
+         4   Hugo A. Akitaya, Matthew D. Jones, David Stalfa, and Csaba D. Tóth. Maximum Area
+             Axis-Aligned Square Packings. In MFCS, pages 77:1–77:15, 2018.
+         5   Antonios Antoniadis, Felix Biermeier, Andrés Cristi, Christoph Damerius, Ruben Hoeksma,
+             Dominik Kaaser, Peter Kling, and Lukas Nölke. On the Complexity of Anchored Rectangle
+             Packing. In 27th Annual European Symposium on Algorithms (ESA), pages 8:1–8:14, 2019.
+             doi:10.4230/LIPIcs.ESA.2019.8.
+         6   Kevin Balas, Adrian Dumitrescu, and Csaba D. Tóth. Anchored rectangle and square packings.
+             Discret. Optim., 26:131–162, 2017. doi:10.1016/j.disopt.2017.08.003.
+         7   Kevin Balas and Csaba D. Tóth. On the number of anchored rectangle packings for a planar
+             point set. Theor. Comput. Sci., 654:143–154, 2016. doi:10.1016/j.tcs.2016.03.007.
+         8   Vincent Bian. Special Configurations in Anchored Rectangle Packings, 2018. arXiv:1809.
+             01769.
+         9   Therese C. Biedl, Ahmad Biniaz, Anil Maheshwari, and Saeed Mehrabi. Packing boundary-
+             anchored rectangles and squares. Comput. Geom., 88:101610, 2020. doi:10.1016/j.comgeo.
+             2020.101610.
+        10   Timothy M. Chan and Sariel Har-Peled. Approximation Algorithms for Maximum In-
+             dependent Set of Pseudo-Disks. Discret. Comput. Geom., 48(2):373–392, 2012. doi:
+             10.1007/s00454-012-9417-5.
+        11   Christoph Damerius, Dominik Kaaser, Peter Kling, and Florian Schneider. On greedily packing
+             anchored rectangles. CoRR, abs/2102.08181, 2021. arXiv:2102.08181.
+        12   Adrian Dumitrescu and Csaba D. Tóth. Packing anchored rectangles. Comb., 35(1):39–61,
+             2015. doi:10.1007/s00493-015-3006-1.
+        13   Ruben Hoeksma and Matthew Maat. A better lower bound for Lower-Left Anchored Rectangle
+             Packing. CoRR, abs/2102.05747, 2021. arXiv:2102.05747.
+        14   IBM. Ponder This Challenge: Puzzle for June 2004, 2004. URL: https://www.research.ibm.
+             com/haifa/ponderthis/challenges/June2004.html.
+        15   Klaus Jansen and Malin Rau. Improved approximation for two dimensional strip packing with
+             polynomial bounded width. Theor. Comput. Sci., 789:34–49, 2019. doi:10.1016/j.tcs.2019.
+             04.002.
+        16   Konstantinos G. Kakoulis and Ioannis G. Tollis. Labeling Algorithms. In Roberto Tamassia,
+             editor, Handbook on Graph Drawing and Visualization, pages 489–515. Chapman and Hall/CRC,
+             2013.
+        17   Arturo I. Merino and Andreas Wiese. On the Two-Dimensional Knapsack Problem for Convex
+             Polygons. In 47th International Colloquium on Automata, Languages, and Programming,
+             (ICALP), pages 84:1–84:16, 2020. doi:10.4230/LIPIcs.ICALP.2020.84.
+        18   William Thomas Tutte, editor. Recent Progress in Combinatorics: Proceedings of the 3rd
+             Waterloo Conference on Combinatorics. Academic Press, 1969.
+        19   Peter Winkler. Packing Rectangles. Mathematical Mind-Benders, pages 133–134, 2007.
+        20   Peter Winkler. Puzzled: Rectangles Galore. Commun. ACM, 53(11):112, 2010. doi:10.1145/
+             1839676.1839700.
+        21   Peter Winkler. Puzzled: Solutions and Sources. Commun. ACM, 53(9):110, 2010. doi:
+             10.1145/1810891.1810917.
+
