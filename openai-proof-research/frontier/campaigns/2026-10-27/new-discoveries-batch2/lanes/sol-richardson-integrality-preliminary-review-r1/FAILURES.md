@@ -1,0 +1,6 @@
+# Preserved failures and limits
+
+1. The initial orientation call used `pwd; rg --files -g AGENTS.md -g ledger.json -g prior-campaign-context.json -g helper_guard.py` outside the required helper guard. This was a read-only command-discipline violation; it produced a truncated broad file inventory and made no edits. It is preserved here, not retroactively represented as compliant. Subsequent Python, retrieval, edit/hash helper commands use the exact requested guard and environment; native bounded rule/guard reads and apply_patch are the allowed exceptions. No caps were raised.
+2. Several tool displays truncated combined outputs, including administration and primary-body extracts. Focused reads then supplied the actual Richardson statement and context, Berg theorem/proof, and Guo–Zeng product/sum bodies. No unread whole-paper audit is claimed.
+3. Predecessor failures and denied routes remain in the frozen FAILURES.md/http.jsonl records. No retry of GitHub API/raw/codeload/diff/patch, ScienceDirect or Google challenge routes occurred here. No parked historical search was reopened.
+4. No exact mathematical check failed. Finite checks are not full proofs. No current complete registry clearance, exhaustive historical search, universal literature priority, Lean success, or manuscript completion is claimed.
