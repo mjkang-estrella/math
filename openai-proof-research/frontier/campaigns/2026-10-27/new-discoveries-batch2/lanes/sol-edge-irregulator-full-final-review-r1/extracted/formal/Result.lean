@@ -1,0 +1,23 @@
+import Charges
+import Refutation
+import Upper
+set_option autoImplicit false
+set_option warningAsError true
+namespace EdgeIrregulator
+noncomputable section
+attribute [local instance] Classical.propDecidable
+theorem minimum_exact (t : ℕ) (ht : 2 ≤ t) : minimum (graph t) = 3*t :=
+  Nat.le_antisymm (Upper.minimum_upper t ht) (minimum_lower t)
+theorem fin_minimum_exact (t : ℕ) (ht : 2 ≤ t) : minimum (finGraph t) = 3*t := by
+  rw [← minimum_iso (finIso t)]
+  exact minimum_exact t ht
+theorem main : (∀ t : ℕ, 2 ≤ t →
+    (graph t).Connected ∧ Fintype.card (Vertex t) = 6*t+1 ∧
+    (graph t).edgeFinset.card = 8*t ∧ minimum (graph t) = 3*t ∧
+    (finGraph t).Connected ∧ minimum (finGraph t) = 3*t) ∧ ¬ SourceClaim := by
+  refine ⟨?_, source_refutation⟩
+  intro t ht
+  exact ⟨graph_connected t, vertex_card t, edge_card t, minimum_exact t ht,
+    fin_connected t, fin_minimum_exact t ht⟩
+end
+end EdgeIrregulator
