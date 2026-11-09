@@ -1,0 +1,546 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+TYPE <class 'str'>
+tions for such compositions in the case of trees. We answer a question due to Corteel, Savage, and Wilf regarding super convex compositions, which we describe as compositions constrained by Laplacian minors for cycles; we extend this solution to the study of compositions constrained by Laplacian minors of leafed cycles. Connections are established and conjectured between compositions constrained by Laplacian minors of leafed cycles of prime length and algebraic/combinatorial properties of reflexive simplices.--------------------------------------------------------------------------------
+2018 IEEE 59th Annual Symposium on Foundations of Computer Science (https://ieee-focs.org/FOCS-2018-Papers/pdfs/59f194.pdf)
+citeturn2search13 [wordlim: 200] Published: 6 months ago; Shachar Lovett ... Conjecture 1.1 (GM-MDS conjecture [6]): Let ... there exists a k × n MDS matrix A over F with Ai,j = 0 ... Theorem 1.2: Conjecture 1.1 is correct. ... its zero/nonzero pattern by a set system S1, . . . , Sk ⊂[n],
+2018 IEEE 59th Annual Symposium on Foundations of Computer Science
+MDS matrices over small ﬁelds: A proof of the GM-MDS conjecture
+Shachar Lovett
+Computer Science and Engineering
+University of California, San Diego
+La Jolla, CA, USA
+slovett@ucsd.edu
+
+reason is that the number of maximal k × k minors of A is
+n
+k
+
+n
+, and the MDS condition implies that the determinants of
+these minors are not identically zero. So, each minor has a
+probability of |F|−1 to be singular, and by the union bound,
+if |F| >
+k
+
+n−1
+, then with positive probability all minors are
+nonsingular. This bound was improved to |F| >
+k−1
+in
+[5].
+Abstract—An MDS matrix is a matrix whose minors all
+have full rank
+s of leafed cycles of prime length and algebraic/combinatorial properties of reflexive simplices.--------------------------------------------------------------------------------
+2018 IEEE 59th Annual Symposium on Foundations of Computer Science (https://ieee-focs.org/FOCS-2018-Papers/pdfs/59f194.pdf)
+citeturn2search13 [wordlim: 200] Published: 6 months ago; Shachar Lovett ... Conjecture 1.1 (GM-MDS conjecture [6]): Let ... there exists a k × n MDS matrix A over F with Ai,j = 0 ... Theorem 1.2: Conjecture 1.1 is correct. ... its zero/nonzero pattern by a set system S1, . . . , Sk ⊂[n],
+2018 IEEE 59th Annual Symposium on Foundations of Computer Science
+MDS matrices over small ﬁelds: A proof of the GM-MDS conjecture
+Shachar Lovett
+Computer Science and Engineering
+University of California, San Diego
+La Jolla, CA, USA
+slovett@ucsd.edu
+
+reason is that the number of maximal k × k minors of A is
+n
+k
+
+n
+, and the MDS condition implies that the determinants of
+these minors are not identically zero. So, each minor has a
+probability of |F|−1 to be singular, and by the union bound,
+if |F| >
+k
+
+n−1
+, then with positive probability all minors are
+nonsingular. This bound was improved to |F| >
+k−1
+in
+[5].
+Abstract—An MDS matrix is a matrix whose minors all
+have full rank. A question arising in coding theory is, what
+zero patterns can MDS matrices have. There is a natural
+combinatorial necessary condition (called the MDS condition)
+which is necessary over any ﬁeld, and sufﬁcient over very
+large ﬁelds by a probabilistic argument. Dau et al. (ISIT 2014)
+conjectured that the MDS condition is sufﬁcient over small
+------------------------------------------------------------------------
+odes Over Small Fields With Constrained Generator Matrices (https://doi.org/10.1109/TIT.2019.2897767)
+citeturn2search1 [wordlim: 200] Published: 7.8 years ago; Crawled: 2 months ago; We give constructions of some special cases of [n, k] Reed-Solomon codes over finite fields of size at least n and n + 1 whose generator matrices have constrained support... ... Furthermore, we consider a generalization of the GM-MDS conjecture proposed by Lovett in 2018. ... a generator matrix with prescribed zero pattern;
+
+# Reed–Solomon Codes Over Small Fields With Constrained Generator Matrices
+
+Publisher: IEEE
+
+[Button: Cite This]
+
+Abstract
+
+## Document Sections
+
+  * I.
+
+Introduction
+
+  * II.
+
+Main Result and Application
+
+  * III.
+
+A Generalization of the GM-MDS Conjecture
+
+  * IV.
+
+Counterexamples to Conjecture 1
+
+  * V.
+
+The Special case of Conjecture 2 When l=2$l=2$
+
+Authors
+
+References
+
+Citations
+
+Keywords
+
+Metrics
+
+More Like This
+
+## Abstract:
+
+We give constructions of some special cases of [n, k] Reed-Solomon codes over finite fields of size at least n and n + 1 whose generator matrices have constrained support...Show More
+
+## Metadata
+
+## Abstract:
+
+We give constructions of some special cases of [n, k] Reed-Solomon codes over finite fields of size at least n and n + 1 whose generator matrices have constrained support. Furthermore, we consider a generalization of the GM-MDS conjecture proposed by Lovett in 2018. We show that Lovett's conjecture is false in general and we specify when the conjecture is true.
+
+Published in: IEEE Transactions on Information Theory ( Volume: 65, Issue: 8, August 2019)
+
+Page(s): 4764 - 4770
+
+Date of Publication: 06 February 2019
+
+ISSN Information:
+
+D
+bstract:
+
+We give constructions of some special cases of [n, k] Reed-Solomon codes over finite fields of size at least n and n + 1 whose generator matrices have constrained support...Show More
+
+## Metadata
+
+## Abstract:
+
+We give constructions of some special cases of [n, k] Reed-Solomon codes over finite fields of size at least n and n + 1 whose generator matrices have constrained support. Furthermore, we consider a generalization of the GM-MDS conjecture proposed by Lovett in 2018. We show that Lovett's conjecture is false in general and we specify when the conjecture is true.
+
+Published in: IEEE Transactions on Information Theory ( Volume: 65, Issue: 8, August 2019)
+
+Page(s): 4764 - 4770
+
+Date of Publication: 06 February 2019
+
+ISSN Information:
+
+DOI: 10.1109/TIT.2019.2897767
+
+
+### I. Introduction
+
+A linear code of length , dimension , distance , and alphabet size is called an MDS code [1]. For certain applications (see [2]–[6]), one would like to construct an MDS code having: 1)
+
+a generator matrix with prescribed zero pattern;
+
+2)
+
+a small alphabet size (i.e., close to ).
+
+[Button: Sign in to Continue Reading ]--------------------------------------------------------------------------------
+Electronic Colloquium on Computational Complexity, Report No. 47 (2018) (https://eccc.weizmann.ac.il/report/2018/047/download)
+citeturn2search17 [wordlim: 200] Published: 6 months ago; Shachar Lovett ... of MDS codes, is when does there exist a k × n matrix G over a ﬁnite ﬁeld F, such that all ... random matrix G with Gi,j = 0 if j ∈Si, and Gi,j ∈F uniformly for all other entries, and ... Conjecture 1.1 (GM-MDS conjecture [DSY14]).
+Electronic Colloquium on Computational Complexity
+13992_Disjoint_pairs_in_set_systems_and_combinatorics_of_low_rank_matrices)
+citeturn2search11 [wordlim: 200] Published: 2.0 years ago; Crawled: 2 months ago; combinatorial formulation asks to show that each binary matrix M of size n×n and rank r contains an
+
+all-zero or all-one submatrix of size at least 2−(log r)O(1) n. ... Furthermore, Lovett [22] notes that Conjecture 1.8, if true, would imply improved bounds for
+--------------------------------------------------------------------------------
+Reed-Solomon codes over small fields with constrained generator matrices (https://arxiv.org/abs/1808.06306)
+citeturn2academia19 [wordlim: 200] Published: 8.2 years ago; We give constructions of some special cases of $[n,k]$ Reed-Solomon codes over finite fields of size at least $n$ and $n+1$ whose generator matrices have constrained support. Furthermore, we consider a generalisation of the GM-MDS conjecture proposed by Lovett in 2018.
+--------------------------------------------------------------------------------
+Most binary matrices have no small defining set (https://arxiv.org/abs/1908.01267)
+citeturn2academia20 [wordlim: 200] Published: 7.3 years ago; Title: Most binary matrices have no small defining set ... Consider a matrix $M$ chosen uniformly at random from a class of $m \times n$ matrices of zeros and ones with prescribed row and column sums. ... Our results generalise a theorem of Cavenagh and Ramadurai, who examined the case when $\lambda=1/2$ and $n=m=2^k$ for an integer $k$.
+--------------------------------------------------------------------------------
+How many m x n matrices with entries of 0/1 have each row and column sum to an odd integer? (https://www.
+one submatrix of size at least 2−(log r)O(1) n. ... Furthermore, Lovett [22] notes that Conjecture 1.8, if true, would imply improved bounds for
+--------------------------------------------------------------------------------
+Reed-Solomon codes over small fields with constrained generator matrices (https://arxiv.org/abs/1808.06306)
+citeturn2academia19 [wordlim: 200] Published: 8.2 years ago; We give constructions of some special cases of $[n,k]$ Reed-Solomon codes over finite fields of size at least $n$ and $n+1$ whose generator matrices have constrained support. Furthermore, we consider a generalisation of the GM-MDS conjecture proposed by Lovett in 2018.
+--------------------------------------------------------------------------------
+Most binary matrices have no small defining set (https://arxiv.org/abs/1908.01267)
+citeturn2academia20 [wordlim: 200] Published: 7.3 years ago; Title: Most binary matrices have no small defining set ... Consider a matrix $M$ chosen uniformly at random from a class of $m \times n$ matrices of zeros and ones with prescribed row and column sums. ... Our results generalise a theorem of Cavenagh and Ramadurai, who examined the case when $\lambda=1/2$ and $n=m=2^k$ for an integer $k$.
+--------------------------------------------------------------------------------
+How many m x n matrices with entries of 0/1 have each row and column sum to an odd integer? (https://www.reddit.com/r/mathriddles/comments/d64z3d)
+citeturn2reddit21 [wordlim: 200] Published: 7.1 years ago; Crawled: 2.8 years ago; A column whose entries are chosen at random has a 1/2 probability of having odd weight (the proof is left to the reader, I've always wanted to say tha
+how that many concepts and invariants in coding theory can be carried on directly to combinatroids, say, Tutte polynomial, characteristic polynomial, MacWilliams identity, extended Hamming polynomial, and the $r$-th generalized Hamming polynomial; this last one, at least conjecturelly, guided by the work of Jurrius and Pellikaan for linear codes.
+Title: Hamming Polynomial of a Demimatroid
+Authors: Jose Martinez-Bernal, Miguel A. Valencia-Bucio, Rafael H. Villarreal
+Date: Tue Jul 23 01:02:46 2019
+
+Following Britz, Johnsen, Mayhew and Shiromoto, we consider demi\-ma\-troids as a(nother) natural generalization of matroids. As they have shown, demi\-ma\-troids are the appropriate combinatorial objects for studying Wei's duality. Our results here apport further evidence about the trueness of that observation. We define the Hamming polynomial of a demimatroid $M$, denoted by $W(x,y,t)$, as a generalization of the extended Hamming weight enumerator of a matroid. The polynomial $W(x,y,t)$ is a specialization of the Tutte polynomial of $M$, and actually is equivalent to it. Guided by work of Johnsen, Roksvold and Verdure for matroids, we prove that Betti numbers of a demimatroid and its elongations determine the Hamming polynomial. Our results may be applied to simplicial complexes since in a canonical way they can be viewed as demimatroids. Furthermore, following work of Brylawski and Gordon, we show how demimatroids may be generalized one step further, to combinatroids. A combinatroid, or Brylawski structure, is an integer valued function $\rho$, defined over the power set of a finite ground set, satisfying the only condition $\rho(\emptyset)=0$. Even in this extreme generality,
+e work of Jurrius and Pellikaan for linear codes.
+Title: Hamming Polynomial of a Demimatroid
+Authors: Jose Martinez-Bernal, Miguel A. Valencia-Bucio, Rafael H. Villarreal
+Date: Tue Jul 23 01:02:46 2019
+
+Following Britz, Johnsen, Mayhew and Shiromoto, we consider demi\-ma\-troids as a(nother) natural generalization of matroids. As they have shown, demi\-ma\-troids are the appropriate combinatorial objects for studying Wei's duality. Our results here apport further evidence about the trueness of that observation. We define the Hamming polynomial of a demimatroid $M$, denoted by $W(x,y,t)$, as a generalization of the extended Hamming weight enumerator of a matroid. The polynomial $W(x,y,t)$ is a specialization of the Tutte polynomial of $M$, and actually is equivalent to it. Guided by work of Johnsen, Roksvold and Verdure for matroids, we prove that Betti numbers of a demimatroid and its elongations determine the Hamming polynomial. Our results may be applied to simplicial complexes since in a canonical way they can be viewed as demimatroids. Furthermore, following work of Brylawski and Gordon, we show how demimatroids may be generalized one step further, to combinatroids. A combinatroid, or Brylawski structure, is an integer valued function $\rho$, defined over the power set of a finite ground set, satisfying the only condition $\rho(\emptyset)=0$. Even in this extreme generality, we will show that many concepts and invariants in coding theory can be carried on directly to combinatroids, say, Tutte polynomial, characteristic polynomial, MacWilliams identity, extended Hamming polynomial, and the $r$-th generalized Hamming polynomial; this last one, at least conjecturelly, gu
+m is a fundamental result in combinatorics, and the corresponding sunflower conjecture is a central open problem. --------------------------------------------------------------------------------
+Reed–Solomon Codes Over Small Fields With Constrained Generator Matrices (https://doi.org/10.1109/TIT.2019.2897767)
+citeturn2search1 [wordlim: 200] Published: 7.8 years ago; Crawled: 2 months ago; We give constructions of some special cases of [n, k] Reed-Solomon codes over finite fields of size at least n and n + 1 whose generator matrices have constrained support... ... Furthermore, we consider a generalization of the GM-MDS conjecture proposed by Lovett in 2018. ... a generator matrix with prescribed zero pattern;
+
+# Reed–Solomon Codes Over Small Fields With Constrained Generator Matrices
+
+Publisher: IEEE
+
+[Button: Cite This]
+
+Abstract
+
+## Document Sections
+
+  * I.
+
+Introduction
+
+  * II.
+
+Main Result and Application
+
+  * III.
+
+A Generalization of the GM-MDS Conjecture
+
+  * IV.
+
+Counterexamples to Conjecture 1
+
+  * V.
+
+The Special case of Conjecture 2 When l=2$l=2$
+
+Authors
+
+References
+
+Citations
+
+Keywords
+
+Metrics
+
+More Like This
+
+## Abstract:
+
+We give constructions of some special cases of [n, k] Reed-Solomon codes over finite fields of size at least n and n + 1 whose generator matrices have constrained support...Show More
+
+## Metadata
+
+## Abstract:
+
+We give constructions of some special cases of [n, k] Reed-Solomon codes over finite fields of size at least n and n + 1 whose generator matrices have constrained support. Furthermore, we consider a generalization of the GM-MDS conjecture proposed by Lovett in 2018. We show that Lovett's conjecture is false in general and we sp
+onjecture
+
+  * IV.
+
+Counterexamples to Conjecture 1
+
+  * V.
+
+The Special case of Conjecture 2 When l=2$l=2$
+
+Authors
+
+References
+
+Citations
+
+Keywords
+
+Metrics
+
+More Like This
+
+## Abstract:
+
+We give constructions of some special cases of [n, k] Reed-Solomon codes over finite fields of size at least n and n + 1 whose generator matrices have constrained support...Show More
+
+## Metadata
+
+## Abstract:
+
+We give constructions of some special cases of [n, k] Reed-Solomon codes over finite fields of size at least n and n + 1 whose generator matrices have constrained support. Furthermore, we consider a generalization of the GM-MDS conjecture proposed by Lovett in 2018. We show that Lovett's conjecture is false in general and we specify when the conjecture is true.
+
+Published in: IEEE Transactions on Information Theory ( Volume: 65, Issue: 8, August 2019)
+
+Page(s): 4764 - 4770
+
+Date of Publication: 06 February 2019
+
+ISSN Information:
+
+DOI: 10.1109/TIT.2019.2897767
+
+
+### I. Introduction
+
+A linear code of length , dimension , distance , and alphabet size is called an MDS code [1]. For certain applications (see [2]–[6]), one would like to construct an MDS code having: 1)
+
+a generator matrix with prescribed zero pattern;
+
+2)
+
+a small alphabet size (i.e., close to ).
+
+[Button: Sign in to Continue Reading ]--------------------------------------------------------------------------------
+Electronic Colloquium on Computational Complexity, Report No. 47 (2018) (https://eccc.weizmann.ac.il/report/2018/047/download)
+citeturn2search17 [wordlim: 200] Published: 6 months ago; Shachar Lovett ... of MDS codes, is when does there exist a k × n matrix G over a ﬁnite ﬁeld F, such that all ... random
+tended Hamming polynomial, and the $r$-th generalized Hamming polynomial; this last one, at least conjecturelly, guided by the work of Jurrius and Pellikaan for linear codes.
+
+## Hamming Polynomial of a Demimatroid
+
+Jose Martinez-Bernal, Miguel A. Valencia-Bucio, Rafael H. Villarreal
+
+Published: 2019-07-23
+
+Note:
+
+DOI: 10.1007/s40863-022-00339-3
+
+betti number characteristic polynomial ground set matroid natural simplicial complex tutte polynomial polynomial
+
+# • BIB • PDF • ARXIV •
+
+### Abstract
+
+Following Britz, Johnsen, Mayhew and Shiromoto, we consider demi\-ma\-troids as a(nother) natural generalization of matroids. As they have shown, demi\-ma\-troids are the appropriate combinatorial objects for studying Wei's duality. Our results here apport further evidence about the trueness of that observation. We define the Hamming polynomial of a demimatroid $M$, denoted by $W(x,y,t)$, as a generalization of the extended Hamming weight enumerator of a matroid. The polynomial $W(x,y,t)$ is a specialization of the Tutte polynomial of $M$, and actually is equivalent to it. --------------------------------------------------------------------------------
+Electronic Colloquium on Computational Complexity, Revision 1 of Report No. 47 (2018) (https://eccc.weizmann.ac.il/report/2018/047/revision/1/download/)
+citeturn2search18 [wordlim: 200] Published: 8.6 years ago; let S1, . . . , Sk ⊂[n] be a set system which satisﬁes the MDS condition. ... the MDS condition, then there exists an MDS matrix with this zero pattern over any ﬁeld of ... Conjecture 1.1 (GM-MDS conjecture [DSY14]).
+the MDS condition on the set system:
+\
+|I| +
+i∈I
+Si
+ ≤k
+∀I ⊆[k], I nonempty.
+(⋆)
+
+It is known t
+19-07-23
+
+Note:
+
+DOI: 10.1007/s40863-022-00339-3
+
+betti number characteristic polynomial ground set matroid natural simplicial complex tutte polynomial polynomial
+
+# • BIB • PDF • ARXIV •
+
+### Abstract
+
+Following Britz, Johnsen, Mayhew and Shiromoto, we consider demi\-ma\-troids as a(nother) natural generalization of matroids. As they have shown, demi\-ma\-troids are the appropriate combinatorial objects for studying Wei's duality. Our results here apport further evidence about the trueness of that observation. We define the Hamming polynomial of a demimatroid $M$, denoted by $W(x,y,t)$, as a generalization of the extended Hamming weight enumerator of a matroid. The polynomial $W(x,y,t)$ is a specialization of the Tutte polynomial of $M$, and actually is equivalent to it. --------------------------------------------------------------------------------
+Electronic Colloquium on Computational Complexity, Revision 1 of Report No. 47 (2018) (https://eccc.weizmann.ac.il/report/2018/047/revision/1/download/)
+citeturn2search18 [wordlim: 200] Published: 8.6 years ago; let S1, . . . , Sk ⊂[n] be a set system which satisﬁes the MDS condition. ... the MDS condition, then there exists an MDS matrix with this zero pattern over any ﬁeld of ... Conjecture 1.1 (GM-MDS conjecture [DSY14]).
+the MDS condition on the set system:
+\
+|I| +
+i∈I
+Si
+ ≤k
+∀I ⊆[k], I nonempty.
+(⋆)
+
+It is known that the MDS condition is also suﬃcient for the existence of MDS matrices
+with zero pattern given by the set system, if the underlying ﬁeld is large enough. Concretely,
+let S1, . . . , Sk ⊂[n] be a set system which satisﬁes the MDS condition.
+Let F be the
+underlying ﬁeld, and assume that |F| >
+ n
+k
+
+accepted57-scopes.json <class 'dict'> ['utc', 'kind', 'accepted_count', 'prior39_not_audited_here']
+prior39-scopes.json <class 'dict'> ['kind', 'prior30', 'next9', 'count']
