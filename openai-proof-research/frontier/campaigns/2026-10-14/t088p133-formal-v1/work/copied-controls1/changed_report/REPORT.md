@@ -1,0 +1,22 @@
+# T088P133 scoped Lean implementation — round 1
+
+Implementation complete for the universal deterministic two-bracket algebra in original Proposition B. Submitted to the parent for independent review; no gate, acceptance or count is assigned. Publication/uploads/submissions/contacts/browser work remain STOPPED. This is not a full formalization of the original geometric theorem.
+
+The main theorem, `T088P133.rational_mixture_lt_one`, states for all real α,β,p,q,d,P,N: α,β>0, α+β=2, 0<p<1, q=1−p, d≥0, P,N>0, 2dp²<P and 2dq²≤N imply
+
+    (1+d)*(p*α/(α+P/p)+q*β/(β+N/q)) < 1.
+
+The non-strict version and p=1/p=0 one-sided rational bounds also compile. The proof derives positive A=P/p,B=N/q and both moment equivalences, proves universal polynomial bracket identities, and obtains strictness from A−2dp>0 with αB>0. The square term d(2p−α)² establishes the first bracket sign, including d=0, without division by d or an assumed slack. See packet/public/COVERAGE.md for every declaration's use-site map and exact exclusions.
+
+Fresh compilation checks 21 support declarations (3 definitions, 18 theorems) and 20 control theorems, then elaborates all their types and prints all axiom dependencies. All three build commands exit zero without warnings. Every declaration depends only on propext, Classical.choice, Quot.sound; no proof placeholders/custom axioms/unsafe/native_decide are present. The pinned compiler is Lean4.34.1, mathlib d13f23b723b8a846827a245b89c10fc7d3f11612; all auxiliary revisions are pinned. Only this package's sources were rebuilt, against existing trusted read-only compiled dependencies. No clean-source mathlib rebuild or complete binary-cache authentication is claimed.
+
+Nonvacuity: the asymmetric strict example equals 12/13 with the second moment at equality; d=0 gives 1/3. Both non-strict moments can yield exactly 1. Lean countermodels retain the other hypotheses and show failure upon removing either moment, α or β positivity, sum normalization, weight normalization or p<1; exact values are 13/10,17/15,24/5,14/3,7/6,6/5,7/3 respectively. Endpoint controls include d=0, a=2 and zero-moment equality boundaries, and failure without its moment bound. These are algebraic controls, not probabilistic/geometric realizations; not every hypothesis is claimed individually necessary.
+
+All supplied author/reviewer detached anchors and all 24 author/48 reviewer manifest payloads authenticate. The preservation inventory records 940 original entries, including complete author and independent-review layouts and used parent/context/adaptation files. Exact bytes/modes/layout/link counts are checked read-only against this inventory. The original proof/sketch/certificate and conflicting author freeze/seal/drafting timestamp provenance remain unchanged; no mathematical author repair was required. Correctness PASS_FULL_T088P133 and separate bounded-search SUBSTANTIAL are prior adopted decisions, not this implementation's review.
+
+The artifact verifier requires independent FINAL/MANIFEST/outsideREPORT SHA256 anchors and checks exact sealed packet paths, bytes, modes and link counts. Its copy-only controls cover clean acceptance plus source alteration, missing/extra payload, mode alteration, symlink, hardlink, three anchor alterations and forged local resealing, with precise expected rejection reasons. These are integrity controls only. Build caches, scratch, copied control bodies, archive/extraction and final replay logs live in excluded work/. The portable set is exactly FINAL.json, REPORT.md and packet/; no private source/history body or compiled dependency is included. Full commands, trust requirements, source hashes, compiled types and axiom audit are in packet/public/README.md, PROVENANCE.md and validation/.
+
+Unformalized: actual-facet geometry; mixed volumes/attainment/coarea/Gamma; distributions/log-concavity/HNBUE; the ten-pattern coefficient certificate and its probabilistic interpretation; continuity/zero/repeated-knot assembly; simplex equality; the final projection-body theorem. No best auxiliary constant or all-dimensional threshold is asserted. No known unresolved implementation/compilation issue remains; independent review and later campaign requirements remain outstanding. Parent must independently inspect all support before acceptance.
+
+Copyright 2026 Myeongjin Kang (no affiliation). Original prose CC BY4.0; new original code/Lean MIT; adapted code notices retained.
+

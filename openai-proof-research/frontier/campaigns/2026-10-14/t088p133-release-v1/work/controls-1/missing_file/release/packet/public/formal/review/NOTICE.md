@@ -1,0 +1,3 @@
+# Rights and provenance
+
+Copyright 2026 Myeongjin Kang, no affiliation. Original review prose is licensed CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); attribute the author and identify changes. Original Lean/Python review code is MIT under LICENSE-CODE.txt. verify.py and integrity_controls.py adapt the same author's MIT scripts from t088p133-formal-v1/packet/public, retaining their notices. LICENSE-CODE.txt is retained verbatim from that package. No private/upstream/history body is included or relicensed. Hash metadata is not evidence of semantic body reading. Trusted Lean/mathlib/auxiliary dependencies retain their own rights. No external publication is performed.

@@ -1,0 +1,3 @@
+# Licensing notice
+
+Myeongjin Kang, no affiliation, 2026. Original prose in this implementation package is licensed under Creative Commons Attribution 4.0 International (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/ . Attribute the author and identify modifications. Original Lean/Python code is MIT; see LICENSE-CODE.txt. The adapted rebuild script retains its copyright/license notice and source attribution in PROVENANCE.md. The original paper/prose remains CC BY 4.0. Trusted dependencies retain their own licenses. No private upstream, primary-literature or history body is included or relicensed. Hash inventories do not transfer rights in the bodies they identify. No publication, upload or submission is performed by this local package.

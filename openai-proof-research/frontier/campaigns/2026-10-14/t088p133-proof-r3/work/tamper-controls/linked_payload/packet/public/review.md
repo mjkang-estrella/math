@@ -1,0 +1,1 @@
+/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/t088p133-proof-r3/work/tamper-controls/linked_payload/packet/public/verdict.json

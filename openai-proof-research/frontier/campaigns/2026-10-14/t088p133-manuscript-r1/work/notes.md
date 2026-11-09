@@ -1,0 +1,15 @@
+# T088P133 manuscript r1 durable notes
+
+Implementation only; original theorem unchanged; formal integration pending; no acceptance.
+All writes confined here. PDF skill marker ran once successfully before authoring.
+Initial broad filename-only AGENTS discovery did not open excluded active root contents. Large catalogue/ledger outputs were truncated; no claim to read their full unrelated contents. Acceptance rules at start and entry088 read separately.
+Contribution private bodies actually live under private/, not packet/private/; exact path in authenticated manifest.
+Authenticated supplied author/r3 anchors and adopted contribution anchors and all three manifests. Original roots snapshotted after initial read-only inspection and before substantive implementation. Initial snapshot rejected an existing symlink in reviewer copied tamper-control fixture; corrected snapshot records symlink targets without following. No original modified.
+
+## Completed draft and QA
+17-page manuscript drafted; all248 nonzero coefficient terms displayed. Original author and independent recurrence/witness reproduced on copies, all5 polynomials match for10 patterns; original witness bytes identical. Two-bracket symbolic identity zero. Exact n5 corner rational ratio exceeds1 separately from negative-coefficient control. Float geometry40 examples diagnostic only.
+Final Tectonic0.17.0 build has0 overfull/underfull/undefined/citation/hyperref warnings. All17 pages inspected; final changed12-16 reinspected, others byte-identical. Identical PDF reproduced with fixed epoch1792454400 and same populated local cache. pdftotext bbox XML had4 illegal control characters; removed for parsing only; raw extraction retained. This does not alter PDF or replace visual review. Initial read-only Tectonic cache-path query named pre-existing global path (directory timestamps Oct9), all compilation caches XDG-routed inside assigned root.
+
+## Final preservation and integrity controls
+All1046 snapshotted original entries unchanged (three whole completed roots plus five parent files), including bytes/path/mode/hardlinkcounts/symlinktargets. Eleven supplied/adopted anchor files reauthenticated; seventeen retained original source bodies rehashed; four copied support artifacts match original bytes. Twelve separately sealed copied-fixture controls all produced expected exits, with verifier before/after fixture snapshots identical and actual packet unchanged. These exercise artifact integrity only. The fixture payload preceded final metadata additions; final actual-root verification is recorded separately after sealing. No syscall trace or independent review claimed.
+Public source-reading metadata added without source bodies. Final public payload is exact-manifest bound; private evidence and caches are separate. Implementation report is outside packet and separately hash-bound. Formal integration, independent manuscript review and all acceptance/release gates remain pending; no active formal task read or polled.
