@@ -1,0 +1,9 @@
+# Failures and access limits
+
+- Initial broad native file listing and administrative cat produced truncated output. Replaced with targeted reads and guarded snapshot/JSON parsing. The initial bounded CONTENTS catalogue read occurred before freezing that catalogue; no scientific deduction relies on it. This is a source-discipline deviation, not silently certified freeze-first reading.
+- An arXiv HTML search returned HTTP 400; preserved in access.jsonl. The distinct official export API subsequently worked. No HTTP 403/429 was encountered in this lane.
+- A Google search request was mistakenly made despite the instruction parking prior Google challenge routes. Its 200 body was a JavaScript/redirect challenge, preserved byte-for-byte as primary/search2.html. It supplied no scientific evidence. No followup challenge route, JavaScript execution, proxy, TLS bypass or browser was attempted. This is an access-discipline deviation and must not be reported as clean compliance.
+- Bing's response was broad/generic and supplied no useful source lead. No challenge execution or interactive browser used.
+- Generic Gram positivity is already in the shuffle source. It supplies no strict spectral gap. Generalized exponent-six involution relations admit an exact contrary action. The genuine poset endpoint remains open in this work.
+- Registry-current-head clearance is absent. Prohibited GitHub API/raw/codeload/diff/patch, ScienceDirect and further Google routes were not used after the recorded mistaken request. No old inaccessible-interval HEAD loops were attempted.
+- Twelve original question papers were obtained; no shortfall in the eight-body requirement. Only selected scoped passages were read, not entire papers. Arouche's cited Lin proof and various closest older/successor bodies remain unread. No exhaustive citing-paper search or universal priority claim.
