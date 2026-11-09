@@ -1,0 +1,965 @@
+                                                                    A Faster Auction Algorithm
+                                                                 for Weighted Matroid Intersection
+
+                                                                                         Tatsuya Terao*
+
+
+
+                                                                                             Abstract
+                                                   We consider the weighted matroid intersection problem in the independence-oracle
+
+
+
+
+arXiv:2610.00920v3 [cs.DS] 27 Oct 2026
+                                                model. A sequence of works by Huang–Kakimura–Kamiyama [SODA’16 & Math. Pro-
+                                                gram’19], Chekuri–Quanrud [SODA’16], Quanrud [ICALP’24], and Dudeja–Grilnberger [IPCO’26]
+                                                has developed efficient (1 − ε)-approximation algorithms for this problem.
+                                                   We present a simple deterministic auction algorithm that, given two matroids on a com-
+                                                mon ground set of size n, computes a (1 − ε)-approximate maximum-weight common in-
+                                                dependent set using O(nε−2 log2 (n)) independence-oracle queries. This is the first deter-
+                                                ministic (1 − ε)-approximation algorithm for the weighted matroid intersection problem
+                                                whose query complexity is nearly linear in n and polynomial in 1/ε. Our algorithm builds
+                                                on the auction algorithm for unweighted matroid intersection by Huang–Kobayashi [’26].
+
+
+                                         1     Introduction
+                                         In the weighted matroid intersection problem, we are give two matroids M1 = (E, I1 ) and
+                                         M2 = (E, I2 ) on a common ground set E, together with a weight function w : E →       PR>0 . The
+                                         goal is to find a common independent set S ∈ I1 ∩ I2 that maximizes w(S) :=              e∈S w(e).
+                                         Matroid intersection is one of the fundamental problems in combinatorial optimization and
+                                         generalizes several classical optimization problems, including bipartite matching. The design
+                                         of faster algorithms for matroid intersection has received considerable attention in recent years.
+                                         A particularly important objective is to reduce the number of independence-oracle queries. An
+                                         independence oracle for a matroid M = (E, I) takes a set S ⊆ E as input and determines
+                                         whether S ∈ I.
+
+                                         1.1    Previous Work
+                                         Starting the work of Edmonds [Edm70, Edm79], a long line of research has developed increas-
+                                         ingly efficient algorithms for matroid intersection with polynomial query complexity [AD71,
+                                         Law75, Cun86, BCG86, FX95, SI95, LSW15, CQ16, HKK19, Ngu19, CLS+ 19, BvdBMN21, Bli21,
+                                         Tu22, BMNT23, Qua24, BT25, Ter25, DG26].
+
+                                             Unweighted Matroid Intersection. In the unweighted matroid intersection problem, the
+                                         goal is to find a common independent set of maximum size. Edmonds [Edm70] developed
+                                         the first polynomial-query algorithm by reduction to the matroid partitioning problem. This
+                                         algorithm requires O(n4 ) independence oracle queries. More direct algorithms were given by
+                                         Aigner–Dowling [AD71] and Lawler [Law75]. Lawler’s algorithm requires O(nr2 ) indepen-
+                                         dence oracle queries, where r denotes the maximum cardinality of a common independent set.
+                                         In 1986, Cunningham [Cun86] presented an O(nr3/2 )-independence-query algorithm by using
+                                         a blocking flow approach, which is akin to the bipartite matching algorithm of Hopcroft–Karp
+                                             * Research Institute for Mathematical Sciences, Kyoto University. E-mail: ttatsuya@kurims.kyoto-u.ac.jp
+
+
+
+
+                                                                                                 1
+[HK73]. Chekuri–Quanrud [CQ16] pointed out that an O(nr/ε)-independence-query (1 − ε)-
+approximation algorithm can be obtained by terminating Cunningham’s algorithm early. Re-
+cently, Nguy˜ên [Ngu19] and Chakrabarty–Lee–Sidford–Singla–Wong [CLS+ 19] independently
+presented a new binary search technique and developed a combinatorial Õ(nr)-independence-
+query exact algorithm.1 Chakrabarty–Lee–Sidford–Singla–Wong also presented a new aug-
+menting sets technique and developed an Õ(n1.5 /ε1.5 )-independence-query (1−ε)-approximation
+algorithm. Blikstad–van den Brand-Mukhopadhyay–Nanongkai [BvdBMN21] first broke the
+Õ(n2 )-independence-query bound for exact matroid intersection algorithms. Blikstad [Bli21]
+                                                                                        √
+improved the independence query complexity of a (1−ε)-approximation algorithm to Õ(n r/ε).
+Blikstad’s improvement on the (1 − ε)-approximation algorithm resulted in a randomized
+Õ(nr3/4 )-independence-query exact algorithm and a deterministic Õ(nr5/6 )-independence-query
+exact algorithm. Recently, Quanrud [Qua24] presented a randomized Õε (n+r3/2 )-independence-
+query (1 − ε)-approximation algorithm2 . Remarkably, Blikstad–Tu [BT25] recently presented
+a randomized Õε (n)-independence-query (1 − ε)-approximation algorithm. Very recently,
+Huang–Kobayashi [HK26] presented an elegant deterministic Õε (n)-independence-query (1 −
+ε)-approximation algorithm.
+
+    Weighted Matroid Intersection. For the weighted matroid intersection problem, Edmonds [Edm70]
+also gave the first polynomial-query algorithm. Faster exact algorithms were developed in
+[Law75,BCG86,Fra81,FX95,SI95,LSW15]. Using a cutting-plane method, Lee–Sidford–Wong [LSW15]
+presented an Õ(n2 )-independence-query exact algorithm.
+    Several recent works have studied efficient (1 − ε)-approximation algorithms for weighted
+matroid intersection. Huang–Kakimura–Kamiyama [HKK19] presented a deterministic Õε (nr3/2 )-
+independence-query (1 − ε)-approximation algorithm. Later, Chekuri–Quanrud [CQ16] im-
+proved the query complexity to Õε (nr). Subsequently, Quanrud [Qua24] introduced a new
+sparsification technique and obtained a randomized Õε (n + r3/2 )-independence-query (1 − ε)-
+approximation algorithm. Very recently, Dudeja–Grilnberger [DG26] gave a new reduction
+that transforms any α-approximation algorithm for unweighted matroid intersection into an
+α(1−ε)-approximation algorithm for the weighted problem. Their reduction incurs an ε−O(1/ε)
+overhead and an additional O(log C) factor, where C := max         e∈E w(e)
+                                                               mine∈E w(e) is the aspect ratio of
+the weights. Consequently, combining their reduction with the unweighted matroid inter-
+section algorithms of Blikstad–Tu [BT25] and Huang–Kobayashi [HK26] yields randomized
+and deterministic (1 − ε)-approximation algorithms for weighted matroid intersection using
+Õ(n · (1/ε)1/ε · log(C)) independence-oracle queries, respectively.
+
+    Algorithms in the Rank-Oracle Model Some previous work studies matroid intersec-
+tion in the rank-oracle model [LSW15, CLS+ 19, Tu22, HK26]. A rank oracle returns the rank
+rankM (S) of any subset S ⊆ E. This model is stronger than the independence-oracle model,
+since the independence of S can be determined by checking whether rankM (S) = |S|.
+    For unweighted matroid intersection, Chakrabarty–Lee–Sidford–Singla–Wong [CLS+ 19]
+presented a deterministic Õε (n)-rank-query (1 − ε)-approximation algorithm. For weighted
+matroid intersection, Huang–Kobayashi [HK26] also presented a deterministic Õε (n)-rank-
+query (1 − ε)-approximation algorithm.
+
+1.2     Our Result
+Our contribution is to present a simple auction algorithm for weighted matroid intersection,
+which yields the following result.
+  1
+      The Õ notation omits factors polynomial in log n.
+  2
+      The Õε notation omits factors polynomial in ε and log n.
+
+
+
+                                                           2
+Theorem 1. Let ε > 0. For the weighted matroid intersection problem, there exists a deterministic
+(1 − ε)-approximation algorithm using O(nε−2 log2 (n)) independence-oracle queries.
+    Our algorithm is based on the auction algorithm of Huang–Kobayashi [HK26] for un-
+weighted matroid intersection. The resulting algorithm is the first deterministic (1−ε)-approximation
+algorithm for the weighted matroid intersection problem whose query complexity is nearly
+linear in n and polynomial in 1/ε.
+    Both the unweighted matroid intersection algorithms of Blikstad–Tu [BT25] and Huang–
+Kobayashi [HK26] are inspired by the auction algorithm for the unweighted bipartite matching
+problem by Assadi–Liu–Tarjan [ALT21]. This naturally raises the question of whether these
+auction-based approaches can be extended to weighted matroid intersection while retaining
+nearly-linear independence-oracle query complexity. Prior to our work, it was not known
+whether either of these auction algorithms for unweighted matroid intersection could be di-
+rectly extended to obtain a (1 − ε)-approximation for weighted matroid intersection using a
+nearly linear number of independence-oracle queries. Furthermore, Dudeja–Grilnberger [DG26]
+identified improving the dependence on ε from (1/ε)1/ε to poly(1/ε) as an interesting direction.
+
+
+2     Preliminary
+2.1   Notation
+Here, we provide the notation and conventions used throughout the paper.
+
+Basic Notation. Let R and R+ denote the sets of real numbers and non-negative real num-
+bers, and let Z denote the set of integers. For a set X and an element e, we write X +e := X ∪{e}
+and X −e := X \{e}. For two sets A and B, we will also write A+B := A∪B and A−B := A\B
+when no confusion can arise.
+   Throughout the paper, log denotes the natural logarithm.
+
+Matroid. A pair M = (E, I) of a finite set E and a non-empty set family I ⊆ 2E is called a
+matroid if the following properties are satisfied.
+
+(Downward closure property) If S ∈ I and S ′ ⊆ S, then S ′ ∈ I.
+
+(Augmentation property) If S, S ′ ∈ I and |S ′ | < |S|, then there exists v ∈ S \ S ′ such that
+    S ′ + v ∈ I.
+
+    A set S ⊆ E is called independent if S ∈ I and dependent otherwise. An element e is called
+a loop if {e} ∈
+              / I. An inclusion-wise maximal independent set is called a base of M. It is well
+known that every base of M has the same size. It is also well known that, for any two bases B1
+and B2 of M and any element e ∈ B1 \ B2 , there exists an element f ∈ B2 \ B1 such that both
+B1 − e + f and B2 + e − f are bases of M; see e.g. [Sch03, Theorem 39.12]. This is known as
+the simultaneous exchange property. An inclusion-wise minimal dependent set is called a circuit
+of M.
+    For a matroid M = (E, I), we define the rank function rankM : 2E → Z≥0 and the span
+function spanM : 2E → 2E by
+
+                      rankM (X) = max{|Y | | Y ⊆ X, Y ∈ I},
+                      spanM (X) = {e ∈ E | rankM (X + e) = rankM (X)}
+
+for any X ⊆ E.
+    For an independent set X ∈ I and an element e ∈ E \ X such that X + e ∈   / I, X + e contains
+a unique circuit, denoted by CM (X, e), called the fundamental circuit e with respect of X.
+
+                                               3
+    For X ⊆ E and q ∈ RE , we write q(X) := e∈X q(e). A q-maximum base of M is a base
+                                                 P
+B maximizing q(B). The notions of q-maximum independent sets and p-minimum bases (for
+p ∈ RE ) are defined similarly. Such sets can be computed by the greedy algorithm (see, e.g.,
+[Sch03, Section 40.1]).
+    For k ∈ Z with k ≥ 0, the truncation of M to rank k is the matroid (E, {X ∈ I | |X| ≤ k}).
+For Y ⊆ E, the contraction of M by Y is the matroid M/Y := (E \ Y, {X ⊆ E \ Y | X ∪ IY ∈ I}),
+where IY is a maximal independent subset of Y . This definition does not depend on the choice
+of IY .
+    We assume that each matroid M = (E, I) is given by an independence oracle, which, given a
+subset S ⊆ E, determines whether S ∈ I.
+
+Weighted Matroid Intersection. Given two matroids M1 = (E, I1 ) and M2 = (E, I2 ) de-
+fined on the same ground set E, a common independent set S is a set in I1 ∩ I2 . Let   P n := |E|, and
+let w ∈ RE  + be a nonnegative  weight    function    on E. For   S  ⊆ E,  let w(S) :=  e∈S w(e). The
+weighted matroid intersection problem asks for a common independent set S maximizing w(S).
+    The main focus of this paper is to present an efficient (1 − ε)-approximation algorithm for
+the weighted matroid intersection problem. Let OPTw denote a maximum-weight common
+independent set. For a given ε ∈ (0, 1), the goal is to find a common independent set of weight
+at least (1 − ε) · w(OPTw ).
+    For i ∈ {1, 2}, the rank function rankMi (·), the span function spanMi (·), and the fundamen-
+tal circuit CMi (·) are denoted by ri (·), spani (·), and Ci (·), respectively.
+    As in [HK26, Section 2.1], we assume without loss of generality the following.
+
+• E ̸= ∅, and M1 and M2 have no loops. In particular, w(e) ≤ w(OPTw ) for every e ∈ E.
+
+• r1 (E) ≤ 2r. Indeed, we can replace M1 by its truncation to rank 2|X0 |, where X0 is a
+  maximal common independent set found greedily with O(n) queries. Since |X0 | ≥ r/2,
+  every common independent set S satisfies |S| ≤ r ≤ 2|X0 |, and hence S is also independent
+  in the truncated matroid.
+
+2.2   Basic Properties
+In this subsection, we present basic properties of matroids from Huang–Kobayashi [HK26]
+that are used throughout the paper.
+
+Observation 2 ( [HK26, Observation 2.1]). Let M = (E, I) be a matroid, let X ∈ I, and let
+e ∈ E \ X with X + e ∈
+                     / I. Then, for f ∈ X + e, we have X + e − f ∈ I if and only if f ∈ CM (X | e).
+
+Lemma 3 ( [HK26, Lemma 2.2]). Let M = (E, I) be a matroid and let S ⊆ E. Let p, p′ ∈ RE be
+such that p(e) ≤ p′ (e) for all e ∈ E and p(e) = p′ (e) for all e ∈ S. If S is contained in a p-minimum
+base of M, then it is also contained in a p′ -minimum base of M.
+
+   Applying Lemma 3 to p = −q and p′ = −q ′ , we obtain the following lemma for maximum
+bases.
+
+Lemma 4. Let M = (E, I) be a matroid and let S ⊆ E. Let q, q ′ ∈ RE be such that q ′ (e) ≤ q(e) for
+all e ∈ E and q ′ (e) = q(e) for all e ∈ S. If S is contained in a q-maximum base of M, then it is also
+contained in a q ′ -maximum base of M.
+
+Lemma 5 ( [HK26, Lemma 2.3]). Let M = (E, I) be a matroid and let w ∈ RE . A set S ∈ I is a
+w-maximum independent set of M if and only if (i) w(e) ≤ 0 for any e ∈ E \ S with S + e ∈ I, (ii)
+w(e) ≥ 0 for any e ∈ S, and (iii) w(e) ≤ w(f ) for any e ∈ E \ S and f ∈ S with S + e − f ∈ I.
+
+
+
+
+                                                  4
+Lemma 6 (Binary search technique [HK26, Lemma 2.4 (1)]; from [Ngu19,CLS+ 19,BvdBMN21]).
+Let M = (E, I) be a matroid, let w ∈ RE , let S ∈ I, R ⊆ S, and v ∈ E \ S. Using O(log |R|)
+independence queries, we can find an element u ∈ R minimizing w(u) subject to S + v − u ∈ I (if such
+an element exists).
+Lemma 7. Let M = (E, I) be a matroid with base family B, let q ∈ RE , let Y ⊆ E be contained in a
+q-maximum base Z of M, and let e ∈ E \ Y . Then Y + e is contained in a q-maximum base of M if
+and only if there exists e′ ∈ Z \ Y such that Z − e′ + e ∈ B and q(e′ ) = q(e) (possibly e′ = e).
+Proof. We first show the “if” part. Suppose that there exists e′ ∈ Z \ Y such that Z − e′ + e ∈ B
+and q(e′ ) = q(e). Then q(Z − e′ + e) = q(Z) − q(e′ ) + q(e) = q(Z), and hence Z − e′ + e is a
+q-maximum base of M. Since e′ ∈   / Y , the base Z − e′ + e contains Y + e.
+    We next show the “only if” part. Suppose that Y + e is contained in a q-maximum base
+Z ′ of M. If e ∈ Z, then e′ = e satisfies the required conditions, because e ∈ Z \ Y and
+Z − e + e = Z ∈ B. Suppose that e ∈       / Z. Then e ∈ Z ′ \ Z. By the simultaneous exchange
+property applied to the bases Z ′ and Z and the element e ∈ Z ′ \ Z, there exists e′ ∈ Z \ Z ′ such
+that both Z ′ − e + e′ and Z + e − e′ are bases of M. Since Z and Z ′ are q-maximum bases, we
+have q(Z + e − e′ ) ≤ q(Z) and q(Z ′ − e + e′ ) ≤ q(Z ′ ), that is, q(e) ≤ q(e′ ) and q(e′ ) ≤ q(e). Hence
+q(e′ ) = q(e). Moreover, e′ ∈ Z \ Z ′ ⊆ Z \ Y because Y ⊆ Z ′ . Therefore, e′ satisfies the required
+conditions.
+
+
+3     The Algorithm
+3.1   Prices and Utilities
+In the algorithm, we maintain a common independent set X ∈ I1 ∩ I2 and a nonnegative value
+π(e) ∈ R+ for each e ∈ X. For notational convenience, we write π(e) = ⊥ for e ∈ E \ X. For X
+and π, we define the vector p̄ ∈ RE+ by
+                     
+                     π(e)
+                                                     if e ∈ X,
+             p̄(e) := 0                               if e ∈ E \ X and X + e ∈ I2 ,       (1)
+                     
+                      min{π(f ) | f ∈ C2 (X | e) − e} if e ∈ E \ X and X + e ∈
+                                                                             / I2 .
+                     
+
+Note that, for e ∈ E \ X with X + e ∈   / I2 , there always exists an element in C2 (X | e) − e,
+because we have assumed that M2 has no loops. We define the price vector p ∈ RE    + induced by
+X and π by adding εw(e) to p̄(e) for each e ∈ E \ X. That is,
+               
+               π(e)
+                                                          if e ∈ X,
+       p(e) = εw(e)                                        if e ∈ E \ X and X + e ∈ I2 ,     (2)
+               
+                 min{π(f ) | f ∈ C2 (X | e) − e} + εw(e) if e ∈ E \ X and X + e ∈ / I2 .
+               
+
+We omit “induced by X and π” if no confusion arises.
+    These vectors have the following auction interpretation. There are two players, Alice and
+Bob, and the weight w(e) is interpreted as Alice’s valuation of the item e ∈ E. The set X
+consists of the items that Alice and Bob have agreed to trade so far, and π(e) is the agreed price
+of e ∈ X. To sell an additional item e ∈ E \ X with X + e ∈   / I2 , Bob has to remove some item
+f ∈ X with X + e − f ∈ I2 . The value p̄(e) is the minimum price of such an item, and p̄(e) = 0
+if X + e ∈ I2 . Bob sells e at the price p(e), which adds εw(e) to p̄(e). The added term εw(e)
+plays the same role as the price increase that Algorithm [HK26, Algorithm 2] applies when
+Bob removes an item from X.
+    For u > 0, we define ⌈u⌉1+ε := (1 + ε)⌈log1+ε u⌉ , which rounds u up to the nearest power of
+1 + ε, and ⌈u⌉1+ε := 0 for u ≤ 0. Let Λ := {0} ∪ {(1 + ε)k | k ∈ Z} denote the set of all possible
+values of ⌈·⌉1+ε . That is, ⌈u⌉1+ε = min{λ ∈ Λ | λ ≥ u} for every u ∈ R.
+    We use two basic properties of the rounding.
+
+                                                    5
+(Λ1) max{u, 0} ≤ ⌈u⌉1+ε ≤ (1 + ε) · max{u, 0}.
+
+(Λ2) If λ, λ′ ∈ Λ and λ < λ′ , then λ ≤ λ′ /(1 + ε).
+
+   We define the utility vector q ∈ ΛE induced by X and π as follows:
+
+                                q(e) := ⌈w(e) − p(e)⌉1+ε     (e ∈ E).                               (3)
+
+    In the auction interpretation, q(e) is the rounded value of the utility w(e) − p(e) that Alice
+gains by buying e at the price p(e).
+    The following lemma captures the effect of the rounding. Roughly speaking, the round-
+ing ensures that a utility can decrease only by a factor of at least 1 + ε, and the lemma makes
+this guarantee usable in the analysis. We apply it to M1 in the analysis of our algorithm (Sec-
+tion 4.3).
+
+Lemma 8. Let M = (E, I) be a matroid with base family B, let q ∈ ΛE and q ′ ∈ RE , and let Y ⊆ E
+be contained in a q-maximum base of M. Suppose that
+
+(H1) q ′ (e) ≤ q(e) for every e ∈ E, and
+
+(H2) q ′ (e) ≤ q(e)/(1 + ε) for every e ∈ E \ Y such that Y + e is contained in a q-maximum base.
+
+Then
+                                                    1                  
+                          max q ′ (B) − q(Y ) ≤         max q(B) − q(Y ) .
+                          B∈B                     1 + ε B∈B
+Proof. Let C be a q-maximum base of M containing Y , so that q(C) = maxB∈B q(B). Define
+q̂ ∈ RE by
+                                  
+                                  q(e)
+                                               if e ∈ Y,
+                          q̂(e) := q(e)/(1 + ε) if e ∈ C \ Y,
+                                  
+                                   ′
+                                    q (e)       if e ∈ E \ C.
+We first show that q ′ (e) ≤ q̂(e) for every e ∈ E. For e ∈ Y , this is (H1). For e ∈ C \ Y , the
+q-maximum base C contains Y +e, and hence q ′ (e) ≤ q(e)/(1+ε) = q̂(e) by (H2). For     e ∈ E \C,
+we have q̂(e) = q ′ (e) by the definition of q̂. Moreover, q̂(C) = q(Y ) + q(C) − q(Y ) /(1 + ε) by
+the definition of q̂. Hence, if C is a q̂-maximum independent set of M, then
+
+                                                                  q(C) − q(Y )
+                    max q ′ (B) ≤ max q̂(B) ≤ q̂(C) = q(Y ) +                  ,
+                    B∈B             B∈B                              1+ε
+which is the assertion. It remains to show that C is a q̂-maximum independent set of M.
+     To this end, we check the three conditions of Lemma 5 with w = q̂ and S = C. Condition (i)
+is vacuous because C is a base. Condition (ii) holds because q̂(c) ≥ 0 for every c ∈ C, which
+follows from q(c) ≥ 0. For condition (iii), let e ∈ E \ C and c ∈ C with C − c + e ∈ I. Then
+C − c + e is a base of M, and hence q(e) ≤ q(c) because C is a q-maximum base. We also have
+q̂(e) = q ′ (e) ≤ q(e) by (H1). We show that q̂(e) ≤ q̂(c) by distinguishing three cases.
+
+• If c ∈ Y , then q̂(c) = q(c) ≥ q(e) ≥ q̂(e).
+
+• If c ∈
+       / Y and q(e) < q(c), then q(e) ≤ q(c)/(1 + ε) by (Λ2) because q(e), q(c) ∈ Λ, and hence
+  q̂(e) ≤ q(e) ≤ q(c)/(1 + ε) = q̂(c).
+
+• If c ∈
+       / Y and q(e) = q(c), then C − c + e is a q-maximum base of M containing Y + e, and
+  hence q̂(e) = q ′ (e) ≤ q(e)/(1 + ε) = q(c)/(1 + ε) = q̂(c) by (H2).
+
+Therefore, C is a q̂-maximum independent set of M by Lemma 5, which completes the proof.
+
+
+                                                   6
+ Algorithm 1: Weighted Matroid Intersection with Nearly Linear Independence
+ Queries
+   Input: Two matroids M1 = (E, I1 ) and M2 = (E, I2 ), and weight w(e) ∈ R+ for e ∈ E
+   Output: A common independent set X ∈ I1 ∩ I2
+ 1 Let X ← ∅;
+ 2 for t ← 1 to T do
+ 3     X ∗ , Y ← X;
+ 4     π ∗ (e) ← π(e) for each e ∈ E;
+       // We keep explicitly π ∗ (e) only for e ∈ X ∗ , as π ∗ (e) = ⊥ for
+             e ∈ E \ X∗
+       // Let q ∗ denote the utility vector induced by X ∗ and π ∗
+ 5     foreach e ∈ E \ X ∗ do
+ 6          if q(e) = q ∗ (e) > 0 and Y + e is contained in a q ∗ -maximum base of M1 then
+ 7              Y ← Y + e;
+ 8              π(e) ← p(e);
+ 9              if X + e ∈ I2 then
+10                  X ← X + e;
+11              else
+12                  Find f ∈ C2 (X | e) − e minimizing π(f );
+13                  X ← X + e − f;
+14                  π(f ) ← ⊥;
+                // The price vector p and the utility vector q induced
+                     by X and π are updated implicitly
+15        t
+       X ← X;
+16 return X t maximizing w(X t ) over t ∈ {0, 1, . . . , T };
+
+
+
+3.2   Algorithm Description
+Our algorithm is presented in Algorithm 1. We call each iteration of the outer for-loop a round,
+and we denote by X t the set X at the end of round t, where X 0 = ∅. In each round, X ∗ , π ∗ , p∗ ,
+and q ∗ denote X, π, p, and q at the beginning of the round. They   stay fixed during the round,
+whereas X, π, p, and q change. The number of rounds is T := 10 (ε−1 log(r1 (E)) + ε−2 ) .
+                                                                                                
+
+    In a round, the algorithm scans each e ∈ E \X ∗ once, in an arbitrary order. If q(e) = q ∗ (e) >
+0, that is, the utility of e is positive and has not changed since the beginning of the round, and
+Y + e is contained in a q ∗ -maximum base of M1 (Line 6), then e is added to Y and π(e) is set
+to the current price p(e) (Lines 7 and 8). Then, e is added to X. If X + e ∈        / I2 , an element
+f ∈ C2 (X | e) − e minimizing π(f ) is removed from X at the same time (Lines 10–14).
+    In the auction interpretation, a round proceeds as follows. Alice aims to buy a q ∗ -maximum
+base of M1 . She buys an item e ∈ E \ X ∗ if its utility is positive, if the utility has not changed
+since the beginning of the round, and if e and the items bought so far lie in a common q ∗ -
+maximum base of M1 . The last condition says that buying e keeps this aim achievable. When
+Alice buys e and X + e ∈     / I2 , Bob removes a cheapest item f ∈ X with X + e − f ∈ I2 .
+
+
+4     Analysis
+Our analysis mainly uses the following quantity. For X and π, let
+                                  U (X, π) := π(X) + max q(B),
+                                                       B∈B1
+
+where q is the utility vector induced by X and π. We simply write U := U (X, π) if no confusion
+arises, where X and π are the current ones maintained by Algorithm 1.
+
+                                                 7
+4.1   Useful Properties
+In this subsection, we show several properties that are maintained throughout the execution
+of Algorithm 1.
+
+Observation 9. Throughout the execution of Algorithm 1, the following hold.
+
+(a) X ∈ I2 , and εw(e) ≤ π(e) < w(e) for each e ∈ X. In particular, π(X) ≤ w(X).
+
+(b) When Lines 7–14 are executed for e ∈ E \ X ∗ , the value p(e) is unchanged and π(X) increases by
+    exactly εw(e).
+
+Proof. When Lines 7–14 are executed for e, we have e ∈                     / X ∗ , and in a round an
+                                                            / X. Indeed, e ∈
+element is added to X only when these lines are executed for it, which happens at most once
+because each element of E \ X ∗ is scanned once.
+    (a) Lines 10 and 13 preserve X ∈ I2 by Observation 2. For e ∈ X, the value π(e) was
+assigned in Line 8 and has not changed since then. At the time of the assignment, we have
+e∈/ X, so π(e) = p(e) = p̄(e) + εw(e) ≥ εw(e), where p̄(e) ≥ 0 because p̄(e) is either 0 or a value
+of π on X, and π ≥ 0 on X by induction. Moreover, q(e) > 0 in Line 6 means w(e) − p(e) > 0
+by (Λ1), so π(e) = p(e) < w(e).
+    (b) In Line 8, π(e) is set to p(e). After Line 10 or 13, we have e ∈ X and p(e) = π(e). Hence,
+p(e) is unchanged by the execution of Lines 7–14. If X + e ∈ I2 , then p̄(e) = 0, and π(X)
+increases by π(e) = εw(e). Otherwise, f minimizes π on C2 (X | e) − e, so π(f ) = p̄(e), and
+π(X) increases by π(e) − π(f ) = εw(e).
+
+   We next show that prices never decrease and utilities never increase. In the auction inter-
+pretation, Bob never lowers the price of an item.
+
+Lemma 10. For each e′ ∈ E, p(e′ ) is monotonically non-decreasing and q(e′ ) is monotonically non-
+increasing throughout the execution of Algorithm 1.
+
+Proof. For z > 0, let X≥z := {x ∈ X | π(x) ≥ z}. We first show that
+
+                    p̄(e′ ) ≥ z   ⇐⇒    e′ ∈ spanM2 (X≥z )       (e′ ∈ E, z > 0).                   (4)
+
+For e′ ∈ X, the left-hand side is π(e′ ) ≥ z by the definition of p̄. The right-hand side also holds
+if and only if π(e′ ) ≥ z, that is, e′ ∈ X≥z , because X is independent and hence no element
+of X \ X≥z is contained in spanM2 (X≥z ). For e′ ∈       / X, the right-hand side says that X≥z + e′
+contains a circuit. The only circuit in X + e , if any, is C2 (X | e′ ), so this happens if and only if
+                                                   ′
+
+X + e′ ∈ / I2 and C2 (X | e′ ) − e′ ⊆ X≥z , that is, if and only if X + e′ ∈  / I2 and every element of
+C2 (X | e′ ) − e′ has price at least z. By the definition of p̄, this is exactly p̄(e′ ) ≥ z.
+    We next show that p̄(e′ ) is monotonically non-decreasing for each e′ ∈ E. Since X and π
+change only in Lines 7–14, it suffices to show that p̄(e′ ) does not decrease when these lines are
+executed for an element e ∈ E \ X ∗ . Let α be the value of p̄(e′ ) before the execution. If α = 0,
+then p̄(e′ ) ≥ α after the execution because p̄(e′ ) ≥ 0. If α > 0, then e′ ∈ spanM2 (X≥α ) before
+the execution by (4), and hence p̄(e′ ) ≥ α after the execution as long as e′ is still contained in
+spanM2 (X≥a ). Therefore, it suffices to show that spanM2 (X≥z ) does not shrink by the execution
+for any z > 0. Let p̄e be the value of p̄(e) before the execution. The execution sets π(e) =
+p̄e + εw(e) in Line 8, and, if X + e ∈      / I2 , removes from X an element f with π(f ) = p̄e in
+Line 13. If X + e ∈ I2 or z > p̄e , then X≥z can only gain the element e, and hence spanM2 (X≥z )
+does not shrink. If X + e ∈     / I2 and z ≤ p̄e , then X≥z becomes X≥z − f + e. In this case,
+X≥z contains C2 (X | e) − e before the execution, because every f ′ ∈ C2 (X | e) − e satisfies
+π(f ′ ) ≥ p̄e ≥ z by the definition of p̄e . Hence, e ∈ spanM2 (X≥z ), and f ∈ spanM2 (X≥z + e − f )
+because f ∈ C2 (X | e) ⊆ X≥z + e. Thus, X≥z − f + e and X≥z have the same span.
+
+
+                                                  8
+     We now show that p(e′ ) is monotonically non-decreasing for each e′ ∈ E. Recall that p(e′ ) =
+p̄(e′ ) + εw(e′ ) for e′ ∈
+                         / X and p(e′ ) = p̄(e′ ) for e′ ∈ X. Consider again the execution of Lines 7–
+14 for e, and let f be the element removed from X in Line 13 if X + e ∈           / I2 . If e′ ∈
+                                                                                               / {e, f },
+then whether e ∈ X does not change, and hence p(e ) does not decrease because p̄(e′ ) does
+                   ′                                           ′
+
+not decrease. If e′ = e, then p(e′ ) is unchanged by Observation 9(b). If e′ = f , then f is
+removed from X, and hence p(f ) = p̄(f ) + εw(f ) after the execution, which is at least the value
+p(f ) = p̄(f ) before the execution because p̄(f ) does not decrease. Finally, q(e′ ) = ⌈w(e′ ) −
+p(e′ )⌉1+ε is monotonically non-increasing for each e′ ∈ E, because p(e′ ) is monotonically non-
+decreasing.
+
+     The next lemma establishes the invariants of the algorithm. In the auction interpretation,
+it says that Alice’s aim of buying a q ∗ -maximum base of M1 stays achievable throughout each
+round.
+
+Lemma 11. In each round, Y is contained in a q ∗ -maximum base of M1 before and after each iteration
+of the inner for-loop. Moreover, X ∈ I1 ∩ I2 throughout, and at the beginning of each round X is
+contained in a q-maximum base of M1 .
+
+Proof. We show by induction on the rounds that X is contained in a q-maximum base of M1 at
+the beginning of each round and that the following hold before and after each iteration of the
+inner for-loop in the round:
+
+(1) X ∪ X ∗ ⊆ Y , and Y is contained in a q ∗ -maximum base of M1 ;
+
+(2) q(x) = q ∗ (x) for each x ∈ X.
+
+At the beginning of the first round, X = ∅ is contained in every base.
+    Consider a round at whose beginning X is contained in a q-maximum base. Then (1) and (2)
+hold at the beginning, because X = X ∗ = Y and q = q ∗ . An iteration changes nothing unless
+Lines 7–14 are executed for the scanned element e. We show that their execution preserves both
+invariants. Invariant (1) is preserved, because e is added to Y in Line 7 and Y + e is contained
+in a q ∗ -maximum base of M1 by the condition in Line 6. For invariant (2), consider the set X
+after the execution. Every element x ̸= e of this set was already in X and keeps its value π(x),
+and hence its utility q(x) = ⌈w(x) − π(x)⌉1+ε . By Observation 9(b), p(e) is unchanged by the
+execution, and hence so is q(e) = ⌈w(e) − p(e)⌉1+ε . Since q(e) = q ∗ (e) held in Line 6, we have
+q(e) = q ∗ (e) after the execution.
+    At the end of the round, X is contained in a q ∗ -maximum base of M1 by (1), q(x) = q ∗ (x)
+for every x ∈ X by (2), and q(e′ ) ≤ q ∗ (e′ ) for every e′ ∈ E by Lemma 10. By Lemma 4, X is
+contained in a q-maximum base of M1 , which completes the induction. Finally, X ∈ I1 by (1)
+and X ∈ I2 by Observation 9(a).
+
+4.2   Weight-Splitting Argument
+In this subsection, we prove the following lemma. It adapts the weight-splitting argument
+in [HK26, Section 4], with p̄ and q in the roles of p′ and w − p. The proof shows that
+
+         (1 − ε) · w(OPTw ) ≤ p̄(OPTw ) + q(OPTw ) ≤ π(X) + max q(B) = U (X, π).
+                                                                      B∈B1
+
+Lemma 12. At any point of Algorithm 1, we have (1 − ε) · w(OPTw ) ≤ U (X, π).
+
+Proof. We bound p̄(OPTw ) and q(OPTw ) separately, and then use that p̄(e) + q(e) ≥ (1 − ε) w(e)
+for every e ∈ E.
+    We first show that p̄(OPTw ) ≤ π(X). Recall that X ∈ I2 by Observation 9(a). To see that
+X is a p̄-maximum independent set of M2 , we check the three conditions of Lemma 5 with
+
+
+                                                   9
+w = p̄ and S = X. Condition (i) holds, because p̄(e) = 0 for every e ∈       / X with X + e ∈ I2 .
+Condition (ii) holds, because p̄(e) = π(e) ≥ 0 for every e ∈ X. For condition (iii), let e ∈ / X and
+f ∈ X with X + e − f ∈ I2 . If X + e ∈ I2 , then p̄(e) = 0 ≤ π(f ). Otherwise, f ∈ C2 (X | e) − e by
+Observation 2, and hence p̄(e) ≤ π(f ) by the definition of p̄. In both cases, p̄(e) ≤ π(f ) = p̄(f ).
+Therefore, X is a p̄-maximum independent set of M2 . Since OPTw ∈ I2 , we obtain p̄(OPTw ) ≤
+p̄(X) = π(X).
+    We next show that q(OPTw ) ≤ maxB∈B1 q(B). This holds because q(e) ≥ 0 for every e ∈ E
+and OPTw ∈ I1 is contained in a base of M1 .
+    Finally, we combine the two bounds. For every e ∈ E, we have p(e) ≤ p̄(e) + εw(e) by the
+definition of p̄, and q(e) ≥ w(e) − p(e) by (Λ1). Hence, (1 − ε) w(e) ≤ p̄(e) + q(e) for every e ∈ E.
+Summing over e ∈ OPTw and using the two bounds, we obtain
+            (1 − ε) · w(OPTw ) ≤ p̄(OPTw ) + q(OPTw ) ≤ π(X) + max q(B) = U (X, π).
+                                                                      B∈B1
+
+
+4.3    Progress in One Round
+Our analysis mainly tracks how U (X, π) changes during the execution of Algorithm 1. In this
+subsection, we bound the change of U (X, π) in one round (Lemma 14). We prove Lemma 14
+by applying Lemma 8 to M1 . To apply it, we need to verify hypotheses (H1) and (H2). Hy-
+pothesis (H1) follows from Lemma 10, and the next lemma provides hypothesis (H2).
+Lemma 13. Consider a round, and let Y and q ′ be the set Y and the utility vector at the end of the
+round. If e ∈ E \ Y and Y + e is contained in a q ∗ -maximum base of M1 , then q ′ (e) ≤ q ∗ (e)/(1 + ε).
+Proof. If q ∗ (e) = 0, then q ′ (e) = 0 by Lemma 10 and q ′ (e) ≥ 0. Suppose that q ∗ (e) > 0. Since
+X ∗ ⊆ Y , we have e ∈ E \ X ∗ , and hence the condition in Line 6 was checked for e in the round.
+Let Y0 be the set Y at the time of this check. Since e ∈ / Y at the end of the round, Lines 7–14
+were not executed for e, that is, the condition in Line 6 did not hold for e. On the other hand,
+since the set Y only grows during the round, we have Y0 ⊆ Y , and hence Y0 + e is contained
+in the q ∗ -maximum base of M1 that contains Y + e. Therefore, q(e) = q ∗ (e) > 0 did not hold at
+the time of the check. Since q ∗ (e) > 0, this means that q(e) ̸= q ∗ (e), and hence q(e) < q ∗ (e) by
+Lemma 10. By (Λ2), we obtain q(e) ≤ q ∗ (e)/(1 + ε) because q(e), q ∗ (e) ∈ Λ. Since q(e) does not
+increase afterwards by Lemma 10, we obtain q ′ (e) ≤ q ∗ (e)/(1 + ε).
+
+      By applying Lemma 8 to M1 , we now bound the change of U (X, π) in one round.
+Lemma 14. Consider a round. Let X ∗ and X ′ be the sets X at its beginning and its end, let U and U ′
+be the values of U at its beginning and its end, and let ∆ := π(X ′ ) − π ∗ (X ∗ ) be the increase of π(X)
+in the round. Then
+                                              U
+                                    U′ ≤          + ε w(X ∗ ) + 2∆.
+                                            1+ε
+Proof. Let q ′ and Y be the utility vector and the set Y at the end of the round, let A := Y \ X ∗ be
+the set of elements added to Y in the round, and let P := π ∗ (X ∗ ). Thus U = P +maxB∈B1 q ∗ (B)
+and U ′ = P + ∆ + maxB∈B1 q ′ (B). Since Lines 7–14 are executed exactly once for each element
+of A, we have ∆ = εw(A) by Observation 9(b).
+    We first apply Lemma 8 to M1 , q ∗ , q ′ , and Y . Its assumptions are satisfied as follows. We
+have q ∗ ∈ ΛE by the definition of q ∗ . The set Y is contained in a q ∗ -maximum base of M1 by
+Lemma 11. Hypothesis (H1) holds by Lemma 10, and hypothesis (H2) holds by Lemma 13.
+Hence, Lemma 8 gives
+                                                         U − P − q ∗ (Y )
+                               max q ′ (B) ≤ q ∗ (Y ) +                   .
+                               B∈B1                           1+ε
+Adding P + ∆ to both sides, we obtain
+                                        U       ε
+                               U′ ≤                P + q ∗ (Y ) .
+                                                               
+                                           +∆+                                                         (5)
+                                       1+ε     1+ε
+
+                                                   10
+      We next show that
+                                  P + q ∗ (Y ) ≤ (1 + ε) w(Y ).                                 (6)
+By (Λ1), q ∗ (y) ≤ (1 + ε) · max{w(y) − p∗ (y), 0} for every y ∈ E. For y ∈ X ∗ , we have p∗ (y) =
+π ∗ (y) < w(y) by Observation 9(a), and hence q ∗ (y) ≤ (1 + ε) w(y) − π ∗ (y) . Adding π ∗ (y)
+                                                                                  
+
+to both sides, we obtain π ∗ (y) + q ∗ (y) ≤ (1 + ε) w(y) − επ ∗ (y) ≤ (1 + ε) w(y), where the last
+inequality follows from π ∗ (y) ≥ 0. For y ∈ A, we have q ∗ (y) ≤ (1 + ε) w(y) because p∗ (y) ≥ 0.
+Summing these inequalities over Y = X ∗ ∪ A gives (6), because P = π ∗ (X ∗ ).
+     Finally, by (6) and ∆ = εw(A), we have
+                  ε
+                       P + q ∗ (Y ) ≤ ε w(Y ) = ε w(X ∗ ) + ε w(A) = ε w(X ∗ ) + ∆.
+                                   
+                1+ε
+Substituting this into (5), we obtain
+                                          U
+                                  U′ ≤       + ε w(X ∗ ) + 2∆,
+                                         1+ε
+which completes the proof.
+
+4.4    Approximation Ratio
+In this subsection, we show that Algorithm 1 with T := 10 (ε−1 log(r1 (E)) + ε−2 ) rounds
+                                                                                      
+
+returns a (1 − 3ε)-approximate solution.
+    We first explain a rough idea of the proof. Suppose that a round starts with w(X) < (1 −
+3ε) w(OPTw ). Let g and g ′ be the values of U −(1−2ε) w(OPTw ), and let P and P ′ be the values
+of π(X), at the beginning and the end of the round. Then Lemma 14 yields
+                                            g
+                                    g′ ≤       + 2(P ′ − P ).
+                                           1+ε
+On the other hand, by Lemma 12, we have U ≥ (1 − ε) w(OPTw ) at any point, and hence
+
+         U − (1 − 2ε) w(OPTw ) ≥ (1 − ε) w(OPTw ) − (1 − 2ε) w(OPTw ) = ε w(OPTw ).
+                                                                ′
+                                                             −P )
+In particular, g ≥ ε w(OPTw ), and hence 2(P ′ − P ) ≤ ε2(P
+                                                          w(OPTw ) g. Substituting this into the
+                  g
+inequality g ′ ≤ 1+ε + 2(P ′ − P ) above, we obtain
+
+                                   2(P ′ − P )
+                                              
+                  ′        1                          g       ′
+                 g ≤           +                 g ≤     eO((P −P )/(ε w(OPTw ))) .
+                         1 + ε ε w(OPTw )            1+ε
+Now suppose that the first T rounds all start with w(X) < (1 − 3ε) w(OPTw ). For t ∈
+{0, 1, . . . , T }, let gt and P t be the values of U − (1 − 2ε) w(OPTw ) and π(X) at the end of
+round t, where the end of round 0 refers to the beginning of the algorithm. Applying the
+above inequality to rounds t = T, T − 1, . . . , 1, we obtain
+                                                                T
+                                                                                !!
+                                                         1     X
+                        gT ≤ g0 · (1 + ε)−T exp O                 (P t − P t−1 )  .
+                                                    ε w(OPTw )
+                                                             t=1
+
+Since P 0 = π(∅) = 0, the sum equals P T . Moreover, P T ≤ w(X T ) ≤ w(OPTw ), and gT ≥
+ε w(OPTw ) as shown above. Hence
+
+                             ε w(OPTw ) ≤ g0 · (1 + ε)−T · eO(1/ε) .
+
+Since g0 < r1 (E) w(OPTw ), the right-hand side is less than ε w(OPTw ) for our choice of T , a
+contradiction.
+   We now formalize the above argument. Instead of deriving a contradiction, the proof below
+argues directly on the first t with w(X t ) ≥ (1 − 3ε) w(OPTw ).
+
+                                                11
+Proposition 15. Let T := 10 (ε−1 log(r1 (E)) + ε−2 ) . Then, Algorithm 1 returns a common inde-
+                                                   
+
+pendent set X with w(X) ≥ (1 − 3ε) w(OPTw ).
+Proof. The output is a common independent set by Lemma 11. Let opt := w(OPTw ). We
+assume that ε < 1/3 without loss of generality. For t ∈ {0, 1, . . . , T }, let P t and U t be the
+values of π(X) and U at the end of round t, where the end of round 0 refers to the beginning
+of the algorithm. Let
+
+                         gt := U t − (1 − 2ε) · opt       (t ∈ {0, 1, . . . , T }).
+
+By Lemma 12, we have U t ≥ (1 − ε) · opt for every t ∈ {0, 1, . . . , T }. Hence, for every t ∈
+{0, 1, . . . , T },
+                     gt ≥ (1 − ε) · opt − (1 − 2ε) · opt = ε · opt.
+   Let
+                      m := min{ t ∈ {0, 1, . . . , T } | w(X t ) ≥ (1 − 3ε) · opt },
+where we set m := T if no such t exists. In both cases, w(X t ) < (1 − 3ε) · opt holds for every
+t ∈ {0, 1, . . . , m − 1}. In the rest of the proof, we show that m < T . This suffices to prove the
+proposition. Indeed, if m < T , then w(X m ) ≥ (1 − 3ε) · opt by the definition of m, and the
+algorithm returns X t maximizing w(X t ) over t ∈ {0, 1, . . . , T }.
+    We first show that
+                                   gt−1
+                            gt ≤         + 2(P t − P t−1 )  (t ∈ {1, . . . , m}).                 (7)
+                                   1+ε
+Fix t ∈ {1, . . . , m}, and apply Lemma 14 to round t, in which X ∗ = X t−1 , U = U t−1 , U ′ = U t ,
+and ∆ = P t − P t−1 . By the definition of m, we have w(X t−1 ) < (1 − 3ε) · opt. Hence Lemma 14
+gives
+
+             U t−1                                   U t−1
+     Ut ≤          + ε w(X t−1 ) + 2(P t − P t−1 ) ≤       + ε (1 − 3ε) · opt + 2(P t − P t−1 ).
+             1+ε                                     1+ε
+Moreover, since (1 + ε)(1 − 3ε) = 1 − 2ε − 3ε2 ≤ 1 − 2ε, we have
+
+                                  ε                                    (1 − 2ε) · opt
+            ε (1 − 3ε) · opt ≤       (1 − 2ε) · opt = (1 − 2ε) · opt −                .
+                                 1+ε                                       1+ε
+Combining these two inequalities and subtracting (1 − 2ε) · opt from both sides, we obtain
+
+                    U t−1 − (1 − 2ε) · opt                     gt−1
+             gt ≤                          + 2(P t − P t−1 ) =      + 2(P t − P t−1 ),
+                            1+ε                                1+ε
+which is (7).
+  We next show that                                                    
+                                                             2(1 + ε) m
+                             gm ≤ g0 · (1 + ε)−m exp                  P  .                         (8)
+                                                              ε · opt
+Fix t ∈ {1, . . . , m}. Recall that gt−1 ≥ ε · opt, which we derived above from Lemma 12. We
+also have P t − P t−1 ≥ 0, because π(X) changes only when Lines 7–14 are executed, and each
+execution increases π(X) by Observation 9(b). Hence,
+
+                             gt−1 2(1 + ε) t             gt−1 2(1 + ε) t
+         2(P t − P t−1 ) =       ·        (P − P t−1 ) ≤      ·        (P − P t−1 ).
+                             1+ε    gt−1                 1 + ε ε · opt
+Substituting this into (7) and using 1 + x ≤ ex , we obtain
+                                                                                  
+               gt−1         2(1 + ε) t     t−1         gt−1       2(1 + ε) t     t−1
+        gt ≤           1+            (P − P ) ≤             exp            (P − P ) .
+               1+ε           ε · opt                  1+ε          ε · opt
+
+                                                   12
+Applying this inequality repeatedly for t = m, m − 1, . . . , 1, we obtain
+                                                        m
+                                                                        !
+                                              2(1  + ε) X
+                      gm ≤ g0 · (1 + ε)−m exp             (P t − P t−1 ) .
+                                               ε · opt
+                                                              t=1
+      Pm
+Since t=1 (P t − P t−1 ) = P m − P 0 and P 0 = π(∅) = 0, this proves (8).
+    We next show that P m ≤ opt. By Observation 9(a), we have P m = π(X m ) ≤ w(X m ). More-
+over, X m ∈ I1 ∩ I2 by Lemma 11, and opt is the maximum weight of a common independent
+set. Hence, w(X m ) ≤ opt, and therefore P m ≤ opt. Recall that gm ≥ ε · opt, which we derived
+above from Lemma 12. Substituting this and P m ≤ opt into (8), we obtain
+
+                             ε · opt ≤ gm ≤ g0 · (1 + ε)−m e2(1+ε)/ε .                       (9)
+
+    We next show that g0 < r1 (E) W . Since (1 − 2ε) · opt > 0 by ε < 1/3, we have g0 =
+U 0 − (1 − 2ε) · opt ≤ U 0 . At the beginning of the algorithm, we have X = ∅, and hence
+p(e) = εw(e) for every e ∈ E. Therefore, every e ∈ E satisfies
+
+               q(e) = ⌈(1 − ε) w(e)⌉1+ε ≤ (1 + ε)(1 − ε) w(e) < w(e) ≤ opt.
+
+Here, the first inequality follows from (Λ1) and the last from w(e) ≤ w(OPTw ). Since π(∅) = 0
+and every base of M1 consists of r1 (E) elements, we obtain
+
+                              g0 ≤ U 0 = max q(B) < r1 (E) · opt.
+                                            B∈B1
+
+    Finally, substituting g0 < r1 (E) · opt into (9), we obtain
+
+                            ε · opt < r1 (E) · opt · (1 + ε)−m e2(1+ε)/ε .
+
+Dividing both sides by opt and multiplying both sides by (1 + ε)m /ε, we obtain
+
+                                                   r1 (E) 2(1+ε)/ε
+                                   (1 + ε)m <            e         .
+                                                      ε
+Taking logarithms of both sides, we obtain
+
+                                                               1 2(1 + ε)
+                         m log(1 + ε) < log(r1 (E)) + log        +        .
+                                                               ε     ε
+Since 0 < ε < 1/3, we have log(1 + ε) ≥ ε/2, log(1/ε) < 1/ε, and 2(1 + ε)/ε < 3/ε. Hence
+        2              1 3
+ m <       log(r1 (E)) + +       = 2ε−1 log(r1 (E)) + 8ε−2 ≤ 10 (ε−1 log(r1 (E)) + ε−2 ) ≤ T,
+        ε               ε ε
+where the last inequality follows from the definition T = 10 (ε−1 log(r1 (E))+ε−2 ) . Therefore,
+                                                                                  
+
+m < T , which completes the proof.
+
+
+5    Query Complexity
+In this section, we show how to implement each round of Algorithm 1 with O(n log r) indepen-
+dence queries, and prove Theorem 1. Throughout a round, we maintain a q ∗ -maximum base
+Z of M1 with Y ⊆ Z. Using Z and Lemma 7, we check the condition in Line 6 with O(log r)
+independence queries by the binary search technique (Lemma 6).
+
+Lemma 16. Each round of Algorithm 1 can be implemented using O(n log r) independence queries.
+
+
+                                                   13
+Proof. We first show that, given X and π, the price p(e) and the utility q(e) of an element e ∈ E
+can be computed with O(log r) independence queries. For e ∈ X, we have p(e) = π(e), which
+is stored. For e ∈    / X, one query decides whether X + e ∈ I2 . If X + e ∈ I2 , then p(e) = εw(e).
+Otherwise, by Observation 2, an element f ∈ C2 (X | e) − e minimizing π(f ) is an element
+f ∈ X minimizing π(f ) subject to X + e − f ∈ I2 , and hence it can be found by Lemma 6 with
+S = R = X, v = e, and w = π using O(log |X|) = O(log r) queries, where |X| ≤ r because
+X ∈ I1 ∩ I2 . Then, p(e) = π(f ) + εw(e), and q(e) is obtained from p(e) by (3). In the same way,
+q ∗ (e) can be computed from X ∗ and π ∗ with O(log r) queries.
+      We next describe the initialization of a round. We compute q ∗ (e) for all e ∈ E with
+O(n log r) queries. We then compute a base Z of M1 as follows. Starting from Z = X ∗ , we
+scan the elements of E \ X ∗ in non-increasing order of q ∗ , and add each scanned element e
+to Z if Z + e ∈ I1 . This requires n queries. This procedure is the greedy algorithm for the
+contraction M1 /X ∗ , and hence Z \ X ∗ is a q ∗ -maximum base of M1 /X ∗ . Let B be any base of
+M1 containing X ∗ . Then B \ X ∗ is a base of M1 /X ∗ , and hence q ∗ (B) = q ∗ (X ∗ ) + q ∗ (B \ X ∗ ) ≤
+q ∗ (X ∗ ) + q ∗ (Z \ X ∗ ) = q ∗ (Z). That is, Z maximizes q ∗ among the bases of M1 containing X ∗ .
+By Lemma 11, there exists a q ∗ -maximum base B0 of M1 that contains X ∗ . Since B0 is a base
+of M1 containing X ∗ , we have q ∗ (Z) ≥ q ∗ (B0 ) = maxB∈B1 q ∗ (B). Hence, Z is a q ∗ -maximum
+base of M1 . We store the values q ∗ (e) for e ∈ Z.
+      We next show how to test the condition in Line 6 for the scanned element e ∈ E \ X ∗ with
+O(log r) queries. We maintain the invariant that Z is a q ∗ -maximum base of M1 containing Y .
+Note that e ∈    / Y at this time. Indeed, Y = X ∗ ∪ A′ , where A′ is the set of elements added to Y in
+Line 7 earlier in this round. We have e ∈       / X ∗ , and e ∈
+                                                              / A′ because e has not been scanned before
+in this round. We first compute q(e) and q ∗ (e) with O(log r) queries, and we may assume that
+q(e) = q ∗ (e) > 0, since otherwise the condition does not hold. If e ∈ Z, then Y + e ⊆ Z,
+and hence the condition holds. Suppose that e ∈             / Z. By Lemma 7, Y + e is contained in a
+q ∗ -maximum base of M1 if and only if there exists e′ ∈ Z \ Y such that Z − e′ + e ∈ I1 and
+q ∗ (e′ ) = q ∗ (e). Since Z is a q ∗ -maximum base, every e′ ∈ Z \ Y with Z − e′ + e ∈ I1 satisfies
+q ∗ (e′ ) ≥ q ∗ (e). Hence, it suffices to find e′ ∈ Z \ Y minimizing q ∗ (e′ ) subject to Z − e′ + e ∈ I1
+and to check whether q ∗ (e′ ) = q ∗ (e). Such e′ can be found by Lemma 6 with S = Z, R = Z \ Y ,
+v = e, and w = q ∗ using O(log |Z|) = O(log r) queries, where |Z| = r1 (E) ≤ 2r. One more
+query checks whether the element e′ found satisfies Z − e′ + e ∈ I1 , and if it does not, then no
+such e′ exists and the condition does not hold. If the condition holds and e ∈            / Z, we replace
+                 ′                           ∗
+Z by Z − e + e, which is again a q -maximum base of M1 and contains Y + e. Hence, the
+invariant is maintained.
+      Finally, Lines 8–14 require the value p(e) and, if X + e ∈        / I2 , the element f . Both were
+obtained when q(e) was computed for the current X and π, and hence no further queries are
+needed.
+      Since a round scans at most n elements, each with O(log r) queries, a round uses O(n log r)
+queries in total.
+
+Proof of Theorem 1. We run Algorithm 1 with ε/3 in place of ε. By Proposition 15, it returns a
+(1 − ε)-approximate solution after T = O(ε−1 log(r1 (E)) + ε−2 ) = O(ε−1 log r + ε−2 ) rounds,
+where we used r1 (E) ≤ 2r. By Lemma 16, the total number of independence queries is
+O(n log r · (ε−1 log r + ε−2 )), plus O(n) for the preprocessing in Section 2 and for computing
+r1 (E).
+
+
+Acknowledgments
+Our algorithm is entirely based on the unweighted matroid intersection algorithm of Huang–
+Kobayashi [HK26]. We are deeply grateful to Yusuke Kobayashi for sharing their result with
+us and for his many helpful comments that improved the clarity and presentation of this pa-
+
+
+                                                   14
+per. We plan to combine this work with that of Huang–Kobayashi [HK26] in a future version,
+providing a more polished and unified presentation.
+    This work was partially supported by the joint project of Kyoto University and Toyota
+Motor Corporation, titled “Advanced Mathematical Science for Mobility Society” and by JSPS
+KAKENHI Grant Number JP24KJ1494.
+
+
+Acknowledgments of the use of AI
+Through discussions with GPT-5.6 Sol (OpenAI), we obtained an auction algorithm for weighted
+matroid intersection by combining the auction algorithm of Huang–Kobayashi [HK26] for
+unweighted matroid intersection with the analysis of Liu–Ke–Khuller [LKK23, Algorithm 1]
+for weighted bipartite matching. The latter analysis extends that of the auction algorithm of
+Assadi–Liu–Tarjan [ALT21] for unweighted bipartite matching to the weighted setting. Since
+the resulting analysis was hard to understand intuitively, we redid it using GPT-6 Astra (Ope-
+nAI). We also used GPT-6 Astra and Claude Fable 5.1 (Anthropic) to assist in drafting the
+manuscript and improving its language and presentation. We carefully verified and rewrote
+the proofs and take full responsibility for the paper.
+
+
+References
+[AD71]        Martin Aigner and Thomas A Dowling. Matching theory for combinatorial ge-
+              ometries. Transactions of the American Mathematical Society, 158(1):231–245, 1971.
+
+[ALT21]       Sepehr Assadi, S Cliff Liu, and Robert E Tarjan. An auction algorithm for bi-
+              partite matching in streaming and massively parallel computation models. In
+              Proceedings of the 4th Symposium on Simplicity in Algorithms (SOSA 2021), pages
+              165–171. SIAM, 2021.
+
+[BCG86]       Carl Brezovec, Gérard Cornuéjols, and Fred Glover. Two algorithms for
+              weighted matroid intersection. Mathematical Programming, 36(1):39–53, 1986.
+
+[Bli21]       Joakim Blikstad. Breaking O(nr) for matroid intersection. In Proceedings of the
+              48th International Colloquium on Automata, Languages, and Programming (ICALP
+              2022), volume 198, pages 31:1–31:17, 2021.
+
+[BMNT23]      Joakim Blikstad, Sagnik Mukhopadhyay, Danupon Nanongkai, and Ta-Wei Tu.
+              Fast algorithms via dynamic-oracle matroids. In Proceedings of the 55th Annual
+              ACM Symposium on Theory of Computing (STOC 2023), pages 1229–1242, 2023.
+
+[BT25]        Joakim Blikstad and Ta-Wei Tu. Efficient matroid intersection via a batch-update
+              auction algorithm. In Proceedings of the 8th Symposium on Simplicity in Algorithms
+              (SOSA 2025), pages 226–237. SIAM, 2025.
+
+[BvdBMN21] Joakim Blikstad, Jan van den Brand, Sagnik Mukhopadhyay, and Danupon
+           Nanongkai. Breaking the quadratic barrier for matroid intersection. In Proceed-
+           ings of the 53rd Annual ACM SIGACT Symposium on Theory of Computing (STOC
+           2021), pages 421–432, 2021.
+
+[CLS+ 19]     Deeparnab Chakrabarty, Yin Tat Lee, Aaron Sidford, Sahil Singla, and Sam Chiu-
+              wai Wong. Faster matroid intersection. In Proceedings of the 60th Annual Sym-
+              posium on Foundations of Computer Science (FOCS 2019), pages 1146–1168. IEEE,
+              2019.
+
+
+
+                                              15
+[CQ16]    Chandra Chekuri and Kent Quanrud. A fast approximation for maximum
+          weight matroid intersection. In Proceedings of the 27th Annual ACM-SIAM Sym-
+          posium on Discrete Algorithms (SODA 2016), pages 445–457. SIAM, 2016.
+
+[Cun86]   William H Cunningham. Improved bounds for matroid partition and intersec-
+          tion algorithms. SIAM Journal on Computing, 15(4):948–957, 1986.
+
+[DG26]    Aditi Dudeja and Mara Grilnberger. A weighted-to-unweighted reduction for
+          matroid intersection. In Proceedings of the 27th International Conference on In-
+          teger Programming and Combinatorial Optimization (IPCO 2026), pages 378–393.
+          Springer, 2026.
+
+[Edm70]   Jack Edmonds. Submodular functions, matroids, and certain polyhedra. In
+          Combinatorial Structures and Their Applications, pages 69–87, 1970.
+
+[Edm79]   Jack Edmonds. Matroid intersection. In Annals of Discrete Mathematics, volume 4,
+          pages 39–49. Elsevier, 1979.
+
+[Fra81]   András Frank. A weighted matroid intersection algorithm. Journal of Algorithms,
+          2(4):328–336, 1981.
+
+[FX95]    Satoru Fujishige and Zhang Xiaodong. An efficient cost scaling algorithm for
+          the independent assignment problem. Journal of the Operations Research Society of
+          Japan, 38(1):124–136, 1995.
+
+[HK73]    John E Hopcroft and Richard M Karp. An n5/2 algorithm for maximum match-
+          ings in bipartite graphs. SIAM Journal on Computing, 2(4):225–231, 1973.
+
+[HK26]    Chien-Chung Huang and Yusuke Kobayashi. Auction-based algorithms for
+          matroid intersection: Near-Linear query complexity and constant-pass semi-
+          streaming. arXiv preprint arXiv:2609.38685, 2026.
+
+[HKK19]   Chien-Chung Huang, Naonori Kakimura, and Naoyuki Kamiyama. Exact and
+          approximation algorithms for weighted matroid intersection. Mathematical Pro-
+          gramming, 177(1-2):85–112, 2019. Announced at SODA 2016.
+
+[Law75]   Eugene L Lawler. Matroid intersection algorithms. Mathematical Programming,
+          9(1):31–56, 1975.
+
+[LKK23]   Quanquan C. Liu, Yiduo Ke, and Samir Khuller. Scalable auction algorithms
+          for bipartite maximum matching problems. In Proceedings of the Approximation,
+          Randomization, and Combinatorial Optimization. Algorithms and Techniques (AP-
+          PROX/RANDOM 2023), volume 275, pages 28:1–28:24, 2023.
+
+[LSW15]   Yin Tat Lee, Aaron Sidford, and Sam Chiu-wai Wong. A faster cutting plane
+          method and its implications for combinatorial and convex optimization. In Pro-
+          ceedings of the 56th Annual Symposium on Foundations of Computer Science (FOCS
+          2015), pages 1049–1065. IEEE, 2015.
+
+[Ngu19]   Huy L Nguyen. A note on Cunningham’s algorithm for matroid intersection.
+          arXiv preprint arXiv:1904.04129, 2019.
+
+[Qua24]   Kent Quanrud. Adaptive sparsification for matroid intersection. In Proceedings of
+          the 51st International Colloquium on Automata, Languages, and Programming (ICALP
+          2024), volume 297, pages 118:1–118:20, 2024.
+
+
+
+                                          16
+[Sch03]   Alexander Schrijver. Combinatorial optimization: polyhedra and efficiency, vol-
+          ume 24. Springer, 2003.
+
+[SI95]    Maiko Shigeno and Satoru Iwata. A dual approximation approach to weighted
+          matroid intersection. Operations Research Letters, 18(3):153–156, 1995.
+
+[Ter25]   Tatsuya Terao. Deterministic (2/3 − ε)-approximation of matroid intersection
+          using nearly-linear independence-oracle queries. In Proceedings of the 19th Inter-
+          national Symposium on Algorithms and Data Structures (WADS 2025), volume 349,
+          pages 50:1–50:18, 2025.
+
+[Tu22]    Ta-Wei Tu. Subquadratic weighted matroid intersection under rank oracles.
+          In Proceedings of the 33rd International Symposium on Algorithms and Computation
+          (ISAAC 2022), volume 248, pages 63:1–63:14, 2022.
+
+
+
+
+                                          17
+

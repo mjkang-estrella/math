@@ -1,0 +1,9 @@
+# Progress and handoff
+
+Read ancestor/batch rules, ledger/context (initial native display truncated), then guarded administrative JSON reconciliation. Frozen29 inherited scientific notes/primary files with original/copy hashes before target reading. Retrieved13 separate new arXiv PDFs, current API metadata, and actual published target chapter. Exact immutable-reference bindings are reused; no historical source trees recursively copied.
+
+Corrected inherited missing-Appendix claim. Developed fixed-lasso criterion beyond unique-letter tests, preserved invalid prefix-only run, checked92 corrected witnesses and one exact return-code obstruction. Universal source problem remains open in this lane. Broad new directions and explicit public-resolution rejections are recorded without relabeling finite evidence as proof.
+
+Next useful work: prove the universal original-input lasso condition, with all shorter-cover obligations, or construct a genuine preserving morphism satisfying the original fixed-point hypotheses. The macrocode counterexample shows that simply desubstituting a long-image witness is insufficient. Literature next: inspect original GX21/base-label/finite-geometry attribution bodies before choosing a new full endpoint; current complete public proof-registry clearance still missing. Do not repeat denied access or old historical HEAD intervals.
+
+Resource record: every Python/retrieval/helper/edit/hash execution in this lane ran through the specified helper_guard.py with OPENBLAS_NUM_THREADS=1,OMP_NUM_THREADS=1,PYTHONDONTWRITEBYTECODE=1, fixed512MiB AS/group RSS,CPU210s,wall230s. Native bounded reads and apply_patch were used as authorized. Observed helper peaks stayed below47MiB; longest retrieval batch ~33s. One bridge-import NameError corrected without cap changes. Final writes precede a separate guarded verifier.
