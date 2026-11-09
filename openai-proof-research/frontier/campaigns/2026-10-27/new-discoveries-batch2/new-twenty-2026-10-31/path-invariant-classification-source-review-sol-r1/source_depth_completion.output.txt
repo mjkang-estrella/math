@@ -1,0 +1,908 @@
+POLYDIAGONAL PAGE 6 6                        JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+                                                                                        (0,0,0)
+                              2
+                              2                           
+                                                    0 −1 2                   (1,0,−1)             (1,0,1)
+                     1        2          3     M = 0 −1 0
+                         −1         −1
+                                                                             (1,0,2)              (1,2,1)
+                                                    2 −1 0
+                              −1
+                                                                                        (1,2,3)
+
+
+          Figure 1. Weighted digraph with adjacency matrix and lattice of coloring
+          vectors of M -invariant polydiagonal subspaces. The shading indicates the
+          synchrony subspaces.
+
+
+    • Decision variables:                      c = (c1 , . . . , cn ) ∈ Zn
+    • Domains:                               −i + 1 ≤ ci ≤ i for all i                                       (Rem. 3.2)
+    • Dependent variables:
+    maximums:                                  (m2 , . . . , mn ) ∈ Zn−1
+                                 mi := max{c1 , . . . , ci−1 } for all i
+                                    (k)
+    spanning set:         b(k) = (b1 , . . . , b(k)
+                                                n ) ∈ Z ,
+                                                         n
+                                                              for k ∈ {1, . . . , n − 1}                     (Rem. 4.3)
+                                       
+                                        1,
+                                                 ci = k
+                               (k)
+                             bi := −1, ci = −k                    for all k and i                           (Prop. 3.12)
+                                       
+                                        0,       otherwise
+    image of spanning set:                    (k)
+                                 w = (w1 , . . . , wn(k) ) ∈ Zn for all k
+                                   (k)
+
+
+                                                w(k) := M b(k)       for all k
+    • Constraints:
+    coloring vector:                   −mi ≤ ci ≤ 1 + mi          for i ∈ {2, . . . , n}                    (Def. 3.1(2))
+    M -invariance:                   ci = 0 =⇒ wi(k) = 0                for all k and i
+                                                     (k)  (k)
+                                    ci = cj =⇒      wi = wj             for all k and j < i                  (Prop. 4.2)
+                                   ci = −cj =⇒ wi(k) = −wj(k) for all k and j < i
+
+
+          Figure 2. Constraint satisfaction problem for the coloring vectors c of M -
+          invariant polydiagonal subspaces for M ∈ Zn×n .
+
+with rational entries can be replaced by an integer matrix in the computation of invariant
+subspaces. This requires multiplication by a common denominator of the entries. Henceforth
+our implementation assumes that M has integer entries.
+   The decision variables are the components c1 , . . . , cn of the coloring vector c. The domains
+of the decision variables are determined by Remark 3.2. We also use the dependent (inferred)
+variables m2 , . . . , mn , b(1) , . . . , b(n−1) , and w(1) , . . . , w(n−1) . The subtle reasons for the range
+k ∈ {1, . . . , n − 1} for b(k) rely on Remark 4.3. Since the b(k) are determined by decision
+variables during run time, even the zero vectors need to be defined. Also, in order to make
+the algorithm more efficient, b(n) is not needed, hence not defined.
+
+POLYDIAGONAL PAGE 7           INVARIANT POLYDIAGONAL SUBSPACES AND CONSTRAINT PROGRAMMING                           7
+
+   We developed code that solves this constraint satisfaction problem using four Python
+interfaces to three different solvers. Two of them are available in the appendices. All four
+programs are available at our companion website [8].
+   In these programs, the dependent variables can be actual variables or expressions, de-
+pending on the constraint solver. After a solver finds all possible coloring vectors, the
+corresponding invariant polydiagonal spaces can be built using Proposition 3.7.
+   The best performing version for smaller problems uses DOcplex, the Python interface to
+IBM’s CP Optimizer [6]. The versions using the CP-SAT solver [16] handle larger or more
+complex problems better. We use the CP-SAT solver through two interfaces. One of them
+uses the native ORtools interface, the other uses the CPMpy [5] interface. The ORtools
+version performs better if we use the conditions of Proposition 3.4. The version using the
+Z3 Theorem Prover [4] is significantly slower. This is probably because Z3 is designed to
+solve more generic problems. We include the Z3 version because it is easily accessible, user
+friendly, and has a non-commercial license.
+   As an initial test, we ran our code without the constraints that force M -invariance, which
+we can think of as letting M be the zero matrix. This finds coloring vectors in Zn . The
+number of such coloring vectors is the Dowling number pn [18, A007405] as was shown in
+[15]. Our code successfully verifies these counts. Table 1 shows the performance of our
+implementations. These values show that the performance of the Z3 code is inferior even for
+this simpler problem compared to the other two implementations.
+       n        1   2   3         4     5   6     7      8      9       10
+       pn       2   6 24         116   648 4088 28640 219920 1832224 16430176
+       DOcplex 0.4 0.4 0.4       0.4   0.5 1.5   8.1    61     501     4531
+       ORtools 0.4 0.3 0.3       0.3   0.4 1.0   6.1    57     586     6427
+       Z3      0.3 0.3 0.3       0.4   1.1 12    532   47513
+
+       Table 1. The number pn of coloring vectors in Zn , and the time in seconds
+       to compute them with three different solvers. Since the ORtools interface
+       to CP-SAT outperforms the CPMpy interface, the CPMpy times are omitted
+       from the table.
+
+
+                        6. Comparison to existing approaches
+  No algorithm, other than brute force, is currently available to compute all invariant polydi-
+agonal subspaces. Our constraint programming approach is the first practical way to handle
+medium-size matrices.
+  The first useful algorithm to compute only the invariant synchrony subspaces was devel-
+oped in [7] and further improved in [11] as the split and cir algorithm. These algorithms rely
+on the computation of the coarsest invariant refinement (cir) of a partition. The synchrony
+subspace corresponding to the cir is the invariant synchrony subspace with the smallest
+dimension that contains the original synchrony subspace.
+  The split and cir algorithm starts with the singleton partition {{1, . . . , n}}, corresponding
+to the coloring vector c = (1, . . . , 1). The one-dimensional subspace ∆Pc is not necessarily
+invariant. The queue of candidates is initialized with this partition. For each candidate
+in the queue, the cir is computed and added to the list of partitions producing invariant
+synchrony subspaces. For each new invariant partition, each class is split into two classes
+
+POLYDIAGONAL PAGE 8 8                  JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+in all possible ways, which are added to the candidate queue. The queue will eventually be
+empty, terminating the algorithm.
+   Our constraint programming code greatly outperforms the split and cir algorithm. A
+theoretical algorithm for computing invariant polydiagonal subspaces using eigenvectors of
+the matrix M is described in [1, 3]. Since no implementation is available, it is hard to
+compare the performance of this approach to ours. One advantage of our approach is that
+it uses exact arithmetic.
+   Table 2 shows how the performance of the split and cir algorithm [11] compares to the
+constraint approach for the Laplacian matrix of the cycle graph Cn . Our computations were
+done on a AMD EPYC 7542 processor using a single 2.9 GHz CPU and 16G RAM. In many
+instances, the use of constraint programming reduces the time of computation from weeks
+to seconds.
+       n                        5    10     15   20   25   30     35   40    45    50
+       number of subspaces
+       synchrony                7    19     27 45     33   77     51   95 83      96
+       polydiagonal            13    47     51 121    64   197    99   269 161    250
+       times (sec)
+       split & cir: sync.       0     0     0   9 401 22631
+       DOcplex: sync.          0.4   0.4   0.5 0.7 1.2 2.1  3.3 5.4 8.0 12
+       DOcplex: polydiag.      0.4   0.4   0.6 1.2 2.4 5.5   11 26 57 124
+       ORtools: sync.          0.4   1.5   6.1 11 18   34    54 107 195 333
+       ORtools: polydiag.      0.5   2.3   7.9 19 38   91   164 348 613 1051
+
+       Table 2. Times to compute the synchrony and polydiagonal subspaces in-
+       variant under the Laplacian of Cn . Only synchrony subspaces are computed
+       with the split and cir algorithm.
+
+  Polydiagonal subspaces that are invariant under a collection of matrices are also often
+useful as was shown in [11]. The constraint programming approach for finding invariant
+polydiagonal subspaces easily generalizes to this setting. It only requires the constraints
+corresponding to the conditions of Proposition 4.2 for each matrix in the collection.
+                                           7. Examples
+   Let Aut(G) be the automorphism group and M be the adjacency matrix of the simple
+graph G. Define Γ := Aut(G) × Z∗ , where and Z∗ = {−1, 1} is the unit group of Z. For
+(ϕ, σ) ∈ Γ and x ∈ Rn , define (ϕ, σ)x := (σxϕ(1) , . . . , σxϕ(n) ). Then Γ acts on the set of
+M -invariant polydiagonal subspaces by (ϕ, σ)V := {(ϕ, σ)x | x ∈ V }. The point stabilizer
+of such a subspace V is
+                      pStab(V ) := {(ϕ, σ) ∈ Γ | (∀x ∈ V ) (ϕ, γ)x = x}.
+The fixed point subspace Fix(Θ) of a subgroup Θ of Γ is the maximal M -invariant subspace
+whose point stabilizer is Θ. We call Fix(pStab(V )) the fixed point subspace corresponding
+to V . If Fix(pStab(V )) ̸= V , then V is an Anomalous Invariant Subspace (AIS). In other
+words, an AIS is an M -invariant polydiagonal subspace that is not a fixed point subspace of
+the Γ action. Although fixed point subspaces can be found by analyzing representations of
+the Γ action [9], finding each AIS is very difficult without constraint programming.
+
+POLYDIAGONAL PAGE 9           INVARIANT POLYDIAGONAL SUBSPACES AND CONSTRAINT PROGRAMMING                                                                        9
+
+                                                            0
+
+
+
+
+                                                                 1             3
+
+
+
+
+                                                        4                      5          6             10
+
+
+
+
+                                         2    11        9            13        8              12        14         18
+
+
+
+
+                                7        19   15            25            27        24             22         23        21
+
+
+
+
+                          16   20        17   26            30                 32             31             29
+
+
+
+
+                                    28             34                35              33
+
+
+
+
+                                                                     36
+
+
+
+
+       Figure 3. The Hasse diagram of the poset of Γ-orbits of M -invariant syn-
+       chrony subspaces for the Buckyball graph. The shaded orbits are described in
+       Figures 4 through 6. The relationship between orbits 30, 31, 33, and 35, as
+       indicated by the red figure eight, shows that this poset is not a lattice.
+
+Example 7.1. Our DOcplex and ORtools codes both find the 240 invariant polydiagonal
+subspaces for the adjacency matrix of the Petersen graph in a few seconds. These subspaces
+are in 22 orbits under the Γ action. The number of invariant anti-synchrony subspaces is
+147. Two orbits contain AIS.
+Example 7.2. The invariant polydiagonal subspaces for the graph Laplacian L for the path
+graph with 100 vertices can be computed by our DOcplex and ORtools codes in 7.4 and 31.9
+minutes, respectively. There are 20 L-invariant subspaces, each in a singleton group orbit of
+the Γ ∼
+      = Z2 × Z2 action. Only 4 of these invariant subspaces are fixed point subspaces, with
+coloring vectors
+        (0, . . . , 0),   (1, . . . , 50, −50, . . . , −1),               (1, . . . , 50, 50, . . . , 1),                (1, . . . , 100).
+Two of the invariant subspaces, for example, that are AIS have the coloring vectors
+                      (1, −1, −1, 1, . . . , 1, −1, −1, 1),                    (1, 2, 2, 1, . . . , 1, 2, 2, 1),
+where the groups of four are repeated.
+  These results could be reproduced using the eigenvectors of L, using the algorithm de-
+scribed in [1, 3]. This can be done because the eigenvectors vk ∈ R100 for k ∈ {0, . . . , 99}
+are known in closed form with components (vk )i = cos((i − 21 )kπ/100).
+
+Example 7.3. The 60-vertex Buckyball graph G models the Buckminsterfullerene molecule
+Carbon 60. The standard embedding of the Buckyball graph into 3-space is the skeleton of
+the truncated icosahedron, familiar as the soccer ball. The symmetry group of this embed-
+ding is the 120-element icosahedral group Ih using Schönflies notation [19]. Note that Ih is a
+subgroup of the orthogonal group O(3), and Ih ∼= Aut(G) ∼ = A5 ×Z2 . Thus, Γ = Aut(G)×Z∗
+has 240 elements. Let M be the adjacency matrix of G. Our ORtools code finds the 1244
+M -invariant polydiagonal subspaces in 6.7 hours. The DOcplex implementation failed to
+find all solutions in 14 days. These polydiagonal subspaces are partitioned into 95 group
+
+POLYDIAGONAL PAGE 10 10                                         JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+                                           1                                                       1
+                                                   2                   3                   2
+                                                                       5
+                                       4                   6                       6                   4
+                                                   6                                       6
+                                                                   4       4
+                                               5           2                   2               5
+                           4                           3                               3                       4
+                                   6                               1       1                               6
+               1                                       2       1               1       2                               1
+                   2                                                                                               2
+                                       6           4               1       1               4       6
+
+                                                       4       2               2       4
+                                   5                                                                   5
+                               3                                       3                                       3
+                                                   6                                       6
+                                                                       5
+                                                           6                       6
+                                           2               4                   4               2
+                                           1                                                       1
+
+
+
+
+       Figure 4. The invariant synchrony subspace W of Example 7.3. The 2D
+       embedding uses an azimuthal equidistant projection of the 3D embedding.
+       The fixed point subspace W has point stabilizer isomorphic to D3d ∼= D3 × Z2 .
+       The D3 symmetry can be seen with the help of the shading in the 2D picture
+       of W , while the Z2 symmetry is the 180◦ rotation around the black axis shown
+       in the 3D embedding of W .
+
+           5           6                                                                                                                         (0,0,0,0,0,0)
+                                                         2                             1       0               0   0       0
+                                                                                                                           
+               2
+                                                        1                             0       1               1   0       0 (0,0,1,−1,1,0)   (1,−1,−1,−1,1,1)   (1,1,1,1,1,1)
+       3                   4
+                                                        0                             2       0               0   1       0
+                                                                                                                           
+                                                   Mc = 
+           2   2                                        0                             1       0               1   0       1
+                                                                                                                            
+                                                                                                                                                 (1,2,2,2,1,1)    (1,2,3,1,2,1)
+                                                        0                             0       1               0   0       2
+               1           2                             0                             0       0               1   1       1                     (1,2,3,4,5,6)
+
+
+
+       Figure 5. The quotient digraph Gc of W from Figure 4 with its adjacency
+       matrix Mc and lattice of coloring vectors of Mc -invariant polydiagonal sub-
+       spaces. The four shaded coloring vectors of synchrony subspaces correspond
+       to the shaded orbits of Figure 3.
+
+orbits under the Γ action. The same code finds the 340 M -invariant synchrony subspaces,
+partitioned into 37 group orbits, in under 3 minutes. The partially ordered set of M -invariant
+synchrony subspaces is shown in Figure 3. Orbits 0 and 36 are both singletons; orbit 0 con-
+tains the fully synchronous subspace with coloring vector (1, . . . , 1), and orbit 36 contains
+R60 with the coloring vector (1, . . . , 60).
+   Orbits connected by a dashed line in Figure 3 have the same conjugacy class of point sta-
+bilizers. The 16 group orbits with a dashed line pointing down contain synchrony subspaces
+that are AIS, and the other 21 group orbits contain synchrony subspaces that are fixed point
+subspaces.
+   Now we focus on the synchrony subspace W shown in Figure 4, which is a fixed point
+subspace and a member of orbit 13 of Figure 3. The quotient digraph Gc of W , where c
+is the coloring vector of W , is shown in Figure 5. An arrow i  j with weight a in the
+quotient digraph indicates that every vertex with color j is connected to a vertices with
+
+POLYDIAGONAL PAGE 11               INVARIANT POLYDIAGONAL SUBSPACES AND CONSTRAINT PROGRAMMING                                                                                                                                          11
+
+                                                                                                                                   +                                                       +
+                                                           +                                                                               -                   -                   -
+                                                           +                                                                                                   +
+                           -                                                               -                                   -                   +                       +                   -
+                                                                                                                                           +                                       +
+                                                       -       -                                                                                           -       -
+                                   +                                               +                                                   +           -                   -               +
+                   -                       +                               +                       -                   -                       -                               -                       -
+                                                                                                                           +                               +       +                               +
+                                                                                                               +                               -       +               +       -                               +
+                                                                                                                   -                                                                                       -
+                                       -                                       -                                               +           -               +       +               -       +
+
+                                           -                               -                                                                   -       -               -       -
+                       +                                                                   +                               +                                                                   +
+                   +                                       +                                       +                   -                                       -                                       -
+                                                                                                                                           +                                       +
+                                                           +                                                                                                   +
+                                                                                                                                                   +                       +
+
+                                               -                   -                                                               -               -                   -               -
+                                                                                                                                   +                                                       +
+
+                               (0, 0, 1, −1, 1, 0)                                                                         (1, −1, −1, −1, 1, 1)
+                               1                                                       1                                           1                                                       1
+                                       2                   2                   2                                                           2                   3                   2
+                                                           1                                                                                                   2
+                           2                   1                       1                   2                                   1                   1                       1                   1
+                                       1                                       1                                                           1                                       1
+                                                       2       2                                                                                           1       1
+                                   1           2                   2               1                                                   2           2                   2               2
+                   2                       2                               2                       2                   1                       3                               3                       1
+                       1                               1       1                               1                           1                               1       1                               1
+          1                                2       1               1       2                               1   1                               2       1               1       2                               1
+               2                                                                                       2           2                                                                                       2
+                           1           2               1       1               2       1                                       1           1               1       1               1       1
+
+                                           2       2               2       2                                                                   1       2               2       1
+                       1                                                                   1                               2                                                                   2
+                   2                                       2                                       2                   3                                       3                                       3
+                                       1                                       1                                                           1                                       1
+                                                           1                                                                                                   2
+                                               1                       1                                                                           1                       1
+                               2               2                   2               2                                               2               1                   1               2
+                               1                                                       1                                           1                                                       1
+
+                                       (1, 2, 2, 2, 1, 1)                                                                                  (1, 2, 3, 1, 2, 1)
+
+       Figure 6. The M -invariant AIS that have the same point stabilizer as W .
+       The coloring vectors below the figures indicate the corresponding Mc -invariant
+       polydiagonal subspaces shown in Figure 5.
+
+color i. The adjacency matrix of the quotient digraph is Mc := Dc+ M Dc ∈ R6×6 [13]. Note
+that the pseudoinverse Dc+ = (DcT Dc )−1 DcT is easy to compute because DcT Dc is diagonal.
+The quotient digraph, the matrix Mc , and the lattice of the six Mc -invariant subspaces are
+shown in Figure 5. The automorphism group of the quotient digraph is trivial, and the only
+fixed point subspaces of the Aut(Gc ) × Z∗ ∼  = Z2 action on R6 are (0, . . . , 0) and (1, . . . , 6).
+This lattice is isomorphic to the lattice of M -invariant polydiagonal subspaces that are also
+subspaces of W . Figure 6 shows the four of these subspaces that are AIS. The remaining
+three of these subspaces, the trivial subspace, the constant subspace, and W itself, are fixed
+point subspaces.
+
+                                                                                                   8. Conclusions
+  Polydiagonal (synchrony or anti-synchrony) subspaces invariant under a matrix have many
+applications in network theory and dynamical systems, especially coupled cell networks. We
+have developed an approach based on coloring vectors which makes it possible to formulate
+constraint satisfaction problems for finding invariant polydiagonal subspaces. We have shown
+that solving the resulting problems with existing state-of-the-art constraint solvers greatly
+
+SYNCHRONY PAGE 1                                                 INVARIANT SYNCHRONY SUBSPACES OF SETS OF MATRICES
+
+                                                               JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+                                                   Abstract. A synchrony subspace of Rn is defined by setting certain components of the
+                                                   vectors equal according to an equivalence relation. Synchrony subspaces invariant under
+                                                   a given set of square matrices ordered by inclusion form a lattice. Applications of these
+                                                   invariant synchrony subspaces include equitable and almost equitable partitions of the ver-
+
+
+
+
+arXiv:1908.05797v2 [math.DS] 18 Feb 2020
+                                                   tices of a graph used in many areas of graph theory, balanced and exo-balanced partitions of
+                                                   coupled cell networks, and coset partitions of Cayley graphs. We study the basic properties
+                                                   of invariant synchrony subspaces and provide many examples of the applications. We also
+                                                   present what we call the split and cir algorithm for finding the lattice of invariant synchrony
+                                                   subspaces. Our theory and algorithm is further generalized for non-square matrices. This
+                                                   leads to the notion of tactical decompositions studied for its application in design theory.
+
+
+
+
+                                                                                      1. Introduction
+                                              Invariant subspaces of matrices play an important role in many areas of mathematics
+                                           [24]. We study a special type of invariant subspace, the invariant synchrony subspace where
+                                           certain components are equal, and further generalize this notion by considering invariance
+                                           with respect to more than one matrix. These invariant synchrony subspaces come from
+                                           certain partitions of the components, which we call invariant partitions. Invariant partitions
+                                           have a surprisingly large number of applications and have been studied, often in different
+                                           form, in graph theory, network theory, mathematical biology, and other areas of mathematics.
+                                           For example, they relate to almost equitable partitions, coupled cell networks, dynamical
+                                           systems, network controllability, and differential equations. Our own interest in the subject
+                                           initiated from needing to understand all possible bifurcations for a given family of semilinear
+                                           elliptic PDE, including cases where symmetry did not fully describe the invariant spaces.
+                                           In that research it became apparent that what we called anomalous invariant subspaces can
+                                           occur quite frequently, and must be understood in order to robustly and efficiently find and
+                                           follow new branches of solutions with local symmetry. Thus, it is desirable to be able to
+                                           find all invariant partitions, which form a lattice. Our main contribution is the split and cir
+                                           algorithm that finds this lattice relatively well, by which we mean it has some efficiencies
+                                           that allow a modestly large calculation, and for multiple matrices. A secondary goal of this
+                                           article is to provide a common framework that brings together different areas of research so
+                                           that we can better share results.
+                                              There are a number of papers that describe algorithms for finding the coarsest invariant
+                                           partitions for a single matrix [6, 8, 9]. These algorithms were developed for algebraic graph
+                                           theory and are often described in graph theoretic terminology (e.g., vertex degree). For
+                                           example, this is used for the graph isomorphism problem in Nauty [32].
+
+                                              2000 Mathematics Subject Classification. 15A72, 34C14, 34C15, 37C80, 06B23, 90C35,
+                                              Key words and phrases. coupled cell network, synchrony, equitable partition, almost equitable partition,
+                                           balanced partition, exo-balanced partition, tactical decomposition.
+                                              Date: 2/20/2020.
+                                                                                                 1
+
+SYNCHRONY PAGE 2 2                   JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+   Our cir algorithm is a slight generalization of these algorithms. It finds the coarsest
+invariant refinement of a given partition for a set of matrices. The coarsest invariant partition
+is the cir of the singleton partition. Our implementation of cir was inspired by [22, 48]. By
+recursively splitting classes of an invariant partition and finding the cir of each of these finer
+partitions, we compute the lattice of invariant partitions. This provides us with a relatively
+efficient split and cir algorithm for the NP-complete problem of finding the lattice of invariant
+partitions. The recursive combination of cir with class splitting is the main contribution of
+our paper.
+   Our algorithm is close to that of [27]. They find the lattice of invariant partitions by
+finding the coarsest invariant partition and then check every finer partition by brute force.
+We believe that our split and cir algorithm with the recursive application of cir is more
+efficient, allowing for larger calculations.
+   By quite different means toward a similar end, the cell network results of [1] use eigenvec-
+tors of each individual adjacency matrix after dividing the network into regular subnetworks.
+We believe that our algorithm is more numerically stable since it uses integer arithmetic.
+   We generalize our split and cir algorithm a bit further to allow non-square matrices. This
+handles a possibly generalized notion (more than one matrix) of tactical decompositions used
+in design theory.
+   The organization of the paper is as follows. In Section 2 we make some definitions and
+examples concerning the partial ordering of partitions. We define synchrony subspaces in
+Section 3, where we give some useful facts concerning the lattice of partitions. In Section 4
+we define invariant synchrony subspaces for collections of matrices, and show that invari-
+ant partitions form a lattice. Applications of invariant synchrony subspaces are provided
+in Section 5. We feature equitable and almost equitable partitions of graphs, balanced and
+exo-balanced partitions of coupled cell networks, weighted cell network systems, network
+controllability, Cayley graphs, and finite difference methods for PDE. The invariant sub-
+spaces for all of these applications can be treated in terms of invariant partitions for the
+appropriate collection of matrices. Section 6 provides some technical tools needed for the
+cir algorithm, which is developed in Section 7. We provide the split and cir algorithm for
+computing the lattice of invariant partitions in Section 8. We parallel this development for
+non-square matrices with applications to tactical decompositions in Sections 9, 10, and 11.
+
+
+                                       2. Preliminaries
+   We recall some terminology and notation for partially ordered sets. Our general reference
+is [26]. A set P with a relation ≤ is a partially ordered set or poset if the relation is reflexive,
+antisymmetric, and transitive. The down-set of an element x of P is
+
+                                     ↓ x := {y ∈ P | y ≤ x}.
+
+   A poset L is a lattice if the join a ∨ b :=
+                                             W sup{a, b} and meetVa ∧ b := inf{a, b} exist for
+all a, b ∈ L. Equivalently, L is a lattice if H := sup(H)
+                                                        W and VH := inf(H) exist for any
+finite subset H of L. A lattice L is called complete if H and H exist for any subset H
+of L.
+   An element y of a poset covers another element x if x < y but x < z < y does not hold
+for any z. We use the notation x ≺ y for the covering relation. We also say that x is a lower
+cover of y and y is an (upper) cover of x.
+
+SYNCHRONY PAGE 3                                 INVARIANT SYNCHRONY SUBSPACES                                        3
+
+Example 2.1. The set L(Rn ) of subspaces of Rn is a poset under reversed containment. It
+is also a lattice such that U ∨ V = U ∩ V and U ∧ V = U + V .
+Example 2.2. Let Π(n) be the set of partitions of the set {1, . . . , n}. We are going to
+simply write Π if n is clear from the context. We refer to an element of a partition as an
+(equivalence) class. The class of i is denoted by [i]. A partition B is coarser than another
+partition A if every class of A is contained in some class of B. Equivalently, B is coarser
+than A exactly when [i]A = [j]A implies [i]B = [j]B for all i and j. In this case we write
+A ≤ B and also say that A is finer than B or that A is a refinement of B. The set Π(n) with
+this order forms a lattice [12, Theorem 4.11]. The top element of this lattice is the singleton
+partition {{1, . . . , n}} and the bottom element is the discrete partition {{1}, . . . , {n}}. We
+use the simplified notation for a partition where we list the elements of the classes separated
+by a bar. So the singleton partition is 12 · · · n and the discrete partition is 1|2| · · · |n.
+   A partition B covers another partition A if A can be constructed from B by splitting one
+of the classes of B into two nonempty sets. More precisely, we have the following.
+Proposition 2.3. For A, B ∈ Π(n), A ≺ B if and only if B = A ∪ {A ∪ B} \ {A, B} for
+some A, B ∈ A.
+                                   3. Synchrony subspaces
+   The characteristic vector of a subset C of {1, . . . , n} is the vector (x1 , . . . , xn ) such that
+xi = 1 for i ∈ C and xi = 0 for i 6∈ C. The characteristic matrix of a partition A =
+{C1 , . . . , Ck } ∈ Π(n) is the matrix P (A) whose columns are the characteristic vectors of the
+classes of A. The classes of A are ordered lexicographically and the characteristic vectors are
+listed in the same order. The coloring vector of A is c(A) := (c1 , . . . , cn ) such that i ∈ Cci
+for all i ∈ V . Note that P (A) is the n × |A| matrix with components P (A)i,a = δci ,a . We
+use the identification Rn ≡ Rn×1 , so the coloring vector c(Ak ) is also a column matrix.
+   The set of all coloring vectors is linearly ordered by the lexicographic order. If A ≺ B
+then c(A) < c(B) since one of the colors in the class that splits must increase. Hence the
+coloring vector map is order preserving. That is, A ≤ B implies c(A) ≤ c(B). However the
+converse is not true. For example c(12|3) = (1, 1, 2) < (1, 2, 2) = c(1|23) even though the
+partitions 12|3 and 1|23 are not comparable. We usually order a list of partitions according
+to the lexicographical order of their coloring vectors. Thus, the first partition in Π(n) is
+the singleton partition A1 with coloring vector (1, 1, 1, . . . , 1) and the last partition is the
+discrete partition ABn with coloring vector (1, 2, 3, . . . , n), where Bn is the n-th Bell number.
+Definition 3.1. For A ∈ Π(n) we define
+                       sys(A) := {(x1 , . . . , xn ) | xi = xj if [i] = [j]} ⊆ Rn
+to be the synchrony subspace of A.
+  The connection between sys(A) and ∆PA defined for coupled cell networks is discussed in
+Subsection 5.2. The following is an easy consequence of the definitions.
+Proposition 3.2. The synchrony subspace sys(A) of a partition A is the column space
+Col(P (A)) of the characteristic matrix P (A).
+Example 3.3. Consider the partitions A = 12|3 and B = 1|23. The characteristic matrices
+are                               h i               h i
+                                    1 0              1 0
+                         P (A) =    1 0 ,    P (B) = 0 1 ,
+                                           0 1                    0 1
+
+SYNCHRONY PAGE 4 4                    JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+the coloring vectors are c(A) = (1, 1, 2) and c(B) = (1, 2, 2) while the synchrony subspaces
+are sys(A) = {(a, a, b) | a, b ∈ R} and sys(B) = {(a, b, b) | a, b ∈ R}.
+  The following is an easy consequence of the definitions. See for example [49, Equation
+(4)].
+Proposition 3.4. The mapping sys : Π(n) → L(Rn ) is an order embedding. That is, it is
+injective and A ≤ B if and only if sys(A) ⊇ sys(B).
+    We recall another relevant result.
+                                                    W    T
+Proposition 3.5. [48, Lemma 2] If S ⊆ Π(n) then sys( S) = {sys(A) | A ∈ S}.
+
+                            4. Invariant synchrony subspaces
+  A subspace U of Rn is invariant under a matrix M in Rn×n if M U = {M u | u ∈ U } is a
+subset of U . The subspace U is invariant under a collection M of matrices if U is invariant
+under each M in M.
+Definition 4.1. Let M ⊆ Rn×n . A partition A in Π(n) is called M-invariant if the
+synchrony subspace of A is M -invariant for all M ∈ M. That is, M sys(A) ⊆ sys(A) for all
+M ∈ M. We let ΠM (n) be the set of M-invariant partitions. We use the simplified notation
+ΠM (n) if M = {M }.
+    Note that ΠM (n) is a subposet of Π(n).
+Example 4.2. Let                          h           i              h 1 0 −1 i
+                                              1 0 0
+                                   M1 =       0 1 0       ,   M2 =    0 2 0
+                                              0 0 2                   0 0 0
+and M = {M1 , M2 }. Then
+                                     ΠM1 (3) = {12|3, 1|2|3},
+                                     ΠM2 (3) = {13|2, 1|2|3},
+                                      ΠM (3) = {1|2|3}.
+For example
+          M2 sys(13|2) = {M2 (a, b, a) | a, b ∈ R} = {(0, 2b, 0) | a, b ∈ R} ⊆ sys(13|2).
+On the other hand
+       M2 sys(12|3) = {M2 (a, a, b) | a, b ∈ R} = {(a − b, 2a, 0) | a, b ∈ R} 6⊆ sys(12|3).
+                                           W
+Proposition 4.3. If ∅ 6= S ⊆ ΠM then S ∈ ΠM .
+                                                           W         T
+Proof. Since sys(A) is M-invariant for all A ∈ S, sys( S) = {sys(A) | A ∈ S} is also
+M-invariant.                                                                                
+    Recall the following result.
+                                                             W
+Proposition 4.4. [26, Lemma 34] If P is a poset in which S exists for all S ⊆ P , then P
+is a complete lattice.
+                                          W         V      W
+   Note that the bottom element of P is ∅, and S = LS where LS is the set of lower
+bounds of S. The following is closely related to [1, Section 4].
+Proposition 4.5. If M ⊆ Rn×n then ΠM (n) is a lattice.
+
+SYNCHRONY PAGE 7                                  INVARIANT SYNCHRONY SUBSPACES                                    7
+
+                                            a    b   b   a      a   b   c   a
+                         a   b   b   a       b   c   c   b      c   d   d   b
+                         a   b   b   a      b    c   c   b      b   d   d   c
+                                            a    b   b   a      a   c   b   a
+
+                             (i)                 (ii)               (iii)
+
+       Figure 5.2. Equitable partitions. (i) The coarsest equitable partition of P4 @
+       P2 . (ii) The coarsest equitable partition of P4 @ P4 . (iii) The orbit partition
+       of the Z4 action on P4 @ P4 .
+
+partitions is isomorphic to the lattice of subgroups exactly when there is a vertex with trivial
+stabilizer subgroup. This happens unless 2 ≤ m = n ≤ 3.
+  Note that the orbit partitions for Z4 and D4 are the same for P2 @ P2 and P3 @ P3 . An
+algorithm using the eigenvectors of the adjacency matrix [1, 27] can possibly be applied
+symbolically for all m and n to prove this conjecture. Alternatively, the techniques of [?]
+might also provide a proof.
+5.2. Balanced partitions of coupled cell networks. Synchrony in coupled cell networks
+introduced by [46] and refined by [25] provide examples of M-invariant synchrony subspaces.
+A coupled cell network system is a set of dynamical systems coupled according to the arrows
+of a digraph. An interesting case is where some or all of the cells have the same internal
+dynamics, so partial or full synchronization of the cells is possible. Coupled cells are of
+interest to physicists and biologists [11, 40, 43, 44, 42]. A good mathematical review is [7].
+   A coupled cell network is formally defined in [25] as a digraph with an equivalence relation
+on the set {1, . . . , n} of cells and another equivalence relation on the arrows, along with
+the consistency condition that equivalent arrows have equivalent heads and equivalent tails.
+Intuitively, two cells are in the same equivalence class if they have the same internal dynamics,
+and two arrows are in the same equivalence class if they represent couplings of the same
+type. The equivalence classes of the cells and arrows can be considered as colorings. So
+a cell network is essentially a digraph with compatible cell and arrow colorings. We use
+different symbols in our figures to indicate the cell colors, and solid or dashed arrows for the
+edge colors.
+   A coupled cell network system defined in [25] on the coupled cell network is an ODE
+defined by an admissible vector field. To define admissible vector fields, a phase space Pi is
+specified for each cell, and the total phase space is the Cartesian product P = P1 ×· · ·×Pn of
+the cell phase spaces. Given a coupled cell network on the digraph G and a total phase space
+P , the set of all admissible vector fields is FGP , the collection of all vector fields compatible
+with the structure of the colored graph G.
+   The polydiagonal subspace of a cell partition A of a cell network system is ∆PA := {x ∈ P |
+xi = xj if [i] = [j]}, see [1, 25, 27, 39, 46]. Note that ∆PA = sys(A) if P = Rn . A cell partition
+A of a coupled cell network system is polysynchronous if ∆PA is invariant under the vector
+field of the system. A cell partition A of a coupled cell network is robustly polysynchronous
+if ∆PA is invariant under every vector field in FGP for all choices of P .
+   The adjacency matrix of a digraph with n vertices is the n × n matrix A with Ai,j equal
+to the number of arrows from vertex j to vertex i. Our adjacency matrix is the in-adjacency
+matrix, which is the preferred choice for cell networks [1]. In graph theory it is more common
+to use the out-adjacency matrix, which is the transpose of our A.
+
+SYNCHRONY PAGE 12 12                   JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+                          a   b   b   a       a   a    b   a      a    b   b   a
+                          b   a   a   b       b   a    a   a      d    c   c   d
+                          b   a   a   b       a   a    a   b      c    d   d   c
+                          a   b   b   a       a   b    a   a      b    a   a   b
+
+                              (i)                 (ii)                 (iii)
+
+     Figure 5.7. Three of the 13 almost equitable, but not equitable, partitions of P4 P4 .
+
+                                                      123 12|3 1|2|3
+                                      1   2   3
+                                                      A1 A2     A3
+
+         Figure 5.8. A coupled cell network and its exo-balanced partitions. The
+         boxed partition is balanced.
+
+  The Laplacian matrix of a graph is defined by L = D − A, where D is the diagonal matrix
+with Di,i = d(i) the degree of i, and A is the adjacency matrix. The following is a well-known
+result stating that the L-invariant partitions are precisely the almost equitable partitions.
+See for example [15, Proposition 1], [2, Remark 2.2 (ii)], and [39, Remark 3.14].
+Proposition 5.23. If L is the Laplacian matrix of a graph with vertex set {1, . . . , n}, then
+ΠL (n) consists of the almost equitable partitions of the graph.
+  This proposition shows that almost equitable partitions of a graph can also be viewed as
+invariant partitions.
+Example 5.24. The almost equitable partitions of Pm @ Pn are much more complicated
+than the equitable partitions. A conjectured classification of the almost equitable partitions
+of P1 Pn ∼= Pn is in [39]. The graph P4 @ P4 has 23 almost equitable partitions in 17 group
+orbit classes. A few of these partitions are shown in Figure 5.7. The companion website
+[38] shows them all. By contrast there are 10 equitable partitions in 8 group orbit classes
+for this graph. Some almost equitable partitions for Pn Pn are found in [21] but not all of
+them. For example, the almost equitable partitions shown in Figure 5.7(i) are described as
+the periodic extensions of a 2 × 2 corner but the almost equitable partitions in (ii) and (iii)
+are not in the families described in [21]. As mentioned after Conjecture 5.6, the algorithms
+in [1, 27] might allow a computation of the lattice of almost equitable partitions of Pm @ Pn
+since the eigenvectors of L are known in closed form.
+5.5. Exo-balanced partitions of coupled cell networks. The generalization of almost
+equitable partitions from graphs to coupled cell networks is immediate.
+Definition 5.25. Consider a coupled cell network with cell type partition T . A cell partition
+                                                −
+A is called exo-balanced if A ≤ T and d−
+                                       B (i) = dB (j) for all i, j ∈ A ∈ A and A 6= B ∈ A in
+every monochrome subgraph.
+  If there is only one cell type, so T is the singleton partition, then T is exo-balanced.
+Furthermore, every balanced partition is exo-balanced, but the converse is not true.
+Example 5.26. Figure 5.8 shows a coupled cell network and its exo-balanced partitions.
+Only partition A3 is balanced.
+
+SYNCHRONY PAGE 16 16                 JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+on the region is used in the finite difference method. The graph Laplacian matrix gives
+the approximation for the Laplacian operator with zero Neumann boundary conditions [34],
+so the synchrony subspaces of exo-balanced partitions are invariant. For other boundary
+conditions, the subspaces that are invariant under the matrix approximating the Laplacian
+include the synchrony subspaces of balanced partitions.
+
+5.8. Network controllability. Network controllability concerns the possibility to transfer
+the state of a dynamical system with external controls from any given initial state to any
+final desired state in finite time [5, 28, 29, 48]. Such a network system is of the form
+                                      ẋ = −M x + Bu,
+where the matrix M describes the coupling between the components of the network, often
+the adjacency or Laplacian matrix, the matrix B encodes the application of the external
+controls u, and x encodes the state of the network.
+   Invariant subspaces of the state space are an obstruction to controllability, since a target
+state in an invariant subspace cannot be reached in finite time from an initial state not
+in that invariant subspace. For example, the invariant subspaces forced by symmetry are
+an obstacle toward the controllability of networks if the matrix B is chosen in a way that
+preserves the invariant subspace. Similarly, an initial state in an invariant subspace cannot
+reach a target state that is not in the subspace.
+   It has been shown that symmetries are not necessary for uncontrollability [41]. Building on
+this work, [5, Theorem 3] showed that if M is the Laplacian of the network and B is chosen
+to respect a nontrivial almost equitable partition, then the network is uncontrollable. They
+observed that almost equitable partitions appear frequently in many real-world networks and
+account for many of the uncontrollable leader selections that do not come from symmetry.
+A result of [49] provides an upper bound for the controllable subspace of networks in terms
+of maximal almost equitable partitions. They give an algorithm for finding such partitions
+given a set of singleton leaders. Our cir algorithm is a generalization of their algorithm with
+the addition that we allow invariance with respect to multiple, arbitrary matrices.
+   Further background and references for the subject of network controllability, particularly
+as pertains to synchrony and almost equitable partitions, can be found in [4, 18, 30, 43].
+
+                                  6. Induced partitions
+                                                                                       
+  In this section we develop some preliminary tools. We use the notation Q R for
+the augmented matrix built from the matrices Q and R. Given a matrix Q ∈ Rn×k , [49]
+constructs a partition ψ(Q) in Π(n) where i and j are in the same class exactly when the i-th
+and j-th rows of Q are equal. Following [22, Section 7], we call ψ(Q) the partition induced
+by the rows of Q.
+  The following are simple properties of induced partitions.
+Proposition 6.1. The following hold for all A ∈ Π(n) and Q, R ∈ Rn×k .
+         (A)) = A;
+  (1) ψ(P
+  (2) ψ( Q R ) = ψ(Q) ∧ ψ(R);
+  (3) Col(Q) ⊆ Col(R) implies ψ(Q) ≥ ψ(R).
+Proof. Statements (1) and (2) are clear from the definitions. To show Statement (3) assume
+Col(Q) ⊆ Col(R). Then every column of Q is a linear combination of the columns of R. So
+
+ROOT HEADS
+openai ['4eaee87548250b2682affda7d05d947c05554bae']
+leanpool ['45b5a1be4b778aa0d78b82671a7b67e649cd05f5']
+tauceti ['e583e15d3be177d86491854d1db508f6edfe5ee7']
+deepmind ['2055e5adadae0b2e392365938faa82ef6f1464f0']
+ROUTING RAW 0:15
+[
+ {
+  "mathdb_id": 324342,
+  "title": "Conference-matrix MDS code conjecture",
+  "statement": "Let $p$ be a prime, and let ${\\mathbb C}$ be a code of length $p+1$ constructed from a generator matrix that is a conference matrix. **Conference-matrix MDS conjecture.** The code ${\\mathbb C}$ is an MDS code of dimension $\\frac{p+1}{2}$ and minimum Hamming distance $\\frac{p+3}{2}$. This would give an MDS code with parameters determined by the rank of a conference matrix over ${\\mathbb Z}_p$; the source provides no resolution of the claim.",
+  "source_url": "https://arxiv.org/abs/1210.5725",
+  "tags": [
+   "coding-theory",
+   "conference-matrices",
+   "mds-codes"
+  ],
+  "canonical_url": "https://mathdb.com/p/324342/conference-matrix-mds-code-conjecture"
+ },
+ {
+  "mathdb_id": 330264,
+  "title": "The spectral characterization of geodesic growth for right-angled Coxeter groups on trees",
+  "statement": "Let $T$ and $T'$ be trees. Assume that they are simultaneously co-spectral, their complements are co-spectral, and their line graphs are co-spectral. **Geodesic-growth conjecture.** Then $T$ and $T'$ have the same geodesic growth, meaning that the associated right-angled Coxeter groups $G(T)$ and $G(T')$ have the same geodesic growth series. The conjecture asks whether these three spectral data determine geodesic growth for right-angled Coxeter groups based on trees; the paper establishes examples supporting the question but does not resolve the general implication.",
+  "source_url": "https://arxiv.org/abs/1504.02774",
+  "tags": [
+   "geodesic-growth",
+   "right-angled-coxeter-groups",
+   "spectral-graph-theory"
+  ],
+  "canonical_url": "https://mathdb.com/p/330264/the-spectral-characterization-of-geodesic-growth-for-right-a"
+ },
+ {
+  "mathdb_id": 331705,
+  "title": "Starlikeness conjecture for Cassinian balls in starlike domains",
+  "statement": "Let $G\\subset\\mathbb{R}^n$ be a domain that is starlike with respect to $x\\in G$, and let $B_{c_G}(x,r)$ denote the Cassinian ball of radius $r$. **Starlikeness conjecture.** For every $r>0$, the ball $B_{c_G}(x,r)$ is starlike with respect to $x$. This is a proposed extension of convexity results to starlike domains, and the paper does not establish it.",
+  "source_url": "https://arxiv.org/abs/1511.01298",
+  "tags": [
+   "cassinian-metric",
+   "metric-geometry",
+   "starlike-domains"
+  ],
+  "canonical_url": "https://mathdb.com/p/331705/starlikeness-conjecture-for-cassinian-balls-in-starlike-doma"
+ },
+ {
+  "mathdb_id": 332037,
+  "title": "The combinatorial injection conjecture for dominance order on compositions",
+  "statement": "Let $A,a,B,b$ be integers with $A \\geq B \\geq 0$ and $a \\geq b \\geq 0$. For $m,n \\in \\mathbb{N}$, let $\\mathcal{U}^m_n$ denote the set of compositions of $n$ with $m$ non-negative parts. For compositions $\\lambda$ and $\\mu$, write $\\lambda\\mu$ for their concatenation, and write $\\trianglerighteq$ for the dominance order induced by the non-increasing rearrangements. **Combinatorial injection conjecture.** There is an injection\n\n$$\n\\gamma: \\mathcal{U}^A_b \\times \\mathcal{U}^B_a \\hookrightarrow \\mathcal{U}^A_a \\times \\mathcal{U}^B_b\n$$\n\nsuch that, for every $(\\lambda_1,\\mu_1) \\in \\mathcal{U}^A_b \\times \\mathcal{U}^B_a$, if $(\\lambda_2,\\mu_2)=\\gamma((\\lambda_1,\\mu_1))$, then\n\n$$\n\\lambda_1\\mu_1 \\trianglerighteq \\lambda_2\\mu_2.\n$$\n\nThis conjecture gives a combinatorial formulation implying the case $k=2$ of the paper's theorem relating total nonnegativity of the matrices $\\mathcal{T}_p$ and $\\mathcal{S}_p$.",
+  "source_url": "https://arxiv.org/abs/1512.04084",
+  "tags": [
+   "combinatorics",
+   "dominance-order",
+   "partitions"
+  ],
+  "canonical_url": "https://mathdb.com/p/332037/the-combinatorial-injection-conjecture-for-dominance-order-o"
+ },
+ {
+  "mathdb_id": 332371,
+  "title": "Common-basis conjecture for partitions of a matroid ground set",
+  "statement": "Let $k\\geq 2$, and let $M$ be a matroid of rank $r$ on a ground set $E$ with $|E|=kr+1$. Suppose $x,y\\in E$ are such that both $E\\setminus\\{x\\}$ and $E\\setminus\\{y\\}$ can be partitioned into $k$ pairwise disjoint bases.\n\n**Common-basis conjecture.** There exist partitions of $E\\setminus\\{x\\}$ and $E\\setminus\\{y\\}$ into $k$ pairwise disjoint bases that share a common basis.\n\nThis is the second conjecture introduced as closely related to White's conjectures. It expresses a common-basis condition for two complementary decompositions and is not resolved in the supplied text.",
+  "source_url": "https://arxiv.org/abs/1601.08199",
+  "tags": [
+   "basis-exchange",
+   "matroid-theory"
+  ],
+  "canonical_url": "https://mathdb.com/p/332371/common-basis-conjecture-for-partitions-of-a-matroid-ground-s"
+ },
+ {
+  "mathdb_id": 333569,
+  "title": "A fully supported local information maximum on the full two-shift",
+  "statement": "Let $(X,T)$ be the full two-shift, let $\\alpha$ be the partition used to define information, and consider the space of one-step Markov measures on $X$. A measure is fully supported when every allowed cylinder has positive measure, and a local maximum is understood relative to this space. **Fully supported local-maximum conjecture.** There is a fully supported one-step Markov measure that is a local maximum of $\\operatorname{Int}_\\mu(X,T,\\alpha)$ among all one-step Markov measures. The assertion is suggested by numerical computations in the source; no proof or resolution is supplied.",
+  "source_url": "https://arxiv.org/abs/1607.02425",
+  "tags": [
+   "ergodic-theory",
+   "symbolic-dynamics"
+  ],
+  "canonical_url": "https://mathdb.com/p/333569/a-fully-supported-local-information-maximum-on-the-full-two"
+ },
+ {
+  "mathdb_id": 333709,
+  "title": "The two-round minimal percolating set conjecture",
+  "statement": "Let $\\Pi_q$ be a finite projective plane of order $q$, let $r$ be the infection rate, and let $t_r(A)$ denote the percolation time of a percolating set $A$. **Two-round minimal percolating set conjecture.** For each $r$ with\n\n$$\n4\\leq r\\leq q,\n$$\n\nthere exists a minimal percolating set $A_r$ with\n\n$$\nt_r(A_r)=2.\n$$\n\nThis asserts the existence of minimal percolating configurations that infect the entire plane in exactly two rounds throughout the stated range. The source gives a construction and proof around the conjecture, but the supplied parser status is unresolved.",
+  "source_url": "https://arxiv.org/abs/1608.00531",
+  "tags": [
+   "combinatorics",
+   "finite-projective-planes",
+   "percolation"
+  ],
+  "canonical_url": "https://mathdb.com/p/333709/the-two-round-minimal-percolating-set-conjecture"
+ },
+ {
+  "mathdb_id": 334599,
+  "title": "The expressivity hierarchy conjecture for finitely iterated supervenience languages",
+  "statement": "Let $\\mathcal{L}_{\\Rrightarrow^n}$ be the propositional language with the $n$-ary supervenience operator $\\Rrightarrow^n$.\n\n**Expressivity hierarchy conjecture.** For all $n\\in\\mathbb{N}$, $\\mathcal{L}_{\\Rrightarrow^{n+1}}$ is more expressive than $\\mathcal{L}_{\\Rrightarrow^n}$.\n\nThe paper establishes the corresponding result for $n=0$ and leaves the generalization to future work.",
+  "source_url": "https://arxiv.org/abs/1611.04740",
+  "tags": [
+   "expressivity",
+   "modal-logic",
+   "supervenience"
+  ],
+  "canonical_url": "https://mathdb.com/p/334599/the-expressivity-hierarchy-conjecture-for-finitely-iterated"
+ },
+ {
+  "mathdb_id": 338258,
+  "title": "Odd-coordinate kernel conjecture for singular io-decomposable Riordan graphs",
+  "statement": "Let $G_n(g,zg)$ be a singular io-decomposable Riordan graph, let ${\\cal A}_n$ be its adjacency matrix, and let $X=[x_1,x_2,\\ldots,x_n]^T$ be an eigenvector with eigenvalue $0$. Define the odd-index and even-index subvectors by\n\n$$\nX_o=[x_1,x_3,\\ldots,x_{2\\lceil n/2\\rceil-1}]^T,\n$$\n\n$$\nX_e=[x_2,x_4,\\ldots,x_{2\\lfloor n/2\\rfloor}]^T.\n$$\n\n**Odd-coordinate kernel conjecture.** Then\n\n$$\nX_o=O_{\\lceil n/2\\rceil}.\n$$\n\nThis claim is motivated by Sage computations and, together with the preceding block-matrix lemma, would constrain the zero-eigenspace of every singular io-decomposable Riordan graph. No proof or resolution is supplied.",
+  "source_url": "https://arxiv.org/abs/1801.07021",
+  "tags": [
+   "linear-algebra",
+   "riordan-graphs",
+   "spectral-graph-theory"
+  ],
+  "canonical_url": "https://mathdb.com/p/338258/odd-coordinate-kernel-conjecture-for-singular-io-decomposabl"
+ },
+ {
+  "mathdb_id": 338887,
+  "title": "Conjecture on recurrent component cardinalities in sinkless rotor networks",
+  "statement": "Let $C_n$ be the bidirected cycle on $n$ vertices, and let $\\mathcal{C}_{n,m,i}$ denote the unique recurrent component of level $m$ and weight $i\\in\\mathbb{Z}_n$. Write $r(\\mathcal{C}_{n,m,i})$ for the number of recurrent configurations in this component.\n\n**Recurrent-component cardinality conjecture.** For $n\\geq 3$, $m\\geq 1$, and $i,j\\in\\mathbb{Z}_n$, one has\n\n$$\nr(\\mathcal{C}_{n,m,i})=r(\\mathcal{C}_{n,m,j})\n$$\n\nwhenever\n\n$$\n\\gcd(n,m,i)=\\gcd(n,m,j).\n$$\n\nThe conjecture refines the observed near equality of recurrent-component sizes in sinkless rotor networks on bidirected cycles. It is supported by data for small values of $m$ and $n$, but the supplied source does not state a resolution.",
+  "source_url": "https://arxiv.org/abs/1804.03322",
+  "tags": [
+   "combinatorics",
+   "dynamical-systems",
+   "rotor-networks"
+  ],
+  "canonical_url": "https://mathdb.com/p/338887/conjecture-on-recurrent-component-cardinalities-in-sinkless"
+ },
+ {
+  "mathdb_id": 339235,
+  "title": "The even-order M{\"o}bius ladder local antimagic chromatic number conjecture",
+  "statement": "For $n\\ge 2$, let $M_{2n}$ be the M{\"o}bius ladder obtained from the cycle $C_{2n}=u_1u_2\\cdots u_nv_1v_2\\cdots v_nu_1$ by adding the edges $u_iv_i$ for $1\\le i\\le n$. Let $\\chi_{la}$ denote the local antimagic chromatic number.\n\n**M{\"o}bius ladder conjecture.** For even $n\\ge 4$,\n\n$$\n\\chi_{la}(M_{2n})=4.\n$$\n\nThe surrounding results establish the value for odd $n\\ge 3$ and note that $M_4=K_4$ has local antimagic chromatic number $4$. The even-order case stated here is presented as a conjecture, with no resolution supplied in the text.",
+  "source_url": "https://arxiv.org/abs/1805.04888",
+  "tags": [
+   "graph-coloring",
+   "local-antimagic-labeling",
+   "mobius-ladders"
+  ],
+  "canonical_url": "https://mathdb.com/p/339235/the-even-order-m-o-bius-ladder-local-antimagic-chromatic-num"
+ },
+ {
+  "mathdb_id": 341850,
+  "title": "Submodular separation conjecture for low-degree monomial families",
+  "statement": "Let $0\\leqslant r\\leqslant d$ be integers and let $n=\\binom{d}{\\leqslant r}$. Define\n\n$$\n\\phi:\\{0,1\\}^d\\to\\{0,1\\}^n,\n\\qquad \\phi(x)=\\left(\\prod_{i\\in S}x_i\\right)_{S\\subset[d]:|S|\\leqslant r},\n$$\n\nand let ${\\mathcal F}_{r,d}=\\phi(\\{0,1\\}^d)$. A function $f:\\{0,1\\}^n\\to\\mathbb Z$ is **submodular** if $f(x)+f(y)\\geqslant f(x\\vee y)+f(x\\wedge y)$ for all $x,y$.\n\n**Submodular separation conjecture.** For every such $r,d$, there exists a submodular function $f$ such that $f(x)$ is computable in $\\mathrm{poly}(n)$ time, $f(x)\\leqslant-1$ for every $x\\in\\mathcal F_{r,d}$, and $f(x)\\geqslant0$ for every $x\\notin\\mathcal F_{r,d}$. If true, this would yield a hardness result for submodular minimization with modular constraints, complementing the known prime-power algorithms; the source does not resolve the conjecture.",
+  "source_url": "https://arxiv.org/abs/1902.04740",
+  "tags": [
+   "combinatorial-optimization",
+   "modular-constraints",
+   "submodular-optimization"
+  ],
+  "canonical_url": "https://mathdb.com/p/341850/submodular-separation-conjecture-for-low-degree-monomial-fam"
+ },
+ {
+  "mathdb_id": 342364,
+  "title": "The 2-adic valuation conjecture for even-colored 2-ary partition functions",
+  "statement": "Let $c_m(n)$ denote the $m$-colored binary partition function, and let $\nu_2$ be the 2-adic valuation. For positive integers $k,n$ and nonnegative integers $k$ as specified below, consider the differences of the values of $c_m$. **2-adic valuation conjecture.** For $kin\\mathbb{N}_{+}$ and each $n\\in\\mathbb{N}_{+}$, \n$$\n\\nu_{2}(c_{2k}(4n)-c_{2k}(n))=\\nu_{2}(n)+2\\nu_{2}(k)+3.\n$$\n Moreover, for $k\\in\\mathbb{N}$ and $n\\in\\mathbb{N}_{+}$, \n$$\n\\nu_{2}(c_{4k+1}(4n)-c_{4k+1}(n))\\geq\\nu_{2}(n)+3,\n$$\n \n$$\n\\nu_{2}(c_{4k+3}(4n)-c_{4k+3}(n))\\geq\\nu_{2}(n)+6.\n$$\n In each case, equality holds for infinitely many $n\\in\\mathbb{N}$. These predictions are motivated by known sharp congruences for the ordinary binary partition function and numerical computations for $m\\leq10$ and $n\\leq10^5$; their general validity remains open.",
+  "source_url": "https://arxiv.org/abs/1904.03398",
+  "tags": [
+   "binary-partitions",
+   "p-adic-valuations",
+   "partition-congruences"
+  ],
+  "canonical_url": "https://mathdb.com/p/342364/the-2-adic-valuation-conjecture-for-even-colored-2-ary-parti"
+ },
+ {
+  "mathdb_id": 342414,
+  "title": "The edge-pattern convex-combination conjecture",
+  "statement": "Let $P$ be a $d$-regular edge-rooted pattern of depth $r$ and girth $2r+2$. For each edge-rooted pattern, let $\\mathbf{e}(P)$ denote its constraint vector, and let $\\mathcal{T}'_r(d)$ be the specified family of $d$-regular edge-rooted trees of depth $r$. The constraint $\\mathbf{e}(P)$ is **weaker** than a convex combination of constraints from this family in the sense that there exist $T_1,\\dots,T_m\\in\\mathcal{T}'_r(d)$ and $\\lambda_1,\\dots,\\lambda_m\\in[0,1]$ with\n\n$$\n\\sum_{i=1}^m\\lambda_i=1\n$$\n\nand, for every $\\bm{\\alpha}\\in{\\left(\\mathbb{Q}^+\\right)}^{r+1}$,\n\n$$\n\\bm{\\alpha}^{\\!\\top}\\left(\\sum_{i=1}^m\\lambda_i\\mathbf{e}(T_i)\\right)\\ge 1\\quad\\implies\\quad\\bm{\\alpha}^{\\!\\top}\\mathbf{e}(P)\\ge 1.\n$$\n\nThis would explain why the bounds obtained from edge-rooted trees remain valid at girth $2r+2$, and would generalize the cases checked for $r=2$ and $d\\in\\{3,4\\}$.",
+  "source_url": "https://arxiv.org/abs/1904.05618",
+  "tags": [
+   "extremal-graph-theory",
+   "fractional-chromatic-number",
+   "graph-coloring"
+  ],
+  "canonical_url": "https://mathdb.com/p/342414/the-edge-pattern-convex-combination-conjecture"
+ },
+ {
+  "mathdb_id": 343536,
+  "title": "Equitable partitions of rectangular grid graphs",
+  "statement": "Let $P_m\\oblong P_n$ be the rectangular grid graph, and let its automorphism group act naturally on its vertices. An equitable partition is a partition in which every vertex in a cell has the same number of neighbors in each cell.\n\n**Grid-graph equitable-partition conjecture.** The equitable partitions of $P_m\\oblong P_n$ are the orbit partitions of natural actions of the subgroups of the automorphism group of the graph. The lattice of equitable partitions is isomorphic to the lattice of subgroups exactly when there is a vertex with trivial stabilizer subgroup. This happens unless $2\\le m=n\\le3$.\n\nThe claim concerns the relationship between equitable partitions and symmetry-induced orbit partitions for rectangular grid graphs. The supplied text reports this as an apparent pattern based on computations, but gives no resolution or proof.",
+  "source_url": "https://arxiv.org/abs/1908.05797",
+  "tags": [
+   "automorphism-groups",
+   "equitable-partitions",
+   "graph-theory"
+  ],
+  "canonical_url": "https://mathdb.com/p/343536/equitable-partitions-of-rectangular-grid-graphs"
+ }
+]

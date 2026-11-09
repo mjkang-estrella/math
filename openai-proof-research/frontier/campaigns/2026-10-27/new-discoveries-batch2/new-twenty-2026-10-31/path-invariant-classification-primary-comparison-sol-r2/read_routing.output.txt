@@ -1,0 +1,519 @@
+
+FILE write_lane.py 
+ import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+
+FILE source_get_guard.py 
+ """One explicit public GET plan per invocation; run inside the supplied runner.
+
+The CLI has no batch/list traversal or retry mode. Every redirect is precharged.
+This guards this client only, not other tools or arbitrary Python networking.
+"""
+import contextlib
+import datetime
+import fcntl
+import hashlib
+import ipaddress
+import json
+from pathlib import Path
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+ROOTS = frozenset([
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures",
+])
+PER_ID_CAP = 12
+GLOBAL_CAP = 48
+MAX_BYTES = 24 * 1024 * 1024
+
+
+class PolicyError(RuntimeError):
+    pass
+
+
+def key(url):
+    p = urllib.parse.urlsplit(url)
+    if p.scheme != "https" or not p.hostname or p.username or p.password:
+        raise PolicyError("Only explicit credential-free HTTPS URLs are allowed")
+    host = p.hostname.lower()
+    if p.port not in (None, 443) or host in ("localhost", "api.github.com") or host.endswith((".local", ".internal", ".localhost")):
+        raise PolicyError("Disallowed host/port")
+    try:
+        if not ipaddress.ip_address(host).is_global:
+            raise PolicyError("Nonpublic IP address")
+    except ValueError:
+        pass
+    return host + urllib.parse.unquote(p.path).rstrip("/")
+
+
+def artifacts(url):
+    s = urllib.parse.unquote(url).lower()
+    found = set(re.findall(r"(?<!\d)\d{4}\.\d{4,5}(?!\d)", s))
+    for doi in re.findall(r"10\.\d{4,9}/[-._;()/:a-z0-9]+", s):
+        while any(doi.endswith(t) for t in (".full", ".pdf", ".abstract", ".html", ".xml")):
+            doi = doi.rsplit(".", 1)[0]
+        found.add(doi)
+    return found
+
+
+class Guard:
+    def __init__(self, lane, opener=None):
+        self.lane = Path(lane).resolve()
+        self.ids = set(map(str, json.loads((self.lane / "reservation.json").read_text())["ids"]))
+        self.denied = json.loads((self.lane / "inherited-denials.json").read_text())
+        self.opener = opener  # Tests inject a local fake; CLI always uses urllib.
+        self.ledger = self.lane / "guard-ledger.jsonl"
+
+    @contextlib.contextmanager
+    def locked(self):
+        with (self.lane / "guard.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            records, previous = [], "0" * 64
+            if self.ledger.exists():
+                for raw in self.ledger.read_bytes().splitlines(keepends=True):
+                    record = json.loads(raw)
+                    if record.get("seq") != len(records) or record.get("previous") != previous:
+                        raise PolicyError("Broken guard ledger chain; no request permitted")
+                    records.append(record)
+                    previous = hashlib.sha256(raw).hexdigest()
+            yield records, previous
+
+    def append(self, records, previous, event):
+        record = dict(event, seq=len(records), previous=previous,
+                      utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+        raw = (json.dumps(record, sort_keys=True) + "\n").encode()
+        with self.ledger.open("ab") as f:
+            f.write(raw)
+            f.flush()
+        return record
+
+    def note(self, event):
+        with self.locked() as (records, previous):
+            return self.append(records, previous, event)
+
+    def reserve(self, url, routes, plan_sha):
+        k = key(url)
+        if url in ROOTS or k in {key(x) for x in ROOTS}:
+            routes = sorted(self.ids)  # Shared roots can never be undercharged.
+        if not routes or not set(routes) <= self.ids or len(routes) != len(set(routes)):
+            raise PolicyError("Routes must be exact unique reserved IDs")
+        with self.locked() as (records, previous):
+            attempts = [r for r in records if r["event"] == "attempt"]
+            failures = [r for r in records if r["event"] == "unavailable"]
+            denied_keys = set(self.denied["blocked_keys"]) | {r["url_key"] for r in failures}
+            denied_artifacts = set(self.denied["blocked_artifacts"])
+            for r in failures:
+                denied_artifacts.update(r.get("artifacts", []))
+            if k in denied_keys or artifacts(url) & denied_artifacts:
+                raise PolicyError("Inherited/current unavailable route or artifact: no retry")
+            if any(r["url_key"] == k for r in attempts):
+                raise PolicyError("Already attempted URL; use saved bytes/outcome, no refetch/query variant")
+            if len(attempts) >= GLOBAL_CAP:
+                raise PolicyError("Global GET-hop cap48 exhausted")
+            for route in routes:
+                if sum(route in r["routes"] for r in attempts) >= PER_ID_CAP:
+                    raise PolicyError("Per-ID GET-hop cap12 exhausted: " + route)
+            return self.append(records, previous, {
+                "event": "attempt", "url": url, "url_key": k,
+                "routes": routes, "plan_sha256": plan_sha,
+                "ordinal": len(attempts) + 1,
+            })
+
+    def fetch(self, plan):
+        if not isinstance(plan, dict) or set(plan) != {"url", "routes", "destination", "source_identity", "purpose"}:
+            raise PolicyError("Exactly one explicit plan object required; no URL arrays/seed traversal")
+        if not isinstance(plan["url"], str) or not isinstance(plan["routes"], list):
+            raise PolicyError("Invalid URL/routes types")
+        if not all(isinstance(x, str) for x in plan["routes"]):
+            raise PolicyError("Route IDs must be strings")
+        if not all(isinstance(plan[x], str) and len(plan[x].strip()) >= 12 for x in ["purpose", "source_identity"]):
+            raise PolicyError("Concrete source identity and assigned-target purpose required")
+        dest = (self.lane / plan["destination"]).resolve()
+        if not dest.is_relative_to(self.lane / "sources") or dest == self.lane / "sources" or dest.exists():
+            raise PolicyError("Destination must be a NEW file under own sources/")
+        plan_sha = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        current = plan["url"]
+        attempt = self.reserve(current, plan["routes"], plan_sha)
+        guard = self
+
+        class Redirect(urllib.request.HTTPRedirectHandler):
+            max_redirections = 5
+
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                nonlocal current, attempt
+                guard.note({"event": "redirect", "url": current, "status": code, "location": newurl})
+                current = newurl
+                attempt = guard.reserve(current, plan["routes"], plan_sha)
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+        opener = self.opener or urllib.request.build_opener(Redirect())
+        http_status = None
+        observed_body = None
+        response_content_type = None
+        try:
+            req = urllib.request.Request(current, headers={"User-Agent": "Research-source-reader/1.0", "Accept-Encoding": "identity"}, method="GET")
+            with opener.open(req, timeout=20) as response:
+                status = response.status
+                http_status = status
+                response_content_type = response.headers.get("Content-Type")
+                if status != 200:
+                    raise RuntimeError("Non-200 status " + str(status))
+                body = response.read(MAX_BYTES + 1)
+                observed_body = body
+                if not body or len(body) > MAX_BYTES:
+                    raise RuntimeError("Empty or oversized body; unavailable, no retry")
+                if "html" in response.headers.get("Content-Type", "").lower() or body.lstrip().lower().startswith((b"<!doctype html", b"<html")):
+                    start = body[:12000].lower()
+                    if any(x in start for x in [b"verify you are human", b"cf-chl-", b"challenge-platform", b"robot check", b"access denied", b"incapsula", b"request unsuccessful"]):
+                        raise RuntimeError("Challenge/denial body; unavailable, no retry")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("xb") as f:
+                    f.write(body)
+                return self.note({"event": "success", "url": current, "status": status,
+                                  "destination": str(dest.relative_to(self.lane)), "bytes": len(body),
+                                  "sha256": hashlib.sha256(body).hexdigest(), "ordinal": attempt["ordinal"]})
+        except Exception as error:
+            self.note({"event": "unavailable", "url": current, "url_key": key(current),
+                       "artifacts": sorted(artifacts(current)), "error": repr(error),
+                       "status": getattr(error, "code", http_status), "ordinal": attempt["ordinal"],
+                       "response_content_type": response_content_type,
+                       "observed_bytes_read": len(observed_body) if observed_body is not None else None,
+                       "observed_body_sha256": hashlib.sha256(observed_body).hexdigest() if observed_body is not None else None,
+                       "body_may_be_truncated": len(observed_body) > MAX_BYTES if observed_body is not None else None})
+            raise
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise PolicyError("Usage: source_get_guard.py OWN_EXPLICIT_PLAN.json")
+    lane = Path(__file__).resolve().parent
+    plan_path = Path(sys.argv[1]).resolve()
+    if not plan_path.is_relative_to(lane):
+        raise PolicyError("Plan must be an own-lane file")
+    print(json.dumps(Guard(lane).fetch(json.loads(plan_path.read_text())), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+
+
+FILE search-budget.json 
+ {
+  "calls_used": 0,
+  "queries_used": 0,
+  "maximum_calls": 2,
+  "maximum_queries": 6,
+  "mutable_before_call_counter": true
+}
+
+
+FILE ROOT-PREP.json 
+ {
+  "utc": "2026-11-08T02:18:26.608985+00:00",
+  "lane": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/path-invariant-classification-primary-comparison-sol-r2",
+  "mathdb_id": 339209,
+  "reservation_sha256": "9a16e5dd6ec8e0b1fe4cec801a4adf6ba9fbe72ea64236ef7e9a86dec0266831",
+  "frozen_count": 325,
+  "copied_inputs": 36,
+  "reviewed_r1_frozen_files": 125,
+  "original_author_references": 151,
+  "helper_sha256": "20e1cc05bd236a184923e83ecf948ade4bba94fca49eaad20c52d7ee2e4860f8",
+  "inherited_denials_sha256": "ea4cd80e84a4f32166bb1c32b2298afab1ab71850925ddf690cc7f78bb685066",
+  "accepted": 55,
+  "credit": 0,
+  "role": "Qualification-onlyO1final/O2original1993/O3trustedaccepted-scopecomparison,noexecution",
+  "protected_active": [
+    "unit-acyclic-coset-source-review-sol-r1",
+    "expanded-corpus-r414"
+  ]
+}
+
+
+FILE inputs/root-intake-r1.json 
+ {
+  "utc": "2026-11-08T02:15:01.530464+00:00",
+  "lane": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/path-invariant-classification-source-review-sol-r1",
+  "mathdb_id": 339209,
+  "manifest_files_verified": 122,
+  "manifest_sha256": "287e491bb3842af4da984d78cce95a92acb83467290410181a49d1561428bd51",
+  "frozen_verified": 185,
+  "receipt_files_in_manifest": 24,
+  "failed_receipts": [
+    {
+      "path": "get_weighted_prior.receipt.json",
+      "exit": 1
+    }
+  ],
+  "get_hops": 8,
+  "transport_payload_hashes_verified": 7,
+  "actual_new_math_primary_bodies": 2,
+  "metadata_js_shells": 1,
+  "registry_root_payloads": 4,
+  "unavailable": [
+    {
+      "artifacts": [],
+      "body_may_be_truncated": null,
+      "error": "URLError(TimeoutError('timed out'))",
+      "event": "unavailable",
+      "observed_body_sha256": null,
+      "observed_bytes_read": null,
+      "ordinal": 8,
+      "previous": "bf5ef3abd651e96a098a21822785facb766eecaea7d9fff34156de8a91d1b5f1",
+      "response_content_type": null,
+      "seq": 15,
+      "status": null,
+      "url": "https://cmup.pt/cmup/apdias/2006_14269.pdf",
+      "url_key": "cmup.pt/cmup/apdias/2006_14269.pdf",
+      "utc": "2026-11-08T02:04:07.035916+00:00"
+    }
+  ],
+  "native_search_calls": 2,
+  "native_search_queries": 6,
+  "independent_full_ordinary_equivalence": "PASS; alln,d,tensor/cubic/firstreturn/virtualboundary/templates/divisibility/conversepaidbyreviewer",
+  "source_final_gate": "HOLD;cachedv2header1Mar2019/internalfooter3Mar2022versusactual2019journalbodyunread. Author-directoryJSshellnotbody.",
+  "prior_gate": "HOLDspecificEpstein-Golubitsky1993lineararraysunread;Aguiar-Dias2021weightedbodytimeoutnoretry;read2024generalcriteriaand2019/2020synchronybodydonotestablishfullalgorithmbridge.",
+  "significance": "Retain substantiveordinarysurvivorprovisionally; no completepaidroutinepriorbridgeestablished. Noautomaticexclusionforfirstreturnrecurrencebeingelementary.",
+  "accepted343536_scope": "RootreadONLYrootgrid-acceptance.jsonexactendpointandremaininglimits,notprotectedcertificatebody. AcceptedunweightedrectangulargridEQUITABLEorbitclassificationdoesnotdirectlystateallsigned/zero/ALMOST-equitablepathwords;requesttargetedactualaccepted-scopecomparison,notcertificateaudit. Noall-prior39clearance.",
+  "decision": "Commissionqualification-onlyr2onoriginal1993body/final2019bodyandtrustedaccepted343536scope,withinnewboundedlimitsandallinheriteddenials. NOLean/formalexecutionorautomaticacceptance.",
+  "grid_acceptance_sha256": "7a4204cf6cda8b32497018b89222496c0941cef8f45c377d431f456496ed244c",
+  "credit": 0,
+  "campaign_accepted": 55,
+  "target": 60,
+  "total_including_39_prior": 94,
+  "limits": "Rootmetadata/integrity/reportadjudicationonly,norootmathwork.Newformalfeasibilityunverified,notclaimlibrarylacksupport;native/sample/readdepthlimitsretained."
+}
+
+
+FILE inputs/REVIEW.md 
+ # Independent review: MathDB339209
+
+Ordinary mathematics: PASS for the FULL path-algorithm equivalence, with independent proof in INDEPENDENT-PROOF.md. No counterexample or unpaid mathematical lemma remains in the argument reviewed. The verdict concerns the exact positive-n,positive-d source algorithm, not only a normal-form or Laplacian helper.
+
+Literal/source mapping: PASS for the cached actual arXivv2 endpoint, with source typos and version/date limits recorded in SOURCE-ALGORITHM-MAP.md. Actual Definition2.2, complete Proposition5.1 proof, Example6.3, Conjecture6.4 and material Figure14 were checked. Source-final: HOLD; final/correction body not authenticated.
+
+Prior/novelty: UNQUALIFIED, with specific original1993 linear-array,2019 journal-final and2021 weighted-network body comparisons still unpaid. Fresh2024 general polydiagonal body and2019/2020 synchrony body comparisons do not establish a complete prior-to-explicit-all-n algorithm bridge. Searches2calls6queries and GET8hops are exhausted. Seven GETs succeeded (one author-directory JavaScript shell), one weighted-paper request timed out and is unavailable without retry. Four current registry roots were refreshed; head metadata is not theorem-body novelty evidence.
+
+Significance: retain as a substantive ordinary survivor provisionally. The exact all-n classification/exhaustion adds something beyond the general criteria read, but the strongest routine-corollary and accepted343536 family objections remain for root adjudication. Copied accepted55 statements are routing-only; prior39 and protected certificate bodies were not audited. No all-family clearance.
+
+Formal: NOT EXECUTED; compact Lean route UNVERIFIED and potentially substantial infrastructure. No library-lacks-support claim. Dormant followup is qualification-only, not permission to dispatch or accept. Acceptance: NOT ACCEPTED, credit0. Campaign unchanged55/60 beyond39,94total.
+
+Process: required bootstrap and standalone before verifier ran first/second exactly. Unchanged runner/writer used thereafter for substantive local operations; final verifier and manifest close the record. No mathematical programs, experiments, solver/CAS, Lean/compiler/checker/API, children, fallback, git, messages, installs or protected-peer body access. The inherited author wrong-cwd pre-run exit2 has no runner receipt and remains documented in inputs/PROCEDURAL-LIMITS.md; no historical universal receipted/capped claim. See inventories for actual read depth, display truncations, native-tool and sampled-resource limits.
+
+
+FILE inputs/INDEPENDENT-PROOF.md 
+ # Independent full ordinary proof: 339209
+
+Reviewer: GPT-6.1 Sol, high/default, personally; no children, formal tools, mathematical programs, enumeration, or experiments. This is an ordinary mathematical review, not acceptance or credit.
+
+## Precise endpoint
+For positive integers n,d put V=R^d. A real linear subspace W of V^n has f(W) contained in W for every f_i(x)=g(x_i)+sum_{j adjacent i}h(x_j-x_i), with g:V->V odd and h:V->V real-linear, if and only if W is the image of one of the following independent-vector words: choose a basic word S of length b dividing n and concatenate n/b blocks S,rev(S),S,rev(S),... . The basics are G_q=(a_1,...,a_q), q>=1; E_(2q-1)=(a_1,...,a_q,a_(q-1),...,a_1), q>=2; O_(2q)=(a_1,...,a_q,-a_q,...,-a_1), q>=1; O_(2q+1)=(a_1,...,a_q,0,-a_q,...,-a_1), q>=1; and O_1=(0). Each a_j ranges freely over V. Independence means freedom of parameters, not that each substituted tuple consists of linearly independent vectors in V.
+
+The source's invariant predicate is pointwise f(W) subset W, Definition 2.2 p3. No existence/uniqueness theorem for nonsmooth flows is needed. The argument also works if admissible g is restricted to smooth odd functions, since its necessity tests are polynomial and its sufficiency uses only oddness. It does not classify arbitrary invariant subspaces for one fixed g,h.
+
+## 1. Cell coordinates and cubic reduction
+For a scalar vector u in R^n and standard coordinate vector v_a in R^d, write u[v_a] for its placement in that coordinate at all cells. All simultaneous endomorphisms I_n tensor A preserve W by taking g=A,h=0. Define U={u:u[v_1] in W}. Given x in W, apply matrix unit E_(1a); its result is x's a-th scalar cell-coordinate vector placed in coordinate1, so that scalar vector belongs to U. Conversely, for u in U, E_(a1) puts u in coordinate a inside W. Linearity then proves W consists exactly of tuples whose every scalar cell-coordinate vector belongs to the same U. This is the precise meaning of U tensor R^d, with no tensor-product theorem assumed.
+
+Choose m=dim U coordinate functionals whose restrictions to U form a basis of its dual. Such a subset exists because all n coordinate functionals span the dual: their common kernel on U is zero. Projection on these selected coordinates is an isomorphism U->R^m. Write the other coordinates as linear forms c.y in the m free coordinates. The simultaneous coordinatewise cube g(v)=(v_1^3,...,v_d^3),h=0 preserves W. Applying it to u[v_1] shows scalar cubing preserves U. Thus for each row c,
+(c.y)^3=sum_a c_a y_a^3 for all y in R^m.
+Comparison of polynomial coefficients gives c_a^3=c_a and 3c_a^2 c_b=0 for a!=b. Consequently every row is zero or one signed standard unit. The selected free rows are standard units; the resulting n-by-m matrix R has full column rank and U=im R. This includes m=0, when U=0. Conversely, zero and signed-unit row maps commute with every odd vector g: g(0)=0, g(-v)=-g(v). This is why a scalar normal form suffices for arbitrary d, including d=1.
+
+## 2. Quotient recurrence
+Use the source's L=D-A, so (Lx)_i=sum_{j adjacent i}(x_i-x_j); the coupling with h=identity is -L. Since W is linear, invariance under -L and L are equivalent. By the preceding coordinate identification this is equivalent to L U subset U. Since R:R^m->U is an isomorphism, this holds iff there is a unique m-by-m matrix Q with LR=RQ. Here r_i is the i-th ROW of R, acting on column parameters. Conversely, LR=RQ implies the coupling for any linear h sends Ry to Rz with z_a=-sum_b Q_ab h(y_b). Together with the odd-g contribution z_a=g(y_a), this proves universal invariance. This formula fixes the sign and orientation of the arbitrary-linear-h bridge.
+
+Put r_0=r_1 and r_(n+1)=r_n. The path degree1 endpoints and degree2 interior give, for every real vertex i,
+r_(i+1)=2r_i-r_(i-1)-r_i Q.                    (*)
+For n=1 the same equation gives r_1 Q=0, correctly L=0. If r_1=0, the equation at1 forces r_2=0 (virtual if n=1), then induction forces every real row zero. Hence m=0 and O1 gives W=0. Assume henceforth r_1 nonzero and rename/orient its parameter as e_1.
+
+## 3. First return, without assuming all parameters have occurred
+Until a row is zero or returns to a previously seen unsigned class, orient each new class positively and name it in order. If all n rows are new, R is the identity after this change of parameters, W=V^n, given by G_n. Otherwise there is q<n with r_i=e_i for 1<=i<=q and t=r_(q+1) either zero or +/-e_j, j<=q. There might still be m-q unseen coordinates: do not discard them yet.
+
+When q>=2 the known equations determine
+ e_1 Q=e_1-e_2,
+ e_i Q=2e_i-e_(i-1)-e_(i+1) (2<=i<q),
+ e_q Q=2e_q-e_(q-1)-t.
+In particular S=span(e_1,...,e_q) is Q-invariant even if m>q. Starting from r_q,t in S, recurrence (*) puts every later row in S. Full column rank of R now forces m=q: an unseen class cannot appear later. This pays the delayed-class bridge before relying on Q being fully specified.
+
+If q>=2 and t=e_j with 2<=j<q, the next row is e_(j-1)+e_(j+1)-e_q. If j<q-1 its three indices are distinct, so it is outside the row alphabet {0,+/-e_a}. If j=q-1 it is e_(q-2), allowed for q>=3. For j=1 the next row is e_1+e_2-e_q: forbidden for q>2, but equal to e_1 for q=2. The latter is the same t=e_(q-1) case, not an extra family.
+
+If t=-e_j with 2<=j<q, the next row is -e_(j-1)-e_(j+1)-e_q. Distinct indices give three negative units; if j=q-1 the merging index q has coefficient -2. Both are forbidden. For t=-e_1 the next row is -e_1-e_2-e_q; q=2 merges to -e_1-2e_2, still forbidden. The unexcluded cases are precisely
+ A: t=e_q; B: t=e_(q-1); C: t=-e_q; D: t=0.
+These arguments remain valid when q+1=n: the next row is r_(n+1)=t, a virtual row that is still in the alphabet. It cannot equal any of the displayed forbidden vectors. No equation at a virtual vertex is being invoked: (*) is applied at the last REAL vertex.
+
+For q=1, t is e_1,-e_1, or0. The endpoint equation is e_1 Q=e_1-t, not the q>=2 formula. Q preserves span e_1, recurrence excludes delayed parameters, and these are A,C,D. There is no B with q=1.
+
+## 4. Global templates and local verification
+For q>=2 define Q on the basis by the preceding left/interior rules and the following last row:
+ A: e_q Q=e_q-e_(q-1), b=q, S=G_q;
+ B: e_q Q=2e_q-2e_(q-1), b=2q-1, S=E_(2q-1);
+ C: e_q Q=3e_q-e_(q-1), b=2q, S=O_(2q);
+ D: e_q Q=2e_q-e_(q-1), b=2q+1, S=O_(2q+1).
+Extend S to the infinite sequence S,rev(S),S,rev(S),... and put r_0=r_1. We check (*) in the equivalent neighbor-sum form r_(i-1)+r_(i+1)=2r_i-r_i Q.
+
+Every interior occurrence of +/-e_j, 1<j<q, has neighbors +/-e_(j-1), +/-e_(j+1), with the same sign, and satisfies the interior row formula. Reversing a word swaps the two neighbors and does not affect their sum; changing all signs preserves the equation. Thus it suffices to list the exceptional triples at turns:
+ A: neighbors of e_q are (e_(q-1),e_q), sum e_(q-1)+e_q;
+ B: neighbors of e_q are (e_(q-1),e_(q-1)), sum2e_(q-1);
+ C: neighbors of e_q are (e_(q-1),-e_q), sum e_(q-1)-e_q;
+ D: neighbors of e_q are (e_(q-1),0), sum e_(q-1), and neighbors of0 are (e_q,-e_q), sum0.
+Each sum is exactly 2e_q-e_q Q (or zero for the zero row), and negative/reversed turns follow by the two identities just stated. At every block junction the doubled outer letter is +/-e_1. Its neighbors are that same signed e_1 and signed e_2, whose sum equals +/-(2e_1-e_1 Q). This also verifies the artificial left row r_0=r_1. For q=2 the interior range is empty; the left and last-row rules apply to different basis vectors and the triples above are still valid. In B,q=2 the whole word is e_1,e_2,e_1; its only special center has sum2e_1, as required.
+
+For q=1 use instead Q=0 in A, Q=2 in C, Q=1 in D, as scalars on e_1. In A all rows e_1 have neighbor sum2e_1. In C the infinite word is e_1,-e_1,-e_1,e_1,e_1,-e_1,...; each signed nonzero row has one equal neighbor and one opposite neighbor, sum0=(2-Q)r_i. In D it is e_1,0,-e_1,-e_1,0,e_1,e_1,...; a nonzero row has neighbors itself and0, sum r_i=(2-Q)r_i, while0 has opposite neighbors. These statements also apply at the left endpoint by the chosen r_0.
+
+Hence every infinite template satisfies the recurrence at every positive index, not just at sample orders. Its first q+1 rows agree with the original. With fixed Q, (*) uniquely determines the next row from the preceding two, so induction identifies the entire original finite word with the appropriate template. No spectral assumption or finite evidence is used.
+
+## 5. Exact stopping positions
+For A,q>=2 every adjacent pair INSIDE a basic block consists of distinct basis indices. For B,q>=2 adjacent internal indices differ even across the single peak; the peak is not doubled. For C adjacent internal entries either have different indices or are e_q,-e_q, which differ over R. For D the two internal zero transitions have one zero and one nonzero row, and all other internal pairs have distinct indices; zero is isolated. Reversal preserves inequality of neighbors. At every block junction the final entry of a block equals the first of its reversal, so these, and only these, are equal consecutive rows. Thus r_i=r_(i+1) iff i is a positive multiple of b. The explicit q=1 A,C,D words have the same property with b=1,2,3 respectively. The all-zero case O1 has b=1 and equality everywhere.
+
+The right boundary therefore holds iff b divides n. This remains valid when the first return occurs at the last real row: the original recurrence fixes its next virtual row, and equality is tested there. The whole-space no-return case is already G_n with b=n. For n=1 the possibilities are precisely0 and V, from O1 and G1. For n=0 the source connected nonempty graph convention does not supply a path algorithm with positive factorization; if P0 is defined separately its phase space is the singleton zero-dimensional space, with one invariant subspace, handled separately rather than claiming a factorization of0 into positive b,k. Likewise d=0, outside the requested positive cell dimension, collapses every word to that same subspace.
+
+## 6. Converse
+For each positive b,k and each listed basic word of length b, the above local check supplies a Q and both boundary equalities at n=bk, so LR=RQ. Each nonzero independent parameter appears, so the row map has full column rank; O1 is treated as m=0. For x_i=sum_a r_ia y_a, oddness gives g(x_i)=sum_a r_ia g(y_a), and linearity gives the coupling as -sum_a r_ia sum_b Q_ab h(y_b). Thus f(x)=Rz belongs to the word image for every odd vector g and every linear endomorphism h. This proves both directions of the literal source algorithm for all positive n,d.
+
+## Verdict on the author's proof
+No mathematical gap found in the FULL equivalence. The candidate's short delayed-class explanation is valid, but the span-invariance argument in section3 above makes its quantifier explicit. The matrix-unit proof and the complete local-neighbor check above fill exposition, not a narrower replacement theorem. This ordinary PASS is not novelty clearance, formal certification, self-acceptance, or a campaign count.
+
+
+FILE inputs/SOURCE-ALGORITHM-MAP.md 
+ # Literal-to-source algorithm map: 339209
+
+The complete original JSONL is inputs/originals/339209.jsonl (SHA510850ae259468bb28ae902bf6d6c181e3fd2586aff3c290e922baa89e92f15d). It leaves D_(G,ell) and the algorithm implicit, so neither the title nor an arbitrary Laplacian helper defines the endpoint. The binding is the copied actual PDF inputs/sources/path.pdf, SHAac3959d30dbb35804c40679dbe6b3023b7e090253ec543fd8801c0e6be3c511e. A fresh local pdftotext extraction equals the copied text exactly. These are source-processing operations, not mathematical execution.
+
+| Literal item | Actual source | Reviewed translation |
+|---|---|---|
+| P_n cells | Definition2.1 and section2 p3 | connected simple undirected path; cells1,...,n, n positive; n=1 allowed |
+| Common cell type | p3 common V=R^k, P=V^n | k renamed d, positive; no scalar-only restriction |
+| D_(G,ell) | Definition2.2 p3, equation1 | common arbitrary odd g:V->V and arbitrary linear operator h:V->V; h is not a scalar coupling constant |
+| invariant subspace | last paragraph Definition2.2 p3 | real linear W with f(W) subset W for EVERY vector field in the class; not merely an eigenspace for one field or a flow claim without regularity |
+| scalar Laplacian | Example2.3 equation4 p4 | L=D-A; h=identity gives -L; sign harmless for linear W, quotient formulas use +L |
+| normal form | Proposition5.1 entire proof pp21-22; Theorem5.2 statement p22 | known general synchrony/matched-partition necessity; independently reproved by matrix units and cubic test; this is not by itself path completeness |
+| previous example | Example6.3 pp26-28 | start with all basic G_q, E_q (odd q>=3), O_q (all positive q), then use every positive factorization n=qk |
+| G basics | p27 | q independent vectors; no repeated or constrained parameters inside G_q |
+| E basics | p27 | E_(2s-1)=(a1,...,as,...,a1), s>=2; source's word-length q is NOT proof's initial-new-class count q |
+| O basics | p27 | O1=0; even length2s and odd length2s+1 have antisymmetric signed halves, zero at the odd center; independent positive-half vectors |
+| concatenation | p27 | S,reverse S,S,... with shared parameters across blocks; exactly k whole blocks, no arbitrary truncation or independent parameters per block |
+| completeness | Conjecture6.4 p28 | both directions are proved in INDEPENDENT-PROOF.md; labels balanced/exo/odd are supplementary, not a change of invariant class |
+| material Figure14 | visually inspected cached page27 PNG | nine subspaces on P6: zero, constant, O2 repeated, O3 repeated, G2 repeated, E3 repeated, G3 reflected, O6, G6; black labels indicate negatives that text extraction loses; no universal inference from this example |
+
+Source textual blemishes are separate from the algorithm: p27 writes P_kr where q is the declared basic length; context and n=qk resolve the dummy-letter inconsistency. The p28 O1 example prints only five zeros in its P6 list; Figure14 has six, and the algorithm unambiguously concatenates six O1 blocks. We do not redefine the theorem to classify five-cell objects on P6. Neither blemish changes the basic-word algorithm. No lattice-isomorphism or uniqueness-of-output assertion is added.
+
+The actual PDF visibly labels arXiv1805.04144v2,1Mar2019 but its first-page footer says March3,2022. Copied official metadata lists v2 revised1Mar2019 and no journal reference. These facts do NOT authenticate a journal-final statement, establish that no correction exists, or settle why the internal footer is later. Current native search identifies a2019 SIAM18(2),904-938 publication lead, but the guarded author-directory GET returned only a JavaScript shell. No final proof body was obtained. Source-final gate remains HOLD.
+
+
+FILE inputs/PRIOR-AND-OBJECTIONS.md 
+ # Prior bridge, significance, and strongest objections
+
+## Primary body comparisons actually made
+The cached 1805.04144v2 Proposition5.1 pp21-22 proves the signed-polydiagonal necessity; Theorem5.2 p22 characterizes the relevant balanced conditions. Their precise contribution is paid in sections1-2 of INDEPENDENT-PROOF.md. They do not supply sections3-5: initial-return exhaustion, no delayed classes, four symbolic trajectories, and exact divisibility stopping positions. Thus treating the proposed endpoint as mere formalization of Proposition5.1 is unsupported.
+
+Fresh guarded https://arxiv.org/pdf/2411.10904 yields v2,13Dec2024 (PDF internal16Dec2024), hash5b01bf4caf4aab527aded7a592b9441e600f436eeadcd16da3b432cded9f7782. Read sections2-5 (pp2-7), comparison pp7-8 and Example7.2 p9 in full. Proposition3.7 proves encoding of tagged partitions; Proposition4.2 gives a basis-image criterion for matrix invariance. With M=L and the independent normal-form bridge these provide an exact finite constraint problem for each n. Example7.2 computes the path with100 vertices and records signed/unsigned reflected patterns. This is strong overlap in subject and mechanism, but the read body supplies no symbolic elimination for arbitrary n to exactly G/E/O. Its finite path example is not an all-n proof. Appendix solver text was incidentally displayed, never executed. Its numeric tables and claimed timings were not independently validated and are not proof evidence here.
+
+Fresh guarded https://arxiv.org/pdf/1908.05797 yields hashb8b885ab4301e2cb017466ab9e8154f0995ca4dd30117d22424c901d837c1c31. Read definitions/linear-space setup pp2-4, equitable/grid statements pp6-7, and almost-equitable section pp11-12. Proposition5.23 p12 identifies L-invariant ordinary partitions with almost-equitable partitions. Example5.24 p12 explicitly describes the path's classification as conjectured in the original paper. Conjecture5.6 pp6-7 concerns EQUITABLE grids, not all Laplacian-invariant signed path words. A general cir/enumeration algorithm is another route to a list at a fixed n, not an explicit uniform classification without symbolic proof. Later algorithm proof sections were not fully read and are not used as prior proof of the exact target.
+
+The2021 Aguiar-Dias weighted-network paper (DOI10.1137/20M1348248), identified by current search and by references in2411.10904, is a strong contrary lead for general anti-synchrony characterization. Its author PDF https://cmup.pt/cmup/apdias/2006_14269.pdf timed out under the immutable guard on hop8. Body unavailable; no alternate host, DOI delivery, version, mirror, query workaround or retry attempted. We do not promote its search snippet or another paper's description into a proved all-n path bridge.
+
+Original Example6.3 p26 explicitly cites Epstein-Golubitsky, Symmetric patterns in linear arrays of coupled cells, Chaos3(1):1-5,1993 (reference10 p32). This is the strongest unexamined early linear-array lead. Its actual body was not acquired in this bounded review. A precise remaining qualification question is whether its boundary/coupling class and symmetry constraints already imply every signed reflected basic word with exact n-divisibility, and exclude every other universally invariant real subspace. No answer is inferred from its title. This is a specific unpaid source comparison, not a claim that an unknown theorem somewhere vetoes the candidate.
+
+## Full prior-to-exact-target bridge audit
+Paid from actual source bodies: signed-polydiagonal normal form (original Prop5.1), scalar L criterion (original context and matrix-basis criteria), and the encoding of each signed row word as a coloring vector (2024 Prop3.7/4.2). Paid independently in this review: full cell-space reduction; quotient recurrence; first-return exclusions with q=1,2 and virtual terminal row; Q-invariant encountered span and rank argument excluding later new parameters; all four global templates; exact equality positions; converse for all odd vector g and linear h. No read earlier body pays all these steps as an already existing explicit all-n path classification. Accordingly there is NO COMPLETE PRIOR BRIDGE ESTABLISHED, and equally NO NOVELTY CLEARANCE. Reusing this review's new symbolic steps to assert that an earlier general theorem already solved the target would be circular for novelty assessment.
+
+## Accepted-family comparison, strongest contrary significance case
+Copied accepted55 routing metadata was used only as statement routing. All55 titles/source URLs were displayed; full statements examined for343536,350452,338258,338887 and the first15-record tranche (some combined tool displays truncated; see inventories). No acceptance certificate or protected formal body was opened, hashed or audited. Prior39 is explicitly not audited.
+
+343536 is the strongest overlap: same authors, graph partitions, Cartesian grids with a path factor, and invariant-subspace translation. Even accepting its copied statement as a theorem would classify equitable partitions of P1 square Pn, not all almost-equitable partitions, zero coordinates, or negative-coordinate matching. For example the G2 reflection on P6 has row word a,b,b,a,a,b. Vertices1 and4 are in the a-class, but vertex1 has one neighbor in b while vertex4 has one b and one a neighbor: their total degree and within-class counts differ, so this is not equitable. Its off-class counts agree; the proof here shows full universal difference-coupled invariance. This ordinary symbolic example shows the hypothesis mismatch, not novelty. A lift to a signed double cover or weighted quotient could conceivably bridge a broader accepted certificate, but that construction and its exact family identification remain unpaid. Root must compare the actual authorized summaries/certificates outside this review; source-family overlap alone does not establish duplication.
+
+350452 concerns IR-graphs (irredundance) of paths/cycles,338258 a Riordan zero-eigenspace restriction,338887 rotor configuration counts on cycles. Their copied statements do not assert the present universal odd-g path-word classification. These are bounded statement comparisons only, not clearance of their complete families. Unrelated-looking titles are not used to clear the other accepted results.
+
+Strongest case AGAINST significance: the general signed-polydiagonal and L-invariance reductions are known; once those are in hand the path has valence at most2 and the entire exhaustion is an elementary second-order recurrence with four turns. A later general coloring-vector algorithm already computes such spaces, and the original paper itself states the templates. Most of the work therefore proves completeness of a very explicit source pattern, rather than discovering a new invariant-space structure. Strongest case FOR significance: it settles the exact stated conjecture uniformly for every positive n,d; general invariance criteria and algorithms do not force the four turns or endpoint divisibility without the independently supplied symbolic exhaustion. It is more than a fixed parameter, helper, or routine specialization of a fully paid prior classification. Reviewer recommends retaining it as a substantive ordinary survivor, CONDITIONAL on the concrete original-final/1993/2021 and family checks. Root alone adjudicates significance and eligibility; no credit is recommended now.
+
+## Objections and disposition
+1. Scalar proof might miss mixed cell-coordinate subspaces: resolved explicitly by all matrix units before cubing.
+2. Cubic test might allow dense rows with cancellations: coefficient c_a^2 c_b excludes every second nonzero coefficient; free parameter projection is justified.
+3. Quotient orientation/sign and linear h: resolved by displayed z_a=-sum_b Q_ab h(y_b); source L sign fixed.
+4. Encountered classes might not span m: resolved using S Q subset S first, recurrence second, full column rank third.
+5. First return near terminal vertex might escape forbidden successor: successor is the still-alphabet virtual Neumann row; no equation at n+1 needed.
+6. q2 merging or q1 Q formula: treated separately; no E1 family invented.
+7. Local template fitting might not be global: all possible internal/turn/junction triples are covered by reversal and sign invariance, then uniqueness propagates indefinitely.
+8. Earlier boundary equalities might give shorter truncations: proved no internal consecutive equality; stopping iff b divides n, including b1.
+9. General earlier theorem might already solve it: no complete earlier translation found in bodies read; specific unpaid leads above remain.
+10. Formalization may not be compact: large infrastructure burden remains UNVERIFIED; no compiler/library availability claim is made.
+
+
+FILE inputs/grid-acceptance-343536.json 
+ {
+ "mathdb_id": 343536,
+ "title": "Equitable partitions of finite rectangular grids are symmetry orbits (Neuberger-Sieben-Swift Conjecture 5.6)",
+ "status": "accepted_in_new_twenty_campaign",
+ "credit": 1,
+ "accepted_utc": "2026-11-03T20:04:34.004893+00:00",
+ "exact_endpoint": "GridFinal6.mathdb_343536 : \u2200 m n \u2265 1, (\u2200 r : Setoid (Fin m \u00d7 Fin n), IsEquitable (G m n) r \u2194 \u2203 H : Subgroup (G m n \u2243g G m n), r = orbitSetoid (G m n) H) \u2227 (Nonempty (EqPart (G m n) \u2243o Subgroup (G m n \u2243g G m n)) \u2194 HasFreeVertex (G m n)) \u2227 (HasFreeVertex (G m n) \u2194 \u00ac (2 \u2264 m \u2227 m = n \u2227 n \u2264 3)), with G m n the Mathlib box product of paths",
+ "scope": "Neuberger, Sieben and Swift, arXiv:1908.05797 (SIAM J. Appl. Dyn. Syst. 19 (2020)), Conjecture 5.6, proved for all m, n >= 1: every equitable partition of P_m \u25a1 P_n is the orbit partition of a subgroup of the automorphism group; the equitable-partition lattice is isomorphic to the subgroup lattice exactly when a free vertex exists; and a free vertex exists unless 2 <= m = n <= 3.",
+ "source_targets": [
+  "Neuberger-Sieben-Swift arXiv:1908.05797 Conjecture 5.6",
+  "MathDB 343536"
+ ],
+ "discovery_lane": "expanded-corpus-r131",
+ "formalization_lanes": "grid-formal-r1 through r6",
+ "paper": "grid-manuscript-r2/paper.pdf",
+ "proof_packet": "grid-formal-r6/grid-formal-r6-source.zip",
+ "dossier": "grid-manuscript-r2/grid-full-dossier.zip",
+ "fidelity_review": "grid-fidelity-r1/REVIEW.md (A-C PASS, D-E QUALIFIED_PASS; no mathematical fix)",
+ "math_review": "grid-review-r1/REVIEW.md (PROCEED_TO_LEAN)",
+ "root_adjudication": "grid-root-adjudication-r1.json",
+ "paper_review": "grid-parent-final-r1/paper-and-package-review.json",
+ "final_replay": "grid-parent-final-r1/replay-result.json",
+ "registry_refresh": "grid-parent-final-r1/registry-refresh.json",
+ "all_local_declarations_audited": 742,
+ "dependency_closure_audited": 299549,
+ "axioms": [
+  "propext",
+  "Classical.choice",
+  "Quot.sound"
+ ],
+ "substantive_reason": "It resolves a published SIAM J. Appl. Dyn. Syst. conjecture, supported by the authors only by computation through m = n = 20. The new content is the first sentence for m, n >= 2 (equitable partitions of grids are exactly automorphism-subgroup orbit partitions), proved by a boundary-propagation argument: a saturated border neighbour-multiset rule, non-backtracking colour walks with corner timing, explicit dihedral witnesses and positive-layer propagation. The lattice statements and the exceptional squares follow. Significance is modest; the path case was already covered by Brito-Manoel (2026).",
+ "novelty_standard": "Qualified bounded comparison; not worldwide priority",
+ "remaining_literature_limits": [
+  "SIADS, Brito-Manoel and Godsil bodies not read; Godsil compact-graph channel not exhaustively excluded",
+  "bounded citing-work search only"
+ ],
+ "trust_limits": [
+  "Prebuilt upstream Mathlib oleans trusted, except Mathlib.Tactic.Bound.Attribute, recompiled locally from pinned read-only source by the packet driver",
+  "leanchecker shares the installation",
+  "round-6 development audit briefly overlapped the lane's fresh replay (terminated, excluded); root replay serial",
+  "root replay attempt 1 failed only on missing executable bits (recorded)"
+ ],
+ "not_claimed": [
+  "Priority for the path case",
+  "Results for infinite or periodic grids",
+  "Publication"
+ ],
+ "sha256": {
+  "paper": "98c9f9f085b07cdc7e217e0497a57120155c1d2721b39bcb06546d98aae43767",
+  "proof_packet": "a4068de99037028f817f2f5d1652a97d7508c4419353da95abea04b45b977953",
+  "dossier": "38f7ebef22dee09a4ed31d3eb5bb08c31eba333b40f39c76460a4056e2839b45"
+ }
+}
+SOURCES ['inputs/sources/author-directory.html', 'inputs/sources/polydiagonal.pdf', 'inputs/sources/registry-deepmind.html', 'inputs/sources/registry-leanpool.html', 'inputs/sources/registry-openai.html', 'inputs/sources/registry-tauceti.html', 'inputs/sources/synchrony.pdf']
+INNER INPUTS ['inputs/inputs/DORMANT-SOL-FORMAL-PLAN.md', 'inputs/inputs/FULLCANDIDATE.md', 'inputs/inputs/accepted55-routing-context.json', 'inputs/inputs/originals', 'inputs/inputs/sources', 'inputs/inputs/texts']

@@ -1,0 +1,863 @@
+                                                INVARIANT POLYDIAGONAL SUBSPACES OF MATRICES AND
+                                                            CONSTRAINT PROGRAMMING
+
+                                                             JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+                                                  Abstract. In a polydiagonal subspace of the Euclidean space, certain components of the
+                                                  vectors are equal (synchrony) or opposite (anti-synchrony). Polydiagonal subspaces in-
+
+
+
+
+arXiv:2411.10904v2 [math.DS] 13 Dec 2024
+                                                  variant under a matrix have many applications in graph theory and dynamical systems,
+                                                  especially coupled cell networks. We describe invariant polydiagonal subspaces in terms of
+                                                  coloring vectors. This approach gives an easy formulation of a constraint satisfaction prob-
+                                                  lem for finding invariant polydiagonal subspaces. Solving the resulting problem with existing
+                                                  state-of-the-art constraint solvers greatly outperforms the currently known algorithms.
+
+
+
+                                                                                     1. Introduction
+                                              Invariant subspaces of matrices play an important role in many applications. An invariant
+                                           synchrony subspace is a special kind of invariant subspace whereby certain components of
+                                           the vectors in the subspace are equal. Invariant synchrony subspaces and their corresponding
+                                           partitions have a surprisingly large number of applications in graph theory, network theory,
+                                           mathematical biology, and other areas of mathematics. Applications include equitable and
+                                           almost equitable partitions of graph vertices, balanced and exo-balanced partitions of coupled
+                                           cell networks, coset partitions of Cayley graphs, network controllability, and differential
+                                           equations, as listed in [11].
+                                              An invariant anti-synchrony subspace is an invariant subspace whereby certain components
+                                           of the vectors in the subspace are opposite. Applications can be found in many settings,
+                                           including multi-agent systems, chaotic oscillators, optically coupled semiconductor lasers,
+                                           and neural networks, as found in [15].
+                                              Finding all invariant synchrony subspaces is an NP-complete problem. Algorithms that
+                                           work for small matrices can be found in [7, 11, 14]. Another approach based on eigenvectors
+                                           [1, 3] can potentially analyze much larger matrices, but the algorithm is complex and would
+                                           be hard to implement on a computer. Furthermore, computing the eigenvalues of large
+                                           matrices requires inexact floating-point computations.
+                                              Polydiagonal subspaces are either synchrony or anti-synchrony subspaces. Since there are
+                                           many more of these subspaces than synchrony subspaces, computing all invariant polydiag-
+                                           onal subspaces is much more computationally intensive. This paper presents a constraint
+                                           programming approach to find all invariant polydiagonal subspaces. Our code greatly out-
+                                           performs implementations of the previously listed algorithms for computing synchrony sub-
+                                           spaces. This makes it possible to handle much larger matrices.
+                                              This breakthrough is achieved with the help of state-of-the-art constraint solvers [4, 6, 16].
+                                           To use these solvers, the conditions for being both polydiagonal and invariant need to be
+                                             2010 Mathematics Subject Classification. 90C35, 34C14, 37C80.
+                                             Key words and phrases. constraint programming, synchrony, anti-synchrony, invariant polydiagonal sub-
+                                           space, equitable partition.
+                                             December 16, 2024.
+                                                                                               1
+2                  JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+translated to constraints. These conditions are enforced using coloring vectors, which encode
+the components that are equal or opposite.
+   Our main motivation for finding invariant polydiagonal subspaces is taken from our ef-
+forts [9, 10, 13] to find and understand bifurcations of solutions to differential equations.
+The Bifurcation Lemma for Invariant Subspaces (BLIS) [13] assumes the existence of nested
+invariant subspaces to prove the existence of bifurcating solutions in many cases. The code
+available at [12] contains an implementation of the corresponding BLIS algorithm which
+requires the invariant polydiagonal subspaces as input, both the anomalous invariant sub-
+spaces [9] and the ubiquitous, well-understood fixed point subspaces. The current paper
+shows how to compute these invariant subspaces.
+
+                                     2. Preliminaries
+   We recall some terminology from [15]. The definition in [3] is also relevant. This provides
+the precise mathematical definition of synchrony and anti-synchrony subspaces. A partial
+involution on a set X is a partial function x 7→ x∗ : X̃ → X̃ that is its own inverse. Note
+that X̃ ⊆ X and x∗∗ = x. A tagged partition of a finite set C is a partition P of C together
+with a partial involution P 7→ P ∗ : P̃ → P̃ on P that has at most one fixed point. The
+equivalence class of i ∈ C is denoted by [i], so that i ∈ [i] ∈ P. The polydiagonal subspace
+of a tagged partition P of C = {1, . . . , n} is the subspace
+               ∆P := {x ∈ Rn | xi = xj if [i] = [j] and xi = −xj if [i]∗ = [j]}
+of Rn . Note that if [i]∗ = [i], then xi = 0 for all x ∈ ∆P . A subspace ∆ of Rn is called
+polydiagonal if ∆ = ∆P for some tagged partition P. The polydiagonal subspace ∆P is
+called a synchrony subspace if the partial involution is the empty function. Otherwise, it is
+called an anti-synchrony subspace. In the next section, we describe polydiagonal subspaces
+in terms of coloring vectors.
+   For a graph with vertex set {1, . . . , n}, the adjacency matrix is the n × n matrix A for
+which Ai,j = 1 if there is an edge between i and j and Ai,j = 0 otherwise. The Laplacian
+matrix of the graph is L = D − A, where D is the diagonal matrix consisting of the degrees
+of the vertices.
+
+                                  3. Coloring vectors
+   Coloring vectors were introduced in [11] to encode partitions. We generalize this notion
+for tagged partitions.
+Definition 3.1. An element c of Zn is called a coloring vector if
+   (1) c1 ∈ {0, 1};
+   (2) −mi ≤ ci ≤ 1 + mi for all i ∈ {2, . . . , n},
+where mi := max{c1 , . . . , ci−1 }.
+  In other words, the first non-zero component of a coloring vector is 1, and for any k ≥ 1
+a component equal to −k or k + 1 must be preceded by a component equal to k.
+Remark 3.2. A simple inductive argument shows that if c is a coloring vector, then
+   (1’) −i + 1 ≤ ci ≤ i for all i.
+On the other hand, this condition guarantees that c1 ∈ {0, 1}, so it is stronger than Defini-
+tion 3.1(1). Hence we can use (1’) instead of (1) in Definition 3.1. The advantage is that
+           INVARIANT POLYDIAGONAL SUBSPACES AND CONSTRAINT PROGRAMMING                            3
+
+(1’) provides finite domains for our decision variables in the constraint satisfaction problem
+shown in Figure 2.
+Example 3.3. The tuples (1, 0, −1, 2, 1, 2) and (0, 0, 1, 2, 3) are coloring vectors, while the
+tuples (1, −2, 1), (1, 0, 3), and (0, 2, 1) are not coloring vectors.
+  The following is easy to verify.
+Proposition 3.4. The conditions of Definition 3.1 are equivalent to the following conditions:
+  (1) −i + 1 ≤ ci ≤ i for all i;
+  (2) for all i ∈ {2, . . . , n} there is a j ∈ {1, . . . , i − 1} such that ci ≤ 1 + cj ;
+  (3) for all i ∈ {2, . . . , n}, either ci ≥ 0 or ci ∈ {−c1 , . . . , −ci−1 }.
+Definition 3.5. Given a coloring vector c ∈ Zn , let [i] := {j | ci = cj }, Pc := {[i] | i ∈
+{1, . . . , n}}, and [i]∗ := {j | cj = −ci }.
+Proposition 3.6. If c is a coloring vector in Zn , then Pc endowed with the partial involution
+[i] 7→ [i]∗ : P̃ → P̃ for P̃ = {[i] | [i]∗ ̸= ∅} is a tagged partition of C = {1, . . . , n}.
+Proof. It is easy to see that we have a partial involution on a partition of C. If ci ̸= 0 then [i]
+is not a fixed point of this partial involution. So the only possible fixed point is {i | ci = 0}
+when this set is non-empty.                                                                     □
+Proposition 3.7. The map c 7→ Pc is a bijection between the set of coloring vectors of Zn
+and the set of tagged partitions of C = {1, . . . , n}.
+Proof. The map is clearly injective. To show that the map is also surjective, consider a
+tagged partition P of C. Let A0 be the fixed point of the partial involution if it exists. Let
+Q := {A ∈ P̃ | min(A∗ ) ≤ min(A)}. Note that A0 ∈ Q if A0 exists. Let (A1 , . . . , Ad ) be the
+ordering of the classes in P \ Q according to the natural order of their minimum elements.
+That is, min(Ar ) < min(As ) for all 0 < r < s. Let A−k := A∗k if A∗k ∈ Q. Now every element
+in P has a unique label. Define c ∈ Zn by ci = k if [i] = Ak . The construction guarantees
+that c is a coloring vector with Pc = P.                                                     □
+  This proposition also implies that there is a bijection between coloring vectors in Zn and
+polydiagonal subspaces of Rn , given by
+                ∆Pc = {x ∈ Rn | xi = xj if ci = cj and xi = −xj if ci = −cj }.
+Example 3.8. Let the partition P = {{1, 4}, {2}, {3}, {5}} be tagged with the partial
+involution on P̃ = {{1, 4}, {2}, {5}} defined by {1, 4}∗ = {5}, {5}∗ = {1, 4}, and {2}∗ = {2}.
+Thus A0 = {2} and Q = {{2}, {5}}, so A1 = {1, 4} and A2 = {3} are the ordered elements
+of P \ Q. Then A−1 = A∗1 = {5}, and the corresponding coloring vector is c = (1, 0, 2, 1, −1).
+Note that
+            ∆P = {x ∈ R5 | x1 = x4 = −x5 , x2 = 0} = {(a, 0, b, a, −a) | a, b ∈ R}.
+is the corresponding polydiagonal subspace of R5 .
+  The coloring vectors of synchrony subspaces are characterized by the following result.
+Proposition 3.9. The vector c ∈ Zn is a coloring vector for a partition with an empty
+partial involution if and only if
+   (1) c1 = 1;
+   (2) 1 ≤ ci ≤ 1 + mi for all i ∈ {2, . . . , n},
+4                     JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+where mi := max{c1 , . . . , ci−1 }.
+Example 3.10. Let the partition P = {{1, 4}, {2, 3}, {5}} have the empty involution, so
+P̃ = ∅ and Q = ∅ in the notation of Proposition 3.7. The classes of the partition are listed
+with increasing minimal elements, so the corresponding coloring vector is c = (1, 2, 2, 1, 3).
+Note that
+               ∆P = {x ∈ R5 | x1 = x4 , x2 = x3 } = {(a, b, b, a, c) | a, b, c ∈ R}
+is the corresponding synchrony subspace of R5 .
+   It is easy to distinguish synchrony and anti-synchrony subspaces by the corresponding
+coloring vectors. If all the components of the coloring vector c are positive, as in Exam-
+ple 3.10, then ∆Pc is a synchrony subspace. If one or more component of c is less than 1, as
+in Example 3.8, then ∆Pc is an anti-synchrony subspace.
+   The following result is an easy consequence of the definitions.
+Proposition 3.11. An element v ∈ Rn is in ∆Pc if and only if the conditions
+   (1) ci = cj implies vi = vj ;
+   (2) ci = −cj implies vi = −vj ;
+   (3) ci = 0 implies vi = 0
+hold for all distinct i and j.
+   Let c be a coloring vector in Zn . The set of colors of c is Kc := {|ci | : 1 ≤ i ≤ n}. The
+signed Kronecker delta function is defined by
+                                          
+                                           1,
+                                                 i=j
+                                 δi (j) := −1, i = −j
+                                          
+                                           0,    otherwise.
+Proposition 3.12. Let c be a coloring vector in Zn . Define b(k) := (δk (c1 ), . . . , δk (cn )). Then
+Bc = {b(k) | k ∈ Kc } is a basis for the polydiagonal subspace ∆Pc .
+  Note that d = |Kc | is the dimension   of ∆Pc and b(k) is the zero vector for k ∈ N \ Kc . The
+                  (1)       (d)
+                                
+matrix Dc := b        ··· b       ∈ {−1, 0, 1}n×d built from the basis vectors is what [13, Def.
+3.6] calls a polydiagonal basis matrix. Every row of Dc has at most one non-zero entry and
+DcT is in reduced row-echelon form. Given a polydiagonal basis matrix Dc , the corresponding
+coloring vector can be recovered as the matrix product c = Dc ι with ι = (1, 2, . . . , d).
+Example 3.13. Consider the coloring vector c = (1, 0, 1, 2, −2) ∈ Z5 . Then Kc = {1, 2}
+and Bc = {(1, 0, 1, 0, 0), (0, 0, 0, 1, −1)}. So the transpose of the corresponding polydiagonal
+basis matrix is                                      
+                                        1 0 1 0 0
+                                T
+                             Dc =                       ∈ {−1, 0, 1}2×5 .
+                                        0 0 0 1 −1
+Note that c = Dc [ 12 ]. The corresponding tagged partition is Pc = {{1, 3}, {2}, {4}, {5}} with
+{2}∗ = {2} and {4}∗ = {5}. The corresponding polydiagonal subspace is ∆Pc = span(Bc ) =
+{(a, 0, a, b, −b) | a, b ∈ R} ∈ R5 .
+Remark 3.14. Recall [15] that a tagged partition P is evenly tagged if the partial involution
+         defined and |A| = |A∗ | for all A ∈ P. It is easy to see that Pc is evenly tagged if and
+is fully P
+only if i bi = 0 for all b ∈ Bc .
+           INVARIANT POLYDIAGONAL SUBSPACES AND CONSTRAINT PROGRAMMING                                 5
+
+                           4. Invariant polydiagonal subspaces
+   A subspace V of Rn is invariant under the matrix M ∈ Rn×n if M V ⊆ V . The following
+is an easy consequence of Proposition 3.11.
+Example 4.1. The partitions corresponding to synchrony subspaces that are invariant under
+the adjacency matrix of a graph are exactly the equitable partitions.
+Proposition 4.2. The polydiagonal subspace ∆Pc of Rn is invariant under M ∈ Rn×n if
+and only if for all k ∈ Kc the conditions
+                         (k)    (k)
+   (1) ci = cj implies wi = wj ;
+                                (k)         (k)
+   (2) ci = −cj implies wi             = −wj ;
+                          (k)
+   (3) ci = 0 implies wi = 0
+hold for all distinct i and j, where w(k) := M b(k) .
+Remark 4.3. In Proposition 4.2, the k ∈ Kc condition can be replaced with k ∈ {1, . . . , n−1}.
+This formulation is more suitable for the constraint satisfaction problem in Table 2. Since
+b(k) = 0 for k ∈ N \ Kc , we can allow k ∈ {1, . . . , n} since {b(1) , . . . , b(n) } is a spanning set.
+Note that b(n) is nonzero only if c = (1, . . . , n). In this case ∆Pc = Rn , so checking the
+conditions for k = n is unnecessary as they are automatically satisfied.
+  Note that the coloring vector of a synchrony subspace only has positive components. So
+Conditions (2) and (3) of Proposition 4.2 are automatically satisfied for synchrony subspaces.
+Remark 4.4. The set of polydiagonal subspaces invariant under a matrix is a lattice ordered
+by reverse inclusion [1, 2, 3]. This ordering induces an ordering of the corresponding coloring
+vectors. In this order c(1) ≤ c(2) if and only if
+         (1)   (1)           (2)    (2)
+   (1) ci = cj implies ci = cj ;
+         (1)      (1)                 (2)    (2)
+   (2) ci = −cj implies ci = −cj ;
+         (1)               (2)
+    (3) ci = 0 implies ci = 0
+hold for all distinct i and j. Conditions (1)–(3) can be applied even if c(1) , c(2) ∈ Rn . Using
+this extended order, the conditions of Proposition 4.2 can be simply stated as c ≤ w(k) for
+all k.
+  We often consider M to be the adjacency or the Laplacian matrix of a graph. However,
+any square matrix is the adjacency matrix of a digraph with weighted edges, as seen in the
+next example [15].
+Example 4.5. The Hasse diagram of the lattice of coloring vectors corresponding to polydi-
+agonal subspaces invariant under M are shown in Figure 1. The matrix M is the in-adjacency
+matrix of the weighted digraph shown. Note that b(1) = (1, 0, 1) and b(2) = (0, 1, 0) for
+c = (1, 2, 1). Hence w(1) = M b(1) = (2, 0, 2) ≥ c and w(2) = M b(2) = (−1, −1, −1) ≥ c,
+verifying that ∆Pc = {(a, b, a) | a, b ∈ R} is invariant under M .
+5. Finding invariant polydiagonal subspaces using constraint programming
+   The conditions of Definition 3.1, Proposition 3.11, Remark 3.2, and Proposition 4.2 are well
+suited for constraint programming [17]. Figure 2 shows the constraint satisfaction problem
+for finding all invariant polydiagonal subspaces of a given matrix. Note that the invariant
+polydiagonal subspaces of M and aM are the same for any nonzero a ∈ R. Thus, a matrix
+6                        JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+                                                                                        (0,0,0)
+                              2
+                              2                           
+                                                    0 −1 2                   (1,0,−1)             (1,0,1)
+                     1        2          3     M = 0 −1 0
+                         −1         −1
+                                                                             (1,0,2)              (1,2,1)
+                                                    2 −1 0
+                              −1
+                                                                                        (1,2,3)
+
+
+          Figure 1. Weighted digraph with adjacency matrix and lattice of coloring
+          vectors of M -invariant polydiagonal subspaces. The shading indicates the
+          synchrony subspaces.
+
+
+    • Decision variables:                      c = (c1 , . . . , cn ) ∈ Zn
+    • Domains:                               −i + 1 ≤ ci ≤ i for all i                                       (Rem. 3.2)
+    • Dependent variables:
+    maximums:                                  (m2 , . . . , mn ) ∈ Zn−1
+                                 mi := max{c1 , . . . , ci−1 } for all i
+                                    (k)
+    spanning set:         b(k) = (b1 , . . . , b(k)
+                                                n ) ∈ Z ,
+                                                         n
+                                                              for k ∈ {1, . . . , n − 1}                     (Rem. 4.3)
+                                       
+                                        1,
+                                                 ci = k
+                               (k)
+                             bi := −1, ci = −k                    for all k and i                           (Prop. 3.12)
+                                       
+                                        0,       otherwise
+    image of spanning set:                    (k)
+                                 w = (w1 , . . . , wn(k) ) ∈ Zn for all k
+                                   (k)
+
+
+                                                w(k) := M b(k)       for all k
+    • Constraints:
+    coloring vector:                   −mi ≤ ci ≤ 1 + mi          for i ∈ {2, . . . , n}                    (Def. 3.1(2))
+    M -invariance:                   ci = 0 =⇒ wi(k) = 0                for all k and i
+                                                     (k)  (k)
+                                    ci = cj =⇒      wi = wj             for all k and j < i                  (Prop. 4.2)
+                                   ci = −cj =⇒ wi(k) = −wj(k) for all k and j < i
+
+
+          Figure 2. Constraint satisfaction problem for the coloring vectors c of M -
+          invariant polydiagonal subspaces for M ∈ Zn×n .
+
+with rational entries can be replaced by an integer matrix in the computation of invariant
+subspaces. This requires multiplication by a common denominator of the entries. Henceforth
+our implementation assumes that M has integer entries.
+   The decision variables are the components c1 , . . . , cn of the coloring vector c. The domains
+of the decision variables are determined by Remark 3.2. We also use the dependent (inferred)
+variables m2 , . . . , mn , b(1) , . . . , b(n−1) , and w(1) , . . . , w(n−1) . The subtle reasons for the range
+k ∈ {1, . . . , n − 1} for b(k) rely on Remark 4.3. Since the b(k) are determined by decision
+variables during run time, even the zero vectors need to be defined. Also, in order to make
+the algorithm more efficient, b(n) is not needed, hence not defined.
+          INVARIANT POLYDIAGONAL SUBSPACES AND CONSTRAINT PROGRAMMING                           7
+
+   We developed code that solves this constraint satisfaction problem using four Python
+interfaces to three different solvers. Two of them are available in the appendices. All four
+programs are available at our companion website [8].
+   In these programs, the dependent variables can be actual variables or expressions, de-
+pending on the constraint solver. After a solver finds all possible coloring vectors, the
+corresponding invariant polydiagonal spaces can be built using Proposition 3.7.
+   The best performing version for smaller problems uses DOcplex, the Python interface to
+IBM’s CP Optimizer [6]. The versions using the CP-SAT solver [16] handle larger or more
+complex problems better. We use the CP-SAT solver through two interfaces. One of them
+uses the native ORtools interface, the other uses the CPMpy [5] interface. The ORtools
+version performs better if we use the conditions of Proposition 3.4. The version using the
+Z3 Theorem Prover [4] is significantly slower. This is probably because Z3 is designed to
+solve more generic problems. We include the Z3 version because it is easily accessible, user
+friendly, and has a non-commercial license.
+   As an initial test, we ran our code without the constraints that force M -invariance, which
+we can think of as letting M be the zero matrix. This finds coloring vectors in Zn . The
+number of such coloring vectors is the Dowling number pn [18, A007405] as was shown in
+[15]. Our code successfully verifies these counts. Table 1 shows the performance of our
+implementations. These values show that the performance of the Z3 code is inferior even for
+this simpler problem compared to the other two implementations.
+       n        1   2   3         4     5   6     7      8      9       10
+       pn       2   6 24         116   648 4088 28640 219920 1832224 16430176
+       DOcplex 0.4 0.4 0.4       0.4   0.5 1.5   8.1    61     501     4531
+       ORtools 0.4 0.3 0.3       0.3   0.4 1.0   6.1    57     586     6427
+       Z3      0.3 0.3 0.3       0.4   1.1 12    532   47513
+
+       Table 1. The number pn of coloring vectors in Zn , and the time in seconds
+       to compute them with three different solvers. Since the ORtools interface
+       to CP-SAT outperforms the CPMpy interface, the CPMpy times are omitted
+       from the table.
+
+
+                        6. Comparison to existing approaches
+  No algorithm, other than brute force, is currently available to compute all invariant polydi-
+agonal subspaces. Our constraint programming approach is the first practical way to handle
+medium-size matrices.
+  The first useful algorithm to compute only the invariant synchrony subspaces was devel-
+oped in [7] and further improved in [11] as the split and cir algorithm. These algorithms rely
+on the computation of the coarsest invariant refinement (cir) of a partition. The synchrony
+subspace corresponding to the cir is the invariant synchrony subspace with the smallest
+dimension that contains the original synchrony subspace.
+  The split and cir algorithm starts with the singleton partition {{1, . . . , n}}, corresponding
+to the coloring vector c = (1, . . . , 1). The one-dimensional subspace ∆Pc is not necessarily
+invariant. The queue of candidates is initialized with this partition. For each candidate
+in the queue, the cir is computed and added to the list of partitions producing invariant
+synchrony subspaces. For each new invariant partition, each class is split into two classes
+8                  JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+in all possible ways, which are added to the candidate queue. The queue will eventually be
+empty, terminating the algorithm.
+   Our constraint programming code greatly outperforms the split and cir algorithm. A
+theoretical algorithm for computing invariant polydiagonal subspaces using eigenvectors of
+the matrix M is described in [1, 3]. Since no implementation is available, it is hard to
+compare the performance of this approach to ours. One advantage of our approach is that
+it uses exact arithmetic.
+   Table 2 shows how the performance of the split and cir algorithm [11] compares to the
+constraint approach for the Laplacian matrix of the cycle graph Cn . Our computations were
+done on a AMD EPYC 7542 processor using a single 2.9 GHz CPU and 16G RAM. In many
+instances, the use of constraint programming reduces the time of computation from weeks
+to seconds.
+       n                        5    10     15   20   25   30     35   40    45    50
+       number of subspaces
+       synchrony                7    19     27 45     33   77     51   95 83      96
+       polydiagonal            13    47     51 121    64   197    99   269 161    250
+       times (sec)
+       split & cir: sync.       0     0     0   9 401 22631
+       DOcplex: sync.          0.4   0.4   0.5 0.7 1.2 2.1  3.3 5.4 8.0 12
+       DOcplex: polydiag.      0.4   0.4   0.6 1.2 2.4 5.5   11 26 57 124
+       ORtools: sync.          0.4   1.5   6.1 11 18   34    54 107 195 333
+       ORtools: polydiag.      0.5   2.3   7.9 19 38   91   164 348 613 1051
+
+       Table 2. Times to compute the synchrony and polydiagonal subspaces in-
+       variant under the Laplacian of Cn . Only synchrony subspaces are computed
+       with the split and cir algorithm.
+
+  Polydiagonal subspaces that are invariant under a collection of matrices are also often
+useful as was shown in [11]. The constraint programming approach for finding invariant
+polydiagonal subspaces easily generalizes to this setting. It only requires the constraints
+corresponding to the conditions of Proposition 4.2 for each matrix in the collection.
+                                           7. Examples
+   Let Aut(G) be the automorphism group and M be the adjacency matrix of the simple
+graph G. Define Γ := Aut(G) × Z∗ , where and Z∗ = {−1, 1} is the unit group of Z. For
+(ϕ, σ) ∈ Γ and x ∈ Rn , define (ϕ, σ)x := (σxϕ(1) , . . . , σxϕ(n) ). Then Γ acts on the set of
+M -invariant polydiagonal subspaces by (ϕ, σ)V := {(ϕ, σ)x | x ∈ V }. The point stabilizer
+of such a subspace V is
+                      pStab(V ) := {(ϕ, σ) ∈ Γ | (∀x ∈ V ) (ϕ, γ)x = x}.
+The fixed point subspace Fix(Θ) of a subgroup Θ of Γ is the maximal M -invariant subspace
+whose point stabilizer is Θ. We call Fix(pStab(V )) the fixed point subspace corresponding
+to V . If Fix(pStab(V )) ̸= V , then V is an Anomalous Invariant Subspace (AIS). In other
+words, an AIS is an M -invariant polydiagonal subspace that is not a fixed point subspace of
+the Γ action. Although fixed point subspaces can be found by analyzing representations of
+the Γ action [9], finding each AIS is very difficult without constraint programming.
+          INVARIANT POLYDIAGONAL SUBSPACES AND CONSTRAINT PROGRAMMING                                                                        9
+
+                                                            0
+
+
+
+
+                                                                 1             3
+
+
+
+
+                                                        4                      5          6             10
+
+
+
+
+                                         2    11        9            13        8              12        14         18
+
+
+
+
+                                7        19   15            25            27        24             22         23        21
+
+
+
+
+                          16   20        17   26            30                 32             31             29
+
+
+
+
+                                    28             34                35              33
+
+
+
+
+                                                                     36
+
+
+
+
+       Figure 3. The Hasse diagram of the poset of Γ-orbits of M -invariant syn-
+       chrony subspaces for the Buckyball graph. The shaded orbits are described in
+       Figures 4 through 6. The relationship between orbits 30, 31, 33, and 35, as
+       indicated by the red figure eight, shows that this poset is not a lattice.
+
+Example 7.1. Our DOcplex and ORtools codes both find the 240 invariant polydiagonal
+subspaces for the adjacency matrix of the Petersen graph in a few seconds. These subspaces
+are in 22 orbits under the Γ action. The number of invariant anti-synchrony subspaces is
+147. Two orbits contain AIS.
+Example 7.2. The invariant polydiagonal subspaces for the graph Laplacian L for the path
+graph with 100 vertices can be computed by our DOcplex and ORtools codes in 7.4 and 31.9
+minutes, respectively. There are 20 L-invariant subspaces, each in a singleton group orbit of
+the Γ ∼
+      = Z2 × Z2 action. Only 4 of these invariant subspaces are fixed point subspaces, with
+coloring vectors
+        (0, . . . , 0),   (1, . . . , 50, −50, . . . , −1),               (1, . . . , 50, 50, . . . , 1),                (1, . . . , 100).
+Two of the invariant subspaces, for example, that are AIS have the coloring vectors
+                      (1, −1, −1, 1, . . . , 1, −1, −1, 1),                    (1, 2, 2, 1, . . . , 1, 2, 2, 1),
+where the groups of four are repeated.
+  These results could be reproduced using the eigenvectors of L, using the algorithm de-
+scribed in [1, 3]. This can be done because the eigenvectors vk ∈ R100 for k ∈ {0, . . . , 99}
+are known in closed form with components (vk )i = cos((i − 21 )kπ/100).
+
+Example 7.3. The 60-vertex Buckyball graph G models the Buckminsterfullerene molecule
+Carbon 60. The standard embedding of the Buckyball graph into 3-space is the skeleton of
+the truncated icosahedron, familiar as the soccer ball. The symmetry group of this embed-
+ding is the 120-element icosahedral group Ih using Schönflies notation [19]. Note that Ih is a
+subgroup of the orthogonal group O(3), and Ih ∼= Aut(G) ∼ = A5 ×Z2 . Thus, Γ = Aut(G)×Z∗
+has 240 elements. Let M be the adjacency matrix of G. Our ORtools code finds the 1244
+M -invariant polydiagonal subspaces in 6.7 hours. The DOcplex implementation failed to
+find all solutions in 14 days. These polydiagonal subspaces are partitioned into 95 group
+10                                         JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+                                           1                                                       1
+                                                   2                   3                   2
+                                                                       5
+                                       4                   6                       6                   4
+                                                   6                                       6
+                                                                   4       4
+                                               5           2                   2               5
+                           4                           3                               3                       4
+                                   6                               1       1                               6
+               1                                       2       1               1       2                               1
+                   2                                                                                               2
+                                       6           4               1       1               4       6
+
+                                                       4       2               2       4
+                                   5                                                                   5
+                               3                                       3                                       3
+                                                   6                                       6
+                                                                       5
+                                                           6                       6
+                                           2               4                   4               2
+                                           1                                                       1
+
+
+
+
+       Figure 4. The invariant synchrony subspace W of Example 7.3. The 2D
+       embedding uses an azimuthal equidistant projection of the 3D embedding.
+       The fixed point subspace W has point stabilizer isomorphic to D3d ∼= D3 × Z2 .
+       The D3 symmetry can be seen with the help of the shading in the 2D picture
+       of W , while the Z2 symmetry is the 180◦ rotation around the black axis shown
+       in the 3D embedding of W .
+
+           5           6                                                                                                                         (0,0,0,0,0,0)
+                                                         2                             1       0               0   0       0
+                                                                                                                           
+               2
+                                                        1                             0       1               1   0       0 (0,0,1,−1,1,0)   (1,−1,−1,−1,1,1)   (1,1,1,1,1,1)
+       3                   4
+                                                        0                             2       0               0   1       0
+                                                                                                                           
+                                                   Mc = 
+           2   2                                        0                             1       0               1   0       1
+                                                                                                                            
+                                                                                                                                                 (1,2,2,2,1,1)    (1,2,3,1,2,1)
+                                                        0                             0       1               0   0       2
+               1           2                             0                             0       0               1   1       1                     (1,2,3,4,5,6)
+
+
+
+       Figure 5. The quotient digraph Gc of W from Figure 4 with its adjacency
+       matrix Mc and lattice of coloring vectors of Mc -invariant polydiagonal sub-
+       spaces. The four shaded coloring vectors of synchrony subspaces correspond
+       to the shaded orbits of Figure 3.
+
+orbits under the Γ action. The same code finds the 340 M -invariant synchrony subspaces,
+partitioned into 37 group orbits, in under 3 minutes. The partially ordered set of M -invariant
+synchrony subspaces is shown in Figure 3. Orbits 0 and 36 are both singletons; orbit 0 con-
+tains the fully synchronous subspace with coloring vector (1, . . . , 1), and orbit 36 contains
+R60 with the coloring vector (1, . . . , 60).
+   Orbits connected by a dashed line in Figure 3 have the same conjugacy class of point sta-
+bilizers. The 16 group orbits with a dashed line pointing down contain synchrony subspaces
+that are AIS, and the other 21 group orbits contain synchrony subspaces that are fixed point
+subspaces.
+   Now we focus on the synchrony subspace W shown in Figure 4, which is a fixed point
+subspace and a member of orbit 13 of Figure 3. The quotient digraph Gc of W , where c
+is the coloring vector of W , is shown in Figure 5. An arrow i  j with weight a in the
+quotient digraph indicates that every vertex with color j is connected to a vertices with
+              INVARIANT POLYDIAGONAL SUBSPACES AND CONSTRAINT PROGRAMMING                                                                                                                                          11
+
+                                                                                                                                   +                                                       +
+                                                           +                                                                               -                   -                   -
+                                                           +                                                                                                   +
+                           -                                                               -                                   -                   +                       +                   -
+                                                                                                                                           +                                       +
+                                                       -       -                                                                                           -       -
+                                   +                                               +                                                   +           -                   -               +
+                   -                       +                               +                       -                   -                       -                               -                       -
+                                                                                                                           +                               +       +                               +
+                                                                                                               +                               -       +               +       -                               +
+                                                                                                                   -                                                                                       -
+                                       -                                       -                                               +           -               +       +               -       +
+
+                                           -                               -                                                                   -       -               -       -
+                       +                                                                   +                               +                                                                   +
+                   +                                       +                                       +                   -                                       -                                       -
+                                                                                                                                           +                                       +
+                                                           +                                                                                                   +
+                                                                                                                                                   +                       +
+
+                                               -                   -                                                               -               -                   -               -
+                                                                                                                                   +                                                       +
+
+                               (0, 0, 1, −1, 1, 0)                                                                         (1, −1, −1, −1, 1, 1)
+                               1                                                       1                                           1                                                       1
+                                       2                   2                   2                                                           2                   3                   2
+                                                           1                                                                                                   2
+                           2                   1                       1                   2                                   1                   1                       1                   1
+                                       1                                       1                                                           1                                       1
+                                                       2       2                                                                                           1       1
+                                   1           2                   2               1                                                   2           2                   2               2
+                   2                       2                               2                       2                   1                       3                               3                       1
+                       1                               1       1                               1                           1                               1       1                               1
+          1                                2       1               1       2                               1   1                               2       1               1       2                               1
+               2                                                                                       2           2                                                                                       2
+                           1           2               1       1               2       1                                       1           1               1       1               1       1
+
+                                           2       2               2       2                                                                   1       2               2       1
+                       1                                                                   1                               2                                                                   2
+                   2                                       2                                       2                   3                                       3                                       3
+                                       1                                       1                                                           1                                       1
+                                                           1                                                                                                   2
+                                               1                       1                                                                           1                       1
+                               2               2                   2               2                                               2               1                   1               2
+                               1                                                       1                                           1                                                       1
+
+                                       (1, 2, 2, 2, 1, 1)                                                                                  (1, 2, 3, 1, 2, 1)
+
+       Figure 6. The M -invariant AIS that have the same point stabilizer as W .
+       The coloring vectors below the figures indicate the corresponding Mc -invariant
+       polydiagonal subspaces shown in Figure 5.
+
+color i. The adjacency matrix of the quotient digraph is Mc := Dc+ M Dc ∈ R6×6 [13]. Note
+that the pseudoinverse Dc+ = (DcT Dc )−1 DcT is easy to compute because DcT Dc is diagonal.
+The quotient digraph, the matrix Mc , and the lattice of the six Mc -invariant subspaces are
+shown in Figure 5. The automorphism group of the quotient digraph is trivial, and the only
+fixed point subspaces of the Aut(Gc ) × Z∗ ∼  = Z2 action on R6 are (0, . . . , 0) and (1, . . . , 6).
+This lattice is isomorphic to the lattice of M -invariant polydiagonal subspaces that are also
+subspaces of W . Figure 6 shows the four of these subspaces that are AIS. The remaining
+three of these subspaces, the trivial subspace, the constant subspace, and W itself, are fixed
+point subspaces.
+
+                                                                                                   8. Conclusions
+  Polydiagonal (synchrony or anti-synchrony) subspaces invariant under a matrix have many
+applications in network theory and dynamical systems, especially coupled cell networks. We
+have developed an approach based on coloring vectors which makes it possible to formulate
+constraint satisfaction problems for finding invariant polydiagonal subspaces. We have shown
+that solving the resulting problems with existing state-of-the-art constraint solvers greatly
+12                   JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+outperforms split and cir, the best previously known algorithm for computing synchrony
+subspaces. Additionally, we are now able to compute all anti-synchrony subspaces. The
+speedup of our new code is remarkable. For example, a problem that took weeks for the
+split and cir code can now be done in seconds.
+   The constraint satisfaction problem of Figure 2 was translated into programs that use
+Python interfaces to several solvers. Our four Python programs are available at the GitHub
+repository [8], including the two listings featured in the appendices.
+   In our examples, we enforced mathematically equivalent constraints via a variety of meth-
+ods. We used different constraint solvers and choices of hyper-parameters. We tested our
+implementations on problems of different sizes and complexity. Based on our experiments,
+we make the following recommendations for finding invariant polydiagonal subspaces with
+our code found at GitHub.
+      • ORtools: The native Python interface to CP-SAT in ORtools (Google) [16] is the
+        best choice for complex problems, but has the most difficult syntax.
+      • CPMpy: If modification of the code is desired, then use the CPMpy [5] interface to
+        CP-SAT. It is easier to understand and executes CP-SAT nearly as fast as the native
+        ORtools interface. This interface can also access other solvers.
+      • DOcplex: For relatively simple problems the DOcplex (IBM) [6] code is generally
+        fastest. It also has a user-friendly syntax, but may not handle more complex prob-
+        lems. The use of DOcplex requires the installation of CP Optimizer. A license is
+        required but it is free for academic users.
+      • Z3: The Z3 Theorem Prover (Microsoft) [4] code is easy to understand, but the
+        performance does not match the other solvers.
+   The ability to find polydiagonal subspaces that are invariant under large matrices opens
+up exciting possibilities for studying the dynamics of complex coupled cell networks. For
+example, our buckyball results have implications for understanding the vibrations of the
+Carbon 60 molecule. An extension of the current paper would be the computation of poly-
+diagonal subspaces that are invariant under a set of matrices [11]. This computation would
+be useful in many applications.
+   The performance of our new code suggests that other combinatorially difficult problems
+in network theory could be solved using constraint programming.
+
+                               Statements and Declarations
+  Some of the computations were performed on Northern Arizona University’s Monsoon
+computing cluster, funded by Arizona’s Technology and Research Initiative Fund.
+
+                                            References
+ [1] Manuela A. D. Aguiar and Ana Paula S. Dias. The lattice of synchrony subspaces of a coupled cell
+     network: characterization and computation algorithm. J. Nonlinear Sci., 24(6):949–996, 2014.
+ [2] Manuela A. D. Aguiar and Ana Paula S. Dias. Synchronization and equitable partitions in weighted
+     networks. Chaos, 28(7):073105, 8, 2018.
+ [3] Manuela A. D. Aguiar and Ana Paula S. Dias. Synchrony and antisynchrony in weighted networks.
+     SIAM Journal on Applied Dynamical Systems, 20(3):1382–1420, 2021.
+ [4] Leonardo De Moura and Nikolaj Bjørner. Z3: an efficient smt solver. In Proceedings of the Theory and
+     Practice of Software, 14th International Conference on Tools and Algorithms for the Construction and
+     Analysis of Systems, TACAS’08/ETAPS’08, page 337–340, Berlin, Heidelberg, 2008. Springer-Verlag.
+            INVARIANT POLYDIAGONAL SUBSPACES AND CONSTRAINT PROGRAMMING                                    13
+
+ [5] Tias Guns. Increasing modeling language convenience with a universal n-dimensional array, cppy as
+     python-embedded example. In Proceedings of the 18th workshop on Constraint Modelling and Reformu-
+     lation at CP (Modref 2019), volume 19, 2019.
+ [6] IBM ILOG. CPLEX Optimization Studio CP Optimizer, 2023. https://www.ibm.com/products/
+     ilog-cplex-optimization-studio/cplex-cp-optimizer.
+ [7] Hiroko Kamei and Peter J. A. Cock. Computation of balanced equivalence relations and their lattice
+     for a coupled cell network. SIAM J. Appl. Dyn. Syst., 12(1):352–382, 2013.
+ [8] John Neuberger, Nándor Sieben, and James W. Swift. Invariant polydiagonal subspaces software. https:
+     //github.com/nandorsieben/IPS, 2024.
+ [9] John M. Neuberger, Nándor Sieben, and James W. Swift. Automated bifurcation analysis for nonlinear
+     elliptic partial difference equations on graphs. Internat. J. Bifur. Chaos Appl. Sci. Engrg., 19(8):2531–
+     2556, 2009.
+[10] John M. Neuberger, Nándor Sieben, and James W. Swift. Newton’s method and symmetry for semilinear
+     elliptic PDE on the cube. SIAM J. Appl. Dyn. Syst., 12(3):1237–1279, 2013.
+[11] John M. Neuberger, Nándor Sieben, and James W. Swift. Invariant synchrony subspaces of sets of
+     matrices. SIAM J. Appl. Dyn. Syst., 19(2):964–993, 2020.
+[12] John M. Neuberger, Nándor Sieben, and James W. Swift. Github repository, https://github.com/
+     jwswift/BLIS/, 2023.
+[13] John M. Neuberger, Nándor Sieben, and James W. Swift. A bifurcation lemma for invariant subspaces.
+     SIAM J. Appl. Dyn. Syst., 23(2):1610–1635, 2024.
+[14] Eddie Nijholt, Nándor Sieben, and James W. Swift. Github repository, https://github.com/jwswift/
+     Anti-Synchrony-Subspaces/, 2022.
+[15] Eddie Nijholt, Nándor Sieben, and James W. Swift. Invariant synchrony and anti-synchrony subspaces
+     of weighted networks. J. Nonlinear Sci., 33(4):38, 2023. Id/No 63.
+[16] Laurent Perron and Frédéric Didier. CP-SAT. https://developers.google.com/optimization/cp/
+     cp_solver.
+[17] Francesca Rossi, Peter van Beek, and Toby Walsh, editors. Handbook of Constraint Programming,
+     volume 2 of Foundations of Artificial Intelligence. Elsevier, 2006.
+[18] Neil J. A. Sloane and The OEIS Foundation Inc. The on-line encyclopedia of integer sequences, http:
+     //oeis.org, 2021.
+[19] Michael Tinkham. Group theory and quantum mechanics. McGraw-Hill Book Co., New York, 1964.
+     14                   JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+                                                 Appendix A
+
+ 1   from docplex . cp . model import CpoModel
+ 2
+ 3   # read integer matrix from file
+ 4   Mat =[[ int ( x ) for x in r . split ()] for r in open ( ’ M . txt ’) if r . strip ()]
+ 5   n = len ( Mat )
+ 6
+ 7   mdl = CpoModel ( name = ’ polydiagonal ’)
+ 8   # coloring vector decision variables with domains
+ 9   c =[ mdl . integer_var ( min = -i , max = i +1 , name = f " c_ { i }") for i in range ( n )]
+10   # maximums
+11   m ={ i : mdl . max ([ c [ j ] for j in range ( i )]) for i in range (1 , n )}
+12   # spanning set
+13   b ={ k :[( c [ i ]== k ) -( c [ i ]== - k ) for i in range ( n )] for k in range (1 , n )}
+14   # image of spanning set
+15   w ={ k :[ mdl . sum ( Mat [ i ][ j ]* b [ k ][ j ] for j in range ( n ) if Mat [ i ][ j ]!=0)
+16                                                          for i in range ( n )] for k in b }
+17   # constraints
+18   # coloring vector
+19   for i in m :
+20      mdl . add ( - m [ i ] <= c [ i ] , c [ i ] <=1+ m [ i ])
+21   # M - invariance
+22   for k in b :
+23      for i in range ( n ):
+24          mdl . add ( mdl . if_then ( c [ i ]==0 , w [ k ][ i ]==0))
+25          for j in range ( i ):
+26             mdl . add ( mdl . if_then ( c [ i ]== c [ j ] , w [ k ][ i ]== w [ k ][ j ]))
+27             mdl . add ( mdl . if_then ( c [ i ]== - c [ j ] , w [ k ][ i ]== - w [ k ][ j ]))
+28
+29   # find all solutions
+30   siter = mdl . start_search ( SearchType = ’ DepthFirst ’ , Workers =1 ,
+31                                 LogVerbosity = ’ Quiet ’)
+32   for sol in siter :
+33     print (*[ sol [ c [ i ]] for i in range ( n )])
+
+
+            Figure 7. DOcplex code for computing coloring vectors of M -invariant poly-
+            diagonal subspaces.
+
+        Figure 7 lists our DOcplex [6] code for solving the constraint satisfaction problem in
+     Figure 2. The code is available at [8]. DOcplex is a Python interface to the CP Optimizer.
+     The code reads in the integer matrix M from the file M.txt and writes the coloring vectors
+     of all of the M -invariant polydiagonal subspaces to standard output. Since the indices of
+     a Python list start at 0, the components of c are indexed by i ∈ {0, . . . , n − 1}. Every
+     dependent variable is encoded as an expression. In the expressions for w(1) , . . . , w(n−1) we
+     avoid zero multiples of a variable. Since M is often a sparse matrix, this simplifies our
+     constraints. Since our goal is not only finding a single solution but finding all of them, we
+     modify the default hyper-parameters by selecting the ‘DepthFirst’ search type and using
+     only one worker. We keep the default presolver, since it results in faster execution.
+                 INVARIANT POLYDIAGONAL SUBSPACES AND CONSTRAINT PROGRAMMING                             15
+
+                                                   Appendix B
+
+ 1   from cpmpy import *
+ 2
+ 3   # read integer matrix from file
+ 4   Mat =[[ int ( x ) for x in r . split ()] for r in open ( ’ M . txt ’) if r . strip ()]
+ 5   n = len ( Mat )
+ 6
+ 7   mdl = Model ()
+ 8   # coloring vector decision variables with domains
+ 9   c =[ intvar ( -i , i +1 , name = f " c_ { i }") for i in range ( n )]
+10   # spanning set
+11   b ={ k :[ intvar ( -1 ,1 , name = f " b_ { k } _ { i }") for i in range ( n )]
+12        for k in range (1 , n )}
+13   for k in b :
+14      for i in range ( n ):
+15          mdl +=( c [ i ]== k ). implies ( b [ k ][ i ]== 1)
+16          mdl +=( c [ i ]== - k ). implies ( b [ k ][ i ]== -1)
+17          mdl +=(( c [ i ]!= k ) & ( c [ i ]!= - k )). implies ( b [ k ][ i ]==0)
+18   # image of spanning set
+19   w ={ k :[ sum ( Mat [ i ][ j ]* b [ k ][ j ] for j in range ( n ) if Mat [ i ][ j ]!=0)
+20        for i in range ( n )] for k in b }
+21
+22   # constraints
+23   # coloring vector
+24   for i in range (1 , n ):
+25         mdl += any ([ c [ i ] <=1+ c [ j ] for j in range ( i )])
+26         mdl += any ([ c [ i ] >=0]+[ c [ i ]== - c [ j ] for j in range ( i )])
+27   # M - invariance
+28   for i in range ( n ):
+29     mdl +=( c [ i ]==0). implies ( all ([ w [ k ][ i ]==0 for k in b ]))
+30     for j in range ( i ):
+31         mdl +=( c [ i ]== c [ j ]). implies ( all ([ w [ k ][ i ]== w [ k ][ j ] for k in b ]))
+32         mdl +=( c [ i ]== - c [ j ]). implies ( all ([ w [ k ][ i ]== - w [ k ][ j ] for k in b ]))
+33
+34   # find all solutions
+35   mdl . solveAll ( display = lambda : print (*[ a . value () for a in c ]))
+
+
+             Figure 8. CPMpy code for computing coloring vectors of M -invariant poly-
+             diagonal subspaces.
+
+       Figure 8 lists our CPMpy [5] code for solving the constraint satisfaction problem in Fig-
+     ure 2. The code is available at [8]. CPMpy is a Python library with access to several solvers.
+     The default solver is CP-SAT. Although this CPMpy code does not reach the speed of similar
+     code using the ORtools interface, the syntax of CPMpy is significantly simpler. It is likely
+     that the speed difference can be eliminated by solver parameter tuning. The native ORtools
+     code is also available at [8].
+       In this code, we use Proposition 3.4 to enforce that c is a coloring vector. As a result,
+     the dependent variables m2 , . . . , mn are not computed. The coloring vector conditions are
+     encoded using logical or-statements. We made this choice because experimentation showed
+     that this encoding performs better using the CP-SAT solver.
+16                   JOHN M. NEUBERGER, NÁNDOR SIEBEN, JAMES W. SWIFT
+
+  The dependent variables w(1) , . . . , w(n−1) are also encoded using expressions instead of
+actual variables. As in the DOcplex code, in these expressions we avoid zero multiples of a
+variable.
+  In this code we handle the k-dependence of the constraints enforcing the M -invariance
+in a different but logically equivalent formulation to that in Figure 2. Embedding the k-
+dependence within the constraints results in fewer but more complex constraints compared to
+the DOcplex code. Experiments show that this results in a significant performance improve-
+ment. We believe that the reason for this is that we do not utilize the CP-SAT presolver.
+Experiments show that the presolver slows down the computation for our problem.
+
+  Current address: Northern Arizona University, Department of Mathematics and Statistics, Flagstaff, AZ
+86011-5717, USA
+  Email address: John.Neuberger@nau.edu, Nandor.Sieben@nau.edu, Jim.Wwift@nau.edu
+
+ROUTING HEADER {'utc': '2026-11-08T01:54:38.255492+00:00', 'kind': 'accepted55immutablecorpusstatementsforroutingonly', 'accepted_count': 55, 'prior39_not_audited_here': True, 'root_role': 'metadataextraction,notmathematicalduplicateclearance', 'limitation': 'CurrentimmutableMathDBstatementmetadataisnotacceptancecertificateaudit; exactsourceURLortitlematch/nonmatchdoesnotsettlefamilyoverlap. Protectedformalbodiesnotread.'}
+324342 Conference-matrix MDS code conjecture https://arxiv.org/abs/1210.5725
+330264 The spectral characterization of geodesic growth for right-angled Coxeter groups on trees https://arxiv.org/abs/1504.02774
+331705 Starlikeness conjecture for Cassinian balls in starlike domains https://arxiv.org/abs/1511.01298
+332037 The combinatorial injection conjecture for dominance order on compositions https://arxiv.org/abs/1512.04084
+332371 Common-basis conjecture for partitions of a matroid ground set https://arxiv.org/abs/1601.08199
+333569 A fully supported local information maximum on the full two-shift https://arxiv.org/abs/1607.02425
+333709 The two-round minimal percolating set conjecture https://arxiv.org/abs/1608.00531
+334599 The expressivity hierarchy conjecture for finitely iterated supervenience languages https://arxiv.org/abs/1611.04740
+338258 Odd-coordinate kernel conjecture for singular io-decomposable Riordan graphs https://arxiv.org/abs/1801.07021
+338887 Conjecture on recurrent component cardinalities in sinkless rotor networks https://arxiv.org/abs/1804.03322
+339235 The even-order M{"o}bius ladder local antimagic chromatic number conjecture https://arxiv.org/abs/1805.04888
+341850 Submodular separation conjecture for low-degree monomial families https://arxiv.org/abs/1902.04740
+342364 The 2-adic valuation conjecture for even-colored 2-ary partition functions https://arxiv.org/abs/1904.03398
+342414 The edge-pattern convex-combination conjecture https://arxiv.org/abs/1904.05618
+343536 Equitable partitions of rectangular grid graphs https://arxiv.org/abs/1908.05797
+343790 Uniqueness of code-loop representations by degree and type https://arxiv.org/abs/1909.05143
+345545 The growth constant for the stack-sorting map https://arxiv.org/abs/2002.07144
+346167 The rainbow vertex-disconnection Nordhaus–Gaddum conjecture https://arxiv.org/abs/2004.06285
+347230 The kernel conjecture for the second-kind interval transform https://arxiv.org/abs/2007.07362
+347712 Latin-strategy characterization conjecture for the symmetric group https://arxiv.org/abs/2008.11448
+349177 Nonexistence conjecture for dendrimer nanostars of at least four stages https://arxiv.org/abs/2012.12492
+349441 Estrada–Mugnolo's Kirchhoff-index ordering conjecture for hubs-biased resistance distances https://arxiv.org/abs/2101.07103
+350452 Non-IR conjecture for paths and cycles https://arxiv.org/abs/2104.09004
+350721 Signed cycle-type restriction polynomiality conjecture https://arxiv.org/abs/2105.08455
+350979 Circulant graph conjecture for monophonic position number two https://arxiv.org/abs/2106.06827
+352253 Subgraph criterion for minimal doubled 3-regular graphs https://arxiv.org/abs/2110.07764
+352496 The Polynexus formula for nonzero products in the rook monoid https://arxiv.org/abs/2111.01863
+352827 Unit-gap conjecture for diameters of Schrijver graphs https://arxiv.org/abs/2112.01884
+352972 Balanced-graph conjecture for flat graphs https://arxiv.org/abs/2112.09721
+353203 Uniqueness conjecture for power domination reconfiguration graphs of complete bipartite graphs https://arxiv.org/abs/2201.01798
+354228 Even-arity complete full tree local antimagic chromatic number conjecture https://arxiv.org/abs/2204.04479
+355140 Improved upper bounds for Staller–Maker–Breaker domination numbers https://arxiv.org/abs/2206.12812
+355217 Strict middle-graph increase conjecture for outer-connected domination https://arxiv.org/abs/2206.15439
+355956 Yip's maximal subfield clique conjecture for generalized Paley graphs https://arxiv.org/abs/2209.00864
+356266 Hurlbert's ordering conjecture for universal cycles of permutations https://arxiv.org/abs/2209.14198
+356756 The prime-modulus conjecture for progression-free digit sets https://arxiv.org/abs/2211.02588
+359279 Linear-bound multiset reconstruction conjecture for tableau minors https://arxiv.org/abs/2307.13161
+360653 The GM-rule Nash equilibrium conjecture for exact slow NIM https://arxiv.org/abs/2311.03257
+360905 Intermediate-value conjecture for orientable total domination numbers https://arxiv.org/abs/2311.16307
+364095 The set-palette conjecture for complete graphs https://arxiv.org/abs/2407.19050
+364205 Largest rigid facet conjecture for Vietoris–Rips complexes of hypercubes https://arxiv.org/abs/2408.01288
+365301 Contact-order distance conjecture for colored graph representations https://arxiv.org/abs/2410.10695
+365453 The local antimagic chromatic number conjecture for joins of matching and null graphs https://arxiv.org/abs/2410.17674
+365710 Maximum sigma_t-irregularity conjecture for connected triangle-free graphs https://arxiv.org/abs/2411.04881
+365943 Nonexistence conjecture for cubic 8-circulant nut graphs https://arxiv.org/abs/2411.16904
+366371 The majorization characterization conjecture for ordinal spaces embeddable in the line https://arxiv.org/abs/2412.17391
+366974 Positive matching decomposition conjecture for Cartesian products of cycles https://arxiv.org/abs/2502.02826
+368807 The neighborhood-tour conjecture for ASEP vertices https://arxiv.org/abs/2506.10671
+369421 The representation-number conjecture for larger toroidal grid graphs https://arxiv.org/abs/2507.16469
+372205 Existence of regular open and closed XOR-magic graphs of power-of-two order https://arxiv.org/abs/2512.19278
+378395 The collapsing conjecture for facets of hierarchical model polytopes https://arxiv.org/abs/math/0405044
+380362 The distance bound for loops with nonequivalent associator https://arxiv.org/abs/math/0701710
+381433 Cardoso–Luz conjecture on adverse graphs https://arxiv.org/abs/1811.05516
+381805 Conjecture on the super edge-magic total strength of odd-cycle unicyclic graphs https://arxiv.org/abs/2212.05329
+388087 Orientation of nonideal clutters https://oldlemon.cs.elte.hu/egres/open/List_of_open_problems
