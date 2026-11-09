@@ -1,0 +1,9 @@
+# MathDB 352827 - manuscript handback
+
+DRAFT for root review; zero accepted credit; no self-acceptance. The seven-page paper is paper.pdf, editable source paper.md. It refutes the literal arXiv v2 unit-gap conjecture at k=12,r=3. The proof distinguishes Lean's sufficient bounds (8 below and 6 above) from independently checked exact diameters; includes the explicit distance-eight pair, rotation/BFS upper bound, k=13 corroboration, complete formal correspondence, search limits, correction-only Theorem 6 remark, audits, access qualifications and bibliography. gate-E-map.json maps all fidelity requirements to the paper.
+
+The proof packet schrijver-source-r5.zip is byte-identical to r5, SHA-256 685b78855d145dae95ba175796528739f8a9ee5ea54fb621fc78b5ccdc763d1b, with 474 Lean modules. Safe extraction and source-manifest verification passed without running Lean, lake or leanchecker. Independent ordinary checks passed for all five certificate graphs. Every final PDF page was rendered and visually inspected; qa/receipt.json binds the inspected PDF and images.
+
+Root replay is pending: schrijver-parent-final-r1/replay-result.json is absent at packaging. The parent registry-refresh receipt is copied with its path-screen limitations. The DAM journal body remains unread; no priority or worldwide novelty claim is made. Root alone decides acceptance. The source Theorem 6 correction receives no separate credit.
+
+Both ZIPs, manifests, raw MathDB line, source copies, access receipts, PROOF.md, REPRODUCE.md, before/after hashes and resource/QA receipts are provided. All frozen input hashes are unchanged. Initial read-only access before complete caps/hash binding and a repaired script-authoring quoting failure are candidly recorded in operations.json. No child agents, external actions, git, shared edits or forbidden proof tools were used. No jobs remain running.

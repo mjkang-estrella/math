@@ -1,0 +1,14 @@
+# Reproduction
+
+Extract schrijver-partial-source.zip into a fresh empty lane-local directory. Run `python3 -I scripts/replay.py` with Lean 4.34.1 at the TASK.txt binary path and the pinned read-only mathlib cache. `--resume` accepts only successful receipts for the identical source manifest. Every Lean and leanchecker invocation is serial under run_capped.py: two CPUs, CPU 120 seconds, wall 140 seconds, private RSS 6 GiB, MALLOC_ARENA_MAX=2, Lean -j1 -M3500 and warningAsError=true. Temporary files and caches are extraction-local. Logs have unique timestamps and are never replaced.
+
+outputs/modules.json gives dependency order. frozen-before.json and frozen-after.json bind all 209 inherited source files to the round-2 archive hash in TASK.txt. ClosureAudit audits every declaration in the exact local import closure of BridgeTransport; Lean compares the expected module set with the actual environment imports. AuditR3 additionally audits every inherited and new mathematical module, including generated declarations. Only propext, Classical.choice and Quot.sound are allowed. leanchecker checks every module. Three inherited negative controls test a corrupted mask, incorrect cyclic stability, and an invalid tree bound. A fourth negative control corrupts packed lookup.
+
+The final endpoint remains conditional on the exact three Props in src/BridgeTransport.lean. Successful validation yields PASS_PARTIAL_ONLY, never acceptance. Root decides.
+
+Validation history: the initial fresh run completed all 724 module processes successfully, then the added negative control hit the default recursion limit. Raising maxRecDepth in that negative test fixed the test harness; scripts/finish_negatives.py verified every mathematical source hash unchanged, retained all successful module receipts, and reran all four negative controls. The original manifest is preserved as fresh-extraction/SOURCE-MANIFEST.initial.json. The final archive contains the fixed negative control, so a new standalone replay runs directly without this development repair. Delivery verification compares every final source with the actual fresh-extraction sources, including the unchanged 362 mathematical modules.
+
+
+## Round 4 replay
+
+Use the delivered archive schrijver-partial-source.zip, extract into an empty lane-local directory, and run `python3 -I scripts/replay.py --resume`. The source manifest fixes every source, script and prose document. outputs/modules.json lists all modules in dependency order. The runner uses the pinned Lean 4.34.1 and read-only mathlib cache, -j1 -M3500 -DwarningAsError=true, unique logs and per-process resource caps. It runs leanchecker on every module and rejects all negative controls. Resource receipts and replay-result.json give actual outcomes. New audits are ClosureAuditRound4.lean and AuditRound4.lean; frozen audits remain untouched. Root decides acceptance.
